@@ -14,6 +14,8 @@
 
 from __future__ import with_statement
 
+import inspect
+
 from robot import utils
 from robot.errors import DataError
 from robot.variables import is_list_var
@@ -211,6 +213,15 @@ class _DynamicHandler(_RunnableHandler):
         _RunnableHandler.__init__(self, library, handler_name, handler_method)
         self._run_keyword_method_name = handler_method.__name__
         self._doc = doc is not None and utils.unic(doc) or ''
+        # Check **kwargs handling requirements:
+        self._handler_argspec = inspect.getargspec(handler_method)
+        if argspec and argspec[-1].startswith('**'):
+            handler_args = self._handler_argspec.args
+            if len(handler_args) < 4:
+                raise DataError(
+                  "Too few '%s' method parameters"
+                  " for **kwargs support: %s" % (
+                      self._run_keyword_method_name, handler_args))
 
     def _parse_arguments(self, handler_method):
         return DynamicArgumentParser().parse(self.longname, self._argspec)
@@ -229,10 +240,10 @@ class _DynamicHandler(_RunnableHandler):
 
     def _get_dynamic_handler(self, runner, name):
         def handler(*positional, **kwargs):
-            if kwargs:
+            # Does the runner have **kwargs support?
+            if len(self._handler_argspec.args) > 3:
                 return runner(name, positional, kwargs)
-            else: # For backwards compatibility
-                # --> run_keyword methods with kwargs should define a default
+            else:
                 return runner(name, positional)
         return handler
 
