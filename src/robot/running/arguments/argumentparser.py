@@ -136,7 +136,7 @@ class DynamicArgumentParser(_ArgumentSpecParser):
         return kwargs[2:]
 
     def _is_varargs(self, arg):
-        return arg.startswith('*') and not arg[1:].startswith('*')
+        return arg.startswith('*') and not self._is_kwargs(arg)
 
     def _format_varargs(self, varargs):
         return varargs[1:]
