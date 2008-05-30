@@ -1,0 +1,294 @@
+Installation And Uninstallation
+===============================
+
+.. contents::
+..
+    1  Introduction
+    2  Installation
+      2.1  Preconditions
+        2.1.1  Python Installation
+        2.1.2  Jython Installation
+      2.2  Installing From Source
+      2.3  Installing Using Binary Installer
+      2.4  Manual Installation
+      2.5  Where Files Are Installed
+      2.6  Setting Up The Environment
+        2.6.1  Start-Up Scripts
+        2.6.2  Python And Jython
+      2.7  Verifying Installation
+    3  Upgrading
+    4  Uninstallation
+
+
+Introduction
+------------
+
+There are two ways to install Robot Framework, depending on how you got it.
+
+`Installing from source`_
+    You can get the source code either as a source distribution package
+    or directly from our version control. In the former case, you need to
+    first extract the package somewhere, and as a result, you got a
+    directory named ``robotframework-<version>``. Detailed instructions
+    follow, but in short, what you need to do is to go to the created
+    directory and run the ``python setup.py install`` command.
+
+`Installing using binary installer`_
+    Binary installers are platform-specific and using them should be
+    familiar to anyone who has ever installed anything on that
+    particular platform. We currently have graphical installers for
+    Windows and an RPM package for several Linux flavours.
+
+Installation packages are available from:  
+
+**TODO**: add correct URL
+
+For more details about different installation packages and possible
+future formats, see the PACKAGING.txt file.
+
+
+Installation
+------------
+
+Preconditions
+~~~~~~~~~~~~~
+
+Robot Framework runs both on Python_ and Jython_ and you need to have
+at least one of them to be able to use it. Installing Robot Framework
+automatically is only possible with Python and installing it is
+recommended.
+
+
+Python Installation
+'''''''''''''''''''
+
+Python 2.5 is recommended, although Python 2.4 and 2.3 are also
+supported. On most unixy systems, you have Python installed by
+default. If you are on Windows or otherwise need to install Python
+yourself, your best place to start is probably `Python
+homepage`_. There you can download a suitable installer and get more
+information about installation and Python in general.
+
+.. Note:: Python installation framework coming with Python 2.3 does not
+          have functionality for copying other than Python
+          files. Robot Framework itself can be installed with it
+          without problems, but installing e.g. certain libraries may
+          require copying those non-Python files manually.
+
+
+Jython Installation
+'''''''''''''''''''
+
+Using test libraries implemented with Java or directly using Java
+tools requires running Robot Framework on Jython_. A precondition for
+Jython is having Java 1.4 or newer installed. Both Sun and IBM Java
+versions are supported and you only need Java Runtime Environment
+(JRE). Newer Java versions are recommended, as they tend to be faster 
+with dynamic languages like Jython.
+
+Jython version to use with Robot Framework is 2.2. At least Jython
+2.2.1 has problems with Unicode in certain cases (see
+http://jython.org/bugs/1802339 for more details), but they are hopefully
+fixed in later 2.2.x versions.
+
+Some unixy systems have Jython automatically available, but they still
+seem to have 2.1 version which is *not* compatible with Robot
+Framework. Installing Jython is, luckily, a pretty easy procedure. You
+need to first get an installer from `Jython homepage`_ and then
+run it. Note that the installer is an executable JAR package, which you
+need to run like ``java -jar jython_installer-2.2.jar``. Depending on
+your system, the installer will either run in the graphical or textual mode,
+but in both cases, the actual installation procedure is really easy.
+
+Robot Framework installer tries to find the Jython executable on the
+system, in order to create the jybot start-up script correctly. Jython
+will be found if:
+
+1. The Jython executable is in the PATH environment variable.
+
+2. An environment variable JYTHON_HOME is set and it points to
+   a directory containing the Jython executable.
+
+3. Jython installation dir is found. On Windows machines, it is
+   searched from 'C:\\' and 'D:\\' drives, and on other systems from
+   '/usr/local' and '/opt' directories. The directory will be found if
+   it is under the search directories mentioned above, or one level
+   deeper.  For example, following Jython installation directories
+   would be found by the installer::
+
+     C:\APPS\Jython2.2
+     D:\Jython22RC2
+     /usr/local/jython2.2.1
+     /opt/more/jython2.2
+
+If you plan to use Robot Framework only with Jython, you do not
+necessarily need Python at all. In that case you need to do a `manual
+installation`_ or have some custom installer.
+
+
+Installing From Source
+~~~~~~~~~~~~~~~~~~~~~~
+
+As already mentioned, you can get Robot Framework source either as a
+source distribution package (which you need to extract somewhere) or
+directly from version control. In both cases, you should have a
+directory containing source code, documentation, tools, templates,
+etc. The first installation step is going to the created directory
+from command line, and after that you can install Robot Framework by
+running the following command::
+
+  python setup.py install
+
+You get a quite long output and something like the following text should
+appear at the end::
+
+  Creating Robot start-up scripts...
+
+  Installation directory: /usr/lib/python2.5/site-packages/robot
+  Python executable: /usr/bin/python
+  Jython executable: /cygdrive/c/jython2.2b2/jython.bat (found from system)
+  Pybot script: /usr/bin/pybot
+  Jybot script: /usr/bin/jybot
+  Rebot script: /usr/bin/rebot
+
+
+Installing Using Binary Installer
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Use the platform-specific way of installation.  For example, on
+Windows, double click the provided installation executable, and follow
+the instructions of the graphical installer.
+
+
+Manual Installation
+~~~~~~~~~~~~~~~~~~~
+
+If you do not want to install Python or for some other reason do not
+want to use any automatic way for installing Robot Framework, you can
+always do it manually following these steps.
+
+1. Get the source code. All the code is in a directory (a module in
+   Python) called ``robot``. If you have a source distribution or a version
+   control checkout, you can find it from the ``src`` directory, but you can
+   also get it from an earlier installation.
+
+2. Copy the source code where you want.
+
+3. Create the needed start-up scripts. If you have a source package or a
+   checkout, you can get templates from ``src/bin``.
+
+
+Where Files Are Installed
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+When an automatic installer is used, Robot Framework code is copied
+into a directory containing external Python modules. The actual location is
+platform-specific, but on unixy machines, it is normally something like
+'/usr/lib/[PythonVer]/site-packages' and on Windows it is
+'[PythonInstallationDir]\\Lib\\site-packages'. The code is in the directory 
+named as robot in the site-packages directory.
+
+Robot Framework start-up scripts (pybot, jybot and rebot) will be 
+created and copied into another platform-specific location. On unixy 
+machines, they normally go to '/usr/bin' and are thus immediately 
+available from command line. On Windows, there is not a similar natural 
+place, and scripts go '[PythonInstallationDir]\\Scripts'. 
+
+
+Setting Up The Environment
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Start-Up Scripts
+''''''''''''''''
+
+The Robot Framework installer creates start-up scripts and copies them
+to platform-dependent locations as explained above. On unixy machines,
+they should be automatically available from command line, but on
+Windows they are not. On Windows, and possible other environments where
+startup scripts are not available, the directory containing them must
+be set to the PATH environment variable.
+
+.. TIP:: Setting PATH in Windows
+
+   Open ``Start > Settings > Control Panel > System > Advanced >
+   Environment Variables``.  There are User variables and System
+   variables, the difference between them is that User Variables affect
+   only the current users, System Variables affect all users.  If the
+   PATH environment variable does not exist, you can create it by
+   choosing 'New'. An existing variable may be edited by choosing
+   'Edit'. You should insert ';C:\\[PythonDir]\\Scripts\\' into the
+   'Variable Value' field in the edit dialog, where [PythonDir] is
+   your Python installation directory.
+
+   A new command prompt needs to be started for the changes to take effect.
+
+Python And Jython
+'''''''''''''''''
+
+If you followed `Jython installation`_ guidelines above, or do not need
+Jython at all, you should not need to do any more configuring. You may
+want to make sure Python and Jython are available from command line
+and if not, add their installation directories into PATH.
+
+If you installed Jython into a location where Robot Framawork
+installer could not find it, you need to either update the ``jybot`` script
+manually or set the Jython installation directory to PATH.
+
+
+Verifying Installation
+~~~~~~~~~~~~~~~~~~~~~~
+
+You can verify the success of the installation and environment setup by typing::
+
+  pybot --version 
+
+Something similar to::
+
+  Robot 2.0 (Python 2.5.1 on cygwin)
+
+should appear on the output.
+
+To verify that Robot Framework works also with Jython, type::
+
+  jybot --version
+
+The expected output in this case is similar to::
+
+  Robot 2.0 (Jython 2.2 on java1.6.0_02)
+
+
+Upgrading
+---------
+
+If you are upgrading from one minor Robot Framework version to another
+(for example, from 2.0 to 2.0.1), it should be safe to install the new
+version over the old one.
+
+If you are upgrading from one major Robot version to another (for
+example, from 2.0 to 2.1), then it is highly recommended to uninstall
+the old version before the new installation.
+
+If you are downgrading, the rules are same as for upgrading.
+
+
+Uninstallation
+--------------
+
+If Robot Framework is installed from a binary distribution, it can be
+uninstalled via the mechanism offered by the operating system. For
+example in Windows you simply go to ``Control Panel >
+Add/Remove Programs``. Note that Robot Framework is listed under
+Python.
+
+If installed from source, or if the removal of binary installation is
+unsuccesful, Robot Framework may be uninstalled by removing the
+framework code and start-up scripts manually. See the `Where Files Are
+Installed`_ section above for more information where to find them.
+
+
+.. _Python: http://www.python.org/ 
+.. _Python Homepage: Python_
+.. _Jython: http://www.jython.org/ 
+.. _Jython Homepage: Jython_
+.. _Java: http://java.sun.com/
+

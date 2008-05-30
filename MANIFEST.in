@@ -1,0 +1,12 @@
+include src/bin/?ybot src/bin/*.bat src/bin/rebot
+include robot_postinstall.py
+include robot.bmp
+
+include LICENSE.txt COPYRIGHT.txt INSTALL.txt PACKAGING.txt
+
+include devscripts/*.tmpl devscripts/*.txt
+recursive-include tools *.py *.au3 *.sh *.rb *.html *.txt *.tsv
+recursive-include proto *.py *.au3 *.sh *.rb *.html *.txt *.tsv *.rnc
+include templates/*.html templates/*.tsv templates/*.txt
+recursive-include doc *.txt *.html *.png *.sh *.py
+
