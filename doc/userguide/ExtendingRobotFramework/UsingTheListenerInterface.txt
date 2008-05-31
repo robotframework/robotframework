@@ -1,0 +1,235 @@
+
+Using the listener interface
+----------------------------
+
+.. contents:: 
+   :depth: 2
+   :local: 
+
+Robot Framework has a listener interface that can be used to receive
+notifications about test execution. Listeners are classes with certain
+special methods, and they can be implemented both with Python and
+Java. Example uses of the listener interface include external test
+monitors, sending a mail when a test fails, and communicating with
+other systems.
+
+This section explains how to use the listener interface. Listeners are
+taken into use from the command line with :cli:`--listener
+ListenerClassName` option as explained at TODO__.
+
+__ TODO: Link to section in executing test chapter about --listener
+
+
+Available listener interface methods
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Robot Framework creates an instance of the listener class when test
+execution starts. No arguments are given to the constructor of the
+listener class. During the test execution, Robot Framework calls
+listeners' methods when test suites and cases start and end. It also
+calls appropriate methods when output files are ready, and finally at
+the end it calls the :code:`close` method. A listener is not required to
+implement any official interface, and it only needs to have the
+methods it actually needs.
+
+The following table lists all the available methods in the listener
+interface. All of these methods have also camelCase aliases. Thus,
+for example, :code:`startSuite` is a synonym to
+:code:`start_suite`. All the arguments are strings, unless otherwise
+noted in the Comments column.
+
+
+.. table:: Available methods in the listener interface
+   :class: tabular
+
+   +-------------+-----------------+--------------------------------------------------+
+   |    Method   |    Arguments    |                     Comments                     |
+   +=============+=================+==================================================+
+   | start_suite | name, doc       | The documentation may be empty.                  |
+   +-------------+-----------------+--------------------------------------------------+
+   | end_suite   | status, message | The status is either PASS or FAIL. The message   |
+   |             |                 | contains suite statistics and an error message,  |
+   |             |                 | if the suite setup or teardown has failed.       |
+   +-------------+-----------------+--------------------------------------------------+
+   | start_test  | name, doc, tags | The documentation may be empty. Tags are given   |
+   |             |                 | as a list of strings in Python and as a string   |
+   |             |                 | array in Java.                                   |
+   +-------------+-----------------+--------------------------------------------------+
+   | end_test    | status, message | The status is either PASS or FAIL. The message   |
+   |             |                 | contains an error message, if the test has failed|
+   |             |                 | and is empty otherwise.                          |
+   +-------------+-----------------+--------------------------------------------------+
+   | output_file | path            | Called when writing to an output file is         |
+   |             |                 | finished. The path is an absolute path to the    |
+   |             |                 | file. When `outputs are split`_, called for each |
+   |             |                 | finished file.                                   |
+   +-------------+-----------------+--------------------------------------------------+
+   | log_file    | path            | Called when writing to a log file is             |
+   |             |                 | finished. The path is an absolute path to the    |
+   |             |                 | file. When `outputs are split`_, called for each |
+   |             |                 | finished file.                                   |
+   +-------------+-----------------+--------------------------------------------------+
+   | report_file | path            | Called when writing to a report file is          |
+   |             |                 | finished. The path is an absolute path to the    |
+   |		 |		   | file.     	   	      	       	       	      |
+   +-------------+-----------------+--------------------------------------------------+
+   | summary_file| path            | Called when writing to a summary file is         |
+   |             |                 | finished. The path is an absolute path to the    |
+   |		 |		   | file.     	   	      	       	       	      |
+   +-------------+-----------------+--------------------------------------------------+
+   | debug_file  | path            | Called when writing to a debug file is           |
+   |             |                 | finished. The path is an absolute path to the    |
+   |		 |		   | file.     	   	      	       	       	      | 
+   +-------------+-----------------+--------------------------------------------------+
+   | close       |                 | Called after all test suites, and test cases in  |
+   |             |                 | them, have been executed.                        |
+   +-------------+-----------------+--------------------------------------------------+
+
+
+.. _outputs are split: TODO link to splitting outputs section
+
+Available methods and their arguments are also shown in a formal Java interface
+specification below. It should be remembered that a listener *does not*
+need to implement any explicit interface nor have all these methods.
+
+
+.. sourcecode:: java
+
+   public interface RobotListenerInterface {
+
+       void startSuite(String name, String doc);
+
+       void endSuite(String status, String message);
+
+       void startTest(String name, String doc, String[] tags);
+
+       void endTest(String status, String message);
+
+       void outputFile(String path);
+
+       void logFile(String path);
+
+       void reportFile(String path);
+
+       void summaryFile(String path);
+
+       void debugFile(String path);
+
+       void close();
+   }
+
+
+Listener examples
+~~~~~~~~~~~~~~~~~
+
+The first simple example is implemented with Python. It mainly
+illustrates that using the listener interface is not very complicated.
+
+
+.. sourcecode:: python
+
+   class SimpleListener:
+
+       def start_test(self, name, documentation, tags):
+           print 'Executing test', name
+
+       def log_file(self, path):
+           print 'Test log available at', path
+
+       def close(self):
+           print 'All tests executed'
+
+
+The second example, which still uses Python, is slightly more
+complicated. It writes all the information it gets into a text file in
+a temporary directory without much formatting. Note that in real
+usage, the `debug file`__ functionality available through the command
+line option :cli:`--debugfile` is probably more useful than this
+example.
+
+__ TODO: link section explaining --debugfile 
+
+
+.. sourcecode:: python
+
+   import os.path
+   import tempfile
+
+
+   class PythonListener:
+    
+       def __init__(self):
+           outpath = os.path.join(tempfile.gettempdir(), 'listen.txt')
+           self.outfile = open(outpath, 'w')
+        
+       def start_suite(self, name, doc):
+           self.outfile.write("%s '%s'\n" % (name, doc))
+        
+       def start_test(self, name, doc, tags):
+           self.outfile.write("- %s '%s' [ %s ] :: " % (name, doc, ' '.join(tags)))
+        
+       def end_test(self, status, message):
+           if status == 'PASS':
+               self.outfile.write('PASS\n')
+           else:
+                self.outfile.write('FAIL: %s\n' % message)
+            
+        def end_suite(self, status, message):
+            self.outfile.write('%s\n%s\n' % (status, message))
+            
+        def close(self):
+            self.outfile.close()
+
+
+The third example implements the same functionality as the previous one, but uses Java instead of Python.
+
+
+.. sourcecode:: java
+
+   import java.io.*;
+
+
+   public class JavaListener {
+   
+       BufferedWriter outfile = null;
+   
+       public JavaListener() throws IOException {
+           String tmpdir = System.getProperty("java.io.tmpdir");
+           String sep = System.getProperty("file.separator");
+           String outpath = tmpdir + sep + "listen_java.txt";
+           outfile = new BufferedWriter(new FileWriter(outpath));
+       }
+   
+       public void startSuite(String name, String doc) throws IOException {
+           outfile.write(name + " '" + doc + "'\n");
+       }
+
+       public void startTest(String name, String doc, String[] tags) throws IOException {
+           outfile.write("- " + name + " '" + doc + "' [ ");
+           for (int i=0; i < tags.length; i++) {
+              outfile.write(tags[i] + " ");
+           }
+           outfile.write(" ] :: ");
+       }
+   
+       public void endTest(String status, String message) throws IOException {
+           if (status.equals("PASS")) {
+               outfile.write("PASS\n");
+           }
+           else {
+               outfile.write("FAIL: " + message + "\n");
+           }
+       }
+      
+       public void endSuite(String status, String message) throws IOException {
+           outfile.write(status + "\n" + message + "\n");
+       }
+   
+       public void close() throws IOException {
+           outfile.close();
+       }
+
+   }
+
+
+

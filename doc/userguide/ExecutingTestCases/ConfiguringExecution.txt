@@ -1,0 +1,59 @@
+Configuring execution
+----------------------
+
+.. contents::
+   :depth: 2
+   :local:
+
+Selecting test cases
+~~~~~~~~~~~~~~~~~~~~
+--test
+--suite
+--include
+--exclude
+
+Setting criticality
+~~~~~~~~~~~~~~~~~~~
+--critical 
+--noncritical
+
+Setting metadata
+~~~~~~~~~~~~~~~~
+--name
+--doc 
+--metadata
+--settag
+
+Adjusting library search path
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+--pythonpath
+CLASSPATH PYTHONAPTH
+
+Setting variables
+~~~~~~~~~~~~~~~~~
+--variable
+--variablefile
+
+TODO: link to variables section
+
+Setting runmode
+~~~~~~~~~~~~~~~
+--runmode
+
+
+Controlling monitor output
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+--monitorwidth
+--monitorcolors Remove from rebot
+
+Setting listeners
+~~~~~~~~~~~~~~~~~
+--listener
+
+
+Setting times for combined outputs
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+--starttime
+--endtime
+
+

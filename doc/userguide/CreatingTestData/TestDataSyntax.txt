@@ -1,0 +1,376 @@
+Test data syntax
+----------------
+
+This section covers Robot Framework's overall test data
+syntax. The following sections will explain how to actually create test
+cases, test suites and so on.
+
+.. contents:: 
+   :depth: 2
+   :local: 
+
+
+Files and directories
+~~~~~~~~~~~~~~~~~~~~~
+
+The hierarchical structure for arranging test cases is built as follows:
+
+- Test cases are created in `test case files`_.
+- A test case file automatically creates a `test suite`_ containing
+  the test cases in that file.
+- A directory containing test case files forms a higher-level test
+  suite. Such a `test suite directory`_ has suites created from test
+  case files as its sub test suites.
+- A test suite directory can also contain other test suite directories,
+  and this hierarchical structure can be as deeply nested as needed.
+- Test suite directories can have a special `initialization file`_.
+
+In addition to this, there are:
+
+- `Test libraries`_ containing the lowest-level keywords
+- `Resource files`_ with variables_ and higher-level `user keywords`_
+- `Variable files`_ to provide more flexible ways to create variables
+  than resource files 
+
+
+Supported file formats
+~~~~~~~~~~~~~~~~~~~~~~
+
+Robot Framework test data is defined in tabular format, using either
+the HTML (hypertext markup language) or TSV (tab-separated values)
+format. Robot Framework selects a parser for the test data based on
+the file extension. The extension is case-insensitive and the
+recognized extensions are :path:`.html`, :path:`.htm` and
+:path:`.xhtml` for HTML, and :path:`.tsv` for TSV.
+
+Source distribution contains both HTML and TSV test data templates and
+they can also be got from Robot Framework's `download page`_.
+
+
+HTML format
+'''''''''''
+
+In HTML files, the test data is defined in separate tables (see the
+example below). Robot Framework recognizes these `test data tables`_
+based on the text in their first cell. Everything outside recognized
+tables is ignored.
+
+.. table:: Using the HTML format
+   :class: example
+
+   ============  ================  =======  =======
+      Setting          Value        Value    Value 
+   ============  ================  =======  =======
+   Library       OperatingSystem   \        \
+   \             \                 \        \
+   ============  ================  =======  =======
+
+.. table::
+   :class: example
+
+   ============  ================  =======  =======
+     Variable        Value          Value    Value
+   ============  ================  =======  =======
+   ${MESSAGE}    Hello, world!     \        \
+   \             \                 \        \
+   ============  ================  =======  =======
+
+.. table::
+   :class: example
+
+   ============  ===================  ============  =============
+    Test Case           Action          Argument      Argument 
+   ============  ===================  ============  =============
+   My Test       [Documentation]      Example test  \
+   \             Log                  ${MESSAGE}    \
+   \             My Keyword           /tmp          \
+   \             \                    \             \
+   Another Test  Should Be Equal      ${MESSAGE}    Hello, world!
+   ============  ===================  ============  =============
+   
+.. table::
+   :class: example
+
+   ============  ======================  ============  ==========
+     Keyword            Action             Argument     Argument
+   ============  ======================  ============  ==========
+   My Keyword    [Argument]              ${path}       \
+   \             Directory Should Exist  ${path}       \
+   ============  ======================  ============  ==========
+
+
+Test data in HTML files can be edited with whichever editor you
+prefer, but a graphic editor, where you can actually see the tables,
+is recommended.  There is also a tool called `Robot IDE`_
+available that is actually designed for editing the test data.
+
+HTML entity references (for example, :code:`&auml;`) are
+supported. Additionally, any encoding can be used assuming that it is
+specified in the data file. Normal HTML files must use the META
+element as in the example below::
+
+ <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+XHTML files should use the XML preamble as in this example::
+ 
+ <?xml version="1.0" encoding="Big5"?>
+
+If no encoding is specified, Robot Framework uses ISO-8859-1 by default. 
+
+.. Note:: Before Robot Framework version 1.8.4, the HTML test data was
+          always assumed to be in ASCII former.
+
+
+TSV format
+''''''''''
+
+In a TSV file, all the data is in one large table. `Test data tables`_
+are recognized from an asterisk (*), followed by a normal table
+name. Robot Framework ignores any other asterisks in the name, so it
+can also be prefixed with another asterisk as in the example below.
+In TSV test data, everything before the first recognized table is
+ignored by in Robot Framework.
+
+.. table:: Using the TSV format
+   :class: tsv-example
+
+   ============  =======================  =============  =============
+   \*Setting*    \*Value*                 \*Value*       \*Value*
+   Library       OperatingSystem          \              \
+   \             \                        \              \ 
+   \             \                        \              \
+   \*Variable*   \*Value*                 \*Value*       \*Value*
+   ${MESSAGE}    Hello, world!            \              \
+   \             \                        \              \
+   \             \                        \              \
+   \*Test Case*  \*Action*                \*Argument*    \*Argument*
+   My Test       [Documentation]          Example test   \
+   \             Log                      ${MESSAGE}     \
+   \             My Keyword               /tmp           \
+   \             \                        \              \
+   Another Test  Should Be Equal          ${MESSAGE}     Hello, world!
+   \             \                        \              \ 
+   \             \                        \              \
+   \*Keyword*    \*Action*                \*Argument*    \*Argument*
+   My Keyword    [Argument]               ${path}        \
+   \             Directory Should Exist   ${path}        \
+   ============  =======================  =============  =============
+
+You can create and edit TSV files in any spreadsheet program, such as
+Microsoft Excel. Select the tab-separated format when you save the
+file and remember to set the file extension to :path:`.tsv`. The TSV
+format can be used in Robot Framework's test data for all the same
+purposes as HTML.
+
+Robot Framework parses TSV data by first splitting all the content
+into rows and then rows into cells based on the tabular
+characters. Spreadsheet programs sometimes surround cells with quotes
+(for example, :code:`"my value"`) and Robot Framework removes
+them. Possible quotes inside the data are doubled (for example,
+:code:`"my ""quoted"" value"`) and Robot Framework handles also
+them. If you are using a spreadsheet program to create TSV data, you
+do not need to think about that, but if you create data
+programmatically, you have to add the same quotes as spreadsheets.
+
+
+Test data tables
+~~~~~~~~~~~~~~~~
+
+Test data is structured in four types of tables listed below. These
+test data tables are identified by the first cell of the table, and
+the last column in the table below lists different aliases that can be
+used as a table name.
+
+.. table:: Different test data tables
+   :class: tabular
+
+   +------------------+--------------------------------------------+-------------------+
+   |    Table name    |                 Used for                   |      Aliases      |
+   +==================+============================================+===================+
+   | Setting table    | 1) Importing `test libraries`_, `resource  | Setting, Settings,| 
+   |                  | files`_, and `variable files`_, 2) Defining| Metadata          | 
+   |                  | metadata for `test suites`_ and `test      |                   |
+   |                  | cases`_             .                      |                   |
+   +------------------+--------------------------------------------+-------------------+
+   | Variable tables  | Defining variables_ that can be used       | Variable,         |
+   |                  | elsewhere in the test data                 | Variables         |
+   +------------------+--------------------------------------------+-------------------+
+   | Test case tables | `Creating test cases`_ from available      | Test Case,        |
+   |                  | keywords                                   | Test Cases        |
+   +------------------+--------------------------------------------+-------------------+
+   | Keyword tables   | `Creating user keywords`_ from existing    | Keyword, Keywords,| 
+   |                  | lower-level keywords                       | User Keyword,     |
+   |                  |                                            | User Keywords     |
+   +------------------+--------------------------------------------+-------------------+
+
+
+
+Rules for parsing the data
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Ignored data
+''''''''''''
+
+When Robot Framework parses the test data, it ignores:
+
+- All tables that do not start with a recognized table name in the first cell
+- Everything else on the first row apart from the first cell
+- Data outside tables in HTML and data before the first table in TSV
+- All empty rows, which means these kinds of rows can be used to make
+  the tables more readable
+- All empty cells at the end of rows; you must add a backslash (\\) to
+  prevent such cells from being ignored
+- All single backslashes (\\); they are used as an escape character
+- All characters following a hash mark (#), if it is the first
+  character of a cell; this means that hash marks can be used to enter
+  comments in the test data
+- All formatting in the HTML test data
+
+When Robot Framework ignores some data, it is not available in any
+resulting reports and, additionally, most tools used with Robot
+Framework also ignore them. To add information that is visible in
+Robot Framework outputs, or available to, for example, `Robot IDE`_,
+place it to documentation or other metadata of test cases or suites,
+or log with the :kw:`Log` or :kw:`Comment` keywords available
+from the `BuiltIn library`_.
+
+
+Escaping
+''''''''
+
+The escape character for the Robot Framework parser is the backslash (\\).
+The escape character can be used as follows:
+
+- To escape special characters so that their literal values are
+  used:
+
+  * :code:`\\${notvar}` means a literal string :code:`${notvar}` that
+    looks like a variable_
+  * :code:`\\\\` means a single backslash (for example :code:`C:\\\\Temp`)
+  * :code:`\\#` means a literal hash (#) mark, even at the beginning of a cell
+
+- To affect `the parsing of whitespaces`__
+
+- To prevent Robot Framework from ignoring empty cells at the end of a
+  row (this requires :code:`\\` to be in the appropriate cell).
+
+__  `Handling whitespace`_.
+
+
+Handling whitespace
+'''''''''''''''''''
+
+Robot Framework handles whitespace, such as spaces, newlines and tabs,
+the same way as they are handled in HTML. This means that Robot Framework:
+
+- Removes leading and trailing whitespaces in all cells.
+- Changes multiple consecutive spaces into single spaces.
+- Converts all new lines and tabs into spaces.
+
+To prevent Robot Framework from parsing data according to these rules, a backslash can be used:
+
+- Before leading spaces, for example :code:`\\ some text`
+- Between consecutive spaces, for example :code:`text \\ \\ more text`
+- After trailing spaces, for example :code:`some text \\ \\`
+- With :code:`n` to create a new line, for example :code:`first line\\n2nd line`
+- With :code:`t` to create a tab character, for example :code:`text\\tmore text`
+- With :code:`r` to create a carriage return, for example :code:`text\\rmore text`
+
+
+Dividing test data to multiple rows
+'''''''''''''''''''''''''''''''''''
+
+If a keyword requires more arguments than there are columns available,
+it is not necessary to add more columns. Instead, it is possible to
+simply have three dots (:code:`...`) below the original keyword name
+and continue arguments there. Arguments presented like this are parsed
+as if they were all in one row.
+
+The same approach works also with settings and variables taking
+several values. In these cases, the three dots are, of course, placed
+under the setting or variable name.
+
+Additionally, values of settings that take only one value (mainly
+documentations) can be split to multiple columns. These values
+will be then catenated together with spaces when the test data is
+parsed.
+
+All these syntaxes are illustrated in the following examples. The
+first three tables show tables where test data has not been split, and
+the following three illustrate how fewer columns are needed after
+splitting the data into multiple rows.
+
+.. table:: Test data that has not been split
+   :class: example
+
+   ============  =======  =======  =======  =======  =======  =======
+     Setting      Value    Value    Value    Value    Value    Value 
+   ============  =======  =======  =======  =======  =======  =======
+   Default Tags  tag-1    tag-2    tag-3    tag-4    tag-5    tag-6  
+   ============  =======  =======  =======  =======  =======  =======
+
+.. table:: 
+   :class: example
+
+   ==========  =======  =======  =======  =======  =======  =======
+    Variable    Value    Value    Value    Value    Value    Value
+   ==========  =======  =======  =======  =======  =======  =======
+   @{LIST}     this     list     has      quite    many     items
+   ==========  =======  =======  =======  =======  =======  =======
+
+.. table:: 
+   :class: example
+
+   +-----------+-----------------+---------------+------+-------+------+------+-----+-----+
+   | Test Case |     Action      |   Argument    | Arg  |  Arg  | Arg  | Arg  | Arg | Arg |
+   +===========+=================+===============+======+=======+======+======+=====+=====+
+   | Example   | [Documentation] | Documentation |      |       |      |      |     |     |
+   |           |                 | for this test |      |       |      |      |     |     |
+   |           |                 | case. This    |      |       |      |      |     |     |
+   |           |                 | can get quite |      |       |      |      |     |     |
+   |           |                 | long...       |      |       |      |      |     |     |
+   +-----------+-----------------+---------------+------+-------+------+------+-----+-----+
+   |           | [Tags]          | t-1           | t-2  | t-3   | t-4  | t-5  |     |     |
+   +-----------+-----------------+---------------+------+-------+------+------+-----+-----+
+   |           | Do X            | one           | two  | three | four | five | six |     |
+   +-----------+-----------------+---------------+------+-------+------+------+-----+-----+
+   |           | ${var} =        | Get X         | 1    | 2     | 3    | 4    | 5   | 6   |
+   +-----------+-----------------+---------------+------+-------+------+------+-----+-----+
+
+
+.. table:: Test data split into multiple rows
+   :class: example
+
+   ============  =======  =======  =======  
+     Setting      Value    Value    Value   
+   ============  =======  =======  =======  
+   Default Tags  tag-1    tag-2    tag-3    
+   ...           tag-4    tag-5    tag-6    
+   ============  =======  =======  =======  
+
+.. table:: 
+   :class: example
+
+   ==========  =======  =======  =======  
+    Variable    Value    Value    Value   
+   ==========  =======  =======  =======  
+   @{LIST}     this     list     has      
+   ...         quite    many     items
+   ==========  =======  =======  =======  
+
+.. table:: 
+   :class: example
+
+   ===========  ================  ==============  ==========  ==========
+    Test Case       Action           Argument      Argument    Argument 
+   ===========  ================  ==============  ==========  ==========
+   Example      [Documentation]   Documentation   for this    test case.
+   \            ...               This can get    quite       long...
+   \            [Tags]            t-1             t-2         t-3
+   \            ...               t-4             t-5         \
+   \            Do X              one             two         three
+   \            ...               four            five        six
+   \            ${var} =          Get X           1           2
+   \            ...               3               4           5
+   \            ...               6               \           \
+   ===========  ================  ==============  ==========  ==========

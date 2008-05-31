@@ -1,0 +1,267 @@
+Installation and uninstallation
+-------------------------------
+
+There are two ways to install Robot Framework.
+
+
+`Installing from the source`_
+
+    You can get the source code either as a source distribution
+    package or directly from version control. In the former case,
+    first extract the package somewhere, and as a result, you have a
+    directory named ``robotframework-<version>``. Detailed
+    instructions follow, but in short, what you need to do is to go to
+    the created directory and run the ``python setup.py install``
+    command.
+
+`Using binary installers`_
+
+    Binary installers are platform-specific. There is currently only
+    one binary distribution available, a graphical installer for
+    Windows.
+
+Installation packages are available from the Robot Framework `download
+page`_. For more information about different installation packages and
+possible future formats, see the :path:`PACKAGING.txt` file included in the
+source distribution.
+
+.. _download page: https://cwiki.nokia.com/RobotFramework/DownloadPage
+
+.. TODO: (OSS) Add link to version control, update download page
+
+.. contents::
+   :depth: 2 
+   :local: 
+
+
+Preconditions
+~~~~~~~~~~~~~
+
+Robot Framework runs both on Python_ and Jython_, and you need to have
+at least one of them to be able to use it. Provided installers only
+work with Python, though, so installing it is always recommended.
+
+
+Python installation
+'''''''''''''''''''
+
+Python 2.5 is recommended, although Python 2.4 and 2.3 are also
+supported. On most UNIX-like systems, you have Python installed by
+default. If you are on Windows or otherwise need to install Python
+yourself, your best place to start is probably the `Python
+homepage`_. There you can download a suitable installer and get more
+information about installation and Python in general.
+
+.. Note:: The Python installation framework coming with Python 2.3
+   	  does not have functions for copying other than Python
+   	  files. Robot Framework itself can be installed with it
+   	  without problems, but installing for example certain
+   	  libraries may require copying those non-Python files
+   	  manually.
+
+
+Jython installation
+'''''''''''''''''''
+
+Using test libraries implemented with Java, or directly using Java
+tools, requires running Robot Framework on Jython, which then requires
+Java Runtime Environment (JRE). The minimum required Java version is
+1.4, but newer versions are recommended, as they tend to be faster
+with dynamic languages, such as Jython. Both Sun and IBM Java versions
+are supported.
+
+Robot Framework requires Jython version 2.2. The earlier Jython
+version 2.1 is not compatible with Robot, and also 2.2 betas and
+alphas have some problems and they are not supported. Unfortunately,
+also Jython 2.2.1 has certain Unicode problems (for more information,
+see http://bugs.jython.org/issue1802339 and
+http://bugs.jython.org/issue1032), which makes it incompatible with
+Robot Framework.
+
+Installing Jython is a fairly easy procedure. First you need to get an
+installer from the `Jython homepage`_ or directly from
+http://downloads.sourceforge.net/jython/jython_installer-2.2.jar.
+Note that the installer is an executable JAR package, which you need
+to run as :cli:`java -jar jython_installer-2.2.jar`. Depending on your
+system, the installer runs either in the graphical or the textual
+mode, but in both cases, the actual installation procedure is very
+easy.
+
+When installing Robot Framework, its installer tries to find the
+Jython executable on the system to create the :cli:`jybot` start-up script
+correctly. Jython is found if:
+
+1. Jython can be executed in the system directly (i.e. it is in the PATH).
+2. An environment variable JYTHON_HOME is set and it points to
+   the Jython installation directory.
+3. The Jython installation directory is found. On Windows machines, it
+   is searched from :path:`C:\\` and :path:`D:\\` drives, and on other systems from
+   the :path:`/usr/local` and :path:`/opt directories`. The directory is found if it
+   is under the searched directories mentioned above, or one level
+   deeper. For example, the following Jython installation directories
+   would be found by the installer::
+
+     C:\APPS\Jython2.2
+     D:\Jython22
+     /usr/local/jython2.2
+     /opt/whatever/Jython22
+
+If you plan to use Robot Framework only with Jython, you do not
+necessarily need Python at all. In that case, you need to do a `manual
+installation`_ or have some custom installer.
+
+
+Installation
+~~~~~~~~~~~~
+
+Installing from the source
+''''''''''''''''''''''''''
+
+You can get the Robot Framework source either as a source distribution
+package (which you need to extract somewhere) or directly from version
+control. In both cases, you should have a directory containing source
+code, documentation, tools, templates, and so on. The first
+installation step is going to the created directory from command line,
+and after that you can install Robot Framework by running the
+following command::
+
+  python setup.py install
+
+You get a quite long output and something like the following text should
+appear at the end::
+
+  Creating Robot start-up scripts...
+
+  Installation directory: /usr/lib/python2.5/site-packages/robot
+  Python executable: /usr/bin/python
+  Jython executable: /cygdrive/c/jython2.2b2/jython.bat (found from system)
+  Pybot script: /usr/bin/pybot
+  Jybot script: /usr/bin/jybot
+  Rebot script: /usr/bin/rebot
+
+.. Note:: The paths vary based on your environment. Robot Framework uses the
+   	  standard Python installation system and should operate in
+   	  accordance with the host operating system conventions.
+
+
+Using binary installers
+'''''''''''''''''''''''
+
+Use the platform-specific way of installation. For example, on
+Windows, double click the provided executable, and follow
+the instructions of the graphical installer.
+
+
+Manual installation
+'''''''''''''''''''
+
+If you do not want to install Python, or for some other reason do not
+want to use any automatic way for installing Robot Framework, you can
+always do it manually following these steps:
+
+1. Get the source code. All the code is in a directory (a module in
+   Python) called :path:`robot`. If you have a source distribution or
+   a version control checkout, you can find it from the :path:`src`
+   directory, but you can also get it from an earlier installation.
+
+2. Copy the source code where you want.
+
+3. Create the needed start-up scripts. If you have a source package or
+   a checkout, you can get templates from :path:`src/bin`.
+
+
+Where files are installed
+'''''''''''''''''''''''''
+
+When an automatic installer is used, the Robot Framework code is copied
+into a directory containing external Python modules. The actual
+location is platform-specific, but on computers with a UNIX-like
+operating system, it is normally something like
+:path:`/usr/lib/[PythonVer]/site-packages`, and on Windows it is
+:path:`[PythonInstallationDir]\\Lib\\site-packages`. Actual Robot
+Framework code is in a directory named as :path:`robot`.
+
+Robot Framework start-up scripts (:cli:`pybot`, :cli:`jybot` and
+:cli:`rebot`) are created and copied into another platform-specific
+location. On UNIX-like systems, they normally go to :path:`/usr/bin`
+and are thus immediately available from the command line. On Windows,
+the operating system does not provide a similar natural place, and
+Python copies these scripts into
+:path:`[PythonInstallationDir]\\Scripts`.
+
+
+Setting up the environment
+''''''''''''''''''''''''''
+
+After the installation, you might want to make Robot Framework's
+start-up scripts easily available from the command line. On UNIX-like
+systems, that should be the case automatically, but for example on
+Windows, it is not. In environments where startup scripts are not
+available, the directory containing them must be set to the PATH
+environment variable. 
+
+Setting PATH environment variable on Windows:
+
+1. Open ``Start > Settings > Control Panel > System > Advanced >
+   Environment Variables``.  There are ``User variables`` and ``System
+   variables``, and the difference between them is that User variables
+   affect only the current users, whereas System variables affect all
+   users.
+
+2. To edit existing PATH, select ``Edit`` and add
+   :path:`;[PythonInstallationDir]\\Scripts\\` at the end of the
+   value. Note that the leading colon (;) is important as it
+   separates different entries. To add a new value, select ``New`` and
+   provide both the name and the value, this time without the colon.
+
+3. Start a new command prompt for the changes to take effect.
+
+
+Verifying installation
+''''''''''''''''''''''
+
+You can verify the success of the installation and environment setup
+by typing::
+
+  $ pybot --version 
+  Robot 2.0 (Python 2.5.1 on cygwin)
+
+To verify that Robot Framework works also with Jython, type::
+
+  $ jybot --version
+  Robot 2.2 (Jython 2.2 on java1.6.0_03)
+
+In both cases, the exact version and platform information can, of course,
+differ from these. On Jython, you may also get some notifications from
+Jython's package manager upon the first execution.
+
+
+Uninstallation
+~~~~~~~~~~~~~~
+
+If Robot Framework is installed from a binary distribution, it can be
+uninstalled via the mechanism offered by the operating system. For
+example, in Windows you simply go to ``Control Panel >
+Add/Remove Programs``, where Robot Framework is listed under Python.
+
+If Robot Framework has been installed using a source distribution, it
+can be uninstalled by removing the framework code and start-up scripts
+manually. For more information on where to find them, see `Where files
+are installed`_.
+
+
+Upgrading
+~~~~~~~~~
+
+If you are upgrading from one minor Robot Framework version to another
+(for example, from 2.0 to 2.0.1), it is safe to install the new
+version over the old one, unless stated otherwise.
+
+If you are upgrading from one major Robot Framework version to another (for
+example, from 2.0 to 2.1), then it is highly recommended to uninstall
+the old version before the new installation.
+
+If you are downgrading, the rules are the same as for upgrading.
+
+
+

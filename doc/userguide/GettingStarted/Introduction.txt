@@ -1,0 +1,62 @@
+Introduction
+------------
+
+Robot Framework is a Python-based, extensible keyword-driven test
+automation framework for end-to-end acceptance testing and
+acceptance-test-driven development (ATDD). It can be used for testing
+distributed, heterogeneous applications, where verification requires
+touching several technologies and interfaces.
+
+.. contents::
+   :depth: 2 
+   :local: 
+
+Why Robot Framework?
+~~~~~~~~~~~~~~~~~~~~
+
+- Enables easy-to-use tabular syntax for `creating test cases`_ in a uniform way,
+  regardless of the tested system.
+- Provides ability to create reusable ´higher-level
+  keywords`_ from the existing keywords.
+- Has very good reports and logs in HTML format.
+- Is platform and application-independent.
+- Can natively use both Python and Java test tools.
+- Provides a simple `library API`_ for creating customized test libraries for wrapping 
+  existing tools or your own interfaces.
+- Provides a `command line interface`__ and XML based outputs for
+  integration into existing test and build infrastructure.
+- The modular architecture supports creating tests even for applications with
+  several diverse interfaces.
+- Provides existing test libraries for web testing, Java GUI testing, running
+  processes, Telnet, SSH, and so on.
+- Has built-in support for variables_, especially handy for testing in different
+  environments. 
+- Provides tagging to categorize and select test cases to execute, provide metadata,
+  generate statistics, and so on.
+- Enables easy integration with source control: `test suites`_ are just files and
+  directories that can be versioned with the production code.
+- Provides test-case and test-suite-level setup and teardown.
+
+__ `Executing test cases`_
+
+.. TODO: Arrange the bullets above, e.g. according to importance to the user.
+
+
+High-level architecture
+~~~~~~~~~~~~~~~~~~~~~~~
+
+Robot Framework handles the processing of test data, the controlling of test 
+execution and the reporting of results for testing. The testing and interaction 
+with the target under test is done by test libraries that are plugged into Robot 
+Framework. Test libraries may internally use other test tools, but this is not 
+visible to Robot Framework.
+
+.. figure:: architecture.png
+
+   Testing solution layers with Robot Framework
+
+As shown in the figure, Robot Framework's role in a test framework is to take 
+test data, process it into a format that is appropriate for the attached test 
+libraries, invoke the test libraries with the appropriate arguments, receive 
+the data about the test from the test libraries, and then report it. The test 
+libraries are responsible for interacting with the target under test.

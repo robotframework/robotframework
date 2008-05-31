@@ -1,0 +1,455 @@
+Advanced features
+-----------------
+
+.. contents:: 
+   :depth: 2
+   :local:
+
+
+Handling keywords with the same name
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Keywords that are used with Robot Framework are either `library
+keywords`_ or `user keywords`_. The former come from `standard
+libraries`_ or `external libraries`_, and the latter are either
+created in the same file where they are used or then imported from
+`resource files`_. When many keywords are in use, it is quite common
+that some of them have the same name, and this section describes how to
+handle possible conflicts in these situations.
+
+
+Keyword scopes
+''''''''''''''
+
+When only a keyword name is used and there are several keywords with
+that name, Robot Framework attempts to determine which keyword has the
+highest priority based on its scope. The keyword's scope is determined
+on the basis of how the keyword in question is created:
+
+1. Created as a user keyword in the same file where it is used. These
+   keywords have the highest priority and they are always used, even
+   if there are other keywords with the same name elsewhere.
+
+2. Created in a resource file and imported either directly or
+   indirectly from another resource file. This is the second-highest
+   priority.
+
+3. Created in an external test library. These keywords are used, if
+   there are no user keywords with the same name. However, if there is
+   a keyword with the same name in the standard library, a warning is
+   displayed.
+
+4. Created in a standard library. These keywords have the lowest
+   priority.
+
+
+Specifying a keyword explicitly
+'''''''''''''''''''''''''''''''
+
+Scopes alone are not a sufficient solution, because there can be
+keywords with the same name in several libraries or resources, and
+additionally, they provide a mechanism to use only the keyword of the
+highest priority. In such cases, it is possible to use *the full name
+of the keyword*, where the keyword name is prefixed with the name of
+the resource or library and a dot is a delimiter.
+
+With library keywords, the long format just means using the format
+:kw:`LibraryName.Keyword Name`. For example, the keyword :kw:`Run` from the
+`OperatingSystem library`_ could be used as
+:kw:`OperatingSystem.Run`, even if there was another :kw:`Run` keyword
+somewhere else. If the library is in a module or package, the full
+module or package name must be used (for example, 
+:kw:`com.company.Library.Some Keyword`). If a custom name is given to a
+library using the `WITH NAME syntax`__, the specified name must be
+used also in the full keyword name.
+
+__ `Setting a custom name to a test library`_
+
+Resource files are specified in the full keyword name, similarly as
+library names. The name of the resource is derived from the basename
+of the resource file without the file extension. For example, the
+keyword :kw:`Example` in a resource file :path:`myresources.html` can
+be used as :kw:`myresources.Example`. Note that this syntax does not
+work, if several resource files have the same basename. In such
+cases, either the files or the keywords must be renamed. The full name
+of the keyword is case-, space- and underscore-insensitive, similarly
+as normal keyword names.
+
+
+Timeouts
+~~~~~~~~
+
+Sometimes keywords may be problematic in situations where they take
+exceptionally long to execute or just hang forever. Robot Framework
+allows you to set timeouts both for `test cases`_ and `user
+keywords`_, and if a test or keyword is not finished within the
+specified time, the keyword that is currently being executed is
+forcefully stopped. Stopping keywords in this manner may leave the
+library or system under test to an unstable state, and timeouts are
+recommended only when there is no safer option available. In general,
+libraries should be implemented so that keywords cannot hang or that
+they have their own timeout mechanism, if necessary.
+
+.. Note:: Before Robot Framework version 1.8.3, it was possible to
+          define if the keyword run was stopped or left running in
+          the background when a timeout occurred. This feature is now
+          removed and keywords are always stopped.
+
+
+Test case timeout
+'''''''''''''''''
+
+The test case timeout can be set either by using the :setting:`Test
+Timeout` setting in the Setting table or the :setting:`[Timeout]`
+setting in the Test Case table. :setting:`Test Timeout` in the Setting
+table defines a default test timeout value for all the test cases in
+the test suite, whereas :setting:`[Timeout]` in the Test Case table
+applies a timeout to an individual test case and overrides the
+possible default value.
+
+Regardless of where the test timeout is defined, the first cell after
+the setting name contains the duration of the timeout. The duration
+must be given in the `time format used in Robot Framework`__, that is,
+either directly in seconds or in a format like :code:`1 hour 2 minutes
+3 seconds`. It must be noted that there is always some overhead by the
+framework, and timeouts shorter than one second are thus not
+recommended.
+
+ __ `Robot Framework time formats`_
+
+The default error message displayed when a test timeout occurs is
+:msg:`Test timeout <time> exceeded`. It is also possible to use custom
+error messages, and these messages are written into the cells
+after the timeout duration. The message can be split into multiple
+cells, similarly as documentations. Both the timeout value and the
+error message may contain variables.
+
+If there is a timeout, the running of a keyword is stopped at the
+expiration of the timeout and the test case fails. However, keywords
+executed as `test teardown`_ are not interrupted if a test timeout
+occurs, because they are normally engaged in important clean-up
+activities. If necessary, it is possible to interrupt also these
+keywords with `user keyword timeouts`_.
+
+
+.. table:: Test timeout examples
+   :class: example
+
+   ============  =========  =======  =======
+     Setting       Value     Value    Value
+   ============  =========  =======  =======
+   Test Timeout  2 minutes  \        \
+   ============  =========  =======  =======
+
+.. table:: 
+   :class: example
+
+   ===============  ===============  ========================================  ==========================  ==================
+      Test Case         Action                      Argument                           Argument                 Argument
+   ===============  ===============  ========================================  ==========================  ==================
+   Default Timeout  [Documentation]  Timeout from the Setting table is used    \                           \
+   \                Some Keyword     argument                                  \                           \
+   \                \                \                                         \                           \
+   Override         [Documentation]  Override default, use 10 seconds timeout  \                           \
+   \                [Timeout]        10                                        \                           \
+   \                Some Keyword     argument                                  \                           \
+   \                \                \                                         \                           \
+   Custom Message   [Documentation]  Override default and use custom message   \                           \
+   \                [Timeout]        1min 10s                                  This is my custom error.    It continues here.
+   \                Some Keyword     argument                                  \                           \
+   \                \                \                                         \                           \
+   Variables        [Documentation]  It is possible to use variables too       \                           \
+   \                [Timeout]        ${TIMEOUT}                                \                           \
+   \                Some Keyword     argument                                  \                           \
+   \                \                \                                         \                           \
+   No Timeout       [Documentation]  Empty timeout means no timeout even when  Test Timeout has been used  \
+   \                [Timeout]        \                                         \                           \
+   \                Some Keyword     argument                                  \                           \
+   ===============  ===============  ========================================  ==========================  ==================
+
+
+User keyword timeout
+''''''''''''''''''''
+
+A timeout can be set for a user keyword using the :setting:`[Timeout]`
+setting in the Keyword table. The syntax for setting it, including how
+timeout values and possible custom messages are given, is
+identical to the syntax used with `test case timeouts`_. If no custom
+message is provided, the default error message :msg:`Keyword timeout
+<time> exceeded` is used if a timeout occurs.
+
+.. table:: User keyword timeout examples
+   :class: example
+
+   =================  =================  ==========================  ===========================================
+        Keyword             Action                 Argument                           Argument
+   =================  =================  ==========================  ===========================================
+   Timed Keyword      [Documentation]    Set only the timeout value  and not the custom message.
+   \                  [Timeout]          1 minute 42 second s        \
+   \                  Do Something       \                           \
+   \                  Do Something Else  \                           \
+   \                  \                  \                           \
+   Timed-out Wrapper  [Arguments]        @{args}                     \
+   \                  [Documentation]    This keyword is a wrapper   that adds a timeout to another keyword.
+   \                  [Timeout]          2 minutes                   Original Keyword didn't finish in 2 minutes
+   \                  Original Keyword   @{args}                     \
+   =================  =================  ==========================  ===========================================
+
+A user keyword timeout is applicable during the execution of that user
+keyword. If the total time of the whole keyword is longer than the
+timeout value, the currently executed keyword is stopped. User keyword
+timeouts are applicable also during a test case teardown, whereas test
+timeouts are not.
+
+If both the test case and some of its keywords (or several nested
+keywords) have a timeout, the active timeout is the one with the least
+time left.
+
+
+For loops
+~~~~~~~~~
+
+Repeating same actions several times is quite a common need in test
+automation. With Robot Framework, test libraries can have any kind of
+loop constructs, and most of the time loops should be implemented in
+them. Robot Framework also has its own For loop syntax, which is
+useful, for example, when there is a need to repeat keywords from
+different libraries.
+
+For loops can be used with both test cases and user keywords. Except for
+really simple cases, user keywords are better, because they hide the
+complexity introduced by for loops. The basic for loop syntax,
+:code:`FOR item IN sequence`, is derived from Python, but similar
+syntax is possible also in shell scripts or Perl.
+
+
+Normal for loop
+'''''''''''''''
+
+In a normal For loop, one variable is assigned into a list of values,
+one value per iteration. The syntax starts with :kw:`:FOR`, where
+colon is required to separate the syntax from normal keywords. The
+next cell contains the loop variable, the subsequent cell must have
+:kw:`IN`, and the final cells contain values over which to iterate.
+
+The keywords used in the For loop are on next rows and they must
+be indented one cell to right. The For loop ends when the indentation
+returns back to normal or the table ends. Having nested For loops
+directly is not supported, but it is possible to use a user keyword
+inside a For loop and have another For loop there.
+
+.. table:: Simple for loops
+   :class: example
+
+   ===========  ========  ============  ===========  ==========  ===========
+    Test Case    Action     Argument     Argument     Argument    Arguments
+   ===========  ========  ============  ===========  ==========  ===========
+   Example 1    :FOR      ${animal}     IN           cat         dog
+   \            \         Log           ${var}       \           \
+   \            \         Log           2nd keyword  \           \
+   \            Log       Outside loop  \            \           \
+   \            \         \             \            \           \
+   Example 2    :FOR      ${var}        IN           one         two
+   \            ...       three         four         five        six
+   \            ...       seven         \            \           \
+   \            \         Log           ${var}       \           \   
+   ===========  ========  ============  ===========  ==========  ===========
+
+
+The For loop in :tc:`Example 1` above is executed twice, so that first
+the loop variable :var:`${animal}` has the value :code:`cat` and then
+:code:`dog`. The loop consists of two :kw:`Log` keywords. In the
+second example, loop values are `split into multiple rows`__ and the
+loop is run altogether seven times.
+
+__ `Dividing test data to multiple rows`_
+
+For loops are most useful and also clearest when they are used with
+`list variables`_. This is illustrated by the example below, where
+:var:`@{ELEMENTS}` contains an arbitrary long list of element names
+and :kw:`Start Element` is used with all of them.
+
+.. table:: For loop with a list variable
+   :class: example
+
+   ===========  ========  =============  ==========  ===========  ===========
+    Test Case    Action     Argument      Argument    Argument     Arguments
+   ===========  ========  =============  ==========  ===========  ===========
+   Example      :FOR      ${element}     IN          @{ELEMENTS}  \
+   \            \         Start Element  ${element}  \            \
+   ===========  ========  =============  ==========  ===========  ===========
+
+
+Using multiple loop variables
+'''''''''''''''''''''''''''''
+
+It is also possible to use several loop variables. The syntax is the
+same as with the normal For loop, but all loop variables are listed in
+the cells between :kw:`:FOR` and :kw:`IN`. There can be any number of loop
+variables, but that their number must match the number of loop
+values. The number of values must be dividable evenly by the number of
+variables.
+
+This syntax naturally works both with and without list variables. In
+the former case, it is often possible to organize loop values below
+loop variables, as in the first part of the example below.
+
+.. table:: Using multiple loop variables
+   :class: example
+
+   ===========  ========  ===========  ==========  ==========  ============
+    Test Case    Action     Argument    Argument    Argument    Arguments
+   ===========  ========  ===========  ==========  ==========  ============
+   Example      :FOR      ${index}     ${english}  ${finnish}  IN
+   \            ...       1            cat         kissa       \
+   \            ...       2            dog         koira       \
+   \            ...       3            horse       hevonen     \
+   \            \         Do X         ${english}  \           \
+   \            \         Y Should Be  ${finnish}  ${index}    \
+   \            :FOR      ${name}      ${id}       IN          @{EMPLOYERS}
+   \            \         Create       ${name}     ${id}       \
+   ===========  ========  ===========  ==========  ==========  ============
+
+
+For in range
+''''''''''''
+
+Earlier for loops always iterated over a sequence, which is also the most
+common use case. Sometimes it is still convenient to have a For loop
+that is executed a certain number of time and Robot Framework has a
+special :code:`FOR index IN RANGE limit` syntax for this purpose. This
+syntax is derived from the similar Python idiom.
+
+The For in range loop starts with :kw:`:FOR` similarly as other For
+loops and the loop variable is in the next cell. In this format there
+can be only one loop variable and it contains the current loop
+index. The next cell must contain :kw:`IN RANGE` and the subsequent cells
+loop limits.
+
+In the simplest case, only the upper limit of the loop is
+specified. In this case, loop indexes start from zero and increase by one
+until, but excluding, the limit. It is also possible to give both the
+start and end limits. Then indexes start from the start limit but
+increase similarly as in the simple case. Finally, it is possible to give
+also the step value that specifies the increment to use. If the step
+is negative, it is used as decrement. All these possibilities are
+illustrated by the examples below.
+
+.. table:: For in range examples
+   :class: example
+
+   ================  ===============  ==========  ==========  =======  =======  =======
+      Test Case          Action        Argument    Argument     Arg      Arg      Arg
+   ================  ===============  ==========  ==========  =======  =======  =======
+   Only upper limit  [Documentation]  Loops over  values      from 0   to 9     \
+   \                 :FOR             ${index}    IN RANGE    10       \        \
+   \                 \                Log         ${index}    \        \        \
+   \                 \                \           \           \        \        \
+   Start and end     [Documentation]  Loops over  values      from 1   to 10    \
+   \                 :FOR             ${index}    IN RANGE    1        11       \     
+   \                 \                Log         ${index}    \        \        \
+   \                 \                \           \           \        \        \
+   Also step given   [Documentation]  Loops over  values      5, 15,   and 25   \
+   \                 :FOR             ${index}    IN RANGE    5        26       10
+   \                 \                Log         ${index}    \        \        \
+   \                 \                \           \           \        \        \
+   Negative step     [Documentation]  Loops over  values      13, 3,   and -7   \
+   \                 :FOR             ${index}    IN RANGE    13       -13      -10
+   \                 \                Log         ${index}    \        \        \
+   ================  ===============  ==========  ==========  =======  =======  =======
+
+ 
+Conditional execution
+~~~~~~~~~~~~~~~~~~~~~
+
+In general, it is not recommended to have conditional logic in test
+cases, or even in user keywords, because it can make them hard to
+understand and maintain. Instead, this kind of logic should be in test
+libraries, where it can be implemented using natural programming
+language constructs. However, some conditional logic can be useful at
+times, and even though Robot Framework does not have an actual if/else
+construct, there are several ways to get the same effect.
+
+1. The name of the keyword used as a setup or a teardown of both `test
+   cases`__ and `test suites`__ can be specified using a
+   variable. This eases changing them, for example, from
+   the command line.
+
+2. The `built-in keyword`_ :kw:`Run Keyword` takes a keyword to actually
+   execute as an argument, and it can thus be a variable. The value of
+   the variable can, for example, be got dynamically from an earlier
+   keyword or given from the command line.
+
+3. The `built-in keywords`_ :kw:`Run Keyword If` and :kw:`Run Keyword
+   Unless` execute a named keyword only if a certain expression is
+   true or false, respectively. They are ideally suited to creating
+   simple if/else constructs. For an example, see the documentation of
+   the former.
+
+4. Another `built-in keyword`_, :kw:`Set Variable If`, can be used to set
+   variables dynamically based on a given expression.
+
+5. There are several `built-in keywords`_ that allow executing a named
+   keyword only if a test case or test suite has failed or passed.
+
+__ `Test setup and teardown`_
+__ `Suite setup and teardown`_
+
+
+
+Parallel execution of keywords
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+By default, all keywords are executed sequentially, so that a new
+keyword is started only after the previous one has ended. Of course,
+it is possible to create a library so that some keyword starts an
+action in the background and returns immediately, and there is
+another keyword that can later be used to check the status of the
+background process or other action.
+
+Robot Framework also has a native support for parallel execution of
+keywords. The syntax for it is using :kw:`:PARALLEL` in the second
+column of the Test Case or Keyword table, similarly as :kw:`:FOR` is
+used with `For loops`_. In both cases, a colon (:) must be used to
+separate them from normal keywords. Keywords inside a parallel block
+are also indented similarly as keywords in a For loop.  The difference
+is that there is no need to have anything after :kw:`:PARALLEL`, and
+normally the first keyword of the parallel block is already there.
+
+When a parallel block is executed, all the keywords in it are started
+in the background, one after another, and the whole block returns only
+after all the keywords have been completed. A parallel block fails if
+any of its keywords fails, but even in this case, Robot Framework
+waits that all keywords are finished. It is even possible that several
+keywords in a block fail.
+
+.. table:: Parallel execution examples
+   :class: example
+
+   ==============  ==========  ===============  ===============  ==========
+     Test Case       Action        Argument        Argument       Argument
+   ==============  ==========  ===============  ===============  ==========
+   Parallel once   Log         Before parallel  \                \
+   \               :PARALLEL   Log              Inside parallel  \
+   \               \           Sleep            2 seconds        \
+   \               \           Log              Inside parallel  \
+   \               Log         After parallel   \                \
+   \               \           \                \                \
+   Parallel twice  :PARALLEL   Sleep            2 seconds        \
+   \               \           Log              First parallel   \
+   \               :PARALLEL   Log              Second parallel  \
+   \               \           Fail             First failure    \
+   \               \           Fail             Second failure   \
+   ==============  ==========  ===============  ===============  ==========
+
+It is not possible to have nested parallel blocks, or to have a For loop
+inside a parallel block, or the other way around. It is, however, possible
+to have a user keyword inside a parallel block,  and use another parallel
+block or a For loop there.
+
+.. warning:: Parallel execution cannot be used with timeouts_ and it
+             does not work correctly with any :kw:`Run Keyword XXX`
+             keywords in the `BuiltIn library`_. In general, it is a quite
+             experimental and not much used feature, and it may also have
+             other peculiar problems.
+

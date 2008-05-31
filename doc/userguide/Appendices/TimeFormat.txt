@@ -1,0 +1,24 @@
+Robot Framework time formats
+----------------------------
+
+In this appendix, the syntax for specifying time in Robot Framework is
+described. It can be used with test case and user keyword timeouts, as
+well as with several keywords, for example with the BuiltIn library's
+keywords :kw:`Sleep` and :kw:`Wait Until Keyword Succeeds`.
+
+It is possible to give the time as a number (not necessarily an
+integer), or as a string that is converted to a number and then
+considered to be seconds (for example, 10, 0.5, or 42). The given time
+must be in the format "2 days 3 hours 4 minutest 5 seconds 6
+milliseconds" following the rules listed below:
+    
+    - Digits with a zero value can be ignored (for example, "1 minute"
+      and "2 minutes 10 seconds" are valid).
+    - The format is case- and space-insensitive. Thus valid are all of the formats below:
+
+      + "days", "day", and "d"
+      + "hours", "hour", and "h"
+      + "minutes", "minute", "mins", "min", and "m"
+      + "seconds", "second", "secs", "sec", and "s"
+      + "milliseconds", "millisecond", "millis", and "ms"
+  

@@ -1,0 +1,261 @@
+Creating user keywords
+----------------------
+
+Keyword tables are used to create new higher-level keywords by combining existing
+keywords together. These keywords are called *user keywords* to differentiate them
+from lowest level *library keywords* that are implemented in test libraries. The 
+syntax for creating user keywords is very close to the
+syntax for creating test cases which makes it easy to learn.
+
+.. contents:: 
+   :depth: 2
+   :local: 
+
+
+User keyword syntax
+~~~~~~~~~~~~~~~~~~~
+
+Basic syntax
+''''''''''''
+
+The overall user keyword syntax is in many ways identical to the `test case syntax`_.
+They are created in keyword tables which differ from test case tables only by the
+name that is used to identify them. User keyword names are in the first column same
+way as test cases names. Also user keywords are created from keywords, either from
+keywords in test libraries or other user keywords. Keyword names are normally in 
+the second column, but when setting variables from keyword return values they are in further away.
+
+.. table:: User keyword examples
+   :class: example
+
+   =======================  =================  ======================  =========== 
+           Keyword               Action               Argument          Argument 
+   =======================  =================  ======================  ===========
+   Open Login Page          Open Browser       http://host/login.html  \
+   \                        Title Should Be    Login Page              \
+   \                        \                  \                       \
+   Title Should Start With  [Arguments]        ${expected}             \
+   \                        ${title} =         Get Title               \
+   \                        Should Start With  ${title}                ${expected}
+   =======================  =================  ======================  ===========
+
+Most user keywords take some arguments. This important functionality is used already in the 
+second example above, and it is explained in detail `later in this section`__ similarly
+as `user keyword return values`_. Arguments and return values are 
+
+__ `User keyword arguments`_
+
+User keywords can be created in `test case files`_, `resource files`_,
+and `test suite initialization files`_. Keywords created in resource
+files are available for files using them, whereas other keywords are
+only available in the files where they are created.
+
+
+Settings in the Keyword table
+'''''''''''''''''''''''''''''
+
+User keywords can have similar settings as `test cases`__, and they have the same square bracket syntax 
+separating them from keyword names. All available settings are listed below and explained later
+in this section.
+
+__ `Settings in the test case table`_
+
+`[Documentation]`:setting:
+   Used for setting a `user keyword documentation`__.
+
+__ `User keyword name and documentation`_
+
+`[Arguments]`:setting:
+   Specifies `user keyword arguments`_.
+
+`[Return]`:setting:
+   Specifies `user keyword return values`_.
+
+`[Timeout]`:setting:
+   Sets the possible `user keyword timeout`_. Timeouts_ are discussed in a section of their own.
+
+
+User keyword name and documentation
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The user keyword name is defined in the first column of the user
+keyword table. Of course, the name should be descriptive, and it is
+alright to have quite long keyword names. Actually, when creating
+use-case-like test cases, the highest level keywords are often
+formulated as sentences or even paragraphs.
+
+User keywords can have a documentation that is set with the
+:setting:`[Documentation]` setting, exactly like `test case
+documentation`_. This setting documents the user keyword in the test
+data. It is also shown in a more formal keyword documentation, which
+the `libdoc`__ tool can create from `resource files`_. Finally, the
+first row of the documentation, everything until the first :code:`\n`
+sequence, is shown as a keyword documentation in test logs.
+
+__ `Library documentation tool (libdoc.py)`_
+
+User keyword arguments
+~~~~~~~~~~~~~~~~~~~~~~
+
+Most user keywords need to take some arguments. The syntax for
+specifying them is probably the most complicated feature normally
+needed with Robot Framework, but even that is relatively easy
+especially in most common cases. Arguments are always specified with
+the :setting:`[Arguments]` setting, and argument names use the same
+syntax as variables_, for example :var:`${arg}`.
+
+Positional arguments
+''''''''''''''''''''
+
+The simplest way to specify arguments, apart from not having them at all,
+is using only positional arguments. In most cases, this is also all 
+that is needed.
+
+The syntax is such that first the :setting:`[Arguments]` setting is
+given and then argument names are defined in the subsequent
+cells. Each argument is in its own cell, using the same syntax as with
+variables. The keyword must be used with as many arguments as there
+are argument names in its signature. Argument names should be
+descriptive, but the actual value is not important. It is recommended
+to use lower case letters in variable names, either as
+:var:`${my_arg}` or :var:`${myArg}`.
+
+.. table:: User keyword taking different number of arguments
+   :class: example
+
+   ===============  ===========  ========================  ==========  ==========
+       Keyword        Action             Argument           Argument    Argument
+   ===============  ===========  ========================  ==========  ==========
+   One Argument     [Arguments]  ${arg_name}               \           \
+   \                Log          Got argument ${arg_name}  \           \
+   \                \            \                         \           \
+   Three Arguments  [Arguments]  ${arg1}                   ${arg2}     ${arg3}
+   \                Log          1st argument: ${arg1}     \           \
+   \                Log          2nd argument: ${arg2}     \           \
+   \                Log          3rd argument: ${arg3}     \           \
+   ===============  ===========  ========================  ==========  ==========
+
+
+Default values
+''''''''''''''
+
+Positional arguments are probably sufficient in over 95 per cent of
+situations. However, sometimes it is useful to be able to have a
+keyword taking a different number of arguments and having default
+values for those that are not given. Also user keywords allow this,
+and the needed new syntax does not add very much to the already
+discussed basic syntax. In short, default values are added to
+arguments, so that first there is the equals sign ( :code:`=`) and then
+the value, for example :var:`${arg}=default`. There can be many
+arguments with defaults, but they all must be given after the normal
+positional arguments.
+
+.. table:: User keyword with default values for arguments
+   :class: example
+
+   =================================  ===============  =====================  ===================
+                 Keyword                   Action             Argument              Argument
+   =================================  ===============  =====================  ===================
+   One Argument With Default Value    [Arguments]      ${arg}=default value   \
+   \                                  [Documentation]  This keyword takes     0-1 arguments
+   \                                  Log              Got argument ${arg}    \
+   \                                  \                \                      \
+   Two Arguments With Defaults        [Arguments]      ${arg1}=default 1      ${arg2}=default 2
+   \                                  [Documentation]  This keyword takes     0-2 arguments
+   \                                  Log              1st argument ${arg1}   \
+   \                                  Log              2nd argument ${arg2}   \
+   \                                  \                \                      \
+   One Required And One With Default  [Arguments]      ${required}            ${optional}=default
+   \                                  [Documentation]  This keyword takes     1-2 arguments
+   \                                  Log              Required: ${required}  \
+   \                                  Log              Optional: ${optional}  \
+   =================================  ===============  =====================  ===================
+
+As all Pythonistas must have already noticed, the syntax for specifying default arguments
+is heavily inspired by Python syntax for function default values.
+
+
+Variable number of arguments
+''''''''''''''''''''''''''''
+
+Sometimes, but more and more seldom, even default values are not enough and there
+is a need for a keyword accepting any number of arguments. User keywords support also this. All that
+is needed is having `list variables`_ like :var:`@{varargs}` as the last argument in the
+keyword signature. This syntax can be combined with the previously described positional arguments 
+and default values, and the list variable at the end gets all the leftover arguments that do not 
+match other arguments. The list variable can thus have any number of items, even zero.
+
+.. table:: User keywords accepting variable number of arguments
+   :class: example
+
+   ===========================  ===========  ================  ==========  ==========
+              Keyword             Action         Argument       Argument    Argument
+   ===========================  ===========  ================  ==========  ==========
+   Any Number Of Arguments      [Arguments]  @{varargs}        \           \
+   \                            Log Many     @{varargs}        \           \
+   \                            \            \                 \           \
+   One Or More Arguments        [Arguments]  ${required}       @{rest}     \       
+   \                            Log Many     ${required}       @{rest}     \
+   \                            \            \                 \           \
+   Required, Default, Varargs   [Arguments]  ${req}            ${opt}=42   @{others}
+   \                            Log          Required: ${req}  \           \
+   \                            Log          Optional: ${opt}  \           \
+   \                            Log          Others:           \           \
+   \                            : FOR        ${item}           IN          @{others}
+   \                            \            Log               ${item}     \     
+   ===========================  ===========  ================  ==========  ==========
+
+The last example above illustrates how a variable number of arguments
+accepted by a user keyword can be used in a `for loops`_. This
+combination of two rather advanced functions can sometimes be very
+useful.
+
+Again, Pythonistas probably notice that the :var:`varargs` syntax is
+very close to the one in Python.
+
+
+User keyword return values
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Similarly as library keywords, also user keywords can return
+values. Return values are defined with the :setting:`[Return]`
+setting. The values can then be `assigned to variables`__ in test
+cases or other user keywords.
+
+__ TODO: link to setting variables from keyword return values 
+
+In a typical case, a user keyword returns one value and it can be set to a scalar
+variable. This is done by having the return value in the next cell after the 
+:setting:`[Return]` setting. User keywords can also return several values, which 
+can then be assigned into several scalar variables at once, to a list variable, or 
+to scalar variables and a list variable. Several values can be returned simply
+by specifying those values in different cells after the :setting:`[Return]` setting.
+
+.. table:: User keywords returning values
+   :class: example
+
+   ================  ============  ===================  ===================  ===================
+       Test Case        Action         Argument              Argument            Argument
+   ================  ============  ===================  ===================  ===================
+   One Return Value  ${ret} =      Return One Value     argument             \
+   \                 Some Keyword  ${ret}               \                    \
+   \                 \             \                    \                    \
+   Multiple Values   ${a}          ${b}                 ${c} =               Return Three Values
+   \                 @{list} =     Return Three Values  \                    \
+   \                 ${scalar}     @{rest} =            Return Three Values  \
+   ================  ============  ===================  ===================  ===================
+
+.. table::
+   :class: example
+
+   ===================  ============  ==============  ===========  ==========
+         Keyword           Action        Argument       Argument    Argument
+   ===================  ============  ==============  ===========  ==========
+   Return One Value     [Arguments]   ${arg}          \            \ 
+   \                    Do Something  ${arg}          \            \ 
+   \                    ${value} =    Get Some Value  \            \      
+   \                    [Return]      ${value}        \            \
+   \                    \             \               \            \ 
+   Return Three Values  [Return]      foo             bar          zap
+   ===================  ============  ==============  ===========  ==========
+

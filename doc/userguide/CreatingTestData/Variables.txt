@@ -1,0 +1,809 @@
+Variables
+---------
+
+.. contents:: 
+   :depth: 2
+   :local:
+
+
+Introduction
+~~~~~~~~~~~~
+
+Variables are an integral feature of Robot Framework, and they can be
+used in most places in test data. Most commonly, they are used in
+arguments for keywords in test case tables and keyword tables, but
+also all settings allow variables in their values. A normal keyword
+name *cannot* be specified with a variable, but the `built-in
+keyword`_ :kw:`Run Keyword` can be used to get the same effect.
+
+Robot Framework itself has two kinds of variables, scalars and lists,
+and they have the syntaxes :var:`${VARIABLE`} and :var:`@{VARIABLE}`,
+respectively. In addition to this, environment variables can be used
+directly with the syntax :var:`%{VARIABLE}`.
+
+The use of variables is recommended in the following cases:
+
+- When strings change often in the test data. With variables you only
+  need to make these changes in one place.
+
+- When creating system-independent and operating-system-independent
+  test data. Using variables instead of hard-coded strings eases that
+  considerably (for example, :var:`${RESOURCES}` instead of
+  :path:`c:\\resources`, or :var:`${HOST}` instead of
+  :path:`10.0.0.1:8080`). Because variables can be set from the
+  command line when tests are started, changing system-specific
+  variables is easy (for example, :cli:`--variable HOST:192.168.0.12
+  --variable RESOURCES:/opt/resources`). This also facilitates
+  localization testing, which often involves running the same tests
+  with different strings.
+
+- When there is a need to have objects other than strings as arguments
+  for keywords.
+
+- When different keywords, even in different test libraries, need to
+  communicate. You can assign a return value from one keyword to a
+  variable and give that as an argument to another.
+
+- When values in the test data are long or otherwise complicated. For
+  example, :var:`${URL}` is shorter and than
+  :path:`\http://long.domain.name:8080/path/to/service?foo=1&bar=2&zap=42`.
+  
+
+If a nonexistent variable is used in the test data, the keyword using
+it fails. If the same syntax that is used for variables is needed as a
+literal string, it must be `escaped with a backslash`__ like :code:`\\${NAME}`.
+
+__ escaping_
+
+
+Variable types
+~~~~~~~~~~~~~~
+
+Different variable types are briefly described in this section. The
+creation and usage of variables is described in more detail in the
+following subsections.
+
+Robot Framework variables, similarly as keywords, are
+case-insensitive, and also spaces and underscores are
+ignored. However, it is recommended to use all capital letters with
+global variables (for example, :var:`${PATH}` or :var:`${TWO_WORDS}`)
+and small letters with variables that are only available in certain
+test cases or user keywords (for example, :var:`${my_var}` or
+:var:`${myVar}`). What is even more important is that cases are used
+consistently.
+
+Unlike in some programming languages where similar variable syntax is
+used, curly braces ("{" and "}") are mandatory in Robot Framework test
+data. Basically, variable names can have any characters between the
+curly braces. However, using only alphabetic characters (from a to z),
+numbers (from 0 to 9), underscore and space is recommended, and it is
+even a requirement for using `extended variable syntax`_.
+
+
+Scalar variables
+''''''''''''''''
+
+When scalar variables are used in the test data, they are replaced
+with the value they are assigned to. While scalar variables are most
+commonly used for simple strings, you can assign any objects,
+including lists, to them. The scalar variable syntax, for example
+:var:`${NAME}`, should be familiar to most users, as it is also used
+for example in shell scripts and Perl.
+
+The example below illustrates the usage of scalar variables. Assuming
+that the variables :var:`${GREET}` and :var:`${NAME}` are available
+and assigned to strings :code:`Hello` and :code:`world`, respectively,
+both the example test cases are equivalent.
+
+.. table:: Scalar variables with string values
+   :class: example
+
+   ============  ========  ====================  ==========
+    Test Case     Action        Argument          Argument
+   ============  ========  ====================  ==========
+   Strings       Log       Hello                 \
+   \             Log       Hello, world!!        \
+   Variables     Log       ${GREET}              \
+   \             Log       ${GREET}, ${NAME}!!   \
+   ============  ========  ====================  ==========
+
+
+When a scalar variable is used as the only value in a test data cell,
+the scalar variable is replaced with the value it has. The value may
+be any object. When a scalar variable is used in a test data cell with
+anything else (constant strings or other variables), its value is
+first converted into a string and then catenated to whatever is in
+that cell. Converting the value into a string means that the object's
+method :code:`=__str__` (in Python) or :code:`toString` (in Java) is
+called.
+
+The example below demonstrates the difference between having a
+variable in a cell alone or with other content. First, let us assume
+that we have a variable :var:`${STR}` set to a string :code:`Hello,
+world!` and :var:`${OBJ}` set to an instance of the following Java
+object:
+
+.. sourcecode:: java
+
+ public class MyObj {
+
+     public String toString() {
+         return "Hi, tellus!";
+     }
+ }
+
+With these two variables set, we then have following test data:
+
+.. table:: Scalar variables with objects as values
+   :class: example
+
+   ===========  ========  =================  ==========   
+    Test Case    Action        Argument       Argument
+   ===========  ========  =================  ==========
+   Objects      KW 1      ${STR}             \
+   \            KW 2      ${OBJ}             \
+   \            KW 3      I said "${STR}"    \
+   \            KW 4      You said "${OBJ}"  \
+   ===========  ========  =================  ==========
+
+Finally, when this test data is executed, different keywords receive
+the arguments as explained below:
+
+- :kw:`KW 1` gets a string :code:`Hello, world!`
+- :kw:`KW 2` gets an object stored to variable :var:`${OBJ}`
+- :kw:`KW 3` gets a string :code:`I said "Hello, world!"`
+- :kw:`KW 4` gets a string :code:`You said "Hi, tellus!"`
+
+
+List variables
+''''''''''''''
+
+List variables are a kind of compound variable that can have several
+values assigned to them. In short, they are always lists and can
+contain an unlimited number of entries (also empty lists are
+possible). The main benefit of list variables is that they allow you
+to assign a name for a larger data set. While list variables normally
+contain only strings, other content is also possible.
+
+When you use a list variable in test data, then the cell that contains
+the variable is replaced with the content of the variable. Thus, if
+the list variable contains two elements, the cell containing the list
+variable is turned into two cells with the content of the list
+variable. Note that cells with list variables should not contain other
+content. The list variable syntax, :var:`@{NAME}`, is borrowed from
+Perl.
+
+Assuming that the list variable :var:`@{USER}` is set to the value
+:code:`['robot','secret']`, the following two test cases
+are equivalent.
+
+.. table:: Using list variables
+   :class: example
+
+   =============  ========  ==========  ==========
+     Test Case     Action    Argument    Argument
+   =============  ========  ==========  ==========
+   Strings        Login     robot       secret
+   List Variable  Login     @{USER}     \
+   =============  ========  ==========  ==========
+
+
+It is also possible to access a certain value from the list variable
+with the syntax :var:`@{NAME}[i]`, where :var:`i` is the index of the
+selected value. Indexes start from zero, and trying to access a value
+with too large an index causes an error. List items accessed in this
+manner can be used similarly as scalar variables.
+
+.. table:: List variables, example 2
+   :class: example
+
+   =============  ===============  ===================  ==========
+     Test Case        Action            Argument         Argument
+   =============  ===============  ===================  ==========
+   Strings        Login            robot                secret
+   \              Title Should Be  Welcome robot!       \
+   List Variable  Login            @{USER}              \
+   \              Title Should Be  Welcome @{USER}[0]!  \
+   =============  ===============  ===================  ==========
+
+
+Environment variables
+'''''''''''''''''''''
+
+Robot Framework allows using environment variables in the test
+data using the syntax :var:`%{ENV_VAR_NAME}`. They are limited to string
+values. 
+
+Environment variables set in the system before the test execution are
+available, and it is possible to create new ones with the keyword
+:kw:`Set Environment Variable` or delete existing ones with the
+keyword :kw:`Delete Environment Variable`, both available from the
+`OperatingSystem library`_. Because environment variables are global,
+you can use environment variables set in one test case in other test
+cases executed after it. However, changes to environment variables are
+not effective after the test execution.
+
+
+.. table:: Environment variables
+   :class: example
+
+   =============  ========  =====================  ==========
+     Test Case     Action          Argument         Argument
+   =============  ========  =====================  ==========
+   Env Variables  Log       Current user: %{USER}  \
+   \              Run       %{JAVA_HOME}${/}javac  \
+   =============  ========  =====================  ==========
+
+
+Creating variables
+~~~~~~~~~~~~~~~~~~
+
+Variables can spring into existence from different sources as
+illustrated in the subsections below.
+
+
+Variable table
+''''''''''''''
+
+The most common source for variables are Variable tables in test case
+files and resource files. Variable tables are convenient, because they
+allow creating variables in the same place as the rest of the test
+data, and the needed syntax is very simple. Their main disadvantage is
+that they only enable assigning variables into strings or a list of
+strings. If other value types are needed, `variable files`_ are
+probably a better option.
+
+
+Creating scalar variables
+`````````````````````````
+
+The simplest possible variable assignment is setting a string into a
+scalar variable. This is done by giving the variable name (including
+:var:`${}`) in the first column of the Variable table and the value in
+the second one. If the second column is empty, an empty string is set
+as a value. Also an already defined variable can be used in the value.
+
+.. table:: Creating scalar variables
+   :class: example
+
+   ============  ==================  =========
+     Variable           Value          Value
+   ============  ==================  =========
+   ${NAME}       Robot Framework     \
+   ${VERSION}    2.0                 \
+   ${EMPTY}      \                   \
+   ${ROBOT}      ${NAME} ${VERSION}  \
+   ============  ==================  =========
+
+Since Robot Framework version 1.8, it is possible, but not obligatory,
+to use the equals sign :code:`=` after the variable name to make assigning
+variables slightly more explicit.
+
+.. table:: Creating scalar variables using the equals sign
+   :class: example
+
+   ============  ===============  =========
+     Variable         Value         Value
+   ============  ===============  =========
+   ${NAME} =     Robot Framework  \
+   ${VERSION} =  2.0              \
+   ============  ===============  =========
+
+
+Creating list variables
+```````````````````````
+
+Creating list variables is as easy as creating scalar variables. Again, the
+variable name is in the first column of the Variable table and
+values in the subsequent columns. A list variable can have any number
+of values, starting from zero, and if many values are needed, they
+can be `split into multiple rows`__.
+
+__ `Dividing test data to multiple rows`_
+
+.. table:: Creating list variables
+   :class: example
+
+   ============  =========  =========  =========
+     Variable      Value      Value      Value
+   ============  =========  =========  =========
+   @{NAMES}      Matti      Teppo      \
+   @{EMPTY}      \          \          \
+   @{NAMES2}     @{NAMES}   @{EMPTY}   Seppo
+   @{MANY}       one        two        three
+   ...           four       five       six
+   ...           seven      \          \
+   ============  =========  =========  =========
+
+
+Variable file
+'''''''''''''
+
+Variable files are the most powerful mechanism for creating different
+kind of variables. It is possible to assign variables to any object
+using them, and they also enable creating variables dynamically. The
+variable file syntax and taking variable files into use is explained
+in section `Resource and variable files`_.
+
+
+Command line
+''''''''''''
+
+Variables can be set from the command line either individually with
+the :setting:`--variable` option or using a variable file with the
+:setting:`--variablefile` option. Variables set from the command line
+are globally available for all executed test data files, and they also
+override variables with the same names in the Variable table and in
+the imported variable files.
+
+The syntax for setting individual variables is :cli:`--variable
+name:value`, where :cli:`name` is the name of the variable without
+:var:`${}` and :cli:`value` is its value. Several variables can be
+set by using this option several times. Only scalar variables can be
+set from the command line and they can only get string values. Many
+special characters are difficult or impossible to represent in the
+command line, but they can be escaped with the :setting:`--escape`
+option. 
+
+.. TODO: link --escape explanation
+
+.. sourcecode:: bash
+
+   --variable EXAMPLE:value
+   --variable HOST:localhost:7272 --variable USER:robot
+   --variable ESCAPED:Qquotes_and_spacesQ --escape quot:Q --escape space:_
+
+In the examples above, variables are set so that
+
+- :var:`${EXAMPLE}` gets the value :code:`value`
+- :var:`${HOST}` and :var:`${USER}` get the values
+  :code:`localhost:7272` and :code:`robot`
+- :var:`${ESCAPED}` gets the value :code:`"quotes and spaces"`
+
+`Variable files`_ are given from the command line using the syntax
+:cli:`--variablefile path/to/variables.py`. Which variables actually
+are created depends on which variables there are in the referenced variable
+file. If both variable files and individual variables are given from
+the command line, the latter override possible variables with the same
+name in the variable files.
+
+
+Return values from keywords
+'''''''''''''''''''''''''''
+
+Return values from keywords can also be set into variables. This
+allows communication between different keywords even in different test
+libraries. The syntax for a simple case is illustrated in the example below:
+
+.. table:: Assigning values from keywords to variables
+   :class: example
+
+   ===========  ==========  ============  ============
+    Test Case     Action      Argument      Argument
+   ===========  ==========  ============  ============
+   Returning    ${x} =      Get X         an argument
+   \            Log         We got ${x}!  \
+   ===========  ==========  ============  ============
+
+In the example above, the value returned by the :kw:`Get X` keyword is
+first set into the variable :var:`${x}` and then used by the :kw:`Log`
+keyword. This syntax works in all cases where a keywords returns
+something, and the variable is set to whatever value returned by the
+keyword. Having the equals sign :code:`=` after the variable name is
+not obligatory, but recommended, because it makes the assignment
+more explicit.
+
+If a keyword returns a list, it is also possible to set it into
+several scalar variables or into a list variable. This is possible
+with keywords returning Python lists or tuples or, from Robot
+Framework version 1.8.6 onwards, with Java keywords returning an
+array. In the future, it is possible to add support also for other
+iterables, if needed.
+
+.. table:: Assigning multiple values at once
+   :class: example
+
+   ===============  ============  ==========  ==========  ==========
+      Test Case        Action      Argument    Argument    Argument
+   ===============  ============  ==========  ==========  ==========
+   Return Multiple  ${scalar} =   Get 3       \           \
+   \                ${a}          ${b}        ${c}=       Get 3
+   \                ${first}      @{rest} =   Get 3       \
+   \                @{list} =     Get 3       \           \
+   ===============  ============  ==========  ==========  ==========
+
+
+Assuming that the keyword :kw:`Get 3` returns a list
+:code:`[1, 2, 3]`, the following variables are created:
+
+- :var:`${scalar}` with the value :code:`[1, 2, 3]`
+- :var:`${a}`, :var:`${b}` and :var:`${c}` with the values :code:`1`,
+  :code:`2`, and :code:`3`, respectively
+- :var:`${first}` with the value :code:`1`, and :var:`@{rest}` with the value
+  :code:`[2, 3]`
+- :var:`@{list}` with the value :code:`[1, 2, 3]`
+
+Variables set in this manner are otherwise similar to any other
+variables, but they are available only within the scope of the test
+case or keyword where they are created. Thus it not possible to, for
+example, set a variable in one test case and use it in another. This is
+because, in general, automated test cases should not dependent on each
+other, and accidentally setting a variable that is used elsewhere
+could cause hard-to-debug errors. If there is a genuine need for
+setting a variable in one test case and using it in another, use the
+:kw:`Set Suite Variable` or :kw:`Set Global Variable` keywords
+available from the `BuiltIn library`_.
+
+
+Variable scopes
+'''''''''''''''
+
+Variables can have global, test suite, test case or user keyword scope
+depending on where and how they are created.
+
+
+Global scope
+````````````
+
+Global variables are available everywhere in the test data. These
+variables are normally set from the command line with the
+:setting:`--variable` and :setting:`--variablefile`
+options. Additionally, it is possible to create new global variables
+or change the existing ones with the `built-in keyword`_ :kw:`Set
+Global Variable` anywhere in the test data.
+
+Global variables override variables defined in Variable tables or in
+imported variable files. Variables set locally override even global
+variables, but only in that local scope. It is recommended to use
+capital letters with global variables.
+
+
+Test suite scope
+````````````````
+
+Variables with the test suite scope are available anywhere in the test
+suite where they are defined or imported. They can be created in
+Variable tables, imported from variable files using the
+:setting:`Variables` setting in the Setting table, or set with the
+`built-in keyword`_ :kw:`Set Suite Variable` anywhere in that test
+suite. 
+
+The test suite scope *is not recursive*, which means that variables
+available in a higher-level test suite *are not available* in
+lower-level suites. If necessary, `resource and variable files`_ can
+be used for sharing variables.
+
+Since these variables can be considered global in the test suite where
+they are used, it is recommended to use capital letters also with them.
+
+
+Test case scope
+```````````````
+
+Variables created in test cases from return values of keywords have a
+test case scope and they are available only in that test
+case. Another possibility to create them is using the `built-in keyword`_
+:kw:`Set Test Variable` anywhere in that particular test case. Test
+case variables are local and should use lower-case letters.
+
+
+User keyword scope
+``````````````````
+
+User keywords get their own variables from `arguments passed to
+them`__ and return values from the keywords they use. Also these variables
+are local and should use lower-case letters.
+
+__ `User keyword arguments`_
+
+
+Built-in variables
+~~~~~~~~~~~~~~~~~~
+
+Robot Framework provides some built-in variables that are available
+automatically.
+
+
+Operating-system variables
+''''''''''''''''''''''''''
+
+Built-in variables related to the operating system ease making the test data
+operating-system-agnostic.
+
+
+.. table:: Available operating-system-related built-in variables
+   :class: tabular
+
+   +------------+------------------------------------------------------------------+
+   |  Variable  |                      Explanation                                 |
+   +============+==================================================================+
+   | ${CURDIR}  | An absolute path to the directory where the test data            |
+   |            | file is located. This variable is case-sensitive.                |
+   +------------+------------------------------------------------------------------+
+   | ${TEMPDIR} | An absolute path to the system temporary directory. In UNIX-like |
+   |            | systems this is typically :path:`/tmp`, and in Windows           |
+   |            | :path:`c:\\Documents and Settings\\<user>\\Local Settings\\Temp`.|
+   +------------+------------------------------------------------------------------+
+   | ${/}       | The system directory path separator. :path:`/` in UNIX-like      |
+   |            | systems, :path:`\\` in Windows.                                  |
+   +------------+------------------------------------------------------------------+
+   | ${:}       | The system path element separator. :path:`:` in UNIX-like        |
+   |            | systems and :path:`;` in Windows.                                |
+   +------------+------------------------------------------------------------------+
+
+
+.. table:: Using operating-system-related built-in variables
+   :class: example
+
+   =============  ========================  =======================  ===================================
+     Test Case             Action                   Argument                       Argument
+   =============  ========================  =======================  ===================================
+   Example        Create File               ${CURDIR}${/}input.data  Some text here
+   \              Set Environment Variable  CLASSPATH                ${TEMPDIR}${:}${TEMPDIR}${/}foo.jar
+   =============  ========================  =======================  ===================================
+
+
+Number variables
+''''''''''''''''
+
+The variable syntax can be used for creating both integers and
+floating point numbers, as illustrated in the example below. This is
+useful when a keyword expects to get a real number as an argument.
+
+.. table:: Using number variables
+   :class: example
+
+   ===========  ========  ===========  ==========  ===================================================
+    Test Case    Action    Argument     Argument                   Comment
+   ===========  ========  ===========  ==========  ===================================================
+   Example 1A   Connect   example.com  80          # Connect gets two strings as arguments
+   Example 1B   Connect   example.com  ${80}       # Connect gets a string and an integer
+   Example 2    Do X      ${3.14}      ${-1e-4}    # Do X gets floating point numbers 3.14 and -0.0001
+   ===========  ========  ===========  ==========  ===================================================
+
+
+Boolean and None/null variables
+'''''''''''''''''''''''''''''''
+
+Also Boolean values and Python :code:`None` and Java :code:`null` can
+be created using the variable syntax similarly as numbers.
+ 
+.. table:: Using Boolean and None/null variables
+   :class: example
+
+   ===========  ===============  ==========  ==========  =============================================
+    Test Case        Action       Argument    Argument                      Comment
+   ===========  ===============  ==========  ==========  =============================================
+   Boolean      Set Status       ${true}     \           # Set Status gets boolean true as an argument
+   \            Create Y         something   ${false}    # Create Y gets a string and boolean false
+   None         Do XYZ           ${None}     \           # Do XYZ gets Python None as an argument
+   Null         ${ret} =         Get Value   arg         # Checking that Get Value returns Java null
+   \            Should Be Equal  ${ret}      ${null}     \
+   ===========  ===============  ==========  ==========  =============================================
+
+These variables are case-insensitive, so for example :var:`${True}` and
+:var:`${true}` are equivalent. Additionally, :var:`${None}` and
+:var:`${null}` are synonyms, because when running tests on the Jython
+interpreter, Jython automatically converts :code:`None` and
+:code:`null` to the correct format when necessary.
+
+
+Automatic variables
+'''''''''''''''''''
+
+Some automatic variables can also be used in the test data. These
+variables can have different values during the test execution and some
+of them are not even available all the time. 
+
+.. table:: Available automatic variables
+   :class: tabular
+
+   +-----------------------+-------------------------------------------------------+----------------+
+   |        Variable       |                    Explanation                        |    Available   |
+   +=======================+=======================================================+================+
+   | ${TEST_NAME}          | Name of the current test case.                        | Test case      |
+   +-----------------------+-------------------------------------------------------+----------------+
+   | @{TEST_TAGS}          | Contains the tags of the current test case in         | Test case      |
+   |                       | alphabetical order.                                   |                |
+   +-----------------------+-------------------------------------------------------+----------------+    
+   | ${TEST_STATUS}        | Status of the current test case, either PASS or FAIL. | Test teardown  |
+   +-----------------------+-------------------------------------------------------+----------------+
+   | ${TEST_MESSSAGE}      | Possible error message of the current test case.      | Test teardown  |
+   +-----------------------+-------------------------------------------------------+----------------+
+   | ${PREV_TEST_NAME}     | Name of the previous test case, or an empty sting if  | Everywhere     |
+   |                       | no tests have been executed yet.                      |                |
+   +-----------------------+-------------------------------------------------------+----------------+
+   | ${PREV_TEST_STATUS}   | Status of the previous test case, either PASS, FAIL   | Everywhere     |
+   |                       | or an empty when no tests have been executed.         |                |
+   +-----------------------+-------------------------------------------------------+----------------+
+   | ${PREV_TEST_MESSSAGE} | Possible error message of the previous test case.     | Everywhere     |
+   +-----------------------+-------------------------------------------------------+----------------+
+   | ${SUITE_NAME}         | Full name of the current test suite.                  | Everywhere     |
+   +-----------------------+-------------------------------------------------------+----------------+
+   | ${SUITE_STATUS}       | Status of the current test case, either PASS or FAIL. | Suite teardown |
+   +-----------------------+-------------------------------------------------------+----------------+
+   | ${SUITE_MESSAGE}      | Full message of the current test suite including      | Suite teardown |
+   |                       | statistics.                                           |                |
+   +-----------------------+-------------------------------------------------------+----------------+
+   | ${OUTPUT_FILE}        | Absolute path to the current `output file`_. Has      | Everywhere     |
+   |                       | different values during execution when                |                |
+   |                       | `outputs are split`_.                                 |                |
+   +-----------------------+-------------------------------------------------------+----------------+
+   | ${LOG_FILE}           | An absolute path to the current `log file`_ or NONE   | Everywhere     |
+   |                       | when no log file is created. Has different values     |                |
+   |                       | during execution when `outputs are split`_.           |                |
+   +-----------------------+-------------------------------------------------------+----------------+
+   | ${REPORT_FILE}        | An absolute path to the `report file`_ or NONE when   | Everywhere     |
+   |                       | no report is created.                                 |                |
+   +-----------------------+-------------------------------------------------------+----------------+
+   | ${SUMMARY_FILE}       | An absolute path to the `summary file`_ or NONE when  | Everywhere     |
+   |                       | no summary is created.                                |                |
+   +-----------------------+-------------------------------------------------------+----------------+
+   | ${DEBUG_FILE}         | An absolute path to the `debug file`_ or NONE when    | Everywhere     |
+   |                       | no debug file is created.                             |                |
+   +-----------------------+-------------------------------------------------------+----------------+
+   | ${OUTPUT_DIR}         | An absolute path to the `output directory`_.          | Everywhere     |
+   +-----------------------+-------------------------------------------------------+----------------+
+
+.. _output file: TODO - link to executing test case section
+.. _log file: TODO - link to executing test case section
+.. _report file: TODO - link to executing test case section
+.. _summary file: TODO - link to executing test case section
+.. _debug file: TODO - link to executing test case section
+.. _output directory: TODO - link to executing test case section
+
+
+Advanced variable features
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+There are also some advanced variable features, described in this section.
+
+Extended variable syntax
+''''''''''''''''''''''''
+
+Extended variable syntax can be used with objects set into scalar
+variables. This allows accessing the attributes of the object (for example,
+:var:`${obj.name}` or :var:`${obj.some_attr}`), and even calling
+its methods (for example, :var:`${obj.get_name()}` or
+:var:`${obj.getSomething('arg')}`. 
+
+Extended variable syntax is a powerful feature, but it should
+be used with care. Accessing attributes is normally not a problem, on
+the contrary, as one variable with an object having several
+attributes is often better than having several variables. On the
+other hand, calling methods, especially when they are used with
+arguments, can make the test data complicated. If that happens,
+it is recommended to move the code into a test library.
+
+The most common usages of extended variable syntax are illustrated
+in the example below. First assume that we have following `variable file`_
+and test case:
+
+
+.. sourcecode:: python
+
+   class MyObject:
+
+       def __init__(self, name):
+           self.name = name
+
+       def greet(self, who):
+           return '%s says hello to %s' % (self.name, who)
+
+       def __str__(self):
+           return self.name
+
+   OBJECT = MyObject('Robot')
+   DICTIONARY = { 1: 'one', 2: 'two', 3: 'three'}
+
+
+.. table:: 
+   :class: example
+
+   ===========  ========  ======================  ==========
+    Test Case    Action          Argument          Argument
+   ===========  ========  ======================  ==========
+   Example      KW 1      ${OBJECT.name}          \
+   \            KW 2      ${OBJECT.greet('Fit')}  \
+   \            KW 3      ${DICTIONARY[2]}        \
+   ===========  ========  ======================  ==========
+     
+
+When this test data is executed, the keywords get the arguments as explained below:
+
+- :kw:`KW 1` gets string :code:`Robot`
+- :kw:`KW 2` gets string :code:`Robot says hello to Fit`
+- :kw:`KW 3` gets string :code:`two`
+
+The extended variable syntax is evaluated in the following order:
+
+1. The variable is searched using the full variable name. The extended
+   variable syntax is evaluated only, if no matching variable
+   is found.
+
+2. The real name of the base variable is created. The body of the name
+   consists of all the characters after :var:`${` until the first
+   occurrence of a non-alphanumeric character or a space (for example,
+   :var:`OBJECT` in :var:`${OBJECT.name}` and :var:`DICTIONARY` in
+   :var:`${DICTIONARY[2]}`).
+
+3. A variable matching the body is searched. If there is no match, an
+   exception is raised and the test case fails.
+
+4. The expression inside the curly brackets is evaluated as a Python
+   expression, so that the base variable name is replaced with its
+   value. If the evaluation fails because of an invalid syntax or that
+   the queried attribute does not exist, an exception is raised and
+   the test fails.
+
+5. The whole extended variable is replaced with the value returned
+   from the evaluation.
+
+If the object that is used is implemented with Java, the extended
+variable syntax allows you to access attributes using so-called bean
+properties. In essence, this means that if you have an object with the
+:code:`getName`  method set into a variable :var:`${OBJ}`, then the
+syntax :var:`${OBJ.name}` is equivalent to, but clearer than
+:var:`${OBJ.getName()}`. Thus the Python object used in the previous
+example could be replaced with the following Java implementation:
+
+.. sourcecode:: java
+
+ public class MyObject:
+
+     private String name;
+
+     public MyObject(String name) {
+         name = name;
+     }
+
+     public String getName() {
+         return name;
+     }
+
+     public String greet(String who) {
+         return name + " says hello to " + who;
+     }
+
+     public String toString() {
+         return name;
+     }
+ }
+
+
+Variables inside variables
+''''''''''''''''''''''''''
+
+Variables are allowed also inside variables, and when this syntax is
+used, variables are resolved from the inside out. For example, if you
+have a variable :var:`${var${x}}`, then :var:`${x}` is resolved
+first. If it has the value :code:`name`, the final value then is the
+value of the variable :var:`${varname}`. There can be several nested
+variables, but resolving the outermost fails, if any of them does not
+exist.
+
+In the example below, the :kw:`Do X` gets the value :var:`${JOHN_HOME}`
+or :var:`${JANE_HOME}` depending on if :kw:`Get Name` returns
+:code:`john` or :code:`jane`. If it returns something else, resolving
+:var:`${${name}_HOME}` fails.
+
+
+.. table:: Using a variable inside another variable
+   :class: example
+
+   ============  ==========  =======  =======
+     Variable       Value     Value    Value
+   ============  ==========  =======  =======
+   ${JOHN_HOME}  /home/john  \        \
+   ${JANE_HOME}  /home/jane  \        \
+   ============  ==========  =======  =======
+
+.. table::
+   :class: example
+ 
+   ===========  ==========  ========================  ==============
+    Test Case     Action            Argument             Argument
+   ===========  ==========  ========================  ==============
+   Example      ${name} =   Get Name                  \
+   \            Do X        ${${name}_HOME}           \
+   ===========  ==========  ========================  ==============

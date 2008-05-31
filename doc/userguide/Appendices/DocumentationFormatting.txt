@@ -1,0 +1,142 @@
+Documentation formatting
+------------------------
+
+In this appendix, the documentation formatting practices of Robot
+Framework are described.
+
+.. contents::
+   :depth: 2 
+   :local: 
+
+Introduction
+~~~~~~~~~~~~ 
+
+It is possible to use simple HTML formatting, such as bold and italic
+text and tables, both with the documentation of test cases and test
+suites and in the library documentation. The formatting is designed so
+that it is understandable and clear both as plain text and after the HTML
+transformation. It is also similar to the style used in most wikis.
+
+Other rules for handling documentation
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
+
+Besides the formatting explained here, the documentation used for test
+cases and suites is subject to general parsing rules of the Robot
+Framework test data. For example, dividing text into lines and
+paragraphs requires having literal new line character sequence (:code:`\\n`),
+as illustrated by the example below.
+
+.. table:: Dividing text into lines and paragraphs
+   :class: example
+
+   ========  ================= 
+   Setting   Value
+   ========  =================   
+   \	     First line.\n
+   Document  Second line.\n 
+   \	     \n
+   \	     Second paragraph.  
+   ========  =================
+
+Furthermore, it is possible to divide documentation into multiple
+columns, and different columns are catenated together with
+spaces. For example, the two documentations in the example below are
+totally equivalent.
+
+.. table:: Dividing text into multiple columns
+   :class: example
+
+   ========  =============  ========   
+   Setting   Value  	    Value
+   ========  =============  ========    
+   Document  Hello  	    world.  
+   Document  Hello world.     
+   ========  =============  ========
+
+
+Bold and italic
+~~~~~~~~~~~~~~~
+ 
+Bold text can be created by having an asterisk before and after the
+selected word or words, for example :code:`\*this is bold*`. Italic
+style works similarly, but the special character is an underscore, for
+example :code:`\_italic_`. An asterisk or an underscore alone or in
+the middle of a word does not start bold or italic, but punctuation
+marks before them, and after the closing asterisk or underscore, are
+allowed. Both bold and italic are limited for formatting text on one
+line, and formatting spanning multiple lines must be explicitly
+restarted and stopped on every line.
+
+It is also possible to have bold italic with the syntax :code:`\_*bold
+italic*_`. Note that in this syntax underscores must always be outside
+asterisks.
+
+.. table:: Formatting text to bold and italic typeface
+   :class: example
+
+   ================================================  =================================================
+   Unformatted		     		      	     Formatted
+   ================================================  =================================================      
+   \*bold*      				     **bold**  
+   \_italic_     				     *italic*  
+   \*Bold*, and \_also italic\_.  		     **Bold**, and *also italic*.  
+   \_*Bold italic*, \_only italic\_, no formatting.   ***Bold italic***, *only italic*, no formatting.  
+   This is \*bold*\\n    	      	 	     This is **bold**        	      	 	      
+   \*on multiple*\\n			      	     **on multiple**
+   \*lines*.				      	     **lines**.
+   ================================================  =================================================
+
+URLs
+~~~~ 
+
+Since Robot Framework 1.6, all strings that look like an URL are
+automatically converted into a clickable link. For example,
+http://some.url turns into link.
+
+Tables
+~~~~~~ 
+
+Tables are created using the pipe character with spaces around it ( | ) as
+a cell boundary and newline (:code:`\\n`) as row separator. The table
+always has a thin border and the text is left-aligned. Formatting using
+bold and italic works also in table cells.
+
+| \*xx* | \*yy*  | \*zz*  | \\n
+| \_1_  | Hello  | world  | \\n
+| \_2_  | Hi     |        | \\n
+
+.. TODO: Change the formatting so that in the HTML file the cell with "Hi" is as wide as the cells above it.
+
+.. table:: Formatting text in tables
+   :class: example
+
+   ======  ======  ======
+   **xx**  **yy**  **yy**
+   ======  ======  ====== 
+   1 	   Hello   world 
+   2 	   Hi	   \
+   ======  ======  ======  
+
+
+Horizontal ruler
+~~~~~~~~~~~~~~~~
+ 
+Horizontal rulers (the <hr> tag) make it possible to separate larger
+sections from each others. They can be created by having three hyphens
+alone in a line (:code:`\n---\n`). Example::
+
+ blah blah blaaah\n
+ \n
+ ---\n
+ \n
+ yadda yadda\n
+ 
+
+blah blah blaaah 
+
+--------------------------------------------------------------------------------
+
+yadda yadda
+
+
+

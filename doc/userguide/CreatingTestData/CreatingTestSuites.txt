@@ -1,0 +1,234 @@
+Creating test suites
+--------------------
+
+Robot Framework test cases are created in test case files, which can
+be organized into directories. These files and directories create a
+hierarchical test suite structure.
+
+.. contents:: 
+   :depth: 2
+   :local: 
+
+
+Test case files
+~~~~~~~~~~~~~~~
+
+Robot Framework test cases `are created`__ using test case tables in
+test case files. Such a file automatically creates a test suite from
+all the test cases it contains. There is no upper limit for how many
+test cases there can be, but it is recommended to have less than ten,
+unless the `data-driven approach`_ is used, where one test case consists of
+only one high-level keyword.
+
+__ `Test case syntax`_
+
+The following settings in the Setting table can be used to customize the
+test suite:
+
+`Documentation`:setting:
+   Used for specifying a `test suite documentation`_
+
+`Meta: <name>`:setting:
+   Used for setting `free test suite metadata`_.
+
+`Suite Setup`:setting:, `Suite Teardown`:setting:
+   Specify `suite setup and teardown`_. Have also synonyms
+   :setting:`Suite Precondition` and :setting:`Suite Postcondition`, respectively.
+
+
+
+Test suite directories
+~~~~~~~~~~~~~~~~~~~~~~
+
+Test case files can be organized into directories, and these
+directories create higher-level test suites. A test suite created from
+a directory cannot have any test cases directly, but it contains
+other test suites with test cases, instead. These directories can then be
+placed into other directories creating an even higher-level suite. There
+are no limits for the structure, so test cases can be organized
+as needed.
+
+When a test directory is executed, the files and directories it
+contains are processed recursively as follows:
+
+- Files and folders with names starting with a dot (.) or an underscore (_) are ignored.
+- Files with names not having the :path:`.html`, :path:`.xhtml`, :path:`.htm` or
+  :path:`.tsv` extension (case-insensitive) are ignored.
+- Directories with the name :path:`CVS` (case-sensitive) are ignored.
+- Other files and directories are processed.
+
+The files and directories that are processed are expected to be test
+case files and test directories, respectively, but if they do not
+contain any test cases, they are silently ignored (a message is
+written to the syslog_) and the processing continues. 
+
+
+Initialization files
+''''''''''''''''''''
+
+A test suite created from a directory can have the same settings
+(:setting:`Documentation`, :setting:`Meta: <name>`, :setting:`Suite
+Setup`, :setting:`Suite Teardown`) as a test case created from a
+file. Because a directory alone cannot have that kind of information,
+they must be placed into a special initialization file.
+
+Initialization files have the same structure as test case files, except that
+they cannot have test case tables, and the overall syntax used in them
+is the same as in other test data files. An initialization file name must
+always be of the format :path:`__init__.extension`, where the extension is
+the same as normally for test data files (for example,
+:path:`__init__.html` or :path:`__init__.tsv`). The name format is
+borrowed from Python, where files named in this manner denote that a
+directory is a module.
+
+The main usage of initialization files is setting test-suite-related
+settings, but setting `test-case-related settings`__ is also possible.
+However, only :setting:`Force Tags` is generally useful, because
+others are only default values for the same settings in lower-level files,
+and even they are default values for the `settings in the test case table`_.
+
+__ `Test-case-related settings in the Setting table`_
+
+
+.. table:: An example test suite initialization file
+   :class: example
+
+   =============  =============  =============
+      Setting         Value          Value
+   =============  =============  =============
+   Documentation  Example suite  \
+   Suite Setup    Do Something   ${MESSAGE}
+   Force Tags     example        \
+   Library        SomeLibrary    \
+   =============  =============  =============
+
+.. table::
+   :class: example
+
+   =============  =============  =============
+      Variable        Value          Value
+   =============  =============  =============
+   ${MESSAGE}     Hello, world!  \
+   =============  =============  =============
+
+.. table::
+   :class: example
+
+   =============  =============  ================  ================
+      Keyword         Action         Argument          Argument
+   =============  =============  ================  ================
+   Do Something   [Arguments]    ${arg}            \
+   \              Log            ${arg}            \
+   =============  =============  ================  ================
+  
+
+An important thing to notice is that variables and keywords created in
+initialization files *are not* available elsewhere. If there is a need
+to share them, for example, with lower-level test suites, `resource
+files`_ must be used.
+
+
+Test suite name and documentation
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Test suite name is got directly from the file or directory name, so
+that a possible file extension is ignored. The name is created so that
+underscores are replaced with spaces, words in camelCaseFormat
+separated, and first letters of all words capitalized. For example,
+:path:`some_tests.html` becomes :code:`Some Tests` and
+:path:`MyTestDir` becomes :code:`My Test Dir`.
+
+The documentation for a test suite is set using the :setting:`Documentation`
+setting in the Setting table. It can be used in test case files
+or, with higher-level suites, in test suite initialization files. Test
+suite documentation has exactly the same characteristics regarding to where
+it is shown and how it can be created as `test case
+documentation`_. 
+
+
+.. table:: Test suite documentation example
+   :class: example
+
+   =============  ======================  ======================  ======================
+      Setting             Value                   Value                   Value
+   =============  ======================  ======================  ======================
+   Documentation  An example test suite   documentation with      \*some\* _formatting_.
+   ...            See test documentation  for more documentation  examples. 
+   =============  ======================  ======================  ======================
+
+
+Both the name and documentation of the top-level test suite can be
+overridden in test execution. This can be done with the command line
+options :setting:`--name` and :setting:`--doc`, respectively, as
+explained in section `Setting metadata for the executed test suite`_.
+
+
+Free test suite metadata
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+Test suites can also have other metadata than the documentation. This
+metadata is defined in the Setting table using the :setting:`Meta: <name>`
+setting, where <name> is a freely selected metadata name. For example,
+:setting:`Meta: Version` adds the version metadata for a test
+suite. Metadata set in this manner is shown in test reports and logs.
+
+The value for the metadata is located in the column after the name. It
+is handled similarly as documentations, which means that it can be
+`split into multiple cells`__ (joined together with
+spaces), simple `HTML formatting`_ works and even variables_ can be
+used.
+
+__ `Dividing test data to multiple rows`_
+
+
+.. table:: Metadata examples 
+   :class: example
+
+   =================  ====================  =========================  ==============================
+        Setting              Value                     Value                       Value 
+   =================  ====================  =========================  ==============================
+   Meta: Version      2.0                   \                          \
+   Meta: More Info    For more information  about \*Robot Framework\*  see \http://robotframework.org
+   Meta: Executed At  ${HOST}               \                          \
+   =================  ====================  =========================  ==============================
+
+
+For top-level test suites, it is possible to set metadata also with the 
+:setting:`--metadata` command line option. This is discussed in more
+detail in section `Setting metadata for the executed test suite`_.
+
+
+Suite setup and teardown
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+Not only `test cases`__ but also test suites can have a setup and
+a teardown. A suite setup is executed before running any of the suite's
+test cases or child test suites, and a test teardown is executed after
+them. All test suites can have a setup and a teardown; with suites created
+from a directory they must be specified in a `test suite
+initialization file`_.
+
+__ `Test setup and teardown`_
+
+Similarly as with test cases, a suite setup and teardown are keywords
+possibly taking arguments. They are defined in the Setting table with
+:setting:`Suite Setup` and :setting:`Suite Teardown` settings,
+respectively. They also have similar synonyms, :setting:`Suite
+Precondition` and :setting:`Suite Postcondition`, as test case setup
+and teardown have. Keyword names and possible arguments are located in
+the columns after the setting name.
+
+If a suite setup fails, all test cases in it and its child test suites
+are immediately assigned a fail status and they are not actually executed. This
+makes suite setups ideal for checking preconditions that must be
+met before running test cases is possible.
+
+A suite teardown is normally used for cleaning up after all the test
+cases have been executed. It is executed even if the setup of the same
+suite fails. If the suite teardown fails, all test cases in the
+suite are marked failed, regardless of their original execution status.
+
+The name of the keyword to be executed as a setup or a teardown can be
+a variable. This makes it easy to have different setups or teardowns
+in different environments by giving the keyword name as a variable
+from the command line.

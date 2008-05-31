@@ -1,0 +1,404 @@
+Creating test cases
+-------------------
+
+This section explains the overall test case syntax. Organizing test
+cases into `test suites`_ using `test case files`_ and `test suite
+directories`_ is discussed in the next section.
+
+.. contents:: 
+   :depth: 2
+   :local: 
+
+
+Test case syntax
+~~~~~~~~~~~~~~~~
+
+Basic syntax
+''''''''''''
+
+Test cases are constructed in test case tables from the available
+keywords. Keywords can be imported from `test libraries`_ or `resource
+files`_ or created in the `keyword table`__ of the test case file
+itself.
+
+__ `user keywords`_
+
+The first column in the test case table contains test case names. A
+test case starts from the row with something in this column and
+continues to the next test case name or to the end of the table. It is
+an error to have something between the table headers and the first
+test.
+
+The second column normally has keyword names. An exception to this rule
+is `setting variables from keyword return values`__, when the second and
+possibly also subsequent columns contain variable names and a keyword
+name is located after them. In either case, columns after the keyword name
+contain possible arguments to the specified keyword.
+
+__ `User keyword return values`_
+
+.. table:: Example test cases
+   :class: example
+
+   ==================  ===========================  ==================  ===============
+       Test Case                  Action                 Argument          Argument
+   ==================  ===========================  ==================  ===============
+   Valid Login         Open Login Page              \                   \
+   \                   Input Name                   demo                \
+   \                   Input Password               mode                \
+   \                   Submit Credentials           \                   \
+   \                   Welcome Page Should Be Open  \                   \
+   \                   \                            \                   \
+   Setting Variables   Do Something                 first argument      second argument
+   \                   ${value} =                   Get Some Value      \
+   \                   Should Be Equal              ${value}            Expected value
+   ==================  ===========================  ==================  ===============
+
+
+Workflow tests vs. data-driven tests
+''''''''''''''''''''''''''''''''''''
+
+In general, there are two kinds of test cases. So called *workflow*
+tests, such as the :tc:`Valid Login` test above, are constructed from
+several keywords. Their normal structure is that the first the system is
+taken into the initial state (:kw:`Open Login Page`), then something is
+done to the system (:kw:`Input Name`, :kw:`Input Password`,
+:kw:`Submit Credentials`), and finally it is verified that the system
+behaved as expected (:kw:`Welcome Page Should Be Open`).
+
+Another type of tests are *data-driven* test cases that contain only
+one higher-level keyword, normally created as `user keywords`_. These
+kinds of tests are very useful when there is a need to test the same
+workflow with different input or output data, as the examples below
+demonstrate.
+
+.. table:: Example test cases using data-driven approach
+   :class: example
+
+   +-------------------+-------------------------+---------+---------+
+   |     Test Case     |         Action          |User Name|Password |
+   +===================+=========================+=========+=========+
+   | Invalid User Name | Login With Invalid      | invalid | mode    |
+   |                   | Credentials Should Fail |         |         |
+   +-------------------+-------------------------+---------+---------+
+   | Invalid Password  | Login With Invalid      | demo    | invalid |
+   |                   | Credentials Should Fail |         |         |
+   +-------------------+-------------------------+---------+---------+
+   | Invalid User Name | Login With Invalid      | invalid | whatever|
+   | And Password      | Credentials Should Fail |         |         |
+   +-------------------+-------------------------+---------+---------+
+   | Empty User Name   | Login With Invalid      |         | mode    |
+   |                   | Credentials Should Fail |         |         |
+   +-------------------+-------------------------+---------+---------+
+   | Empty Password    | Login With Invalid      | demo    | \\      |
+   |                   | Credentials Should Fail |         |         |
+   +-------------------+-------------------------+---------+---------+
+   | Empty User Name   | Login With Invalid      |         | \\      |
+   | And Password      | Credentials Should Fail |         |         |
+   +-------------------+-------------------------+---------+---------+
+
+Note that in the example above column headers have been changed to
+match the data. This is possible, because on the first row other cells
+except the first one `are ignored`__. Additionally, backslash is used
+for escaping_ empty cells at the end of the table.
+
+__ `Ignored data`_
+
+
+Settings in the Test Case table
+'''''''''''''''''''''''''''''''
+
+Test cases can also have their own settings. Setting names are always
+in the second column, where keywords normally are, and their values
+are in the subsequent columns. Setting names have square brackets around
+them to distinguish them from keywords. The available settings are listed
+below and explained later in this section.
+
+`[Documentation]`:setting:
+    Used for specifying a `test case documentation`_.
+
+`[Tags]`:setting:
+    Used for `tagging test cases`_.
+
+`[Setup]`:setting:, `[Teardown]`:setting:
+   Specify `test setup and teardown`_. Have also synonyms
+   :setting:`[Precondition]` and :setting:`[Postcondition]`,
+   respectively. 
+
+`[Timeout]`:setting:
+   Used for setting a `test case timeout`_. Timeouts_ are discussed in their own section.
+
+
+.. table:: Example test case with settings
+   :class: example
+
+   ==================  ===========================  ==================  ===============
+       Test Case                  Action                 Argument          Argument
+   ==================  ===========================  ==================  ===============
+   Test With Settings  [Documentation]              Another dummy test  \
+   \                   [Tags]                       dummy               owner-johndoe
+   \                   Log                          Hello, world!       \
+   ==================  ===========================  ==================  ===============
+
+
+Test-case-related settings in the Setting table
+'''''''''''''''''''''''''''''''''''''''''''''''
+
+The Setting table can have the following test-case-related
+settings. These settings are mainly default values for test case
+specific settings listed earlier.
+
+`Force Tags`:setting:, `Default Tags`:setting:
+   Forced and default values for tags_.
+
+`Test Setup`:setting:, `Test Teardown`:setting:
+   Default values for `test setup and teardown`_. Have also synonyms 
+   :setting:`Test Precondition` and :setting:`Test Postcondition`,
+   respectively.  
+
+`Test Timeout`:setting:
+   Default value for `test case timeout`_. Timeouts_ are discussed in their own section.
+
+
+Test case name and documentation
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The test case name comes directly from the Test Case table: it is
+exactly what is entered into the test case column. Test cases in one
+test suite should have unique names.  Pertaining to this, you can also
+use the `automatic variable`_ :var:`${TEST_NAME}` within the test
+itself to refer to the test name. It is available whenever a test is
+being executed, including all user keywords, as well as the test setup
+and the test teardown.
+
+The :setting:`[Documentation]` setting allows you to set a free
+documentation for a test case. That text is shown in the command line
+output, as well as the resulting test logs and test reports. If the
+documentation is long, it can be `split into multiple cells`__ that
+are catenated together with spaces. It is possible to use simple `HTML
+formatting`_ and even variables_ can be used.
+
+__ `Dividing test data to multiple rows`_
+
+.. table:: Test case documentation examples
+   :class: example
+
+
+   +--------------+-----------------+----------------------+----------------------------+
+   |  Test Case   |     Action      |       Argument       |           Argument         |
+   +==============+=================+======================+============================+
+   | Simple       | [Documentation] | Simple documentation |                            |
+   +--------------+-----------------+----------------------+----------------------------+
+   |              | No Operation    |                      |                            |
+   +--------------+-----------------+----------------------+----------------------------+
+   | Splitting    | [Documentation] | This documentation   | it has been split into     |
+   |              |                 | is a bit longer and  | multiple columns.          |
+   +--------------+-----------------+----------------------+----------------------------+
+   |              | No Operation    |                      |                            |
+   +--------------+-----------------+----------------------+----------------------------+
+   | Formatting   | [Documentation] | \*This is bold\*,    | here is a link:            |
+   |              |                 | \_this italic\_  and | \http://robotframework.org |
+   +--------------+-----------------+----------------------+----------------------------+
+   |              | No Operation    |                      |                            |
+   +--------------+-----------------+----------------------+----------------------------+
+   | Variables    | [Documentation] | Executed at ${HOST}  |                            |
+   |              |                 | by ${USER}           |                            |
+   +--------------+-----------------+----------------------+----------------------------+
+   |              | No Operation    |                      |                            |
+   +--------------+-----------------+----------------------+----------------------------+
+
+It is important that test cases have clear and descriptive names, and
+in that case they normally do not need any documentation. If the logic
+of the test case needs documenting, it is often a sign that keywords
+in the test case need better names and they are to be enhanced
+instead of adding extra documentation. Finally, metadata, such as the
+environment and user information in the last example above, is often
+better specified using tags_. 
+
+
+Tagging test cases
+~~~~~~~~~~~~~~~~~~
+
+Using tags in Robot Framework is a simple, yet powerful mechanism for
+classifying test cases. Tags are free text and they can be used at
+least for the following purposes:
+
+- Tags are shown in test reports and logs (and, of course, in test
+  data), so they provide metadata about the executed test cases.
+- Statistics about test cases (total, passed, failed)
+  are automatically collected per tag.
+- With tags, it is possible to include or exclude test cases to be executed.
+- With tags, it is possible to specify, which test cases are critical.
+
+.. TODO: links to suitable sections in executing test chapter
+
+In this section it is only explained how to set tags for test
+cases, and different ways to do it are listed below. These
+approaches can naturally be used together.
+
+`Force Tags`:setting: in the setting table 
+   All test cases in a test case file with this setting always get
+   specified tags. If it is used in the `test suite initialization file`,
+   all test cases in sub test suites get these tags.
+
+`Default Tags`:setting: in the setting table
+   Test cases not having their own :setting:`[Tags]` setting get these
+   tags. If it used in the test suite initialization file, it is
+   interpreted as a default value for :setting:`Default Tags` in lower
+   level test suites.
+
+`[Tags]`:setting: in the test case table
+   Test case always gets these tags. Additionally, it does not get the
+   possible tags specified with :setting:`Default Tags`.
+
+`--settag`:setting: command line option
+   All executed test cases get tags set with this option in addition
+   to tags they got elsewhere. This option is only available in Robot
+   Framework version 1.8.3 and newer.
+
+
+Tags are free text but they are normalized so that they are converted
+to lowercase and all spaces are removed. If a test case gets the same tag
+several times, other occurrences than the first one are removed. Tags
+can be created using variables, assuming that those variables exist.
+
+
+.. table:: Tagging example
+   :class: example
+
+   ============  ==========  =======  =======  
+     Setting       Value      Value    Value   
+   ============  ==========  =======  =======  
+   Force Tags    req-42      \        \
+   Default Tags  owner-john  smoke    \
+   ============  ==========  =======  =======  
+
+.. table:: 
+   :class: example
+
+   ==========  =========  =======  =======  
+    Variable     Value     Value    Value   
+   ==========  =========  =======  =======  
+   ${HOST}     10.0.1.42  \        \
+   ==========  =========  =======  =======  
+
+.. table:: 
+   :class: example
+
+   +---------------+-----------------+----------------------+------------------------------+
+   |   Test Case   |     Action      |       Argument       |           Argument           |
+   +===============+=================+======================+==============================+
+   | No own tags   | [Documentation] | This test has tags   | owner-john, smoke. req-42    |
+   +---------------+-----------------+----------------------+------------------------------+
+   |               | No Operating    |                      |                              |
+   +---------------+-----------------+----------------------+------------------------------+
+   | With own tags | [Documentation] | This test has tags   | not_ready, owner-mrx, req-42 |
+   +---------------+-----------------+----------------------+------------------------------+
+   |               | [Tags]          | owner-mrx            | not_ready                    |
+   +---------------+-----------------+----------------------+------------------------------+
+   |               | No Operating    |                      |                              |
+   +---------------+-----------------+----------------------+------------------------------+
+   | Own tags with | [Documentation] | This test has tags   | host-10.0.1.42, req-42       |
+   | variables     |                 |                      |                              |
+   +---------------+-----------------+----------------------+------------------------------+
+   |               | [Tags]          | host-${HOST}         |                              |
+   +---------------+-----------------+----------------------+------------------------------+
+   |               | No Operating    |                      |                              |
+   +---------------+-----------------+----------------------+------------------------------+
+   | Empty own tags| [Documentation] | This test has tags   | req-42                       |
+   +---------------+-----------------+----------------------+------------------------------+
+   |               | [Tags]          |                      |                              |
+   +---------------+-----------------+----------------------+------------------------------+
+   |               | No Operating    |                      |                              |
+   +---------------+-----------------+----------------------+------------------------------+
+
+
+
+Test setup and teardown
+~~~~~~~~~~~~~~~~~~~~~~~
+
+Robot Framework has similar test setup and teardown functions as many
+other test automation frameworks. In short, a test setup is something
+that is executed before a test case and a test teardown is executed
+after a test case. What makes teardown special is that it is executed also when
+a test case fails, so it can be used for clean-up activities that must
+be done regardless of the test case status. Both setup and teardown can
+also easily be specified for all test cases in a test suite, so using
+them avoids repetition.
+
+In Robot Framework, a test setup or teardown is just a normal keyword
+with possible arguments. It can either be a keyword from a library or
+a higher-level user keyword.
+
+The easiest way to specify a setup or a teardown for test cases in a
+test suite is using the :setting:`Test Setup` and :setting:`Test
+Teardown` settings in the Setting table. Individual test cases can
+also have their own setup or teardown. They are defined with the
+:setting:`[Setup]` or :setting:`[Teardown]` settings in the test case
+table and they override possible :setting:`Test Setup` and
+:setting:`Test Teardown` settings. Having no keyword after a
+:setting:`[Setup]` or :setting:`[Teardown]` setting means having no
+setup or teardown.
+
+
+.. table:: Test setup and teardown examples
+   :class: example
+
+   =============  =================  =======  =======  
+      Setting            Value        Value    Value  
+   =============  =================  =======  =======  
+   Test Setup     Open Application   App A    \
+   Test Teardown  Close Application  \        \
+   =============  =================  =======  =======  
+
+.. table:: 
+   :class: example
+
+   ==================  ===============  ===================  ==================
+       Test Case           Action            Argument            Argument
+   ==================  ===============  ===================  ==================
+   Default values      [Documentation]  Setup and teardown   from setting table
+   \                   Do Something     \                    \
+   \                   \                \                    \
+   Overridden setup    [Documentation]  Own setup, teardown  from setting table
+   \                   [Setup]          Open Application     App B
+   \                   Do Something     \                    \
+   \                   \                \                    \
+   No teardown         [Documentation]  Default setup, no    teardown at all
+   \                   Do Something     \                    \
+   \                   [Teardown]       \                    \
+   \                   \                \                    \
+   Using variables     [Documentation]  Setup and teardown   given as variables
+   \                   [Setup]          ${SETUP}             \
+   \                   Do Something     \                    \
+   \                   [Teardown]       ${TEARDOWN}          \
+   ==================  ===============  ===================  ==================
+  
+
+Often when creating use-case-like test cases, the terms *precondition*
+and *postcondition* are preferred over the setup and teardown
+terms. Robot Framework supports also this terminology, so that a
+precondition is a synonym to a setup and a postcondition to a
+teardown.
+
+.. table:: Setup and teardown synonyms
+   :class: tabular
+
+   ==============  ===================
+   Test Setup      Test Precondition
+   Test Teardown   Test Postcondition 
+   [Setup]         [Precondition]
+   [Teardown]      [Postcondition]
+   ==============  ===================
+
+The name of the keyword to be executed as a setup or a teardown can be a
+variable. This makes it easy to have different setups or teardowns in
+different environments by giving the keyword name as a variable from
+the command line.
+
+.. Note:: Also `test suites can have their own setup and
+          teardown`__. A suite setup is executed before any test cases
+          or sub test suites in that test suite, and similarly a suite
+          teardown is executed after them.
+
+__  `Suite setup and teardown`_

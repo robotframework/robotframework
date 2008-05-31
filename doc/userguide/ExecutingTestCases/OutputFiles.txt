@@ -1,0 +1,63 @@
+Output files
+------------
+
+.. contents::
+   :depth: 2
+   :local:
+
+Different outputs
+~~~~~~~~~~~~~~~~~~
+
+Output
+''''''
+
+Log
+'''
+
+Report
+''''''
+
+Summary
+'''''''
+
+Debug
+'''''
+
+Syslog
+~~~~~~
+
+Setting output files
+~~~~~~~~~~~~~~~~~~~~
+--outputdir
+--output
+--log
+--report
+--debugfile
+--summary
+--timestampoutputs
+
+Splitting outputs
+~~~~~~~~~~~~~~~~~
+
+Setting titles 
+~~~~~~~~~~~~~~
+--logtitle
+--reporttitle
+--summarytitle
+
+
+Configuring statistics
+~~~~~~~~~~~~~~~~~~~~~~
+--tagstatinclude
+--tagstatexclude
+--tagstatcombine
+--tagstatlink
+--tagdoc
+--suitestatlevel
+
+Setting log level
+~~~~~~~~~~~~~~~~~
+
+Removing keywords from outputs
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+

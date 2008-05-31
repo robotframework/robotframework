@@ -1,0 +1,30 @@
+Demonstration
+-------------
+
+An easily executable demonstration test suite for Robot Framework
+using SeleniumLibrary is now available. It contains a simple
+standalone HTTP server and an application that is used as a system
+under test. The actual test case files and scripts for running the
+demo in different systems are also provided. You can see a screenshot
+of Selenium working in the figures below:
+
+.. figure:: demo_out.png
+   :width: 700
+   :height: 694
+  
+   Login page
+
+.. figure:: welcome.png
+   :width: 547
+   :height: 266
+
+   Welcome page
+
+The demonstration can be downloaded from the `Robot Framework SeleniumLibrary
+page`_, where also the instructions for running the demonstration can
+be found.
+
+.. _Robot Framework SeleniumLibrary page: https://cwiki.nokia.com/RobotFramework/SeleniumLibrary
+
+.. TODO: (OSS) Go through the demo, update download links, etc. 
+         Possible also have even simpler demo with Robot itself.
