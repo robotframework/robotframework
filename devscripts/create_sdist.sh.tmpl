@@ -1,0 +1,17 @@
+#!/bin/bash
+
+# Update version when creating new releases
+version='devel'
+date=$(date +%Y%m%d)
+version_file=src/robot/version.py
+
+echo "VERSION = '$version'" > $version_file
+echo "DATE = '$date'" >> $version_file
+
+rm -rf build/
+ ./cleanup.sh
+ ./install.sh reinstall
+python setup.py sdist
+rm -rf build/
+echo
+echo created source distribution $version $date

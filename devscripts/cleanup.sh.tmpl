@@ -1,0 +1,19 @@
+#!/bin/bash
+
+function cleanup() {
+    dir=$1
+    cd $dir
+    rm -fv *.pyc *\$py.class *~ *.bak
+    for item in *; do
+        if [ -d $item ]; then
+            if  [ $item != '.svn' ]; then
+                cleanup $item
+            fi
+        fi
+    done
+    cd ..
+}
+
+rm -rf build/
+rm -rf atest/results
+cleanup .
