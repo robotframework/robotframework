@@ -20,7 +20,7 @@
 Usage:  statuschecker.py infile [outfile]
 
 This tool processes Robot Framework output XML files and checks that test case
-statuses and messages are as expected. Main use case is postprocessing output
+statuses and messages are as expected. Main use case is post-processing output
 files got when testing Robot Framework test libraries using Robot Framework
 itself. 
 

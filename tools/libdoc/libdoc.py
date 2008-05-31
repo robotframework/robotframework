@@ -28,13 +28,14 @@ Options:
  -f --format html|xml    Specifies whether to generate HTML or XML output.
                          The default value is HTML.
  -o --output path        Where to write the generated documentation. If the 
-                         path is a directory, the documentation is generated
-                         there using the name '<name>.<format>' with an index 
-                         after the '<name>' part, if a file with that name 
-                         already exists. If the given path points to a file, 
-                         this path is used as-is and possible existing file is
-                         overwritten. The default value for the path is the
-                         directory where the script is executed from.
+                         path is a directory, the documentation is
+                         generated there using the name '<name>.<format>'.
+                         If there already is a file with the same name, 
+                         an index is added after the '<name>' part. If the
+                         path points to a file, it is is used as-is and
+                         possible existing file is overwritten. The default
+                         value for the path is the directory where the
+                         script is executed from.
  -P --pythonpath path *  Additional path(s) to insert into PYTHONPATH.
  -h -? --help            Print this help.
 
@@ -45,9 +46,9 @@ when importing libraries. In this case, the library is searched from
 PYTHONPATH (and from CLASSPATH, if on Jython).
 
 A Java test library implemented with normal library API can be specified by 
-giving the path to the source file containing the library class. Additionally, 
-'tools.jar', which is part of the Sun JDK distribution, must be found from 
-CLASSPATH when libdoc.py is executed.
+giving the path to the source file containing the library class.
+Additionally, 'tools.jar', which is part of the Sun JDK distribution, must
+be found from CLASSPATH when 'libdoc.py' is executed.
 
 Libraries using the dynamic library API are handled similarly as
 normal Python libraries. Dynamic libraries should implement optional

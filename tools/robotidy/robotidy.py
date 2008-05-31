@@ -52,7 +52,7 @@ This multipurpose tool has three main usages listed below.
 1) Clean up the test data.
 
 Source code created by most HTML editors is quite ugly. With this tool the 
-source can be formatted nicely and it is even possible to specify a custon
+source can be formatted nicely and it is even possible to specify a custom
 style sheet. Additionally test data itself is cleaned up so that settings and
 metadata is always in same predefined order.
 

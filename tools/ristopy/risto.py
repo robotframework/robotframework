@@ -37,21 +37,22 @@ Alternatively, names can be got from the metadata of the top level
 test suite (see Robot Framework's '--metadata' option for more details).
 
 Graphs are saved to a file specified with '--output' option, and the output
-format is got from the file extension. Supported formats depend on installed
-Matplotlib back-ends, but at least PNG ought to be always available. If output
-file is omited, the graph is opened into Matplotlib's image viewer (which
-requires Matplotlib to be installed with some graphical front-end).
+format is got from the file extension. Supported formats depend on
+installed Matplotlib back-ends, but at least PNG ought to be always 
+available. If output file is omitted, the graph is opened into Matplotlib's
+image viewer (which requires Matplotlib to be installed with some graphical
+front-end).
 
-It is possible to draw multiple graphs with different options at once. This is
-done by separating different option groups with three or more hyphens ('---').
-Note that in this case also paths to input files need to be separated from
-options similarly.
+It is possible to draw multiple graphs with different options at once. This
+is done by separating different option groups with three or more hyphens
+('---'). Note that in this case also paths to input files need to be
+separated from last options similarly.
 
-Instead of giving all options from command line, it is possible to read them
-from a file specified with '--argument' option. In an argument file options
-and their possible argument are listed one per line, and option groups are
-separated with lines of three or more hyphens. Empty lines and lines starting
-with a hash mark ('#') are ignored. 
+Instead of giving all options from command line, it is possible to read
+them from a file specified with '--argument' option. In an argument file
+options and their possible argument are listed one per line, and option
+groups are separated with lines of three or more hyphens. Empty lines and
+lines starting with a hash mark ('#') are ignored. 
 
 Options:
   -C --nocritical     Do not plot graphs for critical tests.
@@ -59,23 +60,25 @@ Options:
   -T --nototals       Do not plot total graphs.
   -P --nopassed       Do not plot passed graphs.
   -F --nofailed       Do not plot failed graphs.
-  -t --tag name *     Add graphs for these tags. Name can contain '*' and '?'
-                      as wildcards. Underscores in names are converted to
-                      spaces and additionally 'AND' to '&'.
+  -t --tag name *     Add graphs for these tags. Name can contain '*' and
+                      '?' as wildcards. 'AND' in the tag name is converted
+                      to ' & ', to make it easier to plot combined tags.
   -o --output path    Path to the image file to create. If not given, the
                       image is opened into Matplotlib' viewer.
-  -i --title title    Title of the graph. Underscores in the given title are
-                      converted to spaces. By default there is no title.
+  -i --title title    Title of the graph. Underscores in the given title
+                      are converted to spaces. By default there is no
+                      title.
   -w --width inches   Width of the image. Default is 800.
   -h --height inches  Height of the image. Default is 400.
   -f --font size      Font size used for legends and labels. Default is 8.
   -m --marker size    Size of marked used with tag graphs. Default is 5.
   -x --xticks num     Maximum number of ticks in x-axis. Default is 15.
-  -n --namemeta name  Name of the metadata of the top level test suite where
-                      to get name of the test round. By default names are got
-                      from paths to input files.
-     ---              Used to group options to create multiple images at once.
-     --argumentfile path  Read command line arguments from the specified file.
+  -n --namemeta name  Name of the metadata of the top level test suite
+                      where to get name of the test round. By default names
+                      are got from paths to input files.
+     ---              Used to group options when creating multiple images
+                      at once.
+     --argumentfile path  Read arguments from the specified file.
      --verbose        Verbose output. 
      --help           Print this help.
      --version        Print version information.
@@ -312,7 +315,7 @@ class Plotter(object):
     def _get_tags(self, tags):
         if tags is None:
             return []
-        return [ t.replace('_',' ').replace('AND','&') for t in tags ]
+        return [ t.replace('AND',' & ') for t in tags ]
 
     def set_axis(self, stats):
         slen = len(stats)

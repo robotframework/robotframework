@@ -2,13 +2,13 @@ Tools
 =====
 
 This directory contains supporting tools that can be used with Robot
-Framwork.  These tools help in some common tasks, but are not part of
+Framework. These tools help in some common tasks, but are not part of
 the core framework.  Most tools show a help text describing their
 purpose and usage when they are executed from the command line without
 arguments or with '--help' option.
 
 
-fileviewery
+fileviewer
     A graphical tool for monitoring text file. The main usage is monitoring
     Robot Framework's debug files (see --debugfile option) on Windows and
     systems where `tail` command is not available.
@@ -22,7 +22,7 @@ oneclickinstaller
     its dependencies on a Windows machine.
 
 ristopy
-    A tool for genereating graphs from historical output data.
+    A tool for generating graphs from historical output data.
 
 robotdiff
     A tool for comparing results of two or more test runs.
@@ -32,7 +32,7 @@ robotidy
     HTML and TSV formats.
 
 statuschecker
-    A tool for checking that tests failed for excpeted reasons and 
+    A tool for checking that tests failed for expected reasons and 
     that keywords have correct log messages.
 
 times2csv

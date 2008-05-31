@@ -19,13 +19,14 @@
 
 Usage:  fileviever.py [path]
 
-This tool is mainly targeted for viewing Robot Framework debug files set with
-'--debugfile' command line option when running test. The idea is to provide
-a tool that has similar functionality as 'tail -f' command in unixy systems.
+This tool is mainly targeted for viewing Robot Framework debug files set
+with '--debugfile' command line option when running test. The idea is to
+provide a tool that has similar functionality as 'tail -f' command in 
+unixy systems.
 
-The tool has a simple GUI which is updated every time the file opened into it
-is updated. File can be given from command line or opened using 'Open' button
-in the GUI.
+The tool has a simple GUI which is updated every time the file opened into
+it is updated. File can be given from command line or opened using 'Open'
+button in the GUI.
 """
 
 import os
