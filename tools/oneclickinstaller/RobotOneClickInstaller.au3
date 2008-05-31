@@ -37,24 +37,24 @@
 $PYTHON_DIR_NAME = "Python25"
 $JYTHON_DIR_NAME = "Jython22"
 $PYTHON_PATTERN = "python-2.5*.msi"
-$ROBOT_PATTERN = "robot-1.8*.exe"
+$ROBOT_PATTERN = "robotframework-2.*.exe"
 $JYTHON_PATTERN = "jython_installer-2.2*.jar"
 
 ; Usage to show to the user. If major versions of installed software are changed update them also here!!
 ; Patterns and directory names above are used in the usage so that they don't need to be updated.
 $USAGE = "One Click Installer installs Robot Framework and its preconditions Python and Jython (optional). " & _
-         "It also sets Robot start-up scripts (pybot, jybot, rebot) as well as Python and Jython executables " & _
+         "It also sets Robot Framework start-up scripts (pybot, jybot, rebot) as well as Python and Jython executables " & _
          "into %PATH% environment variable so that they can be executed from the command line. (Note that " & _
          "you need to restart the command prompt for these changes to take effect.)" & @CRLF & @CRLF & _
-		 "You should use this installer ONLY if you don't previously have Python or Jython installed. " & _
-	     "In that case, and also if you want to have a custom installation, you need to install needed " & _
-		 "components separately." & @CRLF & @CRLF & _
+         "You should use this installer ONLY if you don't previously have Python or Jython installed. " & _
+         "In that case, and also if you want to have a custom installation, you need to install needed " & _
+         "components separately." & @CRLF & @CRLF & _
          "One Click Installer requires that you have all the required component installers in the same directory " & _
-         "with it and that they have expected names. If Robot or Python installer is missing, " & _
+         "with it and that they have expected names. If Robot Framework or Python installer is missing, " & _
          "installation fails. If Jython installer doesn't exist, Jython is simply not installed. Note that " & _
          "in order to install Jython, Java 1.4 or newer must be already installed. Supported " & _
-         "versions are Robot 1.8.x, Python 2.5.x and Jython 2.2.x where '.x' means that any minor version " & _
-         "(e.g. 1.8 or 1.8.3) is ok. These installers can be downloaded from respective project websites if " & _
+         "versions are Robot Framework 2.x, Python 2.5.x and Jython 2.2.x where '.x' means that any minor version " & _
+         "(e.g. 2.5 or 2.5.2) is OK. These installers can be downloaded from respective project websites if " & _
          "they are missing. Expected patterns for installer names are '" & $ROBOT_PATTERN & "', '" & _
          $PYTHON_PATTERN & "' and '" & $JYTHON_PATTERN & "'." & @CRLF & @CRLF & _
          "The only thing you need to specify is the base directory where to install Python and Jython. " & _
@@ -75,11 +75,11 @@ $base_dir = GetBaseDirectory()
 $python_installer = GetRequiredInstaller($PYTHON_PATTERN, "Python")
 $robot_installer = GetRequiredInstaller($ROBOT_PATTERN, "Robot")
 $jython_installer = GetOptionalInstaller($JYTHON_PATTERN)
-$python_dir = GetPythonDir($base_dir & "Python25")
-$jython_dir = GetJythonDir($base_dir & "Jython22", $jython_installer)
+$python_dir = GetPythonDir($base_dir & $PYTHON_DIR_NAME)
+$jython_dir = GetJythonDir($base_dir & $PYTHON_DIR_NAME, $jython_installer)
 InstallPython($python_installer, $python_dir)
 InstallJython($jython_installer, $jython_dir)
-SetPath($python_dir, $jython_dir)  ; This should be done before InstallRobot to get msvcrt71.dll into PATH
+SetPath($python_dir, $jython_dir)  ; This must be done before InstallRobot to always have msvcrt71.dll in PATH
 InstallRobot($robot_installer)
 Exit
 
@@ -89,13 +89,13 @@ Exit
 ;;
 
 Func GetBaseDirectory()
-	If $CmdLine[0] == 0 Then
-		$base = InputBox("Robot Framework One Click Installer", $USAGE, "C:\", "", 500, 470)
-	ElseIf $CmdLine[0] == 1 Then
-		$base = $CmdLine[1]
-	Else
-		Cancel("Usage: " & @ScriptName & " [basedir]")
-	EndIf
+    If $CmdLine[0] == 0 Then
+        $base = InputBox("Robot Framework One Click Installer", $USAGE, "C:\", "", 500, 470)
+    ElseIf $CmdLine[0] == 1 Then
+        $base = $CmdLine[1]
+    Else
+        Cancel("Usage: " & @ScriptName & " [basedir]")
+    EndIf
     If $base == "" Then
         Cancel("Installation cancelled by user.")
     ElseIf FileExists($base) == 0 Then
@@ -201,4 +201,3 @@ Func SetPath($python, $jython)
     RegWrite("HKCU\Environment", "PATH", "REG_EXPAND_SZ", $new)
     EnvUpdate()
 EndFunc
-
