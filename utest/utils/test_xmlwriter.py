@@ -1,0 +1,135 @@
+import os, sys, unittest, tempfile
+from StringIO import StringIO
+
+from robot.errors import *
+from robot import utils
+from robot.utils.asserts import *
+
+PATH = os.path.join(tempfile.gettempdir(), 'test_xmlwriter.xml')
+
+class TestXmlWriter(unittest.TestCase):
+
+    def setUp(self):
+        self.writer = utils.XmlWriter(PATH)
+        
+    def tearDown(self):
+        self.writer.close()
+        os.remove(PATH)
+    
+    def test_write_element_in_pieces(self): 
+        self.writer.start_element('name', {'attr': 'value'}, True)
+        self.writer.content('Some content here!!')
+        self.writer.end_element('name', True)
+        self.writer.close()
+        self._verify_node(None, 'name', '\nSome content here!!',
+                          {'attr': 'value'})
+
+    def test_calling_content_multiple_times(self):
+        self.writer.start_element(u'robot-log', newline=False)
+        self.writer.content(u'Hello world!\n')
+        self.writer.content(u'Hi again!')
+        self.writer.content('\tMy name is John')
+        self.writer.end_element('robot-log')
+        self.writer.close()
+        self._verify_node(None, 'robot-log', 
+                          'Hello world!\nHi again!\tMy name is John')
+    
+    def test_write_whole_element(self):
+        self.writer.whole_element('foo', 'Node\n content', {'a1':'attr1', 'a2':'attr2'})
+        self.writer.close()
+        self._verify_node(None, 'foo', 'Node\n content', 
+                          {'a1': 'attr1', 'a2': 'attr2'})
+
+    def test_write_many_elements(self):
+        self.writer.start_element('root', {'version': 'test'})
+        self.writer.start_element('child1', {'my-attr': 'my value'})
+        self.writer.whole_element('leaf1.1', 'leaf content', {'type': 'kw'})
+        self.writer.whole_element('leaf1.2')
+        self.writer.end_element('child1')
+        self.writer.whole_element('child2', attributes={'class': 'foo'})
+        self.writer.end_element('root')
+        self.writer.close()
+        root = utils.DomWrapper(PATH)
+        self._verify_node(root, 'root', attrs={'version': 'test'})
+        self._verify_node(root.get_node('child1'), 'child1', attrs={'my-attr': 'my value'})
+        self._verify_node(root.get_node('child1/leaf1.1'), 'leaf1.1', 
+                          'leaf content', {'type': 'kw'})
+        self._verify_node(root.get_node('child1/leaf1.2'), 'leaf1.2')
+        self._verify_node(root.get_node('child2'), 'child2', attrs={'class': 'foo'})
+
+    def test_newline_insertion(self):
+        self.writer.start_element('root')
+        self.writer.start_element('suite', {'type': 'directory_suite'})
+        self.writer.whole_element('test', attributes={'name': 'my_test'}, 
+                                  newline=False)
+        self.writer.whole_element('test', attributes={'name': 'my_2nd_test'})
+        self.writer.end_element('suite', False)
+        self.writer.start_element('suite', {'name': 'another suite'}, 
+                                  newline=False)
+        self.writer.content('Suite 2 content')
+        self.writer.end_element('suite')
+        self.writer.end_element('root')
+        self.writer.close()
+        f = open(PATH)
+        lines = [ line for line in f.readlines() if line != '\n' ]
+        f.close()
+        assert_equal(len(lines), 6)
+
+    def test_none_content(self):
+        self.writer.whole_element(u'robot-log', None)
+        self.writer.close()
+        self._verify_node(None, 'robot-log')
+        
+    def test_content_with_invalid_command_char(self):
+        self.writer.whole_element('robot-log', '\033[31m\033[32m\033[33m\033[m')
+        self.writer.close()
+        self._verify_node(None, 'robot-log', '[31m[32m[33m[m')
+
+    def test_content_with_invalid_command_char_unicode(self):
+        self.writer.whole_element('robot-log', u'\x1b[31m\x1b[32m\x1b[33m\x1b[m')
+        self.writer.close()
+        self._verify_node(None, 'robot-log', '[31m[32m[33m[m')
+
+    def test_content_with_unicode(self):
+        self.writer.start_element('root')
+        self.writer.whole_element(u'e', u'Circle is 360\u00B0')
+        self.writer.whole_element(u'f', u'Hyv\u00E4\u00E4 \u00FC\u00F6t\u00E4')
+        self.writer.end_element('root')
+        self.writer.close()
+        root = utils.DomWrapper(PATH)
+        self._verify_node(root.get_node('e'), 'e', u'Circle is 360\u00B0')
+        self._verify_node(root.get_node('f'), 'f', 
+                         u'Hyv\u00E4\u00E4 \u00FC\u00F6t\u00E4')
+        
+
+    def test_content_with_entities(self):
+        self.writer.whole_element(u'robot-log', 'Me, Myself & I > you')
+        self.writer.close()
+        f = open(PATH)
+        content = f.read()
+        f.close()
+        assert_true(content.count('Me, Myself &amp; I &gt; you') > 0)
+
+    def _verify_node(self, node, name, text=None, attrs={}):
+        if node is None:
+            node = utils.DomWrapper(PATH)
+        assert_equals(node.name, name)
+        if text is not None:
+            assert_equals(node.text, text)
+        assert_equals(node.attrs, attrs)
+
+
+class TestXmlWriterUtils(unittest.TestCase):
+    
+    def setUp(self):
+        self.writer = utils.abstractxmlwriter.AbstractXmlWriter()
+
+    def test_encode_with_illegal_chars(self):
+        assert_equals(self.writer._encode(u'\x1b[31m'), '[31m')
+
+    def test_encode_without_illegal_char(self):
+        assert_equals(self.writer._encode('\\x09'), '\\x09')
+        
+
+if __name__ == '__main__':
+    unittest.main()
