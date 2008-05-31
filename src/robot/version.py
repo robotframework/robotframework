@@ -14,4 +14,4 @@
 
 
 VERSION = 'devel'
-DATE = '20080526'
+DATE = '20080531'
