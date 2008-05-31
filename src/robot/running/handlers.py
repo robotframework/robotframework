@@ -1,0 +1,301 @@
+#  Copyright 2008 Nokia Siemens Networks Oyj
+#
+#  Licensed under the Apache License, Version 2.0 (the "License");
+#  you may not use this file except in compliance with the License.
+#  You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+#  Unless required by applicable law or agreed to in writing, software
+#  distributed under the License is distributed on an "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#  See the License for the specific language governing permissions and
+#  limitations under the License.
+
+
+import sys
+from types import MethodType, FunctionType
+
+from robot import utils
+from robot.errors import FrameworkError
+from robot.common import BaseHandler
+
+
+# Hook for names in BuiltIn.RunKeyword, see _RunnableHandler._is_run_keyword_variant
+_run_kw_names = None
+
+
+class _RunnableHandler(BaseHandler):
+    """Base class for PythonHandler, JavaHandler and DynamicHandler"""
+
+    type = 'library'
+
+    def __init__(self, library, handler_name, handler_method):
+        self.library = library
+        self._handler_name = handler_name
+        self.name = utils.printable_name(handler_name, code_style=True)
+        self.longname = '%s.%s' % (library.name, self.name)
+        self._method = library.scope == 'GLOBAL' and \
+                self._get_global_handler(handler_method, handler_name) or None
+        self.doc = ''
+        self.timeout = ''  # Needed for set_attributes in runner.start_keyword
+        
+    def copy(self, library):
+        handler = _RunnableHandler(library, self._handler_name, None)
+        self._copy_attributes(handler)
+        return handler
+        
+    def _copy_attributes(self, handler):
+        handler._method = self._method
+        handler.minargs = self.minargs
+        handler.maxargs = self.maxargs
+        handler.doc = self.doc
+        
+    def run(self, output, namespace, args):
+        """Executes the represented handler with given 'args'.
+        
+        Note: This method MUST NOT change this object's internal state.
+        """
+        if self._method is not None:
+            handler = self._method
+        else:
+            lib_instance = self.library.get_instance()
+            handler = self._get_handler(lib_instance, self._handler_name)
+        args = self._process_args(args, namespace.variables)
+        self._tracelog_args(output, args)
+        utils.capture_output()
+        try:
+            ret = self._run_handler(handler, args, output, namespace)
+        except:
+            self._release_and_log_output(output)
+            raise
+        else:
+            self._release_and_log_output(output)
+        output.trace('Return: %s' % utils.unic(ret))
+        return ret
+    
+    def _get_global_handler(self, method, name):
+        return method
+    
+    def _get_handler(self, lib_instance, handler_name):
+        """Overridden by DynamicHandler"""
+        return getattr(lib_instance, handler_name)
+            
+    def _process_args(self, args, variables):
+        """Overridden by JavaHandler"""
+        args = variables.replace_list(args)
+        self._check_arg_limits(args)
+        return args
+    
+    def _run_handler(self, handler, args, output, namespace):
+        timeout = self._get_timeout(namespace)
+        if timeout is not None and timeout.active():
+            return timeout.run(handler, args=args, logger=output)
+        return handler(*args)
+
+    def _get_timeout(self, namespace):
+        if self._is_run_keyword_variant():
+            return None
+        timeoutable = self._get_timeoutable_items(namespace)
+        if len(timeoutable) > 0 :
+            return min([ item.timeout for item in timeoutable ])
+        return None
+
+    def _get_timeoutable_items(self, namespace):
+        items = namespace.uk_handlers[:]
+        if namespace.test is not None and namespace.test.state != 'TEARDOWN':
+            items.append(namespace.test)
+        return items
+    
+    def _release_and_log_output(self, logger):
+        stdout, stderr = utils.release_output()
+        logger.log_output(stdout)
+        logger.log_output(stderr)
+        if stderr.strip() != '':
+            sys.stderr.write(stderr+'\n')
+            
+    def _is_run_keyword_variant(self):
+        # Timeouts must not be active for Run Keyword -variants.
+        global _run_kw_names
+        if _run_kw_names is None:
+            from robot.libraries.BuiltIn import RunKeyword
+            _run_kw_names = [ utils.printable_name(name, True) 
+                              for name in dir(RunKeyword) if not name.startswith('_') ]
+        return self.library.name == 'BuiltIn' and self.name in _run_kw_names
+
+
+class PythonHandler(_RunnableHandler):
+    
+    def __init__(self, library, handler_name, handler_method):
+        _RunnableHandler.__init__(self, library, handler_name, handler_method)
+        self.doc = utils.get_doc(handler_method)
+        self.args, self.defaults, self.varargs \
+                = self._get_arg_spec(handler_method)
+        self.minargs = len(self.args) - len(self.defaults)
+        self.maxargs = self.varargs is not None and sys.maxint or len(self.args)
+        
+    def _get_arg_spec(self, handler):
+        """Returns info about args in a tuple (args, defaults, varargs)
+
+        args     - tuple of all accepted arguments
+        defaults - tuple of default values
+        varargs  - name of the argument accepting varargs or None
+        """
+        # Code below is based on inspect module's getargs and getargspec 
+        # methods. See their documentation and/or source for more details. 
+        if type(handler) is MethodType:
+            func = handler.im_func
+            first_arg = 1        # this drops 'self' from methods' args
+        elif type(handler) is FunctionType:
+            func = handler
+            first_arg = 0
+        else:
+            raise FrameworkError("Only MethodType and FunctionType accepted. "
+                                 "Got '%s' instead." % type(handler))
+        co = func.func_code
+        nargs = co.co_argcount
+        args = co.co_varnames[first_arg:nargs]
+        defaults = func.func_defaults
+        if defaults is None:
+            defaults = ()
+        if co.co_flags & 4:                      # 4 == CO_VARARGS
+            varargs =  co.co_varnames[nargs]
+        else:
+            varargs = None
+        return args, defaults, varargs
+            
+
+class JavaHandler(_RunnableHandler):
+    
+    def __init__(self, library, handler_name, handler_method):
+        if not self._is_valid_handler(handler_method):
+            raise TypeError('Declared only in implicit parent class')
+        _RunnableHandler.__init__(self, library, handler_name, handler_method)
+        self.minargs, self.maxargs = self._get_arg_limits(handler_method)
+        
+    def _is_valid_handler(self, handler):
+        # Ignore methods only in 'java.lang.Object' (e.g. 'equals', 'wait').
+        # Also ignore methods declared only in 'org.python.proxies' (there 
+        # seems to be 'clone' and 'finalize').
+        co = handler.im_func
+        # signature is an instance of org.python.ReflectedArgs
+        for signature in co.argslist[:co.nargs]:
+            # 'getName' may raise an exception -- not sure why but that happens
+            # at least with handlers declared in class extending JUnit TestCase.
+            # Would be better to investigate but just not excluding these
+            # should be an ok workaround.
+            try:
+                name = signature.declaringClass.getName()
+                if not (name == 'java.lang.Object' 
+                        or name.startswith('org.python.proxies.')):
+                    return True
+            except:
+                return True
+        return False
+    
+    def _get_arg_limits(self, handler):
+        co = handler.im_func
+        signatures = co.argslist[:co.nargs]
+        if len(signatures) == 1:
+            return self._get_single_sig_arg_limits(signatures[0])
+        else:
+            return self._get_multi_sig_arg_limits(signatures)
+
+    def _get_single_sig_arg_limits(self, signature):
+        args = signature.args
+        if len(args) > 0 and args[-1].isArray():
+            mina = len(args) - 1
+            maxa = sys.maxint
+        else:
+            mina = maxa = len(args)
+        return mina, maxa
+    
+    def _get_multi_sig_arg_limits(self, signatures):
+        mina = maxa = None
+        for sig in signatures:
+            argc = len(sig.args)
+            if mina is None or argc < mina:
+                mina = argc
+            if maxa is None or argc > maxa:
+                maxa = argc
+        return mina, maxa
+            
+    def _process_args(self, args, variables):
+        args = _RunnableHandler._process_args(self, args, variables)
+        if self.maxargs == sys.maxint:
+            args = self._handle_varargs(args)
+        return args
+
+    def _handle_varargs(self, args):
+        if len(args) == self.minargs:
+            args.append([])
+        elif len(args) == self.minargs + 1 and utils.is_list(args[-1]):
+            pass
+        else:
+            varargs = args[self.minargs:]
+            args = args[:self.minargs]
+            args.append(varargs)
+        return args
+
+    
+class DynamicHandler(_RunnableHandler):
+    
+    def __init__(self, library, handler_name, handler_method, doc='', 
+                 argspec=None, copy=False):
+        _RunnableHandler.__init__(self, library, handler_name, handler_method)
+        if not copy:
+            self._run_keyword_method_name = handler_method.__name__
+        self.doc = doc is not None and utils.unic(doc) or ''
+        self.args, self.defaults, self.varargs = self._get_arg_spec(argspec)
+        self.minargs = len(self.args) - len(self.defaults)
+        self.maxargs = self.varargs is not None and sys.maxint or len(self.args)
+
+    def _get_arg_spec(self, argspec):
+        if argspec is None:
+            return [], [], '<unknown>' 
+        try:
+            if utils.is_str(argspec):
+                raise TypeError
+            return self._parse_arg_spec(list(argspec))
+        except TypeError:
+            raise TypeError('Argument specification should be list/array of Strings.')
+        
+    def _parse_arg_spec(self, argspec):
+        if argspec == []:
+            return [], [], None
+        args = [] 
+        defaults = []
+        vararg = None
+        for token in argspec:
+            if vararg is not None:
+                raise TypeError
+            if token.startswith('*'):
+                vararg = token[1:]
+                continue
+            if token.count('=') > 0:
+                arg, default = token.split('=', 1)
+                args.append(arg)
+                defaults.append(default)
+                continue
+            if defaults:
+                raise TypeError
+            args.append(token)
+        return args, defaults, vararg
+        
+    def _get_handler(self, lib_instance, handler_name):
+        runner = getattr(lib_instance, self._run_keyword_method_name)
+        return self._get_dynamic_handler(runner, handler_name)
+    
+    def _get_global_handler(self, method, name):
+        return self._get_dynamic_handler(method, name)
+
+    def _get_dynamic_handler(self, runner, name):
+        def handler(*args):
+            return runner(name, list(args))
+        return handler
+    
+    def copy(self, library):
+        handler = DynamicHandler(library, self._handler_name, None, copy=True)
+        self._copy_attributes(handler)
+        handler._run_keyword_method_name = self._run_keyword_method_name
+        return handler
