@@ -1,0 +1,9 @@
+*Setting	Value	Value	Value	Value
+Suite Setup	Suite Setup			
+Document	Testing suite init file
+
+*Variable	Value	Value	Value	Value
+${msg}	Running suite setup
+
+*User Keywords	Action	Argument	Argument	Argument
+Suite Setup	Log	${msg}		

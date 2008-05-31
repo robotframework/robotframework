@@ -1,0 +1,6 @@
+*Variable	Value	Value	Value	Value
+${tsv_resource_var2}	TSV Resource Variable From Recursive Resource			
+
+
+*Keyword	Action	Argument	Argument	Argument
+Keyword from TSV resource 2	Noop			

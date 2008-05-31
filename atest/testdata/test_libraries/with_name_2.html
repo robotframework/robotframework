@@ -1,0 +1,649 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="generator" content="RobotIDE"> 
+<style type="text/css">
+html {
+  font-family: Arial,Helvetica,sans-serif;
+  background-color: white;
+  color: black;
+}
+p {
+  max-width: 60em;
+}
+table {
+  border-collapse: collapse;
+  empty-cells: show;
+  margin: 1em 0em;
+  border: 0.1em solid black;
+}
+th, td {
+  border-style: solid;
+  border-width: 0.05em 0.1em;
+  border-color: black;
+  padding: 0.1em 0.2em;
+  height: 1.5em;
+}
+th {
+  background-color: rgb(192, 192, 192);
+  color: black;
+  border-width: 0.1em;
+  font-weight: bold;
+  text-align: center;
+  text-transform: capitalize;
+  letter-spacing: 0.1em;
+}
+/* Widths of named columns */
+col.name {
+  width: 10em;
+}
+.action, .value, .arg {
+  width: 15em;
+}
+/* Properties for the name column 
+- td:first-child should work in CSS 2.1 avare browsers (tested in Firefox)
+- col.name is against specs but works in IE
+*/
+td:first-child, col.name {
+  background-color: rgb(240, 240, 240);
+  text-transform: capitalize;
+  letter-spacing: 0.1em;
+}
+/* required for IE */
+th {
+  font-style: normal;
+}
+</style>
+<title>With Name 2</title></head>
+<body>
+<h1>With Name 2</h1>
+
+<table border="1">
+<colgroup span="99"><col class="name"><col class="value" span="4"></colgroup>
+<tbody><tr>
+<th>Setting</th>
+<th>Value</th>
+<th>Value</th>
+<th>Value</th>
+<th>Value</th>
+</tr>
+<tr>
+<td>Library</td>
+<td>OperatingSystem</td>
+<td>WITH NAME</td>
+<td>OS</td>
+<td></td>
+</tr>
+<tr>
+<td>Library</td>
+<td>ParameterLibrary</td>
+<td>arg1a</td>
+<td>arg1b</td>
+<td>with name</td>
+</tr>
+<tr>
+<td>...</td>
+<td>Param1</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Library</td>
+<td>ParameterLibrary</td>
+<td>arg2a</td>
+<td>arg2b</td>
+<td>WITH NAME</td>
+</tr>
+<tr>
+<td>...</td>
+<td>Param2</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Library</td>
+<td>ParameterLibrary</td>
+<td>whatever</td>
+<td>with name</td>
+<td></td>
+</tr>
+<tr>
+<td>Library</td>
+<td>BuiltIn</td>
+<td>With Name</td>
+<td>B2</td>
+<td></td>
+</tr>
+<tr>
+<td>Library</td>
+<td>module_library</td>
+<td>with name</td>
+<td>MOD1</td>
+<td></td>
+</tr>
+<tr>
+<td>Library</td>
+<td>pythonmodule.library</td>
+<td>With Name</td>
+<td>mod 2</td>
+<td></td>
+</tr>
+<tr>
+<td>Library</td>
+<td>Example Java Library</td>
+<td>with name</td>
+<td>Java Lib</td>
+<td></td>
+</tr>
+<tr>
+<td>Library</td>
+<td>javapkg.JavaPackageExample</td>
+<td>with name</td>
+<td>Java Pkg</td>
+<td></td>
+</tr>
+<tr>
+<td>Library</td>
+<td>MyLibFile.py</td>
+<td>with name</td>
+<td>Params</td>
+<td></td>
+</tr>
+<tr>
+<td>Library</td>
+<td>RunKeywordLibrary</td>
+<td>with name</td>
+<td>dynamic</td>
+<td></td>
+</tr>
+<tr>
+<td>Library</td>
+<td>RunKeywordLibraryJava</td>
+<td>with name</td>
+<td>dynamicJava</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody></table>
+
+<table border="1">
+<colgroup span="99"><col class="name"><col class="value" span="4"></colgroup>
+<tbody><tr>
+<th>Variable</th>
+<th>Value</th>
+<th>Value</th>
+<th>Value</th>
+<th>Value</th>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody></table>
+
+<table border="1">
+<colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
+<tbody><tr>
+<th>Test Case</th>
+<th>Action</th>
+<th>Argument</th>
+<th>Argument</th>
+<th>Argument</th>
+</tr>
+<tr>
+<td><a name="test_NoArguments">No Arguments</a></td>
+<td>[Documentation]</td>
+<td>FAIL&nbsp;
+No keyword with name 'OperatingSystem.Should Exist' found.</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>OS.Directory Should Exist</td>
+<td>${CURDIR}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should Exist</td>
+<td>${CURDIR}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>OperatingSystem.Should Exist</td>
+<td>${CURDIR}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="test_WithArgumentsAndImportSameLibraryTwice">With Arguments And Import Same Library Twice</a></td>
+<td>${a1}</td>
+<td>${a2} =</td>
+<td>Param1.parameters</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>BuiltIn.Should Be Equal</td>
+<td>${a1}</td>
+<td>arg1a</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>BuiltIn.Should Be Equal</td>
+<td>${a1}</td>
+<td>arg1a</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>${a1}</td>
+<td>${a2} =</td>
+<td>par am 2 . par A meter S</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>BuiltIn.Should Be Equal</td>
+<td>${a1}</td>
+<td>arg2a</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>BuiltIn.Should Be Equal</td>
+<td>${a2}</td>
+<td>arg2b</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="test_WIthNameHasNoEffectIfNotSecondLast">WIth Name Has No Effect If Not Second Last</a></td>
+<td>${a1}</td>
+<td>${a2} =</td>
+<td>ParameterLibrary.parameters</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>BuiltIn.Should Be Equal</td>
+<td>${a1}</td>
+<td>whatever</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>BuiltIn.Should Be Equal</td>
+<td>${a2}</td>
+<td>with name</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="test_WithNameAfterNormalImport">With Name After Normal Import</a></td>
+<td>[Documentation]</td>
+<td>FAIL This failure comes from B2!</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>B2.Fail</td>
+<td>This failure comes from B2!</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="test_ModuleLibrary">Module Library</a></td>
+<td>[Documentation]</td>
+<td>FAIL This is a failing keyword from module library</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>mod1.argument</td>
+<td>Hello</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>${s} =</td>
+<td>MOD2.keyword from sub module</td>
+<td>Tellus</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>BuiltIn.Should Be Equal</td>
+<td>${s}</td>
+<td>Hello, Tellus!</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Failing</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="test_JavaLibrary">Java Library</a></td>
+<td>[Documentation]</td>
+<td>FAIL No keyword with name 'Example Java Library.Get Java Object' found.</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>${s} =</td>
+<td>returnStringFromLibrary</td>
+<td>whatever</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>BuiltIn.Should Be Equal</td>
+<td>${s}</td>
+<td>whatever</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>${obj} =</td>
+<td>Java Lib . Get Java Object</td>
+<td>My Name</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>BuiltIn.Should Be Equal</td>
+<td>${obj.name}</td>
+<td>My Name</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Example Java Library.Get Java Object</td>
+<td>This fails</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="test_JavaLibraryInPackage">Java Library In Package</a></td>
+<td>[Documentation]</td>
+<td>FAIL No keyword with name 'javapkg.JavaPackageExample.whatever' found.</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>${s1} =</td>
+<td>javapkg.returnvalue</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>${s2} =</td>
+<td>Return Value</td>
+<td>Returned string value</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>BuiltIn.Should Be Equal</td>
+<td>${s1}</td>
+<td>${s2}</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>javapkg.JavaPackageExample.whatever</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="test_NameGivenUsing&quot;WithName&quot;CanBeReusedInDifferentSuites">Name Given Using "With Name" Can Be Reused In Different Suites</a></td>
+<td>Para MS.Keyword In My Lib File</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="test_ImportLibraryKeyword">Import Library Keyword</a></td>
+<td>BuiltIn.Import Library</td>
+<td>Operating System</td>
+<td>With Name</td>
+<td>MyOS</td>
+</tr>
+<tr>
+<td></td>
+<td>MyOS.Directory Should Exist</td>
+<td>${CURDIR}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>B2.Import Library</td>
+<td>ParameterLibrary</td>
+<td>my first argument</td>
+<td>second arg</td>
+</tr>
+<tr>
+<td></td>
+<td>...</td>
+<td>WITH NAME</td>
+<td>MyParamLib</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>${a1}</td>
+<td>${a2} =</td>
+<td>My Param Lib . Para Me Ters</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>BuiltIn.Should Be Equal</td>
+<td>${a1}</td>
+<td>my first argument</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>BuiltIn.Should Be Equal</td>
+<td>${a2}</td>
+<td>second arg</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="test_CorrectErrorWhenUsingKeywordFromSameLibraryWithDifferentNamesWithoutPrefix2">Correct Error When Using Keyword From Same Library With Different Names Without Prefix 2</a></td>
+<td>[Documentation]</td>
+<td>FAIL Multiple keywords with name 'Parameters' found.\n Give the
+full name of the keyword you want to use.\n Found:
+'MyParamLib.Parameters', 'Param1.Parameters', 'Param2.Parameters' and
+'ParameterLibrary.Parameters'</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Parameters</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="test_DynamicLibrary">Dynamic Library</a></td>
+<td>[Documentation]</td>
+<td>FAIL&nbsp;
+No keyword with name 'RunKeywordLibrary.Run Keyword That Passes' found.</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>dynamic.Run Keyword That Passes</td>
+<td>arg1</td>
+<td>arg2</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>RunKeywordLibrary.Run Keyword That Passes</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="test_DynamicJavaLibrary">Dynamic Java Library</a></td>
+<td>[Documentation]</td>
+<td>FAIL No keyword with name 'RunKeywordLibraryJava.Run Keyword That Passes' found.</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>dynamicJava.Run Keyword That Passes</td>
+<td>arg1</td>
+<td>arg2</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>RunKeywordLibraryJava.Run Keyword That Passes</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody></table>
+
+<table border="1">
+<colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
+<tbody><tr>
+<th>Keyword</th>
+<th>Action</th>
+<th>Argument</th>
+<th>Argument</th>
+<th>Argument</th>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody></table>
+
+</body></html>

@@ -1,0 +1,2317 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+
+
+
+
+
+
+
+
+
+  
+  
+  
+  
+  
+  
+  
+  
+  <meta name="generator" content="HTML Tidy, see www.w3.org">
+
+
+
+
+
+
+
+
+
+  
+  
+  
+  
+  
+  
+  
+  
+  <style type="text/css">
+html { font-family: Arial,Helvetica,sans-serif;
+background-color: white;
+color: black;
+}
+p { max-width: 60em;
+}
+table { border-collapse: collapse;
+empty-cells: show;
+margin: 1em 0em;
+border: 0.1em solid black;
+}
+th, td {
+border-style: solid;
+border-width: 0.05em 0.1em;
+border-color: black;
+padding: 0.1em 0.2em;
+height: 1.5em;
+}
+th {
+background-color: rgb(192, 192, 192);
+color: black;
+border-width: 0.1em;
+font-weight: bold;
+text-align: center;
+text-transform: capitalize;
+letter-spacing: 0.1em;
+}
+/* Widths of named columns */
+col.name {
+width: 10em;
+}
+.action , .value, .arg {
+width: 15em;
+}
+/* Properties for the name column - td:first-child should work in CSS 2.1 avare browsers (tested in Firefox)
+- col.name is against specs but works in IE
+*/
+td:first-child, col.name {
+background-color: rgb(240, 240, 240);
+text-transform: capitalize;
+letter-spacing: 0.1em;
+}
+th { font-style: normal; } /* required for IE */
+  
+  </style>
+
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <title>Robot Test Cases</title>
+  <link type="text/css" href="resources/css/testdata.css" rel="stylesheet">
+</head>
+
+<body>
+
+
+
+
+
+
+
+
+
+<h1>Robot Test Cases for Operating System Test Library</h1>
+
+
+
+
+
+
+
+
+
+
+<table border="1">
+
+
+
+
+
+
+
+
+
+  <colgroup span="99"><col class="name"><col class="value" span="4"></colgroup>
+
+  <thead>
+  <tr>
+
+
+
+
+
+
+
+
+
+    <th>Setting</th>
+
+
+
+
+
+
+
+
+
+    <th>Value</th>
+
+
+
+
+
+
+
+
+
+    <th>Value</th>
+
+
+
+
+
+
+
+
+
+    <th>value</th>
+
+
+
+
+
+
+
+
+
+    <th>Value</th>
+
+
+
+
+
+
+
+
+
+  </tr>
+
+
+
+
+
+
+
+
+
+  </thead>
+
+  <tbody>
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+      <td>Force tags</td>
+
+
+
+
+
+
+
+
+
+      <td>regression</td>
+
+
+
+
+
+
+
+
+
+      <td>jybot</td>
+
+
+
+
+
+
+
+
+
+      <td>pybot</td>
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+      <td>Suite Setup</td>
+
+
+
+
+
+
+
+
+
+      <td>Run Tests</td>
+
+
+
+
+
+
+
+
+
+      <td><br>
+
+
+
+
+
+
+
+
+
+ </td>
+
+
+
+
+
+
+
+
+
+      <td>standard_libraries${/}operating_system${/}misc.html</td>
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+      <td>Resource</td>
+
+
+
+
+
+
+
+
+
+      <td>../../../resources/resource.html</td>
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
+  
+  
+  
+  
+  
+  
+  
+  
+  </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+<table border="1">
+
+
+
+
+
+
+
+
+
+  <colgroup span="99"><col class="name"><col class="value" span="4"></colgroup>
+
+  <thead>
+  <tr>
+
+
+
+
+
+
+
+
+
+    <th>Variable</th>
+
+
+
+
+
+
+
+
+
+    <th>Value</th>
+
+
+
+
+
+
+
+
+
+    <th>Value</th>
+
+
+
+
+
+
+
+
+
+    <th>Value</th>
+
+
+
+
+
+
+
+
+
+    <th>Value</th>
+
+
+
+
+
+
+
+
+
+  </tr>
+
+
+
+
+
+
+
+
+
+
+  <tr>
+
+
+
+
+
+
+
+
+
+    <td></td>
+
+
+
+
+
+
+
+
+
+    <td></td>
+
+
+
+
+
+
+
+
+
+    <td></td>
+
+
+
+
+
+
+
+
+
+    <td></td>
+
+
+
+
+
+
+
+
+
+    <td></td>
+
+
+
+
+
+
+
+
+
+  </tr>
+
+
+
+
+
+
+
+
+
+  </thead>
+</table>
+
+
+
+
+
+
+
+
+
+
+<table border="1">
+
+
+
+
+
+
+
+
+
+  <colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
+
+  <thead>
+  <tr>
+
+
+
+
+
+
+
+
+
+    <th>Test Case</th>
+
+
+
+
+
+
+
+
+
+    <th>Action</th>
+
+
+
+
+
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+
+
+
+
+
+  </tr>
+
+
+
+
+
+
+
+
+
+  </thead>
+
+  <tbody>
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Get Modified Time As
+Timestamp</td>
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Check testcase</td>
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Get Modified Time As
+Timestamp</td>
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+      <td>Get Modified Time As
+Seconds After Epoch</td>
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Check testcase</td>
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Get Modified Time As
+Seconds After Epoch</td>
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+      <td>Get Modified Time As
+Parts
+
+
+
+
+
+
+ </td>
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Check testcase</td>
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Get Modified Time As
+Parts</td>
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+    <tr>
+
+      <td></td>
+
+      <td></td>
+
+      <td></td>
+
+      <td></td>
+
+      <td></td>
+
+    </tr>
+
+    <tr>
+
+      <td>get modified Time Fails When Path Does Not Exist</td>
+
+      <td>Check testcase</td>
+
+      <td>get modified Time Fails When Path Does Not Exist</td>
+
+      <td></td>
+
+      <td></td>
+
+    </tr>
+
+    <tr>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td>Set modified Time Using Epoch</td>
+
+
+      <td>${tc} =</td>
+
+
+      <td>Check testcase</td>
+
+      <td>Set Modified Time Using Epoch</td>
+
+
+      
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+      <td></td>
+
+      <td>${path} =</td>
+
+      <td>Join Path</td>
+
+      <td>${CURDIR}${/}..${/}..${/}..</td>
+
+      <td>testdata<br>
+
+      </td>
+
+    </tr>
+
+    <tr>
+
+      <td></td>
+
+      <td>...</td>
+
+      <td>standard_libraries</td>
+
+      <td>operating_system</td>
+
+      <td>robot_temp_file.txt</td>
+
+    </tr>
+
+    <tr>
+
+      <td></td>
+
+      <td>Check Log Message</td>
+
+      <td>${tc.kws[1].msgs[0]}</td>
+
+      <td>Set modified time of '${path}' to 2007-04-26 11:22:20</td>
+
+      <td></td>
+
+    </tr>
+
+    <tr>
+
+      <td></td>
+
+      <td></td>
+
+      <td></td>
+
+      <td></td>
+
+      <td></td>
+
+    </tr>
+
+    <tr>
+
+      <td>Set modified Time Using Timestamp</td>
+
+      <td>${tc} =</td>
+
+      <td>Check testcase</td>
+
+      <td>Set modified Time Using Timestamp</td>
+
+      <td></td>
+
+    </tr>
+
+    <tr>
+
+      <td></td>
+
+      <td>${path} =</td>
+
+      <td>Join Path</td>
+
+      <td>${CURDIR}${/}..${/}..${/}..</td>
+
+      <td>testdata<br>
+
+      </td>
+
+    </tr>
+
+    <tr>
+
+      <td></td>
+
+      <td>...</td>
+
+      <td>standard_libraries</td>
+
+      <td>operating_system</td>
+
+      <td>robot_temp_file.txt</td>
+
+    </tr>
+
+    <tr>
+
+      <td></td>
+
+      <td>Check Log Message</td>
+
+      <td>${tc.kws[1].kws[0].kws[0].msgs[0]}</td>
+
+      <td>Set modified time of '${path}' to 2007-04-26 11:22:30</td>
+
+      <td></td>
+
+    </tr>
+
+    <tr>
+
+      <td></td>
+
+      <td>Check Log Message</td>
+
+      <td>${tc.kws[1].kws[1].kws[0].msgs[0]}</td>
+
+      <td>Set modified time of '${path}' to 2007-04-26 11:22:30</td>
+
+      <td></td>
+
+    </tr>
+
+    <tr>
+
+      <td></td>
+
+      <td>Check Log Message</td>
+
+      <td>${tc.kws[1].kws[2].kws[0].msgs[0]}</td>
+
+      <td>Set modified time of '${path}' to 2007-04-26 11:22:30</td>
+
+      <td></td>
+
+    </tr>
+
+    <tr>
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+      <td>Check Log Message</td>
+
+      <td>${tc.kws[1].kws[3].kws[0].msgs[0]}</td>
+
+      <td>Set modified time of '${path}' to 2007-04-26 11:22:30</td>
+
+
+
+
+
+
+
+
+
+      
+
+
+
+
+
+
+
+      
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+    <tr>
+
+      <td></td>
+
+      <td></td>
+
+      <td></td>
+
+      <td></td>
+
+      <td></td>
+
+    </tr>
+
+    <tr>
+
+      <td>Set Modified Time Using NOW</td>
+
+      <td>Check testcase</td>
+
+      <td>Set Modified Time Using NOW</td>
+
+      <td></td>
+
+      <td></td>
+
+    </tr>
+
+    <tr>
+
+      <td></td>
+
+      <td></td>
+
+      <td></td>
+
+      <td></td>
+
+      <td></td>
+
+    </tr>
+
+    <tr>
+
+      <td>Set Modified Time Fails When Path Does Not Exist</td>
+
+      <td>Check testcase</td>
+
+      <td>Set Modified Time Fails When Path Does Not Exist</td>
+
+      <td></td>
+
+      <td></td>
+
+    </tr>
+
+    <tr>
+
+      <td></td>
+
+      <td></td>
+
+      <td></td>
+
+      <td></td>
+
+      <td></td>
+
+    </tr>
+
+    <tr>
+
+      <td>Set Modified Time Fails When Path Is Directory</td>
+
+      <td>Check testcase</td>
+
+      <td>Set Modified Time Fails When Path Is Directory</td>
+
+      <td></td>
+
+      <td></td>
+
+    </tr>
+
+    <tr>
+
+      <td></td>
+
+      <td></td>
+
+      <td></td>
+
+      <td></td>
+
+      <td></td>
+
+    </tr>
+
+    <tr>
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Get File Size</td>
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Check testcase</td>
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Get File Size</td>
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">List&nbsp;Directory</td>
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Check testcase</td>
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">List&nbsp;Directory</td>
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+    <tr>
+
+      <td></td>
+
+      <td></td>
+
+      <td></td>
+
+      <td></td>
+
+      <td></td>
+
+    </tr>
+
+    <tr>
+
+
+
+
+
+
+
+
+
+      <td>List&nbsp;Directory With Patterns</td>
+
+
+
+
+
+
+
+
+
+      <td>Check testcase</td>
+
+
+
+
+
+
+
+
+
+      <td>List&nbsp;Directory With Patterns</td>
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+    <tr>
+
+      <td></td>
+
+      <td></td>
+
+      <td></td>
+
+      <td></td>
+
+      <td></td>
+
+    </tr>
+
+    <tr>
+
+
+
+
+
+
+
+
+
+      <td>List&nbsp;Directory With&nbsp;Absolute</td>
+
+
+
+
+
+
+
+
+
+      <td>Check testcase</td>
+
+
+
+
+
+
+
+
+
+      <td>List&nbsp;Directory With Absolute</td>
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">List And Count Files And
+Directories In&nbsp;Directory</td>
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">[ Document ]</td>
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Tests 'List Files In&nbsp;Directory',
+'List&nbsp;Directories In&nbsp;Directory', 'Count Files In&nbsp;Directory', 'Count&nbsp;Directories In&nbsp;Directory' and
+'Count Items In&nbsp;Directory'</td>
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Check testcase</td>
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">List And Count Files And&nbsp;Directories In&nbsp;Directory</td>
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td>Touch</td>
+
+
+
+      <td>${tc} = </td>
+
+
+
+      <td>Check testcase</td>
+
+
+
+      <td>Touch</td>
+
+
+
+      <td></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td></td>
+
+
+
+      <td>${path} =</td>
+
+
+
+      <td>Join Path</td>
+
+
+
+      <td>${CURDIR}..${/}..${/}..${/}..</td>
+
+
+
+      <td>testdata</td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td></td>
+
+
+
+      <td>...</td>
+
+
+
+      <td>standard_libraries</td>
+
+
+
+      <td>operating_system</td>
+
+
+
+      <td>robot_temp_file.txt</td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td></td>
+
+
+
+      <td>Check Log Message</td>
+
+
+
+      <td>${tc.kws[1].msgs[0]}</td>
+
+
+
+      <td>Touched file '${path}'</td>
+
+
+
+      <td></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td></td>
+
+
+
+      <td>Check Log Message</td>
+
+
+
+      <td>${tc.kws[5].msgs[0]}</td>
+
+
+
+      <td>Touched file '${path}'</td>
+
+
+
+      <td></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+      <td></td>
+
+      <td></td>
+
+      <td></td>
+
+      <td></td>
+
+      <td></td>
+
+    </tr>
+
+    <tr>
+
+
+
+      <td>Touch Dir Fails</td>
+
+
+
+      <td>Check testcase</td>
+
+
+
+      <td>Touch Dir Fails</td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+      <td></td>
+
+      <td></td>
+
+      <td></td>
+
+      <td></td>
+
+      <td></td>
+
+    </tr>
+
+    <tr>
+
+
+
+      <td>Touch When Parent Does Not Exist Fails</td>
+
+
+
+      <td>Check testcase</td>
+
+
+
+      <td>Touch When Parent Does Not Exist Fails</td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+  
+  
+  
+  
+  
+  
+  
+  
+  </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+ <span style="font-weight: bold;"></span>
+</body>
+</html>

@@ -1,0 +1,2560 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+
+
+
+
+
+
+
+  
+  
+  
+  
+  
+  
+  <style type="text/css">
+html {
+  font-family: Arial,Helvetica,sans-serif;
+  background-color: white;
+  color: black;
+}
+p {
+  max-width: 60em;
+}
+table {
+  border-collapse: collapse;
+  empty-cells: show;
+  margin: 1em 0em;
+  border: 0.1em solid black;
+}
+th, td {
+  border-style: solid;
+  border-width: 0.05em 0.1em;
+  border-color: black;
+  padding: 0.1em 0.2em;
+  height: 1.5em;
+}
+th {
+  background-color: rgb(192, 192, 192);
+  color: black;
+  border-width: 0.1em;
+  font-weight: bold;
+  text-align: center;
+  text-transform: capitalize;
+  letter-spacing: 0.1em;
+}
+/* Widths of named columns */
+col.name {
+  width: 10em;
+}
+.action, .value, .arg {
+  width: 15em;
+}
+/* Properties for the name column 
+- td:first-child should work in CSS 2.1 avare browsers (tested in Firefox)
+- col.name is against specs but works in IE
+*/
+td:first-child, col.name {
+  background-color: rgb(240, 240, 240);
+  text-transform: capitalize;
+  letter-spacing: 0.1em;
+}
+/* required for IE */
+th {
+  font-style: normal;
+}
+  </style>
+  
+  
+  
+  
+  
+  
+  <title>Robot Test Cases</title></head>
+<body>
+
+
+
+
+
+
+
+<h1>Robot Test Cases</h1>
+
+
+
+
+
+
+
+
+<table border="1">
+
+
+
+
+
+
+
+  <colgroup span="99"><col class="name"><col class="value" span="4"></colgroup>
+  <thead>
+  <tr>
+
+
+
+
+
+
+
+    <th>Setting</th>
+
+
+
+
+
+
+
+    <th>Value</th>
+
+
+
+
+
+
+
+    <th>Value</th>
+
+
+
+
+
+
+
+    <th>value</th>
+
+
+
+
+
+
+
+    <th>Value</th>
+
+
+
+
+
+
+
+  </tr>
+
+
+
+
+
+
+
+  </thead>
+  <tbody>
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+      <td>Force Tags</td>
+
+
+
+
+
+
+      <td>regression</td>
+
+
+
+
+
+
+
+
+      <td>jybot</td>
+
+
+
+
+
+
+
+      <td>pybot</td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td>Suite Setup</td>
+
+
+
+
+
+
+      <td>Run Tests</td>
+
+
+
+
+
+
+      <td><br>
+
+
+      </td>
+
+
+
+
+
+
+      <td>core${/}test_suite_dir</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td>Resource</td>
+
+
+      <td>../../resources/resource.html</td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+    </tr>
+
+
+
+
+
+
+
+  
+  
+  
+  
+  
+  
+  </tbody>
+</table>
+
+
+
+
+
+
+
+
+<table border="1">
+
+
+
+
+
+
+
+  <colgroup span="99"><col class="name"><col class="value" span="4"></colgroup>
+  <thead>
+  <tr>
+
+
+
+
+
+
+
+    <th>Variable</th>
+
+
+
+
+
+
+
+    <th>Value</th>
+
+
+
+
+
+
+
+    <th>Value</th>
+
+
+
+
+
+
+
+    <th>Value</th>
+
+
+
+
+
+
+
+    <th>Value</th>
+
+
+
+
+
+
+
+  </tr>
+
+
+
+
+
+
+
+  </thead>
+  <tbody>
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+      <td>${1_test_msg}</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">
+
+
+
+
+
+
+1&nbsp;critical test, 1 passed, 0 failed\n<br>1 test total, 1 passed, 0 failed<br></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+      <td>${2_test_msg}</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">
+
+
+
+
+
+
+2 critical tests, 2 passed, 0 failed\n<br>2&nbsp;tests total, 2 passed, 0 failed</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td>${3_test_msg}</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">
+
+
+
+
+
+
+3 critical tests, 3 passed, 0 failed\n<br>3&nbsp;tests total, 3&nbsp;passed, 0 failed</td><td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+  
+  
+  
+  
+  
+  
+  </tbody>
+</table>
+
+
+
+
+
+
+
+
+<table border="1">
+
+
+
+
+
+
+
+  <colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
+  <thead>
+  <tr>
+
+
+
+
+
+
+
+    <th>Test Case</th>
+
+
+
+
+
+
+
+    <th>Action</th>
+
+
+
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+
+
+
+  </tr>
+
+
+
+
+
+
+
+  </thead>
+  <tbody>
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+      <td>Main Suite Executed</td>
+
+
+
+
+
+
+
+      <td>Suite Passed</td>
+
+
+
+
+
+
+
+      <td>Test Suite Dir</td>
+
+
+
+
+
+
+
+      <td>${3_test_msg}</td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Child File Suite Executed</td>
+
+
+
+
+
+
+      <td>Suite Passed</td>
+
+
+
+
+
+
+      <td>Test File 1</td>
+
+
+
+
+
+
+      <td>${1_test_msg}</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Child Dir Suite Executed</td>
+
+
+
+
+
+
+      <td>Suite Passed</td>
+
+
+
+
+
+
+      <td>Test Dir 1</td>
+
+
+
+
+
+
+      <td>${2_test_msg}</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Grandchild File Suite Executed</td>
+
+
+
+
+
+
+      <td>Suite Passed</td>
+
+
+
+
+
+
+      <td>Test File 2</td>
+
+
+
+
+
+
+      <td>${1_test_msg}</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Grandchild Dir Suite Executed</td>
+
+
+
+
+
+
+      <td>Suite Passed</td>
+
+
+
+
+
+
+      <td>Test Dir 2</td>
+
+
+
+
+
+
+      <td>${1_test_msg}</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Grandgrandchild Dir Suite Executed</td>
+
+
+
+
+
+
+      <td>Suite Passed</td>
+
+
+
+
+
+
+      <td>Test Dir 3</td>
+
+
+
+
+
+
+      <td>${1_test_msg}</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Grandgrandchild File Suite Executed</td>
+
+
+
+
+
+
+      <td>Suite Passed</td>
+
+
+
+
+
+
+      <td>Test File 3</td>
+
+
+
+
+
+
+      <td>${1_test_msg}</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    
+    
+    <tr>
+
+
+
+
+
+      <td>Child&nbsp;Suites Not Containing Tests Not Executed</td>
+
+
+
+
+
+      <td>Check Parsing Failed Due To No Test Cases</td>
+
+
+
+
+
+      <td>&nbsp;no_tests_file_1.html</td>
+
+
+
+
+
+      <td>Test case file</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td>Check Parsing Failed Due To No Test Cases</td>
+
+
+
+
+
+      <td>&nbsp;no_tests_file_2.html</td>
+
+
+
+
+
+      <td>Test case file</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td>Check Parsing Failed Due To No Test Cases</td>
+
+
+
+
+
+      <td>&nbsp;no_tests_file_3.html</td>
+
+
+
+
+
+      <td>Test case file</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td>Check Parsing Failed Due To No Test Cases</td>
+
+
+
+
+
+      <td>no_tests_dir_1</td>
+
+
+
+
+
+      <td>Test suite directory</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td>Check Parsing Failed Due To No Test Cases</td>
+
+
+
+
+
+      <td>no_tests_dir_2</td>
+
+
+
+
+
+      <td>Test suite directory</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Check Sub Suite Count</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Test Suite Dir</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">2<br>
+
+
+
+
+
+
+      </td>
+
+
+
+
+
+
+      
+      
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Check Sub Suite Count</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Test&nbsp;Dir 1</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">2<br>
+
+
+
+
+
+
+      </td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+  
+  
+  
+  
+  
+  
+  </tbody>
+</table>
+
+
+
+
+
+
+
+
+<table border="1">
+
+
+
+
+
+
+
+  <colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
+  <thead>
+  <tr>
+
+
+
+
+
+
+
+    <th>Keyword</th>
+
+
+
+
+
+
+
+    <th>Action</th>
+
+
+
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+
+
+
+  </tr>
+
+
+
+
+
+
+
+  </thead>
+  <tbody>
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+      <td>Suite Passed</td>
+
+
+
+
+
+
+
+      <td>[ Arguments ]</td>
+
+
+
+
+
+
+
+      <td>${name}</td>
+
+
+
+
+
+
+
+      <td>${expected_msg}</td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+    <tr><td></td><td>Check Test Suite</td><td>${name}</td><td>${expected_msg}</td><td>PASS</td></tr>
+
+
+
+
+
+
+    
+
+
+
+
+
+
+    
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Check Sub Suite Count</td>
+
+
+
+
+
+
+      <td>[ Arguments ]</td>
+
+
+
+
+
+
+      <td>${name}</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${expected_count}</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td>${suite} =</td>
+
+
+
+
+
+
+      <td>Get Test Suite</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${name}</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Ints Equal</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${suite.suites.__len__()}</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${expected_count}</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td>Check Parsing Failed Due To No Test Cases</td>
+
+
+
+
+
+      <td>[Arguments]</td>
+
+
+
+
+
+      <td>${file_name}</td>
+
+
+
+
+
+      <td>${type}</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td>${syslog} =</td>
+
+
+
+
+
+      <td>Get Syslog</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td>Log</td>
+
+
+
+
+
+      <td>${syslog}</td>
+
+
+
+
+
+      <td>DEBUG</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td>Matches Regexp</td>
+
+
+
+
+
+      <td>${syslog}</td>
+
+
+
+
+
+      <td>Parsing data source '.*${file_name}' failed: ${type} '.*${file_name}' contains no test cases</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+  
+  
+  
+  
+  
+  
+  </tbody>
+</table>
+
+
+
+
+
+
+
+
+</body></html>

@@ -1,0 +1,398 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+<style type="text/css">
+html {
+  font-family: Arial,Helvetica,sans-serif;
+  background-color: white;
+  color: black;
+}
+p {
+  max-width: 60em;
+}
+table {
+  border-collapse: collapse;
+  empty-cells: show;
+  margin: 1em 0em;
+  border: 0.1em solid black;
+}
+th, td {
+  border-style: solid;
+  border-width: 0.05em 0.1em;
+  border-color: black;
+  padding: 0.1em 0.2em;
+  height: 1.5em;
+}
+th {
+  background-color: rgb(192, 192, 192);
+  color: black;
+  border-width: 0.1em;
+  font-weight: bold;
+  text-align: center;
+  text-transform: capitalize;
+  letter-spacing: 0.1em;
+}
+/* Widths of named columns */
+col.name {
+  width: 10em;
+}
+.action, .value, .arg {
+  width: 15em;
+}
+/* Properties for the name column 
+- td:first-child should work in CSS 2.1 avare browsers (tested in Firefox)
+- col.name is against specs but works in IE
+*/
+td:first-child, col.name {
+  background-color: rgb(240, 240, 240);
+  text-transform: capitalize;
+  letter-spacing: 0.1em;
+}
+/* required for IE */
+th {
+  font-style: normal;
+}
+  
+</style>
+
+<title>Robot Test Cases</title></head>
+<body>
+<h1>Robot Test Cases</h1>
+
+<table border="1">
+<colgroup span="99"><col class="name"><col class="value" span="4"></colgroup>
+
+<thead>
+<tr>
+<th>Setting</th>
+<th>Value</th>
+<th>Value</th>
+<th>value</th>
+<th>Value</th>
+</tr>
+</thead>
+
+<tbody>
+
+
+<tr>
+<td>Force Tags</td>
+<td>regression</td>
+<td>pybot</td>
+<td>jybot</td>
+<td></td>
+</tr>
+
+<tr>
+<td>Resource</td>
+<td>../../resources/resource.html</td>
+<td></td>
+<td></td>
+<td></td>
+</tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Suite Setup</td><td>Create Dir</td><td>${OUTPUT DIRECTORY}</td><td></td><td></td></tr><tr><td>Test Teardown</td><td>Empty Dir</td><td>${OUTPUT DIRECTORY}</td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Suite Teardown</td><td>Remove Dir</td><td>${OUTPUT DIRECTORY}</td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr>
+</tbody>
+</table>
+
+<table border="1">
+<colgroup span="99"><col class="name"><col class="value" span="4"></colgroup>
+
+<thead>
+<tr>
+<th>Variable</th>
+<th>Value</th>
+<th>Value</th>
+<th>Value</th>
+<th>Value</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>${OUTPUT DIRECTORY}</td>
+<td>${TEMPDIR}${/}robot-test-999666</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+
+<table border="1">
+<colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
+
+<thead>
+<tr>
+<th>Test Case</th>
+<th>Action</th>
+<th>Argument</th>
+<th>Argument</th>
+<th>Argument</th>
+
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>Tag Links Without Patterns</td>
+<td>Run Tests</td>
+<td>--tagstatlink sub3:http://example.com:title --outputdir ${OUTPUT DIRECTORY} &nbsp;--report report.html</td>
+<td>misc${/}suites</td>
+<td></td>
+
+</tr>
+
+<tr>
+<td></td>
+<td>Report Should Contain Taglink</td>
+<td>sub3</td>
+<td>http://example.com</td>
+<td>title</td>
+
+</tr>
+
+
+
+<tr>
+<td></td>
+<td></td>
+<td><br></td>
+<td></td>
+<td></td>
+
+</tr>
+
+<tr>
+<td>Tag Links With Pattern&nbsp;</td>
+<td>Run Tests</td><td>--tagstatlink ?1:http://example.com/%1:Title --outputdir ${OUTPUT DIRECTORY} &nbsp;--report report.html</td><td>misc${/}suites</td>
+
+
+<td></td>
+
+</tr>
+
+
+
+<tr>
+<td></td>
+<td>Report Should Contain Taglink</td>
+<td>d1</td>
+<td>http://example.com/d</td>
+<td>Title</td>
+
+</tr>
+
+<tr>
+<td></td>
+<td>Report Should Contain Taglink</td><td>f1</td><td>http://example.com/f</td><td>Title</td>
+
+
+
+
+</tr>
+
+<tr>
+<td></td>
+<td>Report Should Contain Taglink</td><td>t1</td><td>http://example.com/t</td><td>Title</td>
+
+
+
+
+</tr>
+
+<tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Tag Links With Many Patterns</td><td>Run Tests</td><td>--tagstatlink *?u?*:%2-%3-%2-%1-%4:Title --outputdir ${OUTPUT DIRECTORY} &nbsp;--report report.html</td><td>misc${/}suites</td><td></td></tr><tr><td></td><td>Report Should Contain Taglink</td><td>sub3</td><td>s-b-s--3</td><td>Title</td></tr><tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+
+</tr>
+
+<tr><td>Tag Link Used Multiple Times</td><td>${mail_to} =</td><td>Catenate</td><td>SEPARATOR=</td><td>mailto:</td></tr><tr><td></td><td>...</td><td>%1@dot.com</td><td>#?subject=%1AMPbody=%1</td><td>#This does not work on Jython in&nbsp; Windows</td></tr><tr>
+<td></td>
+<td>Run Tests</td><td>--tagstatlink ?2:ftp://%1:My_Title<br>--tagstatlink s???:${mail_to}:mail_to<br>--outputdir ${OUTPUT DIRECTORY} <br>--report report.html<br>--escape amp:AMP<br></td><td>misc${/}suites</td>
+
+
+<td></td>
+
+</tr>
+
+<tr>
+<td></td>
+<td>Report Should Contain Taglink</td>
+<td>d2</td>
+<td>ftp://d</td>
+<td>My Title</td>
+
+</tr>
+
+<tr>
+<td></td>
+<td>Report Should Contain Taglink</td><td>t2</td><td>ftp://t</td><td>My Title</td>
+
+
+
+
+</tr>
+
+<tr>
+<td></td>
+<td>Report Should Contain Taglink</td>
+<td>sub3</td>
+<td>${mail_to.replace('%1', 'ub3'). replace('AMP', '&amp;')}</td>
+<td>mail to</td>
+
+</tr>
+
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+
+</tr>
+
+<tr>
+<td>Same Tag Matches Multiple Links</td>
+<td>Run Tests</td>
+<td>--tagstatlink sub3:one:First_Link<br>--tagstatlink *3:%1:Second_Link<br>--tagstatlink ??b?:%1-%2:Third<br>--outputdir ${OUTPUT DIRECTORY} &nbsp;<br>--critical none<br>--report report.html</td>
+<td>misc${/}suites</td>
+<td></td>
+
+</tr>
+
+<tr>
+<td></td>
+<td>${report} =</td><td>Get File</td><td>${OUTPUT DIRECTORY}${/}report.html</td>
+
+
+<td></td>
+
+</tr>
+
+<tr>
+<td></td>
+<td>${expected} =</td><td>Catenate</td><td>SEPARATOR=\n</td><td>&lt;td class="col_stat_name"&gt;</td>
+
+
+
+
+</tr>
+
+<tr>
+<td></td>
+<td>...</td><td>&lt;div class="stat_name"&gt;&lt;a href="#tag_sub3"&gt;sub3&lt;/a&gt;&lt;/div&gt;</td><td>&lt;div class="tag_links"&gt;</td>
+
+
+<td></td>
+
+</tr>
+
+<tr>
+<td></td>
+<td>: FOR</td>
+<td>${link}</td>
+<td>${title} </td>
+<td>IN</td>
+
+</tr>
+
+<tr>
+<td></td>
+<td>...</td>
+<td>one</td>
+<td>First Link</td>
+<td></td>
+
+</tr>
+
+<tr>
+<td></td>
+<td>...</td>
+<td>sub</td>
+<td>Second Link</td>
+<td></td>
+
+</tr>
+
+<tr>
+<td></td>
+<td>...</td>
+<td>su-3</td>
+<td>Third</td>
+<td></td>
+
+</tr>
+
+<tr><td></td><td></td><td>${exp_link} =</td><td>Get Expected Link</td><td>${link}</td></tr><tr><td></td><td></td><td>...</td><td>${title} </td><td></td></tr><tr>
+<td></td>
+<td></td>
+<td>${expected} =</td>
+<td>Set</td>
+<td>${expected}\n${exp_link}</td>
+
+</tr>
+
+<tr>
+<td></td>
+<td>${expected} =</td><td>Set</td><td>${expected}\n&lt;/div&gt;\n&lt;/td&gt;</td>
+
+
+<td></td>
+
+</tr>
+
+<tr><td></td><td>Contains</td><td>${report}</td><td>${expected}</td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr>
+</tbody>
+</table>
+
+<table border="1">
+<colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
+
+<thead>
+<tr>
+<th>Keyword</th>
+<th>Action</th>
+<th>Argument</th>
+<th>Argument</th>
+<th>Argument</th>
+
+</tr>
+</thead>
+
+<tbody>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<tr><td>Report Should Contain Taglink</td><td>[ Arguments ]</td><td>${tag}</td><td>${link}</td><td>${title}</td></tr><tr><td></td><td>List Directory</td><td>${OUTPUT DIRECTORY}&nbsp;</td><td></td><td></td></tr><tr><td></td><td>${report} =</td><td>Get File</td><td>${OUTPUT DIRECTORY}${/}report.html</td><td></td></tr><tr><td></td><td>${expected} =</td><td>Catenate</td><td>SEPARATOR=\n</td><td>&lt;td class="col_stat_name"&gt;</td></tr><tr><td></td><td>...</td><td>&lt;div class="stat_name"&gt;&lt;a href="#tag_${tag}"&gt;${tag}&lt;/a&gt;&lt;/div&gt;</td><td>&lt;div class="tag_links"&gt;</td><td>&lt;span&gt;[&lt;a href="${link}"&gt;${title}&lt;/a&gt;]&lt;/span&gt;</td></tr><tr>
+<td></td>
+<td>...</td><td>&lt;/div&gt;</td><td>&lt;/td&gt;</td>
+
+
+<td></td>
+
+</tr><tr><td></td><td>Contains</td><td>${report}</td><td>${expected}</td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Get Expected Link</td><td>[ Arguments ]</td><td>${link}</td><td>${title}</td><td></td></tr><tr><td></td><td>[ Return ]</td><td>&lt;span&gt;[&lt;a href="${link}"&gt;${title}&lt;/a&gt;]&lt;/span&gt;</td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr>
+</tbody>
+</table>
+</body></html>

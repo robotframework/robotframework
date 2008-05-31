@@ -1,0 +1,10131 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+
+
+
+
+
+  
+  
+  
+  
+  <style type="text/css">
+html {
+font-family: Arial,Helvetica,sans-serif;
+background-color: white;
+color: black;
+}
+p {
+max-width: 60em;
+}
+table {
+border-collapse: collapse;
+empty-cells: show;
+margin: 1em 0em;
+border: 0.1em solid black;
+}
+th, td {
+border-style: solid;
+border-width: 0.05em 0.1em;
+border-color: black;
+padding: 0.1em 0.2em;
+height: 1.5em;
+}
+th {
+background-color: rgb(192, 192, 192);
+color: black;
+border-width: 0.1em;
+font-weight: bold;
+text-align: center;
+text-transform: capitalize;
+letter-spacing: 0.1em;
+}
+/* Widths of named columns */
+col.name {
+width: 10em;
+}
+.action, .value, .arg {
+width: 15em;
+}
+/* Properties for the name column - td:first-child should work in CSS 2.1 avare browsers (tested in Firefox)
+- col.name is against specs but works in IE
+*/
+td:first-child, col.name {
+background-color: rgb(240, 240, 240);
+text-transform: capitalize;
+letter-spacing: 0.1em;
+}
+/* required for IE */
+th {
+font-style: normal;
+}
+  </style>
+  
+  
+  
+  
+  <title>Robot Test Cases</title></head>
+
+<body>
+
+
+
+
+
+<h1>Robot Test Cases</h1>
+
+
+
+
+
+<table border="1">
+
+
+
+
+
+  <colgroup span="99"><col class="name"><col class="value" span="4"></colgroup> <thead>
+  <tr>
+
+
+
+
+
+    <th>Setting</th>
+
+
+
+
+
+    <th>Value</th>
+
+
+
+
+
+    <th>Value</th>
+
+
+
+
+
+    <th>value</th>
+
+
+
+
+
+    <th>Value</th>
+
+
+
+
+
+  </tr>
+
+
+
+
+
+  </thead> <tbody>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Document</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Tests
+for making sure splitting&nbsp; logs into multiple html files works
+while running tests</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">These
+tests assume that&nbsp;splitting outputs to multiple xmls works in
+the first place.</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Resource</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">../../../resources/resource.html</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+      <td align="undefined" valign="undefined">Resource</td>
+
+
+
+      <td align="undefined" valign="undefined">splitting_resource.html</td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+
+
+      <td>Force Tags</td>
+
+
+
+
+
+      <td>pybot</td>
+
+
+
+
+
+      <td>jybot</td>
+
+
+
+
+
+      <td><br>
+
+
+
+
+
+      </td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Default
+Tags</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">regression</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td>Suite Setup</td>
+
+
+
+
+
+      <td>My Run Tests</td>
+
+
+
+      <td>--splitoutputs 1<br>
+
+
+
+
+
+--log subsuites-log<br>
+
+
+
+--report subsuites-report<br>
+
+
+
+
+
+--variable SLEEP:1.1s<br>
+
+
+
+
+
+      </td>
+
+
+
+      <td>misc${/}suites${/}subsuites</td>
+
+
+
+
+
+      
+
+      
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+  
+  
+  
+  
+  </tbody>
+</table>
+
+
+
+
+
+<table border="1">
+
+
+
+
+
+  <colgroup span="99"><col class="name"><col class="value" span="4"></colgroup> <thead>
+  <tr>
+
+
+
+
+
+    <th>Variable</th>
+
+
+
+
+
+    <th>Value</th>
+
+
+
+
+
+    <th>Value</th>
+
+
+
+
+
+    <th>Value</th>
+
+
+
+
+
+    <th>Value</th>
+
+
+
+
+
+  </tr>
+
+
+
+
+
+  </thead> <tbody>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+  
+  
+  
+  
+  </tbody>
+</table>
+
+
+
+
+
+<table border="1">
+
+
+
+
+
+  <colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
+  <thead> <tr>
+
+
+
+
+
+    <th>Test Case</th>
+
+
+
+
+
+    <th>Action</th>
+
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+
+    <th>Arg</th>
+
+
+
+    
+
+
+  </tr>
+
+
+
+
+
+  </thead> <tbody>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Correct
+Sub logs Should Be Created</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">@{files}
+=</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">List
+Dir</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">${OUTDIR}</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">${LOGBASE}*.html</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Fail
+Unless</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">len(@{files})
+== 3</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Equals</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">@{files}[0]</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">${LOGBASE}-001.html</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Equals</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">@{files}[1]</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">${LOGBASE}-002.html</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Equals</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">@{files}[2]</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">${LOGBASE}.html</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+      
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Sub
+Logs Should Have Been Created Before Finishing Index</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">${sub1}
+=</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Get
+Modified Time</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">${OUTDIR}${/}${LOGBASE}-001.html</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">epoch</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">${sub2}
+=</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Get
+Modified Time</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">${OUTDIR}${/}${LOGBASE}-002.html</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">epoch</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">${index}
+=</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Get
+Modified Time</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">${OUTDIR}${/}${LOGBASE}.html</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">epoch</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Fail
+Unless</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">${sub1}
+&lt; ${sub2} &lt;= ${index}</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Index
+Log Should Have Links To Sub Logs But No Sub Log Content</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">${index}
+=</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Get
+File</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">${OUTDIR}${/}${LOGBASE}.html</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Log
+Should Contain Sub Log Link&nbsp;But No Sub Log Content</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">${index}</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Sub 1</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">${LOGBASE}-001.html</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Subsuites</td>
+
+
+
+      
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td>...</td>
+
+
+
+
+
+      <td>SubSuite1 First</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+      
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Log
+Should Contain Sub Log Link&nbsp;But No Sub Log Content</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">${index}</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Sub 2</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">${LOGBASE}-002.html</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Subsuites</td>
+
+
+
+      
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">...</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">SubSuite2
+First</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td align="undefined" valign="undefined">Sub Logs Should Have Correct Content</td>
+
+
+
+      <td align="undefined" valign="undefined">${sublog} =</td>
+
+
+
+      <td align="undefined" valign="undefined">Get File</td>
+
+
+
+      <td align="undefined" valign="undefined">${OUTDIR}${/}${LOGBASE}-002.html</td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined">Stat Link To Itself Should Be Ok</td>
+
+
+
+      <td align="undefined" valign="undefined">${sublog}</td>
+
+
+
+      <td align="undefined" valign="undefined">Sub 2</td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined">Suite Anchor In Sub Log Should Be Ok</td>
+
+
+
+      <td align="undefined" valign="undefined">${sublog}</td>
+
+
+
+      <td align="undefined" valign="undefined">Sub 2</td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined">Test Anchor In Sub Log Should Be Ok</td>
+
+
+
+      <td align="undefined" valign="undefined">${sublog}</td>
+
+
+
+      <td align="undefined" valign="undefined">Sub 2.SubSuite2 First</td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td align="undefined" valign="undefined">Report Should Have Correct Links</td>
+
+
+
+      <td align="undefined" valign="undefined">${report} =</td>
+
+
+
+      <td align="undefined" valign="undefined">Set</td>
+
+
+
+      <td align="undefined" valign="undefined">${LOGBASE.replace('log','report')}.html</td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td align="undefined" valign="undefined"><br>
+
+
+
+      </td>
+
+
+
+      <td align="undefined" valign="undefined">${index} =</td>
+
+
+
+      <td align="undefined" valign="undefined">Get File</td>
+
+
+
+      <td align="undefined" valign="undefined">${OUTDIR}${/}${report}</td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined">${details}</td>
+
+
+
+      <td align="undefined" valign="undefined">${tags} =</td>
+
+
+
+      <td align="undefined" valign="undefined">Evaluate</td>
+
+
+
+      <td align="undefined" valign="undefined">'''${index}'''.split('&lt;h2&gt;Test Details by Tag&lt;/h2&gt;')</td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined">Link In Report To Index Log Should Be Ok</td>
+
+
+
+      <td align="undefined" valign="undefined">${details}</td>
+
+
+
+      <td align="undefined" valign="undefined">Subsuites</td>
+
+
+
+      <td align="undefined" valign="undefined">${LOGBASE}.html</td>
+
+
+
+      <td align="undefined" valign="undefined">suite</td>
+
+
+
+      
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined">Link In Report To Sub Log Should Be Ok</td>
+
+
+
+      <td align="undefined" valign="undefined">${details}</td>
+
+
+
+      <td align="undefined" valign="undefined">Subsuites.Sub 1</td>
+
+
+
+      <td align="undefined" valign="undefined">${LOGBASE}-001.html</td>
+
+
+
+      <td align="undefined" valign="undefined">suite</td>
+
+
+
+      
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined">Link In Report To Sub Log Should Be Ok</td>
+
+
+
+      <td align="undefined" valign="undefined">${details}</td>
+
+
+
+      <td align="undefined" valign="undefined">Subsuites.Sub 1.SubSuite1 First</td>
+
+
+
+      <td align="undefined" valign="undefined">${LOGBASE}-001.html</td>
+
+
+
+      <td align="undefined" valign="undefined">test</td>
+
+
+
+      
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined">Link In Report To Sub Log Should Be Ok</td>
+
+
+
+      <td align="undefined" valign="undefined">${tags}</td>
+
+
+      <td align="undefined" valign="undefined">Subsuites.Sub 1.SubSuite1 First</td>
+
+
+      <td align="undefined" valign="undefined">${LOGBASE}-001.html</td>
+
+
+      <td align="undefined" valign="undefined">test</td>
+
+
+
+      
+      
+      
+      
+      
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined">Link In Report To Sub Log Should Be Ok</td>
+
+
+
+      <td align="undefined" valign="undefined">${tags}</td>
+
+
+      <td align="undefined" valign="undefined">Subsuites.Sub 2.SubSuite2 First</td>
+
+
+      <td align="undefined" valign="undefined">${LOGBASE}-002.html</td>
+
+
+      <td align="undefined" valign="undefined">test</td>
+
+
+
+      
+      
+      
+      
+      
+    </tr>
+
+
+
+    
+    
+    
+    <tr>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+      
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td>Correct Syslog Message Should Be Written</td>
+
+
+
+      <td>Check Syslog Contains</td>
+
+
+
+      <td>Log:&nbsp;${OUTDIR}${/}${LOGBASE}-001.html</td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+      
+    </tr>
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td>Check Syslog Contains</td>
+
+
+
+      <td>Log:&nbsp;${OUTDIR}${/}${LOGBASE}-002.html</td>
+
+
+
+
+
+      
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+      
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+      <td></td>
+
+
+
+      <td>Check Syslog Contains</td>
+
+
+
+      <td>Log:&nbsp;${OUTDIR}${/}${LOGBASE}.html</td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+      
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+      
+    </tr>
+
+
+
+    <tr>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Only
+Index Should Be Created if Non-Nested Suite</td>
+
+
+
+
+
+      <td>@{files} =</td>
+
+
+
+
+
+      <td>My Run Tests</td>
+
+
+
+
+
+      <td>--SplitOutputs 1<br>
+
+
+
+
+
+--log mylog.html<br>
+
+
+
+
+
+      </td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">misc${/}normal.html</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Fail
+Unless</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">len(@{files})
+== 1</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Equals</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">@{files}</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">mylog.html</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">${index}
+=</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Get
+
+File</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">${OUTDIR}${/}mylog.html</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Log
+Should Contain Sub Log Content</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">${index}</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Normal</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Split
+Level 1</td>
+
+
+
+
+
+      <td>Run Nested Suite With Given Split Level</td>
+
+
+
+
+
+      <td>1<br>
+
+
+
+
+
+      </td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"><br>
+
+
+
+
+
+      </td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Verify
+Log Got From misc/suites with level 1</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">${LOGBASE}</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">${OUTDIR}</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td>Suite Statistics Should Be correct When Splitting</td>
+
+
+
+
+
+      <td>Equals</td>
+
+
+
+
+
+      <td>${PREV_TEST_STATUS}</td>
+
+
+
+
+
+      <td>PASS</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+      
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td>Equals</td>
+
+
+
+
+
+      <td>${SUITE.get_full_message()}</td>
+
+
+
+
+
+      <td>6&nbsp;critical tests, 5 passed, 1 failed\n<br>
+
+
+
+
+
+10 tests total, 9 passed, 1 failed</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+      
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">${index}
+= </td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Get
+File</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">${OUTDIR}${/}${LOGBASE}.html</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+      
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td>Log</td>
+
+
+
+
+
+      <td>${index}</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+      
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td>Log Should Contain correct Statistics</td>
+
+
+
+
+
+      <td>${index}</td>
+
+
+
+
+
+      <td>Suites</td>
+
+
+
+
+
+      <td>FAIL</td>
+
+
+
+
+
+      <td></td>
+
+
+
+      
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">...</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">6</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">5</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">1</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td>...</td>
+
+
+
+
+
+      <td>10</td>
+
+
+
+
+
+      <td>9</td>
+
+
+
+
+
+      <td>1</td>
+
+
+
+
+
+      <td></td>
+
+
+
+      
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td>Log Should Contain correct Statistics</td>
+
+
+
+
+
+      <td>${index}</td>
+
+
+
+
+
+      <td>Suites.Fourth</td>
+
+
+
+
+
+      <td>FAIL</td>
+
+
+
+
+
+      <td></td>
+
+
+
+      
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">...</td>
+
+
+
+
+
+      <td>1</td>
+
+
+
+
+
+      <td>0</td>
+
+
+
+
+
+      <td>1</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td>...</td>
+
+
+
+
+
+      <td>1</td>
+
+
+
+
+
+      <td>0</td>
+
+
+
+
+
+      <td>1</td>
+
+
+
+
+
+      <td></td>
+
+
+
+      
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td>Log Should Contain correct Statistics</td>
+
+
+
+
+
+      <td>${index}</td>
+
+
+
+
+
+      <td>Suites.Subsuites</td>
+
+
+
+
+
+      <td>PASS</td>
+
+
+
+
+
+      <td></td>
+
+
+
+      
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">...</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">1</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">1</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">0</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td>...</td>
+
+
+
+
+
+      <td>2</td>
+
+
+
+
+
+      <td>2</td>
+
+
+
+
+
+      <td>0</td>
+
+
+
+
+
+      <td></td>
+
+
+
+      
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td>Log Should Contain correct Statistics</td>
+
+
+
+
+
+      <td>${index}</td>
+
+
+
+
+
+      <td>Suites.Subsuites 2</td>
+
+
+
+
+
+      <td>PASS</td>
+
+
+
+
+
+      <td></td>
+
+
+
+      
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">...</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">1</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">1</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">0</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td>...</td>
+
+
+
+
+
+      <td>2</td>
+
+
+
+
+
+      <td>2</td>
+
+
+
+
+
+      <td>0</td>
+
+
+
+
+
+      <td></td>
+
+
+
+      
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td>Log Should Contain correct Statistics</td>
+
+
+
+
+
+      <td>${index}</td>
+
+
+
+
+
+      <td>Suites.Tsuite 1</td>
+
+
+
+
+
+      <td>PASS</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">...</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">1</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">1</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">0</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">...</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">3</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">3</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">0</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td>Log Should Contain correct Statistics</td>
+
+
+
+
+
+      <td>${index}</td>
+
+
+
+
+
+      <td>Suites.Tsuite 2</td>
+
+
+
+
+
+      <td>PASS</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">...</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">1</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">1</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">0</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">...</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">1</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">1</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">0</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td>Log Should Contain correct Statistics</td>
+
+
+
+
+
+      <td>${index}</td>
+
+
+
+
+
+      <td>Suites.Tsuite 3</td>
+
+
+
+
+
+      <td>PASS</td>
+
+
+
+
+
+      <td></td>
+
+
+
+      
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">...</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">1</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">1</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">0</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td>...</td>
+
+
+
+
+
+      <td>1</td>
+
+
+
+
+
+      <td>1</td>
+
+
+
+
+
+      <td>0</td>
+
+
+
+
+
+      <td></td>
+
+
+
+      
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Split
+Level 2</td>
+
+
+
+
+
+      <td>Run Nested Suite With Given Split Level</td>
+
+
+
+
+      <td>2<br>
+
+
+
+
+
+      </td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+      
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined">Verify
+Log Got From misc/suites with level 2</td>
+
+
+
+
+      <td align="undefined" valign="undefined">${LOGBASE}</td>
+
+
+
+
+      <td align="undefined" valign="undefined">${OUTDIR}</td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+      
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Split
+Level 3</td>
+
+
+
+
+
+      <td>@{files} =</td>
+
+
+
+
+
+      <td>Run Deeply Nested Suite With Given Split Level</td>
+
+
+
+
+
+      <td>3<br>
+
+
+
+
+
+      </td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+      
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Fail
+Unless</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">len(@{files})
+== 4</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+      
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Equals</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">@{files}[0]</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">${LOGBASE}-001.html</td>
+
+
+
+
+
+      <td># misc/subsuites/sub1.html</td>
+
+
+
+
+
+      <td></td>
+
+
+
+      
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Equals</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">@{files}[1]</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">${LOGBASE}-002.html</td>
+
+
+
+
+
+      <td># misc/subsuites/sub2.html</td>
+
+
+
+
+
+      <td></td>
+
+
+
+      
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Equals</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">@{files}[2]</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">${LOGBASE}-003.html</td>
+
+
+
+
+
+      <td># misc/subsuites2/subsuite3.html</td>
+
+
+
+
+
+      <td></td>
+
+
+
+      
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Equals</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">@{files}[3]</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">${LOGBASE}.html</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+      
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">${index}
+= </td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Get
+File</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">${OUTDIR}${/}${LOGBASE}.html</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+      
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">: FOR</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">${name}</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">${link}</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">${test}</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">${suite}</td>
+
+
+
+      
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td>...</td>
+
+
+
+
+
+      <td>IN</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+      
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td>...</td>
+
+
+
+
+
+      <td>Sub 1</td>
+
+
+
+
+
+      <td>${LOGBASE}-001.html</td>
+
+
+
+
+
+      <td>SubSuite1 First</td>
+
+
+
+
+
+      <td>Subsuites</td>
+
+
+
+      
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td>...</td>
+
+
+
+
+
+      <td>Sub 2</td>
+
+
+
+
+
+      <td>${LOGBASE}-002.html</td>
+
+
+
+
+
+      <td>SubSuite2 First</td>
+
+
+
+
+
+      <td>Subsuites</td>
+
+
+
+      
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td>...</td>
+
+
+
+
+
+      <td>Subsuite 3</td>
+
+
+
+
+
+      <td>${LOGBASE}-003.html</td>
+
+
+
+
+
+      <td>SubSuite3 First</td>
+
+
+
+
+
+      <td>Subsuites 2</td>
+
+
+
+      
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Log
+Should Contain Sub Log Link But No Sub Log Content</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">${index}
+      </td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">${name}</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">${link}</td>
+
+
+
+      
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">...</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Misc.Suites.${suite}</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">${test}<br>
+
+
+
+
+
+      </td>
+
+
+
+
+
+      <td></td>
+
+
+
+      
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Sub
+Outputs Should Not be Processed When Creating Index Log</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">[
+Document ]</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Verifies
+that sub outputs aren't needed when creating index log by removing sub
+outputs while running tests.</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td align="undefined" valign="undefined"><br>
+
+
+
+
+
+      </td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">${sub_outs}
+= </td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Set</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">${OUTDIR}${/}suites-output-*.xml</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td>Run Tests Without Processing Output</td>
+
+
+
+
+
+      <td>--SplitOutputs 1<br>
+
+
+
+
+
+--log rm_sub_outs_1.html<br>
+
+
+
+
+
+--variable SUITE_TEARDOWN_KW:Remove_File<br>
+
+
+
+
+
+--variable SUITE_TEARDOWN_ARG:${sub_outs} </td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">misc${/}suites</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">${index}
+=</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Verify
+Log Got From misc/suites with level 1</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">rm_sub_outs_1</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">${OUTDIR}</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">::
+FOR</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">${id}</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">IN</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">001</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">002</td>
+
+
+
+      
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">...</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">003</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">004</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">005</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">006</td>
+
+
+
+      
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Contains</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">${index}</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Removed
+file '${OUTDIR}${/}suites-output-${id}.xml'</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td>Run Tests Without Processing Output</td>
+
+
+
+
+
+      <td>--SplitOutputs 2<br>
+
+
+
+
+
+--log&nbsp;rm_sub_outs_2.html<br>
+
+
+
+
+
+--variable SUITE_TEARDOWN_KW:Remove_File<br>
+
+
+
+
+
+--variable SUITE_TEARDOWN_ARG:${sub_outs} </td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">misc${/}suites</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">${index}
+=</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Verify
+Log Got From misc/suites with level 2</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">rm_sub_outs_2</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">${OUTDIR}</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">::
+FOR</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">${id}</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">IN</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">001</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">002</td>
+
+
+
+      
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">...</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">003</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Contains</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">${index}</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Removed
+file '${OUTDIR}${/}suites-output-${id}.xml'</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      
+
+
+    </tr>
+
+
+
+
+
+  
+  
+  
+  
+  </tbody>
+</table>
+
+
+
+
+
+<table border="1">
+
+
+
+
+
+  <colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
+  <thead> <tr>
+
+
+
+
+
+    <th>Keyword</th>
+
+
+
+
+
+    <th>Action</th>
+
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+
+  </tr>
+
+
+
+
+
+  </thead> <tbody>
+
+
+
+
+
+    
+
+    
+
+    <tr>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Run
+Nested Suite With Given Split Level</td>
+
+
+
+
+
+      <td>[ Arguments ]</td>
+
+
+
+
+
+      <td>${level}</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td>@{files} =</td>
+
+
+
+
+
+      <td>My Run Tests</td>
+
+
+
+
+
+      <td>--SplitOutputs ${level}<br>
+
+
+
+
+
+--log nestedsuite${level}<br>
+
+
+
+
+
+--critical t1<br>
+
+
+
+
+
+      </td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">misc${/}suites</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">...</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">FAIL</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"><br>
+
+
+
+
+
+      </td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">[
+Return ]</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">@{files}</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Run
+Deeply Nested Suite With given Split Level</td>
+
+
+
+
+
+      <td>[ Arguments ]</td>
+
+
+
+
+
+      <td>${level}</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td>@{files} =</td>
+
+
+
+
+
+      <td>My Run Tests</td>
+
+
+
+
+
+      <td>--SplitOutputs ${level}<br>
+
+
+
+
+
+--log deeplynestedsuite${level}
+      </td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">misc</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">...</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">FAIL</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">[
+Return ]</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">@{files}</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td align="undefined" valign="undefined">My
+Run Tests</td>
+
+
+
+
+
+      <td>[ Arguments ]</td>
+
+
+
+
+
+      <td>${args}</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">${path}</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">${status}=PASS</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">${name}
+=</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Get
+Logname</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">${args}</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Set
+Suite Variable</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">$LOGBASE</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">${name}</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Remove
+File</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">${OUTDIR}${/}${LOGBASE}*.html</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td>Run Tests</td>
+
+
+
+
+
+      <td>${args}</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">${path}</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Equals</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">${SUITE.status}</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">${status}</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">@{files}
+=</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">List
+Dir</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">${OUTDIR}</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">${LOGBASE}*.html</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">[
+Return ]</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">@{files}</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td>Get Logname</td>
+
+
+
+
+
+      <td>[ Arguments ]</td>
+
+
+
+
+
+      <td>${args}</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td>${name} =</td>
+
+
+
+
+
+      <td>Set</td>
+
+
+
+
+
+      <td>${args.split('--log ')[1].split()[0]}</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td>${name}&nbsp;</td>
+
+
+
+
+
+      <td>${ext} =</td>
+
+
+
+
+
+      <td>Split Extension </td>
+
+
+
+
+
+      <td>${name}</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td>[ Return &nbsp;]</td>
+
+
+
+
+
+      <td>${name}</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Log
+Should Contain Sub Log Link But No Sub Log Content</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">[Arguments]</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">${log}</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">${name}</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">${link}</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">...</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">${suite}</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">${test}<br>
+
+
+
+
+
+      </td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">${status}=pass</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td>${med_name} =</td>
+
+
+
+
+
+      <td>Get Suite Medium Name</td>
+
+
+
+
+
+      <td>${name}</td>
+
+
+
+
+
+      <td>${suite}</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">${expected}
+=</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Catenate</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">SEPARATOR=\n</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">&lt;span
+class="${status}"&gt;TEST&amp;nbsp;SUITE: &lt;/span&gt;</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">...</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">&lt;a
+class="splitname" 
+
+
+      <br>
+
+
+
+href="${link}#suite_${name}"<br>
+
+
+
+name="suite_${med_name}" title="${suite}.${name}"&gt;${name}&lt;/a&gt;</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">&lt;/td&gt;\n<br>
+
+
+
+
+
+&lt;/tr&gt; </td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Contains</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">${log}</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">${expected}</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Contains</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">${log}</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">&lt;tr&gt;&lt;th&gt;Details:&lt;/th&gt;&lt;td&gt;&lt;a
+href="${link}"&gt;${link}&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td>Does Not Contain</td>
+
+
+
+
+
+      <td>${log}</td>
+
+
+
+
+
+      <td>${test}</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td>get Suite Medium Name</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">[Arguments]</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">${name}</td>
+
+
+
+
+
+      <td>${suite}</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">${pre}</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Evaluate</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">'.'.join([
+t[0].lower() for t in '${suite}'.split('.') ])</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td>[ Return ]</td>
+
+
+
+
+
+      <td>${pre}.${name}</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Log
+Should Contain Sub Log Content</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">[Arguments]</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">${log}</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">${name}</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">${expected}
+=</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Catenate</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">SEPARATOR=\n</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">&lt;span
+class="pass"&gt;TEST&amp;nbsp;SUITE: &lt;/span&gt;</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">...</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">&lt;a
+class="name" name="suite_${name}" title="${name}"&gt;${name}&lt;/a&gt;</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">&lt;/td&gt;\n&lt;/tr&gt;\n&lt;tr&gt;\n&lt;td&gt;</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">&lt;div
+class="indent" id="suite000001_children"<br>
+
+
+
+style="display: block;"&gt;</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">...</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">&lt;table
+class="metadata"&gt; </td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">&lt;tr&gt;&lt;th&gt;Full
+Name:&lt;/th&gt;&lt;td&gt;${name}&lt;/td&gt;&lt;/tr&gt;</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Contains</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">${log}</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">${expected}</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td>Log Should Contain correct Statistics</td>
+
+
+
+
+
+      <td>[Arguments ]</td>
+
+
+
+
+
+      <td>${log}</td>
+
+
+
+
+
+      <td>${name}</td>
+
+
+
+
+
+      <td>${status}</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">...</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">@{stats}</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined">${cls1} =</td>
+
+      <td align="undefined" valign="undefined">Evaluate</td>
+
+      <td align="undefined" valign="undefined">@{stats}[2] &gt; 0 and ' class="fail"' or ''</td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+    </tr>
+
+    <tr>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined">${cls2} =</td>
+
+      <td align="undefined" valign="undefined">Evaluate</td>
+
+      <td align="undefined" valign="undefined">@{stats}[5] &gt; 0 and ' class="fail"' or ''</td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+    </tr>
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td>${msg} =</td>
+
+
+
+
+
+      <td>Catenate</td>
+
+
+
+
+
+      <td>SEPARATOR=</td>
+
+
+
+
+
+      <td><span class="start-tag"></span><span class="attribute-name"></span></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td>...</td>
+
+
+
+
+
+      <td><span class="attribute-name"></span>@{stats}[0]<span class="end-tag"></span><span class="entity"></span>&amp;nbsp;critical&amp;nbsp;<span class="entity"></span>tests?,&amp;nbsp;</td>
+
+
+
+
+
+      <td><span class="entity"></span><span class="start-tag"></span><span class="attribute-name"></span>@{stats}[1]<span class="entity"></span>&amp;nbsp;passed,&amp;nbsp;</td>
+
+
+
+
+
+      <td>&lt;span${cls1}<span class="attribute-name"></span><span class="entity"></span><span class="entity"></span>&gt;@{stats}[2]<span class="entity"></span>&amp;nbsp;failed&lt;/<span class="end-tag">span</span>&gt;</td>
+
+
+
+
+
+      <td>&lt;br /&gt;</td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td>...</td>
+
+
+
+
+
+      <td><span class="entity"></span><span class="start-tag"></span><span class="attribute-name"></span><span class="entity"></span><span class="attribute-name"></span>@{stats}[3]<span class="end-tag"></span><span class="entity"></span>&amp;nbsp;tests?&amp;nbsp;<span class="entity"></span>total,&amp;nbsp;<span class="entity"></span></td>
+
+
+
+
+
+      <td><span class="attribute-name"></span>@{stats}[4]<span class="entity"></span>&amp;nbsp;passed,&amp;nbsp;<span class="entity"></span></td>
+
+
+
+
+
+      <td>&lt;span${cls2}&gt;@{stats}[5]&amp;nbsp;failed&lt;/<span class="end-tag">span</span>&gt;<span class="start-tag"></span><span class="error"><span class="attribute-name"></span></span></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">${exp}
+=</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Catenate<br>
+
+
+
+
+
+      </td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">SEPARATOR=\n<br>
+
+
+
+
+
+      </td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">&lt;<span class="start-tag">table</span><span class="attribute-name"> class</span>=<span class="attribute-value">"metadata"</span>&gt;<br>
+
+
+
+
+
+      </td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td>...</td>
+
+
+
+
+
+      <td>&lt;<span class="start-tag">tr</span>&gt;&lt;<span class="start-tag">th</span>&gt;Full Name:&lt;/<span class="end-tag">th</span>&gt;&lt;<span class="start-tag">td</span>&gt;${name}&lt;/<span class="end-tag">td</span>&gt;&lt;/<span class="end-tag">tr</span>&gt;(</td>
+
+
+
+
+
+      <td>&lt;tr&gt;&lt;th&gt;.+:&lt;/th&gt;&lt;td&gt;.+&lt;/td&gt;&lt;/tr&gt;)*</td>
+
+
+
+
+
+      <td>&lt;<span class="start-tag">tr</span>&gt;&lt;<span class="start-tag">th</span>&gt;Critical
+Tags:&lt;/<span class="end-tag">th</span>&gt;&lt;<span class="start-tag">td</span>&gt;t1&lt;/<span class="end-tag">td</span>&gt;&lt;/<span class="end-tag">tr</span>&gt; </td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td>...</td>
+
+
+
+
+
+      <td>&lt;<span class="start-tag">tr</span>&gt;&lt;<span class="start-tag">th</span>&gt;Start Time:&lt;/<span class="end-tag">th</span>&gt;&lt;<span class="start-tag">td</span>&gt;\\d{8}
+\\d{2}:\\d{2}:\\d{2}.\\d{3}&lt;/<span class="end-tag">td</span>&gt;&lt;/<span class="end-tag">tr</span>&gt;</td>
+
+
+
+
+
+      <td>&lt;<span class="start-tag">tr</span>&gt;&lt;<span class="start-tag">th</span>&gt;End Time:&lt;/<span class="end-tag">th</span>&gt;&lt;<span class="start-tag">td</span>&gt;\\d{8}
+\\d{2}:\\d{2}:\\d{2}.\\d{3}&lt;/<span class="end-tag">td</span>&gt;&lt;/<span class="end-tag">tr</span>&gt;</td>
+
+
+
+
+
+      <td>&lt;<span class="start-tag">tr</span>&gt;&lt;<span class="start-tag">th</span>&gt;Elapsed
+Time:&lt;/<span class="end-tag">th</span>&gt;&lt;<span class="start-tag">td</span>&gt;\\d{2}:\\d{2}:\\d{2}.\\d{3}&lt;/<span class="end-tag">td</span>&gt;&lt;/<span class="end-tag">tr</span>&gt;</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td>...</td>
+
+
+
+
+
+      <td>&lt;<span class="start-tag">tr</span>&gt;&lt;<span class="start-tag">th</span>&gt;Status:&lt;/<span class="end-tag">th</span>&gt;&lt;<span class="start-tag">td</span><span class="attribute-name"> class</span>=<span class="attribute-value">"${status.lower()}"</span>&gt;${status}&lt;/<span class="end-tag">td</span>&gt;\&lt;/<span class="end-tag">tr</span>&gt;</td>
+
+
+
+
+
+      <td>&lt;<span class="start-tag">tr</span>&gt;&lt;<span class="start-tag">th</span>&gt;Message:&lt;/<span class="end-tag">th</span>&gt;&lt;<span class="start-tag">td</span>&gt;${msg}&lt;/<span class="end-tag">td</span>&gt;&lt;/<span class="end-tag">tr</span>&gt;(<br>
+
+
+
+
+
+      </td>
+
+
+
+
+
+      <td>&lt;tr&gt;&lt;th&gt;Details:&lt;/th&gt;&lt;td&gt;&lt;a
+
+.*&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;)?</td>
+
+
+
+
+
+      <td>&lt;/<span class="end-tag">table</span>&gt;</td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td>Matches Regexp</td>
+
+
+
+
+
+      <td>${log}</td>
+
+
+
+
+
+      <td>${exp}</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Verify
+Log Got From misc/suites with level 1</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">[
+Arguments ]</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">${logname}</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">${logdir}</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td>@{files} =</td>
+
+
+
+
+
+      <td>List Dir</td>
+
+
+
+
+
+      <td>${logdir}</td>
+
+
+
+
+
+      <td>${logname}*.html</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Fail
+Unless</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">len(@{files})
+== 7</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Equals</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">@{files}[0]</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">${logname}-001.html</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">#
+fourth.html</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Equals</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">@{files}[1]</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">${logname}-002.html</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">#
+subsuites/</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Equals</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">@{files}[2]</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">${logname}-003.html</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">#
+subsuites2/</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Equals</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">@{files}[3]</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">${logname}-004.html</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">#
+tsuite1.html</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Equals</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">@{files}[4]</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">${logname}-005.html</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">#
+tsuite2.html</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Equals</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">@{files}[5]</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">${logname}-006.html</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">#
+tsuite3.html</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Equals</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">@{files}[6]</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">${logname}.html</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"><br>
+
+
+
+
+
+      </td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">${index}
+= </td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Get
+File</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">${logdir}${/}${logname}.html</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">: FOR</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">${name}</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">${link}</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">${test}</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">${status}</td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td>...</td>
+
+
+
+
+
+      <td>IN</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">...</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Fourth</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">${logname}-001.html</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Suite4
+First</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">fail</td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">...</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Subsuites</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">${logname}-002.html</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">SubSuite1
+First</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">pass</td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">...</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Subsuites 2</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">${logname}-003.html</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">SubSuite3
+First</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">pass</td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">...</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Tsuite 1</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">${logname}-004.html</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Suite1
+First</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">pass</td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">...</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Tsuite 2</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">${logname}-005.html</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Suite2
+First</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">pass</td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">...</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Tsuite 3</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">${logname}-006.html</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Suite3
+First</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">pass</td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Log
+Should Contain Sub Log Link But No Sub Log Content</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">${index}
+      </td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">${name}</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">${link}</td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">...</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Suites</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">${test}<br>
+
+
+
+
+
+      </td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">${status}</td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">[
+Return ]</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">${index}</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td align="undefined" valign="undefined">Verify
+Log Got From misc/suites with level 2</td>
+
+
+
+
+      <td align="undefined" valign="undefined">[
+Arguments ]</td>
+
+
+
+
+      <td align="undefined" valign="undefined">${logname}</td>
+
+
+
+
+      <td align="undefined" valign="undefined">${logdir}</td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td>@{files} =</td>
+
+
+
+
+      <td>List Dir</td>
+
+
+
+
+      <td>${logdir}</td>
+
+
+
+
+      <td>${logname}*.html</td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Fail
+Unless</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">len(@{files})
+== 4</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Equals</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">@{files}[0]</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">${logname}-001.html</td>
+
+
+
+
+
+      <td># subsuites/sub1.html</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Equals</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">@{files}[1]</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">${logname}-002.html</td>
+
+
+
+
+
+      <td># subsuites/sub2.html</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Equals</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">@{files}[2]</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">${logname}-003.html</td>
+
+
+
+
+
+      <td># subsuites2/subsuite3.html</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Equals</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">@{files}[3]</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">${logname}.html</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">${index}
+= </td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Get
+File</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">${logdir}${/}${logname}.html</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">: FOR</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">${name}</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">${link}</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">${test}</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">${suite}</td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td>...</td>
+
+
+
+
+
+      <td>IN</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td>...</td>
+
+
+
+
+
+      <td>Sub 1</td>
+
+
+
+
+
+      <td>${logname}-001.html</td>
+
+
+
+
+
+      <td>SubSuite1 First</td>
+
+
+
+
+
+      <td>Subsuites</td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td>...</td>
+
+
+
+
+
+      <td>Sub 2</td>
+
+
+
+
+
+      <td>${logname}-002.html</td>
+
+
+
+
+
+      <td>SubSuite2 First</td>
+
+
+
+
+
+      <td>Subsuites</td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td>...</td>
+
+
+
+
+
+      <td>Subsuite 3</td>
+
+
+
+
+
+      <td>${logname}-003.html</td>
+
+
+
+
+
+      <td>SubSuite3 First</td>
+
+
+
+
+
+      <td>Subsuites 2</td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Log
+Should Contain Sub Log Link But No Sub Log Content</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">${index}
+      </td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">${name}</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">${link}</td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">...</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Suites.${suite}</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">${test}<br>
+
+
+
+
+
+      </td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined">[
+Return ]</td>
+
+
+
+
+      <td align="undefined" valign="undefined">${index}</td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+    </tr>
+
+
+
+
+
+  
+  
+  
+  
+  </tbody>
+</table>
+
+
+
+
+
+</body></html>

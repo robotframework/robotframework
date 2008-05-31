@@ -1,0 +1,2457 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+
+
+
+
+
+
+
+  
+  
+  
+  
+  
+  
+  <style type="text/css">
+html {
+  font-family: Arial,Helvetica,sans-serif;
+  background-color: white;
+  color: black;
+}
+p {
+  max-width: 60em;
+}
+table {
+  border-collapse: collapse;
+  empty-cells: show;
+  margin: 1em 0em;
+  border: 0.1em solid black;
+}
+th, td {
+  border-style: solid;
+  border-width: 0.05em 0.1em;
+  border-color: black;
+  padding: 0.1em 0.2em;
+  height: 1.5em;
+}
+th {
+  background-color: rgb(192, 192, 192);
+  color: black;
+  border-width: 0.1em;
+  font-weight: bold;
+  text-align: center;
+  text-transform: capitalize;
+  letter-spacing: 0.1em;
+}
+/* Widths of named columns */
+col.name {
+  width: 10em;
+}
+.action, .value, .arg {
+  width: 15em;
+}
+/* Properties for the name column 
+- td:first-child should work in CSS 2.1 avare browsers (tested in Firefox)
+- col.name is against specs but works in IE
+*/
+td:first-child, col.name {
+  background-color: rgb(240, 240, 240);
+  text-transform: capitalize;
+  letter-spacing: 0.1em;
+}
+/* required for IE */
+th {
+  font-style: normal;
+}
+  </style>
+  
+  
+  
+  
+  
+  
+  <title>Robot Test Cases</title>
+</head>
+
+<body>
+
+
+
+
+
+
+
+<h1>Robot Test Cases</h1>
+
+
+
+
+
+
+
+
+<table border="1">
+
+
+
+
+
+
+
+  <colgroup span="99"><col class="name"><col class="value" span="4"></colgroup>
+  <thead>
+  <tr>
+
+
+
+
+
+
+
+    <th>Setting</th>
+
+
+
+
+
+
+
+    <th>Value</th>
+
+
+
+
+
+
+
+    <th>Value</th>
+
+
+
+
+
+
+
+    <th>value</th>
+
+
+
+
+
+
+
+    <th>Value</th>
+
+
+
+
+
+
+
+  </tr>
+
+
+
+
+
+
+
+  </thead>
+  <tbody>
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+      <td>Resource</td>
+
+
+
+
+
+
+
+      <td>resources/my_resource_1.html</td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+      <td>Resource</td>
+
+
+
+
+
+
+      <td>resources/my_resource_2.html</td>
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td align="undefined" valign="undefined">Library</td>
+
+
+
+      <td align="undefined" valign="undefined">MyLibrary1</td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td align="undefined" valign="undefined">Library</td>
+
+
+
+      <td align="undefined" valign="undefined">MyLibrary2</td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td>Library</td>
+
+
+      <td>OperatingSystem</td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+
+
+
+
+
+  
+  
+  
+  
+  
+  
+  </tbody>
+</table>
+
+
+
+
+
+
+
+
+<table border="1">
+
+
+
+
+
+
+
+  <colgroup span="99"><col class="name"><col class="value" span="4"></colgroup>
+  <thead>
+  <tr>
+
+
+
+
+
+
+
+    <th>Variable</th>
+
+
+
+
+
+
+
+    <th>Value</th>
+
+
+
+
+
+
+
+    <th>Value</th>
+
+
+
+
+
+
+
+    <th>Value</th>
+
+
+
+
+
+
+
+    <th>Value</th>
+
+
+
+
+
+
+
+  </tr>
+
+
+
+
+
+
+
+  </thead>
+  <tbody>
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+  
+  
+  
+  
+  
+  
+  </tbody>
+</table>
+
+
+
+
+
+
+
+
+<table border="1">
+
+
+
+
+
+
+
+  <colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
+  <thead>
+  <tr>
+
+
+
+
+
+
+
+    <th>Test Case</th>
+
+
+
+
+
+
+
+    <th>Action</th>
+
+
+
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+
+
+
+
+
+  </tr>
+
+
+
+
+
+
+
+  </thead>
+  <tbody>
+
+
+
+
+
+
+
+    <tr>
+
+
+
+      <td align="undefined" valign="undefined">Keywords With Unique Name Are Ok</td>
+
+
+
+      <td align="undefined" valign="undefined">Keyword Only In Test Case File</td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+
+
+
+
+      <td><br>
+
+
+
+      </td>
+
+
+
+
+
+
+
+      <td>KeywordOnlyInResource1</td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td>keywordonlyinresource2</td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Key Word _ONLY_ In&nbsp;Library 1</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined">KEYWORDONLYINLIBRARY2</td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Full Name Works With Non Unique Keyword Names</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">my_resource_1.Keyword In Both Resources</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">My_Resource_2.Keyword In Both Resources</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined">MY_RES Ource _1.Keyword In All Resources And Libraries</td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined">my_ RESOURCE _ 2.Keyword in all RESOURCES and libraries</td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined">MY &nbsp;_&nbsp; RES ource _ 1 .<br>
+
+
+
+Keyword Every WHERE</td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined">my_ resource_2.keyword everywhere</td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined">MyLibrary1.Keyword In Both Libraries</td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">My Library 2.Keyword In Both Libraries</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined">MYLIBRARY1.<br>
+
+
+
+Keyword in ALL Resources and Libraries</td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined">MYLIBRARY2.<br>
+
+
+
+Keyword In All Resources And Libraries</td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined">My &nbsp;Lib Rar &nbsp;Y1.<br>
+
+
+
+Keyword Everywhere</td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined">mylibrary2.keywordeverywhere</td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Non Unique Keywords Without Full Name Fails&nbsp;1</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">[ Document ]<br>
+
+
+
+
+
+
+      </td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">FAIL</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Multiple keywords with name 'Keyword In Both Resources' found.\n<br>
+
+
+
+
+
+Give the full name of the keyword you want to use.\nFound:</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">'my_resource_1.Keyword In Both Resources' and 'my_resource_2.Keyword In Both Resources'</td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Keyword In Both Resources</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td align="undefined" valign="undefined">Non Unique Keywords Without Full Name Fails&nbsp;2</td>
+
+
+
+      <td align="undefined" valign="undefined">[ Document ]<br>
+
+
+
+
+
+
+      </td>
+
+
+
+      <td align="undefined" valign="undefined">FAIL</td>
+
+
+
+      <td align="undefined" valign="undefined">Multiple keywords with name 'Keyword In Both Libraries' found.\n<br>
+
+
+
+
+
+Give the full name of the keyword you want to use.\nFound: </td>
+
+
+
+      <td align="undefined" valign="undefined">'MyLibrary1.Keyword In Both Libraries' and 'MyLibrary2.Keyword In Both Libraries' </td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined">Keyword In Both Libraries</td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td align="undefined" valign="undefined">Non Unique Keywords Without Full Name Fails&nbsp;3</td>
+
+
+
+      <td align="undefined" valign="undefined">[ Document ]<br>
+
+
+
+
+
+
+      </td>
+
+
+
+      <td align="undefined" valign="undefined">FAIL</td>
+
+
+
+      <td align="undefined" valign="undefined">Multiple keywords with name 'Keyword In All Resources And Libraries' found.\n<br>
+
+
+
+
+
+Give the full name of the keyword you want to use.\n
+Found:</td>
+
+
+
+      <td align="undefined" valign="undefined">'my_resource_1.Keyword In All Resources And Libraries' and 'my_resource_2.Keyword In All Resources And Libraries' </td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined">Keyword In All Resources And Libraries</td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Keyword From Test Case File Overrides&nbsp; Keywords From Resources And Libraries</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Keyword Everywhere</td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined">Keyword In TC File Overrides Others</td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td align="undefined" valign="undefined">Keyword From Resource Overrides&nbsp; Keywords From Libraries</td>
+
+
+
+      <td align="undefined" valign="undefined">Keyword In Resource Overrides Libraries</td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td>Keyword From User Library Overrides Keywords From Standard Library 1</td>
+
+
+      <td>Comment</td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td>Keyword From User Library Overrides Keywords From Standard Library 2</td>
+
+
+      <td>Copy Directory</td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td>Keyword in More than one user library and standard library</td>
+
+
+      <td align="undefined" valign="undefined">[ Document ]<br>
+
+
+
+
+
+
+      </td>
+
+
+      <td align="undefined" valign="undefined">FAIL</td>
+
+
+      <td align="undefined" valign="undefined">Multiple keywords with name 'No Operation' found.\n<br>
+
+
+
+
+
+Give the full name of the keyword you want to use.\nFound: </td>
+
+
+      <td align="undefined" valign="undefined">'BuiltIn.No Operation', 'MyLibrary1.No Operation' and 'MyLibrary2.No Operation' </td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined">No Operation</td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+    </tr>
+
+
+
+
+
+
+
+  
+  
+  
+  
+  
+  
+  </tbody>
+</table>
+
+
+
+
+
+
+
+
+<table border="1">
+
+
+
+
+
+
+
+  <colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
+  <thead>
+  <tr>
+
+
+
+
+
+
+
+    <th>Keyword</th>
+
+
+
+
+
+
+
+    <th>Action</th>
+
+
+
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+
+
+
+  </tr>
+
+
+
+
+
+
+
+  </thead>
+  <tbody>
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Keyword Only In Test Case File</td>
+
+
+
+
+
+
+      <td>Log</td>
+
+
+
+
+
+
+      <td>Keyword from test case file</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+      <td align="undefined" valign="undefined">Keyword Everywhere</td>
+
+
+
+      <td align="undefined" valign="undefined">Log</td>
+
+
+
+      <td align="undefined" valign="undefined">Keyword from test case file</td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td align="undefined" valign="undefined">keyword In TC File Overrides Others</td>
+
+
+
+      <td align="undefined" valign="undefined">Log</td>
+
+
+
+      <td align="undefined" valign="undefined">Keyword from test case file</td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+
+
+
+
+      <td>Keyword In Test Case And Resource Files</td>
+
+
+
+
+
+
+
+      <td>Log</td>
+
+
+
+
+
+
+
+      <td>Keyword from test case file</td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+  
+  
+  
+  
+  
+  
+  </tbody>
+</table>
+
+
+
+
+
+
+
+
+</body>
+</html>

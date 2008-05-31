@@ -1,0 +1,2365 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <style type="text/css">
+html {
+  font-family: Arial,Helvetica,sans-serif;
+  background-color: white;
+  color: black;
+}
+p {
+  max-width: 60em;
+}
+table {
+  border-collapse: collapse;
+  empty-cells: show;
+  margin: 1em 0em;
+  border: 0.1em solid black;
+}
+th, td {
+  border-style: solid;
+  border-width: 0.05em 0.1em;
+  border-color: black;
+  padding: 0.1em 0.2em;
+  height: 1.5em;
+}
+th {
+  background-color: rgb(192, 192, 192);
+  color: black;
+  border-width: 0.1em;
+  font-weight: bold;
+  text-align: center;
+  text-transform: capitalize;
+  letter-spacing: 0.1em;
+}
+/* Widths of named columns */
+col.name {
+  width: 10em;
+}
+.action, .value, .arg {
+  width: 15em;
+}
+/* Properties for the name column 
+- td:first-child should work in CSS 2.1 avare browsers (tested in Firefox)
+- col.name is against specs but works in IE
+*/
+td:first-child, col.name {
+  background-color: rgb(240, 240, 240);
+  text-transform: capitalize;
+  letter-spacing: 0.1em;
+}
+/* required for IE */
+th {
+  font-style: normal;
+}
+  </style>
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <title>Robot Test Cases</title></head>
+<body>
+
+
+
+
+
+
+
+
+
+
+
+
+<h1>Robot Test Cases</h1>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table border="1">
+
+
+
+
+
+
+
+
+
+
+
+
+  <colgroup span="99"><col class="name"><col class="value" span="4"></colgroup>
+  <thead>
+  <tr>
+
+
+
+
+
+
+
+
+
+
+
+
+    <th>Setting</th>
+
+
+
+
+
+
+
+
+
+
+
+
+    <th>Value</th>
+
+
+
+
+
+
+
+
+
+
+
+
+    <th>Value</th>
+
+
+
+
+
+
+
+
+
+
+
+
+    <th>value</th>
+
+
+
+
+
+
+
+
+
+
+
+
+    <th>Value</th>
+
+
+
+
+
+
+
+
+
+
+
+
+  </tr>
+
+
+
+
+
+
+
+
+
+
+
+
+  </thead>
+  <tbody>
+
+
+
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Document</td>
+
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Tests for automatic variables ${OUTPUT_FILE}, ${LOG_FILE}<br>and ${REPORT_FILE}</td>
+
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+
+
+      <td>Force Tags</td>
+
+
+
+
+
+
+
+
+
+
+
+      <td>regression</td>
+
+
+
+
+
+
+
+
+
+
+
+      <td>jybot</td>
+
+
+
+
+
+
+
+
+
+
+
+      <td>pybot</td>
+
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+
+
+
+      <td>Resource</td>
+
+
+
+
+
+
+
+
+
+
+
+      <td>../../resources/resource.html</td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+
+
+
+      <td>Suite Setup</td>
+
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table border="1">
+
+
+
+
+
+
+
+
+
+
+
+
+  <colgroup span="99"><col class="name"><col class="value" span="4"></colgroup>
+  <thead>
+  <tr>
+
+
+
+
+
+
+
+
+
+
+
+
+    <th>Variable</th>
+
+
+
+
+
+
+
+
+
+
+
+
+    <th>Value</th>
+
+
+
+
+
+
+
+
+
+
+
+
+    <th>Value</th>
+
+
+
+
+
+
+
+
+
+
+
+
+    <th>Value</th>
+
+
+
+
+
+
+
+
+
+
+
+
+    <th>Value</th>
+
+
+
+
+
+
+
+
+
+
+
+
+  </tr>
+
+
+
+
+
+
+
+
+
+
+
+
+  </thead>
+  <tbody>
+
+
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table border="1">
+
+
+
+
+
+
+
+
+
+
+
+
+  <colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
+  <thead>
+  <tr>
+
+
+
+
+
+
+
+
+
+
+
+
+    <th>Test Case</th>
+
+
+
+
+
+
+
+
+
+
+
+
+    <th>Action</th>
+
+
+
+
+
+
+
+
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+
+
+
+
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+
+
+
+
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+
+
+
+
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+  </tr>
+
+
+
+
+
+
+
+
+
+
+
+
+  </thead>
+  <tbody>
+
+
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+
+
+
+
+    
+    
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+
+
+
+    
+    
+
+
+
+
+
+
+
+
+
+
+    
+    
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+    
+
+
+
+
+
+
+    
+
+
+
+
+
+
+    
+
+
+
+
+
+
+    
+
+
+
+
+
+
+    
+
+
+
+
+
+
+    
+
+
+
+
+
+
+    
+
+
+
+
+
+
+    
+
+
+
+
+
+
+    
+
+
+
+
+
+
+    
+
+
+
+
+
+
+    
+
+
+
+
+
+
+    
+
+
+
+
+
+
+    
+
+
+
+
+
+
+    
+
+
+
+
+
+
+    
+
+
+
+
+
+
+    
+
+
+
+
+
+
+    
+
+
+
+
+
+
+    
+
+
+
+
+
+
+    
+
+
+
+
+
+
+    
+
+
+
+
+
+
+    
+
+
+
+
+    
+
+
+
+
+    
+
+
+
+
+    
+
+
+
+
+    
+
+
+
+    
+
+
+
+    
+
+
+
+    
+
+
+
+    
+
+
+
+    
+
+
+    
+
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <tr>
+      <td align="undefined" valign="undefined">Outputfile Variables Should Contain Absolute Paths To Outputfiles</td>
+      <td>Run Tests</td><td>--log mylog.html<br>--report myreport.html<br>--summary mysummary.html<br>--debugfile mydebug.txt<br>
+
+
+
+      </td><td>core${/}outputfile_variables</td>
+      
+      
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined"></td>
+      
+    </tr>
+    <tr><td></td><td align="undefined" valign="undefined">${tc} = </td><td align="undefined" valign="undefined">Check Test Case</td><td>Log All Output Files In Toplevel</td><td></td><td></td></tr><tr>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined">Outputfile Variables Should Contain Correct Paths</td>
+      <td align="undefined" valign="undefined">${tc}</td>
+      <td align="undefined" valign="undefined">${OUTDIR}${/}outputfile_variables-output.xml</td><td align="undefined" valign="undefined">${OUTDIR}${/}mylog.html</td><td align="undefined" valign="undefined">${OUTDIR}${/}myreport.html</td>
+      
+      
+      
+    </tr>
+    <tr><td></td><td>...</td><td>${OUTDIR}${/}mysummary.html</td><td>${OUTDIR}${/}mydebug.txt</td><td>${OUTDIR}</td><td></td></tr><tr><td></td><td align="undefined" valign="undefined">${tc} = </td><td align="undefined" valign="undefined">Check Test Case</td><td>Log All Output Files In Sublevel</td><td></td><td></td></tr><tr><td></td><td align="undefined" valign="undefined">Outputfile Variables Should Contain Correct Paths</td><td align="undefined" valign="undefined">${tc}</td><td align="undefined" valign="undefined">${OUTDIR}${/}outputfile_variables-output.xml</td><td align="undefined" valign="undefined">${OUTDIR}${/}mylog.html</td><td align="undefined" valign="undefined">${OUTDIR}${/}myreport.html</td></tr><tr>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td>...</td><td>${OUTDIR}${/}mysummary.html</td><td>${OUTDIR}${/}mydebug.txt</td>
+
+      
+
+      
+
+      <td align="undefined" valign="undefined">${OUTDIR}</td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      
+
+    </tr>
+
+    <tr><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr>
+
+      <td align="undefined" valign="undefined">Default value of outputfile Variables Other than ${OUTPUTDIR} and ${OUTPUTFILE} Is NONE</td>
+
+      <td>Run Tests</td><td>--log&nbsp;none<br>--report NONE<br><br>
+
+
+
+      </td><td>core${/}outputfile_variables</td>
+
+      
+
+      
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      
+
+    </tr>
+
+    <tr>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined">${tc} = </td><td align="undefined" valign="undefined">Check Test Case</td><td>Log All Output Files In Toplevel</td>
+      
+      
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined"></td>
+      
+    </tr>
+    <tr>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined">Outputfile Variables Should Contain Correct Paths</td><td align="undefined" valign="undefined">${tc}</td><td align="undefined" valign="undefined">${OUTDIR}${/}outputfile_variables-output.xml</td>
+
+      
+
+      
+
+      <td align="undefined" valign="undefined">NONE</td>
+
+      <td align="undefined" valign="undefined">NONE</td>
+
+      
+
+    </tr>
+
+    <tr>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td>...</td>
+
+      <td>NONE</td>
+
+      <td align="undefined" valign="undefined">NONE</td>
+
+      <td align="undefined" valign="undefined">${OUTDIR}</td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      
+
+    </tr>
+
+    <tr>
+
+      <td></td><td align="undefined" valign="undefined">${tc} = </td><td align="undefined" valign="undefined">Check Test Case</td><td>Log All Output Files In Sublevel</td>
+
+      
+      
+      
+      <td align="undefined" valign="undefined"></td>
+
+      
+      
+      
+      <td align="undefined" valign="undefined"></td>
+
+      
+
+    </tr>
+
+    <tr>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined">Outputfile Variables Should Contain Correct Paths</td><td align="undefined" valign="undefined">${tc}</td><td align="undefined" valign="undefined">${OUTDIR}${/}outputfile_variables-output.xml</td><td align="undefined" valign="undefined">NONE</td><td align="undefined" valign="undefined">NONE</td>
+      
+      
+      
+      
+      
+    </tr>
+    <tr>
+      <td align="undefined" valign="undefined"></td>
+      <td>...</td><td>NONE</td><td align="undefined" valign="undefined">NONE</td>
+      
+      
+      <td align="undefined" valign="undefined">${OUTDIR}</td>
+      <td align="undefined" valign="undefined"></td>
+      
+    </tr>
+    <tr>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined"></td>
+      
+    </tr>
+    <tr>
+      <td align="undefined" valign="undefined">Values Should Be Changing Correctly When Using Split Output</td>
+      <td>Run Tests</td><td>--log mylog.html<br>--report myreport.html<br>--summary mysummary.html<br>--debugfile mydebug.txt<br>--splitoutput 2<br>
+
+
+
+      </td><td>core${/}outputfile_variables</td>
+      
+      
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined"></td>
+      
+    </tr>
+    <tr><td></td><td>List Dir</td><td>${OUTDIR}</td><td></td><td></td><td></td></tr><tr>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined">${tc} = </td><td align="undefined" valign="undefined">Check Test Case</td><td>Log All Output Files In Toplevel</td>
+
+      
+
+      
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      
+
+    </tr>
+
+    <tr>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined">Outputfile Variables Should Contain Correct Paths</td><td align="undefined" valign="undefined">${tc}</td><td align="undefined" valign="undefined">${OUTDIR}${/}outputfile_variables-output.xml</td><td align="undefined" valign="undefined">${OUTDIR}${/}mylog.html</td><td align="undefined" valign="undefined">${OUTDIR}${/}myreport.html</td>
+      
+      
+      
+      
+      
+    </tr>
+    <tr>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td>...</td><td>${OUTDIR}${/}mysummary.html</td><td>${OUTDIR}${/}mydebug.txt</td>
+
+      
+
+      
+
+      <td align="undefined" valign="undefined">${OUTDIR}</td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      
+
+    </tr>
+
+    <tr>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined">${tc} = </td><td align="undefined" valign="undefined">Check Test Case</td><td>Log All Output Files In Sublevel</td>
+
+      
+
+      
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      
+
+    </tr>
+    <tr>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined">Outputfile Variables Should Contain Correct Paths</td><td align="undefined" valign="undefined">${tc}</td><td align="undefined" valign="undefined">${OUTDIR}${/}outputfile_variables-output-001.xml</td><td align="undefined" valign="undefined">${OUTDIR}${/}mylog-001.html</td><td align="undefined" valign="undefined">${OUTDIR}${/}myreport.html</td>
+      
+      
+      
+      
+      
+    </tr>
+    <tr>
+      <td align="undefined" valign="undefined"></td>
+      <td>...</td><td>${OUTDIR}${/}mysummary.html</td><td>${OUTDIR}${/}mydebug.txt</td>
+      
+      
+      <td align="undefined" valign="undefined">${OUTDIR}</td>
+      <td align="undefined" valign="undefined"></td>
+      
+    </tr>
+    <tr>
+      <td align="undefined" valign="undefined"></td>
+      <td></td>
+      <td></td>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined"></td>
+      
+    </tr>
+    <tr>
+      <td align="undefined" valign="undefined">Default Values Should Be Correct When Using Split Output</td>
+      <td>Run Tests</td><td>--log&nbsp;none<br>--report NONE<br>--splitoutput 2<br><br>
+
+
+
+      </td><td>core${/}outputfile_variables</td>
+      
+      
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined"></td>
+      
+    </tr><tr><td></td><td align="undefined" valign="undefined">${tc} = </td><td align="undefined" valign="undefined">Check Test Case</td><td>Log All Output Files In Toplevel</td><td></td><td></td></tr><tr><td></td><td align="undefined" valign="undefined">Outputfile Variables Should Contain Correct Paths</td><td align="undefined" valign="undefined">${tc}</td><td align="undefined" valign="undefined">${OUTDIR}${/}outputfile_variables-output.xml</td><td>NONE</td><td>NONE</td></tr><tr><td></td><td>...</td><td>NONE</td><td align="undefined" valign="undefined">NONE</td><td>${OUTDIR}</td><td></td></tr><tr><td></td><td align="undefined" valign="undefined">${tc} = </td><td align="undefined" valign="undefined">Check Test Case</td><td>Log All Output Files In Sublevel</td><td></td><td></td></tr><tr><td></td><td align="undefined" valign="undefined">Outputfile Variables Should Contain Correct Paths</td><td align="undefined" valign="undefined">${tc}</td><td align="undefined" valign="undefined">${OUTDIR}${/}outputfile_variables-output-001.xml</td><td>NONE</td><td>NONE</td></tr><tr><td></td><td>...</td><td>NONE</td><td align="undefined" valign="undefined">NONE</td><td>${OUTDIR}</td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table border="1">
+
+
+
+
+
+
+
+
+
+
+
+
+  <colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
+  <thead>
+  <tr>
+
+
+
+
+
+
+
+
+
+
+
+
+    <th>Keyword</th>
+
+
+
+
+
+
+
+
+
+
+
+
+    <th>Action</th>
+
+
+
+
+
+
+
+
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+
+
+
+
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+
+
+
+
+
+
+
+
+    <th>Argument</th><th>Argument</th>
+
+
+
+
+
+
+
+
+
+
+
+
+  </tr>
+
+
+
+
+
+
+
+
+
+
+
+
+  </thead>
+  <tbody>
+
+
+
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+
+
+
+      <td>Outputfile Variables Should Contain&nbsp; Correct Paths</td>
+
+
+
+
+
+
+
+
+
+
+
+
+      <td>[ Arguments ]</td>
+
+
+
+
+
+
+
+
+
+
+
+
+      <td>${test}<br></td>
+
+
+
+
+
+
+
+
+
+
+
+
+      <td>@{files}</td>
+
+
+
+
+
+
+
+
+
+
+
+
+      <td></td><td></td>
+
+
+
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+
+
+    <tr><td></td><td>@{indices} =</td><td>Evaluate</td><td>[ i for i in range(len(@{files})) ]</td><td></td><td></td></tr>
+    <tr><td></td><td>: FOR</td><td>${i}</td><td>IN</td><td>@{indices}</td><td></td></tr><tr><td></td><td></td><td>Check Log Message</td><td>${test.kws[0].msgs[${i}]}</td><td>@{files}[${i}]</td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined"></td><td></td>
+    </tr>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+</body></html>

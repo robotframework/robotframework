@@ -1,0 +1,8224 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+
+
+
+
+
+
+
+
+
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <style type="text/css">
+html { font-family: Arial,Helvetica,sans-serif;
+background-color: white;
+color: black;
+}
+p { max-width: 60em;
+}
+table { border-collapse: collapse;
+empty-cells: show;
+margin: 1em 0em;
+border: 0.1em solid black;
+}
+th, td {
+border-style: solid;
+border-width: 0.05em 0.1em;
+border-color: black;
+padding: 0.1em 0.2em;
+height: 1.5em;
+}
+th {
+background-color: rgb(192, 192, 192);
+color: black;
+border-width: 0.1em;
+font-weight: bold;
+text-align: center;
+text-transform: capitalize;
+letter-spacing: 0.1em;
+}
+/* Widths of named columns */
+col.name {
+width: 10em;
+}
+.action , .value, .arg {
+width: 15em;
+}
+/* Properties for the name column - td:first-child should work in CSS 2.1 avare browsers (tested in Firefox)
+- col.name is against specs but works in IE
+*/
+td:first-child, col.name {
+background-color: rgb(240, 240, 240);
+text-transform: capitalize;
+letter-spacing: 0.1em;
+}
+th { font-style: normal; } /* required for IE */
+  </style>
+  
+
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <title>Robot Test Cases</title><link type="text/css" href="resources/css/testdata.css" rel="stylesheet"></head>
+<body>
+
+
+
+
+
+
+
+
+
+
+<h1>Robot Test Cases for Return Values</h1>
+
+
+
+
+
+
+
+
+
+
+<table border="1">
+
+
+
+
+
+
+
+
+
+
+  <colgroup span="99"><col class="name"><col class="value" span="4"></colgroup> <thead>
+  <tr>
+
+
+
+
+
+
+
+
+
+
+    <th>Setting</th>
+
+
+
+
+
+
+
+
+
+
+    <th>Value</th>
+
+
+
+
+
+
+
+
+
+
+    <th>Value</th>
+
+
+
+
+
+
+
+
+
+
+    <th>value</th>
+
+
+
+
+
+
+
+
+
+
+    <th>Value</th>
+
+
+
+
+
+
+
+
+
+
+  </tr>
+
+
+
+
+
+
+
+
+
+
+  </thead> <tbody>
+
+
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Library</td>
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">ExampleLibrary</td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+      <td>Library</td>
+
+
+
+
+
+
+
+
+
+      <td>ExampleJavaLibrary</td>
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+<br>
+
+
+
+
+
+
+
+
+
+
+<table border="1">
+
+
+
+
+
+
+
+
+
+
+  <colgroup span="99"><col class="name"><col class="value" span="4"></colgroup> <thead>
+  <tr>
+
+
+
+
+
+
+
+
+
+
+    <th>Variable</th>
+
+
+
+
+
+
+
+
+
+
+    <th>Value</th>
+
+
+
+
+
+
+
+
+
+
+    <th>Value</th>
+
+
+
+
+
+
+
+
+
+
+    <th>Value</th>
+
+
+
+
+
+
+
+
+
+
+    <th>Value</th>
+
+
+
+
+
+
+
+
+
+
+  </tr>
+
+
+
+
+
+
+
+
+
+
+  </thead> <tbody>
+
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+<br>
+
+
+
+
+
+
+
+
+
+
+<table border="1">
+
+
+
+
+
+
+
+
+
+
+  <colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
+  <thead> <tr>
+
+
+
+
+
+
+
+
+
+
+    <th>Test Case</th>
+
+
+
+
+
+
+
+
+
+
+    <th>Action</th>
+
+
+
+
+
+
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+
+
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+
+
+
+
+
+
+    <th>Arg</th>
+
+
+
+
+
+
+
+
+
+
+    <th>Arg</th>
+
+
+
+
+
+
+
+
+
+
+    <th>Arg</th>
+
+
+
+
+
+    <th>Arg</th>
+
+
+
+
+
+
+
+
+
+
+  </tr>
+
+
+
+
+
+
+
+
+
+
+  </thead> <tbody>
+
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+ <td>Set Simple Scalar Variable</td>
+
+
+
+
+
+
+
+
+
+
+      <td>${setvar}</td>
+
+
+
+
+
+
+
+
+
+      <td>Set Variable</td>
+
+
+
+
+
+
+
+
+
+      <td>this value is set</td>
+
+
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td>Should Be Equal</td>
+
+
+
+
+
+
+
+
+
+      <td>${setvar}</td><td>this value is set</td>
+
+
+
+
+
+
+
+
+
+      
+
+
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+      <td>Set Empty Scalar Variable</td>
+
+
+
+
+
+
+
+
+
+      <td>${setvar}</td>
+
+
+
+
+
+
+
+
+
+      <td>Set Variable</td>
+
+
+
+
+
+
+
+
+
+      <td><br>
+
+
+
+
+
+
+
+
+
+      </td>
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+      <td>Should Be Equal</td>
+
+
+
+
+
+
+
+
+
+      <td>${setvar}
+
+
+
+
+
+
+
+
+
+      </td>
+
+
+
+
+
+
+
+
+
+      <td>\<br></td>
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+      <td>set List to Scalar Variable</td>
+
+
+
+
+
+
+
+
+
+      <td>${setvar}</td>
+
+
+
+
+
+
+
+
+
+      <td>Set Variable</td>
+
+
+
+
+
+
+
+
+
+      <td>a</td>
+
+
+
+
+
+
+
+
+
+      <td>b</td>
+
+
+
+
+
+
+
+
+
+      <td>c</td>
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+
+
+    <tr><td></td><td>Should Be Equal
+
+
+
+      </td><td>${setvar[0]}</td><td>a</td><td></td><td></td><td></td><td></td></tr><tr>
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+      <td>Should Be Equal</td>
+
+
+
+
+
+
+
+
+
+      <td>${setvar[1]}</td><td>b</td>
+
+
+
+
+
+
+
+
+
+      
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td>Should Be Equal</td>
+
+
+
+
+
+
+
+
+
+
+      <td>${setvar[2]}</td><td>c</td>
+
+
+
+
+
+
+
+
+
+
+      
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+
+      <td>Set Multible Scalar Variables
+      </td>
+
+
+
+
+
+
+
+
+
+
+      <td>${var1}</td>
+
+
+
+
+
+
+
+
+
+      <td>${var2}</td>
+
+
+
+
+
+
+
+
+
+      <td>setvariable</td>
+
+
+
+
+
+
+
+
+
+      <td>one</td>
+
+
+
+
+
+
+
+
+
+      <td>two</td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+
+
+
+    <tr><td></td><td>Should Be Equal</td><td>${var1}</td><td>one</td><td></td><td></td><td></td><td></td></tr><tr>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td>Should Be Equal</td>
+
+
+
+
+
+
+
+
+
+      <td>${var2}</td><td>two</td>
+
+
+
+
+
+
+
+
+
+      
+
+
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+    <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Set Multiple Scalar Variables Using Java Array</td><td>${var1}</td><td>${var2} =</td><td>Get String Array</td><td>first value</td><td>second value</td><td></td><td></td></tr><tr><td></td><td>Should Be Equal</td><td>${var1}</td><td>first value</td><td></td><td></td><td></td><td></td></tr><tr><td></td><td>Should Be Equal</td><td>${var2}</td><td>second value</td><td></td><td></td><td></td><td></td></tr><tr><td></td><td>${i1}</td><td>${i2}</td><td>${i42} =</td><td>Get Array Of Three Ints</td><td></td><td></td><td></td></tr><tr><td></td><td>Should Be Equal</td><td>${i1}</td><td>${1}</td><td></td><td></td><td></td><td></td></tr><tr><td></td><td>Should Be Equal</td><td>${i2}</td><td>${2}</td><td></td><td></td><td></td><td></td></tr><tr><td></td><td>Should Be Equal</td><td>${i42}</td><td>${42}</td><td></td><td></td><td></td><td></td></tr><tr>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td align="undefined" valign="undefined">Set With = Mark</td>
+
+
+      <td align="undefined" valign="undefined">${var} =</td>
+
+
+      <td align="undefined" valign="undefined">Set Variable</td>
+
+
+      <td align="undefined" valign="undefined">hello</td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined">Should Be Equal</td>
+
+
+      <td align="undefined" valign="undefined">${var}</td>
+
+
+      <td align="undefined" valign="undefined">hello</td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined">${v1}</td>
+
+
+      <td align="undefined" valign="undefined">${v2} =</td>
+
+
+      <td align="undefined" valign="undefined">Set</td>
+
+
+      <td align="undefined" valign="undefined">hi</td>
+
+
+      <td align="undefined" valign="undefined">you</td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined">Should Be Equal</td>
+
+
+      <td align="undefined" valign="undefined">${v1}</td>
+
+
+      <td align="undefined" valign="undefined">hi</td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Should Be Equal</td>
+
+
+      <td align="undefined" valign="undefined">${v2}</td>
+
+
+      <td align="undefined" valign="undefined">you</td>
+
+
+
+
+
+
+
+
+
+
+      
+
+
+
+
+
+
+
+      
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined">@{list} =</td>
+
+
+      <td align="undefined" valign="undefined">Set</td>
+
+
+      <td align="undefined" valign="undefined">a</td>
+
+
+      <td align="undefined" valign="undefined">b</td>
+
+
+      <td align="undefined" valign="undefined">c</td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined">Should Be Equal</td>
+
+
+      <td align="undefined" valign="undefined">@{list}[0] @{list}[1]&nbsp;@{list}[2]</td>
+
+
+      <td align="undefined" valign="undefined">a b c</td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td align="undefined" valign="undefined">Set With = Mark Invalid Syntax 1</td>
+
+
+      <td align="undefined" valign="undefined">[ Document ]</td>
+
+
+      <td align="undefined" valign="undefined">FAIL</td>
+
+
+      <td align="undefined" valign="undefined">Syntax error: Only the last variable can have '=' mark</td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined">${v1} =</td>
+
+
+      <td align="undefined" valign="undefined">${v2}</td>
+
+
+      <td align="undefined" valign="undefined">Set Variable</td>
+
+
+      <td align="undefined" valign="undefined">a</td>
+
+
+      <td align="undefined" valign="undefined">b</td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td align="undefined" valign="undefined">Set With = Mark Invalid Syntax 2</td>
+
+
+      <td align="undefined" valign="undefined">[ Document ]</td>
+
+
+      <td align="undefined" valign="undefined">FAIL</td>
+
+
+      <td align="undefined" valign="undefined">Syntax error: Only the last variable can have '=' mark</td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined">${v1} =</td>
+
+
+      <td align="undefined" valign="undefined">${v2} =</td>
+
+
+      <td align="undefined" valign="undefined">Set Variable</td>
+
+
+      <td align="undefined" valign="undefined">a</td>
+
+
+      <td align="undefined" valign="undefined">b</td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+      <td>Set Python Object to Scalar Variable</td>
+
+
+
+
+
+
+
+
+
+      <td>${var}</td>
+
+
+
+
+
+
+
+
+
+      <td>Return Object</td>
+
+
+
+
+
+
+
+
+
+      <td>This is my name</td>
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+      <td>Should Be Equal</td>
+
+
+
+
+
+
+
+
+
+      <td>${var.name}</td>
+
+
+
+
+
+
+
+
+
+      <td>This is my name</td>
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+      <td>Set Java Object to Scalar Variable</td>
+
+
+
+
+
+
+
+
+
+      <td>${var}</td>
+
+
+
+
+
+
+
+
+
+      <td>ExampleJavaLibrary.GetJavaObject</td>
+
+
+
+
+
+
+
+
+
+      <td>This is my name in Java</td>
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+      <td>Should Be Equal</td>
+
+
+
+
+
+
+
+
+
+      <td>${var.name}</td>
+
+
+
+
+
+
+
+
+
+      <td>This is my name in Java</td>
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Set None To Scalar Variable</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">${var}</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Evaluate</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">None</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Fail Unless</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">${var} is None</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Fail If Equal</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">${var}</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">None</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+
+      <td>Set List Variable</td>
+
+
+
+
+
+
+
+
+
+
+      <td>@{listvar} =</td>
+
+
+
+
+
+
+
+
+
+
+      <td>Se TV Ari &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;able</td>
+
+
+
+
+
+
+
+
+
+
+      <td>h</td>
+
+
+
+
+
+
+
+
+
+
+      <td>e</td>
+
+
+
+
+
+
+
+
+
+
+      <td>ll</td>
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">o</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td>Should Be Equal</td>
+
+
+
+
+
+
+
+
+
+
+      <td>@{listvar}[0]</td><td>h</td>
+
+
+
+
+
+
+
+
+
+
+      
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td>Should Be Equal</td>
+
+
+
+
+
+
+
+
+
+
+      <td>@{listvar}[1]</td><td>e</td>
+
+
+
+
+
+
+
+
+
+
+      
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td>Should Be Equal</td>
+
+
+
+
+
+
+
+
+
+
+      <td>@{listvar}[2]</td><td>ll</td>
+
+
+
+
+
+
+
+
+
+
+      
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td>Should Be Equal</td>
+
+
+
+
+
+
+
+
+
+
+      <td>@{listvar}[3]</td><td>o</td>
+
+
+
+
+
+
+
+
+
+
+      
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+    <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Set List Variable Using Java Array</td><td>@{listvar} =</td><td>Get String Array</td><td>v1</td><td>v2</td><td>v3</td><td></td><td></td></tr><tr><td></td><td>Should Be Equal</td><td>@{listvar}[0]</td><td>v1</td><td></td><td></td><td></td><td></td></tr><tr><td></td><td>Should Be True</td><td>@{listvar} == ['v1', 'v2', 'v3']</td><td></td><td></td><td></td><td></td><td></td></tr><tr><td></td><td>@{listvar} =</td><td>Get Array of Three Ints</td><td></td><td></td><td></td><td></td><td></td></tr><tr><td></td><td>Should Be Equal</td><td>@{listvar}[0]</td><td>${1}</td><td></td><td></td><td></td><td></td></tr><tr><td></td><td>Should Be True</td><td>@{listvar} == [1 ,2, 42]</td><td></td><td></td><td></td><td></td><td></td></tr><tr>
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+      <td>Set Long String To Scalar variable</td>
+
+
+
+
+
+
+
+
+
+      <td>${var_300} =</td>
+
+
+
+
+
+
+
+
+
+      <td>Set Variable</td>
+
+
+
+
+
+
+
+
+
+      <td>123456789 123456789 123456789
+123456789&nbsp;123456789&nbsp;123456789
+123456789&nbsp;123456789&nbsp;123456789 1234567890123456789 123456789
+123456789 123456789 123456789&nbsp;123456789 123456789
+123456789&nbsp;123456789 1234567890123456789 123456789 123456789
+123456789 123456789&nbsp;123456789 123456789 123456789&nbsp;123456789
+1234567890 </td>
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+      <td>Should Be Equal</td>
+
+
+
+
+
+
+
+
+
+      <td>123456789 123456789 123456789
+123456789&nbsp;123456789&nbsp;123456789
+123456789&nbsp;123456789&nbsp;123456789 1234567890123456789 123456789
+123456789 123456789 123456789&nbsp;123456789 123456789
+123456789&nbsp;123456789 1234567890123456789 123456789 123456789
+123456789 123456789&nbsp;123456789 123456789 123456789&nbsp;123456789
+1234567890
+       </td>
+
+
+
+
+
+
+
+
+
+      <td>${var_300}</td>
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+      <td>Set Long Values To List variable</td>
+
+
+
+
+
+
+
+
+
+      <td>${100_marks}</td>
+
+
+
+
+
+
+
+
+
+      <td>Set Variable</td>
+
+
+
+
+
+
+
+
+
+      <td>123456789 123456789 123456789 123456789&nbsp;123456789&nbsp;123456789 123456789&nbsp;123456789&nbsp;123456789 1234567890</td>
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+      <td><br>
+
+
+
+
+
+
+
+
+
+      </td>
+
+
+
+
+
+
+
+
+
+      <td>@{listvar}</td>
+
+
+
+
+
+
+
+
+
+      <td>Set Variable</td>
+
+
+
+
+
+
+
+
+
+      <td>&nbsp;${100_marks}</td>
+
+
+
+
+
+
+
+
+
+      <td>${100_marks}</td>
+
+
+
+
+
+
+
+
+
+      <td>${100_marks}&nbsp;</td>
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+      <td>Should Be Equal</td>
+
+
+
+
+
+
+
+
+
+      <td>${100_marks}</td>
+
+
+
+
+
+
+
+
+
+      <td>@{listvar}[0]</td>
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+      <td>Should Be Equal</td>
+
+
+
+
+
+
+
+
+
+      <td>${100_marks}</td>
+
+
+
+
+
+
+
+
+
+      <td>@{listvar}[1]</td>
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+      <td>Should Be Equal</td>
+
+
+
+
+
+
+
+
+
+      <td>${100_marks}</td>
+
+
+
+
+
+
+
+
+
+      <td>@{listvar}[2]</td>
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+      
+
+
+
+      
+
+
+
+      
+
+
+
+      
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+      
+
+
+
+      
+
+
+
+      
+
+
+
+      
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+
+      <td>Set
+Scalar Variables With More Values Than Variables</td>
+
+
+
+
+
+
+
+
+
+
+      <td>[Document]</td>
+
+
+
+
+
+
+
+
+
+
+      <td>Extra string variables are added to last scalar
+variable as list</td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      
+
+
+
+
+      
+
+
+
+
+      
+
+
+
+
+      
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+
+      <td><br>
+
+
+
+
+
+
+
+
+
+
+      </td>
+
+
+
+
+
+
+
+
+
+
+      <td>${a}</td>
+
+
+
+
+
+
+
+
+
+
+      <td>${b}</td>
+
+
+
+
+
+
+
+
+
+
+      <td>${c}</td>
+
+
+
+
+
+
+
+
+
+
+      <td>List</td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      
+
+
+
+
+      
+
+
+
+
+      
+
+
+
+
+      
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+    
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">...</td>
+
+
+
+
+
+      <td>a</td>
+
+
+
+
+
+      <td>b</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">c</td>
+
+
+
+
+
+      <td>d</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">e</td>
+
+
+
+
+
+      <td>f</td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td>Should Be Equal</td>
+
+
+
+
+
+
+
+
+
+
+      <td>${a}</td>
+
+
+
+
+
+
+
+
+
+
+      <td>a</td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      
+
+
+
+
+      
+
+
+
+
+      
+
+
+
+
+      
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td>Should Be True</td>
+
+
+
+
+
+
+
+
+
+
+      <td>'${b}'
+== 'b'</td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      
+
+
+
+
+      
+
+
+
+
+      
+
+
+
+
+      
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td>Should Be True</td>
+
+
+
+
+
+
+
+
+
+
+      <td>${c}
+== ['c', 'd', 'e', 'f']</td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      
+
+
+
+
+      
+
+
+
+
+      
+
+
+
+
+      
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+    <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Set
+Scalar Variables With More Values Than Variables Using Java Array</td><td>${a}</td><td>${b}</td><td>${c}</td><td>Get String Array</td><td></td><td></td><td></td></tr><tr><td></td><td align="undefined" valign="undefined">...</td><td>a</td><td>b</td><td align="undefined" valign="undefined">c</td><td>d</td><td align="undefined" valign="undefined">e</td><td>f</td></tr><tr><td></td><td>Should Be Equal</td><td>${a}</td><td>a</td><td></td><td></td><td></td><td></td></tr><tr><td></td><td>Should Be True</td><td>'${b}'
+== 'b'</td><td></td><td></td><td></td><td></td><td></td></tr><tr><td></td><td>Should Be True</td><td>${c}
+== ['c', 'd', 'e', 'f']</td><td></td><td></td><td></td><td></td><td></td></tr><tr><td></td><td>${i1}</td><td>${i2&amp;42}</td><td>Get Array Of Three Ints</td><td></td><td></td><td></td><td></td></tr><tr><td></td><td>Should Be Equal</td><td>${i1}</td><td>${1}</td><td></td><td></td><td></td><td></td></tr><tr><td></td><td>Should Be True</td><td>${i2&amp;42} == [2, 42]</td><td></td><td></td><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+
+      <td>Set
+Multiple Scalars with too few values</td>
+
+
+
+
+
+
+
+
+
+
+      <td>[ Document ]</td>
+
+
+
+
+
+
+
+
+
+
+      <td>FAIL</td>
+
+
+
+
+
+
+
+
+
+
+      <td>Cannot assign return value of keyword
+'BuiltIn.Create List' to variables '\${a}', '\${b}' and
+'\${c}': Need more values than&nbsp;2</td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      
+
+
+
+
+      
+
+
+
+
+      
+
+
+
+
+      
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+
+      <td><br>
+
+
+
+
+
+
+
+
+
+
+      </td>
+
+
+
+
+
+
+
+
+
+
+      <td>${a}</td>
+
+
+
+
+
+
+
+
+
+
+      <td>${b}</td>
+
+
+
+
+
+
+
+
+
+
+      <td>${c} =</td>
+
+
+
+
+
+
+
+
+
+
+      <td>Create List<br>
+
+
+
+
+
+
+
+
+
+
+      </td>
+
+
+
+
+
+
+
+
+
+
+      <td>a</td>
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">b</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      
+
+
+
+
+      
+
+
+
+
+      
+
+
+
+
+      
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+    <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Set
+Multiple Scalars with too few values Using Java Array</td><td>[ Document ]</td><td>FAIL</td><td>Cannot assign return value of keyword
+'ExampleJavaLibrary.Get Array Of Three Ints' to variables '\${i1}', '\${i2}',&nbsp;'\${i3}' and
+'\${i4}': Need more values than 3</td><td></td><td></td><td></td><td></td></tr><tr><td></td><td>${i1}</td><td>${i2}&nbsp;</td><td>${i3}</td><td>${i4} =</td><td>Get Array Of Three Ints</td><td></td><td></td></tr><tr>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      
+
+      
+
+      
+
+      
+
+    </tr>
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Set Multiple Scalars When No List Returned</td>
+
+
+
+
+
+
+
+      <td>[ Document ]</td>
+
+
+
+
+
+
+
+      <td>FAIL</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Cannot assign
+return value of keyword 'BuiltIn.Set Variable' to variables '\${a}' and '\${b}':
+Expected list, got string instead</td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      
+
+      
+
+      
+
+      
+
+    </tr>
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td>${a}</td>
+
+
+
+
+
+
+
+      <td>${b} =</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Set Variable</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">This is not list</td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      
+
+      
+
+      
+
+      
+
+    </tr>
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      
+
+
+
+
+      
+
+
+
+
+      
+
+
+
+
+      
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Set list When No List Returned</td>
+
+
+
+
+
+
+
+      <td>[ Document ]</td>
+
+
+
+
+
+
+
+      <td>FAIL</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Cannot assign return value of keyword 'BuiltIn.Set Variable' to variable '\@{list}': Expected list, got integer instead</td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      
+
+      
+
+      
+
+      
+
+    </tr>
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">@{list}</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Set Variable</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${42}</td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      
+
+      
+
+      
+
+      
+
+    </tr>
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      
+
+
+
+
+      
+
+
+
+
+      
+
+
+
+
+      
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+
+      <td>Set List to Scalar and list varibles</td>
+
+
+
+
+
+
+
+
+
+
+      <td>${a}</td>
+
+
+
+
+
+
+
+
+
+
+      <td>${b}</td>
+
+
+
+
+
+
+
+
+
+
+      <td>@{c}</td>
+
+
+
+
+
+
+
+
+
+
+      <td><br>
+
+
+
+
+
+      </td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      
+
+
+
+
+      
+
+
+
+
+      
+
+
+
+
+      
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+    
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">...</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Create List</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">...</td>
+
+
+
+
+
+      <td>1</td>
+
+
+
+
+
+      <td>2</td>
+
+
+
+
+
+      <td>c</td>
+
+
+
+
+
+      <td>d</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">e</td>
+
+
+
+
+
+      <td>f</td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td>Should Be True</td>
+
+
+
+
+
+
+
+
+
+
+      <td>${a}
++ ${b} == 3</td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      
+
+
+
+
+      
+
+
+
+
+      
+
+
+
+
+      
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td>Should Be True</td>
+
+
+
+
+
+
+
+
+
+
+      <td>@{c}
+== ['c', 'd', 'e', 'f']</td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      
+
+
+
+
+      
+
+
+
+
+      
+
+
+
+
+      
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td>Should Be Equal</td>
+
+
+
+
+
+
+
+
+
+
+      <td>@{c}[1]@{c}[2]@{c}[3]
+@{c}[3]oo(@{c}[0]): print @{c}[0]</td>
+
+
+
+
+
+
+
+
+
+
+      <td>def
+foo(c): print c</td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      
+
+
+
+
+      
+
+
+
+
+      
+
+
+
+
+      
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+    <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Set List to Scalar and list varibles Using Java Array</td><td>${a}</td><td>${b}</td><td>@{c} =</td><td>Get Array Of Three Ints</td><td></td><td></td><td></td></tr><tr><td></td><td>Should Be Equal</td><td>${a}</td><td>${1}</td><td></td><td></td><td></td><td></td></tr><tr><td></td><td>Should Be Equal</td><td>${b}</td><td>${2}</td><td></td><td></td><td></td><td></td></tr><tr><td></td><td>Should Be Equal</td><td>@{c}</td><td>${42}</td><td></td><td></td><td></td><td></td></tr><tr>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td align="undefined" valign="undefined">List Variable Can Be Only Last 1</td>
+
+
+      <td align="undefined" valign="undefined">[ Document ]</td>
+
+
+      <td align="undefined" valign="undefined">FAIL</td>
+
+
+      <td align="undefined" valign="undefined">Syntax error: Only the last variable can be a list variable</td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined">@{list}</td>
+
+
+      <td align="undefined" valign="undefined">@{list2}</td>
+
+
+      <td align="undefined" valign="undefined">Set Variable</td>
+
+
+      <td align="undefined" valign="undefined">1</td>
+
+
+      <td align="undefined" valign="undefined">2</td>
+
+
+      <td align="undefined" valign="undefined">3</td>
+
+
+      <td align="undefined" valign="undefined">4</td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td align="undefined" valign="undefined">List Variable Can be Only Last 2</td>
+
+
+      <td align="undefined" valign="undefined">[ Document ]</td>
+
+
+      <td align="undefined" valign="undefined">FAIL</td>
+
+
+      <td align="undefined" valign="undefined">Syntax error: Only the last variable can be a list variable</td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined">@{list}</td>
+
+
+      <td align="undefined" valign="undefined">${scal}</td>
+
+
+      <td align="undefined" valign="undefined">Set Variable</td>
+
+
+      <td align="undefined" valign="undefined">1</td>
+
+
+      <td align="undefined" valign="undefined">2</td>
+
+
+      <td align="undefined" valign="undefined">3</td>
+
+
+      <td align="undefined" valign="undefined">4</td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+
+
+
+      <td>No Keyword</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">[ Document ]</td>
+
+
+      <td align="undefined" valign="undefined">FAIL</td>
+
+
+
+
+
+      
+
+
+      <td>Syntax error: No keyword specified</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined">${nokeyword}</td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Failing Set Keyword</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">[ Document ]</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">FAIL</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Failing instead of returning</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">${ret}</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Fail</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Failing instead of returning</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Failing Set Keyword And Teardown</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">[ Document ]</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">FAIL</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Failing, again, instead of returning\n\nAlso teardown failed:\nTeardown fails but it is executed normally</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${ret}</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Fail</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Failing, again, instead of returning&nbsp;</td>
+
+
+
+
+
+
+
+
+
+
+      
+
+
+
+
+      
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      
+
+
+
+
+      
+
+
+
+
+      
+
+
+
+
+      
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">[ Teardown ]</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Fail</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Teardown fails but it is executed normally</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+<br>
+
+
+
+
+
+
+
+
+
+
+<table border="1">
+
+
+
+
+
+
+
+
+
+
+  <colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
+  <thead> <tr>
+
+
+
+
+
+
+
+
+
+
+    <th>Keyword</th>
+
+
+
+
+
+
+
+
+
+
+    <th>Action</th>
+
+
+
+
+
+
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+
+
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+
+
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+
+
+
+
+
+
+  </tr>
+
+
+
+
+
+
+
+
+
+
+  </thead> <tbody>
+
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+</body></html>

@@ -1,0 +1,1562 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+
+
+
+
+
+  
+  
+  
+  
+  <style type="text/css">
+html {
+  font-family: Arial,Helvetica,sans-serif;
+  background-color: white;
+  color: black;
+}
+p {
+  max-width: 60em;
+}
+table {
+  border-collapse: collapse;
+  empty-cells: show;
+  margin: 1em 0em;
+  border: 0.1em solid black;
+}
+th, td {
+  border-style: solid;
+  border-width: 0.05em 0.1em;
+  border-color: black;
+  padding: 0.1em 0.2em;
+  height: 1.5em;
+}
+th {
+  background-color: rgb(192, 192, 192);
+  color: black;
+  border-width: 0.1em;
+  font-weight: bold;
+  text-align: center;
+  text-transform: capitalize;
+  letter-spacing: 0.1em;
+}
+/* Widths of named columns */
+col.name {
+  width: 10em;
+}
+.action, .value, .arg {
+  width: 15em;
+}
+/* Properties for the name column 
+- td:first-child should work in CSS 2.1 avare browsers (tested in Firefox)
+- col.name is against specs but works in IE
+*/
+td:first-child, col.name {
+  background-color: rgb(240, 240, 240);
+  text-transform: capitalize;
+  letter-spacing: 0.1em;
+}
+/* required for IE */
+th {
+  font-style: normal;
+}
+  </style>
+  
+  
+  
+  
+  <title>Robot Test Cases</title>
+</head>
+
+
+<body>
+
+
+
+
+
+<h1>Robot Test Cases</h1>
+
+
+
+
+
+
+<table border="1">
+
+
+
+
+
+  <colgroup span="99"><col class="name"><col class="value" span="4"></colgroup>
+  <thead>
+  <tr>
+
+
+
+
+
+    <th>Setting</th>
+
+
+
+
+
+    <th>Value</th>
+
+
+
+
+
+    <th>Value</th>
+
+
+
+
+
+    <th>value</th>
+
+
+
+
+
+    <th>Value</th>
+
+
+
+
+
+  </tr>
+
+
+
+
+
+  </thead>
+  <tbody>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td>Force Tags</td>
+
+
+
+
+      <td>regression</td>
+
+
+
+
+      <td>jybot</td>
+
+
+
+
+      <td>pybot</td>
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td>Suite Setup</td>
+
+
+
+
+      <td>Run Tests</td>
+
+
+
+
+      <td><br>
+
+      </td>
+
+
+
+
+      <td>parsing${/}multirow.html</td>
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td>Resource</td>
+
+
+
+
+      <td>../../resources/resource.html</td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+
+  
+  
+  
+  
+  </tbody>
+</table>
+
+
+
+
+
+
+<table border="1">
+
+
+
+
+
+  <colgroup span="99"><col class="name"><col class="value" span="4"></colgroup>
+  <thead>
+  <tr>
+
+
+
+
+
+    <th>Variable</th>
+
+
+
+
+
+    <th>Value</th>
+
+
+
+
+
+    <th>Value</th>
+
+
+
+
+
+    <th>Value</th>
+
+
+
+
+
+    <th>Value</th>
+
+
+
+
+
+  </tr>
+
+
+
+
+
+  </thead>
+  <tbody>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+  
+  
+  
+  
+  </tbody>
+</table>
+
+
+
+
+
+
+<table border="1">
+
+
+
+
+
+  <colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
+  <thead>
+  <tr>
+
+
+
+
+
+    <th>Test Case</th>
+
+
+
+
+
+    <th>Action</th>
+
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+
+
+
+  </tr>
+
+
+
+
+
+  </thead>
+  <tbody>
+
+
+
+
+
+    <tr>
+
+      <td align="undefined" valign="undefined">Multirow Settings</td>
+
+      <td align="undefined" valign="undefined">Equals</td>
+
+      <td align="undefined" valign="undefined">${SUITE.doc}</td>
+
+      <td align="undefined" valign="undefined">This doc is one long \ string ! ! ! !</td>
+
+      <td align="undefined" valign="undefined"></td>
+
+    </tr>
+
+    <tr>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined">Fail Unless</td>
+
+      <td align="undefined" valign="undefined">${SUITE.tests[0].tags} == <br>
+
+[ 't'+str(i) for i in range(1,10) ]</td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+    </tr>
+
+    <tr>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+    </tr>
+
+    <tr>
+
+      <td align="undefined" valign="undefined">Multirow Variables</td>
+
+      <td align="undefined" valign="undefined">Check Test Case</td>
+
+      <td align="undefined" valign="undefined">Multirow&nbsp;Variables</td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+    </tr>
+
+    <tr>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+    </tr>
+
+    <tr>
+
+
+
+
+
+      <td>Multirow Args For Base Keyword</td>
+
+
+
+
+
+      <td>${test} =</td>
+
+
+
+
+
+      <td>Check Test Case</td>
+
+
+
+
+
+      <td>Multirow Args For Base Keyword</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    
+
+
+    <tr>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined">${kw} = </td>
+
+      <td align="undefined" valign="undefined">Set</td>
+
+      <td align="undefined" valign="undefined">${test.kws[0]}</td>
+
+      <td align="undefined" valign="undefined"></td>
+
+    </tr>
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td>Check Log Message</td>
+
+
+
+
+
+      <td>${kw.messages[0]}</td>
+
+
+
+
+
+      <td>one</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td>Check Log Message</td>
+
+      <td>${kw.messages[1]}</td>
+
+
+
+
+      
+
+
+      <td>two</td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td>Check Log Message</td>
+
+      <td>${kw.messages[2]}</td>
+
+
+
+
+      
+
+
+      <td>three</td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td>Check Log Message</td>
+
+      <td>${kw.messages[3]}</td>
+
+
+
+
+      
+
+
+      <td>four</td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td>Check Log Message</td>
+
+      <td>${kw.messages[4]}</td>
+
+
+
+
+      
+
+
+      <td>five</td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td>Multirow Args For User Keyword</td>
+
+
+
+
+      <td>${test} =</td>
+
+
+
+
+      <td>Check Test Case</td>
+
+
+
+
+      <td>Multirow Args For User Keyword</td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    
+
+    
+
+
+    <tr>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined">${kw} = </td>
+
+      <td align="undefined" valign="undefined">Set</td>
+
+      <td align="undefined" valign="undefined">${test.kws[0].kws[0]}</td>
+
+      <td align="undefined" valign="undefined"></td>
+
+    </tr>
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td>Check Log Message</td>
+
+      <td>${kw.messages[0]}</td>
+
+
+
+
+      
+
+
+      <td>1</td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td>Check Log Message</td>
+
+      <td>${kw.messages[1]}</td>
+
+
+
+
+      
+
+
+      <td>2</td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td>Check Log Message</td>
+
+      <td>${kw.messages[2]}</td>
+
+
+
+
+      
+
+
+      <td>3</td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td>Check Log Message</td>
+
+      <td>${kw.messages[3]}</td>
+
+
+
+
+      
+
+
+      <td>4</td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td>Check Log Message</td>
+
+      <td>${kw.messages[4]}</td>
+
+
+
+
+      
+
+
+      <td>5</td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+    </tr>
+
+    <tr>
+
+      <td align="undefined" valign="undefined">Multirow In User Keyword</td>
+
+      <td>${test} =</td>
+
+      <td>Check Test Case</td>
+
+      <td align="undefined" valign="undefined">Multirow In User Keyword</td>
+
+      <td align="undefined" valign="undefined"></td>
+
+    </tr>
+
+    <tr>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td align="undefined" valign="undefined">Multirow Return Values</td>
+
+
+
+      <td align="undefined" valign="undefined">Check Test Case</td>
+
+
+
+      <td align="undefined" valign="undefined">Multirow Return Values</td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+    </tr>
+
+    <tr>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+    </tr>
+
+    <tr>
+
+      <td align="undefined" valign="undefined">Multirow Test metadata</td>
+
+      <td>${test} =</td>
+
+      <td>Check Test Case</td>
+
+      <td align="undefined" valign="undefined">Multirow Test Metadata</td>
+
+      <td align="undefined" valign="undefined"></td>
+
+    </tr>
+
+    <tr>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined">Fail Unless</td>
+
+      <td align="undefined" valign="undefined">${test.tags} == <br>
+
+[ 'my'+str(i) for i in range(1,6) ]</td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+    </tr>
+
+    <tr>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined">Equals</td>
+
+      <td align="undefined" valign="undefined">${test.doc}</td>
+
+      <td align="undefined" valign="undefined">This test doc is&nbsp;one long string</td>
+
+      <td align="undefined" valign="undefined"></td>
+
+    </tr>
+
+    <tr>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+    </tr>
+
+    <tr>
+
+      <td align="undefined" valign="undefined">Multirow User Keyword metadata</td>
+
+      <td>${test} =</td>
+
+      <td>Check Test Case</td>
+
+      <td align="undefined" valign="undefined">Multirow User Keyword Metadata</td>
+
+      <td align="undefined" valign="undefined"></td>
+
+    </tr>
+
+    <tr>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+    </tr>
+
+    
+    
+    
+    <tr>
+
+      <td align="undefined" valign="undefined">Invalid Multirow Usage</td>
+
+      <td align="undefined" valign="undefined">Check Multirow Error From Stderr</td>
+
+      <td align="undefined" valign="undefined">Setting</td>
+
+      <td align="undefined" valign="undefined">1<br>
+      </td>
+
+      <td align="undefined" valign="undefined">Invalid multirow usage: No item started</td>
+
+    </tr>
+
+    <tr>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined">Check Multirow Error From Stderr</td>
+
+      <td align="undefined" valign="undefined">Variable</td>
+      <td align="undefined" valign="undefined">2<br>
+      </td>
+      <td align="undefined" valign="undefined">Invalid multirow usage: No item started</td>
+
+      
+      
+    </tr>
+
+    <tr>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined">Check Multirow Error From Stderr</td>
+
+      <td align="undefined" valign="undefined">Test Case</td>
+
+      <td align="undefined" valign="undefined">1<br>
+      </td>
+
+      <td align="undefined" valign="undefined">No name specified</td>
+
+    </tr>
+
+    <tr>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined">Check Multirow Error From Stderr</td>
+
+      <td align="undefined" valign="undefined">Test Case </td>
+
+      <td align="undefined" valign="undefined">3</td>
+
+      <td align="undefined" valign="undefined">Invalid multirow usage: No item started</td>
+
+    </tr>
+
+    <tr>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined">Check Multirow Error From Stderr</td>
+
+      <td align="undefined" valign="undefined">Keyword</td>
+
+      <td align="undefined" valign="undefined">1</td>
+
+      <td align="undefined" valign="undefined">No name specified</td>
+
+    </tr>
+
+    <tr>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined">Check Multirow Error From Stderr</td>
+
+      <td align="undefined" valign="undefined">Keyword </td>
+
+      <td align="undefined" valign="undefined">3</td>
+
+      <td align="undefined" valign="undefined">Invalid multirow usage: No item started</td>
+
+    </tr>
+
+    <tr>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined">Check Test Case</td>
+
+      <td align="undefined" valign="undefined">Invalid Usage In Test And User Keyword</td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+    </tr>
+
+
+
+
+
+  
+  
+  
+  
+  </tbody>
+</table>
+
+
+
+
+
+
+<table border="1">
+
+
+
+
+
+  <colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
+  <thead>
+  <tr>
+
+
+
+
+
+    <th>Keyword</th>
+
+
+
+
+
+    <th>Action</th>
+
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+
+  </tr>
+
+
+
+
+
+  </thead>
+  <tbody>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td>Check Multirow Error from stderr</td>
+
+
+
+
+
+      <td>[ Arguments ]</td>
+
+
+
+
+
+      <td>${table}</td>
+
+
+
+
+
+      <td>${row}</td>
+
+
+
+
+
+      <td>${err}&nbsp;</td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+      <td></td>
+      <td>${path} =</td>
+      <td>Join Path</td>
+      <td>${CURDIR}..${/}..${/}..</td>
+      <td>testdata</td>
+    </tr>
+    <tr>
+      <td></td>
+      <td>...</td>
+      <td>parsing</td>
+      <td>multirow.html</td>
+      <td></td>
+    </tr>
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td>Check Stderr Contains</td>
+
+
+
+
+
+      <td>[ ERROR ] Error in file
+'${path}'
+in table '${table}' in element on row ${row}: ${err}</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+  
+  
+  
+  
+  </tbody>
+</table>
+
+
+
+
+
+
+</body>
+</html>

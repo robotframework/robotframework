@@ -1,0 +1,483 @@
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="RobotIDE" /> 
+<style type="text/css">
+html {
+  font-family: Arial,Helvetica,sans-serif;
+  background-color: white;
+  color: black;
+}
+p {
+  max-width: 60em;
+}
+table {
+  border-collapse: collapse;
+  empty-cells: show;
+  margin: 1em 0em;
+  border: 0.1em solid black;
+}
+th, td {
+  border-style: solid;
+  border-width: 0.05em 0.1em;
+  border-color: black;
+  padding: 0.1em 0.2em;
+  height: 1.5em;
+}
+th {
+  background-color: rgb(192, 192, 192);
+  color: black;
+  border-width: 0.1em;
+  font-weight: bold;
+  text-align: center;
+  text-transform: capitalize;
+  letter-spacing: 0.1em;
+}
+/* Widths of named columns */
+col.name {
+  width: 10em;
+}
+.action, .value, .arg {
+  width: 15em;
+}
+/* Properties for the name column 
+- td:first-child should work in CSS 2.1 avare browsers (tested in Firefox)
+- col.name is against specs but works in IE
+*/
+td:first-child, col.name {
+  background-color: rgb(240, 240, 240);
+  text-transform: capitalize;
+  letter-spacing: 0.1em;
+}
+/* required for IE */
+th {
+  font-style: normal;
+}
+</style>
+<title>Telnet</title>
+</head>
+<body>
+<h1>Telnet</h1>
+
+<table border="1">
+<colgroup span="99">
+<col class="name">
+<col class="value" span="4"></colgroup>
+<tr>
+<th>Setting</th>
+<th>Value</th>
+<th>Value</th>
+<th>Value</th>
+<th>Value</th>
+</tr>
+<tr>
+<td>Force Tags</td>
+<td>jybot</td>
+<td>pybot</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Suite Setup</td>
+<td>Run Tests</td>
+<td>--loglevel DEBUG</td>
+<td>standard_libraries${/}telnet${/}telnet.html</td>
+<td></td>
+</tr>
+<tr>
+<td>Resource</td>
+<td>../../../resources/resource.html</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</table>
+
+<table border="1">
+<colgroup span="99">
+<col class="name">
+<col class="value" span="4"></colgroup>
+<tr>
+<th>Variable</th>
+<th>Value</th>
+<th>Value</th>
+<th>Value</th>
+<th>Value</th>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</table>
+
+<table border="1">
+<colgroup span="99">
+<col class="name">
+<col class="action">
+<col class="arg" span="3"></colgroup>
+<tr>
+<th>Test Case</th>
+<th>Action</th>
+<th>Argument</th>
+<th>Argument</th>
+<th>Argument</th>
+</tr>
+<tr>
+<td><a name="test_Write &amp; Read">Write & Read</a></td>
+<td>${tc} =</td>
+<td>Check testcase</td>
+<td>Write &amp; Read</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Log Message</td>
+<td>${tc.kws[2].msgs[0]}</td>
+<td>/home/test\n[test@plage ~]$</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Log Message</td>
+<td>${tc.kws[6].msgs[0]}</td>
+<td>/home/test\n[test@plage ~]$</td>
+<td>WARN</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="test_Read Until">Read Until</a></td>
+<td>${tc} =</td>
+<td>Check testcase</td>
+<td>Read Until</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Log Message</td>
+<td>${tc.kws[1].msgs[0]}</td>
+<td>/</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Log Message</td>
+<td>${tc.kws[3].msgs[0]}</td>
+<td>home/</td>
+<td>DEBUG</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="test_Read Until Regexp">Read Until Regexp</a></td>
+<td>${tc} =</td>
+<td>Check testcase</td>
+<td>Read Until Regexp</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Log Message</td>
+<td>${tc.kws[1].msgs[0]}</td>
+<td>/home/test</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Log Message</td>
+<td>${tc.kws[3].msgs[0]}</td>
+<td>[test@</td>
+<td>DEBUG</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="test_Write Until Expected Output">Write Until Expected Output</a></td>
+<td>${tc} =</td>
+<td>Check testcase</td>
+<td>Write Until Expected Output</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Log Message</td>
+<td>${tc.kws[1].msgs[0]}</td>
+<td>[test@plage ~]$ a=$(($a - 1)); if (($a == 0)); then echo BLAST OFF; fi</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Log Message</td>
+<td>${tc.kws[1].msgs[1]}</td>
+<td>[test@plage ~]$</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Log Message</td>
+<td>${tc.kws[1].msgs[2]}</td>
+<td>a=$(($a - 1)); if (($a == 0)); then echo BLAST OFF; fi</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="test_Set Prompt Should Return Old Prompt">Set Prompt Should Return Old Prompt</a></td>
+<td>Check testcase</td>
+<td>Set Prompt Should Return Old Prompt</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="test_Read Until Prompt">Read Until Prompt</a></td>
+<td>${tc} =</td>
+<td>Check testcase</td>
+<td>Read Until Prompt</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Log Message</td>
+<td>${tc.kws[2].msgs[0]}</td>
+<td>/home/test\n[test@plage ~]$</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Log Message</td>
+<td>${tc.kws[5].msgs[0]}</td>
+<td>/home/test\n[test@plage ~]$</td>
+<td>WARN</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="test_Read Until Regexp Prompt">Read Until Regexp Prompt</a></td>
+<td>${tc} =</td>
+<td>Check testcase</td>
+<td>Read Until Regexp Prompt</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Log Message</td>
+<td>${tc.kws[2].msgs[0]}</td>
+<td>/home/test\n[test@plage ~]$</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="test_Write &amp;">Write &</a></td>
+<td>Check testcase</td>
+<td>Write &amp;</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="test_Write Long Commandline">Write Long Commandline</a></td>
+<td>Check Test Case</td>
+<td>Write Long Commandline</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="test_Write Unicode">Write Unicode</a></td>
+<td>Check testcase</td>
+<td>Write Unicode</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="test_Set Timeout">Set Timeout</a></td>
+<td>Check testcase</td>
+<td>Set Timeout</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="test_Set Newline">Set Newline</a></td>
+<td>Check testcase</td>
+<td>Set Newline</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="test_Set Default Log Level">Set Default Log Level</a></td>
+<td>${tc} =</td>
+<td>Check testcase</td>
+<td>Set Default log Level</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Log Message</td>
+<td>${tc.kws[1].msgs[0]}</td>
+<td>pwd</td>
+<td>DEBUG</td>
+</tr>
+<tr>
+<td></td>
+<td>Check Log Message</td>
+<td>${tc.kws[3].msgs[0]}</td>
+<td>/home/test\n[test@plage ~]$</td>
+<td>WARN</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</table>
+
+<table border="1">
+<colgroup span="99">
+<col class="name">
+<col class="action">
+<col class="arg" span="3"></colgroup>
+<tr>
+<th>Keyword</th>
+<th>Action</th>
+<th>Argument</th>
+<th>Argument</th>
+<th>Argument</th>
+</tr>
+<tr>
+<td><a name="keyword_My Check Log Message">My Check Log Message</a></td>
+<td>[Arguments]</td>
+<td>${msg}</td>
+<td>${exp_begin}</td>
+<td>${exp_level}=INFO</td>
+</tr>
+<tr>
+<td></td>
+<td>[Timeout]</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should Start With</td>
+<td>${msg.message}</td>
+<td>${exp_begin}</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should Be Equal</td>
+<td>${msg.level}</td>
+<td>${exp_level}</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</table>
+
+</body>
+</html>

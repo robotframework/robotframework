@@ -1,0 +1,2813 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+
+
+
+
+
+
+
+  
+  
+  
+  
+  
+  
+  <style type="text/css">
+html {
+  font-family: Arial,Helvetica,sans-serif;
+  background-color: white;
+  color: black;
+}
+p {
+  max-width: 60em;
+}
+table {
+  border-collapse: collapse;
+  empty-cells: show;
+  margin: 1em 0em;
+  border: 0.1em solid black;
+}
+th, td {
+  border-style: solid;
+  border-width: 0.05em 0.1em;
+  border-color: black;
+  padding: 0.1em 0.2em;
+  height: 1.5em;
+}
+th {
+  background-color: rgb(192, 192, 192);
+  color: black;
+  border-width: 0.1em;
+  font-weight: bold;
+  text-align: center;
+  text-transform: capitalize;
+  letter-spacing: 0.1em;
+}
+/* Widths of named columns */
+col.name {
+  width: 10em;
+}
+.action, .value, .arg {
+  width: 15em;
+}
+/* Properties for the name column 
+- td:first-child should work in CSS 2.1 avare browsers (tested in Firefox)
+- col.name is against specs but works in IE
+*/
+td:first-child, col.name {
+  background-color: rgb(240, 240, 240);
+  text-transform: capitalize;
+  letter-spacing: 0.1em;
+}
+/* required for IE */
+th {
+  font-style: normal;
+}
+  </style>
+  
+  
+  
+  
+  
+  
+  <title>Robot Test Cases</title></head>
+
+<body>
+
+
+
+
+
+
+
+<h1>Robot Test Cases for Escaping</h1>
+
+
+
+
+
+
+
+
+<table border="1">
+
+
+
+
+
+
+
+  <colgroup span="99"><col class="name"><col class="value" span="4"></colgroup>
+  <thead>
+  <tr>
+
+
+
+
+
+
+
+    <th>Setting</th>
+
+
+
+
+
+
+
+    <th>Value</th>
+
+
+
+
+
+
+
+    <th>Value</th>
+
+
+
+
+
+
+
+    <th>value</th>
+
+
+
+
+
+
+
+    <th>Value</th>
+
+
+
+
+
+
+
+  </tr>
+
+
+
+
+
+
+
+  </thead>
+  <tbody>
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+      <td>Variables</td>
+
+
+
+
+
+
+
+      <td>escaping_variables.py</td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+  
+  
+  
+  
+  
+  
+  </tbody>
+</table>
+
+
+
+
+
+
+
+
+<table border="1">
+
+
+
+
+
+
+
+  <colgroup span="99"><col class="name"><col class="value" span="4"></colgroup>
+  <thead>
+  <tr>
+
+
+
+
+
+
+
+    <th>Variable</th>
+
+
+
+
+
+
+
+    <th>Value</th>
+
+
+
+
+
+
+
+    <th>Value</th>
+
+
+
+
+
+
+
+    <th>Value</th>
+
+
+
+
+
+
+
+    <th>Value</th>
+
+
+
+
+
+
+
+  </tr>
+
+
+
+
+
+
+
+  </thead>
+  <tbody>
+
+
+
+
+
+
+
+    
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+      <td>${SPACE}</td>
+
+
+
+
+
+
+
+      <td>\ \</td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+    </tr>
+
+    <tr>
+
+      <td align="undefined" valign="undefined">${TWO_SPACES}</td>
+
+      <td align="undefined" valign="undefined">${SPACE}${SPACE}</td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+    </tr>
+
+    <tr>
+      <td align="undefined" valign="undefined">${FOUR_SPACES}</td>
+      <td align="undefined" valign="undefined">\ \ \ \ \</td>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined"></td>
+    </tr>
+    <tr>
+
+      <td align="undefined" valign="undefined">${PRE_SPACES}</td>
+
+      <td align="undefined" valign="undefined">\ \ two leading spaces</td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+    </tr>
+
+    <tr>
+
+      <td align="undefined" valign="undefined">${POST_SPACES}</td>
+
+      <td align="undefined" valign="undefined">seven trailing spaces \ \ \ \ \ \ \</td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+    </tr>
+
+    <tr>
+
+      <td align="undefined" valign="undefined">${BACKSLASH}</td>
+
+      <td align="undefined" valign="undefined">c:\\temp\\new\\</td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+    </tr>
+
+    <tr>
+
+      <td align="undefined" valign="undefined">${BACKSLASH_2}</td>
+
+      <td align="undefined" valign="undefined">c:\temp\new\</td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+    </tr>
+
+    <tr>
+
+      <td align="undefined" valign="undefined">${NEWLINE}</td>
+
+      <td align="undefined" valign="undefined">\n</td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+    </tr>
+
+    <tr>
+
+      <td align="undefined" valign="undefined">${TABULATOR}</td>
+
+      <td align="undefined" valign="undefined">\t</td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+    </tr>
+
+    <tr>
+
+      <td align="undefined" valign="undefined">${CARRIAGE}</td>
+
+      <td align="undefined" valign="undefined">\r</td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+    </tr>
+
+    <tr>
+
+      <td align="undefined" valign="undefined">${NL_TAB_CR}</td>
+
+      <td align="undefined" valign="undefined">\n${NEWLINE}\t${TABULATOR}\r${CARRIAGE}</td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+    </tr>
+
+    <tr>
+
+      <td align="undefined" valign="undefined">${NOT_VAR}</td>
+
+      <td align="undefined" valign="undefined">\${whatever}</td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+    </tr>
+
+    <tr>
+
+      <td align="undefined" valign="undefined">${NOT_VAR_2}</td>
+
+      <td align="undefined" valign="undefined">${NOT_VAR}</td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+    </tr>
+
+    <tr>
+
+      <td align="undefined" valign="undefined">${LIST}</td>
+
+      <td align="undefined" valign="undefined">\ \</td>
+
+      <td align="undefined" valign="undefined">c:\\temp\\</td>
+
+      <td align="undefined" valign="undefined">\n</td>
+
+      <td align="undefined" valign="undefined">\${xxx}</td>
+
+    </tr>
+
+    <tr>
+
+      <td align="undefined" valign="undefined">@{LIST}</td>
+
+      <td align="undefined" valign="undefined">\ \</td>
+
+      <td align="undefined" valign="undefined">c:\\temp\\</td>
+
+      <td align="undefined" valign="undefined">\n</td>
+
+      <td align="undefined" valign="undefined">\${xxx}</td>
+
+    </tr>
+
+    <tr>
+
+      <td align="undefined" valign="undefined">${NON_STRING}</td>
+
+      <td align="undefined" valign="undefined">${None}</td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+    </tr>
+
+
+
+
+
+
+
+  
+  
+  
+  
+  
+  
+  </tbody>
+</table>
+
+
+
+
+
+
+
+
+<table border="1">
+
+
+
+
+
+
+
+  <colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
+  <thead>
+  <tr>
+
+
+
+
+
+
+
+    <th>Test Case</th>
+
+
+
+
+
+
+
+    <th>Action</th>
+
+
+
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+
+
+
+
+
+  </tr>
+
+
+
+
+
+
+
+  </thead>
+  <tbody>
+
+
+
+
+
+
+
+    <tr>
+
+      <td align="undefined" valign="undefined">Spaces In Variable Table</td>
+
+      <td align="undefined" valign="undefined">Equals</td>
+
+      <td align="undefined" valign="undefined">${SPACE}</td>
+
+      <td align="undefined" valign="undefined">${SP}</td>
+
+      <td align="undefined" valign="undefined"></td>
+
+    </tr>
+
+    <tr>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined">Equals</td>
+
+      <td align="undefined" valign="undefined">${SPACE}${SPACE}</td>
+
+      <td align="undefined" valign="undefined">${SP}${SP}</td>
+
+      <td align="undefined" valign="undefined"></td>
+
+    </tr>
+
+    <tr>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined">Equals</td>
+
+      <td align="undefined" valign="undefined">${SPACE * 3}</td>
+
+      <td align="undefined" valign="undefined">${SP}${SP}${SP}</td>
+
+      <td align="undefined" valign="undefined"></td>
+
+    </tr>
+
+    <tr>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined">Equals</td>
+
+      <td align="undefined" valign="undefined">${TWO_SPACES}</td>
+
+      <td align="undefined" valign="undefined">${SP}${SP}</td>
+
+      <td align="undefined" valign="undefined"></td>
+
+    </tr>
+
+    <tr>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined">Equals</td>
+      <td align="undefined" valign="undefined">${FOUR_SPACES}</td>
+      <td align="undefined" valign="undefined">${SP}${SP}${SP}${SP}</td>
+      <td align="undefined" valign="undefined"></td>
+    </tr>
+    <tr>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined">Fail Unless</td>
+      <td align="undefined" valign="undefined">len('${FOUR_SPACES}') == 4</td>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined"></td>
+    </tr>
+    <tr>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined">Equals</td>
+      <td align="undefined" valign="undefined">"\n<br>
+${FOUR_SPACES}"</td>
+      <td align="undefined" valign="undefined">"${NL}${SP}${SP}${SP}${SP}"</td>
+      <td align="undefined" valign="undefined"></td>
+    </tr>
+    <tr>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+    </tr>
+
+    <tr>
+
+      <td align="undefined" valign="undefined">Leading And Trailing Spaces In Variable Table</td>
+
+      <td align="undefined" valign="undefined">Equals</td>
+
+      <td align="undefined" valign="undefined">${PRE_SPACES}</td>
+
+      <td align="undefined" valign="undefined">${SP}${SP}two leading spaces</td>
+
+      <td align="undefined" valign="undefined"></td>
+
+    </tr>
+
+    <tr>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined">Equals</td>
+
+      <td align="undefined" valign="undefined">${POST_SPACES}</td>
+
+      <td align="undefined" valign="undefined">seven trailing spaces${SP*7}</td>
+
+      <td align="undefined" valign="undefined"></td>
+
+    </tr>
+
+    <tr>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined">Equals</td>
+
+      <td align="undefined" valign="undefined">${POST_SPACES}${PRE_SPACES}</td>
+
+      <td align="undefined" valign="undefined">seven trailing spaces${SP*9}two leading spaces</td>
+
+      <td align="undefined" valign="undefined"></td>
+
+    </tr>
+
+    <tr>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+    </tr>
+
+    <tr>
+
+      <td align="undefined" valign="undefined">Backslash In Variable Table</td>
+
+      <td align="undefined" valign="undefined">Equals</td>
+
+      <td align="undefined" valign="undefined">${BACKSLASH}</td>
+
+      <td align="undefined" valign="undefined">c:${BS}temp${BS}new${BS}</td>
+
+      <td align="undefined" valign="undefined"></td>
+
+    </tr>
+
+    <tr>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined">Equals</td>
+
+      <td align="undefined" valign="undefined">${BACKSLASH}${BS}${BS}</td>
+
+      <td align="undefined" valign="undefined">c:${BS}temp${BS}new${BS*3}</td>
+
+      <td align="undefined" valign="undefined"></td>
+
+    </tr>
+
+    <tr>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined">Equals</td>
+
+      <td align="undefined" valign="undefined">${BACKSLASH}${PRE_SPACES}</td>
+
+      <td align="undefined" valign="undefined">c:${BS}temp${BS}new${BS}${SP*2}two leading spaces</td>
+
+      <td align="undefined" valign="undefined"></td>
+
+    </tr>
+
+    <tr>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined">Equals</td>
+
+      <td align="undefined" valign="undefined">${BACKSLASH_2}</td>
+
+      <td align="undefined" valign="undefined">c:${TAB}emp${NL}ew</td>
+
+      <td align="undefined" valign="undefined"></td>
+
+    </tr>
+
+    <tr>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+    </tr>
+
+    <tr>
+
+      <td align="undefined" valign="undefined">Newline, Tab And Carriage Return In Variable Table</td>
+
+      <td align="undefined" valign="undefined">Equals</td>
+
+      <td align="undefined" valign="undefined">${NEWLINE}</td>
+
+      <td align="undefined" valign="undefined">${NL}</td>
+
+      <td align="undefined" valign="undefined"></td>
+
+    </tr>
+
+    <tr>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined">Equals</td>
+
+      <td align="undefined" valign="undefined">${TABULATOR}</td>
+
+      <td align="undefined" valign="undefined">${TAB}</td>
+
+      <td align="undefined" valign="undefined"></td>
+
+    </tr>
+
+    <tr>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined">Equals</td>
+
+      <td align="undefined" valign="undefined">${CARRIAGE}</td>
+
+      <td align="undefined" valign="undefined">${CR}</td>
+
+      <td align="undefined" valign="undefined"></td>
+
+    </tr>
+
+    <tr>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined">Equals</td>
+
+      <td align="undefined" valign="undefined">${NL_TAB_CR}</td>
+
+      <td align="undefined" valign="undefined">${NL*2}${TAB*2}${CR*2}</td>
+
+      <td align="undefined" valign="undefined"></td>
+
+    </tr>
+
+    <tr>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined">Equals</td>
+
+      <td align="undefined" valign="undefined">${SP}${NEWLINE}</td>
+
+      <td align="undefined" valign="undefined">${SP}${NL}</td>
+
+      <td align="undefined" valign="undefined"></td>
+
+    </tr>
+
+    <tr>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+    </tr>
+
+    <tr>
+
+      <td align="undefined" valign="undefined">Escaping Variables In Variable Table</td>
+
+      <td align="undefined" valign="undefined">Equals</td>
+
+      <td align="undefined" valign="undefined">${NOT_VAR}</td>
+
+      <td align="undefined" valign="undefined">\${whatever}</td>
+
+      <td align="undefined" valign="undefined"></td>
+
+    </tr>
+
+    <tr>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined">Equals</td>
+
+      <td align="undefined" valign="undefined">${NOT_VAR_2}</td>
+
+      <td align="undefined" valign="undefined">\${whatever}</td>
+
+      <td align="undefined" valign="undefined"></td>
+
+    </tr>
+
+    <tr>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined">Equals</td>
+
+      <td align="undefined" valign="undefined">\\${NOT_VAR}</td>
+
+      <td align="undefined" valign="undefined">\\\${whatever}</td>
+
+      <td align="undefined" valign="undefined"></td>
+
+    </tr>
+
+    <tr>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined">Equals</td>
+
+      <td align="undefined" valign="undefined">\\${NOT_VAR_2}</td>
+
+      <td align="undefined" valign="undefined">\\\${whatever}</td>
+
+      <td align="undefined" valign="undefined"></td>
+
+    </tr>
+
+    <tr>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined">Starts</td>
+
+      <td align="undefined" valign="undefined">\${NOT_VAR}</td>
+
+      <td align="undefined" valign="undefined">${NOT_VAR</td>
+
+      <td align="undefined" valign="undefined"></td>
+
+    </tr>
+
+    <tr>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+    </tr>
+
+    <tr>
+
+      <td align="undefined" valign="undefined">Escaping From Scalar List In variable Table</td>
+
+      <td align="undefined" valign="undefined">Fail Unless</td>
+
+      <td align="undefined" valign="undefined">${LIST} == [' ', 'c:\\\\temp\\\\', '\\n', '$'+'{xxx}']</td>
+
+      <td align="undefined" valign="undefined"># Double escaping required in expected value because it's evaluated</td>
+
+      <td align="undefined" valign="undefined"></td>
+
+    </tr>
+
+    <tr>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+    </tr>
+
+    <tr>
+
+      <td align="undefined" valign="undefined">Escaping From List Variable In variable Table</td>
+
+      <td align="undefined" valign="undefined">Equals</td>
+
+      <td align="undefined" valign="undefined">@{LIST}[0]</td>
+
+      <td align="undefined" valign="undefined">${SP}</td>
+
+      <td align="undefined" valign="undefined"></td>
+
+    </tr>
+
+    <tr>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined">Equals</td>
+
+      <td align="undefined" valign="undefined">@{LIST}[1]</td>
+
+      <td align="undefined" valign="undefined">c:${BS}temp${BS}</td>
+
+      <td align="undefined" valign="undefined"></td>
+
+    </tr>
+
+    <tr>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined">Equals</td>
+
+      <td align="undefined" valign="undefined">@{LIST}[2]</td>
+
+      <td align="undefined" valign="undefined">${NL}</td>
+
+      <td align="undefined" valign="undefined"></td>
+
+    </tr>
+
+    <tr>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined">Equals</td>
+
+      <td align="undefined" valign="undefined">@{LIST}[3]</td>
+
+      <td align="undefined" valign="undefined">\${xxx}</td>
+
+      <td align="undefined" valign="undefined"></td>
+
+    </tr>
+
+    <tr>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined">Equals</td>
+
+      <td align="undefined" valign="undefined">@{LIST}[0]@{LIST}[0]@{LIST}[2]</td>
+
+      <td align="undefined" valign="undefined">${SP}${SP}${NL}</td>
+
+      <td align="undefined" valign="undefined"></td>
+
+    </tr>
+
+    <tr>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined">Equals</td>
+
+      <td align="undefined" valign="undefined">@{LIST}[1]@{LIST}[0]@{LIST}[2]</td>
+
+      <td align="undefined" valign="undefined">c:${BS}temp${BS}${SP}${NL}</td>
+
+      <td align="undefined" valign="undefined"></td>
+
+    </tr>
+
+    <tr>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined">Fail Unless</td>
+
+      <td align="undefined" valign="undefined">@{LIST} == [' ', 'c:\\\\temp\\\\', '\\n', '$'+'{xxx}']</td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+    </tr>
+
+    <tr>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+    </tr>
+
+    <tr>
+
+      <td align="undefined" valign="undefined">Non Strings Are Ok In variable Table</td>
+
+      <td align="undefined" valign="undefined">Equals</td>
+
+      <td align="undefined" valign="undefined">${NON_STRING}</td>
+
+      <td align="undefined" valign="undefined">${None}</td>
+
+      <td align="undefined" valign="undefined"></td>
+
+    </tr>
+
+    <tr>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+    </tr>
+
+    <tr>
+
+
+
+
+
+
+
+      <td>Remove Spaces Before And After</td>
+
+
+
+
+
+
+
+      <td>Equals</td>
+
+
+
+
+
+
+
+      <td>&nbsp; foo &nbsp;</td>
+
+
+
+
+
+
+
+      <td>foo</td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td>Remove Extra Spaces between</td>
+
+
+
+
+
+
+      <td>Equals</td>
+
+
+
+
+
+
+      <td>foo &nbsp; &nbsp; bar</td>
+
+
+
+
+
+
+      <td>foo bar</td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td>Escaping Space</td>
+
+
+
+
+      <td>Equals</td>
+
+
+
+
+      <td>\ \ foo \ \</td>
+
+
+
+
+      <td>${SP*2}foo${SP*2}</td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined">${x} =</td>
+
+      <td align="undefined" valign="undefined">Set</td>
+
+      <td align="undefined" valign="undefined">\ \</td>
+
+      <td align="undefined" valign="undefined"></td>
+
+    </tr>
+
+    <tr>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined">Equals</td>
+
+      <td align="undefined" valign="undefined">${x}</td>
+
+      <td align="undefined" valign="undefined">${SP}</td>
+
+      <td align="undefined" valign="undefined"></td>
+
+    </tr>
+
+    <tr>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined">Equals</td>
+
+      <td align="undefined" valign="undefined">${x}${x}</td>
+
+      <td align="undefined" valign="undefined">${SP}${SP}</td>
+
+      <td align="undefined" valign="undefined"></td>
+
+    </tr>
+
+    <tr>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined">Equals</td>
+
+      <td align="undefined" valign="undefined">${x *4}</td>
+
+      <td align="undefined" valign="undefined">${SP}${SP}${SP}${SP}</td>
+
+      <td align="undefined" valign="undefined"></td>
+
+    </tr>
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Literal Newline Is Converted to Space</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Equals
+
+      </td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">foo<br>
+
+
+
+
+bar</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">foo bar</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td align="undefined" valign="undefined">Equals
+
+      </td>
+
+
+
+
+      <td align="undefined" valign="undefined">foo<br>
+
+&nbsp;&nbsp; bar</td>
+
+
+
+
+      <td align="undefined" valign="undefined">foo bar</td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+    </tr>
+
+    <tr>
+
+
+
+
+      <td>Literal newline after Newline Escape Is Ignored</td>
+
+
+
+
+      <td>Equals</td>
+
+
+
+
+      <td>foo\n<br>
+
+
+
+
+bar\n<br>
+
+
+
+
+zap</td>
+
+
+
+
+      <td>foo\nbar\nzap</td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    
+
+    
+
+    <tr>
+
+
+
+
+      <td>Newline</td>
+
+
+
+
+      <td>Equals</td>
+
+
+
+
+      <td>\n</td>
+
+
+
+
+      <td>${NL}</td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td>Equals</td>
+
+
+
+
+      <td>\\n</td>
+
+
+
+
+      <td>${NOT_NL}</td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td>Newline And Space</td>
+
+
+
+
+      <td>Equals</td>
+
+
+
+
+      <td>foo\n bar</td>
+
+
+
+
+      <td>foo${NL}bar</td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td>Equals</td>
+
+
+
+
+      <td>foo\n\ bar</td>
+
+
+
+
+      <td>foo${NL}${SP}bar</td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td align="undefined" valign="undefined">Carrriage Return</td>
+
+
+      <td>Equals</td>
+
+
+      <td>\r</td>
+
+
+      <td align="undefined" valign="undefined">${CR}</td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined">Equals</td>
+
+
+      <td align="undefined" valign="undefined">\\r</td>
+
+
+      <td align="undefined" valign="undefined">${NOT_CR}</td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td>Backslash</td>
+
+
+
+
+      <td>Equals</td>
+
+
+
+
+      <td>\\</td>
+
+
+
+
+      <td>${BS}</td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td>Equals</td>
+
+
+
+
+      <td>\foo</td>
+
+
+
+
+      <td>foo</td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td>Tabulator</td>
+
+
+
+
+      <td>Equals</td>
+
+
+
+
+      <td>\t</td>
+
+
+
+
+      <td>${TAB}</td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td>Hash</td>
+
+
+
+
+      <td>Equals</td>
+
+
+
+
+      <td>\#</td>
+
+
+
+
+      <td>${HASH}</td>
+
+
+
+
+      <td># This is a comment</td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td>Any Character Escaped</td>
+
+
+
+
+      <td>Equals</td>
+
+
+
+
+      <td>\x</td>
+
+
+
+
+      <td>x</td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td>Escaping Variables</td>
+
+
+
+
+      <td>[Document]</td>
+
+
+
+
+      <td>FAIL</td>
+
+
+
+
+      <td>Non-existing variable '\${bar}'</td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td>Equals</td>
+
+
+
+
+      <td>\${foo}</td>
+
+
+
+
+      <td>$\{foo}</td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td>Equals</td>
+
+
+
+
+      <td>\\${var}</td>
+
+
+
+
+      <td>\\\${non_existing}</td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td>Equals</td>
+
+
+
+
+      <td>\${bar}</td>
+
+
+
+
+      <td>${bar}</td>
+
+
+
+
+
+      
+      
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+    <tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Escaping Variables With User Keywords</td><td>${ret} =</td><td>User Keyword</td><td>\${foo}<br></td><td>foo<br></td></tr><tr><td></td><td>Should Be Equal</td><td>${ret}</td><td>\${foo}\${foo}</td><td></td></tr><tr><td></td><td>User keyword 2</td><td>\${foo}</td><td>{foo}</td><td></td></tr><tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+  
+  
+  
+  
+  
+  
+  </tbody>
+</table>
+
+
+
+
+
+
+
+
+<table border="1">
+
+
+
+
+
+
+
+  <colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
+  <thead>
+  <tr>
+
+
+
+
+
+
+
+    <th>Keyword</th>
+
+
+
+
+
+
+
+    <th>Action</th>
+
+
+
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+
+
+
+  </tr>
+
+
+
+
+
+
+
+  </thead>
+  <tbody>
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+      <td>User keyword</td>
+
+
+
+
+
+
+
+      <td>[Arguments]</td>
+
+
+
+
+
+
+
+      <td>${a1}</td>
+
+
+
+
+
+
+
+      <td>${a2}</td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+    <tr><td></td><td>Should Contain</td><td>${a1}</td><td>${a2}</td><td></td></tr><tr><td></td><td>[Return]</td><td>${a1}\${${a2}}</td><td></td><td></td></tr><tr>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+    </tr><tr><td>User keyword 2</td><td>[Arguments]</td><td>${a1}</td><td>${a2}</td><td></td></tr><tr><td></td><td>Should Be Equal</td><td>${a1}</td><td>$${a2}</td><td></td></tr><tr><td></td><td>${ret} =</td><td>User Keyword</td><td>${a1}</td><td>${a2}</td></tr><tr><td></td><td>Should Be Equal</td><td>${ret}</td><td>${a1}\${${a2}}</td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr>
+
+
+
+
+
+
+
+  
+  
+  
+  
+  
+  
+  </tbody>
+</table>
+
+
+
+
+
+
+
+
+</body></html>

@@ -1,0 +1,2408 @@
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="RobotIDE" /> 
+<style type="text/css">
+html {
+  font-family: Arial,Helvetica,sans-serif;
+  background-color: white;
+  color: black;
+}
+p {
+  max-width: 60em;
+}
+table {
+  border-collapse: collapse;
+  empty-cells: show;
+  margin: 1em 0em;
+  border: 0.1em solid black;
+}
+th, td {
+  border-style: solid;
+  border-width: 0.05em 0.1em;
+  border-color: black;
+  padding: 0.1em 0.2em;
+  height: 1.5em;
+}
+th {
+  background-color: rgb(192, 192, 192);
+  color: black;
+  border-width: 0.1em;
+  font-weight: bold;
+  text-align: center;
+  text-transform: capitalize;
+  letter-spacing: 0.1em;
+}
+/* Widths of named columns */
+col.name {
+  width: 10em;
+}
+.action, .value, .arg {
+  width: 15em;
+}
+/* Properties for the name column 
+- td:first-child should work in CSS 2.1 avare browsers (tested in Firefox)
+- col.name is against specs but works in IE
+*/
+td:first-child, col.name {
+  background-color: rgb(240, 240, 240);
+  text-transform: capitalize;
+  letter-spacing: 0.1em;
+}
+/* required for IE */
+th {
+  font-style: normal;
+}
+</style>
+<title>Variables</title>
+</head>
+<body>
+<h1>Variables</h1>
+
+<table border="1">
+<colgroup span="99">
+<col class="name">
+<col class="value" span="4"></colgroup>
+<tr>
+<th>Setting</th>
+<th>Value</th>
+<th>Value</th>
+<th>Value</th>
+<th>Value</th>
+</tr>
+<tr>
+<td>Documentation</td>
+<td>See also builtin_variables_2.html</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Suite Setup</td>
+<td>My Suite Setup</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Suite Teardown</td>
+<td>My Suite Teardown</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Library</td>
+<td>OperatingSystem</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</table>
+
+<table border="1">
+<colgroup span="99">
+<col class="name">
+<col class="value" span="4"></colgroup>
+<tr>
+<th>Variable</th>
+<th>Value</th>
+<th>Value</th>
+<th>Value</th>
+<th>Value</th>
+</tr>
+<tr>
+<td>@{list}</td>
+<td>Hello</td>
+<td>world</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>${scalar}</td>
+<td>Hi tellus</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</table>
+
+<table border="1">
+<colgroup span="99">
+<col class="name">
+<col class="action">
+<col class="arg" span="3"></colgroup>
+<tr>
+<th>Test Case</th>
+<th>Action</th>
+<th>Argument</th>
+<th>Argument</th>
+<th>Argument</th>
+</tr>
+<tr>
+<td><a name="test_Set Variable">Set Variable</a></td>
+<td>${var} =</td>
+<td>Set Variable</td>
+<td>Hello</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Fail Unless</td>
+<td>'${var}' == 'Hello'</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>${var1}</td>
+<td>${var2} =</td>
+<td>Set Variable</td>
+<td>Hello</td>
+</tr>
+<tr>
+<td></td>
+<td>...</td>
+<td>world</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Fail Unless</td>
+<td>'${var1}' == 'Hello'</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Fail Unless</td>
+<td>'${var2}' == 'world'</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>@{list} =</td>
+<td>Set Variable</td>
+<td>Hi</td>
+<td>again</td>
+</tr>
+<tr>
+<td></td>
+<td>Should Be Equal</td>
+<td>'@{list}[0]'</td>
+<td>'Hi'</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should Be Equal</td>
+<td>'@{list}[1]'</td>
+<td>'again'</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>${scal} =</td>
+<td>Set Variable</td>
+<td>Hi</td>
+<td>again</td>
+</tr>
+<tr>
+<td></td>
+<td>Should Be Equal</td>
+<td>'${scal[0]}'</td>
+<td>'Hi'</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should Be Equal</td>
+<td>'${scal[1]}'</td>
+<td>'again'</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>${scal2} =</td>
+<td>Set Variable</td>
+<td>${scal}</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should Be Equal</td>
+<td>${scal}</td>
+<td>${scal2}</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>${empty} =</td>
+<td>Set Variable</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should Be Equal</td>
+<td>${empty}</td>
+<td>\</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="test_Set Variable If With True Condition">Set Variable If With True Condition</a></td>
+<td>${var} =</td>
+<td>Set Variable If</td>
+<td>1 &gt; 0</td>
+<td>assigned value</td>
+</tr>
+<tr>
+<td></td>
+<td>...</td>
+<td>this value is not used</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should Be Equal</td>
+<td>${var}</td>
+<td>assigned value</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>${var} =</td>
+<td>Set Variable If</td>
+<td>True</td>
+<td>Hello</td>
+</tr>
+<tr>
+<td></td>
+<td>Should Be Equal</td>
+<td>${var}</td>
+<td>Hello</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>${list} =</td>
+<td>Create List</td>
+<td>Hello</td>
+<td>world</td>
+</tr>
+<tr>
+<td></td>
+<td>${list2} =</td>
+<td>Create List</td>
+<td>Hi</td>
+<td>Tellus</td>
+</tr>
+<tr>
+<td></td>
+<td>@{var} =</td>
+<td>Set Variable If</td>
+<td>True</td>
+<td>${list}</td>
+</tr>
+<tr>
+<td></td>
+<td>...</td>
+<td>${list2}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should Be True</td>
+<td>@{var} == [ 'Hello', 'world' ]</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="test_Set Variable If With False Condition">Set Variable If With False Condition</a></td>
+<td>${var} =</td>
+<td>Set Variable If</td>
+<td>0 &gt; 1</td>
+<td>this value is not used</td>
+</tr>
+<tr>
+<td></td>
+<td>...</td>
+<td>assigned value</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should Be Equal</td>
+<td>${var}</td>
+<td>assigned value</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>${var} =</td>
+<td>Set Variable If</td>
+<td>${False}</td>
+<td>this value is not used</td>
+</tr>
+<tr>
+<td></td>
+<td>Should Be Equal</td>
+<td>${var}</td>
+<td>${None}</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="test_Log Variables">Log Variables</a></td>
+<td>[Setup]</td>
+<td>Set Log Level</td>
+<td>TRACE</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Log Variables</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>${var} =</td>
+<td>Set</td>
+<td>Hello</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>${int_list} =</td>
+<td>Evaluate</td>
+<td>[ 0, 1, 2, 3 ]</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>@{int_list} =</td>
+<td>Evaluate</td>
+<td>[ 0, 1, 2, 3 ]</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Log Variables</td>
+<td>debug</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Log Variables In UK</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>[Teardown]</td>
+<td>Set Log Level</td>
+<td>INFO</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="test_Set Test Variable - Scalars">Set Test Variable - Scalars</a></td>
+<td>[Documentation]</td>
+<td>FAIL Non-existing variable '\${non_existing}'</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should Be Equal</td>
+<td>${scalar}</td>
+<td>Hi tellus</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Set Test Variable</td>
+<td>$scalar</td>
+<td>Hello</td>
+<td>world</td>
+</tr>
+<tr>
+<td></td>
+<td>Fail Unless</td>
+<td>${scalar} == ['Hello', 'world']</td>
+<td>Hello world</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>${scalar} =</td>
+<td>Set</td>
+<td>Moi maailma</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Set Test Variable</td>
+<td>\${scalar}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should Be Equal</td>
+<td>${scalar}</td>
+<td>Moi maailma</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Set Test Variable</td>
+<td>$new</td>
+<td>Previously non-existing</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should Be Equal</td>
+<td>${new}</td>
+<td>Previously non-existing</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Set Test Variable</td>
+<td>$non_existing</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="test_Set Test Variable - Lists">Set Test Variable - Lists</a></td>
+<td>Fail Unless</td>
+<td>@{list} == ['Hello', 'world']</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Set Test Variable</td>
+<td>\@{list}</td>
+<td>One item</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Fail Unless</td>
+<td>@{list} == ['One item']</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Set Test Variable</td>
+<td>@list</td>
+<td>One</td>
+<td>Two</td>
+</tr>
+<tr>
+<td></td>
+<td>...</td>
+<td>Three</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Fail Unless</td>
+<td>@{list} == ['One','Two','Three']</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>@{list} =</td>
+<td>Set Variable</td>
+<td>1</td>
+<td>2</td>
+</tr>
+<tr>
+<td></td>
+<td>...</td>
+<td>3</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Set Test Variable</td>
+<td>@list</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Fail Unless</td>
+<td>@{list} == ['1','2','3']</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Set Test Variable</td>
+<td>@new</td>
+<td>This</td>
+<td>is</td>
+</tr>
+<tr>
+<td></td>
+<td>...</td>
+<td>ok</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Fail Unless</td>
+<td>@{new} == ['This','is','ok']</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="test_Set Test Variable Needing Escaping">Set Test Variable Needing Escaping</a></td>
+<td>Set Test Variable</td>
+<td>$var1</td>
+<td>One backslash \\ and \${notvar}</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Equals</td>
+<td>${var1}</td>
+<td>One backslash \\ and \${notvar}</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>${var2} =</td>
+<td>Set</td>
+<td>\ \\ \\\ \\\\ \\\\\ \\\\\\</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should Be Equal</td>
+<td>${var2}</td>
+<td>\ \\ \\\ \\\\ \\\\\ \\\\\\</td>
+<td>Sanity check</td>
+</tr>
+<tr>
+<td></td>
+<td>Set Test Variable</td>
+<td>$var2</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should Be Equal</td>
+<td>${var2}</td>
+<td>\ \\ \\\ \\\\ \\\\\ \\\\\\</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>${var3} =</td>
+<td>Set</td>
+<td>\</td>
+<td>\\</td>
+</tr>
+<tr>
+<td></td>
+<td>...</td>
+<td>\\\</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Fail Unless</td>
+<td>${var3} == ['', '\\\\', '\\\\']</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Set Test Variable</td>
+<td>$var3</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Fail Unless</td>
+<td>${var3} == ['', '\\\\', '\\\\']</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should Be Equal</td>
+<td>${var3[0]}</td>
+<td>\</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should Be Equal</td>
+<td>${var3[1]}</td>
+<td>\\</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should Be Equal</td>
+<td>${var3[2]}</td>
+<td>\\</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>@{var4} =</td>
+<td>List</td>
+<td>\</td>
+<td>\\</td>
+</tr>
+<tr>
+<td></td>
+<td>...</td>
+<td>\\\</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Set Test Variable</td>
+<td>@var4</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should Be Equal</td>
+<td>@{var4}[0]</td>
+<td>\</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should Be Equal</td>
+<td>@{var4}[1]</td>
+<td>\\</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should Be Equal</td>
+<td>@{var4}[2]</td>
+<td>\\</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Set Test Variable</td>
+<td>@var5</td>
+<td>\\</td>
+<td>\\\</td>
+</tr>
+<tr>
+<td></td>
+<td>...</td>
+<td>\\\\</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should Be Equal</td>
+<td>@{var5}[0]</td>
+<td>\\</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should Be Equal</td>
+<td>@{var5}[1]</td>
+<td>\\</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should Be Equal</td>
+<td>@{var5}[2]</td>
+<td>\\\\</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="test_Set Test Variable In User Keyword">Set Test Variable In User Keyword</a></td>
+<td>${new_var} =</td>
+<td>Set</td>
+<td>Value of new var</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Variable Should Not Exist</td>
+<td>$uk_var_1</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Variable Should Not Exist</td>
+<td>$uk_var_2</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Variable Should Not Exist</td>
+<td>@uk_var_3</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Variable Should Not Exist</td>
+<td>$uk_var_4</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Set Test Variables In UK</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should Be Equal</td>
+<td>${uk_var_1}</td>
+<td>Value of uk var 1</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should Be Equal</td>
+<td>${uk_var_2}</td>
+<td>Value of uk var 2</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Fail Unless</td>
+<td>@{uk_var_3} == ['Value of', 'uk var 3']</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Variable Should Not Exist</td>
+<td>$uk_var_4</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Test Variables Available In UK</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="test_Set Test Variable Not Affecting Other Tests">Set Test Variable Not Affecting Other Tests</a></td>
+<td>Equals</td>
+<td>${scalar}</td>
+<td>Hi tellus</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Fail Unless</td>
+<td>@{list} == ['Hello', 'world']</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Variable Should Not Exist</td>
+<td>$new_var</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Variable Should Not Exist</td>
+<td>$uk_var_1</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Variable Should Not Exist</td>
+<td>$uk_var_2</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Variable Should Not Exist</td>
+<td>@uk_var_3</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Variable Should Not Exist</td>
+<td>$uk_var_4</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Test Variables Not Available In UK</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="test_Set Suite Variable 1">Set Suite Variable 1</a></td>
+<td>[Documentation]</td>
+<td>FAIL Non-existing variable '\${non_existing}'</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Variable Should Not Exist</td>
+<td>$suite_setup_local_var</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should Be Equal</td>
+<td>${suite_setup_suite_var}</td>
+<td>Suite var set in suite setup</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Fail Unless</td>
+<td>@{suite_setup_suite_var} == [ 'Suite var set in', 'suite setup' ]</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Set Suite Variable</td>
+<td>$test_level_suite_var</td>
+<td>Suite var set in test</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>@{test_level_suite_var} =</td>
+<td>List</td>
+<td>Suite var set in</td>
+<td>test</td>
+</tr>
+<tr>
+<td></td>
+<td>Set Suite Variable</td>
+<td>@test_level_suite_var</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Set Suite Variable</td>
+<td>$suite_var_needing_escaping</td>
+<td>One backslash \\ and \${notvar}</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should Be Equal</td>
+<td>${test_level_suite_var}</td>
+<td>Suite var set in test</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Fail Unless</td>
+<td>@{test_level_suite_var} == [ 'Suite var set in', 'test' ]</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should Be Equal</td>
+<td>${suite_var_needing_escaping}</td>
+<td>One backslash \\ and \${notvar}</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Set Suite Variables In UK</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should Be Equal</td>
+<td>${uk_level_suite_var}</td>
+<td>Suite var set in user keyword</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Fail Unless</td>
+<td>@{uk_level_suite_var} == [ 'Suite var set in', 'user keyword' ]</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should Be Equal</td>
+<td>${sub_uk_level_suite_var}</td>
+<td>Suite var set in sub user keyword</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Fail Unless</td>
+<td>@{sub_uk_level_suite_var} == [ 'Suite var set in', 'sub user keyword' ]</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Suite Variables Available In UK</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Set Suite Variable</td>
+<td>\${non_existing}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="test_Set Suite Variable 2">Set Suite Variable 2</a></td>
+<td>[Documentation]</td>
+<td>FAIL Invalid variable syntax 'invalid'</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should Be Equal</td>
+<td>${test_level_suite_var}</td>
+<td>Suite var set in test</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Fail Unless</td>
+<td>@{test_level_suite_var} == [ 'Suite var set in', 'test' ]</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should Be Equal</td>
+<td>${suite_var_needing_escaping}</td>
+<td>One backslash \\ and \${notvar}</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should Be Equal</td>
+<td>${uk_level_suite_var}</td>
+<td>Suite var set in user keyword</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Fail Unless</td>
+<td>@{uk_level_suite_var} == [ 'Suite var set in', 'user keyword' ]</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should Be Equal</td>
+<td>${sub_uk_level_suite_var}</td>
+<td>Suite var set in sub user keyword</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Fail Unless</td>
+<td>@{sub_uk_level_suite_var} == [ 'Suite var set in', 'sub user keyword' ]</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Suite Variables Available In UK</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Set Suite Variable</td>
+<td>invalid</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="test_Set Global Variable 1">Set Global Variable 1</a></td>
+<td>[Documentation]</td>
+<td>FAIL Non-existing variable '\@{non_existing}'</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should Be Equal</td>
+<td>${suite_setup_global_var}</td>
+<td>Global var set in suite setup</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Fail Unless</td>
+<td>@{suite_setup_global_var} == [ 'Global var set in', 'suite setup' ]</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Set Global Variable</td>
+<td>$test_level_global_var</td>
+<td>Global var set in test</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>@{test_level_global_var} =</td>
+<td>List</td>
+<td>Global var set in</td>
+<td>test</td>
+</tr>
+<tr>
+<td></td>
+<td>Set Global Variable</td>
+<td>@test_level_global_var</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Set Global Variable</td>
+<td>$global_var_needing_escaping</td>
+<td>Four backslashes \\\\\\\\ and \\\${notvar}</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should Be Equal</td>
+<td>${test_level_global_var}</td>
+<td>Global var set in test</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Fail Unless</td>
+<td>@{test_level_global_var} == [ 'Global var set in', 'test' ]</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should Be Equal</td>
+<td>${global_var_needing_escaping}</td>
+<td>Four backslashes \\\\\\\\ and \\\${notvar}</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Set Global Variables In UK</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should Be Equal</td>
+<td>${uk_level_global_var}</td>
+<td>Global var set in user keyword</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Fail Unless</td>
+<td>@{uk_level_global_var} == [ 'Global var set in', 'user keyword' ]</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should Be Equal</td>
+<td>${sub_uk_level_global_var}</td>
+<td>Global var set in sub user keyword</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Fail Unless</td>
+<td>@{sub_uk_level_global_var} == [ 'Global var set in', 'sub user keyword' ]</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Global Variables Available In UK</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Set Global Variable</td>
+<td>@non_existing</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="test_Set Global Variable 2">Set Global Variable 2</a></td>
+<td>[Documentation]</td>
+<td>FAIL Invalid variable syntax 'invalid syntax'</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should Be Equal</td>
+<td>${test_level_global_var}</td>
+<td>Global var set in test</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Fail Unless</td>
+<td>@{test_level_global_var} == [ 'Global var set in', 'test' ]</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should Be Equal</td>
+<td>${uk_level_global_var}</td>
+<td>Global var set in user keyword</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Fail Unless</td>
+<td>@{uk_level_global_var} == [ 'Global var set in', 'user keyword' ]</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should Be Equal</td>
+<td>${sub_uk_level_global_var}</td>
+<td>Global var set in sub user keyword</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Fail Unless</td>
+<td>@{sub_uk_level_global_var} == [ 'Global var set in', 'sub user keyword' ]</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Global Variables Available In UK</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Set Global Variable</td>
+<td>invalid syntax</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="test_Scopes And Overriding 1">Scopes And Overriding 1</a></td>
+<td>Should Be Equal</td>
+<td>${cli_var_1}</td>
+<td>CLI1</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should Be Equal</td>
+<td>${cli_var_2}</td>
+<td>CLI2</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should Be Equal</td>
+<td>${cli_var_3}</td>
+<td>CLI3</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Set Test Variable</td>
+<td>$cli_var_1</td>
+<td>New value 1</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Set Suite Variable</td>
+<td>$cli_var_2</td>
+<td>New value 2</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Set Global Variable</td>
+<td>$cli_var_3</td>
+<td>New value 3</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should Be Equal</td>
+<td>${cli_var_1}</td>
+<td>New value 1</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should Be Equal</td>
+<td>${cli_var_2}</td>
+<td>New value 2</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should Be Equal</td>
+<td>${cli_var_3}</td>
+<td>New value 3</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="test_Scopes And Overriding 2">Scopes And Overriding 2</a></td>
+<td>Should Be Equal</td>
+<td>${cli_var_1}</td>
+<td>CLI1</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should Be Equal</td>
+<td>${cli_var_2}</td>
+<td>New value 2</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should Be Equal</td>
+<td>${cli_var_3}</td>
+<td>New value 3</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="test_Replace Variables">Replace Variables</a></td>
+<td>${template}=</td>
+<td>Get File</td>
+<td>${CURDIR}${/}template.txt</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Replace Variables And Verify Content</td>
+<td>${template}</td>
+<td>Pekka</td>
+<td>fine</td>
+</tr>
+<tr>
+<td></td>
+<td>...</td>
+<td>morning</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Replace Variables And Verify Content</td>
+<td>${template}</td>
+<td>Juha</td>
+<td>dark</td>
+</tr>
+<tr>
+<td></td>
+<td>...</td>
+<td>evening</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>${what} =</td>
+<td>Set Variable</td>
+<td>Python</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>${replaced} =</td>
+<td>Replace Variables</td>
+<td>I like \${what}!</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should Be Equal</td>
+<td>${replaced}</td>
+<td>I like Python!</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</table>
+
+<table border="1">
+<colgroup span="99">
+<col class="name">
+<col class="action">
+<col class="arg" span="3"></colgroup>
+<tr>
+<th>Keyword</th>
+<th>Action</th>
+<th>Argument</th>
+<th>Argument</th>
+<th>Argument</th>
+</tr>
+<tr>
+<td><a name="keyword_My Suite Setup">My Suite Setup</a></td>
+<td>[Timeout]</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>${suite_setup_local_var} =</td>
+<td>Set</td>
+<td>Variable available only locally</td>
+<td>in suite setup</td>
+</tr>
+<tr>
+<td></td>
+<td>Set Suite Variable</td>
+<td>$suite_setup_suite_var</td>
+<td>Suite var set in suite setup</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>@{suite_setup_suite_var} =</td>
+<td>List</td>
+<td>Suite var set in</td>
+<td>suite setup</td>
+</tr>
+<tr>
+<td></td>
+<td>Set Suite Variable</td>
+<td>@suite_setup_suite_var</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>${suite_setup_global_var} =</td>
+<td>Set</td>
+<td>Global var set in suite setup</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Set Global Variable</td>
+<td>$suite_setup_global_var</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Set Global Variable</td>
+<td>@suite_setup_global_var</td>
+<td>Global var set in</td>
+<td>suite setup</td>
+</tr>
+<tr>
+<td></td>
+<td>Log Variables</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Fail Unless</td>
+<td>${suite_setup_local_var} == [ 'Variable available only locally', 'in suite setup' ]</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should Be Equal</td>
+<td>${suite_setup_suite_var}</td>
+<td>Suite var set in suite setup</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Fail Unless</td>
+<td>@{suite_setup_suite_var} == [ 'Suite var set in', 'suite setup' ]</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should Be Equal</td>
+<td>${suite_setup_global_var}</td>
+<td>Global var set in suite setup</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Fail Unless</td>
+<td>@{suite_setup_global_var} == [ 'Global var set in', 'suite setup' ]</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="keyword_My Suite Teardown">My Suite Teardown</a></td>
+<td>[Timeout]</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Set Suite Variable</td>
+<td>$suite_teardown_suite_var</td>
+<td>Suite var set in suite teardown</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should Be Equal</td>
+<td>${suite_setup_suite_var}</td>
+<td>Suite var set in suite setup</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should Be Equal</td>
+<td>${test_level_suite_var}</td>
+<td>Suite var set in test</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should Be Equal</td>
+<td>${uk_level_suite_var}</td>
+<td>Suite var set in user keyword</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should Be Equal</td>
+<td>${sub_uk_level_suite_var}</td>
+<td>Suite var set in sub user keyword</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should Be Equal</td>
+<td>${suite_teardown_suite_var}</td>
+<td>Suite var set in suite teardown</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Set Global Variable</td>
+<td>$suite_teardown_global_var</td>
+<td>Global var set in suite teardown</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should Be Equal</td>
+<td>${suite_setup_global_var}</td>
+<td>Global var set in suite setup</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should Be Equal</td>
+<td>${test_level_global_var}</td>
+<td>Global var set in test</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should Be Equal</td>
+<td>${uk_level_global_var}</td>
+<td>Global var set in user keyword</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should Be Equal</td>
+<td>${sub_uk_level_global_var}</td>
+<td>Global var set in sub user keyword</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should Be Equal</td>
+<td>${suite_teardown_global_var}</td>
+<td>Global var set in suite teardown</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Suite Variables Available In UK</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Global Variables Available In UK</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="keyword_Log Variables In UK">Log Variables In UK</a></td>
+<td>[Documentation]</td>
+<td>Log Variables should log all the global variables, variables defined in test level and also the ones defined here in uk level</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>[Timeout]</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>${ukvar} =</td>
+<td>Set</td>
+<td>Value of an uk variable</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Log Variables</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="keyword_Set Test Variables In UK">Set Test Variables In UK</a></td>
+<td>[Timeout]</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should Be Equal</td>
+<td>${scalar}</td>
+<td>Hi tellus</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should Be Equal</td>
+<td>${new_var}</td>
+<td>Value of new var</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Set Test Variable</td>
+<td>\${uk_var_1}</td>
+<td>Value of uk var 1</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>${uk_var_2} =</td>
+<td>Set</td>
+<td>Value of uk var 2</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Set Test Variable</td>
+<td>$uk_var_2</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Set Test Variable</td>
+<td>@uk_var_3</td>
+<td>Value of</td>
+<td>uk var 3</td>
+</tr>
+<tr>
+<td></td>
+<td>${uk_var_4} =</td>
+<td>Set</td>
+<td>This is a private variable for this user keyword</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="keyword_Check Test Variables Available In UK">Check Test Variables Available In UK</a></td>
+<td>[Timeout]</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should Be Equal</td>
+<td>${scalar}</td>
+<td>Hi tellus</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should Be Equal</td>
+<td>${new_var}</td>
+<td>Value of new var</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should Be Equal</td>
+<td>${uk_var_1}</td>
+<td>Value of uk var 1</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should Be Equal</td>
+<td>${uk_var_2}</td>
+<td>Value of uk var 2</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Fail Unless</td>
+<td>@{uk_var_3} == ['Value of', 'uk var 3']</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Fail If Variable Exists</td>
+<td>$uk_var_4</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="keyword_Check Test Variables Not Available In UK">Check Test Variables Not Available In UK</a></td>
+<td>[Timeout]</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Equals</td>
+<td>${scalar}</td>
+<td>Hi tellus</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Fail Unless</td>
+<td>@{list} == ['Hello', 'world']</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Fail If Variable Exists</td>
+<td>$new_var</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Fail If Variable Exists</td>
+<td>$uk_var_1</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Fail If Variable Exists</td>
+<td>$uk_var_2</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Fail If Variable Exists</td>
+<td>@uk_var_3</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Fail If Variable Exists</td>
+<td>$uk_var_4</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="keyword_Set Suite Variables In UK">Set Suite Variables In UK</a></td>
+<td>[Timeout]</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>${uk_level_suite_var} =</td>
+<td>String</td>
+<td>Suite var set in user keyword</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Set Suite Variable</td>
+<td>\${uk_level_suite_var}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Set Suite Variable</td>
+<td>\@{uk_level_suite_var}</td>
+<td>Suite var set in</td>
+<td>user keyword</td>
+</tr>
+<tr>
+<td></td>
+<td>Should Be Equal</td>
+<td>${uk_level_suite_var}</td>
+<td>Suite var set in user keyword</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Fail Unless</td>
+<td>@{uk_level_suite_var} == [ 'Suite var set in', 'user keyword' ]</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Set Suite Variables In Sub UK</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should Be Equal</td>
+<td>${sub_uk_level_suite_var}</td>
+<td>Suite var set in sub user keyword</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Fail Unless</td>
+<td>@{sub_uk_level_suite_var} == [ 'Suite var set in', 'sub user keyword' ]</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="keyword_Set Suite Variables In Sub UK">Set Suite Variables In Sub UK</a></td>
+<td>[Timeout]</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Set Suite Variable</td>
+<td>\${sub_uk_level_suite_var}</td>
+<td>Suite var set in sub user keyword</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Set Suite Variable</td>
+<td>\@{sub_uk_level_suite_var}</td>
+<td>Suite var set in</td>
+<td>sub user keyword</td>
+</tr>
+<tr>
+<td></td>
+<td>Should Be Equal</td>
+<td>${sub_uk_level_suite_var}</td>
+<td>Suite var set in sub user keyword</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Fail Unless</td>
+<td>@{sub_uk_level_suite_var} == [ 'Suite var set in', 'sub user keyword' ]</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="keyword_Check Suite Variables Available In UK">Check Suite Variables Available In UK</a></td>
+<td>[Timeout]</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Fail If Variable Exists</td>
+<td>$suite_setup_local_var</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should Be Equal</td>
+<td>${suite_setup_suite_var}</td>
+<td>Suite var set in suite setup</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Fail Unless</td>
+<td>@{suite_setup_suite_var} == [ 'Suite var set in', 'suite setup' ]</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should Be Equal</td>
+<td>${test_level_suite_var}</td>
+<td>Suite var set in test</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Fail Unless</td>
+<td>@{test_level_suite_var} == [ 'Suite var set in', 'test' ]</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should Be Equal</td>
+<td>${suite_var_needing_escaping}</td>
+<td>One backslash \\ and \${notvar}</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should Be Equal</td>
+<td>${uk_level_suite_var}</td>
+<td>Suite var set in user keyword</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Fail Unless</td>
+<td>@{uk_level_suite_var} == [ 'Suite var set in', 'user keyword' ]</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should Be Equal</td>
+<td>${sub_uk_level_suite_var}</td>
+<td>Suite var set in sub user keyword</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Fail Unless</td>
+<td>@{sub_uk_level_suite_var} == [ 'Suite var set in', 'sub user keyword' ]</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="keyword_Set Global Variables In UK">Set Global Variables In UK</a></td>
+<td>[Timeout]</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>${uk_level_global_var} =</td>
+<td>String</td>
+<td>Global var set in user keyword</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Set Global Variable</td>
+<td>\${uk_level_global_var}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Set Global Variable</td>
+<td>\@{uk_level_global_var}</td>
+<td>Global var set in</td>
+<td>user keyword</td>
+</tr>
+<tr>
+<td></td>
+<td>Should Be Equal</td>
+<td>${uk_level_global_var}</td>
+<td>Global var set in user keyword</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Fail Unless</td>
+<td>@{uk_level_global_var} == [ 'Global var set in', 'user keyword' ]</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Set Global Variables In Sub UK</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should Be Equal</td>
+<td>${sub_uk_level_global_var}</td>
+<td>Global var set in sub user keyword</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Fail Unless</td>
+<td>@{sub_uk_level_global_var} == [ 'Global var set in', 'sub user keyword' ]</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="keyword_Set Global Variables In Sub UK">Set Global Variables In Sub UK</a></td>
+<td>[Timeout]</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Set Global Variable</td>
+<td>\${sub_uk_level_global_var}</td>
+<td>Global var set in sub user keyword</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Set Global Variable</td>
+<td>\@{sub_uk_level_global_var}</td>
+<td>Global var set in</td>
+<td>sub user keyword</td>
+</tr>
+<tr>
+<td></td>
+<td>Should Be Equal</td>
+<td>${sub_uk_level_global_var}</td>
+<td>Global var set in sub user keyword</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Fail Unless</td>
+<td>@{sub_uk_level_global_var} == [ 'Global var set in', 'sub user keyword' ]</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="keyword_Check Global Variables Available In UK">Check Global Variables Available In UK</a></td>
+<td>[Timeout]</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should Be Equal</td>
+<td>${suite_setup_global_var}</td>
+<td>Global var set in suite setup</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Fail Unless</td>
+<td>@{suite_setup_global_var} == [ 'Global var set in', 'suite setup' ]</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should Be Equal</td>
+<td>${test_level_global_var}</td>
+<td>Global var set in test</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Fail Unless</td>
+<td>@{test_level_global_var} == [ 'Global var set in', 'test' ]</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should Be Equal</td>
+<td>${global_var_needing_escaping}</td>
+<td>Four backslashes \\\\\\\\ and \\\${notvar}</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should Be Equal</td>
+<td>${uk_level_global_var}</td>
+<td>Global var set in user keyword</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Fail Unless</td>
+<td>@{uk_level_global_var} == [ 'Global var set in', 'user keyword' ]</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should Be Equal</td>
+<td>${sub_uk_level_global_var}</td>
+<td>Global var set in sub user keyword</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Fail Unless</td>
+<td>@{sub_uk_level_global_var} == [ 'Global var set in', 'sub user keyword' ]</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="keyword_Replace Variables And Verify Content">Replace Variables And Verify Content</a></td>
+<td>[Arguments]</td>
+<td>${template}</td>
+<td>${name}</td>
+<td>@{occasion}</td>
+</tr>
+<tr>
+<td></td>
+<td>${replaced} =</td>
+<td>Replace Variables</td>
+<td>${template}</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should Be Equal</td>
+<td>${replaced}</td>
+<td>Hello ${name}!\nHow are you on this @{occasion}?\n</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</table>
+
+</body>
+</html>

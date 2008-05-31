@@ -1,0 +1,7565 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+
+
+
+
+
+  
+  
+  
+  
+  <style type="text/css">
+html {
+font-family: Arial,Helvetica,sans-serif;
+background-color: white;
+color: black;
+}
+p {
+max-width: 60em;
+}
+table {
+border-collapse: collapse;
+empty-cells: show;
+margin: 1em 0em;
+border: 0.1em solid black;
+}
+th, td {
+border-style: solid;
+border-width: 0.05em 0.1em;
+border-color: black;
+padding: 0.1em 0.2em;
+height: 1.5em;
+}
+th {
+background-color: rgb(192, 192, 192);
+color: black;
+border-width: 0.1em;
+font-weight: bold;
+text-align: center;
+text-transform: capitalize;
+letter-spacing: 0.1em;
+}
+/* Widths of named columns */
+col.name {
+width: 10em;
+}
+.action, .value, .arg {
+width: 15em;
+}
+/* Properties for the name column - td:first-child should work in CSS 2.1 avare browsers (tested in Firefox)
+- col.name is against specs but works in IE
+*/
+td:first-child, col.name {
+background-color: rgb(240, 240, 240);
+text-transform: capitalize;
+letter-spacing: 0.1em;
+}
+/* required for IE */
+th {
+font-style: normal;
+}
+  </style>
+  
+  
+  
+  
+  <title>Robot Test Cases</title>
+</head>
+
+
+<body>
+
+
+
+
+
+<h1>Robot Test Cases</h1>
+
+
+
+
+
+<table border="1">
+
+
+
+
+
+  <colgroup span="99"><col class="name"><col class="value" span="4"></colgroup> <thead>
+  <tr>
+
+
+
+
+
+    <th>Setting</th>
+
+
+
+
+
+    <th>Value</th>
+
+
+
+
+
+    <th>Value</th>
+
+
+
+
+
+    <th>value</th>
+
+
+
+
+
+    <th>Value</th>
+
+
+
+
+
+  </tr>
+
+
+
+
+
+  </thead> <tbody>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td>Document</td>
+
+
+
+
+
+      <td>Tests for --test and --suite options for Rebot</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td>Default Tags</td>
+
+
+
+
+
+      <td>regression</td>
+
+
+
+
+
+      <td>jybot</td>
+
+
+
+
+
+      <td>pybot</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td>Suite Setup</td>
+
+
+
+
+
+      <td>My Setup</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Test
+Setup</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Empty
+Dir</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">${MYOUTDIR}</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Suite
+Teardown</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Remove
+Dir</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">${MYOUTDIR}</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">recursive</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td>Resource</td>
+
+
+
+
+
+      <td>../../resources/resource.html</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td>Resource</td>
+
+
+
+
+
+      <td>rebot_resource.html</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+  
+  
+  
+  
+  </tbody>
+</table>
+
+
+
+
+
+<table border="1">
+
+
+
+
+
+  <colgroup span="99"><col class="name"><col class="value" span="4"></colgroup> <thead>
+  <tr>
+
+
+
+
+
+    <th>Variable</th>
+
+
+
+
+
+    <th>Value</th>
+
+
+
+
+
+    <th>Value</th>
+
+
+
+
+
+    <th>Value</th>
+
+
+
+
+
+    <th>Value</th>
+
+
+
+
+
+  </tr>
+
+
+
+
+
+  </thead> <tbody>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td>${TESTDATA_TEST}</td>
+
+
+
+
+
+      <td>misc${/}many_tests.html</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td>${TESTDATA_SUITES}</td>
+
+
+
+
+
+      <td>misc${/}suites</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td>${MYOUTDIR}</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">${TEMPDIR}${/}robot-test-145567</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td>${ESCAPES}</td>
+
+
+
+
+
+      <td>--escape star:STAR<br>
+
+
+
+
+
+--escape quest:QUEST<br>
+
+
+
+
+
+      </td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+    </tr>
+
+    <tr>
+
+
+
+
+
+      <td>${USAGE_TIP}</td>
+
+
+
+
+
+      <td>\n\nTry --help for usage information.</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    
+
+    
+
+  
+  
+  
+  
+  </tbody>
+</table>
+
+
+
+
+
+<table border="1">
+
+
+
+
+
+  <colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
+  <thead> <tr>
+
+
+
+
+
+    <th>Test Case</th>
+
+
+
+
+
+    <th>Action</th>
+
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+
+  </tr>
+
+
+
+
+
+  </thead> <tbody>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td>One Call To Test</td>
+
+
+
+
+
+      <td>Run And Check Tests</td>
+
+
+
+
+
+      <td>--test First</td>
+
+
+
+
+
+      <td>['first']</td>
+
+
+
+
+
+      <td>First<br>
+
+
+
+
+
+      </td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td>One Call To Test With Normalized Test Name</td>
+
+
+
+
+
+      <td>Run And Check Tests</td>
+
+
+
+
+
+      <td>--test secondone</td>
+
+
+
+
+
+      <td>['secondone']</td>
+
+
+
+
+
+      <td>Second One</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td>Two Calls To test </td>
+
+
+
+
+
+      <td>Run And Check Tests</td>
+
+
+
+
+
+      <td>--test First --test thirdone</td>
+
+
+
+
+
+      <td>['first', 'thirdone']</td>
+
+
+
+
+
+      <td>First&nbsp;</td>
+
+
+
+
+
+      <td>Third One</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td>Two Calls to Test with one nonexisting test name</td>
+
+
+
+
+
+      <td>Run And Check Tests</td>
+
+
+
+
+
+      <td>--test notexists&nbsp;--test First</td>
+
+
+
+
+
+      <td>['first','notexists']</td>
+
+
+
+
+
+      <td>First</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td>One Call To test with pattern</td>
+
+
+
+
+
+      <td>Run And Check Tests</td>
+
+
+
+
+
+      <td>--test STARoneSTAR</td>
+
+
+
+
+
+      <td>['*one*']</td>
+
+
+
+
+
+      <td>Second One</td>
+
+
+
+
+
+      <td>Third One</td>
+
+
+
+
+
+      <td>Fourth One With More Complex Name</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td>Two Calls To test with patterns</td>
+
+
+
+
+
+      <td>Run And Check Tests</td>
+
+
+
+
+
+      <td>--test STARone --test FiQUESTst</td>
+
+
+
+
+
+      <td>['*one', 'fi?st']</td>
+
+
+
+
+
+      <td>First</td>
+
+
+
+
+
+      <td>Second One</td>
+
+
+
+
+
+      <td>Third One</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td>Suite With One Arg</td>
+
+
+
+
+
+      <td>Run And Check Suites</td>
+
+
+
+
+
+      <td>--suite tsuite1</td>
+
+
+
+
+
+      <td>['tsuite1']<br>
+
+
+
+
+
+      </td>
+
+
+
+
+
+      <td>['Tsuite 1']</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td>Suite with two args</td>
+
+
+
+
+
+      <td>Run And Check Suites</td>
+
+
+
+
+
+      <td>--suite tsuite1 --suite TSuite2</td>
+
+
+
+
+
+      <td>['tsuite1', 'tsuite2']</td>
+
+
+
+
+
+      <td>['Tsuite 1', 'Tsuite 2']</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td>Suite With Matching and nonMatching args</td>
+
+
+
+
+
+      <td>Run And Check Suites</td>
+
+
+
+
+
+      <td>--suite tsuite1 --suite notexists</td>
+
+
+
+
+
+      <td>['notexists', 'tsuite1']<br>
+
+
+
+
+
+      </td>
+
+
+
+
+
+      <td>['Tsuite 1']</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td>Suite With Pattern in arg</td>
+
+
+
+
+
+      <td>Run And Check Suites</td>
+
+
+
+
+
+      <td>--suite&nbsp;tSTAR</td>
+
+
+
+
+
+      <td>['t*']</td>
+
+
+
+
+
+      <td>['Tsuite 1', 'Tsuite 2', 'Tsuite 3']</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td>Suite Under Subdirectory</td>
+
+
+
+
+
+      <td>Run And Check Suites Within Subdirs</td>
+
+
+
+
+
+      <td>--suite sub1</td>
+
+
+
+
+
+      <td>['sub1']</td>
+
+
+
+
+
+      <td>['Sub 1']</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td>Suite Under Subdirectory Using Pattern</td>
+
+
+
+
+
+      <td>Run And Check Suites Within Subdirs</td>
+
+
+
+
+
+      <td>--suite subQUEST</td>
+
+
+
+
+
+      <td>['sub?']</td>
+
+
+
+
+
+      <td>['Sub 1', 'Sub 2']</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td>Suite and test together</td>
+
+
+
+
+
+      <td>Run And Check Suites and Tests</td>
+
+
+
+
+
+      <td>--suite tsuite1<br>
+
+
+
+
+
+--suite tsuite3<br>
+
+
+
+
+
+--test &nbsp;STAR1first<br>
+
+
+
+--test STAR2STAR</td>
+
+
+
+
+
+      <td>['tsuite1', 'tsuite3'] </td>
+
+
+
+
+
+      <td>['Tsuite 1']</td>
+
+
+
+
+
+      <td>['*1first','*2*']&nbsp;</td>
+
+
+
+
+
+      <td>Suite1 First</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td align="undefined" valign="undefined">No Matching tests</td>
+
+
+
+      <td align="undefined" valign="undefined">Run Rebot</td>
+
+
+
+      <td align="undefined" valign="undefined">--test nonex</td>
+
+
+
+      <td align="undefined" valign="undefined">${REBOT_INPUT}</td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined">${stderr} = </td>
+
+
+
+      <td align="undefined" valign="undefined">Log Stderr</td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined">Equals</td>
+
+
+
+      <td align="undefined" valign="undefined">${stderr.strip()}</td>
+
+
+
+      <td align="undefined" valign="undefined">[ ERROR ] Suite 'Many Tests &amp; Suites' contains no test cases named 'nonex'.${USAGE_TIP}</td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td align="undefined" valign="undefined">No Matching Suites</td>
+
+
+
+      <td align="undefined" valign="undefined">Run Rebot</td>
+
+
+
+      <td align="undefined" valign="undefined">--suite nonex<br>
+
+
+
+-s n2 -s n3</td>
+
+
+
+      <td align="undefined" valign="undefined">${REBOT_INPUT}</td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined">${stderr} = </td>
+
+
+
+      <td align="undefined" valign="undefined">Log Stderr</td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined">Equals</td>
+
+
+
+      <td align="undefined" valign="undefined">${stderr.strip()}</td>
+
+
+
+      <td align="undefined" valign="undefined">[ ERROR ] Suite 'Many Tests &amp; Suites' contains no test suites named 'nonex', 'n2' or 'n3'.${USAGE_TIP}</td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td align="undefined" valign="undefined">No Matching Tests In Matching Suites</td>
+
+
+
+      <td align="undefined" valign="undefined">Run Rebot</td>
+
+
+
+      <td align="undefined" valign="undefined">--suite nonex<br>
+
+
+
+--suite suites<br>
+
+
+
+--test first<br>
+
+
+
+--test nonex<br>
+
+
+
+--test STARone<br>
+
+
+
+${ESCAPES}<br>
+
+
+
+      </td>
+
+
+
+      <td align="undefined" valign="undefined">${REBOT_INPUT}</td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined">${stderr} = </td>
+
+
+
+      <td align="undefined" valign="undefined">Log Stderr</td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined">Equals</td>
+
+
+
+      <td align="undefined" valign="undefined">${stderr.strip()}</td>
+
+
+
+      <td align="undefined" valign="undefined">[ ERROR ] Suite
+'Many Tests &amp; Suites' contains no test cases 'first', 'nonex' or
+'*one' in suites 'nonex' or 'suites'.${USAGE_TIP}</td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td>Elapsed Time</td>
+
+
+
+
+
+      <td>[ Document ]</td>
+
+
+
+
+
+      <td>Test setting start, end and elapsed times correctly
+when filtering by tags</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Message</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">1)
+Rebot hand-edited output with predefined times and</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">check
+that times are&nbsp;read correctly. (A sanity check)</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td>Run Rebot</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td>rebot${/}times.xml</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Check
+Times</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">${SUITE.tests[0]}</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">20061227
+12:00:00.000</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">20061227
+12:00:01.000</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">00:00:01.000</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">1000</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">#
+Incl-1</td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Check
+Times</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">${SUITE.tests[1]}</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">20061227
+12:00:01.000</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">20061227
+12:00:03.000</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">00:00:02.000</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">2000</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">#
+Incl-12</td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Check
+Times</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">${SUITE.tests[2]}</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">20061227
+12:00:03.000</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">20061227
+12:00:07.000</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">00:00:04.000</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">4000</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">#
+Incl-123</td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Check
+Times</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">${SUITE.tests[3]}</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">20061227
+12:00:07.000</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">20061227
+12:00:07.001</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">00:00:00.001</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">0001</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">#
+Excl-1</td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Check
+Times</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">${SUITE.tests[4]}</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">20061227
+12:00:07.001</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">20061227
+12:00:07.003</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">00:00:00.002</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">0002</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">#
+Excl-12</td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Check
+Times</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">${SUITE.tests[5]}</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">20061227
+12:00:07.003</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">20061227
+12:00:07.007</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">00:00:00.004</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">0004</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">#
+Excl-123</td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Check
+Times</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">${SUITE}</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">20061227
+11:59:59.000</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">20061227
+12:00:08.999</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">00:00:09.999</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">9999</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">#
+Suite</td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Ints
+Equal</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">${SUITE.test_count}</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">6</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td align="undefined" valign="undefined"><br>
+
+
+
+
+
+      </td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Message</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">2)
+Filter output created in earlier step and check</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">that
+times are set accordingly.</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Run
+Rebot</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">--test
+ExcSTAR<br>
+
+
+
+
+
+--test Incl-1<br>
+
+
+
+
+
+${ESCAPES}&nbsp;</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">${OUTDIR}${/}${OUTFILE}</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Check
+Times</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">${SUITE.tests[0]}</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">20061227
+12:00:00.000</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">20061227
+12:00:01.000</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">00:00:01.000</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">1000</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">#
+Incl-1</td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Check
+Times</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">${SUITE.tests[1]}</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">20061227
+12:00:07.000</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">20061227
+12:00:07.001</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">00:00:00.001</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">0001</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">#&nbsp;Excl-1&nbsp;</td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Check
+Times</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">${SUITE.tests[2]}</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">20061227
+12:00:07.001</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">20061227
+12:00:07.003</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">00:00:00.002</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">0002</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">#
+Excl-12</td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Check
+Times</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">${SUITE.tests[3]}</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">20061227
+12:00:07.003</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">20061227
+12:00:07.007</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">00:00:00.004</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">0004</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">#
+Excl-123</td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Check
+Times</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">${SUITE}</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">N/A</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">N/A</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">00:00:01.007</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">1007</td>
+
+
+
+
+
+      <td># Suite</td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Ints
+Equal</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">${SUITE.test_count}</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">4</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+  
+  
+  
+  
+  </tbody>
+</table>
+
+
+
+
+
+<table border="1">
+
+
+
+
+
+  <colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
+  <thead> <tr>
+
+
+
+
+
+    <th>Keyword</th>
+
+
+
+
+
+    <th style="width: 100px;">Action</th>
+
+
+
+
+
+    <th style="width: 176px;">Argument</th>
+
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+
+    <th style="width: 130px;">Argument</th>
+
+
+
+
+
+    <th style="width: 52px;">Argument<br>
+
+
+
+
+
+    </th>
+
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+
+  </tr>
+
+
+
+
+
+  </thead> <tbody>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td>My Setup</td>
+
+
+
+
+
+      <td>Create Output With Robot</td>
+
+
+
+
+
+      <td><br>
+
+
+
+
+
+      </td>
+
+
+
+
+
+      <td>myoutput.xml</td>
+
+
+
+
+
+      <td>${TESTDATA_TEST} </td>
+
+
+
+
+
+      <td>${TESTDATA_SUITES}</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td style="width: 100px;">Create Dir</td>
+
+
+
+
+
+      <td style="width: 176px;">${MYOUTDIR}</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td>Run and check Tests</td>
+
+
+
+
+
+      <td style="width: 100px;">[ Arguments ]</td>
+
+
+
+
+
+      <td style="width: 176px;">${params}</td>
+
+
+
+
+
+      <td>${filtered_tests}</td>
+
+
+
+
+
+      <td style="width: 130px;">@{test_list}</td>
+
+
+
+
+
+      <td style="width: 52px;"></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td style="width: 100px;">Set Suite Variable</td>
+
+
+
+
+
+      <td style="width: 176px;">$SUITE</td>
+
+
+
+
+
+      <td>${None}</td>
+
+
+
+
+
+      <td style="width: 130px;"></td>
+
+
+
+
+
+      <td style="width: 52px;"></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td style="width: 100px;">Run Rebot</td>
+
+
+
+
+
+      <td style="width: 176px;">${params}&nbsp;${ESCAPES}&nbsp;</td>
+
+
+
+
+
+      <td>${REBOT_INPUT}</td>
+
+
+
+
+
+      <td style="width: 130px;"></td>
+
+
+
+
+
+      <td style="width: 52px;"></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td style="width: 100px;">Log Stderr</td>
+
+
+
+
+
+      <td style="width: 176px;"></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td style="width: 130px;"></td>
+
+
+
+
+
+      <td style="width: 52px;"></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td style="width: 100px;">Fail Unless File Empty</td>
+
+
+
+
+
+      <td style="width: 176px;">${STDERR_FILE}</td>
+
+
+
+
+
+      <td>Errors in test execution</td>
+
+
+
+
+
+      <td style="width: 130px;"></td>
+
+
+
+
+
+      <td style="width: 52px;"></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td style="width: 100px;">Check Tests</td>
+
+
+
+
+
+      <td style="width: 176px;">${SUITE}</td>
+
+
+
+
+
+      <td>${filtered_tests}</td>
+
+
+
+
+
+      <td style="width: 130px;">@{test_list}</td>
+
+
+
+
+
+      <td style="width: 52px;"></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Fail
+Unless</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">${SUITE.all_stats.passed}
+== len(@{test_list})</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td>Check Stats</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td>Check Stats</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Fail
+Unless</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">${SUITE.all_stats.failed}
+== 0&nbsp;</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td>Equals</td>
+
+
+
+
+
+      <td>${SUITE.starttime}</td>
+
+
+
+
+
+      <td>N/A</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td>Equals</td>
+
+
+
+
+
+      <td>${SUITE.endtime}</td>
+
+
+
+
+
+      <td>N/A</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td>Is Valid Elapsed Time</td>
+
+
+
+
+
+      <td>${SUITE.elapsedtime}</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td>Fail Unless</td>
+
+
+
+
+
+      <td>"${SUITE.elapsedtime}" &lt;=
+&nbsp;"${ORIGELAPSED}"</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td>Run and Check Suites</td>
+
+
+
+
+
+      <td style="width: 100px;">[ Arguments ]</td>
+
+
+
+
+
+      <td style="width: 176px;">${params}</td>
+
+
+
+
+
+      <td>${filtered_suites}<br>
+
+
+
+
+
+      </td>
+
+
+
+
+
+      <td style="width: 130px;">${suites} </td>
+
+
+
+
+
+      <td style="width: 52px;"></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td style="width: 100px;">Run Suites</td>
+
+
+
+
+
+      <td style="width: 176px;">${params}</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td style="width: 130px;"></td>
+
+
+
+
+
+      <td style="width: 52px;"></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td style="width: 100px;">Check Suites</td>
+
+
+
+
+
+      <td style="width: 176px;">${SUITE}</td>
+
+
+
+
+
+      <td>${filtered_suites}</td>
+
+
+
+
+
+      <td style="width: 130px;">${suites}</td>
+
+
+
+
+
+      <td style="width: 52px;"></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td style="width: 100px;">Check Stats</td>
+
+
+
+
+
+      <td style="width: 176px;"></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td style="width: 130px;"></td>
+
+
+
+
+
+      <td style="width: 52px;"></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td>Run and check suites within subdirs</td>
+
+
+
+
+
+      <td style="width: 100px;">[ Arguments ]</td>
+
+
+
+
+
+      <td style="width: 176px;">${params}</td>
+
+
+
+
+
+      <td>${filtered_suites}</td>
+
+
+
+
+
+      <td style="width: 130px;">${suites}</td>
+
+
+
+
+
+      <td style="width: 52px;"></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td style="width: 100px;">Run Suites</td>
+
+
+
+
+
+      <td style="width: 176px;">${params}</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td style="width: 130px;"></td>
+
+
+
+
+
+      <td style="width: 52px;"></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td style="width: 100px;">Check Subsuites</td>
+
+
+
+
+
+      <td style="width: 176px;">${SUITE}</td>
+
+
+
+
+
+      <td>${filtered_suites}</td>
+
+
+
+
+
+      <td style="width: 130px;">${suites}</td>
+
+
+
+
+
+      <td style="width: 52px;"></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td>Check Stats</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td style="width: 100px;"></td>
+
+
+
+
+
+      <td style="width: 176px;"></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td style="width: 130px;"></td>
+
+
+
+
+
+      <td style="width: 52px;"></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td>Run And Check Suites and Tests</td>
+
+
+
+
+
+      <td style="width: 100px;">[ Arguments ]</td>
+
+
+
+
+
+      <td style="width: 176px;">${params}</td>
+
+
+
+
+
+      <td>${filtered_suites}</td>
+
+
+
+
+
+      <td style="width: 130px;">${suites}</td>
+
+
+
+
+
+      <td style="width: 52px;">${filtered_tests}</td>
+
+
+
+
+
+      <td>@{tests}<br>
+
+
+
+      </td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td style="width: 100px;">Run Suites</td>
+
+
+
+
+
+      <td style="width: 176px;">${params}</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td style="width: 130px;"></td>
+
+
+
+
+
+      <td style="width: 52px;"></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td style="width: 100px;">Check Suites</td>
+
+
+
+
+
+      <td style="width: 176px;">${SUITE}</td>
+
+
+
+
+
+      <td>${filtered_suites}</td>
+
+
+
+
+
+      <td style="width: 130px;">${suites}</td>
+
+
+
+
+
+      <td style="width: 52px;"></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td style="width: 100px;">Check Tests</td>
+
+
+
+
+
+      <td style="width: 176px;">${SUITE}</td>
+
+
+
+
+
+      <td>${filtered_tests}</td>
+
+
+
+
+
+      <td style="width: 130px;">@{tests}</td>
+
+
+
+
+
+      <td style="width: 52px;"></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Fail
+Unless</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">${SUITE.all_stats.passed}
+== len(@{tests})</td>
+
+
+
+
+
+      <td style="width: 130px;"></td>
+
+
+
+
+
+      <td style="width: 52px;"></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td>Check Stats</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td>Run Suites</td>
+
+
+
+
+
+      <td style="width: 100px;">[ Arguments ]</td>
+
+
+
+
+
+      <td style="width: 176px;">${params}</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td style="width: 130px;"></td>
+
+
+
+
+
+      <td style="width: 52px;"></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td style="width: 100px;">Set Suite Variable</td>
+
+
+
+
+
+      <td style="width: 176px;">$SUITE</td>
+
+
+
+
+
+      <td>${None}</td>
+
+
+
+
+
+      <td style="width: 130px;"></td>
+
+
+
+
+
+      <td style="width: 52px;"></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td style="width: 100px;">Run Rebot</td>
+
+
+
+
+
+      <td style="width: 176px;">${params}&nbsp;${ESCAPES}&nbsp;</td>
+
+
+
+
+
+      <td>${REBOT_INPUT}</td>
+
+
+
+
+
+      <td style="width: 130px;"></td>
+
+
+
+
+
+      <td style="width: 52px;"></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td style="width: 100px;">Log Stderr</td>
+
+
+
+
+
+      <td style="width: 176px;"></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td style="width: 130px;"></td>
+
+
+
+
+
+      <td style="width: 52px;"></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td style="width: 100px;">Fail Unless File Empty</td>
+
+
+
+
+
+      <td style="width: 176px;">${STDERR_FILE}</td>
+
+
+
+
+
+      <td>Errors in test execution</td>
+
+
+
+
+
+      <td style="width: 130px;"></td>
+
+
+
+
+
+      <td style="width: 52px;"></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td style="width: 100px;"></td>
+
+
+
+
+
+      <td style="width: 176px;"></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td style="width: 130px;"></td>
+
+
+
+
+
+      <td style="width: 52px;"></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td style="width: 100px;"></td>
+
+
+
+
+
+      <td style="width: 176px;"></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td style="width: 130px;"></td>
+
+
+
+
+
+      <td style="width: 52px;"></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td>Check Tests</td>
+
+
+
+
+
+      <td style="width: 100px;">[ Arguments ]</td>
+
+
+
+
+
+      <td style="width: 176px;">${suite}</td>
+
+
+
+
+
+      <td>${filtered_tests}</td>
+
+
+
+
+
+      <td style="width: 130px;">@{test_list}</td>
+
+
+
+
+
+      <td style="width: 52px;"></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td style="width: 100px;">Log</td>
+
+
+
+
+
+      <td style="width: 176px;">${suite.filtered.tests}</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td style="width: 130px;"></td>
+
+
+
+
+
+      <td style="width: 52px;"></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td><br>
+
+
+
+
+
+      </td>
+
+
+
+
+
+      <td style="width: 100px;">Check Suite Contains Tests</td>
+
+
+
+
+
+      <td style="width: 176px;">${suite}</td>
+
+
+
+
+
+      <td>@{test_list}</td>
+
+
+
+
+
+      <td style="width: 130px;"></td>
+
+
+
+
+
+      <td style="width: 52px;"></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td style="width: 100px;">Fail Unless</td>
+
+
+
+
+
+      <td style="width: 176px;">${suite.filtered.tests}
+==&nbsp;${filtered_tests}</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td style="width: 130px;"></td>
+
+
+
+
+
+      <td style="width: 52px;"></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td style="width: 100px;"></td>
+
+
+
+
+
+      <td style="width: 176px;"></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td style="width: 130px;"></td>
+
+
+
+
+
+      <td style="width: 52px;"></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td>Check Suites</td>
+
+
+
+
+
+      <td style="width: 100px;">[ Arguments ]</td>
+
+
+
+
+
+      <td style="width: 176px;">${suite}</td>
+
+
+
+
+
+      <td>${filtered_suites}</td>
+
+
+
+
+
+      <td style="width: 130px;">${suites}</td>
+
+
+
+
+
+      <td style="width: 52px;"></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td style="width: 100px;">Log </td>
+
+
+
+
+
+      <td style="width: 176px;">${suite.suites[0].suites}</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td style="width: 130px;"></td>
+
+
+
+
+
+      <td style="width: 52px;"></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td style="width: 100px;">Log </td>
+
+
+
+
+
+      <td style="width: 176px;">${suite.filtered.suites}</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td style="width: 130px;"></td>
+
+
+
+
+
+      <td style="width: 52px;"></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td style="width: 100px;">Fail Unless</td>
+
+
+
+
+
+      <td style="width: 176px;">${suite.suites[0].suites}
+== ${suites}</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td style="width: 130px;"></td>
+
+
+
+
+
+      <td style="width: 52px;"></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td style="width: 100px;">Fail Unless </td>
+
+
+
+
+
+      <td style="width: 176px;">${suite.filtered.suites}
+== ${filtered_suites}</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td style="width: 130px;"></td>
+
+
+
+
+
+      <td style="width: 52px;"></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td style="width: 100px;"></td>
+
+
+
+
+
+      <td style="width: 176px;"></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td style="width: 130px;"></td>
+
+
+
+
+
+      <td style="width: 52px;"></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td>Check Subsuites</td>
+
+
+
+
+
+      <td style="width: 100px;">[ Arguments ]</td>
+
+
+
+
+
+      <td style="width: 176px;">${suite}</td>
+
+
+
+
+
+      <td>${filtered_suites}</td>
+
+
+
+
+
+      <td style="width: 130px;">${suites}</td>
+
+
+
+
+
+      <td style="width: 52px;"></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td style="width: 100px;">${subsuite} </td>
+
+
+
+
+
+      <td style="width: 176px;">Set</td>
+
+
+
+
+
+      <td>${suite.suites[0].suites[0]}</td>
+
+
+
+
+
+      <td style="width: 130px;"></td>
+
+
+
+
+
+      <td style="width: 52px;"></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td style="width: 100px;">Fail Unless</td>
+
+
+
+
+
+      <td style="width: 176px;">${subsuite.suites}
+==&nbsp;${suites}</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td style="width: 130px;"></td>
+
+
+
+
+
+      <td style="width: 52px;"></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td style="width: 100px;">Fail Unless</td>
+
+
+
+
+
+      <td style="width: 176px;">${subsuite.filtered.suites}
+== ${filtered_suites}</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td style="width: 130px;"></td>
+
+
+
+
+
+      <td style="width: 52px;"></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+  
+  
+  
+  
+  </tbody>
+</table>
+
+
+
+
+
+</body>
+</html>

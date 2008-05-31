@@ -1,0 +1,420 @@
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="RobotIDE" /> 
+<style type="text/css">
+html {
+  font-family: Arial,Helvetica,sans-serif;
+  background-color: white;
+  color: black;
+}
+p {
+  max-width: 60em;
+}
+table {
+  border-collapse: collapse;
+  empty-cells: show;
+  margin: 1em 0em;
+  border: 0.1em solid black;
+}
+th, td {
+  border-style: solid;
+  border-width: 0.05em 0.1em;
+  border-color: black;
+  padding: 0.1em 0.2em;
+  height: 1.5em;
+}
+th {
+  background-color: rgb(192, 192, 192);
+  color: black;
+  border-width: 0.1em;
+  font-weight: bold;
+  text-align: center;
+  text-transform: capitalize;
+  letter-spacing: 0.1em;
+}
+/* Widths of named columns */
+col.name {
+  width: 10em;
+}
+.action, .value, .arg {
+  width: 15em;
+}
+/* Properties for the name column 
+- td:first-child should work in CSS 2.1 avare browsers (tested in Firefox)
+- col.name is against specs but works in IE
+*/
+td:first-child, col.name {
+  background-color: rgb(240, 240, 240);
+  text-transform: capitalize;
+  letter-spacing: 0.1em;
+}
+/* required for IE */
+th {
+  font-style: normal;
+}
+</style>
+<title>Args And Docs From Dynamic Libraries</title>
+</head>
+<body>
+<h1>Args And Docs From Dynamic Libraries</h1>
+
+<table border="1">
+<colgroup span="99">
+<col class="name">
+<col class="value" span="4"></colgroup>
+<tr>
+<th>Setting</th>
+<th>Value</th>
+<th>Value</th>
+<th>Value</th>
+<th>Value</th>
+</tr>
+<tr>
+<td>Default Tags</td>
+<td>pybot</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Force Tags</td>
+<td>regression</td>
+<td>jybot</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Suite Setup</td>
+<td>Run Tests</td>
+<td></td>
+<td>test_libraries${/}args_and_docs_from_dynamic_libraries.html</td>
+<td></td>
+</tr>
+<tr>
+<td>Resource</td>
+<td>../../resources/resource.html</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</table>
+
+<table border="1">
+<colgroup span="99">
+<col class="name">
+<col class="value" span="4"></colgroup>
+<tr>
+<th>Variable</th>
+<th>Value</th>
+<th>Value</th>
+<th>Value</th>
+<th>Value</th>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</table>
+
+<table border="1">
+<colgroup span="99">
+<col class="name">
+<col class="action">
+<col class="arg" span="3"></colgroup>
+<tr>
+<th>Test Case</th>
+<th>Action</th>
+<th>Argument</th>
+<th>Argument</th>
+<th>Argument</th>
+</tr>
+<tr>
+<td><a name="test_DocumentationAndArgumentBoundariesWorkWithNoArgs">Documentation And Argument Boundaries Work With No Args</a></td>
+<td>${tc} =</td>
+<td>Check Test case</td>
+<td>Documentation and Argument Boundaries Work With No Args</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should Be Equal</td>
+<td>${tc.kws[0].doc}</td>
+<td>Keyword documentation for No Arg</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="test_DocumentationAndArgumentBoundariesWorkWithMandatoryArgs">Documentation And Argument Boundaries Work With Mandatory Args</a></td>
+<td>${tc} =</td>
+<td>Check Test case</td>
+<td>Documentation and Argument Boundaries Work With Mandatory Args</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should Be Equal</td>
+<td>${tc.kws[0].doc}</td>
+<td>Keyword documentation for One Arg</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="test_DocumentationAndArgumentBoundariesWorkWithDefaultArgs">Documentation And Argument Boundaries Work With Default Args</a></td>
+<td>${tc} =</td>
+<td>Check Test case</td>
+<td>Documentation and Argument Boundaries Work With Default Args</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should Be Equal</td>
+<td>${tc.kws[0].doc}</td>
+<td>Keyword documentation for One or Two Args</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="test_DocumentationAndArgumentBoundariesWorkWithVarargs">Documentation And Argument Boundaries Work With Varargs</a></td>
+<td>${tc} =</td>
+<td>Check Test case</td>
+<td>Documentation and Argument Boundaries Work With Varargs</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should Be Equal</td>
+<td>${tc.kws[0].doc}</td>
+<td>Keyword documentation for Many Args</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="test_DocumentationAndArgumentBoundariesWorkWithNoArgsInJava">Documentation And Argument Boundaries Work With No Args In Java</a></td>
+<td>[Tags]</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>${tc} =</td>
+<td>Check Test case</td>
+<td>Documentation and Argument Boundaries Work With No Args In Java</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should Be Equal</td>
+<td>${tc.kws[0].doc}</td>
+<td>Keyword documentation for Java No Arg</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="test_DocumentationAndArgumentBoundariesWorkWithMandatoryArgsInJava">Documentation And Argument Boundaries Work With Mandatory Args In Java</a></td>
+<td>[Tags]</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>${tc} =</td>
+<td>Check Test case</td>
+<td>Documentation and Argument Boundaries Work With Mandatory Args In Java</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should Be Equal</td>
+<td>${tc.kws[0].doc}</td>
+<td>Keyword documentation for Java One Arg</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="test_DocumentationAndArgumentBoundariesWorkWithDefaultArgsInJava">Documentation And Argument Boundaries Work With Default Args In Java</a></td>
+<td>[Tags]</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>${tc} =</td>
+<td>Check Test case</td>
+<td>Documentation and Argument Boundaries Work With Default Args In Java</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should Be Equal</td>
+<td>${tc.kws[0].doc}</td>
+<td>Keyword documentation for Java One or Two Args</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="test_DocumentationAndArgumentBoundariesWorkWithVarargsInJava">Documentation And Argument Boundaries Work With Varargs In Java</a></td>
+<td>[Tags]</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>${tc} =</td>
+<td>Check Test case</td>
+<td>Documentation and Argument Boundaries Work With Varargs In Java</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should Be Equal</td>
+<td>${tc.kws[0].doc}</td>
+<td>Keyword documentation for Java Many Args</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="test_NoHandlersAreCreatedIfDocOrArgsRetrievalFails">No Handlers Are Created If Doc Or Args Retrieval Fails</a></td>
+<td>Check Syslog Contains</td>
+<td>Imported library 'classes.InvalidAttributeArgDocDynamicLibrary' contains no keywords</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Syslog Contains</td>
+<td>Imported library 'classes.InvalidSignatureArgDocDynamicLibrary' contains no keywords</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="test_NoHandlersAreCreatedIfDocOrArgsRetrievalFailsInJava">No Handlers Are Created If Doc Or Args Retrieval Fails In Java</a></td>
+<td>[Tags]</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Syslog Contains</td>
+<td>Imported library 'InvalidAttributeArgDocDynamicJavaLibrary' contains no keywords</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Syslog Contains</td>
+<td>Imported library 'InvalidSignatureArgDocDynamicJavaLibrary' contains no keywords</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</table>
+
+<table border="1">
+<colgroup span="99">
+<col class="name">
+<col class="action">
+<col class="arg" span="3"></colgroup>
+<tr>
+<th>Keyword</th>
+<th>Action</th>
+<th>Argument</th>
+<th>Argument</th>
+<th>Argument</th>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</table>
+
+</body>
+</html>

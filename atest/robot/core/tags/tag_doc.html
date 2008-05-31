@@ -1,0 +1,600 @@
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<style type="text/css">
+html {
+  font-family: Arial,Helvetica,sans-serif;
+  background-color: white;
+  color: black;
+}
+p {
+  max-width: 60em;
+}
+table {
+  border-collapse: collapse;
+  empty-cells: show;
+  margin: 1em 0em;
+  border: 0.1em solid black;
+}
+th, td {
+  border-style: solid;
+  border-width: 0.05em 0.1em;
+  border-color: black;
+  padding: 0.1em 0.2em;
+  height: 1.5em;
+}
+th {
+  background-color: rgb(192, 192, 192);
+  color: black;
+  border-width: 0.1em;
+  font-weight: bold;
+  text-align: center;
+  text-transform: capitalize;
+  letter-spacing: 0.1em;
+}
+/* Widths of named columns */
+col.name {
+  width: 10em;
+}
+.action, .value, .arg {
+  width: 15em;
+}
+/* Properties for the name column 
+- td:first-child should work in CSS 2.1 avare browsers (tested in Firefox)
+- col.name is against specs but works in IE
+*/
+td:first-child, col.name {
+  background-color: rgb(240, 240, 240);
+  text-transform: capitalize;
+  letter-spacing: 0.1em;
+}
+/* required for IE */
+th {
+  font-style: normal;
+}
+</style>
+<title>Tag Doc</title>
+</head>
+<body>
+<h1>Tag Doc</h1>
+
+<table border="1">
+<colgroup span="99">
+<col class="name">
+<col class="value" span="4"></colgroup>
+<tr>
+<th>Setting</th>
+<th>Value</th>
+<th>Value</th>
+<th>Value</th>
+<th>Value</th>
+</tr>
+<tr>
+<td>Force Tags</td>
+<td>pybot</td>
+<td>jybot</td>
+<td>regression</td>
+<td></td>
+</tr>
+<tr>
+<td>Suite Setup</td>
+<td>Run Tests And Read Outputs</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Resource</td>
+<td>../../../resources/resource.html</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</table>
+
+<table border="1">
+<colgroup span="99">
+<col class="name">
+<col class="value" span="4"></colgroup>
+<tr>
+<th>Variable</th>
+<th>Value</th>
+<th>Value</th>
+<th>Value</th>
+<th>Value</th>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</table>
+
+<table border="1">
+<colgroup span="99">
+<col class="name">
+<col class="action">
+<col class="arg" span="3"></colgroup>
+<tr>
+<th>Test Case</th>
+<th>Action</th>
+<th>Argument</th>
+<th>Argument</th>
+<th>Argument</th>
+</tr>
+<tr>
+<td><a name="test_Tag_Doc_In_Report_Statistics">Tag Doc In Report Statistics</a></td>
+<td>Format In Report Statistics Should Be Correct</td>
+<td>f1</td>
+<td>Some documentation</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="test_Tag_Doc_In_Log_Statistics">Tag Doc In Log Statistics</a></td>
+<td>Format In Log Statistics Should Be Correct</td>
+<td>f1</td>
+<td>Some documentation</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="test_Tag_Doc_In_Report_Details">Tag Doc In Report Details</a></td>
+<td>Format In Report Details Should Be Correct</td>
+<td>f1</td>
+<td>Some documentation</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="test_Tag_Doc_In_Output_Statistics">Tag Doc In Output Statistics</a></td>
+<td>Format In Output Statistics Should Be Correct</td>
+<td>f1</td>
+<td>Some documentation</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="test_Tag_Doc_With_Formatting_In_Report_Statistics">Tag Doc With Formatting In Report Statistics</a></td>
+<td>Format In Report Statistics Should Be Correct</td>
+<td>t1</td>
+<td>http://some.url *bold*</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="test_Tag_Doc_With_Formatting_In_Log_Statistics">Tag Doc With Formatting In Log Statistics</a></td>
+<td>Format In Log Statistics Should Be Correct</td>
+<td>t1</td>
+<td>http://some.url *bold*</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="test_Tag_Doc_With_Formatting_In_Report_Details">Tag Doc With Formatting In Report Details</a></td>
+<td>Format In Report Details Should Be Correct</td>
+<td>t1</td>
+<td>&lt;a href="http://some.url"&gt;http://some.url&lt;/a&gt; &lt;b&gt;bold&lt;/b&gt;</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="test_Tag_Doc_With_Formatting_In_Output_Statistics">Tag Doc With Formatting In Output Statistics</a></td>
+<td>Format In Output Statistics Should Be Correct</td>
+<td>t1</td>
+<td>http://some.url *bold*</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="test_Tag_Doc_With_Pattern_In_Report_Statistics">Tag Doc With Pattern In Report Statistics</a></td>
+<td>Format In Report Statistics Should Be Correct</td>
+<td>d1</td>
+<td>Doc for many tags</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="test_Tag_Doc_With_Pattern_In_Log_Statistics">Tag Doc With Pattern In Log Statistics</a></td>
+<td>Format In Log Statistics Should Be Correct</td>
+<td>d1</td>
+<td>Doc for many tags</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="test_Tag_Doc_With_Pattern_In_Report_Details">Tag Doc With Pattern In Report Details</a></td>
+<td>Format In Report Details Should Be Correct</td>
+<td>d1</td>
+<td>Doc for many tags</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="test_Tag_Doc_With_Pattern_In_Output_Statistics">Tag Doc With Pattern In Output Statistics</a></td>
+<td>Format In Output Statistics Should Be Correct</td>
+<td>d1</td>
+<td>Doc for many tags</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="test_Tag_Doc_With_Multiple_Matches_In_Report_Statistics">Tag Doc With Multiple Matches In Report Statistics</a></td>
+<td>Format In Report Details Should Be Correct</td>
+<td>d2</td>
+<td>Doc for many tags More doc</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="test_Tag_Doc_With_Multiple_Matches_In_Log_Statistics">Tag Doc With Multiple Matches In Log Statistics</a></td>
+<td>Format In Log Statistics Should Be Correct</td>
+<td>d2</td>
+<td>Doc for many tags More doc</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="test_Tag_Doc_With_Multiple_Matches_In_Report_Details">Tag Doc With Multiple Matches In Report Details</a></td>
+<td>Format In Report Details Should Be Correct</td>
+<td>d2</td>
+<td>Doc for many tags More doc</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="test_Tag_Doc_With_Multiple_Matches_In_Output_Statistics">Tag Doc With Multiple Matches In Output Statistics</a></td>
+<td>Format In Output Statistics Should Be Correct</td>
+<td>d2</td>
+<td>Doc for many tags More doc</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</table>
+
+<table border="1">
+<colgroup span="99">
+<col class="name">
+<col class="action">
+<col class="arg" span="3"></colgroup>
+<tr>
+<th>Keyword</th>
+<th>Action</th>
+<th>Argument</th>
+<th>Argument</th>
+<th>Argument</th>
+</tr>
+<tr>
+<td><a name="keyword_Run_Tests_And_Read_Outputs">Run Tests And Read Outputs</a></td>
+<td>Run Tests</td>
+<td>--log log.html --report report.html --tagdoc f1:Some_documentation --tagdoc t1:http://some.url_*bold* --tagdoc d?:Doc_for_many_tags --tagdoc d2:More_doc</td>
+<td>misc${/}normal.html</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>${LOG} =</td>
+<td>Get File</td>
+<td>${OUT_DIR}${/}log.html</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>${REPORT} =</td>
+<td>Get File</td>
+<td>${OUT_DIR}${/}report.html</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>${OUTPUT} =</td>
+<td>Get File</td>
+<td>${OUT_DIR}${/}${OUT_FILE}</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Set Suite Variable</td>
+<td>$LOG</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Set Suite Variable</td>
+<td>$REPORT</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Set Suite Variable</td>
+<td>$OUTPUT</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="keyword_Format_In_Report_Statistics_Should_Be_Correct">Format In Report Statistics Should Be Correct</a></td>
+<td>[Arguments]</td>
+<td>${tag}</td>
+<td>${doc}</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>${expected} =</td>
+<td>Catenate</td>
+<td>SEPARATOR=</td>
+<td>&lt;div class="stat_name"&gt;</td>
+</tr>
+<tr>
+<td></td>
+<td>...</td>
+<td>&lt;a href="#tag_${tag}" title="${doc}"&gt;</td>
+<td>${tag}&lt;/a&gt;&lt;/div&gt;\n</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should Contain</td>
+<td>${REPORT}</td>
+<td>${expected}</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>[Return]</td>
+<td>${expected}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="keyword_Format_In_Log_Statistics_Should_Be_Correct">Format In Log Statistics Should Be Correct</a></td>
+<td>[Arguments]</td>
+<td>${tag}</td>
+<td>${doc}</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>${expected} =</td>
+<td>Catenate</td>
+<td>SEPARATOR=</td>
+<td>&lt;div class="stat_name"&gt;</td>
+</tr>
+<tr>
+<td></td>
+<td>...</td>
+<td>&lt;span title="${doc}"&gt;</td>
+<td>${tag}&lt;/span&gt;&lt;/div&gt;\n</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should Contain</td>
+<td>${LOG}</td>
+<td>${expected}</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="keyword_Format_In_Report_Details_Should_Be_Correct">Format In Report Details Should Be Correct</a></td>
+<td>[Arguments]</td>
+<td>${tag}</td>
+<td>${doc}</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>${expected} =</td>
+<td>Catenate</td>
+<td>SEPARATOR=</td>
+<td>&lt;td class="col_name"&gt;</td>
+</tr>
+<tr>
+<td></td>
+<td>...</td>
+<td>&lt;a name="tag_${tag}"&gt;&lt;/a&gt;</td>
+<td>${tag}</td>
+<td>&lt;/td&gt;\n</td>
+</tr>
+<tr>
+<td></td>
+<td>...</td>
+<td>&lt;td class="col_doc"&gt;</td>
+<td>${doc}</td>
+<td>&lt;/td&gt;\n</td>
+</tr>
+<tr>
+<td></td>
+<td>...</td>
+<td>&lt;td class="col_tags not_available"&gt;</td>
+<td>N/A</td>
+<td>&lt;/td&gt;\n</td>
+</tr>
+<tr>
+<td></td>
+<td>Should Contain</td>
+<td>${REPORT}</td>
+<td>${expected}</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="keyword_Format_In_Output_Statistics_Should_Be_Correct">Format In Output Statistics Should Be Correct</a></td>
+<td>[Arguments]</td>
+<td>${tag}</td>
+<td>${doc}</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>${stat_line} =</td>
+<td>Grep</td>
+<td>${OUTPUT}</td>
+<td>${tag}&lt;/stat&gt;</td>
+</tr>
+<tr>
+<td></td>
+<td>Should Contain</td>
+<td>${stat_line}</td>
+<td>doc="${doc}"</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</table>
+
+</body>
+</html>

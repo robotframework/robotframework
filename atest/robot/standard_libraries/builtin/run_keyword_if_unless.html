@@ -1,0 +1,1703 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+
+
+
+
+
+  
+  
+  
+  
+  <style type="text/css">
+html { font-family: Arial,Helvetica,sans-serif;
+background-color: white;
+color: black;
+}
+p { max-width: 60em;
+}
+table { border-collapse: collapse;
+empty-cells: show;
+margin: 1em 0em;
+border: 0.1em solid black;
+}
+th, td {
+border-style: solid;
+border-width: 0.05em 0.1em;
+border-color: black;
+padding: 0.1em 0.2em;
+height: 1.5em;
+}
+th {
+background-color: rgb(192, 192, 192);
+color: black;
+border-width: 0.1em;
+font-weight: bold;
+text-align: center;
+text-transform: capitalize;
+letter-spacing: 0.1em;
+}
+/* Widths of named columns */
+col.name {
+width: 10em;
+}
+.action , .value, .arg {
+width: 15em;
+}
+/* Properties for the name column - td:first-child should work in CSS 2.1 avare browsers (tested in Firefox)
+- col.name is against specs but works in IE
+*/
+td:first-child, col.name {
+background-color: rgb(240, 240, 240);
+text-transform: capitalize;
+letter-spacing: 0.1em;
+}
+th { font-style: normal; } /* required for IE */
+  </style>
+  
+
+
+  
+  
+  
+  
+  
+  
+  
+  
+  <title>Robot Test Cases</title><link type="text/css" href="resources/css/testdata.css" rel="stylesheet"></head>
+<body>
+
+
+
+
+
+<h1>Robot Test Cases for Built-In Run Keyword If/Unless</h1>
+
+
+
+
+
+<br>
+
+
+
+
+
+<table border="1">
+
+
+
+
+
+  <colgroup span="99"><col class="name"><col class="value" span="4"></colgroup> <thead>
+  <tr>
+
+
+
+
+
+    <th>Setting</th>
+
+
+
+
+
+    <th>Value</th>
+
+
+
+
+
+    <th>Value</th>
+
+
+
+
+
+    <th>value</th>
+
+
+
+
+
+    <th>Value</th>
+
+
+
+
+
+  </tr>
+
+
+
+
+
+  </thead> <tbody>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td>Resource</td>
+
+
+
+
+
+      <td>../../../resources/resource.html</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Document</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Tests
+for BuiltIn library's run keyword functionality</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td>Force Tags</td>
+
+
+
+
+
+      <td>regression</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Default
+Tags</td>
+
+
+
+
+
+      <td>jybot</td>
+
+
+
+
+
+      <td>pybot</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td>Suite Setup</td>
+
+
+
+
+
+      <td>Run Tests</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td>standard_libraries${/}builtin${/}run_keyword_if_unless.html</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+  
+  
+  
+  
+  </tbody>
+</table>
+
+
+
+
+
+<br>
+
+
+
+
+
+<table border="1">
+
+
+
+
+
+  <colgroup span="99"><col class="name"><col class="value"></colgroup> <thead>
+  <tr>
+
+
+
+
+
+    <th>Variable</th>
+
+
+
+
+
+    <th>Value</th>
+
+
+
+
+
+    <th>Value</th>
+
+
+
+
+
+    <th>Value</th>
+
+
+
+
+
+  </tr>
+
+
+
+
+
+  </thead> <tbody>
+
+
+
+
+
+    
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      
+
+    </tr><tr><td></td><td></td><td></td><td></td></tr>
+
+
+
+
+
+    
+
+
+
+
+
+  
+  
+  
+  
+  </tbody>
+</table>
+
+
+
+
+
+<br>
+
+
+
+
+
+<table border="1">
+
+
+
+
+
+  <colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
+  <thead><tr>
+
+
+
+
+
+    <th>Test Case</th>
+
+
+
+
+
+    <th>Action</th>
+
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+
+  </tr>
+
+
+
+
+
+  </thead> <tbody>
+
+
+
+
+
+    
+
+
+
+
+
+    
+
+
+
+
+
+    
+
+
+
+
+
+    
+
+
+
+
+
+    
+
+
+
+
+
+    
+
+
+
+
+
+    
+
+
+
+
+
+    
+
+
+
+
+
+    
+
+
+
+
+
+    
+
+
+
+
+
+    
+
+
+
+
+
+    
+
+
+
+
+
+    
+
+
+
+
+
+    
+
+
+
+
+
+    
+
+
+
+
+
+    
+
+
+
+
+
+    
+
+
+
+
+
+    
+
+
+
+
+
+    
+
+
+
+
+
+    
+
+
+
+
+
+    
+
+
+
+
+
+    
+
+
+
+
+
+    
+
+
+
+
+
+    
+
+
+
+
+
+    
+
+
+
+
+
+    
+
+
+
+
+
+    
+
+
+
+
+
+    
+
+
+
+
+
+    
+
+
+
+
+
+    
+
+
+
+
+
+    
+
+
+
+
+
+    
+
+
+
+
+
+    
+
+
+
+
+
+    
+
+
+
+
+
+    
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td>Run Keyword If With True Expression</td>
+
+
+
+
+
+      <td>${tc} =</td>
+
+
+
+
+
+      <td>Check Test Case</td><td>Run Keyword If With True Expression</td>
+
+
+
+
+
+      
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td>Check Log Message</td>
+
+
+
+
+
+      <td>${tc.kws[0].kws[0].msgs[0]}</td>
+
+
+
+
+
+      <td>This is executed</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr>
+
+
+
+
+
+      <td>Run Keyword If With False Expression</td>
+
+
+
+
+
+      <td>${tc} =</td><td>Check Test Case</td><td>Run Keyword If With False Expression</td>
+
+
+
+
+
+      
+
+
+
+
+
+      
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td>Should Be Equal As Integers</td><td>${tc.kws[0].keyword_count}</td><td>0</td>
+
+
+
+
+
+      
+
+
+
+
+
+      
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr>
+
+
+
+
+
+      <td>Run Keyword In User Keyword</td>
+
+
+
+
+
+      <td>${tc} =</td><td>Check Test Case</td>
+
+
+
+
+
+      
+
+
+
+
+
+      <td>Run Keyword In User Keyword</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td>Check Log Message</td><td>${tc.kws[0].kws[0].kws[0].msgs[0]}</td><td>Hello from conditional!</td>
+
+
+
+
+
+      
+
+
+
+
+
+      
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td>Should Be Equal As Integers</td><td>${tc.kws[1].kws[0].keyword_count}</td><td>0</td>
+
+
+
+
+
+      
+
+
+
+
+
+      
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td>Run Keyword Unless With False Expression</td>
+
+
+
+
+
+      <td>${tc} =</td><td>Check Test Case</td>
+
+
+
+
+
+      
+
+
+
+
+
+      <td>Run Keyword Unless With False Expression</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td>Check Log Message</td><td>${tc.kws[1].kws[0].msgs[0]}</td>
+
+
+
+
+
+      
+
+
+
+
+
+      <td>Condition was false</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td>Run Keyword Unless With True Expression</td><td>${tc} =</td><td>Check Test Case</td><td>Run Keyword Unless With True Expression</td>
+
+
+
+
+
+      
+
+
+
+
+
+      
+
+
+
+
+
+      
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+      <td></td>
+
+
+
+      <td>Should Be Equal As Integers</td><td>${tc.kws[0].keyword_count}</td><td>0</td>
+
+
+
+      
+
+
+
+      
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+    </tr>
+
+
+
+    
+
+
+
+    
+
+
+    
+
+
+    
+
+
+    
+
+
+    
+
+
+    
+
+
+    
+
+
+    
+
+
+    
+
+
+    
+
+
+    
+
+
+    
+
+
+
+    
+
+
+    
+
+
+    
+
+
+    
+
+
+
+
+
+    
+
+
+
+    
+
+    
+
+    
+    
+    
+    
+    
+
+
+
+    
+    
+
+
+  
+  
+  
+  
+  </tbody>
+</table>
+
+
+
+
+
+<br>
+
+
+
+
+
+<table border="1">
+
+
+
+
+
+  <colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
+  <thead><tr>
+
+
+
+
+
+    <th>Keyword</th>
+
+
+
+
+
+    <th>Action</th>
+
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+
+  </tr>
+
+
+
+
+
+  </thead> <tbody>
+
+
+
+
+
+    
+
+
+
+
+
+    
+
+
+
+
+
+    
+
+
+
+
+
+    
+
+
+
+
+
+    
+
+
+
+
+
+    
+
+
+
+
+
+    
+
+
+
+
+
+    
+
+
+
+
+
+    
+
+
+
+
+
+    
+
+
+
+
+
+    
+
+
+
+
+
+    
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+  
+  
+  
+  
+  </tbody>
+</table>
+
+
+
+
+
+</body></html>

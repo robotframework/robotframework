@@ -1,0 +1,1 @@
+PPATH_VARFILE = "Variable from varible file in PYTHONPATH"

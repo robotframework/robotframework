@@ -1,0 +1,3356 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+
+
+
+
+
+  
+  
+  
+  
+  <meta name="generator" content="HTML Tidy, see www.w3.org">
+
+
+
+
+
+  
+  
+  
+  
+  <style type="text/css">
+html { font-family: Arial,Helvetica,sans-serif;
+background-color: white;
+color: black;
+}
+p { max-width: 60em;
+}
+table { border-collapse: collapse;
+empty-cells: show;
+margin: 1em 0em;
+border: 0.1em solid black;
+}
+th, td {
+border-style: solid;
+border-width: 0.05em 0.1em;
+border-color: black;
+padding: 0.1em 0.2em;
+height: 1.5em;
+}
+th {
+background-color: rgb(192, 192, 192);
+color: black;
+border-width: 0.1em;
+font-weight: bold;
+text-align: center;
+text-transform: capitalize;
+letter-spacing: 0.1em;
+}
+/* Widths of named columns */
+col.name {
+width: 10em;
+}
+.action , .value, .arg {
+width: 15em;
+}
+/* Properties for the name column - td:first-child should work in CSS 2.1 avare browsers (tested in Firefox)
+- col.name is against specs but works in IE
+*/
+td:first-child, col.name {
+background-color: rgb(240, 240, 240);
+text-transform: capitalize;
+letter-spacing: 0.1em;
+}
+th { font-style: normal; } /* required for IE */
+  </style>
+  
+
+
+  
+  
+  
+  
+  
+  
+  
+  <title>Robot Test Cases</title>
+  <link type="text/css" href="resources/css/testdata.css" rel="stylesheet">
+</head>
+
+<body>
+
+
+
+
+
+<h1>Robot Test Cases for Operating System Test Library</h1>
+
+
+
+
+
+<table border="1">
+
+
+
+
+
+  <colgroup span="99"><col class="name"><col class="value" span="3"></colgroup> <thead>
+  <tr>
+
+
+
+
+
+    <th>Setting</th>
+
+
+
+
+
+    <th>Value</th>
+
+
+
+
+
+    <th>Value</th>
+
+
+
+
+
+    <th>value</th>
+
+
+
+
+
+
+  </tr>
+
+
+
+
+
+  </thead> <tbody>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td>Force tags</td>
+
+
+
+
+
+      <td>regression</td>
+
+
+
+
+
+      <td>jybot</td>
+
+
+
+
+
+      <td>pybot</td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td>Suite Setup</td>
+
+
+
+
+
+      <td>Run Tests</td>
+
+
+
+
+
+      <td><br>
+
+
+
+
+
+      </td>
+
+
+
+
+
+      <td>standard_libraries${/}deprecated_os${/}files_and_dirs.html</td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td>Resource</td>
+
+
+
+
+
+      <td>../../../resources/resource.html</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+  
+  
+  
+  
+  </tbody>
+</table>
+
+
+
+
+
+<br>
+
+
+
+
+
+<table border="1">
+
+
+
+
+
+  <colgroup span="99"><col class="name"><col class="value" span="4"></colgroup> <thead>
+  <tr>
+
+
+
+
+
+    <th>Variable</th>
+
+
+
+
+
+    <th>Value</th>
+
+
+
+
+
+    <th>Value</th>
+
+
+
+
+
+    <th>Value</th>
+
+
+
+
+
+    <th>Value</th>
+
+
+
+
+
+  </tr>
+
+
+
+
+
+  <tr>
+
+
+
+
+
+    <td></td>
+
+
+
+
+
+    <td></td>
+
+
+
+
+
+    <td></td>
+
+
+
+
+
+    <td></td>
+
+
+
+
+
+    <td></td>
+
+
+
+
+
+  </tr>
+
+
+
+
+
+  </thead>
+</table>
+
+
+
+
+
+<br>
+
+
+
+
+
+<h3>File and Directory Existence</h3>
+
+
+
+
+
+<table border="1">
+
+
+
+
+
+  <colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
+  <thead> <tr>
+
+
+
+
+
+    <th>Test Case</th>
+
+
+
+
+
+    <th>Action</th>
+
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+
+  </tr>
+
+
+
+
+
+  </thead> <tbody>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Fail
+Unless Exists</td>
+
+
+
+
+
+      <td>Check testcase</td>
+
+
+
+
+
+      <td>Fail Unless Exists</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+    </tr>
+
+    <tr>
+
+
+
+
+
+      <td>Fail
+Unless Exists With Non Default Message</td>
+
+
+
+
+
+      <td>Check testcase</td>
+
+
+
+
+
+      <td>Fail
+Unless Exists With Non Default Message</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+    </tr>
+
+    <tr>
+
+
+
+
+
+      <td>Fail
+Unless Exists With Pattern</td>
+
+
+
+
+
+      <td>Check testcase</td>
+
+
+
+
+
+      <td>Fail
+Unless Exists With Pattern</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Fail
+If Exists</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Check
+testcase</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Fail
+If Exists&nbsp;</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+    </tr>
+
+    <tr>
+
+
+
+
+
+      <td>Fail
+If Exists With Non Default Message</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Check
+testcase</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Fail
+If Exists With Non Default Message</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+    </tr>
+
+    <tr>
+
+
+
+
+
+      <td>Fail
+If Exists With Pattern</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Check
+testcase</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Fail
+If Exists With Pattern</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Fail
+Unless File
+Exists</td>
+
+
+
+
+
+      <td>Check testcase</td>
+
+
+
+
+
+      <td>Fail Unless File Exists</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+    </tr>
+
+    <tr>
+
+
+
+
+
+      <td>Fail Unless File Exists When Dir Exists</td>
+
+
+
+
+
+      <td>Check testcase</td>
+
+
+
+
+
+      <td>Fail Unless File Exists When Dir Exists</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+    </tr>
+
+    <tr>
+
+
+
+
+
+      <td>Fail Unless File Exists With Non Default Message</td>
+
+
+
+
+
+      <td>Check testcase</td>
+
+
+
+
+
+      <td>Fail Unless File Exists With Non Default Message</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+    </tr>
+
+    <tr>
+
+
+
+
+
+      <td>Fail Unless File Exists With Pattern</td>
+
+
+
+
+
+      <td>Check testcase</td>
+
+
+
+
+
+      <td>Fail Unless File Exists With Pattern</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Fail
+If File Exists</td>
+
+
+
+
+
+      <td>Check testcase</td>
+
+
+
+
+
+      <td>Fail If File Exists</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+    </tr>
+
+    <tr>
+
+
+
+
+
+      <td>Fail If File Exists With Non Default Message</td>
+
+
+
+
+
+      <td>Check testcase</td>
+
+
+
+
+
+      <td>Fail If File Exists With Non Default Message</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+    </tr>
+
+    <tr>
+
+
+
+
+
+      <td>Fail If File Exists With Pattern Matching One File</td>
+
+
+
+
+
+      <td>Check testcase</td>
+
+
+
+
+
+      <td>Fail If File Exists With Pattern Matching One File</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+    </tr>
+
+    <tr>
+
+
+
+
+
+      <td>Fail If File Exists With Pattern Matching Multiple Files</td>
+
+
+
+
+
+      <td>Check testcase</td>
+
+
+
+
+
+      <td>Fail If File Exists With Pattern Matching Multiple Files</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Fail
+Unless Dir
+Exists</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Check
+testcase</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Fail
+Unless Dir Exists</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+    </tr>
+
+    <tr>
+
+
+
+
+
+      <td>Fail Unless Dir Exists When File Exists</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Check
+testcase</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Fail Unless Dir Exists When File Exists</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+    </tr>
+
+    <tr>
+
+
+
+
+
+      <td>Fail Unless Dir Exists Exists With Non Default Message</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Check
+testcase</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Fail Unless Dir Exists Exists With Non Default Message</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+    </tr>
+
+    <tr>
+
+
+
+
+
+      <td>Fail
+Unless Dir Exists With Pattern</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Check
+testcase</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Fail
+Unless Dir Exists With Pattern</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Fail
+If Dir Exists</td>
+
+
+
+
+
+      <td>Check testcase</td>
+
+
+
+
+
+      <td>Fail If Dir Exists</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+    </tr>
+
+    <tr>
+
+
+
+
+
+      <td>Fail If Dir Exists With Non Default Message</td>
+
+
+
+
+
+      <td>Check testcase</td>
+
+
+
+
+
+      <td>Fail If Dir Exists With Non Default Message</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+    </tr>
+
+    <tr>
+
+
+
+
+
+      <td>Fail If Dir Exists With Pattern Matching One Dir</td>
+
+
+
+
+
+      <td>Check testcase</td>
+
+
+
+
+
+      <td>Fail If Dir Exists With Pattern Matching One Dir</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+    </tr>
+
+    <tr>
+
+
+
+
+
+      <td>Fail If Dir Exists&nbsp; With Pattern Matching Multiple Dirs</td>
+
+
+
+
+
+      <td>Check testcase</td>
+
+
+
+
+
+      <td>Fail If Dir Exists&nbsp; With Pattern Matching Multiple Dirs</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+  
+  
+  
+  
+  </tbody>
+</table>
+
+
+
+
+
+<h3>File and Directory Empty or Not</h3>
+
+
+
+
+
+<table border="1">
+
+
+
+
+
+  <colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
+  <thead> <tr>
+
+
+
+
+
+    <th>Test Case</th>
+
+
+
+
+
+    <th>Action</th>
+
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+
+  </tr>
+
+
+
+
+
+  </thead> <tbody>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Fail
+Unless Dir Empty</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Check
+testcase</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Fail
+Unless Dir Empty</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Fail
+If Dir Empty</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Check
+testcase</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Fail
+If Dir Empty</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Fail
+Unless File
+Empty</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Check
+testcase</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Fail
+Unless File
+Empty</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Fail
+If File Empty</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Check
+testcase</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Fail
+If File Empty</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+  
+  
+  
+  
+  </tbody>
+</table>
+
+
+
+
+
+<br>
+<h3>Creating and Removing Files and Directories</h3>
+
+
+
+
+
+<table border="1">
+
+
+
+
+
+  <colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
+  <thead> <tr>
+
+
+
+
+
+    <th>Test Case</th>
+
+
+
+
+
+    <th>Action</th>
+
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+
+  </tr>
+
+
+
+
+
+  </thead> <tbody>
+
+
+
+
+
+    
+
+
+
+
+    
+
+    
+
+
+
+
+    
+
+    
+
+
+
+
+    
+
+    
+
+
+
+
+    
+
+
+
+
+    
+
+
+
+
+    
+
+    
+
+
+
+
+    
+
+    
+
+
+
+
+    
+
+    
+
+    
+
+
+
+
+    
+
+
+
+
+    
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Create
+Dir</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Check
+testcase</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Create
+Dir</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+
+
+
+      <td>Creating
+Dir Over Existing
+File Fails
+
+
+      </td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Check
+testcase</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Creating
+Dir Over Existing
+File Fails</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Remove
+Dir</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Check
+testcase</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Remove
+Dir</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+
+
+
+      <td>Remove
+Dir
+Recursively</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Check
+testcase</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Remove
+Dir
+Recursively</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+
+
+
+      <td>Removing
+Non-Existing Dir
+Is Ok</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Check
+testcase</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Removing
+Non-Existing Dir
+Is Ok</td>
+
+
+
+
+
+      <td><br>
+
+
+
+
+
+      </td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+
+
+
+      <td>Removing
+Non-Empty Dir
+When Not&nbsp;Recursive&nbsp;Fails</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Check
+testcase</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Removing
+Non-Empty Dir
+When Not&nbsp;Recursive&nbsp;Fails</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td>Empty Dir</td>
+
+
+
+
+
+      <td>Check testcase</td>
+
+
+
+
+
+      <td>Empty Dir</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Emptying
+Non-Existing Dir
+Fails</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Check
+testcase</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Emptying
+Non-Existing Dir
+Fails</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Emptying
+Dir When Dir is
+File&nbsp;Fails</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Check
+testcase</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Emptying
+Dir When Dir is
+File&nbsp;Fails</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+  
+  
+  
+  
+  </tbody>
+</table>
+
+
+
+
+
+<br>
+
+
+
+
+
+<h3>Moving and Copying Files and Directories</h3>
+
+
+
+
+
+Copy File and Copy Dir don't currently have tests but as Move File
+and Move Dir use them internally they are somehow tested. At least
+simple tests for them should be added anyway.
+<table border="1">
+
+
+
+
+
+  <colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
+  <thead> <tr>
+
+
+
+
+
+    <th>Test Case</th>
+
+
+
+
+
+    <th>Action</th>
+
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+
+  </tr>
+
+
+
+
+
+  </thead> <tbody>
+
+
+
+
+
+    
+
+
+
+
+    
+
+    
+
+
+
+
+    
+
+    
+
+
+
+
+    
+
+    
+
+
+
+
+    
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Move
+Dir</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Check
+testcase</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Move
+Dir</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+
+
+
+      <td>Moving
+Non-Existing Dir
+Fails
+
+
+      </td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Check
+testcase</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Moving
+Non-Existing Dir
+Fails</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+  
+  
+  
+  
+  </tbody>
+</table>
+
+
+
+
+
+<br>
+
+
+
+
+
+</body>
+</html>

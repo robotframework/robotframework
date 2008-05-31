@@ -1,0 +1,924 @@
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="RobotIDE" /> 
+<style type="text/css">
+html {
+  font-family: Arial,Helvetica,sans-serif;
+  background-color: white;
+  color: black;
+}
+p {
+  max-width: 60em;
+}
+table {
+  border-collapse: collapse;
+  empty-cells: show;
+  margin: 1em 0em;
+  border: 0.1em solid black;
+}
+th, td {
+  border-style: solid;
+  border-width: 0.05em 0.1em;
+  border-color: black;
+  padding: 0.1em 0.2em;
+  height: 1.5em;
+}
+th {
+  background-color: rgb(192, 192, 192);
+  color: black;
+  border-width: 0.1em;
+  font-weight: bold;
+  text-align: center;
+  text-transform: capitalize;
+  letter-spacing: 0.1em;
+}
+/* Widths of named columns */
+col.name {
+  width: 10em;
+}
+.action, .value, .arg {
+  width: 15em;
+}
+/* Properties for the name column 
+- td:first-child should work in CSS 2.1 avare browsers (tested in Firefox)
+- col.name is against specs but works in IE
+*/
+td:first-child, col.name {
+  background-color: rgb(240, 240, 240);
+  text-transform: capitalize;
+  letter-spacing: 0.1em;
+}
+/* required for IE */
+th {
+  font-style: normal;
+}
+</style>
+<title>Telnet</title>
+</head>
+<body>
+<h1>Telnet</h1>
+
+<table border="1">
+<colgroup span="99">
+<col class="name">
+<col class="value" span="4"></colgroup>
+<tr>
+<th>Setting</th>
+<th>Value</th>
+<th>Value</th>
+<th>Value</th>
+<th>Value</th>
+</tr>
+<tr>
+<td>Suite Teardown</td>
+<td>Close All Connections</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Test Setup</td>
+<td>Login to Plage</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Test Teardown</td>
+<td>Close Connection</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Library</td>
+<td>Telnet</td>
+<td>1 s 500 ms</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Variables</td>
+<td>variables.py</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Resource</td>
+<td>telnet_resource.html</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</table>
+
+<table border="1">
+<colgroup span="99">
+<col class="name">
+<col class="value" span="4"></colgroup>
+<tr>
+<th>Variable</th>
+<th>Value</th>
+<th>Value</th>
+<th>Value</th>
+<th>Value</th>
+</tr>
+<tr>
+<td>${dir}</td>
+<td>longdirname</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>${dirs}</td>
+<td>${dir}1/${dir}2/${dir}3/${dir}4/${dir}5/${dir}6</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</table>
+
+<table border="1">
+<colgroup span="99">
+<col class="name">
+<col class="action">
+<col class="arg" span="3"></colgroup>
+<tr>
+<th>Test Case</th>
+<th>Action</th>
+<th>Argument</th>
+<th>Argument</th>
+<th>Argument</th>
+</tr>
+<tr>
+<td><a name="test_Write &amp; Read">Write & Read</a></td>
+<td>Write</td>
+<td>pwd</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>sleep</td>
+<td>300 ms</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>${out} =</td>
+<td>Read</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should Be Equal</td>
+<td>${out}</td>
+<td>/home/test\r\n[test@plage ~]$ \</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Write</td>
+<td>pwd</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>sleep</td>
+<td>300 ms</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>${out} =</td>
+<td>Read</td>
+<td>warn</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should Be Equal</td>
+<td>${out}</td>
+<td>/home/test\r\n[test@plage ~]$ \</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="test_Write Long Commandline">Write Long Commandline</a></td>
+<td>Write</td>
+<td>mkdir -p ${dirs}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Read Until Prompt</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Write</td>
+<td>ls -l ${dirs}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>${out} =</td>
+<td>Read Until Prompt</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should Be Equal</td>
+<td>${out}</td>
+<td>total 0\r\n[test@plage ~]$\</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Write</td>
+<td>rmdir -rf ${dirs}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="test_Read Until">Read Until</a></td>
+<td>[Documentation]</td>
+<td>FAIL No match found for 'Not found' in 1 second 500 milliseconds</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Write</td>
+<td>pwd</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>${out} =</td>
+<td>Read Until</td>
+<td>/</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should Be Equal</td>
+<td>${out}</td>
+<td>/</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>${out} =</td>
+<td>Read Until</td>
+<td>/</td>
+<td>DEBUG</td>
+</tr>
+<tr>
+<td></td>
+<td>Should Be Equal</td>
+<td>${out}</td>
+<td>home/</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Read Until</td>
+<td>Not found</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="test_Read Until Regexp">Read Until Regexp</a></td>
+<td>[Documentation]</td>
+<td>FAIL No match found for 'Not found' in 1 second 500 milliseconds</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Write</td>
+<td>pwd</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>${out} =</td>
+<td>Read Until Regexp</td>
+<td>/h[abo]me.test\\s+</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should Be Equal</td>
+<td>${out}</td>
+<td>/home/test\r\n</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>${out} =</td>
+<td>Read Until Regexp</td>
+<td>.*@</td>
+<td>deBUG</td>
+</tr>
+<tr>
+<td></td>
+<td>Should Be Equal</td>
+<td>${out}</td>
+<td>[test@</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>${out} =</td>
+<td>Read Until Regexp</td>
+<td>Not found</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="test_Write Until Expected Output">Write Until Expected Output</a></td>
+<td>[Documentation]</td>
+<td>FAIL No match found for 'Not found' in 1 second</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>[Setup]</td>
+<td>Login to Plage and Set Timeout</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Write</td>
+<td>a=3</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Write Until Expected Output</td>
+<td>a=$(($a - 1)); if (($a == 0)); then echo BLAST OFF; fi\r\n</td>
+<td>BLAST OFF</td>
+<td>2 s</td>
+</tr>
+<tr>
+<td></td>
+<td>...</td>
+<td>0.4s</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Write Until Expected Output</td>
+<td>ls</td>
+<td>Not found</td>
+<td>1s</td>
+</tr>
+<tr>
+<td></td>
+<td>...</td>
+<td>0.1s</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>[Teardown]</td>
+<td>Set Timeout</td>
+<td>1.5 s</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="test_Set Prompt Should Return Old Prompt">Set Prompt Should Return Old Prompt</a></td>
+<td>${prompt}</td>
+<td>${is_regexp} =</td>
+<td>Set Prompt</td>
+<td>$$$</td>
+</tr>
+<tr>
+<td></td>
+<td>...</td>
+<td>REGEXP</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should Be Equal</td>
+<td>${prompt}</td>
+<td>$</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should Be Equal</td>
+<td>${is_regexp}</td>
+<td>${False}</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>${prompt}</td>
+<td>${is_regexp} =</td>
+<td>Set Prompt</td>
+<td>$</td>
+</tr>
+<tr>
+<td></td>
+<td>Should Be Equal</td>
+<td>${prompt}</td>
+<td>$$$</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should Be Equal</td>
+<td>${is_regexp}</td>
+<td>${True}</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="test_Read Until Prompt">Read Until Prompt</a></td>
+<td>[Documentation]</td>
+<td>FAIL No match found for '$$' in 1 second 500 milliseconds</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Set Prompt</td>
+<td>$</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Write</td>
+<td>pwd</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>${out} =</td>
+<td>Read Until Prompt</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should Be Equal</td>
+<td>${out}</td>
+<td>/home/test\r\n[test@plage ~]$</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Write</td>
+<td>pwd</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>${out} =</td>
+<td>Read Until Prompt</td>
+<td>wArN</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should Be Equal</td>
+<td>${out}</td>
+<td>/home/test\r\n[test@plage ~]$</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Set Prompt</td>
+<td>$$</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Write</td>
+<td>pwd</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Read Until Prompt</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="test_Read Until Regexp Prompt">Read Until Regexp Prompt</a></td>
+<td>[Documentation]</td>
+<td>FAIL No match found for 'No match' in 1 second 500 milliseconds</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Set Prompt</td>
+<td>\\$</td>
+<td>REGEXP</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Write</td>
+<td>pwd</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>${out} =</td>
+<td>Read Until Prompt</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should Be Equal</td>
+<td>${out}</td>
+<td>/home/test\r\n[test@plage ~]$</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Set Prompt</td>
+<td>No match</td>
+<td>true</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Write</td>
+<td>pwd</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Read Until Prompt</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="test_Write &amp;">Write &</a></td>
+<td>Write</td>
+<td>pwd &amp;</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Write</td>
+<td>${PWD}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Write</td>
+<td>${PWD_AMP}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="test_Write Unicode">Write Unicode</a></td>
+<td>[Documentation]</td>
+<td>FAIL REGEXP: (ValueError: Only ASCII characters are allowed in Telnet. Got: .*|No match found for '.*\n' in 1 second 500 milliseconds)</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Write</td>
+<td>${unic_string}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="test_Set Timeout">Set Timeout</a></td>
+<td>[Documentation]</td>
+<td>FAIL No match found for 'Not found' in 500 milliseconds</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>${to} =</td>
+<td>Set Timeout</td>
+<td>3 min 2 secs</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should Be Equal</td>
+<td>${to}</td>
+<td>1 second 500 milliseconds</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>${to} =</td>
+<td>Set Timeout</td>
+<td>0.5</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should Be Equal</td>
+<td>${to}</td>
+<td>3 minutes 2 seconds</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Read Until</td>
+<td>Not found</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="test_Set Newline">Set Newline</a></td>
+<td>${newline} =</td>
+<td>Set Newline</td>
+<td>LF</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should Be Equal</td>
+<td>${newline}</td>
+<td>\r\n</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="test_Set Default Log Level">Set Default Log Level</a></td>
+<td>[Documentation]</td>
+<td>FAIL Invalid log level 'Invalid'</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Set Default log Level</td>
+<td>DEBUG</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Write</td>
+<td>pwd</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Set Default log Level</td>
+<td>warn</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Read Until Prompt</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Set Default log Level</td>
+<td>Invalid</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</table>
+
+<table border="1">
+<colgroup span="99">
+<col class="name">
+<col class="action">
+<col class="arg" span="3"></colgroup>
+<tr>
+<th>Keyword</th>
+<th>Action</th>
+<th>Argument</th>
+<th>Argument</th>
+<th>Argument</th>
+</tr>
+<tr>
+<td><a name="keyword_Login To Plage">Login To Plage</a></td>
+<td>[Timeout]</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Open Connection</td>
+<td>${HOST}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Set Prompt</td>
+<td>$</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Login</td>
+<td>${USERNAME}</td>
+<td>${PASSWORD}</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="keyword_Login To Plage And Set Timeout">Login To Plage And Set Timeout</a></td>
+<td>[Timeout]</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Login to Plage</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Set Timeout</td>
+<td>0.3</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</table>
+
+</body>
+</html>

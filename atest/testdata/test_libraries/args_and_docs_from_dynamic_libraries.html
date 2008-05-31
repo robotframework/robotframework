@@ -1,0 +1,469 @@
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="RobotIDE" /> 
+<style type="text/css">
+html {
+  font-family: Arial,Helvetica,sans-serif;
+  background-color: white;
+  color: black;
+}
+p {
+  max-width: 60em;
+}
+table {
+  border-collapse: collapse;
+  empty-cells: show;
+  margin: 1em 0em;
+  border: 0.1em solid black;
+}
+th, td {
+  border-style: solid;
+  border-width: 0.05em 0.1em;
+  border-color: black;
+  padding: 0.1em 0.2em;
+  height: 1.5em;
+}
+th {
+  background-color: rgb(192, 192, 192);
+  color: black;
+  border-width: 0.1em;
+  font-weight: bold;
+  text-align: center;
+  text-transform: capitalize;
+  letter-spacing: 0.1em;
+}
+/* Widths of named columns */
+col.name {
+  width: 10em;
+}
+.action, .value, .arg {
+  width: 15em;
+}
+/* Properties for the name column 
+- td:first-child should work in CSS 2.1 avare browsers (tested in Firefox)
+- col.name is against specs but works in IE
+*/
+td:first-child, col.name {
+  background-color: rgb(240, 240, 240);
+  text-transform: capitalize;
+  letter-spacing: 0.1em;
+}
+/* required for IE */
+th {
+  font-style: normal;
+}
+</style>
+<title>Args And Docs From Dynamic Libraries</title>
+</head>
+<body>
+<h1>Args And Docs From Dynamic Libraries</h1>
+
+<table border="1">
+<colgroup span="99">
+<col class="name">
+<col class="value" span="4"></colgroup>
+<tr>
+<th>Setting</th>
+<th>Value</th>
+<th>Value</th>
+<th>Value</th>
+<th>Value</th>
+</tr>
+<tr>
+<td>Library</td>
+<td>classes.ArgDocDynamicLibrary</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Library</td>
+<td>classes.InvalidAttributeArgDocDynamicLibrary</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Library</td>
+<td>classes.InvalidSignatureArgDocDynamicLibrary</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Library</td>
+<td>ArgDocDynamicJavaLibrary</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Library</td>
+<td>InvalidAttributeArgDocDynamicJavaLibrary</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Library</td>
+<td>InvalidSignatureArgDocDynamicJavaLibrary</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</table>
+
+<table border="1">
+<colgroup span="99">
+<col class="name">
+<col class="value" span="4"></colgroup>
+<tr>
+<th>Variable</th>
+<th>Value</th>
+<th>Value</th>
+<th>Value</th>
+<th>Value</th>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</table>
+
+<table border="1">
+<colgroup span="99">
+<col class="name">
+<col class="action">
+<col class="arg" span="3"></colgroup>
+<tr>
+<th>Test Case</th>
+<th>Action</th>
+<th>Argument</th>
+<th>Argument</th>
+<th>Argument</th>
+</tr>
+<tr>
+<td><a name="test_DocumentationandArgumentBoundariesWorkWithNoArgs">Documentation and Argument Boundaries Work With No Args</a></td>
+<td>[Documentation]</td>
+<td>FAIL Keyword 'classes.ArgDocDynamicLibrary.No Arg' expected 0 arguments, got 1.</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>No Arg</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>No Arg</td>
+<td>1</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="test_DocumentationandArgumentBoundariesWorkWithMandatoryArgs">Documentation and Argument Boundaries Work With Mandatory Args</a></td>
+<td>[Documentation]</td>
+<td>FAIL Keyword 'classes.ArgDocDynamicLibrary.One Arg' expected 1 argument, got 0.</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>One Arg</td>
+<td>arg</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>One Arg</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="test_DocumentationandArgumentBoundariesWorkWithDefaultArgs">Documentation and Argument Boundaries Work With Default Args</a></td>
+<td>[Documentation]</td>
+<td>FAIL Keyword 'classes.ArgDocDynamicLibrary.One Or Two Args' expected 1 to 2 arguments, got 3.</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>One Or Two Args</td>
+<td>1</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>One Or Two Args</td>
+<td>1</td>
+<td>2</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>One Or Two Args</td>
+<td>1</td>
+<td>2</td>
+<td>3</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="test_DocumentationandArgumentBoundariesWorkWithVarargs">Documentation and Argument Boundaries Work With Varargs</a></td>
+<td>Many Args</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Many Args</td>
+<td>1</td>
+<td>2</td>
+<td>3</td>
+</tr>
+<tr>
+<td></td>
+<td>...</td>
+<td>4</td>
+<td>5</td>
+<td>6</td>
+</tr>
+<tr>
+<td></td>
+<td>...</td>
+<td>7</td>
+<td>8</td>
+<td>9</td>
+</tr>
+<tr>
+<td></td>
+<td>...</td>
+<td>10</td>
+<td>11</td>
+<td>12</td>
+</tr>
+<tr>
+<td></td>
+<td>...</td>
+<td>13</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="test_DocumentationandArgumentBoundariesWorkWithNoArgsInJava">Documentation and Argument Boundaries Work With No Args In Java</a></td>
+<td>[Documentation]</td>
+<td>FAIL Keyword 'ArgDocDynamicJavaLibrary.Java No Arg' expected 0 arguments, got 1.</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Java No Arg</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Java No Arg</td>
+<td>foo</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="test_DocumentationandArgumentBoundariesWorkWithMandatoryArgsInJava">Documentation and Argument Boundaries Work With Mandatory Args In Java</a></td>
+<td>[Documentation]</td>
+<td>FAIL Keyword 'ArgDocDynamicJavaLibrary.Java One Arg' expected 1 argument, got 0.</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Java One Arg</td>
+<td>arg</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Java One Arg</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="test_DocumentationandArgumentBoundariesWorkWithDefaultArgsInJava">Documentation and Argument Boundaries Work With Default Args In Java</a></td>
+<td>[Documentation]</td>
+<td>FAIL Keyword 'ArgDocDynamicJavaLibrary.Java One Or Two Args' expected 1 to 2 arguments, got 3.</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Java One or Two Args</td>
+<td>1</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Java One or Two Args</td>
+<td>1</td>
+<td>2</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Java One or Two Args</td>
+<td>1</td>
+<td>2</td>
+<td>3</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="test_DocumentationandArgumentBoundariesWorkWithVarargsInJava">Documentation and Argument Boundaries Work With Varargs In Java</a></td>
+<td>Java Many Args</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Java Many Args</td>
+<td>1</td>
+<td>2</td>
+<td>3</td>
+</tr>
+<tr>
+<td></td>
+<td>...</td>
+<td>4</td>
+<td>5</td>
+<td>6</td>
+</tr>
+<tr>
+<td></td>
+<td>...</td>
+<td>7</td>
+<td>8</td>
+<td>9</td>
+</tr>
+<tr>
+<td></td>
+<td>...</td>
+<td>10</td>
+<td>11</td>
+<td>12</td>
+</tr>
+<tr>
+<td></td>
+<td>...</td>
+<td>13</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</table>
+
+<table border="1">
+<colgroup span="99">
+<col class="name">
+<col class="action">
+<col class="arg" span="3"></colgroup>
+<tr>
+<th>Keyword</th>
+<th>Action</th>
+<th>Argument</th>
+<th>Argument</th>
+<th>Argument</th>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</table>
+
+</body>
+</html>

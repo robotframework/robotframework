@@ -1,0 +1,116 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+<meta name="generator" content="HTML Tidy, see www.w3.org"><meta content="text/html;charset=ISO-8859-1" http-equiv="Content-Type"><style type="text/css">
+html { font-family: Arial,Helvetica,sans-serif;
+background-color: white;
+color: black;
+}
+p { max-width: 60em;
+}
+table { border-collapse: collapse;
+empty-cells: show;
+margin: 1em 0em;
+border: 0.1em solid black;
+}
+th, td {
+border-style: solid;
+border-width: 0.05em 0.1em;
+border-color: black;
+padding: 0.1em 0.2em;
+height: 1.5em;
+}
+th {
+background-color: rgb(192, 192, 192);
+color: black;
+border-width: 0.1em;
+font-weight: bold;
+text-align: center;
+text-transform: capitalize;
+letter-spacing: 0.1em;
+}
+/* Widths of named columns */
+col.name {
+width: 10em;
+}
+.action , .value, .arg {
+width: 15em;
+}
+/* Properties for the name column - td:first-child should work in CSS 2.1 avare browsers (tested in Firefox)
+- col.name is against specs but works in IE
+*/
+td:first-child, col.name {
+background-color: rgb(240, 240, 240);
+text-transform: capitalize;
+letter-spacing: 0.1em;
+}
+th { font-style: normal; } /* required for IE */
+/* Properties for the action column
+- td+td and td+td+td is for CSS 2.1 browsers (tested in Firefox)
+- col.action is for IE
+NOTE: Not used currently because in CSS 2.1 browsers td+td matches the
+first value column of Setting and Variable tables.
+td + td {
+background-color: rgb(240, 240, 240);
+}
+td + td + td {
+background: transparent;
+}
+col.action { /* can't be on the same line as td+td */
+background-color: rgb(240, 240, 240);
+}
+*/
+</style><title>Logging Tests</title>
+<link rel="stylesheet" href="resources/css/testdata.css" type="text/css"></head>
+<body><h1>Logging
+Tests</h1>
+<table border="1"> <colgroup span="99"><col class="name"><col class="value" span="4"></colgroup><thead><tr>
+<th>Setting</th> <th>Value</th>
+<th>Value</th> <th>value</th> <th>Value</th>
+</tr> </thead> <tbody> <tr> <td>Resource</td>
+<td>../../resources/resource.html</td> <td></td>
+<td></td> <td></td> </tr> <tr> <td>Force
+Tags</td> <td>regression</td> <td>pybot</td>
+<td>jybot</td> <td></td> </tr> </tbody>
+</table> <table border="1"> <colgroup span="99"><col class="name"><col class="value" span="4"></colgroup><thead><tr>
+<th>Variable</th> <th>Value</th>
+<th>Value</th> <th>Value</th> <th>Value</th>
+</tr> </thead> <tbody>  <tr> <td align="undefined" valign="undefined"></td> <td align="undefined" valign="undefined"></td> <td align="undefined" valign="undefined"></td> <td align="undefined" valign="undefined"></td> <td align="undefined" valign="undefined"></td> </tr> </tbody></table><table border="1"> <colgroup span="99"><col class="name"><col class="action"><col class="arg"></colgroup> <thead>
+<tr> <th>Test Case</th> <th>Action</th>
+<th>Argument</th> <th>Argument</th><th>Argument</th>
+</tr></thead> <tbody> <tr><td>Printing
+Unescaped
+HTML Should Be possible From Libraries</td><td>Run Tests</td><td>--log
+mylog.html<br></td><td>output${/}printing_html_from_libs.html</td><td></td></tr><tr><td><br></td><td>${tc}
+=</td><td>Check Test Case</td><td>Printing
+Unescaped HTML Should Be possible From Libraries</td><td></td></tr><tr><td></td><td>Messages
+Should be Correctly formatted in Output and log</td><td>${tc}</td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Rebot Should Preserve Formatting</td><td>Remove File</td><td>${OUTDIR}${/}mylog.html</td><td></td><td></td></tr><tr><td></td><td>Run Rebot</td><td>--log
+mylog.html<br></td><td>${OUTDIR}${/}printing_html_from_libs-output.xml</td><td><br></td></tr><tr><td></td><td>${tc} =</td><td>Check Test Case</td><td>Printing
+Unescaped HTML Should Be possible From Libraries</td><td></td></tr><tr><td></td><td>Messages
+Should be Correctly formatted in Output and log</td><td>${tc}</td><td></td><td></td></tr><tr>
+<td align="undefined" valign="undefined"></td><td align="undefined" valign="undefined"></td>
+<td align="undefined" valign="undefined"></td><td align="undefined" valign="undefined"></td><td></td>
+</tr> </tbody></table><br> <table border="1"> <colgroup span="99"><col class="name"><col class="action"><col class="arg"></colgroup><thead>
+<tr> <th>Keyword</th> <th>Action</th>
+<th>Argument</th> <th>Argument</th> <th>Argument</th><th>Argument</th>
+</tr> </thead> <tbody>  <tr><td>Messages
+Should be Correctly formatted in Output and log</td><td>[
+Arguments ]</td><td>${tc}</td><td></td><td></td><td></td></tr><tr><td></td><td>Check
+Log Message</td><td>${tc.kws[0].msgs[0]}</td><td>&lt;a
+href="http://www.google.com"&gt;Google&lt;/a&gt;</td><td>INFO</td><td>True</td></tr><tr><td></td><td>Check
+Log Message</td><td>${tc.kws[1].msgs[0]}</td><td>&lt;table
+border=1&gt;\n&lt;tr&gt;&lt;td&gt;0,0&lt;/td&gt;&lt;td&gt;0,1&lt;/td&gt;&lt;/tr&gt;\n<br>&lt;tr&gt;&lt;td&gt;1,0&lt;/td&gt;&lt;td&gt;1,1&lt;/td&gt;&lt;/tr&gt;\n&lt;/table&gt;</td><td>INFO</td><td>True</td></tr><tr><td></td><td>Check
+Log Message</td><td>${tc.kws[1].msgs[1]}</td><td>This
+is html &lt;hr&gt;</td><td>INFO</td><td>True</td></tr><tr><td></td><td>Check
+Log Message</td><td>${tc.kws[1].msgs[2]}</td><td>This
+is not html &lt;br&gt;</td><td>INFO</td><td>False</td></tr><tr><td></td><td>${LOG} =</td><td>Get File</td><td>${OUTDIR}${/}mylog.html</td><td></td><td></td></tr><tr><td></td><td>Should
+Contain</td><td>${LOG}</td><td>&lt;a
+href="http://www.google.com"&gt;Google&lt;/a&gt;</td><td></td><td></td></tr><tr><td></td><td>Should
+Contain</td><td>${LOG}</td><td>&lt;table
+border=1&gt;\n&lt;tr&gt;&lt;td&gt;0,0&lt;/td&gt;&lt;td&gt;0,1&lt;/td&gt;&lt;/tr&gt;\n<br>&lt;tr&gt;&lt;td&gt;1,0&lt;/td&gt;&lt;td&gt;1,1&lt;/td&gt;&lt;/tr&gt;\n&lt;/table&gt;</td><td></td><td></td></tr><tr><td></td><td>Should
+Contain</td><td>${LOG}</td><td>This is html
+&lt;hr&gt;</td><td></td><td></td></tr><tr><td></td><td>Should
+Contain</td><td>${LOG}</td><td>This is not html
+&amp;lt;br&amp;gt;</td><td></td><td></td></tr>
+<tr><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td></td>
+<td></td> <td></td>
+<td></td> <td></td><td></td> </tr> </tbody></table></body></html>

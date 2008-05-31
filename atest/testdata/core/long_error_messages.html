@@ -1,0 +1,881 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+
+
+
+  
+  
+  <style type="text/css">
+html { font-family: Arial,Helvetica,sans-serif;
+background-color: white;
+color: black;
+}
+p { max-width: 60em;
+}
+table { border-collapse: collapse;
+empty-cells: show;
+margin: 1em 0em;
+border: 0.1em solid black;
+}
+th, td {
+border-style: solid;
+border-width: 0.05em 0.1em;
+border-color: black;
+padding: 0.1em 0.2em;
+height: 1.5em;
+}
+th {
+background-color: rgb(192, 192, 192);
+color: black;
+border-width: 0.1em;
+font-weight: bold;
+text-align: center;
+text-transform: capitalize;
+letter-spacing: 0.1em;
+}
+/* Widths of named columns */
+col.name {
+width: 10em;
+}
+.action , .value, .arg {
+width: 15em;
+}
+/* Properties for the name column - td:first-child should work in CSS 2.1 avare browsers (tested in Firefox)
+- col.name is against specs but works in IE
+*/
+td:first-child, col.name {
+background-color: rgb(240, 240, 240);
+text-transform: capitalize;
+letter-spacing: 0.1em;
+}
+th { font-style: normal; } /* required for IE */
+  
+  </style>
+
+
+  
+  
+  
+  
+  
+  <title>Robot Test Cases</title><link type="text/css" href="resources/css/testdata.css" rel="stylesheet"></head>
+<body>
+
+
+
+<h1>Robot Test Cases</h1>
+
+
+
+
+<table border="1">
+
+
+
+  <colgroup span="99"><col class="name"><col class="value" span="4"></colgroup>
+
+  <thead>
+  <tr>
+
+
+
+    <th></th>
+
+
+
+    <th></th>
+
+
+
+    <th>Value</th>
+
+
+
+    <th>value</th>
+
+
+
+    <th>Value</th>
+
+
+
+  </tr>
+
+
+
+  </thead>
+
+  <tbody>
+
+
+
+
+
+    <tr>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+    </tr><tr><td>Documentation</td><td>These test cases test cutting of long error messages.</td><td>The limits of the algorithm are at most 20 lines, at most 78 characters per line.</td><td>If a line has more than 78 characters, it will be considered as two (or more) lines by the cutting algorithm</td><td></td></tr>
+
+
+
+  
+  
+  </tbody>
+</table>
+
+
+
+
+<br>
+
+
+
+
+<table border="1">
+
+
+
+  <colgroup span="99"><col class="name"><col class="value" span="4"></colgroup>
+
+  <thead>
+  <tr>
+
+
+
+    <th>Variable</th>
+
+
+
+    <th>Value</th>
+
+
+
+    <th>Value</th>
+
+
+
+    <th>Value</th>
+
+
+
+    <th>Value</th>
+
+
+
+  </tr>
+
+
+
+  </thead>
+
+  <tbody>
+
+
+
+
+
+    <tr>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+    </tr>
+
+
+
+  
+  
+  </tbody>
+</table>
+
+
+
+
+<br>
+
+
+
+
+<table border="1">
+
+
+
+  <colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
+
+  <thead>
+  <tr>
+
+
+
+    <th>Test Case</th>
+
+
+
+    <th>Action</th>
+
+
+
+    <th>Argument</th>
+
+
+
+    <th>Argument</th>
+
+
+
+    <th>Argument</th>
+
+
+
+    <th>Argument</th>
+
+
+
+
+  </tr>
+
+
+
+  </thead>
+
+  <tbody>
+
+
+
+    <tr>
+
+
+
+      <td>50 x 1 Message</td>
+
+
+
+      <td>Fail With Long Message</td>
+
+
+      <td>50</td>
+
+
+      <td>1</td>
+
+
+
+
+
+      <td># Under the limit</td>
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    
+    <tr>
+
+
+      <td>100&nbsp;x 1 Message</td>
+
+
+      <td>Fail With Long Message</td>
+
+
+      <td>100</td>
+
+
+      <td align="undefined" valign="undefined">1</td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+    </tr>
+
+
+    
+    <tr>
+
+
+      <td>50 x 10 Message</td>
+
+
+      <td>Fail With Long Message</td>
+
+
+      <td>50</td>
+
+
+      <td align="undefined" valign="undefined">10</td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+    </tr>
+
+
+    <tr><td>150 X 9 Message</td><td>Fail With Long Message</td><td>150</td><td>9</td><td></td><td></td></tr><tr>
+
+      <td>77 x 19 Message</td>
+
+      <td>Fail With Long Message</td>
+
+      <td>77</td>
+
+      <td align="undefined" valign="undefined">19</td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+    </tr>
+
+
+    <tr><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr>
+
+
+      <td>20 x 20 Message</td>
+
+
+      <td>Fail With Long Message</td>
+
+
+      <td>20</td>
+
+
+      <td align="undefined" valign="undefined">20</td>
+
+
+      <td align="undefined" valign="undefined"># On the limit</td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+    </tr>
+
+
+    
+    <tr>
+
+
+      <td>150 x 10 Message</td>
+
+
+      <td>Fail With Long Message</td>
+
+
+      <td>150</td>
+
+
+      <td align="undefined" valign="undefined">10</td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+    </tr>
+
+
+    
+    <tr>
+
+
+      <td>1560 x 1 Message</td>
+
+
+      <td>Fail With Long Message</td>
+
+
+      <td>1560</td>
+
+
+      <td align="undefined" valign="undefined">1</td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+    </tr>
+
+
+    
+    <tr><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr>
+
+
+      <td>8&nbsp;x 21 Message</td>
+
+
+      <td>Fail With Long Message</td>
+
+
+      <td>8</td>
+
+
+      <td align="undefined" valign="undefined">21</td>
+
+
+      <td align="undefined" valign="undefined"># &gt; Over the limit</td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td>200 x 7 Message</td>
+
+      <td>Fail With Long Message</td>
+
+      <td>200</td>
+
+      <td align="undefined" valign="undefined">7</td>
+
+
+      
+      
+      
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td>1600 x 1 Message</td>
+
+
+      <td>Fail With Long Message</td>
+
+
+      <td>1600</td>
+
+
+      <td align="undefined" valign="undefined">1</td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+    </tr><tr><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+
+
+    
+    
+
+
+    
+    
+
+
+    
+    
+
+
+    
+    
+
+
+    
+    
+
+
+  
+  
+  </tbody>
+</table>
+
+
+
+
+<br>
+
+
+
+
+<table border="1">
+
+
+
+  <colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
+
+  <thead>
+  <tr>
+
+
+
+    <th>Keyword</th>
+
+
+
+    <th>Action</th>
+
+
+
+    <th>Argument</th>
+
+
+
+    <th>Argument</th>
+
+
+
+    <th>Argument</th>
+
+
+
+  </tr>
+
+
+
+  </thead>
+
+  <tbody>
+
+
+
+    <tr>
+
+
+
+      <td>Fail With Long Message</td>
+
+
+
+      <td>[ Arguments ]</td>
+
+
+
+      <td>${line_length}=80</td>
+
+
+
+      <td>${line_count}=1</td>
+
+
+
+      <td></td>
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined">${msg}</td>
+
+
+      <td align="undefined" valign="undefined">Get Long Message</td>
+
+
+      <td>${line_length}</td>
+
+
+      <td>${line_count}</td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined">Fail Unless</td>
+
+
+      <td align="undefined" valign="undefined">len("""${msg}""")&nbsp;== ${line_length} * ${line_count}</td>
+
+
+      <td align="undefined" valign="undefined">Wrong length</td>
+
+
+      <td align="undefined" valign="undefined"># Sanity check. Must have triple<br>
+
+
+# quotes because ${msg}<br>
+
+
+# contains newlines</td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined">Fail</td>
+
+
+      <td align="undefined" valign="undefined">${msg}</td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td>Get Long Message</td>
+
+
+      <td>[ Arguments ]</td>
+
+
+      <td>${line_length}=80</td>
+
+
+      <td>${line_count}=1</td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined">${lines}</td>
+
+
+      <td align="undefined" valign="undefined">Evaluate</td>
+
+
+      <td align="undefined" valign="undefined">[ str(i * ${line_length} + 1) for i in range(${line_count}) ]</td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined">${lines}</td>
+
+
+      <td align="undefined" valign="undefined">Evaluate</td>
+
+
+      <td align="undefined" valign="undefined">[ line.ljust(${line_length} - 4) for line in ${lines} ]</td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined">${msg}</td>
+
+
+      <td align="undefined" valign="undefined">Evaluate</td>
+
+
+      <td align="undefined" valign="undefined">"END\\n".join(${lines})</td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined">${total_chars}</td>
+
+
+      <td align="undefined" valign="undefined">Evaluate</td>
+
+
+      <td align="undefined" valign="undefined">${line_length} * ${line_count}</td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined">${msg}</td>
+
+
+      <td align="undefined" valign="undefined">Evaluate</td>
+
+
+      <td align="undefined" valign="undefined">"""${msg}"""[:-len("${total_chars}")] + " " * 4 + "${total_chars}"</td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined">[ Return ]</td>
+
+
+      <td align="undefined" valign="undefined">${msg}</td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+    </tr>
+
+
+
+  
+  
+  </tbody>
+</table>
+
+
+
+</body></html>

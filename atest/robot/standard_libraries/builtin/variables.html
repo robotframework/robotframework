@@ -1,0 +1,1239 @@
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="RobotIDE" /> 
+<style type="text/css">
+html {
+  font-family: Arial,Helvetica,sans-serif;
+  background-color: white;
+  color: black;
+}
+p {
+  max-width: 60em;
+}
+table {
+  border-collapse: collapse;
+  empty-cells: show;
+  margin: 1em 0em;
+  border: 0.1em solid black;
+}
+th, td {
+  border-style: solid;
+  border-width: 0.05em 0.1em;
+  border-color: black;
+  padding: 0.1em 0.2em;
+  height: 1.5em;
+}
+th {
+  background-color: rgb(192, 192, 192);
+  color: black;
+  border-width: 0.1em;
+  font-weight: bold;
+  text-align: center;
+  text-transform: capitalize;
+  letter-spacing: 0.1em;
+}
+/* Widths of named columns */
+col.name {
+  width: 10em;
+}
+.action, .value, .arg {
+  width: 15em;
+}
+/* Properties for the name column 
+- td:first-child should work in CSS 2.1 avare browsers (tested in Firefox)
+- col.name is against specs but works in IE
+*/
+td:first-child, col.name {
+  background-color: rgb(240, 240, 240);
+  text-transform: capitalize;
+  letter-spacing: 0.1em;
+}
+/* required for IE */
+th {
+  font-style: normal;
+}
+</style>
+<title>Variables</title>
+</head>
+<body>
+<h1>Variables</h1>
+
+<table border="1">
+<colgroup span="99">
+<col class="name">
+<col class="value" span="4"></colgroup>
+<tr>
+<th>Setting</th>
+<th>Value</th>
+<th>Value</th>
+<th>Value</th>
+<th>Value</th>
+</tr>
+<tr>
+<td>Documentation</td>
+<td>Tests for variable related functionality in BuiltIn</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Force Tags</td>
+<td>regression</td>
+<td>jybot</td>
+<td>pybot</td>
+<td></td>
+</tr>
+<tr>
+<td>Suite Setup</td>
+<td>Run Tests</td>
+<td>--variable cli_var_1:CLI1 --variable cli_var_2:CLI2 --variable cli_var_3:CLI3</td>
+<td>standard_libraries${/}builtin${/}variables.html</td>
+<td>standard_libraries${/}builtin${/}variables2.html</td>
+</tr>
+<tr>
+<td>Resource</td>
+<td>../../../resources/resource.html</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</table>
+
+<table border="1">
+<colgroup span="99">
+<col class="name">
+<col class="value" span="4"></colgroup>
+<tr>
+<th>Variable</th>
+<th>Value</th>
+<th>Value</th>
+<th>Value</th>
+<th>Value</th>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</table>
+
+<table border="1">
+<colgroup span="99">
+<col class="name">
+<col class="action">
+<col class="arg" span="3"></colgroup>
+<tr>
+<th>Test Case</th>
+<th>Action</th>
+<th>Argument</th>
+<th>Argument</th>
+<th>Argument</th>
+</tr>
+<tr>
+<td><a name="test_Set Variable">Set Variable</a></td>
+<td>Check Test Case</td>
+<td>Set Variable</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="test_Set Variable If With True Condition">Set Variable If With True Condition</a></td>
+<td>Check Test Case</td>
+<td>Set Variable If With True Condition</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="test_Set Variable If With False Condition">Set Variable If With False Condition</a></td>
+<td>Check Test Case</td>
+<td>Set Variable If With False Condition</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="test_Log Variables In Suite Setup">Log Variables In Suite Setup</a></td>
+<td>${kw} =</td>
+<td>Set</td>
+<td>${SUITE.suites[0].setup.keywords[7]}</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Log</td>
+<td>${kw.messages}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should Start With</td>
+<td>${kw.messages[0].message}</td>
+<td>\${/} =</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Log Message</td>
+<td>${kw.messages[1]}</td>
+<td>\${:} = ${:}</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Log Message</td>
+<td>${kw.messages[2]}</td>
+<td>\${clivar1} = CLI1</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Log Message</td>
+<td>${kw.messages[3]}</td>
+<td>\${clivar2} = CLI2</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Log Message</td>
+<td>${kw.messages[4]}</td>
+<td>\${clivar3} = CLI3</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Log Message</td>
+<td>${kw.messages[5]}</td>
+<td>\${debugfile} = NONE</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should Start With</td>
+<td>${kw.messages[6].message}</td>
+<td>\${interpreter} =</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Log Message</td>
+<td>${kw.messages[7]}</td>
+<td>\${logfile} = NONE</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should Start With</td>
+<td>${kw.messages[8].message}</td>
+<td>\${outputdir} =</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should Start With</td>
+<td>${kw.messages[9].message}</td>
+<td>\${outputfile} =</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Log Message</td>
+<td>${kw.messages[10]}</td>
+<td>\${prevtestmessage} =</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Log Message</td>
+<td>${kw.messages[11]}</td>
+<td>\${prevtestname} =</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Log Message</td>
+<td>${kw.messages[12]}</td>
+<td>\${prevteststatus} =</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Log Message</td>
+<td>${kw.messages[13]}</td>
+<td>\${reportfile} = NONE</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Log Message</td>
+<td>${kw.messages[14]}</td>
+<td>\${scalar} = Hi tellus</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should Start With</td>
+<td>${kw.messages[15].message}</td>
+<td>\${suitename} =</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Log Message</td>
+<td>${kw.messages[16]}</td>
+<td>\${suitesetupglobalvar} = Global var set in suite setup</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Log Message</td>
+<td>${kw.messages[17]}</td>
+<td>\${suitesetuplocalvar} = [ Variable available only locally | in suite setup ]</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Log Message</td>
+<td>${kw.messages[18]}</td>
+<td>\${suitesetupsuitevar} = Suite var set in suite setup</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Log Message</td>
+<td>${kw.messages[19]}</td>
+<td>\${summaryfile} = NONE</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should Start With</td>
+<td>${kw.messages[20].message}</td>
+<td>\${tempdir} =</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Log Message</td>
+<td>${kw.messages[21]}</td>
+<td>\@{list} = [ Hello | world ]</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Log Message</td>
+<td>${kw.messages[22]}</td>
+<td>\@{suitesetupglobalvar} = [ Global var set in | suite setup ]</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Log Message</td>
+<td>${kw.messages[23]}</td>
+<td>\@{suitesetupsuitevar} = [ Suite var set in | suite setup ]</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should Be Equal As Integers</td>
+<td>${kw.message_count}</td>
+<td>24</td>
+<td>Wrong total message count</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="test_Log Variables In Test">Log Variables In Test</a></td>
+<td>${test} =</td>
+<td>Check Test Case</td>
+<td>Log Variables</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>${kw} =</td>
+<td>Set</td>
+<td>${test.keywords[0]}</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should Start With</td>
+<td>${kw.messages[1].message}</td>
+<td>\${/} =</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Log Message</td>
+<td>${kw.messages[2]}</td>
+<td>\${:} = ${:}</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Log Message</td>
+<td>${kw.messages[3]}</td>
+<td>\${clivar1} = CLI1</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Log Message</td>
+<td>${kw.messages[4]}</td>
+<td>\${clivar2} = CLI2</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Log Message</td>
+<td>${kw.messages[5]}</td>
+<td>\${clivar3} = CLI3</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Log Message</td>
+<td>${kw.messages[6]}</td>
+<td>\${debugfile} = NONE</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should Start With</td>
+<td>${kw.messages[7].message}</td>
+<td>\${interpreter} =</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Log Message</td>
+<td>${kw.messages[8]}</td>
+<td>\${logfile} = NONE</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should Start With</td>
+<td>${kw.messages[9].message}</td>
+<td>\${outputdir} =</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should Start With</td>
+<td>${kw.messages[10].message}</td>
+<td>\${outputfile} =</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Log Message</td>
+<td>${kw.messages[11]}</td>
+<td>\${prevtestmessage} =</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Log Message</td>
+<td>${kw.messages[12]}</td>
+<td>\${prevtestname} = Set Variable If With False Condition</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Log Message</td>
+<td>${kw.messages[13]}</td>
+<td>\${prevteststatus} = PASS</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Log Message</td>
+<td>${kw.messages[14]}</td>
+<td>\${reportfile} = NONE</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Log Message</td>
+<td>${kw.messages[15]}</td>
+<td>\${scalar} = Hi tellus</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should Start With</td>
+<td>${kw.messages[16].message}</td>
+<td>\${suitename} =</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Log Message</td>
+<td>${kw.messages[17]}</td>
+<td>\${suitesetupglobalvar} = Global var set in suite setup</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Log Message</td>
+<td>${kw.messages[18]}</td>
+<td>\${suitesetupsuitevar} = Suite var set in suite setup</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Log Message</td>
+<td>${kw.messages[19]}</td>
+<td>\${summaryfile} = NONE</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should Start With</td>
+<td>${kw.messages[20].message}</td>
+<td>\${tempdir} =</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Log Message</td>
+<td>${kw.messages[21]}</td>
+<td>\${testname} = Log Variables</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Log Message</td>
+<td>${kw.messages[22]}</td>
+<td>\@{list} = [ Hello | world ]</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Log Message</td>
+<td>${kw.messages[23]}</td>
+<td>\@{suitesetupglobalvar} = [ Global var set in | suite setup ]</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Log Message</td>
+<td>${kw.messages[24]}</td>
+<td>\@{suitesetupsuitevar} = [ Suite var set in | suite setup ]</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should Be Equal As Integers</td>
+<td>${kw.message_count}</td>
+<td>27</td>
+<td>Wrong total message count</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="test_Log Variables Afte Setting New Variables">Log Variables Afte Setting New Variables</a></td>
+<td>${test} =</td>
+<td>Check Test Case</td>
+<td>Log Variables</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>${kw} =</td>
+<td>Set</td>
+<td>${test.keywords[4]}</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should Start With</td>
+<td>${kw.messages[1].message}</td>
+<td>\${/} =</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Log Message</td>
+<td>${kw.messages[2]}</td>
+<td>\${:} = ${:}</td>
+<td>DEBUG</td>
+</tr>
+<tr>
+<td></td>
+<td>Check Log Message</td>
+<td>${kw.messages[3]}</td>
+<td>\${clivar1} = CLI1</td>
+<td>DEBUG</td>
+</tr>
+<tr>
+<td></td>
+<td>Check Log Message</td>
+<td>${kw.messages[4]}</td>
+<td>\${clivar2} = CLI2</td>
+<td>DEBUG</td>
+</tr>
+<tr>
+<td></td>
+<td>Check Log Message</td>
+<td>${kw.messages[5]}</td>
+<td>\${clivar3} = CLI3</td>
+<td>DEBUG</td>
+</tr>
+<tr>
+<td></td>
+<td>Check Log Message</td>
+<td>${kw.messages[6]}</td>
+<td>\${debugfile} = NONE</td>
+<td>DEBUG</td>
+</tr>
+<tr>
+<td></td>
+<td>Should Start With</td>
+<td>${kw.messages[7].message}</td>
+<td>\${interpreter} =</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Log Message</td>
+<td>${kw.messages[8]}</td>
+<td>\${intlist} = [ 0 | 1 | 2 | 3 ]</td>
+<td>DEBUG</td>
+</tr>
+<tr>
+<td></td>
+<td>Check Log Message</td>
+<td>${kw.messages[9]}</td>
+<td>\${logfile} = NONE</td>
+<td>DEBUG</td>
+</tr>
+<tr>
+<td></td>
+<td>Should Start With</td>
+<td>${kw.messages[10].message}</td>
+<td>\${outputdir} =</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should Start With</td>
+<td>${kw.messages[11].message}</td>
+<td>\${outputfile} =</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Log Message</td>
+<td>${kw.messages[12]}</td>
+<td>\${prevtestmessage} =</td>
+<td>DEBUG</td>
+</tr>
+<tr>
+<td></td>
+<td>Check Log Message</td>
+<td>${kw.messages[13]}</td>
+<td>\${prevtestname} = Set Variable If With False Condition</td>
+<td>DEBUG</td>
+</tr>
+<tr>
+<td></td>
+<td>Check Log Message</td>
+<td>${kw.messages[14]}</td>
+<td>\${prevteststatus} = PASS</td>
+<td>DEBUG</td>
+</tr>
+<tr>
+<td></td>
+<td>Check Log Message</td>
+<td>${kw.messages[15]}</td>
+<td>\${reportfile} = NONE</td>
+<td>DEBUG</td>
+</tr>
+<tr>
+<td></td>
+<td>Check Log Message</td>
+<td>${kw.messages[16]}</td>
+<td>\${scalar} = Hi tellus</td>
+<td>DEBUG</td>
+</tr>
+<tr>
+<td></td>
+<td>Should Start With</td>
+<td>${kw.messages[17].message}</td>
+<td>\${suitename} =</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Log Message</td>
+<td>${kw.messages[18]}</td>
+<td>\${suitesetupglobalvar} = Global var set in suite setup</td>
+<td>DEBUG</td>
+</tr>
+<tr>
+<td></td>
+<td>Check Log Message</td>
+<td>${kw.messages[19]}</td>
+<td>\${suitesetupsuitevar} = Suite var set in suite setup</td>
+<td>DEBUG</td>
+</tr>
+<tr>
+<td></td>
+<td>Check Log Message</td>
+<td>${kw.messages[20]}</td>
+<td>\${summaryfile} = NONE</td>
+<td>DEBUG</td>
+</tr>
+<tr>
+<td></td>
+<td>Should Start With</td>
+<td>${kw.messages[21].message}</td>
+<td>\${tempdir} =</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Log Message</td>
+<td>${kw.messages[22]}</td>
+<td>\${testname} = Log Variables</td>
+<td>DEBUG</td>
+</tr>
+<tr>
+<td></td>
+<td>Check Log Message</td>
+<td>${kw.messages[23]}</td>
+<td>\${var} = Hello</td>
+<td>DEBUG</td>
+</tr>
+<tr>
+<td></td>
+<td>Check Log Message</td>
+<td>${kw.messages[24]}</td>
+<td>\@{intlist} = [ 0 | 1 | 2 | 3 ]</td>
+<td>DEBUG</td>
+</tr>
+<tr>
+<td></td>
+<td>Check Log Message</td>
+<td>${kw.messages[25]}</td>
+<td>\@{list} = [ Hello | world ]</td>
+<td>DEBUG</td>
+</tr>
+<tr>
+<td></td>
+<td>Check Log Message</td>
+<td>${kw.messages[26]}</td>
+<td>\@{suitesetupglobalvar} = [ Global var set in | suite setup ]</td>
+<td>DEBUG</td>
+</tr>
+<tr>
+<td></td>
+<td>Check Log Message</td>
+<td>${kw.messages[27]}</td>
+<td>\@{suitesetupsuitevar} = [ Suite var set in | suite setup ]</td>
+<td>DEBUG</td>
+</tr>
+<tr>
+<td></td>
+<td>Should Be Equal As Integers</td>
+<td>${kw.message_count}</td>
+<td>30</td>
+<td>Wrong total message count</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="test_Log Variables In User Keyword">Log Variables In User Keyword</a></td>
+<td>${test} =</td>
+<td>Check Test Case</td>
+<td>Log Variables</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>${kw} =</td>
+<td>Set</td>
+<td>${test.keywords[5].keywords[1]}</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should Start With</td>
+<td>${kw.messages[1].message}</td>
+<td>\${/} =</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Log Message</td>
+<td>${kw.messages[2]}</td>
+<td>\${:} = ${:}</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Log Message</td>
+<td>${kw.messages[3]}</td>
+<td>\${clivar1} = CLI1</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Log Message</td>
+<td>${kw.messages[4]}</td>
+<td>\${clivar2} = CLI2</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Log Message</td>
+<td>${kw.messages[5]}</td>
+<td>\${clivar3} = CLI3</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Log Message</td>
+<td>${kw.messages[6]}</td>
+<td>\${debugfile} = NONE</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should Start With</td>
+<td>${kw.messages[7].message}</td>
+<td>\${interpreter} =</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Log Message</td>
+<td>${kw.messages[8]}</td>
+<td>\${intlist} = [ 0 | 1 | 2 | 3 ]</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Log Message</td>
+<td>${kw.messages[9]}</td>
+<td>\${logfile} = NONE</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should Start With</td>
+<td>${kw.messages[10].message}</td>
+<td>\${outputdir} =</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should Start With</td>
+<td>${kw.messages[11].message}</td>
+<td>\${outputfile} =</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Log Message</td>
+<td>${kw.messages[12]}</td>
+<td>\${prevtestmessage} =</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Log Message</td>
+<td>${kw.messages[13]}</td>
+<td>\${prevtestname} = Set Variable If With False Condition</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Log Message</td>
+<td>${kw.messages[14]}</td>
+<td>\${prevteststatus} = PASS</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Log Message</td>
+<td>${kw.messages[15]}</td>
+<td>\${reportfile} = NONE</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Log Message</td>
+<td>${kw.messages[16]}</td>
+<td>\${scalar} = Hi tellus</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should Start With</td>
+<td>${kw.messages[17].message}</td>
+<td>\${suitename} =</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Log Message</td>
+<td>${kw.messages[18]}</td>
+<td>\${suitesetupglobalvar} = Global var set in suite setup</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Log Message</td>
+<td>${kw.messages[19]}</td>
+<td>\${suitesetupsuitevar} = Suite var set in suite setup</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Log Message</td>
+<td>${kw.messages[20]}</td>
+<td>\${summaryfile} = NONE</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should Start With</td>
+<td>${kw.messages[21].message}</td>
+<td>\${tempdir} =</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Log Message</td>
+<td>${kw.messages[22]}</td>
+<td>\${testname} = Log Variables</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Log Message</td>
+<td>${kw.messages[23]}</td>
+<td>\${ukvar} = Value of an uk variable</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Log Message</td>
+<td>${kw.messages[24]}</td>
+<td>\${var} = Hello</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Log Message</td>
+<td>${kw.messages[25]}</td>
+<td>\@{intlist} = [ 0 | 1 | 2 | 3 ]</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Log Message</td>
+<td>${kw.messages[26]}</td>
+<td>\@{list} = [ Hello | world ]</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Log Message</td>
+<td>${kw.messages[27]}</td>
+<td>\@{suitesetupglobalvar} = [ Global var set in | suite setup ]</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Log Message</td>
+<td>${kw.messages[28]}</td>
+<td>\@{suitesetupsuitevar} = [ Suite var set in | suite setup ]</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should Be Equal As Integers</td>
+<td>${kw.message_count}</td>
+<td>31</td>
+<td>Wrong total message count</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="test_Set Test Variable">Set Test Variable</a></td>
+<td>Check Test Case</td>
+<td>Set Test Variable - Scalars</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Test Case</td>
+<td>Set Test Variable - Lists</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Test Case</td>
+<td>Set Test Variable Needing Escaping</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Test Case</td>
+<td>Set Test Variable in User Keyword</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Test Case</td>
+<td>Set Test Variable Not Affecting Other Tests</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Test Case</td>
+<td>Check Suite Vars Set In One Suite Are Not Available In Another</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="test_Set Suite Variable">Set Suite Variable</a></td>
+<td>Check Test Case</td>
+<td>Set Suite Variable 1</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Test Case</td>
+<td>Set Suite Variable 2</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Test Case</td>
+<td>Check Suite Vars Set In One Suite Are Not Available In Another</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Suite Teardown Passed</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="test_Set Global Variables">Set Global Variables</a></td>
+<td>Check Test Case</td>
+<td>Set Global Variable 1</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Test Case</td>
+<td>Set Global Variable 2</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Test Case</td>
+<td>Check Global Vars Set In One Suite Are Available In Another</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Suite Teardown Passed</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="test_Variable Scopes And Overriding">Variable Scopes And Overriding</a></td>
+<td>Check Test Case</td>
+<td>Scopes And Overriding 1</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Test Case</td>
+<td>Scopes And Overriding 2</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Test Case</td>
+<td>Scopes And Overriding 3</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="test_Replace Variables">Replace Variables</a></td>
+<td>Check Test Case</td>
+<td>Replace Variables</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</table>
+
+<table border="1">
+<colgroup span="99">
+<col class="name">
+<col class="action">
+<col class="arg" span="3"></colgroup>
+<tr>
+<th>Keyword</th>
+<th>Action</th>
+<th>Argument</th>
+<th>Argument</th>
+<th>Argument</th>
+</tr>
+<tr>
+<td><a name="keyword_Check Suite Teardown Passed">Check Suite Teardown Passed</a></td>
+<td>[Timeout]</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>${suite} =</td>
+<td>Get Test Suite</td>
+<td>Variables</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should Be Equal</td>
+<td>${suite.teardown.status}</td>
+<td>PASS</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</table>
+
+</body>
+</html>

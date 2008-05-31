@@ -1,0 +1,4624 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+
+
+
+
+  
+  
+  
+  <meta content="HTML Tidy for Cygwin (vers 1st September 2004), see www.w3.org" name="generator">
+
+
+
+
+  
+  
+  
+  <style type="text/css">
+html { font-family: Arial,Helvetica,sans-serif;
+background-color: white;
+color: black;
+}
+p { max-width: 60em;
+}
+table { border-collapse: collapse;
+empty-cells: show;
+margin: 1em 0em;
+border: 0.1em solid black;
+}
+th, td {
+border-style: solid;
+border-width: 0.05em 0.1em;
+border-color: black;
+padding: 0.1em 0.2em;
+height: 1.5em;
+}
+th {
+background-color: rgb(192, 192, 192);
+color: black;
+border-width: 0.1em;
+font-weight: bold;
+text-align: center;
+text-transform: capitalize;
+letter-spacing: 0.1em;
+}
+/* Widths of named columns */
+col.name {
+width: 10em;
+}
+.action , .value, .arg {
+width: 15em;
+}
+/* Properties for the name column - td:first-child should work in CSS 2.1 avare browsers (tested in Firefox)
+- col.name is against specs but works in IE
+*/
+td:first-child, col.name {
+background-color: rgb(240, 240, 240);
+text-transform: capitalize;
+letter-spacing: 0.1em;
+}
+th { font-style: normal; } /* required for IE */
+/* Properties for the action column
+- td+td and td+td+td is for CSS 2.1 browsers (tested in Firefox)
+- col.action is for IE
+NOTE: Not used currently because in CSS 2.1 browsers td+td matches the
+first value column of Setting and Variable tables.
+td + td {
+background-color: rgb(240, 240, 240);
+}
+td + td + td {
+background: transparent;
+}
+col.action { /* can't be on the same line as td+td */
+background-color: rgb(240, 240, 240);
+}
+*/
+  </style>
+
+  
+  
+  
+  
+  
+  
+  <title>Example Test Data</title>
+  <link type="text/css" href="resources/css/testdata.css" rel="stylesheet">
+</head>
+
+<body>
+
+
+
+
+<h1>Test Data</h1>
+
+
+
+
+<table border="1">
+
+
+
+
+  <colgroup span="99"><col class="name"><col class="value" span="4"></colgroup>
+  <thead>
+  <tr>
+
+
+
+
+    <th>Setting</th>
+
+
+
+
+    <th>Value</th>
+
+
+
+
+    <th>Value</th>
+
+
+
+
+    <th>value</th>
+
+
+
+
+    <th>Value</th>
+
+
+
+
+  </tr>
+
+
+
+
+  </thead>
+  <tbody>
+
+
+
+
+    <tr>
+
+
+
+
+      <td align="undefined" valign="undefined">Document</td>
+
+
+
+
+      <td align="undefined" valign="undefined">Test cases for failing
+suite setup and teardown.</td>
+
+
+
+
+      <td align="undefined" valign="undefined">Some related tests are
+also&nbsp;found from</td>
+
+
+
+
+      <td align="undefined" valign="undefined">
+test_suite_dir_with_suite_file.html</td>
+
+
+
+
+      <td align="undefined" valign="undefined"><br>
+
+      </td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td>Force Tags</td>
+
+
+
+
+      <td>regression</td>
+
+
+
+
+      <td>jybot</td>
+
+
+
+
+      <td>pybot</td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td align="undefined" valign="undefined">Library</td>
+
+
+
+
+      <td align="undefined" valign="undefined">OperatingSystem</td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td>Resource</td>
+
+
+
+
+      <td>../../resources/resource.html</td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+  
+  
+  
+  </tbody>
+</table>
+
+
+
+
+<br>
+
+
+
+
+<table border="1">
+
+
+
+
+  <colgroup span="99"><col class="name"><col class="value" span="4"></colgroup>
+  <thead>
+  <tr>
+
+
+
+
+    <th>Variable</th>
+
+
+
+
+    <th>Value</th>
+
+
+
+
+    <th>Value</th>
+
+
+
+
+    <th>Value</th>
+
+
+
+
+    <th>Value</th>
+
+
+
+
+  </tr>
+
+
+
+
+  </thead>
+  <tbody>
+
+
+
+
+    
+
+
+    
+
+
+    <tr>
+
+
+
+
+      <td align="undefined" valign="undefined">${1_pass_msg}</td>
+
+
+
+
+      <td align="undefined" valign="undefined">1&nbsp;critical test, 1 passed, 0 failed\n<br>
+1&nbsp;test total, 1 passed, 0 failed</td>
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td align="undefined" valign="undefined">${2_fail_msg}</td>
+
+
+
+
+      <td align="undefined" valign="undefined">\n\n2 critical tests, 0 passed, 2 failed\n<br>
+2&nbsp;tests total, 0 passed, 2 failed</td>
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td align="undefined" valign="undefined">${4_fail_msg}</td>
+
+
+
+
+      <td align="undefined" valign="undefined">\n\n4 critical tests, 0 passed, 4 failed\n<br>
+4&nbsp;tests total, 0 passed, 4 failed</td>
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td align="undefined" valign="undefined">${5_fail_msg}</td>
+
+
+
+
+      <td align="undefined" valign="undefined">\n\n5 critical tests, 0 passed, 5 failed\n<br>
+5&nbsp;tests total, 0 passed, 5 failed</td>
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td align="undefined" valign="undefined">${12_fail_msg}</td>
+
+
+
+
+      <td align="undefined" valign="undefined">\n\n12 critical tests, 0 passed, 12 failed\n<br>
+12&nbsp;tests total, 0 passed, 12 failed</td>
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td align="undefined" valign="undefined">${also}</td>
+
+
+
+
+      <td align="undefined" valign="undefined">\n\nAlso teardown of the
+parent suite failed.</td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td align="undefined" valign="undefined">${teardown_file}</td>
+
+
+
+
+      <td align="undefined" valign="undefined">
+robot-suite-teardown-executed-0123.txt</td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td align="undefined" valign="undefined">${teardown_file}</td>
+
+
+
+
+      <td align="undefined" valign="undefined">
+${TEMPDIR}${/}${teardownfile}</td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+  
+  
+  
+  </tbody>
+</table>
+
+
+
+
+<br>
+
+
+
+
+<table border="1">
+
+
+
+
+  <colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
+  <thead>
+  <tr>
+
+
+
+
+    <th>Test Case</th>
+
+
+
+
+    <th>Action</th>
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+  </tr>
+
+
+
+
+  </thead>
+  <tbody>
+
+
+
+
+    <tr>
+
+
+
+
+      <td align="undefined" valign="undefined">Passing Suite Setup</td>
+
+
+
+
+      <td>${suite}</td>
+
+
+
+
+      <td>Run Tests And Get Suite</td>
+
+
+
+
+      <td>Passing Suite Setup</td>
+
+
+
+
+      <td><br>
+
+
+
+      </td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td>Check Suite Status<br>
+
+
+
+      </td>
+
+
+
+
+      <td>${suite}</td>
+
+
+
+
+      <td>PASS<br>
+
+
+
+      </td>
+
+
+
+
+      <td align="undefined" valign="undefined">${1_pass_msg}</td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td>Check Suite Contains Tests</td>
+
+
+
+
+      <td>${suite}</td>
+
+
+
+
+      <td>Verify Suite Setup</td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td align="undefined" valign="undefined">Passing Suite
+Teardown</td>
+
+
+
+
+      <td align="undefined" valign="undefined">[ Setup ]</td>
+
+
+
+
+      <td align="undefined" valign="undefined">Remove File</td>
+
+
+
+
+      <td align="undefined" valign="undefined">${teardown_file}</td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td>${suite} =</td>
+
+
+
+
+      <td>Run Tests And Get Suite</td>
+
+
+
+
+      <td>Passing Suite Teardown</td>
+
+
+
+
+      <td><br>
+
+
+
+      </td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td>Check Suite Status</td>
+
+
+
+
+      <td>${suite}</td>
+
+
+
+
+      <td>PASS</td>
+
+
+
+
+      <td align="undefined" valign="undefined">${1_pass_msg}</td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td align="undefined" valign="undefined">Fail Unless File
+Exists</td>
+
+
+
+
+      <td align="undefined" valign="undefined">${teardown_file}</td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td align="undefined" valign="undefined">[ Teardown ]</td>
+
+
+
+
+      <td align="undefined" valign="undefined">Remove File</td>
+
+
+
+
+      <td align="undefined" valign="undefined">${teardown_file}</td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td align="undefined" valign="undefined">Passing Suite Setup And
+Teardown</td>
+
+
+
+
+      <td align="undefined" valign="undefined">[ Setup ]</td>
+
+
+
+
+      <td align="undefined" valign="undefined">Remove File</td>
+
+
+
+
+      <td align="undefined" valign="undefined">${teardown_file}</td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td>${suite} =</td>
+
+
+
+
+      <td>Run Tests And Get Suite</td>
+
+
+
+
+      <td>Passing Suite Setup And Teardown</td>
+
+
+
+
+      <td><br>
+
+
+
+      </td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td>Check Suite Status</td>
+
+
+
+
+      <td>${suite}</td>
+
+
+
+
+      <td>PASS</td>
+
+
+
+
+      <td align="undefined" valign="undefined">${1_pass_msg}</td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td>Check Suite Contains Tests</td>
+
+
+
+
+      <td>${suite}</td>
+
+
+
+
+      <td>Verify Suite Setup</td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td align="undefined" valign="undefined">Fail Unless File
+Exists</td>
+
+
+
+
+      <td align="undefined" valign="undefined">${teardown_file}</td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td align="undefined" valign="undefined">[ Teardown ]</td>
+
+
+
+
+      <td align="undefined" valign="undefined">Remove File</td>
+
+
+
+
+      <td align="undefined" valign="undefined">${teardown_file}</td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td>Failing Suite Setup</td>
+
+
+
+
+      <td>[Document]</td>
+
+
+
+
+      <td>Checks that tests in the suite are found from it and marked
+failed.</td>
+
+
+
+
+      <td>Also checks that suite teardown is executed.</td>
+
+
+
+
+      <td><br>
+
+
+
+      </td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td>${suite} =</td>
+
+
+
+
+      <td>Run Tests And Get Suite</td>
+
+
+
+
+      <td>Failing Suite Setup</td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td>Check Suite Status</td>
+
+
+
+
+      <td>${suite}</td>
+
+
+
+
+      <td>FAIL</td>
+
+
+
+
+      <td align="undefined" valign="undefined">Suite setup
+failed:\nExpected failure${2_fail_msg}</td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td>Check Suite Contains Tests</td>
+
+
+
+
+      <td>${suite}</td>
+
+
+
+
+      <td>Test 1</td>
+
+
+
+
+      <td>Test 2</td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td>Equals<br>
+
+
+
+      </td>
+
+
+
+
+      <td>${suite.setup.status}</td>
+
+
+
+
+      <td>FAIL</td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td>Equals<br>
+
+
+
+      </td>
+
+
+
+
+      <td>${suite.teardown.status}</td>
+
+
+
+
+      <td>PASS</td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td>Ints Equal</td>
+
+
+
+
+      <td>${suite.teardown.message_count}</td>
+
+
+
+
+      <td>1</td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td>Check Log Message<br>
+
+
+
+      </td>
+
+
+
+
+      <td>${suite.teardown.messages[0]}</td>
+
+
+
+
+      <td>Suite teardown executed</td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td>Ints Equal</td>
+
+
+
+
+      <td>${suite.teardown.keyword_count}</td>
+
+
+
+
+      <td>0</td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td>Erroring Suite Setup</td>
+
+
+
+
+      <td>[Document]</td>
+
+
+
+
+      <td>Checks that tests in the suite are found from it and marked
+failed.</td>
+
+
+
+
+      <td>Also checks that suite teardown is executed.</td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td align="undefined" valign="undefined"><br>
+
+
+
+      </td>
+
+
+
+
+      <td>${suite} =</td>
+
+
+
+
+      <td>Run Tests And Get Suite</td>
+
+
+
+
+      <td>Erroring Suite Setup</td>
+
+
+
+
+      <td><br>
+
+
+
+      </td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td>Check Suite Status</td>
+
+
+
+
+      <td>${suite}</td>
+
+
+
+
+      <td>FAIL</td>
+
+
+
+
+      <td align="undefined" valign="undefined">Suite setup failed:\nNo
+keyword with name 'Non-Existing Keyword' found.${2_fail_msg}</td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td>Check Suite Contains Tests</td>
+
+
+
+
+      <td>${suite}</td>
+
+
+
+
+      <td>Test 1</td>
+
+
+
+
+      <td>Test 2</td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td>Equals<br>
+
+
+
+      </td>
+
+
+
+
+      <td>${suite.setup.status}</td>
+
+
+
+
+      <td>FAIL</td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td>${td} =</td>
+
+
+
+
+      <td>Set</td>
+
+
+
+
+      <td>${suite.teardown}</td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td>Equals<br>
+
+
+
+      </td>
+
+
+
+
+      <td>${td.name}</td>
+
+
+
+
+      <td>My TD</td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td>Equals<br>
+
+
+
+      </td>
+
+
+
+
+      <td>${td.status}</td>
+
+
+
+
+      <td>PASS</td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td>Ints Equal</td>
+
+
+
+
+      <td>${td.message_count}</td>
+
+
+
+
+      <td>0</td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td>Ints Equal</td>
+
+
+
+
+      <td>${td.keyword_count}</td>
+
+
+
+
+      <td>2</td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td>Ints Equal</td>
+
+
+
+
+      <td>${td.keywords[0].message_count}</td>
+
+
+
+
+      <td>1</td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td>Check Log Message<br>
+
+
+
+      </td>
+
+
+
+
+      <td>${td.keywords[0].messages[0]}</td>
+
+
+
+
+      <td>Hello from suite teardown!</td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td>Ints Equal</td>
+
+
+
+
+      <td>${td.keywords[0].keyword_count}</td>
+
+
+
+
+      <td>0</td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td>Equals</td>
+
+
+
+
+      <td>${td.keywords[1].name}</td>
+
+
+
+
+      <td>BuiltIn.No Operation</td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td>Failing Suite Teardown When All Tests Pass</td>
+
+
+
+
+      <td>${suite} =</td>
+
+
+
+
+      <td>Run Tests And Get Suite</td>
+
+
+
+
+      <td>Failing Suite Teardown</td>
+
+
+
+
+      <td><br>
+
+
+
+      </td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td>Check Suite Status</td>
+
+
+
+
+      <td>${suite}</td>
+
+
+
+
+      <td>FAIL</td>
+
+
+
+
+      <td align="undefined" valign="undefined">Suite teardown
+failed:\nExpected failure${2_fail_msg}</td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td>Check Suite Contains Tests</td>
+
+
+
+
+      <td>${suite}</td>
+
+
+
+
+      <td>Test 1</td>
+
+
+
+
+      <td>Test 2</td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td>Equals<br>
+
+
+
+      </td>
+
+
+
+
+      <td>${suite.teardown.status}</td>
+
+
+
+
+      <td>FAIL</td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td align="undefined" valign="undefined">Failing Suite Teardown
+When Also Tests Fail</td>
+
+
+
+
+      <td>${suite} =</td>
+
+
+
+
+      <td>Run Tests And Get Suite</td>
+
+
+
+
+      <td>Failing Suite Teardown 2</td>
+
+
+
+
+      <td><br>
+
+
+
+      </td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td>Check Suite Status</td>
+
+
+
+
+      <td>${suite}</td>
+
+
+
+
+      <td>FAIL</td>
+
+
+
+
+      <td align="undefined" valign="undefined">Suite teardown
+failed:\nExpected failure${5_fail_msg}</td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td>Check Suite Contains Tests</td>
+
+
+
+
+      <td>${suite}</td>
+
+
+
+
+      <td align="undefined" valign="undefined">Test Passes</td>
+
+
+
+
+      <td align="undefined" valign="undefined">Test Fails</td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td align="undefined" valign="undefined">...</td>
+
+
+
+
+      <td align="undefined" valign="undefined">Setup Fails</td>
+
+
+
+
+      <td align="undefined" valign="undefined">Teardown Fails</td>
+
+
+
+
+      <td align="undefined" valign="undefined">Test and Teardown
+Fail</td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td>Equals<br>
+
+
+
+      </td>
+
+
+
+
+      <td>${suite.teardown.status}</td>
+
+
+
+
+      <td>FAIL</td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td align="undefined" valign="undefined">Erroring Suite
+Teardown</td>
+
+
+
+
+      <td>${suite} =</td>
+
+
+
+
+      <td>Run Tests And Get Suite</td>
+
+
+
+
+      <td>Erroring Suite Teardown</td>
+
+
+
+
+      <td><br>
+
+
+
+      </td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td>Check Suite Status</td>
+
+
+
+
+      <td>${suite}</td>
+
+
+
+
+      <td>FAIL<br>
+
+
+
+      </td>
+
+
+
+
+      <td align="undefined" valign="undefined">Suite teardown failed:\nNo
+keyword with name 'Non-Existing Keyword' found.${2_fail_msg}</td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td>Check Suite Contains Tests</td>
+
+
+
+
+      <td>${suite}</td>
+
+
+
+
+      <td>Test 1</td>
+
+
+
+
+      <td>Test 2</td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td>Equals<br>
+
+
+
+      </td>
+
+
+
+
+      <td>${suite.teardown.status}</td>
+
+
+
+
+      <td>FAIL</td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td>Failing Suite Setup And Teardown</td>
+
+
+
+
+      <td>${suite} =</td>
+
+
+
+
+      <td>Run Tests And Get Suite</td>
+
+
+
+
+      <td>Failing Suite Setup And Teardown</td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td>Check Suite Status</td>
+
+
+
+
+      <td>${suite}</td>
+
+
+
+
+      <td>FAIL</td>
+
+
+
+
+      <td align="undefined" valign="undefined">Suite setup failed:\n<br>
+
+
+
+
+Setup failure\n\n<br>
+
+
+
+
+Also suite teardown failed:\n<br>
+
+
+
+
+Teardown failure${2_fail_msg}</td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td>Check Suite Contains Tests</td>
+
+
+
+
+      <td>${suite}</td>
+
+
+
+
+      <td>Test 1</td>
+
+
+
+
+      <td>Test 2</td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td>Equals<br>
+
+
+
+      </td>
+
+
+
+
+      <td>${suite.setup.status}</td>
+
+
+
+
+      <td>FAIL</td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td>Equals<br>
+
+
+
+      </td>
+
+
+
+
+      <td>${suite.teardown.status}</td>
+
+
+
+
+      <td>FAIL</td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td align="undefined" valign="undefined">Failing Higher Level Suite
+Teardown</td>
+
+
+
+
+      <td>${suite} =</td>
+
+
+
+
+      <td>Run Tests And Get Suite</td>
+
+
+
+
+      <td>Failing Suite Teardown Dir</td>
+
+
+
+
+      <td align="undefined" valign="undefined">\</td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td>Check Suite Status</td>
+
+
+
+
+      <td>${suite}</td>
+
+
+
+
+      <td>FAIL</td>
+
+
+
+
+      <td align="undefined" valign="undefined">Suite teardown
+failed:\nFailure in top level suite teardown${12_fail_msg}</td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td>Check Suite Contains Tests</td>
+
+
+
+
+      <td>${suite}</td>
+
+
+
+
+      <td>PTD Passing</td>
+
+
+
+
+      <td>PTD &nbsp;Failing</td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td align="undefined" valign="undefined">...</td>
+
+
+
+
+      <td>FTD Passing</td>
+
+
+
+
+      <td>FTD &nbsp;Failing</td>
+
+
+
+
+      <td align="undefined" valign="undefined"># PTD - Passing
+Teardown<br>
+
+
+
+      </td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td align="undefined" valign="undefined">...</td>
+
+
+
+
+      <td>PTD PTD Passing</td>
+
+
+
+
+      <td>PTD PTD &nbsp;Failing</td>
+
+
+
+
+      <td align="undefined" valign="undefined"># FTD - Failing
+Teardown</td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td align="undefined" valign="undefined">...</td>
+
+
+
+
+      <td>PTD FTD Passing</td>
+
+
+
+
+      <td>PTD FTD &nbsp;Failing</td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td align="undefined" valign="undefined">...</td>
+
+
+
+
+      <td>FTD PTD Passing</td>
+
+
+
+
+      <td>FTD PTD &nbsp;Failing</td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td align="undefined" valign="undefined">...</td>
+
+
+
+
+      <td>FTD FTD Passing</td>
+
+
+
+
+      <td>FTD FTD &nbsp;Failing</td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td align="undefined" valign="undefined">${ptd_suite} =</td>
+
+
+
+
+      <td align="undefined" valign="undefined">Get Test Suite</td>
+
+
+
+
+      <td align="undefined" valign="undefined">Passing Teardown Dir</td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td>Check Suite Status</td>
+
+
+
+
+      <td>${ptd_suite}</td>
+
+
+
+
+      <td>FAIL</td>
+
+
+
+
+      <td align="undefined" valign="undefined">Teardown of the parent
+suite failed.${4_fail_msg}</td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td>Check Suite Contains Tests</td>
+
+
+
+
+      <td>${ptd_suite}</td>
+
+
+
+
+      <td>PTD PTD Passing</td>
+
+
+
+
+      <td>PTD PTD &nbsp;Failing</td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td align="undefined" valign="undefined">...</td>
+
+
+
+
+      <td>PTD FTD Passing</td>
+
+
+
+
+      <td>PTD FTD &nbsp;Failing</td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td align="undefined" valign="undefined">${ptd_ptd_suite} =</td>
+
+
+
+
+      <td align="undefined" valign="undefined">Get Test Suite</td>
+
+
+
+
+      <td align="undefined" valign="undefined">Ptd Passing Teardown</td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td>Check Suite Status</td>
+
+
+
+
+      <td>${ptd_ptd_suite}</td>
+
+
+
+
+      <td>FAIL</td>
+
+
+
+
+      <td align="undefined" valign="undefined">Teardown of the parent
+suite failed.${2_fail_msg}</td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td align="undefined" valign="undefined">Check Suite Contains
+Tests</td>
+
+
+
+
+      <td>${ptd_ptd_suite}</td>
+
+
+
+
+      <td>PTD PTD Passing</td>
+
+
+
+
+      <td>PTD PTD &nbsp;Failing</td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td align="undefined" valign="undefined">${ptd_ftd_suite} =</td>
+
+
+
+
+      <td align="undefined" valign="undefined">Get Test Suite</td>
+
+
+
+
+      <td align="undefined" valign="undefined">Ptd Failing Teardown</td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td>Check Suite Status</td>
+
+
+
+
+      <td>${ptd_ftd_suite}</td>
+
+
+
+
+      <td>FAIL</td>
+
+
+
+
+      <td align="undefined" valign="undefined">Suite teardown
+failed:\nFailure in suite teardown${also}${2_fail_msg}</td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td align="undefined" valign="undefined">Check Suite Contains
+Tests</td>
+
+
+
+
+      <td>${ptd_ftd_suite}</td>
+
+
+
+
+      <td>PTD FTD Passing</td>
+
+
+
+
+      <td>PTD FTD &nbsp;Failing</td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td align="undefined" valign="undefined">${ftd_suite} =</td>
+
+
+
+
+      <td align="undefined" valign="undefined">Get Test Suite</td>
+
+
+
+
+      <td align="undefined" valign="undefined">Failing Teardown Dir</td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td>Check Suite Status</td>
+
+
+
+
+      <td>${ftd_suite}</td>
+
+
+
+
+      <td>FAIL</td>
+
+
+
+
+      <td align="undefined" valign="undefined">Suite teardown
+failed:\nFailure in sub suite teardown${also}${4_fail_msg}</td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td>Check Suite Contains Tests</td>
+
+
+
+
+      <td>${ftd_suite}</td>
+
+
+
+
+      <td>FTD PTD Passing</td>
+
+
+
+
+      <td>FTD PTD &nbsp;Failing</td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td align="undefined" valign="undefined">...</td>
+
+
+
+
+      <td>FTD FTD Passing</td>
+
+
+
+
+      <td>FTD FTD &nbsp;Failing</td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td align="undefined" valign="undefined">${ftd_ptd_suite} =</td>
+
+
+
+
+      <td align="undefined" valign="undefined">Get Test Suite</td>
+
+
+
+
+      <td align="undefined" valign="undefined">Ftd Passing Teardown</td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td>Check Suite Status</td>
+
+
+
+
+      <td>${ftd_ptd_suite}</td>
+
+
+
+
+      <td>FAIL</td>
+
+
+
+
+      <td align="undefined" valign="undefined">Teardown of the parent
+suite failed.${also}${2_fail_msg}</td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td>Check Suite Contains Tests</td>
+
+
+
+
+      <td>${ftd_ptd_suite}</td>
+
+
+
+
+      <td>FTD PTD Passing</td>
+
+
+
+
+      <td>FTD PTD &nbsp;Failing</td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td align="undefined" valign="undefined">${ftd_ftd_suite} =</td>
+
+
+
+
+      <td align="undefined" valign="undefined">Get Test Suite</td>
+
+
+
+
+      <td align="undefined" valign="undefined">Ftd Failing Teardown</td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td>Check Suite Status</td>
+
+
+
+
+      <td>${ftd_ftd_suite}</td>
+
+
+
+
+      <td>FAIL</td>
+
+
+
+
+      <td align="undefined" valign="undefined">Suite teardown
+failed:\nFailure in suite teardown${also}${also}${2_fail_msg}</td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td>Check Suite Contains Tests</td>
+
+
+
+
+      <td>${ftd_ftd_suite}</td>
+
+
+
+
+      <td>FTD FTD Passing</td>
+
+
+
+
+      <td>FTD FTD &nbsp;Failing</td>
+
+
+
+
+    </tr>
+
+
+
+
+  
+  
+  
+  </tbody>
+</table>
+
+
+
+
+<br>
+
+
+
+
+<table border="1">
+
+
+
+
+  <colgroup span="99"><col class="name"><col class="value" span="4"></colgroup>
+  <thead>
+  <tr>
+
+
+
+
+    <th>Keyword</th>
+
+
+
+
+    <th>Value</th>
+
+
+
+
+    <th>Value</th>
+
+
+
+
+    <th>Value</th>
+
+
+
+
+    <th>Value</th>
+
+
+
+
+  </tr>
+
+
+
+
+  </thead>
+  <tbody>
+
+
+
+
+    <tr>
+
+
+
+
+      <td>Run Tests and Get Suite</td>
+
+
+
+
+      <td>[ Arguments ]<br>
+
+
+
+      </td>
+
+
+
+
+      <td>${name}</td>
+
+
+
+
+      <td>${extension}=.html<br>
+
+
+
+      </td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td align="undefined" valign="undefined">${base} =</td>
+
+
+
+
+      <td align="undefined" valign="undefined">Set</td>
+
+
+
+
+      <td align="undefined" valign="undefined">${name.replace('
+','_').lower()}</td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td>Run Tests</td>
+
+
+
+
+      <td><br>
+      </td>
+
+
+
+
+      <td>core${/}${base}${extension}</td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td align="undefined" valign="undefined">[ Return ]</td>
+
+
+
+
+      <td align="undefined" valign="undefined">${SUITE}</td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td align="undefined" valign="undefined">Check Suite Status</td>
+
+
+
+
+      <td>[ Arguments ]<br>
+
+
+
+      </td>
+
+
+
+
+      <td>${suite}</td>
+
+
+
+
+      <td>${status}</td>
+
+
+
+
+      <td>${message}</td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td>Equals<br>
+
+
+
+      </td>
+
+
+
+
+      <td>${suite.status}</td>
+
+
+
+
+      <td align="undefined" valign="undefined">${status}</td>
+
+
+
+
+      <td>Wrong suite status</td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td>Equals<br>
+
+
+
+      </td>
+
+
+
+
+      <td>${suite.get_full_message()}</td>
+
+
+
+
+      <td align="undefined" valign="undefined">${message}</td>
+
+
+
+
+      <td>Wrong suite message</td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+  
+  
+  
+  </tbody>
+</table>
+
+
+
+
+</body>
+</html>

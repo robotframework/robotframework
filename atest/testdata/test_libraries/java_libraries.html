@@ -1,0 +1,2208 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+
+
+
+
+
+
+
+
+
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <style type="text/css">
+html { font-family: Arial,Helvetica,sans-serif;
+background-color: white;
+color: black;
+}
+p { max-width: 60em;
+}
+table { border-collapse: collapse;
+empty-cells: show;
+margin: 1em 0em;
+border: 0.1em solid black;
+}
+th, td {
+border-style: solid;
+border-width: 0.05em 0.1em;
+border-color: black;
+padding: 0.1em 0.2em;
+height: 1.5em;
+}
+th {
+background-color: rgb(192, 192, 192);
+color: black;
+border-width: 0.1em;
+font-weight: bold;
+text-align: center;
+text-transform: capitalize;
+letter-spacing: 0.1em;
+}
+/* Widths of named columns */
+col.name {
+width: 10em;
+}
+.action , .value, .arg {
+width: 15em;
+}
+/* Properties for the name column - td:first-child should work in CSS 2.1 avare browsers (tested in Firefox)
+- col.name is against specs but works in IE
+*/
+td:first-child, col.name {
+background-color: rgb(240, 240, 240);
+text-transform: capitalize;
+letter-spacing: 0.1em;
+}
+th { font-style: normal; } /* required for IE */
+  
+  </style>
+
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <title>Robot Test Cases</title>
+  <link type="text/css" href="resources/css/testdata.css" rel="stylesheet">
+</head>
+
+
+<body>
+
+
+
+
+
+
+
+
+
+
+<h1>Robot Test for Java Libraries</h1>
+
+
+
+
+
+
+
+
+
+
+
+<table border="1">
+
+
+
+
+
+
+
+
+
+
+  <colgroup span="99"><col class="name"><col class="value" span="4"></colgroup>
+
+  <thead>
+  <tr>
+
+
+
+
+
+
+
+
+
+
+    <th>Setting</th>
+
+
+
+
+
+
+
+
+
+
+    <th>Value</th>
+
+
+
+
+
+
+
+
+
+
+    <th>Value</th>
+
+
+
+
+
+
+
+
+
+
+    <th>value</th>
+
+
+
+
+
+
+
+
+
+
+    <th>Value</th>
+
+
+
+
+
+
+
+
+
+
+  </tr>
+
+
+
+
+
+
+
+
+
+
+  </thead>
+
+  <tbody>
+
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+
+      <td>Library</td>
+
+
+
+
+
+
+
+
+
+
+      <td>ReturnTypes</td>
+
+
+
+
+
+
+
+
+
+
+      <td># Lives in test/library_resources</td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+    </tr>
+    <tr>
+      <td align="undefined" valign="undefined">Library</td>
+      <td align="undefined" valign="undefined">ArgumentTypes</td>
+      <td align="undefined" valign="undefined"># Lives in test/library_resources</td>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined"></td>
+    </tr>
+
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+<table border="1">
+
+
+
+
+
+
+
+
+
+
+  <colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
+
+  <thead>
+  <tr>
+
+
+
+
+
+
+
+
+
+
+    <th>Test Case</th>
+
+
+
+
+
+
+
+
+
+
+    <th>Action</th>
+
+
+
+
+
+
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+
+
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+
+
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+
+
+
+
+
+
+
+
+  </tr>
+
+
+
+
+
+
+
+
+
+
+  </thead>
+
+  <tbody>
+
+
+
+
+
+
+
+
+
+
+    <tr>
+      <td align="undefined" valign="undefined">String Arg</td>
+      <td align="undefined" valign="undefined">[ Document ]</td>
+      <td align="undefined" valign="undefined">PASS</td>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined"></td>
+    </tr>
+    <tr>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined">argumenttypes.String</td>
+      <td align="undefined" valign="undefined">Hello world</td>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined"></td>
+    </tr>
+    <tr>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined"></td>
+    </tr>
+    <tr>
+      <td align="undefined" valign="undefined">Char Arg</td>
+      <td align="undefined" valign="undefined">[ Document ]</td>
+      <td align="undefined" valign="undefined">FAIL</td>
+      <td align="undefined" valign="undefined">TypeError: char1(): 1st arg can't be coerced to char</td>
+      <td align="undefined" valign="undefined"></td>
+    </tr>
+    <tr>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined">Char 1</td>
+      <td align="undefined" valign="undefined">x</td>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined"></td>
+    </tr>
+    <tr>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined">Char 2</td>
+      <td align="undefined" valign="undefined">y</td>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined"></td>
+    </tr>
+    <tr>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined">Char 1</td>
+      <td align="undefined" valign="undefined">too many chars</td>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined"></td>
+    </tr>
+    <tr>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined"></td>
+    </tr>
+    <tr>
+      <td align="undefined" valign="undefined">Boolean Arg</td>
+      <td align="undefined" valign="undefined">[ Document ]</td>
+      <td align="undefined" valign="undefined">FAIL</td>
+      <td align="undefined" valign="undefined">TypeError: boolean2(): 1st arg can't be coerced to java.lang.Boolean</td>
+      <td align="undefined" valign="undefined"></td>
+    </tr>
+    <tr>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined">Boolean 1</td>
+      <td align="undefined" valign="undefined">${True}</td>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined"></td>
+    </tr>
+    <tr>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined">Boolean 2</td>
+      <td align="undefined" valign="undefined">${false}</td>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined"></td>
+    </tr>
+    <tr>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined">Boolean 2</td>
+      <td align="undefined" valign="undefined">true</td>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined"></td>
+    </tr>
+    <tr>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined"></td>
+    </tr>
+    <tr>
+      <td align="undefined" valign="undefined">Double Arg</td>
+      <td align="undefined" valign="undefined">[ Document ]</td>
+      <td align="undefined" valign="undefined">FAIL</td>
+      <td align="undefined" valign="undefined">TypeError: double1(): 1st arg can't be coerced to double</td>
+      <td align="undefined" valign="undefined"></td>
+    </tr>
+    <tr>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined">Double 1</td>
+      <td align="undefined" valign="undefined">${3.14}</td>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined"></td>
+    </tr>
+    <tr>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined">Double 2</td>
+      <td align="undefined" valign="undefined">${10e2}</td>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined"></td>
+    </tr>
+    <tr>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined">Double 1</td>
+      <td align="undefined" valign="undefined">10</td>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined"></td>
+    </tr>
+    <tr>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined"></td>
+    </tr>
+    <tr>
+      <td align="undefined" valign="undefined">Float Arg</td>
+      <td align="undefined" valign="undefined">[ Document ]</td>
+      <td align="undefined" valign="undefined">FAIL</td>
+      <td align="undefined" valign="undefined">TypeError: float2(): 1st arg can't be coerced to java.lang.Float</td>
+      <td align="undefined" valign="undefined"></td>
+    </tr>
+    <tr>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined">Float&nbsp;1</td>
+      <td align="undefined" valign="undefined">${-3.14}</td>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined"></td>
+    </tr>
+    <tr>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined">Float&nbsp;2</td>
+      <td align="undefined" valign="undefined">${-10e-2}</td>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined"></td>
+    </tr>
+    <tr>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined">Float 2</td>
+      <td align="undefined" valign="undefined">10</td>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined"></td>
+    </tr>
+    <tr>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined"></td>
+    </tr>
+    <tr>
+      <td align="undefined" valign="undefined">Long Arg</td>
+      <td align="undefined" valign="undefined">[ Document ]</td>
+      <td align="undefined" valign="undefined">FAIL</td>
+      <td align="undefined" valign="undefined">TypeError: long1(): 1st arg can't be coerced to long</td>
+      <td align="undefined" valign="undefined"></td>
+    </tr>
+    <tr>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined">Long 1</td>
+      <td align="undefined" valign="undefined">${1000000000000000}</td>
+      <td align="undefined" valign="undefined"># 15 x 0</td>
+      <td align="undefined" valign="undefined"></td>
+    </tr>
+    <tr>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined">Long 2</td>
+      <td align="undefined" valign="undefined">${-1}</td>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined"></td>
+    </tr>
+    <tr>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined">Long 1</td>
+      <td align="undefined" valign="undefined">${1.1}</td>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined"></td>
+    </tr>
+    <tr>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined"></td>
+    </tr>
+    <tr>
+      <td align="undefined" valign="undefined">Integer Arg</td>
+      <td align="undefined" valign="undefined">[ Document ]</td>
+      <td align="undefined" valign="undefined">FAIL</td>
+      <td align="undefined" valign="undefined">TypeError: integer2(): 1st arg can't be coerced to java.lang.Integer</td>
+      <td align="undefined" valign="undefined"></td>
+    </tr>
+    <tr>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined">Integer 1</td>
+      <td align="undefined" valign="undefined">${42}</td>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined"></td>
+    </tr>
+    <tr>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined">Integer 2</td>
+      <td align="undefined" valign="undefined">${-1}</td>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined"></td>
+    </tr>
+    <tr>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined">Integer 2</td>
+      <td align="undefined" valign="undefined">${1000000000000000}</td>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined"></td>
+    </tr>
+    <tr>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined"></td>
+    </tr>
+    <tr>
+      <td align="undefined" valign="undefined">Short Arg</td>
+      <td align="undefined" valign="undefined">[ Document ]</td>
+      <td align="undefined" valign="undefined">FAIL</td>
+      <td align="undefined" valign="undefined">TypeError: short1(): 1st arg can't be coerced to short</td>
+      <td align="undefined" valign="undefined"></td>
+    </tr>
+    <tr>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined">Short 1</td>
+      <td align="undefined" valign="undefined">${2006}</td>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined"></td>
+    </tr>
+    <tr>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined">Short 2</td>
+      <td align="undefined" valign="undefined">${-100}</td>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined"></td>
+    </tr>
+    <tr>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined">Short 1</td>
+      <td align="undefined" valign="undefined">${1000000}</td>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined"></td>
+    </tr>
+    <tr>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined"></td>
+    </tr>
+    <tr>
+      <td align="undefined" valign="undefined">Byte Arg</td>
+      <td align="undefined" valign="undefined">[ Document ]</td>
+      <td align="undefined" valign="undefined">FAIL</td>
+      <td align="undefined" valign="undefined">TypeError: byte1(): 1st arg can't be coerced to byte</td>
+      <td align="undefined" valign="undefined"></td>
+    </tr>
+    <tr>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined">Byte 1</td>
+      <td align="undefined" valign="undefined">${8}</td>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined"></td>
+    </tr>
+    <tr>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined">Byte 2</td>
+      <td align="undefined" valign="undefined">${0}</td>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined"></td>
+    </tr>
+    <tr>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined">Byte 1</td>
+      <td align="undefined" valign="undefined">${1000}</td>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined"></td>
+    </tr>
+    <tr>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined"></td>
+    </tr>
+    <tr>
+      <td align="undefined" valign="undefined">String Array Arg</td>
+      <td align="undefined" valign="undefined">[ Document ]</td>
+      <td align="undefined" valign="undefined">FAIL</td>
+      <td align="undefined" valign="undefined">TypeError: string_array(): 1st arg can't be coerced to String[]</td>
+      <td align="undefined" valign="undefined"><br>
+      </td>
+    </tr>
+    <tr>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined">String Array</td>
+      <td align="undefined" valign="undefined">Hello</td>
+      <td align="undefined" valign="undefined">my</td>
+      <td align="undefined" valign="undefined">world</td>
+    </tr>
+    <tr>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined">String Array</td>
+      <td align="undefined" valign="undefined">Hi your tellus</td>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined"></td>
+    </tr>
+    <tr>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined">String Array</td>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined"></td>
+    </tr>
+    <tr>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined">${list_args}</td>
+      <td align="undefined" valign="undefined">Set</td>
+      <td align="undefined" valign="undefined">Moi</td>
+      <td align="undefined" valign="undefined">maailma</td>
+    </tr>
+    <tr>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined">String Array</td>
+      <td align="undefined" valign="undefined">${list_args}</td>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined"></td>
+    </tr>
+    <tr>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined">${array_args}</td>
+      <td align="undefined" valign="undefined">Return String Array</td>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined"></td>
+    </tr>
+    <tr>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined">String Array</td>
+      <td align="undefined" valign="undefined">${array_args}</td>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined"></td>
+    </tr>
+    <tr>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined">${int_array_args}</td>
+      <td align="undefined" valign="undefined">Return Int Array</td>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined"></td>
+    </tr>
+    <tr>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined">String Array</td>
+      <td align="undefined" valign="undefined">${int_array_args}</td>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined"></td>
+    </tr>
+    <tr>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined"></td>
+    </tr>
+    <tr>
+      <td align="undefined" valign="undefined">Integer Array Arg</td>
+      <td align="undefined" valign="undefined">[ Document ]</td>
+      <td align="undefined" valign="undefined">FAIL</td>
+      <td align="undefined" valign="undefined">TypeError: integer2_array(): 1st arg can't be coerced to java.lang.Integer[]</td>
+      <td align="undefined" valign="undefined"></td>
+    </tr>
+    <tr>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined">Integer 1 Array</td>
+      <td align="undefined" valign="undefined">${1}</td>
+      <td align="undefined" valign="undefined">${2}</td>
+      <td align="undefined" valign="undefined">${3}</td>
+    </tr>
+    <tr>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined">Integer 2 Array</td>
+      <td align="undefined" valign="undefined">${-2006}</td>
+      <td align="undefined" valign="undefined">${2006}</td>
+      <td align="undefined" valign="undefined"></td>
+    </tr>
+    <tr>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined">Integer 1 Array</td>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined"></td>
+    </tr>
+    <tr>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined">Integer 2 Array</td>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined"></td>
+    </tr>
+    <tr>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined">${list_args}</td>
+      <td align="undefined" valign="undefined">Set</td>
+      <td align="undefined" valign="undefined">${-1}</td>
+      <td align="undefined" valign="undefined">${1}</td>
+    </tr>
+    <tr>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined">Integer 1 Array</td>
+      <td align="undefined" valign="undefined">${list_args}</td>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined"></td>
+    </tr>
+    <tr>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined">Integer 2 Array</td>
+      <td align="undefined" valign="undefined">${list_args}</td>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined"></td>
+    </tr>
+    <tr>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined">${int_array_args}</td>
+      <td align="undefined" valign="undefined">Return Int Array</td>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined"></td>
+    </tr>
+    <tr>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined">Integer 1 Array</td>
+      <td align="undefined" valign="undefined">${int_array_args}</td>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined"></td>
+    </tr>
+    <tr>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined">Integer 2 Array</td>
+      <td align="undefined" valign="undefined">${int_array_args}</td>
+      <td align="undefined" valign="undefined"># fails because args is int[] and&nbsp;</td>
+      <td align="undefined" valign="undefined">not&nbsp;java.lang.Integer[]</td>
+    </tr>
+    <tr>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined"></td>
+    </tr>
+    <tr>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined"></td>
+    </tr>
+    <tr>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined"></td>
+    </tr>
+    <tr>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined"></td>
+    </tr>
+    <tr>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined"></td>
+    </tr>
+    <tr>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined"></td>
+    </tr>
+    <tr>
+
+
+
+
+
+
+
+
+
+
+      <td>Return Integer</td>
+
+
+
+
+
+
+
+      <td>[ Document ]</td>
+
+
+
+
+
+
+
+
+
+      <td>FAIL</td>
+
+
+
+
+
+
+
+
+
+
+
+
+      <td>int vs. str: 2 != 2</td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td>${int}<br>
+
+
+
+
+      </td>
+
+
+
+
+      <td>Return integer</td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td>Ints Equal</td>
+
+
+
+
+      <td>${int}</td>
+
+
+
+
+      <td>2</td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined">Equal</td>
+      <td>${int}</td>
+      <td>2</td>
+      <td align="undefined" valign="undefined">int vs. str</td>
+    </tr>
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+      <td>Return Double</td>
+
+
+
+
+
+
+
+
+      <td>[ Document ]</td>
+
+
+
+
+
+
+
+
+      <td>FAIL</td>
+
+
+
+
+
+
+
+
+      <td>double vs. str: 3.14 != 3.14</td>
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td>${double}<br>
+
+
+
+
+      </td>
+
+
+
+
+      <td>Return double</td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td>Floats Equal</td>
+
+
+
+
+      <td>${double}</td>
+
+
+
+
+      <td>3.14</td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+      <td align="undefined" valign="undefined"></td>
+      <td>Equal</td>
+      <td>${double}</td>
+      <td>3.14</td>
+      <td align="undefined" valign="undefined">double vs. str</td>
+    </tr>
+    <tr>
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+      <td>Return Boolean</td>
+
+
+
+
+
+
+
+
+      <td>[ Document ]</td>
+
+
+
+
+
+
+
+
+      <td>PASS</td>
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+      <td>${boolean}<br>
+
+
+
+
+      </td>
+
+
+
+
+
+
+
+
+      <td>Return Boolean</td>
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td>Is True</td>
+      <td>${boolean}</td>
+
+
+
+
+      
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td>${boolean}</td>
+
+
+
+
+      <td>Boolean</td>
+
+
+
+
+      <td>${boolean}</td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td>Is True</td>
+
+
+
+
+      <td>${boolean}</td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td>Return String</td>
+
+
+
+
+      <td>[ Document ]</td>
+
+
+
+
+      <td>PASS</td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td>${string}<br>
+
+
+
+
+      </td>
+
+
+
+
+      <td>Return String</td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td>Equal</td>
+
+
+
+
+      <td>${string}</td>
+
+
+
+
+      <td>Hello world</td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+      <td align="undefined" valign="undefined">Return Null</td>
+
+      <td align="undefined" valign="undefined">[ Document ]</td>
+
+      <td align="undefined" valign="undefined">PASS</td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+    </tr>
+
+    <tr>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined">${null}</td>
+
+      <td align="undefined" valign="undefined">Return Null</td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+    </tr>
+
+    <tr>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined">Fail Unless</td>
+
+      <td align="undefined" valign="undefined">${null} == None</td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+    </tr>
+
+    <tr>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+    </tr>
+
+    <tr>
+
+
+
+
+      <td>Return String Array</td>
+
+
+
+
+      <td>[ Document ]</td>
+
+
+
+
+      <td>PASS</td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td>${string array}<br>
+
+
+
+
+      </td>
+
+
+
+
+      <td>Return String Array</td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td>Check String Array</td>
+
+
+
+
+      <td>${string array}</td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td>Return Int Array</td>
+
+
+
+
+      <td>[ Document ]</td>
+
+
+
+
+      <td>PASS</td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td>${int array}<br>
+
+
+
+
+      </td>
+
+
+
+
+      <td>Return&nbsp;Int Array</td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td>Check&nbsp;Int Array</td>
+
+
+
+
+      <td>${int array}</td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+<br>
+
+
+
+
+
+
+
+
+
+</body>
+</html>

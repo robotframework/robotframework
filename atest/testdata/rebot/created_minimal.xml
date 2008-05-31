@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Absolutely most minimal but kind-of valid Robot output -->
+<robot>
+  <suite name="My Name">
+    <status status="PASS"/>
+  </suite>
+</robot>

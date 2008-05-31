@@ -1,0 +1,6467 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+
+
+
+
+
+
+
+  
+  
+  
+  
+  
+  
+  <meta name="generator" content="HTML Tidy, see www.w3.org">
+
+
+
+
+
+
+
+  
+  
+  
+  
+  
+  
+  <style type="text/css">
+html { font-family: Arial,Helvetica,sans-serif;
+background-color: white;
+color: black;
+}
+p { max-width: 60em;
+}
+table { border-collapse: collapse;
+empty-cells: show;
+margin: 1em 0em;
+border: 0.1em solid black;
+}
+th, td {
+border-style: solid;
+border-width: 0.05em 0.1em;
+border-color: black;
+padding: 0.1em 0.2em;
+height: 1.5em;
+}
+th {
+background-color: rgb(192, 192, 192);
+color: black;
+border-width: 0.1em;
+font-weight: bold;
+text-align: center;
+text-transform: capitalize;
+letter-spacing: 0.1em;
+}
+/* Widths of named columns */
+col.name {
+width: 10em;
+}
+.action , .value, .arg {
+width: 15em;
+}
+/* Properties for the name column - td:first-child should work in CSS 2.1 avare browsers (tested in Firefox)
+- col.name is against specs but works in IE
+*/
+td:first-child, col.name {
+background-color: rgb(240, 240, 240);
+text-transform: capitalize;
+letter-spacing: 0.1em;
+}
+th { font-style: normal; } /* required for IE */
+  
+  </style>
+
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <title>Robot Test Cases</title>
+  <link type="text/css" href="resources/css/testdata.css" rel="stylesheet">
+</head>
+
+
+<body>
+
+
+
+
+
+
+
+<h1>Robot Test Cases for Operating System Test Library</h1>
+
+
+
+
+
+
+
+
+<table border="1">
+
+
+
+
+
+
+
+  <colgroup span="99"><col class="name"><col class="value" span="4"></colgroup>
+
+  <thead>
+  <tr>
+
+
+
+
+
+
+
+    <th>Setting</th>
+
+
+
+
+
+
+
+    <th>Value</th>
+
+
+
+
+
+
+
+    <th>Value</th>
+
+
+
+
+
+
+
+    <th>value</th>
+
+
+
+
+
+
+
+    <th>Value</th>
+
+
+
+
+
+
+
+  </tr>
+
+
+
+
+
+
+
+  </thead>
+
+  <tbody>
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+      <td>Library</td>
+
+
+
+
+
+
+
+      <td>OperatingSystem</td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+  
+  
+  
+  
+  
+  
+  </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+<table border="1">
+
+
+
+
+
+
+
+  <colgroup span="99"><col class="name"><col class="value" span="4"></colgroup>
+
+  <thead>
+  <tr>
+
+
+
+
+
+
+
+    <th>Variable</th>
+
+
+
+
+
+
+
+    <th>Value</th>
+
+
+
+
+
+
+
+    <th>Value</th>
+
+
+
+
+
+
+
+    <th>Value</th>
+
+
+
+
+
+
+
+    <th>Value</th>
+
+
+
+
+
+
+
+  </tr>
+
+
+
+
+
+
+
+  </thead>
+
+  <tbody>
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+  
+  
+  
+  
+  
+  
+  </tbody>
+</table>
+
+
+
+
+
+
+
+
+<table border="1">
+
+
+
+
+
+
+
+  <colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
+
+  <thead>
+  <tr>
+
+
+
+
+
+
+
+    <th>Test Case</th>
+
+
+
+
+
+
+
+    <th>Action</th>
+
+
+
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+
+
+
+    <th>Arg</th>
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+  </tr>
+
+
+
+
+
+
+
+  </thead>
+
+  <tbody>
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+      <td>Join Path</td>
+
+
+
+
+
+
+
+      <td>${path}</td>
+
+
+
+
+
+
+
+      <td>Join Path</td>
+
+
+
+
+
+
+
+      <td>abc</td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Equals</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${path}</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">abc</td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td>${path}</td>
+
+
+
+
+
+
+
+      <td>Join Path</td>
+
+
+
+
+
+
+
+      <td>abc</td>
+
+
+
+
+
+
+
+      <td>123</td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Equals</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${path}</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">abc${/}123</td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td>${path}</td>
+
+
+
+
+
+
+
+      <td>Join Path</td>
+
+
+
+
+
+
+
+      <td>abc${/}</td>
+
+
+
+
+
+
+
+      <td>123${/}<br>
+
+
+
+
+
+
+
+ </td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Equals</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${path}</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">abc${/}123</td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td>${path}</td>
+
+
+
+
+
+
+
+      <td>Join Path</td>
+
+
+
+
+
+
+
+      <td>a</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">b</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">c</td>
+
+
+
+
+
+
+
+      
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+    <tr>
+      <td></td>
+      <td>...</td>
+      <td>d${/}e</td>
+      <td></td>
+      <td></td>
+      <td></td>
+    </tr>
+    <tr>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Equals</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${path}</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">a${/}b${/}c${/}d${/}e</td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td>${path}</td>
+
+
+
+
+
+
+
+      <td>Join Path</td>
+
+
+
+
+
+
+
+      <td>${CURDIR}</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">foo</td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Equals</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${path}</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${CURDIR}${/}foo</td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td>${path}</td>
+
+
+
+
+
+
+
+      <td>Join Path</td>
+
+
+
+
+
+
+
+      <td>foo<br>
+
+
+
+
+
+
+
+ </td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${CURDIR}</td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Equals</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${path}</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${CURDIR}</td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td>${path}</td>
+
+
+
+
+
+
+
+      <td>Join Path</td>
+
+
+
+
+
+
+
+      <td>${TEMPDIR}<br>
+
+
+
+
+
+
+
+ </td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${CURDIR}</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">bar</td>
+
+
+
+
+
+
+
+      
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Equals</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${path}</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${CURDIR}${/}bar</td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+      <td>Join Paths</td>
+
+
+
+
+
+
+
+      <td>@{paths}</td>
+
+
+
+
+
+
+
+      <td>Join Paths</td>
+
+
+
+
+
+
+
+      <td>base</td>
+
+
+
+
+
+
+
+      <td>example</td>
+
+
+
+
+
+
+
+      <td>other</td>
+
+
+
+
+
+
+
+      
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td>Equals</td>
+
+
+
+
+
+
+
+      <td>@{paths}[0]</td>
+
+
+
+
+
+
+
+      <td>base${/}example</td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td>Equals</td>
+
+
+
+
+
+
+
+      <td>@{paths}[1]</td>
+
+
+
+
+
+
+
+      <td>base${/}other</td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td>Fail Unless</td>
+
+
+
+
+
+
+
+      <td>len(@{paths}) == 2</td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td>@{paths}</td>
+
+
+
+
+
+
+
+      <td>Join Paths</td>
+
+
+
+
+
+
+
+      <td>${CURDIR}${/}my${/}base</td>
+
+
+
+
+
+
+
+      <td>${TEMPDIR}${/}example</td>
+
+
+
+
+
+
+
+      <td>other</td>
+
+
+
+
+
+
+
+      
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td>Equals</td>
+
+
+
+
+
+
+
+      <td>@{paths}[0]</td>
+
+
+
+
+
+
+
+      <td>${TEMPDIR}${/}example</td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td>Equals</td>
+
+
+
+
+
+
+
+      <td>@{paths}[1]</td>
+
+
+
+
+
+
+
+      <td>${CURDIR}${/}my${/}base${/}other</td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td>Fail Unless</td>
+
+
+
+
+
+
+
+      <td>len(@{paths}) == 2</td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td>@{paths}</td>
+
+
+
+
+
+
+
+      <td>Join Paths</td>
+
+
+
+
+
+
+
+      <td>my${/}base</td>
+
+
+
+
+
+
+
+      <td>example${/}path${/}</td>
+
+
+
+
+
+
+
+      <td>other</td>
+
+
+
+
+
+
+
+      
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+    <tr>
+      <td></td>
+      <td>...</td>
+      <td>one${/}more</td>
+      <td></td>
+      <td></td>
+      <td></td>
+    </tr>
+    <tr>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td>Equals</td>
+
+
+
+
+
+
+
+      <td>@{paths}[0]</td>
+
+
+
+
+
+
+
+      <td>my${/}base${/}example${/}path</td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td>Equals</td>
+
+
+
+
+
+
+
+      <td>@{paths}[1]</td>
+
+
+
+
+
+
+
+      <td>my${/}base${/}other</td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td>Equals</td>
+
+
+
+
+
+
+
+      <td>@{paths}[2]</td>
+
+
+
+
+
+
+
+      <td>my${/}base${/}one${/}more</td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td>Fail Unless</td>
+
+
+
+
+
+
+
+      <td>len(@{paths}) == 3</td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+      <td>Normalize Path</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Normalize Path And
+Check</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">abc</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">abc</td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Normalize Path And
+Check</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">abc${/}def</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">abc${/}def</td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Normalize Path And
+Check</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">.</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">.</td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Normalize Path And
+Check</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">abc${/}</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">abc</td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Normalize Path And
+Check</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">abc${/}..${/}def</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">def</td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Normalize Path And
+Check</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">
+abc${/}..${/}def${/}..${/}ghi</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">ghi</td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Normalize Path And
+Check</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">
+abc${/}def${/}..${/}..${/}ghi</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">ghi</td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Normalize Path And
+Check</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">abc${/}..</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">.</td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Normalize Path And
+Check</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">abc${/}..${/}</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">.</td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Normalize Path And
+Check</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">abc${/}.</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">abc</td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Normalize Path And
+Check</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">abc${/}.${/}</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">abc</td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Normalize Path And
+Check</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">..</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">..</td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Normalize Path And
+Check</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">..${/}abc</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">..${/}abc</td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Normalize Path And
+Check</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">abc${/}${/}def</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">abc${/}def</td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Normalize Path And
+Check</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">
+${CURDIR}${/}${/}abc${/}.${/}..${/}.${/}${/}</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${CURDIR}</td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+      <td>Split Path</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Split Path And Check</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">abc${/}def</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">abc</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">def</td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Split Path And Check</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">abc${/}def${/}ghi${/}</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">abc${/}def</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">ghi</td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Split Path And Check</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">
+abc${/}..${/}def${/}.${/}${/}ghi</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">def</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">ghi</td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Split Path And Check</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">abc${/}</td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">abc</td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Split Path And Check</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">abc</td>
+
+
+
+
+
+
+
+      <td><br>
+
+
+
+
+
+
+
+ </td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">abc</td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Split Path And Check</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${CURDIR}${/}abc</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${CURDIR}</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">abc</td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Split Path And Check</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">..${/}abc</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">..</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">abc</td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Split Path And Check</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">..</td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">..</td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+      <td>Split Extension</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Split Extension And
+Check</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">abc.ext</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">abc</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">ext</td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Split Extension And
+Check</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">abc.</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">abc</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">\</td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Split Extension And
+Check</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">abc</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">abc</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">\</td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Split Extension And
+Check</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">.abc</td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">abc</td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Split Extension And
+Check</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">abc.def.extension</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">abc.def</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">extension</td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Split Extension And
+Check</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">.abc.def.extension</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">.abc.def</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">extension</td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Split Extension And
+Check</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">path${/}abc.ext</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">path${/}abc</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">ext</td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Split Extension And
+Check</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">
+${CURDIR}${/}path${/}abc.ext2</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">
+${CURDIR}${/}path${/}abc</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">ext2</td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Split Extension And
+Check</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">
+path${/}..${/}abc.e_x_t</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">abc</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">e_x_t</td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Split Extension And
+Check</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">p1${/}..${/}p2${/}</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">p2</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">\</td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Split Extension And
+Check</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">
+p1${/}..${/}p2${/}abc.ext</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">p2${/}abc</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">ext</td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+  
+  
+  
+  
+  
+  
+  </tbody>
+</table>
+
+
+
+
+
+
+
+
+<table border="1">
+
+
+
+
+
+
+
+  <colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
+
+  <thead>
+  <tr>
+
+
+
+
+
+
+
+    <th>Keyword</th>
+
+
+
+
+
+
+
+    <th>Action</th>
+
+
+
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+
+
+
+  </tr>
+
+
+
+
+
+
+
+  </thead>
+
+  <tbody>
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Normalize Path And
+Check</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">[ Arguments ]</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${input}</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${expected}</td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${path}</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Normalize Path</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${input}</td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Equals</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${path}</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${expected}</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Normalizing ${input}
+failed</td>
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Split Path And Check</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">[ Arguments ]</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${input}</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${exp1}</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${exp2}</td>
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${out1}</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${out2}</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Split Path</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${input}</td>
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Equals</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${out1}</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${exp1}</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Splitting path ${input}
+failed</td>
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Equals</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${out2}</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${exp2}</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Splitting path ${input}
+failed</td>
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Split Extension And
+Check</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">[ Arguments ]</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${input}</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${exp1}</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${exp2}</td>
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${out1}</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${out2}</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Split Extension</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${input}</td>
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Equals</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${out1}</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${exp1}</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Splitting extension
+from&nbsp;${input} failed</td>
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Equals</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${out2}</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${exp2}</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Splitting extension from
+${input} failed</td>
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+  
+  
+  
+  
+  
+  
+  </tbody>
+</table>
+
+
+
+
+
+
+
+</body>
+</html>

@@ -1,0 +1,3353 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+
+
+
+
+
+
+  
+  
+  
+  
+  
+  <meta name="generator" content="HTML Tidy, see www.w3.org">
+
+
+
+
+
+
+  
+  
+  
+  
+  
+  <meta content="text/html;charset=ISO-8859-1" http-equiv="Content-Type">
+
+
+
+
+
+
+  
+  
+  
+  
+  
+  <style type="text/css">
+html { font-family: Arial,Helvetica,sans-serif;
+background-color: white;
+color: black;
+}
+p { max-width: 60em;
+}
+table { border-collapse: collapse;
+empty-cells: show;
+margin: 1em 0em;
+border: 0.1em solid black;
+}
+th, td {
+border-style: solid;
+border-width: 0.05em 0.1em;
+border-color: black;
+padding: 0.1em 0.2em;
+height: 1.5em;
+}
+th {
+background-color: rgb(192, 192, 192);
+color: black;
+border-width: 0.1em;
+font-weight: bold;
+text-align: center;
+text-transform: capitalize;
+letter-spacing: 0.1em;
+}
+/* Widths of named columns */
+col.name {
+width: 10em;
+}
+.action , .value, .arg {
+width: 15em;
+}
+/* Properties for the name column - td:first-child should work in CSS 2.1 avare browsers (tested in Firefox)
+- col.name is against specs but works in IE
+*/
+td:first-child, col.name {
+background-color: rgb(240, 240, 240);
+text-transform: capitalize;
+letter-spacing: 0.1em;
+}
+th { font-style: normal; } /* required for IE */
+/* Properties for the action column
+- td+td and td+td+td is for CSS 2.1 browsers (tested in Firefox)
+- col.action is for IE
+NOTE: Not used currently because in CSS 2.1 browsers td+td matches the
+first value column of Setting and Variable tables.
+td + td {
+background-color: rgb(240, 240, 240);
+}
+td + td + td {
+background: transparent;
+}
+col.action { /* can't be on the same line as td+td */
+background-color: rgb(240, 240, 240);
+}
+*/
+  
+  </style>
+
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <title>Logging Tests</title><link rel="stylesheet" href="resources/css/testdata.css" type="text/css"></head>
+<body>
+
+
+
+
+
+
+<h1>Logging Tests</h1>
+
+
+
+
+
+
+
+<table border="1">
+
+
+
+
+
+
+  <colgroup span="99"><col class="name"><col class="value" span="4"></colgroup>
+
+  <thead>
+  <tr>
+
+
+
+
+
+
+    <th>Setting</th>
+
+
+
+
+
+
+    <th>Value</th>
+
+
+
+
+
+
+    <th>Value</th>
+
+
+
+
+
+
+    <th>value</th>
+
+
+
+
+
+
+    <th>Value</th>
+
+
+
+
+
+
+  </tr>
+
+
+
+
+
+
+  </thead>
+
+  <tbody>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td>Resource</td>
+
+
+
+
+
+
+      <td>../../resources/resource.html</td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td>Force Tags</td>
+
+
+
+
+
+
+      <td>regression</td>
+
+
+
+
+
+
+      <td>pybot</td>
+
+
+
+
+
+
+      <td>jybot</td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td>Suite Setup</td>
+
+
+
+
+
+
+      <td>My Setup</td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+  
+  
+  
+  
+  
+  </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+ 
+
+<table border="1">
+
+
+
+
+
+
+  <colgroup span="99"><col class="name"><col class="value" span="4"></colgroup>
+
+  <thead>
+  <tr>
+
+
+
+
+
+
+    <th>Variable</th>
+
+
+
+
+
+
+    <th>Value</th>
+
+
+
+
+
+
+    <th>Value</th>
+
+
+
+
+
+
+    <th>Value</th>
+
+
+
+
+
+
+    <th>Value</th>
+
+
+
+
+
+
+  </tr>
+
+
+
+
+
+
+  </thead>
+
+  <tbody>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td>${LOG}</td>
+
+
+
+
+
+
+      <td># Set in My Setup</td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td>${REPORT}</td>
+
+
+
+
+
+
+      <td># -- ;; --</td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td>${SUMMARY}</td>
+
+
+
+
+      <td># -- ;; --</td>
+
+
+
+
+
+
+      
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+    </tr>
+
+
+
+
+
+
+  
+  
+  
+  
+  
+  </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+ 
+
+<table border="1">
+
+
+
+
+
+
+  <colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
+
+  <thead>
+  <tr>
+
+
+
+
+
+
+    <th>Test Case</th>
+
+
+
+
+
+
+    <th>Action</th>
+
+
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+
+
+    
+
+  </tr>
+
+
+
+
+
+
+  </thead>
+
+  <tbody>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td>Suite Documentation</td>
+
+
+
+
+
+
+      <td>Equals</td>
+
+
+
+
+
+
+      <td>${SUITE.status}</td>
+
+
+
+
+
+
+      <td>PASS</td>
+
+
+
+
+
+
+      
+
+    </tr>
+
+
+
+
+
+
+
+    
+
+
+    <tr>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td>${doc} =</td>
+
+
+
+
+
+
+      <td>Set</td>
+
+
+
+
+
+
+      <td>
+      
+      
+      
+      
+      
+      <pre id="line344">Test cases demonstrating html formatting of suite and test docs and suite metadata.&lt;br /&gt;\n<br>&lt;br /&gt;\n<br>It is possible to format text with &lt;b&gt;bold&lt;/b&gt;, &lt;i&gt;italic&lt;/i&gt; and &lt;i&gt;&lt;b&gt;bold italic&lt;/b&gt;&lt;/i&gt;.<br>Also links like &lt;a href="http://basso.fi/radio"&gt;http://basso.fi/radio&lt;/a&gt;,<br>&lt;a href="ftp://funet.fi"&gt;ftp://funet.fi&lt;/a&gt; and &lt;a href="file:///c:/temp"&gt;file:///c:/temp&lt;/a&gt;<br>are automatically formatted.&lt;br /&gt;\n<br>Furthermore tables and horizontal rulers are available as seen by examples below.&lt;br /&gt;\n<br>&lt;br /&gt;\n<br>&lt;hr /&gt;\n<br>&lt;br /&gt;\n<br>&lt;table border="1" style="border: 1px solid gray; background: transparent; border-collapse: collapse; empty-cells: show;"&gt;\n<br>&lt;tr&gt;\n<br>&lt;td style="border: 1px solid gray; padding: 2px;"&gt;&lt;b&gt;a&lt;/b&gt;&lt;/td&gt;\n<br>&lt;td style="border: 1px solid gray; padding: 2px;"&gt;&lt;b&gt;b&lt;/b&gt;&lt;/td&gt;\n<br>&lt;td style="border: 1px solid gray; padding: 2px;"&gt;&lt;b&gt;c&lt;/b&gt;&lt;/td&gt;\n<br>&lt;/tr&gt;\n<br>&lt;tr&gt;\n<br>&lt;td style="border: 1px solid gray; padding: 2px;"&gt;&lt;i&gt;1&lt;/i&gt;&lt;/td&gt;\n<br>&lt;td style="border: 1px solid gray; padding: 2px;"&gt;xx&lt;/td&gt;\n<br>&lt;td style="border: 1px solid gray; padding: 2px;"&gt;yy&lt;/td&gt;\n<br>&lt;/tr&gt;\n<br>&lt;tr&gt;\n<br>&lt;td style="border: 1px solid gray; padding: 2px;"&gt;&lt;i&gt;2&lt;/i&gt;&lt;/td&gt;\n<br>&lt;td style="border: 1px solid gray; padding: 2px;"&gt;zz&lt;/td&gt;\n<br>&lt;td style="border: 1px solid gray; padding: 2px;"&gt;&lt;/td&gt;\n<br>&lt;/tr&gt;\n<br>&lt;/table&gt;&lt;br /&gt;\n<br>&lt;hr /&gt;\n</pre>
+
+
+
+
+
+
+      </td>
+
+
+
+
+
+
+      
+
+    </tr>
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined">Message</td>
+
+
+
+
+      <td align="undefined" valign="undefined">1)</td>
+
+
+
+
+      <td align="undefined" valign="undefined">Suite doc in log</td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td>Contains</td>
+
+
+
+
+
+
+      <td>${LOG}</td>
+
+
+
+
+
+
+      <td>
+      
+      
+      
+      
+      
+      <pre id="line383">&lt;<span class="start-tag">tr</span>&gt;&lt;<span class="start-tag">th</span>&gt;Full <span class="entity"></span>Name:&lt;/<span class="end-tag">th</span>&gt;&lt;<span class="start-tag">td</span>&gt;Html Formatting&lt;/<span class="end-tag">td</span>&gt;&lt;/<span class="end-tag">tr</span>&gt;\n<br>&lt;<span class="start-tag">tr</span>&gt;&lt;<span class="start-tag">th</span>&gt;Documentation:&lt;/<span class="end-tag">th</span>&gt;&lt;<span class="start-tag">td</span>&gt;${doc}&lt;/<span class="end-tag">td</span>&gt;&lt;/<span class="end-tag">tr</span>&gt;<br></pre>
+
+
+
+
+
+
+      </td>
+
+
+
+
+
+
+      
+
+    </tr>
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined">Message</td>
+
+
+
+
+      <td align="undefined" valign="undefined">2)</td>
+
+
+
+
+      <td align="undefined" valign="undefined">Suite doc in report</td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td>Contains</td>
+
+
+
+
+      <td>${REPORT}</td>
+
+
+
+
+      <td>
+      
+      
+      
+      
+      
+      <pre id="line344"><span class="attribute-value">Html Formatting</span>&lt;/<span class="end-tag">a</span>&gt;&lt;/<span class="end-tag">td</span>&gt;\n<br>&lt;<span class="start-tag">td</span> <span class="attribute-name">class</span>=<span class="attribute-value">"col_doc"</span>&gt;${doc}&lt;/<span class="end-tag">td</span>&gt;<br></pre>
+
+
+
+
+
+
+      </td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined">Message</td>
+
+
+
+
+      <td align="undefined" valign="undefined">3)</td>
+
+
+
+
+      <td align="undefined" valign="undefined">Summary info in report</td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td>Contains</td>
+
+
+
+
+      <td>${REPORT}</td>
+
+
+
+
+      <td align="undefined" valign="undefined">
+      
+      
+      
+      
+      <pre id="line322">&lt;<span class="start-tag">tr</span>&gt;&lt;<span class="start-tag">th</span>&gt;Documentation:&lt;/<span class="end-tag">th</span>&gt;&lt;td&gt;${doc}&lt;/td&gt;&lt;/tr&gt;</pre>
+
+
+
+
+      </td>
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined">Message</td>
+
+
+
+
+      <td align="undefined" valign="undefined">4)</td>
+
+
+
+
+      <td align="undefined" valign="undefined">Summary info in&nbsp;summary</td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td>Contains</td>
+
+
+
+
+      <td>${SUMMARY}</td>
+
+
+
+
+      <td align="undefined" valign="undefined">
+      
+      
+      
+      
+      <pre id="line322">&lt;<span class="start-tag">tr</span>&gt;&lt;<span class="start-tag">th</span>&gt;Documentation:&lt;/<span class="end-tag">th</span>&gt;&lt;td&gt;${doc}&lt;/td&gt;&lt;/tr&gt;</pre>
+
+
+
+
+      </td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      
+
+    </tr>
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+      <td align="undefined" valign="undefined">Suite Metadata</td>
+
+
+
+
+      <td align="undefined" valign="undefined">Message</td>
+
+
+
+
+      <td align="undefined" valign="undefined">1)</td>
+
+
+
+
+      <td align="undefined" valign="undefined">Suite metadata in log</td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td>Contains</td>
+
+
+
+
+      <td>${LOG}</td>
+
+
+
+
+      <td align="undefined" valign="undefined">
+      
+      
+      
+      
+      <pre id="line375">&lt;<span class="start-tag">tr</span>&gt;&lt;<span class="start-tag">th</span>&gt;Bold:&lt;/<span class="end-tag">th</span>&gt;&lt;<span class="start-tag">td</span>&gt;Text in &lt;<span class="start-tag">b</span>&gt;bold&lt;/<span class="end-tag">b</span>&gt;.&lt;/<span class="end-tag">td</span>&gt;&lt;/<span class="end-tag">tr</span>&gt;</pre>
+
+
+
+
+      </td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td>Contains</td>
+
+
+
+
+      <td>${LOG}</td>
+
+
+
+
+      <td align="undefined" valign="undefined">
+      
+      
+      
+      
+      <pre id="line387">&lt;<span class="start-tag">tr</span>&gt;&lt;<span class="start-tag">th</span>&gt;Italic:&lt;/<span class="end-tag">th</span>&gt;&lt;<span class="start-tag">td</span>&gt;&lt;<span class="start-tag">i</span>&gt;Italic text&lt;/<span class="end-tag">i</span>&gt;&lt;/<span class="end-tag">td</span>&gt;&lt;/<span class="end-tag">tr</span>&gt;</pre>
+
+
+
+
+      </td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td>Contains</td>
+
+
+
+
+      <td>${LOG}</td>
+
+
+
+
+      <td align="undefined" valign="undefined">
+      
+      
+      
+      
+      <pre id="line387">&lt;<span class="start-tag">tr</span>&gt;&lt;<span class="start-tag">th</span>&gt;Link:&lt;/<span class="end-tag">th</span>&gt;&lt;<span class="start-tag">td</span>&gt;&lt;<span class="start-tag">a</span><span class="attribute-name"> href</span>=<span class="attribute-value">"http://x"</span>&gt;http://x&lt;/<span class="end-tag">a</span>&gt;, &lt;<span class="start-tag">a</span><span class="attribute-name"> href</span>=<span class="attribute-value">"https://y.z"</span>&gt;https://y.z&lt;/<span class="end-tag">a</span>&gt;&lt;/<span class="end-tag">td</span>&gt;&lt;/<span class="end-tag">tr</span>&gt;</pre>
+
+
+
+
+      </td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td>Contains</td>
+
+
+
+
+      <td>${LOG}</td>
+
+
+
+
+      <td align="undefined" valign="undefined">
+      
+      
+      
+      
+      <pre id="line387">&lt;<span class="start-tag">tr</span>&gt;&lt;<span class="start-tag">th</span>&gt;Link2:&lt;/<span class="end-tag">th</span>&gt;&lt;<span class="start-tag">td</span>&gt;&lt;<span class="start-tag">a</span><span class="attribute-name"> href</span>=<span class="attribute-value">"http://xxx"</span>&gt;http://xxx&lt;/<span class="end-tag">a</span>&gt;&lt;/<span class="end-tag">td</span>&gt;&lt;/<span class="end-tag">tr</span>&gt;</pre>
+
+
+
+
+      </td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined">Message</td>
+
+
+
+
+      <td align="undefined" valign="undefined">2)</td>
+
+
+
+
+      <td align="undefined" valign="undefined">Suite metadata in report</td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined">Contains</td>
+
+
+
+
+      <td align="undefined" valign="undefined">${REPORT}</td>
+
+
+
+
+      <td align="undefined" valign="undefined">
+      
+      
+      
+      
+      <pre id="line389">&lt;<span class="start-tag">span</span><span class="attribute-name"> class</span>=<span class="attribute-value">"meta_name"</span>&gt;Bold: &lt;/<span class="end-tag">span</span>&gt;\nText in &lt;<span class="start-tag">b</span>&gt;bold&lt;/<span class="end-tag">b</span>&gt;.&lt;<span class="start-tag">br</span><span class="attribute-name"> /</span>&gt;</pre>
+
+
+
+
+      </td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined">Contains</td>
+
+
+
+
+      <td align="undefined" valign="undefined">${REPORT}</td>
+
+
+
+
+      <td align="undefined" valign="undefined">
+      
+      
+      
+      
+      <pre id="line400">&lt;<span class="start-tag">span</span><span class="attribute-name"> class</span>=<span class="attribute-value">"meta_name"</span>&gt;Italic: &lt;/<span class="end-tag">span</span>&gt;\n&lt;<span class="start-tag">i</span>&gt;Italic text&lt;/<span class="end-tag">i</span>&gt;&lt;<span class="start-tag">br</span><span class="attribute-name"> /</span>&gt;</pre>
+
+
+
+
+      </td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined">Contains</td>
+
+
+
+
+      <td align="undefined" valign="undefined">${REPORT}</td>
+
+
+
+
+      <td align="undefined" valign="undefined">
+      
+      
+      
+      
+      <pre id="line400">&lt;<span class="start-tag">span</span><span class="attribute-name"> class</span>=<span class="attribute-value">"meta_name"</span>&gt;Link: &lt;/<span class="end-tag">span</span>&gt;\n&lt;<span class="start-tag">a</span><span class="attribute-name"> href</span>=<span class="attribute-value">"http://x"</span>&gt;http://x&lt;/<span class="end-tag">a</span>&gt;, &lt;<span class="start-tag">a</span><span class="attribute-name"> href</span>=<span class="attribute-value">"https://y.z"</span>&gt;https://y.z&lt;/<span class="end-tag">a</span>&gt;&lt;<span class="start-tag">br</span><span class="attribute-name"> /</span>&gt;</pre>
+
+
+
+
+      </td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined">Contains</td>
+
+
+
+
+      <td align="undefined" valign="undefined">${REPORT}</td>
+
+
+
+
+      <td align="undefined" valign="undefined">
+      
+      
+      
+      
+      <pre id="line400">&lt;<span class="start-tag">span</span><span class="attribute-name"> class</span>=<span class="attribute-value">"meta_name"</span>&gt;Link2: &lt;/<span class="end-tag">span</span>&gt;\n&lt;<span class="start-tag">a</span><span class="attribute-name"> href</span>=<span class="attribute-value">"http://xxx"</span>&gt;http://xxx&lt;/<span class="end-tag">a</span>&gt;<span class="start-tag"></span><span class="attribute-name"></span><span class="attribute-value"></span><span class="end-tag"></span>&lt;<span class="start-tag">br</span><span class="attribute-name"> /</span>&gt;</pre>
+
+
+
+
+      </td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined">Message</td>
+
+
+
+
+      <td align="undefined" valign="undefined">3)</td>
+
+
+
+
+      <td align="undefined" valign="undefined">Summary info in report</td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined">Contains</td>
+
+
+
+
+      <td align="undefined" valign="undefined">${REPORT}</td>
+
+
+
+
+      <td align="undefined" valign="undefined">
+      
+      
+      
+      
+      <pre id="line339">&lt;<span class="start-tag">tr</span>&gt;&lt;<span class="start-tag">th</span>&gt;Bold:&lt;/<span class="end-tag">th</span>&gt;&lt;<span class="start-tag">td</span>&gt;Text in &lt;<span class="start-tag">b</span>&gt;bold&lt;/<span class="end-tag">b</span>&gt;.&lt;/<span class="end-tag">td</span>&gt;&lt;/<span class="end-tag">tr</span>&gt;</pre>
+
+
+
+
+      </td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined">Contains</td>
+
+
+
+
+      <td align="undefined" valign="undefined">${REPORT}</td>
+
+
+
+
+      <td align="undefined" valign="undefined">
+      
+      
+      
+      
+      <pre id="line351">&lt;<span class="start-tag">tr</span>&gt;&lt;<span class="start-tag">th</span>&gt;Italic:&lt;/<span class="end-tag">th</span>&gt;&lt;<span class="start-tag">td</span>&gt;&lt;<span class="start-tag">i</span>&gt;Italic text&lt;/<span class="end-tag">i</span>&gt;&lt;/<span class="end-tag">td</span>&gt;&lt;/<span class="end-tag">tr</span>&gt;</pre>
+
+
+
+
+      </td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined">Contains</td>
+
+
+
+
+      <td align="undefined" valign="undefined">${REPORT}</td>
+
+
+
+
+      <td align="undefined" valign="undefined">
+      
+      
+      
+      
+      <pre id="line351">&lt;<span class="start-tag">tr</span>&gt;&lt;<span class="start-tag">th</span>&gt;Link:&lt;/<span class="end-tag">th</span>&gt;&lt;<span class="start-tag">td</span>&gt;&lt;<span class="start-tag">a</span><span class="attribute-name"> href</span>=<span class="attribute-value">"http://x"</span>&gt;http://x&lt;/<span class="end-tag">a</span>&gt;, &lt;<span class="start-tag">a</span><span class="attribute-name"> href</span>=<span class="attribute-value">"https://y.z"</span>&gt;https://y.z&lt;/<span class="end-tag">a</span>&gt;&lt;/<span class="end-tag">td</span>&gt;&lt;/<span class="end-tag">tr</span>&gt;</pre>
+
+
+
+
+      </td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined">Contains</td>
+
+
+
+
+      <td align="undefined" valign="undefined">${REPORT}</td>
+
+
+
+
+      <td align="undefined" valign="undefined">
+      
+      
+      
+      
+      <pre id="line351">&lt;<span class="start-tag">tr</span>&gt;&lt;<span class="start-tag">th</span>&gt;Link2:&lt;/<span class="end-tag">th</span>&gt;&lt;<span class="start-tag">td</span>&gt;&lt;<span class="start-tag">a</span><span class="attribute-name"> href</span>=<span class="attribute-value">"http://xxx"</span>&gt;http://xxx&lt;/<span class="end-tag">a</span>&gt;&lt;/<span class="end-tag">td</span>&gt;&lt;/<span class="end-tag">tr</span>&gt;</pre>
+
+
+
+
+      </td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined">Message</td>
+
+
+
+
+      <td align="undefined" valign="undefined">4)</td>
+
+
+
+
+      <td align="undefined" valign="undefined">Summary info in summary</td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined">Contains</td>
+
+
+
+
+      <td align="undefined" valign="undefined">${SUMMARY}</td>
+
+
+
+
+      <td align="undefined" valign="undefined">
+      
+      
+      
+      
+      <pre id="line339">&lt;<span class="start-tag">tr</span>&gt;&lt;<span class="start-tag">th</span>&gt;Bold:&lt;/<span class="end-tag">th</span>&gt;&lt;<span class="start-tag">td</span>&gt;Text in &lt;<span class="start-tag">b</span>&gt;bold&lt;/<span class="end-tag">b</span>&gt;.&lt;/<span class="end-tag">td</span>&gt;&lt;/<span class="end-tag">tr</span>&gt;</pre>
+
+
+
+
+      </td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined">Contains</td>
+
+
+
+
+      <td align="undefined" valign="undefined">${SUMMARY}</td>
+
+
+
+
+      <td align="undefined" valign="undefined">
+      
+      
+      
+      
+      <pre id="line351">&lt;<span class="start-tag">tr</span>&gt;&lt;<span class="start-tag">th</span>&gt;Italic:&lt;/<span class="end-tag">th</span>&gt;&lt;<span class="start-tag">td</span>&gt;&lt;<span class="start-tag">i</span>&gt;Italic text&lt;/<span class="end-tag">i</span>&gt;&lt;/<span class="end-tag">td</span>&gt;&lt;/<span class="end-tag">tr</span>&gt;</pre>
+
+
+
+
+      </td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined">Contains</td>
+
+
+
+
+      <td align="undefined" valign="undefined">${SUMMARY}</td>
+
+
+
+
+      <td align="undefined" valign="undefined">
+      
+      
+      
+      
+      <pre id="line351">&lt;<span class="start-tag">tr</span>&gt;&lt;<span class="start-tag">th</span>&gt;Link:&lt;/<span class="end-tag">th</span>&gt;&lt;<span class="start-tag">td</span>&gt;&lt;<span class="start-tag">a</span><span class="attribute-name"> href</span>=<span class="attribute-value">"http://x"</span>&gt;http://x&lt;/<span class="end-tag">a</span>&gt;, &lt;<span class="start-tag">a</span><span class="attribute-name"> href</span>=<span class="attribute-value">"https://y.z"</span>&gt;https://y.z&lt;/<span class="end-tag">a</span>&gt;&lt;/<span class="end-tag">td</span>&gt;&lt;/<span class="end-tag">tr</span>&gt;</pre>
+
+
+
+
+      </td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined">Contains</td>
+
+
+
+
+      <td align="undefined" valign="undefined">${SUMMARY}</td>
+
+
+
+
+      <td align="undefined" valign="undefined">
+      
+      
+      
+      
+      <pre id="line351">&lt;<span class="start-tag">tr</span>&gt;&lt;<span class="start-tag">th</span>&gt;Link2:&lt;/<span class="end-tag">th</span>&gt;&lt;<span class="start-tag">td</span>&gt;&lt;<span class="start-tag">a</span><span class="attribute-name"> href</span>=<span class="attribute-value">"http://xxx"</span>&gt;http://xxx&lt;/<span class="end-tag">a</span>&gt;&lt;/<span class="end-tag">td</span>&gt;&lt;/<span class="end-tag">tr</span>&gt;</pre>
+
+
+
+
+      </td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+      <td>Bold</td>
+
+
+
+
+      <td>Check Test Documentation</td>
+
+
+
+
+      <td align="undefined" valign="undefined">Bold</td>
+
+
+
+
+      <td align="undefined" valign="undefined">&lt;b&gt;Bold&lt;/b&gt;</td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      
+
+    </tr>
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td>Italic</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Check Test
+Documentation</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Italic</td>
+
+
+
+
+
+
+      <td>&lt;i&gt;This is italic&lt;/i&gt; and this is not</td>
+
+
+
+
+
+
+      
+
+    </tr>
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      
+
+    </tr>
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td>Bold Italic</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Check Test
+Documentation</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Bold Italic</td>
+
+
+
+
+
+
+      <td>&lt;i&gt;&lt;b&gt;Bold&nbsp;italic&lt;/b&gt;, only
+italic&lt;/i&gt; and no formatting</td>
+
+
+
+
+
+
+      
+
+    </tr>
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td align="undefined" valign="undefined">Link</td>
+
+
+
+
+      <td align="undefined" valign="undefined">Check Test
+Documentation</td>
+
+
+
+
+      <td align="undefined" valign="undefined">Link</td>
+
+
+
+
+      <td align="undefined" valign="undefined">For more info see: &lt;a href="http://some.url/"&gt;http://some.url/&lt;/a&gt;</td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      
+
+    </tr>
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td>Table</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Check Test
+Documentation</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Table</td>
+
+
+
+
+
+
+      <td>
+      
+      
+      
+      
+      
+      <pre id="line363">&lt;<span class="start-tag">table</span> <span class="attribute-name">border="1" style</span>=<span class="attribute-value">"border: 1px solid gray; background: transparent; border-collapse: collapse; empty-cells: show;"</span>&gt;\n<br>&lt;<span class="start-tag">tr</span>&gt;\n<br>&lt;<span class="start-tag">td</span> <span class="attribute-name">style</span>=<span class="attribute-value">"border: 1px solid gray;</span> padding: 2px;<span class="attribute-value">"</span>&gt;&lt;<span class="start-tag">b</span>&gt;a&lt;/<span class="end-tag">b</span>&gt;&lt;/<span class="end-tag">td</span>&gt;\n<br>&lt;<span class="start-tag">td</span> <span class="attribute-name">style</span>=<span class="attribute-value">"border: 1px solid gray;</span> padding: 2px;<span class="attribute-value">"</span>&gt;&lt;<span class="start-tag">b</span>&gt;b&lt;/<span class="end-tag">b</span>&gt;&lt;/<span class="end-tag">td</span>&gt;\n<br>&lt;<span class="start-tag">td</span> <span class="attribute-name">style</span>=<span class="attribute-value">"border: 1px solid gray;</span> padding: 2px;<span class="attribute-value">"</span>&gt;&lt;<span class="start-tag">b</span>&gt;c&lt;/<span class="end-tag">b</span>&gt;&lt;/<span class="end-tag">td</span>&gt;\n<br>&lt;/<span class="end-tag">tr</span>&gt;\n<br>&lt;<span class="start-tag">tr</span>&gt;\n<br>&lt;<span class="start-tag">td</span> <span class="attribute-name">style</span>=<span class="attribute-value">"border: 1px solid gray;</span> padding: 2px;<span class="attribute-value">"</span>&gt;&lt;<span class="start-tag">i</span>&gt;1&lt;/<span class="end-tag">i</span>&gt;&lt;/<span class="end-tag">td</span>&gt;\n<br>&lt;<span class="start-tag">td</span> <span class="attribute-name">style</span>=<span class="attribute-value">"border: 1px solid gray;</span> padding: 2px;<span class="attribute-value">"</span>&gt;xx&lt;/<span class="end-tag">td</span>&gt;\n<br>&lt;<span class="start-tag">td</span> <span class="attribute-name">style</span>=<span class="attribute-value">"border: 1px solid gray;</span> padding: 2px;<span class="attribute-value">"</span>&gt;yy&lt;/<span class="end-tag">td</span>&gt;\n<br>&lt;/<span class="end-tag">tr</span>&gt;\n<br>&lt;<span class="start-tag">tr</span>&gt;\n<br>&lt;<span class="start-tag">td</span> <span class="attribute-name">style</span>=<span class="attribute-value">"border: 1px solid gray;</span> padding: 2px;<span class="attribute-value">"</span>&gt;&lt;<span class="start-tag">i</span>&gt;2&lt;/<span class="end-tag">i</span>&gt;&lt;/<span class="end-tag">td</span>&gt;\n<br>&lt;<span class="start-tag">td</span> <span class="attribute-name">style</span>=<span class="attribute-value">"border: 1px solid gray;</span> padding: 2px;<span class="attribute-value">"</span>&gt;zz&lt;/<span class="end-tag">td</span>&gt;\n<br>&lt;<span class="start-tag">td</span> <span class="attribute-name">style</span>=<span class="attribute-value">"border: 1px solid gray;</span> padding: 2px;<span class="attribute-value">"</span>&gt;&lt;/<span class="end-tag">td</span>&gt;\n<br>&lt;/<span class="end-tag">tr</span>&gt;\n<br>&lt;/<span class="end-tag">table</span>&gt;<br></pre>
+
+
+
+
+
+
+      </td>
+
+
+
+
+
+
+      
+
+    </tr>
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      
+
+    </tr>
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td>Horizontal ruler</td>
+
+
+
+
+
+
+      <td>Check Test Documentation</td>
+
+
+
+
+
+
+      <td>Horizontal Ruler</td>
+
+
+
+
+
+
+      <td>
+      
+      
+      
+      
+      
+      <pre id="line371">&lt;<span class="start-tag">hr</span> <span class="attribute-name">/</span>&gt;\n<br>Horizontal rulers rule&lt;<span class="start-tag">br</span> <span class="attribute-name">/</span>&gt;\n<br>&lt;<span class="start-tag">hr</span> <span class="attribute-name">/</span>&gt;\n<br></pre>
+
+
+
+
+
+
+      </td>
+
+
+
+
+
+
+      
+
+    </tr>
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      
+
+    </tr>
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+      <td align="undefined" valign="undefined">Normal Usage</td>
+
+
+
+
+      <td align="undefined" valign="undefined">[ Document ]</td>
+
+
+
+
+      <td align="undefined" valign="undefined">Using&nbsp;</td>
+
+
+
+
+      <td align="undefined" valign="undefined">documentation in more realistic manner like normal user could use it</td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td><br>
+
+
+
+
+      </td>
+
+
+
+
+
+
+      <td>Check Test Documentation</td>
+
+
+
+
+
+
+      <td>Normal Usage</td>
+
+
+
+
+
+
+      <td>
+      
+      
+      
+      
+      
+      <pre id="line377">&lt;<span class="start-tag">b</span>&gt;Header&lt;/<span class="end-tag">b</span>&gt;&lt;<span class="start-tag">br</span> <span class="attribute-name">/</span>&gt;\n<br>&lt;<span class="start-tag">br</span> <span class="attribute-name">/</span>&gt;\n<br>This test case is &lt;<span class="start-tag">i</span>&gt;an example&lt;/<span class="end-tag">i</span>&gt;. It tries to be use formatting in a manner normal users would<br>use it.&lt;<span class="start-tag">br</span> <span class="attribute-name">/</span>&gt;\n<br>&lt;<span class="start-tag">br</span> <span class="attribute-name">/</span>&gt;\n<br>&lt;<span class="start-tag">b</span>&gt;Another Header&lt;/<span class="end-tag">b</span>&gt;&lt;<span class="start-tag">br</span> <span class="attribute-name">/</span>&gt;\n<br>&lt;<span class="start-tag">br</span> <span class="attribute-name">/</span>&gt;\n<br>Here's some more text about something. See &lt;a href="http://something/else"&gt;http://something/else&lt;/a&gt;<br>for more details.&lt;br /&gt;\n<br>&lt;br /&gt;\n<br>&lt;b&gt;Final Header&lt;/b&gt;&lt;br /&gt;\n<br>&lt;br /&gt;\n<br>1. Point one&lt;br /&gt;\n<br>2. Point two&lt;br /&gt;\n<br>3. Piste kolme</pre>
+
+
+
+
+
+
+      </td>
+
+
+
+
+
+
+      
+
+    </tr>
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+    
+
+
+    
+
+  
+  
+  
+  
+  
+  </tbody>
+</table>
+
+
+
+
+
+
+
+<br>
+
+
+
+
+
+
+ 
+
+<table border="1">
+
+
+
+
+
+
+  <colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
+
+  <thead>
+  <tr>
+
+
+
+
+
+
+    <th>Keyword</th>
+
+
+
+
+
+
+    <th>Action</th>
+
+
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+
+
+  </tr>
+
+
+
+
+
+
+  </thead>
+
+  <tbody>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+      <td align="undefined" valign="undefined">My Setup</td>
+
+
+
+
+      <td>Run Tests</td>
+
+
+
+
+      <td>--log html_formatting-log.html<br>
+
+
+
+
+--report html_formatting-report.html<br>
+
+
+
+
+--summary html_formatting-summary.html<br>
+
+
+
+
+--metadata link2:http://xxx</td>
+
+
+
+
+      <td>output${/}html_formatting.html</td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td>${LOG} =</td>
+
+
+
+
+      <td>Get File</td>
+
+
+
+
+      <td>${OUTDIR}${/}html_formatting-log.html</td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td>${REPORT} =</td>
+
+
+
+
+      <td>Get File</td>
+
+
+
+
+      <td>${OUTDIR}${/}html_formatting-report.html</td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td>${SUMMARY} =</td>
+
+
+
+
+      <td>Get File</td>
+
+
+
+
+      <td>${OUTDIR}${/}html_formatting-summary.html</td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined">Set Suite Variable</td>
+
+
+
+
+      <td align="undefined" valign="undefined">\${LOG}</td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined">Set Suite Variable</td>
+
+
+
+
+      <td align="undefined" valign="undefined">\${REPORT}</td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined">Set Suite Variable</td>
+
+
+
+
+      <td align="undefined" valign="undefined">\${SUMMARY}</td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td>Check Test Documentation</td>
+
+
+
+
+
+
+      <td>[Arguments]</td>
+
+
+
+
+
+
+      <td>${test}</td>
+
+
+
+
+
+
+      <td>${doc}<br>
+
+
+
+
+
+
+ </td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td>Check Test Case</td>
+
+
+
+
+
+
+      <td>${test}</td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+    
+
+
+    <tr>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td>Contains</td>
+
+
+
+
+
+
+      <td>${LOG}</td>
+
+
+
+
+
+
+      <td>
+      
+      
+      
+      
+      
+      <pre id="line383">&lt;<span class="start-tag">tr</span>&gt;&lt;<span class="start-tag">th</span>&gt;Full<span class="entity"> </span>Name:&lt;/<span class="end-tag">th</span>&gt;&lt;<span class="start-tag">td</span>&gt;Html Formatting.${test}&lt;/<span class="end-tag">td</span>&gt;&lt;/<span class="end-tag">tr</span>&gt;\n<br>&lt;<span class="start-tag">tr</span>&gt;&lt;<span class="start-tag">th</span>&gt;Documentation:&lt;/<span class="end-tag">th</span>&gt;&lt;<span class="start-tag">td</span>&gt;${doc}&lt;/<span class="end-tag">td</span>&gt;&lt;/<span class="end-tag">tr</span>&gt;<br></pre>
+
+
+
+
+
+
+      </td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td>Contains</td>
+
+
+
+
+
+
+      <td>${REPORT}</td>
+
+
+
+
+
+
+      <td>
+      
+      
+      
+      
+      
+      <pre id="line344">h.${test}&lt;/<span class="end-tag">a</span>&gt;&lt;/<span class="end-tag">td</span>&gt;\n<br>&lt;<span class="start-tag">td</span> <span class="attribute-name">class</span>=<span class="attribute-value">"col_doc"</span>&gt;${doc}&lt;/<span class="end-tag">td</span>&gt;<br></pre>
+
+
+
+
+
+
+      </td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+    
+
+
+    
+
+
+    
+
+
+    
+
+
+    
+
+
+    
+
+
+    <tr>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+  
+  
+  
+  
+  
+  </tbody>
+</table>
+
+
+
+
+
+
+</body></html>

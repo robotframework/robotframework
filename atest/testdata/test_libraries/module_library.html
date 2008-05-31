@@ -1,0 +1,893 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+
+
+
+  
+  
+  <style type="text/css">
+html {
+  font-family: Arial,Helvetica,sans-serif;
+  background-color: white;
+  color: black;
+}
+p {
+  max-width: 60em;
+}
+table {
+  border-collapse: collapse;
+  empty-cells: show;
+  margin: 1em 0em;
+  border: 0.1em solid black;
+}
+th, td {
+  border-style: solid;
+  border-width: 0.05em 0.1em;
+  border-color: black;
+  padding: 0.1em 0.2em;
+  height: 1.5em;
+}
+th {
+  background-color: rgb(192, 192, 192);
+  color: black;
+  border-width: 0.1em;
+  font-weight: bold;
+  text-align: center;
+  text-transform: capitalize;
+  letter-spacing: 0.1em;
+}
+/* Widths of named columns */
+col.name {
+  width: 10em;
+}
+.action, .value, .arg {
+  width: 15em;
+}
+/* Properties for the name column 
+- td:first-child should work in CSS 2.1 avare browsers (tested in Firefox)
+- col.name is against specs but works in IE
+*/
+td:first-child, col.name {
+  background-color: rgb(240, 240, 240);
+  text-transform: capitalize;
+  letter-spacing: 0.1em;
+}
+/* required for IE */
+th {
+  font-style: normal;
+}
+  </style>
+  
+  
+  <title>Robot Test Cases</title>
+</head>
+
+
+<body>
+
+
+
+<h1>Robot Test Cases</h1>
+
+
+
+
+<table border="1">
+
+
+
+  <colgroup span="99"><col class="name"><col class="value" span="4"></colgroup>
+  <thead>
+  <tr>
+
+
+
+    <th>Setting</th>
+
+
+
+    <th>Value</th>
+
+
+
+    <th>Value</th>
+
+
+
+    <th>value</th>
+
+
+
+    <th>Value</th>
+
+
+
+  </tr>
+
+
+
+  </thead>
+  <tbody>
+
+
+
+    <tr>
+
+
+
+      <td>Library</td>
+
+
+
+      <td>module_library</td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+    </tr>
+    <tr>
+      <td>Library</td>
+      <td>pythonmodule.library</td>
+      <td></td>
+      <td></td>
+      <td></td>
+    </tr>
+
+
+
+    
+    
+    
+
+
+  
+  
+  </tbody>
+</table>
+
+
+
+
+<table border="1">
+
+
+
+  <colgroup span="99"><col class="name"><col class="value" span="4"></colgroup>
+  <thead>
+  <tr>
+
+
+
+    <th>Variable</th>
+
+
+
+    <th>Value</th>
+
+
+
+    <th>Value</th>
+
+
+
+    <th>Value</th>
+
+
+
+    <th>Value</th>
+
+
+
+  </tr>
+
+
+
+  </thead>
+  <tbody>
+
+
+
+    <tr>
+
+
+
+      <td>@{INTS}</td>
+
+
+
+      <td>1</td>
+
+
+
+      <td>2</td>
+
+
+
+      <td>3</td>
+
+
+
+      <td>4</td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td>...</td>
+
+
+
+      <td>5</td>
+      <td>6</td>
+      <td>7</td>
+
+
+
+      
+
+
+      
+
+
+      <td></td>
+
+
+
+    </tr>
+    <tr>
+      <td>...</td>
+      <td>8</td>
+      <td>9 </td>
+      <td>10</td>
+      <td></td>
+    </tr>
+
+
+
+  
+  
+  </tbody>
+</table>
+
+
+
+
+<table border="1">
+
+
+
+  <colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
+  <thead>
+  <tr>
+
+
+
+    <th>Test Case</th>
+
+
+
+    <th>Action</th>
+
+
+
+    <th>Argument</th>
+
+
+
+    <th>Argument</th>
+
+
+
+    <th>Argument</th>
+
+
+
+
+
+  </tr>
+
+
+
+  </thead>
+  <tbody>
+
+
+
+    <tr>
+
+
+
+      <td>Passing</td>
+
+
+      <td>Passing</td>
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+    <tr>
+
+      <td align="undefined" valign="undefined">Failing </td>
+
+      <td align="undefined" valign="undefined">[ Document ] </td>
+
+      <td align="undefined" valign="undefined">FAIL</td>
+
+      <td align="undefined" valign="undefined">This is a failing keyword from&nbsp;</td>
+
+      <td align="undefined" valign="undefined">module library</td>
+
+    </tr>
+
+    <tr>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined">Failing</td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+    </tr>
+
+    <tr>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+    </tr>
+    <tr>
+
+      <td align="undefined" valign="undefined">Logging</td>
+
+      <td align="undefined" valign="undefined">Logging</td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+    </tr>
+
+    <tr>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+    </tr>
+
+    <tr>
+
+      <td align="undefined" valign="undefined">Returning</td>
+
+      <td align="undefined" valign="undefined">${ret} =</td>
+
+      <td align="undefined" valign="undefined">Returning</td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+    </tr>
+
+    <tr>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined">Equals</td>
+
+      <td align="undefined" valign="undefined">${ret}</td>
+
+      <td align="undefined" valign="undefined">Hello from module library</td>
+
+      <td align="undefined" valign="undefined"></td>
+
+    </tr>
+
+    <tr>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+    </tr>
+
+    <tr>
+
+      <td align="undefined" valign="undefined">One Argument</td>
+
+      <td align="undefined" valign="undefined">[ Document ] </td>
+      <td align="undefined" valign="undefined">FAIL</td>
+
+      
+      <td align="undefined" valign="undefined">Expected 'Hello', got 'World'</td>
+
+      <td align="undefined" valign="undefined"></td>
+
+    </tr>
+    <tr>
+      <td></td>
+      <td>Argument</td>
+      <td>Hello</td>
+      <td></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td></td>
+      <td>Argument</td>
+      <td>World</td>
+      <td></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>Many arguments</td>
+      <td align="undefined" valign="undefined">[ Document ] </td>
+      <td align="undefined" valign="undefined">FAIL</td>
+      <td>All arguments should have been equal, got: Hello, Hi and World</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td></td>
+      <td>Many Arguments</td>
+      <td>Hello</td>
+      <td>Hello</td>
+      <td>Hello</td>
+    </tr>
+    <tr>
+      <td></td>
+      <td>Many Arguments</td>
+      <td>Hello</td>
+      <td>Hi</td>
+      <td>World</td>
+    </tr>
+    <tr>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>Default Arguments</td>
+      <td align="undefined" valign="undefined">[ Document ] </td>
+      <td align="undefined" valign="undefined">FAIL</td>
+      <td>All arguments should have been equal, got: Hello, Hi and Hello</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td></td>
+      <td>Default Arguments</td>
+      <td>Hello</td>
+      <td>Hello</td>
+      <td>Hello</td>
+    </tr>
+    <tr>
+      <td></td>
+      <td>Default Arguments</td>
+      <td>Hello</td>
+      <td>Hello</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td></td>
+      <td>Default Arguments</td>
+      <td>Hello</td>
+      <td></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>Variable Arguments</td>
+      <td>${sum} =</td>
+      <td>Variable Arguments</td>
+      <td>2</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <td></td>
+      <td>Equal</td>
+      <td>${sum}</td>
+      <td>${5}</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td></td>
+      <td>${sum} =</td>
+      <td>Variable Arguments</td>
+      <td>@{INTS}</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td></td>
+      <td>Equal</td>
+      <td>${sum}</td>
+      <td>${55}</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>Only methods and functions are Keywords</td>
+      <td align="undefined" valign="undefined">[ Document ] </td>
+      <td align="undefined" valign="undefined">FAIL</td>
+      <td>No keyword with name 'Attribute' found.</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td></td>
+      <td>Attribute</td>
+      <td></td>
+      <td></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>Class Methods in Module Library are Not Keywords</td>
+      <td align="undefined" valign="undefined">[ Document ] </td>
+      <td align="undefined" valign="undefined">FAIL</td>
+      <td>No keyword with name 'Not Keyword' found.</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td></td>
+      <td>Not Keyword</td>
+      <td></td>
+      <td></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>Class method assigned to Module variable&nbsp;</td>
+      <td align="undefined" valign="undefined">[ Document ] </td>
+      <td align="undefined" valign="undefined">FAIL</td>
+      <td>Arguments should have been unequal, both were 'Hi'</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td></td>
+      <td>Two Arguments From Class</td>
+      <td>Hello</td>
+      <td>World</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td></td>
+      <td>Two Arguments From Class</td>
+      <td>Hi</td>
+      <td>Hi</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>Lambda Keyword</td>
+      <td align="undefined" valign="undefined">[ Document ] </td>
+      <td align="undefined" valign="undefined">FAIL</td>
+      <td>Keyword 'module_library.Lambda&nbsp;Keyword' </td>
+      <td>expected 1 argument, got 2.</td>
+    </tr>
+    <tr>
+      <td><br>
+      </td>
+      <td>${ret} = </td>
+      <td>Lambda Keyword</td>
+      <td>2</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td></td>
+      <td>Equal</td>
+      <td>${ret}</td>
+      <td>${3}</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td></td>
+      <td>Lambda Keyword</td>
+      <td>2</td>
+      <td>3</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>Lambda Keyword With two Args</td>
+      <td align="undefined" valign="undefined">[ Document ] </td>
+      <td align="undefined" valign="undefined">FAIL</td>
+      <td>ZeroDivisionError: integer division or modulo by zero</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td></td>
+      <td>${ret} = </td>
+      <td>Lambda Keyword&nbsp;With Two Args</td>
+      <td>4</td>
+      <td>2</td>
+    </tr>
+    <tr>
+      <td></td>
+      <td>Equal</td>
+      <td>${ret}</td>
+      <td>${2}</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td></td>
+      <td>Lambda Keyword&nbsp;With Two Args</td>
+      <td>4</td>
+      <td>0</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>Importing submodule As Library</td>
+      <td>${greeting} =</td>
+      <td>Keyword from submodule</td>
+      <td></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td></td>
+      <td>Equals</td>
+      <td>${greeting}</td>
+      <td>Hello, World!</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td></td>
+      <td>${greeting} =</td>
+      <td>Keyword from submodule</td>
+      <td>you</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td></td>
+      <td>Equals</td>
+      <td>${greeting}</td>
+      <td>Hello, you!</td>
+      <td></td>
+    </tr>
+
+
+
+  
+  
+  </tbody>
+</table>
+
+
+
+
+<table border="1">
+
+
+
+  <colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
+  <thead>
+  <tr>
+
+
+
+    <th>Keyword</th>
+
+
+
+    <th>Action</th>
+
+
+
+    <th>Argument</th>
+
+
+
+    <th>Argument</th>
+
+
+
+    <th>Argument</th>
+
+
+
+  </tr>
+
+
+
+  </thead>
+  <tbody>
+
+
+
+    <tr>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+    </tr>
+
+
+
+  
+  
+  </tbody>
+</table>
+
+
+
+
+</body>
+</html>

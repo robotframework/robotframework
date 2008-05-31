@@ -1,0 +1,1521 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+
+
+
+  
+  
+  <meta name="generator" content="HTML Tidy for Cygwin (vers 1st September 2004), see www.w3.org">
+
+
+
+  
+  
+  <style type="text/css">
+html { font-family: Arial,Helvetica,sans-serif;
+background-color: white;
+color: black;
+}
+p { max-width: 60em;
+}
+table { border-collapse: collapse;
+empty-cells: show;
+margin: 1em 0em;
+border: 0.1em solid black;
+}
+th, td {
+border-style: solid;
+border-width: 0.05em 0.1em;
+border-color: black;
+padding: 0.1em 0.2em;
+height: 1.5em;
+}
+th {
+background-color: rgb(192, 192, 192);
+color: black;
+border-width: 0.1em;
+font-weight: bold;
+text-align: center;
+text-transform: capitalize;
+letter-spacing: 0.1em;
+}
+/* Widths of named columns */
+col.name {
+width: 10em;
+}
+.action , .value, .arg {
+width: 15em;
+}
+/* Properties for the name column - td:first-child should work in CSS 2.1 avare browsers (tested in Firefox)
+- col.name is against specs but works in IE
+*/
+td:first-child, col.name {
+background-color: rgb(240, 240, 240);
+text-transform: capitalize;
+letter-spacing: 0.1em;
+}
+th { font-style: normal; } /* required for IE */
+  </style>
+
+  
+  
+  
+  
+  <title>Robot Test Cases</title>
+  <link type="text/css" href="resources/css/testdata.css" rel="stylesheet">
+</head>
+
+
+<body>
+
+
+&nbsp;&nbsp; &nbsp;
+<h1>Robot Test Cases</h1>
+
+
+
+<table border="1">
+
+
+
+  <colgroup span="99"><col class="name"><col class="value" span="4"></colgroup>
+  <thead>
+  <tr>
+
+
+
+    <th>Setting</th>
+
+
+
+    <th>Value</th>
+
+
+
+    <th>Value</th>
+
+
+
+    <th>value</th>
+
+
+
+    <th>Value</th>
+
+
+
+  </tr>
+
+
+
+  </thead>
+  <tbody>
+
+
+
+    <tr>
+
+
+
+      <td>Document</td>
+
+
+
+      <td>Tests for setting test case status correctly when test passes
+and when a failure or error occurs.&nbsp;</td>
+
+
+
+      <td>Also includes test cases for running test setup and teardown in
+different situations.</td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td>Resource</td>
+
+
+
+      <td>../../resources/resource.html</td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td>Force Tags</td>
+
+
+
+      <td>regression</td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td>Default Tags</td>
+
+
+
+      <td>jybot</td>
+
+
+
+      <td>pybot</td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td>Suite Setup</td>
+
+
+
+      <td>Run Tests</td>
+
+
+
+      <td><br>
+      </td>
+
+
+
+      <td>core${/}test_case_status.html</td>
+
+
+
+      <td><br>
+
+
+      </td>
+
+
+
+    </tr>
+
+
+
+  
+  
+  </tbody>
+</table>
+
+
+
+<table border="1">
+
+
+
+  <colgroup span="99"><col class="name"><col class="value" span="4"></colgroup>
+  <thead>
+  <tr>
+
+
+
+    <th>Variable</th>
+
+
+
+    <th>Value</th>
+
+
+
+    <th>Value</th>
+
+
+
+    <th>Value</th>
+
+
+
+    <th>Value</th>
+
+
+
+  </tr>
+
+
+
+  </thead>
+  <tbody>
+
+
+
+    <tr>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+    </tr>
+
+
+
+  
+  
+  </tbody>
+</table>
+
+
+
+<table border="1">
+
+
+
+  <colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
+  <thead>
+  <tr>
+
+
+
+    <th>Test Case</th>
+
+
+
+    <th>Action</th>
+
+
+
+    <th>Argument</th>
+
+
+
+    <th>Argument</th>
+
+
+
+    <th>Argument</th>
+
+
+
+    <th>Arguments</th>
+
+
+
+  </tr>
+
+
+
+  </thead>
+  <tbody>
+
+
+
+    <tr>
+
+
+
+      <td>Test Passes</td>
+
+
+
+      <td>Check Testcase</td>
+
+
+
+      <td>Test Pass</td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td>Test Fails</td>
+
+
+
+      <td>Check Testcase</td>
+
+
+
+      <td>Test Fail</td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td>Test Errors</td>
+
+
+
+      <td>Check Testcase</td>
+
+
+
+      <td>Test Error</td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td></td>
+
+
+
+      <td>Check Testcase</td>
+
+
+
+      <td>Test Error Non Existing KW</td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td>Test Setup Passes</td>
+
+
+
+      <td>Check Testcase</td>
+
+
+
+      <td>Tests Setup Pass</td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td>Test Setup Fails</td>
+
+
+
+      <td>[ Document ]</td>
+
+
+
+      <td>Checks also that test is not&nbsp;</td>
+
+
+
+      <td>run if setup fails</td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td></td>
+
+
+
+      <td>Check Testcase</td>
+
+
+
+      <td>Tests Setup Fail</td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td>Test Setup Errors</td>
+
+
+
+      <td>Check Testcase</td>
+
+
+
+      <td>Tests Setup Error</td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td><br>
+
+
+      </td>
+
+
+
+      <td>Check Testcase</td>
+
+
+
+      <td>Tests Setup Error&nbsp;Non Existing KW</td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td>Test Teardown Passes</td>
+
+
+
+      <td>Check Testcase</td>
+
+
+
+      <td>Tests Teardown Pass</td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td>Test&nbsp;Teardown Fails</td>
+
+
+
+      <td>Check Testcase</td>
+
+
+
+      <td>Tests&nbsp;Teardown Fail</td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td>Test&nbsp;Teardown Errors</td>
+
+
+
+      <td>Check Testcase</td>
+
+
+
+      <td>Tests&nbsp;Teardown Error</td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td><br>
+
+
+      </td>
+
+
+
+      <td>Check Testcase</td>
+
+
+
+      <td>Tests&nbsp;Teardown Error&nbsp;Non Existing KW</td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td>Test And Teardown Fails</td>
+
+
+
+      <td>Check Testcase</td>
+
+
+
+      <td>Test And Teardown Fails</td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td>Test Setup And Teardown Pass</td>
+
+
+
+      <td>Check Testcase</td>
+
+
+
+      <td>Test Setup And Teardown Pass</td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td>Test Teardown is Run When Setup Fails</td>
+
+
+
+      <td>${test}</td>
+
+
+
+      <td>Check Testcase</td>
+
+
+
+      <td>Test Teardown is Run When Setup Fails</td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td></td>
+
+
+
+      <td>${td} =</td>
+
+
+
+      <td>Set</td>
+
+
+
+      <td>${test.teardown}</td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td></td>
+
+
+
+      <td>Fail If Equal</td>
+
+
+
+      <td>${td}</td>
+
+
+
+      <td>${None}</td>
+
+
+
+      <td>Teardown not run</td>
+
+
+
+      <td>No values</td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td></td>
+
+
+
+      <td>Ints Equal</td>
+
+
+
+      <td>${td.message_count}</td>
+
+
+
+      <td>1</td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td></td>
+
+
+
+      <td>Check Log Message</td>
+
+
+
+      <td>${td.messages[0]}</td>
+
+
+
+      <td>Hello from teardown!</td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td></td>
+
+
+
+      <td>Ints Equal</td>
+
+
+
+      <td>${td.keyword_count}</td>
+
+
+
+      <td>0</td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td>Test Setup And Teardown Fails</td>
+
+
+
+      <td>Check Testcase</td>
+
+
+
+      <td>Test Setup And Teardown Fails</td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+    </tr>
+
+
+
+  
+  
+  </tbody>
+</table>
+
+
+
+</body>
+</html>

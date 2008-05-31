@@ -1,0 +1,14 @@
+*Setting
+Document	Test suite in TSV file
+
+*Variable
+${msg}	*ERROR*
+
+*Test Case	
+TSV Passing	Noop
+TSV Failing	[Document]	FAIL	**ERROR**
+	Failing	*${msg}*
+
+*Keyword
+Failing	[Arguments]	${msg}
+	Fail	${msg}

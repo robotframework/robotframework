@@ -1,0 +1,11 @@
+name|suite.name| Testdata | Empty Settings | Everything
+setup | suite.suite_setup | None | [] | ['My Suite Setup']
+teardown | suite.suite_teardown | None | [] | ['My Suite Teardown']
+#source| suite.source | os.path.abspath('testdata').lower() | 'testdata'+os.path.sep+'empty_settings.html' | 'testdata'+os.path.sep+'everything.html'
+subsuites| [ s.name for s in suite.suites ] | ['Empty Settings', 'Everything', 'Minimum'] | [] | []
+tests |[ t.name for t in suite.tests ] | [] | [ 'Empty Metadata' ] | [ 'Passing Test', 'Failing Test' ]
+doc|suite.doc | None | '' | Test cases for public API
+import names | [ i.name for i in suite.imports ] | [] | [] | ['Library', 'Resource', 'Variables']
+  
+
+               

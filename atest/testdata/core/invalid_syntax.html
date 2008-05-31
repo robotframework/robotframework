@@ -1,0 +1,7990 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <style type="text/css">
+html { font-family: Arial,Helvetica,sans-serif;
+background-color: white;
+color: black;
+}
+p { max-width: 60em;
+}
+table { border-collapse: collapse;
+empty-cells: show;
+margin: 1em 0em;
+border: 0.1em solid black;
+}
+th, td {
+border-style: solid;
+border-width: 0.05em 0.1em;
+border-color: black;
+padding: 0.1em 0.2em;
+height: 1.5em;
+}
+th {
+background-color: rgb(192, 192, 192);
+color: black;
+border-width: 0.1em;
+font-weight: bold;
+text-align: center;
+text-transform: capitalize;
+letter-spacing: 0.1em;
+}
+/* Widths of named columns */
+col.name {
+width: 10em;
+}
+.action , .value, .arg {
+width: 15em;
+}
+/* Properties for the name column - td:first-child should work in CSS 2.1 avare browsers (tested in Firefox)
+- col.name is against specs but works in IE
+*/
+td:first-child, col.name {
+background-color: rgb(240, 240, 240);
+text-transform: capitalize;
+letter-spacing: 0.1em;
+}
+th { font-style: normal; } /* required for IE */
+  
+  </style>
+
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <title>Robot Test Cases</title><link type="text/css" href="resources/css/testdata.css" rel="stylesheet"></head>
+<body>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h1>Robot Test Cases</h1>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table border="1">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <colgroup span="99"><col class="name"><col class="value" span="4"></colgroup>
+
+  <thead>
+  <tr>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <th>Setting</th>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <th>Value</th>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <th>Value</th>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <th>value</th>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <th>Value</th>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  </tr>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  </thead>
+
+  <tbody>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td>Resource</td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td>resources.html</td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td># Contains Imported UK</td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Resource </td>
+
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">non-existing-resource.html</td>
+
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+
+    <tr>
+      <td align="undefined" valign="undefined">Resource</td>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined"></td>
+    </tr>
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Variables</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">non-existing-variables.py</td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Variables</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">variables.py</td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td># ROW 5</td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+      <td align="undefined" valign="undefined">Variables</td>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined"></td>
+    </tr>
+    <tr>
+
+      <td align="undefined" valign="undefined">Library</td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+    </tr>
+
+    <tr>
+
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Library</td>
+
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">NonExistingLibrary</td>
+
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Library</td>
+
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">ExampleLibrary</td>
+
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Invalid</td>
+
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">arguments</td>
+
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Library</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">SameNamesAsInBuiltIn</td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td># ROW 10</td>
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Library</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">OperatingSystem</td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Document</td>
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Setting Name and Document</td>
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">in multiple columns like this is</td>
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">ok nowadays and not a syntax</td>
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">error</td>
+
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td>Invalid Setting</td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td>Yes, this truly</td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td>is an invalid</td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td>setting</td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Default Tags</td>
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">example</td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<br>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table border="1">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <colgroup span="99"><col class="name"><col class="value" span="4"></colgroup>
+
+  <thead>
+  <tr>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <th>Variable</th>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <th>Value</th>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <th>Value</th>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <th>Value</th>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <th>Value</th>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  </tr>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  </thead>
+
+  <tbody>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td>Invalid Variable Name</td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td>Someone forgot&nbsp;$ and {}</td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td>${valid}</td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td>this workz</td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<br>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table border="1">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
+
+  <thead>
+  <tr>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <th>Test Case</th>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <th>Action</th>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  </tr>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  </thead>
+
+  <tbody>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Check Valid Library Import</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">[ Document ]</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Importing valid lib should be ok even when other imports are invalid. Used kw is from OSLib.</td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Fail Unless&nbsp;Dir Exists</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${CURDIR}</td>
+
+
+
+
+
+
+      <td><br>
+
+
+
+
+
+
+      </td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Check Valid Resource Import</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">[ Document ]</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Importing valid resource
+should be ok even when other resource imports are invalid. Used var and
+kw are from resources.html.</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Equals</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${resource_file_var}</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Variable from a resource file</td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Imported UK</td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Check Valid Variable File Import</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">[ Document ]</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Importing
+valid variable file should be ok even when other variable file imports are invalid. Used
+var is from variables.py.</td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Equals</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${variable_file_var}</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Variable from a variable file</td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Check Valid Variable In Variable Table</td>
+
+
+
+
+
+
+      <td>[ Document ]</td>
+
+
+
+
+
+
+      <td>Invalid variables should not</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">corrupt valid variables</td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Equals</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">I believe ${valid}</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">I believe this workz</td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Non-Existing Keyword</td>
+
+
+
+
+
+
+
+      <td>[ Document ]</td>
+
+
+
+
+
+
+
+      <td>Note that doc and tags should be set ok.</td>
+
+
+
+
+
+
+
+      <td>FAIL</td>
+
+
+
+
+
+
+
+      <td>No keyword with name 'Non-Existing Keyword' found.</td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">[ Tags ]</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">example</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">tags</td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Non-Existing Keyword</td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Non-Existing Keyword In UK</td>
+
+
+
+
+
+
+
+      <td>[ Document ]</td>
+
+
+
+
+
+
+
+      <td>Note that doc and tags should be set ok.</td>
+
+
+
+
+
+
+
+      <td>FAIL</td>
+
+
+
+
+
+
+
+      <td>No keyword with name 'I Do Not Exist' found.</td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">[ Tags ]</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">more</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">tags</td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Non-Existing Keyword In UK</td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Invalid Keyword Arguments</td>
+
+
+
+
+
+
+
+      <td>[ Document ]</td>
+
+
+
+
+
+
+
+      <td>Note that doc and tags should be set ok.</td>
+
+
+
+
+
+
+
+      <td>FAIL</td>
+
+
+
+
+
+
+
+      <td>Keyword 'BuiltIn.Log' expected 1 to 2 arguments, got 4.<br>
+
+
+
+
+
+
+
+      </td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">[ Tags ]</td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Log</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Too </td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">many</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">arguments</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">here</td>
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Invalid Keyword Arguments In UK</td>
+
+
+
+
+
+
+
+      <td>[ Document ]</td>
+
+
+
+
+
+
+
+      <td>Note that doc and tags should be set ok.</td>
+
+
+
+
+
+
+
+      <td>FAIL</td>
+
+
+
+
+
+
+
+      <td>Keyword 'BuiltIn.Log' expected 1 to 2 arguments, got 3.<br>
+
+
+
+
+
+
+
+      </td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">[ Tags ]</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">1</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">2</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">3</td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Invalid Keyword Arguments In UK</td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td>User Keyword Defined Multiple Times<br>
+
+
+
+
+
+
+
+      </td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td>[ Document ]</td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td>Note that doc and tags should be set ok.</td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td>FAIL</td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td>Keyword 'Same KW Name Twice' defined multiple times</td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">[ Tags ]</td>
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">mytag</td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Same KW Name Twice</td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+      
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+    
+
+
+
+
+    
+
+
+
+
+    
+
+
+
+
+    
+
+
+
+
+    
+
+
+
+
+    
+
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Test Case With Invalid Metadata</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">[ Document ]</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Invalid metadata is ignored with an error and this test will</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">PASS</td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">[ Invalid In Test ]</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Hello</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">world</td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Set Suite Variable</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">$test_with_inv_meta</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">This is executed</td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Check Test case With Invalid Metadata</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Equals</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${test_with_inv_meta}</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">This is executed</td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">User Keyword With Invalid Metadata</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">[ Document ]</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Invalid meta in uk is ok and this test will</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">PASS</td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">UK With Invalid Metadata</td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Set Suite Variable</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">$uk_with_inv_meta_2</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">This is executed too</td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Check User Keyword With Invalid Meta</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Equals</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${uk_with_inv_meta}</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">This keyword is executed</td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Equals</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${uk_with_inv_meta_2}</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">This&nbsp;is executed too</td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Valid Test</td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td>[ Document ]</td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td>This test should be executed and</td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">PASS</td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+      
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td>Log</td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td>Hello world with non-fatal errors!</td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
+    
+
+
+
+
+
+
+    
+
+    <tr>
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Non-Existing Variable</td>
+
+
+
+
+
+
+
+
+      <td>[ Document ]</td>
+
+
+
+
+
+
+
+
+      <td>FAIL</td>
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Non-existing variable '\${non-existing}'</td>
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+      
+      <td></td>
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Log</td>
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${non-existing}</td>
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+      
+      <td></td>
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Same Test Name Twice</td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td>[ Document ]</td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td>This test should be executed, raise a warning but pass.&nbsp;</td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Running this test alone runs both this test and the other one with the same name.</td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+      
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Set Suite Variable</td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">$same_test_twice_1<br>
+
+
+
+
+
+
+
+      </td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Same Test Name Twice - Part 1</td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+      
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+      
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Same Test Name Twice</td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td>[ Document ]</td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td>See doc of above "sister" test</td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+      
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Set Suite Variable</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">$same_test_twice_2<br>
+
+
+
+
+
+
+
+      </td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Same Test Name Twice - Part 2</td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+      
+
+
+
+
+
+      
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+      
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Check Same Test Name Twice</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Equals</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${same_test_twice_1}<br>
+
+
+
+
+
+
+
+      </td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Same Test Name Twice - Part 1</td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Equals</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${same_test_twice_2}<br>
+
+
+
+
+
+
+
+      </td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Same Test Name Twice - Part 2</td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+
+    
+
+
+
+
+
+    
+
+
+
+
+
+    
+
+
+
+
+
+    
+
+
+
+
+
+    
+
+
+
+
+
+    
+
+
+
+
+
+    
+
+
+
+
+
+    
+
+
+
+
+
+    
+
+
+
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+
+
+
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<br>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table border="1">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
+
+  <thead>
+  <tr>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <th>Keyword</th>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <th>Action</th>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  </tr>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  </thead>
+
+  <tbody>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td>Same KW Name Twice</td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td>[ Document ]</td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td>This kw is defined multiple times which should cause a non fatal error</td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Same KW Name Twice</td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">NOOP</td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Non-Existing keyword in UK</td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">I Do Not Exist</td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td># ROW 5</td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Invalid keyword Arguments in uK</td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Log</td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Too</td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">many</td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">arguments</td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+
+    
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">UK With Invalid Metadata</td>
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">[ Invalid In UK ]</td>
+
+
+
+
+
+
+
+
+
+      <td><br>
+
+
+
+
+
+
+
+      </td>
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Set Suite Variable</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">\${uk_with_inv_meta}</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">This keyword is executed</td>
+
+
+
+
+
+
+
+      <td># ROW 10</td>
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">UK 4 Times</td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">[ Document ]</td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Nobody uses these keywords</td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">UK 4 Times</td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">[ Document ]</td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">but there are still parsing time</td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">UK 4 Times</td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">[ Document ]</td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">errors in stderr and syslog.</td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">UK 4 Times</td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td># ROW 15</td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</body></html>

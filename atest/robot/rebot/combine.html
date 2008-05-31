@@ -1,0 +1,5185 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+
+
+
+
+
+  
+  
+  
+  
+  <style type="text/css">
+html {
+  font-family: Arial,Helvetica,sans-serif;
+  background-color: white;
+  color: black;
+}
+p {
+  max-width: 60em;
+}
+table {
+  border-collapse: collapse;
+  empty-cells: show;
+  margin: 1em 0em;
+  border: 0.1em solid black;
+}
+th, td {
+  border-style: solid;
+  border-width: 0.05em 0.1em;
+  border-color: black;
+  padding: 0.1em 0.2em;
+  height: 1.5em;
+}
+th {
+  background-color: rgb(192, 192, 192);
+  color: black;
+  border-width: 0.1em;
+  font-weight: bold;
+  text-align: center;
+  text-transform: capitalize;
+  letter-spacing: 0.1em;
+}
+/* Widths of named columns */
+col.name {
+  width: 10em;
+}
+.action, .value, .arg {
+  width: 15em;
+}
+/* Properties for the name column 
+- td:first-child should work in CSS 2.1 avare browsers (tested in Firefox)
+- col.name is against specs but works in IE
+*/
+td:first-child, col.name {
+  background-color: rgb(240, 240, 240);
+  text-transform: capitalize;
+  letter-spacing: 0.1em;
+}
+/* required for IE */
+th {
+  font-style: normal;
+}
+  </style>
+  
+  
+  
+  
+  <title>Robot Test Cases</title></head>
+
+<body>
+
+
+
+
+
+<h1>Robot Test Cases</h1>
+
+
+
+
+
+
+<table border="1">
+
+
+
+
+
+  <colgroup span="99"><col class="name"><col class="value" span="4"></colgroup>
+  <thead>
+  <tr>
+
+
+
+
+
+    <th>Setting</th>
+
+
+
+
+
+    <th>Value</th>
+
+
+
+
+
+    <th>Value</th>
+
+
+
+
+
+    <th>value</th>
+
+
+
+
+
+    <th>Value</th>
+
+
+
+
+
+  </tr>
+
+
+
+
+
+  </thead>
+  <tbody>
+
+
+
+
+
+    
+
+
+
+    <tr>
+
+
+
+
+
+      <td>Default Tags</td>
+
+
+
+
+      <td>regression</td>
+
+
+
+
+      <td>pybot</td>
+
+
+
+
+      <td>jybot</td>
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td align="undefined" valign="undefined">Suite Setup</td>
+
+
+
+
+      <td align="undefined" valign="undefined">My Setup</td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td>Resource</td>
+
+
+
+
+      <td>../../resources/resource.html</td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td>Resource</td>
+
+
+
+
+      <td>rebot_resource.html</td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+    </tr>
+
+
+
+
+
+  
+  
+  
+  
+  </tbody>
+</table>
+
+
+
+
+
+
+<table border="1">
+
+
+
+
+
+  <colgroup span="99"><col class="name"><col class="value" span="4"></colgroup>
+  <thead>
+  <tr>
+
+
+
+
+
+    <th>Variable</th>
+
+
+
+
+
+    <th>Value</th>
+
+
+
+
+
+    <th>Value</th>
+
+
+
+
+
+    <th>Value</th>
+
+
+
+
+
+    <th>Value</th>
+
+
+
+    <th>Value</th>
+
+
+
+    <th>Value</th>
+
+
+
+
+
+  </tr>
+
+
+
+
+
+  </thead>
+  <tbody>
+
+
+
+
+
+    <tr>
+
+
+      <td align="undefined" valign="undefined">${SUITE1}</td>
+
+
+      <td align="undefined" valign="undefined"># Set in My Setup.</td>
+
+
+      <td align="undefined" valign="undefined">Combined from&nbsp;Pass And Fail and&nbsp;Normal without options.</td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td align="undefined" valign="undefined">${SUITE2}</td>
+
+
+      <td align="undefined" valign="undefined"># -- ;; --</td>
+
+
+      <td align="undefined" valign="undefined">As previous but with --name, --doc, etc. options</td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td align="undefined" valign="undefined">${SUITE3}</td>
+
+
+      <td align="undefined" valign="undefined"># -- ;; --</td>
+
+
+      <td align="undefined" valign="undefined">Combined from&nbsp;Pass And Fail, Normal and Times</td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td align="undefined" valign="undefined">${SUITE4}</td>
+
+
+      <td align="undefined" valign="undefined"># -- ;; --</td>
+
+
+      <td align="undefined" valign="undefined">Combined from SUITE2 (recombine) and Times</td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+
+      <td align="undefined" valign="undefined">@{PASS_FAIL_TESTS}</td>
+
+
+
+      <td align="undefined" valign="undefined">Pass</td>
+
+
+
+      <td align="undefined" valign="undefined">Fail</td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td align="undefined" valign="undefined">@{NORMAL_TESTS}</td>
+
+
+
+      <td align="undefined" valign="undefined">First One</td>
+
+
+
+      <td align="undefined" valign="undefined">Second One</td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+
+
+      <td>@{TIMES_TESTS}</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Incl-1</td>
+
+
+
+      <td align="undefined" valign="undefined">Incl-12</td>
+
+
+
+      <td align="undefined" valign="undefined">Incl-123</td>
+
+
+
+
+
+      
+
+      
+
+      <td align="undefined" valign="undefined">Excl-1</td>
+
+
+
+      <td align="undefined" valign="undefined">Excl-12</td>
+
+
+
+      <td align="undefined" valign="undefined">Excl-123</td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+    </tr>
+
+
+
+
+
+  
+  
+  
+  
+  </tbody>
+</table>
+
+
+
+
+
+
+<table border="1">
+
+
+
+
+
+  <colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
+  <thead>
+  <tr>
+
+
+
+
+
+    <th>Test Case</th>
+
+
+
+
+
+    <th>Action</th>
+
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+
+    
+
+  </tr>
+
+
+
+
+
+  </thead>
+  <tbody>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+      <td align="undefined" valign="undefined">Combining Two</td>
+
+
+
+
+      <td align="undefined" valign="undefined">Fail Unless</td>
+
+
+
+
+      <td align="undefined" valign="undefined">${SUITE1.suites} == ['Pass And Fail', 'Normal']</td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined">Fail Unless</td>
+
+
+
+      <td align="undefined" valign="undefined">${SUITE2.suites} == ['Pass And Fail', 'Normal']</td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+    </tr>
+
+
+
+    
+    
+    
+    
+
+    <tr>
+
+
+
+
+      <td align="undefined" valign="undefined"><br>
+
+
+      </td>
+
+
+
+
+      <td align="undefined" valign="undefined">Check Suite Contains Tests</td>
+
+
+
+
+      <td align="undefined" valign="undefined">${SUITE1}</td>
+
+
+
+
+      <td align="undefined" valign="undefined">@{PASS_FAIL_TESTS}</td>
+
+
+
+
+      <td align="undefined" valign="undefined">@{NORMAL_TESTS}</td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined">Check Suite Contains Tests</td>
+
+
+
+
+      <td align="undefined" valign="undefined">${SUITE1.suites[0]}</td>
+
+
+
+
+      <td align="undefined" valign="undefined">@{PASS_FAIL_TESTS}</td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined">Check Suite Contains Tests</td>
+
+
+
+
+      <td align="undefined" valign="undefined">${SUITE1.suites[1]}</td>
+
+
+
+
+      <td align="undefined" valign="undefined">@{NORMAL_TESTS}</td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined">Check Suite Contains Tests</td>
+
+
+
+      <td align="undefined" valign="undefined">${SUITE2}</td>
+
+
+
+      <td align="undefined" valign="undefined">@{PASS_FAIL_TESTS}</td>
+
+
+
+      <td align="undefined" valign="undefined">@{NORMAL_TESTS}</td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined">Check Suite Contains Tests</td>
+
+
+
+      <td align="undefined" valign="undefined">${SUITE2.suites[0]}</td>
+
+
+
+      <td align="undefined" valign="undefined">@{PASS_FAIL_TESTS}</td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined">Check Suite Contains Tests</td>
+
+
+
+      <td align="undefined" valign="undefined">${SUITE2.suites[1]}</td>
+
+
+
+      <td align="undefined" valign="undefined">@{NORMAL_TESTS}</td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td align="undefined" valign="undefined">Combining Three</td>
+
+
+      <td align="undefined" valign="undefined">Fail Unless</td>
+
+
+      <td align="undefined" valign="undefined">${SUITE3.suites} == ['Pass And Fail', 'Normal', 'Times']</td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined">Check Suite Contains Tests</td>
+
+
+
+      <td align="undefined" valign="undefined">${SUITE3}</td>
+
+
+
+      <td align="undefined" valign="undefined">@{PASS_FAIL_TESTS}</td>
+
+
+
+      <td align="undefined" valign="undefined">@{NORMAL_TESTS}</td>
+
+
+
+      <td align="undefined" valign="undefined">@{TIMES_TESTS}</td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined">Check Suite Contains Tests</td>
+
+
+
+      <td align="undefined" valign="undefined">${SUITE3.suites[0]}</td>
+
+
+
+      <td align="undefined" valign="undefined">@{PASS_FAIL_TESTS}</td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined">Check Suite Contains Tests</td>
+
+
+
+      <td align="undefined" valign="undefined">${SUITE3.suites[1]}</td>
+
+
+
+      <td align="undefined" valign="undefined">@{NORMAL_TESTS}</td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined">Check Suite Contains Tests</td>
+
+
+
+      <td align="undefined" valign="undefined">${SUITE3.suites[2]}</td>
+
+
+
+      <td align="undefined" valign="undefined">@{TIMES_TESTS}</td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td align="undefined" valign="undefined">Recombining</td>
+
+
+      <td align="undefined" valign="undefined">Fail Unless</td>
+
+
+      <td align="undefined" valign="undefined">${SUITE4.suites} == ['Times', 'New Name']</td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined">Fail Unless</td>
+
+
+      <td align="undefined" valign="undefined">${SUITE4.suites[1].suites} == ['Pass And Fail', 'Normal']</td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined">Check Suite Contains Tests</td>
+
+
+
+      <td align="undefined" valign="undefined">${SUITE4}</td>
+
+
+
+      <td align="undefined" valign="undefined">@{TIMES_TESTS}</td>
+
+
+
+      <td align="undefined" valign="undefined">@{PASS_FAIL_TESTS}</td>
+
+
+
+      <td align="undefined" valign="undefined">@{NORMAL_TESTS}</td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined">Check Suite Contains Tests</td>
+
+
+
+      <td align="undefined" valign="undefined">${SUITE4.suites[0]}</td>
+
+
+
+      <td align="undefined" valign="undefined">@{TIMES_TESTS}</td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined">Check Suite Contains Tests</td>
+
+
+
+      <td align="undefined" valign="undefined">${SUITE4.suites[1]}</td>
+
+
+
+      <td align="undefined" valign="undefined">@{PASS_FAIL_TESTS}</td>
+
+
+
+      <td align="undefined" valign="undefined">@{NORMAL_TESTS}</td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined">Check Suite Contains Tests</td>
+
+
+
+      <td align="undefined" valign="undefined">${SUITE4.suites[1].suites[0]}</td>
+
+
+
+      <td align="undefined" valign="undefined">@{PASS_FAIL_TESTS}</td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined">Check Suite Contains Tests</td>
+
+
+
+      <td align="undefined" valign="undefined">${SUITE4.suites[1].suites[1]}</td>
+
+
+
+      <td align="undefined" valign="undefined">@{NORMAL_TESTS}</td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td>Default Suite Name When Combining Two</td>
+
+
+
+
+
+      <td>Check Names</td>
+
+
+
+
+
+      <td>${SUITE1}</td>
+
+
+
+
+
+      <td>Pass And Fail &amp; Normal</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td>Check Names</td>
+
+
+
+
+      <td>${SUITE1.suites[0]}</td>
+
+
+
+
+      <td>Pass And Fail</td>
+
+
+
+
+      <td align="undefined" valign="undefined">Pass And Fail &amp; Normal.</td>
+
+
+
+
+      <td align="undefined" valign="undefined">p.</td>
+
+
+
+
+      
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td>Check Names</td>
+
+
+
+
+      <td>${SUITE1.suites[1]}</td>
+
+
+
+
+      <td>Normal</td>
+
+
+
+
+      <td align="undefined" valign="undefined">Pass And Fail &amp; Normal.</td>
+
+
+
+
+      <td align="undefined" valign="undefined">p.</td>
+
+
+
+
+      
+    </tr>
+
+
+
+
+    <tr>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+
+
+      <td align="undefined" valign="undefined">Overridden Suite Name</td>
+
+
+
+
+      <td>Check Names</td>
+
+
+
+
+      <td>${SUITE2}</td>
+
+
+
+
+      <td>New Name</td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td>Check Names</td>
+
+
+
+
+      <td>${SUITE2.suites[0]}</td>
+
+
+
+
+      <td>Pass And Fail</td>
+
+
+
+
+      <td align="undefined" valign="undefined">New Name.</td>
+
+
+
+
+      <td align="undefined" valign="undefined">n.</td>
+
+
+
+
+      
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td>Check Names</td>
+
+
+
+
+      <td>${SUITE2.suites[1]}</td>
+
+
+
+
+      <td>Normal</td>
+
+
+
+
+      <td align="undefined" valign="undefined">New Name.</td>
+
+
+
+
+      <td align="undefined" valign="undefined">n.</td>
+
+
+
+
+      
+    </tr>
+
+
+
+
+    <tr>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+
+      <td align="undefined" valign="undefined">Default Suite Name When Combining Three</td>
+
+
+
+      <td>Check Names</td>
+
+
+
+      <td>${SUITE3}</td>
+
+
+
+      <td>Pass And Fail &amp; Normal &amp; Times</td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td>Check Names</td>
+
+
+
+      <td>${SUITE3.suites[0]}</td>
+
+
+
+      <td>Pass And Fail</td>
+
+
+
+      <td align="undefined" valign="undefined">Pass And Fail &amp; Normal &amp; Times.</td>
+
+
+
+      <td align="undefined" valign="undefined">p.</td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td>Check Names</td>
+
+
+
+      <td>${SUITE3.suites[1]}</td>
+
+
+
+      <td>Normal</td>
+
+
+
+      <td align="undefined" valign="undefined">Pass And Fail &amp; Normal &amp; Times.</td>
+
+
+
+      <td align="undefined" valign="undefined">p.</td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td>Check Names</td>
+
+
+
+      <td>${SUITE3.suites[2]}</td>
+
+
+
+      <td>Times</td>
+
+
+
+      <td align="undefined" valign="undefined">Pass And Fail &amp; Normal &amp; Times.</td>
+
+
+
+      <td align="undefined" valign="undefined">p.</td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+
+      <td align="undefined" valign="undefined">Default Suite Name When Recombining</td>
+
+
+
+      <td>Check Names</td>
+
+
+
+      <td>${SUITE4}</td>
+
+
+
+      <td align="undefined" valign="undefined">Times &amp; New Name</td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td>Check Names</td>
+
+
+
+      <td>${SUITE4.suites[0]}</td>
+
+
+
+      <td>Times</td>
+
+
+
+      <td align="undefined" valign="undefined">Times &amp; New Name.</td>
+
+
+
+      <td align="undefined" valign="undefined">t.</td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td>Check Names</td>
+
+
+
+      <td>${SUITE4.suites[1]}</td>
+
+
+
+      <td align="undefined" valign="undefined">New Name</td>
+
+
+
+      <td align="undefined" valign="undefined">Times &amp; New Name.</td>
+
+
+
+      <td align="undefined" valign="undefined">t.</td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td>Check Names</td>
+
+
+
+      <td>${SUITE4.suites[1].suites[0]}</td>
+
+
+
+      <td align="undefined" valign="undefined">Pass And Fail</td>
+
+
+
+      <td align="undefined" valign="undefined">Times &amp; New Name.New Name.</td>
+
+
+
+      <td align="undefined" valign="undefined">t.n.</td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td>Check Names</td>
+
+
+
+      <td>${SUITE4.suites[1].suites[1]}</td>
+
+
+
+      <td align="undefined" valign="undefined">Normal</td>
+
+
+
+      <td align="undefined" valign="undefined">Times &amp; New Name.New Name.</td>
+
+
+
+      <td align="undefined" valign="undefined">t.n.</td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td align="undefined" valign="undefined">Suite Documemt</td>
+
+
+
+
+      <td>Equals</td>
+
+
+
+
+      <td>${SUITE1.doc}</td>
+
+
+
+
+      <td align="undefined" valign="undefined">\</td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td>Equals</td>
+
+
+
+
+      <td>${SUITE2.doc}</td>
+
+
+
+
+      <td align="undefined" valign="undefined">My fine doc</td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td>Equals</td>
+
+
+
+      <td>${SUITE4.doc}</td>
+
+
+
+      <td align="undefined" valign="undefined">\</td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td>Equals</td>
+
+
+
+      <td>${SUITE4.suites[1].doc}</td>
+
+
+
+      <td align="undefined" valign="undefined">My fine doc</td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td align="undefined" valign="undefined">Suite Metadata</td>
+
+
+
+
+      <td align="undefined" valign="undefined">Fail Unless</td>
+
+
+
+
+      <td align="undefined" valign="undefined">${SUITE1.metadata} == {}</td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined">Equals</td>
+
+
+
+
+      <td align="undefined" valign="undefined">${SUITE2.metadata['Name']}</td>
+
+
+
+
+      <td align="undefined" valign="undefined">value</td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined">Equals</td>
+
+
+
+
+      <td align="undefined" valign="undefined">${SUITE2.metadata['Other Meta']}</td>
+
+
+
+
+      <td align="undefined" valign="undefined">Another value</td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td align="undefined" valign="undefined">Critical Tags</td>
+
+
+
+
+      <td align="undefined" valign="undefined">Critical Tags Should Be</td>
+
+
+
+
+      <td align="undefined" valign="undefined">${SUITE1}</td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined">Critical Tags Should Be</td>
+
+
+
+
+      <td align="undefined" valign="undefined">${SUITE1.suites[0]}</td>
+
+
+
+
+      <td align="undefined" valign="undefined">pass</td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined">Critical Tags Should Be</td>
+
+
+
+
+      <td align="undefined" valign="undefined">${SUITE1.suites[1]}</td>
+
+
+
+
+      <td align="undefined" valign="undefined">f1 nonex</td>
+
+
+
+
+      <td align="undefined" valign="undefined">notag</td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td align="undefined" valign="undefined"></td><td align="undefined" valign="undefined">All Stats Should Be</td>
+
+
+
+
+      
+
+
+
+
+      <td align="undefined" valign="undefined">${SUITE1}</td>
+
+
+
+
+      <td align="undefined" valign="undefined">3</td>
+
+
+
+
+      <td align="undefined" valign="undefined">1</td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      
+    </tr>
+
+
+
+
+    
+
+
+
+
+    <tr>
+
+
+
+
+      <td align="undefined" valign="undefined"></td><td align="undefined" valign="undefined">Critical Stats Should Be</td>
+
+
+
+
+      
+
+
+
+
+      <td align="undefined" valign="undefined">${SUITE1}</td>
+
+
+
+
+      <td align="undefined" valign="undefined">3</td>
+
+
+
+
+      <td align="undefined" valign="undefined">0</td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      
+    </tr>
+
+
+
+
+    
+
+
+
+
+    <tr>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined">Critical Tags Should Be</td>
+
+
+
+
+      <td align="undefined" valign="undefined">${SUITE2}</td>
+
+
+
+
+      <td align="undefined" valign="undefined">force</td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      
+    </tr>
+
+
+
+
+    <tr>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined">Critical Tags Should Be</td>
+
+
+      <td align="undefined" valign="undefined">${SUITE2.suites[0]}</td>
+
+
+      <td align="undefined" valign="undefined">force</td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined">Critical Tags Should Be</td>
+
+
+      <td align="undefined" valign="undefined">${SUITE2.suites[1]}</td>
+
+
+      <td align="undefined" valign="undefined">force</td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+
+
+      <td align="undefined" valign="undefined"></td><td align="undefined" valign="undefined">All Stats Should Be</td>
+
+
+
+
+      
+
+
+
+
+      <td align="undefined" valign="undefined">${SUITE2}</td>
+
+
+
+
+      <td align="undefined" valign="undefined">3</td>
+
+
+
+
+      <td align="undefined" valign="undefined">1</td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      
+    </tr>
+
+
+
+
+    
+
+
+
+
+    <tr>
+
+
+
+
+      <td align="undefined" valign="undefined"></td><td align="undefined" valign="undefined">Critical Stats Should Be</td>
+
+
+
+
+      
+
+
+
+
+      <td align="undefined" valign="undefined">${SUITE2}</td>
+
+
+
+
+      <td align="undefined" valign="undefined">1</td>
+
+
+
+
+      <td align="undefined" valign="undefined">1</td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      
+    </tr>
+
+
+
+
+    
+
+
+
+
+    <tr>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td align="undefined" valign="undefined">Critical Tags In Recombine</td>
+
+
+      <td align="undefined" valign="undefined">Critical Tags Should Be</td>
+
+
+      <td align="undefined" valign="undefined">${SUITE4}</td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined">Critical Tags Should Be</td>
+
+
+      <td align="undefined" valign="undefined">${SUITE4.suites[0]}</td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined">Critical Tags Should Be</td>
+
+
+      <td align="undefined" valign="undefined">${SUITE4.suites[1]}</td>
+
+
+      <td align="undefined" valign="undefined">force</td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined">Critical Tags Should Be</td>
+
+
+      <td align="undefined" valign="undefined">${SUITE4.suites[1].suites[0]}</td>
+
+
+      <td align="undefined" valign="undefined">force</td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined">Critical Tags Should Be</td>
+
+
+      <td align="undefined" valign="undefined">${SUITE4.suites[1].suites[1]}</td>
+
+
+      <td align="undefined" valign="undefined">force</td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined">All Stats Should Be</td>
+
+
+      <td align="undefined" valign="undefined">${SUITE4}</td>
+
+
+      <td align="undefined" valign="undefined">9</td>
+
+
+      <td align="undefined" valign="undefined">1</td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+    </tr>
+
+
+    
+
+
+    <tr>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined">Critical Stats Should Be</td>
+
+
+      <td align="undefined" valign="undefined">${SUITE4}</td>
+
+
+      <td align="undefined" valign="undefined">7</td>
+
+
+      <td align="undefined" valign="undefined">1</td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+    </tr>
+
+
+    
+
+
+
+
+    <tr>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+
+
+      <td align="undefined" valign="undefined">Suite Times</td>
+
+
+
+
+      <td align="undefined" valign="undefined">Equals</td>
+
+
+
+
+      <td align="undefined" valign="undefined">${SUITE3.starttime}</td>
+
+
+
+
+      <td align="undefined" valign="undefined">N/A</td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined">Equals</td>
+
+
+
+
+      <td align="undefined" valign="undefined">${SUITE3.endtime}</td>
+
+
+
+
+      <td align="undefined" valign="undefined">N/A</td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined">Is Valid Elapsed Time</td>
+
+
+
+
+      <td align="undefined" valign="undefined">${SUITE3.elapsedtime}</td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined">Fail Unless</td>
+
+
+
+
+      <td align="undefined" valign="undefined">${SUITE3.elapsedmillis} ==<br>
+
+
+
+
+${MILLIS1} + ${MILLIS2} + 9999</td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined">Is Valid Timestamp</td>
+
+
+
+
+      <td align="undefined" valign="undefined">${SUITE3.suites[0].starttime}</td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined">Is Valid Timestamp</td>
+
+
+
+
+      <td align="undefined" valign="undefined">${SUITE3.suites[0].endtime}</td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined">Is Valid Elapsed Time</td>
+
+
+
+
+      <td align="undefined" valign="undefined">${SUITE3.suites[0].elapsedtime}</td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined">Equals</td>
+
+
+
+
+      <td align="undefined" valign="undefined">${SUITE3.suites[0].elapsedmillis}</td>
+
+
+
+
+      <td align="undefined" valign="undefined">${MILLIS1}</td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined">Is Valid Timestamp</td>
+
+
+
+
+      <td align="undefined" valign="undefined">${SUITE3.suites[1].starttime}</td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined">Is Valid Timestamp</td>
+
+
+
+
+      <td align="undefined" valign="undefined">${SUITE3.suites[1].endtime}</td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined">Is Valid Elapsed Time</td>
+
+
+
+
+      <td align="undefined" valign="undefined">${SUITE3.suites[1].elapsedtime}</td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined">Equals</td>
+
+
+
+
+      <td align="undefined" valign="undefined">${SUITE3.suites[1].elapsedmillis}</td>
+
+
+
+
+      <td align="undefined" valign="undefined">${MILLIS2}</td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined">Equals</td>
+
+
+
+      <td align="undefined" valign="undefined">${SUITE3.suites[2].starttime}</td>
+
+
+
+      <td align="undefined" valign="undefined">20061227 11:59:59.000</td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined">Equals</td>
+
+
+
+      <td align="undefined" valign="undefined">${SUITE3.suites[2].endtime}</td>
+
+
+
+      <td align="undefined" valign="undefined">20061227 12:00:08.999</td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined">Equals</td>
+
+
+
+      <td align="undefined" valign="undefined">${SUITE3.suites[2].elapsedtime}</td>
+
+
+
+      <td align="undefined" valign="undefined">00:00:09.999</td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined">Ints Equal</td>
+
+
+
+      <td align="undefined" valign="undefined">${SUITE3.suites[2].elapsedmillis}</td>
+
+
+
+      <td align="undefined" valign="undefined">9999</td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td align="undefined" valign="undefined">Suite Times In Recombine</td>
+
+
+
+      <td align="undefined" valign="undefined">Equals</td>
+
+
+      <td align="undefined" valign="undefined">${SUITE4.starttime}</td>
+
+
+      <td align="undefined" valign="undefined">N/A</td>
+
+
+
+      
+      
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined">Equals</td>
+
+
+      <td align="undefined" valign="undefined">${SUITE4.endtime}</td>
+
+
+      <td align="undefined" valign="undefined">N/A</td>
+
+
+
+
+      
+
+      
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      
+    </tr>
+
+
+    <tr>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined">Fail Unless</td>
+
+
+      <td align="undefined" valign="undefined">${SUITE4.elapsedmillis} ==<br>
+
+
+9999 +
+
+${MILLIS1} + ${MILLIS2}</td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined">Equals</td>
+
+
+      <td align="undefined" valign="undefined">${SUITE4.suites[0].starttime}</td>
+
+
+      <td align="undefined" valign="undefined">20061227 11:59:59.000</td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined">Equals</td>
+
+
+      <td align="undefined" valign="undefined">${SUITE4.suites[0].endtime}</td>
+
+
+      <td align="undefined" valign="undefined">20061227 12:00:08.999</td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined">Ints Equal</td>
+
+
+      <td align="undefined" valign="undefined">${SUITE4.suites[0].elapsedmillis}</td>
+
+
+      <td align="undefined" valign="undefined">9999</td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined">Equals</td>
+
+
+      <td align="undefined" valign="undefined">${SUITE4.suites[1].starttime}</td>
+
+
+      <td align="undefined" valign="undefined">N/A</td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined">Equals</td>
+
+
+      <td align="undefined" valign="undefined">${SUITE4.suites[1].endtime}</td>
+
+
+      <td align="undefined" valign="undefined">N/A</td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined">Is Valid Timestamp</td>
+
+
+      <td align="undefined" valign="undefined">${SUITE4.suites[1].suites[0].starttime}</td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined">Is Valid Timestamp</td>
+
+
+      <td align="undefined" valign="undefined">${SUITE4.suites[1].suites[0].endtime}</td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined">Is Valid Elapsed Time</td>
+
+
+      <td align="undefined" valign="undefined">${SUITE4.suites[1].suites[0].elapsedtime}</td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined">Equals</td>
+
+
+      <td align="undefined" valign="undefined">${SUITE4.suites[1].suites[0].elapsedmillis}</td>
+
+
+      <td align="undefined" valign="undefined">${MILLIS1}</td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined">Is Valid Timestamp</td>
+
+
+      <td align="undefined" valign="undefined">${SUITE4.suites[1].suites[1].starttime}</td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined">Is Valid Timestamp</td>
+
+
+      <td align="undefined" valign="undefined">${SUITE4.suites[1].suites[1].endtime}</td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined">Is Valid Elapsed Time</td>
+
+
+      <td align="undefined" valign="undefined">${SUITE4.suites[1].suites[1].elapsedtime}</td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined">Equals</td>
+
+
+      <td align="undefined" valign="undefined">${SUITE4.suites[1].suites[1].elapsedmillis}</td>
+
+
+      <td align="undefined" valign="undefined">${MILLIS2}</td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+    </tr>
+
+
+
+
+
+  
+  
+  
+  
+  </tbody>
+</table>
+
+
+
+
+
+
+<table border="1">
+
+
+
+
+
+  <colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
+  <thead>
+  <tr>
+
+
+
+
+
+    <th>Keyword</th>
+
+
+
+
+
+    <th>Action</th>
+
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+
+    <th>Argument</th>
+
+
+
+    <th>Argument</th>
+
+
+
+
+
+  </tr>
+
+
+
+
+
+  </thead>
+  <tbody>
+
+
+
+
+
+    <tr>
+
+
+
+      <td align="undefined" valign="undefined">My Setup</td>
+
+
+
+      <td align="undefined" valign="undefined">Message</td>
+
+
+
+      <td align="undefined" valign="undefined">1) Create first input for Rebot</td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+
+
+      <td><br>
+
+
+
+      </td>
+
+
+
+
+
+      <td>Create Output With Robot</td>
+
+
+
+
+
+      <td>--critical pass</td>
+
+
+
+
+
+      <td>input1.xml</td>
+
+
+
+
+
+      <td>misc${/}pass_and_fail.html</td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined">${input1} =</td>
+
+
+
+
+      <td align="undefined" valign="undefined">Set<br>
+
+
+
+
+      </td>
+
+
+
+
+      <td align="undefined" valign="undefined">${REBOT_INPUT}</td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined">Set Suite Variable</td>
+
+
+
+
+      <td align="undefined" valign="undefined">$MILLIS1</td>
+
+
+
+
+      <td align="undefined" valign="undefined">${ORIG_MILLIS}</td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined">Message</td>
+
+
+
+      <td align="undefined" valign="undefined">2) Create second input for Rebot</td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td>Create Output With Robot</td>
+
+
+
+
+      <td>-c f1 -c nonex --noncritical notag</td>
+
+
+
+
+      <td>input2.xml</td>
+
+
+
+
+      <td>misc${/}normal.html</td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined">${input2} =</td>
+
+
+
+
+      <td align="undefined" valign="undefined">Set<br>
+
+
+
+
+      </td>
+
+
+
+
+      <td align="undefined" valign="undefined">${REBOT_INPUT}</td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined">Set Suite Variable</td>
+
+
+
+
+      <td align="undefined" valign="undefined">$MILLIS2</td>
+
+
+
+
+      <td align="undefined" valign="undefined">${ORIG_MILLIS}</td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined">Message</td>
+
+
+
+      <td align="undefined" valign="undefined">3) Combine w/o options</td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td>Run Rebot</td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td>${input1}</td>
+
+
+
+
+      <td>${input2}</td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined">Set Suite Variable</td>
+
+
+
+
+      <td align="undefined" valign="undefined">$SUITE1</td>
+
+
+
+
+      <td align="undefined" valign="undefined">${SUITE}</td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined">Message</td>
+
+
+
+      <td align="undefined" valign="undefined">4) Combine w/ options</td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td>Run Rebot</td>
+
+
+
+
+      <td>--name new_name<br>
+
+
+
+
+--doc MySPfineSPdoc<br>
+
+
+
+
+--metadata name:value<br>
+
+
+
+
+-M&nbsp;other_meta:AnotherSPvalue<br>
+
+
+
+
+--critical force<br>
+
+
+
+
+--escape space:SP</td>
+
+
+
+
+      <td>${input1}</td>
+
+
+
+
+      <td>${input2}</td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined">Set Suite Variable</td>
+
+
+
+
+      <td align="undefined" valign="undefined">$SUITE2</td>
+
+
+
+
+      <td align="undefined" valign="undefined">${SUITE}</td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined">${recomb_input} =</td>
+
+
+
+      <td align="undefined" valign="undefined">Set</td>
+
+
+
+      <td align="undefined" valign="undefined">${OUTDIR}${/}${OUTFILE}</td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined">Message</td>
+
+
+
+      <td align="undefined" valign="undefined">5) Combine with times.xml</td>
+
+
+
+      <td align="undefined" valign="undefined">which has known times</td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined">Run Rebot</td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td>${input1}</td>
+
+
+
+      <td>${input2}</td>
+
+
+
+      <td align="undefined" valign="undefined">rebot${/}times.xml</td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined">Set Suite Variable</td>
+
+
+
+      <td align="undefined" valign="undefined">$SUITE3</td>
+
+
+
+      <td align="undefined" valign="undefined">${SUITE}</td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined">Message</td>
+
+
+
+      <td align="undefined" valign="undefined">6) Recombine</td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined">Run Rebot</td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined">rebot${/}times.xml</td>
+
+
+
+      <td align="undefined" valign="undefined">${recomb_input}</td>
+
+
+
+      <td align="undefined" valign="undefined"><br>
+
+
+
+      </td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined">Set Suite Variable</td>
+
+
+
+      <td align="undefined" valign="undefined">$SUITE4</td>
+
+
+
+      <td align="undefined" valign="undefined">${SUITE}</td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined">Message</td>
+
+
+
+      <td align="undefined" valign="undefined">7) Prevent accidental usage</td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined">Set Suite Variable</td>
+
+
+
+
+      <td align="undefined" valign="undefined">$SUITE</td>
+
+
+
+
+      <td align="undefined" valign="undefined">${None}</td>
+
+
+
+
+      <td align="undefined" valign="undefined"><br>
+
+
+
+      </td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr>
+
+
+
+
+      <td align="undefined" valign="undefined">Critical Tags Should Be</td>
+
+
+
+
+      <td align="undefined" valign="undefined">[Arguments]</td>
+
+
+
+
+      <td align="undefined" valign="undefined">${suite}</td>
+
+
+
+
+      <td align="undefined" valign="undefined">${critical}=</td>
+
+
+
+
+      <td align="undefined" valign="undefined">${non-critical}=</td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+    </tr><tr><td></td><td>Fail Unless</td><td>${suite.critical.tags} == "${critical}".split()</td><td></td><td></td><td></td></tr><tr><td></td><td>Fail Unless</td><td>${suite.critical.nons} == "${non-critical}".split()</td><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>All Stats Should Be</td><td align="undefined" valign="undefined">[Arguments]</td><td align="undefined" valign="undefined">${suite}</td><td>${passed}</td><td>${failed}</td><td></td></tr><tr><td></td><td align="undefined" valign="undefined">Should Be Equal As Integers</td><td align="undefined" valign="undefined">${suite.all_stats.passed}</td><td>${passed}</td><td></td><td></td></tr><tr><td></td><td align="undefined" valign="undefined">Should Be Equal As Integers</td><td align="undefined" valign="undefined">${suite.all_stats.failed}</td><td>${failed}</td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Critical Stats Should Be</td><td align="undefined" valign="undefined">[Arguments]</td><td align="undefined" valign="undefined">${suite}</td><td>${passed}</td><td>${failed}</td><td></td></tr><tr><td></td><td align="undefined" valign="undefined">Should Be Equal As Integers</td><td align="undefined" valign="undefined">${suite.critical_stats.passed}</td><td>${passed}</td><td></td><td></td></tr><tr><td></td><td align="undefined" valign="undefined">Should Be Equal As Integers</td><td align="undefined" valign="undefined">${suite.critical_stats.failed}</td><td>${failed}</td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+
+
+
+
+    
+
+
+
+
+
+  
+  
+  
+  
+  </tbody>
+</table>
+
+
+
+
+
+
+</body></html>

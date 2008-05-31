@@ -1,0 +1,283 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+
+  <style type="text/css">
+html {
+  font-family: Arial,Helvetica,sans-serif;
+  background-color: white;
+  color: black;
+}
+p {
+  max-width: 60em;
+}
+table {
+  border-collapse: collapse;
+  empty-cells: show;
+  margin: 1em 0em;
+  border: 0.1em solid black;
+}
+th, td {
+  border-style: solid;
+  border-width: 0.05em 0.1em;
+  border-color: black;
+  padding: 0.1em 0.2em;
+  height: 1.5em;
+}
+th {
+  background-color: rgb(192, 192, 192);
+  color: black;
+  border-width: 0.1em;
+  font-weight: bold;
+  text-align: center;
+  text-transform: capitalize;
+  letter-spacing: 0.1em;
+}
+/* Widths of named columns */
+col.name {
+  width: 10em;
+}
+.action, .value, .arg {
+  width: 15em;
+}
+/* Properties for the name column 
+- td:first-child should work in CSS 2.1 avare browsers (tested in Firefox)
+- col.name is against specs but works in IE
+*/
+td:first-child, col.name {
+  background-color: rgb(240, 240, 240);
+  text-transform: capitalize;
+  letter-spacing: 0.1em;
+}
+/* required for IE */
+th {
+  font-style: normal;
+}
+  </style>
+  <title>Robot Test Cases</title></head>
+<body>
+
+<h1>Robot Test Cases</h1>
+
+
+<table border="1">
+
+  <colgroup span="99"><col class="name"><col class="value" span="4"></colgroup>
+  <thead>
+  <tr>
+
+    <th>Setting</th>
+
+    <th>Value</th>
+
+    <th>Value</th>
+
+    <th>value</th>
+
+    <th>Value</th>
+
+  </tr>
+
+  </thead>
+  <tbody>
+
+    <tr>
+
+      <td>Resource</td>
+
+      <td>../../resources/resource.html</td>
+
+      <td></td>
+
+      <td></td>
+
+      <td></td>
+
+    </tr>
+
+    <tr>
+
+      <td>Force tags</td>
+
+      <td>regression</td>
+
+      <td></td>
+
+      <td></td>
+
+      <td></td>
+
+    </tr><tr><td>Default Tags</td><td>pybot</td><td>jybot</td><td></td><td></td></tr><tr><td>Suite setup</td><td>Run Tests</td><td></td><td>core${/}error_msg_and_details.html</td><td></td></tr>
+
+  </tbody>
+</table>
+
+
+<table border="1">
+
+  <colgroup span="99"><col class="name"><col class="value" span="4"></colgroup>
+  <thead>
+  <tr>
+
+    <th>Variable</th>
+
+    <th>Value</th>
+
+    <th>Value</th>
+
+    <th>Value</th>
+
+    <th>Value</th>
+
+  </tr>
+
+  </thead>
+  <tbody>
+
+    <tr>
+
+      <td></td>
+
+      <td></td>
+
+      <td></td>
+
+      <td></td>
+
+      <td></td>
+
+    </tr>
+
+    <tr>
+
+      <td></td>
+
+      <td></td>
+
+      <td></td>
+
+      <td></td>
+
+      <td></td>
+
+    </tr>
+
+  </tbody>
+</table>
+
+
+<table border="1">
+
+  <colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
+  <thead>
+  <tr>
+
+    <th>Test Case</th>
+
+    <th>Action</th>
+
+    <th>Argument</th>
+
+    <th>Argument</th>
+
+    <th>Argument</th>
+
+
+
+  </tr>
+
+  </thead>
+  <tbody>
+
+    <tr><td>Exception Type is Removed From Generic Failures</td><td>Verify Test Case And Error In Log</td><td>Generic Failure</td><td>foo != bar</td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Exception Type is Removed From Generic Java Failures</td><td>[Tags]</td><td>jybot</td><td></td><td></td></tr><tr><td></td><td>Verify Test Case And Error In Log</td><td>Generic Failure In Java</td><td>bar != foo</td><td>2</td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr>
+
+      <td>Exception Type is Included In Non-Generic Failures</td>
+
+      <td>Verify Test Case And Error In Log</td><td>Non Generic Failure&nbsp;</td><td>FloatingPointError: Too Large A Number !!</td>
+
+      
+
+      
+
+      <td></td>
+
+
+
+    </tr>
+
+    <tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Exception Type is Included In Non-Generic Java Failures</td><td>[Tags]</td><td>jybot</td><td></td><td></td></tr><tr><td></td><td>Verify Test Case And Error In Log</td><td>Non Generic Failure In Java&nbsp;</td><td>
+ArrayStoreException: My message</td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Message Is Got Correctly If Python Exception Has Non-String Message</td><td>Verify Test Case And Error In Log</td><td>Python Exception With Non-String Message</td><td>ValueError:&nbsp;['a', 'b', (1, 2), None, {'a': 1}]</td><td>1</td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Message Is Got Correctly If Python Exception Has 'None' Message</td><td>Verify Test Case And Error In Log</td><td>Python Exception With 'None' Message</td><td>AssertionError</td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Message Is Got Correctly If Java Exception Has 'null' Message</td><td>[Tags]</td><td>jybot</td><td></td><td></td></tr><tr><td></td><td>Verify Test Case And Error In Log</td><td>Java Exception With 'null' Message</td><td>
+ArrayStoreException</td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Message And Internal Trace Are Removed From Details When Exception In Library</td><td>${tc} =</td><td>Verify Test Case And Error In Log</td><td>Generic Failure</td><td>foo != bar</td></tr><tr><td></td><td>Verify Python Traceback</td><td>${tc.kws[0].msgs[1]}</td><td>exception</td><td>raise exception, msg</td></tr><tr><td></td><td>${tc} =</td><td>Verify Test Case And Error In Log</td><td>Non Generic Failure&nbsp;</td><td>FloatingPointError: Too Large A Number !!</td></tr><tr><td></td><td>Verify Python Traceback</td><td>${tc.kws[0].msgs[1]}</td><td>exception</td><td>raise exception, msg</td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Message And Internal Trace Are Removed From Details When Exception In Java Library</td><td>[Tags]</td><td>jybot</td><td></td><td></td></tr><tr><td></td><td>${tc} =</td><td>Verify Test Case And Error In Log</td><td>Generic Failure In Java</td><td>bar != foo</td></tr><tr><td></td><td>...</td><td>2</td><td></td><td></td></tr><tr><td></td><td>Verify Java Stack Trace</td><td>${tc.kws[2].msgs[1]}</td><td>java.lang.AssertionError: \</td><td>ExampleJavaLibrary.checkInHashtable</td></tr><tr><td></td><td>${tc} =</td><td>Verify Test Case And Error In Log</td><td>Non Generic Failure In Java&nbsp;</td><td>ArrayStoreException: My message</td></tr><tr><td></td><td>Verify Java Stack Trace</td><td>${tc.kws[0].msgs[1]}</td><td>java.lang.ArrayStoreException: \</td><td>ExampleJavaLibrary.exception</td></tr><tr><td></td><td>...</td><td>ExampleJavaLibrary.javaException</td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Message and Internal Trace Are Removed From Details When Exception&nbsp;In External Code</td><td>${tc} =</td><td>Verify Test Case And Error In Log</td><td>External Failure</td><td>UnboundLocalError: Raised from an external object!</td></tr><tr><td></td><td>Verify Python Traceback</td><td>${tc.kws[0].msgs[1]}</td><td>external_exception</td><td>ObjectToReturn('failure').exception(name, msg)</td></tr><tr><td></td><td>...</td><td>exception</td><td>raise exception, msg</td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Message and Internal Trace Are Removed From Details When Exception&nbsp;In External Java Code</td><td>[Tags]</td><td>jybot</td><td></td><td></td></tr><tr><td></td><td>${tc} =</td><td>Verify Test Case And Error In Log</td><td>External Failure In Java</td><td>IllegalArgumentException: Illegal initial capacity: -1</td></tr>
+    <tr><td></td><td>Verify Java Stack Trace</td><td>${tc.kws[0].msgs[1]}</td><td>java.lang.IllegalArgumentException: \</td><td>java.util.HashMap.</td></tr><tr><td></td><td>...</td><td>java.util.HashMap.</td><td>JavaObject.exception</td><td>ExampleJavaLibrary</td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>No Details For Timeouts</td><td>Verify Test Case, Error In Log And No Details</td><td>Timeout Expires</td><td>Test timeout 200ms exceeded</td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>No Details For Non Existing Keywords</td><td>Verify Test Case, Error In Log And No Details</td><td>Non existing Keyword</td><td>No keyword with name 'Non Existing Keyword' found.</td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>No Details For Non Existing Variables</td><td>Verify Test Case, Error In Log And No Details</td><td>Non Existing Scalar Variable</td><td>Non-existing variable '\${non existing}'</td><td></td></tr><tr><td></td><td>Verify Test Case, Error In Log And No Details</td><td>Non Existing List Variable</td><td>Non-existing variable '\@{non existing}'</td><td></td></tr><tr><td><br></td><td></td><td></td><td></td><td></td></tr><tr>
+
+      <td></td>
+
+      <td></td>
+
+      <td></td>
+
+      <td></td>
+
+      <td></td>
+
+
+
+    </tr>
+
+  </tbody>
+</table>
+
+
+<table border="1">
+
+  <colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
+  <thead>
+  <tr>
+
+    <th>Keyword</th>
+
+    <th>Action</th>
+
+    <th>Argument</th>
+
+    <th>Argument</th>
+
+    <th>Argument</th><th>Argument</th>
+
+  </tr>
+
+  </thead>
+  <tbody>
+
+    <tr>
+
+      <td>Verify Test Case And Error In Log</td>
+
+      <td>[Arguments]</td>
+
+      <td>${name}</td>
+
+      <td>${error}</td>
+
+      <td>${index}=0</td><td></td>
+
+    </tr>
+
+    <tr>
+
+      <td></td>
+
+      <td>${tc} =</td><td>Check Test Case</td><td>${name}</td>
+
+      
+
+      
+
+      <td></td><td></td>
+
+    </tr><tr><td></td><td>Check Log Message</td><td>${tc.kws[${index}].msgs[0]}</td><td>${error}</td><td>FAIL</td><td></td></tr><tr><td></td><td>[ Return ]</td><td>${tc}</td><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Verify Test Case, Error In Log And No Details</td><td>[Arguments]</td><td>${name}</td><td>${error}</td><td></td><td></td></tr><tr><td></td><td>${tc} =</td><td>Verify Test Case And Error In Log</td><td>${name}</td><td>${error}</td><td></td></tr><tr><td></td><td>Should Be Equal As Integers</td><td>${tc.kws[0].message_count}</td><td>1</td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Verify Python Traceback</td><td>[Arguments]</td><td>${msg}</td><td>@{funtions_and_texts}</td><td></td><td></td></tr><tr><td></td><td>${exp} =</td><td>Set Variable</td><td>Traceback \\(most recent call last\\):</td><td></td><td></td></tr><tr><td></td><td>@{funtions_and_texts} =</td><td>Regexp Escape</td><td>@{funtions_and_texts}</td><td></td><td></td></tr><tr><td></td><td>: FOR</td><td>${func}</td><td>${text}</td><td>IN</td><td>@{funtions_and_texts}</td></tr><tr><td></td><td></td><td>${exp} =</td><td>Set Variable<br></td><td>${exp}\n<br>\\s+File ".*", line \\d+, in ${func}\n<br>\\s+${text}</td><td><br></td></tr><tr><td></td><td>Should Match Regexp</td><td>${msg.message}</td><td>${exp}</td><td></td><td></td></tr><tr><td></td><td>Should Be Equal</td><td>${msg.level}</td><td>INFO</td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Verify Java Stack Trace</td><td>[Arguments]</td><td>${msg}</td><td>${exception}</td><td>@{functions}</td><td></td></tr><tr><td></td><td>${exp} =</td><td>Regexp Escape</td><td>${exception}</td><td></td><td></td></tr><tr><td></td><td>: FOR</td><td>${func}</td><td>IN</td><td>@{functions}</td><td></td></tr><tr><td></td><td></td><td>${func} =</td><td>Regexp Escape</td><td>${func}</td><td></td></tr><tr><td></td><td></td><td>${exp} =</td><td>Set Variable</td><td>${exp}\n<br>\\s+at ${func}.+</td><td></td></tr><tr><td></td><td>Should Match Regexp</td><td>${msg.message}</td><td>${exp}</td><td></td><td></td></tr><tr><td></td><td>Should Be Equal</td><td>${msg.level}</td><td>INFO</td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+
+  </tbody>
+</table>
+
+
+</body></html>

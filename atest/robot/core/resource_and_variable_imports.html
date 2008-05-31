@@ -1,0 +1,868 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="generator" content="RobotIDE"> 
+<style type="text/css">
+html {
+  font-family: Arial,Helvetica,sans-serif;
+  background-color: white;
+  color: black;
+}
+p {
+  max-width: 60em;
+}
+table {
+  border-collapse: collapse;
+  empty-cells: show;
+  margin: 1em 0em;
+  border: 0.1em solid black;
+}
+th, td {
+  border-style: solid;
+  border-width: 0.05em 0.1em;
+  border-color: black;
+  padding: 0.1em 0.2em;
+  height: 1.5em;
+}
+th {
+  background-color: rgb(192, 192, 192);
+  color: black;
+  border-width: 0.1em;
+  font-weight: bold;
+  text-align: center;
+  text-transform: capitalize;
+  letter-spacing: 0.1em;
+}
+/* Widths of named columns */
+col.name {
+  width: 10em;
+}
+.action, .value, .arg {
+  width: 15em;
+}
+/* Properties for the name column 
+- td:first-child should work in CSS 2.1 avare browsers (tested in Firefox)
+- col.name is against specs but works in IE
+*/
+td:first-child, col.name {
+  background-color: rgb(240, 240, 240);
+  text-transform: capitalize;
+  letter-spacing: 0.1em;
+}
+/* required for IE */
+th {
+  font-style: normal;
+}
+</style>
+<title>Resource And Variable Imports</title></head>
+
+
+<body>
+<h1>Resource And Variable Imports</h1>
+
+<table border="1">
+<colgroup span="99"><col class="name"><col class="value" span="4"></colgroup>
+<tbody><tr>
+<th>Setting</th>
+<th>Value</th>
+<th>Value</th>
+<th>Value</th>
+<th>Value</th>
+</tr>
+<tr>
+<td>Force Tags</td>
+<td>regression</td>
+<td>jybot</td>
+<td>pybot</td>
+<td></td>
+</tr>
+<tr>
+<td>Suite Setup</td>
+<td>My Setup</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Resource</td>
+<td>../../resources/resource.html</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody></table>
+
+<table border="1">
+<colgroup span="99"><col class="name"><col class="value" span="4"></colgroup>
+<tbody><tr>
+<th>Variable</th>
+<th>Value</th>
+<th>Value</th>
+<th>Value</th>
+<th>Value</th>
+</tr>
+<tr>
+<td>${RESDIR}</td>
+<td>${CURDIR}${/}..${/}..${/}testdata${/}core${/}resources_and_variables</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>${PPATH_RESDIR}</td>
+<td>${CURDIR}${/}..${/}..${/}testresources${/}res_and_var_files</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody></table>
+
+<table border="1">
+<colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
+<tbody><tr>
+<th>Test Case</th>
+<th>Action</th>
+<th>Argument</th>
+<th>Argument</th>
+<th>Argument</th>
+</tr>
+<tr>
+<td><a name="test_NormalResourceImport">Normal Resource Import</a></td>
+<td>[Documentation]</td>
+<td>Test that path given in resource import is relative to the current
+directory and that '/' is converted to correct path separator depending
+on os.</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Test Case</td>
+<td>Normal Resource Import</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="test_ResourceImportWithVariables">Resource Import With Variables</a></td>
+<td>[Documentation]</td>
+<td>Test that variables can be used in resource import path. Also test that path can be absolute.</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Test Case</td>
+<td>Resource Import With Variables</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="test_NormalVariableImport">Normal Variable Import</a></td>
+<td>[Documentation]</td>
+<td>Test that path given in variable import is relative to the current
+directory and that '/' is converted to correct path separator depending
+on os.</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Test Case</td>
+<td>Normal Variable Import</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="test_VariableImportWithVariables">Variable Import With Variables</a></td>
+<td>[Documentation]</td>
+<td>Test that variables can be used in variable import path. Also test that path can be absolute.</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Test Case</td>
+<td>Variable Import With Variables</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="test_InvalidListVariable">Invalid List Variable</a></td>
+<td>[Documentation]</td>
+<td>List variable not containing a list value causes an error</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Test Case</td>
+<td>Invalid List Variable</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>${path} =</td>
+<td>Join Path</td>
+<td>${RESDIR}</td>
+<td>invalid_list_variable.py</td>
+</tr>
+<tr>
+<td></td>
+<td>My Check Stderr Contains</td>
+<td>[ ERROR ]</td>
+<td>Error in file '${DATAPATH}' in table 'Setting' in element on row 37: Processing variable file '${path}' failed:</td>
+<td>List variable '\@{invalid_list}' cannot get a non-list value 'This is not a list and thus importing this file fails'</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="test_DynamicVariableFile">Dynamic Variable File</a></td>
+<td>[Documentation]</td>
+<td>Test for getting variables dynamically from a variable file using get_variables or getVariables and arguments.</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Test Case</td>
+<td>Dynamic Variable File No Args</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Test Case</td>
+<td>Dynamic Variable File One Arg</td>
+<td></td>
+<td></td>
+</tr>
+<tr><td></td><td></td><td></td><td></td><td></td></tr><tr>
+<td>Dynamic Variable File With Variables And Backslashes In Args</td>
+<td>Check Test Case</td>
+<td>Dynamic Variable File With Variables And Backslashes In Args</td>
+<td></td>
+<td></td>
+</tr>
+<tr><td></td><td></td><td></td><td></td><td></td></tr>
+<tr>
+<td><a name="test_InvalidDynamicVariableFileUsage">Invalid Dynamic Variable File Usage</a></td>
+<td>${path} =</td>
+<td>Join Path</td>
+<td>${RESDIR}</td>
+<td>dynamic_variables.py</td>
+</tr>
+<tr>
+<td></td>
+<td>My Check Stderr Contains</td>
+<td>[ ERROR ] Error in file '${DATAPATH}' in table 'Setting' in element on row 10:</td>
+<td>Processing variable file '${path}' with arguments [ Two args returns None | which is invalid ] failed:</td>
+<td>get_variables returned 'NoneType', expected a dictionary</td>
+</tr>
+<tr>
+<td></td>
+<td>My Check Stderr Contains</td>
+<td>[ ERROR ] Error in file '${DATAPATH}' in table 'Setting' in element on row 11:</td>
+<td>Processing variable file '${path}' with arguments [ More args raises an exception | which is invalid | of course ] failed:</td>
+<td>Invalid arguments for get_variables</td>
+</tr>
+<tr>
+<td></td>
+<td>${path} =</td>
+<td>Join Path</td>
+<td>${RESDIR}</td>
+<td>dynamicVariables.py</td>
+</tr>
+<tr>
+<td></td>
+<td>My Check Stderr Contains</td>
+<td>[ ERROR ] Error in file '${DATAPATH}' in table 'Setting' in element on row 36:</td>
+<td>Replacing variables from setting 'Variables' failed:</td>
+<td>Non-existing variable '\${non_existing_var_as_arg}'</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="test_ResourceImportingResources">Resource Importing Resources</a></td>
+<td>[Documentation]</td>
+<td>Test that resource file can import more resources. resources_imported_by_resource.html was imported ok by resources.html</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Test Case</td>
+<td>Resource Importing Resources</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="test_ResourceImportingVariables">Resource Importing Variables</a></td>
+<td>[Documentation]</td>
+<td>Test that resource file can import variables</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Test Case</td>
+<td>Resource Importing Variables</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="test_ResourceImportingLibrary">Resource Importing Library</a></td>
+<td>[Documentation]</td>
+<td>Test that resource file can import libraries</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Test Case</td>
+<td>Resource Importing Library</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="test_Re-ImportResourceFile">Re-Import Resource File</a></td>
+<td>${path} =</td>
+<td>Join Path</td>
+<td>${RESDIR}</td>
+<td>resources.html</td>
+</tr>
+<tr>
+<td></td>
+<td>My Check Syslog Contains</td>
+<td>| WARN \ |</td>
+<td>Resource file '${path}' already imported</td>
+<td>by suite 'Resource And Variable Imports'</td>
+</tr>
+<tr>
+<td></td>
+<td>${path} =</td>
+<td>Join Path</td>
+<td>${RESDIR}</td>
+<td>resources2.html</td>
+</tr>
+<tr>
+<td></td>
+<td>My Check Syslog Contains</td>
+<td>| WARN \ |</td>
+<td>Resource file '${path}' already imported</td>
+<td>by suite 'Resource And Variable Imports'</td>
+</tr>
+<tr>
+<td></td>
+<td>${path} =</td>
+<td>Join Path</td>
+<td>${RESDIR}</td>
+<td>resources_imported_by_resource.html</td>
+</tr>
+<tr>
+<td></td>
+<td>My Check Syslog Contains</td>
+<td>| WARN \ |</td>
+<td>Resource file '${path}' already imported</td>
+<td>by suite 'Resource And Variable Imports'</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="test_Re-ImportVariableFile">Re-Import Variable File</a></td>
+<td>${path} =</td>
+<td>Join Path</td>
+<td>${RESDIR}</td>
+<td>variables.py</td>
+</tr>
+<tr>
+<td></td>
+<td>My Check Syslog Contains</td>
+<td>| WARN \ |</td>
+<td>Variable file '${path}' already imported</td>
+<td>by suite 'Resource And Variable Imports'</td>
+</tr>
+<tr>
+<td></td>
+<td>${path} =</td>
+<td>Join Path</td>
+<td>${RESDIR}</td>
+<td>variables2.py</td>
+</tr>
+<tr>
+<td></td>
+<td>My Check Syslog Contains</td>
+<td>| WARN \ |</td>
+<td>Variable file '${path}' already imported</td>
+<td>by suite 'Resource And Variable Imports'</td>
+</tr>
+<tr>
+<td></td>
+<td>${path} =</td>
+<td>Join Path</td>
+<td>${RESDIR}</td>
+<td>variables_imported_by_resource.py</td>
+</tr>
+<tr>
+<td></td>
+<td>My Check Syslog Contains</td>
+<td>| WARN \ |</td>
+<td>Variable file '${path}' already imported</td>
+<td>by suite 'Resource And Variable Imports'</td>
+</tr>
+<tr>
+<td></td>
+<td>${path} =</td>
+<td>Join Path</td>
+<td>${RESDIR}</td>
+<td>dynamic_variables.py</td>
+</tr>
+<tr>
+<td></td>
+<td>My Check Syslog Contains</td>
+<td>| WARN \ |</td>
+<td>Variable file '${path}' with arguments [ One arg works ] already imported</td>
+<td>by suite 'Resource And Variable Imports'</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="test_Non-ExistingResourceFile">Non-Existing Resource File</a></td>
+<td>My Check Stderr Contains</td>
+<td>[ ERROR ] Error in file '${DATAPATH}' in table 'Setting' in element on row 31:</td>
+<td>Resource file 'non_existing.html' does not exist</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="test_Non-ExistingVariableFile">Non-Existing Variable File</a></td>
+<td>My Check Stderr Contains</td>
+<td>[ ERROR ] Error in file '${DATAPATH}' in table 'Setting' in element on row 32:</td>
+<td>Variable file 'non_existing.py' does not exist</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="test_InvalidResourceFile">Invalid Resource File</a></td>
+<td>${path} =</td>
+<td>Join Path</td>
+<td>${RESDIR}</td>
+<td>invalid_resource.html</td>
+</tr>
+<tr>
+<td></td>
+<td>My Check Stderr Contains</td>
+<td>[ ERROR ] Error in file '${DATAPATH}' in table 'Setting' in element on row 33:</td>
+<td>Parsed file '${path}' contains no resources</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="test_InvalidResourceImportParameters">Invalid Resource Import Parameters</a></td>
+<td>My Check Stderr Contains</td>
+<td>[ ERROR ] Error in file '${DATAPATH}' in table 'Setting' in element on row 34:</td>
+<td>Invalid resource import parameters: [ resources_and_variables/resources.html | only one parameter allowed ]</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="test_InvalidSettingInResourceFile">Invalid Setting In Resource File</a></td>
+<td>${path} =</td>
+<td>Join Path</td>
+<td>${RESDIR}</td>
+<td>resources.html</td>
+</tr>
+<tr>
+<td></td>
+<td>My Check Stderr Contains</td>
+<td>[ ERROR ] Error in file '${path}' in table 'Setting' in element on row 5:</td>
+<td>Only settings 'Library', 'Resource' and 'Variables' allowed in resource files.</td>
+<td>Found: Documentation</td>
+</tr>
+<tr>
+<td></td>
+<td>My Check Stderr Contains</td>
+<td>[ ERROR ] Error in file '${path}' in table 'Setting' in element on row 6:</td>
+<td>Only settings 'Library', 'Resource' and 'Variables' allowed in resource files.</td>
+<td>Found: Non existing</td>
+</tr>
+<tr>
+<td></td>
+<td>My Check Stderr Does Not Contain</td>
+<td>AttributeError:</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="test_InvalidVariableFile">Invalid Variable File</a></td>
+<td>${path} =</td>
+<td>Join Path</td>
+<td>${RESDIR}</td>
+<td>invalid_variable_file.py</td>
+</tr>
+<tr>
+<td></td>
+<td>My Check Stderr Contains</td>
+<td>[ ERROR ] Error in file '${DATAPATH}' in table 'Setting' in element on row 35:</td>
+<td>Processing variable file '${path}' failed:</td>
+<td>Importing '${path}' failed: This is an invalid variable file</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="test_ResourceFileInPYTHONPATH">Resource File In PYTHONPATH</a></td>
+<td>[Documentation]</td>
+<td>Test that resource files can be found if they are in dirs in PYTHONPATH too.</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Test Case</td>
+<td>Resource File In PYTHONPATH</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="test_VariableFileInPYTHONPATH">Variable File In PYTHONPATH</a></td>
+<td>[Documentation]</td>
+<td>Test that variable files can be found if they are in dirs in PYTHONPATH too.</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Test Case</td>
+<td>Variable File In PYTHONPATH</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody></table>
+
+<table border="1">
+<colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
+<tbody><tr>
+<th>Keyword</th>
+<th>Action</th>
+<th>Argument</th>
+<th>Argument</th>
+<th>Argument</th>
+</tr>
+<tr>
+<td><a name="keyword_MySetup">My Setup</a></td>
+<td>[Timeout]</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Run Tests</td>
+<td>--pythonpath ${PPATH_RESDIR}</td>
+<td>core${/}resource_and_variable_imports.html</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>${STDERR} =</td>
+<td>Log Stderr</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>${SYSLOG} =</td>
+<td>Log Syslog</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>${DATAPATH} =</td>
+<td>Join Path</td>
+<td>${DATADIR}</td>
+<td>core${/}resource_and_variable_imports.html</td>
+</tr>
+<tr>
+<td></td>
+<td>Set Suite Variable</td>
+<td>$STDERR</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Set Suite Variable</td>
+<td>$SYSLOG</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Set Suite Variable</td>
+<td>$DATAPATH</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="keyword_MyCheckStderrContains">My Check Stderr Contains</a></td>
+<td>[Arguments]</td>
+<td>@{parts}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>[Timeout]</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>${expected} =</td>
+<td>Catenate</td>
+<td>@{parts}</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Contains</td>
+<td>${STDERR}</td>
+<td>${expected}</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="keyword_MyCheckStderrDoesNotContain">My Check Stderr Does Not Contain</a></td>
+<td>[Arguments]</td>
+<td>@{parts}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>[Timeout]</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>${expected} =</td>
+<td>Catenate</td>
+<td>@{parts}</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Fail If Contains</td>
+<td>${STDERR}</td>
+<td>${expected}</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="keyword_MyCheckSyslogContains">My Check Syslog Contains</a></td>
+<td>[Arguments]</td>
+<td>@{parts}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>[Timeout]</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>${expected} =</td>
+<td>Catenate</td>
+<td>@{parts}</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Contains</td>
+<td>${SYSLOG}</td>
+<td>${expected}</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody></table>
+
+</body></html>

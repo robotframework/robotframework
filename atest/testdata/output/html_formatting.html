@@ -1,0 +1,2510 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <style type="text/css">
+html { font-family: Arial,Helvetica,sans-serif;
+background-color: white;
+color: black;
+}
+p { max-width: 60em;
+}
+table { border-collapse: collapse;
+empty-cells: show;
+margin: 1em 0em;
+border: 0.1em solid black;
+}
+th, td {
+border-style: solid;
+border-width: 0.05em 0.1em;
+border-color: black;
+padding: 0.1em 0.2em;
+height: 1.5em;
+}
+th {
+background-color: rgb(192, 192, 192);
+color: black;
+border-width: 0.1em;
+font-weight: bold;
+text-align: center;
+text-transform: capitalize;
+letter-spacing: 0.1em;
+}
+/* Widths of named columns */
+col.name {
+width: 10em;
+}
+.action , .value, .arg {
+width: 15em;
+}
+/* Properties for the name column - td:first-child should work in CSS 2.1 avare browsers (tested in Firefox)
+- col.name is against specs but works in IE
+*/
+td:first-child, col.name {
+background-color: rgb(240, 240, 240);
+text-transform: capitalize;
+letter-spacing: 0.1em;
+}
+th { font-style: normal; } /* required for IE */
+  
+  </style>
+
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <title>Robot Test Cases</title>
+  <link type="text/css" href="resources/css/testdata.css" rel="stylesheet">
+</head>
+
+
+<body>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h1>Robot Test Cases</h1>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table border="1">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <colgroup span="99"><col class="name"><col class="value" span="4"></colgroup>
+
+  <thead>
+  <tr>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <th>Setting</th>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <th>Value</th>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <th>Value</th>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <th>value</th>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <th>Value</th>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  </tr>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  </thead>
+
+  <tbody>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+    
+
+
+
+
+
+
+    
+
+
+
+
+
+    
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Document</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Test cases demonstrating html formatting of suite and test docs and suite metadata.\n\n</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">It is possible to
+format
+text with *bold*, _italic_ and _*bold italic*_.&nbsp;Also links like
+http://basso.fi/radio,&nbsp;ftp://funet.fi
+and&nbsp;file:///c:/temp&nbsp;are automatically formatted.\n</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Furthermore tables and
+horizontal rulers are available as seen by examples below.\n</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">\n---\n<br>
+
+
+
+
+
+| *a* &nbsp;| *b* &nbsp;| *c* |\n<br>
+
+
+
+
+
+
+| _1_ | &nbsp;xx &nbsp;| yy &nbsp;|\n<br>
+
+
+
+
+
+
+| _2_ | zz &nbsp; | &nbsp; &nbsp; &nbsp; |\n<br>
+
+
+
+
+
+---\n</td>
+
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td align="undefined" valign="undefined">Meta: Link</td>
+
+
+
+
+      <td align="undefined" valign="undefined">http://x, https://y.z</td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td align="undefined" valign="undefined">Meta: Bold</td>
+
+
+
+
+      <td align="undefined" valign="undefined">Text in *bold*.</td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td align="undefined" valign="undefined">Meta: Italic</td>
+
+
+
+
+      <td align="undefined" valign="undefined">_Italic text_</td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+    </tr>
+
+
+
+
+
+  
+  
+  
+  
+  
+  </tbody>
+</table>
+
+
+
+
+
+<br>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table border="1">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <colgroup span="99"><col class="name"><col class="value" span="4"></colgroup>
+
+  <thead>
+  <tr>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <th>Variable</th>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <th>Value</th>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <th>Value</th>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <th>Value</th>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <th>Value</th>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  </tr>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  </thead>
+
+  <tbody>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+    
+
+
+
+
+
+
+    
+
+
+    
+
+
+    
+
+
+    
+
+
+
+
+
+
+    
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<br>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table border="1">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
+
+  <thead>
+  <tr>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <th>Test Case</th>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <th>Action</th>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  </tr>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  </thead>
+
+  <tbody>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+    
+
+
+    
+
+
+    
+
+    
+
+    
+
+    
+
+    
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Bold</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">[ Document ]</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">*Bold*</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+      <td></td>
+
+
+      <td>NOOP</td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"><br>
+
+
+
+
+
+      </td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Italic</td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">[ Document ]</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">_This is italic_ and this is not</td>
+
+
+
+
+
+
+
+      
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+      <td></td>
+
+
+      <td>NOOP</td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Bold Italic</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">[ Document ]</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">_*Bold&nbsp;italic*, only italic_ and no formatting</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+      <td></td>
+
+
+      <td>NOOP</td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+      <td align="undefined" valign="undefined">Link</td>
+
+
+
+
+      <td align="undefined" valign="undefined">[ Document ]</td>
+
+
+
+
+      <td align="undefined" valign="undefined">For more info see: http://some.url/</td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+      <td></td>
+
+
+      <td>NOOP</td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Table</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">[ Document ]</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">| *a* &nbsp;| *b* &nbsp;| *c* |\n<br>
+
+
+
+
+
+
+| _1_ | &nbsp;xx &nbsp;| yy &nbsp;|\n<br>
+
+
+
+
+
+
+| _2_ | zz &nbsp; | &nbsp; &nbsp; &nbsp; |\n</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+      <td></td>
+
+
+      <td>NOOP</td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Horizontal ruler</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">[ Document ]</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">---\n<br>
+
+
+
+
+
+Horizontal rulers rule\n<br>
+
+
+
+
+
+---\n</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+      <td></td>
+
+
+      <td>NOOP</td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Normal Usage</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">[ Document ]</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">*Header*\n<br>
+
+
+
+
+
+\n<br>
+
+
+
+
+
+This test case is _an example_. It tries to be use formatting in a manner normal users would use it.\n<br>
+
+
+
+
+
+\n</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">*Another Header*\n<br>
+
+
+
+
+
+\n<br>
+
+
+
+
+
+Here's&nbsp;some more text about something. See http://something/else for more details.\n\n<br>
+
+
+
+
+
+      </td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">*Final Header*\n<br>
+
+
+
+
+\n<br>
+
+
+
+
+1. Point one\n<br>
+
+
+
+
+2. Point two\n<br>
+
+
+
+
+3. Piste kolme</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td></td>
+
+
+      <td>NOOP</td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+
+
+
+
+
+    
+
+
+    
+
+
+    
+
+
+    
+
+
+
+    
+
+
+
+    
+
+
+
+    
+
+
+
+    
+
+
+
+    
+
+
+
+    
+
+
+
+    
+
+
+
+    
+
+
+
+    
+
+
+
+    
+
+
+
+    
+
+
+
+    
+
+
+
+    
+
+
+
+
+
+
+    
+
+
+
+
+
+
+    
+
+
+
+    
+
+
+
+
+
+    
+
+
+
+
+
+
+    
+
+
+
+
+
+    
+
+
+
+    
+
+
+
+
+
+
+    
+
+
+
+
+
+
+    
+
+
+
+
+
+
+    
+
+
+
+
+
+
+    
+
+
+
+
+
+
+    
+
+
+
+
+
+
+    
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<br>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table border="1">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
+
+  <thead>
+  <tr>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <th>Keyword</th>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <th>Action</th>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  </tr>
+
+
+
+
+
+  <tr>
+
+
+
+
+
+    <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+    <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+    <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+    <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+    <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+    <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+  </tr>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  </thead>
+
+  <tbody>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
+    
+
+
+
+    
+
+
+
+    
+
+
+
+    
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

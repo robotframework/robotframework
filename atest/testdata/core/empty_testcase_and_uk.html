@@ -1,0 +1,996 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+
+
+
+
+  
+  
+  
+  <style type="text/css">
+html {
+  font-family: Arial,Helvetica,sans-serif;
+  background-color: white;
+  color: black;
+}
+p {
+  max-width: 60em;
+}
+table {
+  border-collapse: collapse;
+  empty-cells: show;
+  margin: 1em 0em;
+  border: 0.1em solid black;
+}
+th, td {
+  border-style: solid;
+  border-width: 0.05em 0.1em;
+  border-color: black;
+  padding: 0.1em 0.2em;
+  height: 1.5em;
+}
+th {
+  background-color: rgb(192, 192, 192);
+  color: black;
+  border-width: 0.1em;
+  font-weight: bold;
+  text-align: center;
+  text-transform: capitalize;
+  letter-spacing: 0.1em;
+}
+/* Widths of named columns */
+col.name {
+  width: 10em;
+}
+.action, .value, .arg {
+  width: 15em;
+}
+/* Properties for the name column 
+- td:first-child should work in CSS 2.1 avare browsers (tested in Firefox)
+- col.name is against specs but works in IE
+*/
+td:first-child, col.name {
+  background-color: rgb(240, 240, 240);
+  text-transform: capitalize;
+  letter-spacing: 0.1em;
+}
+/* required for IE */
+th {
+  font-style: normal;
+}
+  </style>
+  
+  
+  
+  <title>Robot Test Cases</title>
+</head>
+
+
+<body>
+
+
+
+
+<h1>Robot Test Cases</h1>
+
+
+
+
+
+<table border="1">
+
+
+
+
+  <colgroup span="99"><col class="name"><col class="value" span="4"></colgroup>
+  <thead>
+  <tr>
+
+
+
+
+    <th>Setting</th>
+
+
+
+
+    <th>Value</th>
+
+
+
+
+    <th>Value</th>
+
+
+
+
+    <th>value</th>
+
+
+
+
+    <th>Value</th>
+
+
+
+
+  </tr>
+
+
+
+
+  </thead>
+  <tbody>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    
+    
+    <tr>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+    </tr>
+
+
+
+
+  
+  
+  
+  </tbody>
+</table>
+
+
+
+
+
+<table border="1">
+
+
+
+
+  <colgroup span="99"><col class="name"><col class="value" span="4"></colgroup>
+  <thead>
+  <tr>
+
+
+
+
+    <th>Variable</th>
+
+
+
+
+    <th>Value</th>
+
+
+
+
+    <th>Value</th>
+
+
+
+
+    <th>Value</th>
+
+
+
+
+    <th>Value</th>
+
+
+
+
+  </tr>
+
+
+
+
+  </thead>
+  <tbody>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+  
+  
+  
+  </tbody>
+</table>
+
+
+
+
+
+<table border="1">
+
+
+
+
+  <colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
+  <thead>
+  <tr>
+
+
+
+
+    <th>Test Case</th>
+
+
+
+
+    <th>Action</th>
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+
+
+  </tr>
+
+
+
+
+  </thead>
+  <tbody>
+
+
+
+
+    <tr>
+      <td>Empty Test Case</td>
+      <td>[Document]</td>
+      <td>FAIL</td>
+      <td>Test case contains no keywords</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+    </tr>
+    <tr>
+
+
+
+
+      <td>Empty Test Case With Setup and teardown</td>
+
+
+
+      <td>[Document]</td>
+
+
+
+      <td>FAIL</td>
+
+
+
+
+
+
+      <td>Test case contains no keywords</td>
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+      <td>#</td>
+      <td>Setup and Teardown are not enough to make the test case non-empty</td>
+      <td></td>
+      <td></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td></td>
+      <td>[Setup]</td>
+      <td>Noop</td>
+      <td></td>
+      <td></td>
+    </tr>
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td>[Teardown]</td>
+
+
+
+      <td>Noop</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+    </tr>
+
+
+    <tr>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+    </tr>
+    <tr>
+
+      <td>Empty User Keyword</td>
+
+      <td>[Document]</td>
+
+      <td>FAIL</td>
+
+      <td>User keyword 'Empty UK' contains no keywords</td>
+
+      <td></td>
+
+    </tr>
+
+    <tr>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined">Empty UK</td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+    </tr>
+
+
+    <tr>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>Empty User Keyword With Metadata</td>
+      <td>[Document]</td>
+      <td>FAIL</td>
+      <td>User keyword 'Empty UK With Metadata' contains no keywords</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td></td>
+      <td>Empty UK With Metadata</td>
+      <td>argument</td>
+      <td></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>User Keyword with return and empty return</td>
+      <td>[Document]</td>
+      <td>FAIL</td>
+      <td>User keyword 'UK With Empty Return' contains no keywords</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td></td>
+      <td>UK With Return</td>
+      <td></td>
+      <td></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td></td>
+      <td>UK With Empty Return</td>
+      <td></td>
+      <td></td>
+      <td></td>
+    </tr>
+    <tr>
+
+      <td></td>
+
+      <td></td>
+
+      <td></td>
+
+      <td></td>
+
+      <td></td>
+
+    </tr>
+
+    <tr>
+
+
+      <td align="undefined" valign="undefined">Non Empty and Empty User Keyword</td>
+
+
+      <td>[Document]</td>
+
+      <td>FAIL</td>
+
+      <td>User keyword 'Empty UK' contains no keywords</td>
+
+
+      
+      
+      <td align="undefined" valign="undefined"></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined">UK</td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined">Empty Uk</td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined">Fail</td>
+
+
+      <td align="undefined" valign="undefined">We should not be here</td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td align="undefined" valign="undefined">Non Empty UK Using Empty UK</td>
+
+
+      <td>[Document]</td>
+
+      <td>FAIL</td>
+
+      <td>User keyword 'Empty UK' contains no keywords</td>
+
+
+      
+      
+      <td align="undefined" valign="undefined"></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined">Non Empty UK Using Empty UK</td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+    </tr>
+    <tr>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+    </tr>
+
+
+
+
+  
+  
+  
+  </tbody>
+</table>
+
+
+
+
+
+<table border="1">
+
+
+
+
+  <colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
+  <thead>
+  <tr>
+
+
+
+
+    <th>Keyword</th>
+
+
+
+
+    <th>Action</th>
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+  </tr>
+
+
+
+
+  </thead>
+  <tbody>
+
+
+
+
+    <tr>
+      <td>Empty UK</td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+    </tr>
+    <tr>
+
+
+
+
+      <td>Empty UK with metadata</td>
+
+
+
+
+      <td>[ Document ]</td>
+
+
+
+
+      <td>Metadata other than [ Return ] is not enough to make user keyword non-empty</td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+      <td></td>
+      <td>[ Arguments ]</td>
+      <td>${arg}</td>
+      <td></td>
+      <td></td>
+    </tr>
+    <tr>
+
+      <td></td>
+
+      <td></td>
+
+      <td></td>
+
+      <td></td>
+
+      <td></td>
+
+    </tr>
+
+    <tr>
+
+      <td>Non Empty UK Using Empty UK</td>
+
+      <td>UK</td>
+
+      <td></td>
+
+      <td></td>
+
+      <td></td>
+
+    </tr>
+
+    <tr>
+
+      <td></td>
+
+      <td>Empty UK</td>
+
+      <td></td>
+
+      <td></td>
+
+      <td></td>
+
+    </tr>
+
+    <tr>
+
+      <td></td>
+
+      <td></td>
+
+      <td></td>
+
+      <td></td>
+
+      <td></td>
+
+    </tr>
+
+    <tr>
+
+      <td>UK</td>
+
+      <td>Log</td>
+
+      <td>In UK</td>
+
+      <td></td>
+
+      <td></td>
+
+    </tr>
+
+    <tr>
+
+      <td></td>
+
+      <td></td>
+
+      <td></td>
+
+      <td></td>
+
+      <td></td>
+
+    </tr>
+
+    <tr>
+      <td>UK With Return</td>
+      <td>[Return]</td>
+      <td>This is a return value</td>
+      <td></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+    </tr>
+    <tr>
+
+
+
+
+      <td>UK With Empty Return</td>
+
+
+
+
+      <td>[Return]</td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+  
+  
+  
+  </tbody>
+</table>
+
+
+
+
+
+</body>
+</html>

@@ -1,0 +1,1 @@
+SUITE = "suite1"

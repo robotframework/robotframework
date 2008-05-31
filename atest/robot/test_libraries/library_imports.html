@@ -1,0 +1,378 @@
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="RobotIDE" /> 
+<style type="text/css">
+html {
+  font-family: Arial,Helvetica,sans-serif;
+  background-color: white;
+  color: black;
+}
+p {
+  max-width: 60em;
+}
+table {
+  border-collapse: collapse;
+  empty-cells: show;
+  margin: 1em 0em;
+  border: 0.1em solid black;
+}
+th, td {
+  border-style: solid;
+  border-width: 0.05em 0.1em;
+  border-color: black;
+  padding: 0.1em 0.2em;
+  height: 1.5em;
+}
+th {
+  background-color: rgb(192, 192, 192);
+  color: black;
+  border-width: 0.1em;
+  font-weight: bold;
+  text-align: center;
+  text-transform: capitalize;
+  letter-spacing: 0.1em;
+}
+/* Widths of named columns */
+col.name {
+  width: 10em;
+}
+.action, .value, .arg {
+  width: 15em;
+}
+/* Properties for the name column 
+- td:first-child should work in CSS 2.1 avare browsers (tested in Firefox)
+- col.name is against specs but works in IE
+*/
+td:first-child, col.name {
+  background-color: rgb(240, 240, 240);
+  text-transform: capitalize;
+  letter-spacing: 0.1em;
+}
+/* required for IE */
+th {
+  font-style: normal;
+}
+</style>
+<title>Library Imports</title>
+</head>
+<body>
+<h1>Library Imports</h1>
+
+<table border="1">
+<colgroup span="99">
+<col class="name">
+<col class="value" span="4"></colgroup>
+<tr>
+<th>Setting</th>
+<th>Value</th>
+<th>Value</th>
+<th>Value</th>
+<th>Value</th>
+</tr>
+<tr>
+<td>Documentation</td>
+<td>Importing test libraries normally, using variable in library name, and importing libraries accepting arguments.</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Force Tags</td>
+<td>pybot</td>
+<td>jybot</td>
+<td>regression</td>
+<td></td>
+</tr>
+<tr>
+<td>Resource</td>
+<td>../../resources/resource.html</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</table>
+
+<table border="1">
+<colgroup span="99">
+<col class="name">
+<col class="value" span="4"></colgroup>
+<tr>
+<th>Variable</th>
+<th>Value</th>
+<th>Value</th>
+<th>Value</th>
+<th>Value</th>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</table>
+
+<table border="1">
+<colgroup span="99">
+<col class="name">
+<col class="action">
+<col class="arg" span="3"></colgroup>
+<tr>
+<th>Test Case</th>
+<th>Action</th>
+<th>Argument</th>
+<th>Argument</th>
+<th>Argument</th>
+</tr>
+<tr>
+<td><a name="test_NormalLibraryImport">Normal Library Import</a></td>
+<td>Run Tests</td>
+<td></td>
+<td>test_libraries${/}library_import_normal.html</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Test Case</td>
+<td>Normal Library Import</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="test_LibraryImportWithSpacesInName">Library Import With Spaces In Name</a></td>
+<td>${test} =</td>
+<td>Check Test Case</td>
+<td>Library Import With Spaces In Name</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Log Message</td>
+<td>${test.kws[0].messages[0]}</td>
+<td>It works!</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Log Message</td>
+<td>${test.kws[1].messages[0]}</td>
+<td>It really workz!!</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="test_NumberOfKeywordsInImportedLibraryIsReportedInSyslog">Number Of Keywords In Imported Library Is Reported In Syslog</a></td>
+<td>Check Syslog Contains</td>
+<td>| INFO \ |</td>
+<td>Imported library 'ExampleLibrary' with args [ ] (python type, testcase scope, 25 keywords)</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Syslog Contains</td>
+<td>| INFO \ |</td>
+<td>Imported library 'libmodule.LibClass1' with args [ ] (python type, testcase scope, 1 keywords)</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="test_WarningShouldBeWrittenToSyslogIfLibraryContainsNoKeywords">Warning Should Be Written To Syslog If Library Contains No Keywords</a></td>
+<td>Check Syslog Contains</td>
+<td>| INFO \ |</td>
+<td>Imported library 'libmodule' with args [ ] (module type, global scope, 0 keywords)</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Syslog Contains</td>
+<td>| WARN \ |</td>
+<td>Imported library 'libmodule' contains no keywords</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="test_ImportingPythonClassFromModule">Importing Python Class From Module</a></td>
+<td>Check Test Case</td>
+<td>Importing Python Class From Module</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="test_LibraryImportWithVariables">Library Import With Variables</a></td>
+<td>Run Tests</td>
+<td></td>
+<td>test_libraries${/}library_import_with_variable.html</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Test Case</td>
+<td>Verify Library Import With Variable In Name</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Test Case</td>
+<td>Verify Library Import With List Variable</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="test_LibraryImportWithVariablesFromResourceFile">Library Import With Variables From Resource File</a></td>
+<td>Run Tests</td>
+<td></td>
+<td>test_libraries${/}library_import_with_variable_from_resource.html</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Test Case</td>
+<td>Verify Library Import With Variable In Name</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Test Case</td>
+<td>Verify Library Import With List Variable</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Test Case</td>
+<td>Verify Resource Import With Variable</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="test_ArgumentsToLibrary">Arguments To Library</a></td>
+<td>Run Tests</td>
+<td></td>
+<td>test_libraries${/}library_with_0_parameters.html</td>
+<td>test_libraries${/}library_with_1_parameters.html</td>
+</tr>
+<tr>
+<td></td>
+<td>...</td>
+<td>test_libraries${/}library_with_2_parameters.html</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Test Case</td>
+<td>Two Default Parameters</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Test Case</td>
+<td>One Default and One Set Parameter</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Test Case</td>
+<td>Two Set Parameters</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</table>
+
+<table border="1">
+<colgroup span="99">
+<col class="name">
+<col class="action">
+<col class="arg" span="3"></colgroup>
+<tr>
+<th>Keyword</th>
+<th>Action</th>
+<th>Argument</th>
+<th>Argument</th>
+<th>Argument</th>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</table>
+
+</body>
+</html>

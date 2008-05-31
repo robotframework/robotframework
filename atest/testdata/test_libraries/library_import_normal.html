@@ -1,0 +1,458 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+
+
+  
+  <style type="text/css">
+html {
+  font-family: Arial,Helvetica,sans-serif;
+  background-color: white;
+  color: black;
+}
+p {
+  max-width: 60em;
+}
+table {
+  border-collapse: collapse;
+  empty-cells: show;
+  margin: 1em 0em;
+  border: 0.1em solid black;
+}
+th, td {
+  border-style: solid;
+  border-width: 0.05em 0.1em;
+  border-color: black;
+  padding: 0.1em 0.2em;
+  height: 1.5em;
+}
+th {
+  background-color: rgb(192, 192, 192);
+  color: black;
+  border-width: 0.1em;
+  font-weight: bold;
+  text-align: center;
+  text-transform: capitalize;
+  letter-spacing: 0.1em;
+}
+/* Widths of named columns */
+col.name {
+  width: 10em;
+}
+.action, .value, .arg {
+  width: 15em;
+}
+/* Properties for the name column 
+- td:first-child should work in CSS 2.1 avare browsers (tested in Firefox)
+- col.name is against specs but works in IE
+*/
+td:first-child, col.name {
+  background-color: rgb(240, 240, 240);
+  text-transform: capitalize;
+  letter-spacing: 0.1em;
+}
+/* required for IE */
+th {
+  font-style: normal;
+}
+  </style>
+  
+  <title>Robot Test Cases</title></head>
+
+<body>
+
+
+<h1>Robot Test Cases</h1>
+
+
+
+<table border="1">
+
+
+  <colgroup span="99"><col class="name"><col class="value" span="4"></colgroup>
+  <thead>
+  <tr>
+
+
+    <th>Setting</th>
+
+
+    <th>Value</th>
+
+
+    <th>Value</th>
+
+
+    <th>value</th>
+
+
+    <th>Value</th>
+
+
+  </tr>
+
+
+  </thead>
+  <tbody>
+
+
+    <tr>
+
+
+      <td>Library</td>
+
+
+      <td>OperatingSystem</td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td>Library</td>
+
+
+      <td>E x a m p l e &nbsp; L i b r a r y</td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+    <tr>
+      <td align="undefined" valign="undefined">Library</td>
+      <td align="undefined" valign="undefined">libmodule.LibClass1</td>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined"></td>
+    </tr>
+    <tr>
+      <td align="undefined" valign="undefined">Library</td>
+      <td align="undefined" valign="undefined">lib module . Lib Class 2</td>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined"></td>
+    </tr><tr><td>library</td><td>libmodule</td><td># No keywords here -&gt; warning</td><td></td><td></td></tr>
+
+
+  
+  </tbody>
+</table>
+
+
+
+<table border="1">
+
+
+  <colgroup span="99"><col class="name"><col class="value" span="4"></colgroup>
+  <thead>
+  <tr>
+
+
+    <th>Variable</th>
+
+
+    <th>Value</th>
+
+
+    <th>Value</th>
+
+
+    <th>Value</th>
+
+
+    <th>Value</th>
+
+
+  </tr>
+
+
+  </thead>
+  <tbody>
+
+
+    <tr>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+  
+  </tbody>
+</table>
+
+
+
+<table border="1">
+
+
+  <colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
+  <thead>
+  <tr>
+
+
+    <th>Test Case</th>
+
+
+    <th>Action</th>
+
+
+    <th>Argument</th>
+
+
+    <th>Argument</th>
+
+
+    <th>Argument</th>
+
+
+
+
+  </tr>
+
+
+  </thead>
+  <tbody>
+
+
+    <tr>
+
+
+      <td>Normal Library Import</td>
+
+      <td>Fail If Dir Empty</td>
+
+      <td>${CURDIR}</td>
+
+
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td></td>
+
+
+      <td>Fail Unless&nbsp;Dir Exists</td>
+
+      <td>${TEMPDIR}</td>
+
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+
+
+    </tr>
+    <tr>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined"></td>
+    </tr>
+    <tr>
+      <td align="undefined" valign="undefined">Library Import With Spaces In Name</td>
+      <td align="undefined" valign="undefined">Print</td>
+      <td align="undefined" valign="undefined">It works!</td>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined"></td>
+    </tr>
+    <tr>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined">example Library. print many</td>
+      <td align="undefined" valign="undefined">It really</td>
+      <td align="undefined" valign="undefined"> workz!!</td>
+      <td align="undefined" valign="undefined"></td>
+    </tr>
+    <tr>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined"></td>
+    </tr>
+    <tr>
+      <td align="undefined" valign="undefined">Importing Python Class From Module</td>
+      <td align="undefined" valign="undefined">${ret1} = </td>
+      <td align="undefined" valign="undefined">Verify Lib&nbsp;Class 1</td>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined"></td>
+    </tr>
+    <tr>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined">${ret2} =<br>
+      </td>
+      <td align="undefined" valign="undefined">libmodule . LibClass2 .<br>
+Verify Lib&nbsp;Class 2</td>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined"></td>
+    </tr>
+    <tr>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined">Equals</td>
+      <td align="undefined" valign="undefined">${ret1}</td>
+      <td align="undefined" valign="undefined">LibClass 1 works</td>
+      <td align="undefined" valign="undefined"></td>
+    </tr>
+    <tr>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined">Equals</td>
+      <td align="undefined" valign="undefined">${ret2}</td>
+      <td align="undefined" valign="undefined">LibClass 2 works also</td>
+      <td align="undefined" valign="undefined"></td>
+    </tr>
+
+
+  
+  </tbody>
+</table>
+
+
+
+<table border="1">
+
+
+  <colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
+  <thead>
+  <tr>
+
+
+    <th>Keyword</th>
+
+
+    <th>Action</th>
+
+
+    <th>Argument</th>
+
+
+    <th>Argument</th>
+
+
+    <th>Argument</th>
+
+
+  </tr>
+
+
+  </thead>
+  <tbody>
+
+
+    <tr>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+  
+  </tbody>
+</table>
+
+
+
+</body></html>

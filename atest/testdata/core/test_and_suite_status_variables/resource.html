@@ -1,0 +1,420 @@
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="RobotIDE" /> 
+<style type="text/css">
+html {
+  font-family: Arial,Helvetica,sans-serif;
+  background-color: white;
+  color: black;
+}
+p {
+  max-width: 60em;
+}
+table {
+  border-collapse: collapse;
+  empty-cells: show;
+  margin: 1em 0em;
+  border: 0.1em solid black;
+}
+th, td {
+  border-style: solid;
+  border-width: 0.05em 0.1em;
+  border-color: black;
+  padding: 0.1em 0.2em;
+  height: 1.5em;
+}
+th {
+  background-color: rgb(192, 192, 192);
+  color: black;
+  border-width: 0.1em;
+  font-weight: bold;
+  text-align: center;
+  text-transform: capitalize;
+  letter-spacing: 0.1em;
+}
+/* Widths of named columns */
+col.name {
+  width: 10em;
+}
+.action, .value, .arg {
+  width: 15em;
+}
+/* Properties for the name column 
+- td:first-child should work in CSS 2.1 avare browsers (tested in Firefox)
+- col.name is against specs but works in IE
+*/
+td:first-child, col.name {
+  background-color: rgb(240, 240, 240);
+  text-transform: capitalize;
+  letter-spacing: 0.1em;
+}
+/* required for IE */
+th {
+  font-style: normal;
+}
+</style>
+<title>Resource</title>
+</head>
+<body>
+<h1>Resource</h1>
+
+<table border="1">
+<colgroup span="99">
+<col class="name">
+<col class="value" span="4"></colgroup>
+<tr>
+<th>Setting</th>
+<th>Value</th>
+<th>Value</th>
+<th>Value</th>
+<th>Value</th>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</table>
+
+<table border="1">
+<colgroup span="99">
+<col class="name">
+<col class="value" span="4"></colgroup>
+<tr>
+<th>Variable</th>
+<th>Value</th>
+<th>Value</th>
+<th>Value</th>
+<th>Value</th>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</table>
+
+<table border="1">
+<colgroup span="99">
+<col class="name">
+<col class="action">
+<col class="arg" span="3"></colgroup>
+<tr>
+<th>Keyword</th>
+<th>Action</th>
+<th>Argument</th>
+<th>Argument</th>
+<th>Argument</th>
+</tr>
+<tr>
+<td><a name="keyword_CheckAllVariablesInSuiteSetup">Check All Variables In Suite Setup</a></td>
+<td>[Arguments]</td>
+<td>${name}</td>
+<td>@{prev_test}</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>[Timeout]</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Test Variables Do Not Exist</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Previous Test Variables</td>
+<td>@{prev_test}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Equals</td>
+<td>${SUITE_NAME}</td>
+<td>${name}</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Fail If Variable Exists</td>
+<td>$SUITE_STATUS</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Fail If Variable Exists</td>
+<td>$SUITE_MESSAGE</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="keyword_CheckAllVariablesInSuiteTeardown">Check All Variables In Suite Teardown</a></td>
+<td>[Arguments]</td>
+<td>${name}</td>
+<td>${status}</td>
+<td>${message}</td>
+</tr>
+<tr>
+<td></td>
+<td>...</td>
+<td>@{prev_test}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>[Timeout]</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Test Variables Do Not Exist</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Previous Test Variables</td>
+<td>@{prev_test}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Equals</td>
+<td>${SUITE_NAME}</td>
+<td>${name}</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Equals</td>
+<td>${SUITE_STATUS}</td>
+<td>${status}</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Equals</td>
+<td>${SUITE_MESSAGE}</td>
+<td>${message}</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="keyword_CheckTestVariablesDoNotExist">Check Test Variables Do Not Exist</a></td>
+<td>[Timeout]</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Fail If variable Exists</td>
+<td>$TEST_NAME</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Fail If variable Exists</td>
+<td>$TEST_STATUS</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Fail If variable Exists</td>
+<td>$TEST_MESSAGE</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="keyword_CheckPreviousTestVariables">Check Previous Test Variables</a></td>
+<td>[Arguments]</td>
+<td>${name}=</td>
+<td>${status}=</td>
+<td>${message}=</td>
+</tr>
+<tr>
+<td></td>
+<td>[Timeout]</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Equals</td>
+<td>${PREV_TEST_STATUS}</td>
+<td>${status}</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Equals</td>
+<td>${PREV_TEST_MESSAGE}</td>
+<td>${message}</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Equals</td>
+<td>${PREV_TEST_NAME}</td>
+<td>${name}</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="keyword_CheckTestVariables">Check Test Variables</a></td>
+<td>[Arguments]</td>
+<td>${name}</td>
+<td>${status}</td>
+<td>${message}</td>
+</tr>
+<tr>
+<td></td>
+<td>[Timeout]</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Equals</td>
+<td>${TEST_STATUS}</td>
+<td>${status}</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Equals</td>
+<td>${TEST_MESSAGE}</td>
+<td>${message}</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Equals</td>
+<td>${TEST_NAME}</td>
+<td>${name}</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="keyword_CheckTestTags">Check Test Tags</a></td>
+<td>[Arguments]</td>
+<td>@{expected}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>[Timeout]</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Log Many</td>
+<td>@{TEST TAGS}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Log Many</td>
+<td>@{expected}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>${exp} =</td>
+<td>Set Variable</td>
+<td>@{expected}</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>${actual} =</td>
+<td>Set Variable</td>
+<td>@{TEST TAGS}</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should Be Equal</td>
+<td>${exp}</td>
+<td>${actual}</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</table>
+
+</body>
+</html>

@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<robot generated="20080519 15:20:13.750" generator="Robot devel 20080428 (Python 2.5.1 on cygwin)">
+<suite name="Testdata">
+<doc></doc>
+<metadata>
+</metadata>
+<critical>
+</critical>
+<filtered>
+</filtered>
+<suite name="Empty Settings">
+<doc></doc>
+<metadata>
+</metadata>
+<critical>
+</critical>
+<filtered>
+</filtered>
+<test critical="yes" name="Empty Metadata" timeout="">
+<doc></doc>
+<tags>
+</tags>
+<kw type="kw" name="DeprecatedBuiltIn.Noop" timeout="">
+<doc>No operation.</doc>
+<arguments>
+</arguments>
+<status status="PASS" endtime="20080519 15:20:13.797" starttime="20080519 15:20:13.766"></status>
+</kw>
+<status status="PASS" endtime="20080519 15:20:13.797" starttime="20080519 15:20:13.750"></status>
+</test>
+<status status="PASS" endtime="20080519 15:20:13.797" starttime="20080519 15:20:13.750"></status>
+</suite>
+<suite name="Everything">
+<doc>Test cases for public API</doc>
+<metadata>
+<item name="My Meta">foo bar</item>
+</metadata>
+<critical>
+</critical>
+<filtered>
+</filtered>
+<kw type="setup" name="My Suite Setup" timeout="">
+<doc></doc>
+<arguments>
+</arguments>
+<kw type="kw" name="BuiltIn.Log" timeout="">
+<doc>Logs given message with given level</doc>
+<arguments>
+<arg>Hello from suite setup</arg>
+</arguments>
+<msg timestamp="20080519 15:20:14.062" html="no" level="INFO">Hello from suite setup</msg>
+<status status="PASS" endtime="20080519 15:20:14.062" starttime="20080519 15:20:14.062"></status>
+</kw>
+<status status="PASS" endtime="20080519 15:20:14.062" starttime="20080519 15:20:14.062"></status>
+</kw>
+<test critical="yes" name="Passing Test" timeout="">
+<doc>This is a passing test</doc>
+<tags>
+<tag>force1</tag>
+<tag>tag1</tag>
+<tag>tag2</tag>
+</tags>
+<kw type="setup" name="My Test Setup" timeout="">
+<doc></doc>
+<arguments>
+</arguments>
+<kw type="kw" name="BuiltIn.Log" timeout="">
+<doc>Logs given message with given level</doc>
+<arguments>
+<arg>Hello from test setup</arg>
+</arguments>
+<msg timestamp="20080519 15:20:14.062" html="no" level="INFO">Hello from test setup</msg>
+<status status="PASS" endtime="20080519 15:20:14.062" starttime="20080519 15:20:14.062"></status>
+</kw>
+<status status="PASS" endtime="20080519 15:20:14.062" starttime="20080519 15:20:14.062"></status>
+</kw>
+<kw type="kw" name="BuiltIn.Log" timeout="">
+<doc>Logs given message with given level</doc>
+<arguments>
+<arg>Hello World</arg>
+</arguments>
+<msg timestamp="20080519 15:20:14.062" html="no" level="INFO">Hello World</msg>
+<status status="PASS" endtime="20080519 15:20:14.062" starttime="20080519 15:20:14.062"></status>
+</kw>
+<kw type="kw" name="DeprecatedBuiltIn.Noop" timeout="">
+<doc>No operation.</doc>
+<arguments>
+</arguments>
+<status status="PASS" endtime="20080519 15:20:14.062" starttime="20080519 15:20:14.062"></status>
+</kw>
+<kw type="teardown" name="My Test Teardown" timeout="">
+<doc></doc>
+<arguments>
+</arguments>
+<kw type="kw" name="BuiltIn.Log" timeout="">
+<doc>Logs given message with given level</doc>
+<arguments>
+<arg>Hello from test teardown</arg>
+</arguments>
+<msg timestamp="20080519 15:20:14.062" html="no" level="INFO">Hello from test teardown</msg>
+<status status="PASS" endtime="20080519 15:20:14.062" starttime="20080519 15:20:14.062"></status>
+</kw>
+<status status="PASS" endtime="20080519 15:20:14.062" starttime="20080519 15:20:14.062"></status>
+</kw>
+<status status="PASS" endtime="20080519 15:20:14.062" starttime="20080519 15:20:14.062"></status>
+</test>
+<test critical="yes" name="Failing Test" timeout="">
+<doc></doc>
+<tags>
+<tag>default1</tag>
+<tag>force1</tag>
+</tags>
+<kw type="kw" name="BuiltIn.Fail" timeout="">
+<doc>Fails the test immediately with the given message.</doc>
+<arguments>
+</arguments>
+<msg timestamp="20080519 15:20:14.141" html="no" level="FAIL">AssertionError</msg>
+<msg timestamp="20080519 15:20:14.141" html="no" level="INFO">Traceback (most recent call last):
+  File "/usr/lib/python2.5/site-packages/robot/libraries/BuiltIn.py", line 80, in fail
+    asserts.fail(msg)
+  File "/usr/lib/python2.5/site-packages/robot/utils/asserts.py", line 90, in fail
+    _report_failure(msg)
+  File "/usr/lib/python2.5/site-packages/robot/utils/asserts.py", line 209, in _report_failure
+    raise AssertionError()</msg>
+<status status="FAIL" endtime="20080519 15:20:14.156" starttime="20080519 15:20:14.062"></status>
+</kw>
+<status status="FAIL" endtime="20080519 15:20:14.156" starttime="20080519 15:20:14.062">AssertionError</status>
+</test>
+<kw type="teardown" name="My Suite Teardown" timeout="">
+<doc></doc>
+<arguments>
+</arguments>
+<kw type="kw" name="BuiltIn.Log" timeout="">
+<doc>Logs given message with given level</doc>
+<arguments>
+<arg>Hello from suite teardown</arg>
+</arguments>
+<msg timestamp="20080519 15:20:14.156" html="no" level="INFO">Hello from suite teardown</msg>
+<status status="PASS" endtime="20080519 15:20:14.156" starttime="20080519 15:20:14.156"></status>
+</kw>
+<status status="PASS" endtime="20080519 15:20:14.156" starttime="20080519 15:20:14.156"></status>
+</kw>
+<status status="FAIL" endtime="20080519 15:20:14.156" starttime="20080519 15:20:13.797"></status>
+</suite>
+<suite name="Minimum">
+<doc></doc>
+<metadata>
+</metadata>
+<critical>
+</critical>
+<filtered>
+</filtered>
+<test critical="yes" name="Test" timeout="">
+<doc></doc>
+<tags>
+</tags>
+<kw type="kw" name="DeprecatedBuiltIn.Noop" timeout="">
+<doc>No operation.</doc>
+<arguments>
+</arguments>
+<status status="PASS" endtime="20080519 15:20:14.156" starttime="20080519 15:20:14.156"></status>
+</kw>
+<status status="PASS" endtime="20080519 15:20:14.156" starttime="20080519 15:20:14.156"></status>
+</test>
+<status status="PASS" endtime="20080519 15:20:14.156" starttime="20080519 15:20:14.156"></status>
+</suite>
+<status status="FAIL" endtime="20080519 15:20:14.156" starttime="20080519 15:20:13.594"></status>
+</suite>
+<statistics>
+<total>
+<stat fail="1" pass="3">Critical Tests</stat>
+<stat fail="1" pass="3">All Tests</stat>
+</total>
+<tag>
+<stat fail="1" info="" pass="0">default1</stat>
+<stat fail="1" info="" pass="1">force1</stat>
+<stat fail="0" info="" pass="1">tag1</stat>
+<stat fail="0" info="" pass="1">tag2</stat>
+</tag>
+<suite>
+<stat fail="1" doc="Testdata" pass="3">Testdata</stat>
+<stat fail="0" doc="Testdata.Empty Settings" pass="1">t.Empty Settings</stat>
+<stat fail="1" doc="Testdata.Everything" pass="1">t.Everything</stat>
+<stat fail="0" doc="Testdata.Minimum" pass="1">t.Minimum</stat>
+</suite>
+</statistics>
+<syslog>
+</syslog>
+</robot>

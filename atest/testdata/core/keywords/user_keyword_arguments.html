@@ -1,0 +1,2631 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+
+
+
+  
+  
+  <style type="text/css">
+html {
+  font-family: Arial,Helvetica,sans-serif;
+  background-color: white;
+  color: black;
+}
+p {
+  max-width: 60em;
+}
+table {
+  border-collapse: collapse;
+  empty-cells: show;
+  margin: 1em 0em;
+  border: 0.1em solid black;
+}
+th, td {
+  border-style: solid;
+  border-width: 0.05em 0.1em;
+  border-color: black;
+  padding: 0.1em 0.2em;
+  height: 1.5em;
+}
+th {
+  background-color: rgb(192, 192, 192);
+  color: black;
+  border-width: 0.1em;
+  font-weight: bold;
+  text-align: center;
+  text-transform: capitalize;
+  letter-spacing: 0.1em;
+}
+/* Widths of named columns */
+col.name {
+  width: 10em;
+}
+.action, .value, .arg {
+  width: 15em;
+}
+/* Properties for the name column 
+- td:first-child should work in CSS 2.1 avare browsers (tested in Firefox)
+- col.name is against specs but works in IE
+*/
+td:first-child, col.name {
+  background-color: rgb(240, 240, 240);
+  text-transform: capitalize;
+  letter-spacing: 0.1em;
+}
+/* required for IE */
+th {
+  font-style: normal;
+}
+  </style>
+  
+  
+  <title>Robot Test Cases</title></head>
+
+<body>
+
+
+
+<h1>Robot Test Cases</h1>
+
+
+
+
+<table border="1">
+
+
+
+  <colgroup span="99"><col class="name"><col class="value" span="4"></colgroup>
+  <thead>
+  <tr>
+
+
+
+    <th>Setting</th>
+
+
+
+    <th>Value</th>
+
+
+
+    <th>Value</th>
+
+
+
+    <th>value</th>
+
+
+
+    <th>Value</th>
+
+
+
+  </tr>
+
+
+
+  </thead>
+  <tbody>
+
+
+
+    <tr>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+    </tr>
+
+
+
+  
+  
+  </tbody>
+</table>
+
+
+
+
+<table border="1">
+
+
+
+  <colgroup span="99"><col class="name"><col class="value" span="4"></colgroup>
+  <thead>
+  <tr>
+
+
+
+    <th>Variable</th>
+
+
+
+    <th>Value</th>
+
+
+
+    <th>Value</th>
+
+
+
+    <th>Value</th>
+
+
+
+    <th>Value</th>
+
+
+
+  </tr>
+
+
+
+  </thead>
+  <tbody>
+
+
+
+    <tr>
+
+
+
+      <td>${VAR}</td>
+
+
+
+      <td>Variable value</td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+    </tr>
+
+
+
+  
+  
+  </tbody>
+</table>
+
+
+
+
+<table border="1">
+
+
+
+  <colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
+  <thead>
+  <tr>
+
+
+
+    <th>Test Case</th>
+
+
+
+    <th>Action</th>
+
+
+
+    <th>Argument</th>
+
+
+
+    <th>Argument</th>
+
+
+
+    <th>Argument</th>
+
+
+
+    <th>Argument</th>
+
+
+
+    <th>Argument</th>
+
+
+
+  </tr>
+
+
+
+  </thead>
+  <tbody>
+
+
+
+
+    <tr>
+
+
+
+      <td>Correct Number Of Arguments When No Defaults Or Varargs</td>
+
+
+
+      <td>${ret}</td>
+
+
+
+      <td>A 0</td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td></td>
+
+
+      <td align="undefined" valign="undefined">Equals</td>
+
+
+      <td align="undefined" valign="undefined">${ret}</td>
+
+
+      <td align="undefined" valign="undefined">a_0</td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+      <td></td>
+
+      <td>${ret}</td>
+
+      <td>A 0 B</td>
+
+      <td></td>
+
+      <td></td>
+
+      <td></td>
+
+      <td></td>
+
+    </tr>
+
+    <tr>
+
+      <td></td>
+
+      <td align="undefined" valign="undefined">Equals</td>
+
+      <td align="undefined" valign="undefined">${ret}</td>
+
+      <td align="undefined" valign="undefined">a_0_b</td>
+
+      <td></td>
+
+      <td></td>
+
+      <td></td>
+
+    </tr>
+
+    <tr>
+
+
+      <td></td>
+
+
+      <td align="undefined" valign="undefined">${ret}</td>
+
+
+      <td align="undefined" valign="undefined">A 1</td>
+
+
+      <td align="undefined" valign="undefined">my arg</td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td></td>
+
+
+      <td align="undefined" valign="undefined">Equals</td>
+
+
+      <td align="undefined" valign="undefined">${ret}</td>
+
+
+      <td align="undefined" valign="undefined">a_1: my arg</td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td></td>
+
+
+      <td align="undefined" valign="undefined">${ret}</td>
+
+
+      <td align="undefined" valign="undefined">A 3</td>
+
+
+      <td align="undefined" valign="undefined">a1</td>
+
+
+      <td align="undefined" valign="undefined">a2</td>
+
+
+      <td align="undefined" valign="undefined">a3</td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td></td>
+
+
+      <td align="undefined" valign="undefined">Equals</td>
+
+
+      <td align="undefined" valign="undefined">${ret}</td>
+
+
+      <td align="undefined" valign="undefined">a_3: a1 a2 a3</td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td align="undefined" valign="undefined">Too Few Arguments When No Defaults Or Varargs 1</td>
+
+
+      <td>[ Document ]</td>
+
+
+      <td>FAIL</td>
+
+
+      <td>Keyword 'A 1' expected 1 argument, got 0.</td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td></td>
+
+
+      <td align="undefined" valign="undefined">A 1</td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td align="undefined" valign="undefined">Too Few Arguments When No Defaults Or Varargs 2</td>
+
+
+      <td>[ Document ]</td>
+
+
+      <td>FAIL</td>
+
+
+      <td>Keyword 'A 3' expected 3 arguments, got 2.</td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td></td>
+
+
+      <td align="undefined" valign="undefined">A 3</td>
+
+
+      <td align="undefined" valign="undefined">a1</td>
+
+
+      <td align="undefined" valign="undefined">a2</td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td align="undefined" valign="undefined">Too Many Arguments When No Defaults Or Varargs 1</td>
+
+
+      <td>[ Document ]</td>
+
+
+      <td>FAIL</td>
+
+
+      <td>Keyword 'A 0' expected 0 arguments, got 10.</td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td></td>
+
+
+      <td>A 0</td>
+
+
+      <td>This </td>
+
+
+      <td align="undefined" valign="undefined">is </td>
+
+
+      <td align="undefined" valign="undefined">too</td>
+
+
+      <td align="undefined" valign="undefined">much</td>
+
+
+      <td align="undefined" valign="undefined">!</td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td></td>
+
+
+      <td align="undefined" valign="undefined">...</td>
+
+
+      <td align="undefined" valign="undefined">Really</td>
+
+
+      <td align="undefined" valign="undefined">way</td>
+
+
+      <td align="undefined" valign="undefined">too</td>
+
+
+      <td align="undefined" valign="undefined">much</td>
+
+
+      <td align="undefined" valign="undefined">!!!!!</td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td align="undefined" valign="undefined">Too Many Arguments When No Defaults Or Varargs 2</td>
+
+
+      <td>[ Document ]</td>
+
+
+      <td>FAIL</td>
+
+
+      <td>Keyword 'A 1' expected 1 argument, got 2.</td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td></td>
+
+
+      <td align="undefined" valign="undefined">A 1</td>
+
+
+      <td align="undefined" valign="undefined">Too</td>
+
+
+      <td align="undefined" valign="undefined">much</td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td align="undefined" valign="undefined">Too Many Arguments When No Defaults Or Varargs 3</td>
+
+
+      <td>[ Document ]</td>
+
+
+      <td>FAIL</td>
+
+
+      <td>Keyword 'A 3' expected 3 arguments, got 4.</td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td></td>
+
+
+      <td align="undefined" valign="undefined">A 3</td>
+
+
+      <td align="undefined" valign="undefined">a1</td>
+
+
+      <td align="undefined" valign="undefined">a2</td>
+
+
+      <td align="undefined" valign="undefined">a3</td>
+
+
+      <td align="undefined" valign="undefined">a4</td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td align="undefined" valign="undefined">Correct Number Of Arguments With Defaults</td>
+
+
+      <td align="undefined" valign="undefined">${ret}</td>
+
+
+      <td align="undefined" valign="undefined">A 0 1</td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td></td>
+
+
+      <td align="undefined" valign="undefined">Equals</td>
+
+
+      <td align="undefined" valign="undefined">${ret}</td>
+
+
+      <td align="undefined" valign="undefined">a_0_1: default</td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td></td>
+
+
+      <td align="undefined" valign="undefined">${ret}</td>
+
+
+      <td align="undefined" valign="undefined">A 0 1</td>
+
+
+      <td align="undefined" valign="undefined">This works too</td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td></td>
+
+
+      <td align="undefined" valign="undefined">Equals</td>
+
+
+      <td align="undefined" valign="undefined">${ret}</td>
+
+
+      <td align="undefined" valign="undefined">a_0_1:&nbsp;This works too</td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td></td>
+
+
+      <td align="undefined" valign="undefined">${ret}</td>
+
+
+      <td align="undefined" valign="undefined">A 1 3</td>
+
+
+      <td align="undefined" valign="undefined">My argument<br>
+
+
+      </td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td></td>
+
+
+      <td align="undefined" valign="undefined">Equals</td>
+
+
+      <td align="undefined" valign="undefined">${ret}</td>
+
+
+      <td align="undefined" valign="undefined">a_1_3: My argument default default</td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td></td>
+
+
+      <td align="undefined" valign="undefined">${ret}</td>
+
+
+      <td align="undefined" valign="undefined">A 1 3</td>
+
+
+      <td align="undefined" valign="undefined">My argument<br>
+
+
+      </td>
+
+
+      <td align="undefined" valign="undefined">My argument 2</td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td></td>
+
+
+      <td align="undefined" valign="undefined">Equals</td>
+
+
+      <td align="undefined" valign="undefined">${ret}</td>
+
+
+      <td align="undefined" valign="undefined">a_1_3: My argument&nbsp;My argument 2 default</td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td></td>
+
+
+      <td align="undefined" valign="undefined">${ret}</td>
+
+
+      <td align="undefined" valign="undefined">A 1 3</td>
+
+
+      <td align="undefined" valign="undefined">My argument<br>
+
+
+      </td>
+
+
+      <td align="undefined" valign="undefined">My argument 2</td>
+
+
+      <td align="undefined" valign="undefined">My argument 3</td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td></td>
+
+
+      <td align="undefined" valign="undefined">Equals</td>
+
+
+      <td align="undefined" valign="undefined">${ret}</td>
+
+
+      <td align="undefined" valign="undefined">a_1_3: My argument&nbsp;My argument 2&nbsp;My argument 3</td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td align="undefined" valign="undefined">Too Few Arguments With Defaults</td>
+
+
+      <td align="undefined" valign="undefined">[ Document ]</td>
+
+
+      <td align="undefined" valign="undefined">FAIL</td>
+
+
+      <td align="undefined" valign="undefined">Keyword 'A 1 3' expected 1 to 3 arguments, got 0.</td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td></td>
+
+
+      <td align="undefined" valign="undefined">A 1 3</td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td align="undefined" valign="undefined">Too Many Arguments With Defaults 1</td>
+
+
+      <td align="undefined" valign="undefined">[ Document ]</td>
+
+
+      <td align="undefined" valign="undefined">FAIL</td>
+
+
+      <td align="undefined" valign="undefined">Keyword 'A 0 1' expected 0 to 1 arguments, got 2.</td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td></td>
+
+
+      <td align="undefined" valign="undefined">A 0 1</td>
+
+
+      <td align="undefined" valign="undefined">Too</td>
+
+
+      <td align="undefined" valign="undefined">much </td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td align="undefined" valign="undefined">Too Many Arguments With Defaults 2</td>
+
+
+      <td align="undefined" valign="undefined">[ Document ]</td>
+
+
+      <td align="undefined" valign="undefined">FAIL</td>
+
+
+      <td align="undefined" valign="undefined">Keyword 'A 1 3' expected 1 to 3 arguments, got 4.</td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td></td>
+
+
+      <td align="undefined" valign="undefined">A 1 3</td>
+
+
+      <td align="undefined" valign="undefined">This </td>
+
+
+      <td align="undefined" valign="undefined">is </td>
+
+
+      <td align="undefined" valign="undefined">too</td>
+
+
+      <td align="undefined" valign="undefined">much</td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td align="undefined" valign="undefined">Correct Number Of Arguments With Varargs</td>
+
+
+      <td align="undefined" valign="undefined">${ret}</td>
+
+
+      <td align="undefined" valign="undefined">A 0 N</td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td></td>
+
+
+      <td align="undefined" valign="undefined">Equals</td>
+
+
+      <td align="undefined" valign="undefined">${ret}</td>
+
+
+      <td align="undefined" valign="undefined">a_0_n: \</td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td></td>
+
+
+      <td align="undefined" valign="undefined">${ret}</td>
+
+
+      <td align="undefined" valign="undefined">A 0 N</td>
+
+
+      <td align="undefined" valign="undefined">My arg</td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td></td>
+
+
+      <td align="undefined" valign="undefined">Equals</td>
+
+
+      <td align="undefined" valign="undefined">${ret}</td>
+
+
+      <td align="undefined" valign="undefined">a_0_n: My arg</td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td></td>
+
+
+      <td align="undefined" valign="undefined">${ret}</td>
+
+
+      <td align="undefined" valign="undefined">A 0 N</td>
+
+
+      <td align="undefined" valign="undefined">1</td>
+
+
+      <td align="undefined" valign="undefined">2</td>
+
+
+      <td align="undefined" valign="undefined">3</td>
+
+
+      <td align="undefined" valign="undefined">4</td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td></td>
+
+
+      <td align="undefined" valign="undefined">Equals</td>
+
+
+      <td align="undefined" valign="undefined">${ret}</td>
+
+
+      <td align="undefined" valign="undefined">a_0_n: 1 2 3 4</td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td></td>
+
+
+      <td align="undefined" valign="undefined">${ret}</td>
+
+
+      <td align="undefined" valign="undefined">A 1 N</td>
+
+
+      <td align="undefined" valign="undefined">Required arg</td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td></td>
+
+
+      <td align="undefined" valign="undefined">Equals</td>
+
+
+      <td align="undefined" valign="undefined">${ret}</td>
+
+
+      <td align="undefined" valign="undefined">a_1_n: Required arg \</td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td></td>
+
+
+      <td align="undefined" valign="undefined">${ret}</td>
+
+
+      <td align="undefined" valign="undefined">A 1 N</td>
+
+
+      <td align="undefined" valign="undefined">1 (req)</td>
+
+
+      <td align="undefined" valign="undefined">2</td>
+
+
+      <td align="undefined" valign="undefined">3</td>
+
+
+      <td align="undefined" valign="undefined">4</td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td></td>
+
+
+      <td align="undefined" valign="undefined">...</td>
+
+
+      <td align="undefined" valign="undefined">5</td>
+
+
+      <td align="undefined" valign="undefined">6</td>
+
+
+      <td align="undefined" valign="undefined">7</td>
+
+
+      <td align="undefined" valign="undefined">8</td>
+
+
+      <td align="undefined" valign="undefined">9</td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td></td>
+
+
+      <td align="undefined" valign="undefined">Equals</td>
+
+
+      <td align="undefined" valign="undefined">${ret}</td>
+
+
+      <td align="undefined" valign="undefined">a_1_n: 1 (req) 2 3 4 5 6 7 8 9</td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td align="undefined" valign="undefined">Too Few Arguments With Varargs</td>
+
+
+      <td align="undefined" valign="undefined">[ Document ]</td>
+
+
+      <td align="undefined" valign="undefined">FAIL</td>
+
+
+      <td align="undefined" valign="undefined">Keyword 'A 1 N' expected at least 1 argument, got 0.</td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td></td>
+
+
+      <td align="undefined" valign="undefined">A 1 N</td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td align="undefined" valign="undefined">Correct Number Of Arguments With Defaults And Varargs</td>
+
+
+      <td align="undefined" valign="undefined">${ret}</td>
+
+
+      <td align="undefined" valign="undefined">A 1 2 N</td>
+
+
+      <td align="undefined" valign="undefined">Required arg</td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td></td>
+
+
+      <td align="undefined" valign="undefined">Equals</td>
+
+
+      <td align="undefined" valign="undefined">${ret}</td>
+
+
+      <td align="undefined" valign="undefined">a_1_2_n: Required arg default \</td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td></td>
+
+
+      <td align="undefined" valign="undefined">${ret}</td>
+
+
+      <td align="undefined" valign="undefined">A 1 2 N</td>
+
+
+      <td align="undefined" valign="undefined">one (req)</td>
+
+
+      <td align="undefined" valign="undefined">two</td>
+
+
+      <td align="undefined" valign="undefined">three</td>
+
+
+      <td align="undefined" valign="undefined">four</td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td></td>
+
+
+      <td align="undefined" valign="undefined">Equals</td>
+
+
+      <td align="undefined" valign="undefined">${ret}</td>
+
+
+      <td align="undefined" valign="undefined">a_1_2_n: one (req) two three four</td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td align="undefined" valign="undefined">Too Few Arguments With Defaults And Varargs</td>
+
+
+      <td align="undefined" valign="undefined">[ Document ]</td>
+
+
+      <td align="undefined" valign="undefined">FAIL</td>
+
+
+      <td align="undefined" valign="undefined">Keyword 'A 1 2 N' expected at least 1 argument, got 0.<br>
+
+
+      </td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td></td>
+
+
+      <td align="undefined" valign="undefined">A 1 2 N</td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr><tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Default With Variable</td><td>${ret} =</td><td>Default With Variable</td><td>Given value</td><td></td><td></td><td></td></tr><tr><td></td><td>Should Be Equal</td><td>${ret}</td><td>Given value</td><td></td><td></td><td></td></tr><tr><td></td><td>${ret} =</td><td>Default With Variable</td><td><br></td><td></td><td></td><td></td></tr><tr><td></td><td>Should Be Equal</td><td>${ret}</td><td>Variable value</td><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Default With Automatic Variable</td><td>${ret} =</td><td>Default With None Variable</td><td></td><td></td><td></td><td></td></tr><tr><td></td><td>Should Be Equal</td><td>${ret}</td><td>${None}</td><td></td><td></td><td></td></tr><tr><td></td><td>${ret} =</td><td>Default With Number Variable</td><td></td><td></td><td></td><td></td></tr><tr><td></td><td>Should Be Equal</td><td>${ret}</td><td>${1000}</td><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Default With Extended Variable Syntax</td><td>${ret} =</td><td>Default With Extended Variable Syntax</td><td></td><td></td><td></td><td></td></tr><tr><td></td><td>Should Be Equal</td><td>${ret}</td><td>VARIABLE VALUE</td><td></td><td></td><td></td></tr>
+
+
+
+  
+  
+  </tbody>
+</table>
+
+
+
+
+<table border="1">
+
+
+
+  <colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
+  <thead>
+  <tr>
+
+
+
+    <th>Keyword</th>
+
+
+
+    <th>Action</th>
+
+
+
+    <th>Argument</th>
+
+
+
+    <th>Argument</th>
+
+
+
+    <th>Argument</th>
+
+
+
+  </tr>
+
+
+
+  </thead>
+  <tbody>
+
+
+
+
+    <tr>
+
+
+
+      <td>a 0</td>
+
+
+      <td>[ Return ]</td>
+
+
+      <td>a_0</td>
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td align="undefined" valign="undefined">A 0 B</td>
+
+
+      <td align="undefined" valign="undefined">[ Arguments ]</td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td></td>
+
+
+      <td>[ Return ]</td>
+
+      <td>a_0_b</td>
+
+
+      
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+      <td></td>
+
+      <td></td>
+
+      <td></td>
+
+      <td></td>
+
+      <td></td>
+
+    </tr>
+
+    <tr>
+
+      <td align="undefined" valign="undefined">A 1</td>
+
+      <td align="undefined" valign="undefined">[ Arguments ]</td>
+
+      <td align="undefined" valign="undefined">${arg}</td>
+
+      <td></td>
+
+      <td></td>
+
+    </tr>
+
+    <tr>
+
+      <td></td>
+
+      <td>[ Return ]</td>
+
+      <td>a_1: ${arg}</td>
+
+      <td></td>
+
+      <td></td>
+
+    </tr>
+
+    <tr>
+
+      <td></td>
+
+      <td></td>
+
+      <td></td>
+
+      <td></td>
+
+      <td></td>
+
+    </tr>
+
+    <tr>
+
+      <td align="undefined" valign="undefined">A 3</td>
+
+      <td align="undefined" valign="undefined">[ Arguments ]</td>
+
+      <td align="undefined" valign="undefined">${arg1}</td>
+
+      <td align="undefined" valign="undefined">${arg2}</td>
+
+      <td align="undefined" valign="undefined">${arg3}</td>
+
+    </tr>
+
+    <tr>
+
+      <td></td>
+
+      <td>[ Return ]</td>
+
+      <td>a_3: ${arg1}&nbsp;${arg2}&nbsp;${arg3}</td>
+
+      <td></td>
+
+      <td></td>
+
+    </tr>
+
+    <tr>
+
+      <td></td>
+
+      <td></td>
+
+      <td></td>
+
+      <td></td>
+
+      <td></td>
+
+    </tr>
+
+    <tr>
+
+      <td align="undefined" valign="undefined">A 0 1</td>
+
+      <td align="undefined" valign="undefined">[ Arguments ]</td>
+
+      <td align="undefined" valign="undefined">${arg}=default</td>
+
+      <td></td>
+
+      <td></td>
+
+    </tr>
+
+    <tr>
+
+      <td></td>
+
+      <td>[ Return ]</td>
+
+      <td>a_0_1: ${arg}</td>
+
+      <td></td>
+
+      <td></td>
+
+    </tr>
+
+    <tr>
+
+      <td></td>
+
+      <td></td>
+
+      <td></td>
+
+      <td></td>
+
+      <td></td>
+
+    </tr>
+
+    <tr>
+
+      <td align="undefined" valign="undefined">A 1 3</td>
+
+      <td align="undefined" valign="undefined">[ Arguments ]</td>
+
+      <td align="undefined" valign="undefined">${arg1}</td>
+
+      <td align="undefined" valign="undefined">${arg2}=default</td>
+
+      <td align="undefined" valign="undefined">${arg3}=default</td>
+
+    </tr>
+
+    <tr>
+
+      <td></td>
+
+      <td>[ Return ]</td>
+
+      <td>a_1_3: ${arg1}&nbsp;${arg2}&nbsp;${arg3}</td>
+
+      <td></td>
+
+      <td></td>
+
+    </tr>
+
+    <tr>
+
+      <td></td>
+
+      <td></td>
+
+      <td></td>
+
+      <td></td>
+
+      <td></td>
+
+    </tr>
+
+    <tr>
+
+      <td align="undefined" valign="undefined">A 0 N</td>
+
+      <td align="undefined" valign="undefined">[ Arguments ]</td>
+
+      <td align="undefined" valign="undefined">@{args}</td>
+
+      <td></td>
+
+      <td></td>
+
+    </tr>
+
+    <tr>
+
+      <td></td>
+
+      <td align="undefined" valign="undefined">${ret}</td>
+
+      <td align="undefined" valign="undefined">Catenate</td>
+
+      <td align="undefined" valign="undefined">@{args}</td>
+
+      <td><br>
+
+      </td>
+
+    </tr>
+
+    <tr>
+
+
+      <td></td>
+
+
+      <td align="undefined" valign="undefined">[ Return ]</td>
+
+
+      <td align="undefined" valign="undefined">a_0_n: ${ret}</td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+    <tr>
+
+      <td></td>
+
+      <td></td>
+
+      <td></td>
+
+      <td></td>
+
+      <td></td>
+
+    </tr>
+
+    <tr>
+
+      <td align="undefined" valign="undefined">A 1 N</td>
+
+      <td align="undefined" valign="undefined">[ Arguments ]</td>
+
+      <td align="undefined" valign="undefined">${arg}</td>
+
+      <td align="undefined" valign="undefined">@{args}</td>
+
+      <td></td>
+
+    </tr>
+
+    <tr>
+
+      <td></td>
+
+      <td align="undefined" valign="undefined">${ret}</td>
+
+      <td align="undefined" valign="undefined">Catenate</td>
+
+      <td align="undefined" valign="undefined">@{args}</td>
+
+      <td></td>
+
+    </tr>
+
+    <tr>
+
+      <td></td>
+
+      <td align="undefined" valign="undefined">[ Return ]</td>
+
+      <td align="undefined" valign="undefined">a_1_n: ${arg} ${ret}</td>
+
+      <td></td>
+
+      <td></td>
+
+    </tr>
+
+    <tr>
+
+      <td></td>
+
+      <td></td>
+
+      <td></td>
+
+      <td></td>
+
+      <td></td>
+
+    </tr>
+
+    <tr>
+
+      <td align="undefined" valign="undefined">A 1 2 N</td>
+
+      <td align="undefined" valign="undefined">[ Arguments ]</td>
+
+      <td align="undefined" valign="undefined">${arg1}</td>
+
+      <td align="undefined" valign="undefined">${arg2}=default</td>
+
+      <td align="undefined" valign="undefined">@{args}</td>
+
+    </tr>
+
+    <tr>
+
+      <td></td>
+
+      <td align="undefined" valign="undefined">${ret}</td>
+
+      <td align="undefined" valign="undefined">Catenate</td>
+
+      <td align="undefined" valign="undefined">@{args}</td>
+
+      <td></td>
+
+    </tr>
+
+    <tr>
+
+      <td></td>
+
+      <td align="undefined" valign="undefined">[ Return ]</td>
+
+      <td align="undefined" valign="undefined">a_1_2_n: ${arg1} ${arg2} ${ret}</td>
+
+      <td></td>
+
+      <td></td>
+
+    </tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Default With Variable</td><td align="undefined" valign="undefined">[ Arguments ]</td><td align="undefined" valign="undefined">${arg}=${VAR}</td><td></td><td></td></tr><tr><td></td><td>[ Return ]</td><td>${arg}</td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Default With None Variable</td><td align="undefined" valign="undefined">[ Arguments ]</td><td align="undefined" valign="undefined">${arg}=${None}</td><td></td><td></td></tr><tr><td></td><td>[ Return ]</td><td>${arg}</td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Default With Number Variable</td><td align="undefined" valign="undefined">[ Arguments ]</td><td align="undefined" valign="undefined">${arg}=${1e3}</td><td></td><td></td></tr><tr><td></td><td>[ Return ]</td><td>${arg}</td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Default With Extended Variable Syntax</td><td align="undefined" valign="undefined">[ Arguments ]</td><td align="undefined" valign="undefined">${arg}=${VAR.upper()}</td><td></td><td></td></tr><tr><td></td><td>[ Return ]</td><td>${arg}</td><td></td><td></td></tr>
+
+
+
+  
+  
+  </tbody>
+</table>
+
+
+
+
+</body></html>

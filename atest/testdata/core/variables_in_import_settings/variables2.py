@@ -1,0 +1,1 @@
+greetings = 'Hi, Tellus!'

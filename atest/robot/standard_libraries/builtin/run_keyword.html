@@ -1,0 +1,527 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+<meta name="generator" content="HTML Tidy for Cygwin (vers 1st September 2004), see www.w3.org">
+<style type="text/css">
+html { font-family: Arial,Helvetica,sans-serif;
+background-color: white;
+color: black;
+}
+p { max-width: 60em;
+}
+table { border-collapse: collapse;
+empty-cells: show;
+margin: 1em 0em;
+border: 0.1em solid black;
+}
+th, td {
+border-style: solid;
+border-width: 0.05em 0.1em;
+border-color: black;
+padding: 0.1em 0.2em;
+height: 1.5em;
+}
+th {
+background-color: rgb(192, 192, 192);
+color: black;
+border-width: 0.1em;
+font-weight: bold;
+text-align: center;
+text-transform: capitalize;
+letter-spacing: 0.1em;
+}
+/* Widths of named columns */
+col.name {
+width: 10em;
+}
+.action , .value, .arg {
+width: 15em;
+}
+/* Properties for the name column - td:first-child should work in CSS 2.1 avare browsers (tested in Firefox)
+- col.name is against specs but works in IE
+*/
+td:first-child, col.name {
+background-color: rgb(240, 240, 240);
+text-transform: capitalize;
+letter-spacing: 0.1em;
+}
+th { font-style: normal; } /* required for IE */
+</style>
+
+<title>Robot Test Cases</title><link type="text/css" href="resources/css/testdata.css" rel="stylesheet"></head>
+<body>
+<h1>Robot Test Cases for Built-In Run Keyword</h1>
+<br>
+<table border="1">
+<colgroup span="99"><col class="name"><col class="value" span="4"></colgroup>
+<thead>
+<tr>
+<th>Setting</th>
+<th>Value</th>
+<th>Value</th>
+<th>value</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Resource</td>
+<td>../../../resources/resource.html</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td align="undefined" valign="undefined">Document</td>
+<td align="undefined" valign="undefined">Tests for BuiltIn
+library's run keyword functionality</td>
+<td align="undefined" valign="undefined"></td>
+<td align="undefined" valign="undefined"></td>
+<td align="undefined" valign="undefined"></td>
+</tr>
+<tr>
+<td>Force Tags</td>
+<td>regression</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td align="undefined" valign="undefined">Default Tags</td>
+<td>jybot</td>
+<td>pybot</td>
+<td align="undefined" valign="undefined"></td>
+<td align="undefined" valign="undefined"></td>
+</tr>
+<tr>
+<td>Suite Setup</td>
+<td>Run Tests</td>
+<td></td>
+<td>standard_libraries${/}builtin${/}run_keyword.html</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<br>
+<table border="1">
+<colgroup span="99"><col class="name"><col class="value"></colgroup>
+<thead>
+<tr>
+<th>Variable</th>
+<th>Value</th>
+<th>Value</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><br></td>
+<td><br></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<br>
+<table border="1">
+<colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
+<thead>
+<tr>
+<th>Test Case</th>
+<th>Action</th>
+<th>Argument</th>
+<th>Argument</th>
+<th>Argument</th>
+<th>Argument</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Run Keyword</td>
+<td>${tc} =</td>
+<td>Check Test Case</td>
+<td>Run Keyword</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Run Keyword</td>
+<td>${tc.kws[0]}</td>
+<td>BuiltIn.Log</td>
+<td>This is logged with Run Keyword</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Equals</td>
+<td>${tc.kws[1].kws[0].name}</td>
+<td>BuiltIn.No Operation</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Run Keyword</td>
+<td>${tc.kws[2]}</td>
+<td>BuiltIn.Log Many</td>
+<td>1</td>
+<td>2</td>
+</tr>
+<tr>
+<td></td>
+<td>...</td>
+<td>3</td>
+<td>4</td>
+<td>5</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Run Keyword</td>
+<td>${tc.kws[4]}</td>
+<td>BuiltIn.Log</td>
+<td>Run keyword with variable: Log</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Run Keyword</td>
+<td>${tc.kws[6]}</td>
+<td>BuiltIn.Log Many</td>
+<td>one</td>
+<td>two</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Run Keyword Returning Value</td>
+<td>${tc} =</td>
+<td>Check Test Case</td>
+<td>Run Keyword Returning Value</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Equals</td>
+<td>${tc.kws[0].name}</td>
+<td>\${ret} = BuiltIn.Run Keyword</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Equals</td>
+<td>${tc.kws[0].kws[0].name}</td>
+<td>BuiltIn.Set Variable</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Equals</td>
+<td>${tc.kws[2].name}</td>
+<td>\${ret} = BuiltIn.Run Keyword</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Equals</td>
+<td>${tc.kws[2].kws[0].name}</td>
+<td>BuiltIn.Evaluate</td>
+<td></td>
+<td></td>
+</tr>
+<tr><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Run Keyword With Arguments That Needs to Be Escaped</td><td>${tc} =</td><td>Check Test Case</td><td>Run Keyword With Arguments That Needs to Be Escaped</td><td></td><td></td></tr><tr><td></td><td>Check Log Message</td><td>${tc.kws[1].kws[0].msgs[0]}</td><td>c:\\temp\\foo</td><td></td><td></td></tr><tr><td></td><td>Check Log Message</td><td>${tc.kws[1].kws[0].msgs[1]}</td><td>\${notvar}</td><td></td><td></td></tr><tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Run Keyword with UK</td>
+<td>${tc} =</td>
+<td>Check Test Case</td>
+<td>Run Keyword with UK</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Run Keyword In UK</td>
+<td>${tc.kws[0]}</td>
+<td>BuiltIn.Log</td>
+<td>Using UK</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Run Keyword In UK</td>
+<td>${tc.kws[1]}</td>
+<td>BuiltIn.Log Many</td>
+<td>yksi</td>
+<td>kaksi</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Run Keyword in For Loop</td>
+<td>${tc} =</td>
+<td>Check Test Case</td>
+<td>Run Keyword in For Loop</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Run Keyword</td>
+<td>${tc.kws[0].kws[0].kws[0]}</td>
+<td>BuiltIn.Log</td>
+<td>hello from for loop</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Run Keyword In UK</td>
+<td>${tc.kws[0].kws[2].kws[0]}</td>
+<td>BuiltIn.Log</td>
+<td>hei maailma</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Run Keyword</td>
+<td>${tc.kws[1].kws[0].kws[0]}</td>
+<td>BuiltIn.Log</td>
+<td>hello from second for loop</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Repeat Run Keyword</td>
+<td>${tc} =</td>
+<td>Check Test Case</td>
+<td>Repeat Run Keyword</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Log Message</td>
+<td>${tc.kws[0].kws[0].msgs[0]}</td>
+<td><span class="arg">Hello, World!</span></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Log Message</td>
+<td>${tc.kws[0].kws[1].msgs[0]}</td>
+<td><span class="arg">Hello, World!</span></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Log Message</td>
+<td>${tc.kws[0].kws[2].msgs[0]}</td>
+<td><span class="arg">Hello, World!</span></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Run Keyword With Test timeout</td>
+<td>Check Test Case</td>
+<td>Run Keyword With Test Timeout Passing</td>
+<td><br></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><br></td>
+<td>${tc} =</td>
+<td>Check Test Case</td>
+<td>Run Keyword With Test Timeout Exceeded</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Run Keyword</td>
+<td>${tc.kws[0]}</td>
+<td>BuiltIn.Log</td>
+<td>Before Timeout</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Run Keyword With KW timeout</td>
+<td>Check Test Case</td>
+<td>Run Keyword With KW Timeout Passing</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Test Case</td>
+<td>Run Keyword With KW Timeout Exceeded</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<br>
+<table border="1">
+<colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
+<thead>
+<tr>
+<th>Keyword</th>
+<th>Action</th>
+<th>Argument</th>
+<th>Argument</th>
+<th>Argument</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Check Run Keyword</td>
+<td>[ Arguments ]</td>
+<td>${kw}</td>
+<td>${subkw_name}</td>
+<td>@{msgs}</td>
+</tr>
+<tr>
+<td></td>
+<td>Equals</td>
+<td>${kw.name}</td>
+<td>BuiltIn.Run Keyword</td>
+<td></td>
+</tr>
+<tr>
+<td align="undefined" valign="undefined"></td>
+<td>Equals</td>
+<td>${kw.kws[0].name}</td>
+<td>${subkw_name}</td>
+<td align="undefined" valign="undefined"></td>
+</tr>
+<tr>
+<td></td>
+<td>${index} =&nbsp;</td>
+<td>Set</td>
+<td>${0}</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>: FOR</td>
+<td>${msg}</td>
+<td>IN</td>
+<td>@{msgs}</td>
+</tr>
+<tr>
+<td align="undefined" valign="undefined"></td>
+<td align="undefined" valign="undefined"></td>
+<td align="undefined" valign="undefined">Check Log Message</td>
+<td align="undefined" valign="undefined">
+${kw.kws[0].msgs[${index}]}</td>
+<td align="undefined" valign="undefined">${msg}</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td>${index} =</td>
+<td>evaluate</td>
+<td>${index} +1</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Check Run Keyword In Uk</td>
+<td>[ Arguments ]</td>
+<td>${kw}</td>
+<td>${subkw_name}</td>
+<td>@{msgs}</td>
+</tr>
+<tr>
+<td></td>
+<td>Equals</td>
+<td>${kw.name}</td>
+<td>BuiltIn.Run Keyword</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Equals</td>
+<td>${kw.kws[0].name}</td>
+<td>My UK</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Run Keyword</td>
+<td>${kw.kws[0].kws[0]}</td>
+<td>${subkw_name}</td>
+<td>@{msgs}</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</body></html>

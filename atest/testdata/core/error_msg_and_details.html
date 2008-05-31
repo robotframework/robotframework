@@ -1,0 +1,275 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+
+  <style type="text/css">
+html {
+  font-family: Arial,Helvetica,sans-serif;
+  background-color: white;
+  color: black;
+}
+p {
+  max-width: 60em;
+}
+table {
+  border-collapse: collapse;
+  empty-cells: show;
+  margin: 1em 0em;
+  border: 0.1em solid black;
+}
+th, td {
+  border-style: solid;
+  border-width: 0.05em 0.1em;
+  border-color: black;
+  padding: 0.1em 0.2em;
+  height: 1.5em;
+}
+th {
+  background-color: rgb(192, 192, 192);
+  color: black;
+  border-width: 0.1em;
+  font-weight: bold;
+  text-align: center;
+  text-transform: capitalize;
+  letter-spacing: 0.1em;
+}
+/* Widths of named columns */
+col.name {
+  width: 10em;
+}
+.action, .value, .arg {
+  width: 15em;
+}
+/* Properties for the name column 
+- td:first-child should work in CSS 2.1 avare browsers (tested in Firefox)
+- col.name is against specs but works in IE
+*/
+td:first-child, col.name {
+  background-color: rgb(240, 240, 240);
+  text-transform: capitalize;
+  letter-spacing: 0.1em;
+}
+/* required for IE */
+th {
+  font-style: normal;
+}
+  </style>
+  <title>Robot Test Cases</title></head>
+<body>
+
+<h1>Robot Test Cases</h1>
+
+
+<table border="1">
+
+  <colgroup span="99"><col class="name"><col class="value" span="4"></colgroup>
+  <thead>
+  <tr>
+
+    <th>Setting</th>
+
+    <th>Value</th>
+
+    <th>Value</th>
+
+    <th>value</th>
+
+    <th>Value</th>
+
+  </tr>
+
+  </thead>
+  <tbody>
+
+    <tr>
+
+      <td>Library</td>
+
+      <td>ExampleLibrary</td>
+
+      <td></td>
+
+      <td></td>
+
+      <td></td>
+
+    </tr>
+
+    <tr>
+
+      <td>Library&nbsp;</td>
+
+      <td>ExampleJavaLibrary</td>
+
+      <td></td>
+
+      <td></td>
+
+      <td></td>
+
+    </tr>
+
+  </tbody>
+</table>
+
+
+<table border="1">
+
+  <colgroup span="99"><col class="name"><col class="value" span="4"></colgroup>
+  <thead>
+  <tr>
+
+    <th>Variable</th>
+
+    <th>Value</th>
+
+    <th>Value</th>
+
+    <th>Value</th>
+
+    <th>Value</th>
+
+  </tr>
+
+  </thead>
+  <tbody>
+
+    <tr>
+
+      <td></td>
+
+      <td></td>
+
+      <td></td>
+
+      <td></td>
+
+      <td></td>
+
+    </tr>
+
+    <tr>
+
+      <td></td>
+
+      <td></td>
+
+      <td></td>
+
+      <td></td>
+
+      <td></td>
+
+    </tr>
+
+  </tbody>
+</table>
+
+
+<table border="1">
+
+  <colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
+  <thead>
+  <tr>
+
+    <th>Test Case</th>
+
+    <th>Action</th>
+
+    <th>Argument</th>
+
+    <th>Argument</th>
+
+    <th>Argument</th>
+
+
+
+  </tr>
+
+  </thead>
+  <tbody>
+
+    <tr><td>Generic Failure</td><td>[ Documentation ]</td><td>FAIL</td><td>foo != bar</td><td></td></tr><tr><td></td><td>Exception</td><td>AssertionError</td><td>foo != bar</td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Generic Failure In Java</td><td>[ Documentation ]</td><td>FAIL</td><td>bar != foo</td><td></td></tr><tr><td></td><td>${ht} =</td><td>Get Hashtable</td><td></td><td></td></tr><tr><td></td><td>Set To Hashtable</td><td>${ht}</td><td>foo</td><td>bar</td></tr><tr><td></td><td>Check In Hashtable</td><td>${ht}</td><td>foo</td><td>foo</td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr>
+
+      <td>Non Generic Failure</td>
+
+      <td>[ Documentation ]</td><td>FAIL</td>
+
+      
+
+      <td>FloatingPointError: Too Large A Number !!</td>
+
+      <td></td>
+
+
+
+    </tr>
+
+    <tr><td></td><td>Exception</td><td>FloatingPointError</td><td>Too Large A Number !!</td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Non Generic Failure In Java&nbsp;</td><td>[ Documentation ]</td><td>FAIL</td><td>
+ArrayStoreException:&nbsp;My message</td><td></td></tr><tr><td></td><td>Java Exception&nbsp;</td><td>My message</td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Python Exception With Non-String Message</td><td>[ Documentation ]</td><td>FAIL</td><td>ValueError:&nbsp;['a', 'b', (1, 2), None, {'a': 1}]</td><td></td></tr><tr><td></td><td>${msg} =</td><td>Evaluate</td><td>['a', 'b', (1, 2), None, {'a': 1}]</td><td></td></tr><tr><td></td><td>Exception</td><td>ValueError</td><td>${msg}</td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Python Exception With 'None' Message</td><td>[ Documentation ]</td><td>FAIL</td><td>AssertionError</td><td></td></tr><tr><td></td><td>Exception</td><td>AssertionError</td><td>${None}</td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Java Exception With 'null' Message</td><td>[ Documentation ]</td><td>FAIL</td><td>
+ArrayStoreException</td><td></td></tr><tr><td></td><td>Java Exception&nbsp;</td><td><br></td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>External Failure</td><td>[ Documentation ]</td><td>FAIL</td><td><span class="name"></span>UnboundLocalError: Raised from an external object!</td><td></td></tr><tr><td></td><td>External Exception</td><td>UnboundLocalError</td><td>Raised from an external object!</td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr>
+      <td align="undefined" valign="undefined">External failure in Java</td>
+      <td>[ Documentation ]</td><td>FAIL</td>
+      
+      <td align="undefined" valign="undefined">IllegalArgumentException: Illegal initial capacity: -1</td>
+      <td align="undefined" valign="undefined"></td>
+    </tr>
+    <tr><td></td><td>External Java Exception</td><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Timeout Expires</td><td>[ Documentation ]</td><td>FAIL</td><td>Test timeout 200ms exceeded</td><td></td></tr><tr><td></td><td>[ Timeout ]</td><td>200 ms</td><td></td><td></td></tr><tr><td></td><td>Sleep</td><td>1</td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Non existing Keyword</td><td>[ Documentation ]</td><td>FAIL</td><td>No keyword with name 'Non Existing Keyword' found.</td><td></td></tr><tr><td></td><td>Non Existing Keyword</td><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Non Existing Scalar Variable</td><td>[ Documentation ]</td><td>FAIL</td><td>Non-existing variable '\${non existing}'</td><td></td></tr><tr><td></td><td>Log</td><td>${non existing}</td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Non Existing List Variable</td><td>[ Documentation ]</td><td>FAIL</td><td>Non-existing variable '\@{non existing}'</td><td></td></tr><tr><td></td><td>Log Many</td><td>@{non existing}</td><td></td><td></td></tr>
+
+  </tbody>
+</table>
+
+
+<table border="1">
+
+  <colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
+  <thead>
+  <tr>
+
+    <th>Keyword</th>
+
+    <th>Action</th>
+
+    <th>Argument</th>
+
+    <th>Argument</th>
+
+    <th>Argument</th>
+
+  </tr>
+
+  </thead>
+  <tbody>
+
+    <tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr>
+
+      <td></td>
+
+      <td></td><td></td><td></td>
+
+      
+
+      
+
+      <td></td>
+
+    </tr>
+
+    <tr>
+
+      <td></td>
+
+      <td></td>
+
+      <td></td>
+
+      <td></td>
+
+      <td></td>
+
+    </tr>
+
+  </tbody>
+</table>
+
+
+</body></html>

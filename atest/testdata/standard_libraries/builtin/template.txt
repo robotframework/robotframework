@@ -1,0 +1,2 @@
+Hello ${NAME}!
+How are you on this @{OCCASION}?

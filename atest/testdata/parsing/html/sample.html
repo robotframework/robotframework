@@ -1,0 +1,2655 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+
+
+
+  
+  
+  <style type="text/css">
+html {
+  font-family: Arial,Helvetica,sans-serif;
+  background-color: white;
+  color: black;
+}
+p {
+  max-width: 60em;
+}
+table {
+  border-collapse: collapse;
+  empty-cells: show;
+  margin: 1em 0em;
+  border: 0.1em solid black;
+}
+th, td {
+  border-style: solid;
+  border-width: 0.05em 0.1em;
+  border-color: black;
+  padding: 0.1em 0.2em;
+  height: 1.5em;
+}
+th {
+  background-color: rgb(192, 192, 192);
+  color: black;
+  border-width: 0.1em;
+  font-weight: bold;
+  text-align: center;
+  text-transform: capitalize;
+  letter-spacing: 0.1em;
+}
+/* Widths of named columns */
+col.name {
+  width: 10em;
+}
+.action, .value, .arg {
+  width: 15em;
+}
+/* Properties for the name column 
+- td:first-child should work in CSS 2.1 avare browsers (tested in Firefox)
+- col.name is against specs but works in IE
+*/
+td:first-child, col.name {
+  background-color: rgb(240, 240, 240);
+  text-transform: capitalize;
+  letter-spacing: 0.1em;
+}
+/* required for IE */
+th {
+  font-style: normal;
+}
+  </style>
+  
+  
+  <title>Robot Test Cases</title>
+</head>
+
+
+<body>
+
+
+
+<h1>Robot Test Cases</h1>
+
+
+
+
+<table border="1">
+
+
+
+  <colgroup span="99"><col class="name"><col class="value" span="4"></colgroup>
+  <thead>
+  <tr>
+
+
+
+    <th>Setting</th>
+
+
+
+    <th>Value</th>
+
+
+
+    <th>Value</th>
+
+
+
+    <th>value</th>
+
+
+
+    <th>Value</th>
+
+
+
+  </tr>
+
+
+
+  </thead>
+  <tbody>
+
+
+
+    
+
+
+    <tr>
+
+
+      <td>Document</td>
+
+
+      <td>A complex testdata file.</td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td>Default Tags</td>
+
+
+      <td>default1</td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td>Force Tags</td>
+
+
+      <td>force1</td>
+
+
+      <td>force2</td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+      <td></td>
+
+      <td></td>
+
+      <td></td>
+
+      <td></td>
+
+      <td></td>
+
+    </tr>
+
+    <tr>
+
+      <td>Suite Setup</td>
+
+      <td>Log</td>
+
+      <td>Setup</td>
+
+      <td></td>
+
+      <td></td>
+
+    </tr>
+
+    <tr>
+
+
+      <td>Test Teardown</td>
+
+
+      <td>Log</td>
+
+
+      <td>Test Teardown</td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+      <td></td>
+
+      <td></td>
+
+      <td></td>
+
+      <td></td>
+
+      <td></td>
+
+    </tr>
+
+    <tr>
+
+
+      <td>Resource</td>
+
+
+      <td>../resources/html_resource.html</td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td>Resource</td>
+
+
+      <td>../resources/tsv_resource.tsv</td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td>Variables</td>
+
+
+      <td>../resources/variables.py</td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td>Library</td>
+
+
+      <td>OperatingSystem</td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+    </tr>
+
+
+
+  
+  
+  </tbody>
+</table>
+
+
+
+
+<table border="1">
+
+
+
+  <colgroup span="99"><col class="name"><col class="value" span="4"></colgroup>
+  <thead>
+  <tr>
+
+
+
+    <th>Variable</th>
+
+
+
+    <th>Value</th>
+
+
+
+    <th>Value</th>
+
+
+
+    <th>Value</th>
+
+
+
+    <th>Value</th>
+
+
+
+  </tr>
+
+
+
+  </thead>
+  <tbody>
+
+
+
+    
+
+
+    <tr>
+
+
+      <td>${table_var}</td>
+
+
+      <td>foo</td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td>@{table_listvar}</td>
+
+
+      <td>bar</td>
+
+
+      <td>${table_var}</td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+      <td>${quoted}</td>
+
+      <td>"this has ""many " quotes ""</td>
+
+      <td></td>
+
+      <td></td>
+
+      <td></td>
+
+    </tr>
+
+    <tr>
+
+      <td>${single_quoted}</td>
+
+      <td>'single'qu'ot'es''</td>
+
+      <td></td>
+
+      <td></td>
+
+      <td></td>
+
+    </tr>
+
+    <tr>
+
+      <td></td>
+
+      <td></td>
+
+      <td></td>
+
+      <td></td>
+
+      <td></td>
+
+    </tr>
+
+    
+    
+    
+
+
+  
+  
+  </tbody>
+</table>
+
+
+
+
+<table border="1">
+
+
+
+  <colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
+  <thead>
+  <tr>
+
+
+
+    <th>Test Case</th>
+
+
+
+    <th>Action</th>
+
+
+
+    <th>Argument</th>
+
+
+
+    <th>Argument</th>
+
+
+
+    <th>Argument</th>
+
+
+
+    <th>Argument</th>
+
+
+
+    <th>Argument</th>
+
+
+
+  </tr>
+
+
+
+  </thead>
+  <tbody>
+
+
+
+    
+
+
+    <tr>
+
+
+      <td>Passing</td>
+
+
+      <td>Log</td>
+
+
+      <td>Passing test case.</td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td>failing</td>
+
+
+      <td>[Document]</td>
+
+
+      <td>FAIL</td>
+
+
+      <td>Failing test case.</td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td></td>
+
+
+      <td>Fail</td>
+
+
+      <td>Failing test case.</td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td>#Test </td>
+
+
+      <td>that table start&nbsp;</td>
+
+
+      <td>requires empty row</td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td>User Keyword</td>
+
+
+      <td>[Document]</td>
+
+
+      <td>FAIL</td>
+
+
+      <td>A cunning argument. != something</td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td></td>
+
+
+      <td>My Keyword With Arg</td>
+
+
+      <td>A cunning argument.</td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td>Own Tags</td>
+
+
+      <td>[Tags]</td>
+
+
+      <td>own1</td>
+
+
+      <td>own2</td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td></td>
+
+
+      <td>Log</td>
+
+
+      <td>tags test</td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td>Default Tags</td>
+
+
+      <td>noop</td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td>Variable Table</td>
+
+
+      <td>equals</td>
+
+
+      <td>${table_var}</td>
+
+
+      <td>foo</td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td></td>
+
+
+      <td>equals</td>
+
+
+      <td>@{table_listvar}[0]</td>
+
+
+      <td>bar</td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td></td>
+
+
+      <td>equals</td>
+
+
+      <td>@{table_listvar}[1]</td>
+
+
+      <td>foo</td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td>HTML Resource Keyword</td>
+
+
+      <td>Keyword from HTML resource</td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td></td>
+
+
+      <td>Keyword from HTML resource 2</td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td>HTML Resource variable</td>
+
+
+      <td>Equals</td>
+
+
+      <td>${html_resource_var}</td>
+
+
+      <td>HTML Resource Variable</td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td></td>
+
+
+      <td>Equals</td>
+
+
+      <td>${html_resource_var2}</td>
+
+
+      <td>HTML Resource Variable From Recursive Resource</td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td>TSV Resource Keyword</td>
+
+
+      <td>Keyword from TSV resource</td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td></td>
+
+
+      <td>Keyword from TSV resource 2&nbsp;</td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td>TSV Resource variable</td>
+
+
+      <td>Equals</td>
+
+
+      <td>${tsv_resource_var}</td>
+
+
+      <td>TSV Resource Variable</td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td></td>
+
+
+      <td>Equals</td>
+
+
+      <td>${tsv_resource_var2}</td>
+
+
+      <td>TSV Resource Variable&nbsp; From Recursive Resource</td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td>variable File </td>
+
+
+      <td>Equals</td>
+
+
+      <td>@{file_listvar}[0]</td>
+
+
+      <td>${True}</td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td></td>
+
+
+      <td>Equals</td>
+
+
+      <td>@{file_listvar}[1]</td>
+
+
+      <td>${3.14}</td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td></td>
+
+
+      <td>Equals</td>
+
+
+      <td>@{file_listvar}[2]</td>
+
+
+      <td>Hello, world!!</td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td></td>
+
+
+      <td>Equals</td>
+
+
+      <td>${file_var1}</td>
+
+
+      <td>${-314}</td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td></td>
+
+
+      <td>Equals</td>
+
+
+      <td>${file_var2}</td>
+
+
+      <td>file variable 2</td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td>Library Import</td>
+
+
+      <td>Fail If Dir Empty</td>
+
+
+      <td>${CURDIR}</td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td>Test Timeout</td>
+
+
+      <td>[Timeout]</td>
+
+
+      <td>1second</td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td></td>
+
+
+      <td>[Document]</td>
+
+
+      <td>FAIL</td>
+
+
+      <td>Test timeout  1s exceeded</td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td></td>
+
+
+      <td>Sleep</td>
+
+
+      <td>2</td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td>Keyword timeout</td>
+
+
+      <td>[Document]</td>
+
+
+      <td>FAIL</td>
+
+
+      <td>Keyword timeout&nbsp; 1s exceeded</td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td></td>
+
+
+      <td>Timouted Keyword</td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td>Empty Rows</td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td></td>
+
+
+      <td>[Document]</td>
+
+
+      <td>Testing that empty rows are ignored.</td>
+
+
+      <td>FAIL Expected failure.</td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td></td>
+
+
+      <td>Noop</td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td></td>
+
+
+      <td>Fail</td>
+
+
+      <td>Expected failure.</td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td>Document</td>
+
+
+      <td>[Document]</td>
+
+
+      <td>Testing the metadata parsing.</td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td></td>
+
+
+      <td>Noop</td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+      <td>Default Fixture</td>
+
+      <td>Noop</td>
+
+      <td></td>
+
+      <td></td>
+
+      <td></td>
+
+      <td></td>
+
+      <td></td>
+
+    </tr>
+
+    <tr>
+
+      <td></td>
+
+      <td></td>
+
+      <td></td>
+
+      <td></td>
+
+      <td></td>
+
+      <td></td>
+
+      <td></td>
+
+    </tr>
+
+    <tr>
+
+      <td>Overridden Fixture</td>
+
+      <td>[Teardown]</td>
+
+      <td>Fail</td>
+
+      <td>Failing Teardown</td>
+
+      <td></td>
+
+      <td></td>
+
+      <td></td>
+
+    </tr>
+
+    <tr>
+
+
+      <td></td>
+
+
+      <td>[Setup]</td>
+
+
+      <td>Log</td>
+
+
+      <td>Own Setup</td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+      <td></td>
+
+      <td>[Document]</td>
+
+      <td>FAIL</td>
+
+      <td>Teardown failed:\n Failing Teardown</td>
+
+      <td></td>
+
+      <td></td>
+
+      <td></td>
+
+    </tr>
+
+    <tr>
+      <td></td>
+      <td>NOOP</td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+    </tr>
+    <tr>
+
+      <td></td>
+
+      <td></td>
+
+      <td></td>
+
+      <td></td>
+
+      <td></td>
+
+      <td></td>
+
+      <td></td>
+
+    </tr>
+
+    <tr>
+
+      <td>Quotes</td>
+
+      <td>Equals</td>
+
+      <td>${quoted}</td>
+
+      <td>"this has ""many " quotes ""</td>
+
+      <td></td>
+
+      <td></td>
+
+      <td></td>
+
+    </tr>
+
+    <tr>
+
+
+      <td></td>
+
+
+      <td>Equals</td>
+
+
+      <td>${single_quoted}</td>
+
+
+      <td>'single'qu'ot'es''</td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+
+  
+  
+  </tbody>
+</table>
+
+
+
+
+<table border="1">
+
+
+
+  <colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
+  <thead>
+  <tr>
+
+
+
+    <th>Keyword</th>
+
+
+
+    <th>Action</th>
+
+
+
+    <th>Argument</th>
+
+
+
+    <th>Argument</th>
+
+
+
+    <th>Argument</th>
+
+
+
+  </tr>
+
+
+
+  </thead>
+  <tbody>
+
+
+
+    <tr>
+
+
+
+      <td>My Keyword with arg</td>
+
+
+
+      <td>[Arguments]</td>
+
+
+
+      <td>${arg1}</td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+      <td></td>
+
+
+      <td>Keyword With No Arguments</td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td></td>
+
+
+      <td>Another Keyword</td>
+
+
+      <td>${arg1}</td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td>Another Keyword</td>
+
+
+      <td>[Arguments]</td>
+
+
+      <td>${arg1}</td>
+
+
+      <td>${arg2}=something</td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td></td>
+
+
+      <td>Equals</td>
+
+
+      <td>${arg1}</td>
+
+
+      <td>${arg2}</td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td>Timouted Keyword</td>
+
+
+      <td>[Timeout]</td>
+
+
+      <td>1second</td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td></td>
+
+
+      <td>Sleep</td>
+
+
+      <td>2</td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td>Keyword with no arguments</td>
+
+
+      <td>Log</td>
+
+
+      <td>Hello world!</td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+    </tr>
+
+
+
+  
+  
+  </tbody>
+</table>
+
+
+
+
+</body>
+</html>

@@ -1,0 +1,5156 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <meta name="generator" content="HTML Tidy, see www.w3.org">
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <style type="text/css">
+html { font-family: Arial,Helvetica,sans-serif;
+background-color: white;
+color: black;
+}
+p { max-width: 60em;
+}
+table { border-collapse: collapse;
+empty-cells: show;
+margin: 1em 0em;
+border: 0.1em solid black;
+}
+th, td {
+border-style: solid;
+border-width: 0.05em 0.1em;
+border-color: black;
+padding: 0.1em 0.2em;
+height: 1.5em;
+}
+th {
+background-color: rgb(192, 192, 192);
+color: black;
+border-width: 0.1em;
+font-weight: bold;
+text-align: center;
+text-transform: capitalize;
+letter-spacing: 0.1em;
+}
+/* Widths of named columns */
+col.name {
+width: 10em;
+}
+.action , .value, .arg {
+width: 15em;
+}
+/* Properties for the name column - td:first-child should work in CSS 2.1 avare browsers (tested in Firefox)
+- col.name is against specs but works in IE
+*/
+td:first-child, col.name {
+background-color: rgb(240, 240, 240);
+text-transform: capitalize;
+letter-spacing: 0.1em;
+}
+th { font-style: normal; } /* required for IE */
+  
+  </style>
+
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <title>Robot Test Cases</title>
+  <link type="text/css" href="resources/css/testdata.css" rel="stylesheet">
+</head>
+
+
+<body>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h1>Robot Test Cases for Operating System Test Library</h1>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table border="1">
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <colgroup span="99"><col class="name"><col class="value" span="4"></colgroup>
+
+  <thead>
+  <tr>
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <th>Setting</th>
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <th>Value</th>
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <th>Value</th>
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <th>value</th>
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <th>Value</th>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  </tr>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  </thead>
+
+  <tbody>
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td>Library</td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td>OperatingSystem</td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td>Suite Setup</td>
+
+
+
+
+      <td>My Setup</td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td>Suite Teardown</td>
+
+
+
+
+      <td>Stop All Processes</td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+    
+
+
+
+
+
+
+    
+
+
+
+
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+<table border="1">
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <colgroup span="99"><col class="name"><col class="value" span="4"></colgroup>
+
+  <thead>
+  <tr>
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <th>Variable</th>
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <th>Value</th>
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <th>Value</th>
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <th>Value</th>
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <th>Value</th>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  </tr>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  </thead>
+
+  <tbody>
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td>${PROG}</td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td>python&nbsp; ${CURDIR}${/}files${/}stdout_and_stderr_prog.py</td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td># usage: prog.py&nbsp;stdout stderr<br>
+
+
+
+
+
+
+
+
+
+
+
+
+
+ # defaults: stdout=stderr=''</td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td>${WRITABLE_PROG}</td>
+
+
+
+
+
+      <td>python ${CURDIR}${/}files${/}writable_prog.py</td>
+
+
+
+
+
+      <td>#echoes anything written on stdin, quits if 'quit' is typed</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+    
+
+
+
+
+
+
+    
+
+
+
+
+
+
+    
+
+
+
+
+
+
+    
+
+
+
+
+
+
+    
+
+
+
+
+
+
+    
+
+
+
+
+
+
+    
+
+
+
+
+
+
+    
+
+
+
+
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table style="width: 1066px; height: 512px;" border="1">
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
+
+  <thead>
+  <tr>
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <th>Test Case</th>
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <th>Action</th>
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  </tr>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  </thead>
+
+  <tbody>
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td>Start Process</td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td>${index} =</td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td>Start Process</td>
+
+
+      <td>${PROG}&nbsp;hello</td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+      
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+      <td></td>
+
+
+      <td>Equals</td>
+
+
+      <td>${index}</td>
+
+
+      <td>${2}</td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">${out} =</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Read Process Output</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td>Equals</td>
+
+
+
+
+
+      <td>${out}</td>
+
+
+
+
+
+      <td>hello</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+      <td></td>
+
+
+
+      <td>Start Process</td>
+
+
+
+      <td>${PROG}&nbsp;hi</td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td></td>
+
+
+
+      <td align="undefined" valign="undefined">${out} =</td>
+
+
+
+      <td align="undefined" valign="undefined">Read Process Output</td>
+
+
+
+      <td>Reading only stdout</td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td></td>
+
+
+
+      <td>Equals</td>
+
+
+
+      <td>${out}</td>
+
+
+
+      <td>hi</td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td></td>
+
+
+
+      <td>Start Process</td>
+
+
+
+      <td>${PROG}&nbsp;hey error</td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td></td>
+
+
+
+      <td>${err} =</td>
+
+
+
+      <td>Read Process Output</td>
+
+
+
+      <td>Reading only stderr</td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td></td>
+
+
+
+      <td>Equals</td>
+
+
+
+      <td>${err}</td>
+
+
+
+      <td>error</td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td></td>
+
+
+
+      <td>Start Process</td>
+
+
+
+      <td>${PROG}&nbsp;hei virhe</td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td></td>
+
+
+
+      <td>${out}</td>
+
+
+
+      <td>${err} =</td>
+
+
+
+      <td>Read Process Output</td>
+
+
+
+      <td>Reading both outputs</td>
+
+
+
+      <td></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+      <td></td>
+
+
+      <td>Equals</td>
+
+
+      <td>${out}</td>
+
+
+      <td>hei</td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td>Equals</td>
+
+
+      <td>${err}</td>
+
+
+      <td>virhe</td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+      
+
+
+
+
+
+
+
+
+
+
+      
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td>Start Writable Process</td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Start Process</td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${WRITABLE_PROG}</td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">hello world</td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${output} =</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Read Process Output</td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+      
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td>Equals</td>
+
+
+
+
+
+      <td>${output}&nbsp;</td>
+
+
+
+
+
+      <td>HELLO WORLD\n</td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+      
+
+
+
+
+
+
+
+      
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td>Cannot Read From A Stopped Process</td>
+
+
+
+
+      <td>[ Document ] </td>
+
+
+
+
+      <td>FAIL</td>
+
+
+
+
+      <td>Cannot read from a closed process</td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td>Start Process</td>
+
+
+
+
+      <td>${PROG}&nbsp;hello</td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td align="undefined" valign="undefined">${output} =</td>
+
+
+
+
+      <td align="undefined" valign="undefined">Read Process Output</td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td align="undefined" valign="undefined">${output} =</td>
+
+
+
+
+      <td align="undefined" valign="undefined">Read Process Output</td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td>Switch Process</td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${first} = </td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Start Process</td>
+
+
+
+
+      <td align="undefined" valign="undefined">${PROG}&nbsp;hello</td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+      
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+      <td></td>
+
+
+      <td>${second} =</td>
+
+
+      <td>Start Process</td>
+
+
+      <td>${PROG} world</td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Start Process</td>
+
+
+      <td align="undefined" valign="undefined">${WRITABLE_PROG}</td>
+
+
+      <td align="undefined" valign="undefined">hello world</td>
+
+
+      <td>alias</td>
+
+
+
+
+      
+
+      
+
+      
+
+
+
+
+
+
+
+
+
+
+      
+
+
+
+
+
+
+
+
+      
+
+
+
+
+
+
+
+
+      
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+    
+
+
+    
+
+
+    
+
+
+    
+
+
+    
+
+
+    
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td>Start Process</td>
+
+
+
+
+      <td>${PROG}&nbsp;olleh</td>
+
+
+
+
+      <td><br>
+
+
+
+
+      </td>
+
+
+
+
+      <td><br>
+
+
+      </td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+      <td></td>
+
+
+      <td align="undefined" valign="undefined">${output} =</td>
+
+
+      <td align="undefined" valign="undefined">Read Process Output</td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td></td>
+
+
+      <td>Equals</td>
+
+
+      <td>${output}</td>
+
+
+      <td>olleh</td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td>Switch Process</td>
+
+
+
+
+      <td>${first}</td>
+
+
+
+
+      <td># "${first}" is an integer</td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${output} =</td>
+
+
+
+
+      <td align="undefined" valign="undefined">Read Process Output</td>
+
+
+
+
+
+
+
+
+
+      
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td>Equals</td>
+
+
+
+
+      <td>${output}</td>
+
+
+
+
+      <td>hello</td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+      <td></td>
+
+
+      <td>Switch Process</td>
+
+
+      <td>\ ${second} \&nbsp;</td>
+
+
+      <td># "\ ${second} \" is a string</td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td></td>
+
+
+      <td align="undefined" valign="undefined">${output} =</td>
+
+
+      <td align="undefined" valign="undefined">Read Process Output</td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td></td>
+
+
+      <td>Equals</td>
+
+
+      <td>${output}</td>
+
+
+      <td>world</td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td>Switch Process</td>
+
+
+
+
+      <td>alias</td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td align="undefined" valign="undefined">${output} =</td>
+
+
+
+
+      <td align="undefined" valign="undefined">Read Process Output</td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td>Equals</td>
+
+
+
+
+      <td>${output}&nbsp;</td>
+
+
+
+
+      <td>HELLO WORLD\n</td>
+
+
+
+
+
+
+      
+
+      
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+    
+
+    
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td>Lives Between Tests Setup</td>
+
+
+
+
+      <td>Start Process</td>
+
+
+
+
+      <td>${PROG}&nbsp;from_test_case</td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td>test case process</td>
+
+
+
+
+      <td>#will be used in next test to test lifecycle</td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td>Lives Between tests</td>
+
+
+
+
+      <td>[ Setup ]</td>
+
+
+
+
+      <td>Start Process</td>
+
+
+
+
+      <td>${PROG} from_test_setup</td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td>test setup process</td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td><br>
+
+
+
+
+      </td>
+
+
+
+
+      <td>Switch Process</td>
+
+
+
+
+      <td>suite setup process</td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td align="undefined" valign="undefined">${output} =</td>
+
+
+
+
+      <td align="undefined" valign="undefined">Read Process Output</td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td>Equals</td>
+
+
+
+
+      <td>${output}</td>
+
+
+
+
+      <td>from_suite_setup</td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td>Switch Process</td>
+
+
+
+
+      <td>test setup process</td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td align="undefined" valign="undefined">${output} =</td>
+
+
+
+
+      <td align="undefined" valign="undefined">Read Process Output</td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td>Equals</td>
+
+
+
+
+      <td>${output}</td>
+
+
+
+
+      <td>from_test_setup</td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td>Switch Process</td>
+
+
+
+
+      <td>test case process</td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td align="undefined" valign="undefined">${output} =</td>
+
+
+
+
+      <td align="undefined" valign="undefined">Read Process Output</td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td>Equals</td>
+
+
+
+
+      <td>${output}</td>
+
+
+
+
+      <td> from_test_case</td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td>Stop All</td>
+
+
+
+
+      <td>[ Document ] </td>
+
+
+
+
+      <td>FAIL</td>
+
+
+
+
+      <td>No active processes</td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td align="undefined" valign="undefined">${index} = </td>
+
+
+
+
+      <td align="undefined" valign="undefined">Start Process</td>
+
+
+
+
+      <td align="undefined" valign="undefined">${PROG} hello</td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td align="undefined" valign="undefined">Start Process</td>
+
+
+
+
+      <td align="undefined" valign="undefined">${PROG}&nbsp;hello</td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td>Stop&nbsp;All Processes</td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td>${index} =</td>
+
+
+
+
+      <td align="undefined" valign="undefined">Start Process</td>
+
+
+
+
+      <td align="undefined" valign="undefined">${PROG} hello</td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td>Equals</td>
+
+
+
+
+      <td>${index}</td>
+
+
+
+
+      <td>${1}</td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td>Stop&nbsp;All Processes</td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td align="undefined" valign="undefined">Read Process Output</td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td>Reading Only Stdout&nbsp; When Stderr is not empty Fails</td>
+
+
+
+      <td>[ Document ] </td>
+
+
+
+      <td>FAIL</td>
+
+
+
+      <td>Stderr was not empty. Contents:\n<br>
+
+
+
+error</td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td></td>
+
+
+
+      <td align="undefined" valign="undefined">Start Process</td>
+
+
+
+      <td align="undefined" valign="undefined">${PROG}&nbsp;hello error</td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td></td>
+
+
+
+      <td align="undefined" valign="undefined">${output} =</td>
+
+
+
+      <td align="undefined" valign="undefined">Read Process Output</td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td>Stopping Already Stopped Processes Is OK</td>
+
+
+      <td align="undefined" valign="undefined">Start Process</td>
+
+
+      <td align="undefined" valign="undefined">${PROG}&nbsp;hello&nbsp;</td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td></td>
+
+
+      <td align="undefined" valign="undefined">${output} =</td>
+
+
+      <td align="undefined" valign="undefined">Read Process Output</td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+
+      <td></td>
+
+
+
+      <td>Stop&nbsp;Process</td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td></td>
+
+
+      <td>Stop&nbsp;Process</td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td></td>
+
+
+      <td align="undefined" valign="undefined">Start Process</td>
+
+
+      <td align="undefined" valign="undefined">${PROG}&nbsp;hello&nbsp;</td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td></td>
+
+
+      <td>Stop&nbsp;Process</td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td></td>
+
+
+      <td>Stop&nbsp;Process</td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  </tbody>
+</table>
+
+
+
+
+
+
+
+<br>
+
+
+
+
+
+
+
+<table border="1">
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
+
+  <thead>
+  <tr>
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <th>Keyword</th>
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <th>Action</th>
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <th>Argument</th>
+
+
+    <th>Argument</th>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  </tr>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  </thead>
+
+  <tbody>
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td>My setup</td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td>${index} =</td>
+
+
+      <td>Start Process</td>
+
+
+      <td>${PROG} from_suite_setup</td>
+
+
+      <td></td>
+
+
+      <td>suite setup process</td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+      
+
+
+
+
+
+
+
+
+
+
+      
+
+
+
+
+
+
+
+
+
+
+      
+
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Equals</td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${index} </td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${1}</td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+    
+
+
+
+
+
+
+    
+
+
+
+
+
+
+    
+
+
+
+
+
+
+    
+
+
+
+
+
+
+    
+
+
+
+
+
+
+    
+
+
+
+
+
+
+    
+
+
+
+
+
+
+    
+
+
+
+
+
+
+    
+
+
+
+
+
+
+    
+
+
+
+
+
+
+    
+
+
+
+
+
+
+    
+
+
+
+
+
+
+    
+
+
+
+
+
+
+    
+
+
+
+
+
+
+    
+
+
+
+
+
+
+    
+
+
+
+
+
+
+    
+
+
+
+
+
+
+    
+
+
+
+
+
+
+    
+
+
+
+
+
+
+    
+
+
+
+
+
+
+    
+
+
+
+
+
+
+    
+
+
+
+
+
+
+    
+
+
+
+
+
+
+    
+
+
+
+
+
+
+    
+
+
+
+
+
+
+    
+
+
+
+
+
+
+    
+
+
+
+
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

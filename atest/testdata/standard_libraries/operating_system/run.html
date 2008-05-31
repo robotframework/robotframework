@@ -1,0 +1,5012 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+
+
+
+
+
+
+
+
+
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <meta name="generator" content="HTML Tidy, see www.w3.org">
+
+
+
+
+
+
+
+
+
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <style type="text/css">
+html { font-family: Arial,Helvetica,sans-serif;
+background-color: white;
+color: black;
+}
+p { max-width: 60em;
+}
+table { border-collapse: collapse;
+empty-cells: show;
+margin: 1em 0em;
+border: 0.1em solid black;
+}
+th, td {
+border-style: solid;
+border-width: 0.05em 0.1em;
+border-color: black;
+padding: 0.1em 0.2em;
+height: 1.5em;
+}
+th {
+background-color: rgb(192, 192, 192);
+color: black;
+border-width: 0.1em;
+font-weight: bold;
+text-align: center;
+text-transform: capitalize;
+letter-spacing: 0.1em;
+}
+/* Widths of named columns */
+col.name {
+width: 10em;
+}
+.action , .value, .arg {
+width: 15em;
+}
+/* Properties for the name column - td:first-child should work in CSS 2.1 avare browsers (tested in Firefox)
+- col.name is against specs but works in IE
+*/
+td:first-child, col.name {
+background-color: rgb(240, 240, 240);
+text-transform: capitalize;
+letter-spacing: 0.1em;
+}
+th { font-style: normal; } /* required for IE */
+  
+  </style>
+
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <title>Robot Test Cases</title>
+  <link type="text/css" href="resources/css/testdata.css" rel="stylesheet">
+</head>
+
+
+<body>
+
+
+
+
+
+
+
+
+
+
+<h1>Robot Test Cases for Operating System Test Library</h1>
+
+
+
+
+
+
+
+
+
+
+
+<table border="1">
+
+
+
+
+
+
+
+
+
+
+  <colgroup span="99"><col class="name"><col class="value" span="4"></colgroup>
+
+  <thead>
+  <tr>
+
+
+
+
+
+
+
+
+
+
+    <th>Setting</th>
+
+
+
+
+
+
+
+
+
+
+    <th>Value</th>
+
+
+
+
+
+
+
+
+
+
+    <th>Value</th>
+
+
+
+
+
+
+
+
+
+
+    <th>value</th>
+
+
+
+
+
+
+
+
+
+
+    <th>Value</th>
+
+
+
+
+
+
+
+
+
+
+  </tr>
+
+
+
+
+
+
+
+
+
+
+  </thead>
+
+  <tbody>
+
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+
+      <td>Library</td>
+
+
+
+
+
+
+
+
+
+
+      <td>OperatingSystem</td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+    
+
+
+
+
+
+
+    
+
+
+
+
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+<table border="1">
+
+
+
+
+
+
+
+
+
+
+  <colgroup span="99"><col class="name"><col class="value" span="4"></colgroup>
+
+  <thead>
+  <tr>
+
+
+
+
+
+
+
+
+
+
+    <th>Variable</th>
+
+
+
+
+
+
+
+
+
+
+    <th>Value</th>
+
+
+
+
+
+
+
+
+
+
+    <th>Value</th>
+
+
+
+
+
+
+
+
+
+
+    <th>Value</th>
+
+
+
+
+
+
+
+
+
+
+    <th>Value</th>
+
+
+
+
+
+
+
+
+
+
+  </tr>
+
+
+
+
+
+
+
+
+
+
+  </thead>
+
+  <tbody>
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+
+      <td>${PROG}</td>
+
+
+
+
+
+
+
+
+
+
+      <td>python ${CURDIR}${/}files${/}prog.py</td>
+
+
+
+
+
+
+
+
+
+
+      <td># usage: prog.py&nbsp;rc stdout stderr<br>
+
+
+
+
+
+
+
+
+
+
+ # defaults: rc=0; stdout=stderr=''</td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+    
+
+
+
+
+
+
+    
+
+
+
+
+
+
+    
+
+
+
+
+
+
+    
+
+
+
+
+
+
+    
+
+
+
+
+
+
+    
+
+
+
+
+
+
+    
+
+
+
+
+
+
+    
+
+
+
+
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table border="1">
+
+
+
+
+
+
+
+
+
+
+  <colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
+
+  <thead>
+  <tr>
+
+
+
+
+
+
+
+
+
+
+    <th>Test Case</th>
+
+
+
+
+
+
+
+
+
+
+    <th>Action</th>
+
+
+
+
+
+
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+
+
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+
+
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+
+
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+
+
+
+
+
+
+  </tr>
+
+
+
+
+
+
+
+
+
+
+  </thead>
+
+  <tbody>
+
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+
+      <td>Run</td>
+
+
+
+
+
+
+
+
+
+
+      <td>[ Document ]</td>
+
+
+
+
+
+
+
+
+
+
+      <td>Simply run a program without checking anything</td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td>Run</td>
+
+
+
+
+
+
+
+
+
+
+      <td>${PROG}</td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Run with RC and stdout
+checks</td>
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${rc}</td>
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${stdout} =</td>
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Run</td>
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${PROG} 42 hello</td>
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">rc and stdout</td>
+
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Fail
+Unless&nbsp;Equal</td>
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${stdout}</td>
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">hello</td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Fail Unless Ints
+Equal</td>
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${rc}</td>
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">42</td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${rc}</td>
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${stdout} =</td>
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Run</td>
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${PROG}</td>
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Return both RC and
+output</td>
+
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Fail Unless Ints
+Equal</td>
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${rc}</td>
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">0</td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Fail
+Unless&nbsp;Equal</td>
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${stdout}</td>
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">\</td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Run with RC checks</td>
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Run and Check RC</td>
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${PROG} 42 hello</td>
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">42<br>
+
+
+
+
+
+
+
+
+
+
+ </td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Run and Check RC</td>
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${PROG}</td>
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">0<br>
+
+
+
+
+
+
+
+
+
+
+ </td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Run and Check RC</td>
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${PROG} -1</td>
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">255<br>
+
+
+
+
+
+
+
+
+
+
+ </td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Run and Check RC</td>
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${PROG} 266 hello</td>
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">10<br>
+
+
+
+
+
+
+
+
+
+
+ </td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Run and Check RC</td>
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${PROG} 1000000</td>
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">64<br>
+
+
+
+
+
+
+
+
+
+
+ </td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Run and Check RC</td>
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${PROG} 256</td>
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">0<br>
+
+
+
+
+
+
+
+
+
+
+ </td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Run with Stdout
+checks</td>
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${stdout} =</td>
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Run</td>
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${PROG} 42 hello</td>
+
+
+
+
+
+
+
+
+
+
+      <td><br>
+
+
+
+
+
+
+
+
+
+
+ </td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Fail
+Unless&nbsp;Equal</td>
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${stdout}</td>
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">hello</td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${stdout} =</td>
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Run</td>
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${PROG}</td>
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Only stdout is
+returned</td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Fail
+Unless&nbsp;Equal</td>
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${stdout}</td>
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">\</td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"># Check that trailing
+newline</td>
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">is removed</td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${stdout} =</td>
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Run</td>
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">echo hello world</td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Fail
+Unless&nbsp;Equal</td>
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${stdout}</td>
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">hello world</td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Run With Stderr</td>
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">[ Document ]</td>
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Possible stderr from
+executed command is not catched by run keyword nor Robot.</td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${output} =</td>
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Run</td>
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${PROG} 42 hello
+world</td>
+
+
+
+
+
+
+
+
+
+
+      <td><br>
+
+
+
+
+
+
+
+
+
+
+ </td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Fail
+Unless&nbsp;Equal</td>
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${output}</td>
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">hello</td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Run With Stderr
+Redirected To Stdout</td>
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">[ Document ]</td>
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Stderr is redirected to
+stdout&nbsp; using syntax "2&gt;&amp;1" so it is catched by Run
+keyword.</td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${output} =</td>
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Run</td>
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${PROG} 42 hello world
+2&gt;&amp;1</td>
+
+
+
+
+
+
+
+
+
+
+      <td><br>
+
+
+
+
+
+
+
+
+
+
+ </td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Fail Unless Regexp
+Matches</td>
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${output}</td>
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">hello\nworld|world\nhello</td>
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"># don't know in what
+order<br>
+
+
+
+
+
+
+
+
+
+
+ #&nbsp;stdout and stderr are</td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+
+    <tr>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+    </tr>
+
+    <tr>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+    </tr>
+
+    <tr>
+
+      <td align="undefined" valign="undefined">Run With Stderr
+Redirected To File</td>
+
+      <td align="undefined" valign="undefined">[ Document ]</td>
+
+      <td align="undefined" valign="undefined">Stderr is redirected to a file using syntax "2&gt;stderr.txt"</td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+    </tr>
+
+    <tr>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined">${temp} =</td>
+
+      <td align="undefined" valign="undefined">Join Path</td>
+
+      <td align="undefined" valign="undefined">${TEMPDIR}</td>
+
+      <td align="undefined" valign="undefined">robot_test_stderr.txt</td>
+
+      <td align="undefined" valign="undefined"></td>
+
+    </tr>
+
+    <tr>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined">${stdout} =</td>
+
+      <td align="undefined" valign="undefined">Run</td>
+
+      <td align="undefined" valign="undefined">${PROG} 42 hello world
+2&gt;${temp}</td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+    </tr>
+
+    <tr>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined">Equals</td>
+
+      <td align="undefined" valign="undefined">${stdout}</td>
+
+      <td align="undefined" valign="undefined">hello</td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+    </tr>
+
+    <tr>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined">${stderr} =</td>
+
+      <td align="undefined" valign="undefined">Get File</td>
+
+      <td align="undefined" valign="undefined">${temp}</td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+    </tr>
+
+    <tr>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined">Equals</td>
+
+      <td align="undefined" valign="undefined">${stderr}</td>
+
+      <td align="undefined" valign="undefined">world\n</td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+    </tr>
+
+    <tr>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined">[ Teardown ]</td>
+
+      <td align="undefined" valign="undefined">Remove File</td>
+
+      <td align="undefined" valign="undefined">${temp}</td>
+
+      <td align="undefined" valign="undefined"></td>
+
+      <td align="undefined" valign="undefined"></td>
+
+    </tr>
+
+    <tr>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td>run and return RC</td>
+
+
+
+
+
+
+      <td>${rc} = </td>
+
+
+
+
+
+
+      <td>Run And Return RC</td>
+
+
+
+
+
+
+      <td>${PROG} 42 hello</td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td>Equals</td>
+
+
+
+
+
+
+
+
+
+
+      <td>${rc}</td>
+
+
+
+
+
+
+
+
+
+
+      <td>${42}</td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td>Run and return RC and output</td>
+
+
+
+
+
+
+      <td>${rc} </td>
+
+
+
+
+
+
+      <td>${output} =</td>
+
+
+
+
+
+
+      <td>Run And Return RC And Output</td>
+
+
+
+
+
+
+      <td>${PROG} 42 hello</td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td>Equals</td>
+
+
+
+
+
+
+      <td>${rc}</td>
+
+
+
+
+
+
+      <td>${42}</td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td>Equals</td>
+
+
+
+
+
+
+      <td>${output}</td>
+
+
+
+
+
+
+      <td>hello</td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  </tbody>
+</table>
+
+
+
+
+<br>
+
+
+
+
+<table border="1">
+
+
+
+
+
+
+
+
+
+
+  <colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
+
+  <thead>
+  <tr>
+
+
+
+
+
+
+
+
+
+
+    <th>Keyword</th>
+
+
+
+
+
+
+
+
+
+
+    <th>Action</th>
+
+
+
+
+
+
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+
+
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+
+
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+
+
+
+
+
+
+  </tr>
+
+
+
+
+
+
+
+
+
+
+  </thead>
+
+  <tbody>
+
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+
+      <td>Run and Check RC</td>
+
+
+
+
+
+
+
+
+
+
+      <td>[ Arguments ]</td>
+
+
+
+
+
+
+
+
+
+
+      <td>${command}</td>
+
+
+
+
+
+
+
+
+
+
+      <td>${expected}</td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td>${rc} =</td>
+
+
+
+
+
+
+
+
+
+
+      <td>Run</td>
+
+
+
+
+
+
+
+
+
+
+      <td>${command}</td>
+
+
+
+
+
+
+
+
+
+
+      <td>Return only RC</td>
+
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${expected} =</td>
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Integer</td>
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${expected}</td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Fail
+Unless&nbsp;Equal</td>
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${rc}</td>
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${expected}</td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+    
+
+
+
+
+
+
+    
+
+
+
+
+
+
+    
+
+
+
+
+
+
+    
+
+
+
+
+
+
+    
+
+
+
+
+
+
+    
+
+
+
+
+
+
+    
+
+
+
+
+
+
+    
+
+
+
+
+
+
+    
+
+
+
+
+
+
+    
+
+
+
+
+
+
+    
+
+
+
+
+
+
+    
+
+
+
+
+
+
+    
+
+
+
+
+
+
+    
+
+
+
+
+
+
+    
+
+
+
+
+
+
+    
+
+
+
+
+
+
+    
+
+
+
+
+
+
+    
+
+
+
+
+
+
+    
+
+
+
+
+
+
+    
+
+
+
+
+
+
+    
+
+
+
+
+
+
+    
+
+
+
+
+
+
+    
+
+
+
+
+
+
+    
+
+
+
+
+
+
+    
+
+
+
+
+
+
+    
+
+
+
+
+
+
+    
+
+
+
+
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

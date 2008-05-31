@@ -1,0 +1,637 @@
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="RobotIDE" /> 
+<style type="text/css">
+html {
+  font-family: Arial,Helvetica,sans-serif;
+  background-color: white;
+  color: black;
+}
+p {
+  max-width: 60em;
+}
+table {
+  border-collapse: collapse;
+  empty-cells: show;
+  margin: 1em 0em;
+  border: 0.1em solid black;
+}
+th, td {
+  border-style: solid;
+  border-width: 0.05em 0.1em;
+  border-color: black;
+  padding: 0.1em 0.2em;
+  height: 1.5em;
+}
+th {
+  background-color: rgb(192, 192, 192);
+  color: black;
+  border-width: 0.1em;
+  font-weight: bold;
+  text-align: center;
+  text-transform: capitalize;
+  letter-spacing: 0.1em;
+}
+/* Widths of named columns */
+col.name {
+  width: 10em;
+}
+.action, .value, .arg {
+  width: 15em;
+}
+/* Properties for the name column 
+- td:first-child should work in CSS 2.1 avare browsers (tested in Firefox)
+- col.name is against specs but works in IE
+*/
+td:first-child, col.name {
+  background-color: rgb(240, 240, 240);
+  text-transform: capitalize;
+  letter-spacing: 0.1em;
+}
+/* required for IE */
+th {
+  font-style: normal;
+}
+</style>
+<title>Caching Libs And Resources</title>
+</head>
+<body>
+<h1>Caching Libs And Resources</h1>
+
+<table border="1">
+<colgroup span="99">
+<col class="name">
+<col class="value" span="4"></colgroup>
+<tr>
+<th>Setting</th>
+<th>Value</th>
+<th>Value</th>
+<th>Value</th>
+<th>Value</th>
+</tr>
+<tr>
+<td>Force Tags</td>
+<td>regression</td>
+<td>jybot</td>
+<td>pybot</td>
+<td></td>
+</tr>
+<tr>
+<td>Resource</td>
+<td>../../resources/resource.html</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</table>
+
+<table border="1">
+<colgroup span="99">
+<col class="name">
+<col class="value" span="4"></colgroup>
+<tr>
+<th>Variable</th>
+<th>Value</th>
+<th>Value</th>
+<th>Value</th>
+<th>Value</th>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</table>
+
+<table border="1">
+<colgroup span="99">
+<col class="name">
+<col class="action">
+<col class="arg" span="3"></colgroup>
+<tr>
+<th>Test Case</th>
+<th>Action</th>
+<th>Argument</th>
+<th>Argument</th>
+<th>Argument</th>
+</tr>
+<tr>
+<td><a name="test_Import Libraries Only Once">Import Libraries Only Once</a></td>
+<td>[Setup]</td>
+<td>My Run Tests</td>
+<td>parsing${/}library_caching</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>:: FOR</td>
+<td>${name}</td>
+<td>IN</td>
+<td>Test 1.1</td>
+</tr>
+<tr>
+<td></td>
+<td>...</td>
+<td>Test 1.2</td>
+<td>Test 2.1</td>
+<td>Test 2.2</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td>Check Test Case</td>
+<td>${name}</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Syslog File Should Contain N Times</td>
+<td>Imported library 'BuiltIn' with args [ ]</td>
+<td>1</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Syslog File Should Contain N Times</td>
+<td>Found test library 'BuiltIn' with args [ ] from cache</td>
+<td>2</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Syslog File Should Contain N Times</td>
+<td>Imported library 'OperatingSystem' with args [ ]</td>
+<td>1</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Syslog File Should Contain N Times</td>
+<td>Found test library 'OperatingSystem' with args [ ] from cache</td>
+<td>1</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="test_Process Resource Files Only Once">Process Resource Files Only Once</a></td>
+<td>[Setup]</td>
+<td>My Run Tests</td>
+<td>parsing${/}resource_parsing</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Message</td>
+<td>Check that tests are run ok</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>${tc} =</td>
+<td>Check Test Case</td>
+<td>Test 1.1</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Log Message</td>
+<td>${tc.kws[0].kws[0].msgs[0]}</td>
+<td>variable value from 02 resource</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Log Message</td>
+<td>${tc.kws[1].msgs[0]}</td>
+<td>variable value from 02 resource</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>${tc} =</td>
+<td>Check Test Case</td>
+<td>Test 4.1</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Log Message</td>
+<td>${tc.kws[0].kws[0].msgs[0]}</td>
+<td>variable value from 02 resource</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Log Message</td>
+<td>${tc.kws[1].msgs[0]}</td>
+<td>variable value from 02 resource</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>${tc} =</td>
+<td>Check Test Case</td>
+<td>Test 4.2</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Log Message</td>
+<td>${tc.kws[0].kws[0].msgs[0]}</td>
+<td>variable value from 03 resource</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Log Message</td>
+<td>${tc.kws[0].kws[1].msgs[0]}</td>
+<td>variable value from 02 resource</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Log Message</td>
+<td>${tc.kws[0].kws[2].kws[0].msgs[0]}</td>
+<td>variable value from 02 resource</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Log Message</td>
+<td>${tc.kws[1].msgs[0]}</td>
+<td>variable value from 03 resource</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Message</td>
+<td>Check that resources were parsed only once</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>${dir} =</td>
+<td>Join Path</td>
+<td>${CURDIR}${/}..${/}..</td>
+<td>testdata</td>
+</tr>
+<tr>
+<td></td>
+<td>...</td>
+<td>parsing</td>
+<td>resource_parsing</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Syslog File Should Contain In Order</td>
+<td>Parsing test suite directory</td>
+<td>'${dir}'</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Syslog File Should Contain In Order</td>
+<td>Parsing test case file</td>
+<td>'${dir}${/}01_tests.html'</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Syslog File Should Contain In Order</td>
+<td>Parsing test case file</td>
+<td>'${dir}${/}02_resource.html'</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Syslog File Should Contain In Order</td>
+<td>Parsing data source</td>
+<td>'${dir}${/}02_resource.html'</td>
+<td>failed:</td>
+</tr>
+<tr>
+<td></td>
+<td>...</td>
+<td>Test case file</td>
+<td>'${dir}${/}02_resource.html'</td>
+<td>contains no test cases</td>
+</tr>
+<tr>
+<td></td>
+<td>Syslog File Should Contain In Order</td>
+<td>Parsing test case file</td>
+<td>'${dir}${/}03_resource.html'</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Syslog File Should Contain In Order</td>
+<td>Parsing data source</td>
+<td>'${dir}${/}03_resource.html'</td>
+<td>failed:</td>
+</tr>
+<tr>
+<td></td>
+<td>...</td>
+<td>Test case file</td>
+<td>'${dir}${/}03_resource.html'</td>
+<td>contains no test cases</td>
+</tr>
+<tr>
+<td></td>
+<td>Syslog File Should Contain In Order</td>
+<td>Parsing test case file</td>
+<td>'${dir}${/}04_tests.html'</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Syslog File Should Contain In Order</td>
+<td>Running test suite</td>
+<td>'Resource Parsing'</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Syslog File Should Contain In Order</td>
+<td>Imported resource file</td>
+<td>'${dir}${/}02_resource.html'</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Syslog File Should Contain In Order</td>
+<td>Imported resource file</td>
+<td>'${dir}${/}03_resource.html'</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Syslog File Should Contain In Order</td>
+<td>Found resource file</td>
+<td>'${dir}${/}02_resource.html'</td>
+<td>from cache</td>
+</tr>
+<tr>
+<td></td>
+<td>Syslog File Should Contain In Order</td>
+<td>Resource file</td>
+<td>'${dir}${/}02_resource.html'</td>
+<td>already imported by suite 'Resource Parsing.04 Tests'</td>
+</tr>
+<tr>
+<td></td>
+<td>Syslog File Should Contain In Order</td>
+<td>Tests executed successfully.</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</table>
+
+<table border="1">
+<colgroup span="99">
+<col class="name">
+<col class="action">
+<col class="arg" span="3"></colgroup>
+<tr>
+<th>Keyword</th>
+<th>Action</th>
+<th>Argument</th>
+<th>Argument</th>
+<th>Argument</th>
+</tr>
+<tr>
+<td><a name="keyword_Syslog File Should Contain N Times">Syslog File Should Contain N Times</a></td>
+<td>[Arguments]</td>
+<td>${text}</td>
+<td>${exp_count}</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>[Timeout]</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>${lines} =</td>
+<td>Grep</td>
+<td>${SYSLOGFILE}</td>
+<td>${text}</td>
+</tr>
+<tr>
+<td></td>
+<td>Log</td>
+<td>${SYSLOGFILE}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>${count} =</td>
+<td>Evaluate</td>
+<td>len("""${lines}""".splitlines())</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Ints Equal</td>
+<td>${count}</td>
+<td>${exp_count}</td>
+<td>${text}</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="keyword_Syslog File Should Contain In Order">Syslog File Should Contain In Order</a></td>
+<td>[Arguments]</td>
+<td>@{parts}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>[Timeout]</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>${text} =</td>
+<td>Catenate</td>
+<td>@{parts}</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>${text} =</td>
+<td>Set</td>
+<td>${text.replace("\\","/")}</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Syslog File Should Contain N Times</td>
+<td>${text}</td>
+<td>1</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>${pre}</td>
+<td>${post} =</td>
+<td>Set</td>
+<td>${SYSLOGFILE.split("${text}")}</td>
+</tr>
+<tr>
+<td></td>
+<td>Set Suite Variable</td>
+<td>$SYSLOGFILE</td>
+<td>${post}</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="keyword_My Run Tests">My Run Tests</a></td>
+<td>[Arguments]</td>
+<td>${path}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>[Timeout]</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Run Tests</td>
+<td></td>
+<td>${path}</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Set Suite Variable</td>
+<td>$SUITE</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>${SYSLOGFILE} =</td>
+<td>Get Syslog</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Log</td>
+<td>${SYSLOGFILE}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Set Suite Variable</td>
+<td>$SYSLOGFILE</td>
+<td>${SYSLOGFILE.replace("\\","/")}</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Verify My Run Tests</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="keyword_Verify My Run Tests">Verify My Run Tests</a></td>
+<td>[Timeout]</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Fail If Equal</td>
+<td>${SUITE}</td>
+<td>${None}</td>
+<td>Running tests failed</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</table>
+
+</body>
+</html>

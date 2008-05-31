@@ -1,0 +1,633 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="generator" content="RobotIDE"> 
+<style type="text/css">
+html {
+  font-family: Arial,Helvetica,sans-serif;
+  background-color: white;
+  color: black;
+}
+p {
+  max-width: 60em;
+}
+table {
+  border-collapse: collapse;
+  empty-cells: show;
+  margin: 1em 0em;
+  border: 0.1em solid black;
+}
+th, td {
+  border-style: solid;
+  border-width: 0.05em 0.1em;
+  border-color: black;
+  padding: 0.1em 0.2em;
+  height: 1.5em;
+}
+th {
+  background-color: rgb(192, 192, 192);
+  color: black;
+  border-width: 0.1em;
+  font-weight: bold;
+  text-align: center;
+  text-transform: capitalize;
+  letter-spacing: 0.1em;
+}
+/* Widths of named columns */
+col.name {
+  width: 10em;
+}
+.action, .value, .arg {
+  width: 15em;
+}
+/* Properties for the name column 
+- td:first-child should work in CSS 2.1 avare browsers (tested in Firefox)
+- col.name is against specs but works in IE
+*/
+td:first-child, col.name {
+  background-color: rgb(240, 240, 240);
+  text-transform: capitalize;
+  letter-spacing: 0.1em;
+}
+/* required for IE */
+th {
+  font-style: normal;
+}
+</style>
+<title>Split With Rebot</title></head>
+
+
+<body>
+<h1>Split With Rebot</h1>
+
+<table border="1">
+<colgroup span="99"><col class="name"><col class="value" span="4"></colgroup>
+<tbody><tr>
+<th>Setting</th>
+<th>Value</th>
+<th>Value</th>
+<th>Value</th>
+<th>Value</th>
+</tr>
+<tr>
+<td>Documentation</td>
+<td>Tests for splitting output and log with Rebot. Reading splitted outputs is tested in split_output.html</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Force Tags</td>
+<td>pybot</td>
+<td>jybot</td>
+<td>regression</td>
+<td></td>
+</tr>
+<tr>
+<td>Suite Setup</td>
+<td>Run Some Tests</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Test Setup</td>
+<td>Remove File</td>
+<td>${OUTDIR}${/}${BASEOUT}*.xml</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Resource</td>
+<td>../../../resources/resource.html</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Resource</td>
+<td>splitting_resource.html</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody></table>
+
+<table border="1">
+<colgroup span="99"><col class="name"><col class="value" span="4"></colgroup>
+<tbody><tr>
+<th>Variable</th>
+<th>Value</th>
+<th>Value</th>
+<th>Value</th>
+<th>Value</th>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody></table>
+
+<table border="1">
+<colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
+<tbody><tr>
+<th>Test Case</th>
+<th>Action</th>
+<th>Argument</th>
+<th>Argument</th>
+<th>Argument</th>
+</tr>
+<tr>
+<td><a name="test_Split Level 1">Split Level 1</a></td>
+<td>Run Rebot With Given Split Level</td>
+<td>1</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Correct Files Should Be Created</td>
+<td>${BASEOUT}</td>
+<td>xml</td>
+<td>8</td>
+</tr>
+<tr>
+<td></td>
+<td>Correct Files Should Be Created</td>
+<td>split1</td>
+<td>html</td>
+<td>8</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="test_Split Level 2">Split Level 2</a></td>
+<td>Run Rebot With Given Split Level</td>
+<td>2</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Correct Files Should Be Created</td>
+<td>${BASEOUT}</td>
+<td>xml</td>
+<td>17</td>
+</tr>
+<tr>
+<td></td>
+<td>Correct Files Should Be Created</td>
+<td>split2</td>
+<td>html</td>
+<td>17</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="test_Index Log Should Have Correct Content">Index Log Should Have Correct Content</a></td>
+<td>${index} =</td>
+<td>Get File</td>
+<td>${OUTDIR}${/}split2.html</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Stat Link To Itself Should Be Ok</td>
+<td>${index}</td>
+<td>Misc</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Stat Link In Index To Sub Log Should Be Ok</td>
+<td>${index}</td>
+<td>Misc.Suites.Subsuites</td>
+<td>split2-012.html</td>
+</tr>
+<tr>
+<td></td>
+<td>Test Link In Index To Sub Log Should Be Ok</td>
+<td>${index}</td>
+<td>Misc.Suites.Fourth</td>
+<td>split2-011.html</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="test_Sub Logs Should Have Correct Content">Sub Logs Should Have Correct Content</a></td>
+<td>${sublog} =</td>
+<td>Get File</td>
+<td>${OUTDIR}${/}split2-012.html</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Stat Link To Itself Should Be Ok</td>
+<td>${sublog}</td>
+<td>Subsuites</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Suite Anchor In Sub Log Should Be Ok</td>
+<td>${sublog}</td>
+<td>Subsuites</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Test Anchor In Sub Log Should Be Ok</td>
+<td>${sublog}</td>
+<td>Subsuites.Sub 1.SubSuite1 First</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="test_Report Should Have Correct Links">Report Should Have Correct Links</a></td>
+<td>${index} =</td>
+<td>Get File</td>
+<td>${OUTDIR}${/}report2.html</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>${details}</td>
+<td>${tags} =</td>
+<td>Evaluate</td>
+<td>'''${index}'''.split('&lt;h2&gt;Test Details by Tag&lt;/h2&gt;')</td>
+</tr>
+<tr>
+<td></td>
+<td>Link In Report To Index Log Should Be Ok</td>
+<td>${details}</td>
+<td>Misc</td>
+<td>split2.html</td>
+</tr>
+<tr>
+<td></td>
+<td>...</td>
+<td>suite</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Link In Report To Index Log Should Be Ok</td>
+<td>${details}</td>
+<td>Misc.Dummy Lib Test.Dummy Test</td>
+<td>split2.html</td>
+</tr>
+<tr>
+<td></td>
+<td>...</td>
+<td>test</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Link In Report To Sub Log Should Be Ok</td>
+<td>${details}</td>
+<td>Misc.Suites.Fourth</td>
+<td>split2-011.html</td>
+</tr>
+<tr>
+<td></td>
+<td>...</td>
+<td>suite</td>
+<td>2</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Link In Report To Sub Log Should Be Ok</td>
+<td>${details}</td>
+<td>Misc.Suites.Fourth.Suite4 First</td>
+<td>split2-011.html</td>
+</tr>
+<tr>
+<td></td>
+<td>...</td>
+<td>test</td>
+<td>2</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Link In Report To Index Log Should Be Ok</td>
+<td>${tags}</td>
+<td>Misc.Many Tests.First</td>
+<td>split2.html</td>
+</tr>
+<tr>
+<td></td>
+<td>...</td>
+<td>test</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Link In Report To Sub Log Should Be Ok</td>
+<td>${tags}</td>
+<td>Misc.Suites.Subsuites 2.Subsuite 3.SubSuite3 Second</td>
+<td>split2-013.html</td>
+</tr>
+<tr>
+<td></td>
+<td>...</td>
+<td>test</td>
+<td>2</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="test_Split Level 3">Split Level 3</a></td>
+<td>Run Rebot With Given Split Level</td>
+<td>3</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Correct Files Should Be Created</td>
+<td>${BASEOUT}</td>
+<td>xml</td>
+<td>4</td>
+</tr>
+<tr>
+<td></td>
+<td>Correct Files Should Be Created</td>
+<td>split3</td>
+<td>html</td>
+<td>4</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="test_Only Index Should Be Created If Non-Nested Suite">Only Index Should Be Created If Non-Nested Suite</a></td>
+<td>Run Tests</td>
+<td></td>
+<td>misc${/}normal.html</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Move File</td>
+<td>${OUTDIR}${/}normal-output.xml</td>
+<td>${OUTDIR}${/}notsplit.xml</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Run Rebot</td>
+<td>--split 1 --log notsplit</td>
+<td>${OUTDIR}${/}notsplit.xml</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Equals</td>
+<td>${SUITE.status}</td>
+<td>PASS</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>${files} =</td>
+<td>List Dir</td>
+<td>${OUTDIR}</td>
+<td>notsplit*.*ml</td>
+</tr>
+<tr>
+<td></td>
+<td>Fail Unless</td>
+<td>${files} == ['notsplit-output.xml', 'notsplit.html', 'notsplit.xml']</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody></table>
+
+<table border="1">
+<colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
+<tbody><tr>
+<th>Keyword</th>
+<th>Action</th>
+<th>Argument</th>
+<th>Argument</th>
+<th>Argument</th>
+</tr>
+<tr>
+<td><a name="keyword_Run Some Tests">Run Some Tests</a></td>
+<td>[Timeout]</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Run Tests</td>
+<td></td>
+<td>misc</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Set Suite Variable</td>
+<td>$BASEOUT</td>
+<td>input-output</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Set Suite Variable</td>
+<td>$INPUT</td>
+<td>${OUTDIR}${/}input.xml</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Move File</td>
+<td>${OUTDIR}${/}misc-output.xml</td>
+<td>${INPUT}</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="keyword_Run Rebot With Given Split Level">Run Rebot With Given Split Level</a></td>
+<td>[Arguments]</td>
+<td>${level}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>[Timeout]</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Run Rebot</td>
+<td>--SplitOutputs ${level} --log split${level}.html --report report${level}.html</td>
+<td>${INPUT}</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Equals</td>
+<td>${SUITE.status}</td>
+<td>FAIL</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="keyword_Correct Files Should Be Created">Correct Files Should Be Created</a></td>
+<td>[Arguments]</td>
+<td>${base}</td>
+<td>${ext}</td>
+<td>${exp_count}</td>
+</tr>
+<tr>
+<td></td>
+<td>[Timeout]</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>@{files} =</td>
+<td>List Dir</td>
+<td>${OUTDIR}</td>
+<td>${base}*.${ext}</td>
+</tr>
+<tr>
+<td></td>
+<td>Fail Unless</td>
+<td>len(@{files}) == ${exp_count}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>@{range} =</td>
+<td>Evaluate</td>
+<td>range(${exp_count}-1)</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>:: FOR</td>
+<td>${i}</td>
+<td>IN</td>
+<td>@{range}</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td>${id} =</td>
+<td>Evaluate</td>
+<td>"%03d" % (${i} + 1)</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td>Equals</td>
+<td>@{files}[${i}]</td>
+<td>${base}-${id}.${ext}</td>
+</tr>
+<tr>
+<td></td>
+<td>Equals</td>
+<td>@{files}[${id}]</td>
+<td>${base}.${ext}</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody></table>
+
+</body></html>

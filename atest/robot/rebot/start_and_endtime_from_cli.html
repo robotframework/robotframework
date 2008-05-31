@@ -1,0 +1,643 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+
+  <style type="text/css">
+html {
+  font-family: Arial,Helvetica,sans-serif;
+  background-color: white;
+  color: black;
+}
+p {
+  max-width: 60em;
+}
+table {
+  border-collapse: collapse;
+  empty-cells: show;
+  margin: 1em 0em;
+  border: 0.1em solid black;
+}
+th, td {
+  border-style: solid;
+  border-width: 0.05em 0.1em;
+  border-color: black;
+  padding: 0.1em 0.2em;
+  height: 1.5em;
+}
+th {
+  background-color: rgb(192, 192, 192);
+  color: black;
+  border-width: 0.1em;
+  font-weight: bold;
+  text-align: center;
+  text-transform: capitalize;
+  letter-spacing: 0.1em;
+}
+/* Widths of named columns */
+col.name {
+  width: 10em;
+}
+.action, .value, .arg {
+  width: 15em;
+}
+/* Properties for the name column 
+- td:first-child should work in CSS 2.1 avare browsers (tested in Firefox)
+- col.name is against specs but works in IE
+*/
+td:first-child, col.name {
+  background-color: rgb(240, 240, 240);
+  text-transform: capitalize;
+  letter-spacing: 0.1em;
+}
+/* required for IE */
+th {
+  font-style: normal;
+}
+  
+  </style>
+
+  <title>Robot Test Cases</title>
+</head>
+
+<body>
+
+<h1>Robot Test Cases</h1>
+
+
+<table border="1">
+
+  <colgroup span="99"><col class="name"><col class="value" span="4"></colgroup>
+
+  <thead>
+  <tr>
+
+    <th>Setting</th>
+
+    <th>Value</th>
+
+    <th>Value</th>
+
+    <th>value</th>
+
+    <th>Value</th>
+
+  </tr>
+
+  </thead>
+
+  <tbody>
+
+
+
+
+
+    <tr>
+      <td>Force Tags</td>
+      <td>regression</td>
+      <td>pybot</td>
+      <td>jybot</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>Suite Setup</td>
+      <td>My Setup</td>
+      <td></td>
+      <td></td>
+      <td></td>
+    </tr>
+    <tr>
+
+      <td>Resource</td>
+
+      <td>../../resources/resource.html</td>
+
+      <td></td>
+
+      <td></td>
+
+      <td></td>
+
+    </tr>
+    <tr>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+    </tr>
+
+  </tbody>
+</table>
+
+
+<table border="1">
+
+  <colgroup span="99"><col class="name"><col class="value" span="4"></colgroup>
+
+  <thead>
+  <tr>
+
+    <th>Variable</th>
+
+    <th>Value</th>
+
+    <th>Value</th>
+
+    <th>Value</th>
+
+    <th>Value</th>
+
+  </tr>
+
+  </thead>
+
+  <tbody>
+
+
+
+    <tr>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+    </tr>
+
+  </tbody>
+</table>
+
+
+<table border="1">
+
+  <colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
+
+  <thead>
+  <tr>
+
+    <th>Test Case</th>
+
+    <th>Action</th>
+
+    <th>Argument</th>
+
+    <th>Argument</th>
+
+    <th>Argument</th>
+
+
+  </tr>
+
+  </thead>
+
+  <tbody>
+
+    <tr>
+
+      <td>Combine With Both Starttime and endtime should Set Correct Elapsed Time</td>
+
+      <td>Log Many</td>
+
+      <td>${INPUT1}</td>
+
+      <td>${INPUT2}</td>
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+      <td></td>
+      <td>${OUTPUT_NAME} =</td>
+      <td>Set</td>
+      <td>combined </td>
+      <td></td>
+    </tr>
+    <tr>
+
+      <td></td>
+
+      <td>Run Rebot</td>
+      <td>--starttime 2007:09:25:21:51<br>
+--endtime 2007:09:26:01:12:30.200</td>
+      <td>${INPUT1}</td>
+      <td>${INPUT2}</td>
+
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+      <td></td>
+      <td>Equals</td>
+      <td>${SUITE.starttime}</td>
+      <td>20070925 21:51:00.000</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td></td>
+      <td>Equals</td>
+      <td>${SUITE.endtime}</td>
+      <td>20070926 01:12:30.200</td>
+      <td></td>
+    </tr>
+    <tr>
+
+      <td></td>
+
+      <td>Equals</td>
+
+      <td>${SUITE.elapsedtime}</td>
+
+      <td>03:21:30.200</td>
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined"></td>
+    </tr>
+    <tr>
+
+      <td>Combine With Only Starttime Should Only Affect Starttime</td>
+
+      <td>Run Rebot</td>
+      <td>--starttime 20070925-2151<br>
+      </td>
+      <td>${INPUT1}</td>
+      <td>${INPUT2}</td>
+
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+      <td></td>
+
+      <td>Equals</td>
+      <td>${SUITE.starttime}</td>
+      <td>20070925 21:51:00.000</td>
+
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+      <td></td>
+
+      <td>Equals</td>
+      <td>${SUITE.endtime}</td>
+      <td>${ORIG_END}</td>
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+    <tr>
+
+      <td></td>
+
+      <td>Equals</td>
+      <td>${SUITE.elapsedtime}</td>
+      <td>${ORIG_ELAPSED}</td>
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+    <tr>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>Combine With Only Endtime Should Only Affect Endtime</td>
+      <td>Run Rebot</td>
+      <td>--endtime 2010_01.01:12-33<br>
+      </td>
+      <td>${INPUT1}</td>
+      <td>${INPUT2}</td>
+    </tr>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <tr>
+
+      <td></td>
+
+      <td>Equals</td>
+      <td>${SUITE.starttime}</td>
+
+
+      <td>${ORIG_START}</td>
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+      <td></td>
+      <td>Equals</td>
+      <td>${SUITE.endtime}</td>
+      <td>20100101 11:33:00.000</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td></td>
+      <td>Equals</td>
+      <td>${SUITE.elapsedtime}</td>
+      <td>${ORIG_ELAPSED}</td>
+      <td></td>
+    </tr>
+    <tr>
+
+      <td></td>
+
+      <td></td>
+
+      <td></td>
+
+      <td></td>
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+      <td>Recombining Should Work</td>
+
+      <td>Run Rebot</td>
+      <td>--starttime 2007:09:25:21:51<br>
+--endtime 2007:09:26:01:12:30:200<br>
+--output once_combined.xml</td>
+      <td>${INPUT1}</td>
+      <td>${INPUT2}</td>
+
+
+
+
+
+    </tr>
+
+
+    <tr>
+      <td></td>
+      <td>Run Rebot</td>
+      <td></td>
+      <td>${INPUT1}</td>
+      <td>${INPUT2}</td>
+    </tr>
+    <tr>
+      <td></td>
+      <td>...</td>
+      <td>${OUTDIR}${/}once_combined.xml</td>
+      <td></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td></td>
+      <td>Fail Unless</td>
+      <td>'${SUITE.elapsedtime}' &gt; '03:21:30.200'</td>
+      <td></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined"></td>
+    </tr>
+    <tr>
+      <td align="undefined" valign="undefined">It should Be possible to Omit Time Altogether</td>
+      <td>Run Rebot</td>
+      <td>--starttime 2007-10-01<br>
+--endtime 20071006</td>
+      <td>${INPUT1}</td>
+      <td>${INPUT2}</td>
+    </tr>
+    <tr>
+      <td></td>
+      <td>Equals</td>
+      <td>${SUITE.starttime}</td>
+      <td>20071001 00:00:00.000</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td align="undefined" valign="undefined"></td>
+      <td>Equals</td>
+      <td>${SUITE.endtime}</td>
+      <td>20071006 00:00:00.000</td>
+      <td align="undefined" valign="undefined"></td>
+    </tr>
+    <tr>
+      <td align="undefined" valign="undefined"></td>
+      <td>Equals</td>
+      <td>${SUITE.elapsedtime}</td>
+      <td>120:00:00.000</td>
+      <td align="undefined" valign="undefined"></td>
+    </tr>
+
+  </tbody>
+</table>
+
+
+<table border="1">
+
+  <colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
+
+  <thead>
+  <tr>
+
+    <th>Keyword</th>
+
+    <th>Action</th>
+
+    <th>Argument</th>
+
+    <th>Argument</th>
+
+    <th>Argument</th>
+
+
+  </tr>
+
+  </thead>
+
+  <tbody>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <tr>
+      <td>My Setup</td>
+      <td>${OUTPUT_NAME} =</td>
+      <td>Set</td>
+      <td>first</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td><br>
+      </td>
+      <td>Run Tests Without Processing Output</td>
+      <td><br>
+      </td>
+      <td>misc${/}normal.html</td>
+      <td><br>
+      </td>
+    </tr>
+    <tr>
+      <td></td>
+      <td>Set Suite Variable</td>
+      <td>$INPUT1</td>
+      <td>${OUTDIR}${/}${OUTFILE}<br>
+      </td>
+      <td></td>
+    </tr>
+    <tr>
+      <td></td>
+      <td>${OUTPUT_NAME} =</td>
+      <td>Set</td>
+      <td align="undefined" valign="undefined">second</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td></td>
+      <td>Run Tests&nbsp;Without Processing Output</td>
+      <td><br>
+      </td>
+      <td>misc${/}suites${/}tsuite1.html</td>
+      <td><br>
+      </td>
+    </tr>
+    <tr>
+      <td></td>
+      <td>Set Suite Variable</td>
+      <td>$INPUT2</td>
+      <td>${OUTDIR}${/}${OUTFILE}<br>
+      </td>
+      <td></td>
+    </tr>
+    <tr>
+      <td></td>
+      <td>${OUTPUT_NAME} =</td>
+      <td>Set</td>
+      <td>orig_combined</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td></td>
+      <td>Run Rebot</td>
+      <td></td>
+      <td>${INPUT1}</td>
+      <td>${INPUT2}</td>
+    </tr>
+    <tr>
+      <td></td>
+      <td>Set Suite Variable</td>
+      <td>$ORIG_START</td>
+      <td>${SUITE.starttime}</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td></td>
+      <td>Set Suite Variable</td>
+      <td>$ORIG_END</td>
+      <td>${SUITE.endtime}</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td></td>
+      <td>Set Suite Variable</td>
+      <td>$ORIG_ELAPSED</td>
+      <td>${SUITE.elapsedtime}</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+    </tr>
+
+  </tbody>
+</table>
+
+</body>
+</html>

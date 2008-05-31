@@ -1,0 +1,5495 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <style type="text/css">
+html {
+  font-family: Arial,Helvetica,sans-serif;
+  background-color: white;
+  color: black;
+}
+p {
+  max-width: 60em;
+}
+table {
+  border-collapse: collapse;
+  empty-cells: show;
+  margin: 1em 0em;
+  border: 0.1em solid black;
+}
+th, td {
+  border-style: solid;
+  border-width: 0.05em 0.1em;
+  border-color: black;
+  padding: 0.1em 0.2em;
+  height: 1.5em;
+}
+th {
+  background-color: rgb(192, 192, 192);
+  color: black;
+  border-width: 0.1em;
+  font-weight: bold;
+  text-align: center;
+  text-transform: capitalize;
+  letter-spacing: 0.1em;
+}
+/* Widths of named columns */
+col.name {
+  width: 10em;
+}
+.action, .value, .arg {
+  width: 15em;
+}
+/* Properties for the name column 
+- td:first-child should work in CSS 2.1 avare browsers (tested in Firefox)
+- col.name is against specs but works in IE
+*/
+td:first-child, col.name {
+  background-color: rgb(240, 240, 240);
+  text-transform: capitalize;
+  letter-spacing: 0.1em;
+}
+/* required for IE */
+th {
+  font-style: normal;
+}
+  </style>
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <title>Robot Test Cases</title></head>
+
+<body>
+
+
+
+
+
+
+
+
+
+
+
+<h1>Robot Test Cases</h1>
+
+
+
+
+
+
+
+
+
+
+
+
+<table border="1">
+
+
+
+
+
+
+
+
+
+
+
+  <colgroup span="99"><col class="name"><col class="value" span="4"></colgroup>
+  <thead>
+  <tr>
+
+
+
+
+
+
+
+
+
+
+
+    <th>Setting</th>
+
+
+
+
+
+
+
+
+
+
+
+    <th>Value</th>
+
+
+
+
+
+
+
+
+
+
+
+    <th>Value</th>
+
+
+
+
+
+
+
+
+
+
+
+    <th>value</th>
+
+
+
+
+
+
+
+
+
+
+
+    <th>Value</th>
+
+
+
+
+
+
+
+
+
+
+
+  </tr>
+
+
+
+
+
+
+
+
+
+
+
+  </thead>
+  <tbody>
+
+
+
+
+
+
+
+
+
+
+
+    
+    
+    <tr>
+
+
+
+
+
+
+
+
+
+
+      <td>Force Tags</td>
+
+
+
+
+
+
+
+
+
+
+      <td>regression</td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Default Tags</td>
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">pybot</td>
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">jybot</td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+
+
+      <td>Resource</td>
+
+
+
+
+
+
+
+
+
+
+      <td>../../resources/resource.html</td>
+
+
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td align="undefined" valign="undefined">Suite Setup</td>
+
+
+
+      <td align="undefined" valign="undefined">Run Tests</td>
+
+
+
+      <td align="undefined" valign="undefined">--variable FAIL:YES<br>
+
+
+
+--log mylog.html<br>
+
+
+
+--report myreport.html<br>
+
+
+
+--summary mysummary.html<br>
+
+
+
+--debugfile mydebug.txt</td>
+
+
+
+      <td align="undefined" valign="undefined">misc${/}suites${/}subsuites</td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+<table border="1">
+
+
+
+
+
+
+
+
+
+
+
+  <colgroup span="99"><col class="name"><col class="value" span="4"></colgroup>
+  <thead>
+  <tr>
+
+
+
+
+
+
+
+
+
+
+
+    <th>Variable</th>
+
+
+
+
+
+
+
+
+
+
+
+    <th>Value</th>
+
+
+
+
+
+
+
+
+
+
+
+    <th>Value</th>
+
+
+
+
+
+
+
+
+
+
+
+    <th>Value</th>
+
+
+
+
+
+
+
+
+
+
+
+    <th>Value</th>
+
+
+
+
+
+
+
+
+
+
+
+  </tr>
+
+
+
+
+
+
+
+
+
+
+
+  </thead>
+  <tbody>
+
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+    
+    <tr>
+
+
+
+      <td align="undefined" valign="undefined">${SEP_CHAR1}</td>
+
+
+
+      <td align="undefined" valign="undefined">=</td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td align="undefined" valign="undefined">${SEP_CHAR2}</td>
+
+
+
+      <td align="undefined" valign="undefined">-</td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td align="undefined" valign="undefined">${SEP_LINE1}</td>
+
+
+
+      <td align="undefined" valign="undefined">${SEP_CHAR1 * 78}</td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td align="undefined" valign="undefined">${SEP_LINE2}</td>
+
+
+
+      <td align="undefined" valign="undefined">${SEP_CHAR2 * 78}</td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td align="undefined" valign="undefined">${SPACE}</td>
+
+
+
+      <td align="undefined" valign="undefined">\ \</td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+
+      <td>${MSG_211}</td>
+
+
+
+
+      <td align="undefined" valign="undefined">2 critical tests, 1 passed, 1 failed\n<br>
+
+
+
+
+2&nbsp;tests total, 1 passed, 1 failed</td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td>${MSG_110}</td>
+
+
+
+      <td align="undefined" valign="undefined">1&nbsp;critical test, 1 passed, 0 failed\n<br>
+
+
+
+
+1 test total, 1 passed, 0 failed</td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+<table border="1">
+
+
+
+
+
+
+
+
+
+
+
+  <colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
+  <thead>
+  <tr>
+
+
+
+
+
+
+
+
+
+
+
+    <th>Test Case</th>
+
+
+
+
+
+
+
+
+
+
+
+    <th>Action</th>
+
+
+
+
+
+
+
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+
+
+
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+
+
+
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+
+
+
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+
+
+
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+  </tr>
+
+
+
+
+
+
+
+
+
+
+
+  </thead>
+  <tbody>
+
+
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Top Level Suite Start</td>
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Check Stdout Contains</td>
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${SEP_LINE1}\n<br>
+
+
+
+Subsuites${SPACE * 69}\n<br>
+
+
+
+${SEP_LINE1}\n</td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+    
+
+
+
+
+
+
+    
+
+
+
+
+
+
+    <tr>
+
+
+
+
+      <td align="undefined" valign="undefined">Top Level Suite End</td>
+
+
+
+      <td align="undefined" valign="undefined">${status} =</td>
+
+
+
+      <td align="undefined" valign="undefined">Create Status Line</td>
+
+
+
+
+      
+      
+      <td align="undefined" valign="undefined">Subsuites</td>
+
+
+
+
+      <td align="undefined" valign="undefined">61</td>
+
+
+
+
+      <td align="undefined" valign="undefined">FAIL</td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Check Stdout Contains</td>
+
+
+
+      <td align="undefined" valign="undefined">${SEP_LINE1}\n<br>
+
+
+
+${status}\n<br>
+
+
+
+${MSG_211}\n<br>
+
+
+
+${SEP_LINE1}\n<br>
+
+
+
+      </td>
+
+
+
+
+
+
+
+
+
+
+      
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+    
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+
+
+
+
+      
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Nestes Suite Start</td>
+
+
+
+      <td align="undefined" valign="undefined">Check Stdout Contains</td>
+
+
+
+      <td align="undefined" valign="undefined">${SEP_LINE1}\n<br>
+
+
+
+Subsuites.Sub 1 :: Normal test cases${SPACE * 42}\n<br>
+
+
+
+${SEP_LINE1}\n</td>
+
+
+
+
+
+
+
+
+
+
+      
+
+
+
+
+
+
+      
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+    
+
+
+
+
+
+
+    
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Nestes Suite End</td>
+
+
+
+      <td align="undefined" valign="undefined">${status} =</td>
+
+
+
+      <td align="undefined" valign="undefined">Create Status Line</td>
+
+
+
+      <td align="undefined" valign="undefined">Subsuites.Sub 2 :: Normal test cases</td>
+
+
+
+      <td align="undefined" valign="undefined">34</td>
+
+
+
+      <td align="undefined" valign="undefined">PASS</td>
+
+
+
+
+
+
+
+
+
+
+      
+
+
+
+
+
+
+      
+
+
+
+
+
+
+      
+
+
+
+
+
+
+      
+
+
+
+
+
+
+      
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Check Stdout Contains</td>
+
+
+
+      <td align="undefined" valign="undefined">${SEP_LINE2}\n<br>
+
+
+
+${status}\n<br>
+
+
+
+${MSG_110}\n<br>
+
+
+
+${SEP_LINE1}\n<br>
+
+
+
+      </td>
+
+
+
+
+
+
+
+
+
+
+      
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+
+      <td>Passing Test</td>
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${status} =</td>
+
+
+
+      <td align="undefined" valign="undefined">Create Status Line</td>
+
+
+
+
+
+
+
+
+
+
+      
+
+
+
+
+
+
+      <td>SubSuite2 First</td>
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">55</td>
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">PASS</td>
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+
+
+
+
+      
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined">Check Stdout Contains</td>
+
+
+
+      <td align="undefined" valign="undefined">${SEP_LINE1}\n<br>
+
+
+
+${status}\n<br>
+
+
+
+${SEP_LINE2}\n<br>
+
+
+
+      </td>
+
+
+
+
+      
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+    </tr>
+
+
+
+
+    
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
+    
+
+    <tr>
+
+
+
+
+
+
+
+
+
+
+      <td>Failing Test</td>
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${status} =</td>
+
+
+
+      <td align="undefined" valign="undefined">Create Status Line</td>
+
+
+
+      <td>SubSuite1 First</td>
+
+
+
+      <td align="undefined" valign="undefined">55</td>
+
+
+
+      <td align="undefined" valign="undefined">FAIL</td>
+
+
+
+
+
+
+
+
+
+
+      
+
+
+
+
+
+
+      
+
+      
+
+
+
+
+
+
+      
+
+
+
+
+      
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Check Stdout Contains</td>
+
+
+
+      <td align="undefined" valign="undefined">${SEP_LINE1}\n<br>
+
+
+
+${status}\n<br>
+
+
+
+This test was doomed to fail: YES != NO\n<br>
+
+
+
+${SEP_LINE2}\n<br>
+
+
+
+      </td>
+
+
+
+
+
+
+      
+
+
+      <td align="undefined" valign="undefined"><br>
+
+
+
+      </td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td align="undefined" valign="undefined">Outputs</td>
+
+
+
+      <td align="undefined" valign="undefined">${stdout} =</td>
+
+
+
+      <td align="undefined" valign="undefined">Get Stdout</td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td align="undefined" valign="undefined"><br>
+
+
+
+      </td>
+
+
+
+      <td align="undefined" valign="undefined">${outputs} =</td>
+
+
+
+      <td align="undefined" valign="undefined">Evaluate</td>
+
+
+
+      <td align="undefined" valign="undefined">'''${stdout.replace('\\','\\\\')}'''.split('${SEP_LINE1}')[-1]</td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined">Matches Regexp</td>
+
+
+
+      <td align="undefined" valign="undefined">${outputs}<br>
+
+
+
+      </td>
+
+
+
+      <td align="undefined" valign="undefined">Output: \ .*subsuites-output.xml\n<br>
+
+
+
+Debug: \ \ .*mydebug.txt\n<br>
+
+
+
+Summary: .*mysummary.html\n<br>
+
+
+
+Report: \ .*myreport.html\n<br>
+
+
+
+Log: \ \ \ \ .*mylog.html</td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      
+
+    </tr>
+
+
+
+
+
+
+    
+
+
+    <tr>
+
+
+
+      <td align="undefined" valign="undefined">Long Document Should Be Cut From End</td>
+
+
+
+      <td align="undefined" valign="undefined">${doc} =</td>
+
+
+
+      <td align="undefined" valign="undefined">Evaluate</td>
+
+
+
+      <td align="undefined" valign="undefined">'0123456789' * 10</td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Run Tests</td>
+
+
+
+      <td align="undefined" valign="undefined">--name My_Name<br>
+
+
+
+--doc start${doc}end</td>
+
+
+
+      <td align="undefined" valign="undefined">misc${/}normal.html</td>
+
+
+
+
+
+
+      
+
+
+      
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined">${expbase} =</td>
+
+
+
+      <td align="undefined" valign="undefined">Evaluate</td>
+
+
+
+      <td align="undefined" valign="undefined">'My Name :: start' + '0123456789'*5</td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Check Stdout Contains</td>
+
+
+
+      <td align="undefined" valign="undefined">${SEP_LINE1}\n<br>
+
+
+
+${expbase}012345678...\n<br>
+
+
+
+${SEP_LINE1}\n<br>
+
+
+
+      </td>
+
+
+
+
+
+
+      
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Check Stdout Contains</td>
+
+
+
+      <td align="undefined" valign="undefined">${SEP_LINE2}\n<br>
+
+
+
+${expbase}... | PASS |\n<br>
+
+
+
+      </td>
+
+
+
+
+
+
+      
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+    </tr>
+
+
+
+
+    
+    <tr>
+
+
+
+
+      <td align="undefined" valign="undefined">Long Name Should Be Cut From Beginning</td>
+
+
+
+
+      <td align="undefined" valign="undefined">${name} =</td>
+
+
+
+      <td align="undefined" valign="undefined">Evaluate</td>
+
+
+
+      <td align="undefined" valign="undefined">'0123456789' * 10</td>
+
+
+
+
+      
+      
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined">Run Tests</td>
+
+
+
+      <td align="undefined" valign="undefined">--name start${name}end<br>
+
+
+
+--doc whatever</td>
+
+
+
+      <td align="undefined" valign="undefined">misc${/}normal.html</td>
+
+
+
+
+      
+      
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined">${expbase} =</td>
+
+
+
+      <td align="undefined" valign="undefined">Evaluate</td>
+
+
+
+      <td align="undefined" valign="undefined">'789' + '0123456789'*6+ 'end'<br>
+
+
+
+      </td>
+
+
+
+
+      
+      
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined">Check Stdout Contains</td>
+
+
+
+      <td align="undefined" valign="undefined">${SEP_LINE1}\n<br>
+
+
+
+...890123456${expbase}\n<br>
+
+
+
+${SEP_LINE1}\n<br>
+
+
+
+      </td>
+
+
+
+
+      
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined">Check Stdout Contains</td>
+
+
+
+      <td align="undefined" valign="undefined">${SEP_LINE2}\n<br>
+
+
+
+...${expbase} | PASS |\n<br>
+
+
+
+      </td>
+
+
+
+
+      
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+    </tr>
+
+
+
+
+    
+    
+    
+    
+    <tr>
+
+
+
+
+      <td align="undefined" valign="undefined">Monitor Colors</td>
+
+
+
+
+      <td align="undefined" valign="undefined">Run Tests</td>
+
+
+
+      <td align="undefined" valign="undefined">--monitorcolors off<br>
+
+
+
+--splitoutputs this_causes_error</td>
+
+
+
+
+      
+      <td align="undefined" valign="undefined">misc${/}pass_and_fail.html</td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined">Check Stdout Contains</td>
+
+
+
+      <td align="undefined" valign="undefined">| PASS |<br>
+
+
+
+      </td>
+
+
+
+
+      
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined">Check Stdout Contains</td>
+
+
+
+      <td align="undefined" valign="undefined">| FAIL |<br>
+
+
+
+      </td>
+
+
+
+
+      
+      <td></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined">Check Stderr Contains</td>
+
+
+
+      <td align="undefined" valign="undefined">[ ERROR ]<br>
+
+
+
+      </td>
+
+
+
+
+      
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined">Run Tests</td>
+
+
+
+      <td align="undefined" valign="undefined">-C force<br>
+
+
+
+--splitoutputs this_causes_error</td>
+
+
+
+      <td align="undefined" valign="undefined">misc${/}pass_and_fail.html</td>
+
+
+
+
+      
+      
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined">Check Stdout Does Not Contain</td>
+
+
+
+      <td align="undefined" valign="undefined">| PASS |</td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined">Check Stdout Contains</td>
+
+
+
+      <td align="undefined" valign="undefined">PASS<br>
+
+
+
+      </td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined">Check Stdout Does Not Contain</td>
+
+
+
+      <td align="undefined" valign="undefined">| FAIL |</td>
+
+
+
+
+      
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined">Check Stdout Contains</td>
+
+
+
+      <td align="undefined" valign="undefined">FAIL<br>
+
+
+
+      </td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined">Check Stderr Does Not Contain</td>
+
+
+
+      <td align="undefined" valign="undefined">[ ERROR ]</td>
+
+
+
+
+      
+      <td align="undefined" valign="undefined"># Actual output contains binary color codes around&nbsp;ERROR</td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined">Check Stderr&nbsp;Contains</td>
+
+
+
+      <td align="undefined" valign="undefined">ERROR</td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td align="undefined" valign="undefined">Monitor Width</td>
+
+
+
+      <td align="undefined" valign="undefined">${name} =</td>
+
+
+
+      <td align="undefined" valign="undefined">Evaluate</td>
+
+
+
+      <td align="undefined" valign="undefined">'Start-' + '0123456789' * 9 + '-end'</td>
+
+
+
+      <td align="undefined" valign="undefined"># altogether 100 chars</td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined">Run Tests</td>
+
+
+
+      <td align="undefined" valign="undefined">--monitorwidth 105<br>
+
+
+
+--name ${name}<br>
+
+
+
+--doc x<br>
+
+
+
+      </td>
+
+
+
+      <td align="undefined" valign="undefined">misc${/}pass_and_fail.html</td>
+
+
+
+
+      
+      
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined">Check Stdout Contains</td>
+
+
+
+      <td align="undefined" valign="undefined">${SEP_CHAR1 * 105}\n<br>
+
+
+
+${name} :: x\n<br>
+
+
+
+${SEP_CHAR1 * 105}\n<br>
+
+
+
+      </td>
+
+
+
+
+      
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined">Check Stdout Contains</td>
+
+
+
+      <td align="undefined" valign="undefined">${SEP_CHAR2 * 105}\n<br>
+
+
+
+...${name[7:]} | FAIL |\n<br>
+
+
+
+${MSG_211}\n<br>
+
+
+
+${SEP_CHAR1 * 105}\n<br>
+
+
+
+      </td>
+
+
+
+
+      
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined">${statuts} = </td>
+
+
+
+      <td align="undefined" valign="undefined">Create Status Line</td>
+
+
+
+      <td align="undefined" valign="undefined">Pass</td>
+
+
+
+      <td align="undefined" valign="undefined">93</td>
+
+
+
+      <td align="undefined" valign="undefined">PASS</td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined">Check Stdout Contains</td>
+
+
+
+      <td align="undefined" valign="undefined">${SEP_CHAR1 * 105}\n<br>
+
+
+
+${statuts}\n<br>
+
+
+
+${SEP_CHAR2 * 105}\n<br>
+
+
+
+      </td>
+
+
+
+
+      
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined">${statuts} = </td>
+
+
+
+      <td align="undefined" valign="undefined">Create Status Line</td>
+
+
+
+      <td align="undefined" valign="undefined">
+Fail :: FAIL Expected failure</td>
+
+
+
+      <td align="undefined" valign="undefined">68</td>
+
+
+
+      <td align="undefined" valign="undefined">FAIL</td>
+
+
+
+
+      
+      
+      
+      
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined">Check Stdout Contains</td>
+
+
+
+      <td align="undefined" valign="undefined">${SEP_CHAR2 * 105}\n<br>
+
+
+
+${statuts}\n<br>
+
+
+
+
+Expected failure\n<br>
+
+
+
+${SEP_CHAR2 * 105}\n<br>
+
+
+
+      </td>
+
+
+
+
+      
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined">Run Tests</td>
+
+
+
+      <td align="undefined" valign="undefined">-W 20<br>
+
+
+
+--name ${name}<br>
+
+
+
+      </td>
+
+
+
+      <td align="undefined" valign="undefined">misc${/}pass_and_fail.html</td>
+
+
+
+
+      
+      
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined">Check Stdout Contains</td>
+
+
+
+      <td align="undefined" valign="undefined">${SEP_CHAR1 * 20}\n<br>
+
+
+
+...7890123456789-end\n<br>
+
+
+
+${SEP_CHAR1 * 20}\n<br>
+
+
+
+      </td>
+
+
+
+
+      
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined">Check Stdout Contains</td>
+
+
+
+      <td align="undefined" valign="undefined">${SEP_CHAR2 * 20}\n<br>
+
+
+
+...6789-end | FAIL |\n<br>
+
+
+
+${MSG_211}\n<br>
+
+
+
+${SEP_CHAR1 * 20}\n<br>
+
+
+
+      </td>
+
+
+
+
+      
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined">Check Stdout Contains</td>
+
+
+
+      <td align="undefined" valign="undefined">${SEP_CHAR1 * 20}\n<br>
+
+
+
+Pass${SPACE * 8}| PASS |\n<br>
+
+
+
+${SEP_CHAR2 * 20}\n<br>
+
+
+
+      </td>
+
+
+
+
+      
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined">Check Stdout Contains</td>
+
+
+
+      <td align="undefined" valign="undefined">${SEP_CHAR2 * 20}\n<br>
+
+
+
+
+Fail :: ... | FAIL |\n<br>
+
+
+
+
+Expected failure\n<br>
+
+
+
+${SEP_CHAR2 * 20}\n<br>
+
+
+
+      </td>
+
+
+
+
+      
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+<table border="1">
+
+
+
+
+
+
+
+
+
+
+
+  <colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
+  <thead>
+  <tr>
+
+
+
+
+
+
+
+
+
+
+
+    <th>Keyword</th>
+
+
+
+
+
+
+
+
+
+
+
+    <th>Action</th>
+
+
+
+
+
+
+
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+
+
+
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+
+
+
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+
+
+
+
+
+
+
+  </tr>
+
+
+
+
+
+
+
+
+
+
+
+  </thead>
+  <tbody>
+
+
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+
+
+      <td>Create Status Line</td>
+
+
+
+
+
+
+
+
+
+
+
+      <td>[ Arguments ]</td>
+
+
+
+
+
+
+
+
+
+
+
+      <td>${name}</td>
+
+
+
+
+
+
+
+
+
+
+
+      <td>${padding}</td>
+
+
+
+
+
+
+
+
+
+
+
+      <td>${status}</td>
+
+
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+
+      <td>[ Return ]</td>
+
+
+
+
+
+
+
+
+
+
+      <td>${name}${SPACE * ${padding}}| ${status} |</td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+</body></html>

@@ -1,0 +1,14051 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+
+
+
+
+
+
+  
+  
+  
+  
+  
+  <meta name="generator" content="HTML Tidy for Cygwin (vers 1st September 2004), see www.w3.org">
+
+
+
+
+
+
+  
+  
+  
+  
+  
+  <style type="text/css">
+html { font-family: Arial,Helvetica,sans-serif;
+background-color: white;
+color: black;
+}
+p { max-width: 60em;
+}
+table { border-collapse: collapse;
+empty-cells: show;
+margin: 1em 0em;
+border: 0.1em solid black;
+}
+th, td {
+border-style: solid;
+border-width: 0.05em 0.1em;
+border-color: black;
+padding: 0.1em 0.2em;
+height: 1.5em;
+}
+th {
+background-color: rgb(192, 192, 192);
+color: black;
+border-width: 0.1em;
+font-weight: bold;
+text-align: center;
+text-transform: capitalize;
+letter-spacing: 0.1em;
+}
+/* Widths of named columns */
+col.name {
+width: 10em;
+}
+.action , .value, .arg {
+width: 15em;
+}
+/* Properties for the name column - td:first-child should work in CSS 2.1 avare browsers (tested in Firefox)
+- col.name is against specs but works in IE
+*/
+td:first-child, col.name {
+background-color: rgb(240, 240, 240);
+text-transform: capitalize;
+letter-spacing: 0.1em;
+}
+th { font-style: normal; } /* required for IE */
+  
+  
+  </style>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <title>Robot Test Cases</title><link type="text/css" href="resources/css/testdata.css" rel="stylesheet"></head>
+
+<body>
+
+
+
+
+
+
+<h1>Robot Acceptance Test Cases for Rebot</h1>
+
+
+
+
+
+
+<table border="1">
+
+
+
+
+
+
+  <colgroup span="99"><col class="name"><col class="value" span="4"></colgroup>
+  <thead>
+  <tr>
+
+
+
+
+
+
+    <th>Setting</th>
+
+
+
+
+
+
+    <th>Value</th>
+
+
+
+
+
+
+    <th>Value</th>
+
+
+
+
+
+
+    <th>value</th>
+
+
+
+
+
+
+    <th>Value</th>
+
+
+
+
+
+
+  </tr>
+
+
+
+
+
+
+  </thead>
+  <tbody>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Document</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Testing Rebot's command
+line functionality.</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Functionality tested
+elsewere:\n<br>
+
+
+
+
+
+
+-&nbsp;filtering by tags/names\n<br>
+
+
+
+
+
+
+- combining outputs\n<br>
+
+
+
+
+
+
+- creating correct html &nbsp;(incl. --xxxtitle options)</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td>Default Tags</td>
+
+
+
+
+
+
+      <td>regression</td>
+
+
+
+
+
+
+      <td>pybot</td>
+
+
+
+
+
+
+      <td>jybot</td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td><br>
+
+
+
+
+
+      </td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td>Suite Setup</td>
+
+
+
+
+
+
+      <td>My Setup</td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td><br>
+
+
+
+
+
+      </td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Test Setup</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Empty Dir</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${MYOUTDIR}</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Suite Teardown</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Remove Dir</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${MYOUTDIR}</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">recursive</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td>Resource</td>
+
+
+
+
+
+
+      <td>../../resources/resource.html</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+  
+  
+  
+  
+  
+  </tbody>
+</table>
+
+
+
+
+
+
+<table border="1">
+
+
+
+
+
+
+  <colgroup span="99"><col class="name"><col class="value" span="4"></colgroup>
+  <thead>
+  <tr>
+
+
+
+
+
+
+    <th>Variable</th>
+
+
+
+
+
+
+    <th>Value</th>
+
+
+
+
+
+
+    <th>Value</th>
+
+
+
+
+
+
+    <th>Value</th>
+
+
+
+
+
+
+    <th>Value</th>
+
+
+
+
+
+
+  </tr>
+
+
+
+
+
+
+  </thead>
+  <tbody>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${TESTFILE}</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">misc${/}normal.html</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${PASS_FAIL_FILE}</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">
+misc${/}pass_and_fail.html</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td>${MYOUTDIR}</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">
+${TEMPDIR}${/}robot-test-145435</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"><br>
+
+
+
+
+
+      </td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${MYINPUT}</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"># Set in My Setup</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${M_211_211}</td>
+
+
+
+
+      <td align="undefined" valign="undefined">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+2&nbsp;critical tests, 1 passed, 1 failed\n<br>
+
+
+
+
+2 tests total, 1 passed, 1 failed</td>
+
+
+
+
+
+
+      
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${M_110_211}</td>
+
+
+
+
+      <td align="undefined" valign="undefined">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+1 critical test, 1 passed, 0 failed\n<br>
+
+
+
+
+2 tests total, 1 passed, 1 failed</td>
+
+
+
+
+
+
+      
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${M_101_211}</td>
+
+
+
+
+      <td align="undefined" valign="undefined">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+1 critical test, 0 passed, 1 failed\n<br>
+
+
+
+
+2 tests total, 1 passed, 1 failed</td>
+
+
+
+
+
+
+      
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${M_000_211}</td>
+
+
+
+
+      <td align="undefined" valign="undefined">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+0 critical tests, 0 passed, 0 failed\n<br>
+
+
+
+
+2 tests total, 1 passed, 1 failed</td>
+
+
+
+
+
+
+      
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td align="undefined" valign="undefined">${USAGE_TIP}</td>
+
+
+
+
+      <td align="undefined" valign="undefined">\n\nTry --help for usage information.</td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+    </tr>
+
+
+
+
+
+
+  
+  
+  
+  
+  
+  </tbody>
+</table>
+
+
+
+
+
+
+<table border="1">
+
+
+
+
+
+
+  <colgroup span="99"><col class="name"><col class="value" span="4"></colgroup>
+  <thead>
+  <tr>
+
+
+
+
+
+
+    <th>Test Case</th>
+
+
+
+
+
+
+    <th>Action</th>
+
+
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+
+
+  </tr>
+
+
+
+
+
+
+  </thead>
+  <tbody>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Output Only</td>
+
+
+
+
+
+
+      <td>Run Rebot&nbsp; Without Processing Output</td>
+
+
+
+
+
+
+      <td>--outputdir ${MYOUTDIR}<br>
+
+
+
+
+
+
+--output myoutput.xml<br>
+
+
+
+
+
+
+--log none<br>
+
+
+
+
+
+
+--report none</td>
+
+
+
+
+
+
+      <td>${MYINPUT}</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Directory Should
+Contain</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${MYOUTDIR}</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">myoutput.xml</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Report Only</td>
+
+
+
+
+
+
+      <td>Run Rebot&nbsp; Without Processing Output</td>
+
+
+
+
+
+
+      <td>--outputdir ${MYOUTDIR}<br>
+
+
+
+
+
+
+--output none<br>
+
+
+
+
+
+
+--report myreport.html<br>
+
+
+
+
+
+
+--log NONE<br>
+
+
+
+
+
+
+--summary none</td>
+
+
+
+
+
+
+      <td>${MYINPUT}</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Directory Should
+Contain</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${MYOUTDIR}</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">myreport.html</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Log Only</td>
+
+
+
+
+
+
+      <td>Run Rebot&nbsp; Without Processing Output</td>
+
+
+
+
+
+
+      <td>--outputdir ${MYOUTDIR}<br>
+
+
+
+
+
+
+--output None<br>
+
+
+
+
+
+
+--report NONE<br>
+
+
+
+
+
+
+--log mylog.html<br>
+
+
+
+
+
+
+-S none</td>
+
+
+
+
+
+
+      <td>${MYINPUT}</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Directory Should
+Contain</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${MYOUTDIR}</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">mylog.html</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Summary Only</td>
+
+
+
+
+
+
+      <td>Run Rebot &nbsp;Without Processing Output</td>
+
+
+
+
+
+
+      <td>--outputdir ${MYOUTDIR}<br>
+
+
+
+
+
+
+-o none<br>
+
+
+
+
+
+
+--summary mysummary.html<br>
+
+
+
+
+
+
+-l none<br>
+
+
+
+
+
+
+-r NONE</td>
+
+
+
+
+
+
+      <td>${MYINPUT}</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Directory Should
+Contain</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${MYOUTDIR}</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">mysummary.html</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td>All Outputs</td>
+
+
+
+
+
+
+      <td>Run Rebot&nbsp; Without Processing Output</td>
+
+
+
+
+
+
+      <td>--outputdir ${MYOUTDIR}<br>
+
+
+
+
+
+
+--output myoutput.xml<br>
+
+
+
+
+
+
+--report myreport.html<br>
+
+
+
+
+
+
+--log mylog.html<br>
+
+
+
+
+
+
+-S mysummary.html</td>
+
+
+
+
+
+
+      <td>${MYINPUT}</td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Directory Should
+Contain</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${MYOUTDIR}</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">mylog.html</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">myoutput.xml</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">myreport.html</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">mysummary.html</td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td>All Outputs With Default Names</td>
+
+
+
+
+
+
+      <td>Verify REBOT Set</td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"><br>
+
+
+
+
+
+      </td>
+
+
+
+
+
+
+      <td>Run&nbsp;</td>
+
+
+
+
+
+
+      <td>${REBOT} --outputdir ${MYOUTDIR} ${MYINPUT}</td>
+
+
+
+
+
+
+      <td><br>
+
+
+
+
+
+      </td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Directory Should
+Contain</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${MYOUTDIR}</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">log.html</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">report.html</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"><br>
+
+
+
+
+
+      </td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">All outputs without
+Extensions</td>
+
+
+
+
+
+
+      <td>Run Rebot&nbsp; Without Processing Output</td>
+
+
+
+
+
+
+      <td>--outputdir ${MYOUTDIR}<br>
+
+
+
+
+
+
+-o myoutput<br>
+
+
+
+
+
+
+-r myreport<br>
+
+
+
+
+
+
+-l mylog<br>
+
+
+
+
+
+
+--summary mysummary</td>
+
+
+
+
+
+
+      <td>${MYINPUT}</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Directory Should
+Contain</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${MYOUTDIR}</td>
+
+
+
+
+
+
+      <td>mylog.html</td>
+
+
+
+
+
+
+      <td>myoutput.xml</td>
+
+
+
+
+
+
+      <td>myreport.html</td>
+
+
+
+
+
+
+      <td>mysummary.html</td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Outputs Into Different
+Dirs</td>
+
+
+
+
+
+
+      <td>Run Rebot&nbsp; Without Processing Output</td>
+
+
+
+
+
+
+      <td>--outputdir ::invalid::<br>
+
+
+
+
+
+
+-o&nbsp;${MYOUTDIR}${/}o${/}o.xml<br>
+
+
+
+
+
+
+-r ${MYOUTDIR}${/}r${/}r.html<br>
+
+
+
+
+
+
+-l&nbsp;${MYOUTDIR}${/}l${/}l.html<br>
+
+
+
+
+
+
+--summary&nbsp;${MYOUTDIR}${/}s.htm<br>
+
+
+
+
+
+      </td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${MYINPUT}</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Directory Should
+Contain</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${MYOUTDIR}${/}o</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">o.xml</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Directory Should
+Contain</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${MYOUTDIR}${/}r</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">r.html</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Directory Should
+Contain</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${MYOUTDIR}${/}l</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">l.html</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Directory Should
+Contain</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${MYOUTDIR}</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">l</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">o</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">r</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">s.htm</td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td>Timestamped outputs</td>
+
+
+
+
+
+
+      <td>Verify REBOT Set</td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td>Run&nbsp;</td>
+
+
+
+
+
+
+      <td>${REBOT}<br>
+
+
+
+
+
+
+--outputdir ${MYOUTDIR}<br>
+
+
+
+
+
+
+--TimeStampOutputs<br>
+
+
+
+
+
+
+${MYINPUT}</td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td>@{files}=</td>
+
+
+
+
+
+
+      <td style="width: 58px;" align="undefined" valign="undefined">List
+Dir</td>
+
+
+
+
+
+
+      <td style="width: 79px;" align="undefined" valign="undefined">
+${MYOUTDIR}</td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td>Fail Unless</td>
+
+
+
+
+
+
+      <td>len(@{files}) == 2</td>
+
+
+
+
+
+
+      <td>&nbsp;</td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td>: FOR</td>
+
+
+
+
+
+
+      <td>${file}</td>
+
+
+
+
+
+
+      <td>IN&nbsp;</td>
+
+
+
+
+
+
+      <td>@{files}</td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td>Fail Unless Regexp Matches</td>
+
+
+
+
+
+
+      <td>${file}</td>
+
+
+
+
+
+
+      <td>(log|report)-20\\d{6}-\\d{6}\\.html</td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td>Timestamped outputs With names</td>
+
+
+
+
+
+
+      <td>Run Rebot&nbsp; Without Processing Output</td>
+
+
+
+
+
+
+      <td>--outputdir ${MYOUTDIR}<br>
+
+
+
+
+
+
+--TimeStampOutputs<br>
+
+
+
+
+
+
+-l l<br>
+
+
+
+
+
+
+-r r.html<br>
+
+
+
+
+
+
+-o o<br>
+
+
+
+
+
+
+-S s</td>
+
+
+
+
+
+
+      <td>${MYINPUT}</td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td>@{files}=</td>
+
+
+
+
+
+
+      <td style="width: 58px;" align="undefined" valign="undefined">List
+Dir</td>
+
+
+
+
+
+
+      <td style="width: 79px;" align="undefined" valign="undefined">
+${MYOUTDIR}</td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td>Fail Unless</td>
+
+
+
+
+
+
+      <td>len(@{files}) == 4</td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td>: FOR</td>
+
+
+
+
+
+
+      <td>${file}</td>
+
+
+
+
+
+
+      <td>IN&nbsp;</td>
+
+
+
+
+
+
+      <td>@{files}</td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td>Fail Unless Regexp Matches</td>
+
+
+
+
+
+
+      <td>${file}</td>
+
+
+
+
+
+
+      <td>(l|o|r|s)-20\\d{6}-\\d{6}\\.(html|xml)</td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Default Name, Doc &amp;
+Metadata</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">[ Document ]</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Using default values (read
+from xml) for name, doc and metadata.</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Tests are run together to
+have less Rebot runs with same input i.e. to have faster
+execution.</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"><br>
+
+
+
+
+
+      </td>
+
+
+
+
+
+
+      <td>Run Rebot&nbsp;</td>
+
+
+
+
+
+
+      <td><br>
+
+
+
+
+
+      </td>
+
+
+
+
+
+
+      <td>${MYINPUT}</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Check Names</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${SUITE}</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Normal</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Check Names</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${SUITE.tests[0]}</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">First One<br>
+
+
+
+
+
+      </td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Normal.</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">n.</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Check Names</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${SUITE.tests[1]}</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Second One<br>
+
+
+
+
+
+      </td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Normal.</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">n.</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Equals</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${SUITE.doc}</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Normal test cases</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Equals</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">
+${SUITE.metadata['Something']}</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">My Value</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Overriding Name, Doc &amp;
+Metadata And Escaping</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">[ Document ]</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Overriding name, doc and
+metadata. Also testing escaping values.</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Tests are run together to
+have less Rebot runs with same input i.e. to have faster
+execution.</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td>Run Rebot&nbsp;</td>
+
+
+
+
+
+
+      <td>-N this_is_overridden_next<br>
+
+
+
+
+
+
+--name my_COOL_NameEXEX<br>
+
+
+
+
+
+
+--doc Even_cooooler_docEXQU<br>
+
+
+
+
+
+
+--metadata something:New<br>
+
+
+
+
+
+
+--metadata two_parts:one_part<br>
+
+
+
+
+
+
+-M esc:STQUDOAMHAEXEX<br>
+
+
+
+
+
+
+--escape star:ST -E quest:QU<br>
+
+
+
+
+
+
+-E dollar:DO -E amp:AM<br>
+
+
+
+
+
+
+-E hash:HA -E exclam:EX</td>
+
+
+
+
+
+
+      <td>${MYINPUT}</td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Check Names</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${SUITE}</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">My COOL Name!!</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Check Names</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${SUITE.tests[0]}</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">First One<br>
+
+
+
+
+
+      </td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">My COOL Name!!.</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">m.</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Check Names</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${SUITE.tests[1]}</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Second One<br>
+
+
+
+
+
+      </td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">My COOL Name!!.</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">m.</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Equals</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${SUITE.doc}</td>
+
+
+
+
+
+
+      <td>Even cooooler doc!?</td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Equals</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">
+${SUITE.metadata['Something']}</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">New</td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Equals</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${SUITE.metadata['Two
+Parts']}</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">one_part</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Equals</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">
+${SUITE.metadata['Esc']}</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">*?$&amp;#!!</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">invalid Options</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Run Rebot</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">--invalid option</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${MYINPUT}</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Check Stderr Contains</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">option&nbsp;--invalid not
+recognized\n<br>
+
+
+
+
+
+
+\n<br>
+
+
+
+
+
+
+Try --help for usage information.<br>
+
+
+
+
+
+
+      <br>
+
+
+
+
+
+      </td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Run Rebot</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">--name valid -X</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${MYINPUT}</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Check Stderr Contains</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">option&nbsp;-X not
+recognized\n<br>
+
+
+
+
+
+
+\n<br>
+
+
+
+
+
+
+Try --help for usage information.<br>
+
+
+
+
+
+      </td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+      <td>It&nbsp;Should Be possible to use wildcards in datasources</td>
+
+
+      <td>Set Test Variable</td>
+
+
+      <td>$OUTPUTNAME</td>
+
+
+      <td>mysuite</td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td></td>
+
+
+      <td>Copy File</td>
+
+
+      <td>${MYINPUT}</td>
+
+
+      <td>
+${OUTDIR}${/}runningwild-1.xml</td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td></td>
+
+
+      <td>Copy File</td>
+
+
+      <td>${MYINPUT}</td>
+
+
+      <td>
+${OUTDIR}${/}runningwild-2.xml</td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td></td>
+
+
+      <td>Run Rebot</td>
+
+
+      <td></td>
+
+
+      <td>
+${OUTDIR}${/}*wild-?.xml</td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td></td>
+
+
+      <td>Fail Unless</td>
+
+
+      <td>${SUITE.suites} == ['Normal'] * 2</td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+
+
+
+
+      <td>No Input</td>
+
+
+
+
+
+
+      <td>Verify REBOT Set</td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td><br>
+
+
+
+
+
+      </td>
+
+
+
+
+
+
+      <td>${output} =</td>
+
+
+
+
+
+
+      <td>Run</td>
+
+
+
+
+
+
+      <td>${REBOT} --colormonitor off 2&gt;&amp;1</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Ends</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${output}</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">No Robot output files
+given.${USAGE_TIP}
+      </td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Non-Existing Input</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Run Rebot</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">non-existing.xml</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Equals</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${SUITE}</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${None}</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Check Stderr Matches
+Regexp</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">.*Robot output file
+'.*[/\\\\]non-existing\\.xml' does not exist.\n\n<br>
+
+
+
+
+
+
+Try --help for usage information.</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Non-XML Input</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Create File</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">
+${MYOUTDIR}${/}invalid.txt</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Hello, world</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Run Rebot</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"><br>
+
+
+
+
+
+      </td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">
+${MYOUTDIR}${/}invalid.txt</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Check Stderr Matches
+Regexp</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">(\\[Fatal Error\\] .*:
+Content is not allowed in prolog.\\n)?\\[ ERROR \\] File
+'.*[/\\\\]invalid.txt' is not a valid XML file.${USAGE_TIP}
+      </td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"># "[Fatal Error] ..." part
+appears<br>
+
+
+
+
+
+
+#&nbsp;with Jython</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Non-Compatible Input</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">[ Document ]</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Test handlig xml files not
+compatible with Robot</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"><br>
+
+
+
+
+
+      </td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Create File</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">
+${MYOUTDIR}${/}invalid.xml</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">
+&lt;not&gt;&lt;our&gt;type&lt;/our&gt;&lt;/not&gt;<br>
+
+
+
+
+
+      </td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Run Rebot</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"><br>
+
+
+
+
+
+      </td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">
+${MYOUTDIR}${/}invalid.xml</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Check Stderr Matches
+Regexp</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">\\[ ERROR \\] File
+'.*[/\\\\]invalid.xml' is not a Robot output file.${USAGE_TIP}
+      </td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">invalid Output Dirs</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">[ Document ]</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Test error handling when
+some of the output dirs (where to write output, report, etc.) is
+invalid (i.e. can't be created).</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">To make sure creating dirs
+fails their names are non-standard (that's not enough in Linux)
+parent is made read only.</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">[ Teardown ]</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Set Read Write</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${MYOUTDIR}${/}x</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Create Dir</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${MYOUTDIR}${/}x</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Set Read Only</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${MYOUTDIR}${/}x</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"><br>
+
+
+
+
+
+      </td>
+
+
+
+
+
+
+      <td>Run Rebot</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">
+--outputdir&nbsp;${MYOUTDIR}${/}x${/}:i<br>
+
+
+
+
+
+
+--output default<br>
+
+
+
+
+
+      </td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${MYINPUT}</td>
+
+
+
+
+
+
+      <td><br>
+
+
+
+
+
+      </td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Check Stderr Matches
+Regexp</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">\\[ ERROR \\] Can't create
+output file's parent directory '.*[/\\\\]x[/\\\\]:i\\\\?':
+(OS|IO|Windows)Error: .*${USAGE_TIP}</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"># \ is added after : in
+Windows</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td>Run Rebot</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">--outputdir
+${MYOUTDIR}${/}x${/}hello:world<br>
+
+
+
+
+
+
+--output none<br>
+
+
+
+
+
+
+--report default<br>
+
+
+
+
+
+      </td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${MYINPUT}</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Check Stderr Matches
+Regexp</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">\\[ ERROR \\] Can't create
+report file's parent directory '.*[/\\\\]x[/\\\\]hello:world':
+(OS|IO|Windows)Error: .*${USAGE_TIP}</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Invalid Output Files</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">[ Document ]</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Test error handling when
+some of the output files (output, report, etc.) is invalid (i.e.
+can't be opened)</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Create Dir</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">
+${MYOUTDIR}${/}directory.ext</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td><br>
+
+
+
+
+
+      </td>
+
+
+
+
+
+
+      <td>Run Rebot</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">--outputdir
+${MYOUTDIR}<br>
+
+
+
+
+
+
+--output directory.ext<br>
+
+
+
+
+
+      </td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${MYINPUT}</td>
+
+
+
+
+
+
+      <td><br>
+
+
+
+
+
+      </td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Check Stderr Matches
+Regexp</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">\\[ ERROR \\] Opening
+output file '.*[/\\\\]directory.ext' for writing failed:
+(IOError|FileNotFoundException): .*${USAGE_TIP}
+      </td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td>Run Rebot</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">--outputdir
+${MYOUTDIR}<br>
+
+
+
+
+
+
+--summary&nbsp;directory.ext<br>
+
+
+
+
+
+
+--report r.html<br>
+
+
+
+
+
+      </td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${MYINPUT}</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Check Stderr Matches
+Regexp</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">\\[ ERROR \\] Opening
+summary &nbsp;file '.*[/\\\\]directory.ext' for writing failed:
+(IOError|FileNotFoundException): .*
+      </td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    
+
+
+
+
+
+
+    
+
+
+
+
+
+
+    
+
+
+
+
+
+
+    
+
+
+
+
+
+
+    
+
+
+
+
+
+
+    
+
+
+
+
+
+
+    
+
+
+
+
+
+
+    
+
+
+
+
+
+
+    
+
+
+
+
+
+
+    
+
+
+
+
+
+
+    
+
+
+
+
+
+
+    
+
+
+
+
+
+
+    
+
+
+
+
+
+
+    
+
+
+
+
+
+
+    
+
+
+
+
+
+
+    
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Help</td>
+
+
+
+
+
+
+      <td>Verify REBOT Set</td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"><br>
+
+
+
+
+
+      </td>
+
+
+
+
+
+
+      <td>${rc}</td>
+
+
+
+
+
+
+      <td>${help} =</td>
+
+
+      <td>Run And Return Rc And Output</td>
+
+
+      <td>${REBOT} --help 2&gt;&amp;1</td>
+
+
+
+
+
+
+      
+
+
+
+      
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+      <td></td>
+
+
+      <td>Equals</td>
+
+
+      <td>${rc}</td>
+
+
+      <td>${251}</td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Log</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${help.replace('
+','_').replace('\\t','_'*8)}</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"># Turning spaces and tabs
+to<br>
+
+
+
+
+
+
+# underscores makes them visible</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Starts</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${help}</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Rebot -- Robot's Report
+and Log Generator\n<br>
+
+
+
+
+
+
+\n<br>
+
+
+
+
+
+
+Version: \</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"><br>
+
+
+
+
+
+      </td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Ends</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${help}</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">\n\n# Running
+'robot/rebot.py' directly and creating combined outputs.\n<br>
+
+
+
+
+
+
+$ python /path/robot/rebot.py -N Project_X -l x.html -r x.html
+outputs/*.xml\n</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Fail If Contains</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${help}</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">ERROR</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">@{lines} =</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Evaluate</td>
+
+
+
+
+
+
+      <td>[ '%d\\t%s' % (len(line), line)<br>
+
+
+
+
+
+
+&nbsp; for line in&nbsp;${help.splitlines()} ]</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td>Log Many</td>
+
+
+
+
+
+
+      <td>@{lines}</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td>@{long} =</td>
+
+
+
+
+
+
+      <td>Evaluate</td>
+
+
+
+
+
+
+      <td>[ line for line in ${help.splitlines()}<br>
+
+
+
+
+
+
+&nbsp; if len(line) - line.count('\\\\') &gt;= 80 ]</td>
+
+
+
+
+
+
+      <td># Lines are escaped so<br>
+
+
+
+
+
+
+# need to subtract '\' count</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td>Log Many</td>
+
+
+
+
+
+
+      <td>@{long}</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Fail Unless</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">len(@{long}) == 0</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Too long (&gt;= 80) help
+line(s)</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td>${help2} =</td>
+
+
+
+
+
+
+      <td>Run</td>
+
+
+
+
+
+
+      <td>${REBOT} -h 2&gt;&amp;1</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Equals</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${help}</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${help2}</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Version</td>
+
+
+
+
+
+
+      <td>Fail If Equal</td>
+
+
+
+
+
+
+      <td>${REBOT}</td>
+
+
+
+
+
+
+      <td>\</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">This test can be run only
+after \${REBOT} is set</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">No values</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"><br>
+
+
+
+
+
+      </td>
+
+
+
+
+
+
+      <td>${rc}</td>
+
+
+
+
+
+
+      <td>${output} =</td>
+
+
+      <td>Run And Return Rc And Output</td>
+
+
+      <td>${REBOT} --version 2&gt;&amp;1</td>
+
+
+
+
+
+
+      
+
+
+
+      
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+      <td></td>
+
+
+      <td>Equals</td>
+
+
+      <td>${rc}</td>
+
+
+      <td>${251}</td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Log</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${output}</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Matches Regexp</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${output}</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">^Rebot<br>
+
+
+
+
+
+
+(1\\.\\d+(\\.\\d+)?|devel 20\\d{6}) \\([PJ]ython 2.* on .*\\)$</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Fail Unless</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">len("${output}") &lt;
+80</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Too long version line</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Argument File</td>
+
+
+
+
+
+
+      <td>Fail If Equal</td>
+
+
+
+
+
+
+      <td>${REBOT}</td>
+
+
+
+
+
+
+      <td>\</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">This test can be run only
+after \${REBOT} is set</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">No values</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"><br>
+
+
+
+
+
+      </td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Create File</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${MYOUTDIR}${/}a.txt</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">--name From_Arg_File\n<br>
+
+
+
+
+
+
+-c c1\n<br>
+
+
+
+
+
+
+# comment line\n<br>
+
+
+
+
+
+
+--log none\n<br>
+
+
+
+
+
+
+-r none\n<br>
+
+
+
+
+
+
+--output ${MYOUTDIR}${/}output.xml\n<br>
+
+
+
+
+
+
+${MYINPUT}</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td>${output} =</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Run</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${REBOT}<br>
+
+
+
+
+
+
+--critical c2<br>
+
+
+
+
+
+
+--argumentfile&nbsp;${MYOUTDIR}${/}a.txt<br>
+
+
+
+
+
+
+2&gt;&amp;1</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Fail If Contains</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${output}</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">ERROR</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${suite}</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${syslog} =</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Process Output</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">
+${MYOUTDIR}${/}output.xml</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Equals</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${suite.name}</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">From Arg File</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Fail Unless</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${suite.critical.tags} ==
+['c1','c2']</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td>Setting Syslog File</td>
+
+
+
+
+
+
+      <td>Set Environment Variable</td>
+
+
+
+
+
+
+      <td>ROBOT_SYSLOG_FILE</td>
+
+
+
+
+
+
+      <td>${MYOUTDIR}${/}syslog.txt</td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td>Rebot Something</td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td>Fail If File Empty</td>
+
+
+
+
+
+
+      <td>${MYOUTDIR}${/}syslog.txt</td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td>Remove File</td>
+
+
+
+
+
+
+      <td>${MYOUTDIR}${/}syslog.txt</td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td>Delete Environment Variable</td>
+
+
+
+
+
+
+      <td>ROBOT_SYSLOG_FILE</td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td>Rebot Something</td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td>Fail If File Exists</td>
+
+
+
+
+
+
+      <td>${MYOUTDIR}${/}syslog.txt</td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td>Set Environment Variable</td>
+
+
+
+
+
+
+      <td>ROBOT_SYSLOG_FILE</td>
+
+
+
+
+
+
+      <td>none</td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td>Rebot Something</td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td>Fail If File Exists</td>
+
+
+
+
+
+
+      <td>${MYOUTDIR}${/}syslog.txt</td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td>Setting Syslog level</td>
+
+
+
+
+
+
+      <td>Set Environment Variable</td>
+
+
+
+
+
+
+      <td>ROBOT_SYSLOG_FILE</td>
+
+
+
+
+
+
+      <td>${MYOUTDIR}${/}syslog.txt</td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td>Set Environment Variable</td>
+
+
+
+
+
+      <td>ROBOT_SYSLOG_LEVEL</td>
+
+
+
+
+
+      <td>INFO</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td>Rebot Something</td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td>${size1} =</td>
+
+
+
+
+
+
+      <td>Get File Size</td>
+
+
+
+
+
+
+      <td>${MYOUTDIR}${/}syslog.txt</td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td>Set Environment Variable</td>
+
+
+
+
+
+
+      <td>ROBOT_SYSLOG_LEVEL</td>
+
+
+
+
+
+
+      <td>DEBUG</td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td>Rebot Something</td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td>${size2} =</td>
+
+
+
+
+
+
+      <td>Get File Size</td>
+
+
+
+
+
+
+      <td>${MYOUTDIR}${/}syslog.txt</td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td>Fail Unless</td>
+
+
+
+
+
+
+      <td>0&nbsp;&lt; ${size1} &lt;= ${size2}&nbsp;</td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td>Set Environment Variable</td>
+
+
+
+
+
+
+      <td>ROBOT_SYSLOG_LEVEL</td>
+
+
+
+
+
+
+      <td>warn</td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td>Rebot Something</td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td>Fail Unless File Empty<br>
+
+
+
+
+
+      </td>
+
+
+
+
+
+
+      <td>${MYOUTDIR}${/}syslog.txt</td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td>[ Teardown ]</td>
+
+
+
+
+
+
+      <td>Set Environment Variable</td>
+
+
+
+
+
+
+      <td>ROBOT_SYSLOG_LEVEL</td>
+
+
+
+
+
+
+      <td>INFO</td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+      <td>Correct RC When Invalid Data</td>
+
+
+      <td>${rc} =</td>
+
+
+      <td>Run And Return Rc</td>
+
+
+      <td>${REBOT}&nbsp;2&gt;&amp;1</td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td></td>
+
+
+      <td>Equals</td>
+
+
+      <td>${rc}</td>
+
+
+      <td>${252}</td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+
+      <td align="undefined" valign="undefined">Invalid Argument Values</td>
+
+
+
+      <td align="undefined" valign="undefined">Run Rebot</td>
+
+
+
+      <td align="undefined" valign="undefined">--splitoutputs not_int<br>
+
+
+
+--suitestatlevel not_int<br>
+
+
+
+--tagstatlink less_than_3x_:</td>
+
+
+
+      <td align="undefined" valign="undefined">${MYINPUT}</td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined">Check Stderr Contains</td>
+
+
+      <td align="undefined" valign="undefined">[ ERROR ]&nbsp;</td>
+
+
+      <td align="undefined" valign="undefined">Option '--suitestatlevel' expected integer value but got 'not_int'.</td>
+
+
+      <td align="undefined" valign="undefined"> Default value used instead.\n
+      </td>
+
+
+
+      
+      
+      
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined">Check Stderr Contains</td>
+
+
+      <td align="undefined" valign="undefined">[ ERROR ]&nbsp;</td>
+
+
+      <td align="undefined" valign="undefined">Option '--splitoutputs' expected integer value but got 'not_int'.</td>
+
+
+      <td align="undefined" valign="undefined"> Default value used instead.\n</td>
+
+
+
+      
+      
+      
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined">Check Stderr Contains</td>
+
+
+      <td align="undefined" valign="undefined">[ ERROR ]&nbsp;</td>
+
+
+      <td align="undefined" valign="undefined">Invalid format for option '--tagstatlink'.</td>
+
+
+      <td align="undefined" valign="undefined">Expected 'tag:link:title' but got 'less_than_3x_:'.\n</td>
+
+
+
+      
+      
+      
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+    </tr>
+
+
+
+    
+    <tr>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td>Equals</td>
+
+
+
+      <td>${SUITE.status}</td>
+
+
+
+      <td>PASS</td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+    </tr>
+
+
+
+
+
+
+  
+  
+  
+  
+  
+  </tbody>
+</table>
+
+
+
+
+
+
+<table border="1">
+
+
+
+
+
+
+  <colgroup span="99"><col class="name"><col class="value" span="4"></colgroup>
+  <thead>
+  <tr>
+
+
+
+
+
+
+    <th>Keyword</th>
+
+
+
+
+
+
+    <th>Action</th>
+
+
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+
+
+  </tr>
+
+
+
+
+
+
+  </thead>
+  <tbody>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td>My Setup</td>
+
+
+
+
+
+
+      <td>Run Tests Without Processing Output</td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td>${TESTFILE}</td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Set Suite Variable</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">$MYINPUT</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">
+${OUTDIR}${/}myinput.xml</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Move File</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">
+${OUTDIR}${/}${OUTFILE}</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${MYINPUT}</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td>Create Dir</td>
+
+
+
+
+
+
+      <td>${MYOUTDIR}</td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Directory Should
+Contain</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">[ Arguments ]<br>
+
+
+
+
+
+      </td>
+
+
+
+
+
+
+      <td>${dir_path}</td>
+
+
+
+
+
+
+      <td>@{exp_files}</td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td>${exp_files} =</td>
+
+
+
+
+
+
+      <td>List</td>
+
+
+
+
+
+
+      <td>@{exp_files}</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td>${act_files} =</td>
+
+
+
+
+
+
+      <td>List Dir</td>
+
+
+
+
+
+
+      <td>${dir_path}</td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td>Fail Unless Equal</td>
+
+
+
+
+
+
+      <td>${act_files}</td>
+
+
+
+
+
+
+      <td>${exp_files}</td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Test Critical</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">[ Arguments ]<br>
+
+
+
+
+
+      </td>
+
+
+
+
+
+
+      <td>${opts}</td>
+
+
+
+
+
+
+      <td>${input}<br>
+
+
+
+
+
+      </td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${status}</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${msg}</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${crit_tags}</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${crit1}</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${crit2}</td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Set Suite Variable</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">$SUITE</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${None}</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"># Make sure<br>
+
+
+
+
+
+
+#&nbsp;$SUITE is set</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Run Rebot</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${opts}</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${input}</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Equals</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${SUITE.status}</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${status}</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Equals</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">
+${SUITE.get_full_message()}</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${msg}</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Fail Unless</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${SUITE.critical_tags} ==
+${crit_tags}</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Equals</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">
+${SUITE.tests[0].critical}</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${crit1}</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Equals</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">
+${SUITE.tests[1].critical}</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${crit2}</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td>Verify REBOT Set</td>
+
+
+
+
+
+
+      <td>Fail If Equal</td>
+
+
+
+
+
+
+      <td>${REBOT}</td>
+
+
+
+
+
+
+      <td>\</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">This test can be run only
+after \${REBOT} is set</td>
+
+
+
+
+
+
+      <td>No Values</td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td>Rebot Something</td>
+
+
+
+
+
+
+      <td>Verify REBOT Set</td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td>Run</td>
+
+
+
+
+
+
+      <td>${REBOT} --outputdir ${MYOUTDIR}<br>
+
+
+
+
+
+
+${MYINPUT}</td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+  
+  
+  
+  
+  
+  </tbody>
+</table>
+
+
+
+
+
+
+<br>
+
+
+
+
+
+
+</body></html>

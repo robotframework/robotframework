@@ -1,0 +1,1261 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+<meta name="generator" content="HTML Tidy, see www.w3.org">
+<style type="text/css">
+html { font-family: Arial,Helvetica,sans-serif;
+background-color: white;
+color: black;
+}
+p { max-width: 60em;
+}
+table { border-collapse: collapse;
+empty-cells: show;
+margin: 1em 0em;
+border: 0.1em solid black;
+}
+th, td {
+border-style: solid;
+border-width: 0.05em 0.1em;
+border-color: black;
+padding: 0.1em 0.2em;
+height: 1.5em;
+}
+th {
+background-color: rgb(192, 192, 192);
+color: black;
+border-width: 0.1em;
+font-weight: bold;
+text-align: center;
+text-transform: capitalize;
+letter-spacing: 0.1em;
+}
+/* Widths of named columns */
+col.name {
+width: 10em;
+}
+.action , .value, .arg {
+width: 15em;
+}
+/* Properties for the name column - td:first-child should work in CSS 2.1 avare browsers (tested in Firefox)
+- col.name is against specs but works in IE
+*/
+td:first-child, col.name {
+background-color: rgb(240, 240, 240);
+text-transform: capitalize;
+letter-spacing: 0.1em;
+}
+th { font-style: normal; } /* required for IE */
+  
+</style>
+
+
+<title>Robot Test Cases</title><link type="text/css" href="resources/css/testdata.css" rel="stylesheet"></head>
+<body>
+<h1>Test Cases for BuildIn's Variable Should Exist And&nbsp;Variable Should Not Exist Keywords</h1>
+
+<br>
+ 
+
+<table border="1">
+<colgroup span="99"><col class="name"><col class="value" span="4"></colgroup>
+
+<thead>
+<tr>
+<th>Setting</th>
+<th>Value</th>
+<th>Value</th>
+<th>value</th>
+<th>Value</th>
+</tr>
+</thead>
+
+<tbody>
+
+
+<tr>
+<td>Variables</td>
+<td>
+variables_to_verify.py</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+
+
+
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+
+<br>
+ 
+
+<table border="1">
+<colgroup span="99"><col class="name"><col class="value" span="4"></colgroup>
+
+<thead>
+<tr>
+<th>Variable</th>
+<th>Value</th>
+<th>Value</th>
+<th>Value</th>
+<th>Value</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>${scalar}</td><td>Hi tellus</td>
+
+<td></td>
+<td></td>
+<td></td>
+</tr>
+
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+
+<br>
+ 
+
+<table border="1">
+<colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
+
+<thead>
+<tr>
+<th>Test Case</th>
+<th>Action</th>
+<th>Argument</th>
+<th>Argument</th>
+<th>Argument</th>
+<th>Argument</th>
+</tr>
+</thead>
+
+<tbody>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<tr>
+<td>Variable Should Exist With
+Default Error Message</td>
+<td>[ Document ]</td>
+<td>FAIL</td>
+<td>Variable \${non-existing}
+does not exist</td>
+<td></td>
+<td></td>
+</tr>
+
+<tr>
+<td><br>
+ </td>
+<td>Variable Should Exist</td>
+<td>\${scalar}</td>
+<td><br>
+</td>
+<td></td>
+<td></td>
+</tr>
+
+<tr>
+<td></td>
+<td>Variable Should Exist</td>
+<td>\${non-existing}</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+
+<tr>
+<td>Variable Should Exist With
+Given Error Message</td>
+<td>[ Document ]</td>
+<td>FAIL</td>
+<td>My non-default error
+message</td>
+<td></td>
+<td></td>
+</tr>
+
+<tr>
+<td></td>
+<td>Variable Should Exist</td>
+<td>\${scalar}</td>
+<td>This would be the error
+message</td>
+<td></td>
+<td></td>
+</tr>
+
+<tr>
+<td></td>
+<td>Variable Should Exist</td>
+<td>\${non-existing}</td>
+<td>My non-default error
+message</td>
+<td></td>
+<td></td>
+</tr>
+
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+
+<tr>
+<td>Variable Should
+Exist&nbsp;Using $name format</td>
+<td>[ Document ]</td>
+<td>FAIL</td>
+<td>Variable \${non-existing}
+does not exist</td>
+<td></td>
+<td></td>
+</tr>
+
+<tr>
+<td></td>
+<td>Variable Should Exist</td>
+<td>$scalar</td>
+<td>This would be the error
+message</td>
+<td></td>
+<td></td>
+</tr>
+
+<tr>
+<td></td>
+<td>Variable Should Exist</td>
+<td>$non-existing</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+
+<tr>
+<td>Variable Should Exist With Built In Variables</td>
+<td>Variable Should Exist</td>
+<td>\${TEMPDIR}</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+
+<tr>
+<td></td>
+<td>Variable Should Exist</td>
+<td>\${/}</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+
+<tr>
+<td></td>
+<td>Variable Should Exist</td>
+<td>\${10}</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+
+<tr>
+<td></td>
+<td>Variable Should Exist</td>
+<td>\${TRUE}</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+
+<tr>
+<td>#Currently this is not working</td>
+<td>Variable Should Exist</td>
+<td>\${CURDIR}</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+
+<tr>
+<td>Variable Should Exist With Extended Variable Syntax</td>
+<td>[ Document ]</td>
+<td>FAIL</td>
+<td>Variable \${length attribute.missing} does not exist</td>
+<td></td>
+<td></td>
+</tr>
+
+<tr>
+<td></td>
+<td>Variable Should Exist</td>
+<td>\${length
+attribute.length}</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+
+<tr>
+<td></td>
+<td>Variable Should Exist</td>
+<td>\${length attribute.missing}</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+
+<tr>
+<td>Variable Should Exist With Extended Variable Syntax And Missing
+Object</td>
+<td>[ Document ]</td>
+<td>FAIL</td>
+<td>Variable&nbsp;\${missing.missing} does not exist</td>
+<td></td>
+<td></td>
+</tr>
+
+<tr>
+<td></td>
+<td>Variable Should Exist</td>
+<td>\${missing.missing}</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+
+<tr>
+<td>Variable Should Exist With
+Invalid name</td>
+<td>[ Document ]</td>
+<td>FAIL</td>
+<td>Invalid variable syntax
+'invalid'</td>
+<td></td>
+<td></td>
+</tr>
+
+<tr>
+<td></td>
+<td>Variable Should Exist</td>
+<td>invalid</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+
+<tr>
+<td>Variable Should Exist
+With&nbsp;Empty name</td>
+<td>[ Document ]</td>
+<td>FAIL</td>
+<td>Invalid variable syntax
+''</td>
+<td></td>
+<td></td>
+</tr>
+
+<tr>
+<td></td>
+<td>Variable Should Exist</td>
+<td>\</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+
+<tr>
+<td>Variable Should Not Exist
+With&nbsp;Default error message</td>
+<td>[ Document ]</td>
+<td>FAIL</td>
+<td>Variable&nbsp;\${scalar}
+exists</td>
+<td></td>
+<td></td>
+</tr>
+
+<tr>
+<td><br>
+ </td>
+<td>Variable Should Not
+Exist&nbsp;</td>
+<td>\${non-existing}</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+
+<tr>
+<td></td>
+<td>Variable Should Not
+Exist&nbsp;</td>
+<td>\${scalar}</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+
+<tr>
+<td>Variable Should Not Exist
+With Given Error Message</td>
+<td>[ Document ]</td>
+<td>FAIL</td>
+<td>This is the error
+message</td>
+<td></td>
+<td></td>
+</tr>
+
+<tr>
+<td></td>
+<td>Variable Should Not
+Exist&nbsp;</td>
+<td>\${non-existing}</td>
+<td>This should not fail</td>
+<td></td>
+<td></td>
+</tr>
+
+<tr>
+<td></td>
+<td>Variable Should Not
+Exist&nbsp;</td>
+<td>\${scalar}</td>
+<td>This is the error
+message</td>
+<td></td>
+<td></td>
+</tr>
+
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+
+<tr>
+<td>Variable Should Not Exist With Built In Variables</td>
+<td>[ Document ]</td>
+<td>FAIL</td>
+<td>Variable \${10} exists</td>
+<td></td>
+<td></td>
+</tr>
+
+<tr>
+<td></td>
+<td>Variable Should Not Exist&nbsp;</td>
+<td>\${10}</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+
+<tr>
+<td>Variable Should Not Exist With Extended Variable Syntax</td>
+<td>[ Document ]</td>
+<td>FAIL</td>
+<td>Variable \${length attribute.length} exists</td>
+<td></td>
+<td></td>
+</tr>
+
+<tr>
+<td></td>
+<td>Variable Should Not Exist&nbsp;</td>
+<td>\${length attribute.missing}</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+
+<tr>
+<td></td>
+<td>Variable Should Not Exist&nbsp;</td>
+<td>\${length attribute.length}</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+
+<tr>
+<td>Variable Should Not Exist With Extended Variable Syntax And
+Missing Object</td>
+<td>Variable Should Not Exist</td>
+<td>\${missing.missing}</td>
+<td><br>
+</td>
+<td></td>
+<td></td>
+</tr>
+
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+
+<tr>
+<td>Variable Should Not
+Exist&nbsp;Using the $name format</td>
+<td>[ Document ]</td>
+<td>FAIL</td>
+<td>Variable&nbsp;\${scalar}
+exists</td>
+<td></td>
+<td></td>
+</tr>
+
+<tr>
+<td></td>
+<td>Variable Should Not
+Exist&nbsp;</td>
+<td>$non-existing</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+
+<tr>
+<td></td>
+<td>Variable Should Not
+Exist&nbsp;</td>
+<td>$scalar</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+
+<tr>
+<td>Variable Should Not Exist
+With&nbsp;Invalid name</td>
+<td>[ Document ]</td>
+<td>FAIL</td>
+<td>Invalid variable syntax
+'invalid'</td>
+<td></td>
+<td></td>
+</tr>
+
+<tr>
+<td></td>
+<td>Variable Should Not
+Exist&nbsp;</td>
+<td>invalid</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+
+<tr>
+<td>Variable Should Not Exist
+With Empty Name</td>
+<td>[ Document ]</td>
+<td>FAIL</td>
+<td>Invalid variable syntax
+''</td>
+<td></td>
+<td></td>
+</tr>
+
+<tr>
+<td></td>
+<td>Variable Should Not
+Exist&nbsp;</td>
+<td>\</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+
+<br>
+ 
+
+<table border="1">
+<colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
+
+<thead>
+<tr>
+<th>Keyword</th>
+<th>Action</th>
+<th>Argument</th>
+<th>Argument</th>
+<th>Argument</th>
+</tr>
+</thead>
+
+<tbody>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</body></html>

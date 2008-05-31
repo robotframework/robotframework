@@ -1,0 +1,766 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+
+
+
+
+
+
+
+
+
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <style type="text/css">
+html { font-family: Arial,Helvetica,sans-serif;
+background-color: white;
+color: black;
+}
+p { max-width: 60em;
+}
+table { border-collapse: collapse;
+empty-cells: show;
+margin: 1em 0em;
+border: 0.1em solid black;
+}
+th, td {
+border-style: solid;
+border-width: 0.05em 0.1em;
+border-color: black;
+padding: 0.1em 0.2em;
+height: 1.5em;
+}
+th {
+background-color: rgb(192, 192, 192);
+color: black;
+border-width: 0.1em;
+font-weight: bold;
+text-align: center;
+text-transform: capitalize;
+letter-spacing: 0.1em;
+}
+/* Widths of named columns */
+col.name {
+width: 10em;
+}
+.action , .value, .arg {
+width: 15em;
+}
+/* Properties for the name column - td:first-child should work in CSS 2.1 avare browsers (tested in Firefox)
+- col.name is against specs but works in IE
+*/
+td:first-child, col.name {
+background-color: rgb(240, 240, 240);
+text-transform: capitalize;
+letter-spacing: 0.1em;
+}
+th { font-style: normal; } /* required for IE */
+  
+  </style>
+
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <title>Robot Test Cases</title><link type="text/css" href="resources/css/testdata.css" rel="stylesheet"></head>
+<body>
+
+
+
+
+
+
+
+
+
+
+<h1>Robot Tests for Test Libraries</h1>
+
+
+
+
+
+
+
+
+
+
+
+<table border="1">
+
+
+
+
+
+
+
+
+
+
+  <colgroup span="99"><col class="name"><col class="value" span="4"></colgroup>
+
+  <thead>
+  <tr>
+
+
+
+
+
+
+
+
+
+
+    <th>Setting</th>
+
+
+
+
+
+
+
+
+
+
+    <th>Value</th>
+
+
+
+
+
+
+
+
+
+
+    <th>Value</th>
+
+
+
+
+
+
+
+
+
+
+    <th>value</th>
+
+
+
+
+
+
+
+
+
+
+    <th>Value</th>
+
+
+
+
+
+
+
+
+
+
+  </tr>
+
+
+
+
+
+
+
+
+
+
+  </thead>
+
+  <tbody>
+
+
+
+
+
+
+
+
+
+
+    <tr><td>Library</td><td>ExtendPythonLib</td><td></td><td></td><td></td></tr><tr>
+
+
+
+
+
+
+
+
+
+
+      <td>Library</td>
+
+
+
+
+
+
+
+
+
+
+      <td>ExtendJavaLib</td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+    </tr>
+    
+
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+<table border="1">
+
+
+
+
+
+
+
+
+
+
+  <colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
+
+  <thead>
+  <tr>
+
+
+
+
+
+
+
+
+
+
+    <th>Test Case</th>
+
+
+
+
+
+
+
+
+
+
+    <th>Action</th>
+
+
+
+
+
+
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+
+
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+
+
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+
+
+
+
+
+
+
+
+  </tr>
+
+
+
+
+
+
+
+
+
+
+  </thead>
+
+  <tbody>
+
+
+
+
+
+
+
+
+
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+
+    
+
+
+
+
+    
+    
+
+
+
+
+    
+
+
+
+
+
+
+
+
+    
+
+
+
+
+    
+
+
+
+
+    
+    
+
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+
+    
+
+
+
+
+    
+
+
+
+
+    
+
+
+
+    
+
+
+
+
+    
+
+
+
+
+    
+
+
+
+
+    
+
+
+
+
+    
+
+
+
+
+    
+
+
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+
+
+    
+
+
+
+
+    
+
+
+
+
+    
+
+
+
+
+    
+
+
+
+
+    
+
+
+
+
+    
+
+
+
+
+    <tr><td>Keyword From Python Class Extended By Python Class</td><td>[ Document ]&nbsp;</td><td>FAIL</td><td>My error message</td><td></td></tr><tr><td></td><td>Exception</td><td>AssertionError</td><td>My error message</td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Keyword From Python Class Extending Python class</td><td>${value} =</td><td>kw_in_python_extender</td><td>${4}</td><td></td></tr><tr><td></td><td>Should Be Equal</td><td>${value}</td><td>${2}</td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Method In Python Class Overriding Method Of The Parent Class</td><td>[ Document ]</td><td>FAIL</td><td>Overridden kw executed!</td><td></td></tr><tr><td></td><td>Print Many</td><td>Foo</td><td>bar</td><td>!</td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Keyword In Python Class Using Method From Parent Class</td><td>[ Document ]</td><td>FAIL</td><td>Error message from lib</td><td></td></tr><tr><td></td><td>Using Method From Python Parent</td><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Keyword From Java Class Extended By Python Class</td><td>[ Document ]</td><td>FAIL</td><td>ArithmeticException: / by zero</td><td></td></tr><tr><td></td><td>${value} =</td><td>ExtendJavaLib.returnStringFromLibrary</td><td>Hello, world!</td><td></td></tr><tr><td></td><td>Should Be Equal</td><td>${value}</td><td>Hello, world!</td><td></td></tr><tr><td></td><td>Div By Zero</td><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Keyword From Python Class Extending Java Class</td><td>${value} =</td><td>kw_in_java_extender</td><td>${2}</td><td></td></tr><tr><td></td><td>Should Be Equal</td><td>${value}</td><td>${4}</td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Method In Python Class Overriding Method in Java Class</td><td>[ Document ]</td><td>FAIL</td><td>Overridden kw executed!</td><td></td></tr><tr>
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+      <td>Java Sleep</td>
+
+
+
+
+
+
+
+
+      <td>1</td>
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+    </tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Keyword In Python Class Using Method From Java Class</td><td>[ Document ]</td><td>FAIL</td><td>ArithmeticException: / by zero</td><td></td></tr><tr><td></td><td>Using Method From Java Parent</td><td></td><td></td><td></td></tr>
+
+
+
+
+
+
+
+
+
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+<br>
+
+
+
+
+
+
+
+
+
+</body></html>

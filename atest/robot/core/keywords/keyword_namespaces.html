@@ -1,0 +1,1836 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+
+
+
+
+
+
+
+
+
+  
+  
+  
+  
+  
+  
+  
+  
+  <style type="text/css">
+html {
+  font-family: Arial,Helvetica,sans-serif;
+  background-color: white;
+  color: black;
+}
+p {
+  max-width: 60em;
+}
+table {
+  border-collapse: collapse;
+  empty-cells: show;
+  margin: 1em 0em;
+  border: 0.1em solid black;
+}
+th, td {
+  border-style: solid;
+  border-width: 0.05em 0.1em;
+  border-color: black;
+  padding: 0.1em 0.2em;
+  height: 1.5em;
+}
+th {
+  background-color: rgb(192, 192, 192);
+  color: black;
+  border-width: 0.1em;
+  font-weight: bold;
+  text-align: center;
+  text-transform: capitalize;
+  letter-spacing: 0.1em;
+}
+/* Widths of named columns */
+col.name {
+  width: 10em;
+}
+.action, .value, .arg {
+  width: 15em;
+}
+/* Properties for the name column 
+- td:first-child should work in CSS 2.1 avare browsers (tested in Firefox)
+- col.name is against specs but works in IE
+*/
+td:first-child, col.name {
+  background-color: rgb(240, 240, 240);
+  text-transform: capitalize;
+  letter-spacing: 0.1em;
+}
+/* required for IE */
+th {
+  font-style: normal;
+}
+  </style>
+  
+  
+  
+  
+  
+  
+  
+  
+  <title>Robot Test Cases</title>
+</head>
+
+
+<body>
+
+
+
+
+
+
+
+
+
+<h1>Robot Test Cases</h1>
+
+
+
+
+
+
+
+
+
+
+<table border="1">
+
+
+
+
+
+
+
+
+
+  <colgroup span="99"><col class="name"><col class="value" span="4"></colgroup>
+  <thead>
+  <tr>
+
+
+
+
+
+
+
+
+
+    <th>Setting</th>
+
+
+
+
+
+
+
+
+
+    <th>Value</th>
+
+
+
+
+
+
+
+
+
+    <th>Value</th>
+
+
+
+
+
+
+
+
+
+    <th>value</th>
+
+
+
+
+
+
+
+
+
+    <th>Value</th>
+
+
+
+
+
+
+
+
+
+  </tr>
+
+
+
+
+
+
+
+
+
+  </thead>
+  <tbody>
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Document</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Testing that keyword
+namespaces -- test case file user keywords, resource user keywords,
+base keywords -- work correctly and have correct priorities.&nbsp; </td>
+
+
+
+
+
+      <td>Situations
+where more than one keyword with same name exists are tested also.
+Non-existing keywords are tested in keyword_not_found.html.</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+      <td>Force Tags</td>
+
+
+
+
+
+
+
+
+      <td>regression</td>
+
+
+
+
+
+
+
+
+      <td>jybot</td>
+
+
+
+
+
+
+
+
+      <td>pybot</td>
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+      <td>Suite Setup</td>
+
+
+
+
+
+
+
+
+
+      <td>Run Tests</td>
+
+
+      <td>--pythonpath ${RESDIR}</td>
+
+
+      <td>core${/}keywords${/}keyword_namespaces.html</td>
+
+
+
+
+
+
+
+
+      
+
+
+
+
+
+      
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+      <td>Resource</td>
+
+
+
+
+
+
+
+
+      <td>../../../resources/resource.html</td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+  
+  
+  
+  
+  
+  
+  
+  
+  </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+<table border="1">
+
+
+
+
+
+
+
+
+
+  <colgroup span="99"><col class="name"><col class="value" span="4"></colgroup>
+  <thead>
+  <tr>
+
+
+
+
+
+
+
+
+
+    <th>Variable</th>
+
+
+
+
+
+
+
+
+
+    <th>Value</th>
+
+
+
+
+
+
+
+
+
+    <th>Value</th>
+
+
+
+
+
+
+
+
+
+    <th>Value</th>
+
+
+
+
+
+
+
+
+
+    <th>Value</th>
+
+
+
+
+
+
+
+
+
+  </tr>
+
+
+
+
+
+
+
+
+
+  </thead>
+  <tbody>
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${RESDIR}</td>
+
+
+      <td align="undefined" valign="undefined">${CURDIR}${/}..${/}..${/}..${/}testdata${/}core${/}keywords${/}resources</td>
+
+
+
+
+
+
+
+
+
+      
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+  
+  
+  
+  
+  
+  
+  
+  
+  </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+<table border="1">
+
+
+
+
+
+
+
+
+
+  <colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
+  <thead>
+  <tr>
+
+
+
+
+
+
+
+
+
+    <th>Test Case</th>
+
+
+
+
+
+
+
+
+
+    <th>Action</th>
+
+
+
+
+
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+
+
+
+
+
+
+
+  </tr>
+
+
+
+
+
+
+
+
+
+  </thead>
+  <tbody>
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+      <td>Keywords With Unique Name Are Ok</td>
+
+
+
+
+
+
+
+
+
+      <td>Check Test Case</td>
+
+
+
+
+
+
+
+
+
+      <td>Keywords With Unique Name Are Ok</td>
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+      <td>Full Name Works With Non Unique Keyword Names</td>
+
+
+
+
+
+
+
+
+
+      <td>Check Test Case</td>
+
+
+
+
+
+
+
+
+
+      <td>Full Name Works With Non Unique&nbsp;Keyword Names</td>
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Non Unique Keywords Without Full Name Fails</td>
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Check Test Case</td>
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Non Unique Keywords Without Full Name Fails 1</td>
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Check Test Case</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Non Unique Keywords Without Full Name Fails 2</td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Check Test Case</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Non Unique Keywords Without Full Name Fails&nbsp;3</td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Keyword From Test Case File Overrides&nbsp; Keywords From Resources And Libraries</td>
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Check Test Case</td>
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Keyword From Test Case File Overrides&nbsp; Keywords From Resources And Libraries</td>
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Keyword From Resource Overrides&nbsp; Keywords From Libraries</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Check Test Case</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Keyword From Resource Overrides&nbsp; Keywords From Libraries</td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+      <td></td>
+
+      <td></td>
+
+      <td></td>
+
+      <td></td>
+
+      <td></td>
+
+    </tr>
+
+    <tr>
+
+
+
+
+
+
+      <td>Keyword From User Library Overrides Keywords From Standard Library</td>
+
+
+
+
+
+
+      <td>Check Test Case</td>
+
+
+
+
+
+
+      <td>Keyword From User Library Overrides Keywords From Standard Library 1</td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+    </tr>
+
+    <tr>
+
+      <td></td>
+
+      <td>Check Stderr Contains</td>
+
+      <td>[&nbsp;WARN ]</td>
+
+      <td>Keyword 'Comment' found from both user created library
+'MyLibrary1' and Robot standard library 'BuiltIn'. The user created
+keyword is used.</td>
+
+      <td>To select explicitly, and to get rid of this warning,
+use full format i.e. either 'MyLibrary1.Comment' or 'BuiltIn.Comment'. </td>
+
+    </tr>
+
+    <tr>
+
+      <td></td>
+
+      <td>Check Test Case</td>
+
+      <td>Keyword From User Library Overrides Keywords From Standard Library 2</td>
+
+      <td></td>
+
+      <td></td>
+
+    </tr>
+
+    <tr>
+
+      <td></td>
+
+      <td>Check Stderr Contains</td>
+      <td>[&nbsp;WARN ]</td>
+
+      
+      <td>Keyword 'Copy Directory' found from both user created library
+'MyLibrary1' and Robot standard library 'OperatingSystem'. The user
+created keyword is used.</td>
+
+      <td>To select explicitly, and to get rid of this warning,
+use full format i.e. either 'MyLibrary1.Copy Directory' or
+'OperatingSystem.Copy Directory'. </td>
+
+    </tr>
+
+    <tr>
+
+      <td></td>
+
+      <td></td>
+
+      <td></td>
+
+      <td></td>
+
+      <td></td>
+
+    </tr>
+
+    <tr>
+
+      <td>Keyword in More than one user library and standard library</td>
+
+      <td>Check Test Case</td>
+
+      <td>Keyword in More than one user library and standard library</td>
+
+      <td></td>
+
+      <td></td>
+
+    </tr>
+
+    <tr>
+
+      <td></td>
+
+      <td>Check Syslog does Not Contain</td>
+
+      <td>BuiltIn.Noop</td>
+
+      <td></td>
+
+      <td></td>
+
+    </tr>
+
+
+
+
+
+
+
+
+
+  
+  
+  
+  
+  
+  
+  
+  
+  </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+<table border="1">
+
+
+
+
+
+
+
+
+
+  <colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
+  <thead>
+  <tr>
+
+
+
+
+
+
+
+
+
+    <th>Keyword</th>
+
+
+
+
+
+
+
+
+
+    <th>Action</th>
+
+
+
+
+
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+
+
+
+
+
+  </tr>
+
+
+
+
+
+
+
+
+
+  </thead>
+  <tbody>
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+      
+
+
+
+
+
+      
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+  
+  
+  
+  
+  
+  
+  
+  
+  </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

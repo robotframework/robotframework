@@ -1,0 +1,329 @@
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="RobotIDE" /> 
+<style type="text/css">
+html {
+  font-family: Arial,Helvetica,sans-serif;
+  background-color: white;
+  color: black;
+}
+p {
+  max-width: 60em;
+}
+table {
+  border-collapse: collapse;
+  empty-cells: show;
+  margin: 1em 0em;
+  border: 0.1em solid black;
+}
+th, td {
+  border-style: solid;
+  border-width: 0.05em 0.1em;
+  border-color: black;
+  padding: 0.1em 0.2em;
+  height: 1.5em;
+}
+th {
+  background-color: rgb(192, 192, 192);
+  color: black;
+  border-width: 0.1em;
+  font-weight: bold;
+  text-align: center;
+  text-transform: capitalize;
+  letter-spacing: 0.1em;
+}
+/* Widths of named columns */
+col.name {
+  width: 10em;
+}
+.action, .value, .arg {
+  width: 15em;
+}
+/* Properties for the name column 
+- td:first-child should work in CSS 2.1 avare browsers (tested in Firefox)
+- col.name is against specs but works in IE
+*/
+td:first-child, col.name {
+  background-color: rgb(240, 240, 240);
+  text-transform: capitalize;
+  letter-spacing: 0.1em;
+}
+/* required for IE */
+th {
+  font-style: normal;
+}
+</style>
+<title>Utf8 Data</title>
+</head>
+<body>
+<h1>Utf8 Data</h1>
+
+<table border="1">
+<colgroup span="99">
+<col class="name">
+<col class="value" span="4"></colgroup>
+<tr>
+<th>Setting</th>
+<th>Value</th>
+<th>Value</th>
+<th>Value</th>
+<th>Value</th>
+</tr>
+<tr>
+<td>Documentation</td>
+<td>Testing that reading and writing of Unicode (äöå §½€ etc.) works properly.</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Default Tags</td>
+<td>tag-äöå</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Force Tags</td>
+<td>tag-§</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Meta: Ä</td>
+<td>§</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</table>
+
+<table border="1">
+<colgroup span="99">
+<col class="name">
+<col class="value" span="4"></colgroup>
+<tr>
+<th>Variable</th>
+<th>Value</th>
+<th>Value</th>
+<th>Value</th>
+<th>Value</th>
+</tr>
+<tr>
+<td>${UNICODE}</td>
+<td>äöå §½€</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>${UTF NAME öäå §½€}</td>
+<td>value</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</table>
+
+<table border="1">
+<colgroup span="99">
+<col class="name">
+<col class="action">
+<col class="arg" span="3"></colgroup>
+<tr>
+<th>Test Case</th>
+<th>Action</th>
+<th>Argument</th>
+<th>Argument</th>
+<th>Argument</th>
+</tr>
+<tr>
+<td><a name="test_UTF-8">UTF-8</a></td>
+<td>[Documentation]</td>
+<td>äöå §½€</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>[Setup]</td>
+<td>Log</td>
+<td>äöå</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>[Tags]</td>
+<td>tag-€</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>[Teardown]</td>
+<td>Logging Keyword</td>
+<td>äöå</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Log</td>
+<td>§½€</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Log</td>
+<td>${UNICODE}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Logging Keyword</td>
+<td>äöå</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="test_UTF-8NameÄöå§½€&quot;">UTF-8 Name Äöå §½€"</a></td>
+<td>[Documentation]</td>
+<td>Quote is actually plain ASCII but there was a bug in processing them also.</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>${ret}</td>
+<td>äöå §½€</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Log</td>
+<td>${ret}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Log</td>
+<td>${UTF NAME öäå §½€}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</table>
+
+<table border="1">
+<colgroup span="99">
+<col class="name">
+<col class="action">
+<col class="arg" span="3"></colgroup>
+<tr>
+<th>Keyword</th>
+<th>Action</th>
+<th>Argument</th>
+<th>Argument</th>
+<th>Argument</th>
+</tr>
+<tr>
+<td><a name="keyword_LoggingKeyword">Logging Keyword</a></td>
+<td>[Arguments]</td>
+<td>${value}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Log</td>
+<td>${value}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Log</td>
+<td>${UNICODE}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Log</td>
+<td>§½€</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="keyword_Äöå§½€">Äöå §½€</a></td>
+<td>[Return]</td>
+<td>äöå §½€</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</table>
+
+</body>
+</html>

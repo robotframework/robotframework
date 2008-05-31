@@ -1,0 +1,1 @@
+IMPORT_VARIABLES_1 = 'Simple variable file'

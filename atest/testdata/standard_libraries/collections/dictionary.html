@@ -1,0 +1,1055 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+<meta name="generator" content="HTML Tidy, see www.w3.org">
+<style type="text/css">
+html {
+  font-family: Arial,Helvetica,sans-serif;
+  background-color: white;
+  color: black;
+}
+p {
+  max-width: 60em;
+}
+table {
+  border-collapse: collapse;
+  empty-cells: show;
+  margin: 1em 0em;
+  border: 0.1em solid black;
+}
+th, td {
+  border-style: solid;
+  border-width: 0.05em 0.1em;
+  border-color: black;
+  padding: 0.1em 0.2em;
+  height: 1.5em;
+}
+th {
+  background-color: rgb(192, 192, 192);
+  color: black;
+  border-width: 0.1em;
+  font-weight: bold;
+  text-align: center;
+  text-transform: capitalize;
+  letter-spacing: 0.1em;
+}
+/* Widths of named columns */
+col.name {
+  width: 10em;
+}
+.action, .value, .arg {
+  width: 15em;
+}
+/* Properties for the name column 
+- td:first-child should work in CSS 2.1 avare browsers (tested in Firefox)
+- col.name is against specs but works in IE
+*/
+td:first-child, col.name {
+  background-color: rgb(240, 240, 240);
+  text-transform: capitalize;
+  letter-spacing: 0.1em;
+}
+/* required for IE */
+th {
+  font-style: normal;
+}
+</style>
+
+<title>Robot Test Cases</title></head>
+
+<body>
+<h1>Robot Test Cases for Dictionary Keywords in Collections
+Library</h1>
+
+<table border="1">
+<colgroup span="99"><col class="name"><col class="value" span="4"></colgroup>
+
+<thead>
+<tr>
+<th>Setting</th>
+<th>Value</th>
+<th>Value</th>
+<th>value</th>
+<th>Value</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>Resource</td>
+<td>collections_resources.html</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+
+<tr>
+<td>Test Setup</td>
+<td>Create Dictionaries For Testing</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+
+<table border="1">
+<colgroup span="99"><col class="name"><col class="value" span="4"></colgroup>
+
+<thead>
+<tr>
+<th>Variable</th>
+<th>Value</th>
+<th>Value</th>
+<th>Value</th>
+<th>Value</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+
+<table border="1">
+<colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
+
+<thead>
+<tr>
+<th>Test Case</th>
+<th>Action</th>
+<th>Argument</th>
+<th>Argument</th>
+<th>Argument</th>
+<th>Argument</th>
+<th>Argument</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>Create Dictionary</td>
+<td>${dict} =</td>
+<td>Create Dictionary</td>
+<td>a</td>
+<td>1</td>
+<td>b</td>
+<td>2</td>
+</tr>
+
+<tr>
+<td></td>
+<td>...</td>
+<td>c</td>
+<td>${3}</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+
+<tr>
+<td></td>
+<td>Compare To Expected String</td>
+<td>${dict}</td>
+<td>{'a':'1', 'b':'2', 'c':3}</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+
+<tr>
+<td>Create Dictionary with wrong number of arguments</td>
+<td>[Documentation]</td>
+<td>FAIL</td>
+<td>Creating dictionary failed. There should be even number of 'key_value_pair' arguments.</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+
+<tr>
+<td></td>
+<td>Create Dictionary</td>
+<td>a</td>
+<td>1</td>
+<td>b</td>
+<td></td>
+<td></td>
+</tr>
+
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+
+<tr>
+<td>Set To Dictionary</td>
+<td>Set To Dictionary</td>
+<td>${D0}</td>
+<td>a</td>
+<td>${1}</td>
+<td></td>
+<td></td>
+</tr>
+
+<tr>
+<td></td>
+<td>Should Be Equal</td>
+<td>${D0}</td>
+<td>${D1}</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+
+<tr>
+<td></td>
+<td>Set To Dictionary</td>
+<td>${D0}</td>
+<td>b</td>
+<td>${2}</td>
+<td>c</td>
+<td>${3}</td>
+</tr>
+
+<tr>
+<td></td>
+<td>Should Be Equal</td>
+<td>${D0}</td>
+<td>${D3}</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+
+<tr>
+<td>Set To Dictionary With wrong number of arguments</td>
+<td>[Documentation]</td>
+<td>FAIL</td>
+<td>Adding data to dictionary failed. There should be even number of 'key_value_pair' arguments.</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+
+<tr>
+<td></td>
+<td>Set To Dictionary</td>
+<td>${D0}</td>
+<td>a</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+
+<tr>
+<td>Remove From Dictionary</td>
+<td>Remove From Dictionary</td>
+<td>${D3}</td>
+<td>b</td>
+<td>x</td>
+<td>${2}</td>
+<td></td>
+</tr>
+
+<tr>
+<td></td>
+<td>Compare To Expected String</td>
+<td>${D3}</td>
+<td>{'a':1, 'c':3}</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+
+<tr>
+<td>Keep In Dictionary</td>
+<td>Keep In Dictionary</td>
+<td>${D3}</td>
+<td>a</td>
+<td>x</td>
+<td>${2}</td>
+<td>c</td>
+</tr>
+
+<tr>
+<td></td>
+<td>Compare To Expected String</td>
+<td>${D3}</td>
+<td>{'a':1, 'c':3}</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+
+<tr>
+<td>Copy Dictionary</td>
+<td>${copy of dictionary} =</td>
+<td>Copy Dictionary</td>
+<td>${D3}</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+
+<tr>
+<td></td>
+<td>Remove From Dictionary</td>
+<td>${copy of dictionary}</td>
+<td>a</td>
+<td>c</td>
+<td></td>
+<td></td>
+</tr>
+
+<tr>
+<td></td>
+<td>Compare To Expected String</td>
+<td>${copy of dictionary}</td>
+<td>{'b':2}</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+
+<tr>
+<td></td>
+<td>Compare To Expected String</td>
+<td>${D3}</td>
+<td>{'a':1, 'b':2, 'c':3}</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+
+<tr>
+<td>Get Dictionary Keys</td>
+<td>${keys} =</td>
+<td>Get Dictionary Keys</td>
+<td>${D3}</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+
+<tr>
+<td></td>
+<td>${expected} =</td>
+<td>Create List</td>
+<td>a</td>
+<td>b</td>
+<td>c</td>
+<td></td>
+</tr>
+
+<tr>
+<td></td>
+<td>List Should Contain Sub List</td>
+<td>${expected}</td>
+<td>${keys}</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+
+<tr>
+<td></td>
+<td>List Should Contain Sub List</td>
+<td>${keys}</td>
+<td>${expected}</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+
+<tr>
+<td>Get Dictionary Values</td>
+<td>${values} =</td>
+<td>Get Dictionary Values</td>
+<td>${D3}</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+
+<tr>
+<td></td>
+<td>${expected}&nbsp;=</td>
+<td>Create List</td>
+<td>${1}</td>
+<td>${2}</td>
+<td>${3}</td>
+<td></td>
+</tr>
+
+<tr>
+<td></td>
+<td>List Should Contain Sub List</td>
+<td>${expected}</td>
+<td>${values}</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+
+<tr>
+<td></td>
+<td>List Should Contain Sub List</td>
+<td>${values}</td>
+<td>${expected}</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+
+<tr>
+<td>Get Dictionary Items</td>
+<td>${items} =</td>
+<td>Get Dictionary Items</td>
+<td>${D3}</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+
+<tr>
+<td></td>
+<td>${expected}&nbsp;=</td>
+<td>Create List</td>
+<td>a<br>
+</td>
+<td>${1}</td>
+<td>b<br>
+</td>
+<td>${2}</td>
+</tr>
+
+<tr>
+<td></td>
+<td>...</td>
+<td>c</td>
+<td>${3}</td>
+<td><br>
+</td>
+<td></td>
+<td></td>
+</tr>
+
+<tr>
+<td></td>
+<td>List Should Contain Sub List</td>
+<td>${items}</td>
+<td>${expected}</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+
+<tr>
+<td></td>
+<td>List Should Contain Sub List</td>
+<td>${expected}</td>
+<td>${items}</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+
+<tr>
+<td>Get From Dictionary</td>
+<td>${value} =</td>
+<td>Get From Dictionary</td>
+<td>${D3}</td>
+<td>b</td>
+<td></td>
+<td></td>
+</tr>
+
+<tr>
+<td></td>
+<td>Should Be Equal As Integers</td>
+<td>${value}</td>
+<td>2</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+
+<tr>
+<td>Get From Dictionary With Invalid Key</td>
+<td>[Documentation]</td>
+<td>FAIL</td>
+<td>Dictionary does not contain key 'x'</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+
+<tr>
+<td></td>
+<td>Get From Dictionary</td>
+<td>${D3}</td>
+<td>x</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+
+<tr>
+<td>Dictionary Should Contain Key</td>
+<td>Dictionary Should Contain Key</td>
+<td>${D3}</td>
+<td>a</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+
+<tr>
+<td>Dictionary Should Contain Key With Missing Key</td>
+<td>[Documentation]</td>
+<td>FAIL</td>
+<td>Dictionary does not contain key 'x'</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+
+<tr>
+<td></td>
+<td>Dictionary Should Contain Key</td>
+<td>${D3}</td>
+<td>x</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+
+<tr>
+<td>Dictionary Should Not Contain Key</td>
+<td>Dictionary Should Not Contain Key</td>
+<td>${D3}</td>
+<td>x</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+
+<tr>
+<td>Dictionary Should Not Contain Key With Existing Key</td>
+<td>[Documentation]</td>
+<td>FAIL</td>
+<td>Dictionary contains key 'b'</td>
+<td></td>
+<td></td>
+<td></td>
+
+</tr>
+
+<tr>
+<td></td>
+<td>Dictionary Should Not Contain Key</td>
+<td>${D3}</td>
+<td>b</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+
+
+
+<tr>
+<td>Dictionary Should Contain Value</td>
+<td>Dictionary Should Contain&nbsp;Value</td>
+<td>${D3}</td>
+<td>${2}</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+
+<tr>
+<td>Dictionary Should Contain&nbsp;Value With Missing&nbsp;Value</td>
+<td>[Documentation]</td>
+<td>FAIL</td>
+<td>Dictionary does not contain value 'x'</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+
+<tr>
+<td></td>
+<td>Dictionary Should Contain&nbsp;Value</td>
+<td>${D3}</td>
+<td>x</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+
+<tr>
+<td>Dictionary Should Not Contain&nbsp;Value</td>
+<td>Dictionary Should Not Contain&nbsp;Value</td>
+<td>${D3}</td>
+<td>x</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+
+<tr>
+<td>Dictionary Should Not Contain Value With Existing&nbsp;Value</td>
+<td>[Documentation]</td>
+<td>FAIL</td>
+<td>Dictionary contains value '2'</td>
+<td></td>
+<td></td>
+<td></td>
+
+</tr>
+
+<tr>
+<td></td>
+<td>Dictionary Should Not Contain&nbsp;Value</td>
+<td>${D3}</td>
+<td>${2}</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+
+<tr>
+<td>Dictionaries Should Be Equal</td>
+<td>Dictionaries Should Be Equal</td>
+<td>${D0}</td>
+<td>${D0}</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+
+<tr>
+<td></td>
+<td>Dictionaries Should Be Equal</td><td>${D3}</td><td>${D3}</td>
+
+
+<td></td>
+<td></td>
+<td></td>
+</tr>
+
+<tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr>
+<td>Dictionaries Should Be Equal With Different Keys</td>
+<td>[Documentation]</td>
+<td>FAIL</td>
+<td>Following keys are different: a, x</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+
+<tr>
+<td></td>
+<td>Dictionaries Should Be Equal</td>
+<td>${D2}</td><td>${D2 different keys}</td>
+
+<td></td>
+<td></td>
+<td></td>
+</tr>
+
+<tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr>
+<td>Dictionaries Should Be Equal With Different Keys And Own Error Message</td>
+<td>[Documentation]</td><td>FAIL</td>
+
+<td>My error message!</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+
+<tr><td></td><td>Dictionaries Should Be Equal</td><td>${D2}</td><td>${D2 different keys}</td><td>My error message!</td><td>No Values</td><td></td></tr><tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+
+<tr>
+<td>Dictionaries Should Be Equal With Different Keys And Own And Default Error Messages</td>
+<td>[Documentation]</td><td>FAIL</td>
+
+<td>My error message!\nFollowing keys are different: a, x</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+
+<tr>
+<td></td>
+<td>Dictionaries Should Be Equal</td><td>${D2}</td><td>${D2 different keys}</td><td>My error message!</td><td><br></td>
+
+
+
+
+<td></td>
+</tr>
+
+<tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Dictionaries Should Be Equal With Different Values</td><td>[Documentation]</td><td>FAIL</td><td>Dictionaries are different:\n<br>
+ key, dict1 value, dict2 value\n<br>
+b, 2, x</td><td></td><td></td><td></td></tr><tr><td></td><td>Dictionaries Should Be Equal</td><td>${D2}</td><td>${D2 different values}</td><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Dictionaries Should Be Equal With Different Values And Own Error Message</td><td>[Documentation]</td><td>FAIL</td><td>My error message!</td><td></td><td></td><td></td></tr><tr><td></td><td>Dictionaries Should Be Equal</td><td>${D2}</td><td>${D2 different values}</td><td>My error message!</td><td>False</td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Dictionaries Should Be Equal With Different Values And Own And Default Error Messages</td><td>[Documentation]</td><td>FAIL</td><td>My error message!\nDictionaries are different:\n<br>
+ key, dict1 value, dict2 value\n<br>
+b, 2, x</td><td></td><td></td><td></td></tr><tr><td></td><td>Dictionaries Should Be Equal</td><td>${D2}</td><td>${D2 different values}</td><td>My error message!</td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr>
+<td>Dictionary Should Contain Sub Dictionary</td>
+<td>Dictionary Should Contain Sub Dictionary</td><td>${D3}</td>
+
+<td>${D2}</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+
+<tr><td></td><td>Dictionary Should Contain Sub Dictionary</td><td>${D3}</td><td>${D0}</td><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Dictionary Should Contain Sub Dictionary With Missing Keys</td><td>[Documentation]</td><td>FAIL</td><td>Following key(s) are missing from dict1: c</td><td></td><td></td><td></td></tr><tr><td></td><td>Dictionary Should Contain Sub Dictionary</td><td>${D2}</td><td>${D3}</td><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Dictionary Should Contain Sub Dictionary With&nbsp;Missing Keys And Own Error Message</td><td>[Documentation]</td><td>FAIL</td><td>My error message!</td><td></td><td></td><td></td></tr><tr><td></td><td>Dictionary Should Contain Sub Dictionary</td><td>${D2}</td><td>${D3}</td><td>My error message!</td><td>False</td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Dictionary Should Contain Sub Dictionary With&nbsp;Missing Keys And Own And Default Error Message</td><td>[Documentation]</td><td>FAIL</td><td>My error message!\nFollowing key(s) are missing from dict1: c</td><td></td><td></td><td></td></tr><tr>
+<td></td>
+<td>Dictionary Should Contain Sub Dictionary</td><td>${D2}</td><td>${D3}</td>
+
+
+<td>My error message!</td>
+<td></td>
+<td></td>
+</tr><tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Dictionary Should Contain Sub Dictionary With Different Value</td><td>[Documentation]</td><td>FAIL</td><td>Dictionaries are different:\n<br>key, dict1 value, dict2 value\n<br>b, 2, x</td><td></td><td></td><td></td></tr><tr><td></td><td>Dictionary Should Contain Sub Dictionary</td><td>${D3}</td><td>${D2 different values}</td><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Dictionary Should Contain Sub Dictionary With&nbsp;Different Value And Own Error Message</td><td>[Documentation]</td><td>FAIL</td><td>My error message!</td><td></td><td></td><td></td></tr><tr><td></td><td>Dictionary Should Contain Sub Dictionary</td><td>${D3}</td><td>${D2 different values}</td><td>My error message!</td><td>False</td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Dictionary Should Contain Sub Dictionary With&nbsp;Different Value And Own And Default Error Message</td><td>[Documentation]</td><td>FAIL</td><td>My error message!\n<br>Dictionaries are different:\n<br>key, dict1 value, dict2 value\n<br>b, 2, x</td><td></td><td></td><td></td></tr><tr><td></td><td>Dictionary Should Contain Sub Dictionary</td><td>${D3}</td><td>${D2 different values}</td><td>My error message!</td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+</tbody>
+</table>
+
+<table border="1">
+<colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
+
+<thead>
+<tr>
+<th>Keyword</th>
+<th>Action</th>
+<th>Argument</th>
+<th>Argument</th>
+<th>Argument</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>Create Dictionaries For Testing</td>
+<td>${D0}</td>
+<td>Create Dictionary</td>
+<td></td>
+<td></td>
+</tr>
+
+<tr>
+<td></td>
+<td>Set Test Variable</td>
+<td>\${D0}</td>
+<td></td>
+<td></td>
+</tr>
+
+<tr>
+<td></td>
+<td>${D1} =</td>
+<td>Create Dictionary</td>
+<td>a</td>
+<td>${1}</td>
+</tr>
+
+<tr>
+<td></td>
+<td>Set Test Variable</td>
+<td>\${D1}</td>
+<td></td>
+<td></td>
+</tr>
+
+<tr>
+<td></td>
+<td>${D2} =</td>
+<td>Create Dictionary</td>
+<td>a</td>
+<td>${1}</td>
+</tr>
+
+<tr>
+<td></td>
+<td>...</td>
+<td>b</td>
+<td>${2}</td>
+<td></td>
+</tr>
+
+<tr>
+<td></td>
+<td>Set Test Variable</td>
+<td>\${D2}</td>
+<td></td>
+<td></td>
+</tr>
+
+<tr><td></td><td>${D2 different keys} =</td><td>Create Dictionary</td><td>x</td><td>${1}</td></tr><tr><td></td><td>...</td><td>b</td><td>${2}</td><td></td></tr><tr><td></td><td>Set Test Variable</td><td>\${D2 different keys}</td><td></td><td></td></tr><tr><td></td><td>${D2 different values} =</td><td>Create Dictionary</td><td>a</td><td>${1}</td></tr><tr><td></td><td>...</td><td>b</td><td>x</td><td></td></tr><tr><td></td><td>Set Test Variable</td><td>\${D2 different values}</td><td></td><td></td></tr><tr>
+<td></td>
+<td>${D3}</td>
+<td>Create Dictionary</td>
+<td>a</td>
+<td>${1}</td>
+</tr>
+
+<tr>
+<td></td>
+<td>...</td>
+<td>b</td>
+<td>${2}</td>
+<td>c</td>
+</tr>
+
+<tr>
+<td></td>
+<td>...</td>
+<td>${3}</td>
+<td></td>
+<td></td>
+</tr>
+
+<tr>
+<td></td>
+<td>Set Test Variable</td>
+<td>\${D3}</td>
+<td></td>
+<td></td>
+</tr>
+
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</body></html>

@@ -1,0 +1,469 @@
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="RobotIDE" /> 
+<style type="text/css">
+html {
+  font-family: Arial,Helvetica,sans-serif;
+  background-color: white;
+  color: black;
+}
+p {
+  max-width: 60em;
+}
+table {
+  border-collapse: collapse;
+  empty-cells: show;
+  margin: 1em 0em;
+  border: 0.1em solid black;
+}
+th, td {
+  border-style: solid;
+  border-width: 0.05em 0.1em;
+  border-color: black;
+  padding: 0.1em 0.2em;
+  height: 1.5em;
+}
+th {
+  background-color: rgb(192, 192, 192);
+  color: black;
+  border-width: 0.1em;
+  font-weight: bold;
+  text-align: center;
+  text-transform: capitalize;
+  letter-spacing: 0.1em;
+}
+/* Widths of named columns */
+col.name {
+  width: 10em;
+}
+.action, .value, .arg {
+  width: 15em;
+}
+/* Properties for the name column 
+- td:first-child should work in CSS 2.1 avare browsers (tested in Firefox)
+- col.name is against specs but works in IE
+*/
+td:first-child, col.name {
+  background-color: rgb(240, 240, 240);
+  text-transform: capitalize;
+  letter-spacing: 0.1em;
+}
+/* required for IE */
+th {
+  font-style: normal;
+}
+</style>
+<title>Splitting Resource</title>
+</head>
+<body>
+<h1>Splitting Resource</h1>
+
+<table border="1">
+<colgroup span="99">
+<col class="name">
+<col class="value" span="4"></colgroup>
+<tr>
+<th>Setting</th>
+<th>Value</th>
+<th>Value</th>
+<th>Value</th>
+<th>Value</th>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</table>
+
+<table border="1">
+<colgroup span="99">
+<col class="name">
+<col class="value" span="4"></colgroup>
+<tr>
+<th>Variable</th>
+<th>Value</th>
+<th>Value</th>
+<th>Value</th>
+<th>Value</th>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</table>
+
+<table border="1">
+<colgroup span="99">
+<col class="name">
+<col class="action">
+<col class="arg" span="3"></colgroup>
+<tr>
+<th>Keyword</th>
+<th>Action</th>
+<th>Argument</th>
+<th>Argument</th>
+<th>Argument</th>
+</tr>
+<tr>
+<td><a name="keyword_Stat Link To Itself Should Be Ok">Stat Link To Itself Should Be Ok</a></td>
+<td>[Arguments]</td>
+<td>${file}</td>
+<td>${name}</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>[Timeout]</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Contains</td>
+<td>${file}</td>
+<td>&lt;td class="col_stat_name"&gt;\n &lt;div class="stat_name"&gt;&lt;a href="#suite_${name}" onclick="set_element_visible('suite_${name}')" title="${name}"&gt;${name}&lt;/a&gt;&lt;/div&gt;\n &lt;/td&gt;</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="keyword_Stat Link In Index To Sub Log Should Be Ok">Stat Link In Index To Sub Log Should Be Ok</a></td>
+<td>[Arguments]</td>
+<td>${file}</td>
+<td>${name}</td>
+<td>${link}</td>
+</tr>
+<tr>
+<td></td>
+<td>[Timeout]</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>${full}</td>
+<td>${med}</td>
+<td>${normal} =</td>
+<td>Get Names</td>
+</tr>
+<tr>
+<td></td>
+<td>...</td>
+<td>${name}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Contains</td>
+<td>${file}</td>
+<td>&lt;td class="col_stat_name"&gt;\n &lt;div class="stat_name"&gt;&lt;a href="${link}#suite_${normal}" title="${full}"&gt;${med}&lt;/a&gt;&lt;/div&gt;\n &lt;/td&gt;</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="keyword_Test Link In Index To Sub Log Should Be Ok">Test Link In Index To Sub Log Should Be Ok</a></td>
+<td>[Arguments]</td>
+<td>${file}</td>
+<td>${name}</td>
+<td>${link}</td>
+</tr>
+<tr>
+<td></td>
+<td>[Timeout]</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>${full}</td>
+<td>${med}</td>
+<td>${normal} =</td>
+<td>Get Names</td>
+</tr>
+<tr>
+<td></td>
+<td>...</td>
+<td>${name}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Contains</td>
+<td>${file}</td>
+<td>&lt;span class="fail"&gt;TEST&amp;nbsp;SUITE: &lt;/span&gt;\n &lt;a class="splitname" href="${link}#suite_${normal}" name="suite_${med}" title="${full}"&gt;${normal}&lt;/a&gt;</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="keyword_Suite Anchor In Sub Log Should Be Ok">Suite Anchor In Sub Log Should Be Ok</a></td>
+<td>[Arguments]</td>
+<td>${file}</td>
+<td>${name}</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>[Timeout]</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Contains</td>
+<td>${file}</td>
+<td>&lt;span class="pass"&gt;TEST&amp;nbsp;SUITE: &lt;/span&gt;\n &lt;a class="name" name="suite_${name}" title="${name}"&gt;${name}&lt;/a&gt;</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="keyword_Test Anchor In Sub Log Should Be Ok">Test Anchor In Sub Log Should Be Ok</a></td>
+<td>[Arguments]</td>
+<td>${file}</td>
+<td>${name}</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>[Timeout]</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>${full}</td>
+<td>${med}</td>
+<td>${normal} =</td>
+<td>Get Names</td>
+</tr>
+<tr>
+<td></td>
+<td>...</td>
+<td>${name}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Contains</td>
+<td>${file}</td>
+<td>&lt;span class="pass"&gt;TEST&amp;nbsp;CASE: &lt;/span&gt;\n &lt;a class="name" name="test_${med}" title="${full}"&gt;${normal}&lt;/a&gt;</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="keyword_Link In Report To Index Log Should Be Ok">Link In Report To Index Log Should Be Ok</a></td>
+<td>[Arguments]</td>
+<td>${file}</td>
+<td>${name}</td>
+<td>${link}</td>
+</tr>
+<tr>
+<td></td>
+<td>...</td>
+<td>${type}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>[Timeout]</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>${full}</td>
+<td>${med}</td>
+<td>${normal} =</td>
+<td>Get Names</td>
+</tr>
+<tr>
+<td></td>
+<td>...</td>
+<td>${name}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Contains</td>
+<td>${file}</td>
+<td>&lt;td class="col_name"&gt;&lt;a href="${link}#${type}_${med}" id="${type}_${med}" title="${full}"&gt;${med}&lt;/a&gt;&lt;/td&gt;</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="keyword_Link In Report To Sub Log Should Be Ok">Link In Report To Sub Log Should Be Ok</a></td>
+<td>[Arguments]</td>
+<td>${file}</td>
+<td>${name}</td>
+<td>${link}</td>
+</tr>
+<tr>
+<td></td>
+<td>...</td>
+<td>${type}</td>
+<td>${splitlevel}=1</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>[Timeout]</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>${full}</td>
+<td>${med}</td>
+<td>${normal} =</td>
+<td>Get Names</td>
+</tr>
+<tr>
+<td></td>
+<td>...</td>
+<td>${name}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>${submed} =</td>
+<td>Evaluate</td>
+<td>"${med}"[2*${splitlevel}:]</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Contains</td>
+<td>${file}</td>
+<td>&lt;td class="col_name"&gt;&lt;a href="${link}#${type}_${submed}" id="${type}_${med}" title="${full}"&gt;${med}&lt;/a&gt;&lt;/td&gt;</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="keyword_Get Names">Get Names</a></td>
+<td>[Arguments]</td>
+<td>${fullname}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>[Timeout]</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>${tokens} =</td>
+<td>Evaluate</td>
+<td>"${fullname}".split('.')</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>${normal} =</td>
+<td>Evaluate</td>
+<td>${tokens}[-1]</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>${medpre} =</td>
+<td>Evaluate</td>
+<td>'.'.join([ t[0].lower() for t in ${tokens}[:-1] ])</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>${medjoin} =</td>
+<td>Evaluate</td>
+<td>len("${medpre}") &gt; 0 and '.' or ''</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>[Return]</td>
+<td>${fullname}</td>
+<td>${medpre}${medjoin}${normal}</td>
+<td>${normal}</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</table>
+
+</body>
+</html>
