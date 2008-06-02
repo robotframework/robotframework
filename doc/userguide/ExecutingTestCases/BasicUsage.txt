@@ -1,17 +1,69 @@
 Basic usage
 -----------
 
+Robot Framework test cases are executed from the command line, and the end result is, by default, an output file in XML format and HTML report and log. Output files can be combined and otherwise post-processed with :prog:`rebot` tool.
 
 .. contents::
    :depth: 2
    :local:
 
+
 Starting test execution
 ~~~~~~~~~~~~~~~~~~~~~~~
+
+Different start-up scripts
+''''''''''''''''''''''''''
+
+Test execution is normally started with :prog:`pybot` or :prog:`jybot` commands, which are otherwise identical but the former uses Python and latter Jython. Which one to use depends on the needed test libraries. Some libraries use modules or syntax available only on Python, others use Java based tools that require Jython, and some work on both. If you can use either :prog:`pybot` or :prog:`jybot`, the former is recommended as Python is somewhat faster than Jython.
+
+Another possibility for starting the test execution is running the :prog:`runner.py` script under the installed__ :core:`robot` module directly. This method allows selecting the interpreter and setting command line options to it freely. The most common use case is altering options controlling JVM maximum memory consumptions.
+
+__ `Where files are installed`_
+
+Regardless the runner script, path or paths to the test data to be executed is given as an argument, and it is possible to use different command line options to somehow alter the execution. 
+
+
+Specifying test data to be executed
+'''''''''''''''''''''''''''''''''''
+
+Robot Framework test cases are create in files__ and directories__, and they are executed by giving the path to the file or directory in question to the selected start-up script. The path can be absolute or, more commonly, relative to the directory where tests are executed from. The given file or directory forms the top-level test suite, which gets its name, unless overridden with :setting:`--name` option, from the file or directory name. Different execution possibilities are illustrated by examples below. Notice that in these examples, as well as in other examples in this section, the runner is :prog:`pybot` but it could be replaced with :prog:`jybot` or a custom runner script. 
+
+__ `Test case files`_
+__ `Test suite directories`_
+
+   pybot test_cases.html
+   pybot path/to/my_tests/
+   pybot /opt/robot/tests.html   
+   pybot c:\\robot\\tests.html
+   
+It is also possible to give paths to multiple test case files or directories at once separated with spaces. In this case Robot Framework creates the top-level test suite automatically, and specified files and directories become its child suites. The name of the created test suite is got from child suite names so that they are catenated together with an ampersand (&) and spaces. For example the name of the top-level suite in the first example below is :name:`My Tests & Your Tests`. These automatically created names are seldom very good and they can easily get quite long. In most cases it is thus better to use :setting:`--name` option for overriding it like in the second example below.
+
+   pybot my_tests.html your_tests.html
+   pybot --name Example path/to/tests/pattern_*.html
+
+
+Using command line options
+''''''''''''''''''''''''''
+
+Robot Framework provides a number of command line options that can be
+used to control how test cases are executed. The syntax for using them is explained in this section, and what options actually exist and how they can be used is discussed elsewhere in this chapter.
+
+Options always have a long name like :setting:`--name`, and most often needed options also have a short name like :setting:`-N`. In addition to that, long options can be shortened as long as they are unique. For example :cli:`--logle DEBUG` works, while :cli:`--lo log.html` does not, because the former matches only :setting:`--loglevel` but the latter matches multiple options. Short and shortened options are handy when executing test cases manually, but long options are recommended in start-up script since they are easier to understand. Finally, long option format is case-insensitive. For example :setting:`--SuiteStatLevel` is equivalent to, but easier to read than, :setting:`--suitestatlevel`.
+
+Most of the options require a value, which must be given after the option name. Both short and long options accept the value so that it is separated from the option name with a space like :cli:`--include tag` or :cli:`-i tag`. With long options the separator can also be the equals sign like :cli:`--include=tag`, and with short option the separator can be omitted like :cli:`-itag`.
+
+Some options can be specified multiple times. For example :cli:`--variable VAR1:value --variable VAR2:another` sets two variables. If other options are given multiple times, the last given value takes the effect. 
 
 
 Combining and generating outputs
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+In addition to Robot Framework itself, there is also Rebot. Rebot is
+the part of Robot that generates reports and logs.  It is used
+automatically when running tests with Robot, but it can also process
+existing Robot output files, create reports and logs from them and
+combine them to create higher-level reports or logs.
+
 
 Getting online help
 ~~~~~~~~~~~~~~~~~~~

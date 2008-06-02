@@ -339,14 +339,14 @@ table.messages td.level {
 .setting {
     font-style: italic;
 }
-.code, .cli {
+.prog, .code, .cli {
     background: #f4f4f4;
     font-family: monospace;
 }
 .msg {
     font-family: monospace;
 }
-.kw, .tc {
+.kw, .name {  
     font-style: italic;
 }
 .path {
