@@ -841,6 +841,10 @@ class Misc:
         """
         # TODO: Better link to TimeSyntax
         seconds = utils.timestr_to_secs(time)
+        # At least Python hangs with negative values, so it's better to convert
+        # those to zero
+        if seconds < 0:
+            seconds = 0
         _time.sleep(seconds)
         self.log('Slept %s' % utils.secs_to_timestr(seconds))
 

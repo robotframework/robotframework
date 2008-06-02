@@ -135,7 +135,7 @@ th {
 <th>Argument</th>
 </tr>
 <tr>
-<td><a name="test_NoOperation">No Operation</a></td>
+<td><a name="test_No Operation">No Operation</a></td>
 <td>No Operation</td>
 <td></td>
 <td></td>
@@ -201,6 +201,13 @@ th {
 <td></td>
 <td>Fail Unless</td>
 <td>'${time4}' &gt; '${time3}' &gt; '${time2}' &gt; '${time1}'</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Sleep</td>
+<td>-10 hours</td>
 <td></td>
 <td></td>
 </tr>
@@ -416,13 +423,6 @@ th {
 </tr>
 <tr>
 <td></td>
-<td>[Teardown]</td>
-<td>Set Log Level</td>
-<td>INFO</td>
-<td></td>
-</tr>
-<tr>
-<td></td>
 <td>Log</td>
 <td>Log says: Hello from tests!</td>
 <td></td>
@@ -479,13 +479,20 @@ th {
 </tr>
 <tr>
 <td></td>
+<td>[Teardown]</td>
+<td>Set Log Level</td>
+<td>INFO</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
 <td></td>
 <td></td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td><a name="test_LogMany">Log Many</a></td>
+<td><a name="test_Log Many">Log Many</a></td>
 <td>Log Many</td>
 <td>Log Many says:</td>
 <td>Hello</td>
@@ -541,17 +548,10 @@ th {
 <td></td>
 </tr>
 <tr>
-<td><a name="test_SetLogLevel">Set Log Level</a></td>
+<td><a name="test_Set Log Level">Set Log Level</a></td>
 <td>[Documentation]</td>
 <td>FAIL Invalid log level 'INVALID'</td>
 <td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td>[Teardown]</td>
-<td>Set Log Level</td>
-<td>INFO</td>
 <td></td>
 </tr>
 <tr>
@@ -703,6 +703,13 @@ th {
 </tr>
 <tr>
 <td></td>
+<td>[Teardown]</td>
+<td>Set Log Level</td>
+<td>INFO</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
 <td></td>
 <td></td>
 <td></td>
@@ -723,7 +730,7 @@ th {
 <td></td>
 </tr>
 <tr>
-<td><a name="test_ImportLibrary1">Import Library 1</a></td>
+<td><a name="test_Import Library 1">Import Library 1</a></td>
 <td>[Documentation]</td>
 <td>Verify that keyword to be imported is not yet available FAIL No keyword with name 'Fail Unless Exists' found.</td>
 <td></td>
@@ -744,7 +751,7 @@ th {
 <td></td>
 </tr>
 <tr>
-<td><a name="test_ImportLibrary2">Import Library 2</a></td>
+<td><a name="test_Import Library 2">Import Library 2</a></td>
 <td>Import Library</td>
 <td>OperatingSystem</td>
 <td></td>
@@ -765,7 +772,7 @@ th {
 <td></td>
 </tr>
 <tr>
-<td><a name="test_ImportLibrary3">Import Library 3</a></td>
+<td><a name="test_Import Library 3">Import Library 3</a></td>
 <td>[Documentation]</td>
 <td>Verify that keyword from lib imported by earlier kw is still available</td>
 <td></td>
@@ -786,7 +793,7 @@ th {
 <td></td>
 </tr>
 <tr>
-<td><a name="test_ImportLibraryWithParameter">Import Library With Parameter</a></td>
+<td><a name="test_Import Library With Parameter">Import Library With Parameter</a></td>
 <td>Import Library</td>
 <td>ParameterLibrary</td>
 <td>myhost</td>
@@ -821,7 +828,7 @@ th {
 <td></td>
 </tr>
 <tr>
-<td><a name="test_ImportVariables1">Import Variables 1</a></td>
+<td><a name="test_Import Variables 1">Import Variables 1</a></td>
 <td>Variable Should Not Exist</td>
 <td>$IMPORT_VARIABLES_1</td>
 <td></td>
@@ -849,7 +856,7 @@ th {
 <td></td>
 </tr>
 <tr>
-<td><a name="test_ImportVariables2">Import Variables 2</a></td>
+<td><a name="test_Import Variables 2">Import Variables 2</a></td>
 <td>[Documentation]</td>
 <td>Verify that variable imported by earlier kw is still available</td>
 <td></td>
@@ -870,17 +877,10 @@ th {
 <td></td>
 </tr>
 <tr>
-<td><a name="test_ImportVariablesWithParameter">Import Variables With Parameter</a></td>
+<td><a name="test_Import Variables With Parameter">Import Variables With Parameter</a></td>
 <td>[Documentation]</td>
 <td>FAIL REGEXP: Processing variable file '.*variables_to_import_2.py' with arguments \\[ 1 | 2 | 3\\] failed: TypeError: .*</td>
 <td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td>[Teardown]</td>
-<td>Remove File</td>
-<td>${TEMPDIR}${/}variables_to_import_2.py</td>
 <td></td>
 </tr>
 <tr>
@@ -962,13 +962,20 @@ th {
 </tr>
 <tr>
 <td></td>
+<td>[Teardown]</td>
+<td>Remove File</td>
+<td>${TEMPDIR}${/}variables_to_import_2.py</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
 <td></td>
 <td></td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td><a name="test_ImportVariablesInUserKeyword">Import Variables In User Keyword</a></td>
+<td><a name="test_Import Variables In User Keyword">Import Variables In User Keyword</a></td>
 <td>Import Variables In User Keyword</td>
 <td>Set in</td>
 <td>user keyword</td>
@@ -996,7 +1003,7 @@ th {
 <td></td>
 </tr>
 <tr>
-<td><a name="test_ImportVariablesInUserKeyword2">Import Variables In User Keyword 2</a></td>
+<td><a name="test_Import Variables In User Keyword 2">Import Variables In User Keyword 2</a></td>
 <td>Should Be Equal</td>
 <td>${IMPORT_VARIABLES_2_ARGS}</td>
 <td>Set in user keyword</td>
@@ -1038,7 +1045,7 @@ th {
 <td></td>
 </tr>
 <tr>
-<td><a name="test_GetTimeAsTimestamp">Get Time As Timestamp</a></td>
+<td><a name="test_Get Time As Timestamp">Get Time As Timestamp</a></td>
 <td>${time1} =</td>
 <td>Get Time</td>
 <td></td>
@@ -1073,7 +1080,7 @@ th {
 <td></td>
 </tr>
 <tr>
-<td><a name="test_GetTimeAsSecondsAfterEpoch">Get Time As Seconds After Epoch</a></td>
+<td><a name="test_Get Time As Seconds After Epoch">Get Time As Seconds After Epoch</a></td>
 <td>${time} =</td>
 <td>Get Time</td>
 <td>epoch</td>
@@ -1094,7 +1101,7 @@ th {
 <td></td>
 </tr>
 <tr>
-<td><a name="test_GetTimeAsParts">Get Time As Parts</a></td>
+<td><a name="test_Get Time As Parts">Get Time As Parts</a></td>
 <td>@{time} =</td>
 <td>Get Time</td>
 <td>year, month, day, hour, min, sec</td>
@@ -1318,7 +1325,7 @@ th {
 <td></td>
 </tr>
 <tr>
-<td><a name="test_CallMethod">Call Method</a></td>
+<td><a name="test_Call Method">Call Method</a></td>
 <td>Call Method</td>
 <td>${obj}</td>
 <td>my_method</td>
@@ -1374,7 +1381,7 @@ th {
 <td></td>
 </tr>
 <tr>
-<td><a name="test_CallMethodReturns">Call Method Returns</a></td>
+<td><a name="test_Call Method Returns">Call Method Returns</a></td>
 <td>${res} =</td>
 <td>Call Method</td>
 <td>my_str</td>
@@ -1430,7 +1437,7 @@ th {
 <td></td>
 </tr>
 <tr>
-<td><a name="test_CallMethodFromModule">Call Method From Module</a></td>
+<td><a name="test_Call Method From Module">Call Method From Module</a></td>
 <td>${path} =</td>
 <td>Call Method</td>
 <td>${os.path}</td>
@@ -1458,7 +1465,7 @@ th {
 <td></td>
 </tr>
 <tr>
-<td><a name="test_CallNonExistingMethod">Call Non Existing Method</a></td>
+<td><a name="test_Call Non Existing Method">Call Non Existing Method</a></td>
 <td>[Documentation]</td>
 <td>FAIL REGEXP: Object '&lt;objects_for_call_method.MyObject instance .*&gt;' does not have a method 'non_existing'</td>
 <td></td>
@@ -1479,7 +1486,7 @@ th {
 <td></td>
 </tr>
 <tr>
-<td><a name="test_CallJavaMethod">Call Java Method</a></td>
+<td><a name="test_Call Java Method">Call Java Method</a></td>
 <td>${isempty} =</td>
 <td>Call Method</td>
 <td>${hashtable}</td>
@@ -1549,7 +1556,7 @@ th {
 <td></td>
 </tr>
 <tr>
-<td><a name="test_CallNonExistingJavaMethod">Call Non Existing Java Method</a></td>
+<td><a name="test_Call Non Existing Java Method">Call Non Existing Java Method</a></td>
 <td>[Documentation]</td>
 <td>FAIL Object '{myname=myvalue}' does not have a method 'nonExisting'</td>
 <td></td>
@@ -1570,7 +1577,7 @@ th {
 <td></td>
 </tr>
 <tr>
-<td><a name="test_GrepLiteral">Grep Literal</a></td>
+<td><a name="test_Grep Literal">Grep Literal</a></td>
 <td>:: FOR</td>
 <td>${pattern}</td>
 <td>${type}</td>
@@ -1640,7 +1647,7 @@ th {
 <td></td>
 </tr>
 <tr>
-<td><a name="test_GrepCaseInsensitive">Grep Case Insensitive</a></td>
+<td><a name="test_Grep Case Insensitive">Grep Case Insensitive</a></td>
 <td>:: FOR</td>
 <td>${pattern}</td>
 <td>${type}</td>
@@ -1703,7 +1710,7 @@ th {
 <td></td>
 </tr>
 <tr>
-<td><a name="test_GrepSimplePattern">Grep Simple Pattern</a></td>
+<td><a name="test_Grep Simple Pattern">Grep Simple Pattern</a></td>
 <td>:: FOR</td>
 <td>${pattern}</td>
 <td>${type}</td>
@@ -1766,7 +1773,7 @@ th {
 <td></td>
 </tr>
 <tr>
-<td><a name="test_GrepRegexp">Grep Regexp</a></td>
+<td><a name="test_Grep Regexp">Grep Regexp</a></td>
 <td>:: FOR</td>
 <td>${pattern}</td>
 <td>${type}</td>
@@ -1836,7 +1843,7 @@ th {
 <td></td>
 </tr>
 <tr>
-<td><a name="test_RegexpEscape">Regexp Escape</a></td>
+<td><a name="test_Regexp Escape">Regexp Escape</a></td>
 <td>${escaped} =</td>
 <td>Regexp Escape</td>
 <td>f$o^o$b[a]r()?\\</td>
@@ -1920,7 +1927,7 @@ th {
 <th>Argument</th>
 </tr>
 <tr>
-<td><a name="keyword_ImportVariablesInUserKeyword">Import Variables In User Keyword</a></td>
+<td><a name="keyword_Import Variables In User Keyword">Import Variables In User Keyword</a></td>
 <td>[Arguments]</td>
 <td>@{value}</td>
 <td></td>
@@ -1969,7 +1976,7 @@ th {
 <td></td>
 </tr>
 <tr>
-<td><a name="keyword_ImporttedVariableShouldBeSetTo">Importted Variable Should Be Set To</a></td>
+<td><a name="keyword_Importted Variable Should Be Set To">Importted Variable Should Be Set To</a></td>
 <td>[Arguments]</td>
 <td>${value}</td>
 <td></td>
@@ -1997,7 +2004,7 @@ th {
 <td></td>
 </tr>
 <tr>
-<td><a name="keyword_VerifyGrep">Verify Grep</a></td>
+<td><a name="keyword_Verify Grep">Verify Grep</a></td>
 <td>[Arguments]</td>
 <td>${pattern}</td>
 <td>${pattern_type}</td>
