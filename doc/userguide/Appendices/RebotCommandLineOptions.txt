@@ -1,0 +1,152 @@
+Rebot command line options
+--------------------------
+
+Options:
+
+  -N, --name <name>       Set the name of the top level test suite. Name is
+                          automatically capitalized and underscores converted
+                          to spaces.
+  -D, --doc <document>    Set the document of the top level test suite.
+                          Underscores in the document are turned into spaces
+                          and it may also contain simple HTML formatting (e.g.
+                          \*bold\*, _italic_ and http://url/).
+  -M, --metadata <name:value>  Set metadata of the top level test suite. Name is
+                          automatically capitalized and underscores converted
+                          to spaces. Value can contain same HTML formatting as
+                          --doc. 
+  -G, --settag <tag>      Sets given tag(s) to all executed test cases. 
+  -t, --test <name>       Select test cases by name. Name is case and space
+                          insensitive and it can also be a simple pattern where
+                          '\*' matches anything and '?' matches any character.
+  -s, --suite <name>        Select test suites by name. When this option is used
+                          with --test, --include or --exclude, only test cases
+                          in matching suites and also matching other filtering
+                          criteria are selected. 
+  -i, --include <tag>     Select test cases by tag. Similarly as name in --test
+                          tag is case and space insensitive and it can also be
+                          a simple pattern. To include only tests which have 
+                          more than one tag use '&' or 'AND' between tag names.
+  -e, --exclude <tag>     Unselect test cases by tag. These tests are not
+                          selected even if they are included with --include.
+                          Tag names are handled similarly as in --include and
+                          excluding only tests containing multiple tags works
+                          works the same way using '&' or 'AND'.
+  -c, --critical <tag>    Tests having given tag are considered critical. If no
+                          critical tags are set, all tags are critical. Tags
+                          can be given as a pattern like e.g. with --test.
+                          Resets possible critical tags set earlier.
+  -n, --noncritical <tag>  Tests with given tag are not critical even if they
+                          have a tag set with --critical. Tag can be a pattern.
+                          Resets possible non critical tags set earlier.
+  -d, --outputdir <dir>   Where to create output files. The default is the
+                          directory where Rebot is run from and the given path
+                          is considered relative to that unless it is absolute.
+  -o, --output <file>     XML output file. Not created unless this option is
+                          specified. Given path, similarly as paths given to
+                          --log, --report and --summary, is relative to
+                          --outputdir unless given as an absolute path.
+                          Default is 'output.xml'. 
+  -l, --log <file>        HTML log file. Can be disabled by giving a special
+                          name 'NONE'. 
+  -r, --report <file>     HTML report file. Can be disabled with 'NONE'
+                          similarly as --log. Default is 'report.html'.
+  -S, --summary <file>    HTML summary report. Not created unless this option
+                          is specified. 
+  -T, --timestampoutputs  When this option is used, timestamp in a format
+                          'YYYYMMDD-hhmmss' is added to all generated output 
+                          files between their basename and extension.
+  --splitoutputs <level>  Split output and log files from specified suite 
+                          level to make them smaller in size. Top level files
+                          have links to lower level files for easy navigation.
+  --logtitle <title>    Title for the generated test log. The default title
+                          is '<Name Of The Suite> Test Log'. Underscores in
+                          the title are converted into spaces in all titles.
+  --reporttitle <title>  Title for the generated test report. The default
+                          title is '<Name Of The Suite> Test Report'.
+  --summarytitle <title>  Title for the generated summary report. The default
+                          title is '<Name Of The Suite> Summary Report'.
+  --suitestatlevel <level>  How many levels to show in 'Statistics by Suite'
+                          table in outputs. By default all suite levels are
+                          shown. If zero (0) is given the whole table is 
+                          removed. Example: '--suitestatlevel 3'
+  --tagstatinclude <tag>  Include only these tags in 'Statistics by Tag' and
+                          and 'Test Details by Tag' tables in outputs. By
+                          default all tags set in test cases are shown. Given
+                          'tag' can also be a simple pattern (see e.g. --test).
+  --tagstatexclude <tag>  Exclude these tags from 'Statistics by Tag' and
+                          'Test Details by Tag' tables in outputs. This option
+                          can be used with --tagstatinclude similarly as
+                          --exclude is used with --include.
+  --tagstatcombine <tags>  Create combined statistics based on tags. These
+                          statistics are added into 'Statistics by Tag' table 
+                          and matching tests into 'Test Details by Tag' table.
+                          There are three ways to give these tags.
+                          1) One tag as a simple pattern. Tests having a tag
+                          matching the pattern are included. Example: 'it-\*'
+                          2) Two or more tags (or patterns) separated by '&' or
+                          'AND'. Only tests having all these tags are included.
+                          3) Two or more tags (or patterns) separated by 'NOT'.
+                          Tests having the first tag but not any of the latter
+                          ones are included. Example: 'it-10NOTsmoke'
+  --tagdoc <pattern:doc>  Add documentation to tags matching given pattern. 
+                          Documentation is shown in 'Test Details by Tag' 
+                          table and also as a tooltip in 'Statistics by Tag' 
+                          table. Pattern can contain characters '\*' (matches 
+                          anything) and '?' (matches any char). In case of 
+                          multiple matches, documentations are catenated with
+                          spaces. Documentation can contain formatting as with
+                          --doc option.
+  --tagstatlink <pattern:link:title>  Adds links into 'Statistics by Tag' 
+                          table in outputs. Pattern can contain characters '\*' 
+                          (matches anything) and '?' (matches any character).
+                          Character(s) matching to wildcard expression(s) can 
+                          be used in the resulting link with syntax %N, where N
+                          is the index of the match (starting from 1). In title
+                          underscores are automatically converted to spaces.
+  --removekeywords <all|passed>  Remove keyword data from generated outputs. 
+                          Keyword data is not needed when creating reports and
+                          removing it can make the size of an output file
+                          considerably smaller.
+                          'all'    - remove data from all keywords
+                          'passed' - remove data only from keywords in passed
+                          test cases and suites
+  --starttime <timestamp>  Set starting time of test execution when creating
+                          combined reports. Timestamp must be given in format
+                          '2007-10-01 15:12:42.268' where all separators are
+                          optional (e.g. '20071001151242268' is ok too) and
+                          parts from milliseconds to hours can be omitted if
+                          they are zero (e.g. '2007-10-01'). If this option is
+                          not used, starttime of combined reports is 'N/A'.
+  --endtime <timestamp>   Same as --starttime but for ending time. If both 
+                          options are used, elapsed time is calculated based on
+                          them. Otherwise it is calculated by adding elapsed 
+                          times of sub tests suites together.
+  -E, --escape <what:with>  Escape characters which are problematic in console.
+                          'what' is the name of the character to escape and
+                          'with' is the string to escape it with. Note that
+                          all given arguments, incl. data sources, are escaped
+                          so escape characters ought to be selected carefully.
+                          Available escapes: amp (&), apos ('), at (@), bslash
+                          (\), colon (:), comma (,), curly1 ({), curly2 (}),
+                          dollar ($), exclam (!), gt (>), hash (#), lt (<),
+                          paren1 ((), paren2 ()), percent (%), pipe (|), quest
+                          (?), quot ("), semic (;), slash (/), space ( ),
+                          square1 ([), square2 (]), star (\*)
+  -A, --argumentfile <path>   Text file to read more arguments from. File can have
+                          both options and data sources one per line. Contents
+                          don't need to be escaped but spaces in the beginning
+                          and end of lines are removed. Empty lines and lines
+                          starting with a hash character (#) are ignored.
+  -h, --help              Print usage instructions.
+  --version               Print version information.
+
+
+Environment Variables:
+
+ROBOT_SYSLOG_FILE         Path to the syslog file. If not specified, or set to
+                          special value 'NONE', writing to syslog file is 
+                          disabled. Path must be absolute. 
+ROBOT_SYSLOG_LEVEL        Log level to use when writing to the syslog file.
+                          Available levels are the same as for --loglevel 
+                          option to Robot and the default is INFO.
+

@@ -7,53 +7,111 @@ Configuring execution
 
 Selecting test cases
 ~~~~~~~~~~~~~~~~~~~~
---test
---suite
---include
---exclude
+
+There are several command line options which affect which test case are to be
+executed. These options allow selection by suite name, test name or tag name.
+It is also possible to exclude tests from execution by tag name. All these 
+options can be given multiple times, and their arguments accept simple patterns. 
+The options can be combined for a greater flexibility.
+Examples:
+
+.. sourcecode:: bash
+   
+  pybot --test test-?
+  pybot --suite tests.my*
+  pybot --include tag1
+  pybot --include criticalANDowner-*
+  pybot --include feature1 --test webui* 
+
+
 
 Setting criticality
 ~~~~~~~~~~~~~~~~~~~
---critical 
---noncritical
+
+The final result of test execution is determined based on critical tests. If
+any critical test fails, the whole run is considered failed. There are command
+line options for controlling which tests are considered critial. This way, it
+is easy to include unfinished or otherwise failing tests in the test run and 
+consider them non-critical.
+Examples:
+
+.. sourcecode:: bash
+
+  pybot --critical smoke 
+  pybot --noncritical not-ready
+
 
 Setting metadata
 ~~~~~~~~~~~~~~~~
---name
---doc 
---metadata
---settag
+
+There is also a possibility to set name, documentation and free metadata for 
+suite and tags for all test cases from the commandline. 
+
 
 Adjusting library search path
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
---pythonpath
-CLASSPATH PYTHONAPTH
+
+When test libraries are taken into use in the test data, Robot Framework tries
+to find the library code from locations defined in PYTHONPATH environment
+variable. When test are executed with Jython, also CLASSPATH environment 
+variable is used to determine search path. Command line option --pythonpath
+can be used to add directories to PYTHONPATH environment variable. 
+
+It is usually best to create a start-up script for setting the environment
+variables.
 
 Setting variables
 ~~~~~~~~~~~~~~~~~
---variable
---variablefile
 
-TODO: link to variables section
+There is also possibility to define variable_ from command line, either
+directly or from a variable file. These variables will override any 
+variables with same name in test case and resource files. 
+
 
 Setting runmode
 ~~~~~~~~~~~~~~~
---runmode
+
+There is a command line option :cli:`--runmode`, which can be used to define
+some additional characteristics of the test execution. It currently has four
+meaningful values, all other values are just ignored. The possible values are:
+
+random:test
+    Tests inside each suite are executed in random order.
+
+random:suite
+    All suites are executed in random order.
+
+random:all
+    Suites are executed in random order and tests inside suites are also 
+    executed in random order.
+
+exitonfailure
+    Test execution is stopped whenever a critical test fails. All remaining
+    test will be marked failed with message 
+    'Critical failure occurred and ExitOnFailure option is in use'
 
 
 Controlling monitor output
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
---monitorwidth
---monitorcolors Remove from rebot
+
+It is also possible to set the width of the console output and whether 
+colors should be used in the monitor or not.
+
 
 Setting listeners
 ~~~~~~~~~~~~~~~~~
---listener
 
+The only way to get a listener_
+
+_ 'Using the listener interface`_
 
 Setting times for combined outputs
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
---starttime
---endtime
+
+When combining outputs with rebot it possible to set the start and end
+time of the combined suite. This may be convenient because by default,
+these statistics will have no value in the combined suite.
+
+
 
 
