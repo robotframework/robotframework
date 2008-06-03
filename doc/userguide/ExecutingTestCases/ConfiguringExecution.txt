@@ -101,9 +101,11 @@ colors should be used in the monitor or not.
 Setting listeners
 ~~~~~~~~~~~~~~~~~
 
-The only way to get a listener_
+The only way to get a listener__ into use during execution is to define it 
+from command line. The listener class must be found in PYTHONPATH, see 
+`Adjusting library search path`_.
 
-_ 'Using the listener interface`_
+.. __: `Using the listener interface`_
 
 Setting times for combined outputs
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
