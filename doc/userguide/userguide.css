@@ -357,11 +357,14 @@ table.messages td.level {
 }
 
 
-/* Overridden styles */
+/* Overridden and modified styles */
 
 div.admonition, div.attention, div.caution, div.danger, div.error,
 div.hint, div.important, div.note, div.tip, div.warning {
   border: 2px solid gray;
+}
+pre.literal-block, pre.doctest-block {
+    background: #f4f4f4;
 }
 
 

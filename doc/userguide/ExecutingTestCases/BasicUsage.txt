@@ -16,7 +16,7 @@ Different start-up scripts
 
 Test execution is normally started with :prog:`pybot` or :prog:`jybot` commands, which are otherwise identical but the former uses Python and latter Jython. Which one to use depends on the needed test libraries. Some libraries use modules or syntax available only on Python, others use Java based tools that require Jython, and some work on both. If you can use either :prog:`pybot` or :prog:`jybot`, the former is recommended as Python is somewhat faster than Jython.
 
-Another possibility for starting the test execution is running the :prog:`runner.py` script under the installed__ :core:`robot` module directly. This method allows selecting the interpreter and setting command line options to it freely. The most common use case is altering options controlling JVM maximum memory consumptions.
+Another possibility for starting the test execution is running the :prog:`runner.py` script under the installed__ :code:`robot` module directly. This method allows selecting the interpreter and setting command line options to it freely. The most common use case is altering options controlling JVM maximum memory consumptions.
 
 __ `Where files are installed`_
 
@@ -54,9 +54,13 @@ Most of the options require a value, which must be given after the option name. 
 
 Some options can be specified multiple times. For example :cli:`--variable VAR1:value --variable VAR2:another` sets two variables. If other options are given multiple times, the last given value takes the effect. 
 
+Many of the options take arguments as *simple patterns*. This means that :code:`*` and :code:`?` can be used as special characters so that the former matches any string (even an empty string) and the latter matches any single character. For example :cli:`--include prefix-*` would match all tags starting with :code:`prefix-` and :cli:`--include a???` would match any four characters long tag starting with :code:`a`.
+
 
 Combining and generating outputs
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+TODO.
 
 In addition to Robot Framework itself, there is also Rebot. Rebot is
 the part of Robot that generates reports and logs.  It is used
@@ -65,13 +69,72 @@ existing Robot output files, create reports and logs from them and
 combine them to create higher-level reports or logs.
 
 
-Getting online help
-~~~~~~~~~~~~~~~~~~~
---help
---version
+Getting help on command line
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Both when executing test cases with :prog:`pybot` or :prog:`jybot` and when post-processing reports with :prog:`rebot`, it is possible to get command line help with option :setting:`--help` and its short version :setting:`-h`. These help texts have a short general overview and briefly explain available command line options. 
+
+All start-up scripts also support getting the version information with option :setting:`--version`. The version information also contains the version of the interpreter and operating system type. 
+
 
 Handling complicated options
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
---esacpe
---argumentfile
 
+Many special characters are complicated to use on the command line, and additionally normal space is problematic in an option value since it is used for separating options from each others. Escaping these complicated characters with a backslash or quoting the values does not work too well, because start-up scripts call other scripts and escaping is lost. To ease using special characters, Robot Framework has its own escaping mechanism, and it also supports argument files where options can be specified in plain text format. These systems work both when executing tests and when post-processing outputs, and also some of the external supporting tools have same or similar capabilities. 
+
+Escaping options
+''''''''''''''''
+
+Robot Frameworks command line escaping mechanism works so that problematic characters are escaped with freely selected text. The command line option to use is :setting:`--escape` (short version :setting:`-E`) which takes argument in format :setting:`what:with`, where :setting:`what` is the name of the character to escape and :setting:`what` is the string to escape it with. Characters that can be escaped are listed in the table below.
+
+.. table:: Available escapes
+   :class: tabular
+
+   =========  =============  =========  =============
+   Character   Name to use   Character   Name to use
+   =========  =============  =========  =============
+   &          amp            (          paren1
+   '          apos           )          paren2
+   @          at             %          percent
+   \\         blash          |          pipe
+   :          colon          ?          quest
+   ,          comma          "          quot
+   {          curly1         ;          semic
+   }          curly2         /          slash
+   $          dollar         \          space
+   !          exclam         [          square1
+   >          gt             ]          square2
+   #          hash           \*         star
+   <          lt             \          \   
+   =========  =============  =========  =============
+
+Following examples ought to make the syntax more clear. In the first example metadata :setting:`X` gets value :code:`Value with spaces`, and in the second variable :var:`${VAR}` is assigned to :code:`"Hello, world!"`.
+
+::
+
+    --escape space:_ --metadata X:Value_with_spaces
+    -E space:SP -E quot:QU -E comma:CO -E exclam:EX -v VAR:QUHelloCOSPworldEXQU
+
+Note that all given command line arguments, including paths to test data, are escaped. Escape character sequences ought to thus be selected carefully.
+
+
+Using argument files
+''''''''''''''''''''
+
+Another possibility to handle complicated arguments is placing them into argument files, and using :setting:`--argumentfile` (short option :setting:`-A`) to specify path to it along with possible other options. These files can contain both command line options and paths to test data, one per line. Argument files can contain any ASCII characters and they do not need to be escaped, but spaces in the beginning and end of lines are ignored. Additionally empty lines and lines starting with a hash character (#) are ignored.
+
+An example argument file::
+
+   --doc This is an example (where "special characters" are ok!)
+   --metadata X:Value with spaces
+   --variable VAR:Hello, word!
+   # This is a comment line
+   path/to/test directory/
+
+Argument files can be used either alone so that they contain all the options and paths to test data, or along with other options and paths. When an argument file is used in the command line, its contents are placed into the original list of arguments into the same place where the argument file option was.
+
+::
+
+   pybot --argumentfile all_arguments.txt
+   pybot --name example --argumentfile other_options_and_paths.txt
+   pybot --argumentfile default_options.txt --name example my_tests.html
