@@ -57,7 +57,7 @@ Section title
 Roles used in Robot Framework User Guide
 ----------------------------------------
 
-For the formatting roles used in Robot Framework User Guide to make it
+For the formatting roles, which are used in Robot Framework User Guide to make it
 easier for the reader to distinguish certain parts of the text, see
 the file RobotFrameworkUserGuide.txt.
  
@@ -65,7 +65,7 @@ the file RobotFrameworkUserGuide.txt.
 Using sourcecode directive with files
 -------------------------------------
 
-Sourcecode directive can be used also to read the source code from a file.
+The sourcecode directive can be used also to read the source code from a file.
 In this case, the path to the file must be relative to the root directory of
 the user guide, for example::
 
@@ -90,9 +90,12 @@ command::
 
   python ug2html.py
 
-After the compilation you get a 'robotframework-userguide' directory containing
-the actual user guide in RobotFrameworkUserGuide.html, all images used in the user guide,
-and the library documentations.
+After the compilation, you get a robotframework-userguide directory
+containing the actual user guide named RobotFrameworkUserGuide.html, all
+images used in the user guide, and the library documentations. The
+tools documentation is actually located under robotframework\tools, in
+doc folders under the respective tools, and only copied from there at the
+compilation stage.
 
 
 References
