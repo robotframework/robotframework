@@ -1,0 +1,131 @@
+Library documentation can generate library keyword documentation from
+test libraries and resource files either in HTML or XML format. The
+former is for humans and the latter mainly for Robot IDE or other
+tools.
+
+Usage
+'''''
+
+.. TODO: Change the formatting of the options below so that in the HTML file it looks the same as in CWiki. 
+ 
+The usage printed with :cli:`python libdoc.py --help` should look something like below::
+
+
+    $ python libdoc.py
+    Robot Framework Library and Resource File Documentation Generator
+
+    Usage:  libdoc.py [options] library_or_resource
+
+    This script can generate keyword documentation in HTML or XML. The former is 
+    for humans and the latter mainly for Robot IDE and other tools.
+
+    Documentation can be created for
+
+    - test libraries implemented with Python or Java using the normal library API,
+    - test libraries using the dynamic API (but you only get keyword names and not
+      their arguments or documentations), and
+    - resource files.
+
+    Options:
+
+    -f --format html|xml	Specifies whether to generate HTML or XML output. The default value is HTML.
+
+    -o --output path		Where to write the generated documentation. If the path is a directory, the documentation is generated there using the name "." with an index after the "" part, if a file with that name already exists. If the given path points to a file, this path is used as-is and possible existing file is overwritten. The default value for the path is the directory where the script is executed from.
+
+    -P --pythonpath path *  Additional path(s) to insert into PYTHONPATH.
+
+    -h -? --help            Print this help.
+
+    It is possible to specify a Python test library by giving either the path to 
+    the source or only the library name. If the library name is used, it must be in 
+    the same format as in Robot test data when importing libraries. In this case, 
+    the library is searched from PYTHONPATH (and from CLASSPATH, if on Jython). 
+
+    A Java test library implemented with normal library API can be specified by 
+    giving the path to the source file containing the library class. Additionally, 
+    "tools.jar", which is part of the Sun JDK distribution, must be found from 
+    CLASSPATH when libdoc.py is executed.
+
+    Libraries using the dynamic library API are handled in the same way as Python 
+    libraries are.
+
+    Resource files must always be specified using a path. If the path does not 
+    exist, resource files are also searched from all directories in PYTHONPATH.
+
+    Examples:
+
+     $ python path/to/libdoc.py OperatingSystem
+     $ python path/to/libdoc.py --output doc/MyLib.html src/MyLib.py
+     $ python path/to/libdoc.py test/resource.html
+     $ python path/to/libdoc.py --format xml OperatingSystem
+     $ python path/to/libdoc.py --format xml --output doc test/resource.html
+     $ jython path/to/libdoc.py --format xml MyJavaLibrary.java
+
+
+How imported libraries are found
+''''''''''''''''''''''''''''''''  
+ 
+The libraries to document are imported similarly as they are imported
+when executing test cases. Libraries can only be imported if they are
+found from PYTHONPATH (or from CLASSPATH when running with
+Jython). PYTHONPATH (and/or the CLASSPATH) must thus be set correctly
+before generating the documentation. An exception to this rule are
+normal Java libraries; it is enough to give the path to the source
+file for these.
+
+
+Writing documentation
+'''''''''''''''''''''
+  
+The documentation for Python libraries is written simply as doc
+strings for the library class and for methods implementing
+keywords. The first line of the method documentation is considered as
+a short documentation for the keywords (used for example as a tool tip in
+links in the generated HTML documentation), and it should thus be as
+describing as possible but not too long. From Robot 1.4 onwards, it
+is possible to use simple formatting in documentation (for example, bold and
+tables).
+
+The simple example below illustrates how to write the documentation,
+and standard libraries (for example, OperatingSystemLibrary) give more
+realistic examples. For more information on Python documentation
+strings, see `PEP-257`_.
+
+.. _PEP-257: http://www.python.org/dev/peps/pep-0257/
+
+.. sourcecode:: python
+
+	class ExampleLib:
+
+    	    """Library for demo purposes.
+
+    	    This library is only used in an example and does not do anything useful.
+    	    """
+
+    	    def my_keyword(self):
+            	"""Does nothing."""
+            	pass
+
+    	    def your_keyword(self, arg):
+            	"""Takes one argument and *does nothing* with it.
+
+        	Example:
+        	| Your Keyword | xxx |
+        	| Your Keyword | yyy |
+        	"""
+        	pass
+
+When writing documentation for a normal Java library, conventions for
+writing Javadoc should be used. The documentation is generated based
+on the Javadocs in the source files.
+
+
+Download
+''''''''
+ 
+The script can be downloaded from
+https://cwiki.nokia.com/twiki/pub/RobotFramework/LibraryDocumentationGeneration/libdoc.py.txt.
+
+.. Note:: Because of TWiki security restrictions, the filename has a
+   	  :path:`.txt` extension. That must be removed, so the file must be saved
+ 	  as :path:`libdoc.py`.
