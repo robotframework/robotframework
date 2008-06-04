@@ -1,0 +1,25 @@
+File viewer is a tool designed to be used together with the Robot
+Framework command line option :cli:`--debugfile`. The debug file can be
+opened with File viewer, and the viewer will automatically update the
+display as the debug file gets written, so that it is possible to
+scroll the file when it is being written to.
+
+The tool can be downloaded from here:
+https://cwiki.nokia.com/twiki/pub/RobotFramework/FileViewerTool/fileviewer.py.txt
+
+.. Note:: Because of TWiki security restrictions, the filename has a
+   	  :path:`.txt` extension. That must be removed, so the file must be saved
+ 	  as :path:`fileviewer.py`.
+
+To use the tool, you can either double-click the icon and click the
+``Open`` button in the GUI to open the desired file, or you can start
+the tool from the command line and give the path to the debug file as
+an argument, for example::
+
+   python fileviewer.py mydebugfile.txt
+
+.. figure:: fileviewer.png
+   :width: 754
+   :height: 521
+
+   File viewer
