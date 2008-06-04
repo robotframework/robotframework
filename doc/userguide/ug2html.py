@@ -108,13 +108,17 @@ if os.path.exists(OUTDIR):
     shutil.rmtree(OUTDIR)
 os.mkdir(OUTDIR)
 
-for filename in glob.glob('*/*.txt'):
+def copy_figures(filename):
     dirname = os.path.dirname(filename)
     images = [ line[12:] for line in open(filename).read().splitlines() if line.startswith(".. figure") ]
     for image in images:
         shutil.copy(os.path.join(dirname, image), OUTDIR)
 
-for doc in glob.glob('../libraries/*.html'):
+for filename in glob.glob('*/*.txt') + glob.glob('../../tools/*/doc/*.txt'):
+    copy_figures(filename)
+
+
+for doc in glob.glob('../libraries/*.html') + glob.glob('../../tools/*/doc/*.html'):
     shutil.copy(doc, OUTDIR)
 
 #

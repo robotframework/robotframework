@@ -13,10 +13,8 @@ executed. These options allow selection by suite name, test name or tag name.
 It is also possible to exclude tests from execution by tag name. All these 
 options can be given multiple times, and their arguments accept simple patterns. 
 The options can be combined for a greater flexibility.
-Examples:
+Examples::
 
-.. sourcecode:: bash
-   
   pybot --test test-?
   pybot --suite tests.my*
   pybot --include tag1
@@ -33,9 +31,7 @@ any critical test fails, the whole run is considered failed. There are command
 line options for controlling which tests are considered critial. This way, it
 is easy to include unfinished or otherwise failing tests in the test run and 
 consider them non-critical.
-Examples:
-
-.. sourcecode:: bash
+Examples::
 
   pybot --critical smoke 
   pybot --noncritical not-ready
