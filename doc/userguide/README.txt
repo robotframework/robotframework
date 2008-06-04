@@ -66,8 +66,8 @@ Using sourcecode directive with files
 -------------------------------------
 
 Sourcecode directive can be used also to read the source code from a file.
-In this case the path to file must be relative to the root direcotory of
-userguide, for example::
+In this case, the path to the file must be relative to the root directory of
+the user guide, for example::
 
   ..sourcecode:: python
 
@@ -90,9 +90,9 @@ command::
 
   python ug2html.py
 
-After the compilation you ought to get 'robotframework-userguide' directory containing
+After the compilation you get a 'robotframework-userguide' directory containing
 the actual user guide in RobotFrameworkUserGuide.html, all images used in the user guide,
-and library documentations.
+and the library documentations.
 
 
 References
