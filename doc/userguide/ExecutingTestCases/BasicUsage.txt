@@ -1,7 +1,7 @@
 Basic usage
 -----------
 
-Robot Framework test cases are executed from the command line, and the end result is, by default, an output file in XML format and HTML report and log. Output files can be combined and otherwise post-processed with :prog:`rebot` tool.
+Robot Framework test cases are executed from the command line, and the end result is, by default, an output file in XML format and HTML report and log. After the execution output files can be combined and otherwise post-processed with :prog:`rebot` tool.
 
 .. contents::
    :depth: 2
@@ -20,7 +20,7 @@ Another possibility for starting the test execution is running the :prog:`runner
 
 __ `Where files are installed`_
 
-Regardless the runner script, path or paths to the test data to be executed is given as an argument. Additionally different command line options can be used to somehow alter the test execution or generated outputs.
+Regardless the runner script, a path (or paths) to the test data to be executed is given as an argument. Additionally different command line options can be used to somehow alter the test execution or generated outputs.
 
 
 Specifying test data to be executed
@@ -37,7 +37,7 @@ __ `Test suite name and documentation`_
    pybot test_cases.html
    pybot path/to/my_tests/
    pybot /opt/robot/tests.html   
-   pybot c:\\robot\\tests.html
+   pybot c:\robot\tests.html
    
 It is also possible to give paths to multiple test case files or directories at once, separated with spaces. In this case Robot Framework creates the top-level test suite automatically, and specified files and directories become its child test suites. The name of the created test suite is got from child suite names so that they are catenated together with an ampersand (&) and spaces. For example the name of the top-level suite in the first example below is :name:`My Tests & Your Tests`. These automatically created names are seldom very good and they can easily get quite long. In most cases it is thus better to use :setting:`--name` option for overriding it like in the second example below::
 
@@ -52,7 +52,7 @@ Robot Framework provides a number of command line options that can be used to co
 
 Options always have a long name like :setting:`--name`, and most frequently needed options also have a short name like :setting:`-N`. In addition to that, long options can be shortened as long as they are unique. For example :cli:`--logle DEBUG` works, while :cli:`--lo log.html` does not, because the former matches only :setting:`--loglevel` but the latter matches multiple options. Short and shortened options are handy when executing test cases manually, but long options are recommended in start-up script since they are easier to understand. Finally, long option format is case-insensitive. For example :setting:`--SuiteStatLevel` is equivalent to, but easier to read than, :setting:`--suitestatlevel`.
 
-Most of the options require a value, which is given after the option name. Both short and long options accept the value so that it is separated from the option name with a space like :cli:`--include tag` or :cli:`-i tag`. With long options the separator can also be the equals sign like :cli:`--include=tag`, and with short option the separator can be omitted like :cli:`-itag`.
+Most of the options require a value, which is given after the option name. Both short and long options accept the value so that it is separated from the option name with a space like :cli:`--include tag` or :cli:`-i tag`. With long options the separator can also be the equals sign like :cli:`--include=tag`, and with short options the separator can be omitted like :cli:`-itag`.
 
 Some options can be specified multiple times. For example :cli:`--variable VAR1:value --variable VAR2:another` sets two variables. If those options that take only one value are used multiple times, the last given value takes the effect. 
 
@@ -86,13 +86,34 @@ The command line output is very limited, and separate output files are normally 
 Post-processing outputs
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-TODO.
+XML output files that are generated during the test execution can be post-processed afterwards by :prog:`rebot` tool, which is an integral part of Robot Framework. It is actually used automatically when test reports and logs are generated during the test execution, but there are also good reasons for using it separately.
 
-In addition to Robot Framework itself, there is also Rebot. Rebot is
-the part of Robot that generates reports and logs.  It is used
-automatically when running tests with Robot, but it can also process
-existing Robot output files, create reports and logs from them and
-combine them to create higher-level reports or logs.
+Creating different reports and logs
+'''''''''''''''''''''''''''''''''''
+
+It is possible to use :prog:`rebot` for creating same reports and logs that are created automatically during the test execution. Of course it does not make much sense to create exactly same files, but for example having one report with all test cases and another with only some subset of tests can be really useful. Additionally it is possible to create only the output file when running tests, and generate logs and reports later. This ma be a good idea for example when running tests on Jython, because :prog:`rebot` tool always runs on Python which is a bit faster than Jython.
+
+The basic syntax for using :prog:`rebot` is exactly the same that is used when `starting test execution`_, and also most of the command line options are same. The difference is that arguments to :prog:`rebot` are XML output files instead of test data files or directories. 
+
+::
+
+   rebot output.xml
+   rebot --include smoke --name Smoke_Tests path/to/output.xml
+
+
+Combining outputs
+'''''''''''''''''
+
+The most important feature of :prog:`rebot` is its ability to combine outputs from different test executions. This capability allows for example running same test cases on different environments and generating an overall report from all outputs. Combining outputs is extremely easy, all that needs to be done is giving multiple output files as arguments::
+
+   rebot output1.xml output2.xml
+   rebot outputs/*.xml
+
+When outputs are combined, a new top-level test suite is created so that test suites in given output files are its child suites. This works the same way when `multiple test data files or directories are executed`__, and also in this case the name of the top-level test suite is created by joining child suite names with an ampersand (&) and spaces. These automatically generated names are not that good, and it is often a good idea to use :setting:`--name` to give a more meaningful name::
+
+   rebot --name Browser_compatibility firefox.xml opera.xml ie.xml
+
+__ `Specifying test data to be executed`_
 
 
 Getting help on command line
@@ -100,18 +121,18 @@ Getting help on command line
 
 Both when executing test cases with :prog:`pybot` or :prog:`jybot` and when post-processing reports with :prog:`rebot`, it is possible to get command line help with option :setting:`--help` and its short version :setting:`-h`. These help texts have a short general overview and briefly explain available command line options. 
 
-All start-up scripts also support getting the version information with option :setting:`--version`. The version information also contains the version of the used interpreter and the operating system type. 
+All start-up scripts also support getting the version information with option :setting:`--version`. The information also contains the version of the used interpreter and the operating system type. 
 
 
 Handling complicated options
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Many special characters are complicated to use on the command line, and additionally normal space is problematic in an option value since it is used for separating options from each others. Escaping these complicated characters with a backslash or quoting the values does not work too well, because start-up scripts call other scripts and escaping is lost. To ease using special characters, Robot Framework has its own escaping mechanism, and it also supports argument files where options can be specified in plain text format. These systems work both when executing tests and when post-processing outputs, and also some of the external supporting tools have same or similar capabilities. 
+Many special characters are complicated to use on the command line, and additionally normal space is problematic in an option value since it is used for separating options from each others. Escaping these complicated characters with a backslash or quoting the values does not always work, and Robot Framework has its own generic escaping mechanism. It is also possible to use argument files where options can be specified in plain text format. These systems work both when executing tests and when post-processing outputs, and also some of the external supporting tools have same or similar capabilities. 
 
 Escaping options
 ''''''''''''''''
 
-Robot Frameworks command line escaping mechanism works so that problematic characters are escaped with freely selected text. The command line option to use is :setting:`--escape`, short version :setting:`-E`, which takes argument in format :setting:`what:with`, where :setting:`what` is the name of the character to escape and :setting:`what` is the string to escape it with. Characters that can be escaped are listed in the table below.
+Robot Framework's command line escaping mechanism works so that problematic characters are escaped with freely selected text. The command line option to use is :setting:`--escape`, short version :setting:`-E`, which takes argument in format :setting:`what:with`, where :setting:`what` is the name of the character to escape and :setting:`what` is the string to escape it with. Characters that can be escaped are listed in the table below.
 
 .. table:: Available escapes
    :class: tabular
@@ -147,7 +168,7 @@ Note that all given command line arguments, including paths to test data, are es
 Using argument files
 ''''''''''''''''''''
 
-Another possibility to handle complicated arguments is placing them into a argument file, and using :setting:`--argumentfile` (short option :setting:`-A`) to specify path to it along with possible other options. These files can contain both command line options and paths to test data, one per line. Argument files can contain any ASCII characters and they do not need to be escaped, but spaces in the beginning and end of lines are ignored. Additionally empty lines and lines starting with a hash character (#) are ignored.
+Another possibility to handle complicated arguments is placing them into a argument file, and using :setting:`--argumentfile` (short option :setting:`-A`) to specify path to it along with possible other options. These files can contain both command line options and paths to test data, one per line. Argument files can contain any ASCII characters without any escaping, but spaces in the beginning and end of lines are ignored. Additionally empty lines and lines starting with a hash character (#) are ignored.
 
 An example argument file::
 
