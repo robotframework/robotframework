@@ -16,14 +16,14 @@ Why Robot Framework?
 
 - Enables easy-to-use tabular syntax for `creating test cases`_ in a uniform way,
   regardless of the tested system.
-- Provides ability to create reusable ´higher-level
+- Provides ability to create reusable `higher-level
   keywords`_ from the existing keywords.
 - Has very good reports and logs in HTML format.
 - Is platform and application-independent.
 - Can natively use both Python and Java test tools.
 - Provides a simple `library API`_ for creating customized test libraries for wrapping 
   existing tools or your own interfaces.
-- Provides a `command line interface`__ and XML based outputs for
+- Provides a `command line interface`_ and XML based outputs for
   integration into existing test and build infrastructure.
 - The modular architecture supports creating tests even for applications with
   several diverse interfaces.
@@ -37,7 +37,7 @@ Why Robot Framework?
   directories that can be versioned with the production code.
 - Provides test-case and test-suite-level setup and teardown.
 
-__ `Executing test cases`_
+.. _command line interface: `Executing test cases`_
 
 .. TODO: Arrange the bullets above, e.g. according to importance to the user.
 
