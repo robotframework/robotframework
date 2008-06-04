@@ -254,7 +254,7 @@ The escape character can be used as follows:
 - To prevent Robot Framework from ignoring empty cells at the end of a
   row (this requires :code:`\\` to be in the appropriate cell).
 
-..  _the parsing of whitespaces: `Handling whitespace`
+.. _the parsing of whitespaces: `Handling whitespace`_
 
 
 Handling whitespace
