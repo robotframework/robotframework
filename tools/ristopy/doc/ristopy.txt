@@ -1,0 +1,283 @@
+risto.py is a tool for plotting graphs about test execution history
+based on statistics read from Robot output files.
+
+Usage
+''''' 
+
+risto.py -- Robot Framework's Historical Reporting Tool
+
+Version: 1.0
+
+Usage:  risto.py options input files
+  or:   risto.py options1 --- options2 --- optionsN --- input files
+  or:   risto.py --argumentfile path
+
+risto.py plots graphs about test execution history, based on statistics read
+from Robot output files. By default, it draws total, passed and failed graphs
+for critical tests and all tests, but it is possible to omit some of these
+graphs and also to add graphs by tags. The actual drawing is handled by the Matplotlib
+tool that must be installed separately. More information on Matplotlib, including
+the installation instructions, can be found from http://matplotlib.sourceforge.net.
+
+Names of test rounds that are shown on the x-axis are, by default, obtained from the
+paths to input files. Alternatively, names can be obtained from the metadata of the
+top level test suite (for more information, see Robot Framework's :cli:`--metadata` option).
+
+Graphs are saved to a file specified with the :cli:`--output` option, and the output
+format is determined by from the file extension. The supported formats depend on the installed
+Matplotlib back-ends, but at least PNG ought to be always available. If the output
+file is omitted, the graph is opened into Matplotlib's image viewer (which
+requires Matplotlib to be installed with some graphical front-end).
+
+It is possible to draw several graphs with different options at once. This is
+done by separating different option groups with three or more hyphens (:cli:`---`).
+Note that in this case, also paths to input files need to be separated from
+the options similarly.
+
+Instead of giving all options from the command line, it is possible to read them
+from a file specified with the :cli:`--argument` option. In an argument file, options
+and their possible arguments are listed one per line, and option groups are
+separated with lines of three or more hyphens. Empty lines and lines starting
+with a hash mark (#) are ignored. 
+
+Options:
+
+--nocritical
+
+    Also -C. Specifies that graphs are not plot for critical tests.
+
+--noall
+
+    Also -A. Specifies that graphs are not plot for all tests.
+
+--nototals
+
+    Also -T. Specifies that total graphs are not plot.
+
+--nopassed
+
+    Also -P. Specifies that passed graphs are not plot.
+
+--nofailed
+
+    Also -F. Specifies that failed graphs not plot.
+
+--tag
+
+    Also -t. Takes name as argument. Adds graphs for these
+    tags. The name can contain "\*" and "?" as
+    wildcards. Underscores in the names are converted to spaces and
+    additionally "AND" to "&".
+
+--output
+
+    Also -o. Takes path as argument. Specifies the path to
+    the image file to create. If not given, the image is opened into
+    Matplotlib's viewer.
+
+--title
+
+    Also -i. Takes title as argument. Specifies the title of
+    the graph. Underscores in the given title are converted to
+    spaces. By default, there is no title.
+
+--width
+
+    Also -w. Takes inches as argument. Specifies the width of
+    the image. The default is 800.
+
+--height
+
+    Also -h. Takes inches as argument. Specifies the height
+    of the image. The default is 400.
+
+--font
+
+    Also -f. Takes size as argument. Specifies the font size
+    used for legends and labels. The default is 8.
+
+--marker size    
+
+    Also -m. The size of marker used with tag graphs. The default is 5.
+
+--xticks
+
+    Also -x. Takes num as argument. Specifies the maximum
+    number of ticks on the x-axis. The default is 15.
+
+--namemeta
+
+    Also -n. Takes name as argument. Specifies the name of
+    the metadata of the top level test suite where to get name of
+    the test round. By default names are got from paths to input
+    files.
+
+.. TODO: Change the formatting so that the options below look OK in the HTML file.
+  
+---
+ 
+    Used to group options to create several images at once.
+
+--argumentfile
+ 
+    Takes path as argument. Reads the command line arguments from the specified file.
+
+--verbose
+
+    Specifies the verbose output.
+ 
+--help
+
+    Prints the help.
+
+ --version
+
+    Prints the version information.
+
+
+Examples:
+
+.. sourcecode:: python
+
+	risto.py --output history.png output1.xml output2.xml output3.xml
+  		risto.py --title My_Report --noall --namemeta Date --output out.png \*.xml
+  	risto.py --nopassed --tag smoke --tag iter-* results/\*/output.xml
+  	risto.py -CAP -t tag1 --- -CAP -t tag2 --- -CAP -t tag3 --- outputs/*.xml
+  	risto.py --argumentfile arguments.txt
+
+ 	 ====[arguments.txt]===================
+  	--title Overview
+  	--output overview.png
+  	----------------------
+  	--nocritical
+  	--noall
+  	--nopassed
+  	--tag smoke1
+  	--title Smoke Tests
+  	--output smoke.png
+  	----------------------
+  	path/to/*.xml
+  	======================================
+
+Installation
+''''''''''''
+
+Here you can find the instructions for the installation of risto.py. 
+
+Preconditions
+`````````````
+ 
+risto.py requires Python. It has been tested both on releases 2.4 and
+2.5, and it should work also in 2.3. Also some Robot modules are
+needed, and thus some Robot Framework 1.8 version needs to be
+installed.
+
+The Matplotlib tool is used for plotting graphs, and it needs to be
+installed separately. Matplotlib has its own preconditions, and at
+least NumPy needs to be installed. The default Matplotlib installation
+should always support at least PNG, but if more output formats are
+needed, some extra back-ends may need to be installed. Additionally,
+you may need to install graphical front-ends to be able to use
+Matplotlib's own viewer for opening graphs without saving them to a
+file.
+
+risto.py reads statistics from output files using the ElementTree
+module. Python 2.5 has this module in its standard library, but for
+older versions, it needs to be installed separately.
+
+
+Links to the needed software: 
+
+- Matplotlib_
+
+- NumPy_
+
+- ElementTree_ 
+
+- risto.py_ 
+
+.. Note:: Because of TWiki security restrictions, the
+   	  file name has a :path:`.txt` extension. That must be removed, so
+   	  the file must be saved as :path:`risto.py`. After the downloading
+   	  and renaming, you can run the tool simply like python
+   	  risto.py arguments.
+
+
+Screenshots
+'''''''''''
+
+Here you can find some screenshots of risto.py.
+
+Default settings
+````````````````
+ 
+The screenshot below uses some very simple example outputs, thus the lines
+are mainly straight. The default settings have been used otherwise,
+but the output has been saved into a file with the :cli:`--output
+default.png` option.
+
+.. figure:: risto_default.png
+   :width: 800
+   :height: 400
+
+   Simple example output
+
+Various settings
+````````````````
+ 
+The example outputs used in this screenshot are the same as in the previous
+one, but now the following options have been specified::
+
+    --nopassed --noall --tag f1 --title Another_Example --width 600 --height 250 --font 6 --marker 3 --output another.png
+
+.. figure:: risto_another.png
+   :width: 600
+   :height: 250
+   
+   Another example output
+
+Using Matplotlib's Viewer
+`````````````````````````
+ 
+This time there are more input files and the image has been opened
+into Matplotlib's viewer (that is, the :cli:`--output` option has not been
+used). The options used to create this example are the ones below::
+
+      -CAP -t d1_AND_d2 -t t1 -t sub3 -i Yet_Another_Example -x 20 -w 1000 -n Name
+
+.. figure:: risto_yetanother.png
+   :width: 820
+   :height: 393
+
+   More complex example output
+
+More Realistic Examples
+'''''''''''''''''''''''
+
+These examples are generated from real test outputs using the following argument file: 
+
+::
+
+      --title Overview
+      --output overview.png
+      -----------------
+      --title DRT Tests
+      --nocritical
+      --noall
+      --tag phase-drt
+      -nofailed
+      --output drt.png 
+      ------------------
+      path/\*/output.xml
+
+.. figure:: risto_overview.png
+   :width: 800
+   :height: 400
+
+   Example overview
+
+.. figure:: risto_drt.png
+   :width: 800
+   :height: 400
+
+   Example DRT tests
