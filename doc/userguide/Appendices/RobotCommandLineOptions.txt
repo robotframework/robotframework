@@ -1,169 +1,171 @@
 Robot command line options
 --------------------------
 
-  -N, --name <name>       Set the name of the top level test suite. Name is
+  -N, --name <name>       Sets the name of the top-level test suite. The name is
                           automatically capitalized and underscores converted
-                          to spaces. Default name is created from the name of
+                          to spaces. The default name is created from the name of
                           the executed data source.
-  -D, --doc <document>    Set the document of the top level test suite.
-                          Underscores in the document are turned into spaces
-                          and it may also contain simple HTML formatting (e.g.
-                          \*bold\* and http://url/).
-  -M, --metadata <name:value>  Set metadata of the top level test suite. Name is
-                          automatically capitalized and underscores converted
-                          to spaces. Value can contain same HTML formatting as
+  -D, --doc <document>    Sets the document of the top-level test suite.
+                          Underscores in the document are turned into spaces.
+                          The document may also contain simple HTML formatting 
+                          (for example, \*bold\* and http://url/).
+  -M, --metadata <name:value>  Sets the metadata of the top level test suite. The 
+                          name is automatically capitalized and underscores converted
+                          to spaces. The value can contain the same HTML formatting as
                           --doc.
-  -G, --settag <tag>      Sets given tag(s) to all executed test cases. 
-  -t, --test <name>       Select test cases to run by name. Name is case and
-                          space insensitive and it can also be a simple pattern
-                          where '\*' matches anything and '?' matches any char.
-                          If using '\*' amd '?' in the console is problematic
+  -G, --settag <tag>      Sets the given tag(s) to all executed test cases. 
+  -t, --test <name>       Selects test cases to run by name. The name is case- and
+                          space-insensitive and can also be a simple pattern,
+                          where "\*" matches anything and "?" matches any char.
+                          If using "\*" amd "?" in the console is problematic,
                           see  --escape and --argumentfile.
-  -s, --suite <name>      Select test suites to run by name. When this option
+  -s, --suite <name>      Selects test suites to run by name. When this option
                           is used with  --test, --include or --exclude, only
-                          test cases in matching suites and also matching other
-                          filtering criteria are selected. Name can be a simple
-                          pattern similarly as with  --test and it can contain
-                          parent name separated with a dot. 
-  -i, --include <tag>     Select test cases to run by tag. Similarly as name in
-                          --test, tag is case and space insensitive and it 
+                          test cases in matching suites and also matching the other
+                          filtering criteria are selected. The name can be a simple
+                          pattern similarly as with  --test, and it can contain
+                          the parent name separated with a dot. 
+  -i, --include <tag>     Selects test cases to run by tag. Similarly as the name in
+                          --test, the tag is case- and space-insensitive and 
                           can also be a simple pattern. To include only tests
-                          which have more than one tag use '&' or 'AND' between
+                          that have more than one tag, use "&" or "AND" between
                           tag names. 
-  -e, --exclude <tag>     Select test cases not to run by tag. These tests are
-                          not run even if they are included with  --include. Tag
-                          names are handled similarly as in  --include and
+  -e, --exclude <tag>     Selects test cases not to run by tag. These tests are
+                          not run, even if they are included with  --include. The tag
+                          names are handled similarly as in  --include, and
                           excluding only tests containing multiple tags works
-                          the same way using '&' or 'AND'.
-  -c, --critical <tag>    Tests having given tag are considered critical. If no
-                          critical tags are set, all tags are critical. Tags
-                          can be given as a pattern like e.g. with  --test.
-  -n, --noncritical <tag>  Tests with given tag are not critical even if they
-                          have a tag set with  --critical. Tag can be a pattern.
-  --runmode <mode>        Possible values are 'random:test', 'random:suite',  
-                          'random:all' and 'exitonfailure'. Any other value is 
-                          ignored. First three change te execution order of 
-                          suites or tests (or both). 'exitonfailure' causes the
-                          execution of tests to be stopped if a critical test
+                          the same way using "&" or "AND".
+  -c, --critical <tag>    Tests that have the given tag are considered critical. If no
+                          critical tags are set, all tags are critical. The tags
+                          can be given as a pattern, for example, with  --test.
+  -n, --noncritical <tag>  Tests that have the given tag are not critical, even if they 
+                          have a tag set with  --critical. The tag can be a pattern.
+  --runmode <mode>        The possible values are "random:test", "random:suite",  
+                          "random:all" and "exitonfailure". Any other value is 
+                          ignored. The first three change the execution order of 
+                          suites or tests (or both). "exitonfailure" causes the
+                          execution of tests to be stopped, if a critical test
                           fails.  
-  -v, --variable <name:value>   Set variables in the test data. Only scalar
-                          variables are supported and name is given without 
-                          '${}'. See  --escape for how to use special characters
-                          and  --variablefile for a more powerfull variable
+  -v, --variable <name:value>   Sets variables in the test data. Only scalar
+                          variables are supported, and the name is given without 
+                          "${}". See  --escape for how to use special characters
+                          and  --variablefile for a more powerful variable
                           setting mechanism that allows also list variables.
-  -V, --variablefile <path>  File to read variables from (e.g. 'path/vars.py').
-  -d, --outputdir <dir>   Where to create output files. The default is the
-                          directory where tests are run from and the given path
-                          is considered relative to that unless it is absolute.
-  -o, --output <file>     XML output file. Given path, similarly as paths given
+  -V, --variablefile <path>  The file to read variables from (for example, 
+                          "path/vars.py").
+  -d, --outputdir <dir>   Defines where to create output files. The default is the
+                          directory where tests are run from, and the given path
+                          is considered relative to that, unless it is absolute.
+  -o, --output <file>     The XML output file. The given path, similarly as paths given
                           to  --log, --report, --summary and --debugfile, is 
-                          relative to  --outputdir unless given as an absolute 
-                          path. Other output files are created from XML output 
-                          file after the test execution and XML output can also
-                          be further processed with Rebot tool (e.g. combined 
-                          with other XML output files). Default: output.xml
-  -l, --log <file>        HTML log file. Can be disabled by giving a special
-                          name 'NONE'. Default: log.html
-  -r, --report <file>     HTML report file. Can be disabled with 'NONE'
-                          similarly as  --log. Default: report.html
-  -S, --summary <file>    HTML summary report. Not created unless this option
+                          relative to  --outputdir, unless given as an absolute 
+                          path. Other output files are created from the XML output 
+                          file after the test execution, and XML output can also
+                          be further processed with the Rebot tool (for example, combined 
+                          with other XML output files). The default is "output.xml".
+  -l, --log <file>        The HTML log file. Can be disabled by giving a special
+                          name "NONE". The default is "log.html".
+  -r, --report <file>     The HTML report file. Can be disabled with "NONE",
+                          similarly as  --log. The default is "report.html".
+  -S, --summary <file>    The HTML summary report. Not created, unless this option
                           is specified.
-  -b, --debugfile <file>  Debug file written during execution. Not created 
+  -b, --debugfile <file>  The debug file that is written during execution. Not created, 
                           unless this option is specified.
-  -T, --timestampoutputs  When this option is used, timestamp in a format
-                          'YYYYMMDD-hhmmss' is added to all generated output 
+  -T, --timestampoutputs  When this option is used, a timestamp in a format
+                          "YYYYMMDD-hhmmss" is added to all generated output 
                           files between their basename and extension.
-  --splitoutputs <level>  Split output and log files from specified suite
-                          level. This makes generated files smaller and lower
-                          level files available immediatelly when a respective
-                          test suite is executed. Top level files have links to
-                          lower level files for easy navigation. 
-  --logtitle <title>      Title for the generated test log. The default title
-                          is '<Name Of The Suite> Test Log'. Underscores in
+  --splitoutputs <level>  Splits output and log files from the specified suite
+                          level. Decreases the size of generated files and lower
+                          level files that are available immediately after the relevant
+                          test suite is executed. Top-level files have links to
+                          lower-level files for easy navigation. 
+  --logtitle <title>      The title for the generated test log. The default title
+                          is "<Name Of The Suite> Test Log". Underscores in
                           the title are converted into spaces in all titles.
-  --reporttitle <title>   Title for the generated test report. The default
-                          title is '<Name Of The Suite> Test Report'.
-  --summarytitle <title>  Title for the generated summary report. The default
-                          title is '<Name Of The Suite> Summary Report'.
-  -L, --loglevel <level>  Threshold level for logging. Available levels: 
-                          TRACE, DEBUG, INFO (default), WARN, NONE (no logging)
-  --suitestatlevel <level>  How many levels to show in 'Statistics by Suite'
-                          table in outputs. By default all suite levels are
-                          shown. If zero (0) is given the whole table is 
+  --reporttitle <title>   The title for the generated test report. The default
+                          title is "<Name Of The Suite> Test Report".
+  --summarytitle <title>  The title for the generated summary report. The default
+                          title is "<Name Of The Suite> Summary Report".
+  -L, --loglevel <level>  The threshold level for logging. The available levels: 
+                          TRACE, DEBUG, INFO (default), WARN, NONE (no logging).
+  --suitestatlevel <level>  Defines how many levels to show in the Statistics by Suite
+                          table in outputs. By default, all suite levels are
+                          shown. If zero (0) is given, the whole table is 
                           removed.
-  --tagstatinclude <tag>  Include only these tags in 'Statistics by Tag' and
-                          and 'Test Details by Tag' tables in outputs. By
-                          default all tags set in test cases are shown. Given
-                          'tag' can also be a simple pattern (see e.g.  --test).
-  --tagstatexclude <tag>  Exclude these tags from 'Statistics by Tag' and
-                          'Test Details by Tag' tables in outputs. This option
-                          can be used with  --tagstatinclude <similarly> as
+  --tagstatinclude <tag>  Includes only these tags in the Statistics by Tag and
+                          Test Details by Tag tables in outputs. By default,
+                          all tags set in test cases are shown. The given
+                          tag can also be a simple pattern (see for example --test).
+  --tagstatexclude <tag>  Excludes these tags from the Statistics by Tag and
+                          Test Details by Tag tables in outputs. This option
+                          can be used with  --tagstatinclude similarly as
                           --exclude is used with --include.
-  --tagstatcombine <tags>  Create combined statistics based on tags. These
-                          statistics are added into 'Statistics by Tag' table 
-                          and matching tests into 'Test Details by Tag' table.
-                          There are three ways to give these tags.
+  --tagstatcombine <tags>  Creates combined statistics based on tags. These
+                          statistics are added into the Statistics by Tag table 
+                          and matching tests into the Test Details by Tag table.
+                          There are three ways to give these tags:
                           1) One tag as a simple pattern. Tests having a tag
                           matching the pattern are included.
-                          2) Two or more tags (or patterns) separated by '&' or
-                          'AND'. Only tests having all these tags are included.
-                          3) Two or more tags (or patterns) separated by 'NOT'.
-                          Tests having the first tag but not any of the latter
-                          ones are included.
-  --tagdoc <pattern:doc>   Add documentation to tags matching given pattern. 
-                          Documentation is shown in 'Test Details by Tag' 
-                          table and also as a tooltip in 'Statistics by Tag' 
-                          table. Pattern can contain characters '\*' (matches 
-                          anything) and '?' (matches any char). In case of 
+                          2) Two or more tags (or patterns) separated by "&" or
+                          "AND". Only tests having all these tags are included.
+                          3) Two or more tags (or patterns) separated by "NOT".
+                          Tests having the first tag, but not any of the latter
+                          ones, are included.
+  --tagdoc <pattern:doc>   Adds documentation to tags matching the given pattern. 
+                          Documentation is shown in the Test Details by Tag 
+                          table and also as a tooltip in the Statistics by Tag 
+                          table. The pattern can contain the characters "\*" (matches 
+                          anything) and "?" (matches any char). In case of 
                           multiple matches, documentations are catenated with
-                          spaces. Documentation can contain formatting as with
-                          --doc <option.>
-  --tagstatlink <pattern:link:title>   Add external links into 'Statistics by 
-                          Tag' table in outputs. Pattern can contain characters
-                          '\*' (matches anything) and '?' (matches any char).
+                          spaces. The documentation can contain formatting, as with
+                          the --doc <option.
+  --tagstatlink <pattern:link:title>   Adds external links to the Statistics by 
+                          Tag table in outputs. The pattern can contain the characters
+                          "\*" (matches anything) and "?" (matches any char).
                           Character(s) matching to wildcard expression(s) can 
-                          be used in the resulting link with syntax %N, where N
-                          is the index of the match (starting from 1). In title
+                          be used in the resulting link with the syntax "%N", where N
+                          is the index of the match (starting from 1). In the title,
                           underscores are automatically converted to spaces.
   --listener <class>      A class for monitoring test execution. Gets 
-                          notifications e.g. when a test case starts and ends.
-  -W, --monitorwidth <chars>  Width of the monitor output. Default is 78.
-  -C, --monitorcolors <on|off|force>  Using ANSI colors in console. Normally colors
-                          work in unixes but not in Windows. Default is 'on'.
+                          notifications, for example,  when a test case starts and ends.
+  -W, --monitorwidth <chars>  The width of the monitor output. The default is 78.
+  -C, --monitorcolors <on|off|force>  Using ANSI colors in the console. Normally, colors
+                          work in UNIX-like operating systems, but not in Windows. The 
+                          default is "on".                          
                           'on'    - use colors in unixes but not in Windows
                           'off'   - never use colors
                           'force' - always use colors (also in Windows)
   -P, --pythonpath <path>   Additional locations (directories, ZIPs, JARs) where
                           to search test libraries from when they are imported.
                           Multiple paths can be given by separating them with a
-                          colon (':') or using this option several times. Given
+                          colon (:) or using this option several times. The given
                           path can also be a glob pattern matching multiple
-                          paths but then it normally must be escaped or quoted.
-  -E, --escape <what:with>   Escape characters which are problematic in console.
-                          'what' is the name of the character to escape and
-                          'with' is the string to escape it with. Note that
-                          all given arguments, incl. data sources, are escaped
-                          so escape characters ought to be selected carefully.
-                          Available escapes: amp (&), apos ('), at (@), bslash
+                          paths, but then it normally must be escaped or quoted.
+  -E, --escape <what:with>   Escape characters that are problematic in the console.
+                          "what" is the name of the character to escape and
+                          "with" is the string to escape it with. Note that
+                          all given arguments, including data sources, are escaped,
+                          so escape characters need to be selected carefully.
+                          The available escapes: amp (&), apos ('), at (@), bslash
                           (\), colon (:), comma (,), curly1 ({), curly2 (}),
                           dollar ($), exclam (!), gt (>), hash (#), lt (<),
                           paren1 ((), paren2 ()), percent (%), pipe (|), quest
                           (?), quot ("), semic (;), slash (/), space ( ),
-                          square1 ([), square2 (]), star (*)
-  -A, --argumentfile <path>   Text file to read more arguments from. File can have
-                          both options and data sources one per line. Contents
-                          do not need to be escaped but spaces in the beginning
+                          square1 ([), square2 (]), star (*).
+  -A, --argumentfile <path>   The text file to read more arguments from. The file can 
+                          have both options and data sources one per line. The contents
+                          need not be escaped, but spaces in the beginning
                           and end of lines are removed. Empty lines and lines
                           starting with a hash character (#) are ignored.
-  -h, --help              Print usage instructions.
-  --version               Print version information.
+  -h, --help              Prints usage instructions.
+  --version               Prints version information.
 
 Environment Variables:
 
-ROBOT_SYSLOG_FILE         Path to the syslog file. If not specified, or set to
-                          special value 'NONE', writing to syslog file is 
-                          disabled. Path must be absolute. 
-ROBOT_SYSLOG_LEVEL        Log level to use when writing to the syslog file.
-                          Available levels are the same as for  --loglevel
-                          option and the default is INFO.
+ROBOT_SYSLOG_FILE         The path to the syslog file. If not specified, or set to
+                          the special value "NONE", writing to syslog file is 
+                          disabled. The path must be absolute. 
+ROBOT_SYSLOG_LEVEL        The log level to use when writing to the syslog file.
+                          The available levels are the same as for the  --loglevel
+                          option. The default is INFO.
 

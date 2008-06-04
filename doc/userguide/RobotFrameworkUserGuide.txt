@@ -114,6 +114,8 @@ Appendices
    :local: 
 
 .. include:: Appendices/AvailableSettingsInTestData.txt
+.. include:: Appendices/RobotCommandLineOptions.txt
+.. include:: Appendices/RebotCommandLineOptions.txt
 .. include:: Appendices/SupportingTools.txt
 .. include:: Appendices/DocumentationFormatting.txt
 .. include:: Appendices/TimeFormat.txt

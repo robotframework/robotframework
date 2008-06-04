@@ -10,20 +10,20 @@ Options:
                           Underscores in the document are turned into spaces.
                           The document may also contain simple HTML formatting 
                           (for example, \*bold\*, _italic_ and http://url/).
-  -M, --metadata <name:value>  Sets metadata of the top-level test suite. The name is
-                          automatically capitalized and underscores converted
+  -M, --metadata <name:value>  Sets the metadata of the top-level test suite. The 
+                          name is automatically capitalized and underscores converted
                           to spaces. The value can contain the same HTML formatting as
                           --doc. 
   -G, --settag <tag>      Sets the given tag(s) to all executed test cases. 
-  -t, --test <name>       Select test cases by name. The name is case- and space-
-                          insensitive. It can also be a simple pattern where
+  -t, --test <name>       Selects test cases by name. The name is case- and space-
+                          insensitive. It can also be a simple pattern, where
                           "\*" matches anything and "?" matches any character.
-  -s, --suite <name>        Select test suites by name. When this option is used
+  -s, --suite <name>        Selects test suites by name. When this option is used
                           with --test, --include or --exclude, only test cases
                           in matching suites and also matching the other filtering
                           criteria are selected. 
-  -i, --include <tag>     Selects test cases by tag. Similarly as the name in --test
-                          tag, is case- and space-insensitive and can also be
+  -i, --include <tag>     Selects test cases by tag. Similarly as the name in --test,
+                          the tag is case- and space-insensitive and can also be
                           a simple pattern. To include only tests that have 
                           more than one tag, use "&" or "AND" between the tag names.
   -e, --exclude <tag>     Unselects test cases by tag. These tests are not
@@ -35,7 +35,7 @@ Options:
                           If no critical tags are set, all tags are critical. 
                           Tags can be given as a pattern, for example, with --test.
                           Resets possible critical tags set earlier.
-  -n, --noncritical <tag>  Tests with the given tag are not critical, even if they
+  -n, --noncritical <tag>  Tests that have the given tag are not critical, even if they
                           have a tag set with --critical. The tag can be a pattern.
                           Resets possible non-critical tags set earlier.
   -d, --outputdir <dir>   Defines where to create output files. The default is the
@@ -46,11 +46,11 @@ Options:
                           --log, --report and --summary, is relative to
                           --outputdir, unless given as an absolute path.
                           The default is "output.xml". 
-  -l, --log <file>        HTML log file. Can be disabled by giving a special
+  -l, --log <file>        The HTML log file. Can be disabled by giving a special
                           name "NONE". 
-  -r, --report <file>     HTML report file. Can be disabled with "NONE"
+  -r, --report <file>     The HTML report file. Can be disabled with "NONE"
                           similarly as --log. Default is "report.html".
-  -S, --summary <file>    HTML summary report. Not created unless this option
+  -S, --summary <file>    The HTML summary report. Not created unless this option
                           is specified. 
   -T, --timestampoutputs  When this option is used, timestamp in a format
                           "YYYYMMDD-hhmmss" is added to all generated output 
@@ -62,7 +62,7 @@ Options:
                           is "<Name Of The Suite> Test Log". Underscores in
                           the title are converted into spaces in all titles.
   --reporttitle <title>  The title for the generated test report. The default
-                          The title is "<Name Of The Suite> Test Report".
+                          title is "<Name Of The Suite> Test Report".
   --summarytitle <title>  The title for the generated summary report. The default
                           title is "<Name Of The Suite> Summary Report".
   --suitestatlevel <level>  Defines how many levels to show in the Statistics by Suite
