@@ -18,10 +18,10 @@ Basic syntax
 
 Test cases are constructed in test case tables from the available
 keywords. Keywords can be imported from `test libraries`_ or `resource
-files`_ or created in the `keyword table`__ of the test case file
+files`_ or created in the `keyword table`_ of the test case file
 itself.
 
-__ `user keywords`_
+.. _keyword table: `user keywords`_
 
 The first column in the test case table contains test case names. A
 test case starts from the row with something in this column and
@@ -30,12 +30,12 @@ an error to have something between the table headers and the first
 test.
 
 The second column normally has keyword names. An exception to this rule
-is `setting variables from keyword return values`__, when the second and
+is `setting variables from keyword return values`_, when the second and
 possibly also subsequent columns contain variable names and a keyword
 name is located after them. In either case, columns after the keyword name
 contain possible arguments to the specified keyword.
 
-__ `User keyword return values`_
+.. _setting variables from keyword return values: `User keyword return values`_
 
 .. table:: Example test cases
    :class: example
