@@ -28,16 +28,16 @@ the second column, but when setting variables from keyword return values they ar
 .. table:: User keyword examples
    :class: example
 
-   =======================  =================  ======================  =========== 
+   =======================  =================  =======================  =========== 
            Keyword               Action               Argument          Argument 
-   =======================  =================  ======================  ===========
-   Open Login Page          Open Browser       http://host/login.html  \
-   \                        Title Should Be    Login Page              \
-   \                        \                  \                       \
-   Title Should Start With  [Arguments]        ${expected}             \
-   \                        ${title} =         Get Title               \
-   \                        Should Start With  ${title}                ${expected}
-   =======================  =================  ======================  ===========
+   =======================  =================  =======================  ===========
+   Open Login Page          Open Browser       \http://host/login.html  \
+   \                        Title Should Be    Login Page               \
+   \                        \                  \                        \
+   Title Should Start With  [Arguments]        ${expected}              \
+   \                        ${title} =         Get Title                \
+   \                        Should Start With  ${title}                 ${expected}
+   =======================  =================  =======================  ===========
 
 Most user keywords take some arguments. This important functionality is used already in the 
 second example above, and it is explained in detail `later in this section`__ similarly
