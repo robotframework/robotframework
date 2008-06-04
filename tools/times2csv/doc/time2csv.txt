@@ -8,7 +8,7 @@ Usage
 
   times2csv.py input-xml [output-csv]
 
-This script reads start, end, and elapsed times from all suites, tests and 
+This script reads the start, end, and elapsed times from all suites, tests and 
 keywords in the given Robot output file and writes them into a file in the
 comma-separated-values (CSV) format. If the CSV output file is not given, its 
 name is obtained from the input file by replacing the :path:`.xml` extension with :path:`.csv`.

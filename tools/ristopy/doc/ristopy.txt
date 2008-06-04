@@ -24,10 +24,10 @@ paths to input files. Alternatively, names can be obtained from the metadata of 
 top level test suite (for more information, see Robot Framework's :cli:`--metadata` option).
 
 Graphs are saved to a file specified with the :cli:`--output` option, and the output
-format is determined by from the file extension. The supported formats depend on the installed
+format is determined by the file extension. The supported formats depend on the installed
 Matplotlib back-ends, but at least PNG ought to be always available. If the output
 file is omitted, the graph is opened into Matplotlib's image viewer (which
-requires Matplotlib to be installed with some graphical front-end).
+requires Matplotlib to be installed with some graphical front end).
 
 It is possible to draw several graphs with different options at once. This is
 done by separating different option groups with three or more hyphens (:cli:`---`).
@@ -98,7 +98,7 @@ Options:
 
 --marker size    
 
-    Also -m. The size of marker used with tag graphs. The default is 5.
+    Also -m. The size of the marker used with tag graphs. The default is 5.
 
 --xticks
 
@@ -108,8 +108,8 @@ Options:
 --namemeta
 
     Also -n. Takes name as argument. Specifies the name of
-    the metadata of the top level test suite where to get name of
-    the test round. By default names are got from paths to input
+    the metadata of the top level test suite where to get the name of
+    the test round. By default, names are got from the paths to input
     files.
 
 .. TODO: Change the formatting so that the options below look OK in the HTML file.
@@ -176,8 +176,8 @@ The Matplotlib tool is used for plotting graphs, and it needs to be
 installed separately. Matplotlib has its own preconditions, and at
 least NumPy needs to be installed. The default Matplotlib installation
 should always support at least PNG, but if more output formats are
-needed, some extra back-ends may need to be installed. Additionally,
-you may need to install graphical front-ends to be able to use
+needed, some extra back ends may need to be installed. Additionally,
+you may need to install graphical front ends to be able to use
 Matplotlib's own viewer for opening graphs without saving them to a
 file.
 
@@ -240,7 +240,7 @@ Using Matplotlib's Viewer
 `````````````````````````
  
 This time there are more input files and the image has been opened
-into Matplotlib's viewer (that is, the :cli:`--output` option has not been
+in Matplotlib's viewer (that is, the :cli:`--output` option has not been
 used). The options used to create this example are the ones below::
 
       -CAP -t d1_AND_d2 -t t1 -t sub3 -i Yet_Another_Example -x 20 -w 1000 -n Name
@@ -254,7 +254,7 @@ used). The options used to create this example are the ones below::
 More Realistic Examples
 '''''''''''''''''''''''
 
-These examples are generated from real test outputs using the following argument file: 
+These examples are generated from actual test outputs using the following argument file: 
 
 ::
 

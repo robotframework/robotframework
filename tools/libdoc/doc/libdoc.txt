@@ -5,8 +5,7 @@ tools.
 
 Usage
 '''''
-
-.. TODO: Change the formatting of the options below so that in the HTML file it looks the same as in CWiki. 
+.. TODO: Check that in HTML, the layout of the text below is the same as in CWiki.
  
 The usage printed with :cli:`python libdoc.py --help` should look something like below::
 
@@ -32,9 +31,9 @@ The usage printed with :cli:`python libdoc.py --help` should look something like
 
     -o --output path		Where to write the generated documentation. If the path is a directory, the documentation is generated there using the name "." with an index after the "" part, if a file with that name already exists. If the given path points to a file, this path is used as-is and possible existing file is overwritten. The default value for the path is the directory where the script is executed from.
 
-    -P --pythonpath path *  Additional path(s) to insert into PYTHONPATH.
+    -P --pythonpath path *      Additional path(s) to insert into PYTHONPATH.
 
-    -h -? --help            Print this help.
+    -h -? --help                Print this help.
 
     It is possible to specify a Python test library by giving either the path to 
     the source or only the library name. If the library name is used, it must be in 
