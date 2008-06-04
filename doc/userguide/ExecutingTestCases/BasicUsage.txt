@@ -16,27 +16,30 @@ Different start-up scripts
 
 Test execution is normally started with :prog:`pybot` or :prog:`jybot` commands, which are otherwise identical but the former uses Python and latter Jython. Which one to use depends on the needed test libraries. Some libraries use modules or syntax available only on Python, others use Java based tools that require Jython, and some work on both. If you can use either :prog:`pybot` or :prog:`jybot`, the former is recommended as Python is somewhat faster than Jython.
 
-Another possibility for starting the test execution is running the :prog:`runner.py` script under the installed__ :code:`robot` module directly. This method allows selecting the interpreter and setting command line options to it freely. The most common use case is altering options controlling JVM maximum memory consumptions.
+Another possibility for starting the test execution is running the :prog:`runner.py` script under the installed__ :code:`robot` module directly. This method allows selecting the interpreter and setting command line options to it freely. The most common use case is altering options controlling JVM maximum memory consumption.
 
 __ `Where files are installed`_
 
-Regardless the runner script, path or paths to the test data to be executed is given as an argument, and it is possible to use different command line options to somehow alter the execution. 
+Regardless the runner script, path or paths to the test data to be executed is given as an argument. Additionally different command line options can be used to somehow alter the test execution or generated outputs.
 
 
 Specifying test data to be executed
 '''''''''''''''''''''''''''''''''''
 
-Robot Framework test cases are create in files__ and directories__, and they are executed by giving the path to the file or directory in question to the selected start-up script. The path can be absolute or, more commonly, relative to the directory where tests are executed from. The given file or directory forms the top-level test suite, which gets its name, unless overridden with :setting:`--name` option, from the file or directory name. Different execution possibilities are illustrated by examples below. Notice that in these examples, as well as in other examples in this section, the runner is :prog:`pybot` but it could be replaced with :prog:`jybot` or a custom runner script. 
+Robot Framework test cases are created in files__ and directories__, and they are executed by giving the path to the file or directory in question to the selected start-up script. The path can be absolute or, more commonly, relative to the directory where tests are executed from. The given file or directory creates the top-level test suite, which gets its name, unless overridden with :setting:`--name` option, from the `file or directory name`__. Different execution possibilities are illustrated by examples below. Notice that in these examples, as well as in other examples in this section, only the :prog:`pybot` start-up script is used, but :prog:`jybot` or a custom runner script could be used similarly.
 
 __ `Test case files`_
 __ `Test suite directories`_
+__ `Test suite name and documentation`_
+
+::
 
    pybot test_cases.html
    pybot path/to/my_tests/
    pybot /opt/robot/tests.html   
    pybot c:\\robot\\tests.html
    
-It is also possible to give paths to multiple test case files or directories at once separated with spaces. In this case Robot Framework creates the top-level test suite automatically, and specified files and directories become its child suites. The name of the created test suite is got from child suite names so that they are catenated together with an ampersand (&) and spaces. For example the name of the top-level suite in the first example below is :name:`My Tests & Your Tests`. These automatically created names are seldom very good and they can easily get quite long. In most cases it is thus better to use :setting:`--name` option for overriding it like in the second example below.
+It is also possible to give paths to multiple test case files or directories at once, separated with spaces. In this case Robot Framework creates the top-level test suite automatically, and specified files and directories become its child test suites. The name of the created test suite is got from child suite names so that they are catenated together with an ampersand (&) and spaces. For example the name of the top-level suite in the first example below is :name:`My Tests & Your Tests`. These automatically created names are seldom very good and they can easily get quite long. In most cases it is thus better to use :setting:`--name` option for overriding it like in the second example below::
 
    pybot my_tests.html your_tests.html
    pybot --name Example path/to/tests/pattern_*.html
@@ -45,20 +48,43 @@ It is also possible to give paths to multiple test case files or directories at 
 Using command line options
 ''''''''''''''''''''''''''
 
-Robot Framework provides a number of command line options that can be
-used to control how test cases are executed. The syntax for using them is explained in this section, and what options actually exist and how they can be used is discussed elsewhere in this chapter.
+Robot Framework provides a number of command line options that can be used to control how test cases are executed. The syntax for using them is explained in this section, and what options actually exist and how they can be used is discussed elsewhere in this chapter.
 
-Options always have a long name like :setting:`--name`, and most often needed options also have a short name like :setting:`-N`. In addition to that, long options can be shortened as long as they are unique. For example :cli:`--logle DEBUG` works, while :cli:`--lo log.html` does not, because the former matches only :setting:`--loglevel` but the latter matches multiple options. Short and shortened options are handy when executing test cases manually, but long options are recommended in start-up script since they are easier to understand. Finally, long option format is case-insensitive. For example :setting:`--SuiteStatLevel` is equivalent to, but easier to read than, :setting:`--suitestatlevel`.
+Options always have a long name like :setting:`--name`, and most frequently needed options also have a short name like :setting:`-N`. In addition to that, long options can be shortened as long as they are unique. For example :cli:`--logle DEBUG` works, while :cli:`--lo log.html` does not, because the former matches only :setting:`--loglevel` but the latter matches multiple options. Short and shortened options are handy when executing test cases manually, but long options are recommended in start-up script since they are easier to understand. Finally, long option format is case-insensitive. For example :setting:`--SuiteStatLevel` is equivalent to, but easier to read than, :setting:`--suitestatlevel`.
 
-Most of the options require a value, which must be given after the option name. Both short and long options accept the value so that it is separated from the option name with a space like :cli:`--include tag` or :cli:`-i tag`. With long options the separator can also be the equals sign like :cli:`--include=tag`, and with short option the separator can be omitted like :cli:`-itag`.
+Most of the options require a value, which is given after the option name. Both short and long options accept the value so that it is separated from the option name with a space like :cli:`--include tag` or :cli:`-i tag`. With long options the separator can also be the equals sign like :cli:`--include=tag`, and with short option the separator can be omitted like :cli:`-itag`.
 
-Some options can be specified multiple times. For example :cli:`--variable VAR1:value --variable VAR2:another` sets two variables. If other options are given multiple times, the last given value takes the effect. 
+Some options can be specified multiple times. For example :cli:`--variable VAR1:value --variable VAR2:another` sets two variables. If those options that take only one value are used multiple times, the last given value takes the effect. 
 
 Many of the options take arguments as *simple patterns*. This means that :code:`*` and :code:`?` can be used as special characters so that the former matches any string (even an empty string) and the latter matches any single character. For example :cli:`--include prefix-*` would match all tags starting with :code:`prefix-` and :cli:`--include a???` would match any four characters long tag starting with :code:`a`.
 
+Generated outputs
+'''''''''''''''''
 
-Combining and generating outputs
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+The most visible output from test execution is the output displayed in the command line. All executed test suites and test cases as well as their statuses are shown there in real time. Example below shows the output from executing a simple test suite with only two test cases::
+
+   ==============================================================================
+   Example test suite
+   ==============================================================================
+   First test :: Possible documentation is here                          | PASS |
+   ------------------------------------------------------------------------------
+   Second test                                                           | FAIL |
+   Error message is displayed here
+   ==============================================================================
+   Example test suite                                                    | FAIL |
+   2 critical tests, 1 passed, 1 failed
+   2 tests total, 1 passed, 1 failed
+   ==============================================================================
+   Output:  /path/to/output.xml
+   Report:  /path/to/report.html
+   Log:     /path/to/log.html
+
+
+The command line output is very limited, and separate output files are normally needed for investigating the test execution if there are any problems. Like the example above shows, three output files are generated by default. The first one is in XML format and it contains all information about test execution. The second is a higher level report and the third is a more detailed log fie, both in HTML format and generated from the XML output. These files and other possible output files are discussed in more detail in `Different outputs`_ section. 
+
+
+Post-processing outputs
+~~~~~~~~~~~~~~~~~~~~~~~
 
 TODO.
 
@@ -74,7 +100,7 @@ Getting help on command line
 
 Both when executing test cases with :prog:`pybot` or :prog:`jybot` and when post-processing reports with :prog:`rebot`, it is possible to get command line help with option :setting:`--help` and its short version :setting:`-h`. These help texts have a short general overview and briefly explain available command line options. 
 
-All start-up scripts also support getting the version information with option :setting:`--version`. The version information also contains the version of the interpreter and operating system type. 
+All start-up scripts also support getting the version information with option :setting:`--version`. The version information also contains the version of the used interpreter and the operating system type. 
 
 
 Handling complicated options
@@ -85,7 +111,7 @@ Many special characters are complicated to use on the command line, and addition
 Escaping options
 ''''''''''''''''
 
-Robot Frameworks command line escaping mechanism works so that problematic characters are escaped with freely selected text. The command line option to use is :setting:`--escape` (short version :setting:`-E`) which takes argument in format :setting:`what:with`, where :setting:`what` is the name of the character to escape and :setting:`what` is the string to escape it with. Characters that can be escaped are listed in the table below.
+Robot Frameworks command line escaping mechanism works so that problematic characters are escaped with freely selected text. The command line option to use is :setting:`--escape`, short version :setting:`-E`, which takes argument in format :setting:`what:with`, where :setting:`what` is the name of the character to escape and :setting:`what` is the string to escape it with. Characters that can be escaped are listed in the table below.
 
 .. table:: Available escapes
    :class: tabular
@@ -96,7 +122,7 @@ Robot Frameworks command line escaping mechanism works so that problematic chara
    &          amp            (          paren1
    '          apos           )          paren2
    @          at             %          percent
-   \\         blash          |          pipe
+   \\         blash          \|         pipe
    :          colon          ?          quest
    ,          comma          "          quot
    {          curly1         ;          semic
@@ -121,7 +147,7 @@ Note that all given command line arguments, including paths to test data, are es
 Using argument files
 ''''''''''''''''''''
 
-Another possibility to handle complicated arguments is placing them into argument files, and using :setting:`--argumentfile` (short option :setting:`-A`) to specify path to it along with possible other options. These files can contain both command line options and paths to test data, one per line. Argument files can contain any ASCII characters and they do not need to be escaped, but spaces in the beginning and end of lines are ignored. Additionally empty lines and lines starting with a hash character (#) are ignored.
+Another possibility to handle complicated arguments is placing them into a argument file, and using :setting:`--argumentfile` (short option :setting:`-A`) to specify path to it along with possible other options. These files can contain both command line options and paths to test data, one per line. Argument files can contain any ASCII characters and they do not need to be escaped, but spaces in the beginning and end of lines are ignored. Additionally empty lines and lines starting with a hash character (#) are ignored.
 
 An example argument file::
 
