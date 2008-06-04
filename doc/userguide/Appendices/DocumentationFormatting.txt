@@ -24,7 +24,7 @@ Besides the formatting explained here, the documentation used for test
 cases and suites is subject to general parsing rules of the Robot
 Framework test data. For example, dividing text into lines and
 paragraphs requires having literal new line character sequence (:code:`\\n`),
-as illustrated by the example below.
+as illustrated in the example below.
 
 .. table:: Dividing text into lines and paragraphs
    :class: example
@@ -38,12 +38,12 @@ as illustrated by the example below.
    \	     Second paragraph.  
    ========  =================
 
-Furthermore, it is possible to divide documentation into multiple
-columns, and different columns are catenated together with
-spaces. For example, the two documentations in the example below are
+Furthermore, it is possible to divide documentation into several
+columns, and the columns are catenated together with spaces.
+For example, the two documentations in the example below are
 totally equivalent.
 
-.. table:: Dividing text into multiple columns
+.. table:: Dividing text into several columns
    :class: example
 
    ========  =============  ========   
@@ -64,11 +64,11 @@ example :code:`\_italic_`. An asterisk or an underscore alone or in
 the middle of a word does not start bold or italic, but punctuation
 marks before them, and after the closing asterisk or underscore, are
 allowed. Both bold and italic are limited for formatting text on one
-line, and formatting spanning multiple lines must be explicitly
+line, and formatting spanning several lines must be explicitly
 restarted and stopped on every line.
 
 It is also possible to have bold italic with the syntax :code:`\_*bold
-italic*_`. Note that in this syntax underscores must always be outside
+italic*_`. Note that in this syntax, underscores must always be outside
 asterisks.
 
 .. table:: Formatting text to bold and italic typeface
@@ -97,7 +97,7 @@ Tables
 ~~~~~~ 
 
 Tables are created using the pipe character with spaces around it ( | ) as
-a cell boundary and newline (:code:`\\n`) as row separator. The table
+a cell boundary and new line (:code:`\\n`) as a row separator. The table
 always has a thin border and the text is left-aligned. Formatting using
 bold and italic works also in table cells.
 

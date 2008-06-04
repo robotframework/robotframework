@@ -9,7 +9,7 @@ keywords :kw:`Sleep` and :kw:`Wait Until Keyword Succeeds`.
 It is possible to give the time as a number (not necessarily an
 integer), or as a string that is converted to a number and then
 considered to be seconds (for example, 10, 0.5, or 42). The given time
-must be in the format "2 days 3 hours 4 minutest 5 seconds 6
+must be in the format "2 days 3 hours 4 minutes 5 seconds 6
 milliseconds" following the rules listed below:
     
     - Digits with a zero value can be ignored (for example, "1 minute"
