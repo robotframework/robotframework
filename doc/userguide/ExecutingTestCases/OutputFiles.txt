@@ -45,8 +45,8 @@ Default name for log file is log.html.
 
    Example log file
 
-Summary
-'''''''
+Summary report
+''''''''''''''
 
 The summary report is even more high level overview of the executed tests.
 It does not contain the test details by suite table, and it is also not 
@@ -165,7 +165,7 @@ So in this case, following files will be created:
 Setting titles 
 ~~~~~~~~~~~~~~
 
-Titles for `Log`_, `Report`_ and `Summary`_ files can be given from command 
+Titles for `Log`_, `Report`_ and `Summary report`_ files can be given from command 
 line. The default title is generated from the name(s) of the input file(s).
 
 

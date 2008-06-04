@@ -160,7 +160,7 @@ documentation`_.
 Both the name and documentation of the top-level test suite can be
 overridden in test execution. This can be done with the command line
 options :setting:`--name` and :setting:`--doc`, respectively, as
-explained in section `Setting metadata for the executed test suite`_.
+explained in section `Setting metadata`_.
 
 
 Free test suite metadata
@@ -195,7 +195,7 @@ __ `Dividing test data to multiple rows`_
 
 For top-level test suites, it is possible to set metadata also with the 
 :setting:`--metadata` command line option. This is discussed in more
-detail in section `Setting metadata for the executed test suite`_.
+detail in section `Setting metadata`_.
 
 
 Suite setup and teardown

@@ -75,8 +75,8 @@ Creating test data
 .. _Keyword tables: `Creating user keywords`_
 .. _Keyword: `User keyword syntax`
 .. _test case tables: `Test case syntax`_
-.. _--name: `Setting metadata for the executed test suite`_
-.. _--doc: `Setting metadata for the executed test suite`_
+.. _--name: `Setting metadata`_
+.. _--doc: `Setting metadata`_
 .. _[Documentation]: `Test suite name and documentation`_
 .. _return values from keywords: `User keyword return values`_
 .. _BuiltIn: `Standard libraries`_
@@ -162,12 +162,12 @@ Appendices
 .. _Robot IDE: `Test data editing tool (Robot IDE)`_
 .. _syslog: TODO
 .. _rebot: TODO
-.. _--include: `Filtering test cases`_
-.. _--exclude: `Filtering test cases`_
+.. _--include: `Selecting test cases`_
+.. _--exclude: `Selecting test cases`_
 .. _--escape: `Handling complicated options`_
 .. _--argumentfile: `Handling complicated options`_
-.. _--output: `Configuring outputs`_
-.. _--summary: `Configuring outputs`_
+.. _--output: `Setting output files`_
+.. _--summary: `Setting output files`_
 .. _--splitoutput: `Splitting outputs`_
 .. _built-in keyword: `BuiltIn library`_
 .. _built-in keywords: `BuiltIn library`_
