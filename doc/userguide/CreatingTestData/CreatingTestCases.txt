@@ -1,7 +1,7 @@
 Creating test cases
 -------------------
 
-This section explains the overall test case syntax. Organizing test
+This section describes the overall test case syntax. Organizing test
 cases into `test suites`_ using `test case files`_ and `test suite
 directories`_ is discussed in the next section.
 
@@ -18,7 +18,7 @@ Basic syntax
 
 Test cases are constructed in test case tables from the available
 keywords. Keywords can be imported from `test libraries`_ or `resource
-files`_ or created in the `keyword table`_ of the test case file
+files`_, or created in the `keyword table`_ of the test case file
 itself.
 
 .. _keyword table: `user keywords`_
@@ -31,7 +31,7 @@ test.
 
 The second column normally has keyword names. An exception to this rule
 is `setting variables from keyword return values`_, when the second and
-possibly also subsequent columns contain variable names and a keyword
+possibly also the subsequent columns contain variable names and a keyword
 name is located after them. In either case, columns after the keyword name
 contain possible arguments to the specified keyword.
 
@@ -60,7 +60,7 @@ Workflow tests vs. data-driven tests
 
 In general, there are two kinds of test cases. So called *workflow*
 tests, such as the :tc:`Valid Login` test above, are constructed from
-several keywords. Their normal structure is that the first the system is
+several keywords. Their normal structure is that first the system is
 taken into the initial state (:kw:`Open Login Page`), then something is
 done to the system (:kw:`Input Name`, :kw:`Input Password`,
 :kw:`Submit Credentials`), and finally it is verified that the system
@@ -97,7 +97,7 @@ demonstrate.
    | And Password      | Credentials Should Fail |         |         |
    +-------------------+-------------------------+---------+---------+
 
-Note that in the example above column headers have been changed to
+Note that in the example above, column headers have been changed to
 match the data. This is possible, because on the first row other cells
 except the first one `are ignored`__. Additionally, backslash is used
 for escaping_ empty cells at the end of the table.
@@ -126,7 +126,8 @@ below and explained later in this section.
    respectively. 
 
 `[Timeout]`:setting:
-   Used for setting a `test case timeout`_. Timeouts_ are discussed in their own section.
+   Used for setting a `test case timeout`_. Timeouts_ are discussed in
+   their own section.
 
 
 .. table:: Example test case with settings
@@ -145,19 +146,20 @@ Test-case-related settings in the Setting table
 '''''''''''''''''''''''''''''''''''''''''''''''
 
 The Setting table can have the following test-case-related
-settings. These settings are mainly default values for test case
-specific settings listed earlier.
+settings. These settings are mainly default values for the
+test-case-specific settings listed earlier.
 
 `Force Tags`:setting:, `Default Tags`:setting:
-   Forced and default values for tags_.
+   The forced and default values for tags_.
 
 `Test Setup`:setting:, `Test Teardown`:setting:
-   Default values for `test setup and teardown`_. Have also synonyms 
+   The default values for `test setup and teardown`_. Have also synonyms 
    :setting:`Test Precondition` and :setting:`Test Postcondition`,
    respectively.  
 
 `Test Timeout`:setting:
-   Default value for `test case timeout`_. Timeouts_ are discussed in their own section.
+   The dfault value for `test case timeout`_. Timeouts_ are discussed in
+   their own section.
 
 
 Test case name and documentation
@@ -210,7 +212,7 @@ __ `Dividing test data to multiple rows`_
 It is important that test cases have clear and descriptive names, and
 in that case they normally do not need any documentation. If the logic
 of the test case needs documenting, it is often a sign that keywords
-in the test case need better names and they are to be enhanced
+in the test case need better names and they are to be enhanced,
 instead of adding extra documentation. Finally, metadata, such as the
 environment and user information in the last example above, is often
 better specified using tags_. 
@@ -227,8 +229,8 @@ least for the following purposes:
   data), so they provide metadata about the executed test cases.
 - Statistics about test cases (total, passed, failed)
   are automatically collected per tag.
-- With tags, it is possible to include or exclude test cases to be executed.
-- With tags, it is possible to specify, which test cases are critical.
+- With tags, you can include or exclude test cases to be executed.
+- With tags, you can specify which test cases are critical.
 
 .. TODO: links to suitable sections in executing test chapter
 
@@ -236,19 +238,19 @@ In this section it is only explained how to set tags for test
 cases, and different ways to do it are listed below. These
 approaches can naturally be used together.
 
-`Force Tags`:setting: in the setting table 
+`Force Tags`:setting: in the Setting table 
    All test cases in a test case file with this setting always get
    specified tags. If it is used in the `test suite initialization file`,
    all test cases in sub test suites get these tags.
 
-`Default Tags`:setting: in the setting table
-   Test cases not having their own :setting:`[Tags]` setting get these
-   tags. If it used in the test suite initialization file, it is
-   interpreted as a default value for :setting:`Default Tags` in lower
-   level test suites.
+`Default Tags`:setting: in the Setting table
+   Test cases that do not have a :setting:`[Tags]` setting of their own
+   get these tags. If it used in the test suite initialization file,
+   it is interpreted as a default value for :setting:`Default Tags` in
+   lower-level test suites.
 
-`[Tags]`:setting: in the test case table
-   Test case always gets these tags. Additionally, it does not get the
+`[Tags]`:setting: in the Test Case table
+   A test case always gets these tags. Additionally, it does not get the
    possible tags specified with :setting:`Default Tags`.
 
 `--settag`:setting: command line option
@@ -257,7 +259,7 @@ approaches can naturally be used together.
    Framework version 1.8.3 and newer.
 
 
-Tags are free text but they are normalized so that they are converted
+Tags are free text, but they are normalized so that they are converted
 to lowercase and all spaces are removed. If a test case gets the same tag
 several times, other occurrences than the first one are removed. Tags
 can be created using variables, assuming that those variables exist.
@@ -320,11 +322,11 @@ Test setup and teardown
 Robot Framework has similar test setup and teardown functions as many
 other test automation frameworks. In short, a test setup is something
 that is executed before a test case and a test teardown is executed
-after a test case. What makes teardown special is that it is executed also when
-a test case fails, so it can be used for clean-up activities that must
-be done regardless of the test case status. Both setup and teardown can
-also easily be specified for all test cases in a test suite, so using
-them avoids repetition.
+after a test case. What makes a test teardown special is that it is
+executed also when a test case fails, so it can be used for clean-up
+activities that must be done regardless of the test case status. Both
+a setup and a teardown can also easily be specified for all test cases
+in a test suite, so using them avoids repetition.
 
 In Robot Framework, a test setup or teardown is just a normal keyword
 with possible arguments. It can either be a keyword from a library or
@@ -376,8 +378,8 @@ setup or teardown.
   
 
 Often when creating use-case-like test cases, the terms *precondition*
-and *postcondition* are preferred over the setup and teardown
-terms. Robot Framework supports also this terminology, so that a
+and *postcondition* are preferred over the terms setup and
+teardown. Robot Framework supports also this terminology, so that a
 precondition is a synonym to a setup and a postcondition to a
 teardown.
 
@@ -392,13 +394,13 @@ teardown.
    ==============  ===================
 
 The name of the keyword to be executed as a setup or a teardown can be a
-variable. This makes it easy to have different setups or teardowns in
+variable. This facilitates having different setups or teardowns in
 different environments by giving the keyword name as a variable from
 the command line.
 
-.. Note:: Also `test suites can have their own setup and
-          teardown`__. A suite setup is executed before any test cases
-          or sub test suites in that test suite, and similarly a suite
-          teardown is executed after them.
+.. Note:: `Test suites can have a setup and teardown of their
+           own`__. A suite setup is executed before any test cases or sub test
+           suites in that test suite, and similarly a suite teardown is
+           executed after them.
 
 __  `Suite setup and teardown`_
