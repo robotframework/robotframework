@@ -1,11 +1,11 @@
 Using test libraries
 --------------------
 
-Test libraries contain those lowest level keywords, often called
+Test libraries contain those lowest-level keywords, often called
 *library keywords*, which actually interact with the system under
 test. All test cases always use keywords from some library, often
 through higher-level `user keywords`_. This section explains how to
-take test libraries into use and how to use keywords they
+take test libraries into use and how to use the keywords they
 provide. `Creating test libraries`_ is described in a separate
 section.
 
@@ -18,7 +18,7 @@ section.
 Taking test libraries into use
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Instructions for taking test libraries into use can be found in the
+Instructions for taking test libraries into use are given in the
 subsections below.
 
 Using the Library setting
@@ -31,7 +31,7 @@ of the module or class implementing the library and must be exactly
 correct), but any spaces in it are ignored. With Python libraries in
 modules or Java libraries in packages, the full name including the
 module or package name must be used. In those cases where the library
-needs arguments, they are listed in columns after the library
+needs arguments, they are listed in the columns after the library
 name. Both the library name and arguments can be set using variables.
 
 .. table:: Importing test libraries
@@ -57,7 +57,7 @@ Using the Import Library keyword
 ''''''''''''''''''''''''''''''''
 
 Another possibility to take a test library into use is using the keyword
-:kw:`Import Library` from `BuiltIn library`_. This keyword takes the library
+:kw:`Import Library` from the `BuiltIn library`_. This keyword takes the library
 name and possible arguments similarly as the :setting:`Library`
 setting. Keywords from the imported library are available in the test
 suite where the :kw:`Import Library` keyword was used. This approach is
@@ -83,7 +83,7 @@ Robot Framework can import a library only if the library class or
 module can be found from the library search path. Basically, this
 means that the library code and all its possible dependencies must be
 in :code:`PYTHONPATH` or, when running tests on Jython, in
-:code:`CLASSPATH`. Setting library search path is explained in
+:code:`CLASSPATH`. Setting the library search path is explained in
 `dedicated section`__, and well-developed libraries either do that
 automatically or have clear instructions on how to do it.
 
@@ -94,22 +94,22 @@ Setting a custom name to a test library
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The library name is shown in test logs before keyword names and it
-also must be used when `handling keywords with the same name`_. The
+must also be used when `handling keywords with the same name`_. The
 library name is got normally from the module or class name
 implementing it, but there are some situations where changing it is
 desirable:
 
-1. There is a need to import the same library several times with
-   different arguments. This is not possible otherwise.
+- There is a need to import the same library several times with
+  different arguments. This is not possible otherwise.
 
-2. The library name is inconveniently long. This can happen, for
-   example, if a Java library has a long package name.
+- The library name is inconveniently long. This can happen, for
+  example, if a Java library has a long package name.
 
-3. You want to use variables to import different libraries in
-   different environments, but refer to them with the same name.
+- You want to use variables to import different libraries in
+  different environments, but refer to them with the same name.
 
-4. The library name is misleading or otherwise poor. In this case,
-   changing the actual name is a better solution.
+- The library name is misleading or otherwise poor. In this case,
+  changing the actual name is a better solution.
 
 
 The basic syntax for specifying the new name is having the text
@@ -132,9 +132,9 @@ logs and must be used in the test data when using keywords' full name
 Possible arguments to the library are placed into cells between the
 original library name and the :code:`WITH NAME` text. The following example
 illustrates how the same library can be imported several times with
-different arguments. 
+different arguments: 
 
-.. table:: Importing same library several times with a different name
+.. table:: Importing the same library several times with a different name
    :class: example
 
    =========  ===========  =============  =======  =========  =========
@@ -174,7 +174,7 @@ standard libraries:
   - `Screenshot library`_
 
 The BuiltIn library is special, because it is taken into use
-automatically and its keywords are thus always available. Other
+automatically and thus its keywords are always available. Other
 standard libraries need to be imported in the same way as any other
 libraries, but there is no need to install them. Additionally, they
 work when running tests both with Python and Jython (with the
@@ -201,43 +201,43 @@ To Integer`) and for various other purposes (for example, :kw:`Log` and
 :kw:`Sleep`).
 
 The names of the keywords in the BuiltIn library have been renamed for
-Robot 1.8. All the old keywords still work, but the long names (the
+Robot Framework version 1.8. All the old keywords still work, but the long names (the
 names visible in log files) of the keywords that are deprecated begin
 with :kw:`DeprecatedBuiltIn.` (for example, :kw:`DeprecartedBuiltIn.Equals`).
 
-For more information, see `BuiltIn library documentation`_.
+For more information, see the `BuiltIn library documentation`_.
 
 
 OperatingSystem library
 '''''''''''''''''''''''
 
-The OperatingSystem library enables various os-related tasks to be
+The OperatingSystem library enables various operating-system-related tasks to be
 performed in the system running Robot Framework. It can, among other
 things, execute commands (for example, :kw:`Run`) and check whether
 files exist or not (for example, :kw:`File Should Exist`). The idea of
-the library is to wrap all relevant functions from standard Python
+the library is to wrap all relevant functions from the standard Python
 modules :code:`os`, :code:`os.path` and :code:`shutil`, but other
 related functions can also be added.
 
 The names of the keywords in the OperatingSystem library have been
-renamed for Robot 1.8. All the old keywords still work, but the long
+renamed for Robot Framework version 1.8. All the old keywords still work, but the long
 names (names visible in log files) of the keywords that are deprecated
-begin with :kw:`DeprecatedOperatingSystem.` (for example
+begin with :kw:`DeprecatedOperatingSystem.` (for example,
 :kw:`DeprecartedOperatingSystem.Fail Unless File Empty`).
 
-For more information, see `OperatingSystem library documentation`_.
+For more information, see the `OperatingSystem library documentation`_.
 
 
 Telnet library
 ''''''''''''''
 
-The Telnet library enables testing done over a Telnet connection. It
+The Telnet library enables testing over a Telnet connection. It
 has functions for logging into a Telnet server, running commands on
 the server and returning the output. The Telnet library extends
 Python's own :code:`telnetlib` module and it supports several
 simultaneous connections.
 
-For more information, see `Telnet library documentation`_.
+For more information, see the `Telnet library documentation`_.
 
 
 Collections library
@@ -252,7 +252,7 @@ dictionaries (for example, :kw:`Append To List`), and checking the
 equality of lists and dictionaries (for example, :kw:`Dictionaries
 Should Be Equal`).
 
-For more information, see `Collections library documentation`_.
+For more information, see the `Collections library documentation`_.
 
 .. _Python Library Reference: http://docs.python.org/lib/lib.html
 
@@ -261,10 +261,10 @@ Screenshot library
 ''''''''''''''''''
 
 The Screenshot library provides a way to capture and store screenshots of the
-whole desktop. This library is implemented Java AWT APIs, so it can be used
+whole desktop. This library is implemented with Java AWT APIs, so it can be used
 only when running Robot Framework with Jython.
 
-For more information, see `Screenshot library documentation`_.
+For more information, see the `Screenshot library documentation`_.
 
 
 
@@ -281,7 +281,7 @@ and most teams have also some custom libraries only for themselves.
 .. TODO: should be list libs we provide?
 
 Different external libraries can have a totally different mechanism
-for installation and taking into use. Quite often they also require
+for installing and introducing them. Quite often they also require
 some other dependencies to be installed separately. All libraries
-should have clear instructions on this and preferably make the
-installation automatic.
+should have clear instructions on this and preferably automate the
+installation.
