@@ -1,7 +1,7 @@
 Installation and uninstallation
 -------------------------------
 
-There are two ways to install Robot Framework.
+There are two ways to install Robot Framework:
 
 
 `Installing from the source`_

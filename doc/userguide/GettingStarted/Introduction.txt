@@ -19,7 +19,7 @@ Why Robot Framework?
 - Provides ability to create reusable `higher-level
   keywords`_ from the existing keywords.
 - Has very good reports and logs in HTML format.
-- Is platform and application-independent.
+- Is platform- and application-independent.
 - Can natively use both Python and Java test tools.
 - Provides a simple `library API`_ for creating customized test libraries for wrapping 
   existing tools or your own interfaces.
@@ -29,10 +29,10 @@ Why Robot Framework?
   several diverse interfaces.
 - Provides existing test libraries for web testing, Java GUI testing, running
   processes, Telnet, SSH, and so on.
-- Has built-in support for variables_, especially handy for testing in different
+- Has built-in support for variables_, practical particularly for testing in different
   environments. 
-- Provides tagging to categorize and select test cases to execute, provide metadata,
-  generate statistics, and so on.
+- Provides tagging to categorize and select the test cases to be executed, to provide metadata,
+  to generate statistics, and so on.
 - Enables easy integration with source control: `test suites`_ are just files and
   directories that can be versioned with the production code.
 - Provides test-case and test-suite-level setup and teardown.
