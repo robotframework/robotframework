@@ -5,8 +5,8 @@ An easily executable demonstration test suite for Robot Framework
 using SeleniumLibrary is now available. It contains a simple
 standalone HTTP server and an application that is used as a system
 under test. The actual test case files and scripts for running the
-demo in different systems are also provided. You can see a screenshot
-of Selenium working in the figures below:
+demonstration in different systems are also provided. You can see a 
+screenshot of Selenium working in the figures below:
 
 .. figure:: demo_out.png
    :width: 700
