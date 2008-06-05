@@ -45,13 +45,13 @@ The use of variables is recommended in the following cases:
   variable and give that as an argument to another.
 
 - When values in the test data are long or otherwise complicated. For
-  example, :var:`${URL}` is shorter and than
+  example, :var:`${URL}` is shorter than
   :path:`\http://long.domain.name:8080/path/to/service?foo=1&bar=2&zap=42`.
   
 
 If a nonexistent variable is used in the test data, the keyword using
 it fails. If the same syntax that is used for variables is needed as a
-literal string, it must be `escaped with a backslash`__ like :code:`\\${NAME}`.
+literal string, it must be `escaped with a backslash`__ as in :code:`\\${NAME}`.
 
 __ escaping_
 
@@ -87,8 +87,8 @@ When scalar variables are used in the test data, they are replaced
 with the value they are assigned to. While scalar variables are most
 commonly used for simple strings, you can assign any objects,
 including lists, to them. The scalar variable syntax, for example
-:var:`${NAME}`, should be familiar to most users, as it is also used
-for example in shell scripts and Perl.
+:var:`${NAME}`, should be familiar to most users, as it is also used,
+for example, in shell scripts and Perl.
 
 The example below illustrates the usage of scalar variables. Assuming
 that the variables :var:`${GREET}` and :var:`${NAME}` are available
@@ -132,7 +132,7 @@ object:
      }
  }
 
-With these two variables set, we then have following test data:
+With these two variables set, we then have the following test data:
 
 .. table:: Scalar variables with objects as values
    :class: example
@@ -158,7 +158,7 @@ the arguments as explained below:
 List variables
 ''''''''''''''
 
-List variables are a kind of compound variable that can have several
+List variables are compound variables that can have several
 values assigned to them. In short, they are always lists and can
 contain an unlimited number of entries (also empty lists are
 possible). The main benefit of list variables is that they allow you
@@ -189,7 +189,7 @@ are equivalent.
 
 
 It is also possible to access a certain value from the list variable
-with the syntax :var:`@{NAME}[i]`, where :var:`i` is the index of the
+with the syntax :var:`@{NAME}[i]`, where "i" is the index of the
 selected value. Indexes start from zero, and trying to access a value
 with too large an index causes an error. List items accessed in this
 manner can be used similarly as scalar variables.
@@ -217,9 +217,9 @@ values.
 Environment variables set in the system before the test execution are
 available, and it is possible to create new ones with the keyword
 :kw:`Set Environment Variable` or delete existing ones with the
-keyword :kw:`Delete Environment Variable`, both available from the
+keyword :kw:`Delete Environment Variable`, both available in the
 `OperatingSystem library`_. Because environment variables are global,
-you can use environment variables set in one test case in other test
+environment variables set in one test case can be used in other test
 cases executed after it. However, changes to environment variables are
 not effective after the test execution.
 
@@ -239,7 +239,7 @@ Creating variables
 ~~~~~~~~~~~~~~~~~~
 
 Variables can spring into existence from different sources as
-illustrated in the subsections below.
+described in the subsections below.
 
 
 Variable table
@@ -425,9 +425,9 @@ Assuming that the keyword :kw:`Get 3` returns a list
 
 Variables set in this manner are otherwise similar to any other
 variables, but they are available only within the scope of the test
-case or keyword where they are created. Thus it not possible to, for
-example, set a variable in one test case and use it in another. This is
-because, in general, automated test cases should not dependent on each
+case or keyword where they are created. Thus it is not possible, for
+example, to set a variable in one test case and use it in another. This is
+because, in general, automated test cases should not depend on each
 other, and accidentally setting a variable that is used elsewhere
 could cause hard-to-debug errors. If there is a genuine need for
 setting a variable in one test case and using it in another, use the
@@ -438,8 +438,8 @@ available from the `BuiltIn library`_.
 Variable scopes
 '''''''''''''''
 
-Variables can have global, test suite, test case or user keyword scope
-depending on where and how they are created.
+Depending on where and how they are created, variables can have a
+global, test suite, test case or user keyword scope.
 
 
 Global scope
@@ -449,7 +449,7 @@ Global variables are available everywhere in the test data. These
 variables are normally set from the command line with the
 :setting:`--variable` and :setting:`--variablefile`
 options. Additionally, it is possible to create new global variables
-or change the existing ones with the `built-in keyword`_ :kw:`Set
+or change the existing ones with the `BuiltIn keyword`_ :kw:`Set
 Global Variable` anywhere in the test data.
 
 Global variables override variables defined in Variable tables or in
@@ -465,7 +465,7 @@ Variables with the test suite scope are available anywhere in the test
 suite where they are defined or imported. They can be created in
 Variable tables, imported from variable files using the
 :setting:`Variables` setting in the Setting table, or set with the
-`built-in keyword`_ :kw:`Set Suite Variable` anywhere in that test
+`BuiltIn keyword`_ :kw:`Set Suite Variable` anywhere in that test
 suite. 
 
 The test suite scope *is not recursive*, which means that variables
@@ -480,9 +480,9 @@ they are used, it is recommended to use capital letters also with them.
 Test case scope
 ```````````````
 
-Variables created in test cases from return values of keywords have a
+Variables created in test cases from the return values of keywords have a
 test case scope and they are available only in that test
-case. Another possibility to create them is using the `built-in keyword`_
+case. Another possibility to create them is using the `BuiltIn keyword`_
 :kw:`Set Test Variable` anywhere in that particular test case. Test
 case variables are local and should use lower-case letters.
 
@@ -574,8 +574,8 @@ be created using the variable syntax similarly as numbers.
    ===========  ===============  ==========  ==========  =============================================
     Test Case        Action       Argument    Argument                      Comment
    ===========  ===============  ==========  ==========  =============================================
-   Boolean      Set Status       ${true}     \           # Set Status gets boolean true as an argument
-   \            Create Y         something   ${false}    # Create Y gets a string and boolean false
+   Boolean      Set Status       ${true}     \           # Set Status gets Boolean true as an argument
+   \            Create Y         something   ${false}    # Create Y gets a string and Boolean false
    None         Do XYZ           ${None}     \           # Do XYZ gets Python None as an argument
    Null         ${ret} =         Get Value   arg         # Checking that Get Value returns Java null
    \            Should Be Equal  ${ret}      ${null}     \
@@ -601,31 +601,34 @@ of them are not even available all the time.
    +-----------------------+-------------------------------------------------------+----------------+
    |        Variable       |                    Explanation                        |    Available   |
    +=======================+=======================================================+================+
-   | ${TEST_NAME}          | Name of the current test case.                        | Test case      |
+   | ${TEST_NAME}          | The naame of the current test case.                   | Test case      |
    +-----------------------+-------------------------------------------------------+----------------+
    | @{TEST_TAGS}          | Contains the tags of the current test case in         | Test case      |
    |                       | alphabetical order.                                   |                |
    +-----------------------+-------------------------------------------------------+----------------+    
-   | ${TEST_STATUS}        | Status of the current test case, either PASS or FAIL. | Test teardown  |
+   | ${TEST_STATUS}        | The status of the current test case, either PASS or   | Test teardown  |
+   |                       | FAIL.                                                 |                |
    +-----------------------+-------------------------------------------------------+----------------+
-   | ${TEST_MESSSAGE}      | Possible error message of the current test case.      | Test teardown  |
+   | ${TEST_MESSSAGE}      | The possible error message of the current test case.  | Test teardown  |
    +-----------------------+-------------------------------------------------------+----------------+
-   | ${PREV_TEST_NAME}     | Name of the previous test case, or an empty sting if  | Everywhere     |
-   |                       | no tests have been executed yet.                      |                |
+   | ${PREV_TEST_NAME}     | The name of the previous test case, or an empty string| Everywhere     |
+   |                       | if no tests have been executed yet.                   |                |
    +-----------------------+-------------------------------------------------------+----------------+
-   | ${PREV_TEST_STATUS}   | Status of the previous test case, either PASS, FAIL   | Everywhere     |
-   |                       | or an empty when no tests have been executed.         |                |
+   | ${PREV_TEST_STATUS}   | The status of the previous test case: either PASS,    | Everywhere     |
+   |                       | FAIL or an empty string when no tests have been       |                |
+   |                       | executed.                                             |                |
    +-----------------------+-------------------------------------------------------+----------------+
-   | ${PREV_TEST_MESSSAGE} | Possible error message of the previous test case.     | Everywhere     |
+   | ${PREV_TEST_MESSSAGE} | The possible error message of the previous test case. | Everywhere     |
    +-----------------------+-------------------------------------------------------+----------------+
-   | ${SUITE_NAME}         | Full name of the current test suite.                  | Everywhere     |
+   | ${SUITE_NAME}         | The full name of the current test suite.              | Everywhere     |
    +-----------------------+-------------------------------------------------------+----------------+
-   | ${SUITE_STATUS}       | Status of the current test case, either PASS or FAIL. | Suite teardown |
+   | ${SUITE_STATUS}       | The status of the current test case, either PASS or   | Suite teardown |
+   |                       | FAIL.                                                 |                |
    +-----------------------+-------------------------------------------------------+----------------+
-   | ${SUITE_MESSAGE}      | Full message of the current test suite including      | Suite teardown |
+   | ${SUITE_MESSAGE}      | The full message of the current test suite, including | Suite teardown |
    |                       | statistics.                                           |                |
    +-----------------------+-------------------------------------------------------+----------------+
-   | ${OUTPUT_FILE}        | Absolute path to the current `output file`_. Has      | Everywhere     |
+   | ${OUTPUT_FILE}        | An absolute path to the current `output file`_. Has   | Everywhere     |
    |                       | different values during execution when                |                |
    |                       | `outputs are split`_.                                 |                |
    +-----------------------+-------------------------------------------------------+----------------+
@@ -676,7 +679,7 @@ arguments, can make the test data complicated. If that happens,
 it is recommended to move the code into a test library.
 
 The most common usages of extended variable syntax are illustrated
-in the example below. First assume that we have following `variable file`_
+in the example below. First assume that we have the following `variable file`_
 and test case:
 
 
@@ -709,7 +712,8 @@ and test case:
    ===========  ========  ======================  ==========
      
 
-When this test data is executed, the keywords get the arguments as explained below:
+When this test data is executed, the keywords get the arguments as
+explained below:
 
 - :kw:`KW 1` gets string :code:`Robot`
 - :kw:`KW 2` gets string :code:`Robot says hello to Fit`
@@ -731,7 +735,7 @@ The extended variable syntax is evaluated in the following order:
    exception is raised and the test case fails.
 
 4. The expression inside the curly brackets is evaluated as a Python
-   expression, so that the base variable name is replaced with its
+   expression, so the base variable name is replaced with its
    value. If the evaluation fails because of an invalid syntax or that
    the queried attribute does not exist, an exception is raised and
    the test fails.
@@ -777,13 +781,13 @@ Variables inside variables
 Variables are allowed also inside variables, and when this syntax is
 used, variables are resolved from the inside out. For example, if you
 have a variable :var:`${var${x}}`, then :var:`${x}` is resolved
-first. If it has the value :code:`name`, the final value then is the
+first. If it has the value :code:`name`, the final value is then the
 value of the variable :var:`${varname}`. There can be several nested
 variables, but resolving the outermost fails, if any of them does not
 exist.
 
-In the example below, the :kw:`Do X` gets the value :var:`${JOHN_HOME}`
-or :var:`${JANE_HOME}` depending on if :kw:`Get Name` returns
+In the example below, :kw:`Do X` gets the value :var:`${JOHN_HOME}`
+or :var:`${JANE_HOME}`, depending on if :kw:`Get Name` returns
 :code:`john` or :code:`jane`. If it returns something else, resolving
 :var:`${${name}_HOME}` fails.
 
