@@ -38,8 +38,8 @@ Preconditions
 ~~~~~~~~~~~~~
 
 Robot Framework runs both on Python_ and Jython_, and you need to have
-at least one of them to be able to use it. Provided installers only
-work with Python, though, so installing it is always recommended.
+at least one of them to be able to use it. However, the provided installers
+only work with Python, so installing it is always recommended.
 
 
 Python installation
@@ -50,12 +50,12 @@ supported. On most UNIX-like systems, you have Python installed by
 default. If you are on Windows or otherwise need to install Python
 yourself, your best place to start is probably the `Python
 homepage`_. There you can download a suitable installer and get more
-information about installation and Python in general.
+information about the installation and Python in general.
 
 .. Note:: The Python installation framework coming with Python 2.3
    	  does not have functions for copying other than Python
    	  files. Robot Framework itself can be installed with it
-   	  without problems, but installing for example certain
+   	  without problems, but, for example, installing certain
    	  libraries may require copying those non-Python files
    	  manually.
 
@@ -63,8 +63,8 @@ information about installation and Python in general.
 Jython installation
 '''''''''''''''''''
 
-Using test libraries implemented with Java, or directly using Java
-tools, requires running Robot Framework on Jython, which then requires
+Using test libraries implemented with Java or using Java tools
+directly requires running Robot Framework on Jython, which then requires
 Java Runtime Environment (JRE). The minimum required Java version is
 1.4, but newer versions are recommended, as they tend to be faster
 with dynamic languages, such as Jython. Both Sun and IBM Java versions
@@ -72,7 +72,7 @@ are supported.
 
 Robot Framework requires Jython version 2.2. The earlier Jython
 version 2.1 is not compatible with Robot, and also 2.2 betas and
-alphas have some problems and they are not supported. Unfortunately,
+alphas have some problems and are not supported. Unfortunately,
 also Jython 2.2.1 has certain Unicode problems (for more information,
 see http://bugs.jython.org/issue1802339 and
 http://bugs.jython.org/issue1032), which makes it incompatible with
@@ -94,10 +94,10 @@ correctly. Jython is found if:
 1. Jython can be executed in the system directly (i.e. it is in the PATH).
 2. An environment variable JYTHON_HOME is set and it points to
    the Jython installation directory.
-3. The Jython installation directory is found. On Windows machines, it
-   is searched from :path:`C:\\` and :path:`D:\\` drives, and on other systems from
-   the :path:`/usr/local` and :path:`/opt directories`. The directory is found if it
-   is under the searched directories mentioned above, or one level
+3. The Jython installation directory is found. On Windows, it is searched 
+   from the :path:`C:\\` and :path:`D:\\` drives, and on other systems from
+   the :path:`/usr/local` and :path:`/opt` directories. The directory is found 
+   if it is under the searched directories mentioned above, or one level
    deeper. For example, the following Jython installation directories
    would be found by the installer::
 
@@ -107,7 +107,7 @@ correctly. Jython is found if:
      /opt/whatever/Jython22
 
 If you plan to use Robot Framework only with Jython, you do not
-necessarily need Python at all. In that case, you need to do a `manual
+necessarily need Python at all. In that case, you need to perform a `manual
 installation`_ or have some custom installer.
 
 
@@ -119,15 +119,15 @@ Installing from the source
 
 You can get the Robot Framework source either as a source distribution
 package (which you need to extract somewhere) or directly from version
-control. In both cases, you should have a directory containing source
+control. In both cases, you should have a directory containing the source
 code, documentation, tools, templates, and so on. The first
-installation step is going to the created directory from command line,
-and after that you can install Robot Framework by running the
+installation step is going to the created directory from the command line
+and after that installing Robot Framework by running the
 following command::
 
   python setup.py install
 
-You get a quite long output and something like the following text should
+You get a rather long output, and something like the following text should
 appear at the end::
 
   Creating Robot start-up scripts...
@@ -148,7 +148,7 @@ Using binary installers
 '''''''''''''''''''''''
 
 Use the platform-specific way of installation. For example, on
-Windows, double click the provided executable, and follow
+Windows, double click the provided executable and follow
 the instructions of the graphical installer.
 
 
@@ -156,7 +156,7 @@ Manual installation
 '''''''''''''''''''
 
 If you do not want to install Python, or for some other reason do not
-want to use any automatic way for installing Robot Framework, you can
+want to use any automatic way of installing Robot Framework, you can
 always do it manually following these steps:
 
 1. Get the source code. All the code is in a directory (a module in
@@ -164,7 +164,7 @@ always do it manually following these steps:
    a version control checkout, you can find it from the :path:`src`
    directory, but you can also get it from an earlier installation.
 
-2. Copy the source code where you want.
+2. Copy the source code where you want to.
 
 3. Create the needed start-up scripts. If you have a source package or
    a checkout, you can get templates from :path:`src/bin`.
@@ -178,8 +178,8 @@ into a directory containing external Python modules. The actual
 location is platform-specific, but on computers with a UNIX-like
 operating system, it is normally something like
 :path:`/usr/lib/[PythonVer]/site-packages`, and on Windows it is
-:path:`[PythonInstallationDir]\\Lib\\site-packages`. Actual Robot
-Framework code is in a directory named as :path:`robot`.
+:path:`[PythonInstallationDir]\\Lib\\site-packages`. The actual Robot
+Framework code is in a directory named :path:`robot`.
 
 Robot Framework start-up scripts (:cli:`pybot`, :cli:`jybot` and
 :cli:`rebot`) are created and copied into another platform-specific
@@ -200,7 +200,7 @@ Windows, it is not. In environments where startup scripts are not
 available, the directory containing them must be set to the PATH
 environment variable. 
 
-Setting PATH environment variable on Windows:
+Setting the PATH environment variable on Windows:
 
 1. Open ``Start > Settings > Control Panel > System > Advanced >
    Environment Variables``.  There are ``User variables`` and ``System
@@ -208,9 +208,9 @@ Setting PATH environment variable on Windows:
    affect only the current users, whereas System variables affect all
    users.
 
-2. To edit existing PATH, select ``Edit`` and add
+2. To edit the existing PATH, select ``Edit`` and add
    :path:`;[PythonInstallationDir]\\Scripts\\` at the end of the
-   value. Note that the leading colon (;) is important as it
+   value. Note that the leading colon (;) is important, as it
    separates different entries. To add a new value, select ``New`` and
    provide both the name and the value, this time without the colon.
 
@@ -220,8 +220,8 @@ Setting PATH environment variable on Windows:
 Verifying installation
 ''''''''''''''''''''''
 
-You can verify the success of the installation and environment setup
-by typing::
+To verify that the installation and environment setup were successful,
+type::
 
   $ pybot --version 
   Robot 2.0 (Python 2.5.1 on cygwin)
@@ -253,15 +253,19 @@ are installed`_.
 Upgrading
 ~~~~~~~~~
 
-If you are upgrading from one minor Robot Framework version to another
-(for example, from 2.0 to 2.0.1), it is safe to install the new
-version over the old one, unless stated otherwise.
+The procedure when upgrading or downgrading Robot Framework depends on
+the versions used:
 
-If you are upgrading from one major Robot Framework version to another (for
-example, from 2.0 to 2.1), then it is highly recommended to uninstall
-the old version before the new installation.
+- If you are upgrading from one minor Robot Framework version to
+  another (for example, from 2.0 to 2.0.1), it is safe to install the
+  new version over the old one, unless stated otherwise.
 
-If you are downgrading, the rules are the same as for upgrading.
+- If you are upgrading from one major Robot Framework version to
+  another (for example, from 2.0 to 2.1), then it is highly
+  recommended to uninstall the old version before the new
+  installation.
+
+- If you are downgrading, the rules are the same as for upgrading.
 
 
 
