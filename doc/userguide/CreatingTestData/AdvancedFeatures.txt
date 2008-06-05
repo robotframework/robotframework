@@ -53,7 +53,7 @@ highest priority. In such cases, it is possible to use *the full name
 of the keyword*, where the keyword name is prefixed with the name of
 the resource or library and a dot is a delimiter.
 
-With library keywords, the long format just means using the format
+With library keywords, the long format means only using the format
 :kw:`LibraryName.Keyword Name`. For example, the keyword :kw:`Run` from the
 `OperatingSystem library`_ could be used as
 :kw:`OperatingSystem.Run`, even if there was another :kw:`Run` keyword
@@ -79,8 +79,8 @@ as normal keyword names.
 Timeouts
 ~~~~~~~~
 
-Sometimes keywords may be problematic in situations where they take
-exceptionally long to execute or just hang forever. Robot Framework
+Keywords may be problematic in situations where they take
+exceptionally long to execute or just hang endlessly. Robot Framework
 allows you to set timeouts both for `test cases`_ and `user
 keywords`_, and if a test or keyword is not finished within the
 specified time, the keyword that is currently being executed is
@@ -110,7 +110,7 @@ possible default value.
 Regardless of where the test timeout is defined, the first cell after
 the setting name contains the duration of the timeout. The duration
 must be given in the `time format used in Robot Framework`__, that is,
-either directly in seconds or in a format like :code:`1 hour 2 minutes
+either directly in seconds or in a format :code:`1 hour 2 minutes
 3 seconds`. It must be noted that there is always some overhead by the
 framework, and timeouts shorter than one second are thus not
 recommended.
@@ -124,7 +124,7 @@ after the timeout duration. The message can be split into multiple
 cells, similarly as documentations. Both the timeout value and the
 error message may contain variables.
 
-If there is a timeout, the running of a keyword is stopped at the
+If there is a timeout, the keyword running is stopped at the
 expiration of the timeout and the test case fails. However, keywords
 executed as `test teardown`_ are not interrupted if a test timeout
 occurs, because they are normally engaged in important clean-up
@@ -232,8 +232,8 @@ colon is required to separate the syntax from normal keywords. The
 next cell contains the loop variable, the subsequent cell must have
 :kw:`IN`, and the final cells contain values over which to iterate.
 
-The keywords used in the For loop are on next rows and they must
-be indented one cell to right. The For loop ends when the indentation
+The keywords used in the For loop are on the next rows and they must
+be indented one cell to the right. The For loop ends when the indentation
 returns back to normal or the table ends. Having nested For loops
 directly is not supported, but it is possible to use a user keyword
 inside a For loop and have another For loop there.
@@ -259,10 +259,10 @@ inside a For loop and have another For loop there.
 The For loop in :tc:`Example 1` above is executed twice, so that first
 the loop variable :var:`${animal}` has the value :code:`cat` and then
 :code:`dog`. The loop consists of two :kw:`Log` keywords. In the
-second example, loop values are `split into multiple rows`__ and the
+second example, loop values are `split into several rows`__ and the
 loop is run altogether seven times.
 
-__ `Dividing test data to multiple rows`_
+__ `Dividing test data to several rows`_
 
 For loops are most useful and also clearest when they are used with
 `list variables`_. This is illustrated by the example below, where
@@ -280,19 +280,19 @@ and :kw:`Start Element` is used with all of them.
    ===========  ========  =============  ==========  ===========  ===========
 
 
-Using multiple loop variables
-'''''''''''''''''''''''''''''
+Using several loop variables
+''''''''''''''''''''''''''''
 
 It is also possible to use several loop variables. The syntax is the
 same as with the normal For loop, but all loop variables are listed in
 the cells between :kw:`:FOR` and :kw:`IN`. There can be any number of loop
-variables, but that their number must match the number of loop
-values. The number of values must be dividable evenly by the number of
+variables, but their number must match the number of loop
+values. The number of values must be evenly dividable by the number of
 variables.
 
 This syntax naturally works both with and without list variables. In
 the former case, it is often possible to organize loop values below
-loop variables, as in the first part of the example below.
+loop variables, as in the first part of the example below:
 
 .. table:: Using multiple loop variables
    :class: example
@@ -314,22 +314,22 @@ loop variables, as in the first part of the example below.
 For in range
 ''''''''''''
 
-Earlier for loops always iterated over a sequence, which is also the most
+Earlier For loops always iterated over a sequence, which is also the most
 common use case. Sometimes it is still convenient to have a For loop
-that is executed a certain number of time and Robot Framework has a
+that is executed a certain number of times, and Robot Framework has a
 special :code:`FOR index IN RANGE limit` syntax for this purpose. This
 syntax is derived from the similar Python idiom.
 
-The For in range loop starts with :kw:`:FOR` similarly as other For
-loops and the loop variable is in the next cell. In this format there
-can be only one loop variable and it contains the current loop
-index. The next cell must contain :kw:`IN RANGE` and the subsequent cells
-loop limits.
+Similarly as other For loops, the For in range loop starts with
+:kw:`:FOR` and the loop variable is in the next cell. In this format
+there can be only one loop variable and it contains the current loop
+index. The next cell must contain :kw:`IN RANGE` and the subsequent
+cells loop limits.
 
 In the simplest case, only the upper limit of the loop is
 specified. In this case, loop indexes start from zero and increase by one
 until, but excluding, the limit. It is also possible to give both the
-start and end limits. Then indexes start from the start limit but
+start and end limits. Then indexes start from the start limit, but
 increase similarly as in the simple case. Finally, it is possible to give
 also the step value that specifies the increment to use. If the step
 is negative, it is used as decrement. All these possibilities are
@@ -370,27 +370,27 @@ language constructs. However, some conditional logic can be useful at
 times, and even though Robot Framework does not have an actual if/else
 construct, there are several ways to get the same effect.
 
-1. The name of the keyword used as a setup or a teardown of both `test
-   cases`__ and `test suites`__ can be specified using a
-   variable. This eases changing them, for example, from
-   the command line.
+- The name of the keyword used as a setup or a teardown of both `test
+  cases`__ and `test suites`__ can be specified using a
+  variable. This facilitates changing them, for example, from
+  the command line.
 
-2. The `built-in keyword`_ :kw:`Run Keyword` takes a keyword to actually
-   execute as an argument, and it can thus be a variable. The value of
-   the variable can, for example, be got dynamically from an earlier
-   keyword or given from the command line.
+- The `BuiltIn keyword`_ :kw:`Run Keyword` takes a keyword to actually
+  execute as an argument, and it can thus be a variable. The value of
+  the variable can, for example, be got dynamically from an earlier
+  keyword or given from the command line.
 
-3. The `built-in keywords`_ :kw:`Run Keyword If` and :kw:`Run Keyword
-   Unless` execute a named keyword only if a certain expression is
-   true or false, respectively. They are ideally suited to creating
-   simple if/else constructs. For an example, see the documentation of
-   the former.
+- The `BuiltIn keywords`_ :kw:`Run Keyword If` and :kw:`Run Keyword
+  Unless` execute a named keyword only if a certain expression is
+  true or false, respectively. They are ideally suited to creating
+  simple if/else constructs. For an example, see the documentation of
+  the former.
 
-4. Another `built-in keyword`_, :kw:`Set Variable If`, can be used to set
-   variables dynamically based on a given expression.
+- Another `BuiltIn keyword`_, :kw:`Set Variable If`, can be used to set
+  variables dynamically based on a given expression.
 
-5. There are several `built-in keywords`_ that allow executing a named
-   keyword only if a test case or test suite has failed or passed.
+- There are several `built-in keywords`_ that allow executing a named
+  keyword only if a test case or test suite has failed or passed.
 
 __ `Test setup and teardown`_
 __ `Suite setup and teardown`_
@@ -407,12 +407,12 @@ action in the background and returns immediately, and there is
 another keyword that can later be used to check the status of the
 background process or other action.
 
-Robot Framework also has a native support for parallel execution of
+Robot Framework also has native support for parallel execution of
 keywords. The syntax for it is using :kw:`:PARALLEL` in the second
 column of the Test Case or Keyword table, similarly as :kw:`:FOR` is
 used with `For loops`_. In both cases, a colon (:) must be used to
 separate them from normal keywords. Keywords inside a parallel block
-are also indented similarly as keywords in a For loop.  The difference
+are also indented, similarly as keywords in a For loop.  The difference
 is that there is no need to have anything after :kw:`:PARALLEL`, and
 normally the first keyword of the parallel block is already there.
 
@@ -443,8 +443,8 @@ keywords in a block fail.
    ==============  ==========  ===============  ===============  ==========
 
 It is not possible to have nested parallel blocks, or to have a For loop
-inside a parallel block, or the other way around. It is, however, possible
-to have a user keyword inside a parallel block,  and use another parallel
+inside a parallel block, or the other way around. However, you can have
+a user keyword inside a parallel block, and use another parallel
 block or a For loop there.
 
 .. warning:: Parallel execution cannot be used with timeouts_ and it

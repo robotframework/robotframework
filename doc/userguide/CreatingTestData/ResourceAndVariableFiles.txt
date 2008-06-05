@@ -8,10 +8,10 @@ the resource file structure is very close to test case files, it is
 easy to create them.
 
 *Variable files* provide a powerful mechanism for creating and sharing
-variables. For example, they allow other values than strings and
+variables. For example, they allow values other than strings and
 enable creating variables dynamically. Their flexibility comes from
 the fact that they are created using Python code, which also makes
-them somewhat more complicated than variable tables.
+them somewhat more complicated than Variable tables.
 
 
 .. contents:: 
@@ -38,7 +38,7 @@ it is then searched from the directories in PYTHONPATH. The path can
 contain variables, and it is recommended to use them to make paths
 system-independent (for example, :path:`${RESOURCES}/login_resources.html` or
 :path:`${RESOURCE_PATH}`). Additionally, slashes ("/") in the path
-are automatically changed to backslashes ("\\") in Windows.
+are automatically changed to backslashes ("\\") on Windows.
 
 .. table:: Importing resource files
    :class: example
@@ -155,11 +155,11 @@ setting. Similarly to resource files, the path to the imported
 variable file is considered relative to the directory where the
 importing file is, and if not found, it is searched from the
 directories in PYTHONPATH. The path can also contain variables, and
-slashes are converted to backslashes in Windows.
+slashes are converted to backslashes on Windows.
 
 __ `Taking resource files into use`_
 
-The path to the variable file is given the same way, regardless of how
+The path to the variable file is given in the same way regardless of how
 the file is implemented. If the :code:`get_variables` function is used and
 it takes arguments, those arguments are specified in the cells after the
 path and also they can contain variables.
@@ -179,14 +179,14 @@ path and also they can contain variables.
 
 All variables from a variable file are available in the test data file
 that imports it. If several variable files are imported and they
-contain a variable with the same name, the one in earliest imported file is
+contain a variable with the same name, the one in the earliest imported file is
 taken into use. Additionally, variables created in Variable tables and
 set from the command line override variables from variable files.
 
 Command line
 ````````````
 
-Another way of taking variables into use is using the command line option
+Another way of introducing variables is using the command line option
 :setting:`--variablefile`. Variables in these files are globally
 available in all test data files, similarly as individual variables set
 with the :setting:`--variable` option.
@@ -203,7 +203,7 @@ Basic syntax
 
 When variable files are taken into use, they are imported as Python
 modules and all their global attributes that do not start with an
-underscore ("_") are considered to be variables. Because variable
+underscore (_) are considered to be variables. Because variable
 names are case-insensitive, both lower- and upper-case names are
 possible, but in general, capital letters are recommended for global
 variables and attributes.
@@ -218,7 +218,7 @@ variables and attributes.
 
 
 In the example above, variables :var:`${VARIABLE}`,
-:var:`${ANOTHER_VARIABLE}`, and so on, are created. the first two
+:var:`${ANOTHER_VARIABLE}`, and so on, are created. The first two
 variables are strings, the third one is an integer and the last two are lists.
 All these variables are `scalar variables`_, even the ones containing
 lists as values. To create `list variables`_, the variable name must
@@ -230,7 +230,7 @@ be prefixed with :code:`LIST__` (note the two underscores).
    LIST__MIXED = ["first value", -1.1, None, True]
 
 
-The variables in both the above examples could be created also using the
+The variables in both the examples above could be created also using the
 Variable table below.
 
 .. table::
@@ -253,7 +253,7 @@ Using objects as values
 ```````````````````````
 
 Variables in variable files are not limited to having only strings or
-other base types as values like variable tables, but instead their
+other base types as values like variable tables. Instead, their
 variables can contain any objects. In the example below, the variable
 :var:`${MAPPING}` contains a Java hashtable with two values (this
 example works only when running tests on Jython).
@@ -285,7 +285,7 @@ the same file.
 Creating variables dynamically
 ``````````````````````````````
 
-Because variable files are created using a real programming, language
+Because variable files are created using a real programming language,
 they can have dynamic logic for setting variables.
 
 .. sourcecode:: python
@@ -327,8 +327,8 @@ Selecting which variables to include
 When Robot Framework processes variable files, all their attributes
 that do not start with an underscore are expected to be
 variables. This means that even functions or classes created in the
-variable file or imported elsewhere are considered variables. For
-example, in the last example would contain the variables :var:`${math}`
+variable file or imported from elsewhere are considered variables. For
+example, the last example would contain the variables :var:`${math}`
 and :var:`${get_area}` in addition to :var:`${AREA1}` and
 :var:`${AREA2}`.
 
@@ -385,7 +385,7 @@ Robot Framework calls that function and it returns variables as a
 Python dictionary (similar to Java maps), with variable names as keys
 and variable values as values. Variables are considered to be scalars,
 unless prefixed with :code:`LIST__`, and values can contain
-anything. The example below is identical to the first examples about
+anything. The example below is identical to the first examples of
 `creating variables directly`_.
 
 
@@ -402,10 +402,10 @@ anything. The example below is identical to the first examples about
         return variables
 
 
-:code:`get_variables` can also take arguments, which facilitates
+:code:`get_variables` can also take arguments. This feature facilitates
 changing which variables actually are created. Arguments to the function
 are set just as any other arguments for a Python function, and when
-importing the file arguments are specified in cells after the
+importing the file, arguments are specified in cells after the
 path to the variable file. The dummy example below illustrates this
 principle. In a more realistic example, the argument could be a path
 to an external text file or database where to read variables from.
