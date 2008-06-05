@@ -30,20 +30,13 @@ IDE wiki pages`_.
 Start/End/Elapsed time reporting tool (times2csv.py)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
 
-__ time2csv.html
-
-
 
 Library documentation tool (libdoc.py)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-__ libdoc.html
-
 
 Tool for viewing debug files (fileviewer.py)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-__ fileviewer.html
 
 
 Javalibcore
@@ -164,8 +157,6 @@ are working in is correct for the keyword.
 
 Historical reporting tool (risto.py)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
- 
-__ ristopy.html
 
 
 .. _Robot IDE wiki pages: https://cwiki.nokia.com/RobotFramework/RobotIDE
