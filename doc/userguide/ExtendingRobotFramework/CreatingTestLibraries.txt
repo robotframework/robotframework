@@ -17,12 +17,12 @@ and straightforward.
 Supported programming languages
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Robot Framework itself is written with Python_ and test libraries
-extending it can naturally be implemented using the same
+Robot Framework itself is written with Python_ and, naturally, test libraries
+extending it can be implemented using the same
 language. Additionally, it is possible to write libraries using Java_,
 which requires running the framework on the Jython_ interpreter. Pure
 Python code works both on Python and Jython interpreters, assuming that
-it does not use syntax or libraries not available on Jython.
+it does not use syntax or libraries that are not available on Jython.
 
 It is also possible to implement a test library with C by using
 `Python C API`_. Another, and in most cases easier, method to
@@ -32,7 +32,7 @@ interact with C code from a library is using Python's ctypes_ module.
 .. _ctypes: http://docs.python.org/lib/module-ctypes.html
 
 Finally, it is possible to implement the actual test library
-functionality using any language and call that from a thin Python or
+functions using any language and call that from a thin Python or
 Java wrapper library. Possible approaches include calling external
 scripts or tools through the operating system or using XML-RPC to connect
 the wrapper with the real implementation. The former approach is quite
@@ -49,7 +49,7 @@ Robot Framework has three different test library APIs.
 Normal API 
 
   The simplest approach is having a module (in Python) or a class
-  (Python or Java) with methods the names of which map more or less
+  (in Python or Java) with methods the names of which map more or less
   directly to keyword names. Keywords also take the same arguments as
   the code implementing them.  Keywords report failures with
   exceptions, log by writing to standard output and can return
@@ -68,12 +68,12 @@ Hybrid API
 
   This is a hybrid between a normal and a dynamic API. Libraries are
   classes with a method telling what keywords they implement, but
-  those keywords must be available directly. Everything else than
+  those keywords must be available directly. Everything else except
   discovering what keywords are implemented is similar as in the
   normal API.
   
-All these APIs are explained in this chapter. Everything is based on
-how the normal API works, so its functionality is discussed first. How
+All these APIs are described in this chapter. Everything is based on
+how the normal API works, so its functions are discussed first. How
 the `dynamic library API`_ and the `hybrid library API`_ differ from it
 is then discussed in sections of their own.
 
@@ -82,7 +82,7 @@ module or a class. Dynamic and hybrid APIs require libraries to be
 classes, and with Java the language itself allows classes.
 
 The examples in this chapter are mainly about using Python, but they
-ought to be easy to understand also for Java-only developers. In those
+should be easy to understand also for Java-only developers. In those
 few cases where APIs have differences, both usages are explained with
 adequate examples.
 
