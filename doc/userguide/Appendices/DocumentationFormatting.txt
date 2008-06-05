@@ -23,7 +23,7 @@ Other rules for handling documentation
 Besides the formatting explained here, the documentation used for test
 cases and suites is subject to general parsing rules of the Robot
 Framework test data. For example, dividing text into lines and
-paragraphs requires having literal new line character sequence (:code:`\\n`),
+paragraphs requires having a literal newline character sequence (:code:`\\n`),
 as illustrated in the example below.
 
 .. table:: Dividing text into lines and paragraphs
@@ -97,7 +97,7 @@ Tables
 ~~~~~~ 
 
 Tables are created using the pipe character with spaces around it ( | ) as
-a cell boundary and new line (:code:`\\n`) as a row separator. The table
+a cell boundary and a newline (:code:`\\n`) as a row separator. The table
 always has a thin border and the text is left-aligned. Formatting using
 bold and italic works also in table cells.
 
