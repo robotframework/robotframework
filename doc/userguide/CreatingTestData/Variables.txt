@@ -215,7 +215,7 @@ data using the syntax :var:`%{ENV_VAR_NAME}`. They are limited to string
 values. 
 
 Environment variables set in the system before the test execution are
-available, and it is possible to create new ones with the keyword
+available during it, and it is possible to create new ones with the keyword
 :kw:`Set Environment Variable` or delete existing ones with the
 keyword :kw:`Delete Environment Variable`, both available in the
 `OperatingSystem library`_. Because environment variables are global,

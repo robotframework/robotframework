@@ -44,7 +44,7 @@ keyword return values, they are in the subsequent columns.
 Most user keywords take some arguments. This important feature is used
 already in the second example above, and it is explained in detail
 `later in this section`__, similarly as `user keyword return
-values`_. Arguments and return values are
+values`_.
 
 __ `User keyword arguments`_
 
