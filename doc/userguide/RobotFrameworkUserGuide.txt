@@ -169,8 +169,8 @@ Appendices
 .. _--output: `Setting output files`_
 .. _--summary: `Setting output files`_
 .. _--splitoutput: `Splitting outputs`_
-.. _built-in keyword: `BuiltIn library`_
-.. _built-in keywords: `BuiltIn library`_
+.. _BuiltIn keyword: `BuiltIn library`_
+.. _BuiltIn keywords: `BuiltIn library`_
 .. _BuiltIn library documentation: BuiltIn.html
 .. _OperatingSystem library documentation: OperatingSystem.html
 .. _Telnet library documentation: Telnet.html

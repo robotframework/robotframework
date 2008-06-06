@@ -176,11 +176,11 @@ and the test teardown.
 The :setting:`[Documentation]` setting allows you to set a free
 documentation for a test case. That text is shown in the command line
 output, as well as the resulting test logs and test reports. If the
-documentation is long, it can be `split into multiple cells`__ that
+documentation is long, it can be `split into several cells`__ that
 are catenated together with spaces. It is possible to use simple `HTML
 formatting`_ and even variables_ can be used.
 
-__ `Dividing test data to multiple rows`_
+__ `Dividing test data to several rows`_
 
 .. table:: Test case documentation examples
    :class: example
@@ -194,7 +194,7 @@ __ `Dividing test data to multiple rows`_
    |              | No Operation    |                      |                            |
    +--------------+-----------------+----------------------+----------------------------+
    | Splitting    | [Documentation] | This documentation   | it has been split into     |
-   |              |                 | is a bit longer and  | multiple columns.          |
+   |              |                 | is a bit longer and  | several columns.           |
    +--------------+-----------------+----------------------+----------------------------+
    |              | No Operation    |                      |                            |
    +--------------+-----------------+----------------------+----------------------------+

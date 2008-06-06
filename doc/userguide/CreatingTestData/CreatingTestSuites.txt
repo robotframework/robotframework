@@ -175,11 +175,11 @@ suite. Metadata set in this manner is shown in test reports and logs.
 
 The value for the metadata is located in the column after the name. It
 is handled similarly as documentations, which means that it can be
-`split into multiple cells`__ (joined together with
+`split into several cells`__ (joined together with
 spaces), simple `HTML formatting`_ works and even variables_ can be
 used.
 
-__ `Dividing test data to multiple rows`_
+__ `Dividing test data to several rows`_
 
 
 .. table:: Metadata examples 

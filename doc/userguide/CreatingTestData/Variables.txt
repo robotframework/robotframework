@@ -13,7 +13,7 @@ Variables are an integral feature of Robot Framework, and they can be
 used in most places in test data. Most commonly, they are used in
 arguments for keywords in test case tables and keyword tables, but
 also all settings allow variables in their values. A normal keyword
-name *cannot* be specified with a variable, but the `built-in
+name *cannot* be specified with a variable, but the `BuiltIn
 keyword`_ :kw:`Run Keyword` can be used to get the same effect.
 
 Robot Framework itself has two kinds of variables, scalars and lists,
@@ -297,9 +297,9 @@ Creating list variables is as easy as creating scalar variables. Again, the
 variable name is in the first column of the Variable table and
 values in the subsequent columns. A list variable can have any number
 of values, starting from zero, and if many values are needed, they
-can be `split into multiple rows`__.
+can be `split into several rows`__.
 
-__ `Dividing test data to multiple rows`_
+__ `Dividing test data to several rows`_
 
 .. table:: Creating list variables
    :class: example
