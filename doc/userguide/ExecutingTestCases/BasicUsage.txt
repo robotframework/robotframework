@@ -47,7 +47,7 @@ and they are executed by giving the path to the file or directory in
 question to the selected start-up script. The path can be absolute or,
 more commonly, relative to the directory where tests are executed
 from. The given file or directory creates the top-level test suite,
-which gets its name, unless overridden with the :setting:`--name` option,
+which gets its name, unless overridden with the :setting:`--name` option__,
 from the `file or directory name`__. Different execution possibilities
 are illustrated in the examples below. Note that in these examples, as
 well as in other examples in this section, only the :prog:`pybot`
@@ -56,6 +56,7 @@ could be used similarly.
 
 __ `Test case files`_
 __ `Test suite directories`_
+__ `Setting name`_
 __ `Test suite name and documentation`_
 
 ::

@@ -19,11 +19,11 @@ By names
 Test suites and test cases can be included in the test run by their
 names, with the command line options :setting:`--suite (-s)` and
 :setting:`--test (-t)`.  Both of these can be defined multiple times
-and their arguments may contain simple patters. It is also possible to
+and their arguments may contain simple patterns. It is also possible to
 determine a parent suite with :setting:`--suite` by using the option
 as in :cli:`--suite parentname.childname`.  In this case, also the
 setup and teardown of the parent suite are executed, if they are
-defined. Exmaples::
+defined. Examples::
 
   pybot --test test-? --t some_name
   pybot --suite mys* -s alltests.subsuite 
@@ -63,7 +63,7 @@ The final result of test execution is determined on the basis of critical tests.
 a critical test fails, the whole run is considered failed. The command line 
 options :setting:`--critical (-c)` and :setting:`--noncritical (-n)` can be used 
 to control which tags are considered critial. Both of these options can be
-given several times and their arguments may be simple patters. If a tag 
+given several times and their arguments may be simple patterns. If a tag 
 matches both critical and non-critical, it is considered non-critical.
 Examples::
 
@@ -74,32 +74,32 @@ Examples::
 Setting metadata
 ~~~~~~~~~~~~~~~~
 
-Name
-''''
+Setting name
+''''''''''''
 
 When Robot Framework parses test data, a name for the top-level suite
 is based on the data source path. This can be overridden with the
 command line option :setting:`--name (-N)`. The argument is
 capitalized and underscores are converted to spaces.
 
-Documentation
-'''''''''''''
+Setting documentation
+'''''''''''''''''''''
 
 In addition to defining documentation in the test data, documentation
 for the top-level suite may also be given from the command line with the
 option :setting:`--doc (-D)`. The given documenatation may contain simple
 HTML formatting.
 
-Free metadata
-'''''''''''''
+Setting free metadata
+'''''''''''''''''''''
 
 `Free test suite metadata`_ may also be given from the command line with the option
 :setting:`--metadata (-M)`. The argument must be in the format :setting:`name:value`, where
 "name" is capitalized and undescores converted to spaces and "value" may 
 contain simple HTML formatting. This option may be used several times.
 
-Tags
-''''
+Setting tags
+''''''''''''
 
 The command line option :setting:`--settag (-G)` can be used to set the given tag to 
 all executed test cases. This option may be used several times.
@@ -133,7 +133,7 @@ option can only be used to create scalar variables. Examples::
   -v x: -v y:42  =>  ${x} = '', ${y} = '42'
 
 The option :setting:`--variablefile (-V)` can be used to take a `variable file`__
-into use.
+into use. Argument for this option is either relative or absolute path to the file.
 
 __ `Variable files`
 
@@ -166,7 +166,7 @@ The width of the console output can be defined using the option :setting:`-- mon
 The default value for the monitor width is 78.
 
 :setting:`--monitorcolors` is used to control whether colors should be used
-in the monitor output. It has three possible values, and :setting:`on` is the
+in the monitor output. It has three possible values, of which :setting:`on` is the
 default value:
 
 :setting:`on`
