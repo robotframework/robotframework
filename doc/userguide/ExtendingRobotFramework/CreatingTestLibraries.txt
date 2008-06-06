@@ -93,14 +93,14 @@ Library and keyword names
 The name of a test library that is used when a library is imported is
 the same as the name of the module or class implementing it. For
 example, if you have a Python module :code:`MyLibrary` (that is, the file
-:path:`MyLibrary.py`) its name is simply :code:`MyLibrary`. Similarly a Java
+:path:`MyLibrary.py`) its name is simply :code:`MyLibrary`. Similarly, a Java
 class :code:`YourLibrary`, when it is not in any package, creates a
 library with exactly that name.
 
 Python classes are always inside a module. If the name of a class
 implementing a library is the same as the name of the module, Robot
 Framework allows dropping the module name when importing the
-library. For example, the class :code:`MyLib` in :path:`MyLib.py` file can be
+library. For example, the class :code:`MyLib` in the :path:`MyLib.py` file can be
 used as a library with the name :code:`MyLib`. If the module name and
 class name are different, libraries must be taken into use using both
 module and class names, such as :code:`mymodule.MyLibrary`.
@@ -110,7 +110,7 @@ full name. For example, the class :code:`MyLib` in the :code:`com.mycompany.mypr
 package must be imported with the name :code:`com.mycompany.myproject.MyLib`.
 
 .. Tip:: If the library name is really long, for example when the Java
-         package name is long, it is often a good idea to give the library a
+         package name is long, it is recommended to give the library a
          simpler alias by using the `With Name`__ syntax.
 
 __ `Setting a custom name to a test library`_
@@ -118,7 +118,7 @@ __ `Setting a custom name to a test library`_
 When the normal library API is used, Robot Framework uses reflection
 to find out what methods the library implements. With `dynamic library
 API`_ and `hybrid library API`_, keyword names are got from the
-library directly. Robot Framework can naturally see only public
+library directly. Naturally, Robot Framework can see only public
 methods and it also excludes all methods starting with an
 underscore. With Java libraries, also methods that are implemented in
 :code:`java.lang.Object` and not overridden are ignored.
@@ -131,7 +131,7 @@ example, the method :code:`hello` maps to the keyword name :kw:`Hello`,
 :code:`doNothing` methods can be used as the :kw:`Do Nothing` keyword in the
 test data.
 
-Example Python library implemented as a module in :path:`MyLibrary.py` file:
+Example Python library implemented as a module in the :path:`MyLibrary.py` file:
 
 .. sourcecode:: python
 
@@ -141,7 +141,7 @@ Example Python library implemented as a module in :path:`MyLibrary.py` file:
   def do_nothing():
       pass
 
-Example Java library implemented as a class in :path:`MyLibrary.java` file:
+Example Java library implemented as a class in the :path:`MyLibrary.java` file:
 
 .. sourcecode:: java
 
@@ -158,7 +158,7 @@ Example Java library implemented as a class in :path:`MyLibrary.java` file:
 
 The example below illustrates how the example libraries above can be
 used. If you want to try this yourself, make sure that the library is
-in PYTHONPATH or CLASSPATH as explained at TODO__. Note that in
+in PYTHONPATH or CLASSPATH as explained in TODO__. Note that in
 subsequent examples all boilerplates, such as taking a library into
 use and creating a test case, is excluded.
 
@@ -190,9 +190,9 @@ __ TODO: Link to setting pythonpath/classpath. That should probably be
 Keyword arguments
 ~~~~~~~~~~~~~~~~~
 
-With normal and hybrid API, the information on how many arguments a
+With a normal and hybrid API, the information on how many arguments a
 keyword needs is got directly from the method that implements it.
-Libraries using `dynamic library API`_ have other means for getting
+Libraries using a `dynamic library API`_ have other means for getting
 this information, so this section is not relevant to them.
 
 The most common and also simplest situation is when a keyword needs an
@@ -221,7 +221,7 @@ Default values
 
 It is often useful that some of the arguments that a keyword uses have
 default values. Python and Java have different syntaxes for handling these
-kinds of situations and the natural syntaxes of these languages can be
+kinds of situations, and the natural syntaxes of these languages can be
 used when creating test libraries for Robot Framework.
 
 In Python, a method has always exactly one implementation and possible
@@ -238,11 +238,11 @@ which is familiar to all Python programmers, is illustrated below:
 
 
 The first example keyword above can be used either with zero or one
-argument. If no arguments are given, :code:`arg` gets the value
-:code:`default`; if there is one argument :code:`arg` gets that value,
-calling the keyword with any other number of arguments fails. In the
+arguments. If no arguments are given, :code:`arg` gets the value
+:code:`default`. If there is one argument, :code:`arg` gets that value,
+and calling the keyword with any other number of arguments fails. In the
 second example, one argument is always required, but the second and
-the third have default values, so it is possible to use the keyword
+the third one have default values, so it is possible to use the keyword
 with one to three arguments.
 
 In Java, one method can have several implementations with different
@@ -275,7 +275,7 @@ examples:
    }
 
 
-Above keywords could be used in the test data like below.
+The keywords above can be used in the test data as illustrated in the example below:
 
 
 .. table:: Using keywords with a variable number of arguments
@@ -301,8 +301,8 @@ in test libraries is different in Python and Java.
 
 Python itself has a good support for methods accepting any
 number of arguments. The same syntax works in libraries and, as
-the examples below show, it can also be combined with other ways to
-specify arguments:
+the examples below show, it can also be combined with other ways of
+specifying arguments:
 
 .. sourcecode:: python
 
@@ -327,10 +327,10 @@ it. This also works, if the keyword is used with one argument less than
 the actual number of arguments in the signature - in this case the
 array at the end will be empty. 
 
-This system has one limitation, as it only works if the method has one
+This system has one limitation: it only works if the method has one
 signature. Thus it is not possible to have a Java keyword that has
-both the default values and a variable number of arguments. Having required
-values with a variable number of arguments is of course possible, as
+both the default values and a variable number of arguments. Of course, having the required
+values with a variable number of arguments is possible, as
 the examples below illustrate:
 
 .. sourcecode:: java
@@ -350,8 +350,8 @@ the examples below illustrate:
   }
 
 
-Here are finally examples on how keywords in the examples above can be used in
-the test data. Note that the last examples do not work with Java due to
+Finally, here are examples on how keywords in the examples above can be used in
+the test data. Note that the last examples do not work with Java because of
 the limitations explained above.
 
 
@@ -380,11 +380,11 @@ Argument types
 Robot Framework does not do any argument type checking when it uses
 keywords. Since arguments in Python do not have any type, calling a Python
 method implementing a keyword always succeeds, but the execution fails
-later if the given arguments are incompatible. Java arguments are typed,
+later, if the given arguments are incompatible. Java arguments are typed,
 and using a Java keyword with incompatible arguments causes
-a :code:`TypeError` at calling time. Jython does some argument
-coercion automatically, however, so for example method expecting
-:code:`double` can be called with any number but not with a string.
+a :code:`TypeError` at the calling time. However, Jython does some argument
+coercion automatically, so, for example, a method expecting
+:code:`double` can be called with any number, but not with a string.
 
 
 Reporting keyword status
@@ -398,13 +398,13 @@ keyword passed or not. This last feature is discussed in this
 section and others in the next ones.
 
 Reporting keyword status is done simply using exceptions. If a method
-raises any exception, the keyword status is FAIL, and if it returns
+raises an exception, the keyword status is FAIL, and if it returns
 normally, the status is PASS.
 
 The error message shown in logs, reports and the console is created from
 the exception type and its message. With generic exceptions
-(for example :code:`AssertionError`, :code:`Exception`, :code:`RuntimeError`), only the
-exception message is used, and with others the message is created in
+(for example, :code:`AssertionError`, :code:`Exception`, and :code:`RuntimeError`), only the
+exception message is used, and with others, the message is created in
 the format :msg:`ExceptionType: Actual message`. In both cases, it is
 important for users that the exception message is as informative as
 possible.
@@ -437,17 +437,17 @@ message in the format :msg:`*LEVEL* Actual log message`, where
 the available logging levels :msg:`TRACE`, :msg:`DEBUG`, :msg:`INFO` and
 :msg:`WARN`.
 
-Everything normally logged by the library will be converted into
-format that can be safely represented as HTML. For example
+Everything normally logged by the library will be converted into a
+format that can be safely represented as HTML. For example,
 :code:`<b>foo</b>` will be displayed in the log exactly like that and
-not like **foo**. If libraries want to use formatting, links, display
-images etc. they can use special pseudo log level :msg:`HTML`. Robot
-Framework will write these messages directly into the log with
-:msg:`INFO` level so they can use any HTML syntax they want. This
-powerful feature needs to be used with care, though, because one badly
-placed :code:`</table>` tag can mess up the log file pretty badly.
+not as **foo**. If libraries want to use formatting, links, display
+images and so on, they can use a special pseudo log level :msg:`HTML`. Robot
+Framework will write these messages directly into the log with the
+:msg:`INFO` level, so they can use any HTML syntax they want. However, this
+feature needs to be used with care, because one badly
+placed :code:`</table>` tag can ruin the log file quite badly.
 
-The following examples should clarify how logging with different
+The following examples clarify how logging with different
 levels works. Java programmers should regard the code :code:`print 'message'`
 as pseudocode meaning :code:`System.out.println("message");`.
 
@@ -507,7 +507,7 @@ as pseudocode meaning :code:`System.out.println("message");`.
 
 In most cases, the :msg:`INFO` level is adequate. The levels below it,
 :msg:`DEBUG` and :msg:`TRACE`, are useful for writing debug information.
-These messages are normally not shown, but they can help debugging
+These messages are normally not shown, but they can facilitate debugging
 possible problems in the library itself. The :msg:`WARN` level can
 be used to make messages slightly more visible.
 
@@ -521,12 +521,12 @@ Returning values
 The final way for keywords to communicate back to the core framework
 is returning information retrieved from the system under test or
 generated by some other means. Returned values can be assigned to
-variables in the test data and then used as inputs for other keywords
+variables in the test data and then used as inputs for other keywords,
 even from different test libraries. For more information about using
 returned values, see `User keyword return values`_.
 
-Values are returned naturally using the :code:`return` statement both from
-the Python and Java methods. Normally one value is assigned into one
+Values are returned using the :code:`return` statement both from
+the Python and Java methods. Normally, one value is assigned into one
 `scalar variable`__ as illustrated in the example below. This example
 also illustrates that it is possible to return any objects and to use
 `extended variable syntax`_ to access object attributes.
@@ -594,16 +594,16 @@ Providing arguments to libraries
 All test libraries implemented as classes can take arguments. These
 arguments are specified in the Setting table after the library name,
 and when Robot Framework creates an instance of the imported library
-it passes them to its constructor. Libraries implemented as module
+it passes them to its constructor. Libraries implemented as a module
 cannot take any arguments and trying to use those results in an error.
 
-Number of the arguments needed by the library is, of course, the same
+The number of arguments needed by the library is the same
 as the number of arguments accepted by the library's
-constructor. Default values and variable number of arguments work
-similarly as with `keyword arguments`_, with an exception that there
+constructor. The default values and variable number of arguments work
+similarly as with `keyword arguments`_, with the exception that there
 is no variable argument support for Java libraries. Arguments passed
 to the library, as well as the library name itself, can be specified
-using variables so it is possible to alter them e.g. from command
+using variables, so it is possible to alter them for example from the command
 line.
 
 
@@ -619,7 +619,7 @@ line.
 
 
 Example implementations, first one in Python and second in Java, for
-libraries used in the above example.
+the libraries used in the above example:
 
 
 .. sourcecode:: python
@@ -656,33 +656,33 @@ libraries used in the above example.
 Library scope
 ~~~~~~~~~~~~~
 
-Libraries implemented as classes can have internal state, which can be
+Libraries implemented as classes can have an internal state, which can be
 altered by keywords and with arguments to the constructor of the
 library. Because the state can affect how keywords actually behave, it
 is important to make sure that changes in one test case do not
 accidentally affect other test cases. This kind of dependencies may
-create hard-to-debug problems for example when new test cases are
-added and they use the library somehow inconsistently.
+create hard-to-debug problems, for example, when new test cases are
+added and they use the library inconsistently.
 
-Robot Framework tries to keep test cases independent from each others
-by creating new instances of test libraries for every test case by
-default. This behavior is not always desirable, though, because
-sometimes test cases should be able to share a common
-state. Additionally all libraries do not have any state and creating
+Robot Framework attempts to keep test cases independent from each
+other: by default, it creates new instances of test libraries for
+every test case. However, this behavior is not always desirable,
+because sometimes test cases should be able to share a common
+state. Additionally, all libraries do not have a state and creating
 new instances of them is simply not needed.
 
 Test libraries can control when new libraries are created with a
 class attribute :code:`ROBOT_LIBRARY_SCOPE` . This attribute must be
-a string and it can have following three values.
+a string and it can have the following three values:
 
 `TEST CASE`:code:
-  New instance is created for every test case. Possible suite setup
-  and teardown share yet another instance. This is the default.
+  A new instance is created for every test case. A possible suite setup
+  and suite teardown share yet another instance. This is the default.
 
 `TEST SUITE`:code:
-  New instance is created for every test suite. Lowest level test
+  A new instance is created for every test suite. The lowest-level test
   suites, created from test case files and containing test cases, have
-  own instances, and higher level suites all get their own instances
+  instances of their own, and higher-level suites all get their own instances
   for their possible setups and teardowns.
 
 `GLOBAL`:code: 
@@ -691,15 +691,15 @@ a string and it can have following three values.
   modules are always global.
 
 
-When :code:`TEST SUITE` or :code:`GLOBAL` scopes are used with test
-libraries having a state, it is recommended that libraries have some
+When the :code:`TEST SUITE` or :code:`GLOBAL` scopes are used with test
+libraries that have a state, it is recommended that libraries have some
 special keyword for cleaning up the state. This keyword can then be
-used for example in a suite setup or teardown to ensure that test
-cases in coming test suites can start from a known state. For example
-:code:`SeleniumLibrary` uses :code:`GLOBAL` scope to make it possible
-to use same browser in different test cases without wasting time to
-reopen it, and it also has :kw:`Close All Browsers` keyword for
-easily closing all opened browsers.
+used, for example, in a suite setup or teardown to ensure that test
+cases in the next test suites can start from a known state. For example,
+:code:`SeleniumLibrary` uses the :code:`GLOBAL` scope to enable
+using the same browser in different test cases without having to
+reopen it, and it also has the :kw:`Close All Browsers` keyword for
+easily closing all open browsers.
 
 
 Example Python library using :code:`TEST SUITE` scope:
@@ -746,12 +746,12 @@ Example Java library using :code:`GLOBAL` scope:
 Documenting libraries
 ~~~~~~~~~~~~~~~~~~~~~
 
-A test library without any documentation about what keywords it
+A test library without documentation about what keywords it
 contains and what those keywords do is rather useless. To ease
 maintenance, it is highly recommended that library documentation is
-included in the source code and generated from it. Basically that
-means using docstrings_ with Python and Javadoc_ with Java like in
-examples below.
+included in the source code and generated from it. Basically, that
+means using docstrings_ with Python and Javadoc_ with Java, as in
+the examples below.
 
 .. _docstrings: http://www.python.org/dev/peps/pep-0257/
 .. _javadoc: http://java.sun.com/j2se/javadoc/writingdoccomments/index.html
@@ -779,12 +779,12 @@ examples below.
 
     /**
      *  This is an example library with some documentation.
-     */
+     \*/
     public class MyLibrary {
 
         /**
          * This keyword has only a short documentation
-         */
+         \*/
         public void keywordWithShortDocumentation(String argument) {
         }
 
@@ -801,31 +801,32 @@ examples below.
 
 
 Both Python and Java have tools for creating an API documentation of a
-library documented like above. Outputs from these tools can be a bit
-technical for some users, though. Another alternative is using Robot
+library documented as above. However, outputs from these tools can be slightly
+technical for some users. Another alternative is using Robot
 Framework's own documentation tool :code:`libdoc.py`. This tool can
 create a library documentation from both Python and Java libraries
-using the normal library API, like the ones above, but it also handles
+using the normal library API, sucha as the ones above, but it also handles
 libraries using the `dynamic library API`_ and `hybrid library API`_.
 
 .. TODO: link to libdoc.py
 
-First line of a keyword documentation is used specially and should
-contain a short overall description of the keyword. It is used as a
-short documentation, for example as a tool tip, by :code:`libdoc.py`
-and also shown in the test logs. The latter does not work with Java
-libraries using the normal API, though, because their documentations
-are lost in compilation and not available at runtime.
+The first line of a keyword documentation is used for a special
+purpose and should contain a short overall description of the
+keyword. It is used as a short documentation, for example as a tool
+tip, by :code:`libdoc.py` and also shown in the test logs. However, the latter
+does not work with Java libraries using the normal API,
+because their documentations are lost in compilation and not available
+at runtime.
 
 
 Dynamic library API
 ~~~~~~~~~~~~~~~~~~~
 
-The dynamic API is in most ways similar to the normal API. For example
-reporting the keyword status, logging and returning values works in
-the exactly same way. Most importantly, there are no differences in
-importing dynamic libraries and using their keywords compared to other
-libraries, so end users do not even need to know what APIs the
+The dynamic API is in most ways similar to the normal API. For
+example, reporting the keyword status, logging and returning values
+works exactly the same way. Most importantly, there are no differences
+in importing dynamic libraries and using their keywords compared to
+other libraries, so you do not even need to know what APIs the
 libraries use.
 
 The only difference between normal and dynamic libraries is the way
@@ -837,10 +838,10 @@ dynamic libraries have special methods that are used for these
 purposes.
 
 One of the benefits of the dynamic API is that you have more
-flexibility to organize your library. With the normal API, you have all
-keywords in one class (or module), whereas with the dynamic API, you can
-for example implement every keyword as a separate class if you
-want. This use case is not so important with Python, though, because
+flexibility in organizing your library. With the normal API, you have all
+keywords in one class (or module), whereas with the dynamic API, you can,
+for example, implement each keyword as a separate class if you
+want. This use case is not so important with Python, because
 its dynamic capabilities and multi-inheritance already give plenty of
 flexibility and the `hybrid library API`_ is usually a better option.
 
@@ -855,10 +856,10 @@ This section explains how the dynamic API works between Robot
 Framework and dynamic libraries. It does not matter for Robot
 Framework how these libraries are actually implemented (for example,
 how calls to the :code:`run_keyword` method are mapped to a correct
-keyword implementation), and obviously many different approaches are
+keyword implementation), and many different approaches are
 possible. However, if you use Java, you may want to examine
 :code:`javalibcore` before implementing your own system. This reusable
-component has several ways for creating keywords, and it is likely
+component has several ways of creating keywords, and it is likely
 that it already has a mechanism that suites your needs.
 
 .. TODO: add javalibcore to supporting tools and link it from here
@@ -870,7 +871,7 @@ Getting keyword names
 Dynamic libraries tell what keywords they implement with the
 :code:`get_keyword_names` method. The method also has the alias
 :code:`getKeywordNames` that is recommended when writing Java. This
-method cannot take any arguments and it must return a list of strings
+method cannot take any arguments, and it must return a list of strings
 (in Python) or a string array (in Java) containing the names of the
 keywords that the library implements.
 
@@ -878,12 +879,12 @@ If the returned keyword names contain several words, they can be returned
 separated with spaces or underscores, or in the camelCase format. For
 example, :code:`['first keyword', 'second keyword']`,
 :code:`['first_keyword', 'second_keyword']`, and
-:code:`['firstKeyword', 'secondKeyword']` would all result in keywords
+:code:`['firstKeyword', 'secondKeyword']` would all result in the keywords
 :kw:`First Keyword` and :kw:`Second Keyword`.
 
 Dynamic libraries must always have this method. If it is missing, or
 if calling it fails for some reason, the library is considered a
-normal library instead.
+normal library, instead.
 
 
 Running keywords
@@ -901,15 +902,15 @@ the test data.
 
 After the library has got the keyword name and arguments, it can
 execute the keyword freely, but it must use the same mechanism to
-communicate with the framework as normal libraries. Basically, that
+communicate with the framework as normal libraries. This
 means using exceptions for reporting keyword status, logging by
 writing to the standard output and using the return statement in
 :code:`run_keyword` for returning something.
 
 Every dynamic library must have both the :code:`get_keyword_names` and
 :code:`run_keyword` methods. The rest of the methods in the dynamic
-API are optional, so the example below shows a working (albeit trivial
-and useless) dynamic library.
+API are optional, so the example below shows a working (albeit
+trivial) dynamic library.
 
 .. sourcecode:: python
 
@@ -926,20 +927,20 @@ Getting keyword arguments
 '''''''''''''''''''''''''
 
 If a dynamic library only implements the :code:`get_keyword_names` and
-:code:`run_keyword` methods, Robot Framework does not know anything
+:code:`run_keyword` methods, Robot Framework does not have any information
 about the arguments that the implemented keywords need. For example,
-both :kw:`First Keyword` and :kw:`Second Keyword` in the above example
+both :kw:`First Keyword` and :kw:`Second Keyword` in the example above
 could be used with any number of arguments. This is problematic,
 because most real keywords expect a certain number of keywords, and
 under these circumstances they would need to check the argument counts
 themselves.
 
-Starting from Robot 1.8.4, dynamic libraries have the possibility to
-tell Robot Framework what arguments the keywords it implements actually
-expect. This is done with the :code:`get_keyword_arguments` (alias
-:code:`getKeywordArguments`) method, which takes the name of a keyword
-as an argument and returns a list of strings (a string array in Java)
-containing the arguments accepted by that keyword.
+Starting from Robot Framework version 1.8.4, dynamic libraries can
+tell Robot Framework what arguments the keywords that it implements
+actually expect. This is done with the :code:`get_keyword_arguments`
+(alias :code:`getKeywordArguments`) method, which takes the name of a
+keyword as an argument and returns a list of strings (a string array
+in Java) containing the arguments accepted by that keyword.
 
 Similarly as normal keywords, dynamic keywords can require any number
 of arguments, have default values and accept a variable number of
@@ -974,14 +975,14 @@ When the :code:`get_keyword_arguments` is used, Robot Framework
 automatically calculates how many arguments the keywords require. If a
 keyword is used with an invalid number of arguments, an error occurs
 and :code:`run_keyword` is not even called. The last column of the
-above table shows the minimum and maximum argument counts calculated
+table above shows the minimum and maximum argument counts calculated
 from the presented examples.
 
 The actual argument names do not matter when tests are executed,
 because only argument counts are of concern to Robot Framework. On the
-other hand, if the :code:`libdoc.py` tool is used for documenting the
+other hand, if the :prog:`libdoc.py` tool is used for documenting the
 library, arguments are shown in the documentation, in which case they
-actually need to have meaningful names.
+need to have meaningful names.
 
 .. TODO: link to libdoc.py
 
@@ -1011,7 +1012,7 @@ Summary
 
 All special methods in the dynamic API are listed in the table
 below. Method names are listed in the underscore format, but their
-camelCase aliases function in the exactly same way.
+camelCase aliases function in exactly the same way.
 
 .. table:: All special methods in the dynamic API
    :class: tabular
@@ -1026,7 +1027,7 @@ camelCase aliases function in the exactly same way.
    ==========================  ================  ======================================================
 
 
-It is possible to write a formal interface specification in Java as
+It is possible to write a formal interface specification in Java, as
 below. Remember, however, that libraries *do not need* to implement
 any explicit interface, because Robot Framework directly checks if the
 library has the required :code:`get_keyword_names` and
@@ -1054,7 +1055,7 @@ Hybrid library API
 ~~~~~~~~~~~~~~~~~~
 
 The hybrid library API is, as its name implies, a hybrid between the
-normal API and the dynamic API. Like with the dynamic API, it is
+normal API and the dynamic API. Just as with the dynamic API, it is
 possible to implement a library using the hybrid API only as a class.
 
 
@@ -1194,13 +1195,13 @@ Since libraries are normal programming code, they can be packaged
 using normal packaging tools. With Python, good options include
 distutils_, contained by Python's standard library, and the newer
 setuptools_. A benefit of these tools is that library modules are
-installed into a location which is automatically in the `library
+installed into a location that is automatically in the `library
 search path`_.
 
-When using Java it is natural to package libraries into a JAR
+When using Java, it is natural to package libraries into a JAR
 archive. The JAR package must be put into the `library search path`_
 before running tests, but it is easy to create a start-up script that
-does it automatically.
+does that automatically.
 
 .. _distutils: http://docs.python.org/dist/dist.html
 .. _setuptools: http://peak.telecommunity.com/DevCenter/setuptools
