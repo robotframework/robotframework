@@ -6,9 +6,9 @@ supporting tools or extending the processing of input or output data. These
 APIs are implemented as Python modules, and as such can only be used from 
 Python and Jython scripts and programs. 
 
-Unfortunately, these APIs are not especially well documented, and are subject
+Unfortunately, these APIs are not particularly well documented, and are subject
 to change and refinement in the future. Our goal is to improve the APIs and
-the documentation in the future releases based on needs and requests. If you
+the documentation in the future releases is based on needs and requests. If you
 have questions regarding the APIs, please contact Robot Framework developers.
 
 Some of the tools included with Robot Framework illustrate the use of these
@@ -27,10 +27,10 @@ The Robot Framework runner method. It is possible to start the execution
 of Robot tests by calling this method instead of using the command line
 interface.
 
-Signature of run method is: :code:`run(*datasources, **options)`, where
-data sources are paths to files and directories, similarly as when running
-pybot/jybot from command line. Options are given as keywords arguments and
-their names are same as long command line options without hyphens.
+The signature of run method is :code:`run(*datasources, **options)`, where
+"datasources" are paths to files and directories, similarly as when running
+pybot/jybot from the command line. "Options" are given as keywords' arguments and
+their names are the same as the long command line options without hyphens.
 
 Example:
 
@@ -43,21 +43,21 @@ Example:
 Equivalent command line usage would be:
 :cli:`pybot --log mylog.html /path/to/tests.html /path/to/tests2.html`
 
-.. warning:: This method can be used only once in a given context. This will
-    most likely be fixed in a future release.
+.. warning:: This method can be used only once in a given context. This issue will
+    fixed in a future release.
 
 
 Parsed test data
 ~~~~~~~~~~~~~~~~
 
 A method for parsing given input files into a test suite object, which 
-contains the data from the input files 'as is'.
+contains the data from the input files "as is".
 
-Signature of this :code:`TestSuite` method is: 
-:code:`TestSuite(*datasources, **options)`, where data sources are paths to 
-files and directories, similarly as when running pybot/jybot from command 
-line. Options are given as keywords arguments and their names are same as 
-long command line options without hyphens. 
+The signature of this :code:`TestSuite` method is 
+:code:`TestSuite(*datasources, **options)`, where "datasources" are paths to 
+files and directories, similarly as when running pybot/jybot from the command 
+line. "Options" are given as keywords arguments and their names are the same as 
+the long command line options without hyphens. 
 
 Example:
 
@@ -70,19 +70,19 @@ Example:
     for test in suite.tests:
         print test.name
 
-Options that affect parsing are as follows:
+The options that affect parsing are as follows:
 
 process_curdir 
-    is a special option and when False, variable :var:`${CURDIR}` is not i
+    is a special option, and when False, the variable :var:`${CURDIR}` is not 
     replaced when parsing the data. `Robot IDE`_ uses this option when it 
-    parses the input data. See `Built-in variables`_ for information about 
+    parses the input data. See `Built-in variables`_ for more information about 
     :var:`${CURDIR}`. 
 
 syslog
     TODO: add link to syslog
 
 SuiteNames
-   Value of this option becomes the name of the topmost suite if either
+   The value of this option becomes the name of the topmost suite, if either
    several datasources are given or if the datasource is a directory.
 
 
@@ -92,11 +92,11 @@ Runnable test data
 A method for parsing given input files into a runnable test suite object. 
 This means that variables and settings for suite are processed.
 
-Signature of this :code:`TestSuite` method is: 
+The signature of this :code:`TestSuite` method is 
 :code:`TestSuite(datasources, settings, syslog)`, where data sources are 
 paths to files and directories, similarly as when running pybot/jybot from 
-command line. Settings must be a RobotSettings object, and syslog must 
-implement syslog interface.
+the command line. "Settings" must be a RobotSettings object, and "syslog" must 
+implement the syslog interface.
 
 
 Executed test data
@@ -106,12 +106,12 @@ A method for reading a Robot Framework output file(s) into a test suite
 object that contains all the relevant information about the results of
 the test execution. 
 
-Signature of this :code:`TestSuite` method is: :code:`TestSuite(outpath)`, 
-where outpath is a path to an existing output file. The returned 
+The signature of this :code:`TestSuite` method is :code:`TestSuite(outpath)`, 
+where "outpath" is a path to an existing output file. The returned 
 :code:`TestSuite` object can be used to process the results of the test run. 
 
-Here's an example that reads a given output file and marks each test case 
-whose execution time is longer than 3 minutes failed. The :code:`TestSuite` 
+Here is an example that reads a given output file and marks each test case, 
+the execution time of which is longer than 3 minutes, failed. The :code:`TestSuite` 
 object is then serialized and regular Robot log and report files can 
 be generated with Rebot_.
 

@@ -10,12 +10,12 @@ Robot Framework has a listener interface that can be used to receive
 notifications about test execution. Listeners are classes with certain
 special methods, and they can be implemented both with Python and
 Java. Example uses of the listener interface include external test
-monitors, sending a mail when a test fails, and communicating with
+monitors, sending a mail message when a test fails, and communicating with
 other systems.
 
 This section explains how to use the listener interface. Listeners are
-taken into use from the command line with :cli:`--listener
-ListenerClassName` option as explained at TODO__.
+taken into use from the command line with the :cli:`--listener
+ListenerClassName` option as explained in TODO__.
 
 __ TODO: Link to section in executing test chapter about --listener
 
@@ -27,7 +27,7 @@ Robot Framework creates an instance of the listener class when test
 execution starts. No arguments are given to the constructor of the
 listener class. During the test execution, Robot Framework calls
 listeners' methods when test suites and cases start and end. It also
-calls appropriate methods when output files are ready, and finally at
+calls the appropriate methods when output files are ready, and finally at
 the end it calls the :code:`close` method. A listener is not required to
 implement any official interface, and it only needs to have the
 methods it actually needs.
@@ -88,9 +88,9 @@ noted in the Comments column.
 
 .. _outputs are split: TODO link to splitting outputs section
 
-Available methods and their arguments are also shown in a formal Java interface
+The available methods and their arguments are also shown in a formal Java interface
 specification below. It should be remembered that a listener *does not*
-need to implement any explicit interface nor have all these methods.
+need to implement any explicit interface or have all these methods.
 
 
 .. sourcecode:: java
