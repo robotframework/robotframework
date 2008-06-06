@@ -12,19 +12,19 @@ Different outputs
 Output
 ''''''
 
-The output file contains the test execution results in XML format. Report,
+An output file contains the test execution results in XML format. Report,
 log and summary files are generated from the information in the output file.
-Default name for output file is output.xml
+The default name for an output file is :path:`output.xml`.
 
 Report
 ''''''
 
-The report file contains overview of results of the test execution.
+A report file contains an overview of the results of the test execution.
 It has summary information by suite and by tag, and also contains details
-by suite, where status of each test case can be individually seen. The
+by suite, where the status of each test case can be seen individually. The
 report file also contains links to the log file for easy navigation to 
-more detailed information when necessary. Default name for report file 
-is report.html.
+more detailed information, when necessary. The default name for a report file 
+is :path:`report.html`.
 
 .. figure:: report.png
    :width: 600
@@ -35,9 +35,9 @@ is report.html.
 Log
 '''
 
-The log file contains details about test cases that were executed. It
-has a hierarchical structure, showing suite, test and keyword details.
-Default name for log file is log.html.
+A log file contains details about the executed test cases. It
+has a hierarchical structure showing suite, test and keyword details.
+The default name for a log file is :path:`log.html`.
 
 .. figure:: log.png
    :width: 500
@@ -48,9 +48,9 @@ Default name for log file is log.html.
 Summary report
 ''''''''''''''
 
-The summary report is even more high level overview of the executed tests.
-It does not contain the test details by suite table, and it is also not 
-possible to navigate from statistics by suite table to the log file.
+The summary report is a higher-level overview of the executed tests.
+It does not contain the Test details by suite table, neither is it 
+possible to navigate from the Statistics by suite table to the log file.
 
 .. figure:: summaryreport.png
    :width: 600
@@ -61,9 +61,9 @@ possible to navigate from statistics by suite table to the log file.
 Debug file
 ''''''''''
 
-Debugfile is a special kind of output file. It is a text file that is written
-during the execution. It is possible to follow the execution of tests by 
-following the information written in the debugfile. There is a tool__
+A debug file is a special kind of an output file: a text file that is written
+during the execution. You can monitor the execution of tests by 
+following the information written in the debug file. There is a separate tool__
 available for viewing the debugfile. 
 
 __ `Tool for viewing debug files (fileviewer.py)`_
@@ -72,13 +72,13 @@ __ `Tool for viewing debug files (fileviewer.py)`_
 Syslog
 ~~~~~~
 
-Syslog file contains debug information about the functioning of Robot 
+A syslog file contains debug information about the functioning of Robot 
 Framework. The information in it is usually only needed when some unexpected
 error occurs during the execution of tests.
 
-To enable syslog, environment variable ROBOT_SYSLOG_FILE must contain an 
-absolute path to a non-existing file. The ROBOT_SYSLOG_LEVEL environment 
-variable determines the level of logging. Available levels are same as with
+To enable syslog, the environment variable :var:`ROBOT_SYSLOG_FILE` must contain an 
+absolute path to a non-existing file. The :var:`ROBOT_SYSLOG_LEVEL` environment 
+variable determines the level of logging. The available levels are the same as with the
 `--loglevel`__ command line option.
 
 __ `Setting log level`_
@@ -91,51 +91,51 @@ Each output file has a corresponding command line option to determine a path
 to which it is written. These paths are relative to output directory, unless
 given as absolute paths.
 
-Setting output file
-'''''''''''''''''''
+Setting an output file
+''''''''''''''''''''''
 
-Command line option :setting:`--output (-o)` determines where output file
-is created. This file is created by default when test are executed with 
-Robot Framework, but is not created with :prog:`rebot` unless this option
+The command line option :setting:`--output (-o)` determines where an output file
+is created. By default, this file is created when tests are executed with 
+Robot Framework, but it is not created with :prog:`rebot` unless this option
 is used.
 
-Setting log file
-''''''''''''''''
+Setting a log file
+''''''''''''''''''
 
-Command line option :setting:`--log (-l)` determines where log file is
-created. Log file is created by default both when test are executed and
-when :prog:`rebot` is used. The default name for log file is log.html.
-Creation of log file may be disabled by using argument 'none'.
+The command line option :setting:`--log (-l)` determines where a log file is
+created. By default, a log file is created both when tests are executed and
+when :prog:`rebot` is used. The default name for a log file is :path:`log.html`.
+The creation of a log file may be disabled by using the argument "none".
 
 
-Setting report file
-'''''''''''''''''''
+Setting a report file
+'''''''''''''''''''''
 
-Command line option :setting:`--report (-r)` determines where report file 
-is created. Report file is created by default both when test are executed and
-when :prog:`rebot` is used. The default name for log file is report.html.
-Creation of log file may be disabled by using argument 'none'.
+The command line option :setting:`--report (-r)` determines where a report file 
+is created. By default, a report file is created both when tests are executed and
+when :prog:`rebot` is used. The default name for a log file is :path:`report.html`.
+The creation of a log file may be disabled by using the argument "none".
 
-Setting summary report file
+Setting a summary report file
+'''''''''''''''''''''''''''''
+
+The command line option :setting:`--summary (-S)` determines where a summary report 
+file is created. By default, this file is not created. 
+
+Setting an output directory
 '''''''''''''''''''''''''''
 
-Command line option :setting:`--summary (-S)` determines where summary report 
-file is created. By default this file is not created. 
-
-Setting output directory
-''''''''''''''''''''''''
-
-By default, output directory is the directory where test execution was started.
-This can be changed with option :setting:`--outputdir (-d)`. If the given 
-directory does not exist, it will be created. 
+By default, an output directory is the directory where test execution was started.
+This can be changed with teh option :setting:`--outputdir (-d)`. If the given 
+directory does not exist, it is created. 
 
 Setting timestamps to output file names
 '''''''''''''''''''''''''''''''''''''''
 
-It is also possible to get timestamped names for output files by using command
-line option :setting:`--timestampoutputs`. The timestamp is of format 
-'YYMMDD-hhmmss' and will be placed between the basename and extension of each
-output file name.
+It is also possible to get timestamped names for output files by using
+the command line option :setting:`--timestampoutputs`. The timestamp
+is of format "YYMMDD-hhmmss" and will be placed between the base name
+and the extension of each output file name.
 
 Example::
     
@@ -146,36 +146,37 @@ Example::
 Splitting outputs
 ~~~~~~~~~~~~~~~~~
 
-For big test suites, instead of generating one huge output file, Robot 
+For large test suites, instead of generating one vast output file, Robot 
 Framework can be configured to produce a set of smaller output files. In this
 case, if log files are created, one log file will be created from each 
-output file. If report file is generated, it will still be only one file, 
-but it links to multiple log files.
+output file. If a report file is generated, it will still be only one file, 
+but links to multiple log files.
 
-Splitting can be turned on with command line option :setting:`--splitoutputs`,
+Splitting can be activated with the command line option :setting:`--splitoutputs`,
 which takes split level as its argument. 
 
 When outputs are split, a top-level output file contains the general 
-information about the whole test execution and it links to sub-level output 
-files which contain details of some suites and tests. The exact contents of 
-each file depends on split level and the directory structure of the test data
-As the examples below demonstrate, the test data should be strucutred in a 
-way that supports splitting outputs should you wish to use that feature.
+information about the whole test execution and it links to sublevel output 
+files, which contain details of some suites and tests. The exact contents of 
+each file depends on the split level and the directory structure of the test data.
+As the examples below show, the test data needs to be strucutred in a 
+way that supports splitting outputs, if you wish to use that feature.
 
 
 Unbalanced output
 '''''''''''''''''
 
-When an unbalanced directory strucuture (see Figure) is executed with split
-level set to 3, individual output file is created for test case files 1-4.
-The information about the test case files 5 and 6 will be written to root 
-level output file. So in this case, following files will be created:
+When an unbalanced directory strucuture (see the figure below) is executed with a split
+level set to 3, an individual output file is created for test case files from 1 to 4.
+The information about the test case files 5 and 6 is written to the root 
+level output file. In this case, the following files will be created:
 
-- output.xml, which contains summary information of the executed suite, 
-  details of test case files 5 and 6, and liks to sub-level output files.
+- :path:`output.xml`, which contains summary information of the executed suite, 
+  details of test case files 5 and 6, and links to sublevel output files.
     
-- output-001.xml output-002.xml, output-003.xml and output-004.xml, which
-  contain details of test case files 1, 2, 3 and 4, respectively.
+- :path:`output-001.xml`, :path:`output-002.xml`,
+  :path:`output-003.xml` and :path:`output-004.xml`, which contain
+  details of test case files 1, 2, 3 and 4, respectively.
 
 
 .. figure:: unbalanced_output.png
@@ -187,16 +188,16 @@ level output file. So in this case, following files will be created:
 Balanced output
 '''''''''''''''
 
-When an balanced directory strucuture (see Figure) is executed with split
-level set to 3, individual output file is created for all test case files.
-So in this case, following files will be created:
+When a balanced directory strucuture (see the figure below) is executed with a split
+level set to 3, an individual output file is created for all test case files.
+In this case, the following files will be created:
 
-- output.xml, which contains summary information of the executed suite 
+- :path:`output.xml`, which contains summary information on the executed test suite 
   and links to sublevel output files.
     
-- output-001.xml output-002.xml, output-003.xml and output-004.xml, 
-  output-005.xml output-006.xml, output-007.xml and output-008.xml, which
-  contain details of test case files 1-8.
+- :path:`output-001.xml`, :path:`output-002.xml`, :path:`output-003.xml`, :path:`output-004.xml`, 
+  :path:`output-005.xml`, :path:`output-006.xml`, :path:`output-007.xml`, and :path:`output-008.xml`, which
+  contain details of test case files from 1 to 8.
 
 
 .. figure:: balanced_output.png
@@ -209,10 +210,11 @@ So in this case, following files will be created:
 Setting titles 
 ~~~~~~~~~~~~~~
 
-Titles for `Log`_, `Report`_ and `Summary report`_ files can be given from command 
-line using options :setting:`--logtitle`, :setting:`--reporttitle` and :setting:
-`--summarytitle` respectively. The default title is generated from the name(s) of 
-the input file(s).
+Titles for `Log`_, `Report`_ and `Summary report`_ files can be given
+from the command line using the options :setting:`--logtitle`,
+:setting:`--reporttitle` and :setting:`--summarytitle`,
+respectively. The default title is generated from the name(s) of the
+input file(s).
 
 
 Configuring statistics
@@ -225,9 +227,9 @@ contents of 'Statistics by Tag', 'Test Details by Tag' and 'Statistics by Suite'
 Including and excluding tag statistics
 ''''''''''''''''''''''''''''''''''''''
 
-Command line options :setting:`--tagstatinclude` and :setting:`--tagstatexclude`
-can be used to define the contents of the 'Statistics by Tag' and 'Test Details
-by Tag' -tablse. Both of these options may be given multiple times and their 
+The command line options :setting:`--tagstatinclude` and :setting:`--tagstatexclude`
+can be used to define the contents of the Statistics by Tag and Test Details
+by Tag tables. Both of these options may be given several times and their 
 arguments may be simple patterns. If a tag matches both include and exclude, it 
 will be excluded. 
 
@@ -235,33 +237,32 @@ will be excluded.
 Generating combined tag statistics
 ''''''''''''''''''''''''''''''''''
 
-Command line option :setting:`--tagstatcombine` can be used to generate an
-aggregate row in the 'Statistics by Tag' and 'Test Details by Tag' -tables.
-There are three somewha different ways that the argument for this option can
-be given:
+The command line option :setting:`--tagstatcombine` can be used to generate an
+aggregate row in the Statistics by Tag and Test Details by Tag tables.
+There are three somewhat different ways for giving arguments for this option:
 
 One tag as a pattern
     All tags matching the pattern are combined, for example
-    :cli:`--tagstatcombine it-*`
+    :cli:`--tagstatcombine it-\*`.
 
-Two or more tags separated by 'AND' or '&'
-    Tags may be patterns also in this case. Test must have all these tags to
-    be included in this combined statistic. i
+Two or more tags separated by "AND" or "&"
+    Also in this case tags may be patterns. Tests must have all these tags to
+    be included in the combined statistics. 
     Example: :cli:`--tagstatcombine tag1&tag2ANDit-1?`
 
-Two or more tags separated by 'NOT'
-    Tags may be patterns also in this case. Only tests matching first tag and 
-    not any of the following tags are included in this combined statistics.
+Two or more tags separated by "NOT"
+    Also in this case tags may be patterns. Only tests matching the first tag, but 
+    not any of the following tags, are included in the combined statistics.
     Example: :cli:`--tagstatcombine it-11NOTsmoke`
 
 Creating links from tag names
 '''''''''''''''''''''''''''''
 
-It is possible to add an external link to 'Statistics by Tag' - table by using 
-command line option :setting:`--tagstatlink`. Argument to this option is given 
-in format pattern:link:title, where pattern may contain characters '*' (matches
-anything) and '?' (matcehs any char). The matches of wildcards may be used in the 
-resulting link with syntax %N, where N is the index of the match starting from 1.
+It is possible to add an external link to the Statistics by Tag table by using 
+the command line option :setting:`--tagstatlink`. An argument to this option is given 
+in the format :code:`pattern:link:title`, where pattern may contain the characters "*" (matches
+anything) and "?" (matcehs any character). The matches of wildcards may be used in the 
+resulting link with the syntax :code:`%N`, where "N" is the index of the match starting from 1.
 Examples::
 
     --tagstatlink mytag:http://my.domain:Link
@@ -270,10 +271,10 @@ Examples::
 Adding documentation to tags
 ''''''''''''''''''''''''''''
 
-Documentation for tags can be set with command line option :setting:`--tagdoc`
-Argument is in format tag:doc, where tag may be a simple pattern and doc may
-contain simple formatting. This documentation will be shown in 
-'Test Details by Tag' table and also as a tooltip in 'Statistics by Tag' table.
+Documentation for tags can be set with the command line option :setting:`--tagdoc`
+The argument is in the format :code:`tag:doc`, where "tag" may be a simple pattern and "doc" may
+contain simple formatting. This documentation is shown in the 
+Test Details by Tag table and also as a tool tip in the Statistics by Tag table.
 Examples::
 
     --tagdoc mytag:My_documentation
@@ -281,38 +282,40 @@ Examples::
     --tagdoc owner-*:Original_author
 
 
-Configuring 'Statistics by Suite' table
-'''''''''''''''''''''''''''''''''''''''
+Configuring the Statistics by Suite table
+'''''''''''''''''''''''''''''''''''''''''
 
-It is possible to control how many levels of subsuites are displayed in the 
-'Statistics by Suite' table. This is done with command line option
-:setting:`--suitestatlevel`. If 0 is given as argument, the whole table is 
+You can control how many levels of subsuites are displayed in the 
+Statistics by Suite table. This is done with the command line option
+:setting:`--suitestatlevel`. If 0 is given as an argument, the whole table is 
 removed.
 
 
-Setting log level
-~~~~~~~~~~~~~~~~~
+Setting the log level
+~~~~~~~~~~~~~~~~~~~~~
 
-By default, `keyword output`__ from test libraries is logged at :msg:`INFO` 
+By default, the `keyword output`__ from test libraries is logged at the :msg:`INFO` 
 level. This can be changed from the command line using :setting:`--loglevel (-L)`. 
-The available log levels in descending order are :msg:`WARN`, :msg:`INFO`, 
-:msg:`DEBUG` and :msg:`TRACE`. When a certain log level is used, Everything with 
-lesser log level is ignored when output file is written, and thus that information 
+In descending order, the available log levels are :msg:`WARN`, :msg:`INFO`, 
+:msg:`DEBUG`, and :msg:`TRACE`. When a certain log level is used, everything with a 
+lesser log level is ignored when an output file is written, and thus that information 
 is not available when log files are generated. 
 
 __ `Logging information`_
 
-.. note::
-   With log level :msg:`TRACE`, Robot Framework itself logs the actual values
+.. Note::
+   With the log level :msg:`TRACE`, Robot Framework itself logs the actual values
    of keyword arguments and return values. Normally, only variable names are 
    logged. This may increase the size of the output file(s) considerably.
 
 
 Removing keywords from outputs
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-When outputs are processed with :prog:`rebot`, it is possible to remove all
-keyword information of passed tests from the produced log file(s) using command
-line option :setting:`--removekeywords`. Only the names of top-level keywords 
-will be listed. This may reduce the size of the log file(s) dramatically, while 
-still preserving essential information about failed tests.
+
+When outputs are processed with :prog:`rebot`, you can remove all
+keyword information of passed tests from the produced log file(s)
+using the command line option :setting:`--removekeywords`. Only the
+names of top-level keywords will be listed. This may reduce the size
+of the log file(s) dramatically, while still preserving the essential
+information about failed tests.
 
