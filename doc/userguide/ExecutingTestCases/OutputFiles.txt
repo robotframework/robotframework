@@ -81,7 +81,7 @@ absolute path to a non-existing file. The :var:`ROBOT_SYSLOG_LEVEL` environment
 variable determines the level of logging. The available levels are the same as with the
 `--loglevel`__ command line option.
 
-__ `Setting log level`_
+__ `Setting a log level`_
 
 
 Setting output files
@@ -291,8 +291,8 @@ Statistics by Suite table. This is done with the command line option
 removed.
 
 
-Setting the log level
-~~~~~~~~~~~~~~~~~~~~~
+Setting a log level
+~~~~~~~~~~~~~~~~~~~
 
 By default, the `keyword output`__ from test libraries is logged at the :msg:`INFO` 
 level. This can be changed from the command line using :setting:`--loglevel (-L)`. 
