@@ -210,7 +210,7 @@ Setting titles
 ~~~~~~~~~~~~~~
 
 Titles for `Log`_, `Report`_ and `Summary report`_ files can be given from command 
-line using options :setting:`--logtitle`, :settingi:`--reporttitle` and :setting:
+line using options :setting:`--logtitle`, :setting:`--reporttitle` and :setting:
 `--summarytitle` respectively. The default title is generated from the name(s) of 
 the input file(s).
 
@@ -218,12 +218,77 @@ the input file(s).
 Configuring statistics
 ~~~~~~~~~~~~~~~~~~~~~~
 
---tagstatinclude
---tagstatexclude
---tagstatcombine
---tagstatlink
---tagdoc
---suitestatlevel
+There are several command line options that can be used to configure and tweak the 
+contents of 'Statistics by Tag', 'Test Details by Tag' and 'Statistics by Suite'
+-tables in outputs files. 
+
+Including and excluding tag statistics
+''''''''''''''''''''''''''''''''''''''
+
+Command line options :setting:`--tagstatinclude` and :setting:`--tagstatexclude`
+can be used to define the contents of the 'Statistics by Tag' and 'Test Details
+by Tag' -tablse. Both of these options may be given multiple times and their 
+arguments may be simple patterns. If a tag matches both include and exclude, it 
+will be excluded. 
+
+
+Generating combined tag statistics
+''''''''''''''''''''''''''''''''''
+
+Command line option :setting:`--tagstatcombine` can be used to generate an
+aggregate row in the 'Statistics by Tag' and 'Test Details by Tag' -tables.
+There are three somewha different ways that the argument for this option can
+be given:
+
+One tag as a pattern
+    All tags matching the pattern are combined, for example
+    :cli:`--tagstatcombine it-*`
+
+Two or more tags separated by 'AND' or '&'
+    Tags may be patterns also in this case. Test must have all these tags to
+    be included in this combined statistic. i
+    Example: :cli:`--tagstatcombine tag1&tag2ANDit-1?`
+
+Two or more tags separated by 'NOT'
+    Tags may be patterns also in this case. Only tests matching first tag and 
+    not any of the following tags are included in this combined statistics.
+    Example: :cli:`--tagstatcombine it-11NOTsmoke`
+
+Creating links from tag names
+'''''''''''''''''''''''''''''
+
+It is possible to add an external link to 'Statistics by Tag' - table by using 
+command line option :setting:`--tagstatlink`. Argument to this option is given 
+in format pattern:link:title, where pattern may contain characters '*' (matches
+anything) and '?' (matcehs any char). The matches of wildcards may be used in the 
+resulting link with syntax %N, where N is the index of the match starting from 1.
+Examples::
+
+    --tagstatlink mytag:http://my.domain:Link
+    --tagstatlink bug-*:http://tracker/id=%1:Bug_Tracker
+
+Adding documentation to tags
+''''''''''''''''''''''''''''
+
+Documentation for tags can be set with command line option :setting:`--tagdoc`
+Argument is in format tag:doc, where tag may be a simple pattern and doc may
+contain simple formatting. This documentation will be shown in 
+'Test Details by Tag' table and also as a tooltip in 'Statistics by Tag' table.
+Examples::
+
+    --tagdoc mytag:My_documentation
+    --tagdoc regression:*See*_http://info.html
+    --tagdoc owner-*:Original_author
+
+
+Configuring 'Statistics by Suite' table
+'''''''''''''''''''''''''''''''''''''''
+
+It is possible to control how many levels of subsuites are displayed in the 
+'Statistics by Suite' table. This is done with command line option
+:setting:`--suitestatlevel`. If 0 is given as argument, the whole table is 
+removed.
+
 
 Setting log level
 ~~~~~~~~~~~~~~~~~
