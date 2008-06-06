@@ -389,7 +389,7 @@ construct, there are several ways to get the same effect.
 - Another `BuiltIn keyword`_, :kw:`Set Variable If`, can be used to set
   variables dynamically based on a given expression.
 
-- There are several `built-in keywords`_ that allow executing a named
+- There are several `BuiltIn keywords`_ that allow executing a named
   keyword only if a test case or test suite has failed or passed.
 
 __ `Test setup and teardown`_
