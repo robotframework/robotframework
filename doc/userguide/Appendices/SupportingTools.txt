@@ -9,160 +9,49 @@ tools can be downloaded from the `Robot Framework supporting tools page`_.
    :depth: 2 
    :local: 
 
-Test data editing tool (Robot IDE)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Library documentation tool (libdoc.py)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Robot IDE is a standalone tool for editing test data. It helps in
-creating, editing and maintaining of Robot Framework test
-data.
+`Libdoc`__ is tool for generating HTML or XML documentation from keywords of a
+test library or a resource file.
 
-.. figure:: Robot_IDE.png
-   :width: 942
-   :height: 683
-  
-   Robot IDE
-
-However, the instructions for using Robot IDE are not within the
-scope of this user guide; for more information on the tool, see `Robot
-IDE wiki pages`_.
+__ libdoc.html
 
 
 Start/End/Elapsed time reporting tool (times2csv.py)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
 
+`times2csv`__ is a tool for generating start, end and elapsed
+time information about suites, tests and keywords in CSV format.
 
-Library documentation tool (libdoc.py)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
+__ times2csv.html
 
 Tool for viewing debug files (fileviewer.py)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+`Fileviewer`__ is a graphical tool implementing unix :cli:`tail` -like 
+functionality. It is especiall designed to view `debug files`__
 
-Javalibcore
-~~~~~~~~~~~
-
-Javalibcore is a common core for all Java libraries of Robot Framework. 
-
-The main advantages of this core are: 
-
-    - It is easily extensible and dynamic; you can add keywords to the class path. 
-    - There is no need for a library; you can just implement keywords. 
-    - There is common functionality readily available (for example, argument count checking for keywords) 
-
-Robot Framework supports two kinds of Java libraries. The simpler way
-is to have a single library class, which has keywords as methods. This
-is a very easy way to get started, but as the number of keywords grows,
-this approach soon leads to bad design and hard-to-maintain code, even if you
-split the keywords into several classes.
-
-The other, better way of doing this is to have a library that
-implements the methods :code:`String[] getKeywordNames()` and
-:code:`Object runKeyword(String keywordName, Object[]
-arguments)`. This enables you to decide how you want to run and
-implement your keywords.
-
-Javalibcore provides an implementation of the latter library
-model. You can add keywords either by simply implementing a Keyword
-interface and having your classes in the classpath when running Robot Framework,
-or by using Spring configuration files to wire them.
-
-
-Provided libraries
-'''''''''''''''''' 
-
-These libraries do not provide any keywords. They are mere common
-implementations of libraries so you do not need to create your own, but you only
-need to write keyword implementations. The principle of how the libraries find the
-keywords is explained below.
-
-ClassPathLibrary
-```````````````` 
-
-ClassPathLibrary searches for keywords in the class path. The class
-name is mapped to a keyword name. To create a keyword with the name
-:kw:`Do My Specific Task`, you simply implement a keyword class called
-DoMySpecificTask and add it to the class path.
-
-A keyword implementation has to meet the following requirements: 
-
-  - It is a class that implements the com.nokia.robot.javalib.core.keyword.Keyword interface. 
-  - The name matches the pattern com/nokia/\**/keyword/\**/\**.class. 
-  - The class has a default constructor. 
-  - The class is public and non-abstract. 
-
-See the Examples part in the Downloads section of `Javalib-core Wiki pages`__ to get started.
-
-__ https://cwiki.nokia.com/RobotFramework/Javalib-core 
-
-SpringLibrary
-````````````` 
-
-ClassPathLibrary maps one keyword to one class. It also limits the
-implementation, because it requires a default constructor. If this is
-a problem, you can use Spring configuration files to wire keywords any
-way you want. Here is an example of a Spring configuration file:
-
-::
-
- <?xml version="1.0" encoding="UTF-8"?>
- <!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN"
-	 "http://www.springframework.org/dtd/spring-beans.dtd">
-
- <beans>
-   <bean id="componentShouldBeVisible" class="com.nokia.oss.mycomponent.keyword.ComponentVisibility">
-     <constructor-arg type="boolean" value="true">
-   </bean>
-
-   <bean id="componentShouldNotBeVisible" class="com.nokia.oss.mycomponent.keyword.ComponentVisibility">
-     <constructor-arg type="boolean" value="false">
-   </bean>
- </beans>
-
-The pattern used to find configuration files is
-com/nokia/\**/keywords.xml. Only beans of type
-com.nokia.robot.javalib.core.keyword.Keyword are interpreted to be
-keyword implementations.
-
-For more information about Spring Framework, see http://www.springframework.org/. 
-
-
-CompositeLibrary
-````````````````
- 
-CompositeLibrary simply combines SpringLibrary and ClassPathLibrary. With CompositeLibrary, you can use either way to add new keywords. 
-
-
-Common functionality 
-''''''''''''''''''''
-.. TODO: Add some short introductory text here.
-
-ArgumentCheckingKeyword
-```````````````````````
- 
-With a lot of keywords you want to check that you get the correct
-number of arguments from the user. In Javalib-core, there is an abstract class
-that you can extend to achieve this behavior. Please see the source
-code for com.nokia.robot.javalib.core.keyword.ArgumentCheckingKeyword.
-
-
-PreparableKeyword
-````````````````` 
-
-If your keyword needs to be prepared in some way for it to work, you
-can use com.nokia.robot.core.keyword.PreparableKeyword. For example,
-in the Prepare method you can check that the current context that you
-are working in is correct for the keyword.
-
+__ fileviewer.html
+__ `Debug file`_
 
 Historical reporting tool (risto.py)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+`Ristopy`__ is a tool for generating plots about historical statistics
+of test executions.
 
-.. _Robot IDE wiki pages: https://cwiki.nokia.com/RobotFramework/RobotIDE
-.. _Mabot page: https://cwiki.nokia.com/RobotFramework/Mabot
-.. _Matplotlib: http://matplotlib.sourceforge.net/
-.. _NumPy: http://numpy.scipy.org/
-.. _ElementTree: http://effbot.org/zone/element-index.htm
-.. _risto.py: https://cwiki.nokia.com/twiki/pub/RobotFramework/HistoricalReporting/risto.py.txt
-.. _Robot Framework supporting tools page: https://cwiki.nokia.com/RobotFramework/DownloadPage#Supporting_Tools 
+__ ristopy.html
+
+Test data editing tool (Robot IDE)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Robot IDE is a standalone tool for editing test data. It helps in
+creating, editing and maintaining of Robot Framework test data.
+
+More information will be added as soon as Robot IDE project is
+made publicly available.
+
+
+
+.. _Robot Framework supporting tools page: TODO, correct link

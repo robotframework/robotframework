@@ -214,7 +214,7 @@ meaningful name::
 
    rebot --name Browser_compatibility firefox.xml opera.xml ie.xml
 
-__ `Specifying test data to be executed`_
+__ `Specifying the test data to be executed`_
 
 
 Getting help on command line

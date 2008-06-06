@@ -187,7 +187,7 @@ the command line using the option :setting:`--listener`. The listener
 class must be found in PYTHONPATH__.
 
 __ `Using the listener interface`_
-__ `Adjusting library search path`_
+__ `Adjusting the library search path`_
 
 
 Setting times for combined outputs
