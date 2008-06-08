@@ -1,74 +1,155 @@
 Configuring execution
 ----------------------
 
+This section explains different command line options that can be used
+configuring the `test execution`_ or `post-processing outputs`_
+somehow. Options related to generated output files are discussedin in
+the `next section`__.
+
+__ `Output files`_
+
 .. contents::
    :depth: 2
    :local:
 
+
 Selecting test cases
 ~~~~~~~~~~~~~~~~~~~~
 
-Robot Framework offers several command line options for selecting which test
-cases to include in a given test execution. The options can also be combined for  
-even greater flexibility.
+Robot Framework offers several command line options for selecting
+which test cases to execute. Same options also work when
+post-processing outputs with :prog:`rebot` tool.
 
 
-By names
-''''''''
+By test suite and test case names
+'''''''''''''''''''''''''''''''''
 
-Test suites and test cases can be included in the test run by their
-names, with the command line options :setting:`--suite (-s)` and
-:setting:`--test (-t)`.  Both of these can be defined multiple times
-and their arguments may contain simple patterns. It is also possible to
-determine a parent suite with :setting:`--suite` by using the option
-as in :cli:`--suite parentname.childname`.  In this case, also the
-setup and teardown of the parent suite are executed, if they are
-defined. Examples::
+Test suites and test cases can be selected by their names with command
+line options :setting:`--suite (-s)` and :setting:`--test (-t)`,
+respectively.  Both of these options can be used multiple times to
+select multiple test suites or cases. Arguments to these options are
+case and space insensitive, and theys can be also be `simple
+patterns`_ matching multiple names.  If both :setting:`--suite` and
+:setting:`--test` options are used, only test cases in matching suites
+with matching names are selected.
 
-  pybot --test test-? --t some_name
-  pybot --suite mys* -s alltests.subsuite 
+::
 
-Usually, these options are useful during the development of new test
-cases. It is often necessary to execute some hierarchy of test suites
-to get proper setup and teardown executed, but then only run the tests
-that are being developed.
+  --test Example
+  --test mytest --test yourtest
+  --test example*
+  --suite example-??
+  --suite mysuite --test mytest --test your*
 
+Using :setting:`--suite` option is more or less same as executing only
+the appropriate test case file or directory. One major benefit is the
+possibility to select the suite based on its parent suite. The syntax
+for this is specifying both the parent and child suite names separated
+with a dot.  In this case possible setup and teardown of the parent
+suite are executed.
+
+::
+
+  --suite parent.child
+  --suite myhouse.myhousemusic --test jack*
+
+Selecting individual test cases with :setting:`--test` option is very
+handy when creating test cases, but quite limited when running tests
+automatically. :setting:`--suite` option can be useful also in that
+case, but in general selecting test cases by tag names is more
+flexible.
 
 By tag names
 ''''''''''''
 
-It is possible to include and exclude test cases by tag names with
-specific command line options. Both these options can be defined
-several times, and their arguments may contain simple patterns.
+It is possible to include and exclude test cases by tag_ names with
+:setting:`--include (-i)` and :setting:`--exclude (-e)` options,
+respectively. When the former is used, only test cases having a
+matching tag are selected, and with the latter test cases having a
+matching tag are not. If both are used, only tests having a tag
+matching the former option, and not having a tag matching the latter
+are selected.
 
-:setting:`--include (-i)` can be used to include test cases in the test execution 
-by tag names and :setting:`--exclude (-e)` to exclude tests. If a tag matches 
-both include and exclude, it is not executed. Examples::
+::
 
-  pybot --include tag1
-  pybot -i criticalANDowner-*
-  pybot --include feature1 --exclude notready 
+   --include example
+   --exclude not_ready
+   --include regression --exclude long_lasting
 
-Usually, these options are useful in an automated environment. For example,
-unfinished tests may be committed to version control, marked with a tag
-"notready" or similar, and excluded from the test execution. Similarly,
-a subset of tests can be tagged "smoke" and first only those tests
-would be executed.
+Both :setting:`--include` and :setting:`--exclude` can be used several
+times to match multiple tags, and their arguments can be `simple
+patterns`_. In these cases the rules for selecting test cases apply so
+that test cases having any tag matching any include patterns are
+selected, and tests having any tag matching exclude patterns are not.
+It is also possible to select only test cases that have two or more
+specified tags by separating tags either with :code:`&` or :code:`AND`
+(case-sensitive). Similarly only tests with a certain tag but without
+another can be selected by separating these tags with :code:`NOT`
+(case-sensitive).
+
+::
+
+  --include req-*
+  --include regressionANDiter-42
+  --include tag1&tag2&tag3&tag4
+  --exclude regressionNOTowner-*
+
+Selecting test cases by tags is a really flexible machanism and allows
+many interesting possibilities:
+
+- A subset of tests to be executed before other tests can be tagged
+  with :setting:`smoke` and executed with :cli:`--include smoke`.
+
+- Unfinished test can be committed to version control with a tag
+  :setting:`not_ready` and excluded from the test execution with
+  :cli:`--exclude not_ready`.
+
+- Tests can be tagged with :setting:`iter-<num>`, where
+  :setting:`<num>` specifies the number of the current iteration, and
+  after executing all test cases a separate report containing only
+  tests for certain iteration can be generated like :cli:`rebot
+  --include iter-42 ouput.xml`.
 
 
 Setting criticality
 ~~~~~~~~~~~~~~~~~~~
 
-The final result of test execution is determined on the basis of critical tests. If
-a critical test fails, the whole run is considered failed. The command line 
-options :setting:`--critical (-c)` and :setting:`--noncritical (-n)` can be used 
-to control which tags are considered critial. Both of these options can be
-given several times and their arguments may be simple patterns. If a tag 
-matches both critical and non-critical, it is considered non-critical.
-Examples::
+TODO: Peke continues here on Monday
 
-  pybot --critical smoke 
-  pybot --noncritical not-ready
+The final result of test execution is determined on the basis of
+critical tests. If a single critical test fails, the whole test run is
+considered failed, but non-critical test cases can fail without the
+overall status changing. 
+
+By default all test cases are critical, but this can be changed with
+:setting:`--critical (-c)` and :setting:`--noncritical (-n)`
+options. These options specify which test cases are consider critical
+based on tags similarly as :setting:`--include` and
+:setting:`--exclude` are used to `select test cases by tag
+names`__. In short this means that test cases having a critical tag
+are considered critical unless they also have a non-critical tag, and
+that these options accept `simple patterns`_ and can be given multiple times.
+
+__ `By tag names`_
+
+::
+
+  --critical regression
+  --noncritical not_ready
+  --critical iter-* --critical req-* --noncritical req-6??
+
+The most common use case for setting criticality is having test cases
+that are not ready or that are testing features still under
+development in the test execution. These tests could, of course, be
+excluded from the test execution altogether with :setting:`--exclude`
+option, but including them as non-critical tests makes it possible to
+see when they start to pass.
+
+.. Note:: Currently criticality set when tests are executed is not
+          changed when `post-processing outputs`_ unless
+          :setting:`--critical` or :setting:`--noncritical` is used
+          explicitly. In the future this will change so that they need
+          to be used always.
 
 
 Setting metadata

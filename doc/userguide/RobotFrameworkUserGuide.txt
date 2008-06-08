@@ -146,11 +146,12 @@ Appendices
 .. _test teardown: `Test setup and teardown`_
 .. _suite setup: `Suite setup and teardown`_
 .. _suite teardown: `Suite setup and teardown`_
-.. _tags: `Tagging test cases`_
+.. _tag: `Tagging test cases`_
+.. _tags: `tag`_
 .. _test case timeouts: `Test case timeout`_
 .. _test timeout: `Test case timeout`_
 .. _user keyword timeouts: `User keyword timeout`_
-.. _user keyword documentation: `User keyword name and documentation`
+.. _user keyword documentation: `User keyword name and documentation`_
 .. _keyword timeout: `User keyword timeout`_
 .. _variable: `Variables`_
 .. _test libraries: `Using test libraries`_
@@ -161,11 +162,14 @@ Appendices
 .. _HTML formatting: `Documentation formatting`_
 .. _Robot IDE: `Test data editing tool (Robot IDE)`_
 .. _syslog: TODO
-.. _rebot: TODO
+.. _rebot: `Post-processing outputs`_
+.. _test execution: `Starting test execution`_
+.. _simple pattern: `Option value as simple pattern`_
+.. _simple patterns: `simple pattern`_
 .. _--include: `Selecting test cases`_
 .. _--exclude: `Selecting test cases`_
-.. _--escape: `Handling complicated options`_
-.. _--argumentfile: `Handling complicated options`_
+.. _--escape: `Escaping options`_
+.. _--argumentfile: `Using argument files`_
 .. _--output: `Setting output files`_
 .. _--summary: `Setting output files`_
 .. _--splitoutput: `Splitting outputs`_
