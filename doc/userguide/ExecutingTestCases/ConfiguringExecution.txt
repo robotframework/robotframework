@@ -166,7 +166,7 @@ can, however, be overridden with the command line option
 :setting:`--name (-N)`. Underscores in the given name are converted to
 spaces automatically, and words in the name capitalized.
 
-__ `Test suite name and documenation`_
+__ `Test suite name and documentation`_
 
 
 Setting documentation
@@ -177,7 +177,7 @@ of the top-level suite can be given from the command line with the
 option :setting:`--doc (-D)`. Underscores in the given documentation
 are converted to spaces, and it may contain simple `HTML formatting`_.
 
-__ `Test suite name and documenation`_
+__ `Test suite name and documentation`_
 
 
 Setting free metadata

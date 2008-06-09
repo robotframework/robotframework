@@ -249,12 +249,12 @@ The escape character can be used as follows:
   * :code:`\\\\` means a single backslash (for example, :code:`C:\\\\Temp`)
   * :code:`\\#` means a literal hash (#) mark, even at the beginning of a cell
 
-- To affect `the parsing of whitespaces`_
+- To affect `the parsing of whitespaces`__
 
 - To prevent Robot Framework from ignoring empty cells at the end of a
   row (this requires :code:`\\` to be in the appropriate cell).
 
-.. _the parsing of whitespaces: `Handling whitespace`_
+__ `Handling whitespace`_
 
 
 Handling whitespace
