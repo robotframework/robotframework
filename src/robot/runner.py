@@ -92,7 +92,7 @@ Options:
                           ignored. First three change te execution order of 
                           suites or tests (or both). 'exitonfailure' causes the
                           execution of tests to be stopped if a critical test
-                          fails-  
+                          fails.  
  -v --variable name:value *  Set variables in the test data. Only scalar
                           variables are supported and name is given without 
                           '${}'. See --escape for how to use special characters

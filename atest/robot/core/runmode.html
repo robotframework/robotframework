@@ -205,11 +205,11 @@ th {
 <td></td>
 </tr>
 <tr>
-<td><a name="test_Exit on Failure">Exit on Failure</a></td>
+<td><a name="test_Exit On Failure">Exit On Failure</a></td>
 <td>[Setup]</td>
 <td>Run Tests</td>
 <td>--runmode exitonfailure</td>
-<td>misc${/}pass_and_fail.html </td>
+<td>misc${/}pass_and_fail.html</td>
 </tr>
 <tr>
 <td></td>
@@ -245,6 +245,62 @@ th {
 <td>Suite3 First</td>
 <td>FAIL</td>
 <td>Critical failure occurred and ExitOnFailure option is in use</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="test_Correct Suite Teardown is Executed When Exitonfailure is Used">Correct Suite Teardown is Executed When Exitonfailure is Used</a></td>
+<td>[Setup]</td>
+<td>Run Tests</td>
+<td>--runmode exitonfailure</td>
+<td>misc${/}suites</td>
+</tr>
+<tr>
+<td></td>
+<td>${tsuite} =</td>
+<td>Get Test Suite</td>
+<td>Suites</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should Be Equal</td>
+<td>${tsuite.teardown.name}</td>
+<td>BuiltIn.Log</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>${tsuite} =</td>
+<td>Get Test Suite</td>
+<td>Fourth</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should Be Equal</td>
+<td>${tsuite.teardown.name}</td>
+<td>BuiltIn.Log</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>${tsuite} =</td>
+<td>Get Test Suite</td>
+<td>Tsuite3</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should Be Equal</td>
+<td>${tsuite.teardown}</td>
+<td>${None}</td>
+<td></td>
 </tr>
 <tr>
 <td></td>
