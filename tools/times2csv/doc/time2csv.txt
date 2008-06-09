@@ -1,3 +1,5 @@
+.. role:: path
+
 times2csv.py is a tool for creating a CSV file containing suite, test
 and keyword execution times (Start/End/Elapsed time).
 

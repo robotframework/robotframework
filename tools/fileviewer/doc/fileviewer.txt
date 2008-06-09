@@ -1,3 +1,6 @@
+.. role:: cli
+.. role:: path
+
 File viewer is a tool designed to be used together with the Robot
 Framework command line option :cli:`--debugfile`. The debug file can be
 opened with File viewer, and the viewer will automatically update the
@@ -5,11 +8,8 @@ display as the debug file gets written, so that it is possible to
 scroll the file when it is being written to.
 
 The tool can be downloaded from here:
-https://cwiki.nokia.com/twiki/pub/RobotFramework/FileViewerTool/fileviewer.py.txt
+TODO: link
 
-.. Note:: Because of TWiki security restrictions, the filename has a
-   	  :path:`.txt` extension. That must be removed, so the file must be saved
- 	  as :path:`fileviewer.py`.
 
 To use the tool, you can either double-click the icon and click the
 ``Open`` button in the GUI to open the desired file, or you can start

@@ -1,3 +1,6 @@
+.. role:: cli
+.. role:: path
+
 risto.py is a tool for plotting graphs about test execution history
 based on statistics read from Robot output files.
 
@@ -196,12 +199,6 @@ Links to the needed software:
 
 - risto.py_ 
 
-.. Note:: Because of TWiki security restrictions, the
-   	  file name has a :path:`.txt` extension. That must be removed, so
-   	  the file must be saved as :path:`risto.py`. After the downloading
-   	  and renaming, you can run the tool simply like python
-   	  risto.py arguments.
-
 
 Screenshots
 '''''''''''
@@ -281,3 +278,8 @@ These examples are generated from actual test outputs using the following argume
    :height: 400
 
    Example DRT tests
+
+.. _Matplotlib: http://matplotlib.sourceforge.net/
+.. _NumPy: http://numpy.scipy.org/
+.. _ElementTree: http://effbot.org/zone/element-index.htm
+.. _risto.py: TODO
