@@ -114,21 +114,22 @@ many interesting possibilities:
 Setting criticality
 ~~~~~~~~~~~~~~~~~~~
 
-TODO: Peke continues here on Monday
-
 The final result of test execution is determined on the basis of
 critical tests. If a single critical test fails, the whole test run is
-considered failed, but non-critical test cases can fail without the
-overall status changing. 
+considered failed. Non-critical test cases, on the other hand, can
+fail without the overall status is still passed.
 
 By default all test cases are critical, but this can be changed with
 :setting:`--critical (-c)` and :setting:`--noncritical (-n)`
 options. These options specify which test cases are consider critical
-based on tags similarly as :setting:`--include` and
+based on tags, similarly as :setting:`--include` and
 :setting:`--exclude` are used to `select test cases by tag
-names`__. In short this means that test cases having a critical tag
-are considered critical unless they also have a non-critical tag, and
-that these options accept `simple patterns`_ and can be given multiple times.
+names`__. If only :setting:`--critical` is used, test cases having a
+matching tag are critical. If only :setting:`--noncritical` is used,
+test not having a matching tag are critical. Finally, if both are
+used, only test with a critical tag but without a non-critical tag are
+considered critical.  Both of these options accept `simple patterns`_
+and can be given multiple times.
 
 __ `By tag names`_
 
@@ -146,10 +147,11 @@ option, but including them as non-critical tests makes it possible to
 see when they start to pass.
 
 .. Note:: Currently criticality set when tests are executed is not
-          changed when `post-processing outputs`_ unless
+          changed when `post-processing outputs`_, unless
           :setting:`--critical` or :setting:`--noncritical` is used
           explicitly. In the future this will change so that they need
-          to be used always.
+          to be used always. It is thus recommended to use them with
+          :prog:`rebot` already now.
 
 
 Setting metadata
@@ -158,32 +160,44 @@ Setting metadata
 Setting name
 ''''''''''''
 
-When Robot Framework parses test data, a name for the top-level suite
-is based on the data source path. This can be overridden with the
-command line option :setting:`--name (-N)`. The argument is
-capitalized and underscores are converted to spaces.
+When Robot Framework parses test data, `test suite names are created
+from file and directory names`__. The name of the top-level test suite
+can, however, be overridden with the command line option
+:setting:`--name (-N)`. Underscores in the given name are converted to
+spaces automatically, and words in the name capitalized.
+
+__ `Test suite name and documenation`_
+
 
 Setting documentation
 '''''''''''''''''''''
 
-In addition to defining documentation in the test data, documentation
-for the top-level suite may also be given from the command line with the
-option :setting:`--doc (-D)`. The given documenatation may contain simple
-HTML formatting.
+In addition to `defining documentation in the test data`__, documentation
+of the top-level suite can be given from the command line with the
+option :setting:`--doc (-D)`. Underscores in the given documentation
+are converted to spaces, and it may contain simple `HTML formatting`_.
+
+__ `Test suite name and documenation`_
+
 
 Setting free metadata
 '''''''''''''''''''''
 
-`Free test suite metadata`_ may also be given from the command line with the option
-:setting:`--metadata (-M)`. The argument must be in the format :setting:`name:value`, where
-"name" is capitalized and undescores converted to spaces and "value" may 
-contain simple HTML formatting. This option may be used several times.
+`Free test suite metadata`_ may also be given from the command line
+with the option :setting:`--metadata (-M)`. The argument must be in
+the format :setting:`name:value`, where :setting:`name` the name of
+the metadata to set, and :setting:`value` is its value. Underscores in
+the former are converted to spaces and words capitalized, and the
+latter may contain simple `HTML formatting`_. This option may be used
+several times to set multiple metadata.
 
 Setting tags
 ''''''''''''
 
-The command line option :setting:`--settag (-G)` can be used to set the given tag to 
-all executed test cases. This option may be used several times.
+The command line option :setting:`--settag (-G)` can be used to set
+the given tag to all executed test cases. This option may be used
+several times to set multiple tags.
+
 
 Adjusting the library search path
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
