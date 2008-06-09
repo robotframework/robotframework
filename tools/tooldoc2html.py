@@ -111,7 +111,7 @@ from docutils.core import publish_cmdline
 
 description = 'HTML generator for Robot Framework Tool Documentation.'
 stylesheetpath = os.path.join(os.path.dirname(os.path.abspath(__file__)), 
-                              '..', 'doc', 'userguide', 'userguide.css')
+                              '..', 'doc', 'userguide', 'src', 'userguide.css')
 arguments = [ 
 '--time', 
 '--stylesheet-path=%s' % stylesheetpath,
