@@ -113,7 +113,7 @@ def copy_figures(filename):
     for image in images:
         shutil.copy(os.path.join(dirname, image), OUTDIR)
 
-for filename in glob.glob('*/*.txt') + glob.glob('../../tools/*/doc/*.txt'):
+for filename in glob.glob('src/*/*.txt') + glob.glob('../../tools/*/doc/*.txt'):
     copy_figures(filename)
 
 
@@ -138,8 +138,8 @@ from docutils.core import publish_cmdline
 description = 'HTML generator for Robot Framework User Guide.'
 arguments = ('''
 --time
---stylesheet-path=userguide.css
-RobotFrameworkUserGuide.txt
+--stylesheet-path=src/userguide.css
+src/RobotFrameworkUserGuide.txt
 %s/RobotFrameworkUserGuide.html
 ''' % OUTDIR).split('\n')[1:-1] 
 
