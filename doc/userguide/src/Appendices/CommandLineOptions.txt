@@ -18,60 +18,48 @@ Command line options for test execution
   -N, --name <name>       `Sets the name`_ of the top-level test suite.
   -D, --doc <document>    `Sets the documentation`_ of the top-level test suite.
   -M, --metadata <name:value>  `Sets free metadata`_ for the top level test suite. 
-  -G, --settag <tag>      `Sets tag(s)`_ to all executed test cases. 
-  -t, --test <name>       `Selects test cases`_ to run by name.
-  -s, --suite <name>      `Selects test suites`_ to run by name. 
-  -i, --include <tag>     `Selects test cases`_ to run by tag. 
-  -e, --exclude <tag>     `Selects test cases`_ not to run by tag. 
+  -G, --settag <tag>      `Sets the given tag(s)`_ to all executed test cases. 
+  -t, --test <name>       Selects the executed `test cases by name`_.
+  -s, --suite <name>      `Selects the test suites`_ to run by name. 
+  -i, --include <tag>     `Selects the test cases`_ to run by tag. 
+  -e, --exclude <tag>     `Selects the test cases`_ not to run by tag. 
   -c, --critical <tag>    Tests that have the given tag are `considered critical`_. 
   -n, --noncritical <tag>  Tests that have the given tag are `not critical`_. 
   --runmode <mode>        `Sets the runmode`_ for this test run.
   -v, --variable <name:value>   `Sets variables`_ in the test data. 
   -V, --variablefile <path>  A file to `read variables`_ from. 
   -d, --outputdir <dir>   Defines where to `create output files`_.
-  -o, --output <file>     The XML `output file`_. 
-  -l, --log <file>        The HTML `log file`_. 
-  -r, --report <file>     The HTML `report file`_. 
-  -S, --summary <file>    The HTML `summary report file`_. 
+  -o, --output <file>     Sets the path to the `generated output file`_.
+  -l, --log <file>        Sets the path to the `generated log file`_. 
+  -r, --report <file>     Sets the path to the `generated report file`_. 
+  -S, --summary <file>    Sets the path to the `generated summary report file`_. 
   -b, --debugfile <file>  The `debug file`_ that is written during execution. 
-  -T, --timestampoutputs  `Add a timestamp`_ in a format "YYYYMMDD-hhmmss" to all 
+  -T, --timestampoutputs  `Adds a timestamp`_ in a format "YYYYMMDD-hhmmss" to all 
                           output file names between their basename and extension.
-  --splitoutputs <level>  `Splits output and log`_ files from specified suite level. 
-  --logtitle <title>      `Sets title`_ for the generated test log. 
-  --reporttitle <title>   `Sets title`_ for the generated test report. 
-  --summarytitle <title>  `Sets title`_ for the generated summary report.
-  -L, --loglevel <level>  `Sets threshold level` for logging. 
+  --splitoutputs <level>  `Splits output and log`_ files from a specified suite level. 
+  --logtitle <title>      `Sets a title`_ for the generated test log. 
+  --reporttitle <title>   `Sets a title`_ for the generated test report. 
+  --summarytitle <title>  `Sets a title`_ for the generated summary report.
+  -L, --loglevel <level>  `Sets the threshold level` for logging. 
   --suitestatlevel <level>  Defines how many `levels to show`_ in the Statistics 
                             by Suite table in outputs. 
-  --tagstatinclude <tag>  Includes only these tags in the Statistics by Tag and
+  --tagstatinclude <tag>  `Includes only these tags`_ in the Statistics by Tag and
                           Test Details by Tag tables in outputs. 
-  --tagstatexclude <tag>  Excludes these tags from the Statistics by Tag and
+  --tagstatexclude <tag>  `Excludes these tags`_ from the Statistics by Tag and
                           Test Details by Tag tables in outputs.
-  --tagstatcombine <tags>  Creates combined statistics based on tags.
-  --tagdoc <pattern:doc>   Adds documentation to tags matching the given pattern. 
-                          Documentation is shown in the Test Details by Tag 
-                          table and also as a tooltip in the Statistics by Tag 
-                          table. The pattern can contain the characters "\*" (matches 
-                          anything) and "?" (matches any char). In case of 
-                          multiple matches, documentations are catenated with
-                          spaces. The documentation can contain formatting, as with
-                          the --doc <option.
-  --tagstatlink <pattern:link:title>   Adds external links to the Statistics by 
-                          Tag table in outputs. The pattern can contain the characters
-                          "\*" (matches anything) and "?" (matches any char).
-                          Character(s) matching to wildcard expression(s) can 
-                          be used in the resulting link with the syntax "%N", where N
-                          is the index of the match (starting from 1). In the title,
-                          underscores are automatically converted to spaces.
+  --tagstatcombine <tags>  Creates `combined statistics based on tags`_.
+  --tagdoc <pattern:doc>   Adds `documentation to specified tags`_. 
+  --tagstatlink <pattern:link:title>   Adds `external links`_ to the Statistics by 
+                          Tag table in outputs.
   --listener <class>      A class for `monitoring test execution`_. 
-  -W, --monitorwidth <chars>  `Sets width`_ of the monitor output. 
+  -W, --monitorwidth <chars>  `Sets the width`_ of the monitor output. 
   -C, --monitorcolors <on|off|force>  Using ANSI colors in the `console`_. 
   -P, --pythonpath <path>   Additional locations (directories, ZIPs, JARs) where
                           to `search test libraries`_ from when they are imported.
-  -E, --escape <what:with>   `Escape characters`_ that are problematic in the console.
+  -E, --escape <what:with>   `Escapes characters`_ that are problematic in the console.
   -A, --argumentfile <path>   The text file to `read more arguments`_ from. 
-  -h, --help              Prints usage instructions.
-  --version               Prints version information.
+  -h, --help              Prints `usage instructions`_.
+  --version               Prints the `version information`_.
 
 Environment Variables:
 
@@ -83,185 +71,54 @@ ROBOT_SYSLOG_LEVEL        The log level to use when writing to the syslog file.
                           option. The default is INFO.
 
 
-.. :  `Setting name`_
-.. :  `Setting documentation`_
-.. :  `Setting free metadata`_
-.. :  `Setting tags`_
-.. :  `By test suite and test case names`_
-.. :  `By test suite and test case names`_
-.. :  `By tag names`_
-.. :  `By tag names`_
-.. :  `Setting criticality`__
-.. :  `Setting criticality`__
-.. :  `Setting runmode`_
-.. :  `Setting variables`_
-.. :  `Setting variables`_
 
-.. :  `Setting output directory`_
-.. :  `Setting output file`_
-.. :  `Setting log file`_
-.. :  `Setting report file`_
-.. :  `Setting summary report file`_
-.. :  `Setting debug file`_
-.. :  `Setting timestamps to output file names`_
-.. :  `Splitting outputs`_
-.. :  `Setting titles`_
-.. :  `Setting titles`_
-.. :  `Setting titles`_
+Command line options for post-processing outputs
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. :  `Setting a log level`_
-.. :  `Configuring the Statistics by Suite table`_
-
-.. :  `Setting listeners`_
-.. :  `Controlling monitor output`_
-.. :  `Controlling monitor output`_
-.. :  `Adjusting the library search path`_
-.. :  `Escaping options`_
-.. :  `Using argument files`_ 
-
-
-
-Rebot command line options
-~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Options:
 
-  -N, --name <name>       Sets the name of the top level test suite. The name is
-                          automatically capitalized and underscores converted
-                          to spaces.
-  -D, --doc <document>    Sets the document of the top-level test suite.
+  -N, --name <name>       `Sets the name`_ of the top level test suite. 
+  -D, --doc <document>    `Sets the documentation`_ of the top-level test suite.
                           Underscores in the document are turned into spaces.
-                          The document may also contain simple HTML formatting 
-                          (for example, \*bold\*, _italic_ and http://url/).
-  -M, --metadata <name:value>  Sets the metadata of the top-level test suite. The 
-                          name is automatically capitalized and underscores converted
-                          to spaces. The value can contain the same HTML formatting as
-                          --doc. 
-  -G, --settag <tag>      Sets the given tag(s) to all executed test cases. 
-  -t, --test <name>       Selects test cases by name. The name is case- and space-
-                          insensitive. It can also be a simple pattern, where
-                          "\*" matches anything and "?" matches any character.
-  -s, --suite <name>        Selects test suites by name. When this option is used
-                          with --test, --include or --exclude, only test cases
-                          in matching suites and also matching the other filtering
-                          criteria are selected. 
-  -i, --include <tag>     Selects test cases by tag. Similarly as the name in --test,
-                          the tag is case- and space-insensitive and can also be
-                          a simple pattern. To include only tests that have 
-                          more than one tag, use "&" or "AND" between the tag names.
-  -e, --exclude <tag>     Unselects test cases by tag. These tests are not
-                          selected, even if they are included with --include.
-                          Tag names are handled similarly as in --include, and
-                          excluding only tests containing multiple tags works
-                          the same way using "&" or "AND".
-  -c, --critical <tag>    Tests that have the given tag are considered critical. 
-                          If no critical tags are set, all tags are critical. 
-                          Tags can be given as a pattern, for example, with --test.
-                          Resets possible critical tags set earlier.
-  -n, --noncritical <tag>  Tests that have the given tag are not critical, even if they
-                          have a tag set with --critical. The tag can be a pattern.
-                          Resets possible non-critical tags set earlier.
-  -d, --outputdir <dir>   Defines where to create output files. The default is the
-                          directory where Rebot is run from, and the given path
-                          is considered relative to that, unless it is absolute.
-  -o, --output <file>     The XML output file. Not created unless this option is
-                          specified. The given path, similarly as paths given to
-                          --log, --report and --summary, is relative to
-                          --outputdir, unless given as an absolute path.
-                          The default is "output.xml". 
-  -l, --log <file>        The HTML log file. Can be disabled by giving a special
-                          name "NONE". 
-  -r, --report <file>     The HTML report file. Can be disabled with "NONE"
-                          similarly as --log. Default is "report.html".
-  -S, --summary <file>    The HTML summary report. Not created unless this option
-                          is specified. 
-  -T, --timestampoutputs  When this option is used, timestamp in a format
-                          "YYYYMMDD-hhmmss" is added to all generated output 
-                          files between their basename and extension.
-  --splitoutputs <level>  Splits output and log files from a specified suite 
-                          level to make them smaller. Top-level files
-                          have links to lower-level files for easy navigation.
-  --logtitle <title>    The title for the generated test log. The default title
-                          is "<Name Of The Suite> Test Log". Underscores in
-                          the title are converted into spaces in all titles.
-  --reporttitle <title>  The title for the generated test report. The default
-                          title is "<Name Of The Suite> Test Report".
-  --summarytitle <title>  The title for the generated summary report. The default
-                          title is "<Name Of The Suite> Summary Report".
-  --suitestatlevel <level>  Defines how many levels to show in the Statistics by Suite
-                          table in outputs. By default, all suite levels are
-                          shown. If zero (0) is given, the whole table is 
-                          removed. Example: "--suitestatlevel 3".
-  --tagstatinclude <tag>  Includes only these tags in the Statistics by Tag and
-                          Test Details by Tag tables in outputs. By default,
-                          all tags set in test cases are shown. The given
-                          tag can also be a simple pattern (see for example --test).
-  --tagstatexclude <tag>  Excludes these tags from the Statistics by Tag and
-                          Test Details by Tag tables in outputs. This option
-                          can be used with --tagstatinclude, similarly as
-                          --exclude is used with --include.
-  --tagstatcombine <tags>  Creates combined statistics based on tags. These
-                          statistics are added into the Statistics by Tag table 
-                          and matching tests into the Test Details by Tag table.
-                          There are three ways to give these tags.
-                          1) One tag as a simple pattern. Tests having a tag
-                          matching the pattern are included. Example: "it-\*".
-                          2) Two or more tags (or patterns) separated by "&" or
-                          "AND". Only tests having all these tags are included.
-                          3) Two or more tags (or patterns) separated by "NOT".
-                          Tests having the first tag but not any of the latter
-                          ones are included. Example: "it-10NOTsmoke"
-  --tagdoc <pattern:doc>  Add documentation to tags matching given pattern. 
-                          Documentation is shown in the Test Details by Tag 
-                          table and also as a tooltip in the Statistics by Tag 
-                          table. Pattern can contain characters "\*" (matches 
-                          anything) and "?" (matches any char). In case of 
-                          multiple matches, documentations are catenated with
-                          spaces. Documentation can contain formatting as with
-                          --doc option.
-  --tagstatlink <pattern:link:title>  Adds links into the Statistics by Tag 
-                          table in outputs. Pattern can contain the characters  
-                          "\*"(matches anything) and "?" (matches any character).
-                          Character(s) matching to wildcard expression(s) can 
-                          be used in the resulting link with the syntax "%N", where N
-                          is the index of the match (starting from 1). In the title,
-                          underscores are automatically converted to spaces.
-  --removekeywords <all|passed>  Removes keyword data from generated outputs. 
-                          Keyword data is not needed when creating reports, and
-                          removing it can decrease the size of an output file
-                          considerably.
-                          "all"    - remove data from all keywords
-                          "passed" - remove data only from keywords in passed
-                          test cases and suites
-  --starttime <timestamp>  Sets the starting time of test execution when creating
-                          combined reports. The timestamp must be given in the format
-                          "2007-10-01 15:12:42.268", where all separators are optional 
-                          (for example, "20071001151242268" is acceptable, too), 
-                          and the parts from milliseconds to hours can be omitted, if
-                          they are zero (for example, 2007-10-01). If this option is
-                          not used, the starttime of combined reports is "N/A".
-  --endtime <timestamp>   The same as --starttime, but for ending time. If both 
-                          the options are used, the elapsed time is calculated based 
-                          on them. Otherwise it is calculated by adding the elapsed 
-                          times of sub tests suites together.
-  -E, --escape <what:with>  Escapes characters that are problematic in the console.
-                          "what" is the name of the character to escape and
-                          "with" is the string to escape it with. Note that
-                          all the given arguments, including data sources, are escaped,
-                          so escape characters need to be selected carefully.
-                          The available escapes: amp (&), apos ('), at (@), bslash
-                          (\), colon (:), comma (,), curly1 ({), curly2 (}),
-                          dollar ($), exclam (!), gt (>), hash (#), lt (<),
-                          paren1 ((), paren2 ()), percent (%), pipe (|), quest
-                          (?), quot ("), semic (;), slash (/), space ( ),
-                          square1 ([), square2 (]), star (\*)
-  -A, --argumentfile <path>   The text file to read more arguments from. The file can 
-                          have both options and data sources one per line. Contents
-                          do not need to be escaped, but spaces in the beginning
-                          and end of lines are removed. Empty lines and lines
-                          starting with a hash character (#) are ignored.
-  -h, --help              Prints usage instructions.
-  --version               Prints version information.
+  -M, --metadata <name:value>  `Sets free metadata`_ for the top-level test suite.
+  -G, --settag <tag>      `Sets the given tag(s)`_ to all processed test cases. 
+  -t, --test <name>       Selects the `test cases by name`_. 
+  -s, --suite <name>      `Selects the test suites`_ by name.
+  -i, --include <tag>     `Selects the test cases`_ by tag.
+  -e, --exclude <tag>     `Selects the test cases`_ to be excluded by tag.
+  -c, --critical <tag>    Tests that have the given tag are `considered critical`_. 
+  -n, --noncritical <tag>  Tests that have the given tag are `not critical`_.
+  -d, --outputdir <dir>   Defines where to `create output files`_.
+  -o, --output <file>     The XML `output file`_.
+  -l, --log <file>        The HTML `log file`_.
+  -r, --report <file>     The HTML `report file`_.
+  -S, --summary <file>    The HTML `summary report file`_.
+  -T, --timestampoutputs  `Adds a timestamp`_ in a format "YYYYMMDD-hhmmss" to all
+                          output file names between their basename and extension.
+  --splitoutputs <level>  `Splits output and log`_ files from a specified suite 
+                          level.
+  --logtitle <title>    `Sets a title`_ for the generated test log.
+  --reporttitle <title>  `Sets a title`_ for the generated test report.
+  --summarytitle <title>  `Sets a title`_ for the generated summary report.
+  --suitestatlevel <level>  Defines how many `levels to show`_ in the Statistics by Suite
+                          table in outputs.
+  --tagstatinclude <tag>  `Includes only these tags`_ in the Statistics by Tag and
+                          Test Details by Tag tables in outputs.
+  --tagstatexclude <tag>  `Excludes these tags`_ from the Statistics by Tag and
+                          Test Details by Tag tables in outputs.
+  --tagstatcombine <tags>  Creates `combined statistics based on tags`_.
+  --tagdoc <pattern:doc>  Adds `documentation to specified tags`_.
+  --tagstatlink <pattern:link:title>  Adds `external links`_ into the Statistics by Tag 
+                          table in outputs.
+  --removekeywords <all|passed>  `Removes keyword data`_ from the generated outputs. 
+  --starttime <timestamp>  Sets the `starting time`_ of test execution when creating
+                          combined reports.
+  --endtime <timestamp>   The same as --starttime, but for `ending time`_.
+  -E, --escape <what:with>  `Escapes characters`_ that are problematic in the console.
+  -A, --argumentfile <path>   The text file to `read more arguments`_ from.
+  -h, --help              Prints `usage instructions`_.
+  --version               Prints the `version information`_.
 
 
 Environment Variables:
@@ -272,4 +129,50 @@ ROBOT_SYSLOG_FILE         The path to the syslog file. If not specified, or set 
 ROBOT_SYSLOG_LEVEL        The log level to use when writing to the syslog file.
                           The available levels are the same as for the --loglevel 
                           option to Robot and the default is INFO.
+
+
+.. _Sets the name: `Setting name`_
+.. _Sets the documentation: `Setting documentation`_
+.. _Sets free metadata: `Setting free metadata`_
+.. _Sets the given tag(s): `Setting tags`_
+.. _test cases by name: `By test suite and test case names`_
+.. _Selects the test suites: `test cases by name`_
+.. _Selects the test cases: `By tag names`_
+.. _considered critical: `Setting criticality`_
+.. _not critical: `considered critical`_
+.. _Sets the runmode: `Setting runmode`_
+.. _Sets variables: `Setting variables`_
+.. _read variables: `Sets variables`_
+
+.. _create output files: `Setting output directory`_
+.. _generated output file: `Setting output file`_
+.. _generated log file: `Setting log file`_
+.. _generated report file: `Setting report file`_
+.. _generated summary report file: `Setting summary report file`_
+.. _debug file: `Setting debug file`_
+.. _Adds a timestamp: `Setting timestamps to output file names`_
+.. _Splits output and log: `Splitting outputs`_
+.. _Sets a title: `Setting titles`_
+
+.. _Sets the threshold level: `Setting a log level`_
+.. _levels to show: `Configuring the Statistics by Suite table`_
+.. _Includes only these tags: `Including and excluding tag statistics`_
+.. _Excludes these tags: `Includes only these tags`_
+.. _combined statistics based on tags: `Generating combined tag statistics`_
+.. _documentation to specified tags: `Adding documentation to tags`_
+.. _external links: `Creating links from tag names`_
+
+.. _monitoring test execution: `Setting listeners`_
+.. _Sets the width: `Controlling monitor output`_
+.. _console: `Sets the width`_
+.. _search test libraries: `Adjusting the library search path`_
+.. _Escapes characters: `Escaping options`_
+.. _read more arguments: `Using argument files`_
+.. _usage instructions: `Getting help on the command line`_
+.. _version information: `usage instructions`_
+
+.. _Removes keyword data: `Removing keywords from outputs`_
+.. _starting time: `Setting times for combined outputs`_
+.. _ending time: `starting time`_
+
 

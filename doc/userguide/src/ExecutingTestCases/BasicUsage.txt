@@ -238,8 +238,8 @@ meaningful name::
 __ `Specifying the test data to be executed`_
 
 
-Getting help on command line
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Getting help on the command line
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Both when executing test cases with :prog:`pybot` or :prog:`jybot` and
 when post-processing reports with :prog:`rebot`, it is possible to get
