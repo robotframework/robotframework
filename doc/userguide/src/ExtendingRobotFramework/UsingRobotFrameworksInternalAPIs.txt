@@ -78,9 +78,8 @@ process_curdir
     parses the input data. See `Built-in variables`_ for more information about 
     :var:`${CURDIR}`. 
 
-syslog
-    TODO: add link to syslog
-
+syslog_
+   
 SuiteNames
    The value of this option becomes the name of the topmost suite, if either
    several datasources are given or if the datasource is a directory.

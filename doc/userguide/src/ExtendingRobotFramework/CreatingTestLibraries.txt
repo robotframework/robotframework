@@ -158,12 +158,9 @@ Example Java library implemented as a class in the :path:`MyLibrary.java` file:
 
 The example below illustrates how the example libraries above can be
 used. If you want to try this yourself, make sure that the library is
-in PYTHONPATH or CLASSPATH as explained in TODO__. Note that in
+in PYTHONPATH or CLASSPATH as explained in `Adjusting the library search path`_. Note that in
 subsequent examples all boilerplates, such as taking a library into
 use and creating a test case, is excluded.
-
-__ TODO: Link to setting pythonpath/classpath. That should probably be
-         explained at Executing tests chapter.
 
 
 .. table:: Using simple example library
@@ -447,9 +444,11 @@ Framework will write these messages directly into the log with the
 feature needs to be used with care, because one badly
 placed :code:`</table>` tag can ruin the log file quite badly.
 
-The following examples clarify how logging with different
-levels works. Java programmers should regard the code :code:`print 'message'`
+The following examples clarify how `logging with different
+levels`__ works. Java programmers should regard the code :code:`print 'message'`
 as pseudocode meaning :code:`System.out.println("message");`.
+
+__ `Setting a log level`
 
 
 .. sourcecode:: python
@@ -510,9 +509,6 @@ In most cases, the :msg:`INFO` level is adequate. The levels below it,
 These messages are normally not shown, but they can facilitate debugging
 possible problems in the library itself. The :msg:`WARN` level can
 be used to make messages slightly more visible.
-
-.. TODO: Link to explanation about how to run tests with different log
-   levels. 
 
 
 Returning values
@@ -805,10 +801,10 @@ library documented as above. However, outputs from these tools can be slightly
 technical for some users. Another alternative is using Robot
 Framework's own documentation tool :code:`libdoc.py`. This tool can
 create a library documentation from both Python and Java libraries
-using the normal library API, sucha as the ones above, but it also handles
+using the normal library API, such as the ones above, but it also handles
 libraries using the `dynamic library API`_ and `hybrid library API`_.
 
-.. TODO: link to libdoc.py
+.. _libdoc.py: `Library documentation tool (libdoc.py)`
 
 The first line of a keyword documentation is used for a special
 purpose and should contain a short overall description of the
@@ -980,11 +976,9 @@ from the presented examples.
 
 The actual argument names do not matter when tests are executed,
 because only argument counts are of concern to Robot Framework. On the
-other hand, if the :prog:`libdoc.py` tool is used for documenting the
+other hand, if the :prog:`libdoc.py`_ tool is used for documenting the
 library, arguments are shown in the documentation, in which case they
 need to have meaningful names.
-
-.. TODO: link to libdoc.py
 
 
 Getting keyword documentation
@@ -1000,11 +994,9 @@ version 1.8.4.
 The returned documentation is used similarly as the keyword
 documentation string with normal libraries implemented with
 Python. The main use case is getting keywords' documentations into a
-library documentation generated with :code:`libdoc.py`. Additionally,
+library documentation generated with :code:`libdoc.py`_. Additionally,
 the first line of the documentation (until the first :code:`\\n`) is
 shown in test logs.
-
-.. TODO: link to libdoc.py
 
 
 Summary
@@ -1205,4 +1197,3 @@ does that automatically.
 
 .. _distutils: http://docs.python.org/dist/dist.html
 .. _setuptools: http://peak.telecommunity.com/DevCenter/setuptools
-.. _library search path: TODO - link for setting pythonpath/classpath

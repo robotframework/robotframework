@@ -15,9 +15,7 @@ other systems.
 
 This section explains how to use the listener interface. Listeners are
 taken into use from the command line with the :cli:`--listener
-ListenerClassName` option as explained in TODO__.
-
-__ TODO: Link to section in executing test chapter about --listener
+ListenerClassName` option as explained in `Setting listeners`_.
 
 
 Available listener interface methods
@@ -86,7 +84,7 @@ noted in the Comments column.
    +-------------+-----------------+--------------------------------------------------+
 
 
-.. _outputs are split: TODO link to splitting outputs section
+.. _outputs are split: `Splitting outputs`_
 
 The available methods and their arguments are also shown in a formal Java interface
 specification below. It should be remembered that a listener *does not*
@@ -143,11 +141,9 @@ illustrates that using the listener interface is not very complicated.
 The second example, which still uses Python, is slightly more
 complicated. It writes all the information it gets into a text file in
 a temporary directory without much formatting. Note that in real
-usage, the `debug file`__ functionality available through the command
+usage, the `debug file`_ functionality available through the command
 line option :cli:`--debugfile` is probably more useful than this
 example.
-
-__ TODO: link section explaining --debugfile 
 
 
 .. sourcecode:: python
