@@ -799,17 +799,15 @@ the examples below.
 Both Python and Java have tools for creating an API documentation of a
 library documented as above. However, outputs from these tools can be slightly
 technical for some users. Another alternative is using Robot
-Framework's own documentation tool :code:`libdoc.py`. This tool can
+Framework's own documentation tool :code:`libdoc.py`_. This tool can
 create a library documentation from both Python and Java libraries
 using the normal library API, such as the ones above, but it also handles
 libraries using the `dynamic library API`_ and `hybrid library API`_.
 
-.. _libdoc.py: `Library documentation tool (libdoc.py)`
-
 The first line of a keyword documentation is used for a special
 purpose and should contain a short overall description of the
 keyword. It is used as a short documentation, for example as a tool
-tip, by :code:`libdoc.py` and also shown in the test logs. However, the latter
+tip, by :code:`libdoc.py`_ and also shown in the test logs. However, the latter
 does not work with Java libraries using the normal API,
 because their documentations are lost in compilation and not available
 at runtime.
