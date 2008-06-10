@@ -27,6 +27,7 @@ class Statistics:
                                   tag_stat_combine, tag_doc, tag_stat_link)
         self.suite = SuiteStatistics(suite, self.tags, suite_stat_level)
         self.total = TotalStatistics(self.suite)
+        self.tags.sort()
         
     def serialize(self, serializer):
         serializer.start_statistics(self)
@@ -87,7 +88,6 @@ class TagStat(Stat):
     def add_test(self, test):
         Stat.add_test(self, test)
         self.tests.append(test)
-        self.tests.sort()
 
     def __cmp__(self, other):
         if self.critical != other.critical:
@@ -233,7 +233,11 @@ class TagStatistics:
         for stat in stats:
             stat.serialize(serializer)
         serializer.end_tag_stats(self)
- 
+
+    def sort(self):
+        for stat in self.stats.values():
+            stat.tests.sort()
+
 
 class TotalStatistics:
     
