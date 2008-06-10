@@ -28,7 +28,7 @@
    - kw       TODO: rename to 'name' where used
    - cli      command line examples (note that options alone use setting)
    - path     file names and paths
-   - misc     everything else (synomyn to ``text``)
+   - misc     everything else (synonym to ``text``)
  
 .. role:: var
 .. role:: setting
