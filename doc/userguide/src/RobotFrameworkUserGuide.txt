@@ -180,6 +180,8 @@ Appendices
 .. _Telnet library documentation: Telnet.html
 .. _Collections library documentation: Collections.html
 .. _Screenshot library documentation: Screenshot.html
+.. _libdoc.py: `Library documentation tool (libdoc.py)`_
+.. _library search path: `Adjusting the library search path`_
 
 
 .. Other commonly used link targets
