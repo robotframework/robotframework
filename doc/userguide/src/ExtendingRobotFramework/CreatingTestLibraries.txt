@@ -799,7 +799,7 @@ the examples below.
 Both Python and Java have tools for creating an API documentation of a
 library documented as above. However, outputs from these tools can be slightly
 technical for some users. Another alternative is using Robot
-Framework's own documentation tool :code:`libdoc.py`_. This tool can
+Framework's own documentation tool `libdoc.py`_. This tool can
 create a library documentation from both Python and Java libraries
 using the normal library API, such as the ones above, but it also handles
 libraries using the `dynamic library API`_ and `hybrid library API`_.
@@ -807,7 +807,7 @@ libraries using the `dynamic library API`_ and `hybrid library API`_.
 The first line of a keyword documentation is used for a special
 purpose and should contain a short overall description of the
 keyword. It is used as a short documentation, for example as a tool
-tip, by :code:`libdoc.py`_ and also shown in the test logs. However, the latter
+tip, by `libdoc.py`_ and also shown in the test logs. However, the latter
 does not work with Java libraries using the normal API,
 because their documentations are lost in compilation and not available
 at runtime.
@@ -974,7 +974,7 @@ from the presented examples.
 
 The actual argument names do not matter when tests are executed,
 because only argument counts are of concern to Robot Framework. On the
-other hand, if the :prog:`libdoc.py`_ tool is used for documenting the
+other hand, if the `libdoc.py`_ tool is used for documenting the
 library, arguments are shown in the documentation, in which case they
 need to have meaningful names.
 
@@ -992,7 +992,7 @@ version 1.8.4.
 The returned documentation is used similarly as the keyword
 documentation string with normal libraries implemented with
 Python. The main use case is getting keywords' documentations into a
-library documentation generated with :code:`libdoc.py`_. Additionally,
+library documentation generated with `libdoc.py`_. Additionally,
 the first line of the documentation (until the first :code:`\\n`) is
 shown in test logs.
 
