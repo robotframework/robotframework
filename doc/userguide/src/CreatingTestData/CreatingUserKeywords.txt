@@ -230,7 +230,7 @@ values. Return values are defined with the :setting:`[Return]`
 setting. The values can then be `assigned to variables`__ in test
 cases or other user keywords.
 
-__ TODO: link to setting variables from keyword return values 
+__ `Return values from keywords` 
 
 In a typical case, a user keyword returns one value and it can be set
 to a scalar variable. This is done by having the return value in the

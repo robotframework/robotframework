@@ -82,12 +82,12 @@ Library search path
 Robot Framework can import a library only if the library class or
 module can be found from the library search path. Basically, this
 means that the library code and all its possible dependencies must be
-in :code:`PYTHONPATH` or, when running tests on Jython, in
-:code:`CLASSPATH`. Setting the library search path is explained in
-`dedicated section`__, and well-developed libraries either do that
+in :code:`PYTHONPATH` or, when running tests on Jython, in a
+:code:`CLASSPATH`. `Setting the library search path`__ is explained in
+a section of its own, and well-developed libraries either do that
 automatically or have clear instructions on how to do it.
 
-__ TODO: link to setting lib search path
+__ `Adjusting the library search path`
 
 
 Setting a custom name to a test library

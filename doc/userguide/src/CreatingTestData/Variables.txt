@@ -342,10 +342,10 @@ name:value`, where :cli:`name` is the name of the variable without
 set by using this option several times. Only scalar variables can be
 set from the command line and they can only get string values. Many
 special characters are difficult or impossible to represent in the
-command line, but they can be escaped with the :setting:`--escape`
+command line, but they can be `escaped`__ with the :setting:`--escape`
 option. 
 
-.. TODO: link --escape explanation
+__ `Escaping`
 
 .. sourcecode:: bash
 
@@ -648,12 +648,11 @@ of them are not even available all the time.
    | ${OUTPUT_DIR}         | An absolute path to the `output directory`_.          | Everywhere     |
    +-----------------------+-------------------------------------------------------+----------------+
 
-.. _output file: TODO - link to executing test case section
-.. _log file: TODO - link to executing test case section
-.. _report file: TODO - link to executing test case section
-.. _summary file: TODO - link to executing test case section
-.. _debug file: TODO - link to executing test case section
-.. _output directory: TODO - link to executing test case section
+.. _output file: `Output files`
+.. _log file: `Setting a log file`
+.. _report file: `Report`
+.. _summary file: `Summary report`
+.. _output directory: `Setting an output directory`
 
 
 Advanced variable features

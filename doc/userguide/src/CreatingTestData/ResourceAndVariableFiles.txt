@@ -22,7 +22,7 @@ them somewhat more complicated than Variable tables.
 Resource files
 ~~~~~~~~~~~~~~
 
-.. TODO: Some short introductory text here.
+.. TODO: Some short introductory text here?
 
 Taking resource files into use
 ''''''''''''''''''''''''''''''
@@ -143,7 +143,8 @@ variables:
 
 Taking variable files into use
 ''''''''''''''''''''''''''''''
-.. TODO: Add a short introductory text here.
+
+.. TODO: Add a short introductory text here?
 
 Setting table
 `````````````
@@ -191,12 +192,13 @@ Another way of introducing variables is using the command line option
 available in all test data files, similarly as individual variables set
 with the :setting:`--variable` option.
 
+For more information, see `Robot command line options`.
 
-.. TODO: Link to suitable cli section
 
 Creating variables directly
+
 '''''''''''''''''''''''''''
-.. TODO: Add a short introductory text here.
+.. TODO: Add a short introductory text here?
 
 Basic syntax
 ````````````

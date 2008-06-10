@@ -225,14 +225,18 @@ Using tags in Robot Framework is a simple, yet powerful mechanism for
 classifying test cases. Tags are free text and they can be used at
 least for the following purposes:
 
-- Tags are shown in test reports and logs (and, of course, in test
-  data), so they provide metadata about the executed test cases.
-- Statistics about test cases (total, passed, failed)
+- Tags are shown in test `reports and logs`_ (and, of course, in test
+  data), so they provide `metadata`_ about the executed test cases.
+- `Statistics`_ about test cases (total, passed, failed)
   are automatically collected per tag.
-- With tags, you can include or exclude test cases to be executed.
-- With tags, you can specify which test cases are critical.
+- With tags, you can `include or exclude`_ test cases to be executed.
+- With tags, you can specify which test cases are `critical`_.
 
-.. TODO: links to suitable sections in executing test chapter
+.. _reports and logs: `Creating different reports and logs`
+.. _metadata: `Setting metadata`
+.. _statistics: `Configuring statistics`
+.. _critical: `Setting criticality`
+.. _include or exclude: `By tag names`
 
 In this section it is only explained how to set tags for test
 cases, and different ways to do it are listed below. These
