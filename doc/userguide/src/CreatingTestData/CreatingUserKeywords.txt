@@ -93,11 +93,10 @@ User keywords can have a documentation that is set with the
 :setting:`[Documentation]` setting, exactly as `test case
 documentation`_. This setting documents the user keyword in the test
 data. It is also shown in a more formal keyword documentation, which
-the `libdoc`__ tool can create from `resource files`_. Finally, the
+the `libdoc`_ tool can create from `resource files`_. Finally, the
 first row of the documentation, everything until the first :code:`\n`
 sequence, is shown as a keyword documentation in test logs.
 
-__ `Library documentation tool (libdoc.py)`_
 
 User keyword arguments
 ~~~~~~~~~~~~~~~~~~~~~~
