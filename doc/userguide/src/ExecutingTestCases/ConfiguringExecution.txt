@@ -209,6 +209,9 @@ also the CLASSPATH environment variable is used to determine the
 search path. The command line option :setting:`--pythonpath` can be
 used to add directories to the PYTHONPATH environment variable.
 
+Multiple paths may be given by separating them with :cli:`:`, and 
+:cli:`*` can be used to incldue multiple paths. 
+
 It is usually best to create a start-up script for setting the environment
 variables.
 

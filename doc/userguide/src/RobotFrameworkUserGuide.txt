@@ -2,9 +2,12 @@
   Robot Framework User Guide
 =============================
 
-----------------------
+---------------
   Version 1.8
-----------------------
+---------------
+
+| Copyright Nokia Siemens Networks 2008
+| Licensed under Apache 2.0 license
 
 
 .. contents:: Table of Contents
@@ -48,6 +51,7 @@ Getting started
    :local:
 
 .. include:: GettingStarted/Introduction.txt
+.. include:: GettingStarted/CopyrightAndLicense.txt
 .. include:: GettingStarted/Installation.txt
 .. include:: GettingStarted/Demonstration.txt
 
@@ -114,8 +118,7 @@ Appendices
    :local: 
 
 .. include:: Appendices/AvailableSettingsInTestData.txt
-.. include:: Appendices/RobotCommandLineOptions.txt
-.. include:: Appendices/RebotCommandLineOptions.txt
+.. include:: Appendices/CommandLineOptions.txt
 .. include:: Appendices/SupportingTools.txt
 .. include:: Appendices/DocumentationFormatting.txt
 .. include:: Appendices/TimeFormat.txt

@@ -9,15 +9,15 @@ Different outputs
 ~~~~~~~~~~~~~~~~~~
 
 
-Output
-''''''
+Output file
+'''''''''''
 
 An output file contains the test execution results in XML format. Report,
 log and summary files are generated from the information in the output file.
 The default name for an output file is :path:`output.xml`.
 
-Report
-''''''
+Report file
+'''''''''''
 
 A report file contains an overview of the results of the test execution.
 It has summary information by suite and by tag, and also contains details
@@ -32,8 +32,8 @@ is :path:`report.html`.
 
    Example report file
 
-Log
-'''
+Log file
+''''''''
 
 A log file contains details about the executed test cases. It
 has a hierarchical structure showing suite, test and keyword details.
@@ -45,8 +45,8 @@ The default name for a log file is :path:`log.html`.
 
    Example log file
 
-Summary report
-''''''''''''''
+Summary report file
+'''''''''''''''''''
 
 The summary report is a higher-level overview of the executed tests.
 It does not contain the Test details by suite table, neither is it 
@@ -69,8 +69,8 @@ available for viewing the debugfile.
 __ `Tool for viewing debug files (fileviewer.py)`_
 
 
-Syslog
-~~~~~~
+Syslog file
+'''''''''''
 
 A syslog file contains debug information about the functioning of Robot 
 Framework. The information in it is usually only needed when some unexpected
@@ -91,16 +91,16 @@ Each output file has a corresponding command line option to determine a path
 to which it is written. These paths are relative to output directory, unless
 given as absolute paths.
 
-Setting an output file
-''''''''''''''''''''''
+Setting output file
+'''''''''''''''''''
 
 The command line option :setting:`--output (-o)` determines where an output file
 is created. By default, this file is created when tests are executed with 
 Robot Framework, but it is not created with :prog:`rebot` unless this option
 is used.
 
-Setting a log file
-''''''''''''''''''
+Setting log file
+''''''''''''''''
 
 The command line option :setting:`--log (-l)` determines where a log file is
 created. By default, a log file is created both when tests are executed and
@@ -108,22 +108,28 @@ when :prog:`rebot` is used. The default name for a log file is :path:`log.html`.
 The creation of a log file may be disabled by using the argument "none".
 
 
-Setting a report file
-'''''''''''''''''''''
+Setting report file
+'''''''''''''''''''
 
 The command line option :setting:`--report (-r)` determines where a report file 
 is created. By default, a report file is created both when tests are executed and
 when :prog:`rebot` is used. The default name for a log file is :path:`report.html`.
 The creation of a log file may be disabled by using the argument "none".
 
-Setting a summary report file
-'''''''''''''''''''''''''''''
+Setting summary report file
+'''''''''''''''''''''''''''
 
 The command line option :setting:`--summary (-S)` determines where a summary report 
 file is created. By default, this file is not created. 
 
-Setting an output directory
-'''''''''''''''''''''''''''
+Setting debug file
+''''''''''''''''''
+
+The command line option :setting:`--debugfile (-b)` determines where a debug file
+is created. By default, this file is not created.
+
+Setting output directory
+''''''''''''''''''''''''
 
 By default, an output directory is the directory where test execution was started.
 This can be changed with teh option :setting:`--outputdir (-d)`. If the given 
@@ -210,11 +216,15 @@ In this case, the following files will be created:
 Setting titles 
 ~~~~~~~~~~~~~~
 
-Titles for `Log`_, `Report`_ and `Summary report`_ files can be given
+Titles for `log`__, `report`__ and `summary report`__ files can be given
 from the command line using the options :setting:`--logtitle`,
 :setting:`--reporttitle` and :setting:`--summarytitle`,
 respectively. The default title is generated from the name(s) of the
 input file(s).
+
+__ `Log file`_
+__ `Report file`_
+__ `Summary report file`_
 
 
 Configuring statistics

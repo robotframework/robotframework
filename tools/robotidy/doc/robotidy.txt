@@ -1,15 +1,22 @@
-==============================
-Robot Framework test data tidy
-==============================
+===========
+robotidy.py
+===========
+
+A tool for cleaning up Robot Framework test data.
 
 
-Tool for cleaning up Robot Framework test data.
+Synopsis
+--------
 
-Usage:  robotidy.py [options] inputfile outputfile
-  or:   robotidy.py --inplace [options] inputfile [more input files]
-  or:   robotidy.py --recursive [options] directory
+::  
 
-Options:
+  robotidy.py [options] inputfile outputfile
+  robotidy.py --inplace [options] inputfile [more input files]
+  robotidy.py --recursive [options] directory
+
+
+Options
+-------
 
   -I, --inplace      Tidy given file(s) so that original file(s) are overwritten
                     When this option is used, it is possible to give multiple
@@ -36,31 +43,43 @@ Options:
   -h, --help         Print this help.
 
 
-This multipurpose tool has three main usages listed below.
+Description
+-----------
 
-1) Clean up the test data.
+This multipurpose tool has three usages explained in this section.
+In all cases, the outputs are written in UTF-8 format.
+
+
+Cleaning up the test data
+~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Source code created by most HTML editors is quite ugly. With this tool the 
 source can be formatted nicely and it is even possible to specify a custom
 style sheet. Additionally test data itself is cleaned up so that settings and
 metadata is always in same predefined order.
 
-Examples:
+Examples::
+
   robotidy.py messed_up_tests.html cleaned_tests.html 
   robotidy.py --style new_styles.css my_tests.html my_tests.html
 
-2) Change format between HTML and TSV.
+
+Changing format between HTML and TSV
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Robot Framework supports test data in HTML and TSV formats and this tools makes
 changing between formats trivial. Input format is always determined from the
 extension of the input file. Output format is also got from the output file
 extension by default but it can also be set explicitly with '--format' option.
 
-Examples:
+Examples::
+
   robotidy.py tests_in_html.html tests_in_tsv.tsv
   robotidy.py --format html tests.tsv tests.xxx
 
-3) Fix comments.
+
+Fixing comments
+~~~~~~~~~~~~~~~
 
 Robot IDE is a great tool for editing the test data but at least currently it
 totally ignores comments. This tool can be used to convert comments so that 
@@ -74,6 +93,4 @@ Examples::
   robotidy.py --fixcomments orig.html fixed.html
   robotidy.py --fixcomments --inplace \*.html
 
-
-Outputs are always written using UTF-8 encoding.
 
