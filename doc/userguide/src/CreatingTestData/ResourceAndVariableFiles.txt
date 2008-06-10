@@ -196,8 +196,8 @@ For more information, see `Robot command line options`.
 
 
 Creating variables directly
-
 '''''''''''''''''''''''''''
+
 .. TODO: Add a short introductory text here?
 
 Basic syntax
