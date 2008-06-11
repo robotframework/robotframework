@@ -14,20 +14,19 @@ monitors, sending a mail message when a test fails, and communicating with
 other systems.
 
 
-Taking listener into use
-~~~~~~~~~~~~~~~~~~~~~~~~
+Taking listeners into use
+~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Listeners are taken into use from the command line with the
 :setting:`--listener` option, so that the name of the listener is
 given to it as an argument. The listener name is got from the name of
 the class implementing the listener interface, similarly as `test
-library names`__ are got from classes implementing them. Specified
-listeners must be found the same `module search path`__ where test
-libraries are searched when they are imported. It is possible to take
+library names`__ are got from classes implementing them. The specified
+listeners must be in the same `module search path`_ where test
+libraries are searched from when they are imported. It is possible to take
 multiple listners into use by using this option several times.
 
 __ `Library and keyword names`_
-__ `Adjusting library search path`_
 
 Examples::
 
@@ -52,7 +51,7 @@ The following table lists all the available methods in the listener
 interface. All of these methods have also camelCase aliases. Thus,
 for example, :code:`startSuite` is a synonym to
 :code:`start_suite`. All the arguments are strings, unless otherwise
-noted in the Comments column.
+stated in the Comments column.
 
 
 .. table:: Available methods in the listener interface
