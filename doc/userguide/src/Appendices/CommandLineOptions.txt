@@ -165,7 +165,7 @@ ROBOT_SYSLOG_LEVEL        The log level to use when writing to the syslog file.
 .. _monitoring test execution: `Setting listeners`_
 .. _Sets the width: `Controlling monitor output`_
 .. _console: `Sets the width`_
-.. _search test libraries: `Adjusting the library search path`_
+.. _search test libraries: `library search path`_
 .. _Escapes characters: `Escaping options`_
 .. _read more arguments: `Using argument files`_
 .. _usage instructions: `Getting help on the command line`_

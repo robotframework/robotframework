@@ -158,6 +158,7 @@ Appendices
 .. _keyword timeout: `User keyword timeout`_
 .. _variable: `Variables`_
 .. _test libraries: `Using test libraries`_
+.. _test library: `test libraries`_
 .. _library keyword: `test libraries`_
 .. _library keywords: `library keyword`_
 .. _library API: `Creating test libraries`_
@@ -185,7 +186,7 @@ Appendices
 .. _Screenshot library documentation: Screenshot.html
 .. _libdoc.py: `Library documentation tool (libdoc.py)`_
 .. _libdoc: `libdoc.py`_
-.. _library search path: `Adjusting the library search path`_
+.. _library search path: `Adjusting library search path`_
 
 
 .. Other commonly used link targets

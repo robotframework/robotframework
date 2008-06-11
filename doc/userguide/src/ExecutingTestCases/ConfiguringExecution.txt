@@ -198,21 +198,79 @@ the given tag to all executed test cases. This option may be used
 several times to set multiple tags.
 
 
-Adjusting the library search path
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Adjusting library search path
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-When test libraries are introduced in the test data, Robot Framework
-attempts to find the library code from locations defined in the
-PYTHONPATH environment variable. When tests are executed with Jython,
-also the CLASSPATH environment variable is used to determine the
-search path. The command line option :setting:`--pythonpath` can be
-used to add directories to the PYTHONPATH environment variable.
+When a `test library is taken into use`__, Robot Framework uses Python
+or Jython interpreter to import module implementing the library from
+the system. The locations these modules are searched from is called
+PYTHONPATH, and when running tests on Jython also Java CLASSPATH is
+used.
 
-Multiple paths may be given by separating them with :cli:`:`, and 
-:cli:`*` can be used to include multiple paths. 
+Adjusting the library search path so that libraries are found is
+obviously a requirement for successful test execution. In addition to
+find test libraries, the search path is also used to find `listeners
+set in the command line`__. There are multiple ways to alter
+PYTHONPATH and CLASSPATH, but regardless the selected approach it is
+usually best to do it in a `custom start-up script`__.
 
-It is usually best to create a start-up script for setting the environment
-variables.
+__ `Taking test libraries into use`_
+__ `Setting listeners`_
+__ `Creating start-up scripts`_
+
+
+Locations automatically in PYTHONPATH
+'''''''''''''''''''''''''''''''''''''
+
+Python and Jython installations put their own library directories into
+PYTHONPATH automatically. This means that test libraries `packaged
+using Python's own packaging system`__ are automatically installed
+into a location that is in the library search path. Robot Framework
+also puts the directory containing its `standard libraries`_ and the
+directory where tests are executed from into PYTHONPATH.
+
+__ `Packaging libraries`_
+
+
+Setting PYTHONPATH in system
+''''''''''''''''''''''''''''
+
+There are several ways to alter PYTHONPATH in the system, but the most
+common one is setting an environment variable with the same name
+before the test execution. Jython actually does not use PYTHONPATH
+environment variable normally, but Robot Framework ensures that
+locations listed in it are added into the library search path
+regardless the interpreter.
+
+
+Setting CLASSPATH in system
+'''''''''''''''''''''''''''
+
+CLASSPATH is used only with Jython, and the most command way to alter
+it is setting an environemnt variable similarly as with PYTHONPATH.
+Notice that that instead of CLASSPATH it is always possible to use
+PYTHONPATH with Jython, even with libraries and listeres implemented
+with Java.
+
+
+Using --pythonpath option
+'''''''''''''''''''''''''
+
+Robot Framework also has a separate command line option
+:setting:`--pythonpath (-P)` for adding directories or archives into
+PYTHONPATH. Multiple paths can be given by separating them with a
+colon (:), or using this option several times. Given path can also be
+a glob pattern matching multiple paths, but then it normally must be
+escaped__.
+
+__ `Escaping options`_
+
+Examples::
+
+   --pythonpath libs/ 
+   --pythonpath /opt/testlibs:mylibs.zip:yourlibs 
+   --pythonpath mylib.jar --pythonpath lib/STAR.jar --escape star:STAR 
+
 
 Setting variables
 ~~~~~~~~~~~~~~~~~
@@ -281,10 +339,10 @@ Setting listeners
 
 The only way to use a listener__ during execution is to define it from
 the command line using the option :setting:`--listener`. The listener
-class must be found in PYTHONPATH__.
+class must be found the `search path`__.
 
 __ `Using the listener interface`_
-__ `Adjusting the library search path`_
+__ `Adjusting library search path`_
 
 
 Setting times for combined outputs

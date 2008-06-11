@@ -158,9 +158,9 @@ Example Java library implemented as a class in the :path:`MyLibrary.java` file:
 
 The example below illustrates how the example libraries above can be
 used. If you want to try this yourself, make sure that the library is
-in PYTHONPATH or CLASSPATH as explained in `Adjusting the library search path`_. Note that in
-subsequent examples all boilerplates, such as taking a library into
-use and creating a test case, is excluded.
+in the `library search path`_. Note that in subsequent examples all
+boilerplates, such as taking a library into use and creating a test
+case, is excluded.
 
 
 .. table:: Using simple example library
