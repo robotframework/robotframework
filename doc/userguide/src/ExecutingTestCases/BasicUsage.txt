@@ -112,7 +112,7 @@ names in easy-to-read format. For example, :setting:`--SuiteStatLevel`
 is equivalent to, but easier to read than :setting:`--suitestatlevel`.
 
 Setting option values
-````````````````````
+`````````````````````
 
 Most of the options require a value, which is given after the option
 name. Both short and long options accept the value so that it is
