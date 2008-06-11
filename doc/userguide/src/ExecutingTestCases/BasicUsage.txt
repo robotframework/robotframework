@@ -249,9 +249,16 @@ briefly explain the available command line options.
 
 All runner scripts also support getting the version information with
 the option :setting:`--version`. This information also contains Python
-or Jython version and the platform type.
+or Jython version and the platform type::
 
-.. TODO: pybot and jybt --version outputs here
+   $ pybot --version
+   Robot 2.0 (Python 2.5.1 on cygwin)
+
+   C:\>jybot --version
+   Robot 2.0 (Jython 2.2 on java1.6.0_03)
+
+   C:\>rebot --version
+   Rebot 2.0 (Python 2.5.2 on win32)
 
 
 Handling complicated characters
@@ -369,14 +376,43 @@ some other high-level programming language. Regardless of the language,
 it is recommended that long option names are used, because they are
 easier to understand than the short names.
 
-The following bash script example sets the needed JAR files under the :path:`lib`
-directory into CLASSPATH before running :prog:`jybot`. This script
-requires the path to the executed test data to be given as an argument
-(the :code:`$*` syntax means passing all arguments forward). It is also
-possible to use command line options freely, even though some options
-have already been set in the script.
+In first examples same web tests are executed with different browsers
+and results combined afterwards. This is really easy with shell
+scripts, as it is basically enough to just list needed commands one
+after another:
 
 .. sourcecode:: bash
+
+   #!/bin/bash
+   pybot --variable BROWSER:Firefox --name Firefox --log none --report none --output out/fx.xml login
+   pybot --variable BROWSER:IE --name IE --log none --report none --output out/ie.xml login
+   rebot --name Login --splitoutputs 1 --outputdir out --output login.xml out/fx.xml out/ie.xml
+
+Implementing the above example with Windows batch files is not too
+complicated either. The most important thing to remember is that
+because :prog:`pybot` and :prog:`rebot` are implemented as batch
+files, :prog:`call` must be used when running them from another batch
+file. Otherwise execution would end after the first batch file is
+finished.
+
+.. sourcecode:: bat
+
+   @echo off
+   call pybot --variable BROWSER:Firefox --name Firefox --log none --report none --output out\fx.xml login
+   call pybot --variable BROWSER:IE --name IE --log none --report none --output out\ie.xml login
+   call rebot --name Login --splitoutputs 1 --outputdir out --output login.xml out\fx.xml out\ie.xml
+
+
+In second examples JAR files under a :path:`lib` directory are put
+into into CLASSPATH before starting the test execution. In these
+examples start-up scripts require paths to the executed test data to
+be given as arguments, and it is also possible to use command line
+options freely, even though some options have already been set in the
+script.  All this is relatively straigt forward to do using bash:
+
+.. sourcecode:: bash
+
+   #!/bin/bash
 
    cp=.
    for jar in lib/*.jar; do
@@ -384,12 +420,17 @@ have already been set in the script.
    done
    export CLASSPATH=$cp
 
-   jybot --ouputdir logs --splitoutputs 2 $*
+   jybot --ouputdir /tmp/logs --splitoutputs 2 $*
 
 
-Above example can also be implemented using Windows batch files:
+Implementing this using Windows batch files is a bit trickier. The
+hard part is setting the variable containing needed JARs inside a for
+loop, because for some reason that is not possible without a helper
+function. There is no need to use :prog:`call`, because only one batch
+file is executed.
 
-.. sourcecode:: batch
+
+.. sourcecode:: bat
 
    @echo off
 
@@ -399,18 +440,12 @@ Above example can also be implemented using Windows batch files:
    )
    set CLASSPATH=%CP%
 
-   jybot --ouputdir logs --splitoutputs 2 %*
+   jybot --ouputdir c:\temp\logs --splitoutputs 2 %*
 
    goto :eof
 
-   :: Helper function for setting variable. 
+   :: Helper for setting variables inside a for loop
    :set_cp
        set CP=%CP%;%1
-       goto :eof
-
-
-.. TODO
-   - check above code & get correct sourcecode option to get highlighting working
-   - add examples running webtests with different browsers and reboting results
-
+   goto :eof
 

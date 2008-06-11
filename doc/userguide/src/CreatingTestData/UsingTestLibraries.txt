@@ -56,13 +56,14 @@ files using them.
 Using the Import Library keyword
 ''''''''''''''''''''''''''''''''
 
-Another possibility to take a test library into use is using the keyword
-:kw:`Import Library` from the `BuiltIn library`_. This keyword takes the library
-name and possible arguments similarly as the :setting:`Library`
-setting. Keywords from the imported library are available in the test
-suite where the :kw:`Import Library` keyword was used. This approach is
-useful in cases where the library is not available when the
-test execution starts and only some other keywords make it available.
+Another possibility to take a test library into use is using the
+keyword :kw:`Import Library` from the `BuiltIn library`_. This keyword
+takes the library name and possible arguments similarly as the
+:setting:`Library` setting. Keywords from the imported library are
+available in the test suite where the :kw:`Import Library` keyword was
+used. This approach is useful in cases where the library is not
+available when the test execution starts and only some other keywords
+make it available.
 
 .. table:: Using Import Library keyword
    :class: example
@@ -201,9 +202,10 @@ To Integer`) and for various other purposes (for example, :kw:`Log` and
 :kw:`Sleep`).
 
 The names of the keywords in the BuiltIn library have been renamed for
-Robot Framework version 1.8. All the old keywords still work, but the long names (the
-names visible in log files) of the keywords that are deprecated begin
-with :kw:`DeprecatedBuiltIn.` (for example, :kw:`DeprecatedBuiltIn.Equals`).
+Robot Framework version 1.8. All the old keywords still work, but the
+long names (the names visible in log files) of the keywords that are
+deprecated begin with :kw:`DeprecatedBuiltIn.` (for example,
+:kw:`DeprecatedBuiltIn.Equals`).
 
 For more information, see the `BuiltIn library documentation`_.
 
@@ -211,19 +213,19 @@ For more information, see the `BuiltIn library documentation`_.
 OperatingSystem library
 '''''''''''''''''''''''
 
-The OperatingSystem library enables various operating-system-related tasks to be
-performed in the system running Robot Framework. It can, among other
-things, execute commands (for example, :kw:`Run`) and check whether
-files exist or not (for example, :kw:`File Should Exist`). The idea of
-the library is to wrap all relevant functions from the standard Python
-modules :code:`os`, :code:`os.path` and :code:`shutil`, but other
-related functions can also be added.
+The OperatingSystem library enables various operating-system-related
+tasks to be performed in the system running Robot Framework. It can,
+among other things, execute commands (for example, :kw:`Run`) and
+check whether files exist or not (for example, :kw:`File Should
+Exist`). The idea of the library is to wrap all relevant functions
+from the standard Python modules :code:`os`, :code:`os.path` and
+:code:`shutil`, but other related functions can also be added.
 
 The names of the keywords in the OperatingSystem library have been
-renamed for Robot Framework version 1.8. All the old keywords still work, but the long
-names (names visible in log files) of the keywords that are deprecated
-begin with :kw:`DeprecatedOperatingSystem.` (for example,
-:kw:`DeprecatedOperatingSystem.Fail Unless File Empty`).
+renamed for Robot Framework version 1.8. All the old keywords still
+work, but the long names (names visible in log files) of the keywords
+that are deprecated begin with :kw:`DeprecatedOperatingSystem.` (for
+example, :kw:`DeprecatedOperatingSystem.Fail Unless File Empty`).
 
 For more information, see the `OperatingSystem library documentation`_.
 
@@ -260,9 +262,9 @@ For more information, see the `Collections library documentation`_.
 Screenshot library
 ''''''''''''''''''
 
-The Screenshot library provides a way to capture and store screenshots of the
-whole desktop. This library is implemented with Java AWT APIs, so it can be used
-only when running Robot Framework with Jython.
+The Screenshot library provides a way to capture and store screenshots
+of the whole desktop. This library is implemented with Java AWT APIs,
+so it can be used only when running Robot Framework with Jython.
 
 For more information, see the `Screenshot library documentation`_.
 
@@ -277,8 +279,6 @@ some generic libraries, such as SeleniumLibrary, which are not
 packaged with the framework itself, because they require external
 dependencies. Generic libraries can also be provided by other parties,
 and most teams have also some custom libraries only for themselves.
-
-.. TODO: should be list libs we provide?
 
 Different external libraries can have a totally different mechanism
 for installing and introducing them. Quite often they also require
