@@ -290,43 +290,43 @@ illustrate how to use these options::
 __ `Setting variables in command line`_
 
 
-Setting execution mode
-~~~~~~~~~~~~~~~~~~~~~~
+Setting the execution mode
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Command line option :setting:`--runmode` can be used to alter the test
+The command line option :setting:`--runmode` can be used to alter the test
 execution. Possible values for it are listed and explained below,
 other values are silently ignored. All these values are case-insensitive.
 
 :setting:`ExitOnFailure`
-    Test execution is stopped immediatelly if a `critical test`_
+    Test execution is stopped immediately if a `critical test`_
     fails. All remaining tests are marked failed with the message
     :msg:`Critical failure occurred and ExitOnFailure option is in
     use`. This option is new in version 1.8.7.
 
 :setting:`random:test`
-    Test cases inside each test suite are executed in a random
-    order. New in 1.8.6. 
+    Test cases inside each test suite are executed in random
+    order. This option is new in version 1.8.6. 
 
 :setting:`random:suite`
-    All tes suites are executed in a random order, but test cases inside
-    suites are run in the order they are defined.  New in 1.8.6.
+    All test suites are executed in a random order, but test cases inside
+    suites are run in the order they are defined.  This option is new in version 1.8.6.
 
 :setting:`random:all`
     Both test cases and test suites are executed in a random
-    order. New in 1.8.6. 
+    order. This option is new in version 1.8.6. 
 
 
-Controlling monitor output
-~~~~~~~~~~~~~~~~~~~~~~~~~~
+Controlling the monitor output
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The width of the test execution output in the console set using the
+The width of the test execution output in the console is set using the
 option :setting:`--monitorwidth (-W)`. The default value for the monitor
 width is 78 characters.
 
-:setting:`--monitorcolors (-C)` option is used to control whether
-colors should be used in the monitor output. These so called ANSI
+The :setting:`--monitorcolors (-C)` option is used to control whether
+colors should be used in the monitor output. These so-called ANSI
 colors do not work on Windows by default, but they ought to work on
-all UNIX-like systems. This option has three possible, case-insensitive,
+all UNIX-like systems. This option has three possible, case-insensitive
 values:
 
 :setting:`on`
@@ -348,28 +348,28 @@ Example::
 Setting listeners
 ~~~~~~~~~~~~~~~~~
 
-So called listeners_ can be used for monitoring the test
-execution. They are taken into use with a command line option
-:setting:`--listener`, and specified listeners must be in the `module
+So-called listeners_ can be used for monitoring the test
+execution. They are taken into use with the command line option
+:setting:`--listener`, and the specified listeners must be in the `module
 search path`_ similarly as test libraries.
 
 
 Setting times for combined outputs
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-When `combining outputs`_ with :prog:`rebot`, it possible to set the
-start and end time of the combined test suite using options
+When `combining outputs`_ with :prog:`rebot`, it is possible to set the
+start and end time of the combined test suite using the options
 :setting:`--starttime` and :setting:`--endtime`, respectively. This
 may be convenient, because by default, the combined suite does not
 have these values. When both the start and end time are given, the
 elapsed time is also calculated based on them. Otherwise the elapsed
-time is got by adding elapsed times of the child tests suites together.
+time is got by adding the elapsed times of the child tests suites together.
 
-Times must be given as timestamps in format :code:`YYYY-MM-DD
-hh:mm:ss.mil`, where all separators are optional and parts from
-milliseconds to hours can be omitted. For example :code:`2008-06-11
-17:59:20.495` is equivelant both to :code:`20080611-175920.495` and 
-:code:`20080611175920495`, and also just :code:`20080611` would work.
+Times must be given as timestamps in the format :code:`YYYY-MM-DD
+hh:mm:ss.mil`, where all separators are optional and the parts from
+milliseconds to hours can be omitted. For example, :code:`2008-06-11
+17:59:20.495` is equivalent both to :code:`20080611-175920.495` and 
+:code:`20080611175920495`, and also mere :code:`20080611` would work.
 
 Examples::
 
