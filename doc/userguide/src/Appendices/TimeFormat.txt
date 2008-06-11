@@ -19,11 +19,16 @@ following the rules listed below:
    |                 Rule                      |      Examples                         |
    +===========================================+=======================================+   
    | Digits with a zero value can be ignored.  | 1 minute                              |
+   |                                           +---------------------------------------+
    |                                           | 2 minutes 10 seconds                  |   
    +-------------------------------------------+---------------------------------------+
-   | The format is case- and space-insensitive.| days, day, d                          | 
-   | Thus all of the formats in the examples   | hours, hour, h                        |
-   | are valid.                                | minutes, minute, mins, min, m         |  
+   | The format is case- and space-insensitive.| days, day, d                          |
+   | Thus all of the formats in the examples   +---------------------------------------+ 
+   | are valid.                                | hours, hour, h                        |
+   |                                           +---------------------------------------+
+   |                                           | minutes, minute, mins, min, m         |  
+   |                                           +---------------------------------------+
    |                                           | seconds, second, secs, sec, s         |
+   |                                           +---------------------------------------+
    |                                           | milliseconds, millisecond, millis, ms |                                 
    +-------------------------------------------+---------------------------------------+ 

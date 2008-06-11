@@ -28,8 +28,11 @@ as illustrated in the example below.
    |Setting       |      Value       |
    +==============+==================+   
    | Documentation| First line.\\n   |
+   |              +------------------+
    |              | Second line.\\n  | 
+   |              +------------------+
    |	          | \\n              |
+   |              +------------------+  
    |              | Second paragraph.|  
    +--------------+------------------+ 
 
@@ -92,7 +95,7 @@ URLs
 
 Since Robot Framework 1.6, all strings that look like an URL are
 automatically converted into a clickable link. For example,
-http://some.url turns into link.
+\http://some.url turns into link.
 
 Tables
 ~~~~~~ 
