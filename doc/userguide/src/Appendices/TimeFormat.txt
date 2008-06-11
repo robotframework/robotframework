@@ -1,24 +1,29 @@
-Robot Framework time formats
-----------------------------
+Time formats
+------------
 
-In this appendix, the syntax for specifying time in Robot Framework is
-described. It can be used with test case and user keyword timeouts, as
-well as with several keywords, for example with the BuiltIn library's
-keywords :kw:`Sleep` and :kw:`Wait Until Keyword Succeeds`.
+The time format syntax described below can be used with test case and
+user keyword timeouts, as well as with several keywords (for example,
+with the BuiltIn library's keywords :kw:`Sleep` and :kw:`Wait Until
+Keyword Succeeds`).
 
 It is possible to give the time as a number (not necessarily an
-integer), or as a string that is converted to a number and then
-considered to be seconds (for example, 10, 0.5, or 42). The given time
-must be in the format "2 days 3 hours 4 minutes 5 seconds 6
-milliseconds" following the rules listed below:
-    
-    - Digits with a zero value can be ignored (for example, "1 minute"
-      and "2 minutes 10 seconds" are valid).
-    - The format is case- and space-insensitive. Thus valid are all of the formats below:
+integer), or as a string that is converted to a number and considered
+to be seconds (for example, 10, 0.5, or 42). The given time must be of
+the format "2 days 3 hours 4 minutes 5 seconds 6 milliseconds",
+following the rules listed below:
 
-      + "days", "day", and "d"
-      + "hours", "hour", and "h"
-      + "minutes", "minute", "mins", "min", and "m"
-      + "seconds", "second", "secs", "sec", and "s"
-      + "milliseconds", "millisecond", "millis", and "ms"
-  
+.. table:: Time format rules
+   :class: tabular
+
+   +-------------------------------------------+---------------------------------------+
+   |                 Rule                      |      Examples                         |
+   +===========================================+=======================================+   
+   | Digits with a zero value can be ignored.  | 1 minute                              |
+   |                                           | 2 minutes 10 seconds                  |   
+   +-------------------------------------------+---------------------------------------+
+   | The format is case- and space-insensitive.| days, day, d                          | 
+   | Thus all of the formats in the examples   | hours, hour, h                        |
+   | are valid.                                | minutes, minute, mins, min, m         |  
+   |                                           | seconds, second, secs, sec, s         |
+   |                                           | milliseconds, millisecond, millis, ms |                                 
+   +-------------------------------------------+---------------------------------------+ 

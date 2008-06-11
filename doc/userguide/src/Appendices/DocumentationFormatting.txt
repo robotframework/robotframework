@@ -12,8 +12,8 @@ transformation. It is also similar to the style used in most wikis.
    :depth: 2 
    :local: 
 
-Other rules for handling documentation
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
+Applicable general rules on documentation formatting
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  
 
 Besides the formatting explained here, the documentation used for test
 cases and suites is subject to general parsing rules of the Robot
@@ -22,16 +22,17 @@ paragraphs requires having a literal newline character sequence (:code:`\\n`),
 as illustrated in the example below.
 
 .. table:: Dividing text into lines and paragraphs
-   :class: example
+   :class: tabular
 
-   ========  ================= 
-   Setting   Value
-   ========  =================   
-   \	     First line.\\n
-   Document  Second line.\\n 
-   \	     \\n
-   \	     Second paragraph.  
-   ========  =================
+   +--------------+------------------+
+   |Setting       |      Value       |
+   +==============+==================+   
+   | Documentation| First line.\\n   |
+   |              | Second line.\\n  | 
+   |	          | \\n              |
+   |              | Second paragraph.|  
+   +--------------+------------------+ 
+
 
 Furthermore, it is possible to divide documentation into several
 columns, and the columns are catenated together with spaces.
@@ -39,15 +40,16 @@ For example, the two documentations in the example below are
 totally equivalent.
 
 .. table:: Dividing text into several columns
-   :class: example
+   :class: tabular
 
-   ========  =============  ========   
-   Setting   Value  	    Value
-   ========  =============  ========    
-   Document  Hello  	    world.  
-   Document  Hello world.   \      
-   ========  =============  ========
-
+   +--------------+-------------+--------+  
+   |Setting       |   Value     |  Value |
+   +==============+=============+========+    
+   | Documentation|  Hello      | world. | 
+   +--------------+-------------+--------+
+   | Documentation| Hello world.|        |
+   +--------------+-------------+--------+         
+   
 
 Bold and italic
 ~~~~~~~~~~~~~~~
@@ -67,19 +69,23 @@ italic*_`. Note that in this syntax, underscores must always be outside
 asterisks.
 
 .. table:: Formatting text to bold and italic typeface
-   :class: example
+   :class: tabular
 
-   ================================================  =================================================
-   Unformatted		     		      	     Formatted
-   ================================================  =================================================      
-   \*bold*      				     **bold**  
-   \_italic_     				     *italic*  
-   \*Bold*, and \_also italic\_.  		     **Bold**, and *also italic*.  
-   \_*Bold italic*, \_only italic\_, no formatting.   ***Bold italic***, *only italic*, no formatting.  
-   This is \*bold*\\n    	      	 	     This is **bold**        	      	 	      
-   \*on multiple*\\n			      	     **on multiple**
-   \*lines*.				      	     **lines**.
-   ================================================  =================================================
+   +-------------------------------------------------+--------------------------------------------------+ 
+   |                Unformatted		             |                   Formatted                      |
+   +=================================================+==================================================+      
+   | \*bold*                                         | **bold**                                         |
+   +-------------------------------------------------+--------------------------------------------------+  
+   | \_italic_                                       | *italic*                                         |  
+   +-------------------------------------------------+--------------------------------------------------+
+   | \*Bold*, and \_also italic\_.                   | **Bold**, and *also italic*.                     | 
+   +-------------------------------------------------+--------------------------------------------------+ 
+   | \_*Bold italic*, \_only italic\_, no formatting.| ***Bold italic***, *only italic*, no formatting. |  
+   +-------------------------------------------------+--------------------------------------------------+  
+   | This is \*bold*\\n                              | This is **bold**                                 |     	      	 	      
+   | \*on multiple*\\n	                             | **on multiple**                                  |
+   | \*lines*.				      	     | **lines**.                                       |
+   +-------------------------------------------------+--------------------------------------------------+
 
 URLs
 ~~~~ 
@@ -94,23 +100,22 @@ Tables
 Tables are created using the pipe character with spaces around it ( | ) as
 a cell boundary and a newline (:code:`\\n`) as a row separator. The table
 always has a thin border and the text is left-aligned. Formatting using
-bold and italic works also in table cells.
+bold and italic works also in table cells::
 
-| \*xx* | \*yy*  | \*zz*  | \\n
-| \_1_  | Hello  | world  | \\n
-| \_2_  | Hi     |        | \\n
-
-.. TODO: Change the formatting so that in the HTML file the cell with "Hi" is as wide as the cells above it.
+ | \*xx* | \*yy*  | \*zz*  | \\n
+ | \_1_  | Hello  | world  | \\n
+ | \_2_  | Hi     |        | \\n
 
 .. table:: Formatting text in tables
-   :class: example
+   :class: tabular
 
-   ======  ======  ======
-   **xx**  **yy**  **yy**
-   ======  ======  ====== 
-   1 	   Hello   world 
-   2 	   Hi	   \
-   ======  ======  ======  
+   +-------+-------+-------+
+   | **xx**| **yy**| **yy**|
+   +=======+=======+=======+ 
+   | 1 	   | Hello | world |
+   +-------+-------+-------+   
+   | 2 	   |   Hi  |       |	   
+   +-------+-------+-------+
 
 
 Horizontal ruler
