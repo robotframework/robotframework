@@ -261,7 +261,7 @@ Because spaces are used for separating options from each other, it is
 problematic to use them in option values.  Some options, such as
 :setting:`--name`, automatically convert underscores to spaces, but
 with others spaces must be escaped. Additionally, many special
-characters are complicated to use in the command line.
+characters are complicated to use on the command line.
 
 Because escaping complicated characters with a backslash or quoting
 the values does not always work too well, Robot Framework has its own
@@ -339,7 +339,7 @@ An example argument file::
    path/to/test directory/
 
 
-When an argument file is used in the command line, its contents are
+When an argument file is used on the command line, its contents are
 placed to the original list of arguments to the same place where the
 argument file option was. Argument files can be used either alone so
 that they contain all the options and paths to the test data, or along
