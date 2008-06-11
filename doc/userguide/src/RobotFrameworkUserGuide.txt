@@ -172,13 +172,22 @@ Appendices
 .. _simple pattern: `Option value as a simple pattern`_
 .. _simple patterns: `simple pattern`_
 .. _critical test: `Setting criticality`_
+.. _critical tests: `critical test`_
 .. _--include: `Selecting test cases`_
 .. _--exclude: `Selecting test cases`_
 .. _--escape: `Escaping options`_
 .. _--argumentfile: `Using argument files`_
-.. _--output: `Setting output files`_
-.. _--summary: `Setting output files`_
 .. _--splitoutput: `Splitting outputs`_
+.. _output: `Output file`_
+.. _--output: `Output file`_
+.. _log: `Log file`_
+.. _--log: `Log file`_
+.. _report: `Report file`_
+.. _--report: `Report file`_
+.. _summary: `Summary file`_
+.. _--summary: `Summary file`_
+.. _log level: `Setting log level`_
+.. _--loglevel: `Setting log level`_
 .. _listener: `Using listener interface`_
 .. _listeners: listener_
 .. _BuiltIn keyword: `BuiltIn library`_

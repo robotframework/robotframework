@@ -1,151 +1,171 @@
 Output files
 ------------
 
+Several outputs files are created When tests are executed, and most of
+them are somehow related to test results. This section explains what
+outputs are created, how to configure where to create them, and how to
+fine-tune their contents.
+
 .. contents::
    :depth: 2
    :local:
 
-Different outputs
-~~~~~~~~~~~~~~~~~~
+
+Different output files
+~~~~~~~~~~~~~~~~~~~~~~
+
+This section explains different output files and how to configure
+where they are created. Other outputs than the `syslog file`_ are
+configured using command line options, which get the path to the
+output file as an argument. All these options, except
+:setting:`--output` when executing test cases, also accept special
+value :setting:`NONE` (case-insensitive), which means that the output
+file in question is not created at all.
+
+
+Output directory
+''''''''''''''''
+
+The default location where all output files are created is the
+directory where the execution is started from, but it can be altered
+with :setting:`--outputdir (-d)` option. All output files can be
+set using an absolute path, in which case they are created to
+the specified place, but in other cases the path is considered
+relative to the output directory. Regardless how a path to an
+individual output file is got, its parent directory is created
+automatically if it does not exist.
 
 
 Output file
 '''''''''''
 
-An output file contains the test execution results in XML format. Report,
-log and summary files are generated from the information in the output file.
-The default name for an output file is :path:`output.xml`.
+XML output files contain all the test execution results. Log_,
+report_, and summary_ files are generated based on them, they can also
+be `combined and otherwise post-processed`__ after the test execution.
 
-Report file
-'''''''''''
+The command line option :setting:`--output (-o)` determines where
+output files are created. When tests are executed, the default name
+for outputs is :path:`output.xml`, and it is not possible to suppress creating
+them. When post-processing outputs, new output files are not created
+unless this option is explicitly used.
 
-A report file contains an overview of the results of the test execution.
-It has summary information by suite and by tag, and also contains details
-by suite, where the status of each test case can be seen individually. The
-report file also contains links to the log file for easy navigation to 
-more detailed information, when necessary. The default name for a report file 
-is :path:`report.html`.
+__ `Post-processing outputs`_
 
-.. figure:: report.png
-   :width: 600
-   :height: 568
-
-   Example report file
 
 Log file
 ''''''''
 
-A log file contains details about the executed test cases. It
-has a hierarchical structure showing suite, test and keyword details.
-The default name for a log file is :path:`log.html`.
+Log files contain details about the executed test cases. They have a
+hierarchical structure showing test suite, test case and keyword
+details. Log files are needed nearly every time when test results
+needs to be investigated in detail. Even though log files also have
+statistics, report_ and summary_ files are better for getting an
+higher-level overview.
+
+The command line option :setting:`--log (-l)` determines where log
+files are created. Unless special value :setting:`NONE` is used, log
+files are always created and their default name is :path:`log.html`.
 
 .. figure:: log.png
    :width: 500
    :height: 534
 
-   Example log file
+   An example log file
 
-Summary report file
-'''''''''''''''''''
 
-The summary report is a higher-level overview of the executed tests.
-It does not contain the Test details by suite table, neither is it 
-possible to navigate from the Statistics by suite table to the log file.
+Report file
+'''''''''''
 
-.. figure:: summaryreport.png
+Report files contain an overview of the test execution results. They
+have statistic based on tags and executed test suites, as well as
+short details about every executed test suite and test case. When both
+report and log is generated, the report has links to the log file for
+easy navigation to more detailed information.  It is easy to see the
+overall test execution status from the report, because its backgroud
+is green is if all `critical tests`_ pass, and bright red otherwise.
+
+The command line option :setting:`--report (-r)` determines where
+report files are created. Similarly as log files, reporst are always
+created unless :setting:`NONE` is used as a value. The default name
+for a log file is :path:`report.html`.
+
+.. figure:: report.png
+   :width: 600
+   :height: 568
+
+   An example report file
+
+
+Summary file
+''''''''''''
+
+Summary files contain same statistics as reports, and their backgrounds
+are similarly green or red depending on the overall test execution
+status. They have no test case details, however, which makes them much
+smaller than reports. They are usefull when a big number of test cases is
+executed, and a very high-level overview is needed. 
+
+Summary files are not generated by default. When they are needed, they
+can be created using the command line option :setting:`--summary (-S)`.
+
+.. figure:: summary.png
    :width: 600
    :height: 450
    
-   Example summary file
+   An example summary file
+
 
 Debug file
 ''''''''''
 
-A debug file is a special kind of an output file: a text file that is written
-during the execution. You can monitor the execution of tests by 
-following the information written in the debug file. There is a separate tool__
-available for viewing the debug file. 
+Debug files are plain text files that are written during the
+execution. All messages got from test libraries are written to them,
+as wel as information about started and ended test suites, test cases
+and keywords. Debug files can be used for monitoring the test
+execution using, for example, a separate `file viewer tool`__ or in
+UNIX-like systems simply with :prog:`tail -f` command.
 
 __ `Tool for viewing debug files (fileviewer.py)`_
+
+Debug files are not created unless the command line option
+:setting:`--debugfile (-b)` is used explicityly.
+
+
+Setting timestamps to output file names
+'''''''''''''''''''''''''''''''''''''''
+
+*TO BE CONTINUED FROM HERE*
+
+Because all output file names can be given from the command line, it
+is possible to use timestamps 
+
+It is also possible to get timestamped names for output files by using
+the command line option :setting:`--timestampoutputs (-T)`. The timestamp
+is of format "YYMMDD-hhmmss" and will be placed between the base name
+and the extension of each output file name.
+
+For example following 
+    
+   pybot --timestampoutputs --log mylog.html tests
+
+generates files called output-080604-163225.xml and mylog-080604-163225.html
 
 
 Syslog file
 '''''''''''
 
-A syslog file contains debug information about the functioning of Robot 
+Syslog files contains debug information about the functioning of Robot 
 Framework. The information in it is usually only needed when some unexpected
 error occurs during the execution of tests.
 
 To enable syslog, the environment variable :var:`ROBOT_SYSLOG_FILE` must contain an 
 absolute path to a non-existing file. The :var:`ROBOT_SYSLOG_LEVEL` environment 
 variable determines the level of logging. The available levels are the same as with the
-`--loglevel`__ command line option.
-
-__ `Setting a log level`_
+`--loglevel`_ command line option.
 
 
-Setting output files
-~~~~~~~~~~~~~~~~~~~~
-
-Each output file has a corresponding command line option to determine a path 
-to which it is written. These paths are relative to output directory, unless
-given as absolute paths.
-
-Setting output file
-'''''''''''''''''''
-
-The command line option :setting:`--output (-o)` determines where an output file
-is created. By default, this file is created when tests are executed with 
-Robot Framework, but it is not created with :prog:`rebot` unless this option
-is used.
-
-Setting log file
+Listener outputs
 ''''''''''''''''
-
-The command line option :setting:`--log (-l)` determines where a log file is
-created. By default, a log file is created both when tests are executed and
-when :prog:`rebot` is used. The default name for a log file is :path:`log.html`.
-The creation of a log file may be disabled by using the argument "none".
-
-
-Setting report file
-'''''''''''''''''''
-
-The command line option :setting:`--report (-r)` determines where a report file 
-is created. By default, a report file is created both when tests are executed and
-when :prog:`rebot` is used. The default name for a log file is :path:`report.html`.
-The creation of a log file may be disabled by using the argument "none".
-
-Setting summary report file
-'''''''''''''''''''''''''''
-
-The command line option :setting:`--summary (-S)` determines where a summary report 
-file is created. By default, this file is not created. 
-
-Setting debug file
-''''''''''''''''''
-
-The command line option :setting:`--debugfile (-b)` determines where a debug file
-is created. By default, this file is not created.
-
-Setting output directory
-''''''''''''''''''''''''
-
-By default, an output directory is the directory where test execution was started.
-This can be changed with the option :setting:`--outputdir (-d)`. If the given 
-directory does not exist, it is created. 
-
-Setting timestamps to output file names
-'''''''''''''''''''''''''''''''''''''''
-
-It is also possible to get timestamped names for output files by using
-the command line option :setting:`--timestampoutputs`. The timestamp
-is of format "YYMMDD-hhmmss" and will be placed between the base name
-and the extension of each output file name.
-
-Example::
-    
-    "pybot -T --log mylog.html tests" generates files called output-080604-163225.xml and mylog-080604-163225.html
 
 
 
@@ -213,18 +233,14 @@ In this case, the following files will be created:
    Example balanced output file
 
 
-Setting titles 
+Setting titles
 ~~~~~~~~~~~~~~
 
-Titles for `log`__, `report`__ and `summary report`__ files can be given
+Titles for log_, report_ and summary_ files can be given
 from the command line using the options :setting:`--logtitle`,
 :setting:`--reporttitle` and :setting:`--summarytitle`,
 respectively. The default title is generated from the name(s) of the
 input file(s).
-
-__ `Log file`_
-__ `Report file`_
-__ `Summary report file`_
 
 
 Configuring statistics
@@ -301,8 +317,8 @@ Statistics by Suite table. This is done with the command line option
 removed.
 
 
-Setting a log level
-~~~~~~~~~~~~~~~~~~~
+Setting log level
+~~~~~~~~~~~~~~~~~
 
 By default, the `keyword output`__ from test libraries is logged at the :msg:`INFO` 
 level. This can be changed from the command line using :setting:`--loglevel (-L)`. 

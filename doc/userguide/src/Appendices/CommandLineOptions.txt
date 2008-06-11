@@ -29,10 +29,10 @@ Command line options for test execution
   -v, --variable <name:value>   `Sets variables`_ in the test data. 
   -V, --variablefile <path>  A file to `read variables`_ from. 
   -d, --outputdir <dir>   Defines where to `create output files`_.
-  -o, --output <file>     Sets the path to the `generated output file`_.
-  -l, --log <file>        Sets the path to the `generated log file`_. 
-  -r, --report <file>     Sets the path to the `generated report file`_. 
-  -S, --summary <file>    Sets the path to the `generated summary report file`_. 
+  -o, --output <file>     Sets the path to the generated `output file`_.
+  -l, --log <file>        Sets the path to the generated `log file`_. 
+  -r, --report <file>     Sets the path to the generated `report file`_. 
+  -S, --summary <file>    Sets the path to the generated `summary file`_. 
   -b, --debugfile <file>  The `debug file`_ that is written during execution. 
   -T, --timestampoutputs  `Adds a timestamp`_ in a format "YYYYMMDD-hhmmss" to all 
                           output file names between their basename and extension.
@@ -40,7 +40,7 @@ Command line options for test execution
   --logtitle <title>      `Sets a title`_ for the generated test log. 
   --reporttitle <title>   `Sets a title`_ for the generated test report. 
   --summarytitle <title>  `Sets a title`_ for the generated summary report.
-  -L, --loglevel <level>  `Sets the threshold level` for logging. 
+  -L, --loglevel <level>  `Sets the threshold level`_ for logging. 
   --suitestatlevel <level>  Defines how many `levels to show`_ in the Statistics 
                             by Suite table in outputs. 
   --tagstatinclude <tag>  `Includes only these tags`_ in the Statistics by Tag and
@@ -93,7 +93,7 @@ Options:
   -o, --output <file>     The XML `output file`_.
   -l, --log <file>        The HTML `log file`_.
   -r, --report <file>     The HTML `report file`_.
-  -S, --summary <file>    The HTML `summary report file`_.
+  -S, --summary <file>    The HTML `summary file`_.
   -T, --timestampoutputs  `Adds a timestamp`_ in a format "YYYYMMDD-hhmmss" to all
                           output file names between their basename and extension.
   --splitoutputs <level>  `Splits output and log`_ files from a specified suite 
@@ -144,17 +144,12 @@ ROBOT_SYSLOG_LEVEL        The log level to use when writing to the syslog file.
 .. _Sets variables: `Setting variables`_
 .. _read variables: `Sets variables`_
 
-.. _create output files: `Setting output directory`_
-.. _generated output file: `Setting output file`_
-.. _generated log file: `Setting log file`_
-.. _generated report file: `Setting report file`_
-.. _generated summary report file: `Setting summary report file`_
-.. _debug file: `Setting debug file`_
+.. _create output files: `Output directory`_
 .. _Adds a timestamp: `Setting timestamps to output file names`_
 .. _Splits output and log: `Splitting outputs`_
 .. _Sets a title: `Setting titles`_
 
-.. _Sets the threshold level: `Setting a log level`_
+.. _Sets the threshold level: `Setting log level`_
 .. _levels to show: `Configuring the Statistics by Suite table`_
 .. _Includes only these tags: `Including and excluding tag statistics`_
 .. _Excludes these tags: `Includes only these tags`_
