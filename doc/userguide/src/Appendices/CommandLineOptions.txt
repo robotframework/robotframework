@@ -140,7 +140,7 @@ ROBOT_SYSLOG_LEVEL        The log level to use when writing to the syslog file.
 .. _Selects the test cases: `By tag names`_
 .. _considered critical: `Setting criticality`_
 .. _not critical: `considered critical`_
-.. _Sets the execution mode: `Setting execution mode`_
+.. _Sets the execution mode: `Setting the execution mode`_
 .. _Sets variables: `Setting variables`_
 .. _read variables: `Sets variables`_
 
@@ -163,7 +163,7 @@ ROBOT_SYSLOG_LEVEL        The log level to use when writing to the syslog file.
 .. _external links: `Creating links from tag names`_
 
 .. _monitoring test execution: `Setting listeners`_
-.. _Sets the width: `Controlling monitor output`_
+.. _Sets the width: `Controlling the monitor output`_
 .. _console: `Sets the width`_
 .. _search test libraries: `library search path`_
 .. _Escapes characters: `Escaping options`_
