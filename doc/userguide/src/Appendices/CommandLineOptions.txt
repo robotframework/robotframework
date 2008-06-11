@@ -25,7 +25,7 @@ Command line options for test execution
   -e, --exclude <tag>     `Selects the test cases`_ not to run by tag. 
   -c, --critical <tag>    Tests that have the given tag are `considered critical`_. 
   -n, --noncritical <tag>  Tests that have the given tag are `not critical`_. 
-  --runmode <mode>        `Sets the runmode`_ for this test run.
+  --runmode <mode>        `Sets the execution mode`_ for this test run.
   -v, --variable <name:value>   `Sets variables`_ in the test data. 
   -V, --variablefile <path>  A file to `read variables`_ from. 
   -d, --outputdir <dir>   Defines where to `create output files`_.
@@ -140,7 +140,7 @@ ROBOT_SYSLOG_LEVEL        The log level to use when writing to the syslog file.
 .. _Selects the test cases: `By tag names`_
 .. _considered critical: `Setting criticality`_
 .. _not critical: `considered critical`_
-.. _Sets the runmode: `Setting runmode`_
+.. _Sets the execution mode: `Setting execution mode`_
 .. _Sets variables: `Setting variables`_
 .. _read variables: `Sets variables`_
 

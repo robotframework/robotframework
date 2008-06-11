@@ -289,56 +289,69 @@ illustrate how to use these options::
 __ `Setting variables in command line`_
 
 
-Setting runmode
-~~~~~~~~~~~~~~~
+Setting execution mode
+~~~~~~~~~~~~~~~~~~~~~~
 
-There is a command line option :setting:`--runmode`, which can be used to define
-some additional characteristics of the test execution. Currently it has four
-meaningful values, all other values are just ignored. The possible values are:
+Command line option :setting:`--runmode` can be used to alter the test
+execution. Possible values for it are listed and explained below,
+other values are silently ignored. All these values are case-insensitive.
+
+:setting:`ExitOnFailure`
+    Test execution is stopped immediatelly if a `critical test`_
+    fails. All remaining test are marked failed with the message
+    :msg:`Critical failure occurred and ExitOnFailure option is in
+    use`. This option is new in version 1.8.7.
 
 :setting:`random:test`
-    Tests inside each suite are executed in random order.
+    Test cases inside each test suite are executed in a random
+    order. New in 1.8.6. 
 
 :setting:`random:suite`
-    All suites are executed in random order.
+    All tes suites are executed in a random order, but test cases inside
+    suites are run in the order they are defined.  New in 1.8.6.
 
 :setting:`random:all`
-    Suites are executed in random order, tests inside suites likewise.
-
-:setting:`exitonfailure`
-    Test execution is stopped whenever a critical test fails. All remaining
-    test will be marked failed with the message 
-    :msg:`Critical failure occurred and ExitOnFailure option is in use`.
+    Both test cases and test suites are executed in a random
+    order. New in 1.8.6. 
 
 
 Controlling monitor output
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The width of the console output can be defined using the option :setting:`--monitorwidth`.
-The default value for the monitor width is 78.
+The width of the test execution output in the console set using the
+option :setting:`--monitorwidth (-W)`. The default value for the monitor
+width is 78 characters.
 
-:setting:`--monitorcolors` is used to control whether colors should be used
-in the monitor output. It has three possible values, of which :setting:`on` is the
-default value:
+:setting:`--monitorcolors (-C)` option is used to control whether
+colors should be used in the monitor output. These so called ANSI
+colors do not work on Windows by default, but they ought to work on
+all UNIX-like systems. This option has three possible, case-insensitive,
+values:
 
 :setting:`on`
-    Colors are used in UNIX-like systems, but not on Windows.
+    Colors are used on UNIX-like systems, but not on Windows. This is
+    the default.
 
 :setting:`off`
-    Colors are never used.
+    Colors are never used. Useful for example when redirecting the
+    output to a file.
 
 :setting:`force`
-    Colors are always used.
+    Colors are always used, also on Windows.
+
+Example::
+
+   pybot --monitorwidth 140 --monitorcolors OFF tests.html > output.txt
 
 
 Setting listeners
 ~~~~~~~~~~~~~~~~~
 
-The only way to use a listener__ during execution is to define it from
-the command line using the option :setting:`--listener`. The listener
+So called listeners_ can be used for monitoring the test execution
+some how. They are set using a command line option :setting:`--listener`. The listener
 class must be found the `search path`__.
 
-__ `Using the listener interface`_
+
 __ `Adjusting library search path`_
 
 

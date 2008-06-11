@@ -86,6 +86,7 @@ Creating test data
 .. _BuiltIn: `Standard libraries`_
 .. _Robot Framework download page: https://cwiki.nokia.com/RobotFramework/DownloadPage
 
+
 Executing test cases
 ====================
 
@@ -106,8 +107,8 @@ Extending Robot Framework
    :local: 
 
 .. include:: ExtendingRobotFramework/CreatingTestLibraries.txt
-.. include:: ExtendingRobotFramework/UsingTheListenerInterface.txt
-.. include:: ExtendingRobotFramework/UsingRobotFrameworksInternalAPIs.txt
+.. include:: ExtendingRobotFramework/ListenerInterface.txt
+.. include:: ExtendingRobotFramework/InternalAPI.txt
 
 
 Appendices
@@ -117,7 +118,7 @@ Appendices
    :depth: 1
    :local: 
 
-.. include:: Appendices/AvailableSettingsInTestData.txt
+.. include:: Appendices/AvailableSettings.txt
 .. include:: Appendices/CommandLineOptions.txt
 .. include:: Appendices/SupportingTools.txt
 .. include:: Appendices/DocumentationFormatting.txt
@@ -170,6 +171,7 @@ Appendices
 .. _test execution: `Starting test execution`_
 .. _simple pattern: `Option value as simple pattern`_
 .. _simple patterns: `simple pattern`_
+.. _critical test: `Setting criticality`_
 .. _--include: `Selecting test cases`_
 .. _--exclude: `Selecting test cases`_
 .. _--escape: `Escaping options`_
@@ -177,6 +179,8 @@ Appendices
 .. _--output: `Setting output files`_
 .. _--summary: `Setting output files`_
 .. _--splitoutput: `Splitting outputs`_
+.. _listener: `Using the listener interface`_
+.. _listeners: listener_
 .. _BuiltIn keyword: `BuiltIn library`_
 .. _BuiltIn keywords: `BuiltIn library`_
 .. _BuiltIn library documentation: BuiltIn.html
