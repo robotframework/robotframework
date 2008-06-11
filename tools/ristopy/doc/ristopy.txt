@@ -141,8 +141,6 @@ Links to the needed software:
 
 - ElementTree_ 
 
-- risto.py_ 
-
 
 Screenshots
 '''''''''''
@@ -226,4 +224,4 @@ These examples are generated from actual test outputs using the following argume
 .. _Matplotlib: http://matplotlib.sourceforge.net/
 .. _NumPy: http://numpy.scipy.org/
 .. _ElementTree: http://effbot.org/zone/element-index.htm
-.. _risto.py: http://downloads.robotframework.org
+

@@ -52,8 +52,3 @@ is 'Log message'::
 The message index (number after ':') is by default 1, so if you check the first
 log message of given keyword, it may be omitted. 
 
-Download
---------
-
-statuscheker.py can be downloaded from http://downloads.robotframework.org
-

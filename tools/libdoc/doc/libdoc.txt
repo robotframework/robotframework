@@ -132,9 +132,3 @@ When writing documentation for a normal Java library, conventions for
 writing Javadoc should be used. The documentation is generated based
 on the Javadocs in the source files.
 
-
-Download
---------
- 
-The script can be downloaded from http://downloads.robotframework.org
-

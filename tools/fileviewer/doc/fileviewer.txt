@@ -36,9 +36,3 @@ an argument, for example::
 
    File viewer
 
-
-Download
---------
-
-The tool can be downloaded from http://downloads.robotframework.org
-
