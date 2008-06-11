@@ -1,27 +1,25 @@
 Templates
 =========
 
-testcase_template.html
+This directory contains templates that can be used when creating test
+data for Robot Framework. These templates can be edited using normal
+HTML or TSV editors and they can be costomized freely. See Robot
+Framework User Guide for more information about how different tables
+are recognized and the test data syntax in general.
 
-	Template for creating new Robot Framework test cases in html format.
+
+testcase_template.html, testcase_template.tsv
+
+    Templates for creating test cases in HTML and TSV formats, respectively.
+
+resource_template.html, resource_template.tsv
+
+	HTML and TSV templates for creating resource files. Same templates
+    can be used also to create test suite initialization files.
 
 atdd_template.html  
 
-	Template for creating test cases in Acceptance Test-Driven Development manner at highest 
-	testing level. There is no need for Keyword and Variable tables as all needed resources 
-	can be imported from resource file. Setup and Teardown can be also named as Precondition 
-	and Postcondition respectively in the Setting table.
-
-resource_template.html
-
-	Template for creating Robot Framework resources. You can also use this template to set
-	directory suite settings by copying this file to suite directory and renaming it as
-	__init__.html. 
-
-testcase_template.tsv
-
-	Robot Framework's testcase template in tsv format.
-
-resource_template.tsv   
-
-	Robot Framework's resource template in tsv format.
+    Template for creating test cases in Acceptance Test-Driven
+    Development (ATDD) style. These use-case-like test cases are
+    created from high-level keywords needing no arguments, and the
+    template has been simplified accordingly.
