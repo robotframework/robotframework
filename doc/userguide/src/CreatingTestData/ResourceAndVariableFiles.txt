@@ -129,7 +129,7 @@ Python modules. There are two different possibilities for creating
 variables:
 
 `Creating variables directly`_
-   Variables are specifed as module attributes. In simple cases, the
+   Variables are specified as module attributes. In simple cases, the
    syntax is so simple that no real programming is needed. For example,
    :code:`MY_VAR = 'my value'` creates a variable
    :var:`${MY_VAR}` with the specified text as the value.

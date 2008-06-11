@@ -314,7 +314,7 @@ loop variables, as in the first part of the example below:
 For in range
 ''''''''''''
 
-Earlier For loops always iterated over a sequence, which is also the most
+Earlier For loops always iterated over a sequence, and this is also the most
 common use case. Sometimes it is still convenient to have a For loop
 that is executed a certain number of times, and Robot Framework has a
 special :code:`FOR index IN RANGE limit` syntax for this purpose. This

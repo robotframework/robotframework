@@ -1,7 +1,7 @@
 All command line options
 ------------------------
 
-This appendix lists all the command line options that are avialable
+This appendix lists all the command line options that are available
 when `executing test cases`__ with :prog:`pybot` or :prog:`jybot`, and when 
 `post-processing outputs`_ with :prog:`rebot`.
 

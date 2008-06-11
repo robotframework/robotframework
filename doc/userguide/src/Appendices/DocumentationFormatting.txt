@@ -32,9 +32,9 @@ as illustrated in the example below.
    ========  ================= 
    Setting   Value
    ========  =================   
-   \	     First line.\n
-   Document  Second line.\n 
-   \	     \n
+   \	     First line.\\n
+   Document  Second line.\\n 
+   \	     \\n
    \	     Second paragraph.  
    ========  =================
 
@@ -50,7 +50,7 @@ totally equivalent.
    Setting   Value  	    Value
    ========  =============  ========    
    Document  Hello  	    world.  
-   Document  Hello world.     
+   Document  Hello world.   \      
    ========  =============  ========
 
 

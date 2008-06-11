@@ -31,7 +31,7 @@ __ times2csv.html
 Historical reporting tool (risto.py)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-`Ristopy`__ is a tool for generating plots about historical statistics
+`Risto.py`__ is a tool for generating plots about historical statistics
 of test executions.
 
 __ ristopy.html
@@ -40,7 +40,7 @@ __ ristopy.html
 Tool for viewing debug files (fileviewer.py)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-`Fileviewer`__ is a graphical tool implementing unix :cli:`tail` -like 
+`Fileviewer`__ is a graphical tool implementing UNIX :cli:`tail` -like 
 functionality. It is especially designed to view `debug files`__
 
 __ fileviewer.html
@@ -79,7 +79,7 @@ __ robotdiff.html
 Tool for further verification of test results
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-`Statuschecker`__ is a tool for verifying that test case statuses and messags 
+`Statuschecker`__ is a tool for verifying that test case statuses and messages 
 and also keyword log messages are as expected.
 
 __ statuschecker.html

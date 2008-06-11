@@ -111,7 +111,7 @@ The long option format is case-insensitive, which helps writing option
 names in easy-to-read format. For example, :setting:`--SuiteStatLevel`
 is equivalent to, but easier to read than :setting:`--suitestatlevel`.
 
-Setting opion values
+Setting option values
 ````````````````````
 
 Most of the options require a value, which is given after the option

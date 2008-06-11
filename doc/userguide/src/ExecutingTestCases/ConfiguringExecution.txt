@@ -3,8 +3,7 @@ Configuring execution
 
 This section explains different command line options that can be used
 configuring the `test execution`_ or `post-processing outputs`_
-somehow. Options related to generated output files are discussedin in
-the `next section`__.
+somehow. Options related to generated output files are discussed in the `next section`__.
 
 __ `Output files`_
 
@@ -28,7 +27,7 @@ Test suites and test cases can be selected by their names with command
 line options :setting:`--suite (-s)` and :setting:`--test (-t)`,
 respectively.  Both of these options can be used multiple times to
 select multiple test suites or cases. Arguments to these options are
-case and space insensitive, and theys can be also be `simple
+case and space insensitive, and there can also be `simple
 patterns`_ matching multiple names.  If both :setting:`--suite` and
 :setting:`--test` options are used, only test cases in matching suites
 with matching names are selected.
@@ -94,7 +93,7 @@ another can be selected by separating these tags with :code:`NOT`
   --include tag1&tag2&tag3&tag4
   --exclude regressionNOTowner-*
 
-Selecting test cases by tags is a really flexible machanism and allows
+Selecting test cases by tags is a very flexible mechanism and allows
 many interesting possibilities:
 
 - A subset of tests to be executed before other tests can be tagged
@@ -210,7 +209,7 @@ search path. The command line option :setting:`--pythonpath` can be
 used to add directories to the PYTHONPATH environment variable.
 
 Multiple paths may be given by separating them with :cli:`:`, and 
-:cli:`*` can be used to incldue multiple paths. 
+:cli:`*` can be used to include multiple paths. 
 
 It is usually best to create a start-up script for setting the environment
 variables.
@@ -260,7 +259,7 @@ meaningful values, all other values are just ignored. The possible values are:
 Controlling monitor output
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The width of the console output can be defined using the option :setting:`-- monitorwidth`.
+The width of the console output can be defined using the option :setting:`--monitorwidth`.
 The default value for the monitor width is 78.
 
 :setting:`--monitorcolors` is used to control whether colors should be used

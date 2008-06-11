@@ -64,7 +64,7 @@ Debug file
 A debug file is a special kind of an output file: a text file that is written
 during the execution. You can monitor the execution of tests by 
 following the information written in the debug file. There is a separate tool__
-available for viewing the debugfile. 
+available for viewing the debug file. 
 
 __ `Tool for viewing debug files (fileviewer.py)`_
 
@@ -132,7 +132,7 @@ Setting output directory
 ''''''''''''''''''''''''
 
 By default, an output directory is the directory where test execution was started.
-This can be changed with teh option :setting:`--outputdir (-d)`. If the given 
+This can be changed with the option :setting:`--outputdir (-d)`. If the given 
 directory does not exist, it is created. 
 
 Setting timestamps to output file names
@@ -165,14 +165,14 @@ When outputs are split, a top-level output file contains the general
 information about the whole test execution and it links to sublevel output 
 files, which contain details of some suites and tests. The exact contents of 
 each file depends on the split level and the directory structure of the test data.
-As the examples below show, the test data needs to be strucutred in a 
+As the examples below show, the test data needs to be structured in a 
 way that supports splitting outputs, if you wish to use that feature.
 
 
 Unbalanced output
 '''''''''''''''''
 
-When an unbalanced directory strucuture (see the figure below) is executed with a split
+When an unbalanced directory structure (see the figure below) is executed with a split
 level set to 3, an individual output file is created for test case files from 1 to 4.
 The information about the test case files 5 and 6 is written to the root 
 level output file. In this case, the following files will be created:
@@ -194,7 +194,7 @@ level output file. In this case, the following files will be created:
 Balanced output
 '''''''''''''''
 
-When a balanced directory strucuture (see the figure below) is executed with a split
+When a balanced directory structure (see the figure below) is executed with a split
 level set to 3, an individual output file is created for all test case files.
 In this case, the following files will be created:
 
@@ -271,7 +271,7 @@ Creating links from tag names
 It is possible to add an external link to the Statistics by Tag table by using 
 the command line option :setting:`--tagstatlink`. An argument to this option is given 
 in the format :code:`pattern:link:title`, where pattern may contain the characters "*" (matches
-anything) and "?" (matcehs any character). The matches of wildcards may be used in the 
+anything) and "?" (matches any character). The matches of wildcards may be used in the 
 resulting link with the syntax :code:`%N`, where "N" is the index of the match starting from 1.
 Examples::
 

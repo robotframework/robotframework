@@ -601,7 +601,7 @@ of them are not even available all the time.
    +-----------------------+-------------------------------------------------------+----------------+
    |        Variable       |                    Explanation                        |    Available   |
    +=======================+=======================================================+================+
-   | ${TEST_NAME}          | The naame of the current test case.                   | Test case      |
+   | ${TEST_NAME}          | The name of the current test case.                    | Test case      |
    +-----------------------+-------------------------------------------------------+----------------+
    | @{TEST_TAGS}          | Contains the tags of the current test case in         | Test case      |
    |                       | alphabetical order.                                   |                |
