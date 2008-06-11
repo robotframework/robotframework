@@ -203,7 +203,7 @@ To Integer`) and for various other purposes (for example, :kw:`Log` and
 The names of the keywords in the BuiltIn library have been renamed for
 Robot Framework version 1.8. All the old keywords still work, but the long names (the
 names visible in log files) of the keywords that are deprecated begin
-with :kw:`DeprecatedBuiltIn.` (for example, :kw:`DeprecartedBuiltIn.Equals`).
+with :kw:`DeprecatedBuiltIn.` (for example, :kw:`DeprecatedBuiltIn.Equals`).
 
 For more information, see the `BuiltIn library documentation`_.
 
@@ -223,7 +223,7 @@ The names of the keywords in the OperatingSystem library have been
 renamed for Robot Framework version 1.8. All the old keywords still work, but the long
 names (names visible in log files) of the keywords that are deprecated
 begin with :kw:`DeprecatedOperatingSystem.` (for example,
-:kw:`DeprecartedOperatingSystem.Fail Unless File Empty`).
+:kw:`DeprecatedOperatingSystem.Fail Unless File Empty`).
 
 For more information, see the `OperatingSystem library documentation`_.
 

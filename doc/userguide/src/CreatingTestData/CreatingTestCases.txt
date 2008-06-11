@@ -158,7 +158,7 @@ test-case-specific settings listed earlier.
    respectively.  
 
 `Test Timeout`:setting:
-   The dfault value for `test case timeout`_. Timeouts_ are discussed in
+   The default value for `test case timeout`_. Timeouts_ are discussed in
    their own section.
 
 
