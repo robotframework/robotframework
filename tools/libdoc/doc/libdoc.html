@@ -4,7 +4,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="Docutils 0.4.1: http://docutils.sourceforge.net/" />
-<title></title>
+<title>libdoc.py</title>
 <style type="text/css">
 
 /* Robot Framework User Guide Style Sheet
@@ -448,75 +448,87 @@ pre.literal-block, pre.doctest-block {
 </style>
 </head>
 <body>
-<div class="document">
+<div class="document" id="libdoc-py">
+<h1 class="title">libdoc.py</h1>
+<p>A tool for generating keyword documentation from test libraries and
+resource files.</p>
+<div class="section">
+<h1><a id="synopsis" name="synopsis">Synopsis</a></h1>
+<pre class="literal-block">
+libdoc.py [options] library_or_resource_file
+</pre>
+</div>
+<div class="section">
+<h1><a id="options" name="options">Options</a></h1>
+<blockquote>
+<table class="docutils option-list" frame="void" rules="none">
+<col class="option" />
+<col class="description" />
+<tbody valign="top">
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">-f</span>, <span class="option">--format <var>&lt;html|xml&gt;</var></span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>Specifies whether to generate HTML or XML output.
+The default value is HTML.</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">-o</span>, <span class="option">--output <var>path</var></span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>Where to write the generated documentation. If the path
+is a directory, the documentation is generated there
+using the name &quot;.&quot; with an index after the &quot;&quot; part, if
+a file with that name already exists. If the given path
+points to a file, this path is used as-is and possible
+existing file is overwritten. The default value for the
+path is the directory where the script is executed from.</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">-P</span>, <span class="option">--pythonpath <var>path</var></span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>Additional path(s) to insert into PYTHONPATH.</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">-h</span>, <span class="option">--help</span></kbd></td>
+<td>Print this help.</td></tr>
+</tbody>
+</table>
+</blockquote>
+</div>
+<div class="section">
+<h1><a id="description" name="description">Description</a></h1>
 <p>Library documentation can generate library keyword documentation from
 test libraries and resource files either in HTML or XML format. The
 former is for humans and the latter mainly for Robot IDE or other
 tools.</p>
-<div class="section">
-<h1><a id="usage" name="usage">Usage</a></h1>
-<!-- TODO: Check that in HTML, the layout of the text below is the same as in CWiki. -->
-<p>The usage printed with <span class="cli">python libdoc.py --help</span> should look something like below:</p>
-<pre class="literal-block">
-$ python libdoc.py
-Robot Framework Library and Resource File Documentation Generator
-
-Usage:  libdoc.py [options] library_or_resource
-
-This script can generate keyword documentation in HTML or XML. The former is
-for humans and the latter mainly for Robot IDE and other tools.
-
-Documentation can be created for
-
-- test libraries implemented with Python or Java using the normal library API,
-- test libraries using the dynamic API (but you only get keyword names and not
-  their arguments or documentations), and
-- resource files.
-
-Options:
-
--f --format html|xml        Specifies whether to generate HTML or XML output.
-The default value is HTML.
-
--o --output path            Where to write the generated documentation. If the
-path is a directory, the documentation is generated there using the name &quot;.&quot;
-with an index after the &quot;&quot; part, if a file with that name already exists. If
-the given path points to a file, this path is used as-is and possible existing
-file is overwritten. The default value for the path is the directory where the
-script is executed from.
-
--P --pythonpath path *      Additional path(s) to insert into PYTHONPATH.
-
--h -? --help                Print this help.
-
-It is possible to specify a Python test library by giving either the path to
+<p>Documentation can be created for</p>
+<blockquote>
+<ul class="simple">
+<li>test libraries implemented with Python or Java using the normal library API,</li>
+<li>test libraries using the dynamic API (but you only get keyword names and not
+their arguments or documentations), and</li>
+<li>resource files.</li>
+</ul>
+</blockquote>
+<p>It is possible to specify a Python test library by giving either the path to
 the source or only the library name. If the library name is used, it must be in
 the same format as in Robot test data when importing libraries. In this case,
-the library is searched from PYTHONPATH (and from CLASSPATH, if on Jython).
-
-A Java test library implemented with normal library API can be specified by
+the library is searched from PYTHONPATH (and from CLASSPATH, if on Jython).</p>
+<p>A Java test library implemented with normal library API can be specified by
 giving the path to the source file containing the library class. Additionally,
 &quot;tools.jar&quot;, which is part of the Sun JDK distribution, must be found from
-CLASSPATH when libdoc.py is executed.
-
-Libraries using the dynamic library API are handled in the same way as Python
-libraries are.
-
-Resource files must always be specified using a path. If the path does not
-exist, resource files are also searched from all directories in PYTHONPATH.
-
-Examples:
-
- $ python path/to/libdoc.py OperatingSystem
- $ python path/to/libdoc.py --output doc/MyLib.html src/MyLib.py
- $ python path/to/libdoc.py test/resource.html
- $ python path/to/libdoc.py --format xml OperatingSystem
- $ python path/to/libdoc.py --format xml --output doc test/resource.html
- $ jython path/to/libdoc.py --format xml MyJavaLibrary.java
+CLASSPATH when libdoc.py is executed.</p>
+<p>Libraries using the dynamic library API are handled in the same way as Python
+libraries are.</p>
+<p>Resource files must always be specified using a path. If the path does not
+exist, resource files are also searched from all directories in PYTHONPATH.</p>
+<p>Examples:</p>
+<pre class="literal-block">
+$ python path/to/libdoc.py OperatingSystem
+$ python path/to/libdoc.py --output doc/MyLib.html src/MyLib.py
+$ python path/to/libdoc.py test/resource.html
+$ python path/to/libdoc.py --format xml OperatingSystem
+$ python path/to/libdoc.py --format xml --output doc test/resource.html
+$ jython path/to/libdoc.py --format xml MyJavaLibrary.java
 </pre>
-</div>
 <div class="section">
-<h1><a id="how-imported-libraries-are-found" name="how-imported-libraries-are-found">How imported libraries are found</a></h1>
+<h2><a id="how-imported-libraries-are-found" name="how-imported-libraries-are-found">How imported libraries are found</a></h2>
 <p>The libraries to document are imported similarly as they are imported
 when executing test cases. Libraries can only be imported if they are
 found from PYTHONPATH (or from CLASSPATH when running with
@@ -524,6 +536,7 @@ Jython). PYTHONPATH (and/or the CLASSPATH) must thus be set correctly
 before generating the documentation. An exception to this rule are
 normal Java libraries; it is enough to give the path to the source
 file for these.</p>
+</div>
 </div>
 <div class="section">
 <h1><a id="writing-documentation" name="writing-documentation">Writing documentation</a></h1>
@@ -565,13 +578,12 @@ on the Javadocs in the source files.</p>
 </div>
 <div class="section">
 <h1><a id="download" name="download">Download</a></h1>
-<p>The script can be downloaded from
-TODO: Link!</p>
+<p>The script can be downloaded from <a class="reference" href="http://downloads.robotframework.org">http://downloads.robotframework.org</a></p>
 </div>
 </div>
 <div class="footer">
 <hr class="footer" />
-Generated on: 2008-06-06 09:48 UTC.
+Generated on: 2008-06-11 07:29 UTC.
 
 </div>
 </body>

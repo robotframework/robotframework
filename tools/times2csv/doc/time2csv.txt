@@ -1,16 +1,26 @@
 .. role:: path
 
-times2csv.py is a tool for creating a CSV file containing suite, test
+============
+times2csv.py
+============
+
+
+A tool for creating a CSV file containing suite, test
 and keyword execution times (Start/End/Elapsed time).
 
-Usage
-'''''
+Synopsis
+--------
 
 ::
 
   times2csv.py input-xml [output-csv]
 
+Description
+-----------
+
 This script reads the start, end, and elapsed times from all suites, tests and 
 keywords in the given Robot output file and writes them into a file in the
 comma-separated-values (CSV) format. If the CSV output file is not given, its 
-name is obtained from the input file by replacing the :path:`.xml` extension with :path:`.csv`.
+name is obtained from the input file by replacing the :path:`.xml` extension with 
+:path:`.csv`.
+

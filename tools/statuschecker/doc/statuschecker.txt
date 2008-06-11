@@ -1,9 +1,19 @@
-===================================
-Robot Framework Test Status Checker
-===================================
+================
+statuschecker.py
+================
+
+A tool for further processing of Robot Framework output files.
+
+Synopsis
+--------
+
+::
+
+    statuschecker.py infile [outfile]
 
 
-Usage:  statuschecker.py infile [outfile]
+Description
+-----------
 
 This tool processes Robot Framework output XML files and checks that test case
 statuses and messages are as expected. Main use case is post-processing output
@@ -13,10 +23,37 @@ itself.
 If output file is not given, the input file is considered to be also output 
 file and it is edited in place.
 
+
+Defining expected test status
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 By default all test cases are expected to 'PASS' and have no message. Changing
 the expected status to 'FAIL' is done by having word 'FAIL' (in uppercase)
 somewhere in the test case documentation. Expected error message must then be
 given after 'FAIL'. Error message can also be specified as a regular expression
 by prefixing it with 'REGEXP:'. Having spaces between the status, the message
-or the possible regexp prefix is optional. Everything before 'FAIL' is ignored.
+or the possible regexp prefix is optional. 
+
+Defining expected keyword log messages
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Expected keyword log messages can also be defined in the test case documentation
+using syntax like::
+    
+     LOG x.y:z message
+
+
+For example, following documentation expects that the test case fails with 
+message 'Expected message', and in addition, the second log message of first keyword
+is 'Log message'::
+
+    FAIL: Expected failure LOG 1:2 Log message
+
+The message index (number after ':') is by default 1, so if you check the first
+log message of given keyword, it may be omitted. 
+
+Download
+--------
+
+statuscheker.py can be downloaded from http://downloads.robotframework.org
 

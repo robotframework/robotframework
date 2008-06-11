@@ -1,3 +1,14 @@
+==========================
+RobotOneCLickInstaller.au3
+==========================
+
+An AutoIT__ script for installing Robot Framework and it's preconditions
+on a Windows machine.
+
+__ http://www.autoitscript.com/autoit3/
+
+Description
+-----------
 
 One Click Installer installs Robot Framework and its preconditions Python and 
 Jython (optional). It also sets Robot Framework start-up scripts (pybot, jybot, 

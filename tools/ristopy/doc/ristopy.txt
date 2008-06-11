@@ -1,19 +1,58 @@
 .. role:: cli
 .. role:: path
 
-risto.py is a tool for plotting graphs about test execution history
-based on statistics read from Robot output files.
+========
+risto.py
+========
 
-Usage
-''''' 
+A tool for plotting graphs about test execution history based on statistics 
+read from Robot output files.
 
-risto.py -- Robot Framework's Historical Reporting Tool
+Synopsis
+--------
 
-Version: 1.0
+::
+ 
+  risto.py options input files
+  risto.py options1 --- options2 --- optionsN --- input files
+  risto.py --argumentfile path
 
-Usage:  risto.py options input files
-  or:   risto.py options1 --- options2 --- optionsN --- input files
-  or:   risto.py --argumentfile path
+Options
+-------
+
+  -C, --nocritical       Do not plot graphs for critical tests.
+  -A, --noall            Do not plot graphs for all tests.
+  -T, --nototals         Do not plot total graphs.
+  -P, --nopassed         Do not plot passed graphs.
+  -F, --nofailed         Do not plot failed graphs.
+  -t, --tag <name>       Add graphs for these tags. Name can contain '\*' and
+                         '?' as wildcards. 'AND' in the tag name is converted
+                         to ' & ', to make it easier to plot combined tags.
+  -o, --output <path>    Path to the image file to create. If not given, the
+                         image is opened into Matplotlib' viewer.
+  -i, --title <title>    Title of the graph. Underscores in the given title
+                         are converted to spaces. By default there is no
+                         title.
+  -w, --width <inches>   Width of the image. Default is 800.
+  -h, --height <inches>  Height of the image. Default is 400.
+  -f, --font <size>      Font size used for legends and labels. Default is 8.
+  -m, --marker <size>    Size of marked used with tag graphs. Default is 5.
+  -x, --xticks <num>     Maximum number of ticks in x-axis. Default is 15.
+  -n, --namemeta <name>  Name of the metadata of the top level test suite
+                         where to get name of the test round. By default names
+                         are got from paths to input files.
+  --argumentfile <path>  Read arguments from the specified file.
+  --verbose              Verbose output.
+  --help                 Print this help.
+  --version              Print version information.
+
+
+Additionally :cli:`---` can be used to group options when creating multiple 
+images at once.
+
+
+Description
+-----------
 
 risto.py plots graphs about test execution history, based on statistics read
 from Robot output files. By default, it draws total, passed and failed graphs
@@ -43,101 +82,6 @@ and their possible arguments are listed one per line, and option groups are
 separated with lines of three or more hyphens. Empty lines and lines starting
 with a hash mark (#) are ignored. 
 
-Options:
-
---nocritical
-
-    Also -C. Specifies that graphs are not plot for critical tests.
-
---noall
-
-    Also -A. Specifies that graphs are not plot for all tests.
-
---nototals
-
-    Also -T. Specifies that total graphs are not plot.
-
---nopassed
-
-    Also -P. Specifies that passed graphs are not plot.
-
---nofailed
-
-    Also -F. Specifies that failed graphs not plot.
-
---tag
-
-    Also -t. Takes name as argument. Adds graphs for these
-    tags. The name can contain "\*" and "?" as
-    wildcards. Underscores in the names are converted to spaces and
-    additionally "AND" to "&".
-
---output
-
-    Also -o. Takes path as argument. Specifies the path to
-    the image file to create. If not given, the image is opened into
-    Matplotlib's viewer.
-
---title
-
-    Also -i. Takes title as argument. Specifies the title of
-    the graph. Underscores in the given title are converted to
-    spaces. By default, there is no title.
-
---width
-
-    Also -w. Takes inches as argument. Specifies the width of
-    the image. The default is 800.
-
---height
-
-    Also -h. Takes inches as argument. Specifies the height
-    of the image. The default is 400.
-
---font
-
-    Also -f. Takes size as argument. Specifies the font size
-    used for legends and labels. The default is 8.
-
---marker size    
-
-    Also -m. The size of the marker used with tag graphs. The default is 5.
-
---xticks
-
-    Also -x. Takes num as argument. Specifies the maximum
-    number of ticks on the x-axis. The default is 15.
-
---namemeta
-
-    Also -n. Takes name as argument. Specifies the name of
-    the metadata of the top level test suite where to get the name of
-    the test round. By default, names are got from the paths to input
-    files.
-
-.. TODO: Change the formatting so that the options below look OK in the HTML file.
-  
----
- 
-    Used to group options to create several images at once.
-
---argumentfile
- 
-    Takes path as argument. Reads the command line arguments from the specified file.
-
---verbose
-
-    Specifies the verbose output.
- 
---help
-
-    Prints the help.
-
- --version
-
-    Prints the version information.
-
-
 Examples:
 
 .. sourcecode:: python
@@ -163,12 +107,12 @@ Examples:
   	======================================
 
 Installation
-''''''''''''
+------------
 
 Here you can find the instructions for the installation of risto.py. 
 
 Preconditions
-`````````````
+~~~~~~~~~~~~~
  
 risto.py requires Python. It has been tested both on releases 2.4 and
 2.5, and it should work also in 2.3. Also some Robot modules are
@@ -282,4 +226,4 @@ These examples are generated from actual test outputs using the following argume
 .. _Matplotlib: http://matplotlib.sourceforge.net/
 .. _NumPy: http://numpy.scipy.org/
 .. _ElementTree: http://effbot.org/zone/element-index.htm
-.. _risto.py: TODO
+.. _risto.py: http://downloads.robotframework.org
