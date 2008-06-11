@@ -57,7 +57,7 @@ could be used similarly.
 
 __ `Test case files`_
 __ `Test suite directories`_
-__ `Setting name`_
+__ `Setting the name`_
 __ `Test suite name and documentation`_
 
 ::

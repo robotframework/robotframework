@@ -131,8 +131,8 @@ ROBOT_SYSLOG_LEVEL        The log level to use when writing to the syslog file.
                           option to Robot and the default is INFO.
 
 
-.. _Sets the name: `Setting name`_
-.. _Sets the documentation: `Setting documentation`_
+.. _Sets the name: `Setting the name`_
+.. _Sets the documentation: `Setting the documentation`_
 .. _Sets free metadata: `Setting free metadata`_
 .. _Sets the given tag(s): `Setting tags`_
 .. _test cases by name: `By test suite and test case names`_

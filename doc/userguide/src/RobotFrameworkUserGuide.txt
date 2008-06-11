@@ -169,7 +169,7 @@ Appendices
 .. _syslog: TODO
 .. _rebot: `Post-processing outputs`_
 .. _test execution: `Starting test execution`_
-.. _simple pattern: `Option value as simple pattern`_
+.. _simple pattern: `Option value as a simple pattern`_
 .. _simple patterns: `simple pattern`_
 .. _critical test: `Setting criticality`_
 .. _--include: `Selecting test cases`_
