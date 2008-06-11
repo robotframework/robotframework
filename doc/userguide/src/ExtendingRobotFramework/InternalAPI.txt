@@ -1,5 +1,5 @@
-Robot Framework's Internal APIs
--------------------------------
+Using internal APIs
+-------------------
 
 Robot Framework has some public APIs which are intended to help in developing 
 supporting tools or extending the processing of input or output data. These

@@ -1,6 +1,5 @@
-
-Using the listener interface
-----------------------------
+Using listener interface
+------------------------
 
 .. contents:: 
    :depth: 2

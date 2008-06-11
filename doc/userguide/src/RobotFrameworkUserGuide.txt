@@ -179,7 +179,7 @@ Appendices
 .. _--output: `Setting output files`_
 .. _--summary: `Setting output files`_
 .. _--splitoutput: `Splitting outputs`_
-.. _listener: `Using the listener interface`_
+.. _listener: `Using listener interface`_
 .. _listeners: listener_
 .. _BuiltIn keyword: `BuiltIn library`_
 .. _BuiltIn keywords: `BuiltIn library`_
