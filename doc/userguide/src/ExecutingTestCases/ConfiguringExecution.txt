@@ -348,22 +348,17 @@ Example::
 Setting listeners
 ~~~~~~~~~~~~~~~~~
 
-So called listeners_ can be used for monitoring the test execution
-some how. They are set using a command line option :setting:`--listener`. The listener
-class must be found the `search path`__.
-
-
-__ `Adjusting library search path`_
+So called listeners_ can be used for monitoring the test
+execution. They are taken into use with a command line option
+:setting:`--listener`, and specified listeners must be in the `module
+search path path`_ similarly as test libraries.
 
 
 Setting times for combined outputs
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-When combining outputs with rebot, it possible to set the start and end
-time of the combined suite using the option :setting:`--starttime` and 
-:setting:`--endtime`. This may be convenient, because by default,
-these statistics have no value in the combined suite.
-
-
-
-
+When `combining outputs`_ with :prog:`rebot`, it possible to set the
+start and end time of the combined test suite using options
+:setting:`--starttime` and :setting:`--endtime`, respectively. This
+may be convenient, because by default, these statistics have no value
+in the combined suite. 
