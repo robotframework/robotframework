@@ -115,7 +115,7 @@ either directly in seconds or in a format :code:`1 hour 2 minutes
 framework, and timeouts shorter than one second are thus not
 recommended.
 
- __ `Robot Framework time formats`_
+ __ `Time formats`_
 
 The default error message displayed when a test timeout occurs is
 :msg:`Test timeout <time> exceeded`. It is also possible to use custom
