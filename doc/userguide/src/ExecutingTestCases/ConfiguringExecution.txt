@@ -275,22 +275,19 @@ Examples::
 Setting variables
 ~~~~~~~~~~~~~~~~~
 
-You can also define a variable_ from the command line, either
-directly or from a variable file. These variables override any 
-variables with same name in test case and resource files. 
+Variables_ can be set from the command line either individually__
+using :setting:`--variable (-v)` option or through `variable files`_
+with :setting:`--variablefile (-V)` option. Variables and variable
+files are explained in separate chapters, but following examples
+illustrate how to use these options::
 
-The option :setting:`--variable (-v)` takes an argument in the format
-:setting:`name:value`, where "name" must be given without "${}". This
-option can only be used to create scalar variables. Examples::
+  --variable name:value
+  --variable OS:Linux --variable IP:10.0.0.42
+  --variablefile path/to/variables.py
+  --variable ENVIRONMENT:Windows --variablefile c:\resources\windows.py
 
-  --variable str:Hello  =>  ${str} = 'Hello'
-  -v str:Hi_World -E space:_  =>  ${str} = 'Hi World'
-  -v x: -v y:42  =>  ${x} = '', ${y} = '42'
+__ `Setting variables in command line`_
 
-The option :setting:`--variablefile (-V)` can be used to take a `variable file`__
-into use. Argument for this option is either relative or absolute path to the file.
-
-__ `Variable files`
 
 Setting runmode
 ~~~~~~~~~~~~~~~

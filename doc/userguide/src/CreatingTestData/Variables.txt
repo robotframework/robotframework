@@ -326,8 +326,8 @@ variable file syntax and taking variable files into use is explained
 in section `Resource and variable files`_.
 
 
-Command line
-''''''''''''
+Setting variables in command line
+'''''''''''''''''''''''''''''''''
 
 Variables can be set from the command line either individually with
 the :setting:`--variable` option or using a variable file with the
