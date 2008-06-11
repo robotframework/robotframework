@@ -2,20 +2,15 @@ Documentation formatting
 ------------------------
 
 In this appendix, the documentation formatting practices of Robot
-Framework are described.
-
-.. contents::
-   :depth: 2 
-   :local: 
-
-Introduction
-~~~~~~~~~~~~ 
-
-It is possible to use simple HTML formatting, such as bold and italic
+Framework are described. It is possible to use simple HTML formatting, such as bold and italic
 text and tables, both with the documentation of test cases and test
 suites and in the library documentation. The formatting is designed so
 that it is understandable and clear both as plain text and after the HTML
 transformation. It is also similar to the style used in most wikis.
+
+.. contents::
+   :depth: 2 
+   :local: 
 
 Other rules for handling documentation
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
