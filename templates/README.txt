@@ -14,7 +14,7 @@ testcase_template.html, testcase_template.tsv
 
 resource_template.html, resource_template.tsv
 
-	HTML and TSV templates for creating resource files. Same templates
+    HTML and TSV templates for creating resource files. Same templates
     can be used also to create test suite initialization files.
 
 atdd_template.html  
