@@ -22,10 +22,11 @@ We use Python's standard distutils_ module for creating different
 Robot Framework packages. For more information about distutils and 
 creating packages with it see `Distributing Python Modules`_ document.
 
-We provide binary installer packages only for those environments that
-are supported by distutils. Additional packages can be created by
-volunteers and they should either be created based an a source
-distribution or a checkout from version control system.
+We currently provide binary installer packages only Windows platform.
+However, we plan to add support for RPM-distributions in the future.
+Additional packages can be created by volunteers and they should either 
+be created based an a source distribution or a checkout from version control 
+system.
 
 
 Package Types
@@ -56,10 +57,8 @@ Framework installed into the target platform. At least for the time
 being they include only the framework itself and no documentation,
 tools or other additional material. 
 
-As already mentioned, we only provide binary packages for those
-environments supported by distutils. In short that means that we have
-a Windows installer and an RPM package which is be suitable for
-several Linux distributions. 
+As already mentioned, we only provide binary packages for Windows 
+environments, but plan to add support also for an RPM-package. 
 
 JAR Packages
 ~~~~~~~~~~~~
@@ -67,7 +66,7 @@ JAR Packages
 It should be possible to package Robot Framework into a Java Archive
 (JAR) package. That way installing would only include dropping the
 package into suitable place and Python would not be needed for
-that. Alternatively also Jython could be included in the package so
+that. Alternatively also Jython couldb be included in the package so
 having only Java would be enough.
 
 If you'd like to have this kind of JAR package, and especially if you
@@ -120,14 +119,18 @@ as with source packages.
 RPM
 '''
 
-.. Note:: This section still mainly TODO. 
-
-Basically creating RPMs ought to be matter of saying::
+Distutils offers also a `mechanism for creating RPM-packages`__.
+However, the simple::
 
   python setup.py bdist_rpm
 
-Need to learn a bit more about `spec files`__
-and have machine where to test RPMs.
+will not work, because the ``setup.py`` does some modifications to
+the Robot Framework start-up scripts, and the generated scripts do
+not work from the RPM-package.
+
+If anyone has some experience or insight into creating custom 
+RPM-packages with distutils, please contact Robot Framework developers.
+
 
 __ http://docs.python.org/dist/creating-rpms.html
 

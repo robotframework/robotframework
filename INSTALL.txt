@@ -36,12 +36,12 @@ There are two ways to install Robot Framework, depending on how you got it.
 `Installing using binary installer`_
     Binary installers are platform-specific and using them should be
     familiar to anyone who has ever installed anything on that
-    particular platform. We currently have graphical installers for
-    Windows and an RPM package for several Linux flavours.
+    particular platform. We currently have graphical installer for
+    Windows.
 
-Installation packages are available from:  
+Installation packages are available from::
 
-**TODO**: add correct URL
+  http://dowloads.robotframework.org
 
 For more details about different installation packages and possible
 future formats, see the PACKAGING.txt file.
@@ -155,7 +155,7 @@ appear at the end::
 Installing Using Binary Installer
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Use the platform-specific way of installation.  For example, on
+Use the platform-specific way of installation. For example, on
 Windows, double click the provided installation executable, and follow
 the instructions of the graphical installer.
 
