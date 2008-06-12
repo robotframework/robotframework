@@ -190,6 +190,7 @@ Appendices
 .. _--loglevel: `Setting log level`_
 .. _listener: `Using listener interface`_
 .. _listeners: listener_
+.. _command line options: `All command line options`_
 .. _BuiltIn keyword: `BuiltIn library`_
 .. _BuiltIn keywords: `BuiltIn library`_
 .. _BuiltIn library documentation: BuiltIn.html
