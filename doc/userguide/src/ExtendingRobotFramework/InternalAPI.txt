@@ -30,7 +30,7 @@ where :code:`outpath` is a path to an existing output file. The returned
 Here is an example that reads a given output file and marks each test case whose 
 execution time is longer than three minutes failed. The :code:`TestSuite` object 
 is then serialized and normal log and report files could be generated with 
-:prog:rebot_.
+:prog:`rebot`.
 
 .. sourcecode:: python 
    
