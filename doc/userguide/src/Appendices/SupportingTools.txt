@@ -10,35 +10,54 @@ tools can be downloaded from the `Robot Framework supporting tools page`_.
    :local: 
 
 
-Library documentation tool (libdoc.py)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Library documentation tool -- libdoc.py
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-`Libdoc`__ is tool for generating HTML or XML documentation from keywords of a
+`libdoc.py`__ is tool for generating HTML or XML documentation from keywords of a
 test library or a resource file.
 
 __ libdoc.html
 
 
-Start/End/Elapsed time reporting tool (times2csv.py)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
+Historical reporting tool -- risto.py
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-`times2csv`__ is a tool for generating start, end and elapsed
-time information about suites, tests and keywords in CSV format.
-
-__ times2csv.html
-
-
-Historical reporting tool (risto.py)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-`Risto.py`__ is a tool for generating plots about historical statistics
+`Risto.py`__ is a tool for generating graphs about historical statistics
 of test executions.
 
 __ ristopy.html
 
 
-Tool for viewing debug files (fileviewer.py)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Test data tidying tool -- robotidy.py
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`Robotidy`__ is a tool for cleaning Robot Framework test data, changing test 
+data format between HTML and TSV and fixing inline comments to format supported
+by Robot IDE.
+
+__ robotidy.html
+
+
+Test result diffing tool -- robotdiff.py
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`Robotdiff`__ is a tool for generating diff reports from Robot
+Framework output files.
+
+__ robotdiff.html
+
+
+Execution time reporting tool -- times2csv.py
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
+
+`times2csv.py`__ is a tool for generating start, end and elapsed
+time information about suites, tests and keywords in CSV format.
+
+__ times2csv.html
+
+
+File viewing tool -- fileviewer.py
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 `Fileviewer`__ is a graphical tool implementing UNIX :cli:`tail` -like 
 functionality. It is especially designed to view `debug files`__
@@ -57,27 +76,8 @@ __ oneclickinstaller.html
 __ http://www.autoitscript.com/autoit3/
 
 
-Tool for cleaning up Robot Framework test data
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-`Robotidy`__ is a tool for cleaning Robot Framework test data, changing test 
-data format between HTML and TSV and fixing inline comments to format supported
-by Robot IDE.
-
-__ robotidy.html
-
-
-Tool for diffing Robot Framework outputs
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-`Robotdiff`__ is a tool for generating diff reports from Robot
-Framework output files.
-
-__ robotdiff.html
-
-
-Tool for further verification of test results
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Test status checker tool -- statuschecker.py
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 `Statuschecker`__ is a tool for verifying that test case statuses and messages 
 and also keyword log messages are as expected.

@@ -198,7 +198,7 @@ Appendices
 .. _Telnet library documentation: Telnet.html
 .. _Collections library documentation: Collections.html
 .. _Screenshot library documentation: Screenshot.html
-.. _libdoc.py: `Library documentation tool (libdoc.py)`_
+.. _libdoc.py: `Library documentation tool -- libdoc.py`_
 .. _libdoc: `libdoc.py`_
 .. _library search path: `Adjusting library search path`_
 .. _module search path: `library search path`_

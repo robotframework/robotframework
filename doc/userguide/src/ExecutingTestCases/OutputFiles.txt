@@ -125,7 +125,7 @@ and keywords. Debug files can be used for monitoring the test
 execution using, for example, a separate `file viewer tool`__ or in
 UNIX-like systems simply with :prog:`tail -f` command.
 
-__ `Tool for viewing debug files (fileviewer.py)`_
+__ `File viewing tool -- fileviewer.py`_
 
 Debug files are not created unless the command line option
 :setting:`--debugfile (-b)` is used explicityly.
