@@ -104,8 +104,16 @@ os.chdir(os.path.dirname(os.path.abspath(__file__)))
 OUTDIR = "rfug"
 
 if os.path.exists(OUTDIR):
-    shutil.rmtree(OUTDIR)
-os.mkdir(OUTDIR)
+    for file in os.listdir(OUTDIR):
+        if file == '.svn':
+            continue
+        file = os.path.join(os.path.abspath(OUTDIR), file)
+        if os.path.isdir(file):
+            shutil.rmtree(file)
+        else:
+            os.remove(file)
+else:
+    os.mkdir(OUTDIR)
 
 def copy_figures(filename):
     dirname = os.path.dirname(filename)
