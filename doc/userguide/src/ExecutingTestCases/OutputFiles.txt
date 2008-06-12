@@ -459,13 +459,32 @@ each test case.
 System log
 ~~~~~~~~~~
 
-Syslog files contains debug information about the functioning of Robot 
-Framework. The information in it is usually only needed when some unexpected
-error occurs during the execution of tests.
+Robot Framework has its own plain text system log where it writes
+information about
 
-To enable syslog, the environment variable :var:`ROBOT_SYSLOG_FILE` must contain an 
-absolute path to a non-existing file. The :var:`ROBOT_SYSLOG_LEVEL` environment 
-variable determines the level of logging. The available levels are the same as with the
-`--loglevel`_ command line option.
+   * processed and skipped test data files
+   * imported test libraries, resource files and variable files
+   * executed test suites and test cases
+   * created outputs
 
+Normally users should never need this information, but it can be
+useful when investigating problems with test libraries or Robot Framework
+itself. System log is not created by default, but it can be enabled
+by setting an environment variable :setting:`ROBOT_SYSLOG_FILE` so
+that it contains a path to the selected file.
+
+System log has same `log levels`_ as normal log file, with an
+exception that instead of :msg:`FAIL` it has :msg:`ERROR` level. The
+treshold level to use can be altered using
+:setting:`ROBOT_SYSLOG_LEVEL` environment variable.
+
+
+.. sourcecode:: bash
+
+   #!/bin/bash
+
+   export ROBOT_SYSLOG_FILE=/tmp/syslog.txt
+   export ROBOT_SYSLOG_LEVEL=DEBUG
+
+   pybot --name Syslog_example path/to/tests
 
