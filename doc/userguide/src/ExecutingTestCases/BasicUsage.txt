@@ -173,14 +173,53 @@ detailed log file. These files and other possible output files are
 discussed in more detail in the section `Different output files`_.
 
 
+Return codes
+''''''''''''
+
+Runner scripts communicate the overall test execution status to the
+system running them using return codes. The basic rule is that the
+return code is zero, which is a typical return code for success, when
+the execution starts successfully and no `critical test`_
+fail. Possible return codes are explained in the table below.
+
+.. table:: Possible return codes
+   :class: tabular
+
+   ========  ==========================================
+      RC                    Explanation
+   ========  ==========================================
+   0         All critical tests passed.  
+   1-249     Returned number of critical tests failed.
+   250       250 or more critical failures.
+   251       Help or version information printed.
+   252       Invalid test data or command line options.
+   255       Unexpected internal error.
+   ========  ==========================================
+
+
+Return codes should always be easily available after the execution,
+which makes it easy to automatically determine the overall execution
+status. For example, in bash shell the return code is in special
+variable :code:`$?`, and in Windows it is in :code:`%ERRORLEVEL%`
+variable. If you use some external tool for running tests, consult its
+documentation for how to get the return code.
+
+
 Post-processing outputs
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-XML output files that are generated during the test execution can be
+`XML output files`_ that are generated during the test execution can be
 post-processed afterwards by the :prog:`rebot` tool, which is an integral
 part of Robot Framework. It is used automatically when test
 reports and logs are generated during the test execution, but there
 are also good grounds for using it separately after the execution.
+
+The basic syntax for using :prog:`rebot` is exactly the same as when
+`starting test execution`_, `return codes`_ are the same, and also
+most of the command line options are identical. The main difference is
+that arguments to :prog:`rebot` are XML output files instead of test
+data files or directories.
+
 
 Creating different reports and logs
 '''''''''''''''''''''''''''''''''''
@@ -196,12 +235,6 @@ output files collected to a central place, and reports and logs
 created there. If generating reports and logs takes a lot of time when
 running tests on Jython, it is a good idea to try if using
 :prog:`rebot`, which always runs on Python, is any faster.
-
-The basic syntax for using :prog:`rebot` is exactly the same as that
-used when `starting test execution`_, and also most of the command
-line options are the same. The main difference is that arguments to
-:prog:`rebot` are XML output files instead of test data files or
-directories.
 
 ::
 
@@ -429,7 +462,6 @@ loop, because for some reason that is not possible without a helper
 function. There is no need to use :prog:`call`, because only one batch
 file is executed.
 
-
 .. sourcecode:: bat
 
    @echo off
@@ -449,3 +481,5 @@ file is executed.
        set CP=%CP%;%1
    goto :eof
 
+
+.. TODO: Add echoing $? and %ERRORLEVEL% to examples. Need to test the latter on Windows first, though.

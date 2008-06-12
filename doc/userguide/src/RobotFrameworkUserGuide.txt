@@ -77,7 +77,6 @@ Creating test data
          BUT check are these used first
 .. _initialization file: `Initialization files`_
 .. _Keyword tables: `Creating user keywords`_
-.. _Keyword: `User keyword syntax`
 .. _test case tables: `Test case syntax`_
 .. _--name: `Setting metadata`_
 .. _--doc: `Setting metadata`_
@@ -173,17 +172,22 @@ Appendices
 .. _simple patterns: `simple pattern`_
 .. _critical test: `Setting criticality`_
 .. _critical tests: `critical test`_
+.. _critical: `critical test`_
 .. _--include: `Selecting test cases`_
 .. _--exclude: `Selecting test cases`_
 .. _--escape: `Escaping options`_
 .. _--argumentfile: `Using argument files`_
 .. _--splitoutput: `Splitting outputs`_
 .. _output: `Output file`_
-.. _--output: `Output file`_
+.. _outputs: `output`_
+.. _XML output files: `output`_
+.. _--output: `output`_
 .. _log: `Log file`_
-.. _--log: `Log file`_
+.. _logs: `log`_
+.. _--log: `log`_
 .. _report: `Report file`_
-.. _--report: `Report file`_
+.. _reports: `report`_
+.. _--report: `report`_
 .. _summary: `Summary file`_
 .. _--summary: `Summary file`_
 .. _log level: `Setting log level`_

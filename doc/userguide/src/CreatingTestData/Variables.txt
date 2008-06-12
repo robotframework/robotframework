@@ -648,12 +648,6 @@ of them are not even available all the time.
    | ${OUTPUT_DIR}         | An absolute path to the `output directory`_.          | Everywhere     |
    +-----------------------+-------------------------------------------------------+----------------+
 
-.. _output file: `Output files`
-.. _log file: `Setting a log file`
-.. _report file: `Report`
-.. _summary file: `Summary report`
-.. _output directory: `Setting an output directory`
-
 
 Advanced variable features
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
