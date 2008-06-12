@@ -145,7 +145,7 @@ ROBOT_SYSLOG_LEVEL        The log level to use when writing to the syslog file.
 .. _read variables: `Sets variables`_
 
 .. _create output files: `Output directory`_
-.. _Adds a timestamp: `Setting timestamps to output file names`_
+.. _Adds a timestamp: `Timestamping output files`_
 .. _Splits output and log: `Splitting outputs`_
 .. _Sets a title: `Setting titles`_
 

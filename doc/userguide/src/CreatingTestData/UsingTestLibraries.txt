@@ -88,7 +88,7 @@ in :code:`PYTHONPATH` or, when running tests on Jython, in a
 a section of its own, and well-developed libraries either do that
 automatically or have clear instructions on how to do it.
 
-__ `Adjusting the library search path`
+__ `Adjusting library search path`_
 
 
 Setting a custom name to a test library

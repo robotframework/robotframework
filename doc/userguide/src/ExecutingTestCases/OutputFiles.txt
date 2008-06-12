@@ -132,31 +132,93 @@ Debug files are not created unless the command line option
 :setting:`--debugfile (-b)` is used explicitly.
 
 
-Setting timestamps to output file names
-'''''''''''''''''''''''''''''''''''''''
+Timestamping output files
+'''''''''''''''''''''''''
 
-*TO BE CONTINUED FROM HERE*
+All output files listed in this section can be automatically
+timestampped with option :setting:`--timestampoutputs (-T)`, which is
+one of the rare opions taking no value. When this option is used, a
+timestamp in format :setting:`YYYYMMDD-hhmmss` is placed between the
+extension and the basename of each file. The example below would, for
+example, create output files like :path:`output-20080604-163225.xml`
+and :path:`mylog-20080604-163225.html`.
 
-Because all output file names can be given from the command line, it
-is possible to use timestamps 
+::
 
-It is also possible to get timestamped names for output files by using
-the command line option :setting:`--timestampoutputs (-T)`. The timestamp
-is of format "YYMMDD-hhmmss" and will be placed between the base name
-and the extension of each output file name.
-
-For example following 
-    
-   pybot --timestampoutputs --log mylog.html tests
-
-generates files called output-080604-163225.xml and mylog-080604-163225.html
+   pybot --timestampoutputs --log mylog.html --report NONE tests.html
 
 
+Setting titles
+''''''''''''''
 
+The default titles for log_, report_ and summary_ files are generated
+by prefixing the name of the top-level test suite with :name:`Test
+Log`, :name:`Test Report` or :name:`Summary Report`. Custom titles can
+be given from the command line using options :setting:`--logtitle`,
+:setting:`--reporttitle` and :setting:`--summarytitle`,
+respectively. With all these options, underscores in the given title
+are converted to spaces automatically.
+
+Examples::
+
+   pybot --logtitle Smoke_Test_Log --reporttitle Smoke_Test_Report --include smoke mytests
+   rebot --summarytitle Overview --summary overview.html --log none --report none *.xml
+
+
+Log levels
+~~~~~~~~~~
+
+Available log levels
+''''''''''''''''''''
+
+Messages in `log files`_ can have different log levels. Some of the
+messages are written by Robot Framework itself, but also executed
+keywords can `log information`__ using different levels. Available
+log levels are:
+
+__ `Logging information`_
+
+:msg:`FAIL`
+   Used when a keyword fails. Can be used only by Robot Framework.
+
+:msg:`WARN`
+   Used to display warnings. Notice that warnings do not change the
+   test case status and they can thus easily be missed.
+ 
+:msg:`INFO`
+   The default level for normal messages. Messages below this level
+   are not shown in the log file by default.
+
+:msg:`DEBUG`
+   Used for debugging purposes. Useful for example for logging what
+   libraries are doing internally.
+
+:msg:`TRACE`
+   Another debugging level. Robot Framework itself logs the actual values
+   of keyword arguments and return values using this level.
+
+
+Setting log level
+'''''''''''''''''
+
+By default log messages below :msg:`INFO` are not logged, but this
+threshold level can be changed from the command line using
+:setting:`--loglevel (-L)` option. This option takes any of the
+available log levels as an argument, and that level becomes the new
+threshold level. A special value :msg:`NONE` can also be used to
+disable logging altogether.
+
+Another possibility to change the log level is using `BuiltIn
+keyword`_ :kw:`Set Log Level` in the test data. It takes same
+arguments as :setting:`--loglevel` option, and it also returns the old
+level so that it can be restored later, for example, in a `test
+teardown`_.  
 
 
 Splitting outputs
 ~~~~~~~~~~~~~~~~~
+
+.. TODO: Not reviewed yet
 
 For large test suites, instead of generating one vast output file, Robot 
 Framework can be configured to produce a set of smaller output files. In this
@@ -217,16 +279,6 @@ In this case, the following files will be created:
    :height: 266
 
    Example balanced output file
-
-
-Setting titles
-~~~~~~~~~~~~~~
-
-Titles for log_, report_ and summary_ files can be given
-from the command line using the options :setting:`--logtitle`,
-:setting:`--reporttitle` and :setting:`--summarytitle`,
-respectively. The default title is generated from the name(s) of the
-input file(s).
 
 
 Configuring statistics
@@ -302,23 +354,6 @@ Statistics by Suite table. This is done with the command line option
 :setting:`--suitestatlevel`. If 0 is given as an argument, the whole table is 
 removed.
 
-
-Setting log level
-~~~~~~~~~~~~~~~~~
-
-By default, the `keyword output`__ from test libraries is logged at the :msg:`INFO` 
-level. This can be changed from the command line using :setting:`--loglevel (-L)`. 
-In descending order, the available log levels are :msg:`WARN`, :msg:`INFO`, 
-:msg:`DEBUG`, and :msg:`TRACE`. When a certain log level is used, everything with a 
-lesser log level is ignored when an output file is written, and thus that information 
-is not available when log files are generated. 
-
-__ `Logging information`_
-
-.. Note::
-   With the log level :msg:`TRACE`, Robot Framework itself logs the actual values
-   of keyword arguments and return values. Normally, only variable names are 
-   logged. This may increase the size of the output file(s) considerably.
 
 
 Setting times for combined outputs

@@ -53,7 +53,7 @@ If a nonexistent variable is used in the test data, the keyword using
 it fails. If the same syntax that is used for variables is needed as a
 literal string, it must be `escaped with a backslash`__ as in :code:`\\${NAME}`.
 
-__ escaping_
+__ Escaping_
 
 
 Variable types
@@ -342,10 +342,10 @@ name:value`, where :cli:`name` is the name of the variable without
 set by using this option several times. Only scalar variables can be
 set from the command line and they can only get string values. Many
 special characters are difficult or impossible to represent in the
-command line, but they can be `escaped`__ with the :setting:`--escape`
+command line, but they can be escaped__ with the :setting:`--escape`
 option. 
 
-__ `Escaping`
+__ `Escaping options`_
 
 .. sourcecode:: bash
 

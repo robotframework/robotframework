@@ -1,4 +1,3 @@
-
 Creating test libraries
 -----------------------
 
@@ -417,12 +416,12 @@ Logging information
 ~~~~~~~~~~~~~~~~~~~
 
 Exception messages are not the only way to give information to the
-users. In addition to that, methods can also send messages to log
-files simply by writing to standard output (stdout) or standard error
-(stderr).
+users. In addition to that, methods can also send messages to `log
+files`_ simply by writing to standard output (stdout) or standard error
+(stderr), and they can even use different `log levels`_.
 
-By default, everything written by a method to stdout is written into
-the Robot Framework's log file as a single entry with the log level
+By default, everything written by a method to stdout is written into a
+log file as a single entry with the log level
 :msg:`INFO`. Messages written into stderr are handled similarly
 otherwise, but they are echoed back to the original stderr after the
 keyword execution has finished.
@@ -444,12 +443,9 @@ Framework will write these messages directly into the log with the
 feature needs to be used with care, because one badly
 placed :code:`</table>` tag can ruin the log file quite badly.
 
-The following examples clarify how `logging with different
-levels`__ works. Java programmers should regard the code :code:`print 'message'`
+The following examples clarify how logging with different levels
+works. Java programmers should regard the code :code:`print 'message'`
 as pseudocode meaning :code:`System.out.println("message");`.
-
-__ `Setting a log level`
-
 
 .. sourcecode:: python
 

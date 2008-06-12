@@ -82,7 +82,6 @@ Creating test data
 .. _--doc: `Setting metadata`_
 .. _[Documentation]: `Test suite name and documentation`_
 .. _return values from keywords: `User keyword return values`_
-.. _BuiltIn: `Standard libraries`_
 .. _Robot Framework download page: https://cwiki.nokia.com/RobotFramework/DownloadPage
 
 
@@ -184,13 +183,15 @@ Appendices
 .. _--output: `output`_
 .. _log: `Log file`_
 .. _logs: `log`_
+.. _log files: `log`_
 .. _--log: `log`_
 .. _report: `Report file`_
 .. _reports: `report`_
+.. _report files: `report`_
 .. _--report: `report`_
 .. _summary: `Summary file`_
 .. _--summary: `Summary file`_
-.. _log level: `Setting log level`_
+.. _log level: `Log levels`_
 .. _--loglevel: `Setting log level`_
 .. _listener: `Using listener interface`_
 .. _listeners: listener_
