@@ -218,16 +218,18 @@ teardown`_.
 Splitting outputs
 ~~~~~~~~~~~~~~~~~
 
-.. TODO: Not reviewed yet
+When executing a big amount of test cases, log files can grow so big that
+opening them to browser gets slow. A solution for this problem is
+splitting the log file into smaller pieces so that the top-level log
+acts as an index having links to other pieces.
 
-For large test suites, instead of generating one vast output file, Robot 
-Framework can be configured to produce a set of smaller output files. In this
-case, if log files are created, one log file will be created from each 
-output file. If a report file is generated, it will still be only one file, 
-but links to multiple log files.
+Splitting can be activated with the command line option
+:setting:`--splitoutputs`, which takes split level as its
+argument. When it is used, both XML output files and log files are
+split from the specified level, but only one report is always created.
 
-Splitting can be activated with the command line option :setting:`--splitoutputs`,
-which takes split level as its argument. 
+*TODO: Continue here*
+
 
 When outputs are split, a top-level output file contains the general 
 information about the whole test execution and it links to sublevel output 
