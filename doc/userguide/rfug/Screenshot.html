@@ -1,0 +1,159 @@
+
+<html>
+<head>
+<title>Screenshot - Documentation</title>
+<style>
+
+  body {
+    background: white;
+    color: black;
+  }
+
+  /* Generic Table Styles */
+  
+  table {
+    background: white;
+    border: 1px solid black;
+    border-collapse: collapse;
+    empty-cells: show;
+    margin: 0px 1px;
+  }
+  th, td {
+    border: 1px solid black;
+    padding: 1px 5px;
+  }
+  th {
+    background: #C6C6C6;
+  }
+  td {
+    vertical-align: top;
+  }    
+
+  /* Columns */
+
+  td.kw {
+    font-weight: bold;
+  }
+  td.arg {
+    width: 300px;
+  }
+  td.doc {
+  }
+
+  /* Paragraphs */
+
+  .libdoc, .links {
+    width: 800px;
+  }
+  /* 
+</style>
+</head>
+<body>
+<h1>Screenshot - Documentation</h1>
+
+<h2>Introduction</h2>
+<p class='libdoc'>This library supports taking full-screen screenshots of the desktop.<br />
+<br />
+The library can be initialized with two arguments 'default_directory' and<br />
+'log_file_directory'. If 'default_directory' is provided, all the<br />
+screenshots will be saved under that directory by default. If the<br />
+'default_directory' is not provided the system temporary directory is used<br />
+as default.<br />
+'log_file_directory' is used to create relative paths when screenshots are<br />
+logged. By default absolute paths are used.<br />
+<br />
+The library depends on standard Java APIs and thus requires a Jython runtime<br />
+environment. The library does not, however, require any specific operating<br />
+system. While the library has been tested on Windows and Linux, any<br />
+operating system for which the JDK is available should be sufficient.</p>
+
+<h2>Shortcuts</h2>
+<div class='links'>
+<a href="#Log Screenshot" title="Takes a screenshot and logs it to Robot's log.">Log&nbsp;Screenshot</a>&nbsp;
+<a href="#Save Screenshot" title="Saves a screenshot with a generated unique name.">Save&nbsp;Screenshot</a>&nbsp;
+<a href="#Save Screenshot To" title="Saves a screenshot to the specified file.">Save&nbsp;Screenshot&nbsp;To</a>&nbsp;
+<a href="#Set Screenshot Directories" title="Used to set 'default_directory' and 'log_file_directory'.">Set&nbsp;Screenshot&nbsp;Directories</a>&nbsp;
+</div>
+
+<h2>Keywords</h2>
+<table class="keywords">
+<tr>
+  <th class="kw">Keyword</th>
+  <th class="arg">Arguments</th>
+  <th class="doc">Documentation</th>
+</tr>
+<tr>
+  <td class="kw"><a name="Log Screenshot"></a>Log Screenshot</td>
+  <td class="arg">basename=screenshot, directory=None, log_file_directory=None, width=100%</td>
+  <td class="doc">Takes a screenshot and logs it to Robot's log.<br />
+<br />
+Saves the files as defined in keyword 'Save Screenshot' and creates<br />
+picture to Robot's log. 'directory' defines the directory where the<br />
+screenshots is saved. By default its value is 'default_directory'<br />
+which is set at library import or with keyword 'Set Screenshot<br />
+Directories'. 'log_file_directory' is used to create relative paths to<br />
+the pictures. This allows moving the log and pictures to<br />
+different machines and having still working pictures. If<br />
+'log_file_directory' is not given or set (sameway as<br />
+'default_directory' is set), the paths will be absolute.</td>
+</tr>
+<tr>
+  <td class="kw"><a name="Save Screenshot"></a>Save Screenshot</td>
+  <td class="arg">basename=screenshot, directory=None</td>
+  <td class="doc">Saves a screenshot with a generated unique name.<br />
+<br />
+The unique name is derived based on the provided basename and directory<br />
+passed in as optional arguments. If a directory is provided, the<br />
+screenshot will be saved under that directory, otherwise, the<br />
+'default_directory' set during library import or by keyword 'Set<br />
+Screenshot Directories' is used. If a basename for the screenshot file<br />
+is provided, a unique filename is determined by appending an underscore<br />
+and a running counter. Otherwise, the basename defaults to 'screenshot'.<br />
+<br />
+Examples:<br />
+<br />
+<table border="1" style="border: 1px solid gray; background: transparent; border-collapse: collapse; empty-cells: show;">
+<tr>
+<td style="border: 1px solid gray; padding: 2px;">Save Screenshot</td>
+<td style="border: 1px solid gray; padding: 2px;">mypic</td>
+<td style="border: 1px solid gray; padding: 2px;">/home/user</td>
+</tr>
+</table>=&gt; /home/user/mypic_1.jpg, /home/user/mypic_2.jpg, ...<br />
+<br />
+<table border="1" style="border: 1px solid gray; background: transparent; border-collapse: collapse; empty-cells: show;">
+<tr>
+<td style="border: 1px solid gray; padding: 2px;">Save Screenshot</td>
+<td style="border: 1px solid gray; padding: 2px;">mypic</td>
+<td style="border: 1px solid gray; padding: 2px;"></td>
+</tr>
+</table>=&gt; /tmp/mypic_1.jpg, /tmp/mypic_2.jpg, ...<br />
+<br />
+<table border="1" style="border: 1px solid gray; background: transparent; border-collapse: collapse; empty-cells: show;">
+<tr>
+<td style="border: 1px solid gray; padding: 2px;">Save Screenshot</td>
+<td style="border: 1px solid gray; padding: 2px;"></td>
+<td style="border: 1px solid gray; padding: 2px;"></td>
+</tr>
+</table>=&gt; /tmp/screenshot_1.jpg, /tmp/screenshot_2.jpg, ...</td>
+</tr>
+<tr>
+  <td class="kw"><a name="Save Screenshot To"></a>Save Screenshot To</td>
+  <td class="arg">path</td>
+  <td class="doc">Saves a screenshot to the specified file.<br />
+<br />
+The directory holding the file must exist or an exception is raised.</td>
+</tr>
+<tr>
+  <td class="kw"><a name="Set Screenshot Directories"></a>Set Screenshot Directories</td>
+  <td class="arg">default_directory=None, log_file_directory=None</td>
+  <td class="doc">Used to set 'default_directory' and 'log_file_directory'.<br />
+<br />
+See library documentation for details.</td>
+</tr>
+</table>
+<p class="footer">
+Altogether 4 keywords.
+Documentation generated 20080602 06:49:09.
+</p>
+</body>
+</html>
