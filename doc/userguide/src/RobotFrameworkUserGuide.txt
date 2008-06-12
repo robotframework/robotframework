@@ -81,7 +81,6 @@ Creating test data
 .. _--name: `Setting metadata`_
 .. _--doc: `Setting metadata`_
 .. _[Documentation]: `Test suite name and documentation`_
-.. _return values from keywords: `User keyword return values`_
 .. _Robot Framework download page: https://cwiki.nokia.com/RobotFramework/DownloadPage
 
 
