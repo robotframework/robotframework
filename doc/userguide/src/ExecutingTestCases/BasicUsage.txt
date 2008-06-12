@@ -127,8 +127,8 @@ variables. If the options that take only one value are used several
 times, the value given last is effective.
 
 
-Option value as a simple pattern
-````````````````````````````````
+Option value as simple pattern
+``````````````````````````````
 
 Many of the options take arguments as *simple patterns*. This means
 that :code:`*` and :code:`?` can be used as special characters, so

@@ -284,61 +284,116 @@ In this case, the following files will be created:
 Configuring statistics
 ~~~~~~~~~~~~~~~~~~~~~~
 
-There are several command line options that can be used to configure and tweak the 
-contents of 'Statistics by Tag', 'Test Details by Tag' and 'Statistics by Suite'
--tables in outputs files. 
+There are several command line options that can be used to configure
+and tweak the contents of :name:`Statistics by Tag`, :name:`Statistics
+by Suite` and :name:`Test Details by Tag` tables in different output
+files. All these options work both when executing test cases and when
+post-processing outputs.
+
+
+Configuring displayed suite statistics
+''''''''''''''''''''''''''''''''''''''
+
+When a deeper suite structure is executed, showing all the test suite
+levels in :name:`Statistics by Suite` table may make the table
+somewhat messy. How many levels are displayed can be controlled with
+the command line option :setting:`--suitestatlevel`. It takes the
+required level as an integer, and if :setting:`0` is used, the whole
+table is removed.
+
 
 Including and excluding tag statistics
 ''''''''''''''''''''''''''''''''''''''
 
-The command line options :setting:`--tagstatinclude` and :setting:`--tagstatexclude`
-can be used to define the contents of the Statistics by Tag and Test Details
-by Tag tables. Both of these options may be given several times and their 
-arguments may be simple patterns. If a tag matches both include and exclude, it 
-will be excluded. 
+When plenty of tags are used, :name:`Statistics by Tag` table can get
+quite crowded. If this happens, command line options
+:setting:`--tagstatinclude` and :setting:`--tagstatexclude` can be
+used to select what tags to display, similarly as
+:setting:`--include` and :setting:`--exclude` are used to `select test
+cases`__::
+
+   --tagstatinclude some-tag --tagstatinclude another-tag
+   --tagstatexclude owner-*
+   --tagstatinclude prefix-* --tagstatexclude prefix-13
+
+These settings affect also :name:`Test Details by Tag` table so that
+it has details only by the selected tags. This can make the report
+considerably smaller, and excluding not interesting tags is thus often a
+good idea.
+
+__ `By tag names`_
 
 
 Generating combined tag statistics
 ''''''''''''''''''''''''''''''''''
 
-The command line option :setting:`--tagstatcombine` can be used to generate an
-aggregate row in the Statistics by Tag and Test Details by Tag tables.
-There are three somewhat different ways for giving arguments for this option:
+The command line option :setting:`--tagstatcombine` can be used to
+generate aggregate tags that combine statistics from multiple
+tags. These new combined tags are shown in :name:`Statistics by Tag`
+table, and matching tests listed in :name:`Test Details by Tag` table.
+There are three somewhat different ways for giving arguments for this
+option:
 
-One tag as a pattern
-    All tags matching the pattern are combined, for example
-    :cli:`--tagstatcombine it-\*`.
+One tag as a `simple pattern`_
+   All tags matching the given pattern are combined together.
 
-Two or more tags separated by "AND" or "&"
-    Also in this case tags may be patterns. Tests must have all these tags to
-    be included in the combined statistics. 
-    Example: :cli:`--tagstatcombine tag1&tag2ANDit-1?`
+Two or more tags separated by :code:`AND` or :code:`&`
+   Combined statistics contains tests that have all the listed tags.
+   Tags can be given as simple patterns.
 
-Two or more tags separated by "NOT"
-    Also in this case tags may be patterns. Only tests matching the first tag, but 
-    not any of the following tags, are included in the combined statistics.
-    Example: :cli:`--tagstatcombine it-11NOTsmoke`
+Two or more tags separated by :code:`NOT`
+   Combined statistics contains tests that have the first tag but
+   not others.  Also in this case tags may be patterns.
+
+Examples::
+
+    --tagstatcombine owner-*
+    --tagstatcombine tag-1ANDtag-2ANDtag-??
+    --tagstatcombine smokeNOTiter-42
+
+.. TODO: Screenshot needed! Preferably so that it shows results of the
+         above example (which of course can be edited)
+
 
 Creating links from tag names
 '''''''''''''''''''''''''''''
 
-It is possible to add an external link to the Statistics by Tag table by using 
-the command line option :setting:`--tagstatlink`. An argument to this option is given 
-in the format :code:`pattern:link:title`, where pattern may contain the characters "*" (matches
-anything) and "?" (matches any character). The matches of wildcards may be used in the 
-resulting link with the syntax :code:`%N`, where "N" is the index of the match starting from 1.
+It is possible to add external links to :name:`Statistics by Tag`
+table by using the command line option
+:setting:`--tagstatlink`. Arguments to this option are given in format
+:setting:`tag:link:name`, where :setting:`tag` specifies tags to
+assign the link to, :setting:`link` is the link to be created, and
+:setting:`name` is the name to give to the link.
+
+:setting:`tag` may be a single tag, but more commonly a `simple
+pattern`_ where :code:`*` matches anything and :code:`?` matches any
+single character. When :setting:`tag` is a pattern, the matches to
+wildcards may be used in :setting:`link` with the syntax :code:`%N`,
+where :code:`N` is the index of the match starting from 1.
+
 Examples::
 
     --tagstatlink mytag:http://my.domain:Link
     --tagstatlink bug-*:http://tracker/id=%1:Bug_Tracker
+    --tagstatlink owner-*:mailto:%1@domain?subject=Acceptance_tests:Send_Mail
+
+.. TODO: Screenshot needed! Preferably so that it shows results of the
+         above example (which of course can be edited)
+
 
 Adding documentation to tags
 ''''''''''''''''''''''''''''
 
-Documentation for tags can be set with the command line option :setting:`--tagdoc`
-The argument is in the format :code:`tag:doc`, where "tag" may be a simple pattern and "doc" may
-contain simple formatting. This documentation is shown in the 
-Test Details by Tag table and also as a tool tip in the Statistics by Tag table.
+Tags can be given a documentation with the command line option
+:setting:`--tagdoc`, which takes an argument in format
+:setting:`tag:doc`. :setting:`tag` is the name of the tag to assign
+the documentation to, and it can also be a `simple pattern`_ matching
+multiple tags. :setting:`doc` is the assigned
+documentation. Underscores in it are converted to spaces automatically,
+and it can also contain `HTML formatting`_. The given documentation is
+shown with matching tags in :name:`Test Details by Tag` table, and as
+a tool tip for these tags in :name:`Statistics by Tag` table.
+
 Examples::
 
     --tagdoc mytag:My_documentation
@@ -346,26 +401,23 @@ Examples::
     --tagdoc owner-*:Original_author
 
 
-Configuring the Statistics by Suite table
-'''''''''''''''''''''''''''''''''''''''''
+Additional options for post-processing outputs
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-You can control how many levels of subsuites are displayed in the 
-Statistics by Suite table. This is done with the command line option
-:setting:`--suitestatlevel`. If 0 is given as an argument, the whole table is 
-removed.
-
+These options are available only when `post-processing outputs`_ with
+:prog:`rebot`.
 
 
 Setting times for combined outputs
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+''''''''''''''''''''''''''''''''''
 
-When `combining outputs`_ with :prog:`rebot`, it is possible to set the
-start and end time of the combined test suite using the options
-:setting:`--starttime` and :setting:`--endtime`, respectively. This
-may be convenient, because by default, the combined suite does not
-have these values. When both the start and end time are given, the
-elapsed time is also calculated based on them. Otherwise the elapsed
-time is got by adding the elapsed times of the child tests suites together.
+When `combining outputs`_, it is possible to set the start and end
+time of the combined test suite using the options
+:setting:`--starttime` and :setting:`--endtime`, respectively. This is
+convenient, because by default, combined suites do not have these
+values. When both the start and end time are given, the elapsed time
+is also calculated based on them. Otherwise the elapsed time is got by
+adding the elapsed times of the child tests suites together.
 
 Times must be given as timestamps in the format :code:`YYYY-MM-DD
 hh:mm:ss.mil`, where all separators are optional and the parts from
@@ -380,14 +432,28 @@ Examples::
 
 
 Removing keywords from outputs
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+''''''''''''''''''''''''''''''
 
-When outputs are processed with :prog:`rebot`, you can remove all
-keyword information of passed tests from the produced log file(s)
-using the command line option :setting:`--removekeywords`. Only the
-names of top-level keywords will be listed. This may reduce the size
-of the log file(s) dramatically, while still preserving the essential
-information about failed tests.
+Most of the content of `output files`_ is taken by keywords and
+especially their log messages. When creating higher level reports, log
+files are not necessarily needed at all and the space taken by
+keywords and their messages is just wasted. In these situations
+command line option :setting:`--removekeywords` can be used to get rid
+of unnecessary keywords. It has two possible values:
+
+:setting:`ALL`
+   All keywords are unconditionally removed. 
+
+:setting:`PASSED`
+   Keywords are removed only from passed test cases. In most cases log
+   files created after this contain enough information to investigate
+   possible failures.
+
+Removing keywords makes output files considerably smaller and thus
+faster to process further. Even when keywords are removed, names,
+arguments and statuses of top-level keywords are preverved, so it is
+still possible to create log files and see the high-level structure of
+each test case. 
 
 
 System log

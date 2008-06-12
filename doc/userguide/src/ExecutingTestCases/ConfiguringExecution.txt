@@ -78,14 +78,14 @@ are selected.
 
 Both :setting:`--include` and :setting:`--exclude` can be used several
 times to match multiple tags, and their arguments can be `simple
-patterns`_. In these cases, the rules for selecting test cases apply, so
-that test cases with a tag matching any include patterns are
-selected, and tests with a tag matching exclude patterns are not.
-It is also possible to select only test cases that have two or more
-specified tags by separating the tags either with :code:`&` or :code:`AND`
-(case-sensitive). Similarly, only tests with a certain tag, but without
-another, can be selected by separating these tags with :code:`NOT`
-(case-sensitive).
+patterns`_. In these cases, the rules for selecting test cases apply,
+so that test cases with a tag matching any include patterns are
+selected, and tests with a tag matching exclude patterns are not.  It
+is also possible to select only test cases that have two or more
+specified tags by separating the tags either with :code:`&` or
+:code:`AND` (case-sensitive). Similarly, only tests with a certain
+tag, but without some others, can be selected by separating these tags
+with :code:`NOT` (case-sensitive).
 
 ::
 

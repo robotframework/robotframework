@@ -150,7 +150,7 @@ ROBOT_SYSLOG_LEVEL        The log level to use when writing to the syslog file.
 .. _Sets a title: `Setting titles`_
 
 .. _Sets the threshold level: `Setting log level`_
-.. _levels to show: `Configuring the Statistics by Suite table`_
+.. _levels to show: `Configuring displayed suite statistics`_
 .. _Includes only these tags: `Including and excluding tag statistics`_
 .. _Excludes these tags: `Includes only these tags`_
 .. _combined statistics based on tags: `Generating combined tag statistics`_
