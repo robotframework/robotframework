@@ -113,5 +113,5 @@ and report files can be generated with rebot_.
 
 .. sourcecode:: python 
    
-   ExtendingRobotFramework/check_test_times.py
+   src/ExtendingRobotFramework/check_test_times.py
 
