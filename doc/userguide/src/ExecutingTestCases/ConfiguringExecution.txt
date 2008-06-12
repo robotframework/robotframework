@@ -6,7 +6,7 @@ for configuring the `test execution`_ or `post-processing
 outputs`_. Options related to generated output files are discussed in
 the `next section`__.
 
-__ `Output files`_
+__ `Created outputs`_
 
 .. contents::
    :depth: 2
@@ -352,26 +352,3 @@ So-called listeners_ can be used for monitoring the test
 execution. They are taken into use with the command line option
 :setting:`--listener`, and the specified listeners must be in the `module
 search path`_ similarly as test libraries.
-
-
-Setting times for combined outputs
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-When `combining outputs`_ with :prog:`rebot`, it is possible to set the
-start and end time of the combined test suite using the options
-:setting:`--starttime` and :setting:`--endtime`, respectively. This
-may be convenient, because by default, the combined suite does not
-have these values. When both the start and end time are given, the
-elapsed time is also calculated based on them. Otherwise the elapsed
-time is got by adding the elapsed times of the child tests suites together.
-
-Times must be given as timestamps in the format :code:`YYYY-MM-DD
-hh:mm:ss.mil`, where all separators are optional and the parts from
-milliseconds to hours can be omitted. For example, :code:`2008-06-11
-17:59:20.495` is equivalent both to :code:`20080611-175920.495` and 
-:code:`20080611175920495`, and also mere :code:`20080611` would work.
-
-Examples::
-
-   rebot --starttime 20080611-17:59:20.495 output1.xml output2.xml
-   rebot --starttime 20080611-175920 --endtime 20080611-180242 *.xml

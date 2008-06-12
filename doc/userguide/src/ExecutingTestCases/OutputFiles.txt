@@ -1,8 +1,8 @@
-Output files
-------------
+Created outputs
+---------------
 
-Several outputs files are created When tests are executed, and most of
-them are somehow related to test results. This section explains what
+Several outputs files are created when tests are executed, and most of
+them are somehow related to test results. This section discusses what
 outputs are created, how to configure where to create them, and how to
 fine-tune their contents.
 
@@ -14,40 +14,41 @@ fine-tune their contents.
 Different output files
 ~~~~~~~~~~~~~~~~~~~~~~
 
-This section explains different output files and how to configure
-where they are created. Other outputs than the `syslog file`_ are
-configured using command line options, which get the path to the
-output file as an argument. All these options, except
-:setting:`--output` when executing test cases, also accept special
-value :setting:`NONE` (case-insensitive), which means that the output
-file in question is not created at all.
+This section explains what different output files can be created and how
+to configure where to create them. Output files are configured using
+command line options, which get the path to the output file in
+question as an argument. Special value :setting:`NONE`
+(case-insensitive), can be used to disable creating certain output
+file.
 
 
 Output directory
 ''''''''''''''''
 
-The default location where all output files are created is the
-directory where the execution is started from, but it can be altered
-with :setting:`--outputdir (-d)` option. All output files can be
-set using an absolute path, in which case they are created to
-the specified place, but in other cases the path is considered
-relative to the output directory. Regardless how a path to an
-individual output file is got, its parent directory is created
+All output files can be set using an absolute path, in which case they
+are created to the specified place, but in other cases the path is
+considered relative to the output directory. The default output
+directory is the directory where the execution is started from, but it
+can be altered with :setting:`--outputdir (-d)` option. The path set
+with this option is, again, relative to the execution directory, but
+can naturally be given also as an absoute path. Regardless how a path
+to an individual output file is got, its parent directory is created
 automatically if it does not exist.
 
 
 Output file
 '''''''''''
 
-XML output files contain all the test execution results. Log_,
-report_, and summary_ files are generated based on them, they can also
-be `combined and otherwise post-processed`__ after the test execution.
+Output files contain all the test execution results in XML
+format. Log_, report_, and summary_ files are generated based on them,
+and they can also be `combined and otherwise post-processed`__ after the
+test execution. 
 
 The command line option :setting:`--output (-o)` determines where
-output files are created. When tests are executed, the default name
-for outputs is :path:`output.xml`, and it is not possible to suppress creating
-them. When post-processing outputs, new output files are not created
-unless this option is explicitly used.
+output files are created. Output files are always created when tests
+are executed, the default name for them is :path:`output.xml`. When
+post-processing outputs, new output files are not created unless this
+option is explicitly used.
 
 __ `Post-processing outputs`_
 
@@ -55,12 +56,12 @@ __ `Post-processing outputs`_
 Log file
 ''''''''
 
-Log files contain details about the executed test cases. They have a
-hierarchical structure showing test suite, test case and keyword
-details. Log files are needed nearly every time when test results
-needs to be investigated in detail. Even though log files also have
-statistics, report_ and summary_ files are better for getting an
-higher-level overview.
+Log files contain details about the executed test cases in HTML
+format. They have a hierarchical structure showing test suite, test
+case and keyword details. Log files are needed nearly every time when
+test results must be investigated in detail. Even though log files
+also have statistics, report_ and summary_ files are better for
+getting an higher-level overview.
 
 The command line option :setting:`--log (-l)` determines where log
 files are created. Unless special value :setting:`NONE` is used, log
@@ -76,18 +77,18 @@ files are always created and their default name is :path:`log.html`.
 Report file
 '''''''''''
 
-Report files contain an overview of the test execution results. They
-have statistic based on tags and executed test suites, as well as
-short details about every executed test suite and test case. When both
-report and log is generated, the report has links to the log file for
-easy navigation to more detailed information.  It is easy to see the
-overall test execution status from the report, because its backgroud
-is green is if all `critical tests`_ pass, and bright red otherwise.
+Report files contain an overview of the test execution results in HTML
+format. They have statistic based on tags and executed test suites, as
+well as a list of all executed test cases . When both reports and logs
+are generated, the report has links to the log file for easy
+navigation to more detailed information.  It is easy to see the
+overall test execution status from reports, because their backgroud is
+green if all `critical tests`_ pass, and bright red otherwise.
 
 The command line option :setting:`--report (-r)` determines where
 report files are created. Similarly as log files, reporst are always
-created unless :setting:`NONE` is used as a value. The default name
-for a log file is :path:`report.html`.
+created unless :setting:`NONE` is used as a value, and their default
+name is :path:`report.html`.
 
 .. figure:: report.png
    :width: 600
@@ -99,11 +100,11 @@ for a log file is :path:`report.html`.
 Summary file
 ''''''''''''
 
-Summary files contain same statistics as reports, and their backgrounds
-are similarly green or red depending on the overall test execution
-status. They have no test case details, however, which makes them much
-smaller than reports. They are usefull when a big number of test cases is
-executed, and a very high-level overview is needed. 
+Summary files contain same statistics as reports, and their
+backgrounds are similarly green or red depending on the overall test
+execution status. They have no test case details, however, which makes
+them much smaller. They are usefull when a big number of test cases is
+executed and a very high-level overview is needed.
 
 Summary files are not generated by default. When they are needed, they
 can be created using the command line option :setting:`--summary (-S)`.
@@ -118,7 +119,7 @@ can be created using the command line option :setting:`--summary (-S)`.
 Debug file
 ''''''''''
 
-Debug files are plain text files that are written during the
+Debug files are plain text files that are written during the test
 execution. All messages got from test libraries are written to them,
 as wel as information about started and ended test suites, test cases
 and keywords. Debug files can be used for monitoring the test
@@ -128,7 +129,7 @@ UNIX-like systems simply with :prog:`tail -f` command.
 __ `File viewing tool -- fileviewer.py`_
 
 Debug files are not created unless the command line option
-:setting:`--debugfile (-b)` is used explicityly.
+:setting:`--debugfile (-b)` is used explicitly.
 
 
 Setting timestamps to output file names
@@ -151,21 +152,6 @@ For example following
 generates files called output-080604-163225.xml and mylog-080604-163225.html
 
 
-Syslog file
-'''''''''''
-
-Syslog files contains debug information about the functioning of Robot 
-Framework. The information in it is usually only needed when some unexpected
-error occurs during the execution of tests.
-
-To enable syslog, the environment variable :var:`ROBOT_SYSLOG_FILE` must contain an 
-absolute path to a non-existing file. The :var:`ROBOT_SYSLOG_LEVEL` environment 
-variable determines the level of logging. The available levels are the same as with the
-`--loglevel`_ command line option.
-
-
-Listener outputs
-''''''''''''''''
 
 
 
@@ -335,6 +321,29 @@ __ `Logging information`_
    logged. This may increase the size of the output file(s) considerably.
 
 
+Setting times for combined outputs
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+When `combining outputs`_ with :prog:`rebot`, it is possible to set the
+start and end time of the combined test suite using the options
+:setting:`--starttime` and :setting:`--endtime`, respectively. This
+may be convenient, because by default, the combined suite does not
+have these values. When both the start and end time are given, the
+elapsed time is also calculated based on them. Otherwise the elapsed
+time is got by adding the elapsed times of the child tests suites together.
+
+Times must be given as timestamps in the format :code:`YYYY-MM-DD
+hh:mm:ss.mil`, where all separators are optional and the parts from
+milliseconds to hours can be omitted. For example, :code:`2008-06-11
+17:59:20.495` is equivalent both to :code:`20080611-175920.495` and 
+:code:`20080611175920495`, and also mere :code:`20080611` would work.
+
+Examples::
+
+   rebot --starttime 20080611-17:59:20.495 output1.xml output2.xml
+   rebot --starttime 20080611-175920 --endtime 20080611-180242 *.xml
+
+
 Removing keywords from outputs
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -344,4 +353,18 @@ using the command line option :setting:`--removekeywords`. Only the
 names of top-level keywords will be listed. This may reduce the size
 of the log file(s) dramatically, while still preserving the essential
 information about failed tests.
+
+
+System log
+~~~~~~~~~~
+
+Syslog files contains debug information about the functioning of Robot 
+Framework. The information in it is usually only needed when some unexpected
+error occurs during the execution of tests.
+
+To enable syslog, the environment variable :var:`ROBOT_SYSLOG_FILE` must contain an 
+absolute path to a non-existing file. The :var:`ROBOT_SYSLOG_LEVEL` environment 
+variable determines the level of logging. The available levels are the same as with the
+`--loglevel`_ command line option.
+
 

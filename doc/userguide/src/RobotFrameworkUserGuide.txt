@@ -165,7 +165,7 @@ Appendices
 .. _automatic variable: `Automatic variables`_
 .. _HTML formatting: `Documentation formatting`_
 .. _Robot IDE: `Test data editing tool (Robot IDE)`_
-.. _syslog: `Syslog file`_
+.. _syslog: `System log`_
 .. _rebot: `Post-processing outputs`_
 .. _test execution: `Starting test execution`_
 .. _simple pattern: `Option value as a simple pattern`_
