@@ -18,14 +18,32 @@ just taking a look at the source code of Robot Framework.
    :local: 
 
 
+Executed test data
+~~~~~~~~~~~~~~~~~~
+
+This API consists of a method for reading Robot Framework output file(s) into a
+:code:`TestSuite` object that contains all the relevant information about the 
+results of the test execution. Signature of method is :code:`TestSuite(outpath)`, 
+where :code:`outpath` is a path to an existing output file. The returned 
+:code:`TestSuite` object can be used to process the results of the test run. 
+
+Here is an example that reads a given output file and marks each test case whose 
+execution time is longer than three minutes failed. The :code:`TestSuite` object 
+is then serialized and normal log and report files could be generated with 
+:prog:rebot_.
+
+.. sourcecode:: python 
+   
+   src/ExtendingRobotFramework/check_test_times.py
+
+
 Test execution
 ~~~~~~~~~~~~~~
 
-This API consists of :code:`run` method, which can be used for
-starting the test execution. The signature of the method is
-:code:`run(*datasources, **options)`, where :code:`datasources` are
-paths to files and directories to be executed, and :code:`options`
-are same as normal `command line options`_ without hyphens.
+This API consists of :code:`run` method, which can be used for starting the 
+test execution. Signature of the method is :code:`run(*datasources, **options)`, 
+where :code:`datasources` are paths to files and directories to be executed and
+:code:`options` are same as normal `command line options`_ without hyphens.
 
 Example:
 
@@ -48,13 +66,11 @@ Equivalent command line usage would be::
 Parsed test data
 ~~~~~~~~~~~~~~~~
 
-*TODO: Go this and rest of the section throug*
-
-An API for getting a :code:`TestSuite` object containing parsed test
-data.  This API is used like :code:`TestSuite(*datasources,
-**options)`, where :code:`datasources` are paths to files and
-directories containing the test data, and :code:`options` are same as
-normal `command line options`_ without hyphens.
+This API consists of a method for getting a :code:`TestSuite` object that 
+contains parsed test data. The method is used like :code:`TestSuite(*datasources,
+**options)`, where :code:`datasources` are paths to files and directories 
+containing the test data, and :code:`options` are same as normal `command line 
+options`_ without hyphens.
 
 Example:
 
@@ -67,51 +83,20 @@ Example:
     for test in suite.tests:
         print test.name
 
-The options that affect parsing are as follows:
-
-process_curdir 
-    is a special option, and when False, the variable :var:`${CURDIR}` is not 
-    replaced when parsing the data. `Robot IDE`_ uses this option when it 
-    parses the input data. See `Built-in variables`_ for more information about 
-    :var:`${CURDIR}`. 
-
-syslog_
-   
-SuiteNames
-   The value of this option becomes the name of the topmost suite, if either
-   several datasources are given or if the datasource is a directory.
+:code:`process_curdir` is a special option, and when False, the variable 
+:var:`${CURDIR}` is not replaced when parsing the data. `Robot IDE`_ uses this 
+option when it parses the input data. See `Built-in variables`_ for more 
+information about :var:`${CURDIR}`. 
 
 
 Runnable test data
 ~~~~~~~~~~~~~~~~~~
 
-A method for parsing given input files into a runnable test suite object. 
-This means that variables and settings for suite are processed.
+This API consists of a  method for parsing given input files into a runnable 
+:code:`TestSuite` object. This differs from a parsed :code:`TestSuite` in that
+variables and settings for suite(s) are processed.
 
-The signature of this :code:`TestSuite` method is 
-:code:`TestSuite(datasources, settings, syslog)`, where data sources are 
-paths to files and directories, similarly as when running pybot/jybot from 
-the command line. "Settings" must be a RobotSettings object, and "syslog" must 
-implement the syslog interface.
-
-
-Executed test data
-~~~~~~~~~~~~~~~~~~
-
-A method for reading a Robot Framework output file(s) into a test suite 
-object that contains all the relevant information about the results of
-the test execution. 
-
-The signature of this :code:`TestSuite` method is :code:`TestSuite(outpath)`, 
-where :code:`outpath` is a path to an existing output file. The returned 
-:code:`TestSuite` object can be used to process the results of the test run. 
-
-Here is an example that reads a given output file and marks each test
-case, the execution time of which is longer than three minutes,
-failed. The :code:`TestSuite` object is then serialized and normal log
-and report files can be generated with rebot_.
-
-.. sourcecode:: python 
-   
-   src/ExtendingRobotFramework/check_test_times.py
+The signature of this :code:`TestSuite` method is :code:`TestSuite(datasources, 
+settings, syslog)` , where data sources are paths to files and directories, 
+similarly as when running pybot/jybot from the command line. 
 
