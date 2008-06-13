@@ -16,10 +16,12 @@ Applicable general rules on documentation formatting
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  
 
 Besides the formatting explained here, the documentation used for test
-cases and suites is subject to `general parsing rules`_ of the Robot
-Framework test data. For example, dividing text into lines and
-paragraphs requires having a literal newline character sequence
-(:code:`\\n`), as illustrated in the example below.
+cases and suites is subject to `general parsing rules`__ of the test
+data. For example, dividing text into lines and paragraphs requires
+having a literal newline character sequence (:code:`\\n`), as
+illustrated in the example below.
+
+__ `Test data syntax`_
 
 .. raw:: html
 
@@ -36,7 +38,9 @@ paragraphs requires having a literal newline character sequence
 
 
 Furthermore, a very long documentation can also be `split into several
-rows`_ using :code:`...`.
+rows`__ using :code:`...` syntax.
+
+__ `Dividing test data to several rows`_
 
 
 Bold and italic
