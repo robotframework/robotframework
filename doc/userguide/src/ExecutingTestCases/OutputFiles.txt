@@ -250,17 +250,19 @@ way that supports splitting outputs, if you wish to use that feature.
 Unbalanced output
 '''''''''''''''''
 
-When an unbalanced directory structure (see the figure below) is executed with a split
-level set to 3, an individual output file is created for test case files from 1 to 4.
-The information about the test case files 5 and 6 is written to the root 
-level output file. In this case, the following files will be created:
+When an unbalanced directory structure (see the figure below) is
+executed with a split level set to 3, an individual output file is
+created for test case files from 1 to 4.  The information about the
+test case files 5 and 6 is written to the root level output file. In
+this case, the following files will be created:
 
-- :path:`output.xml`, which contains summary information of the executed suite, 
-  details of test case files 5 and 6, and links to sublevel output files.
+- :path:`output.xml`, which contains summary information of the
+  executed suite, details on test case files 5 and 6, and links to
+  sublevel output files.
     
 - :path:`output-001.xml`, :path:`output-002.xml`,
   :path:`output-003.xml` and :path:`output-004.xml`, which contain
-  details of test case files 1, 2, 3 and 4, respectively.
+  details on test case files 1, 2, 3 and 4, respectively.
 
 
 .. figure:: unbalanced_output.png
@@ -276,12 +278,14 @@ When a balanced directory structure (see the figure below) is executed with a sp
 level set to 3, an individual output file is created for all test case files.
 In this case, the following files will be created:
 
-- :path:`output.xml`, which contains summary information on the executed test suite 
-  and links to sublevel output files.
+- :path:`output.xml`, which contains summary information on the
+  executed test suite and links to sublevel output files.
     
-- :path:`output-001.xml`, :path:`output-002.xml`, :path:`output-003.xml`, :path:`output-004.xml`, 
-  :path:`output-005.xml`, :path:`output-006.xml`, :path:`output-007.xml`, and :path:`output-008.xml`, which
-  contain details of test case files from 1 to 8.
+- :path:`output-001.xml`, :path:`output-002.xml`,
+  :path:`output-003.xml`, :path:`output-004.xml`,
+  :path:`output-005.xml`, :path:`output-006.xml`,
+  :path:`output-007.xml`, and :path:`output-008.xml`, which contain
+  details on test case files from 1 to 8.
 
 
 .. figure:: balanced_output.png
@@ -295,30 +299,30 @@ Configuring statistics
 ~~~~~~~~~~~~~~~~~~~~~~
 
 There are several command line options that can be used to configure
-and tweak the contents of :name:`Statistics by Tag`, :name:`Statistics
+and adjust the contents of the :name:`Statistics by Tag`, :name:`Statistics
 by Suite` and :name:`Test Details by Tag` tables in different output
 files. All these options work both when executing test cases and when
 post-processing outputs.
 
 
-Configuring displayed suite statistics
-''''''''''''''''''''''''''''''''''''''
+Configuring the displayed suite statistics
+''''''''''''''''''''''''''''''''''''''''''
 
 When a deeper suite structure is executed, showing all the test suite
-levels in :name:`Statistics by Suite` table may make the table
-somewhat messy. How many levels are displayed can be controlled with
-the command line option :setting:`--suitestatlevel`. It takes the
-required level as an integer, and if :setting:`0` is used, the whole
-table is removed.
+levels in the :name:`Statistics by Suite` table may make the table
+somewhat difficult to read. You can control the number of levels
+displayed with the command line option :setting:`--suitestatlevel`. It
+takes the required level as an integer, and if :setting:`0` is used,
+the whole table is removed.
 
 
 Including and excluding tag statistics
 ''''''''''''''''''''''''''''''''''''''
 
-When plenty of tags are used, :name:`Statistics by Tag` table can get
-quite crowded. If this happens, command line options
+When many tags are used, the :name:`Statistics by Tag` table can become
+quite congested. If this happens, the command line options
 :setting:`--tagstatinclude` and :setting:`--tagstatexclude` can be
-used to select what tags to display, similarly as
+used to select which tags to display, similarly as
 :setting:`--include` and :setting:`--exclude` are used to `select test
 cases`__::
 
@@ -326,10 +330,10 @@ cases`__::
    --tagstatexclude owner-*
    --tagstatinclude prefix-* --tagstatexclude prefix-13
 
-These settings affect also :name:`Test Details by Tag` table so that
-it has details only by the selected tags. This can make the report
-considerably smaller, and excluding not interesting tags is thus often a
-good idea.
+These settings affect also the :name:`Test Details by Tag` table, so
+that it has details only by the selected tags. This can make the
+report considerably smaller, which is why excluding tags that are not
+interesting can be recommended.
 
 __ `By tag names`_
 
@@ -339,24 +343,24 @@ Generating combined tag statistics
 
 The command line option :setting:`--tagstatcombine` can be used to
 generate aggregate tags that combine statistics from multiple
-tags. These new combined tags are shown in :name:`Statistics by Tag`
-table, and matching tests listed in :name:`Test Details by Tag` table.
-There are three somewhat different ways for giving arguments for this
-option:
+tags. These new combined tags are shown in the :name:`Statistics by
+Tag` table, and the matching tests are listed in the :name:`Test
+Details by Tag` table.  There are three somewhat different ways for
+giving arguments for this option:
 
 One tag as a `simple pattern`_
    All tags matching the given pattern are combined together.
 
 Two or more tags separated by :code:`AND` or :code:`&`
-   Combined statistics contains tests that have all the listed tags.
+   The combined statistics contain tests that have all the listed tags.
    Tags can be given as simple patterns.
 
 Two or more tags separated by :code:`NOT`
-   Combined statistics contains tests that have the first tag but
-   not others.  Also in this case tags may be patterns.
+   The combined statistics contain tests that have the first tag but
+   not the others. Also in this case tags may be patterns.
 
-Following examples illustrate these usages, and the figure below shows snippet 
-of the resulting :name:`Statistics by Tag` table when example test data is 
+The following examples illustrate these usages, and the figure below shows a snippet 
+of the resulting :name:`Statistics by Tag` table when the example test data is 
 executed with these options::
 
     --tagstatcombine owner-*
@@ -371,10 +375,10 @@ executed with these options::
 Creating links from tag names
 '''''''''''''''''''''''''''''
 
-It is possible to add external links to :name:`Statistics by Tag`
+You can add external links to the :name:`Statistics by Tag`
 table by using the command line option
-:setting:`--tagstatlink`. Arguments to this option are given in format
-:setting:`tag:link:name`, where :setting:`tag` specifies tags to
+:setting:`--tagstatlink`. Arguments to this option are given in the format
+:setting:`tag:link:name`, where :setting:`tag` specifies the tags to
 assign the link to, :setting:`link` is the link to be created, and
 :setting:`name` is the name to give to the link.
 
@@ -382,10 +386,10 @@ assign the link to, :setting:`link` is the link to be created, and
 pattern`_ where :code:`*` matches anything and :code:`?` matches any
 single character. When :setting:`tag` is a pattern, the matches to
 wildcards may be used in :setting:`link` with the syntax :code:`%N`,
-where :code:`N` is the index of the match starting from 1.
+where "N" is the index of the match starting from 1.
 
-Following examples illustrate usage of this option, and the figure below shows 
-snippet of the resulting :name:`Statistics by Tag` table when example test 
+The following examples illustrate the usage of this option, and the figure below shows 
+a snippet of the resulting :name:`Statistics by Tag` table when example test 
 data is executed with these options::
 
     --tagstatlink mytag:http://www.google.com:Google
@@ -400,14 +404,14 @@ Adding documentation to tags
 ''''''''''''''''''''''''''''
 
 Tags can be given a documentation with the command line option
-:setting:`--tagdoc`, which takes an argument in format
-:setting:`tag:doc`. :setting:`tag` is the name of the tag to assign
+:setting:`--tagdoc`, which takes an argument in the format
+:setting:`tag:doc`. "tag" is the name of the tag to assign
 the documentation to, and it can also be a `simple pattern`_ matching
-multiple tags. :setting:`doc` is the assigned
+multiple tags. "doc" is the assigned
 documentation. Underscores in it are converted to spaces automatically,
 and it can also contain `HTML formatting`_. The given documentation is
-shown with matching tags in :name:`Test Details by Tag` table, and as
-a tool tip for these tags in :name:`Statistics by Tag` table.
+shown with matching tags in the :name:`Test Details by Tag` table, and as
+a tool tip for these tags in the :name:`Statistics by Tag` table.
 
 Examples::
 
@@ -432,7 +436,7 @@ time of the combined test suite using the options
 convenient, because by default, combined suites do not have these
 values. When both the start and end time are given, the elapsed time
 is also calculated based on them. Otherwise the elapsed time is got by
-adding the elapsed times of the child tests suites together.
+adding the elapsed times of the child test suites together.
 
 Times must be given as timestamps in the format :code:`YYYY-MM-DD
 hh:mm:ss.mil`, where all separators are optional and the parts from
@@ -449,24 +453,24 @@ Examples::
 Removing keywords from outputs
 ''''''''''''''''''''''''''''''
 
-Most of the content of `output files`_ is taken by keywords and
+Most of the content of `output files`_ comes from keywords and
 especially their log messages. When creating higher level reports, log
-files are not necessarily needed at all and the space taken by
-keywords and their messages is just wasted. In these situations
-command line option :setting:`--removekeywords` can be used to get rid
+files are not necessarily needed at all, and then keywords and their
+messages just take space unnecessarily. In these situations, the
+command line option :setting:`--removekeywords` can be used to dispose
 of unnecessary keywords. It has two possible values:
 
 :setting:`ALL`
    All keywords are unconditionally removed. 
 
 :setting:`PASSED`
-   Keywords are removed only from passed test cases. In most cases log
+   Keywords are removed only from the passed test cases. In most cases, log
    files created after this contain enough information to investigate
    possible failures.
 
 Removing keywords makes output files considerably smaller and thus
 faster to process further. Even when keywords are removed, names,
-arguments and statuses of top-level keywords are preverved, so it is
+arguments and statuses of top-level keywords are preserved, so it is
 still possible to create log files and see the high-level structure of
 each test case. 
 
@@ -474,23 +478,23 @@ each test case.
 System log
 ~~~~~~~~~~
 
-Robot Framework has its own plain text system log where it writes
+Robot Framework has its own plain-text system log where it writes
 information about
 
-   * processed and skipped test data files
-   * imported test libraries, resource files and variable files
-   * executed test suites and test cases
-   * created outputs
+   - Processed and skipped test data files
+   - Imported test libraries, resource files and variable files
+   - Executed test suites and test cases
+   - Created outputs
 
-Normally users should never need this information, but it can be
+Normally users never need this information, but it can be
 useful when investigating problems with test libraries or Robot Framework
-itself. System log is not created by default, but it can be enabled
-by setting an environment variable :setting:`ROBOT_SYSLOG_FILE` so
+itself. A system log is not created by default, but it can be enabled
+by setting the environment variable :setting:`ROBOT_SYSLOG_FILE` so
 that it contains a path to the selected file.
 
-System log has same `log levels`_ as normal log file, with an
-exception that instead of :msg:`FAIL` it has :msg:`ERROR` level. The
-treshold level to use can be altered using
+A system log has the same `log levels`_ as a normal log file, with the
+exception that instead of :msg:`FAIL` it has the :msg:`ERROR` level. The
+treshold level to use can be altered using the
 :setting:`ROBOT_SYSLOG_LEVEL` environment variable.
 
 
