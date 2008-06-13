@@ -396,8 +396,8 @@ Creating start-up scripts
 Test cases are often executed automatically by a continuous
 integration system or some other mechanism. In such cases, there is a
 need to have a script for starting the test execution, and possibly
-also for post-processing outputs somehow. Similar scripts are also useful
-when running tests manually, especially if a large number of
+also for post-processing outputs somehow. Similar scripts are also
+useful when running tests manually, especially if a large number of
 command line options are needed or setting up the test environment is
 complicated.
 
@@ -405,14 +405,14 @@ In UNIX-like environments, shell scripts provide a simple but powerful
 mechanism for creating custom start-up scripts. Windows batch files
 can also be used, but they are more limited and often also more
 complicated. A platform-independent alternative is using Python or
-some other high-level programming language. Regardless of the language,
-it is recommended that long option names are used, because they are
-easier to understand than the short names.
+some other high-level programming language. Regardless of the
+language, it is recommended that long option names are used, because
+they are easier to understand than the short names.
 
-In first examples same web tests are executed with different browsers
-and results combined afterwards. This is really easy with shell
-scripts, as it is basically enough to just list needed commands one
-after another:
+In the first examples, the same web tests are executed with different
+browsers and the results combined afterwards. This is easy with shell
+scripts, as practically you just list the needed commands one after
+another:
 
 .. sourcecode:: bash
 
@@ -421,11 +421,11 @@ after another:
    pybot --variable BROWSER:IE --name IE --log none --report none --output out/ie.xml login
    rebot --name Login --splitoutputs 1 --outputdir out --output login.xml out/fx.xml out/ie.xml
 
-Implementing the above example with Windows batch files is not too
-complicated either. The most important thing to remember is that
+Implementing the above example with Windows batch files is not very
+complicated, either. The most important thing to remember is that
 because :prog:`pybot` and :prog:`rebot` are implemented as batch
 files, :prog:`call` must be used when running them from another batch
-file. Otherwise execution would end after the first batch file is
+file. Otherwise execution would end when the first batch file is
 finished.
 
 .. sourcecode:: bat
@@ -436,12 +436,12 @@ finished.
    call rebot --name Login --splitoutputs 1 --outputdir out --output login.xml out\fx.xml out\ie.xml
 
 
-In second examples JAR files under a :path:`lib` directory are put
-into into CLASSPATH before starting the test execution. In these
-examples start-up scripts require paths to the executed test data to
-be given as arguments, and it is also possible to use command line
+In the next examples, JAR files under the :path:`lib` directory are
+put into CLASSPATH before starting the test execution. In these
+examples, start-up scripts require that paths to the executed test
+data are given as arguments. It is also possible to use command line
 options freely, even though some options have already been set in the
-script.  All this is relatively straigt forward to do using bash:
+script. All this is relatively straight-forward using bash:
 
 .. sourcecode:: bash
 
@@ -456,9 +456,9 @@ script.  All this is relatively straigt forward to do using bash:
    jybot --ouputdir /tmp/logs --splitoutputs 2 $*
 
 
-Implementing this using Windows batch files is a bit trickier. The
-hard part is setting the variable containing needed JARs inside a for
-loop, because for some reason that is not possible without a helper
+Implementing this using Windows batch files is slightly more complicated. The
+difficult part is setting the variable containing the needed JARs inside a For
+loop, because, for some reason, that is not possible without a helper
 function. There is no need to use :prog:`call`, because only one batch
 file is executed.
 
