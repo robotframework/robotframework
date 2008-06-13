@@ -69,8 +69,9 @@ log files are always created and their default name is
 :path:`log.html`.
 
 .. figure:: log.png
-   :width: 500
-   :height: 534
+   :width: 600
+   :height: 568
+   :target: example_log.html
 
    An example log file
 
@@ -95,6 +96,7 @@ name is :path:`report.html`.
 .. figure:: report.png
    :width: 600
    :height: 568
+   :target: example_report.html
 
    An example report file
 
@@ -353,14 +355,17 @@ Two or more tags separated by :code:`NOT`
    Combined statistics contains tests that have the first tag but
    not others.  Also in this case tags may be patterns.
 
-Examples::
+Following examples illustrate these usages, and the figure below shows snippet 
+of the resulting :name:`Statistics by Tag` table when example test data is 
+executed with these options::
 
     --tagstatcombine owner-*
-    --tagstatcombine tag-1ANDtag-2ANDtag-??
-    --tagstatcombine smokeNOTiter-42
+    --tagstatcombine smokeANDmytag
+    --tagstatcombine smokeNOTowner-janne
 
-.. TODO: Screenshot needed! Preferably so that it shows results of the
-         above example (which of course can be edited)
+.. figure:: tagstatcombine.png
+
+    Examples of combined tag statistics
 
 
 Creating links from tag names
@@ -379,15 +384,17 @@ single character. When :setting:`tag` is a pattern, the matches to
 wildcards may be used in :setting:`link` with the syntax :code:`%N`,
 where :code:`N` is the index of the match starting from 1.
 
-Examples::
+Following examples illustrate usage of this option, and the figure below shows 
+snippet of the resulting :name:`Statistics by Tag` table when example test 
+data is executed with these options::
 
-    --tagstatlink mytag:http://my.domain:Link
-    --tagstatlink bug-*:http://tracker/id=%1:Bug_Tracker
-    --tagstatlink owner-*:mailto:%1@domain?subject=Acceptance_tests:Send_Mail
+    --tagstatlink mytag:http://www.google.com:Google
+    --tagstatlink jython-bug-*:http://jython.org/bugs/%1:Jython-bugs
+    --tagstatlink owner-*:mailto:%1@domain.com?subject=Acceptance_Tests:Send_Mail
 
-.. TODO: Screenshot needed! Preferably so that it shows results of the
-         above example (which of course can be edited)
+.. figure:: tagstatlink.png
 
+    Examples of links from tag names
 
 Adding documentation to tags
 ''''''''''''''''''''''''''''
