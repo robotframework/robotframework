@@ -1,10 +1,10 @@
 Created outputs
 ---------------
 
-Several outputs files are created when tests are executed, and most of
+Several output files are created when tests are executed, and most of
 them are somehow related to test results. This section discusses what
-outputs are created, how to configure where to create them, and how to
-fine-tune their contents.
+outputs are created, how to configure where they are created, and how
+to fine-tune their contents.
 
 .. contents::
    :depth: 2
@@ -14,11 +14,11 @@ fine-tune their contents.
 Different output files
 ~~~~~~~~~~~~~~~~~~~~~~
 
-This section explains what different output files can be created and how
-to configure where to create them. Output files are configured using
-command line options, which get the path to the output file in
-question as an argument. Special value :setting:`NONE`
-(case-insensitive), can be used to disable creating certain output
+This section explains what different output files can be created and
+how to configure where they are created. Output files are configured
+using command line options, which get the path to the output file in
+question as an argument. A special value :setting:`NONE`
+(case-insensitive) can be used to disable creating a certain output
 file.
 
 
@@ -26,29 +26,29 @@ Output directory
 ''''''''''''''''
 
 All output files can be set using an absolute path, in which case they
-are created to the specified place, but in other cases the path is
+are created to the specified place, but in other cases, the path is
 considered relative to the output directory. The default output
 directory is the directory where the execution is started from, but it
-can be altered with :setting:`--outputdir (-d)` option. The path set
-with this option is, again, relative to the execution directory, but
-can naturally be given also as an absoute path. Regardless how a path
-to an individual output file is got, its parent directory is created
-automatically if it does not exist.
+can be altered with the :setting:`--outputdir (-d)` option. The path
+set with this option is, again, relative to the execution directory,
+but can naturally be given also as an absoute path. Regardless of how
+a path to an individual output file is obtained, its parent directory
+is created automatically, if it does not exist already.
 
 
 Output file
 '''''''''''
 
-Output files contain all the test execution results in XML
-format. Log_, report_, and summary_ files are generated based on them,
-and they can also be `combined and otherwise post-processed`__ after the
-test execution. 
+Output files contain all the test execution results in the XML
+format. Log_, report_, and summary_ files are generated based on
+output files, and output files can also be `combined and otherwise
+post-processed`__ after the test execution.
 
 The command line option :setting:`--output (-o)` determines where
 output files are created. Output files are always created when tests
-are executed, the default name for them is :path:`output.xml`. When
-post-processing outputs, new output files are not created unless this
-option is explicitly used.
+are executed, and the default name for them is
+:path:`output.xml`. When post-processing outputs, new output files are
+not created unless this option is explicitly used.
 
 __ `Post-processing outputs`_
 
@@ -59,13 +59,14 @@ Log file
 Log files contain details about the executed test cases in HTML
 format. They have a hierarchical structure showing test suite, test
 case and keyword details. Log files are needed nearly every time when
-test results must be investigated in detail. Even though log files
+test results are to be investigated in detail. Even though log files
 also have statistics, report_ and summary_ files are better for
 getting an higher-level overview.
 
 The command line option :setting:`--log (-l)` determines where log
-files are created. Unless special value :setting:`NONE` is used, log
-files are always created and their default name is :path:`log.html`.
+files are created. Unless the special value :setting:`NONE` is used,
+log files are always created and their default name is
+:path:`log.html`.
 
 .. figure:: log.png
    :width: 500
@@ -78,15 +79,16 @@ Report file
 '''''''''''
 
 Report files contain an overview of the test execution results in HTML
-format. They have statistic based on tags and executed test suites, as
-well as a list of all executed test cases . When both reports and logs
-are generated, the report has links to the log file for easy
+format. They have statistics based on tags and executed test suites,
+as well as a list of all executed test cases. When both reports and
+logs are generated, the report has links to the log file for easy
 navigation to more detailed information.  It is easy to see the
-overall test execution status from reports, because their backgroud is
-green if all `critical tests`_ pass, and bright red otherwise.
+overall test execution status from reports, because their background
+color is green, if all `critical tests`_ pass, and bright red
+otherwise.
 
 The command line option :setting:`--report (-r)` determines where
-report files are created. Similarly as log files, reporst are always
+report files are created. Similarly as log files, reports are always
 created unless :setting:`NONE` is used as a value, and their default
 name is :path:`report.html`.
 
@@ -100,14 +102,15 @@ name is :path:`report.html`.
 Summary file
 ''''''''''''
 
-Summary files contain same statistics as reports, and their
-backgrounds are similarly green or red depending on the overall test
-execution status. They have no test case details, however, which makes
-them much smaller. They are usefull when a big number of test cases is
-executed and a very high-level overview is needed.
+Summary files contain the same statistics as reports, and their
+background color is similarly green or red, depending on the overall
+test execution status. However, they have no test case details, which
+makes them much smaller. They are useful when a large number of test
+cases is executed and a very high-level overview is needed.
 
 Summary files are not generated by default. When they are needed, they
-can be created using the command line option :setting:`--summary (-S)`.
+can be created using the command line option :setting:`--summary
+(-S)`.
 
 .. figure:: summary.png
    :width: 600
@@ -123,8 +126,9 @@ Debug files are plain text files that are written during the test
 execution. All messages got from test libraries are written to them,
 as wel as information about started and ended test suites, test cases
 and keywords. Debug files can be used for monitoring the test
-execution using, for example, a separate `file viewer tool`__ or in
-UNIX-like systems simply with :prog:`tail -f` command.
+execution. This can be done using, for example, a separate `file
+viewer tool`__, or in UNIX-like systems, simply with the :prog:`tail
+-f` command.
 
 __ `File viewing tool -- fileviewer.py`_
 
@@ -136,12 +140,13 @@ Timestamping output files
 '''''''''''''''''''''''''
 
 All output files listed in this section can be automatically
-timestampped with option :setting:`--timestampoutputs (-T)`, which is
-one of the rare opions taking no value. When this option is used, a
-timestamp in format :setting:`YYYYMMDD-hhmmss` is placed between the
-extension and the basename of each file. The example below would, for
-example, create output files like :path:`output-20080604-163225.xml`
-and :path:`mylog-20080604-163225.html`.
+timestamped with the option :setting:`--timestampoutputs (-T)`, which
+is one of the rare opions taking no value. When this option is used, a
+timestamp in the format :setting:`YYYYMMDD-hhmmss` is placed between
+the extension and the basename of each file. The example below would,
+for example, create such output files as
+:path:`output-20080604-163225.xml` and
+:path:`mylog-20080604-163225.html`.
 
 ::
 
@@ -154,10 +159,10 @@ Setting titles
 The default titles for log_, report_ and summary_ files are generated
 by prefixing the name of the top-level test suite with :name:`Test
 Log`, :name:`Test Report` or :name:`Summary Report`. Custom titles can
-be given from the command line using options :setting:`--logtitle`,
-:setting:`--reporttitle` and :setting:`--summarytitle`,
-respectively. With all these options, underscores in the given title
-are converted to spaces automatically.
+be given from the command line using the options
+:setting:`--logtitle`, :setting:`--reporttitle` and
+:setting:`--summarytitle`, respectively. With all these options,
+underscores in the given title are converted to spaces automatically.
 
 Examples::
 
@@ -173,7 +178,7 @@ Available log levels
 
 Messages in `log files`_ can have different log levels. Some of the
 messages are written by Robot Framework itself, but also executed
-keywords can `log information`__ using different levels. Available
+keywords can `log information`__ using different levels. The available
 log levels are:
 
 __ `Logging information`_
@@ -182,12 +187,12 @@ __ `Logging information`_
    Used when a keyword fails. Can be used only by Robot Framework.
 
 :msg:`WARN`
-   Used to display warnings. Notice that warnings do not change the
-   test case status and they can thus easily be missed.
+   Used to display warnings. Note that warnings do not change the
+   test case status, so they can easily be missed.
  
-:msg:`INFO`
-   The default level for normal messages. Messages below this level
-   are not shown in the log file by default.
+:msg:`INFO` 
+   The default level for normal messages. By default,
+   messages below this level are not shown in the log file.
 
 :msg:`DEBUG`
    Used for debugging purposes. Useful for example for logging what
@@ -195,33 +200,34 @@ __ `Logging information`_
 
 :msg:`TRACE`
    Another debugging level. Robot Framework itself logs the actual values
-   of keyword arguments and return values using this level.
+   of keyword arguments and the return values using this level.
 
 
 Setting log level
 '''''''''''''''''
 
-By default log messages below :msg:`INFO` are not logged, but this
-threshold level can be changed from the command line using
+By default, log messages below :msg:`INFO` are not logged, but this
+threshold level can be changed from the command line using the
 :setting:`--loglevel (-L)` option. This option takes any of the
 available log levels as an argument, and that level becomes the new
 threshold level. A special value :msg:`NONE` can also be used to
 disable logging altogether.
 
-Another possibility to change the log level is using `BuiltIn
-keyword`_ :kw:`Set Log Level` in the test data. It takes same
-arguments as :setting:`--loglevel` option, and it also returns the old
-level so that it can be restored later, for example, in a `test
-teardown`_.  
+Another possibility to change the log level is using the `BuiltIn
+keyword`_ :kw:`Set Log Level` in the test data. It takes the same
+arguments as the :setting:`--loglevel` option, and it also returns the
+old level so that it can be restored later, for example, in a `test
+teardown`_.
 
 
 Splitting outputs
 ~~~~~~~~~~~~~~~~~
 
-When executing a big amount of test cases, log files can grow so big that
-opening them to browser gets slow. A solution for this problem is
-splitting the log file into smaller pieces so that the top-level log
-acts as an index having links to other pieces.
+When executing a large number of test cases, the size of log files can
+increase to the extent that opening them in the browser is slow. A
+solution for this problem is splitting the log file into smaller
+pieces so that the top-level log acts as an index having links to
+other pieces.
 
 Splitting can be activated with the command line option
 :setting:`--splitoutputs`, which takes split level as its
