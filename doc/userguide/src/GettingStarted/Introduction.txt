@@ -53,7 +53,7 @@ visible to Robot Framework.
 
 .. figure:: architecture.png
 
-   Testing solution layers with Robot Framework
+   High-level architecture
 
 As shown in the figure, Robot Framework's role in a test framework is to take 
 test data, process it into a format that is appropriate for the attached test 
