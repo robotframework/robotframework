@@ -21,20 +21,18 @@ Framework test data. For example, dividing text into lines and
 paragraphs requires having a literal newline character sequence (:code:`\\n`),
 as illustrated in the example below.
 
-.. table:: Dividing text into lines and paragraphs
-   :class: tabular
+.. raw:: html
 
-   +--------------+------------------+
-   |Setting       |      Value       |
-   +==============+==================+   
-   | Documentation| First line.\\n   |
-   |              +------------------+
-   |              | Second line.\\n  | 
-   |              +------------------+
-   |	          | \\n              |
-   |              +------------------+  
-   |              | Second paragraph.|  
-   +--------------+------------------+ 
+   <table class="example docutils">
+     <tr>
+       <th>Setting</th>
+       <th>Value</th>
+     </tr>
+     <tr>
+       <td>Documentation</td>
+       <td>First line.\n<br>Second line.\n<br>\n<br>Second paragraph.</td>
+     </tr>
+   </table>
 
 
 Furthermore, it is possible to divide documentation into several
@@ -42,17 +40,6 @@ columns, and the columns are catenated together with spaces.
 For example, the two documentations in the example below are
 totally equivalent.
 
-.. table:: Dividing text into several columns
-   :class: tabular
-
-   +--------------+-------------+--------+  
-   |Setting       |   Value     |  Value |
-   +==============+=============+========+    
-   | Documentation|  Hello      | world. | 
-   +--------------+-------------+--------+
-   | Documentation| Hello world.|        |
-   +--------------+-------------+--------+         
-   
 
 Bold and italic
 ~~~~~~~~~~~~~~~
@@ -71,31 +58,44 @@ It is also possible to have bold italic with the syntax :code:`\_*bold
 italic*_`. Note that in this syntax, underscores must always be outside
 asterisks.
 
-.. table:: Formatting text to bold and italic typeface
-   :class: tabular
+Examples:
 
-   +-------------------------------------------------+--------------------------------------------------+ 
-   |                Unformatted		             |                   Formatted                      |
-   +=================================================+==================================================+      
-   | \*bold*                                         | **bold**                                         |
-   +-------------------------------------------------+--------------------------------------------------+  
-   | \_italic_                                       | *italic*                                         |  
-   +-------------------------------------------------+--------------------------------------------------+
-   | \*Bold*, and \_also italic\_.                   | **Bold**, and *also italic*.                     | 
-   +-------------------------------------------------+--------------------------------------------------+ 
-   | \_*Bold italic*, \_only italic\_, no formatting.| ***Bold italic***, *only italic*, no formatting. |  
-   +-------------------------------------------------+--------------------------------------------------+  
-   | This is \*bold*\\n                              | This is **bold**                                 |     	      	 	      
-   | \*on multiple*\\n	                             | **on multiple**                                  |
-   | \*lines*.				      	     | **lines**.                                       |
-   +-------------------------------------------------+--------------------------------------------------+
+.. raw:: html
+
+   <table class="tabular docutils">
+     <tr>
+       <th>Unformatted</th>
+       <th>Formatted</th>
+     </tr>
+     <tr>
+       <td>*bold*</td>
+       <td><b>bold</b></td>
+     </tr>
+     <tr>
+       <td>_italic_</td>
+       <td><i>italic</i></td>
+     </tr>
+     <tr>
+       <td>*bold* and then _italic_</td>
+       <td><b>bold</b> and then <i>italic</i></td>
+     </tr>
+     <tr>
+       <td>_*bold italic*_, _italic_, nothing</td>
+       <td><i><b>bold italic</b></i>, <i>italic</i>, nothing</td>
+     </tr>
+     <tr>
+       <td>This is *bold*\n<br>*on multiple*\n<br>*lines*.</td>
+       <td>This is <b>bold</b><br><b>on multiple</b><br><b>lines</b>.</td>
+     </tr>
+   </table>
+
 
 URLs
 ~~~~ 
 
-Since Robot Framework 1.6, all strings that look like an URL are
-automatically converted into a clickable link. For example,
-\http://some.url turns into link.
+All strings that look like URLs are automatically converted into a
+clickable link. For example, :code:`http://some.url` turns into link.
+
 
 Tables
 ~~~~~~ 
@@ -105,20 +105,19 @@ a cell boundary and a newline (:code:`\\n`) as a row separator. The table
 always has a thin border and the text is left-aligned. Formatting using
 bold and italic works also in table cells::
 
- | \*xx* | \*yy*  | \*zz*  | \\n
- | \_1_  | Hello  | world  | \\n
- | \_2_  | Hi     |        | \\n
+   | *xx* | *yy*  | *zz*  | \n
+   | _1_  | Hello | world | \n
+   | _2_  | Hi    |       | \n
 
-.. table:: Formatting text in tables
+.. table:: An example table
    :class: tabular
 
-   +-------+-------+-------+
-   | **xx**| **yy**| **yy**|
-   +=======+=======+=======+ 
-   | 1 	   | Hello | world |
-   +-------+-------+-------+   
-   | 2 	   |   Hi  |       |	   
-   +-------+-------+-------+
+   ========  ========  ========
+      xx        yy        zz
+   ========  ========  ========
+   *1*       Hello     world
+   *2*       Hi        \
+   ========  ========  ========
 
 
 Horizontal ruler
@@ -126,20 +125,10 @@ Horizontal ruler
  
 Horizontal rulers (the <hr> tag) make it possible to separate larger
 sections from each others. They can be created by having three hyphens
-alone in a line (:code:`\n---\n`). Example::
+alone in a line (:code:`\\n---\\n`). Example::
 
- blah blah blaaah\n
- \n
- ---\n
- \n
- yadda yadda\n
- 
-
-blah blah blaaah 
-
---------------------------------------------------------------------------------
-
-yadda yadda
-
-
-
+   Some text here.\n
+    \n
+    ---\n
+    \n
+   More text...
