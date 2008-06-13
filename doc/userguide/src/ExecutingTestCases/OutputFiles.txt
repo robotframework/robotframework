@@ -379,7 +379,7 @@ executed with these options::
 
     --tagstatcombine owner-*
     --tagstatcombine smokeANDmytag
-    --tagstatcombine smokeNOTowner-janne
+    --tagstatcombine smokeNOTowner-janne*
 
 .. figure:: tagstatcombine.png
 
