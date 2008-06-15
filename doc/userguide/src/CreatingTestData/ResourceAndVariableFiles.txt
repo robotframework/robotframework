@@ -22,7 +22,6 @@ them somewhat more complicated than Variable tables.
 Resource files
 ~~~~~~~~~~~~~~
 
-.. TODO: Some short introductory text here?
 
 Taking resource files into use
 ''''''''''''''''''''''''''''''
@@ -145,8 +144,6 @@ variables:
 Taking variable files into use
 ''''''''''''''''''''''''''''''
 
-.. TODO: Add a short introductory text here?
-
 Setting table
 `````````````
 
@@ -198,8 +195,6 @@ For more information, see `Robot command line options`.
 
 Creating variables directly
 '''''''''''''''''''''''''''
-
-.. TODO: Add a short introductory text here?
 
 Basic syntax
 ````````````
