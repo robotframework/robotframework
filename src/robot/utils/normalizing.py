@@ -50,11 +50,14 @@ def normalize_list(list, ignore=[], caseless=True, spaceless=True):
 def normpath(path, normcase=True):
     """Returns path in normalized and absolute format.
     
-    On Windows also path is also casenormalized (if normcase is True).
+    On case-insensitive file systems the path is also casenormalized
+    (if normcase is True).
     """ 
     if misc.is_url(path):
         return path
-    path = _normcase(_absnorm(path), normcase)
+    path = _absnorm(path)
+    if normcase and _is_case_insensitive_filesystem():
+        path = path.lower()
     if os.sep == '\\' and len(path) == 2 and path[1] == ':':
         path += '\\'
     return path
@@ -70,11 +73,9 @@ def _absnorm(path):
         path = java.io.File(path).getAbsolutePath()
     return os.path.normpath(path)
 
-def _normcase(path, normcase=True):
-    # If windows or cyqwin (os.path.normcase doesn't work correctly in Jython)
-    if normcase and (os.sep == '\\' or sys.platform.count('cygwin') > 0):
-        path = path.lower()
-    return path
+def _is_case_insensitive_filesystem():
+    return os.sep == '\\' or 'cygwin' in sys.platform or \
+                    'darwin' in sys.platform
 
 
 class NormalizedDict(UserDict):
