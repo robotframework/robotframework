@@ -114,18 +114,18 @@ are in the subsequent columns. Setting names have square brackets around
 them to distinguish them from keywords. The available settings are listed
 below and explained later in this section.
 
-`[Documentation]`:setting:
+`[Documentation]`:opt:
     Used for specifying a `test case documentation`_.
 
-`[Tags]`:setting:
+`[Tags]`:opt:
     Used for `tagging test cases`_.
 
-`[Setup]`:setting:, `[Teardown]`:setting:
+`[Setup]`:opt:, `[Teardown]`:opt:
    Specify `test setup and teardown`_. Have also synonyms
-   :setting:`[Precondition]` and :setting:`[Postcondition]`,
+   :opt:`[Precondition]` and :opt:`[Postcondition]`,
    respectively. 
 
-`[Timeout]`:setting:
+`[Timeout]`:opt:
    Used for setting a `test case timeout`_. Timeouts_ are discussed in
    their own section.
 
@@ -149,15 +149,15 @@ The Setting table can have the following test-case-related
 settings. These settings are mainly default values for the
 test-case-specific settings listed earlier.
 
-`Force Tags`:setting:, `Default Tags`:setting:
+`Force Tags`:opt:, `Default Tags`:opt:
    The forced and default values for tags_.
 
-`Test Setup`:setting:, `Test Teardown`:setting:
+`Test Setup`:opt:, `Test Teardown`:opt:
    The default values for `test setup and teardown`_. Have also synonyms 
-   :setting:`Test Precondition` and :setting:`Test Postcondition`,
+   :opt:`Test Precondition` and :opt:`Test Postcondition`,
    respectively.  
 
-`Test Timeout`:setting:
+`Test Timeout`:opt:
    The default value for `test case timeout`_. Timeouts_ are discussed in
    their own section.
 
@@ -173,7 +173,7 @@ itself to refer to the test name. It is available whenever a test is
 being executed, including all user keywords, as well as the test setup
 and the test teardown.
 
-The :setting:`[Documentation]` setting allows you to set a free
+The :opt:`[Documentation]` setting allows you to set a free
 documentation for a test case. That text is shown in the command line
 output, as well as the resulting test logs and test reports. If the
 documentation is long, it can be `split into several cells`__ that
@@ -239,22 +239,22 @@ In this section it is only explained how to set tags for test
 cases, and different ways to do it are listed below. These
 approaches can naturally be used together.
 
-`Force Tags`:setting: in the Setting table 
+`Force Tags`:opt: in the Setting table 
    All test cases in a test case file with this setting always get
    specified tags. If it is used in the `test suite initialization file`,
    all test cases in sub test suites get these tags.
 
-`Default Tags`:setting: in the Setting table
-   Test cases that do not have a :setting:`[Tags]` setting of their own
+`Default Tags`:opt: in the Setting table
+   Test cases that do not have a :opt:`[Tags]` setting of their own
    get these tags. If it used in the test suite initialization file,
-   it is interpreted as a default value for :setting:`Default Tags` in
+   it is interpreted as a default value for :opt:`Default Tags` in
    lower-level test suites.
 
-`[Tags]`:setting: in the Test Case table
+`[Tags]`:opt: in the Test Case table
    A test case always gets these tags. Additionally, it does not get the
-   possible tags specified with :setting:`Default Tags`.
+   possible tags specified with :opt:`Default Tags`.
 
-`--settag`:setting: command line option
+`--settag`:opt: command line option
    All executed test cases get tags set with this option in addition
    to tags they got elsewhere. This option is only available in Robot
    Framework version 1.8.3 and newer.
@@ -334,13 +334,13 @@ with possible arguments. It can either be a keyword from a library or
 a higher-level user keyword.
 
 The easiest way to specify a setup or a teardown for test cases in a
-test suite is using the :setting:`Test Setup` and :setting:`Test
+test suite is using the :opt:`Test Setup` and :opt:`Test
 Teardown` settings in the Setting table. Individual test cases can
 also have their own setup or teardown. They are defined with the
-:setting:`[Setup]` or :setting:`[Teardown]` settings in the test case
-table and they override possible :setting:`Test Setup` and
-:setting:`Test Teardown` settings. Having no keyword after a
-:setting:`[Setup]` or :setting:`[Teardown]` setting means having no
+:opt:`[Setup]` or :opt:`[Teardown]` settings in the test case
+table and they override possible :opt:`Test Setup` and
+:opt:`Test Teardown` settings. Having no keyword after a
+:opt:`[Setup]` or :opt:`[Teardown]` setting means having no
 setup or teardown.
 
 

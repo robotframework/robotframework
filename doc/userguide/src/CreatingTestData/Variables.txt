@@ -330,8 +330,8 @@ Setting variables in command line
 '''''''''''''''''''''''''''''''''
 
 Variables can be set from the command line either individually with
-the :setting:`--variable` option or using a variable file with the
-:setting:`--variablefile` option. Variables set from the command line
+the :opt:`--variable` option or using a variable file with the
+:opt:`--variablefile` option. Variables set from the command line
 are globally available for all executed test data files, and they also
 override variables with the same names in the Variable table and in
 the imported variable files.
@@ -342,7 +342,7 @@ name:value`, where :cli:`name` is the name of the variable without
 set by using this option several times. Only scalar variables can be
 set from the command line and they can only get string values. Many
 special characters are difficult or impossible to represent in the
-command line, but they can be escaped__ with the :setting:`--escape`
+command line, but they can be escaped__ with the :opt:`--escape`
 option. 
 
 __ `Escaping options`_
@@ -447,7 +447,7 @@ Global scope
 
 Global variables are available everywhere in the test data. These
 variables are normally set from the command line with the
-:setting:`--variable` and :setting:`--variablefile`
+:opt:`--variable` and :opt:`--variablefile`
 options. Additionally, it is possible to create new global variables
 or change the existing ones with the `BuiltIn keyword`_ :name:`Set
 Global Variable` anywhere in the test data.
@@ -464,7 +464,7 @@ Test suite scope
 Variables with the test suite scope are available anywhere in the test
 suite where they are defined or imported. They can be created in
 Variable tables, imported from variable files using the
-:setting:`Variables` setting in the Setting table, or set with the
+:opt:`Variables` setting in the Setting table, or set with the
 `BuiltIn keyword`_ :name:`Set Suite Variable` anywhere in that test
 suite. 
 

@@ -64,18 +64,18 @@ this section.
 
 __ `Settings in the test case table`_
 
-`[Documentation]`:setting:
+`[Documentation]`:opt:
    Used for setting a `user keyword documentation`__.
 
 __ `User keyword name and documentation`_
 
-`[Arguments]`:setting:
+`[Arguments]`:opt:
    Specifies `user keyword arguments`_.
 
-`[Return]`:setting:
+`[Return]`:opt:
    Specifies `user keyword return values`_.
 
-`[Timeout]`:setting:
+`[Timeout]`:opt:
    Sets the possible `user keyword timeout`_. Timeouts_ are discussed
    in a section of their own.
 
@@ -90,7 +90,7 @@ use-case-like test cases, the highest-level keywords are often
 formulated as sentences or even paragraphs.
 
 User keywords can have a documentation that is set with the
-:setting:`[Documentation]` setting, exactly as `test case
+:opt:`[Documentation]` setting, exactly as `test case
 documentation`_. This setting documents the user keyword in the test
 data. It is also shown in a more formal keyword documentation, which
 the `libdoc`_ tool can create from `resource files`_. Finally, the
@@ -105,7 +105,7 @@ Most user keywords need to take some arguments. The syntax for
 specifying them is probably the most complicated feature normally
 needed with Robot Framework, but even that is relatively easy,
 particularly in most common cases. Arguments are always specified with
-the :setting:`[Arguments]` setting, and argument names use the same
+the :opt:`[Arguments]` setting, and argument names use the same
 syntax as variables_, for example :var:`${arg}`.
 
 Positional arguments
@@ -115,7 +115,7 @@ The simplest way to specify arguments (apart from not having them at all)
 is using only positional arguments. In most cases, this is all 
 that is needed.
 
-The syntax is such that first the :setting:`[Arguments]` setting is
+The syntax is such that first the :opt:`[Arguments]` setting is
 given and then argument names are defined in the subsequent
 cells. Each argument is in its own cell, using the same syntax as with
 variables. The keyword must be used with as many arguments as there
@@ -225,7 +225,7 @@ User keyword return values
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Similarly as library keywords, also user keywords can return
-values. Return values are defined with the :setting:`[Return]`
+values. Return values are defined with the :opt:`[Return]`
 setting. The values can then be `assigned to variables`__ in test
 cases or other user keywords.
 
@@ -233,12 +233,12 @@ __ `Return values from keywords`_
 
 In a typical case, a user keyword returns one value and it can be set
 to a scalar variable. This is done by having the return value in the
-next cell after the :setting:`[Return]` setting. User keywords can
+next cell after the :opt:`[Return]` setting. User keywords can
 also return several values, which can then be assigned into several
 scalar variables at once, to a list variable, or to scalar variables
 and a list variable. Several values can be returned simply by
 specifying those values in different cells after the
-:setting:`[Return]` setting.
+:opt:`[Return]` setting.
 
 .. table:: User keywords returning values
    :class: example

@@ -25,12 +25,12 @@ By test suite and test case names
 '''''''''''''''''''''''''''''''''
 
 Test suites and test cases can be selected by their names with the command
-line options :setting:`--suite (-s)` and :setting:`--test (-t)`,
+line options :opt:`--suite (-s)` and :opt:`--test (-t)`,
 respectively.  Both of these options can be used several times to
 select several test suites or cases. Arguments to these options are
 case- and space-insensitive, and there can also be `simple
-patterns`_ matching multiple names.  If both the :setting:`--suite` and
-:setting:`--test` options are used, only test cases in matching suites
+patterns`_ matching multiple names.  If both the :opt:`--suite` and
+:opt:`--test` options are used, only test cases in matching suites
 with matching names are selected.
 
 ::
@@ -41,7 +41,7 @@ with matching names are selected.
   --suite example-??
   --suite mysuite --test mytest --test your*
 
-Using the :setting:`--suite` option is more or less the same as executing only
+Using the :opt:`--suite` option is more or less the same as executing only
 the appropriate test case file or directory. One major benefit is the
 possibility to select the suite based on its parent suite. The syntax
 for this is specifying both the parent and child suite names separated
@@ -53,9 +53,9 @@ suite are executed.
   --suite parent.child
   --suite myhouse.myhousemusic --test jack*
 
-Selecting individual test cases with the :setting:`--test` option is very
+Selecting individual test cases with the :opt:`--test` option is very
 practical when creating test cases, but quite limited when running tests
-automatically. The :setting:`--suite` option can be useful in that
+automatically. The :opt:`--suite` option can be useful in that
 case, but in general, selecting test cases by tag names is more
 flexible.
 
@@ -63,7 +63,7 @@ By tag names
 ''''''''''''
 
 It is possible to include and exclude test cases by tag_ names with the
-:setting:`--include (-i)` and :setting:`--exclude (-e)` options,
+:opt:`--include (-i)` and :opt:`--exclude (-e)` options,
 respectively. When the former is used, only test cases having a
 matching tag are selected, and with the latter, test cases having a
 matching tag are not. If both are used, only tests with a tag
@@ -76,7 +76,7 @@ are selected.
    --exclude not_ready
    --include regression --exclude long_lasting
 
-Both :setting:`--include` and :setting:`--exclude` can be used several
+Both :opt:`--include` and :opt:`--exclude` can be used several
 times to match multiple tags, and their arguments can be `simple
 patterns`_. In these cases, the rules for selecting test cases apply,
 so that test cases with a tag matching any include patterns are
@@ -98,14 +98,14 @@ Selecting test cases by tags is a very flexible mechanism and allows
 many interesting possibilities:
 
 - A subset of tests to be executed before other tests can be tagged
-  with :setting:`smoke` and executed with :cli:`--include smoke`.
+  with :opt:`smoke` and executed with :cli:`--include smoke`.
 
 - Unfinished test can be committed to version control with the tag
-  :setting:`not_ready` and excluded from the test execution with
+  :opt:`not_ready` and excluded from the test execution with
   :cli:`--exclude not_ready`.
 
-- Tests can be tagged with :setting:`iter-<num>`, where
-  :setting:`<num>` specifies the number of the current iteration, and
+- Tests can be tagged with :opt:`iter-<num>`, where
+  :opt:`<num>` specifies the number of the current iteration, and
   after executing all test cases, a separate report containing only
   the tests for a certain iteration can be generated (for example, :cli:`rebot
   --include iter-42 ouput.xml`).
@@ -120,12 +120,12 @@ considered failed. On the other hand, non-critical test cases can
 fail and the overall status is still passed.
 
 By default, all test cases are critical, but this can be changed with
-the :setting:`--critical (-c)` and :setting:`--noncritical (-n)`
+the :opt:`--critical (-c)` and :opt:`--noncritical (-n)`
 options. These options specify which test cases are consider critical
-based on tags, similarly as :setting:`--include` and
-:setting:`--exclude` are used to `select test cases by tag
-names`__. If only :setting:`--critical` is used, test cases with a
-matching tag are critical. If only :setting:`--noncritical` is used,
+based on tags, similarly as :opt:`--include` and
+:opt:`--exclude` are used to `select test cases by tag
+names`__. If only :opt:`--critical` is used, test cases with a
+matching tag are critical. If only :opt:`--noncritical` is used,
 tests without a matching tag are critical. Finally, if both are
 used, only test with a critical tag but without a non-critical tag are
 considered critical.  Both of these options accept `simple patterns`_
@@ -142,13 +142,13 @@ __ `By tag names`_
 The most common use case for setting criticality is having test cases
 that are not ready or test features still under development in the
 test execution. Of course, these tests could be excluded from the
-test execution altogether with the :setting:`--exclude` option, but
+test execution altogether with the :opt:`--exclude` option, but
 including them as non-critical tests enables you to see when
 they start to pass.
 
 .. Note:: Currently, criticality set when tests are executed is not
           changed when `post-processing outputs`_, unless
-          :setting:`--critical` or :setting:`--noncritical` is used
+          :opt:`--critical` or :opt:`--noncritical` is used
           explicitly. In the future, this will change so that they are
           to be used always. It is thus recommended to use them with
           :prog:`rebot` already now.
@@ -163,7 +163,7 @@ Setting the name
 When Robot Framework parses test data, `test suite names are created
 from file and directory names`__. The name of the top-level test suite
 can, however, be overridden with the command line option
-:setting:`--name (-N)`. Underscores in the given name are converted to
+:opt:`--name (-N)`. Underscores in the given name are converted to
 spaces automatically, and words in the name capitalized.
 
 __ `Test suite name and documentation`_
@@ -174,7 +174,7 @@ Setting the documentation
 
 In addition to `defining documentation in the test data`__, documentation
 of the top-level suite can be given from the command line with the
-option :setting:`--doc (-D)`. Underscores in the given documentation
+option :opt:`--doc (-D)`. Underscores in the given documentation
 are converted to spaces, and it may contain simple `HTML formatting`_.
 
 __ `Test suite name and documentation`_
@@ -184,9 +184,9 @@ Setting free metadata
 '''''''''''''''''''''
 
 `Free test suite metadata`_ may also be given from the command line
-with the option :setting:`--metadata (-M)`. The argument must be in
-the format :setting:`name:value`, where :setting:`name` the name of
-the metadata to set and :setting:`value` is its value. Underscores in
+with the option :opt:`--metadata (-M)`. The argument must be in
+the format :opt:`name:value`, where :opt:`name` the name of
+the metadata to set and :opt:`value` is its value. Underscores in
 the former are converted to spaces and words capitalized, and the
 latter may contain simple `HTML formatting`_. This option may be used
 several times to set multiple metadata.
@@ -194,7 +194,7 @@ several times to set multiple metadata.
 Setting tags
 ''''''''''''
 
-The command line option :setting:`--settag (-G)` can be used to set
+The command line option :opt:`--settag (-G)` can be used to set
 the given tag to all executed test cases. This option may be used
 several times to set multiple tags.
 
@@ -258,7 +258,7 @@ Using the --pythonpath option
 '''''''''''''''''''''''''''''
 
 Robot Framework also has a separate command line option
-:setting:`--pythonpath (-P)` for adding directories or archives into
+:opt:`--pythonpath (-P)` for adding directories or archives into
 PYTHONPATH. Multiple paths can be given by separating them with a
 colon (:) or using this option several times. The given path can also be
 a glob pattern matching multiple paths, but then it normally must be
@@ -277,8 +277,8 @@ Setting variables
 ~~~~~~~~~~~~~~~~~
 
 Variables_ can be set from the command line either individually__
-using the :setting:`--variable (-v)` option or through `variable files`_
-with the :setting:`--variablefile (-V)` option. Variables and variable
+using the :opt:`--variable (-v)` option or through `variable files`_
+with the :opt:`--variablefile (-V)` option. Variables and variable
 files are explained in separate chapters, but the following examples
 illustrate how to use these options::
 
@@ -293,25 +293,25 @@ __ `Setting variables in command line`_
 Setting the execution mode
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The command line option :setting:`--runmode` can be used to alter the test
+The command line option :opt:`--runmode` can be used to alter the test
 execution. Possible values for it are listed and explained below,
 other values are silently ignored. All these values are case-insensitive.
 
-:setting:`ExitOnFailure`
+:opt:`ExitOnFailure`
     Test execution is stopped immediately if a `critical test`_
     fails. All remaining tests are marked failed with the message
     :msg:`Critical failure occurred and ExitOnFailure option is in
     use`. This option is new in version 1.8.7.
 
-:setting:`random:test`
+:opt:`random:test`
     Test cases inside each test suite are executed in random
     order. This option is new in version 1.8.6. 
 
-:setting:`random:suite`
+:opt:`random:suite`
     All test suites are executed in a random order, but test cases inside
     suites are run in the order they are defined.  This option is new in version 1.8.6.
 
-:setting:`random:all`
+:opt:`random:all`
     Both test cases and test suites are executed in a random
     order. This option is new in version 1.8.6. 
 
@@ -320,24 +320,24 @@ Controlling the monitor output
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The width of the test execution output in the console is set using the
-option :setting:`--monitorwidth (-W)`. The default value for the monitor
+option :opt:`--monitorwidth (-W)`. The default value for the monitor
 width is 78 characters.
 
-The :setting:`--monitorcolors (-C)` option is used to control whether
+The :opt:`--monitorcolors (-C)` option is used to control whether
 colors should be used in the monitor output. These so-called ANSI
 colors do not work on Windows by default, but they ought to work on
 all UNIX-like systems. This option has three possible, case-insensitive
 values:
 
-:setting:`on`
+:opt:`on`
     Colors are used on UNIX-like systems, but not on Windows. This is
     the default.
 
-:setting:`off`
+:opt:`off`
     Colors are never used. Useful for example when redirecting the
     output to a file.
 
-:setting:`force`
+:opt:`force`
     Colors are always used, also on Windows.
 
 Example::
@@ -350,5 +350,5 @@ Setting listeners
 
 So-called listeners_ can be used for monitoring the test
 execution. They are taken into use with the command line option
-:setting:`--listener`, and the specified listeners must be in the `module
+:opt:`--listener`, and the specified listeners must be in the `module
 search path`_ similarly as test libraries.

@@ -17,7 +17,7 @@ Taking listeners into use
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Listeners are taken into use from the command line with the
-:setting:`--listener` option, so that the name of the listener is
+:opt:`--listener` option, so that the name of the listener is
 given to it as an argument. The listener name is got from the name of
 the class implementing the listener interface, similarly as `test
 library names`_ are got from classes implementing them. The specified

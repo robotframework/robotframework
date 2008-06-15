@@ -48,7 +48,7 @@ and they are executed by giving the path to the file or directory in
 question to the selected runner script. The path can be absolute or,
 more commonly, relative to the directory where tests are executed
 from. The given file or directory creates the top-level test suite,
-which gets its name, unless overridden with the :setting:`--name` option__,
+which gets its name, unless overridden with the :opt:`--name` option__,
 from the `file or directory name`__. Different execution possibilities
 are illustrated in the examples below. Note that in these examples, as
 well as in other examples in this section, only the :prog:`pybot`
@@ -76,7 +76,7 @@ catenating them together with an ampersand (&) and spaces. For example,
 the name of the top-level suite in the first example below is
 :name:`My Tests & Your Tests`. These automatically created names are
 seldom very good and they are often quite long. In most cases, it
-is thus better to use the :setting:`--name` option for overriding it, as
+is thus better to use the :opt:`--name` option for overriding it, as
 in the second example below::
 
    pybot my_tests.html your_tests.html
@@ -95,12 +95,12 @@ discussed elsewhere in this chapter.
 Short and long options
 ``````````````````````
 
-Options always have a long name, such as :setting:`--name`, and the
+Options always have a long name, such as :opt:`--name`, and the
 most frequently needed options also have a short name, such as
-:setting:`-N`. In addition to that, long options can be shortened as
+:opt:`-N`. In addition to that, long options can be shortened as
 long as they are unique. For example, :cli:`--logle DEBUG` works,
 while :cli:`--lo log.html` does not, because the former matches only
-:setting:`--loglevel`, but the latter matches several options. Short
+:opt:`--loglevel`, but the latter matches several options. Short
 and shortened options are practical when executing test cases
 manually, but long options are recommended in `start-up scripts`__,
 because they are easier to understand.
@@ -108,8 +108,8 @@ because they are easier to understand.
 __ `Creating start-up scripts`_
 
 The long option format is case-insensitive, which facilitates writing option
-names in an easy-to-read format. For example, :setting:`--SuiteStatLevel`
-is equivalent to, but easier to read than :setting:`--suitestatlevel`.
+names in an easy-to-read format. For example, :opt:`--SuiteStatLevel`
+is equivalent to, but easier to read than :opt:`--suitestatlevel`.
 
 Setting option values
 `````````````````````
@@ -262,7 +262,7 @@ works the same way when `multiple test data files or directories are
 executed`__, and also in this case the name of the top-level test
 suite is created by joining child suite names with an ampersand (&)
 and spaces. These automatically generated names are not that good, and
-it is often a good idea to use :setting:`--name` to give a more
+it is often a good idea to use :opt:`--name` to give a more
 meaningful name::
 
    rebot --name Browser_Compatibility firefox.xml opera.xml safari.xml ie.xml
@@ -276,12 +276,12 @@ Getting help on the command line
 
 Both when executing test cases with :prog:`pybot` or :prog:`jybot` and
 when post-processing reports with :prog:`rebot`, it is possible to get
-command line help with the option :setting:`--help` and its short version
-:setting:`-h`. These help texts have a short general overview and
+command line help with the option :opt:`--help` and its short version
+:opt:`-h`. These help texts have a short general overview and
 briefly explain the available command line options.
 
 All runner scripts also support getting the version information with
-the option :setting:`--version`. This information also contains Python
+the option :opt:`--version`. This information also contains Python
 or Jython version and the platform type::
 
    $ pybot --version
@@ -299,7 +299,7 @@ Handling complicated characters
 
 Because spaces are used for separating options from each other, it is
 problematic to use them in option values.  Some options, such as
-:setting:`--name`, automatically convert underscores to spaces, but
+:opt:`--name`, automatically convert underscores to spaces, but
 with others spaces must be escaped. Additionally, many special
 characters are complicated to use on the command line.
 
@@ -316,10 +316,10 @@ Escaping options
 
 In Robot Framework's command line escaping mechanism,
 problematic characters are escaped with freely selected text. The
-command line option to use is :setting:`--escape` (short version
-:setting:`-E`), which takes an argument in the format :setting:`what:with`,
-where :setting:`what` is the name of the character to escape and
-:setting:`with` is the string to escape it with. Characters that can
+command line option to use is :opt:`--escape` (short version
+:opt:`-E`), which takes an argument in the format :opt:`what:with`,
+where :opt:`what` is the name of the character to escape and
+:opt:`with` is the string to escape it with. Characters that can
 be escaped are listed in the table below:
 
 .. table:: Available escapes
@@ -344,7 +344,7 @@ be escaped are listed in the table below:
    =========  =============  =========  =============
 
 The following examples make the syntax more clear. In the
-first example, the metadata :setting:`X` gets the value :code:`Value with
+first example, the metadata :opt:`X` gets the value :code:`Value with
 spaces`, and in the second variable :var:`${VAR}` is assigned to
 :code:`"Hello, world!"`.
 
@@ -362,8 +362,8 @@ Using argument files
 ''''''''''''''''''''
 
 Another possibility to handle complicated arguments is placing them
-into a argument file and using :setting:`--argumentfile` (short
-option :setting:`-A`) to specify the path to it, along with possible other
+into a argument file and using :opt:`--argumentfile` (short
+option :opt:`-A`) to specify the path to it, along with possible other
 options. These files can contain both command line options and paths
 to the test data, one per line. Argument files can contain any ASCII
 characters without escaping, but spaces in the beginning and end

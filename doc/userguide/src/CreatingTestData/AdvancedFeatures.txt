@@ -97,11 +97,11 @@ they have their own timeout mechanism, if necessary.
 Test case timeout
 '''''''''''''''''
 
-The test case timeout can be set either by using the :setting:`Test
-Timeout` setting in the Setting table or the :setting:`[Timeout]`
-setting in the Test Case table. :setting:`Test Timeout` in the Setting
+The test case timeout can be set either by using the :opt:`Test
+Timeout` setting in the Setting table or the :opt:`[Timeout]`
+setting in the Test Case table. :opt:`Test Timeout` in the Setting
 table defines a default test timeout value for all the test cases in
-the test suite, whereas :setting:`[Timeout]` in the Test Case table
+the test suite, whereas :opt:`[Timeout]` in the Test Case table
 applies a timeout to an individual test case and overrides the
 possible default value.
 
@@ -167,7 +167,7 @@ keywords with `user keyword timeouts`_.
 User keyword timeout
 ''''''''''''''''''''
 
-A timeout can be set for a user keyword using the :setting:`[Timeout]`
+A timeout can be set for a user keyword using the :opt:`[Timeout]`
 setting in the Keyword table. The syntax for setting it, including how
 timeout values and possible custom messages are given, is
 identical to the syntax used with `test case timeouts`_. If no custom

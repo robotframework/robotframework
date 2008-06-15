@@ -24,7 +24,7 @@ subsections below.
 Using Library setting
 '''''''''''''''''''''
 
-Test libraries are normally imported using the :setting:`Library`
+Test libraries are normally imported using the :opt:`Library`
 setting in the Setting table and having the library name in the
 subsequent column. The library name is case-sensitive (it is the name
 of the module or class implementing the library and must be exactly
@@ -59,7 +59,7 @@ Using Import Library keyword
 Another possibility to take a test library into use is using the
 keyword :name:`Import Library` from the `BuiltIn library`_. This keyword
 takes the library name and possible arguments similarly as the
-:setting:`Library` setting. Keywords from the imported library are
+:opt:`Library` setting. Keywords from the imported library are
 available in the test suite where the :name:`Import Library` keyword was
 used. This approach is useful in cases where the library is not
 available when the test execution starts and only some other keywords

@@ -26,7 +26,7 @@ Resource files
 Taking resource files into use
 ''''''''''''''''''''''''''''''
 
-Resource files are imported using the :setting:`Resource` setting in the
+Resource files are imported using the :opt:`Resource` setting in the
 Settings table. The path to the resource file is given in the cell
 after the setting name.
 
@@ -63,8 +63,8 @@ Resource file structure
 The higher-level structure of resource files is the same as that of
 test case files otherwise, but, of course, they cannot contain Test Case
 tables. Additionally, the Setting table in resource files can contain
-only import settings (:setting:`Library`, :setting:`Resource`, and
-:setting:`Variables`). The Variable table and Keyword table are used
+only import settings (:opt:`Library`, :opt:`Resource`, and
+:opt:`Variables`). The Variable table and Keyword table are used
 exactly the same way as in test case files.
 
 If several resource files have a user keyword with the same name, they
@@ -148,8 +148,8 @@ Setting table
 `````````````
 
 All test data files can import variables using the
-:setting:`Variables` setting in the Setting table, in the same way as
-`resource files are imported`__ using the :setting:`Resource`
+:opt:`Variables` setting in the Setting table, in the same way as
+`resource files are imported`__ using the :opt:`Resource`
 setting. Similarly to resource files, the path to the imported
 variable file is considered relative to the directory where the
 importing file is, and if not found, it is searched from the
@@ -186,9 +186,9 @@ Command line
 ````````````
 
 Another way of introducing variables is using the command line option
-:setting:`--variablefile`. Variables in these files are globally
+:opt:`--variablefile`. Variables in these files are globally
 available in all test data files, similarly as individual variables set
-with the :setting:`--variable` option.
+with the :opt:`--variable` option.
 
 For more information, see `Robot command line options`.
 

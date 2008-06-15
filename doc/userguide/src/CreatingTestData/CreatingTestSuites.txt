@@ -25,15 +25,15 @@ __ `Test case syntax`_
 The following settings in the Setting table can be used to customize the
 test suite:
 
-`Documentation`:setting:
+`Documentation`:opt:
    Used for specifying a `test suite documentation`_
 
-`Meta: <name>`:setting:
+`Meta: <name>`:opt:
    Used for setting `free test suite metadata`_.
 
-`Suite Setup`:setting:, `Suite Teardown`:setting:
+`Suite Setup`:opt:, `Suite Teardown`:opt:
    Specify `suite setup and teardown`_. Have also synonyms
-   :setting:`Suite Precondition` and :setting:`Suite Postcondition`, respectively.
+   :opt:`Suite Precondition` and :opt:`Suite Postcondition`, respectively.
 
 
 
@@ -69,8 +69,8 @@ Initialization files
 ''''''''''''''''''''
 
 A test suite created from a directory can have the same settings
-(:setting:`Documentation`, :setting:`Meta: <name>`, :setting:`Suite
-Setup`, :setting:`Suite Teardown`) as a test case created from a
+(:opt:`Documentation`, :opt:`Meta: <name>`, :opt:`Suite
+Setup`, :opt:`Suite Teardown`) as a test case created from a
 file. Because a directory alone cannot have that kind of information,
 they must be placed into a special initialization file.
 
@@ -85,7 +85,7 @@ directory is a module.
 
 The main usage of initialization files is setting test-suite-related
 settings, but setting `test-case-related settings`__ is also possible.
-However, only :setting:`Force Tags` is generally useful, because
+However, only :opt:`Force Tags` is generally useful, because
 others are only default values for the same settings in lower-level files,
 and even they are default values for the `settings in the Test Case table`_.
 
@@ -139,7 +139,7 @@ separated, and first letters of all words capitalized. For example,
 :path:`some_tests.html` becomes :code:`Some Tests` and
 :path:`MyTestDir` becomes :code:`My Test Dir`.
 
-The documentation for a test suite is set using the :setting:`Documentation`
+The documentation for a test suite is set using the :opt:`Documentation`
 setting in the Setting table. It can be used in test case files
 or, with higher-level suites, in test suite initialization files. Test
 suite documentation has exactly the same characteristics regarding to where
@@ -160,7 +160,7 @@ documentation`_.
 
 Both the name and documentation of the top-level test suite can be
 overridden in test execution. This can be done with the command line
-options :setting:`--name` and :setting:`--doc`, respectively, as
+options :opt:`--name` and :opt:`--doc`, respectively, as
 explained in section `Setting metadata`_.
 
 
@@ -168,9 +168,9 @@ Free test suite metadata
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
 Test suites can also have other metadata than the documentation. This
-metadata is defined in the Setting table using the :setting:`Meta: <name>`
+metadata is defined in the Setting table using the :opt:`Meta: <name>`
 setting, where <name> is a freely selected metadata name. For example,
-:setting:`Meta: Version` adds the version metadata for a test
+:opt:`Meta: Version` adds the version metadata for a test
 suite. Metadata set in this manner is shown in test reports and logs.
 
 The value for the metadata is located in the column after the name. It
@@ -195,7 +195,7 @@ __ `Dividing test data to several rows`_
 
 
 For top-level test suites, it is possible to set metadata also with the 
-:setting:`--metadata` command line option. This is discussed in more
+:opt:`--metadata` command line option. This is discussed in more
 detail in section `Setting metadata`_.
 
 
@@ -213,9 +213,9 @@ __ `Test setup and teardown`_
 
 Similarly as with test cases, a suite setup and teardown are keywords
 that may take arguments. They are defined in the Setting table with
-:setting:`Suite Setup` and :setting:`Suite Teardown` settings,
-respectively. They also have similar synonyms, :setting:`Suite
-Precondition` and :setting:`Suite Postcondition`, as a test case setup
+:opt:`Suite Setup` and :opt:`Suite Teardown` settings,
+respectively. They also have similar synonyms, :opt:`Suite
+Precondition` and :opt:`Suite Postcondition`, as a test case setup
 and teardown have. Keyword names and possible arguments are located in
 the columns after the setting name.
 
