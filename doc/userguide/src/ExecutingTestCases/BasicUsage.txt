@@ -480,6 +480,3 @@ file is executed.
    :set_cp
        set CP=%CP%;%1
    goto :eof
-
-
-.. TODO: Add echoing $? and %ERRORLEVEL% to examples. Need to test the latter on Windows first, though.
