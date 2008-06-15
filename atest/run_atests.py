@@ -27,44 +27,43 @@ import robot
 
 
 ACCDIR = os.path.join(os.path.abspath(os.path.dirname(__file__)))
-
-DEFAULT_ARGS = '''
---doc RobotSPacceptanceSPtestsSPonSP%(pj)sython
---metadata interpreter:%(interpreter)s
---variable interpreter:%(interpreter)s
---pythonpath %(pythonpath)s
---include %(pj)sybot
---outputdir %(outdir)s
---output %(pj)sybot-output.xml
---report %(pj)sybot-report.html
---log %(pj)sybot-log.html
+ARGUMENTS = ' '.join('''
+--doc RobotSPFrameworkSPacceptanceSPtests
+--metadata interpreter:%(INTERPRETER)s
+--metadata platform:%(PLATFORM)s
+--variable interpreter:%(INTERPRETER)s
+--pythonpath %(PYTHONPATH)s
+--include %(RUNNER)s
+--outputdir %(OUTPUTDIR)s
+--output %(RUNNER)s-output.xml
+--report %(RUNNER)s-report.html
+--log %(RUNNER)s-log.html
 --escape space:SP
 --escape star:STAR
 --escape paren1:PAR1
 --escape paren2:PAR2
 --critical regression
---critical smoke
 --SplitOutputs 2
 --SuiteStatLevel 3
 --TagStatCombine jybotNOTpybot
 --TagStatCombine pybotNOTjybot
---TagStatLink jybot:http://jython.org:Jython
---TagStatLink pybot:http://python.org:Python
---TagStatLink jybot-bug-STAR:http://bugs.jython.org/issue%%1:Tracker
-'''.strip().splitlines()
+--TagStatExclude pybot
+--TagStatExclude jybot
+'''.strip().splitlines())
 
-ARG_VALUES = { 'pythonpath' : os.path.join(ACCDIR,'resources'),
-               'outdir' : os.path.join(ACCDIR,'results'),
-             }
 
 def main(interpreter, *params):
-    ARG_VALUES['interpreter'] = interpreter
-    ARG_VALUES['pj'] = 'python' in os.path.basename(interpreter) and 'p' or 'j'
+    args = ARGUMENTS % {
+        'PYTHONPATH' : os.path.join(ACCDIR, 'resources'),
+        'OUTPUTDIR' : os.path.join(ACCDIR, 'results'),
+        'INTERPRETER': interpreter,
+        'PLATFORM': sys.platform,
+        'RUNNER': ('python' in os.path.basename(interpreter)
+                   and 'pybot' or 'jybot')
+        }
     runner = os.path.join(os.path.dirname(robot.__file__), 'runner.py')
-    command = '%s %s %s %s' % (sys.executable, runner,
-                               ' '.join(DEFAULT_ARGS) % ARG_VALUES,
-                               ' '.join(params))
-    print "Running command\n%s\n" % command
+    command = '%s %s %s %s' % (sys.executable, runner, args, ' '.join(params))
+    print 'Running command\n%s\n' % command
     sys.stdout.flush()
     rc = os.system(command)
     sys.exit(rc)
@@ -73,5 +72,5 @@ def main(interpreter, *params):
 if __name__ == '__main__':
     if len(sys.argv) == 1 or '--help' in sys.argv:
         print __doc__
-        sys.exit(1) 
+        sys.exit(251) 
     main(*sys.argv[1:])
