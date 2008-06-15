@@ -25,7 +25,6 @@
    - code     programming code
    - msg      test case status and message, as well as log messages and levels
    - name     keyword, test case and test suite names
-   - kw       TODO: rename to 'name' where used
    - cli      command line examples (note that options alone use setting)
    - path     file names and paths
    - misc     everything else (synonym to ``text``)
@@ -36,8 +35,6 @@
 .. role:: code
 .. role:: msg  
 .. role:: name
-.. role:: kw
-.. role:: tc
 .. role:: cli
 .. role:: path
 .. role:: misc

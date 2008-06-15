@@ -239,7 +239,7 @@ used, for example, in a suite setup or teardown to ensure that test
 cases in the next test suites can start from a known state. For example,
 :name:`SeleniumLibrary` uses the :code:`GLOBAL` scope to enable
 using the same browser in different test cases without having to
-reopen it, and it also has the :kw:`Close All Browsers` keyword for
+reopen it, and it also has the :name:`Close All Browsers` keyword for
 easily closing all open browsers.
 
 
@@ -303,9 +303,9 @@ Keyword names used in the test data are compared with method names to
 find the method implementing these keywords. Name comparison is
 case-insensitive, and also spaces and underscores are ignored. For
 example, the method :code:`hello` maps to the keyword name
-:kw:`Hello`, :kw:`hello` or even :kw:`h e l l o`. Similarly both the
+:name:`Hello`, :name:`hello` or even :name:`h e l l o`. Similarly both the
 :code:`do_nothing` and :code:`doNothing` methods can be used as the
-:kw:`Do Nothing` keyword in the test data.
+:name:`Do Nothing` keyword in the test data.
 
 Example Python library implemented as a module in the :path:`MyLibrary.py` file:
 
@@ -852,7 +852,7 @@ them anyway.
 It is also easy to use Robot Framework itself for testing libraries
 and that way have actual end-to-end acceptance tests for them. There are
 plenty of useful keywords in the `BuiltIn library`_ for this
-purpose. One worth mentioning specifically is :kw:`Run Keyword And Expect
+purpose. One worth mentioning specifically is :name:`Run Keyword And Expect
 Error`, which is useful for testing that keywords report errors
 correctly. 
 
@@ -949,7 +949,7 @@ separated with spaces or underscores, or in the camelCase format. For
 example, :code:`['first keyword', 'second keyword']`,
 :code:`['first_keyword', 'second_keyword']`, and
 :code:`['firstKeyword', 'secondKeyword']` would all result in the keywords
-:kw:`First Keyword` and :kw:`Second Keyword`.
+:name:`First Keyword` and :name:`Second Keyword`.
 
 Dynamic libraries must always have this method. If it is missing, or
 if calling it fails for some reason, the library is considered a
@@ -998,7 +998,7 @@ Getting keyword arguments
 If a dynamic library only implements the :code:`get_keyword_names` and
 :code:`run_keyword` methods, Robot Framework does not have any information
 about the arguments that the implemented keywords need. For example,
-both :kw:`First Keyword` and :kw:`Second Keyword` in the example above
+both :name:`First Keyword` and :name:`Second Keyword` in the example above
 could be used with any number of arguments. This is problematic,
 because most real keywords expect a certain number of keywords, and
 under these circumstances they would need to check the argument counts

@@ -230,7 +230,7 @@ threshold level. A special value :msg:`NONE` can also be used to
 disable logging altogether.
 
 Another possibility to change the log level is using the `BuiltIn
-keyword`_ :kw:`Set Log Level` in the test data. It takes the same
+keyword`_ :name:`Set Log Level` in the test data. It takes the same
 arguments as the :setting:`--loglevel` option, and it also returns the
 old level so that it can be restored later, for example, in a `test
 teardown`_.

@@ -59,12 +59,12 @@ Workflow tests vs. data-driven tests
 ''''''''''''''''''''''''''''''''''''
 
 In general, there are two kinds of test cases. So called *workflow*
-tests, such as the :tc:`Valid Login` test above, are constructed from
+tests, such as the :name:`Valid Login` test above, are constructed from
 several keywords. Their normal structure is that first the system is
-taken into the initial state (:kw:`Open Login Page`), then something is
-done to the system (:kw:`Input Name`, :kw:`Input Password`,
-:kw:`Submit Credentials`), and finally it is verified that the system
-behaved as expected (:kw:`Welcome Page Should Be Open`).
+taken into the initial state (:name:`Open Login Page`), then something is
+done to the system (:name:`Input Name`, :name:`Input Password`,
+:name:`Submit Credentials`), and finally it is verified that the system
+behaved as expected (:name:`Welcome Page Should Be Open`).
 
 Another type of tests are *data-driven* test cases that contain only
 one higher-level keyword, normally created as `user keywords`_. These

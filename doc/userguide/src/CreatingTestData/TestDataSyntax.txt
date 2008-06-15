@@ -231,7 +231,7 @@ any resulting reports and, additionally, most tools used with Robot
 Framework also ignore them. To add information that is visible in
 Robot Framework outputs, or available to, for example, `Robot IDE`_,
 place it to the documentation or other metadata of test cases or suites,
-or log with the :kw:`Log` or :kw:`Comment` keywords available
+or log with the :name:`Log` or :name:`Comment` keywords available
 from the `BuiltIn library`_.
 
 

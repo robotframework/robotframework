@@ -14,7 +14,7 @@ used in most places in test data. Most commonly, they are used in
 arguments for keywords in test case tables and keyword tables, but
 also all settings allow variables in their values. A normal keyword
 name *cannot* be specified with a variable, but the `BuiltIn
-keyword`_ :kw:`Run Keyword` can be used to get the same effect.
+keyword`_ :name:`Run Keyword` can be used to get the same effect.
 
 Robot Framework itself has two kinds of variables, scalars and lists,
 and they have the syntaxes :var:`${VARIABLE`} and :var:`@{VARIABLE}`,
@@ -149,10 +149,10 @@ With these two variables set, we then have the following test data:
 Finally, when this test data is executed, different keywords receive
 the arguments as explained below:
 
-- :kw:`KW 1` gets a string :code:`Hello, world!`
-- :kw:`KW 2` gets an object stored to variable :var:`${OBJ}`
-- :kw:`KW 3` gets a string :code:`I said "Hello, world!"`
-- :kw:`KW 4` gets a string :code:`You said "Hi, tellus!"`
+- :name:`KW 1` gets a string :code:`Hello, world!`
+- :name:`KW 2` gets an object stored to variable :var:`${OBJ}`
+- :name:`KW 3` gets a string :code:`I said "Hello, world!"`
+- :name:`KW 4` gets a string :code:`You said "Hi, tellus!"`
 
 
 List variables
@@ -216,8 +216,8 @@ values.
 
 Environment variables set in the system before the test execution are
 available during it, and it is possible to create new ones with the keyword
-:kw:`Set Environment Variable` or delete existing ones with the
-keyword :kw:`Delete Environment Variable`, both available in the
+:name:`Set Environment Variable` or delete existing ones with the
+keyword :name:`Delete Environment Variable`, both available in the
 `OperatingSystem library`_. Because environment variables are global,
 environment variables set in one test case can be used in other test
 cases executed after it. However, changes to environment variables are
@@ -385,8 +385,8 @@ libraries. The syntax for a simple case is illustrated in the example below:
    \            Log         We got ${x}!  \
    ===========  ==========  ============  ============
 
-In the example above, the value returned by the :kw:`Get X` keyword is
-first set into the variable :var:`${x}` and then used by the :kw:`Log`
+In the example above, the value returned by the :name:`Get X` keyword is
+first set into the variable :var:`${x}` and then used by the :name:`Log`
 keyword. This syntax works in all cases where a keywords returns
 something, and the variable is set to whatever value returned by the
 keyword. Having the equals sign :code:`=` after the variable name is
@@ -413,7 +413,7 @@ iterables, if needed.
    ===============  ============  ==========  ==========  ==========
 
 
-Assuming that the keyword :kw:`Get 3` returns a list
+Assuming that the keyword :name:`Get 3` returns a list
 :code:`[1, 2, 3]`, the following variables are created:
 
 - :var:`${scalar}` with the value :code:`[1, 2, 3]`
@@ -431,7 +431,7 @@ because, in general, automated test cases should not depend on each
 other, and accidentally setting a variable that is used elsewhere
 could cause hard-to-debug errors. If there is a genuine need for
 setting a variable in one test case and using it in another, use the
-:kw:`Set Suite Variable` or :kw:`Set Global Variable` keywords
+:name:`Set Suite Variable` or :name:`Set Global Variable` keywords
 available from the `BuiltIn library`_.
 
 
@@ -449,7 +449,7 @@ Global variables are available everywhere in the test data. These
 variables are normally set from the command line with the
 :setting:`--variable` and :setting:`--variablefile`
 options. Additionally, it is possible to create new global variables
-or change the existing ones with the `BuiltIn keyword`_ :kw:`Set
+or change the existing ones with the `BuiltIn keyword`_ :name:`Set
 Global Variable` anywhere in the test data.
 
 Global variables override variables defined in Variable tables or in
@@ -465,7 +465,7 @@ Variables with the test suite scope are available anywhere in the test
 suite where they are defined or imported. They can be created in
 Variable tables, imported from variable files using the
 :setting:`Variables` setting in the Setting table, or set with the
-`BuiltIn keyword`_ :kw:`Set Suite Variable` anywhere in that test
+`BuiltIn keyword`_ :name:`Set Suite Variable` anywhere in that test
 suite. 
 
 The test suite scope *is not recursive*, which means that variables
@@ -483,7 +483,7 @@ Test case scope
 Variables created in test cases from the return values of keywords have a
 test case scope and they are available only in that test
 case. Another possibility to create them is using the `BuiltIn keyword`_
-:kw:`Set Test Variable` anywhere in that particular test case. Test
+:name:`Set Test Variable` anywhere in that particular test case. Test
 case variables are local and should use lower-case letters.
 
 
@@ -708,9 +708,9 @@ and test case:
 When this test data is executed, the keywords get the arguments as
 explained below:
 
-- :kw:`KW 1` gets string :code:`Robot`
-- :kw:`KW 2` gets string :code:`Robot says hello to Fit`
-- :kw:`KW 3` gets string :code:`two`
+- :name:`KW 1` gets string :code:`Robot`
+- :name:`KW 2` gets string :code:`Robot says hello to Fit`
+- :name:`KW 3` gets string :code:`two`
 
 The extended variable syntax is evaluated in the following order:
 
@@ -779,8 +779,8 @@ value of the variable :var:`${varname}`. There can be several nested
 variables, but resolving the outermost fails, if any of them does not
 exist.
 
-In the example below, :kw:`Do X` gets the value :var:`${JOHN_HOME}`
-or :var:`${JANE_HOME}`, depending on if :kw:`Get Name` returns
+In the example below, :name:`Do X` gets the value :var:`${JOHN_HOME}`
+or :var:`${JANE_HOME}`, depending on if :name:`Get Name` returns
 :code:`john` or :code:`jane`. If it returns something else, resolving
 :var:`${${name}_HOME}` fails.
 

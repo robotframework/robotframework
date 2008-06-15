@@ -54,20 +54,20 @@ of the keyword*, where the keyword name is prefixed with the name of
 the resource or library and a dot is a delimiter.
 
 With library keywords, the long format means only using the format
-:kw:`LibraryName.Keyword Name`. For example, the keyword :kw:`Run` from the
+:name:`LibraryName.Keyword Name`. For example, the keyword :name:`Run` from the
 `OperatingSystem library`_ could be used as
-:kw:`OperatingSystem.Run`, even if there was another :kw:`Run` keyword
+:name:`OperatingSystem.Run`, even if there was another :name:`Run` keyword
 somewhere else. If the library is in a module or package, the full
 module or package name must be used (for example, 
-:kw:`com.company.Library.Some Keyword`). If a custom name is given to a
+:name:`com.company.Library.Some Keyword`). If a custom name is given to a
 library using the `WITH NAME syntax`_, the specified name must be
 used also in the full keyword name.
 
 Resource files are specified in the full keyword name, similarly as
 library names. The name of the resource is derived from the basename
 of the resource file without the file extension. For example, the
-keyword :kw:`Example` in a resource file :path:`myresources.html` can
-be used as :kw:`myresources.Example`. Note that this syntax does not
+keyword :name:`Example` in a resource file :path:`myresources.html` can
+be used as :name:`myresources.Example`. Note that this syntax does not
 work, if several resource files have the same basename. In such
 cases, either the files or the keywords must be renamed. The full name
 of the keyword is case-, space- and underscore-insensitive, similarly
@@ -223,10 +223,10 @@ Normal for loop
 '''''''''''''''
 
 In a normal For loop, one variable is assigned into a list of values,
-one value per iteration. The syntax starts with :kw:`:FOR`, where
+one value per iteration. The syntax starts with :name:`:FOR`, where
 colon is required to separate the syntax from normal keywords. The
 next cell contains the loop variable, the subsequent cell must have
-:kw:`IN`, and the final cells contain values over which to iterate.
+:name:`IN`, and the final cells contain values over which to iterate.
 
 The keywords used in the For loop are on the next rows and they must
 be indented one cell to the right. The For loop ends when the indentation
@@ -252,9 +252,9 @@ inside a For loop and have another For loop there.
    ===========  ========  ============  ===========  ==========  ===========
 
 
-The For loop in :tc:`Example 1` above is executed twice, so that first
+The For loop in :name:`Example 1` above is executed twice, so that first
 the loop variable :var:`${animal}` has the value :code:`cat` and then
-:code:`dog`. The loop consists of two :kw:`Log` keywords. In the
+:code:`dog`. The loop consists of two :name:`Log` keywords. In the
 second example, loop values are `split into several rows`__ and the
 loop is run altogether seven times.
 
@@ -263,7 +263,7 @@ __ `Dividing test data to several rows`_
 For loops are most useful and also clearest when they are used with
 `list variables`_. This is illustrated by the example below, where
 :var:`@{ELEMENTS}` contains an arbitrary long list of element names
-and :kw:`Start Element` is used with all of them.
+and :name:`Start Element` is used with all of them.
 
 .. table:: For loop with a list variable
    :class: example
@@ -281,7 +281,7 @@ Using several loop variables
 
 It is also possible to use several loop variables. The syntax is the
 same as with the normal For loop, but all loop variables are listed in
-the cells between :kw:`:FOR` and :kw:`IN`. There can be any number of loop
+the cells between :name:`:FOR` and :name:`IN`. There can be any number of loop
 variables, but their number must match the number of loop
 values. The number of values must be evenly dividable by the number of
 variables.
@@ -317,9 +317,9 @@ special :code:`FOR index IN RANGE limit` syntax for this purpose. This
 syntax is derived from the similar Python idiom.
 
 Similarly as other For loops, the For in range loop starts with
-:kw:`:FOR` and the loop variable is in the next cell. In this format
+:name:`:FOR` and the loop variable is in the next cell. In this format
 there can be only one loop variable and it contains the current loop
-index. The next cell must contain :kw:`IN RANGE` and the subsequent
+index. The next cell must contain :name:`IN RANGE` and the subsequent
 cells loop limits.
 
 In the simplest case, only the upper limit of the loop is
@@ -371,18 +371,18 @@ construct, there are several ways to get the same effect.
   variable. This facilitates changing them, for example, from
   the command line.
 
-- The `BuiltIn keyword`_ :kw:`Run Keyword` takes a keyword to actually
+- The `BuiltIn keyword`_ :name:`Run Keyword` takes a keyword to actually
   execute as an argument, and it can thus be a variable. The value of
   the variable can, for example, be got dynamically from an earlier
   keyword or given from the command line.
 
-- The `BuiltIn keywords`_ :kw:`Run Keyword If` and :kw:`Run Keyword
+- The `BuiltIn keywords`_ :name:`Run Keyword If` and :name:`Run Keyword
   Unless` execute a named keyword only if a certain expression is
   true or false, respectively. They are ideally suited to creating
   simple if/else constructs. For an example, see the documentation of
   the former.
 
-- Another `BuiltIn keyword`_, :kw:`Set Variable If`, can be used to set
+- Another `BuiltIn keyword`_, :name:`Set Variable If`, can be used to set
   variables dynamically based on a given expression.
 
 - There are several `BuiltIn keywords`_ that allow executing a named
@@ -404,12 +404,12 @@ another keyword that can later be used to check the status of the
 background process or other action.
 
 Robot Framework also has native support for parallel execution of
-keywords. The syntax for it is using :kw:`:PARALLEL` in the second
-column of the Test Case or Keyword table, similarly as :kw:`:FOR` is
+keywords. The syntax for it is using :name:`:PARALLEL` in the second
+column of the Test Case or Keyword table, similarly as :name:`:FOR` is
 used with `For loops`_. In both cases, a colon (:) must be used to
 separate them from normal keywords. Keywords inside a parallel block
 are also indented, similarly as keywords in a For loop.  The difference
-is that there is no need to have anything after :kw:`:PARALLEL`, and
+is that there is no need to have anything after :name:`:PARALLEL`, and
 normally the first keyword of the parallel block is already there.
 
 When a parallel block is executed, all the keywords in it are started
@@ -444,7 +444,7 @@ a user keyword inside a parallel block, and use another parallel
 block or a For loop there.
 
 .. warning:: Parallel execution cannot be used with timeouts_ and it
-             does not work correctly with any :kw:`Run Keyword XXX`
+             does not work correctly with any :name:`Run Keyword XXX`
              keywords in the `BuiltIn library`_. In general, it is a quite
              experimental and not much used feature, and it may also have
              other peculiar problems.

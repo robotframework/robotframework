@@ -69,8 +69,8 @@ exactly the same way as in test case files.
 
 If several resource files have a user keyword with the same name, they
 must be used so that the `keyword name is prefixed with the resource
-file name`__ without the extension (for example, :kw:`myresources.Some
-Keyword` and :kw:`common.Some Keyword`). Moreover, if several resource
+file name`__ without the extension (for example, :name:`myresources.Some
+Keyword` and :name:`common.Some Keyword`). Moreover, if several resource
 files contain the same variable, the one that is imported first is
 taken into use.
 

@@ -2,7 +2,7 @@ Time format
 -----------
 
 Robot Framework has its own time format that is used by several
-keywords (for example :kw:`Sleep` and :kw:`Wait Until Keyword
+keywords (for example :name:`Sleep` and :name:`Wait Until Keyword
 Succeeds`) as well as `test case`__ and `user keyword timeouts`_. This
 format is ment to be both flexible to use and easy to understand.
 
