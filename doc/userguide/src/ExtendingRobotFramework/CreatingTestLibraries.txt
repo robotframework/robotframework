@@ -1,8 +1,6 @@
 Creating test libraries
 -----------------------
 
-**TODO** This chapter is under reorganization by Peke
-
 Robot Framework's actual testing capabilities are provided by test
 libraries. There are many existing libraries, some of which are even
 bundled with the core framework, but there is still often a need to
@@ -21,12 +19,13 @@ Introduction
 Supported programming languages
 '''''''''''''''''''''''''''''''
 
-Robot Framework itself is written with Python_ and, naturally, test libraries
-extending it can be implemented using the same
+Robot Framework itself is written with Python_ and test libraries
+extending it can, naturally, be implemented using the same
 language. Additionally, it is possible to write libraries using Java_,
 which requires running the framework on the Jython_ interpreter. Pure
-Python code works both on Python and Jython interpreters, assuming that
-it does not use syntax or libraries that are not available on Jython.
+Python code works both on Python and Jython interpreters, assuming
+that it does not use syntax or libraries that are not available on
+Jython.
 
 It is also possible to implement a test library with C by using
 `Python C API`_. Another, and in most cases easier, method to
@@ -36,12 +35,12 @@ interact with C code from a library is using Python's ctypes_ module.
 .. _ctypes: http://docs.python.org/lib/module-ctypes.html
 
 Finally, it is possible to implement the actual test library
-functions using any language and call that from a thin Python or
+functionality using any language and call that from a thin Python or
 Java wrapper library. Possible approaches include calling external
-scripts or tools through the operating system or using XML-RPC to connect
-the wrapper with the real implementation. The former approach is quite
-widely used and there is a proof-of-concept prototype also for the
-latter. The plan is to have XML-RPC support built in to Robot
+scripts or tools through the operating system or using XML-RPC to
+connect the wrapper with the real implementation. The former approach
+is quite widely used and there is a proof-of-concept prototype also
+for the latter. The plan is to have XML-RPC support built in to Robot
 Framework in the future.
 
 
@@ -54,10 +53,10 @@ Static API
 
   The simplest approach is having a module (in Python) or a class
   (in Python or Java) with methods the names of which map more or less
-  directly to keyword names. Keywords also take the same arguments as
-  the code implementing them.  Keywords report failures with
-  exceptions, log by writing to standard output and can return
-  something using the :code:`return` statement.
+  directly to `keyword names`_. Keywords also take the same `arguments`__ as
+  the code implementing them.  Keywords `report failures`__ with
+  exceptions, `log`__ by writing to standard output and can `return
+  values`__ using the :code:`return` statement.
 
 Dynamic API
 
@@ -65,7 +64,7 @@ Dynamic API
   of the keywords they implement, and another method to execute a named 
   keyword with given arguments. The names of the keywords to implement, as
   well as how they are executed, can be determined dynamically at
-  runtime, but reporting the status, logging and returning is done
+  runtime, but reporting the status, logging and returning values is done
   similarly as in the static API.
 
 Hybrid API
@@ -81,19 +80,24 @@ how the static API works, so its functions are discussed first. How
 the `dynamic library API`_ and the `hybrid library API`_ differ from it
 is then discussed in sections of their own.
 
-A Python library using the static API can be implemented either as a
-module or a class. Dynamic and hybrid APIs require libraries to be
-classes, and with Java the language itself allows classes.
-
 The examples in this chapter are mainly about using Python, but they
 should be easy to understand also for Java-only developers. In those
 few cases where APIs have differences, both usages are explained with
 adequate examples.
 
-Library stuff
-~~~~~~~~~~~~~
+__ `Keyword arguments`_
+__ `Reporting keyword status`_
+__ `Logging information`_
+__ `Returning values`_
 
-*TODO* Better name
+
+Creating test library class or module
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Test libraries can be implemented as Python modules or Python
+or Java classes. Using modules is possible only with the static API,
+and more complicated libraries are normally better implemented as classes
+even then.
 
 
 Test library names
@@ -101,22 +105,24 @@ Test library names
 
 The name of a test library that is used when a library is imported is
 the same as the name of the module or class implementing it. For
-example, if you have a Python module :code:`MyLibrary` (that is, the file
-:path:`MyLibrary.py`) its name is simply :code:`MyLibrary`. Similarly, a Java
-class :code:`YourLibrary`, when it is not in any package, creates a
-library with exactly that name.
+example, if you have a Python module :code:`MyLibrary` (that is, the
+file :path:`MyLibrary.py`), it will create a library with a name
+:name:`MyLibrary`. Similarly, a Java class :code:`YourLibrary`, when
+it is not in any package, creates a library with exactly that name.
 
 Python classes are always inside a module. If the name of a class
 implementing a library is the same as the name of the module, Robot
 Framework allows dropping the module name when importing the
-library. For example, the class :code:`MyLib` in the :path:`MyLib.py` file can be
-used as a library with the name :code:`MyLib`. If the module name and
-class name are different, libraries must be taken into use using both
-module and class names, such as :code:`mymodule.MyLibrary`.
+library. For example, the class :code:`MyLib` in the :path:`MyLib.py`
+file can be used as a library with the name :name:`MyLib`. If the
+module name and class name are different, libraries must be taken into
+use using both module and class names, such as
+:name:`mymodule.MyLibrary`.
 
 Java classes in a non-default package must be taken into use with the
-full name. For example, the class :code:`MyLib` in the :code:`com.mycompany.myproject`
-package must be imported with the name :code:`com.mycompany.myproject.MyLib`.
+full name. For example, the class :code:`MyLib` in the
+:code:`com.mycompany.myproject` package must be imported with the name
+:name:`com.mycompany.myproject.MyLib`.
 
 .. Tip:: If the library name is really long, for example when the Java
          package name is long, it is recommended to give the library a
@@ -177,22 +183,22 @@ the libraries used in the above example:
        private String setting = null;
 
        public AnotherLib(String setting) {
-           this.setting = setting;
+           setting = setting;
        }
 
        public void doSomething() {
-           if this.setting.equals("42") {
+           if setting.equals("42") {
                // do something ...
            }
        }
    }
 
 
-Library scope
-'''''''''''''
+Test library scope
+''''''''''''''''''
 
-Libraries implemented as classes can have an internal state, which can be
-altered by keywords and with arguments to the constructor of the
+Libraries implemented as classes can have an internal state, which can
+be altered by keywords and with arguments to the constructor of the
 library. Because the state can affect how keywords actually behave, it
 is important to make sure that changes in one test case do not
 accidentally affect other test cases. This kind of dependencies may
@@ -231,7 +237,7 @@ libraries that have a state, it is recommended that libraries have some
 special keyword for cleaning up the state. This keyword can then be
 used, for example, in a suite setup or teardown to ensure that test
 cases in the next test suites can start from a known state. For example,
-:code:`SeleniumLibrary` uses the :code:`GLOBAL` scope to enable
+:name:`SeleniumLibrary` uses the :code:`GLOBAL` scope to enable
 using the same browser in different test cases without having to
 reopen it, and it also has the :kw:`Close All Browsers` keyword for
 easily closing all open browsers.
@@ -296,10 +302,10 @@ underscore. With Java libraries, also methods that are implemented in
 Keyword names used in the test data are compared with method names to
 find the method implementing these keywords. Name comparison is
 case-insensitive, and also spaces and underscores are ignored. For
-example, the method :code:`hello` maps to the keyword name :kw:`Hello`,
-:kw:`hello` or even :kw:`h e l l o`. Similarly both the :code:`do_nothing` and
-:code:`doNothing` methods can be used as the :kw:`Do Nothing` keyword in the
-test data.
+example, the method :code:`hello` maps to the keyword name
+:kw:`Hello`, :kw:`hello` or even :kw:`h e l l o`. Similarly both the
+:code:`do_nothing` and :code:`doNothing` methods can be used as the
+:kw:`Do Nothing` keyword in the test data.
 
 Example Python library implemented as a module in the :path:`MyLibrary.py` file:
 
@@ -358,7 +364,7 @@ Keyword arguments
 
 With a static and hybrid API, the information on how many arguments a
 keyword needs is got directly from the method that implements it.
-Libraries using a `dynamic library API`_ have other means for getting
+Libraries using the `dynamic library API`_ have other means for getting
 this information, so this section is not relevant to them.
 
 The most common and also simplest situation is when a keyword needs an
@@ -569,19 +575,18 @@ Reporting keyword status is done simply using exceptions. If a method
 raises an exception, the keyword status is FAIL, and if it returns
 normally, the status is PASS.
 
-The error message shown in logs, reports and the console is created from
-the exception type and its message. With generic exceptions
-(for example, :code:`AssertionError`, :code:`Exception`, and :code:`RuntimeError`), only the
-exception message is used, and with others, the message is created in
-the format :msg:`ExceptionType: Actual message`. In both cases, it is
-important for users that the exception message is as informative as
-possible.
+The error message shown in logs, reports and the console is created
+from the exception type and its message. With generic exceptions (for
+example, :code:`AssertionError`, :code:`Exception`, and
+:code:`RuntimeError`), only the exception message is used, and with
+others, the message is created in the format :msg:`ExceptionType:
+Actual message`. In both cases, it is important for users that the
+exception message is as informative as possible.
 
-If the error message is longer than 20 lines, Robot Framework will
-automatically cut it from the middle to prevent reports from getting
-too long and difficult to read. The full error message is always shown
-in the log message of the failed keyword, so it is not lost even if
-this happens.
+If the error message is longer than 20 lines, it will be automatically
+cut from the middle to prevent reports from getting too long and
+difficult to read. The full error message is always shown in the log
+message of the failed keyword, so it is not lost even if this happens.
 
 
 Logging information
@@ -589,8 +594,8 @@ Logging information
 
 Exception messages are not the only way to give information to the
 users. In addition to that, methods can also send messages to `log
-files`_ simply by writing to standard output (stdout) or standard error
-(stderr), and they can even use different `log levels`_.
+files`_ simply by writing to standard output (stdout) or standard
+error (stderr), and they can even use different `log levels`_.
 
 By default, everything written by a method to stdout is written into a
 log file as a single entry with the log level
@@ -598,22 +603,23 @@ log file as a single entry with the log level
 otherwise, but they are echoed back to the original stderr after the
 keyword execution has finished.
 
-To use other log levels than :msg:`INFO`, or to create several messages,
-specify the log level explicitly by embedding the level into the
-message in the format :msg:`*LEVEL* Actual log message`, where
-:msg:`*LEVEL*` must be in the beginning of a line and :msg:`LEVEL` is one of
-the available logging levels :msg:`TRACE`, :msg:`DEBUG`, :msg:`INFO` and
-:msg:`WARN`.
+To use other log levels than :msg:`INFO`, or to create several
+messages, specify the log level explicitly by embedding the level into
+the message in the format :msg:`*LEVEL* Actual log message`, where
+:msg:`*LEVEL*` must be in the beginning of a line and :msg:`LEVEL` is
+one of the available logging levels :msg:`TRACE`, :msg:`DEBUG`,
+:msg:`INFO` and :msg:`WARN`.
 
 Everything normally logged by the library will be converted into a
 format that can be safely represented as HTML. For example,
 :code:`<b>foo</b>` will be displayed in the log exactly like that and
 not as **foo**. If libraries want to use formatting, links, display
-images and so on, they can use a special pseudo log level :msg:`HTML`. Robot
-Framework will write these messages directly into the log with the
-:msg:`INFO` level, so they can use any HTML syntax they want. However, this
-feature needs to be used with care, because one badly
-placed :code:`</table>` tag can ruin the log file quite badly.
+images and so on, they can use a special pseudo log level
+:msg:`HTML`. Robot Framework will write these messages directly into
+the log with the :msg:`INFO` level, so they can use any HTML syntax
+they want. However, this feature needs to be used with care, because
+one badly placed :code:`</table>` tag can ruin the log file quite
+badly.
 
 The following examples clarify how logging with different levels
 works. Java programmers should regard the code :code:`print 'message'`
@@ -684,10 +690,9 @@ Returning values
 
 The final way for keywords to communicate back to the core framework
 is returning information retrieved from the system under test or
-generated by some other means. Returned values can be assigned to
-variables in the test data and then used as inputs for other keywords,
-even from different test libraries. For more information about using
-returned values, see `User keyword return values`_.
+generated by some other means. Returned values can be `assigned to
+variables`__ in the test data and then used as inputs for other keywords,
+even from different test libraries. 
 
 Values are returned using the :code:`return` statement both from
 the Python and Java methods. Normally, one value is assigned into one
@@ -695,6 +700,7 @@ the Python and Java methods. Normally, one value is assigned into one
 also illustrates that it is possible to return any objects and to use
 `extended variable syntax`_ to access object attributes.
 
+__ `Return values from keywords`_
 __ `Scalar variables`_
 
 .. sourcecode:: python
@@ -752,9 +758,11 @@ __ `List variables`_
    ================  ==================  ==================  =======================
 
 
+Distributing test libraries
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Documenting libraries
-~~~~~~~~~~~~~~~~~~~~~
+'''''''''''''''''''''
 
 A test library without documentation about what keywords it
 contains and what those keywords do is rather useless. To ease
@@ -789,12 +797,12 @@ the examples below.
 
     /**
      *  This is an example library with some documentation.
-     \*/
+     */
     public class MyLibrary {
 
         /**
          * This keyword has only a short documentation
-         \*/
+         */
         public void keywordWithShortDocumentation(String argument) {
         }
 
@@ -825,6 +833,59 @@ tip, by `libdoc.py`_ and also shown in the test logs. However, the latter
 does not work with Java libraries using the static API,
 because their documentations are lost in compilation and not available
 at runtime.
+
+
+Testing libraries
+'''''''''''''''''
+
+Any non-trivial test library needs to be thoroughly tested to prevent
+bugs in them. Of course, this testing should be automated to make it
+easy to rerun tests when libraries are changed. 
+
+Both Python and Java have excellent unit testing tools, and they suite
+very well for testing libraries. There are no major differences in
+using them for this purpose compared to using them for some other
+testing. The developers familiar with these tools do not need to learn
+anything new, and the developers not familiar with them should learn
+them anyway.
+
+It is also easy to use Robot Framework itself for testing libraries
+and that way have actual end-to-end acceptance tests for them. There are
+plenty of useful keywords in the `BuiltIn library`_ for this
+purpose. One worth mentioning specifically is :kw:`Run Keyword And Expect
+Error`, which is useful for testing that keywords report errors
+correctly. 
+
+Whether to use a unit- or acceptance-level testing approach depends on
+the context. If there is a need to simulate the actual system under
+test, it is often easier on the unit level. On the other hand,
+acceptance tests ensure that keywords do work through Robot
+Framework. If you cannot decide, of course it is possible to use both
+the approaches.
+
+
+Packaging libraries
+'''''''''''''''''''
+
+After a library is implemented, documented, and tested, it still needs
+to be distributed to the users. With simple libraries consisting of a
+single file, it is often enough to ask the users to copy that file
+somewhere and set the `library search path`_ accordingly. With more
+complicated libraries, package them to make the installation easier.
+
+Since libraries are normal programming code, they can be packaged
+using normal packaging tools. With Python, good options include
+distutils_, contained by Python's standard library, and the newer
+setuptools_. A benefit of these tools is that library modules are
+installed into a location that is automatically in the `library
+search path`_.
+
+When using Java, it is natural to package libraries into a JAR
+archive. The JAR package must be put into the `library search path`_
+before running tests, but it is easy to `create a start-up`__ script that
+does that automatically.
+
+__ `Creating start-up scripts`_
 
 
 Dynamic library API
@@ -1155,56 +1216,3 @@ the keyword name and arguments.
 
 A good example of using the hybrid API is Robot Framework's own
 `Telnet library`_.
-
-
-Testing libraries
-~~~~~~~~~~~~~~~~~
-
-Any non-trivial test library needs to be thoroughly tested to prevent
-bugs in them. Of course, this testing should be automated to make it
-easy to rerun tests when libraries are changed. 
-
-Both Python and Java have excellent unit testing tools, and they suite
-very well for testing libraries. There are no major differences in
-using them for this purpose compared to using them for some other
-testing. The developers familiar with these tools do not need to learn
-anything new, and the developers not familiar with them should learn
-them anyway.
-
-It is also easy to use Robot Framework itself for testing libraries
-and that way have actual end-to-end acceptance tests for them. There are
-plenty of useful keywords in the `BuiltIn library`_ for this
-purpose. One worth mentioning specifically is :kw:`Run Keyword And Expect
-Error`, which is useful for testing that keywords report errors
-correctly. 
-
-Whether to use a unit- or acceptance-level testing approach depends on
-the context. If there is a need to simulate the actual system under
-test, it is often easier on the unit level. On the other hand,
-acceptance tests ensure that keywords do work through Robot
-Framework. If you cannot decide, of course it is possible to use both
-the approaches.
-
-
-Packaging libraries
-~~~~~~~~~~~~~~~~~~~
-
-After a library is implemented, documented, and tested, it still needs
-to be distributed to the users. With simple libraries consisting of a
-single file, it is often enough to ask the users to copy that file
-somewhere and set the `library search path`_ accordingly. With more
-complicated libraries, package them to make the installation easier.
-
-Since libraries are normal programming code, they can be packaged
-using normal packaging tools. With Python, good options include
-distutils_, contained by Python's standard library, and the newer
-setuptools_. A benefit of these tools is that library modules are
-installed into a location that is automatically in the `library
-search path`_.
-
-When using Java, it is natural to package libraries into a JAR
-archive. The JAR package must be put into the `library search path`_
-before running tests, but it is easy to `create a start-up`__ script that
-does that automatically.
-
-__ `Creating start-up scripts`_
