@@ -73,17 +73,6 @@ Creating test data
 .. include:: CreatingTestData/AdvancedFeatures.txt
 
 
-.. TODO: Move these below next to other link targets 
-         BUT check are these used first
-.. _initialization file: `Initialization files`_
-.. _Keyword tables: `Creating user keywords`_
-.. _test case tables: `Test case syntax`_
-.. _--name: `Setting metadata`_
-.. _--doc: `Setting metadata`_
-.. _[Documentation]: `Test suite name and documentation`_
-.. _Robot Framework download page: https://cwiki.nokia.com/RobotFramework/DownloadPage
-
-
 Executing test cases
 ====================
 
@@ -137,8 +126,9 @@ Appendices
 .. _data-driven approach: `Workflow tests vs. data-driven tests`_
 .. _test case file: `Test case files`_
 .. _test suite directory: `Test suite directories`_
-.. _test suite initialization file: `Initialization file`_
-.. _test suite initialization files: `Initialization file`_
+.. _initialization file: `Initialization files`_
+.. _test suite initialization file: `Initialization files`_
+.. _test suite initialization files: `Initialization files`_
 .. _test case name: `Test case name and documentation`_
 .. _test case documentation: `Test case name and documentation`_
 .. _test suite name: `Test suite name and documentation`_
