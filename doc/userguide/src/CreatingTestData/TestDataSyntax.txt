@@ -184,24 +184,24 @@ used as a table name.
 .. table:: Different test data tables
    :class: tabular
 
-   +------------------+--------------------------------------------+-------------------+
-   |    Table name    |                 Used for                   |      Aliases      |
-   +==================+============================================+===================+
-   | Setting table    | 1) Importing `test libraries`_, `resource  | Setting, Settings,| 
-   |                  | files`_, and `variable files`_, 2) Defining| Metadata          | 
-   |                  | metadata for `test suites`_ and `test      |                   |
-   |                  | cases`_                                    |                   |
-   +------------------+--------------------------------------------+-------------------+
-   | Variable tables  | Defining variables_ that can be used       | Variable,         |
-   |                  | elsewhere in the test data                 | Variables         |
-   +------------------+--------------------------------------------+-------------------+
-   | Test case tables | `Creating test cases`_ from available      | Test Case,        |
-   |                  | keywords                                   | Test Cases        |
-   +------------------+--------------------------------------------+-------------------+
-   | Keyword tables   | `Creating user keywords`_ from existing    | Keyword, Keywords,| 
-   |                  | lower-level keywords                       | User Keyword,     |
-   |                  |                                            | User Keywords     |
-   +------------------+--------------------------------------------+-------------------+
+   +--------------+-------------------------------------------+-------------------+
+   |  Table name  |                 Used for                  |      Aliases      |
+   +==============+===========================================+===================+
+   | Setting      | | 1) Importing `test libraries`_,         | Setting, Settings,| 
+   | table        |   `resource files`_ and `variable files`_ | Metadata          | 
+   |              | | 2) Defining metadata for `test suites`_ |                   |
+   |              |   and `test cases`_                       |                   |
+   +--------------+-------------------------------------------+-------------------+
+   | Variable     | Defining variables_ that can be used      | Variable,         |
+   | table        | elsewhere in the test data                | Variables         |
+   +--------------+-------------------------------------------+-------------------+
+   | Test case    | `Creating test cases`_ from available     | Test Case,        |
+   | table        | keywords                                  | Test Cases        |
+   +--------------+-------------------------------------------+-------------------+
+   | Keyword      | `Creating user keywords`_ from existing   | Keyword, Keywords,| 
+   | table        | lower-level keywords                      | User Keyword,     |
+   |              |                                           | User Keywords     |
+   +--------------+-------------------------------------------+-------------------+
 
 
 
