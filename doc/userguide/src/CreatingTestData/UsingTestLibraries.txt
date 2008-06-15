@@ -21,8 +21,8 @@ Taking test libraries into use
 Instructions for taking test libraries into use are given in the
 subsections below.
 
-Using the Library setting
-'''''''''''''''''''''''''
+Using Library setting
+'''''''''''''''''''''
 
 Test libraries are normally imported using the :setting:`Library`
 setting in the Setting table and having the library name in the
@@ -53,8 +53,8 @@ cases, all the keywords in the imported library are available in that
 file. With resource files, those keywords are also available in other
 files using them.
 
-Using the Import Library keyword
-''''''''''''''''''''''''''''''''
+Using Import Library keyword
+''''''''''''''''''''''''''''
 
 Another possibility to take a test library into use is using the
 keyword :kw:`Import Library` from the `BuiltIn library`_. This keyword
@@ -91,14 +91,16 @@ automatically or have clear instructions on how to do it.
 __ `Adjusting library search path`_
 
 
-Setting a custom name to a test library
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Setting custom name to test library
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The library name is shown in test logs before keyword names and it
-must also be used when `handling keywords with the same name`_. The
-library name is got normally from the module or class name
-implementing it, but there are some situations where changing it is
-desirable:
+The library name is shown in test logs before keyword names, and if
+multiple keywords have the same name, they must be used so that the
+`keyword name is prefixed with the library name`__. The library name
+is got normally from the module or class name implementing it, but
+there are some situations where changing it is desirable:
+
+__ `Handling keywords with same names`_
 
 - There is a need to import the same library several times with
   different arguments. This is not possible otherwise.
@@ -110,7 +112,7 @@ desirable:
   different environments, but refer to them with the same name.
 
 - The library name is misleading or otherwise poor. In this case,
-  changing the actual name is a better solution.
+  changing the actual name is, of course, a better solution.
 
 
 The basic syntax for specifying the new name is having the text

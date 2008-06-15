@@ -1,27 +1,33 @@
 Documentation formatting
 ------------------------
 
-It is possible to use simple HTML formatting, such as bold and italic
-text and tables, both with the documentation of test cases and test
-suites and in the library documentation. The formatting is designed so
-that it is understandable and clear both as plain text and after the
-HTML transformation. It is also similar to the style used in most
-wikis.
+It is possible to use simple HTML formatting with `test suite`__,
+`test case`__ and `user keyword`__ documentation in the test data, as well
+as when `documenting test libraries`__.  The formatting is similar to
+the style used in most wikis, and it is designed to be understandable
+both as plain text and after the HTML transformation.
+
+__ `test suite documentation`_
+__ `test case documentation`_
+__ `user keyword documentation`_
+__ `Documenting libraries`_
 
 .. contents::
    :depth: 2 
    :local: 
 
-Applicable general rules on documentation formatting
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  
 
-Besides the formatting explained here, the documentation used for test
-cases and suites is subject to `general parsing rules`__ of the test
-data. For example, dividing text into lines and paragraphs requires
-having a literal newline character sequence (:code:`\\n`), as
-illustrated in the example below.
+Representing newlines
+~~~~~~~~~~~~~~~~~~~~~
+
+The documentation used for test suites, test cases and keywords is
+subject to `general parsing rules`__ of the test data. This means that
+normal newlines are not preserved, and dividing documentation into lines
+and paragraphs requires using a `literal newline character sequence`__
+(:code:`\\n`), as illustrated in the example below.
 
 __ `Test data syntax`_
+__ `Handling whitespace`_
 
 .. raw:: html
 
@@ -32,15 +38,26 @@ __ `Test data syntax`_
      </tr>
      <tr>
        <td>Documentation</td>
-       <td>First line.\n<br>Second line.\n<br>\n<br>Second paragraph.</td>
+       <td>
+         First line.\n<br>\n<br>
+         Second paragraph, this time\n<br>with multiple lines.
+       </td>
      </tr>
    </table>
 
+With library documentations normal newlines are enough, and for
+example the following keyword documentation would create same end result
+as the above test suite documentation.
 
-Furthermore, a very long documentation can also be `split into several
-rows`__ using :code:`...` syntax.
+.. sourcecode:: python
 
-__ `Dividing test data to several rows`_
+  def example_keyword():
+      """First line.
+
+      Second paragraph, this time
+      with multiple lines.
+      """
+      pass
 
 
 Bold and italic
@@ -48,23 +65,20 @@ Bold and italic
  
 Bold text can be created by having an asterisk before and after the
 selected word or words, for example :code:`\*this is bold*`. Italic
-style works similarly, but the special character is an underscore, for
-example :code:`\_italic_`. An asterisk or an underscore alone or in
-the middle of a word does not start bold or italic, but punctuation
-marks before them, and after the closing asterisk or underscore, are
-allowed. Both bold and italic are limited for formatting text on one
-line, and formatting spanning several lines must be explicitly
-restarted and stopped on every line.
+style works similarly, but the special character to use is an
+underscore, for example :code:`\_italic_`. It is also possible to have
+bold italic with the syntax :code:`\_*bold italic*_`.
 
-It is also possible to have bold italic with the syntax :code:`\_*bold
-italic*_`. Note that in this syntax, underscores must always be outside
-asterisks.
-
-Examples:
+An asterisk or an underscore alone, or in the middle of a word, does
+not start formatting, but punctuation characters before or after them
+are allowed. Both bold and italic are limited for formatting text on
+one line, and formatting spanning several lines must be explicitly
+started and stopped on every line.
 
 .. raw:: html
 
    <table class="tabular docutils">
+     <caption>Bold and italic examples</caption>
      <tr>
        <th>Unformatted</th>
        <th>Formatted</th>
@@ -102,21 +116,26 @@ clickable link. For example, :code:`http://some.url` turns into link.
 Tables
 ~~~~~~ 
 
-Tables are created using the pipe character with spaces around it ( | ) as
-a cell boundary and a newline (:code:`\\n`) as a row separator. The table
-always has a thin border and the text is left-aligned. Formatting using
-bold and italic works also in table cells::
+Tables are created using the pipe character with whitespace around it
+as a cell boundary and the newline as a row separator. In library
+documentations normal newlines are enough, but in test suite, test
+case and keyword documentations the explicit newline character
+sequence (:code:`\\n`) is needed::
 
-   | *xx* | *yy*  | *zz*  | \n
-   | _1_  | Hello | world | \n
-   | _2_  | Hi    |       | \n
+   | *A*  | *B*   | *C*   |\n
+   | _1_  | Hello | world |\n
+   | _2_  | Hi    |       |\n
 
-.. table:: An example table
+The created table always has a thin border and the text is
+left-aligned. Formatting using bold and italic works also in table
+cells, so it is possibe to create headers. For example the above
+documentation would be formatted like this:
+
+.. table:: 
    :class: tabular
 
    ========  ========  ========
-      xx        yy        zz
-   ========  ========  ========
+   **A**     **B**     **C**
    *1*       Hello     world
    *2*       Hi        \
    ========  ========  ========
@@ -126,11 +145,12 @@ Horizontal ruler
 ~~~~~~~~~~~~~~~~
  
 Horizontal rulers (the <hr> tag) make it possible to separate larger
-sections from each others. They can be created by having three hyphens
-alone in a line (:code:`\\n---\\n`). Example::
+sections from each others, and they can be created by having three
+hyphens alone in a line. With documentations in the test data literal
+newlines are, again, required::
 
    Some text here.\n
-    \n
-    ---\n
-    \n
+   \n
+   ---\n
+   \n
    More text...

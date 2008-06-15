@@ -1,34 +1,49 @@
-Time formats
-------------
+Time format
+-----------
 
-The time format syntax described below can be used with test case and
-user keyword timeouts, as well as with several keywords (for example,
-with the BuiltIn library's keywords :kw:`Sleep` and :kw:`Wait Until
-Keyword Succeeds`).
+Robot Framework has its own time format that is used by several
+keywords (for example :kw:`Sleep` and :kw:`Wait Until Keyword
+Succeeds`) as well as `test case`__ and `user keyword timeouts`_. This
+format is ment to be both flexible to use and easy to understand.
 
-It is possible to give the time as a number (not necessarily an
-integer), or as a string that is converted to a number and considered
-to be seconds (for example, 10, 0.5, or 42). The given time must be of
-the format "2 days 3 hours 4 minutes 5 seconds 6 milliseconds",
-following the rules listed below:
+__ `test case timeouts`_
 
-.. table:: Time format rules
-   :class: tabular
 
-   +-------------------------------------------+---------------------------------------+
-   |                 Rule                      |      Examples                         |
-   +===========================================+=======================================+   
-   | Digits with a zero value can be ignored.  | 1 minute                              |
-   |                                           +---------------------------------------+
-   |                                           | 2 minutes 10 seconds                  |   
-   +-------------------------------------------+---------------------------------------+
-   | The format is case- and space-insensitive.| days, day, d                          |
-   | Thus all of the formats in the examples   +---------------------------------------+ 
-   | are valid.                                | hours, hour, h                        |
-   |                                           +---------------------------------------+
-   |                                           | minutes, minute, mins, min, m         |  
-   |                                           +---------------------------------------+
-   |                                           | seconds, second, secs, sec, s         |
-   |                                           +---------------------------------------+
-   |                                           | milliseconds, millisecond, millis, ms |                                 
-   +-------------------------------------------+---------------------------------------+ 
+Time as number
+~~~~~~~~~~~~~~
+
+The time can always be given as a plain number, in which case it is
+interpreted to be seconds. Both integers and floating point numbers
+work, and it is possible to use either real numbers or strings
+containing numerical values. This format is useful, for example, when
+the actual time value is calculated somehow.
+
+
+Time as text
+~~~~~~~~~~~~
+
+Represening the time as text means using format like :code:`2 minutes
+42 seconds`, which is normally easier to understand than just having
+the value as seconds. It is, for example, not so easy to understand
+how long time :code:`4200` is in seconds, but :code:`1 hour 10
+minutes` is clear immediatelly.
+
+The basic idea of this format is having first a number and then a text
+specifying what time that number represents. Numbers can be either
+integers or floating point numbers, the whole format is case and space
+insensitive, and the available specifier texts are:
+
+* days, day, d
+* hours, hour, h
+* minutes, minute, mins, min, m
+* seconds, second, secs, sec, s
+* milliseconds, millisecond, millis, ms
+
+Examples::
+
+   1 min 30 secs
+   1.5 minutes
+   90 s
+   1 day 2 hours 3 minutes 4 seconds 5 milliseconds
+   1d 2h 3m 4s 5ms
+   

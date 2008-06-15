@@ -20,12 +20,10 @@ Listeners are taken into use from the command line with the
 :setting:`--listener` option, so that the name of the listener is
 given to it as an argument. The listener name is got from the name of
 the class implementing the listener interface, similarly as `test
-library names`__ are got from classes implementing them. The specified
+library names`_ are got from classes implementing them. The specified
 listeners must be in the same `module search path`_ where test
 libraries are searched from when they are imported. It is possible to take
 multiple listners into use by using this option several times.
-
-__ `Library and keyword names`_
 
 Examples::
 

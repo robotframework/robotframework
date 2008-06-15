@@ -52,7 +52,7 @@ Command line options for test execution
                           Tag` table in outputs.
   --listener <class>     `Sets a listener`_ for monitoring test execution. 
   -W, --monitorwidth <chars>  `Sets the width`_ of the monitor output. 
-  -C, --monitorcolors <on|off|force>  Specifies if `colors`_ are used in the console. 
+  -C, --monitorcolors <on|off|force>  `Specifies are colors`_ used in the console.
   -P, --pythonpath <path>   Additional locations where to `search test libraries`_ from when they are imported.
   -E, --escape <what:with>   `Escapes characters`_ that are problematic in the console.
   -A, --argumentfile <path>   A text file to `read more arguments`_ from. 
@@ -123,7 +123,7 @@ Command line options for post-processing outputs
 .. _Sets a title: `Setting titles`_
 
 .. _Sets the threshold level: `Setting log level`_
-.. _levels to show: `Configuring the displayed suite statistics`_
+.. _levels to show: `Configuring displayed suite statistics`_
 .. _Includes only these tags: `Including and excluding tag statistics`_
 .. _Excludes these tags: `Includes only these tags`_
 .. _combined statistics based on tags: `Generating combined tag statistics`_
@@ -132,7 +132,7 @@ Command line options for post-processing outputs
 
 .. _Sets a listener: `Setting listeners`_
 .. _Sets the width: `Controlling the monitor output`_
-.. _colors: `Sets the width`_
+.. _Specifies are colors: `Sets the width`_
 .. _search test libraries: `library search path`_
 .. _Escapes characters: `Escaping options`_
 .. _read more arguments: `Using argument files`_
@@ -142,5 +142,3 @@ Command line options for post-processing outputs
 .. _Removes keyword data: `Removing keywords from outputs`_
 .. _starting time: `Setting times for combined outputs`_
 .. _ending time: `starting time`_
-
-

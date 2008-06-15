@@ -243,23 +243,24 @@ When executing a large number of test cases, the size of log files can
 increase to the extent that opening them in the browser is slow. A
 solution for this problem is splitting the log file into smaller
 pieces so that the top-level log acts as an index having links to
-other pieces.
-
-Splitting can be activated with the command line option
-:setting:`--splitoutputs`, which takes split level as its
-argument. When it is used, both XML output files and log files are
-split from the specified level, but only one report is always created.
-
-*TODO: Continue here*
-
+other pieces. Splitting can be activated with the command line option
+:setting:`--splitoutputs`, which takes the level where to split test suites from as an argument. With this option, both XML output files and log files are
+split from the specified level.
 
 When outputs are split, a top-level output file contains the general 
-information about the whole test execution and it links to sublevel output 
+information about the whole test execution and it links to lower-level output 
 files, which contain details of some suites and tests. The exact contents of 
 each file depends on the split level and the directory structure of the test data.
-As the examples below show, the test data needs to be structured in a 
-way that supports splitting outputs, if you wish to use that feature.
 
+**TODO**
+
+|                                1
+|                        /               \    
+|               1.1                              1.2
+|            /       \                        /        \
+|      1.1.1           1.1.2               1.2.1        1.2.2
+|    /       \       /       \          /    |    \
+| 1.1.1.1 1.1.1.2 1.1.2.1 1.1.2.2 1.2.1.1 1.2.1.2 1.2.1.3
 
 Unbalanced output
 '''''''''''''''''
@@ -319,8 +320,8 @@ files. All these options work both when executing test cases and when
 post-processing outputs.
 
 
-Configuring the displayed suite statistics
-''''''''''''''''''''''''''''''''''''''''''
+Configuring displayed suite statistics
+''''''''''''''''''''''''''''''''''''''
 
 When a deeper suite structure is executed, showing all the test suite
 levels in the :name:`Statistics by Suite` table may make the table

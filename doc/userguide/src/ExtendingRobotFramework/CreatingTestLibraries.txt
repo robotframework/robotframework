@@ -1,6 +1,8 @@
 Creating test libraries
 -----------------------
 
+**TODO** This chapter is under reorganization by Peke
+
 Robot Framework's actual testing capabilities are provided by test
 libraries. There are many existing libraries, some of which are even
 bundled with the core framework, but there is still often a need to
@@ -13,8 +15,11 @@ and straightforward.
    :local: 
 
 
+Introduction
+~~~~~~~~~~~~
+
 Supported programming languages
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+'''''''''''''''''''''''''''''''
 
 Robot Framework itself is written with Python_ and, naturally, test libraries
 extending it can be implemented using the same
@@ -41,11 +46,11 @@ Framework in the future.
 
 
 Different test library APIs
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
+'''''''''''''''''''''''''''
 
 Robot Framework has three different test library APIs. 
 
-Normal API 
+Static API 
 
   The simplest approach is having a module (in Python) or a class
   (in Python or Java) with methods the names of which map more or less
@@ -61,22 +66,22 @@ Dynamic API
   keyword with given arguments. The names of the keywords to implement, as
   well as how they are executed, can be determined dynamically at
   runtime, but reporting the status, logging and returning is done
-  similarly as in a normal API.
+  similarly as in the static API.
 
 Hybrid API
 
-  This is a hybrid between a normal and a dynamic API. Libraries are
+  This is a hybrid between the static and the dynamic API. Libraries are
   classes with a method telling what keywords they implement, but
   those keywords must be available directly. Everything else except
   discovering what keywords are implemented is similar as in the
-  normal API.
+  static API.
   
 All these APIs are described in this chapter. Everything is based on
-how the normal API works, so its functions are discussed first. How
+how the static API works, so its functions are discussed first. How
 the `dynamic library API`_ and the `hybrid library API`_ differ from it
 is then discussed in sections of their own.
 
-A Python library using the normal API can be implemented either as a
+A Python library using the static API can be implemented either as a
 module or a class. Dynamic and hybrid APIs require libraries to be
 classes, and with Java the language itself allows classes.
 
@@ -85,9 +90,14 @@ should be easy to understand also for Java-only developers. In those
 few cases where APIs have differences, both usages are explained with
 adequate examples.
 
+Library stuff
+~~~~~~~~~~~~~
 
-Library and keyword names
-~~~~~~~~~~~~~~~~~~~~~~~~~
+*TODO* Better name
+
+
+Test library names
+''''''''''''''''''
 
 The name of a test library that is used when a library is imported is
 the same as the name of the module or class implementing it. For
@@ -110,11 +120,172 @@ package must be imported with the name :code:`com.mycompany.myproject.MyLib`.
 
 .. Tip:: If the library name is really long, for example when the Java
          package name is long, it is recommended to give the library a
-         simpler alias by using the `With Name`__ syntax.
+         simpler alias by using the `With Name syntax`_.
 
-__ `Setting a custom name to a test library`_
 
-When the normal library API is used, Robot Framework uses reflection
+Providing arguments to test libraries
+'''''''''''''''''''''''''''''''''''''
+
+All test libraries implemented as classes can take arguments. These
+arguments are specified in the Setting table after the library name,
+and when Robot Framework creates an instance of the imported library
+it passes them to its constructor. Libraries implemented as a module
+cannot take any arguments and trying to use those results in an error.
+
+The number of arguments needed by the library is the same
+as the number of arguments accepted by the library's
+constructor. The default values and variable number of arguments work
+similarly as with `keyword arguments`_, with the exception that there
+is no variable argument support for Java libraries. Arguments passed
+to the library, as well as the library name itself, can be specified
+using variables, so it is possible to alter them for example from the command
+line.
+
+
+.. table:: Importing a test library with arguments
+   :class: example
+
+   =========  ===========  =========  =======
+    Setting      Value       Value     Value
+   =========  ===========  =========  =======
+   Library    MyLibrary    10.0.0.1   8080
+   Library    AnotherLib   ${VAR}     \
+   =========  ===========  =========  =======
+
+
+Example implementations, first one in Python and second in Java, for
+the libraries used in the above example:
+
+
+.. sourcecode:: python
+
+  from example import Connection
+
+  class MyLibrary:
+
+      def __init__(self, host, port=80):
+          self._conn = Connection(host, int(port))
+
+      def send_message(self, message):
+          self._conn.send(message)
+
+
+.. sourcecode:: java
+
+   public class AnotherLib {
+
+       private String setting = null;
+
+       public AnotherLib(String setting) {
+           this.setting = setting;
+       }
+
+       public void doSomething() {
+           if this.setting.equals("42") {
+               // do something ...
+           }
+       }
+   }
+
+
+Library scope
+'''''''''''''
+
+Libraries implemented as classes can have an internal state, which can be
+altered by keywords and with arguments to the constructor of the
+library. Because the state can affect how keywords actually behave, it
+is important to make sure that changes in one test case do not
+accidentally affect other test cases. This kind of dependencies may
+create hard-to-debug problems, for example, when new test cases are
+added and they use the library inconsistently.
+
+Robot Framework attempts to keep test cases independent from each
+other: by default, it creates new instances of test libraries for
+every test case. However, this behavior is not always desirable,
+because sometimes test cases should be able to share a common
+state. Additionally, all libraries do not have a state and creating
+new instances of them is simply not needed.
+
+Test libraries can control when new libraries are created with a
+class attribute :code:`ROBOT_LIBRARY_SCOPE` . This attribute must be
+a string and it can have the following three values:
+
+`TEST CASE`:code:
+  A new instance is created for every test case. A possible suite setup
+  and suite teardown share yet another instance. This is the default.
+
+`TEST SUITE`:code:
+  A new instance is created for every test suite. The lowest-level test
+  suites, created from test case files and containing test cases, have
+  instances of their own, and higher-level suites all get their own instances
+  for their possible setups and teardowns.
+
+`GLOBAL`:code: 
+  Only one instance is created during the whole test execution and it
+  is shared by all test cases and test suites. Libraries created from
+  modules are always global.
+
+
+When the :code:`TEST SUITE` or :code:`GLOBAL` scopes are used with test
+libraries that have a state, it is recommended that libraries have some
+special keyword for cleaning up the state. This keyword can then be
+used, for example, in a suite setup or teardown to ensure that test
+cases in the next test suites can start from a known state. For example,
+:code:`SeleniumLibrary` uses the :code:`GLOBAL` scope to enable
+using the same browser in different test cases without having to
+reopen it, and it also has the :kw:`Close All Browsers` keyword for
+easily closing all open browsers.
+
+
+Example Python library using :code:`TEST SUITE` scope:
+
+.. sourcecode:: python
+
+
+    class ExampleLibrary:
+
+        ROBOT_LIBRARY_SCOPE = 'TEST SUITE'
+
+        def __init__(self):
+            self._counter = 0
+  
+        def count(self):
+            self._counter += 1
+            print self._counter
+
+        def clear_counter(self):
+            self._counter = 0
+
+
+Example Java library using :code:`GLOBAL` scope:
+
+.. sourcecode:: java
+
+    public class ExampleLibrary {
+
+        public static String ROBOT_LIBRARY_SCOPE = "GLOBAL";
+
+        private int counter = 0;
+
+        public void count() {
+            counter += 1;
+            System.out.println(counter);
+        }
+
+        public void clearCounter() {
+            counter = 0;
+        }
+    }
+
+
+
+Creating static keywords
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+Keyword names
+'''''''''''''
+
+When the static library API is used, Robot Framework uses reflection
 to find out what methods the library implements. With `dynamic library
 API`_ and `hybrid library API`_, keyword names are got from the
 library directly. Naturally, Robot Framework can see only public
@@ -182,11 +353,10 @@ case, is excluded.
    ===========  ===========  ============  ============
 
 
-
 Keyword arguments
-~~~~~~~~~~~~~~~~~
+'''''''''''''''''
 
-With a normal and hybrid API, the information on how many arguments a
+With a static and hybrid API, the information on how many arguments a
 keyword needs is got directly from the method that implements it.
 Libraries using a `dynamic library API`_ have other means for getting
 this information, so this section is not relevant to them.
@@ -213,7 +383,7 @@ Example Python keywords taking different numbers of arguments:
 
 
 Default values
-''''''''''''''
+``````````````
 
 It is often useful that some of the arguments that a keyword uses have
 default values. Python and Java have different syntaxes for handling these
@@ -289,7 +459,7 @@ The keywords above can be used in the test data as illustrated in the example be
 
 
 Variable number of arguments
-''''''''''''''''''''''''''''
+````````````````````````````
 
 Robot Framework supports also keywords that take any number of
 arguments. Similarly as with the default values, the actual syntax to use
@@ -371,7 +541,7 @@ the limitations explained above.
 
 
 Argument types
-''''''''''''''
+``````````````
 
 Robot Framework does not do any argument type checking when it uses
 keywords. Since arguments in Python do not have any type, calling a Python
@@ -383,15 +553,17 @@ coercion automatically, so, for example, a method expecting
 :code:`double` can be called with any number, but not with a string.
 
 
-Reporting keyword status
-~~~~~~~~~~~~~~~~~~~~~~~~
+Communicating with Robot Framwork
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 After a method implementing a keyword is called, it can use any
 mechanism to communicate with the system under test. It can then also
 send messages to Robot Framework's log file, return information that
 can be saved to variables and, most importantly, report if the
-keyword passed or not. This last feature is discussed in this
-section and others in the next ones.
+keyword passed or not. 
+
+Reporting keyword status
+''''''''''''''''''''''''
 
 Reporting keyword status is done simply using exceptions. If a method
 raises an exception, the keyword status is FAIL, and if it returns
@@ -413,7 +585,7 @@ this happens.
 
 
 Logging information
-~~~~~~~~~~~~~~~~~~~
+'''''''''''''''''''
 
 Exception messages are not the only way to give information to the
 users. In addition to that, methods can also send messages to `log
@@ -508,7 +680,7 @@ be used to make messages slightly more visible.
 
 
 Returning values
-~~~~~~~~~~~~~~~~
+''''''''''''''''
 
 The final way for keywords to communicate back to the core framework
 is returning information retrieved from the system under test or
@@ -580,160 +752,6 @@ __ `List variables`_
    ================  ==================  ==================  =======================
 
 
-Providing arguments to libraries
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-All test libraries implemented as classes can take arguments. These
-arguments are specified in the Setting table after the library name,
-and when Robot Framework creates an instance of the imported library
-it passes them to its constructor. Libraries implemented as a module
-cannot take any arguments and trying to use those results in an error.
-
-The number of arguments needed by the library is the same
-as the number of arguments accepted by the library's
-constructor. The default values and variable number of arguments work
-similarly as with `keyword arguments`_, with the exception that there
-is no variable argument support for Java libraries. Arguments passed
-to the library, as well as the library name itself, can be specified
-using variables, so it is possible to alter them for example from the command
-line.
-
-
-.. table:: Importing a test library with arguments
-   :class: example
-
-   =========  ===========  =========  =======
-    Setting      Value       Value     Value
-   =========  ===========  =========  =======
-   Library    MyLibrary    10.0.0.1   8080
-   Library    AnotherLib   ${VAR}     \
-   =========  ===========  =========  =======
-
-
-Example implementations, first one in Python and second in Java, for
-the libraries used in the above example:
-
-
-.. sourcecode:: python
-
-  from example import Connection
-
-  class MyLibrary:
-
-      def __init__(self, host, port=80):
-          self._conn = Connection(host, int(port))
-
-      def send_message(self, message):
-          self._conn.send(message)
-
-
-.. sourcecode:: java
-
-   public class AnotherLib {
-
-       private String setting = null;
-
-       public AnotherLib(String setting) {
-           this.setting = setting;
-       }
-
-       public void doSomething() {
-           if this.setting.equals("42") {
-               // do something ...
-           }
-       }
-   }
-
-
-Library scope
-~~~~~~~~~~~~~
-
-Libraries implemented as classes can have an internal state, which can be
-altered by keywords and with arguments to the constructor of the
-library. Because the state can affect how keywords actually behave, it
-is important to make sure that changes in one test case do not
-accidentally affect other test cases. This kind of dependencies may
-create hard-to-debug problems, for example, when new test cases are
-added and they use the library inconsistently.
-
-Robot Framework attempts to keep test cases independent from each
-other: by default, it creates new instances of test libraries for
-every test case. However, this behavior is not always desirable,
-because sometimes test cases should be able to share a common
-state. Additionally, all libraries do not have a state and creating
-new instances of them is simply not needed.
-
-Test libraries can control when new libraries are created with a
-class attribute :code:`ROBOT_LIBRARY_SCOPE` . This attribute must be
-a string and it can have the following three values:
-
-`TEST CASE`:code:
-  A new instance is created for every test case. A possible suite setup
-  and suite teardown share yet another instance. This is the default.
-
-`TEST SUITE`:code:
-  A new instance is created for every test suite. The lowest-level test
-  suites, created from test case files and containing test cases, have
-  instances of their own, and higher-level suites all get their own instances
-  for their possible setups and teardowns.
-
-`GLOBAL`:code: 
-  Only one instance is created during the whole test execution and it
-  is shared by all test cases and test suites. Libraries created from
-  modules are always global.
-
-
-When the :code:`TEST SUITE` or :code:`GLOBAL` scopes are used with test
-libraries that have a state, it is recommended that libraries have some
-special keyword for cleaning up the state. This keyword can then be
-used, for example, in a suite setup or teardown to ensure that test
-cases in the next test suites can start from a known state. For example,
-:code:`SeleniumLibrary` uses the :code:`GLOBAL` scope to enable
-using the same browser in different test cases without having to
-reopen it, and it also has the :kw:`Close All Browsers` keyword for
-easily closing all open browsers.
-
-
-Example Python library using :code:`TEST SUITE` scope:
-
-.. sourcecode:: python
-
-
-    class ExampleLibrary:
-
-        ROBOT_LIBRARY_SCOPE = 'TEST SUITE'
-
-        def __init__(self):
-            self._counter = 0
-  
-        def count(self):
-            self._counter += 1
-            print self._counter
-
-        def clear_counter(self):
-            self._counter = 0
-
-
-Example Java library using :code:`GLOBAL` scope:
-
-.. sourcecode:: java
-
-    public class ExampleLibrary {
-
-        public static String ROBOT_LIBRARY_SCOPE = "GLOBAL";
-
-        private int counter = 0;
-
-        public void count() {
-            counter += 1;
-            System.out.println(counter);
-        }
-
-        public void clearCounter() {
-            counter = 0;
-        }
-    }
-
 
 Documenting libraries
 ~~~~~~~~~~~~~~~~~~~~~
@@ -797,14 +815,14 @@ library documented as above. However, outputs from these tools can be slightly
 technical for some users. Another alternative is using Robot
 Framework's own documentation tool `libdoc.py`_. This tool can
 create a library documentation from both Python and Java libraries
-using the normal library API, such as the ones above, but it also handles
+using the static library API, such as the ones above, but it also handles
 libraries using the `dynamic library API`_ and `hybrid library API`_.
 
 The first line of a keyword documentation is used for a special
 purpose and should contain a short overall description of the
 keyword. It is used as a short documentation, for example as a tool
 tip, by `libdoc.py`_ and also shown in the test logs. However, the latter
-does not work with Java libraries using the normal API,
+does not work with Java libraries using the static API,
 because their documentations are lost in compilation and not available
 at runtime.
 
@@ -812,23 +830,23 @@ at runtime.
 Dynamic library API
 ~~~~~~~~~~~~~~~~~~~
 
-The dynamic API is in most ways similar to the normal API. For
+The dynamic API is in most ways similar to the static API. For
 example, reporting the keyword status, logging and returning values
 works exactly the same way. Most importantly, there are no differences
 in importing dynamic libraries and using their keywords compared to
 other libraries, so you do not even need to know what APIs the
 libraries use.
 
-The only difference between normal and dynamic libraries is the way
+The only difference between static and dynamic libraries is the way
 how Robot Framework discovers what keywords the library implements,
 what arguments and documentation they have and how those keywords are
-actually executed. With the normal API, all this is done using
+actually executed. With the static API, all this is done using
 reflection (except for the documentation of Java libraries), but
 dynamic libraries have special methods that are used for these
 purposes.
 
 One of the benefits of the dynamic API is that you have more
-flexibility in organizing your library. With the normal API, you have all
+flexibility in organizing your library. With the static API, you have all
 keywords in one class (or module), whereas with the dynamic API, you can,
 for example, implement each keyword as a separate class if you
 want. This use case is not so important with Python, because
@@ -874,7 +892,7 @@ example, :code:`['first keyword', 'second keyword']`,
 
 Dynamic libraries must always have this method. If it is missing, or
 if calling it fails for some reason, the library is considered a
-normal library, instead.
+static library, instead.
 
 
 Running keywords
@@ -892,7 +910,7 @@ the test data.
 
 After the library has got the keyword name and arguments, it can
 execute the keyword freely, but it must use the same mechanism to
-communicate with the framework as normal libraries. This
+communicate with the framework as static libraries. This
 means using exceptions for reporting keyword status, logging by
 writing to the standard output and using the return statement in
 :code:`run_keyword` for returning something.
@@ -932,7 +950,7 @@ actually expect. This is done with the :code:`get_keyword_arguments`
 keyword as an argument and returns a list of strings (a string array
 in Java) containing the arguments accepted by that keyword.
 
-Similarly as normal keywords, dynamic keywords can require any number
+Similarly as static keywords, dynamic keywords can require any number
 of arguments, have default values and accept a variable number of
 arguments. The syntax for how to represent all these different
 situations is explained in the following table. Note that the examples
@@ -986,7 +1004,7 @@ a string. This method also only works starting from Robot Framework
 version 1.8.4.
 
 The returned documentation is used similarly as the keyword
-documentation string with normal libraries implemented with
+documentation string with static libraries implemented with
 Python. The main use case is getting keywords' documentations into a
 library documentation generated with `libdoc.py`_. Additionally,
 the first line of the documentation (until the first :code:`\\n`) is
@@ -1041,7 +1059,7 @@ Hybrid library API
 ~~~~~~~~~~~~~~~~~~
 
 The hybrid library API is, as its name implies, a hybrid between the
-normal API and the dynamic API. Just as with the dynamic API, it is
+static API and the dynamic API. Just as with the dynamic API, it is
 possible to implement a library using the hybrid API only as a class.
 
 
@@ -1059,7 +1077,7 @@ Running keywords
 
 In the hybrid API, there is no :code:`run_keyword` method for executing
 keywords. Instead, Robot Framework uses reflection to find methods
-implementing keywords, similarly as with the normal API. A library
+implementing keywords, similarly as with the static API. A library
 using the hybrid API can either have those methods implemented
 directly or, more importantly, it can handle them dynamically.
 
@@ -1104,16 +1122,16 @@ defined. For example, the library above would not work correctly, if
 The hybrid API is not very useful with Java, because it is not
 possible to handle missing methods with it. Of course, it is possible
 to implement all the methods in the library class, but that brings few
-benefits compared to the normal API.
+benefits compared to the static API.
 
 
 Getting keyword arguments and documentation
 '''''''''''''''''''''''''''''''''''''''''''
 
 When this API is used, Robot Framework uses reflection to find the
-methods implementing keywords, similarly as with the normal API. After
+methods implementing keywords, similarly as with the static API. After
 getting a reference to the method, it searches for arguments and
-documentation from it, in the same way as when using the normal
+documentation from it, in the same way as when using the static
 API. Thus there is no need for special methods for getting arguments
 and documentation like there is with the dynamic API.
 
@@ -1186,8 +1204,7 @@ search path`_.
 
 When using Java, it is natural to package libraries into a JAR
 archive. The JAR package must be put into the `library search path`_
-before running tests, but it is easy to create a start-up script that
+before running tests, but it is easy to `create a start-up`__ script that
 does that automatically.
 
-.. _distutils: http://docs.python.org/dist/dist.html
-.. _setuptools: http://peak.telecommunity.com/DevCenter/setuptools
+__ `Creating start-up scripts`_

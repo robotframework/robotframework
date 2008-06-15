@@ -69,12 +69,13 @@ only import settings (:setting:`Library`, :setting:`Resource`, and
 exactly the same way as in test case files.
 
 If several resource files have a user keyword with the same name, they
-must be used so that the keyword name is prefixed with the resource file
-name without the extension (for example, :kw:`myresources.Some
-Keyword` and :kw:`common.Some Keyword`). For more information, see
-`Handling keywords with the same name`_. Moreover, if several resource
+must be used so that the `keyword name is prefixed with the resource
+file name`__ without the extension (for example, :kw:`myresources.Some
+Keyword` and :kw:`common.Some Keyword`). Moreover, if several resource
 files contain the same variable, the one that is imported first is
 taken into use.
+
+__ `Handling keywords with same names`_
 
 .. table:: An example resource file 
    :class: example

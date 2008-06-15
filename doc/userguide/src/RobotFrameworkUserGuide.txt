@@ -159,6 +159,7 @@ Appendices
 .. _test library: `test libraries`_
 .. _library keyword: `test libraries`_
 .. _library keywords: `library keyword`_
+.. _`With Name syntax`: `Setting custom name to test library`_
 .. _library API: `Creating test libraries`_
 .. _automatic variable: `Automatic variables`_
 .. _HTML formatting: `Documentation formatting`_
@@ -217,4 +218,5 @@ Appendices
 .. _Java: http://java.sun.com/
 .. _reStructuredText: http://docutils.sourceforge.net/rst.html
 .. _Pygments: http://pygments.org/
-
+.. _distutils: http://docs.python.org/dist/dist.html
+.. _setuptools: http://peak.telecommunity.com/DevCenter/setuptools

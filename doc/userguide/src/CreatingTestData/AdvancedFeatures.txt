@@ -6,8 +6,8 @@ Advanced features
    :local:
 
 
-Handling keywords with the same name
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Handling keywords with same names
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Keywords that are used with Robot Framework are either `library
 keywords`_ or `user keywords`_. The former come from `standard
@@ -60,10 +60,8 @@ With library keywords, the long format means only using the format
 somewhere else. If the library is in a module or package, the full
 module or package name must be used (for example, 
 :kw:`com.company.Library.Some Keyword`). If a custom name is given to a
-library using the `WITH NAME syntax`__, the specified name must be
+library using the `WITH NAME syntax`_, the specified name must be
 used also in the full keyword name.
-
-__ `Setting a custom name to a test library`_
 
 Resource files are specified in the full keyword name, similarly as
 library names. The name of the resource is derived from the basename
@@ -109,13 +107,11 @@ possible default value.
 
 Regardless of where the test timeout is defined, the first cell after
 the setting name contains the duration of the timeout. The duration
-must be given in the `time format used in Robot Framework`__, that is,
-either directly in seconds or in a format :code:`1 hour 2 minutes
-3 seconds`. It must be noted that there is always some overhead by the
+must be given in Robot Framework's `time format`_, that is,
+either directly in seconds or in a format like :code:`1 minute
+30 seconds`. It must be noted that there is always some overhead by the
 framework, and timeouts shorter than one second are thus not
 recommended.
-
- __ `Time formats`_
 
 The default error message displayed when a test timeout occurs is
 :msg:`Test timeout <time> exceeded`. It is also possible to use custom
