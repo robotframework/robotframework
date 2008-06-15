@@ -24,6 +24,13 @@ import misc
 
 
 _WHITESPACE_REGEXP = re.compile('\s+')
+if os.sep == '\\':
+    _CASE_INSENSITIVE_FILESYSTEM = True
+else:
+    try:
+        _CASE_INSENSITIVE_FILESYSTEM = os.listdir('/tmp') == os.listdir('/TMP')
+    except:
+        _CASE_INSENSITIVE_FILESYSTEM = False
 
 
 def normalize(string, ignore=[], caseless=True, spaceless=True):
@@ -56,7 +63,7 @@ def normpath(path, normcase=True):
     if misc.is_url(path):
         return path
     path = _absnorm(path)
-    if normcase and _is_case_insensitive_filesystem():
+    if normcase and _CASE_INSENSITIVE_FILESYSTEM:
         path = path.lower()
     if os.sep == '\\' and len(path) == 2 and path[1] == ':':
         path += '\\'
