@@ -82,18 +82,26 @@ usage is displayed with '--help' and also shown below::
     $ atest/run_atests.py /usr/bin/jython22 atest/robot/core/variables.html
 
 
-To run all the acceptance tests, execute the 'atest/robot' folder entirely.
+To run all the acceptance tests, execute the 'atest/robot' folder entirely:
+
+    python atest/run_atests.py python atest/robot
+
+
 A sub test suite can be executed simply by running the folder or file 
 containing it. On modern machines running all acceptance tests ought to
 take less than ten minutes with Python, but with Jython the execution time 
 is considerably longer. This is due to Jython being somewhat slower than
 Python in general, but the main reason is that the JVM is started by
-acceptance dozens of times and it always takes few seconds.
+acceptance dozens of times and it always takes few seconds. 
 
 When acceptance tests are run, both Python and Jython interpreter should be
 used to verify interoperability with both supported interpreters. Tests
 can (and should) also be run using different Python and Jython versions and
-on different operating systems. 
+on different operating systems. Since running tests on Jython takes quite a
+lot time, it is sometimes a good idea to run only those tests that are not 
+executed with Python with it:
+
+    python atest/run_atests.py jython --exclude pybot atest/robot
 
 The results of the test execution are written to 'results' folder. The 
 directory contains output, log and report files that are named based on
