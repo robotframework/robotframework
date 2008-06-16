@@ -1,3 +1,4 @@
+.. role:: path
 .. role:: cli
 
 ============
@@ -18,7 +19,7 @@ Options
 -------
 
   -r, --report <file>       The HTML report file (created from the input files).
-                            The default is 'robotdiff.html'.
+                            The default is :path:`robotdiff.html`.
   -n, --name <name>         The name for the test run. Different test runs can be named
                             with this option. However, there must be as many 
                             names as there are input files. By default, the name
@@ -26,10 +27,10 @@ Options
                             with the same file name are distinguished by adding 
                             as many parent directories to the names as needed.
   -t, --title <title>       The title for the generated diff report. The default
-                            title is 'Diff Report'.
+                            title is "Diff Report".
   -E, --escape <what:with>  Escapes certain characters that are problematic in the
-                            console. 'what' is the name of the character to 
-                            escape and 'with' is the string to escape it with.
+                            console. "what" is the name of the character to 
+                            escape and "with" is the string to escape it with.
                             The available characters to escape: %(ESCAPES)s
                             Example: :cli:`-\\-escape space:_ -\\-title My_Diff_Report`
   -h, --help                Prints this usage instruction.

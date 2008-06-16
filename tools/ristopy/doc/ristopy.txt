@@ -47,7 +47,7 @@ Options
   --version              Prints the version information.
 
 
-Additionally, :cli:`---` can be used to group options when creating multiple 
+Additionally, :opt:`---` can be used to group options when creating multiple 
 images at once.
 
 
@@ -116,7 +116,7 @@ Preconditions
  
 risto.py requires Python. It has been tested both on releases 2.4 and
 2.5, and it should work also in 2.3. Also some Robot Framwork modules are
-needed, and thus some Robot Framework 1.8 version needs to be
+needed, and thus some Robot Framework version 1.8 needs to be
 installed.
 
 The Matplotlib tool is used for plotting graphs, and it needs to be

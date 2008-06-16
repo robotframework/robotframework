@@ -1,3 +1,5 @@
+.. role:: msg
+
 ================
 statuschecker.py
 ================
@@ -27,11 +29,11 @@ file and it is edited in place.
 Defining the expected test status
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-By default, all test cases are expected to 'PASS' and have no message. Changing
-the expected status to 'FAIL' is done by having the word 'FAIL' (in uppercase)
+By default, all test cases are expected to :msg:`PASS` and have no message. Changing
+the expected status to :msg:`FAIL` is done by having the word "FAIL" (in uppercase)
 somewhere in the test case documentation. The expected error message must then be
-given after 'FAIL'. The error message can also be specified as a regular expression
-by prefixing it with 'REGEXP:'. Having spaces between the status, the message
+given after "FAIL". The error message can also be specified as a regular expression
+by prefixing it with "REGEXP:". Having spaces between the status, the message
 or the possible "regexp" prefix is optional. 
 
 Defining the expected keyword log messages
@@ -44,11 +46,11 @@ using a syntax such as::
 
 
 For example, the following documentation expects that the test case fails with the 
-message 'Expected message', and in addition, the second log message of the first keyword
-is 'Log message'::
+message :msg:`Expected message`, and in addition, the second log message of the first keyword
+is :msg:`Log message`::
 
     FAIL: Expected failure LOG 1:2 Log message
 
-The message index (the number after ':') is by default 1, so if you check the first
+The message index (the number after ":") is by default 1, so if you check the first
 log message of the given keyword, it may be omitted. 
 
