@@ -1,16 +1,16 @@
 Using listener interface
 ------------------------
 
-.. contents:: 
-   :depth: 2
-   :local: 
-
 Robot Framework has a listener interface that can be used to receive
 notifications about test execution. Listeners are classes with certain
 special methods, and they can be implemented both with Python and
 Java. Example uses of the listener interface include external test
 monitors, sending a mail message when a test fails, and communicating with
 other systems.
+
+.. contents:: 
+   :depth: 2
+   :local: 
 
 
 Taking listeners into use
