@@ -130,7 +130,7 @@ can be created using the command line option :opt:`--summary
 .. figure:: summary_passed.png
    :width: 550
    :height: 395
-   :target: summary_passed.html   
+   :target: summary_passed.html
 
    An example summary file
 

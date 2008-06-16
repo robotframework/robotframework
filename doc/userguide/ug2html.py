@@ -115,14 +115,20 @@ if os.path.exists(OUTDIR):
 else:
     os.mkdir(OUTDIR)
 
-def copy_figures(filename):
+def copy_figures_and_targets(filename):
     dirname = os.path.dirname(filename)
-    images = [ line[12:] for line in open(filename).read().splitlines() if line.startswith(".. figure") ]
+    lines = open(filename).read().splitlines()
+    images = [ line[12:] for line in lines if line.startswith(".. figure") ]
     for image in images:
         shutil.copy(os.path.join(dirname, image), OUTDIR)
+    targets = [ line[12:] for line in lines if line.startswith("   :target:")]
+    for target in targets:
+        target_path = os.path.join(dirname, target)
+        if os.path.isfile(target_path):
+            shutil.copy(target_path, OUTDIR)
 
 for filename in glob.glob('src/*/*.txt') + glob.glob('../../tools/*/doc/*.txt'):
-    copy_figures(filename)
+    copy_figures_and_targets(filename)
 
 
 for doc in glob.glob('../libraries/*.html') + glob.glob('../../tools/*/doc/*.html'):
