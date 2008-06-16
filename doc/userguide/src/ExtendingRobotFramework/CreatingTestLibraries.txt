@@ -5,7 +5,7 @@ Robot Framework's actual testing capabilities are provided by test
 libraries. There are many existing libraries, some of which are even
 bundled with the core framework, but there is still often a need to
 create new ones. This task is not too complicated because, as this
-chapter illustrates, Robot Framework's library API is really simple
+chapter illustrates, Robot Framework's library API is simple
 and straightforward.
 
 .. contents::
@@ -19,8 +19,8 @@ Introduction
 Supported programming languages
 '''''''''''''''''''''''''''''''
 
-Robot Framework itself is written with Python_ and test libraries
-extending it can, naturally, be implemented using the same
+Robot Framework itself is written with Python_, so naturally, test 
+libraries extending it can be implemented using the same
 language. Additionally, it is possible to write libraries using Java_,
 which requires running the framework on the Jython_ interpreter. Pure
 Python code works both on Python and Jython interpreters, assuming
@@ -134,9 +134,9 @@ Providing arguments to test libraries
 
 All test libraries implemented as classes can take arguments. These
 arguments are specified in the Setting table after the library name,
-and when Robot Framework creates an instance of the imported library
+and when Robot Framework creates an instance of the imported library,
 it passes them to its constructor. Libraries implemented as a module
-cannot take any arguments and trying to use those results in an error.
+cannot take any arguments, so trying to use those results in an error.
 
 The number of arguments needed by the library is the same
 as the number of arguments accepted by the library's
@@ -144,7 +144,7 @@ constructor. The default values and variable number of arguments work
 similarly as with `keyword arguments`_, with the exception that there
 is no variable argument support for Java libraries. Arguments passed
 to the library, as well as the library name itself, can be specified
-using variables, so it is possible to alter them for example from the command
+using variables, so it is possible to alter them, for example, from the command
 line.
 
 
@@ -243,7 +243,7 @@ reopen it, and it also has the :name:`Close All Browsers` keyword for
 easily closing all open browsers.
 
 
-Example Python library using :code:`TEST SUITE` scope:
+Example Python library using the :code:`TEST SUITE` scope:
 
 .. sourcecode:: python
 
@@ -263,7 +263,7 @@ Example Python library using :code:`TEST SUITE` scope:
             self._counter = 0
 
 
-Example Java library using :code:`GLOBAL` scope:
+Example Java library using the :code:`GLOBAL` scope:
 
 .. sourcecode:: java
 
@@ -294,7 +294,7 @@ Keyword names
 When the static library API is used, Robot Framework uses reflection
 to find out what methods the library implements. With `dynamic library
 API`_ and `hybrid library API`_, keyword names are got from the
-library directly. Naturally, Robot Framework can see only public
+library directly. Naturally, Robot Framework can see only the public
 methods and it also excludes all methods starting with an
 underscore. With Java libraries, also methods that are implemented in
 :code:`java.lang.Object` and not overridden are ignored.
@@ -334,7 +334,7 @@ Example Java library implemented as a class in the :path:`MyLibrary.java` file:
 
 The example below illustrates how the example libraries above can be
 used. If you want to try this yourself, make sure that the library is
-in the `library search path`_. Note that in subsequent examples all
+in the `library search path`_. Note that in the subsequent examples all
 boilerplates, such as taking a library into use and creating a test
 case, is excluded.
 
@@ -549,13 +549,13 @@ the limitations explained above.
 Argument types
 ``````````````
 
-Robot Framework does not do any argument type checking when it uses
-keywords. Since arguments in Python do not have any type, calling a Python
+Robot Framework does not do any argument-type checking when it uses
+keywords. Because arguments in Python do not have any type, calling a Python
 method implementing a keyword always succeeds, but the execution fails
 later, if the given arguments are incompatible. Java arguments are typed,
 and using a Java keyword with incompatible arguments causes
 a :code:`TypeError` at the calling time. However, Jython does some argument
-coercion automatically, so, for example, a method expecting
+coercion automatically. So, for example, a method expecting
 :code:`double` can be called with any number, but not with a string.
 
 
@@ -580,7 +580,7 @@ from the exception type and its message. With generic exceptions (for
 example, :code:`AssertionError`, :code:`Exception`, and
 :code:`RuntimeError`), only the exception message is used, and with
 others, the message is created in the format :msg:`ExceptionType:
-Actual message`. In both cases, it is important for users that the
+Actual message`. In both cases, it is important for the users that the
 exception message is as informative as possible.
 
 If the error message is longer than 20 lines, it will be automatically
@@ -690,13 +690,13 @@ Returning values
 
 The final way for keywords to communicate back to the core framework
 is returning information retrieved from the system under test or
-generated by some other means. Returned values can be `assigned to
+generated by some other means. The returned values can be `assigned to
 variables`__ in the test data and then used as inputs for other keywords,
 even from different test libraries. 
 
 Values are returned using the :code:`return` statement both from
 the Python and Java methods. Normally, one value is assigned into one
-`scalar variable`__ as illustrated in the example below. This example
+`scalar variable`__, as illustrated in the example below. This example
 also illustrates that it is possible to return any objects and to use
 `extended variable syntax`_ to access object attributes.
 
@@ -909,7 +909,7 @@ purposes.
 One of the benefits of the dynamic API is that you have more
 flexibility in organizing your library. With the static API, you have all
 keywords in one class (or module), whereas with the dynamic API, you can,
-for example, implement each keyword as a separate class if you
+for example, implement each keyword as a separate class, if you
 want. This use case is not so important with Python, because
 its dynamic capabilities and multi-inheritance already give plenty of
 flexibility and the `hybrid library API`_ is usually a better option.
@@ -1093,7 +1093,7 @@ camelCase aliases function in exactly the same way.
 
 
 It is possible to write a formal interface specification in Java, as
-below. Remember, however, that libraries *do not need* to implement
+below. However, remember that libraries *do not need* to implement
 any explicit interface, because Robot Framework directly checks if the
 library has the required :code:`get_keyword_names` and
 :code:`run_keyword` methods. Additionally,
