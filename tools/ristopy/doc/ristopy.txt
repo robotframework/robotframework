@@ -1,4 +1,4 @@
-.. role:: cli
+.. role:: opt
 .. role:: path
 
 ========
@@ -20,34 +20,34 @@ Synopsis
 Options
 -------
 
-  -C, --nocritical       Do not plot graphs for critical tests.
-  -A, --noall            Do not plot graphs for all tests.
-  -T, --nototals         Do not plot total graphs.
-  -P, --nopassed         Do not plot passed graphs.
-  -F, --nofailed         Do not plot failed graphs.
-  -t, --tag <name>       Add graphs for these tags. Name can contain '\*' and
-                         '?' as wildcards. 'AND' in the tag name is converted
-                         to ' & ', to make it easier to plot combined tags.
-  -o, --output <path>    Path to the image file to create. If not given, the
-                         image is opened into Matplotlib' viewer.
-  -i, --title <title>    Title of the graph. Underscores in the given title
-                         are converted to spaces. By default there is no
+  -C, --nocritical       Does not plot graphs for critical tests.
+  -A, --noall            Does not plot graphs for all tests.
+  -T, --nototals         Does not plot total graphs.
+  -P, --nopassed         Does not plot passed graphs.
+  -F, --nofailed         Does not plot failed graphs.
+  -t, --tag <name>       Adds graphs for these tags. The name can contain "\*" and
+                         "?" as wildcards. "AND" in the tag name is converted
+                         to " & ", to make it easier to plot combined tags.
+  -o, --output <path>    The path to the image file to create. If not given, the
+                         image is opened into Matplotlib viewer.
+  -i, --title <title>    The title of the graph. Underscores in the given title
+                         are converted to spaces. By default, there is no
                          title.
-  -w, --width <inches>   Width of the image. Default is 800.
-  -h, --height <inches>  Height of the image. Default is 400.
-  -f, --font <size>      Font size used for legends and labels. Default is 8.
-  -m, --marker <size>    Size of marked used with tag graphs. Default is 5.
-  -x, --xticks <num>     Maximum number of ticks in x-axis. Default is 15.
-  -n, --namemeta <name>  Name of the metadata of the top level test suite
-                         where to get name of the test round. By default names
-                         are got from paths to input files.
-  --argumentfile <path>  Read arguments from the specified file.
-  --verbose              Verbose output.
-  --help                 Print this help.
-  --version              Print version information.
+  -w, --width <inches>   The width of the image. The default is 800.
+  -h, --height <inches>  The height of the image. The default is 400.
+  -f, --font <size>      The font size used for legends and labels. The default is 8.
+  -m, --marker <size>    The size of the marker used with tag graphs. The default is 5.
+  -x, --xticks <num>     The maximum number of ticks on the x-axis. The default is 15.
+  -n, --namemeta <name>  The name of the metadata of the top-level test suite
+                         where to get the name of the test round. By default, names
+                         are got from the paths to input files.
+  --argumentfile <path>  Reads arguments from the specified file.
+  --verbose              The verbose output.
+  --help                 Prints this help.
+  --version              Prints the version information.
 
 
-Additionally :cli:`---` can be used to group options when creating multiple 
+Additionally, :cli:`---` can be used to group options when creating multiple 
 images at once.
 
 
@@ -63,21 +63,21 @@ the installation instructions, can be found from http://matplotlib.sourceforge.n
 
 Names of test rounds that are shown on the x-axis are, by default, obtained from the
 paths to input files. Alternatively, names can be obtained from the metadata of the
-top level test suite (for more information, see Robot Framework's :cli:`--metadata` option).
+top-level test suite (for more information, see Robot Framework's :opt:`--metadata` option).
 
-Graphs are saved to a file specified with the :cli:`--output` option, and the output
+Graphs are saved to a file specified with the :opt:`--output` option, and the output
 format is determined by the file extension. The supported formats depend on the installed
 Matplotlib back-ends, but at least PNG ought to be always available. If the output
 file is omitted, the graph is opened into Matplotlib's image viewer (which
 requires Matplotlib to be installed with some graphical front end).
 
 It is possible to draw several graphs with different options at once. This is
-done by separating different option groups with three or more hyphens (:cli:`---`).
+done by separating different option groups with three or more hyphens (:opt:`---`).
 Note that in this case, also paths to input files need to be separated from
 the options similarly.
 
 Instead of giving all options from the command line, it is possible to read them
-from a file specified with the :cli:`--argument` option. In an argument file, options
+from a file specified with the :opt:`--argument` option. In an argument file, options
 and their possible arguments are listed one per line, and option groups are
 separated with lines of three or more hyphens. Empty lines and lines starting
 with a hash mark (#) are ignored. 
@@ -115,7 +115,7 @@ Preconditions
 ~~~~~~~~~~~~~
  
 risto.py requires Python. It has been tested both on releases 2.4 and
-2.5, and it should work also in 2.3. Also some Robot modules are
+2.5, and it should work also in 2.3. Also some Robot Framwork modules are
 needed, and thus some Robot Framework 1.8 version needs to be
 installed.
 
@@ -152,7 +152,7 @@ Default settings
  
 The screenshot below uses some very simple example outputs, thus the lines
 are mainly straight. The default settings have been used otherwise,
-but the output has been saved into a file with the :cli:`--output
+but the output has been saved into a file with the :opt:`--output
 default.png` option.
 
 .. figure:: risto_default.png
@@ -179,7 +179,7 @@ Using Matplotlib's Viewer
 `````````````````````````
  
 This time there are more input files and the image has been opened
-in Matplotlib's viewer (that is, the :cli:`--output` option has not been
+in Matplotlib's viewer (that is, the :opt:`--output` option has not been
 used). The options used to create this example are the ones below::
 
       -CAP -t d1_AND_d2 -t t1 -t sub3 -i Yet_Another_Example -x 20 -w 1000 -n Name

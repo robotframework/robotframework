@@ -1,4 +1,4 @@
-.. role:: cli
+.. role:: prog
 .. role:: path
 
 =========
@@ -21,16 +21,20 @@ Options
     -f, --format <html|xml>  Specifies whether to generate HTML or XML output. 
                           The default value is HTML.
 
-    -o, --output path	  Where to write the generated documentation. If the path 
-                          is a directory, the documentation is generated there 
-                          using the name "." with an index after the "" part, if 
-                          a file with that name already exists. If the given path 
-                          points to a file, this path is used as-is and possible 
-                          existing file is overwritten. The default value for the 
-                          path is the directory where the script is executed from.
-    -P, --pythonpath path  Additional path(s) to insert into PYTHONPATH.
+    -o, --output path     Specifies where to write the generated
+                          documentation. If the path is a directory,
+                          the documentation is generated there using
+                          the name "." with an index after the ""
+                          part, if a file with that name already
+                          exists. If the given path points to a file,
+                          this path is used as is, and the possible
+                          existing file is overwritten. The default
+                          value for the path is the directory where
+                          the script is executed from.  -P,
+                          --pythonpath path Additional path(s) to
+                          insert into PYTHONPATH.
 
-    -h, --help            Print this help.
+    -h, --help            Prints this help.
 
 
 
@@ -38,26 +42,27 @@ Description
 -----------
 
 Library documentation can generate library keyword documentation from
-test libraries and resource files either in HTML or XML format. The
+test libraries and resource files either in the HTML or XML format. The
 former is for humans and the latter mainly for Robot IDE or other
 tools.
 
 Documentation can be created for
 
-   - test libraries implemented with Python or Java using the normal library API,
-   - test libraries using the dynamic API (but you only get keyword names and not
-     their arguments or documentations), and
-   - resource files.
+   - Test libraries implemented with Python or Java using the normal library API,
+   - Test libraries using the dynamic API (but you only get keyword names and not
+     their arguments or documentations)
+   - Resource files
 
-It is possible to specify a Python test library by giving either the path to 
-the source or only the library name. If the library name is used, it must be in 
-the same format as in Robot test data when importing libraries. In this case, 
-the library is searched from PYTHONPATH (and from CLASSPATH, if on Jython). 
+It is possible to specify a Python test library by giving either the
+path to the source or only the library name. If the library name is
+used, it must be in the same format as in the Robot Framework test
+data when importing libraries. In this case, the library is searched
+from PYTHONPATH (and from CLASSPATH, if on Jython).
 
-A Java test library implemented with normal library API can be specified by 
+A Java test library implemented with a normal library API can be specified by 
 giving the path to the source file containing the library class. Additionally, 
-"tools.jar", which is part of the Sun JDK distribution, must be found from 
-CLASSPATH when libdoc.py is executed.
+:path:`tools.jar`, which is part of the Sun JDK distribution, must be found from 
+CLASSPATH when :prog:`libdoc.py` is executed.
 
 Libraries using the dynamic library API are handled in the same way as Python 
 libraries are.
@@ -95,7 +100,7 @@ strings for the library class and for methods implementing
 keywords. The first line of the method documentation is considered as
 a short documentation for the keywords (used for example as a tool tip in
 links in the generated HTML documentation), and it should thus be as
-describing as possible but not too long. From Robot 1.4 onwards, it
+describing as possible, but not too long. From Robot 1.4 onwards, it
 is possible to use simple formatting in documentation (for example, bold and
 tables).
 

@@ -2,7 +2,7 @@
 RobotOneCLickInstaller.au3
 ==========================
 
-An AutoIT__ script for installing Robot Framework and it's preconditions
+An AutoIT__ script for installing Robot Framework and its preconditions
 on a Windows machine.
 
 __ http://www.autoitscript.com/autoit3/
@@ -10,35 +10,41 @@ __ http://www.autoitscript.com/autoit3/
 Description
 -----------
 
-One Click Installer installs Robot Framework and its preconditions Python and 
-Jython (optional). It also sets Robot Framework start-up scripts (pybot, jybot, 
-rebot) as well as Python and Jython executables into %PATH% environment variable 
-so that they can be executed from the command line. (Note that you need to restart 
-the command prompt for these changes to take effect.) You should use this installer 
-ONLY if you don't previously have Python or Jython installed. In that case, and 
-also if you want to have a custom installation, you need to install needed 
-components separately.
+One Click Installer installs Robot Framework and its preconditions
+Python and Jython (optional). It also sets Robot Framework start-up
+scripts (pybot, jybot, rebot), as well as Python and Jython
+executables, into the %PATH% environment variable, so that they can be
+executed from the command line. (Note that you need to restart the
+command prompt for these changes to take effect.) You should use this
+installer ONLY if you do not previously have Python or Jython
+installed. In that case, and also if you want to have a custom
+installation, you need to install the needed components separately.
 
-One Click Installer requires that you have all the required component installers 
-in the same directory with it and that they have expected names. If Robot Framework 
-or Python installer is missing, installation fails. If Jython installer doesn't 
-exist, Jython is simply not installed. Note that in order to install Jython, Java 
-1.4 or newer must be already installed. Supported versions are Robot Framework 2.x, 
-Python 2.5.x and Jython 2.2.x where '.x' means that any minor version (e.g. 2.5 
-or 2.5.2) is OK. These installers can be downloaded from respective project websites 
-if they are missing. Expected patterns for installer names are 
-'robotframework-2.*.exe' , 'python-2.5*.msi' and 'jython_installer-2.2.*.jar'.
+One Click Installer requires that you have all the required component
+installers in the same directory with it and that they have expected
+names. If Robot Framework or Python installer is missing, the
+installation fails. If Jython installer does not exist, Jython is
+simply not installed. Note that in order to install Jython, Java
+version 1.4 or newer must be already installed. Supported versions are
+Robot Framework version 2.x, Python version 2.5.x and Jython version
+2.2.x, where '.x' means that any minor version (e.g. 2.5 or 2.5.2) is
+acceptable. If these installers are missing, they can be downloaded
+from the respective project web sites. The expected patterns for installer
+names are 'robotframework-2.*.exe' , 'python-2.5*.msi', and
+'jython_installer-2.2.*.jar'.
 
-The only thing you need to specify is the base directory where to install Python 
-and Jython. They are installed into directories 'Python25' and 'Jython22', 
-respectively, inside the given base directory. Robot Framework itself is installed 
-under Python installation directory and its startup scripts can be found from 
+All you need to specify is the base directory where to
+install Python and Jython. They are installed into directories
+'Python25' and 'Jython22', respectively, inside the given base
+directory. Robot Framework itself is installed under the Python
+installation directory. Its startup scripts can be found from
 '[PYTHON]\Scripts' and code from '[PYTHON]\Lib\site-packages'.
 
 .. Note::
 
-	The specified base directory MUST exist and Python and Jython directories 
-	inside it must not.  It is also not recommended to use a path containing spaces. 
-	Good candidates include directories like 'C:\' and 'C:\APPS'.
+	The specified base directory MUST exist, whereas Python and Jython
+	directories inside it must not. It is also not recommended to
+	use a path containing spaces. Good candidates include
+	directories such as 'C:\' and 'C:\APPS'.
 
 

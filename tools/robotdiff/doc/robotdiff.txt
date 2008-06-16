@@ -17,35 +17,36 @@ Synopsis
 Options
 -------
 
-  -r, --report <file>       HTML report file (created from the input files).
-                            Default is 'robotdiff.html'.
-  -n, --name <name>         Name for test run. Different test runs can be named
+  -r, --report <file>       The HTML report file (created from the input files).
+                            The default is 'robotdiff.html'.
+  -n, --name <name>         The name for the test run. Different test runs can be named
                             with this option. However, there must be as many 
-                            names as there are input files. By default the name
+                            names as there are input files. By default, the name
                             of the input files are used as names. Input files 
-                            having same file name are distinguished by adding 
-                            as many parent directories to the names as is needed.
-  -t, --title <title>       Title for the generated diff report. The default
+                            with the same file name are distinguished by adding 
+                            as many parent directories to the names as needed.
+  -t, --title <title>       The title for the generated diff report. The default
                             title is 'Diff Report'.
-  -E, --escape <what:with>  Escape certain characters which are problematic in
+  -E, --escape <what:with>  Escapes certain characters that are problematic in the
                             console. 'what' is the name of the character to 
                             escape and 'with' is the string to escape it with.
-                            Available character to escape: %(ESCAPES)s
+                            The available characters to escape: %(ESCAPES)s
                             Example: :cli:`-\\-escape space:_ -\\-title My_Diff_Report`
-  -h, --help                Print this usage instruction.
+  -h, --help                Prints this usage instruction.
 
 
 
 Description
 -----------
 
-This script compares two or more Robot Framework output files and creates a 
-report where possible differences between test case statuses in each file 
-are highlighted. Main use case is verifying that results from executing same
-test cases in different environments are same. For example, it is possible to
-test that new Robot Framework version does not affect test results. Another 
-usage is comparing earlier test results with newer ones to find out possible
-status changes and added test cases.   
+This script compares two or more Robot Framework output files and
+creates a report, where possible differences between test case
+statuses in each file are highlighted. The main use case is verifying
+that results from executing the same test cases in different
+environments are the same. For example, you can test that a new Robot
+Framework version does not affect your test results. Another usage is
+comparing earlier test results with newer ones to find out possible
+status changes and added test cases.
 
 Examples::
 

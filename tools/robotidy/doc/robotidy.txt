@@ -18,45 +18,45 @@ Synopsis
 Options
 -------
 
-  -I, --inplace      Tidy given file(s) so that original file(s) are overwritten
+  -I, --inplace      Cleans given file(s) so that original file(s) are overwritten.
                     When this option is used, it is possible to give multiple
                     files at once. Examples:
                     robotidy.py --inplace tests.html
                     robotidy.py --inplace --fixcomments \*.html
-  -R, --recursive    Process given directory recursively. Files in the directory
-                    are processed in place similarly as when '--inplace'
+  -R, --recursive    Processes the given directory recursively. Files in the directory
+                    are processed in place, similarly as when the '--inplace'
                     option is used.
-  -X, --fixcomments  Fix comments in the test data.
+  -X, --fixcomments  Fixes comments in the test data.
   -F, --format <html|tsv>  
-                    Format to use for output. Possible values are HTML and TSV.
+                    The format to use for output. Possible values are HTML and TSV.
                     If this option is not used, the format is got from the
                     extension of the output file.     
-  -T, --title text   Title to use in the test data. By default the title is got 
+  -T, --title text   The title to use in the test data. By default, the title is got 
                     from the name of the output file. If the output file is
-                    HTML the title is used with 'h1' and 'title' tags, and with
-                    TSV it is simply printed before the first table. Possible
+                    HTML, the title is used with 'h1' and 'title' tags, and with
+                    TSV, it is simply printed before the first table. Possible
                     underscores in the given title are converted to spaces.
-  -S, --style <path>  ead styles from an external style sheet file and replace
-                    default styles with them. If the path has a special value
+  -S, --style <path>  Reads styles from an external style sheet file and replaces
+                    the default styles with them. If the path has a special value
                     'NONE', no styles are used. This setting is applicable only
                     when the output format is HTML.
-  -h, --help         Print this help.
+  -h, --help         Prints this help.
 
 
 Description
 -----------
 
 This multipurpose tool has three usages explained in this section.
-In all cases, the outputs are written in UTF-8 format.
+In all cases, the outputs are written in the UTF-8 format.
 
 
 Cleaning up the test data
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Source code created by most HTML editors is quite ugly. With this tool the 
-source can be formatted nicely and it is even possible to specify a custom
-style sheet. Additionally test data itself is cleaned up so that settings and
-metadata is always in same predefined order.
+The source code created by most HTML editors does not look very good. With this tool, the 
+source can be formatted nicely, and it is even possible to specify a custom
+style sheet. Additionally, test data itself is cleaned up, so that settings and
+metadata are always in the same, predefined order.
 
 Examples::
 
@@ -67,10 +67,10 @@ Examples::
 Changing format between HTML and TSV
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Robot Framework supports test data in HTML and TSV formats and this tools makes
-changing between formats trivial. Input format is always determined from the
-extension of the input file. Output format is also got from the output file
-extension by default but it can also be set explicitly with '--format' option.
+Robot Framework supports test data in HTML and TSV formats, and this tool eases
+changing between formats. The input format is always determined from the
+extension of the input file. The output format is also got from the output file
+extension by default, but it can also be set explicitly with the '--format' option.
 
 Examples::
 
@@ -81,12 +81,12 @@ Examples::
 Fixing comments
 ~~~~~~~~~~~~~~~
 
-Robot IDE is a great tool for editing the test data but at least currently it
-totally ignores comments. This tool can be used to convert comments so that 
-they are not lost when the test data is opened to the IDE. Comments in test 
-case and user keyword tables are changed so that instead of '#' a built-in 
-'Comment' keyword is used. In variable tables comments are converted to '@{#}'
-or '${#}'. Comments in setting tables are not fixed. 
+Robot IDE is a great tool for editing the test data, but at least currently, it
+totally ignores comments. This tool can be used to convert comments, so that 
+they are not lost when the test data is opened in IDE. Comments in Test 
+Case and user keyword tables are changed, so that instead of '#', a built-in 
+'Comment' keyword is used. In Variable tables, comments are converted to '@{#}'
+or '${#}'. Comments in Setting tables are not fixed. 
 
 Examples::
 
