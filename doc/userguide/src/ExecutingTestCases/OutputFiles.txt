@@ -239,75 +239,177 @@ teardown`_.
 Splitting outputs
 ~~~~~~~~~~~~~~~~~
 
+Benefits
+''''''''
+
 When executing a large number of test cases, the size of log files can
-increase to the extent that opening them in the browser is slow. A
-solution for this problem is splitting the log file into smaller
-pieces so that the top-level log acts as an index having links to
-other pieces. Splitting can be activated with the command line option
-:opt:`--splitoutputs`, which takes the level where to split test suites from as an argument. With this option, both XML output files and log files are
-split from the specified level.
+increase to the extent that opening them into browsers is
+slow. Additionally, since log files can be created only after output
+files are ready, they are available only after the test
+execution. This is not a problem is the test execution time is short,
+but with long-running tests it is better to be able to investigate
+first failures while rests of the tests are still running.
 
-When outputs are split, a top-level output file contains the general 
-information about the whole test execution and it links to lower-level output 
-files, which contain details of some suites and tests. The exact contents of 
-each file depends on the split level and the directory structure of the test data.
-
-**TODO**
-
-|                                1
-|                        /               \    
-|               1.1                              1.2
-|            /       \                        /        \
-|      1.1.1           1.1.2               1.2.1        1.2.2
-|    /       \       /       \          /    |    \
-| 1.1.1.1 1.1.1.2 1.1.2.1 1.1.2.2 1.2.1.1 1.2.1.2 1.2.1.3
-
-Unbalanced output
-'''''''''''''''''
-
-When an unbalanced directory structure (see the figure below) is
-executed with a split level set to 3, an individual output file is
-created for test case files from 1 to 4.  The information about the
-test case files 5 and 6 is written to the root level output file. In
-this case, the following files will be created:
-
-- :path:`output.xml`, which contains summary information of the
-  executed suite, details on test case files 5 and 6, and links to
-  sublevel output files.
-    
-- :path:`output-001.xml`, :path:`output-002.xml`,
-  :path:`output-003.xml` and :path:`output-004.xml`, which contain
-  details on test case files 1, 2, 3 and 4, respectively.
+Splitting outputs provides a solution for both of these
+problems. First of all, splitting logs means that individual log files
+are smaller and thus faster to open. If outputs are split while
+executing test cases, the lower-level log files are also created
+immediatelly when the equivelant output files are ready. Notifications
+about created files can be received through the `listener
+interface`_, and `automatic variables`_ :var:`${LOG_FILE}` and
+:var:`${OUTPUT_FILE}` always contain the path to the current file.
 
 
-.. figure:: unbalanced_output.png
-   :width: 629
-   :height: 278
+Specifying split level
+''''''''''''''''''''''
 
-   Example unbalanced output file
+Outputs are split from a certain test suite level. Suites below this
+level will get their own outputs, and everything above the level will
+be in an index file, which has links to lower-level files. Only
+`output files`_ and `log files`_ are split, and they are always split
+from the same level. Splitting outputs gives best results when test
+cases are organized into a relatively balanced hierarchical structure.
 
-Balanced output
-'''''''''''''''
-
-When a balanced directory structure (see the figure below) is executed with a split
-level set to 3, an individual output file is created for all test case files.
-In this case, the following files will be created:
-
-- :path:`output.xml`, which contains summary information on the
-  executed test suite and links to sublevel output files.
-    
-- :path:`output-001.xml`, :path:`output-002.xml`,
-  :path:`output-003.xml`, :path:`output-004.xml`,
-  :path:`output-005.xml`, :path:`output-006.xml`,
-  :path:`output-007.xml`, and :path:`output-008.xml`, which contain
-  details on test case files from 1 to 8.
+Splitting can be activated with the command line option
+:opt:`--splitoutputs`, which takes the split level as an
+argument. Index files have the same name as output and log would have
+without splitting, and lower-level files get a running counter between
+the basename and extension.
 
 
-.. figure:: balanced_output.png
-   :width: 597
-   :height: 266
+Examples
+''''''''
 
-   Example balanced output file
+Explaining how splitting outputs actually works is easiest with
+examples, and it is also a good idea to experiment with real test data.
+In these examples we assume that test cases are organized into test
+suites hierarchically like this::
+
+   project
+   |-- component_a
+   |   |-- feature_a1
+   |   |   |-- a11.html
+   |   |   `-- a12.html
+   |   `-- feature_a2
+   |       `-- a21.html
+   |-- component_b
+   |   `-- feature_b1
+   |       |-- b11.html
+   |       `-- b21.html
+   `-- component_c
+       |-- c1.html
+       |-- c2.html
+       `-- c3.html
+
+
+In the first example these test cases are executed so that they are
+split right below the top-level test suite. The command line to use is
+as follows, and the following table lists all created output files::
+
+   pybot --splitoutputs 1 project
+
+
+.. table:: All output files created in the first example
+   :class: tabular
+
+   +---------------+-------------------------------------------------------+ 
+   | Created File  |                       Contents                        |
+   +===============+=======================================================+
+   | output.xml    | Information about :name:`Project` test suite,         |
+   |               | excluding its child test suites. Lower-level output   |
+   |               | files are referenced.                                 |
+   +---------------+-------------------------------------------------------+ 
+   | output-001.xml| Information about the whole :name:`Component A` suite.|
+   +---------------+-------------------------------------------------------+ 
+   | output-002.xml| Information about the whole :name:`Component B` suite.|
+   +---------------+-------------------------------------------------------+ 
+   | output-003.xml| Information about the whole :name:`Component C` suite.|
+   +---------------+-------------------------------------------------------+ 
+   | log.html      | Log file created from :path:`output.xml`, lower-level |
+   |               | log files are linked.                                 |
+   +---------------+-------------------------------------------------------+ 
+   | log-001.html  | Log file created from :path:`output-001.xml`.         |
+   +---------------+-------------------------------------------------------+ 
+   | log-002.html  | Log file created from :path:`output-002.xml`.         |
+   +---------------+-------------------------------------------------------+ 
+   | log-003.html  | Log file created from :path:`output-003.xml`.         |
+   +---------------+-------------------------------------------------------+ 
+   | report.html   | Normal report file.                                   |
+   +---------------+-------------------------------------------------------+ 
+
+
+The fact that output files are split is transparent when
+post-processing outputs afterwards, and it is enough to point
+:prog:`rebot` to the index file. Splitting works with :prog:`rebot`
+regardless are outputs split earlier or not. Outputs created by the
+first example could thus by re-split, for example, like::
+
+   rebot --splitoutputs 2 output.xml
+
+In this example splitting is done from the second level. The table below
+again lists created files, and because :prog:`rebot` does not create new
+output files by default, they are not listed in the table either.
+
+
+.. table:: All output files created in the second example
+   :class: tabular
+
+   +---------------+-------------------------------------------------------+ 
+   | Created File  |                       Contents                        |
+   +===============+=======================================================+
+   | log.html      | Information about :name:`Project` and all             |
+   |               | :name:`Component ?` suites, but not their child       |
+   |               | suites. Lower-level log files are linked.             |
+   +---------------+-------------------------------------------------------+ 
+   | log-001.html  | The whole :name:`Feature A1` test suite.              |
+   +---------------+-------------------------------------------------------+ 
+   | log-002.html  | The whole :name:`Feature A2` test suite.              |
+   +---------------+-------------------------------------------------------+ 
+   | log-003.html  | The whole :name:`Feature B1` test suite.              |
+   +---------------+-------------------------------------------------------+ 
+   | log-004.html  | The whole :name:`C1` test suite.                      |
+   +---------------+-------------------------------------------------------+ 
+   | log-005.html  | The whole :name:`C2` test suite.                      |
+   +---------------+-------------------------------------------------------+ 
+   | log-006.html  | The whole :name:`C3` test suite.                      |
+   +---------------+-------------------------------------------------------+ 
+   | report.html   | Normal report file.                                   |
+   +---------------+-------------------------------------------------------+ 
+
+
+The last example splits outputs from the third level. It also shows
+how to configure output file names when splitting::
+
+   rebot --splitoutputs 3 --log mylog.html --report none output.xml
+
+
+.. table:: All output files created in the third example
+   :class: tabular
+
+   +---------------+-------------------------------------------------------+ 
+   | Created File  |                       Contents                        |
+   +===============+=======================================================+
+   | mylog.html    | Information about :name:`Project` test suite all the  |
+   |               | way to its second level child suites. This includes   |
+   |               | test cases in :name:`C?` suites. Lower level logs are |
+   |               | linked.                                               |
+   +---------------+-------------------------------------------------------+ 
+   | mylog-001.html| The whole :name:`A11` test suite.                     |
+   +---------------+-------------------------------------------------------+ 
+   | mylog-002.html| The whole :name:`A12` test suite.                     |
+   +---------------+-------------------------------------------------------+ 
+   | mylog-003.html| The whole :name:`A21` test suite.                     |
+   +---------------+-------------------------------------------------------+ 
+   | mylog-004.html| The whole :name:`B11` test suite.                     |
+   +---------------+-------------------------------------------------------+ 
+   | mylog-005.html| The whole :name:`B12` test suite.                     |
+   +---------------+-------------------------------------------------------+ 
+
+
+If higher split level than three is used with this test data, all the
+information ends up to index files. The end result is thus exactly
+same as if outputs were not split at all.
+
 
 
 Configuring statistics
@@ -390,12 +492,11 @@ executed with these options::
 Creating links from tag names
 '''''''''''''''''''''''''''''
 
-You can add external links to the :name:`Statistics by Tag`
-table by using the command line option
-:opt:`--tagstatlink`. Arguments to this option are given in the format
-:opt:`tag:link:name`, where :opt:`tag` specifies the tags to
-assign the link to, :opt:`link` is the link to be created, and
-:opt:`name` is the name to give to the link.
+You can add external links to the :name:`Statistics by Tag` table by
+using the command line option :opt:`--tagstatlink`. Arguments to this
+option are given in the format :opt:`tag:link:name`, where :opt:`tag`
+specifies the tags to assign the link to, :opt:`link` is the link to
+be created, and :opt:`name` is the name to give to the link.
 
 :opt:`tag` may be a single tag, but more commonly a `simple
 pattern`_ where :code:`*` matches anything and :code:`?` matches any
@@ -403,12 +504,12 @@ single character. When :opt:`tag` is a pattern, the matches to
 wildcards may be used in :opt:`link` with the syntax :code:`%N`,
 where "N" is the index of the match starting from 1.
 
-The following examples illustrate the usage of this option, and the figure below shows 
-a snippet of the resulting :name:`Statistics by Tag` table when example test 
-data is executed with these options::
+The following examples illustrate the usage of this option, and the
+figure below shows a snippet of the resulting :name:`Statistics by
+Tag` table when example test data is executed with these options::
 
     --tagstatlink mytag:http://www.google.com:Google
-    --tagstatlink jython-bug-*:http://jython.org/bugs/%1:Jython-bugs
+    --tagstatlink jython-bug-*:http://bugs.jython.org/issue_%1:Jython-bugs
     --tagstatlink owner-*:mailto:%1@domain.com?subject=Acceptance_Tests:Send_Mail
 
 .. figure:: tagstatlink.png

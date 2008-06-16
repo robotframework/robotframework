@@ -181,8 +181,9 @@ Appendices
 .. _--summary: `Summary file`_
 .. _log level: `Log levels`_
 .. _--loglevel: `Setting log level`_
-.. _listener: `Using listener interface`_
-.. _listeners: listener_
+.. _listener interface: `Using listener interface`_
+.. _listener: `listener interface`_
+.. _listeners: `listener interface`_
 .. _command line options: `All command line options`_
 .. _BuiltIn keyword: `BuiltIn library`_
 .. _BuiltIn keywords: `BuiltIn library`_
