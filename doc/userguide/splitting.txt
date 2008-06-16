@@ -1,0 +1,29 @@
+It is now possible to split output files during execution so that instead of one output and log file, multiple files are generated.
+The splitting of output files is controlled by command line option =--splitoutput level=, where level indicates the depth in 
+directory structure from which onwards output files will be split.
+
+Example:
+
+supposing following directory structure:
+<pre>
+--Tests
+  |--Subdir 1
+  | |--Test Case File 1
+  | |--Test Case File 2 
+  |--Subdir 2
+    |--Test Case File 3
+</pre>
+
+Running command:
+<pre>pybot --splitoutputs 1 --output myout.xml --log mylog.html Tests </pre>
+will result in following output files:
+
+| myout.xml      | Contains information of 'Tests' and links to suboutputs  |
+| myout-001.xml  | Contains information of 'Subdir 1' and Test Case Files 1&2 |
+| myout-002.xml  | Contains information of 'Subdir 2' and Test Case File 3 |
+| mylog.html     | Is the Log file for 'Tests' and contains linsk to sub logs. |
+| mylog-001.html | Is the log file for 'Subdir1' containing logs for all testcases in Test Case Files 1&2 |
+| mylog-002.html | Is the log file for 'Subdir2' containing logs for all testcases in Test Case File 3 |
+
+The benefit of this is that the sub log files mylog-001.html and mylog-002.html  will be completed
+as soon as the corresponding output file is finished and that log.html will not grow overly big.
