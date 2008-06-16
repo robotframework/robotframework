@@ -3,7 +3,7 @@ import os
 
 from robot.output import TestSuite
 
-from apihelper import verify_suites, verify_tests
+from apihelper import verify_suites, verify_tests, remove_outputdir
 
 
 BASE = os.path.dirname(os.path.abspath(sys.argv[0]))
@@ -20,6 +20,7 @@ def read_and_modify_suite(path):
     fails += verify_tests(suite, os.path.join(DATA, 'output_modified_test_data.txt'))
     
     print 'Total failures: %d' % fails 
+    remove_outputdir()
     return fails    
 
 def _process_suite(suite):

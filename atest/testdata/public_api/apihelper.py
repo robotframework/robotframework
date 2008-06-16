@@ -1,5 +1,7 @@
 import os
 
+OUTPATH = os.path.join(os.path.dirname(__file__), 'output')
+
 
 def verify_suites(suite, path_to_data):
     suites = [ suite ] + suite.suites
@@ -59,6 +61,12 @@ def parse_data(path):
             continue
         data.append(dict(zip(titles, cells)))
     return data
+
+    
+def remove_outputdir():
+    for file in os.listdir(OUTPATH):
+        os.remove(os.path.join(OUTPATH, file))
+    os.rmdir(OUTPATH)
 
     
 if __name__ == '__main__':

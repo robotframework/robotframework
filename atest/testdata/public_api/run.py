@@ -2,7 +2,7 @@ import os
 
 from robot import run
 
-from apihelper import verify_suites, verify_tests
+from apihelper import verify_suites, verify_tests, remove_outputdir
 
 
 def run_suite(base):
@@ -11,15 +11,9 @@ def run_suite(base):
     fails += verify_tests(suite, os.path.join(base, 'testdata', 'run_test_data.txt'))
                     
     print 'Total failures: %d' % fails 
- #   _remove_outputdir('output')
+    remove_outputdir()
     return fails
-    
 
-def _remove_outputdir(path):
-    for file in os.listdir(path):
-        print 'removing', file
-        os.remove(file)
-    os.remove(path)
     
 
 if __name__ == '__main__':
