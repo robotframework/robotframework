@@ -8,7 +8,7 @@ Python and Jython scripts and programs.
 
 Unfortunately, these APIs are not particularly well documented, and
 are subject to change and refinement in the future. The plan is to
-enhance the documentation in the future, but before that the optios to get
+enhance the documentation in the future, but before that the options for getting
 more information are asking help from Robot Framework developers,
 investigating existing `supporting tools`_ that use these APIs, or
 just taking a look at the source code of Robot Framework.

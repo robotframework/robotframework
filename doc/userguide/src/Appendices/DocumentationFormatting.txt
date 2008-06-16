@@ -128,7 +128,7 @@ sequence (:code:`\\n`) is needed::
 
 The created table always has a thin border and the text is
 left-aligned. Formatting using bold and italic works also in table
-cells, so it is possibe to create headers. For example the above
+cells, so it is possible to create headers. For example the above
 documentation would be formatted like this:
 
 .. table:: 

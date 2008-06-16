@@ -23,7 +23,7 @@ the class implementing the listener interface, similarly as `test
 library names`_ are got from classes implementing them. The specified
 listeners must be in the same `module search path`_ where test
 libraries are searched from when they are imported. It is possible to take
-multiple listners into use by using this option several times.
+multiple listeners into use by using this option several times.
 
 Examples::
 

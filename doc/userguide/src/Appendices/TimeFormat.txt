@@ -4,7 +4,7 @@ Time format
 Robot Framework has its own time format that is used by several
 keywords (for example :name:`Sleep` and :name:`Wait Until Keyword
 Succeeds`) as well as `test case`__ and `user keyword timeouts`_. This
-format is ment to be both flexible to use and easy to understand.
+format is meant to be both flexible to use and easy to understand.
 
 __ `test case timeouts`_
 
@@ -16,17 +16,17 @@ The time can always be given as a plain number, in which case it is
 interpreted to be seconds. Both integers and floating point numbers
 work, and it is possible to use either real numbers or strings
 containing numerical values. This format is useful, for example, when
-the actual time value is calculated somehow.
+the actual time value is calculated.
 
 
 Time as text
 ~~~~~~~~~~~~
 
-Represening the time as text means using format like :code:`2 minutes
+Representing the time as text means using a format such as :code:`2 minutes
 42 seconds`, which is normally easier to understand than just having
 the value as seconds. It is, for example, not so easy to understand
-how long time :code:`4200` is in seconds, but :code:`1 hour 10
-minutes` is clear immediatelly.
+how long a time :code:`4200` is in seconds, but :code:`1 hour 10
+minutes` is clear immediately.
 
 The basic idea of this format is having first a number and then a text
 specifying what time that number represents. Numbers can be either

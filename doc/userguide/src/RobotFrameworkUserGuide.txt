@@ -195,6 +195,8 @@ Appendices
 .. _libdoc: `libdoc.py`_
 .. _library search path: `Adjusting library search path`_
 .. _module search path: `library search path`_
+.. _general parsing rules: `Test data syntax`
+.. _split into several rows: `Dividing test data to several rows`
 
 .. Other commonly used link targets
 

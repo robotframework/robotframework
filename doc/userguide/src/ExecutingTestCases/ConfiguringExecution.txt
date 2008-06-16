@@ -248,7 +248,7 @@ Setting CLASSPATH in the system
 '''''''''''''''''''''''''''''''
 
 CLASSPATH is used only with Jython, and the most common way to alter
-it is setting an environemnt variable similarly as with PYTHONPATH.
+it is setting an environment variable similarly as with PYTHONPATH.
 Note that instead of CLASSPATH, it is always possible to use
 PYTHONPATH with Jython, even with libraries and listeners implemented
 with Java.

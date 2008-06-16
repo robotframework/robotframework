@@ -559,8 +559,8 @@ coercion automatically, so, for example, a method expecting
 :code:`double` can be called with any number, but not with a string.
 
 
-Communicating with Robot Framwork
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Communicating with Robot Framework
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 After a method implementing a keyword is called, it can use any
 mechanism to communicate with the system under test. It can then also

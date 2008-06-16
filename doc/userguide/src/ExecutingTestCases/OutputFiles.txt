@@ -31,7 +31,7 @@ considered relative to the output directory. The default output
 directory is the directory where the execution is started from, but it
 can be altered with the :opt:`--outputdir (-d)` option. The path
 set with this option is, again, relative to the execution directory,
-but can naturally be given also as an absoute path. Regardless of how
+but can naturally be given also as an absolute path. Regardless of how
 a path to an individual output file is obtained, its parent directory
 is created automatically, if it does not exist already.
 
@@ -140,7 +140,7 @@ Debug file
 
 Debug files are plain text files that are written during the test
 execution. All messages got from test libraries are written to them,
-as wel as information about started and ended test suites, test cases
+as well as information about started and ended test suites, test cases
 and keywords. Debug files can be used for monitoring the test
 execution. This can be done using, for example, a separate `file
 viewer tool`__, or in UNIX-like systems, simply with the :prog:`tail
@@ -157,7 +157,7 @@ Timestamping output files
 
 All output files listed in this section can be automatically
 timestamped with the option :opt:`--timestampoutputs (-T)`, which
-is one of the rare opions taking no value. When this option is used, a
+is one of the rare options taking no value. When this option is used, a
 timestamp in the format :opt:`YYYYMMDD-hhmmss` is placed between
 the extension and the basename of each file. The example below would,
 for example, create such output files as
@@ -509,7 +509,7 @@ that it contains a path to the selected file.
 
 A system log has the same `log levels`_ as a normal log file, with the
 exception that instead of :msg:`FAIL` it has the :msg:`ERROR` level. The
-treshold level to use can be altered using the
+threshold level to use can be altered using the
 :opt:`ROBOT_SYSLOG_LEVEL` environment variable.
 
 
