@@ -1,0 +1,332 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="generator" content="RobotIDE"> 
+<style type="text/css">
+html {
+  font-family: Arial,Helvetica,sans-serif;
+  background-color: white;
+  color: black;
+}
+p {
+  max-width: 60em;
+}
+table {
+  border-collapse: collapse;
+  empty-cells: show;
+  margin: 1em 0em;
+  border: 0.1em solid black;
+}
+th, td {
+  border-style: solid;
+  border-width: 0.05em 0.1em;
+  border-color: black;
+  padding: 0.1em 0.2em;
+  height: 1.5em;
+}
+th {
+  background-color: rgb(192, 192, 192);
+  color: black;
+  border-width: 0.1em;
+  font-weight: bold;
+  text-align: center;
+  text-transform: capitalize;
+  letter-spacing: 0.1em;
+}
+/* Widths of named columns */
+col.name {
+  width: 10em;
+}
+.action, .value, .arg {
+  width: 15em;
+}
+/* Properties for the name column 
+- td:first-child should work in CSS 2.1 avare browsers (tested in Firefox)
+- col.name is against specs but works in IE
+*/
+td:first-child, col.name {
+  background-color: rgb(240, 240, 240);
+  text-transform: capitalize;
+  letter-spacing: 0.1em;
+}
+/* required for IE */
+th {
+  font-style: normal;
+}
+</style>
+<title>Listener Interface</title></head>
+<body>
+<h1>Listener Interface</h1>
+
+<table border="1">
+<colgroup span="99"><col class="name"><col class="value" span="4"></colgroup>
+<tbody><tr>
+<th>Setting</th>
+<th>Value</th>
+<th>Value</th>
+<th>Value</th>
+<th>Value</th>
+</tr>
+<tr>
+<td>Default Tags</td>
+<td>pybot</td>
+<td>jybot</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Force Tags</td>
+<td>regression</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Suite Setup</td>
+<td>Run Listener Tests</td><td>--listener ListenAll --listener JavaListener --log mylog.html
+--report myrep.html --summary mysum.html --output myout.xml --debugfile
+mydeb.txt</td><td>misc${/}pass_and_fail.html</td>
+
+
+<td></td>
+</tr>
+<tr>
+<td>Resource</td>
+<td>listener_resource.html</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody></table>
+
+<table border="1">
+<colgroup span="99"><col class="name"><col class="value" span="4"></colgroup>
+<tbody><tr>
+<th>Variable</th>
+<th>Value</th>
+<th>Value</th>
+<th>Value</th>
+<th>Value</th>
+</tr>
+
+
+
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody></table>
+
+<table border="1">
+<colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
+<tbody><tr>
+<th>Test Case</th>
+<th>Action</th>
+<th>Argument</th>
+<th>Argument</th>
+<th>Argument</th>
+</tr>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<tr>
+<td><a name="test_OutputFiles">Output Files</a></td>
+<td>${file} =</td>
+<td>Get File</td>
+<td>${ALL_FILE}</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>${exp} =</td>
+<td>Catenate</td>
+<td>SEPARATOR=\n</td>
+<td>Output: myout.xml</td>
+</tr>
+<tr>
+<td></td>
+<td>...</td>
+<td>Debug: mydeb.txt</td>
+<td>Summary: mysum.html</td>
+<td>Report: myrep.html</td>
+</tr>
+<tr>
+<td></td>
+<td>...</td>
+<td>Log: mylog.html</td>
+<td>Closing...\n</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should End With</td>
+<td>${file}</td>
+<td>${exp}</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="test_OutputFilesWithJava">Output Files With Java</a></td>
+<td>[Tags]</td>
+<td>jybot</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>${file} =</td>
+<td>Get File</td>
+<td>${JAVA_FILE}</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>${exp} =</td>
+<td>Catenate</td>
+<td>SEPARATOR=\n</td>
+<td>Output (java): myout.xml</td>
+</tr>
+<tr>
+<td></td>
+<td>...</td>
+<td>Debug (java): mydeb.txt</td>
+<td>Summary (java): mysum.html</td>
+<td>Report (java): myrep.html</td>
+</tr>
+<tr>
+<td></td>
+<td>...</td>
+<td>Log (java): mylog.html</td>
+<td>The End\n</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should End With</td>
+<td>${file}</td>
+<td>${exp}</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</tbody></table>
+
+<table border="1">
+<colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
+<tbody><tr>
+<th>Keyword</th>
+<th>Action</th>
+<th>Argument</th>
+<th>Argument</th>
+<th>Argument</th>
+</tr>
+
+
+
+
+
+
+
+
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody></table>
+
+</body></html>

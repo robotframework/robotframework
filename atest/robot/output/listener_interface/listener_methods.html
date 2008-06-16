@@ -1,9 +1,7 @@
-
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html>
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<meta name="generator" content="RobotIDE" /> 
+<html><head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="generator" content="RobotIDE"> 
 <style type="text/css">
 html {
   font-family: Arial,Helvetica,sans-serif;
@@ -56,16 +54,15 @@ th {
   font-style: normal;
 }
 </style>
-<title>Listener Interface</title>
-</head>
+<title>Listener Interface</title></head>
+
+
 <body>
 <h1>Listener Interface</h1>
 
 <table border="1">
-<colgroup span="99">
-<col class="name">
-<col class="value" span="4"></colgroup>
-<tr>
+<colgroup span="99"><col class="name"><col class="value" span="4"></colgroup>
+<tbody><tr>
 <th>Setting</th>
 <th>Value</th>
 <th>Value</th>
@@ -88,14 +85,17 @@ th {
 </tr>
 <tr>
 <td>Suite Setup</td>
-<td>My Setup</td>
-<td></td>
-<td></td>
+<td>Run Listener Tests</td><td>--listener ListenAll --listener
+listeners.ListenSome --listener JavaListener --listener
+NonExistingListener --listener listeners.InvalidInit --listener
+listeners.InvalidMethods</td><td>misc${/}pass_and_fail.html</td>
+
+
 <td></td>
 </tr>
 <tr>
 <td>Resource</td>
-<td>../../resources/resource.html</td>
+<td>listener_resource.html</td>
 <td></td>
 <td></td>
 <td></td>
@@ -107,13 +107,11 @@ th {
 <td></td>
 <td></td>
 </tr>
-</table>
+</tbody></table>
 
 <table border="1">
-<colgroup span="99">
-<col class="name">
-<col class="value" span="4"></colgroup>
-<tr>
+<colgroup span="99"><col class="name"><col class="value" span="4"></colgroup>
+<tbody><tr>
 <th>Variable</th>
 <th>Value</th>
 <th>Value</th>
@@ -121,29 +119,8 @@ th {
 <th>Value</th>
 </tr>
 <tr>
-<td>${ALL_FILE}</td>
-<td>${TEMPDIR}${/}listen_all.txt</td>
 <td></td>
 <td></td>
-<td></td>
-</tr>
-<tr>
-<td>${SOME_FILE}</td>
-<td>${TEMPDIR}${/}listen_some.txt</td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td>${JAVA_FILE}</td>
-<td>${TEMPDIR}${/}listen_java.txt</td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td>${SUITE_MSG}</td>
-<td>2 critical tests, 1 passed, 1 failed\n 2 tests total, 1 passed, 1 failed</td>
 <td></td>
 <td></td>
 <td></td>
@@ -155,14 +132,14 @@ th {
 <td></td>
 <td></td>
 </tr>
-</table>
+
+
+
+</tbody></table>
 
 <table border="1">
-<colgroup span="99">
-<col class="name">
-<col class="action">
-<col class="arg" span="3"></colgroup>
-<tr>
+<colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
+<tbody><tr>
 <th>Test Case</th>
 <th>Action</th>
 <th>Argument</th>
@@ -421,350 +398,76 @@ th {
 <td></td>
 <td></td>
 </tr>
-<tr>
-<td><a name="test_OutputFiles">Output Files</a></td>
-<td>Remove Files</td>
-<td>${ALL_FILE}</td>
-<td>${JAVA_FILE}</td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td>Run Tests</td>
-<td>--listener ListenAll --listener JavaListener --log mylog.html --report myrep.html --summary mysum.html --output myout.xml --debugfile mydeb.txt</td>
-<td>misc${/}pass_and_fail.html</td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td>${file} =</td>
-<td>Get File</td>
-<td>${ALL_FILE}</td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td>${exp} =</td>
-<td>Catenate</td>
-<td>SEPARATOR=\n</td>
-<td>Output: myout.xml</td>
-</tr>
-<tr>
-<td></td>
-<td>...</td>
-<td>Debug: mydeb.txt</td>
-<td>Summary: mysum.html</td>
-<td>Report: myrep.html</td>
-</tr>
-<tr>
-<td></td>
-<td>...</td>
-<td>Log: mylog.html</td>
-<td>Closing...\n</td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td>Ends</td>
-<td>${file}</td>
-<td>${exp}</td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td><a name="test_OutputFilesWithJava">Output Files With Java</a></td>
-<td>[Tags]</td>
-<td>jybot</td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td>${file} =</td>
-<td>Get File</td>
-<td>${JAVA_FILE}</td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td>${exp} =</td>
-<td>Catenate</td>
-<td>SEPARATOR=\n</td>
-<td>Output (java): myout.xml</td>
-</tr>
-<tr>
-<td></td>
-<td>...</td>
-<td>Debug (java): mydeb.txt</td>
-<td>Summary (java): mysum.html</td>
-<td>Report (java): myrep.html</td>
-</tr>
-<tr>
-<td></td>
-<td>...</td>
-<td>Log (java): mylog.html</td>
-<td>The End\n</td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td>Ends</td>
-<td>${file}</td>
-<td>${exp}</td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td><a name="test_SplitOutputFiles">Split Output Files</a></td>
-<td>Remove Files</td>
-<td>${ALL_FILE}</td>
-<td>${JAVA_FILE}</td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td>Run Tests</td>
-<td>--listener ListenAll --listener JavaListener --log split.html --output split.xml --splitoutputs 1</td>
-<td>misc${/}suites</td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td>${file} =</td>
-<td>Get File</td>
-<td>${ALL_FILE}</td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td>Contains</td>
-<td>${file}</td>
-<td>Output: split.xml</td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td>Contains</td>
-<td>${file}</td>
-<td>Log: split.html</td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td>:: FOR</td>
-<td>${index}</td>
-<td>IN</td>
-<td>001</td>
-</tr>
-<tr>
-<td></td>
-<td>...</td>
-<td>002</td>
-<td>003</td>
-<td>004</td>
-</tr>
-<tr>
-<td></td>
-<td>...</td>
-<td>005</td>
-<td>006</td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td>Contains</td>
-<td>${file}</td>
-<td>Output: split-${index}.xml</td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td>Contains</td>
-<td>${file}</td>
-<td>Log: split-${index}.html</td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td><a name="test_SplitOutputFilesWithJava">Split Output Files With Java</a></td>
-<td>[Tags]</td>
-<td>jybot</td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td>${file} =</td>
-<td>Get File</td>
-<td>${JAVA_FILE}</td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td>Contains</td>
-<td>${file}</td>
-<td>Output (java): split.xml</td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td>Contains</td>
-<td>${file}</td>
-<td>Log (java): split.html</td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td>:: FOR</td>
-<td>${index}</td>
-<td>IN</td>
-<td>001</td>
-</tr>
-<tr>
-<td></td>
-<td>...</td>
-<td>002</td>
-<td>003</td>
-<td>004</td>
-</tr>
-<tr>
-<td></td>
-<td>...</td>
-<td>005</td>
-<td>006</td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td>Contains</td>
-<td>${file}</td>
-<td>Output (java): split-${index}.xml</td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td>Contains</td>
-<td>${file}</td>
-<td>Log (java): split-${index}.html</td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</tbody></table>
 
 <table border="1">
-<colgroup span="99">
-<col class="name">
-<col class="action">
-<col class="arg" span="3"></colgroup>
-<tr>
+<colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
+<tbody><tr>
 <th>Keyword</th>
 <th>Action</th>
 <th>Argument</th>
 <th>Argument</th>
 <th>Argument</th>
 </tr>
-<tr>
-<td><a name="keyword_MySetup">My Setup</a></td>
-<td>[Timeout]</td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td>Remove Files</td>
-<td>${ALL_FILE}</td>
-<td>${SOME_FILE}</td>
-<td>${JAVA_FILE}</td>
-</tr>
-<tr>
-<td></td>
-<td>Run Tests</td>
-<td>--listener ListenAll --listener listeners.ListenSome --listener JavaListener --listener NonExistingListener --listener listeners.InvalidInit --listener listeners.InvalidMethods</td>
-<td>misc${/}pass_and_fail.html</td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td><a name="keyword_CheckListenerFile">Check Listener File</a></td>
-<td>[Arguments]</td>
-<td>${path}</td>
-<td>${content}</td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td>[Timeout]</td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td>${file} =</td>
-<td>Get File</td>
-<td>${path}</td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td>Equals</td>
-<td>${file.strip()}</td>
-<td>${content}</td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-</table>
 
-</body>
-</html>
+
+
+
+
+
+
+
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody></table>
+
+</body></html>

@@ -1,0 +1,366 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="generator" content="RobotIDE"> 
+<style type="text/css">
+html {
+  font-family: Arial,Helvetica,sans-serif;
+  background-color: white;
+  color: black;
+}
+p {
+  max-width: 60em;
+}
+table {
+  border-collapse: collapse;
+  empty-cells: show;
+  margin: 1em 0em;
+  border: 0.1em solid black;
+}
+th, td {
+  border-style: solid;
+  border-width: 0.05em 0.1em;
+  border-color: black;
+  padding: 0.1em 0.2em;
+  height: 1.5em;
+}
+th {
+  background-color: rgb(192, 192, 192);
+  color: black;
+  border-width: 0.1em;
+  font-weight: bold;
+  text-align: center;
+  text-transform: capitalize;
+  letter-spacing: 0.1em;
+}
+/* Widths of named columns */
+col.name {
+  width: 10em;
+}
+.action, .value, .arg {
+  width: 15em;
+}
+/* Properties for the name column 
+- td:first-child should work in CSS 2.1 avare browsers (tested in Firefox)
+- col.name is against specs but works in IE
+*/
+td:first-child, col.name {
+  background-color: rgb(240, 240, 240);
+  text-transform: capitalize;
+  letter-spacing: 0.1em;
+}
+/* required for IE */
+th {
+  font-style: normal;
+}
+</style>
+<title>Listener Interface</title></head>
+<body>
+<h1>Listener Interface</h1>
+
+<table border="1">
+<colgroup span="99"><col class="name"><col class="value" span="4"></colgroup>
+<tbody><tr>
+<th>Setting</th>
+<th>Value</th>
+<th>Value</th>
+<th>Value</th>
+<th>Value</th>
+</tr>
+<tr>
+<td>Default Tags</td>
+<td>pybot</td>
+<td>jybot</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Force Tags</td>
+<td>regression</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Suite Setup</td>
+<td>Run Listener Tests</td>
+<td>--listener ListenAll --listener JavaListener --log split.html --output split.xml --splitoutputs 1</td><td>misc${/}suites</td>
+
+<td></td>
+</tr>
+<tr>
+<td>Resource</td>
+<td>listener_resource.html</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody></table>
+
+<table border="1">
+<colgroup span="99"><col class="name"><col class="value" span="4"></colgroup>
+<tbody><tr>
+<th>Variable</th>
+<th>Value</th>
+<th>Value</th>
+<th>Value</th>
+<th>Value</th>
+</tr>
+
+
+
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody></table>
+
+<table border="1">
+<colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
+<tbody><tr>
+<th>Test Case</th>
+<th>Action</th>
+<th>Argument</th>
+<th>Argument</th>
+<th>Argument</th>
+</tr>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<tr>
+<td><a name="test_SplitOutputFiles">Split Output Files</a></td>
+<td>${file} =</td>
+<td>Get File</td>
+<td>${ALL_FILE}</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should Contain</td>
+<td>${file}</td>
+<td>Output: split.xml</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should Contain</td>
+<td>${file}</td>
+<td>Log: split.html</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>:: FOR</td>
+<td>${index}</td>
+<td>IN</td>
+<td>001</td>
+</tr>
+<tr>
+<td></td>
+<td>...</td>
+<td>002</td>
+<td>003</td>
+<td>004</td>
+</tr>
+<tr>
+<td></td>
+<td>...</td>
+<td>005</td>
+<td>006</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td>Should Contain</td>
+<td>${file}</td>
+<td>Output: split-${index}.xml</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td>Should Contain</td>
+<td>${file}</td>
+<td>Log: split-${index}.html</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="test_SplitOutputFilesWithJava">Split Output Files With Java</a></td>
+<td>[Tags]</td>
+<td>jybot</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>${file} =</td>
+<td>Get File</td>
+<td>${JAVA_FILE}</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should Contain</td>
+<td>${file}</td>
+<td>Output (java): split.xml</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should Contain</td>
+<td>${file}</td>
+<td>Log (java): split.html</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>:: FOR</td>
+<td>${index}</td>
+<td>IN</td>
+<td>001</td>
+</tr>
+<tr>
+<td></td>
+<td>...</td>
+<td>002</td>
+<td>003</td>
+<td>004</td>
+</tr>
+<tr>
+<td></td>
+<td>...</td>
+<td>005</td>
+<td>006</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td>Should Contain</td>
+<td>${file}</td>
+<td>Output (java): split-${index}.xml</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td>Should Contain</td>
+<td>${file}</td>
+<td>Log (java): split-${index}.html</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody></table>
+
+<table border="1">
+<colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
+<tbody><tr>
+<th>Keyword</th>
+<th>Action</th>
+<th>Argument</th>
+<th>Argument</th>
+<th>Argument</th>
+</tr>
+
+
+
+
+
+
+
+
+
+<tr><td></td><td></td><td></td><td></td><td></td></tr><tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody></table>
+
+</body></html>
