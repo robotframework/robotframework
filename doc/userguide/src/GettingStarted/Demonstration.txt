@@ -20,11 +20,9 @@ screenshot of Selenium working in the figures below:
 
    Welcome page
 
-The demonstration can be downloaded from the `Robot Framework SeleniumLibrary
-page`_, where also the instructions for running the demonstration can
-be found.
+The demonstration can be downloaded from the `SeleniumLibrary page`_, where 
+also the instructions for running the demonstration can be found.
 
-.. _Robot Framework SeleniumLibrary page: https://cwiki.nokia.com/RobotFramework/SeleniumLibrary
+.. _SeleniumLibrary page: http://code.google.com/p/robotframework-seleniumlibrary
 
-.. TODO: (OSS) Go through the demo, update download links, etc. 
-         Possible also have even simpler demo with Robot itself.
+.. TODO: new demo for quick start

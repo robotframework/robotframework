@@ -7,7 +7,7 @@ There are two ways to install Robot Framework:
 `Installing from the source`_
 
     You can get the source code either as a source distribution
-    package or directly from version control. In the former case,
+    package or directly from `version control`__. In the former case,
     first extract the package somewhere, and as a result, you have a
     directory named ``robotframework-<version>``. Detailed
     instructions follow, but in short, what you need to do is to go to
@@ -25,9 +25,7 @@ page`_. For more information about different installation packages and
 possible future formats, see the :path:`PACKAGING.txt` file included in the
 source distribution.
 
-.. _download page: https://cwiki.nokia.com/RobotFramework/DownloadPage
-
-.. TODO: (OSS) Add link to version control, update download page
+__ `source code`_
 
 .. contents::
    :depth: 2 

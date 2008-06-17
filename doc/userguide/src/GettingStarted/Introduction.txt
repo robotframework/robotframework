@@ -56,7 +56,7 @@ Screenshots
 ~~~~~~~~~~~
 
 
-Following image shows screenshots of Robot Framework `test data`__, `test 
+Following image shows screenshots of Robot Framework `test data`_, `test 
 reports`_ and `test logs`_.
 
 .. figure:: src/GettingStarted/screenshots.png
