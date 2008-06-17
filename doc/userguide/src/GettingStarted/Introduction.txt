@@ -51,6 +51,7 @@ Why Robot Framework?
 
 .. _command line interface: `Executing test cases`_
 
+TODO: Add content from wiki frontpage
 
 Screenshots
 ~~~~~~~~~~~
