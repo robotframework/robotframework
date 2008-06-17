@@ -59,7 +59,13 @@ Screenshots
 Following image shows screenshots of Robot Framework `test data`_, `test 
 reports`_ and `test logs`_.
 
+.. figure:: src/GettingStarted/testdata_screenshots.png
+
+   Example test case files
+
 .. figure:: src/GettingStarted/screenshots.png
+
+    Example report and log files
  
 
 
