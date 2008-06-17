@@ -116,6 +116,9 @@ Appendices
 
 .. 2. Creating test data
 
+.. _test data: `Creating test data`_
+.. _general parsing rules: `Test data syntax`_
+.. _split into several rows: `Dividing test data to several rows`_
 .. _test case: `Creating test cases`_
 .. _test cases: `test case`_
 .. _test suite: `Creating test suites`_
@@ -158,8 +161,6 @@ Appendices
 .. _Telnet library documentation: ../libraries/Telnet.html
 .. _Collections library documentation: ../libraries/Collections.html
 .. _Screenshot library documentation: ../libraries/Screenshot.html
-.. _general parsing rules: `Test data syntax`_
-.. _split into several rows: `Dividing test data to several rows`_
 
 .. 3. Executing test cases
 
@@ -176,11 +177,13 @@ Appendices
 .. _output files: `output`_
 .. _XML output files: `output`_
 .. _log: `Log file`_
-.. _logs: `log`_
-.. _log files: `log`_
+.. _logs: log_
+.. _log files: log_
+.. _test logs: log_
 .. _report: `Report file`_
-.. _reports: `report`_
-.. _report files: `report`_
+.. _reports: report_
+.. _report files: report_
+.. _test reports: report_
 .. _summary: `Summary file`_
 .. _log level: `Log levels`_
 .. _library search path: `Adjusting library search path`_
@@ -202,8 +205,12 @@ Appendices
 .. _libdoc: `libdoc.py`_
 .. _javalib-core: `Core for Java test libraries`_
 
+.. 6. Misc
 
-.. Other commonly used link targets
+.. _download page: http://downloads.robotframework.org
+
+
+.. External link targets
 
 .. _Python: http://www.python.org/ 
 .. _Python Homepage: Python_
