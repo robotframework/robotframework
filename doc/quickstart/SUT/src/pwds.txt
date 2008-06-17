@@ -1,0 +1,6 @@
+dale	password	active
+elisabeth	pass	active
+jan	p@ss1	active
+fred	p@ss10	active
+kirk	password	active
+didi	password	active

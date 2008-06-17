@@ -1,0 +1,304 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+  <style type="text/css">
+html {
+  font-family: Arial,Helvetica,sans-serif;
+  background-color: white;
+  color: black;
+}
+p {
+  max-width: 60em;
+}
+table {
+  border-collapse: collapse;
+  empty-cells: show;
+  margin: 1em 0em;
+  border: 0.1em solid black;
+}
+th, td {
+  border-style: solid;
+  border-width: 0.05em 0.1em;
+  border-color: black;
+  padding: 0.1em 0.2em;
+  height: 1.5em;
+}
+th {
+  background-color: rgb(192, 192, 192);
+  color: black;
+  border-width: 0.1em;
+  font-weight: bold;
+  text-align: center;
+  text-transform: capitalize;
+  letter-spacing: 0.1em;
+}
+/* Widths of named columns */
+col.name {
+  width: 10em;
+}
+.action, .value, .arg {
+  width: 15em;
+}
+/* Properties for the name column 
+- td:first-child should work in CSS 2.1 avare browsers (tested in Firefox)
+- col.name is against specs but works in IE
+*/
+td:first-child, col.name {
+  background-color: rgb(240, 240, 240);
+  text-transform: capitalize;
+  letter-spacing: 0.1em;
+}
+/* required for IE */
+th {
+  font-style: normal;
+}</style>
+  <title>Robot Test Cases</title>
+</head>
+<body>
+<h1>Robot Framework Quick Start Guide<br>
+</h1>
+<h2>Installation</h2>
+TO DO<br>
+<h2>Overview</h2>
+Robot Framework is a keyword-based test automation tool.&nbsp; Tests
+live in html test files and make use of keywords written in libraries
+to drive the software under test.&nbsp; <br>
+<br>
+[TODO: create picture]<br>
+<br>
+Because Robot Framework is flexible and extensible, it is ideally
+suited to testing complex software with a variety of interfaces: GUI,
+Web, command line, Web services, etc.<br>
+<h2>Running This Demo</h2>
+To run this demo, open a command shell, cd to this directory, and type
+the following command at the command line:<br>
+<pre>pybot quickstart.html<span
+ style="font-family: Arial,Helvetica,sans-serif;"><br></span></pre>
+The tests in this file will execute and generate the following reports:<br>
+<ul>
+  <li>report.html: the test results summary<br>
+  </li>
+  <li>log.html: the test results details</li>
+  <li>output.xml: the test results in a portable XML format for
+integration with other tools</li>
+</ul>
+Double click on report.html to open it in your browser, then click on
+the links to explore the results. The report.html file links to the
+log.html file.<br>
+<h2>First Tests</h2>
+The following table has two tests:<br>
+<ul>
+  <li>User Can Create An Account And Login</li>
+  <li>User Cannot Log In With Bad Password</li>
+</ul>
+<table border="1">
+  <colgroup span="99"><col class="name"><col class="action"><col
+ class="arg" span="2"></colgroup> <thead> <tr>
+    <th>Test Case</th>
+    <th>Action</th>
+    <th>Data</th>
+    <th>Data</th>
+  </tr>
+  </thead> <tbody>
+    <tr>
+      <td>User can create an account and login<br>
+      </td>
+      <td>Create Valid User</td>
+      <td>fred</td>
+      <td>password</td>
+    </tr>
+    <tr>
+      <td><br>
+      </td>
+      <td>Attempt to Login with Credentials<br>
+      </td>
+      <td>fred</td>
+      <td>password<br>
+      </td>
+    </tr>
+    <tr>
+      <td><br>
+      </td>
+      <td>Status Should Be</td>
+      <td>Logged In</td>
+      <td><br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;"><br>
+      </td>
+      <td style="vertical-align: top;"><br>
+      </td>
+      <td style="vertical-align: top;"><br>
+      </td>
+      <td style="vertical-align: top;"><br>
+      </td>
+    </tr>
+    <tr>
+      <td>User cannot log in with Bad Password<br>
+      </td>
+      <td>Create Valid User</td>
+      <td>betty</td>
+      <td>password</td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;"><br>
+      </td>
+      <td style="vertical-align: top;">Attempt to Login with Credentials<br>
+      </td>
+      <td style="vertical-align: top;">betty<br>
+      </td>
+      <td style="vertical-align: top;">wrong<br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;"><br>
+      </td>
+      <td style="vertical-align: top;">Status Should Be<br>
+      </td>
+      <td style="vertical-align: top;">Access Denied<br>
+      </td>
+      <td style="vertical-align: top;"><br>
+      </td>
+    </tr>
+  </tbody>
+</table>
+Notice that these tests read almost like a manual test written in
+English rather than like an automated test.&nbsp; Robot Framework uses
+a keyword approach that supports writing tests that capture the essence
+of the actions and expectations in natural language.<br>
+<h2>Keywords</h2>
+Robot Framework supports three types of keywords:<br>
+<ul>
+  <li><span style="font-weight: bold; font-style: italic;">Built-in
+keywords</span>: the keywords included with Robot Framework,
+including generally useful keywords such as "Get Time" and "Should Be
+Equal".&nbsp; For a complete list of the available built-in keywords
+see [TODO: link to built-in library]<br>
+  </li>
+  <li><span style="font-weight: bold; font-style: italic;">User-defined
+keywords</span>: keywords defined in a Keywords table
+either in the test file, or in a resources file for a test suite. (More
+on test suites later.)<br>
+  </li>
+  <li><span style="font-weight: bold; font-style: italic;">Library
+keywords</span>: keywords defined in a Robot Framework Library.
+(More on Libraries later.The keyword "Create Valid User" from the
+previous tests is a User
+Keyword.<br>
+  </li>
+</ul>
+<table border="1">
+  <thead><tr>
+    <th>Keyword</th>
+    <th>Action</th>
+    <th>Argument</th>
+    <th>Argument</th>
+  </tr>
+  </thead> <tbody>
+    <tr>
+      <td>Create Valid User<br>
+      </td>
+      <td>[Arguments]<br>
+      </td>
+      <td>${username} </td>
+      <td>${password} </td>
+    </tr>
+    <tr>
+      <td><br>
+      </td>
+      <td>Create User<br>
+      </td>
+      <td>${username} </td>
+      <td>${password} </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;"><br>
+      </td>
+      <td style="vertical-align: top;">Status Should Be<br>
+      </td>
+      <td style="vertical-align: top;">SUCCESS<br>
+      </td>
+      <td style="vertical-align: top;"><br>
+      </td>
+    </tr>
+  </tbody>
+</table>
+User-defined keywords can inlude actions defined by other user-defined
+keywords, built-in keywords, or library keywords.&nbsp; As you can see
+from this example, User-defined keywords can take
+parameters.&nbsp; They can also return values and even contain FOR
+loops. For now, the important thing to know is that User-defined
+keywords enable test creators
+to create reusable steps for common action sequences.&nbsp;
+User-defined keywords can also help the test author keep the tests as
+readable as possible.<br>
+<h2>Libraries</h2>
+Robot Framework comes with a handful of libraries including an
+OperatingSystem library to support common operating system functions,
+and a Screenshot library for taking screenshots.&nbsp; In addition,
+there are other libraries distributed in separate open source projects,
+such as a
+Selenium library for Web testing.<br>
+<br>
+<table border="1">
+  <colgroup span="99"><col class="name"><col class="value" span="1"></colgroup>
+  <thead> <tr>
+    <th>Setting</th>
+    <th>Value</th>
+  </tr>
+  </thead> <tbody>
+    <tr>
+      <td>Library</td>
+      <td>OperatingSystem</td>
+    </tr>
+    <tr>
+      <td>Library</td>
+      <td>./Libs/loginlib.py</td>
+    </tr>
+  </tbody>
+</table>
+<h2>Test Setup and Teardown</h2>
+<h2>Test Suites</h2>
+<h2>Creating a Library</h2>
+<iframe src="./Libs/loginlib.py">
+<h2>Variables</h2>
+<br>
+<table border="1">
+  <colgroup span="99"><col class="name"><col class="value" span="4"></colgroup>
+  <thead> <tr>
+    <th>Variable</th>
+    <th>Value</th>
+    <th>Value</th>
+    <th>Value</th>
+    <th>Value</th>
+  </tr>
+  </thead> <tbody>
+    <tr>
+      <td><br>
+      </td>
+      <td><br>
+      </td>
+      <td><br>
+      </td>
+      <td><br>
+      </td>
+      <td><br>
+      </td>
+    </tr>
+    <tr>
+      <td><br>
+      </td>
+      <td><br>
+      </td>
+      <td><br>
+      </td>
+      <td><br>
+      </td>
+      <td><br>
+      </td>
+    </tr>
+  </tbody>
+</table>
+</body>
+</html>
