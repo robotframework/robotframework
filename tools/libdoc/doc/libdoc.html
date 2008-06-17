@@ -3,7 +3,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<meta name="generator" content="Docutils 0.4.1: http://docutils.sourceforge.net/" />
+<meta name="generator" content="Docutils 0.5: http://docutils.sourceforge.net/" />
 <title>libdoc.py</title>
 <style type="text/css">
 
@@ -345,7 +345,7 @@ table.messages td.level {
 .var {
     background: #f4f4f4;
 }
-.setting {
+.opt {
     font-style: italic;
 }
 .prog, .code, .cli {
@@ -355,7 +355,7 @@ table.messages td.level {
 .msg {
     font-family: monospace;
 }
-.kw, .name {  
+.name {  
     font-style: italic;
 }
 .path {
@@ -450,16 +450,17 @@ pre.literal-block, pre.doctest-block {
 <body>
 <div class="document" id="libdoc-py">
 <h1 class="title">libdoc.py</h1>
+
 <p>A tool for generating keyword documentation from test libraries and
 resource files.</p>
-<div class="section">
-<h1><a id="synopsis" name="synopsis">Synopsis</a></h1>
+<div class="section" id="synopsis">
+<h1>Synopsis</h1>
 <pre class="literal-block">
 libdoc.py [options] library_or_resource_file
 </pre>
 </div>
-<div class="section">
-<h1><a id="options" name="options">Options</a></h1>
+<div class="section" id="options">
+<h1>Options</h1>
 <blockquote>
 <table class="docutils option-list" frame="void" rules="none">
 <col class="option" />
@@ -473,47 +474,49 @@ The default value is HTML.</td></tr>
 <tr><td class="option-group" colspan="2">
 <kbd><span class="option">-o</span>, <span class="option">--output <var>path</var></span></kbd></td>
 </tr>
-<tr><td>&nbsp;</td><td>Where to write the generated documentation. If the path
-is a directory, the documentation is generated there
-using the name &quot;.&quot; with an index after the &quot;&quot; part, if
-a file with that name already exists. If the given path
-points to a file, this path is used as-is and possible
-existing file is overwritten. The default value for the
-path is the directory where the script is executed from.</td></tr>
-<tr><td class="option-group" colspan="2">
-<kbd><span class="option">-P</span>, <span class="option">--pythonpath <var>path</var></span></kbd></td>
-</tr>
-<tr><td>&nbsp;</td><td>Additional path(s) to insert into PYTHONPATH.</td></tr>
+<tr><td>&nbsp;</td><td>Specifies where to write the generated
+documentation. If the path is a directory,
+the documentation is generated there using
+the name &quot;.&quot; with an index after the &quot;&quot;
+part, if a file with that name already
+exists. If the given path points to a file,
+this path is used as is, and the possible
+existing file is overwritten. The default
+value for the path is the directory where
+the script is executed from.  -P,
+--pythonpath path Additional path(s) to
+insert into PYTHONPATH.</td></tr>
 <tr><td class="option-group">
 <kbd><span class="option">-h</span>, <span class="option">--help</span></kbd></td>
-<td>Print this help.</td></tr>
+<td>Prints this help.</td></tr>
 </tbody>
 </table>
 </blockquote>
 </div>
-<div class="section">
-<h1><a id="description" name="description">Description</a></h1>
+<div class="section" id="description">
+<h1>Description</h1>
 <p>Library documentation can generate library keyword documentation from
-test libraries and resource files either in HTML or XML format. The
+test libraries and resource files either in the HTML or XML format. The
 former is for humans and the latter mainly for Robot IDE or other
 tools.</p>
 <p>Documentation can be created for</p>
 <blockquote>
 <ul class="simple">
-<li>test libraries implemented with Python or Java using the normal library API,</li>
-<li>test libraries using the dynamic API (but you only get keyword names and not
-their arguments or documentations), and</li>
-<li>resource files.</li>
+<li>Test libraries implemented with Python or Java using the normal library API,</li>
+<li>Test libraries using the dynamic API (but you only get keyword names and not
+their arguments or documentations)</li>
+<li>Resource files</li>
 </ul>
 </blockquote>
-<p>It is possible to specify a Python test library by giving either the path to
-the source or only the library name. If the library name is used, it must be in
-the same format as in Robot test data when importing libraries. In this case,
-the library is searched from PYTHONPATH (and from CLASSPATH, if on Jython).</p>
-<p>A Java test library implemented with normal library API can be specified by
+<p>It is possible to specify a Python test library by giving either the
+path to the source or only the library name. If the library name is
+used, it must be in the same format as in the Robot Framework test
+data when importing libraries. In this case, the library is searched
+from PYTHONPATH (and from CLASSPATH, if on Jython).</p>
+<p>A Java test library implemented with a normal library API can be specified by
 giving the path to the source file containing the library class. Additionally,
-&quot;tools.jar&quot;, which is part of the Sun JDK distribution, must be found from
-CLASSPATH when libdoc.py is executed.</p>
+<span class="path">tools.jar</span>, which is part of the Sun JDK distribution, must be found from
+CLASSPATH when <span class="prog">libdoc.py</span> is executed.</p>
 <p>Libraries using the dynamic library API are handled in the same way as Python
 libraries are.</p>
 <p>Resource files must always be specified using a path. If the path does not
@@ -527,8 +530,8 @@ $ python path/to/libdoc.py --format xml OperatingSystem
 $ python path/to/libdoc.py --format xml --output doc test/resource.html
 $ jython path/to/libdoc.py --format xml MyJavaLibrary.java
 </pre>
-<div class="section">
-<h2><a id="how-imported-libraries-are-found" name="how-imported-libraries-are-found">How imported libraries are found</a></h2>
+<div class="section" id="how-imported-libraries-are-found">
+<h2>How imported libraries are found</h2>
 <p>The libraries to document are imported similarly as they are imported
 when executing test cases. Libraries can only be imported if they are
 found from PYTHONPATH (or from CLASSPATH when running with
@@ -538,20 +541,20 @@ normal Java libraries; it is enough to give the path to the source
 file for these.</p>
 </div>
 </div>
-<div class="section">
-<h1><a id="writing-documentation" name="writing-documentation">Writing documentation</a></h1>
+<div class="section" id="writing-documentation">
+<h1>Writing documentation</h1>
 <p>The documentation for Python libraries is written simply as doc
 strings for the library class and for methods implementing
 keywords. The first line of the method documentation is considered as
 a short documentation for the keywords (used for example as a tool tip in
 links in the generated HTML documentation), and it should thus be as
-describing as possible but not too long. From Robot 1.4 onwards, it
+describing as possible, but not too long. From Robot 1.4 onwards, it
 is possible to use simple formatting in documentation (for example, bold and
 tables).</p>
 <p>The simple example below illustrates how to write the documentation,
 and standard libraries (for example, OperatingSystemLibrary) give more
 realistic examples. For more information on Python documentation
-strings, see <a class="reference" href="http://www.python.org/dev/peps/pep-0257/">PEP-257</a>.</p>
+strings, see <a class="reference external" href="http://www.python.org/dev/peps/pep-0257/">PEP-257</a>.</p>
 <div class="highlight"><pre><span class="k">class</span> <span class="nc">ExampleLib</span><span class="p">:</span>
 
     <span class="sd">&quot;&quot;&quot;Library for demo purposes.</span>
@@ -579,7 +582,7 @@ on the Javadocs in the source files.</p>
 </div>
 <div class="footer">
 <hr class="footer" />
-Generated on: 2008-06-11 10:12 UTC.
+Generated on: 2008-06-17 08:57 UTC.
 
 </div>
 </body>

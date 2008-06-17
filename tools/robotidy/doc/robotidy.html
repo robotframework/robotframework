@@ -3,7 +3,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<meta name="generator" content="Docutils 0.4.1: http://docutils.sourceforge.net/" />
+<meta name="generator" content="Docutils 0.5: http://docutils.sourceforge.net/" />
 <title>robotidy.py</title>
 <style type="text/css">
 
@@ -345,7 +345,7 @@ table.messages td.level {
 .var {
     background: #f4f4f4;
 }
-.setting {
+.opt {
     font-style: italic;
 }
 .prog, .code, .cli {
@@ -355,7 +355,7 @@ table.messages td.level {
 .msg {
     font-family: monospace;
 }
-.kw, .name {  
+.name {  
     font-style: italic;
 }
 .path {
@@ -450,17 +450,18 @@ pre.literal-block, pre.doctest-block {
 <body>
 <div class="document" id="robotidy-py">
 <h1 class="title">robotidy.py</h1>
+
 <p>A tool for cleaning up Robot Framework test data.</p>
-<div class="section">
-<h1><a id="synopsis" name="synopsis">Synopsis</a></h1>
+<div class="section" id="synopsis">
+<h1>Synopsis</h1>
 <pre class="literal-block">
 robotidy.py [options] inputfile outputfile
 robotidy.py --inplace [options] inputfile [more input files]
 robotidy.py --recursive [options] directory
 </pre>
 </div>
-<div class="section">
-<h1><a id="options" name="options">Options</a></h1>
+<div class="section" id="options">
+<h1>Options</h1>
 <blockquote>
 <table class="docutils option-list" frame="void" rules="none">
 <col class="option" />
@@ -468,85 +469,85 @@ robotidy.py --recursive [options] directory
 <tbody valign="top">
 <tr><td class="option-group">
 <kbd><span class="option">-I</span>, <span class="option">--inplace</span></kbd></td>
-<td>Tidy given file(s) so that original file(s) are overwritten
+<td>Cleans given file(s) so that original file(s) are overwritten.
 When this option is used, it is possible to give multiple
-files at once. Examples:
+files at once. Examples::
 robotidy.py --inplace tests.html
 robotidy.py --inplace --fixcomments *.html</td></tr>
 <tr><td class="option-group" colspan="2">
 <kbd><span class="option">-R</span>, <span class="option">--recursive</span></kbd></td>
 </tr>
-<tr><td>&nbsp;</td><td>Process given directory recursively. Files in the directory
-are processed in place similarly as when '--inplace'
+<tr><td>&nbsp;</td><td>Processes the given directory recursively. Files in the directory
+are processed in place, similarly as when the <span class="opt">--inplace</span>
 option is used.</td></tr>
 <tr><td class="option-group" colspan="2">
 <kbd><span class="option">-X</span>, <span class="option">--fixcomments</span></kbd></td>
 </tr>
-<tr><td>&nbsp;</td><td>Fix comments in the test data.</td></tr>
+<tr><td>&nbsp;</td><td>Fixes comments in the test data.</td></tr>
 <tr><td class="option-group" colspan="2">
 <kbd><span class="option">-F</span>, <span class="option">--format <var>&lt;html|tsv&gt;</var></span></kbd></td>
 </tr>
-<tr><td>&nbsp;</td><td>Format to use for output. Possible values are HTML and TSV.
+<tr><td>&nbsp;</td><td>The format to use for output. Possible values are HTML and TSV.
 If this option is not used, the format is got from the
 extension of the output file.</td></tr>
 <tr><td class="option-group" colspan="2">
 <kbd><span class="option">-T</span>, <span class="option">--title <var>text</var></span></kbd></td>
 </tr>
-<tr><td>&nbsp;</td><td>Title to use in the test data. By default the title is got
+<tr><td>&nbsp;</td><td>The title to use in the test data. By default, the title is got
 from the name of the output file. If the output file is
-HTML the title is used with 'h1' and 'title' tags, and with
-TSV it is simply printed before the first table. Possible
+HTML, the title is used with &quot;h1&quot; and &quot;title&quot; tags, and with
+TSV, it is simply printed before the first table. Possible
 underscores in the given title are converted to spaces.</td></tr>
 <tr><td class="option-group" colspan="2">
 <kbd><span class="option">-S</span>, <span class="option">--style <var>&lt;path&gt;</var></span></kbd></td>
 </tr>
-<tr><td>&nbsp;</td><td>ead styles from an external style sheet file and replace
-default styles with them. If the path has a special value
-'NONE', no styles are used. This setting is applicable only
+<tr><td>&nbsp;</td><td>Reads styles from an external style sheet file and replaces
+the default styles with them. If the path has a special value
+NONE, no styles are used. This setting is applicable only
 when the output format is HTML.</td></tr>
 <tr><td class="option-group">
 <kbd><span class="option">-h</span>, <span class="option">--help</span></kbd></td>
-<td>Print this help.</td></tr>
+<td>Prints this help.</td></tr>
 </tbody>
 </table>
 </blockquote>
 </div>
-<div class="section">
-<h1><a id="description" name="description">Description</a></h1>
+<div class="section" id="description">
+<h1>Description</h1>
 <p>This multipurpose tool has three usages explained in this section.
-In all cases, the outputs are written in UTF-8 format.</p>
-<div class="section">
-<h2><a id="cleaning-up-the-test-data" name="cleaning-up-the-test-data">Cleaning up the test data</a></h2>
-<p>Source code created by most HTML editors is quite ugly. With this tool the
-source can be formatted nicely and it is even possible to specify a custom
-style sheet. Additionally test data itself is cleaned up so that settings and
-metadata is always in same predefined order.</p>
+In all cases, the outputs are written in the UTF-8 format.</p>
+<div class="section" id="cleaning-up-the-test-data">
+<h2>Cleaning up the test data</h2>
+<p>The source code created by most HTML editors does not look very good. With this tool, the
+source can be formatted nicely, and it is even possible to specify a custom
+style sheet. Additionally, test data itself is cleaned up, so that settings and
+metadata are always in the same, predefined order.</p>
 <p>Examples:</p>
 <pre class="literal-block">
 robotidy.py messed_up_tests.html cleaned_tests.html
 robotidy.py --style new_styles.css my_tests.html my_tests.html
 </pre>
 </div>
-<div class="section">
-<h2><a id="changing-format-between-html-and-tsv" name="changing-format-between-html-and-tsv">Changing format between HTML and TSV</a></h2>
-<p>Robot Framework supports test data in HTML and TSV formats and this tools makes
-changing between formats trivial. Input format is always determined from the
-extension of the input file. Output format is also got from the output file
-extension by default but it can also be set explicitly with '--format' option.</p>
+<div class="section" id="changing-format-between-html-and-tsv">
+<h2>Changing format between HTML and TSV</h2>
+<p>Robot Framework supports test data in HTML and TSV formats, and this tool eases
+changing between formats. The input format is always determined from the
+extension of the input file. The output format is also got from the output file
+extension by default, but it can also be set explicitly with the <span class="opt">--format</span> option.</p>
 <p>Examples:</p>
 <pre class="literal-block">
 robotidy.py tests_in_html.html tests_in_tsv.tsv
 robotidy.py --format html tests.tsv tests.xxx
 </pre>
 </div>
-<div class="section">
-<h2><a id="fixing-comments" name="fixing-comments">Fixing comments</a></h2>
-<p>Robot IDE is a great tool for editing the test data but at least currently it
-totally ignores comments. This tool can be used to convert comments so that
-they are not lost when the test data is opened to the IDE. Comments in test
-case and user keyword tables are changed so that instead of '#' a built-in
-'Comment' keyword is used. In variable tables comments are converted to '&#64;{#}'
-or '${#}'. Comments in setting tables are not fixed.</p>
+<div class="section" id="fixing-comments">
+<h2>Fixing comments</h2>
+<p>Robot IDE is a great tool for editing the test data, but at least currently, it
+totally ignores comments. This tool can be used to convert comments, so that
+they are not lost when the test data is opened in IDE. Comments in Test
+Case and user keyword tables are changed, so that instead of &quot;#&quot;, a built-in
+<span class="name">Comment</span> keyword is used. In Variable tables, comments are converted to &quot;&#64;{#}&quot;
+or &quot;${#}&quot;. Comments in Setting tables are not fixed.</p>
 <p>Examples:</p>
 <pre class="literal-block">
 robotidy.py --fixcomments orig.html fixed.html
@@ -557,7 +558,7 @@ robotidy.py --fixcomments --inplace \*.html
 </div>
 <div class="footer">
 <hr class="footer" />
-Generated on: 2008-06-11 10:12 UTC.
+Generated on: 2008-06-17 08:59 UTC.
 
 </div>
 </body>
