@@ -15,8 +15,8 @@ Internal tools
 Library documentation tool -- libdoc.py
 ''''''''''''''''''''''''''''''''''''''''
 
-`libdoc.py`__ is tool for generating HTML or XML documentation from keywords of a
-test library or a resource file.
+`libdoc.py`__ is tool for generating HTML or XML documentation from keywords of
+a test library or a resource file.
 
 __ ../../tools/libdoc/doc/libdoc.html
 
@@ -103,15 +103,21 @@ made publicly available.
 Manual test execution tool (mabot)
 ''''''''''''''''''''''''''''''''''
 
-:prog:`mabot` is a tool TODO: Juha
+:prog:`mabot` is a standalone tool for reporting manual test execution results. 
+It enables storing and reporting manual test cases along with automated Robot 
+Framework test cases.
+
+More information will be added as soon as :prog:`mabot` project is
+made publicly available.
 
 
 Core for Java test libraries
 ''''''''''''''''''''''''''''
 
-Javalib-core is an external component that simplifies creation of larger Java test 
-libraries by offering several dynamic ways of resolving available keywords at 
-runtime. For more information, see http://code.google.com/p/robotframework-javalib-core/
+Javalib-core is an external component that simplifies creation of larger Java
+test libraries by offering several dynamic ways of resolving available keywords
+at runtime. For more information, see
+http://code.google.com/p/robotframework-javalib-core/
 
 
 
