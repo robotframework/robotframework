@@ -134,7 +134,7 @@ class Verify:
         asserts.fail_unless(_is_true(expr), msg)
 
     def should_be_equal(self, first, second, msg=None, values=True):
-        """Fail if the given objects are unequal.
+        """Fails if the given objects are unequal.
         
         - If 'msg' is not given, the possible error message is
           'first != second'.
@@ -146,7 +146,7 @@ class Verify:
         asserts.fail_unless_equal(first, second, msg, values)
 
     def should_not_be_equal(self, first, second, msg=None, values=True):
-        """Fail if the given objects are equal.
+        """Fails if the given objects are equal.
              
         See 'Should Be Equal' for an explanation on how to override gthe default
         error message with 'msg' and 'values'.
@@ -155,7 +155,7 @@ class Verify:
         asserts.fail_if_equal(first, second, msg, values)
 
     def should_not_be_equal_as_integers(self, first, second, msg=None, values=True):
-        """Fail if objects are equal after converting them to integers.
+        """Fails if objects are equal after converting them to integers.
         
         See 'Should Be Equal' for an explanation on how to override the default
         error message with 'msg' and 'values'.
@@ -164,7 +164,7 @@ class Verify:
         self.should_not_be_equal(first, second, msg, values)
 
     def should_be_equal_as_integers(self, first, second, msg=None, values=True):
-        """Fail if objects are unequal after converting them to integers.
+        """Fails if objects are unequal after converting them to integers.
 
         See 'Should Be Equal' for an explanation on how to override the default
         error message with 'msg' and 'values'.
@@ -173,7 +173,7 @@ class Verify:
         self.should_be_equal(first, second, msg, values)
 
     def should_not_be_equal_as_numbers(self, first, second, msg=None, values=True):
-        """Fail if objects are equal after converting them to real numbers.
+        """Fails if objects are equal after converting them to real numbers.
         
         See 'Should Be Equal' for an explanation on how to override the default
         error message with 'msg' and 'values'.        
@@ -182,7 +182,7 @@ class Verify:
         self.should_not_be_equal(first, second, msg, values)
 
     def should_be_equal_as_numbers(self, first, second, msg=None, values=True):
-        """Fail if objects are unequal after converting them to real numbers.
+        """Fails if objects are unequal after converting them to real numbers.
         
         See 'Should Be Equal' for an explanation on how to override the default
         error message with 'msg' and 'values'.
@@ -191,7 +191,7 @@ class Verify:
         self.should_be_equal(first, second, msg, values)
         
     def should_not_be_equal_as_strings(self, first, second, msg=None, values=True):
-        """Fail if objects are equal after converting them to strings.
+        """Fails if objects are equal after converting them to strings.
         
         See 'Should Be Equal' for an explanation on how to override the default
         error message with 'msg' and 'values'.
@@ -200,7 +200,7 @@ class Verify:
         self.should_not_be_equal(first, second, msg, values)
         
     def should_be_equal_as_strings(self, first, second, msg=None, values=True):
-        """Fail if objects are unequal after converting them to strings.
+        """Fails if objects are unequal after converting them to strings.
         
         See 'Should Be Equal' for an explanation on how to override the default
         error message with 'msg' and 'values'.
@@ -209,7 +209,7 @@ class Verify:
         self.should_be_equal(first, second, msg, values)
 
     def should_not_start_with(self, str1, str2, msg=None, values=True):
-        """Fail if the string 'str1' starts with the string 'str2'.
+        """Fails if the string 'str1' starts with the string 'str2'.
         
         See 'Should Be Equal' for an explanation on how to override the default
         error message with 'msg' and 'values'.
@@ -218,7 +218,7 @@ class Verify:
         asserts.fail_if(str1.startswith(str2), msg)
 
     def should_start_with(self, str1, str2, msg=None, values=True):
-        """Fail if the string 'str1' does not start with the string 'str2'.
+        """Fails if the string 'str1' does not start with the string 'str2'.
         
         See 'Should Be Equal' for an explanation on how to override the default
         error message with 'msg' and 'values'.
@@ -227,7 +227,7 @@ class Verify:
         asserts.fail_unless(str1.startswith(str2), msg)
 
     def should_not_end_with(self, str1, str2, msg=None, values=True):
-        """Fail if the string 'str1' ends with the string 'str2'.
+        """Fails if the string 'str1' ends with the string 'str2'.
         
         See 'Should Be Equal' for an explanation on how to override the default
         error message with 'msg' and 'values'.
@@ -236,7 +236,7 @@ class Verify:
         asserts.fail_if(str1.endswith(str2), msg)
 
     def should_end_with(self, str1, str2, msg=None, values=True):
-        """Fail if the string 'str1' does not end with the string 'str2'.
+        """Fails if the string 'str1' does not end with the string 'str2'.
 
         See 'Should Be Equal' for an explanation on how to override the default
         error message with 'msg' and 'values'.        
@@ -245,7 +245,7 @@ class Verify:
         asserts.fail_unless(str1.endswith(str2), msg)
 
     def should_not_contain(self, str1, str2, msg=None, values=True):
-        """Fail if the string 'str1' contains the string 'str2' one or more
+        """Fails if the string 'str1' contains the string 'str2' one or more
         times.
         
         See 'Should Be Equal' for an explanation on how to override the default
@@ -255,7 +255,7 @@ class Verify:
         asserts.fail_if(str1.count(str2) > 0, msg)
 
     def should_contain(self, str1, str2, msg=None, values=True):
-        """Fail if the string 'str1' does not contain the string 'str2' one or
+        """Fails if the string 'str1' does not contain the string 'str2' one or
         more times.
         
         See 'Should Be Equal' for an explanation on how to override the default
@@ -265,7 +265,7 @@ class Verify:
         asserts.fail_unless(str1.count(str2) > 0, msg)
 
     def should_not_match(self, string, pattern, msg=None, values=True):
-        """Fail if the given 'string' matches the given 'pattern'.
+        """Fails if the given 'string' matches the given 'pattern'.
 
         Pattern matching is similar as matching files in a shell, and it is
         always case-sensitive. In the pattern '*' matches to anything and '?'
@@ -278,7 +278,7 @@ class Verify:
         asserts.fail_if(self._matches(string, pattern), msg)
 
     def should_match(self, string, pattern, msg=None, values=True):
-        """Fail unless the given 'string' matches the given 'pattern'.
+        """Fails unless the given 'string' matches the given 'pattern'.
 
         Pattern matching is similar as matching files in a shell, and it is
         always case-sensitive. In the pattern, '*' matches to anything and '?'
@@ -291,7 +291,7 @@ class Verify:
         asserts.fail_unless(self._matches(string, pattern), msg)
 
     def should_match_regexp(self, string, pattern, msg=None, values=True):
-        """Fail if 'string' does not match 'pattern' as a regular expression.
+        """Fails if 'string' does not match 'pattern' as a regular expression.
 
         Regular expression check is done using the Python 're' module, which has 
         a pattern syntax derived from Perl, and thus also very similar to the 
@@ -350,7 +350,7 @@ class Verify:
         return match
         
     def should_not_match_regexp(self, string, pattern, msg=None, values=True):
-        """Fail if 'string' matches 'pattern' as a regular expression.
+        """Fails if 'string' matches 'pattern' as a regular expression.
         
         See 'Should Match Regexp' for more information about arguments.
         """

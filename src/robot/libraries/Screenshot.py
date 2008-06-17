@@ -24,18 +24,18 @@ class Screenshot:
  
     """This library supports taking full-screen screenshots of the desktop.
     
-    The library can be initialized with two arguments 'default_directory' and 
-    'log_file_directory'. If 'default_directory' is provided, all the 
+    The library can be initialized with two arguments: 'default_directory' and 
+    'log_file_directory'. If the 'default_directory' is provided, all the 
     screenshots will be saved under that directory by default. If the 
-    'default_directory' is not provided the system temporary directory is used 
+    'default_directory' is not provided, the system temporary directory is used 
     as default.
     'log_file_directory' is used to create relative paths when screenshots are 
-    logged. By default absolute paths are used.
+    logged. By default, absolute paths are used.
     
     The library depends on standard Java APIs and thus requires a Jython runtime
     environment. The library does not, however, require any specific operating
     system. While the library has been tested on Windows and Linux, any 
-    operating system for which the JDK is available should be sufficient. 
+    operating system for which the JDK is available, should be sufficient. 
     """
     
     def __init__(self, default_directory=None, log_file_directory=None):
@@ -45,7 +45,7 @@ class Screenshot:
                                  log_file_directory=None):
         """Used to set 'default_directory' and 'log_file_directory'.
         
-        See library documentation for details."""
+        See the library documentation for details."""
 
         if default_directory is None:
             default_directory = tempfile.gettempdir()
@@ -58,8 +58,8 @@ class Screenshot:
         
         The unique name is derived based on the provided basename and directory
         passed in as optional arguments. If a directory is provided, the 
-        screenshot will be saved under that directory, otherwise, the 
-        'default_directory' set during library import or by keyword 'Set 
+        screenshot is saved under that directory. Otherwise, the 
+        'default_directory' set during the library import or by the keyword 'Set 
         Screenshot Directories' is used. If a basename for the screenshot file 
         is provided, a unique filename is determined by appending an underscore
         and a running counter. Otherwise, the basename defaults to 'screenshot'.
@@ -108,17 +108,17 @@ class Screenshot:
     
     def log_screenshot(self, basename="screenshot", directory=None, 
                        log_file_directory=None, width="100%"):
-        """Takes a screenshot and logs it to Robot's log.
+        """Takes a screenshot and logs it to Robot Framework's log.
         
-        Saves the files as defined in keyword 'Save Screenshot' and creates 
-        picture to Robot's log. 'directory' defines the directory where the 
-        screenshots is saved. By default its value is 'default_directory' 
-        which is set at library import or with keyword 'Set Screenshot 
-        Directories'. 'log_file_directory' is used to create relative paths to 
-        the pictures. This allows moving the log and pictures to 
-        different machines and having still working pictures. If 
-        'log_file_directory' is not given or set (sameway as 
-        'default_directory' is set), the paths will be absolute.
+        Saves the files as defined in the keyword 'Save Screenshot' and creates 
+        a picture to Robot Framework's log. 'directory' defines the directory
+        where the screenshots are saved. By default, its value is
+        'default_directory', which is set at the library import or with the
+        keyword 'Set Screenshot Directories'. 'log_file_directory' is used to
+        create relative paths to the pictures. This allows moving the log and
+        pictures to different machines and having still working pictures. If 
+        'log_file_directory' is not given or set (in the same way as 
+        'default_directory' is set), the paths are absolute.
         """
 
         path = self.save_screenshot(basename, directory)

@@ -32,35 +32,37 @@ PROCESSES = utils.ConnectionCache('No active processes')
 
 class OperatingSystem:
     
-    """This test library enables multiple operating system related tasks."""
+    """This test library enables multiple operating-system-related tasks."""
 
     ROBOT_LIBRARY_SCOPE = 'GLOBAL'
     
     def run(self, command, return_mode='stdout'):
-        """Runs given command in system and returns return code and/or stdout.
+        """Runs the given command in the system and returns a return code
+        and/or stdout.
         
-        'return_mode' defines how return code (rc) and standard output (stdout)
-        are returned as explained below. All checks are case insensitive.
-        * If it contains word 'rc' and either word 'stdout' or 'output', both
+        'return_mode' defines how the return code (rc) and the standard output
+        (stdout) are returned as explained below. All checks are
+        case-insensitive.
+        * If it contains the word 'rc' and either the word 'stdout' or 'output', both
           the rc and stdout are returned.
-        * Otherwise, if it contains word 'rc', only the rc is returned.
+        * Otherwise, if it contains the word 'rc', only the rc is returned.
         * Otherwise, and by default, only the stdout is returned.
                 
-        The rc is returned as an integer. It must thus be checked e.g. with 
+        The rc is returned as an integer. It must thus be checked e.g. with the 
         keyword 'Should Be Equal As Integers' instead of 'Should Be Equal' (both
-        are built-in keywords). Return codes are positive integers in range
-        from 0 to 255 as returned by the command (if the command returns some
-        other value the system maps it into this range).
+        are built-in keywords). Return codes are positive integers within the
+        range from 0 to 255 as returned by the command (if the command returns
+        some other value, the system maps it into this range).
         
         The returned output contains everything written into the stdout by the
         command. Many commands add an extra newline (\\n) after the output to
-        make reading it easier in the console. To ease processing the returned
-        output Robot strips this possible newline.
+        ease reading it in the console. To ease processing the returned
+        output, Robot Framework strips this possible newline.
         
-        Possible standard error (stderr) from the executed command is NOT
+        The possible standard error (stderr) from the executed command is NOT
         captured by this keyword or other parts of Robot. If catching stderr is
-        important it must be redirected into stdout or some file. The former 
-        can be achieved, both in Windows and unixes, with syntax 
+        important, it must be redirected into stdout or some file. The former 
+        can be achieved (both in Windows and UNIX-like systems) with the syntax 
         'my_command 2>&1' and the latter with 'my_command 2>stderr.txt'.
         
         Examples:
@@ -115,52 +117,55 @@ class OperatingSystem:
         return self.run(command, 'RC')
     
     def run_and_return_rc_and_output(self, command):
-        """Wrapper for 'Run' keyword that returns the return code and output.
+        """Wrapper for the 'Run' keyword that returns the return code and
+        output.
         
-        Following two examples are equivalent but the latter is easier to
+        The following two examples are equivalent, but the latter is easier to
         understand and thus recommended.
         
         | ${rc} | ${output} = | Run                  | my_command | RC, Output |
         | ${rc} | ${output} = | Run and Return RC and Output | my_command |    |
         
-        Note that similarly as normal 'Run' this keyword only returns the 
-        standard output and not the standard error. Use either format
+        Note that similarly as the normal 'Run', this keyword only returns the 
+        standard output and not the standard error. Use either the format
         'my_command 2>/tmp/stderr.txt' to redirect the stderr into a specific
         file or 'my_command 2>&1' to return it along with the stdout.
         """
         return self.run(command, 'RC,Output')
     
     def start_process(self, command, stdin='', alias=None):
-        """Starts given command as a background process.
+        """Starts the given command as a background process.
         
         Starts the process in the background and sets this process as the 
-        current process so that following calls of keywords 'Read Process Output'
-        and 'Stop Process' affect this process unless keyword 'Switch Process' is
-        used in between.
+        current process. The following calls of the keywords
+        'Read Process Output' and 'Stop Process' affect this process, unless
+        the keyword 'Switch Process' is used. Then these keywords affect the
+        selected process.
         
-        If the command needs input, it can be defined with 'stdin' argument. It 
-        is not possible give input to the command later.
+        If the command needs input, it can be defined with the 'stdin' argument.
+        It is not possible to give input to the command later.
         
-        Returns the index of this process. Indexing starts from 1, and it can 
-        be used to switch between processes with 'Switch Process' keyword. To 
-        end all processes and reset indexing, 'Stop All Processes' keyword 
-        must be used.
+        Returns the index of this process. The indexing starts from 1, and it
+        can be used to switch between the processes with the 'Switch Process'
+        keyword. To end all processes and reset indexing, the
+        'Stop All Processes' keyword must be used.
         
-        Optional 'alias' is a name for this process that may be used with 
+        The optional 'alias' is a name for this process that may be used with 
         'Switch Process' instead of the returned index.
         
-        See Robot documentation on ConnectionCache for full details on aliases
-        and process switching.
+        See Robot Framework User Guide on ConnectionCache for full details on
+        aliases and process switching.
         """
         self._info("Running command '%s'" % command)
         process = _Process(command, stdin)
         return PROCESSES.register(process, alias)
     
     def switch_process(self, index_or_alias):
-        """Switch the current process to process found with 'index_or_alias'.
+        """Switches the current process to the process found with
+        'index_or_alias'.
         
-        Index is the return value of 'Start Process' keyword and alias may have 
-        been defined to it.
+        The index is the return value of the 'Start Process' keyword and an
+        alias may have been defined to it.
         """
         PROCESSES.switch(index_or_alias)
     
@@ -168,16 +173,16 @@ class OperatingSystem:
         """Waits for the process to finish and returns its output.
         
         'mode' defines which outputs are returned. If it contains 'stdout', 
-        standard output is returned. If it contains 'stderr' standard error is 
-        returned. If it contains 'stderr' and 'stdout' or 'both', standard 
-        output and standard error are returned.
+        the standard output is returned. If it contains 'stderr', the  standard
+        error is returned. If it contains 'stderr' and 'stdout' or 'both', the
+        standard output and standard error are returned.
         
-        If mode contains only 'stdout', but there are contents on stderr, this
-        keyword will fail.
+        If the mode contains only 'stdout', but there are contents on stderr,
+        this keyword fails.
         
         Note that although the process is finished, it is not removed from the 
-        process list. Trying to read from a stopped process will nevertheless 
-        fail. To reset the process list (and indices and aliases) 
+        process list. Trying to read from a stopped process nevertheless 
+        fails. To reset the process list (and indexes and aliases), 
         'Stop All Processes' must be used. 
         
         See 'Start Process' and 'Switch Process' for more information.
@@ -193,8 +198,8 @@ class OperatingSystem:
     def stop_process(self):
         """Stops the current process without reading from it.
         
-        Stopping a process will not remove it from the process list. To reset 
-        the process list (and indices and aliases) 'Stop All Processes' must be 
+        Stopping a process does not remove it from the process list. To reset 
+        the process list (and indexes and aliases), 'Stop All Processes' must be 
         used.
         
         See 'Start Process' and 'Switch Process' for more information.
@@ -210,11 +215,11 @@ class OperatingSystem:
         PROCESSES.close_all()
     
     def get_file(self, path, encoding='UTF-8'):
-        """Return contents of specified file.
+        """Returns the contents of a specified file.
         
         This keyword reads the specified file and returns the contents. 
-        'encoding' defines the encoding of the file. By default the value is 
-        'UTF-8', which means that UTF-8 and ascii encoded files are
+        'encoding' defines the encoding of the file. By default, the value is 
+        'UTF-8', which means that UTF-8 and ASCII-encoded files are
         read correctly.
         """
         self._info("Getting file '%s'" % path)
@@ -228,8 +233,8 @@ class OperatingSystem:
         """Deprecated. Will be removed in Robot 1.9
         
         This keyword reads the specified file and returns the contents. 
-        'encoding' defines the encoding of the file. By default the value is 
-        'UTF-8', which means that UTF-8 and ascii encoded files are
+        'encoding' defines the encoding of the file. By default, the value is 
+        'UTF-8', which means that UTF-8 and ASCII-encoded files are
         read correctly.
         """
         robot.output.SYSLOG.warn("Keyword 'OperatingSystem.Get File With Encoding' "
@@ -239,47 +244,47 @@ class OperatingSystem:
 
     def grep_file(self, path, pattern, pattern_type='literal string', 
                  encoding='UTF-8'):
-        """Returns contents of specified file grepped using 'pattern'.
+        """Returns the contents of a specified file grepped using 'pattern'.
         
         This keyword reads the specified file and returns only lines matching 
-        the 'pattern'. 'encoding' defines the encoding of the file. By default 
-        the value is 'UTF-8', which means that UTF-8 and ascii encoded files are
+        the 'pattern'. 'encoding' defines the encoding of the file. By default, 
+        the value is 'UTF-8', which means that UTF-8 and ASCII-encoded files are
         read correctly.
         
         'pattern_type' defines how the given pattern is interpreted as explained
-        below. 'pattern_type' argument is case insensitive and may contain other
-        text. For example 'regexp', 'REGEXP' and 'Pattern is a regexp' are all 
+        below. 'pattern_type' argument is case-insensitive and may contain other
+        text. For example, 'regexp', 'REGEXP' and 'Pattern is a regexp' are all 
         considered equal.
         
-        - If 'pattern_type' contains either string 'simple' or 'glob' the 
+        - If 'pattern_type' contains either the string 'simple' or 'glob', the 
           'pattern' is considered a simple pattern and lines returned only if 
           they match it. (1) 
-        - If 'pattern_type' contains either string 'regular expression' or
-          'regexp' the 'pattern' is considered a regular expression and only 
+        - If 'pattern_type' contains either the string 'regular expression' or
+          'regexp', the 'pattern' is considered a regular expression and only 
           lines matching it returned. (2)
-        - If 'pattern_type' contains string 'case insensitive' the 'pattern' is 
-          considered a literal string and lines returned if they contain the 
-          string regardless of the case.
+        - If 'pattern_type' contains the string 'case insensitive' the 'pattern'
+          is considered a literal string and lines returned, if they contain the 
+          string, regardless of the case.
         - Otherwise the pattern is considered a literal string and lines
-          returned if they contain the string exactly. This is the default.
+          returned, if they contain the string exactly. This is the default.
         
-        1) Simple pattern matching is similar as matching files in a shell and 
-        it is always case-sensitive. In the pattern '*' matches to anything 
+        1) Simple pattern matching is similar as matching files in a shell, and 
+        it is always case-sensitive. In the pattern, '*' matches to anything 
         and '?' matches to any single character. 
   
-        2) Regular expression check is done using Python 're' module which has 
-        a pattern syntax derived from Perl and thus also very similar to the 
-        one in Java. See following documents from more details about regexps
+        2) Regular expression check is done using the Python 're' module,
+        which has a pattern syntax derived from Perl and thus also very similar to the 
+        one in Java. See the following documents from more details about regexps
         in general and their Python implementation in particular.
         
         're' Module Documentation: http://docs.python.org/lib/module-re.html
         Regular Expression HOWTO: http://www.amk.ca/python/howto/regex/
         
-        Note that if you want to use flags (e.g. re.IGNORECASE) you have to
+        Note that if you want to use flags (e.g. re.IGNORECASE), you have to
         embed them into the pattern (e.g. '(?i)pattern'). Note also that 
-        backslash is an escape character in Robot test data and possible
-        backslaches in patterns must thus be escaped with another backslash
-        (e.g. '\\\\d\\\\w+').
+        backslash is an escape character in Robot Framework test data, and
+        possible backslashes in patterns must thus be escaped with another
+        backslash (e.g. '\\\\d\\\\w+').
         """
         content = self.get_file(path, encoding)
         content = builtin.grep(content, pattern, pattern_type)
@@ -289,8 +294,9 @@ class OperatingSystem:
     def log_file(self, path, encoding='UTF-8'):
         """Wrapper for 'Get File' that also logs the returned file.
         
-        File is logged with INFO level, if you want something else just use
-        'Get File' and built-in keyword 'Log' with desired level. 
+        The file is logged with the INFO level. If you want something else,
+        just use 'Get File' and the built-in keyword 'Log' with the desired
+        level. 
         """
         content = self.get_file(path, encoding)
         self._info('File content:\n' + content)
@@ -299,16 +305,16 @@ class OperatingSystem:
     # File and directory existence
     
     def should_exist(self, path, msg=None):
-        """Fails unless given path (file or directory) exists.
+        """Fails unless the given path (file or directory) exists.
         
-        Path can be given as an exact path or as a patter where         
+        The path can be given as an exact path or as a pattern where         
         '*'        - matches everything
         '?'        - matches any single character
         '[chars]'  - matches any character inside square brackets (e.g. '[abc]'
                      matches either 'a', 'b' or 'c')
         '[!chars]' - matches any character not inside square brackets
         
-        Default error message can be overridden with 'msg' argument.
+        The default error message can be overridden with the 'msg' argument.
         """
         matches = glob.glob(path)
         if len(matches) == 0:
@@ -316,16 +322,16 @@ class OperatingSystem:
         self._info("Path '%s' exists" % path)
         
     def should_not_exist(self, path, msg=None):
-        """Fails if given path (file or directory) exists.
+        """Fails if the given path (file or directory) exists.
 
-        Path can be given as an exact path or as a patter where         
+        The path can be given as an exact path or as a pattern where         
         '*'        - matches everything
         '?'        - matches any single character
         '[chars]'  - matches any character inside square brackets (e.g. '[abc]'
                      matches either 'a', 'b' or 'c')
         '[!chars]' - matches any character not inside square brackets
         
-        Default error message can be overridden with 'msg' argument.
+        The default error message can be overridden with the 'msg' argument.
         """
         matches = glob.glob(path)
         if len(matches) > 0:
@@ -339,16 +345,16 @@ class OperatingSystem:
         self._info("Path '%s' does not exist" % path)
         
     def file_should_exist(self, path, msg=None):
-        """Fails unless given path points to an existing file.
+        """Fails unless the given path points to an existing file.
         
-        Path can be given as an exact path or as a patter where         
+        The path can be given as an exact path or as a pattern where         
         '*'        - matches everything
         '?'        - matches any single character
         '[chars]'  - matches any character inside square brackets (e.g. '[abc]'
                      matches either 'a', 'b' or 'c')
         '[!chars]' - matches any character not inside square brackets
         
-        Default error message can be overridden with 'msg' argument.
+        The default error message can be overridden with the 'msg' argument.
         """
         matches = [ p for p in glob.glob(path) if os.path.isfile(p) ]
         if len(matches) == 0:
@@ -356,16 +362,16 @@ class OperatingSystem:
         self._info("File '%s' exists" % path)
 
     def file_should_not_exist(self, path, msg=None):
-        """Fails if given path points to an existing file.
+        """Fails if the given path points to an existing file.
         
-        Path can be given as an exact path or as a patter where         
+        The path can be given as an exact path or as a pattern where         
         '*'        - matches everything
         '?'        - matches any single character
         '[chars]'  - matches any character inside square brackets (e.g. '[abc]'
                      matches either 'a', 'b' or 'c')
         '[!chars]' - matches any character not inside square brackets
         
-        Default error message can be overridden with 'msg' argument.
+        The default error message can be overridden with the 'msg' argument.
         """
         matches = [ p for p in glob.glob(path) if os.path.isfile(p) ]
         if len(matches) > 0:
@@ -381,16 +387,16 @@ class OperatingSystem:
         self._info("File '%s' does not exist" % path)
 
     def directory_should_exist(self, path, msg=None):
-        """Fails unless given path points to an existing directory.
+        """Fails unless the given path points to an existing directory.
         
-        Path can be given as an exact path or as a patter where         
+        The path can be given as an exact path or as a pattern where         
         '*'        - matches everything
         '?'        - matches any single character
         '[chars]'  - matches any character inside square brackets (e.g. '[abc]'
                      matches either 'a', 'b' or 'c')
         '[!chars]' - matches any character not inside square brackets
         
-        Default error message can be overridden with 'msg' argument.
+        The default error message can be overridden with the 'msg' argument.
         """
         matches = [ p for p in glob.glob(path) if os.path.isdir(p) ]
         if len(matches) == 0:
@@ -398,16 +404,16 @@ class OperatingSystem:
         self._info("Directory '%s' exists" % path)
 
     def directory_should_not_exist(self, path, msg=None):
-        """Fails if given path points to an existing file.
+        """Fails if the given path points to an existing file.
         
-        Path can be given as an exact path or as a pattern where         
+        The path can be given as an exact path or as a pattern where         
         '*'        - matches everything
         '?'        - matches any single character
         '[chars]'  - matches any character inside square brackets (e.g. '[abc]'
                      matches either 'a', 'b' or 'c')
         '[!chars]' - matches any character not inside square brackets
         
-        Default error message can be overridden with 'msg' argument.
+        The default error message can be overridden with the 'msg' argument.
         """
         matches = [ p for p in glob.glob(path) if os.path.isdir(p) ]
         if len(matches) > 0:
@@ -431,22 +437,24 @@ class OperatingSystem:
     def wait_until_removed(self, path, timeout='1 minute'):
         """Waits until the given file or directory is removed.
         
-        Path can be given as an exact path or as a pattern where         
+        The path can be given as an exact path or as a pattern where         
         '*'        - matches everything
         '?'        - matches any single character
         '[chars]'  - matches any character inside square brackets (e.g. '[abc]'
                      matches either 'a', 'b' or 'c')
         '[!chars]' - matches any character not inside square brackets
         
-        If path is a pattern, the keyword waits until all matching items are
+        If the path is a pattern, the keyword waits until all matching items are
         removed.
              
-        Optional 'timeout' can be used to control how long to wait in maximum.
-        Timeout is given as a timeout string e.g. in format '15 min' or '1min 10s'.
-        The time string format is described in Robot documentation TimeSyntax.
+        The optional 'timeout' can be used to control the maximum time of waiting.
+        The timeout is given as a timeout string, e.g. in a format '15 min' or
+        '1min 10s'. The time string format is described in section Time format in
+        Robot Framework.
 
-        If the timeout is negative the keyword never timeouts. The keyword returns
-        immediatelly if the file/directory does not exist in the first place. 
+        If the timeout is negative, the keyword is never timed out. The keyword
+        returns immediately, if the file/directory does not exist in the first
+        place. 
         """
         matches = glob.glob(path)
         if len(matches) == 0:
@@ -464,22 +472,23 @@ class OperatingSystem:
     def wait_until_created(self, path, timeout='1 minute'):
         """Waits until the given file or directory is created.
 
-        Path can be given as an exact path or as a pattern where         
+        The path can be given as an exact path or as a pattern where         
         '*'        - matches everything
         '?'        - matches any single character
         '[chars]'  - matches any character inside square brackets (e.g. '[abc]'
                      matches either 'a', 'b' or 'c')
         '[!chars]' - matches any character not inside square brackets
         
-        If path is a pattern, the keyword returns when an item matching to 
-        pattern is creted.
+        If the path is a pattern, the keyword returns when an item matching to 
+        the pattern is created.
 
-        Optional 'timeout' can be used to control how long to wait in maximum.
-        Timeout is given as a timeout string e.g. in format '15 min' or '1min 10s'.
-        The time string format is described in Robot documentation TimeSyntax.
+        The optional 'timeout' can be used to control the maximum time of waiting.
+        The timeout is given as a timeout string, e.g. in the format '15 min' or
+        '1min 10s'. The time string format is described in section Time formt in
+        Robot Framework User Guide.
         
-        If the timeout is negative the keyword never timeouts. The keyword returns
-        immediatelly if the file/directory already exist. 
+        If the timeout is negative, the keyword is never timed-out. The keyword
+        returns immediately, if the file/directory already exist. 
         """
         timeout = utils.timestr_to_secs(timeout)
         starttime = time.time()
@@ -497,7 +506,7 @@ class OperatingSystem:
     def directory_should_be_empty(self, path, msg=None):
         """Fails unless the specified directory is empty.
         
-        Default error message can be overridden with 'msg' argument.
+        The default error message can be overridden with the 'msg' argument.
         """
         if not os.path.isdir(path):
             raise AssertionError("Directory '%s' does not exist" % path)
@@ -512,7 +521,7 @@ class OperatingSystem:
     def directory_should_not_be_empty(self, path, msg=None):
         """Fails if the specified directory is empty.
         
-        Default error message can be overridden with 'msg' argument.
+        The default error message can be overridden with the 'msg' argument.
         """
         if not os.path.isdir(path):
             raise AssertionError("Directory '%s' does not exist" % path)
@@ -525,7 +534,7 @@ class OperatingSystem:
     def file_should_be_empty(self, path, msg=None):
         """Fails unless the specified file is empty.
         
-        Default error message can be overridden with 'msg' argument.
+        The default error message can be overridden with the 'msg' argument.
         """
         if not os.path.isfile(path):
             raise AssertionError("File '%s' does not exist" % path)
@@ -537,7 +546,7 @@ class OperatingSystem:
     def file_should_not_be_empty(self, path, msg=None):
         """Fails if the specified directory is empty.
         
-        Default error message can be overridden with 'msg' argument.
+        The default error message can be overridden with the 'msg' argument.
         """
         if not os.path.isfile(path):
             raise AssertionError("File '%s' does not exist" % path)
@@ -550,13 +559,13 @@ class OperatingSystem:
     # Creating and removing files and directory
 
     def create_file(self, path, content='', mode='overwrite'):
-        """Creates file to given path with given content.
+        """Creates a file to the given path with the given content.
         
-        If mode contains any of the strings 'False', 'No', "Don't" (case 
-        insensitive so e.g. "Do not" works also) keyword fails if file alreaydy
-        exists and file is not overwritten. If it contains word 'Append'
-        (case insensitive) content is appended and otherwise file is
-        overwritten.
+        If the mode contains any of the strings 'False', 'No', "Don't"
+        (case-insensitive, so e.g. "Do not" also works) the keyword fails,
+        if the file already exists and the file is not overwritten. If it
+        contains the word 'Append'(case-insensitive), the content is appended.
+        Otherwise the file is overwritten.
         
         If the directory where to create file does not exist it, and possible
         intermediate missing directories, are created.
@@ -573,12 +582,12 @@ class OperatingSystem:
         self._info("Created file '%s'" % path)
         
     def remove_file(self, path):
-        """Removes file with given path.
+        """Removes a file with the given path.
         
-        Passes if file does not exist but fails if path does not point to
-        a regular file (e.g. it points to a directory).
+        Passes if the file does not exist, but fails if the path does not point
+        to a regular file (e.g. it points to a directory).
         
-        Path can be given as an exact path or as a patter where         
+        The path can be given as an exact path or as a pattern where         
         '*'        - matches everything
         '?'        - matches any single character
         '[chars]'  - matches any character inside square brackets (e.g. '[abc]'
@@ -610,10 +619,11 @@ class OperatingSystem:
         self._info("Emptied directory '%s'" % path)
 
     def create_directory(self, path):
-        """Creates directory, and all intermediate ones, with given path.
+        """Creates a directory, and all the intermediate ones, with the given
+        path.
         
-        Passes if directory does not exist and fails if path does not point to
-        a regular file (e.g. it points to a directory).
+        Passes if the directory does not exist and fails if the path does not
+        point to a regular file (e.g. it points to a directory).
         """
         if os.path.isdir(path):
             self._info("Directory '%s' already exists" % path )
@@ -627,14 +637,15 @@ class OperatingSystem:
     create_dir = create_directory 
         
     def remove_directory(self, path, recursive='no'):
-        """Removes directory pointed by given 'path' optionally recursively.
+        """Removes the directory pointed to by the given 'path'.
         
-        If second argument 'recursive' contains any of the words 'yes', 'true'
-        or 'recursive' (case insensitive) all directory contents are removed
-        also. Otherwise removing fails if directory is not empty.
+        If the second argument 'recursive' contains any of the words 'yes',
+        'true' or 'recursive' (case-insensitive), all of the directory contents
+        are also removed. Otherwise removing fails, if the directory is not
+        empty.
         
-        If directory pointed by the 'path' does not exist keyword passes but it
-        fails if the 'path' points to a file.
+        If the directory pointed to by the 'path' does not exist, the keyword
+        passes, but it fails, if the 'path' points to a file.
         """
         if not os.path.exists(path):
             self._info("Directory '%s' does not exist" % path)
@@ -655,19 +666,19 @@ class OperatingSystem:
     # Moving and copying files and directories
             
     def copy_file(self, source, destination):
-        """Copies source file into new destination.
+        """Copies the source file into a new destination.
         
         1) If the destination is an existing file, the source file is copied
         over it.
         2) If the destination is an existing directory, the source file is
-        copied into it. Possible file with same name is overwritten.
-        3) If the destination does not exist and it ends with path separator 
-        ('/' in unixes, '\\' in Windows), it is considered a directory. That 
-        directory is created and source file copied into it. Possible missing
-        intermediate directories are also created.
-        4) If the destination does not exist and it does not end with path
+        copied into it. A possible file with the same name is overwritten.
+        3) If the destination does not exist and it ends with a path separator 
+        ('/' in UNIX-like systems, '\\' in Windows), it is considered a
+        directory. That directory is created and a source file copied into it.
+        Possible missing intermediate directories are also created.
+        4) If the destination does not exist and it does not end with a path
         separator, it is considered a file. If the path to the file does not
-        exist it is created.
+        exist, it is created.
         """
         self._copy_file(source, destination)
         self._info("Copied file from '%s' to '%s'" % (source, destination))
@@ -687,10 +698,11 @@ class OperatingSystem:
         shutil.copy(source, destination)
 
     def copy_directory(self, source, destination):
-        """Copies source directory into destination.
+        """Copies the source directory into the destination.
         
-        If destination exists source is copied under it, otherwise destination
-        directory and possible missing intermediate directories are created.
+        If the destination exists, the source is copied under it. Otherwise
+        the destination directory and the possible missing intermediate
+        directories are created.
         """
         self._copy_dir(source, destination)
         self._info("Copied directory from '%s' to '%s'" % (source, destination))
@@ -713,21 +725,22 @@ class OperatingSystem:
         shutil.copytree(source, destination)
 
     def move_file(self, source, destination):
-        """Moves source file into new destination.
+        """Moves the source file into a new destination.
         
-        Destination may be file or a directory and in the latter case file's
-        original basename is kept. If the destination file exists it is
-        overwritten. Missing intermediate directories are NOT created.
+        The destination may be a file or a directory. In the latter case, the
+        file's original basename is kept. If the destination file exists, it is
+        overwritten. The missing intermediate directories are NOT created.
         """
         self._copy_file(source, destination)
         os.remove(source)
         self._info("Moved file from '%s' to '%s'" % (source, destination))
 
     def move_directory(self, source, destination):
-        """Moves source directory into destination.
+        """Moves the source directory into a destination.
         
-        If destination exists source is moved under it, otherwise destination
-        directory and possible missing intermediate directories are created.
+        If a destination exists, the source is moved under it. Oherwise the
+        destination directory and the possible missing intermediate directories
+        are created.
         """
         self._copy_dir(source, destination)
         shutil.rmtree(source)
@@ -737,13 +750,13 @@ class OperatingSystem:
     # Environment Variables
 
     def get_environment_variable(self, name, default=None):
-        """Returns the value of an environment variable with given name.
+        """Returns the value of an environment variable with the given name.
         
-        If no such environment variable is set returns the default value if 
-        given and otherwise fails the test case.
+        If no such environment variable is set, returns the default value, if 
+        given. Otherwise fails the test case.
         
         Note that you can also access environment variables directly using
-        variable syntax %{ENV_VAR_NAME}.
+        the variable syntax %{ENV_VAR_NAME}.
         """
         ret = os.environ.get(name, default)
         if ret is None:
@@ -751,12 +764,12 @@ class OperatingSystem:
         return ret
         
     def set_environment_variable(self, name, value):
-        """Sets environment variable to specified value"""
+        """Sets an environment variable to a specified value."""
         os.environ[name] = value
         self._info("Environment variable '%s' set to value '%s'" % (name, value))
 
     def remove_environment_variable(self, name):
-        """Deletes specified environment variable.
+        """Deletes the specified environment variable.
         
         Does nothing if the environment variable is not set.
         """
@@ -769,7 +782,7 @@ class OperatingSystem:
     def environment_variable_should_be_set(self, name, msg=None):
         """Fails if the specified environment variable is not set.
         
-        Default error message can be overridden with 'msg' argument.
+        The default error message can be overridden with the 'msg' argument.
         """
         try:
             value = os.environ[name]
@@ -781,7 +794,7 @@ class OperatingSystem:
     def environment_variable_should_not_be_set(self, name, msg=None):
         """Fails if the specified environment variable is set.
         
-        Default error message can be overridden with 'msg' argument.
+        The default error message can be overridden with the 'msg' argument.
         """
         try:
             value = os.environ[name]
@@ -796,10 +809,11 @@ class OperatingSystem:
     def join_path(self, base, *parts):
         """Joins the given path part(s) to the given base path.
         
-        Path separator ('/' or '\\') is inserted when needed and possible
-        absolute paths handled as expected. Resulted path is also normalized.
+        The path separator ('/' or '\\') is inserted when needed and the
+        possible absolute paths handled as expected. The resulted path is also
+        normalized.
         
-        Examples (assuming unix environment):
+        Examples (assuming a UNIX environment):
         | ${path} = | Join Path | my        | path  |
         | ${p2} =   | Join Path | my/       | path/ |
         | ${p3} =   | Join Path | my        | path  | my | file.txt |
@@ -817,7 +831,7 @@ class OperatingSystem:
     def join_paths(self, base, *paths):
         """ Joins given paths with base and returns resulted paths.
         
-        Examples (assuming unix environment):
+        Examples (assuming a UNIX environment):
         | @{p1} = | Join Path | base     | example       | other |          |
         | @{p2} = | Join Path | /my/base | /example      | other |          |
         | @{p3} = | Join Path | my/base  | example/path/ | other | one/more |
@@ -831,7 +845,7 @@ class OperatingSystem:
     def normalize_path(self, path):
         """Normalizes the given path.
         
-        Examples (assuming unix environment):
+        Examples (assuming a UNIX environment):
         | ${path} = | Normalize Path | abc        |
         | ${p2} =   | Normalize Path | abc/       |
         | ${p3} =   | Normalize Path | abc/../def |
@@ -851,11 +865,11 @@ class OperatingSystem:
     def split_path(self, path):
         """Splits the given path from the last path separator ('/' or '\\').
         
-        Given path is first normalized (e.g. possible trailing path separator
-        removed, special directories '..' and '.' removed). Splitted parts are
-        returned as separate components.
+        The given path is first normalized (e.g. a possible trailing path
+        separator is removed, special directories '..' and '.' removed).
+        The splitted parts are returned as separate components.
         
-        Examples (assuming unix environment):
+        Examples (assuming a UNIX environment):
         | ${path1} | ${dir} =  | Split Path | abc/def         |
         | ${path2} | ${file} = | Split Path | abc/def/ghi.txt |        
         | ${path3} | ${d2}  =  | Split Path | abc/../def/ghi/ |
@@ -867,14 +881,14 @@ class OperatingSystem:
         return os.path.split(self.normalize_path(path))
     
     def split_extension(self, path):
-        """Splits extension from the given path.
+        """Splits the extension from the given path.
         
-        Given path is first normalized (e.g. possible trailing path separator
-        removed, special directories '..' and '.' removed). Splitted parts are
-        returned as separate components. If path contains no extension an empty
-        string is returned for it.
+        The given path is first normalized (e.g. a possible trailing path
+        separator removed, special directories '..' and '.' removed).
+        The splitted parts are returned as separate components. If the path
+        contains no extension, an empty string is returned for it.
         
-        Examples (assuming unix environment):
+        Examples (assuming a UNIX environment):
         | ${path} | ${ext} = | Split Extension | file.extension    |
         | ${p2}   | ${e2} =  | Split Extension | path/file.ext     |
         | ${p3}   | ${e3} =  | Split Extension | path/file         |
@@ -894,22 +908,23 @@ class OperatingSystem:
     # Misc
     
     def get_modified_time(self, path, format='timestamp'):
-        """Return the last modification time of a file or directory.
+        """Returns the last modification time of a file or directory.
         
-        How time is returned is deternined based on the given 'format' string as
-        follows. Note that all checks are case insensitive.
+        How time is returned is determined based on the given 'format' string as
+        follows. Note that all checks are case-insensitive.
         
-        - If 'format' contains word 'epoch' the time is returned in seconds 
-          after the unix epoch. Return value is always an integer.
+        - If 'format' contains the word 'epoch', the time is returned in seconds 
+          after the UNIX epoch. The return value is always an integer.
         - If 'format' contains any of the words 'year', 'month', 'day', 'hour',
-          'min' or 'sec' only selected parts are returned. The order of the
-          returned parts is always the one in previous sentence and order of
-          words in 'format' is not significant. Parts are returned as zero
-          padded strings (e.g. May -> '05').
+          'min' or 'sec', only the selected parts are returned. The order of the
+          returned parts is always the one in the previous sentence and the
+          order of the words in 'format' is not significant. The parts are
+          returned as zero-padded strings (e.g. May -> '05').
         - Otherwise (and by default) the time is returned as a timestamp string 
-          in format '2006-02-24 15:08:31'
+          in the format '2006-02-24 15:08:31'.
         
-        Examples (when modified time of the ${CURDIR} is 2006-03-29 15:06:21):
+        Examples (when the modified time of the ${CURDIR} is
+        2006-03-29 15:06:21):
         | ${time} = | Get Modified Time | ${CURDIR} |
         | ${secs} = | Get Modified Time | ${CURDIR} | epoch |
         | ${year} = | Get Modified Time | ${CURDIR} | return year |
@@ -928,23 +943,25 @@ class OperatingSystem:
         return utils.get_time(format, os.stat(path).st_mtime)
 
     def set_modified_time(self, path, mtime):
-        """Sets the modified time of file.
+        """Sets the file modification time.
         
-        Changes the modified and access times of given file to value determined
-        by 'mtime'. There are four different ways to give 'mtime'.
+        Changes the modification and access times of the given file to the value
+        determined by 'mtime'. There are four different ways to give 'mtime'.
         
-        1) If 'mtime' is a floating point number, it will be interpreted as 
+        1) If 'mtime' is a floating point number, it is interpreted as 
         seconds since epoch (Jan 1, 1970 0:00:00). This documentation is written
         about 1177654467 seconds since epoch.
         
         2) If 'mtime' is a valid timestamp, that time will be used.
         Valid timestamp formats are 'YYYY-MM-DD hh:mm:ss' and 'YYYYMMDD hhmmss'. 
         
-        3) If 'mtime' is equal to 'NOW' (case insensitive) current time is used.
+        3) If 'mtime' is equal to 'NOW' (case-insensitive), the current time is
+        used.
 
-        4) If 'mtime' is in format 'NOW - 1 day' or 'NOW + 1 hour 30 min' 
-        current time plus/minus the time specified with time string is used. 
-        The time string format is described in Robot documentation TimeSyntax.
+        4) If 'mtime' is in the format 'NOW - 1 day' or 'NOW + 1 hour 30 min', 
+        the current time plus/minus the time specified with the time string is
+        used. The time string format is described in section Time format in
+        Robot Framework User Guide.
         
         Examples:
         | Set Modified Time | /path/file | 1177654467         | #(2007-04-27 9:14:27) |
@@ -998,33 +1015,34 @@ class OperatingSystem:
     
     def list_directory(self, path, pattern=None, pattern_type='simple', 
                  absolute=False):
-        """Returns items from the given directory optionally filtered with 'pattern'.
+        """Returns items from the given directory, optionally filtered with
+        'pattern'.
                 
         File and directory names are returned in case-sensitive alphabetical 
-        order e.g. like ['A Name', 'Second', 'a lower case name', 'one more'].
-        Implicit directories '.' and '..' are not returned. Returned items are
-        automatically logged.
+        order, e.g. 'A Name', 'Second', 'a lower case name', 'one more'].
+        Implicit directories '.' and '..' are not returned. The returned items
+        are automatically logged.
         
-        By default file and directory names are returned relative to the given 
-        path (e.g. 'file.txt'). If you want them be returned in absolute format 
-        (e.g. '/home/robot/file.txt') set 'absolute' argument value to 'True', 
-        'Yes' or 'absolute' (case insensitive).
+        By default, the file and directory names are returned relative to the
+        given path (e.g. 'file.txt'). If you want them be returned in the
+        absolute format (e.g. '/home/robot/file.txt'), set the 'absolute'
+        argument value to 'True', 'Yes' or 'absolute' (case-insensitive).
                 
-        If no 'pattern' is given all item names are returned. If 'pattern' is
-        given only names matching it are returned. 'pattern_type' defines how
-        the given pattern is interpreted as explained below.
+        If no 'pattern' is given, all item names are returned. If 'pattern' is
+        given, only names matching it are returned. 'pattern_type' defines how
+        the given pattern is interpreted, as explained below.
         
-        - If 'pattern_type' contains a string 'simple' (case insensitive) the
+        - If 'pattern_type' contains the string 'simple' (case-insensitive), the
           'pattern' is considered a simple pattern and items returned only if
           they match it. This is the default. (1) 
-        - If 'pattern_type' contains either string 'regular expression' or
-          'regexp' (case insensitive) the 'pattern' is considered a regular
+        - If 'pattern_type' contains either the string 'regular expression' or
+          'regexp' (case-insensitive), the 'pattern' is considered a regular
           expression and only items matching it returned. (2)
         - Otherwise the pattern is considered a literal string and items
-          returned if they contain the string.
+          returned, if they contain the string.
         
-        1) Simple pattern matching is similar as matching files in a shell and
-        it is always case-sensitive. The special characters are presented below.
+        1) Simple pattern matching is similar as matching files in a shell, and
+        it is always case-sensitive. The special characters are listed below.
         
         '*'        - matches everything
         '?'        - matches any single character
@@ -1032,23 +1050,23 @@ class OperatingSystem:
                      matches either 'a', 'b' or 'c')
         '[!chars]' - matches any character not inside square brackets
         
-        Simple pattern matching is implemented using Python 'fnmatch' module's
-        'fnmatchcase' method. For more information see its documentation at 
-        http://docs.python.org/lib/module-fnmatch.html
+        Simple pattern matching is implemented using the Python 'fnmatch' module's
+        'fnmatchcase' method. For more information, see its documentation at 
+        http://docs.python.org/lib/module-fnmatch.html.
           
-        2) Regular expression check is done using Python 're' module which has 
-        a pattern syntax derived from Perl and thus also very similar to the 
-        one in Java. See following documents from more details about regexps
+        2) Regular expression check is done using the Python 're' module, which
+        has a pattern syntax derived from Perl and thus also very similar to the 
+        one in Java. See the following documents for more details about regexps
         in general and their Python implementation in particular.
         
         're' Module Documentation: http://docs.python.org/lib/module-re.html
         Regular Expression HOWTO: http://www.amk.ca/python/howto/regex/
         
-        Note that if you want to use flags (e.g. re.IGNORECASE) you have to
-        embed them into the pattern (e.g. '(?i)pattern'). Note also that 
-        backslash is an escape character in Robot test data and possible
-        backslaches in patterns must thus be escaped with another backslash
-        (e.g. '\\\\d\\\\w+').
+        Note that if you want to use flags (e.g. re.IGNORECASE), you have to
+        embed them into the pattern (e.g. '(?i)pattern'). Note also that a
+        backslash is an escape character in Robot Framework test data, and
+        possible backslashes in patterns must thus be escaped with another
+        backslash (e.g. '\\\\d\\\\w+').
         """
         items = self._list_dir(path, pattern, pattern_type, absolute)
         for item in items:
@@ -1074,9 +1092,10 @@ class OperatingSystem:
     def count_items_in_directory(self, path, pattern=None, pattern_type='simple'):
         """Returns the number of all items in the given directory.
         
-        Arguments 'pattern' and 'pattern_type' have same semantics as in 'List
-        Directory' keyword. Count is returned as an integer so it must be 
-        checked e.g. with built-in keyword 'Should Be Equal As Integers'. 
+        The arguments 'pattern' and 'pattern_type' have the same semantics as
+        in the 'List Directory' keyword. The count is returned as an integer, so
+        it must be checked e.g. with the built-in keyword
+        'Should Be Equal As Integers'. 
         """
         items = self._list_dir(path, pattern, pattern_type)
         return len(items)
@@ -1084,19 +1103,21 @@ class OperatingSystem:
     def count_files_in_directory(self, path, pattern=None, pattern_type='simple'):
         """Returns the number of files in the given directory.
         
-        Arguments 'pattern' and 'pattern_type' have same semantics as in 'List
-        Directory' keyword. Count is returned as an integer so it must be 
-        checked e.g. with built-in keyword 'Should Be Equal As Integers'. 
+        The arguments 'pattern' and 'pattern_type' have the same semantics as
+        in the 'List Directory' keyword. The count is returned as an integer, so
+        it must be checked e.g. with the built-in keyword
+        'Should Be Equal As Integers'. 
         """
         files = self._list_files_in_dir(path, pattern, pattern_type)
         return len(files)
     
     def count_directories_in_directory(self, path, pattern=None, pattern_type='simple'):
-        """Returns the number of sub directories in the given directory.
+        """Returns the number of subdirectories in the given directory.
         
-        Arguments 'pattern' and 'pattern_type' have same semantics as in 'List
-        Directory' keyword. Count is returned as an integer so it must be 
-        checked e.g. with built-in keyword 'Should Be Equal As Integers'. 
+        The arguments 'pattern' and 'pattern_type' have the same semantics as
+        in the 'List Directory' keyword. The count is returned as an integer, so
+        it must be checked e.g. with the built-in keyword
+        'Should Be Equal As Integers'. 
         """
         dirs = self._list_dirs_in_dir(path, pattern, pattern_type)
         return len(dirs)
@@ -1134,13 +1155,13 @@ class OperatingSystem:
                  if os.path.isdir(os.path.join(path,item)) ]
 
     def touch(self, path):
-        """Emulates Unix touch command.
+        """Emulates the UNIX touch command.
         
-        Creates file if it does not exist, otherwise changes its access and 
-        modified times to current time.
+        Creates a file, if it does not exist. Otherwise changes its access and 
+        modification times to the current time.
         
-        Fails if used with directories or parent directory of the given file 
-        does not exist.
+        Fails if used with the directories or the parent directory of the given
+        file does not exist.
         """
         if os.path.isdir(path):
             raise DataError("Cannot touch '%s' because it is a directory" % path)
