@@ -246,33 +246,33 @@ When executing a large number of test cases, the size of log files can
 increase to the extent that opening them into browsers is
 slow. Additionally, since log files can be created only after output
 files are ready, they are available only after the test
-execution. This is not a problem is the test execution time is short,
+execution. This is not a problem if the test execution time is short,
 but with long-running tests it is better to be able to investigate
-first failures while rests of the tests are still running.
+the first failures while the rest of the tests are still running.
 
 Splitting outputs provides a solution for both of these
 problems. First of all, splitting logs means that individual log files
 are smaller and thus faster to open. If outputs are split while
 executing test cases, the lower-level log files are also created
-immediatelly when the equivelant output files are ready. Notifications
+immediateay when the equivelent output files are ready. Notifications
 about created files can be received through the `listener
 interface`_, and `automatic variables`_ :var:`${LOG_FILE}` and
 :var:`${OUTPUT_FILE}` always contain the path to the current file.
 
 
-Specifying split level
-''''''''''''''''''''''
+Specifying a split level
+''''''''''''''''''''''''
 
 Outputs are split from a certain test suite level. Suites below this
 level will get their own outputs, and everything above the level will
 be in an index file, which has links to lower-level files. Only
 `output files`_ and `log files`_ are split, and they are always split
-from the same level. Splitting outputs gives best results when test
+from the same level. Splitting outputs gives the best results when test
 cases are organized into a relatively balanced hierarchical structure.
 
 Splitting can be activated with the command line option
 :opt:`--splitoutputs`, which takes the split level as an
-argument. Index files have the same name as output and log would have
+argument. Index files have the same name as the output and log would have
 without splitting, and lower-level files get a running counter between
 the basename and extension.
 
@@ -283,7 +283,7 @@ Examples
 Explaining how splitting outputs actually works is easiest with
 examples, and it is also a good idea to experiment with real test data.
 In these examples we assume that test cases are organized into test
-suites hierarchically like this::
+suites hierarchically in the following way::
 
    project
    |-- component_a
@@ -304,7 +304,7 @@ suites hierarchically like this::
 
 In the first example these test cases are executed so that they are
 split right below the top-level test suite. The command line to use is
-as follows, and the following table lists all created output files::
+as follows, and the following table lists all the created output files::
 
    pybot --splitoutputs 1 project
 
@@ -315,7 +315,7 @@ as follows, and the following table lists all created output files::
    +---------------+-------------------------------------------------------+ 
    | Created File  |                       Contents                        |
    +===============+=======================================================+
-   | output.xml    | Information about :name:`Project` test suite,         |
+   | output.xml    | Information about the :name:`Project` test suite,     |
    |               | excluding its child test suites. Lower-level output   |
    |               | files are referenced.                                 |
    +---------------+-------------------------------------------------------+ 
@@ -325,29 +325,29 @@ as follows, and the following table lists all created output files::
    +---------------+-------------------------------------------------------+ 
    | output-003.xml| Information about the whole :name:`Component C` suite.|
    +---------------+-------------------------------------------------------+ 
-   | log.html      | Log file created from :path:`output.xml`, lower-level |
-   |               | log files are linked.                                 |
+   | log.html      | A log file created from :path:`output.xml`,           |
+   |               | lower-level log files are linked.                     |
    +---------------+-------------------------------------------------------+ 
-   | log-001.html  | Log file created from :path:`output-001.xml`.         |
+   | log-001.html  | A log file created from :path:`output-001.xml`.       |
    +---------------+-------------------------------------------------------+ 
-   | log-002.html  | Log file created from :path:`output-002.xml`.         |
+   | log-002.html  | A log file created from :path:`output-002.xml`.       |
    +---------------+-------------------------------------------------------+ 
-   | log-003.html  | Log file created from :path:`output-003.xml`.         |
+   | log-003.html  | A log file created from :path:`output-003.xml`.       |
    +---------------+-------------------------------------------------------+ 
-   | report.html   | Normal report file.                                   |
+   | report.html   | A normal report file.                                 |
    +---------------+-------------------------------------------------------+ 
 
 
 The fact that output files are split is transparent when
 post-processing outputs afterwards, and it is enough to point
 :prog:`rebot` to the index file. Splitting works with :prog:`rebot`
-regardless are outputs split earlier or not. Outputs created by the
-first example could thus by re-split, for example, like::
+regardless of whether outputs are split earlier or not. Outputs created by the
+first example could thus by re-split, for example, as::
 
    rebot --splitoutputs 2 output.xml
 
-In this example splitting is done from the second level. The table below
-again lists created files, and because :prog:`rebot` does not create new
+In this example, splitting is done from the second level. The table below
+again lists created the files, and because :prog:`rebot` does not create new
 output files by default, they are not listed in the table either.
 
 
@@ -357,7 +357,7 @@ output files by default, they are not listed in the table either.
    +---------------+-------------------------------------------------------+ 
    | Created File  |                       Contents                        |
    +===============+=======================================================+
-   | log.html      | Information about :name:`Project` and all             |
+   | log.html      | Information about the :name:`Project` and all the     |
    |               | :name:`Component ?` suites, but not their child       |
    |               | suites. Lower-level log files are linked.             |
    +---------------+-------------------------------------------------------+ 
@@ -373,7 +373,7 @@ output files by default, they are not listed in the table either.
    +---------------+-------------------------------------------------------+ 
    | log-006.html  | The whole :name:`C3` test suite.                      |
    +---------------+-------------------------------------------------------+ 
-   | report.html   | Normal report file.                                   |
+   | report.html   | A normal report file.                                 |
    +---------------+-------------------------------------------------------+ 
 
 
@@ -389,10 +389,10 @@ how to configure output file names when splitting::
    +---------------+-------------------------------------------------------+ 
    | Created File  |                       Contents                        |
    +===============+=======================================================+
-   | mylog.html    | Information about :name:`Project` test suite all the  |
-   |               | way to its second level child suites. This includes   |
-   |               | test cases in :name:`C?` suites. Lower level logs are |
-   |               | linked.                                               |
+   | mylog.html    | Information about the :name:`Project` test suite all  |
+   |               | the way to its second-level child suites. This        |
+   |               | includes test cases in the :name:`C?` suites.         |
+   |               | Lower-level logs are linked.                          |
    +---------------+-------------------------------------------------------+ 
    | mylog-001.html| The whole :name:`A11` test suite.                     |
    +---------------+-------------------------------------------------------+ 
@@ -406,8 +406,8 @@ how to configure output file names when splitting::
    +---------------+-------------------------------------------------------+ 
 
 
-If higher split level than three is used with this test data, all the
-information ends up to index files. The end result is thus exactly
+If a split level higher than three is used with this test data, all the
+information ends up to index files. The end result is thus exactly the
 same as if outputs were not split at all.
 
 
