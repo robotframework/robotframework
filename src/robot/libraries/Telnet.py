@@ -88,7 +88,7 @@ class Telnet:
 
         Returns the index of this connection, which can be used later to switch
         back to the connection. The index starts from 1 and is reset back to it
-        when the 'Close All' keyword is used.
+        when the 'Close All Connections' keyword is used.
 
         The optional alias is a name for the connection, and it can be used for
         switching between connections, similarly as the index. See 'Switch
@@ -129,7 +129,6 @@ class Telnet:
         The index is got from Open keywords, and an alias can be given to it.
 
         Example:
-
         | Open              | myhost.net   |          |
         | Login             | john         | secret   |
         | Write             | some command |          |
@@ -140,16 +139,16 @@ class Telnet:
         | Write             | something    |          |
         | Switch Connection | 2nd conn     | # alias  |
         | Write             | whatever     |          |
-        | Close All         |              |          |
+        | [Teardown]        | Close All Connections   |  
 
         The example above expects that there were no other open connections when
         opening the first one, because it used index '1' when switching to the
         connection later. If you are not sure about that, you can store the
         index into a variable as shown below.
 
-        | ${id} =           | Open         | myhost.net |
+        | ${id} =            | Open         | myhost.net |
         | # Do something ... |
-        | Switch Connection | ${id}        |            |
+        | Switch Connection  | ${id}        |            |
         """
         self._conn = self._cache.switch(index_or_alias)
 
@@ -208,8 +207,7 @@ class TelnetConnection(telnetlib.Telnet):
         return old
 
     def close_connection(self, loglevel=None):
-        """Closes the current Telnet connection and returns any remaining
-        output.
+        """Closes the current Telnet connection and returns any remaining output.
 
         See 'Read' for more information on 'loglevel'.
         """
@@ -266,8 +264,7 @@ class TelnetConnection(telnetlib.Telnet):
         return self.read_until(self._newline, loglevel)
 
     def write_bare(self, text):
-        """Writes the given text over the connection without appending a
-        newline.
+        """Writes the given text over the connection without appending a newline.
         
         Does not consume the written text.
         """
@@ -280,8 +277,7 @@ class TelnetConnection(telnetlib.Telnet):
         
     def write_until_expected_output(self, text, expected, timeout, 
                                     retry_interval, loglevel=None):
-        """Writes the given text repeatedly, until 'expected' appears in the
-        output.
+        """Writes the given text repeatedly, until 'expected' appears in the output.
         
         'text' is written without appending a newline. 'retry_interval' defines
         the time waited before writing 'text' again. 'text' is consumed
@@ -318,8 +314,7 @@ class TelnetConnection(telnetlib.Telnet):
                              % (expected, utils.secs_to_timestr(timeout)))
 
     def read(self, loglevel=None):
-        """Reads and returns/logs everything that is currently available in the
-        output.
+        """Reads and returns/logs everything that is currently available in the output.
 
         The read message is always returned and logged. The default log level is 
         either 'INFO', or the level set with 'Set Default Log Level'.

@@ -37,8 +37,7 @@ class OperatingSystem:
     ROBOT_LIBRARY_SCOPE = 'GLOBAL'
     
     def run(self, command, return_mode='stdout'):
-        """Runs the given command in the system and returns a return code
-        and/or stdout.
+        """Runs the given command in the system and returns a return code and/or stdout.
         
         'return_mode' defines how the return code (rc) and the standard output
         (stdout) are returned as explained below. All checks are
@@ -117,8 +116,7 @@ class OperatingSystem:
         return self.run(command, 'RC')
     
     def run_and_return_rc_and_output(self, command):
-        """Wrapper for the 'Run' keyword that returns the return code and
-        output.
+        """Wrapper for the 'Run' keyword that returns the return code and output.
         
         The following two examples are equivalent, but the latter is easier to
         understand and thus recommended.
@@ -153,16 +151,19 @@ class OperatingSystem:
         The optional 'alias' is a name for this process that may be used with 
         'Switch Process' instead of the returned index.
         
-        See Robot Framework User Guide on ConnectionCache for full details on
-        aliases and process switching.
+        Example:
+        | Start Process  | longlasting.sh      |
+        | Do Something   |                     |
+        | ${stdout}=     | Read Process Output |
+        | Should Contain | ${stdout}           | Expected text |
+        | [Teardown]     | Stop All Processes  |
         """
         self._info("Running command '%s'" % command)
         process = _Process(command, stdin)
         return PROCESSES.register(process, alias)
     
     def switch_process(self, index_or_alias):
-        """Switches the current process to the process found with
-        'index_or_alias'.
+        """Switches the current process to the process found with 'index_or_alias'.
         
         The index is the return value of the 'Start Process' keyword and an
         alias may have been defined to it.
@@ -619,8 +620,7 @@ class OperatingSystem:
         self._info("Emptied directory '%s'" % path)
 
     def create_directory(self, path):
-        """Creates a directory, and all the intermediate ones, with the given
-        path.
+        """Creates a directory, and all the intermediate ones, with the given path.
         
         Passes if the directory does not exist and fails if the path does not
         point to a regular file (e.g. it points to a directory).
