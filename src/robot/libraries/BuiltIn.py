@@ -245,8 +245,7 @@ class Verify:
         asserts.fail_unless(str1.endswith(str2), msg)
 
     def should_not_contain(self, str1, str2, msg=None, values=True):
-        """Fails if the string 'str1' contains the string 'str2' one or more
-        times.
+        """Fails if the string 'str1' contains the string 'str2' one or more times.
         
         See 'Should Be Equal' for an explanation on how to override the default
         error message with 'msg' and 'values'.
@@ -255,8 +254,7 @@ class Verify:
         asserts.fail_if(str1.count(str2) > 0, msg)
 
     def should_contain(self, str1, str2, msg=None, values=True):
-        """Fails if the string 'str1' does not contain the string 'str2' one or
-        more times.
+        """Fails if the string 'str1' does not contain the string 'str2' one or more times.
         
         See 'Should Be Equal' for an explanation on how to override the default
         error message with 'msg' and 'values'.
@@ -447,8 +445,7 @@ class Variables:
             self.log('%s = %s' % (name, value), level)
 
     def variable_should_exist(self, name, msg=None):
-        """Fails unless a variable with the given name exists within the current
-        scope.
+        """Fails unless a variable with the given name exists within the current scope.
         
         The variable name must be given in the escaped format, e.g. \\${scalar} or
         \\@{list} to prevent it from being resolved. Alternatively, in this
@@ -464,8 +461,7 @@ class Variables:
         asserts.fail_unless(variables.has_key(name), msg)
         
     def variable_should_not_exist(self, name, msg=None):
-        """Fails if the variable with the given name exists within the current
-        scope.
+        """Fails if the variable with the given name exists within the current scope.
         
         The variable name must be given in the escaped format, e.g. \\${scalar}
         or \\@{list} to prevent it from being resolved. Alternatively, in this
@@ -539,8 +535,7 @@ class Variables:
         return value2
 
     def set_test_variable(self, name, *values):
-        """Makes a variable available everywhere within the scope of the current
-        test.
+        """Makes a variable available everywhere within the scope of the current test.
         
         Variables set with this keyword are available everywhere within the
         scope of the currently executed test case. For example, if you set a
@@ -556,8 +551,7 @@ class Variables:
         self._log_set_variable(name, value)
         
     def set_suite_variable(self, name, *values):
-        """Makes a variable available everywhere within the scope of the
-        current suite.
+        """Makes a variable available everywhere within the scope of the current suite.
         
         Variables set with this keyword are available everywhere within the
         scope of the currently executed test suite. Setting variables with this
@@ -673,8 +667,7 @@ class RunKeyword:
             return self.run_keyword(name, *args)
     
     def run_keyword_and_ignore_error(self, name, *args):
-        """Runs the given keyword with the given arguments and ignores possible
-        error.
+        """Runs the given keyword with the given arguments and ignores possible error.
         
         This keyword returns two values, so that the first is either 'PASS' or
         'FAIL', depending on the status of the executed keyword. The second value
@@ -721,8 +714,7 @@ class RunKeyword:
         return error
 
     def wait_until_keyword_succeeds(self, timeout, retry_interval, name, *args):
-        """Waits until the specified keyword succeeds or the given timeout
-        expires.
+        """Waits until the specified keyword succeeds or the given timeout expires.
         
         'name' and 'args' define the keyword that is executed. If the specified 
         keyword does not succeed within 'timeout', this keyword fails.        
@@ -781,8 +773,7 @@ class RunKeyword:
                         % kwname)
         
     def run_keyword_if_all_critical_tests_passed(self, name, *args):
-        """Runs the given keyword with the given arguments, if all critical
-        tests passed.
+        """Runs the given keyword with the given arguments, if all critical tests passed.
         
         This keyword can only be used in suite teardown. Trying to use it in any
         other place will result in an error.
@@ -796,8 +787,7 @@ class RunKeyword:
             return self.run_keyword(name, *args)
         
     def run_keyword_if_any_critical_tests_failed(self, name, *args):
-        """Runs the given keyword with the given arguments, if any critical
-        tests failed.
+        """Runs the given keyword with the given arguments, if any critical tests failed.
         
         This keyword can only be used in a suite teardown. Trying to use it
         anywhere else results in an error.
@@ -824,8 +814,7 @@ class RunKeyword:
             return self.run_keyword(name, *args)
             
     def run_keyword_if_any_tests_failed(self, name, *args):
-        """Runs the given keyword with the given arguments, if one or more tests
-        failed.
+        """Runs the given keyword with the given arguments, if one or more tests failed.
         
         This keyword can only be used in a suite teardown. Trying to use it
         anywhere else results in an error.
@@ -905,8 +894,7 @@ class Misc:
             self.log(msg)
 
     def set_log_level(self, level):
-        """Sets the log threshold to the specified level and returns the old
-        level.
+        """Sets the log threshold to the specified level and returns the old level.
         
         Messages below the level will not logged. The default logging level is
         INFO, but it can be overridden with the command line option
@@ -930,7 +918,7 @@ class Misc:
         pass
 
     def syslog(self, message, level="INFO"):
-        """Logs the given message with the given level to Robot's syslog"""
+        """Logs the given message with the given level into syslog."""
         output.SYSLOG.write(message, level)
         
     def import_library(self, name, *args):
@@ -1013,8 +1001,7 @@ class Misc:
                             % (expression, err))
         
     def call_method(self, object, method_name, *args):
-        """Calls the named method of the given object with the provided
-        arguments.
+        """Calls the named method of the given object with the provided arguments.
         
         The possible return value from the method is returned and can be
         assigned to a variable. Keyword fails both if the object does not have
