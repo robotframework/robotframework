@@ -152,8 +152,7 @@ class _List:
             self._index_error(L, index)
         
     def get_slice_from_list(self, L, start=0, end=None):
-        """ Returns the part of the given list specified with start and end
-        indexes.
+        """ Returns the part of the given list specified with start and end indexes.
 
         The given list is never altered by this keyword.
                 
@@ -502,9 +501,6 @@ class _Dictionary:
         default = "Dictionary contains value '%s'" % (value)
         _verify_condition(not value in dictionary.values(), default, msg)
 
-#    def dictionary_size_should_be(self, dictionary, size, msg=None):
-#        pass
-    
     def dictionaries_should_be_equal(self, dict1, dict2, msg=None, values=True):
         """Fails if the given lists are unequal. 
         
@@ -533,8 +529,7 @@ class _Dictionary:
         
     def dictionary_should_contain_sub_dictionary(self, dict1, dict2, msg=None, 
                                                  values=True):
-        """
-        Fails if not all key, value pairs in 'dict2' are found from 'dict1.'
+        """Fails if not all key, value pairs in 'dict2' are found from 'dict1.'
 
         See 'Lists Should Be Equal' for an explanation of 'msg'. 
 
@@ -568,9 +563,7 @@ class Collections(_List, _Dictionary):
 
     Examples:
     | ${list} = | Create List | @{list} |
-    
     | @{list} = | Set Variable | ${list} | 
-
 
     In the examples, ${Lx} always means a list that contains x times an alphabet,
     as in ${L2} = ['a', 'b'].
