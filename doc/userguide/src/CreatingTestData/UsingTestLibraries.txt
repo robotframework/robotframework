@@ -191,8 +191,6 @@ standard libraries if it is generic, works on both Python and Jython
 without any external dependencies, and is adequately tested and
 documented.
 
-.. TODO: link to devel contact information
-
 
 BuiltIn library
 '''''''''''''''
