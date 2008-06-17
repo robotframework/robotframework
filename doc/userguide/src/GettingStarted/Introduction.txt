@@ -51,7 +51,7 @@ with the target under test is done by test libraries that are plugged into Robot
 Framework. Test libraries may internally use other test tools, but this is not 
 visible to Robot Framework.
 
-.. figure:: architecture.png
+.. figure:: src/Introduction/architecture.png
 
    High-level architecture
 

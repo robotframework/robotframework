@@ -187,11 +187,11 @@ Appendices
 .. _command line options: `All command line options`_
 .. _BuiltIn keyword: `BuiltIn library`_
 .. _BuiltIn keywords: `BuiltIn library`_
-.. _BuiltIn library documentation: BuiltIn.html
-.. _OperatingSystem library documentation: OperatingSystem.html
-.. _Telnet library documentation: Telnet.html
-.. _Collections library documentation: Collections.html
-.. _Screenshot library documentation: Screenshot.html
+.. _BuiltIn library documentation: ../libraries/BuiltIn.html
+.. _OperatingSystem library documentation: ../libraries/OperatingSystem.html
+.. _Telnet library documentation: ../libraries/Telnet.html
+.. _Collections library documentation: ../libraries/Collections.html
+.. _Screenshot library documentation: ../libraries/Screenshot.html
 .. _libdoc.py: `Library documentation tool -- libdoc.py`_
 .. _libdoc: `libdoc.py`_
 .. _library search path: `Adjusting library search path`_

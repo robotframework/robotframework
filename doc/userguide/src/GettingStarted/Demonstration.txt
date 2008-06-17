@@ -8,13 +8,13 @@ under test. The actual test case files and scripts for running the
 demonstration in different systems are also provided. You can see a 
 screenshot of Selenium working in the figures below:
 
-.. figure:: demo_out.png
+.. figure:: src/GettingStarted/demo_out.png
    :width: 700
    :height: 694
   
    Login page
 
-.. figure:: welcome.png
+.. figure:: src/GettingStarted/welcome.png
    :width: 547
    :height: 266
 

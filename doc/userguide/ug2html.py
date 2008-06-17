@@ -112,8 +112,9 @@ if os.path.exists(OUTDIR):
             shutil.rmtree(file)
         else:
             os.remove(file)
-else:
-    os.mkdir(OUTDIR)
+
+#else:
+#    os.mkdir(OUTDIR)
 
 def copy_figures_and_targets(filename):
     dirname = os.path.dirname(filename)
@@ -127,12 +128,12 @@ def copy_figures_and_targets(filename):
         if os.path.isfile(target_path):
             shutil.copy(target_path, OUTDIR)
 
-for filename in glob.glob('src/*/*.txt') + glob.glob('../../tools/*/doc/*.txt'):
-    copy_figures_and_targets(filename)
+#for filename in glob.glob('src/*/*.txt') + glob.glob('../../tools/*/doc/*.txt'):
+#    copy_figures_and_targets(filename)
 
 
-for doc in glob.glob('../libraries/*.html') + glob.glob('../../tools/*/doc/*.html'):
-    shutil.copy(doc, OUTDIR)
+#for doc in glob.glob('../libraries/*.html') + glob.glob('../../tools/*/doc/*.html'):
+#    shutil.copy(doc, OUTDIR)
 
 #
 # Creating the documentation
@@ -150,12 +151,12 @@ from docutils.core import publish_cmdline
 
 
 description = 'HTML generator for Robot Framework User Guide.'
-arguments = ('''
+arguments = '''
 --time
 --stylesheet-path=src/userguide.css
 src/RobotFrameworkUserGuide.txt
-%s/RobotFrameworkUserGuide.html
-''' % OUTDIR).split('\n')[1:-1] 
+RobotFrameworkUserGuide.html
+'''.split('\n')[1:-1] 
 
 
 publish_cmdline(writer_name='html', description=description, argv=arguments)
