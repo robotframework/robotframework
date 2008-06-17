@@ -1,13 +1,28 @@
 #!/usr/bin/env python
 
-# ug2html.py -- Creates HTML version of Robot Framework User Guide
-#
+"""ug2html.py -- Creates HTML version of Robot Framework User Guide
+
+Synopsis:
+ug2html.py [dist]
+
+Description:
+If no arguments are given, user guide will be generated. This userguide will 
+have relative links that work only from version control or with full source 
+distribution.
+
+With 'dist' as argument, a 'rfug' directory is created and all images and link 
+targets are copied under it. This way the created output directory may be 
+compressed and the user guide distributed independently.
+"""
+
+
 # First part of this file is Pygments configuration and actual
 # documentation generation follows it.
-
+#
 
 #
 # Pygments configuration
+# ----------------------
 #
 # This code is from 'external/rst-directive.py' file included in Pygments 0.9
 # distribution. For more details see http://pygments.org/docs/rstdirective/
@@ -83,7 +98,7 @@ def pygments_directive(name, arguments, options, content, lineno,
     formatter = options and VARIANTS[options.keys()[0]] or DEFAULT
     filtered = [ line for line in content if line ]
     if len(filtered) and os.path.isfile(filtered[0]):
-        content = open(content[0]).read().splitlines()
+        content = open(content[0]).read().splitlines() # Read source code from a file
     parsed = highlight(u'\n'.join(content), lexer, formatter)
     return [nodes.raw('', parsed, format='html')]
 
@@ -96,70 +111,88 @@ directives.register_directive('sourcecode', pygments_directive)
 #
 # Create outputdir and move images and library documentation there
 #
-import glob
-import shutil
 
 
-os.chdir(os.path.dirname(os.path.abspath(__file__)))
-OUTDIR = "rfug"
+def distribute_userguide():
+    import shutil
+    import re
+    from urlparse import urlparse
 
-if os.path.exists(OUTDIR):
-    for file in os.listdir(OUTDIR):
-        if file == '.svn':
-            continue
-        file = os.path.join(os.path.abspath(OUTDIR), file)
-        if os.path.isdir(file):
-            shutil.rmtree(file)
-        else:
-            os.remove(file)
+    os.chdir(os.path.dirname(os.path.abspath(__file__)))
+    OUTDIR = "rfug"
 
-#else:
-#    os.mkdir(OUTDIR)
+    if os.path.exists(OUTDIR):
+        shutil.rmtree(OUTDIR)
+    
+    os.mkdir(OUTDIR)
+    for name in ['images', 'libraries', 'tools']:
+        os.mkdir(os.path.join(OUTDIR, name))
 
-def copy_figures_and_targets(filename):
-    dirname = os.path.dirname(filename)
-    lines = open(filename).read().splitlines()
-    images = [ line[12:] for line in lines if line.startswith(".. figure") ]
-    for image in images:
-        shutil.copy(os.path.join(dirname, image), OUTDIR)
-    targets = [ line[12:] for line in lines if line.startswith("   :target:")]
-    for target in targets:
-        target_path = os.path.join(dirname, target)
-        if os.path.isfile(target_path):
-            shutil.copy(target_path, OUTDIR)
+    link_regexp = re.compile('''
+(<(a|img)\s+.*?)
+(\s+(href|src)="(.*?)"|>)
+''', re.VERBOSE | re.DOTALL | re.IGNORECASE)
 
-#for filename in glob.glob('src/*/*.txt') + glob.glob('../../tools/*/doc/*.txt'):
-#    copy_figures_and_targets(filename)
+    def replace_links(res):
+        if not res.group(5):
+            return res.group(0)
+        scheme, _, path, _, _, fragment = urlparse(res.group(5))
+        if scheme or (fragment and not path):
+            return res.group(0)
+        replaced_link = '%s %s="%%s/%s"' % (res.group(1), res.group(4), os.path.basename(path)) 
+        if path.startswith('../../tools'):
+            shutil.copy(path, os.path.join(OUTDIR, 'tools'))
+            return replaced_link % 'tools'
+        elif path.startswith('../libraries'):
+            shutil.copy(path, os.path.join(OUTDIR, 'libraries'))
+            return replaced_link % 'libraries'
+        elif path.startswith('src/'):
+            shutil.copy(path, os.path.join(OUTDIR, 'images'))
+            return replaced_link % 'images'
+        return "foo"
 
 
-#for doc in glob.glob('../libraries/*.html') + glob.glob('../../tools/*/doc/*.html'):
-#    shutil.copy(doc, OUTDIR)
+    content = open('RobotFrameworkUserGuide.html').read()
+    content = link_regexp.sub(replace_links, content )
+    outfile = open(os.path.join(OUTDIR, 'RobotFrameworkUserGuide.html'), 'wb')
+    outfile.write(content)
+    outfile.close()
 
 #
 # Creating the documentation
 #
 # This code is based on rst2html.py distributed with docutils
 #
+def create_userguide():
+    try:
+        import locale
+        locale.setlocale(locale.LC_ALL, '')
+    except:
+        pass
 
-try:
-    import locale
-    locale.setlocale(locale.LC_ALL, '')
-except:
-    pass
+    from docutils.core import publish_cmdline
 
-from docutils.core import publish_cmdline
-
-
-description = 'HTML generator for Robot Framework User Guide.'
-arguments = '''
+    description = 'HTML generator for Robot Framework User Guide.'
+    arguments = '''
 --time
 --stylesheet-path=src/userguide.css
 src/RobotFrameworkUserGuide.txt
 RobotFrameworkUserGuide.html
 '''.split('\n')[1:-1] 
 
+    publish_cmdline(writer_name='html', description=description, argv=arguments)
 
-publish_cmdline(writer_name='html', description=description, argv=arguments)
+    print os.path.abspath(arguments[-1])
 
-print os.path.abspath(arguments[-1])
+
+if __name__ == '__main__':
+    import sys
+    if len(sys.argv) == 1:
+        create_userguide()
+    elif len(sys.argv) == 2 and sys.argv[1] == 'dist':
+        create_userguide()
+        distribute_userguide()
+    else:
+        print __doc__
+    
 
