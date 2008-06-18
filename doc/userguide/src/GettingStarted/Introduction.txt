@@ -15,39 +15,40 @@ Why Robot Framework?
 ~~~~~~~~~~~~~~~~~~~~
 
 - Enables easy-to-use tabular syntax for `creating test cases`_ in a uniform
-  way regardless of the tested system.
+  way.
 
 - Provides ability to create reusable `higher-level keywords`_ from the
   existing keywords.
 
-- Has very good reports_ and logs_ in HTML format.
+- Provides easy-to-read result reports and logs in HTML format.
 
-- Is platform- and application-independent.
+- Is platform and application independent.
 
-- Can natively use both Python and Java test tools.
+- Can natively use both Python and Java test code.
 
-- Provides a simple `library API`_ for creating customized test libraries for
-  wrapping existing tools or your own interfaces.
+- Provides a simple `library API`_ for creating customized test libraries.
 
-- The modular architecture supports creating tests even for applications with
-  several diverse interfaces.
+- Provides a `command line interface`_ and XML based `output files`_  for 
+  integration into existing build infrastructure (continuous integration 
+  systems).
 
-- Provides existing test libraries for web testing, Java GUI testing, running
+- Provides support for Selenium for web testing, Java GUI testing, running 
   processes, Telnet, SSH, and so on.
+
+- Supports creating data-driven tests.
 
 - Has built-in support for variables_, practical particularly for testing in
   different environments. 
 
-- Provides tagging to categorize and select the test cases to be executed, to
-  provide metadata, to generate statistics, and so on.
+- Provides tagging to categorize and select test cases to be executed. 
 
 - Enables easy integration with source control: `test suites`_ are just files
   and directories that can be versioned with the production code.
 
-- Provides a `command line interface`_ and XML based `output files`_  for 
-  integration into existing test and build infrastructure.
-
 - Provides test-case and test-suite-level setup and teardown.
+
+- The modular architecture supports creating tests even for applications with
+  several diverse interfaces.
 
 .. _command line interface: `Executing test cases`_
 

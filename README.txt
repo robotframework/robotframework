@@ -4,29 +4,25 @@ Robot Framework
 1. Introduction
 ---------------
 
-Robot Framework is a keyword-driven test automation framework with an
-easy-to-use tabular syntax for creating test cases. Test data can be
-either in HTML or TSV format. Robot's testing capabilities can be
-easily extended by test libraries having a very simple API. Libraries
-can be implemented either with Python or Java (requires Jython). Users
-can also create new keywords from existing ones using the same simple
+Robot Framework is a Python-based keyword-driven test automation framework with 
+an easy-to-use tabular syntax for creating test cases. Its testing capabilities
+can be extended by test libraries implemented either with Python or Java. 
+Users can also create new keywords from existing ones using the same simple 
 syntax that is used for creating test cases.
 
-Robot Framework has two start-up scripts, 'pybot' and 'jybot', which
-run it on Python and Jython interpreters, respectively. Alternatively
-it is possible to directly call robot/runner.py script using selected
-interpreter. Additionally there's a 'rebot' tool that can be used to
-combine and recreate reports and logs from Robot Framework's XML
-output files.
-
-Data sources given to Robot Framework are either test case files or
-directories containing them and/or other directories. Single test case
-file creates a test suite containing all the test cases in it and a
-directory containing test case files creates a higher level test suite
-with test case files or other directories as sub test suites. If
-multiple data sources are given, a virtual test suite containing
-suites generated from given data sources is created.
-
+  - Enables easy-to-use tabular syntax for creating test cases in a uniform way.
+  - Provides ability to create reusable higher-level keywords from the existing
+    keywords.
+  - Provides easy-to-read result reports and logs in HTML format.
+  - Is platform and application independent.
+  - Can natively use both Python and Java test code.
+  - Provides a simple library API for creating customized test libraries.
+  - Provides a command line interface and XML based outputs for integration into
+    existing build infrastructure (continuous integration systems).
+  - Provides support for Selenium for web testing, Java GUI testing, running 
+    processes, Telnet, SSH, and so on.
+  - Supports creating data-driven tests.
+  - Provides tagging to categorize and select test cases to be executed. 
 
 2. More Information
 -------------------
