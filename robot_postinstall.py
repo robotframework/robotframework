@@ -1,4 +1,6 @@
-import sys, os
+import sys
+import os
+import stat
 
 
 def generic_install(script_dir, robot_dir):
@@ -80,11 +82,14 @@ def _remove_scripts(scripts, script_dir):
     for name in scripts:
         path = os.path.join(script_dir, name)
         try:
+            os.chmod(path, stat.S_IWRITE)  # Windows sometimes needs this...
             os.remove(path)
-            print 'Removed:', path
         except Exception, err:
             print "Failed to remove non-needed start-up script '%s': %s" \
                     % (path, str(err))
+        else:
+            print 'Removed:', path
+
     
 def _read(path):
     reader = open(path)
