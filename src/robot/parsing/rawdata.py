@@ -25,16 +25,21 @@ from tsvreader import TsvReader
 from rawdatatables import SimpleTable, ComplexTable
 
 
+# Hook for external tools for altering ${CURDIR} processing
+PROCESS_CURDIR = True
+
+# Recognized table names
 SETTING_TABLES = ['Setting','Settings','Metadata']
 VARIABLE_TABLES = ['Variable','Variables']
 TESTCASE_TABLES = ['Test Case','Test Cases']
 KEYWORD_TABLES = ['Keyword','Keywords','User Keyword','User Keywords']
 TABLE_NAMES = SETTING_TABLES + VARIABLE_TABLES + TESTCASE_TABLES + KEYWORD_TABLES
 
-_whitespace_regexp = re.compile('\s+')
+_WHITESPACE_REGEXP = re.compile('\s+')
 
 
-def RawData(path, syslog, strip_comments=True, process_curdir=True):
+# TODO: is strip_comments needed?
+def RawData(path, syslog, strip_comments=True):
     if path is None or os.path.isdir(path):
         return EmptyRawData(path)
     try:
@@ -51,7 +56,7 @@ def RawData(path, syslog, strip_comments=True, process_curdir=True):
         reader = TsvReader()
     else:
         raise DataError("Unsupported file format '%s'" % ext)
-    rawdata = TabularRawData(path, syslog, strip_comments, process_curdir)
+    rawdata = TabularRawData(path, syslog, strip_comments)
     reader.read(datafile, rawdata)
     datafile.close()
     return rawdata
@@ -102,12 +107,11 @@ class EmptyRawData(_BaseRawData):
 class TabularRawData(_BaseRawData):
     """Populates RawData from tabular test data"""
 
-    def __init__(self, path, syslog, strip_comments=True, process_curdir=True):
+    def __init__(self, path, syslog, strip_comments=True):
         _BaseRawData.__init__(self, path)
         self._syslog = syslog
         self._table = None
         self._strip_comments = strip_comments
-        self._process_curdir = process_curdir
         # ${CURDIR} is replaced the data and thus must be escaped
         self._curdir = utils.get_directory(path).replace('\\','\\\\')
                 
@@ -161,7 +165,7 @@ class TabularRawData(_BaseRawData):
             cell = self._process_cell(cell)
             if self._strip_comments and cell.startswith('#'):
                 break
-            if self._process_curdir:
+            if PROCESS_CURDIR:
                 cell = cell.replace('${CURDIR}', self._curdir)
             temp.append(cell)
         # Strip trailing empty cells
@@ -173,4 +177,4 @@ class TabularRawData(_BaseRawData):
         return temp
     
     def _process_cell(self, cell):
-        return _whitespace_regexp.sub(' ', cell).strip()
+        return _WHITESPACE_REGEXP.sub(' ', cell).strip()

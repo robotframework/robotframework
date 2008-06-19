@@ -93,11 +93,12 @@ import sys
 import os
 import glob
 
-from robot.parsing import RawData, rawdatatables
+from robot.parsing import RawData, rawdatatables, rawdata
 from robot.output import SystemLogger
 from robot.errors import DataError
 from robot import utils
 
+rawdata.PROCESS_CURDIR = False
 
 # Rows having comment in the first cell need to be handled differently because
 # otherwise they'd start a new tc or uk. Such row are simply indented one column
@@ -213,7 +214,7 @@ class TestData:
         if not os.path.isfile(path) or os.path.splitext(path)[1][1:].upper() \
                 not in _valid_extensions:
             raise DataError("Input format must be either HTML or TSV.")
-        raw = RawData(path, SYSLOG, strip_comments=False, process_curdir=False)
+        raw = RawData(path, SYSLOG, strip_comments=False)
         if raw.is_empty():
             raise DataError("'%s' contains no test data" % path)
         self.settings = Settings(raw.settings, fix_comments)

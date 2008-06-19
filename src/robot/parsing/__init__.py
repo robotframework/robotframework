@@ -12,7 +12,6 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-
 from model import TestSuiteData
 from rawdata import RawData
 from resourcefile import ResourceFile
@@ -32,5 +31,4 @@ def TestSuite(*datasources, **options):
         syslog = options['syslog'] 
     except KeyError: 
         syslog = SystemLogger(settings)
-    return TestSuiteData(datasources, settings, syslog, 
-                         options.get('process_curdir', True))
+    return TestSuiteData(datasources, settings, syslog)
