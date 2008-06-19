@@ -6,6 +6,7 @@ import unittest
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'src'))
 from auth import *
 
+
 class TestPassword(unittest.TestCase):
 
     def test_validate_password_returns_true_when_all_conventions_met(self):
@@ -31,6 +32,7 @@ class TestPassword(unittest.TestCase):
     def test_validate_password_returns_false_when_password_missing_number(self):
         password = Password("!!!!!A")
         self.assertFalse(password.valid())
+
 
 class MockPasswordFile(PasswordFile):
     
@@ -75,6 +77,7 @@ class TestAuth(unittest.TestCase):
         assert self.auth.account_exists("newacc")
         self.assertEqual('success', return_code)
 
+
 class TestCmd(unittest.TestCase):
 
     def setUp(self):
@@ -83,17 +86,18 @@ class TestCmd(unittest.TestCase):
 
     def test_command_sent_to_auth_object(self):
         return_code = CommandLine().called_with(self.auth, ["create", "foo", "bar"])
-        print return_code
         self.assertEqual('SUCCESS', return_code)
 
     def test_undefined_command_returns_error_message(self):
         return_code = CommandLine().called_with(self.auth, ["nosuchcommand"])
         self.assertEqual("Auth Server: unknown command 'nosuchcommand'", return_code)
 
-#class TestErrs < Test::Unit::TestCase
-#  def test_can_retrieve_messages
-#    assert_equal "SUCCESS", Messages.lookup(:success)
-#  end
-#end
-#
 
+class TestErrs(unittest.TestCase):
+
+    def test_can_retrieve_messages(self):
+        self.assertEqual("SUCCESS", Messages().lookup('success'))
+
+
+if __name__ == "__main__":
+    unittest.main()
