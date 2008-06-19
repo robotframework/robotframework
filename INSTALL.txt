@@ -6,18 +6,14 @@ Installation And Uninstallation
     1  Introduction
     2  Installation
       2.1  Preconditions
-        2.1.1  Python Installation
-        2.1.2  Jython Installation
       2.2  Installing From Source
       2.3  Installing Using Binary Installer
       2.4  Manual Installation
       2.5  Where Files Are Installed
       2.6  Setting Up The Environment
-        2.6.1  Start-Up Scripts
-        2.6.2  Python And Jython
       2.7  Verifying Installation
-    3  Upgrading
-    4  Uninstallation
+    3  Uninstallation
+    4  Upgrading
 
 
 Introduction
@@ -65,15 +61,15 @@ Python Installation
 Python 2.5 is recommended, although Python 2.4 and 2.3 are also
 supported. On most unixy systems, you have Python installed by
 default. If you are on Windows or otherwise need to install Python
-yourself, your best place to start is probably `Python
-homepage`_. There you can download a suitable installer and get more
-information about installation and Python in general.
+yourself, your best place to start is probably `Python homepage`_.
+There you can download a suitable installer and get more information
+about installation and Python in general.
 
-.. Note:: Python installation framework coming with Python 2.3 does not
-          have functionality for copying other than Python
-          files. Robot Framework itself can be installed with it
-          without problems, but installing e.g. certain libraries may
-          require copying those non-Python files manually.
+.. Note:: Python installation framework coming with Python 2.3 does
+          not have functionality for copying other than Python files.
+          Robot Framework itself can be installed with it without
+          problems, but installing e.g. certain libraries may require
+          copying those non-Python files manually.
 
 
 Jython Installation
@@ -88,8 +84,8 @@ with dynamic languages like Jython.
 
 Jython version to use with Robot Framework is 2.2. At least Jython
 2.2.1 has problems with Unicode in certain cases (see
-http://jython.org/bugs/1802339 for more details), but they are hopefully
-fixed in later 2.2.x versions.
+http://bugs.jython.org/issue1802339 and http://bugs.jython.org/issue1032
+for more details), but they are hopefully fixed in later 2.2.x versions.
 
 Some unixy systems have Jython automatically available, but they still
 seem to have 2.1 version which is *not* compatible with Robot
@@ -104,17 +100,17 @@ Robot Framework installer tries to find the Jython executable on the
 system, in order to create the jybot start-up script correctly. Jython
 will be found if:
 
-1. The Jython executable is in the PATH environment variable.
+1. The Jython executable is in a directory in the PATH environment variable.
 
 2. An environment variable JYTHON_HOME is set and it points to
    a directory containing the Jython executable.
 
-3. Jython installation dir is found. On Windows machines, it is
-   searched from 'C:\\' and 'D:\\' drives, and on other systems from
-   '/usr/local' and '/opt' directories. The directory will be found if
-   it is under the search directories mentioned above, or one level
-   deeper.  For example, following Jython installation directories
-   would be found by the installer::
+3. Jython installation directory is found by the installer. On Windows
+   machines, it is searched from 'C:\\' and 'D:\\' drives, and on
+   other systems from '/usr/local' and '/opt' directories. The
+   directory will be found if it is under the search directories
+   mentioned above, or one level deeper.  For example, following
+   Jython installation directories would be found by the installer::
 
      C:\APPS\Jython2.2
      D:\Jython22RC2
@@ -135,21 +131,31 @@ directly from version control. In both cases, you should have a
 directory containing source code, documentation, tools, templates,
 etc. The first installation step is going to the created directory
 from command line, and after that you can install Robot Framework by
-running the following command::
+running either of the following command::
 
-  python setup.py install
+    python setup.py install
+    python install.py install
 
-You get a quite long output and something like the following text should
-appear at the end::
+``setup.py`` is a standard Python installer script, and it can be used
+also for creating distribution packages. It can take several
+parameters allowing, for example, installation into non-default
+locations.  
 
-  Creating Robot start-up scripts...
+``install.py`` is a custom installation and uninstallation script for
+Robot Framework. When it is used for installation, it simply uses
+``setup.py`` and thus above commands are totally equivelant.
 
-  Installation directory: /usr/lib/python2.5/site-packages/robot
-  Python executable: /usr/bin/python
-  Jython executable: /cygdrive/c/jython2.2b2/jython.bat (found from system)
-  Pybot script: /usr/bin/pybot
-  Jybot script: /usr/bin/jybot
-  Rebot script: /usr/bin/rebot
+With both of these commads you get a quite long output and something
+like the following text should appear at the end::
+
+    Creating Robot start-up scripts...
+
+    Installation directory: /usr/lib/python2.5/site-packages/robot
+    Python executable: /usr/bin/python
+    Jython executable: /cygdrive/c/jython2.2b2/jython.bat (found from system)
+    Pybot script: /usr/bin/pybot
+    Jybot script: /usr/bin/jybot
+    Rebot script: /usr/bin/rebot
 
 
 Installing Using Binary Installer
@@ -188,7 +194,7 @@ platform-specific, but on unixy machines, it is normally something like
 '[PythonInstallationDir]\\Lib\\site-packages'. The code is in the directory 
 named as robot in the site-packages directory.
 
-Robot Framework start-up scripts (pybot, jybot and rebot) will be 
+Robot Framework runner scripts (pybot, jybot and rebot) will be 
 created and copied into another platform-specific location. On unixy 
 machines, they normally go to '/usr/bin' and are thus immediately 
 available from command line. On Windows, there is not a similar natural 
@@ -198,8 +204,8 @@ place, and scripts go '[PythonInstallationDir]\\Scripts'.
 Setting Up The Environment
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Start-Up Scripts
-''''''''''''''''
+Runner Scripts
+''''''''''''''
 
 The Robot Framework installer creates start-up scripts and copies them
 to platform-dependent locations as explained above. On unixy machines,
@@ -257,22 +263,13 @@ The expected output in this case is similar to::
   Robot 2.0 (Jython 2.2 on java1.6.0_02)
 
 
-Upgrading
----------
-
-If you are upgrading from one minor Robot Framework version to another
-(for example, from 2.0 to 2.0.1), it should be safe to install the new
-version over the old one.
-
-If you are upgrading from one major Robot version to another (for
-example, from 2.0 to 2.1), then it is highly recommended to uninstall
-the old version before the new installation.
-
-If you are downgrading, the rules are same as for upgrading.
-
-
 Uninstallation
 --------------
+
+If Robot Framework has been installed using a source distribution, it
+can be uninstalled with command::
+
+    python install.py uninstall
 
 If Robot Framework is installed from a binary distribution, it can be
 uninstalled via the mechanism offered by the operating system. For
@@ -280,10 +277,26 @@ example in Windows you simply go to ``Control Panel >
 Add/Remove Programs``. Note that Robot Framework is listed under
 Python.
 
-If installed from source, or if the removal of binary installation is
-unsuccesful, Robot Framework may be uninstalled by removing the
-framework code and start-up scripts manually. See the `Where Files Are
-Installed`_ section above for more information where to find them.
+If uninstallation fails somehow, Robot Framework may be uninstalled by
+removing the framework code and start-up scripts manually. See the
+`Where Files Are Installed`_ section above for more information where
+to find them.
+
+
+Upgrading
+---------
+
+If you are upgrading from one minor Robot Framework version to another
+(for example, from 2.0 to 2.0.1), it should be safe to install the new
+version over the old one. If you are upgrading from one major Robot
+version to another (for example, from 2.0 to 2.1), then it is highly
+recommended to uninstall the old version before the new installation.
+
+Reinstalling using a source distribution is easy with command::
+
+    python install.py reinstall
+
+Binary installers may also have similar reinstall capabilities.
 
 
 .. _Python: http://www.python.org/ 
