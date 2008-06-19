@@ -1,8 +1,15 @@
 Installation and uninstallation
 -------------------------------
 
-There are two ways to install Robot Framework:
+.. contents::
+   :depth: 2 
+   :local: 
 
+
+Introduction
+~~~~~~~~~~~~
+
+There are two ways to install Robot Framework:
 
 `Installing from the source`_
 
@@ -20,16 +27,13 @@ There are two ways to install Robot Framework:
     one binary distribution available, a graphical installer for
     Windows.
 
-Installation packages are available from the Robot Framework `download
-page`_. For more information about different installation packages and
-possible future formats, see the :path:`PACKAGING.txt` file included in the
-source distribution.
+Installation packages are available from
+http://downloads.robotframework.org, and source code from
+http://source.robotframework.org/.  For more information about
+different installation packages and possible future formats, see the
+:path:`PACKAGING.txt` file included in the source distribution.
 
 __ `source code`_
-
-.. contents::
-   :depth: 2 
-   :local: 
 
 
 Preconditions
@@ -136,7 +140,7 @@ be used also for creating distribution packages.
  
 :prog:`install.py` is a custom installation and uninstallation_ script
 for Robot Framework. When it is used for installation, it simply uses
-:prog:`setup.py`, and thus above commands are totally equivelant. 
+:prog:`setup.py`, and thus above commands are totally equivalent. 
 
 With both of these commands you get a rather long output, and
 something like the following text should appear at the end::
@@ -202,8 +206,8 @@ Python copies these scripts into
 :path:`[PythonInstallationDir]\\Scripts`.
 
 
-Setting up the environment
-''''''''''''''''''''''''''
+Setting up environment
+''''''''''''''''''''''
 
 After the installation, you might want to make Robot Framework's
 runner scripts easily available from the command line. On UNIX-like
@@ -262,7 +266,7 @@ example, in Windows you simply go to ``Control Panel >
 Add/Remove Programs``, where Robot Framework is listed under Python.
 
 If uninstallation fails somehow, Robot Framework can be uninstalled by
-emoving the framework code and runner scripts manually. For more
+removing the framework code and runner scripts manually. For more
 information on where to find them, see `Where files are installed`_.
 
 
