@@ -17,13 +17,13 @@ import shutil
 
 
 def install():
-    print 'Ininstalling Robot Framework...'
+    print 'Installing Robot Framework...'
     setup = os.path.join(os.path.dirname(sys.argv[0]), 'setup.py')
     rc = os.system('%s %s install' % (sys.executable, setup))
     if rc != 0:
         print 'Installation failed.'
         sys.exit(rc)
-    print 'Installation successful.'
+    print 'Installation was successful.'
 
 def uninstall():
     print 'Uninstalling Robot Framework...'
@@ -34,7 +34,7 @@ def uninstall():
         sys.exit(1)
     _remove(instdir)
     _remove_runners()
-    print 'Uninstallation successful.'
+    print 'Uninstallation was successful.'
 
 def reinstall():
     uninstall()
@@ -65,7 +65,7 @@ def _remove(path):
         else:
             os.remove(path)
     except Exception, err:
-        print "Removing '%s' failed: %s" % err
+        print "Removing '%s' failed: %s" % (path, err)
         sys.exit(1)
     else:
         print "Removed '%s'" % path
