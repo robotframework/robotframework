@@ -41,7 +41,7 @@ There are two ways to install Robot Framework, depending on how you got it.
 
 Installation packages are available from::
 
-  http://dowloads.robotframework.org
+  http://downloads.robotframework.org
 
 For more details about different installation packages and possible
 future formats, see the PACKAGING.txt file.
