@@ -65,9 +65,6 @@ Directory Layout
 atest/
     Acceptance tests. Naturally using Robot Framework.
 
-devscripts/
-    Helper scripts for Robot Framework developers.
-
 doc/
     User Guide and standard library documentation.
 
