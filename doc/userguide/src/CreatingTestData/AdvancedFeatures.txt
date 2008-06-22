@@ -241,7 +241,7 @@ inside a For loop and have another For loop there.
     Test Case    Action     Argument     Argument     Argument    Arguments
    ===========  ========  ============  ===========  ==========  ===========
    Example 1    :FOR      ${animal}     IN           cat         dog
-   \            \         Log           ${var}       \           \
+   \            \         Log           ${animal}    \           \
    \            \         Log           2nd keyword  \           \
    \            Log       Outside loop  \            \           \
    \            \         \             \            \           \
