@@ -17,23 +17,22 @@ import os
 import sys
 import re
 
-from robot.version import VERSION, DATE
+from robot.version import VERSION, RELEASE
 
 
 def get_version():
-    if VERSION == 'devel':
-        return '%s %s' % (VERSION, DATE)
+    if RELEASE != 'final':
+        return '%s %s' % (VERSION, RELEASE)
     return VERSION
 
 
 def get_java_version():
     if os.name != 'java':
         return (0, 0)
-    res = re.match("java(\d)\.(\d)", sys.platform)
     try:
-        major = int(res.group(1))
-        minor = int(res.group(2))
-    except:
+        res = re.match("java(\d+)\.(\d+)", sys.platform)
+        if not res:
+            raise ValueError
+        return int(res.group(1)), int(res.group(2))
+    except ValueError:
         raise EnvironmentError('Invalid Java version: %s' % sys.platform)
-    return (major, minor)
-

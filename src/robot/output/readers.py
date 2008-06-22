@@ -111,19 +111,12 @@ class _SuiteReader(_TestAndSuiteReader):
         del(self.keywords)
         for metanode in node.get_nodes('metadata/item'):
             self.metadata[metanode.get_attr('name')] = metanode.text
-        if utils.version_date < '20071126':
-            self.critical.tags = self._get_texts(node, 'critical/tag')
-            self.filtered.suites = self._get_texts(node, 'filtered/suites/name')
-            self.filtered.tests = self._get_texts(node, 'filtered/tests/name')
-            self.filtered.incls = self._get_texts(node, 'filtered/incls/tag')
-            self.filtered.excls = self._get_texts(node, 'filtered/excls/tag')
-        else:
-            self.critical.tags = self._get_texts(node, 'critical/tag')
-            self.critical.nons = self._get_texts(node, 'critical/non')
-            self.filtered.suites = self._get_texts(node, 'filtered/suite')
-            self.filtered.tests = self._get_texts(node, 'filtered/test')
-            self.filtered.incls = self._get_texts(node, 'filtered/incl')
-            self.filtered.excls = self._get_texts(node, 'filtered/excl')
+        self.critical.tags = self._get_texts(node, 'critical/tag')
+        self.critical.nons = self._get_texts(node, 'critical/non')
+        self.filtered.suites = self._get_texts(node, 'filtered/suite')
+        self.filtered.tests = self._get_texts(node, 'filtered/test')
+        self.filtered.incls = self._get_texts(node, 'filtered/incl')
+        self.filtered.excls = self._get_texts(node, 'filtered/excl')
             
     def _get_texts(self, node, path):
         return [ item.text for item in node.get_nodes(path) ]

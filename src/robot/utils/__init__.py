@@ -38,7 +38,7 @@ from robottime import get_timestamp, get_start_timestamp, format_time, \
 from robottypes import is_list, is_tuple, is_scalar, is_str, is_integer, \
         is_boolean, is_number, is_list_of_str, to_boolean, to_list, \
         type_as_str, unic
-from robotversion import get_version, get_java_version, DATE
+from robotversion import get_version, get_java_version
 from text import cut_long_message, cut_long_assign_msg, wrap
 from xmlwriter import XmlWriter
 from connectioncache import ConnectionCache
@@ -46,13 +46,11 @@ from idgenerator import IdGenerator, FileNameGenerator
 
 
 version    = get_version()          # Robot version as string
-version_date = DATE
 py_version = sys.version_info[:2]   # Python version in tuple (major,minor)
 java_version = get_java_version()   # Java version in tuple (major,minor)
 is_jython  = os.name == 'java'
 is_windows = os.sep == '\\'         # This works also in Jython on Windows
-is_linux   = sys.platform.count('linux') > 0
-is_cygwin  = sys.platform.count('cygwin') > 0
+is_cygwin  = 'cygwin' in sys.platform
 platform   = '%sython %s on %s' % (is_jython and 'J' or 'P', 
                                    sys.version.split()[0], sys.platform)
 
