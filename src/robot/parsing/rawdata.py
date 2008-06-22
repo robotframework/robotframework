@@ -25,7 +25,7 @@ from tsvreader import TsvReader
 from rawdatatables import SimpleTable, ComplexTable
 
 
-# Hook for external tools for altering ${CURDIR} processing
+# Hook for external tools for altering ${CURDIR} processing
 PROCESS_CURDIR = True
 
 # Recognized table names
