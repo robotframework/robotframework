@@ -82,6 +82,7 @@ def version(version_number, release_tag=None):
     vfile = open(VERSION, 'w')
     vfile.write("VERSION = '%s'\n" % version_number)
     vfile.write("RELEASE = '%s'\n" % release_tag)
+    vfile.write("TIMESTAMP = '%d%02d%02d-%02d%02d%02d'\n" % time.localtime()[:6])
     vfile.close()
     print "Updated version to %s %s" % (version_number, release_tag)
     
