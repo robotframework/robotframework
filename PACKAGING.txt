@@ -1,175 +1,30 @@
 Packaging Robot Framework
 =========================
 
-.. contents:: Table Of Contents
-..
-    1  Introduction
-    2  Package Types
-      2.1  Source Distributions
-      2.2  Binary Packages
-      2.3  JAR Packages
-    3  Creating Packages
-      3.1  Source Distributions
-      3.2  Binary Packages
-        3.2.1  Windows Installer
-        3.2.2  RPM
+Available packages
+------------------
 
+Currently only official distribution packages for Robot Framework are
+source distributions and binary installers for Windows. See Robot
+Framework User Guide's Installation and uninstallation section for
+more information about them.
 
-Introduction
-------------
+Additional installation packages can be created and distributed by
+volunteers. We are also planning to support JAR and RPM packages in
+the future. If you are interested to help, see issues #24 and #36 at
+http://issues.robotframework.org and contact
+robotframework-devel@googlegroups.com.
 
-We use Python's standard distutils_ module for creating different
-Robot Framework packages. For more information about distutils and 
-creating packages with it see `Distributing Python Modules`_ document.
-
-We currently provide binary installer packages only Windows platform.
-However, we plan to add support for RPM-distributions in the future.
-Additional packages can be created by volunteers and they should either 
-be created based an a source distribution or a checkout from version control 
-system.
-
-
-Package Types
--------------
-
-Source Distributions
-~~~~~~~~~~~~~~~~~~~~
-
-Source distributions contain more or less everything that's in the
-version control system. You should be able to install Robot Framework
-to any environment where Python runs using a source distribution as
-explained in INSTALL.txt file. They contain more documentation, tools,
-etc. than binary packages so you may want to get one even if you used
-binary installer. Additionally source distributions can be used as a
-base for binary packages.
-
-We have separate source distribution packages for unixy systems
-(incl. Linux and MacOSX) and Windows. They have exactly same files and
-installer (``setup.py`` script) takes care of installing only relevant
-start-up scripts. Only differences are packaging formats (``.tar.gz``
-vs. ``.zip``) and different new line delimiters for text files.
-
-Binary Packages
-~~~~~~~~~~~~~~~
-
-Binary installation packages provide an easy way to get Robot
-Framework installed into the target platform. At least for the time
-being they include only the framework itself and no documentation,
-tools or other additional material. 
-
-As already mentioned, we only provide binary packages for Windows 
-environments, but plan to add support also for an RPM-package. 
-
-JAR Packages
-~~~~~~~~~~~~
-
-It should be possible to package Robot Framework into a Java Archive
-(JAR) package. That way installing would only include dropping the
-package into suitable place and Python would not be needed for
-that. Alternatively also Jython couldb be included in the package so
-having only Java would be enough.
-
-If you'd like to have this kind of JAR package, and especially if you
-are willing to build one, contact Robot Framework developers.
-
-
-Creating Packages
+Creating packages
 -----------------
 
-Using package.py
-~~~~~~~~~~~~~~~~
+Official Robot Framework distribution packages are created using
+`package.py` script. This tool can create both source distributions
+and Windows installers, and it has its own help text that is available
+with command `python package.py help`.
 
-`package.py` is a packaging script for Robot Framework that uses setuptools
-internally.
+`package.py` is a front-end for standard `setup.py` script, which uses
+Python's distutils module internally. For more information about
+distutils and creating packages with it see
+http://docs.python.org/dist/dist.html.
 
-Usage
-'''''
-
-`python package.py type version release`
-
-'type' can be either:
-  sdist    - create source distribution
-  wininst  - create Windows installer
-  all      - create both packages
-  version  - update only version information
-
-'version' must be either a version number in format '2.x(.y)' or 'trunk'.
-
-'release' must be 'alpha', 'beta', 'rc' or 'final', where all but the
-last one can have a number after the name like 'alpha1' or 'rc2'. With
-'trunk' versions 'release' is ignored and is automatically assigned
-the current date.
-
-Distribution packages are created under 'dist' directory, which is first 
-deleted.
-
-Examples::
-
-  python package.py all 2.0 final
-  python package.py all 2.1.13 alpha
-  python package.py sdist trunk
-  python package.py version 2.0.1 alpha2
-
-
-Source Distributions
-~~~~~~~~~~~~~~~~~~~~
-
-Source distributions are created using following command::
-
-  python setup.py sdist
-
-If you run it on Windows you get a zip package and on other
-environments you should get a tar.gz package (or whatever is the
-distutils default on that system). In both cases the package is
-created under ``dist`` directory.
-
-It's possible to create a zip package also on Linux and a tar.gz on
-Windows but at least our official source distributions should be
-created on "correct" platforms. That way packages automatically get
-correct new line delimiters for text files because our version control
-takes care of them (assuming that files have ``svn:eol-style`` property
-set to ``native``).
-
-Default configuration for creating the source package is in
-``setup.cfg`` file. There shouldn't normally be any need for custom
-configuration.
-
-
-Binary Packages
-~~~~~~~~~~~~~~~
-
-Windows Installer
-'''''''''''''''''
-
-It is possible to crete Windows installers of Robot Framework also on linux
-with the standard setuptools configuration. Creating the actual installer is 
-as easy as running this command::
-
-  python setup.py bdist_wininst
-
-An exectutable installer is created into ``dist`` directory similarly
-as with source packages.
-
-RPM
-'''
-
-Distutils offers also a `mechanism for creating RPM-packages`__.
-However, the simple::
-
-  python setup.py bdist_rpm
-
-will not work, because the ``setup.py`` does some modifications to
-the Robot Framework start-up scripts, and the generated scripts do
-not work from the RPM-package.
-
-If anyone has some experience or insight into creating custom 
-RPM-packages with distutils, please contact Robot Framework developers.
-
-
-__ http://docs.python.org/dist/creating-rpms.html
-
-
-
-
-.. _distutils: http://docs.python.org/lib/module-distutils.html
-.. _Distributing Python Modules: http://docs.python.org/dist/dist.html
