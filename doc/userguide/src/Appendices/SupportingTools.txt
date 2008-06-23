@@ -24,7 +24,7 @@ __ ../../tools/libdoc/doc/libdoc.html
 Historical reporting tool -- risto.py
 '''''''''''''''''''''''''''''''''''''
 
-`Risto.py`__ is a tool for generating graphs about historical statistics
+`risto.py`__ is a tool for generating graphs about historical statistics
 of test executions.
 
 __ ../../tools/ristopy/doc/ristopy.html
@@ -33,7 +33,7 @@ __ ../../tools/ristopy/doc/ristopy.html
 Test data tidying tool -- robotidy.py
 '''''''''''''''''''''''''''''''''''''
 
-`Robotidy`__ is a tool for cleaning Robot Framework test data, changing test 
+`robotidy.py`__ is a tool for cleaning Robot Framework test data, changing test 
 data format between HTML and TSV and fixing inline comments to format supported
 by Robot IDE.
 
@@ -43,7 +43,7 @@ __ ../../tools/robotidy/doc/robotidy.html
 Test result diffing tool -- robotdiff.py
 ''''''''''''''''''''''''''''''''''''''''
 
-`Robotdiff`__ is a tool for generating diff reports from Robot
+`robotdiff.py`__ is a tool for generating diff reports from Robot
 Framework output files.
 
 __ ../../tools/robotdiff/doc/robotdiff.html
@@ -61,7 +61,7 @@ __ ../../tools/times2csv/doc/times2csv.html
 File viewing tool -- fileviewer.py
 ''''''''''''''''''''''''''''''''''
 
-`Fileviewer`__ is a graphical tool implementing UNIX :cli:`tail` -like 
+`fileviewer.py`__ is a graphical tool implementing UNIX :cli:`tail` -like 
 functionality. It is especially designed to view `debug files`__
 
 __ ../../tools/fileviewer/doc/fileviewer.html
@@ -81,7 +81,7 @@ __ http://www.autoitscript.com/autoit3/
 Test status checker tool -- statuschecker.py
 ''''''''''''''''''''''''''''''''''''''''''''
 
-`Statuschecker`__ is a tool for verifying that test case statuses and messages 
+`statuschecker.py`__ is a tool for verifying that test case statuses and messages 
 and also keyword log messages are as expected.
 
 __ ../../tools/statuschecker/doc/statuschecker.html
