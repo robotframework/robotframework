@@ -34,7 +34,7 @@ the current date.
 This script uses 'setup.py' internally. Distribution packages are
 created under 'dist' directory, which is first deleted.
 
-Exampes:
+Examples:
   python package.py all 2.0 final
   python package.py all 2.1.13 alpha
   python package.py sdist trunk
