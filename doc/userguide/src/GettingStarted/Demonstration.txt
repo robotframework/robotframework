@@ -1,16 +1,15 @@
 Demonstration
 -------------
 
-Robot Framework does not currently have a standalone demo, but we plan to add
-one soon. However, Selenium test library has an easily executable
-demonstration test suite available. It contains a simple standalone HTTP
-server and an application that is used as a system under test. The actual test
-case files and scripts for running the demonstration in different systems are
-also provided. 
+Robot Framework does not currently have a standalone demo, but we plan
+to add one soon. However, SeleniumLibrary has an easily executable
+demonstration test suite available. It contains a simple standalone
+HTTP server and an application that is used as a system under
+test. The actual test case files and scripts for running the
+demonstration in different systems are also provided.
 
-The demonstration can be downloaded from the `SeleniumLibrary page`_, where 
-also the instructions for running the demonstration can be found.
+The demonstration, as well as instructions for running it, can be
+downloaded from SeleniumLibrary project page at
+http://code.google.com/p/robotframework-seleniumlibrary.
 
-.. _SeleniumLibrary page: http://code.google.com/p/robotframework-seleniumlibrary
 
-.. TODO: new demo for quick start

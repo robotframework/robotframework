@@ -11,30 +11,23 @@ Introduction
 
 There are two ways to install Robot Framework:
 
-`Installing from the source`_
-
+`Installing from source`_
     You can get the source code either as a source distribution
-    package or directly from `version control`__. In the former case,
-    first extract the package somewhere, and as a result, you have a
-    directory named ``robotframework-<version>``. Detailed
+    package or directly from version control system. In the former
+    case, first extract the package somewhere, and as a result, you
+    have a directory named ``robotframework-<version>``. Detailed
     instructions follow, but in short, what you need to do is to go to
     the created directory and run the ``python setup.py install``
     command.
 
 `Using binary installers`_
-
     Binary installers are platform-specific. There is currently only
     one binary distribution available, a graphical installer for
     Windows.
 
 Installation packages are available from
 http://downloads.robotframework.org, and source code from
-http://source.robotframework.org/.  For more information about
-different installation packages and possible future formats, see the
-:path:`PACKAGING.txt` file included in the source distribution.
-
-__ `source code`_
-
+http://source.robotframework.org.  
 
 Preconditions
 ~~~~~~~~~~~~~
@@ -119,16 +112,18 @@ installation`_ or have some custom installer.
 Installation
 ~~~~~~~~~~~~
 
-Installing from the source
-''''''''''''''''''''''''''
+Installing from source
+''''''''''''''''''''''
 
-You can get the Robot Framework source either as a source distribution
-package (which you need to extract somewhere) or directly from version
-control. In both cases, you should have a directory containing the source
-code, documentation, tools, templates, and so on. The first
-installation step is going to the created directory from the command line
-and after that installing Robot Framework by running either of the following 
-commands::
+You can get Robot Framework source code either directly from version
+control or as a source distribution package that needs to be extracted
+somewhere. In both cases, you should have a directory containing the
+source code, documentation, tools, templates, and so on.
+
+You should be able to install Robot Framework to any environment where
+Python runs using a source distribution. The installation is done by
+going to the created directory from the command line, and after that
+running either of the following commands::
 
    python setup.py install
    python install.py install
@@ -266,8 +261,9 @@ example, in Windows you simply go to ``Control Panel >
 Add/Remove Programs``, where Robot Framework is listed under Python.
 
 If uninstallation fails somehow, Robot Framework can be uninstalled by
-removing the framework code and runner scripts manually. For more
-information on where to find them, see `Where files are installed`_.
+removing the `framework code and runner scripts`__ manually.
+
+__ `Where files are installed`_
 
 
 Upgrading
