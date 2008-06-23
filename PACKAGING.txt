@@ -76,6 +76,41 @@ are willing to build one, contact Robot Framework developers.
 Creating Packages
 -----------------
 
+Using package.py
+~~~~~~~~~~~~~~~~
+
+`package.py` is a packaging script for Robot Framework that uses setuptools
+internally.
+
+Usage
+'''''
+
+`python package.py type version release`
+
+'type' can be either:
+  sdist    - create source distribution
+  wininst  - create Windows installer
+  all      - create both packages
+  version  - update only version information
+
+'version' must be either a version number in format '2.x(.y)' or 'trunk'.
+
+'release' must be 'alpha', 'beta', 'rc' or 'final', where all but the
+last one can have a number after the name like 'alpha1' or 'rc2'. With
+'trunk' versions 'release' is ignored and is automatically assigned
+the current date.
+
+Distribution packages are created under 'dist' directory, which is first 
+deleted.
+
+Examples::
+
+  python package.py all 2.0 final
+  python package.py all 2.1.13 alpha
+  python package.py sdist trunk
+  python package.py version 2.0.1 alpha2
+
+
 Source Distributions
 ~~~~~~~~~~~~~~~~~~~~
 
@@ -106,10 +141,9 @@ Binary Packages
 Windows Installer
 '''''''''''''''''
 
-It's recommended to use a Windows machine for creating a Windows
-installer. On Windows you only need the standard Python installation
-but on other environments you need to install separate Windows modules
-too. Creating the actual installer is as easy as running this command::
+It is possible to crete Windows installers of Robot Framework also on linux
+with the standard setuptools configuration. Creating the actual installer is 
+as easy as running this command::
 
   python setup.py bdist_wininst
 
