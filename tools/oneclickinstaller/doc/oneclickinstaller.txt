@@ -1,8 +1,8 @@
 .. role:: path
 
-==========================
-RobotOneCLickInstaller.au3
-==========================
+===================================
+Robot Framework One Click Installer
+===================================
 
 An AutoIT__ script for installing Robot Framework and its preconditions
 on a Windows machine.
