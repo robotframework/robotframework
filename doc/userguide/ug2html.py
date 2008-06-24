@@ -3,14 +3,14 @@
 """ug2html.py -- Creates HTML version of Robot Framework User Guide
 
 Synopsis:
-ug2html.py [dist]
+ug2html.py [ cr(eate) | dist ]
 
 Description:
-If no arguments are given, user guide will be generated. This userguide will 
+With 'create' as argument, user guide will be generated. This userguide will 
 have relative links that work only from version control or with full source 
 distribution.
 
-With 'dist' as argument, a 'rfug' directory is created and all images and link 
+With 'dist' as argument, 'rfug' directory is created and all images and link 
 targets are copied under it. This way the created output directory may be 
 compressed and the user guide distributed independently.
 """
@@ -118,20 +118,20 @@ def distribute_userguide():
     import re
     from urlparse import urlparse
 
+    create_userguide()
     os.chdir(os.path.dirname(os.path.abspath(__file__)))
-    OUTDIR = "rfug"
+    outdir = "rfug"
+    toolsdir = os.path.join(outdir, 'tools')
+    librariesdir = os.path.join(outdir, 'libraries')
+    imagesdir = os.path.join(outdir, 'images')
 
-    if os.path.exists(OUTDIR):
-        shutil.rmtree(OUTDIR)
+    if os.path.exists(outdir):
+        print 'Removing previous user guide distribution'
+        shutil.rmtree(outdir)
     
-    os.mkdir(OUTDIR)
-    for name in ['images', 'libraries', 'tools']:
-        os.mkdir(os.path.join(OUTDIR, name))
-
-    link_regexp = re.compile('''
-(<(a|img)\s+.*?)
-(\s+(href|src)="(.*?)"|>)
-''', re.VERBOSE | re.DOTALL | re.IGNORECASE)
+    for dirname in [outdir, toolsdir, librariesdir, imagesdir]:
+        print "Creating outut directory '%s'" % dirname
+        os.mkdir(dirname)
 
     def replace_links(res):
         if not res.group(5):
@@ -139,22 +139,41 @@ def distribute_userguide():
         scheme, _, path, _, _, fragment = urlparse(res.group(5))
         if scheme or (fragment and not path):
             return res.group(0)
-        replaced_link = '%s %s="%%s/%s"' % (res.group(1), res.group(4), os.path.basename(path)) 
+        replaced_link = '%s %s="%%s/%s"' % (res.group(1), res.group(4), 
+                                            os.path.basename(path)) 
         if path.startswith('../../tools'):
-            shutil.copy(path, os.path.join(OUTDIR, 'tools'))
-            return replaced_link % 'tools'
+            copy(path, toolsdir)
+            copy_tool_images(path)
+            replaced_link = replaced_link % 'tools'
         elif path.startswith('../libraries'):
-            shutil.copy(path, os.path.join(OUTDIR, 'libraries'))
-            return replaced_link % 'libraries'
+            copy(path, librariesdir)
+            replaced_link = replaced_link % 'libraries'
         elif path.startswith('src/'):
-            shutil.copy(path, os.path.join(OUTDIR, 'images'))
-            return replaced_link % 'images'
-        return "foo"
+            copy(path, imagesdir)
+            replaced_link = replaced_link % 'images'
+        else:
+            raise ValueError('Invalid link target: %s' % path)
+        print "Modified link '%s' -> '%s'" % (res.group(0), replaced_link)
+        return replaced_link
 
+    def copy(source, dest):
+        print "Copying '%s' -> '%s'" % (source, dest)
+        shutil.copy(source, dest)
+
+    def copy_tool_images(path):
+        indir = os.path.dirname(path)
+        for line in open(os.path.splitext(path)[0]+'.txt').readlines():
+            if line.startswith('.. figure::'):
+                copy(os.path.join(indir, line.strip().split()[-1]), toolsdir)
+
+    link_regexp = re.compile('''
+(<(a|img)\s+.*?)
+(\s+(href|src)="(.*?)"|>)
+''', re.VERBOSE | re.DOTALL | re.IGNORECASE)
 
     content = open('RobotFrameworkUserGuide.html').read()
-    content = link_regexp.sub(replace_links, content )
-    outfile = open(os.path.join(OUTDIR, 'RobotFrameworkUserGuide.html'), 'wb')
+    content = link_regexp.sub(replace_links, content)
+    outfile = open(os.path.join(outdir, 'RobotFrameworkUserGuide.html'), 'wb')
     outfile.write(content)
     outfile.close()
 
@@ -184,15 +203,12 @@ RobotFrameworkUserGuide.html
 
     print os.path.abspath(arguments[-1])
 
-
 if __name__ == '__main__':
     import sys
-    if len(sys.argv) == 1:
-        create_userguide()
-    elif len(sys.argv) == 2 and sys.argv[1] == 'dist':
-        create_userguide()
-        distribute_userguide()
-    else:
+    actions = { 'create': create_userguide, 'cr': create_userguide,
+                'dist': distribute_userguide }
+    try:
+        actions[sys.argv[1]]()
+    except (KeyError, IndexError):
         print __doc__
-    
 
