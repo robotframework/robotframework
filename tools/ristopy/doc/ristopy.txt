@@ -1,3 +1,4 @@
+.. role:: code
 .. role:: opt
 .. role:: path
 
@@ -47,7 +48,7 @@ Options
   --version              Prints the version information.
 
 
-Additionally, :opt:`---` can be used to group options when creating multiple 
+Additionally, :code:`---` can be used to group options when creating multiple 
 images at once.
 
 

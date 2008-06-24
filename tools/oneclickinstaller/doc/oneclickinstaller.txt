@@ -35,18 +35,18 @@ from the respective project web sites. The expected patterns for installer
 names are :path:`robotframework-2.*.exe` , :path:`python-2.5*.msi`, and
 :path:`jython_installer-2.2.*.jar`.
 
-All you need to specify is the base directory where to
-install Python and Jython. They are installed into the directories
-:path:`Python25` and :path:`Jython22`, respectively, inside the given base
-directory. Robot Framework itself is installed under the Python
-installation directory. Its startup scripts can be found from
-:path:`[PYTHON]\Scripts` and code from :path:`[PYTHON]\Lib\site-packages:path:`.
+All you need to specify is the base directory where to install Python and
+Jython. They are installed into the directories :path:`Python25` and
+:path:`Jython22`, respectively, inside the given base directory. Robot
+Framework itself is installed under the Python installation directory. Its
+startup scripts can be found from :path:`[PYTHON]\\Scripts` and code from
+:path:`[PYTHON]\\Lib\\site-packages`.
 
 .. Note::
 
 	The specified base directory MUST exist, whereas Python and Jython
 	directories inside it must not. It is also not recommended to
 	use a path containing spaces. Good candidates include
-	directories such as :path:`C:\` and :path:`C:\APPS`.
+	directories such as :path:`C:\\` and :path:`C:\\APPS`.
 
 

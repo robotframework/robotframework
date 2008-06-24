@@ -1,3 +1,4 @@
+.. role:: code
 .. role:: opt
 .. role:: name
 
@@ -23,9 +24,8 @@ Options
 
   -I, --inplace      Cleans given file(s) so that original file(s) are overwritten.
                     When this option is used, it is possible to give multiple
-                    files at once. Examples::
-                    robotidy.py --inplace tests.html
-                    robotidy.py --inplace --fixcomments \*.html
+                    files at once. Examples: :code:`robotidy.py --inplace tests.html`,
+                    :code:`robotidy.py --inplace --fixcomments \*.html`
   -R, --recursive    Processes the given directory recursively. Files in the directory
                     are processed in place, similarly as when the :opt:`--inplace`
                     option is used.
