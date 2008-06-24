@@ -130,7 +130,7 @@ def distribute_userguide():
         shutil.rmtree(outdir)
     
     for dirname in [outdir, toolsdir, librariesdir, imagesdir]:
-        print "Creating outut directory '%s'" % dirname
+        print "Creating output directory '%s'" % dirname
         os.mkdir(dirname)
 
     def replace_links(res):
