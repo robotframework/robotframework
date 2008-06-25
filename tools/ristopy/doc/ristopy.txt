@@ -125,20 +125,20 @@ ignored::
 Installation
 ------------
 
-:prog:`risto.py` does not need to be installed, but it has some
-preconditions. The most obvious one is Python. :prog:`risto.py` has
-been tested both on releases 2.4 and 2.5, and it should work also in
-2.3. Some Robot Framework internal modules are also needed, and thus
-Robot Framework version 1.8 or newer needs to be installed.
+:prog:`risto.py` itself does not need to be installed, simply running
+it from the command line is enough, but it has some preconditions. The
+most obvious one is Python, and versions 2.5 and 2.4 have been
+tested. Some Robot Framework internal modules are also needed, and
+thus Robot Framework version 1.8 or newer is required.
 
 The Matplotlib tool is used for plotting graphs, and it needs to be
 installed separately. Matplotlib has its own preconditions, and at
 least NumPy needs to be installed. The default Matplotlib installation
-should always support at least PNG, but if more output formats are
-needed, some extra back-ends may need to be installed. Additionally,
-you may need to install graphical front-ends to be able to use
-Matplotlib's own viewer for opening graphs without saving them to a
-file.
+should always support at least PNG outputs, but if more output formats
+are needed, some extra back-ends may need to be installed.
+Additionally, you may need to install graphical front-ends to be able
+to use Matplotlib's own viewer for opening graphs without saving them
+to a file.
 
 :prog:`risto.py` reads statistics from XML output files using the
 ElementTree module. Python 2.5 and newer have this module in standard
