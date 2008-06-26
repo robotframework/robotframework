@@ -29,6 +29,17 @@ if RELEASE != 'final':
 INSTALL = 'install' in sys.argv
 WININST = 'bdist_wininst' in sys.argv
 
+DESCRIPTTION = """
+Robot Framework is a Python-based keyword-driven test automation framework
+for acceptance level testing and acceptance test-driven development (ATDD).
+It has an easy-to-use tabular syntax for creating test cases and its testing
+capabilities can be extended by test libraries implemented either with 
+Python or Java.  Users can also create new keywords from existing ones using
+the same simple syntax that is used for creating test cases.
+"""[1:-1]
+
+CLASSIFIERS = """
+"""[1:-1]
 
 def main():
     pkg_dir = 'src'
@@ -49,10 +60,15 @@ def main():
     dist = setup(
           name         = 'robotframework',
           version      = VERSION,
-          description  = 'Robot -- Automating the h*ck out of it',
           author       = 'Robot Framework Developers',
           author_email = 'robotframework-devel@googlegroups.com',
-          url          = 'http://robotframework.org',
+          home_page    = 'http://robotframework.org',
+          license      = 'Apache License 2.0',
+          summary      = 'A keyword-driven test automation framework',
+          description  = DESCRIPTION,
+          keywords     = '',
+          platform     = 'any',
+          download_url = '',
           package_dir  = { '' : pkg_dir },
           packages     = inst_pkgs,
           scripts      = inst_scripts,
