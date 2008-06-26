@@ -69,7 +69,7 @@ def main():
           author_email = 'robotframework-devel@googlegroups.com',
           url          = 'http://robotframework.org',
           license      = 'Apache License 2.0',
-          description  = 'A keyword-driven test automation framework',
+          description  = 'A keyword-driven acceptance test automation framework',
           long_description = DESCRIPTION,
           keywords     = 'acceptance test automation atdd',
           platforms    = 'any',
