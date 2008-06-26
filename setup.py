@@ -29,7 +29,7 @@ if RELEASE != 'final':
 INSTALL = 'install' in sys.argv
 WININST = 'bdist_wininst' in sys.argv
 
-DESCRIPTTION = """
+DESCRIPTION = """
 Robot Framework is a Python-based keyword-driven test automation framework
 for acceptance level testing and acceptance test-driven development (ATDD).
 It has an easy-to-use tabular syntax for creating test cases and its testing
@@ -39,11 +39,16 @@ the same simple syntax that is used for creating test cases.
 """[1:-1]
 
 CLASSIFIERS = """
+Development Status :: 5 - Production/Stable
+License :: OSI Approved :: Apache Software License
+Operating System :: OS Independent
+Programming Language :: Python
+Topic :: Software Development :: Testing
 """[1:-1]
 
+
 def main():
-    pkg_dir = 'src'
-    scripts = [ os.path.join(pkg_dir,'bin',script) for script in
+    scripts = [ os.path.join('src','bin',script) for script in
                 ['pybot','jybot','rebot'] ]
     win_scripts = [ script+'.bat' for script in scripts ]
     all_scripts = scripts + win_scripts
@@ -62,21 +67,21 @@ def main():
           version      = VERSION,
           author       = 'Robot Framework Developers',
           author_email = 'robotframework-devel@googlegroups.com',
-          home_page    = 'http://robotframework.org',
+          url          = 'http://robotframework.org',
           license      = 'Apache License 2.0',
-          summary      = 'A keyword-driven test automation framework',
-          description  = DESCRIPTION,
-          keywords     = '',
-          platform     = 'any',
-          download_url = '',
-          package_dir  = { '' : pkg_dir },
+          description  = 'A keyword-driven test automation framework',
+          long_description = DESCRIPTION,
+          keywords     = 'acceptance test automation atdd',
+          platforms    = 'any',
+          download_url = 'http://robotframework.googlecode.com/files/robotframework-2.0.tar.gz', 
+          classifiers  = CLASSIFIERS.splitlines(),
+          package_dir  = {'': 'src'},
           packages     = inst_pkgs,
           scripts      = inst_scripts,
     )
 
     if INSTALL:
         def absnorm(path):
-            # os.path.abspath does not normalize in Jython
             return os.path.abspath(os.path.normpath(path))
         
         script_dir = absnorm(dist.command_obj['install_scripts'].install_dir)
