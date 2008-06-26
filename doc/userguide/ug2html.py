@@ -117,7 +117,6 @@ def distribute_userguide(version):
     from urlparse import urlparse
 
     create_userguide()
-    os.chdir(os.path.dirname(os.path.abspath(__file__)))
     outdir = "robotframework-userguide-%s" % version 
     toolsdir = os.path.join(outdir, 'tools')
     librariesdir = os.path.join(outdir, 'libraries')
@@ -174,7 +173,7 @@ def distribute_userguide(version):
     outfile = open(os.path.join(outdir, 'RobotFrameworkUserGuide-%s.html' % version), 'wb')
     outfile.write(content)
     outfile.close()
-    print outfile.name
+    print os.path.abspath(outfile.name)
 
 
 #
@@ -199,6 +198,7 @@ src/RobotFrameworkUserGuide.txt
 RobotFrameworkUserGuide.html
 '''.split('\n')[1:-1] 
 
+    os.chdir(os.path.dirname(os.path.abspath(__file__)))
     publish_cmdline(writer_name='html', description=description, argv=arguments)
     print os.path.abspath(arguments[-1])
 
@@ -209,6 +209,6 @@ if __name__ == '__main__':
                 'dist': distribute_userguide }
     try:
         actions[sys.argv[1]](*sys.argv[2:])
-    except (KeyError, IndexError):
+    except (KeyError, IndexError, TypeError):
         print __doc__
 
