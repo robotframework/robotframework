@@ -37,21 +37,23 @@ class OperatingSystem:
     ROBOT_LIBRARY_SCOPE = 'GLOBAL'
     
     def run(self, command, return_mode='stdout'):
-        """Runs the given command in the system and returns a return code and/or stdout.
+        """Runs the given command in the system and returns an RC and/or stdout.
         
-        'return_mode' defines how the return code (rc) and the standard output
+        'return_mode' defines how the return code (RC) and the standard output
         (stdout) are returned as explained below. All checks are
         case-insensitive.
-        * If it contains the word 'rc' and either the word 'stdout' or 'output', both
-          the rc and stdout are returned.
-        * Otherwise, if it contains the word 'rc', only the rc is returned.
+        
+        * If 'return_mode' contains the word 'RC' and either the word 'stdout'
+          or 'output', both the RC and stdout are returned.
+        * Otherwise, if it contains the word 'RC', only the RC is returned.
         * Otherwise, and by default, only the stdout is returned.
-                
-        The rc is returned as an integer. It must thus be checked e.g. with the 
-        keyword 'Should Be Equal As Integers' instead of 'Should Be Equal' (both
-        are built-in keywords). Return codes are positive integers within the
-        range from 0 to 255 as returned by the command (if the command returns
-        some other value, the system maps it into this range).
+
+        The RC is returned as a positive integer in range from 0 to 255 as
+        returned by the executed command. On some operating systems (notable
+        Windows) original return codes can be something else, but this keyword
+        always maps them to the 0-255 range. Since the RC is an integer, it must
+        be checked e.g. with the keyword 'Should Be Equal As Integers' instead
+        of 'Should Be Equal' (both are built-in keywords). 
         
         The returned output contains everything written into the stdout by the
         command. Many commands add an extra newline (\\n) after the output to
@@ -65,13 +67,13 @@ class OperatingSystem:
         'my_command 2>&1' and the latter with 'my_command 2>stderr.txt'.
         
         Examples:
-        | ${output} = | Run | ls -lhF /tmp | 
-        | Log | ${output} |
-        | ${rc} = | Run | ${CURDIR}${/}script.py  | Return RC  |
-        | Should Be Equal As Integers | ${rc} | 0 |
-        | ${rc} | ${out} = | Run | /opt/script.py 2>&1 | RC,Output |
-        | Fail Unless | ${rc} > 0 |
-        | Contains | ${out} | TEST PASSED |
+        | ${output} =    | Run        | ls -lhF /tmp | 
+        | Log            | ${output}  |
+        | ${rc} =        | Run        | ${CURDIR}${/}script.py    | Return RC |
+        | Should Be Equal As Integers | ${rc}                     | 0         |
+        | ${rc}          | ${out} =   | Run | /opt/script.py 2>&1 | RC,Output |
+        | Should Be True | ${rc} > 0  |
+        | Should Contain | ${out}     | TEST PASSED |
         """
         self._info("Running command '%s'" % command)
         if utils.is_jython:
@@ -108,7 +110,8 @@ class OperatingSystem:
         """Wrapper for 'Run' keyword that returns only the return code.
         
         Following two examples are equivalent but the latter is easier to
-        understand and thus recommended.
+        understand and thus recommended. See 'Run' keyword for more information
+        about the characteristics of the returned RC.
         
         | ${rc} = | Run               | my_command | RC |
         | ${rc} = | Run and Return RC | my_command |    |
@@ -116,7 +119,7 @@ class OperatingSystem:
         return self.run(command, 'RC')
     
     def run_and_return_rc_and_output(self, command):
-        """Wrapper for the 'Run' keyword that returns the return code and output.
+        """Wrapper for the 'Run' keyword that returns both the RC and stdout.
         
         The following two examples are equivalent, but the latter is easier to
         understand and thus recommended.
@@ -125,9 +128,8 @@ class OperatingSystem:
         | ${rc} | ${output} = | Run and Return RC and Output | my_command |    |
         
         Note that similarly as the normal 'Run', this keyword only returns the 
-        standard output and not the standard error. Use either the format
-        'my_command 2>/tmp/stderr.txt' to redirect the stderr into a specific
-        file or 'my_command 2>&1' to return it along with the stdout.
+        standard output and not the standard error. See 'Run' keyword for more
+        information.
         """
         return self.run(command, 'RC,Output')
     
@@ -163,7 +165,7 @@ class OperatingSystem:
         return PROCESSES.register(process, alias)
     
     def switch_process(self, index_or_alias):
-        """Switches the current process to the process found with 'index_or_alias'.
+        """Switches the active process to the specified process.
         
         The index is the return value of the 'Start Process' keyword and an
         alias may have been defined to it.
@@ -199,9 +201,9 @@ class OperatingSystem:
     def stop_process(self):
         """Stops the current process without reading from it.
         
-        Stopping a process does not remove it from the process list. To reset 
-        the process list (and indexes and aliases), 'Stop All Processes' must be 
-        used.
+        Stopping a process does not remove it from the process list. To reset
+        the process list (and indexes and aliases), 'Stop All Processes' must
+        be used.
         
         See 'Start Process' and 'Switch Process' for more information.
         """
@@ -218,10 +220,10 @@ class OperatingSystem:
     def get_file(self, path, encoding='UTF-8'):
         """Returns the contents of a specified file.
         
-        This keyword reads the specified file and returns the contents. 
+        This keyword reads the specified file and returns the contents.
         'encoding' defines the encoding of the file. By default, the value is 
-        'UTF-8', which means that UTF-8 and ASCII-encoded files are
-        read correctly.
+        'UTF-8', which means that UTF-8 and ASCII-encoded files are read
+        correctly.
         """
         self._info("Getting file '%s'" % path)
         f = open(path, 'rb')
@@ -264,8 +266,8 @@ class OperatingSystem:
           'regexp', the 'pattern' is considered a regular expression and only 
           lines matching it returned. (2)
         - If 'pattern_type' contains the string 'case insensitive' the 'pattern'
-          is considered a literal string and lines returned, if they contain the 
-          string, regardless of the case.
+          is considered a literal string and lines returned, if they contain
+          the string, regardless of the case.
         - Otherwise the pattern is considered a literal string and lines
           returned, if they contain the string exactly. This is the default.
         
@@ -273,8 +275,8 @@ class OperatingSystem:
         it is always case-sensitive. In the pattern, '*' matches to anything 
         and '?' matches to any single character. 
   
-        2) Regular expression check is done using the Python 're' module,
-        which has a pattern syntax derived from Perl and thus also very similar to the 
+        2) Regular expression check is done using the Python 're' module, which
+        has a pattern syntax derived from Perl and thus also very similar to the
         one in Java. See the following documents from more details about regexps
         in general and their Python implementation in particular.
         
@@ -309,10 +311,10 @@ class OperatingSystem:
         """Fails unless the given path (file or directory) exists.
         
         The path can be given as an exact path or as a pattern where         
-        '*'        - matches everything
-        '?'        - matches any single character
-        '[chars]'  - matches any character inside square brackets (e.g. '[abc]'
-                     matches either 'a', 'b' or 'c')
+        '*' - matches everything
+        '?' - matches any single character
+        '[chars]' - matches any character inside square brackets (e.g. '[abc]'
+                    matches either 'a', 'b' or 'c')
         '[!chars]' - matches any character not inside square brackets
         
         The default error message can be overridden with the 'msg' argument.
@@ -326,9 +328,9 @@ class OperatingSystem:
         """Fails if the given path (file or directory) exists.
 
         The path can be given as an exact path or as a pattern where         
-        '*'        - matches everything
-        '?'        - matches any single character
-        '[chars]'  - matches any character inside square brackets (e.g. '[abc]'
+        '*' - matches everything
+        '?' - matches any single character
+        '[chars]' - matches any character inside square brackets (e.g. '[abc]'
                      matches either 'a', 'b' or 'c')
         '[!chars]' - matches any character not inside square brackets
         
@@ -349,9 +351,9 @@ class OperatingSystem:
         """Fails unless the given path points to an existing file.
         
         The path can be given as an exact path or as a pattern where         
-        '*'        - matches everything
-        '?'        - matches any single character
-        '[chars]'  - matches any character inside square brackets (e.g. '[abc]'
+        '*' - matches everything
+        '?' - matches any single character
+        '[chars]' - matches any character inside square brackets (e.g. '[abc]'
                      matches either 'a', 'b' or 'c')
         '[!chars]' - matches any character not inside square brackets
         
@@ -366,9 +368,9 @@ class OperatingSystem:
         """Fails if the given path points to an existing file.
         
         The path can be given as an exact path or as a pattern where         
-        '*'        - matches everything
-        '?'        - matches any single character
-        '[chars]'  - matches any character inside square brackets (e.g. '[abc]'
+        '*' - matches everything
+        '?' - matches any single character
+        '[chars]' - matches any character inside square brackets (e.g. '[abc]'
                      matches either 'a', 'b' or 'c')
         '[!chars]' - matches any character not inside square brackets
         
@@ -391,9 +393,9 @@ class OperatingSystem:
         """Fails unless the given path points to an existing directory.
         
         The path can be given as an exact path or as a pattern where         
-        '*'        - matches everything
-        '?'        - matches any single character
-        '[chars]'  - matches any character inside square brackets (e.g. '[abc]'
+        '*' - matches everything
+        '?' - matches any single character
+        '[chars]' - matches any character inside square brackets (e.g. '[abc]'
                      matches either 'a', 'b' or 'c')
         '[!chars]' - matches any character not inside square brackets
         
@@ -408,9 +410,9 @@ class OperatingSystem:
         """Fails if the given path points to an existing file.
         
         The path can be given as an exact path or as a pattern where         
-        '*'        - matches everything
-        '?'        - matches any single character
-        '[chars]'  - matches any character inside square brackets (e.g. '[abc]'
+        '*' - matches everything
+        '?' - matches any single character
+        '[chars]' - matches any character inside square brackets (e.g. '[abc]'
                      matches either 'a', 'b' or 'c')
         '[!chars]' - matches any character not inside square brackets
         
@@ -439,19 +441,19 @@ class OperatingSystem:
         """Waits until the given file or directory is removed.
         
         The path can be given as an exact path or as a pattern where         
-        '*'        - matches everything
-        '?'        - matches any single character
-        '[chars]'  - matches any character inside square brackets (e.g. '[abc]'
+        '*' - matches everything
+        '?' - matches any single character
+        '[chars]' - matches any character inside square brackets (e.g. '[abc]'
                      matches either 'a', 'b' or 'c')
         '[!chars]' - matches any character not inside square brackets
         
         If the path is a pattern, the keyword waits until all matching items are
         removed.
              
-        The optional 'timeout' can be used to control the maximum time of waiting.
-        The timeout is given as a timeout string, e.g. in a format '15 min' or
-        '1min 10s'. The time string format is described in section Time format in
-        Robot Framework.
+        The optional 'timeout' can be used to control the maximum time of
+        waiting. The timeout is given as a timeout string, e.g. in a format
+        '15 seconds' or '1min 10s'. The time string format is described in an
+        appendix of Robot Framework User Guide.
 
         If the timeout is negative, the keyword is never timed out. The keyword
         returns immediately, if the file/directory does not exist in the first
@@ -474,20 +476,20 @@ class OperatingSystem:
         """Waits until the given file or directory is created.
 
         The path can be given as an exact path or as a pattern where         
-        '*'        - matches everything
-        '?'        - matches any single character
-        '[chars]'  - matches any character inside square brackets (e.g. '[abc]'
+        '*' - matches everything
+        '?' - matches any single character
+        '[chars]' - matches any character inside square brackets (e.g. '[abc]'
                      matches either 'a', 'b' or 'c')
         '[!chars]' - matches any character not inside square brackets
         
         If the path is a pattern, the keyword returns when an item matching to 
         the pattern is created.
 
-        The optional 'timeout' can be used to control the maximum time of waiting.
-        The timeout is given as a timeout string, e.g. in the format '15 min' or
-        '1min 10s'. The time string format is described in section Time formt in
-        Robot Framework User Guide.
-        
+        The optional 'timeout' can be used to control the maximum time of
+        waiting. The timeout is given as a timeout string, e.g. in a format
+        '15 seconds' or '1min 10s'. The time string format is described in an
+        appendix of Robot Framework User Guide.
+
         If the timeout is negative, the keyword is never timed-out. The keyword
         returns immediately, if the file/directory already exist. 
         """
@@ -565,7 +567,7 @@ class OperatingSystem:
         If the mode contains any of the strings 'False', 'No', "Don't"
         (case-insensitive, so e.g. "Do not" also works) the keyword fails,
         if the file already exists and the file is not overwritten. If it
-        contains the word 'Append'(case-insensitive), the content is appended.
+        contains the word 'Append' (case-insensitive), the content is appended.
         Otherwise the file is overwritten.
         
         If the directory where to create file does not exist it, and possible
@@ -589,9 +591,9 @@ class OperatingSystem:
         to a regular file (e.g. it points to a directory).
         
         The path can be given as an exact path or as a pattern where         
-        '*'        - matches everything
-        '?'        - matches any single character
-        '[chars]'  - matches any character inside square brackets (e.g. '[abc]'
+        '*' - matches everything
+        '?' - matches any single character
+        '[chars]' - matches any character inside square brackets (e.g. '[abc]'
                      matches either 'a', 'b' or 'c')
         '[!chars]' - matches any character not inside square brackets
         """
@@ -620,10 +622,11 @@ class OperatingSystem:
         self._info("Emptied directory '%s'" % path)
 
     def create_directory(self, path):
-        """Creates a directory, and all the intermediate ones, with the given path.
-        
-        Passes if the directory does not exist and fails if the path does not
-        point to a regular file (e.g. it points to a directory).
+        """Creates the specified directory.
+
+        Also possible intermediate directories are created. Passes if the
+        directory already exists, and fails if the path points to a regular
+        file.
         """
         if os.path.isdir(path):
             self._info("Directory '%s' already exists" % path )
@@ -670,12 +673,15 @@ class OperatingSystem:
         
         1) If the destination is an existing file, the source file is copied
         over it.
+
         2) If the destination is an existing directory, the source file is
         copied into it. A possible file with the same name is overwritten.
+
         3) If the destination does not exist and it ends with a path separator 
         ('/' in UNIX-like systems, '\\' in Windows), it is considered a
         directory. That directory is created and a source file copied into it.
         Possible missing intermediate directories are also created.
+
         4) If the destination does not exist and it does not end with a path
         separator, it is considered a file. If the path to the file does not
         exist, it is created.
@@ -913,14 +919,16 @@ class OperatingSystem:
         How time is returned is determined based on the given 'format' string as
         follows. Note that all checks are case-insensitive.
         
-        - If 'format' contains the word 'epoch', the time is returned in seconds 
+        - If 'format' contains the word 'epoch', the time is returned in seconds
           after the UNIX epoch. The return value is always an integer.
+
         - If 'format' contains any of the words 'year', 'month', 'day', 'hour',
           'min' or 'sec', only the selected parts are returned. The order of the
           returned parts is always the one in the previous sentence and the
           order of the words in 'format' is not significant. The parts are
           returned as zero-padded strings (e.g. May -> '05').
-        - Otherwise (and by default) the time is returned as a timestamp string 
+
+        - Otherwise, and by default, the time is returned as a timestamp string 
           in the format '2006-02-24 15:08:31'.
         
         Examples (when the modified time of the ${CURDIR} is
@@ -953,15 +961,15 @@ class OperatingSystem:
         about 1177654467 seconds since epoch.
         
         2) If 'mtime' is a valid timestamp, that time will be used.
-        Valid timestamp formats are 'YYYY-MM-DD hh:mm:ss' and 'YYYYMMDD hhmmss'. 
+        Valid timestamp formats are 'YYYY-MM-DD hh:mm:ss' and 'YYYYMMDD hhmmss'.
         
         3) If 'mtime' is equal to 'NOW' (case-insensitive), the current time is
         used.
 
         4) If 'mtime' is in the format 'NOW - 1 day' or 'NOW + 1 hour 30 min', 
         the current time plus/minus the time specified with the time string is
-        used. The time string format is described in section Time format in
-        Robot Framework User Guide.
+        used. The time string format is described in an appendix of Robot
+        Framework User Guide.
         
         Examples:
         | Set Modified Time | /path/file | 1177654467         | #(2007-04-27 9:14:27) |
@@ -1014,9 +1022,8 @@ class OperatingSystem:
         return os.stat(path).st_size
     
     def list_directory(self, path, pattern=None, pattern_type='simple', 
-                 absolute=False):
-        """Returns items from the given directory, optionally filtered with
-        'pattern'.
+                       absolute=False):
+        """Returns items from a directory, optionally filtered with 'pattern'.
                 
         File and directory names are returned in case-sensitive alphabetical 
         order, e.g. 'A Name', 'Second', 'a lower case name', 'one more'].
@@ -1044,18 +1051,18 @@ class OperatingSystem:
         1) Simple pattern matching is similar as matching files in a shell, and
         it is always case-sensitive. The special characters are listed below.
         
-        '*'        - matches everything
-        '?'        - matches any single character
-        '[chars]'  - matches any character inside square brackets (e.g. '[abc]'
+        '*' - matches everything
+        '?' - matches any single character
+        '[chars]' - matches any character inside square brackets (e.g. '[abc]'
                      matches either 'a', 'b' or 'c')
         '[!chars]' - matches any character not inside square brackets
         
-        Simple pattern matching is implemented using the Python 'fnmatch' module's
-        'fnmatchcase' method. For more information, see its documentation at 
-        http://docs.python.org/lib/module-fnmatch.html.
+        Simple pattern matching is implemented using the Python 'fnmatch'
+        module's 'fnmatchcase' method. For more information, see its
+        documentation at http://docs.python.org/lib/module-fnmatch.html.
           
         2) Regular expression check is done using the Python 're' module, which
-        has a pattern syntax derived from Perl and thus also very similar to the 
+        has a pattern syntax derived from Perl and thus also very similar to the
         one in Java. See the following documents for more details about regexps
         in general and their Python implementation in particular.
         
@@ -1074,15 +1081,15 @@ class OperatingSystem:
         return items
 
     def list_files_in_directory(self, path, pattern=None, pattern_type='simple',
-                          absolute=False):
+                                absolute=False):
         """A wrapper for 'List Directory' that returns only files."""
         files = self._list_files_in_dir(path, pattern, pattern_type, absolute)
         for f in files:
             self._info(f)
         return files
     
-    def list_directories_in_directory(self, path, pattern=None, pattern_type='simple',
-                         absolute=False):
+    def list_directories_in_directory(self, path, pattern=None,
+                                      pattern_type='simple', absolute=False):
         """A wrapper for 'List Directory' that returns only directories."""
         dirs = self._list_dirs_in_dir(path, pattern, pattern_type, absolute)
         for d in dirs: 
