@@ -9,7 +9,6 @@ take test libraries into use and how to use the keywords they
 provide. `Creating test libraries`_ is described in a separate
 section.
 
-
 .. contents:: 
    :depth: 2
    :local: 
@@ -46,12 +45,12 @@ name. Both the library name and arguments can be set using variables.
    Library    ${LIBRARY}           \        \
    =========  ===================  =======  =======
 
-
 It is possible to import test libraries in `test case files`_,
 `resource files`_ and `test suite initialization files`_. In all these
 cases, all the keywords in the imported library are available in that
 file. With resource files, those keywords are also available in other
 files using them.
+
 
 Using Import Library keyword
 ''''''''''''''''''''''''''''
@@ -80,15 +79,58 @@ make it available.
 Library search path
 '''''''''''''''''''
 
-Robot Framework can import a library only if the library class or
-module can be found from the library search path. Basically, this
-means that the library code and all its possible dependencies must be
-in :code:`PYTHONPATH` or, when running tests on Jython, in a
+The most common way to specify a test library to import is using its
+name, like it has been done in all the examples in this section. In
+these cases Robot Framework tries to find the class or module
+implementing the library from the *library search path*. Basically,
+this means that the library code and all its possible dependencies
+must be in :code:`PYTHONPATH` or, when running tests on Jython, in a
 :code:`CLASSPATH`. `Setting the library search path`__ is explained in
-a section of its own, and well-developed libraries either do that
-automatically or have clear instructions on how to do it.
+a section of its own. Libraries can also set the search path
+automatically or have special instructions on how to do it. All
+`standard libraries`_, for example, are in the library search path
+automatically.
+
+The biggest benefit of this approach is that when the library search
+path has been configured, often using a `custom start-up script`__,
+normal users do not need to think where libraries actually are
+installed. The drawback is that getting your own, possible
+very simple, libraries into the search path may require some
+additional configuration.
 
 __ `Adjusting library search path`_
+__ `Creating start-up scripts`_
+
+
+Using physical path to library
+''''''''''''''''''''''''''''''
+
+Another mechanism for specifying the library to import is using a
+path to it in the file system. This path is considered relative to the
+directory where current test data file is situated similarly as paths
+to `resource and variable files`_. The main benefit of this approach
+is that there is no need to configure the library search path.
+
+If the library is a file, the path to it must contain extension. For
+Python libraries the extension is naturally :path:`.py` and for Java
+libraries it can either be :path:`.class` or :path:`.java`, but the
+class file must always be available. If Python library is implemented
+as a directory, the path to it must have a trailing forward slash
+(:path:`/`).  Importing Java libraries in JAR packages is not possible
+using this mechanism. Following examples demonstrate these different
+usages.
+
+.. table:: Importing test libraries using physical paths to them
+   :class: example
+  
+   =========  ===========================  ========  =========
+    Setting               Value             Value      Value
+   =========  ===========================  ========  =========
+   Library    PythonLib.py                 \         \
+   Library    /absolute/path/JavaLib.java  \         \
+   Library    relative/path/PythonDirLib/  possible  arguments
+   Library    ${RESOURCES}/Example.class   \         \
+   =========  ===========================  ========  =========
 
 
 Setting custom name to test library
