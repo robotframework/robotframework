@@ -40,13 +40,12 @@ class OperatingSystem:
         """Runs the given command in the system and returns an RC and/or stdout.
         
         'return_mode' defines how the return code (RC) and the standard output
-        (stdout) are returned as explained below. All checks are
-        case-insensitive.
+        (stdout) are returned as explained below. All checks are case-insensitive.
         
-        * If 'return_mode' contains the word 'RC' and either the word 'stdout'
+        - If 'return_mode' contains the word 'RC' and either the word 'stdout'
           or 'output', both the RC and stdout are returned.
-        * Otherwise, if it contains the word 'RC', only the RC is returned.
-        * Otherwise, and by default, only the stdout is returned.
+        - Otherwise, if it contains the word 'RC', only the RC is returned.
+        - Otherwise, and by default, only the stdout is returned.
 
         The RC is returned as a positive integer in range from 0 to 255 as
         returned by the executed command. On some operating systems (notable
@@ -57,14 +56,14 @@ class OperatingSystem:
         
         The returned output contains everything written into the stdout by the
         command. Many commands add an extra newline (\\n) after the output to
-        ease reading it in the console. To ease processing the returned
+        make it easier to read in the console. To ease processing the returned
         output, Robot Framework strips this possible newline.
         
         The possible standard error (stderr) from the executed command is NOT
-        captured by this keyword or other parts of Robot. If catching stderr is
-        important, it must be redirected into stdout or some file. The former 
-        can be achieved (both in Windows and UNIX-like systems) with the syntax 
-        'my_command 2>&1' and the latter with 'my_command 2>stderr.txt'.
+        captured by this keyword or other parts of Robot Framework. If catching
+        the stderr is important, it must be redirected into stdout or some file.
+        The former can be achieved (both in Windows and UNIX-like systems) with
+        the syntax 'my_command 2>&1' and the latter with 'my_command 2>stderr.txt'.
         
         Examples:
         | ${output} =    | Run        | ls -lhF /tmp | 
