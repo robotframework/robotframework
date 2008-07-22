@@ -231,20 +231,6 @@ class OperatingSystem:
         f.close()
         return unicode(content, encoding).replace('\r\n', '\n')
     
-    # TODO: Remove in 1.9
-    def get_file_with_encoding(self, path, encoding='UTF-8'):
-        """Deprecated. Will be removed in Robot 1.9
-        
-        This keyword reads the specified file and returns the contents. 
-        'encoding' defines the encoding of the file. By default, the value is 
-        'UTF-8', which means that UTF-8 and ASCII-encoded files are
-        read correctly.
-        """
-        robot.output.SYSLOG.warn("Keyword 'OperatingSystem.Get File With Encoding' "
-                                 "is deprecated and will be removed in Robot 1.9. "
-                                 "Please use 'OperatingSystem.Get File' instead.") 
-        return self.get_file(path, encoding)
-
     def grep_file(self, path, pattern, pattern_type='literal string', 
                  encoding='UTF-8'):
         """Returns the contents of a specified file grepped using 'pattern'.
@@ -636,9 +622,6 @@ class OperatingSystem:
         os.makedirs(path)
         self._info("Created directory '%s'" % path)
     
-    # TODO: Remove synonym    
-    create_dir = create_directory 
-        
     def remove_directory(self, path, recursive='no'):
         """Removes the directory pointed to by the given 'path'.
         
