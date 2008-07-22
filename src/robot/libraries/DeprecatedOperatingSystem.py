@@ -39,6 +39,7 @@ class DeprecatedOperatingSystem:
     remove_dir = OPSYS.remove_directory
     copy_dir = OPSYS.copy_directory
     move_dir = OPSYS.move_directory
+    create_dir = OPSYS.create_directory
     list_dir = OPSYS.list_directory
     list_files_in_dir = OPSYS.list_files_in_directory
     list_dirs_in_dir = OPSYS.list_directories_in_directory
