@@ -2,7 +2,7 @@
 
 """ug2html.py -- Creates HTML version of Robot Framework User Guide
 
-Usage:  ug2html.py [ cr(eate) | dist <version> ]
+Usage:  ug2html.py [ cr(eate) | dist ]
 
 With 'create' as argument, user guide will be generated. This userguide will 
 have relative links that work only from version control or with full source 
@@ -11,9 +11,12 @@ distribution.
 With 'dist' as argument, 'robotframework-userguide-<version>' directory is 
 created and all images and link targets are copied under it. This way the 
 created output directory may be compressed and the user guide distributed 
-independently. Version number to use must be given as second argument.
+independently. Version number to use is got automatically from robot/version.py
+file created by setup.py.
 """
 
+import os
+import sys
 
 # First part of this file is Pygments configuration and actual
 # documentation generation follows it.
@@ -78,8 +81,6 @@ VARIANTS = {
     # 'linenos': HtmlFormatter(noclasses=INLINESTYLES, linenos=True),
 }
 
-import os
-
 from docutils import nodes
 from docutils.parsers.rst import directives
 
@@ -111,12 +112,12 @@ directives.register_directive('sourcecode', pygments_directive)
 #
 # Create user guide distribution
 #
-def distribute_userguide(version):
+def distribute_userguide():
     import shutil
     import re
     from urlparse import urlparse
 
-    create_userguide()
+    version = create_userguide()
     outdir = "robotframework-userguide-%s" % version 
     toolsdir = os.path.join(outdir, 'tools')
     librariesdir = os.path.join(outdir, 'libraries')
@@ -170,7 +171,7 @@ def distribute_userguide(version):
 
     content = open('RobotFrameworkUserGuide.html').read()
     content = link_regexp.sub(replace_links, content)
-    outfile = open(os.path.join(outdir, 'RobotFrameworkUserGuide-%s.html' % version), 'wb')
+    outfile = open(os.path.join(outdir, 'RobotFrameworkUserGuide.html'), 'wb')
     outfile.write(content)
     outfile.close()
     print os.path.abspath(outfile.name)
@@ -187,8 +188,19 @@ def create_userguide():
         locale.setlocale(locale.LC_ALL, '')
     except:
         pass
-
     from docutils.core import publish_cmdline
+
+    ugdir = os.path.dirname(os.path.abspath(__file__))
+    sys.path.insert(0, os.path.join(ugdir, '..', '..', 'src', 'robot'))
+
+    from version import VERSION, RELEASE
+
+    if RELEASE != 'final':
+        VERSION = '%s %s' % (VERSION, RELEASE)
+    print 'Version', VERSION
+    vfile = open(os.path.join(ugdir, 'src', 'version.txt'), 'w')
+    vfile.write('.. |version| replace:: %s\n' % VERSION)
+    vfile.close()
 
     description = 'HTML generator for Robot Framework User Guide.'
     arguments = '''
@@ -198,17 +210,17 @@ src/RobotFrameworkUserGuide.txt
 RobotFrameworkUserGuide.html
 '''.split('\n')[1:-1] 
 
-    os.chdir(os.path.dirname(os.path.abspath(__file__)))
+    os.chdir(ugdir)
     publish_cmdline(writer_name='html', description=description, argv=arguments)
     print os.path.abspath(arguments[-1])
+    os.unlink(vfile.name)
+    return VERSION.replace(' ', '-')
 
 
 if __name__ == '__main__':
-    import sys
     actions = { 'create': create_userguide, 'cr': create_userguide,
                 'dist': distribute_userguide }
     try:
         actions[sys.argv[1]](*sys.argv[2:])
     except (KeyError, IndexError, TypeError):
         print __doc__
-
