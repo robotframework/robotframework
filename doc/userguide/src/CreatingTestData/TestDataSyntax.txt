@@ -43,8 +43,8 @@ the file extension. The extension is case-insensitive, and the
 recognized extensions are :path:`.html`, :path:`.htm` and
 :path:`.xhtml` for HTML, and :path:`.tsv` for TSV.
 
-Source distribution contains both HTML and TSV test data templates and
-they can also be obtained from Robot Framework's `download page`_.
+Different `test data templates`_ are available to make it easier to
+get started writing tests.
 
 
 HTML format

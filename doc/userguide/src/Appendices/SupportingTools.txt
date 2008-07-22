@@ -1,19 +1,24 @@
 Supporting tools
 ----------------
 
-In this appendix, the available supporting tools for Robot Framework
-are described. Unless otherwise stated later in this chapter, the
-tools can be downloaded from the `Robot Framework supporting tools page`_.
+The available supporting tools for Robot Framework are described in
+this appendix.
 
 .. contents::
    :depth: 2 
    :local: 
 
+
 Internal tools
 ~~~~~~~~~~~~~~
 
-Library documentation tool -- libdoc.py
-''''''''''''''''''''''''''''''''''''''''
+These tools are distributed with Robot Framework. They are included in
+the source distribution and also available through
+http://code.google.com/p/robotframework/wiki/SupportingTools.
+
+
+Library documentation tool
+''''''''''''''''''''''''''
 
 `libdoc.py`__ is tool for generating HTML or XML documentation from keywords of
 a test library or a resource file.
@@ -21,8 +26,8 @@ a test library or a resource file.
 __ ../../tools/libdoc/doc/libdoc.html
 
 
-Historical reporting tool -- risto.py
-'''''''''''''''''''''''''''''''''''''
+Historical reporting tool
+'''''''''''''''''''''''''
 
 `risto.py`__ is a tool for generating graphs about historical statistics
 of test executions.
@@ -30,8 +35,8 @@ of test executions.
 __ ../../tools/ristopy/doc/ristopy.html
 
 
-Test data tidying tool -- robotidy.py
-'''''''''''''''''''''''''''''''''''''
+Test data tidying tool
+''''''''''''''''''''''
 
 `robotidy.py`__ is a tool for cleaning Robot Framework test data, changing test 
 data format between HTML and TSV and fixing inline comments to format supported
@@ -40,8 +45,8 @@ by Robot IDE.
 __ ../../tools/robotidy/doc/robotidy.html
 
 
-Test result diffing tool -- robotdiff.py
-''''''''''''''''''''''''''''''''''''''''
+Test result diffing tool
+''''''''''''''''''''''''
 
 `robotdiff.py`__ is a tool for generating diff reports from Robot
 Framework output files.
@@ -49,8 +54,8 @@ Framework output files.
 __ ../../tools/robotdiff/doc/robotdiff.html
 
 
-Execution time reporting tool -- times2csv.py
-''''''''''''''''''''''''''''''''''''''''''''' 
+Execution time reporting tool
+'''''''''''''''''''''''''''''
 
 `times2csv.py`__ is a tool for generating start, end and elapsed
 time information about suites, tests and keywords in CSV format.
@@ -58,8 +63,8 @@ time information about suites, tests and keywords in CSV format.
 __ ../../tools/times2csv/doc/times2csv.html
 
 
-File viewing tool -- fileviewer.py
-''''''''''''''''''''''''''''''''''
+File viewing tool
+'''''''''''''''''
 
 `fileviewer.py`__ is a graphical tool implementing UNIX :cli:`tail` -like 
 functionality. It is especially designed to view `debug files`__
@@ -78,8 +83,8 @@ __ ../../tools/oneclickinstaller/doc/oneclickinstaller.html
 __ http://www.autoitscript.com/autoit3/
 
 
-Test status checker tool -- statuschecker.py
-''''''''''''''''''''''''''''''''''''''''''''
+Test status checker tool
+''''''''''''''''''''''''
 
 `statuschecker.py`__ is a tool for verifying that test case statuses and messages 
 and also keyword log messages are as expected.
@@ -89,6 +94,9 @@ __ ../../tools/statuschecker/doc/statuschecker.html
 
 External tools
 ~~~~~~~~~~~~~~
+
+These tools are all available as separate external projects.
+
 
 Test data editing tool (Robot IDE)
 ''''''''''''''''''''''''''''''''''
@@ -118,9 +126,5 @@ Javalib-core is an external component that simplifies creation of larger Java
 test libraries by offering several dynamic ways of resolving available keywords
 at runtime. For more information, see
 http://code.google.com/p/robotframework-javalib-core/
-
-
-
-.. _Robot Framework supporting tools page: http://code.google.com/p/robotframework/wiki/SupportingTools
 
 

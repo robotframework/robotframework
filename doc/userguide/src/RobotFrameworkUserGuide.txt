@@ -106,6 +106,7 @@ Appendices
 
 .. include:: Appendices/AvailableSettings.txt
 .. include:: Appendices/CommandLineOptions.txt
+.. include:: Appendices/Templates.txt
 .. include:: Appendices/SupportingTools.txt
 .. include:: Appendices/DocumentationFormatting.txt
 .. include:: Appendices/TimeFormat.txt
@@ -204,7 +205,7 @@ Appendices
 .. _HTML formatting: `Documentation formatting`_
 .. _Robot IDE: `Test data editing tool (Robot IDE)`_
 .. _command line options: `All command line options`_
-.. _libdoc.py: `Library documentation tool -- libdoc.py`_
+.. _libdoc.py: `Library documentation tool`_
 .. _libdoc: `libdoc.py`_
 .. _javalib-core: `Core for Java test libraries`_
 

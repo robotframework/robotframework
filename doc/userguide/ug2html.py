@@ -165,16 +165,17 @@ def create_distribution():
 
     ugpath, version = create_userguide()  # we are in doc/userguide after this
     outdir = 'robotframework-userguide-%s' % version
-    toolsdir = os.path.join(outdir, 'tools')
-    librariesdir = os.path.join(outdir, 'libraries')
-    imagesdir = os.path.join(outdir, 'images')
+    tools = os.path.join(outdir, 'tools')
+    templates = os.path.join(outdir, 'templates')
+    libraries = os.path.join(outdir, 'libraries')
+    images = os.path.join(outdir, 'images')
     print 'Creating distribution directory ...'
 
     if os.path.exists(outdir):
         print 'Removing previous user guide distribution'
         shutil.rmtree(outdir)
     
-    for dirname in [outdir, toolsdir, librariesdir, imagesdir]:
+    for dirname in [outdir, tools, templates, libraries, images]:
         print "Creating output directory '%s'" % dirname
         os.mkdir(dirname)
 
@@ -187,14 +188,17 @@ def create_distribution():
         replaced_link = '%s %s="%%s/%s"' % (res.group(1), res.group(4), 
                                             os.path.basename(path)) 
         if path.startswith('../../tools'):
-            copy(path, toolsdir)
+            copy(path, tools)
             copy_tool_images(path)
             replaced_link = replaced_link % 'tools'
+        elif path.startswith('../../templates'):
+            copy(path, templates)
+            replaced_link = replaced_link % 'templates'
         elif path.startswith('../libraries'):
-            copy(path, librariesdir)
+            copy(path, libraries)
             replaced_link = replaced_link % 'libraries'
         elif path.startswith('src/'):
-            copy(path, imagesdir)
+            copy(path, images)
             replaced_link = replaced_link % 'images'
         else:
             raise ValueError('Invalid link target: %s' % path)
@@ -209,7 +213,7 @@ def create_distribution():
         indir = os.path.dirname(path)
         for line in open(os.path.splitext(path)[0]+'.txt').readlines():
             if line.startswith('.. figure::'):
-                copy(os.path.join(indir, line.strip().split()[-1]), toolsdir)
+                copy(os.path.join(indir, line.strip().split()[-1]), tools)
 
     link_regexp = re.compile('''
 (<(a|img)\s+.*?)
@@ -240,7 +244,7 @@ def create_zip():
             print "Adding '%s'" % path
             zipfile.write(path)
     zipfile.close()
-    print zippath
+    print os.path.abspath(zippath)
 
 
 if __name__ == '__main__':
