@@ -16,10 +16,11 @@
 from robot import utils
 
 
+# Note that create_list and should_(not_)_be_empty are in BuiltIn library
+
+
 class _List:
 
-    #TODO: create_list exists already in BuiltIn
-    
     def convert_to_list(self, item):
         """Converts the given 'item' to a list.
         
@@ -39,18 +40,17 @@ class _List:
         ${L2} == ['a', 'b', 'x', 'y', 'z']
         """
         for value in values:
-            print 'Appending value ' + value
             L.append(value)
     
     def insert_into_list(self, L, index, value):
         """Inserts 'value' into 'L' to the position specified with 'index'.
         
         Index '0' adds the value into the first position, '1' to the second, and
-        so on. Similarly, '-1' is the last position, '-2' second last, and so on.
-        If the absolute value of the index is greater than the length of the
+        so on. Similarly, '-1' is the last position, '-2' second last, and so
+        on. If the absolute value of the index is greater than the length of the
         list, the value is added at the end (positive index) or the beginning
-        (negative index). An index can be given either as an integer or a string that can be
-        converted to an integer. 
+        (negative index). An index can be given either as an integer or a string
+        that can be converted to an integer. 
         
         Example:
         | Insert Into List | ${L1} | 0     | xxx |
@@ -75,8 +75,8 @@ class _List:
         ${L1} and ${L2} are not changed.
         """
         ret = []
-        for list_ in lists:
-            ret += list_
+        for item in lists:
+            ret.extend(item)
         return ret
         
     def set_list_value(self, L, index, value):
@@ -133,7 +133,7 @@ class _List:
         
         The given list is never altered by this keyword.
         
-        Index '0' means the first position, '1' the second, and so on. Similarly,
+        Index '0' means the first position, '1' the second, and so on. Similarly
         '-1' is the last position, '-2' the second last, and so on. Using an
         index that does not exist on the list causes an error. The index can be
         either an integer or a string that can be converted to an integer.
@@ -152,12 +152,12 @@ class _List:
             self._index_error(L, index)
         
     def get_slice_from_list(self, L, start=0, end=None):
-        """ Returns the part of the given list specified with start and end indexes.
+        """Returns a slice of the given list between start and end indexes.
 
         The given list is never altered by this keyword.
                 
-        If both 'start' and 'end' are given, a sublist containing values
-        from 'start' to 'end' is returned. This is the same as 'L[start:end]' in
+        If both 'start' and 'end' are given, a sublist containing values from
+        'start' to 'end' is returned. This is the same as 'L[start:end]' in
         Python. To get all items from the beginning, use 0 as the start value,
         and to get all items until the end, use 'None' as the end value. 'None'
         is also a default value, so in this case, it is enough to give only 
@@ -167,9 +167,9 @@ class _List:
         largest (or smallest) available index.
         
         Examples (incl. Python equivelants in comments):
-        | ${x} = | Get Slice From List | ${L5} | 2 | 4   | # L5[2:4]    |
-        | ${y} = | Get Slice From List | ${L5} | 1 |   | # L5[1:None]  |
-        | ${z} = | Get Slice From List | ${L5} |  | -1 | # L5[0:-2] |
+        | ${x} = | Get Slice From List | ${L5} | 2 | 4  | # L5[2:4]    |
+        | ${y} = | Get Slice From List | ${L5} | 1 |    | # L5[1:None] |
+        | ${z} = | Get Slice From List | ${L5} |   | -1 | # L5[0:-2]   |
         =>
         ${x} == ['c', 'd']
         ${y} == ['b', 'c', 'd', 'e']
@@ -262,7 +262,8 @@ class _List:
         not contain the value 'x'" is shown in case of a failure. Otherwise, the
         given 'msg' is used in case of a failure.
         """
-        default = "%s does not contain value '%s'" % (utils.seq2str2(L), str(value))
+        default = "%s does not contain value '%s'" % (utils.seq2str2(L),
+                                                      str(value))
         _verify_condition(L.count(value) != 0, default, msg)
     
     def list_should_not_contain_value(self, L, value, msg=None):
@@ -278,8 +279,8 @@ class _List:
         
         The first equality of lists' length is checked, and after that all
         values. If there are differences between the values, those are listed in
-        an error message, e.g. with lists
-        ${L1} = [1, 2, 3] and ${L2} = [0, 2, 4].
+        an error message, for example with lists "${L1} = [1, 2, 3]" and
+        "${L2} = [0, 2, 4]".
         
         Lists are different:
         index, L1 value, L2 value
@@ -309,7 +310,6 @@ class _List:
         
         See the use of 'msg' and 'values' from the 'List Should Be Equal'
         keyword.
-
         """
         diffs = [value for value in L2 if not L1.count(value) > 0 ]
         default = 'Following values were not found from first list: '
@@ -324,10 +324,8 @@ class _List:
             raise ValueError("Cannot convert index '%s' to an integer" % index)
 
     def _index_error(self, L, index):
-        raise IndexError("Given index '%s' out of range 0-%s" % (index, len(L)-1))
-
-
-# TODO: Should (Not) Be Empty in BuiltIn
+        raise IndexError("Given index '%s' out of range 0-%s"
+                         % (index, len(L)-1))
 
 
 class _Dictionary:
@@ -345,9 +343,8 @@ class _Dictionary:
         ${z} == {'a':1, 'b':2}
         """        
         if len(key_value_pairs) % 2 != 0:
-            msg = "Creating dictionary failed. There should be even number of "
-            msg += "'key_value_pair' arguments."
-            raise AssertionError(msg)
+            raise ValueError("Creating a dictionary failed. There should be "
+                             "an even number of key-value-pairs.")
         return self._add_to_dictionary({}, key_value_pairs)
 
     def set_to_dictionary(self, dictionary, *key_value_pairs):
@@ -359,9 +356,8 @@ class _Dictionary:
         ${D1} == {'a':1, 'key':'value'}
         """
         if len(key_value_pairs) % 2 != 0:
-            msg = "Adding data to dictionary failed. There should be even "
-            msg += "number of 'key_value_pair' arguments."
-            raise AssertionError(msg)
+            raise ValueError("Adding data to a dictionary failed. There should "
+                             "be an even number of key-value-pairs.")
         self._add_to_dictionary(dictionary, key_value_pairs)
 
         
@@ -378,8 +374,7 @@ class _Dictionary:
         for key in keys:
             try:
                 value = dictionary.pop(key)
-                print "Removed item with key '%s' and value '%s'" % (key, 
-                                                                     str(value))
+                print "Removed item with key '%s' and value '%s'" % (key, value)
             except KeyError:
                 print "Key '%s' not found" % (key)
 
@@ -458,7 +453,7 @@ class _Dictionary:
         try:
             return dictionary[key]
         except KeyError:
-            msg = "Dictionary does not contain key '%s'" % (str(key))
+            msg = "Dictionary does not contain key '%s'" % key
             raise AssertionError(msg)
 
     def dictionary_should_contain_key(self, dictionary, key, msg=None):
@@ -468,7 +463,7 @@ class _Dictionary:
 
         The given dictionary is never altered by this keyword.
         """
-        default = "Dictionary does not contain key '%s'" % (key)
+        default = "Dictionary does not contain key '%s'" % key
         _verify_condition(dictionary.has_key(key), default, msg)
     
     def dictionary_should_not_contain_key(self, dictionary, key, msg=None):
@@ -478,7 +473,7 @@ class _Dictionary:
 
         The given dictionary is never altered by this keyword.
         """
-        default = "Dictionary contains key '%s'" % (key)
+        default = "Dictionary contains key '%s'" % key
         _verify_condition(not dictionary.has_key(key), default, msg)
 
     def dictionary_should_contain_value(self, dictionary, value, msg=None):
@@ -488,7 +483,7 @@ class _Dictionary:
 
         The given dictionary is never altered by this keyword.
         """
-        default = "Dictionary does not contain value '%s'" % (value)
+        default = "Dictionary does not contain value '%s'" % value
         _verify_condition(value in dictionary.values(), default, msg)
     
     def dictionary_should_not_contain_value(self, dictionary, value, msg=None):
@@ -498,7 +493,7 @@ class _Dictionary:
 
         The given dictionary is never altered by this keyword.
         """
-        default = "Dictionary contains value '%s'" % (value)
+        default = "Dictionary contains value '%s'" % value
         _verify_condition(not value in dictionary.values(), default, msg)
 
     def dictionaries_should_be_equal(self, dict1, dict2, msg=None, values=True):
@@ -506,8 +501,8 @@ class _Dictionary:
         
         First the equality of dictionaries' keys is checked and after that all 
         the key value pairs. If there are differences between the values, those
-        are listed in an error message, e.g. with dictionaries 
-        ${D1} = {'a':1, 'b':2, 'c':3} and ${D2} = {'a':1, 'b':4, 'c':6}.
+        are listed in an error message, for example with dictionaries 
+        "${D1} = {'a':1, 'b':2, 'c':3}" and "${D2} = {'a':1, 'b':4, 'c':6}".
         
         Dictionaries are different:
         key, dict1 value, dict2 value
@@ -517,7 +512,6 @@ class _Dictionary:
         See 'List Should Be Equal' for an explanation of 'msg'. 
 
         The given dictionaries are never altered by this keyword.
-
         """
         keys = dict1.keys()
         keys.extend(dict2.keys())
@@ -555,22 +549,33 @@ class _Dictionary:
     
 
 class Collections(_List, _Dictionary):
-    """This Library provides keywords for handling Lists and Dictionaries.
+    
+    """A library providing keywords for handling lists and dictionaries.
 
-    To use list keywords with a list variable (e.g. @{list}), convert it first 
-    to a scalar variable (e.g. ${list}). A scalar variable containing a list can 
-    also be converted to a list variable. 
+    List keywords that do not alter given list can also be used with tuples,
+    and to some extend also with other iterables.
 
-    Examples:
-    | ${list} = | Create List | @{list} |
+    BuiltIn library has also some related keywords. 'Create List' can obviously
+    be used for creating new lists, and 'Should Be Empty' and 'Should Not Be
+    Empty' work both with lists and dictionaries.
+
+    All list keywords expect a scalar variable (e.g. ${list}) as an argument,
+    and possible list variables (e.g. @{list}) must be converted to scalar
+    variables first. The example below shows how to convert between them.
+
+    | ${list} = | Create List  | @{list} |
     | @{list} = | Set Variable | ${list} | 
 
-    In the examples, ${Lx} always means a list that contains x times an alphabet,
-    as in ${L2} = ['a', 'b'].
-    Similarly, ${Dx} means a dictionary that contains x items with an alphabet
-    key and a number value, as in ${D2} {'a':1, 'b':2}.
+    ---
 
-    Keywords that do not edit lists can be used with tuples.
+    List related keywords use variables in format ${Lx} in their examples.
+    this means a list with as many alphabetic characters as specified by 'x'.
+    For example ${L1}' means ['a'] and ${L3} means ['a', 'b', 'c'].
+
+    Dictionary keywords use similar ${Dx} variable. For example ${D1} means
+    {'a': 1} and ${D3} means {'a': 1, 'b': 2, 'c': 3}.
+
+    ---
     """
     pass
 
