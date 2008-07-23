@@ -37,13 +37,22 @@ class OperatingSystem:
     ROBOT_LIBRARY_SCOPE = 'GLOBAL'
     
     def run(self, command, return_mode='stdout'):
-        """Runs the given command in the system and returns an RC and/or stdout.
-        
+        """Runs the given command in the system and returns the RC and/or stdout.
+
+        The execution status of the command is NOT checked by this keyword. It
+        can be done afterwards based on the return code (RC), standard output
+        (stdout) or standard error (stderr). Documentation below explains how
+        to control how RC and stdout returned, and how to handle also stderr
+        which is not catched by this keyword. Examples at the end illustrate few
+        different possibilities for checking the outcome.
+
+        ---
+
         'return_mode' defines how the return code (RC) and the standard output
         (stdout) are returned as explained below. All checks are case-insensitive.
         
         - If 'return_mode' contains the word 'RC' and either the word 'stdout'
-          or 'output', both the RC and stdout are returned.
+          or 'output', both the RC and stdout are returned. 
         - Otherwise, if it contains the word 'RC', only the RC is returned.
         - Otherwise, and by default, only the stdout is returned.
 
@@ -64,8 +73,11 @@ class OperatingSystem:
         the stderr is important, it must be redirected into stdout or some file.
         The former can be achieved (both in Windows and UNIX-like systems) with
         the syntax 'my_command 2>&1' and the latter with 'my_command 2>stderr.txt'.
+
+        ---
         
         Examples:
+        
         | ${output} =    | Run        | ls -lhF /tmp | 
         | Log            | ${output}  |
         | ${rc} =        | Run        | ${CURDIR}${/}script.py    | Return RC |
