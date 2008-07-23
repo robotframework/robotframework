@@ -42,8 +42,8 @@ class OperatingSystem:
         The execution status of the command is NOT checked by this keyword. It
         can be done afterwards based on the return code (RC), standard output
         (stdout) or standard error (stderr). Documentation below explains how
-        to control how RC and stdout returned, and how to handle also stderr
-        which is not catched by this keyword. Examples at the end illustrate few
+        to control returning RC and stdout, and how to handle also stderr which
+        is not catched by this keyword. Examples at the end illustrate few
         different possibilities for checking the outcome.
 
         ---
