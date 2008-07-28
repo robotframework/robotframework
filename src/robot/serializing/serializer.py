@@ -329,9 +329,7 @@ class LogSuiteSerializer:
         self._writer.start_element('table', {'class': 'metadata'})
         self._write_metadata_row('Documentation', kw.doc)
         self._write_metadata_row('Timeout', kw.timeout)
-        self._write_metadata_row('Start Time', kw.starttime)
-        self._write_metadata_row('End Time', kw.endtime)
-        self._write_metadata_row('Elapsed Time', kw.elapsedtime)
+        self._write_times(kw)
         self._writer.end_element('table')
         
     def _write_folding_button(self, item):
@@ -368,42 +366,43 @@ class LogSuiteSerializer:
                                ('Included Tags', suite.filtered.incls), 
                                ('Excluded Tags', suite.filtered.excls) ]:
             self._write_metadata_row(title, ', '.join(values), escape=False)
-        self._end_suite_or_test_metadata(suite)
+        self._write_times(suite)
+        self._write_metadata_row('Status', suite.status, 
+                                 {'class': suite.status.lower()})
+        self._write_metadata_row('Message', suite.get_full_message(html=True),
+                                 escape=False)
+        self._write_split_suite_details_link()
+        self._writer.end_element('table')
 
     def _write_test_metadata(self, test):
         self._start_suite_or_test_metadata(test)
         self._write_metadata_row('Critical', test.critical)
-        if test.timeout != '':
-            self._write_metadata_row('Timeout', test.timeout)
+        self._write_metadata_row('Timeout', test.timeout)
         self._write_metadata_row('Tags', ', '.join(test.tags))
-        self._end_suite_or_test_metadata(test)
+        self._write_times(test)
+        self._write_metadata_row('Status', test.status, 
+                                 {'class': test.status.lower()})
+        self._write_metadata_row('Message', test.message)
+        self._writer.end_element('table')
 
     def _start_suite_or_test_metadata(self, item):
         self._writer.start_element('table', {'class': 'metadata'})
         self._write_metadata_row('Full Name', item.longname)
         self._write_metadata_row('Documentation', item.htmldoc, escape=False)
 
-    def _end_suite_or_test_metadata(self, item):
+    def _write_times(self, item):
         self._write_metadata_row('Start Time', item.starttime)
         self._write_metadata_row('End Time', item.endtime)
         self._write_metadata_row('Elapsed Time', item.elapsedtime)
-        self._write_metadata_row('Status', item.status, 
-                                 {'class': item.status.lower()})
-        try:
-            message = item.get_full_message(html=True)
-            self._write_metadata_row('Message', message, escape=False)
-            self._write_split_suite_details_link()
-        except AttributeError:
-            self._write_metadata_row('Message', item.message)
-        self._writer.end_element('table')
 
     def _write_metadata_row(self, name, value, attrs={}, escape=True,
                             write_empty=False):
-        if value == '' and not write_empty:
+        if not value and not write_empty:
             return
         self._writer.start_element('tr', newline=False)
         self._writer.whole_element('th', name+':', escape=False, newline=False)
-        self._writer.whole_element('td', value, attrs, escape=escape, newline=False)
+        self._writer.whole_element('td', value, attrs, escape=escape,
+                                   newline=False)
         self._writer.end_element('tr')
 
     def _write_split_suite_details_link(self):
