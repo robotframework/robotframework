@@ -65,7 +65,6 @@ font-style: normal;
   
   
   <title>Robot Test Cases</title></head>
-
 <body>
 
 
@@ -5552,7 +5551,7 @@ Nested Suite With Given Split Level</td>
 
 
 
-      <td></td>
+      <td>FAIL</td>
 
 
 
@@ -5564,55 +5563,7 @@ Nested Suite With Given Split Level</td>
 
 
 
-    <tr>
-
-
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-
-
-      <td align="undefined" valign="undefined">...</td>
-
-
-
-
-
-      <td align="undefined" valign="undefined">FAIL</td>
-
-
-
-
-
-      <td align="undefined" valign="undefined"><br>
-
-
-
-
-
-      </td>
-
-
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-    </tr>
+    
 
 
 
@@ -5807,7 +5758,7 @@ Deeply Nested Suite With given Split Level</td>
 
 
 
-      <td></td>
+      <td>FAIL</td>
 
 
 
@@ -5819,49 +5770,7 @@ Deeply Nested Suite With given Split Level</td>
 
 
 
-    <tr>
-
-
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-
-
-      <td align="undefined" valign="undefined">...</td>
-
-
-
-
-
-      <td align="undefined" valign="undefined">FAIL</td>
-
-
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-    </tr>
+    
 
 
 
@@ -6209,49 +6118,7 @@ File</td>
 
 
 
-    <tr>
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-    </tr>
+    
 
 
 
@@ -6608,7 +6475,7 @@ Return ]</td>
 
 
 
-      <td>[ Return &nbsp;]</td>
+      <td>[ Return ]</td>
 
 
 
@@ -7212,7 +7079,7 @@ href="${link}"&gt;${link}&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;</td>
 
 
 
-      <td align="undefined" valign="undefined">${pre}</td>
+      <td align="undefined" valign="undefined">${pre} =</td>
 
 
 
@@ -7680,7 +7547,7 @@ Name:&lt;/th&gt;&lt;td&gt;${name}&lt;/td&gt;&lt;/tr&gt;</td>
 
 
 
-      <td></td>
+      <td>@{stats}</td>
 
 
 
@@ -7692,49 +7559,7 @@ Name:&lt;/th&gt;&lt;td&gt;${name}&lt;/td&gt;&lt;/tr&gt;</td>
 
 
 
-    <tr>
-
-
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-
-
-      <td align="undefined" valign="undefined">...</td>
-
-
-
-
-
-      <td align="undefined" valign="undefined">@{stats}</td>
-
-
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-    </tr>
+    
 
 
 
@@ -7746,13 +7571,13 @@ Name:&lt;/th&gt;&lt;td&gt;${name}&lt;/td&gt;&lt;/tr&gt;</td>
 
       <td align="undefined" valign="undefined">${cls1} =</td>
 
-      <td align="undefined" valign="undefined">Evaluate</td>
+      <td align="undefined" valign="undefined">Set Variable If</td>
 
-      <td align="undefined" valign="undefined">@{stats}[2] &gt; 0 and ' class="fail"' or ''</td>
+      <td align="undefined" valign="undefined">@{stats}[2] &gt; 0</td>
 
-      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined">\&nbsp;class="fail"</td>
 
-      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined">\</td>
 
     </tr>
 
@@ -7762,13 +7587,13 @@ Name:&lt;/th&gt;&lt;td&gt;${name}&lt;/td&gt;&lt;/tr&gt;</td>
 
       <td align="undefined" valign="undefined">${cls2} =</td>
 
-      <td align="undefined" valign="undefined">Evaluate</td>
+      <td align="undefined" valign="undefined">Set Variable If</td>
 
-      <td align="undefined" valign="undefined">@{stats}[5] &gt; 0 and ' class="fail"' or ''</td>
+      <td align="undefined" valign="undefined">@{stats}[5] &gt; 0</td>
 
-      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined">\&nbsp;class="fail"</td>
 
-      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined">\</td>
 
     </tr>
 
@@ -8050,22 +7875,25 @@ Tags:&lt;/<span class="end-tag">th</span>&gt;&lt;<span class="start-tag">td</spa
 
 
 
-      <td>&lt;<span class="start-tag">tr</span>&gt;&lt;<span class="start-tag">th</span>&gt;Start Time:&lt;/<span class="end-tag">th</span>&gt;&lt;<span class="start-tag">td</span>&gt;\\d{8}
-\\d{2}:\\d{2}:\\d{2}.\\d{3}&lt;/<span class="end-tag">td</span>&gt;&lt;/<span class="end-tag">tr</span>&gt;</td>
+      <td>&lt;<span class="start-tag">tr</span>&gt;&lt;<span class="start-tag">th</span>&gt;Start / End / Elapsed:&lt;/<span class="end-tag">th</span>&gt;&lt;<span class="start-tag">td</span>&gt;.+&lt;/<span class="end-tag">td</span>&gt;&lt;/<span class="end-tag">tr</span>&gt;</td>
 
 
 
 
 
-      <td>&lt;<span class="start-tag">tr</span>&gt;&lt;<span class="start-tag">th</span>&gt;End Time:&lt;/<span class="end-tag">th</span>&gt;&lt;<span class="start-tag">td</span>&gt;\\d{8}
-\\d{2}:\\d{2}:\\d{2}.\\d{3}&lt;/<span class="end-tag">td</span>&gt;&lt;/<span class="end-tag">tr</span>&gt;</td>
+      <td>&lt;<span class="start-tag">tr</span>&gt;&lt;<span class="start-tag">th</span>&gt;Overall Status:&lt;/<span class="end-tag">th</span>&gt;&lt;<span class="start-tag">td</span><span class="attribute-name"> class</span>=<span class="attribute-value">"${status.lower()}"</span>&gt;${status}&lt;/<span class="end-tag">td</span>&gt;\&lt;/<span class="end-tag">tr</span>&gt;</td><td>&lt;<span class="start-tag">tr</span>&gt;&lt;<span class="start-tag">th</span>&gt;Message:&lt;/<span class="end-tag">th</span>&gt;&lt;<span class="start-tag">td</span>&gt;${msg}&lt;/<span class="end-tag">td</span>&gt;&lt;/<span class="end-tag">tr</span>&gt;(<br>
 
 
 
 
 
-      <td>&lt;<span class="start-tag">tr</span>&gt;&lt;<span class="start-tag">th</span>&gt;Elapsed
-Time:&lt;/<span class="end-tag">th</span>&gt;&lt;<span class="start-tag">td</span>&gt;\\d{2}:\\d{2}:\\d{2}.\\d{3}&lt;/<span class="end-tag">td</span>&gt;&lt;/<span class="end-tag">tr</span>&gt;</td>
+      </td>
+
+
+
+
+
+      
 
 
 
@@ -8101,33 +7929,27 @@ Time:&lt;/<span class="end-tag">th</span>&gt;&lt;<span class="start-tag">td</spa
 
 
 
-      <td>&lt;<span class="start-tag">tr</span>&gt;&lt;<span class="start-tag">th</span>&gt;Status:&lt;/<span class="end-tag">th</span>&gt;&lt;<span class="start-tag">td</span><span class="attribute-name"> class</span>=<span class="attribute-value">"${status.lower()}"</span>&gt;${status}&lt;/<span class="end-tag">td</span>&gt;\&lt;/<span class="end-tag">tr</span>&gt;</td>
-
-
-
-
-
-      <td>&lt;<span class="start-tag">tr</span>&gt;&lt;<span class="start-tag">th</span>&gt;Message:&lt;/<span class="end-tag">th</span>&gt;&lt;<span class="start-tag">td</span>&gt;${msg}&lt;/<span class="end-tag">td</span>&gt;&lt;/<span class="end-tag">tr</span>&gt;(<br>
-
-
-
-
-
-      </td>
-
-
-
-
-
       <td>&lt;tr&gt;&lt;th&gt;Details:&lt;/th&gt;&lt;td&gt;&lt;a
 
-.*&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;)?</td>
+.*&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;)?</td><td>&lt;/<span class="end-tag">table</span>&gt;</td>
 
 
 
 
 
-      <td>&lt;/<span class="end-tag">table</span>&gt;</td>
+      
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
 
 
 
