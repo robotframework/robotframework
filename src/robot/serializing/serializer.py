@@ -367,7 +367,7 @@ class LogSuiteSerializer:
                                ('Excluded Tags', suite.filtered.excls) ]:
             self._write_metadata_row(title, ', '.join(values), escape=False)
         self._write_times(suite)
-        self._write_metadata_row('Status', suite.status, 
+        self._write_metadata_row('Overall Status', suite.status, 
                                  {'class': suite.status.lower()})
         self._write_metadata_row('Message', suite.get_full_message(html=True),
                                  escape=False)
@@ -376,11 +376,11 @@ class LogSuiteSerializer:
 
     def _write_test_metadata(self, test):
         self._start_suite_or_test_metadata(test)
-        self._write_metadata_row('Critical', test.critical)
         self._write_metadata_row('Timeout', test.timeout)
         self._write_metadata_row('Tags', ', '.join(test.tags))
         self._write_times(test)
-        self._write_metadata_row('Status', test.status, 
+        crit = test.critical == 'yes' and 'critical' or 'non-critical'
+        self._write_metadata_row('Status', '%s (%s)' % (test.status, crit), 
                                  {'class': test.status.lower()})
         self._write_metadata_row('Message', test.message)
         self._writer.end_element('table')
@@ -391,9 +391,8 @@ class LogSuiteSerializer:
         self._write_metadata_row('Documentation', item.htmldoc, escape=False)
 
     def _write_times(self, item):
-        self._write_metadata_row('Start Time', item.starttime)
-        self._write_metadata_row('End Time', item.endtime)
-        self._write_metadata_row('Elapsed Time', item.elapsedtime)
+        times = [item.starttime, item.endtime, item.elapsedtime]
+        self._write_metadata_row('Start / End / Elapsed', '  /  '.join(times))
 
     def _write_metadata_row(self, name, value, attrs={}, escape=True,
                             write_empty=False):
