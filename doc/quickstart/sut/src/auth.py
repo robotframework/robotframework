@@ -12,7 +12,7 @@ class PasswordFile:
         data = self._get_data()
         if data is not None:
             for line in data.splitlines():
-                entry = line.split("\t")
+                entry = line.split('\t')
                 user_accounts[entry[0]] = {'name':entry[0], 'pwd':entry[1], 
                                           'status':entry[2]}
         else:
@@ -32,11 +32,11 @@ class PasswordFile:
     def save(self, user_accounts):
         data = ''
         for userid, values in user_accounts.items():
-            data += userid + "\t" + values['pwd'] + "\t" + values['status'] + '\n'
+            data += userid + '\t' + values['pwd'] + '\t' + values['status'] + '\n'
         self._save_data(data)
 
     def _save_data(self, data):
-        password_file = open(self.path, "w")
+        password_file = open(self.path, 'w')
         password_file.write(data)
         password_file.close()
 
@@ -49,15 +49,15 @@ class Authentication:
     def account_exists(self, username):
         return self.user_accounts.has_key(username)
   
-    def create(self, username, password, status='active'):
+    def create(self, username='', password=''):
         account_data = {}
         account_data['pwd'] = password
-        account_data['status'] = status
+        account_data['status'] = 'active'
         self.user_accounts[username] = account_data
         self.pwd_file.save(self.user_accounts)
         return 'success'
   
-    def login(self, username, password):
+    def login(self, username='', password=''):
         if self.user_accounts.has_key(username) and self.user_accounts[username]['pwd'] == password:
             self.user_accounts[username]['status'] = 'online'
             self.pwd_file.save(self.user_accounts)
@@ -106,13 +106,13 @@ class Password:
         return re.search('\d', self.password) is not None
 
 class Messages:
-    mappings = {'success':"SUCCESS",
-                'fail':"FAIL",
-                'unknown':"Auth Server: unknown command",
-                'no_cmd':"Must provide at least one command",
-                'logged_in':"Logged In",
-                'load_failed':"Failed to load user accounts",
-                'access_denied':"Access Denied"
+    mappings = {'success':'SUCCESS',
+                'fail':'FAIL',
+                'unknown':'Auth Server: unknown command',
+                'no_cmd':'Must provide at least one command',
+                'logged_in':'Logged In',
+                'load_failed':'Failed to load user accounts',
+                'access_denied':'Access Denied'
                }
   
     def lookup(self, msg_symbol):
@@ -124,7 +124,7 @@ class CommandLine:
         if len(args) == 0:
             return Messages().lookup('no_cmd')
         if args[0] in dir(auth):
-            return_code = getattr(auth, args[0])(args[1], args[2])
+            return_code = getattr(auth, args[0])(*args[1:])
             return Messages().lookup(return_code)
         else:
             return Messages().lookup('unknown') + " '" + args[0] + "'"
