@@ -839,21 +839,29 @@ class Misc:
     def no_operation(self):
         """No operation."""
 
-    def sleep(self, time):
+    def sleep(self, time, reason=None):
         """Sleeps for the given time.
         
         'time' may be either a number or a time string. Time strings are in
-        a format such as '1day 2h 3min 4s 5ms'. For more information on time
-        strings, see section Time format in Robot Framework User Guide. 
+        a format such as '1 day 2 hours 3 minutes 4 seconds 5milliseconds' or
+        '1d 2h 3m 4s 5ms', and they are fully explained in an appendix of Robot
+        Framework User Guide. Optional 'reason' can be used to explain why 
+        sleeping is necessary. Both the time slept and the reason are logged.
+
+        Examples:
+        | Sleep | 42                   |
+        | Sleep | 1.5                  |
+        | Sleep | 2 minutes 10 seconds |
+        | Sleep | 10s                  | Wait for a reply |
         """
-        # TODO: Better link to TimeSyntax
         seconds = utils.timestr_to_secs(time)
-        # At least Python hangs with negative values, so it's better to convert
-        # those to zero
+        # Python hangs with negative values
         if seconds < 0:
             seconds = 0
         _time.sleep(seconds)
         self.log('Slept %s' % utils.secs_to_timestr(seconds))
+        if reason:
+            self.log(reason)
 
     def catenate(self, *items):
         """Catenates the given items together and returns the resulted string.
