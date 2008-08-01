@@ -947,15 +947,15 @@ class OperatingSystem:
     def set_modified_time(self, path, mtime):
         """Sets the file modification time.
         
-        Changes the modification and access times of the given file to the value
-        determined by 'mtime'. There are four different ways to give 'mtime'.
+        Changes the modification and access times of the given file to the
+        value determined by 'mtime', which can be given in four different ways.
         
-        1) If 'mtime' is a floating point number, it is interpreted as 
-        seconds since epoch (Jan 1, 1970 0:00:00). This documentation is written
-        about 1177654467 seconds since epoch.
+        1) If 'mtime' is a floating point number, it is interpreted as seconds
+        since epoch (Jan 1, 1970 0:00:00). This documentation is written about
+        1177654467 seconds since epoch.
         
-        2) If 'mtime' is a valid timestamp, that time will be used.
-        Valid timestamp formats are 'YYYY-MM-DD hh:mm:ss' and 'YYYYMMDD hhmmss'.
+        2) If 'mtime' is a valid timestamp, that time will be used. Valid
+        timestamp formats are 'YYYY-MM-DD hh:mm:ss' and 'YYYYMMDD hhmmss'.
         
         3) If 'mtime' is equal to 'NOW' (case-insensitive), the current time is
         used.
