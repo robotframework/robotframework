@@ -17,7 +17,7 @@ zip ..... Uses 'dist' to create a stand-alone distribution and then packages
           it into 'robotframework-userguide-<version>.zip'
 
 Version number to use is got automatically from 'src/robot/version.py' file
-created by 'setup.py'.
+created by 'package.py'.
 """
 
 import os
@@ -130,13 +130,10 @@ def create_userguide():
     print 'Creating user guide ...'
     ugdir = os.path.dirname(os.path.abspath(__file__))
     sys.path.insert(0, os.path.join(ugdir, '..', '..', 'src', 'robot'))
-
-    from version import VERSION, RELEASE
-    if RELEASE != 'final':
-        VERSION = '%s %s' % (VERSION, RELEASE)
-    print 'Version:', VERSION
+    from version import get_version
+    print 'Version:', get_version()
     vfile = open(os.path.join(ugdir, 'src', 'version.txt'), 'w')
-    vfile.write('.. |version| replace:: %s\n' % VERSION)
+    vfile.write('.. |version| replace:: %s\n' % get_version())
     vfile.close()
 
     description = 'HTML generator for Robot Framework User Guide.'
@@ -152,7 +149,7 @@ RobotFrameworkUserGuide.html
     os.unlink(vfile.name)
     ugpath = os.path.abspath(arguments[-1])
     print ugpath
-    return ugpath, VERSION.replace(' ', '-')
+    return ugpath, get_version(sep='-')
 
 
 #
