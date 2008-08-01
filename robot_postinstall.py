@@ -1,7 +1,33 @@
-import sys
 import os
+import subprocess
+import sys
 import stat
 
+
+def egg_preinstall(setup_path, scripts):
+    robot_dir = _get_robot_dir(setup_path)
+    if robot_dir is None: 
+        print "Could not find site-packages"
+    else:
+        _update_scripts(scripts, setup_path, robot_dir)
+    
+def _get_robot_dir(path):
+    site_packages = _get_site_packages()
+    if site_packages is None:
+        return None
+    major, minor = sys.version_info[0:2]
+    process = os.popen('%s _' % os.path.join(path, 'src', 'robot', 'version.py'))
+    egg_name = 'robotframework-%s-py%s.%s.egg' % (process.read().strip(), 
+                                                  major, minor)
+    process.close()
+    return os.path.join(site_packages, egg_name, 'robot')
+
+def _get_site_packages():
+    for path in sys.path:
+        path = os.path.normpath(path)
+        if os.path.basename(path) == 'site-packages':
+            return path
+    return None
 
 def generic_install(script_dir, robot_dir):
     """Updates needed (platform specific) startup scripts and removes others.
@@ -14,7 +40,6 @@ def generic_install(script_dir, robot_dir):
     if os.name == 'nt':  
         updated, removed = removed, updated
     _update_scripts(updated, script_dir, robot_dir)
-    _remove_scripts(removed, script_dir)
 
 
 def windows_binary_install():
@@ -22,10 +47,6 @@ def windows_binary_install():
     
     Executed as the last part of Windows binary installation started by 
     running 'robot-<version>.win32.exe'.
-    
-    Nothing needs to be removed because only needed startup files (*.bat)
-    were installed (see setup.py for details). Removing something would also
-    mess up the uninstaller.
     """
     scripts = ['pybot.bat','jybot.bat', 'rebot.bat']
     script_dir = os.path.join(sys.prefix, 'Scripts')
@@ -35,8 +56,8 @@ def windows_binary_install():
         _update_scripts(scripts, script_dir, robot_dir, python_exe)
         print '\nInstallation was successful. Happy Roboting!'
     except Exception, err:
-        print '\nRunning postinstall script failed: %s' % err
-        print 'Robot start up scripts (pybot.bat and jybot.bat) may not work correctly.'
+        print '\nRunning post-install script failed: %s' % err
+        print 'Robot Framework start-up scripts may not work correctly.'
 
 
 def windows_binary_uninstall():
@@ -63,32 +84,20 @@ def windows_binary_uninstall():
 
 def _update_scripts(scripts, script_dir, robot_dir, python_exe=sys.executable):
     jython_exe, how_found = _find_jython()
-    print 'Creating Robot start-up scripts...'
+    print 'Creating Robot Framework start-up scripts...'
     print 'Installation directory:', robot_dir
     print 'Python executable:', python_exe
     print 'Jython executable: %s (%s)' % (jython_exe, how_found)
-    for name in scripts:
-        path = os.path.join(script_dir, name)
+    for script in scripts:
+        path = os.path.join(script_dir, script)
         content = _read(path)
         for pattern, replace in [ ('[ROBOT_DIR]', robot_dir),
                                   ('[PYTHON_EXECUTABLE]', python_exe),
                                   ('[JYTHON_EXECUTABLE]', jython_exe) ]:
             content = content.replace(pattern, replace)
-        print '%s script: %s' % (os.path.splitext(name)[0].capitalize(), path)
         _write(path, content)
-
-
-def _remove_scripts(scripts, script_dir):
-    for name in scripts:
-        path = os.path.join(script_dir, name)
-        try:
-            os.chmod(path, stat.S_IWRITE)  # Windows sometimes needs this...
-            os.remove(path)
-        except Exception, err:
-            print "Failed to remove non-needed start-up script '%s': %s" \
-                    % (path, str(err))
-        else:
-            print 'Removed:', path
+        name = os.path.splitext(os.path.basename(script))[0].capitalize()
+        print '%s script: %s' % (name, path)
 
     
 def _read(path):
@@ -102,9 +111,6 @@ def _write(path, content):
     writer = open(path, 'w')
     writer.write(content)
     writer.close()
-
-def _copy(from_path, to_path):
-    _write(to_path, _read(from_path))
 
     
 def _find_jython():
@@ -171,14 +177,16 @@ def _is_jython_dir(dir, jyexe):
     
 
 if __name__ == '__main__':
-    # This is executed when run as a postinstall script for Windows binary
+    # This is executed when run as a post-install script for Windows binary
     # distribution. Executed both when installed and when uninstalled from
     # Add/Remove Programs. For more details see 
     # 5.3 Creating Windows Installers
     # http://docs.python.org/dist/postinstallation-script.html
-    if len(sys.argv) < 2:
-        pass
-    elif sys.argv[1] == '-install':
+    #
+    # If installation is done using 'easy_install', this script is not run
+    # automatically. It is possible to run this script manually without 
+    # arguments to update start-up scripts in that case.
+    if len(sys.argv) < 2 or sys.argv[1] == '-install':
         windows_binary_install()
     elif sys.argv[1] == '-remove':
         windows_binary_uninstall()

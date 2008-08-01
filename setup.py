@@ -20,14 +20,9 @@ from distutils.core import setup
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'src','robot'))
 
-from version import VERSION, RELEASE
+from version import get_version
 import robot_postinstall
 
-
-if RELEASE != 'final':
-    VERSION += '-' + RELEASE
-INSTALL = 'install' in sys.argv
-WININST = 'bdist_wininst' in sys.argv
 
 DESCRIPTION = """
 Robot Framework is a Python-based keyword-driven test automation framework
@@ -46,25 +41,30 @@ Programming Language :: Python
 Topic :: Software Development :: Testing
 """[1:-1]
 
+PACKAGES = [ 'robot', 'robot.common', 'robot.conf', 'robot.libraries',
+             'robot.output', 'robot.parsing', 'robot.serializing',
+             'robot.running', 'robot.utils', 'robot.variables' ]
+
+SCRIPT_NAMES = ['pybot', 'jybot', 'rebot']
+
 
 def main():
-    scripts = [ os.path.join('src','bin',script) for script in
-                ['pybot','jybot','rebot'] ]
-    win_scripts = [ script+'.bat' for script in scripts ]
-    all_scripts = scripts + win_scripts
-    inst_pkgs = [ 'robot', 'robot.common', 'robot.conf', 'robot.libraries',
-                  'robot.output', 'robot.parsing', 'robot.serializing',
-                  'robot.running', 'robot.utils', 'robot.variables' ]
-    if WININST:
-        inst_scripts = win_scripts
+    inst_scripts = [ os.path.join('src','bin',name) for name in SCRIPT_NAMES ]
+
+    if 'bdist_wininst' in sys.argv:
+        inst_scripts = [ script+'.bat' for script in inst_scripts ]
         inst_scripts.append('robot_postinstall.py') 
-    else:
-        inst_scripts = all_scripts
+    elif os.name == 'nt':
+        inst_scripts = [ script+'.bat' for script in inst_scripts ]
+
+    if 'bdist_egg' in sys.argv:
+        setup_dir = os.path.dirname(sys.argv[0])
+        robot_postinstall.egg_preinstall(setup_dir, inst_scripts)
 
     # Let distutils take care of most of the setup
     dist = setup(
           name         = 'robotframework',
-          version      = VERSION,
+          version      = get_version(sep='-'),
           author       = 'Robot Framework Developers',
           author_email = 'robotframework-devel@googlegroups.com',
           url          = 'http://robotframework.org',
@@ -73,14 +73,13 @@ def main():
           long_description = DESCRIPTION,
           keywords     = 'acceptance test automation atdd',
           platforms    = 'any',
-          download_url = 'http://robotframework.googlecode.com/files/robotframework-2.0.tar.gz', 
           classifiers  = CLASSIFIERS.splitlines(),
           package_dir  = {'': 'src'},
-          packages     = inst_pkgs,
+          packages     = PACKAGES,
           scripts      = inst_scripts,
     )
 
-    if INSTALL:
+    if 'install' in sys.argv:
         def absnorm(path):
             return os.path.abspath(os.path.normpath(path))
         
