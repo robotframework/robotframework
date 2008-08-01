@@ -5,23 +5,26 @@ import stat
 
 
 def egg_preinstall(setup_path, scripts):
-    robot_dir = _get_robot_dir(setup_path)
+    """Updates needed (platform specific) startup scripts.
+    
+    Run as part of the easy_install egg creation procedure. This the only way 
+    to get the scripts updated when the easy_install is used.
+    """
+    robot_dir = _get_robot_dir(os.path.basename(setup_path))
     if robot_dir is None: 
         print "Could not find site-packages"
     else:
         _update_scripts(scripts, setup_path, robot_dir)
     
-def _get_robot_dir(path):
+def _get_robot_dir(version):
     site_packages = _get_site_packages()
     if site_packages is None:
         return None
     major, minor = sys.version_info[0:2]
-    process = os.popen('%s _' % os.path.join(path, 'src', 'robot', 'version.py'))
-    egg_name = 'robotframework-%s-py%s.%s.egg' % (process.read().strip(), 
-                                                  major, minor)
-    process.close()
+    version = version.replace('-', '_').replace('_', '-', 1)
+    egg_name = '%s-py%s.%s.egg' % (version, major, minor)
     return os.path.join(site_packages, egg_name, 'robot')
-
+    
 def _get_site_packages():
     for path in sys.path:
         path = os.path.normpath(path)
