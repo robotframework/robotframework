@@ -181,9 +181,9 @@ class TelnetConnection(telnetlib.Telnet):
         'timeout' is given in Robot Framework's time format
         (e.g. 1 minute 20 seconds).
 
-        The read operations wait for this time before starting to read 
-        from the output. To run operations that take a long time to generate 
-        their complete output, this timeout must be set accordingly.
+        Read operations that expect some output to appear (Read Until, Read 
+        Until Regexp, Read Until Prompt) use this timeout and fail if the 
+        expected output has not appeared when this timeout expires. 
         
         The old timeout is returned and can be used to restore it later.
         
