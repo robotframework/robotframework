@@ -221,7 +221,7 @@ class TelnetConnection(telnetlib.Telnet):
         """Logs in to the Telnet server with the given user information.
 
         The login keyword reads from the connection until login_prompt is
-        encountered and then types the username. Then it reads until
+        encountered and then types the user name. Then it reads until
         password_prompt is encountered and types the password. The rest of the
         output (if any) is also read, and all the text that has been read is
         returned as a single string.
@@ -238,13 +238,29 @@ class TelnetConnection(telnetlib.Telnet):
         self.write_bare(password + self._newline)
         ret += '*' * len(password) + '\n'
         if self._prompt_is_set():
-            ret += self.read_until_prompt('TRACE')
+            try:
+                ret += self.read_until_prompt('TRACE')
+            except AssertionError:
+                self._verify_login(ret)
+                raise
         else:
-            time.sleep(1)
-            ret += self.read('TRACE')
+            ret += self._verify_login(ret) 
         self._log(ret)
         return ret
-
+    
+    def _verify_login(self, ret):
+        # It is necessary to wait for the 'login incorrect' message to appear. 
+        time.sleep(1)
+        while True:
+            try:
+                ret += self.read_until('\n', 'TRACE')
+            except AssertionError:
+                return ret  
+            else:
+                if 'Login incorrect' in ret:
+                    self._log(ret)
+                    raise AssertionError("Login incorrect")
+    
     def write(self, text, loglevel=None):
         """Writes the given text over the connection and appends a newline.
         
