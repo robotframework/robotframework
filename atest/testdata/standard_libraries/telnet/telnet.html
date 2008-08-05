@@ -81,7 +81,7 @@ th {
 </tr>
 <tr>
 <td>Test Setup</td>
-<td>Login to Plage</td>
+<td>Login And Set Prompt</td>
 <td></td>
 <td></td>
 <td></td>
@@ -97,20 +97,6 @@ th {
 <td>Library</td>
 <td>Telnet</td>
 <td>1 s 500 ms</td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td>Variables</td>
-<td>variables.py</td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td>Resource</td>
-<td>telnet_resource.html</td>
-<td></td>
 <td></td>
 <td></td>
 </tr>
@@ -403,7 +389,7 @@ th {
 <tr>
 <td></td>
 <td>[Setup]</td>
-<td>Login to Plage and Set Timeout</td>
+<td>Login and Set Timeout</td>
 <td></td>
 <td></td>
 </tr>
@@ -828,6 +814,97 @@ th {
 <td></td>
 </tr>
 <tr>
+<td><a name="test_Invalid Login">Invalid Login</a></td>
+<td>[Documentation]</td>
+<td>FAIL Login incorrect</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>[Setup]</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Open Connection</td>
+<td>${HOST}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Login</td>
+<td>invalid</td>
+<td>invalid</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>[Teardown]</td>
+<td>Close All Connections</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="test_Invalid Login With Prompt Set">Invalid Login With Prompt Set</a></td>
+<td>[Documentation]</td>
+<td>FAIL Login incorrect</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>[Setup]</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Open Connection</td>
+<td>${HOST}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Set Prompt</td>
+<td>$</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Login</td>
+<td>invalid</td>
+<td>invalid</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>[Teardown]</td>
+<td>Close All Connections</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
 <td></td>
 <td></td>
 <td></td>
@@ -849,7 +926,7 @@ th {
 <th>Argument</th>
 </tr>
 <tr>
-<td><a name="keyword_Login To Plage">Login To Plage</a></td>
+<td><a name="keyword_Login And Set Prompt">Login And Set Prompt</a></td>
 <td>[Timeout]</td>
 <td></td>
 <td></td>
@@ -884,7 +961,7 @@ th {
 <td></td>
 </tr>
 <tr>
-<td><a name="keyword_Login To Plage And Set Timeout">Login To Plage And Set Timeout</a></td>
+<td><a name="keyword_Login And Set Timeout">Login And Set Timeout</a></td>
 <td>[Timeout]</td>
 <td></td>
 <td></td>
@@ -892,7 +969,7 @@ th {
 </tr>
 <tr>
 <td></td>
-<td>Login to Plage</td>
+<td>Login and Set Prompt</td>
 <td></td>
 <td></td>
 <td></td>
