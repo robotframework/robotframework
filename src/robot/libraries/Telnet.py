@@ -25,8 +25,8 @@ class Telnet:
 
     """A test library providing Telnet connections and communicating with them.
 
-    This library takes the optional arguments timeout, newline, regexp and 
-    regexp_is_prompt. These are default values used when a new connection is
+    This library takes the optional arguments timeout, newline, prompt and 
+    prompt_is_regexp. These are default values used when a new connection is
     opened with the keyword 'Open', and they can be overridden. The purpose of
     these parameters can be found from the documentation of 'Open'.  
     
