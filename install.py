@@ -25,12 +25,14 @@ default installation somehow.
 See 'INSTALL.txt' or Robot Framework User Guide for more information.
 """
 
-import sys
+import glob
 import os
 import shutil
+import sys
 
 
 def install():
+    _remove(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'build'))
     print 'Installing Robot Framework...'
     setup = os.path.join(os.path.dirname(sys.argv[0]), 'setup.py')
     rc = os.system('%s %s install' % (sys.executable, setup))
@@ -47,6 +49,8 @@ def uninstall():
         print 'Robot Framework is not installed or the installation is corrupted.'
         sys.exit(1)
     _remove(instdir)
+    if not 'robotframework' in instdir:
+        _remove_egg_info(instdir)
     _remove_runners()
     print 'Uninstallation was successful.'
 
@@ -60,7 +64,11 @@ def _get_installation_directory():
     # Ensure we got correct robot module
     if 'Robot' not in robot.pythonpathsetter.__doc__:
         raise TypeError
-    return os.path.dirname(robot.__file__)
+    robot_dir = os.path.dirname(robot.__file__)
+    parent_dir = os.path.dirname(robot_dir)
+    if 'robotframework' in os.path.basename(parent_dir):
+        return parent_dir
+    return robot_dir
 
 def _remove_runners():
     for name in ['pybot', 'jybot', 'rebot']:
@@ -69,6 +77,12 @@ def _remove_runners():
         else:
             for dirpath in ['/bin', '/usr/bin/', '/usr/local/bin' ]:
                  _remove(os.path.join(dirpath, name))
+
+def _remove_egg_info(instdir):
+    egg_info_match = glob.glob(os.path.join(os.path.dirname(instdir), 
+                                            'robotframework*.egg-info'))
+    if len(egg_info_match) > 0:
+        _remove(egg_info_match[0])
 
 def _remove(path):
     if not os.path.exists(path):

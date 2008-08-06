@@ -1,48 +1,31 @@
 import os
-import subprocess
 import sys
-import stat
 
 
-def egg_preinstall(setup_path, scripts):
-    """Updates needed (platform specific) startup scripts.
+def egg_preinstall(package_path, scripts):
+    """Updates platform specific startup scripts.
     
-    Run as part of the easy_install egg creation procedure. This the only way 
-    to get the scripts updated when the easy_install is used.
+    Run as part of the easy_install egg creation procedure. This is the only way 
+    to get the scripts updated when the easy_install is used. Updates the 
+    scripts before the egg is created and therefore the created egg cannot be
+    used at any other machine unless the Python and Jython installations are 
+    exactly equal.
     """
-    robot_dir = _get_robot_dir(os.path.basename(setup_path))
+    robot_dir = _get_robot_target_dir(os.path.basename(package_path))
     if robot_dir is None: 
-        print "Could not find site-packages"
+        print """Could not find site-packages from PYTHONPATH! 
+Robot Framework start-up scripts needs to be updated manually."""
     else:
-        _update_scripts(scripts, setup_path, robot_dir)
-    
-def _get_robot_dir(version):
-    site_packages = _get_site_packages()
-    if site_packages is None:
-        return None
-    major, minor = sys.version_info[0:2]
-    version = version.replace('-', '_').replace('_', '-', 1)
-    egg_name = '%s-py%s.%s.egg' % (version, major, minor)
-    return os.path.join(site_packages, egg_name, 'robot')
-    
-def _get_site_packages():
-    for path in sys.path:
-        path = os.path.normpath(path)
-        if os.path.basename(path) == 'site-packages':
-            return path
-    return None
+        _update_scripts(scripts, package_path, robot_dir)
 
-def generic_install(script_dir, robot_dir):
-    """Updates needed (platform specific) startup scripts and removes others.
+
+def generic_install(script_names, script_dir, robot_dir):
+    """Updates given startup scripts.
     
     Run as part of the generic installation procedure from 'setup.py' after 
     running 'python setyp.py install'.
     """
-    updated = [ 'pybot', 'jybot', 'rebot' ] 
-    removed = [ script + '.bat' for script in updated ]
-    if os.name == 'nt':  
-        updated, removed = removed, updated
-    _update_scripts(updated, script_dir, robot_dir)
+    _update_scripts(script_names, script_dir, robot_dir)
 
 
 def windows_binary_install():
@@ -53,10 +36,9 @@ def windows_binary_install():
     """
     scripts = ['pybot.bat','jybot.bat', 'rebot.bat']
     script_dir = os.path.join(sys.prefix, 'Scripts')
-    robot_dir = os.path.join(sys.prefix, 'Lib', 'site-packages', 'robot')
     python_exe = os.path.join(sys.prefix, 'python.exe')  # sys.executable doesn't work here
     try:
-        _update_scripts(scripts, script_dir, robot_dir, python_exe)
+        _update_scripts(scripts, script_dir, _get_robot_location(), python_exe)
         print '\nInstallation was successful. Happy Roboting!'
     except Exception, err:
         print '\nRunning post-install script failed: %s' % err
@@ -73,8 +55,7 @@ def windows_binary_uninstall():
     deletes directories only if they are empty. Thus compiled files created
     by Jython must be deleted separately.
     """
-    robot_dir = os.path.join(sys.prefix, 'Lib', 'site-packages', 'robot')
-    for base, dirs, files in os.walk(robot_dir):
+    for base, dirs, files in os.walk(_get_robot_location()):
         for name in files:
             if name.endswith('$py.class'):
                 path = os.path.join(base, name)
@@ -84,6 +65,30 @@ def windows_binary_uninstall():
                     print "Failed to remove Jython compiled file '%s': %s" \
                             % (path, str(err))
 
+
+def _get_robot_target_dir(version):
+    site_packages = _get_site_packages()
+    if site_packages is None:
+        return None
+    major, minor = sys.version_info[0:2]
+    version = version.replace('-', '_').replace('_', '-', 1)
+    egg_name = '%s-py%s.%s.egg' % (version, major, minor)
+    return os.path.join(site_packages, egg_name, 'robot')
+    
+def _get_site_packages():
+    for path in sys.path:
+        path = os.path.normpath(path)
+        if os.path.basename(path) == 'site-packages':
+            return path
+    return None
+
+
+def _get_robot_location():
+    try:
+        import robot
+        return os.path.dirname(os.path.abspath(robot.__file__))
+    except:
+        return os.path.join(sys.prefix, 'Lib', 'site-packages', 'robot')
 
 def _update_scripts(scripts, script_dir, robot_dir, python_exe=sys.executable):
     jython_exe, how_found = _find_jython()
@@ -108,6 +113,7 @@ def _read(path):
     content = reader.read()
     reader.close()
     return content
+
 
 def _write(path, content):
     os.chmod(path, 0755)

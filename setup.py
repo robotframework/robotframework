@@ -19,7 +19,6 @@ import os
 from distutils.core import setup
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'src','robot'))
-
 from version import get_version
 import robot_postinstall
 
@@ -50,7 +49,6 @@ SCRIPT_NAMES = ['pybot', 'jybot', 'rebot']
 
 def main():
     inst_scripts = [ os.path.join('src','bin',name) for name in SCRIPT_NAMES ]
-
     if 'bdist_wininst' in sys.argv:
         inst_scripts = [ script+'.bat' for script in inst_scripts ]
         inst_scripts.append('robot_postinstall.py') 
@@ -58,8 +56,8 @@ def main():
         inst_scripts = [ script+'.bat' for script in inst_scripts ]
 
     if 'bdist_egg' in sys.argv:
-        setup_dir = os.path.dirname(sys.argv[0])
-        robot_postinstall.egg_preinstall(setup_dir, inst_scripts)
+        package_path = os.path.dirname(sys.argv[0])
+        robot_postinstall.egg_preinstall(package_path, inst_scripts)
 
     # Let distutils take care of most of the setup
     dist = setup(
@@ -78,7 +76,6 @@ def main():
           packages     = PACKAGES,
           scripts      = inst_scripts,
     )
-
     if 'install' in sys.argv:
         def absnorm(path):
             return os.path.abspath(os.path.normpath(path))
@@ -86,7 +83,8 @@ def main():
         script_dir = absnorm(dist.command_obj['install_scripts'].install_dir)
         module_dir = absnorm(dist.command_obj['install_lib'].install_dir)
         robot_dir = os.path.join(module_dir, 'robot')
-        robot_postinstall.generic_install(script_dir, robot_dir)
+        script_names = [ os.path.basename(name) for name in inst_scripts ]
+        robot_postinstall.generic_install(script_names, script_dir, robot_dir)
     
 
 if __name__ == "__main__":

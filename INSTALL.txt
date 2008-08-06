@@ -5,7 +5,7 @@ Installation and uninstallation
 Introduction
 ------------
 
-There are two ways to install Robot Framework, depending on how you got it.
+There are three ways to install Robot Framework, depending on how you got it.
 
 Installing from source
 
@@ -18,6 +18,12 @@ Installing using binary installer
     Binary installers are platform-specific and using them should be
     familiar to anyone who has ever installed anything on that
     particular platform.
+    
+Installing using easy_install
+
+    You can use easy_install http://peak.telecommunity.com/DevCenter/EasyInstall 
+    to install Robot Framework. Just use command easy_install robotframework 
+    after you have installed easy_install.
 
 
 This file contains brief instructions for installation and

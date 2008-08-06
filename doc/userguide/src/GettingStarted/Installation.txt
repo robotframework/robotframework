@@ -9,7 +9,7 @@ Installation and uninstallation
 Introduction
 ~~~~~~~~~~~~
 
-There are two ways to install Robot Framework:
+There are three ways to install Robot Framework:
 
 `Installing from source`_
     You can get the source code either as a source distribution
@@ -24,6 +24,11 @@ There are two ways to install Robot Framework:
     Binary installers are platform-specific. There is currently only
     one binary distribution available, a graphical installer for
     Windows.
+
+`Using easy_install`_
+    You can install Robot Framework also using easy_install (see
+    http://peak.telecommunity.com/DevCenter/EasyInstall). With the easy_install
+    installation can be done with command ``easy_install robotframework``.
 
 Installation packages are available from
 http://downloads.robotframework.org, and source code from
@@ -162,6 +167,24 @@ Use the platform-specific way of installation. For example, on
 Windows, double click the provided executable and follow
 the instructions of the graphical installer.
 
+Using easy_install
+''''''''''''''''''
+
+Precondition is to have easy_install installed. See installation instructions 
+from http://peak.telecommunity.com/DevCenter/EasyInstall. When easy_install is 
+available, all you need to do is to run command ``easy_install robotframework``. 
+If you need to use a proxy to access the web, you can tell easy_install to use
+the proxy by setting the http_proxy environment variable to point to your proxy 
+server.
+
+.. Note:: When using easy_install at Windows, you need to run 
+   ``robot_postinstall.py`` script after installation. There should be following 
+   line in the installation output where you can see the full path to the 
+   script. Run the script i.e. in below case 
+   ``python C:\APPS\Python25\Scripts\robot_postinstall.py``.
+
+      Installing robot_postinstall.py script to C:\\APPS\\Python25\\Scripts
+
 
 Manual installation
 '''''''''''''''''''
@@ -190,15 +213,15 @@ location is platform-specific, but on computers with a UNIX-like
 operating system, it is normally something like
 :path:`/usr/lib/[PythonVer]/site-packages`, and on Windows it is
 :path:`[PythonInstallationDir]\\Lib\\site-packages`. The actual Robot
-Framework code is in a directory named :path:`robot`.
+Framework code is in a directory named :path:`robot` or in case of easy_install
+in directory :path:`robotframework[RobotVer].py[PythonVer].egg/robot`
 
 Robot Framework runner scripts (:prog:`pybot`, :prog:`jybot` and
 :prog:`rebot`) are created and copied into another platform-specific
 location. On UNIX-like systems, they normally go to :path:`/usr/bin`
 and are thus immediately available from the command line. On Windows,
 the operating system does not provide a similar natural place, and
-Python copies these scripts into
-:path:`[PythonInstallationDir]\\Scripts`.
+Python copies these scripts into :path:`[PythonInstallationDir]\\Scripts`.
 
 
 Setting up environment
@@ -260,8 +283,9 @@ uninstalled via the mechanism offered by the operating system. For
 example, in Windows you simply go to ``Control Panel >
 Add/Remove Programs``, where Robot Framework is listed under Python.
 
-If uninstallation fails somehow, Robot Framework can be uninstalled by
-removing the `framework code and runner scripts`__ manually.
+If uninstallation fails somehow or you have used easy_install, Robot Framework 
+can be uninstalled by removing the `framework code and runner scripts`__ 
+manually.
 
 __ `Where files are installed`_
 
