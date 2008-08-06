@@ -57,7 +57,9 @@ th {
 <body>
 <h1>Robot Framework Quick Start Guide</h1>
 <h2>Installation</h2>
-See from <a href="http://robotframework.googlecode.com/svn/trunk/doc/userguide/RobotFrameworkUserGuide.html#installation-and-uninstallation">Robot Framework User Guide</a>.
+See from <a
+ href="http://robotframework.googlecode.com/svn/trunk/doc/userguide/RobotFrameworkUserGuide.html#installation-and-uninstallation">Robot
+Framework User Guide</a>.
 <h2>Overview</h2>
 Robot Framework is a keyword-based test automation tool.&nbsp; Tests
 live in html test files and make use of keywords written in libraries
@@ -81,9 +83,46 @@ The tests in this file will execute and generate the following reports:<br>
   <li>output.xml: the test results in a portable XML format for
 integration with other tools</li>
 </ul>
-Double click on report.html to open it in your browser, then click on
+Open report.html in your browser, then click on
 the links to explore the results. The report.html file links to the
 log.html file.<br>
+<h2>Introducing the Sample Application</h2>
+The sample application for this paper is a variation on a classic login
+example: it&#8217;s a command-line based authentication server written in
+Python. At the moment, the sample application allows a user to do two
+things:<br>
+<ul>
+  <li>Create an account with a password</li>
+  <li>Log in with a valid user name and password</li>
+</ul>
+Attempting to log in with a non-existent user account or with an
+invalid password results in the same error message:<br>
+<br>
+&nbsp;&nbsp;&nbsp; Access Denied<br>
+<br>
+Creating a user account results in the message:<br>
+<br>
+&nbsp;&nbsp;&nbsp; SUCCESS<br>
+<br>
+And logging in successfully results in the message:<br>
+<br>
+&nbsp;&nbsp;&nbsp; Logged In<br>
+<br>
+So, for example, if I issue the following commands, I should get the
+following responses:<br>
+<br>
+&nbsp;&nbsp;&nbsp; &gt; login fred password<br>
+&nbsp;&nbsp;&nbsp; Access Denied<br>
+<br>
+&nbsp;&nbsp;&nbsp; &gt; create fred password<br>
+&nbsp;&nbsp;&nbsp; SUCCESS<br>
+<br>
+&nbsp;&nbsp;&nbsp; &gt; login fred password<br>
+&nbsp;&nbsp;&nbsp; Logged In<br>
+<br>
+That&#8217;s all our little sample application does just at the moment.&nbsp;
+It&#8217;s not much.&nbsp; But it&#8217;s a start.&nbsp; Now we need to add some
+new capabilities to it.<br>
 <h2>First Tests</h2>
 The following table has two tests:<br>
 <ul>
@@ -167,26 +206,21 @@ English rather than like an automated test.&nbsp; Robot Framework uses
 a keyword approach that supports writing tests that capture the essence
 of the actions and expectations in natural language.<br>
 <h2>Keywords</h2>
-Robot Framework supports three types of keywords:<br>
-<ul>
-  <li><span style="font-weight: bold; font-style: italic;">Built-in
+Robot Framework supports three types of keywords:<span
+ style="font-weight: bold; font-style: italic;"><br>
+<br>
+Built-in
 keywords</span>: the keywords included with Robot Framework,
 including generally useful keywords such as "Get Time" and "Should Be
 Equal".&nbsp; For a complete list of the available built-in keywords
-see <a href="http://code.google.com/p/robotframework/wiki/BuiltInLibrary">BuiltInLibrary</a> wikipage.
-  </li>
-  <li><span style="font-weight: bold; font-style: italic;">User-defined
+see <a
+ href="http://code.google.com/p/robotframework/wiki/BuiltInLibrary">BuiltInLibrary</a>
+wikipage. <span style="font-weight: bold; font-style: italic;"><br>
+<br>
+User-defined
 keywords</span>: keywords defined in a Keywords table
 either in the test file, or in a resources file for a test suite. (More
-on test suites later.)<br>
-  </li>
-  <li><span style="font-weight: bold; font-style: italic;">Library
-keywords</span>: keywords defined in a Robot Framework Library.
-(More on Libraries later. The keyword "Create Valid User" from the
-previous tests is a User
-Keyword.<br>
-  </li>
-</ul>
+on test suites later.)&nbsp; For example:
 <table border="1">
   <thead><tr>
     <th>Keyword</th>
@@ -223,6 +257,12 @@ Keyword.<br>
     </tr>
   </tbody>
 </table>
+<span style="font-weight: bold; font-style: italic;">Library
+keywords</span>: keywords defined in a Robot Framework Library.
+(More on Libraries later. The keyword "Create Valid User" from the
+previous tests is a User
+Keyword.)<br>
+<br>
 User-defined keywords can include actions defined by other user-defined
 keywords, built-in keywords, or library keywords.&nbsp; As you can see
 from this example, User-defined keywords can take
@@ -233,12 +273,15 @@ to create reusable steps for common action sequences.&nbsp;
 User-defined keywords can also help the test author keep the tests as
 readable as possible.<br>
 <h2>Libraries</h2>
-Robot Framework comes with a handful of libraries including an
+Robot Framework comes with a <a
+ href="http://code.google.com/p/robotframework/wiki/BuiltInLibrary">handful
+of libraries</a> including an
 OperatingSystem library to support common operating system functions,
 and a Screenshot library for taking screenshots.&nbsp; In addition,
 there are other libraries distributed in separate open source projects,
 such as a
-Selenium library for Web testing.<br>
+<a href="http://code.google.com/p/robotframework-seleniumlibrary/">Selenium
+library for Web testing</a>.<br>
 <br>
 <table border="1">
   <colgroup span="99"><col class="name"><col class="value" span="1"></colgroup>
@@ -257,39 +300,81 @@ Selenium library for Web testing.<br>
     </tr>
   </tbody>
 </table>
-<h2>Test Setup and Teardown</h2>
 <h2>Test Suites</h2>
+<h2>Setup and Teardown</h2>
+If you want a set of actions to occur before and after each test
+executes, use the Test Setup and Test Teardown settings in the Setting
+table like so:<br>
+<table class="example docutils" border="1">
+  <thead valign="bottom"><tr>
+    <th class="head">Setting</th>
+    <th class="head">Value</th>
+    <th class="head">Value</th>
+    <th class="head">Value</th>
+  </tr>
+  </thead>
+  <tbody valign="top">
+    <tr>
+      <td>Test Setup</td>
+      <td><br>
+      </td>
+      <td><br>
+      </td>
+      <td><br>
+      </td>
+    </tr>
+    <tr>
+      <td>Test Teardown</td>
+      <td><br>
+      </td>
+      <td><br>
+      </td>
+      <td><br>
+      </td>
+    </tr>
+  </tbody>
+</table>
+Similarly you can use the Suite Setup and Suite Teardown settings to
+specify actions to be executed before and after an entire test suite
+executes.<br>
+<h2><br>
+</h2>
 <h2>Creating a Library</h2>
-<iframe width="60%" height="50%" src="./testlibs/LoginLibrary.py"></iframe>
+<iframe src="./testlibs/LoginLibrary.py" height="50%" width="60%"></iframe>
 <h2>Variables</h2>
 <table border="1">
-  <colgroup span="99">
-    <col class="name">
-    <col class="value" span="4">
-  </colgroup>
-  <thead>
+  <colgroup span="99"> <col class="name"> <col class="value" span="4">
+  </colgroup> <thead> <tr>
+    <th>Variable</th>
+    <th>Value</th>
+    <th>Value</th>
+    <th>Value</th>
+    <th>Value</th>
+  </tr>
+  </thead> <tbody>
     <tr>
-      <th>Variable</th>
-      <th>Value</th>
-      <th>Value</th>
-      <th>Value</th>
-      <th>Value</th>
+      <td><br>
+      </td>
+      <td><br>
+      </td>
+      <td><br>
+      </td>
+      <td><br>
+      </td>
+      <td><br>
+      </td>
     </tr>
-  </thead> 
-  <tbody>
     <tr>
-      <td></td>
-      <td></td>
-      <td></td>
-      <td></td>
-      <td></td>
-    </tr>
-    <tr>
-      <td></td>
-      <td></td>
-      <td></td>
-      <td></td>
-      <td></td>
+      <td><br>
+      </td>
+      <td><br>
+      </td>
+      <td><br>
+      </td>
+      <td><br>
+      </td>
+      <td><br>
+      </td>
     </tr>
   </tbody>
 </table>
