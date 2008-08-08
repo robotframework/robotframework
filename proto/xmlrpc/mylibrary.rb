@@ -1,93 +1,80 @@
-class MyLibrary
-  
-  def divide(a, b)
-    return Float(a) / Float(b)
+class RubyLibraryExample
+
+  def do_nothing()
   end
   
-  def raise_failure(message)
+  def failure(message)
     raise message
   end
   
   def logging(message, level='INFO')
     puts '*'+ level + '* ' + message
   end
-  
-  def return_nothing()
-    return nil
+
+  def one_argument(arg)
+    puts 'arg: ' + arg
+  end
+
+  def two_arguments(arg1, arg2)
+    puts 'arg1: ' + arg1
+    puts 'arg2: ' + arg2
+  end
+
+  def arguments_with_default_values(arg1, arg2='default value', arg3=nil)
+    puts 'arg1: ' + arg1
+    puts 'arg2: ' + arg2
+    puts 'arg3: ' + arg3
+  end
+
+  def argument_should_be_boolean_true(arg)
+    argument_type_should_be(arg, TrueClass)
   end
   
-  def return_multiple_values(value1, value2)
-    return value1, value2
+  def argument_should_be_string(arg)
+    argument_type_should_be(arg, String)
+  end
+
+  def argument_type_should_be(arg, type)
+    if not arg.class == type
+      raise Exception, 'Argument type should be '+ type.to_s() +' but was ' + arg.class.to_s()
+    end    
+  end
+
+  def return_string()
+    return 'Hello, world!'
   end
   
-  def check_argument_is_boolean_type_true(arg)
-    arguments_type_should_be(arg, TrueClass)
-    return arg
+  def return_object()
+    return MyObjectToReturn.new
   end
-  
+
   def return_true()
     return true
   end
 
-  def check_argument_is_string_type(arg)
-    arguments_type_should_be(arg, String)
-    return arg
-  end
-
-  def arguments_type_should_be(arg, type)
-    if not arg.class == type
-      raise Exception, 'Arguments type should be '+ type.to_s() +' but was ' + arg.class.to_s()
-    end    
+  def return_multiple_values(given)
+    return 'first', 2, given
   end
   
-  def should_be_list(arg)
-    if arg != ['a','b','c'] 
-      raise Exception, "Given list is not ['a', 'b', 'c']"
-    end
-    return arg
+  def divide(a, b)
+    return Float(a) / Float(b)
   end
-  
-  def should_be_dictionary(arg)
-    if arg != {'a'=> 1, 'b'=>'Hello', 'c' => ['a', 1]}
-      raise Exception, "Given argument is not {'a'=> 1, 'b'=>'Hello', 'c' => ['a', 1]}"
-    end
-    return arg
-  end
-  
-  def return_object()
-    return MyObject.new
-  end
+    
 end
 
-class MyObject
+
+class MyObjectToReturn
   def to_s()
     return "String representation of MyObject"
   end
 end
 
 
-
-#METHODS FOR STARTING THE LIBRARY FROM COMMAND LINE
-
-def start(port)
-  $: << File.expand_path(File.dirname(__FILE__))
+if ARGV.size == 1
   require "robotxmlrpcserver"
-  r = RobotXmlRpcServer.new(MyLibrary.new, port)
-  r.add_handler("robot", r)
-  r.serve
-end
-
-def help
-  print "
-  Usage: #{__FILE__} port
-"
-end
-
-if ARGV.size != 1
-  help
+  RobotXmlRpcServer.new(RubyLibraryExample.new, ARGV[0])
 else
-  start(ARGV[0])
+  puts "Usage: #{__FILE__} port"
 end
+
 exit
-
-

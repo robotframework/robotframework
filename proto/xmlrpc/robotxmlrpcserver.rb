@@ -6,14 +6,20 @@ class RobotXmlRpcServer<XMLRPC::Server
   
   def initialize(library, port=8080)
     @library = library
-	super(port, 'localhost')
 	@supported_types = [Date, Integer, Float, Fixnum, TrueClass, 
                         FalseClass, String, Hash, Array]
+	super(port, 'localhost')
+    add_handler('robotframework', self)
+    serve
+  end
+
+  def stop()
+    shutdown
   end
 
   def get_keyword_names
-    # TODO: We should only return methods implemented by this lib and possible
-    # it's parents but not all implicit methods like to_s.
+    # TODO: We should only return methods implemented by @library, and possibly
+    # by its parents, but not all implicit methods like to_s.
     return @library.methods
   end
 
@@ -56,9 +62,5 @@ class RobotXmlRpcServer<XMLRPC::Server
     $save_for_close.close
     return @output
   end
-  
-  def stop()
-    shutdown
-  end
-  
+    
 end

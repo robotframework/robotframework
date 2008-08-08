@@ -8,16 +8,17 @@ import os.path
 def stop_xmlrpc_server(port):
     url = 'http://localhost:%s' % port
     server = xmlrpclib.ServerProxy(url)
-    server.robot.stop()
-    print "Server at %s stopped" % url
+    server.robotframework.stop()
+    print "Stopped server at %s" % url
     
 def test_xmlrpc_server(port, attempts=1):
     url = 'http://localhost:%s' % port
     for i in range(int(attempts)):
         try:
             server = xmlrpclib.ServerProxy(url)
-            if not server.robot.get_keyword_names():
-                raise AssertionError("Server at %s returned no keyword names" % url)
+            if not server.robotframework.get_keyword_names():
+                raise AssertionError("Server at %s returned no keyword names"
+                                     % url)
         except socket.error:
             if i+1 >= attempts:
                 break
