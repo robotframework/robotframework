@@ -76,9 +76,14 @@ def _get_robot_target_dir(version):
     return os.path.join(site_packages, egg_name, 'robot')
     
 def _get_site_packages():
-    for path in sys.path:
-        path = os.path.normpath(path)
-        if os.path.basename(path) == 'site-packages':
+    # There might be multiple 'site-packages' in sys.path. In that case, 
+    # the 'site-packages' under python installation directory is returned.
+    potential_paths = [ path for path in sys.path if
+                        os.path.basename(path) == 'site-packages']
+    if len(potential_paths) == 1:
+        return potential_paths[0]
+    for path in potential_paths:
+        if 'os.py' in os.listdir(os.path.dirname(path)):
             return path
     return None
 
