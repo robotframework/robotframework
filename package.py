@@ -85,14 +85,16 @@ def sdist(*version_info):
 def wininst(*version_info):
     version(*version_info)
     _clean()
-    _create_wininst()
-    _announce()
+    if _verify_platform(*version_info):
+        _create_wininst()
+        _announce()
 
 def all(*version_info):
     version(*version_info)
     _clean()
     _create_sdist()
-    _create_wininst()
+    if _verify_platform(*version_info):
+        _create_wininst()
     _announce()
 
 def version(version_number, release_tag=None):
@@ -104,12 +106,6 @@ def version(version_number, release_tag=None):
     else:
         _update_version(version_number, _verify_version(release_tag, RELEASES))
     
-def _clean():
-    print 'Cleaning up...'
-    for path in [DIST_PATH, BUILD_PATH]:
-        if os.path.exists(path):
-            shutil.rmtree(path)
-
 def _verify_version(given, valid):
     for item in valid:
         if given == item or (hasattr(item, 'search') and item.search(given)):
@@ -127,12 +123,28 @@ def _keep_version():
     sys.path.insert(0, ROBOT_PATH)
     from version import get_version
     print 'Keeping version %s' % get_version()
-    
+ 
+def _clean():
+    print 'Cleaning up...'
+    for path in [DIST_PATH, BUILD_PATH]:
+        if os.path.exists(path):
+            shutil.rmtree(path)
+
+def _verify_platform(version_number, release_tag=None):
+    if release_tag == 'final' and os.sep != '\\':
+        print 'Final Windows installers can only be created in Windows.'
+        print 'Windows installer was not created.'
+        return False
+    return True
+   
 def _create_sdist():
     _create('sdist', 'source distribution')
 
 def _create_wininst():
     _create('bdist_wininst', 'Windows installer')
+    if os.sep != '\\':
+        print 'Warning: Windows installers created on other platforms may not' 
+        print 'be exactly identical to ones created in Windows.'
 
 def _create(command, name):
     print 'Creating %s...' % name
@@ -153,3 +165,4 @@ if __name__ == '__main__':
         globals()[sys.argv[1]](*sys.argv[2:])
     except (KeyError, IndexError, TypeError, ValueError):
         print __doc__
+
