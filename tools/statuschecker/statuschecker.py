@@ -33,6 +33,9 @@ somewhere in the test case documentation. Expected error message must then be
 given after 'FAIL'. Error message can also be specified as a regular expression
 by prefixing it with 'REGEXP:'. Having spaces between the status, the message
 or the possible regexp prefix is optional. Everything before 'FAIL' is ignored.
+
+This tool also allows testing the created log messages. This a bit advanced
+functionality is described in tool documentation.
 """
 
 import re
@@ -110,6 +113,7 @@ def _get_keyword(test, kw_indices):
     for index in kw_indices[1:]:
         kw = kw.keywords[index-1]
     return kw
+
 
 class _Expected:
     

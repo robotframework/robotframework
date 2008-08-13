@@ -4,7 +4,9 @@
 statuschecker.py
 ================
 
-A tool for further processing of Robot Framework output files.
+A tool for checking that Robot Framework test cases have expected
+statuses and log messages.
+
 
 Synopsis
 --------
@@ -17,40 +19,58 @@ Synopsis
 Description
 -----------
 
-This tool processes Robot Framework output XML files and checks that test case
-statuses and messages are as expected. The main use case is post-processing output
-files got when testing Robot Framework test libraries using Robot Framework
-itself. 
+This tool processes Robot Framework output XML files and checks that
+test case statuses and messages are as expected. The main use case is
+post-processing output files got when testing Robot Framework test
+libraries using Robot Framework itself.
 
-If an output file is not given, the input file is considered to be also an output 
-file and it is edited in place.
+If an output file is not given, the input file is considered to be
+also an output file and it is edited in place.
 
 
-Defining the expected test status
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Defining expected test status
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-By default, all test cases are expected to :msg:`PASS` and have no message. Changing
-the expected status to :msg:`FAIL` is done by having the word "FAIL" (in uppercase)
-somewhere in the test case documentation. The expected error message must then be
-given after "FAIL". The error message can also be specified as a regular expression
-by prefixing it with "REGEXP:". Having spaces between the status, the message
-or the possible "regexp" prefix is optional. 
+By default, all test cases are expected to :msg:`PASS` and have no
+message. Changing the expected status to :msg:`FAIL` is done by having
+the word :msg:`FAIL` (in uppercase) somewhere in the test case
+documentation. The expected error message must then be given after
+:msg:`FAIL`. The error message can also be specified as a regular
+expression by prefixing it with :msg:`REGEXP:`. Having spaces between
+the status, the message or the possible regular expression prefix is
+optional.
 
-Defining the expected keyword log messages
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The expected keyword log messages can also be defined in the test case documentation
-using a syntax such as::
+Defining expected log messages
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The expected keyword log messages can also be defined in the test case
+documentation using a syntax such as::
     
-     LOG x.y:z message
+     LOG x.y:z LEVEL Actual message
+
+The part before the colon is the number of the keyword to check. For
+example :msg:`1` means first keyword, :msg:`1.2` is the second child
+keyword of the first keyword, and so on.
+
+The part after the colon denotes the number of the message. For
+example :msg:`1:2` means the second message of the first keyword and
+:msg:`1.2:3` is the third message of the second child keyword of the
+first keyword. The message index is optional and defaults to :msg:`1`.
+
+Message level is specified before the actual message, and it can be
+any of the valid log levels in capital letters. If the level is not
+given it defaults to :msg:`INFO`.
+
+This syntax can be used multiple times to test multiple messages. It can be
+used together with :msg:`FAIL`, but it that case :msg:`FAIL` must be first.
+
+Examples::
+
+    LOG 1 Hello, world!
+    LOG 2.1:42 Some message LOG 2.2 Another message
+    LOG 2:2 WARN Warning, warning!
+    FAIL Error messagea LOG 1:2 Log message
 
 
-For example, the following documentation expects that the test case fails with the 
-message :msg:`Expected message`, and in addition, the second log message of the first keyword
-is :msg:`Log message`::
-
-    FAIL: Expected failure LOG 1:2 Log message
-
-The message index (the number after ":") is by default 1, so if you check the first
-log message of the given keyword, it may be omitted. 
 
