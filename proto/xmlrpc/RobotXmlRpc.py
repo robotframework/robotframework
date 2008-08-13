@@ -13,6 +13,13 @@ class RobotXmlRpc:
     def get_keyword_names(self):
         return self._library.get_keyword_names()
 
+    def get_keyword_arguments(self, name):
+        # TODO: Handle errors
+        return self._library.get_keyword_arguments(name)
+
+    def get_keyword_documentation(self, name):
+        return self._library.get_keyword_documentation(name)
+
     def run_keyword(self, name, args):
         try:
             result = self._library.run_keyword(name, args)

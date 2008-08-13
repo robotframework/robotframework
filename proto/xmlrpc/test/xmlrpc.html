@@ -1,0 +1,283 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+
+  <style type="text/css">
+html {
+  font-family: Arial,Helvetica,sans-serif;
+  background-color: white;
+  color: black;
+}
+p {
+  max-width: 60em;
+}
+table {
+  border-collapse: collapse;
+  empty-cells: show;
+  margin: 1em 0em;
+  border: 0.1em solid black;
+}
+th, td {
+  border-style: solid;
+  border-width: 0.05em 0.1em;
+  border-color: black;
+  padding: 0.1em 0.2em;
+  height: 1.5em;
+}
+th {
+  background-color: rgb(192, 192, 192);
+  color: black;
+  border-width: 0.1em;
+  font-weight: bold;
+  text-align: center;
+  text-transform: capitalize;
+  letter-spacing: 0.1em;
+}
+/* Widths of named columns */
+col.name {
+  width: 10em;
+}
+.action, .value, .arg {
+  width: 15em;
+}
+/* Properties for the name column 
+- td:first-child should work in CSS 2.1 avare browsers (tested in Firefox)
+- col.name is against specs but works in IE
+*/
+td:first-child, col.name {
+  background-color: rgb(240, 240, 240);
+  text-transform: capitalize;
+  letter-spacing: 0.1em;
+}
+/* required for IE */
+th {
+  font-style: normal;
+}
+  </style>
+  <title>Robot Test Cases</title></head>
+<body>
+
+<h1>Robot Test Cases</h1>
+
+
+<table border="1">
+
+  <colgroup span="99"><col class="name"><col class="value" span="4"></colgroup>
+  <thead>
+  <tr>
+
+    <th>Setting</th>
+
+    <th>Value</th>
+
+    <th>Value</th>
+
+    <th>value</th>
+
+    <th>Value</th>
+
+  </tr>
+
+  </thead>
+  <tbody>
+
+    <tr>
+
+      <td>Library</td>
+
+      <td>RobotXmlRpc</td>
+
+      <td>localhost:${PORT}</td>
+
+      <td>WITH NAME</td>
+
+      <td>xmlrpc</td>
+
+    </tr>
+
+    <tr>
+
+      <td></td>
+
+      <td></td>
+
+      <td></td>
+
+      <td></td>
+
+      <td></td>
+
+    </tr>
+
+  </tbody>
+</table>
+
+
+<table border="1">
+
+  <colgroup span="99"><col class="name"><col class="value" span="4"></colgroup>
+  <thead>
+  <tr>
+
+    <th>Variable</th>
+
+    <th>Value</th>
+
+    <th>Value</th>
+
+    <th>Value</th>
+
+    <th>Value</th>
+
+  </tr>
+
+  </thead>
+  <tbody>
+
+    <tr>
+
+      <td>${PORT}<br></td><td>Must be given from cli</td>
+
+      
+
+      <td></td>
+
+      <td></td>
+
+      <td></td>
+
+    </tr>
+
+    <tr>
+
+      <td></td>
+
+      <td></td>
+
+      <td></td>
+
+      <td></td>
+
+      <td></td>
+
+    </tr>
+
+  </tbody>
+</table>
+
+
+<table border="1">
+
+  <colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
+  <thead>
+  <tr>
+
+    <th>Test Case</th>
+
+    <th>Action</th>
+
+    <th>Argument</th>
+
+    <th>Argument</th>
+
+    <th>Argument</th>
+
+
+
+  </tr>
+
+  </thead>
+  <tbody>
+
+    <tr>
+
+      <td>Calling&nbsp;Method</td>
+
+      <td>Do Nothing</td>
+
+      <td></td>
+
+      <td></td>
+
+      <td></td>
+
+
+
+    </tr>
+
+    <tr>
+
+      <td></td>
+
+      <td></td>
+
+      <td></td>
+
+      <td></td>
+
+      <td></td>
+
+
+
+    </tr>
+    <tr><td>Failure</td><td>[Documentation]</td><td>FAIL</td><td>This is the error we get</td><td></td></tr><tr><td></td><td>Failure</td><td>This is the error we get</td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Error</td><td>[Documentation]</td><td>FAIL</td><td>REGEXP: .*</td><td></td></tr><tr><td></td><td>xmlrpc.Error</td><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Logging</td><td>[Documentation]</td><td>LOG 1</td><td>Hello, world!</td><td></td></tr><tr><td></td><td>...</td><td>LOG 2 WARN</td><td>Warning, warning!!</td><td></td></tr><tr><td></td><td>Logging</td><td>Hello, world!</td><td></td><td></td></tr><tr><td></td><td>Logging</td><td>Warning, warning!!</td><td>WARN</td><td></td></tr>
+    <tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>One Argument</td><td>[Documentation]</td><td>LOG 1</td><td>arg: Something</td><td></td></tr>
+    <tr><td></td><td>One Argument</td><td>Something</td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Two Arguments</td><td>[Documentation]</td><td>LOG 1:1</td><td>arg1: 1st arg</td><td></td></tr><tr><td></td><td>...</td><td>LOG 1:2</td><td>arg2: 2nd arg</td><td></td></tr><tr><td></td><td>Two Arguments</td><td>1st arg</td><td>2nd arg</td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Arguments With Default Values</td><td>[Documentation]</td><td>LOG 1</td><td>1 | 2 | 3</td><td></td></tr><tr><td></td><td>...</td><td>LOG 2</td><td>1 | 2 | 42</td><td></td></tr><tr><td></td><td>...</td><td>LOG 3</td><td>1 | two | 42</td><td></td></tr><tr><td></td><td>Arguments With Default Values</td><td>1</td><td>2</td><td>3</td></tr><tr><td></td><td>Arguments With Default Values</td><td>1</td><td>2</td><td></td></tr><tr><td></td><td>Arguments With Default Values</td><td>1</td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Argument Types</td><td>Argument Should Be String</td><td>some string</td><td></td><td></td></tr><tr><td></td><td>Argument Should Be Integer</td><td>${42}</td><td></td><td></td></tr><tr><td></td><td>Argument Should Be Float</td><td>${3.14}</td><td></td><td></td></tr><tr><td></td><td>Argument Should Be Boolean</td><td>${TRUE}</td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Return String</td><td>${ret} =</td><td>Return String</td><td></td><td></td></tr><tr><td></td><td>Should Be Equal</td><td>${ret}</td><td>Hello, world!</td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Return Integer</td><td>${ret} =</td><td>Return Integer</td><td></td><td></td></tr><tr><td></td><td>Should Be Equal</td><td>${ret}</td><td>${42}</td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Return Float</td><td>${ret} =</td><td>Return Float</td><td><br></td><td></td></tr><tr><td></td><td>Should Be Equal</td><td>${ret}</td><td>${-0.5}</td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Return Multiple Values</td><td>${ret1}&nbsp;</td><td>${ret2}</td><td>${ret3}&nbsp;</td><td>${ret4} =</td></tr><tr><td></td><td>...</td><td>Return Multiple Values</td><td>some arg</td><td></td></tr><tr><td></td><td>Should Be Equal</td><td>${ret1}</td><td>first</td><td></td></tr><tr><td></td><td>Should Be Equal</td><td>${ret2}</td><td>${2}</td><td></td></tr><tr><td></td><td>Should Be Equal</td><td>${ret3}</td><td>${-3.14}</td><td></td></tr><tr><td></td><td>Should Be Equal</td><td>${ret4}</td><td>some arg</td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Return Object</td><td>${ret} =</td><td>Return Object</td><td></td><td></td></tr><tr><td></td><td>Should Be Equal</td><td>${ret}</td><td>String representation of MyObjectToReturn</td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Methods Inherited From Base Object Should Be Ignored</td><td>[Documentation]</td><td>FAIL</td><td>No keyword with name 'To S' found.</td><td></td></tr><tr><td></td><td>To S</td><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Private Methods Should Be Ignored</td><td>[Documentation]</td><td>FAIL</td><td>No keyword with name 'Private Method' found.</td><td></td></tr><tr><td></td><td>Private Method</td><td></td><td></td><td></td></tr>
+
+  </tbody>
+</table>
+
+
+<table border="1">
+
+  <colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
+  <thead>
+  <tr>
+
+    <th>Keyword</th>
+
+    <th>Action</th>
+
+    <th>Argument</th>
+
+    <th>Argument</th>
+
+    <th>Argument</th>
+
+  </tr>
+
+  </thead>
+  <tbody>
+
+    <tr>
+
+      <td></td>
+
+      <td></td>
+
+      <td></td>
+
+      <td></td>
+
+      <td></td>
+
+    </tr>
+
+    <tr>
+
+      <td></td>
+
+      <td></td>
+
+      <td></td>
+
+      <td></td>
+
+      <td></td>
+
+    </tr>
+
+  </tbody>
+</table>
+
+
+</body></html>

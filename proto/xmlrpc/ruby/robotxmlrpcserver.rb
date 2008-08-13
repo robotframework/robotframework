@@ -1,7 +1,6 @@
 require 'xmlrpc/server'
 require 'stringio'
 
-
 class RobotXmlRpcServer<XMLRPC::Server
   
   def initialize(library, port=8080)
@@ -13,14 +12,30 @@ class RobotXmlRpcServer<XMLRPC::Server
     serve
   end
 
-  def stop()
+  def stop
     shutdown
   end
 
   def get_keyword_names
     # TODO: We should only return methods implemented by @library, and possibly
     # by its parents, but not all implicit methods like to_s.
-    return @library.methods
+    lib_methods = @library.methods
+    obj_methods = Object.new.methods
+    lib_methods.reject {|x| obj_methods.index(x) }
+  end
+
+  def get_keyword_arguments(name)
+    args = [1, 2, 3, 4, 5, 6, 7, 8, 9]
+    begin
+      @library.send(name, args)
+    rescue => exception
+      puts exception.message
+      1
+    end
+  end
+
+  def get_keyword_documentation(name)
+    ''
   end
 
   def run_keyword(name, args)
@@ -50,13 +65,13 @@ class RobotXmlRpcServer<XMLRPC::Server
     end
   end
 
-  def redirect_stdout()
+  def redirect_stdout
     $original_stdout = $stdout.dup
     @output = ''
     $stdout = StringIO.new(@output)
   end
   
-  def restore_stdout()
+  def restore_stdout
     $save_for_close = $stdout
     $stdout = $original_stdout
     $save_for_close.close
