@@ -18,11 +18,11 @@ Installing using binary installer
     Binary installers are platform-specific and using them should be familiar 
     to anyone who has ever installed anything on that particular platform.
     
-Installing using `easy_install`
+Installing using Easy Install
 
-    If Python package managing tool `easy_install` is available, installation 
+    If Python package managing tool Easy Install is available, installation 
     is as easy as running command `easy_install robotframework`. For more 
-    information about `easy_install`, go to 
+    information about Easy Install, go to 
     http://peak.telecommunity.com/DevCenter/EasyInstall.
 
 

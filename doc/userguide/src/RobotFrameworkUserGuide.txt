@@ -192,6 +192,8 @@ Appendices
 .. _log level: `Log levels`_
 .. _library search path: `Adjusting library search path`_
 .. _module search path: `library search path`_
+.. _runner script: `Different runner scripts`_
+.. _runner scripts: `runner script`_
 
 .. 4. Extending
 
@@ -226,3 +228,4 @@ Appendices
 .. _Pygments: http://pygments.org/
 .. _distutils: http://docs.python.org/dist/dist.html
 .. _setuptools: http://peak.telecommunity.com/DevCenter/setuptools
+.. _Easy Install: http://peak.telecommunity.com/DevCenter/EasyInstall

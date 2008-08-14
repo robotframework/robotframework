@@ -25,15 +25,14 @@ There are three ways to install Robot Framework:
     one binary distribution available, a graphical installer for
     Windows.
 
-`Using easy_install`_
-    You can install Robot Framework also using easy_install (see
-    http://peak.telecommunity.com/DevCenter/EasyInstall). With the easy_install
-    installation can be done with command ``easy_install robotframework``.
+`Using Easy Install`_
+    If Python package managing tool `Easy Install`_ is available, installing Robot 
+    Framework is as easy as running command :cli:`easy_install robotframework`.
 
 Installation packages are available from
 http://downloads.robotframework.org, and source code from
 http://source.robotframework.org.  
-
+    
 Preconditions
 ~~~~~~~~~~~~~
 
@@ -53,11 +52,11 @@ homepage`_. There you can download a suitable installer and get more
 information about the installation and Python in general.
 
 .. Note:: The Python installation framework coming with Python 2.3
-   	  does not have functions for copying other than Python
-   	  files. Robot Framework itself can be installed with it
-   	  without problems, but, for example, installing certain
-   	  libraries may require copying those non-Python files
-   	  manually.
+          does not have functions for copying other than Python
+          files. Robot Framework itself can be installed with it
+          without problems, but, for example, installing certain
+          libraries may require copying those non-Python files
+          manually.
 
 
 Jython installation
@@ -167,23 +166,22 @@ Use the platform-specific way of installation. For example, on
 Windows, double click the provided executable and follow
 the instructions of the graphical installer.
 
-Using easy_install
+
+Using Easy Install
 ''''''''''''''''''
 
-Precondition is to have easy_install installed. See installation instructions 
-from http://peak.telecommunity.com/DevCenter/EasyInstall. When easy_install is 
-available, all you need to do is to run command ``easy_install robotframework``. 
-If you need to use a proxy to access the web, you can tell easy_install to use
-the proxy by setting the http_proxy environment variable to point to your proxy 
-server.
+An obvious precondition for using `Easy Install`_ is to have it installed. The 
+actual command to install Robot Framework with Easy Install is
+:cli:`easy_install robotframework`. 
 
-.. Note:: When using easy_install at Windows, you need to run 
-   ``robot_postinstall.py`` script after installation. There should be following 
-   line in the installation output where you can see the full path to the 
-   script. Run the script i.e. in below case 
-   ``python C:\APPS\Python25\Scripts\robot_postinstall.py``.
+.. Note:: When using Easy Install on Windows, you need to run :prog:`robot_postinstall.py`
+          script after the installation to configure `runner scripts`_. 
+          The installation output should define where the post-install script is
+          installed, and you can execute it by double clicking it or running it
+          from command line like :cli:`python C:\\Python25\\Scripts\\robot_postinstall.py`.
 
-      Installing robot_postinstall.py script to C:\\APPS\\Python25\\Scripts
+.. Note:: If you need to use a proxy to access the Internet, you can tell Easy
+          Install to use it by setting the :var:`http_proxy` environment variable.
 
 
 Manual installation
@@ -213,8 +211,8 @@ location is platform-specific, but on computers with a UNIX-like
 operating system, it is normally something like
 :path:`/usr/lib/[PythonVer]/site-packages`, and on Windows it is
 :path:`[PythonInstallationDir]\\Lib\\site-packages`. The actual Robot
-Framework code is in a directory named :path:`robot` or in case of easy_install
-in directory :path:`robotframework[RobotVer].py[PythonVer].egg/robot`
+Framework code is in a directory named :path:`robot`, or when `using Easy Install`_
+in directory :path:`robotframework[RobotVer].py[PythonVer].egg/robot`.
 
 Robot Framework runner scripts (:prog:`pybot`, :prog:`jybot` and
 :prog:`rebot`) are created and copied into another platform-specific
@@ -258,12 +256,12 @@ To verify that the installation and environment setup were successful,
 type::
 
   $ pybot --version 
-  Robot 2.0 (Python 2.5.1 on cygwin)
+  Robot 2.0.1 (Python 2.5.1 on cygwin)
 
 To verify that Robot Framework works also with Jython, type::
 
   $ jybot --version
-  Robot 2.2 (Jython 2.2 on java1.6.0_03)
+  Robot 2.0.1 (Jython 2.2 on java1.6.0_03)
 
 In both cases, the exact version and platform information can, of course,
 differ from these. On Jython, you may also get some notifications from
@@ -283,10 +281,11 @@ uninstalled via the mechanism offered by the operating system. For
 example, in Windows you simply go to ``Control Panel >
 Add/Remove Programs``, where Robot Framework is listed under Python.
 
-If uninstallation fails somehow or you have used easy_install, Robot Framework 
+If uninstallation fails somehow or you have `used Easy Install`__, Robot Framework 
 can be uninstalled by removing the `framework code and runner scripts`__ 
 manually.
 
+__ `Using Easy Install`_
 __ `Where files are installed`_
 
 
