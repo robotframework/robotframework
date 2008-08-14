@@ -70,7 +70,7 @@ Options:
  -t --test name *         Select test cases to run by name. Name is case and
                           space insensitive and it can also be a simple pattern
                           where '*' matches anything and '?' matches any char.
-                          If using '*' amd '?' in the console is problematic
+                          If using '*' and '?' in the console is problematic
                           see --escape and --argumentfile.
  -s --suite name *        Select test suites to run by name. When this option
                           is used with --test, --include or --exclude, only
@@ -97,14 +97,14 @@ Options:
                           have a tag set with --critical. Tag can be a pattern.
     --runmode mode        Possible values are 'random:test', 'random:suite',  
                           'random:all' and 'exitonfailure'. Any other value is 
-                          ignored. First three change te execution order of 
+                          ignored. First three change the execution order of 
                           suites or tests (or both). 'exitonfailure' causes the
                           execution of tests to be stopped if a critical test
                           fails.  
  -v --variable name:value *  Set variables in the test data. Only scalar
                           variables are supported and name is given without 
                           '${}'. See --escape for how to use special characters
-                          and --variablefile for a more powerfull variable
+                          and --variablefile for a more powerful variable
                           setting mechanism that allows also list variables.
                           Examples:
                           -\\-variable str:Hello  =>  ${str} = 'Hello'
@@ -150,7 +150,7 @@ Options:
                           'report-20070503-154410.html'.
     --splitoutputs level  Split output and log files from specified suite
                           level. This makes generated files smaller and lower
-                          level files available immediatelly when a respective
+                          level files available immediately when a respective
                           test suite is executed. Top level files have links to
                           lower level files for easy navigation. 
     --logtitle title      Title for the generated test log. The default title
@@ -216,7 +216,7 @@ Options:
                           'on'    - use colors in unixes but not in Windows
                           'off'   - never use colors
                           'force' - always use colors (also in Windows)
-    --colormonitor param  Deprecated. Use --monitorcolors intead.
+    --colormonitor param  Deprecated. Use --monitorcolors instead.
  -P --pythonpath path *   Additional locations (directories, ZIPs, JARs) where
                           to search test libraries from when they are imported.
                           Multiple paths can be given by separating them with a

@@ -52,7 +52,7 @@ Options:
  -t --test name *         Select test cases by name. Name is case and space
                           insensitive and it can also be a simple pattern where
                           '*' matches anything and '?' matches any character.
-                          If using '*' amd '?' in the console is problematic
+                          If using '*' and '?' in the console is problematic
                           see --escape and --argumentfile.
  -s --suite name *        Select test suites by name. When this option is used
                           with --test, --include or --exclude, only test cases
@@ -166,7 +166,7 @@ Options:
                           optional (e.g. '20071001151242268' is ok too) and
                           parts from milliseconds to hours can be omitted if
                           they are zero (e.g. '2007-10-01'). If this option is
-                          not used, starttime of combined reports is 'N/A'.
+                          not used, start time of combined reports is 'N/A'.
     --endtime timestamp   Same as --starttime but for ending time. If both 
                           options are used, elapsed time is calculated based on
                           them. Otherwise it is calculated by adding elapsed 
@@ -176,7 +176,7 @@ Options:
                           'on'    - use colors in unixes but not in Windows
                           'off'   - never use colors
                           'force' - always use colors (also in Windows)
-    --colormonitor param  Deprecated. Use --monitorcolors intead.
+    --colormonitor param  Deprecated. Use --monitorcolors instead.
  -E --escape what:with *  Escape characters which are problematic in console.
                           'what' is the name of the character to escape and
                           'with' is the string to escape it with. Note that
