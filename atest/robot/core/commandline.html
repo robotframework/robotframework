@@ -1,9 +1,7 @@
-
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html>
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<meta name="generator" content="RobotIDE" /> 
+<html><head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="generator" content="RobotIDE"> 
 <style type="text/css">
 html {
   font-family: Arial,Helvetica,sans-serif;
@@ -56,16 +54,15 @@ th {
   font-style: normal;
 }
 </style>
-<title>Commandline</title>
-</head>
+<title>Commandline</title></head>
+
+
 <body>
 <h1>Commandline</h1>
 
 <table border="1">
-<colgroup span="99">
-<col class="name">
-<col class="value" span="4"></colgroup>
-<tr>
+<colgroup span="99"><col class="name"><col class="value" span="4"></colgroup>
+<tbody><tr>
 <th>Setting</th>
 <th>Value</th>
 <th>Value</th>
@@ -74,7 +71,10 @@ th {
 </tr>
 <tr>
 <td>Documentation</td>
-<td>Testing Robot's command line functionality. Functionality tested elsewere:\n + filtering by tags (--include/--exclude)\n + filtering by names (--test/--suite)\n + --MonitorColors/Width\n + --critical/--noncritical\n + --loglevel</td>
+<td>Testing Robot's command line functionality. Functionality tested
+elsewere:\n + filtering by tags (--include/--exclude)\n + filtering by
+names (--test/--suite)\n + --MonitorColors/Width\n +
+--critical/--noncritical\n + --loglevel</td>
 <td></td>
 <td></td>
 <td></td>
@@ -121,13 +121,11 @@ th {
 <td></td>
 <td></td>
 </tr>
-</table>
+</tbody></table>
 
 <table border="1">
-<colgroup span="99">
-<col class="name">
-<col class="value" span="4"></colgroup>
-<tr>
+<colgroup span="99"><col class="name"><col class="value" span="4"></colgroup>
+<tbody><tr>
 <th>Variable</th>
 <th>Value</th>
 <th>Value</th>
@@ -190,14 +188,11 @@ th {
 <td></td>
 <td></td>
 </tr>
-</table>
+</tbody></table>
 
 <table border="1">
-<colgroup span="99">
-<col class="name">
-<col class="action">
-<col class="arg" span="3"></colgroup>
-<tr>
+<colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
+<tbody><tr>
 <th>Test Case</th>
 <th>Action</th>
 <th>Argument</th>
@@ -438,7 +433,9 @@ th {
 <tr>
 <td><a name="test_OutputsIntoDifferentDirs">Outputs Into Different Dirs</a></td>
 <td>Run Tests Without Processing Output</td>
-<td>--outputdir ::invalid:: -o ${MYOUTDIR}${/}o${/}o.xml -r ${MYOUTDIR}${/}r${/}r.html -l ${MYOUTDIR}${/}l${/}l.html --summary ${MYOUTDIR}${/}s.htm</td>
+<td>--outputdir ::invalid:: -o ${MYOUTDIR}${/}o${/}o.xml -r
+${MYOUTDIR}${/}r${/}r.html -l ${MYOUTDIR}${/}l${/}l.html --summary
+${MYOUTDIR}${/}s.htm</td>
 <td>${TESTFILE}</td>
 <td></td>
 </tr>
@@ -662,7 +659,8 @@ th {
 <tr>
 <td></td>
 <td>Check Stderr Matches Regexp</td>
-<td>\\[ ERROR \\] Opening debug file '.*debug.txt' failed and writing to debug file is disabled. Error: (IOError|FileNotFoundException): .*</td>
+<td>\\[ ERROR \\] Opening debug file '.*debug.txt' failed and writing
+to debug file is disabled. Error: (IOError|FileNotFoundException): .*</td>
 <td></td>
 <td></td>
 </tr>
@@ -814,9 +812,11 @@ th {
 <td></td>
 </tr>
 <tr>
-<td><a name="test_DefaultName,Doc&Metadata">Default Name, Doc & Metadata</a></td>
+<td><a name="test_DefaultName,Doc&amp;Metadata">Default Name, Doc &amp; Metadata</a></td>
 <td>[Documentation]</td>
-<td>Using default values (read from xml) for name, doc and metadata. Tests are run together to have less Robot runs with same input i.e. to have faster execution.</td>
+<td>Using default values (read from xml) for name, doc and metadata.
+Tests are run together to have less Robot runs with same input i.e. to
+have faster execution.</td>
 <td></td>
 <td></td>
 </tr>
@@ -884,16 +884,21 @@ th {
 <td></td>
 </tr>
 <tr>
-<td><a name="test_OverridingName,Doc&MetadataAndEscaping">Overriding Name, Doc & Metadata And Escaping</a></td>
+<td><a name="test_OverridingName,Doc&amp;MetadataAndEscaping">Overriding Name, Doc &amp; Metadata And Escaping</a></td>
 <td>[Documentation]</td>
-<td>Overriding name, doc and metadata. Also testing escaping values. Tests are run together to have less Robot runs with same input i.e. to have faster execution.</td>
+<td>Overriding name, doc and metadata. Also testing escaping values.
+Tests are run together to have less Robot runs with same input i.e. to
+have faster execution.</td>
 <td></td>
 <td></td>
 </tr>
 <tr>
 <td></td>
 <td>Run Tests</td>
-<td>-N this_is_overridden_next --name my_COOL_NameEXEX --doc Even_cooooler_docEXQU --metadata something:New --metadata two_parts:one_part -M esc:STQUDOAMHAEXEX --escape star:ST -E quest:QU -E dollar:DO -E amp:AM -E hash:HA -E exclam:EX</td>
+<td>-N this_is_overridden_next --name my_COOL_NameEXEX --doc
+Even_cooooler_docEXQU --metadata something:New --metadata
+two_parts:one_part -M esc:STQUDOAMHAEXEX --escape star:ST -E quest:QU
+-E dollar:DO -E amp:AM -E hash:HA -E exclam:EX</td>
 <td>${TESTFILE}</td>
 <td></td>
 </tr>
@@ -1118,7 +1123,8 @@ th {
 <td></td>
 <td>Create File</td>
 <td>${MYOUTDIR}${/}invalid.html</td>
-<td>&lt;html&gt;&lt;body&gt;&lt;table&gt;&lt;th&gt;&lt;/th&gt;&lt;tr&gt;&lt;/tr&gt; &lt;/tr&gt;&lt;/table&gt;&lt;/body&gt;&lt;/html&gt;</td>
+<td>&lt;html&gt;&lt;body&gt;&lt;table&gt;&lt;th&gt;&lt;/th&gt;&lt;tr&gt;&lt;/tr&gt;
+&lt;/tr&gt;&lt;/table&gt;&lt;/body&gt;&lt;/html&gt;</td>
 <td></td>
 </tr>
 <tr>
@@ -1307,7 +1313,7 @@ th {
 <td></td>
 <td>Starts</td>
 <td>${help}</td>
-<td>Robot -- Automating the h*ck out of it\n \n Version: \</td>
+<td>Robot Framework -- A keyword-driven test automation framework\n\nVersion: \</td>
 <td></td>
 </tr>
 <tr>
@@ -1779,14 +1785,11 @@ th {
 <td></td>
 <td></td>
 </tr>
-</table>
+</tbody></table>
 
 <table border="1">
-<colgroup span="99">
-<col class="name">
-<col class="action">
-<col class="arg" span="3"></colgroup>
-<tr>
+<colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
+<tbody><tr>
 <th>Keyword</th>
 <th>Action</th>
 <th>Argument</th>
@@ -1968,7 +1971,6 @@ th {
 <td></td>
 <td></td>
 </tr>
-</table>
+</tbody></table>
 
-</body>
-</html>
+</body></html>
