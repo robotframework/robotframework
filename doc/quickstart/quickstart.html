@@ -1,6 +1,5 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html>
-<head>
+<html><head>
   <style type="text/css">
 html {
   font-family: Arial,Helvetica,sans-serif;
@@ -52,13 +51,12 @@ td:first-child, col.name {
 th {
   font-style: normal;
 }</style>
-  <title>Robot Framework Quick Start Guide</title>
-</head>
+  <title>Robot Framework Quick Start Guide</title></head>
+
 <body>
 <h1>Robot Framework Quick Start Guide</h1>
 <h2>Installation</h2>
-See from <a
- href="http://robotframework.googlecode.com/svn/trunk/doc/userguide/RobotFrameworkUserGuide.html#installation-and-uninstallation">Robot
+See from <a href="http://robotframework.googlecode.com/svn/trunk/doc/userguide/RobotFrameworkUserGuide.html#installation-and-uninstallation">Robot
 Framework User Guide</a>.
 <h2>Overview</h2>
 Robot Framework is a keyword-based test automation tool.&nbsp; Tests
@@ -73,8 +71,7 @@ Web, command line, Web services, etc.<br>
 <h2>Running This Demo</h2>
 To run this demo, open a command shell, cd to this directory, and type
 the following command at the command line:<br>
-<pre>pybot quickstart.html<span
- style="font-family: Arial,Helvetica,sans-serif;"><br></span></pre>
+<pre>pybot quickstart.html<span style="font-family: Arial,Helvetica,sans-serif;"><br></span></pre>
 The tests in this file will execute and generate the following reports:<br>
 <ul>
   <li>report.html: the test results summary<br>
@@ -130,8 +127,7 @@ The following table has two tests:<br>
   <li>User Cannot Log In With Bad Password</li>
 </ul>
 <table border="1">
-  <colgroup span="99"><col class="name"><col class="action"><col
- class="arg" span="2"></colgroup> <thead> <tr>
+  <colgroup span="99"><col class="name"><col class="action"><col class="arg" span="2"></colgroup> <thead> <tr>
     <th>Test Case</th>
     <th>Action</th>
     <th>Data</th>
@@ -206,15 +202,13 @@ English rather than like an automated test.&nbsp; Robot Framework uses
 a keyword approach that supports writing tests that capture the essence
 of the actions and expectations in natural language.<br>
 <h2>Keywords</h2>
-Robot Framework supports three types of keywords:<span
- style="font-weight: bold; font-style: italic;"><br>
+Robot Framework supports three types of keywords:<span style="font-weight: bold; font-style: italic;"><br>
 <br>
 Built-in
 keywords</span>: the keywords included with Robot Framework,
 including generally useful keywords such as "Get Time" and "Should Be
 Equal".&nbsp; For a complete list of the available built-in keywords
-see <a
- href="http://code.google.com/p/robotframework/wiki/BuiltInLibrary">BuiltInLibrary</a>
+see <a href="http://code.google.com/p/robotframework/wiki/BuiltInLibrary">BuiltInLibrary</a>
 wikipage. <span style="font-weight: bold; font-style: italic;"><br>
 <br>
 User-defined
@@ -273,8 +267,7 @@ to create reusable steps for common action sequences.&nbsp;
 User-defined keywords can also help the test author keep the tests as
 readable as possible.<br>
 <h2>Libraries</h2>
-Robot Framework comes with a <a
- href="http://code.google.com/p/robotframework/wiki/BuiltInLibrary">handful
+Robot Framework comes with a <a href="http://code.google.com/p/robotframework/wiki/BuiltInLibrary">handful
 of libraries</a> including an
 OperatingSystem library to support common operating system functions,
 and a Screenshot library for taking screenshots.&nbsp; In addition,
@@ -316,7 +309,7 @@ table like so:<br>
   <tbody valign="top">
     <tr>
       <td>Test Setup</td>
-      <td><br>
+      <td>Clear Login Database<br>
       </td>
       <td><br>
       </td>
@@ -337,14 +330,33 @@ table like so:<br>
 Similarly you can use the Suite Setup and Suite Teardown settings to
 specify actions to be executed before and after an entire test suite
 executes.<br>
-<h2><br>
-</h2>
-<h2>Creating a Library</h2>
-<iframe src="./testlibs/LoginLibrary.py" height="50%" width="60%"></iframe>
-<h2>Variables</h2>
 <table border="1">
-  <colgroup span="99"> <col class="name"> <col class="value" span="4">
-  </colgroup> <thead> <tr>
+  <thead><tr>
+    <th>Keyword</th>
+    <th>Action</th>
+    <th>Argument</th>
+    <th>Argument</th>
+  </tr>
+  </thead> <tbody>
+    <tr>
+      <td>Clear Login Database<br>
+      </td>
+      <td>Remove File</td>
+      <td>${DATABASE FILE}</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td><br>
+      </td>
+      <td></td>
+      <td></td>
+      <td></td>
+    </tr>
+    
+  </tbody>
+</table><span style="font-weight: bold; font-style: italic;"></span><h2>Variables</h2>
+<table border="1">
+  <colgroup span="99"><col class="name"><col class="value" span="4"></colgroup> <thead> <tr>
     <th>Variable</th>
     <th>Value</th>
     <th>Value</th>
@@ -353,9 +365,9 @@ executes.<br>
   </tr>
   </thead> <tbody>
     <tr>
-      <td><br>
+      <td>${DATABASE FILE}<br>
       </td>
-      <td><br>
+      <td>${TEMPDIR}${/}robotframework-quickstart-db.txt<br>
       </td>
       <td><br>
       </td>
@@ -378,5 +390,5 @@ executes.<br>
     </tr>
   </tbody>
 </table>
-</body>
-</html>
+<h2>Creating a Library</h2>
+<iframe src="./testlibs/LoginLibrary.py" height="50%" width="60%"></iframe></body></html>
