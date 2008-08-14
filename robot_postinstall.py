@@ -1,5 +1,6 @@
 import os
 import sys
+from distutils.sysconfig import get_python_lib
 
 
 def egg_preinstall(package_path, scripts):
@@ -12,11 +13,7 @@ def egg_preinstall(package_path, scripts):
     exactly equal.
     """
     robot_dir = _get_robot_target_dir(os.path.basename(package_path))
-    if robot_dir is None: 
-        print """Could not find site-packages from PYTHONPATH! 
-Robot Framework start-up scripts needs to be updated manually."""
-    else:
-        _update_scripts(scripts, package_path, robot_dir)
+    _update_scripts(scripts, package_path, robot_dir)
 
 
 def generic_install(script_names, script_dir, robot_dir):
@@ -32,7 +29,7 @@ def windows_binary_install():
     """Updates start-up scripts.
     
     Executed as the last part of Windows binary installation started by 
-    running 'robot-<version>.win32.exe'.
+    running 'robotframework-<version>.win32.exe'.
     """
     scripts = ['pybot.bat','jybot.bat', 'rebot.bat']
     script_dir = os.path.join(sys.prefix, 'Scripts')
@@ -67,33 +64,17 @@ def windows_binary_uninstall():
 
 
 def _get_robot_target_dir(version):
-    site_packages = _get_site_packages()
-    if site_packages is None:
-        return None
     major, minor = sys.version_info[0:2]
     version = version.replace('-', '_').replace('_', '-', 1)
     egg_name = '%s-py%s.%s.egg' % (version, major, minor)
-    return os.path.join(site_packages, egg_name, 'robot')
-    
-def _get_site_packages():
-    # There might be multiple 'site-packages' in sys.path. In that case, 
-    # the 'site-packages' under python installation directory is returned.
-    potential_paths = [ path for path in sys.path if
-                        os.path.basename(path) == 'site-packages']
-    if len(potential_paths) == 1:
-        return potential_paths[0]
-    for path in potential_paths:
-        if 'os.py' in os.listdir(os.path.dirname(path)):
-            return path
-    return None
-
+    return os.path.join(get_python_lib(), egg_name, 'robot')
 
 def _get_robot_location():
     try:
         import robot
         return os.path.dirname(os.path.abspath(robot.__file__))
     except:
-        return os.path.join(sys.prefix, 'Lib', 'site-packages', 'robot')
+        return os.path.join(get_python_lib(), 'robot')
 
 def _update_scripts(scripts, script_dir, robot_dir, python_exe=sys.executable):
     jython_exe, how_found = _find_jython()
