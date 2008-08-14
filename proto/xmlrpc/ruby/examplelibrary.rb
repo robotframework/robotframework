@@ -28,6 +28,15 @@ class RubyLibraryExample
     puts "#{arg1} | #{arg2} | #{arg3}"
   end
 
+  def variable_number_of_arguments(*args)
+    args.join(' ')
+  end
+
+  def required_defaults_and_varargs(required, default='world', *varargs)
+    args = [required, default] + varargs
+    args.join(' ')
+  end
+
   def argument_should_be_string(arg)
     argument_type_should_be(arg, String)
   end

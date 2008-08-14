@@ -17,24 +17,30 @@ class RobotXmlRpcServer<XMLRPC::Server
   end
 
   def get_keyword_names
-    # TODO: We should only return methods implemented by @library, and possibly
-    # by its parents, but not all implicit methods like to_s.
+    # Would be better to include all methods actually implemeted by @library
     lib_methods = @library.methods
     obj_methods = Object.new.methods
     lib_methods.reject {|x| obj_methods.index(x) }
   end
 
   def get_keyword_arguments(name)
-    args = [1, 2, 3, 4, 5, 6, 7, 8, 9]
-    begin
-      @library.send(name, args)
-    rescue => exception
-      puts exception.message
-      1
+    # This algorithm doesn't return correct number of maximum arguments when 
+    # args have default values. It seems that there's no easy way to get that
+    # in formation in Ruby, see e.g. http://www.ruby-forum.com/topic/147614.
+    # Additionally it would be much better to return real argument names 
+    # because that information could be used to create librart documentation. 
+    arity = @library.method(name).arity
+    if arity >= 0
+      return ['arg'] * arity
+    else
+      return ['arg'] * (arity.abs - 1) + ['*args']
     end
   end
 
   def get_keyword_documentation(name)
+    # Is there a way to implement this? Would mainly allow creating a library
+    # documentation, but if real argument names are not got that's probably
+    # not so relevant.
     ''
   end
 
@@ -48,10 +54,12 @@ class RobotXmlRpcServer<XMLRPC::Server
       result['status'] = 'FAIL'
       result['message'] = exception.message
     end
-    result['output'] = restore_stdout()
+    result['output'] = restore_stdout
     return result
   end
   
+  private
+
   def convert_value_for_xmlrpc(return_value)
     # Because ruby's xmlrpc does not support sending nil values, 
     # those have to be converter to empty strings
