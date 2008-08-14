@@ -15,7 +15,7 @@
 
 #!/usr/bin/env python
 
-"""Robot -- Automating the h*ck out of it
+"""Robot Framework -- A keyword-driven test automation framework
 
 Version: %(VERSION)s
 
@@ -24,25 +24,33 @@ Usage:  pybot [options] data_sources
   or:   interpreter /path/robot/runner.py [options] data_sources
   or:   python -m robot.runner [options] data_sources
 
-Robot is a keyword-driven test automation framework with an easy-to-use tabular
-syntax for creating test cases. Test data can be either in HTML or TSV format. 
-Robot's testing capabilities can be easily extended by test libraries
-having a very simple API. Libraries can be implemented either with Python or
-Java (requires Jython). Users can also create new keywords from existing ones
-using the same simple syntax that is used for creating test cases.
+Robot Framework is a Python-based keyword-driven test automation framework for
+acceptance level testing and acceptance test-driven development (ATDD). It has
+an easy-to-use tabular syntax for creating test cases and its testing
+capabilities can be extended by test libraries implemented either with Python
+or Java. Users can also create new keywords from existing ones using the same
+simple syntax that is used for creating test cases.
 
-Robot has two start-up scripts, 'pybot' and 'jybot', which run it on Python and
-Jython interpreters, respectively. Alternatively it is possible to directly
-call robot/runner.py script using selected interpreter.
+Robot Framework has two start-up scripts, 'pybot' and 'jybot', which run it on
+Python and Jython interpreters, respectively. Alternatively it is possible to
+directly call 'robot/runner.py' script using a selected interpreter.
 
-Data sources given to Robot are either test case files or directories
+Data sources given to Robot Framework are either test case files or directories
 containing them and/or other directories. Single test case file creates a test
 suite containing all the test cases in it and a directory containing test case
-files creates a higher level test suite with test case files or other 
-directories as sub test suites. If multiple data sources are given, a virtual 
+files creates a higher level test suite with test case files or other
+directories as sub test suites. If multiple data sources are given, a virtual
 test suite containing suites generated from given data sources is created.
 
-For more information see Robot wiki at https://cwiki.nokia.com/RobotFramework/.
+By default Robot Framework creates an XML output file and a log and a report in
+HTML format, but this can be configured using various options listed below.
+Outputs in HTML format are for human consumption and XML output for integration
+with other systems. XML outputs can also be combined and otherwise further
+processed with Rebot tool. Run 'rebot --help' for more information.
+
+Robot Framework is open source software released under Apache License 2.0.
+Its copyrights are owned and development supported by Nokia Siemens Networks.
+For more information about the framework see http://robotframework.org.
 
 Options:
 
