@@ -103,10 +103,10 @@ The following table has two tests:
    =====================================  =================================  ==============  ==============
    User can create an account and log in  Create Valid User                  fred            password
    \                                      Attempt to Login with Credentials  fred            password
-   \                                      Status Should Be                   Logged in       \
+   \                                      Status Should Be                   Logged In       \
    User cannot log in with bad password   Create Valid User                  betty           password
    \                                      Attempt to Login with Credentials  betty           wrong
-   \                                      Status Should Be                   Access denied   \    
+   \                                      Status Should Be                   Access Denied   \    
    =====================================  =================================  ==============  ==============
 
 
