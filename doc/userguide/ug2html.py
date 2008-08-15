@@ -22,6 +22,7 @@ created by 'package.py'.
 
 import os
 import sys
+import shutil
 
 # First part of this file is Pygments configuration and actual
 # documentation generation follows it.
@@ -119,12 +120,13 @@ directives.register_directive('sourcecode', pygments_directive)
 #
 # This code is based on rst2html.py distributed with docutils
 #
+try:
+    import locale
+    locale.setlocale(locale.LC_ALL, '')
+except:
+    pass
+
 def create_userguide():
-    try:
-        import locale
-        locale.setlocale(locale.LC_ALL, '')
-    except:
-        pass
     from docutils.core import publish_cmdline
 
     print 'Creating user guide ...'
@@ -156,7 +158,6 @@ RobotFrameworkUserGuide.html
 # Create user guide distribution directory
 #
 def create_distribution():
-    import shutil
     import re
     from urlparse import urlparse
 
@@ -230,9 +231,10 @@ def create_distribution():
 #
 def create_zip():
     ugdir = create_distribution()
-    zip_directory(ugdir)
+    zip_distribution(ugdir)
+
     
-def zip_directory(dirpath):
+def zip_distribution(dirpath):
     """Generic zipper. Used also by qs2html.py """
     from zipfile import ZipFile, ZIP_DEFLATED
 
@@ -245,6 +247,8 @@ def zip_directory(dirpath):
             print "Adding '%s'" % path
             zipfile.write(path)
     zipfile.close()
+    print 'Removing distribution directory', dirpath
+    shutil.rmtree(dirpath)
     print os.path.abspath(zippath)
 
 
