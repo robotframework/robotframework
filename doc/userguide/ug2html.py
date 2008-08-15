@@ -229,13 +229,17 @@ def create_distribution():
 # Create a zip distribution package
 #
 def create_zip():
+    ugdir = create_distribution()
+    zip_directory(ugdir)
+    
+def zip_directory(dirpath):
+    """Generic zipper. Used also by qs2html.py """
     from zipfile import ZipFile, ZIP_DEFLATED
 
-    ugdir = create_distribution()
-    zippath = os.path.normpath(ugdir) + '.zip'
     print 'Creating zip package ...'
+    zippath = os.path.normpath(dirpath) + '.zip'
     zipfile = ZipFile(zippath, 'w', compression=ZIP_DEFLATED)
-    for root, dirs, files in os.walk(ugdir):
+    for root, _, files in os.walk(dirpath):
         for name in files:
             path = os.path.join(root, name)
             print "Adding '%s'" % path
