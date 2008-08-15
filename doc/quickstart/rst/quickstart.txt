@@ -1,0 +1,181 @@
+=====================================
+  Robot Framework Quick Start Guide
+=====================================
+
+Introduction
+============
+
+Installation
+------------
+
+See from Robot Framework User Guide.
+
+Overview
+--------
+
+Robot Framework is a keyword-based test automation tool.  Tests live
+in html test files and make use of keywords written in libraries to
+drive the software under test.
+
+[TODO: create picture]
+
+Because Robot Framework is flexible and extensible, it is ideally
+suited to testing complex software with a variety of interfaces: GUI,
+Web, command line, Web services, etc.  
+
+Running This Demo
+-----------------
+
+To run this demo, open a command shell, cd to this directory, and type
+the following command at the command line:
+
+   pybot quickstart.html
+
+The tests in this file will execute and generate the following reports:
+
+report.html
+   the test results summary
+log.html
+   the test results details
+output.xml
+   the test results in a portable XML format for integration with other tools
+
+Open report.html in your browser, then click on the links to explore
+the results. The report.html file links to the log.html file.
+
+Introducing the Sample Application
+----------------------------------
+
+The sample application for this paper is a variation on a classic
+login example: it’s a command-line based authentication server written
+in Python. At the moment, the sample application allows a user to do
+two things:
+
+   * Create an account with a password
+   * Log in with a valid user name and password
+
+Attempting to log in with a non-existent user account or with an invalid password results in the same error message:
+
+    Access Denied
+
+Creating a user account results in the message:
+
+    SUCCESS
+
+And logging in successfully results in the message:
+
+    Logged In
+
+So, for example, if I issue the following commands, I should get the following responses:
+
+    > login fred password
+    Access Denied
+
+    > create fred password
+    SUCCESS
+
+    > login fred password
+    Logged In
+
+That’s all our little sample application does just at the moment.
+It’s not much.  But it’s a start.  Now we need to add some new
+capabilities to it.
+
+
+First Tests
+===========
+
+The following table has two tests:
+
+   * User Can Create An Account And Login
+   * User Cannot Log In With Bad Password
+
+
+.. table:: 
+   :class: example
+
+   =====================================  =================================  ==============  ==============
+               Test Case                                Action                  Argument        Argument
+   =====================================  =================================  ==============  ==============
+   User can create an account and log in  Create Valid User                  fred            password
+   \                                      Attempt to Login with Credentials  fred            password
+   \                                      Status Should Be                   Logged in       \
+   User cannot log in with bad password   Create Valid User                  betty           password
+   \                                      Attempt to Login with Credentials  betty           wrong
+   \                                      Status Should Be                   Access denied   \    
+   =====================================  =================================  ==============  ==============
+
+
+Notice that these tests read almost like a manual test written in English rather than like an automated test.  Robot Framework uses a keyword approach that supports writing tests that capture the essence of the actions and expectations in natural language.
+
+
+
+Keywords
+========
+
+Robot Framework supports three types of keywords:
+
+Built-in keywords
+   The keywords included with Robot Framework,
+   including generally useful keywords such as "Get Time" and "Should
+   Be Equal".  For a complete list of the available built-in keywords
+   see BuiltInLibrary wikipage.
+
+Library keywords
+   Keywords defined in a Robot Framework Library. (More on Libraries
+   later. The keyword "Create Valid User" from the previous tests is a
+   User Keyword.)
+ 
+User-defined keywords
+   Keywords defined in a Keywords table either in the test file, or in
+   a resources file for a test suite. (More on test suites later.)
+   For example:
+
+Keyword Action Argument Argument
+Create Valid User
+[Arguments]
+${username} ${password}
+
+Create User
+${username} ${password}
+
+Status Should Be
+SUCCESS
+
+User-defined keywords can include actions defined by other user-defined keywords, built-in keywords, or library keywords.  As you can see from this example, User-defined keywords can take parameters.  They can also return values and even contain FOR loops. For now, the important thing to know is that User-defined keywords enable test creators to create reusable steps for common action sequences.  User-defined keywords can also help the test author keep the tests as readable as possible.
+Libraries
+Robot Framework comes with a handful of libraries including an OperatingSystem library to support common operating system functions, and a Screenshot library for taking screenshots.  In addition, there are other libraries distributed in separate open source projects, such as a Selenium library for Web testing.
+
+Setting Value
+Library OperatingSystem
+Library testlibs/LoginLibrary.py
+Test Suites
+Setup and Teardown
+If you want a set of actions to occur before and after each test executes, use the Test Setup and Test Teardown settings in the Setting table like so:
+Setting Value Value  Value
+Test Setup Clear Login Database
+
+
+Test Teardown 
+
+
+Similarly you can use the Suite Setup and Suite Teardown settings to specify actions to be executed before and after an entire test suite executes.
+Keyword Action Argument Argument
+Clear Login Database
+Remove File ${DATABASE FILE} 
+
+
+Variables
+Variable Value Value Value Value
+${DATABASE FILE}
+${TEMPDIR}${/}robotframework-quickstart-db.txt
+
+
+
+
+
+
+
+
+Creating a Library
+
