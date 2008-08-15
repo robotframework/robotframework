@@ -6,7 +6,7 @@ class LoginLibrary:
 
     def __init__(self):
         sut_path = os.path.join(os.path.dirname(__file__),
-                                '..', 'sut', 'src', 'auth.py')
+                                '..', 'sut', 'login.py')
         self._command_prefix = '%s %s ' % (sys.executable, sut_path)
         self._status = ''
 
