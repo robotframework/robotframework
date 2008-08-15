@@ -178,4 +178,12 @@ ${TEMPDIR}${/}robotframework-quickstart-db.txt
 
 
 Creating a Library
+==================
+
+Here is an example test library:
+
+.. sourcecode:: python 
+   
+  testlibs/LoginLibrary.py 
+
 
