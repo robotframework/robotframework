@@ -1,0 +1,24 @@
+.. Roles to use in text like :rolename:`text`. Styled in userguide.css.
+   - var    variables
+   - opt    settings in setting table (e.g. Force Tags), tc/kw tables 
+            (e.g [Documentation]) and command line options (e.g. --name)
+   - prog   program names (e.g. rebot, risto.py)
+   - code   programming code
+   - msg    test case status and message, as well as log messages and levels
+   - name   keyword, library, test case, test suite, etc. names
+   - cli    command line examples (note that options alone use opt)
+   - path   file names and paths
+   - misc   everything else (synonym to ``text``)
+ 
+.. role:: var
+.. role:: opt
+.. role:: prog
+.. role:: code
+.. role:: msg  
+.. role:: name
+.. role:: cli
+.. role:: path
+.. role:: misc
+
+
+
