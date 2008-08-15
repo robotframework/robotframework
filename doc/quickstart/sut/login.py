@@ -2,7 +2,7 @@ import sys
 import os
 import tempfile
 
-DATABASE_FILE = os.path.join(tempfile.gettempdir(), 'robot-quickstart-db.txt')
+DATABASE_FILE = os.path.join(tempfile.gettempdir(), 'robotframework-quickstart-db.txt')
 
 
 class DataBase(object):
