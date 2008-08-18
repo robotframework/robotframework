@@ -306,6 +306,8 @@ table.example caption, table.tsv-example caption, table.tabular caption {
 table.example th, table.example td, table.tsv-example td {
     border: 1px solid #808080;
     height: 1.2em;
+    font-family: arial,helvetica,sans-serif;
+    font-size: 0.9em;
 }
 table.example th {
     background: #E0E0E0;
