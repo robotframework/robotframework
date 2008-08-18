@@ -116,13 +116,13 @@ capabilities to it.
 Test cases
 ==========
 
-TODO: Peke
+First tests
+-----------
 
 The following table has two tests:
 
-   * User Can Create An Account And Login
-   * User Cannot Log In With Bad Password
-
+   * User can create an account and log in
+   * User cannot log in with bad password
 
 .. table:: 
    :class: example
@@ -142,12 +142,40 @@ The following table has two tests:
 
 Notice that these tests read almost like a manual test written in
 English rather than like an automated test. Robot Framework uses a
-keyword approach that supports writing tests that capture the essence
-of the actions and expectations in natural language.
+keyword-driven approach that supports writing tests that capture the
+essence of the actions and expectations in natural language. The text
+in the :name:`action column` denotes the keyword to be used and
+subsequent columns have possible arguments.
 
 
-Data-Driven Test Cases
-----------------------
+Higher-level tests
+------------------
+
+Test cases can also be created using only high-level keywords that
+take no arguments. This style allows using totally free text which is
+suitable for communication even with most non-technical customers or
+other stakeholers. Robot Framework does not enforce any particular
+style for writing test cases, but it is possible to use for example
+*given-when-then* style popularized by *behaviour-driven development
+(BDD)*.
+
+
+.. table:: 
+   :class: example
+
+   ========================  ===========================================
+           Test Case                           Steps             
+   ========================  ===========================================
+   User can change password  Given a user has a valid account
+   \                         When she changes her password
+   \                         Then she can log in with the new password
+   \                         And she cannot use the old password anymore
+   ========================  ===========================================
+
+
+
+Data-driven tests
+-----------------
 
 .. table:: 
    :class: example
@@ -215,19 +243,29 @@ For example:
 .. table:: 
    :class: example
 
-   ===============================================  ================  =======================================  =================
-         Keyword                                          Action          Argument                               Argument
-   ===============================================  ================  =======================================  =================
-   Clear Login Database                             Remove File       ${DATABASE_FILE}                         \
-   \                                                \                 \                                        \
-   Create Valid User                                [Arguments]       ${username}                              ${password}
-   \                                                Create User       ${username}                              ${password}
-   \                                                Status Should Be  SUCCESS                                  \
-   \                                                \                 \                                        \
-   Creating user with invalid password should fail  [Arguments]       ${password}                              ${expected_error}
-   \                                                Create User       example                                  ${password}
-   \                                                Status Should Be  Creating user failed: ${expected_error}  \
-   ===============================================  ================  =======================================  =================
+   ===============================================  =================================  =======================================  =================
+                   Keyword                                         Action                              Argument                      Argument
+   ===============================================  =================================  =======================================  =================
+   Clear login database                             Remove file                        ${DATABASE_FILE}                         \
+   \                                                \                                  \                                        \
+   Create valid user                                [Arguments]                        ${username}                              ${password}
+   \                                                Create user                        ${username}                              ${password}
+   \                                                Status should be                   SUCCESS                                  \
+   \                                                \                                  \                                        \
+   Creating user with invalid password should fail  [Arguments]                        ${password}                              ${expected_error}
+   \                                                Create user                        example                                  ${password}
+   \                                                Status should be                   Creating user failed: ${expected_error}  \
+   \                                                \                                  \                                        \
+   Given a user has a valid account                 Create valid user                  ${USERNAME}                              ${PASSWORD}
+   \                                                \                                  \                                        \
+   When she changes her password                    Change password                    ${USERNAME}                              ${PASSWORD2}
+   \                                                \                                  \                                        \
+   Then she can log in with the new password        Attempt to login with credentials  ${USERNAME}                              ${PASSWORD2}
+   \                                                Status should be                   SUCCESS                                  \
+   \                                                \                                  \                                        \
+   And she cannot use the old password anymore      Attempt to login with credentials  ${USERNAME}                              ${PASSWORD}
+   \                                                Status should be                   Access Denied                            \
+   ===============================================  =================================  =======================================  =================
 
 
 User-defined keywords can include actions defined by other

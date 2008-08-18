@@ -477,29 +477,39 @@ Processed by unicode2rstsubs.py, part of Docutils:
 <p class="topic-title first">Table of Contents</p>
 <ul class="simple">
 <li><a class="reference internal" href="#introduction" id="id1">Introduction</a><ul>
-<li><a class="reference internal" href="#installation" id="id2">Installation</a></li>
-<li><a class="reference internal" href="#overview" id="id3">Overview</a></li>
-<li><a class="reference internal" href="#running-this-demo" id="id4">Running This Demo</a></li>
-<li><a class="reference internal" href="#introducing-the-sample-application" id="id5">Introducing the Sample Application</a></li>
+<li><a class="reference internal" href="#robot-framework-overview" id="id2">Robot Framework overview</a></li>
+<li><a class="reference internal" href="#installation" id="id3">Installation</a></li>
+<li><a class="reference internal" href="#running-this-demo" id="id4">Running this demo</a></li>
+<li><a class="reference internal" href="#introducing-the-sample-application" id="id5">Introducing the sample application</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#first-tests" id="id6">First Tests</a></li>
-<li><a class="reference internal" href="#keywords" id="id7">Keywords</a></li>
-<li><a class="reference internal" href="#libraries" id="id8">Libraries</a></li>
-<li><a class="reference internal" href="#test-suites" id="id9">Test Suites</a></li>
-<li><a class="reference internal" href="#setup-and-teardown" id="id10">Setup and Teardown</a></li>
-<li><a class="reference internal" href="#data-driven-test-cases" id="id11">Data-Driven Test Cases</a></li>
-<li><a class="reference internal" href="#creating-a-library" id="id12">Creating a Library</a></li>
+<li><a class="reference internal" href="#test-cases" id="id6">Test cases</a><ul>
+<li><a class="reference internal" href="#first-tests" id="id7">First tests</a></li>
+<li><a class="reference internal" href="#higher-level-tests" id="id8">Higher-level tests</a></li>
+<li><a class="reference internal" href="#data-driven-tests" id="id9">Data-driven tests</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#keywords" id="id10">Keywords</a><ul>
+<li><a class="reference internal" href="#built-in-keywords" id="id11">Built-in keywords</a></li>
+<li><a class="reference internal" href="#library-keywords" id="id12">Library keywords</a></li>
+<li><a class="reference internal" href="#user-defined-keywords" id="id13">User-defined keywords</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#variables" id="id14">Variables</a></li>
+<li><a class="reference internal" href="#organizing-test-cases" id="id15">Organizing test cases</a><ul>
+<li><a class="reference internal" href="#test-suites" id="id16">Test suites</a></li>
+<li><a class="reference internal" href="#setup-and-teardown" id="id17">Setup and teardown</a></li>
+<li><a class="reference internal" href="#using-tags" id="id18">Using tags</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#creating-test-libraries" id="id19">Creating test libraries</a></li>
 </ul>
 </div>
 <div class="section" id="introduction">
 <h1><a class="toc-backref" href="#id1">Introduction</a></h1>
-<div class="section" id="installation">
-<h2><a class="toc-backref" href="#id2">Installation</a></h2>
-<p>See from Robot Framework User Guide.</p>
-</div>
-<div class="section" id="overview">
-<h2><a class="toc-backref" href="#id3">Overview</a></h2>
+<p>TODO: Janne</p>
+<div class="section" id="robot-framework-overview">
+<h2><a class="toc-backref" href="#id2">Robot Framework overview</a></h2>
 <p>Robot Framework is a keyword-based test automation tool.  Tests live
 in html test files and make use of keywords written in libraries to
 drive the software under test.</p>
@@ -508,8 +518,20 @@ drive the software under test.</p>
 suited to testing complex software with a variety of interfaces: GUI,
 Web, command line, Web services, etc.</p>
 </div>
+<div class="section" id="installation">
+<h2><a class="toc-backref" href="#id3">Installation</a></h2>
+<ol class="arabic simple" start="0">
+<li>Python &amp; Jython</li>
+<li>Windows installer</li>
+<li>Source distribution</li>
+<li>easy_install</li>
+<li>$PATH</li>
+<li>pybot --version</li>
+</ol>
+<p>See from Robot Framework User Guide.</p>
+</div>
 <div class="section" id="running-this-demo">
-<h2><a class="toc-backref" href="#id4">Running This Demo</a></h2>
+<h2><a class="toc-backref" href="#id4">Running this demo</a></h2>
 <p>To run this demo, open a command shell, cd to this directory, and type
 the following command at the command line:</p>
 <blockquote>
@@ -525,9 +547,12 @@ pybot quickstart.html</blockquote>
 </dl>
 <p>Open report.html in your browser, then click on the links to explore
 the results. The report.html file links to the log.html file.</p>
+<p>Mention some command line options, pybot --help
+for example</p>
+<p>pybot --outputdir reports --log mylog.html --name</p>
 </div>
 <div class="section" id="introducing-the-sample-application">
-<h2><a class="toc-backref" href="#id5">Introducing the Sample Application</a></h2>
+<h2><a class="toc-backref" href="#id5">Introducing the sample application</a></h2>
 <p>The sample application for this paper is a variation on a classic
 login example: it’s a command-line based authentication server written
 in Python. At the moment, the sample application allows a user to do
@@ -549,25 +574,31 @@ SUCCESS</blockquote>
 Logged In</blockquote>
 <p>So, for example, if I issue the following commands, I should get the following responses:</p>
 <blockquote>
-<p>&gt; login fred password
+<p>&gt; python sut/login.py login fred password
 Access Denied</p>
-<p>&gt; create fred password
+<p>&gt; python sut/login.py create fred password
 SUCCESS</p>
-<p>&gt; login fred password
+<p>&gt; python sut/login.py login fred password
 Logged In</p>
 </blockquote>
 <p>That’s all our little sample application does just at the moment.
 It’s not much.  But it’s a start.  Now we need to add some new
 capabilities to it.</p>
+<ul class="simple">
+<li>Add a mention of password reqirements</li>
+<li>Mention the application path</li>
+</ul>
 </div>
 </div>
+<div class="section" id="test-cases">
+<h1><a class="toc-backref" href="#id6">Test cases</a></h1>
 <div class="section" id="first-tests">
-<h1><a class="toc-backref" href="#id6">First Tests</a></h1>
+<h2><a class="toc-backref" href="#id7">First tests</a></h2>
 <p>The following table has two tests:</p>
 <blockquote>
 <ul class="simple">
-<li>User Can Create An Account And Login</li>
-<li>User Cannot Log In With Bad Password</li>
+<li>User can create an account and log in</li>
+<li>User cannot log in with bad password</li>
 </ul>
 </blockquote>
 <table border="1" class="example docutils">
@@ -600,6 +631,11 @@ capabilities to it.</p>
 <td>Logged In</td>
 <td></td>
 </tr>
+<tr><td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
 <tr><td>User cannot log in with bad password</td>
 <td>Create Valid User</td>
 <td>betty</td>
@@ -618,181 +654,49 @@ capabilities to it.</p>
 </tbody>
 </table>
 <p>Notice that these tests read almost like a manual test written in
-English rather than like an automated test.  Robot Framework uses a
-keyword approach that supports writing tests that capture the essence
-of the actions and expectations in natural language.</p>
+English rather than like an automated test. Robot Framework uses a
+keyword-driven approach that supports writing tests that capture the
+essence of the actions and expectations in natural language. The text
+in the <span class="name">action column</span> denotes the keyword to be used and
+subsequent columns have possible arguments.</p>
 </div>
-<div class="section" id="keywords">
-<h1><a class="toc-backref" href="#id7">Keywords</a></h1>
-<p>Robot Framework supports three types of keywords:</p>
-<dl class="docutils">
-<dt><strong>Built-in keywords</strong></dt>
-<dd>The keywords included with Robot Framework,
-including generally useful keywords such as &quot;Get Time&quot; and &quot;Should
-Be Equal&quot;.  For a complete list of the available built-in keywords
-see BuiltInLibrary wikipage.</dd>
-<dt><strong>Library keywords</strong></dt>
-<dd>Keywords defined in a Robot Framework Library. (More on Libraries
-later. The keyword &quot;Create Valid User&quot; from the previous tests is a
-User Keyword.)</dd>
-<dt><strong>User-defined keywords</strong></dt>
-<dd>Keywords defined in a Keywords table either in the test file, or in
-a resources file for a test suite. (More on test suites later.)
-For example:</dd>
-</dl>
+<div class="section" id="higher-level-tests">
+<h2><a class="toc-backref" href="#id8">Higher-level tests</a></h2>
+<p>Test cases can also be created using only high-level keywords that
+take no arguments. This style allows using totally free text which is
+suitable for communication even with most non-technical customers or
+other stakeholers. Robot Framework does not enforce any particular
+style for writing test cases, but it is possible to use for example
+<em>given-when-then</em> style popularized by <em>behaviour-driven development
+(BDD)</em>.</p>
 <table border="1" class="example docutils">
 <colgroup>
-<col width="29%" />
-<col width="29%" />
-<col width="21%" />
-<col width="21%" />
+<col width="36%" />
+<col width="64%" />
 </colgroup>
 <thead valign="bottom">
-<tr><th class="head">Keyword</th>
-<th class="head">Action</th>
-<th class="head">Argument</th>
-<th class="head">Argument</th>
+<tr><th class="head">Test Case</th>
+<th class="head">Steps</th>
 </tr>
 </thead>
 <tbody valign="top">
-<tr><td>Create Valid User</td>
-<td>[Arguments]</td>
-<td>${username}</td>
-<td>${password}</td>
+<tr><td>User can change password</td>
+<td>Given a user has a valid account</td>
 </tr>
 <tr><td></td>
-<td>Create User</td>
-<td>${username}</td>
-<td>${password}</td>
+<td>When she changes her password</td>
 </tr>
 <tr><td></td>
-<td>Status Should Be</td>
-<td>SUCCESS</td>
-<td></td>
-</tr>
-</tbody>
-</table>
-<p>User-defined keywords can include actions defined by other
-user-defined keywords, built-in keywords, or library keywords.  As you
-can see from this example, User-defined keywords can take parameters.
-They can also return values and even contain FOR loops. For now, the
-important thing to know is that User-defined keywords enable test
-creators to create reusable steps for common action sequences.
-User-defined keywords can also help the test author keep the tests as
-readable as possible.</p>
-</div>
-<div class="section" id="libraries">
-<h1><a class="toc-backref" href="#id8">Libraries</a></h1>
-<p>Robot Framework comes with a handful of libraries including an
-OperatingSystem library to support common operating system functions,
-and a Screenshot library for taking screenshots.  In addition, there
-are other libraries distributed in separate open source projects, such
-as a Selenium library for Web testing.</p>
-<table border="1" class="example docutils">
-<colgroup>
-<col width="38%" />
-<col width="62%" />
-</colgroup>
-<thead valign="bottom">
-<tr><th class="head">Setting</th>
-<th class="head">Value</th>
-</tr>
-</thead>
-<tbody valign="top">
-<tr><td>Library</td>
-<td>OperatingSystem</td>
-</tr>
-<tr><td>Library</td>
-<td>testlibs/LoginLibrary.py</td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="section" id="test-suites">
-<h1><a class="toc-backref" href="#id9">Test Suites</a></h1>
-</div>
-<div class="section" id="setup-and-teardown">
-<h1><a class="toc-backref" href="#id10">Setup and Teardown</a></h1>
-<p>If you want a set of actions to occur before and after each test
-executes, use the Test Setup and Test Teardown settings in the Setting
-table like so:</p>
-<table border="1" class="example docutils">
-<colgroup>
-<col width="38%" />
-<col width="62%" />
-</colgroup>
-<thead valign="bottom">
-<tr><th class="head">Setting</th>
-<th class="head">Value</th>
-</tr>
-</thead>
-<tbody valign="top">
-<tr><td>Test Setup</td>
-<td>Clear Login Database</td>
-</tr>
-<tr><td>Test Teardown</td>
-<td></td>
-</tr>
-</tbody>
-</table>
-<p>Similarly you can use the Suite Setup and Suite Teardown settings to
-specify actions to be executed before and after an entire test suite
-executes.</p>
-<table border="1" class="example docutils">
-<colgroup>
-<col width="29%" />
-<col width="28%" />
-<col width="23%" />
-<col width="20%" />
-</colgroup>
-<thead valign="bottom">
-<tr><th class="head">Keyword</th>
-<th class="head">Action</th>
-<th class="head">Argument</th>
-<th class="head">Argument</th>
-</tr>
-</thead>
-<tbody valign="top">
-<tr><td>Clear Login Database</td>
-<td>Remove File</td>
-<td>${DATABASE_FILE}</td>
-<td></td>
+<td>Then she can log in with the new password</td>
 </tr>
 <tr><td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-</tbody>
-</table>
-<table border="1" class="example docutils">
-<colgroup>
-<col width="22%" />
-<col width="78%" />
-</colgroup>
-<thead valign="bottom">
-<tr><th class="head">Variable</th>
-<th class="head">Value</th>
-</tr>
-</thead>
-<tbody valign="top">
-<tr><td>${DATABASE_FILE}</td>
-<td>${TEMPDIR}${/}robotframework-quickstart-db.txt</td>
-</tr>
-<tr><td></td>
-<td></td>
-</tr>
-<tr><td>${PWD_INVALID_LENGTH}</td>
-<td>Password must be 7-12 characters long</td>
-</tr>
-<tr><td>${PWD_INVALID_CONTENT}</td>
-<td>Password must be a combination of lowercase and uppercase letters and numbers</td>
+<td>And she cannot use the old password anymore</td>
 </tr>
 </tbody>
 </table>
 </div>
-<div class="section" id="data-driven-test-cases">
-<h1><a class="toc-backref" href="#id11">Data-Driven Test Cases</a></h1>
+<div class="section" id="data-driven-tests">
+<h2><a class="toc-backref" href="#id9">Data-driven tests</a></h2>
 <table border="1" class="example docutils">
 <colgroup>
 <col width="29%" />
@@ -840,12 +744,59 @@ executes.</p>
 </tr>
 </tbody>
 </table>
+</div>
+</div>
+<div class="section" id="keywords">
+<h1><a class="toc-backref" href="#id10">Keywords</a></h1>
+<p>TODO: Peke</p>
+<div class="section" id="built-in-keywords">
+<h2><a class="toc-backref" href="#id11">Built-in keywords</a></h2>
+<p>The keywords included with Robot Framework,
+including generally useful keywords such as &quot;Get Time&quot; and &quot;Should
+Be Equal&quot;.  For a complete list of the available built-in keywords
+see BuiltInLibrary wikipage.</p>
+</div>
+<div class="section" id="library-keywords">
+<h2><a class="toc-backref" href="#id12">Library keywords</a></h2>
+<p>Keywords defined in a Robot Framework Library. (More on Libraries
+later. The keyword &quot;Create Valid User&quot; from the previous tests is a
+User Keyword.)</p>
+<p>Robot Framework comes with a handful of libraries including an
+OperatingSystem library to support common operating system functions,
+and a Screenshot library for taking screenshots.  In addition, there
+are other libraries distributed in separate open source projects, such
+as a Selenium library for Web testing.</p>
 <table border="1" class="example docutils">
 <colgroup>
-<col width="39%" />
+<col width="38%" />
+<col width="62%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Setting</th>
+<th class="head">Value</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>Library</td>
+<td>OperatingSystem</td>
+</tr>
+<tr><td>Library</td>
+<td>testlibs/LoginLibrary.py</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="user-defined-keywords">
+<h2><a class="toc-backref" href="#id13">User-defined keywords</a></h2>
+<p>Keywords defined in a Keywords table either in the test file, or in
+a resources file for a test suite. (More on test suites later.)
+For example:</p>
+<table border="1" class="example docutils">
+<colgroup>
+<col width="35%" />
+<col width="24%" />
+<col width="29%" />
 <col width="13%" />
-<col width="33%" />
-<col width="14%" />
 </colgroup>
 <thead valign="bottom">
 <tr><th class="head">Keyword</th>
@@ -855,26 +806,205 @@ executes.</p>
 </tr>
 </thead>
 <tbody valign="top">
+<tr><td>Clear login database</td>
+<td>Remove file</td>
+<td>${DATABASE_FILE}</td>
+<td></td>
+</tr>
+<tr><td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr><td>Create valid user</td>
+<td>[Arguments]</td>
+<td>${username}</td>
+<td>${password}</td>
+</tr>
+<tr><td></td>
+<td>Create user</td>
+<td>${username}</td>
+<td>${password}</td>
+</tr>
+<tr><td></td>
+<td>Status should be</td>
+<td>SUCCESS</td>
+<td></td>
+</tr>
+<tr><td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
 <tr><td>Creating user with invalid password should fail</td>
 <td>[Arguments]</td>
 <td>${password}</td>
 <td>${expected_error}</td>
 </tr>
 <tr><td></td>
-<td>Create User</td>
+<td>Create user</td>
 <td>example</td>
 <td>${password}</td>
 </tr>
 <tr><td></td>
-<td>Status Should Be</td>
+<td>Status should be</td>
 <td>Creating user failed: ${expected_error}</td>
+<td></td>
+</tr>
+<tr><td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr><td>Given a user has a valid account</td>
+<td>Create valid user</td>
+<td>${USERNAME}</td>
+<td>${PASSWORD}</td>
+</tr>
+<tr><td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr><td>When she changes her password</td>
+<td>Change password</td>
+<td>${USERNAME}</td>
+<td>${PASSWORD2}</td>
+</tr>
+<tr><td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr><td>Then she can log in with the new password</td>
+<td>Attempt to login with credentials</td>
+<td>${USERNAME}</td>
+<td>${PASSWORD2}</td>
+</tr>
+<tr><td></td>
+<td>Status should be</td>
+<td>SUCCESS</td>
+<td></td>
+</tr>
+<tr><td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr><td>And she cannot use the old password anymore</td>
+<td>Attempt to login with credentials</td>
+<td>${USERNAME}</td>
+<td>${PASSWORD}</td>
+</tr>
+<tr><td></td>
+<td>Status should be</td>
+<td>Access Denied</td>
 <td></td>
 </tr>
 </tbody>
 </table>
+<p>User-defined keywords can include actions defined by other
+user-defined keywords, built-in keywords, or library keywords.  As you
+can see from this example, User-defined keywords can take parameters.
+They can also return values and even contain FOR loops. For now, the
+important thing to know is that User-defined keywords enable test
+creators to create reusable steps for common action sequences.
+User-defined keywords can also help the test author keep the tests as
+readable as possible.</p>
 </div>
-<div class="section" id="creating-a-library">
-<h1><a class="toc-backref" href="#id12">Creating a Library</a></h1>
+</div>
+<div class="section" id="variables">
+<h1><a class="toc-backref" href="#id14">Variables</a></h1>
+<p>TODO: Janne</p>
+<table border="1" class="example docutils">
+<colgroup>
+<col width="22%" />
+<col width="78%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Variable</th>
+<th class="head">Value</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>${DATABASE_FILE}</td>
+<td>${TEMPDIR}${/}robotframework-quickstart-db.txt</td>
+</tr>
+<tr><td></td>
+<td></td>
+</tr>
+<tr><td>${PWD_INVALID_LENGTH}</td>
+<td>Password must be 7-12 characters long</td>
+</tr>
+<tr><td>${PWD_INVALID_CONTENT}</td>
+<td>Password must be a combination of lowercase and uppercase letters and numbers</td>
+</tr>
+</tbody>
+</table>
+<p>Built-in variables, cli, variable files</p>
+</div>
+<div class="section" id="organizing-test-cases">
+<h1><a class="toc-backref" href="#id15">Organizing test cases</a></h1>
+<p>TODO: Peke</p>
+<div class="section" id="test-suites">
+<h2><a class="toc-backref" href="#id16">Test suites</a></h2>
+<p>File and directory suites</p>
+</div>
+<div class="section" id="setup-and-teardown">
+<h2><a class="toc-backref" href="#id17">Setup and teardown</a></h2>
+<p>If you want a set of actions to occur before and after each test
+executes, use the Test Setup and Test Teardown settings in the Setting
+table like so:</p>
+<table border="1" class="example docutils">
+<colgroup>
+<col width="38%" />
+<col width="62%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Setting</th>
+<th class="head">Value</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>Test Setup</td>
+<td>Clear Login Database</td>
+</tr>
+<tr><td>Test Teardown</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>Similarly you can use the Suite Setup and Suite Teardown settings to
+specify actions to be executed before and after an entire test suite
+executes.</p>
+</div>
+<div class="section" id="using-tags">
+<h2><a class="toc-backref" href="#id18">Using tags</a></h2>
+<table border="1" class="example docutils">
+<colgroup>
+<col width="35%" />
+<col width="32%" />
+<col width="32%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Setting</th>
+<th class="head">Value</th>
+<th class="head">Value</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>Default Tags</td>
+<td>quickstart</td>
+<td>example</td>
+</tr>
+</tbody>
+</table>
+<p>Also for single test case, usages: filtering, critical tests, statistics</p>
+</div>
+</div>
+<div class="section" id="creating-test-libraries">
+<h1><a class="toc-backref" href="#id19">Creating test libraries</a></h1>
+<p>TODO: Janne</p>
 <p>Here is an example test library:</p>
 <div class="highlight"><pre><span class="k">import</span> <span class="nn">os</span>
 <span class="k">import</span> <span class="nn">sys</span>
@@ -911,7 +1041,7 @@ executes.</p>
 </div>
 <div class="footer">
 <hr class="footer" />
-Generated on: 2008-08-18 11:37 UTC.
+Generated on: 2008-08-18 21:58 UTC.
 
 </div>
 </body>
