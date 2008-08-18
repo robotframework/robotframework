@@ -1,8 +1,17 @@
+.. include:: <isonum.txt>
 .. include:: ../userguide/src/roles.txt
 
 =====================================
   Robot Framework Quick Start Guide
 =====================================
+
+| Copyright |copy| Nokia Siemens Networks 2008
+| Licensed under the Apache License, Version 2.0
+
+
+.. contents:: Table of Contents
+   :depth: 2
+
 
 Introduction
 ============
@@ -12,7 +21,6 @@ Installation
 
 See from Robot Framework User Guide.
 
-Role test: :var:`${var}`, :path:`/tm/foo`.
 
 Overview
 --------
@@ -227,9 +235,33 @@ executes.
    ================  ==============================================
 
 
+Data-Driven Test Cases
+======================
 
+.. table:: 
+   :class: example
 
+   ================================  ===============================================  =============  ==============================================
+                Test Case                                    Action                     Password                Expected error message
+   ================================  ===============================================  =============  ==============================================
+   Too short password                Creating user with invalid password should fail  abCD5          Password must be 7-12 characters long
+   Too long password                 Creating user with invalid password should fail  abCD567890123  Password must be 7-12 characters long
+   Password without small letters    Creating user with invalid password should fail  123DEFG        Password must contain small letters
+   Password without capital letters  Creating user with invalid password should fail  abcd56789      Password must contain capital letters
+   Password without numbers          Creating user with invalid password should fail  AbCdEfGh       Password must contain numbers
+   Password with special characters  Creating user with invalid password should fail  abCD56.        Password must contain only letters and numbers
+   ================================  ===============================================  =============  ==============================================
 
+.. table:: 
+   :class: example
+
+   ===============================================  ================  =======================================  =================
+                       Keyword                            Action                     Argument                      Argument
+   ===============================================  ================  =======================================  =================
+   Creating user with invalid password should fail  [Arguments]       ${password}                              ${expected_error}
+   \                                                Create User       example                                  ${password}
+   \                                                Status Should Be  Creating user failed: ${expected_error}  \
+   ===============================================  ================  =======================================  =================
 
 
 
