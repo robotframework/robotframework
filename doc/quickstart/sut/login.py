@@ -25,7 +25,10 @@ class DataBase(object):
         return dbfile, users
 
     def create_user(self, username, password):
-        user = User(username, password)
+        try:
+            user = User(username, password)
+        except ValueError, err:
+            return 'Creating user failed: %s' % err
         self._users[user.username] = user
         return 'SUCCESS'
 
@@ -48,9 +51,28 @@ class DataBase(object):
 class User(object):
 
     def __init__(self, username, password, status='Inactive'):
+        self._validate_password(password)
         self.username = username
         self.password = password
         self.status = status
+
+    def _validate_password(self, password):
+        if not (6 < len(password) < 13):
+            raise ValueError('Password must be 7-12 characters long')
+        has_lower = has_upper = has_number = has_invalid = False
+        for char in password:
+            if char.islower():
+                has_lower = True
+            elif char.isupper():
+                has_upper = True
+            elif char.isdigit():
+                has_number = True
+            else: 
+                has_invalid = True
+                break
+        if has_invalid or not (has_lower and has_upper and has_number):
+            raise ValueError('Password must be a combination of lowercase ' 
+                             'and uppercase letters and numbers')
 
     def serialize(self, dbfile):
         dbfile.write('%s\t%s\t%s\n' % 
