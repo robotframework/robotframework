@@ -16,14 +16,10 @@
 Introduction
 ============
 
-Installation
-------------
+TODO: Janne
 
-See from Robot Framework User Guide.
-
-
-Overview
---------
+Robot Framework overview
+------------------------
 
 Robot Framework is a keyword-based test automation tool.  Tests live
 in html test files and make use of keywords written in libraries to
@@ -35,7 +31,21 @@ Because Robot Framework is flexible and extensible, it is ideally
 suited to testing complex software with a variety of interfaces: GUI,
 Web, command line, Web services, etc.  
 
-Running This Demo
+
+Installation
+------------
+
+0. Python & Jython
+1. Windows installer
+2. Source distribution
+3. easy_install
+4. $PATH
+5. pybot --version
+
+See from Robot Framework User Guide.
+
+
+Running this demo
 -----------------
 
 To run this demo, open a command shell, cd to this directory, and type
@@ -55,7 +65,13 @@ output.xml
 Open report.html in your browser, then click on the links to explore
 the results. The report.html file links to the log.html file.
 
-Introducing the Sample Application
+Mention some command line options, pybot --help
+for example
+
+pybot --outputdir reports --log mylog.html --name  
+
+
+Introducing the sample application
 ----------------------------------
 
 The sample application for this paper is a variation on a classic
@@ -80,22 +96,27 @@ And logging in successfully results in the message:
 
 So, for example, if I issue the following commands, I should get the following responses:
 
-    > login fred password
+    > python sut/login.py login fred password
     Access Denied
 
-    > create fred password
+    > python sut/login.py create fred password
     SUCCESS
 
-    > login fred password
+    > python sut/login.py login fred password
     Logged In
 
 That’s all our little sample application does just at the moment.
 It’s not much.  But it’s a start.  Now we need to add some new
 capabilities to it.
 
+* Add a mention of password reqirements
+* Mention the application path
 
-First Tests
-===========
+
+Test cases
+==========
+
+TODO: Peke
 
 The following table has two tests:
 
@@ -112,6 +133,7 @@ The following table has two tests:
    User can create an account and log in  Create Valid User                  fred            P4ssw0rd
    \                                      Attempt to Login with Credentials  fred            P4ssw0rd
    \                                      Status Should Be                   Logged In       \
+   \                                      \                                  \               \
    User cannot log in with bad password   Create Valid User                  betty           P4ssw0rd
    \                                      Attempt to Login with Credentials  betty           wrong
    \                                      Status Should Be                   Access Denied   \    
@@ -119,56 +141,49 @@ The following table has two tests:
 
 
 Notice that these tests read almost like a manual test written in
-English rather than like an automated test.  Robot Framework uses a
+English rather than like an automated test. Robot Framework uses a
 keyword approach that supports writing tests that capture the essence
 of the actions and expectations in natural language.
 
+
+Data-Driven Test Cases
+----------------------
+
+.. table:: 
+   :class: example
+
+   ==================================  ===============================================  =============  ======================
+                Test Case                                    Action                       Password     Expected error message
+   ==================================  ===============================================  =============  ======================
+   Too short password                  Creating user with invalid password should fail  abCD5          ${PWD_INVALID_LENGTH}
+   Too long password                   Creating user with invalid password should fail  abCD567890123  ${PWD_INVALID_LENGTH}
+   Password without lowercase letters  Creating user with invalid password should fail  123DEFG        ${PWD_INVALID_CONTENT}
+   Password without capital letters    Creating user with invalid password should fail  abcd56789      ${PWD_INVALID_CONTENT}
+   Password without numbers            Creating user with invalid password should fail  AbCdEfGh       ${PWD_INVALID_CONTENT}
+   Password with special characters    Creating user with invalid password should fail  abCD56.        ${PWD_INVALID_CONTENT}
+   ==================================  ===============================================  =============  ======================
 
 
 Keywords
 ========
 
-Robot Framework supports three types of keywords:
+TODO: Peke
 
-**Built-in keywords**
-   The keywords included with Robot Framework,
-   including generally useful keywords such as "Get Time" and "Should
-   Be Equal".  For a complete list of the available built-in keywords
-   see BuiltInLibrary wikipage.
+Built-in keywords
+-----------------
 
-**Library keywords**
-   Keywords defined in a Robot Framework Library. (More on Libraries
-   later. The keyword "Create Valid User" from the previous tests is a
-   User Keyword.)
- 
-**User-defined keywords**
-   Keywords defined in a Keywords table either in the test file, or in
-   a resources file for a test suite. (More on test suites later.)
-   For example:
-
-.. table:: 
-   :class: example
-
-   ===================  ===================  ==============  ==============
-         Keyword               Action           Argument        Argument
-   ===================  ===================  ==============  ==============
-   Create Valid User    [Arguments]          ${username}     ${password}
-   \                    Create User          ${username}     ${password}
-   \                    Status Should Be     SUCCESS         \
-   ===================  ===================  ==============  ==============
-
-User-defined keywords can include actions defined by other
-user-defined keywords, built-in keywords, or library keywords.  As you
-can see from this example, User-defined keywords can take parameters.
-They can also return values and even contain FOR loops. For now, the
-important thing to know is that User-defined keywords enable test
-creators to create reusable steps for common action sequences.
-User-defined keywords can also help the test author keep the tests as
-readable as possible.
+The keywords included with Robot Framework,
+including generally useful keywords such as "Get Time" and "Should
+Be Equal".  For a complete list of the available built-in keywords
+see BuiltInLibrary wikipage.
 
 
-Libraries
-=========
+Library keywords
+----------------
+
+Keywords defined in a Robot Framework Library. (More on Libraries
+later. The keyword "Create Valid User" from the previous tests is a
+User Keyword.)
 
 Robot Framework comes with a handful of libraries including an
 OperatingSystem library to support common operating system functions,
@@ -188,11 +203,77 @@ as a Selenium library for Web testing.
    ===============  ========================
 
 
-Test Suites
-===========
 
-Setup and Teardown
-==================
+
+User-defined keywords
+---------------------
+
+Keywords defined in a Keywords table either in the test file, or in
+a resources file for a test suite. (More on test suites later.)
+For example:
+
+.. table:: 
+   :class: example
+
+   ===============================================  ================  =======================================  =================
+         Keyword                                          Action          Argument                               Argument
+   ===============================================  ================  =======================================  =================
+   Clear Login Database                             Remove File       ${DATABASE_FILE}                         \
+   \                                                \                 \                                        \
+   Create Valid User                                [Arguments]       ${username}                              ${password}
+   \                                                Create User       ${username}                              ${password}
+   \                                                Status Should Be  SUCCESS                                  \
+   \                                                \                 \                                        \
+   Creating user with invalid password should fail  [Arguments]       ${password}                              ${expected_error}
+   \                                                Create User       example                                  ${password}
+   \                                                Status Should Be  Creating user failed: ${expected_error}  \
+   ===============================================  ================  =======================================  =================
+
+
+User-defined keywords can include actions defined by other
+user-defined keywords, built-in keywords, or library keywords.  As you
+can see from this example, User-defined keywords can take parameters.
+They can also return values and even contain FOR loops. For now, the
+important thing to know is that User-defined keywords enable test
+creators to create reusable steps for common action sequences.
+User-defined keywords can also help the test author keep the tests as
+readable as possible.
+
+
+Variables
+=========
+
+TODO: Janne
+
+.. table:: 
+   :class: example
+
+   ======================  =============================================================================  
+       Variable                        Value
+   ======================  ============================================================================= 
+   ${DATABASE_FILE}        ${TEMPDIR}${/}robotframework-quickstart-db.txt
+   \                       \
+   ${PWD_INVALID_LENGTH}   Password must be 7-12 characters long
+   ${PWD_INVALID_CONTENT}  Password must be a combination of lowercase and uppercase letters and numbers 
+   ======================  =============================================================================
+
+
+Built-in variables, cli, variable files
+
+
+Organizing test cases
+=====================
+
+TODO: Peke
+
+Test suites
+-----------
+
+File and directory suites
+
+
+Setup and teardown
+------------------
 
 If you want a set of actions to occur before and after each test
 executes, use the Test Setup and Test Teardown settings in the Setting
@@ -213,63 +294,27 @@ Similarly you can use the Suite Setup and Suite Teardown settings to
 specify actions to be executed before and after an entire test suite
 executes.
 
-.. table:: 
-   :class: example
 
-   ====================  ===================  ================  ==============
-         Keyword               Action            Argument         Argument
-   ====================  ===================  ================  ==============
-   Clear Login Database  Remove File          ${DATABASE_FILE}  \
-   \                     \                    \                 \
-   ====================  ===================  ================  ==============
-
+Using tags
+----------
 
 .. table:: 
    :class: example
 
-   ======================  =============================================================================  
-       Variable                        Value
-   ======================  ============================================================================= 
-   ${DATABASE_FILE}        ${TEMPDIR}${/}robotframework-quickstart-db.txt
-   \                       \
-   ${PWD_INVALID_LENGTH}   Password must be 7-12 characters long
-   ${PWD_INVALID_CONTENT}  Password must be a combination of lowercase and uppercase letters and numbers 
-   ======================  =============================================================================
+   ============  ===========  ===========
+      Setting       Value        Value
+   ============  ===========  ===========
+   Default Tags  quickstart   example
+   ============  ===========  =========== 
+
+Also for single test case, usages: filtering, critical tests, statistics
 
 
-Data-Driven Test Cases
-======================
+Creating test libraries
+=======================
 
-.. table:: 
-   :class: example
+TODO: Janne
 
-   ==================================  ===============================================  =============  ======================
-                Test Case                                    Action                       Password     Expected error message
-   ==================================  ===============================================  =============  ======================
-   Too short password                  Creating user with invalid password should fail  abCD5          ${PWD_INVALID_LENGTH}
-   Too long password                   Creating user with invalid password should fail  abCD567890123  ${PWD_INVALID_LENGTH}
-   Password without lowercase letters  Creating user with invalid password should fail  123DEFG        ${PWD_INVALID_CONTENT}
-   Password without capital letters    Creating user with invalid password should fail  abcd56789      ${PWD_INVALID_CONTENT}
-   Password without numbers            Creating user with invalid password should fail  AbCdEfGh       ${PWD_INVALID_CONTENT}
-   Password with special characters    Creating user with invalid password should fail  abCD56.        ${PWD_INVALID_CONTENT}
-   ==================================  ===============================================  =============  ======================
-
-.. table:: 
-   :class: example
-
-   ===============================================  ================  =======================================  =================
-                       Keyword                            Action                     Argument                      Argument
-   ===============================================  ================  =======================================  =================
-   Creating user with invalid password should fail  [Arguments]       ${password}                              ${expected_error}
-   \                                                Create User       example                                  ${password}
-   \                                                Status Should Be  Creating user failed: ${expected_error}  \
-   ===============================================  ================  =======================================  =================
-
-
-
-
-Creating a Library
-==================
 
 Here is an example test library:
 
