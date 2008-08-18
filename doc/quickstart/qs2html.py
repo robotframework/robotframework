@@ -7,11 +7,10 @@ Usage:  qs2html.py [ cr(eate) | dist | zip ]
 create .. Creates the quick start guide in HTML format.
 
 dist .... Creates the quick start guide and copies it and all its dependencies 
-	  under directory named robotframework-quickstart
+          under directory named robotframework-quickstart
 
 zip ..... Uses 'dist' to create the quick start guide under a directory and then
-	  packages the directory into 'robotframework-quickstart.zip'
-
+          packages the directory into 'robotframework-quickstart.zip'
 """
 
 import sys
@@ -19,7 +18,7 @@ import os
 import shutil
 
 sys.path.insert(0, os.path.join('..', 'userguide'))
-import ug2html  # This initializes docutils and pygments
+import ug2html  # This also initializes docutils and pygments
 
 
 def create_quickstart():
@@ -45,10 +44,9 @@ quickstart.html
 def create_distribution():
     qspath = create_quickstart() # we are in doc/quickstart after this
     outdir = 'robotframework-quickstart'
-    files = { '.': [qspath],
-              'sut': ['login.py', 'test_login.py'],
-              'testlibs': ['LoginLibrary.py'] }
-
+    files = { '.': [qspath], 'testlibs': ['LoginLibrary.py'],
+              'sut': ['login.py', 'test_login.py'] }
+              
     print 'Creating distribution directory ...'
     if os.path.exists(outdir):
         print 'Removing previous distribution'
@@ -78,4 +76,3 @@ if __name__ == '__main__':
         actions[sys.argv[1]](*sys.argv[2:])
     except (KeyError, IndexError, TypeError):
         print __doc__
-
