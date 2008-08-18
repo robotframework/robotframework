@@ -6,10 +6,11 @@ Usage:  qs2html.py [ cr(eate) | dist | zip ]
 
 create .. Creates the quick start guide in HTML format.
 
-dist .... TODO
+dist .... Creates the quick start guide and copies it and all its dependencies 
+	  under directory named robotframework-quickstart
 
-zip ..... Uses 'create' to create the quick start guide and then packages
-          it into 'robotframework-quickstart.zip'
+zip ..... Uses 'dist' to create the quick start guide under a directory and then
+	  packages the directory into 'robotframework-quickstart.zip'
 
 """
 
@@ -77,3 +78,4 @@ if __name__ == '__main__':
         actions[sys.argv[1]](*sys.argv[2:])
     except (KeyError, IndexError, TypeError):
         print __doc__
+

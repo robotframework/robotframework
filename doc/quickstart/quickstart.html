@@ -1,394 +1,801 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html><head>
-  <style type="text/css">
-html {
-  font-family: Arial,Helvetica,sans-serif;
-  background-color: white;
-  color: black;
-}
-p {
-  max-width: 60em;
-}
-table {
-  border-collapse: collapse;
-  empty-cells: show;
-  margin: 1em 0em;
-  border: 0.1em solid black;
-}
-th, td {
-  border-style: solid;
-  border-width: 0.05em 0.1em;
-  border-color: black;
-  padding: 0.1em 0.2em;
-  height: 1.5em;
-}
-th {
-  background-color: rgb(192, 192, 192);
-  color: black;
-  border-width: 0.1em;
-  font-weight: bold;
-  text-align: center;
-  text-transform: capitalize;
-  letter-spacing: 0.1em;
-}
-/* Widths of named columns */
-col.name {
-  width: 10em;
-}
-.action, .value, .arg {
-  width: 15em;
-}
-/* Properties for the name column 
-- td:first-child should work in CSS 2.1 avare browsers (tested in Firefox)
-- col.name is against specs but works in IE
-*/
-td:first-child, col.name {
-  background-color: rgb(240, 240, 240);
-  text-transform: capitalize;
-  letter-spacing: 0.1em;
-}
-/* required for IE */
-th {
-  font-style: normal;
-}</style>
-  <title>Robot Framework Quick Start Guide</title></head>
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Docutils 0.5: http://docutils.sourceforge.net/" />
+<title>Robot Framework Quick Start Guide</title>
+<style type="text/css">
 
+/* Robot Framework User Guide Style Sheet
+
+   This stylesheet contains styles from restructuredText's default 
+   'html4css1.css' and after that modifications needed for Robot Framework User
+   Guide. These styles are added into the same file against suggestions at 
+   reST's stylesheet  howto mentioned below, because we want to be able to 
+   embed all styles into the created HTML file. Everything before 'Robot 
+   Framework User Guide Modifications' text is from 'html4css1.css' without 
+   any changes so that part can still be changed easily.
+*/
+
+
+/*
+:Author: David Goodger (goodger@python.org)
+:Id: $Id: html4css1.css 5196 2007-06-03 20:25:28Z wiemann $
+:Copyright: This stylesheet has been placed in the public domain.
+
+Default cascading style sheet for the HTML output of Docutils.
+
+See http://docutils.sf.net/docs/howto/html-stylesheets.html for how to
+customize this style sheet.
+*/
+
+/* used to remove borders from tables and images */
+.borderless, table.borderless td, table.borderless th {
+  border: 0 }
+
+table.borderless td, table.borderless th {
+  /* Override padding for "table.docutils td" with "! important".
+     The right padding separates the table cells. */
+  padding: 0 0.5em 0 0 ! important }
+
+.first {
+  /* Override more specific margin styles with "! important". */
+  margin-top: 0 ! important }
+
+.last, .with-subtitle {
+  margin-bottom: 0 ! important }
+
+.hidden {
+  display: none }
+
+a.toc-backref {
+  text-decoration: none ;
+  color: black }
+
+blockquote.epigraph {
+  margin: 2em 5em ; }
+
+dl.docutils dd {
+  margin-bottom: 0.5em }
+
+/* Uncomment (and remove this text!) to get bold-faced definition list terms
+dl.docutils dt {
+  font-weight: bold }
+*/
+
+div.abstract {
+  margin: 2em 5em }
+
+div.abstract p.topic-title {
+  font-weight: bold ;
+  text-align: center }
+
+div.admonition, div.attention, div.caution, div.danger, div.error,
+div.hint, div.important, div.note, div.tip, div.warning {
+  margin: 2em ;
+  border: medium outset ;
+  padding: 1em }
+
+div.admonition p.admonition-title, div.hint p.admonition-title,
+div.important p.admonition-title, div.note p.admonition-title,
+div.tip p.admonition-title {
+  font-weight: bold ;
+  font-family: sans-serif }
+
+div.attention p.admonition-title, div.caution p.admonition-title,
+div.danger p.admonition-title, div.error p.admonition-title,
+div.warning p.admonition-title {
+  color: red ;
+  font-weight: bold ;
+  font-family: sans-serif }
+
+/* Uncomment (and remove this text!) to get reduced vertical space in
+   compound paragraphs.
+div.compound .compound-first, div.compound .compound-middle {
+  margin-bottom: 0.5em }
+
+div.compound .compound-last, div.compound .compound-middle {
+  margin-top: 0.5em }
+*/
+
+div.dedication {
+  margin: 2em 5em ;
+  text-align: center ;
+  font-style: italic }
+
+div.dedication p.topic-title {
+  font-weight: bold ;
+  font-style: normal }
+
+div.figure {
+  margin-left: 2em ;
+  margin-right: 2em }
+
+div.footer, div.header {
+  clear: both;
+  font-size: smaller }
+
+div.line-block {
+  display: block ;
+  margin-top: 1em ;
+  margin-bottom: 1em }
+
+div.line-block div.line-block {
+  margin-top: 0 ;
+  margin-bottom: 0 ;
+  margin-left: 1.5em }
+
+div.sidebar {
+  margin: 0 0 0.5em 1em ;
+  border: medium outset ;
+  padding: 1em ;
+  background-color: #ffffee ;
+  width: 40% ;
+  float: right ;
+  clear: right }
+
+div.sidebar p.rubric {
+  font-family: sans-serif ;
+  font-size: medium }
+
+div.system-messages {
+  margin: 5em }
+
+div.system-messages h1 {
+  color: red }
+
+div.system-message {
+  border: medium outset ;
+  padding: 1em }
+
+div.system-message p.system-message-title {
+  color: red ;
+  font-weight: bold }
+
+div.topic {
+  margin: 2em }
+
+h1.section-subtitle, h2.section-subtitle, h3.section-subtitle,
+h4.section-subtitle, h5.section-subtitle, h6.section-subtitle {
+  margin-top: 0.4em }
+
+h1.title {
+  text-align: center }
+
+h2.subtitle {
+  text-align: center }
+
+hr.docutils {
+  width: 75% }
+
+img.align-left {
+  clear: left }
+
+img.align-right {
+  clear: right }
+
+ol.simple, ul.simple {
+  margin-bottom: 1em }
+
+ol.arabic {
+  list-style: decimal }
+
+ol.loweralpha {
+  list-style: lower-alpha }
+
+ol.upperalpha {
+  list-style: upper-alpha }
+
+ol.lowerroman {
+  list-style: lower-roman }
+
+ol.upperroman {
+  list-style: upper-roman }
+
+p.attribution {
+  text-align: right ;
+  margin-left: 50% }
+
+p.caption {
+  font-style: italic }
+
+p.credits {
+  font-style: italic ;
+  font-size: smaller }
+
+p.label {
+  white-space: nowrap }
+
+p.rubric {
+  font-weight: bold ;
+  font-size: larger ;
+  color: maroon ;
+  text-align: center }
+
+p.sidebar-title {
+  font-family: sans-serif ;
+  font-weight: bold ;
+  font-size: larger }
+
+p.sidebar-subtitle {
+  font-family: sans-serif ;
+  font-weight: bold }
+
+p.topic-title {
+  font-weight: bold }
+
+pre.address {
+  margin-bottom: 0 ;
+  margin-top: 0 ;
+  font-family: serif ;
+  font-size: 100% }
+
+pre.literal-block, pre.doctest-block {
+  margin-left: 2em ;
+  margin-right: 2em }
+
+span.classifier {
+  font-family: sans-serif ;
+  font-style: oblique }
+
+span.classifier-delimiter {
+  font-family: sans-serif ;
+  font-weight: bold }
+
+span.interpreted {
+  font-family: sans-serif }
+
+span.option {
+  white-space: nowrap }
+
+span.pre {
+  white-space: pre }
+
+span.problematic {
+  color: red }
+
+span.section-subtitle {
+  /* font-size relative to parent (h1..h6 element) */
+  font-size: 80% }
+
+table.citation {
+  border-left: solid 1px gray;
+  margin-left: 1px }
+
+table.docinfo {
+  margin: 2em 4em }
+
+table.docutils {
+  margin-top: 0.5em ;
+  margin-bottom: 0.5em }
+
+table.footnote {
+  border-left: solid 1px black;
+  margin-left: 1px }
+
+table.docutils td, table.docutils th,
+table.docinfo td, table.docinfo th {
+  padding-left: 0.5em ;
+  padding-right: 0.5em ;
+  vertical-align: top }
+
+table.docutils th.field-name, table.docinfo th.docinfo-name {
+  font-weight: bold ;
+  text-align: left ;
+  white-space: nowrap ;
+  padding-left: 0 }
+
+h1 tt.docutils, h2 tt.docutils, h3 tt.docutils,
+h4 tt.docutils, h5 tt.docutils, h6 tt.docutils {
+  font-size: 100% }
+
+ul.auto-toc {
+  list-style-type: none }
+
+
+/* **************************************** *
+ * Robot Framework User Guide Modifications * 
+ * **************************************** */
+
+/* Tables -- both those used with examples and those with normal tabular data */
+
+table.example, table.tsv-example, table.messages, table.tabular {
+    border: 1px solid #808080;
+    border-collapse: collapse;
+    empty-cell: show;
+    margin: 0.5em 2em;
+}
+table.example caption, table.tsv-example caption, table.tabular caption {
+    text-align: left;
+    padding-bottom: 0.5em;
+    font-style: italic;
+    margin: 0.5em 2em;
+}
+table.example th, table.example td, table.tsv-example td {
+    border: 1px solid #808080;
+    height: 1.2em;
+}
+table.example th {
+    background: #E0E0E0;
+}
+table.tabular th, table.tabular td {
+    border: 1px solid black;
+    height: 1.2em;
+}
+table.messages {
+    border: none;
+    font-family: monospace;
+}
+table.messages td {
+    vertical-align: top;
+}
+table.messages td.time {
+    width: 6em;
+    letter-spacing: -0.05em;
+} 
+table.messages td.level {
+    width: 4em;
+    text-align: center;
+}
+
+
+/* Roles -- these are defined in RobotFrameworkUserGuide.txt file */
+
+.var {
+    background: #f4f4f4;
+}
+.opt {
+    font-style: italic;
+}
+.prog, .code, .cli {
+    background: #f4f4f4;
+    font-family: monospace;
+}
+.msg {
+    font-family: monospace;
+}
+.name {  
+    font-style: italic;
+}
+.path {
+    font-style: italic;
+}
+.misc, .literal {
+    background: #f4f4f4;
+}
+
+
+/* Overridden and modified styles */
+
+div.admonition, div.attention, div.caution, div.danger, div.error,
+div.hint, div.important, div.note, div.tip, div.warning {
+  border: 2px solid gray;
+}
+pre.literal-block, pre.doctest-block {
+    background: #f4f4f4;
+}
+
+
+/* Pygments 
+
+- Styles generated using "HtmlFormatter().get_style_defs('.highlight')"
+- Changed only background from f8f8f8 to f4f4f4 and added margin
+- For more details see e.g. http://pygments.org/docs/quickstart/
+*/
+
+.highlight  { background: #f4f4f4; margin: 1em 2em; }
+.highlight .c { color: #408080; font-style: italic } /* Comment */
+.highlight .err { border: 1px solid #FF0000 } /* Error */
+.highlight .k { color: #008000; font-weight: bold } /* Keyword */
+.highlight .o { color: #666666 } /* Operator */
+.highlight .cm { color: #408080; font-style: italic } /* Comment.Multiline */
+.highlight .cp { color: #BC7A00 } /* Comment.Preproc */
+.highlight .c1 { color: #408080; font-style: italic } /* Comment.Single */
+.highlight .cs { color: #408080; font-style: italic } /* Comment.Special */
+.highlight .gd { color: #A00000 } /* Generic.Deleted */
+.highlight .ge { font-style: italic } /* Generic.Emph */
+.highlight .gr { color: #FF0000 } /* Generic.Error */
+.highlight .gh { color: #000080; font-weight: bold } /* Generic.Heading */
+.highlight .gi { color: #00A000 } /* Generic.Inserted */
+.highlight .go { color: #808080 } /* Generic.Output */
+.highlight .gp { color: #000080; font-weight: bold } /* Generic.Prompt */
+.highlight .gs { font-weight: bold } /* Generic.Strong */
+.highlight .gu { color: #800080; font-weight: bold } /* Generic.Subheading */
+.highlight .gt { color: #0040D0 } /* Generic.Traceback */
+.highlight .kc { color: #008000; font-weight: bold } /* Keyword.Constant */
+.highlight .kd { color: #008000; font-weight: bold } /* Keyword.Declaration */
+.highlight .kp { color: #008000 } /* Keyword.Pseudo */
+.highlight .kr { color: #008000; font-weight: bold } /* Keyword.Reserved */
+.highlight .kt { color: #B00040 } /* Keyword.Type */
+.highlight .m { color: #666666 } /* Literal.Number */
+.highlight .s { color: #BA2121 } /* Literal.String */
+.highlight .na { color: #7D9029 } /* Name.Attribute */
+.highlight .nb { color: #008000 } /* Name.Builtin */
+.highlight .nc { color: #0000FF; font-weight: bold } /* Name.Class */
+.highlight .no { color: #880000 } /* Name.Constant */
+.highlight .nd { color: #AA22FF } /* Name.Decorator */
+.highlight .ni { color: #999999; font-weight: bold } /* Name.Entity */
+.highlight .ne { color: #D2413A; font-weight: bold } /* Name.Exception */
+.highlight .nf { color: #0000FF } /* Name.Function */
+.highlight .nl { color: #A0A000 } /* Name.Label */
+.highlight .nn { color: #0000FF; font-weight: bold } /* Name.Namespace */
+.highlight .nt { color: #008000; font-weight: bold } /* Name.Tag */
+.highlight .nv { color: #19177C } /* Name.Variable */
+.highlight .ow { color: #AA22FF; font-weight: bold } /* Operator.Word */
+.highlight .w { color: #bbbbbb } /* Text.Whitespace */
+.highlight .mf { color: #666666 } /* Literal.Number.Float */
+.highlight .mh { color: #666666 } /* Literal.Number.Hex */
+.highlight .mi { color: #666666 } /* Literal.Number.Integer */
+.highlight .mo { color: #666666 } /* Literal.Number.Oct */
+.highlight .sb { color: #BA2121 } /* Literal.String.Backtick */
+.highlight .sc { color: #BA2121 } /* Literal.String.Char */
+.highlight .sd { color: #BA2121; font-style: italic } /* Literal.String.Doc */
+.highlight .s2 { color: #BA2121 } /* Literal.String.Double */
+.highlight .se { color: #BB6622; font-weight: bold } /* Literal.String.Escape */
+.highlight .sh { color: #BA2121 } /* Literal.String.Heredoc */
+.highlight .si { color: #BB6688; font-weight: bold } /* Literal.String.Interpol */
+.highlight .sx { color: #008000 } /* Literal.String.Other */
+.highlight .sr { color: #BB6688 } /* Literal.String.Regex */
+.highlight .s1 { color: #BA2121 } /* Literal.String.Single */
+.highlight .ss { color: #19177C } /* Literal.String.Symbol */
+.highlight .bp { color: #008000 } /* Name.Builtin.Pseudo */
+.highlight .vc { color: #19177C } /* Name.Variable.Class */
+.highlight .vg { color: #19177C } /* Name.Variable.Global */
+.highlight .vi { color: #19177C } /* Name.Variable.Instance */
+.highlight .il { color: #666666 } /* Literal.Number.Integer.Long */
+
+</style>
+</head>
 <body>
-<h1>Robot Framework Quick Start Guide</h1>
+<div class="document" id="robot-framework-quick-start-guide">
+<h1 class="title">Robot Framework Quick Start Guide</h1>
+
+<!-- Roles to use in text like :rolename:`text`. Styled in userguide.css.
+- var    variables
+- opt    settings in setting table (e.g. Force Tags), tc/kw tables
+         (e.g [Documentation]) and command line options (e.g. - -name)
+- prog   program names (e.g. rebot, risto.py)
+- code   programming code
+- msg    test case status and message, as well as log messages and levels
+- name   keyword, library, test case, test suite, etc. names
+- cli    command line examples (note that options alone use opt)
+- path   file names and paths
+- misc   everything else (synonym to ``text``) -->
+<div class="section" id="introduction">
+<h1>Introduction</h1>
+<div class="section" id="installation">
 <h2>Installation</h2>
-See from <a href="http://robotframework.googlecode.com/svn/trunk/doc/userguide/RobotFrameworkUserGuide.html#installation-and-uninstallation">Robot
-Framework User Guide</a>.
+<p>See from Robot Framework User Guide.</p>
+<p>Role test: <span class="var">${var}</span>, <span class="path">/tm/foo</span>.</p>
+</div>
+<div class="section" id="overview">
 <h2>Overview</h2>
-Robot Framework is a keyword-based test automation tool.&nbsp; Tests
-live in html test files and make use of keywords written in libraries
-to drive the software under test.&nbsp; <br>
-<br>
-[TODO: create picture]<br>
-<br>
-Because Robot Framework is flexible and extensible, it is ideally
+<p>Robot Framework is a keyword-based test automation tool.  Tests live
+in html test files and make use of keywords written in libraries to
+drive the software under test.</p>
+<p>[TODO: create picture]</p>
+<p>Because Robot Framework is flexible and extensible, it is ideally
 suited to testing complex software with a variety of interfaces: GUI,
-Web, command line, Web services, etc.<br>
+Web, command line, Web services, etc.</p>
+</div>
+<div class="section" id="running-this-demo">
 <h2>Running This Demo</h2>
-To run this demo, open a command shell, cd to this directory, and type
-the following command at the command line:<br>
-<pre>pybot quickstart.html<span style="font-family: Arial,Helvetica,sans-serif;"><br></span></pre>
-The tests in this file will execute and generate the following reports:<br>
-<ul>
-  <li>report.html: the test results summary<br>
-  </li>
-  <li>log.html: the test results details</li>
-  <li>output.xml: the test results in a portable XML format for
-integration with other tools</li>
-</ul>
-Open report.html in your browser, then click on
-the links to explore the results. The report.html file links to the
-log.html file.<br>
+<p>To run this demo, open a command shell, cd to this directory, and type
+the following command at the command line:</p>
+<blockquote>
+pybot quickstart.html</blockquote>
+<p>The tests in this file will execute and generate the following reports:</p>
+<dl class="docutils">
+<dt>report.html</dt>
+<dd>the test results summary</dd>
+<dt>log.html</dt>
+<dd>the test results details</dd>
+<dt>output.xml</dt>
+<dd>the test results in a portable XML format for integration with other tools</dd>
+</dl>
+<p>Open report.html in your browser, then click on the links to explore
+the results. The report.html file links to the log.html file.</p>
+</div>
+<div class="section" id="introducing-the-sample-application">
 <h2>Introducing the Sample Application</h2>
-The sample application for this paper is a variation on a classic login
-example: it&#8217;s a command-line based authentication server written in
-Python. At the moment, the sample application allows a user to do two
-things:<br>
-<ul>
-  <li>Create an account with a password</li>
-  <li>Log in with a valid user name and password</li>
+<p>The sample application for this paper is a variation on a classic
+login example: it’s a command-line based authentication server written
+in Python. At the moment, the sample application allows a user to do
+two things:</p>
+<blockquote>
+<ul class="simple">
+<li>Create an account with a password</li>
+<li>Log in with a valid user name and password</li>
 </ul>
-Attempting to log in with a non-existent user account or with an
-invalid password results in the same error message:<br>
-<br>
-&nbsp;&nbsp;&nbsp; Access Denied<br>
-<br>
-Creating a user account results in the message:<br>
-<br>
-&nbsp;&nbsp;&nbsp; SUCCESS<br>
-<br>
-And logging in successfully results in the message:<br>
-<br>
-&nbsp;&nbsp;&nbsp; Logged In<br>
-<br>
-So, for example, if I issue the following commands, I should get the
-following responses:<br>
-<br>
-&nbsp;&nbsp;&nbsp; &gt; login fred password<br>
-&nbsp;&nbsp;&nbsp; Access Denied<br>
-<br>
-&nbsp;&nbsp;&nbsp; &gt; create fred password<br>
-&nbsp;&nbsp;&nbsp; SUCCESS<br>
-<br>
-&nbsp;&nbsp;&nbsp; &gt; login fred password<br>
-&nbsp;&nbsp;&nbsp; Logged In<br>
-<br>
-That&#8217;s all our little sample application does just at the moment.&nbsp;
-It&#8217;s not much.&nbsp; But it&#8217;s a start.&nbsp; Now we need to add some
-new capabilities to it.<br>
-<h2>First Tests</h2>
-The following table has two tests:<br>
-<ul>
-  <li>User Can Create An Account And Login</li>
-  <li>User Cannot Log In With Bad Password</li>
+</blockquote>
+<p>Attempting to log in with a non-existent user account or with an invalid password results in the same error message:</p>
+<blockquote>
+Access Denied</blockquote>
+<p>Creating a user account results in the message:</p>
+<blockquote>
+SUCCESS</blockquote>
+<p>And logging in successfully results in the message:</p>
+<blockquote>
+Logged In</blockquote>
+<p>So, for example, if I issue the following commands, I should get the following responses:</p>
+<blockquote>
+<p>&gt; login fred password
+Access Denied</p>
+<p>&gt; create fred password
+SUCCESS</p>
+<p>&gt; login fred password
+Logged In</p>
+</blockquote>
+<p>That’s all our little sample application does just at the moment.
+It’s not much.  But it’s a start.  Now we need to add some new
+capabilities to it.</p>
+</div>
+</div>
+<div class="section" id="first-tests">
+<h1>First Tests</h1>
+<p>The following table has two tests:</p>
+<blockquote>
+<ul class="simple">
+<li>User Can Create An Account And Login</li>
+<li>User Cannot Log In With Bad Password</li>
 </ul>
-<table border="1">
-  <colgroup span="99"><col class="name"><col class="action"><col class="arg" span="2"></colgroup> <thead> <tr>
-    <th>Test Case</th>
-    <th>Action</th>
-    <th>Data</th>
-    <th>Data</th>
-  </tr>
-  </thead> <tbody>
-    <tr>
-      <td>User can create an account and login<br>
-      </td>
-      <td>Create Valid User</td>
-      <td>fred</td>
-      <td>password</td>
-    </tr>
-    <tr>
-      <td><br>
-      </td>
-      <td>Attempt to Login with Credentials<br>
-      </td>
-      <td>fred</td>
-      <td>password<br>
-      </td>
-    </tr>
-    <tr>
-      <td><br>
-      </td>
-      <td>Status Should Be</td>
-      <td>Logged In</td>
-      <td><br>
-      </td>
-    </tr>
-    <tr>
-      <td style="vertical-align: top;"><br>
-      </td>
-      <td style="vertical-align: top;"><br>
-      </td>
-      <td style="vertical-align: top;"><br>
-      </td>
-      <td style="vertical-align: top;"><br>
-      </td>
-    </tr>
-    <tr>
-      <td>User cannot log in with Bad Password<br>
-      </td>
-      <td>Create Valid User</td>
-      <td>betty</td>
-      <td>password</td>
-    </tr>
-    <tr>
-      <td style="vertical-align: top;"><br>
-      </td>
-      <td style="vertical-align: top;">Attempt to Login with Credentials<br>
-      </td>
-      <td style="vertical-align: top;">betty<br>
-      </td>
-      <td style="vertical-align: top;">wrong<br>
-      </td>
-    </tr>
-    <tr>
-      <td style="vertical-align: top;"><br>
-      </td>
-      <td style="vertical-align: top;">Status Should Be<br>
-      </td>
-      <td style="vertical-align: top;">Access Denied<br>
-      </td>
-      <td style="vertical-align: top;"><br>
-      </td>
-    </tr>
-  </tbody>
+</blockquote>
+<table border="1" class="example docutils">
+<colgroup>
+<col width="38%" />
+<col width="34%" />
+<col width="14%" />
+<col width="14%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Test Case</th>
+<th class="head">Action</th>
+<th class="head">Argument</th>
+<th class="head">Argument</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>User can create an account and log in</td>
+<td>Create Valid User</td>
+<td>fred</td>
+<td>password</td>
+</tr>
+<tr><td></td>
+<td>Attempt to Login with Credentials</td>
+<td>fred</td>
+<td>password</td>
+</tr>
+<tr><td></td>
+<td>Status Should Be</td>
+<td>Logged In</td>
+<td></td>
+</tr>
+<tr><td>User cannot log in with bad password</td>
+<td>Create Valid User</td>
+<td>betty</td>
+<td>password</td>
+</tr>
+<tr><td></td>
+<td>Attempt to Login with Credentials</td>
+<td>betty</td>
+<td>wrong</td>
+</tr>
+<tr><td></td>
+<td>Status Should Be</td>
+<td>Access Denied</td>
+<td></td>
+</tr>
+</tbody>
 </table>
-Notice that these tests read almost like a manual test written in
-English rather than like an automated test.&nbsp; Robot Framework uses
-a keyword approach that supports writing tests that capture the essence
-of the actions and expectations in natural language.<br>
-<h2>Keywords</h2>
-Robot Framework supports three types of keywords:<span style="font-weight: bold; font-style: italic;"><br>
-<br>
-Built-in
-keywords</span>: the keywords included with Robot Framework,
-including generally useful keywords such as "Get Time" and "Should Be
-Equal".&nbsp; For a complete list of the available built-in keywords
-see <a href="http://code.google.com/p/robotframework/wiki/BuiltInLibrary">BuiltInLibrary</a>
-wikipage. <span style="font-weight: bold; font-style: italic;"><br>
-<br>
-User-defined
-keywords</span>: keywords defined in a Keywords table
-either in the test file, or in a resources file for a test suite. (More
-on test suites later.)&nbsp; For example:
-<table border="1">
-  <thead><tr>
-    <th>Keyword</th>
-    <th>Action</th>
-    <th>Argument</th>
-    <th>Argument</th>
-  </tr>
-  </thead> <tbody>
-    <tr>
-      <td>Create Valid User<br>
-      </td>
-      <td>[Arguments]<br>
-      </td>
-      <td>${username} </td>
-      <td>${password} </td>
-    </tr>
-    <tr>
-      <td><br>
-      </td>
-      <td>Create User<br>
-      </td>
-      <td>${username} </td>
-      <td>${password} </td>
-    </tr>
-    <tr>
-      <td style="vertical-align: top;"><br>
-      </td>
-      <td style="vertical-align: top;">Status Should Be<br>
-      </td>
-      <td style="vertical-align: top;">SUCCESS<br>
-      </td>
-      <td style="vertical-align: top;"><br>
-      </td>
-    </tr>
-  </tbody>
+<p>Notice that these tests read almost like a manual test written in
+English rather than like an automated test.  Robot Framework uses a
+keyword approach that supports writing tests that capture the essence
+of the actions and expectations in natural language.</p>
+</div>
+<div class="section" id="keywords">
+<h1>Keywords</h1>
+<p>Robot Framework supports three types of keywords:</p>
+<dl class="docutils">
+<dt><strong>Built-in keywords</strong></dt>
+<dd>The keywords included with Robot Framework,
+including generally useful keywords such as &quot;Get Time&quot; and &quot;Should
+Be Equal&quot;.  For a complete list of the available built-in keywords
+see BuiltInLibrary wikipage.</dd>
+<dt><strong>Library keywords</strong></dt>
+<dd>Keywords defined in a Robot Framework Library. (More on Libraries
+later. The keyword &quot;Create Valid User&quot; from the previous tests is a
+User Keyword.)</dd>
+<dt><strong>User-defined keywords</strong></dt>
+<dd>Keywords defined in a Keywords table either in the test file, or in
+a resources file for a test suite. (More on test suites later.)
+For example:</dd>
+</dl>
+<table border="1" class="example docutils">
+<colgroup>
+<col width="29%" />
+<col width="29%" />
+<col width="21%" />
+<col width="21%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Keyword</th>
+<th class="head">Action</th>
+<th class="head">Argument</th>
+<th class="head">Argument</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>Create Valid User</td>
+<td>[Arguments]</td>
+<td>${username}</td>
+<td>${password}</td>
+</tr>
+<tr><td></td>
+<td>Create User</td>
+<td>${username}</td>
+<td>${password}</td>
+</tr>
+<tr><td></td>
+<td>Status Should Be</td>
+<td>SUCCESS</td>
+<td></td>
+</tr>
+</tbody>
 </table>
-<span style="font-weight: bold; font-style: italic;">Library
-keywords</span>: keywords defined in a Robot Framework Library.
-(More on Libraries later. The keyword "Create Valid User" from the
-previous tests is a User
-Keyword.)<br>
-<br>
-User-defined keywords can include actions defined by other user-defined
-keywords, built-in keywords, or library keywords.&nbsp; As you can see
-from this example, User-defined keywords can take
-parameters.&nbsp; They can also return values and even contain FOR
-loops. For now, the important thing to know is that User-defined
-keywords enable test creators
-to create reusable steps for common action sequences.&nbsp;
+<p>User-defined keywords can include actions defined by other
+user-defined keywords, built-in keywords, or library keywords.  As you
+can see from this example, User-defined keywords can take parameters.
+They can also return values and even contain FOR loops. For now, the
+important thing to know is that User-defined keywords enable test
+creators to create reusable steps for common action sequences.
 User-defined keywords can also help the test author keep the tests as
-readable as possible.<br>
-<h2>Libraries</h2>
-Robot Framework comes with a <a href="http://code.google.com/p/robotframework/wiki/BuiltInLibrary">handful
-of libraries</a> including an
+readable as possible.</p>
+</div>
+<div class="section" id="libraries">
+<h1>Libraries</h1>
+<p>Robot Framework comes with a handful of libraries including an
 OperatingSystem library to support common operating system functions,
-and a Screenshot library for taking screenshots.&nbsp; In addition,
-there are other libraries distributed in separate open source projects,
-such as a
-<a href="http://code.google.com/p/robotframework-seleniumlibrary/">Selenium
-library for Web testing</a>.<br>
-<br>
-<table border="1">
-  <colgroup span="99"><col class="name"><col class="value" span="1"></colgroup>
-  <thead> <tr>
-    <th>Setting</th>
-    <th>Value</th>
-  </tr>
-  </thead> <tbody>
-    <tr>
-      <td>Library</td>
-      <td>OperatingSystem</td>
-    </tr>
-    <tr>
-      <td>Library</td>
-      <td>testlibs/LoginLibrary.py</td>
-    </tr>
-  </tbody>
+and a Screenshot library for taking screenshots.  In addition, there
+are other libraries distributed in separate open source projects, such
+as a Selenium library for Web testing.</p>
+<table border="1" class="example docutils">
+<colgroup>
+<col width="38%" />
+<col width="62%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Setting</th>
+<th class="head">Value</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>Library</td>
+<td>OperatingSystem</td>
+</tr>
+<tr><td>Library</td>
+<td>testlibs/LoginLibrary.py</td>
+</tr>
+</tbody>
 </table>
-<h2>Test Suites</h2>
-<h2>Setup and Teardown</h2>
-If you want a set of actions to occur before and after each test
+</div>
+<div class="section" id="test-suites">
+<h1>Test Suites</h1>
+</div>
+<div class="section" id="setup-and-teardown">
+<h1>Setup and Teardown</h1>
+<p>If you want a set of actions to occur before and after each test
 executes, use the Test Setup and Test Teardown settings in the Setting
-table like so:<br>
-<table class="example docutils" border="1">
-  <thead valign="bottom"><tr>
-    <th class="head">Setting</th>
-    <th class="head">Value</th>
-    <th class="head">Value</th>
-    <th class="head">Value</th>
-  </tr>
-  </thead>
-  <tbody valign="top">
-    <tr>
-      <td>Test Setup</td>
-      <td>Clear Login Database<br>
-      </td>
-      <td><br>
-      </td>
-      <td><br>
-      </td>
-    </tr>
-    <tr>
-      <td>Test Teardown</td>
-      <td><br>
-      </td>
-      <td><br>
-      </td>
-      <td><br>
-      </td>
-    </tr>
-  </tbody>
+table like so:</p>
+<table border="1" class="example docutils">
+<colgroup>
+<col width="38%" />
+<col width="62%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Setting</th>
+<th class="head">Value</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>Test Setup</td>
+<td>Clear Login Database</td>
+</tr>
+<tr><td>Test Teardown</td>
+<td></td>
+</tr>
+</tbody>
 </table>
-Similarly you can use the Suite Setup and Suite Teardown settings to
+<p>Similarly you can use the Suite Setup and Suite Teardown settings to
 specify actions to be executed before and after an entire test suite
-executes.<br>
-<table border="1">
-  <thead><tr>
-    <th>Keyword</th>
-    <th>Action</th>
-    <th>Argument</th>
-    <th>Argument</th>
-  </tr>
-  </thead> <tbody>
-    <tr>
-      <td>Clear Login Database<br>
-      </td>
-      <td>Remove File</td>
-      <td>${DATABASE FILE}</td>
-      <td></td>
-    </tr>
-    <tr>
-      <td><br>
-      </td>
-      <td></td>
-      <td></td>
-      <td></td>
-    </tr>
-    
-  </tbody>
-</table><span style="font-weight: bold; font-style: italic;"></span><h2>Variables</h2>
-<table border="1">
-  <colgroup span="99"><col class="name"><col class="value" span="4"></colgroup> <thead> <tr>
-    <th>Variable</th>
-    <th>Value</th>
-    <th>Value</th>
-    <th>Value</th>
-    <th>Value</th>
-  </tr>
-  </thead> <tbody>
-    <tr>
-      <td>${DATABASE FILE}<br>
-      </td>
-      <td>${TEMPDIR}${/}robotframework-quickstart-db.txt<br>
-      </td>
-      <td><br>
-      </td>
-      <td><br>
-      </td>
-      <td><br>
-      </td>
-    </tr>
-    <tr>
-      <td><br>
-      </td>
-      <td><br>
-      </td>
-      <td><br>
-      </td>
-      <td><br>
-      </td>
-      <td><br>
-      </td>
-    </tr>
-  </tbody>
+executes.</p>
+<table border="1" class="example docutils">
+<colgroup>
+<col width="29%" />
+<col width="28%" />
+<col width="23%" />
+<col width="20%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Keyword</th>
+<th class="head">Action</th>
+<th class="head">Argument</th>
+<th class="head">Argument</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>Clear Login Database</td>
+<td>Remove File</td>
+<td>${DATABASE_FILE}</td>
+<td></td>
+</tr>
+<tr><td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
 </table>
-<h2>Creating a Library</h2>
-<iframe src="./testlibs/LoginLibrary.py" height="50%" width="60%"></iframe></body></html>
+<table border="1" class="example docutils">
+<colgroup>
+<col width="26%" />
+<col width="74%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Variable</th>
+<th class="head">Value</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>${DATABASE_FILE}</td>
+<td>${TEMPDIR}${/}robotframework-quickstart-db.txt</td>
+</tr>
+<tr><td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="creating-a-library">
+<h1>Creating a Library</h1>
+<p>Here is an example test library:</p>
+<div class="highlight"><pre><span class="k">import</span> <span class="nn">os</span>
+<span class="k">import</span> <span class="nn">sys</span>
+
+
+<span class="k">class</span> <span class="nc">LoginLibrary</span><span class="p">:</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">sut_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">__file__</span><span class="p">),</span>
+                                <span class="s">&#39;..&#39;</span><span class="p">,</span> <span class="s">&#39;sut&#39;</span><span class="p">,</span> <span class="s">&#39;login.py&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_command_prefix</span> <span class="o">=</span> <span class="s">&#39;</span><span class="si">%s</span><span class="s"> </span><span class="si">%s</span><span class="s"> &#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">executable</span><span class="p">,</span> <span class="n">sut_path</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_status</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>
+
+    <span class="k">def</span> <span class="nf">create_user</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">username</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">):</span>
+        <span class="n">command</span> <span class="o">=</span> <span class="s">&#39;create </span><span class="si">%s</span><span class="s"> </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">username</span><span class="p">,</span> <span class="n">password</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_run_command</span><span class="p">(</span><span class="n">command</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">attempt_to_login_with_credentials</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">username</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">):</span>
+        <span class="n">command</span> <span class="o">=</span> <span class="s">&#39;login </span><span class="si">%s</span><span class="s"> </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">username</span><span class="p">,</span> <span class="n">password</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_run_command</span><span class="p">(</span><span class="n">command</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">status_should_be</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expected_status</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">expected_status</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_status</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">AssertionError</span><span class="p">(</span><span class="s">&quot;Expected status to be &#39;</span><span class="si">%s</span><span class="s">&#39; but was &#39;</span><span class="si">%s</span><span class="s">&#39;&quot;</span>
+                                  <span class="o">%</span> <span class="p">(</span><span class="n">expected_status</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_status</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">_run_command</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">command</span><span class="p">):</span>
+        <span class="n">command</span> <span class="o">=</span> <span class="s">&#39;</span><span class="si">%s</span><span class="s"> </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_command_prefix</span><span class="p">,</span> <span class="n">command</span><span class="p">)</span>
+        <span class="n">process</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">popen</span><span class="p">(</span><span class="n">command</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_status</span> <span class="o">=</span> <span class="n">process</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="n">process</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="footer">
+<hr class="footer" />
+Generated on: 2008-08-18 13:40 UTC.
+
+</div>
+</body>
+</html>
