@@ -109,10 +109,10 @@ The following table has two tests:
    =====================================  =================================  ==============  ==============
                Test Case                                Action                  Argument        Argument
    =====================================  =================================  ==============  ==============
-   User can create an account and log in  Create Valid User                  fred            password
-   \                                      Attempt to Login with Credentials  fred            password
+   User can create an account and log in  Create Valid User                  fred            P4ssw0rd
+   \                                      Attempt to Login with Credentials  fred            P4ssw0rd
    \                                      Status Should Be                   Logged In       \
-   User cannot log in with bad password   Create Valid User                  betty           password
+   User cannot log in with bad password   Create Valid User                  betty           P4ssw0rd
    \                                      Attempt to Login with Credentials  betty           wrong
    \                                      Status Should Be                   Access Denied   \    
    =====================================  =================================  ==============  ==============
@@ -227,12 +227,14 @@ executes.
 .. table:: 
    :class: example
 
-   ================  ==============================================
+   ======================  =============================================================================  
        Variable                        Value
-   ================  ==============================================
-   ${DATABASE_FILE}  ${TEMPDIR}${/}robotframework-quickstart-db.txt
-   \                 \
-   ================  ==============================================
+   ======================  ============================================================================= 
+   ${DATABASE_FILE}        ${TEMPDIR}${/}robotframework-quickstart-db.txt
+   \                       \
+   ${PWD_INVALID_LENGTH}   Password must be 7-12 characters long
+   ${PWD_INVALID_CONTENT}  Password must be a combination of lowercase and uppercase letters and numbers 
+   ======================  =============================================================================
 
 
 Data-Driven Test Cases
@@ -241,16 +243,16 @@ Data-Driven Test Cases
 .. table:: 
    :class: example
 
-   ================================  ===============================================  =============  ==============================================
-                Test Case                                    Action                     Password                Expected error message
-   ================================  ===============================================  =============  ==============================================
-   Too short password                Creating user with invalid password should fail  abCD5          Password must be 7-12 characters long
-   Too long password                 Creating user with invalid password should fail  abCD567890123  Password must be 7-12 characters long
-   Password without small letters    Creating user with invalid password should fail  123DEFG        Password must contain small letters
-   Password without capital letters  Creating user with invalid password should fail  abcd56789      Password must contain capital letters
-   Password without numbers          Creating user with invalid password should fail  AbCdEfGh       Password must contain numbers
-   Password with special characters  Creating user with invalid password should fail  abCD56.        Password must contain only letters and numbers
-   ================================  ===============================================  =============  ==============================================
+   ==================================  ===============================================  =============  ======================
+                Test Case                                    Action                       Password     Expected error message
+   ==================================  ===============================================  =============  ======================
+   Too short password                  Creating user with invalid password should fail  abCD5          ${PWD_INVALID_LENGTH}
+   Too long password                   Creating user with invalid password should fail  abCD567890123  ${PWD_INVALID_LENGTH}
+   Password without lowercase letters  Creating user with invalid password should fail  123DEFG        ${PWD_INVALID_CONTENT}
+   Password without capital letters    Creating user with invalid password should fail  abcd56789      ${PWD_INVALID_CONTENT}
+   Password without numbers            Creating user with invalid password should fail  AbCdEfGh       ${PWD_INVALID_CONTENT}
+   Password with special characters    Creating user with invalid password should fail  abCD56.        ${PWD_INVALID_CONTENT}
+   ==================================  ===============================================  =============  ======================
 
 .. table:: 
    :class: example
