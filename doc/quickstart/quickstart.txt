@@ -16,16 +16,12 @@
 Introduction
 ============
 
-TODO: Janne
-
 Robot Framework overview
 ------------------------
 
 Robot Framework is a keyword-based test automation tool.  Tests live
-in html test files and make use of keywords written in libraries to
+in html test files and make use of keywords implemented in test libraries to
 drive the software under test.
-
-[TODO: create picture]
 
 Because Robot Framework is flexible and extensible, it is ideally
 suited to testing complex software with a variety of interfaces: GUI,
@@ -35,14 +31,35 @@ Web, command line, Web services, etc.
 Installation
 ------------
 
-0. Python & Jython
-1. Windows installer
-2. Source distribution
-3. easy_install
-4. $PATH
-5. pybot --version
+Before Robot Framework can be installed, Python must be installed.
+In addition, to use test libraries written in Java, Jython must be
+installed. To run this quickstart, Python is enough.
 
-See from Robot Framework User Guide.
+There are three different ways to install Robot Framework, the most suitable
+can be chosen:
+
+1. There is a binary installer for Windows platform. It is enough to
+   double-click the installer and follow instructions.
+2. On every platform, Robot Framework can be installed from source. To install
+   from source, extract the distribution and run command `python setup.py
+   install`
+3. Robot Framework can be installed using easy_install by issuing comand
+   `easy_install robotframework`
+
+After the framework is installed, it is useful to include the directory
+containing start-up scipts in PATH environment variable. In Linux this
+actually happens automatically, in Windows this must be done from 'Control
+Panel -> System -> Advanced -> Environment Variables' by adding e.g.
+C:\\Python25\\Scripts to PATH.
+
+Successful installation can be verified with command `pybot --version` which
+should output something like::
+
+    $ pybot --version
+    Robot 2.0.1 (Python 2.5.2 on linux2)
+
+Detailed installation instructions can be found from Robot Framework User
+Guide.
 
 
 Running this demo
@@ -65,10 +82,14 @@ output.xml
 Open report.html in your browser, then click on the links to explore
 the results. The report.html file links to the log.html file.
 
-Mention some command line options, pybot --help
-for example
-
-pybot --outputdir reports --log mylog.html --name  
+There are also a number of command line options that can be used to control
+the test execution and generated outputs. Complete list can be viewed by
+issuing `pybot --help`. The following command determines output directory,
+names of the output files and also the name of the top level suite in the
+report::
+    
+    pybot --outputdir reports --log mylog.html --report myrep.html --name
+    My_Fine_Tests  
 
 
 Introducing the sample application
@@ -79,38 +100,44 @@ login example: it’s a command-line based authentication server written
 in Python. At the moment, the sample application allows a user to do
 two things:
 
-   * Create an account with a password
+   * Create an account with a valid password
    * Log in with a valid user name and password
 
-Attempting to log in with a non-existent user account or with an invalid password results in the same error message:
+Attempting to log in with a non-existent user account or with an invalid password results in the same error message::
 
     Access Denied
 
-Creating a user account results in the message:
+Creating a user account with valid password results in the message::
 
     SUCCESS
 
-And logging in successfully results in the message:
+There are two requirements that a password must fulfill to be valid: it must
+be between 7-12 characters long, and it must contain lower and upper case
+letters and numbers, but it must not contain special characters. Trying to
+create a user with invalid password results in one of the following messages::
+
+    Creating user failed: Password must be 7-12 characters long
+    Creating user failed: Password must be a combination of lowercase and
+    uppercase letters and numbers
+
+And logging in successfully results in the message::
 
     Logged In
 
-So, for example, if I issue the following commands, I should get the following responses:
+So, for example, if I issue the following commands, I should get the following responses::
 
-    > python sut/login.py login fred password
+    > python sut/login.py login fred P4ssw0rd
     Access Denied
 
-    > python sut/login.py create fred password
+    > python sut/login.py create fred P4ssw0rd
     SUCCESS
 
-    > python sut/login.py login fred password
+    > python sut/login.py login fred P4ssw0rd
     Logged In
 
 That’s all our little sample application does just at the moment.
 It’s not much.  But it’s a start.  Now we need to add some new
 capabilities to it.
-
-* Add a mention of password reqirements
-* Mention the application path
 
 
 Test cases
