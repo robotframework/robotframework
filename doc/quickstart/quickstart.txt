@@ -143,10 +143,10 @@ capabilities to it.
 Test cases
 ==========
 
-First tests
------------
+First test cases
+----------------
 
-The following table has two tests:
+Robot Framework test cases are created using a simple tabular syntax. For example the following table has two tests:
 
    * User can create an account and log in
    * User cannot log in with bad password
@@ -168,23 +168,25 @@ The following table has two tests:
 
 
 Notice that these tests read almost like a manual test written in
-English rather than like an automated test. Robot Framework uses a
+English rather than like an automated test. Robot Framework uses the
 keyword-driven approach that supports writing tests that capture the
-essence of the actions and expectations in natural language. The text
-in the :name:`action column` denotes the keyword to be used and
-subsequent columns have possible arguments.
+essence of the actions and expectations in natural language. Test
+cases are constructed from keywords (normaly in the second column) and
+their possible arguments .
 
 
-Higher-level tests
-------------------
+Higher-level test cases
+-----------------------
 
 Test cases can also be created using only high-level keywords that
 take no arguments. This style allows using totally free text which is
-suitable for communication even with most non-technical customers or
+suitable for communication even with non-technical customers or
 other stakeholers. Robot Framework does not enforce any particular
-style for writing test cases, but it is possible to use for example
-*given-when-then* style popularized by *behaviour-driven development
-(BDD)*.
+style for writing test cases, and it is possible to use for example
+*given-when-then* format popularized by `behaviour-driven development`__
+(BDD) like in the example below.
+
+__ http://en.wikipedia.org/wiki/Behavior_driven_development
 
 
 .. table:: 
@@ -194,15 +196,25 @@ style for writing test cases, but it is possible to use for example
            Test Case                           Steps             
    ========================  ===========================================
    User can change password  Given a user has a valid account
-   \                         When she changes her password
-   \                         Then she can log in with the new password
-   \                         And she cannot use the old password anymore
+   \                         when she changes her password
+   \                         then she can log in with the new password
+   \                         and she cannot use the old password anymore
    ========================  ===========================================
 
 
+This kind of use-case or user-story-like test cases are ideally suited
+for *acceptance test-driven development* (ATTD). In ATTD acceptance
+tests are written before implementing actual product features and they
+act also as requirements.
 
-Data-driven tests
------------------
+
+Data-driven test cases
+----------------------
+
+Quite often several test cases are otherwise similar but they have
+slightly different input or output data. In these situations
+*data-driven* test cases, like six tests below, allow varying the test
+data without dublicating the workflow.
 
 .. table:: 
    :class: example
@@ -215,8 +227,14 @@ Data-driven tests
    Password without lowercase letters  Creating user with invalid password should fail  123DEFG        ${PWD_INVALID_CONTENT}
    Password without capital letters    Creating user with invalid password should fail  abcd56789      ${PWD_INVALID_CONTENT}
    Password without numbers            Creating user with invalid password should fail  AbCdEfGh       ${PWD_INVALID_CONTENT}
-   Password with special characters    Creating user with invalid password should fail  abCD56.        ${PWD_INVALID_CONTENT}
+   Password with special characters    Creating user with invalid password should fail  abCD56+        ${PWD_INVALID_CONTENT}
    ==================================  ===============================================  =============  ======================
+
+In these tests there is only one keyword (:name:`Creating user with
+invalid password should fail`) per test case, and it is responsible
+for trying to create a user with the provided password and checking
+that creation fails with an expected error message. Notice that the error
+messages are specified using variables_.
 
 
 Keywords
@@ -224,25 +242,36 @@ Keywords
 
 TODO: Peke
 
+Keywords that test cases are created from come from two
+sources. Lowest level keywords are always created in *test libraries*
+using standard programming languages.  In addition to that, users can
+create new higher-level keywords using the same tabular syntax that is
+used for creating test cases.
+
+
+Library keywords
+----------------
+
+http://code.google.com/p/robotframework/wiki/TestLibraries
+
 Built-in keywords
------------------
+'''''''''''''''''
 
 The keywords included with Robot Framework,
 including generally useful keywords such as "Get Time" and "Should
 Be Equal".  For a complete list of the available built-in keywords
 see BuiltInLibrary wikipage.
 
-
-Library keywords
-----------------
+Standard libraries
+''''''''''''''''''
 
 Keywords defined in a Robot Framework Library. (More on Libraries
 later. The keyword "Create Valid User" from the previous tests is a
 User Keyword.)
 
 Robot Framework comes with a handful of libraries including an
-OperatingSystem library to support common operating system functions,
-and a Screenshot library for taking screenshots.  In addition, there
+:name:`OperatingSystem` library to support common operating system functions,
+and a :name:`Screenshot` library for taking screenshots.  In addition, there
 are other libraries distributed in separate open source projects, such
 as a Selenium library for Web testing.
 
@@ -256,8 +285,6 @@ as a Selenium library for Web testing.
    Library          OperatingSystem
    Library          testlibs/LoginLibrary.py
    ===============  ========================
-
-
 
 
 User-defined keywords
@@ -286,10 +313,10 @@ For example:
    Given a user has a valid account                 Create valid user                  ${USERNAME}                              ${PASSWORD}
    \                                                \                                  \                                        \
    When she changes her password                    Change password                    ${USERNAME}                              ${PASSWORD}
-   \                                                ...                                ${PASSWORD2}                             \
+   \                                                ...                                ${NEW_PASSWORD}                          \
    \                                                Status should be                   SUCCESS                                  \
    \                                                \                                  \                                        \
-   Then she can log in with the new password        Attempt to login with credentials  ${USERNAME}                              ${PASSWORD2}
+   Then she can log in with the new password        Attempt to login with credentials  ${USERNAME}                              ${NEW_PASSWORD}
    \                                                Status should be                   Logged In                                \
    \                                                \                                  \                                        \
    And she cannot use the old password anymore      Attempt to login with credentials  ${USERNAME}                              ${PASSWORD}
@@ -312,17 +339,17 @@ Variables
 
 Variables are an integral part of Robot Framework. Usually any data used in
 tests that is subject to change is best defined as variables. Syntax for
-variable definition is wuite simple, as seen in this table:
+variable definition is quite simple, as seen in this table:
 
 .. table:: 
    :class: example
 
    ======================  =============================================================================  
-       Variable                        Value
+          Variable                                           Value
    ======================  ============================================================================= 
    ${USERNAME}             janedoe
    ${PASSWORD}             J4n3d03
-   ${PASSWORD2}            30d3n4J
+   ${NEW_PASSWORD}         30d3n4J
    \                       \
    ${DATABASE_FILE}        ${TEMPDIR}${/}robotframework-quickstart-db.txt
    \                       \
@@ -332,7 +359,7 @@ variable definition is wuite simple, as seen in this table:
 
 
 In additioni to user defined variables , there are some built-in variables 
-that are always available. ${TEMPDIR} in the above table is one such variable.
+that are always available. :var:`${TEMPDIR}` in the above table is one such variable.
 Variables can also be given from the command line which is useful if the tests
 need to be executed in different environements. Variables can also be defined
 in variable files.
