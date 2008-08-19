@@ -23,8 +23,8 @@ class TestUser(unittest.TestCase):
         User('James', 'Secret007', 'Active').serialize(db)
         self.assertEquals(db.getvalue(), 'James\tSecret007\tActive\n')
         User('user', 'T3stpass').serialize(db)
-        self.assertEquals(db.getvalue(),
-                          'James\tSecret007\tActive\nuser\tT3stpass\tInactive\n')
+        self.assertEquals(db.getvalue(), 'James\tSecret007\tActive\n'
+                                         'user\tT3stpass\tInactive\n')
 
     def test_invalid_password_length(self):
         msg = 'Password must be 7-12 characters long' 
@@ -35,7 +35,6 @@ class TestUser(unittest.TestCase):
         msg = 'Password must be a combination of lowercase and uppercase ' \
                 + 'letters and numbers'
         for pwd in ['N0L0W3R', 'n0c4pses', 'NoNumbers', 'aB1/(&%#&"']:
-            print pwd
             self._verify_creating_fails_with_invalid_password(pwd, msg)
            
     def _verify_creating_fails_with_invalid_password(self, pwd, msg):   
@@ -47,31 +46,46 @@ class TestUser(unittest.TestCase):
            self.assertEquals(str(err), msg)
 
 
-
-class TestCreateUser(unittest.TestCase):
-
-    def setUp(self):
-        self._dbfile = StringIO()
-        self._db = DataBase(self._dbfile)
-
-    def test_create_user(self):
-        self._db.create_user('testu', 'P4ssw0rd') 
-        self.assertEquals(self._db._users['testu'].password, 'P4ssw0rd')
-
-class TestLogin(unittest.TestCase):
+class TestDataBase(unittest.TestCase):
 
     def setUp(self):
         self._db = DataBase(StringIO('testu\tP4ssw0rd\n'))
 
+    def test_create_user(self):
+        self._db.create_user('username', 'Mypass1234') 
+        self.assertEquals(self._db._users['username'].password, 'Mypass1234')
+
     def test_succesful_login(self):
         self.assertEquals(self._db.login('testu', 'P4ssw0rd'), 'Logged In')
+        self.assertEquals(self._db._users['testu'].status, 'Active')
 
     def test_invalid_login(self):
         self.assertEquals(self._db.login('inv', 'alid'), 'Access Denied')
+        self.assertEquals(self._db._users['testu'].status, 'Inactive')
 
-    def test_succesful_login_changes_status(self):
-        self.assertEquals(self._db.status('testu'), 'Inactive')
+    def test_change_password_succesfully(self):
+        result = self._db.change_password('testu', 'P4ssw0rd', 'dr0wss4P') 
+        self.assertEquals(result, 'SUCCESS')
+        self.assertEquals(self._db._users['testu'].password, 'dr0wss4P')
+       
+    def test_change_password_when_user_does_not_exist(self):
+        result = self._db.change_password('nonexisting', 'P4ssw0r', 'r0wss4P')
+        self.assertEquals(result, 'Changing password failed: Access Denied')
+
+    def test_change_password_with_wrong_old_password(self):
+        result = self._db.change_password('testu', 'wrong', 'r0wss4P')
+        self.assertEquals(result, 'Changing password failed: Access Denied')
+
+    def test_change_password_with_invalid_new_password(self):
+        result = self._db.change_password('testu', 'P4ssw0rd', 'short')
+        self.assertEquals(result, 'Changing password failed: Password must '
+                                  'be 7-12 characters long')
+        result = self._db.change_password('testu', 'P4ssw0rd', 'invalid')
+        self.assertEquals(result, 'Changing password failed: Password must be '
+                                  'a combination of lowercase and uppercase ' 
+                                  'letters and numbers')
 
 
 if __name__ == '__main__':
 	unittest.main()
+

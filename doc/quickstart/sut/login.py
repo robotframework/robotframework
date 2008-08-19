@@ -33,16 +33,28 @@ class DataBase(object):
         return 'SUCCESS'
 
     def login(self, username, password):
-        if username in self._users and \
-                self._users[username].password == password:
+        if self._is_valid_user(username, password):
+            self._users[username].status = 'Active'
             return 'Logged In'
         return 'Access Denied'
 
-    def status(self, username):
-        return 'Inactive'
+    def _is_valid_user(self, username, password):
+        return username in self._users and \
+                self._users[username].password == password
+
+    def change_password(self, username, old_pwd, new_pwd):
+        try:
+            if not self._is_valid_user(username, old_pwd):
+                raise ValueError('Access Denied')
+            self._users[username].password = new_pwd
+        except ValueError, err:
+            return 'Changing password failed: %s' % err 
+        else:
+            return 'SUCCESS'
 
     def close(self):
-        self._dbfile.truncate(0)
+        self._dbfile.seek(0)
+        self._dbfile.truncate()
         for user in self._users.values():
             user.serialize(self._dbfile)
         self._dbfile.close()
@@ -51,10 +63,18 @@ class DataBase(object):
 class User(object):
 
     def __init__(self, username, password, status='Inactive'):
-        self._validate_password(password)
         self.username = username
         self.password = password
         self.status = status
+
+    def _get_password(self):
+        return self._password
+
+    def _set_password(self, password):
+        self._validate_password(password)
+        self._password = password
+
+    password = property(_get_password, _set_password)
 
     def _validate_password(self, password):
         if not (6 < len(password) < 13):
@@ -89,13 +109,19 @@ def create_user(username, password):
     print db.create_user(username, password)
     db.close()
 
+def change_password(username, old_pwd, new_pwd):
+    db = DataBase(DATABASE_FILE)
+    print db.change_password(username, old_pwd, new_pwd)
+    db.close()
+    
 def help():
-    print 'Usage: %s { create | login | help } [username password]' \
+    print 'Usage: %s { create | login | change-password | help }' \
              % os.path.basename(sys.argv[0])
 
 
 if __name__ == '__main__':
-    actions = {'create': create_user, 'login': login, 'help': help}
+    actions = {'create': create_user, 'login': login, 
+               'change-password': change_password, 'help': help}
     try:
         action = sys.argv[1]
     except IndexError:
@@ -105,3 +131,4 @@ if __name__ == '__main__':
         actions[action](*args)
     except (KeyError, TypeError):
         help()
+

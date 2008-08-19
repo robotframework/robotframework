@@ -285,10 +285,12 @@ For example:
    \                                                \                                  \                                        \
    Given a user has a valid account                 Create valid user                  ${USERNAME}                              ${PASSWORD}
    \                                                \                                  \                                        \
-   When she changes her password                    Change password                    ${USERNAME}                              ${PASSWORD2}
+   When she changes her password                    Change password                    ${USERNAME}                              ${PASSWORD}
+   \                                                ...                                ${PASSWORD2}                             \
+   \                                                Status should be                   SUCCESS                                  \
    \                                                \                                  \                                        \
    Then she can log in with the new password        Attempt to login with credentials  ${USERNAME}                              ${PASSWORD2}
-   \                                                Status should be                   SUCCESS                                  \
+   \                                                Status should be                   Logged In                                \
    \                                                \                                  \                                        \
    And she cannot use the old password anymore      Attempt to login with credentials  ${USERNAME}                              ${PASSWORD}
    \                                                Status should be                   Access Denied                            \
@@ -308,7 +310,9 @@ readable as possible.
 Variables
 =========
 
-TODO: Janne
+Variables are an integral part of Robot Framework. Usually any data used in
+tests that is subject to change is best defined as variables. Syntax for
+variable definition is wuite simple, as seen in this table:
 
 .. table:: 
    :class: example
@@ -316,6 +320,10 @@ TODO: Janne
    ======================  =============================================================================  
        Variable                        Value
    ======================  ============================================================================= 
+   ${USERNAME}             janedoe
+   ${PASSWORD}             J4n3d03
+   ${PASSWORD2}            30d3n4J
+   \                       \
    ${DATABASE_FILE}        ${TEMPDIR}${/}robotframework-quickstart-db.txt
    \                       \
    ${PWD_INVALID_LENGTH}   Password must be 7-12 characters long
@@ -323,7 +331,11 @@ TODO: Janne
    ======================  =============================================================================
 
 
-Built-in variables, cli, variable files
+In additioni to user defined variables , there are some built-in variables 
+that are always available. ${TEMPDIR} in the above table is one such variable.
+Variables can also be given from the command line which is useful if the tests
+need to be executed in different environements. Variables can also be defined
+in variable files.
 
 
 Organizing test cases

@@ -11,20 +11,21 @@ class LoginLibrary:
         self._status = ''
 
     def create_user(self, username='', password=''):
-        command = 'create %s %s' % (username, password)
-        self._run_command(command)
+        self._run_command('create', username, password)
+
+    def change_password(self, username, old_pwd, new_pwd):
+        self._run_command('change-password', username, old_pwd, new_pwd)
 
     def attempt_to_login_with_credentials(self, username='', password=''):
-        command = 'login %s %s' % (username, password)
-        self._run_command(command)
+        self._run_command('login', username, password)
 
     def status_should_be(self, expected_status):
         if expected_status != self._status:
             raise AssertionError("Expected status to be '%s' but was '%s'"
                                   % (expected_status, self._status))
 
-    def _run_command(self, command):
-        command = '%s %s' % (self._command_prefix, command)
+    def _run_command(self, command, *args):
+        command = '%s %s %s' % (self._command_prefix, command, ' '.join(args))
         process = os.popen(command)
         self._status = process.read().strip()
         process.close()
