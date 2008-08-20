@@ -19,57 +19,64 @@ Introduction
 Overview
 --------
 
-Robot Framework is a keyword-based test automation tool.  Tests live
-in html test files and make use of keywords implemented in test libraries to
-drive the software under test.
+Robot Framework is a keyword-driven test automation framework.  Test
+cases live in HTML or TSV (tab-separated values) test files and make
+use of keywords implemented in test libraries to drive the software
+under test. Because Robot Framework is flexible and extensible, it is
+ideally suited to testing complex software with a variety of
+interfaces: user interfaces, command line, web services, proprietary
+programming interfaces, etc.
 
-Because Robot Framework is flexible and extensible, it is ideally
-suited to testing complex software with a variety of interfaces: GUI,
-Web, command line, Web services, etc.  
-
-This guide is designed to introduce the basic concepts of Robot Framework.
-For a detailed technical description, please refer to `Robot Framework User 
-Guide`_.
+Robot Framework is open source software and installation packages,
+source code and further documentation is available through
+http://robotframework.org. This guide is designed to introduce the
+basic concepts of Robot Framework.  For a detailed technical
+description, please refer to `Robot Framework User Guide`_.
 
 
 Installation
 ------------
 
-Before Robot Framework can be installed, Python must be installed.
-In addition, to use test libraries written in Java, Jython must be
-installed. To run this quickstart, Python is enough.
+A precondition for installing Robot Framework is having Python_ installed.
+In addition, to use test libraries written in Java, Jython_ must be
+installed. To use this Quick Start Guide, Python is enough.
 
-There are three different ways to install Robot Framework, of which the most 
-suitable can be chosen:
+There are three different ways to install Robot Framework, of which
+the most suitable can be chosen. Detailed installation instructions
+can be found from the `user guide`_.
 
-1. There is a binary installer for Windows platform. It is enough to
-   double-click the installer and follow instructions.
-2. On every platform, Robot Framework can be installed from source. To install
-   from source, extract the distribution and run command `python setup.py
-   install`
-3. Robot Framework can be installed using easy_install by issuing comand
-   `easy_install robotframework`
+1.  There is a binary installer for Windows platform. It is enough to
+    double-click the installer and follow instructions.
 
-After the framework is installed, it is useful to include the directory
-containing start-up scipts in PATH environment variable. In Linux this
-actually happens automatically, in Windows this must be done from 'Control
-Panel -> System -> Advanced -> Environment Variables' by adding e.g.
-C:\\Python25\\Scripts to PATH.
+2.  On every platform, Robot Framework can be installed from
+    source. To install from source, extract the source distribution
+    and run command :cli:`python setup.py install`.
 
-Successful installation can be verified with command `pybot --version` which
-should output something like::
+3.  If Python package management system `Easy Install`_ is available,
+    Robot Framework can be installed by issuing command
+    :cli:`easy_install robotframework`. On Windows you also need to
+    run :path:`robot_postinstall.py` script manually.
+
+After the framework is installed, it is useful to include the
+directory containing start-up scripts in :var:`PATH` environment
+variable. On UNIX-like systems this should actually happen
+automatically, but on Windows this must be done from ``Control Panel >
+System > Advanced > Environment Variables`` by adding e.g.
+:path:`C:\\Python25\\Scripts` to :var:`PATH`.
+
+Successful installation can be verified with command :cli:`pybot
+--version` which should output something like::
 
     $ pybot --version
     Robot 2.0.1 (Python 2.5.2 on linux2)
-
-Detailed installation instructions can be found from the `user guide`_.
 
 
 Running this demo
 -----------------
 
-To run this demo, open a command shell, cd to this directory, and type
-the following command at the command line::
+This Quick Start Guide also acts as an executable demo.  To run it,
+open a command shell, cd to this directory, and type the following
+command at the command line::
 
    pybot quickstart.html
 
@@ -82,16 +89,16 @@ The tests in this file will execute and generate the following reports:
 :path:`output.xml`
    the test results in a portable XML format for integration with other tools
 
-Open `report.html`__ (note: the link works only after this guide has been 
-executed at least once) in your browser, then click on the links to explore
+Open `report.html`__ (the link works only after this guide has been executed) in your browser, then click on the links to explore
 the results. The :path:`report.html` file links to the :path:`log.html` file.
 
 __ report.html
 
-There are also a number of command line options that can be used to control
-the test execution and generated outputs. Complete list can be viewed by
-issuing `pybot --help`. The following command changes the name of the log
-file and the name of the top level suite in the report and log::
+There are also a number of command line options that can be used to
+control the test execution and generated outputs. Complete list can be
+viewed by issuing :cli:`pybot --help`. For example the following
+command changes the name of the log file and the name of the top level
+test suite::
     
     pybot --log mylog.html --name My_Fine_Tests quickstart.html
 
@@ -100,43 +107,23 @@ Introducing the sample application
 ----------------------------------
 
 The sample application for this paper is a variation on a classic
-login example: it's a command-line based authentication server written
+login example: it is a command-line based authentication server written
 in Python. At the moment, the sample application allows a user to do
 three things:
 
-   * Create an account with a valid password
-   * Log in with a valid user name and password
-   * Change the password of an existing account
+* Create an account with a valid password.
+* Log in with a valid user name and password.
+* Change the password of an existing account.
 
-Attempting to log in with a non-existent user account or with an invalid password results in the same error message::
+The application itself is in the :path:`sut` directory and can be
+executed with a command :cli:`python sut/login.py`. Attempting to log
+in with a non-existent user account or with an invalid password
+results in the same error message::
 
+    > python sut/login.py login nobody P4ssw0rd
     Access Denied
 
-Creating a user account with valid password results in the message::
-
-    SUCCESS
-
-There are two requirements that a password must fulfill to be valid: it must
-be between 7-12 characters long, and it must contain lower and upper case
-letters and numbers, but it must not contain special characters. Trying to
-create a user with invalid password results in one of the following messages::
-
-    Creating user failed: Password must be 7-12 characters long
-    Creating user failed: Password must be a combination of lowercase and
-    uppercase letters and numbers
-
-Changing password with invalid credentials results in the same error message
-as logging in with invalid credentials. The validity of new password is
-verified and if not valid, an error message is given.
-
-And logging in successfully results in the message::
-
-    Logged In
-
-So, for example, if I issue the following commands, I should get the following responses::
-
-    > python sut/login.py login fred P4ssw0rd
-    Access Denied
+After creating a user account with valid password login succeeds::
 
     > python sut/login.py create fred P4ssw0rd
     SUCCESS
@@ -144,15 +131,34 @@ So, for example, if I issue the following commands, I should get the following r
     > python sut/login.py login fred P4ssw0rd
     Logged In
 
-    > python sut/login.py change-password freddy P4ssw0rd dr0wss4P
-    Access Denied
+There are two requirements that a password must fulfill to be valid: it must
+be between 7-12 characters long, and it must contain lower and upper case
+letters and numbers, but it must not contain special characters. Trying to
+create a user with invalid password fails::
 
-    > python sut/login.py change-password fred P4ssw0rd dr0wss4P
+    > python sut/login.py create fred short
+    Creating user failed: Password must be 7-12 characters long
+
+    > python sut/login.py create fred invalid
+    Creating user failed: Password must be a combination of lowercase and
+    uppercase letters and numbers
+
+Changing password with invalid credentials results in the same error message
+as logging in with invalid credentials. The validity of new password is
+verified and if not valid, an error message is given::
+
+    > python sut/login.py change-password fred wrong NewP4ss
+    Changing password failed: Access Denied
+
+    > python sut/login.py change-password fred P4ssw0rd short
+    Changing password failed: Password must be 7-12 characters long
+
+    > python sut/login.py change-password fred P4ssw0rd NewP4ss
     SUCCESS
 
-That's all our little sample application does just at the moment.
-It's not much.  But it's a start.  Now we need to add some new
-capabilities to it.
+The application uses a simple database file to keep track on user
+statuses. The file is located in operating system dependent temporary
+directory.
 
 
 Test cases
@@ -182,12 +188,12 @@ Robot Framework test cases are created using a simple tabular syntax. For exampl
    =====================================  =================================  ==============  ==============
 
 
-Notice that these tests read almost like a manual test written in
-English rather than like an automated test. Robot Framework uses the
+Notice that these tests read almost like manual tests written in
+English rather than like automated test cases. Robot Framework uses the
 keyword-driven approach that supports writing tests that capture the
 essence of the actions and expectations in natural language. Test
-cases are constructed from keywords (normaly in the second column) and
-their possible arguments .
+cases are constructed from keywords (normally in the second column) and
+their possible arguments.
 
 
 Higher-level test cases
@@ -198,7 +204,7 @@ take no arguments. This style allows using totally free text which is
 suitable for communication even with non-technical customers or
 other stakeholders. Robot Framework does not enforce any particular
 style for writing test cases, and it is possible to use for example
-*given-when-then* format popularized by `behaviour-driven development`__
+*given-when-then* format popularized by `behavior-driven development`__
 (BDD) like in the example below.
 
 __ http://en.wikipedia.org/wiki/Behavior_driven_development
@@ -245,11 +251,10 @@ data without duplicating the workflow.
    Password with special characters    Creating user with invalid password should fail  abCD56+        ${PWD INVALID CONTENT}
    ==================================  ===============================================  =============  ======================
 
-In these tests there is only one keyword (:name:`Creating user with
-invalid password should fail`) per test case, and it is responsible
-for trying to create a user with the provided password and checking
-that creation fails with an expected error message. Notice that the error
-messages are specified using variables_.
+In these tests there is only one keyword per test case, and it is
+responsible for trying to create a user with the provided password and
+checking that creation fails with an expected error message. Notice
+that the error messages are specified using variables_.
 
 
 Keywords
@@ -257,11 +262,9 @@ Keywords
 
 Keywords that test cases are created from come from three sources:
 `built-in keywords`_ are always available, `library keywords`_ come
-from imported test libraries, and so called `user keywords`__ cab be
+from imported test libraries, and so called `user keywords`_ can be
 created using the same tabular syntax that is used for creating test
 cases.
-
-__ `User-defined keywords`_
 
 
 Built-in keywords
@@ -270,7 +273,7 @@ Built-in keywords
 Some generally useful keywords such as :name:`Get Time` and
 :name:`Should Be Equal` are always available. Technically these
 keywords come from a test library called BuiltIn_ and you can
-see its documentation for a compleate list of available keywords.
+see its documentation for a complete list of available keywords.
 
 
 Library keywords
@@ -278,21 +281,20 @@ Library keywords
 
 All lowest level keywords are defined in test libraries which are
 implemented using standard programming languages. Robot Framework
-comes with a handful of libraries including an OperatingSystem_
+comes with a `handful of libraries`__ including an OperatingSystem_
 library to support common operating system functions, and a
 Screenshot_ library for taking screenshots.  In addition to these
 *standard libraries*, there are other libraries distributed in
 separate open source projects, such as SeleniumLibrary_ for Web
 testing. It is also easy to `implement your own libraries`__ when
-there is no suitable library available. For a list of available
-libraries see
-http://code.google.com/p/robotframework/wiki/TestLibraries.
+there is no suitable library available. 
 
+__ http://code.google.com/p/robotframework/wiki/TestLibraries
 __ `Creating test libraries`_
 
-To be able to use keywords provided by a test library it must be taken
+To be able to use keywords provided by a test library, it must be taken
 into use.  Tests in this file need keywords from the standard
-OperatingSystem library (e.g. :name:`Remove File`) as wel as from a
+OperatingSystem library (e.g. :name:`Remove File`) as well as from a
 custom made LoginLibrary (e.g. :name:`Attempt to login with
 credentials`). Both of these libraries are imported in so called
 *setting table* below.
@@ -315,8 +317,8 @@ One of the most powerful features of Robot Framework is the ability to
 easily create new higher-level keywords from other keywords. The
 syntax for creating these so called *user-defined keywords*, or *user
 keywords* for short, is similar to the syntax that is used for
-creating test cases. All the higher-level keywords needed
-in previous test cases are created in the table below.
+creating test cases. All the higher-level keywords needed in previous
+test cases are created in the *keyword table* below.
 
 .. table:: 
    :class: example
@@ -338,7 +340,7 @@ in previous test cases are created in the table below.
    \                                                Attempt to login with credentials  ${username}                     ${password}
    \                                                Status should be                   Logged In                       \
    \                                                \                                  \                               \
-   *# Used by BDD test cases*                       \                                  \                               \
+   *# Used by BDD test cases (this is a comment)*   \                                  \                               \
    Given a user has a valid account                 Create valid user                  ${USERNAME}                     ${PASSWORD}
    When she changes her password                    Change password                    ${USERNAME}                     ${PASSWORD}
    \                                                ...                                ${NEW_PASSWORD}                 \
@@ -377,8 +379,8 @@ variable definition is quite simple, as seen in this table:
           Variable                                           Value
    ======================  ============================================================================= 
    ${USERNAME}             janedoe
-   ${PASSWORD}             J4n3d03
-   ${NEW_PASSWORD}         30d3n4J
+   ${PASSWORD}             J4n3D0e
+   ${NEW_PASSWORD}         e0D3n4J
    \                       \
    ${DATABASE_FILE}        ${TEMPDIR}${/}robotframework-quickstart-db.txt
    \                       \
@@ -386,84 +388,84 @@ variable definition is quite simple, as seen in this table:
    ${PWD_INVALID_CONTENT}  Password must be a combination of lowercase and uppercase letters and numbers 
    ======================  =============================================================================
 
+Variables can also be given from the command line which is useful if
+the tests need to be executed in different environments. For example
+this demo can be executed like::
 
-In addition to user defined variables , there are some built-in variables that 
-are always available. :var:`${TEMPDIR}` in the above table is one such variable.
-Variables can also be given from the command line which is useful if the tests
-need to be executed in different environments. Variables can also be defined
-in variable files.
+   pybot --variable USERNAME:johndoe --variable PASSWORD:J0hnD0e quickstart.html
+
+In addition to user defined variables, there are some built-in
+variables that are always available. These variables include
+:var:`${TEMPDIR}` and :var:`${/}` which are used in the above table.
 
 
-Using Variables
+Using variables
 ---------------
 
-Variables can be used in most places in the test data, most commonly as
-arguments to keywords. Also all settings allow variables in their values.
-Additionally, it is possible for keywords to return value(s) that can be
-assigned to variable(s) and further used. 
-
-User keyword :name:`Verify database content` used in the following test case
-demonstrates the use of a variable to capture return value of a keyword (in
-this case :name:`Get File` from :name:`OperatingSystem` test library) and
-making assertions against it:
+Variables can be used in most places in the test data. They are most
+commonly used as arguments to keywords like the following test case
+demonstrates.  Return values from keywords can also be assigned to
+variables and used later. For example following :name:`Database Should
+Contain` `user keyword`_ sets database content to :var:`${database}`
+variable and then verifies the content using `built-in keyword`_
+:name:`Should Contain`.
 
 .. table:: 
    :class: example
 
-   =====================================  =================================  =========  ========  ========
-               Test Case                                 Action              Argument   Argument  Argument
-   =====================================  =================================  =========  ========  ========
-   Logging in changes the status of user  [ Tags ]                           example    variable  \
-   \                                      Create Valid User                  fred       P4ssw0rd  \
-   \                                      Verify database content            fred       P4ssw0rd  Inactive 
-   \                                      Attempt to Login with Credentials  fred       P4ssw0rd  \
-   \                                      Status Should Be                   Logged In  \         \
-   \                                      Verify database content            fred       P4ssw0rd  Active  
-   =====================================  =================================  =========  ========  ========
-
-Tags will be explained in next chapter.
-
+   =================================  =======================  ==============  ==============  ============
+               Test Case                       Action             Argument        Argument       Argument
+   =================================  =======================  ==============  ==============  ============
+   User status is stored in database  [Tags]                   variables       database        \ 
+   \                                  Create Valid User        ${USERNAME}     ${PASSWORD}     \
+   \                                  Database Should Contain  ${USERNAME}     ${PASSWORD}     Inactive 
+   \                                  Login                    ${USERNAME}     ${PASSWORD}     \
+   \                                  Database Should Contain  ${USERNAME}     ${PASSWORD}     Active  
+   =================================  =======================  ==============  ==============  ============
 
 .. table:: 
    :class: example
 
-   =======================  ==============  ===========  =====================================  =========
-        Keyword                Action        Argument                Argument                   Argument
-   =======================  ==============  ===========  =====================================  =========
-   Verify database content  [Arguments]     ${username}  ${password}                            ${status}  
-   \                        ${database} =   Get File     ${DATABASE FILE}                       \
-   \                        Should Contain  ${database}  ${username}\\t${password}\\t${status}  \
-   =======================  ==============  ===========  =====================================  =========
+   =======================  ================  ==============  =====================================  ============
+           Keyword               Action          Argument                  Argument                    Argument
+   =======================  ================  ==============  =====================================  ============
+   Database Should Contain  [Arguments]       ${username}     ${password}                            ${status}  
+   \                        ${database} =     Get File        ${DATABASE_FILE}                       \
+   \                        Should Contain    ${database}     ${username}\\t${password}\\t${status}  \
+   =======================  ================  ==============  =====================================  ============
 
 
 Organizing test cases
 =====================
 
-
 Test suites
 -----------
 
-Collections of test cases are called test suites in Robot Framework. Every input 
-file which contains test case(s) forms a test suite. When running 
-:cli:`pybot quickstart.html` you will see test suite Quickstart in the console 
-output. It is also visible in the report and log and it contains all the test 
-cases defined in this file.
+Collections of test cases are called test suites in Robot
+Framework. Every input file which contains test cases forms a test
+suite. When `running this demo`_, you see test suite
+:name:`Quickstart` in the console output. This name is got from the
+file name and it is also visible in the report and log.
 
-Directory containing test suite file(s) forms also a test suite. Running command 
-:cli:`pybot .` will run directory where this quickstart.html is located. 
-This will produce one more level of test suites to the results. There is no 
-limitation how many levels of test suites can be created with directory test 
-suites. This makes it possible to organize the test cases to logically 
-meaningful and manageable size directories and files. See more about test suites 
-from `user guide`_.
+It is possible to organize test cases hierarchically by placing test
+case files into directories and these directories into other
+directories. All these directories automatically create higher level
+test suites that get their names from directory names.  Since test
+suites are just files and directories, they are trivially placed into
+any version control system.
+
+You can test running a directory as a test suite by running following
+command in the directory where this guide is located::
+
+   pybot .
 
 
 Setup and teardown
 ------------------
 
 If you want a set of actions to occur before and after each test
-executes, use the Test Setup and Test Teardown settings in the Setting
-table like so:
+executes, use the :name:`Test Setup` and :name:`Test Teardown`
+settings like so:
 
 .. table:: 
    :class: example
@@ -475,43 +477,40 @@ table like so:
    Test Teardown    \
    ===============  ========================
 
-
-Similarly you can use the Suite Setup and Suite Teardown settings to
-specify actions to be executed before and after an entire test suite
-executes.
+Similarly you can use the :name:`Suite Setup` and :name:`Suite
+Teardown` settings to specify actions to be executed before and after
+an entire test suite executes.
 
 
 Using tags
 ----------
 
+Robot Framework allows setting tags for test cases to give them free
+metadata.  Tags can be set for all test cases in a file with
+:name:`Default Tags` or :name:`Force Tags` settings like in the table
+below. It is also possible to define tags for single test case like in
+earlier__ :name:`User status is stored in database` tests.
+
+__ `Using variables`_
+
 .. table:: 
    :class: example
 
-   ============  ===========  ===========
-      Setting       Value        Value
-   ============  ===========  ===========
-   Default Tags  quickstart   example
-   ============  ===========  =========== 
+   ==============  ===========  ===========
+       Setting        Value        Value
+   ==============  ===========  ===========
+   Force Tags      quickstart   \
+   Default Tags    example      smoke
+   ==============  ===========  =========== 
 
-Tags are metadata in the test case and every test case can have any number of 
-tags. Tags can be defined to all the test suite's test cases with Default Tags 
-(see above) or Force Tags settings. It is also possible to define tags for 
-single test case like in :name:`Logging in changes the status of user` test 
-case.
+When you look at a report after test execution, you can see that tests
+have specified tags associated with them and there are also statistics
+generated based on tags. Tags can also be used for many other
+purposes, one of the most important being the possibility to select
+what tests to execute. You can try for example following commands::
 
-Tags are used for three purposes: selecting test cases to be executed, defining 
-critical test cases, and getting statistics. :cli:`pybot --include variable quickstart.html` 
-will execute only test cases having tag :name:`variable` and 
-:cli:`pybot --exclude variable quickstart.html` will execute all but test cases 
-with tag :name:`variable`. :cli:`pybot --critical variable quickstart.html` will 
-define that only test cases with tag :name:`variable` will affect the test 
-execution result. You can see from output that there is only one critical test 
-case. In case the other test cases would fail, the overall status would still be
-pass. This functionality is useful in case you have test cases that you know 
-will fail. This is the case at least when ATDD is used and the test cases are 
-ready before the functionality is implemented. In report you can also see the 
-:name:`Statistics by Tag` table which contains statistics per tag. See 
-`user guide`_ for more details about tagging.
+   pybot --include smoke quickstart.html
+   pybot --exclude database quickstart.html
 
 
 Creating test libraries
@@ -520,15 +519,24 @@ Creating test libraries
 Robot Framework offers a simple API for creating test libraries, both with
 Python and Java. The `user guide`_ contains detailed description with examples.
 
-Below is the source code for the test library used in this guide. You can see, 
-for example, how the keyword :name:`Create User` is mapped to actual
-implementation of method :code:`create_user`.
+Below is the source code of :name:`LoginLibrary` test library used in
+this guide. You can see, for example, how the keyword :name:`Create
+User` is mapped to actual implementation of method
+:code:`create_user`.
 
 .. sourcecode:: python 
-   
-  testlibs/LoginLibrary.py 
+
+   testlibs/LoginLibrary.py 
 
 
+.. footer:: Generated by reStructuredText_. Syntax highlighting by Pygments_.
+
+
+.. Link targets:
+
+.. _user keywords: `User-defined keywords`_
+.. _user keyword: `user keywords`_
+.. _built-in keyword: `Built-in keywords`_
 
 .. _User Guide: http://code.google.com/p/robotframework/wiki/UserGuide
 .. _Robot Framework User Guide: `User Guide`_
@@ -536,3 +544,8 @@ implementation of method :code:`create_user`.
 .. _OperatingSystem: http://code.google.com/p/robotframework/wiki/OperatingSystemLibrary
 .. _Screenshot: http://code.google.com/p/robotframework/wiki/ScreenshotLibrary
 .. _SeleniumLibrary: http://code.google.com/p/robotframework-seleniumlibrary
+.. _Python: http://python.org
+.. _Jython: http://jython.org
+.. _Easy Install: http://peak.telecommunity.com/DevCenter/EasyInstall
+.. _reStructuredText: http://docutils.sourceforge.net/rst.html
+.. _Pygments: http://pygments.org/
