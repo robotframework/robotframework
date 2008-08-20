@@ -31,9 +31,6 @@ This guide is designed to introduce the basic concepts of Robot Framework.
 For a detailed technical description, please refer to `Robot Framework User 
 Guide`_.
 
-.. _User Guide: http://code.google.com/p/robotframework/wiki/UserGuide
-.. _Robot Framework User Guide: `User Guide`_
-
 
 Installation
 ------------
@@ -258,41 +255,47 @@ messages are specified using variables_.
 Keywords
 ========
 
-TODO: Peke
+Keywords that test cases are created from come from three sources:
+`built-in keywords`_ are always available, `library keywords`_ come
+from imported test libraries, and so called `user keywords`__ cab be
+created using the same tabular syntax that is used for creating test
+cases.
 
-Keywords that test cases are created from come from two
-sources. Lowest level keywords are always created in *test libraries*
-using standard programming languages.  In addition to that, users can
-create new higher-level keywords using the same tabular syntax that is
-used for creating test cases.
+__ `User-defined keywords`_
+
+
+Built-in keywords
+-----------------
+
+Some generally useful keywords such as :name:`Get Time` and
+:name:`Should Be Equal` are always available. Technically these
+keywords come from a test library called BuiltIn_ and you can
+see its documentation for a compleate list of available keywords.
 
 
 Library keywords
 ----------------
 
-http://code.google.com/p/robotframework/wiki/TestLibraries
+All lowest level keywords are defined in test libraries which are
+implemented using standard programming languages. Robot Framework
+comes with a handful of libraries including an OperatingSystem_
+library to support common operating system functions, and a
+Screenshot_ library for taking screenshots.  In addition to these
+*standard libraries*, there are other libraries distributed in
+separate open source projects, such as SeleniumLibrary_ for Web
+testing. It is also easy to `implement your own libraries`__ when
+there is no suitable library available. For a list of available
+libraries see
+http://code.google.com/p/robotframework/wiki/TestLibraries.
 
-Built-in keywords
-'''''''''''''''''
+__ `Creating test libraries`_
 
-The keywords included with Robot Framework,
-including generally useful keywords such as "Get Time" and "Should
-Be Equal".  For a complete list of the available built-in keywords
-see BuiltInLibrary wikipage.
-
-Standard libraries
-''''''''''''''''''
-
-Keywords defined in a Robot Framework Library. (More on Libraries
-later. The keyword "Create Valid User" from the previous tests is a
-User Keyword.)
-
-Robot Framework comes with a handful of libraries including an
-:name:`OperatingSystem` library to support common operating system functions,
-and a :name:`Screenshot` library for taking screenshots.  In addition, there
-are other libraries distributed in separate open source projects, such
-as a Selenium library for Web testing.
-
+To be able to use keywords provided by a test library it must be taken
+into use.  Tests in this file need keywords from the standard
+OperatingSystem library (e.g. :name:`Remove File`) as wel as from a
+custom made LoginLibrary (e.g. :name:`Attempt to login with
+credentials`). Both of these libraries are imported in so called
+*setting table* below.
 
 .. table:: 
    :class: example
@@ -308,48 +311,53 @@ as a Selenium library for Web testing.
 User-defined keywords
 ---------------------
 
-Keywords defined in a Keywords table either in the test file, or in
-a resources file for a test suite. (More on test suites later.)
-For example:
+One of the most powerful features of Robot Framework is the ability to
+easily create new higher-level keywords from other keywords. The
+syntax for creating these so called *user-defined keywords*, or *user
+keywords* for short, is similar to the syntax that is used for
+creating test cases. All the higher-level keywords needed
+in previous test cases are created in the table below.
 
 .. table:: 
    :class: example
 
-   ===============================================  =================================  =======================================  =================
-                   Keyword                                         Action                              Argument                      Argument
-   ===============================================  =================================  =======================================  =================
-   Clear login database                             Remove file                        ${DATABASE FILE}                         \
-   \                                                \                                  \                                        \
-   Create valid user                                [Arguments]                        ${username}                              ${password}
-   \                                                Create user                        ${username}                              ${password}
-   \                                                Status should be                   SUCCESS                                  \
-   \                                                \                                  \                                        \
-   Creating user with invalid password should fail  [Arguments]                        ${password}                              ${expected_error}
-   \                                                Create user                        example                                  ${password}
-   \                                                Status should be                   Creating user failed: ${expected_error}  \
-   \                                                \                                  \                                        \
-   Given a user has a valid account                 Create valid user                  ${USERNAME}                              ${PASSWORD}
-   \                                                \                                  \                                        \
-   When she changes her password                    Change password                    ${USERNAME}                              ${PASSWORD}
-   \                                                ...                                ${NEW PASSWORD}                          \
-   \                                                Status should be                   SUCCESS                                  \
-   \                                                \                                  \                                        \
-   Then she can log in with the new password        Attempt to login with credentials  ${USERNAME}                              ${NEW PASSWORD}
-   \                                                Status should be                   Logged In                                \
-   \                                                \                                  \                                        \
-   And she cannot use the old password anymore      Attempt to login with credentials  ${USERNAME}                              ${PASSWORD}
-   \                                                Status should be                   Access Denied                            \
-   ===============================================  =================================  =======================================  =================
+   ===============================================  =================================  ==============================  ================
+                   Keyword                                         Action                          Argument                Argument
+   ===============================================  =================================  ==============================  ================
+   Clear login database                             Remove file                        ${DATABASE_FILE}                \
+   \                                                \                                  \                               \
+   Create valid user                                [Arguments]                        ${username}                     ${password}
+   \                                                Create user                        ${username}                     ${password}
+   \                                                Status should be                   SUCCESS                         \
+   \                                                \                                  \                               \
+   Creating user with invalid password should fail  [Arguments]                        ${password}                     ${error}
+   \                                                Create user                        example                         ${password}
+   \                                                Status should be                   Creating user failed: ${error}  \
+   \                                                \                                  \                               \
+   Login                                            [Arguments]                        ${username}                     ${password}
+   \                                                Attempt to login with credentials  ${username}                     ${password}
+   \                                                Status should be                   Logged In                       \
+   \                                                \                                  \                               \
+   *# Used by BDD test cases*                       \                                  \                               \
+   Given a user has a valid account                 Create valid user                  ${USERNAME}                     ${PASSWORD}
+   When she changes her password                    Change password                    ${USERNAME}                     ${PASSWORD}
+   \                                                ...                                ${NEW_PASSWORD}                 \
+   \                                                Status should be                   SUCCESS                         \
+   Then she can log in with the new password        Login                              ${USERNAME}                     ${NEW_PASSWORD}
+   And she cannot use the old password anymore      Attempt to login with credentials  ${USERNAME}                     ${PASSWORD}
+   \                                                Status should be                   Access Denied                   \
+   ===============================================  =================================  ==============================  ================
 
 
 User-defined keywords can include actions defined by other
 user-defined keywords, built-in keywords, or library keywords.  As you
-can see from this example, User-defined keywords can take parameters.
+can see from this example, user-defined keywords can take parameters.
 They can also return values and even contain FOR loops. For now, the
-important thing to know is that User-defined keywords enable test
+important thing to know is that user-defined keywords enable test
 creators to create reusable steps for common action sequences.
 User-defined keywords can also help the test author keep the tests as
-readable as possible.
+readable as possible and use appropriate abstraction levels in
+different situations.
 
 
 Variables
@@ -370,12 +378,12 @@ variable definition is quite simple, as seen in this table:
    ======================  ============================================================================= 
    ${USERNAME}             janedoe
    ${PASSWORD}             J4n3d03
-   ${NEW PASSWORD}         30d3n4J
+   ${NEW_PASSWORD}         30d3n4J
    \                       \
-   ${DATABASE FILE}        ${TEMPDIR}${/}robotframework-quickstart-db.txt
+   ${DATABASE_FILE}        ${TEMPDIR}${/}robotframework-quickstart-db.txt
    \                       \
-   ${PWD INVALID LENGTH}   Password must be 7-12 characters long
-   ${PWD INVALID CONTENT}  Password must be a combination of lowercase and uppercase letters and numbers 
+   ${PWD_INVALID_LENGTH}   Password must be 7-12 characters long
+   ${PWD_INVALID_CONTENT}  Password must be a combination of lowercase and uppercase letters and numbers 
    ======================  =============================================================================
 
 
@@ -490,3 +498,10 @@ implementation of method :code:`create_user`.
   testlibs/LoginLibrary.py 
 
 
+
+.. _User Guide: http://code.google.com/p/robotframework/wiki/UserGuide
+.. _Robot Framework User Guide: `User Guide`_
+.. _BuiltIn: http://code.google.com/p/robotframework/wiki/BuiltInLibrary
+.. _OperatingSystem: http://code.google.com/p/robotframework/wiki/OperatingSystemLibrary
+.. _Screenshot: http://code.google.com/p/robotframework/wiki/ScreenshotLibrary
+.. _SeleniumLibrary: http://code.google.com/p/robotframework-seleniumlibrary
