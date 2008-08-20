@@ -27,7 +27,8 @@ There are three ways to install Robot Framework:
 
 `Using Easy Install`_
     If Python package managing tool `Easy Install`_ is available, installing Robot 
-    Framework is as easy as running command :cli:`easy_install robotframework`.
+    Framework is as easy as running command :cli:`easy_install robotframework`. 
+    Easy Install support is available from Robot Framework 2.0.1 onwards.
 
 Installation packages are available from
 http://downloads.robotframework.org, and source code from
@@ -172,7 +173,9 @@ Using Easy Install
 
 An obvious precondition for using `Easy Install`_ is to have it installed. The 
 actual command to install Robot Framework with Easy Install is
-:cli:`easy_install robotframework`. 
+:cli:`easy_install robotframework`. Easy Install support is available from Robot 
+Framework 2.0.1 onwards.
+
 
 .. Note:: When using Easy Install on Windows, you need to run :prog:`robot_postinstall.py`
           script after the installation to configure `runner scripts`_. 
