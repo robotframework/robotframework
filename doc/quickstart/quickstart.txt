@@ -16,8 +16,8 @@
 Introduction
 ============
 
-Robot Framework overview
-------------------------
+Overview
+--------
 
 Robot Framework is a keyword-based test automation tool.  Tests live
 in html test files and make use of keywords implemented in test libraries to
@@ -27,6 +27,13 @@ Because Robot Framework is flexible and extensible, it is ideally
 suited to testing complex software with a variety of interfaces: GUI,
 Web, command line, Web services, etc.  
 
+This guide is designed to introduce the basic concepts of Robot Framework.
+For a detailed technical description, please refer to `Robot Framework User 
+Guide`_.
+
+.. _User Guide: http://code.google.com/p/robotframework/wiki/UserGuide
+.. _Robot Framework User Guide: `User Guide`_
+
 
 Installation
 ------------
@@ -35,8 +42,8 @@ Before Robot Framework can be installed, Python must be installed.
 In addition, to use test libraries written in Java, Jython must be
 installed. To run this quickstart, Python is enough.
 
-There are three different ways to install Robot Framework, the most suitable
-can be chosen:
+There are three different ways to install Robot Framework, of which the most 
+suitable can be chosen:
 
 1. There is a binary installer for Windows platform. It is enough to
    double-click the installer and follow instructions.
@@ -58,8 +65,7 @@ should output something like::
     $ pybot --version
     Robot 2.0.1 (Python 2.5.2 on linux2)
 
-Detailed installation instructions can be found from Robot Framework User
-Guide.
+Detailed installation instructions can be found from the `user guide`_.
 
 
 Running this demo
@@ -98,10 +104,11 @@ Introducing the sample application
 The sample application for this paper is a variation on a classic
 login example: it’s a command-line based authentication server written
 in Python. At the moment, the sample application allows a user to do
-two things:
+three things:
 
    * Create an account with a valid password
    * Log in with a valid user name and password
+   * Change the password of an existing account
 
 Attempting to log in with a non-existent user account or with an invalid password results in the same error message::
 
@@ -120,6 +127,10 @@ create a user with invalid password results in one of the following messages::
     Creating user failed: Password must be a combination of lowercase and
     uppercase letters and numbers
 
+Changing password with invalid credentials results in the same error message
+as logging in with invalid credentials. The validity of new password is
+verified and if not valid, an error message is given.
+
 And logging in successfully results in the message::
 
     Logged In
@@ -134,6 +145,12 @@ So, for example, if I issue the following commands, I should get the following r
 
     > python sut/login.py login fred P4ssw0rd
     Logged In
+
+    > python sut/login.py change-password freddy P4ssw0rd dr0wss4P
+    Access Denied
+
+    > python sut/login.py change-password fred P4ssw0rd dr0wss4P
+    SUCCESS
 
 That’s all our little sample application does just at the moment.
 It’s not much.  But it’s a start.  Now we need to add some new
@@ -214,7 +231,7 @@ Data-driven test cases
 Quite often several test cases are otherwise similar but they have
 slightly different input or output data. In these situations
 *data-driven* test cases, like six tests below, allow varying the test
-data without dublicating the workflow.
+data without duplicating the workflow.
 
 .. table:: 
    :class: example
@@ -358,8 +375,8 @@ variable definition is quite simple, as seen in this table:
    ======================  =============================================================================
 
 
-In additioni to user defined variables , there are some built-in variables 
-that are always available. :var:`${TEMPDIR}` in the above table is one such variable.
+In addition to user defined variables , there are some built-in variables that 
+are always available. :var:`${TEMPDIR}` in the above table is one such variable.
 Variables can also be given from the command line which is useful if the tests
 need to be executed in different environements. Variables can also be defined
 in variable files.
@@ -417,10 +434,12 @@ Also for single test case, usages: filtering, critical tests, statistics
 Creating test libraries
 =======================
 
-TODO: Janne
+Robot Framework offers a simple API for creating test libraries, both with
+Python and Java. The `user guide`_ contains detailed description with examples.
 
-
-Here is an example test library:
+Below is the source code for the test library used in this guide. You can see, 
+for example, how the keyword :name:`Create User` is mapped to actual
+implementation of method :code:`create_user`.
 
 .. sourcecode:: python 
    
