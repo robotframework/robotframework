@@ -100,7 +100,7 @@ Introducing the sample application
 ----------------------------------
 
 The sample application for this paper is a variation on a classic
-login example: it’s a command-line based authentication server written
+login example: it's a command-line based authentication server written
 in Python. At the moment, the sample application allows a user to do
 three things:
 
@@ -150,8 +150,8 @@ So, for example, if I issue the following commands, I should get the following r
     > python sut/login.py change-password fred P4ssw0rd dr0wss4P
     SUCCESS
 
-That’s all our little sample application does just at the moment.
-It’s not much.  But it’s a start.  Now we need to add some new
+That's all our little sample application does just at the moment.
+It's not much.  But it's a start.  Now we need to add some new
 capabilities to it.
 
 
@@ -196,7 +196,7 @@ Higher-level test cases
 Test cases can also be created using only high-level keywords that
 take no arguments. This style allows using totally free text which is
 suitable for communication even with non-technical customers or
-other stakeholers. Robot Framework does not enforce any particular
+other stakeholders. Robot Framework does not enforce any particular
 style for writing test cases, and it is possible to use for example
 *given-when-then* format popularized by `behaviour-driven development`__
 (BDD) like in the example below.
@@ -390,7 +390,7 @@ variable definition is quite simple, as seen in this table:
 In addition to user defined variables , there are some built-in variables that 
 are always available. :var:`${TEMPDIR}` in the above table is one such variable.
 Variables can also be given from the command line which is useful if the tests
-need to be executed in different environements. Variables can also be defined
+need to be executed in different environments. Variables can also be defined
 in variable files.
 
 
@@ -413,13 +413,15 @@ making assertions against it:
    =====================================  =================================  =========  ========  ========
                Test Case                                 Action              Argument   Argument  Argument
    =====================================  =================================  =========  ========  ========
-   Logging in changes the status of user  Create Valid User                  fred       P4ssw0rd  \
+   Logging in changes the status of user  [ Tags ]                           example    variable  \
+   \                                      Create Valid User                  fred       P4ssw0rd  \
    \                                      Verify database content            fred       P4ssw0rd  Inactive 
    \                                      Attempt to Login with Credentials  fred       P4ssw0rd  \
    \                                      Status Should Be                   Logged In  \         \
    \                                      Verify database content            fred       P4ssw0rd  Active  
    =====================================  =================================  =========  ========  ========
 
+Tags will be explained in next chapter.
 
 
 .. table:: 
@@ -437,12 +439,23 @@ making assertions against it:
 Organizing test cases
 =====================
 
-TODO: Peke
 
 Test suites
 -----------
 
-File and directory suites
+Collections of test cases are called test suites in Robot Framework. Every input 
+file which contains test case(s) forms a test suite. When running 
+:cli:`pybot quickstart.html` you will see test suite Quickstart in the console 
+output. It is also visible in the report and log and it contains all the test 
+cases defined in this file.
+
+Directory containing test suite file(s) forms also a test suite. Running command 
+:cli:`pybot .` will run directory where this quickstart.html is located. 
+This will produce one more level of test suites to the results. There is no 
+limitation how many levels of test suites can be created with directory test 
+suites. This makes it possible to organize the test cases to logically 
+meaningful and manageable size directories and files. See more about test suites 
+from `user guide`_.
 
 
 Setup and teardown
@@ -480,7 +493,25 @@ Using tags
    Default Tags  quickstart   example
    ============  ===========  =========== 
 
-Also for single test case, usages: filtering, critical tests, statistics
+Tags are metadata in the test case and every test case can have any number of 
+tags. Tags can be defined to all the test suite's test cases with Default Tags 
+(see above) or Force Tags settings. It is also possible to define tags for 
+single test case like in :name:`Logging in changes the status of user` test 
+case.
+
+Tags are used for three purposes: selecting test cases to be executed, defining 
+critical test cases, and getting statistics. :cli:`pybot --include variable quickstart.html` 
+will execute only test cases having tag :name:`variable` and 
+:cli:`pybot --exclude variable quickstart.html` will execute all but test cases 
+with tag :name:`variable`. :cli:`pybot --critical variable quickstart.html` will 
+define that only test cases with tag :name:`variable` will affect the test 
+execution result. You can see from output that there is only one critical test 
+case. In case the other test cases would fail, the overall status would still be
+pass. This functionality is useful in case you have test cases that you know 
+will fail. This is the case at least when ATDD is used and the test cases are 
+ready before the functionality is implemented. In report you can also see the 
+:name:`Statistics by Tag` table which contains statistics per tag. See 
+`user guide`_ for more details about tagging.
 
 
 Creating test libraries
