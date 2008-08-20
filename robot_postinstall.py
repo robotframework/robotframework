@@ -3,7 +3,7 @@ import sys
 from distutils.sysconfig import get_python_lib
 
 
-def egg_preinstall(package_path, scripts):
+def egg_preinstall(temp_robot_path, scripts):
     """Updates platform specific startup scripts.
     
     Run as part of the easy_install egg creation procedure. This is the only way 
@@ -12,8 +12,12 @@ def egg_preinstall(package_path, scripts):
     used at any other machine unless the Python and Jython installations are 
     exactly equal.
     """
-    robot_dir = _get_robot_target_dir(os.path.basename(package_path))
-    _update_scripts(scripts, package_path, robot_dir)
+    major, minor = sys.version_info[0:2]
+    version = os.path.basename(temp_robot_path)
+    version = version.replace('-', '_').replace('_', '-', 1)
+    egg_name = '%s-py%s.%s.egg' % (version, major, minor)
+    robot_dir = os.path.join(get_python_lib(), egg_name, 'robot')
+    _update_scripts(scripts, temp_robot_path, robot_dir)
 
 
 def generic_install(script_names, script_dir, robot_dir):
@@ -33,9 +37,10 @@ def windows_binary_install():
     """
     scripts = ['pybot.bat','jybot.bat', 'rebot.bat']
     script_dir = os.path.join(sys.prefix, 'Scripts')
+    robot_dir = os.path.join(get_python_lib(), 'robot')
     python_exe = os.path.join(sys.prefix, 'python.exe')  # sys.executable doesn't work here
     try:
-        _update_scripts(scripts, script_dir, _get_robot_location(), python_exe)
+        _update_scripts(scripts, script_dir, robot_dir, python_exe)
         print '\nInstallation was successful. Happy Roboting!'
     except Exception, err:
         print '\nRunning post-install script failed: %s' % err
@@ -52,7 +57,7 @@ def windows_binary_uninstall():
     deletes directories only if they are empty. Thus compiled files created
     by Jython must be deleted separately.
     """
-    for base, dirs, files in os.walk(_get_robot_location()):
+    for base, dirs, files in os.walk(os.path.join(get_python_lib(), 'robot')):
         for name in files:
             if name.endswith('$py.class'):
                 path = os.path.join(base, name)
@@ -62,19 +67,6 @@ def windows_binary_uninstall():
                     print "Failed to remove Jython compiled file '%s': %s" \
                             % (path, str(err))
 
-
-def _get_robot_target_dir(version):
-    major, minor = sys.version_info[0:2]
-    version = version.replace('-', '_').replace('_', '-', 1)
-    egg_name = '%s-py%s.%s.egg' % (version, major, minor)
-    return os.path.join(get_python_lib(), egg_name, 'robot')
-
-def _get_robot_location():
-    try:
-        import robot
-        return os.path.dirname(os.path.abspath(robot.__file__))
-    except:
-        return os.path.join(get_python_lib(), 'robot')
 
 def _update_scripts(scripts, script_dir, robot_dir, python_exe=sys.executable):
     jython_exe, how_found = _find_jython()
