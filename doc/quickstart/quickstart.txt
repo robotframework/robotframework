@@ -72,30 +72,31 @@ Running this demo
 -----------------
 
 To run this demo, open a command shell, cd to this directory, and type
-the following command at the command line:
+the following command at the command line::
 
    pybot quickstart.html
 
 The tests in this file will execute and generate the following reports:
 
-report.html
+:path:`report.html`
    the test results summary
-log.html
+:path:`log.html`
    the test results details
-output.xml
+:path:`output.xml`
    the test results in a portable XML format for integration with other tools
 
-Open report.html in your browser, then click on the links to explore
-the results. The report.html file links to the log.html file.
+Open `report.html`__ (note: the link works only after this guide has been 
+executed at least once) in your browser, then click on the links to explore
+the results. The :path:`report.html` file links to the :path:`log.html` file.
+
+__ report.html
 
 There are also a number of command line options that can be used to control
 the test execution and generated outputs. Complete list can be viewed by
-issuing `pybot --help`. The following command determines output directory,
-names of the output files and also the name of the top level suite in the
-report::
+issuing `pybot --help`. The following command changes the name of the log
+file and the name of the top level suite in the report and log::
     
-    pybot --outputdir reports --log mylog.html --report myrep.html --name
-    My_Fine_Tests  
+    pybot --log mylog.html --name My_Fine_Tests quickstart.html
 
 
 Introducing the sample application
@@ -239,12 +240,12 @@ data without duplicating the workflow.
    ==================================  ===============================================  =============  ======================
                 Test Case                                    Action                       Password     Expected error message
    ==================================  ===============================================  =============  ======================
-   Too short password                  Creating user with invalid password should fail  abCD5          ${PWD_INVALID_LENGTH}
-   Too long password                   Creating user with invalid password should fail  abCD567890123  ${PWD_INVALID_LENGTH}
-   Password without lowercase letters  Creating user with invalid password should fail  123DEFG        ${PWD_INVALID_CONTENT}
-   Password without capital letters    Creating user with invalid password should fail  abcd56789      ${PWD_INVALID_CONTENT}
-   Password without numbers            Creating user with invalid password should fail  AbCdEfGh       ${PWD_INVALID_CONTENT}
-   Password with special characters    Creating user with invalid password should fail  abCD56+        ${PWD_INVALID_CONTENT}
+   Too short password                  Creating user with invalid password should fail  abCD5          ${PWD INVALID LENGTH}
+   Too long password                   Creating user with invalid password should fail  abCD567890123  ${PWD INVALID LENGTH}
+   Password without lowercase letters  Creating user with invalid password should fail  123DEFG        ${PWD INVALID CONTENT}
+   Password without capital letters    Creating user with invalid password should fail  abcd56789      ${PWD INVALID CONTENT}
+   Password without numbers            Creating user with invalid password should fail  AbCdEfGh       ${PWD INVALID CONTENT}
+   Password with special characters    Creating user with invalid password should fail  abCD56+        ${PWD INVALID CONTENT}
    ==================================  ===============================================  =============  ======================
 
 In these tests there is only one keyword (:name:`Creating user with
@@ -317,7 +318,7 @@ For example:
    ===============================================  =================================  =======================================  =================
                    Keyword                                         Action                              Argument                      Argument
    ===============================================  =================================  =======================================  =================
-   Clear login database                             Remove file                        ${DATABASE_FILE}                         \
+   Clear login database                             Remove file                        ${DATABASE FILE}                         \
    \                                                \                                  \                                        \
    Create valid user                                [Arguments]                        ${username}                              ${password}
    \                                                Create user                        ${username}                              ${password}
@@ -330,10 +331,10 @@ For example:
    Given a user has a valid account                 Create valid user                  ${USERNAME}                              ${PASSWORD}
    \                                                \                                  \                                        \
    When she changes her password                    Change password                    ${USERNAME}                              ${PASSWORD}
-   \                                                ...                                ${NEW_PASSWORD}                          \
+   \                                                ...                                ${NEW PASSWORD}                          \
    \                                                Status should be                   SUCCESS                                  \
    \                                                \                                  \                                        \
-   Then she can log in with the new password        Attempt to login with credentials  ${USERNAME}                              ${NEW_PASSWORD}
+   Then she can log in with the new password        Attempt to login with credentials  ${USERNAME}                              ${NEW PASSWORD}
    \                                                Status should be                   Logged In                                \
    \                                                \                                  \                                        \
    And she cannot use the old password anymore      Attempt to login with credentials  ${USERNAME}                              ${PASSWORD}
@@ -354,6 +355,9 @@ readable as possible.
 Variables
 =========
 
+Defining Variables
+------------------
+
 Variables are an integral part of Robot Framework. Usually any data used in
 tests that is subject to change is best defined as variables. Syntax for
 variable definition is quite simple, as seen in this table:
@@ -366,12 +370,12 @@ variable definition is quite simple, as seen in this table:
    ======================  ============================================================================= 
    ${USERNAME}             janedoe
    ${PASSWORD}             J4n3d03
-   ${NEW_PASSWORD}         30d3n4J
+   ${NEW PASSWORD}         30d3n4J
    \                       \
-   ${DATABASE_FILE}        ${TEMPDIR}${/}robotframework-quickstart-db.txt
+   ${DATABASE FILE}        ${TEMPDIR}${/}robotframework-quickstart-db.txt
    \                       \
-   ${PWD_INVALID_LENGTH}   Password must be 7-12 characters long
-   ${PWD_INVALID_CONTENT}  Password must be a combination of lowercase and uppercase letters and numbers 
+   ${PWD INVALID LENGTH}   Password must be 7-12 characters long
+   ${PWD INVALID CONTENT}  Password must be a combination of lowercase and uppercase letters and numbers 
    ======================  =============================================================================
 
 
@@ -380,6 +384,46 @@ are always available. :var:`${TEMPDIR}` in the above table is one such variable.
 Variables can also be given from the command line which is useful if the tests
 need to be executed in different environements. Variables can also be defined
 in variable files.
+
+
+Using Variables
+---------------
+
+Variables can be used in most places in the test data, most commonly as
+arguments to keywords. Also all settings allow variables in their values.
+Additionally, it is possible for keywords to return value(s) that can be
+assigned to variable(s) and further used. 
+
+User keyword :name:`Verify database content` used in the following test case
+demonstrates the use of a variable to capture return value of a keyword (in
+this case :name:`Get File` from :name:`OperatingSystem` test library) and
+making assertions against it:
+
+.. table:: 
+   :class: example
+
+   =====================================  =================================  =========  ========  ========
+               Test Case                                 Action              Argument   Argument  Argument
+   =====================================  =================================  =========  ========  ========
+   Logging in changes the status of user  Create Valid User                  fred       P4ssw0rd  \
+   \                                      Verify database content            fred       P4ssw0rd  Inactive 
+   \                                      Attempt to Login with Credentials  fred       P4ssw0rd  \
+   \                                      Status Should Be                   Logged In  \         \
+   \                                      Verify database content            fred       P4ssw0rd  Active  
+   =====================================  =================================  =========  ========  ========
+
+
+
+.. table:: 
+   :class: example
+
+   =======================  ==============  ===========  =====================================  =========
+        Keyword                Action        Argument                Argument                   Argument
+   =======================  ==============  ===========  =====================================  =========
+   Verify database content  [Arguments]     ${username}  ${password}                            ${status}  
+   \                        ${database} =   Get File     ${DATABASE FILE}                       \
+   \                        Should Contain  ${database}  ${username}\\t${password}\\t${status}  \
+   =======================  ==============  ===========  =====================================  =========
 
 
 Organizing test cases
