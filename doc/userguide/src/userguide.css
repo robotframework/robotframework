@@ -305,15 +305,18 @@ table.example caption, table.tsv-example caption, table.tabular caption {
 }
 table.example th, table.example td, table.tsv-example td {
     border: 1px solid #808080;
-    height: 1.2em;
     font-family: arial,helvetica,sans-serif;
-    font-size: 0.9em;
+    font-size: 0.8em;
+    padding: 0.1em 0.3em;
+    height: 1.2em;
 }
 table.example th {
     background: #E0E0E0;
 }
 table.tabular th, table.tabular td {
     border: 1px solid black;
+    font-size: 0.9em;
+    padding: 0.1em 0.3em;
     height: 1.2em;
 }
 table.messages {
@@ -333,7 +336,7 @@ table.messages td.level {
 }
 
 
-/* Roles -- these are defined in RobotFrameworkUserGuide.txt file */
+/* Roles -- these are defined in roles.txt file */
 
 .var {
     background: #f4f4f4;
