@@ -82,7 +82,7 @@ downloading and installing latest stable version of Docutils_ and Pygments_
 (Python syntax highlighter).
 
 Robot Framwork User Guide can then be generated with ug2html.py script. 
-Run following command to get available arguments:
+Run following command to get available options:
 
   python ug2html.py
 
