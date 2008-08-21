@@ -1,17 +1,24 @@
 Robot Framework Quick Start Guide
 =================================
 
-Quick start guide is written to quickstart.txt using `reStructuredText (reST)`_ 
-format. See more about reST from ../userguide/README.txt. quickstart.html is 
-generated from quickstart.txt by using qs2html.py script.   
+To view the Quick Start Guide simply open `quickstart.html` into your
+favorite browser. That file contains also instructions how to execute
+the guide as a demo.
 
-The preconditions for generating Quick Start Guide are downloading and 
-installing latest stable version of Docutils_ and Pygments_ (Python syntax 
-highlighter). To get available options run command:
+The system under test used in the demo is under `sut` directory along
+with its unit tests. The needed test library is located in `testlibs`.
+
+Quick Start Guide itself is created using reStructuredText__ and the
+source text is in `quickstart.txt` file. For more information about
+reStructuredText and software needed for creating the HTML version of
+the guide, see see README file of the User Guide in 
+`../userguide/README.txt`.
+
+When all preconditions (docutils and Pygments) are installed, the HTML
+version of the guide can be generated with `qs2html.py` script. To see
+the available options, just run the script without arguments like::
 
    python qs2html.py
 
 
-.. _Pygments: http://pygments.org/download/
-.. _Docutils: http://docutils.sourceforge.net/
-.. _reStructuredText (reST): http://docutils.sourceforge.net/rst.html
+__reStructuredText: http://docutils.sourceforge.net/rst.html
