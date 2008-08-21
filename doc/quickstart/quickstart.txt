@@ -326,7 +326,7 @@ test cases are created in the *keyword table* below.
    ===============================================  =================================  ==============================  ================
                    Keyword                                         Action                          Argument                Argument
    ===============================================  =================================  ==============================  ================
-   Clear login database                             Remove file                        ${DATABASE_FILE}                \
+   Clear login database                             Remove file                        ${DATABASE FILE}                \
    \                                                \                                  \                               \
    Create valid user                                [Arguments]                        ${username}                     ${password}
    \                                                Create user                        ${username}                     ${password}
@@ -343,9 +343,9 @@ test cases are created in the *keyword table* below.
    *# Used by BDD test cases (this is a comment)*   \                                  \                               \
    Given a user has a valid account                 Create valid user                  ${USERNAME}                     ${PASSWORD}
    When she changes her password                    Change password                    ${USERNAME}                     ${PASSWORD}
-   \                                                ...                                ${NEW_PASSWORD}                 \
+   \                                                ...                                ${NEW PASSWORD}                 \
    \                                                Status should be                   SUCCESS                         \
-   Then she can log in with the new password        Login                              ${USERNAME}                     ${NEW_PASSWORD}
+   Then she can log in with the new password        Login                              ${USERNAME}                     ${NEW PASSWORD}
    And she cannot use the old password anymore      Attempt to login with credentials  ${USERNAME}                     ${PASSWORD}
    \                                                Status should be                   Access Denied                   \
    ===============================================  =================================  ==============================  ================
@@ -380,12 +380,12 @@ variable definition is quite simple, as seen in this table:
    ======================  ============================================================================= 
    ${USERNAME}             janedoe
    ${PASSWORD}             J4n3D0e
-   ${NEW_PASSWORD}         e0D3n4J
+   ${NEW PASSWORD}         e0D3n4J
    \                       \
-   ${DATABASE_FILE}        ${TEMPDIR}${/}robotframework-quickstart-db.txt
+   ${DATABASE FILE}        ${TEMPDIR}${/}robotframework-quickstart-db.txt
    \                       \
-   ${PWD_INVALID_LENGTH}   Password must be 7-12 characters long
-   ${PWD_INVALID_CONTENT}  Password must be a combination of lowercase and uppercase letters and numbers 
+   ${PWD INVALID LENGTH}   Password must be 7-12 characters long
+   ${PWD INVALID CONTENT}  Password must be a combination of lowercase and uppercase letters and numbers 
    ======================  =============================================================================
 
 Variables can also be given from the command line which is useful if
@@ -430,7 +430,7 @@ variable and then verifies the content using `built-in keyword`_
            Keyword               Action          Argument                  Argument                    Argument
    =======================  ================  ==============  =====================================  ============
    Database Should Contain  [Arguments]       ${username}     ${password}                            ${status}  
-   \                        ${database} =     Get File        ${DATABASE_FILE}                       \
+   \                        ${database} =     Get File        ${DATABASE FILE}                       \
    \                        Should Contain    ${database}     ${username}\\t${password}\\t${status}  \
    =======================  ================  ==============  =====================================  ============
 
@@ -489,7 +489,7 @@ Robot Framework allows setting tags for test cases to give them free
 metadata.  Tags can be set for all test cases in a file with
 :name:`Default Tags` or :name:`Force Tags` settings like in the table
 below. It is also possible to define tags for single test case like in
-earlier__ :name:`User status is stored in database` tests.
+earlier__ :name:`User status is stored in database` test.
 
 __ `Using variables`_
 

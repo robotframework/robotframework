@@ -890,7 +890,7 @@ test cases are created in the <em>keyword table</em> below.</p>
 <tbody valign="top">
 <tr><td>Clear login database</td>
 <td>Remove file</td>
-<td>${DATABASE_FILE}</td>
+<td>${DATABASE FILE}</td>
 <td></td>
 </tr>
 <tr><td></td>
@@ -975,7 +975,7 @@ test cases are created in the <em>keyword table</em> below.</p>
 </tr>
 <tr><td></td>
 <td>...</td>
-<td>${NEW_PASSWORD}</td>
+<td>${NEW PASSWORD}</td>
 <td></td>
 </tr>
 <tr><td></td>
@@ -986,7 +986,7 @@ test cases are created in the <em>keyword table</em> below.</p>
 <tr><td>Then she can log in with the new password</td>
 <td>Login</td>
 <td>${USERNAME}</td>
-<td>${NEW_PASSWORD}</td>
+<td>${NEW PASSWORD}</td>
 </tr>
 <tr><td>And she cannot use the old password anymore</td>
 <td>Attempt to login with credentials</td>
@@ -1035,22 +1035,22 @@ variable definition is quite simple, as seen in this table:</p>
 <tr><td>${PASSWORD}</td>
 <td>J4n3D0e</td>
 </tr>
-<tr><td>${NEW_PASSWORD}</td>
+<tr><td>${NEW PASSWORD}</td>
 <td>e0D3n4J</td>
 </tr>
 <tr><td></td>
 <td></td>
 </tr>
-<tr><td>${DATABASE_FILE}</td>
+<tr><td>${DATABASE FILE}</td>
 <td>${TEMPDIR}${/}robotframework-quickstart-db.txt</td>
 </tr>
 <tr><td></td>
 <td></td>
 </tr>
-<tr><td>${PWD_INVALID_LENGTH}</td>
+<tr><td>${PWD INVALID LENGTH}</td>
 <td>Password must be 7-12 characters long</td>
 </tr>
-<tr><td>${PWD_INVALID_CONTENT}</td>
+<tr><td>${PWD INVALID CONTENT}</td>
 <td>Password must be a combination of lowercase and uppercase letters and numbers</td>
 </tr>
 </tbody>
@@ -1149,7 +1149,7 @@ variable and then verifies the content using <a class="reference internal" href=
 <tr><td></td>
 <td>${database} =</td>
 <td>Get File</td>
-<td>${DATABASE_FILE}</td>
+<td>${DATABASE FILE}</td>
 <td></td>
 </tr>
 <tr><td></td>
@@ -1217,7 +1217,7 @@ an entire test suite executes.</p>
 metadata.  Tags can be set for all test cases in a file with
 <span class="name">Default Tags</span> or <span class="name">Force Tags</span> settings like in the table
 below. It is also possible to define tags for single test case like in
-<a class="reference internal" href="#using-variables">earlier</a> <span class="name">User status is stored in database</span> tests.</p>
+<a class="reference internal" href="#using-variables">earlier</a> <span class="name">User status is stored in database</span> test.</p>
 <table border="1" class="example docutils">
 <colgroup>
 <col width="39%" />
@@ -1272,13 +1272,13 @@ User</span> is mapped to actual implementation of method
         <span class="bp">self</span><span class="o">.</span><span class="n">_command_prefix</span> <span class="o">=</span> <span class="s">&#39;</span><span class="si">%s</span><span class="s"> </span><span class="si">%s</span><span class="s"> &#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">executable</span><span class="p">,</span> <span class="n">sut_path</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_status</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>
 
-    <span class="k">def</span> <span class="nf">create_user</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">username</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">create_user</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">username</span><span class="p">,</span> <span class="n">password</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_run_command</span><span class="p">(</span><span class="s">&#39;create&#39;</span><span class="p">,</span> <span class="n">username</span><span class="p">,</span> <span class="n">password</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">change_password</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">username</span><span class="p">,</span> <span class="n">old_pwd</span><span class="p">,</span> <span class="n">new_pwd</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_run_command</span><span class="p">(</span><span class="s">&#39;change-password&#39;</span><span class="p">,</span> <span class="n">username</span><span class="p">,</span> <span class="n">old_pwd</span><span class="p">,</span> <span class="n">new_pwd</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">attempt_to_login_with_credentials</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">username</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">attempt_to_login_with_credentials</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">username</span><span class="p">,</span> <span class="n">password</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_run_command</span><span class="p">(</span><span class="s">&#39;login&#39;</span><span class="p">,</span> <span class="n">username</span><span class="p">,</span> <span class="n">password</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">status_should_be</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expected_status</span><span class="p">):</span>
@@ -1298,7 +1298,7 @@ User</span> is mapped to actual implementation of method
 <div class="footer">
 <hr class="footer" />
 <p>Generated by <a class="reference external" href="http://docutils.sourceforge.net/rst.html">reStructuredText</a>. Syntax highlighting by <a class="reference external" href="http://pygments.org/">Pygments</a>.</p>
-<p>Generated on: 2008-08-20 17:40 UTC.
+<p>Generated on: 2008-08-21 09:55 UTC.
 </p>
 
 </div>
