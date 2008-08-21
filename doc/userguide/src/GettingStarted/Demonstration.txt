@@ -1,15 +1,18 @@
-Demonstration
--------------
+Demonstrations
+--------------
 
-Robot Framework does not currently have a standalone demo, but we plan
-to add one soon. However, SeleniumLibrary has an easily executable
+Robot Framework Quick Start Guide acts also as a standalone demo. It
+is part of the source distribution (under :path:`doc/quickstart/`),
+and also available as a separate download from `project web pages`__.
+
+__ http://code.google.com/p/robotframework/wiki/QuickStartGuide
+
+Additionally, external SeleniumLibrary__ has an easily executable
 demonstration test suite available. It contains a simple standalone
 HTTP server and an application that is used as a system under
 test. The actual test case files and scripts for running the
 demonstration in different systems are also provided.
 
-The demonstration, as well as instructions for running it, can be
-downloaded from SeleniumLibrary project page at
-http://code.google.com/p/robotframework-seleniumlibrary.
+__ http://code.google.com/p/robotframework-seleniumlibrary
 
 
