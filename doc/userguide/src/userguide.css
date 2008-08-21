@@ -340,6 +340,7 @@ table.messages td.level {
 
 .var {
     background: #f4f4f4;
+    font-size: 0.9em;
 }
 .opt {
     font-style: italic;
