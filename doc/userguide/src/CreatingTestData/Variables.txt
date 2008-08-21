@@ -16,9 +16,9 @@ also all settings allow variables in their values. A normal keyword
 name *cannot* be specified with a variable, but the `BuiltIn
 keyword`_ :name:`Run Keyword` can be used to get the same effect.
 
-Robot Framework itself has two kinds of variables, scalars and lists,
+Robot Framework itself has two kinds of variables, scalars__ and lists__,
 and they have the syntaxes :var:`${VARIABLE`} and :var:`@{VARIABLE}`,
-respectively. In addition to this, environment variables can be used
+respectively. In addition to this, `environment variables`_ can be used
 directly with the syntax :var:`%{VARIABLE}`.
 
 The use of variables is recommended in the following cases:
@@ -29,10 +29,10 @@ The use of variables is recommended in the following cases:
 - When creating system-independent and operating-system-independent
   test data. Using variables instead of hard-coded strings eases that
   considerably (for example, :var:`${RESOURCES}` instead of
-  :path:`c:\\resources`, or :var:`${HOST}` instead of
-  :path:`10.0.0.1:8080`). Because variables can be set from the
-  command line when tests are started, changing system-specific
-  variables is easy (for example, :cli:`--variable HOST:192.168.0.12
+  :code:`c:\\resources`, or :var:`${HOST}` instead of
+  :code:`10.0.0.1:8080`). Because variables can be `set from the
+  command line`__ when tests are started, changing system-specific
+  variables is easy (for example, :cli:`--variable HOST:10.0.0.2:1234
   --variable RESOURCES:/opt/resources`). This also facilitates
   localization testing, which often involves running the same tests
   with different strings.
@@ -46,13 +46,16 @@ The use of variables is recommended in the following cases:
 
 - When values in the test data are long or otherwise complicated. For
   example, :var:`${URL}` is shorter than
-  :path:`\http://long.domain.name:8080/path/to/service?foo=1&bar=2&zap=42`.
+  :code:`\http://long.domain.name:8080/path/to/service?foo=1&bar=2&zap=42`.
   
 
 If a nonexistent variable is used in the test data, the keyword using
 it fails. If the same syntax that is used for variables is needed as a
 literal string, it must be `escaped with a backslash`__ as in :code:`\\${NAME}`.
 
+__ `Scalar variables`_
+__ `List variables`_
+__ `Setting variables in command line`_
 __ Escaping_
 
 
@@ -69,15 +72,15 @@ ignored. However, it is recommended to use all capital letters with
 global variables (for example, :var:`${PATH}` or :var:`${TWO_WORDS}`)
 and small letters with variables that are only available in certain
 test cases or user keywords (for example, :var:`${my_var}` or
-:var:`${myVar}`). What is even more important is that cases are used
+:var:`${myVar}`). Much more importantly, though, cases shoud be used
 consistently.
 
 Unlike in some programming languages where similar variable syntax is
-used, curly braces ("{" and "}") are mandatory in Robot Framework test
+used, curly braces (:code:`{` and :code:`}`) are mandatory in Robot Framework test
 data. Basically, variable names can have any characters between the
-curly braces. However, using only alphabetic characters (from a to z),
-numbers (from 0 to 9), underscore and space is recommended, and it is
-even a requirement for using `extended variable syntax`_.
+curly braces. However, using only alphabetic characters from a to z,
+numbers, underscore and space is recommended, and it is
+even a requirement for using the `extended variable syntax`_.
 
 
 Scalar variables
@@ -88,7 +91,7 @@ with the value they are assigned to. While scalar variables are most
 commonly used for simple strings, you can assign any objects,
 including lists, to them. The scalar variable syntax, for example
 :var:`${NAME}`, should be familiar to most users, as it is also used,
-for example, in shell scripts and Perl.
+for example, in shell scripts and Perl programming language.
 
 The example below illustrates the usage of scalar variables. Assuming
 that the variables :var:`${GREET}` and :var:`${NAME}` are available
@@ -114,7 +117,7 @@ be any object. When a scalar variable is used in a test data cell with
 anything else (constant strings or other variables), its value is
 first converted into a string and then catenated to whatever is in
 that cell. Converting the value into a string means that the object's
-method :code:`=__str__` (in Python) or :code:`toString` (in Java) is
+method :code:`__str__` (in Python) or :code:`toString` (in Java) is
 called.
 
 The example below demonstrates the difference between having a
@@ -189,12 +192,12 @@ are equivalent.
 
 
 It is also possible to access a certain value from the list variable
-with the syntax :var:`@{NAME}[i]`, where "i" is the index of the
+with the syntax :var:`@{NAME}[i]`, where :var:`i` is the index of the
 selected value. Indexes start from zero, and trying to access a value
 with too large an index causes an error. List items accessed in this
-manner can be used similarly as scalar variables.
+manner can be used similarly as scalar variables:
 
-.. table:: List variables, example 2
+.. table:: Accessing list variable items
    :class: example
 
    =============  ===============  ===================  ==========
@@ -214,7 +217,7 @@ Robot Framework allows using environment variables in the test
 data using the syntax :var:`%{ENV_VAR_NAME}`. They are limited to string
 values. 
 
-Environment variables set in the system before the test execution are
+Environment variables set in the operating system before the test execution are
 available during it, and it is possible to create new ones with the keyword
 :name:`Set Environment Variable` or delete existing ones with the
 keyword :name:`Delete Environment Variable`, both available in the
@@ -223,8 +226,7 @@ environment variables set in one test case can be used in other test
 cases executed after it. However, changes to environment variables are
 not effective after the test execution.
 
-
-.. table:: Environment variables
+.. table:: Using environment variables
    :class: example
 
    =============  ========  =====================  ==========
@@ -271,11 +273,11 @@ as a value. Also an already defined variable can be used in the value.
    ============  ==================  =========
    ${NAME}       Robot Framework     \
    ${VERSION}    2.0                 \
-   ${EMPTY}      \                   \
    ${ROBOT}      ${NAME} ${VERSION}  \
+   ${EMPTY}      \                   \
    ============  ==================  =========
 
-Since Robot Framework version 1.8, it is possible, but not obligatory,
+It is also possible, but not obligatory,
 to use the equals sign :code:`=` after the variable name to make assigning
 variables slightly more explicit.
 
@@ -333,15 +335,15 @@ Variables can be set from the command line either individually with
 the :opt:`--variable` option or using a variable file with the
 :opt:`--variablefile` option. Variables set from the command line
 are globally available for all executed test data files, and they also
-override variables with the same names in the Variable table and in
-the imported variable files.
+override possible variables with the same names in the Variable table and in
+variable files imported in the test data.
 
 The syntax for setting individual variables is :cli:`--variable
 name:value`, where :cli:`name` is the name of the variable without
 :var:`${}` and :cli:`value` is its value. Several variables can be
 set by using this option several times. Only scalar variables can be
-set from the command line and they can only get string values. Many
-special characters are difficult or impossible to represent in the
+set using this syntax and they can only get string values. Many
+special characters are difficult represent in the
 command line, but they can be escaped__ with the :opt:`--escape`
 option. 
 
@@ -447,15 +449,17 @@ Global scope
 
 Global variables are available everywhere in the test data. These
 variables are normally set from the command line with the
-:opt:`--variable` and :opt:`--variablefile`
-options. Additionally, it is possible to create new global variables
-or change the existing ones with the `BuiltIn keyword`_ :name:`Set
-Global Variable` anywhere in the test data.
+:opt:`--variable` and :opt:`--variablefile` options, but it is also 
+possible to create new global variables or change the existing ones
+with the `BuiltIn keyword`_ :name:`Set Global Variable` anywhere in
+the test data.
 
 Global variables override variables defined in Variable tables or in
-imported variable files. Variables set locally override even global
-variables, but only in that local scope. It is recommended to use
-capital letters with global variables.
+variable files imported in the test data. Variables set locally, for
+example using return values from keywords, override even global
+variables in the local scope where they are created.
+
+It is recommended to use capital letters with global variables.
 
 
 Test suite scope
@@ -463,10 +467,9 @@ Test suite scope
 
 Variables with the test suite scope are available anywhere in the test
 suite where they are defined or imported. They can be created in
-Variable tables, imported from variable files using the
-:opt:`Variables` setting in the Setting table, or set with the
-`BuiltIn keyword`_ :name:`Set Suite Variable` anywhere in that test
-suite. 
+Variable tables, imported from `resource and variable files`_, or set with
+the `BuiltIn keyword`_ :name:`Set Suite Variable` anywhere in that
+test suite.
 
 The test suite scope *is not recursive*, which means that variables
 available in a higher-level test suite *are not available* in
@@ -503,13 +506,11 @@ Built-in variables
 Robot Framework provides some built-in variables that are available
 automatically.
 
-
 Operating-system variables
 ''''''''''''''''''''''''''
 
 Built-in variables related to the operating system ease making the test data
 operating-system-agnostic.
-
 
 .. table:: Available operating-system-related built-in variables
    :class: tabular
@@ -524,13 +525,12 @@ operating-system-agnostic.
    |            | systems this is typically :path:`/tmp`, and in Windows           |
    |            | :path:`c:\\Documents and Settings\\<user>\\Local Settings\\Temp`.|
    +------------+------------------------------------------------------------------+
-   | ${/}       | The system directory path separator. :path:`/` in UNIX-like      |
-   |            | systems, :path:`\\` in Windows.                                  |
+   | ${/}       | The system directory path separator. :code:`/` in UNIX-like      |
+   |            | systems, :code:`\\` in Windows.                                  |
    +------------+------------------------------------------------------------------+
-   | ${:}       | The system path element separator. :path:`:` in UNIX-like        |
-   |            | systems and :path:`;` in Windows.                                |
+   | ${:}       | The system path element separator. :code:`:` in UNIX-like        |
+   |            | systems and :code:`;` in Windows.                                |
    +------------+------------------------------------------------------------------+
-
 
 .. table:: Using operating-system-related built-in variables
    :class: example
@@ -548,7 +548,8 @@ Number variables
 
 The variable syntax can be used for creating both integers and
 floating point numbers, as illustrated in the example below. This is
-useful when a keyword expects to get a real number as an argument.
+useful when a keyword expects to get an actual number, and not a
+string that just looks like a number, as an argument.
 
 .. table:: Using number variables
    :class: example
@@ -565,7 +566,7 @@ useful when a keyword expects to get a real number as an argument.
 Boolean and None/null variables
 '''''''''''''''''''''''''''''''
 
-Also Boolean values and Python :code:`None` and Java :code:`null` can
+Also boolean values and Python :code:`None` and Java :code:`null` can
 be created using the variable syntax similarly as numbers.
  
 .. table:: Using Boolean and None/null variables
@@ -632,18 +633,18 @@ of them are not even available all the time.
    |                       | different values during execution when                |                |
    |                       | `outputs are split`_.                                 |                |
    +-----------------------+-------------------------------------------------------+----------------+
-   | ${LOG_FILE}           | An absolute path to the current `log file`_ or NONE   | Everywhere     |
-   |                       | when no log file is created. Has different values     |                |
+   | ${LOG_FILE}           | An absolute path to the current `log file`_ or string | Everywhere     |
+   |                       | NONE when no log file is created. Has different values|                |
    |                       | during execution when `outputs are split`_.           |                |
    +-----------------------+-------------------------------------------------------+----------------+
-   | ${REPORT_FILE}        | An absolute path to the `report file`_ or NONE when   | Everywhere     |
-   |                       | no report is created.                                 |                |
+   | ${REPORT_FILE}        | An absolute path to the `report file`_ or string NONE | Everywhere     |
+   |                       | when no report is created.                            |                |
    +-----------------------+-------------------------------------------------------+----------------+
-   | ${SUMMARY_FILE}       | An absolute path to the `summary file`_ or NONE when  | Everywhere     |
-   |                       | no summary is created.                                |                |
+   | ${SUMMARY_FILE}       | An absolute path to the `summary file`_ or string NONE| Everywhere     |
+   |                       | when no summary is created.                           |                |
    +-----------------------+-------------------------------------------------------+----------------+
-   | ${DEBUG_FILE}         | An absolute path to the `debug file`_ or NONE when    | Everywhere     |
-   |                       | no debug file is created.                             |                |
+   | ${DEBUG_FILE}         | An absolute path to the `debug file`_ or string NONE  | Everywhere     |
+   |                       | when no debug file is created.                        |                |
    +-----------------------+-------------------------------------------------------+----------------+
    | ${OUTPUT_DIR}         | An absolute path to the `output directory`_.          | Everywhere     |
    +-----------------------+-------------------------------------------------------+----------------+
@@ -652,8 +653,6 @@ of them are not even available all the time.
 Advanced variable features
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-There are also some advanced variable features, described in this section.
-
 Extended variable syntax
 ''''''''''''''''''''''''
 
@@ -661,7 +660,7 @@ Extended variable syntax can be used with objects set into scalar
 variables. This allows accessing the attributes of the object (for example,
 :var:`${obj.name}` or :var:`${obj.some_attr}`), and even calling
 its methods (for example, :var:`${obj.get_name()}` or
-:var:`${obj.getSomething('arg')}`. 
+:var:`${obj.getSomething('arg')}`). 
 
 Extended variable syntax is a powerful feature, but it should
 be used with care. Accessing attributes is normally not a problem, on
@@ -674,7 +673,6 @@ it is recommended to move the code into a test library.
 The most common usages of extended variable syntax are illustrated
 in the example below. First assume that we have the following `variable file`_
 and test case:
-
 
 .. sourcecode:: python
 
@@ -692,7 +690,6 @@ and test case:
    OBJECT = MyObject('Robot')
    DICTIONARY = { 1: 'one', 2: 'two', 3: 'three'}
 
-
 .. table:: 
    :class: example
 
@@ -704,7 +701,6 @@ and test case:
    \            KW 3      ${DICTIONARY[2]}        \
    ===========  ========  ======================  ==========
      
-
 When this test data is executed, the keywords get the arguments as
 explained below:
 
@@ -728,7 +724,7 @@ The extended variable syntax is evaluated in the following order:
    exception is raised and the test case fails.
 
 4. The expression inside the curly brackets is evaluated as a Python
-   expression, so the base variable name is replaced with its
+   expression, so that the base variable name is replaced with its
    value. If the evaluation fails because of an invalid syntax or that
    the queried attribute does not exist, an exception is raised and
    the test fails.
@@ -783,7 +779,6 @@ In the example below, :name:`Do X` gets the value :var:`${JOHN_HOME}`
 or :var:`${JANE_HOME}`, depending on if :name:`Get Name` returns
 :code:`john` or :code:`jane`. If it returns something else, resolving
 :var:`${${name}_HOME}` fails.
-
 
 .. table:: Using a variable inside another variable
    :class: example
