@@ -92,9 +92,9 @@ When installing Robot Framework, its installer tries to find the
 Jython executable on the system to create the :prog:`jybot` runner script
 correctly. Jython is found if:
 
-1. Jython can be executed in the system directly (i.e. it is in the PATH).
+1. Jython can be executed in the system directly (i.e. it is in the :var:`PATH`).
 
-2. An environment variable JYTHON_HOME is set and it points to
+2. An environment variable :var:`JYTHON_HOME` is set and it points to
    the Jython installation directory.
 
 3. The Jython installation directory is found. On Windows, it is searched 
@@ -232,10 +232,10 @@ After the installation, you might want to make Robot Framework's
 runner scripts easily available from the command line. On UNIX-like
 systems, that should be the case automatically, but for example on
 Windows, it is not. In environments where startup scripts are not
-available, the directory containing them must be set to the PATH
+available, the directory containing them must be set to the :var:`PATH`
 environment variable. 
 
-Setting the PATH environment variable on Windows:
+Setting the :var:`PATH` environment variable on Windows:
 
 1. Open ``Start > Settings > Control Panel > System > Advanced >
    Environment Variables``.  There are ``User variables`` and ``System
@@ -243,7 +243,7 @@ Setting the PATH environment variable on Windows:
    affect only the current users, whereas System variables affect all
    users.
 
-2. To edit the existing PATH, select ``Edit`` and add
+2. To edit the existing :var:`PATH`, select ``Edit`` and add
    :path:`;[PythonInstallationDir]\\Scripts\\` at the end of the
    value. Note that the leading colon (;) is important, as it
    separates different entries. To add a new value, select ``New`` and
