@@ -6,7 +6,7 @@ Introduction
 
 Robot Framework User Guide was created with a text editor, using
 `reStructuredText (reST)`_, which is the markup syntax and parser
-component of Docutils. In reST, simple markup is used to indicate
+component of Docutils_. In reST, simple markup is used to indicate
 special parts of text, such as section headings, bullet lists, and
 emphasis. Some general formatting principles of reST that are followed
 in Robot Framework User Guide are presented here.
@@ -59,13 +59,13 @@ Roles used in Robot Framework User Guide
 
 For the formatting roles, which are used in Robot Framework User Guide to make it
 easier for the reader to distinguish certain parts of the text, see
-the file RobotFrameworkUserGuide.txt.
+the file roles.txt.
  
 
-Using sourcecode directive with files
--------------------------------------
+Using source code directive with files
+--------------------------------------
 
-The sourcecode directive can be used also to read the source code from a file.
+The source code directive can be used also to read the source code from a file.
 In this case, the path to the file must be relative to the root directory of
 the user guide, for example::
 
@@ -78,9 +78,8 @@ Generating Robot Framework User Guide in the HTML format
 --------------------------------------------------------
 
 The preconditions for generating Robot Framework User Guide are
-downloading and installing reST and Pygments_ (Python syntax
-highlighter). For reST, download the snapshot, and for Pygments, the
-latest stable version.
+downloading and installing latest stable version of Docutils_ and Pygments_ 
+(Python syntax highlighter).
 
 Robot Framwork User Guide can then be generated either running the
 Python executable file ug2html.py or using the command line. In the
@@ -105,6 +104,7 @@ For more information on Docutils reST, see `Quick reStructuredText`_
 and `reStructuredText Markup Specification`_.
 
 .. _Pygments: http://pygments.org/download/
+.. _Docutils: http://docutils.sourceforge.net/
 .. _reStructuredText (reST): http://docutils.sourceforge.net/rst.html
 .. _Quick reStructuredText: http://docutils.sourceforge.net/docs/user/rst/quickref.html
 .. _reStructuredText Markup Specification: http://docutils.sourceforge.net/docs/ref/rst/restructuredtext.html
