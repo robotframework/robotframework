@@ -10,13 +10,13 @@ class LoginLibrary:
         self._command_prefix = '%s %s ' % (sys.executable, sut_path)
         self._status = ''
 
-    def create_user(self, username='', password=''):
+    def create_user(self, username, password):
         self._run_command('create', username, password)
 
     def change_password(self, username, old_pwd, new_pwd):
         self._run_command('change-password', username, old_pwd, new_pwd)
 
-    def attempt_to_login_with_credentials(self, username='', password=''):
+    def attempt_to_login_with_credentials(self, username, password):
         self._run_command('login', username, password)
 
     def status_should_be(self, expected_status):
