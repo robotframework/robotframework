@@ -81,20 +81,10 @@ The preconditions for generating Robot Framework User Guide are
 downloading and installing latest stable version of Docutils_ and Pygments_ 
 (Python syntax highlighter).
 
-Robot Framwork User Guide can then be generated either running the
-Python executable file ug2html.py or using the command line. In the
-latter case, open the command window in the directory containing the
-Robot Framework User Guide in the TXT format, and enter the following
-command::
+Robot Framwork User Guide can then be generated with ug2html.py script. 
+Run following command to get available arguments:
 
   python ug2html.py
-
-After the compilation, you get a robotframework-userguide directory
-containing the actual user guide named RobotFrameworkUserGuide.html, all
-images used in the user guide, and the library documentations. The
-tools documentation is actually located under robotframework\tools, in
-doc folders under the respective tools, and only copied from there at the
-compilation stage.
 
 
 References
