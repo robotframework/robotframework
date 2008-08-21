@@ -32,7 +32,21 @@ PROCESSES = utils.ConnectionCache('No active processes')
 
 class OperatingSystem:
     
-    """This test library enables multiple operating-system-related tasks."""
+    """This test library enables multiple operating-system-related tasks.
+
+    Example usage:
+
+    | *Setting* |     *Value*     |
+    | Library   | OperatingSystem |
+
+    | *Variable* |         *Value*          |
+    | ${PATH}    | ${CURDIR}${/}example.txt |
+
+    | *Test Case* |     *Action*      |  *Argument* | *Argument* |
+    | Example     | Create File       | ${PATH}     | Some text  |
+    |             | File Should Exist | ${PATH}     |            |
+    |             | Copy File         | ${PATH}     | ${TEMPDIR} |
+    """
 
     ROBOT_LIBRARY_SCOPE = 'GLOBAL'
     
