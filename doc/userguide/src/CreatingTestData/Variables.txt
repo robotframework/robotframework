@@ -414,7 +414,6 @@ iterables, if needed.
    \                @{list} =     Get 3       \           \
    ===============  ============  ==========  ==========  ==========
 
-
 Assuming that the keyword :name:`Get 3` returns a list
 :code:`[1, 2, 3]`, the following variables are created:
 
@@ -448,18 +447,20 @@ Global scope
 ````````````
 
 Global variables are available everywhere in the test data. These
-variables are normally set from the command line with the
+variables are normally `set from the command line`__ with the
 :opt:`--variable` and :opt:`--variablefile` options, but it is also 
 possible to create new global variables or change the existing ones
 with the `BuiltIn keyword`_ :name:`Set Global Variable` anywhere in
 the test data.
 
-Global variables override variables defined in Variable tables or in
+Global variables override variables defined in Variable tables and in
 variable files imported in the test data. Variables set locally, for
 example using return values from keywords, override even global
 variables in the local scope where they are created.
 
 It is recommended to use capital letters with global variables.
+
+__ `Setting variables in command line`_
 
 
 Test suite scope
