@@ -8,7 +8,10 @@ DATABASE_FILE = os.path.join(tempfile.gettempdir(), 'robotframework-quickstart-d
 class DataBase(object):
    
     def __init__(self, dbfile):
-        """
+        """This class reads ands writes user data in a 'database'.
+	dbfile can be either or string or already opened file object. In the
+	former case, dbfile is considered to be path. If a file object is given
+	it must be opened in a mode that allows both reading and writing.
         """
         self._dbfile, self._users = self._read_users(dbfile)
 
