@@ -75,8 +75,8 @@ Running this demo
 -----------------
 
 This Quick Start Guide also acts as an executable demo.  To run it,
-open a command shell, cd to this directory, and type the following
-command at the command line::
+open a command shell, cd to the directory where this file is, and type the 
+following command at the command line::
 
    pybot quickstart.html
 
@@ -106,7 +106,7 @@ test suite::
 Introducing the sample application
 ----------------------------------
 
-The sample application for this paper is a variation on a classic
+The sample application for this guide is a variation on a classic
 login example: it is a command-line based authentication server written
 in Python. At the moment, the sample application allows a user to do
 three things:
@@ -260,7 +260,7 @@ that the error messages are specified using variables_.
 Keywords
 ========
 
-Keywords that test cases are created from come from three sources:
+Test cases are created from keywords that can come from three sources:
 `built-in keywords`_ are always available, `library keywords`_ come
 from imported test libraries, and so called `user keywords`_ can be
 created using the same tabular syntax that is used for creating test
