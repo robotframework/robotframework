@@ -45,12 +45,12 @@ class _List:
     def insert_into_list(self, L, index, value):
         """Inserts 'value' into 'L' to the position specified with 'index'.
         
-        Index '0' adds the value into the first position, '1' to the second, and
-        so on. Similarly, '-1' is the last position, '-2' second last, and so
-        on. If the absolute value of the index is greater than the length of the
-        list, the value is added at the end (positive index) or the beginning
-        (negative index). An index can be given either as an integer or a string
-        that can be converted to an integer. 
+        Index '0' adds the value into the first position, '1' to the second,
+        and so on. Similarly, '-1' is the last position, '-2' second last, and
+        so on. If the absolute value of the index is greater than the length of
+        the list, the value is added at the end (positive index) or the
+        beginning (negative index). An index can be given either as an integer
+        or a string that can be converted to an integer. 
         
         Example:
         | Insert Into List | ${L1} | 0     | xxx |
@@ -82,10 +82,11 @@ class _List:
     def set_list_value(self, L, index, value):
         """Sets the value of 'L' specified by 'index' to the given 'value'.
         
-        Index '0' means the first position, '1' the second and so on. Similarly,
-        '-1' is the last position, '-2' second last, and so on. Using an index
-        that does not exist on the list causes an error. The index can be either
-        an integer or a string that can be converted to an integer.
+        Index '0' means the first position, '1' the second and so on.
+        Similarly, '-1' is the last position, '-2' second last, and so on.
+        Using an index that does not exist on the list causes an error. 
+        The index can be either an integer or a string that can be converted to
+        an integer.
 
         Example: 
         | Set List Value | ${L3} | 1 | xxx |
@@ -112,10 +113,11 @@ class _List:
     def remove_from_list(self, L, index):
         """Removes and returns the value specified with an index from L.
         
-        Index '0' means the first position, '1' the second and so on. Similarly,
-        '-1' is the last position, '-2' the second last, and so on. Using an
-        index that does not exist on the list causes an error. The index can be
-        either an integer or a string that can be converted to an integer.
+        Index '0' means the first position, '1' the second and so on.
+        Similarly, '-1' is the last position, '-2' the second last, and so on.
+        Using an index that does not exist on the list causes an error.
+        The index can be either an integer or a string that can be converted
+        to an integer.
         
         Example:
         | ${x} = | Remove From List | ${L2} | 0 |
@@ -133,10 +135,11 @@ class _List:
         
         The given list is never altered by this keyword.
         
-        Index '0' means the first position, '1' the second, and so on. Similarly
-        '-1' is the last position, '-2' the second last, and so on. Using an
-        index that does not exist on the list causes an error. The index can be
-        either an integer or a string that can be converted to an integer.
+        Index '0' means the first position, '1' the second, and so on.
+        Similarly, '-1' is the last position, '-2' the second last, and so on.
+        Using an index that does not exist on the list causes an error.
+        The index can be either an integer or a string that can be converted
+        to an integer.
 
         Examples (including Python equivalents in comments):
         | ${x} = | Get From List | ${L5} | 0 | # L5[0]    |
@@ -184,39 +187,34 @@ class _List:
     def count_values_in_list(self, L, value, start=0, end=None):
         """Returns the number of occurrences of the given value in L.
 
-        The given list is never altered by this keyword.
-        
         The search can be narrowed to the selected sublist by the 'start' and
         'end' indexes having the same semantics as in the 'Get Slice From List'
-        keyword.
+        keyword. The given list is never altered by this keyword.
 
         | ${x} = | Count Values In List | ${L3} | b |
         =>
         ${x} == 1
         ${L3} is not changed.
-        
         """
         return self.get_slice_from_list(L, start, end).count(value)
         
     def get_index_from_list(self, L, value, start=0, end=None):
         """Returns the index of the first occurrence of the value on the list.
 
-        In case the value is not found, -1 is returned.
-
-        The given list is never altered by this keyword.
-        
         The search can be narrowed to the selected sublist by the 'start' and
         'end' indexes having the same semantics as in the 'Get Slice From List'
-        keyword.
+        keyword. In case the value is not found, -1 is returned. The given list
+        is never altered by this keyword.
 
         | ${x} = | Get Index From List | ${L5} | d |
         =>
         ${x} == 3
         ${L5} is not changed.
         """
+        if start == '':
+            start = 0
         L = self.get_slice_from_list(L, start, end)
         try:
-            start = start != '' and start or 0
             return int(start) + L.index(value)
         except ValueError:
             return -1
@@ -258,50 +256,45 @@ class _List:
     def list_should_contain_value(self, L, value, msg=None):
         """Fails if the value is not found from L.
         
-        If 'msg' is not given, the default error message "['a', 'b', 'c'] does
-        not contain the value 'x'" is shown in case of a failure. Otherwise, the
-        given 'msg' is used in case of a failure.
+        If 'msg' is not given, the default error message "[ a | b | c ] does
+        not contain the value 'x'" is shown in case of a failure. Otherwise,
+        the given 'msg' is used in case of a failure.
         """
-        default = "%s does not contain value '%s'" % (utils.seq2str2(L),
-                                                      str(value))
-        _verify_condition(L.count(value) != 0, default, msg)
+        default = "%s does not contain value '%s'" % (utils.seq2str2(L), value)
+        _verify_condition(value in L, default, msg)
     
     def list_should_not_contain_value(self, L, value, msg=None):
         """Fails if the value is not found from L.
         
         See 'List Should Contain Value' for an explanation of 'msg'. 
         """
-        default = "%s contains value '%s'" % (utils.seq2str2(L), str(value))
-        _verify_condition(L.count(value) == 0, default, msg)
+        default = "%s contains value '%s'" % (utils.seq2str2(L), value)
+        _verify_condition(value not in L, default, msg)
     
     def lists_should_be_equal(self, L1, L2, msg=None, values=True):
-        """Fail if given lists are unequal. 
+        """Fails if given lists are unequal. 
         
         The first equality of lists' length is checked, and after that all
-        values. If there are differences between the values, those are listed in
-        an error message, for example with lists "${L1} = [1, 2, 3]" and
+        values. If there are differences between the values, those are listed
+        in an error message, for example with lists "${L1} = [1, 2, 3]" and
         "${L2} = [0, 2, 4]".
         
         Lists are different:
-        index, L1 value, L2 value
-        0, 1, 0
-        2, 3, 4
+        Index 0: 1 != 0
+        Index 2: 3 != 4
 
         - If 'msg' is not given, the possible error message is the default.
         - If 'msg' is given and 'values' is either Boolean False or a string 
           'False' or 'No Values', the error message is simply 'msg'.
         - Otherwise the error message is 'msg' + 'new line' + default.
         """
-        default = 'Lengths are different %d!=%d' % (len(L1), len(L2))
-        _verify_condition(len(L1) == len(L2), default, msg, values)
-
-
-        diffs = [[i, v1, v2] for i, v1, v2 in zip(range(len(L1)), L1, L2) 
-                             if v1 != v2 ] 
-        default = 'Lists are different:\nindex, L1 value, L2 value'
-        for d in diffs:
-            default += '\n%s, %s, %s' % (str(d[0]), str(d[1]), str(d[2]))
-        _verify_condition(len(diffs) == 0, default, msg, values)
+        len1 = len(L1); len2 = len(L2)
+        default = 'Lengths are different: %d != %d' % (len1, len2)
+        _verify_condition(len1 == len2, default, msg, values)
+        diffs = [ 'Index %d: %s != %s' % (i, L1[i], L2[i])
+                  for i in range(len1) if L1[i] != L2[i] ]
+        default = 'Lists are different:\n' + '\n'.join(diffs) 
+        _verify_condition(diffs == [], default, msg, values)
     
     def list_should_contain_sub_list(self, L1, L2, msg=None, values=True):
         """Fails if not all of the elements in L2 are found in L1.
@@ -311,13 +304,13 @@ class _List:
         See the use of 'msg' and 'values' from the 'List Should Be Equal'
         keyword.
         """
-        diffs = [value for value in L2 if not L1.count(value) > 0 ]
-        default = 'Following values were not found from first list: '
-        default += ', '.join(diffs)
-        _verify_condition(len(diffs) == 0, default, msg, values)
+        diffs = ', '.join([ str(item) for item in L2 if item not in L1 ])
+        default = 'Following values were not found from first list: ' + diffs
+        _verify_condition(diffs == '', default, msg, values)
 
     def _index_to_int(self, index, empty_to_zero=False):    
-        index = empty_to_zero and index == '' and '0' or index
+        if empty_to_zero and index == '':
+            return 0
         try:
             return int(index)
         except ValueError:
@@ -339,13 +332,13 @@ class _Dictionary:
         | ${z} = | Create Dictionary | a    | ${1}  | b | ${2} |
         =>
         ${x} == {'name': 'value'}
-        ${y} == {'a':'1', 'b':'2'}
-        ${z} == {'a':1, 'b':2}
+        ${y} == {'a': '1', 'b': '2'}
+        ${z} == {'a': 1, 'b': 2}
         """        
         if len(key_value_pairs) % 2 != 0:
             raise ValueError("Creating a dictionary failed. There should be "
                              "an even number of key-value-pairs.")
-        return self._add_to_dictionary({}, key_value_pairs)
+        return self.set_to_dictionary({}, *key_value_pairs)
 
     def set_to_dictionary(self, dictionary, *key_value_pairs):
         """Adds the given 'key_value_pairs' to the dictionary.
@@ -353,13 +346,14 @@ class _Dictionary:
         Example:
         | Set To Dictionary | ${D1} | key | value | 
         =>
-        ${D1} == {'a':1, 'key':'value'}
+        ${D1} == {'a': 1, 'key': 'value'}
         """
         if len(key_value_pairs) % 2 != 0:
-            raise ValueError("Adding data to a dictionary failed. There should "
-                             "be an even number of key-value-pairs.")
-        self._add_to_dictionary(dictionary, key_value_pairs)
-
+            raise ValueError("Adding data to a dictionary failed. There "
+                             "should be an even number of key-value-pairs.")
+        for i in range(0, len(key_value_pairs), 2):
+            dictionary[key_value_pairs[i]] = key_value_pairs[i+1]
+        return dictionary
         
     def remove_from_dictionary(self, dictionary, *keys):
         """Removes the given keys from the dictionary.
@@ -369,7 +363,7 @@ class _Dictionary:
         Example:
         | Remove From Dictionary | ${D3} | b | x | y | 
         =>
-        ${D3} == {'a':1, 'c':3}
+        ${D3} == {'a': 1, 'c': 3}
         """
         for key in keys:
             try:
@@ -386,7 +380,7 @@ class _Dictionary:
         Example:
         | Keep In Dictionary | ${D5} | b | x | d | 
         =>
-        ${D5} == {'b':2, 'd':4}
+        ${D5} == {'b': 2, 'd': 4}
         """
         remove_keys = [ key for key in dictionary.keys() if not key in keys ]
         self.remove_from_dictionary(dictionary, *remove_keys)
@@ -400,41 +394,46 @@ class _Dictionary:
     
     def get_dictionary_keys(self, dictionary):
         """Returns keys of the given dictionary.
-        
-        The given dictionary is never altered by this keyword.
+
+        Keys are returned in sorted order. The given dictionary is never
+        altered by this keyword.
 
         Example:
         | ${keys} = | Get Dictionary Keys | ${D3} |
         =>
         ${keys} == ['a', 'b', 'c']
         """
-        return dictionary.keys()
+        keys = dictionary.keys()
+        keys.sort()
+        return keys
 
     def get_dictionary_values(self, dictionary):
         """Returns values of the given dictionary.
         
-        The given dictionary is never altered by this keyword.
+        Values are returned sorted according to keys. The given dictionary is
+        never altered by this keyword.
 
         Example:
         | ${values} = | Get Dictionary Values | ${D3} |
         =>
         ${values} == [1, 2, 3]
         """
-        return dictionary.values()
+        return [ dictionary[k] for k in self.get_dictionary_keys(dictionary) ]
     
     def get_dictionary_items(self, dictionary):
         """Returns items of the given dictionary.
-        
-        The given dictionary is never altered by this keyword.
+
+        Items are returned sorted by keys. The given dictionary is never
+        altered by this keyword.
 
         Example:
         | ${items} = | Get Dictionary Items | ${D3} |
         =>
-        ${items} == ['a', 1, 'b', 2, 'c', 3 ]
+        ${items} == ['a', 1, 'b', 2, 'c', 3]
         """
         ret = []
-        for item in dictionary.items():
-            ret.extend(item)
+        for key in self.get_dictionary_keys(dictionary):
+            ret.extend((key, dictionary[key]))
         return ret
 
     def get_from_dictionary(self, dictionary, key):
@@ -453,8 +452,7 @@ class _Dictionary:
         try:
             return dictionary[key]
         except KeyError:
-            msg = "Dictionary does not contain key '%s'" % key
-            raise AssertionError(msg)
+            raise AssertionError("Dictionary does not contain key '%s'" % key)
 
     def dictionary_should_contain_key(self, dictionary, key, msg=None):
         """Fails if 'key' is not found from 'dictionary'.
@@ -497,56 +495,58 @@ class _Dictionary:
         _verify_condition(not value in dictionary.values(), default, msg)
 
     def dictionaries_should_be_equal(self, dict1, dict2, msg=None, values=True):
-        """Fails if the given lists are unequal. 
+        """Fails if the given dictionaries are not equal. 
         
         First the equality of dictionaries' keys is checked and after that all 
         the key value pairs. If there are differences between the values, those
         are listed in an error message, for example with dictionaries 
         "${D1} = {'a':1, 'b':2, 'c':3}" and "${D2} = {'a':1, 'b':4, 'c':6}".
         
-        Dictionaries are different:
-        key, dict1 value, dict2 value
-        b, 2, 4
-        c, 3, 6
+        Following keys have different values:
+        Key b: 2 != 4
+        Key c: 3 != 6
 
         See 'List Should Be Equal' for an explanation of 'msg'. 
-
         The given dictionaries are never altered by this keyword.
         """
-        keys = dict1.keys()
-        keys.extend(dict2.keys())
-        diff_keys = [ key for key in keys 
-                          if not (dict1.has_key(key) and dict2.has_key(key)) ]
-        default = 'Following keys are different: %s' % (', '.join(diff_keys))
-        _verify_condition(len(diff_keys) == 0, default, msg, values)
-        self.dictionary_should_contain_sub_dictionary(dict1, dict2, msg, values)
+        keys = self._keys_should_be_equal(dict1, dict2, msg, values)
+        self._key_values_should_be_equal(keys, dict1, dict2, msg, values)
         
     def dictionary_should_contain_sub_dictionary(self, dict1, dict2, msg=None, 
                                                  values=True):
-        """Fails if not all key, value pairs in 'dict2' are found from 'dict1.'
+        """Fails unless all items in 'dict2' are found from 'dict1.'
 
         See 'Lists Should Be Equal' for an explanation of 'msg'. 
-
         The given dictionaries are never altered by this keyword.        
         """
+        keys = self.get_dictionary_keys(dict2)
+        diffs = [ str(k) for k in keys if k not in dict1 ]
+        default = "Following keys missing from first dictionary: %s" \
+                  % ', '.join(diffs)
+        _verify_condition(diffs == [], default, msg, values)
+        self._key_values_should_be_equal(keys, dict1, dict2, msg, values)
 
-        diff_keys = [ key for key in dict2.keys() if not dict1.has_key(key) ]
-        default = "Following key(s) are missing from dict1: %s" 
-        default = default % (', '.join(diff_keys))
-        _verify_condition(len(diff_keys) == 0, default, msg, values)
+    def _keys_should_be_equal(self, dict1, dict2, msg, values):
+        keys1 = self.get_dictionary_keys(dict1)
+        keys2 = self.get_dictionary_keys(dict2)
+        miss1 = [ str(k) for k in keys2 if k not in dict1 ]
+        miss2 = [ str(k) for k in keys1 if k not in dict2 ]
+        error = []
+        if miss1:
+            error += [ 'Following keys missing from first dictionary: %s'
+                       % ', '.join(miss1) ]
+        if miss2:
+            error += [ 'Following keys missing from second dictionary: %s'
+                       % ', '.join(miss2) ]
+        _verify_condition(error == [], '\n'.join(error), msg, values)
+        return keys1
 
-        diffs = [(key, dict1[key], dict2[key]) for key in dict2.keys() 
-                  if dict1[key] != dict2[key] ]
-        default = 'Dictionaries are different:\nkey, dict1 value, dict2 value'
-        for d in diffs:
-            default += '\n%s, %s, %s' % (str(d[0]), str(d[1]), str(d[2]))
-        _verify_condition(len(diffs) == 0, default, msg, values)
+    def _key_values_should_be_equal(self, keys, dict1, dict2, msg, values):
+        diffs = [ 'Key %s: %s != %s' % (k, dict1[k], dict2[k])
+                  for k in keys if dict1[k] != dict2[k] ]
+        default = 'Following keys have different values:\n' + '\n'.join(diffs) 
+        _verify_condition(diffs == [], default, msg, values)
 
-    def _add_to_dictionary(self, dictionary, key_value_pairs):
-        for i in range(0, len(key_value_pairs), 2):
-            dictionary[key_value_pairs[i]] = key_value_pairs[i+1]
-        return dictionary
-    
 
 class Collections(_List, _Dictionary):
     
