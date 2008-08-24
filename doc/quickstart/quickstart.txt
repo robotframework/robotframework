@@ -224,7 +224,7 @@ __ http://en.wikipedia.org/wiki/Behavior_driven_development
 
 
 This kind of use-case or user-story-like test cases are ideally suited
-for *acceptance test-driven development* (ATTD). In ATTD acceptance
+for *acceptance test-driven development* (ATDD). In ATDD acceptance
 tests are written before implementing actual product features and they
 act also as requirements.
 
