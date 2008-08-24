@@ -35,7 +35,10 @@ def _is_true(expr):
 class Converter:
     
     def convert_to_integer(self, item):
-        """Converts the given item to an integer number."""
+        """Converts the given item to an integer number.
+
+        Uses always long integers so there cannot be overflow.
+        """
         try:
             return long(item)
         except:
@@ -50,17 +53,20 @@ class Converter:
                             % item)
 
     def convert_to_string(self, item):
-        """Converts the given item to a string.
-        
-        Note that if the item is a Java object, its 'toString' method is called.
+        """Converts the given item to a Unicode string.
+
+        Uses '__unicode__' or '__str__' method with Python objects and
+        'toString' with Java objects.
         """
         return utils.unic(item)
     
     def convert_to_boolean(self, item):
-        """Converts the given item to Boolean.
+        """Converts the given item to Boolean true or false.
         
-        Handles also the strings 'True' and 'False' (case-insensitive) as
-        expected.
+        Handles strings 'True' and 'False' (case-insensitive) as expected,
+        otherwise returns item's truth value [1] using Python's 'bool' method.
+
+        [1] http://docs.python.org/lib/truth.html.
         """
         if utils.is_str(item):
             if utils.eq(item, 'True'):
@@ -70,18 +76,18 @@ class Converter:
         try:
             return bool(item)
         except:
-            raise DataError("%s cannot be converted to a boolean" % item)
+            raise DataError("%s cannot be converted to a Boolean" % item)
 
     def create_list(self, *items):
         """Returns a list containing given items.
     
         The returned list can be assigned both to ${scalar} and @{list}
-        variables. The earlier can be used e.g. with Java keywords expecting an array as an
-        argument.
+        variables. The earlier can be used e.g. with Java keywords expecting
+        an array as an argument.
 
         Examples:
         | @{list} =   | Create List | a    | b    | c    |
-        | ${scaler} = | Create List | a    | b    | c    |
+        | ${scalar} = | Create List | a    | b    | c    |
         | ${ints} =   | Create List | ${1} | ${2} | ${3} |
         """
         return list(items)
@@ -92,7 +98,7 @@ class Verify:
     # Wrappers for robot.asserts
 
     def fail(self, msg=None):
-        """Fails the test immediately with the given message."""
+        """Fails the test immediately with the given (optional) message."""
         asserts.fail(msg)
 
     def should_not_be_true(self, expr, msg=None):
@@ -117,7 +123,7 @@ class Verify:
         is got directly from its truth value as explained at
         http://docs.python.org/lib/truth.html.
          
-        The default error message ('<expr> should be true') maybe is not very
+        The default error message ('<expr> should be true') is not very
         informative, but it can be overridden with the 'msg' argument.
         
         Examples:
@@ -136,8 +142,7 @@ class Verify:
     def should_be_equal(self, first, second, msg=None, values=True):
         """Fails if the given objects are unequal.
         
-        - If 'msg' is not given, the possible error message is
-          'first != second'.
+        - If 'msg' is not given, the error message is 'first != second'.
         - If 'msg' is given and 'values' is either Boolean False or the
           string 'False' or 'No Values', the error message is simply 'msg'.
         - Otherwise the error message is 'msg: first != second'.
@@ -148,7 +153,7 @@ class Verify:
     def should_not_be_equal(self, first, second, msg=None, values=True):
         """Fails if the given objects are equal.
              
-        See 'Should Be Equal' for an explanation on how to override gthe default
+        See 'Should Be Equal' for an explanation on how to override the default
         error message with 'msg' and 'values'.
         """
         values = utils.to_boolean(values, false_strs=['No Values'], default=True)
@@ -244,23 +249,33 @@ class Verify:
         msg = self._get_string_msg(str1, str2, msg, values, 'does not end with')
         asserts.fail_unless(str1.endswith(str2), msg)
 
-    def should_not_contain(self, str1, str2, msg=None, values=True):
-        """Fails if the string 'str1' contains the string 'str2' one or more times.
-        
-        See 'Should Be Equal' for an explanation on how to override the default
-        error message with 'msg' and 'values'.
-        """
-        msg = self._get_string_msg(str1, str2, msg, values, 'contains')
-        asserts.fail_if(str1.count(str2) > 0, msg)
+    def should_not_contain(self, item1, item2, msg=None, values=True):
+        """Fails if 'item1' contains 'item2' one or more times.
 
-    def should_contain(self, str1, str2, msg=None, values=True):
-        """Fails if the string 'str1' does not contain the string 'str2' one or more times.
-        
-        See 'Should Be Equal' for an explanation on how to override the default
-        error message with 'msg' and 'values'.
+        Works with strings, lists, and anything that supports Python's 'in'
+        keyword. See 'Should Be Equal' for an explanation on how to override
+        the default error message with 'msg' and 'values'.
+
+        Examples:
+        | Should Not Contain | ${output}    | FAILED |
+        | Should Not Contain | ${some_list} | value  |
         """
-        msg = self._get_string_msg(str1, str2, msg, values, 'does not contain')
-        asserts.fail_unless(str1.count(str2) > 0, msg)
+        msg = self._get_string_msg(item1, item2, msg, values, 'contains')
+        asserts.fail_if(item2 in item1, msg)
+
+    def should_contain(self, item1, item2, msg=None, values=True):
+        """Fails if 'item1' does not contain 'item2' one or more times.
+        
+        Works with strings, lists, and anything that supports Python's 'in'
+        keyword. See 'Should Be Equal' for an explanation on how to override
+        the default error message with 'msg' and 'values'.
+
+        Examples:
+        | Should Contain | ${output}    | PASS |
+        | Should Contain | ${some_list} | value  |
+        """
+        msg = self._get_string_msg(item1, item2, msg, values, 'does not contain')
+        asserts.fail_unless(item2 in item1, msg)
 
     def should_not_match(self, string, pattern, msg=None, values=True):
         """Fails if the given 'string' matches the given 'pattern'.
@@ -285,16 +300,17 @@ class Verify:
         See 'Should Be Equal' for an explanation on how to override the default
         error message with 'msg' and 'values'.
         """
-        msg = self._get_string_msg(string, pattern, msg, values, 'does not match')
+        msg = self._get_string_msg(string, pattern, msg, values,
+                                   'does not match')
         asserts.fail_unless(self._matches(string, pattern), msg)
 
     def should_match_regexp(self, string, pattern, msg=None, values=True):
         """Fails if 'string' does not match 'pattern' as a regular expression.
 
-        Regular expression check is done using the Python 're' module, which has 
-        a pattern syntax derived from Perl, and thus also very similar to the 
-        one in Java. See the following documents for more details about regexps
-        in general and Python implementation in particular.
+        Regular expression check is done using the Python 're' module, which
+        has a pattern syntax derived from Perl, and thus also very similar to
+        the one in Java. See the following documents for more details about
+        regexps in general and Python implementation in particular.
         
         * http://docs.python.org/lib/module-re.html
         * http://www.amk.ca/python/howto/regex/
@@ -305,23 +321,24 @@ class Verify:
         backslaches in the pattern must thus be escaped with another backslash
         (e.g. '\\\\d\\\\w+').
         
-        2) Strings that may contain special characters, but should be handled as
-        literal strings, can be escaped with the 'Regexp Escape' keyword.
+        2) Strings that may contain special characters, but should be handled
+        as literal strings, can be escaped with the 'Regexp Escape' keyword.
 
-        3) The given pattern does not need to match the whole string. For example,
-        the pattern 'ello' matches the string 'Hello world!'. If a full match is
-        needed, the '^' and '$' characters can be used to denote the beginning and
-        end of the string, respectively. For example, '^ello$' only matches the
-        exact string 'ello'.
+        3) The given pattern does not need to match the whole string. For
+        example, the pattern 'ello' matches the string 'Hello world!'. If
+        a full match is needed, the '^' and '$' characters can be used to
+        denote the beginning and end of the string, respectively. For example,
+        '^ello$' only matches the exact string 'ello'.
 
-        4) Possible flags altering how the expression is parsed (e.g. re.IGNORECASE,
-        re.MULTILINE) can be set by prefixing the pattern with the '(?iLmsux)'
-        group (e.g. '(?im)pattern'). The available flags are 'IGNORECASE': 'i',
-        'MULTILINE': 'm', 'DOTALL': 's', 'VERBOSE': 'x', 'UNICODE': 'u', and
-        'LOCALE': 'L'. 
+        4) Possible flags altering how the expression is parsed (e.g.
+        re.IGNORECASE, re.MULTILINE) can be set by prefixing the pattern with
+        the '(?iLmsux)' group (e.g. '(?im)pattern'). The available flags are
+        'IGNORECASE': 'i', 'MULTILINE': 'm', 'DOTALL': 's', 'VERBOSE': 'x',
+        'UNICODE': 'u', and 'LOCALE': 'L'. 
         
-        If this keyword passes, it returns the portion of the string that matched
-        the pattern. Additionally, the possible captured groups are returned.   
+        If this keyword passes, it returns the portion of the string that
+        matched the pattern. Additionally, the possible captured groups are
+        returned.   
         
         See the 'Should Be Equal' keyword for an explanation on how to override
         the default error message with the 'msg' and 'values' arguments.
@@ -338,7 +355,8 @@ class Verify:
         ${group1} = 'Bar'
         ${group2} = '43'
         """ 
-        msg = self._get_string_msg(string, pattern, msg, values, 'does not match')
+        msg = self._get_string_msg(string, pattern, msg, values,
+                                   'does not match')
         res = re.search(pattern, string)
         asserts.fail_if_none(res, msg, False)
         match = res.group(0)
@@ -358,11 +376,12 @@ class Verify:
     def get_length(self, item):
         """Returns the length of the given item.
         
-        The keyword first tries to get the length with the Python function 'len',
-        which calls the item's '__len__' method internally. If that fails, the
-        keyword tries to call the item's 'length' and 'size' methods directly.
-        The final attempt is trying to get the value of the item's 'length'
-        attribute. If all these attempts are unsuccessful, the keyword fails.
+        The keyword first tries to get the length with the Python function
+        'len', which calls the item's '__len__' method internally. If that
+        fails, the keyword tries to call the item's 'length' and 'size' methods
+        directly. The final attempt is trying to get the value of the item's
+        'length' attribute. If all these attempts are unsuccessful, the keyword
+        fails.
         
         New in Robot Framework version 1.8.2.
         """
@@ -386,8 +405,8 @@ class Verify:
         try:
             length = int(length)
         except ValueError:
-            raise DataError("Given length '%s' cannot be converted to an integer"
-                             % length)
+            raise DataError("Given length '%s' cannot be converted to "
+                            "an integer" % length)
         if self.get_length(item) != length:
             if msg is None:
                 msg = "Length of '%s' should be %d but it is %d" \
@@ -445,10 +464,10 @@ class Variables:
             self.log('%s = %s' % (name, value), level)
 
     def variable_should_exist(self, name, msg=None):
-        """Fails unless a variable with the given name exists within the current scope.
+        """Fails unless the given variable exists within the current scope.
         
-        The variable name must be given in the escaped format, e.g. \\${scalar} or
-        \\@{list} to prevent it from being resolved. Alternatively, in this
+        The variable name must be given in the escaped format, e.g. \\${scalar}
+        or \\@{list} to prevent it from being resolved. Alternatively, in this
         case, it is possible to give the variable name in a special format
         without curly braces, e.g. $scalar or @list.
         
@@ -461,7 +480,7 @@ class Variables:
         asserts.fail_unless(variables.has_key(name), msg)
         
     def variable_should_not_exist(self, name, msg=None):
-        """Fails if the variable with the given name exists within the current scope.
+        """Fails if the given variable exists within the current scope.
         
         The variable name must be given in the escaped format, e.g. \\${scalar}
         or \\@{list} to prevent it from being resolved. Alternatively, in this
@@ -476,20 +495,18 @@ class Variables:
             msg = "Variable %s exists" % name
         asserts.fail_if(variables.has_key(name), msg)
 
-
     def replace_variables(self, text):
         """Replaces variables in the given text with their current values.
         
         If the text contains undefined variables, this keyword fails.
-        
-        
+                
         Example:
-        The file 'template.txt' contains 'Hello ${NAME}!' and variable '${NAME}' 
-        has the value 'Robot'.
+        The file 'template.txt' contains 'Hello ${NAME}!' and variable
+        '${NAME}' has the value 'Robot'.
         
-        | ${template} = | Get File | ${CURDIR}${/}template.txt} |
-        | ${message} = | Replace Variables | ${template} |
-        | Should Be Equal | ${message} | Hello Robot! |
+        | ${template} =   | Get File          | ${CURDIR}${/}template.txt} |
+        | ${message} =    | Replace Variables | ${template}                |
+        | Should Be Equal | ${message}        | Hello Robot!               |
         """
         return self._get_variables().replace_string(text)
     
@@ -540,8 +557,8 @@ class Variables:
         Variables set with this keyword are available everywhere within the
         scope of the currently executed test case. For example, if you set a
         variable in a user keyword, it is available both in the test case level
-        and also in all other user keywords used in the current test. Other test
-        cases will not see variables set with this keyword.
+        and also in all other user keywords used in the current test. Other
+        test cases will not see variables set with this keyword.
         
         See 'Set Suite Variable' for more information and examples.
         """
@@ -556,8 +573,8 @@ class Variables:
         Variables set with this keyword are available everywhere within the
         scope of the currently executed test suite. Setting variables with this
         keyword thus has the same effect as creating them using the Variable
-        table in the test data file or importing them from variable files. Other
-        test suites will not see variables set with this keyword.
+        table in the test data file or importing them from variable files.
+        Other test suites will not see variables set with this keyword.
         
         The variable name must be given either in the escaped format
         (e.g. \\${scalar} or \\@{list}) or without curly braces (e.g. $scalar
@@ -570,7 +587,7 @@ class Variables:
 
         Examples:
         | Set Suite Variable | $GREET  | Hello, world! |        
-        | ${ID} = | Get ID |
+        | ${ID} =            | Get ID  |
         | Set Suite Variable | \\${ID} |
          """
         name = self._get_var_name(name)
@@ -581,11 +598,11 @@ class Variables:
     def set_global_variable(self, name, *values):
         """Makes a variable available globally in all tests and suites.
         
-        Variables set with this keyword are globally available in all test cases
-        and suites executed after setting them. Setting variables with this
-        keyword thus has the same effect as creating from the command line 
-        using the options --variable or --variablefile. Because this keyword
-        can change variables everywhere, it should be used with care.
+        Variables set with this keyword are globally available in all test
+        cases and suites executed after setting them. Setting variables with
+        this keyword thus has the same effect as creating from the command line
+        using the options '--variable' or '--variablefile'. Because this
+        keyword can change variables everywhere, it should be used with care.
         
         See 'Set Suite Variable' for more information and examples.
         """
@@ -670,8 +687,9 @@ class RunKeyword:
         """Runs the given keyword with the given arguments and ignores possible error.
         
         This keyword returns two values, so that the first is either 'PASS' or
-        'FAIL', depending on the status of the executed keyword. The second value
-        is either the return value of the keyword or the received error message.
+        'FAIL', depending on the status of the executed keyword. The second
+        value is either the return value of the keyword or the received error
+        message.
         
         The keyword name and arguments work as in 'Run Keyword'.
         
@@ -688,10 +706,10 @@ class RunKeyword:
     def run_keyword_and_expect_error(self, expected_error, name, *args):
         """Runs the keyword and checks that the expected error occurred.
         
-        The expected error must be given in the same format as in Robot Framework
-        reports. It can be a pattern containing characters '?', which matches to
-        any single character and '*'. which matches to any number of any
-        characters.
+        The expected error must be given in the same format as in Robot
+        Framework reports. It can be a pattern containing characters '?',
+        which matches to any single character and '*'. which matches to any
+        number of any characters.
         
         If the expected error occurs, the error message is returned and it can
         be further processed/tested, if needed. If there is no error, or the 
@@ -707,7 +725,8 @@ class RunKeyword:
         except:
             error = utils.get_error_message()
         else:
-            raise AssertionError("Expected error '%s' did not occur" % expected_error)
+            raise AssertionError("Expected error '%s' did not occur"
+                                 % expected_error)
         if not self._matches(error, expected_error):
             raise AssertionError("Expected error '%s' but got '%s'" 
                                  % (expected_error, error))
@@ -716,7 +735,7 @@ class RunKeyword:
     def wait_until_keyword_succeeds(self, timeout, retry_interval, name, *args):
         """Waits until the specified keyword succeeds or the given timeout expires.
         
-        'name' and 'args' define the keyword that is executed. If the specified 
+        'name' and 'args' define the keyword that is executed. If the specified
         keyword does not succeed within 'timeout', this keyword fails.        
         'retry_interval' is the time to wait before trying to run the keyword
         again after the previous run has failed. 
@@ -775,14 +794,14 @@ class RunKeyword:
     def run_keyword_if_all_critical_tests_passed(self, name, *args):
         """Runs the given keyword with the given arguments, if all critical tests passed.
         
-        This keyword can only be used in suite teardown. Trying to use it in any
-        other place will result in an error.
+        This keyword can only be used in suite teardown. Trying to use it in
+        any other place will result in an error.
         
         Otherwise, this keyword works exactly like 'Run Keyword', see its 
         documentation for more details. 
         """
-        kwname = 'Run Keyword If All Critical Tests Passed'
-        suite = self._get_suite_in_teardown(kwname)
+        suite = self._get_suite_in_teardown('Run Keyword If '
+                                            'All Critical Tests Passed')
         if suite.critical_stats.failed == 0:
             return self.run_keyword(name, *args)
         
@@ -795,8 +814,8 @@ class RunKeyword:
         Otherwise, this keyword works exactly like 'Run Keyword', see its 
         documentation for more details. 
         """
-        kwname = 'Run Keyword If Any Critical Tests Failed'
-        suite = self._get_suite_in_teardown(kwname)
+        suite = self._get_suite_in_teardown('Run Keyword If '
+                                            'Any Critical Tests Failed')
         if suite.critical_stats.failed > 0:
             return self.run_keyword(name, *args)
         
@@ -837,10 +856,10 @@ class RunKeyword:
 class Misc:
     
     def no_operation(self):
-        """No operation."""
+        """Does absolutely nothing."""
 
     def sleep(self, time, reason=None):
-        """Sleeps for the given time.
+        """Pauses the test executed for the given time.
         
         'time' may be either a number or a time string. Time strings are in
         a format such as '1 day 2 hours 3 minutes 4 seconds 5milliseconds' or
@@ -871,12 +890,12 @@ class Misc:
         Items are converted into strings when necessary.
         
         Examples:
-        | ${str1} = | Catenate | Hello       | world  |        |
-        | ${str2} = | Catenate | SEPARATOR=- | Hello  | world  |
-        | ${str3} = | Catenate | SEPARATOR=  | Hello  | world  |
+        | ${str1} = | Catenate | Hello         | world |       |
+        | ${str2} = | Catenate | SEPARATOR=--- | Hello | world |
+        | ${str3} = | Catenate | SEPARATOR=    | Hello | world |
         =>
         ${str1} = 'Hello world'
-        ${str2} = 'Hello-world'
+        ${str2} = 'Hello---world'
         ${str3} = 'Helloworld'
         """
         if len(items) == 0:
@@ -920,8 +939,8 @@ class Misc:
         
         This keyword does nothing with the arguments it receives, but as they
         are visible in the log, this keyword can be used to display simple
-        messages. In more complicated cases, the Log or Log Many keywords should
-        be used.
+        messages. In more complicated cases, the 'Log' or 'Log Many keywords'
+        should be used.
         """
         pass
 
@@ -964,14 +983,16 @@ class Misc:
         How time is returned is determined based on the given 'format' string
         as follows. Note that all checks are case-insensitive.
         
-        - If 'format' contains the word 'epoch', the time is returned in seconds 
-          after the UNIX epoch. The return value is always an integer.
+        - If 'format' contains the word 'epoch', the time is returned in
+          seconds after the UNIX epoch. The return value is always an integer.
+
         - If 'format' contains any of the words 'year', 'month', 'day', 'hour',
           'min', or 'sec', only the selected parts are returned. The order of
           the returned parts is always the one in the previous sentence and the
           order of words in 'format' is not significant. The parts are returned
           as zero-padded strings (e.g. May -> '05').
-        - Otherwise (and by default) the time is returned as a timestamp string 
+
+        - Otherwise (and by default) the time is returned as a timestamp string
           in the format '2006-02-24 15:08:31'.
         
         Examples (expecting the current time is 2006-03-29 15:06:21):
@@ -1017,11 +1038,11 @@ class Misc:
         exception.
         
         Examples:
-        | Call Method        | ${hashtable} | put          | myname  | myvalue |
-        | ${isempty} =       | Call Method  | ${hashtable} | isEmpty |         |
-        | Should Not Be True | ${isempty}   |              |         |         |
-        | ${value} =         | Call Method  | ${hashtable} | get     | myname  |
-        | Should Be Equal    | ${value}     | myvalue      |         |         |        
+        | Call Method      | ${hashtable} | put          | myname  | myvalue |
+        | ${isempty} =     | Call Method  | ${hashtable} | isEmpty |         |
+        | Should Not Be True | ${isempty} |              |         |         |
+        | ${value} =       | Call Method  | ${hashtable} | get     | myname  |
+        | Should Be Equal  | ${value}     | myvalue      |         |         |
         """
         try:
             method = getattr(object, method_name)
@@ -1050,14 +1071,14 @@ class Misc:
         - Otherwise the pattern is considered a literal string and lines
           returned, if they contain the string exactly. This is the default.
         
-        1) Simple pattern matching is similar to matching files in a shell, and 
+        1) Simple pattern matching is similar to matching files in a shell, and
         it is always case-sensitive. In the pattern, '*' matches to anything 
         and '?' matches to any single character.  
         
-        2) Regular expression check is done using Python's 're' module which has 
-        a pattern syntax derived from Perl and thus is also very similar to the 
-        one in Java. See the following documents from more details about regexps
-        in general and their Python implementation in particular.
+        2) Regular expression check is done using Python's 're' module which
+        has a pattern syntax derived from Perl and thus is also very similar to
+        the one in Java. See the following documents from more details about
+        regexps in general and their Python implementation in particular.
         
         're' Module Documentation: http://docs.python.org/lib/module-re.html
         Regular Expression HOWTO: http://www.amk.ca/python/howto/regex/
@@ -1078,16 +1099,16 @@ class Misc:
             lines = [ line for line in lines if grep.search(line) is not None ]
         elif utils.contains(pattern_type, 'case insensitive'):
             pattern = pattern.lower()
-            lines = [ line for line in lines if line.lower().count(pattern) > 0 ]
+            lines = [ line for line in lines if pattern in line.lower() ]
         else:
-            lines = [ line for line in lines if line.count(pattern) > 0 ]
+            lines = [ line for line in lines if pattern in line ]
         return '\n'.join(lines)
     
     def regexp_escape(self, *patterns):
         """Returns each argument string escaped for use as a regular expression.
         
-        This keyword can be used to escape strings to be used with 'Should
-        Match Regexp' and 'Should Not Match Regexp' keywords.
+        This keyword can be used to escape strings to be used with
+        'Should Match Regexp' and 'Should Not Match Regexp' keywords.
         
         Escaping is done with Python's re.escape() function.
         
@@ -1111,9 +1132,9 @@ class BuiltIn(Verify, Converter, Variables, RunKeyword, Misc):
     """BuiltIn library provides a set of often needed generic keywords.
 
     These keywords are available automatically without importing any library.
-    They allow functionality for verifications (e.g. Should Be 
-    Equal), conversions (e.g. Convert To Integer) and for various other 
-    purposes (e.g. Sleep).
+    They allow functionality for verifications (e.g. 'Should Be Equal'),
+    conversions (e.g. 'Convert To Integer') and for various other purposes
+    (e.g. 'Sleep', 'Run Keyword If').
     """
 
     ROBOT_LIBRARY_SCOPE = 'GLOBAL'
