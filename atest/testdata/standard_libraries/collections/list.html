@@ -55,8 +55,6 @@ th {
 }
 </style>
 <title>List</title></head>
-
-
 <body>
 <h1>List</h1>
 
@@ -248,7 +246,7 @@ th {
 <tr>
 <td></td>
 <td>...</td>
-<td>[ '1', 'value', '2' ]</td>
+<td>['1', 'value',&nbsp;2]</td>
 <td></td>
 <td></td>
 </tr>
@@ -269,7 +267,7 @@ th {
 <tr>
 <td></td>
 <td>...</td>
-<td>[ '1', 'value', '2' ]</td>
+<td>['1', 'value',&nbsp;2]</td>
 <td></td>
 <td></td>
 </tr>
@@ -290,7 +288,7 @@ th {
 <tr>
 <td></td>
 <td>...</td>
-<td>[ '1', '2', 'value' ]</td>
+<td>['1',&nbsp;2, 'value']</td>
 <td></td>
 <td></td>
 </tr>
@@ -311,7 +309,7 @@ th {
 <tr>
 <td></td>
 <td>...</td>
-<td>[ '41', '42', 'value', '43' ,'44']</td>
+<td>['41',&nbsp;42, 'value', '43' ,'44']</td>
 <td></td>
 <td></td>
 </tr>
@@ -332,7 +330,7 @@ th {
 <tr>
 <td></td>
 <td>...</td>
-<td>[ 'value' , '1', '2']</td>
+<td>['value' , '1',&nbsp;2]</td>
 <td></td>
 <td></td>
 </tr>
@@ -346,8 +344,8 @@ th {
 <tr>
 <td><a name="test_InsertIntoListWithInvalidIndex">Insert Into List With Invalid Index</a></td>
 <td>[Documentation]</td>
-<td>FAIL ${INDEX ERROR}</td>
-<td></td>
+<td>FAIL</td>
+<td>${INDEX ERROR}</td>
 <td></td>
 </tr>
 <tr>
@@ -375,7 +373,7 @@ th {
 <td></td>
 <td>Compare To Expected String</td>
 <td>${combined list}</td>
-<td>[ '1', '1', '2' ]</td>
+<td>['1', '1',&nbsp;2]</td>
 <td></td>
 </tr>
 <tr>
@@ -396,7 +394,7 @@ th {
 <td></td>
 <td>Compare To Expected String</td>
 <td>${combined list}</td>
-<td>[ '1', '1', '2', '11', '12', '13' ]</td>
+<td>['1', '1',&nbsp;2, '11',&nbsp;12, '13']</td>
 <td></td>
 </tr>
 <tr>
@@ -417,7 +415,7 @@ th {
 <td></td>
 <td>Compare To Expected String</td>
 <td>${L3}</td>
-<td>[ '11', 'value', '13' ]</td>
+<td>['11', 'value', '13']</td>
 <td></td>
 </tr>
 <tr>
@@ -473,22 +471,22 @@ th {
 <td><a name="test_RemoveValuesFromList">Remove Values From List</a></td>
 <td>Remove Values From List</td>
 <td>${LONG}</td>
-<td>42</td>
+<td>${42}</td>
 <td></td>
 </tr>
 <tr>
 <td></td>
 <td>Compare To Expected String</td>
 <td>${LONG}</td>
-<td>[ '1', '1', '2', '41', '43', '44', '1', '2']</td>
+<td>[ '1', '1',&nbsp;2, '41', '43', '44', '1',&nbsp;2]</td>
 <td></td>
 </tr>
 <tr>
 <td></td>
 <td>Remove Values From List</td>
 <td>${LONG}</td>
-<td>2</td>
-<td>42</td>
+<td>${2}</td>
+<td>${42}</td>
 </tr>
 <tr>
 <td></td>
@@ -522,7 +520,7 @@ th {
 <td></td>
 <td>Compare To Expected String</td>
 <td>${L3}</td>
-<td>[ '11', '12', '13' ]</td>
+<td>[ '11',&nbsp;12, '13' ]</td>
 <td></td>
 </tr>
 <tr>
@@ -543,7 +541,7 @@ th {
 <td></td>
 <td>Should Be Equal</td>
 <td>${removed value}</td>
-<td>12</td>
+<td>${12}</td>
 <td></td>
 </tr>
 <tr>
@@ -637,7 +635,7 @@ th {
 <td>3</td>
 <td></td>
 </tr>
-<tr><td></td><td>${count} =</td><td>Count Values In List</td><td>${LONG}</td><td>2</td></tr><tr><td></td><td>Should Be Equal As Integers</td><td>${count}</td><td>2</td><td></td></tr><tr>
+<tr><td></td><td>${count} =</td><td>Count Values In List</td><td>${LONG}</td><td>${2}</td></tr><tr><td></td><td>Should Be Equal As Integers</td><td>${count}</td><td>2</td><td></td></tr><tr>
 <td></td>
 <td>${count} =</td>
 <td>Count Values In List</td>
@@ -747,7 +745,7 @@ th {
 <td>${position} =</td>
 <td>Get Index From List</td>
 <td>${LONG}</td>
-<td>2</td>
+<td>${2}</td>
 </tr>
 <tr>
 <td></td>
@@ -761,7 +759,7 @@ th {
 <td>${position} =</td>
 <td>Get Index From List</td>
 <td>${LONG}</td>
-<td>2</td>
+<td>${2}</td>
 </tr>
 <tr>
 <td></td>
@@ -928,7 +926,7 @@ th {
 <td></td>
 <td>Compare To Expected String</td>
 <td>${copy}</td>
-<td>[ '1', '2' ]</td>
+<td>['1',&nbsp;2]</td>
 <td></td>
 </tr>
 <tr>
@@ -949,7 +947,7 @@ th {
 <td></td>
 <td>Compare To Expected String</td>
 <td>${LONG}</td>
-<td>[ '2', '1', '44', '43', '42', '41', '2', '1', '1' ]</td>
+<td>[2, '1', '44', '43',&nbsp;42, '41',&nbsp;2, '1', '1']</td>
 <td></td>
 </tr>
 <tr>
@@ -970,7 +968,7 @@ th {
 <td></td>
 <td>Compare To Expected String</td>
 <td>${LONG}</td>
-<td>[ '1', '1' , '1', '2', '2', '41', '42', '43', '44' ]</td>
+<td>[&nbsp;2,&nbsp;2, 42, '1', '1' , '1', '41', '43', '44']</td>
 <td></td>
 </tr>
 <tr>
@@ -1075,7 +1073,7 @@ th {
 <td></td>
 <td>Compare To Expected String</td>
 <td>${values}</td>
-<td>[ '42' ]</td>
+<td>[42]</td>
 <td></td>
 </tr>
 <tr>
@@ -1089,7 +1087,7 @@ th {
 <td></td>
 <td>Compare To Expected String</td>
 <td>${values}</td>
-<td>[ '42', '43', '44']</td>
+<td>[42, '43', '44']</td>
 <td></td>
 </tr>
 <tr>
@@ -1110,7 +1108,7 @@ th {
 <td></td>
 <td>Compare To Expected String</td>
 <td>${values}</td>
-<td>[ '41', '42' ]</td>
+<td>['41',&nbsp;42]</td>
 <td></td>
 </tr>
 <tr>
@@ -1347,7 +1345,7 @@ th {
 <tr>
 <td><a name="test_ListsShouldBeEqualWithDifferentLengths">Lists Should Be Equal With Different Lengths</a></td>
 <td>[Documentation]</td>
-<td>FAIL Lengths are different 1!=4</td>
+<td>FAIL Lengths are different: 1 != 4</td>
 <td></td>
 <td></td>
 </tr>
@@ -1396,7 +1394,7 @@ th {
 <tr>
 <td><a name="test_ListsShouldBeEqualWithDifferentLengthsAndOwnAndDefaultErrorMessages">Lists Should Be Equal With Different Lengths And Own And Default Error Messages</a></td>
 <td>[Documentation]</td>
-<td>FAIL My error message!\nLengths are different 1!=4</td>
+<td>FAIL My error message!\nLengths are different: 1 != 4</td>
 <td></td>
 <td></td>
 </tr>
@@ -1417,7 +1415,7 @@ th {
 <tr>
 <td><a name="test_ListsShouldBeEqualWithDifferentValues">Lists Should Be Equal With Different Values</a></td>
 <td>[Documentation]</td>
-<td>FAIL Lists are different:\n index, L1 value, L2 value\n 0, 11, 10\n 2, 13, 14</td>
+<td>FAIL Lists are different:\n<br>Index 0: 11 != 10\n<br>Index 1: 12 != 12\n<br>Index 2: 13 != 14\n<br></td>
 <td></td>
 <td></td>
 </tr>
@@ -1494,7 +1492,7 @@ th {
 <tr>
 <td><a name="test_ListsShouldBeEqualWithDifferentValuesAndOwnAndDefaultErrorMessages">Lists Should Be Equal With Different Values And Own And Default Error Messages</a></td>
 <td>[Documentation]</td>
-<td>FAIL My error message!\nLists are different:\n index, L1 value, L2 value\n 0, 11, 10\n 2, 13, 14</td>
+<td>FAIL My error message!\n<br>Lists are different:\n<br>Index 0: 11 != 10\n<br>Index 1: 12 != 12\n<br>Index 2: 13 != 14\n</td>
 <td></td>
 <td></td>
 </tr>
@@ -1668,7 +1666,7 @@ th {
 <td>${L2} =</td>
 <td>Create List</td>
 <td>1</td>
-<td>2</td>
+<td>${2}</td>
 </tr>
 <tr>
 <td></td>
@@ -1682,7 +1680,7 @@ th {
 <td>${L3} =</td>
 <td>Create List</td>
 <td>11</td>
-<td>12</td>
+<td>${12}</td>
 </tr>
 <tr>
 <td></td>
@@ -1703,7 +1701,7 @@ th {
 <td>${L4} =</td>
 <td>Create List</td>
 <td>41</td>
-<td>42</td>
+<td>${42}</td>
 </tr>
 <tr>
 <td></td>

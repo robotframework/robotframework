@@ -139,8 +139,8 @@ Library</h1>
 </thead>
 
 <tbody>
-<tr>
-<td>Create Dictionary</td>
+<tr><td>Create Dictionary</td><td>${dict} =</td><td>Create Dictionary</td><td></td><td></td><td></td><td></td></tr><tr><td></td><td>Compare To Expected String</td><td>${dict}</td><td>{}</td><td></td><td></td><td></td></tr><tr>
+<td><br></td>
 <td>${dict} =</td>
 <td>Create Dictionary</td>
 <td>a</td>
@@ -152,10 +152,10 @@ Library</h1>
 <tr>
 <td></td>
 <td>...</td>
-<td>c</td>
 <td>${3}</td>
-<td></td>
-<td></td>
+<td>${3.1}</td>
+<td>${True}</td>
+<td>${dict}</td>
 <td></td>
 </tr>
 
@@ -163,23 +163,15 @@ Library</h1>
 <td></td>
 <td>Compare To Expected String</td>
 <td>${dict}</td>
-<td>{'a':'1', 'b':'2', 'c':3}</td>
+<td>{'a': '1', 'b': '2', 3: 3.1, True: {}}</td>
 <td></td>
 <td></td>
 <td></td>
 </tr>
 
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
 
-<tr>
+
+<tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr>
 <td>Create Dictionary with wrong number of arguments</td>
 <td>[Documentation]</td>
 <td>FAIL</td>
@@ -235,8 +227,8 @@ Library</h1>
 <td>${D0}</td>
 <td>b</td>
 <td>${2}</td>
-<td>c</td>
 <td>${3}</td>
+<td>${None}</td>
 </tr>
 
 <tr>
@@ -303,7 +295,7 @@ Library</h1>
 <td></td>
 <td>Compare To Expected String</td>
 <td>${D3}</td>
-<td>{'a':1, 'c':3}</td>
+<td>{'a': 1,&nbsp;3: None}</td>
 <td></td>
 <td></td>
 <td></td>
@@ -326,14 +318,14 @@ Library</h1>
 <td>a</td>
 <td>x</td>
 <td>${2}</td>
-<td>c</td>
+<td>${3}</td>
 </tr>
 
 <tr>
 <td></td>
 <td>Compare To Expected String</td>
-<td>${D3}</td>
-<td>{'a':1, 'c':3}</td>
+<td>${D3}</td><td>{'a': 1,&nbsp;3: None}</td>
+
 <td></td>
 <td></td>
 <td></td>
@@ -351,7 +343,7 @@ Library</h1>
 
 <tr>
 <td>Copy Dictionary</td>
-<td>${copy of dictionary} =</td>
+<td>${copy} =</td>
 <td>Copy Dictionary</td>
 <td>${D3}</td>
 <td></td>
@@ -362,9 +354,9 @@ Library</h1>
 <tr>
 <td></td>
 <td>Remove From Dictionary</td>
-<td>${copy of dictionary}</td>
+<td>${copy}</td>
 <td>a</td>
-<td>c</td>
+<td>${3}</td>
 <td></td>
 <td></td>
 </tr>
@@ -372,7 +364,7 @@ Library</h1>
 <tr>
 <td></td>
 <td>Compare To Expected String</td>
-<td>${copy of dictionary}</td>
+<td>${copy}</td>
 <td>{'b':2}</td>
 <td></td>
 <td></td>
@@ -383,7 +375,7 @@ Library</h1>
 <td></td>
 <td>Compare To Expected String</td>
 <td>${D3}</td>
-<td>{'a':1, 'b':2, 'c':3}</td>
+<td>{'a': 1, 'b': 2,&nbsp;3: None}</td>
 <td></td>
 <td></td>
 <td></td>
@@ -411,45 +403,29 @@ Library</h1>
 
 <tr>
 <td></td>
-<td>${expected} =</td>
-<td>Create List</td>
-<td>a</td>
-<td>b</td>
-<td>c</td>
-<td></td>
-</tr>
-
-<tr>
-<td></td>
-<td>List Should Contain Sub List</td>
-<td>${expected}</td>
+<td>Compare To Expected String</td>
 <td>${keys}</td>
+<td>[3, 'a', 'b']</td>
 <td></td>
 <td></td>
 <td></td>
 </tr>
 
+
+
+
+
 <tr>
 <td></td>
-<td>List Should Contain Sub List</td>
-<td>${keys}</td>
-<td>${expected}</td>
+<td>${keys} =</td><td>Get Dictionary Keys</td><td>${BIG}</td>
+
+
 <td></td>
 <td></td>
 <td></td>
 </tr>
 
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-
-<tr>
+<tr><td></td><td>Compare To Expected String</td><td>${keys}</td><td>[3, '', 'B', 'a', 'd', ()]</td><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr>
 <td>Get Dictionary Values</td>
 <td>${values} =</td>
 <td>Get Dictionary Values</td>
@@ -461,45 +437,37 @@ Library</h1>
 
 <tr>
 <td></td>
-<td>${expected}&nbsp;=</td>
-<td>Create List</td>
-<td>${1}</td>
-<td>${2}</td>
-<td>${3}</td>
+<td>Compare To Expected String</td><td>${values}</td><td>[None, 1, 2]</td>
+
+
+<td></td><td></td>
+
 <td></td>
 </tr>
 
 <tr>
 <td></td>
-<td>List Should Contain Sub List</td>
-<td>${expected}</td>
-<td>${values}</td>
+<td>${values} =</td><td>Get Dictionary Values</td><td>${BIG}</td>
+
+
 <td></td>
 <td></td>
 <td></td>
 </tr>
 
+
+
 <tr>
 <td></td>
-<td>List Should Contain Sub List</td>
-<td>${values}</td>
-<td>${expected}</td>
+<td>Compare To Expected String</td><td>${values}</td><td>[[42], 'e', 2, 1, '', {}]</td>
+
+
 <td></td>
 <td></td>
 <td></td>
 </tr>
 
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-
-<tr>
+<tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr>
 <td>Get Dictionary Items</td>
 <td>${items} =</td>
 <td>Get Dictionary Items</td>
@@ -511,21 +479,19 @@ Library</h1>
 
 <tr>
 <td></td>
-<td>${expected}&nbsp;=</td>
-<td>Create List</td>
-<td>a<br>
-</td>
-<td>${1}</td>
-<td>b<br>
-</td>
-<td>${2}</td>
+<td>Compare To Expected String</td><td>${items}</td><td>[3, None, 'a', 1, 'b', 2]</td>
+
+
+<td></td>
+<td></td>
+<td></td>
 </tr>
 
 <tr>
 <td></td>
-<td>...</td>
-<td>c</td>
-<td>${3}</td>
+<td>${items} =</td><td>Get Dictionary Items</td><td>${BIG}</td>
+
+
 <td><br>
 </td>
 <td></td>
@@ -534,23 +500,15 @@ Library</h1>
 
 <tr>
 <td></td>
-<td>List Should Contain Sub List</td>
-<td>${items}</td>
-<td>${expected}</td>
+<td>Compare To Expected String</td><td>${items}</td><td>[3, [42], '', 'e', 'B', 2, 'a', 1, 'd', '', (), {}]</td>
+
+
 <td></td>
 <td></td>
 <td></td>
 </tr>
 
-<tr>
-<td></td>
-<td>List Should Contain Sub List</td>
-<td>${expected}</td>
-<td>${items}</td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
+
 
 <tr>
 <td></td>
@@ -846,11 +804,11 @@ Library</h1>
 <td></td>
 </tr>
 
-<tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr>
-<td>Dictionaries Should Be Equal With Different Keys</td>
+<tr><td></td><td>Dictionaries Should Be Equal</td><td>${BIG}</td><td>${BIG}</td><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr>
+<td>Dictionaries Should&nbsp;Equal With First Dictionary Missing Keys</td>
 <td>[Documentation]</td>
 <td>FAIL</td>
-<td>Following keys are different: a, x</td>
+<td>Following keys missing from first dictionary: 3</td>
 <td></td>
 <td></td>
 <td></td>
@@ -859,14 +817,14 @@ Library</h1>
 <tr>
 <td></td>
 <td>Dictionaries Should Be Equal</td>
-<td>${D2}</td><td>${D2 different keys}</td>
+<td>${D2}</td><td>${D3}</td>
 
 <td></td>
 <td></td>
 <td></td>
 </tr>
 
-<tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr>
+<tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Dictionaries Should&nbsp;Equal With Second Dictionary Missing Keys</td><td>[Documentation]</td><td>FAIL</td><td>Following keys missing from second dictionary: a, b</td><td></td><td></td><td></td></tr><tr><td></td><td>Dictionaries Should Be Equal</td><td>${D2}</td><td>${D0}</td><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Dictionaries Should&nbsp;Equal With Both Dictionaries Missing Keys</td><td>[Documentation]</td><td>FAIL</td><td>Following keys missing from first dictionary: b\n<br>Following keys missing from second dictionary: , B, d, ()</td><td></td><td></td><td></td></tr><tr><td></td><td>Dictionaries Should Be Equal</td><td>${BIG}</td><td>${D3}</td><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr>
 <td>Dictionaries Should Be Equal With Different Keys And Own Error Message</td>
 <td>[Documentation]</td><td>FAIL</td>
 
@@ -876,7 +834,7 @@ Library</h1>
 <td></td>
 </tr>
 
-<tr><td></td><td>Dictionaries Should Be Equal</td><td>${D2}</td><td>${D2 different keys}</td><td>My error message!</td><td>No Values</td><td></td></tr><tr>
+<tr><td></td><td>Dictionaries Should Be Equal</td><td>${D2}</td><td>${D3}</td><td>My error message!</td><td>No Values</td><td></td></tr><tr>
 <td></td>
 <td></td>
 <td></td>
@@ -890,7 +848,7 @@ Library</h1>
 <td>Dictionaries Should Be Equal With Different Keys And Own And Default Error Messages</td>
 <td>[Documentation]</td><td>FAIL</td>
 
-<td>My error message!\nFollowing keys are different: a, x</td>
+<td>My error message!\n<br>Following keys missing from first dictionary: 3</td>
 <td></td>
 <td></td>
 <td></td>
@@ -898,7 +856,7 @@ Library</h1>
 
 <tr>
 <td></td>
-<td>Dictionaries Should Be Equal</td><td>${D2}</td><td>${D2 different keys}</td><td>My error message!</td><td><br></td>
+<td>Dictionaries Should Be Equal</td><td>${D2}</td><td>${D3}</td><td>My error message!</td><td><br></td>
 
 
 
@@ -906,11 +864,7 @@ Library</h1>
 <td></td>
 </tr>
 
-<tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Dictionaries Should Be Equal With Different Values</td><td>[Documentation]</td><td>FAIL</td><td>Dictionaries are different:\n<br>
- key, dict1 value, dict2 value\n<br>
-b, 2, x</td><td></td><td></td><td></td></tr><tr><td></td><td>Dictionaries Should Be Equal</td><td>${D2}</td><td>${D2 different values}</td><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Dictionaries Should Be Equal With Different Values And Own Error Message</td><td>[Documentation]</td><td>FAIL</td><td>My error message!</td><td></td><td></td><td></td></tr><tr><td></td><td>Dictionaries Should Be Equal</td><td>${D2}</td><td>${D2 different values}</td><td>My error message!</td><td>False</td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Dictionaries Should Be Equal With Different Values And Own And Default Error Messages</td><td>[Documentation]</td><td>FAIL</td><td>My error message!\nDictionaries are different:\n<br>
- key, dict1 value, dict2 value\n<br>
-b, 2, x</td><td></td><td></td><td></td></tr><tr><td></td><td>Dictionaries Should Be Equal</td><td>${D2}</td><td>${D2 different values}</td><td>My error message!</td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr>
+<tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Dictionaries Should Be Equal With Different Values</td><td>[Documentation]</td><td>FAIL</td><td>Following keys have different values:\n<br>Key b: 2 != x<br></td><td></td><td></td><td></td></tr><tr><td></td><td>Dictionaries Should Be Equal</td><td>${D2}</td><td>${D2B}</td><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Dictionaries Should Be Equal With Different Values And Own Error Message</td><td>[Documentation]</td><td>FAIL</td><td>My error message!</td><td></td><td></td><td></td></tr><tr><td></td><td>Dictionaries Should Be Equal</td><td>${D2}</td><td>${D2B}</td><td>My error message!</td><td>False</td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Dictionaries Should Be Equal With Different Values And Own And Default Error Messages</td><td>[Documentation]</td><td>FAIL</td><td>My error message!\n<br>Following keys have different values:\n<br>Key b: 2 != x</td><td></td><td></td><td></td></tr><tr><td></td><td>Dictionaries Should Be Equal</td><td>${D2}</td><td>${D2B}</td><td>My error message!</td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr>
 <td>Dictionary Should Contain Sub Dictionary</td>
 <td>Dictionary Should Contain Sub Dictionary</td><td>${D3}</td>
 
@@ -920,7 +874,7 @@ b, 2, x</td><td></td><td></td><td></td></tr><tr><td></td><td>Dictionaries Should
 <td></td>
 </tr>
 
-<tr><td></td><td>Dictionary Should Contain Sub Dictionary</td><td>${D3}</td><td>${D0}</td><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Dictionary Should Contain Sub Dictionary With Missing Keys</td><td>[Documentation]</td><td>FAIL</td><td>Following key(s) are missing from dict1: c</td><td></td><td></td><td></td></tr><tr><td></td><td>Dictionary Should Contain Sub Dictionary</td><td>${D2}</td><td>${D3}</td><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Dictionary Should Contain Sub Dictionary With&nbsp;Missing Keys And Own Error Message</td><td>[Documentation]</td><td>FAIL</td><td>My error message!</td><td></td><td></td><td></td></tr><tr><td></td><td>Dictionary Should Contain Sub Dictionary</td><td>${D2}</td><td>${D3}</td><td>My error message!</td><td>False</td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Dictionary Should Contain Sub Dictionary With&nbsp;Missing Keys And Own And Default Error Message</td><td>[Documentation]</td><td>FAIL</td><td>My error message!\nFollowing key(s) are missing from dict1: c</td><td></td><td></td><td></td></tr><tr>
+<tr><td></td><td>Dictionary Should Contain Sub Dictionary</td><td>${D3}</td><td>${D0}</td><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Dictionary Should Contain Sub Dictionary With Missing Keys</td><td>[Documentation]</td><td>FAIL</td><td>Following keys missing from first dictionary: 3</td><td></td><td></td><td></td></tr><tr><td></td><td>Dictionary Should Contain Sub Dictionary</td><td>${D2}</td><td>${D3}</td><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Dictionary Should Contain Sub Dictionary With&nbsp;Missing Keys And Own Error Message</td><td>[Documentation]</td><td>FAIL</td><td>My error message!</td><td></td><td></td><td></td></tr><tr><td></td><td>Dictionary Should Contain Sub Dictionary</td><td>${D2}</td><td>${D3}</td><td>My error message!</td><td>False</td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Dictionary Should Contain Sub Dictionary With&nbsp;Missing Keys And Own And Default Error Message</td><td>[Documentation]</td><td>FAIL</td><td>My error message!\n<br>Following keys missing from first dictionary: 3<br></td><td></td><td></td><td></td></tr><tr>
 <td></td>
 <td>Dictionary Should Contain Sub Dictionary</td><td>${D2}</td><td>${D3}</td>
 
@@ -928,7 +882,7 @@ b, 2, x</td><td></td><td></td><td></td></tr><tr><td></td><td>Dictionaries Should
 <td>My error message!</td>
 <td></td>
 <td></td>
-</tr><tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Dictionary Should Contain Sub Dictionary With Different Value</td><td>[Documentation]</td><td>FAIL</td><td>Dictionaries are different:\n<br>key, dict1 value, dict2 value\n<br>b, 2, x</td><td></td><td></td><td></td></tr><tr><td></td><td>Dictionary Should Contain Sub Dictionary</td><td>${D3}</td><td>${D2 different values}</td><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Dictionary Should Contain Sub Dictionary With&nbsp;Different Value And Own Error Message</td><td>[Documentation]</td><td>FAIL</td><td>My error message!</td><td></td><td></td><td></td></tr><tr><td></td><td>Dictionary Should Contain Sub Dictionary</td><td>${D3}</td><td>${D2 different values}</td><td>My error message!</td><td>False</td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Dictionary Should Contain Sub Dictionary With&nbsp;Different Value And Own And Default Error Message</td><td>[Documentation]</td><td>FAIL</td><td>My error message!\n<br>Dictionaries are different:\n<br>key, dict1 value, dict2 value\n<br>b, 2, x</td><td></td><td></td><td></td></tr><tr><td></td><td>Dictionary Should Contain Sub Dictionary</td><td>${D3}</td><td>${D2 different values}</td><td>My error message!</td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+</tr><tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Dictionary Should Contain Sub Dictionary With Different Value</td><td>[Documentation]</td><td>FAIL</td><td>Following keys have different values:\n<br>Key b: 2 != x<br></td><td></td><td></td><td></td></tr><tr><td></td><td>Dictionary Should Contain Sub Dictionary</td><td>${D3}</td><td>${D2B}</td><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Dictionary Should Contain Sub Dictionary With&nbsp;Different Value And Own Error Message</td><td>[Documentation]</td><td>FAIL</td><td>My error message!</td><td></td><td></td><td></td></tr><tr><td></td><td>Dictionary Should Contain Sub Dictionary</td><td>${D3}</td><td>${D2B}</td><td>My error message!</td><td>False</td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Dictionary Should Contain Sub Dictionary With&nbsp;Different Value And Own And Default Error Message</td><td>[Documentation]</td><td>FAIL</td><td>My error message!\n<br>Following keys have different values:\n<br>Key b: 2 != x<br></td><td></td><td></td><td></td></tr><tr><td></td><td>Dictionary Should Contain Sub Dictionary</td><td>${D3}</td><td>${D2B}</td><td>My error message!</td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
 </tbody>
 </table>
 
@@ -1002,7 +956,7 @@ b, 2, x</td><td></td><td></td><td></td></tr><tr><td></td><td>Dictionaries Should
 <td></td>
 </tr>
 
-<tr><td></td><td>${D2 different keys} =</td><td>Create Dictionary</td><td>x</td><td>${1}</td></tr><tr><td></td><td>...</td><td>b</td><td>${2}</td><td></td></tr><tr><td></td><td>Set Test Variable</td><td>\${D2 different keys}</td><td></td><td></td></tr><tr><td></td><td>${D2 different values} =</td><td>Create Dictionary</td><td>a</td><td>${1}</td></tr><tr><td></td><td>...</td><td>b</td><td>x</td><td></td></tr><tr><td></td><td>Set Test Variable</td><td>\${D2 different values}</td><td></td><td></td></tr><tr>
+<tr><td></td><td>${D2B} =</td><td>Create Dictionary</td><td>a</td><td>${1}</td></tr><tr><td></td><td>...</td><td>b</td><td>x</td><td></td></tr><tr><td></td><td>Set Test Variable</td><td>\${D2B}</td><td></td><td></td></tr><tr>
 <td></td>
 <td>${D3}</td>
 <td>Create Dictionary</td>
@@ -1015,14 +969,14 @@ b, 2, x</td><td></td><td></td><td></td></tr><tr><td></td><td>Dictionaries Should
 <td>...</td>
 <td>b</td>
 <td>${2}</td>
-<td>c</td>
+<td></td>
 </tr>
 
 <tr>
 <td></td>
 <td>...</td>
 <td>${3}</td>
-<td></td>
+<td>${None}</td>
 <td></td>
 </tr>
 
@@ -1036,16 +990,16 @@ b, 2, x</td><td></td><td></td><td></td></tr><tr><td></td><td>Dictionaries Should
 
 <tr>
 <td></td>
-<td></td>
-<td></td>
-<td></td>
+<td>${BIG} =</td>
+<td>Evaluate</td>
+<td>{'a': 1, 'B': 2, 3: [42], 'd': '', '': 'e', (): {}}</td>
 <td></td>
 </tr>
 
 <tr>
 <td></td>
-<td></td>
-<td></td>
+<td>Set Test Variable</td><td>\${BIG}</td>
+
 <td></td>
 <td></td>
 </tr>
