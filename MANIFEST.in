@@ -8,5 +8,5 @@ include LICENSE.txt COPYRIGHT.txt INSTALL.txt PACKAGING.txt
 recursive-include tools *.py *.au3 *.sh *.rb *.html *.txt *.tsv *.png
 recursive-include proto *.py *.au3 *.sh *.rb *.html *.txt *.tsv *.rnc
 include templates/*.html templates/*.tsv templates/*.txt
-recursive-include doc *.txt *.html *.png *.sh *.py
-prune doc/userguide/robotframework-userguide-*
+recursive-include doc *.txt *.html *.png *.sh *.py *.dia
+
