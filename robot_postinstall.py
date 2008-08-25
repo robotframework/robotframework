@@ -37,7 +37,7 @@ def windows_binary_install():
     """
     scripts = ['pybot.bat','jybot.bat', 'rebot.bat']
     script_dir = os.path.join(sys.prefix, 'Scripts')
-    robot_dir = os.path.join(get_python_lib(), 'robot')
+    robot_dir = _get_installation_dir()
     python_exe = os.path.join(sys.prefix, 'python.exe')  # sys.executable doesn't work here
     try:
         _update_scripts(scripts, script_dir, robot_dir, python_exe)
@@ -57,7 +57,7 @@ def windows_binary_uninstall():
     deletes directories only if they are empty. Thus compiled files created
     by Jython must be deleted separately.
     """
-    for base, dirs, files in os.walk(os.path.join(get_python_lib(), 'robot')):
+    for base, dirs, files in os.walk(_get_installation_dir()):
         for name in files:
             if name.endswith('$py.class'):
                 path = os.path.join(base, name)
@@ -67,6 +67,10 @@ def windows_binary_uninstall():
                     print "Failed to remove Jython compiled file '%s': %s" \
                             % (path, str(err))
 
+def _get_installation_dir():
+    """Returns installation location. Works also with easy_install."""
+    import robot
+    return os.path.dirname(os.path.abspath(robot.__file__))
 
 def _update_scripts(scripts, script_dir, robot_dir, python_exe=sys.executable):
     jython_exe, how_found = _find_jython()
