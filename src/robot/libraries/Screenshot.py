@@ -13,12 +13,17 @@
 #  limitations under the License.
 
 
-import sys, os, tempfile
+import sys
+import os
+import tempfile
+
 from java.awt import Toolkit, Robot, Rectangle
 from javax.imageio import ImageIO
 from java.io import File
 
 from robot import utils
+from robot.errors import DataError
+
 
 class Screenshot:
  
@@ -27,16 +32,19 @@ class Screenshot:
     The library can be initialized with two arguments: 'default_directory' and 
     'log_file_directory'. If the 'default_directory' is provided, all the 
     screenshots will be saved under that directory by default. If the 
-    'default_directory' is not provided, the system temporary directory is used 
+    'default_directory' is not provided, the system temporary directory is used
     as default.
+
     'log_file_directory' is used to create relative paths when screenshots are 
     logged. By default, absolute paths are used.
     
-    The library depends on standard Java APIs and thus requires a Jython runtime
-    environment. The library does not, however, require any specific operating
-    system. While the library has been tested on Windows and Linux, any 
-    operating system for which the JDK is available, should be sufficient. 
+    The library depends on standard Java APIs and thus requires a Jython
+    runtime environment. The library does not, however, require any specific
+    operating system. While the library has been tested on Windows and Linux,
+    any operating system for which the JDK is available, should be sufficient. 
     """
+
+    ROBOT_LIBRARY_SCOPE = 'TEST SUITE'
     
     def __init__(self, default_directory=None, log_file_directory=None):
         self.set_screenshot_directories(default_directory, log_file_directory)
@@ -45,49 +53,12 @@ class Screenshot:
                                  log_file_directory=None):
         """Used to set 'default_directory' and 'log_file_directory'.
         
-        See the library documentation for details."""
-
+        See the library documentation for details.
+        """
         if default_directory is None:
             default_directory = tempfile.gettempdir()
         self._default_dir = default_directory
         self._log_file_directory = log_file_directory
-        
-    
-    def save_screenshot(self, basename="screenshot", directory=None):
-        """Saves a screenshot with a generated unique name.
-        
-        The unique name is derived based on the provided basename and directory
-        passed in as optional arguments. If a directory is provided, the 
-        screenshot is saved under that directory. Otherwise, the 
-        'default_directory' set during the library import or by the keyword 'Set 
-        Screenshot Directories' is used. If a basename for the screenshot file 
-        is provided, a unique filename is determined by appending an underscore
-        and a running counter. Otherwise, the basename defaults to 'screenshot'.
-
-        Examples:
-        
-        | Save Screenshot | mypic | /home/user |
-        => /home/user/mypic_1.jpg, /home/user/mypic_2.jpg, ...
-
-        | Save Screenshot | mypic |  |
-        => /tmp/mypic_1.jpg, /tmp/mypic_2.jpg, ...
-
-        | Save Screenshot |  |  |
-        => /tmp/screenshot_1.jpg, /tmp/screenshot_2.jpg, ...
-        """
-        
-        if directory is None:
-            directory = self._default_dir
-        file = self._next_unique_filename(directory, basename)
-        return self.save_screenshot_to(file)
-
-    def _next_unique_filename(self, directory, basename):
-        i = 1
-        while True:
-            path = os.path.join(directory, "%s_%d.jpg" % (basename, i))
-            if not os.path.exists(path):
-                return path
-            i += 1
     
     def save_screenshot_to(self, path):
         """Saves a screenshot to the specified file.
@@ -95,22 +66,53 @@ class Screenshot:
         The directory holding the file must exist or an exception is raised.
         """
         if not os.path.exists(os.path.dirname(path)):
-            raise Exception("Path '%s' where to save the sceenshot does not exist" 
-                            % path)
-        tk = Toolkit.getDefaultToolkit()
-        screensize = tk.getScreenSize()
-        robot = Robot()
+            raise DataError("Directory '%s' where to save the screenshot does "
+                            "not exist" % path)
+        screensize = Toolkit.getDefaultToolkit().getScreenSize()
         rectangle = Rectangle(0, 0, screensize.width, screensize.height)
-        image = robot.createScreenCapture(rectangle)
+        image = Robot().createScreenCapture(rectangle)
         ImageIO.write(image, "jpg", File(path))
         print "Screenshot saved to '%s'" % path
         return path
+    
+    def save_screenshot(self, basename="screenshot", directory=None):
+        """Saves a screenshot with a generated unique name.
+        
+        The unique name is derived based on the provided basename and directory
+        passed in as optional arguments. If a directory is provided, the 
+        screenshot is saved under that directory. Otherwise, the 
+        'default_directory' set during the library import or by the keyword
+        'Set Screenshot Directories' is used. If a basename for the screenshot
+        file is provided, a unique filename is determined by appending an
+        underscore and a running counter. Otherwise, the basename defaults to
+        'screenshot'.
+
+        The path where the screenshot is saved is returned.
+
+        Examples:
+        | Save Screenshot | mypic | /home/user | # (1) |
+        | Save Screenshot | mypic |            | # (2) |
+        | Save Screenshot |       |            | # (3) |
+        =>
+        (1) /home/user/mypic_1.jpg, /home/user/mypic_2.jpg, ...
+        (2) /tmp/mypic_1.jpg, /tmp/mypic_2.jpg, ...
+        (3) /tmp/screenshot_1.jpg, /tmp/screenshot_2.jpg, ...
+        """
+        if directory is None:
+            directory = self._default_dir
+        index = 0
+        while True:
+            index += 1
+            path = os.path.join(directory, "%s_%d.jpg" % (basename, index))
+            if not os.path.exists(path):
+                break
+        return self.save_screenshot_to(path)
     
     def log_screenshot(self, basename="screenshot", directory=None, 
                        log_file_directory=None, width="100%"):
         """Takes a screenshot and logs it to Robot Framework's log.
         
-        Saves the files as defined in the keyword 'Save Screenshot' and creates 
+        Saves the files as defined in the keyword 'Save Screenshot' and creates
         a picture to Robot Framework's log. 'directory' defines the directory
         where the screenshots are saved. By default, its value is
         'default_directory', which is set at the library import or with the
@@ -119,20 +121,23 @@ class Screenshot:
         pictures to different machines and having still working pictures. If 
         'log_file_directory' is not given or set (in the same way as 
         'default_directory' is set), the paths are absolute.
-        """
 
+        The path where the screenshot is saved is returned.
+        """
         path = self.save_screenshot(basename, directory)
         if log_file_directory is None:
             log_file_directory = self._log_file_directory
         if log_file_directory is not None:
-            path  = utils.get_link_path(path, log_file_directory)
+            link = utils.get_link_path(path, log_file_directory)
         else:
-            path = 'file:///' + path.replace('\\', '/')
-        print '*HTML* <a href="%s"><img src="%s" width="%s" /></a>' % (path, path, width)
+            link = 'file:///' + path.replace('\\', '/')
+        print '*HTML* <a href="%s"><img src="%s" width="%s" /></a>' \
+              % (link, link, width)
+        return path
 
 
 if __name__ == "__main__":
     if len(sys.argv) != 2:
-        print "Usage: " + os.path.basename(sys.argv[0]) + " <file>"
-        sys.exit(1)
-    Screenshot().save_screenshot_to(sys.argv[1])
+        print "Usage: %s path" % os.path.basename(sys.argv[0])
+    else:
+        Screenshot().save_screenshot_to(sys.argv[1])
