@@ -67,7 +67,7 @@ class Screenshot:
         """
         if not os.path.exists(os.path.dirname(path)):
             raise DataError("Directory '%s' where to save the screenshot does "
-                            "not exist" % path)
+                            "not exist" % os.path.dirname(path))
         screensize = Toolkit.getDefaultToolkit().getScreenSize()
         rectangle = Rectangle(0, 0, screensize.width, screensize.height)
         image = Robot().createScreenCapture(rectangle)
