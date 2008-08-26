@@ -408,7 +408,8 @@ demonstrates.  Return values from keywords can also be assigned to
 variables and used later. For example following :name:`Database Should
 Contain` `user keyword`_ sets database content to :var:`${database}`
 variable and then verifies the content using `built-in keyword`_
-:name:`Should Contain`.
+:name:`Should Contain`. Both library and user defined keywords can return  
+values.
 
 .. table:: 
    :class: example
