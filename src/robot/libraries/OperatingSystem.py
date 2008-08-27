@@ -102,8 +102,8 @@ class OperatingSystem:
         """
         self._info("Running command '%s'" % command)
         if utils.is_jython:
-            # Jython's os.popen doesn't handle unicode as explained in
-            # http://jython.org/bugs/1735774
+            # Jython's os.popen doesn't handle Unicode as explained in
+            # http://jython.org/bugs/1735774. This bug is still in Jython 2.2.
             command = str(command)
         process = os.popen(command)
         stdout = process.read()
@@ -575,8 +575,8 @@ class OperatingSystem:
     def create_file(self, path, content='', mode='overwrite'):
         """Creates a file to the given path with the given content.
         
-        If the mode contains any of the strings 'False', 'No', "Don't"
-        (case-insensitive, so e.g. "Do not" also works) the keyword fails,
+        If the mode contains any of the strings 'False', 'No', 'Don't'
+        (case-insensitive, so e.g. 'Do not' also works) the keyword fails,
         if the file already exists and the file is not overwritten. If it
         contains the word 'Append' (case-insensitive), the content is appended.
         Otherwise the file is overwritten.
@@ -1198,6 +1198,10 @@ class OperatingSystem:
 class _Process:
     
     def __init__(self, command, input):
+        if utils.is_jython:
+            # Jython's os.popen doesn't handle Unicode as explained in
+            # http://jython.org/bugs/1735774. This bug is still in Jython 2.2.
+            command = str(command)
         stdin, self.stdout, self.stderr = os.popen3(command)
         if input != '':
             stdin.write(input)
