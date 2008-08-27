@@ -1,6 +1,5 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html>
-<head>
+<html><head>
 
 
 
@@ -124,10 +123,8 @@ th { font-style: normal; } /* required for IE */
   
   
   
-  <title>Robot Test Cases</title>
-  <link type="text/css" href="resources/css/testdata.css" rel="stylesheet">
-</head>
-
+  
+  <title>Robot Test Cases</title><link type="text/css" href="resources/css/testdata.css" rel="stylesheet"></head>
 
 <body>
 
@@ -780,7 +777,7 @@ th { font-style: normal; } /* required for IE */
 
 
 
-      <td>#echoes anything written on stdin, quits if 'quit' is typed</td>
+      <td># echoes anything written to stdin to stdout in upper case</td>
 
 
 
@@ -798,7 +795,7 @@ th { font-style: normal; } /* required for IE */
 
 
 
-    </tr>
+    </tr><tr><td>${TEMP FILE}</td><td>${CURDIR}${/}robot-start-process.tmp</td><td></td><td></td><td></td></tr>
 
 
 
@@ -3273,12 +3270,12 @@ th { font-style: normal; } /* required for IE */
 
 
 
-      <td>Start Process</td>
+      <td>[ Document ]</td>
 
 
 
 
-      <td>${PROG}&nbsp;from_test_case</td>
+      <td>Starts a process used in next test case</td>
 
 
 
@@ -3288,12 +3285,12 @@ th { font-style: normal; } /* required for IE */
 
 
 
-      <td>test case process</td>
+      <td></td>
 
 
 
 
-      <td>#will be used in next test to test lifecycle</td>
+      <td></td>
 
 
 
@@ -3303,7 +3300,7 @@ th { font-style: normal; } /* required for IE */
 
 
 
-    <tr>
+    <tr><td></td><td>Start Process</td><td>${PROG}&nbsp;from_test_case</td><td></td><td>test case process</td><td></td></tr><tr>
 
 
 
@@ -4435,7 +4432,7 @@ error</td>
       <td></td>
 
 
-    </tr>
+    </tr><tr><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Redirecting stdout and/Or stderr To File</td><td>Start Process</td><td>${PROG} hello &gt;&nbsp;${TEMP FILE}</td><td></td><td></td><td></td></tr><tr><td></td><td>Output and Temp File Should Be</td><td></td><td>hello</td><td></td><td></td></tr><tr><td></td><td>Start Process</td><td>${PROG} hello world 2&gt;&nbsp;${TEMP FILE}</td><td></td><td></td><td></td></tr><tr><td></td><td align="undefined" valign="undefined">Output and Temp File Should Be</td><td align="undefined" valign="undefined">hello</td><td>world</td><td></td><td></td></tr><tr><td></td><td>Start Process</td><td>${PROG} hello world &amp;&gt;&nbsp;${TEMP FILE}</td><td></td><td></td><td></td></tr><tr><td></td><td>Output and Temp File Should Be</td><td></td><td>(helloworld|worldhello)</td><td></td><td></td></tr><tr><td></td><td>[Teardown]</td><td>Remove File</td><td>${TEMP FILE}</td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Redirecting stderr To Stdout</td><td>Start Process</td><td>${PROG} hello world 2&gt;&amp;1</td><td></td><td></td><td></td></tr><tr><td></td><td>Output&nbsp;Should Be</td><td>(helloworld|worldhello)</td><td><br></td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td></tr>
 
 
 
@@ -4828,7 +4825,7 @@ error</td>
 
 
 
-    <tr>
+    <tr><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Output and Temp File Should Be</td><td align="undefined" valign="undefined">[Arguments]</td><td align="undefined" valign="undefined">${exp_out}</td><td>${exp_file}</td><td></td><td></td></tr><tr><td></td><td>Output Should Be</td><td>${exp_out}</td><td><br></td><td></td><td></td></tr><tr><td></td><td>Wait Until Keyword Succeeds</td><td>2&nbsp;seconds</td><td>0.1 second<br></td><td>Temp File Should Be</td><td>${exp_file}</td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Output Should Be</td><td align="undefined" valign="undefined">[Arguments]</td><td align="undefined" valign="undefined">${expected}</td><td></td><td></td><td></td></tr><tr><td></td><td align="undefined" valign="undefined">${output} =</td><td align="undefined" valign="undefined">Read Process Output</td><td></td><td></td><td></td></tr><tr><td></td><td>Stop Process</td><td></td><td></td><td></td><td></td></tr><tr><td></td><td>Should Match Regexp</td><td>${output}</td><td>^${expected}$</td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr>
 
 
 
@@ -4842,7 +4839,35 @@ error</td>
 
 
 
-      <td></td>
+      <td>temp File Should Be</td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">[Arguments]</td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">${expected}</td>
 
 
 
@@ -4870,34 +4895,6 @@ error</td>
 
 
 
-      <td align="undefined" valign="undefined"></td>
-
-
-
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-
-
-
-
-
-
-
-
-
-
       <td></td>
 
 
@@ -4915,7 +4912,7 @@ error</td>
 
 
 
-    </tr>
+    </tr><tr><td></td><td>${file} =</td><td>Get File</td><td>${TEMP FILE}</td><td></td><td></td></tr><tr><td></td><td>Should Match Regexp</td><td>${file}</td><td>^${expected}$</td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td></tr>
 
 
 
@@ -5152,5 +5149,4 @@ error</td>
 
 
 
-</body>
-</html>
+</body></html>
