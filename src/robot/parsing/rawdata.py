@@ -119,19 +119,18 @@ class TabularRawData(_BaseRawData):
         """Makes rawdata instance ready to receive new data
         
         This method should be called with table's name before adding table's
-        data with add_row.
-        Returns False if data from specified table will not be processed. Client
-        should thus check the return value of start_table and only call add_row
-        if it receives True.
+        data with 'add_row'.
+        Returns False if data from specified table will not be processed.
+        Client should thus check the return value and only call 'add_row' if
+        it is True.
         """
-        name = self._process_cell(name)
+        name = self._collapse_whitespace(name)
         table, data = self._get_table_and_data(name)
         if table is not None:
             self._table = table(name, self.source, data, self._syslog)
-            return True
         else:
             self._table = None
-            return False
+        return self._table is not None
             
     def _get_table_and_data(self, name):
         if utils.eq_any(name, SETTING_TABLES):
@@ -161,8 +160,7 @@ class TabularRawData(_BaseRawData):
         """
         temp = []
         for cell in cells:
-            # Remove leading and trailing whitespace and collapse internal
-            cell = self._process_cell(cell)
+            cell = self._collapse_whitespace(cell)
             if self._strip_comments and cell.startswith('#'):
                 break
             if PROCESS_CURDIR:
@@ -176,5 +174,6 @@ class TabularRawData(_BaseRawData):
                 temp.pop()
         return temp
     
-    def _process_cell(self, cell):
+    def _collapse_whitespace(self, cell):
+        # Remove leading and trailing whitespace and collapse internal
         return _WHITESPACE_REGEXP.sub(' ', cell).strip()
