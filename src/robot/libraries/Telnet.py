@@ -129,17 +129,20 @@ class Telnet:
         The index is got from 'Open Connection' keyword, and an alias can be 
         given to it.
 
+	Returns the index of previously active connection.
+
         Example:
-        | Open Connection   | myhost.net   |          |
-        | Login             | john         | secret   |
-        | Write             | some command |          |
-        | Open Connection   | yourhost.com | 2nd conn |
-        | Login             | root         | password |
-        | Write             | another cmd  |          |
-        | Switch Connection | 1            | # index  |
-        | Write             | something    |          |
-        | Switch Connection | 2nd conn     | # alias  |
-        | Write             | whatever     |          |
+        | Open Connection   | myhost.net        |          |
+        | Login             | john              | secret   |
+        | Write             | some command      |          |
+        | Open Connection   | yourhost.com      | 2nd conn |
+        | Login             | root              | password |
+        | Write             | another cmd       |          |
+        | ${old index}=     | Switch Connection | 1        | # index  |
+        | Write             | something         |          |
+        | Switch Connection | 2nd conn          | # alias  |
+        | Write             | whatever          |          |
+	| Switch Connection | ${old index}      | # back to original again
         | [Teardown]        | Close All Connections   |  
 
         The example above expects that there were no other open connections when
