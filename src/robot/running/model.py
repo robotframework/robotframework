@@ -145,7 +145,7 @@ class RunnableTestCase(BaseTestCase):
         BaseTestCase.__init__(self, testdata.name)
         self.doc = testdata.doc is not None and testdata.doc or ''
         test_setup, test_teardown, force_tags, default_tags, test_timeout \
-                = self._proces_parents(parentdatas)
+                = self._process_parents(parentdatas)
         self.setup = utils.get_not_none(testdata.setup, test_setup, [])
         self.teardown = utils.get_not_none(testdata.teardown, test_teardown, [])
         self.tags = force_tags + utils.get_not_none(testdata.tags, default_tags, [])
@@ -242,7 +242,7 @@ class RunnableTestCase(BaseTestCase):
             return clazz(parent)
         return clazz()
     
-    def _proces_parents(self, parentdatas):
+    def _process_parents(self, parentdatas):
         test_setup = test_teardown = default_tags = test_timeout = None
         force_tags = []
         parentdatas.reverse()
