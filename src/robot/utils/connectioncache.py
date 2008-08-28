@@ -13,8 +13,6 @@
 #  limitations under the License.
 
 
-from types import StringTypes
-
 from robot.errors import DataError
 from normalizing import NormalizedDict
 
@@ -33,13 +31,14 @@ class ConnectionCache:
 
     def __init__(self, no_current_msg='No open connection'):
         self.current = None
-        self.connections = []
-        self.aliases = NormalizedDict()
-        self.no_current_msg = no_current_msg
+        self.current_index = None
+        self._connections = []
+        self._aliases = NormalizedDict()
+        self._no_current_msg = no_current_msg
         
     def get_current(self):
         if self.current is None:
-            raise DataError(self.no_current_msg)
+            raise DataError(self._no_current_msg)
         return self.current
         
     def register(self, connection, alias=None):
@@ -50,11 +49,11 @@ class ConnectionCache:
         close_all or empty_cache is 1, second is 2, etc.
         """
         self.current = connection
-        self.connections.append(connection)
-        index = len(self.connections)
-        if alias is not None and type(alias) in StringTypes:
-            self.aliases[alias] = index
-        return index
+        self._connections.append(connection)
+        self.current_index = len(self._connections)
+        if isinstance(alias, basestring):
+            self._aliases[alias] = self.current_index
+        return self.current_index
     
     def switch(self, index_or_alias):
         """Switches to the connection specified by given index or alias.
@@ -67,7 +66,8 @@ class ConnectionCache:
             index = self._get_index(index_or_alias)
         except ValueError:
             raise DataError("Non-existing index or alias '%s'" % index_or_alias)
-        self.current = self.connections[index-1]
+        self.current = self._connections[index-1]
+        self.current_index = index
         return self.current
 
     def close_all(self, closer_method='close'):
@@ -77,7 +77,7 @@ class ConnectionCache:
         connections, clients should close connections themselves and use
         empty_cache afterwards.         
         """
-        for conn in self.connections:
+        for conn in self._connections:
             getattr(conn, closer_method)()
         self.empty_cache()
         return self.current
@@ -87,8 +87,9 @@ class ConnectionCache:
         
         Indexes of new connections starts from 1 after this."""
         self.current = None
-        self.connections = []
-        self.aliases = NormalizedDict()
+        self.current_index = None
+        self._connections = []
+        self._aliases = NormalizedDict()
         
     def _get_index(self, index_or_alias):
         try:
@@ -97,15 +98,15 @@ class ConnectionCache:
             return self._resolve_index(index_or_alias)
     
     def _resolve_alias(self, alias):
-        if type(alias) in StringTypes:
+        if isinstance(alias, basestring):
             try:
-                return self.aliases[alias]
+                return self._aliases[alias]
             except KeyError:
                 pass
         raise ValueError
 
     def _resolve_index(self, index):
         index = int(index)
-        if not 0 < index <= len(self.connections):
+        if not 0 < index <= len(self._connections):
             raise ValueError
         return index
