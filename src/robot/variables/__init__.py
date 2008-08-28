@@ -29,6 +29,8 @@ def init_global_variables(settings, syslog):
     for name, value in [ ('${TEMPDIR}', utils.get_temp_dir()),
                          ('${/}', os.sep), 
                          ('${:}', os.pathsep),
+                         ('${SPACE}', ' '),
+                         ('${EMPTY}', ''),
                          ('${OUTPUTDIR}', settings['OutputDir']),
                          ('${OUTPUT_FILE}', settings['Output']),
                          ('${SUMMARY_FILE}', settings['Summary']),
