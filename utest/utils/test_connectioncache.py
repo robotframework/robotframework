@@ -2,10 +2,11 @@ import unittest
 import sys
 
 if __name__ == "__main__":
-    sys.path.insert(0, "../../../src")
+    sys.path.insert(0, "../../src")
+    
 
 from robot.utils.asserts import *
-from robot.errors import *
+from robot.errors import DataError
 
 from robot.utils import ConnectionCache
 
@@ -34,8 +35,8 @@ class TestConnnectionCache(unittest.TestCase):
         index = self.cache.register(conn)
         assert_equals(index, 1)
         assert_equals(self.cache.current, conn)
-        assert_equals(self.cache.connections, [conn])
-        assert_equals(self.cache.aliases, {})
+        assert_equals(self.cache._connections, [conn])
+        assert_equals(self.cache._aliases, {})
 
     def test_register_multiple(self):
         c1 = ConnectionMock(); c2 = ConnectionMock(); c3 = ConnectionMock()
@@ -43,15 +44,19 @@ class TestConnnectionCache(unittest.TestCase):
             index = self.cache.register(conn)
             assert_equals(index, i+1)
             assert_equals(self.cache.current, conn)
-        assert_equals(self.cache.connections, [c1,c2,c3])
+        assert_equals(self.cache._connections, [c1,c2,c3])
         
     def test_switch_with_index(self):
         self._register('a', 'b', 'c')
-        assert_equals(self.cache.current.id, 'c')
+        self._assert_current('c', 3)
         self.cache.switch(1)
-        assert_equals(self.cache.current.id, 'a')
+        self._assert_current('a', 1)
         self.cache.switch('2')
-        assert_equals(self.cache.current.id, 'b')
+        self._assert_current('b', 2)
+
+    def _assert_current(self, id, index):
+        assert_equals(self.cache.current.id, id)
+        assert_equals(self.cache.current_index, index)
         
     def test_switch_with_non_existing_index(self):
         self._register('a', 'b')
@@ -65,8 +70,8 @@ class TestConnnectionCache(unittest.TestCase):
         index = self.cache.register(conn, 'My Connection')
         assert_equals(index, 1)
         assert_equals(self.cache.current, conn)
-        assert_equals(self.cache.connections, [conn])
-        assert_equals(self.cache.aliases, { 'myconnection' : 1 })
+        assert_equals(self.cache._connections, [conn])
+        assert_equals(self.cache._aliases, { 'myconnection' : 1 })
 
     def test_register_multiple_with_alis(self):
         c1 = ConnectionMock(); c2 = ConnectionMock(); c3 = ConnectionMock()
@@ -74,8 +79,8 @@ class TestConnnectionCache(unittest.TestCase):
             index = self.cache.register(conn, 'c%d' % (i+1))
             assert_equals(index, i+1)
             assert_equals(self.cache.current, conn)
-        assert_equals(self.cache.connections, [c1,c2,c3])
-        assert_equals(self.cache.aliases, {'c1' : 1, 'c2' : 2, 'c3' : 3 })
+        assert_equals(self.cache._connections, [c1,c2,c3])
+        assert_equals(self.cache._aliases, {'c1' : 1, 'c2' : 2, 'c3' : 3 })
         
     def test_switch_with_alias(self):
         self._register('a', 'b', 'c', 'd', 'e')
@@ -123,8 +128,9 @@ class TestConnnectionCache(unittest.TestCase):
         
     def _verify_initial_state(self):
         assert_none(self.cache.current)
-        assert_equals(self.cache.connections, [])
-        assert_equals(self.cache.aliases, {})
+        assert_none(self.cache.current_index)
+        assert_equals(self.cache._connections, [])
+        assert_equals(self.cache._aliases, {})
 
     def _register(self, *ids):
         connections = []
