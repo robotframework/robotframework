@@ -409,6 +409,10 @@ class TelnetConnection(telnetlib.Telnet):
         if regexp:
             return self.read_until_regexp(prompt, loglevel)
         return self.read_until(prompt, loglevel)
+    
+    def execute_command(self, command, loglevel=None):
+        self.write(command, loglevel)
+        return self.read_until_prompt(loglevel)
 
     def set_prompt(self, prompt, prompt_is_regexp=False):
         """Sets the prompt used in this connection to 'prompt'.
