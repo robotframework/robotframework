@@ -132,18 +132,18 @@ class Telnet:
 	Returns the index of previously active connection.
 
         Example:
-        | Open Connection   | myhost.net        |          |
-        | Login             | john              | secret   |
-        | Write             | some command      |          |
-        | Open Connection   | yourhost.com      | 2nd conn |
-        | Login             | root              | password |
-        | Write             | another cmd       |          |
+        | Open Connection   | myhost.net        |          |          |
+        | Login             | john              | secret   |          |
+        | Write             | some command      |          |          |
+        | Open Connection   | yourhost.com      | 2nd conn |          |
+        | Login             | root              | password |          |
+        | Write             | another cmd       |          |          |
         | ${old index}=     | Switch Connection | 1        | # index  |
-        | Write             | something         |          |
-        | Switch Connection | 2nd conn          | # alias  |
-        | Write             | whatever          |          |
-	| Switch Connection | ${old index}      | # back to original again
-        | [Teardown]        | Close All Connections   |  
+        | Write             | something         |          |          |
+        | Switch Connection | 2nd conn          | # alias  |          |
+        | Write             | whatever          |          |          |
+	| Switch Connection | ${old index}      | # back to original again |
+        | [Teardown]        | Close All Connections   |            |
 
         The example above expects that there were no other open connections when
         opening the first one, because it used index '1' when switching to the
@@ -276,6 +276,8 @@ class TelnetConnection(telnetlib.Telnet):
         Note: This keyword does not return the possible output of the executed 
         command. To get the output, one of the 'Read XXX' keywords must be 
         used.
+
+	See 'Read' for more information on 'loglevel'.
         """
         if self._newline in text:
             raise RuntimeError("Write cannot be used with string containing " 
@@ -414,6 +416,20 @@ class TelnetConnection(telnetlib.Telnet):
         return self.read_until(prompt, loglevel)
     
     def execute_command(self, command, loglevel=None):
+	"""Executes given command and reads and returns everything until prompt.
+
+	This is a convenience keyword; following two are functionally identical:
+
+	| ${out} = | Execute Command   | Some command |
+
+	| Write    | Some command      |
+	| ${out} = | Read Until Prompt |
+
+	This keyword expects a prompt to be set, see 'Read Until Prompt' for 
+	details.
+
+	See 'Read' for more information on 'loglevel'.
+	"""
         self.write(command, loglevel)
         return self.read_until_prompt(loglevel)
 
