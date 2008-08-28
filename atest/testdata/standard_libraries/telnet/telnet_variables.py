@@ -1,6 +1,8 @@
-HOST = 'plage'
+HOST = 'localhost'
 USERNAME = 'test'
 PASSWORD = 'test'
+MACHINE = 'L140'
+FULL_PROMPT = '%s@%s:~$' % (USERNAME, MACHINE)
 
 pwd = u'pwd'
 pwd_amp = u'pwd &'

@@ -89,13 +89,20 @@ th {
 <tr>
 <td>Suite Setup</td>
 <td>Run Tests</td>
-<td>--variablefile ${CURDIR}${/}..${/}..${/}..${/}testdata${/}standard_libraries${/}telnet${/}telnet_variables.py --loglevel DEBUG</td>
+<td>--variablefile ${PATH TO VARIABLES} --loglevel DEBUG</td>
 <td>standard_libraries${/}telnet${/}telnet.html</td>
 <td></td>
 </tr>
 <tr>
 <td>Resource</td>
 <td>../../../resources/resource.html</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Variables</td>
+<td>${PATH TO VARIABLES}</td>
 <td></td>
 <td></td>
 <td></td>
@@ -119,6 +126,13 @@ th {
 <th>Value</th>
 <th>Value</th>
 <th>Value</th>
+</tr>
+<tr>
+<td>${PATH TO VARIABLES}</td>
+<td>${CURDIR}${/}..${/}..${/}..${/}testdata${/}standard_libraries${/}telnet${/}telnet_variables.py</td>
+<td></td>
+<td></td>
+<td></td>
 </tr>
 <tr>
 <td></td>
@@ -152,14 +166,14 @@ th {
 <td></td>
 <td>Check Log Message</td>
 <td>${tc.kws[2].msgs[0]}</td>
-<td>/home/test\n[test@plage ~]$</td>
+<td>/home/test\n${FULL PROMPT}</td>
 <td></td>
 </tr>
 <tr>
 <td></td>
 <td>Check Log Message</td>
 <td>${tc.kws[6].msgs[0]}</td>
-<td>/home/test\n[test@plage ~]$</td>
+<td>/home/test\n${FULL PROMPT}</td>
 <td>WARN</td>
 </tr>
 <tr>
@@ -208,14 +222,14 @@ th {
 <td></td>
 <td>Check Log Message</td>
 <td>${tc.kws[1].msgs[0]}</td>
-<td>/home/test</td>
+<td>/home/${USERNAME}</td>
 <td></td>
 </tr>
 <tr>
 <td></td>
 <td>Check Log Message</td>
 <td>${tc.kws[3].msgs[0]}</td>
-<td>[test@</td>
+<td>${USERNAME}@</td>
 <td>DEBUG</td>
 </tr>
 <tr>
@@ -236,14 +250,14 @@ th {
 <td></td>
 <td>Check Log Message</td>
 <td>${tc.kws[1].msgs[0]}</td>
-<td>[test@plage ~]$ a=$(($a - 1)); if (($a == 0)); then echo BLAST OFF; fi</td>
+<td>${FULL PROMPT} a=$(($a - 1)); if (($a == 0)); then echo BLAST OFF; fi</td>
 <td></td>
 </tr>
 <tr>
 <td></td>
 <td>Check Log Message</td>
 <td>${tc.kws[1].msgs[1]}</td>
-<td>[test@plage ~]$</td>
+<td>${FULL PROMPT}</td>
 <td></td>
 </tr>
 <tr>
@@ -261,9 +275,9 @@ th {
 <td></td>
 </tr>
 <tr>
-<td><a name="test_Set Prompt Should Return Old Prompt">Set Prompt Should Return Old Prompt</a></td>
+<td><a name="test_Set Prompt">Set Prompt</a></td>
 <td>Check testcase</td>
-<td>Set Prompt Should Return Old Prompt</td>
+<td>Set Prompt</td>
 <td></td>
 <td></td>
 </tr>
@@ -285,14 +299,14 @@ th {
 <td></td>
 <td>Check Log Message</td>
 <td>${tc.kws[2].msgs[0]}</td>
-<td>/home/test\n[test@plage ~]$</td>
+<td>/home/test\n${FULL PROMPT}</td>
 <td></td>
 </tr>
 <tr>
 <td></td>
 <td>Check Log Message</td>
 <td>${tc.kws[5].msgs[0]}</td>
-<td>/home/test\n[test@plage ~]$</td>
+<td>/home/test\n${FULL PROMPT}</td>
 <td>WARN</td>
 </tr>
 <tr>
@@ -313,7 +327,7 @@ th {
 <td></td>
 <td>Check Log Message</td>
 <td>${tc.kws[2].msgs[0]}</td>
-<td>/home/test\n[test@plage ~]$</td>
+<td>/home/test\n${FULL PROMPT}</td>
 <td></td>
 </tr>
 <tr>
@@ -411,7 +425,7 @@ th {
 <td></td>
 <td>Check Log Message</td>
 <td>${tc.kws[3].msgs[0]}</td>
-<td>/home/test\n[test@plage ~]$</td>
+<td>/home/test\n${FULL PROMPT}</td>
 <td>WARN</td>
 </tr>
 <tr>
@@ -450,6 +464,20 @@ th {
 <td></td>
 </tr>
 <tr>
+<td><a name="test_Switch Connection">Switch Connection</a></td>
+<td>Check Test Case</td>
+<td>Switch Connection</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
 <td></td>
 <td></td>
 <td></td>
@@ -476,13 +504,6 @@ th {
 <td>${msg}</td>
 <td>${exp_begin}</td>
 <td>${exp_level}=INFO</td>
-</tr>
-<tr>
-<td></td>
-<td>[Timeout]</td>
-<td></td>
-<td></td>
-<td></td>
 </tr>
 <tr>
 <td></td>

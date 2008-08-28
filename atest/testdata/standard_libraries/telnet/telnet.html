@@ -180,7 +180,7 @@ th {
 <td></td>
 <td>Should Be Equal</td>
 <td>${out}</td>
-<td>/home/test\r\n[test@plage ~]$ \</td>
+<td>/home/${USERNAME}\r\n${FULL PROMPT} \</td>
 <td></td>
 </tr>
 <tr>
@@ -208,7 +208,7 @@ th {
 <td></td>
 <td>Should Be Equal</td>
 <td>${out}</td>
-<td>/home/test\r\n[test@plage ~]$ \</td>
+<td>/home/${USERNAME}\r\n${FULL PROMPT} \</td>
 <td></td>
 </tr>
 <tr>
@@ -248,9 +248,9 @@ th {
 </tr>
 <tr>
 <td></td>
-<td>Should Be Equal</td>
+<td>Should End With</td>
 <td>${out}</td>
-<td>total 0\r\n[test@plage ~]$\</td>
+<td>${FULL PROMPT}</td>
 <td></td>
 </tr>
 <tr>
@@ -341,14 +341,14 @@ th {
 <td></td>
 <td>${out} =</td>
 <td>Read Until Regexp</td>
-<td>/h[abo]me.test\\s+</td>
+<td>/h[abo]me.${USERNAME}\\s+</td>
 <td></td>
 </tr>
 <tr>
 <td></td>
 <td>Should Be Equal</td>
 <td>${out}</td>
-<td>/home/test\r\n</td>
+<td>/home/${USERNAME}\r\n</td>
 <td></td>
 </tr>
 <tr>
@@ -362,7 +362,7 @@ th {
 <td></td>
 <td>Should Be Equal</td>
 <td>${out}</td>
-<td>[test@</td>
+<td>${USERNAME}@</td>
 <td></td>
 </tr>
 <tr>
@@ -443,62 +443,6 @@ th {
 <td></td>
 </tr>
 <tr>
-<td><a name="test_Set Prompt Should Return Old Prompt">Set Prompt Should Return Old Prompt</a></td>
-<td>${prompt}</td>
-<td>${is_regexp} =</td>
-<td>Set Prompt</td>
-<td>$$$</td>
-</tr>
-<tr>
-<td></td>
-<td>...</td>
-<td>REGEXP</td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td>Should Be Equal</td>
-<td>${prompt}</td>
-<td>$</td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td>Should Be Equal</td>
-<td>${is_regexp}</td>
-<td>${False}</td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td>${prompt}</td>
-<td>${is_regexp} =</td>
-<td>Set Prompt</td>
-<td>$</td>
-</tr>
-<tr>
-<td></td>
-<td>Should Be Equal</td>
-<td>${prompt}</td>
-<td>$$$</td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td>Should Be Equal</td>
-<td>${is_regexp}</td>
-<td>${True}</td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
 <td><a name="test_Read Until Prompt">Read Until Prompt</a></td>
 <td>[Documentation]</td>
 <td>FAIL No match found for '$$' in 1 second 500 milliseconds</td>
@@ -530,7 +474,7 @@ th {
 <td></td>
 <td>Should Be Equal</td>
 <td>${out}</td>
-<td>/home/test\r\n[test@plage ~]$</td>
+<td>/home/${USERNAME}\r\n${FULL PROMPT}</td>
 <td></td>
 </tr>
 <tr>
@@ -551,7 +495,7 @@ th {
 <td></td>
 <td>Should Be Equal</td>
 <td>${out}</td>
-<td>/home/test\r\n[test@plage ~]$</td>
+<td>/home/${USERNAME}\r\n${FULL PROMPT}</td>
 <td></td>
 </tr>
 <tr>
@@ -614,7 +558,7 @@ th {
 <td></td>
 <td>Should Be Equal</td>
 <td>${out}</td>
-<td>/home/test\r\n[test@plage ~]$</td>
+<td>/home/${USERNAME}\r\n${FULL PROMPT}</td>
 <td></td>
 </tr>
 <tr>
@@ -685,6 +629,62 @@ th {
 <td>Write</td>
 <td>${unic_string}</td>
 <td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="test_Set Prompt">Set Prompt</a></td>
+<td>${prompt}</td>
+<td>${is_regexp} =</td>
+<td>Set Prompt</td>
+<td>$$$</td>
+</tr>
+<tr>
+<td></td>
+<td>...</td>
+<td>REGEXP</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should Be Equal</td>
+<td>${prompt}</td>
+<td>$</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should Be Equal</td>
+<td>${is_regexp}</td>
+<td>${False}</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>${prompt}</td>
+<td>${is_regexp} =</td>
+<td>Set Prompt</td>
+<td>$</td>
+</tr>
+<tr>
+<td></td>
+<td>Should Be Equal</td>
+<td>${prompt}</td>
+<td>$$$</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should Be Equal</td>
+<td>${is_regexp}</td>
+<td>${True}</td>
 <td></td>
 </tr>
 <tr>
@@ -905,6 +905,83 @@ th {
 <td></td>
 </tr>
 <tr>
+<td><a name="test_Switch Connection">Switch Connection</a></td>
+<td>[Setup]</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>${first} =</td>
+<td>Login And Set Prompt</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Write</td>
+<td>cd /tmp</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Read Until Prompt</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Write</td>
+<td>pwd</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>${dir} =</td>
+<td>Read Until Prompt</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should Start With</td>
+<td>${dir}</td>
+<td>/tmp</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>${second} =</td>
+<td>Login And Set Prompt</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>${old} =</td>
+<td>Switch Connection</td>
+<td>${first}</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should Be Equal</td>
+<td>${old}</td>
+<td>${second}</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
 <td></td>
 <td></td>
 <td></td>
@@ -927,16 +1004,9 @@ th {
 </tr>
 <tr>
 <td><a name="keyword_Login And Set Prompt">Login And Set Prompt</a></td>
-<td>[Timeout]</td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
+<td>${index} =</td>
 <td>Open Connection</td>
 <td>${HOST}</td>
-<td></td>
 <td></td>
 </tr>
 <tr>
@@ -955,6 +1025,13 @@ th {
 </tr>
 <tr>
 <td></td>
+<td>[Return]</td>
+<td>${index}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
 <td></td>
 <td></td>
 <td></td>
@@ -962,13 +1039,6 @@ th {
 </tr>
 <tr>
 <td><a name="keyword_Login And Set Timeout">Login And Set Timeout</a></td>
-<td>[Timeout]</td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
 <td>Login and Set Prompt</td>
 <td></td>
 <td></td>
