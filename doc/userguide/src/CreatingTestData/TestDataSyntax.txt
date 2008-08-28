@@ -251,10 +251,12 @@ The escape character can be used as follows:
 
 - To affect `the parsing of whitespaces`__
 
-- To prevent Robot Framework from ignoring empty cells at the end of a
-  row (this requires :code:`\\` to be in the appropriate cell).
+- To prevent ignoring empty cells at the end of a row (this requires 
+  :code:`\\` to be in the appropriate cell). Another possibility is
+  using `built-in variable`__ :var:`${EMPTY}`.
 
 __ `Handling whitespace`_
+__ `Space and empty variables`_
 
 
 Handling whitespace
@@ -275,6 +277,12 @@ To prevent Robot Framework from parsing data according to these rules, a backsla
 - With :code:`n` to create a newline, for example :code:`first line\\n2nd line`
 - With :code:`t` to create a tab character, for example :code:`text\\tmore text`
 - With :code:`r` to create a carriage return, for example :code:`text\\rmore text`
+
+Another, and often easier, possibility for representing leading,
+trailing, or consecutive spaces is using `built-in variable`__
+:var:`${SPACE}`.
+
+__ `Space and empty variables`_
 
 
 Dividing test data to several rows

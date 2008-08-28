@@ -567,7 +567,7 @@ string that just looks like a number, as an argument.
 Boolean and None/null variables
 '''''''''''''''''''''''''''''''
 
-Also boolean values and Python :code:`None` and Java :code:`null` can
+Also Boolean values and Python :code:`None` and Java :code:`null` can
 be created using the variable syntax similarly as numbers.
  
 .. table:: Using Boolean and None/null variables
@@ -588,6 +588,36 @@ These variables are case-insensitive, so for example :var:`${True}` and
 :var:`${null}` are synonyms, because when running tests on the Jython
 interpreter, Jython automatically converts :code:`None` and
 :code:`null` to the correct format when necessary.
+
+
+Space and empty variables
+'''''''''''''''''''''''''
+
+Starting from Robot Framework version 2.0.2, it is possible to create
+spaces and empty strings using variables :var:`${SPACE}` and
+:var:`${EMPTY}`, respectively. These variables are useful, for example,
+when there would otherwise be a need to `escape spaces or empty
+cells`__ with a backslash. If more than one space is needed, it is
+possible to use the `extended variable syntax`_ like :var:`${SPACE * 5}`.
+In the following exmaple, :name:`Should Be Equal` keyword gets
+identical arguments but those using variables are easier to understand
+than those using backslashes.
+
+__ Escaping_
+
+.. table:: Using :var:`${SPACE}` and :var:`${EMPTY}`
+   :class: example
+
+   =============  =================  ================  ================================
+     Test Case         Action            Argument                Argument 
+   =============  =================  ================  ================================
+   One Space      Should Be Equal    ${SPACE}          \\ \\
+   Four Spaces    Should Be Equal    ${SPACE * 4}      \\ \\ \\ \\ \\
+   Ten Spaces     Should Be Equal    ${SPACE * 10}     \\ \\ \\ \\ \\ \\ \\ \\ \\ \\ \\
+   Quoted Space   Should Be Equal    "${SPACE}"        " "
+   Quoted Spaces  Should Be Equal    "${SPACE * 2}"    " \\ "
+   Empty          Should Be Equal    ${EMPTY}          \\
+   =============  =================  ================  ================================
 
 
 Automatic variables
@@ -658,7 +688,7 @@ Extended variable syntax
 ''''''''''''''''''''''''
 
 Extended variable syntax can be used with objects set into scalar
-variables. This allows accessing the attributes of the object (for example,
+variables. It allows accessing the attributes of the object (for example,
 :var:`${obj.name}` or :var:`${obj.some_attr}`), and even calling
 its methods (for example, :var:`${obj.get_name()}` or
 :var:`${obj.getSomething('arg')}`). 
@@ -763,6 +793,35 @@ example could be replaced with the following Java implementation:
          return name;
      }
  }
+
+
+Many standard Python objects, including strings and numbers, have
+methods that can be used with the extended variable syntax either
+explicitly or implicitly. Sometimes this can be really useful and
+reduce the need for setting temporary variables, but it is also easy
+to overuse it and create really cryptic test data. Following examples
+show few pretty good usages. 
+
+.. table:: Using methods of strings and numbers
+   :class: example
+
+   ===========  ============  ===================  ===============
+    Test Case      Action           Argument          Argument
+   ===========  ============  ===================  ===============
+   String       ${string} =   Set Variable         abc
+   \            Log           ${string.upper()}    # Logs 'ABC'
+   \            Log           ${string * 2}        # Logs 'abcabc'
+   Number       ${number} =   Set Variable         ${-2}
+   \            Log           ${number * 10}       # Logs -20
+   \            Log           ${number.__abs__()}  # Logs 2
+   ===========  ============  ===================  ===============
+
+Note that even though :code:`abs(number)` is recommended over
+:code:`number.__abs__()` in normal Python code, using
+:var:`${abs(number)}` does not work. This is because the variable name
+must be in the beginning of the extended syntax. Using :code:`__xxx__`
+methods in the test data like this is already a bit questionable, and
+it is normally better to move this kind of logic into test libraries.
 
 
 Variables inside variables
