@@ -67,26 +67,26 @@ class _Metadata:
                 
 
 class TestCaseMetadata(_Metadata):
-    _names =  {'documentation': 'Documentation', 
+    _names = { 'documentation': 'Documentation', 
                'document': 'Documentation',
                'setup': 'Setup', 
                'precondition': 'Setup', 
                'teardown': 'Teardown', 
                'postcondition': 'Teardown', 
                'tags': 'Tags', 
-               'timeout': 'Timeout'}
+               'timeout': 'Timeout' }
     
 
 class UserKeywordMetadata(_Metadata):
-    _names =  {'documentation': 'Documentation', 
+    _names = { 'documentation': 'Documentation', 
                'document': 'Documentation',
                'arguments': 'Arguments', 
                'return': 'Return', 
-               'timeout': 'Timeout'}
+               'timeout': 'Timeout' }
 
 
 class TestSuiteMetadata(_Metadata):
-    _names =  {'documentation': 'Documentation', 
+    _names = { 'documentation': 'Documentation', 
                'document': 'Documentation',
                'suitesetup': 'Suite Setup', 
                'suiteprecondition': 'Suite Setup', 
@@ -98,7 +98,7 @@ class TestSuiteMetadata(_Metadata):
                'testpostcondition': 'Test Teardown',
                'defaulttags': 'Default Tags', 
                'forcetags': 'Force Tags', 
-               'testtimeout': 'Test Timeout'}
+               'testtimeout': 'Test Timeout' }
 
     def __init__(self, rawdata=None):
         _Metadata.__init__(self)
