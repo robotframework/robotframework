@@ -17,7 +17,7 @@ import sys
 import os
 import shutil
 
-sys.path.insert(0, os.path.join('..', 'userguide'))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'userguide'))
 import ug2html  # This also initializes docutils and pygments
 
 
