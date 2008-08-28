@@ -94,17 +94,17 @@ class Telnet:
         switching between connections, similarly as the index. See 'Switch
         Connection' for more details about that.
 
-        The timeout newline and prompt attributes got default values when the 
+        The timeout, newline and prompt attributes got default values when the 
         library was taken into use, but they can be overridden for each opened 
         connection and also set after opening the connection using the 
         'Set Timeout', 'Set Newline' and 'Set Prompt' keywords.
         
         Timeout is used with keywords that start 'Read Until'. If the text they
-        are searching is not found within the timeout, the keywords fail.
+        are searching is not found within the timeout, those keywords fail.
         
         Newline is the newline character in the target system.
         
-        Prompt is the prompt character of the taget system, and it can be given
+        Prompt is the prompt character of the target system, and it can be given
         as a regular expression when promp_is_regexp is set to True.
         """
         if timeout is None or timeout == '':
@@ -126,13 +126,14 @@ class Telnet:
     def switch_connection(self, index_or_alias):
         """Switches between active connections using an index or alias.
 
-        The index is got from Open keywords, and an alias can be given to it.
+        The index is got from 'Open Connection' keyword, and an alias can be 
+        given to it.
 
         Example:
-        | Open              | myhost.net   |          |
+        | Open Connection   | myhost.net   |          |
         | Login             | john         | secret   |
         | Write             | some command |          |
-        | Open              | yourhost.com | 2nd conn |
+        | Open Connection   | yourhost.com | 2nd conn |
         | Login             | root         | password |
         | Write             | another cmd  |          |
         | Switch Connection | 1            | # index  |
@@ -146,9 +147,9 @@ class Telnet:
         connection later. If you are not sure about that, you can store the
         index into a variable as shown below.
 
-        | ${id} =            | Open         | myhost.net |
-        | # Do something ... |
-        | Switch Connection  | ${id}        |            |
+        | ${id} =            | Open Connection | myhost.net |
+        | # Do something ... |                 |            |
+        | Switch Connection  | ${id}           |            |
         """
         old_index = self._cache.current_index
         self._conn = self._cache.switch(index_or_alias)
@@ -157,8 +158,8 @@ class Telnet:
     def close_all_connections(self):
         """Closes all open connections and empties the connection cache.
 
-        After this keyword, new indexes got from the 'Open' keyword are reset
-        to 1.
+        After this keyword, new indexes got from the 'Open Connection' keyword 
+        are reset to 1.
 
         This keyword should be used in a test or suite teardown to make sure
         all connections are closed.
@@ -183,9 +184,9 @@ class TelnetConnection(telnetlib.Telnet):
         'timeout' is given in Robot Framework's time format
         (e.g. 1 minute 20 seconds).
 
-        Read operations that expect some output to appear (Read Until, Read 
-        Until Regexp, Read Until Prompt) use this timeout and fail if the 
-        expected output has not appeared when this timeout expires. 
+        Read operations that expect some output to appear ('Read Until', 
+        'Read Until Regexp', 'Read Until Prompt') use this timeout and fail if 
+        the expected output has not appeared when this timeout expires. 
         
         The old timeout is returned and can be used to restore it later.
         
