@@ -287,7 +287,7 @@ class DiffRobotOutputs:
             
     def _write_end(self):
         self._writer.end_element('body')
-        self._writer.end_element('hmtl')
+        self._writer.end_element('html')
 
 
 START_HTML = '''
