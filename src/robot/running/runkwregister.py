@@ -6,8 +6,8 @@ from robot import utils
 class _RunKeywordRegister:
     
     def __init__(self):
-        self._register = {'IpaMml':{'Run Keyword If':2}}    
-    
+        self._register = {}
+
     def register_run_keyword(self, library, keyword, args_to_process=None):
         if args_to_process is None:            
             args_to_process = self._get_args_from_method(keyword)
