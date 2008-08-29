@@ -1,8 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html>
-<head>
-<meta name="generator" content=
-"HTML Tidy for Cygwin (vers 1st September 2004), see www.w3.org">
+<html><head>
+<meta name="generator" content="HTML Tidy for Cygwin (vers 1st September 2004), see www.w3.org">
 <style type="text/css">
 html { font-family: Arial,Helvetica,sans-serif;
 background-color: white;
@@ -48,18 +46,14 @@ letter-spacing: 0.1em;
 }
 th { font-style: normal; } /* required for IE */
 </style>
-<title>Robot Test Cases</title>
-<link type="text/css" href="resources/css/testdata.css" rel=
-"stylesheet">
-</head>
+
+<title>Robot Test Cases</title><link type="text/css" href="resources/css/testdata.css" rel="stylesheet"></head>
 <body>
 <h1>Robot Test Cases for Built-In&nbsp;Run Keyword If Test
 Passed/Failed</h1>
 <span style="font-weight: bold;">&nbsp;&nbsp; &nbsp;</span>
 <table border="1">
-<colgroup span="99">
-<col class="name">
-<col class="value" span="4"></colgroup>
+<colgroup span="99"><col class="name"><col class="value" span="4"></colgroup>
 <thead>
 <tr>
 <th>Setting</th>
@@ -81,9 +75,7 @@ Passed/Failed</h1>
 </table>
 <br>
 <table border="1">
-<colgroup span="99">
-<col class="name">
-<col class="value" span="4"></colgroup>
+<colgroup span="99"><col class="name"><col class="value" span="4"></colgroup>
 <thead>
 <tr>
 <th>Variable</th>
@@ -95,13 +87,13 @@ Passed/Failed</h1>
 </thead>
 <tbody>
 <tr>
-<td align="undefined" valign="undefined"></td>
-<td align="undefined" valign="undefined"></td>
+<td align="undefined" valign="undefined">${EXPECTED FAILURE}</td>
+<td align="undefined" valign="undefined">Expected failure</td>
 <td align="undefined" valign="undefined"></td>
 <td></td>
 <td></td>
 </tr>
-<tr>
+<tr><td>${TEARDOWN MESSAGE}</td><td>Teardown message</td><td></td><td></td><td></td></tr><tr>
 <td></td>
 <td></td>
 <td></td>
@@ -112,10 +104,7 @@ Passed/Failed</h1>
 </table>
 <br>
 <table border="1">
-<colgroup span="99">
-<col class="name">
-<col class="action">
-<col class="arg" span="3"></colgroup>
+<colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
 <thead>
 <tr>
 <th>Test Case</th>
@@ -146,7 +135,7 @@ Passed/Failed</h1>
 <tr>
 <td></td>
 <td>Fail</td>
-<td>Expected failure</td>
+<td>${EXPECTED FAILURE}</td>
 <td></td>
 <td></td>
 <td></td>
@@ -164,8 +153,8 @@ Passed/Failed</h1>
 <td>[ Teardown ]</td>
 <td>Run Keyword If Test Failed</td>
 <td>Log</td>
-<td>This should not be executed.</td>
-<td></td>
+<td>${MESSAGE}</td><td>#Should not be executed nor evaluated</td>
+
 </tr>
 <tr>
 <td></td>
@@ -197,8 +186,8 @@ used in test teardown</td>
 <td>[ Setup ]</td>
 <td>Run Keyword If Test Failed</td>
 <td>Fail</td>
-<td>This should not be executed.</td>
-<td></td>
+<td>${MESSAGE}</td><td>#Should not be executed nor evaluated</td>
+
 </tr>
 <tr>
 <td></td>
@@ -229,8 +218,8 @@ teardown</td>
 <td></td>
 <td>Run Keyword If Test Failed</td>
 <td>Log</td>
-<td>This should not be executed.</td>
-<td></td>
+<td>${MESSAGE}</td><td>#Should not be executed nor evaluated</td>
+
 <td></td>
 </tr>
 <tr>
@@ -254,13 +243,13 @@ teardown</td>
 <td>[ Teardown ]</td>
 <td>Run Keyword If Test Failed</td>
 <td>Teardown UK</td>
-<td></td>
+<td>${TEARDOWN MESSAGE}</td>
 <td></td>
 </tr>
 <tr>
 <td></td>
 <td>Fail</td>
-<td>Expected failure</td>
+<td>${EXPECTED FAILURE}</td>
 <td></td>
 <td></td>
 <td></td>
@@ -293,7 +282,7 @@ failure</td>
 <tr>
 <td></td>
 <td>Fail</td>
-<td>Expected&nbsp;failure</td>
+<td>${EXPECTED FAILURE}</td>
 <td></td>
 <td></td>
 <td></td>
@@ -349,7 +338,7 @@ failure</td>
 <tr>
 <td></td>
 <td>Fail</td>
-<td>Expected failure</td>
+<td>${EXPECTED FAILURE}</td>
 <td></td>
 <td></td>
 <td></td>
@@ -376,8 +365,8 @@ used in test teardown</td>
 <td>[ Setup ]</td>
 <td>Run Keyword If Test Passed</td>
 <td>Fail</td>
-<td>This should not be executed.</td>
-<td></td>
+<td>${MESSAGE}</td><td>#Should not be executed nor evaluated</td>
+
 </tr>
 <tr>
 <td></td>
@@ -408,8 +397,8 @@ teardown</td>
 <td></td>
 <td>Run Keyword If Test Passed</td>
 <td>Fail</td>
-<td>This should not be executed.&nbsp;</td>
-<td></td>
+<td>${MESSAGE}</td><td>#Should not be executed nor evaluated</td>
+
 <td></td>
 </tr>
 <tr>
@@ -425,7 +414,7 @@ teardown</td>
 <td>[ Teardown ]</td>
 <td>Run Keyword If Test Passed</td>
 <td>Teardown UK</td>
-<td></td>
+<td>${TEARDOWN MESSAGE}</td>
 <td></td>
 </tr>
 <tr>
@@ -448,7 +437,7 @@ teardown</td>
 <td>Run Keyword If Test Passed Fails</td>
 <td>[ Document ]</td>
 <td>FAIL</td>
-<td>Teardown failed:\nExpected teardown failure</td>
+<td>Teardown failed:\nExpected failure</td>
 <td></td>
 <td></td>
 </tr>
@@ -457,7 +446,7 @@ teardown</td>
 <td>[ Teardown ]</td>
 <td>Run Keyword If Test Passed</td>
 <td>Fail</td>
-<td>Expected teardown failure</td>
+<td>${EXPECTED FAILURE}</td>
 <td></td>
 </tr>
 <tr>
@@ -480,10 +469,7 @@ teardown</td>
 </table>
 <br>
 <table border="1">
-<colgroup span="99">
-<col class="name">
-<col class="action">
-<col class="arg" span="3"></colgroup>
+<colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
 <thead>
 <tr>
 <th>Keyword</th>
@@ -497,21 +483,20 @@ teardown</td>
 <tbody>
 <tr>
 <td>Teardown UK</td>
-<td>Log</td>
-<td>Teardown message</td>
+<td>[ Arguments ]<br></td>
+<td>${message}<br></td>
 <td></td>
 <td></td>
 <td></td>
 </tr>
 <tr>
 <td align="undefined" valign="undefined"></td>
-<td align="undefined" valign="undefined"></td>
-<td align="undefined" valign="undefined"></td>
+<td align="undefined" valign="undefined">Log</td>
+<td align="undefined" valign="undefined">${message}</td>
 <td align="undefined" valign="undefined"></td>
 <td align="undefined" valign="undefined"></td>
 <td align="undefined" valign="undefined"></td>
 </tr>
 </tbody>
 </table>
-</body>
-</html>
+</body></html>
