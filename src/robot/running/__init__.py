@@ -17,6 +17,7 @@ from model import TestSuite
 from keywords import Keyword
 from testlibraries import TestLibrary
 from userkeyword import PublicUserLibrary as UserLibrary
+from runkwregister import RUN_KW_REGISTER
 
 
 class _Namespaces:

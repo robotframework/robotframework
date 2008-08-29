@@ -19,6 +19,7 @@ from types import MethodType, FunctionType
 from robot import utils
 from robot.errors import FrameworkError
 from robot.common import BaseHandler
+from runkwregister import RUN_KW_REGISTER
 
 
 # Hook for names in BuiltIn.RunKeyword, see _RunnableHandler._is_run_keyword_variant
@@ -82,6 +83,16 @@ class _RunnableHandler(BaseHandler):
         return getattr(lib_instance, handler_name)
             
     def _process_args(self, args, variables):
+        index = RUN_KW_REGISTER.get_args_to_process(self.library.orig_name, self.name)
+        # Negative index means that this is not Run Keyword variant and all
+        # arguments are processed normally
+        if index < 0:
+            args = self._replace_variables_from_args(args, variables)
+        else:            
+            args[:index] = self._replace_variables_from_args(args[:index], variables)
+        return args
+    
+    def _replace_variables_from_args(self, args, variables):
         """Overridden by JavaHandler"""
         args = variables.replace_list(args)
         self._check_arg_limits(args)
@@ -220,7 +231,7 @@ class JavaHandler(_RunnableHandler):
                 maxa = argc
         return mina, maxa
             
-    def _process_args(self, args, variables):
+    def _replace_variables_from_args(self, args, variables):
         args = _RunnableHandler._process_args(self, args, variables)
         if self.maxargs == sys.maxint:
             args = self._handle_varargs(args)

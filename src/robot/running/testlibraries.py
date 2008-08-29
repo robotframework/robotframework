@@ -63,6 +63,7 @@ class _BaseTestLibrary(BaseLibrary):
         if os.path.exists(name):
             name = os.path.splitext(os.path.basename(name))[0]
         self.name = name
+        self.orig_name = name # Stores original name also after copying
         self.args = args
         self._instance_cache = []
         if libcode is not None:
@@ -85,6 +86,7 @@ class _BaseTestLibrary(BaseLibrary):
             
     def copy(self, name):
         lib = _BaseTestLibrary(None, name, self.args, None)
+        lib.orig_name = self.name
         lib.doc = self.doc
         lib.scope = self.scope
         lib._libcode = self._libcode

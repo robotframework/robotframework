@@ -21,7 +21,7 @@ from robot.utils import asserts
 from robot.errors import DataError
 from robot import utils
 from robot.variables import is_var, is_list_var
-from robot.running import NAMESPACES, Keyword
+from robot.running import NAMESPACES, Keyword, RUN_KW_REGISTER
 
 
 def _is_true(expr):
@@ -651,7 +651,7 @@ class RunKeyword:
         can be a variable and thus set dynamically, e.g. from a return value of
         another keyword or from the command line.
         """
-        kw = Keyword(name, [ utils.escape(arg) for arg in args ])
+        kw = Keyword(name, args)
         return kw.run(output.OUTPUT, NAMESPACES.current)
     
     def run_keyword_if(self, expr, name, *args):
@@ -1141,3 +1141,44 @@ class BuiltIn(Verify, Converter, Variables, RunKeyword, Misc):
     
     def _matches(self, string, pattern):
         return utils.matches(string, pattern, caseless=False, spaceless=False)
+
+
+def register_run_keyword(library, keyword, args_to_process=None):
+    """Needs to be called when extending run keyword variants.
+
+    'library' is the name of the library where the keyword is implemented. 
+    'keyword' is function, method or keywords name. In case name is used,
+    args_to_process is needed and it should define how many arguments needs to
+    be processed. Following example shows how the registering can be done:
+    
+    from robot.libraries.BuiltIn import BuiltIn, register_run_keyword
+
+    def my_run_keyword(name, *args):
+        # do something
+        return BuiltIn().run_keyword(name, *args)
+
+    register_run_keyword(__name__, my_run_keyword)
+    
+    or:
+    
+    from robot.libraries.BuiltIn import BuiltIn, register_run_keyword
+    
+    class MyLibrary:
+        def my_run_keyword_if(self, expression, name, *args):
+            # do something
+            return BuiltIn().run_keyword_if(expression, name, *args)
+
+    register_run_keyword('MyLibrary', RegisteredClass.my_run_keyword_if)
+    
+    or same as above, but last line as:
+    
+    register_run_keyword('MyLibrary', 'my_run_keyword_if', 1)
+    
+    Note: Works only with Python and Jython keywords (not Java).
+    """
+    RUN_KW_REGISTER.register_run_keyword(library, keyword, args_to_process)
+
+for keyword in [ name for name in dir(RunKeyword) if not name.startswith('_') ]:
+    register_run_keyword("BuiltIn", getattr(RunKeyword, keyword))
+               
+    
