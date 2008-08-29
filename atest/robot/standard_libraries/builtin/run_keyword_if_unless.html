@@ -429,13 +429,13 @@ Tags</td>
 
 
 
-      <td></td>
+      <td align="undefined" valign="undefined">${EXECUTED}</td><td align="undefined" valign="undefined">This is executed</td>
 
 
 
 
 
-      <td></td>
+      
 
 
 
@@ -827,7 +827,7 @@ Tags</td>
 
 
 
-      <td>This is executed</td>
+      <td>${EXECUTED}</td>
 
 
 
@@ -1007,7 +1007,7 @@ Tags</td>
 
 
 
-      <td>Check Log Message</td><td>${tc.kws[0].kws[0].kws[0].msgs[0]}</td><td>Hello from conditional!</td>
+      <td>Check Log Message</td><td>${tc.kws[0].kws[0].kws[0].msgs[0]}</td><td>${EXECUTED}</td>
 
 
 
@@ -1211,7 +1211,7 @@ Tags</td>
 
 
 
-      <td>Condition was false</td>
+      <td>${EXECUTED}</td>
 
 
 
@@ -1399,7 +1399,19 @@ Tags</td>
 
 
 
-      <td></td>
+      <td>Variable Values Should Not Be Visible As Keyword's Arguments</td>
+
+
+
+      <td>${tc} =</td><td>Check Test Case</td><td>Run Keyword In User Keyword</td>
+
+
+
+      
+
+
+
+      
 
 
 
@@ -1411,19 +1423,7 @@ Tags</td>
 
 
 
-      <td></td>
-
-
-
-      <td></td>
-
-
-
-      <td></td>
-
-
-
-    </tr>
+    </tr><tr><td></td><td>Check KW Arguments</td><td>${tc.kws[0].kws[0]}</td><td>'\${status}' == 'PASS'</td><td>Log</td><td>\${message}</td></tr><tr><td></td><td>Check KW Arguments</td><td>${tc.kws[0].kws[0].kws[0]}</td><td>\${message}</td><td></td><td></td></tr>
 
 
 

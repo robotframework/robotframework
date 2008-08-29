@@ -127,7 +127,7 @@ th { font-style: normal; } /* required for IE */
 
 
 
-<h1>Robot Test Cases for Built-In Run Keyword If/Unless</h1>
+<h1>Robot Test Cases for Registering Own Run Keyword Variant</h1>
 
 
 
@@ -322,7 +322,41 @@ th { font-style: normal; } /* required for IE */
 
 
 
-    <tr>
+    <tr><td>Library</td><td>RegisteringLibrary.py</td><td></td><td></td><td></td></tr><tr>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Library</td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">NotRegisteringLibrary.py</td>
 
 
 
@@ -390,41 +424,7 @@ th { font-style: normal; } /* required for IE */
 
 
 
-      <td align="undefined" valign="undefined"></td>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    </tr>
+    </tr><tr><td>Library</td><td>RegisteringLibrary.py</td><td>WITH NAME</td><td>lib</td><td></td></tr><tr><td>Library</td><td>RegisteredClass.py</td><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr>
 
 
 
@@ -661,7 +661,7 @@ th { font-style: normal; } /* required for IE */
 
 
 
-      <td align="undefined" valign="undefined">${EXECUTED}</td>
+      <td align="undefined" valign="undefined">${VARIABLE}</td>
 
 
 
@@ -678,7 +678,7 @@ th { font-style: normal; } /* required for IE */
 
 
 
-      <td align="undefined" valign="undefined">This is executed</td>
+      <td align="undefined" valign="undefined">\${not variable}</td>
 
 
 
@@ -780,7 +780,7 @@ th { font-style: normal; } /* required for IE */
 
 
 
-      <td></td>
+      <td>${HELLO}</td>
 
 
 
@@ -797,7 +797,7 @@ th { font-style: normal; } /* required for IE */
 
 
 
-      <td></td>
+      <td>Hello</td>
 
 
 
@@ -3106,7 +3106,7 @@ th { font-style: normal; } /* required for IE */
 
 
 
-      <td>Run Keyword If With True Expression&nbsp;</td>
+      <td>Not registered Keyword Fails With Content That Should Not Be Evaluated Twice&nbsp; </td>
 
 
 
@@ -3117,7 +3117,7 @@ th { font-style: normal; } /* required for IE */
 
 
 
-      <td>Run Keyword If</td>
+      <td>[Documentation]</td>
 
 
 
@@ -3128,7 +3128,7 @@ th { font-style: normal; } /* required for IE */
 
 
 
-      <td>${True}</td>
+      <td>FAIL</td>
 
 
 
@@ -3139,271 +3139,7 @@ th { font-style: normal; } /* required for IE */
 
 
 
-      <td>Log</td>
-
-
-
-
-
-
-
-
-
-
-      <td>${EXECUTED}</td>
-
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-
-    </tr>
-
-
-
-
-
-
-
-
-
-
-    <tr><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr>
-
-
-
-
-
-
-
-
-
-
-      <td>Run Keyword If With False Expression</td>
-
-
-
-
-
-
-
-
-
-
-      <td>Run Keyword If</td>
-
-
-
-
-
-
-
-
-
-
-      <td>0 == 1</td>
-
-
-
-
-
-
-
-
-
-
-      <td>Log</td>
-
-
-
-
-
-
-
-
-
-
-      <td>${MESSAGE}</td><td>#Should not be executed nor evaluated</td>
-
-
-
-
-
-
-
-
-
-
-      
-
-
-
-
-
-
-
-
-
-
-    </tr>
-
-
-
-
-
-
-
-
-
-
-    <tr>
-
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-
-      <td></td>
-      <td></td>
-      <td></td>
-
-
-
-
-
-
-
-
-
-
-      
-
-
-
-
-
-
-
-
-
-      
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-
-    </tr>
-
-
-
-
-
-
-
-
-
-
-    <tr>
-
-
-
-
-
-
-
-
-
-
-      <td>Run Keyword In User Keyword</td>
-
-
-
-
-
-
-
-
-
-
-      <td>Conditional User Keyword</td>
-
-
-
-
-
-
-
-
-
-
-      <td>PASS</td>
-
-
-
-
-
-
-
-
-
-
-      <td>${EXECUTED}</td>
+      <td>Non-existing variable '\${not variable}'</td>
 
 
 
@@ -3447,106 +3183,7 @@ th { font-style: normal; } /* required for IE */
 
 
 
-    <tr>
-
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-
-      <td>Conditional User Keyword</td><td>FAIL</td>
-
-
-
-
-
-
-
-
-
-
-      
-
-
-
-
-
-
-
-
-
-
-      <td>${EXECUTED}</td><td></td><td></td>
-
-
-
-
-
-
-
-
-
-
-      
-
-
-
-
-
-
-
-
-
-
-      
-
-
-
-
-
-
-
-
-
-
-    </tr>
-
-
-
-
-
-
-
-
-
-
-    <tr><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Run Keyword Unless With False Expression</td><td>${empty list}</td><td>Create List</td><td></td><td></td><td></td></tr><tr><td></td><td>Run Keyword Unless</td><td>${empty list}<br></td><td>Log</td><td>${EXECUTED}</td><td></td></tr>
-
-
-
-
-
-
-
-
-
-
-    <tr>
+    <tr><td></td><td>${var} =</td><td>Set Variable</td><td>\${not variable}</td><td></td><td></td></tr><tr><td></td><td>Should Be Equal</td><td>${var}</td><td>\${not variable}</td><td></td><td></td></tr><tr><td></td><td>My Run Keyword</td><td>Log</td><td>${HELLO}</td><td></td><td></td></tr><tr><td></td><td>My Run Keyword</td><td>Log</td><td>${VARIABLE}</td><td></td><td></td></tr><tr>
 
 
 
@@ -3645,7 +3282,205 @@ th { font-style: normal; } /* required for IE */
 
 
 
+      <td>Registered Function</td>
+
+
+
+
+
+
+
+
+
+
+      <td>${var} =</td>
+      <td>RegisteringLibrary.Run Keyword Function</td><td>Set Variable</td><td>${VARIABLE}</td>
+      
+
+
+
+
+
+
+
+
+
+
+      
+
+
+
+
+
+
+
+
+
+      
+
+
+
+
+
+
+
+
+
+      
+
+
+
+
+
+
+
+
+
+
       <td></td>
+
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td>Should Be Equal</td>
+
+
+
+
+
+
+
+
+
+
+      <td>${var}</td>
+
+
+
+
+
+
+
+
+
+
+      <td>\${not variable}</td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+    <tr><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Registered Method</td><td>${var} =</td><td>Run Keyword If Method</td><td>${TRUE}</td><td>Set Variable</td><td>${VARIABLE}</td></tr><tr>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td>Should Be Equal</td><td>${var}</td><td>\${not variable}</td>
+
+
+
+
+
+
+
+
+
+
+      
 
 
 
@@ -3668,29 +3503,7 @@ th { font-style: normal; } /* required for IE */
 
 
       
-      <td></td><td></td><td></td>
-      
 
-
-
-
-
-
-
-
-
-
-      
-
-
-
-
-
-
-
-
-
-      
 
 
 
@@ -3722,6 +3535,17 @@ th { font-style: normal; } /* required for IE */
 
 
 
+    <tr><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>With Name And Args To Process Registered Method</td><td>${var} =</td><td>Run KeywordMethod</td><td>Set Variable</td><td>${VARIABLE}</td><td></td></tr><tr><td></td><td>Should Be Equal</td><td>${var}</td><td>\${not variable}</td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Registered Keyword With With Name</td><td>${var} =</td><td>lib.Run Keyword Function</td><td>Set Variable</td><td>${VARIABLE}</td><td></td></tr><tr><td></td><td>Should Be Equal</td><td>${var}</td><td>\${not variable}</td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+
+
+
+
+
+
+
+
+
+
     
 
 
@@ -3733,7 +3557,29 @@ th { font-style: normal; } /* required for IE */
 
 
 
-    <tr><td>Run Keyword Unless With True Expression</td><td>Run Keyword Unless</td><td>${0} == ${0}</td><td>Log</td><td>${MESSAGE}</td><td>#Should not be executed nor evaluated</td></tr>
+    
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+
+
+
+    
 
 
 
@@ -4786,63 +4632,14 @@ th { font-style: normal; } /* required for IE */
 
 
 
-    <tr>
+    
 
 
 
 
 
-      <td>Conditional User Keyword</td><td>[ Arguments ]</td>
-
-
-
-
-
-      
-
-
-
-
-
-      <td>${status}</td>
-
-
-
-
-
-      <td align="undefined" valign="undefined">${message}</td>
-
-
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-
-
-    </tr>
-
-
-
-
-
-    <tr>
-      <td></td>
-      <td>Run Keyword If</td>
-      <td>'${status}' == 'PASS'</td>
-      <td>Log</td>
-      <td>${message}</td>
-      <td></td>
-    </tr>
-    <tr>
+    
+    <tr><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr>
       <td></td>
       <td></td>
       <td></td>

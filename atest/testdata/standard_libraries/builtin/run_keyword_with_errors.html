@@ -763,7 +763,41 @@ th { font-style: normal; } /* required for IE */
 
 
 
-    <tr>
+    <tr><td>${MESSAGE}</td><td>My message</td><td></td><td></td><td></td></tr><tr>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td>${ERROR MESSAGE}</td><td>My error message</td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      
 
 
 
@@ -831,41 +865,7 @@ th { font-style: normal; } /* required for IE */
 
 
 
-      <td></td>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    </tr>
+    </tr><tr><td>${FAIL KW}</td><td>Fail</td><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr>
 
 
 
@@ -3139,7 +3139,7 @@ th { font-style: normal; } /* required for IE */
 
 
 
-      <td>My message</td>
+      <td>${MESSAGE}</td>
 
 
 
@@ -3295,7 +3295,7 @@ th { font-style: normal; } /* required for IE */
 
       <td>Run Keyword And Ignore Error</td>
       <td>Fail</td>
-      <td>My error message</td>
+      <td>${ERROR MESSAGE}</td>
 
 
 
@@ -3668,7 +3668,7 @@ th { font-style: normal; } /* required for IE */
 
 
       
-      <td>Run Keyword And Ignore Error</td><td>Fail</td><td>My error message</td>
+      <td>Run Keyword And Ignore Error</td><td>${FAIL KW}</td><td>${ERROR MESSAGE}</td>
       
 
 
@@ -4149,21 +4149,21 @@ th { font-style: normal; } /* required for IE */
 
 
 
-      <td>My error message</td>
+      <td>${ERROR MESSAGE}</td>
 
 
 
 
 
 
-      <td>Fail</td>
+      <td>${FAIL KW}</td>
 
 
 
 
 
 
-      <td>My error message</td>
+      <td>${ERROR MESSAGE}</td>
 
 
 
@@ -4205,7 +4205,7 @@ th { font-style: normal; } /* required for IE */
       <td>Run Keyword And Expect Error</td>
       <td>My error&nbsp;</td>
       <td>Fail</td>
-      <td>My error message</td>
+      <td>${ERROR MESSAGE}</td>
       <td></td>
     </tr>
     <tr>

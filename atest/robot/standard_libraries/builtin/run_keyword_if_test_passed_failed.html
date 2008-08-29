@@ -1395,35 +1395,7 @@ Tags</td>
 
 
 
-    <tr>
-
-
-
-      <td></td>
-
-
-
-      <td></td>
-
-
-
-      <td></td>
-
-
-
-      <td></td>
-
-
-
-      <td></td>
-
-
-
-      <td></td>
-
-
-
-    </tr>
+    <tr><td></td><td></td><td></td><td></td><td></td><td></td></tr>
 
 
 
@@ -1459,22 +1431,19 @@ Tags</td>
 
 
 
-    <tr><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Run Keyword If test Failed Can't Be Used In Suite Setup or Teardown</td><td>Check Test Case</td><td>Run Keyword If test Failed Can't Be Used In Suite Setup or Teardown </td><td></td><td></td><td></td></tr><tr>
+    <tr><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Run Keyword If test Failed Can't Be Used In Suite Setup or Teardown</td><td>${tc} =</td><td>Check Test Case</td><td>Run Keyword If test Failed Can't Be Used In Suite Setup or Teardown </td><td></td><td></td></tr><tr>
 
 
       <td></td>
 
 
-      <td></td>
+      <td>Check Log Message</td>
 
 
-      <td></td>
+      <td>${SUITE.suites[0].setup.msgs[0]}</td>
 
 
-      <td></td>
-
-
-      <td></td>
+      <td>Keyword 'Run Keyword If Test Failed' can only be used in test teardown</td><td>FAIL</td>
 
 
       <td></td>
@@ -1483,7 +1452,7 @@ Tags</td>
     </tr>
 
 
-    <tr>
+    <tr><td></td><td>Check Log Message</td><td>${SUITE.suites[0].teardown.msgs[0]}</td><td>Keyword 'Run Keyword If Test Failed' can only be used in test teardown</td><td>FAIL</td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr>
 
 
       <td>Run Keyword If Test Passed When Test Passes</td>
@@ -1609,13 +1578,13 @@ Tags</td>
       <td>Run Keyword If Test Passed&nbsp; Can't Be used In Setup</td>
 
 
-      <td>Check Test Case</td>
-
-
-      <td>Run Keyword If Test Passed&nbsp; Can't Be used In Setup</td>
+      <td>Check Test Case</td><td>Run Keyword If Test Passed&nbsp; Can't Be used In Setup</td>
 
 
       <td></td>
+
+
+      
 
 
       <td></td>
@@ -1748,7 +1717,7 @@ Tags</td>
 
 
 
-    <tr>
+    <tr><td></td><td>Check&nbsp;KW Arguments</td><td>${tc.teardown.kws[0].kws[0]}</td><td>\${message}</td><td></td><td></td></tr><tr>
 
 
       <td></td>
@@ -1826,7 +1795,7 @@ Tags</td>
 
 
 
-      <td>Run Keyword If test Passed Can't Be Used In Suite Setup or Teardown</td><td>Check Test Case</td><td>Run Keyword If test&nbsp;Passed Can't Be Used In Suite Setup or Teardown </td>
+      <td>Run Keyword If test Passed Can't Be Used In Suite Setup or Teardown</td><td>${tc} =</td><td>Check Test Case</td><td>Run Keyword If test&nbsp;Passed Can't Be Used In Suite Setup or Teardown </td>
 
 
 
@@ -1844,7 +1813,7 @@ Tags</td>
 
 
 
-      <td></td>
+      
 
 
 
@@ -1876,17 +1845,17 @@ Tags</td>
 
       <td></td>
 
-      <td></td>
+      <td>Check Log Message</td><td>${SUITE.suites[2].setup.msgs[0]}</td><td>Keyword 'Run Keyword If Test Passed' can only be used in test teardown</td><td>FAIL</td>
+
+      
+
+      
+
+      
 
       <td></td>
 
-      <td></td>
-
-      <td></td>
-
-      <td></td>
-
-    </tr>
+    </tr><tr><td></td><td>Check Log Message</td><td>${SUITE.suites[2].teardown.msgs[0]}</td><td>Keyword 'Run Keyword If Test Passed' can only be used in test teardown</td><td>FAIL</td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Variable Values Should Not Be Visible As Keyword's Arguments</td><td>${tc} =</td><td>Check Test Case</td><td>Run Keyword If Test Failed Uses User Keyword</td><td></td><td></td></tr><tr><td></td><td>Check KW Arguments</td><td>${tc.teardown}</td><td>Teardown UK</td><td>\${TEARDOWN MESSAGE}</td><td></td></tr><tr><td></td><td>Check&nbsp;KW Arguments</td><td>${tc.teardown.kws[0]}</td><td>\${TEARDOWN MESSAGE}</td><td></td><td></td></tr><tr><td></td><td>Check&nbsp;KW Arguments</td><td>${tc.teardown.kws[0].kws[0]}</td><td>\${message}</td><td></td><td></td></tr>
 
     
 
