@@ -15,10 +15,13 @@ class _RunKeywordRegister:
         keyword = utils.printable_name(keyword, code_style=True)
         self._register.setdefault(library, {})[keyword] = int(args_to_process)
             
-    def get_args_to_process(self, lib, keyword):
-        if lib in self._register and keyword in self._register[lib]:
-            return self._register[lib][keyword]
+    def get_args_to_process(self, library, keyword):
+        if library in self._register and keyword in self._register[library]:
+            return self._register[library][keyword]
         return -1
+
+    def is_run_keyword(self, library, keyword):
+        return self.get_args_to_process(library, keyword) >= 0
 
     def _get_args_from_method(self, method):
         if type(method) is MethodType:

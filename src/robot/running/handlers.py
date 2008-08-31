@@ -22,10 +22,6 @@ from robot.common import BaseHandler
 from runkwregister import RUN_KW_REGISTER
 
 
-# Hook for names in BuiltIn.RunKeyword, see _RunnableHandler._is_run_keyword_variant
-_run_kw_names = None
-
-
 class _RunnableHandler(BaseHandler):
     """Base class for PythonHandler, JavaHandler and DynamicHandler"""
 
@@ -105,7 +101,9 @@ class _RunnableHandler(BaseHandler):
         return handler(*args)
 
     def _get_timeout(self, namespace):
-        if self._is_run_keyword_variant():
+        # Timeouts must not be active for run keyword variants, only for
+        # keywords they execute internally
+        if RUN_KW_REGISTER.is_run_keyword(self.library.orig_name, self.name):
             return None
         timeoutable = self._get_timeoutable_items(namespace)
         if len(timeoutable) > 0 :
@@ -125,16 +123,7 @@ class _RunnableHandler(BaseHandler):
         if stderr.strip() != '':
             sys.stderr.write(stderr+'\n')
             
-    def _is_run_keyword_variant(self):
-        # Timeouts must not be active for Run Keyword -variants.
-        global _run_kw_names
-        if _run_kw_names is None:
-            from robot.libraries.BuiltIn import RunKeyword
-            _run_kw_names = [ utils.printable_name(name, True) 
-                              for name in dir(RunKeyword) if not name.startswith('_') ]
-        return self.library.name == 'BuiltIn' and self.name in _run_kw_names
-
-
+  
 class PythonHandler(_RunnableHandler):
     
     def __init__(self, library, handler_name, handler_method):
