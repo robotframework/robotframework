@@ -83,12 +83,12 @@ class _RunnableHandler(BaseHandler):
         # Negative index means that this is not Run Keyword variant and all
         # arguments are processed normally
         if index < 0:
-            args = self._replace_variables_from_args(args, variables)
+            args = self._replace_vars_from_args(args, variables)
         else:            
-            args[:index] = self._replace_variables_from_args(args[:index], variables)
+            args[:index] = self._replace_vars_from_args(args[:index], variables)
         return args
     
-    def _replace_variables_from_args(self, args, variables):
+    def _replace_vars_from_args(self, args, variables):
         """Overridden by JavaHandler"""
         args = variables.replace_list(args)
         self._check_arg_limits(args)
@@ -220,8 +220,8 @@ class JavaHandler(_RunnableHandler):
                 maxa = argc
         return mina, maxa
             
-    def _replace_variables_from_args(self, args, variables):
-        args = _RunnableHandler._process_args(self, args, variables)
+    def _replace_vars_from_args(self, args, variables):
+        args = _RunnableHandler._replace_vars_from_args(self, args, variables)
         if self.maxargs == sys.maxint:
             args = self._handle_varargs(args)
         return args
