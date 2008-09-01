@@ -26,3 +26,6 @@ class MyLibrary1:
  
     def no_operation(self):
         print "Overrides keyword from BuiltIn library"
+
+    def open_connection(self):
+        print "Overrides keyword from Telnet library"

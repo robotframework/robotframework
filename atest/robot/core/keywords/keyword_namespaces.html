@@ -1,6 +1,5 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html>
-<head>
+<html><head>
 
 
 
@@ -78,9 +77,7 @@ th {
   
   
   
-  <title>Robot Test Cases</title>
-</head>
-
+  <title>Robot Test Cases</title></head>
 
 <body>
 
@@ -391,7 +388,7 @@ Non-existing keywords are tested in keyword_not_found.html.</td>
       <td>Run Tests</td>
 
 
-      <td>--pythonpath ${RESDIR}</td>
+      <td><br></td>
 
 
       <td>core${/}keywords${/}keyword_namespaces.html</td>
@@ -631,10 +628,10 @@ Non-existing keywords are tested in keyword_not_found.html.</td>
 
 
 
-      <td align="undefined" valign="undefined">${RESDIR}</td>
+      <td align="undefined" valign="undefined"></td>
 
 
-      <td align="undefined" valign="undefined">${CURDIR}${/}..${/}..${/}..${/}testdata${/}core${/}keywords${/}resources</td>
+      <td align="undefined" valign="undefined"></td>
 
 
 
@@ -1500,7 +1497,7 @@ Non-existing keywords are tested in keyword_not_found.html.</td>
 
 
 
-      <td>Keyword From User Library Overrides Keywords From Standard Library 1</td>
+      <td>Keyword From User Library Overrides Keywords From Standard Library</td>
 
 
 
@@ -1531,8 +1528,8 @@ Non-existing keywords are tested in keyword_not_found.html.</td>
 
       <td>[&nbsp;WARN ]</td>
 
-      <td>Keyword 'Comment' found from both user created library
-'MyLibrary1' and Robot standard library 'BuiltIn'. The user created
+      <td>Keyword 'Comment' found both from a user created test library
+'MyLibrary1' and Robot Framework standard library 'BuiltIn'. The user created
 keyword is used.</td>
 
       <td>To select explicitly, and to get rid of this warning,
@@ -1540,19 +1537,7 @@ use full format i.e. either 'MyLibrary1.Comment' or 'BuiltIn.Comment'. </td>
 
     </tr>
 
-    <tr>
-
-      <td></td>
-
-      <td>Check Test Case</td>
-
-      <td>Keyword From User Library Overrides Keywords From Standard Library 2</td>
-
-      <td></td>
-
-      <td></td>
-
-    </tr>
+    
 
     <tr>
 
@@ -1562,8 +1547,8 @@ use full format i.e. either 'MyLibrary1.Comment' or 'BuiltIn.Comment'. </td>
       <td>[&nbsp;WARN ]</td>
 
       
-      <td>Keyword 'Copy Directory' found from both user created library
-'MyLibrary1' and Robot standard library 'OperatingSystem'. The user
+      <td>Keyword 'Copy Directory' found both from a user created test library
+'MyLibrary1' and Robot Framework standard library 'OperatingSystem'. The user
 created keyword is used.</td>
 
       <td>To select explicitly, and to get rid of this warning,
@@ -1572,19 +1557,12 @@ use full format i.e. either 'MyLibrary1.Copy Directory' or
 
     </tr>
 
-    <tr>
-
-      <td></td>
-
-      <td></td>
-
-      <td></td>
-
-      <td></td>
-
-      <td></td>
-
-    </tr>
+    <tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Keyword From User Library Overrides Keywords From Standard Library Even When Std lib imported with Different Name</td><td>Check Test Case</td><td>Keyword From User Library Overrides Keywords From Standard Library Even When Std lib imported with Different Name</td><td></td><td></td></tr><tr><td></td><td>Check Stderr Contains</td><td>[&nbsp;WARN ]</td><td>Keyword
+'Open Connection' found both from a user created test library
+'MyLibrary1' and Robot Framework standard library 'Telnet'. The user
+created keyword is used.</td><td>To select explicitly, and to get rid of this warning, use full format
+i.e. either 'MyLibrary1.Open Connection' or 'StdLibWithCustomName.Open
+Connection'.</td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr>
 
     <tr>
 
@@ -1832,5 +1810,4 @@ use full format i.e. either 'MyLibrary1.Copy Directory' or
 
 
 
-</body>
-</html>
+</body></html>
