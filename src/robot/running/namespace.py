@@ -169,7 +169,7 @@ class Namespace:
     def get_handler(self, name):
         try:
             handler = None
-            if name.count('.'):
+            if '.' in name:
                 handler = self._get_explicit_handler(name)
             if handler is None:
                 handler = self._get_implicit_handler(name)
@@ -200,41 +200,36 @@ class Namespace:
         # 3) Try to find unique keyword from base keywords
         found = [ lib.get_handler(name)
                   for lib in self._testlibs.values() if lib.has_handler(name) ]
-        if len(found) > 1:
-            found = self._filter_stdlib_handlers(found)
+        if len(found) == 2:
+            found = self._filter_stdlib_handler(found[0], found[1])
         if len(found) > 1:
             raise self._raise_multiple_keywords_found(name, found)
         if len(found) == 1:
             return found[0]
         return None
 
-    def _filter_stdlib_handlers(self, all_handlers):
-        external_handlers = []
-        standard_handler = None 
-        for handler in all_handlers: 
-            if handler.library.name in STDLIB_NAMES:
-                standard_handler = handler
-            else:
-                external_handlers.append(handler)
-        if len(external_handlers) != 1:
-            return all_handlers
-        msg = ("Keyword '%s' found from both user created library '%s' and "
-               "Robot standard library '%s'. The user created keyword is used. "
-               "To select explicitly, and to get rid of this warning, use "
-               "full format i.e. either '%s' or '%s'." )
-        self._syslog.warn(msg % (standard_handler.name,
-                                 external_handlers[0].library.name,
-                                 standard_handler.library.name,
-                                 external_handlers[0].longname,
-                                 standard_handler.longname))
-        return external_handlers
+    def _filter_stdlib_handler(self, handler1, handler2):
+        if handler1.library.orig_name in STDLIB_NAMES:
+            std_handler, ext_handler = handler1, handler2
+        elif handler2.library.orig_name in STDLIB_NAMES:
+            std_handler, ext_handler = handler2, handler1
+        else:
+            return [handler1, handler2]
+        msg = ("Keyword '%s' found both from a user created test library '%s' "
+               "and Robot Framework standard library '%s'. The user created "
+               "keyword is used. To select explicitly, and to get rid of this "
+               "warning, use full format i.e. either '%s' or '%s'.")
+        self._syslog.warn(msg % (std_handler.name, ext_handler.library.name,
+                                 std_handler.library.orig_name,
+                                 ext_handler.longname, std_handler.longname))
+        return [ext_handler]
     
     def _get_explicit_handler(self, name):
         libname, kwname = self._split_keyword_name(name)
         # 1) Find matching lib(s)
         libs = [ lib for lib in self._userlibs + self._testlibs.values() 
                  if utils.eq(lib.name, libname) ]
-        if len(libs) == 0:
+        if not libs:
             return None
         # 2) Find matching kw from found libs
         found = [ lib.get_handler(kwname)
