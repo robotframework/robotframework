@@ -49,22 +49,24 @@ Keyword*\tNot a table because doesn't start with '*'
         tsv = StringIO('''Ignored text before tables...
 Mote\tignored\text
 *Setting*\t*Value*\t*Value*
-Document\tWhatever\t\t\t
-Default Tags\tt1\tt2\tt3\t
+Document\tWhatever\t\t\\\t
+Default Tags\tt1\tt2\tt3\t\t
 
 *Variable*\tWhatever
   2 spaces before and after  
+\\ \\ 2 escaped spaces before and after \\ \\
 4 spaces in the row below
     
 ''')
         data = MockRawData()
         TsvReader().read(tsv, data)
-        expected1 = [ ['Document','Whatever','','',''],
-                      ['Default Tags','t1','t2','t3',''],
+        expected1 = [ ['Document','Whatever','','\\'],
+                      ['Default Tags','t1','t2','t3'],
                       [''] ]
-        expected2 = [ ['  2 spaces before and after  '], 
+        expected2 = [ ['  2 spaces before and after'], 
+                      ['\\ \\ 2 escaped spaces before and after \\ \\'], 
                       ['4 spaces in the row below'], 
-                      ['    '] ]
+                      [''] ]
         assert_equals(len(data.tables.keys()), 2)
         self._verify_rows(data.tables['Setting'], expected1)
         self._verify_rows(data.tables['Variable'], expected2)
