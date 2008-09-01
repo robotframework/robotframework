@@ -125,7 +125,6 @@ th { font-style: normal; } /* required for IE */
   
   
   <title>Robot Test Cases</title><link type="text/css" href="resources/css/testdata.css" rel="stylesheet"></head>
-
 <body>
 
 
@@ -4432,7 +4431,7 @@ error</td>
       <td></td>
 
 
-    </tr><tr><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Redirecting stdout and/Or stderr To File</td><td>Start Process</td><td>${PROG} hello &gt;&nbsp;${TEMP FILE}</td><td></td><td></td><td></td></tr><tr><td></td><td>Output and Temp File Should Be</td><td></td><td>hello</td><td></td><td></td></tr><tr><td></td><td>Start Process</td><td>${PROG} hello world 2&gt;&nbsp;${TEMP FILE}</td><td></td><td></td><td></td></tr><tr><td></td><td align="undefined" valign="undefined">Output and Temp File Should Be</td><td align="undefined" valign="undefined">hello</td><td>world</td><td></td><td></td></tr><tr><td></td><td>Start Process</td><td>${PROG} hello world &amp;&gt;&nbsp;${TEMP FILE}</td><td></td><td></td><td></td></tr><tr><td></td><td>Output and Temp File Should Be</td><td></td><td>(helloworld|worldhello)</td><td></td><td></td></tr><tr><td></td><td>[Teardown]</td><td>Remove File</td><td>${TEMP FILE}</td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Redirecting stderr To Stdout</td><td>Start Process</td><td>${PROG} hello world 2&gt;&amp;1</td><td></td><td></td><td></td></tr><tr><td></td><td>Output&nbsp;Should Be</td><td>(helloworld|worldhello)</td><td><br></td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+    </tr><tr><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Redirecting stdout To File</td><td>Start Process</td><td>${PROG} hello &gt;&nbsp;${TEMP FILE}</td><td></td><td></td><td></td></tr><tr><td></td><td>Output and Temp File Should Be</td><td></td><td>hello</td><td></td><td></td></tr><tr><td></td><td>[Teardown]</td><td>Remove File</td><td>${TEMP FILE}</td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Redirecting stderr To File</td><td>Start Process</td><td>${PROG} hello world 2&gt;&nbsp;${TEMP FILE}</td><td></td><td></td><td></td></tr><tr><td></td><td align="undefined" valign="undefined">Output and Temp File Should Be</td><td align="undefined" valign="undefined">hello</td><td>world</td><td></td><td></td></tr><tr><td></td><td>[Teardown]</td><td>Remove File</td><td>${TEMP FILE}</td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Redirecting stderr To Stdout</td><td>Start Process</td><td>${PROG} hello world 2&gt;&amp;1</td><td></td><td></td><td></td></tr><tr><td></td><td>Output&nbsp;Should Be</td><td>(helloworld|worldhello)</td><td><br></td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td></tr>
 
 
 
