@@ -36,8 +36,8 @@ class _List:
         | Append To List | ${L1} | xxx |   |   |
         | Append To List | ${L2} | x | y | z |
         =>
-        ${L1} == ['a', 'xxx']
-        ${L2} == ['a', 'b', 'x', 'y', 'z']
+        - ${L1} = ['a', 'xxx']
+        - ${L2} = ['a', 'b', 'x', 'y', 'z']
         """
         for value in values:
             L.append(value)
@@ -56,8 +56,8 @@ class _List:
         | Insert Into List | ${L1} | 0     | xxx |
         | Insert Into List | ${L2} | ${-1} | xxx |
         =>
-        ${L1} == ['xxx', 'a']
-        ${L2} == ['a', 'xxx', 'b']
+        - ${L1} = ['xxx', 'a']
+        - ${L2} = ['a', 'xxx', 'b']
         """
         L.insert(self._index_to_int(index), value)
 
@@ -70,9 +70,9 @@ class _List:
         | ${x} = | Combine List | ${L1} | ${L2} |       |
         | ${y} = | Combine List | ${L1} | ${L2} | ${L1} |
         =>
-        ${x} == ['a', 'a', 'b']
-        ${y} == ['a', 'a', 'b', 'a']
-        ${L1} and ${L2} are not changed.
+        - ${x} = ['a', 'a', 'b']
+        - ${y} = ['a', 'a', 'b', 'a']
+        - ${L1} and ${L2} are not changed.
         """
         ret = []
         for item in lists:
@@ -91,7 +91,7 @@ class _List:
         Example: 
         | Set List Value | ${L3} | 1 | xxx |
         =>
-        ${L3} == ['a', 'xxx', 'c']
+        - ${L3} = ['a', 'xxx', 'c']
         """ 
         try:
             L[self._index_to_int(index)] = value
@@ -104,7 +104,7 @@ class _List:
         Example:
         | Remove Values From List | ${L4} | a | c | e | f |
         =>
-        ${L4} == ['b', 'd']
+        - ${L4} = ['b', 'd']
         """
         for value in values:
             while value in L:
@@ -122,8 +122,8 @@ class _List:
         Example:
         | ${x} = | Remove From List | ${L2} | 0 |
         =>
-        ${x} == 'a'
-        ${L2} == ['b']
+        - ${x} = 'a'
+        - ${L2} = ['b']
         """
         try:
             return L.pop(self._index_to_int(index))
@@ -145,9 +145,9 @@ class _List:
         | ${x} = | Get From List | ${L5} | 0 | # L5[0]    |
         | ${y} = | Get From List | ${L5} | 2 | # L5[2]    |
         =>
-        ${x} == 'a'
-        ${y} == 'c'
-        ${L1} and ${L2} are not changed.
+        - ${x} = 'a'
+        - ${y} = 'c'
+        - ${L1} and ${L2} are not changed.
         """
         try:
             return L[self._index_to_int(index)]
@@ -174,10 +174,10 @@ class _List:
         | ${y} = | Get Slice From List | ${L5} | 1 |    | # L5[1:None] |
         | ${z} = | Get Slice From List | ${L5} |   | -1 | # L5[0:-2]   |
         =>
-        ${x} == ['c', 'd']
-        ${y} == ['b', 'c', 'd', 'e']
-        ${z} == ['a', 'b', 'c']
-        ${L5} is not changed.
+        - ${x} = ['c', 'd']
+        - ${y} = ['b', 'c', 'd', 'e']
+        - ${z} = ['a', 'b', 'c']
+        - ${L5} is not changed.
         """
         start = self._index_to_int(start, True)
         if end is not None:
@@ -193,8 +193,8 @@ class _List:
 
         | ${x} = | Count Values In List | ${L3} | b |
         =>
-        ${x} == 1
-        ${L3} is not changed.
+        - ${x} = 1
+        - ${L3} is not changed.
         """
         return self.get_slice_from_list(L, start, end).count(value)
         
@@ -208,8 +208,8 @@ class _List:
 
         | ${x} = | Get Index From List | ${L5} | d |
         =>
-        ${x} == 3
-        ${L5} is not changed.
+        - ${x} = 3
+        - ${L5} is not changed.
         """
         if start == '':
             start = 0
@@ -234,7 +234,7 @@ class _List:
 
         | Reverse List | ${L3} |
         =>
-        ${L3} == ['c', 'b', 'a']        
+        - ${L3} = ['c', 'b', 'a']        
         """
         L.reverse()
     
@@ -249,7 +249,7 @@ class _List:
         ${L} = [2,1,'a','c','b']
         | Sort List | ${L} |
         =>
-        ${L} == [1, 2, 'a', 'b', 'c']
+        - ${L} = [1, 2, 'a', 'b', 'c']
         """
         L.sort()
     
@@ -331,9 +331,9 @@ class _Dictionary:
         | ${y} = | Create Dictionary | a    | 1     | b | 2 |
         | ${z} = | Create Dictionary | a    | ${1}  | b | ${2} |
         =>
-        ${x} == {'name': 'value'}
-        ${y} == {'a': '1', 'b': '2'}
-        ${z} == {'a': 1, 'b': 2}
+        - ${x} = {'name': 'value'}
+        - ${y} = {'a': '1', 'b': '2'}
+        - ${z} = {'a': 1, 'b': 2}
         """        
         if len(key_value_pairs) % 2 != 0:
             raise ValueError("Creating a dictionary failed. There should be "
@@ -346,7 +346,7 @@ class _Dictionary:
         Example:
         | Set To Dictionary | ${D1} | key | value | 
         =>
-        ${D1} == {'a': 1, 'key': 'value'}
+        - ${D1} = {'a': 1, 'key': 'value'}
         """
         if len(key_value_pairs) % 2 != 0:
             raise ValueError("Adding data to a dictionary failed. There "
@@ -363,7 +363,7 @@ class _Dictionary:
         Example:
         | Remove From Dictionary | ${D3} | b | x | y | 
         =>
-        ${D3} == {'a': 1, 'c': 3}
+        - ${D3} = {'a': 1, 'c': 3}
         """
         for key in keys:
             try:
@@ -380,7 +380,7 @@ class _Dictionary:
         Example:
         | Keep In Dictionary | ${D5} | b | x | d | 
         =>
-        ${D5} == {'b': 2, 'd': 4}
+        - ${D5} = {'b': 2, 'd': 4}
         """
         remove_keys = [ key for key in dictionary.keys() if not key in keys ]
         self.remove_from_dictionary(dictionary, *remove_keys)
@@ -401,7 +401,7 @@ class _Dictionary:
         Example:
         | ${keys} = | Get Dictionary Keys | ${D3} |
         =>
-        ${keys} == ['a', 'b', 'c']
+        - ${keys} = ['a', 'b', 'c']
         """
         keys = dictionary.keys()
         keys.sort()
@@ -416,7 +416,7 @@ class _Dictionary:
         Example:
         | ${values} = | Get Dictionary Values | ${D3} |
         =>
-        ${values} == [1, 2, 3]
+        - ${values} = [1, 2, 3]
         """
         return [ dictionary[k] for k in self.get_dictionary_keys(dictionary) ]
     
@@ -429,7 +429,7 @@ class _Dictionary:
         Example:
         | ${items} = | Get Dictionary Items | ${D3} |
         =>
-        ${items} == ['a', 1, 'b', 2, 'c', 3]
+        - ${items} = ['a', 1, 'b', 2, 'c', 3]
         """
         ret = []
         for key in self.get_dictionary_keys(dictionary):
@@ -447,7 +447,7 @@ class _Dictionary:
         Example:
         | ${value} = | Get From Dictionary | ${D3} | b |
         =>
-        ${value} == 2
+        - ${value} = 2
         """
         try:
             return dictionary[key]

@@ -834,11 +834,11 @@ class OperatingSystem:
         | ${p4} =   | Join Path | my        | /path |
         | ${p5} =   | Join Path | /my/path/ | ..    | path2 |
         =>
-        ${path} = 'my/path'
-        ${p2} = 'my/path'
-        ${p3} = 'my/path/my/file.txt'
-        ${p4} = '/path'
-        ${p5} = '/my/path2'        
+        - ${path} = 'my/path'
+        - ${p2} = 'my/path'
+        - ${p3} = 'my/path/my/file.txt'
+        - ${p4} = '/path'
+        - ${p5} = '/my/path2'        
         """
         return os.path.normpath(os.path.join(base, *parts))
     
@@ -850,9 +850,9 @@ class OperatingSystem:
         | @{p2} = | Join Path | /my/base | /example      | other |          |
         | @{p3} = | Join Path | my/base  | example/path/ | other | one/more |
         =>
-        @{p1} = [ 'base/example', 'base/other' ]
-        @{p2} = [ '/example', '/my/base/other' ]
-        @{p3} = [ 'my/base/example/path', 'my/base/other', 'my/base/one/more' ]
+        - @{p1} = ['base/example', 'base/other']
+        - @{p2} = ['/example', '/my/base/other']
+        - @{p3} = ['my/base/example/path', 'my/base/other', 'my/base/one/more']
         """
         return [ self.join_path(base, path) for path in paths ]
         
@@ -866,11 +866,11 @@ class OperatingSystem:
         | ${p4} =   | Normalize Path | abc/./def  |
         | ${p5} =   | Normalize Path | abc//def   |
         =>
-        ${path} = 'abc'
-        ${p2} = 'abc'
-        ${p3} = 'def'
-        ${p4} = 'abc/def'
-        ${p5} = 'abc/def'        
+        - ${path} = 'abc'
+        - ${p2} = 'abc'
+        - ${p3} = 'def'
+        - ${p4} = 'abc/def'
+        - ${p5} = 'abc/def'        
         """
         ret = os.path.normpath(path)
         if ret == '': return '.'
@@ -888,9 +888,9 @@ class OperatingSystem:
         | ${path2} | ${file} = | Split Path | abc/def/ghi.txt |        
         | ${path3} | ${d2}  =  | Split Path | abc/../def/ghi/ |
         =>
-        ${path1} = 'abc', ${dir} = 'def'
-        ${path2} = 'abc/def', ${file} = 'ghi.txt'
-        ${path3} = 'def', ${d2} = 'ghi'
+        - ${path1} = 'abc' & ${dir} = 'def'
+        - ${path2} = 'abc/def' & ${file} = 'ghi.txt'
+        - ${path3} = 'def' & ${d2} = 'ghi'
         """
         return os.path.split(self.normalize_path(path))
     
@@ -908,10 +908,10 @@ class OperatingSystem:
         | ${p3}   | ${e3} =  | Split Extension | path/file         |
         | ${p4}   | ${e4} =  | Split Extension | p1/../p2/file.ext |
         =>
-        ${path} = 'file', ${ext} = 'extension'
-        ${p2} = 'path/file', ${e2} = 'ext'
-        ${p3} = 'path/file', ${e3} = ''
-        ${p4} = 'p2/file', ${e4} = 'ext'
+        - ${path} = 'file' & ${ext} = 'extension'
+        - ${p2} = 'path/file' & ${e2} = 'ext'
+        - ${p3} = 'path/file' & ${e3} = ''
+        - ${p4} = 'p2/file' & ${e4} = 'ext'
         """
         base, ext = os.path.splitext(self.normalize_path(path))
         if len(ext) > 0 and ext[0] == '.':
@@ -947,11 +947,11 @@ class OperatingSystem:
         | ${y} | ${d} = | Get Modified Time | ${CURDIR} | year,day |
         | @{time} = | Get Modified Time | ${CURDIR} | year,month,day,hour,min,sec |
         =>
-        ${time} = '2006-03-29 15:06:21'
-        ${secs} = 1143637581
-        ${year} = '2006'
-        ${y} = '2006', ${d} = '29'
-        @{time} = [ '2006', '03', '29', '15', '06', '21' ]
+        - ${time} = '2006-03-29 15:06:21'
+        - ${secs} = 1143637581
+        - ${year} = '2006'
+        - ${y} = '2006' & ${d} = '29'
+        - @{time} = ['2006', '03', '29', '15', '06', '21']
         """
         if not os.path.exists(path):
             raise DataError("Getting modified time of '%s' failed: "

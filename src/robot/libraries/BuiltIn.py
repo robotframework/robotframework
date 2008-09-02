@@ -350,10 +350,10 @@ class Verify:
         | ${match} | ${group1} | ${group2} = |
         | ...      | Should Match Regexp | Bar: 43 | (Foo|Bar): (\\\\d+) |
         =>
-        ${ret} = 'Foo: 42', 
-        ${match} = 'Bar: 43'
-        ${group1} = 'Bar'
-        ${group2} = '43'
+        - ${ret} = 'Foo: 42'
+        - ${match} = 'Bar: 43'
+        - ${group1} = 'Bar'
+        - ${group2} = '43'
         """ 
         msg = self._get_string_msg(string, pattern, msg, values,
                                    'does not match')
@@ -519,10 +519,10 @@ class Variables:
         | @{list} = | Set Variable | Hi     | again  |    | # list variable   |
         | ${scal} = | Set Variable | Hi     | again  |    | # scalar variable |
         => 
-        ${var} = 'Hello'
-        ${var1} = 'Hello' & ${var2} = 'world'
-        @{list} = ['Hi','again'] i.e. @{list}[0] = 'Hi' & @{list}[1] = 'again'
-        ${scal} = ['Hi','again']
+        - ${var} = 'Hello'
+        - ${var1} = 'Hello' & ${var2} = 'world'
+        - @{list} = ['Hi','again'] i.e. @{list}[0] = 'Hi' & @{list}[1] = 'again'
+        - ${scal} = ['Hi','again']
         """
         if len(args) == 0:
             return ''
@@ -541,9 +541,9 @@ class Variables:
         | ${var2} = | Set Variable If | False | v1 | v2 | 
         | ${var3} = | Set Variable If | 1 > 0 and False | v1 |
         =>
-        ${var1} = 'v1'  
-        ${var2} = 'v2'
-        ${var3} = None
+        - ${var1} = 'v1'  
+        - ${var2} = 'v2'
+        - ${var3} = None
         
         New in Robot Framework version 1.8.3.
         """
@@ -894,9 +894,9 @@ class Misc:
         | ${str2} = | Catenate | SEPARATOR=--- | Hello | world |
         | ${str3} = | Catenate | SEPARATOR=    | Hello | world |
         =>
-        ${str1} = 'Hello world'
-        ${str2} = 'Hello---world'
-        ${str3} = 'Helloworld'
+        - ${str1} = 'Hello world'
+        - ${str2} = 'Hello---world'
+        - ${str3} = 'Helloworld'
         """
         if len(items) == 0:
             return u''
@@ -1000,16 +1000,16 @@ class Misc:
         | ${secs} = | Get Time | epoch       |  |  |
         | ${year} = | Get Time | return year |  |  |
         | ${yyyy}   | ${mm}    | ${dd} =     | Get Time | year,month,day |
-        | @{time} = | Get Time | year,month,day,hour,min,sec |  |  |
+        | @{time} = | Get Time | year month day hour min sec |  |  |
         | ${y}      | ${s} =   | Get Time    | seconds and year |  |
         => 
-        ${time} = '2006-03-29 15:06:21'
-        ${secs} = 1143637581
-        ${year} = '2006'
-        ${yyyy} = '2006', ${mm} = '03', ${dd} = '29'
-        @{time} = [ '2006', '03', '29', '15', '06', '21' ]
-        ${y} = '2006'
-        ${s} = '21'
+        - ${time} = '2006-03-29 15:06:21'
+        - ${secs} = 1143637581
+        - ${year} = '2006'
+        - ${yyyy} = '2006', ${mm} = '03', ${dd} = '29'
+        - @{time} = [ '2006', '03', '29', '15', '06', '21' ]
+        - ${y} = '2006'
+        - ${s} = '21'
         """
         return utils.get_time(format)
 
@@ -1020,8 +1020,8 @@ class Misc:
         | ${status} = | Evaluate | 0 < ${RC} < 10          |
         | ${dict} =   | Evaluate | { 'a':1, 'b':2, 'c':3 } |
         =>
-        ${status} = False
-        ${dict} = { 'a':1, 'b':2, 'c':3 }
+        - ${status} = False
+        - ${dict} = { 'a':1, 'b':2, 'c':3 }
         """
         try:
             return eval(expression)

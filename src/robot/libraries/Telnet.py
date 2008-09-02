@@ -372,7 +372,7 @@ class TelnetConnection(telnetlib.Telnet):
         regular expressions. The keyword returns the text up to and including 
         the first match to any of the regular expressions.
         
-        If the last argument in *excpected is a valid log level, it is used
+        If the last argument in '*expected' is a valid log level, it is used
         as 'loglevel' in the keyword 'Read'.
         
         Examples:
