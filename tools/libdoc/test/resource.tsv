@@ -1,0 +1,20 @@
+*keyword*
+kw	[document]	foo bar `kw 2`.
+	noop
+kw 2	[document]	foo bar `kw`.\n baa `${a1}` 
+	[arguments]	${a1}	${a2}
+	noop
+kw 3	[arguments]	${a1}	@{a2}
+kw 4	[arguments]	${a1}=d	@{a2}
+kw 5	[document]	foo bar `kw`.\n baa `${a1}` alskdj alskdjlajd
+	...	askf laskdjf asldkfj alsdkfj alsdkfjasldkfj 
+	...	askf laskdjf _asldkfj_ alsdkfj alsdkfjasldkfj 
+	...	askf *laskdjf* asldkfj alsdkfj alsdkfjasldkfj 
+	...	http://foo.bar\n\n
+	...	- aaa\n
+	...	- bbb\n
+	...	\n
+	...	-------------\n
+	...	\n
+	...	| *1* | *2* |\n
+	...	| foo | bar |\n
