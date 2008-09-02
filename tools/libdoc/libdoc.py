@@ -134,7 +134,7 @@ def exit(msg=None, error=None):
 
 def LibraryDoc(libname):
     ext = os.path.splitext(libname)[1].lower()
-    if  ext == '.html':
+    if  ext in ['.html', '.htm', '.xhtml', '.tsv']:
         return ResourceDoc(libname)
     if ext == '.java':
         return JavaLibraryDoc(libname)
@@ -149,7 +149,7 @@ def doc_to_html(doc):
 
 
 
-class _DocToHtml:
+class _DocHelper:
 
     _name_regexp = re.compile("`(.+?)`")
     _list_or_table_regexp = re.compile('^(\d+\.|[-*|]) .')
@@ -159,25 +159,24 @@ class _DocToHtml:
             return self._get_htmldoc(self.doc)
         raise AttributeError("Non-existing attribute '%s'" % name)
 
-    def _get_htmldoc(self, doc):
-        doc = self._remove_extra_newlines(doc)
-        doc = utils.html_escape(doc, formatting=True)
-        doc = self._name_regexp.sub(self._link_keywords, doc)
-        return doc
-
-    def _remove_extra_newlines(self, doc):
+    def _process_doc(self, doc):
         ret = ['']
         for line in doc.splitlines():
-            line = line.rstrip() + ' '
-            if line == ' ' and ret[-1] != '':
-                line = ''
+            line = line.strip()
+            if line == '' and ret[-1] != '':
                 ret.append('\n\n')
             elif self._list_or_table_regexp.search(line) and ret[-1] != '':
                 ret.append('\n')
-            elif ret[-1].endswith('| '):
+            elif ret[-1].startswith('| ') and ret[-1].endswith(' | '):
                 ret.append('\n')
+            elif ret[-1] != '':
+                ret.append(' ')
             ret.append(line)
         return ''.join(ret)
+
+    def _get_htmldoc(self, doc):
+        doc = utils.html_escape(doc, formatting=True)
+        return self._name_regexp.sub(self._link_keywords, doc)
 
     def _link_keywords(self, res):
         name = res.group(1)
@@ -191,14 +190,14 @@ class _DocToHtml:
         return '<span class="name">%s</span>' % name
 
 
-class PythonLibraryDoc(_DocToHtml):
+class PythonLibraryDoc(_DocHelper):
     
     type = 'library'
     
     def __init__(self, name):
         lib = self._import(name)
         self.name = lib.name
-        self.doc = self._get_doc(lib)
+        self.doc = self._process_doc(self._get_doc(lib))
         self.keywords = [ KeywordDoc(handler, self) 
                           for handler in lib.handlers.values() ]
         self.keywords.sort()
@@ -214,7 +213,7 @@ class PythonLibraryDoc(_DocToHtml):
 
     def _get_doc(self, lib):
         if lib.doc == '':
-            return "Documentation for test library  `%s`."
+            return "Documentation for test library  `%s`." % lib.name
         return lib.doc
     
 
@@ -223,22 +222,21 @@ class ResourceDoc(PythonLibraryDoc):
     type = 'resource'
         
     def _import(self, path):
-        if not os.path.exists(path):
-            found = None
-            for dire in [ item for item in sys.path if os.path.isdir(item) ]:
-                if os.path.exists(os.path.join(dire, path)):
-                    found = os.path.join(dire, path)
-                    break
-            if found is None:
-                DataError("Resource file '%s' doesn't exist." % path)
-            path = found
-        return UserLibrary(path)
+        return UserLibrary(self._find_resource_file(path))
+
+    def _find_resource_file(self, path):
+        if os.path.isfile(path):
+            return path
+        for dire in [ item for item in sys.path if os.path.isdir(item) ]:
+            if os.path.isfile(os.path.join(dire, path)):
+                return os.path.join(dire, path)
+        DataError("Resource file '%s' doesn't exist." % path)
     
     def _get_doc(self, lib):
         return "Documentation for resource file `%s`." % lib.name
     
     
-class _BaseKeywordDoc(_DocToHtml):
+class _BaseKeywordDoc(_DocHelper):
     
     def __cmp__(self, other):
         return cmp(self.name, other.name)
@@ -246,7 +244,7 @@ class _BaseKeywordDoc(_DocToHtml):
     def __getattr__(self, name):
         if name == 'argstr':
             return ', '.join(self.args)
-        return _DocToHtml.__getattr__(self, name)
+        return _DocHelper.__getattr__(self, name)
         
 
 class KeywordDoc(_BaseKeywordDoc):
@@ -254,7 +252,7 @@ class KeywordDoc(_BaseKeywordDoc):
     def __init__(self, handler, library):
         self.name = handler.name
         self.args = self._get_args(handler) 
-        self.doc = handler.doc
+        self.doc = self._process_doc(handler.doc)
         self.shortdoc = handler.shortdoc
         self.lib = library
 
@@ -267,8 +265,9 @@ class KeywordDoc(_BaseKeywordDoc):
 
     def _parse_args(self, handler):
         args = list(handler.args)
+        # strip ${} from user keywords (args look more consistent e.g. in IDE)
         if handler.type == 'user':
-            args = [ arg[2:-1] for arg in args ]  # strip ${}
+            args = [ arg[2:-1] for arg in args ]  
         default_count = len(handler.defaults)
         if default_count == 0:
             required = args[:]
@@ -284,14 +283,14 @@ class KeywordDoc(_BaseKeywordDoc):
    
 if utils.is_jython:
     
-    class JavaLibraryDoc:
+    class JavaLibraryDoc(_DocHelper):
         
         type = 'library'
         
         def __init__(self, path):
             cls = self._get_class(path)
             self.name = cls.qualifiedName()
-            self.doc = cls.getRawCommentText()
+            self.doc = self._process_doc(cls.getRawCommentText())
             self.keywords = [ JavaKeywordDoc(method, self) 
                               for method in cls.methods() ]
             self.keywords.sort()
@@ -329,10 +328,11 @@ if utils.is_jython:
         def __init__(self, method, library):
             self.name = utils.printable_name(method.name(), True)
             self.args = [ param.name() for param in method.parameters() ]
-            self.doc = method.getRawCommentText()
+            self.doc = self._process_doc(method.getRawCommentText())
             self.shortdoc = self.doc and self.doc.splitlines()[0] or ''
             self.lib = library
-            
+
+
         
 DOCUMENT_TEMPLATE = '''
 <html>
