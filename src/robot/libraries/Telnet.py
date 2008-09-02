@@ -25,18 +25,20 @@ class Telnet:
 
     """A test library providing Telnet connections and communicating with them.
 
-    This library takes the optional arguments timeout, newline, prompt and 
-    prompt_is_regexp. These are default values used when a new connection is
-    opened with the keyword 'Open', and they can be overridden. The purpose of
-    these parameters can be found from the documentation of 'Open'.  
+    This library takes the optional arguments `timeout`, `newline`,
+    `prompt` and `prompt_is_regexp`. These are default values used
+    when a new connection is opened with the keyword `Open`, and they
+    can be overridden. The purpose of these parameters can be found
+    from the documentation of `Open`.
     
     Examples (use only one of these):
 
+    | *Setting* | *Value* | *Value* | *Value* | *Value* | *Value* | *Comment* |
     | Library | Telnet |     |    |     |    | # default values                |
     | Library | Telnet | 0.5 |    |     |    | # set only timeout              |
     | Library | Telnet |     | LF |     |    | # set only newline              |
     | Library | Telnet | 2.0 | LF |     |    | # set timeout and newline       |
-    | Library | Telnet | 2.0 | LF | $   |    | # set also prompt               |
+    | Library | Telnet | 2.0 | CRLF | $ |    | # set also prompt               |
     | Library | Telnet | 2.0 | LF | ($|~) | True | # set prompt with simple regexp |
     """
 
@@ -86,26 +88,22 @@ class Telnet:
 
         Possible already opened connections are cached.
 
-        Returns the index of this connection, which can be used later to switch
-        back to the connection. The index starts from 1 and is reset back to it
-        when the 'Close All Connections' keyword is used.
+        Returns the index of this connection, which can be used later
+        to switch back to the connection. The index starts from 1 and
+        is reset back to it when the `Close All Connections` keyword
+        is used.
 
-        The optional alias is a name for the connection, and it can be used for
-        switching between connections, similarly as the index. See 'Switch
-        Connection' for more details about that.
+        The optional `alias` is a name for the connection, and it can
+        be used for switching between connections, similarly as the
+        index. See `Switch Connection` for more details about that.
 
-        The timeout, newline and prompt attributes got default values when the 
-        library was taken into use, but they can be overridden for each opened 
-        connection and also set after opening the connection using the 
-        'Set Timeout', 'Set Newline' and 'Set Prompt' keywords.
-        
-        Timeout is used with keywords that start 'Read Until'. If the text they
-        are searching is not found within the timeout, those keywords fail.
-        
-        Newline is the newline character in the target system.
-        
-        Prompt is the prompt character of the target system, and it can be given
-        as a regular expression when promp_is_regexp is set to True.
+        The `timeout`, `newline`, `prompt` and `prompt_is_regexp`
+        arguments got default values when the library is taken into
+        use, but setting them here overrides those values for the
+        opened connection. They can also be set after opening the
+        connection using the `Set Timeout`, `Set Newline` and `Set
+        Prompt` keywords. See these keywords for more information
+        about possible values for these arguments.
         """
         if timeout is None or timeout == '':
             timeout = self._timeout
@@ -126,10 +124,10 @@ class Telnet:
     def switch_connection(self, index_or_alias):
         """Switches between active connections using an index or alias.
 
-        The index is got from 'Open Connection' keyword, and an alias can be 
-        given to it.
+        The index is got from `Open Connection` keyword, and an alias
+        can be given to it.
 
-	Returns the index of previously active connection.
+        Returns the index of previously active connection.
 
         Example:
         | Open Connection   | myhost.net        |          |          |
@@ -142,13 +140,14 @@ class Telnet:
         | Write             | something         |          |          |
         | Switch Connection | 2nd conn          | # alias  |          |
         | Write             | whatever          |          |          |
-	| Switch Connection | ${old index}      | # back to original again |
+        | Switch Connection | ${old index}      | # back to original again |
         | [Teardown]        | Close All Connections   |            |
 
-        The example above expects that there were no other open connections when
-        opening the first one, because it used index '1' when switching to the
-        connection later. If you are not sure about that, you can store the
-        index into a variable as shown below.
+        The example above expects that there were no other open
+        connections when opening the first one, because it used index
+        '1' when switching to the connection later. If you are not
+        sure about that, you can store the index into a variable as
+        shown below.
 
         | ${id} =            | Open Connection | myhost.net |
         | # Do something ... |                 |            |
@@ -161,11 +160,11 @@ class Telnet:
     def close_all_connections(self):
         """Closes all open connections and empties the connection cache.
 
-        After this keyword, new indexes got from the 'Open Connection' keyword 
-        are reset to 1.
+        After this keyword, new indexes got from the `Open Connection`
+        keyword are reset to 1.
 
-        This keyword should be used in a test or suite teardown to make sure
-        all connections are closed.
+        This keyword should be used in a test or suite teardown to
+        make sure all connections are closed.
         """
         self._conn = self._cache.close_all()
         
@@ -184,12 +183,13 @@ class TelnetConnection(telnetlib.Telnet):
     def set_timeout(self, timeout):
         """Sets the timeout used in read operations to the given value.
 
-        'timeout' is given in Robot Framework's time format
+        `timeout` is given in Robot Framework's time format
         (e.g. 1 minute 20 seconds).
 
-        Read operations that expect some output to appear ('Read Until', 
-        'Read Until Regexp', 'Read Until Prompt') use this timeout and fail if 
-        the expected output has not appeared when this timeout expires. 
+        Read operations that expect some output to appear (`Read
+        Until`, `Read Until Regexp`, `Read Until Prompt`) use this
+        timeout and fail if the expected output has not appeared when
+        this timeout expires.
         
         The old timeout is returned and can be used to restore it later.
         
@@ -198,24 +198,34 @@ class TelnetConnection(telnetlib.Telnet):
         | Do Something |
         | Set Timeout | ${tout} |
         """
-        old = hasattr(self, '_timeout') and self._timeout or 3.0
+        old = getattr(self, '_timeout', 3.0)
         self._timeout = utils.timestr_to_secs(timeout)
         return utils.secs_to_timestr(old)
 
     def set_newline(self, newline):
-        """Sets the newline used by the 'Write' keyword.
+        """Sets the newline used by the `Write` keyword.
+
+        Newline can be given either in escaped format using '\\n' and
+        '\\r', or with special 'LF' and 'CR' syntax.
+
+        Examples:
+        | Set Newline | \\n  |
+        | Set Newline | CRLF |
         
+        Correct newline to use depends on the system and the default
+        value is 'CRLF'.
+
         The old newline is returned and can be used to restore it later.
-        See 'Set Timeout' for an example. 
+        See `Set Prompt` or `Set Timeout` for an example. 
         """
-        old = hasattr(self, '_newline') and self._newline or 'CRLF'
+        old = getattr(self, '_newline', 'CRLF')
         self._newline = newline.upper().replace('LF','\n').replace('CR','\r')
         return old
 
     def close_connection(self, loglevel=None):
         """Closes the current Telnet connection and returns any remaining output.
 
-        See 'Read' for more information on 'loglevel'.
+        See `Read` for more information on `loglevel`.
         """
         telnetlib.Telnet.close(self)
         ret = self.read_all().decode('ASCII', 'replace')
@@ -226,16 +236,17 @@ class TelnetConnection(telnetlib.Telnet):
               password_prompt='Password: '):
         """Logs in to the Telnet server with the given user information.
 
-        The login keyword reads from the connection until login_prompt is
-        encountered and then types the user name. Then it reads until
-        password_prompt is encountered and types the password. The rest of the
-        output (if any) is also read, and all the text that has been read is
-        returned as a single string.
+        The login keyword reads from the connection until login_prompt
+        is encountered and then types the user name. Then it reads
+        until password_prompt is encountered and types the
+        password. The rest of the output (if any) is also read, and
+        all the text that has been read is returned as a single
+        string.
         
-        If a prompt has been set to this connection, either with 'Open Connection'
-        or 'Set Prompt', this keyword reads the output until the prompt is
-        found. Otherwise, the keyword sleeps for a second and reads everything
-        that is available.
+        If a prompt has been set to this connection, either with `Open
+        Connection` or `Set Prompt`, this keyword reads the output
+        until the prompt is found. Otherwise, the keyword sleeps for a
+        second and reads everything that is available.
         """
         ret = self.read_until(login_prompt, 'TRACE')
         self.write_bare(username + self._newline)
@@ -270,14 +281,15 @@ class TelnetConnection(telnetlib.Telnet):
     def write(self, text, loglevel=None):
         """Writes the given text over the connection and appends a newline.
         
-        Consumes the written text (until the appended newline) from the output 
-        and returns it. The given text must not contain newlines.
+        Consumes the written text (until the appended newline) from
+        the output and returns it. The given text must not contain
+        newlines.
         
-        Note: This keyword does not return the possible output of the executed 
-        command. To get the output, one of the 'Read XXX' keywords must be 
-        used.
+        Note: This keyword does not return the possible output of the
+        executed command. To get the output, one of the `Read XXX`
+        keywords must be used.
 
-	See 'Read' for more information on 'loglevel'.
+        See `Read` for more information on `loglevel`.
         """
         if self._newline in text:
             raise RuntimeError("Write cannot be used with string containing " 
@@ -301,25 +313,26 @@ class TelnetConnection(telnetlib.Telnet):
         
     def write_until_expected_output(self, text, expected, timeout, 
                                     retry_interval, loglevel=None):
-        """Writes the given text repeatedly, until 'expected' appears in the output.
+        """Writes the given text repeatedly, until `expected` appears in the output.
         
-        'text' is written without appending a newline. 'retry_interval' defines
-        the time waited before writing 'text' again. 'text' is consumed
-        from the output before 'expected' is tried to be read. 
+        `text` is written without appending a
+        newline. `retry_interval` defines the time waited before
+        writing `text` again. `text` is consumed from the output
+        before `expected` is tried to be read.
         
-        If 'expected' does not appear in the output within 'timeout', this
-        keyword fails. 
+        If `expected` does not appear in the output within `timeout`,
+        this keyword fails.
         
-        See 'Read' for more information on 'loglevel'.
+        See `Read` for more information on `loglevel`.
         
         Example:
         | Write Until Expected Output | ps -ef| grep myprocess\\n | myprocess |
-        | ... | 5s | 0.5s |
+        | ...                         | 5s                        | 0.5s      |
         
-        This writes the 'ps -ef | grep myprocess\\n', until 'myprocess' 
-        appears on the output. The command is written every 0.5 seconds and 
-        the keyword ,fails if 'myprocess' does not appear in the output in
-        5 seconds.
+        This writes the 'ps -ef | grep myprocess\\n', until
+        'myprocess' appears on the output. The command is written
+        every 0.5 seconds and the keyword ,fails if 'myprocess' does
+        not appear in the output in 5 seconds.
         
         New in Robot Framework version 1.8.2.
         """
@@ -340,10 +353,11 @@ class TelnetConnection(telnetlib.Telnet):
     def read(self, loglevel=None):
         """Reads and returns/logs everything that is currently available in the output.
 
-        The read message is always returned and logged. The default log level is 
-        either 'INFO', or the level set with 'Set Default Log Level'.
-        'loglevel' can be used to override the default log level, and the
-        available levels are TRACE, DEBUG, INFO, and WARN.
+        The read message is always returned and logged. The default
+        log level is either 'INFO', or the level set with `Set Default
+        Log Level`.  `loglevel` can be used to override the default
+        log level, and the available levels are TRACE, DEBUG, INFO,
+        and WARN.
         """
         ret = self.read_very_eager().decode('ASCII', 'replace')
         self._log(ret, loglevel)
@@ -355,7 +369,7 @@ class TelnetConnection(telnetlib.Telnet):
         Text up to and including the match is returned. If no match is
         found, the keyword fails.
         
-        See 'Read' for more information on 'loglevel'.
+        See `Read` for more information on `loglevel`.
         """
         ret = telnetlib.Telnet.read_until(self, expected, 
                                           self._timeout).decode('ASCII', 'replace')
@@ -368,12 +382,13 @@ class TelnetConnection(telnetlib.Telnet):
     def read_until_regexp(self, *expected):
         """Reads from the current output, until a match to a regexp in expected.
 
-        Expected is a list of regular expression patterns as strings, or compiled
-        regular expressions. The keyword returns the text up to and including 
-        the first match to any of the regular expressions.
+        Expected is a list of regular expression patterns as strings,
+        or compiled regular expressions. The keyword returns the text
+        up to and including the first match to any of the regular
+        expressions.
         
-        If the last argument in '*expected' is a valid log level, it is used
-        as 'loglevel' in the keyword 'Read'.
+        If the last argument in `*expected` is a valid log level, it
+        is used as `loglevel` in the keyword `Read`.
         
         Examples:
         | Read Until Regexp | (#|$) |
@@ -403,10 +418,10 @@ class TelnetConnection(telnetlib.Telnet):
     def read_until_prompt(self, loglevel=None):
         """Reads from the current output, until a prompt is found.
         
-        The prompt must have been set, either in the Library import or at login
-        time, or by using the 'Set Prompt' keyword.
+        The prompt must have been set, either in the library import or
+        at login time, or by using the `Set Prompt` keyword.
         
-        See 'Read' for more information on 'loglevel'.
+        See `Read` for more information on `loglevel`.
         """
         if not self._prompt_is_set():
             raise RuntimeError('Prompt is not set')
@@ -416,27 +431,28 @@ class TelnetConnection(telnetlib.Telnet):
         return self.read_until(prompt, loglevel)
     
     def execute_command(self, command, loglevel=None):
-	"""Executes given command and reads and returns everything until prompt.
+        """Executes given command and reads and returns everything until prompt.
 
-	This is a convenience keyword; following two are functionally identical:
+        This is a convenience keyword; following two are functionally
+        identical:
 
-	| ${out} = | Execute Command   | Some command |
+        | ${out} = | Execute Command   | Some command |
 
-	| Write    | Some command      |
-	| ${out} = | Read Until Prompt |
+        | Write    | Some command      |
+        | ${out} = | Read Until Prompt |
 
-	This keyword expects a prompt to be set, see 'Read Until Prompt' for 
-	details.
+        This keyword expects a prompt to be set, see `Read Until
+        Prompt` for details.
 
-	See 'Read' for more information on 'loglevel'.
-	"""
+        See `Read` for more information on `loglevel`.
+        """
         self.write(command, loglevel)
         return self.read_until_prompt(loglevel)
 
     def set_prompt(self, prompt, prompt_is_regexp=False):
-        """Sets the prompt used in this connection to 'prompt'.
+        """Sets the prompt used in this connection to `prompt`.
         
-        If 'prompt_is_regexp' is a non-empty string, the given prompt is 
+        If `prompt_is_regexp` is a non-empty string, the given prompt is 
         considered to be a regular expression.
         
         The old prompt is returned and can be used to restore it later.
@@ -463,7 +479,7 @@ class TelnetConnection(telnetlib.Telnet):
         
         The possible values are TRACE, DEBUG, INFO and WARN. The default is
         INFO. The old value is returned and can be used to restore it later,
-        similarly as with 'Set Timeout'.
+        similarly as with `Set Timeout`.
         """
         self._is_valid_log_level(level, raise_if_invalid=True)
         old = self._default_log_level
