@@ -109,17 +109,33 @@ import sys
 from docutils.core import publish_cmdline
 
 
-description = 'HTML generator for Robot Framework Tool Documentation.'
-stylesheetpath = os.path.join(os.path.dirname(os.path.abspath(__file__)), 
-                              '..', 'doc', 'userguide', 'src', 'userguide.css')
-arguments = [ 
-'--time', 
-'--stylesheet-path=%s' % stylesheetpath,
-sys.argv[1],
-sys.argv[1].replace('.txt', '.html')
-]
+def create_tooldoc(tool_name):
+    description = 'HTML generator for Robot Framework Tool Documentation.'
+    stylesheet_path = os.path.join(BASEDIR, '..', 'doc', 'userguide', 'src', 
+                                   'userguide.css')
+    base_path = os.path.join(tool_name, 'doc', tool_name)
+    arguments = [ '--time', '--stylesheet-path=%s' % stylesheet_path,
+                  base_path + '.txt', base_path + '.html' ]
 
-publish_cmdline(writer_name='html', description=description, argv=arguments)
+    publish_cmdline(writer_name='html', description=description, argv=arguments)
+    print os.path.abspath(arguments[-1])
 
-print os.path.abspath(arguments[-1])
 
+BASEDIR = os.path.dirname(os.path.abspath(__file__))
+VALID_TOOLS = [ path for path in os.listdir(BASEDIR) 
+                if os.path.isdir(path) and not path.startswith('.')]
+
+
+if __name__ == '__main__':
+    if len(sys.argv) != 2 or sys.argv[1].lower() not in VALID_TOOLS + ['all']:
+        print "Usage:  %s toolname | all\n" % (os.path.basename(sys.argv[0]))
+        print "Available tools are:"
+        for tool in sorted(VALID_TOOLS):
+            print tool
+        sys.exit(1)
+    tool = sys.argv[1].lower()
+    if tool == 'all':
+        for name in VALID_TOOLS:
+            create_tooldoc(name)
+    else:
+        create_tooldoc(tool)
