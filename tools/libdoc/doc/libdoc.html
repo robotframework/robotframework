@@ -457,16 +457,43 @@ pre.literal-block, pre.doctest-block {
 <div class="document" id="libdoc-py">
 <h1 class="title">libdoc.py</h1>
 
+<!-- Roles to use in text like :rolename:`text`. Styled in userguide.css.
+- var    variables
+- opt    settings in setting table (e.g. Force Tags), tc/kw tables
+         (e.g [Documentation]) and command line options (e.g. - -name)
+- prog   program names (e.g. rebot, risto.py)
+- code   programming code
+- msg    test case status and message, as well as log messages and levels
+- name   keyword, library, test case, test suite, etc. names
+- cli    command line examples (note that options alone use opt)
+- path   file names and paths
+- misc   everything else (synonym to ``text``) -->
 <p>A tool for generating keyword documentation from test libraries and
 resource files.</p>
+<div class="contents topic" id="contents">
+<p class="topic-title first">Contents</p>
+<ul class="simple">
+<li><a class="reference internal" href="#synopsis" id="id6">Synopsis</a></li>
+<li><a class="reference internal" href="#options" id="id7">Options</a></li>
+<li><a class="reference internal" href="#description" id="id8">Description</a></li>
+<li><a class="reference internal" href="#writing-documentation" id="id9">Writing documentation</a><ul>
+<li><a class="reference internal" href="#python-libraries" id="id10">Python libraries</a></li>
+<li><a class="reference internal" href="#java-libraries" id="id11">Java libraries</a></li>
+<li><a class="reference internal" href="#dynamic-libraries" id="id12">Dynamic libraries</a></li>
+<li><a class="reference internal" href="#resource-files" id="id13">Resource files</a></li>
+<li><a class="reference internal" href="#documentation-formatting" id="id14">Documentation formatting</a></li>
+</ul>
+</li>
+</ul>
+</div>
 <div class="section" id="synopsis">
-<h1>Synopsis</h1>
+<h1><a class="toc-backref" href="#id6">Synopsis</a></h1>
 <pre class="literal-block">
 libdoc.py [options] library_or_resource_file
 </pre>
 </div>
 <div class="section" id="options">
-<h1>Options</h1>
+<h1><a class="toc-backref" href="#id7">Options</a></h1>
 <blockquote>
 <table class="docutils option-list" frame="void" rules="none">
 <col class="option" />
@@ -482,7 +509,7 @@ The default value is HTML.</td></tr>
 </tr>
 <tr><td>&nbsp;</td><td>Specifies where to write the generated documentation.
 If the path is a directory, the documentation is
-generated there using the name '&lt;name&gt;.&lt;format&gt;&quot;
+generated there using the name '&lt;name&gt;.&lt;format&gt;'
 with an index after the '&lt;name&gt;' part, if a file
 with that name already exists. If the given path
 points to a file, this path is used as is, and the
@@ -501,72 +528,61 @@ is executed from.</td></tr>
 </blockquote>
 </div>
 <div class="section" id="description">
-<h1>Description</h1>
-<p>Library documentation can generate library keyword documentation from
-test libraries and resource files either in the HTML or XML format. The
-former is for humans and the latter mainly for Robot IDE or other
-tools.</p>
-<p>Documentation can be created for</p>
-<blockquote>
+<h1><a class="toc-backref" href="#id8">Description</a></h1>
+<p><span class="prog">libdoc.py</span> generate keyword documentation from test libraries
+and resource files either in the HTML or XML format. The former is for
+humans and the latter mainly for Robot Framework IDE or other tools.</p>
+<p>Documentation can be created for:</p>
 <ul class="simple">
-<li>Test libraries implemented with Python or Java using the normal library API,</li>
-<li>Test libraries using the dynamic API (but you only get keyword names and not
-their arguments or documentations)</li>
-<li>Resource files</li>
+<li>Test libraries implemented with <a class="reference internal" href="#python-libraries">Python</a> or <a class="reference internal" href="#java-libraries">Java</a> using the normal library API.</li>
+<li>Test libraries using the <a class="reference internal" href="#dynamic-libraries">dynamic API</a>.</li>
+<li><a class="reference internal" href="#resource-files">Resource files</a>.</li>
 </ul>
-</blockquote>
 <p>It is possible to specify a Python test library by giving either the
 path to the source or only the library name. If the library name is
 used, it must be in the same format as in the Robot Framework test
 data when importing libraries. In this case, the library is searched
 from PYTHONPATH (and from CLASSPATH, if on Jython).</p>
-<p>A Java test library implemented with a normal library API can be specified by
-giving the path to the source file containing the library class. Additionally,
-<span class="path">tools.jar</span>, which is part of the Sun JDK distribution, must be found from
-CLASSPATH when <span class="prog">libdoc.py</span> is executed.</p>
+<p>A Java test library implemented with a normal library API can be
+specified by giving the path to the source code file containing the
+library implementation. Additionally, <span class="path">tools.jar</span>, which is part
+of the Sun JDK distribution, must be found from CLASSPATH when
+<span class="prog">libdoc.py</span> is executed.</p>
 <p>Libraries using the dynamic library API are handled in the same way as Python
 libraries are.</p>
 <p>Resource files must always be specified using a path. If the path does not
 exist, resource files are also searched from all directories in PYTHONPATH.</p>
 <p>Examples:</p>
 <pre class="literal-block">
-$ python path/to/libdoc.py OperatingSystem
-$ python path/to/libdoc.py --output doc/MyLib.html src/MyLib.py
-$ python path/to/libdoc.py test/resource.html
-$ python path/to/libdoc.py --format xml OperatingSystem
-$ python path/to/libdoc.py --format xml --output doc test/resource.html
-$ jython path/to/libdoc.py --format xml MyJavaLibrary.java
+$ python libdoc.py OperatingSystem
+$ python libdoc.py --output doc/MyLib.html src/MyLib.py
+$ python libdoc.py test/resource.html
+$ python libdoc.py --format xml OperatingSystem
+$ python libdoc.py --format xml --output doc test/resource.html
+$ jython libdoc.py --format xml MyJavaLibrary.java
 </pre>
-<div class="section" id="how-imported-libraries-are-found">
-<h2>How imported libraries are found</h2>
-<p>The libraries to document are imported similarly as they are imported
-when executing test cases. Libraries can only be imported if they are
-found from PYTHONPATH (or from CLASSPATH when running with
-Jython). PYTHONPATH (and/or the CLASSPATH) must thus be set correctly
-before generating the documentation. An exception to this rule are
-normal Java libraries; it is enough to give the path to the source
-file for these.</p>
-</div>
 </div>
 <div class="section" id="writing-documentation">
-<h1>Writing documentation</h1>
+<h1><a class="toc-backref" href="#id9">Writing documentation</a></h1>
+<p>For more information about how to actually create test libraries and resource
+files see <a class="reference external" href="http://code.google.com/p/robotframework/wiki/UserGuide">Robot Framework User Guide</a>.</p>
+<div class="section" id="python-libraries">
+<h2><a class="toc-backref" href="#id10">Python libraries</a></h2>
 <p>The documentation for Python libraries is written simply as doc
 strings for the library class and for methods implementing
 keywords. The first line of the method documentation is considered as
 a short documentation for the keywords (used for example as a tool tip in
 links in the generated HTML documentation), and it should thus be as
-describing as possible, but not too long. From Robot 1.4 onwards, it
-is possible to use simple formatting in documentation (for example, bold and
-tables).</p>
+describing as possible, but not too long.</p>
 <p>The simple example below illustrates how to write the documentation,
-and standard libraries (for example, OperatingSystemLibrary) give more
+and for example <a class="reference external" href="http://code.google.com/p/robotframework/wiki/TestLibraries">standard libraries</a> give more
 realistic examples. For more information on Python documentation
 strings, see <a class="reference external" href="http://www.python.org/dev/peps/pep-0257/">PEP-257</a>.</p>
 <div class="highlight"><pre><span class="k">class</span> <span class="nc">ExampleLib</span><span class="p">:</span>
 
     <span class="sd">&quot;&quot;&quot;Library for demo purposes.</span>
 
-<span class="sd">    This library is only used in an example and does not do anything useful.</span>
+<span class="sd">    This library is only used in an example and it does&#39;t do anything useful.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">my_keyword</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -582,14 +598,104 @@ strings, see <a class="reference external" href="http://www.python.org/dev/peps/
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">pass</span>
 </pre></div>
+</div>
+<div class="section" id="java-libraries">
+<h2><a class="toc-backref" href="#id11">Java libraries</a></h2>
 <p>When writing documentation for a normal Java library, conventions for
 writing Javadoc should be used. The documentation is generated based
-on the Javadocs in the source files.</p>
+on the Javadocs in the source files. For example following simple
+example has exactly same documentation (and functionality) than the
+earlier Python example.</p>
+<div class="highlight"><pre><span class="c">/**</span>
+<span class="c"> * Library for demo purposes.</span>
+<span class="c"> *</span>
+<span class="c"> * This library is only used in an example and it does&#39;t do anything useful.</span>
+<span class="c"> */</span>
+<span class="k">public</span> <span class="k">class</span> <span class="nc">ExampleLib</span> <span class="o">{</span>
+
+    <span class="c">/**</span>
+<span class="c">     * Does nothing</span>
+<span class="c">     */</span>
+    <span class="k">public</span> <span class="kt">void</span> <span class="nf">myKeyword</span><span class="o">()</span> <span class="o">{</span>
+    <span class="o">}</span>
+
+    <span class="c">/**</span>
+<span class="c">     * Takes one argument and *does nothing* with it.</span>
+<span class="c">     *</span>
+<span class="c">     * Example:</span>
+<span class="c">     * | Your Keyword | xxx |</span>
+<span class="c">     * | Your Keyword | yyy |</span>
+<span class="c">     */</span>
+    <span class="k">public</span> <span class="kt">void</span> <span class="nf">yourKeyword</span><span class="o">(</span><span class="n">String</span> <span class="n">arg</span><span class="o">)</span> <span class="o">{</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</pre></div>
+</div>
+<div class="section" id="dynamic-libraries">
+<h2><a class="toc-backref" href="#id12">Dynamic libraries</a></h2>
+<p>To be able to generate meaningful documentation for dynamic libraries,
+they must return keyword argument names and documentation using
+<span class="code">get_keyword_arguments</span> and <span class="code">get_keyword_documentation</span>
+methods (or using their camelCase variants <span class="code">getKeywordArguments</span>
+and <span class="code">getKeywordDocumentation</span>). See the <a class="reference external" href="http://code.google.com/p/robotframework/wiki/UserGuide">user guide</a> for more
+information about how to create these methods and the dynamic library
+API in general.</p>
+</div>
+<div class="section" id="resource-files">
+<h2><a class="toc-backref" href="#id13">Resource files</a></h2>
+<p>Keywords in resource files can have documentation using
+<span class="opt">[Documentation]</span> setting, and this documentation is also used by
+<span class="prog">libdoc.py</span>. First line of the documentation (until the first
+<span class="code">\n</span>) is considered to be the short documentation similarly as
+with test libraries.</p>
+<p>Possible variables in resource files are not documented.</p>
+</div>
+<div class="section" id="documentation-formatting">
+<h2><a class="toc-backref" href="#id14">Documentation formatting</a></h2>
+<p>The <a class="reference external" href="http://code.google.com/p/robotframework/wiki/UserGuide">user guide</a> has an appendix explaining different documentation
+formatting possibilities. Most important fearues are formatting using
+<span class="code">*bold*</span> and <span class="code">_italic_</span>, automatic conversion of URLs to
+clickable links, and the possibility to create tables (useful for
+examples) simply with pipe character:</p>
+<pre class="literal-block">
+| Some Keyword    | arg |
+| Another Keyword |     |
+</pre>
+<p>In addition to the formatting explained in the user guide,
+<span class="prog">libdoc.py</span> supports also special formatting of keyword names
+and arguments with backtic character <span class="code">`</span>. Even more
+importantly, this syntax also automatically creates internal links to
+other keywords in the library. For example documentation of the
+following simple Python library would have link from <span class="name">Log
+Messages</span> to <span class="name">Log Message</span>, and <span class="code">`message`</span> and
+<span class="code">`level`</span> would be formatted specially.</p>
+<div class="highlight"><pre><span class="k">def</span> <span class="nf">log_message</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="s">&quot;INFO&quot;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Writes given message to log using specified log level.</span>
+
+<span class="sd">    `message` can be any object.</span>
+
+<span class="sd">    Valid values for `level` are &quot;INFO&quot; (default), &quot;DEBUG&quot; and &quot;TRACE&quot;.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">print</span> <span class="s">&quot;*</span><span class="si">%s</span><span class="s">* </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">level</span><span class="p">,</span> <span class="n">message</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">log_messages</span><span class="p">(</span><span class="n">message1</span><span class="p">,</span> <span class="n">message2</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="s">&quot;INFO&quot;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Writes given messages to log using specified log level.</span>
+
+<span class="sd">    See `Log Message` keyword for more information about valid values</span>
+<span class="sd">    for `level`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">log_message</span><span class="p">(</span><span class="n">message1</span><span class="p">,</span> <span class="n">level</span><span class="p">)</span>
+    <span class="n">log_message</span><span class="p">(</span><span class="n">message2</span><span class="p">,</span> <span class="n">level</span><span class="p">)</span>
+</pre></div>
+<p>Internal linking between keywords is used by all <a class="reference external" href="http://code.google.com/p/robotframework/wiki/TestLibraries">standard
+libraries</a>, so their documentation (and source) acts as a more
+realistic example.</p>
+</div>
 </div>
 </div>
 <div class="footer">
 <hr class="footer" />
-Generated on: 2008-08-24 23:53 UTC.
+Generated on: 2008-09-02 16:15 UTC.
 
 </div>
 </body>

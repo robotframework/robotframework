@@ -1,5 +1,4 @@
-.. role:: prog
-.. role:: path
+.. include:: ../../../doc/userguide/src/roles.txt
 
 =========
 libdoc.py
@@ -8,6 +7,9 @@ libdoc.py
 A tool for generating keyword documentation from test libraries and 
 resource files.
 
+.. contents::
+
+
 Synopsis
 --------
 
@@ -15,39 +17,41 @@ Synopsis
 
     libdoc.py [options] library_or_resource_file
 
+
 Options
 -------
     
     -f, --format <html|xml>  Specifies whether to generate HTML or XML output. 
-                          The default value is HTML.
-    -o, --output <path>   Specifies where to write the generated documentation. 
-                          If the path is a directory, the documentation is
-                          generated there using the name '<name>.<format>"
-                          with an index after the '<name>' part, if a file
-                          with that name already exists. If the given path
-                          points to a file, this path is used as is, and the
-                          possible existing file is overwritten. The default
-                          value for the path is the directory where the script
-                          is executed from.
+                             The default value is HTML.
+    -o, --output <path>      Specifies where to write the generated documentation. 
+                             If the path is a directory, the documentation is
+                             generated there using the name '<name>.<format>'
+                             with an index after the '<name>' part, if a file
+                             with that name already exists. If the given path
+                             points to a file, this path is used as is, and the
+                             possible existing file is overwritten. The default
+                             value for the path is the directory where the script
+                             is executed from.
     -P, --pythonpath <path>  Additional path(s) to insert into PYTHONPATH.
-    -h, --help            Prints this help.
-
+    -h, --help               Prints this help.
 
 
 Description
 -----------
 
-Library documentation can generate library keyword documentation from
-test libraries and resource files either in the HTML or XML format. The
-former is for humans and the latter mainly for Robot IDE or other
-tools.
+:prog:`libdoc.py` generate keyword documentation from test libraries
+and resource files either in the HTML or XML format. The former is for
+humans and the latter mainly for Robot Framework IDE or other tools.
 
-Documentation can be created for
+Documentation can be created for:
 
-   - Test libraries implemented with Python or Java using the normal library API,
-   - Test libraries using the dynamic API (but you only get keyword names and not
-     their arguments or documentations)
-   - Resource files
+- Test libraries implemented with Python__ or Java__ using the normal library API.
+- Test libraries using the `dynamic API`__.
+- `Resource files`_.
+
+__ `Python libraries`_
+__ `Java libraries`_
+__ `Dynamic libraries`_
 
 It is possible to specify a Python test library by giving either the
 path to the source or only the library name. If the library name is
@@ -55,10 +59,11 @@ used, it must be in the same format as in the Robot Framework test
 data when importing libraries. In this case, the library is searched
 from PYTHONPATH (and from CLASSPATH, if on Jython).
 
-A Java test library implemented with a normal library API can be specified by 
-giving the path to the source file containing the library class. Additionally, 
-:path:`tools.jar`, which is part of the Sun JDK distribution, must be found from 
-CLASSPATH when :prog:`libdoc.py` is executed.
+A Java test library implemented with a normal library API can be
+specified by giving the path to the source code file containing the
+library implementation. Additionally, :path:`tools.jar`, which is part
+of the Sun JDK distribution, must be found from CLASSPATH when
+:prog:`libdoc.py` is executed.
 
 Libraries using the dynamic library API are handled in the same way as Python 
 libraries are.
@@ -68,68 +73,170 @@ exist, resource files are also searched from all directories in PYTHONPATH.
 
 Examples::
 
-     $ python path/to/libdoc.py OperatingSystem
-     $ python path/to/libdoc.py --output doc/MyLib.html src/MyLib.py
-     $ python path/to/libdoc.py test/resource.html
-     $ python path/to/libdoc.py --format xml OperatingSystem
-     $ python path/to/libdoc.py --format xml --output doc test/resource.html
-     $ jython path/to/libdoc.py --format xml MyJavaLibrary.java
-
-
-How imported libraries are found
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  
- 
-The libraries to document are imported similarly as they are imported
-when executing test cases. Libraries can only be imported if they are
-found from PYTHONPATH (or from CLASSPATH when running with
-Jython). PYTHONPATH (and/or the CLASSPATH) must thus be set correctly
-before generating the documentation. An exception to this rule are
-normal Java libraries; it is enough to give the path to the source
-file for these.
+     $ python libdoc.py OperatingSystem
+     $ python libdoc.py --output doc/MyLib.html src/MyLib.py
+     $ python libdoc.py test/resource.html
+     $ python libdoc.py --format xml OperatingSystem
+     $ python libdoc.py --format xml --output doc test/resource.html
+     $ jython libdoc.py --format xml MyJavaLibrary.java
 
 
 Writing documentation
 ---------------------
+
+For more information about how to actually create test libraries and resource
+files see `Robot Framework User Guide`__.
+
+__ `user guide`_
+
   
+Python libraries
+~~~~~~~~~~~~~~~~
+
 The documentation for Python libraries is written simply as doc
 strings for the library class and for methods implementing
 keywords. The first line of the method documentation is considered as
 a short documentation for the keywords (used for example as a tool tip in
 links in the generated HTML documentation), and it should thus be as
-describing as possible, but not too long. From Robot 1.4 onwards, it
-is possible to use simple formatting in documentation (for example, bold and
-tables).
+describing as possible, but not too long.
 
 The simple example below illustrates how to write the documentation,
-and standard libraries (for example, OperatingSystemLibrary) give more
+and for example `standard libraries`_ give more
 realistic examples. For more information on Python documentation
-strings, see `PEP-257`_.
+strings, see `PEP-257`__.
 
-.. _PEP-257: http://www.python.org/dev/peps/pep-0257/
+__ http://www.python.org/dev/peps/pep-0257/
+
 
 .. sourcecode:: python
 
-	class ExampleLib:
+    class ExampleLib:
 
-    	    """Library for demo purposes.
+        """Library for demo purposes.
 
-    	    This library is only used in an example and does not do anything useful.
-    	    """
+        This library is only used in an example and it does't do anything useful.
+        """
 
-    	    def my_keyword(self):
-            	"""Does nothing."""
-            	pass
+        def my_keyword(self):
+            """Does nothing."""
+            pass
 
-    	    def your_keyword(self, arg):
-            	"""Takes one argument and *does nothing* with it.
+        def your_keyword(self, arg):
+            """Takes one argument and *does nothing* with it.
 
-        	Example:
-        	| Your Keyword | xxx |
-        	| Your Keyword | yyy |
-        	"""
-        	pass
+            Example:
+            | Your Keyword | xxx |
+            | Your Keyword | yyy |
+            """
+            pass
+
+
+Java libraries
+~~~~~~~~~~~~~~
 
 When writing documentation for a normal Java library, conventions for
 writing Javadoc should be used. The documentation is generated based
-on the Javadocs in the source files.
+on the Javadocs in the source files. For example following simple
+example has exactly same documentation (and functionality) than the
+earlier Python example.
 
+.. sourcecode:: java
+
+    /** 
+     * Library for demo purposes.
+     *
+     * This library is only used in an example and it does't do anything useful.
+     */
+    public class ExampleLib {
+
+        /** 
+         * Does nothing 
+         */
+        public void myKeyword() {
+        }
+
+        /** 
+         * Takes one argument and *does nothing* with it.
+         *
+         * Example:
+         * | Your Keyword | xxx |
+         * | Your Keyword | yyy |
+         */
+        public void yourKeyword(String arg) {
+        }
+    }
+
+
+Dynamic libraries
+~~~~~~~~~~~~~~~~~
+
+To be able to generate meaningful documentation for dynamic libraries,
+they must return keyword argument names and documentation using
+:code:`get_keyword_arguments` and :code:`get_keyword_documentation`
+methods (or using their camelCase variants :code:`getKeywordArguments`
+and :code:`getKeywordDocumentation`). See the `user guide`_ for more
+information about how to create these methods and the dynamic library
+API in general.
+
+
+Resource files
+~~~~~~~~~~~~~~
+
+Keywords in resource files can have documentation using
+:opt:`[Documentation]` setting, and this documentation is also used by
+:prog:`libdoc.py`. First line of the documentation (until the first
+:code:`\\n`) is considered to be the short documentation similarly as
+with test libraries.
+
+Possible variables in resource files are not documented.
+
+
+Documentation formatting
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+The `user guide`_ has an appendix explaining different documentation
+formatting possibilities. Most important fearues are formatting using
+:code:`*bold*` and :code:`_italic_`, automatic conversion of URLs to
+clickable links, and the possibility to create tables (useful for
+examples) simply with pipe character::
+
+   | Some Keyword    | arg |
+   | Another Keyword |     |
+
+In addition to the formatting explained in the user guide,
+:prog:`libdoc.py` supports also special formatting of keyword names
+and arguments with backtic character :code:`\``. Even more
+importantly, this syntax also automatically creates internal links to
+other keywords in the library. For example documentation of the
+following simple Python library would have link from :name:`Log
+Messages` to :name:`Log Message`, and :code:`\`message\`` and
+:code:`\`level\`` would be formatted specially.
+
+.. sourcecode:: python
+
+   def log_message(message, level="INFO"):
+       """Writes given message to log using specified log level.
+
+       `message` can be any object.
+
+       Valid values for `level` are "INFO" (default), "DEBUG" and "TRACE".
+       """
+       print "*%s* %s" % (level, message)
+
+   def log_messages(message1, message2, level="INFO"):
+       """Writes given messages to log using specified log level.
+
+       See `Log Message` keyword for more information about valid values 
+       for `level`.
+       """
+       log_message(message1, level)
+       log_message(message2, level)
+
+
+Internal linking between keywords is used by all `standard
+libraries`_, so their documentation (and source) acts as a more
+realistic example.
+
+
+.. _standard libraries: http://code.google.com/p/robotframework/wiki/TestLibraries
+.. _user guide: http://code.google.com/p/robotframework/wiki/UserGuide
