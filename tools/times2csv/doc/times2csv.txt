@@ -13,14 +13,24 @@ Synopsis
 
 ::
 
-  times2csv.py input-xml [output-csv]
+  times2csv.py input-xml [output-csv] [include-items]
 
 Description
 -----------
 
-This script reads the start, end, and elapsed times from all suites, tests and 
+This script reads start, end, and elapsed times from all suites, tests
+and/or keywords from the given output file, and writes them into an file
+in comma-separated-values (CSV) format. CSV files can then be further
+processed with spreadsheet programs. If the CSV output file is not
+given, its name is got from the input file by replacing the :path:`.xml`
+extension with :path:`.csv`. Include-items can be used for defining which 
+items are written. Possible include values are suite, test and keyword and 
+those are separated with -. For example when suites' and test cases' 
+information is needed include-items needs to be suite-test.
+
+This script reads the start, end, and elapsed times from all suites, tests and/or
 keywords in the given Robot Framework output file and writes them into a file in the
-comma-separated-values (CSV) format. If the CSV output file is not given, its 
-name is obtained from the input file by replacing the :path:`.xml` extension with 
+comma-separated-values (CSV) format. If the CSV output file is not given, its
+name is obtained from the input file by replacing the :path:`.xml` extension with
 :path:`.csv`.
 
