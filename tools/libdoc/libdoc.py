@@ -76,9 +76,6 @@ from robot import utils
 from robot.errors import DataError
 
 
-_KW_NAME_REGEXP = re.compile("'(.+?)'")
-
-
 def main(args):
     outpath, format, libname = process_arguments(args)
     try:
@@ -124,8 +121,8 @@ def get_unique_path(base, index=1):
 
 
 def create_html_doc(lib, outpath):
-    namespace = Namespace(LIBNAME=lib.name, LIBDOC=lib.doc, KEYWORDS=lib.keywords,
-                          GENERATED=utils.get_timestamp(millissep=None))
+    generated = utils.get_timestamp(daysep='-', millissep=None)
+    namespace = Namespace(LIB=lib, GENERATED=generated)
     doc = Template(template=DOCUMENT_TEMPLATE).generate(namespace)
     outfile = open(outpath, 'w')
     outfile.write(doc)
@@ -169,7 +166,56 @@ def LibraryDoc(libname):
     return PythonLibraryDoc(libname) 
 
 
-class PythonLibraryDoc:
+def doc_to_html(doc):
+    doc = remove_extra_newlines(doc)
+    doc = utils.html_escape(doc, formatting=True)
+    doc = _KW_NAME_REGEXP.sub(self._link_keywords, doc)
+    return doc
+
+
+
+class _DocToHtml:
+
+    _name_regexp = re.compile("`(.+?)`")
+
+    def __getattr__(self, name):
+        if name == 'htmldoc':
+            return self._get_htmldoc(self.doc)
+        raise AttributeError("Non-existing attribute '%s'" % name)
+
+    def _get_htmldoc(self, doc):
+        doc = self._remove_extra_newlines(doc)
+        doc = utils.html_escape(doc, formatting=True)
+        doc = self._name_regexp.sub(self._link_keywords, doc)
+        return doc
+
+    def _remove_extra_newlines(self, doc):
+        ret = []
+        for line in doc.splitlines():
+            line = line.rstrip() + ' '
+            if line == ' ' and (ret and ret[-1] != ''):
+                line = ''
+                ret.append('\n\n')
+            elif line[0] in ['-', '*', '+', '|'] and (ret and ret[-1] != ''):
+                ret.append('\n')
+            elif ret and ret[-1].endswith('| '):
+                ret.append('\n')
+            ret.append(line)
+        return ''.join(ret)
+
+    def _link_keywords(self, res):
+        name = res.group(1)
+        try:
+            lib = self.lib
+        except AttributeError:
+            lib = self
+        for kw in lib.keywords:
+            if utils.eq(name, kw.name):
+                return '<a href="#%s" class="name">%s</a>' % (kw.name, name)
+        return '<span class="name">%s</span>' % name
+
+
+class PythonLibraryDoc(_DocToHtml):
     
     type = 'library'
     
@@ -189,11 +235,11 @@ class PythonLibraryDoc:
         else:
             name = name_or_path
         return TestLibrary(name)
-    
+
     def _get_doc(self, lib):
         if lib.doc == '':
-            return "Documentation for test library '%s'." % lib.name
-        return utils.html_escape(lib.doc, formatting=True)
+            return "Documentation for test library  `%s`."
+        return lib.doc
     
 
 class ResourceDoc(PythonLibraryDoc):
@@ -213,50 +259,18 @@ class ResourceDoc(PythonLibraryDoc):
         return UserLibrary(path)
     
     def _get_doc(self, lib):
-        return "Documentation for resource file '%s'." % lib.name
+        return "Documentation for resource file `%s`." % lib.name
     
     
-class _BaseKeywordDoc:
+class _BaseKeywordDoc(_DocToHtml):
     
     def __cmp__(self, other):
         return cmp(self.name, other.name)
     
     def __getattr__(self, name):
-        if name == 'htmldoc':
-            return self._get_htmldoc(self.doc)
         if name == 'argstr':
             return ', '.join(self.args)
-        raise AttributeError('KeywordDoc has no attribute %s' % name)
-
-    def _get_htmldoc(self, doc):
-        doc = self._remove_extra_newlines(doc)
-        doc = utils.html_escape(doc, formatting=True)
-        doc = _KW_NAME_REGEXP.sub(self._link_keywords, doc)
-        return doc
-
-    def _remove_extra_newlines(self, doc):
-        ret = []
-        for line in doc.splitlines():
-            line = line.rstrip() + ' '
-            if line == ' ' and (ret and ret[-1] != ''):
-                line = ''
-                ret.append('\n\n')
-            elif line[0] in ['-', '*', '+', '|'] and (ret and ret[-1] != ''):
-                ret.append('\n')
-            elif ret and ret[-1].endswith('| '):
-                ret.append('\n')
-            ret.append(line)
-        return ''.join(ret)
-
-    def _link_keywords(self, res):
-        name = res.group(1)
-        for kw in self.lib.keywords:
-            if utils.eq(name, kw.name):
-                return '<a href="#%s" class="kw">%s</a>' % (kw.name, name)
-        for arg in self.args:
-            if arg.split('=')[0] == name:
-                return '<span class="arg">%s</span>' % name
-        return res.group(0)
+        return _DocToHtml.__getattr__(self, name)
         
 
 class KeywordDoc(_BaseKeywordDoc):
@@ -343,12 +357,11 @@ if utils.is_jython:
             self.shortdoc = self.doc and self.doc.splitlines()[0] or ''
             self.lib = library
             
-
         
 DOCUMENT_TEMPLATE = '''
 <html>
 <head>
-<title>${LIBNAME} - Documentation</title>
+<title>${LIB.name} - Documentation</title>
 <style>
 
   body {
@@ -395,9 +408,10 @@ DOCUMENT_TEMPLATE = '''
   }
 
   /* Misc */
-  a.kw, span.arg {  
+  a.name, span.name {  
     font-style: italic;
     background: #f4f4f4;
+    text-decoration: none;
   }
   a:link, a:visited {
     color: blue;
@@ -406,18 +420,20 @@ DOCUMENT_TEMPLATE = '''
     text-decoration: underline;
     color: purple;
   }
-
+  .footer {
+    font-size: 0.9em;
+  }
 </style>
 </head>
 <body>
-<h1>${LIBNAME} - Documentation</h1>
+<h1>${LIB.name} - Documentation</h1>
 
 <h2>Introduction</h2>
-<p class='libdoc'>${LIBDOC}</p>
+<p class='libdoc'>${LIB.htmldoc}</p>
 
 <h2>Shortcuts</h2>
 <div class='links'>
-<!-- FOR ${kw} IN ${KEYWORDS} -->
+<!-- FOR ${kw} IN ${LIB.keywords} -->
 <a href="#${kw.name}" title="${kw.shortdoc}">${kw.name.replace(' ','&nbsp;')}</a>&nbsp;
 <!-- END FOR -->
 </div>
@@ -429,7 +445,7 @@ DOCUMENT_TEMPLATE = '''
   <th class="arg">Arguments</th>
   <th class="doc">Documentation</th>
 </tr>
-<!-- FOR ${kw} IN ${KEYWORDS} -->
+<!-- FOR ${kw} IN ${LIB.keywords} -->
 <tr>
   <td class="kw"><a name="${kw.name}"></a>${kw.name}</td>
   <td class="arg">${kw.argstr}</td>
@@ -438,8 +454,9 @@ DOCUMENT_TEMPLATE = '''
 <!-- END FOR -->
 </table>
 <p class="footer">
-Altogether ${KEYWORDS.__len__()} keywords.
-Documentation generated ${GENERATED}.
+Altogether ${LIB.keywords.__len__()} keywords.<br />
+Generated by <a href="http://code.google.com/p/robotframework/wiki/LibraryDocumentationTool">libdoc.py</a>
+on ${GENERATED}.
 </p>
 </body>
 </html>
