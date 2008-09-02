@@ -216,8 +216,8 @@ class TestHtmlEscapeWithFormatting(unittest.TestCase):
     def test_multi_row_table(self):
         inp = '| 1.1 | 1.2 | 1.3 |\n| 2.1 | 2.2 |\n| 3.1 | 3.2 | 3.3 |\n'
         exp = _format_table([['1.1','1.2','1.3'],
-                            ['2.1','2.2'],
-                            ['3.1','3.2','3.3']])
+                             ['2.1','2.2'],
+                             ['3.1','3.2','3.3']])
         assert_equals(html_escape(inp, True), exp)
 
     def test_table_with_extra_spaces(self):
@@ -333,8 +333,8 @@ after
 '''
         exp = '<br />\n' \
             + _format_table([['<i>a</i>','<i>b</i>','<i>c</i>'],
-                                   ['<i>b</i>','x','y'],
-                                   ['<i>c</i>','z','']]) \
+                             ['<i>b</i>','x','y'],
+                             ['<i>c</i>','z','']]) \
             + '<br />\n' \
             +  _format_table([['a','x <i>b</i> y','<i>b</i> <i>c</i>'],
                               ['_a','b_','']])
@@ -364,7 +364,9 @@ after
 
     def test_hr_is_three_or_more_hyphens(self):
         for i in range(3, 100):
-            assert_equals(html_escape('-'*i, True), '<hr />\n')
+            hr = '-' * i
+            assert_equals(html_escape(hr, True), '<hr />\n')
+            assert_equals(html_escape(hr + '  ', True), '<hr />\n')
 
     def test_hr_with_other_stuff_around(self):
         for inp, exp in [ ('---\n-', '<hr />\n-'),
@@ -376,7 +378,7 @@ after
             assert_equals(html_escape(inp, True), exp)
 
     def test_not_hr(self):
-        for inp in [ '-', '--', ' ---', '--- ', ' --- ', '...---...', '===' ]:
+        for inp in [ '-', '--', ' ---', ' --- ', '...---...', '===' ]:
             assert_equals(html_escape(inp, True), inp)
 
     def test_hr_before_and_after_table(self):
@@ -396,15 +398,16 @@ class TestFormatTable(unittest.TestCase):
     _table_start = ( '<table border="1" style="border: 1px solid gray; '
                      'background: transparent; '
                      'border-collapse: collapse; '
+                     'font-size: 0.9em; '
                      'empty-cells: show;">' )
 
     def test_one_row_table(self):
         inp = [['1','2','3']]
         exp = self._table_start + '''
 <tr>
-<td style="border: 1px solid gray; padding: 2px;">1</td>
-<td style="border: 1px solid gray; padding: 2px;">2</td>
-<td style="border: 1px solid gray; padding: 2px;">3</td>
+<td style="border: 1px solid gray; padding: 0.1em 0.3em;">1</td>
+<td style="border: 1px solid gray; padding: 0.1em 0.3em;">2</td>
+<td style="border: 1px solid gray; padding: 0.1em 0.3em;">3</td>
 </tr>
 </table>'''
         assert_equals(_format_table(inp), exp)
@@ -413,16 +416,16 @@ class TestFormatTable(unittest.TestCase):
         inp = [['1.1','1.2'], ['2.1','2.2'], ['3.1','3.2']]
         exp = self._table_start + '''
 <tr>
-<td style="border: 1px solid gray; padding: 2px;">1.1</td>
-<td style="border: 1px solid gray; padding: 2px;">1.2</td>
+<td style="border: 1px solid gray; padding: 0.1em 0.3em;">1.1</td>
+<td style="border: 1px solid gray; padding: 0.1em 0.3em;">1.2</td>
 </tr>
 <tr>
-<td style="border: 1px solid gray; padding: 2px;">2.1</td>
-<td style="border: 1px solid gray; padding: 2px;">2.2</td>
+<td style="border: 1px solid gray; padding: 0.1em 0.3em;">2.1</td>
+<td style="border: 1px solid gray; padding: 0.1em 0.3em;">2.2</td>
 </tr>
 <tr>
-<td style="border: 1px solid gray; padding: 2px;">3.1</td>
-<td style="border: 1px solid gray; padding: 2px;">3.2</td>
+<td style="border: 1px solid gray; padding: 0.1em 0.3em;">3.1</td>
+<td style="border: 1px solid gray; padding: 0.1em 0.3em;">3.2</td>
 </tr>
 </table>'''
         assert_equals(_format_table(inp), exp)
@@ -431,19 +434,19 @@ class TestFormatTable(unittest.TestCase):
         inp = [['1.1','1.2','1.3'], ['2.1'], ['3.1','3.2']]
         exp = self._table_start + '''
 <tr>
-<td style="border: 1px solid gray; padding: 2px;">1.1</td>
-<td style="border: 1px solid gray; padding: 2px;">1.2</td>
-<td style="border: 1px solid gray; padding: 2px;">1.3</td>
+<td style="border: 1px solid gray; padding: 0.1em 0.3em;">1.1</td>
+<td style="border: 1px solid gray; padding: 0.1em 0.3em;">1.2</td>
+<td style="border: 1px solid gray; padding: 0.1em 0.3em;">1.3</td>
 </tr>
 <tr>
-<td style="border: 1px solid gray; padding: 2px;">2.1</td>
-<td style="border: 1px solid gray; padding: 2px;"></td>
-<td style="border: 1px solid gray; padding: 2px;"></td>
+<td style="border: 1px solid gray; padding: 0.1em 0.3em;">2.1</td>
+<td style="border: 1px solid gray; padding: 0.1em 0.3em;"></td>
+<td style="border: 1px solid gray; padding: 0.1em 0.3em;"></td>
 </tr>
 <tr>
-<td style="border: 1px solid gray; padding: 2px;">3.1</td>
-<td style="border: 1px solid gray; padding: 2px;">3.2</td>
-<td style="border: 1px solid gray; padding: 2px;"></td>
+<td style="border: 1px solid gray; padding: 0.1em 0.3em;">3.1</td>
+<td style="border: 1px solid gray; padding: 0.1em 0.3em;">3.2</td>
+<td style="border: 1px solid gray; padding: 0.1em 0.3em;"></td>
 </tr>
 </table>'''      
         assert_equals(_format_table(inp), exp)
@@ -465,6 +468,7 @@ class TestHtmlAttrEscape(unittest.TestCase):
         for inp, exp in [ ('\n', ' '), ('\t', ' '), ('"\n\t"', '&quot;  &quot;'), 
                           ('N1\nN2\n\nT1\tT3\t\t\t', 'N1 N2  T1 T3   ') ]:
             assert_equals(html_attr_escape(inp), exp)
+
 
 if __name__ == '__main__':
     unittest.main()

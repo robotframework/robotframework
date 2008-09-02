@@ -54,7 +54,7 @@ _link_re = re.compile('''
 ''', re.VERBOSE)
 _link_repl = r'\1<a href="\3">\3</a>'
 
-_hr_re = re.compile('^-{3,}$')
+_hr_re = re.compile('^-{3,} *$')
 _hr_repl = '<hr />\n'
 
 
@@ -127,8 +127,9 @@ class _Table:
 _table_pre = ('<table border="1" style="border: 1px solid gray; '
               'background: transparent; '
               'border-collapse: collapse; '
+              'font-size: 0.9em; '
               'empty-cells: show;">')
-_cell_templ = '<td style="border: 1px solid gray; padding: 2px;">%s</td>'
+_cell_templ = '<td style="border: 1px solid gray; padding: 0.1em 0.3em;">%s</td>'
 
 def _format_table(rows):
     maxlen = max([ len(row) for row in rows ])
