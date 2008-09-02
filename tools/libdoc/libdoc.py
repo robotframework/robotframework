@@ -141,14 +141,6 @@ def LibraryDoc(libname):
     return PythonLibraryDoc(libname) 
 
 
-def doc_to_html(doc):
-    doc = remove_extra_newlines(doc)
-    doc = utils.html_escape(doc, formatting=True)
-    doc = _KW_NAME_REGEXP.sub(self._link_keywords, doc)
-    return doc
-
-
-
 class _DocHelper:
 
     _name_regexp = re.compile("`(.+?)`")
@@ -167,7 +159,7 @@ class _DocHelper:
                 ret.append('\n\n')
             elif self._list_or_table_regexp.search(line) and ret[-1] != '':
                 ret.append('\n')
-            elif ret[-1].startswith('| ') and ret[-1].endswith(' | '):
+            elif ret[-1].startswith('| ') and ret[-1].endswith(' |'):
                 ret.append('\n')
             elif ret[-1] != '':
                 ret.append(' ')
@@ -352,7 +344,7 @@ DOCUMENT_TEMPLATE = '''
     border: 1px solid black;
     border-collapse: collapse;
     empty-cells: show;
-    margin: 0.3em 0.1em;
+    margin: 0.3em 0em;
   }
   th, td {
     border: 1px solid black;
