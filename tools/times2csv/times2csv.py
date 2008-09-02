@@ -58,7 +58,7 @@ def process_suite(suite, writer, items, level=0):
 
 def process_test(test, writer, items, level):
     if 'test' in items:
-        process_item(test, writer, level, 'Test')
+        process_item(test, writer, level, 'Test', not 'suite' in items)
     if 'keyword' in items:
         for kw in [test.setup] + test.keywords + [test.teardown]:
             process_keyword(kw, writer, level+1)
@@ -74,12 +74,15 @@ def process_keyword(kw, writer, level):
     for subkw in kw.keywords:
         process_keyword(subkw, writer, level+1)
     
-def process_item(item, writer, level, item_type):
+def process_item(item, writer, level, item_type, long_name=False):
     if level == 0:
         indent = ''
     else:
         indent = '|  ' * (level-1) + '|- '
-    row = [ indent+item_type, item.name, item.status, item.starttime,
+    name = item.name
+    if long_name:
+        name = item.longname
+    row = [ indent+item_type, name, item.status, item.starttime,
             item.endtime, item.elapsedtime, item.elapsedmillis/1000.0 ]
     writer.writerow(row)
 
