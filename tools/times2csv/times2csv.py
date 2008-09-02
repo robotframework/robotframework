@@ -19,15 +19,21 @@
 
 Usage:  times2csv.py input-xml [output-csv] [include-items]
 
-This script reads start, end, and elapsed times from all suites, tests
-and/or keywords from the given output file, and writes them into an file
-in comma-separated-values (CSV) format. CSV files can then be further
-processed with spreadsheet programs. If the CSV output file is not
-given, its name is got from the input file by replacing the .xml
-extension with .csv. Include-items can be used for defining which 
-items are written. Possible include values are suite, test and keyword and 
-those are separated with -. For example when suites' and test cases' 
-information is needed include-items needs to be suite-test.
+This script reads start, end, and elapsed times from all suites, tests and/or
+keywords from the given output file, and writes them into an file in
+comma-separated-values (CSV) format. CSV files can then be further processed
+with spreadsheet programs. If the CSV output file is not given, its name is
+got from the input file by replacing the '.xml' extension with '.csv'.
+
+'include-items' can be used for defining which items to process. Possible
+values are 'suite', 'test' and 'keyword', and they can be combined to specify
+multiple items e.g. like 'suite-test' or 'test-keyword'.
+
+Examples:
+$ times2csv.py output.xml
+$ times2csv.py path/results.xml path2/times.csv
+$ times2csv.py output.xml times.csv test
+$ times2csv.py output.xml times.csv suite-test
 """
 
 import sys
@@ -58,7 +64,7 @@ def process_suite(suite, writer, items, level=0):
 
 def process_test(test, writer, items, level):
     if 'test' in items:
-        process_item(test, writer, level, 'Test', not 'suite' in items)
+        process_item(test, writer, level, 'Test', 'suite' not in items)
     if 'keyword' in items:
         for kw in [test.setup] + test.keywords + [test.teardown]:
             process_keyword(kw, writer, level+1)
@@ -79,9 +85,10 @@ def process_item(item, writer, level, item_type, long_name=False):
         indent = ''
     else:
         indent = '|  ' * (level-1) + '|- '
-    name = item.name
     if long_name:
         name = item.longname
+    else:
+        name = item.name
     row = [ indent+item_type, name, item.status, item.starttime,
             item.endtime, item.elapsedtime, item.elapsedmillis/1000.0 ]
     writer.writerow(row)
@@ -92,13 +99,13 @@ if __name__ == '__main__':
         print __doc__
         sys.exit(1)
     inxml = sys.argv[1]
-    if len(sys.argv) == 2:
-        outcsv = os.path.splitext(inxml)[0] + '.csv'
-    else:
+    try:
         outcsv = sys.argv[2]
-    if len(sys.argv) == 4:
+    except IndexError:
+        outcsv = os.path.splitext(inxml)[0] + '.csv'
+    try:
         items = sys.argv[3]            
-    else:
+    except IndexError:
         items = 'suite-test-keyword'
     process_file(inxml, outcsv, items)
     print os.path.abspath(outcsv)
