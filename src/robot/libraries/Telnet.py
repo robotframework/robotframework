@@ -27,9 +27,9 @@ class Telnet:
 
     This library takes the optional arguments `timeout`, `newline`,
     `prompt` and `prompt_is_regexp`. These are default values used
-    when a new connection is opened with the keyword `Open`, and they
-    can be overridden. The purpose of these parameters can be found
-    from the documentation of `Open`.
+    when a new connection is opened with the keyword `Open Connection`,
+    and they can be overridden. The purpose of these parameters can be
+    found from the documentation of `Open Connection`.
     
     Examples (use only one of these):
 
