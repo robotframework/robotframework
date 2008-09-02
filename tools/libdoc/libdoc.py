@@ -68,11 +68,15 @@ $ python libdoc.py --format xml --output doc test/resource.html
 
 import sys
 import os
+import re
 
 from robot.running import TestLibrary, UserLibrary
 from robot.serializing import Template, Namespace
 from robot import utils
 from robot.errors import DataError
+
+
+_KW_NAME_REGEXP = re.compile("'(.+?)'")
 
 
 def main(args):
@@ -173,7 +177,8 @@ class PythonLibraryDoc:
         lib = self._import(name)
         self.name = lib.name
         self.doc = self._get_doc(lib)
-        self.keywords = [ KeywordDoc(hand) for hand in lib.handlers.values() ]
+        self.keywords = [ KeywordDoc(handler, self) 
+                          for handler in lib.handlers.values() ]
         self.keywords.sort()
     
     def _import(self, name_or_path):
@@ -218,19 +223,50 @@ class _BaseKeywordDoc:
     
     def __getattr__(self, name):
         if name == 'htmldoc':
-            return utils.html_escape(self.doc, formatting=True)
+            return self._get_htmldoc(self.doc)
         if name == 'argstr':
             return ', '.join(self.args)
         raise AttributeError('KeywordDoc has no attribute %s' % name)
+
+    def _get_htmldoc(self, doc):
+        doc = self._remove_extra_newlines(doc)
+        doc = utils.html_escape(doc, formatting=True)
+        doc = _KW_NAME_REGEXP.sub(self._link_keywords, doc)
+        return doc
+
+    def _remove_extra_newlines(self, doc):
+        ret = []
+        for line in doc.splitlines():
+            line = line.rstrip() + ' '
+            if line == ' ' and (ret and ret[-1] != ''):
+                line = ''
+                ret.append('\n\n')
+            elif line[0] in ['-', '*', '+', '|'] and (ret and ret[-1] != ''):
+                ret.append('\n')
+            elif ret and ret[-1].endswith('| '):
+                ret.append('\n')
+            ret.append(line)
+        return ''.join(ret)
+
+    def _link_keywords(self, res):
+        name = res.group(1)
+        for kw in self.lib.keywords:
+            if utils.eq(name, kw.name):
+                return '<a href="#%s" class="kw">%s</a>' % (kw.name, name)
+        for arg in self.args:
+            if arg.split('=')[0] == name:
+                return '<span class="arg">%s</span>' % name
+        return res.group(0)
         
 
 class KeywordDoc(_BaseKeywordDoc):
 
-    def __init__(self, handler):
+    def __init__(self, handler, library):
         self.name = handler.name
         self.args = self._get_args(handler) 
         self.doc = handler.doc
         self.shortdoc = handler.shortdoc
+        self.lib = library
 
     def _get_args(self, handler):
         required, defaults, varargs = self._parse_args(handler)
@@ -266,7 +302,8 @@ if utils.is_jython:
             cls = self._get_class(path)
             self.name = cls.qualifiedName()
             self.doc = cls.getRawCommentText()
-            self.keywords = [ JavaKeywordDoc(method) for method in cls.methods() ]
+            self.keywords = [ JavaKeywordDoc(method, self) 
+                              for method in cls.methods() ]
             self.keywords.sort()
                             
         def _get_class(self, path):
@@ -295,15 +332,18 @@ if utils.is_jython:
                                            List.nil(), False, List.nil(),
                                            List.nil(), False, False, True)
             return root.classes()[0]
-        
+
+
     class JavaKeywordDoc(_BaseKeywordDoc):
         # TODO: handle keyword default values and varargs.
-        def __init__(self, method):
+        def __init__(self, method, library):
             self.name = utils.printable_name(method.name(), True)
             self.args = [ param.name() for param in method.parameters() ]
             self.doc = method.getRawCommentText()
             self.shortdoc = self.doc and self.doc.splitlines()[0] or ''
+            self.lib = library
             
+
         
 DOCUMENT_TEMPLATE = '''
 <html>
@@ -323,11 +363,11 @@ DOCUMENT_TEMPLATE = '''
     border: 1px solid black;
     border-collapse: collapse;
     empty-cells: show;
-    margin: 0px 1px;
+    margin: 0.3em 0.1em;
   }
   th, td {
     border: 1px solid black;
-    padding: 1px 5px;
+    padding: 0.2em;
   }
   th {
     background: #C6C6C6;
@@ -343,6 +383,7 @@ DOCUMENT_TEMPLATE = '''
   }
   td.arg {
     width: 300px;
+    font-style: italic;
   }
   td.doc {
   }
@@ -352,7 +393,20 @@ DOCUMENT_TEMPLATE = '''
   .libdoc, .links {
     width: 800px;
   }
-  /* 
+
+  /* Misc */
+  a.kw, span.arg {  
+    font-style: italic;
+    background: #f4f4f4;
+  }
+  a:link, a:visited {
+    color: blue;
+  }
+  a:hover, a:active {
+    text-decoration: underline;
+    color: purple;
+  }
+
 </style>
 </head>
 <body>
