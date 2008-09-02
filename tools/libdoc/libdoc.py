@@ -19,10 +19,9 @@
 
 Usage:  libdoc.py [options] library_or_resource
 
-This script can generate keyword documentation in HTML or XML. The
-former is for humans and the latter mainly for Robot IDE and other
-tools. Documentation can be created for both test libraries and
-resource files.
+This script can generate keyword documentation in HTML or XML. The former is
+for humans and the latter mainly for Robot Framework IDE and other tools.
+Documentation can be created for both test libraries and resource files.
 
 Options:
  -f --format html|xml    Specifies whether to generate HTML or XML output.
@@ -39,31 +38,7 @@ Options:
  -P --pythonpath path *  Additional path(s) to insert into PYTHONPATH.
  -h -? --help            Print this help.
 
-It is possible to specify a Python test library by giving either the
-path to the source or only the library name. If the library name is
-used, it must be in the same format as in Robot Framework test data
-when importing libraries. In this case, the library is searched from
-PYTHONPATH (and from CLASSPATH, if on Jython).
-
-A Java test library implemented with normal library API can be specified by 
-giving the path to the source file containing the library class.
-Additionally, 'tools.jar', which is part of the Sun JDK distribution, must
-be found from CLASSPATH when 'libdoc.py' is executed.
-
-Libraries using the dynamic library API are handled similarly as
-normal Python libraries. Dynamic libraries should implement optional
-getKeywordArguments and getKeywordDocumentation methods to get other
-information than keyword names to the generated documentation.
-
-Resource files must always be specified using a path. If the path does not 
-exist, resource files are also searched from all directories in PYTHONPATH.
-
-Examples:
-$ python libdoc.py OperatingSystem 
-$ python libdoc.py --output doc/MyLib.html src/MyLib.py 
-$ python libdoc.py test/resource.html 
-$ python libdoc.py --format xml OperatingSystem 
-$ python libdoc.py --format xml --output doc test/resource.html
+For information see the 
 """
 
 import sys
@@ -177,6 +152,7 @@ def doc_to_html(doc):
 class _DocToHtml:
 
     _name_regexp = re.compile("`(.+?)`")
+    _list_or_table_regexp = re.compile('^(\d+\.|[-*|]) .')
 
     def __getattr__(self, name):
         if name == 'htmldoc':
@@ -190,15 +166,15 @@ class _DocToHtml:
         return doc
 
     def _remove_extra_newlines(self, doc):
-        ret = []
+        ret = ['']
         for line in doc.splitlines():
             line = line.rstrip() + ' '
-            if line == ' ' and (ret and ret[-1] != ''):
+            if line == ' ' and ret[-1] != '':
                 line = ''
                 ret.append('\n\n')
-            elif line[0] in ['-', '*', '+', '|'] and (ret and ret[-1] != ''):
+            elif self._list_or_table_regexp.search(line) and ret[-1] != '':
                 ret.append('\n')
-            elif ret and ret[-1].endswith('| '):
+            elif ret[-1].endswith('| '):
                 ret.append('\n')
             ret.append(line)
         return ''.join(ret)
