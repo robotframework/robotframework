@@ -29,13 +29,13 @@ class Screenshot:
  
     """This library supports taking full-screen screenshots of the desktop.
     
-    The library can be initialized with two arguments: 'default_directory' and 
-    'log_file_directory'. If the 'default_directory' is provided, all the 
+    The library can be initialized with two arguments: `default_directory` and 
+    `log_file_directory`. If the `default_directory` is provided, all the 
     screenshots will be saved under that directory by default. If the 
-    'default_directory' is not provided, the system temporary directory is used
+    `default_directory` is not provided, the system temporary directory is used
     as default.
 
-    'log_file_directory' is used to create relative paths when screenshots are 
+    `log_file_directory` is used to create relative paths when screenshots are 
     logged. By default, absolute paths are used.
     
     The library depends on standard Java APIs and thus requires a Jython
@@ -51,7 +51,7 @@ class Screenshot:
     
     def set_screenshot_directories(self, default_directory=None, 
                                  log_file_directory=None):
-        """Used to set 'default_directory' and 'log_file_directory'.
+        """Used to set `default_directory` and `log_file_directory`.
         
         See the library documentation for details.
         """
@@ -78,14 +78,14 @@ class Screenshot:
     def save_screenshot(self, basename="screenshot", directory=None):
         """Saves a screenshot with a generated unique name.
         
-        The unique name is derived based on the provided basename and directory
-        passed in as optional arguments. If a directory is provided, the 
-        screenshot is saved under that directory. Otherwise, the 
-        'default_directory' set during the library import or by the keyword
-        'Set Screenshot Directories' is used. If a basename for the screenshot
-        file is provided, a unique filename is determined by appending an
-        underscore and a running counter. Otherwise, the basename defaults to
-        'screenshot'.
+        The unique name is derived based on the provided `basename` and
+        `directory` passed in as optional arguments. If a `directory`
+        is provided, the screenshot is saved under that directory.
+        Otherwise, the `default_directory` set during the library
+        import or by the keyword `Set Screenshot Directories` is used.
+        If a `basename` for the screenshot file is provided, a unique
+        filename is determined by appending an underscore and a running
+        counter. Otherwise, the `basename` defaults to 'screenshot'.
 
         The path where the screenshot is saved is returned.
 
@@ -94,9 +94,9 @@ class Screenshot:
         | Save Screenshot | mypic |            | # (2) |
         | Save Screenshot |       |            | # (3) |
         =>
-        - (1) /home/user/mypic_1.jpg, /home/user/mypic_2.jpg, ...
-        - (2) /tmp/mypic_1.jpg, /tmp/mypic_2.jpg, ...
-        - (3) /tmp/screenshot_1.jpg, /tmp/screenshot_2.jpg, ...
+        1. /home/user/mypic_1.jpg, /home/user/mypic_2.jpg, ...
+        2. /tmp/mypic_1.jpg, /tmp/mypic_2.jpg, ...
+        3. /tmp/screenshot_1.jpg, /tmp/screenshot_2.jpg, ...
         """
         if directory is None:
             directory = self._default_dir
@@ -112,15 +112,15 @@ class Screenshot:
                        log_file_directory=None, width="100%"):
         """Takes a screenshot and logs it to Robot Framework's log.
         
-        Saves the files as defined in the keyword 'Save Screenshot' and creates
-        a picture to Robot Framework's log. 'directory' defines the directory
+        Saves the files as defined in the keyword `Save Screenshot` and creates
+        a picture to Robot Framework's log. `directory` defines the directory
         where the screenshots are saved. By default, its value is
-        'default_directory', which is set at the library import or with the
-        keyword 'Set Screenshot Directories'. 'log_file_directory' is used to
+        `default_directory`, which is set at the library import or with the
+        keyword `Set Screenshot Directories`. `log_file_directory` is used to
         create relative paths to the pictures. This allows moving the log and
         pictures to different machines and having still working pictures. If 
-        'log_file_directory' is not given or set (in the same way as 
-        'default_directory' is set), the paths are absolute.
+        `log_file_directory` is not given or set (in the same way as 
+        `default_directory` is set), the paths are absolute.
 
         The path where the screenshot is saved is returned.
         """
