@@ -104,11 +104,11 @@ class Verify:
     def should_not_be_true(self, expr, msg=None):
         """Fails if the the given expression (or item) is true.
                 
-        See 'Should Be True' for details about how 'expr' is evaluated and
-        'msg' used to override the default error message.
+        See `Should Be True` for details about how `expr` is evaluated and
+        `msg` used to override the default error message.
         
         New in Robot Framework version 1.8.3. This is intended to replace the
-        old keyword 'Fail If', which still continues to work.
+        old keyword `Fail If`, which still continues to work.
         """
         if msg is None:
             msg = "'%s' should not be true" % expr
@@ -117,14 +117,14 @@ class Verify:
     def should_be_true(self, expr, msg=None):
         """Fails if the given expression (or item) is not true.
         
-        If 'expr' is a string (e.g. '${rc} < 10'), it is evaluated as a Python 
+        If `expr` is a string (e.g. '${rc} < 10'), it is evaluated as a Python 
         expression using the built-in 'eval' function and the keyword status is
         decided based on the result. If a non-string item is given, the status
         is got directly from its truth value as explained at
         http://docs.python.org/lib/truth.html.
          
         The default error message ('<expr> should be true') is not very
-        informative, but it can be overridden with the 'msg' argument.
+        informative, but it can be overridden with the `msg` argument.
         
         Examples:
         | Should Be True | ${rc} < 10  |     
@@ -133,7 +133,7 @@ class Verify:
         | Should Be True | ${list}     | # Passes if ${list} is not empty  | 
         
         New in Robot Framework version 1.8.3. This is intended to replace the
-        old keyword 'Fail Unless', which still continues to work.
+        old keyword `Fail Unless`, which still continues to work.
         """
         if msg is None:
             msg = "'%s' should be true" % expr
@@ -142,10 +142,10 @@ class Verify:
     def should_be_equal(self, first, second, msg=None, values=True):
         """Fails if the given objects are unequal.
         
-        - If 'msg' is not given, the error message is 'first != second'.
-        - If 'msg' is given and 'values' is either Boolean False or the
-          string 'False' or 'No Values', the error message is simply 'msg'.
-        - Otherwise the error message is 'msg: first != second'.
+        - If `msg` is not given, the error message is 'first != second'.
+        - If `msg` is given and `values` is either Boolean False or the
+          string 'False' or 'No Values', the error message is simply `msg`.
+        - Otherwise the error message is '`msg`: `first` != `second`'.
         """
         values = utils.to_boolean(values, false_strs=['No Values'], default=True)
         asserts.fail_unless_equal(first, second, msg, values)
@@ -153,8 +153,8 @@ class Verify:
     def should_not_be_equal(self, first, second, msg=None, values=True):
         """Fails if the given objects are equal.
              
-        See 'Should Be Equal' for an explanation on how to override the default
-        error message with 'msg' and 'values'.
+        See `Should Be Equal` for an explanation on how to override the default
+        error message with `msg` and `values`.
         """
         values = utils.to_boolean(values, false_strs=['No Values'], default=True)
         asserts.fail_if_equal(first, second, msg, values)
@@ -162,8 +162,8 @@ class Verify:
     def should_not_be_equal_as_integers(self, first, second, msg=None, values=True):
         """Fails if objects are equal after converting them to integers.
         
-        See 'Should Be Equal' for an explanation on how to override the default
-        error message with 'msg' and 'values'.
+        See `Should Be Equal` for an explanation on how to override the default
+        error message with `msg` and `values`.
         """
         first, second = [ self.convert_to_integer(item) for item in first, second ]
         self.should_not_be_equal(first, second, msg, values)
@@ -171,8 +171,8 @@ class Verify:
     def should_be_equal_as_integers(self, first, second, msg=None, values=True):
         """Fails if objects are unequal after converting them to integers.
 
-        See 'Should Be Equal' for an explanation on how to override the default
-        error message with 'msg' and 'values'.
+        See `Should Be Equal` for an explanation on how to override the default
+        error message with `msg` and `values`.
         """
         first, second = [ self.convert_to_integer(item) for item in first, second ]
         self.should_be_equal(first, second, msg, values)
@@ -180,8 +180,8 @@ class Verify:
     def should_not_be_equal_as_numbers(self, first, second, msg=None, values=True):
         """Fails if objects are equal after converting them to real numbers.
         
-        See 'Should Be Equal' for an explanation on how to override the default
-        error message with 'msg' and 'values'.        
+        See `Should Be Equal` for an explanation on how to override the default
+        error message with `msg` and `values`.        
         """
         first, second = [ self.convert_to_number(item) for item in first, second ]
         self.should_not_be_equal(first, second, msg, values)
@@ -189,8 +189,8 @@ class Verify:
     def should_be_equal_as_numbers(self, first, second, msg=None, values=True):
         """Fails if objects are unequal after converting them to real numbers.
         
-        See 'Should Be Equal' for an explanation on how to override the default
-        error message with 'msg' and 'values'.
+        See `Should Be Equal` for an explanation on how to override the default
+        error message with `msg` and `values`.
         """
         first, second = [ self.convert_to_number(item) for item in first, second ]
         self.should_be_equal(first, second, msg, values)
@@ -198,8 +198,8 @@ class Verify:
     def should_not_be_equal_as_strings(self, first, second, msg=None, values=True):
         """Fails if objects are equal after converting them to strings.
         
-        See 'Should Be Equal' for an explanation on how to override the default
-        error message with 'msg' and 'values'.
+        See `Should Be Equal` for an explanation on how to override the default
+        error message with `msg` and `values`.
         """
         first, second = [ self.convert_to_string(item) for item in first, second ]
         self.should_not_be_equal(first, second, msg, values)
@@ -207,54 +207,54 @@ class Verify:
     def should_be_equal_as_strings(self, first, second, msg=None, values=True):
         """Fails if objects are unequal after converting them to strings.
         
-        See 'Should Be Equal' for an explanation on how to override the default
-        error message with 'msg' and 'values'.
+        See `Should Be Equal` for an explanation on how to override the default
+        error message with `msg` and `values`.
         """
         first, second = [ self.convert_to_string(item) for item in first, second ]
         self.should_be_equal(first, second, msg, values)
 
     def should_not_start_with(self, str1, str2, msg=None, values=True):
-        """Fails if the string 'str1' starts with the string 'str2'.
+        """Fails if the string `str1` starts with the string `str2`.
         
-        See 'Should Be Equal' for an explanation on how to override the default
-        error message with 'msg' and 'values'.
+        See `Should Be Equal` for an explanation on how to override the default
+        error message with `msg` and `values`.
         """
         msg = self._get_string_msg(str1, str2, msg, values, 'starts with')
         asserts.fail_if(str1.startswith(str2), msg)
 
     def should_start_with(self, str1, str2, msg=None, values=True):
-        """Fails if the string 'str1' does not start with the string 'str2'.
+        """Fails if the string `str1` does not start with the string `str2`.
         
-        See 'Should Be Equal' for an explanation on how to override the default
-        error message with 'msg' and 'values'.
+        See `Should Be Equal` for an explanation on how to override the default
+        error message with `msg` and `values`.
         """
         msg = self._get_string_msg(str1, str2, msg, values, 'does not start with')
         asserts.fail_unless(str1.startswith(str2), msg)
 
     def should_not_end_with(self, str1, str2, msg=None, values=True):
-        """Fails if the string 'str1' ends with the string 'str2'.
+        """Fails if the string `str1` ends with the string `str2`.
         
-        See 'Should Be Equal' for an explanation on how to override the default
-        error message with 'msg' and 'values'.
+        See `Should Be Equal` for an explanation on how to override the default
+        error message with `msg` and `values`.
         """
         msg = self._get_string_msg(str1, str2, msg, values, 'ends with')
         asserts.fail_if(str1.endswith(str2), msg)
 
     def should_end_with(self, str1, str2, msg=None, values=True):
-        """Fails if the string 'str1' does not end with the string 'str2'.
+        """Fails if the string `str1` does not end with the string `str2`.
 
-        See 'Should Be Equal' for an explanation on how to override the default
-        error message with 'msg' and 'values'.        
+        See `Should Be Equal` for an explanation on how to override the default
+        error message with `msg` and `values`.        
         """
         msg = self._get_string_msg(str1, str2, msg, values, 'does not end with')
         asserts.fail_unless(str1.endswith(str2), msg)
 
     def should_not_contain(self, item1, item2, msg=None, values=True):
-        """Fails if 'item1' contains 'item2' one or more times.
+        """Fails if `item1` contains `item2` one or more times.
 
         Works with strings, lists, and anything that supports Python's 'in'
-        keyword. See 'Should Be Equal' for an explanation on how to override
-        the default error message with 'msg' and 'values'.
+        keyword. See `Should Be Equal` for an explanation on how to override
+        the default error message with `msg` and `values`.
 
         Examples:
         | Should Not Contain | ${output}    | FAILED |
@@ -264,11 +264,11 @@ class Verify:
         asserts.fail_if(item2 in item1, msg)
 
     def should_contain(self, item1, item2, msg=None, values=True):
-        """Fails if 'item1' does not contain 'item2' one or more times.
+        """Fails if `item1` does not contain `item2` one or more times.
         
         Works with strings, lists, and anything that supports Python's 'in'
-        keyword. See 'Should Be Equal' for an explanation on how to override
-        the default error message with 'msg' and 'values'.
+        keyword. See `Should Be Equal` for an explanation on how to override
+        the default error message with `msg` and `values`.
 
         Examples:
         | Should Contain | ${output}    | PASS |
@@ -278,34 +278,34 @@ class Verify:
         asserts.fail_unless(item2 in item1, msg)
 
     def should_not_match(self, string, pattern, msg=None, values=True):
-        """Fails if the given 'string' matches the given 'pattern'.
+        """Fails if the given `string` matches the given `pattern`.
 
         Pattern matching is similar as matching files in a shell, and it is
         always case-sensitive. In the pattern '*' matches to anything and '?'
         matches to any single character.  
         
-        See 'Should Be Equal' for an explanation on how to override the default
-        error message with 'msg' and 'values'.
+        See `Should Be Equal` for an explanation on how to override the default
+        error message with `msg` and `values`.
         """
         msg = self._get_string_msg(string, pattern, msg, values, 'matches')
         asserts.fail_if(self._matches(string, pattern), msg)
 
     def should_match(self, string, pattern, msg=None, values=True):
-        """Fails unless the given 'string' matches the given 'pattern'.
+        """Fails unless the given `string` matches the given `pattern`.
 
         Pattern matching is similar as matching files in a shell, and it is
         always case-sensitive. In the pattern, '*' matches to anything and '?'
         matches to any single character.  
         
-        See 'Should Be Equal' for an explanation on how to override the default
-        error message with 'msg' and 'values'.
+        See `Should Be Equal` for an explanation on how to override the default
+        error message with `msg` and `values`.
         """
         msg = self._get_string_msg(string, pattern, msg, values,
                                    'does not match')
         asserts.fail_unless(self._matches(string, pattern), msg)
 
     def should_match_regexp(self, string, pattern, msg=None, values=True):
-        """Fails if 'string' does not match 'pattern' as a regular expression.
+        """Fails if `string` does not match `pattern` as a regular expression.
 
         Regular expression check is done using the Python 're' module, which
         has a pattern syntax derived from Perl, and thus also very similar to
@@ -322,7 +322,7 @@ class Verify:
         (e.g. '\\\\d\\\\w+').
         
         2) Strings that may contain special characters, but should be handled
-        as literal strings, can be escaped with the 'Regexp Escape' keyword.
+        as literal strings, can be escaped with the `Regexp Escape` keyword.
 
         3) The given pattern does not need to match the whole string. For
         example, the pattern 'ello' matches the string 'Hello world!'. If
@@ -340,8 +340,8 @@ class Verify:
         matched the pattern. Additionally, the possible captured groups are
         returned.   
         
-        See the 'Should Be Equal' keyword for an explanation on how to override
-        the default error message with the 'msg' and 'values' arguments.
+        See the `Should Be Equal` keyword for an explanation on how to override
+        the default error message with the `msg` and `values` arguments.
         
         Examples:
         | Should Match Regexp | ${output} | \\\\d{6}   | # Output contains six numbers  |
@@ -366,9 +366,9 @@ class Verify:
         return match
         
     def should_not_match_regexp(self, string, pattern, msg=None, values=True):
-        """Fails if 'string' matches 'pattern' as a regular expression.
+        """Fails if `string` matches `pattern` as a regular expression.
         
-        See 'Should Match Regexp' for more information about arguments.
+        See `Should Match Regexp` for more information about arguments.
         """
         msg = self._get_string_msg(string, pattern, msg, values, 'matches')
         asserts.fail_unless_none(re.search(pattern, string), msg, False)
@@ -397,8 +397,8 @@ class Verify:
     def length_should_be(self, item, length, msg=None):
         """Verifies that the length of the given item is correct.
         
-        The length of the item is got using the 'Get Length' keyword. The
-        default error message can be overridden with the 'msg' argument.
+        The length of the item is got using the `Get Length` keyword. The
+        default error message can be overridden with the `msg` argument.
         
         New in Robot Framework version 1.8.2.
         """
@@ -416,8 +416,8 @@ class Verify:
     def should_be_empty(self, item, msg=None):
         """Verifies that the given item is empty.
         
-        The length of the item is got using the 'Get Length' keyword. The
-        default error message can be overridden with the 'msg' argument.
+        The length of the item is got using the `Get Length` keyword. The
+        default error message can be overridden with the `msg` argument.
         
         New in Robot 1.8.2.
         """
@@ -429,8 +429,8 @@ class Verify:
     def should_not_be_empty(self, item, msg=None):
         """Verifies that the given item is not empty.
         
-        The length of the item is got using the 'Get Length' keyword. The
-        default error message can be overridden with the 'msg' argument.
+        The length of the item is got using the `Get Length` keyword. The
+        default error message can be overridden with the `msg` argument.
         
         New in Robot Framework version 1.8.2.
         """
@@ -471,7 +471,7 @@ class Variables:
         case, it is possible to give the variable name in a special format
         without curly braces, e.g. $scalar or @list.
         
-        The default error message can be overridden with the 'msg' argument.
+        The default error message can be overridden with the `msg` argument.
         """
         name = self._get_var_name(name)
         variables = self._get_variables()
@@ -487,7 +487,7 @@ class Variables:
         case, it is possible to give the variable name in the special format
         without curly braces, e.g. $scalar or @list.
         
-        The default error message can be overridden with the 'msg' argument.
+        The default error message can be overridden with the `msg` argument.
         """
         name = self._get_var_name(name)
         variables = self._get_variables()
@@ -523,6 +523,11 @@ class Variables:
         - ${var1} = 'Hello' & ${var2} = 'world'
         - @{list} = ['Hi','again'] i.e. @{list}[0] = 'Hi' & @{list}[1] = 'again'
         - ${scal} = ['Hi','again']
+
+        Variables created with this keyword are available only in the
+        scope where they are created. See `Set Global Variable`, `Set
+        Test Variable` and `Set Suite Variable` for information how to
+        set a variable so that it is available also in a larger scope.
         """
         if len(args) == 0:
             return ''
@@ -532,9 +537,9 @@ class Variables:
             return list(args)
 
     def set_variable_if(self, expr, value1, value2=None):
-        """If 'expr' is true, returns 'value1', and otherwise returns 'value2'.
+        """If `expr` is true, returns `value1`, and otherwise returns `value2`.
         
-        'expr' is evaluated as with the 'Should Be True' keyword.
+        `expr` is evaluated as with the `Should Be True` keyword.
         
         Examples:
         | ${var1} = | Set Variable If | 1 > 0 | v1 | v2 | 
@@ -560,7 +565,7 @@ class Variables:
         and also in all other user keywords used in the current test. Other
         test cases will not see variables set with this keyword.
         
-        See 'Set Suite Variable' for more information and examples.
+        See `Set Suite Variable` for more information and examples.
         """
         name = self._get_var_name(name)
         value = self._get_var_value(name, values)
@@ -589,7 +594,9 @@ class Variables:
         | Set Suite Variable | $GREET  | Hello, world! |        
         | ${ID} =            | Get ID  |
         | Set Suite Variable | \\${ID} |
-         """
+
+        See also `Set Global Variable` and `Set Test Variable`.
+        """
         name = self._get_var_name(name)
         value = self._get_var_value(name, values)
         self._get_variables().set_suite(name, value)
@@ -604,7 +611,7 @@ class Variables:
         using the options '--variable' or '--variablefile'. Because this
         keyword can change variables everywhere, it should be used with care.
         
-        See 'Set Suite Variable' for more information and examples.
+        See `Set Suite Variable` for more information and examples.
         """
         name = self._get_var_name(name)
         value = self._get_var_value(name, values)
@@ -659,10 +666,11 @@ class RunKeyword:
         return kw.run(output.OUTPUT, NAMESPACES.current)
     
     def run_keyword_if(self, expr, name, *args):
-        """Runs the given keyword with the given arguments, if 'expr' is true.
+        """Runs the given keyword with the given arguments, if `expr` is true.
         
-        'expr' is evaluated in the same way as with the 'Should Be True'
-        keyword.
+        The given `expr` is evaluated similarly as with `Should Be
+        True` keyword, and `name` and `*args` have same semantics as with
+        `Run Keyword`.
         
         Example, a simple if/else construct:
         | ${status} | ${value} = | Run Keyword And Ignore Error | My Keyword |
@@ -678,9 +686,9 @@ class RunKeyword:
             return self.run_keyword(name, *args)
     
     def run_keyword_unless(self, expr, name, *args):
-        """Runs the given keyword with the given arguments, if 'expr' is false.
+        """Runs the given keyword with the given arguments, if `expr` is false.
 
-        See 'Run Keyword If' for more information and an example.
+        See `Run Keyword If` for more information and an example.
         
         New in Robot Framework version 1.8.3.
         """
@@ -695,9 +703,9 @@ class RunKeyword:
         value is either the return value of the keyword or the received error
         message.
         
-        The keyword name and arguments work as in 'Run Keyword'.
+        The keyword name and arguments work as in `Run Keyword`.
         
-        See 'Run Keyword If' for a usage example.
+        See `Run Keyword If` for a usage example.
         
         Note: In versions prior to Robot Framework version 1.8.3, this keyword
         only returns the return value or error message of the executed keyword.
@@ -739,12 +747,13 @@ class RunKeyword:
     def wait_until_keyword_succeeds(self, timeout, retry_interval, name, *args):
         """Waits until the specified keyword succeeds or the given timeout expires.
         
-        'name' and 'args' define the keyword that is executed. If the specified
-        keyword does not succeed within 'timeout', this keyword fails.        
-        'retry_interval' is the time to wait before trying to run the keyword
-        again after the previous run has failed. 
+        `name` and `args` define the keyword that is executed
+        similarly as with `Run Keyword`. If the specified keyword does
+        not succeed within `timeout`, this keyword fails.
+        `retry_interval` is the time to wait before trying to run the
+        keyword again after the previous run has failed.
         
-        Both 'timeout' and 'retry_interval' must be given in Robot Framework's
+        Both `timeout` and `retry_interval` must be given in Robot Framework's
         time format (e.g. '1 minute', '2 min 3 s', '4.5').
         
         Example:
@@ -768,7 +777,7 @@ class RunKeyword:
         This keyword can only be used in a test teardown. Trying to use it
         anywhere else results in an error.
         
-        Otherwise, this keyword works exactly like 'Run Keyword', see its 
+        Otherwise, this keyword works exactly like `Run Keyword`, see its 
         documentation for more details. 
         """
         test = self._get_test_in_teardown('Run Keyword If Test Failed')
@@ -781,7 +790,7 @@ class RunKeyword:
         This keyword can only be used in a test teardown. Trying to use it
         anywhere else results in an error.
         
-        Otherwise, this keyword works exactly like 'Run Keyword', see its 
+        Otherwise, this keyword works exactly like `Run Keyword`, see its 
         documentation for more details. 
         """
         test = self._get_test_in_teardown('Run Keyword If Test Passed')
@@ -801,7 +810,7 @@ class RunKeyword:
         This keyword can only be used in suite teardown. Trying to use it in
         any other place will result in an error.
         
-        Otherwise, this keyword works exactly like 'Run Keyword', see its 
+        Otherwise, this keyword works exactly like `Run Keyword`, see its 
         documentation for more details. 
         """
         suite = self._get_suite_in_teardown('Run Keyword If '
@@ -815,7 +824,7 @@ class RunKeyword:
         This keyword can only be used in a suite teardown. Trying to use it
         anywhere else results in an error.
         
-        Otherwise, this keyword works exactly like 'Run Keyword', see its 
+        Otherwise, this keyword works exactly like `Run Keyword`, see its 
         documentation for more details. 
         """
         suite = self._get_suite_in_teardown('Run Keyword If '
@@ -829,7 +838,7 @@ class RunKeyword:
         This keyword can only be used in a suite teardown. Trying to use it
         anywhere else results in an error.
         
-        Otherwise, this keyword works exactly like 'Run Keyword', see its 
+        Otherwise, this keyword works exactly like `Run Keyword`, see its 
         documentation for more details. 
         """
         suite = self._get_suite_in_teardown('Run Keyword If All Tests Passed')
@@ -842,7 +851,7 @@ class RunKeyword:
         This keyword can only be used in a suite teardown. Trying to use it
         anywhere else results in an error.
         
-        Otherwise, this keyword works exactly like 'Run Keyword'; see its 
+        Otherwise, this keyword works exactly like `Run Keyword`, see its 
         documentation for more details.
         """
         suite = self._get_suite_in_teardown('Run Keyword If Any Tests Failed')
@@ -865,10 +874,10 @@ class Misc:
     def sleep(self, time, reason=None):
         """Pauses the test executed for the given time.
         
-        'time' may be either a number or a time string. Time strings are in
+        `time` may be either a number or a time string. Time strings are in
         a format such as '1 day 2 hours 3 minutes 4 seconds 5milliseconds' or
         '1d 2h 3m 4s 5ms', and they are fully explained in an appendix of Robot
-        Framework User Guide. Optional 'reason' can be used to explain why 
+        Framework User Guide. Optional `reason` can be used to explain why 
         sleeping is necessary. Both the time slept and the reason are logged.
 
         Examples:
@@ -954,7 +963,7 @@ class Misc:
         
         This keyword does nothing with the arguments it receives, but as they
         are visible in the log, this keyword can be used to display simple
-        messages. In more complicated cases, the 'Log' or 'Log Many keywords'
+        messages. In more complicated cases, the `Log` or `Log Many` keywords
         should be used.
         """
         pass
@@ -995,16 +1004,16 @@ class Misc:
     def get_time(self, format='timestamp'):
         """Returns the current time in the requested format. 
         
-        How time is returned is determined based on the given 'format' string
+        How time is returned is determined based on the given `format` string
         as follows. Note that all checks are case-insensitive.
         
-        - If 'format' contains the word 'epoch', the time is returned in
+        - If `format` contains the word 'epoch', the time is returned in
           seconds after the UNIX epoch. The return value is always an integer.
 
-        - If 'format' contains any of the words 'year', 'month', 'day', 'hour',
+        - If `format` contains any of the words 'year', 'month', 'day', 'hour',
           'min', or 'sec', only the selected parts are returned. The order of
           the returned parts is always the one in the previous sentence and the
-          order of words in 'format' is not significant. The parts are returned
+          order of words in `format` is not significant. The parts are returned
           as zero-padded strings (e.g. May -> '05').
 
         - Otherwise (and by default) the time is returned as a timestamp string
@@ -1022,7 +1031,7 @@ class Misc:
         - ${secs} = 1143637581
         - ${year} = '2006'
         - ${yyyy} = '2006', ${mm} = '03', ${dd} = '29'
-        - @{time} = [ '2006', '03', '29', '15', '06', '21' ]
+        - @{time} = ['2006', '03', '29', '15', '06', '21']
         - ${y} = '2006'
         - ${s} = '21'
         """
@@ -1067,21 +1076,21 @@ class Misc:
         return method(*args)
 
     def grep(self, text, pattern, pattern_type='literal string'):
-        """Returns the text grepped using 'pattern'.
+        """Returns the text grepped using `pattern`.
         
-        'pattern_type' defines how the given pattern is interpreted,
+        `pattern_type` defines how the given pattern is interpreted,
         as explained below. It is case-insensitive and may contain other text.
         For example, 'regexp', 'REGEXP' and 'Pattern is a regexp' are all
         considered equal.
         
-        - If 'pattern_type' contains either the string 'simple' or 'glob', the 
-          'pattern' is considered a simple pattern and lines returned only if 
+        - If `pattern_type` contains either the string 'simple' or 'glob', the 
+          `pattern` is considered a simple pattern and lines returned only if 
           they match it. (1) 
-        - If 'pattern_type' contains either the string 'regular expression' or
-          'regexp', the 'pattern' is considered a regular expression and only 
+        - If `pattern_type` contains either the string 'regular expression' or
+          'regexp', the `pattern` is considered a regular expression and only 
           lines matching it returned. (2)
-        - If 'pattern_type' contains the string 'case insensitive',
-          the 'pattern' is considered a literal string and lines returned,
+        - If `pattern_type` contains the string 'case insensitive',
+          the `pattern` is considered a literal string and lines returned,
           if they contain the string, regardless of the case.
         - Otherwise the pattern is considered a literal string and lines
           returned, if they contain the string exactly. This is the default.
@@ -1123,7 +1132,7 @@ class Misc:
         """Returns each argument string escaped for use as a regular expression.
         
         This keyword can be used to escape strings to be used with
-        'Should Match Regexp' and 'Should Not Match Regexp' keywords.
+        `Should Match Regexp` and `Should Not Match Regexp` keywords.
         
         Escaping is done with Python's re.escape() function.
         
@@ -1147,9 +1156,9 @@ class BuiltIn(Verify, Converter, Variables, RunKeyword, Misc):
     """BuiltIn library provides a set of often needed generic keywords.
 
     These keywords are available automatically without importing any library.
-    They allow functionality for verifications (e.g. 'Should Be Equal'),
-    conversions (e.g. 'Convert To Integer') and for various other purposes
-    (e.g. 'Sleep', 'Run Keyword If').
+    They allow functionality for verifications (e.g. `Should Be Equal`),
+    conversions (e.g. `Convert To Integer`) and for various other purposes
+    (e.g. `Sleep`, `Run Keyword If`).
     """
 
     ROBOT_LIBRARY_SCOPE = 'GLOBAL'
@@ -1163,7 +1172,7 @@ def register_run_keyword(library, keyword, args_to_process=None):
 
     1) Why is this method needed
 
-    Keywords running other keywords internally (normally using 'Run Keyword'
+    Keywords running other keywords internally (normally using `Run Keyword`
     or some variants of it in BuiltIn) must have the arguments ment to the
     internally executed keyword handled specially to prevent processing them
     twice. This is done ONLY for keywords registered using this method.
@@ -1175,15 +1184,15 @@ def register_run_keyword(library, keyword, args_to_process=None):
     
     2) How to use this method
 
-    'library' is the name of the library where the registered keyword is
+    `library` is the name of the library where the registered keyword is
     implemented.
 
-    'keyword' can be either a function or method implementing the
+    `keyword` can be either a function or method implementing the
     keyword, or name of the implemented keyword as a string.
 
-    'args_to_process' is needed when 'keyword' is given as a string, and it
+    `args_to_process` is needed when `keyword` is given as a string, and it
     defines how many of the arguments to the registered keyword must be
-    processed normally. When 'keyword' is a method or function, this
+    processed normally. When `keyword` is a method or function, this
     information is got directly from it so that varargs (those specified with
     syntax '*args') are not processed but others are.
 
