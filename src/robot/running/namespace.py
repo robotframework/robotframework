@@ -23,6 +23,7 @@ from robot.common import UserErrorHandler
 import robot
 
 from importer import Importer
+from runkwregister import RUN_KW_REGISTER
 
 
 IMPORTER = Importer()
@@ -215,13 +216,17 @@ class Namespace:
             std_handler, ext_handler = handler2, handler1
         else:
             return [handler1, handler2]
-        msg = ("Keyword '%s' found both from a user created test library '%s' "
-               "and Robot Framework standard library '%s'. The user created "
-               "keyword is used. To select explicitly, and to get rid of this "
-               "warning, use full format i.e. either '%s' or '%s'.")
-        self._syslog.warn(msg % (std_handler.name, ext_handler.library.name,
-                                 std_handler.library.orig_name,
-                                 ext_handler.longname, std_handler.longname))
+        # In case keyword is registered as run keyword variant and it has the 
+        # same name as standard library keyword, warning is not raised.
+        if not RUN_KW_REGISTER.is_run_keyword(ext_handler.library.orig_name, 
+                                              ext_handler.name):
+            msg = ("Keyword '%s' found both from a user created test library '%s' "
+                   "and Robot Framework standard library '%s'. The user created "
+                   "keyword is used. To select explicitly, and to get rid of this "
+                   "warning, use full format i.e. either '%s' or '%s'.")
+            self._syslog.warn(msg % (std_handler.name, ext_handler.library.name,
+                                     std_handler.library.orig_name,
+                                     ext_handler.longname, std_handler.longname))
         return [ext_handler]
     
     def _get_explicit_handler(self, name):
