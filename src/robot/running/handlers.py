@@ -103,7 +103,7 @@ class _RunnableHandler(BaseHandler):
     def _get_timeout(self, namespace):
         # Timeouts must not be active for run keyword variants, only for
         # keywords they execute internally
-        if RUN_KW_REGISTER.is_run_keyword(self.library.orig_name, self.name):
+        if RUN_KW_REGISTER.is_run_keyword(self):
             return None
         timeoutable = self._get_timeoutable_items(namespace)
         if len(timeoutable) > 0 :

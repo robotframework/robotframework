@@ -27,6 +27,16 @@ def function_with_three(one, two, three, *args):
     pass
 
 
+class HandlerStub:
+
+    def __init__(self, libname, name):
+        class LibStub:
+            def __init__(self, name):
+                self.orig_name = name
+        self.library = LibStub(libname)
+        self.name = name
+        
+
 class TestRunKeywordRegister(unittest.TestCase):
 
     def setUp(self):
@@ -68,17 +78,21 @@ class TestRunKeywordRegister(unittest.TestCase):
 
     def test_is_run_keyword_when_library_does_not_match(self):
         self.reg.register_run_keyword('SomeLib', function_without_arg)
-        assert_false(self.reg.is_run_keyword('Non Existing', 'whatever'))
+        handler = HandlerStub('Non Existing Lib', 'whatever')
+        assert_false(self.reg.is_run_keyword(handler))
 
     def test_is_run_keyword_when_keyword_does_not_match(self):
         self.reg.register_run_keyword('SomeLib', function_without_arg)
-        assert_false(self.reg.is_run_keyword('SomeLib', 'non_existing'))
+        handler = HandlerStub('SomeLib', 'non_existing')
+        assert_false(self.reg.is_run_keyword(handler))
 
     def test_is_run_keyword_matches(self):
         self.reg.register_run_keyword('SomeLib', function_without_arg)
         self.reg.register_run_keyword('AnotherLib', Lib().method_with_default)
-        assert_true(self.reg.is_run_keyword('SomeLib', 'Function Without Arg'))
-        assert_true(self.reg.is_run_keyword('AnotherLib', 'Method With Default'))
+        hand1 = HandlerStub('SomeLib', 'Function Without Arg')
+        hand2 = HandlerStub('AnotherLib', 'Method With Default')
+        assert_true(self.reg.is_run_keyword(hand1))
+        assert_true(self.reg.is_run_keyword(hand2))
 
     def _verify_reg(self, lib_name, keyword, keyword_name, arg_count, given_count=None):
         if given_count is None:

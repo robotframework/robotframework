@@ -209,25 +209,23 @@ class Namespace:
             return found[0]
         return None
 
-    def _filter_stdlib_handler(self, handler1, handler2):
-        if handler1.library.orig_name in STDLIB_NAMES:
-            std_handler, ext_handler = handler1, handler2
-        elif handler2.library.orig_name in STDLIB_NAMES:
-            std_handler, ext_handler = handler2, handler1
+    def _filter_stdlib_handler(self, hand1, hand2):
+        if hand1.library.orig_name in STDLIB_NAMES:
+            std_hand, ext_hand = hand1, hand2
+        elif hand2.library.orig_name in STDLIB_NAMES:
+            std_hand, ext_hand = hand2, hand1
         else:
-            return [handler1, handler2]
-        # In case keyword is registered as run keyword variant and it has the 
-        # same name as standard library keyword, warning is not raised.
-        if not RUN_KW_REGISTER.is_run_keyword(ext_handler.library.orig_name, 
-                                              ext_handler.name):
-            msg = ("Keyword '%s' found both from a user created test library '%s' "
-                   "and Robot Framework standard library '%s'. The user created "
-                   "keyword is used. To select explicitly, and to get rid of this "
-                   "warning, use full format i.e. either '%s' or '%s'.")
-            self._syslog.warn(msg % (std_handler.name, ext_handler.library.name,
-                                     std_handler.library.orig_name,
-                                     ext_handler.longname, std_handler.longname))
-        return [ext_handler]
+            return [hand1, hand2]
+        if not RUN_KW_REGISTER.is_run_keyword(ext_hand):
+            self._syslog.warn(
+                "Keyword '%s' found both from a user created test library "
+                "'%s' and Robot Framework standard library '%s'. The user "
+                "created keyword is used. To select explicitly, and to get "
+                "rid of this warning, use full format i.e. either '%s' or '%s'."
+                % (std_hand.name,
+                   ext_hand.library.orig_name, std_hand.library.orig_name,
+                   ext_hand.longname, std_hand.longname))
+        return [ext_hand]
     
     def _get_explicit_handler(self, name):
         libname, kwname = self._split_keyword_name(name)
