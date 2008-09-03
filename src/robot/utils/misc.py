@@ -92,13 +92,13 @@ def _isWordBoundary(prev, char, next):
 
 
 def cygpath(path, options='-wa'):
-    """Converts given path using Cygwin command cygpath
+    """Converts given path using Cygwin command 'cygpath'.
     
-    Default options convert posix path to absolute Windows paths.
+    Default options convert unixy path to an absolute Windows path.
     
     Returns path unmodified if not in Cygwin.
     """
-    if sys.platform.count('cygwin') == 0:
+    if 'cygwin' not in sys.platform:
         return path
     output = os.popen('cygpath %s "%s"' % (options, path))
     winpath = output.read().splitlines()[0]
