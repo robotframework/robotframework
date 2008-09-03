@@ -643,10 +643,10 @@ class Variables:
 
 
 class RunKeyword:
-    # If you use any of keywords from this class internally, you need to 
-    # register your keyword, otherwise the arguments are processed incorrectly 
-    # too early. See end of this file for method registering your keyword and 
-    # for some more information.
+
+    # If you use any of these run keyword variants from another library, you
+    # should register those keywords with 'register_run_keyword' method. See
+    # the documentation of that method at the end of this file.
     
     def run_keyword(self, name, *args):
         """Executes the given keyword with the given arguments.
@@ -1159,12 +1159,35 @@ class BuiltIn(Verify, Converter, Variables, RunKeyword, Misc):
 
 
 def register_run_keyword(library, keyword, args_to_process=None):
-    """Needs to be called when extending run keyword variants.
+    """Registers 'run keyword' so that its arguments can be handled correctly.
 
-    'library' is the name of the library where the keyword is implemented. 
-    'keyword' is function, method or keywords name. In case name is used,
-    args_to_process is needed and it should define how many arguments needs to
-    be processed. Following example shows how the registering can be done:
+    1) Why is this method needed
+
+    Keywords running other keywords internally (normally using 'Run Keyword'
+    or some variants of it in BuiltIn) must have the arguments ment to the
+    internally executed keyword handled specially to prevent processing them
+    twice. This is done ONLY for keywords registered using this method.
+
+    If the register keyword has same name as any keyword from Robot Framework
+    standard libraries, it can be used without getting warnings. Normally
+    there is a warning in such cases  unless the keyword is used in long
+    format (e.g. MyLib.Keyword).
+    
+    2) How to use this method
+
+    'library' is the name of the library where the registered keyword is
+    implemented.
+
+    'keyword' can be either a function or method implementing the
+    keyword, or name of the implemented keyword as a string.
+
+    'args_to_process' is needed when 'keyword' is given as a string, and it
+    defines how many of the arguments to the registered keyword must be
+    processed normally. When 'keyword' is a method or function, this
+    information is got directly from it so that varargs (those specified with
+    syntax '*args') are not processed but others are.
+
+    3) Examples
     
     from robot.libraries.BuiltIn import BuiltIn, register_run_keyword
 
@@ -1172,32 +1195,27 @@ def register_run_keyword(library, keyword, args_to_process=None):
         # do something
         return BuiltIn().run_keyword(name, *args)
 
+    # Either one of these works
     register_run_keyword(__name__, my_run_keyword)
-    
-    or:
-    
+    register_run_keyword(__name__, 'My Run Keyword', 1)
+
+    -------------
+
     from robot.libraries.BuiltIn import BuiltIn, register_run_keyword
-    
+
     class MyLibrary:
         def my_run_keyword_if(self, expression, name, *args):
             # do something
             return BuiltIn().run_keyword_if(expression, name, *args)
 
+    # Either one of these works
     register_run_keyword('MyLibrary', MyLibrary.my_run_keyword_if)
-    
-    or same as above, but last line as:
-    
-    register_run_keyword('MyLibrary', 'my_run_keyword_if', 1)
-    
-    
-    Note: In case registered keywords name conflicts with some of the standard 
-    libraries keyword name, no warning is raised.
-    
-    Note: Works only with Python and Jython keywords (not Java).
+    register_run_keyword('MyLibrary', 'my_run_keyword_if', 2)
     """
     RUN_KW_REGISTER.register_run_keyword(library, keyword, args_to_process)
 
-for keyword in [ name for name in dir(RunKeyword) if not name.startswith('_') ]:
-    register_run_keyword("BuiltIn", getattr(RunKeyword, keyword))
-               
-    
+
+for name in [ attr for attr in dir(RunKeyword) if not attr.startswith('_') ]:
+    register_run_keyword('BuiltIn', getattr(RunKeyword, name))
+
+del(name)
