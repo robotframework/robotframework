@@ -643,6 +643,10 @@ class Variables:
 
 
 class RunKeyword:
+    # If you use any of keywords from this class internally, you need to 
+    # register your keyword, otherwise the arguments are processed incorrectly 
+    # too early. See end of this file for method registering your keyword and 
+    # for some more information.
     
     def run_keyword(self, name, *args):
         """Executes the given keyword with the given arguments.
@@ -1179,11 +1183,15 @@ def register_run_keyword(library, keyword, args_to_process=None):
             # do something
             return BuiltIn().run_keyword_if(expression, name, *args)
 
-    register_run_keyword('MyLibrary', RegisteredClass.my_run_keyword_if)
+    register_run_keyword('MyLibrary', MyLibrary.my_run_keyword_if)
     
     or same as above, but last line as:
     
     register_run_keyword('MyLibrary', 'my_run_keyword_if', 1)
+    
+    
+    Note: In case registered keywords name conflicts with some of the standard 
+    libraries keyword name, no warning is raised.
     
     Note: Works only with Python and Jython keywords (not Java).
     """
