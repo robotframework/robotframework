@@ -33,7 +33,7 @@ class TestHtmlEscape(unittest.TestCase):
         assert_equals(html_escape('"<&>"'), '"&lt;&amp;&gt;"')
                 
     def test_not_links(self):
-        for nolink in [ 'http no link', 'http:/no', 'xx://no', 'chars07://no',
+        for nolink in [ 'http no link', 'http:/no', 'xx://no', 'tooolong10://no',
                         'http://', 'http:// no' ]:
             assert_equals(html_escape(nolink, True), nolink)
             assert_equals(html_escape(nolink, False), nolink)
