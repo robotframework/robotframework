@@ -4,31 +4,33 @@ import sys
 import tempfile
 import os
 
-BASEDIR = os.path.dirname(os.path.abspath(__file__))
+ROOT = os.path.normpath(os.path.join(os.path.abspath(__file__),'..','..','..'))
 LIBRARIES = { 'builtin': 'BuiltIn', 'bu': 'BuiltIn',
               'operatingsystem': 'OperatingSystem', 'op': 'OperatingSystem',
               'telnet': 'Telnet', 'te': 'Telnet',
               'collections': 'Collections', 'co': 'Collections',
               'screenshot': 'Screenshot', 'sc': 'Screenshot' }
 
-sys.path.insert(0, os.path.join(BASEDIR,'..','..','tools','libdoc'))
-sys.path.insert(0, os.path.join(BASEDIR,'..','..','src'))
+sys.path.insert(0, os.path.join(ROOT,'tools','libdoc'))
+sys.path.insert(0, os.path.join(ROOT,'src'))
 
 from libdoc import LibraryDoc, create_html_doc
 
 
 def create_libdoc(name):
     if name == 'Screenshot':
-       javamods = _FakeJavaModules() 
-    lib = LibraryDoc(name)
-    output = os.path.abspath(os.path.join(BASEDIR, name+'.html'))
-    create_html_doc(lib, output)
+       javamods = _FakeJavaModules()
+    ipath = os.path.join(ROOT,'src','robot','libraries',name+'.py')
+    opath = os.path.join(ROOT,'doc','libraries',name+'.html')
+    create_html_doc(LibraryDoc(ipath), opath)
     if name == 'Screenshot':
         javamods.cleanup()
-    print output
+    print opath
 
 
 class _FakeJavaModules:
+
+    """Adds fake Java modules to sys.modules to enable importing Screenshot"""
 
     __path__ = [tempfile.gettempdir()]
 
@@ -63,9 +65,7 @@ if __name__ == '__main__':
         else:
             create_libdoc(LIBRARIES[name])
     except (IndexError, KeyError):
-        print 'Usage:  %s library | all' % (os.path.basename(sys.argv[0]))
-        print 
-        print 'Libraries:'
+        print 'Usage:  lib2html.py [ library | all ]\n\nLibraries:'
         for name in sorted(set(LIBRARIES.values())):
             print '  %s (%s)' % (name, name[:2].lower())
 
