@@ -9,6 +9,9 @@ class MyObject:
     def my_method(self, *args):
         self.args = args
 
+    def __str__(self):
+        return 'String presentation of MyObject'
+
     
 obj = MyObject()
 

@@ -137,6 +137,7 @@ def process_test(test):
         test.exp_status = 'PASS'
         test.exp_message = ''    
     test.kws = test.keywords
+    test.keyword_count = test.kw_count = len(test.keywords)
     for kw in test.keywords:
         process_keyword(kw)
     process_keyword(test.setup)

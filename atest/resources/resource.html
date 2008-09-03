@@ -19647,7 +19647,7 @@ Robot's acceptace tests.<br>
 
 
 
-      <td>${exp_msg}</td>
+      <td>${msg}</td>
 
 
 
@@ -19670,7 +19670,7 @@ Robot's acceptace tests.<br>
 
 
 
-      <td>${exp_level}=INFO</td>
+      <td>${level}=INFO</td>
 
 
 
@@ -19693,7 +19693,7 @@ Robot's acceptace tests.<br>
 
 
 
-      <td align="undefined" valign="undefined">${html}=False</td>
+      <td align="undefined" valign="undefined"><br></td>
 
 
 
@@ -19739,7 +19739,7 @@ Robot's acceptace tests.<br>
 
 
 
-    <tr>
+    <tr><td></td><td>${html} =</td><td>Set Variable If</td><td>'${level}' == 'HTML'</td><td>${True}<br></td><td>${False}</td></tr><tr><td></td><td>${level} =</td><td>Set Variable If</td><td>${html} is True</td><td>INFO</td><td>${level}</td></tr><tr>
 
 
 
@@ -19831,7 +19831,7 @@ Robot's acceptace tests.<br>
 
 
 
-      <td>${exp_msg}</td>
+      <td>${msg}</td>
 
 
 
@@ -20017,7 +20017,7 @@ Robot's acceptace tests.<br>
 
 
 
-      <td>${exp_level}</td>
+      <td>${level}</td>
 
 
 
@@ -20116,7 +20116,7 @@ Robot's acceptace tests.<br>
 
 
 
-    <tr><td></td><td>${html} =</td><td>Convert To Boolean</td><td>${html}</td><td></td><td></td></tr><tr><td></td><td>Should Be Equal</td><td>${item.html}</td><td>${html}</td><td></td><td></td></tr><tr>
+    <tr><td></td><td>Should Be Equal</td><td>${item.html}</td><td>${html}</td><td>Wrong HTML status</td><td></td></tr><tr>
 
 
 

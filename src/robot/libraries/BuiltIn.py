@@ -898,20 +898,31 @@ class Misc:
         - ${str2} = 'Hello---world'
         - ${str3} = 'Helloworld'
         """
-        if len(items) == 0:
-            return u''
+        if not items:
+            return ''
         items = [ utils.unic(item) for item in items ]
         if items[0].startswith('SEPARATOR='):
             sep = items[0][len('SEPARATOR='):]
             items = items[1:]
         else:
-            sep = u' '
+            sep = ' '
         return sep.join(items)
 
     def log(self, message, level="INFO"):
-        """Logs the given message with the given level"""
+        """Logs the given message with the given level.
+
+        Valid levels are TRACE, DEBUG, INFO (default), HTML and WARN.
+
+        HTML level is special because it writes the message into the
+        log file without escaping HTML code from it. For example
+        logging a message like '<img src="image.png">' with that level
+        creates an image, but with other levels you see just that
+        string.  Logging HTML messages should be used with care,
+        because invalid messages can corrupt the whole log file.  The
+        actual log level used for HTML messages is INFO.
+        """
         level = level.upper()
-        if not output.LEVELS.has_key(level):
+        if not output.LEVELS.has_key(level) and level != 'HTML':
             raise DataError("Invalid log level '%s'" % level)
         print '*%s* %s' % (level, message)
 

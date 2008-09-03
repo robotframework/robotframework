@@ -55,8 +55,6 @@ th {
 }
 </style>
 <title>Misc</title></head>
-
-
 <body>
 <h1>Misc</h1>
 
@@ -203,7 +201,7 @@ th {
 <td></td>
 <td></td>
 </tr>
-<tr><td>Sleep With Negative Time</td><td>${time1} =</td><td>Get Time</td><td>epoch</td><td></td></tr><tr><td></td><td>Sleep</td><td>-1</td><td></td><td></td></tr><tr><td></td><td>Sleep</td><td>-10 hours</td><td></td><td></td></tr><tr><td></td><td>${time2} =</td><td>Get Time</td><td>epoch</td><td></td></tr><tr><td></td><td>Should Be True</td><td>${time1} == ${time2} or ${time1} == ${time2} + 1</td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Sleep With Reason</td><td>Sleep</td><td>42 ms</td><td>No good reason</td><td></td></tr><tr>
+<tr><td>Sleep With Negative Time</td><td>${start} =</td><td>Get Time</td><td>epoch</td><td></td></tr><tr><td></td><td>Sleep</td><td>-1</td><td></td><td></td></tr><tr><td></td><td>Sleep</td><td>-10 hours</td><td></td><td></td></tr><tr><td></td><td>${end} =</td><td>Get Time</td><td>epoch</td><td></td></tr><tr><td></td><td>Should Be True</td><td>${start} == ${end} or ${start} == ${end} - 1</td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Sleep With Reason</td><td>Sleep</td><td>42 ms</td><td>No good reason</td><td></td></tr><tr>
 <td></td>
 <td></td>
 <td></td>
@@ -399,8 +397,8 @@ th {
 <td></td>
 <td></td>
 </tr>
-<tr>
-<td><a name="test_Log">Log</a></td>
+<tr><td>Log</td><td>Log</td><td>Hello, world!</td><td></td><td></td></tr><tr><td></td><td>Log</td><td>${42}</td><td></td><td></td></tr><tr><td></td><td>Log</td><td>${None}</td><td></td><td></td></tr><tr><td></td><td>Log</td><td>${OBJ}</td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr>
+<td><a name="test_Log">Log With Different Levels</a></td>
 <td>[Documentation]</td>
 <td>FAIL Invalid log level 'INVALID'</td>
 <td></td>
@@ -476,7 +474,7 @@ th {
 <td>INFO</td>
 <td></td>
 </tr>
-<tr>
+<tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Log HTML</td><td>Log</td><td>&lt;b&gt;not bold&lt;/b&gt;</td><td></td><td></td></tr><tr><td></td><td>Log</td><td>&lt;b&gt;bold&lt;/b&gt;</td><td>HTML</td><td></td></tr><tr><td></td><td>${html} =</td><td>Set Variable</td><td>&lt;img src="nonex.png"&gt;</td><td></td></tr><tr><td></td><td>Log</td><td>${html}</td><td></td><td></td></tr><tr><td></td><td>Log</td><td>${html}</td><td>HTML</td><td></td></tr><tr>
 <td></td>
 <td></td>
 <td></td>
@@ -1459,7 +1457,7 @@ th {
 <tr>
 <td><a name="test_Call Non Existing Method">Call Non Existing Method</a></td>
 <td>[Documentation]</td>
-<td>FAIL REGEXP: Object '&lt;objects_for_call_method.MyObject instance .*&gt;' does not have a method 'non_existing'</td>
+<td>FAIL Object 'String presentation of MyObject' does not have a method 'non_existing'</td>
 <td></td>
 <td></td>
 </tr>

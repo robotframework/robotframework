@@ -4199,7 +4199,10 @@ th { font-style: normal; } /* required for IE */
 
 
 
-    <tr>
+    <tr><td>Log</td><td>${tc} =</td><td>Check Test Case</td><td>Log</td><td></td></tr><tr><td></td><td>Check Log Message</td><td>${tc.kws[0].msgs[0]}</td><td>Hello, world!</td><td></td></tr><tr><td></td><td>Check Log Message</td><td>${tc.kws[1].msgs[0]}
+      </td><td>42</td><td></td></tr><tr><td></td><td>Check Log Message</td><td>${tc.kws[2].msgs[0]}
+      </td><td>None</td><td></td></tr><tr><td></td><td>Check Log Message</td><td>${tc.kws[3].msgs[0]}
+      </td><td>String presentation of MyObject</td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr>
 
 
 
@@ -4229,7 +4232,7 @@ th { font-style: normal; } /* required for IE */
 
 
 
-      <td>Log</td>
+      <td>Log With Different Levels</td>
 
 
 
@@ -4259,7 +4262,7 @@ th { font-style: normal; } /* required for IE */
 
 
 
-      <td>${tc}</td>
+      <td>${tc} =</td>
 
 
 
@@ -4319,7 +4322,7 @@ th { font-style: normal; } /* required for IE */
 
 
 
-      <td>Log</td>
+      <td>Log With Different Levels</td>
 
 
 
@@ -4439,216 +4442,7 @@ th { font-style: normal; } /* required for IE */
 
 
 
-    <tr>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      <td>${kws}</td>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      <td>Set</td>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      <td>${tc.keywords}</td>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    </tr>
+    
 
 
 
@@ -4933,7 +4727,7 @@ th { font-style: normal; } /* required for IE */
 
 
 
-      <td>${kws[0].messages[1]}
+      <td>${tc.kws[0].msgs[1]}
       </td>
 
 
@@ -5123,7 +4917,8 @@ th { font-style: normal; } /* required for IE */
 
 
 
-      <td align="undefined" valign="undefined">Check Log Message</td>
+      <td>Check Log Message</td><td>${tc.kws[1].msgs[1]}
+      </td>
 
 
 
@@ -5145,7 +4940,7 @@ th { font-style: normal; } /* required for IE */
 
 
 
-      <td align="undefined" valign="undefined">${kws[1].messages[1]}</td>
+      
 
 
 
@@ -5321,7 +5116,7 @@ th { font-style: normal; } /* required for IE */
 
 
 
-      <td align="undefined" valign="undefined">${kws[2].messages[1]}</td>
+      <td align="undefined" valign="undefined">${tc.kws[2].msgs[1]}</td>
 
 
 
@@ -5497,7 +5292,7 @@ th { font-style: normal; } /* required for IE */
 
 
 
-      <td align="undefined" valign="undefined">${kws[3].messages[1]}</td>
+      <td align="undefined" valign="undefined">${tc.kws[3].msgs[1]}</td>
 
 
 
@@ -5673,7 +5468,7 @@ th { font-style: normal; } /* required for IE */
 
 
 
-      <td align="undefined" valign="undefined">${kws[4].messages[1]}</td>
+      <td align="undefined" valign="undefined">${tc.kws[4].msgs[1]}</td>
 
 
 
@@ -5849,7 +5644,7 @@ th { font-style: normal; } /* required for IE */
 
 
 
-      <td align="undefined" valign="undefined">${kws[5].messages[1]}</td>
+      <td align="undefined" valign="undefined">${tc.kws[5].msgs[1]}</td>
 
 
 
@@ -6025,7 +5820,7 @@ th { font-style: normal; } /* required for IE */
 
 
 
-      <td align="undefined" valign="undefined">${kws[6].messages[1]}</td>
+      <td align="undefined" valign="undefined">${tc.kws[6].msgs[1]}</td>
 
 
 
@@ -6145,7 +5940,7 @@ th { font-style: normal; } /* required for IE */
 
 
 
-    <tr>
+    <tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Log HTML</td><td>${tc} =</td><td>Check Test Case</td><td>Log HTML</td><td></td></tr><tr><td></td><td>Check Log Message</td><td>${tc.kws[0].msgs[0]}</td><td>&lt;b&gt;not bold&lt;/b&gt;</td><td>INFO</td></tr><tr><td></td><td>Check Log Message</td><td>${tc.kws[1].msgs[0]}</td><td>&lt;b&gt;bold&lt;/b&gt;</td><td>HTML</td></tr><tr><td></td><td>Check Log Message</td><td>${tc.kws[3].msgs[0]}</td><td>&lt;img src="nonex.png"&gt;</td><td>INFO</td></tr><tr><td></td><td>Check Log Message</td><td>${tc.kws[4].msgs[0]}</td><td>&lt;img src="nonex.png"&gt;</td><td>HTML</td></tr><tr>
 
 
 
@@ -6617,217 +6412,7 @@ th { font-style: normal; } /* required for IE */
 
 
 
-    <tr>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      <td>${kws}</td>
-
-
-
-
-
-
-
-
-
-
-
-
-      <td>Set</td>
-
-
-
-
-
-
-
-
-
-
-
-
-      <td>${tc.keywords}</td>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    </tr>
+    
 
 
 
@@ -6944,7 +6529,7 @@ th { font-style: normal; } /* required for IE */
 
 
 
-      <td>${kws[0].messages[0]}
+      <td>${tc.kws[0].msgs[0]}
       </td>
 
 
@@ -7156,7 +6741,7 @@ th { font-style: normal; } /* required for IE */
 
 
 
-      <td>${kws[0].messages[1]}
+      <td>${tc.kws[0].msgs[1]}
       </td>
 
 
@@ -7333,7 +6918,7 @@ th { font-style: normal; } /* required for IE */
 
 
 
-      <td>${kws[0].messages[2]}
+      <td>${tc.kws[0].msgs[2]}
       </td>
 
 
@@ -7510,7 +7095,7 @@ th { font-style: normal; } /* required for IE */
 
 
 
-      <td>${kws[0].messages[3]}
+      <td>${tc.kws[0].msgs[3]}
       </td>
 
 
@@ -7684,7 +7269,7 @@ th { font-style: normal; } /* required for IE */
 
 
 
-      <td>${kws[1].messages[0]}
+      <td>${tc.kws[1].msgs[0]}
       </td>
 
 
@@ -8000,7 +7585,7 @@ th { font-style: normal; } /* required for IE */
 
 
 
-      <td align="undefined" valign="undefined">Check Test Case</td>
+      <td align="undefined" valign="undefined">${tc} =</td>
 
 
 
@@ -8021,7 +7606,7 @@ th { font-style: normal; } /* required for IE */
 
 
 
-      <td align="undefined" valign="undefined">Comment</td>
+      <td align="undefined" valign="undefined">Check Test Case</td><td align="undefined" valign="undefined">Comment</td>
 
 
 
@@ -8042,7 +7627,7 @@ th { font-style: normal; } /* required for IE */
 
 
 
-      <td align="undefined" valign="undefined"></td>
+      
 
 
 
@@ -8184,7 +7769,7 @@ th { font-style: normal; } /* required for IE */
 
 
 
-      <td></td>
+      <td align="undefined" valign="undefined">Should Be Equal As Integers</td><td align="undefined" valign="undefined">${tc.kws[0].msg_count}</td><td>0</td>
 
 
 
@@ -8213,7 +7798,7 @@ th { font-style: normal; } /* required for IE */
 
 
 
-      <td></td>
+      
 
 
 
@@ -8242,7 +7827,7 @@ th { font-style: normal; } /* required for IE */
 
 
 
-      <td></td>
+      
 
 
 
@@ -8358,7 +7943,7 @@ th { font-style: normal; } /* required for IE */
 
 
 
-    <tr>
+    <tr><td></td><td align="undefined" valign="undefined">Should Be Equal As Integers</td><td align="undefined" valign="undefined">${tc.kws[1].msg_count}</td><td>0</td><td></td></tr><tr><td></td><td align="undefined" valign="undefined">Should Be Equal As Integers</td><td align="undefined" valign="undefined">${tc.kws[2].msg_count}</td><td>0</td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr>
 
 
 
@@ -8402,7 +7987,7 @@ th { font-style: normal; } /* required for IE */
 
 
 
-      <td>${tc}</td>
+      <td>${tc} =</td>
 
 
 
@@ -8534,161 +8119,7 @@ th { font-style: normal; } /* required for IE */
 
 
 
-    <tr>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      <td>${kws}</td>
-
-
-
-
-
-
-
-
-
-
-
-
-      <td>Set</td>
-
-
-
-
-
-
-
-
-
-
-
-
-      <td>${tc.keywords}</td>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      
-
-
-
-
-
-
-
-
-      
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    </tr>
+    
 
 
 
@@ -8944,7 +8375,7 @@ th { font-style: normal; } /* required for IE */
 
 
 
-      <td>${kws[1].messages[1]}
+      <td>${tc.kws[1].msgs[1]}
       </td>
 
 
@@ -9121,7 +8552,7 @@ th { font-style: normal; } /* required for IE */
 
 
 
-      <td>${kws[2].messages[1]}
+      <td>${tc.kws[2].msgs[1]}
       </td>
 
 
@@ -9298,7 +8729,7 @@ th { font-style: normal; } /* required for IE */
 
 
 
-      <td>${kws[3].messages[1]}
+      <td>${tc.kws[3].msgs[1]}
       </td>
 
 
@@ -9475,7 +8906,7 @@ th { font-style: normal; } /* required for IE */
 
 
 
-      <td align="undefined" valign="undefined">${kws[6].message_count}</td>
+      <td align="undefined" valign="undefined">${tc.kws[6].message_count}</td>
 
 
 
@@ -9651,7 +9082,7 @@ th { font-style: normal; } /* required for IE */
 
 
 
-      <td>${kws[7].messages[0]}
+      <td>${tc.kws[7].msgs[0]}
       </td>
 
 
@@ -9828,7 +9259,7 @@ th { font-style: normal; } /* required for IE */
 
 
 
-      <td>${kws[8].messages[0]}
+      <td>${tc.kws[8].msgs[0]}
       </td>
 
 
@@ -10005,7 +9436,7 @@ th { font-style: normal; } /* required for IE */
 
 
 
-      <td align="undefined" valign="undefined">${kws[10].message_count}</td>
+      <td align="undefined" valign="undefined">${tc.kws[10].message_count}</td>
 
 
 
@@ -10181,7 +9612,7 @@ th { font-style: normal; } /* required for IE */
 
 
 
-      <td align="undefined" valign="undefined">${kws[11].message_count}</td>
+      <td align="undefined" valign="undefined">${tc.kws[11].message_count}</td>
 
 
 
@@ -10357,7 +9788,7 @@ th { font-style: normal; } /* required for IE */
 
 
 
-      <td>${kws[12].messages[0]}
+      <td>${tc.kws[12].msgs[0]}
       </td>
 
 
@@ -10534,7 +9965,7 @@ th { font-style: normal; } /* required for IE */
 
 
 
-      <td align="undefined" valign="undefined">${kws[15].message_count}</td>
+      <td align="undefined" valign="undefined">${tc.kws[15].message_count}</td>
 
 
 
@@ -10710,7 +10141,7 @@ th { font-style: normal; } /* required for IE */
 
 
 
-      <td>${kws[16].messages[0]}
+      <td>${tc.kws[16].msgs[0]}
       </td>
 
 
@@ -10821,7 +10252,7 @@ th { font-style: normal; } /* required for IE */
 
 
 
-    <tr><td></td><td align="undefined" valign="undefined">Should Be Equal As Integers</td><td align="undefined" valign="undefined">${kws[18].message_count}</td><td>0</td><td></td></tr><tr><td></td><td align="undefined" valign="undefined">Should Be Equal As Integers</td><td align="undefined" valign="undefined">${kws[19].message_count}</td><td>0</td><td></td></tr><tr>
+    <tr><td></td><td align="undefined" valign="undefined">Should Be Equal As Integers</td><td align="undefined" valign="undefined">${tc.kws[18].message_count}</td><td>0</td><td></td></tr><tr><td></td><td align="undefined" valign="undefined">Should Be Equal As Integers</td><td align="undefined" valign="undefined">${tc.kws[19].message_count}</td><td>0</td><td></td></tr><tr>
 
 
 
@@ -10865,7 +10296,7 @@ th { font-style: normal; } /* required for IE */
 
 
 
-      <td align="undefined" valign="undefined">Should Be Equal As Integers</td><td align="undefined" valign="undefined">${kws[20].message_count}</td><td>0</td>
+      <td align="undefined" valign="undefined">Should Be Equal As Integers</td><td align="undefined" valign="undefined">${tc.kws[20].message_count}</td><td>0</td>
 
 
 
