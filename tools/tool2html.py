@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# tooldoc2html.py -- Creates HTML version of given tool documentation
+# tool2html.py -- Creates HTML version of given tool documentation
 #
 # First part of this file is Pygments configuration and actual
 # documentation generation follows it.
@@ -115,7 +115,7 @@ def create_tooldoc(tool_name):
                                    'userguide.css')
     base_path = os.path.join(BASEDIR, tool_name, 'doc', tool_name)
     arguments = [ '--time', '--stylesheet-path=%s' % stylesheet_path,
-                  base_path + '.txt', base_path + '.html' ]
+                  base_path+'.txt', base_path+'.html' ]
 
     publish_cmdline(writer_name='html', description=description, argv=arguments)
     print os.path.abspath(arguments[-1])
@@ -126,15 +126,16 @@ VALID_TOOLS = [ name for name in os.listdir(BASEDIR) if '.' not in name ]
 
 
 if __name__ == '__main__':
-    if len(sys.argv) != 2 or sys.argv[1].lower() not in VALID_TOOLS + ['all']:
-        print "Usage:  %s toolname | all\n" % (os.path.basename(sys.argv[0]))
-        print "Tools:"
+    try:
+        tool = sys.argv[1].lower()
+        if tool == 'all':
+            for name in VALID_TOOLS:
+                create_tooldoc(name)
+        elif tool in VALID_TOOLS:
+            create_tooldoc(tool)
+        else:
+            raise IndexError
+    except IndexError:
+        print 'Usage:  tool2html.py [ tool | all ]\n\nTools:' 
         for tool in sorted(VALID_TOOLS):
             print '  %s' % tool
-        sys.exit(1)
-    tool = sys.argv[1].lower()
-    if tool == 'all':
-        for name in VALID_TOOLS:
-            create_tooldoc(name)
-    else:
-        create_tooldoc(tool)
