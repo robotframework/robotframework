@@ -318,9 +318,9 @@ class TestVariableSplitter(unittest.TestCase):
                             ('*{x}567890${y}', 10),
                             ('&{x}%{x}@{x}\\${x}${y}', 
                              len('&{x}%{x}@{x}\\${x}')) ]:
-            self._test(inp, '${y}', start, custom_identifiers=['$'])
+            self._test(inp, '${y}', start, identifiers=['$'])
                                 
-    def _test(self, inp, variable, start=0, index=None, custom_identifiers=None,
+    def _test(self, inp, variable, start=0, index=None, identifiers=None,
               internal=False):
         if variable is not None:
             identifier = variable[0]
@@ -331,7 +331,9 @@ class TestVariableSplitter(unittest.TestCase):
         else:
             identifier = base = None
             start = end = -1
-        res = variables._VariableSplitter(inp, custom_identifiers)
+        if not identifiers:
+            identifiers = ['$','@','%','&','*']
+        res = variables._VariableSplitter(inp, identifiers)
         assert_equals(res.start, start, inp)
         assert_equals(res.end, end, inp)
         assert_equals(res.identifier, identifier, inp)

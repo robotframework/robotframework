@@ -20,32 +20,28 @@ from types import DictionaryType
 from robot import utils
 from robot.errors import DataError
 
-from isvar import is_var, is_scalar_var, is_list_var
-
-
-_default_identifiers = ['$','@','%','&','*']
-
-
-_extended_var_re = re.compile(r'''
-^\${       # start of the string and "${" 
-([ \w]+)   # base name (matches chars " _a-zA-Z0-9") (group 1)
-(.+)       # attribute query (anything at least once) (group 2)
-}$         # "}" and end of the string
-''', re.VERBOSE)
+from isvar import is_var, is_list_var
 
 
 class Variables(utils.NormalizedDict):
-
+    
     """Represents a set of variables including both ${scalars} and @{lists}.
     
     Contains methods for replacing variables from list, scalars, and strings.
     On top of ${scalar} and @{list} variables these methods handle also
     %{environment} variables.
     """
+
+    _extended_var_re = re.compile(r'''
+    ^\${       # start of the string and "${" 
+    ([ \w]+)   # base name (matches chars " _a-zA-Z0-9") (group 1)
+    (.+)       # attribute query (anything at least once) (group 2)
+    }$         # "}" and end of the string
+    ''', re.VERBOSE)
     
     def __init__(self, identifiers=None):
         if identifiers is None:
-            self._identifiers = _default_identifiers
+            self._identifiers = ['$','@','%','&','*']
         else:
             self._identifiers = identifiers
         utils.NormalizedDict.__init__(self, ignore=['_'])
@@ -73,7 +69,7 @@ class Variables(utils.NormalizedDict):
         raise DataError("Non-existing variable '%s'" % name)
 
     def _get_extended_var(self, name):
-        res = _extended_var_re.search(name)
+        res = self._extended_var_re.search(name)
         if res is None: 
             raise ValueError("'%s' is not extended variable" % name)
         base_name = res.group(1)
@@ -293,13 +289,11 @@ class Variables(utils.NormalizedDict):
         except:
             return False
 
+
 class _VariableSplitter:
     
-    def __init__(self, string, identifiers=None):
-        if identifiers is None:
-            self._identifiers = _default_identifiers
-        else:
-            self._identifiers = identifiers
+    def __init__(self, string, identifiers):
+        self._identifiers = identifiers
         variable_found = self._split(string)
         self._finalize(variable_found)
     
