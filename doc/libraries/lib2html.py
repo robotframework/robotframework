@@ -68,5 +68,3 @@ if __name__ == '__main__':
         print 'Usage:  lib2html.py [ library | all ]\n\nLibraries:'
         for name in sorted(set(LIBRARIES.values())):
             print '  %s (%s)' % (name, name[:2].lower())
-
-
