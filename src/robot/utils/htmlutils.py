@@ -15,7 +15,7 @@
 
 import re
 
-from robottypes import is_str, is_list
+from robottypes import is_str
 
 
 _html_entities = [ ('&', '&amp;'), ('<', '&lt;'), ('>', '&gt;') ]
