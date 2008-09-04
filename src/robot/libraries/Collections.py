@@ -550,23 +550,28 @@ class _Dictionary:
 
 class Collections(_List, _Dictionary):
     
-    """A library providing keywords for handling lists and dictionaries.
+    """A library providing keywords for handling Python lists and dictionaries.
 
     List keywords that do not alter given list can also be used with tuples,
     and to some extend also with other iterables.
 
-    BuiltIn library has also some related keywords. `Create List` can obviously
-    be used for creating new lists, and `Should Be Empty` and `Should Not Be
-    Empty` work both with lists and dictionaries.
+    Following keywords from the BuiltIn library can also be used with lists and
+    dictionaries:
 
-    All list keywords expect a scalar variable (e.g. ${list}) as an argument,
-    and possible list variables (e.g. @{list}) must be converted to scalar
+    - `Create List`
+    - `Get Length`
+    - `Length Should Be`
+    - `Should Be Empty`
+    - `Should Not Be Empty`
+
+    All list keywords expect a scalar variable (e.g. ${list}) as an argument.
+    Possible list variables (e.g. @{list}) must thus be converted to scalar
     variables first. The example below shows how to convert between them.
 
     | ${list} = | Create List  | @{list} |
     | @{list} = | Set Variable | ${list} | 
 
-    ---
+    -------
 
     List related keywords use variables in format ${Lx} in their examples.
     this means a list with as many alphabetic characters as specified by 'x'.
@@ -575,7 +580,7 @@ class Collections(_List, _Dictionary):
     Dictionary keywords use similar ${Dx} variable. For example ${D1} means
     {'a': 1} and ${D3} means {'a': 1, 'b': 2, 'c': 3}.
 
-    ---
+    --------
     """
     pass
 
