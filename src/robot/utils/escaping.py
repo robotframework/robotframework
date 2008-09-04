@@ -22,36 +22,14 @@ from robottypes import is_str, is_list, is_tuple
 _escape_re = re.compile(r'(\\+)([^\\]{,2})')   # escapes and nextchars
 
 
-# TODO: Check is this method used anymore and remove if not
 def escape(item):
-    if is_list(item):
-        return _escape_or_unescape_list(item, escape)
     if not is_str(item):
         return item
-    for orig, esc in [ ('\\', '\\\\'),
-                       ('${', '\\${'),
-                       ('@{', '\\@{'),
-                       ('%{', '\\%{'),
-                       ('&{', '\\&{'),
-                       ('*{', '\\*{') ]:
-        item = item.replace(orig, esc)
+    for orig in [ '\\', '${', '@{', '%{', '&{', '*{' ]:
+        item = item.replace(orig, '\\' + orig)
     return item
 
-def _escape_or_unescape_list(items, method):
-    # Want to return tuples as tuples. Tuples are immutable so can't change
-    # in place.
-    return items
-    if is_tuple(items):
-        return tuple([ method(item) for item in items ])
-    # Lists must be returned so that they are changed in place. Otherwise
-    # changes in libraries wouldn't have any effect for original lists.
-    for index, item in enumerate(items):
-        items[index] = method(item)
-    return items
-
 def unescape(item):
-    if is_list(item):
-        return _escape_or_unescape_list(item, unescape)
     if not is_str(item):
         return item
     result = []
