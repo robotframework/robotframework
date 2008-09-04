@@ -144,7 +144,7 @@ def LibraryDoc(libname):
 class _DocHelper:
 
     _name_regexp = re.compile("`(.+?)`")
-    _list_or_table_regexp = re.compile('^(\d+\.|[-*|]) .')
+    _list_or_table_regexp = re.compile('^(\d+\.|[-*|]|\[\d+\]) .')
 
     def __getattr__(self, name):
         if name == 'htmldoc':
