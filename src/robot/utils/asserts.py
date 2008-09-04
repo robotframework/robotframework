@@ -20,9 +20,9 @@ Benefits:
   - Can be easily used without unittest (using unittest.TestCase when you
     only need convenient asserts is not so nice)
   - Saved typing and shorter lines because no need to have 'self.' before
-    asserts. These are static functions after all so tha is OK.
+    asserts. These are static functions after all so that is OK.
   - All 'equals' methods (by default) report given values even if optional 
-    message given. This behaviour can be controlled with the optional values
+    message given. This behavior can be controlled with the optional values
     argument.
     
 Drawbacks:
