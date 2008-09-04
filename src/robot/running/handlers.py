@@ -84,8 +84,11 @@ class _RunnableHandler(BaseHandler):
         # arguments are processed normally
         if index < 0:
             args = self._replace_vars_from_args(args, variables)
-        else:            
-            args[:index] = self._replace_vars_from_args(args[:index], variables)
+        else:
+            processed = self._replace_vars_from_args(args[:index], variables)
+            if len(processed) > index:
+                processed = [utils.escape(arg) for arg in processed]
+            args[:index] = processed
         return args
     
     def _replace_vars_from_args(self, args, variables):
