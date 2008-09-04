@@ -1179,7 +1179,7 @@ def register_run_keyword(library, keyword, args_to_process=None):
 
     If the register keyword has same name as any keyword from Robot Framework
     standard libraries, it can be used without getting warnings. Normally
-    there is a warning in such cases  unless the keyword is used in long
+    there is a warning in such cases unless the keyword is used in long
     format (e.g. MyLib.Keyword).
     
     2) How to use this method
