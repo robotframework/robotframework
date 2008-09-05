@@ -74,6 +74,18 @@ class TestHtmlEscape(unittest.TestCase):
             assert_equals(html_escape(inp, True), exp)
             assert_equals(html_escape(inp, False), exp)
         
+    def test_image_links(self):
+        img = '(<img src="%s" title="%s" style="border: 1px solid gray" />)'
+        link = '(<a href="%s">%s</a>)'
+        for ext in ['jpg', 'jpeg', 'png', 'gif', 'bmp']:
+            url = 'foo://bar/zap.%s' % ext
+            uprl = url.upper()
+            inp = '(%s)' % url
+            assert_equals(html_escape(inp, True), img % (url, url))
+            assert_equals(html_escape(inp, False), link % (url, url))
+            assert_equals(html_escape(inp.upper(), True), img % (uprl, uprl))
+            assert_equals(html_escape(inp.upper(), False), link % (uprl, uprl))
+
 
 class TestHtmlEscapeWithFormatting(unittest.TestCase):
 
