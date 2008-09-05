@@ -374,7 +374,7 @@ class Verify:
         asserts.fail_unless_none(re.search(pattern, string), msg, False)
         
     def get_length(self, item):
-        """Returns the length of the given item.
+        """Returns and logs the length of the given item.
         
         The keyword first tries to get the length with the Python function
         'len', which calls the item's '__len__' method internally. If that
@@ -383,16 +383,23 @@ class Verify:
         'length' attribute. If all these attempts are unsuccessful, the keyword
         fails.
         
-        New in Robot Framework version 1.8.2.
+        New in Robot Framework version 1.8.2. Logging the returned value
+        added in 2.0.2.
         """
-        try:     return len(item)
-        except:  pass
-        try:     return item.length()
-        except:  pass
-        try:     return item.size()
-        except:  pass
-        try:     return item.length
-        except:  raise DataError("Could not get length of '%s'" % item)
+        length = self._get_length(item)
+        self.log('Length is %d' % length)
+        return length
+
+    def _get_length(self, item):
+        try: return len(item)
+        except:
+            try: return item.length()
+            except:
+                try: return item.size()
+                except:
+                    try: return item.length
+                    except:
+                        raise DataError("Could not get length of '%s'" % item)
         
     def length_should_be(self, item, length, msg=None):
         """Verifies that the length of the given item is correct.
