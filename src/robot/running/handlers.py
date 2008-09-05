@@ -86,8 +86,9 @@ class _RunnableHandler(BaseHandler):
             args = self._replace_vars_from_args(args, variables)
         else:
             processed = self._replace_vars_from_args(args[:index], variables)
-            if len(processed) > index:
-                processed[index:] = [utils.escape(arg) for arg in processed[index:]]
+            # In case @{list} variable is unpacked, the arguments going further 
+            # needs to be escaped, otherwise those are unescaped twice.
+            processed[index:] = [utils.escape(arg) for arg in processed[index:]]
             args[:index] = processed
         return args
     
