@@ -754,7 +754,7 @@ th { font-style: normal; } /* required for IE */
 
 
 
-      <td>Log Many</td><td>\${notvar}</td>
+      <td>\\Log Many</td><td>\${notvar}</td>
 
 
 
@@ -818,7 +818,7 @@ th { font-style: normal; } /* required for IE */
 
 
 
-    </tr><tr><td>@{KEYWORD AND ARGS WHICH NEEDS ESCAPING}</td><td>Log Many</td><td>@{NEEDS ESCAPING}</td><td></td><td></td></tr>
+    </tr><tr><td>@{KEYWORD AND ARGS WHICH NEEDS ESCAPING}</td><td>\\Log Many</td><td>@{NEEDS ESCAPING}</td><td></td><td></td></tr>
 
 
 
@@ -7303,7 +7303,16 @@ th { font-style: normal; } /* required for IE */
 
 
 
-    <tr>
+    <tr><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr>
+
+
+      <td>\Log Many</td>
+
+
+      <td>[Arguments]</td>
+
+
+      <td>@{args}</td>
 
 
       <td></td>
@@ -7315,16 +7324,7 @@ th { font-style: normal; } /* required for IE */
       <td></td>
 
 
-      <td></td>
-
-
-      <td></td>
-
-
-      <td></td>
-
-
-    </tr>
+    </tr><tr><td></td><td>Log Many</td><td>@{args}</td><td></td><td></td><td></td></tr>
 
 
     
