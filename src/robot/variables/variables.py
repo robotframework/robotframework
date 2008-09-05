@@ -54,31 +54,26 @@ class Variables(utils.NormalizedDict):
     def __getitem__(self, name):
         if not is_var(name):
             raise DataError("Invalid variable name '%s'" % name)
-        try:
-            return utils.NormalizedDict.__getitem__(self, name)
+        try: return utils.NormalizedDict.__getitem__(self, name)
         except KeyError:
-            pass
-        try:
-            return self._get_num_or_bool_or_none_var(name)
-        except ValueError:
-            pass
-        try:
-            return self._get_extended_var(name)
-        except ValueError:
-            raise DataError("Non-existing variable '%s'" % name)
+            try: return self._get_num_or_bool_or_none_var(name)
+            except ValueError:
+                try: return self._get_extended_var(name)
+                except ValueError:
+                    raise DataError("Non-existing variable '%s'" % name)
 
     def _get_extended_var(self, name):
         res = self._extended_var_re.search(name)
         if res is None: 
             raise ValueError
         base_name = res.group(1)
-        attr_query = res.group(2)
+        expression = res.group(2)
         try:
             variable = self['${%s}' % base_name]
         except DataError:
             raise ValueError
         try:
-            return eval('variable%s' % attr_query, {'variable': variable})
+            return eval('_BASE_VAR_' + expression, {'_BASE_VAR_': variable})
         except:
             raise DataError("Resolving variable '%s' failed: %s"
                             % (name, utils.get_error_message()))
