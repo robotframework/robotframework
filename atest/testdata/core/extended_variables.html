@@ -1,0 +1,169 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+<meta name="generator" content="HTML Tidy for Cygwin (vers 1st September 2004), see www.w3.org">
+<style type="text/css">
+html {
+  font-family: Arial,Helvetica,sans-serif;
+  background-color: white;
+  color: black;
+}
+p {
+  max-width: 60em;
+}
+table {
+  border-collapse: collapse;
+  empty-cells: show;
+  margin: 1em 0em;
+  border: 0.1em solid black;
+}
+th, td {
+  border-style: solid;
+  border-width: 0.05em 0.1em;
+  border-color: black;
+  padding: 0.1em 0.2em;
+  height: 1.5em;
+}
+th {
+  background-color: rgb(192, 192, 192);
+  color: black;
+  border-width: 0.1em;
+  font-weight: bold;
+  text-align: center;
+  text-transform: capitalize;
+  letter-spacing: 0.1em;
+}
+/* Widths of named columns */
+col.name {
+  width: 10em;
+}
+.action, .value, .arg {
+  width: 15em;
+}
+/* Properties for the name column 
+- td:first-child should work in CSS 2.1 avare browsers (tested in Firefox)
+- col.name is against specs but works in IE
+*/
+td:first-child, col.name {
+  background-color: rgb(240, 240, 240);
+  text-transform: capitalize;
+  letter-spacing: 0.1em;
+}
+/* required for IE */
+th {
+  font-style: normal;
+}
+</style>
+<title>Robot Test Cases</title></head>
+<body>
+<h1>Robot Test Cases</h1>
+<table border="1">
+<colgroup span="99"><col class="name"><col class="value" span="4"></colgroup>
+<thead>
+<tr>
+<th>Setting</th>
+<th>Value</th>
+<th>Value</th>
+<th>value</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Variables</td>
+<td>variables.py</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Library</td>
+<td>ExampleJavaLibrary</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<table border="1">
+<colgroup span="99"><col class="name"><col class="value" span="4"></colgroup>
+<thead>
+<tr>
+<th>Variable</th>
+<th>Value</th>
+<th>Value</th>
+<th>Value</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>${list} =</td>
+<td>${42}</td>
+<td>foo</td>
+<td>${None}</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<table border="1">
+<colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
+<thead>
+<tr>
+<th>Test Case</th>
+<th>Action</th>
+<th>Argument</th>
+<th>Argument</th>
+<th>Argument</th>
+
+
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Using Attribute</td>
+<td>Should Be Equal</td>
+<td>${OBJ.name}</td>
+<td>dude</td>
+<td></td>
+
+
+</tr>
+<tr><td></td><td>Should Be Equal</td><td>${ o_B J __ &nbsp;.name}</td><td>dude</td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Calling Method</td><td>Should Be Equal</td><td>${OBJ.greet()}</td><td>dude says hi!</td><td></td></tr><tr><td></td><td>Should Be Equal</td><td>${OBJ.greet('dudette')}</td><td>dude says hi to dudette!</td><td></td></tr><tr><td></td><td>Should Be Equal</td><td>${OBJ.name.capitalize()}</td><td>Dude</td><td></td></tr><tr><td></td><td>Should Be Equal</td><td>${SPACE.__len__()}</td><td>${1}<br></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Accessing List</td><td>Should Be Equal</td><td>${LIST[0]} ${LIST[1]}</td><td>42 foo</td><td></td></tr><tr><td></td><td>Should Be Equal</td><td>${LIST[2]}</td><td>${None}</td><td></td></tr><tr><td></td><td>Should Be Equal</td><td>${LIST[-1]}&nbsp;${LIST[-2]}&nbsp;</td><td>None foo</td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Accessing Dictionary </td><td>${dict} = </td><td>Evaluate</td><td>{'a': 1,&nbsp;42: 'b'}</td><td></td></tr><tr><td></td><td>Should Be Equal</td><td>${dict['a']}</td><td>${1}</td><td></td></tr><tr><td></td><td>Should Be Equal</td><td>${dict[42]}</td><td>b</td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Multiply</td><td>[Documentation]</td><td>FAIL STARTS:</td><td>Resolving variable '\${3.0 * 2}' failed: SyntaxError:</td><td></td></tr><tr><td></td><td>Should Be Equal</td><td>${SPACE * 3}</td><td>${SPACE}${SPACE}${SPACE}</td><td></td></tr><tr><td></td><td>Should Be Equal</td><td>${3 * 42}</td><td>${126}</td><td></td></tr><tr><td></td><td>Should Be Equal</td><td>${3 * 2.0}</td><td>${6}</td><td></td></tr><tr><td></td><td>Log Many</td><td>Having&nbsp;float first fails</td><td>${3.0 * 2}</td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Using Public Java Attribute</td><td>${javaobj} =</td><td>Get Java Object</td><td>Robot Framework</td><td></td></tr><tr><td></td><td>Should Be Equal</td><td>${javaobj.publicString}</td><td>Robot Framework</td><td></td></tr><tr><td></td><td>Should Be Equal</td><td>${javaobj.publicInt}</td><td>${42}</td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Using Java Attribute With Bean Properties</td><td>${javaobj} =</td><td>Get Java Object</td><td>Robot</td><td></td></tr><tr><td></td><td>Should Be Equal</td><td>${javaobj.name}</td><td>Robot</td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Calling Java Method</td><td>${javaobj} =</td><td>Get Java Object</td><td>Robot</td><td></td></tr><tr><td></td><td>Should Be Equal</td><td>${javaobj.setName('New')}</td><td>${null}</td><td></td></tr><tr><td></td><td>Should Be Equal</td><td>${javaobj.getName()}</td><td>New</td><td></td></tr><tr><td></td><td>Should Be Equal</td><td>${javaobj.publicString}</td><td>Robot</td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Accessing Java Lists and Maps </td><td>${array} =</td><td>Get Array Of Three Ints</td><td></td><td></td></tr><tr><td></td><td>Should Be Equal</td><td>${array[2]}</td><td>${42}</td><td></td></tr><tr><td></td><td>${array} =</td><td>Get String Array</td><td>foo</td><td>bar</td></tr><tr><td></td><td>Should Be Equal</td><td>${array[-1]}</td><td>bar</td><td></td></tr><tr><td></td><td>${ht} =</td><td>Get Hashtable</td><td></td><td></td></tr><tr><td></td><td>Should Be Equal</td><td>${ht.put('key', 'value')}</td><td>${null}</td><td></td></tr><tr><td></td><td>Should Be Equal</td><td>${ht['key']}</td><td>value</td><td></td></tr><tr><td></td><td>${list} =</td><td>Get Linked List</td><td>one</td><td>two</td></tr><tr><td></td><td>Should Be Equal</td><td>${list[0]}</td><td>one</td><td></td></tr><tr><td></td><td>Should Be Equal</td><td>${list[1]}</td><td>two</td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Failing When Base Name Does Not Exist</td><td>[Documentation]</td><td>FAIL</td><td>Non-existing variable '\${nonex.whatever}'</td><td></td></tr><tr><td></td><td>Log</td><td>${nonex.whatever}</td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Failing When Attribute Does Not exists 1</td><td>[Documentation]</td><td>FAIL STARTS:</td><td>Resolving variable '\${OBJ.nonex}' failed: AttributeError: </td><td></td></tr><tr><td></td><td>Log</td><td>${OBJ.nonex}</td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Failing When Attribute Does Not exists 2</td><td>[Documentation]</td><td>FAIL STARTS:</td><td>Resolving variable '\${OBJ.nonex_method()}' failed: AttributeError:</td><td></td></tr><tr><td></td><td>Log</td><td>${OBJ.nonex_method()}</td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Failing When Calling Method With Wrong Number Of Arguments</td><td>[Documentation]</td><td>FAIL STARTS:</td><td>Resolving variable '\${OBJ.greet('too', 'many')}' failed: TypeError: </td><td></td></tr><tr><td></td><td>Log</td><td>${OBJ.greet('too', 'many')}</td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Failing When Method Raises Exception</td><td>[Documentation]</td><td>FAIL</td><td>Resolving variable '\${OBJ.greet('FAIL')}' failed: ValueError</td><td></td></tr><tr><td></td><td>Log</td><td>${OBJ.greet('FAIL')}</td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Fail When Accessing Item Not In List</td><td>[Documentation]</td><td>FAIL STARTS:</td><td>Resolving variable '\${LIST[30]}' failed: IndexError:</td><td></td></tr><tr><td></td><td>Log</td><td>${LIST[30]}</td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Fail When Accessing Item Not In Dictionary</td><td>[Documentation]</td><td>FAIL STARTS:</td><td>Resolving variable '\${dict['xxx']}' failed: KeyError:</td><td></td></tr><tr><td></td><td>${dict} =</td><td>Evaluate</td><td>{}</td><td></td></tr><tr><td></td><td>Log</td><td>${dict['xxx']}</td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Failing For Syntax Error</td><td>[Documentation]</td><td>FAIL STARTS:</td><td>Resolving variable '\${OBJ.greet('no end quote)}' failed: SyntaxError: </td><td></td></tr><tr><td></td><td>Log</td><td>${OBJ.greet('no end quote)}</td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Failing When Java Attribute Does Not Exist</td><td>[Documentation]</td><td>FAIL STARTS:</td><td>Resolving variable '\${javaobj.nonExisting}' failed: AttributeError: </td><td></td></tr><tr><td></td><td>${javaobj} =</td><td>Get Java Object</td><td>My Name</td><td></td></tr><tr><td></td><td>Log</td><td>${javaobj.nonExisting}</td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Failing When Java Method Throws Exception</td><td>[Documentation]</td><td>FAIL STARTS:</td><td>Resolving variable '\${javaobj.exception()}' failed: IllegalArgumentException:</td><td></td></tr><tr><td></td><td>${javaobj} =</td><td>Get Java Object</td><td>My Name</td><td></td></tr><tr><td></td><td>Log</td><td>${javaobj.exception()}</td><td></td><td></td></tr>
+</tbody>
+</table>
+<table border="1">
+<colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
+<thead>
+<tr>
+<th>Keyword</th>
+<th>Action</th>
+<th>Argument</th>
+<th>Argument</th>
+<th>Argument</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</body></html>
