@@ -109,8 +109,18 @@ started and stopped on every line.
 URLs
 ~~~~ 
 
-All strings that look like URLs are automatically converted into a
-clickable link. For example, :code:`http://some.url` turns into link.
+All strings that look like URLs are automatically converted into
+clickable links. Additionally, URLs that end with extension
+:path:`.jpg`, :path:`.jpeg`, :path:`.png`, :path:`.gif` or
+:path:`.bmp` (case-insensitive) will automatically create images. For
+example URLs like :code:`http://some.url` are turned into links, and
+:code:`http:///server/image.jpg` and :code:`file:///path/chart.png`
+into images.
+
+The automatic conversion of URLs to links is applied to all the data
+in logs and reports, but creating images is done only for test suite,
+test case and keyword documentation. Creating images works starting
+from Robot Framework 2.0.2.
 
 
 Tables
