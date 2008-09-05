@@ -59,27 +59,33 @@ class Variables(utils.NormalizedDict):
         except KeyError:
             pass
         try:
-            return self._get_extended_var(name)
-        except:
+            return self._get_num_or_bool_or_none_var(name)
+        except ValueError:
             pass
         try:
-            return self._get_num_or_bool_or_none_var(name)
-        except:
-            pass
-        raise DataError("Non-existing variable '%s'" % name)
+            return self._get_extended_var(name)
+        except ValueError:
+            raise DataError("Non-existing variable '%s'" % name)
 
     def _get_extended_var(self, name):
         res = self._extended_var_re.search(name)
         if res is None: 
-            raise ValueError("'%s' is not extended variable" % name)
+            raise ValueError
         base_name = res.group(1)
         attr_query = res.group(2)
-        variable = self['${%s}' % base_name]
-        return eval('variable%s' % attr_query)
+        try:
+            variable = self['${%s}' % base_name]
+        except DataError:
+            raise ValueError
+        try:
+            return eval('variable%s' % attr_query, {'variable': variable})
+        except:
+            raise DataError("Resolving variable '%s' failed: %s"
+                            % (name, utils.get_error_message()))
         
     def _get_num_or_bool_or_none_var(self, name):
         if name[0] != '$':
-            raise ValueError("'%s' is not num, bool or None variable" % name)
+            raise ValueError
         base = self._normalize(name)[2:-1]
         if base == 'true':
             return True
@@ -89,7 +95,7 @@ class Variables(utils.NormalizedDict):
             return None
         try:
             return long(base)
-        except:
+        except ValueError:
             return float(base)
 
     def replace_list(self, items):
