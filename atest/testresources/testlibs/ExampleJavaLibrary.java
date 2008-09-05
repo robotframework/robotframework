@@ -1,4 +1,5 @@
 import java.util.Hashtable;
+import java.util.LinkedList;
 
 
 public class ExampleJavaLibrary {
@@ -88,4 +89,13 @@ public class ExampleJavaLibrary {
     		throw new AssertionError(actual + " != " + expected);
     	}
     }
+
+    public LinkedList getLinkedList(Object[] values) {
+        LinkedList list = new LinkedList();
+    	for (int i=0; i < values.length; i++) {
+            list.add(values[i]);
+        }
+        return list;
+    }
+     
 }
