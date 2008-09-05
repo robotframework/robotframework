@@ -78,17 +78,18 @@ class TestCheckerLibrary:
 
         if test.exp_message == test.message:
             return
-        
         if test.exp_message.startswith('REGEXP:'):
-            exp_pattern = test.exp_message.replace('REGEXP:', '', 1).strip()
-            if re.match(exp_pattern, test.message):
+            pattern = test.exp_message.replace('REGEXP:', '', 1).strip()
+            if re.match(pattern, test.message):
                 return
-            msg = "Wrong regexp error message."
-        else:
-            msg = "Wrong error message."
-        
-        raise AssertionError("%s\n\nExpected:\n%s\n\nActual:\n%s\n"
-                             % (msg, test.exp_message, test.message))
+        if test.exp_message.startswith('STARTS:'):
+            start = test.exp_message.replace('STARTS:', '', 1).strip()
+            if test.message.startswith(start):
+                return
+
+        raise AssertionError("Wrong error message\n\n"
+                             "Expected:\n%s\n\nActual:\n%s\n"
+                             % (test.exp_message, test.message))
 
 
     def check_suite_contains_tests(self, suite, *expected_names):
@@ -98,16 +99,16 @@ Expected tests : %s
 Actual tests   : %s"""  % (str(list(expected_names)), str(actual_tests))
         expected_names = [ utils.normalize(name) for name in expected_names ]
         if len(actual_tests) != len(expected_names):
-            raise AssertionError, "Wrong number of tests." + tests_msg
+            raise AssertionError("Wrong number of tests." + tests_msg)
         for test in actual_tests:
             if utils.eq_any(test.name, expected_names):
                 self.check_test_status(test)
                 expected_names.remove(utils.normalize(test.name))
             else:
-                msg = "Test '%s' was not expected to be run." % test.name
-                raise AssertionError, msg + tests_msg
+                raise AssertionError("Test '%s' was not expected to be run.%s"
+                                     % test.name, tests_msg)
         if len(expected_names) != 0:
-            raise Exception, "Bug in test library"
+            raise Exception("Bug in test library")
         
         
     def get_node(self, path, node=None):
