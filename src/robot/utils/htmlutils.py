@@ -14,15 +14,13 @@
 
 
 import re
+import os.path
 
 from robottypes import is_str
 
-
-_html_entities = [ ('&', '&amp;'), ('<', '&lt;'), ('>', '&gt;') ]
-_attr_entities = [ ('"', '&quot;') ]
 _table_line_re = re.compile('^\s*\| (.* |)\|\s*$')
 _table_line_splitter = re.compile(' \|(?= )')
-
+_hr_re = re.compile('^-{3,} *$')
 _bold_re = re.compile('''
 (                         # prefix (group 1)
   (\A|\ )                 # begin of line or space
@@ -36,8 +34,6 @@ _bold_re = re.compile('''
   (\Z|\ )                 # end of line or space
 )
 ''', re.VERBOSE)
-_bold_repl = r'\1<b>\3</b>'
-
 _italic_re = re.compile('''
 ( (\A|\ ) ["'(]* )         # begin of line or space and opt. any char "'(
 _                          # start of italic
@@ -45,24 +41,18 @@ _                          # start of italic
 _                          # end of italic
 (?= ["').,!?:;]* (\Z|\ ) ) # opt. any char "').,!?:; and end of line or space
 ''', re.VERBOSE)
-_italic_repl = r'\1<i>\3</i>'
-
-_link_re = re.compile('''
+_url_re = re.compile('''
 ( (\A|\ ) ["'([]* )         # begin of line or space and opt. any char "'([
-(\w{3,6}://[\S]+?)          # link (protocol is any alphanum 3-6 long string)
+(\w{3,9}://[\S]+?)          # url (protocol is any alphanum 3-9 long string)
 (?= [])"'.,!?:;]* (\Z|\ ) ) # opt. any char ])"'.,!?:; and end of line or space
 ''', re.VERBOSE)
-_link_repl = r'\1<a href="\3">\3</a>'
-
-_hr_re = re.compile('^-{3,} *$')
-_hr_repl = '<hr />\n'
 
 
 def html_escape(text, formatting=False):
     if not is_str(text):
         return text
 
-    for name, value in _html_entities:
+    for name, value in [('&', '&amp;'), ('<', '&lt;'), ('>', '&gt;')]:
         text = text.replace(name, value)
     
     ret = []
@@ -77,13 +67,13 @@ def html_escape(text, formatting=False):
             table.add_row(line)
         elif table.is_started():
             if _hr_re.match(line):
-                hr = _hr_repl
+                hr = '<hr />\n'
                 line = ''
             else:
                 line = _format_line(line, True)
             ret.append(table.end() + line)
         elif formatting and _hr_re.match(line):
-            hr = _hr_repl
+            hr = '<hr />\n'
         else:
             line = _format_line(line, formatting)
             if hr is not None:
@@ -100,13 +90,21 @@ def html_escape(text, formatting=False):
 
 
 def html_attr_escape(attr):
-    for name, value in _html_entities + _attr_entities + [('\n',' '), ('\t',' ')]:
+    for name, value in [('&', '&amp;'), ('"', '&quot;'),
+                        ('<', '&lt;'), ('>', '&gt;')]:
         attr = attr.replace(name, value)
+    for wspace in ['\n', '\r', '\t']:
+        attr = attr.replace(wspace, ' ')
     return attr
 
 
 class _Table:
 
+    _td = '<td style="border: 1px solid gray; padding: 0.1em 0.3em;">%s</td>'
+    _table = ('<table border="1" style="border: 1px solid gray; '
+              'background: transparent; border-collapse: collapse; '
+              'font-size: 0.9em; empty-cells: show;">')
+    
     def __init__(self):
         self._rows = []
 
@@ -116,44 +114,39 @@ class _Table:
         self._rows.append(cells)
 
     def end(self):
-        ret = _format_table(self._rows)
+        ret = self._format(self._rows)
         self._rows = []
         return ret
 
     def is_started(self):
         return len(self._rows) > 0
 
-
-_table_pre = ('<table border="1" style="border: 1px solid gray; '
-              'background: transparent; '
-              'border-collapse: collapse; '
-              'font-size: 0.9em; '
-              'empty-cells: show;">')
-_cell_templ = '<td style="border: 1px solid gray; padding: 0.1em 0.3em;">%s</td>'
-
-def _format_table(rows):
-    maxlen = max([ len(row) for row in rows ])
-    table = [ _table_pre ]
-    for row in rows:
-        row += [''] * (maxlen - len(row))  # fix ragged tables
-        table.append('<tr>')
-        table.extend([ _cell_templ % _format_line(cell, True) for cell in row ])
-        table.append('</tr>')
-    table.append('</table>')
-    return '\n'.join(table)
+    def _format(self, rows):
+        maxlen = max([ len(row) for row in rows ])
+        table = [ self._table ]
+        for row in rows:
+            row += [''] * (maxlen - len(row))  # fix ragged tables
+            table.append('<tr>')
+            table.extend([ self._td % _format_line(cell, True) for cell in row ])
+            table.append('</tr>')
+        table.append('</table>')
+        return '\n'.join(table)
 
 
 def _format_line(line, formatting=False):
-    # Handle _italic_ and *bold* only when asked to do so
     if formatting:
-        line = _bold_re.sub(_bold_repl, line)
-        line = _italic_re.sub(_italic_repl, line)
-    
-    # Always convert urls to clickable links
-    line = _link_re.sub(_link_repl, line)
-  
-    # Replace tab with eight "hard" spaces and two "soft" spaces with one
+        line = _bold_re.sub('\\1<b>\\3</b>', line)
+        line = _italic_re.sub('\\1<i>\\3</i>', line)
+    line = _url_re.sub(lambda res: _repl_url(res, formatting), line)
+    # Replace a tab with eight "hard" spaces, and two "soft" spaces with one
     # "hard" and one "soft" space (preserves spaces but allows wrapping) 
-    line = line.replace('\t', '&nbsp;'*8).replace('  ', ' &nbsp;')
-    
-    return line
+    return line.replace('\t', '&nbsp;'*8).replace('  ', ' &nbsp;')
+
+
+def _repl_url(res, formatting):
+    pre = res.group(1)
+    url = res.group(3)
+    if formatting and os.path.splitext(url)[1].lower() \
+           in ['.jpg', '.jpeg', '.png', '.gif', '.bmp']:
+        return '%s<img src="%s" title="%s" style="border: 1px solid gray" />' % (pre, url, url)
+    return '%s<a href="%s">%s</a>' % (pre, url, url)

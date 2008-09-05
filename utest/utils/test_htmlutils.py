@@ -3,7 +3,9 @@ import unittest
 
 from robot.utils.asserts import *
 
-from robot.utils.htmlutils import html_escape, html_attr_escape, _format_table
+from robot.utils.htmlutils import html_escape, html_attr_escape, _Table
+
+_format_table = _Table()._format
 
 
 class TestHtmlEscape(unittest.TestCase):
@@ -43,10 +45,14 @@ class TestHtmlEscape(unittest.TestCase):
                       '123456://link', 'file:///c:/temp/xxx.yyy' ]:
             exp = '<a href="%s">%s</a>' % (link, link)
             assert_equals(html_escape(link, True), exp)
+            assert_equals(html_escape(link, False), exp)
             for end in [',', '.', ';', ':', '!', '?', '...', '!?!', ' hello' ]:
+                assert_equals(html_escape(link+end, True), exp+end)
                 assert_equals(html_escape(link+end, False), exp+end)
                 assert_equals(html_escape('x '+link+end, True), 'x '+exp+end)
+                assert_equals(html_escape('x '+link+end, False), 'x '+exp+end)
             for start, end in [ ('(',')'), ('[',']'), ('"','"'), ("'","'") ]:
+                assert_equals(html_escape(start+link+end, True), start+exp+end)
                 assert_equals(html_escape(start+link+end, False), start+exp+end)
 
     def test_complex_links(self):
