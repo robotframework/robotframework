@@ -22,7 +22,7 @@ import glob
 
 from robot import utils
 from robot.errors import DataError
-import robot.output
+from robot.output import SYSLOG
 import BuiltIn
 
 
@@ -100,12 +100,7 @@ class OperatingSystem:
         | Should Be True | ${rc} > 0  |
         | Should Contain | ${out}     | TEST PASSED |
         """
-        self._info("Running command '%s'" % command)
-        if utils.is_jython:
-            # Jython's os.popen doesn't handle Unicode as explained in
-            # http://jython.org/bugs/1735774. This bug is still in Jython 2.2.
-            command = str(command)
-        process = os.popen(command)
+        process = os.popen(self._process_command(command))
         stdout = process.read()
         if stdout.endswith('\n'):
             stdout = stdout[:-1]
@@ -130,6 +125,19 @@ class OperatingSystem:
                 return rc, stdout
             return rc
         return stdout
+    
+    def _process_command(self, command):
+        if utils.is_jython:
+            # Jython's os.popen doesn't handle Unicode as explained in
+            # http://jython.org/bugs/1735774. This bug is still in Jython 2.2.
+            command = str(command)
+        if '>' not in command:
+            if command.endswith('&'):
+                command = command[:-1] + ' 2>&1 &'
+            else: 
+                command += ' 2>&1'
+        self._info("Running command '%s'" % command)
+        return command
     
     def run_and_return_rc(self, command):
         """Wrapper for `Run` keyword that returns only the return code.
@@ -185,8 +193,7 @@ class OperatingSystem:
         | Should Contain | ${stdout}           | Expected text |
         | [Teardown]     | Stop All Processes  |
         """
-        self._info("Running command '%s'" % command)
-        process = _Process(command, stdin)
+        process = _Process(self._process_command(command), stdin)
         return PROCESSES.register(process, alias)
     
     def switch_process(self, index_or_alias):
@@ -197,7 +204,7 @@ class OperatingSystem:
         """
         PROCESSES.switch(index_or_alias)
     
-    def read_process_output(self, mode='stdout'):
+    def read_process_output(self, mode=None):
         """Waits for the process to finish and returns its output.
         
         `mode` defines which outputs are returned. If it contains 'stdout', 
@@ -215,13 +222,12 @@ class OperatingSystem:
         
         See `Start Process` and `Switch Process` for more information.
         """
+        if mode:
+            msg = "'mode' argument for 'Read Process Output' keyword is deprecated."
+            self._log(msg, 'WARN')
+            SYSLOG.warn(msg)
         process = PROCESSES.get_current()
-        if (utils.contains(mode, 'stdout') and utils.contains(mode, 'stderr')) \
-                or utils.contains(mode, 'both'):
-            return process.read_stdout_and_stderr()
-        if utils.contains(mode, 'stderr'):
-            return process.read_stderr()
-        return process.read_stdout()
+        return process.read()
         
     def stop_process(self):
         """Stops the current process without reading from it.
@@ -1193,44 +1199,31 @@ class OperatingSystem:
         raise AssertionError(error)
 
     def _info(self, msg):
-        print "*INFO*", msg
+        self._log(msg, 'INFO')
+        
+    def _log(self, msg, level):
+        print '*%s* %s' % (level, msg)
         
 
 class _Process:
     
     def __init__(self, command, input):
-        if utils.is_jython:
-            # Jython's os.popen doesn't handle Unicode as explained in
-            # http://jython.org/bugs/1735774. This bug is still in Jython 2.2.
-            command = str(command)
-        stdin, self.stdout, self.stderr = os.popen3(command)
+        stdin, self.stdout = os.popen2(command)
         if input != '':
             stdin.write(input)
         stdin.close()
         self.closed = False
         
-    def read_stdout(self):
-        out, err = self._read()
-        if err != '':
-            raise DataError('Stderr was not empty. Contents:\n%s' % err)
-        return out
-    
-    def read_stderr(self):
-        return self._read()[1]
-    
-    def read_stdout_and_stderr(self):
-        return self._read()
-        
-    def _read(self):
+    def read(self):
         if self.closed:
             raise DataError('Cannot read from a closed process')
-        err = self.stderr.read()
         out = self.stdout.read()
+        if out.endswith('\n'):
+            out = out[:-1]
         self.close()
-        return out, err
+        return out
     
     def close(self):
         if not self.closed:
             self.stdout.close() 
-            self.stderr.close()
             self.closed = True
