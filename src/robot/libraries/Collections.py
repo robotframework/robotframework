@@ -14,6 +14,8 @@
 
 
 from robot import utils
+from robot import output
+from robot.errors import DataError
 
 
 # Note that create_list and should_(not_)_be_empty are in BuiltIn library
@@ -29,8 +31,8 @@ class _List:
         """
         return list(item)
 
-    def append_to_list(self, L, *values):
-        """Adds `values` to the end of `L`.
+    def append_to_list(self, list, *values):
+        """Adds `values` to the end of `list`.
         
         Example:
         | Append To List | ${L1} | xxx |   |   |
@@ -40,10 +42,10 @@ class _List:
         - ${L2} = ['a', 'b', 'x', 'y', 'z']
         """
         for value in values:
-            L.append(value)
+            list.append(value)
     
-    def insert_into_list(self, L, index, value):
-        """Inserts `value` into `L` to the position specified with `index`.
+    def insert_into_list(self, list, index, value):
+        """Inserts `value` into `list` to the position specified with `index`.
         
         Index '0' adds the value into the first position, '1' to the second,
         and so on. Similarly, '-1' is the last position, '-2' second last, and
@@ -59,7 +61,7 @@ class _List:
         - ${L1} = ['xxx', 'a']
         - ${L2} = ['a', 'xxx', 'b']
         """
-        L.insert(self._index_to_int(index), value)
+        list.insert(self._index_to_int(index), value)
 
     def combine_lists(self, *lists):
         """Combines the given `lists` together and returns the result.
@@ -79,8 +81,8 @@ class _List:
             ret.extend(item)
         return ret
         
-    def set_list_value(self, L, index, value):
-        """Sets the value of `L` specified by `index` to the given `value`.
+    def set_list_value(self, list, index, value):
+        """Sets the value of `list` specified by `index` to the given `value`.
         
         Index '0' means the first position, '1' the second and so on.
         Similarly, '-1' is the last position, '-2' second last, and so on.
@@ -94,12 +96,12 @@ class _List:
         - ${L3} = ['a', 'xxx', 'c']
         """ 
         try:
-            L[self._index_to_int(index)] = value
+            list[self._index_to_int(index)] = value
         except IndexError:
-            self._index_error(L, index)
+            self._index_error(list, index)
     
-    def remove_values_from_list(self, L, *values):
-        """Removes all occurences of given `values` from `L`.
+    def remove_values_from_list(self, list, *values):
+        """Removes all occurences of given `values` from `list`.
         
         Example:
         | Remove Values From List | ${L4} | a | c | e | f |
@@ -107,11 +109,11 @@ class _List:
         - ${L4} = ['b', 'd']
         """
         for value in values:
-            while value in L:
-                L.remove(value)
+            while value in list:
+                list.remove(value)
 
-    def remove_from_list(self, L, index):
-        """Removes and returns the value specified with an `index` from `L`.
+    def remove_from_list(self, list, index):
+        """Removes and returns the value specified with an `index` from `list`.
         
         Index '0' means the first position, '1' the second and so on.
         Similarly, '-1' is the last position, '-2' the second last, and so on.
@@ -126,12 +128,12 @@ class _List:
         - ${L2} = ['b']
         """
         try:
-            return L.pop(self._index_to_int(index))
+            return list.pop(self._index_to_int(index))
         except IndexError:
-            self._index_error(L, index)
+            self._index_error(list, index)
         
-    def get_from_list(self, L, index):
-        """Returns the value specified with an `index` from `L`.
+    def get_from_list(self, list, index):
+        """Returns the value specified with an `index` from `list`.
         
         The given list is never altered by this keyword.
         
@@ -150,17 +152,17 @@ class _List:
         - ${L1} and ${L2} are not changed.
         """
         try:
-            return L[self._index_to_int(index)]
+            return list[self._index_to_int(index)]
         except IndexError:
-            self._index_error(L, index)
+            self._index_error(list, index)
         
-    def get_slice_from_list(self, L, start=0, end=None):
+    def get_slice_from_list(self, list, start=0, end=None):
         """Returns a slice of the given list between `start` and `end` indexes.
 
         The given list is never altered by this keyword.
                 
         If both `start` and `end` are given, a sublist containing values from
-        `start` to `end` is returned. This is the same as 'L[start:end]' in
+        `start` to `end` is returned. This is the same as 'list[start:end]' in
         Python. To get all items from the beginning, use 0 as the start value,
         and to get all items until the end, use 'None' as the end value. 'None'
         is also a default value, so in this case, it is enough to give only 
@@ -182,10 +184,10 @@ class _List:
         start = self._index_to_int(start, True)
         if end is not None:
             end = self._index_to_int(end)
-        return L[start:end]
+        return list[start:end]
         
-    def count_values_in_list(self, L, value, start=0, end=None):
-        """Returns the number of occurrences of the given `value` in `L`.
+    def count_values_in_list(self, list, value, start=0, end=None):
+        """Returns the number of occurrences of the given `value` in `list`.
 
         The search can be narrowed to the selected sublist by the `start` and
         `end` indexes having the same semantics as in the `Get Slice From List`
@@ -196,9 +198,9 @@ class _List:
         - ${x} = 1
         - ${L3} is not changed.
         """
-        return self.get_slice_from_list(L, start, end).count(value)
+        return self.get_slice_from_list(list, start, end).count(value)
         
-    def get_index_from_list(self, L, value, start=0, end=None):
+    def get_index_from_list(self, list, value, start=0, end=None):
         """Returns the index of the first occurrence of the `value` on the list.
 
         The search can be narrowed to the selected sublist by the `start` and
@@ -213,20 +215,20 @@ class _List:
         """
         if start == '':
             start = 0
-        L = self.get_slice_from_list(L, start, end)
+        list = self.get_slice_from_list(list, start, end)
         try:
-            return int(start) + L.index(value)
+            return int(start) + list.index(value)
         except ValueError:
             return -1
         
-    def copy_list(self, L):
+    def copy_list(self, list):
         """Returns a copy of the given list.
         
         The given list is never altered by this keyword.
         """
-        return L[:]
+        return list[:]
         
-    def reverse_list(self, L):
+    def reverse_list(self, list):
         """Reverses the given list in place. 
         
         Note that the given list is changed and nothing is returned. Use 
@@ -236,9 +238,9 @@ class _List:
         =>
         - ${L3} = ['c', 'b', 'a']        
         """
-        L.reverse()
+        list.reverse()
     
-    def sort_list(self, L):
+    def sort_list(self, list):
         """Sorts the given list in place.
 
         The strings are sorted alphabetically and the numbers numerically.
@@ -251,27 +253,27 @@ class _List:
         =>
         - ${L} = [1, 2, 'a', 'b', 'c']
         """
-        L.sort()
+        list.sort()
     
-    def list_should_contain_value(self, L, value, msg=None):
-        """Fails if the `value` is not found from `L`.
+    def list_should_contain_value(self, list, value, msg=None):
+        """Fails if the `value` is not found from `list`.
         
         If `msg` is not given, the default error message "[ a | b | c ] does
         not contain the value 'x'" is shown in case of a failure. Otherwise,
         the given `msg` is used in case of a failure.
         """
-        default = "%s does not contain value '%s'" % (utils.seq2str2(L), value)
-        _verify_condition(value in L, default, msg)
+        default = "%s does not contain value '%s'" % (utils.seq2str2(list), value)
+        _verify_condition(value in list, default, msg)
     
-    def list_should_not_contain_value(self, L, value, msg=None):
-        """Fails if the `value` is not found from `L`.
+    def list_should_not_contain_value(self, list, value, msg=None):
+        """Fails if the `value` is not found from `list`.
         
         See `List Should Contain Value` for an explanation of `msg`. 
         """
-        default = "%s contains value '%s'" % (utils.seq2str2(L), value)
-        _verify_condition(value not in L, default, msg)
+        default = "%s contains value '%s'" % (utils.seq2str2(list), value)
+        _verify_condition(value not in list, default, msg)
     
-    def lists_should_be_equal(self, L1, L2, msg=None, values=True):
+    def lists_should_be_equal(self, list1, list2, msg=None, values=True):
         """Fails if given lists are unequal. 
         
         The first equality of lists' length is checked, and after that all
@@ -288,26 +290,44 @@ class _List:
           'False' or 'No Values', the error message is simply `msg`.
         - Otherwise the error message is `msg` + 'new line' + default.
         """
-        len1 = len(L1); len2 = len(L2)
+        len1 = len(list1); len2 = len(list2)
         default = 'Lengths are different: %d != %d' % (len1, len2)
         _verify_condition(len1 == len2, default, msg, values)
-        diffs = [ 'Index %d: %s != %s' % (i, L1[i], L2[i])
-                  for i in range(len1) if L1[i] != L2[i] ]
+        diffs = [ 'Index %d: %s != %s' % (i, list1[i], list2[i])
+                  for i in range(len1) if list1[i] != list2[i] ]
         default = 'Lists are different:\n' + '\n'.join(diffs) 
         _verify_condition(diffs == [], default, msg, values)
     
-    def list_should_contain_sub_list(self, L1, L2, msg=None, values=True):
-        """Fails if not all of the elements in `L2` are found in `L1`.
+    def list_should_contain_sub_list(self, list1, list2, msg=None, values=True):
+        """Fails if not all of the elements in `list2` are found in `list1`.
         
-        The order of values and the number of values are not taken into acount.
+        The order of values and the number of values are not taken into account.
         
         See the use of `msg` and `values` from the `Lists Should Be Equal`
         keyword.
         """
-        diffs = ', '.join([ str(item) for item in L2 if item not in L1 ])
+        diffs = ', '.join([ str(item) for item in list2 if item not in list1 ])
         default = 'Following values were not found from first list: ' + diffs
         _verify_condition(diffs == '', default, msg, values)
 
+    def log_list(self, list, level='INFO'):
+        """Logs given `list's` length and content with given `level`
+        
+        Valid levels are TRACE, DEBUG, INFO (default), and WARN.
+        
+        In case you want only log the length, use keyword `Get Length` from 
+        BuiltIn library. 
+        """
+        print '*%s* ' % (_validate_log_level(level)),
+        if len(list) == 0:
+            print 'List is empty'
+        elif len(list) == 1:
+            print "List has one item '%s'" % (list[0])
+        else:
+            print "List length is '%s'" % (len(list))
+            for i in range(0, len(list)):
+                print '%s: %s' % (i, list[i])
+            
     def _index_to_int(self, index, empty_to_zero=False):    
         if empty_to_zero and index == '':
             return 0
@@ -316,9 +336,9 @@ class _List:
         except ValueError:
             raise ValueError("Cannot convert index '%s' to an integer" % index)
 
-    def _index_error(self, L, index):
+    def _index_error(self, list, index):
         raise IndexError("Given index '%s' out of range 0-%s"
-                         % (index, len(L)-1))
+                         % (index, len(list)-1))
 
 
 class _Dictionary:
@@ -526,6 +546,24 @@ class _Dictionary:
         _verify_condition(diffs == [], default, msg, values)
         self._key_values_should_be_equal(keys, dict1, dict2, msg, values)
 
+    def log_dictionary(self, dictionary, level='INFO'):
+        """Logs given `dictionary's` length and content with given `level`
+        
+        Valid levels are TRACE, DEBUG, INFO (default), and WARN.
+        
+        In case you want only log the length, use keyword `Get Length` from 
+        BuiltIn library. 
+        """
+        print '*%s* ' % (_validate_log_level(level)),
+        if len(dictionary) == 0:
+            print 'Dictionary is empty'
+        elif len(dictionary) == 1:
+            print "Dictionary has one item '%s: %s'" % (dictionary.items()[0])
+        else:
+            print "Dictionary length is '%s'" % (len(dictionary))
+            for key in self.get_dictionary_keys(dictionary):
+                print '%s: %s' % (key, dictionary[key])
+
     def _keys_should_be_equal(self, dict1, dict2, msg, values):
         keys1 = self.get_dictionary_keys(dict1)
         keys2 = self.get_dictionary_keys(dict2)
@@ -593,3 +631,9 @@ def _verify_condition(condition, default_msg, given_msg, values=False):
         if values:
             raise AssertionError(given_msg + '\n' + default_msg)
         raise AssertionError(given_msg)
+
+def _validate_log_level(level):
+    level = level.upper()
+    if not output.LEVELS.has_key(level):
+        raise DataError("Invalid log level '%s'" % level)
+    return level
