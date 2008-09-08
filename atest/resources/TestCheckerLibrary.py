@@ -58,7 +58,7 @@ class TestCheckerLibrary:
         status is not given, expected status and message are read from test's 
         documentation. If documentation doesn't contain any of PASS, FAIL or 
         ERROR, test's status is expected to be PASS. If status is given that is 
-        used. Expected message is documetation after given status. Expected 
+        used. Expected message is documentation after given status. Expected 
         message can also be regular expression. In that case expected match 
         starts with REGEXP: , which is ignored in the regexp match.        
         """
@@ -133,7 +133,7 @@ def process_suite(suite):
 def process_test(test):
     if test.doc.count('FAIL') > 0:
         test.exp_status = 'FAIL'
-        test.exp_message = test.doc.split('FAIL', 1)[1].strip()
+        test.exp_message = test.doc.split('FAIL', 1)[1].lstrip()
     else:
         test.exp_status = 'PASS'
         test.exp_message = ''    
