@@ -173,11 +173,14 @@ class JavaHandler(_RunnableHandler):
     
     def __init__(self, library, handler_name, handler_method):
         if not self._is_valid_handler(handler_method):
-            raise TypeError('Declared only in implicit parent class')
+            raise TypeError('Not valid Java handler')
         _RunnableHandler.__init__(self, library, handler_name, handler_method)
         self.minargs, self.maxargs = self._get_arg_limits(handler_method)
         
     def _is_valid_handler(self, handler):
+        # Ignore overridden methods of parent classes created by Jython.  
+        if str(handler).startswith('super__'):
+            return False
         # Ignore methods only in 'java.lang.Object' (e.g. 'equals', 'wait').
         # Also ignore methods declared only in 'org.python.proxies' (there 
         # seems to be 'clone' and 'finalize').

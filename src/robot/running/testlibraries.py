@@ -14,7 +14,7 @@
 
 
 import os
-from types import MethodType, FunctionType, ModuleType, ClassType
+import types
 
 from robot import utils
 from robot.errors import DataError
@@ -29,8 +29,7 @@ def TestLibrary(name, args=None, syslog=None):
         syslog = SystemLogger()
     libcode = utils.import_(name)
     args = utils.to_list(args)
-    libtype = type(libcode)
-    if libtype is ModuleType:
+    if isinstance(libcode, types.ModuleType):
         if args:
             raise DataError('Libraries implemented as modules do not take '
                             'arguments, got: %s' % str(args))
@@ -40,7 +39,9 @@ def TestLibrary(name, args=None, syslog=None):
             return DynamicLibrary(libcode, name, args, syslog)
         else:
             return HybridLibrary(libcode, name, args, syslog)
-    if libtype is ClassType:
+    # Using type check and not isinstance for ClassType, because it does not 
+    # match Java classes whose type is javaclass. 
+    if type(libcode) is types.ClassType or isinstance(libcode, types.TypeType):
         return PythonLibrary(libcode, name, args, syslog)
     return JavaLibrary(libcode, name, args, syslog)
     
@@ -52,9 +53,8 @@ def _has_method(code, names):
     return False
 
 def _is_method(code):
-    type_ = type(code)
-    return type_ is MethodType or (utils.is_jython and 
-                                   str(type_).count('reflectedfunction') > 0)
+    return isinstance(code, types.MethodType) or \
+            (utils.is_jython and 'reflectedfunction' in str(type(code)))
 
 
 class _BaseTestLibrary(BaseLibrary):
@@ -172,7 +172,7 @@ class _BaseTestLibrary(BaseLibrary):
         
     def _get_handler_method(self, libcode, name):
         method = getattr(libcode, name)
-        if type(method) not in [MethodType, FunctionType]:
+        if not isinstance(method, (types.MethodType, types.FunctionType)):
             raise TypeError('Not a method or function')
         return method
     
@@ -213,8 +213,7 @@ class PythonLibrary(_BaseTestLibrary):
         if not utils.is_jython:
             return False
         try:
-            return str(type(method.im_func)).count('reflectedfunction') > 0 \
-                     and str(method).count('super__') == 0
+            return 'reflectedfunction' in str(type(method.im_func))
         except AttributeError:
             return False
 

@@ -15,7 +15,7 @@
 
 import os
 import sys
-from types import ModuleType, ClassType
+import types 
 if os.name == 'java':
     from java.lang import System
     
@@ -24,9 +24,7 @@ from error import get_error_message, get_error_details
 from robottypes import type_as_str
 from normalizing import normpath
 
-_VALID_IMPORT_TYPES = [ ModuleType, ClassType ]
-if os.name == 'java':
-    _VALID_IMPORT_TYPES.append(type(System)) # No JavaClassType in types
+_VALID_IMPORT_TYPES = (types.ModuleType, types.ClassType, types.TypeType)
 
 
 def simple_import(path_to_module):
@@ -101,7 +99,7 @@ def import_(name, type_='test library'):
         if fromlist:
             _raise_no_lib_in_module(type_, modname, fromlist[0])
         code = module_or_class
-    if type(code) not in _VALID_IMPORT_TYPES:
+    if not isinstance(code, _VALID_IMPORT_TYPES):
         _raise_invalid_type(type_, code)
     return code
 
