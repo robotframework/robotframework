@@ -1,6 +1,5 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html>
-<head>
+<html><head>
 
 
 
@@ -106,10 +105,8 @@ th { font-style: normal; } /* required for IE */
   
   
   
-  <title>Robot Test Cases</title>
-  <link type="text/css" href="resources/css/testdata.css" rel="stylesheet">
-</head>
-
+  
+  <title>Robot Test Cases</title><link type="text/css" href="resources/css/testdata.css" rel="stylesheet"></head>
 
 <body>
 
@@ -3122,7 +3119,7 @@ Unless&nbsp;Equal</td>
 
 
       <td align="undefined" valign="undefined">Possible stderr from
-executed command is not catched by run keyword nor Robot.</td>
+executed command is redirected to stdout</td>
 
 
 
@@ -3133,7 +3130,7 @@ executed command is not catched by run keyword nor Robot.</td>
 
 
 
-      <td></td>
+      <td>with "2&gt;&amp;1" unless the command has it's own redirect.</td>
 
 
 
@@ -3301,8 +3298,8 @@ world</td>
 
 
 
-      <td align="undefined" valign="undefined">Fail
-Unless&nbsp;Equal</td>
+      <td align="undefined" valign="undefined">Fail Unless Regexp
+Matches</td><td align="undefined" valign="undefined">${output}</td><td align="undefined" valign="undefined">^(hello\nworld|world\nhello)$</td>
 
 
 
@@ -3313,7 +3310,7 @@ Unless&nbsp;Equal</td>
 
 
 
-      <td align="undefined" valign="undefined">${output}</td>
+      
 
 
 
@@ -3324,7 +3321,7 @@ Unless&nbsp;Equal</td>
 
 
 
-      <td align="undefined" valign="undefined">hello</td>
+      
 
 
 
@@ -3335,7 +3332,19 @@ Unless&nbsp;Equal</td>
 
 
 
-      <td></td>
+      <td># don't know in what
+order<br>
+
+
+
+
+
+
+
+
+
+
+ #&nbsp;stdout and stderr are</td>
 
 
 
@@ -3492,9 +3501,7 @@ Redirected To Stdout</td>
 
 
 
-      <td align="undefined" valign="undefined">Stderr is redirected to
-stdout&nbsp; using syntax "2&gt;&amp;1" so it is catched by Run
-keyword.</td>
+      <td align="undefined" valign="undefined">Explicit redirect i.e. exactly same end results as with above test</td>
 
 
 
@@ -3696,7 +3703,7 @@ Matches</td>
 
 
 
-      <td align="undefined" valign="undefined">hello\nworld|world\nhello</td>
+      <td align="undefined" valign="undefined">^(hello\nworld|world\nhello)$</td>
 
 
 
@@ -3769,21 +3776,7 @@ order<br>
 
     </tr>
 
-    <tr>
-
-      <td align="undefined" valign="undefined"></td>
-
-      <td align="undefined" valign="undefined"></td>
-
-      <td align="undefined" valign="undefined"></td>
-
-      <td align="undefined" valign="undefined"></td>
-
-      <td align="undefined" valign="undefined"></td>
-
-      <td align="undefined" valign="undefined"></td>
-
-    </tr>
+    
 
     <tr>
 
@@ -3899,7 +3892,7 @@ Redirected To File</td>
 
     </tr>
 
-    <tr>
+    <tr><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Run When Command Writes Lot Of Stdout And stderr</td><td align="undefined" valign="undefined">${stdout} =</td><td align="undefined" valign="undefined">Run</td><td align="undefined" valign="undefined">${PROG} 0 out err 12500</td><td></td><td></td></tr><tr><td></td><td>Length Should Be</td><td>${stdout}</td><td>99999</td><td># Trailing newline stripped</td><td></td></tr><tr>
 
 
 
@@ -5008,5 +5001,4 @@ Unless&nbsp;Equal</td>
 
 
 
-</body>
-</html>
+</body></html>

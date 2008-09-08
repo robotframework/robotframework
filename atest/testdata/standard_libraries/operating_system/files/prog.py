@@ -1,22 +1,19 @@
 import sys
 
 
-def run(rc=0, stdout=None, stderr=None):
-    output(stdout, sys.stdout)
-    output(stderr, sys.stderr)
-    return int(rc)
-    
-    
-def output(msg, stream=sys.stdout):
-    if msg is not None:
-        stream.write(msg + '\n')
+def output(stdout=None, stderr=None, count=1):
+    if stdout is not None:
+        sys.stdout.write((stdout+'\n') * int(count))
+    if stderr is not None:
+        sys.stderr.write((stderr+'\n') * int(count))
     
 
 if __name__ == '__main__':
     args = sys.argv[1:]
     try:
-        rc = run(*args)
-    except Exception, err:
-        output("Running failed with args %s for exception: %s" % (args, err))
-        rc = 255
+        rc = int(args[0])
+        args = args[1:]
+    except (IndexError, ValueError):
+        rc = 0
+    output(*args)
     sys.exit(rc)
