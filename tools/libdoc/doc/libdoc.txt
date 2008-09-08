@@ -238,5 +238,18 @@ libraries`_, so their documentation (and source) acts as a more
 realistic example.
 
 
+Keyword arguments
+~~~~~~~~~~~~~~~~~
+
+:prog:`libdoc.py` handles keyword arguments automatically so that
+arguments specified for methods in libraries or user keywords in
+resource files are listed in a separate column. Possible trailing
+spaces in argument names are stripped to make it possible to use
+arguments like :code:`list_` in the code and still have :code:`list`
+in documentation. Additionally, user keyword arguments are shown
+without :var:`${}` or :var:`@{}` to make arguments look the same
+regardless where keywords originated from.
+
+
 .. _standard libraries: http://code.google.com/p/robotframework/wiki/TestLibraries
 .. _user guide: http://code.google.com/p/robotframework/wiki/UserGuide

@@ -482,6 +482,7 @@ resource files.</p>
 <li><a class="reference internal" href="#dynamic-libraries" id="id12">Dynamic libraries</a></li>
 <li><a class="reference internal" href="#resource-files" id="id13">Resource files</a></li>
 <li><a class="reference internal" href="#documentation-formatting" id="id14">Documentation formatting</a></li>
+<li><a class="reference internal" href="#keyword-arguments" id="id15">Keyword arguments</a></li>
 </ul>
 </li>
 </ul>
@@ -691,11 +692,22 @@ Messages</span> to <span class="name">Log Message</span>, and <span class="code"
 libraries</a>, so their documentation (and source) acts as a more
 realistic example.</p>
 </div>
+<div class="section" id="keyword-arguments">
+<h2><a class="toc-backref" href="#id15">Keyword arguments</a></h2>
+<p><span class="prog">libdoc.py</span> handles keyword arguments automatically so that
+arguments specified for methods in libraries or user keywords in
+resource files are listed in a separate column. Possible trailing
+spaces in argument names are stripped to make it possible to use
+arguments like <span class="code">list_</span> in the code and still have <span class="code">list</span>
+in documentation. Additionally, user keyword arguments are shown
+without <span class="var">${}</span> or <span class="var">&#64;{}</span> to make arguments look the same
+regardless where keywords originated from.</p>
+</div>
 </div>
 </div>
 <div class="footer">
 <hr class="footer" />
-Generated on: 2008-09-02 16:15 UTC.
+Generated on: 2008-09-08 10:39 UTC.
 
 </div>
 </body>
