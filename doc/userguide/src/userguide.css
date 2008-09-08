@@ -301,12 +301,13 @@ table.example caption, table.tsv-example caption, table.tabular caption {
     text-align: left;
     padding-bottom: 0.5em;
     font-style: italic;
+    font-size: 0.9em;
     margin: 0.5em 2em;
 }
 table.example th, table.example td, table.tsv-example td {
     border: 1px solid #808080;
     font-family: arial,helvetica,sans-serif;
-    font-size: 0.8em;
+    font-size: 0.9em;
     padding: 0.1em 0.3em;
     height: 1.2em;
 }

@@ -94,10 +94,10 @@ __ `Returning values`_
 Creating test library class or module
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Test libraries can be implemented as Python modules or Python
-or Java classes. Using modules is possible only with the static API,
-and more complicated libraries are normally better implemented as classes
-even then.
+Test libraries can be implemented as Python modules or Python or Java classes. 
+In Robot Framework 2.0.1 and earlier, it is possible to use only classic
+classes as test libraries. Both classic and new style classes are 
+supported from 2.0.2 onwards.
 
 
 Test library names
