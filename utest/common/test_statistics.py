@@ -188,22 +188,29 @@ class TestTagStatistics(unittest.TestCase):
             assert_equal(keys, exp, "Incls: %s, Excls: %s" % (incl, excl))
 
     def test_set_combine_and(self):
-        for inp, exp in [ ( ['t'], [['t']] ),
-                          ( ['not*'], [['not*']] ),
-                          ( ['T1','T2'], [['t1'],['t2']] ),
-                          ( ['t1&t2&t3'], [['t1','t2','t3']] ),
-                          ( ['','&','&a&'], [['a']] ),
+        for inp, exp in [ ( ['t'], [(['t'], None)] ),
+                          ( ['not*'], [(['not*'], None)] ),
+                          ( ['T1','T2'], [(['t1'], None), (['t2'], None)] ),
+                          ( ['t1&t2&t3'], [(['t1', 't2', 't3'], None)] ),
+                          ( ['','&','&a&'], [(['a'], None)] ),
                           ( ['T 1  &  T 2','3&2&1&A','UP'], 
-                            [['t1','t2'],['3','2','1','a'],['up']] ) ]:
+                            [(['t1', 't2'], None), 
+                             (['3', '2', '1', 'a'], None), 
+                             (['up'], None)] ) ]:
             assert_equals(TagStatistics([], [], inp)._combine_and, exp)
             assert_equals(TagStatistics([], [], inp)._combine_not, [])
 
     def test_set_combine_not(self):
-        for inp, exp, in [ ( ['t1NOTt2'], [['t1','t2']] ),
-                           ( ['t1NOTT2NOTx*'], [['t1','t2','x*']] ),
-                           ( ['notNOTNOtt'], [['not','nott']] ),
+        for inp, exp, in [ ( ['t1NOTt2'], 
+                             [(['t1', 't2'], None)] ),
+                           ( ['t1NOTT2NOTx*'], 
+                             [(['t1','t2','x*'], None)] ),
+                           ( ['notNOTNOtt'], 
+                             [(['not','nott'], None)] ),
                            ( ['t1NOTt2','3NOT4','5NOT6NOT7NOT8'], 
-                             [['t1','t2'],['3','4'],['5','6','7','8']] ) ]:
+                             [(['t1','t2'], None),
+                              (['3','4'], None),
+                              (['5','6','7','8'], None)] ) ]:
             assert_equals(TagStatistics([], [], inp)._combine_not, exp)
             assert_equals(TagStatistics([], [], inp)._combine_and, [])
         for invalid in [ 'NOT', 'NOTNOT', 'xNOTNOTy', 'NOTa', 'bNOT', 
@@ -214,12 +221,30 @@ class TestTagStatistics(unittest.TestCase):
     def test_set_combine_and_not_together(self):
         for inp, exp_and, exp_not in [ 
                 ( [], [], [] ),
-                ( ['t1&t2','t1NOTt3'], [['t1','t2']], [['t1','t3']] ),
-                ( ['1&2','3*','4NOT5'], [['1','2'],['3*']], [['4','5']] ),
+                ( ['t1&t2', 't1NOTt3'],
+                  [(['t1', 't2'], None)], 
+                  [(['t1', 't3'], None)] ),
+                ( ['1&2','3*','4NOT5'], 
+                  [(['1', '2'], None), (['3*'], None)], 
+                  [(['4', '5'], None)] ),
                 ( ['7NOT8','1&2&3','4NOT5NOT6'], 
-                  [['1','2','3']], [['7','8'],['4','5','6']] ) ]:
+                  [(['1', '2', '3'], None)], 
+                  [(['7', '8'], None), (['4', '5', '6'], None)] ) ]:
             assert_equals(TagStatistics([], [], inp)._combine_and, exp_and)
             assert_equals(TagStatistics([], [], inp)._combine_not, exp_not)
+
+    def test_set_combine_and_give_name(self):
+        for inp, exp_and, exp_not in [ 
+                ( [], [], [] ),
+                ( ['t1&t2:my_name','t1NOTt3:others'], 
+                  [(['t1', 't2'], 'My Name')], 
+                  [(['t1', 't3'], 'Others')] ),
+                ( ['1:2&2:3:name','3*','4NOT5:some new name'], 
+                  [(['1:2', '2:3'], 'Name'), (['3*'], None)], 
+                  [(['4', '5'], 'Some New Name')] ) ]:
+            assert_equals(TagStatistics([], [], inp)._combine_and, exp_and)
+            assert_equals(TagStatistics([], [], inp)._combine_not, exp_not)
+
 
     def test_is_combined_with_and(self):
         stats = TagStatistics()

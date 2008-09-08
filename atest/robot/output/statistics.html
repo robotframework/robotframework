@@ -81,7 +81,6 @@ th {
   
   
   <title>Robot Test Cases</title></head>
-
 <body>
 
 
@@ -436,7 +435,7 @@ th {
 
 
       <td align="undefined" valign="undefined">--critical t1<br>
---tagstatcombine d1ANDd2<br>
+--tagstatcombine d1ANDd2<br>--tagstatcombine d1ANDd2:combined_tag_with_new_name<br>
 --suitestatlevel 2<br>
 --tagstatexclude t2<br>
       </td>
@@ -1497,7 +1496,7 @@ th {
 
 
       <td align="undefined" valign="undefined">Tag Node Information Should Be Correct</td>
-      <td align="undefined" valign="undefined">${stats.children[1]}</td>
+      <td align="undefined" valign="undefined">${stats.children[2]}</td>
       <td align="undefined" valign="undefined">d1 &amp; d2</td>
       <td align="undefined" valign="undefined">1</td>
       <td align="undefined" valign="undefined">0</td>
@@ -1533,7 +1532,7 @@ th {
 
 
       <td align="undefined" valign="undefined">Tag Node Information Should Be Correct</td>
-      <td align="undefined" valign="undefined">${stats.children[2]}</td>
+      <td align="undefined" valign="undefined">${stats.children[3]}</td>
       <td align="undefined" valign="undefined">d1</td>
       <td align="undefined" valign="undefined">1</td>
       <td align="undefined" valign="undefined">0</td>
@@ -1567,7 +1566,7 @@ th {
 
 
       <td align="undefined" valign="undefined">Tag Node Information Should Be Correct</td>
-      <td align="undefined" valign="undefined">${stats.children[3]}</td>
+      <td align="undefined" valign="undefined">${stats.children[4]}</td>
       <td align="undefined" valign="undefined">d2</td>
       <td align="undefined" valign="undefined">1</td>
       <td align="undefined" valign="undefined">0</td>
@@ -1596,7 +1595,7 @@ th {
 
 
       <td align="undefined" valign="undefined">Tag Node Information Should Be Correct</td>
-      <td align="undefined" valign="undefined">${stats.children[4]}</td>
+      <td align="undefined" valign="undefined">${stats.children[5]}</td>
       <td align="undefined" valign="undefined">f1</td>
       <td align="undefined" valign="undefined">9</td>
       <td align="undefined" valign="undefined">1</td>
@@ -1632,7 +1631,7 @@ th {
 
 
       <td align="undefined" valign="undefined">Tag Node Information Should Be Correct</td>
-      <td align="undefined" valign="undefined">${stats.children[5]}</td>
+      <td align="undefined" valign="undefined">${stats.children[6]}</td>
       <td align="undefined" valign="undefined">sub3</td>
       <td align="undefined" valign="undefined">2</td>
       <td align="undefined" valign="undefined">0</td>
@@ -1662,7 +1661,7 @@ th {
     
 
 
-    <tr>
+    <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Combined Tag Statistics Name Can Be Given</td><td align="undefined" valign="undefined">${stats} =</td><td align="undefined" valign="undefined">Get Node</td><td align="undefined" valign="undefined">${OUTDIR}${/}${OUTFILE}</td><td align="undefined" valign="undefined">statistics/tag</td><td></td><td></td></tr><tr><td></td><td align="undefined" valign="undefined">Tag Node Information Should Be Correct</td><td align="undefined" valign="undefined">${stats.children[1]}</td><td>Combined Tag With New Name</td><td>1</td><td>0</td><td>combined</td></tr><tr>
 
 
       <td align="undefined" valign="undefined"></td>
