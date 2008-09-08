@@ -1271,7 +1271,7 @@ th { font-style: normal; } /* required for IE */
 
 
 
-      <td></td>
+      <td>--loglevel debug</td>
 
 
 
@@ -10089,7 +10089,7 @@ th { font-style: normal; } /* required for IE */
 
 
 
-    <tr><td></td><td></td><td></td><td></td><td></td></tr>
+    <tr><td>Log Dictionary With Different Log Levels</td><td>${tc} =</td><td>Check Test Case</td><td>Log Dictionary With Different Log Levels</td><td></td></tr><tr><td></td><td>${expected} =</td><td>Set Variable</td><td>Dictionary length is '3'\n<br>3: None\n<br>a: 1\n<br>b: 2 </td><td></td></tr><tr><td></td><td>Check Log Message</td><td>${tc.kws[0].msgs[0]}</td><td>${expected}</td><td>INFO</td></tr><tr><td></td><td>Variable Should Not Exist</td><td>\${tc.kws[1].msgs[0]}</td><td></td><td></td></tr><tr><td></td><td>Check Log Message</td><td>${tc.kws[2].msgs[0]}</td><td>${expected}</td><td>WARN</td></tr><tr><td></td><td>Check Log Message</td><td>${tc.kws[3].msgs[0]}</td><td>${expected}</td><td>DEBUG</td></tr><tr><td></td><td>Check Log Message</td><td>${tc.kws[4].msgs[0]}</td><td>${expected}</td><td>INFO</td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Log Dictionary With Different Dictionaries</td><td>${tc} =</td><td>Check Test Case</td><td>Log Dictionary With Different Dictionaries</td><td></td></tr><tr><td></td><td>Check Log Message</td><td>${tc.kws[0].msgs[0]}</td><td>Dictionary is empty<br></td><td>INFO</td></tr><tr><td></td><td>Check Log Message</td><td>${tc.kws[1].msgs[0]}</td><td>Dictionary has one item 'a: 1'</td><td>INFO</td></tr><tr><td></td><td>Check Log Message</td><td>${tc.kws[4].msgs[0]}</td><td>Dictionary length is '2'\n<br>(1, 2, 3): 3.12\n<br>1: 2&nbsp;</td><td>INFO</td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr>
 
 
 
