@@ -174,10 +174,12 @@ Options:
                           'Test Details by Tag' tables in outputs. This option
                           can be used with --tagstatinclude similarly as
                           -\\-exclude is used with --include.
-    --tagstatcombine tags *  Create combined statistics based on tags. These
-                          statistics are added into 'Statistics by Tag' table 
-                          and matching tests into 'Test Details by Tag' table.
-                          There are three ways to give these tags.
+    --tagstatcombine tags:name *  Create combined statistics based on tags.
+                          These statistics are added into 'Statistics by Tag'
+                          table and matching tests into 'Test Details by Tag'
+                          table. Unless the optional 'name' is used, name of 
+                          the added combined tag is got from specified tags.                          
+                          There are three ways to give tags to combine:
                           1) One tag as a simple pattern. Tests having a tag
                           matching the pattern are included. Example: 'it-*'
                           2) Two or more tags (or patterns) separated by '&' or
@@ -185,7 +187,7 @@ Options:
                           Examples: 'tag1&tag2', 'smokeANDowner-*ANDit-10'
                           3) Two or more tags (or patterns) separated by 'NOT'.
                           Tests having the first tag but not any of the latter
-                          ones are included. Example: 'it-10NOTsmoke'
+                          ones are included. Example: 'it-10NOTsmoke'                          
     --tagdoc pattern:doc *  Add documentation to tags matching given pattern. 
                           Documentation is shown in 'Test Details by Tag' 
                           table and also as a tooltip in 'Statistics by Tag' 

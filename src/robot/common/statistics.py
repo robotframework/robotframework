@@ -168,20 +168,23 @@ class TagStatistics:
         if combine is None or combine == []:
             return ands, nots
         for tags in combine:
-            if tags.count('NOT'):
-                nots.append([ utils.normalize(t) for t in tags.split('NOT') ])
+            tags, name = self._split_tag_stat_combine_option(tags)
+            if 'NOT' in tags:
+                parts = [ utils.normalize(t) for t in tags.split('NOT') ]
+                if '' not in parts:
+                    nots.append((parts, name))
             else:
-                ands.append(utils.normalize(tags).split('&'))
-        return self._clean_combine_and(ands), self._clean_combine_not(nots)
+                parts = [ tag for tag in utils.normalize(tags).split('&') 
+                          if tag != '' ]
+                if parts != []:
+                    ands.append((parts, name))
+        return ands, nots
 
-    def _clean_combine_and(self, ands):
-        ands = [ [ tag for tag in tags if tag != '' ] for tags in ands ]
-        ands = [ tags for tags in ands if tags != [] ]
-        return ands
-
-    def _clean_combine_not(self, nots):
-        nots = [ tags for tags in nots if '' not in tags ]
-        return nots
+    def _split_tag_stat_combine_option(self, tags):
+        if ':' in tags:
+            index = tags.rfind(':')
+            return tags[:index], utils.printable_name(tags[index+1:], True)
+        return tags, None
 
     def add_test(self, test, critical):
         for tag in test.tags:
@@ -191,14 +194,15 @@ class TagStatistics:
             if not self.stats.has_key(key):
                 self.stats[key] = TagStat(tag, key[1], key[2], self._taginfo)
             self.stats[key].add_test(test)
-        self._add_test_to_combined(test, self._combine_and, ' & ', 
+        self._add_test_to_combined(test, self._combine_and, ' & ',
                                    self._is_combined_with_and)
-        self._add_test_to_combined(test, self._combine_not, ' NOT ', 
+        self._add_test_to_combined(test, self._combine_not, ' NOT ',
                                    self._is_combined_with_not)
     
     def _add_test_to_combined(self, test, combined_tags, joiner, is_combined):
-        for tags in combined_tags:
-            name = joiner.join(tags)
+        for tags, name in combined_tags:
+            if name is None:
+                name = joiner.join(tags)
             key = (name, False, False)  # Combined tag stats aren't critical
             if not self.stats.has_key(key):
                 self.stats[key] = CombinedTagStat(name)
