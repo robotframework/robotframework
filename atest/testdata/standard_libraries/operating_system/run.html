@@ -107,7 +107,6 @@ th { font-style: normal; } /* required for IE */
   
   
   <title>Robot Test Cases</title><link type="text/css" href="resources/css/testdata.css" rel="stylesheet"></head>
-
 <body>
 
 
@@ -3892,7 +3891,7 @@ Redirected To File</td>
 
     </tr>
 
-    <tr><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Run When Command Writes Lot Of Stdout And stderr</td><td align="undefined" valign="undefined">${stdout} =</td><td align="undefined" valign="undefined">Run</td><td align="undefined" valign="undefined">${PROG} 0 out err 12500</td><td></td><td></td></tr><tr><td></td><td>Length Should Be</td><td>${stdout}</td><td>99999</td><td># Trailing newline stripped</td><td></td></tr><tr>
+    <tr><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Run When Command Writes Lot Of Stdout And stderr</td><td align="undefined" valign="undefined">${stdout} =</td><td align="undefined" valign="undefined">Run</td><td align="undefined" valign="undefined">${PROG} 0 out err 20000</td><td></td><td></td></tr><tr><td></td><td>Length Should Be</td><td>${stdout}</td><td>159999</td><td># Trailing newline stripped</td><td></td></tr><tr>
 
 
 
@@ -4309,7 +4308,23 @@ Redirected To File</td>
 
 
 
-    <tr>
+    <tr><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>It is possible To Start Background Processes</td><td>${output} =</td><td>Run</td><td>${PROG} foo bar&amp;&nbsp;</td><td></td><td></td></tr><tr><td></td><td>Should Contain</td><td>${output}</td><td>foo</td><td></td><td></td></tr><tr>
+
+
+
+      <td></td>
+
+
+
+      <td>Should Contain</td><td>${output}</td><td>bar</td>
+
+
+
+      
+
+
+
+      
 
 
 
@@ -4321,23 +4336,7 @@ Redirected To File</td>
 
 
 
-      <td></td>
-
-
-
-      <td></td>
-
-
-
-      <td></td>
-
-
-
-      <td></td>
-
-
-
-    </tr>
+    </tr><tr><td></td><td></td><td></td><td></td><td></td><td></td></tr>
 
 
 
