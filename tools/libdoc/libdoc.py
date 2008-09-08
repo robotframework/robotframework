@@ -38,7 +38,9 @@ Options:
  -P --pythonpath path *  Additional path(s) to insert into PYTHONPATH.
  -h -? --help            Print this help.
 
-For information see the 
+See more information from 'tools/libdoc/doc/libdoc.html folder in case of 
+source distribution or from 
+http://code.google.com/p/robotframework/wiki/LibraryDocumentationTool 
 """
 
 import sys
@@ -256,10 +258,10 @@ class KeywordDoc(_BaseKeywordDoc):
         return args
 
     def _parse_args(self, handler):
-        args = list(handler.args)
+        args = [ arg.rstrip('_') for arg in handler.args ]
         # strip ${} from user keywords (args look more consistent e.g. in IDE)
         if handler.type == 'user':
-            args = [ arg[2:-1] for arg in args ]  
+            args = [ arg[2:-1] for arg in args ]
         default_count = len(handler.defaults)
         if default_count == 0:
             required = args[:]
@@ -268,6 +270,7 @@ class KeywordDoc(_BaseKeywordDoc):
             required = args[:-default_count]
             defaults = zip(args[-default_count:], list(handler.defaults))
         varargs = handler.varargs
+        varargs = varargs is not None and varargs.rstrip('_') or varargs         
         if handler.type == 'user' and varargs is not None:
             varargs = varargs[2:-1]
         return required, defaults, varargs
