@@ -43,7 +43,7 @@ def get_error_message():
     framework.
     """
     exc_type, exc_value, exc_traceback = sys.exc_info()
-    if exc_type is KeyboardInterrupt:
+    if exc_type in (KeyboardInterrupt, SystemExit):
         raise exc_value
     if _is_java_exception(exc_value):
         return _get_java_message(exc_type, exc_value)
@@ -61,7 +61,7 @@ def get_error_details():
     framework.
     """
     exc_type, exc_value, exc_traceback = sys.exc_info()
-    if exc_type is KeyboardInterrupt:
+    if exc_type in (KeyboardInterrupt, SystemExit):
         raise exc_value
     if _is_java_exception(exc_value):
         message = _get_java_message(exc_type, exc_value)
