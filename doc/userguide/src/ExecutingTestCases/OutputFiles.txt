@@ -491,9 +491,9 @@ generated from the given pattern. In certain situations this name can look prett
 cryptic and, starting from Robot Framework 2.0.2, it is possible to specify a 
 more descriptive name. This name is given after the pattern separating it 
 with a colon (:code:`:`). Example below generates combined tag so that the name shown
-in reports and logs is :code:`critical`::
+in reports and logs is :name:`Critical Tests`::
 
-    --tagstatcombine *NOTnon-critical:critical
+    --tagstatcombine *NOTnon-critical:Critical_Tests
 
 
 Creating links from tag names
