@@ -193,6 +193,7 @@ fail. Possible return codes are explained in the table below.
    250       250 or more critical failures.
    251       Help or version information printed.
    252       Invalid test data or command line options.
+   253       Test execution stopped by user.
    255       Unexpected internal error.
    ========  ==========================================
 

@@ -26,7 +26,8 @@ from output import Output, SystemLogger
 from conf import RobotSettings, RebotSettings
 from running import TestSuite
 from serializing import RobotTestOutput, RebotTestOutput, SplitIndexTestOutput
-from errors import DataError, INFO_PRINTED, DATA_ERROR, FRAMEWORK_ERROR
+from errors import DataError, INFO_PRINTED, DATA_ERROR, STOPPED_BY_USER, \
+     FRAMEWORK_ERROR
 from variables import init_global_variables
 import utils
 
@@ -39,10 +40,9 @@ def run_from_cli(args, usage):
         suite = run(*datasources, **options)
     except DataError:
         _exit(DATA_ERROR, *utils.get_error_details())
-    except KeyboardInterrupt:
-        _exit(FRAMEWORK_ERROR, 'Test execution stopped by user')
+    except (KeyboardInterrupt, SystemExit):
+        _exit(STOPPED_BY_USER, 'Test execution stopped by user')
     except:
-        raise
         _exit(FRAMEWORK_ERROR, 'Unexpected error in test execution',
               '\n'.join(utils.get_error_details()))
     else:
@@ -55,8 +55,8 @@ def rebot_from_cli(args, usage):
         suite = rebot(*datasources, **options)
     except DataError:
         _exit(DATA_ERROR, *utils.get_error_details())
-    except KeyboardInterrupt:
-        _exit(FRAMEWORK_ERROR, 'Log/report generation stopped by user')
+    except (STOPPED_BY_USER, SystemExit):
+        _exit(DATA_ERROR, 'Log/report generation stopped by user')
     except:
         _exit(FRAMEWORK_ERROR, 'Unexpected error in log/report generation', 
               '\n'.join(utils.get_error_details()))
@@ -189,6 +189,7 @@ def _exit(rc_or_suite, error=None, details=None):
                 (250 means 250 or more failures)
       251     - Help or version info was printed
       252     - Invalid test data or command line arguments
+      253     - Execution stopped by user
       255     - Internal and unexpected error occurred in the framework itself
     """
     if utils.is_integer(rc_or_suite):

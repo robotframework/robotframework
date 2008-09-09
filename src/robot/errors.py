@@ -17,8 +17,9 @@
 # RC below 250 is the number of failed critical tests and exactly 250
 # means that number or more such failures.
 INFO_PRINTED    = 251   # --help or --version
-DATA_ERROR      = 252
-FRAMEWORK_ERROR = 255
+DATA_ERROR      = 252   # Invalid data or cli args
+STOPPED_BY_USER = 253   # KeyboardInterrupt or SystemExit
+FRAMEWORK_ERROR = 255   # Unexpected error
 
 
 class RobotError(Exception):
