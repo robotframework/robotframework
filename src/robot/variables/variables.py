@@ -33,10 +33,10 @@ class Variables(utils.NormalizedDict):
     """
 
     _extended_var_re = re.compile(r'''
-    ^\${       # start of the string and "${" 
-    ([ \w]+)   # base name (matches chars " _a-zA-Z0-9") (group 1)
-    (.+)       # attribute query (anything at least once) (group 2)
-    }$         # "}" and end of the string
+    ^\${         # start of the string and "${" 
+    (.+?)        # base name (group 1)
+    ([^\s\w].+)  # extended part (any non-alphanum or space)ast once) (group 2)
+    }$           # "}" and end of the string
     ''', re.VERBOSE)
     
     def __init__(self, identifiers=None):
