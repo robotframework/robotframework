@@ -327,7 +327,8 @@ class LogSuiteSerializer:
         
     def _write_keyword_info(self, kw):
         self._writer.start_element('table', {'class': 'metadata'})
-        self._write_metadata_row('Documentation', kw.doc)
+        doc = utils.html_escape(kw.doc, formatting=True)
+        self._write_metadata_row('Documentation', doc, escape=False)
         self._write_metadata_row('Timeout', kw.timeout)
         self._write_times(kw)
         self._writer.end_element('table')

@@ -20,7 +20,6 @@ from robot.errors import FrameworkError, ExecutionFailed, DataError
 from robot.common import BaseKeyword
 from robot.variables import is_list_var
 
-
 def KeywordFactory(kwdata):
     if kwdata.type == 'kw':
         return Keyword(kwdata.name, kwdata.args)
@@ -48,6 +47,11 @@ class Keyword(BaseKeyword):
         self.timeout = str(handler.timeout)
         self.starttime = utils.get_timestamp()
         output.start_keyword(self)
+        if '*DEPRECATED*' in self.doc:
+            # SYSLOG is not initialized if imported in module
+            from robot.output import SYSLOG
+            msg = self.doc.replace('*DEPRECATED*', '', 1).strip()
+            SYSLOG.warn("Keyword '%s' is deprecated! %s" % (self.name, msg))
         try:
             ret = self._run(handler, output, namespace)
         except ExecutionFailed, err:
