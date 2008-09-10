@@ -1,4 +1,6 @@
 ROBOT_LIBRARY_SCOPE = 'Test Suite' # this should be igonred.
+__version__ = 'test'  # this should be used as version of this library
+
 
 def passing():
     pass

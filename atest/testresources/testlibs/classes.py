@@ -1,3 +1,6 @@
+__version__ = 'N/A'  # This should be ignored when version is parsed
+
+
 class NameLibrary:
     handler_count = 10
     def simple1(self):
@@ -92,7 +95,23 @@ class SynonymLibrary:
         pass
     synonym_handler = handler
     another_synonym = handler
+
+
+class VersionLibrary:
+    ROBOT_LIBRARY_VERSION = '0.1'
+    kw = lambda x:None
     
+
+class VersionObjectLibrary:
+    class _Version:
+        def __init__(self, ver):
+            self._ver = ver
+        def __str__(self):
+            return self._ver
+    ROBOT_LIBRARY_VERSION = _Version('ver')
+    kw = lambda x:None
+
+
 
 class RecordingLibrary:
     ROBOT_LIBRARY_SCOPE = 'GLOBAL'
