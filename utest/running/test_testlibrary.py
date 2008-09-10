@@ -28,6 +28,7 @@ example_keywords = [ ( "Log", ("msg",) ),
                      ( "equals", ("1","2","failed") ), ]
 java_keywords = [ ( "print", ("msg",) ) ]
 
+
 class TestLibraryTypes(unittest.TestCase):
     
     def test_python_library(self):
@@ -55,6 +56,7 @@ class TestLibraryTypes(unittest.TestCase):
         def test_java_library(self):
             lib = TestLibrary("ExampleJavaLibrary")
             assert_equals(lib.__class__, JavaLibrary)
+            
 
 class TestImports(unittest.TestCase):
         
@@ -161,6 +163,32 @@ class TestImports(unittest.TestCase):
             exp = "%s.%s" % (libname, name)
             assert_equals(utils.normalize(handler.longname), 
                           utils.normalize(exp))
+            
+            
+class TestVersion(unittest.TestCase):
+    
+    def test_version_of_python_libarary(self):
+        self._test_version('classes.VersionLibrary', '0.1')
+        self._test_version('classes.VersionObjectLibrary', 'ver')
+        
+    def test_version_with_no_version_info_defined(self):
+        self._test_version('classes.NameLibrary', '<unknown>')
+        
+    def test_version_of_module_library(self):
+        self._test_version('module_library', 'test')
+
+    def _test_version(self, name, version):
+        lib = TestLibrary(name)
+        assert_equals(lib.version, version)
+        
+    if utils.is_jython:
+        
+        def test_version_of_java_library(self):
+            self._test_version('JavaVersionLibrary', '1.0')
+            
+        def test_version_of_java_library_with_no_version_defined(self):
+            self._test_version('ExampleJavaLibrary', '<unknown>')
+        
 
 class _TestScopes(unittest.TestCase):
     
