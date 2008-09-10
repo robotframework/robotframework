@@ -1,0 +1,183 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="generator" content="RobotIDE"> 
+<style type="text/css">
+html {
+  font-family: Arial,Helvetica,sans-serif;
+  background-color: white;
+  color: black;
+}
+p {
+  max-width: 60em;
+}
+table {
+  border-collapse: collapse;
+  empty-cells: show;
+  margin: 1em 0em;
+  border: 0.1em solid black;
+}
+th, td {
+  border-style: solid;
+  border-width: 0.05em 0.1em;
+  border-color: black;
+  padding: 0.1em 0.2em;
+  height: 1.5em;
+}
+th {
+  background-color: rgb(192, 192, 192);
+  color: black;
+  border-width: 0.1em;
+  font-weight: bold;
+  text-align: center;
+  text-transform: capitalize;
+  letter-spacing: 0.1em;
+}
+/* Widths of named columns */
+col.name {
+  width: 10em;
+}
+.action, .value, .arg {
+  width: 15em;
+}
+/* Properties for the name column 
+- td:first-child should work in CSS 2.1 avare browsers (tested in Firefox)
+- col.name is against specs but works in IE
+*/
+td:first-child, col.name {
+  background-color: rgb(240, 240, 240);
+  text-transform: capitalize;
+  letter-spacing: 0.1em;
+}
+/* required for IE */
+th {
+  font-style: normal;
+}
+</style>
+<title>Library Imports</title></head>
+<body>
+<h1>Library Imports</h1>
+
+<table border="1">
+<colgroup span="99"><col class="name"><col class="value" span="4"></colgroup>
+<tbody><tr>
+<th>Setting</th>
+<th>Value</th>
+<th>Value</th>
+<th>Value</th>
+<th>Value</th>
+</tr>
+
+<tr>
+<td>Force Tags</td>
+<td>regression</td>
+<td></td>
+<td><br></td>
+<td></td>
+</tr>
+<tr><td>Default Tags</td><td>pybot</td><td>jybot</td><td></td><td></td></tr><tr>
+<td>Resource</td>
+<td>../../resources/resource.html</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Suite Setup</td>
+<td>My Setup</td><td></td><td></td>
+
+
+<td></td>
+</tr>
+</tbody></table>
+
+<table border="1">
+<colgroup span="99"><col class="name"><col class="value" span="4"></colgroup>
+<tbody><tr>
+<th>Variable</th>
+<th>Value</th>
+<th>Value</th>
+<th>Value</th>
+<th>Value</th>
+</tr>
+<tr><td></td><td></td><td></td><td></td><td></td></tr><tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody></table>
+
+<table border="1">
+<colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
+<tbody><tr>
+<th>Test Case</th>
+<th>Action</th>
+<th>Argument</th>
+<th>Argument</th>
+<th>Argument</th>
+</tr>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<tr><td>Python Library From A Zip File</td><td>Check Test Case</td><td>Python Library From a Zip File</td><td></td><td></td></tr><tr><td></td><td>Check Syslog Contains</td><td>Imported
+library 'ZipLib' with arguments [ ] (version &lt;unknown&gt;, python
+type, testcase scope, 1 keywords, source
+${TESTLIBPATH}${/}ziplib.zip${/}ZipLib.py)</td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Java Library From a Jar File</td><td>[ tags ]</td><td>jybot</td><td></td><td></td></tr><tr><td></td><td>Check Test Case</td><td>Java Library From a Jar File</td><td></td><td></td></tr><tr>
+<td></td>
+<td>Check Syslog Contains</td><td>Imported library 'org.robotframework.JarLib' with
+arguments [ ] (version &lt;unknown&gt;, java type, testcase scope, 1
+keywords, source ${TESTLIBPATH}${/}JarLib.jar)</td>
+
+<td></td>
+<td></td>
+</tr><tr><td></td><td></td><td></td><td></td><td></td></tr>
+</tbody></table>
+
+<table style="width: 1122px; height: 159px;" border="1">
+<colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
+<tbody><tr>
+<th>Keyword</th>
+<th>Action</th>
+<th>Argument</th>
+<th>Argument</th>
+<th>Argument</th>
+</tr>
+<tr><td>My Setup</td><td>${TESTLIBPATH} =</td><td>Join Path</td><td>${CURDIR}${/}..${/}..</td><td>testresources/testlibs</td></tr><tr><td></td><td>Set Suite Variable</td><td>$TESTLIBPATH</td><td></td><td></td></tr><tr>
+<td></td>
+<td>Run Tests</td><td>-P ${TESTLIBPATH}${/}ziplib.zip -P ${TESTLIBPATH}${/}JarLib.jar</td><td>test_libraries${/}library_import_from_archive.html</td>
+
+
+<td></td>
+</tr>
+</tbody></table>
+
+</body></html>
