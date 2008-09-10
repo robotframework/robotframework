@@ -13,7 +13,7 @@
 #  limitations under the License.
 
 
-import time as _time
+import time
 import re
 
 from robot import output
@@ -21,19 +21,9 @@ from robot.utils import asserts
 from robot.errors import DataError
 from robot import utils
 from robot.variables import is_var, is_list_var
-from robot.running import NAMESPACES, Keyword, RUN_KW_REGISTER
+from robot.running import Keyword, NAMESPACES, RUN_KW_REGISTER
 
 
-def _is_true(expr):
-    if utils.is_str(expr):
-        try:
-            expr = eval(expr)
-        except:
-            raise DataError("Evaluating expression '%s' failed: %s"
-                            % (expr, utils.get_error_message()))
-    return expr and True or False
- 
-    
 class Converter:
     
     def convert_to_integer(self, item):
@@ -114,7 +104,7 @@ class Verify:
         """
         if msg is None:
             msg = "'%s' should not be true" % expr
-        asserts.fail_if(_is_true(expr), msg)
+        asserts.fail_if(self._is_true(expr), msg)
 
     def should_be_true(self, expr, msg=None):
         """Fails if the given expression (or item) is not true.
@@ -139,7 +129,7 @@ class Verify:
         """
         if msg is None:
             msg = "'%s' should be true" % expr
-        asserts.fail_unless(_is_true(expr), msg)
+        asserts.fail_unless(self._is_true(expr), msg)
 
     def should_be_equal(self, first, second, msg=None, values=True):
         """Fails if the given objects are unequal.
@@ -609,7 +599,7 @@ class Variables:
     
     def _get_variables(self):
         return NAMESPACES.current.variables
-        
+
     def _get_var_name(self, name):
         if is_var(name):
             return name
@@ -669,7 +659,7 @@ class RunKeyword:
         
         New in Robot Framework version 1.8.3.
         """
-        if _is_true(expr):
+        if self._is_true(expr):
             return self.run_keyword(name, *args)
     
     def run_keyword_unless(self, expr, name, *args):
@@ -679,7 +669,7 @@ class RunKeyword:
         
         New in Robot Framework version 1.8.3.
         """
-        if not _is_true(expr):
+        if not self._is_true(expr):
             return self.run_keyword(name, *args)
     
     def run_keyword_and_ignore_error(self, name, *args):
@@ -750,14 +740,14 @@ class RunKeyword:
         """
         timeout = utils.timestr_to_secs(timeout)
         retry_interval = utils.timestr_to_secs(retry_interval)
-        starttime = _time.time()
-        while _time.time() - starttime < timeout:
+        starttime = time.time()
+        while time.time() - starttime < timeout:
             try:
                 return self.run_keyword(name, *args)
             except (KeyboardInterrupt, SystemExit):
                 raise
             except:
-                _time.sleep(retry_interval)
+                time.sleep(retry_interval)
         raise AssertionError("Timeout %s exceeded"
                              % utils.secs_to_timestr(timeout))
     
@@ -780,7 +770,7 @@ class RunKeyword:
         TODO: Explain 'else if' functionality, mention nonex vars are ok.
         """
         values = self._verify_values_for_set_variable_if(list(values))
-        if _is_true(expr):
+        if self._is_true(expr):
             return NAMESPACES.current.variables.replace_scalar(values[0])
         values = self._verify_values_for_set_variable_if(values[1:], True)
         if len(values) == 1:
@@ -898,7 +888,7 @@ class Misc:
     def no_operation(self):
         """Does absolutely nothing."""
 
-    def sleep(self, time, reason=None):
+    def sleep(self, time_, reason=None):
         """Pauses the test executed for the given time.
         
         `time` may be either a number or a time string. Time strings are in
@@ -913,11 +903,11 @@ class Misc:
         | Sleep | 2 minutes 10 seconds |
         | Sleep | 10s                  | Wait for a reply |
         """
-        seconds = utils.timestr_to_secs(time)
+        seconds = utils.timestr_to_secs(time_)
         # Python hangs with negative values
         if seconds < 0:
             seconds = 0
-        _time.sleep(seconds)
+        time.sleep(seconds)
         self.log('Slept %s' % utils.secs_to_timestr(seconds))
         if reason:
             self.log(reason)
@@ -1193,6 +1183,15 @@ class BuiltIn(Verify, Converter, Variables, RunKeyword, Misc):
     def _matches(self, string, pattern):
         return utils.matches(string, pattern, caseless=False, spaceless=False)
 
+    def _is_true(self, expr):
+        if utils.is_str(expr):
+            try:
+                expr = eval(expr)
+            except:
+                raise DataError("Evaluating expression '%s' failed: %s"
+                                % (expr, utils.get_error_message()))
+        return expr and True or False
+        
 
 def register_run_keyword(library, keyword, args_to_process=None):
     """Registers 'run keyword' so that its arguments can be handled correctly.
