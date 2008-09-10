@@ -26,11 +26,13 @@ from robot.running import NAMESPACES, Keyword, RUN_KW_REGISTER
 
 def _is_true(expr):
     if utils.is_str(expr):
-        expr = eval(expr)
-    if expr:
-        return True
-    return False
-    
+        try:
+            expr = eval(expr)
+        except:
+            raise DataError("Evaluating expression '%s' failed: %s"
+                            % (expr, utils.get_error_message()))
+    return expr and True or False
+ 
     
 class Converter:
     
@@ -481,10 +483,9 @@ class Variables:
         The default error message can be overridden with the `msg` argument.
         """
         name = self._get_var_name(name)
-        variables = self._get_variables()
         if msg is None:
             msg = "Variable %s does not exist" % name
-        asserts.fail_unless(variables.has_key(name), msg)
+        asserts.fail_unless(self._get_variables().has_key(name), msg)
         
     def variable_should_not_exist(self, name, msg=None):
         """Fails if the given variable exists within the current scope.
@@ -497,10 +498,9 @@ class Variables:
         The default error message can be overridden with the `msg` argument.
         """
         name = self._get_var_name(name)
-        variables = self._get_variables()
         if msg is None:
             msg = "Variable %s exists" % name
-        asserts.fail_if(variables.has_key(name), msg)
+        asserts.fail_if(self._get_variables().has_key(name), msg)
 
     def replace_variables(self, text):
         """Replaces variables in the given text with their current values.
@@ -542,26 +542,6 @@ class Variables:
             return args[0]
         else:
             return list(args)
-
-    def set_variable_if(self, expr, value1, value2=None):
-        """If `expr` is true, returns `value1`, and otherwise returns `value2`.
-        
-        `expr` is evaluated as with the `Should Be True` keyword.
-        
-        Examples:
-        | ${var1} = | Set Variable If | 1 > 0 | v1 | v2 | 
-        | ${var2} = | Set Variable If | False | v1 | v2 | 
-        | ${var3} = | Set Variable If | 1 > 0 and False | v1 |
-        =>
-        - ${var1} = 'v1'  
-        - ${var2} = 'v2'
-        - ${var3} = None
-        
-        New in Robot Framework version 1.8.3.
-        """
-        if _is_true(expr):
-            return value1
-        return value2
 
     def set_test_variable(self, name, *values):
         """Makes a variable available everywhere within the scope of the current test.
@@ -774,10 +754,50 @@ class RunKeyword:
         while _time.time() - starttime < timeout:
             try:
                 return self.run_keyword(name, *args)
+            except (KeyboardInterrupt, SystemExit):
+                raise
             except:
                 _time.sleep(retry_interval)
-        raise Exception("Timeout %s exceeded" % utils.secs_to_timestr(timeout))
+        raise AssertionError("Timeout %s exceeded"
+                             % utils.secs_to_timestr(timeout))
     
+    def set_variable_if(self, expr, *values):
+        """If `expr` is true, returns `value1`, and otherwise returns `value2`.
+        
+        `expr` is evaluated as with the `Should Be True` keyword.
+        
+        Examples:
+        | ${var1} = | Set Variable If | 1 > 0 | v1 | v2 | 
+        | ${var2} = | Set Variable If | False | v1 | v2 | 
+        | ${var3} = | Set Variable If | 1 > 0 and False | v1 |
+        =>
+        - ${var1} = 'v1'  
+        - ${var2} = 'v2'
+        - ${var3} = None
+        
+        New in Robot Framework version 1.8.3.
+
+        TODO: Explain 'else if' functionality, mention nonex vars are ok.
+        """
+        values = self._verify_values_for_set_variable_if(list(values))
+        if _is_true(expr):
+            return NAMESPACES.current.variables.replace_scalar(values[0])
+        values = self._verify_values_for_set_variable_if(values[1:], True)
+        if len(values) == 1:
+            return NAMESPACES.current.variables.replace_scalar(values[0])
+        return self.run_keyword('BuiltIn.Set Variable If', *values[0:])
+
+    def _verify_values_for_set_variable_if(self, values, default=False):
+        if not values:
+            if default:
+                return [None]
+            raise DataError('At least one value is required')
+        if is_list_var(values[0]):
+            values[:1] = [ utils.escape(item) for item in
+                           NAMESPACES.current.variables[values[0]] ]
+            return self._verify_values_for_set_variable_if(values)
+        return values
+
     def run_keyword_if_test_failed(self, name, *args):
         """Runs the given keyword with the given arguments, if the test failed.
         
