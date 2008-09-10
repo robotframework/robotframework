@@ -29,14 +29,16 @@ class Importer:
     def import_library(self, name, args, syslog):
         key = (name, tuple(args))
         if self._libraries.has_key(key):
-            syslog.info("Found test library '%s' with args %s from cache" 
+            syslog.info("Found test library '%s' with arguments %s from cache" 
                         % (name, utils.seq2str2(args)))
         else:
             lib = TestLibrary(name, args, syslog)
             self._libraries[key] = lib
             libtype = lib.__class__.__name__.replace('Library', '').lower()
-            syslog.info("Imported library '%s' with args %s (%s type, %s scope, %d keywords)" 
-                        % (name, utils.seq2str2(args), libtype, lib.scope.lower(), len(lib)))
+            syslog.info("Imported library '%s' with arguments %s (version %s, "
+                        "%s type, %s scope, %d keywords, source %s)" 
+                        % (name, utils.seq2str2(args), lib.version, libtype, 
+                           lib.scope.lower(), len(lib), lib.source))
             if len(lib) == 0:
                 syslog.warn("Imported library '%s' contains no keywords" % name)
         return self._libraries[key]

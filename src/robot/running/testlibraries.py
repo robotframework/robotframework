@@ -27,23 +27,23 @@ from handlers import PythonHandler, JavaHandler, DynamicHandler
 def TestLibrary(name, args=None, syslog=None):
     if syslog is None:
         syslog = SystemLogger()
-    libcode = utils.import_(name)
+    libcode, source = utils.import_(name)
     args = utils.to_list(args)
     if isinstance(libcode, types.ModuleType):
         if args:
             raise DataError('Libraries implemented as modules do not take '
                             'arguments, got: %s' % str(args))
-        return ModuleLibrary(libcode, name, args, syslog)
+        return ModuleLibrary(libcode, source, name, args, syslog)
     if _has_method(libcode, ['get_keyword_names', 'getKeywordNames']):
         if _has_method(libcode, ['run_keyword', 'runKeyword']):
-            return DynamicLibrary(libcode, name, args, syslog)
+            return DynamicLibrary(libcode, source, name, args, syslog)
         else:
-            return HybridLibrary(libcode, name, args, syslog)
+            return HybridLibrary(libcode, source, name, args, syslog)
     # Using type check and not isinstance for ClassType, because it does not 
     # match Java classes whose type is javaclass. 
     if type(libcode) is types.ClassType or isinstance(libcode, types.TypeType):
-        return PythonLibrary(libcode, name, args, syslog)
-    return JavaLibrary(libcode, name, args, syslog)
+        return PythonLibrary(libcode, source, name, args, syslog)
+    return JavaLibrary(libcode, source, name, args, syslog)
     
 
 def _has_method(code, names):
@@ -59,9 +59,11 @@ def _is_method(code):
 
 class _BaseTestLibrary(BaseLibrary):
 
-    def __init__(self, libcode, name, args, syslog):
+    def __init__(self, libcode, source, name, args, syslog):
         if os.path.exists(name):
             name = os.path.splitext(os.path.basename(name))[0]
+        self.source = source
+        self.version = self._get_version(libcode)
         self.name = name
         self.orig_name = name # Stores original name also after copying
         self.args = args
@@ -73,7 +75,16 @@ class _BaseTestLibrary(BaseLibrary):
             self._libinst = self.get_instance()
             self.handlers = self._create_handlers(syslog)
             self._init_scope_handling(self.scope)
-        
+
+    def _get_version(self, code):
+        try:
+            return str(code.ROBOT_LIBRARY_VERSION)
+        except AttributeError:
+            try:
+                return str(code.__version__)
+            except AttributeError:
+                return '<unknown>'
+            
     def _init_scope_handling(self, scope):
         if scope == 'GLOBAL':
             return
@@ -85,7 +96,7 @@ class _BaseTestLibrary(BaseLibrary):
             self.end_test = self._restoring_end
             
     def copy(self, name):
-        lib = _BaseTestLibrary(None, name, self.args, None)
+        lib = _BaseTestLibrary(None, self.version, name, self.args, None)
         lib.orig_name = self.name
         lib.doc = self.doc
         lib.scope = self.scope
@@ -238,10 +249,10 @@ class DynamicLibrary(_BaseTestLibrary):
     _get_kw_doc_names = ['get_keyword_documentation', 'getKeywordDocumentation']
     _get_kw_args_names = ['get_keyword_arguments', 'getKeywordArguments']
     
-    def __init__(self, libcode, name, args, syslog):
+    def __init__(self, libcode, source, name, args, syslog):
         self._get_keyword_documentation = self._get_method(libcode, *self._get_kw_doc_names)
         self._get_keyword_arguments = self._get_method(libcode, *self._get_kw_args_names)
-        _BaseTestLibrary.__init__(self, libcode, name, args, syslog)
+        _BaseTestLibrary.__init__(self, libcode, source, name, args, syslog)
         
     def _get_method(self, libcode, name, alternative):
         try:
