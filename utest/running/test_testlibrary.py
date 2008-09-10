@@ -1,12 +1,11 @@
 import unittest
 import sys
-import os
     
-from robot.errors import DataError
-from robot.running.testlibraries import *
-from robot.running.namespace import _VariableScopes
+from robot.running.testlibraries import PythonLibrary, ModuleLibrary, \
+        TestLibrary, DynamicLibrary, JavaLibrary
 from robot.utils.asserts import *
-from BuiltIn import BuiltIn
+from robot import utils
+from robot.errors import DataError
 
 from classes import NameLibrary, DocLibrary, ArgInfoLibrary, GetattrLibrary, \
         SynonymLibrary
@@ -157,7 +156,7 @@ class TestImports(unittest.TestCase):
             
     def _verify_lib(self, lib, libname, keywords):
         assert_equals(libname, lib.name)
-        for name, args in keywords:
+        for name, _ in keywords:
             handler = lib.get_handler(name)
             exp = "%s.%s" % (libname, name)
             assert_equals(utils.normalize(handler.longname), 
@@ -212,7 +211,7 @@ class TestSuiteScope(_TestScopes):
         
     def test_start_test_or_end_test_do_not_flush_instance(self):
         inst = self.lib.get_instance()
-        for i in range(10):
+        for _ in range(10):
             self.lib.start_test()
             assert_true(inst is self.lib._libinst)
             assert_true(inst is self.lib.get_instance())
@@ -241,7 +240,7 @@ class TestSuiteScope(_TestScopes):
         self._verify_end_suite_restores_previous_instance(None)
         
     def _run_tests(self, exp_inst, count=3):
-        for i in range(count):
+        for _ in range(count):
             self.lib.start_test()
             assert_true(self.lib.get_instance() is exp_inst)
             self.lib.end_test()
@@ -274,7 +273,7 @@ class TestCaseScope(_TestScopes):
     
     def _run_tests(self, suite_inst, count=3):
         old_insts = [suite_inst]
-        for i in range(count):
+        for _ in range(count):
             self.lib.start_test()
             assert_none(self.lib._libinst)
             inst = self.lib.get_instance()
@@ -324,8 +323,8 @@ class TestHandlers(unittest.TestCase):
     def test_global_handlers_are_created_only_once(self):
         lib = TestLibrary('classes.RecordingLibrary')
         calls_after_init = lib._libinst.calls_to_getattr
-        for i in range(5): 
-            lib.handlers['kw'].run(_MockOutput(), _MockNamespace(), [])
+        for _ in range(5): 
+            lib.handlers['kw'].run(_FakeOutput(), _FakeNamespace(), [])
         assert_equals(lib._libinst.calls_to_getattr, calls_after_init)
                     
     if utils.is_jython:
@@ -386,13 +385,14 @@ class TestDynamicLibrary(unittest.TestCase):
             self._assert_handler(handler, minargs, maxargs)
     
         
-class _MockNamespace:
+class _FakeNamespace:
     def __init__(self):
-        self.variables = _MockVariableScope()
+        self.variables = _FakeVariableScope()
         self.uk_handlers = []
         self.test = None
 
-class _MockVariableScope:
+
+class _FakeVariableScope:
     def __init__(self):
         self.variables = {}
     def replace_list(self, args):
@@ -411,12 +411,14 @@ class _MockVariableScope:
         self.variables.__setitem__(key, value)
     def __getitem__(self, key):
         return self.variables.get(key)
+
     
-class _MockOutput:
+class _FakeOutput:
     def trace(self, str):
         pass
     def log_output(self, output):
         pass
+
 
 if __name__ == '__main__':
     unittest.main()
