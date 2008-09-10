@@ -1,9 +1,7 @@
-
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html>
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<meta name="generator" content="RobotIDE" /> 
+<html><head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="generator" content="RobotIDE"> 
 <style type="text/css">
 html {
   font-family: Arial,Helvetica,sans-serif;
@@ -56,16 +54,15 @@ th {
   font-style: normal;
 }
 </style>
-<title>Library Imports</title>
-</head>
+<title>Library Imports</title></head>
+
+
 <body>
 <h1>Library Imports</h1>
 
 <table border="1">
-<colgroup span="99">
-<col class="name">
-<col class="value" span="4"></colgroup>
-<tr>
+<colgroup span="99"><col class="name"><col class="value" span="4"></colgroup>
+<tbody><tr>
 <th>Setting</th>
 <th>Value</th>
 <th>Value</th>
@@ -81,12 +78,12 @@ th {
 </tr>
 <tr>
 <td>Force Tags</td>
-<td>pybot</td>
-<td>jybot</td>
 <td>regression</td>
 <td></td>
+<td><br></td>
+<td></td>
 </tr>
-<tr>
+<tr><td>Default Tags</td><td>pybot</td><td>jybot</td><td></td><td></td></tr><tr>
 <td>Resource</td>
 <td>../../resources/resource.html</td>
 <td></td>
@@ -100,34 +97,29 @@ th {
 <td></td>
 <td></td>
 </tr>
-</table>
+</tbody></table>
 
 <table border="1">
-<colgroup span="99">
-<col class="name">
-<col class="value" span="4"></colgroup>
-<tr>
+<colgroup span="99"><col class="name"><col class="value" span="4"></colgroup>
+<tbody><tr>
 <th>Variable</th>
 <th>Value</th>
 <th>Value</th>
 <th>Value</th>
 <th>Value</th>
 </tr>
-<tr>
+<tr><td></td><td></td><td></td><td></td><td></td></tr><tr>
 <td></td>
 <td></td>
 <td></td>
 <td></td>
 <td></td>
 </tr>
-</table>
+</tbody></table>
 
 <table border="1">
-<colgroup span="99">
-<col class="name">
-<col class="action">
-<col class="arg" span="3"></colgroup>
-<tr>
+<colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
+<tbody><tr>
 <th>Test Case</th>
 <th>Action</th>
 <th>Argument</th>
@@ -183,32 +175,32 @@ th {
 <td></td>
 <td></td>
 </tr>
-<tr>
-<td><a name="test_NumberOfKeywordsInImportedLibraryIsReportedInSyslog">Number Of Keywords In Imported Library Is Reported In Syslog</a></td>
+<tr><td><a name="test_NumberOfKeywordsInImportedLibraryIsReportedInSyslog">Number Of Keywords In Imported Library Is Reported In Syslog</a></td><td>${testlibs path} =</td><td>Join Path</td><td>${CURDIR}/../../</td><td>testresources/testlibs/</td></tr><tr><td></td><td>${ex lib module} = </td><td>Join Path</td><td>${testlibs path}</td><td>ExampleLibrary.py</td></tr><tr>
+<td><a name="test_NumberOfKeywordsInImportedLibraryIsReportedInSyslog"><br></a></td>
 <td>Check Syslog Contains</td>
 <td>| INFO \ |</td>
-<td>Imported library 'ExampleLibrary' with args [ ] (python type, testcase scope, 25 keywords)</td>
+<td>Imported library 'ExampleLibrary' with arguments [ ] (version &lt;unknown&gt;, python type, testcase scope, 25 keywords, source&nbsp;${ex lib module}</td>
+<td></td>
+</tr>
+<tr><td></td><td>${lib class module} = </td><td>Join Path</td><td>${testlibs path}</td><td>libmodule.py</td></tr><tr>
+<td></td>
+<td>Check Syslog Contains</td>
+<td>| INFO \ |</td>
+<td>Imported library 'libmodule.LibClass1' with arguments [ ] (version &lt;unknown&gt;, python type, testcase scope, 1 keywords, source ${lib class module}</td>
 <td></td>
 </tr>
 <tr>
 <td></td>
-<td>Check Syslog Contains</td>
-<td>| INFO \ |</td>
-<td>Imported library 'libmodule.LibClass1' with args [ ] (python type, testcase scope, 1 keywords)</td>
-<td></td>
-</tr>
-<tr>
-<td></td>
 <td></td>
 <td></td>
 <td></td>
 <td></td>
 </tr>
-<tr>
-<td><a name="test_WarningShouldBeWrittenToSyslogIfLibraryContainsNoKeywords">Warning Should Be Written To Syslog If Library Contains No Keywords</a></td>
+<tr><td><a name="test_WarningShouldBeWrittenToSyslogIfLibraryContainsNoKeywords">Warning Should Be Written To Syslog If Library Contains No Keywords</a></td><td>${lib module path} =</td><td>Join Path</td><td>${CURDIR}/../../</td><td>testresources/testlibs/libmodule.py</td></tr><tr>
+<td><a name="test_WarningShouldBeWrittenToSyslogIfLibraryContainsNoKeywords"><br></a></td>
 <td>Check Syslog Contains</td>
 <td>| INFO \ |</td>
-<td>Imported library 'libmodule' with args [ ] (module type, global scope, 0 keywords)</td>
+<td>Imported library 'libmodule' with arguments [ ] (version &lt;unknown&gt;, module type, global scope, 0 keywords, source&nbsp;${lib module path}</td>
 <td></td>
 </tr>
 <tr>
@@ -344,21 +336,18 @@ th {
 <td></td>
 <td></td>
 </tr>
-<tr>
+<tr><td>Python Library From A Zip File</td><td>Run Tests</td><td>-P ${CURDIR}${/}..${/}..testresources${/}testlibs${/}ziplib.zip</td><td>test_libraries${/}library_import_from_archive.html</td><td></td></tr><tr><td></td><td>Check Test Case</td><td>Python Library From a Zip File</td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Java Library From a Jar File</td><td>[ tags ]</td><td>jybot</td><td></td><td></td></tr><tr><td></td><td>Check Test Case</td><td>Java Library From a Jar File</td><td></td><td></td></tr><tr>
 <td></td>
 <td></td>
 <td></td>
 <td></td>
 <td></td>
 </tr>
-</table>
+</tbody></table>
 
 <table border="1">
-<colgroup span="99">
-<col class="name">
-<col class="action">
-<col class="arg" span="3"></colgroup>
-<tr>
+<colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
+<tbody><tr>
 <th>Keyword</th>
 <th>Action</th>
 <th>Argument</th>
@@ -372,7 +361,6 @@ th {
 <td></td>
 <td></td>
 </tr>
-</table>
+</tbody></table>
 
-</body>
-</html>
+</body></html>

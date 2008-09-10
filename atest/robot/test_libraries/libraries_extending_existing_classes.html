@@ -189,15 +189,16 @@ th {
 </tr>
 <tr>
 <td><a name="test_MessageOfImportingLibraryShouldBeInSyslog">Message Of Importing Library Should Be In Syslog</a></td>
-<td>Check Syslog Contains</td>
-<td>Imported library 'ExtendPythonLib' with args [ ] (python type, testcase scope, 27 keywords)</td>
-<td></td>
-<td></td>
+<td>${lib path} =</td>
+<td>Join Path</td>
+<td>${CURDIR}/../../</td>
+<td>testresources/testlibs/ExtendPythonLib.py</td>
 </tr>
 <tr>
 <td></td>
-<td></td>
-<td></td>
+<td>Check Syslog Contains</td><td>Imported library 'ExtendPythonLib' with arguments [ ] (version &lt;unknown&gt;, python type, testcase scope, 27 keywords,
+source ${lib path}</td>
+
 <td></td>
 <td></td>
 </tr>
@@ -295,7 +296,7 @@ th {
 <tr>
 <td></td>
 <td>Check Syslog Contains</td>
-<td>Imported library 'ExtendJavaLib' with args [ ] (python type, testcase scope, 17 keywords)</td>
+<td>Imported library 'ExtendJavaLib' with arguments [ ] (version &lt;unknown&gt;, python type, testcase scope, 17 keywords</td>
 <td></td>
 <td></td>
 </tr>
