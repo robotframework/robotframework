@@ -73,8 +73,6 @@ class Keyword(BaseKeyword):
     def _run(self, handler, output, namespace):
         try:
             return handler.run(output, namespace, self.args[:])
-        except KeyboardInterrupt:
-            raise
         except ExecutionFailed:
             raise 
         except:
