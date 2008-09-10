@@ -1,9 +1,7 @@
-
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html>
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<meta name="generator" content="RobotIDE" /> 
+<html><head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="generator" content="RobotIDE"> 
 <style type="text/css">
 html {
   font-family: Arial,Helvetica,sans-serif;
@@ -56,16 +54,13 @@ th {
   font-style: normal;
 }
 </style>
-<title>Variables</title>
-</head>
+<title>Variables</title></head>
 <body>
 <h1>Variables</h1>
 
 <table border="1">
-<colgroup span="99">
-<col class="name">
-<col class="value" span="4"></colgroup>
-<tr>
+<colgroup span="99"><col class="name"><col class="value" span="4"></colgroup>
+<tbody><tr>
 <th>Setting</th>
 <th>Value</th>
 <th>Value</th>
@@ -107,13 +102,11 @@ th {
 <td></td>
 <td></td>
 </tr>
-</table>
+</tbody></table>
 
 <table border="1">
-<colgroup span="99">
-<col class="name">
-<col class="value" span="4"></colgroup>
-<tr>
+<colgroup span="99"><col class="name"><col class="value" span="4"></colgroup>
+<tbody><tr>
 <th>Variable</th>
 <th>Value</th>
 <th>Value</th>
@@ -141,14 +134,11 @@ th {
 <td></td>
 <td></td>
 </tr>
-</table>
+</tbody></table>
 
 <table border="1">
-<colgroup span="99">
-<col class="name">
-<col class="action">
-<col class="arg" span="3"></colgroup>
-<tr>
+<colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
+<tbody><tr>
 <th>Test Case</th>
 <th>Action</th>
 <th>Argument</th>
@@ -164,9 +154,9 @@ th {
 </tr>
 <tr>
 <td></td>
-<td>Fail Unless</td>
-<td>'${var}' == 'Hello'</td>
-<td></td>
+<td>Should Be Equal</td>
+<td>${var}</td>
+<td>Hello</td>
 <td></td>
 </tr>
 <tr>
@@ -185,16 +175,16 @@ th {
 </tr>
 <tr>
 <td></td>
-<td>Fail Unless</td>
-<td>'${var1}' == 'Hello'</td>
-<td></td>
+<td>Should Be Equal</td>
+<td>${var1}</td>
+<td>Hello</td>
 <td></td>
 </tr>
 <tr>
 <td></td>
-<td>Fail Unless</td>
-<td>'${var2}' == 'world'</td>
-<td></td>
+<td>Should Be Equal</td>
+<td>${var2}</td>
+<td>world</td>
 <td></td>
 </tr>
 <tr>
@@ -255,7 +245,7 @@ th {
 </tr>
 <tr>
 <td></td>
-<td>${empty} =</td>
+<td>${emp} =</td>
 <td>Set Variable</td>
 <td></td>
 <td></td>
@@ -263,7 +253,7 @@ th {
 <tr>
 <td></td>
 <td>Should Be Equal</td>
-<td>${empty}</td>
+<td>${emp}</td>
 <td>\</td>
 <td></td>
 </tr>
@@ -274,41 +264,11 @@ th {
 <td></td>
 <td></td>
 </tr>
-<tr>
-<td><a name="test_Set Variable If With True Condition">Set Variable If With True Condition</a></td>
-<td>${var} =</td>
-<td>Set Variable If</td>
-<td>1 &gt; 0</td>
-<td>assigned value</td>
-</tr>
-<tr>
-<td></td>
-<td>...</td>
-<td>this value is not used</td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td>Should Be Equal</td>
-<td>${var}</td>
-<td>assigned value</td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td>${var} =</td>
-<td>Set Variable If</td>
-<td>True</td>
-<td>Hello</td>
-</tr>
-<tr>
-<td></td>
-<td>Should Be Equal</td>
-<td>${var}</td>
-<td>Hello</td>
-<td></td>
-</tr>
+
+
+
+
+
 <tr>
 <td></td>
 <td>${list} =</td>
@@ -351,48 +311,12 @@ th {
 <td></td>
 <td></td>
 </tr>
-<tr>
-<td><a name="test_Set Variable If With False Condition">Set Variable If With False Condition</a></td>
-<td>${var} =</td>
-<td>Set Variable If</td>
-<td>0 &gt; 1</td>
-<td>this value is not used</td>
-</tr>
-<tr>
-<td></td>
-<td>...</td>
-<td>assigned value</td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td>Should Be Equal</td>
-<td>${var}</td>
-<td>assigned value</td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td>${var} =</td>
-<td>Set Variable If</td>
-<td>${False}</td>
-<td>this value is not used</td>
-</tr>
-<tr>
-<td></td>
-<td>Should Be Equal</td>
-<td>${var}</td>
-<td>${None}</td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
+
+
+
+
+
+
 <tr>
 <td><a name="test_Log Variables">Log Variables</a></td>
 <td>[Setup]</td>
@@ -1534,14 +1458,11 @@ th {
 <td></td>
 <td></td>
 </tr>
-</table>
+</tbody></table>
 
 <table border="1">
-<colgroup span="99">
-<col class="name">
-<col class="action">
-<col class="arg" span="3"></colgroup>
-<tr>
+<colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
+<tbody><tr>
 <th>Keyword</th>
 <th>Action</th>
 <th>Argument</th>
@@ -2402,7 +2323,6 @@ th {
 <td></td>
 <td></td>
 </tr>
-</table>
+</tbody></table>
 
-</body>
-</html>
+</body></html>
