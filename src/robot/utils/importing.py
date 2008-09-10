@@ -101,7 +101,13 @@ def import_(name, type_='test library'):
         code = module_or_class
     if not isinstance(code, _VALID_IMPORT_TYPES):
         _raise_invalid_type(type_, code)
-    return code
+    try:
+        imported_from = module_or_class.__file__
+        if not imported_from:
+            raise AttributeError
+    except AttributeError:
+        imported_from = '<unknown>'
+    return code, imported_from
 
 
 def _raise_import_failed(type_, name):

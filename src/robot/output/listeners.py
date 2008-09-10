@@ -58,7 +58,7 @@ class _Listener:
     
     def __init__(self, listener_name, syslog):
         self._handlers = {}
-        listener_class = utils.import_(listener_name, 'listener')
+        listener_class, _ = utils.import_(listener_name, 'listener')
         listener = listener_class()
         for name in ['start_suite', 'end_suite', 'start_test', 'end_test', 
                      'output_file', 'summary_file', 'report_file', 'log_file',
