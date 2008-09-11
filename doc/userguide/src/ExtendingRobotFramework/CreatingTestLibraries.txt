@@ -861,7 +861,7 @@ libraries using the `dynamic library API`_ and `hybrid library API`_.
 
 The first line of a keyword documentation is used for a special
 purpose and should contain a short overall description of the
-keyword. It is used as a short documentation, for example as a tool
+keyword. It is used as a *short documentation*, for example as a tool
 tip, by `libdoc.py`_ and also shown in the test logs. However, the latter
 does not work with Java libraries using the static API,
 because their documentations are lost in compilation and not available
@@ -920,6 +920,58 @@ does that automatically.
 
 __ `Creating start-up scripts`_
 
+
+Deprecating keywords
+''''''''''''''''''''
+
+Sometimes there is a need to replace existing keywords with new ones. Just
+informing the users about the change may not always be enough, and it is more
+efficient to get warnings at runtime. Starting from Robot Framework 2.0.2 this
+is possible by marking these keywords *deprecated*. This makes it easier to 
+find old keywords from the test data and remove or replace them. 
+
+Keywords are deprecated by starting their documentation with 
+:code:`*DEPRECATED*`. When these keywords are executed, a warning containing rest 
+of the `short documentation`__ is written into the syslog_ and the `log file`_.
+For example, if following keyword is executed there will be a warning like
+shown below in the log file.
+
+.. sourcecode:: python
+
+    def example_keyword(argument):
+        """*DEPRECATED* Use keyword `Other Keyword` instead.
+
+        This keyword does something to given `argument` and returns the result.
+        """
+        return do_something(argument)
+
+.. raw:: html
+
+   <table class="messages">
+     <tr>
+       <td class="time">20080911&nbsp;16:00:22.650</td>
+       <td class="warn level">WARN</td>
+       <td class="msg">Keyword 'SomeLibrary.Example Keyword' is deprecated. Use keyword `Other Keyword` instead.</td>
+     </tr>
+   </table>
+
+This deprecation system works with most test libraries and also with `user keywords`__.
+The only exception are keywords implemented in a Java test library that uses 
+the `static library interface`__ because their documentation is not available
+at runtime. With such keywords, it possible to use user keywords as wrappers and
+deprecate them.
+
+There is a plan to implement a tool that can use this same deprecation
+information for automatically replacing deprecated keywords. The tool will most
+likely get the name of the new keyword from the documentation so that it searches
+words inside backticks (:code:`\``). Thus it would find :name:`Other Keyword` from
+the earlier example. Note that `libdoc.py`_ also automatically creates internal
+links using the same syntax.
+
+__ `Documenting libraries`_
+__ `User keyword name and documentation`_
+__ `Creating static keywords`_
+ 
 
 Dynamic library API
 ~~~~~~~~~~~~~~~~~~~

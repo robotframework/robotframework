@@ -74,48 +74,6 @@ of the keyword is case-, space- and underscore-insensitive, similarly
 as normal keyword names.
 
 
-Deprecating keywords
-~~~~~~~~~~~~~~~~~~~~
-
-At some point there might be need to deprecate `library keywords`_ or `user keywords`_. 
-Deprecation is needed for example if name of the keyword is improved or the keyword 
-is replaced with some other keyword. To maintain the library, there is need to 
-remove the deprecated keywords at some point. From Robot Framework 
-version 2.0.2 onwards there has been support for getting warnings if deprecated 
-keywords have been used. This makes it easier to find deprecated keywords from 
-testdata and remove or replace those. 
-
-Deprecated keyword is found based on it's documentation. If keyword's first 
-line documentation called also `short documentation`_ contains word 
-:code:`*DEPRECATED*` the keywords is handled as deprecated. When ever deprecated 
-keyword is executed, warning is written to the  `log file`_. See example of 
-deprecated keyword below:
-
-.. sourcecode:: python
-
-    def keyword(argument):
-    """*DEPRECATED* Use keyword `Other Keyword` instead.
-
-    This keyword does something to given `argument` and returns the result.
-    """
-        return do_something(argument)
-
-Deprecation works currently with user keywords, library keywords implemented with 
-:name:`Python` and using `static`_ or `hybrid`_ library API and, keywords 
-implemented using `dynamic library API`_ and providing method :code:`get_documentation` 
-for `getting keyword documentation`_. Library keywords implemented in 
-some other way, can be deprecated by using user keyword as wrapper.
-
-As `documentation formatting`_ is used in :code:`*DEPRECATED*`, the information 
-is visible in the log file with the `bold style`_.
-
-
-.. _short documentation: `Documenting libraries`_
-.. _static: `Creating static keywords`_
-.. _hybrid: `Hybrid library API`_
-.. _bold style: `Bold and italic`_
- 
-
 Timeouts
 ~~~~~~~~
 
