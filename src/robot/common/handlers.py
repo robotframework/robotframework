@@ -30,6 +30,7 @@ class BaseHandler:
     def _check_arg_limits(self, args):
         if not self.minargs <= len(args) <= self.maxargs:
             self._raise_inv_args(args)
+        return args
 
     def _raise_inv_args(self, args):
         minend = utils.plural_or_not(self.minargs)

@@ -36,13 +36,6 @@ class _RunnableHandler(BaseHandler):
                 self._get_global_handler(handler_method, handler_name) or None
         self.doc = ''
         self.timeout = ''  # Needed for set_attributes in runner.start_keyword
-#        self.handle_args = _handle_normal_kw_args
-#
-#    def _handle_run_kw_args(self):
-#        pass
-#
-#    def _handle_normal_kw_args(self):
-#        pass
 
     def copy(self, library):
         handler = _RunnableHandler(library, self._handler_name, None)
@@ -87,27 +80,24 @@ class _RunnableHandler(BaseHandler):
         # Negative index means that this is not Run Keyword variant and all
         # arguments are processed normally
         if index < 0:
-            args = self._replace_vars_from_args(args, variables)
-        else:
-            processed = []
-            # In case there are @{list} variables and there is not enough 
-            # arguments in the first one, we need to continue until we have
-            # enough arguments to give to the Run Keyword variant
-            while len(processed) < index and len(args) != 0:
-                process, args = args[:index], args[index:] 
-                processed += variables.replace_list(process)
-            # In case @{list} variable is unpacked, the arguments going further 
-            # needs to be escaped, otherwise those are unescaped twice.
-            processed[index:] = [utils.escape(arg) for arg in processed[index:]]
-            args = processed + args
-            self._check_arg_limits(args)
-        return args
+            return self._replace_vars_from_args(args, variables)
+        if index == 0:
+            return self._check_arg_limits(args)
+        # There might be @{list} variables and those might have more or less 
+        # arguments that is needed. Therefore we need to go through arguments 
+        # one by one.
+        processed = []
+        while len(processed) < index and args: 
+            processed += variables.replace_list([args.pop(0)])
+        # In case @{list} variable is unpacked, the arguments going further 
+        # needs to be escaped, otherwise those are unescaped twice.
+        processed[index:] = [utils.escape(arg) for arg in processed[index:]]
+        return self._check_arg_limits(processed + args)
     
     def _replace_vars_from_args(self, args, variables):
         """Overridden by JavaHandler"""
         args = variables.replace_list(args)
-        self._check_arg_limits(args)
-        return args
+        return self._check_arg_limits(args)
     
     def _run_handler(self, handler, args, output, namespace):
         timeout = self._get_timeout(namespace)
@@ -137,18 +127,6 @@ class _RunnableHandler(BaseHandler):
         logger.log_output(stderr)
         if stderr.strip() != '':
             sys.stderr.write(stderr+'\n')
-
-
-#class _RunKeywordHandler:
-#    pass
-#
-#class PythonRunKeywordHandler(_RunKeywordHandler, _PythonHandler):
-#    pass
-#
-#class DynamicRunKeywordHandler(_RunKeywordHandler, _DynamicHandler):
-#    pass
-#def DynamicHandler(*args):
-#    return _DynamicHandler(*args)
 
 
 class PythonHandler(_RunnableHandler):
