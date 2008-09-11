@@ -15,8 +15,6 @@
 
 
 
-
-  
   
   
   
@@ -107,8 +105,6 @@ th { font-style: normal; } /* required for IE */
   
   
   
-  
-  
   <title>Robot Test Cases</title><link type="text/css" href="resources/css/testdata.css" rel="stylesheet"></head>
 <body>
 
@@ -126,9 +122,7 @@ th { font-style: normal; } /* required for IE */
 
 
 
-
-<h1>Robot Test Cases for Registering Own Run Keyword Variant</h1>
-
+<h1>Robot Test Cases for Built-In Run Keyword</h1>
 
 
 <span style="font-weight: bold;">&nbsp;&nbsp; &nbsp;</span>
@@ -173,9 +167,7 @@ th { font-style: normal; } /* required for IE */
 
 
 
-
   <colgroup span="99"><col class="name"><col class="value" span="4"></colgroup> <thead><tr>
-
 
 
 
@@ -207,7 +199,6 @@ th { font-style: normal; } /* required for IE */
 
 
 
-
     <th>Value</th>
 
 
@@ -224,9 +215,7 @@ th { font-style: normal; } /* required for IE */
 
 
 
-
     <th>Value</th>
-
 
 
 
@@ -258,9 +247,7 @@ th { font-style: normal; } /* required for IE */
 
 
 
-
     <th>Value</th>
-
 
 
 
@@ -292,9 +279,7 @@ th { font-style: normal; } /* required for IE */
 
 
 
-
   </thead> <tbody>
-
 
 
 
@@ -322,7 +307,7 @@ th { font-style: normal; } /* required for IE */
 
 
 
-    <tr><td>Library</td><td>RegisteringLibrary.py</td><td></td><td></td><td></td></tr><tr>
+    <tr><td>variables</td><td>variable.py</td><td></td><td></td><td></td></tr>
 
 
 
@@ -338,110 +323,6 @@ th { font-style: normal; } /* required for IE */
 
 
 
-
-      <td align="undefined" valign="undefined">Library</td>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">NotRegisteringLibrary.py</td>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    </tr><tr><td>Library</td><td>RegisteringLibrary.py</td><td>WITH NAME</td><td>lib</td><td></td></tr><tr><td>Library</td><td>RegisteredClass.py</td><td></td><td></td><td></td></tr><tr><td>Library</td><td>DynamicRegisteredLibrary.py</td><td></td><td></td><td></td></tr>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  
   
   
   
@@ -473,7 +354,6 @@ th { font-style: normal; } /* required for IE */
 
 
 
-
 <br>
 
 
@@ -490,9 +370,7 @@ th { font-style: normal; } /* required for IE */
 
 
 
-
 <table border="1">
-
 
 
 
@@ -524,7 +402,6 @@ th { font-style: normal; } /* required for IE */
 
 
 
-
     <th>Variable</th>
 
 
@@ -541,26 +418,7 @@ th { font-style: normal; } /* required for IE */
 
 
 
-
     <th>Value</th>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    <th>Value</th>
-
 
 
 
@@ -592,9 +450,23 @@ th { font-style: normal; } /* required for IE */
 
 
 
-
     <th>Value</th>
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <th>Value</th>
 
 
 
@@ -626,9 +498,7 @@ th { font-style: normal; } /* required for IE */
 
 
 
-
   </thead> <tbody>
-
 
 
 
@@ -660,9 +530,7 @@ th { font-style: normal; } /* required for IE */
 
 
 
-
-      <td align="undefined" valign="undefined">${VARIABLE}</td>
-
+      <td align="undefined" valign="undefined">@{NEEDS ESCAPING}</td>
 
 
 
@@ -678,7 +546,7 @@ th { font-style: normal; } /* required for IE */
 
 
 
-      <td align="undefined" valign="undefined">\${not variable}</td>
+      <td align="undefined" valign="undefined">c:\\temp\\foo</td>
 
 
 
@@ -694,26 +562,7 @@ th { font-style: normal; } /* required for IE */
 
 
 
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      <td></td>
-
+      <td align="undefined" valign="undefined">\${notvar}</td>
 
 
 
@@ -731,6 +580,21 @@ th { font-style: normal; } /* required for IE */
 
       <td></td>
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td></td>
 
 
 
@@ -762,7 +626,6 @@ th { font-style: normal; } /* required for IE */
 
 
 
-
     <tr>
 
 
@@ -779,9 +642,7 @@ th { font-style: normal; } /* required for IE */
 
 
 
-
-      <td>${HELLO}</td>
-
+      <td>@{KEYWORD AND ARG WHICH NEEDS ESCAPING}</td>
 
 
 
@@ -797,7 +658,7 @@ th { font-style: normal; } /* required for IE */
 
 
 
-      <td>Hello</td>
+      <td>\\Log Many</td><td>\${notvar}</td>
 
 
 
@@ -813,26 +674,7 @@ th { font-style: normal; } /* required for IE */
 
 
 
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      <td></td>
-
+      
 
 
 
@@ -864,9 +706,7 @@ th { font-style: normal; } /* required for IE */
 
 
 
-
-    </tr><tr><td>@{KEYWORD AND ARG}</td><td>\\Log Many</td><td>${VARIABLE}</td><td></td><td></td></tr>
-
+      <td></td>
 
 
 
@@ -882,7 +722,22 @@ th { font-style: normal; } /* required for IE */
 
 
 
-  
+    </tr><tr><td>@{KEYWORD AND ARGS WHICH NEEDS ESCAPING}</td><td>\\Log Many</td><td>@{NEEDS ESCAPING}</td><td></td><td></td></tr><tr><td>@{EMPTY}</td><td></td><td></td><td></td><td></td></tr><tr><td>@{KEYWORD}</td><td>\\Log Many</td><td></td><td></td><td></td></tr><tr><td>@{EXPRESSION}</td><td>${TRUE}</td><td></td><td></td><td></td></tr><tr><td>@{ARGS}</td><td>@{NEEDS ESCAPING}</td><td></td><td></td><td></td></tr><tr><td>${KEYWORD}</td><td>\\Log Many</td><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   
   
   
@@ -914,9 +769,7 @@ th { font-style: normal; } /* required for IE */
 
 
 
-
 <br>
-
 
 
 
@@ -948,10 +801,8 @@ th { font-style: normal; } /* required for IE */
 
 
 
-
   <colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
   <thead><tr>
-
 
 
 
@@ -983,7 +834,6 @@ th { font-style: normal; } /* required for IE */
 
 
 
-
     <th>Action</th>
 
 
@@ -1000,26 +850,7 @@ th { font-style: normal; } /* required for IE */
 
 
 
-
     <th>Argument</th>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    <th>Argument</th>
-
 
 
 
@@ -1051,9 +882,23 @@ th { font-style: normal; } /* required for IE */
 
 
 
-
     <th>Argument</th>
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <th>Argument</th>
 
 
 
@@ -1085,7 +930,6 @@ th { font-style: normal; } /* required for IE */
 
 
 
-
   </thead> <tbody>
 
 
@@ -1102,7 +946,6 @@ th { font-style: normal; } /* required for IE */
 
 
 
-
     
 
 
@@ -3084,229 +2927,10 @@ th { font-style: normal; } /* required for IE */
 
 
     
-
-
-
-
-
-
-
-
-
-
-
-    <tr>
-
-
-
-
-
-
-
-
-
-
-      <td>Not registered Keyword Fails With Content That Should Not Be Evaluated Twice&nbsp; </td>
-
-
-
-
-
-
-
-
-
-
-      <td>[Documentation]</td>
-
-
-
-
-
-
-
-
-
-
-      <td>FAIL</td>
-
-
-
-
-
-
-
-
-
-
-      <td>Non-existing variable '\${not variable}'</td>
-
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-
-    </tr>
-
-
-
-
-
-
-
-
-
-
-    <tr><td></td><td>${var} =</td><td>Set Variable</td><td>\${not variable}</td><td></td><td></td></tr><tr><td></td><td>Should Be Equal</td><td>${var}</td><td>\${not variable}</td><td></td><td></td></tr><tr><td></td><td>My Run Keyword</td><td>Log</td><td>${HELLO}</td><td></td><td></td></tr><tr><td></td><td>My Run Keyword</td><td>Log</td><td>${VARIABLE}</td><td></td><td></td></tr><tr>
-
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-
-    </tr>
-
-
-
-
-
-
-
-
-
-
-    <tr>
-
-
-
-
-
-
-
-
-
-
-      <td>Registered Function</td>
-
-
-
-
-
-
-
-
-
-
-      <td>${var} =</td>
-      <td>RegisteringLibrary.Run Keyword Function</td><td>Set Variable</td><td>${VARIABLE}</td>
-      
-
-
-
-
-
-
 
 
 
 
-      
 
 
 
@@ -3314,209 +2938,37 @@ th { font-style: normal; } /* required for IE */
 
 
 
-
-
-      
-
-
-
-
-
-
-
-
-
-      
-
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-
-    </tr>
-
-
-
-
-
-
-
-
-
-
-    <tr>
-
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-
-      <td>Should Be Equal</td>
-
-
-
-
-
-
-
-
-
-
-      <td>${var}</td>
-
-
-
-
-
-
-
-
-
-
-      <td>\${not variable}</td>
-
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-
-    </tr>
-
-
-
-
-
-
-
-
-
-
-    <tr><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Registered Method</td><td>${var} =</td><td>Run Keyword If Method</td><td>${TRUE}</td><td>Set Variable</td><td>${VARIABLE}</td></tr><tr>
-
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-
-      <td>Should Be Equal</td><td>${var}</td><td>\${not variable}</td>
-
-
-
-
-
-
-
-
-
-
-      
-
-
-
-
-
-
+    
 
 
 
 
-      <td></td><td></td>
 
 
 
 
 
+    
 
 
 
 
 
-      
 
 
 
 
+    
 
 
 
 
 
 
-      
 
 
 
+    
 
 
 
@@ -3524,9 +2976,9 @@ th { font-style: normal; } /* required for IE */
 
 
 
-    </tr>
 
 
+    
 
 
 
@@ -3535,8 +2987,8 @@ th { font-style: normal; } /* required for IE */
 
 
 
-    <tr><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>With Name And Args To Process Registered Method</td><td>${var} =</td><td>Run KeywordMethod</td><td>Set Variable</td><td>${VARIABLE}</td><td></td></tr><tr><td></td><td>Should Be Equal</td><td>${var}</td><td>\${not variable}</td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Registered Keyword With With Name</td><td>${var} =</td><td>lib.Run Keyword Function</td><td>Set Variable</td><td>${VARIABLE}</td><td></td></tr><tr><td></td><td>Should Be Equal</td><td>${var}</td><td>\${not variable}</td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td></tr>
 
+    
 
 
 
@@ -3547,7 +2999,6 @@ th { font-style: normal; } /* required for IE */
 
 
     
-
 
 
 
@@ -3567,7 +3018,6 @@ th { font-style: normal; } /* required for IE */
 
 
 
-
     
 
 
@@ -3578,9 +3028,7 @@ th { font-style: normal; } /* required for IE */
 
 
 
-
     
-
 
 
 
@@ -3600,7 +3048,6 @@ th { font-style: normal; } /* required for IE */
 
 
 
-
     
 
 
@@ -3611,9 +3058,7 @@ th { font-style: normal; } /* required for IE */
 
 
 
-
     
-
 
 
 
@@ -3633,7 +3078,6 @@ th { font-style: normal; } /* required for IE */
 
 
 
-
     
 
 
@@ -3821,30 +3265,18 @@ th { font-style: normal; } /* required for IE */
 
 
     
-
 
 
 
 
 
-    
-    
     
-    
-    
-    
-    
-    
-    
 
 
 
 
 
-
     
-    
-
 
 
 
@@ -3852,16 +3284,13 @@ th { font-style: normal; } /* required for IE */
 
 
     
-    
 
 
 
 
 
 
-
     
-
 
 
 
@@ -3881,16 +3310,13 @@ th { font-style: normal; } /* required for IE */
 
 
 
-
     
 
 
 
 
 
-
     
-
 
 
 
@@ -3910,27 +3336,10 @@ th { font-style: normal; } /* required for IE */
 
 
 
-
-
-    
 
-    
-    
-    
-    
-    
-    
-    
     
-    <tr><td>Registered Keyword From Dynamic Library</td><td>Dynamic Run Keyword</td><td>@{KEYWORD AND ARG}</td><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr>
-      <td></td>
-      <td></td>
-      <td></td>
-      <td></td>
-      <td></td>
-      <td></td>
-    </tr>
 
+    <tr><td>Variable Values Should Not Be Visible As Keyword's Arguments</td><td>Run Keyword</td><td>My UK</td><td>Log</td><td>${OBJECT}</td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Run Keyword When Keyword and Arguments Are in List Variable</td><td>Run Keyword</td><td>@{KEYWORD AND ARGS WHICH NEEDS ESCAPING}</td><td></td><td></td><td></td></tr><tr><td></td><td>Run Keyword</td><td>@{KEYWORD AND ARG WHICH NEEDS ESCAPING}</td><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Run Keyword If When Arguments are In Multiple List</td><td>Run Keyword If</td><td>@{EXPRESSION}</td><td>@{KEYWORD}</td><td>@{ARGS}</td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Run Keyword When Arguments are Not In First Lists </td><td>Run Keyword</td><td>@{EMPTY}</td><td>@{EMPTY}</td><td>@{EMPTY}</td><td></td></tr><tr><td></td><td>...</td><td>@{KEYWORD}</td><td>@{ARGS}</td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Run Keyword When Keyword And Arguments In Scalar After Empty Lists</td><td>Run Keyword</td><td>@{EMPTY}</td><td>@{EMPTY}</td><td>${KEYWORD}</td><td>@{ARGS}</td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Run Keyword When Keyword And String Arguments After Empty Lists</td><td>[Documentation]</td><td>FAIL&nbsp;Expected Failure</td><td></td><td></td><td></td></tr><tr><td><br></td><td>Run Keyword</td><td>@{EMPTY}</td><td>@{EMPTY}</td><td>Fail</td><td>Expected Failure</td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Run Keyword If When Not Enough Arguments</td><td>[Documentation]</td><td>FAIL Keyword 'BuiltIn.Run Keyword If' expected at least 2 arguments, got 1.</td><td></td><td></td><td></td></tr><tr><td><br></td><td>Run Keyword If</td><td>@{EMPTY}</td><td>@{EMPTY}</td><td>@{EMPTY}</td><td>@{EXPRESSION}</td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td></tr>
 
 
     
@@ -4326,7 +3735,6 @@ th { font-style: normal; } /* required for IE */
 
     
 
-  
   
   
   
@@ -4358,7 +3766,6 @@ th { font-style: normal; } /* required for IE */
 
 
 
-
 <br>
 
 
@@ -4375,9 +3782,7 @@ th { font-style: normal; } /* required for IE */
 
 
 
-
 <table border="1">
-
 
 
 
@@ -4410,9 +3815,7 @@ th { font-style: normal; } /* required for IE */
 
 
 
-
     <th>Keyword</th>
-
 
 
 
@@ -4444,26 +3847,7 @@ th { font-style: normal; } /* required for IE */
 
 
 
-
     <th>Argument</th>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    <th>Argument</th>
-
 
 
 
@@ -4494,8 +3878,22 @@ th { font-style: normal; } /* required for IE */
 
 
 
+
     <th>Argument</th>
 
+
+
+
+
+
+
+
+
+
+
+
+
+    <th>Argument</th>
 
 
 
@@ -4527,7 +3925,6 @@ th { font-style: normal; } /* required for IE */
 
 
 
-
   </thead> <tbody>
 
 
@@ -4544,7 +3941,6 @@ th { font-style: normal; } /* required for IE */
 
 
 
-
     
 
 
@@ -4637,26 +4033,33 @@ th { font-style: normal; } /* required for IE */
 
 
 
-
     
-    <tr><td>\Log Many</td><td>[Arguments]</td><td>@{args}</td><td></td><td></td><td></td></tr><tr>
-      <td></td>
-      <td>Log Many</td>
+
+
+
+
+    <tr><td>My UK</td><td>[ Arguments ]</td><td>${name}</td><td>@{args}</td><td></td><td></td></tr><tr><td></td><td>Run Keyword</td><td>${name}</td><td>@{args}</td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr>
+
+
+      <td>\Log Many</td>
+
+
+      <td>[Arguments]</td>
+
+
       <td>@{args}</td>
+
+
       <td></td>
+
+
       <td></td>
+
+
       <td></td>
-    </tr>
-    
-    
-    
 
 
-
-
-
-    
-
+    </tr><tr><td></td><td>Log Many</td><td>@{args}</td><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td></tr>
 
 
     
@@ -4676,7 +4079,6 @@ th { font-style: normal; } /* required for IE */
 
 
 
-  
   
   
   
@@ -4693,7 +4095,6 @@ th { font-style: normal; } /* required for IE */
   
   </tbody>
 </table>
-
 
 
 
