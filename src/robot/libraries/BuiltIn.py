@@ -1179,6 +1179,7 @@ class BuiltIn(Verify, Converter, Variables, RunKeyword, Misc):
     """
 
     ROBOT_LIBRARY_SCOPE = 'GLOBAL'
+    ROBOT_LIBRARY_VERSION = utils.get_version()
     
     def _matches(self, string, pattern):
         return utils.matches(string, pattern, caseless=False, spaceless=False)

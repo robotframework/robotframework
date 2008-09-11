@@ -49,6 +49,7 @@ class OperatingSystem:
     """
 
     ROBOT_LIBRARY_SCOPE = 'GLOBAL'
+    ROBOT_LIBRARY_VERSION = utils.get_version()
     
     def run(self, command, return_mode='stdout'):
         """Runs the given command in the system and returns the RC and/or stdout.

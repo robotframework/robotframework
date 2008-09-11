@@ -43,6 +43,7 @@ class Telnet:
     """
 
     ROBOT_LIBRARY_SCOPE = 'TEST_SUITE'
+    ROBOT_LIBRARY_VERSION = utils.get_version()
 
     def __init__(self, timeout=3.0, newline='CRLF', 
                  prompt=None, prompt_is_regexp=False):

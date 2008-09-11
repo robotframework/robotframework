@@ -620,7 +620,8 @@ class Collections(_List, _Dictionary):
 
     --------
     """
-    pass
+    ROBOT_LIBRARY_SCOPE = 'GLOBAL'
+    ROBOT_LIBRARY_VERSION = utils.get_version()
 
 
 def _verify_condition(condition, default_msg, given_msg, values=False):
