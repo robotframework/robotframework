@@ -269,7 +269,7 @@ Example Java library using the :code:`GLOBAL` scope:
 
     public class ExampleLibrary {
 
-        public static String ROBOT_LIBRARY_SCOPE = "GLOBAL";
+        public static final String ROBOT_LIBRARY_SCOPE = "GLOBAL";
 
         private int counter = 0;
 
@@ -283,6 +283,39 @@ Example Java library using the :code:`GLOBAL` scope:
         }
     }
 
+
+Specifying library version
+''''''''''''''''''''''''''
+
+When a test library is taken into use, Robot Framework tries to determine its
+version. This version is read from attribute :code:`ROBOT_LIBRARY_VERSION` or
+:code:`__version__`, similarly as `test library scope`_. If both attributes
+are defined, the former takes precedence. The attribute must be a class or
+module attribute depending whether the library is implemented as a class or a
+module. The value will be written in syslog_, mainly to provide debugging
+information. 
+
+Library documentation tool libdoc_ also writes this information into keyword
+documentation if available. For Java libraries, the version attribute must be
+declared as :code:`static final` as the second example below demonstrates:
+
+.. sourcecode:: python
+
+    __version__ = '0.1'
+
+    def keyword():
+        pass
+
+
+.. sourcecode:: java
+
+    public class VersionExample {
+        
+        public static final String ROBOT_LIBRARY_VERSION = "1.0.2";
+        
+        public void keyword() {
+        }
+    }
 
 
 Creating static keywords
