@@ -86,6 +86,8 @@ def import_(name, type_='test library'):
         classname = name
         fromlist = []
     try:
+        # It seems that we get class when importing java class from file system
+        # or from a default package of a jar file. Otherwise we get a module.
         module_or_class = __import__(modname, globals(), locals(), fromlist)
     except:
         if pop_sys_path:
@@ -106,6 +108,7 @@ def import_(name, type_='test library'):
         if not imported_from:
             raise AttributeError
     except AttributeError:
+        # Java classes not packaged in a jar file do not have __file__. 
         imported_from = '<unknown>'
     return code, imported_from
 
