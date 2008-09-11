@@ -55,8 +55,6 @@ th {
 }
 </style>
 <title>Listener Interface</title></head>
-
-
 <body>
 <h1>Listener Interface</h1>
 
@@ -85,9 +83,9 @@ th {
 </tr>
 <tr>
 <td>Suite Setup</td>
-<td>Run Listener Tests</td><td>--listener ListenAll --listener
-listeners.ListenSome --listener JavaListener --listener
-NonExistingListener --listener listeners.InvalidInit --listener
+<td>Run Listener Tests</td><td>--listener ListenAll<br>--listener
+listeners.ListenSome <br>--listener JavaListener<br>--listener
+NonExistingListener --listener listeners.InvalidInit <br>--listener
 listeners.InvalidMethods</td><td>misc${/}pass_and_fail.html</td>
 
 
@@ -213,7 +211,7 @@ listeners.InvalidMethods</td><td>misc${/}pass_and_fail.html</td>
 <td></td>
 <td>...</td>
 <td>Output: pass_and_fail-output.xml</td>
-<td>Closing...</td>
+<td>Closing...\n</td>
 <td></td>
 </tr>
 <tr>
@@ -248,7 +246,7 @@ listeners.InvalidMethods</td><td>misc${/}pass_and_fail.html</td>
 <td></td>
 <td>...</td>
 <td>Fail</td>
-<td>${SUITE_MSG}</td>
+<td>${SUITE_MSG}\n</td>
 <td></td>
 </tr>
 <tr>
@@ -325,7 +323,7 @@ listeners.InvalidMethods</td><td>misc${/}pass_and_fail.html</td>
 <td></td>
 <td>...</td>
 <td>Output (java): pass_and_fail-output.xml</td>
-<td>The End</td>
+<td>The End\n</td>
 <td></td>
 </tr>
 <tr>
