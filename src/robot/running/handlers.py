@@ -36,7 +36,14 @@ class _RunnableHandler(BaseHandler):
                 self._get_global_handler(handler_method, handler_name) or None
         self.doc = ''
         self.timeout = ''  # Needed for set_attributes in runner.start_keyword
-        
+#        self.handle_args = _handle_normal_kw_args
+#
+#    def _handle_run_kw_args(self):
+#        pass
+#
+#    def _handle_normal_kw_args(self):
+#        pass
+
     def copy(self, library):
         handler = _RunnableHandler(library, self._handler_name, None)
         self._copy_attributes(handler)
@@ -63,10 +70,7 @@ class _RunnableHandler(BaseHandler):
         utils.capture_output()
         try:
             ret = self._run_handler(handler, args, output, namespace)
-        except:
-            self._release_and_log_output(output)
-            raise
-        else:
+        finally:
             self._release_and_log_output(output)
         output.trace('Return: %s' % utils.unic(ret))
         return ret
@@ -85,11 +89,18 @@ class _RunnableHandler(BaseHandler):
         if index < 0:
             args = self._replace_vars_from_args(args, variables)
         else:
-            processed = self._replace_vars_from_args(args[:index], variables)
+            processed = []
+            # In case there are @{list} variables and there is not enough 
+            # arguments in the first one, we need to continue until we have
+            # enough arguments to give to the Run Keyword variant
+            while len(processed) < index and len(args) != 0:
+                process, args = args[:index], args[index:] 
+                processed += variables.replace_list(process)
             # In case @{list} variable is unpacked, the arguments going further 
             # needs to be escaped, otherwise those are unescaped twice.
             processed[index:] = [utils.escape(arg) for arg in processed[index:]]
-            args[:index] = processed
+            args = processed + args
+            self._check_arg_limits(args)
         return args
     
     def _replace_vars_from_args(self, args, variables):
@@ -126,8 +137,20 @@ class _RunnableHandler(BaseHandler):
         logger.log_output(stderr)
         if stderr.strip() != '':
             sys.stderr.write(stderr+'\n')
-            
-  
+
+
+#class _RunKeywordHandler:
+#    pass
+#
+#class PythonRunKeywordHandler(_RunKeywordHandler, _PythonHandler):
+#    pass
+#
+#class DynamicRunKeywordHandler(_RunKeywordHandler, _DynamicHandler):
+#    pass
+#def DynamicHandler(*args):
+#    return _DynamicHandler(*args)
+
+
 class PythonHandler(_RunnableHandler):
     
     def __init__(self, library, handler_name, handler_method):
