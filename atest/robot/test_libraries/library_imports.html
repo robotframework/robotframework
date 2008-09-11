@@ -55,8 +55,6 @@ th {
 }
 </style>
 <title>Library Imports</title></head>
-
-
 <body>
 <h1>Library Imports</h1>
 
@@ -179,14 +177,18 @@ th {
 <td><a name="test_NumberOfKeywordsInImportedLibraryIsReportedInSyslog"><br></a></td>
 <td>Check Syslog Contains</td>
 <td>| INFO \ |</td>
-<td>Imported library 'ExampleLibrary' with arguments [ ] (version &lt;unknown&gt;, python type, testcase scope, 25 keywords, source&nbsp;${ex lib module}</td>
+<td>Imported library 'ExampleLibrary' with arguments [ ] (version
+&lt;unknown&gt;, python type, testcase scope, 25 keywords,
+source&nbsp;${ex lib module}</td>
 <td></td>
 </tr>
 <tr><td></td><td>${lib class module} = </td><td>Join Path</td><td>${testlibs path}</td><td>libmodule.py</td></tr><tr>
 <td></td>
 <td>Check Syslog Contains</td>
 <td>| INFO \ |</td>
-<td>Imported library 'libmodule.LibClass1' with arguments [ ] (version &lt;unknown&gt;, python type, testcase scope, 1 keywords, source ${lib class module}</td>
+<td>Imported library 'libmodule.LibClass1' with arguments [ ] (version
+&lt;unknown&gt;, python type, testcase scope, 1 keywords, source ${lib
+class module}</td>
 <td></td>
 </tr>
 <tr>
@@ -200,7 +202,9 @@ th {
 <td><a name="test_WarningShouldBeWrittenToSyslogIfLibraryContainsNoKeywords"><br></a></td>
 <td>Check Syslog Contains</td>
 <td>| INFO \ |</td>
-<td>Imported library 'libmodule' with arguments [ ] (version &lt;unknown&gt;, module type, global scope, 0 keywords, source&nbsp;${lib module path}</td>
+<td>Imported library 'libmodule' with arguments [ ] (version
+&lt;unknown&gt;, module type, global scope, 0 keywords,
+source&nbsp;${lib module path}</td>
 <td></td>
 </tr>
 <tr>
@@ -336,7 +340,7 @@ th {
 <td></td>
 <td></td>
 </tr>
-<tr><td>Python Library From A Zip File</td><td>Run Tests</td><td>-P ${CURDIR}${/}..${/}..testresources${/}testlibs${/}ziplib.zip</td><td>test_libraries${/}library_import_from_archive.html</td><td></td></tr><tr><td></td><td>Check Test Case</td><td>Python Library From a Zip File</td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Java Library From a Jar File</td><td>[ tags ]</td><td>jybot</td><td></td><td></td></tr><tr><td></td><td>Check Test Case</td><td>Java Library From a Jar File</td><td></td><td></td></tr><tr>
+<tr><td>Python Library From A Zip File</td><td>Run Imports From Archive Tests</td><td></td><td></td><td></td></tr><tr><td></td><td>Check Test Case</td><td>Python Library From a Zip File</td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Java Library From a Jar File</td><td>[ tags ]</td><td>jybot</td><td></td><td></td></tr><tr><td></td><td>Run Keyword If</td><td>"${PREV_TEST_NAME}" != "Python Library From A Zip File"</td><td>Run Imports From Archive Tests</td><td></td></tr><tr><td></td><td>Check Test Case</td><td>Java Library From a Jar File</td><td></td><td></td></tr><tr>
 <td></td>
 <td></td>
 <td></td>
@@ -355,10 +359,10 @@ th {
 <th>Argument</th>
 </tr>
 <tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
+<td>Run Imports From Archive Tests</td>
+<td>Run Tests</td><td>--pythonpath ${CURDIR}${/}..${/}..testresources${/}testlibs${/}ziplib.zip</td><td>test_libraries${/}library_import_from_archive.html</td>
+
+
 <td></td>
 </tr>
 </tbody></table>
