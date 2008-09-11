@@ -289,8 +289,11 @@ ul.auto-toc {
  * Robot Framework User Guide Modifications * 
  * **************************************** */
 
-/* Tables -- both those used with examples and those with normal tabular data */
-
+/* Tables
+   - example, tsv-example: test data examples
+   - messages: log message examples
+   - tabular: normal tabular information
+*/
 table.example, table.tsv-example, table.messages, table.tabular {
     border: 1px solid #808080;
     border-collapse: collapse;
@@ -301,42 +304,45 @@ table.example caption, table.tsv-example caption, table.tabular caption {
     text-align: left;
     padding-bottom: 0.5em;
     font-style: italic;
-    font-size: 0.9em;
     margin: 0.5em 2em;
 }
 table.example th, table.example td, table.tsv-example td {
     border: 1px solid #808080;
     font-family: arial,helvetica,sans-serif;
-    font-size: 0.9em;
-    padding: 0.1em 0.3em;
     height: 1.2em;
+    font-size: 0.85em;
 }
 table.example th {
+    padding: 0.1em 1em;
     background: #E0E0E0;
+}
+table.example td, table.tsv-example td {
+    padding: 0.1em 1em 0.1em 0.3em;
 }
 table.tabular th, table.tabular td {
     border: 1px solid black;
-    font-size: 0.9em;
     padding: 0.1em 0.3em;
     height: 1.2em;
+    font-size: 0.9em;
 }
 table.messages {
     border: 1px solid gray;
     font-family: monospace;
-    width: 80%;
+    margin: 1em 2em;
+    width: 65%;
 }
 table.messages td {
     vertical-align: top;
+    padding: 0.1em 0.2em;
 }
 table.messages td.time {
-    width: 6em;
+    width: 7em;
     letter-spacing: -0.05em;
 } 
 table.messages td.level {
-    width: 4em;
+    width: 5em;
     text-align: center;
 }
-/* Status text colors */
 table.messages td.fail, table.messages td.error {
     color: red;
 }
@@ -388,7 +394,7 @@ pre.literal-block, pre.doctest-block {
 /* Pygments 
 
 - Styles generated using "HtmlFormatter().get_style_defs('.highlight')"
-- Changed only background from f8f8f8 to f4f4f4 and added margin
+- Changed only background (f8f8f8 -> f4f4f4) and added margin
 - For more details see e.g. http://pygments.org/docs/quickstart/
 */
 
