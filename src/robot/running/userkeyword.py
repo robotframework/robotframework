@@ -62,8 +62,7 @@ class UserHandler(BaseHandler):
             self.longname = self.name
         else:
             self.longname = '%s.%s' % (libname, self.name)
-        self.doc = self._doc = handlerdata.metadata.get('Documentation', '')
-        self.timeout = self._timeout = handlerdata.metadata.get('Timeout', [])
+        self._set_variable_dependent_metadata(handlerdata.metadata)
         self.keywords = [ KeywordFactory(kw) for kw in handlerdata.keywords ]
         self.args = handlerdata.args
         self.defaults = handlerdata.defaults
@@ -71,7 +70,13 @@ class UserHandler(BaseHandler):
         self.minargs = handlerdata.minargs
         self.maxargs = handlerdata.maxargs
         self.return_value = handlerdata.return_value
-            
+        
+    def _set_variable_dependent_metadata(self, metadata):
+        self._doc = metadata.get('Documentation', '')
+        self.doc = utils.unescape(self._doc)
+        self._timeout = metadata.get('Timeout', [])
+        self.timeout = [ utils.unescape(item) for item in self._timeout ]
+    
     def init_user_keyword(self, varz):
         self._errors = []
         self.doc = varz.replace_from_meta('Documentation', self._doc, self._errors)
