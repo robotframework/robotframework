@@ -104,13 +104,15 @@ def import_(name, type_='test library'):
     if not isinstance(code, _VALID_IMPORT_TYPES):
         _raise_invalid_type(type_, code)
     try:
-        imported_from = module_or_class.__file__
-        if not imported_from:
+        source = module_or_class.__file__
+        if not source:
             raise AttributeError
+        dirpath, filename = os.path.split(source)
+        source = os.path.join(normpath(dirpath), filename)
     except AttributeError:
         # Java classes not packaged in a jar file do not have __file__. 
-        imported_from = '<unknown>'
-    return code, imported_from
+        source = '<unknown>'
+    return code, source
 
 
 def _raise_import_failed(type_, name):
