@@ -329,7 +329,7 @@ table.messages {
     border: 1px solid gray;
     font-family: monospace;
     margin: 1em 2em;
-    width: 65%;
+    width: 60%;
 }
 table.messages td {
     vertical-align: top;
