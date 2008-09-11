@@ -321,8 +321,9 @@ table.tabular th, table.tabular td {
     height: 1.2em;
 }
 table.messages {
-    border: none;
+    border: 1px solid gray;
     font-family: monospace;
+    width: 80%;
 }
 table.messages td {
     vertical-align: top;
@@ -335,7 +336,16 @@ table.messages td.level {
     width: 4em;
     text-align: center;
 }
-
+/* Status text colors */
+table.messages td.fail, table.messages td.error {
+    color: red;
+}
+table.messages td.pass {
+    color: #009900;
+}
+table.messages td.warn {
+    color: #FFCC00;
+}
 
 /* Roles -- these are defined in roles.txt file */
 
@@ -368,7 +378,7 @@ table.messages td.level {
 
 div.admonition, div.attention, div.caution, div.danger, div.error,
 div.hint, div.important, div.note, div.tip, div.warning {
-  border: 2px solid gray;
+    border: 2px solid gray;
 }
 pre.literal-block, pre.doctest-block {
     background: #f4f4f4;
