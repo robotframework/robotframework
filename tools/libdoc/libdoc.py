@@ -191,6 +191,7 @@ class PythonLibraryDoc(_DocHelper):
     def __init__(self, name):
         lib = self._import(name)
         self.name = lib.name
+        self.version = utils.html_escape(getattr(lib, 'version', '<unknown>'))
         self.doc = self._process_doc(self._get_doc(lib))
         self.keywords = [ KeywordDoc(handler, self) 
                           for handler in lib.handlers.values() ]
@@ -285,6 +286,7 @@ if utils.is_jython:
         def __init__(self, path):
             cls = self._get_class(path)
             self.name = cls.qualifiedName()
+            self.version = self._get_version(cls)
             self.doc = self._process_doc(cls.getRawCommentText())
             self.keywords = [ JavaKeywordDoc(method, self) 
                               for method in cls.methods() ]
@@ -316,6 +318,13 @@ if utils.is_jython:
                                            List.nil(), False, List.nil(),
                                            List.nil(), False, False, True)
             return root.classes()[0]
+        
+        def _get_version(self, cls):
+            for field in cls.fields():
+                if field.name() == 'ROBOT_LIBRARY_VERSION' \
+                        and field.isPublic() and field.constantValue():
+                    return field.constantValue()
+            return '<unknown>'
 
 
     class JavaKeywordDoc(_BaseKeywordDoc):
@@ -398,6 +407,9 @@ DOCUMENT_TEMPLATE = '''
 </head>
 <body>
 <h1>${LIB.name} - Documentation</h1>
+<!-- IF "${LIB.version}" != "&lt;unknown&gt;" -->
+<p><b>Version:</b> ${LIB.version}</p>
+<!-- END IF -->
 
 <h2>Introduction</h2>
 <p class='libdoc'>${LIB.htmldoc}</p>
