@@ -107,7 +107,7 @@ def import_(name, type_='test library'):
         source = module_or_class.__file__
         if not source:
             raise AttributeError
-        dirpath, filename = os.path.split(source)
+        dirpath, filename = os.path.split(os.path.abspath(source))
         source = os.path.join(normpath(dirpath), filename)
     except AttributeError:
         # Java classes not packaged in a jar file do not have __file__. 
