@@ -205,7 +205,7 @@ examples) simply with pipe character::
 
 In addition to the formatting explained in the user guide,
 :prog:`libdoc.py` supports also special formatting of keyword names
-and arguments with backtic character :code:`\``. Even more
+and arguments with backtick character :code:`\``. Even more
 importantly, this syntax also automatically creates internal links to
 other keywords in the library. For example documentation of the
 following simple Python library would have link from :name:`Log
