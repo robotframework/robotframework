@@ -93,29 +93,29 @@ class Verify:
         """Fails the test immediately with the given (optional) message."""
         asserts.fail(msg)
 
-    def should_not_be_true(self, expr, msg=None):
-        """Fails if the the given expression (or item) is true.
+    def should_not_be_true(self, condition, msg=None):
+        """Fails if the the given condition is true.
                 
-        See `Should Be True` for details about how `expr` is evaluated and
-        `msg` used to override the default error message.
+        See `Should Be True` for details about how `condition` is evaluated and
+        how `msg` can be used to override the default error message.
         
         New in Robot Framework version 1.8.3. This is intended to replace the
         old keyword `Fail If`, which still continues to work.
         """
         if msg is None:
-            msg = "'%s' should not be true" % expr
-        asserts.fail_if(self._is_true(expr), msg)
+            msg = "'%s' should not be true" % condition
+        asserts.fail_if(self._is_true(condition), msg)
 
-    def should_be_true(self, expr, msg=None):
-        """Fails if the given expression (or item) is not true.
+    def should_be_true(self, condition, msg=None):
+        """Fails if the given condition is not true.
         
-        If `expr` is a string (e.g. '${rc} < 10'), it is evaluated as a Python 
-        expression using the built-in 'eval' function and the keyword status is
-        decided based on the result. If a non-string item is given, the status
-        is got directly from its truth value as explained at
+        If `condition` is a string (e.g. '${rc} < 10'), it is evaluated as a 
+        Python expression using the built-in 'eval' function and the keyword 
+        status is decided based on the result. If a non-string item is given, 
+        the status is got directly from its truth value as explained at
         http://docs.python.org/lib/truth.html.
          
-        The default error message ('<expr> should be true') is not very
+        The default error message ('<condition> should be true') is not very
         informative, but it can be overridden with the `msg` argument.
         
         Examples:
@@ -128,8 +128,8 @@ class Verify:
         old keyword `Fail Unless`, which still continues to work.
         """
         if msg is None:
-            msg = "'%s' should be true" % expr
-        asserts.fail_unless(self._is_true(expr), msg)
+            msg = "'%s' should be true" % condition
+        asserts.fail_unless(self._is_true(condition), msg)
 
     def should_be_equal(self, first, second, msg=None, values=True):
         """Fails if the given objects are unequal.
@@ -642,10 +642,10 @@ class RunKeyword:
         kw = Keyword(name, args)
         return kw.run(output.OUTPUT, NAMESPACES.current)
     
-    def run_keyword_if(self, expr, name, *args):
-        """Runs the given keyword with the given arguments, if `expr` is true.
+    def run_keyword_if(self, condition, name, *args):
+        """Runs the given keyword with the given arguments, if `condition` is true.
         
-        The given `expr` is evaluated similarly as with `Should Be
+        The given `condition` is evaluated similarly as with `Should Be
         True` keyword, and `name` and `*args` have same semantics as with
         `Run Keyword`.
         
@@ -659,17 +659,17 @@ class RunKeyword:
         
         New in Robot Framework version 1.8.3.
         """
-        if self._is_true(expr):
+        if self._is_true(condition):
             return self.run_keyword(name, *args)
     
-    def run_keyword_unless(self, expr, name, *args):
-        """Runs the given keyword with the given arguments, if `expr` is false.
+    def run_keyword_unless(self, condition, name, *args):
+        """Runs the given keyword with the given arguments, if `condition` is false.
 
         See `Run Keyword If` for more information and an example.
         
         New in Robot Framework version 1.8.3.
         """
-        if not self._is_true(expr):
+        if not self._is_true(condition):
             return self.run_keyword(name, *args)
     
     def run_keyword_and_ignore_error(self, name, *args):
@@ -751,10 +751,10 @@ class RunKeyword:
         raise AssertionError("Timeout %s exceeded"
                              % utils.secs_to_timestr(timeout))
     
-    def set_variable_if(self, expr, *values):
-        """If `expr` is true, returns `value1`, and otherwise returns `value2`.
+    def set_variable_if(self, condition, *values):
+        """If `condition` is true, returns `value1`, and otherwise returns `value2`.
         
-        `expr` is evaluated as with the `Should Be True` keyword.
+        `condition` is evaluated as with the `Should Be True` keyword.
         
         Examples:
         | ${var1} = | Set Variable If | 1 > 0 | v1 | v2 | 
@@ -770,7 +770,7 @@ class RunKeyword:
         TODO: Explain 'else if' functionality, mention nonex vars are ok.
         """
         values = self._verify_values_for_set_variable_if(list(values))
-        if self._is_true(expr):
+        if self._is_true(condition):
             return NAMESPACES.current.variables.replace_scalar(values[0])
         values = self._verify_values_for_set_variable_if(values[1:], True)
         if len(values) == 1:
@@ -1184,14 +1184,15 @@ class BuiltIn(Verify, Converter, Variables, RunKeyword, Misc):
     def _matches(self, string, pattern):
         return utils.matches(string, pattern, caseless=False, spaceless=False)
 
-    def _is_true(self, expr):
-        if utils.is_str(expr):
+    def _is_true(self, condition):
+        if utils.is_str(condition):
             try:
-                expr = eval(expr)
+                condition = eval(condition)
             except:
-                raise DataError("Evaluating expression '%s' failed: %s"
-                                % (expr, utils.get_error_message()))
-        return expr and True or False
+                raise DataError("Evaluating condition '%s' failed: %s"
+                                % (condition, utils.get_error_message()))
+        return condition and True or False
+
         
 
 def register_run_keyword(library, keyword, args_to_process=None):
