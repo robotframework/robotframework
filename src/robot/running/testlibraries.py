@@ -179,7 +179,8 @@ class _BaseTestLibrary(BaseLibrary):
                     
     def _get_handler_names(self, libcode):
         return [ name for name in dir(libcode) 
-                 if not name.startswith('_') and name != 'ROBOT_LIBRARY_SCOPE' ]
+                 if not (name.startswith('_') or 
+                         name.startswith('ROBOT_LIBRARY_')) ]
         
     def _get_handler_method(self, libcode, name):
         method = getattr(libcode, name)
