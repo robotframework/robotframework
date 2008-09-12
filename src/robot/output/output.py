@@ -122,11 +122,13 @@ class Output(AbstractLogger):
         
     def start_keyword(self, kw):
         self.logger.start_keyword(kw)
+        self.listeners.start_keyword(kw)
         if self._debugfile is not None:
             self._debugfile.start_keyword(kw)
         
     def end_keyword(self, kw):
         self.logger.end_keyword(kw)
+        self.listeners.end_keyword(kw)
         if self._debugfile is not None:
             self._debugfile.end_keyword(kw)
      

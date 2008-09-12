@@ -45,6 +45,14 @@ class Listeners:
         for listener in self._listeners:
             listener.end_test(test.status, test.message)
 
+    def start_keyword(self, kw):
+        for listener in self._listeners:
+            listener.start_keyword(kw.name, kw.args)
+        
+    def end_keyword(self, kw):
+        for listener in self._listeners:
+            listener.end_keyword(kw.status)
+
     def output_file(self, name, path):
         for listener in self._listeners:
             getattr(listener, '%s_file' % name.lower())(path)
@@ -61,8 +69,9 @@ class _Listener:
         listener_class, _ = utils.import_(listener_name, 'listener')
         listener = listener_class()
         for name in ['start_suite', 'end_suite', 'start_test', 'end_test', 
-                     'output_file', 'summary_file', 'report_file', 'log_file',
-                     'debug_file', 'close']:
+                     'start_keyword', 'end_keyword', 'output_file', 
+                     'summary_file', 'report_file', 'log_file', 'debug_file', 
+                     'close']:
             self._handlers[name] = _Handler(listener, listener_name, name, syslog)
             
     def __getattr__(self, name):
@@ -81,7 +90,8 @@ class _Handler:
             
     def __call__(self, *args):
         try:
-            self._handler(*args)
+            if self._handler is not None:
+                self._handler(*args)
         except:
             message, details = utils.get_error_details()
             self._syslog.error("Calling '%s' method of listener '%s' failed: %s"
@@ -96,7 +106,7 @@ class _Handler:
                 name =  self._toCamelCase(name)
                 return getattr(listener, name), name
         except AttributeError:
-            return lambda *args : None, None
+            return None, None
     
     def _toCamelCase(self, name):
         parts = name.split('_')
