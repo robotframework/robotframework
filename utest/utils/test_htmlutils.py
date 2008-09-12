@@ -423,9 +423,9 @@ class TestFormatTable(unittest.TestCase):
         inp = [['1','2','3']]
         exp = self._table_start + '''
 <tr>
-<td style="border: 1px solid gray; padding: 0.1em 0.3em;">1</td>
-<td style="border: 1px solid gray; padding: 0.1em 0.3em;">2</td>
-<td style="border: 1px solid gray; padding: 0.1em 0.3em;">3</td>
+<td style="border: 1px solid gray; padding: 0.1em 0.3em; height: 1.2em;">1</td>
+<td style="border: 1px solid gray; padding: 0.1em 0.3em; height: 1.2em;">2</td>
+<td style="border: 1px solid gray; padding: 0.1em 0.3em; height: 1.2em;">3</td>
 </tr>
 </table>'''
         assert_equals(_format_table(inp), exp)
@@ -434,16 +434,16 @@ class TestFormatTable(unittest.TestCase):
         inp = [['1.1','1.2'], ['2.1','2.2'], ['3.1','3.2']]
         exp = self._table_start + '''
 <tr>
-<td style="border: 1px solid gray; padding: 0.1em 0.3em;">1.1</td>
-<td style="border: 1px solid gray; padding: 0.1em 0.3em;">1.2</td>
+<td style="border: 1px solid gray; padding: 0.1em 0.3em; height: 1.2em;">1.1</td>
+<td style="border: 1px solid gray; padding: 0.1em 0.3em; height: 1.2em;">1.2</td>
 </tr>
 <tr>
-<td style="border: 1px solid gray; padding: 0.1em 0.3em;">2.1</td>
-<td style="border: 1px solid gray; padding: 0.1em 0.3em;">2.2</td>
+<td style="border: 1px solid gray; padding: 0.1em 0.3em; height: 1.2em;">2.1</td>
+<td style="border: 1px solid gray; padding: 0.1em 0.3em; height: 1.2em;">2.2</td>
 </tr>
 <tr>
-<td style="border: 1px solid gray; padding: 0.1em 0.3em;">3.1</td>
-<td style="border: 1px solid gray; padding: 0.1em 0.3em;">3.2</td>
+<td style="border: 1px solid gray; padding: 0.1em 0.3em; height: 1.2em;">3.1</td>
+<td style="border: 1px solid gray; padding: 0.1em 0.3em; height: 1.2em;">3.2</td>
 </tr>
 </table>'''
         assert_equals(_format_table(inp), exp)
@@ -452,19 +452,19 @@ class TestFormatTable(unittest.TestCase):
         inp = [['1.1','1.2','1.3'], ['2.1'], ['3.1','3.2']]
         exp = self._table_start + '''
 <tr>
-<td style="border: 1px solid gray; padding: 0.1em 0.3em;">1.1</td>
-<td style="border: 1px solid gray; padding: 0.1em 0.3em;">1.2</td>
-<td style="border: 1px solid gray; padding: 0.1em 0.3em;">1.3</td>
+<td style="border: 1px solid gray; padding: 0.1em 0.3em; height: 1.2em;">1.1</td>
+<td style="border: 1px solid gray; padding: 0.1em 0.3em; height: 1.2em;">1.2</td>
+<td style="border: 1px solid gray; padding: 0.1em 0.3em; height: 1.2em;">1.3</td>
 </tr>
 <tr>
-<td style="border: 1px solid gray; padding: 0.1em 0.3em;">2.1</td>
-<td style="border: 1px solid gray; padding: 0.1em 0.3em;"></td>
-<td style="border: 1px solid gray; padding: 0.1em 0.3em;"></td>
+<td style="border: 1px solid gray; padding: 0.1em 0.3em; height: 1.2em;">2.1</td>
+<td style="border: 1px solid gray; padding: 0.1em 0.3em; height: 1.2em;"></td>
+<td style="border: 1px solid gray; padding: 0.1em 0.3em; height: 1.2em;"></td>
 </tr>
 <tr>
-<td style="border: 1px solid gray; padding: 0.1em 0.3em;">3.1</td>
-<td style="border: 1px solid gray; padding: 0.1em 0.3em;">3.2</td>
-<td style="border: 1px solid gray; padding: 0.1em 0.3em;"></td>
+<td style="border: 1px solid gray; padding: 0.1em 0.3em; height: 1.2em;">3.1</td>
+<td style="border: 1px solid gray; padding: 0.1em 0.3em; height: 1.2em;">3.2</td>
+<td style="border: 1px solid gray; padding: 0.1em 0.3em; height: 1.2em;"></td>
 </tr>
 </table>'''      
         assert_equals(_format_table(inp), exp)

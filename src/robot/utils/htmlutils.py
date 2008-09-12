@@ -100,7 +100,8 @@ def html_attr_escape(attr):
 
 class _Table:
 
-    _td = '<td style="border: 1px solid gray; padding: 0.1em 0.3em;">%s</td>'
+    _td = ('<td style="border: 1px solid gray; padding: 0.1em 0.3em; '
+           'height: 1.2em;">%s</td>')
     _table = ('<table border="1" style="border: 1px solid gray; '
               'background: transparent; border-collapse: collapse; '
               'font-size: 0.9em; empty-cells: show;">')
