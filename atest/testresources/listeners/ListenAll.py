@@ -9,19 +9,27 @@ class ListenAll:
         self.outfile = open(outpath, 'w')
         
     def start_suite(self, name, doc):
-        self.outfile.write("%s '%s'\n" % (name, doc))
+        self.outfile.write("SUITE START: %s '%s'\n" % (name, doc))
         
     def start_test(self, name, doc, tags):
-        self.outfile.write("- %s '%s' %s :: " % (name, doc, '[ %s ]' % ' | '.join(tags)))
+        tags = [ str(tag) for tag in tags ]
+        self.outfile.write("TEST START: %s '%s' %s\n" % (name, doc, tags))
+    
+    def start_keyword(self, name, args):
+        args = [ str(arg) for arg in args ]
+        self.outfile.write("KW START: %s %s\n" % (name, args))
         
+    def end_keyword(self, status):
+        self.outfile.write("KW END: %s\n" % (status))        
+    
     def end_test(self, status, message):
         if status == 'PASS':
-            self.outfile.write('PASS\n')
+            self.outfile.write('TEST END: PASS\n')
         else:
-            self.outfile.write('%s: %s\n' % (status, message))
+            self.outfile.write("TEST END: %s %s\n" % (status, message))        
             
     def end_suite(self, status, message):
-        self.outfile.write('%s: %s\n' % (status, message))
+        self.outfile.write('SUITE END: %s %s\n' % (status, message))
 
     def output_file(self, path):
         self._out_file('Output', path)

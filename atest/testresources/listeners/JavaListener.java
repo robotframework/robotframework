@@ -13,30 +13,38 @@ public class JavaListener {
 	}
 	
 	public void startSuite(String name, String doc) throws IOException {
-		this.outfile.write(name + " '" + doc + "'\n");
+		this.outfile.write("START SUITE: " + name + " '" + doc + "'\n");
 	}
 
 	public void startTest(String name, String doc, String[] tags) throws IOException {
-		this.outfile.write(name + " '" + doc + "' [");
+		this.outfile.write("START TEST: " + name + " '" + doc + "' [");
 		for (int i=0; i < tags.length; i++) {
 			this.outfile.write(tags[i]);
 		}
-		this.outfile.write("] ");
+		this.outfile.write("]\n");
 	}
-	
+
+	public void startKeyword(String name, String[] args) throws IOException {
+		this.outfile.write("START KW: " + name + " [");
+		for (int i=0; i < args.length; i++) {
+			this.outfile.write(args[i]);
+		}
+		this.outfile.write("]\n");
+	}
+
 	public void endTest(String status, String message) throws IOException {
 		if (status.equals("PASS")) {
-			this.outfile.write(status + "\n");
+			this.outfile.write("END TEST: " + status + "\n");
 		}
 		else {
-			this.outfile.write(status + ": " + message + "\n");
+			this.outfile.write("END TEST: " + status + ": " + message + "\n");
 		}
 	}
 		
 	public void endSuite(String stat, String msg) throws IOException {
-		this.outfile.write(stat + ": " + msg + "\n");
+		this.outfile.write("END SUITE: " + stat + ": " + msg + "\n");
 	}
-
+	
 	public void outputFile(String path) throws IOException {
         this.writeOutputFile("Output", path);
 	}

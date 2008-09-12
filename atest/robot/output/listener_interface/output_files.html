@@ -83,7 +83,7 @@ th {
 </tr>
 <tr>
 <td>Suite Setup</td>
-<td>Run Listener Tests</td><td>--listener ListenAll --listener JavaListener --log mylog.html
+<td>Run Listener Tests</td><td>--listener "${LISTENERS}${/}ListenAll.py" --listener "${LISTENERS}${/}JavaListener.java" --log mylog.html
 --report myrep.html --summary mysum.html --output myout.xml --debugfile
 mydeb.txt</td><td>misc${/}pass_and_fail.html</td>
 
@@ -98,8 +98,9 @@ mydeb.txt</td><td>misc${/}pass_and_fail.html</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
-<td></td>
+<td>Documentation</td>
+<td>Testing that listener gets information about different output
+files. Tests also that the listener can be taken into use with path.</td>
 <td></td>
 <td></td>
 <td></td>
@@ -119,8 +120,8 @@ mydeb.txt</td><td>misc${/}pass_and_fail.html</td>
 
 
 <tr>
-<td></td>
-<td></td>
+<td>${LISTENERS}</td>
+<td>${CURDIR}${/}..${/}..${/}..${/}testresources${/}listeners</td>
 <td></td>
 <td></td>
 <td></td>

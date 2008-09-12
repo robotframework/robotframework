@@ -153,68 +153,62 @@ listeners.InvalidMethods</td><td>misc${/}pass_and_fail.html</td>
 </tr>
 <tr>
 <td></td>
-<td>${suite_start} =</td>
-<td>Set</td>
-<td>Pass And Fail 'Some tests here'</td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td>${test1} =</td>
-<td>Catenate</td>
-<td>SEPARATOR= :: \</td>
-<td>- Pass '' [ force | pass ]</td>
-</tr>
-<tr>
-<td></td>
-<td>...</td>
-<td>PASS</td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td>${test2} =</td>
-<td>Catenate</td>
-<td>SEPARATOR= :: \</td>
-<td>- Fail 'FAIL Expected failure' [ fail | force ]</td>
-</tr>
-<tr>
-<td></td>
-<td>...</td>
-<td>FAIL: Expected failure</td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td>${suite_end} =</td>
-<td>Set</td>
-<td>FAIL: ${SUITE_MSG}</td>
-<td></td>
-</tr>
-<tr>
-<td></td>
 <td>${expected} =</td>
 <td>Catenate</td>
 <td>SEPARATOR=\n</td>
-<td>${suite_start}</td>
+<td></td>
+</tr>
+<tr><td></td><td>...</td><td>SUITE START: Pass And Fail 'Some tests here'</td><td></td><td></td></tr><tr>
+<td></td>
+<td>...</td>
+<td>KW START: My Keyword ['Suite Setup']</td>
+<td></td>
+<td></td>
+</tr>
+
+<tr>
+<td></td>
+<td>...</td>
+<td>KW START: BuiltIn.Log ['Hello says "\${who}"!', '\${LEVEL1}']</td>
+<td></td>
+<td></td>
 </tr>
 <tr>
 <td></td>
 <td>...</td>
-<td>${test1}</td>
-<td>${test2}</td>
-<td>${suite_end}</td>
+<td>KW END: PASS</td>
+<td></td>
+<td></td>
 </tr>
 <tr>
 <td></td>
 <td>...</td>
-<td>Output: pass_and_fail-output.xml</td>
-<td>Closing...\n</td>
+<td>KW START: BuiltIn.Log ['Debug message', '\${LEVEL2}']</td>
+<td></td>
 <td></td>
 </tr>
 <tr>
+<td></td>
+<td>...</td>
+<td>KW END: PASS</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>...</td>
+<td>KW END: PASS</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>...</td>
+<td>TEST START: Pass '' ['force', 'pass']</td>
+<td></td>
+<td></td>
+</tr>
+<tr><td></td><td>...</td><td>KW START: My Keyword ['Pass']</td><td></td><td></td></tr><tr><td></td><td>...</td><td>KW START: BuiltIn.Log ['Hello says "\${who}"!', '\${LEVEL1}']</td><td></td><td></td></tr><tr><td></td><td>...</td><td>KW END: PASS</td><td></td><td></td></tr><tr><td></td><td>...</td><td>KW START: BuiltIn.Log ['Debug message', '\${LEVEL2}']</td><td></td><td></td></tr><tr><td></td><td>...</td><td>KW END: PASS</td><td></td><td></td></tr><tr><td></td><td>...</td><td>KW END: PASS</td><td></td><td></td></tr><tr><td></td><td>...</td><td>TEST END: PASS</td><td></td><td></td></tr><tr><td></td><td>...</td><td>TEST START: Fail 'FAIL Expected failure' ['fail', 'force']</td><td></td><td></td></tr><tr><td></td><td>...</td><td>KW START: My Keyword ['Fail']</td><td></td><td></td></tr><tr><td></td><td>...</td><td>KW START: BuiltIn.Log ['Hello says "\${who}"!', '\${LEVEL1}']</td><td></td><td></td></tr><tr><td></td><td>...</td><td>KW END: PASS</td><td></td><td></td></tr><tr><td></td><td>...</td><td>KW START: BuiltIn.Log ['Debug message', '\${LEVEL2}']</td><td></td><td></td></tr><tr><td></td><td>...</td><td>KW END: PASS</td><td></td><td></td></tr><tr><td></td><td>...</td><td>KW END: PASS</td><td></td><td></td></tr><tr><td></td><td>...</td><td>KW START: BuiltIn.Fail ['Expected failure']</td><td></td><td></td></tr><tr><td></td><td>...</td><td>KW END: FAIL</td><td></td><td></td></tr><tr><td></td><td>...</td><td>TEST END: FAIL Expected failure</td><td></td><td></td></tr><tr><td></td><td>...</td><td>SUITE END: FAIL 2 critical tests, 1 passed, 1 failed</td><td></td><td></td></tr><tr><td></td><td>...</td><td>2 tests total, 1 passed, 1 failed</td><td></td><td></td></tr><tr><td></td><td>...</td><td>Output: pass_and_fail-output.xml</td><td></td><td></td></tr><tr><td></td><td>...</td><td>Closing...\n</td><td></td><td></td></tr><tr>
 <td></td>
 <td>Check Listener File</td>
 <td>${ALL_FILE}</td>
@@ -277,56 +271,32 @@ listeners.InvalidMethods</td><td>misc${/}pass_and_fail.html</td>
 <td></td>
 <td></td>
 </tr>
-<tr>
-<td></td>
-<td>${suite_start} =</td>
-<td>Set</td>
-<td>Pass And Fail 'Some tests here'</td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td>${test1} =</td>
-<td>Catenate</td>
-<td>Pass '' [forcepass]</td>
-<td>PASS</td>
-</tr>
-<tr>
-<td></td>
-<td>${test2} =</td>
-<td>Catenate</td>
-<td>Fail 'FAIL Expected failure' [failforce]</td>
-<td>FAIL: Expected failure</td>
-</tr>
-<tr>
-<td></td>
-<td>${suite_end} =</td>
-<td>Set</td>
-<td>FAIL: ${SUITE_MSG}</td>
-<td></td>
-</tr>
+
+
+
+
 <tr>
 <td></td>
 <td>${expected} =</td>
 <td>Catenate</td>
 <td>SEPARATOR=\n</td>
-<td>${suite_start}</td>
+<td></td>
 </tr>
 <tr>
 <td></td>
 <td>...</td>
-<td>${test1}</td>
-<td>${test2}</td>
-<td>${suite_end}</td>
+<td>START SUITE: Pass And Fail 'Some tests here'</td>
+<td></td>
+<td></td>
 </tr>
 <tr>
 <td></td>
 <td>...</td>
-<td>Output (java): pass_and_fail-output.xml</td>
-<td>The End\n</td>
+<td>START KW: My Keyword [Suite Setup]</td>
+<td></td>
 <td></td>
 </tr>
-<tr>
+<tr><td></td><td>...</td><td>START KW: BuiltIn.Log [Hello says "\${who}"!\${LEVEL1}]</td><td></td><td></td></tr><tr><td></td><td>...</td><td>START KW: BuiltIn.Log [Debug message\${LEVEL2}]</td><td></td><td></td></tr><tr><td></td><td>...</td><td>START TEST: Pass '' [forcepass]</td><td></td><td></td></tr><tr><td></td><td>...</td><td>START KW: My Keyword [Pass]</td><td></td><td></td></tr><tr><td></td><td>...</td><td>START KW: BuiltIn.Log [Hello says "\${who}"!\${LEVEL1}]</td><td></td><td></td></tr><tr><td></td><td>...</td><td>START KW: BuiltIn.Log [Debug message\${LEVEL2}]</td><td></td><td></td></tr><tr><td></td><td>...</td><td>END TEST: PASS</td><td></td><td></td></tr><tr><td></td><td>...</td><td>START TEST: Fail 'FAIL Expected failure' [failforce]</td><td></td><td></td></tr><tr><td></td><td>...</td><td>START KW: My Keyword [Fail]</td><td></td><td></td></tr><tr><td></td><td>...</td><td>START KW: BuiltIn.Log [Hello says "\${who}"!\${LEVEL1}]</td><td></td><td></td></tr><tr><td></td><td>...</td><td>START KW: BuiltIn.Log [Debug message\${LEVEL2}]</td><td></td><td></td></tr><tr><td></td><td>...</td><td>START KW: BuiltIn.Fail [Expected failure]</td><td></td><td></td></tr><tr><td></td><td>...</td><td>END TEST: FAIL: Expected failure</td><td></td><td></td></tr><tr><td></td><td>...</td><td>END SUITE: FAIL: 2 critical tests, 1 passed, 1 failed</td><td></td><td></td></tr><tr><td></td><td>...</td><td>2 tests total, 1 passed, 1 failed</td><td></td><td></td></tr><tr><td></td><td>...</td><td>Output (java): pass_and_fail-output.xml</td><td></td><td></td></tr><tr><td></td><td>...</td><td>The End\n</td><td></td><td></td></tr><tr>
 <td></td>
 <td>Check Listener File</td>
 <td>${JAVA_FILE}</td>
