@@ -129,7 +129,7 @@ if __name__ == '__main__':
     try:
         tool = sys.argv[1].lower()
         if tool == 'all':
-            for name in VALID_TOOLS:
+            for name in sorted(VALID_TOOLS):
                 create_tooldoc(name)
         elif tool in VALID_TOOLS:
             create_tooldoc(tool)
