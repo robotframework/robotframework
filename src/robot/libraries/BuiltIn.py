@@ -752,22 +752,43 @@ class RunKeyword:
                              % utils.secs_to_timestr(timeout))
     
     def set_variable_if(self, condition, *values):
-        """If `condition` is true, returns `value1`, and otherwise returns `value2`.
-        
-        `condition` is evaluated as with the `Should Be True` keyword.
-        
-        Examples:
-        | ${var1} = | Set Variable If | 1 > 0 | v1 | v2 | 
-        | ${var2} = | Set Variable If | False | v1 | v2 | 
-        | ${var3} = | Set Variable If | 1 > 0 and False | v1 |
-        =>
-        - ${var1} = 'v1'  
-        - ${var2} = 'v2'
-        - ${var3} = None
-        
-        New in Robot Framework version 1.8.3.
+        """Sets variable based on the given condition.
 
-        TODO: Explain 'else if' functionality, mention nonex vars are ok.
+        The basic usage is giving a condition and two values. The
+        given condition is first evaluated the same way as with the
+        `Should Be True` keyword. If the condition is true, then the
+        first value is returned, and otherwise the second value is
+        returned. The second value can also be omitted, in which case
+        it has a default value None. This usage is illustrated in the
+        examples below, where ${rc} is assumed to be zero.
+        
+        | ${var1} = | Set Variable If | ${rc} == 0 | zero     | nonzero | 
+        | ${var2} = | Set Variable If | ${rc} > 0  | value1   | value2  |
+        | ${var3} = | Set Variable If | ${rc} > 0  | whatever |         |
+        => 
+        - ${var1} = 'zero'
+        - ${var2} = 'value2'
+        - ${var3} = None
+
+        It is also possible to have 'Else If' support by replacing the
+        second value with another condition, and having two new values
+        after it.  If the first condition is not true, the second is
+        evaluated and one of the values after it is returned based on
+        its truth value. This can be continued by adding more
+        conditions without a limit.
+
+        | ${var} = | Set Variable If | ${rc} == 0        | zero           | 
+        | ...      | ${rc} > 0       | greater than zero | less then zero |
+        |          |
+        | ${var} = | Set Variable If | 
+        | ...      | ${rc} == 0      | zero              | 
+        | ...      | ${rc} == 1      | one               | 
+        | ...      | ${rc} == 2      | two               | 
+        | ...      | ${rc} > 2       | greater than two  | 
+        | ...      | ${rc} < 0       | less than zero    | 
+
+        This keyword was added in Robot Framework version 1.8.3, and support 
+        for 'Else If' was added in 2.0.2.
         """
         values = self._verify_values_for_set_variable_if(list(values))
         if self._is_true(condition):
