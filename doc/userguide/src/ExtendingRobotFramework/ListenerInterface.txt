@@ -22,14 +22,18 @@ given to it as an argument. The listener name is got from the name of
 the class implementing the listener interface, similarly as `test
 library names`_ are got from classes implementing them. The specified
 listeners must be in the same `module search path`_ where test
-libraries are searched from when they are imported. It is possible to take
-multiple listeners into use by using this option several times.
+libraries are searched from when they are imported. Other option is to give 
+the path to the listener file `similarly as with test libraries`__. It is 
+possible to take multiple listeners into use by using this option several times.
+
+__ `Using physical path to library`_
 
 Examples::
 
    pybot --listener MyListener tests.html
-   pybot --listener module.Listener --listener AnotherListener tests.html
    jybot --listener com.company.package.Listener tests.html
+   pybot --listener path/to/MyListener.py tests.html
+   pybot --listener module.Listener --listener AnotherListener tests.html
 
 
 Available listener interface methods
@@ -38,8 +42,8 @@ Available listener interface methods
 Robot Framework creates an instance of the listener class when test
 execution starts. No arguments are given to the constructor of the
 listener class. During the test execution, Robot Framework calls
-listeners' methods when test suites and cases start and end. It also
-calls the appropriate methods when output files are ready, and finally at
+listeners' methods when test suites, test cases and keywords start and end. It 
+also calls the appropriate methods when output files are ready, and finally at
 the end it calls the :code:`close` method. A listener is not required to
 implement any official interface, and it only needs to have the
 methods it actually needs.
@@ -47,55 +51,61 @@ methods it actually needs.
 The following table lists all the available methods in the listener
 interface. All of these methods have also camelCase aliases. Thus,
 for example, :code:`startSuite` is a synonym to
-:code:`start_suite`. All the arguments are strings, unless otherwise
-stated in the Comments column.
+:code:`start_suite`. All the arguments are strings, unless stated otherwise.
 
 
 .. table:: Available methods in the listener interface
    :class: tabular
 
-   +-------------+-----------------+--------------------------------------------------+
-   |    Method   |    Arguments    |                     Comments                     |
-   +=============+=================+==================================================+
-   | start_suite | name, doc       | The documentation may be empty.                  |
-   +-------------+-----------------+--------------------------------------------------+
-   | end_suite   | status, message | The status is either PASS or FAIL. The message   |
-   |             |                 | contains suite statistics and an error message,  |
-   |             |                 | if the suite setup or teardown has failed.       |
-   +-------------+-----------------+--------------------------------------------------+
-   | start_test  | name, doc, tags | The documentation may be empty. Tags are given   |
-   |             |                 | as a list of strings in Python and as a string   |
-   |             |                 | array in Java.                                   |
-   +-------------+-----------------+--------------------------------------------------+
-   | end_test    | status, message | The status is either PASS or FAIL. The message   |
-   |             |                 | contains an error message, if the test has failed|
-   |             |                 | and is empty otherwise.                          |
-   +-------------+-----------------+--------------------------------------------------+
-   | output_file | path            | Called when writing to an output file is         |
-   |             |                 | finished. The path is an absolute path to the    |
-   |             |                 | file. When `outputs are split`_, called for each |
-   |             |                 | finished file.                                   |
-   +-------------+-----------------+--------------------------------------------------+
-   | log_file    | path            | Called when writing to a log file is             |
-   |             |                 | finished. The path is an absolute path to the    |
-   |             |                 | file. When `outputs are split`_, called for each |
-   |             |                 | finished file.                                   |
-   +-------------+-----------------+--------------------------------------------------+
-   | report_file | path            | Called when writing to a report file is          |
-   |             |                 | finished. The path is an absolute path to the    |
-   |		 |		   | file.     	   	      	       	       	      |
-   +-------------+-----------------+--------------------------------------------------+
-   | summary_file| path            | Called when writing to a summary file is         |
-   |             |                 | finished. The path is an absolute path to the    |
-   |		 |		   | file.     	   	      	       	       	      |
-   +-------------+-----------------+--------------------------------------------------+
-   | debug_file  | path            | Called when writing to a debug file is           |
-   |             |                 | finished. The path is an absolute path to the    |
-   |		 |		   | file.     	   	      	       	       	      | 
-   +-------------+-----------------+--------------------------------------------------+
-   | close       |                 | Called after all test suites, and test cases in  |
-   |             |                 | them, have been executed.                        |
-   +-------------+-----------------+--------------------------------------------------+
+   +---------------+-----------------+--------------------------------------------------+
+   |    Method     |    Arguments    |                     Explanation                  |
+   +===============+=================+==================================================+
+   | start_suite   | name, doc       | The documentation may be empty.                  |
+   +---------------+-----------------+--------------------------------------------------+
+   | end_suite     | status, message | The status is either PASS or FAIL. The message   |
+   |               |                 | contains suite statistics and an error message,  |
+   |               |                 | if the suite setup or teardown has failed.       |
+   +---------------+-----------------+--------------------------------------------------+
+   | start_test    | name, doc, tags | The documentation may be empty. Tags are given   |
+   |               |                 | as a list of strings in Python and as a string   |
+   |               |                 | array in Java.                                   |
+   +---------------+-----------------+--------------------------------------------------+
+   | end_test      | status, message | The status is either PASS or FAIL. The message   |
+   |               |                 | contains an error message, if the test has failed|
+   |               |                 | and is empty otherwise.                          |
+   +---------------+-----------------+--------------------------------------------------+
+   | start_keyword | name, args      | Arguments are given as a list of strings in      |
+   |               |                 | Python and as a string array in Java. Available  |
+   |               |                 | from Robot Framework 2.0.2 onwards.              |
+   +---------------+-----------------+--------------------------------------------------+
+   | end_keyword   | status          | The status is either PASS or FAIL. Available     |
+   |               |                 | from Robot Framework 2.0.2 onwards.              |
+   +---------------+-----------------+--------------------------------------------------+
+   | output_file   | path            | Called when writing to an output file is         |
+   |               |                 | finished. The path is an absolute path to the    |
+   |               |                 | file. When `outputs are split`_, called for each |
+   |               |                 | finished file.                                   |
+   +---------------+-----------------+--------------------------------------------------+
+   | log_file      | path            | Called when writing to a log file is             |
+   |               |                 | finished. The path is an absolute path to the    |
+   |               |                 | file. When `outputs are split`_, called for each |
+   |               |                 | finished file.                                   |
+   +---------------+-----------------+--------------------------------------------------+
+   | report_file   | path            | Called when writing to a report file is          |
+   |               |                 | finished. The path is an absolute path to the    |
+   |               |                 | file.                                            |
+   +---------------+-----------------+--------------------------------------------------+
+   | summary_file  | path            | Called when writing to a summary file is         |
+   |               |                 | finished. The path is an absolute path to the    |
+   |               |                 | file.                                            |
+   +---------------+-----------------+--------------------------------------------------+
+   | debug_file    | path            | Called when writing to a debug file is           |
+   |               |                 | finished. The path is an absolute path to the    |
+   |               |                 | file.                                            |
+   +---------------+-----------------+--------------------------------------------------+
+   | close         |                 | Called after all test suites, and test cases in  |
+   |               |                 | them, have been executed.                        |
+   +---------------+-----------------+--------------------------------------------------+
 
 
 .. _outputs are split: `Splitting outputs`_
@@ -116,6 +126,10 @@ need to implement any explicit interface or have all these methods.
        void startTest(String name, String doc, String[] tags);
 
        void endTest(String status, String message);
+
+       void startKeyword(String name, String[] args);
+
+       void endKeyword(String status);
 
        void outputFile(String path);
 
@@ -143,10 +157,13 @@ illustrates that using the listener interface is not very complicated.
    class SimpleListener:
 
        def start_test(self, name, documentation, tags):
-           print 'Executing test', name
+           print 'Executing test %s' % name
+           
+       def start_keyword(self, name, args):
+           print 'Executing keyword %s with arguments %s' % (name, args)
 
        def log_file(self, path):
-           print 'Test log available at', path
+           print 'Test log available at %s' % path
 
        def close(self):
            print 'All tests executed'

@@ -116,8 +116,7 @@ Python libraries the extension is naturally :path:`.py` and for Java
 libraries it can either be :path:`.class` or :path:`.java`, but the
 class file must always be available. If Python library is implemented
 as a directory, the path to it must have a trailing forward slash
-(:path:`/`).  Importing Java libraries in JAR packages is not possible
-using this mechanism. Following examples demonstrate these different
+(:path:`/`). Following examples demonstrate these different
 usages.
 
 .. table:: Importing test libraries using physical paths to them
@@ -132,6 +131,11 @@ usages.
    Library    ${RESOURCES}/Example.class   \         \
    =========  ===========================  ========  =========
 
+A limitation of this approach is that libraries implemented as Python classes `must 
+be in a module with the same name as the class`__. Additionally, importing 
+libraries distributed in JAR or ZIP packages is not possible with this mechanism.
+
+__ `Test library names`_
 
 Setting custom name to test library
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
