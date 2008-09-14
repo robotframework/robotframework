@@ -186,11 +186,23 @@ Command line
 ````````````
 
 Another way of introducing variables is using the command line option
-:opt:`--variablefile`. Variables in these files are globally
-available in all test data files, similarly as individual variables set
-with the :opt:`--variable` option.
+:opt:`--variablefile`::
 
-For more information, see `Robot command line options`.
+   --variablefile myvariables.py
+   --variablefile path/variables.py
+   --variablefile /absolute/path/common.py
+
+Variables in these files are globally available in all test data
+files, similarly as `individual variables`__ set with the
+:opt:`--variable` option. If both :opt:`--variablefile` and
+:opt:`--variable` options are used and there are variables with same
+names, those that are set individually with
+:opt:`--variable` option take precedence. There is currently no
+possibility to give arguments for variable files taken into use from
+the command line, but there is a `plan to add support for that in the future`__.
+
+__ `Setting variables in command line`_
+__ http://code.google.com/p/robotframework/issues/detail?id=105
 
 
 Creating variables directly
@@ -201,7 +213,7 @@ Basic syntax
 
 When variable files are taken into use, they are imported as Python
 modules and all their global attributes that do not start with an
-underscore (_) are considered to be variables. Because variable
+underscore (:code:`_`) are considered to be variables. Because variable
 names are case-insensitive, both lower- and upper-case names are
 possible, but in general, capital letters are recommended for global
 variables and attributes.
