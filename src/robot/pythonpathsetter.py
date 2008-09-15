@@ -17,6 +17,7 @@
 
 import sys
 import os
+import fnmatch
 
 
 def norm_path(path):
@@ -26,10 +27,6 @@ def norm_path(path):
         path = path.lower()
     return path
 
-def add_paths(paths, to_beginning=False):
-    for path in paths:
-        add_path(path, to_beginning)
-        
 def add_path(path, to_beginning=False):
     path = norm_path(path)
     if path not in sys.path and os.path.exists(path):
@@ -44,25 +41,28 @@ def remove_path(path):
         sys.path.remove(path)
 
 
-# Normalize sys.path items
 sys.path = [ norm_path(p) for p in sys.path ]
 
-# Get the basedir 
-base = norm_path(os.path.dirname(os.path.abspath(__file__)))
+ROBOTDIR = norm_path(os.path.dirname(os.path.abspath(__file__)))
+PARENTDIR = os.path.dirname(ROBOTDIR)
 
-# Directories needed always ('/path/robot/..' and '/path/robot/libraries')
-paths = [ os.path.join(base, p) for p in ['..','libraries'] ]
-add_paths(paths, to_beginning=True)
+add_path(os.path.join(ROBOTDIR, 'libraries'), to_beginning=True)
+add_path(PARENTDIR, to_beginning=True)
+# Handles egg installations
+if fnmatch.fnmatchcase(os.path.basename(PARENTDIR), 'robotframework-*.egg'):
+    add_path(os.path.dirname(PARENTDIR), to_beginning=True)
 
-# Remove base dir to disallow importing robot internal modules directly
-remove_path(base)
+# Remove ROBOTDIR dir to disallow importing robot internal modules directly
+remove_path(ROBOTDIR)
 
 # Elements from PYTHONPATH. By default it is not processed in Jython and in
 # Python valid non-absolute paths may be ignored.
-try:
-    add_paths(os.environ['PYTHONPATH'].split(os.pathsep))
-except:
-    pass
+if 'PYTHONPATH' in os.environ:
+    for path in os.environ['PYTHONPATH'].split(os.pathsep):
+        add_path(path)
+    del path
 
 # Current dir (it seems to be in Jython by default so let's be consistent)
 add_path('.')
+
+del norm_path, add_path, remove_path, ROBOTDIR, PARENTDIR
