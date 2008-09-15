@@ -1,9 +1,6 @@
 import unittest
-import sys, os
-from StringIO import StringIO
 
-from robot.utils import robottime
-from robot.errors import * 
+from robot.errors import DataError 
 from robot.output.abstractlogger import AbstractLogger
 
 
