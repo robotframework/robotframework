@@ -4,9 +4,10 @@ import tempfile
 
 class ListenAll:
     
-    def __init__(self):
-        outpath = os.path.join(tempfile.gettempdir(), 'listen_all.txt')
-        self.outfile = open(outpath, 'w')
+    def __init__(self, path=None):
+        if not path:
+            path = os.path.join(tempfile.gettempdir(), 'listen_all.txt')
+        self.outfile = open(path, 'w')
         
     def start_suite(self, name, doc):
         self.outfile.write("SUITE START: %s '%s'\n" % (name, doc))

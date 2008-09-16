@@ -18,12 +18,15 @@ class ListenSome:
         self.outfile.close()
         
         
-class InvalidInit:
+class WithArgs(object):
     
-    def __init__(self, args, arenot, allowed, here):
-        pass
-
-
+    def __init__(self, arg1, arg2='default'):
+        outpath = os.path.join(tempfile.gettempdir(), 'listener_with_args.txt')
+        outfile = open(outpath, 'a')
+        outfile.write("I got arguments '%s' and '%s'\n" % (arg1, arg2))
+        outfile.close()
+    
+        
 class InvalidMethods:
     
     def start_suite(self, wrong, number, of, args, here):
