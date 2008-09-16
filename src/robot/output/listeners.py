@@ -13,7 +13,10 @@
 #  limitations under the License.
 
 
+import types
+
 from robot import utils
+from robot.errors import DataError
 
 
 class Listeners:
@@ -64,15 +67,30 @@ class Listeners:
     
 class _Listener:
     
-    def __init__(self, listener_name, syslog):
+    def __init__(self, name, syslog):
         self._handlers = {}
-        listener_class, _ = utils.import_(listener_name, 'listener')
-        listener = listener_class()
-        for name in ['start_suite', 'end_suite', 'start_test', 'end_test', 
+        name, args = self._split_args(name)
+        listener, source = utils.import_(name, 'listener')
+        if not isinstance(listener, types.ModuleType):
+            listener = listener(*args)
+        elif args:
+            raise DataError("Listeners implemented as modules do not take arguments")
+        syslog.info("Imported listener '%s' with arguments %s (source %s)" 
+                    % (name, utils.seq2str2(args), source))
+        for func in ['start_suite', 'end_suite', 'start_test', 'end_test', 
                      'start_keyword', 'end_keyword', 'output_file', 
                      'summary_file', 'report_file', 'log_file', 'debug_file', 
                      'close']:
-            self._handlers[name] = _Handler(listener, listener_name, name, syslog)
+            self._handlers[func] = _Handler(listener, name, func, syslog)
+
+    def _split_args(self, name):
+        if ':' not in name:
+            return name, []
+        args = name.split(':')
+        name = args.pop(0)
+        if len(name) == 1 and args and args[0][0] in ['/', '\\']:
+            name = name + ':' + args.pop(0)
+        return name, args
             
     def __getattr__(self, name):
         try:
@@ -84,7 +102,15 @@ class _Listener:
 class _Handler:
     
     def __init__(self, listener, listener_name, name, syslog):
-        self._handler, self._name = self._get_handler(listener, name)
+        try:
+            self._handler, self._name = self._get_handler(listener, name)
+        except AttributeError:
+            self._handler = self._name = None
+            syslog.debug("Listener '%s' does not have method '%s'" 
+                         % (listener_name, name))
+        else:
+            syslog.debug("Listener '%s' has method '%s'" 
+                         % (listener_name, self._name))
         self._listener_name = listener_name
         self._syslog = syslog
             
@@ -100,13 +126,10 @@ class _Handler:
             
     def _get_handler(self, listener, name):
         try:
-            try:
-                return getattr(listener, name), name
-            except AttributeError:
-                name =  self._toCamelCase(name)
-                return getattr(listener, name), name
+            return getattr(listener, name), name
         except AttributeError:
-            return None, None
+            name =  self._toCamelCase(name)
+            return getattr(listener, name), name
     
     def _toCamelCase(self, name):
         parts = name.split('_')
