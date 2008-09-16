@@ -20,6 +20,7 @@ from robot.errors import FrameworkError, ExecutionFailed, DataError
 from robot.common import BaseKeyword
 from robot.variables import is_list_var
 
+
 def KeywordFactory(kwdata):
     if kwdata.type == 'kw':
         return Keyword(kwdata.name, kwdata.args)
@@ -60,7 +61,8 @@ class Keyword(BaseKeyword):
             self.status = 'PASS'
             err = None
         self.endtime = utils.get_timestamp()
-        self.elapsedmillis = utils.get_elapsed_millis(self.starttime, self.endtime)
+        self.elapsedmillis = utils.get_elapsed_millis(self.starttime,
+                                                      self.endtime)
         self.elapsedtime = utils.elapsed_millis_to_string(self.elapsedmillis)
         output.end_keyword(self)
         if err is not None:
