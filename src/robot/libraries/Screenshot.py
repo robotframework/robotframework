@@ -57,15 +57,20 @@ class Screenshot:
         See the library documentation for details.
         """
         if default_directory is None:
-            default_directory = tempfile.gettempdir()
-        self._default_dir = default_directory
-        self._log_file_directory = log_file_directory
+            self._default_dir = tempfile.gettempdir()
+        else:
+            self._default_dir = os.path.normpath(default_directory.replace('/', os.sep))
+        if log_file_directory is None:
+            self._log_file_dir = None
+        else:
+            self._log_file_dir = os.path.normpath(log_file_directory.replace('/', os.sep))
     
     def save_screenshot_to(self, path):
         """Saves a screenshot to the specified file.
         
         The directory holding the file must exist or an exception is raised.
         """
+        path = os.path.abspath(path.replace('/', os.sep))
         if not os.path.exists(os.path.dirname(path)):
             raise DataError("Directory '%s' where to save the screenshot does "
                             "not exist" % os.path.dirname(path))
@@ -101,6 +106,8 @@ class Screenshot:
         """
         if directory is None:
             directory = self._default_dir
+        else:
+            directory = directory.replace('/', os.sep)
         index = 0
         while True:
             index += 1
@@ -111,7 +118,7 @@ class Screenshot:
     
     def log_screenshot(self, basename="screenshot", directory=None, 
                        log_file_directory=None, width="100%"):
-        """Takes a screenshot and logs it to Robot Framework's log.
+        """Takes a screenshot and logs it to Robot Framework's log file.
         
         Saves the files as defined in the keyword `Save Screenshot` and creates
         a picture to Robot Framework's log. `directory` defines the directory
@@ -127,7 +134,7 @@ class Screenshot:
         """
         path = self.save_screenshot(basename, directory)
         if log_file_directory is None:
-            log_file_directory = self._log_file_directory
+            log_file_directory = self._log_file_dir
         if log_file_directory is not None:
             link = utils.get_link_path(path, log_file_directory)
         else:
