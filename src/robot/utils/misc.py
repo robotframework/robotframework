@@ -22,7 +22,7 @@ import posixpath
 from types import IntType
     
 from robot.errors import DataError, FrameworkError
-from robottypes import is_str, is_list, unic
+from robottypes import is_str, is_list, unic, is_integer
 from normalizing import normpath
 from error import get_error_message
 
@@ -142,7 +142,7 @@ def is_url(string):
 
 
 def plural_or_not(list_or_int):
-    if type(list_or_int) is IntType:
+    if is_integer(list_or_int):
         return list_or_int != 1 and "s" or ""
     else:
         return len(list_or_int) != 1 and "s" or ""
