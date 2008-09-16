@@ -2,11 +2,11 @@ Using listener interface
 ------------------------
 
 Robot Framework has a listener interface that can be used to receive
-notifications about test execution. Listeners are classes with certain
-special methods, and they can be implemented both with Python and
-Java. Example uses of the listener interface include external test
-monitors, sending a mail message when a test fails, and communicating with
-other systems.
+notifications about test execution. Listeners are classes with certain special
+methods, and they can be implemented both with Python and Java. Starting from
+version 2.0.2, it is also possible to implement listeners as Python modules.
+Example uses of the listener interface include external test monitors, sending
+a mail message when a test fails, and communicating with other systems.
 
 .. contents:: 
    :depth: 2
@@ -16,15 +16,19 @@ other systems.
 Taking listeners into use
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Listeners are taken into use from the command line with the
-:opt:`--listener` option, so that the name of the listener is
-given to it as an argument. The listener name is got from the name of
-the class implementing the listener interface, similarly as `test
-library names`_ are got from classes implementing them. The specified
-listeners must be in the same `module search path`_ where test
-libraries are searched from when they are imported. Other option is to give 
-the path to the listener file `similarly as with test libraries`__. It is 
-possible to take multiple listeners into use by using this option several times.
+Listeners are taken into use from the command line with the :opt:`--listener`
+option, so that the name of the listener is given to it as an argument. The
+listener name is got from the name of the class or module implementing the
+listener interface, similarly as `test library names`_ are got from classes
+implementing them. The specified listeners must be in the same `module search
+path`_ where test libraries are searched from when they are imported. Other
+option is to give the path to the listener file `similarly as with test
+libraries`__. It is possible to take multiple listeners into use by using this
+option several times.
+
+Starting from version 2.0.2, it is also possible to give arguments to listener
+classes from the command line. Arguments are appended after the name of the
+class, using colon as separator.
 
 __ `Using physical path to library`_
 
@@ -34,6 +38,8 @@ Examples::
    jybot --listener com.company.package.Listener tests.html
    pybot --listener path/to/MyListener.py tests.html
    pybot --listener module.Listener --listener AnotherListener tests.html
+   pybot --listener module tests.html
+   pybot --listener ListenerWithArgs:arg1:arg2
 
 
 Available listener interface methods
@@ -148,33 +154,32 @@ need to implement any explicit interface or have all these methods.
 Listener examples
 ~~~~~~~~~~~~~~~~~
 
-The first simple example is implemented with Python. It mainly
+The first simple example is implemented in a Python module. It mainly
 illustrates that using the listener interface is not very complicated.
 
 
 .. sourcecode:: python
 
-   class SimpleListener:
 
-       def start_test(self, name, documentation, tags):
-           print 'Executing test %s' % name
-           
-       def start_keyword(self, name, args):
-           print 'Executing keyword %s with arguments %s' % (name, args)
+   def start_test(name, documentation, tags):
+       print 'Executing test %s' % name
+       
+   def start_keyword(name, args):
+       print 'Executing keyword %s with arguments %s' % (name, args)
 
-       def log_file(self, path):
-           print 'Test log available at %s' % path
+   def log_file(path):
+       print 'Test log available at %s' % path
 
-       def close(self):
-           print 'All tests executed'
+   def close():
+       print 'All tests executed'
 
 
-The second example, which still uses Python, is slightly more
-complicated. It writes all the information it gets into a text file in
-a temporary directory without much formatting. Note that in real
-usage, the `debug file`_ functionality available through the command
-line option :cli:`--debugfile` is probably more useful than this
-example.
+The second example, which still uses Python, is slightly more complicated. It
+writes all the information it gets into a text file in a temporary directory
+without much formatting. The filename may be given from the command line, but
+also has a default value. Note that in real usage, the `debug file`_
+functionality available through the command line option :cli:`--debugfile` is
+probably more useful than this example.
 
 
 .. sourcecode:: python
@@ -185,8 +190,8 @@ example.
 
    class PythonListener:
     
-       def __init__(self):
-           outpath = os.path.join(tempfile.gettempdir(), 'listen.txt')
+       def __init__(self, filename='listen.txt'):
+           outpath = os.path.join(tempfile.gettempdir(), filename)
            self.outfile = open(outpath, 'w')
         
        def start_suite(self, name, doc):
@@ -218,12 +223,17 @@ The third example implements the same functionality as the previous one, but use
 
    public class JavaListener {
    
+       public static final String DEFAULT_FILENAME = "listen_java.txt";
        BufferedWriter outfile = null;
-   
+
        public JavaListener() throws IOException {
+           this(DEFAULT_FILENAME);
+       }
+   
+       public JavaListener(String filename) throws IOException {
            String tmpdir = System.getProperty("java.io.tmpdir");
            String sep = System.getProperty("file.separator");
-           String outpath = tmpdir + sep + "listen_java.txt";
+           String outpath = tmpdir + sep + filename; 
            outfile = new BufferedWriter(new FileWriter(outpath));
        }
    
