@@ -41,45 +41,56 @@ class OperatingSystem:
     | *Variable*  |       *Value*         |
     | ${PATH}     | ${CURDIR}/example.txt |
 
-    | *Test Case* |     *Action*      | *Argument* |    *Argument*    |
-    | Example     | Create File       | ${PATH}    | Some text        |
-    |             | File Should Exist | ${PATH}    |                  |
-    |             | Copy File         | ${PATH}    | ${TEMPDIR}/stuff |
-
+    | *Test Case* |     *Action*      | *Argument* |    *Argument*       |
+    | Example     | Create File       | ${PATH}    | Some text           |
+    |             | File Should Exist | ${PATH}    |                     |
+    |             | Copy File         | ${PATH}    | ${TEMPDIR}/stuff    |
+    |             | ${output} =       | Run | ${CURDIR}${/}script.sh arg |
+    
     Starting from Robot Framework 2.0.2, all keywords expecting paths
-    as arguments always accept a forward slash as a path separator
-    regardless the operating system. This only works if an argument is
-    only a path, *not* if a path is part of an argument, like it often
-    is with `Run` and `Start Process` keywords. In these cases, and
-    with earlier versions, built-in variable ${/} can be used to keep
-    the test data platform independent.
+    as arguments accept a forward slash as a path separator regardless
+    the operating system. This only works if an argument is only a
+    path, *not if a path is part of an argument*, like it often is
+    with `Run` and `Start Process` keywords. In these cases, and with
+    earlier versions, built-in variable ${/} can be used to keep the
+    test data platform independent.
     """
 
     ROBOT_LIBRARY_SCOPE = 'GLOBAL'
     ROBOT_LIBRARY_VERSION = utils.get_version()
     
-    def run(self, command, return_mode='stdout'):
-        """Runs the given command in the system and returns the RC and/or stdout.
+    def run(self, command, return_mode='output'):
+        """Runs the given command in the system and returns the RC and/or output.
 
-        The execution status of the command is NOT checked by this
-        keyword. It can be done afterwards based on the return code
-        (RC), standard output (stdout) or standard error
-        (stderr). Documentation below explains how to control
-        returning RC and stdout, and how to handle also stderr which
-        is not caught by this keyword otherwise. Examples at the end
-        illustrate few different possibilities for checking the
+        The execution status of the command *is not checked* by this
+        keyword, and it must be done separately based on the return code
+        (RC) or the returned output. Documentation below explains how to
+        control returning RC and output, and examples at the
+        end illustrate few different possibilities for checking the
         outcome.
 
+        Starting from Robot Framework 2.0.2, the standard error stream is
+        automatically redirected to the standard output stream by
+        adding ' 2>&1' after the executed command. This is done mainly
+        as a workaround for a bug in Jython that makes it hang if a
+        lot of text is written to the standard error
+        (http://bugs.jython.org/issue1124), but it also makes possible
+        errors in executing the command available automatically.
+
+        The automatic redirection of the standard error is done only
+        when the executed command does not contain additional output
+        redirections. You can thus freely forward the standard error
+        somewhere else, for example, like 'my_command 2>stderr.txt'.
+        
         ---
 
-        `return_mode` defines how the return code (RC) and the
-        standard output (stdout) are returned as explained below. All
-        checks are case-insensitive.
+        `return_mode` defines whether the RC, output or both is retured.
+        All checks explained below are case-insensitive.
         
-        - If `return_mode` contains the word 'RC' and either the word 'stdout'
-          or 'output', both the RC and stdout are returned. 
+        - If `return_mode` contains the word 'RC' and the word 'output',
+          both the RC and output are returned. 
         - Otherwise, if it contains the word 'RC', only the RC is returned.
-        - Otherwise, and by default, only the stdout is returned.
+        - Otherwise, and by default, only the output is returned.
 
         The RC is returned as a positive integer in range from 0 to
         255 as returned by the executed command. On some operating
@@ -90,30 +101,26 @@ class OperatingSystem:
         `Should Be Equal` (both are built-in keywords).
         
         The returned output contains everything written into the
-        stdout by the command. Many commands add an extra newline
+        standard output or error by the command (unless either of them
+        is redirected explicityly). Many commands add an extra newline
         (\\n) after the output to make it easier to read in the
         console. To ease processing the returned output, Robot
-        Framework strips this possible newline.
+        Framework strips this possible newline.        
         
-        The possible standard error (stderr) from the executed command
-        is NOT captured by this keyword or other parts of Robot
-        Framework. If catching the stderr is important, it must be
-        redirected into stdout or some file.  The former can be
-        achieved (both in Windows and UNIX-like systems) with the
-        syntax 'my_command 2>&1' and the latter with 'my_command
-        2>stderr.txt'.
-
         ---
         
         Examples:
         
-        | ${output} =    | Run        | ls -lhF /tmp | 
-        | Log            | ${output}  |
-        | ${rc} =        | Run        | ${CURDIR}${/}script.py    | Return RC |
-        | Should Be Equal As Integers | ${rc}                     | 0         |
-        | ${rc}          | ${out} =   | Run | /opt/script.py 2>&1 | RC,Output |
-        | Should Be True | ${rc} > 0  |
+        | ${output} = | Run        | ls -lhF /tmp | 
+        | Log         | ${output}  |
+        |             |            |
+        | ${rc} =     | Run        | ${CURDIR}${/}script.py arg | Return RC |
+        | Should Be Equal As Integers | ${rc} | 0 |
+        |                |            |
+        | ${rc}          | ${out} =   | Run | /opt/script.sh 2>/tmp/stderr.txt | RC,Output |
+        | Should Be True | ${rc} > 42 |
         | Should Contain | ${out}     | TEST PASSED |
+        | File Should Be Empty | /tmp/stderr.txt |
         """
         process = os.popen(self._process_command(command))
         stdout = process.read()
