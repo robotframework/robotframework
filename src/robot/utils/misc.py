@@ -107,7 +107,7 @@ def cygpath(path, options='-wa'):
  
 
 def get_temp_dir(extrapath=None):
-    tempdir = tempfile.gettempdir()
+    tempdir = os.path.normpath(tempfile.gettempdir())
     if not os.path.isdir(tempdir):
         raise EnvironmentError("Temp directory '%s' does not exist" % tempdir)
     if extrapath is not None:
