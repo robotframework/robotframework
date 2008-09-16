@@ -13,8 +13,10 @@
 #  limitations under the License.
 
 
-import time
+import os
 import re
+import time
+import fnmatch
 
 from robot import output
 from robot.utils import asserts
@@ -23,26 +25,60 @@ from robot import utils
 from robot.variables import is_var, is_list_var
 from robot.running import Keyword, NAMESPACES, RUN_KW_REGISTER
 
+if utils.is_jython:
+    from java.lang import String, Number, Long, Double
+
 
 class Converter:
     
     def convert_to_integer(self, item):
-        """Converts the given item to an integer number.
-
-        Uses always long integers so there cannot be overflow.
-        """
+        """Converts the given item to an integer number."""
         try:
-            return long(item)
+            if utils.is_jython:
+                return self._jython_to_integer(item)
+            return int(item)
         except:
-            raise DataError("%s cannot be converted to an integer" % item)
+            raise DataError("'%s' cannot be converted to an integer: %s"
+                            % (item, utils.get_error_message()))
+
+    def _jython_to_integer(self, item):
+        # This helper handles Java Strings and Numbers as well as Jython
+        # not handling overflow automatically
+        try:
+            return int(item)
+        except ValueError:
+            return long(item)
+        except TypeError:
+            if isinstance(item, String):
+                return Long.parseLong(item)
+            if isinstance(item, Number):
+                return item.longValue()
+            raise
 
     def convert_to_number(self, item):
         """Converts the given item to a floating point number."""
         try:
+            if utils.is_jython:
+                return self._jython_to_number(item)
             return float(item)
         except:
-            raise DataError("%s cannot be converted to a floating point number" 
-                            % item)
+            error = utils.get_error_message()
+            try:
+                return float(self.convert_to_integer(item))
+            except DataError:
+                raise DataError("'%s' cannot be converted to a floating point "
+                                "number: %s" % (item, error))
+
+    def _jython_to_number(self, item):
+        # This helper handles Java Strings and Numbers
+        try:
+            return float(item)
+        except (TypeError, AttributeError):
+            if isinstance(item, String):
+                return Double.parseDouble(item)
+            if isinstance(item, Number):
+                return item.doubleValue()
+            raise
 
     def convert_to_string(self, item):
         """Converts the given item to a Unicode string.
@@ -56,19 +92,16 @@ class Converter:
         """Converts the given item to Boolean true or false.
         
         Handles strings 'True' and 'False' (case-insensitive) as expected,
-        otherwise returns item's truth value [1] using Python's 'bool' method.
-
-        [1] http://docs.python.org/lib/truth.html.
+        otherwise returns item's truth value using Python's 'bool' method.
+        For more information about truth values, see
+        http://docs.python.org/lib/truth.html.
         """
         if utils.is_str(item):
             if utils.eq(item, 'True'):
                 return True
             if utils.eq(item, 'False'):
                 return False
-        try:
-            return bool(item)
-        except:
-            raise DataError("%s cannot be converted to a Boolean" % item)
+        return bool(item)
 
     def create_list(self, *items):
         """Returns a list containing given items.
@@ -157,7 +190,7 @@ class Verify:
         See `Should Be Equal` for an explanation on how to override the default
         error message with `msg` and `values`.
         """
-        first, second = [ self.convert_to_integer(item) for item in first, second ]
+        first, second = [ self.convert_to_integer(i) for i in first, second ]
         self.should_not_be_equal(first, second, msg, values)
 
     def should_be_equal_as_integers(self, first, second, msg=None, values=True):
@@ -166,25 +199,33 @@ class Verify:
         See `Should Be Equal` for an explanation on how to override the default
         error message with `msg` and `values`.
         """
-        first, second = [ self.convert_to_integer(item) for item in first, second ]
+        first, second = [ self.convert_to_integer(i) for i in first, second ]
         self.should_be_equal(first, second, msg, values)
 
     def should_not_be_equal_as_numbers(self, first, second, msg=None, values=True):
         """Fails if objects are equal after converting them to real numbers.
         
+        Starting from Robot Framework 2.0.2, the check for equality is
+        done using six decimal places.
+
         See `Should Be Equal` for an explanation on how to override the default
         error message with `msg` and `values`.        
         """
-        first, second = [ self.convert_to_number(item) for item in first, second ]
+        first = round(self.convert_to_number(first), 6)
+        second = round(self.convert_to_number(second), 6)
         self.should_not_be_equal(first, second, msg, values)
 
     def should_be_equal_as_numbers(self, first, second, msg=None, values=True):
         """Fails if objects are unequal after converting them to real numbers.
-        
+
+        Starting from Robot Framework 2.0.2, the check for equality is
+        done using six decimal places.
+
         See `Should Be Equal` for an explanation on how to override the default
         error message with `msg` and `values`.
         """
-        first, second = [ self.convert_to_number(item) for item in first, second ]
+        first = round(self.convert_to_number(first), 6)
+        second = round(self.convert_to_number(second), 6)
         self.should_be_equal(first, second, msg, values)
         
     def should_not_be_equal_as_strings(self, first, second, msg=None, values=True):
@@ -193,7 +234,7 @@ class Verify:
         See `Should Be Equal` for an explanation on how to override the default
         error message with `msg` and `values`.
         """
-        first, second = [ self.convert_to_string(item) for item in first, second ]
+        first, second = [ self.convert_to_string(i) for i in first, second ]
         self.should_not_be_equal(first, second, msg, values)
         
     def should_be_equal_as_strings(self, first, second, msg=None, values=True):
@@ -202,7 +243,7 @@ class Verify:
         See `Should Be Equal` for an explanation on how to override the default
         error message with `msg` and `values`.
         """
-        first, second = [ self.convert_to_string(item) for item in first, second ]
+        first, second = [ self.convert_to_string(i) for i in first, second ]
         self.should_be_equal(first, second, msg, values)
 
     def should_not_start_with(self, str1, str2, msg=None, values=True):
@@ -384,12 +425,16 @@ class Verify:
 
     def _get_length(self, item):
         try: return len(item)
+        except (KeyboardInterrupt, SystemExit): raise
         except:
             try: return item.length()
+            except (KeyboardInterrupt, SystemExit): raise
             except:
                 try: return item.size()
+                except (KeyboardInterrupt, SystemExit): raise
                 except:
                     try: return item.length
+                    except (KeyboardInterrupt, SystemExit): raise
                     except:
                         raise DataError("Could not get length of '%s'" % item)
         
@@ -1018,8 +1063,21 @@ class Misc:
         and not yet available when test data is processed. In a normal case,
         libraries should be imported using the Library setting in the Setting
         table.
+
+        This keyword supports importing libraries both using library
+        names and physical paths. When path are used, they must be
+        given in absolute format. Starting from 2.0.2 version, forward
+        slashes can be used as path separators in all operating
+        systems. It is possible to use arguments as well as to give a
+        custom name with 'WITH NAME' syntax. For more information
+        about importing libraries, see Robot Framework User Guide.
+
+        Examples:
+        | Import Library | MyLibrary |
+        | Import Library | ${CURDIR}/Library.py | some | args |
+        | Import Library | ${CURDIR}/../libs/Lib.java | arg | WITH NAME | JavaLib |
         """
-        NAMESPACES.current.import_library(name, args)
+        NAMESPACES.current.import_library(name.replace('/', os.sep), args)
         
     def import_variables(self, path, *args):
         """Imports a variable file with the given path and optional arguments.
@@ -1030,14 +1088,17 @@ class Misc:
         the same names and this functionality can thus be used to import new
         variables, e.g. for each test in a test suite.
         
-        The given path must be absolute and path separators ('/' or '\\') must
-        be set correctly. This is often easiest done using built-in variables 
-        '${CURDIR}' and '${/}' as shown in the examples below.
+        The given path must be absolute. Starting from 2.0.2 version,
+        forward slashes can be used as path separator regardless the
+        operating system, but on earlier versions ${/} variable must be used
+        instead.
         
-        | Import Variables | ${CURDIR}${/}variables.py         |      |      |
-        | Import Variables | ${CURDIR}${/}..${/}vars${/}env.py | arg1 | arg2 |
+        Examples:
+        | Import Variables | ${CURDIR}/variables.py   |      |      |
+        | Import Variables | ${CURDIR}/../vars/env.py | arg1 | arg2 |
         """
-        NAMESPACES.current.import_variables(path, args, overwrite=True)
+        NAMESPACES.current.import_variables(path.replace('/', os.sep),
+                                            args, overwrite=True)
         
     def get_time(self, format='timestamp'):
         """Returns the current time in the requested format. 
@@ -1115,57 +1176,63 @@ class Misc:
 
     def grep(self, text, pattern, pattern_type='literal string'):
         """Returns the text grepped using `pattern`.
+
+        `pattern_type` defines how the given pattern is interpreted as
+        explained below. `pattern_type` argument is case-insensitive
+        and may contain other text. For example, 'regexp', 'REGEXP'
+        and 'Pattern is a regexp' are all considered equal.
         
-        `pattern_type` defines how the given pattern is interpreted,
-        as explained below. It is case-insensitive and may contain other text.
-        For example, 'regexp', 'REGEXP' and 'Pattern is a regexp' are all
-        considered equal.
-        
-        - If `pattern_type` contains either the string 'simple' or 'glob', the 
-          `pattern` is considered a simple pattern and lines returned only if 
-          they match it. (1) 
-        - If `pattern_type` contains either the string 'regular expression' or
-          'regexp', the `pattern` is considered a regular expression and only 
-          lines matching it returned. (2)
-        - If `pattern_type` contains the string 'case insensitive',
-          the `pattern` is considered a literal string and lines returned,
-          if they contain the string, regardless of the case.
-        - Otherwise the pattern is considered a literal string and lines
-          returned, if they contain the string exactly. This is the default.
-        
-        1) Simple pattern matching is similar to matching files in a shell, and
-        it is always case-sensitive. In the pattern, '*' matches to anything 
-        and '?' matches to any single character.  
-        
-        2) Regular expression check is done using Python's 're' module which
-        has a pattern syntax derived from Perl and thus is also very similar to
-        the one in Java. See the following documents from more details about
-        regexps in general and their Python implementation in particular.
-        
-        're' Module Documentation: http://docs.python.org/lib/module-re.html
-        Regular Expression HOWTO: http://www.amk.ca/python/howto/regex/
-        
-        Note that if you want to use flags (e.g. re.IGNORECASE) you have to
-        embed them into the pattern (e.g. '(?i)pattern'). Note also that a
-        backslash is an escape character in Robot Framework test data and
-        possible backslaches in patterns must thus be escaped with another
-        backslash (e.g. '\\\\d\\\\w+').
+        1) If `pattern_type` contains either the strings 'simple' or
+           'glob', the `pattern` is considered a simple glob pattern
+           where:
+           | *        | matches everything |
+           | ?        | matches any single character |
+           | [chars]  | matches any character inside square brackets (e.g. '[abc]' matches either 'a', 'b' or 'c') |
+           | [!chars] | matches any character not inside square brackets |
+
+        2) If `pattern_type` contains either 'simple' or 'glob', and
+           additionally contains 'case-insensitive' or 'case
+           insensitive', the glob pattern is considered
+           case-insensitive. This functionality is available in 2.0.2
+           version and newer.
+
+        3) If `pattern_type` contains either the string 'regular
+           expression' or 'regexp', the `pattern` is considered a
+           regular expression. See `Should Match Regexp` for more information
+           about using regular expressions.
+
+        4) If `pattern_type` contains either 'case-insensitive' or
+           'case insensitive' (but does not contain 'simple' or
+           'glob'), `pattern` is considered a literal string and
+           lines returned, if they contain the string, regardless of
+           the case.
+
+        5) Otherwise the pattern is considered a literal string and lines
+           returned, if they contain the string.
         """
-        if pattern == '':
-            return text
-        lines = text.splitlines()
-        if utils.contains_any(pattern_type, ['simple','glob']):
-            lines = [ line for line in lines if self._matches(line, pattern) ]
-        elif utils.contains_any(pattern_type, ['regular expression','regexp']):
-            grep = re.compile(pattern)
-            lines = [ line for line in lines if grep.search(line) is not None ]
-        elif utils.contains(pattern_type, 'case insensitive'):
-            pattern = pattern.lower()
-            lines = [ line for line in lines if pattern in line.lower() ]
-        else:
-            lines = [ line for line in lines if pattern in line ]
+        lines = self._filter_lines(text.splitlines(), pattern, pattern_type)
         return '\n'.join(lines)
-    
+
+    def _filter_lines(self, lines, pattern, ptype):
+        # Used also by OperatingSystem.list_dir
+        if not pattern:
+            filtr = lambda line: True
+        elif utils.contains_any(ptype, ['simple','glob']):
+            if utils.contains_any(ptype, ['case insensitive'], ignore=['-']):
+                pattern = pattern.lower()
+                filtr = lambda line: fnmatch.fnmatchcase(line.lower(), pattern)
+            else:
+                filtr = lambda line: fnmatch.fnmatchcase(line, pattern)
+        elif utils.contains_any(ptype, ['regular expression','regexp']):
+            pattern = re.compile(pattern)
+            filtr = lambda line: pattern.search(line)
+        elif utils.contains_any(ptype, ['case insensitive'], ignore=['-']):
+            pattern = pattern.lower()
+            filtr = lambda line: pattern in line.lower()
+        else:
+            filtr = lambda line: pattern in line
+        return [ line for line in lines if filtr(line) ]
+
     def regexp_escape(self, *patterns):
         """Returns each argument string escaped for use as a regular expression.
         
@@ -1203,6 +1270,7 @@ class BuiltIn(Verify, Converter, Variables, RunKeyword, Misc):
     ROBOT_LIBRARY_VERSION = utils.get_version()
     
     def _matches(self, string, pattern):
+        # Must use this instead of fnmatch when string may contain newlines.
         return utils.matches(string, pattern, caseless=False, spaceless=False)
 
     def _is_true(self, condition):
