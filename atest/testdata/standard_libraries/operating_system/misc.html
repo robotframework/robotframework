@@ -119,7 +119,6 @@ th { font-style: normal; } /* required for IE */
   
   
   <title>Robot Test Cases</title><link type="text/css" href="resources/css/testdata.css" rel="stylesheet"></head>
-
 <body>
 
 
@@ -773,7 +772,7 @@ th { font-style: normal; } /* required for IE */
 
 
 
-      <td>${CURDIR}${/}robot_temp_file.txt</td>
+      <td>${CURDIR}/robot_temp_file.txt</td>
 
 
 
@@ -880,7 +879,7 @@ th { font-style: normal; } /* required for IE */
 
 
       <td align="undefined" valign="undefined">
-${CURDIR}${/}robot_temp_dir</td>
+${CURDIR}/robot_temp_dir</td>
 
 
 
@@ -6311,8 +6310,7 @@ int('@{time}[3]') &lt;= 59</td>
 
 
 
-      <td align="undefined" valign="undefined">Fail Unless Ints
-Equal</td>
+      <td align="undefined" valign="undefined">Should Be Equal As Integers</td>
 
 
 
@@ -6404,7 +6402,7 @@ Equal</td>
 
 
 
-    <tr>
+    <tr><td></td><td align="undefined" valign="undefined">Create File</td><td align="undefined" valign="undefined">${TESTFILE}</td><td align="undefined" valign="undefined">x</td><td></td><td></td><td></td></tr><tr><td></td><td align="undefined" valign="undefined">${size} =</td><td align="undefined" valign="undefined">Get File Size</td><td align="undefined" valign="undefined">${TESTFILE}</td><td></td><td></td><td></td></tr><tr><td></td><td align="undefined" valign="undefined">Should Be Equal As Integers</td><td align="undefined" valign="undefined">${size}</td><td align="undefined" valign="undefined">1</td><td></td><td></td><td></td></tr><tr>
 
 
 
@@ -6666,8 +6664,7 @@ Equal</td>
 
 
 
-      <td align="undefined" valign="undefined">Fail Unless Ints
-Equal</td>
+      <td align="undefined" valign="undefined">Should Be Equal As Integers</td>
 
 
 
@@ -6759,7 +6756,7 @@ Equal</td>
 
 
 
-    <tr>
+    <tr><td></td><td align="undefined" valign="undefined">${size} =</td><td align="undefined" valign="undefined">Get File Size</td><td align="undefined" valign="undefined">${CURDIR}/misc.html</td><td></td><td></td><td></td></tr><tr><td></td><td>Should Be True</td><td>${size} &gt; 1000</td><td></td><td></td><td></td><td></td></tr><tr>
 
 
 
@@ -9988,7 +9985,7 @@ Patterns</td>
 
 
 
-      <td align="undefined" valign="undefined"># 0) Setup</td>
+      <td align="undefined" valign="undefined">Comment</td>
 
 
 
@@ -10001,7 +9998,7 @@ Patterns</td>
 
 
 
-      <td></td>
+      <td>0) Setup</td>
 
 
 
@@ -10578,21 +10575,21 @@ Patterns</td>
 
 
 
-      <td align="undefined" valign="undefined"># 1) &nbsp;Simple
+      <td align="undefined" valign="undefined">Comment<br></td>
+
+
+
+
+
+
+
+
+
+
+
+
+      <td>1) &nbsp;Simple
 pattern</td>
-
-
-
-
-
-
-
-
-
-
-
-
-      <td></td>
 
 
 
@@ -10908,7 +10905,7 @@ pattern</td>
 
 
 
-    <tr>
+    
 
 
 
@@ -10921,8 +10918,8 @@ pattern</td>
 
 
 
-      <td></td>
 
+    
 
 
 
@@ -10934,9 +10931,9 @@ pattern</td>
 
 
 
-      <td align="undefined" valign="undefined">Fail Unless</td>
 
 
+    
 
 
 
@@ -10947,322 +10944,11 @@ pattern</td>
 
 
 
-      <td align="undefined" valign="undefined">len(${names}) == 2</td>
 
 
 
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-
-
-
-    </tr>
-
-
-
-
-
-
-
-
-
-
-
-
-
-    <tr>
-
-
-
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">${name_count}</td>
-
-
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">Evaluate</td>
-
-
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">len(${names})</td>
-
-
-
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-
-
-
-    </tr>
-
-
-
-
-
-
-
-
-
-
-
-
-
-    <tr>
-
-
-
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">Ints Equal</td>
-
-
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">${name_count}</td>
-
-
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">2</td>
-
-
-
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-
-
-
-    </tr>
-
-
-
-
-
-
-
-
-
-
-
-
-
-    <tr>
+    <tr><td></td><td align="undefined" valign="undefined">Comment<br></td><td>2) &nbsp;Case-insensitive simple
+pattern</td><td></td><td></td><td></td><td></td></tr><tr>
 
 
 
@@ -11327,7 +11013,7 @@ pattern</td>
 
 
 
-      <td align="undefined" valign="undefined">???.txt</td>
+      <td align="undefined" valign="undefined">???.TXT</td>
 
 
 
@@ -11340,7 +11026,7 @@ pattern</td>
 
 
 
-      <td align="undefined" valign="undefined">simple pattern</td>
+      <td align="undefined" valign="undefined">case-insensitive simple pattern</td>
 
 
 
@@ -11525,7 +11211,7 @@ pattern</td>
 
 
 
-      <td align="undefined" valign="undefined"># 2) Regexp pattern</td>
+      <td align="undefined" valign="undefined">Comment<br></td>
 
 
 
@@ -11538,7 +11224,7 @@ pattern</td>
 
 
 
-      <td></td>
+      <td>3) Regexp pattern</td>
 
 
 
@@ -12091,7 +11777,8 @@ pattern</td>
 
 
 
-    <tr>
+    <tr><td></td><td>Comment</td><td>4) Case-insensitive</td><td></td><td></td><td></td><td></td></tr><tr><td></td><td align="undefined" valign="undefined">${names}</td><td align="undefined" valign="undefined">List Dir</td><td align="undefined" valign="undefined">${TESTDIR}</td><td>FOO</td><td>CaseInsensitive</td><td></td></tr><tr><td></td><td align="undefined" valign="undefined">Fail Unless</td><td align="undefined" valign="undefined">${names} == ['foo.txt',
+'foodir']</td><td></td><td></td><td></td><td></td></tr><tr>
 
 
 
@@ -12117,8 +11804,7 @@ pattern</td>
 
 
 
-      <td align="undefined" valign="undefined"># 3) Literal string
-pattern</td>
+      <td align="undefined" valign="undefined">Comment</td>
 
 
 
@@ -12131,7 +11817,7 @@ pattern</td>
 
 
 
-      <td></td>
+      <td>5) Literal string</td>
 
 
 
@@ -14839,7 +14525,7 @@ In&nbsp;Directory&nbsp;</td>
 
 
 
-      <td align="undefined" valign="undefined"># 0) Setup</td>
+      <td align="undefined" valign="undefined">Comment<br></td>
 
 
 
@@ -14852,7 +14538,7 @@ In&nbsp;Directory&nbsp;</td>
 
 
 
-      <td></td>
+      <td>0) Setup</td>
 
 
 
@@ -15665,21 +15351,21 @@ In&nbsp;Directory&nbsp;</td>
 
 
 
-      <td align="undefined" valign="undefined"># 1) List Files In
+      <td align="undefined" valign="undefined">Comment</td>
+
+
+
+
+
+
+
+
+
+
+
+
+      <td>1) List Files In
 Dir</td>
-
-
-
-
-
-
-
-
-
-
-
-
-      <td></td>
 
 
 
@@ -16258,7 +15944,7 @@ Dir</td>
 
 
 
-      <td align="undefined" valign="undefined"># 2) List Dirs In Dir</td>
+      <td align="undefined" valign="undefined">Comment</td>
 
 
 
@@ -16271,7 +15957,7 @@ Dir</td>
 
 
 
-      <td></td>
+      <td>2) List Dirs In Dir</td>
 
 
 
@@ -16546,7 +16232,7 @@ Dir</td>
 
 
 
-      <td align="undefined" valign="undefined">regexp</td>
+      <td align="undefined" valign="undefined">R E G E X P</td>
 
 
 
@@ -17126,7 +16812,7 @@ Dir</td>
 
 
 
-      <td align="undefined" valign="undefined">*.txt</td>
+      <td align="undefined" valign="undefined">*.TXT</td>
 
 
 
@@ -17139,7 +16825,7 @@ Dir</td>
 
 
 
-      <td></td>
+      <td>case-insensitive glob</td>
 
 
 
@@ -17441,21 +17127,21 @@ Dir</td>
 
 
 
-      <td align="undefined" valign="undefined"># 4) Count Dirs In
+      <td align="undefined" valign="undefined">Comment</td>
+
+
+
+
+
+
+
+
+
+
+
+
+      <td>4) Count Dirs In
 Dir</td>
-
-
-
-
-
-
-
-
-
-
-
-
-      <td></td>
 
 
 
@@ -18032,21 +17718,21 @@ Dir</td>
 
 
 
-      <td align="undefined" valign="undefined"># 5) Count Items In
+      <td align="undefined" valign="undefined">Comment<br></td>
+
+
+
+
+
+
+
+
+
+
+
+
+      <td>5) Count Items In
 Dir</td>
-
-
-
-
-
-
-
-
-
-
-
-
-      <td></td>
 
 
 
@@ -18623,7 +18309,7 @@ Dir</td>
 
 
 
-      <td align="undefined" valign="undefined"># 6) Misc tests</td>
+      <td align="undefined" valign="undefined">Comment<br></td>
 
 
 
@@ -18636,7 +18322,7 @@ Dir</td>
 
 
 
-      <td></td>
+      <td>6) Misc tests</td>
 
 
 
@@ -19485,7 +19171,7 @@ Equal</td>
 
 
 
-      <td>Fail If File Exists</td>
+      <td>Should Not Exist</td>
 
 
 
@@ -19593,19 +19279,19 @@ Equal</td>
 
 
 
-      <td>Fail Unless File Exists</td>
+      <td>${content} =</td><td>Get File</td><td>${TESTFILE}</td>
 
 
 
 
 
-      <td>${TESTFILE}</td>
+      
 
 
 
 
 
-      <td></td>
+      
 
 
 
@@ -19635,7 +19321,7 @@ Equal</td>
 
 
 
-    <tr>
+    <tr><td></td><td>Should Be Equal</td><td>${content}</td><td>${EMPTY}</td><td></td><td></td><td></td></tr><tr>
 
 
 
@@ -19647,7 +19333,7 @@ Equal</td>
 
 
 
-      <td align="undefined" valign="undefined">${time1}</td>
+      <td align="undefined" valign="undefined">${time1} =</td>
 
 
 
@@ -19809,7 +19495,7 @@ Equal</td>
 
 
 
-      <td align="undefined" valign="undefined">${time2}</td>
+      <td align="undefined" valign="undefined">${time2} =</td>
 
 
 
@@ -19863,7 +19549,7 @@ Equal</td>
 
 
 
-      <td>Fail Unless</td>
+      <td>Should Be True</td>
 
 
 
@@ -19905,7 +19591,7 @@ Equal</td>
 
 
 
-    <tr>
+    <tr><td></td><td>Create File</td><td>${TESTFILE}</td><td>Some text\nin 2 lines\n</td><td></td><td></td><td></td></tr><tr><td></td><td>Touch </td><td>${TESTFILE}</td><td></td><td></td><td></td><td></td></tr><tr><td></td><td>${content} =</td><td>Get File</td><td>${TESTFILE}</td><td></td><td></td><td></td></tr><tr><td></td><td>Should Be Equal</td><td>${content}</td><td>Some text\nin 2 lines\n</td><td></td><td></td><td></td></tr><tr>
 
 
 

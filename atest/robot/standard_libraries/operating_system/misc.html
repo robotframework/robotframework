@@ -1,6 +1,5 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html>
-<head>
+<html><head>
 
 
 
@@ -100,10 +99,8 @@ th { font-style: normal; } /* required for IE */
   
   
   
-  <title>Robot Test Cases</title>
-  <link type="text/css" href="resources/css/testdata.css" rel="stylesheet">
-</head>
-
+  
+  <title>Robot Test Cases</title><link type="text/css" href="resources/css/testdata.css" rel="stylesheet"></head>
 <body>
 
 
@@ -1081,7 +1078,7 @@ Parts</td>
 
       <td>Join Path</td>
 
-      <td>${CURDIR}${/}..${/}..${/}..</td>
+      <td>${CURDIR}/../../..</td>
 
       <td>testdata<br>
 
@@ -1153,7 +1150,7 @@ Parts</td>
 
       <td>Join Path</td>
 
-      <td>${CURDIR}${/}..${/}..${/}..</td>
+      <td>${CURDIR}/../../..</td>
 
       <td>testdata<br>
 
@@ -1406,7 +1403,7 @@ Parts</td>
 
 
 
-      <td align="undefined" valign="undefined">Check testcase</td>
+      <td align="undefined" valign="undefined">${tc} =</td>
 
 
 
@@ -1416,7 +1413,7 @@ Parts</td>
 
 
 
-      <td align="undefined" valign="undefined">Get File Size</td>
+      <td align="undefined" valign="undefined">Check testcase</td><td align="undefined" valign="undefined">Get File Size</td>
 
 
 
@@ -1426,7 +1423,7 @@ Parts</td>
 
 
 
-      <td></td>
+      
 
 
 
@@ -1457,7 +1454,9 @@ Parts</td>
 
 
 
-    <tr>
+    <tr><td></td><td>${path} =</td><td>Join Path</td><td>${CURDIR}/../../..</td><td>testdata<br>
+
+      </td></tr><tr><td></td><td>...</td><td>standard_libraries</td><td>operating_system</td><td>robot_temp_file.txt</td></tr><tr>
 
 
 
@@ -1477,7 +1476,7 @@ Parts</td>
 
 
 
-      <td></td>
+      <td>Check Log Message</td><td>${tc.kws[1].msgs[0]}</td><td>Size of file '${path}' is 0 bytes</td>
 
 
 
@@ -1487,7 +1486,7 @@ Parts</td>
 
 
 
-      <td></td>
+      
 
 
 
@@ -1497,7 +1496,7 @@ Parts</td>
 
 
 
-      <td></td>
+      
 
 
 
@@ -1528,7 +1527,7 @@ Parts</td>
 
 
 
-    <tr>
+    <tr><td></td><td>Check Log Message</td><td>${tc.kws[4].msgs[0]}</td><td>Size of file '${path}' is 1 byte</td><td></td></tr><tr><td></td><td>Check Log Message</td><td>${tc.kws[7].msgs[0]}</td><td>Size of file '${path}' is 12 bytes</td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr>
 
 
 
@@ -2050,7 +2049,7 @@ Directories In&nbsp;Directory</td>
 
 
 
-      <td>${CURDIR}..${/}..${/}..${/}..</td>
+      <td>${CURDIR}/../../..</td>
 
 
 
@@ -2106,7 +2105,7 @@ Directories In&nbsp;Directory</td>
 
 
 
-      <td>Touched file '${path}'</td>
+      <td>Touched new file '${path}'</td>
 
 
 
@@ -2130,11 +2129,11 @@ Directories In&nbsp;Directory</td>
 
 
 
-      <td>${tc.kws[5].msgs[0]}</td>
+      <td>${tc.kws[6].msgs[0]}</td>
 
 
 
-      <td>Touched file '${path}'</td>
+      <td>Touched existing file '${path}'</td>
 
 
 
@@ -2146,7 +2145,7 @@ Directories In&nbsp;Directory</td>
 
 
 
-    <tr>
+    <tr><td></td><td>Check Log Message</td><td>${tc.kws[10].msgs[0]}</td><td>Touched existing file '${path}'</td><td></td></tr><tr>
 
       <td></td>
 
@@ -2313,5 +2312,4 @@ Directories In&nbsp;Directory</td>
 
 
  <span style="font-weight: bold;"></span>
-</body>
-</html>
+</body></html>
