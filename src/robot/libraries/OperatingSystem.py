@@ -45,7 +45,7 @@ class OperatingSystem:
     | Example     | Create File       | ${PATH}    | Some text           |
     |             | File Should Exist | ${PATH}    |                     |
     |             | Copy File         | ${PATH}    | ${TEMPDIR}/stuff    |
-    |             | ${output} =       | Run | ${CURDIR}${/}script.sh arg |
+    |             | ${output} =       | Run | ${CURDIR}${/}script.py arg |
     
     Starting from Robot Framework 2.0.2, all keywords expecting paths
     as arguments accept a forward slash as a path separator regardless
@@ -188,18 +188,19 @@ class OperatingSystem:
         """
         return self.run(command, 'RC,Output')
     
-    def start_process(self, command, stdin='', alias=None):
+    def start_process(self, command, stdin=None, alias=None):
         """Starts the given command as a background process.
         
         Starts the process in the background and sets this process as
         the current process. The following calls of the keywords `Read
-        Process Output` and `Stop Process` affect this process, unless
-        the keyword `Switch Process` is used. Then these keywords
-        affect the selected process.
+        Process Output` or `Stop Process` affect this process, unless
+        the keyword `Switch Process` is used.
         
-        If the command needs input, it can be defined with the `stdin`
-        argument.  It is not possible to give input to the command
-        later.
+        If the command needs input through the standard input stream,
+        it can be defined with the `stdin` argument.  It is not
+        possible to give input to the command later. Possible command
+        line arguments must be given as part of the command like
+        '/tmp/script.sh arg1 arg2'.
         
         Returns the index of this process. The indexing starts from 1, and it
         can be used to switch between the processes with the `Switch Process`
@@ -208,13 +209,18 @@ class OperatingSystem:
         
         The optional `alias` is a name for this process that may be used with 
         `Switch Process` instead of the returned index.
+
+        Starting from Robot Framework 2.0.2, the standard error stream
+        is redirected to the standard input stream automatically by
+        adding '2>&1' after the executed command. This is done the
+        same way, and for the same reasons, as with `Run` keyword.
         
         Example:
-        | Start Process  | longlasting.sh      |
-        | Do Something   |                     |
-        | ${stdout}=     | Read Process Output |
-        | Should Contain | ${stdout}           | Expected text |
-        | [Teardown]     | Stop All Processes  |
+        | Start Process  | /path/longlasting.sh |
+        | Do Something   |                      |
+        | ${output} =    | Read Process Output  |
+        | Should Contain | ${output}            | Expected text |
+        | [Teardown]     | Stop All Processes   |
         """
         process = _Process(self._process_command(command), stdin)
         return PROCESSES.register(process, alias)
@@ -224,40 +230,51 @@ class OperatingSystem:
         
         The index is the return value of the `Start Process` keyword and an
         alias may have been defined to it.
+
+        Example:
+        | Start Process  | /path/script.sh arg   |    | 1st process |
+        | ${2nd} =       | Start Process         | /path/script2.sh |
+        | Switch Process | 1st process           |
+        | ${out1} =      | Read Process Output   |
+        | Switch Process | ${2nd}                |
+        | ${out2} =      | Read Process Output   |
+        | Log Many       | 1st processs: ${out1} | 2nd processs: ${out1} |
+        | [Teardown]     | Stop All Processes    |
         """
         PROCESSES.switch(index_or_alias)
     
-    def read_process_output(self, mode=None):
+    def read_process_output(self, mode='<deprecated>'):
         """Waits for the process to finish and returns its output.
         
-        `mode` defines which outputs are returned. If it contains 'stdout', 
-        the standard output is returned. If it contains 'stderr', the  standard
-        error is returned. If it contains 'stderr' and 'stdout' or 'both', the
-        standard output and standard error are returned.
+        In Robot Framework versions prior to 2.0.2 it was possible to
+        read either the standard output, standard error or both. As
+        mentioned in the documentation of `Start Process`, the
+        standard error is nowadays automatically redirected to the
+        standard output. This keyword thus always returns all the
+        output and `mode` argument is ignored.  As explained in `Run`
+        keyword, it is still possible to redirect the standard error,
+        or output, using e.g. '2>stderr.txt' after the command.
+
+        Note that although the process is finished, it is not removed
+        from the process list. Trying to read from a stopped process
+        nevertheless fails. To reset the process list (and indexes and
+        aliases), `Stop All Processes` must be used.
         
-        If the `mode` contains only 'stdout', but there are contents on stderr,
-        this keyword fails.
-        
-        Note that although the process is finished, it is not removed from the 
-        process list. Trying to read from a stopped process nevertheless 
-        fails. To reset the process list (and indexes and aliases), 
-        `Stop All Processes` must be used. 
-        
-        See `Start Process` and `Switch Process` for more information.
+        See `Start Process` and `Switch Process` for more information
+        and examples about running processes.
         """
-        if mode:
+        if mode != '<deprecated>':
             msg = "'mode' argument for 'Read Process Output' keyword is deprecated."
             self._log(msg, 'WARN')
             SYSLOG.warn(msg)
-        process = PROCESSES.get_current()
-        return process.read()
+        return PROCESSES.get_current().read()
         
     def stop_process(self):
         """Stops the current process without reading from it.
         
         Stopping a process does not remove it from the process list. To reset
         the process list (and indexes and aliases), `Stop All Processes` must
-        be used.
+        be used. Stopping an already stopped process has no effect.
         
         See `Start Process` and `Switch Process` for more information.
         """
@@ -266,8 +283,12 @@ class OperatingSystem:
     def stop_all_processes(self):
         """Stops all the processes and removes them from the process list.
         
-        Resets the indexing that `Start Process` uses. All aliases are also 
-        deleted.
+        Resets the indexing that `Start Process` uses. All aliases are
+        also deleted. It does not matter have some of the processes
+        already been closed or not.
+
+        It is highly recommened to use this keyword in test or suite level
+        teardown to make sure all the started processes are closed.
         """
         PROCESSES.close_all()
     
@@ -1201,12 +1222,15 @@ class OperatingSystem:
         print '*%s* %s' % (level, msg)
         
 
+# TODO: Could we use _Process also with Run keyword? We would get rid of
+# dublicate code and have all process related code in separate class.
+
 class _Process:
     
-    def __init__(self, command, input):
+    def __init__(self, command, input_):
         stdin, self.stdout = os.popen2(command)
-        if input != '':
-            stdin.write(input)
+        if input_:
+            stdin.write(input_)
         stdin.close()
         self.closed = False
         
