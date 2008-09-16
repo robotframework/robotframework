@@ -810,7 +810,7 @@ th {
 <td>4242</td>
 <td></td>
 </tr>
-<tr>
+<tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Import Library Using Physical Path</td><td>Import Library</td><td>${CURDIR}${/}RegisteredClass.py</td><td></td><td></td></tr><tr><td></td><td>RegisteredClass.<br>Run Keyword If Method</td><td>False</td><td>Fail</td><td>This is not executed</td></tr><tr><td></td><td>Import Library</td><td>${CURDIR}/../../test_libraries/spaces in path/SpacePathLib.py</td><td></td><td></td></tr><tr><td></td><td>${ret} =</td><td>Spaces in Library Path</td><td></td><td></td></tr><tr><td></td><td>Should Be Equal</td><td>${ret}</td><td>here was a bug</td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Import Library Using Physical Path, Arguments and WITH NAME</td><td>${dir} =<br></td><td>Join Path<br></td><td>${CURDIR}/../../..</td><td>testresources/testlibs</td></tr><tr><td></td><td>Import Library</td><td>${dir}/ParameterLibrary.py</td><td>first param</td><td>${2}</td></tr><tr><td></td><td>...</td><td>WITH NAME</td><td>Params With Path</td><td></td></tr><tr><td></td><td>${params} =</td><td>Params With Path.Parameters</td><td></td><td></td></tr><tr><td></td><td>Should Be True</td><td>${params} == ('first param', 2)</td><td></td><td></td></tr><tr>
 <td></td>
 <td></td>
 <td></td>
@@ -897,7 +897,7 @@ th {
 <tr>
 <td></td>
 <td>Import Variables</td>
-<td>${CURDIR}${/}variables_to_import_2.py</td>
+<td>${CURDIR}/variables_to_import_2.py</td>
 <td>one arg only</td>
 <td></td>
 </tr>
@@ -925,14 +925,14 @@ th {
 <tr>
 <td></td>
 <td>Copy File</td>
-<td>${CURDIR}${/}variables_to_import_2.py</td>
-<td>${TEMPDIR}${/}variables_to_import_2.py</td>
+<td>${CURDIR}/variables_to_import_2.py</td>
+<td>${TEMPDIR}/variables_to_import_2.py</td>
 <td></td>
 </tr>
 <tr>
 <td></td>
 <td>Import Variables</td>
-<td>${TEMPDIR}${/}variables_to_import_2.py</td>
+<td>${TEMPDIR}/variables_to_import_2.py</td>
 <td>1</td>
 <td>2</td>
 </tr>
@@ -954,7 +954,7 @@ th {
 <td></td>
 <td>[Teardown]</td>
 <td>Remove File</td>
-<td>${TEMPDIR}${/}variables_to_import_2.py</td>
+<td>${TEMPDIR}/variables_to_import_2.py</td>
 <td></td>
 </tr>
 <tr>
