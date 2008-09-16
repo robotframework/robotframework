@@ -100,12 +100,6 @@ def html_attr_escape(attr):
 
 class _Table:
 
-    _td = ('<td style="border: 1px solid gray; padding: 0.1em 0.3em; '
-           'height: 1.2em;">%s</td>')
-    _table = ('<table border="1" style="border: 1px solid gray; '
-              'background: transparent; border-collapse: collapse; '
-              'font-size: 0.9em; empty-cells: show;">')
-    
     def __init__(self):
         self._rows = []
 
@@ -124,13 +118,14 @@ class _Table:
 
     def _format(self, rows):
         maxlen = max([ len(row) for row in rows ])
-        table = [ self._table ]
+        table = [ '<table border="1" class="doc">' ]
         for row in rows:
             row += [''] * (maxlen - len(row))  # fix ragged tables
             table.append('<tr>')
-            table.extend([ self._td % _format_line(cell, True) for cell in row ])
+            table.extend([ '<td>%s</td>' % _format_line(cell, True)
+                           for cell in row ])
             table.append('</tr>')
-        table.append('</table>')
+        table.append('</table>\n')
         return '\n'.join(table)
 
 

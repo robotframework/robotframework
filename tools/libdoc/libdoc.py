@@ -350,7 +350,6 @@ DOCUMENT_TEMPLATE = '''
   }
 
   /* Generic Table Styles */
-  
   table {
     background: white;
     border: 1px solid black;
@@ -370,7 +369,6 @@ DOCUMENT_TEMPLATE = '''
   }    
 
   /* Columns */
-
   td.kw {
     font-weight: bold;
   }
@@ -381,8 +379,22 @@ DOCUMENT_TEMPLATE = '''
   td.doc {
   }
 
-  /* Paragraphs */
+  /* Tables in documentation */
+  table.doc {
+    border: 1px solid gray;
+    background: transparent;
+    border-collapse: collapse;
+    empty-cells: show;
+    font-size: 0.85em;
+    font-family: arial,helvetica,sans-serif;
+  }
+  table.doc td {
+    border: 1px solid gray;
+    padding: 0.1em 0.3em;
+    height: 1.2em;
+  }
 
+  /* Paragraphs */
   .libdoc, .links {
     width: 800px;
   }

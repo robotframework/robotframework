@@ -17,7 +17,6 @@ _STYLE = '''
 <style media="all" type="text/css">
 
   /* Generic styles */ 
-
   body {
     font-family: sans-serif;
     font-size: 0.8em;
@@ -29,7 +28,6 @@ _STYLE = '''
   }
 
   /* Statistics Table */
-
   table.statistics {
     width: 58em;
     border: 1px solid black;
@@ -68,7 +66,6 @@ _STYLE = '''
   }
   
   /* Statistics Table Graph */
-
   .pass_bar { 
     background: #00f000;
   }
@@ -94,13 +91,25 @@ _STYLE = '''
     font-size: 4px;  /* to make graphs thin also in IE */
   }
 
+  /* Tables in documentation */
+  table.doc {
+    border: 1px solid gray;
+    background: transparent;
+    border-collapse: collapse;
+    empty-cells: show;
+    font-size: 0.9em;
+  }
+  table.doc td {
+    border: 1px solid gray;
+    padding: 0.1em 0.3em;
+    height: 1.2em;
+  }
+    
   /* Misc Styles */
-
   .not_available {
     color: gray;      /* no grey in IE */
     font-weight: normal;
   }
-
   a:link, a:visited {
     text-decoration: none;
     color: blue;
@@ -111,7 +120,6 @@ _STYLE = '''
   }
   
   /* Headers */
-
   .header {
     width: 58em;
     margin: 6px 0px;
@@ -259,7 +267,7 @@ LOG = '''%(FUNCTIONS)s
   }       
   table.suite, table.syslog {
     width: 100%%;
-    border: 1pt solid gray;  /* no grey in IE */
+    border: 1px solid gray;  /* no grey in IE */
     margin: 0.2em 0em;
     padding: 0.2em;
   }
