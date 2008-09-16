@@ -88,7 +88,7 @@ class _Listener:
             return name, []
         args = name.split(':')
         name = args.pop(0)
-        if len(name) == 1 and args and args[0][0] in ['/', '\\']:
+        if len(name) == 1 and args[0] and args[0][0] in ['/', '\\']:
             name = name + ':' + args.pop(0)
         return name, args
             
