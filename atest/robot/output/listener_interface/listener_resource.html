@@ -163,7 +163,7 @@ th {
 <td></td>
 </tr>
 
-<tr><td></td><td>${content} =</td><td>Get Listener File</td><td>${file}</td><td></td></tr><tr><td></td><td>${expected}</td><td>Catenate</td><td>SEPARATOR=\n</td><td>@{expected}</td></tr><tr><td></td><td>Should Be Equal</td><td>${content}</td><td>${expected}\n</td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Get Listener FIle</td><td>[Arguments]</td><td>${file}</td><td></td><td></td></tr><tr><td></td><td>${dir} =</td><td>Set Variable If</td><td>"${file}" == "${JAVA_FILE}"</td><td>${JAVATEMPDIR}</td></tr><tr><td></td><td>...</td><td>${TEMPDIR}</td><td></td><td></td></tr><tr>
+<tr><td></td><td>${content} =</td><td>Get Listener File</td><td>${file}</td><td></td></tr><tr><td></td><td>${expected}</td><td>Catenate</td><td>SEPARATOR=\n</td><td>@{expected}</td></tr><tr><td></td><td>Should Be Equal</td><td>${content}</td><td>${expected}\n</td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Get Listener FIle</td><td>[Arguments]</td><td>${file}</td><td></td><td></td></tr><tr><td></td><td>${dir} =</td><td>Set Variable If</td><td>"${file}" in ["${JAVA_FILE}", "${JAVA_ARGS_FILE}"]</td><td>${JAVATEMPDIR}</td></tr><tr><td></td><td>...</td><td>${TEMPDIR}</td><td></td><td></td></tr><tr>
 <td></td>
 <td>${content} =</td>
 <td>Get File</td>
