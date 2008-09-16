@@ -102,7 +102,7 @@ def create_html_doc(lib, outpath):
     namespace = Namespace(LIB=lib, GENERATED=generated)
     doc = Template(template=DOCUMENT_TEMPLATE).generate(namespace)
     outfile = open(outpath, 'w')
-    outfile.write(doc)
+    outfile.write(doc + '\n')
     outfile.close()
 
     
