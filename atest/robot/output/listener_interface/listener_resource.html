@@ -102,7 +102,7 @@ th {
 <td></td>
 <td></td>
 </tr>
-<tr>
+<tr><td>${ALL_FILE2}</td><td>listen_all2.txt</td><td></td><td></td><td></td></tr><tr>
 <td>${SOME_FILE}</td>
 <td>listen_some.txt</td>
 <td></td>
@@ -116,7 +116,7 @@ th {
 <td></td>
 <td></td>
 </tr>
-<tr>
+<tr><td>${ARGS_FILE}</td><td>listener_with_args.txt</td><td></td><td></td><td></td></tr><tr><td>${JAVA_ARGS_FILE}</td><td>java_listener_with_args.txt</td><td></td><td></td><td></td></tr><tr><td>${MODULE_FILE}</td><td>listen_by_module.txt</td><td></td><td></td><td></td></tr><tr>
 <td>${SUITE_MSG}</td>
 <td>2 critical tests, 1 passed, 1 failed\n 2 tests total, 1 passed, 1 failed</td>
 <td></td>
@@ -124,10 +124,10 @@ th {
 <td></td>
 </tr>
 <tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
+<td>${LISTENERS}</td>
+<td>${CURDIR}${/}..${/}..${/}..${/}testresources${/}listeners</td><td><br></td><td><br></td>
+
+
 <td></td>
 </tr>
 </tbody></table><table border="1">
@@ -141,29 +141,29 @@ th {
 </tr>
 
 <tr><td><a name="keyword_MySetup">Run Listener Tests</a></td><td>[Arguments]</td><td>${options}</td><td>${path}</td><td></td></tr>
-<tr><td></td><td>Remove Files</td><td>${TEMPDIR}${/}${ALL_FILE}</td><td>${TEMPDIR}${/}${SOME_FILE}</td><td>${JAVATEMPDIR}${/}${JAVA_FILE}</td></tr><tr>
+<tr>
 <td></td>
 <td>Run Tests</td>
 <td>${options}</td><td>${path}</td>
 
 <td></td>
 </tr>
-<tr><td></td><td>Should Not Be Equal</td><td>${SUITE}</td><td>${None}</td><td></td></tr><tr>
+<tr><td></td><td>Should Not Be Equal</td><td>${SUITE}</td><td>${None}</td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Remove Listener Files</td><td>Remove Files</td><td>${TEMPDIR}${/}${ALL_FILE}</td><td>${TEMPDIR}${/}${SOME_FILE}</td><td>${JAVATEMPDIR}${/}${JAVA_FILE}</td></tr><tr>
 <td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
+<td>...</td><td>${TEMPDIR}${/}${ARGS_FILE}</td><td>${TEMPDIR}${/}${ALL_FILE2}</td><td>${TEMPDIR}${/}${MODULE_FILE}</td>
+
+
+
 </tr>
-<tr>
+<tr><td></td><td>...</td><td>${JAVA_ARGS_FILE}</td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr>
 <td><a name="keyword_CheckListenerFile">Check Listener File</a></td>
 <td>[Arguments]</td>
 <td>${file}</td>
-<td>${expected}</td>
+<td>@{expected}</td>
 <td></td>
 </tr>
 
-<tr><td></td><td>${content} =</td><td>Get Listener File</td><td>${file}</td><td></td></tr><tr><td></td><td>Should Be Equal</td><td>${content}</td><td>${expected}</td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Get Listener FIle</td><td>[Arguments]</td><td>${file}</td><td></td><td></td></tr><tr><td></td><td>${dir} =</td><td>Set Variable If</td><td>"${file}" == "${JAVA_FILE}"</td><td>${JAVATEMPDIR}</td></tr><tr><td></td><td>...</td><td>${TEMPDIR}</td><td></td><td></td></tr><tr>
+<tr><td></td><td>${content} =</td><td>Get Listener File</td><td>${file}</td><td></td></tr><tr><td></td><td>${expected}</td><td>Catenate</td><td>SEPARATOR=\n</td><td>@{expected}</td></tr><tr><td></td><td>Should Be Equal</td><td>${content}</td><td>${expected}\n</td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Get Listener FIle</td><td>[Arguments]</td><td>${file}</td><td></td><td></td></tr><tr><td></td><td>${dir} =</td><td>Set Variable If</td><td>"${file}" == "${JAVA_FILE}"</td><td>${JAVATEMPDIR}</td></tr><tr><td></td><td>...</td><td>${TEMPDIR}</td><td></td><td></td></tr><tr>
 <td></td>
 <td>${content} =</td>
 <td>Get File</td>
