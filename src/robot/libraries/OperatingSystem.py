@@ -71,7 +71,7 @@ class OperatingSystem:
 
         Starting from Robot Framework 2.0.2, the standard error stream is
         automatically redirected to the standard output stream by
-        adding ' 2>&1' after the executed command. This is done mainly
+        adding '2>&1' after the executed command. This is done mainly
         as a workaround for a bug in Jython that makes it hang if a
         lot of text is written to the standard error
         (http://bugs.jython.org/issue1124), but it also makes possible
