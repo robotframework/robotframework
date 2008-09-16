@@ -51,7 +51,6 @@ th { font-style: normal; } /* required for IE */
 
 
 <title>Robot Test Cases</title><link type="text/css" href="resources/css/testdata.css" rel="stylesheet"></head>
-
 <body>
 <h1>Robot Test Cases</h1>
 
@@ -182,13 +181,13 @@ th { font-style: normal; } /* required for IE */
 
 <tr>
 <td>Save Screenshot With File Name and Path Defined</td>
-<td>Check Test Case</td>
-<td>Save Screenshot With File Name and Path Defined</td>
-<td></td>
+<td>${test} =</td>
+<td>Check Test Case</td><td>Save Screenshot With File Name and Path Defined</td>
+
 <td></td>
 </tr>
 
-<tr>
+<tr><td></td><td>${exp_path} =</td><td>Normalize Path</td><td>${CURDIR}../../../testdata/standard_libraries/mybase_1.jpg</td><td></td></tr><tr><td></td><td>Check Log Message</td><td>${test.kws[0].msgs[0]}</td><td>Screenshot saved to '${exp_path}'</td><td></td></tr><tr>
 <td></td>
 <td></td>
 <td></td>
