@@ -46,11 +46,11 @@ Command line options for test execution
                           :name:`Test Details by Tag` tables in outputs. 
   --tagstatexclude <tag>  `Excludes these tags`_ from the :name:`Statistics by Tag` and
                           :name:`Test Details by Tag` tables in outputs.
-  --tagstatcombine <tags>  Creates `combined statistics based on tags`_.
+  --tagstatcombine <tags:title>  Creates `combined statistics based on tags`_.
   --tagdoc <pattern:doc>   Adds `documentation to the specified tags`_. 
   --tagstatlink <pattern:link:title>   Adds `external links`_ to the :name:`Statistics by 
                           Tag` table in outputs.
-  --listener <class>     `Sets a listener`_ for monitoring test execution. 
+  --listener <name:args>  `Sets a listener`_ for monitoring test execution. 
   -W, --monitorwidth <chars>  `Sets the width`_ of the monitor output. 
   -C, --monitorcolors <on|off|force>  `Specifies are colors`_ used in the console.
   -P, --pythonpath <path>   Additional locations where to `search test libraries`_ from when they are imported.
@@ -89,7 +89,7 @@ Command line options for post-processing outputs
                           :name:`Test Details by Tag` tables in outputs.
   --tagstatexclude <tag>  `Excludes these tags`_ from the :name:`Statistics by Tag` and
                           :name:`Test Details by Tag` tables in outputs.
-  --tagstatcombine <tags>  Creates `combined statistics based on tags`_.
+  --tagstatcombine <tags:title>  Creates `combined statistics based on tags`_.
   --tagdoc <pattern:doc>  Adds `documentation to the specified tags`_.
   --tagstatlink <pattern:link:title>  Adds `external links`_ into the :name:`Statistics by Tag` 
                           table in outputs.
@@ -101,7 +101,6 @@ Command line options for post-processing outputs
   -A, --argumentfile <path>   A text file to `read more arguments`_ from.
   -h, --help              Prints `usage instructions`_.
   --version               Prints the `version information`_.
-
 
 
 .. _Sets the name: `Setting the name`_
