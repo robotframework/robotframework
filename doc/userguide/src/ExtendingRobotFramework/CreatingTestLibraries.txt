@@ -287,17 +287,22 @@ Example Java library using the :code:`GLOBAL` scope:
 Specifying library version
 ''''''''''''''''''''''''''
 
-When a test library is taken into use, Robot Framework tries to determine its
-version. This version is read from attribute :code:`ROBOT_LIBRARY_VERSION` or
-:code:`__version__`, similarly as `test library scope`_. If both attributes
-are defined, the former takes precedence. The attribute must be a class or
-module attribute depending whether the library is implemented as a class or a
-module. The value will be written in syslog_, mainly to provide debugging
-information. 
+When a test library is taken into use, Robot Framework tries to
+determine its version. This information is then written into the syslog_
+to provide debugging information. Library documentation tool
+`libdoc.py`_ also writes this information into the keyword
+documentations it generates.
 
-Library documentation tool libdoc_ also writes this information into keyword
-documentation if available. For Java libraries, the version attribute must be
-declared as :code:`static final` as the second example below demonstrates:
+Version information is read from attribute
+:code:`ROBOT_LIBRARY_VERSION`, similarly as `test library scope`_ is
+read from :code:`ROBOT_LIBRARY_SCOPE`. If
+:code:`ROBOT_LIBRARY_VERSION` does not exist, information is tried to
+be read from :code:`__version__` attribute. These attributes must be a
+class or module attributes, depending whether the library is
+implemented as a class or a module.  For Java libraries, the version
+attribute must be declared as :code:`static final`.
+
+An example Python module using :code:`__version__`:
 
 .. sourcecode:: python
 
@@ -306,6 +311,8 @@ declared as :code:`static final` as the second example below demonstrates:
     def keyword():
         pass
 
+
+A Java class using :code:`ROBOT_LIBRARY_VERSION`:
 
 .. sourcecode:: java
 
