@@ -931,11 +931,12 @@ __ `Creating start-up scripts`_
 Deprecating keywords
 ''''''''''''''''''''
 
-Sometimes there is a need to replace existing keywords with new ones. Just
-informing the users about the change may not always be enough, and it is more
-efficient to get warnings at runtime. Starting from Robot Framework 2.0.2 this
-is possible by marking these keywords *deprecated*. This makes it easier to 
-find old keywords from the test data and remove or replace them. 
+Sometimes there is a need to replace existing keywords with new ones
+or remove them altogether. Just informing the users about the change
+may not always be enough, and it is more efficient to get warnings at
+runtime. Starting from Robot Framework 2.0.2 this is possible by
+marking these keywords *deprecated*. This makes it easier to find old
+keywords from the test data and remove or replace them.
 
 Keywords are deprecated by starting their documentation with 
 :code:`*DEPRECATED*`. When these keywords are executed, a warning containing rest 
@@ -968,7 +969,7 @@ the `static library interface`__ because their documentation is not available
 at runtime. With such keywords, it possible to use user keywords as wrappers and
 deprecate them.
 
-There is a plan to implement a tool that can use this same deprecation
+There is a plan to implement a tool that can use the deprecation
 information for automatically replacing deprecated keywords. The tool will most
 likely get the name of the new keyword from the documentation so that it searches
 words inside backticks (:code:`\``). Thus it would find :name:`Other Keyword` from
