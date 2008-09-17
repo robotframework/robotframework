@@ -351,7 +351,7 @@ class Verify:
         Things to note about the regexp syntax in Robot Framework test data:
 
         1) Backslash is an escape character in the test data, and possible
-        backslaches in the pattern must thus be escaped with another backslash
+        backslashes in the pattern must thus be escaped with another backslash
         (e.g. '\\\\d\\\\w+').
         
         2) Strings that may contain special characters, but should be handled
@@ -1344,4 +1344,4 @@ def register_run_keyword(library, keyword, args_to_process=None):
 for name in [ attr for attr in dir(RunKeyword) if not attr.startswith('_') ]:
     register_run_keyword('BuiltIn', getattr(RunKeyword, name))
 
-del(name)
+del name, attr

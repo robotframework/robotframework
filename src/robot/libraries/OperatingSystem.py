@@ -74,8 +74,8 @@ class OperatingSystem:
         adding '2>&1' after the executed command. This is done mainly
         as a workaround for a bug in Jython that makes it hang if a
         lot of text is written to the standard error
-        (http://bugs.jython.org/issue1124), but it also makes possible
-        errors in executing the command available automatically.
+        (http://bugs.jython.org/issue1124). Additionally, it also makes 
+        possible errors in executing the command available automatically.
 
         The automatic redirection of the standard error is done only
         when the executed command does not contain additional output
@@ -84,7 +84,7 @@ class OperatingSystem:
         
         ---
 
-        `return_mode` defines whether the RC, output or both is retured.
+        `return_mode` defines whether the RC, output or both is returned.
         All checks explained below are case-insensitive.
         
         - If `return_mode` contains the word 'RC' and the word 'output',
@@ -102,7 +102,7 @@ class OperatingSystem:
         
         The returned output contains everything written into the
         standard output or error by the command (unless either of them
-        is redirected explicityly). Many commands add an extra newline
+        is redirected explicitly). Many commands add an extra newline
         (\\n) after the output to make it easier to read in the
         console. To ease processing the returned output, Robot
         Framework strips this possible newline.        
@@ -232,14 +232,14 @@ class OperatingSystem:
         alias may have been defined to it.
 
         Example:
-        | Start Process  | /path/script.sh arg   |    | 1st process |
-        | ${2nd} =       | Start Process         | /path/script2.sh |
-        | Switch Process | 1st process           |
-        | ${out1} =      | Read Process Output   |
-        | Switch Process | ${2nd}                |
-        | ${out2} =      | Read Process Output   |
-        | Log Many       | 1st processs: ${out1} | 2nd processs: ${out1} |
-        | [Teardown]     | Stop All Processes    |
+        | Start Process  | /path/script.sh arg  |    | 1st process |
+        | ${2nd} =       | Start Process        | /path/script2.sh |
+        | Switch Process | 1st process          |
+        | ${out1} =      | Read Process Output  |
+        | Switch Process | ${2nd}               |
+        | ${out2} =      | Read Process Output  |
+        | Log Many       | 1st process: ${out1} | 2nd process: ${out1} |
+        | [Teardown]     | Stop All Processes   |
         """
         PROCESSES.switch(index_or_alias)
     
@@ -287,7 +287,7 @@ class OperatingSystem:
         also deleted. It does not matter have some of the processes
         already been closed or not.
 
-        It is highly recommened to use this keyword in test or suite level
+        It is highly recommended to use this keyword in test or suite level
         teardown to make sure all the started processes are closed.
         """
         PROCESSES.close_all()
@@ -790,7 +790,7 @@ class OperatingSystem:
     def move_directory(self, source, destination):
         """Moves the source directory into a destination.
         
-        If a destination exists, the source is moved under it. Oherwise the
+        If a destination exists, the source is moved under it. Otherwise the
         destination directory and the possible missing intermediate directories
         are created.
         """
@@ -925,7 +925,7 @@ class OperatingSystem:
         
         The given path is first normalized (e.g. a possible trailing
         path separator is removed, special directories '..' and '.'
-        removed).  The splitted parts are returned as separate
+        removed).  The parts that are split are returned as separate
         components.
         
         Examples:
@@ -944,7 +944,7 @@ class OperatingSystem:
         
         The given path is first normalized (e.g. a possible trailing
         path separator removed, special directories '..' and '.'
-        removed).  The splitted parts are returned as separate
+        removed).  The parts that are split are returned as separate
         components. If the path contains no extension, an empty string
         is returned for it. 
         
