@@ -222,7 +222,7 @@ The third example implements the same functionality as the previous one, but use
    public class JavaListener {
    
        public static final String DEFAULT_FILENAME = "listen_java.txt";
-       BufferedWriter outfile = null;
+       private BufferedWriter outfile = null;
 
        public JavaListener() throws IOException {
            this(DEFAULT_FILENAME);
