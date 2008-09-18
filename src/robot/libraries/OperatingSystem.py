@@ -947,13 +947,13 @@ class OperatingSystem:
         removed). The base path and extension are returned as separate
         components so that extension separator ('.') is removed. If
         the path contains no extension, an empty string is returned
-        for it.
+        for it. 
 
-        Starting from 2.0.2, files starting with a dot are handled so
-        that the leading dot is always part of the file name. With
-        earlier versions, the last example below would return 'file' as
-        an extension.
-        
+        Possible leading dots in in the file name are considered to be
+        part of the basename, and not extension separators, starting
+        from Robot Framework 2.0.2. With earlier versions, the last
+        example below would return 'file' as an extension.
+
         Examples:
         | ${path} | ${ext} = | Split Extension | file.extension    |
         | ${p2}   | ${e2} =  | Split Extension | path/file.ext     |
@@ -971,12 +971,22 @@ class OperatingSystem:
         """
         path = self.normalize_path(path)
         basename = os.path.basename(path)
-        if basename.startswith('.') and basename.count('.') == 1:
+        if basename.startswith('.' * basename.count('.')):
             return path, ''
-        base, ext = os.path.splitext(path)
+        if path.endswith('.'):
+            path2 = path.rstrip('.')
+            trailing_dots = '.' * (len(path) - len(path2))
+            path = path2
+        else:
+            trailing_dots = ''
+        basepath, ext = os.path.splitext(path)
         if ext.startswith('.'):
             ext = ext[1:]
-        return base, ext
+        if ext:
+            ext += trailing_dots
+        else:
+            basepath += trailing_dots
+        return basepath, ext
 
     # Misc
     
