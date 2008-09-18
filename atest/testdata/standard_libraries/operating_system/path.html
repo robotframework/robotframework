@@ -4889,7 +4889,8 @@ Check</td>
 
 
 
-    <tr>
+    <tr><td></td><td align="undefined" valign="undefined">Split Extension And
+Check</td><td align="undefined" valign="undefined">.abc.ext</td><td>.abc</td><td align="undefined" valign="undefined">ext<br></td><td></td></tr><tr>
 
 
 
@@ -5060,7 +5061,7 @@ Check</td>
 
 
 
-      <td align="undefined" valign="undefined">path${/}abc.ext</td>
+      <td align="undefined" valign="undefined">path/abc.ext</td>
 
 
 
@@ -5134,7 +5135,7 @@ Check</td>
 
 
       <td align="undefined" valign="undefined">
-${CURDIR}${/}path${/}abc.ext2</td>
+${CURDIR}/path${/}abc.ext2</td>
 
 
 
@@ -5282,7 +5283,7 @@ Check</td>
 
 
 
-      <td align="undefined" valign="undefined">p1${/}..${/}p2${/}</td>
+      <td align="undefined" valign="undefined">p1${/}..${/}p2${/}/</td>
 
 
 
@@ -5356,7 +5357,7 @@ Check</td>
 
 
       <td align="undefined" valign="undefined">
-p1${/}..${/}p2${/}abc.ext</td>
+p1${/}..///////p2${/}abc.ext</td>
 
 
 
@@ -5395,7 +5396,13 @@ p1${/}..${/}p2${/}abc.ext</td>
 
 
 
-    </tr><tr><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Forward Slash Works as Separator On All OSes</td><td>${path} =</td><td>Join Path</td><td>a/b</td><td>c/d/e</td><td>f/g</td></tr><tr><td></td><td>Should Be Equal</td><td>${path}</td><td>a${/}b${/}c${/}d${/}e${/}f${/}g</td><td></td><td></td></tr><tr><td></td><td>Normalize Path And Check</td><td>foo/bar/../zap</td><td>foo${/}zap</td><td></td><td></td></tr><tr><td></td><td>Split Path And Check</td><td>foo/bar/zap</td><td>foo${/}bar</td><td>zap</td><td></td></tr><tr><td></td><td>Split Extension And Check</td><td>foo/bar/zap.txt</td><td>foo${/}bar${/}zap</td><td>txt</td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+    </tr><tr><td></td><td align="undefined" valign="undefined">Split Extension And
+Check</td><td align="undefined" valign="undefined">
+path/.file.ext</td><td align="undefined" valign="undefined">path${/}.file</td><td>ext</td><td></td></tr><tr><td></td><td align="undefined" valign="undefined">Split Extension And
+Check</td><td align="undefined" valign="undefined">
+path/.file</td><td align="undefined" valign="undefined">path${/}.file</td><td>\</td><td></td></tr><tr><td></td><td align="undefined" valign="undefined">Split Extension And
+Check</td><td align="undefined" valign="undefined">
+path/..ext</td><td align="undefined" valign="undefined">path${/}.</td><td>ext</td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Forward Slash Works as Separator On All OSes</td><td>${path} =</td><td>Join Path</td><td>a/b</td><td>c/d/e</td><td>f/g</td></tr><tr><td></td><td>Should Be Equal</td><td>${path}</td><td>a${/}b${/}c${/}d${/}e${/}f${/}g</td><td></td><td></td></tr><tr><td></td><td>Normalize Path And Check</td><td>foo/bar/../zap</td><td>foo${/}zap</td><td></td><td></td></tr><tr><td></td><td>Split Path And Check</td><td>foo/bar/zap</td><td>foo${/}bar</td><td>zap</td><td></td></tr><tr><td></td><td>Split Extension And Check</td><td>foo/bar/zap.txt</td><td>foo${/}bar${/}zap</td><td>txt</td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td></tr>
 
 
 

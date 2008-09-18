@@ -942,22 +942,32 @@ class OperatingSystem:
     def split_extension(self, path):
         """Splits the extension from the given path.
         
-        The given path is first normalized (e.g. a possible trailing
-        path separator removed, special directories '..' and '.'
-        removed).  The parts that are split are returned as separate
-        components. If the path contains no extension, an empty string
-        is returned for it. 
+        The given path is first normalized (e.g. possible trailing
+        path separators removed, special directories '..' and '.'
+        removed). The base path and extension are returned as separate
+        components so that extension separator ('.') is removed. If
+        the path contains no extension, an empty string is returned
+        for it.
+
+        Starting from 2.0.2, files starting with a dot are handled so
+        that the leading dot is always part of the file name. With
+        earlier versions, the last example below would return 'file' as
+        an extension.
         
         Examples:
         | ${path} | ${ext} = | Split Extension | file.extension    |
         | ${p2}   | ${e2} =  | Split Extension | path/file.ext     |
         | ${p3}   | ${e3} =  | Split Extension | path/file         |
         | ${p4}   | ${e4} =  | Split Extension | p1/../p2/file.ext |
+        | ${p5}   | ${e5} =  | Split Extension | path/.file.ext    |
+        | ${p6}   | ${e6} =  | Split Extension | path/.file        |
         =>
         - ${path} = 'file' & ${ext} = 'extension'
         - ${p2} = 'path/file' & ${e2} = 'ext'
         - ${p3} = 'path/file' & ${e3} = ''
         - ${p4} = 'p2/file' & ${e4} = 'ext'
+        - ${p5} = 'path/.file' & ${e5} = 'ext'
+        - ${p6} = 'path/.file' & ${e6} = ''
         """
         path = self.normalize_path(path)
         basename = os.path.basename(path)
