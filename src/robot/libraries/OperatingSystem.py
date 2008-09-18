@@ -959,7 +959,11 @@ class OperatingSystem:
         - ${p3} = 'path/file' & ${e3} = ''
         - ${p4} = 'p2/file' & ${e4} = 'ext'
         """
-        base, ext = os.path.splitext(self.normalize_path(path))
+        path = self.normalize_path(path)
+        basename = os.path.basename(path)
+        if basename.startswith('.') and basename.count('.') == 1:
+            return path, ''
+        base, ext = os.path.splitext(path)
         if ext.startswith('.'):
             ext = ext[1:]
         return base, ext
