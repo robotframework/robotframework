@@ -1,7 +1,7 @@
 import xmlrpclib
 
 
-class RobotXmlRpc:
+class RobotRemoteLibrary:
     
     ROBOT_LIBRARY_SCOPE = 'GLOBAL'
 

@@ -81,8 +81,5 @@ class MyObjectToReturn:
 
 
 if __name__ == '__main__':
-    if len(sys.argv) == 2:
-        from RobotXMLRPCServer import RobotXmlRpcServer
-        RobotXmlRpcServer(PythonLibraryExample(), sys.argv[1])
-    else:
-        print 'Usage: %s port' % sys.argv[0]
+    from RobotRemoteServer import RobotRemoteServer
+    RobotRemoteServer(PythonLibraryExample(), *sys.argv[1:])

@@ -5,14 +5,14 @@ from datetime import datetime
 from types import MethodType, FunctionType
 
 
-class RobotXmlRpcServer(SimpleXMLRPCServer):
+class RobotRemoteServer(SimpleXMLRPCServer):
   
     _supported_types = (datetime, int, long, float, bool, basestring, 
                         tuple, dict, list)
     # TODO: What about tuple/dict/list containing non-supported types?
     # Same issue also with the ruby version.
     
-    def __init__(self, library, port=8080):
+    def __init__(self, library, port=8270):
         SimpleXMLRPCServer.__init__(self, ('localhost', int(port)),
                                     allow_none=True)
         # TODO: allow_none doesn't seem to be available in Python 2.3
