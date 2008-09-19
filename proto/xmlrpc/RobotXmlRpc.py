@@ -8,17 +8,17 @@ class RobotXmlRpc:
     def __init__(self, uri):
         if '://' not in uri:
             uri = 'http://' + uri
-        self._library = xmlrpclib.Server(uri).robotframework
+        self._library = xmlrpclib.Server(uri)  #.robotframework
 
     def get_keyword_names(self):
         return self._library.get_keyword_names()
 
-    def get_keyword_arguments(self, name):
+#    def get_keyword_arguments(self, name):
         # TODO: Handle errors
-        return self._library.get_keyword_arguments(name)
+#        return self._library.get_keyword_arguments(name)
 
-    def get_keyword_documentation(self, name):
-        return self._library.get_keyword_documentation(name)
+ #   def get_keyword_documentation(self, name):
+ #       return self._library.get_keyword_documentation(name)
 
     def run_keyword(self, name, args):
         try:

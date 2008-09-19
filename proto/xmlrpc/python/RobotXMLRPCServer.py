@@ -1,28 +1,41 @@
+import sys
 from SimpleXMLRPCServer import SimpleXMLRPCServer
-from types import *
 from StringIO import StringIO
 from datetime import datetime
-
-SUPPORTED_TYPES = [datetime(1,1,1).__class__, IntType, FloatType, 
-                   BooleanType, StringType, TupleType, DictType, ListType]
+from types import MethodType, FunctionType
 
 
-class RobotXMLRPCServer(SimpleXMLRPCServer):
+class RobotXmlRpcServer(SimpleXMLRPCServer):
   
+    _supported_types = (datetime, int, long, float, bool, basestring, 
+                        tuple, dict, list)
+    # TODO: What about tuple/dict/list containing non-supported types?
+    # Same issue also with the ruby version.
+    
     def __init__(self, library, port=8080):
-        SimpleXMLRPCServer.__init__(self, ('localhost', port))
-        self.library = library
+        SimpleXMLRPCServer.__init__(self, ('localhost', int(port)),
+                                    allow_none=True)
+        # TODO: allow_none doesn't seem to be available in Python 2.3
+        self._library = library
+        self.register_function(self.get_keyword_names)
+        self.register_function(self.run_keyword)
+        self.register_function(self.stop)
+        self.register_introspection_functions()
+        self.serve_forever()
+
+    def stop(self):
+        self.server_close()
 
     def get_keyword_names(self):
-        print dir(library)
-        return dir(library)
+        return [ attr for attr in dir(self._library) if attr[0] != '_'
+                 and isinstance(getattr(self._library, attr),
+                                (MethodType, FunctionType)) ]
 
     def run_keyword(self, name, args):
         self._redirect_stdout()
         result = {'status':'PASS', 'return':'', 'message':'',  'output':''}
         try:
-            method = getattr(name, self.library)
-            return_value = self.library.method(*args)
+            return_value = getattr(self._library, name)(*args)
             result['return'] = self._convert_value_for_xmlrpc(return_value)
         except Exception, exception:
             result['status'] = 'FAIL'
@@ -31,27 +44,17 @@ class RobotXMLRPCServer(SimpleXMLRPCServer):
         return result
   
     def _convert_value_for_xmlrpc(self, return_value):
-        # Because ruby's xmlrpc does not support sending nil values, 
-        # those have to be converter to empty strings
-        #    if return_value == nil
-        #      return ''
-        #    end
-        if SUPPORTED_TYPES.count(return_value.__class__) > 0:
+        if isinstance(return_value, self._supported_types):
             return return_value
         else:
             return str(return_value)
 
     def _redirect_stdout(self):
-        self.io = StringIO
-        sys.stdout = self.io
-        sys.stderr = self.io
+        # TODO: What about stderr?
+        sys.stdout = StringIO()
   
     def _restore_stdout(self):
+        output = sys.stdout.read()
+        sys.stdout.close()
         sys.stdout = sys.__stdout__
-        sys.stderr = sys.__stderr__
-        result = self.io.read() 
-        self.io.close()
-        return result
-  
-    def stop(self):
-        self.server_close()
+        return output

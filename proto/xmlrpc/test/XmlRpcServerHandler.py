@@ -8,7 +8,7 @@ import os.path
 def stop_xmlrpc_server(port):
     url = 'http://localhost:%s' % port
     server = xmlrpclib.ServerProxy(url)
-    server.robotframework.stop()
+    server.stop()  #.robotframework.stop()
     print "Stopped server at %s" % url
     
 def test_xmlrpc_server(port, attempts=1):
