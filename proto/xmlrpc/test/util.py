@@ -11,7 +11,7 @@ def stop_xmlrpc_server(port=8270):
     server.stop()  #.robotframework.stop()
     print "Stopped server at %s" % url
     
-def test_xmlrpc_server(port=8072, attempts=1):
+def test_xmlrpc_server(port=8270, attempts=1):
     url = 'http://localhost:%s' % port
     attempts = int(attempts)
     for i in range(attempts):
