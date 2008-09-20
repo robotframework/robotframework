@@ -1,8 +1,3 @@
-import os.path
-import sys
-import types
-
-
 class PythonLibraryExample:
 
     # Basic communication
@@ -22,17 +17,19 @@ class PythonLibraryExample:
     # Arguments counts (Todo)
 
     def no_arguments(self):
-        print 'No arguments'
+        return 'no arguments'
 
     def one_argument(self, arg):
-        print 'arg: %s' % arg
+        return arg
 
     def two_arguments(self, arg1, arg2):
-        print '*INFO* arg1: %s' % arg1
-        print '*INFO* arg2: %s' % arg2
+        return '%s %s' % (arg1, arg2)
 
-    def arguments_with_default_values(self, arg1, arg2='two', arg3=42):
-        print '%s | %s | %s' % (arg1, arg2, arg3)
+    def seven_arguments(self, arg1, arg2, arg3, arg4, arg5, arg6, arg7):
+        return ' '.join((arg1, arg2, arg3, arg4, arg5, arg6, arg7))
+
+    def arguments_with_default_values(self, arg1, arg2='2', arg3=3):
+        return '%s %s %s' % (arg1, arg2, arg3)
 
     def variable_number_of_arguments(self, *args):
         return ' '.join(args)
@@ -160,5 +157,7 @@ class MyObject:
 
 
 if __name__ == '__main__':
+    import sys
     from RobotRemoteServer import RobotRemoteServer
+
     RobotRemoteServer(PythonLibraryExample(), *sys.argv[1:])

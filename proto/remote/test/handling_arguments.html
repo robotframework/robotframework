@@ -1,0 +1,243 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+
+  <style type="text/css">
+html {
+  font-family: Arial,Helvetica,sans-serif;
+  background-color: white;
+  color: black;
+}
+p {
+  max-width: 60em;
+}
+table {
+  border-collapse: collapse;
+  empty-cells: show;
+  margin: 1em 0em;
+  border: 0.1em solid black;
+}
+th, td {
+  border-style: solid;
+  border-width: 0.05em 0.1em;
+  border-color: black;
+  padding: 0.1em 0.2em;
+  height: 1.5em;
+}
+th {
+  background-color: rgb(192, 192, 192);
+  color: black;
+  border-width: 0.1em;
+  font-weight: bold;
+  text-align: center;
+  text-transform: capitalize;
+  letter-spacing: 0.1em;
+}
+/* Widths of named columns */
+col.name {
+  width: 10em;
+}
+.action, .value, .arg {
+  width: 15em;
+}
+/* Properties for the name column 
+- td:first-child should work in CSS 2.1 avare browsers (tested in Firefox)
+- col.name is against specs but works in IE
+*/
+td:first-child, col.name {
+  background-color: rgb(240, 240, 240);
+  text-transform: capitalize;
+  letter-spacing: 0.1em;
+}
+/* required for IE */
+th {
+  font-style: normal;
+}
+  </style>
+  <title>Robot Test Cases</title></head>
+<body>
+
+<h1>Robot Test Cases</h1>
+
+
+<table border="1">
+
+  <colgroup span="99"><col class="name"><col class="value" span="4"></colgroup>
+  <thead>
+  <tr>
+
+    <th>Setting</th>
+
+    <th>Value</th>
+
+    <th>Value</th>
+
+    <th>value</th>
+
+    <th>Value</th>
+
+  </tr>
+
+  </thead>
+  <tbody>
+
+    <tr>
+
+      <td>Library</td>
+
+      <td>Remote</td>
+
+      <td>localhost:${PORT}</td>
+
+      <td></td>
+
+      <td></td>
+
+    </tr>
+
+    <tr>
+
+      <td>Suite Teardown</td>
+
+      <td>Stop Remote Server</td>
+
+      <td></td>
+
+      <td></td>
+
+      <td></td>
+
+    </tr><tr><td>Default Tags</td><td>python</td><td>ruby</td><td></td><td></td></tr>
+
+  </tbody>
+</table>
+
+
+<table border="1">
+
+  <colgroup span="99"><col class="name"><col class="value" span="4"></colgroup>
+  <thead>
+  <tr>
+
+    <th>Variable</th>
+
+    <th>Value</th>
+
+    <th>Value</th>
+
+    <th>Value</th>
+
+    <th>Value</th>
+
+  </tr>
+
+  </thead>
+  <tbody>
+
+    <tr>
+
+      <td>${PORT} =<br></td><td>8270</td>
+
+      
+
+      <td></td>
+
+      <td></td>
+
+      <td></td>
+
+    </tr>
+
+    <tr>
+
+      <td></td>
+
+      <td></td>
+
+      <td></td>
+
+      <td></td>
+
+      <td></td>
+
+    </tr>
+
+  </tbody>
+</table>
+
+
+<table border="1">
+
+  <colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
+  <thead>
+  <tr>
+
+    <th>Test Case</th>
+
+    <th>Action</th>
+
+    <th>Argument</th>
+
+    <th>Argument</th>
+
+    <th>Argument</th>
+
+
+
+  </tr>
+
+  </thead>
+  <tbody>
+
+    
+
+    
+    
+    <tr><td>No Arguments</td><td>Arguments Should Be Accepted</td><td>no arguments</td><td>No Arguments</td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Required Arguments</td><td>Arguments Should Be Accepted</td><td>some argument</td><td>One Argument</td><td>some argument</td></tr>
+    <tr><td></td><td>Arguments Should Be Accepted</td><td>first argument second argument</td><td>Two Arguments</td><td>first argument</td></tr><tr><td></td><td>...</td><td>second argument</td><td><br></td><td><br></td></tr><tr><td></td><td>Arguments Should Be Accepted</td><td>1 2 3 4 5 6 7<br></td><td>Seven Arguments</td><td>1</td></tr><tr><td></td><td>...<br></td><td>2</td><td>3</td><td>4</td></tr><tr><td></td><td>...</td><td>5</td><td>6</td><td>7</td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Arguments With Default Values</td><td>Arguments Should Be Accepted</td><td>one two three</td><td>Arguments With Default Values</td><td></td></tr><tr><td></td><td>...</td><td>one</td><td>two</td><td>three</td></tr><tr><td></td><td>Arguments Should Be Accepted</td><td>one two 3</td><td>Arguments With Default Values</td><td></td></tr><tr><td></td><td>...</td><td>one </td><td>two</td><td></td></tr><tr><td></td><td>Arguments Should Be Accepted</td><td>one 2 3</td><td>Arguments With Default Values</td><td>one</td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Variable Number Of Arguments</td><td>Arguments Should Be Accepted</td><td><br></td><td>Variable Number Of Arguments</td><td></td></tr><tr><td></td><td>Arguments Should Be Accepted</td><td>One argument</td><td>Variable Number Of Arguments</td><td>One argument</td></tr><tr><td></td><td>Arguments Should Be Accepted</td><td>Three arguments now</td><td>Variable Number Of Arguments</td><td></td></tr><tr><td></td><td>...</td><td>Three</td><td>arguments</td><td>now</td></tr><tr><td></td><td>Arguments Should Be Accepted</td><td>1 2 3 4 5 6 7 8 9 10</td><td>Variable Number Of Arguments</td><td>1</td></tr><tr><td></td><td>...</td><td>2</td><td>3</td><td>4</td></tr><tr><td></td><td>...</td><td>5</td><td>6</td><td>7</td></tr><tr><td></td><td>...</td><td>8</td><td>9</td><td>10</td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Required Arguments, Default Values and Varargs</td><td>Arguments Should Be Accepted</td><td>Hello world</td><td>Required Defaults And Varargs</td><td>Hello</td></tr><tr><td></td><td>Arguments Should Be Accepted</td><td>Hi tellus</td><td>Required Defaults And Varargs</td><td>Hi</td></tr><tr><td></td><td>...</td><td>tellus<br></td><td></td><td><br></td></tr><tr><td></td><td>Arguments Should Be Accepted</td><td>Hello again world</td><td>Required Defaults And Varargs</td><td>Hello</td></tr><tr><td></td><td>...</td><td>again</td><td>world</td><td></td></tr><tr><td></td><td>Arguments Should Be Accepted</td><td>Hi for the&nbsp;last time tellus</td><td>Required Defaults And Varargs</td><td>Hi</td></tr><tr><td></td><td>...</td><td>for</td><td>the</td><td>last</td></tr><tr><td></td><td>...</td><td>time</td><td>tellus</td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Using Arguments When No Accepted</td><td>[Documentation]</td><td>FAIL</td><td>Keyword 'Remote.No Arguments' expected 0 arguments, got 1.</td><td></td></tr><tr><td></td><td>No Arguments</td><td>not allowed</td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Too Few Arguments When Using Only Required Args</td><td>[Documentation]</td><td>FAIL</td><td>Keyword 'Remote.One Argument' expected 1 argument, got 0.</td><td></td></tr><tr><td></td><td>One Argument</td><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Too Many Arguments When Using Only Required Args</td><td>[Documentation]</td><td>FAIL</td><td>Keyword 'Remote.Two Arguments' expected 2 arguments, got 3.</td><td></td></tr><tr><td></td><td>Two Arguments</td><td>too</td><td>many</td><td>arguments</td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Too Few Arguments When Using Default Values</td><td>[Documentation]</td><td>FAIL</td><td>Keyword 'Remote.Arguments With Default Values' expected 1 to 3 arguments, got 0.</td><td></td></tr><tr><td></td><td>[Tags]</td><td>python</td><td></td><td></td></tr><tr><td></td><td>Arguments With Default Values</td><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Too Many Arguments When Using Default Values</td><td>[Documentation]</td><td>FAIL</td><td>Keyword 'Remote.Arguments With Default Values' expected 1 to 3 arguments, got 5.</td><td></td></tr><tr><td></td><td>[Tags]</td><td>python</td><td></td><td></td></tr><tr><td></td><td>Arguments With Default Values</td><td>this</td><td>is</td><td>way</td></tr><tr><td></td><td>...</td><td>too</td><td>much</td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Too Few Arguments When Using Default Values</td><td>[Documentation]</td><td>With Ruby it is not possible to get maximum argument count when using default values. </td><td>FAIL</td><td>Keyword 'Remote.Arguments With Default Values' expected at least 1 argument, got 0.</td></tr><tr><td></td><td>[Tags]</td><td>ruby</td><td></td><td></td></tr><tr><td></td><td>Arguments With Default Values</td><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Too Many Arguments When Using Default Values</td><td>[Documentation]</td><td>With Ruby it is not possible to get maximum argument count when using default values. This error comes from Ruby.</td><td>FAIL</td><td>wrong number of arguments (5 for 3)</td></tr><tr><td></td><td>[Tags]</td><td>ruby</td><td></td><td></td></tr><tr><td></td><td>Arguments With Default Values</td><td>this</td><td>is</td><td>way</td></tr><tr><td></td><td>...</td><td>too</td><td>much</td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Too Few Arguments When Using Varargs</td><td>[Documentation]</td><td>FAIL</td><td>Keyword 'Remote.Required Defaults And Varargs' expected at least 1 argument, got 0.</td><td></td></tr><tr><td></td><td>Required Defaults And Varargs</td><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr>
+
+  </tbody>
+</table>
+
+
+<table border="1">
+
+  <colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
+  <thead>
+  <tr>
+
+    <th>Keyword</th>
+
+    <th>Action</th>
+
+    <th>Argument</th>
+
+    <th>Argument</th>
+
+    <th>Argument</th>
+
+  </tr>
+
+  </thead>
+  <tbody>
+
+    <tr>
+
+      <td>Arguments Should Be Accepted</td>
+
+      <td>[Arguments]</td>
+
+      <td>${expected}</td>
+
+      <td>${keyword}</td>
+
+      <td>@{arguments}</td>
+
+    </tr>
+
+    <tr><td></td><td>${actual} =</td><td>Run Keyword</td><td>${keyword}</td><td>@{arguments}</td></tr><tr><td></td><td>Should Be Equal</td><td>${actual}</td><td>${expected}</td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr>
+
+  </tbody>
+</table>
+
+
+</body></html>

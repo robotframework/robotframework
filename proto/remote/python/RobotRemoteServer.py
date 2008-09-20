@@ -1,6 +1,6 @@
 import sys
+import inspect
 from StringIO import StringIO
-from types import MethodType, FunctionType
 from SimpleXMLRPCServer import SimpleXMLRPCServer
 try:
     import signal
@@ -15,6 +15,8 @@ class RobotRemoteServer(SimpleXMLRPCServer):
         self._library = library
         self.register_function(self.get_keyword_names)
         self.register_function(self.run_keyword)
+        self.register_function(self.get_keyword_arguments)
+        self.register_function(self.get_keyword_documentation)
         self.register_function(self.stop_remote_server)
         if signal:
             callback = lambda signum, frame: self.stop_remote_server()
@@ -32,15 +34,15 @@ class RobotRemoteServer(SimpleXMLRPCServer):
         return True
 
     def get_keyword_names(self):
-        return [ attr for attr in dir(self._library) if attr[0] != '_'
-                 and isinstance(getattr(self._library, attr),
-                                (MethodType, FunctionType)) ]
+        names = [ attr for attr in dir(self._library) if attr[0] != '_'
+                  and callable(getattr(self._library, attr)) ]
+        return names + ['stop_remote_server']
 
     def run_keyword(self, name, args):
         result = {'status':'PASS', 'return':'', 'message':'',  'output':''}
         self._redirect_stdout()
         try:
-            return_value = getattr(self._library, name)(*args)
+            return_value = self._get_keyword(name)(*args)
         except Exception, exp:
             result['status'] = 'FAIL'
             result['message'] = str(exp)
@@ -48,6 +50,28 @@ class RobotRemoteServer(SimpleXMLRPCServer):
             result['return'] = self._handle_return_value(return_value)
         result['output'] = self._restore_stdout()
         return result
+
+    def get_keyword_arguments(self, name):
+        kw = self._get_keyword(name)
+        args, varargs, _, defaults = inspect.getargspec(kw)
+        if inspect.ismethod(kw):
+            args = args[1:]  # drop 'self'
+        if defaults:
+            args, names = args[:-len(defaults)], args[-len(defaults):]
+            args += [ '%s=%s' % (name, value)
+                      for name, value in zip(names, defaults) ]
+        if varargs:
+            args.append('*%s' % varargs)
+        return args
+
+    # TODO
+    def get_keyword_documentation(self, name):
+        return ''
+
+    def _get_keyword(self, name):
+        if name == 'stop_remote_server':
+            return self.stop_remote_server
+        return getattr(self._library, name)
   
     def _handle_return_value(self, ret):
         if isinstance(ret, (basestring, int, long, float, bool)):
