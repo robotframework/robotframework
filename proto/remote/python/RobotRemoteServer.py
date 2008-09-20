@@ -20,12 +20,13 @@ class RobotRemoteServer(SimpleXMLRPCServer):
         self._library = library
         self.register_function(self.get_keyword_names)
         self.register_function(self.run_keyword)
-        self.register_function(self.stop)
+        self.register_function(self.stop_remote_server)
         # May want to enable this later. May also want to use DocXMLRPCServer.
         # self.register_introspection_functions()
         if signal:
-            signal.signal(signal.SIGHUP, lambda signum, frame: self.stop())
-            signal.signal(signal.SIGINT, lambda signum, frame: self.stop())
+            callback = lambda signum, frame: self.stop_remote_server()
+            signal.signal(signal.SIGHUP, callback)
+            signal.signal(signal.SIGINT, callback)
         self.serve_forever()
 
     def serve_forever(self):
@@ -33,7 +34,7 @@ class RobotRemoteServer(SimpleXMLRPCServer):
         while not self._shutdown:
             self.handle_request()
 
-    def stop(self):
+    def stop_remote_server(self):
         self._shutdown = True
         return True
 
@@ -47,14 +48,14 @@ class RobotRemoteServer(SimpleXMLRPCServer):
         result = {'status':'PASS', 'return':'', 'message':'',  'output':''}
         try:
             return_value = getattr(self._library, name)(*args)
-            result['return'] = self._convert_value_for_xmlrpc(return_value)
-        except Exception, exception:
+            result['return'] = self._handle_return_value(return_value)
+        except Exception, exp:
             result['status'] = 'FAIL'
-            result['message'] = exception[0]
+            result['message'] = str(exp) #cepexception[0]
         result['output'] = self._restore_stdout()
         return result
   
-    def _convert_value_for_xmlrpc(self, return_value):
+    def _handle_return_value(self, return_value):
         # Can't set 'allow_none' in init because it's only in Python 2.5
         if return_value is None:
             return ''
@@ -68,9 +69,10 @@ class RobotRemoteServer(SimpleXMLRPCServer):
     def _redirect_stdout(self):
         # TODO: What about stderr?
         sys.stdout = StringIO()
-  
+
     def _restore_stdout(self):
-        output = sys.stdout.read()
+        output = sys.stdout.getvalue()
         sys.stdout.close()
         sys.stdout = sys.__stdout__
         return output
+

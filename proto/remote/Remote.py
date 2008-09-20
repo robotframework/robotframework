@@ -1,7 +1,7 @@
 import xmlrpclib
 
 
-class RobotRemoteLibrary:
+class Remote:
     
     ROBOT_LIBRARY_SCOPE = 'GLOBAL'
 
@@ -23,8 +23,7 @@ class RobotRemoteLibrary:
 
     def run_keyword(self, name, args):
         if name == 'Stop Remote Server':
-            self._library.stop()
-            del self._library  # Needed?
+            self._library.stop_remote_server()
             return 
         try:
             result = self._library.run_keyword(name, args)

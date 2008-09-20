@@ -5,17 +5,21 @@ import types
 
 class PythonLibraryExample:
 
-    def do_nothing(self):
+    # Basic communication
+
+    def passing(self):
         pass
   
-    def failure(self, message):
+    def failing(self, message):
         raise AssertionError(message)
 
-    def error(self):
-        1/0
-  
     def logging(self, message, level='INFO'):
         print '*%s* %s' % (level, message)
+
+    def returning(self):
+        return "returned string"
+
+    # Arguments
 
     def one_argument(self, arg):
         print 'arg: %s' % arg
