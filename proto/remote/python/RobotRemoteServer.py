@@ -1,5 +1,4 @@
 import sys
-from datetime import datetime
 from StringIO import StringIO
 from types import MethodType, FunctionType
 from SimpleXMLRPCServer import SimpleXMLRPCServer
@@ -11,18 +10,12 @@ except ImportError:
 
 class RobotRemoteServer(SimpleXMLRPCServer):
   
-    _supported_types = (basestring, int, long, float, bool, 
-                        datetime, tuple, dict, list)
-    
     def __init__(self, library, port=8270):
-        # Cannot use allow_none attribute since it's been added in 2.5
         SimpleXMLRPCServer.__init__(self, ('localhost', int(port)))
         self._library = library
         self.register_function(self.get_keyword_names)
         self.register_function(self.run_keyword)
         self.register_function(self.stop_remote_server)
-        # May want to enable this later. May also want to use DocXMLRPCServer.
-        # self.register_introspection_functions()
         if signal:
             callback = lambda signum, frame: self.stop_remote_server()
             signal.signal(signal.SIGHUP, callback)
@@ -44,27 +37,33 @@ class RobotRemoteServer(SimpleXMLRPCServer):
                                 (MethodType, FunctionType)) ]
 
     def run_keyword(self, name, args):
-        self._redirect_stdout()
         result = {'status':'PASS', 'return':'', 'message':'',  'output':''}
+        self._redirect_stdout()
         try:
             return_value = getattr(self._library, name)(*args)
-            result['return'] = self._handle_return_value(return_value)
         except Exception, exp:
             result['status'] = 'FAIL'
-            result['message'] = str(exp) #cepexception[0]
+            result['message'] = str(exp)
+        else:
+            result['return'] = self._handle_return_value(return_value)
         result['output'] = self._restore_stdout()
         return result
   
-    def _handle_return_value(self, return_value):
-        # Can't set 'allow_none' in init because it's only in Python 2.5
-        if return_value is None:
+    def _handle_return_value(self, ret):
+        if isinstance(ret, (basestring, int, long, float, bool)):
+            return ret
+        if isinstance(ret, (tuple, list)):
+            return [ self._handle_return_value(item) for item in ret ]
+        if isinstance(ret, dict):
+            return dict([ (self._return_value_to_str(key),
+                           self._handle_return_value(value))
+                          for key, value in ret.items() ])
+        return self._return_value_to_str(ret)
+
+    def _return_value_to_str(self, ret):
+        if ret is None:
             return ''
-        # TODO: What about tuple/dict/list containing non-supported types?
-        # Same issue also with the ruby version.
-        elif isinstance(return_value, self._supported_types):
-            return return_value
-        else:
-            return str(return_value)
+        return str(ret)
 
     def _redirect_stdout(self):
         # TODO: What about stderr?
