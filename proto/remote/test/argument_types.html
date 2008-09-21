@@ -1,0 +1,219 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+
+  <style type="text/css">
+html {
+  font-family: Arial,Helvetica,sans-serif;
+  background-color: white;
+  color: black;
+}
+p {
+  max-width: 60em;
+}
+table {
+  border-collapse: collapse;
+  empty-cells: show;
+  margin: 1em 0em;
+  border: 0.1em solid black;
+}
+th, td {
+  border-style: solid;
+  border-width: 0.05em 0.1em;
+  border-color: black;
+  padding: 0.1em 0.2em;
+  height: 1.5em;
+}
+th {
+  background-color: rgb(192, 192, 192);
+  color: black;
+  border-width: 0.1em;
+  font-weight: bold;
+  text-align: center;
+  text-transform: capitalize;
+  letter-spacing: 0.1em;
+}
+/* Widths of named columns */
+col.name {
+  width: 10em;
+}
+.action, .value, .arg {
+  width: 15em;
+}
+/* Properties for the name column 
+- td:first-child should work in CSS 2.1 avare browsers (tested in Firefox)
+- col.name is against specs but works in IE
+*/
+td:first-child, col.name {
+  background-color: rgb(240, 240, 240);
+  text-transform: capitalize;
+  letter-spacing: 0.1em;
+}
+/* required for IE */
+th {
+  font-style: normal;
+}
+  </style>
+  <title>Robot Test Cases</title></head>
+<body>
+
+<h1>Robot Test Cases</h1>
+
+
+<table border="1">
+
+  <colgroup span="99"><col class="name"><col class="value" span="4"></colgroup>
+  <thead>
+  <tr>
+
+    <th>Setting</th>
+
+    <th>Value</th>
+
+    <th>Value</th>
+
+    <th>value</th>
+
+    <th>Value</th>
+
+  </tr>
+
+  </thead>
+  <tbody>
+
+    <tr>
+
+      <td>Library</td>
+
+      <td>Remote</td>
+
+      <td>localhost:${PORT}</td>
+
+      <td>WITH NAME</td>
+
+      <td>remote</td>
+
+    </tr>
+
+    <tr><td>Library</td><td>Collections</td><td></td><td></td><td></td></tr><tr><td>Force Tags</td><td>python</td><td>ruby</td><td></td><td></td></tr><tr><td>Variables</td><td>arguments.py</td><td></td><td></td><td></td></tr>
+
+  </tbody>
+</table>
+
+
+<table border="1">
+
+  <colgroup span="99"><col class="name"><col class="value" span="4"></colgroup>
+  <thead>
+  <tr>
+
+    <th>Variable</th>
+
+    <th>Value</th>
+
+    <th>Value</th>
+
+    <th>Value</th>
+
+    <th>Value</th>
+
+  </tr>
+
+  </thead>
+  <tbody>
+
+    <tr>
+
+      <td>${PORT} =<br></td><td>8270</td>
+
+      
+
+      <td></td>
+
+      <td></td>
+
+      <td></td>
+
+    </tr>
+
+    <tr>
+
+      <td></td>
+
+      <td></td>
+
+      <td></td>
+
+      <td></td>
+
+      <td></td>
+
+    </tr>
+
+  </tbody>
+</table>
+
+
+<table border="1">
+
+  <colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
+  <thead>
+  <tr>
+
+    <th>Test Case</th>
+
+    <th>Action</th>
+
+    <th>Argument</th>
+
+    <th>Argument</th>
+
+    <th>Argument</th>
+
+
+
+  </tr>
+
+  </thead>
+  <tbody>
+
+    
+
+    
+    
+    
+    <tr><td>String As Argument</td><td>Argument Should Accepted</td><td>String As Argument</td><td>'Hello, world!'</td><td></td></tr><tr><td>Unicode String As Argument</td><td>Argument Should Accepted</td><td>Unicode String As Argument</td><td>u'Hyv\\xE4\\xE4&nbsp;\\xFC\\xF6t\\xE4!'</td><td></td></tr><tr><td>Empty String&nbsp;As Argument</td><td>Argument Should Accepted</td><td>Empty String As Argument</td><td>''</td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Integer As Argument</td><td>Argument Should Accepted</td><td>Integer As Argument</td><td>42</td><td></td></tr><tr><td><br></td><td>Argument Should Accepted</td><td>Negative Integer As Argument</td><td>-1</td><td></td></tr><tr><td>Float As Argument</td><td>Argument Should Accepted</td><td>Float As Argument</td><td>3.14<br></td><td></td></tr><tr><td></td><td>Argument Should Accepted</td><td>Negative Float As Argument</td><td>-0.5</td><td></td></tr><tr><td>Zero As Argument</td><td>Argument Should Accepted</td><td>Zero As Argument</td><td>0</td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Boolean As Argument</td><td>Argument Should Accepted</td><td>Boolean True As Argument</td><td>True</td><td></td></tr><tr><td><br></td><td>Argument Should Accepted</td><td>Boolean False As Argument</td><td>False</td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>None As Argument</td><td>[Documentation]</td><td>None/nil/null is not supported by all XML-RPC versions</td><td>and thus it is converted to a string</td><td></td></tr><tr><td></td><td>Argument Should Accepted</td><td>None As Argument</td><td>None</td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Arbitrary Object&nbsp;As Argument</td><td>[Documentation]</td><td>Arbitraty objects cannot be transferred over XML-RPC </td><td>and thus only their string presentation is used</td><td></td></tr><tr><td><br></td><td>Object&nbsp;As Argument</td><td>${MyObject()}</td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>List&nbsp;As Argument</td><td>Argument Should Accepted</td><td>List&nbsp;As Argument</td><td>['One', -2, False]</td><td></td></tr><tr><td><br></td><td>Argument Should Accepted</td><td>Empty List&nbsp;As Argument</td><td>[]</td><td></td></tr><tr><td>List Containing None&nbsp;As Argument</td><td>Argument Should Accepted</td><td>List Containing None&nbsp;As Argument</td><td>[None]</td><td></td></tr><tr><td>List Containing Arbitrary Objects&nbsp;As Argument</td><td>List Containing Objects&nbsp;As Argument</td><td>${LIST_WITH_OBJECTS}</td><td></td><td></td></tr><tr><td>Nested List&nbsp;As Argument</td><td>Nested List&nbsp;As Argument</td><td>${NESTED_LIST}</td><td><br></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Tuple&nbsp;As Argument</td><td>[Documentation]</td><td>Tuples are converted to lists</td><td></td><td></td></tr><tr><td></td><td>Argument Should Accepted</td><td>List&nbsp;As Argument</td><td>('One', -2, False)</td><td></td></tr><tr><td><br></td><td>Argument Should Accepted</td><td>Empty List As Argument</td><td>()</td><td></td></tr><tr><td></td><td>Nested List As Argument</td><td>${NESTED_TUPLE}</td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Dictionary&nbsp;As Argument</td><td>Argument Should Accepted</td><td>Dictionary&nbsp;&nbsp;As Argument</td><td>{'one': 1, 'true': True}</td><td></td></tr><tr><td></td><td>Argument Should Accepted</td><td>Empty&nbsp;Dictionary&nbsp;&nbsp;As Argument</td><td>{}</td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Dictionary With Non-String Keys&nbsp;As Argument</td><td>[Documentation]</td><td>XML-RPC supports only strings as keys so must convert them </td><td></td><td></td></tr><tr><td></td><td>Argument Should Accepted</td><td>Dictionary&nbsp;With Non String Keys&nbsp;As Argument</td><td>{1: 2,&nbsp;False: True}</td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Dictionary Containing None&nbsp;As Argument</td><td>Argument Should Accepted</td><td>Dictionary Containing None&nbsp;As Argument</td><td>{'As value': None, None: 'As key'}</td><td></td></tr><tr><td>Dictionary Containing Objects As Argument</td><td>Dictionary Containing Objects As Argument</td><td>${DICT_WITH_OBJECTS}</td><td></td><td></td></tr><tr><td>Nested Dictionary As Argument</td><td>Nested Dictionary As Argument</td><td>${NESTED_DICT}</td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr>
+
+  </tbody>
+</table>
+
+
+<table border="1">
+
+  <colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
+  <thead>
+  <tr>
+
+    <th>Keyword</th>
+
+    <th>Action</th>
+
+    <th>Argument</th>
+
+    <th>Argument</th>
+
+    <th>Argument</th>
+
+  </tr><tr><td>Argument Should Accepted</td><td>[Arguments]</td><td>${keyword}</td><td>${argument}</td><td></td></tr><tr><td></td><td>${argument}</td><td>Evaluate</td><td>${argument}</td><td></td></tr><tr><td></td><td>Run Keyword</td><td>${keyword}</td><td>${argument}</td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr>
+
+  </thead>
+  <tbody>
+
+    
+
+    
+
+  </tbody>
+</table>
+
+
+</body></html>
