@@ -1,31 +1,42 @@
 class RubyLibraryExample
 
-  def do_nothing
+  # Basic communication
+
+  def passing
   end
   
-  def failure(message)
+  def failing(message)
     raise message
   end
 
-  def error
-    1/0
-  end
-  
   def logging(message, level='INFO')
     puts '*'+ level + '* ' + message
   end
 
+  def returning
+    'returned string'
+  end
+
+  # Argument counts
+
+  def no_arguments
+    'no arguments'
+  end
+
   def one_argument(arg)
-    puts 'arg: ' + arg
+    arg
   end
 
   def two_arguments(arg1, arg2)
-    puts '*INFO* arg1: ' + arg1
-    puts '*INFO* arg2: ' + arg2
+    arg1 + ' ' + arg2
   end
 
-  def arguments_with_default_values(arg1, arg2='two', arg3=42)
-    puts "#{arg1} | #{arg2} | #{arg3}"
+  def seven_arguments(arg1, arg2, arg3, arg4, arg5, arg6, arg7)
+    "#{arg1} #{arg2} #{arg3} #{arg4} #{arg5} #{arg6} #{arg7}"
+  end
+
+  def arguments_with_default_values(arg1, arg2='2', arg3=3)
+     "#{arg1} #{arg2} #{arg3}"
   end
 
   def variable_number_of_arguments(*args)
@@ -36,6 +47,8 @@ class RubyLibraryExample
     args = [required, default] + varargs
     args.join(' ')
   end
+
+  # Argument types (TODO)
 
   def argument_should_be_string(arg)
     argument_type_should_be(arg, String)
@@ -59,29 +72,67 @@ class RubyLibraryExample
     end    
   end
 
+  # Return values
+
   def return_string()
     return 'Hello, world!'
+  end
+
+  def return_empty_string()
+    return ''
   end
 
   def return_integer()
     return 42
   end
   
-  def return_float()
-    return -0.5
+  def return_negativeinteger()
+    return -1
   end
   
-  def return_boolean()
+  def return_float()
+    return 3.14
+  end
+
+  def return_negative_float()
+    return -0.5
+  end
+
+  def return_zero()
+    return 0
+  end
+  
+  def return_boolean_true()
     return true
   end
 
-  def return_multiple_values(given)
-    return 'first', 2, -3.14, given
+  def return_boolean_false()
+    return false
+  end
+
+  def return_nothing()
   end
   
   def return_object()
-    return MyObjectToReturn.new
+    return MyObject.new
   end
+
+  def return_list()
+    ['One', -2, false]
+  end
+
+  def return_empty_list()
+    []
+  end
+
+  def return_list_containing_none()
+    [nil]
+  end
+
+  def return_list_containing_objects()
+    [MyObject.new(1), MyObject.new(2)]
+  end
+
 
   private 
   def private_method
@@ -90,18 +141,16 @@ class RubyLibraryExample
 end
 
 
-class MyObjectToReturn
+class MyObject
+  def initialize(index='')
+    @index = index
+  end
   def to_s()
-    return "String representation of MyObjectToReturn"
+    return "<MyObject#{@index}>"
   end
 end
 
 
-if ARGV.size == 1
-  require "robotxmlrpcserver"
-  RobotXmlRpcServer.new(RubyLibraryExample.new, ARGV[0])
-else
-  puts "Usage: #{__FILE__} port"
-end
+require "ruby/robotremoteserver"
+RobotRemoteServer.new(RubyLibraryExample.new, *ARGV)
 
-exit

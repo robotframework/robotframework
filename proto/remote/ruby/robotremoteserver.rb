@@ -1,19 +1,18 @@
 require 'xmlrpc/server'
+require 'xmlrpc/utils'
 require 'stringio'
 
-class RobotXmlRpcServer<XMLRPC::Server
+class RobotRemoteServer<XMLRPC::Server
   
-  def initialize(library, port=8080)
+  def initialize(library, port=8270)
     @library = library
-	@supported_types = [Date, Integer, Float, Fixnum, TrueClass, 
-                        FalseClass, String, Hash, Array]
 	super(port, 'localhost')
-    add_handler('robotframework', self)
+    add_handler('get_keyword_names') { get_keyword_names }
+    add_handler('run_keyword') { |name,args| run_keyword(name, args) }
+    add_handler('get_keyword_arguments') { |name| get_keyword_arguments(name) }
+    add_handler('get_keyword_documentation') { |name| get_keyword_documentation(name) }
+    add_handler('stop_remote_server') { shutdown }
     serve
-  end
-
-  def stop
-    shutdown
   end
 
   def get_keyword_names
@@ -21,6 +20,20 @@ class RobotXmlRpcServer<XMLRPC::Server
     lib_methods = @library.methods
     obj_methods = Object.new.methods
     lib_methods.reject {|x| obj_methods.index(x) }
+  end
+
+  def run_keyword(name, args)
+    redirect_stdout()
+    result = {'status'=>'PASS', 'return'=>'', 'message'=>'',  'output'=>''}
+    begin
+      return_value = @library.send(name, *args)
+      result['return'] = handle_return_value(return_value)
+    rescue => exception
+      result['status'] = 'FAIL'
+      result['message'] = exception.message
+    end
+    result['output'] = restore_stdout
+    return result
   end
 
   def get_keyword_arguments(name)
@@ -37,36 +50,21 @@ class RobotXmlRpcServer<XMLRPC::Server
     end
   end
 
-  def get_keyword_documentation(name)
+  def get_keyword_documentation(name)  
     # Is there a way to implement this? Would mainly allow creating a library
     # documentation, but if real argument names are not got that's probably
     # not so relevant.
     ''
   end
 
-  def run_keyword(name, args)
-    redirect_stdout()
-    result = {'status'=>'PASS', 'return'=>'', 'message'=>'',  'output'=>''}
-    begin
-      return_value = @library.send(name, *args)
-      result['return'] = convert_value_for_xmlrpc(return_value)
-    rescue => exception
-      result['status'] = 'FAIL'
-      result['message'] = exception.message
-    end
-    result['output'] = restore_stdout
-    return result
-  end
-  
   private
 
-  def convert_value_for_xmlrpc(return_value)
-    # Because ruby's xmlrpc does not support sending nil values, 
-    # those have to be converter to empty strings
-    if return_value == nil
-      return ''
-    end
-    if @supported_types.include?(return_value.class)
+  def handle_return_value(return_value)
+    if [String, Integer, Fixnum, Float, TrueClass, FalseClass].include?(return_value.class)
+      return return_value
+    elif return_value.class == Hash
+      return return_value
+    elif return_value.class == Array
       return return_value
     else
       return return_value.to_s
