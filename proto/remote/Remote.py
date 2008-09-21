@@ -18,10 +18,11 @@ class Remote:
         # TODO: Handle errors
         return self._library.get_keyword_arguments(name)
 
- #   def get_keyword_documentation(self, name):
- #       return self._library.get_keyword_documentation(name)
+    def get_keyword_documentation(self, name):
+        return self._library.get_keyword_documentation(name)
 
     def run_keyword(self, name, args):
+        args = [ self._handle_argument(arg) for arg in args ]
         try:
             result = self._library.run_keyword(name, args)
         except xmlrpclib.Fault, err:
@@ -30,3 +31,13 @@ class Remote:
         if result['status'] != 'PASS':
             raise AssertionError(result['message'])
         return result['return']
+
+    def _handle_argument(self, arg):
+        if isinstance(arg, (basestring, int, long, float, bool)):
+            return arg
+        if isinstance(arg, (tuple, list)):
+            return [ self._handle_argument(item) for item in arg ]
+        if isinstance(arg, dict):
+            return dict([ (str(key), self._handle_argument(value))
+                          for key, value in arg.items() ])
+        return str(arg)
