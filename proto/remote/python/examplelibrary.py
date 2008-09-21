@@ -94,13 +94,13 @@ class RemoteTestLibrary:
         self._should_be_equal(arg, [])
 
     def list_containing_none_as_argument(self, arg):
-        self._should_be_equal(arg, ['None'])
+        self._should_be_equal(arg, [''])
 
     def list_containing_objects_as_argument(self, arg):
         self._should_be_equal(arg, ['<MyObject1>', '<MyObject2>'])
 
     def nested_list_as_argument(self, arg):
-        exp = [ [True, False], [[1, 'None', '<MyObject>', {}]] ]
+        exp = [ [True, False], [[1, '', '<MyObject>', {}]] ]
         self._should_be_equal(arg, exp)
 
     def dictionary_as_argument(self, arg):
@@ -113,7 +113,7 @@ class RemoteTestLibrary:
         self._should_be_equal(arg, {'1': 2, 'False': True})
 
     def dictionary_containing_none_as_argument(self, arg):
-        self._should_be_equal(arg, {'As value': 'None', 'None': 'As key'})
+        self._should_be_equal(arg, {'As value': '', '': 'As key'})
 
     def dictionary_containing_objects_as_argument(self, arg):
         self._should_be_equal(arg, {'As value': '<MyObject1>', '<MyObject2>': 'As key'})
