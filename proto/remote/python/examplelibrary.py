@@ -1,20 +1,32 @@
-class PythonLibraryExample:
+class RemoteTestLibrary:
 
-    # Basic communication
+    # Basic communication (and documenting keywords)
 
     def passing(self):
+        """This keyword passes.
+
+        See `Failing`, `Logging`, and `Returning` for other basic keywords.
+        """
         pass
   
     def failing(self, message):
+        """This keyword fails with provided `message`"""
         raise AssertionError(message)
 
     def logging(self, message, level='INFO'):
+        """This keywords logs given `message` with given `level`
+
+        Example:
+        | Logging | Hello, world! |      |
+        | Logging | Warning!!!    | WARN |
+        """
         print '*%s* %s' % (level, message)
 
     def returning(self):
-        return "returned string"
+        """This keyword returns a string 'returned string'."""
+        return 'returned string'
 
-    # Arguments counts (Todo)
+    # Arguments counts
 
     def no_arguments(self):
         return 'no arguments'
@@ -37,25 +49,83 @@ class PythonLibraryExample:
     def required_defaults_and_varargs(self, req, default='world', *varargs):
         return ' '.join((req, default) + varargs)
 
+    # Argument types
 
-    # Argument types (TODO)
+    def string_as_argument(self, arg):
+        self._should_be_equal(arg, self.return_string())
 
-    def argument_should_be_string(self, arg):
-        self.argument_type_should_be(arg, basestring)
+    def unicode_string_as_argument(self, arg):
+        self._should_be_equal(arg, self.return_unicode_string())
 
-    def argument_should_be_integer(self, arg):
-        self.argument_type_should_be(arg, int)
+    def empty_string_as_argument(self, arg):
+        self._should_be_equal(arg, '')
 
-    def argument_should_be_float(self, arg):
-        self.argument_type_should_be(arg, float)
+    def integer_as_argument(self, arg):
+        self._should_be_equal(arg, self.return_integer())
 
-    def argument_should_be_boolean(self, arg):
-        self.argument_type_should_be(arg, bool)
+    def negative_integer_as_argument(self, arg):
+        self._should_be_equal(arg, self.return_negative_integer())
 
-    def argument_type_should_be(self, arg, type_):
-        if not isinstance(arg, type_):
-            raise AssertionError('Argument type should be %s but was %s'
-                                 % (type_, type(arg)))
+    def float_as_argument(self, arg):
+        self._should_be_equal(arg, self.return_float())
+
+    def negative_float_as_argument(self, arg):
+        self._should_be_equal(arg, self.return_negative_float())
+
+    def zero_as_argument(self, arg):
+        self._should_be_equal(arg, 0)
+
+    def boolean_true_as_argument(self, arg):
+        self._should_be_equal(arg, True)
+
+    def boolean_false_as_argument(self, arg):
+        self._should_be_equal(arg, False)
+
+    def none_as_argument(self, arg):
+        self._should_be_equal(arg, 'None')
+
+    def object_as_argument(self, arg):
+        self._should_be_equal(arg, '<MyObject>')
+
+    def list_as_argument(self, arg):
+        self._should_be_equal(arg, self.return_list())
+
+    def empty_list_as_argument(self, arg):
+        self._should_be_equal(arg, [])
+
+    def list_containing_none_as_argument(self, arg):
+        self._should_be_equal(arg, ['None'])
+
+    def list_containing_objects_as_argument(self, arg):
+        self._should_be_equal(arg, ['<MyObject1>', '<MyObject2>'])
+
+    def nested_list_as_argument(self, arg):
+        exp = [ [True, False], [[1, 'None', '<MyObject>', {}]] ]
+        self._should_be_equal(arg, exp)
+
+    def dictionary_as_argument(self, arg):
+        self._should_be_equal(arg, self.return_dictionary())
+
+    def empty_dictionary_as_argument(self, arg):
+        self._should_be_equal(arg, {})
+
+    def dictionary_with_non_string_keys_as_argument(self, arg):
+        self._should_be_equal(arg, {'1': 2, 'False': True})
+
+    def dictionary_containing_none_as_argument(self, arg):
+        self._should_be_equal(arg, {'As value': 'None', 'None': 'As key'})
+
+    def dictionary_containing_objects_as_argument(self, arg):
+        self._should_be_equal(arg, {'As value': '<MyObject1>', '<MyObject2>': 'As key'})
+
+    def nested_dictionary_as_argument(self, arg):
+        exp = { '1': {'True': False},
+                '2': {'A': {'1': 'None'}, 'B': {'<MyObject>': {}}} }
+        self._should_be_equal(arg, exp)
+
+    def _should_be_equal(self, arg, exp):
+        if arg != exp:
+            raise AssertionError('%r != %r' % (arg, exp))
 
     # Return values
 
@@ -92,7 +162,7 @@ class PythonLibraryExample:
     def return_nothing(self):
         pass
 
-    def return__object(self):
+    def return_object(self):
         return MyObject()
 
     def return_list(self):
@@ -108,8 +178,7 @@ class PythonLibraryExample:
         return [MyObject(1), MyObject(2)]
 
     def return_nested_list(self):
-        return ['1', [2, [True]], [MyObject(), {'a':1,'b':2},
-                                   (1,2,3), [None, [], (), {}]]]
+        return [ [True, False], [[1, None, MyObject(), {}]] ]
 
     def return_tuple(self):
         return (1, 'two', True)
@@ -118,7 +187,7 @@ class PythonLibraryExample:
         return ()
 
     def return_nested_tuple(self):
-        return ('1', (2, [True]), [MyObject(), (None, (), [], {})])
+        return ( (True, False), [(1, None, MyObject(), {})] )
 
     def return_dictionary(self):
         return {'one': 1, 'true': True}
@@ -136,7 +205,8 @@ class PythonLibraryExample:
         return {'As value': MyObject(1), MyObject(2): 'As key'}
 
     def return_nested_dictionary(self):
-        return {1: {2: {3: {}}}, None: {True: MyObject(), 'list': [1,None,{}]}}
+        return { 1: {True: False},
+                 2: {'A': {1: None}, 'B': {MyObject(): {}}} }
 
     # Not keywords
 
@@ -160,4 +230,4 @@ if __name__ == '__main__':
     import sys
     from RobotRemoteServer import RobotRemoteServer
 
-    RobotRemoteServer(PythonLibraryExample(), *sys.argv[1:])
+    RobotRemoteServer(RemoteTestLibrary(), *sys.argv[1:])
