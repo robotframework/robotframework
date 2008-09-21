@@ -82,7 +82,7 @@ class RemoteTestLibrary:
         self._should_be_equal(arg, False)
 
     def none_as_argument(self, arg):
-        self._should_be_equal(arg, 'None')
+        self._should_be_equal(arg, '')
 
     def object_as_argument(self, arg):
         self._should_be_equal(arg, '<MyObject>')
@@ -120,7 +120,7 @@ class RemoteTestLibrary:
 
     def nested_dictionary_as_argument(self, arg):
         exp = { '1': {'True': False},
-                '2': {'A': {'1': 'None'}, 'B': {'<MyObject>': {}}} }
+                '2': {'A': {'1': ''}, 'B': {'<MyObject>': {}}} }
         self._should_be_equal(arg, exp)
 
     def _should_be_equal(self, arg, exp):
@@ -228,6 +228,6 @@ class MyObject:
 
 if __name__ == '__main__':
     import sys
-    from RobotRemoteServer import RobotRemoteServer
+    from robotremoteserver import RobotRemoteServer
 
     RobotRemoteServer(RemoteTestLibrary(), *sys.argv[1:])

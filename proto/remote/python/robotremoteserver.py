@@ -80,9 +80,14 @@ class RobotRemoteServer(SimpleXMLRPCServer):
         if isinstance(ret, (tuple, list)):
             return [ self._handle_return_value(item) for item in ret ]
         if isinstance(ret, dict):
-            return dict([ (str(key), self._handle_return_value(value))
+            return dict([ (self._str(key), self._handle_return_value(value))
                           for key, value in ret.items() ])
-        return str(ret)
+        return self._str(ret)
+
+    def _str(self, item):
+        if item is None:
+            return ''
+        return str(item)
 
     def _redirect_stdout(self):
         # TODO: What about stderr?

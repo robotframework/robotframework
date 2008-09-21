@@ -38,6 +38,11 @@ class Remote:
         if isinstance(arg, (tuple, list)):
             return [ self._handle_argument(item) for item in arg ]
         if isinstance(arg, dict):
-            return dict([ (str(key), self._handle_argument(value))
+            return dict([ (self._str(key), self._handle_argument(value))
                           for key, value in arg.items() ])
-        return str(arg)
+        return self._str(arg)
+
+    def _str(self, item):
+        if item is None:
+            return ''
+        return str(item)
