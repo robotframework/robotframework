@@ -26,8 +26,8 @@ class Library:
 if __name__ == '__main__':
     lang, path = sys.argv[1:3]
     lib = Library(lang)
-    os.system('ROBOT_SYSLOG_FILE=sys.txt pybot --log none --report none --output logs/output.xml --include %s %s'
-              % (lang, path))
+    os.system('pybot --name %s --log none --report none --output logs/output.xml --include %s %s'
+              % (lang, lang, path))
     lib.stop()
     os.system('../../tools/statuschecker/statuschecker.py logs/output.xml')
     rc = os.system('rebot --outputdir logs logs/output.xml')
