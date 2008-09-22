@@ -59,15 +59,15 @@ class RobotRemoteServer<XMLRPC::Server
 
   private
 
-  def handle_return_value(return_value)
-    if [String, Integer, Fixnum, Float, TrueClass, FalseClass].include?(return_value.class)
-      return return_value
-    elif return_value.class == Hash
-      return return_value
-    elif return_value.class == Array
-      return return_value
+  def handle_return_value(ret)
+    if [String, Integer, Fixnum, Float, TrueClass, FalseClass].include?(ret.class)
+      return ret
+    elsif ret.class == Array
+      return ret   # TODO: Handle internal values
+    elsif ret.class == Hash
+      return ret   # TODO: Handle internal values
     else
-      return return_value.to_s
+      return ret.to_s
     end
   end
 
