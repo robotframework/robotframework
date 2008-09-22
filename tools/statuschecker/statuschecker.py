@@ -155,17 +155,17 @@ class _Expected:
         
 if __name__=='__main__':
     import sys
+    import os
 
     if not 2 <= len(sys.argv) <= 3 or '--help' in sys.argv:
         print __doc__ 
         sys.exit(1)
     infile = sys.argv[1]
     outfile = len(sys.argv) == 3 and sys.argv[2] or None
-    msg = "Processing input file '%s'" % infile 
-    if outfile is not None:
-        msg += " into output file '%s'" % outfile
-    print msg
+    print  "Checking %s" % os.path.abspath(infile)
     rc = process_output(infile, outfile)
+    if outfile:
+        print "Output %s" % os.path.abspath(outfile)
     if rc > 255:
         rc = 255
     sys.exit(rc)
