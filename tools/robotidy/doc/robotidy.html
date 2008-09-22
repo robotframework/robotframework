@@ -298,8 +298,11 @@ ul.auto-toc {
  * Robot Framework User Guide Modifications * 
  * **************************************** */
 
-/* Tables -- both those used with examples and those with normal tabular data */
-
+/* Tables
+   - example, tsv-example: test data examples
+   - messages: log message examples
+   - tabular: normal tabular information
+*/
 table.example, table.tsv-example, table.messages, table.tabular {
     border: 1px solid #808080;
     border-collapse: collapse;
@@ -315,35 +318,49 @@ table.example caption, table.tsv-example caption, table.tabular caption {
 table.example th, table.example td, table.tsv-example td {
     border: 1px solid #808080;
     font-family: arial,helvetica,sans-serif;
-    font-size: 0.8em;
-    padding: 0.1em 0.3em;
     height: 1.2em;
+    font-size: 0.85em;
 }
 table.example th {
+    padding: 0.1em 1em;
     background: #E0E0E0;
+}
+table.example td, table.tsv-example td {
+    padding: 0.1em 1em 0.1em 0.3em;
 }
 table.tabular th, table.tabular td {
     border: 1px solid black;
-    font-size: 0.9em;
     padding: 0.1em 0.3em;
     height: 1.2em;
+    font-size: 0.9em;
 }
 table.messages {
-    border: none;
+    border: 1px solid gray;
     font-family: monospace;
+    margin: 1em 2em;
+    width: 60%;
 }
 table.messages td {
     vertical-align: top;
+    padding: 0.1em 0.2em;
 }
 table.messages td.time {
-    width: 6em;
+    width: 7em;
     letter-spacing: -0.05em;
 } 
 table.messages td.level {
-    width: 4em;
+    width: 5em;
     text-align: center;
 }
-
+table.messages td.fail, table.messages td.error {
+    color: red;
+}
+table.messages td.pass {
+    color: #009900;
+}
+table.messages td.warn {
+    color: #FFCC00;
+}
 
 /* Roles -- these are defined in roles.txt file */
 
@@ -376,7 +393,7 @@ table.messages td.level {
 
 div.admonition, div.attention, div.caution, div.danger, div.error,
 div.hint, div.important, div.note, div.tip, div.warning {
-  border: 2px solid gray;
+    border: 2px solid gray;
 }
 pre.literal-block, pre.doctest-block {
     background: #f4f4f4;
@@ -386,7 +403,7 @@ pre.literal-block, pre.doctest-block {
 /* Pygments 
 
 - Styles generated using "HtmlFormatter().get_style_defs('.highlight')"
-- Changed only background from f8f8f8 to f4f4f4 and added margin
+- Changed only background (f8f8f8 -> f4f4f4) and added margin
 - For more details see e.g. http://pygments.org/docs/quickstart/
 */
 
@@ -563,7 +580,7 @@ robotidy.py --fixcomments --inplace \*.html
 </div>
 <div class="footer">
 <hr class="footer" />
-Generated on: 2008-08-24 23:53 UTC.
+Generated on: 2008-09-22 12:29 UTC.
 
 </div>
 </body>
