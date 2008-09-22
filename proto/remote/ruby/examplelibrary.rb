@@ -214,18 +214,6 @@ class RubyLibraryExample
     return [ [true, false], [[1, nil, MyObject.new, {}]] ]
   end
         
-  def return_tuple
-    #return (1, 'two', true)
-  end
-
-  def return_empty_tuple
-    #return ()
-  end
-
-  def return_nested_tuple
-    #return ( (true, false), [(1, nil, MyObject.new, {})] )
-  end
-
   def return_dictionary
     return {'one'=>1, 'true'=>true}
   end

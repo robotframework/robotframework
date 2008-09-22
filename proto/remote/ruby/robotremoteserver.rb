@@ -16,10 +16,10 @@ class RobotRemoteServer<XMLRPC::Server
   end
 
   def get_keyword_names
-    # Would be better to include all methods actually implemeted by @library
+    # TODO: Would be better to include all methods implemeted by @library
     lib_methods = @library.methods
     obj_methods = Object.new.methods
-    lib_methods.reject {|x| obj_methods.index(x) }
+    lib_methods.reject { |x| obj_methods.index(x) }
   end
 
   def run_keyword(name, args)
