@@ -120,7 +120,7 @@ class RemoteTestLibrary:
 
     def nested_dictionary_as_argument(self, arg):
         exp = { '1': {'True': False},
-                '2': {'A': {'1': ''}, 'B': {'<MyObject>': {}}} }
+                '2': {'A': {'n': ''}, 'B': {'o': '<MyObject>', 'e': {}}} }
         self._should_be_equal(arg, exp)
 
     def _should_be_equal(self, arg, exp):
@@ -206,7 +206,7 @@ class RemoteTestLibrary:
 
     def return_nested_dictionary(self):
         return { 1: {True: False},
-                 2: {'A': {1: None}, 'B': {MyObject(): {}}} }
+                 2: {'A': {'n': None}, 'B': {'o': MyObject(), 'e': {}}} }
 
     # Not keywords
 
