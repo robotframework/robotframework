@@ -1,13 +1,13 @@
-.. role:: code
-.. role:: opt
-.. role:: name
+.. include:: ../../../doc/userguide/src/roles.txt
 
 ===========
 robotidy.py
 ===========
 
-A tool for cleaning up Robot Framework test data.
-
+:prog:`robotidy.py` is a tool for cleaning up Robot Framework test
+data.  It is included in source distributions and can also be
+downloaded from
+http://code.google.com/p/robotframework/wiki/TestDataTidyingTool.
 
 Synopsis
 --------

@@ -1,11 +1,13 @@
-.. role:: msg
+.. include:: ../../../doc/userguide/src/roles.txt
 
 ================
 statuschecker.py
 ================
 
-A tool for checking that Robot Framework test cases have expected
-statuses and log messages.
+:prog:`statuschecker.py` is a tool for checking that Robot Framework
+test cases have expected statuses and log messages.  It is included in
+source distributions and can also be downloaded from
+http://code.google.com/p/robotframework/wiki/TestStatusCheckerTool.
 
 
 Synopsis

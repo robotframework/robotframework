@@ -4,10 +4,12 @@
 libdoc.py
 =========
 
-A tool for generating keyword documentation from test libraries and 
-resource files.
+:prog:`libdoc.py` is a tool for generating keyword documentation from
+test libraries and resource files.
+It is included in source distributions and can also be downloaded from
+http://code.google.com/p/robotframework/wiki/LibraryDocumentationTool.
 
-.. contents::
+.. contents:: Table of contents
 
 
 Synopsis
