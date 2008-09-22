@@ -40,7 +40,7 @@ class RobotRemoteServer(SimpleXMLRPCServer):
 
     def run_keyword(self, name, args):
         result = {'status':'PASS', 'return':'', 'message':'',  'output':''}
-        self._redirect_stdout()
+        self._intercept_stdout()
         try:
             return_value = self._get_keyword(name)(*args)
         except Exception, exp:
@@ -89,7 +89,7 @@ class RobotRemoteServer(SimpleXMLRPCServer):
             return ''
         return str(item)
 
-    def _redirect_stdout(self):
+    def _intercept_stdout(self):
         # TODO: What about stderr?
         sys.stdout = StringIO()
 

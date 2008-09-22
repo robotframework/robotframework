@@ -16,14 +16,12 @@ class RobotRemoteServer<XMLRPC::Server
   end
 
   def get_keyword_names
-    # TODO: Would be better to include all methods implemeted by @library
-    lib_methods = @library.methods
-    obj_methods = Object.new.methods
-    lib_methods.reject { |x| obj_methods.index(x) }
+    # Implicit methods can't be used as keywords
+    @library.methods - Object.new.methods
   end
 
   def run_keyword(name, args)
-    redirect_stdout()
+    intercept_stdout()
     result = {'status'=>'PASS', 'return'=>'', 'message'=>'',  'output'=>''}
     begin
       return_value = @library.send(name, *args)
@@ -67,19 +65,19 @@ class RobotRemoteServer<XMLRPC::Server
       ret.each {|item|
         new_ret.push(handle_return_value(item))
       }
-      return new_ret   # TODO: Handle internal values
+      return new_ret
     elsif ret.class == Hash
       new_ret = {}
       ret.keys.each {|key|
         new_ret[key.to_s] = handle_return_value(ret[key])
       }
-      return new_ret   # TODO: Handle internal values
+      return new_ret
     else
       return ret.to_s
     end
   end
 
-  def redirect_stdout
+  def intercept_stdout
     $original_stdout = $stdout.dup
     @output = ''
     $stdout = StringIO.new(@output)
