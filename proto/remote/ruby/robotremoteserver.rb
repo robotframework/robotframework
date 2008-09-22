@@ -6,7 +6,7 @@ class RobotRemoteServer<XMLRPC::Server
   
   def initialize(library, port=8270)
     @library = library
-	super(port, 'localhost')
+    super(port, 'localhost')
     add_handler('get_keyword_names') { get_keyword_names }
     add_handler('run_keyword') { |name,args| run_keyword(name, args) }
     add_handler('get_keyword_arguments') { |name| get_keyword_arguments(name) }
