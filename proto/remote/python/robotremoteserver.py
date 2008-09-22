@@ -11,7 +11,8 @@ except ImportError:
 class RobotRemoteServer(SimpleXMLRPCServer):
   
     def __init__(self, library, port=8270):
-        SimpleXMLRPCServer.__init__(self, ('localhost', int(port)), logRequests=False)
+        SimpleXMLRPCServer.__init__(self, ('localhost', int(port)),
+                                    logRequests=False)
         self._library = library
         self.register_function(self.get_keyword_names)
         self.register_function(self.run_keyword)
@@ -66,8 +67,7 @@ class RobotRemoteServer(SimpleXMLRPCServer):
 
     # TODO: Not tested
     def get_keyword_documentation(self, name):
-        doc = inspect.getdoc(self._get_keyword(name))
-        return doc or ''
+        return inspect.getdoc(self._get_keyword(name)) or ''
 
     def _get_keyword(self, name):
         if name == 'stop_remote_server':
@@ -98,4 +98,3 @@ class RobotRemoteServer(SimpleXMLRPCServer):
         sys.stdout.close()
         sys.stdout = sys.__stdout__
         return output
-

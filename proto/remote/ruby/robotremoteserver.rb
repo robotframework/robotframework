@@ -22,7 +22,7 @@ class RobotRemoteServer<XMLRPC::Server
 
   def run_keyword(name, args)
     intercept_stdout()
-    result = {'status'=>'PASS', 'return'=>'', 'message'=>'',  'output'=>''}
+    result = {'status'=>'PASS', 'return'=>'', 'message'=>'', 'output'=>''}
     begin
       return_value = @library.send(name, *args)
       result['return'] = handle_return_value(return_value)
@@ -61,15 +61,11 @@ class RobotRemoteServer<XMLRPC::Server
     if [String, Integer, Fixnum, Float, TrueClass, FalseClass].include?(ret.class)
       return ret
     elsif ret.class == Array
-      new_ret = []
-      ret.each {|item|
-        new_ret.push(handle_return_value(item))
-      }
-      return new_ret
+      return ret.collect { |item| handle_return_value(item) }
     elsif ret.class == Hash
       new_ret = {}
-      ret.keys.each {|key|
-        new_ret[key.to_s] = handle_return_value(ret[key])
+      ret.each_pair { |key,value|
+        new_ret[key.to_s] = handle_return_value(value)
       }
       return new_ret
     else
