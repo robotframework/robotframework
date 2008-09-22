@@ -5,7 +5,9 @@ Robot Framework One Click Installer
 ===================================
 
 An AutoIT__ script for installing Robot Framework and its preconditions
-on a Windows machine.
+on a Windows machine. It is included in source distributions and can also be 
+downloaded from 
+http://code.google.com/p/robotframework/wiki/OneClickInstaller
 
 __ http://www.autoitscript.com/autoit3/
 

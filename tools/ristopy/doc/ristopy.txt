@@ -1,16 +1,15 @@
+.. include:: ../../../doc/userguide/src/roles.txt
+
 ===========================================================
   risto.py -- Robot Framework's Historical Reporting Tool
 ===========================================================
 
-.. role:: code
-.. role:: opt
-.. role:: path
-.. role:: prog
-
 :prog:`risto.py` is a tool for plotting graphs about test execution
 history based on statistics read from Robot Framework output files.
 Actual drawing is handled by Matplotlib tool, which must be installed
-separately.
+separately. :prog:`risto.py` is included in source distributions and can also 
+be downloaded from 
+http://code.google.com/p/robotframework/wiki/HistoricalReportingTool.
 
 .. contents::
    :local:

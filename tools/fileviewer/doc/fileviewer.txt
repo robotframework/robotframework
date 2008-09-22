@@ -1,11 +1,12 @@
-.. role:: cli
-.. role:: path
+.. include:: ../../../doc/userguide/src/roles.txt
 
 =============
 fileviewer.py
 =============
 
-A tool for viewing Robot Framework debug files.
+:prog:`fileviewer.py` is a tool for viewing Robot Framework debug files. It is 
+included in source distributions and can also be downloaded from 
+http://code.google.com/p/robotframework/wiki/FileViewingTool.
 
 Synopsis
 --------
