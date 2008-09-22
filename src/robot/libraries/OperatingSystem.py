@@ -925,7 +925,7 @@ class OperatingSystem:
         
         The given path is first normalized (e.g. a possible trailing
         path separator is removed, special directories '..' and '.'
-        removed).  The parts that are split are returned as separate
+        removed). The parts that are split are returned as separate
         components.
         
         Examples:
