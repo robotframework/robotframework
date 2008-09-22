@@ -1,6 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html><head>
-
+<html>
+<head>
   <style type="text/css">
 html {
   font-family: Arial,Helvetica,sans-serif;
@@ -53,167 +53,649 @@ th {
   font-style: normal;
 }
   </style>
-  <title>Robot Test Cases</title></head>
+  <title>Robot Test Cases</title>
+</head>
 <body>
-
 <h1>Robot Test Cases</h1>
-
-
 <table border="1">
-
   <colgroup span="99"><col class="name"><col class="value" span="4"></colgroup>
-  <thead>
-  <tr>
-
+  <thead> <tr>
     <th>Setting</th>
-
     <th>Value</th>
-
     <th>Value</th>
-
     <th>value</th>
-
     <th>Value</th>
-
   </tr>
-
-  </thead>
-  <tbody>
-
+  </thead> <tbody>
     <tr>
-
       <td>Library</td>
-
       <td>Remote</td>
-
       <td>localhost:${PORT}</td>
-
       <td>WITH NAME</td>
-
       <td>remote</td>
-
     </tr>
-
-    <tr><td>Force Tags</td><td>python</td><td>ruby</td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr>
-
+    <tr>
+      <td>Default Tags</td>
+      <td>python</td>
+      <td>ruby</td>
+      <td><br>
+      </td>
+      <td><br>
+      </td>
+    </tr>
+    <tr>
+      <td><br>
+      </td>
+      <td><br>
+      </td>
+      <td><br>
+      </td>
+      <td><br>
+      </td>
+      <td><br>
+      </td>
+    </tr>
   </tbody>
 </table>
-
-
 <table border="1">
-
   <colgroup span="99"><col class="name"><col class="value" span="4"></colgroup>
-  <thead>
-  <tr>
-
+  <thead> <tr>
     <th>Variable</th>
-
     <th>Value</th>
-
     <th>Value</th>
-
     <th>Value</th>
-
     <th>Value</th>
-
   </tr>
-
-  </thead>
-  <tbody>
-
+  </thead> <tbody>
     <tr>
-
-      <td>${PORT} =<br></td><td>8270</td>
-
-      
-
-      <td></td>
-
-      <td></td>
-
-      <td></td>
-
+      <td>${PORT} =<br>
+      </td>
+      <td>8270</td>
+      <td><br>
+      </td>
+      <td><br>
+      </td>
+      <td><br>
+      </td>
     </tr>
-
     <tr>
-
-      <td></td>
-
-      <td></td>
-
-      <td></td>
-
-      <td></td>
-
-      <td></td>
-
+      <td><br>
+      </td>
+      <td><br>
+      </td>
+      <td><br>
+      </td>
+      <td><br>
+      </td>
+      <td><br>
+      </td>
     </tr>
-
   </tbody>
 </table>
-
-
 <table border="1">
-
-  <colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
-  <thead>
-  <tr>
-
+  <colgroup span="99"><col class="name"><col class="action"><col
+ class="arg" span="3"></colgroup> <thead> <tr>
     <th>Test Case</th>
-
     <th>Action</th>
-
     <th>Argument</th>
-
     <th>Argument</th>
-
     <th>Argument</th>
-
-
-
   </tr>
-
-  </thead>
-  <tbody>
-
-    
-
-    
-    
-    
-    <tr><td>Return String</td><td>Return Value Should Be</td><td>Return String</td><td>'Hello, world!'</td><td></td></tr><tr><td><br></td><td></td><td></td><td></td><td></td></tr><tr><td>Return Unicode String</td><td>Return Value Should Be</td><td>Return Unicode String</td><td>u'Hyv\\xE4\\xE4&nbsp;\\xFC\\xF6t\\xE4!'</td><td></td></tr><tr><td>Return Empty String</td><td>Return Value Should Be</td><td>Return Empty String</td><td>''</td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Return Integer</td><td>Return Value Should Be</td><td>Return Integer</td><td>42</td><td></td></tr><tr><td><br></td><td>Return Value Should Be</td><td>Return Negative Integer</td><td>-1</td><td></td></tr><tr><td>Return Float</td><td>Return Value Should Be</td><td>Return Float</td><td>3.14<br></td><td></td></tr><tr><td></td><td>Return Value Should Be</td><td>Return Negative Float</td><td>-0.5</td><td></td></tr><tr><td>Return Zero</td><td>Return Value Should Be</td><td>Return Zero</td><td>0</td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Return Boolean</td><td>Return Value Should Be</td><td>Return Boolean True</td><td>True</td><td></td></tr><tr><td><br></td><td>Return Value Should Be</td><td>Return Boolean False</td><td>False</td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Return Nothing</td><td>[Documentation]</td><td>None/nil/null is not supported by all XML-RPC versions</td><td>and thus it is converted to an empty string</td><td></td></tr><tr><td></td><td>Return Value Should Be</td><td>Return Nothing</td><td>''</td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Return Arbitrary Object</td><td>[Documentation]</td><td>Arbitraty objects cannot be transferred over XML-RPC </td><td>and thus only their string presentation is returned</td><td></td></tr><tr><td><br></td><td>Return Value Should Be</td><td>Return Object</td><td>'&lt;MyObject&gt;'</td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Return List</td><td>Return Value Should Be</td><td>Return List</td><td>['One', -2, False]</td><td></td></tr><tr><td><br></td><td>Return Value Should Be</td><td>Return Empty List</td><td>[]</td><td></td></tr><tr><td>Return List Containing None</td><td>Return Value Should Be</td><td>Return List Containing None</td><td>['']</td><td></td></tr><tr><td>Return List Containing Arbitrary Objects</td><td>Return Value Should Be</td><td>Return List Containing Objects</td><td>['&lt;MyObject1&gt;', '&lt;MyObject2&gt;']</td><td></td></tr><tr><td>Return Nested List</td><td>Return Value Should Be</td><td>Return Nested List</td><td>[ [True, False], [[1, '', '&lt;MyObject&gt;', {}]] ]</td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Return Tuple</td><td>[Documentation]</td><td>Tuples are converted to lists</td><td></td><td></td></tr><tr><td></td><td>Return Value Should Be</td><td>Return Tuple</td><td>[1, 'two', True]</td><td></td></tr><tr><td><br></td><td>Return Value Should Be</td><td>Return Empty Tuple</td><td>[]</td><td></td></tr><tr><td></td><td>Return Value Should Be</td><td>Return Nested Tuple</td><td>[ [True, False], [[1, '', '&lt;MyObject&gt;', {}]] ]</td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Return Dictionary</td><td>Return Value Should Be</td><td>Return&nbsp;Dictionary</td><td>{'one': 1, 'true': True}</td><td></td></tr><tr><td></td><td>Return Value Should Be</td><td>Return Empty&nbsp;Dictionary</td><td>{}</td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Return Dictionary With Non-String Keys</td><td>[Documentation]</td><td>XML-RPC supports only strings as keys so must convert them </td><td></td><td></td></tr><tr><td></td><td>Return Value Should Be</td><td>Return&nbsp;Dictionary&nbsp;With Non String Keys</td><td>{'1': 2, 'False': True}</td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Return Dictionary Containing None</td><td>Return Value Should Be</td><td>Return Dictionary Containing None</td><td>{'As value': '', '': 'As key'}</td><td></td></tr><tr><td>Return Dictionary Containing Objects</td><td>Return Value Should Be</td><td>Return Dictionary Containing Objects</td><td>{'As value': '&lt;MyObject1&gt;', '&lt;MyObject2&gt;': 'As key'}</td><td></td></tr><tr><td>Return Nested Dictionary</td><td>Return Value Should Be</td><td>Return Nested Dictionary</td><td>{'1': {'True': False},<br>&nbsp; '2': {'A': {'n': ''},<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp; 'B': {'o': '&lt;MyObject&gt;', 'e': {}}} }</td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr>
-
+  </thead> <tbody>
+    <tr>
+      <td>Return String</td>
+      <td>Return Value Should Be</td>
+      <td>Return String</td>
+      <td>'Hello, world!'</td>
+      <td><br>
+      </td>
+    </tr>
+    <tr>
+      <td>Return Unicode String</td>
+      <td>[Tags]<br>
+      </td>
+      <td>python<br>
+      </td>
+      <td><br>
+      </td>
+      <td><br>
+      </td>
+    </tr>
+    <tr>
+      <td><br>
+      </td>
+      <td>Return Value Should Be</td>
+      <td>Return Unicode String</td>
+      <td>u'Hyv\\xE4\\xE4&nbsp;\\xFC\\xF6t\\xE4!'</td>
+      <td><br>
+      </td>
+    </tr>
+    <tr>
+      <td>Return Empty String</td>
+      <td>Return Value Should Be</td>
+      <td>Return Empty String</td>
+      <td>''</td>
+      <td><br>
+      </td>
+    </tr>
+    <tr>
+      <td><br>
+      </td>
+      <td><br>
+      </td>
+      <td><br>
+      </td>
+      <td><br>
+      </td>
+      <td><br>
+      </td>
+    </tr>
+    <tr>
+      <td>Return Integer</td>
+      <td>Return Value Should Be</td>
+      <td>Return Integer</td>
+      <td>42</td>
+      <td><br>
+      </td>
+    </tr>
+    <tr>
+      <td><br>
+      </td>
+      <td>Return Value Should Be</td>
+      <td>Return Negative Integer</td>
+      <td>-1</td>
+      <td><br>
+      </td>
+    </tr>
+    <tr>
+      <td>Return Float</td>
+      <td>Return Value Should Be</td>
+      <td>Return Float</td>
+      <td>3.14<br>
+      </td>
+      <td><br>
+      </td>
+    </tr>
+    <tr>
+      <td><br>
+      </td>
+      <td>Return Value Should Be</td>
+      <td>Return Negative Float</td>
+      <td>-0.5</td>
+      <td><br>
+      </td>
+    </tr>
+    <tr>
+      <td>Return Zero</td>
+      <td>Return Value Should Be</td>
+      <td>Return Zero</td>
+      <td>0</td>
+      <td><br>
+      </td>
+    </tr>
+    <tr>
+      <td><br>
+      </td>
+      <td><br>
+      </td>
+      <td><br>
+      </td>
+      <td><br>
+      </td>
+      <td><br>
+      </td>
+    </tr>
+    <tr>
+      <td>Return Boolean</td>
+      <td>Return Value Should Be</td>
+      <td>Return Boolean True</td>
+      <td>True</td>
+      <td><br>
+      </td>
+    </tr>
+    <tr>
+      <td><br>
+      </td>
+      <td>Return Value Should Be</td>
+      <td>Return Boolean False</td>
+      <td>False</td>
+      <td><br>
+      </td>
+    </tr>
+    <tr>
+      <td><br>
+      </td>
+      <td><br>
+      </td>
+      <td><br>
+      </td>
+      <td><br>
+      </td>
+      <td><br>
+      </td>
+    </tr>
+    <tr>
+      <td>Return Nothing</td>
+      <td>[Documentation]</td>
+      <td>None/nil/null is not supported by all XML-RPC versions</td>
+      <td>and thus it is converted to an empty string</td>
+      <td><br>
+      </td>
+    </tr>
+    <tr>
+      <td><br>
+      </td>
+      <td>Return Value Should Be</td>
+      <td>Return Nothing</td>
+      <td>''</td>
+      <td><br>
+      </td>
+    </tr>
+    <tr>
+      <td><br>
+      </td>
+      <td><br>
+      </td>
+      <td><br>
+      </td>
+      <td><br>
+      </td>
+      <td><br>
+      </td>
+    </tr>
+    <tr>
+      <td>Return Arbitrary Object</td>
+      <td>[Documentation]</td>
+      <td>Arbitraty objects cannot be transferred over XML-RPC </td>
+      <td>and thus only their string presentation is returned</td>
+      <td><br>
+      </td>
+    </tr>
+    <tr>
+      <td><br>
+      </td>
+      <td>Return Value Should Be</td>
+      <td>Return Object</td>
+      <td>'&lt;MyObject&gt;'</td>
+      <td><br>
+      </td>
+    </tr>
+    <tr>
+      <td><br>
+      </td>
+      <td><br>
+      </td>
+      <td><br>
+      </td>
+      <td><br>
+      </td>
+      <td><br>
+      </td>
+    </tr>
+    <tr>
+      <td>Return List</td>
+      <td>Return Value Should Be</td>
+      <td>Return List</td>
+      <td>['One', -2, False]</td>
+      <td><br>
+      </td>
+    </tr>
+    <tr>
+      <td><br>
+      </td>
+      <td>Return Value Should Be</td>
+      <td>Return Empty List</td>
+      <td>[]</td>
+      <td><br>
+      </td>
+    </tr>
+    <tr>
+      <td>Return List Containing None</td>
+      <td>Return Value Should Be</td>
+      <td>Return List Containing None</td>
+      <td>['']</td>
+      <td><br>
+      </td>
+    </tr>
+    <tr>
+      <td>Return List Containing Arbitrary Objects</td>
+      <td>Return Value Should Be</td>
+      <td>Return List Containing Objects</td>
+      <td>['&lt;MyObject1&gt;', '&lt;MyObject2&gt;']</td>
+      <td><br>
+      </td>
+    </tr>
+    <tr>
+      <td>Return Nested List</td>
+      <td>Return Value Should Be</td>
+      <td>Return Nested List</td>
+      <td>[ [True, False], [[1, '', '&lt;MyObject&gt;', {}]] ]</td>
+      <td><br>
+      </td>
+    </tr>
+    <tr>
+      <td><br>
+      </td>
+      <td><br>
+      </td>
+      <td><br>
+      </td>
+      <td><br>
+      </td>
+      <td><br>
+      </td>
+    </tr>
+    <tr>
+      <td>Return Tuple</td>
+      <td>[Documentation]</td>
+      <td>Tuples are converted to lists</td>
+      <td><br>
+      </td>
+      <td><br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;"><br>
+      </td>
+      <td style="vertical-align: top;">[Tags]<br>
+      </td>
+      <td style="vertical-align: top;">python<br>
+      </td>
+      <td style="vertical-align: top;"><br>
+      </td>
+      <td style="vertical-align: top;"><br>
+      </td>
+    </tr>
+    <tr>
+      <td><br>
+      </td>
+      <td>Return Value Should Be</td>
+      <td>Return Tuple</td>
+      <td>[1, 'two', True]</td>
+      <td><br>
+      </td>
+    </tr>
+    <tr>
+      <td><br>
+      </td>
+      <td>Return Value Should Be</td>
+      <td>Return Empty Tuple</td>
+      <td>[]</td>
+      <td><br>
+      </td>
+    </tr>
+    <tr>
+      <td><br>
+      </td>
+      <td>Return Value Should Be</td>
+      <td>Return Nested Tuple</td>
+      <td>[ [True, False], [[1, '', '&lt;MyObject&gt;', {}]] ]</td>
+      <td><br>
+      </td>
+    </tr>
+    <tr>
+      <td><br>
+      </td>
+      <td><br>
+      </td>
+      <td><br>
+      </td>
+      <td><br>
+      </td>
+      <td><br>
+      </td>
+    </tr>
+    <tr>
+      <td>Return Dictionary</td>
+      <td>Return Value Should Be</td>
+      <td>Return&nbsp;Dictionary</td>
+      <td>{'one': 1, 'true': True}</td>
+      <td><br>
+      </td>
+    </tr>
+    <tr>
+      <td><br>
+      </td>
+      <td>Return Value Should Be</td>
+      <td>Return Empty&nbsp;Dictionary</td>
+      <td>{}</td>
+      <td><br>
+      </td>
+    </tr>
+    <tr>
+      <td><br>
+      </td>
+      <td><br>
+      </td>
+      <td><br>
+      </td>
+      <td><br>
+      </td>
+      <td><br>
+      </td>
+    </tr>
+    <tr>
+      <td>Return Dictionary With Non-String Keys</td>
+      <td>[Documentation]</td>
+      <td>XML-RPC supports only strings as keys so must convert them </td>
+      <td><br>
+      </td>
+      <td><br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;"><br>
+      </td>
+      <td style="vertical-align: top;">[Tags]<br>
+      </td>
+      <td style="vertical-align: top;">python<br>
+      </td>
+      <td style="vertical-align: top;"><br>
+      </td>
+      <td style="vertical-align: top;"><br>
+      </td>
+    </tr>
+    <tr>
+      <td><br>
+      </td>
+      <td>Return Value Should Be</td>
+      <td>Return&nbsp;Dictionary&nbsp;With Non String Keys</td>
+      <td>{'1': 2, 'False': True}</td>
+      <td><br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;">Return Dictionary With
+Non-String Keys</td>
+      <td style="vertical-align: top;">[Tags]<br>
+      </td>
+      <td style="vertical-align: top;">ruby<br>
+      </td>
+      <td style="vertical-align: top;"><br>
+      </td>
+      <td style="vertical-align: top;"><br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;"><br>
+      </td>
+      <td style="vertical-align: top;">Return Value Should Be</td>
+      <td style="vertical-align: top;">Return&nbsp;Dictionary&nbsp;With
+Non String Keys</td>
+      <td style="vertical-align: top;">{'1': 2, 'false': True}</td>
+      <td style="vertical-align: top;"><br>
+      </td>
+    </tr>
+    <tr>
+      <td><br>
+      </td>
+      <td><br>
+      </td>
+      <td><br>
+      </td>
+      <td><br>
+      </td>
+      <td><br>
+      </td>
+    </tr>
+    <tr>
+      <td>Return Dictionary Containing None</td>
+      <td>Return Value Should Be</td>
+      <td>Return Dictionary Containing None</td>
+      <td>{'As value': '', '': 'As key'}</td>
+      <td><br>
+      </td>
+    </tr>
+    <tr>
+      <td>Return Dictionary Containing Objects</td>
+      <td>Return Value Should Be</td>
+      <td>Return Dictionary Containing Objects</td>
+      <td>{'As value': '&lt;MyObject1&gt;', '&lt;MyObject2&gt;': 'As
+key'}</td>
+      <td><br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;">Return Nested Dictionary</td>
+      <td style="vertical-align: top;">[Tags]<br>
+      </td>
+      <td style="vertical-align: top;">python<br>
+      </td>
+      <td style="vertical-align: top;"><br>
+      </td>
+      <td style="vertical-align: top;"><br>
+      </td>
+    </tr>
+    <tr>
+      <td><br>
+      </td>
+      <td>Return Value Should Be</td>
+      <td>Return Nested Dictionary</td>
+      <td>{'1': {'True': False},<br>
+&nbsp; '2': {'A': {'n': ''},<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp; 'B': {'o': '&lt;MyObject&gt;',
+'e': {}}} }</td>
+      <td><br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;">Return Nested Dictionary</td>
+      <td style="vertical-align: top;">[Tags]</td>
+      <td style="vertical-align: top;">ruby<br>
+      </td>
+      <td style="vertical-align: top;"><br>
+      </td>
+      <td style="vertical-align: top;"><br>
+      </td>
+    </tr>
+    <tr>
+      <td><br>
+      </td>
+      <td>Return Value Should Be</td>
+      <td>Return Nested Dictionary</td>
+      <td>{'1': {'true': False},<br>
+&nbsp; '2': {'A': {'n': ''},<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp; 'B': {'o': '&lt;MyObject&gt;',
+'e': {}}} }</td>
+      <td><br>
+      </td>
+    </tr>
+    <tr>
+      <td><br>
+      </td>
+      <td><br>
+      </td>
+      <td><br>
+      </td>
+      <td><br>
+      </td>
+      <td><br>
+      </td>
+    </tr>
   </tbody>
 </table>
-
-
 <table border="1">
-
-  <colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
-  <thead>
-  <tr>
-
+  <colgroup span="99"><col class="name"><col class="action"><col
+ class="arg" span="3"></colgroup> <thead> <tr>
     <th>Keyword</th>
-
     <th>Action</th>
-
     <th>Argument</th>
-
     <th>Argument</th>
-
     <th>Argument</th>
-
-  </tr><tr><td>Return Value Should Be</td><td>[Arguments]</td><td>${keyword}</td><td>${expected}</td><td></td></tr><tr><td></td><td>${actual} = </td><td>Run Keyword</td><td>${keyword}</td><td></td></tr><tr><td></td><td>${expected} =</td><td>Evaluate</td><td>${expected}</td><td></td></tr><tr><td></td><td>Should Be Equal</td><td>${actual}</td><td>${expected}</td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr>
-
-  </thead>
-  <tbody>
-
-    
-
-    
-
+  </tr>
+  <tr>
+    <td>Return Value Should Be</td>
+    <td>[Arguments]</td>
+    <td>${keyword}</td>
+    <td>${expected}</td>
+    <td><br>
+    </td>
+  </tr>
+  <tr>
+    <td><br>
+    </td>
+    <td>${actual} = </td>
+    <td>Run Keyword</td>
+    <td>${keyword}</td>
+    <td><br>
+    </td>
+  </tr>
+  <tr>
+    <td><br>
+    </td>
+    <td>${expected} =</td>
+    <td>Evaluate</td>
+    <td>${expected}</td>
+    <td><br>
+    </td>
+  </tr>
+  <tr>
+    <td><br>
+    </td>
+    <td>Should Be Equal</td>
+    <td>${actual}</td>
+    <td>${expected}</td>
+    <td><br>
+    </td>
+  </tr>
+  <tr>
+    <td><br>
+    </td>
+    <td><br>
+    </td>
+    <td><br>
+    </td>
+    <td><br>
+    </td>
+    <td><br>
+    </td>
+  </tr>
+  <tr>
+    <td><br>
+    </td>
+    <td><br>
+    </td>
+    <td><br>
+    </td>
+    <td><br>
+    </td>
+    <td><br>
+    </td>
+  </tr>
+  <tr>
+    <td><br>
+    </td>
+    <td><br>
+    </td>
+    <td><br>
+    </td>
+    <td><br>
+    </td>
+    <td><br>
+    </td>
+  </tr>
+  </thead> <tbody>
   </tbody>
 </table>
-
-
-</body></html>
+</body>
+</html>
