@@ -63,9 +63,17 @@ class RobotRemoteServer<XMLRPC::Server
     if [String, Integer, Fixnum, Float, TrueClass, FalseClass].include?(ret.class)
       return ret
     elsif ret.class == Array
-      return ret   # TODO: Handle internal values
+      new_ret = []
+      ret.each {|item|
+        new_ret.push(handle_return_value(item))
+      }
+      return new_ret   # TODO: Handle internal values
     elsif ret.class == Hash
-      return ret   # TODO: Handle internal values
+      new_ret = {}
+      ret.keys.each {|key|
+        new_ret[key.to_s] = handle_return_value(ret[key])
+      }
+      return new_ret   # TODO: Handle internal values
     else
       return ret.to_s
     end

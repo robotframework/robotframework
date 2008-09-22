@@ -235,8 +235,8 @@ class RubyLibraryExample
   end
 
   def return_nested_dictionary
-#    return { 1=>{true=>false},
-#             2=>{'A'=>{'n'=>nil}, 'B'=>{'o'=>MyObject.new, 'e'=>{}}} }
+    return { 1=>{true=>false},
+             2=>{'A'=>{'n'=>nil}, 'B'=>{'o'=>MyObject.new, 'e'=>{}}} }
   end
 
   @@attribute = "Not keyword"
