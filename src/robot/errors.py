@@ -45,5 +45,5 @@ class ExecutionFailed(RobotError):
 class TimeoutError(RobotError):
     """Used when test execution is timed out"""
 
-
-
+class RemoteError(RobotError):
+    """Used by Remote library to report remote errors"""

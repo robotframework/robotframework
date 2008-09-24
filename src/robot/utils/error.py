@@ -23,16 +23,16 @@ if os.name == 'java':
     
 from match import eq
 from robottypes import is_str, unic
-from robot.errors import DataError, TimeoutError
+from robot.errors import DataError, TimeoutError, RemoteError
 
 
 _java_trace_re = re.compile('^\s+at (\w.+)')
-_ignored_java_trace = ['org.python.', 'robot.running.', 'robot$py.', 
-                       'sun.reflect.', 'java.lang.reflect.']
+_ignored_java_trace = ('org.python.', 'robot.running.', 'robot$py.', 
+                       'sun.reflect.', 'java.lang.reflect.')
 _ignore_trace_until = (os.path.join('robot','running','handlers.py'), '_run_handler')
-_generic_exceptions = ['AssertionError', 'AssertionFailedError', 'Exception', 
+_generic_exceptions = ('AssertionError', 'AssertionFailedError', 'Exception', 
                        'Error', 'RuntimeError', 'RuntimeException',
-                       'DataError', 'TimeoutError', 'ExecutionFailed']
+                       'DataError', 'TimeoutError', 'ExecutionFailed', 'RemoteError')
 
 
 def get_error_message():
@@ -130,7 +130,7 @@ def _get_python_message(exc_type, exc_value):
 
 
 def _get_python_details(exc_type, exc_tb):
-    if exc_type in [DataError, TimeoutError]:
+    if exc_type in (DataError, RemoteError, TimeoutError):
         return ''
     tb = traceback.extract_tb(exc_tb)
     for row, (path, _, func, _) in enumerate(tb):
