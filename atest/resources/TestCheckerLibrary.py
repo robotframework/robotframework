@@ -80,10 +80,12 @@ class TestCheckerLibrary:
             return
         if test.exp_message.startswith('REGEXP:'):
             pattern = test.exp_message.replace('REGEXP:', '', 1).strip()
-            if re.match(pattern, test.message):
+            if re.match('^%s$' % pattern, test.message, re.DOTALL):
                 return
         if test.exp_message.startswith('STARTS:'):
             start = test.exp_message.replace('STARTS:', '', 1).strip()
+            if start == '':
+                raise RuntimeError("Empty 'STARTS:' is not allowed")
             if test.message.startswith(start):
                 return
 
