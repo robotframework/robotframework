@@ -1,5 +1,6 @@
 import sys
 import inspect
+import traceback
 from StringIO import StringIO
 from SimpleXMLRPCServer import SimpleXMLRPCServer
 try:
@@ -40,16 +41,20 @@ class RobotRemoteServer(SimpleXMLRPCServer):
         return names + ['stop_remote_server']
 
     def run_keyword(self, name, args):
-        result = {'status':'PASS', 'return':'', 'message':'',  'output':''}
+        result = {'status':'PASS', 'return':'', 'message':'', 'output':''}
         self._intercept_stdout()
         try:
             return_value = self._get_keyword(name)(*args)
         except:
             result['status'] = 'FAIL'
-            result['message'] = self._get_error_message()
+            result['message'], trace = self._get_error_details()
         else:
             result['return'] = self._handle_return_value(return_value)
-        result['output'] = self._restore_stdout()
+            trace = None
+        output = self._restore_stdout()
+        if trace is not None:
+            output = output != '' and '%s\n*INFO* %s' % (output, trace) or trace
+        result['output'] = output
         return result
 
     def get_keyword_arguments(self, name):
@@ -74,17 +79,29 @@ class RobotRemoteServer(SimpleXMLRPCServer):
             return self.stop_remote_server
         return getattr(self._library, name)
 
-    def _get_error_message(self):
-        # TODO: Return details too
-        exc_type, exc_value, exc_tp = sys.exc_info()
+    def _get_error_details(self):
+        exc_type, exc_value, exc_tb = sys.exc_info()
+        if exc_type in (SystemExit, KeyboardInterrupt):
+            self._restore_stdout()
+            raise
+        return (self._get_error_message(exc_type, exc_value),
+                self._get_error_traceback(exc_tb))
+
+    def _get_error_message(self, exc_type, exc_value):
         name = exc_type.__name__
         message = str(exc_value)
         if not message:
             return name
-        if name in ['AssertionError', 'RuntimeError', 'Exception']:
+        if name in ('AssertionError', 'RuntimeError', 'Exception'):
             return message
         return '%s: %s' % (name, message)
-  
+
+    def _get_error_traceback(self, exc_tb):
+        # Latest entry originates from this class so it can be removed
+        entries = traceback.extract_tb(exc_tb)[1:]
+        trace = ''.join(traceback.format_list(entries))
+        return 'Traceback (most recent call last):\n' + trace
+
     def _handle_return_value(self, ret):
         if isinstance(ret, (basestring, int, long, float, bool)):
             return ret
