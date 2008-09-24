@@ -1,5 +1,10 @@
 import xmlrpclib
 
+try:
+    from robot.errors import RemoteError
+except ImportError:  # RemoteError available only after 2.0.2
+    RemoteError = AssertionError
+
 
 class Remote:
     
@@ -29,7 +34,7 @@ class Remote:
             raise RuntimeError(err.faultString)
         print result['output']
         if result['status'] != 'PASS':
-            raise AssertionError(result['message'])
+            raise RemoteError(result['message'])
         return result['return']
 
     def _handle_argument(self, arg):
