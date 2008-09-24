@@ -57,8 +57,6 @@ the message or the possible regular expression prefix is optional.
    =================  ===============  =========  =============================
 
 
-
-
 Defining expected log messages
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -85,6 +83,13 @@ also workstogether with specifying the expected error message with
 :msg:`FAIL`, but it that case :msg:`FAIL` and the expected error must
 be first.
 
+The log message can also be given as a regular expression pattern the
+same way as the `expected error message`__. Finally, to check that a
+keyword does not have a certain message, it is possible to use
+:msg:`NONE` in the place of the message.
+
+__ `Defining expected test status`_
+
 
 .. table:: Examples
    :class: example
@@ -110,5 +115,10 @@ be first.
    \                  Steps            \          \
    Status and Log     [Documentation]  FAIL       Expected error message
    \                  ...              LOG 1.2    Expected log message
+   \                  Steps            \          \
+   Regexp Message     [Documentation]  LOG 1      REGEXP: (Hello|Hi) world!
+   \                  Steps            \          \
+   No Message         [Documentation]  LOG 1:1    Test that we have only 1 msg
+   \                  ...              LOG 1:2    NONE
    \                  Steps            \          \
    =================  ===============  =========  =============================

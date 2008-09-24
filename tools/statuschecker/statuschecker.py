@@ -70,7 +70,7 @@ def _check_status(test, exp):
         else:
             test.message = ("Test was expected to FAIL but it PASSED. "
                             "Expected message:\n") + exp.message
-    elif not _messages_match(test, exp.message):
+    elif not _message_matches(test.message, exp.message):
         test.status = 'FAIL'
         test.message = ("Wrong error message.\n\nExpected:\n%s\n\nActual:\n%s\n"
                         % (exp.message, test.message))
@@ -78,41 +78,53 @@ def _check_status(test, exp):
         test.status = 'PASS'
         test.message = 'Original test failed as expected.'
         
-def  _messages_match(test, exp_message):
-    if exp_message == test.message:
+def  _message_matches(actual, expected):
+    if actual == expected:
         return True
-    if exp_message.startswith('REGEXP:'):
-        exp_pattern = '^%s$' % exp_message.replace('REGEXP:', '', 1).strip()
-        if re.match(exp_pattern, test.message):
+    if expected.startswith('REGEXP:'):
+        pattern = '^%s$' % expected.replace('REGEXP:', '', 1).strip()
+        if re.match(pattern, actual, re.DOTALL):
             return True
     return False
 
 def _check_logs(test, exp):
     for kw_indices, msg_index, level, message in exp.logs:
-        kw = _get_keyword(test, kw_indices)
         try:
-            msg = kw.messages[msg_index-1]
+            kw = test.keywords[kw_indices[0]]
+            for index in kw_indices[1:]:
+                kw = kw.keywords[index]
         except IndexError:
+            indices = '.'.join([ str(i+1) for i in kw_indices ])
             test.status = 'FAIL'
-            test.message = ("Keyword '%s' should have had at least %d log messages"\
-                            % (kw.name, msg_index))
-            return
-        if msg.level != level:
-            test.status = 'FAIL'
-            test.message = ("Wrong log level for keyword '%s'.\n\n"
-                            "Expected: %s\nActual: %s" % (kw.name, level, msg.level))
-            return
-        if msg.message.strip() != message:
-            test.status = 'FAIL'
-            test.message = ("Wrong log message for keyword '%s'.\n\n"
-                            "Expected:\n%s\n\nActual:\n%s" % (kw.name, message, msg.message))
+            test.message = ("Test '%s' does not have keyword with index '%s'"
+                            % (test.name, indices))
             return
 
-def _get_keyword(test, kw_indices):
-    kw = test.keywords[kw_indices[0]-1]
-    for index in kw_indices[1:]:
-        kw = kw.keywords[index-1]
-    return kw
+        if len(kw.messages) <= msg_index:
+            if message != 'NONE':
+                test.status = 'FAIL'
+                test.message = ("Keyword '%s' should have had at least %d "
+                                "messages" % (kw.name, msg_index+1))
+        else:
+            msg = kw.messages[msg_index]
+            if _check_log_level(msg.level, level, test, kw):
+                _check_log_message(msg.message.strip(), message, test, kw)
+
+def _check_log_level(actual, expected, test, kw):
+    if actual == expected:
+        return True
+    test.status = 'FAIL'
+    test.message = ("Wrong log level for keyword '%s'.\n\n"
+                    "Expected: %s\nActual: %s" % (kw.name, expected, actual))
+    return False
+
+def _check_log_message(actual, expected, test, kw):
+    if _message_matches(actual, expected):
+        return True
+    test.status = 'FAIL'
+    test.message = ("Wrong log message for keyword '%s'.\n\n"
+                    "Expected:\n%s\n\nActual:\n%s" % (kw.name, expected, actual))
+    return False
 
 
 class _Expected:
@@ -139,9 +151,9 @@ class _Expected:
         try:
             kw_indices, msg_index = index_str.split(':')
         except ValueError:
-            kw_indices, msg_index = index_str, '1'
-        kw_indices = [ int(index) for index in kw_indices.split('.') ]
-        return kw_indices, int(msg_index)
+            kw_indices, msg_index = index_str, '0'
+        kw_indices = [ int(index) - 1 for index in kw_indices.split('.') ]
+        return kw_indices, int(msg_index) - 1
             
     def _get_log_message(self, msg_str):
         try:
