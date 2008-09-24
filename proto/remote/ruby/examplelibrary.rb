@@ -10,7 +10,7 @@ class RubyLibraryExample
   end
 
   def logging(message, level='INFO')
-    puts '*'+ level + '* ' + message
+    puts "*#{level}* #{message}"
   end
 
   def returning
