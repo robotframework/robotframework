@@ -78,6 +78,11 @@ class RemoteTestLibrary:
     def custom_exception(self):
         raise MyException('My message')
 
+    def failure_deeper(self, rounds=10):
+        if rounds == 1:
+            raise RuntimeError('Finally failing')
+        self.failure_deeper(rounds-1)
+
     # Arguments counts
 
     def no_arguments(self):
