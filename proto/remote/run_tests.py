@@ -8,7 +8,7 @@ import os
 class Library:
 
     def __init__(self, lang):
-        ext = {'python': 'py', 'ruby': 'rb', 'perl': 'pl'}[lang]
+        ext = {'python': 'py', 'jython': 'py', 'ruby': 'rb', 'perl': 'pl'}[lang]
         cmd = '%s %s/examplelibrary.%s' % (lang, lang, ext)
         stdin, self._stdout, self._stderr = os.popen3(cmd)
         stdin.close()
@@ -25,14 +25,15 @@ if __name__ == '__main__':
     if len(sys.argv) < 2:
         raise "Will get an usage here..."
     lang = sys.argv[1]
-    lib = Library(lang)
+    include = lang if lang != 'jython' else 'python'
     args = 'test' if len(sys.argv) == 2 else ' '.join(sys.argv[2:])
+    lib = Library(lang)
     os.system('pybot --log none --report none --output logs/output.xml '
-              '--name %s --include %s %s' % (lang, lang, args))
+              '--name %s --include %s %s' % (lang, include, args))
     lib.stop()
     os.system('../../tools/statuschecker/statuschecker.py logs/output.xml')
-    rc = os.system('rebot --outputdir logs logs/output.xml')
+    rc = os.system('rebot --outputdir logs logs/output.xml') >> 8
     if rc == 0:
         print 'All tests passed'
     else:
-        print '%d test(s) failed' % (rc >> 8)
+        print '%d test%s failed' % (rc, 's' if rc != 1 else '')
