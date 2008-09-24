@@ -37,10 +37,26 @@ By default, all test cases are expected to :msg:`PASS` and have no
 message. Changing the expected status to :msg:`FAIL` is done by having
 the word :msg:`FAIL` (in uppercase) somewhere in the test case
 documentation. The expected error message must then be given after
-:msg:`FAIL`. The error message can also be specified as a regular
-expression by prefixing it with :msg:`REGEXP:`. Having spaces between
-the status, the message or the possible regular expression prefix is
-optional.
+:msg:`FAIL`.
+
+The error message can also be specified as a regular expression by
+prefixing it with :msg:`REGEXP:`. The specified regular expression
+must match the error message fully. Having spaces between the status,
+the message or the possible regular expression prefix is optional.
+
+.. table:: Examples
+   :class: example
+
+   =================  ===============  =========  =============================
+       Test Case           Action      Arguments           Arguments
+   =================  ===============  =========  =============================
+   Simple Example     [Documentation]  FAIL       Expected error message
+   \                  Steps            \          \
+   Regexp Example     [Documentation]  FAIL       REGEXP: (IOError|OSError): .*
+   \                  Steps            \          \
+   =================  ===============  =========  =============================
+
+
 
 
 Defining expected log messages
@@ -49,7 +65,7 @@ Defining expected log messages
 The expected keyword log messages can also be defined in the test case
 documentation using a syntax such as::
     
-     LOG x.y:z LEVEL Actual message
+   LOG x.y:z LEVEL Actual message
 
 The part before the colon is the number of the keyword to check. For
 example :msg:`1` means first keyword, :msg:`1.2` is the second child
@@ -64,15 +80,35 @@ Message level is specified before the actual message, and it can be
 any of the valid log levels in capital letters. If the level is not
 given it defaults to :msg:`INFO`.
 
-This syntax can be used multiple times to test multiple messages. It can be
-used together with :msg:`FAIL`, but it that case :msg:`FAIL` must be first.
-
-Examples::
-
-    LOG 1 Hello, world!
-    LOG 2.1:42 Some message LOG 2.2 Another message
-    LOG 2:2 WARN Warning, warning!
-    FAIL Error messagea LOG 1:2 Log message
+This syntax can be used multiple times to test multiple messages.  It
+also workstogether with specifying the expected error message with
+:msg:`FAIL`, but it that case :msg:`FAIL` and the expected error must
+be first.
 
 
+.. table:: Examples
+   :class: example
 
+   =================  ===============  =========  =============================
+       Test Case           Action      Arguments           Arguments
+   =================  ===============  =========  =============================
+   Simple Example     [Documentation]  LOG 1      Hello, world!
+   \                  Steps            \          \
+   Nested Keywords    [Documentation]  LOG 2.1    1st child of 2nd kw
+   \                  Steps            \          \
+   Message Index      [Documentation]  LOG 2:2    2nd msg of 2nd kw
+   \                  Steps            \          \
+   Nested and Index   [Documentation]  LOG 3.1:2  2nd msg of 3rd kw's 1st child
+   \                  Steps            \          \
+   Levels 1           [Documentation]  LOG 2      DEBUG Debug level
+   \                  Steps            \          \
+   Levels 2           [Documentation]  LOG 1.2:3  WARN Warning
+   \                  Steps            \          \
+   Multiple Messages  [Documentation]  LOG 1      First tested message
+   \                  ...              LOG 1.2    Second tested message
+   \                  ...              LOG 2.2.1  DEBUG Third tested message
+   \                  Steps            \          \
+   Status and Log     [Documentation]  FAIL       Expected error message
+   \                  ...              LOG 1.2    Expected log message
+   \                  Steps            \          \
+   =================  ===============  =========  =============================
