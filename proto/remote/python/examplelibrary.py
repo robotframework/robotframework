@@ -26,6 +26,58 @@ class RemoteTestLibrary:
         """This keyword returns a string 'returned string'."""
         return 'returned string'
 
+    # Logging
+
+    def one_message_without_level(self):
+        print 'Hello, world!'
+
+    def multiple_messages_with_different_levels(self):
+        print 'Info message'
+        print '*DEBUG* Debug message'
+        print '*INFO* Second info'
+        print 'this time with two lines'
+        print '*INFO* Third info'
+        print '*TRACE* This is ignored'
+        print '*WARN* Warning'
+
+    def logging_and_failing(self):
+        print '*INFO* This keyword will fail!'
+        print '*WARN* Run for your lives!!'
+        raise AssertionError('Too slow')
+
+    def logging_and_returning(self):
+        print 'Logged message'
+        return 'Returned value'
+
+    # Failures
+
+    def base_exception(self):
+        raise Exception('My message')
+
+    def exception_without_message(self):
+        raise Exception
+
+    def assertion_error(self):
+        raise AssertionError('Failure message')
+
+    def runtime_error(self):
+        raise RuntimeError('Error message')
+
+    def name_error(self):
+        non_existing
+
+    def attribute_error(self):
+        self.non_existing
+
+    def index_error(self):
+        [][0]
+
+    def zero_division(self):
+        1/0
+
+    def custom_exception(self):
+        raise MyException('My message')
+
     # Arguments counts
 
     def no_arguments(self):
@@ -190,7 +242,7 @@ class RemoteTestLibrary:
         return ( (True, False), [(1, None, MyObject(), {})] )
 
     def return_dictionary(self):
-        return {'one': 1, 'true': True}
+        return {'one': 1, 'spam': 'eggs'}
 
     def return_empty_dictionary(self):
         return {}
@@ -224,6 +276,9 @@ class MyObject:
         self.index = index
     def __str__(self):
         return '<MyObject%s>' % self.index
+
+class MyException(Exception):
+    pass
 
 
 if __name__ == '__main__':

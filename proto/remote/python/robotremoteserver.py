@@ -44,9 +44,9 @@ class RobotRemoteServer(SimpleXMLRPCServer):
         self._intercept_stdout()
         try:
             return_value = self._get_keyword(name)(*args)
-        except Exception, exp:
+        except:
             result['status'] = 'FAIL'
-            result['message'] = str(exp)
+            result['message'] = self._get_error_message()
         else:
             result['return'] = self._handle_return_value(return_value)
         result['output'] = self._restore_stdout()
@@ -73,6 +73,17 @@ class RobotRemoteServer(SimpleXMLRPCServer):
         if name == 'stop_remote_server':
             return self.stop_remote_server
         return getattr(self._library, name)
+
+    def _get_error_message(self):
+        # TODO: Return details too
+        exc_type, exc_value, exc_tp = sys.exc_info()
+        name = exc_type.__name__
+        message = str(exc_value)
+        if not message:
+            return name
+        if name in ['AssertionError', 'RuntimeError', 'Exception']:
+            return message
+        return '%s: %s' % (name, message)
   
     def _handle_return_value(self, ret):
         if isinstance(ret, (basestring, int, long, float, bool)):
