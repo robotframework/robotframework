@@ -17,6 +17,28 @@ class RubyLibraryExample
     'returned string'
   end
 
+  # Errors
+
+  def name_error
+    non_existing
+  end
+
+  def attribute_error
+    @non_existing
+  end
+
+  def index_error
+    [][0]
+  end
+
+  def zero_division
+    1/0
+  end
+
+  def custom_exception
+    raise MyException, 'My message'
+  end
+
   # Argument counts
 
   def no_arguments
@@ -99,7 +121,7 @@ class RubyLibraryExample
   end
 
   def list_as_argument(arg)
-    should_be_equal(arg, return_list)
+    should_be_equal(arg, ['One', -2, false])
   end
 
   def empty_list_as_argument(arg)
@@ -120,7 +142,7 @@ class RubyLibraryExample
   end
 
   def dictionary_as_argument(arg)
-    should_be_equal(arg, return_dictionary)
+    should_be_equal(arg, {'one'=>1, 'spam'=>'eggs'})
   end
 
   def empty_dictionary_as_argument(arg)
@@ -148,54 +170,54 @@ class RubyLibraryExample
   # Return values
 
   def return_string
-    return 'Hello, world!'
-  end
-
-  def return_unicode_string
-    return 'TODO'
+    'Hello, world!'
   end
 
   def return_empty_string
-    return ''
+    ''
+  end
+
+  def return_symbol
+    :symbol
   end
 
   def return_integer
-    return 42
+    42
   end
   
   def return_negative_integer
-    return -1
+    -1
   end
   
   def return_float
-    return 3.14
+    3.14
   end
 
   def return_negative_float
-    return -0.5
+    -0.5
   end
 
   def return_zero
-    return 0
+    0
   end
   
   def return_boolean_true
-    return true
+    true
   end
 
   def return_boolean_false
-    return false
+    false
   end
 
   def return_nothing
   end
   
   def return_object
-    return MyObject.new
+    MyObject.new
   end
 
   def return_list
-    ['One', -2, false]
+    [:One, -2, false]
   end
 
   def return_empty_list
@@ -211,32 +233,32 @@ class RubyLibraryExample
   end
 
   def return_nested_list
-    return [ [true, false], [[1, nil, MyObject.new, {}]] ]
+    [ [true, false], [[1, nil, MyObject.new, {}]] ]
   end
         
   def return_dictionary
-    return {'one'=>1, 'true'=>true}
+    {'one'=>1, :spam=>:eggs}
   end
 
   def return_empty_dictionary
-    return {}
+    {}
   end
 
   def return_dictionary_with_non_string_keys
-    return {1=>2, false=>true}
+    {1=>2, false=>true}
   end
 
   def return_dictionary_containing_none
-    return {'As value'=>nil, nil=>'As key'}
+    {'As value'=>nil, nil=>'As key'}
   end
 
   def return_dictionary_containing_objects
-    return {'As value'=>MyObject.new(1), MyObject.new(2)=>'As key'}
+    {'As value'=>MyObject.new(1), MyObject.new(2)=>'As key'}
   end
 
   def return_nested_dictionary
-    return { 1=>{true=>false},
-             2=>{'A'=>{'n'=>nil}, 'B'=>{'o'=>MyObject.new, 'e'=>{}}} }
+    { 1=>{true=>false},
+      2=>{'A'=>{'n'=>nil}, 'B'=>{'o'=>MyObject.new, 'e'=>{}}} }
   end
 
   @@attribute = "Not keyword"
@@ -260,10 +282,12 @@ class MyObject
     @index = index
   end
   def to_s
-    return "<MyObject#{@index}>"
+    "<MyObject#{@index}>"
   end
 end
 
+class MyException<Exception
+end
 
 require "ruby/robotremoteserver"
 RobotRemoteServer.new(RubyLibraryExample.new, *ARGV)
