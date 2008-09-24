@@ -30,12 +30,12 @@ file and it is edited in place.
 By default all test cases are expected to 'PASS' and have no message. Changing
 the expected status to 'FAIL' is done by having word 'FAIL' (in uppercase)
 somewhere in the test case documentation. Expected error message must then be
-given after 'FAIL'. Error message can also be specified as a regular expression
-by prefixing it with 'REGEXP:'. Having spaces between the status, the message
-or the possible regexp prefix is optional. Everything before 'FAIL' is ignored.
+given after 'FAIL'. Error message can also be specified as a regular
+expression by prefixing it with string 'REGEXP:'. 
 
-This tool also allows testing the created log messages. This a bit advanced
-functionality is described in tool documentation.
+This tool also allows testing the created log messages. They are specified
+using a syntax 'LOG x.y:z LEVEL Actual message', which is described in the
+tool documentation.
 """
 
 import re
@@ -82,7 +82,7 @@ def  _messages_match(test, exp_message):
     if exp_message == test.message:
         return True
     if exp_message.startswith('REGEXP:'):
-        exp_pattern = exp_message.replace('REGEXP:', '', 1).strip()
+        exp_pattern = '^%s$' % exp_message.replace('REGEXP:', '', 1).strip()
         if re.match(exp_pattern, test.message):
             return True
     return False
@@ -99,13 +99,13 @@ def _check_logs(test, exp):
             return
         if msg.level != level:
             test.status = 'FAIL'
-            test.message = ("Wrong keyword log message level for keyword '%s'"
-                            "\n\nExpected:%s Actual:%s" % (kw.name, level, msg.level))
+            test.message = ("Wrong log level for keyword '%s'.\n\n"
+                            "Expected: %s\nActual: %s" % (kw.name, level, msg.level))
             return
-        if msg.message != message:
+        if msg.message.strip() != message:
             test.status = 'FAIL'
-            test.message = ("Wrong keyword log message for keyword '%s'\n\n"
-                            "Expected:\n%s\n\nActual:\n%s\n" % (kw.name, message, msg.message))
+            test.message = ("Wrong log message for keyword '%s'.\n\n"
+                            "Expected:\n%s\n\nActual:\n%s" % (kw.name, message, msg.message))
             return
 
 def _get_keyword(test, kw_indices):
