@@ -1,9 +1,10 @@
-- exceptions testit
 - get args/docs -virheet
 - xmlrpc-virheet
-- stderr
 - big int & too big int
 - big float
 - big string
 - same testi kahdesti
-- ruby :label -testit
+- copyrights
+
+doc:
+- stderr
