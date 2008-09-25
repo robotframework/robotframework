@@ -2,6 +2,7 @@ require 'xmlrpc/server'
 require 'xmlrpc/utils'
 require 'stringio'
 
+
 class RobotRemoteServer<XMLRPC::Server
   
   def initialize(library, port=8270)
@@ -22,15 +23,16 @@ class RobotRemoteServer<XMLRPC::Server
 
   def run_keyword(name, args)
     intercept_stdout()
-    result = {'status'=>'PASS', 'return'=>'', 'message'=>'', 'output'=>''}
+    result = {:status=>'PASS', :return=>'', :output=>'',
+              :error=>'', :traceback=>''}
     begin
       return_value = @library.send(name, *args)
-      result['return'] = handle_return_value(return_value)
+      result[:return] = handle_return_value(return_value)
     rescue => exception
-      result['status'] = 'FAIL'
-      result['message'] = exception.message
+      result[:status] = 'FAIL'
+      result[:error] = exception.message
     end
-    result['output'] = restore_stdout
+    result[:output] = restore_stdout
     return result
   end
 
