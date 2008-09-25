@@ -20,9 +20,10 @@ class RobotRemoteServer(SimpleXMLRPCServer):
         self.register_function(self.get_keyword_arguments)
         self.register_function(self.get_keyword_documentation)
         self.register_function(self.stop_remote_server)
-        if signal:
-            callback = lambda signum, frame: self.stop_remote_server()
+        callback = lambda signum, frame: self.stop_remote_server()
+        if hasattr(signal, 'SIGHUP'):
             signal.signal(signal.SIGHUP, callback)
+        if hasattr(signal, 'SIGINT'):
             signal.signal(signal.SIGINT, callback)
         self.serve_forever()
 
