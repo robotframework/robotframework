@@ -100,7 +100,7 @@ class RobotRemoteServer(SimpleXMLRPCServer):
         return 'Traceback (most recent call last):\n' + trace
 
     def _handle_return_value(self, ret):
-        if isinstance(ret, (basestring, int, long, float, bool)):
+        if isinstance(ret, (basestring, int, long, float)):
             return ret
         if isinstance(ret, (tuple, list)):
             return [ self._handle_return_value(item) for item in ret ]
