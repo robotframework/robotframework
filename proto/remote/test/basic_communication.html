@@ -137,9 +137,9 @@ th {
 
     <tr>
 
-      <td></td>
+      <td>${COUNT} = </td>
 
-      <td></td>
+      <td>100</td>
 
       <td></td>
 
@@ -209,7 +209,7 @@ th {
     </tr>
     <tr><td>Failing</td><td>[Documentation]</td><td>FAIL</td><td>This is the error we get</td><td></td></tr><tr><td></td><td>Failing</td><td>This is the error we get</td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Logging</td><td>[Documentation]</td><td>LOG 1</td><td>INFO<br></td><td>Hello, world!</td></tr><tr><td></td><td>...</td><td>LOG 2</td><td>WARN<br></td><td>Warning, warning!!</td></tr><tr><td></td><td>Logging</td><td>Hello, world!</td><td></td><td></td></tr><tr><td></td><td>Logging</td><td>Warning, warning!!</td><td>WARN</td><td></td></tr>
     <tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Returning</td><td>${ret} =</td><td>Returning</td><td></td><td></td></tr>
-    <tr><td></td><td>Should Be Equal</td><td>${ret}</td><td>returned string</td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Use Remote Keyword Multiple Times</td><td>[Documentation]</td><td>LOG 1.1.1 Round 1</td><td>LOG 1.2.1 Round 2</td><td>LOG 1.100.1 Round 100</td></tr><tr><td></td><td>: FOR </td><td>${i}</td><td>IN RANGE</td><td>100</td></tr><tr><td></td><td></td><td>Logging</td><td>Round ${i + 1}</td><td></td></tr>
+    <tr><td></td><td>Should Be Equal</td><td>${ret}</td><td>returned string</td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Use Remote Keyword Multiple Times</td><td>[Documentation]</td><td>LOG 1.1.1&nbsp;</td><td>Round 1</td><td><br></td></tr><tr><td></td><td>...</td><td>LOG 1.2.1&nbsp;</td><td>Round 2</td><td></td></tr><tr><td></td><td>...</td><td>LOG 1.${COUNT}.1&nbsp; </td><td>Round&nbsp;${COUNT}</td><td></td></tr><tr><td></td><td>: FOR </td><td>${i}</td><td>IN RANGE</td><td>${COUNT} </td></tr><tr><td></td><td></td><td>Logging</td><td>Round ${i + 1}</td><td></td></tr>
 
   </tbody>
 </table>
