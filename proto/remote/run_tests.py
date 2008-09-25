@@ -40,6 +40,7 @@ if __name__ == '__main__':
     os.system('pybot --log none --report none --output logs/output.xml '
               '--name %s --include %s %s' % (lang, include, args))
     lib.stop()
+    print
     os.system('../../tools/statuschecker/statuschecker.py logs/output.xml')
     rc = os.system('rebot --outputdir logs logs/output.xml') >> 8
     if rc == 0:
