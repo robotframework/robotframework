@@ -106,24 +106,27 @@ def _check_logs(test, exp):
                 test.message = ("Keyword '%s' should have had at least %d "
                                 "messages" % (kw.name, msg_index+1))
         else:
-            msg = kw.messages[msg_index]
-            if _check_log_level(msg.level, level, test, kw):
-                _check_log_message(msg.message.strip(), message, test, kw)
+            if _check_log_level(level, test, kw, msg_index):
+                _check_log_message(message, test, kw, msg_index)
 
-def _check_log_level(actual, expected, test, kw):
+def _check_log_level(expected, test, kw, index):
+    actual = kw.messages[index].level
     if actual == expected:
         return True
     test.status = 'FAIL'
-    test.message = ("Wrong log level for keyword '%s'.\n\n"
-                    "Expected: %s\nActual: %s" % (kw.name, expected, actual))
+    test.message = ("Wrong level for message %d of keyword '%s'.\n\n"
+                    "Expected: %s\nActual: %s" 
+                    % (index+1, kw.name, expected, actual))
     return False
 
-def _check_log_message(actual, expected, test, kw):
+def _check_log_message(expected, test, kw, index):
+    actual = kw.messages[index].message.strip()
     if _message_matches(actual, expected):
         return True
     test.status = 'FAIL'
-    test.message = ("Wrong log message for keyword '%s'.\n\n"
-                    "Expected:\n%s\n\nActual:\n%s" % (kw.name, expected, actual))
+    test.message = ("Wrong content for message %d of keyword '%s'.\n\n"
+                    "Expected:\n%s\n\nActual:\n%s" 
+                    % (index+1, kw.name, expected, actual))
     return False
 
 
