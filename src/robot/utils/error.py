@@ -68,7 +68,7 @@ def get_error_details():
         details = _get_java_details(exc_value)
     else:
         message = _get_python_message(exc_type, exc_value)
-        details = _get_python_details(exc_type, exc_traceback)
+        details = _get_python_details(exc_value, exc_traceback)
     return message, details
 
 
@@ -129,9 +129,11 @@ def _get_python_message(exc_type, exc_value):
     return _format_message(name, msg)
 
 
-def _get_python_details(exc_type, exc_tb):
-    if exc_type in (DataError, RemoteError, TimeoutError):
+def _get_python_details(exc_value, exc_tb):
+    if isinstance(exc_value, (DataError, TimeoutError)):
         return ''
+    if isinstance(exc_value, RemoteError):
+        return exc_value.traceback
     tb = traceback.extract_tb(exc_tb)
     for row, (path, _, func, _) in enumerate(tb):
         if path.endswith(_ignore_trace_until[0]) and func == _ignore_trace_until[1]:

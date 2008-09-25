@@ -47,3 +47,7 @@ class TimeoutError(RobotError):
 
 class RemoteError(RobotError):
     """Used by Remote library to report remote errors"""
+    def __init__(self, message, traceback):
+        RobotError.__init__(self, message)
+        self.traceback = traceback
+
