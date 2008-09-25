@@ -2,8 +2,8 @@ import xmlrpclib
 
 try:
     from robot.errors import RemoteError
-except ImportError:  # RemoteError available only after 2.0.2
-    RemoteError = AssertionError
+except ImportError:
+    RemoteError = None
 
 
 class Remote:
@@ -13,7 +13,7 @@ class Remote:
     def __init__(self, uri='http://localhost:8270'):
         if '://' not in uri:
             uri = 'http://' + uri
-        self._library = xmlrpclib.Server(uri)  #.robotframework
+        self._library = xmlrpclib.Server(uri)
 
     def get_keyword_names(self):
         # TODO: Support also getKeywordNames (and runKeyword etc.)
@@ -34,7 +34,7 @@ class Remote:
             raise RuntimeError(err.faultString)
         print result['output']
         if result['status'] != 'PASS':
-            raise RemoteError(result['message'])
+            self._raise_failed(result['error'], result.get('traceback', ''))
         return result['return']
 
     def _handle_argument(self, arg):
@@ -51,3 +51,11 @@ class Remote:
         if item is None:
             return ''
         return str(item)
+
+    def _raise_failed(self, message, traceback):
+        if RemoteError is not None:
+            raise RemoteError(message, traceback)
+        # Support for Robot Framework 2.0.2 and earlier.
+        print '*INFO*', traceback
+        raise AssertionError(message)
+

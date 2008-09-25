@@ -41,20 +41,17 @@ class RobotRemoteServer(SimpleXMLRPCServer):
         return names + ['stop_remote_server']
 
     def run_keyword(self, name, args):
-        result = {'status':'PASS', 'return':'', 'message':'', 'output':''}
+        result = {'status':'PASS', 'return':'', 'error':'', 
+                  'traceback': '', 'output':''}
         self._intercept_stdout()
         try:
             return_value = self._get_keyword(name)(*args)
         except:
             result['status'] = 'FAIL'
-            result['message'], trace = self._get_error_details()
+            result['error'], result['traceback'] = self._get_error_details()
         else:
             result['return'] = self._handle_return_value(return_value)
-            trace = None
-        output = self._restore_stdout()
-        if trace is not None:
-            output = output != '' and '%s\n*INFO* %s' % (output, trace) or trace
-        result['output'] = output
+        result['output'] = self._restore_stdout()
         return result
 
     def get_keyword_arguments(self, name):
