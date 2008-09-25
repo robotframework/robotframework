@@ -1,7 +1,15 @@
+#!/usr/bin/env python
+"""Script for running the remote library tests against different servers.
+
+Usage: run_tests.py lang [[options] datasources]
+
+Currently lang can be 'python' or 'ruby'.
+By default, all tests under 'test' directory are run, but this can be changed
+by providing options, which can be any Robot Framework command line options.
+"""
 import sys
 import xmlrpclib
 import time
-import socket
 import os
 
 
@@ -23,7 +31,8 @@ class Library:
 
 if __name__ == '__main__':
     if len(sys.argv) < 2:
-        raise "Will get an usage here..."
+        print __doc__
+        sys.exit(1)
     lang = sys.argv[1]
     include = lang if lang != 'jython' else 'python'
     args = 'test' if len(sys.argv) == 2 else ' '.join(sys.argv[2:])
@@ -37,3 +46,4 @@ if __name__ == '__main__':
         print 'All tests passed'
     else:
         print '%d test%s failed' % (rc, 's' if rc != 1 else '')
+
