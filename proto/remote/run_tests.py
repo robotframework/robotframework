@@ -11,16 +11,31 @@ import sys
 import xmlrpclib
 import time
 import os
+import socket
 
 
 class Library:
 
     def __init__(self, lang):
         ext = {'python': 'py', 'jython': 'py', 'ruby': 'rb', 'perl': 'pl'}[lang]
-        cmd = '%s %s/examplelibrary.%s' % (lang, lang, ext)
+        dirname = lang if lang != 'jython' else 'python'
+        cmd = '%s %s/examplelibrary.%s' % (lang, dirname, ext)
         stdin, self._stdout, self._stderr = os.popen3(cmd)
         stdin.close()
-        time.sleep(1)  # TODO: Test server is available instead of sleeping
+        self.test(attempts=10)
+        
+    def test(self, port=8270, attempts=1):
+        url = 'http://localhost:%s' % port
+        for i in range(attempts):
+            try:
+                server = xmlrpclib.ServerProxy(url)
+                server.get_keyword_names()
+            except socket.error:
+                time.sleep(1)
+            else:
+                print "Server at %s seems to work OK." % url
+                return
+        print "Failed to connect to server at %s with %d attempts." % (url, attempts)
 
     def stop(self, port=8270):
         server = xmlrpclib.ServerProxy('http://localhost:%s' % port)
@@ -47,4 +62,3 @@ if __name__ == '__main__':
         print 'All tests passed'
     else:
         print '%d test%s failed' % (rc, 's' if rc != 1 else '')
-
