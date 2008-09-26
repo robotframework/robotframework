@@ -1,0 +1,235 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+
+  <style type="text/css">
+html {
+  font-family: Arial,Helvetica,sans-serif;
+  background-color: white;
+  color: black;
+}
+p {
+  max-width: 60em;
+}
+table {
+  border-collapse: collapse;
+  empty-cells: show;
+  margin: 1em 0em;
+  border: 0.1em solid black;
+}
+th, td {
+  border-style: solid;
+  border-width: 0.05em 0.1em;
+  border-color: black;
+  padding: 0.1em 0.2em;
+  height: 1.5em;
+}
+th {
+  background-color: rgb(192, 192, 192);
+  color: black;
+  border-width: 0.1em;
+  font-weight: bold;
+  text-align: center;
+  text-transform: capitalize;
+  letter-spacing: 0.1em;
+}
+/* Widths of named columns */
+col.name {
+  width: 10em;
+}
+.action, .value, .arg {
+  width: 15em;
+}
+/* Properties for the name column 
+- td:first-child should work in CSS 2.1 avare browsers (tested in Firefox)
+- col.name is against specs but works in IE
+*/
+td:first-child, col.name {
+  background-color: rgb(240, 240, 240);
+  text-transform: capitalize;
+  letter-spacing: 0.1em;
+}
+/* required for IE */
+th {
+  font-style: normal;
+}
+  </style>
+  <title>Robot Test Cases</title></head>
+<body>
+
+<h1>Robot Test Cases</h1>
+
+
+<table border="1">
+
+  <colgroup span="99"><col class="name"><col class="value" span="4"></colgroup>
+  <thead>
+  <tr>
+
+    <th>Setting</th>
+
+    <th>Value</th>
+
+    <th>Value</th>
+
+    <th>value</th>
+
+    <th>Value</th>
+
+  </tr>
+
+  </thead>
+  <tbody>
+
+    <tr><td>Documentation</td><td>Tests in this suite have two different purposes:\n</td><td>1) Starting, importing and stopping remote libraries using 'Start Process', 'Import Library', and 'Stop Remote Server'.\n</td><td>2) Using keywords from a library which doesn't have get_kw_args/doc methods and which returns only minimal result dictionary.</td><td></td></tr><tr><td>Library</td><td>Operating System</td><td></td><td></td><td></td></tr>
+
+    <tr><td>Force Tags</td><td>python</td><td>ruby</td><td></td><td></td></tr>
+
+  </tbody>
+</table>
+
+
+<table border="1">
+
+  <colgroup span="99"><col class="name"><col class="value" span="4"></colgroup>
+  <thead>
+  <tr>
+
+    <th>Variable</th>
+
+    <th>Value</th>
+
+    <th>Value</th>
+
+    <th>Value</th>
+
+    <th>Value</th>
+
+  </tr>
+
+  </thead>
+  <tbody>
+
+    <tr>
+
+      <td>${PORT} =<br></td><td>8271</td>
+
+      
+
+      <td></td>
+
+      <td></td>
+
+      <td></td>
+
+    </tr>
+
+    <tr>
+
+      <td></td>
+
+      <td></td>
+
+      <td></td>
+
+      <td></td>
+
+      <td></td>
+
+    </tr>
+
+  </tbody>
+</table>
+
+
+<table border="1">
+
+  <colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
+  <thead>
+  <tr>
+
+    <th>Test Case</th>
+
+    <th>Action</th>
+
+    <th>Argument</th>
+
+    <th>Argument</th>
+
+    <th>Argument</th>
+
+
+
+  </tr>
+
+  </thead>
+  <tbody>
+
+    <tr><td>Start And Import Remote Library</td><td>Run Keyword And Expect Error</td><td>No keyword with name 'KW 1' found.</td><td>KW 1</td><td>Does not work yet</td></tr><tr><td><br></td><td>Start Process</td><td>python ${CURDIR}${/}simplelibrary.py ${PORT}</td><td></td><td></td></tr><tr><td></td><td>Import Library</td><td>Remote</td><td>localhost:${PORT}</td><td></td></tr><tr><td></td><td>Set Suite Variable</td><td>$LIBRARY STARTED OK</td><td>we actually should not require<br>value here</td><td></td></tr><tr><td></td><td>KW 1</td><td>Now this works!</td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Keywords From Simple Library</td><td>[Documentation]</td><td>FAIL</td><td>My error message</td><td></td></tr><tr><td></td><td>${ret} =</td><td>KW 1</td><td></td><td></td></tr><tr><td></td><td>Should Be Equal</td><td>${ret}</td><td>${EMPTY}</td><td></td></tr><tr>
+
+      <td></td>
+
+      <td>${ret} =</td>
+
+      <td>KW 1</td>
+
+      <td>Hello</td>
+
+      <td>world!</td>
+
+
+
+    </tr>
+
+    <tr>
+
+      <td></td>
+
+      <td>Should Be Equal</td>
+
+      <td>${ret}</td>
+
+      <td>Hello world!</td>
+
+      <td></td>
+
+
+
+    </tr>
+    <tr><td></td><td>KW 2</td><td>My</td><td>error</td><td>message</td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Stop Remote Library</td><td>[Documentation]</td><td>FAIL</td><td>Connection to remote server broken: Connection refused</td><td></td></tr><tr><td></td><td>Variable Should Exist</td><td>$LIBRARY STARTED OK</td><td></td><td></td></tr><tr><td><br></td><td>Stop Remote Server</td><td></td><td></td><td></td></tr><tr><td></td><td>${out} =<br></td><td>Read Process Output</td><td></td><td></td></tr><tr><td></td><td>Log</td><td>${out}</td><td></td><td></td></tr><tr><td></td><td>KW 1</td><td>This won't work anymore</td><td></td><td></td></tr>
+    
+    
+
+  </tbody>
+</table>
+
+
+<table border="1">
+
+  <colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
+  <thead>
+  <tr>
+
+    <th>Keyword</th>
+
+    <th>Action</th>
+
+    <th>Argument</th>
+
+    <th>Argument</th>
+
+    <th>Argument</th>
+
+  </tr>
+
+  </thead>
+  <tbody>
+
+    
+
+    <tr><td></td><td></td><td></td><td></td><td></td></tr>
+
+  </tbody>
+</table>
+
+
+</body></html>
