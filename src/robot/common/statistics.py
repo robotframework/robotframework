@@ -331,4 +331,4 @@ class TagStatLink:
         if open_parenthesis:
             regexp.append(')')
         return re.compile('^%s$' % ''.join(regexp))
-     
+ 

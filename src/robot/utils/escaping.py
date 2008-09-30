@@ -89,4 +89,4 @@ def _escape_char(char):
         return _replaced_chars[char]
     else:
         return '_'
-    
+

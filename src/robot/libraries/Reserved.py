@@ -30,4 +30,3 @@ class Reserved:
     def run_keyword(self, name, args):
         raise Exception("'%s' is a reserved keyword" % utils.printable_name(name))
 
-        

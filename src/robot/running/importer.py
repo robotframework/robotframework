@@ -56,4 +56,4 @@ class Importer:
             # if there are no keywords. Importing an empty resource file fails
             # already earlier so no need to check that here either.
         return self._resources[path]
-        
+ 

@@ -86,4 +86,4 @@ class Message:
         if not utils.is_str(msg):
             msg = utils.unic(msg)
         return msg.replace('\r\n', '\n')
-        
+
