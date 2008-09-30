@@ -73,6 +73,13 @@ th {
 <th>Value</th>
 </tr>
 <tr>
+<td>Documentation</td>
+<td>\</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
 <td>Suite Teardown</td>
 <td>Close All Connections</td>
 <td></td>
@@ -235,7 +242,7 @@ th {
 <tr>
 <td></td>
 <td>Write</td>
-<td>ls -l ${dirs}</td>
+<td>ls -l ${dir}1/${dir}2/${dir}3/${dir}4/${dir}5</td>
 <td></td>
 <td></td>
 </tr>
@@ -248,6 +255,13 @@ th {
 </tr>
 <tr>
 <td></td>
+<td>Should Contain</td>
+<td>${out}</td>
+<td>${dir}6</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
 <td>Should End With</td>
 <td>${out}</td>
 <td>${FULL PROMPT}</td>
@@ -256,7 +270,7 @@ th {
 <tr>
 <td></td>
 <td>Write</td>
-<td>rmdir -rf ${dirs}</td>
+<td>rm -rf ${dir}1</td>
 <td></td>
 <td></td>
 </tr>
