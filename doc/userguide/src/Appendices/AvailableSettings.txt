@@ -24,7 +24,7 @@ for importing libraries, resources, and variables.
    +-----------------+------------------------------------------------------------------+
    | Resource        | Used for `taking resource files into use`_.                      |
    +-----------------+------------------------------------------------------------------+
-   | Variables       | used for `taking variable files into use`_.                      |
+   | Variables       | Used for `taking variable files into use`_.                      |
    +-----------------+------------------------------------------------------------------+
    | Documentation   | Used for specifying a `test suite documentation`_.               |
    +-----------------+------------------------------------------------------------------+ 

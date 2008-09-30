@@ -103,9 +103,7 @@ Test data editing tool (Robot IDE)
 
 Robot IDE is a standalone tool for editing test data. It helps in
 creating, editing and maintaining of Robot Framework test data.
-
-More information will be added as soon as Robot IDE project is
-made publicly available.
+The project pages are at http://code.google.com/p/robotframework-ride.
 
 
 Manual test execution tool (mabot)
