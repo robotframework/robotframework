@@ -215,6 +215,13 @@ class TestVariables(unittest.TestCase):
         assert_equals(self.varz.replace_scalar('${${whos${name}}${name}}'), [1,2,3])
         assert_equals(self.varz.replace_scalar('- ${${whos${name}}${name}} -'), '- [1, 2, 3] -')
         
+    def test_list_variable_as_scalar(self):
+        self.varz['@{name}'] = exp = ['spam', 'eggs']
+        assert_equals(self.varz.replace_scalar('${name}'), exp)
+        assert_equals(self.varz.replace_list(['${name}', 42]), [exp, 42])
+        assert_equals(self.varz.replace_string('${name}'), str(exp))
+        assert_true(self.varz.has_key('${name}'))
+
     if utils.is_jython:
         
         def test_variable_as_object_in_java(self):
@@ -229,25 +236,20 @@ class TestVariables(unittest.TestCase):
             assert_equals(self.varz.replace_list(['${obj.name}']), ['my name'])
 
 
+
 class TestVariableSplitter(unittest.TestCase):
         
     def test_empty(self):
         self._test('', None)
 
     def test_no_vars(self):
-        for inp in [ 'hello world',
-                     '$hello',
-                     '{hello}',
-                     '$\\{hello}',
-                     '${hello',
-                     '$hello}' ]:
+        for inp in ['hello world', '$hello', '{hello}', '$\\{hello}',
+                    '${hello', '$hello}' ]:
             self._test(inp, None)
         
     def test_backslashes(self):
-        for inp in [ '\\',
-                     '\\\\',
-                     '\\\\\\\\\\',
-                     '\\hello\\\\world\\\\\\' ]:
+        for inp in ['\\', '\\\\', '\\\\\\\\\\',
+                    '\\hello\\\\world\\\\\\']:
             self._test(inp, None)
         
     def test_one_var(self):
@@ -261,7 +263,6 @@ class TestVariableSplitter(unittest.TestCase):
         # variable base is processed again in this special case.
         self._test('%{hi%{u}', '%{hi%{u}', 0, internal=True)  
         
-        
     def test_multiple_vars(self):
         self._test('${hello} ${world}', '${hello}', 0)
         self._test('hi %{u}2 and @{u2} and also *{us3}', '%{u}', 3)
@@ -273,7 +274,8 @@ class TestVariableSplitter(unittest.TestCase):
         
     def test_not_escaped_var(self):
         self._test('\\\\${hello}', '${hello}', 2)
-        self._test('\\hi \\\\\\\\\\\\${hello} moi', '${hello}', len('\\hi \\\\\\\\\\\\'))
+        self._test('\\hi \\\\\\\\\\\\${hello} moi', '${hello}',
+                   len('\\hi \\\\\\\\\\\\'))
         self._test('\\ ${hello}', '${hello}', 2)
         self._test('${hello}\\', '${hello}', 0)
         self._test('\\ \\ ${hel\\lo}\\', '${hel\\lo}', 4)
@@ -281,7 +283,8 @@ class TestVariableSplitter(unittest.TestCase):
     def test_escaped_and_not_escaped_vars(self):
         for inp, var, start in [ 
                 ('\\${esc} ${not}', '${not}', len('\\${esc} ')),
-                ('\\\\\\${esc} \\\\${not}', '${not}', len('\\\\\\${esc} \\\\')),
+                ('\\\\\\${esc} \\\\${not}', '${not}',
+                 len('\\\\\\${esc} \\\\')),
                 ('\\${esc}\\\\${not}${n2}', '${not}', len('\\${esc}\\\\')) ]:
             self._test(inp, var, start)
             
