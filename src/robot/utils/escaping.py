@@ -19,7 +19,7 @@ import string
 from robottypes import is_str, is_list, is_tuple
 
 
-_escape_re = re.compile(r'(\\+)([^\\]{,2})')   # escapes and nextchars
+_escape_re = re.compile(r'(\\+)([^\\]{0,2})')   # escapes and nextchars
 
 
 def escape(item):
