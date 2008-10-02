@@ -362,7 +362,7 @@ class TestVariableSplitter(unittest.TestCase):
         assert_equals(res.end, end, "'%s' end" % inp)
         assert_equals(res.identifier, identifier, "'%s' indentifier" % inp)
         assert_equals(res.index, index, "'%s' index" % inp)
-        assert_equals(res.may_have_internal_variables, internal,
+        assert_equals(res._may_have_internal_variables, internal,
                       "'%s' internal" % inp)
 
 

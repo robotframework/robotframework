@@ -128,12 +128,10 @@ class Variables(utils.NormalizedDict):
         if not utils.is_str(item):
             return item
         var = _VariableSplitter(item, self._identifiers)
-        if var.identifier is not None and len(var.base) > 0 and \
-                var.start == 0 and var.end == len(item):
-            ret = self._get_variable(var)
-        else:
-            ret = self.replace_string(item, var)
-        return ret
+        if var.identifier and var.base and \
+               var.start == 0 and var.end == len(item):
+            return self._get_variable(var)
+        return self.replace_string(item, var)
         
     def replace_string(self, string, splitted=None):
         """Replaces variables from a string. Result is always a string."""
@@ -172,8 +170,9 @@ class Variables(utils.NormalizedDict):
                     return os.environ[name]
                 else:
                     return '%%{%s}' % var.base
-            except:
-                raise DataError("Environment variable '%s' does not exist" % name)
+            except KeyError:
+                raise DataError("Environment variable '%s' does not exist"
+                                % name)
             
         # 3) Handle ${scalar} variables and @{list} variables without index
         elif var.index is None:
@@ -186,7 +185,7 @@ class Variables(utils.NormalizedDict):
                 index = int(self.replace_string(var.index))
                 name = '@{%s}' % var.get_replaced_base(self)
                 return self[name][index]
-            except:
+            except (ValueError, DataError, IndexError):
                 raise DataError("Non-existing variable '@{%s}[%s]'" 
                                 % (var.base, var.index))
 
@@ -235,11 +234,12 @@ class Variables(utils.NormalizedDict):
                     self.data[name] = value
             except:
                 rawvar.report_invalid_syntax("Setting variable '%s' failed: %s"
-                                             % (rawvar.name, utils.get_error_message()))
+                                             % (rawvar.name,
+                                                utils.get_error_message()))
 
     def _get_var_table_name_and_value(self, rawvar):
         name = self._normalize(rawvar.name)
-        if len(name) == 0:
+        if not name:
             raise DataError('No variable name given')
         if name.endswith('=') and is_var(name[:-1]):
             name = name[:-1]
@@ -290,46 +290,47 @@ class Variables(utils.NormalizedDict):
         variables = get_variables(*args)
         if type(variables) != DictionaryType:
             raise DataError("%s returned '%s', expected a dictionary" 
-                        % (get_variables.__name__, utils.type_as_str(variables)))
+                            % (get_variables.__name__,
+                               utils.type_as_str(variables)))
         return variables.items()
 
     def has_key(self, key):
         try:
             self[key]
-            return True
-        except:
+        except DataError:
             return False
+        else:
+            return True
 
 
 class _VariableSplitter:
     
     def __init__(self, string, identifiers):
-        self._identifiers = identifiers
-        variable_found = self._split(string)
-        self._finalize(variable_found)
-    
-    def get_replaced_base(self, variables):
-        if self.may_have_internal_variables:
-            return variables.replace_string(self.base)
-        return self.base
-    
-    def _finalize(self, variable_found): 
         self.identifier = None
         self.base = None
         self.index = None  
-        if variable_found:
-            self.identifier = self._variable_chars[0]
-            self.base = ''.join(self._variable_chars[2:-1])
-            self.end = self.start + len(self._variable_chars)
-            if len(self._index_chars) > 0 and self._index_chars[-1] == ']':
-                self.index = ''.join(self._index_chars[1:-1])
-                self.end += len(self._index_chars)
-        else:
-            self.start = self.end = -1
+        self.start = -1
+        self.end = -1
+        self._identifiers = identifiers
+        self._may_have_internal_variables = False
+        if self._split(string):
+            self._finalize()
+    
+    def get_replaced_base(self, variables):
+        if self._may_have_internal_variables:
+            return variables.replace_string(self.base)
+        return self.base
+    
+    def _finalize(self):
+        self.identifier = self._variable_chars[0]
+        self.base = ''.join(self._variable_chars[2:-1])
+        self.end = self.start + len(self._variable_chars)
+        if self._index_chars and self._index_chars[-1] == ']':
+            self.index = ''.join(self._index_chars[1:-1])
+            self.end += len(self._index_chars)
 
     def _split(self, string):
         start_index, max_index = self._find_variable(string)
-        self.may_have_internal_variables = False
         if start_index < 0:
             return False
         self.start = start_index
@@ -385,7 +386,7 @@ class _VariableSplitter:
                 if self._variable_chars[0] == '@':
                     self._state_handler = self._waiting_index_state_handler
                 else:
-                    raise StopIteration()
+                    raise StopIteration
         elif char in self._identifiers:
             self._state_handler = self._internal_variable_start_state_handler
 
@@ -394,7 +395,7 @@ class _VariableSplitter:
         if char == '{':
             self._variable_chars.append(char)
             self._started_vars += 1
-            self.may_have_internal_variables = True
+            self._may_have_internal_variables = True
         else:
             self._variable_state_handler(char)
     
@@ -403,9 +404,9 @@ class _VariableSplitter:
             self._index_chars.append(char)
             self._state_handler = self._index_state_handler
         else:
-            raise StopIteration()
+            raise StopIteration
 
     def _index_state_handler(self, char):
         self._index_chars.append(char)
         if char == ']':
-            raise StopIteration()        
+            raise StopIteration
