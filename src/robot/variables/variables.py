@@ -20,7 +20,7 @@ from types import DictionaryType
 from robot import utils
 from robot.errors import DataError
 
-from isvar import is_var, is_list_var
+from isvar import is_var, is_scalar_var, is_list_var
 
 
 class Variables(utils.NormalizedDict):
@@ -60,7 +60,17 @@ class Variables(utils.NormalizedDict):
             except ValueError:
                 try: return self._get_extended_var(name)
                 except ValueError:
-                    raise DataError("Non-existing variable '%s'" % name)
+                    try: return self._get_list_var_as_scalar(name)
+                    except ValueError:
+                        raise DataError("Non-existing variable '%s'" % name)
+
+    def _get_list_var_as_scalar(self, name):
+        if is_scalar_var(name):
+            try:
+                return self['@'+name[1:]]
+            except DataError:
+                pass
+        raise ValueError
 
     def _get_extended_var(self, name):
         res = self._extended_var_re.search(name)
@@ -208,7 +218,7 @@ class Variables(utils.NormalizedDict):
                                     "value '%s'" % (name, utils.unic(value)))
             else:
                 name = '${%s}' % name
-            if overwrite or not self.has_key(name):
+            if overwrite or not utils.NormalizedDict.has_key(self, name):
                 self[name] = value
 
     def _raise_set_from_file_failed(self, path, url, args):
