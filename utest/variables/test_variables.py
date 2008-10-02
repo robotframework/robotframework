@@ -239,6 +239,8 @@ class TestVariables(unittest.TestCase):
 
 class TestVariableSplitter(unittest.TestCase):
         
+    _identifiers = ['$','@','%','&','*']
+
     def test_empty(self):
         self._test('', None)
 
@@ -322,6 +324,13 @@ class TestVariableSplitter(unittest.TestCase):
                             ('&{x}%{x}@{x}\\${x}${y}', 
                              len('&{x}%{x}@{x}\\${x}')) ]:
             self._test(inp, '${y}', start, identifiers=['$'])
+
+    def test_identifier_as_variable_name(self):
+        for ident in self._identifiers:
+            var = '${%s}' % ident
+            self._test(var, var)
+            self._test(var+'spam', var)
+            self._test(var+'{eggs}', var)
                                 
     def _test(self, inp, variable, start=0, index=None, identifiers=None,
               internal=False):
@@ -335,14 +344,15 @@ class TestVariableSplitter(unittest.TestCase):
             identifier = base = None
             start = end = -1
         if not identifiers:
-            identifiers = ['$','@','%','&','*']
+            identifiers = self._identifiers
         res = variables._VariableSplitter(inp, identifiers)
-        assert_equals(res.start, start, inp)
-        assert_equals(res.end, end, inp)
-        assert_equals(res.identifier, identifier, inp)
-        assert_equals(res.base, base, inp)
-        assert_equals(res.index, index, inp)
-        assert_equals(res.may_have_internal_variables, internal, inp)
+        assert_equals(res.base, base, inp+' base')
+        assert_equals(res.start, start, inp+' start')
+        assert_equals(res.end, end, inp+' end')
+        assert_equals(res.identifier, identifier, inp+' indentifier')
+        assert_equals(res.index, index, inp+' index')
+        assert_equals(res.may_have_internal_variables, internal,
+                      inp+'internal')
 
 
 if __name__ == '__main__':
