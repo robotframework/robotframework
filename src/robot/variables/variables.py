@@ -390,13 +390,13 @@ class _VariableSplitter:
             self._state_handler = self._internal_variable_start_state_handler
 
     def _internal_variable_start_state_handler(self, char):
+        self._state_handler = self._variable_state_handler
         if char == '{':
             self._variable_chars.append(char)
             self._started_vars += 1
             self.may_have_internal_variables = True
         else:
             self._variable_state_handler(char)
-        self._state_handler = self._variable_state_handler
     
     def _waiting_index_state_handler(self, char):
         if char == '[':

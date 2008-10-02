@@ -13,7 +13,6 @@ NOKS = [ 'var', '$var', '${var', '${va}r', '@{va}r', '@var', '%{var}',
          ' ${var}', '@{var} ', '\\${var}', '\\\\${var}' ]
 
 
-
 # Simple objects needed when testing assigning objects to variables.
 # JavaObject lives in '../../acceptance/testdata/libraries'
 
@@ -326,12 +325,24 @@ class TestVariableSplitter(unittest.TestCase):
             self._test(inp, '${y}', start, identifiers=['$'])
 
     def test_identifier_as_variable_name(self):
-        for ident in self._identifiers:
-            var = '${%s}' % ident
-            self._test(var, var)
-            self._test(var+'spam', var)
-            self._test(var+'{eggs}', var)
+        for i in self._identifiers:
+            for count in 1,2,3,42:
+                var = '%s{%s}' % (i, i*count)
+                self._test(var, var)
+                self._test(var+'spam', var)
+                self._test('eggs'+var+'spam', var, start=4)
+                self._test(i+var+i, var, start=1)
                                 
+    def test_identifier_as_variable_name_with_internal_vars(self):
+        for i in self._identifiers:
+            for count in 1,2,3,42:
+                var = '%s{%s{%s}}' % (i, i*count, i)
+                self._test(var, var, internal=True)
+                self._test('eggs'+var+'spam', var, start=4, internal=True)
+                var = '%s{%s{%s}}' % (i, i*count, i*count)
+                self._test(var, var, internal=True)
+                self._test('eggs'+var+'spam', var, start=4, internal=True)
+        
     def _test(self, inp, variable, start=0, index=None, identifiers=None,
               internal=False):
         if variable is not None:
@@ -346,13 +357,13 @@ class TestVariableSplitter(unittest.TestCase):
         if not identifiers:
             identifiers = self._identifiers
         res = variables._VariableSplitter(inp, identifiers)
-        assert_equals(res.base, base, inp+' base')
-        assert_equals(res.start, start, inp+' start')
-        assert_equals(res.end, end, inp+' end')
-        assert_equals(res.identifier, identifier, inp+' indentifier')
-        assert_equals(res.index, index, inp+' index')
+        assert_equals(res.base, base, "'%s' base" % inp)
+        assert_equals(res.start, start, "'%s' start" % inp)
+        assert_equals(res.end, end, "'%s' end" % inp)
+        assert_equals(res.identifier, identifier, "'%s' indentifier" % inp)
+        assert_equals(res.index, index, "'%s' index" % inp)
         assert_equals(res.may_have_internal_variables, internal,
-                      inp+'internal')
+                      "'%s' internal" % inp)
 
 
 if __name__ == '__main__':
