@@ -262,7 +262,8 @@ class _List:
         not contain the value 'x'" is shown in case of a failure. Otherwise,
         the given `msg` is used in case of a failure.
         """
-        default = "%s does not contain value '%s'" % (utils.seq2str2(list_), value)
+        default = "%s does not contain value '%s'" % (utils.seq2str2(list_),
+                                                      value)
         _verify_condition(value in list_, default, msg)
     
     def list_should_not_contain_value(self, list_, value, msg=None):
@@ -276,16 +277,11 @@ class _List:
     def lists_should_be_equal(self, list1, list2, msg=None, values=True):
         """Fails if given lists are unequal. 
         
-        The first equality of lists' length is checked, and after that all
-        values. If there are differences between the values, those are listed
-        in an error message, for example with lists "${L1} = [1, 2, 3]" and
-        "${L2} = [0, 2, 4]".
-        
-        Lists are different:
-        Index 0: 1 != 0
-        Index 2: 3 != 4
+        The keyword first verifies that the lists have equal lengths, and
+        then it checks are all the values equal. Possible differences between
+        the values are listed in the default error message.
 
-        - If `msg` is not given, the possible error message is the default.
+        - If `msg` is not given, the default error message is used.
         - If `msg` is given and `values` is either Boolean False or a string 
           'False' or 'No Values', the error message is simply `msg`.
         - Otherwise the error message is `msg` + 'new line' + default.
@@ -519,12 +515,7 @@ class _Dictionary:
         
         First the equality of dictionaries' keys is checked and after that all 
         the key value pairs. If there are differences between the values, those
-        are listed in an error message, for example with dictionaries 
-        "${D1} = {'a':1, 'b':2, 'c':3}" and "${D2} = {'a':1, 'b':4, 'c':6}".
-        
-        Following keys have different values:
-        Key b: 2 != 4
-        Key c: 3 != 6
+        are listed in the error message.
 
         See `Lists Should Be Equal` for an explanation of `msg`. 
         The given dictionaries are never altered by this keyword.
