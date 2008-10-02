@@ -117,12 +117,12 @@ More information will be added as soon as :prog:`mabot` project is
 made publicly available.
 
 
-Core for Java test libraries
-''''''''''''''''''''''''''''
+Tools for creating Java test libraries
+''''''''''''''''''''''''''''''''''''''
 
-Javalib-core is an external component that simplifies creation of larger Java
+Javatools is an external collection of tools that simplify creation of larger Java
 test libraries by offering several dynamic ways of resolving available keywords
 at runtime. For more information, see
-http://code.google.com/p/robotframework-javalib-core/
+http://code.google.com/p/robotframework-javatools/
 
 

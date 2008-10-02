@@ -187,7 +187,7 @@ Appendices
 .. _command line options: `All command line options`_
 .. _libdoc.py: `Library documentation tool`_
 .. _libdoc: `libdoc.py`_
-.. _javalib-core: `Core for Java test libraries`_
+.. _javatools: `Tools for creating Java test libraries`_
 
 .. 6. Misc
 
