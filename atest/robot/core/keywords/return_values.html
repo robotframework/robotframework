@@ -55,8 +55,6 @@ th {
 }
 </style>
 <title>Return Values</title></head>
-
-
 <body>
 <h1>Return Values</h1>
 
@@ -604,7 +602,7 @@ Multiple Scalars with too few values Using Java Array</td><td></td></tr><tr><td>
 <td>Set List to Scalar and list varibles Using Java Array</td>
 <td></td>
 </tr>
-<tr><td></td><td>Should Be Equal</td><td>${test.kws[0].name}</td><td>\${a}, \${b}, \@{c} = ExampleJavaLibrary.Get Array Of Three Ints</td><td></td></tr><tr><td></td><td>Check Log Message</td><td>${test.kws[0].msgs[0]}</td><td>\${a} = 1</td><td></td></tr><tr><td></td><td>Check Log Message</td><td>${test.kws[0].msgs[1]}</td><td>\${b} = 2</td><td></td></tr><tr><td></td><td>Check Log Message</td><td>${test.kws[0].msgs[2]}</td><td>\@{c} = [ 42 ]</td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr>
+<tr><td></td><td>Should Be Equal</td><td>${test.kws[0].name}</td><td>\${a}, \${b}, \@{c} = ExampleJavaLibrary.Get Array Of Three Ints</td><td></td></tr><tr><td></td><td>Check Log Message</td><td>${test.kws[0].msgs[0]}</td><td>\${a} = 1</td><td></td></tr><tr><td></td><td>Check Log Message</td><td>${test.kws[0].msgs[1]}</td><td>\${b} = 2</td><td></td></tr><tr><td></td><td>Check Log Message</td><td>${test.kws[0].msgs[2]}</td><td>\@{c} = [ 42 ]</td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Assigning One None To Multiple Variables</td><td>${test} =</td><td>Check Test Case</td><td>Assigning One None To Multiple Variables</td><td></td></tr><tr><td></td><td>Check Log Message</td><td>${test.kws[0].msgs[0]}</td><td>\${x} = None</td><td></td></tr><tr><td></td><td>Check Log Message</td><td>${test.kws[0].msgs[1]}</td><td>\${y} = None</td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Assigning None To List Variable</td><td>${test} =</td><td>Check Test Case</td><td>Assigning None To List Variable</td><td></td></tr><tr><td></td><td>Check Log Message</td><td>${test.kws[0].msgs[1]}</td><td>\@{list} = [ ]</td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Assigning One None To Scalar Variables And List Variable</td><td>${test} =</td><td>Check Test Case</td><td>Assigning One None To Scalar Variables And List Variable</td><td></td></tr><tr><td></td><td>Check Log Message</td><td>${test.kws[0].msgs[0]}</td><td>\${a} = None</td><td></td></tr><tr><td></td><td>Check Log Message</td><td>${test.kws[0].msgs[1]}</td><td>\${b} = None</td><td></td></tr><tr><td></td><td>Check Log Message</td><td>${test.kws[0].msgs[2]}</td><td>\${c} = None</td><td></td></tr><tr><td></td><td>Check Log Message</td><td>${test.kws[0].msgs[3]}</td><td>\@{d} = [ ]</td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr>
 <td><a name="test_ListVariableCanBeOnlyLast">List Variable Can Be Only Last</a></td>
 <td>${test} =</td>
 <td>Check Test Case</td>
