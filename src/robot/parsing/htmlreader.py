@@ -16,6 +16,8 @@
 import HTMLParser
 from htmlentitydefs import entitydefs
 
+from robot import utils
+
 extra_entitydefs = { 'nbsp' : ' ',
                      'apos' : "'",
                      'tilde' : '~' }
@@ -184,3 +186,18 @@ class HtmlReader(HTMLParser.HTMLParser):
                     encoding = encoding[1:-1]
                 return encoding
         return None
+
+
+# Workaround for following bug in Python 2.6: http://bugs.python.org/issue3932 
+if utils.py_version > (2, 5):
+    def unescape_from_py25(self, s):
+        if '&' not in s:
+            return s
+        s = s.replace("&lt;", "<")
+        s = s.replace("&gt;", ">")
+        s = s.replace("&apos;", "'")
+        s = s.replace("&quot;", '"')
+        s = s.replace("&amp;", "&") # Must be last
+        return s
+
+    HTMLParser.HTMLParser.unescape = unescape_from_py25
