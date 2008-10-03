@@ -14,7 +14,6 @@
 
 
 import os
-import re
 import shutil
 import time
 import glob
@@ -1244,7 +1243,7 @@ class OperatingSystem:
         
 
 # TODO: Could we use _Process also with Run keyword? We would get rid of
-# dublicate code and have all process related code in separate class.
+# duplicate code and have all process related code in separate class.
 
 class _Process:
     
