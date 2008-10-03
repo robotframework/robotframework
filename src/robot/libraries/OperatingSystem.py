@@ -299,7 +299,7 @@ class OperatingSystem:
         'UTF-8', which means that UTF-8 and ASCII-encoded files are read
         correctly.
         """
-        path = path.replace('/', os.sep)
+        path = self._absnorm(path)
         self._info("Getting file '%s'" % path)
         f = open(path, 'rb')
         content = f.read()
@@ -370,7 +370,7 @@ class OperatingSystem:
         similarly as with `File Should Exist` keyword. The default
         error message can be overridden with the `msg` argument.
         """
-        path = path.replace('/', os.sep)
+        path = self._absnorm(path)
         if not glob.glob(path):
             self._fail(msg, "Path '%s' does not match any file or directory" % path)
         self._info("Path '%s' exists" % path)
@@ -382,7 +382,7 @@ class OperatingSystem:
         similarly as with `File Should Exist` keyword. The default
         error message can be overridden with the `msg` argument.
         """
-        path = path.replace('/', os.sep)
+        path = self._absnorm(path)
         matches = glob.glob(path)
         if not matches:
             self._info("Path '%s' does not exist" % path)
@@ -410,7 +410,7 @@ class OperatingSystem:
 
         The default error message can be overridden with the `msg` argument.
         """
-        path = path.replace('/', os.sep)
+        path = self._absnorm(path)
         matches = [ p for p in glob.glob(path) if os.path.isfile(p) ]
         if not matches:
             self._fail(msg, "Path '%s' does not match any file" % path)
@@ -423,7 +423,7 @@ class OperatingSystem:
         similarly as with `File Should Exist` keyword. The default
         error message can be overridden with the `msg` argument.
         """
-        path = path.replace('/', os.sep)
+        path = self._absnorm(path)
         matches = [ p for p in glob.glob(path) if os.path.isfile(p) ]
         if not matches:
             self._info("File '%s' does not exist" % path)
@@ -445,7 +445,7 @@ class OperatingSystem:
         similarly as with `File Should Exist` keyword. The default
         error message can be overridden with the `msg` argument.
         """
-        path = path.replace('/', os.sep)
+        path = self._absnorm(path)
         matches = [ p for p in glob.glob(path) if os.path.isdir(p) ]
         if not matches:
             self._fail(msg, "Path '%s' does not match any directory" % path)
@@ -458,7 +458,7 @@ class OperatingSystem:
         similarly as with `File Should Exist` keyword. The default
         error message can be overridden with the `msg` argument.
         """
-        path = path.replace('/', os.sep)
+        path = self._absnorm(path)
         matches = [ p for p in glob.glob(path) if os.path.isdir(p) ]
         if not matches:
             self._info("Directory '%s' does not exist" % path)
@@ -495,7 +495,7 @@ class OperatingSystem:
         returns immediately, if the file/directory does not exist in the first
         place. 
         """
-        path = path.replace('/', os.sep)
+        path = self._absnorm(path)
         matches = glob.glob(path)
         if len(matches) == 0:
             self._info("No items found matching to '%s' found" % path)
@@ -526,7 +526,7 @@ class OperatingSystem:
         If the timeout is negative, the keyword is never timed-out. The keyword
         returns immediately, if the file/directory already exist. 
         """
-        path = path.replace('/', os.sep)
+        path = self._absnorm(path)
         timeout = utils.timestr_to_secs(timeout)
         starttime = time.time()
         matches = glob.glob(path)
@@ -544,7 +544,7 @@ class OperatingSystem:
         
         The default error message can be overridden with the `msg` argument.
         """
-        path = path.replace('/', os.sep)
+        path = self._absnorm(path)
         if not os.path.isdir(path):
             raise AssertionError("Directory '%s' does not exist" % path)
         entries = self._list_dir(path)
@@ -560,7 +560,7 @@ class OperatingSystem:
         
         The default error message can be overridden with the `msg` argument.
         """
-        path = path.replace('/', os.sep)
+        path = self._absnorm(path)
         if not os.path.isdir(path):
             raise AssertionError("Directory '%s' does not exist" % path)
         count = len(self._list_dir(path))
@@ -574,7 +574,7 @@ class OperatingSystem:
         
         The default error message can be overridden with the `msg` argument.
         """
-        path = path.replace('/', os.sep)
+        path = self._absnorm(path)
         if not os.path.isfile(path):
             raise AssertionError("File '%s' does not exist" % path)
         size = os.stat(path).st_size
@@ -587,7 +587,7 @@ class OperatingSystem:
         
         The default error message can be overridden with the `msg` argument.
         """
-        path = path.replace('/', os.sep)
+        path = self._absnorm(path)
         if not os.path.isfile(path):
             raise AssertionError("File '%s' does not exist" % path)
         size = os.stat(path).st_size
@@ -609,11 +609,11 @@ class OperatingSystem:
         If the directory where to create file does not exist it, and possible
         intermediate missing directories, are created.
         """
-        path = path.replace('/', os.sep)
+        path = self._absnorm(path)
         if utils.contains_any(mode, ['False','No',"Don't"]):
             self.file_should_not_exist(path)
         open_mode = utils.contains(mode, 'Append') and 'a' or 'w'
-        parent = os.path.dirname(os.path.abspath(os.path.normpath(path)))
+        parent = os.path.dirname(path)
         if not os.path.exists(parent):
             os.makedirs(parent)
         f = open(path, open_mode)
@@ -631,9 +631,9 @@ class OperatingSystem:
         similarly as with `File Should Exist` keyword. If the path is
         a pattern, all files matching it are removed.
         """
-        path = path.replace('/', os.sep)
+        path = self._absnorm(path)
         matches = glob.glob(path)
-        if len(matches) == 0:
+        if not matches:
             self._info("File '%s' does not exist" % path)
         for match in matches:
             if not os.path.isfile(match):
@@ -652,7 +652,7 @@ class OperatingSystem:
         
     def empty_directory(self, path):
         """Deletes all the content (incl. subdirectories) from the given directory."""
-        path = path.replace('/', os.sep)
+        path = self._absnorm(path)
         items = [ os.path.join(path, item) for item in self._list_dir(path) ]
         for item in items:
             if os.path.isdir(item):
@@ -668,7 +668,7 @@ class OperatingSystem:
         directory already exists, and fails if the path points to a regular
         file.
         """
-        path = path.replace('/', os.sep)
+        path = self._absnorm(path)
         if os.path.isdir(path):
             self._info("Directory '%s' already exists" % path )
             return
@@ -688,7 +688,7 @@ class OperatingSystem:
         If the directory pointed to by the `path` does not exist, the keyword
         passes, but it fails, if the `path` points to a file.
         """
-        path = path.replace('/', os.sep)
+        path = self._absnorm(path)
         if not os.path.exists(path):
             self._info("Directory '%s' does not exist" % path)
             return
@@ -704,7 +704,8 @@ class OperatingSystem:
             
     def _is_recursive(self, recursive):
         return utils.contains_any(recursive, ['yes','true','recursive'])
-            
+
+
     # Moving and copying files and directories
             
     def copy_file(self, source, destination):
@@ -725,24 +726,37 @@ class OperatingSystem:
         separator, it is considered a file. If the path to the file does not
         exist, it is created.
         """
-        source = source.replace('/', os.sep)
-        destination = destination.replace('/', os.sep)
-        self._copy_file(source, destination)
+        source, destination = self._copy_file(source, destination)
         self._info("Copied file from '%s' to '%s'" % (source, destination))
         
-    def _copy_file(self, source, destination):
+    def move_file(self, source, destination):
+        """Moves the source file into a new destination.
+
+        `source` and `destination` have exactly same semantics as with
+        `Copy File`.
+        """
+        source, destination = self._copy_file(source, destination)
+        os.remove(source)
+        self._info("Moved file from '%s' to '%s'" % (source, destination))
+
+    def _copy_file(self, source, dest):
+        source = self._absnorm(source)
+        dest = dest.replace('/', os.sep)
+        dest_is_dir = dest.endswith(os.sep)
+        dest = self._absnorm(dest)
         if not os.path.exists(source):
             raise DataError("Source file '%s' does not exist" % source)
         if not os.path.isfile(source):
             raise DataError("Source file '%s' is not a regular file" % source)
-        if not os.path.exists(destination):
-            if destination.endswith(os.sep):
-                parent = destination
+        if not os.path.exists(dest):
+            if dest_is_dir:
+                parent = dest
             else:
-                parent = os.path.dirname(os.path.normpath(destination))
+                parent = os.path.dirname(dest)
             if not os.path.exists(parent):
                 os.makedirs(parent)
-        shutil.copy(source, destination)
+        shutil.copy(source, dest)
+        return source, dest
 
     def copy_directory(self, source, destination):
         """Copies the source directory into the destination.
@@ -751,41 +765,10 @@ class OperatingSystem:
         the destination directory and the possible missing intermediate
         directories are created.
         """
-        source = source.replace('/', os.sep)
-        destination = destination.replace('/', os.sep)
-        self._copy_dir(source, destination)
-        self._info("Copied directory from '%s' to '%s'" % (source, destination))
+        source, destination = self._copy_dir(source, destination)
+        self._info("Copied directory from '%s' to '%s'"
+                   % (source, destination))
         
-    def _copy_dir(self, source, destination):
-        if not os.path.exists(source):
-            raise DataError("Source directory '%s' does not exist" % source)
-        if not os.path.isdir(source):
-            raise DataError("Source directory '%s' is not a directory" % source)
-        if os.path.exists(destination) and not os.path.isdir(destination):
-            raise DataError("Destination '%s' exists but is not a directory" 
-                               % destination)
-        if os.path.exists(destination):
-            base = os.path.basename(os.path.normpath(source))
-            destination = os.path.join(destination, base)
-        else:
-            parent = os.path.dirname(os.path.normpath(destination))
-            if not os.path.exists(parent):
-                os.makedirs(parent)
-        shutil.copytree(source, destination)
-
-    def move_file(self, source, destination):
-        """Moves the source file into a new destination.
-        
-        The destination may be a file or a directory. In the latter case, the
-        file's original basename is kept. If the destination file exists, it is
-        overwritten. The missing intermediate directories are NOT created.
-        """
-        source = source.replace('/', os.sep)
-        destination = destination.replace('/', os.sep)
-        self._copy_file(source, destination)
-        os.remove(source)
-        self._info("Moved file from '%s' to '%s'" % (source, destination))
-
     def move_directory(self, source, destination):
         """Moves the source directory into a destination.
         
@@ -793,11 +776,29 @@ class OperatingSystem:
         destination directory and the possible missing intermediate directories
         are created.
         """
-        source = source.replace('/', os.sep)
-        destination = destination.replace('/', os.sep)
-        self._copy_dir(source, destination)
+        source, destination = self._copy_dir(source, destination)
         shutil.rmtree(source)
         self._info("Moved directory from '%s' to '%s'" % (source, destination))
+
+    def _copy_dir(self, source, dest):
+        source = self._absnorm(source)
+        dest = self._absnorm(dest)
+        if not os.path.exists(source):
+            raise DataError("Source directory '%s' does not exist" % source)
+        if not os.path.isdir(source):
+            raise DataError("Source directory '%s' is not a directory" % source)
+        if os.path.exists(dest) and not os.path.isdir(dest):
+            raise DataError("Destination '%s' exists but is not a directory" 
+                            % dest)
+        if os.path.exists(dest):
+            base = os.path.basename(source)
+            dest = os.path.join(dest, base)
+        else:
+            parent = os.path.dirname(dest)
+            if not os.path.exists(parent):
+                os.makedirs(parent)
+        shutil.copytree(source, dest)
+        return source, dest
 
 
     # Environment Variables
@@ -880,7 +881,7 @@ class OperatingSystem:
         """
         base = base.replace('/', os.sep)
         parts = [ p.replace('/', os.sep) for p in parts ]
-        return os.path.normpath(os.path.join(base, *parts))
+        return self.normalize_path(os.path.join(base, *parts))
     
     def join_paths(self, base, *paths):
         """Joins given paths with base and returns resulted paths.
@@ -914,8 +915,7 @@ class OperatingSystem:
         - ${p4} = 'abc/def'
         - ${p5} = 'abc/def'        
         """
-        path = path.replace('/', os.sep)
-        ret = os.path.normpath(path)
+        ret = os.path.normpath(path.replace('/', os.sep))
         if ret == '': return '.'
         return ret
         
@@ -1020,7 +1020,7 @@ class OperatingSystem:
         - ${y} = '2006' & ${d} = '29'
         - @{time} = ['2006', '03', '29', '15', '06', '21']
         """
-        path = path.replace('/', os.sep)
+        path = self._absnorm(path)
         if not os.path.exists(path):
             raise DataError("Getting modified time of '%s' failed: "
                             "Path does not exist" % path)
@@ -1055,7 +1055,7 @@ class OperatingSystem:
         | Set Modified Time | /path/file | NOW - 1d           | # 1 day subtraced from NOW |
         | Set Modified Time | /path/file | NOW + 1h 2min 3s   | # 1h 2min 3s added to NOW |
         """
-        path = path.replace('/', os.sep)
+        path = self._absnorm(path)
         try:
             if not os.path.exists(path):
                 raise DataError('File does not exist')
@@ -1097,7 +1097,7 @@ class OperatingSystem:
     def get_file_size(self, path):
         """Returns and logs file size as an integer in bytes"""
         # TODO: Add an option to return size in kilos, megas or gigas
-        path = path.replace('/', os.sep)
+        path = self._absnorm(path)
         size = os.stat(path).st_size
         self._info("Size of file '%s' is %d byte%s"
                    % (path, size, utils.plural_or_not(size)))
@@ -1183,7 +1183,7 @@ class OperatingSystem:
 
     def _list_dir(self, path, pattern=None, pattern_type='simple', 
                   absolute=False):
-        path = path.replace('/', os.sep)
+        path = self._absnorm(path)
         if not os.path.isdir(path):
             raise DataError("Directory '%s' does not exist" % path)
         items = os.listdir(path)
@@ -1216,7 +1216,7 @@ class OperatingSystem:
         Fails if used with the directories or the parent directory of the given
         file does not exist.
         """
-        path = path.replace('/', os.sep)
+        path = self._absnorm(path)
         if os.path.isdir(path):
             raise DataError("Cannot touch '%s' because it is a directory" % path)
         if not os.path.exists(os.path.dirname(path)):
@@ -1230,6 +1230,9 @@ class OperatingSystem:
             open(path, 'w').close()
             self._info("Touched new file '%s'" % path)
             
+    def _absnorm(self, path):
+        return os.path.normpath(os.path.abspath(path.replace('/', os.sep)))
+
     def _fail(self, error, default):
         if error is None:
             error = default
