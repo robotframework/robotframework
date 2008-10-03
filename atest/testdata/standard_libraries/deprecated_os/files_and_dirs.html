@@ -559,8 +559,8 @@ Teardown</td>
 
 
 
-      <td>FAIL</td>
-      <td>Path 'non-existing-file-or-dir' does not&nbsp;match
+      <td>FAIL REGEXP:</td>
+      <td>Path '.*non-existing-file-or-dir' does not&nbsp;match
 any file or
 directory</td>
 
@@ -894,8 +894,8 @@ Unless Exists With Pattern</td>
 
 
 
-      <td>FAIL</td>
-      <td>Path '*non*existing*' does not&nbsp;match any file
+      <td>FAIL REGEXP:</td>
+      <td>Path '.*\\*non\\*existing\\*' does not&nbsp;match any file
 or
 directory</td>
 
@@ -1757,9 +1757,9 @@ If Exists</td>
 
 
 
-      <td>FAIL</td>
+      <td>FAIL REGEXP:</td>
       <td align="undefined" valign="undefined">Path
-'non-existing-file'
+'.*non-existing-file'
 does not match any file<br>
 
 
@@ -3208,12 +3208,12 @@ doesn't exists</td>
 
 
 
-      <td>FAIL</td>
+      <td>FAIL REGEXP:</td>
 
 
 
 
-      <td>Path 'non-existing-directory' does not match any
+      <td>Path '.*non-existing-directory' does not match any
 directory</td>
 
 
@@ -8609,7 +8609,7 @@ and Check File</td>
 
 
 
-      <td>Source directory 'non-existing-dir' does not exist</td>
+      <td>Source directory '${CURDIR}${/}non-existing-dir' does not exist</td>
 
 
 
@@ -8645,7 +8645,7 @@ Dir</td>
 
 
 
-      <td align="undefined" valign="undefined">non-existing-dir</td>
+      <td align="undefined" valign="undefined">${CURDIR}${/}non-existing-dir</td>
 
 
 
