@@ -115,12 +115,19 @@ class SetKeyword(Keyword):
             output.info('%s = %s' % (name, utils.cut_long_assign_msg(value)))
         
     def _get_vars_to_set(self, ret):
+        if ret is None:
+            return self._get_vars_to_set_when_ret_is_none()
         if self.list_var is None:
             return self._get_vars_to_set_with_only_scalars(ret)
-        elif not utils.is_list(ret):
-            self._raise_invalid_return_value(ret, wrong_type=True)
-        else:
+        if utils.is_list(ret):
             return self._get_vars_to_set_with_scalars_and_list(ret)
+        self._raise_invalid_return_value(ret, wrong_type=True)
+
+    def _get_vars_to_set_when_ret_is_none(self):
+        ret = [ (var, None) for var in self.scalar_vars ]
+        if self.list_var is not None:
+            ret.append((self.list_var, []))
+        return ret
 
     def _get_vars_to_set_with_only_scalars(self, ret):
         needed = len(self.scalar_vars)
