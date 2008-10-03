@@ -732,8 +732,8 @@ class OperatingSystem:
     def move_file(self, source, destination):
         """Moves the source file into a new destination.
 
-        `source` and `destination` have exactly same semantics as with
-        `Copy File`.
+        Uses `Copy File` keyword internally, and `source` and `destination`
+        arguments have exactly same semantics as with that keyword.
         """
         source, destination = self._copy_file(source, destination)
         os.remove(source)
@@ -772,9 +772,9 @@ class OperatingSystem:
     def move_directory(self, source, destination):
         """Moves the source directory into a destination.
         
-        If a destination exists, the source is moved under it. Otherwise the
-        destination directory and the possible missing intermediate directories
-        are created.
+        Uses `Copy Directory` keyword internally, and `source` and
+        `destination` arguments have exactly same semantics as with
+        that keyword.
         """
         source, destination = self._copy_dir(source, destination)
         shutil.rmtree(source)
