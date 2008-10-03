@@ -1,7 +1,4 @@
 import unittest
-import sys
-import os
-from types import *
 
 from robot.utils.asserts import *
 from robot import utils
@@ -9,7 +6,7 @@ if utils.is_jython:
     import JavaExceptions
     java_exceptions = JavaExceptions()
 
-from robot.utils.error import *
+from robot.utils.error import get_error_details, get_error_message
 
 
 
@@ -26,7 +23,9 @@ class TestError(unittest.TestCase):
                     (AssertionError, 'Msg\nin 3\nlines', 'Msg\nin 3\nlines'),
                     (ValueError, '2\nlines', 'ValueError: 2\nlines'),
                     ("MyStringException", None, "MyStringException"),
-                    ("MyStrEx2", "My msg", "MyStrEx2: My msg")  ]: 
+                    ("MyStrEx2", "My msg", "MyStrEx2: My msg")  ]:
+            if isinstance(exception, basestring) and utils.py_version > (2, 5):
+                continue
             try:
                 raise exception, msg
             except:
