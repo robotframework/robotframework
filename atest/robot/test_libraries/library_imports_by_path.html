@@ -106,7 +106,6 @@ background-color: rgb(240, 240, 240);
   
   
   <title>Example Test Data</title><link type="text/css" href="resources/css/testdata.css" rel="stylesheet"></head>
-
 <body>
 
 
@@ -2077,7 +2076,7 @@ In My Lib Dir 2</span></td>
 
 
 
-      <td align="undefined" valign="undefined">Check Stderr Contains</td>
+      <td align="undefined" valign="undefined">Check Stderr Matches Regexp</td>
 
 
 
@@ -2087,7 +2086,7 @@ In My Lib Dir 2</span></td>
 
 
 
-      <td align="undefined" valign="undefined">Importing test library 'library_scope/' failed:&nbsp;</td>
+      <td align="undefined" valign="undefined">(?ms).*Importing test library 'library_scope/' failed:&nbsp;</td>
 
 
 
@@ -2097,7 +2096,7 @@ In My Lib Dir 2</span></td>
 
 
 
-      <td align="undefined" valign="undefined">ImportError: ${no} module named library_scope/</td>
+      <td align="undefined" valign="undefined">ImportError: (${no} module named library_scope/|Import by filename is not supported.)</td>
 
 
 
