@@ -560,7 +560,7 @@ Teardown</td>
 
 
 
-    </tr>
+    </tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>${ANYDIR}</td><td>.*[/\\\\]</td><td></td><td></td><td></td></tr>
 
 
 
@@ -656,15 +656,15 @@ Teardown</td>
 
 
 
-      <td>[ Document ]</td>
+      <td>[Documentation]</td>
 
 
 
 
 
-      <td>FAIL</td>
+      <td>FAIL REGEXP:</td>
 
-      <td>Path 'non-existing-file-or-dir' does not&nbsp;match
+      <td>Path '${ANYDIR}non-existing-file-or-dir' does not&nbsp;match
 any file or
 directory</td>
 
@@ -922,7 +922,7 @@ directory</td>
 
 
 
-      <td>[ Document ]</td>
+      <td>[Documentation]</td>
 
 
 
@@ -1050,15 +1050,15 @@ message</td>
 
 
 
-      <td>[ Document ]</td>
+      <td>[Documentation]</td>
 
 
 
 
 
-      <td>FAIL</td>
+      <td>FAIL REGEXP:</td>
 
-      <td>Path '*non*existing*' does not&nbsp;match any file
+      <td>Path '${ANYDIR}\\*non\\*existing\\*' does not&nbsp;match any file
 or
 directory</td>
 
@@ -1495,7 +1495,7 @@ Dir</td>
 
 
 
-      <td>[ Document ]</td>
+      <td>[Documentation]</td>
 
 
 
@@ -1687,7 +1687,7 @@ Dir</td>
 
 
 
-      <td>[ Document ]</td>
+      <td>[Documentation]</td>
 
 
 
@@ -1817,7 +1817,7 @@ error message</td>
 
 
 
-      <td>[ Document ]</td>
+      <td>[Documentation]</td>
 
 
 
@@ -2071,16 +2071,16 @@ and '${CURDIR}${/}R-F.txt'</td>
 
 
 
-      <td>[ Document ]</td>
+      <td>[Documentation]</td>
 
 
 
 
 
-      <td>FAIL</td>
+      <td>FAIL REGEXP:</td>
 
       <td align="undefined" valign="undefined">Path
-'non-existing-file'
+'${ANYDIR}non-existing-file'
 does not match any file<br>
 
 
@@ -2295,7 +2295,7 @@ does not match any file<br>
 
 
 
-      <td>[ Document ]</td>
+      <td>[Documentation]</td>
 
 
 
@@ -2429,7 +2429,7 @@ match any file<br>
 
 
 
-      <td>[ Document ]</td>
+      <td>[Documentation]</td>
 
 
 
@@ -2559,7 +2559,7 @@ non-default error&nbsp;</td>
 
 
 
-      <td>[ Document ]</td>
+      <td>[Documentation]</td>
 
 
 
@@ -2859,7 +2859,7 @@ Dir</td>
 
 
 
-      <td>[ Document ]</td>
+      <td>[Documentation]</td>
 
 
 
@@ -3123,7 +3123,7 @@ Dir</td>
 
 
 
-      <td>[ Document ]</td>
+      <td>[Documentation]</td>
 
 
 
@@ -3293,7 +3293,7 @@ non-default</td>
 
 
 
-      <td>[ Document ]</td>
+      <td>[Documentation]</td>
 
 
 
@@ -3302,8 +3302,7 @@ non-default</td>
       <td>FAIL</td>
 
       <td align="undefined" valign="undefined">Path
-'${CURDIR}${/}R-*.txt' matches
-file&nbsp;'${CURDIR}${/}R-F.txt'</td>
+'${CURDIR}${/}R-*.txt' matches file '${CURDIR}${/}R-F.txt'</td>
 
 
 
@@ -3590,7 +3589,7 @@ Dir</td>
 
 
 
-      <td>[ Document ]</td>
+      <td>[Documentation]</td>
 
 
 
@@ -3600,7 +3599,7 @@ Dir</td>
 
       <td align="undefined" valign="undefined">Path
 '${CURDIR}${/}R-*.txt' matches
-files '${CURDIR}${/}R-F.txt' and&nbsp;'${CURDIR}${/}R-F2.txt'</td>
+files '${CURDIR}${/}R-F.txt' and '${CURDIR}${/}R-F2.txt'</td>
 
 
 
@@ -3778,7 +3777,7 @@ files '${CURDIR}${/}R-F.txt' and&nbsp;'${CURDIR}${/}R-F2.txt'</td>
 
 
 
-      <td>[ Document ]</td>
+      <td>[Documentation]</td>
 
 
 
@@ -3792,13 +3791,13 @@ doesn't exists</td>
 
 
 
-      <td>FAIL</td>
+      <td>FAIL REGEXP:</td>
 
 
 
 
 
-      <td>Path 'non-existing-directory' does not match any
+      <td>Path '${ANYDIR}non-existing-directory' does not match any
 directory</td>
 
 
@@ -3955,7 +3954,7 @@ directory</td>
 
 
 
-      <td>[ Document ]</td>
+      <td>[Documentation]</td>
 
 
 
@@ -4130,7 +4129,7 @@ directory</td>
 
 
 
-      <td>[ Document ]</td>
+      <td>[Documentation]</td>
 
 
 
@@ -4258,7 +4257,7 @@ error</td>
 
 
 
-      <td>[ Document ]</td>
+      <td>[Documentation]</td>
 
 
 
@@ -4554,7 +4553,7 @@ Dir</td>
 
 
 
-      <td>[ Document ]</td>
+      <td>[Documentation]</td>
 
 
 
@@ -4806,7 +4805,7 @@ Dir</td>
 
 
 
-      <td>[ Document ]</td>
+      <td>[Documentation]</td>
 
 
 
@@ -4936,7 +4935,7 @@ non-default&nbsp;msg</td>
 
 
 
-      <td>[ Document ]</td>
+      <td>[Documentation]</td>
 
 
 
@@ -5244,7 +5243,7 @@ Dir</td>
 
 
 
-      <td>[ Document ]</td>
+      <td>[Documentation]</td>
 
 
 
@@ -5529,7 +5528,7 @@ Dir</td>
 
 
 
-      <td>[ Document ]</td>
+      <td>[Documentation]</td>
 
 
 
@@ -5877,7 +5876,7 @@ File</td>
 
 
 
-      <td>[ Document ]</td>
+      <td>[Documentation]</td>
 
 
 
@@ -6183,7 +6182,7 @@ Empty</td>
 
 
 
-      <td>[ Document ]</td>
+      <td>[Documentation]</td>
 
 
 
@@ -6446,7 +6445,7 @@ Empty</td>
 
 
 
-      <td>[ Document ]</td>
+      <td>[Documentation]</td>
 
 
 
@@ -7166,7 +7165,7 @@ Not Be Empty</td>
 
 
 
-      <td>[ Document ]</td>
+      <td>[Documentation]</td>
 
 
 
@@ -7312,7 +7311,7 @@ Not Be Empty</td>
 
 
 
-      <td>[ Document ]</td>
+      <td>[Documentation]</td>
 
 
 
@@ -7767,7 +7766,7 @@ Not Be Empty</td>
 
 
 
-      <td>[ Document ]</td>
+      <td>[Documentation]</td>
 
 
 
@@ -7872,7 +7871,7 @@ Not Be Empty</td>
 
 
 
-      <td>[ Document ]</td>
+      <td>[Documentation]</td>
 
 
 
@@ -12423,8 +12422,7 @@ given<br>
 
 
 
-      <td align="undefined" valign="undefined">Fail
-If Exists</td>
+      <td align="undefined" valign="undefined">Should Not Exist</td>
 
 
 
@@ -12566,8 +12564,7 @@ name&nbsp;given<br>
 
 
 
-      <td align="undefined" valign="undefined">Fail
-If Exists</td>
+      <td align="undefined" valign="undefined">Should Not Exist</td>
 
 
 
@@ -12640,7 +12637,7 @@ and Check File</td>
 
 
 
-    <tr>
+    <tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Move File Using Just File Name</td><td>Create File</td><td>just_name.1</td><td>contents</td><td></td></tr><tr><td></td><td>${contents 1} =</td><td>Get File</td><td>just_name.1</td><td></td></tr><tr><td></td><td>Move File</td><td>just_name.1</td><td>just_name.2</td><td></td></tr><tr><td></td><td>Should Not Exist</td><td>just_name.1</td><td></td><td></td></tr><tr><td></td><td>${contents 2} =</td><td>Get File</td><td>just_name.2</td><td></td></tr><tr><td></td><td>Should Be Equal</td><td>-${contents 1}-${contents 2}-</td><td>-contents-contents-</td><td></td></tr><tr><td></td><td>[Teardown]</td><td>Remove Files</td><td>just_name.?</td><td><br></td></tr><tr>
 
 
 
@@ -12694,19 +12691,19 @@ and Check File</td>
 
 
 
-      <td>[ Document ]</td>
+      <td>[Documentation]</td>
 
 
 
 
 
-      <td>FAIL</td>
+      <td>FAIL REGEXP:</td>
 
 
 
 
 
-      <td>Source file 'non-existing-file.txt' does not exist</td>
+      <td>Source file '${ANYDIR}non-existing-file.txt' does not exist</td>
 
 
 
@@ -12828,8 +12825,7 @@ Directory</td>
 
 
 
-      <td align="undefined" valign="undefined">[
-Document ]</td>
+      <td align="undefined" valign="undefined">[Documentation]</td>
 
 
 
@@ -12843,7 +12839,7 @@ Moving to excisting and non-existing directory should pass.</td>
 
 
 
-      <td align="undefined" valign="undefined">PASS</td>
+      <td align="undefined" valign="undefined">*TODO:* Split this test</td>
 
 
 
@@ -12861,7 +12857,7 @@ Moving to excisting and non-existing directory should pass.</td>
 
 
 
-    <tr>
+    <tr><td></td><td>Comment</td><td>Setup</td><td></td><td></td></tr><tr>
 
 
 
@@ -13050,15 +13046,14 @@ File</td>
 
 
 
-      <td align="undefined" valign="undefined">#
-Move to new dir (same as
+      <td align="undefined" valign="undefined">Comment</td>
+
+
+
+
+
+      <td>Move to new dir (same as
 rename)</td>
-
-
-
-
-
-      <td></td>
 
 
 
@@ -13136,8 +13131,7 @@ rename)</td>
 
 
 
-      <td align="undefined" valign="undefined">Fail
-If Exists</td>
+      <td align="undefined" valign="undefined">Should Not Exist</td>
 
 
 
@@ -13308,15 +13302,14 @@ and Check File</td>
 
 
 
-      <td align="undefined" valign="undefined">#
-Move to existing
+      <td align="undefined" valign="undefined">Comment<br></td>
+
+
+
+
+
+      <td>Move to existing
 dir</td>
-
-
-
-
-
-      <td></td>
 
 
 
@@ -13442,8 +13435,7 @@ dir</td>
 
 
 
-      <td align="undefined" valign="undefined">Fail
-If Exists</td>
+      <td align="undefined" valign="undefined">Should Not Exist</td>
 
 
 
@@ -13614,15 +13606,14 @@ and Check File</td>
 
 
 
-      <td align="undefined" valign="undefined">#
-Move to non-existing
+      <td align="undefined" valign="undefined">Comment</td>
+
+
+
+
+
+      <td>Move to non-existing
 with missing intermediate dirs</td>
-
-
-
-
-
-      <td></td>
 
 
 
@@ -13700,8 +13691,7 @@ with missing intermediate dirs</td>
 
 
 
-      <td align="undefined" valign="undefined">Fail
-If Exists</td>
+      <td align="undefined" valign="undefined">Should Not Exist</td>
 
 
 
@@ -13860,7 +13850,7 @@ and Check File</td>
 
 
 
-    <tr>
+    <tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Move Directory Using Just Dir Name</td><td>Create File</td><td>just_name_1/file</td><td>contents</td><td></td></tr><tr><td></td><td>${contents 1} =</td><td>Get File</td><td>just_name_1/file</td><td></td></tr><tr><td></td><td>Move Directory</td><td>just_name_1</td><td>just_name_2</td><td></td></tr><tr><td></td><td>Should Not Exist</td><td>just_name_1</td><td></td><td></td></tr><tr>
 
 
 
@@ -13872,19 +13862,19 @@ and Check File</td>
 
 
 
-      <td></td>
+      <td>${contents 2} =</td><td>Get File</td><td>just_name_2/file</td>
 
 
 
 
 
-      <td></td>
+      
 
 
 
 
 
-      <td></td>
+      
 
 
 
@@ -13902,7 +13892,8 @@ and Check File</td>
 
 
 
-    <tr>
+    <tr><td></td><td>Should Be Equal</td><td>-${contents 1}-${contents 2}-</td><td>-contents-contents-</td><td></td></tr><tr><td></td><td>[Teardown]</td><td>Remove
+Temps</td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr>
 
 
 
@@ -13914,19 +13905,19 @@ and Check File</td>
 
 
 
-      <td>[ Document ]</td>
+      <td>[Documentation]</td>
 
 
 
 
 
-      <td>FAIL</td>
+      <td>FAIL REGEXP:</td>
 
 
 
 
 
-      <td>Source directory 'non-existing-dir' does not exist</td>
+      <td>Source directory '${ANYDIR}non-existing-dir' does not exist</td>
 
 
 
@@ -14346,7 +14337,7 @@ Files</td>
 
 
       <td align="undefined" valign="undefined">Remove
-Dir</td>
+Directory</td>
 
 
 
@@ -14389,7 +14380,7 @@ Dir</td>
 
 
       <td align="undefined" valign="undefined">Remove
-Dir</td>
+Directory</td>
 
 
 
@@ -14423,7 +14414,8 @@ Dir</td>
 
 
 
-    <tr>
+    <tr><td></td><td>Remove
+Directory</td><td>just_name_1</td><td>recursive</td><td></td></tr><tr>
 
 
 
@@ -14433,17 +14425,18 @@ Dir</td>
 
 
 
-      <td></td>
+      <td>Remove
+Directory</td>
 
 
 
 
-      <td></td>
+      <td>just_name_2</td>
 
 
 
 
-      <td></td>
+      <td>recursive</td>
 
 
 
@@ -14458,7 +14451,7 @@ Dir</td>
 
 
 
-    <tr>
+    <tr><td></td><td></td><td></td><td></td><td></td></tr><tr>
 
 
 
