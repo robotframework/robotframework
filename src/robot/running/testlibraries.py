@@ -74,7 +74,7 @@ class _BaseTestLibrary(BaseLibrary):
             self._libcode = libcode
             self._libinst = self.get_instance()
             self.handlers = self._create_handlers(syslog)
-            self._init_scope_handling(self.scope)
+            self._init_scope_handling()
 
     def _get_version(self, code):
         try:
@@ -85,13 +85,13 @@ class _BaseTestLibrary(BaseLibrary):
             except AttributeError:
                 return '<unknown>'
             
-    def _init_scope_handling(self, scope):
-        if scope == 'GLOBAL':
+    def _init_scope_handling(self):
+        if self.scope == 'GLOBAL':
             return
         self._libinst = None
         self.start_suite = self._caching_start
         self.end_suite = self._restoring_end
-        if scope == 'TESTCASE':
+        if self.scope == 'TESTCASE':
             self.start_test = self._caching_start
             self.end_test = self._restoring_end
             
@@ -102,6 +102,7 @@ class _BaseTestLibrary(BaseLibrary):
         lib.scope = self.scope
         lib._libcode = self._libcode
         lib._libinst = self._libinst
+        lib._init_scope_handling()
         lib.handlers = utils.NormalizedDict(ignore=['_'])
         for name, handler in self.handlers.items():
             lib.handlers[name] = handler.copy(lib)
