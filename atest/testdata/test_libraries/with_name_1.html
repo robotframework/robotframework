@@ -1,6 +1,5 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html>
-<head>
+<html><head>
 
 
 
@@ -81,10 +80,7 @@ th {
   
   
   
-  <title>Robot Test Cases</title>
-</head>
-
-
+  <title>Robot Test Cases</title></head>
 <body>
 
 
@@ -322,7 +318,7 @@ th {
 
       <td align="undefined" valign="undefined"></td>
 
-    </tr>
+    </tr><tr><td>Library</td><td>libraryscope.Global</td><td>WITH NAME</td><td>GlobalScope </td><td></td></tr><tr><td>Library</td><td>libraryscope.Suite</td><td>with name</td><td>Suite Scope</td><td></td></tr><tr><td>Library</td><td>libraryscope.Test</td><td>WITH NAME</td><td>TEST SCOPE</td><td></td></tr>
 
 
 
@@ -971,7 +967,7 @@ Found: 'ParameterLibrary.Parameters' and 'Params.Parameters'</td>
 
       <td align="undefined" valign="undefined"></td>
 
-    </tr>
+    </tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Global Scope 1.1</td><td>Register And Test Registered</td><td>Global Scope</td><td>G.1.1</td><td></td></tr><tr><td>Global Scope 1.2</td><td>Register And Test Registered</td><td>Global Scope</td><td>G.1.2</td><td>G.1.1</td></tr><tr><td>Test Suite Scope 1.1</td><td>Register And Test Registered</td><td>Suite Scope</td><td>S.1.1</td><td></td></tr><tr><td>Test Suite Scope 1.2</td><td>Register And Test Registered</td><td>Suite Scope</td><td>S.1.2</td><td>S.1.1</td></tr><tr><td>Test Case Scope 1.1</td><td>Register And Test Registered</td><td>Test Scope</td><td>T.1.1</td><td></td></tr><tr><td>Test Case Scope 1.2</td><td>Register And Test Registered</td><td>Test Scope</td><td>T.1.2</td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr>
 
 
 
@@ -1238,7 +1234,7 @@ Found: 'ParameterLibrary.Parameters' and 'Params.Parameters'</td>
 
 
 
-      <td></td>
+      <td>Register And test Registered</td>
 
 
 
@@ -1249,7 +1245,7 @@ Found: 'ParameterLibrary.Parameters' and 'Params.Parameters'</td>
 
 
 
-      <td></td>
+      <td>[Arguments]</td>
 
 
 
@@ -1260,7 +1256,7 @@ Found: 'ParameterLibrary.Parameters' and 'Params.Parameters'</td>
 
 
 
-      <td></td>
+      <td>${scope}</td>
 
 
 
@@ -1271,7 +1267,7 @@ Found: 'ParameterLibrary.Parameters' and 'Params.Parameters'</td>
 
 
 
-      <td></td>
+      <td>${reg}</td><td>@{exp}</td>
 
 
 
@@ -1282,7 +1278,7 @@ Found: 'ParameterLibrary.Parameters' and 'Params.Parameters'</td>
 
 
 
-      <td></td>
+      
 
 
 
@@ -1326,7 +1322,29 @@ Found: 'ParameterLibrary.Parameters' and 'Params.Parameters'</td>
 
 
 
-      <td></td>
+      <td>Run Keyword</td>
+
+
+
+
+
+
+
+
+
+
+      <td>${scope}.Register</td>
+
+
+
+
+
+
+
+
+
+
+      <td>${reg}</td>
 
 
 
@@ -1348,29 +1366,7 @@ Found: 'ParameterLibrary.Parameters' and 'Params.Parameters'</td>
 
 
 
-      <td></td>
-
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-
-    </tr>
+    </tr><tr><td></td><td>Run Keyword</td><td>${scope}.Should Be Registered</td><td>${reg}</td><td>@{exp}</td></tr>
 
 
 
@@ -1403,5 +1399,4 @@ Found: 'ParameterLibrary.Parameters' and 'Params.Parameters'</td>
 
 
 
-</body>
-</html>
+</body></html>
