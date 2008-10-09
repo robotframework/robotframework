@@ -183,12 +183,12 @@ are equivalent.
 .. table:: Using list variables
    :class: example
 
-   =============  ========  ==========  ==========
-     Test Case     Action    Argument    Argument
-   =============  ========  ==========  ==========
-   Strings        Login     robot       secret
-   List Variable  Login     @{USER}     \
-   =============  ========  ==========  ==========
+   =============  ========  ===========  ==========
+     Test Case     Action    User Name    Password
+   =============  ========  ===========  ==========
+   Strings        Login     robot        secret
+   List Variable  Login     @{USER}      \
+   =============  ========  ===========  ==========
 
 
 It is also possible to access a certain value from the list variable
@@ -208,6 +208,30 @@ manner can be used similarly as scalar variables:
    List Variable  Login            @{USER}              \
    \              Title Should Be  Welcome @{USER}[0]!  \
    =============  ===============  ===================  ==========
+
+
+Starting from Robot Framework 2.0.3, it is possible to use list
+variables as scalar variables containing lists simply by replacing
+:var:`@` with :var:`$`. This makes it possible to use list variables
+with list related keywords, for example, from from BuiltIn_ and
+Collections_ libraries. This feature works only if there is no scalar
+variable with same basename as the list variable has. In these cases
+the scalar variable has precedence and its value is used instead.
+
+.. table:: Using list variables as scalars
+   :class: example
+
+   =============  ================  ==============  ==========  ==========
+     Test Case         Action          Argument      Argument    Argument
+   =============  ================  ==============  ==========  ==========
+   Example        @{items} =        Create List     first       second
+   \              Length Should Be  ${items}        2           \
+   \              Append To List    ${items}        third       \
+   \              Length Should Be  ${items}        3           \
+   \              Remove From List  ${items}        1           \
+   \              Length Should Be  ${items}        2           \
+   \              Log Many          @{items}        \           \
+   =============  ================  ==============  ==========  ==========
 
 
 Environment variables
@@ -853,9 +877,9 @@ or :var:`${JANE_HOME}`, depending on if :name:`Get Name` returns
 .. table::
    :class: example
  
-   ===========  ==========  ========================  ==============
-    Test Case     Action            Argument             Argument
-   ===========  ==========  ========================  ==============
-   Example      ${name} =   Get Name                  \
-   \            Do X        ${${name}_HOME}           \
-   ===========  ==========  ========================  ==============
+   ===========  ============  ========================  ==========
+    Test Case      Action             Argument           Argument
+   ===========  ============  ========================  ==========
+   Example      ${name} =     Get Name                  \
+   \            Do X          ${${name}_HOME}           \
+   ===========  ============  ========================  ==========
