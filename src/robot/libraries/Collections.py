@@ -18,9 +18,6 @@ from robot import output
 from robot.errors import DataError
 
 
-# Note that create_list and should_(not_)_be_empty are in BuiltIn library
-
-
 class _List:
 
     def convert_to_list(self, item):
@@ -593,12 +590,11 @@ class Collections(_List, _Dictionary):
     - `Should Be Empty`
     - `Should Not Be Empty`
 
-    All list keywords expect a scalar variable (e.g. ${list}) as an argument.
-    Possible list variables (e.g. @{list}) must thus be converted to scalar
-    variables first. The example below shows how to convert between them.
-
-    | ${list} = | Create List  | @{list} |
-    | @{list} = | Set Variable | ${list} | 
+    All list keywords expect a scalar variable (e.g. ${list}) as an
+    argument.  Starting with Robot Framework 2.0.3, it is possible to
+    use list variables (e.g. @{list}) as scalars simply by replacing
+    '@' with '$'. With earlier versions, list variables must be
+    converted to scalar variables first. 
 
     -------
 
