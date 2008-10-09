@@ -33,6 +33,7 @@ There are three ways to install Robot Framework:
 Installation packages are available from
 http://downloads.robotframework.org, and source code from
 http://source.robotframework.org.  
+
     
 Preconditions
 ~~~~~~~~~~~~~
@@ -71,13 +72,11 @@ with dynamic languages, such as Jython. Both Sun and IBM Java versions
 are supported.
 
 Robot Framework requires Jython version 2.2. The earlier Jython
-version 2.1 is not compatible with Robot, and also 2.2 betas and
-alphas have some problems and are not supported. Unfortunately, also
-Jython 2.2.1 has certain Unicode problems (for more information, see
+version 2.1 is not compatible with Robot Framework, and Jython 2.2
+betas and alphas are not supported either. Unfortunately, also Jython
+2.2.1 has certain Unicode problems (for more information, see
 http://bugs.jython.org/issue1802339 and
-http://bugs.jython.org/issue1032), which makes it incompatible with
-Robot Framework. Hopefully these problems will be fixed in future
-versions.
+http://bugs.jython.org/issue1032).
 
 Installing Jython is a fairly easy procedure. First you need to get an
 installer from the `Jython homepage`_ or directly from
@@ -97,7 +96,8 @@ correctly. Jython is found if:
 2. An environment variable :var:`JYTHON_HOME` is set and it points to
    the Jython installation directory.
 
-3. The Jython installation directory is found. On Windows, it is searched 
+3. The installer finds the Jython installation directory from the system. On 
+   Windows, it is searched 
    from the :path:`C:\\` and :path:`D:\\` drives, and on other systems from
    the :path:`/usr/local` and :path:`/opt` directories. The directory is found 
    if it is under the searched directories mentioned above, or one level
@@ -202,7 +202,7 @@ always do it manually following these steps:
 2. Copy the source code where you want to.
 
 3. Create the needed runner scripts. If you have a source package or
-   a checkout, you can get templates from :path:`src/bin`.
+   a checkout, you can get templates from :path:`src/bin` directory.
 
 
 Where files are installed
@@ -258,17 +258,17 @@ Verifying installation
 To verify that the installation and environment setup were successful,
 type::
 
-  $ pybot --version 
-  Robot 2.0.1 (Python 2.5.1 on cygwin)
+   $ pybot --version 
+   Robot 2.0.1 (Python 2.5.1 on cygwin)
 
 To verify that Robot Framework works also with Jython, type::
 
-  $ jybot --version
-  Robot 2.0.1 (Jython 2.2 on java1.6.0_03)
+   $ jybot --version
+   Robot 2.0.1 (Jython 2.2 on java1.6.0_03)
 
 In both cases, the exact version and platform information can, of course,
 differ from these. On Jython, you may also get some notifications from
-Jython's package manager upon the first execution.
+Jython package manager upon the first execution.
 
 
 Uninstallation
@@ -277,7 +277,7 @@ Uninstallation
 If Robot Framework has been installed using a source distribution, it
 can be uninstalled with command::
 
-    python install.py uninstall
+   python install.py uninstall
 
 If Robot Framework is installed from a binary distribution, it can be
 uninstalled via the mechanism offered by the operating system. For
@@ -309,6 +309,15 @@ the versions used:
 
 - If you are downgrading, the rules are the same as for upgrading.
 
-With source distributions upgrading is easy with command::
+With source distributions, you first need to get the new package, and
+after that run the following command, which automatically takes care
+of the uninstallation::
 
-    python install.py reinstall
+   python install.py reinstall
+
+With Easy Install you can simply run::
+
+   easy_install robotframework==<new-version>
+
+Regardless on the version or installation method, you do not need to
+reinstall preconditions or set the :var:`PATH` environment variable again.
