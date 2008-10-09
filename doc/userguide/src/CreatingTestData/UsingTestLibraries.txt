@@ -315,19 +315,22 @@ so it can be used only when running Robot Framework with Jython.
 For more information, see the `Screenshot library documentation`_.
 
 
-
 External libraries
 ~~~~~~~~~~~~~~~~~~~
 
 Any test library that is not one of the standard libraries is, by
 definition, *an external library*. Robot Framework developers provide
-some generic libraries, such as SeleniumLibrary, which are not
-packaged with the framework itself, because they require external
-dependencies. Generic libraries can also be provided by other parties,
-and most teams have also some custom libraries only for themselves.
+some generic libraries, such as SeleniumLibrary_ and SwingLibrary_,
+which are not packaged with the framework itself, because they require
+external dependencies. Generic libraries can also be provided by other
+parties, and most teams have also some custom libraries only for
+themselves.
 
 Different external libraries can have a totally different mechanism
 for installing and introducing them. Quite often they also require
 some other dependencies to be installed separately. All libraries
 should have clear instructions on this and preferably automate the
 installation.
+
+See `Creating test libraries`_ section for more information about how
+to create new test libraries for your own or generic usage.
