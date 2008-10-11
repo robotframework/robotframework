@@ -171,7 +171,7 @@ class _List:
         Examples (incl. Python equivelants in comments):
         | ${x} = | Get Slice From List | ${L5} | 2 | 4  | # L5[2:4]    |
         | ${y} = | Get Slice From List | ${L5} | 1 |    | # L5[1:None] |
-        | ${z} = | Get Slice From List | ${L5} |   | -1 | # L5[0:-2]   |
+        | ${z} = | Get Slice From List | ${L5} |   | -2 | # L5[0:-2]   |
         =>
         - ${x} = ['c', 'd']
         - ${y} = ['b', 'c', 'd', 'e']
@@ -304,12 +304,12 @@ class _List:
         _verify_condition(diffs == '', default, msg, values)
 
     def log_list(self, list_, level='INFO'):
-        """Logs given `list's` length and content with given `level`
+        """Logs the length and contents of the `list` using given `level`.
         
         Valid levels are TRACE, DEBUG, INFO (default), and WARN.
         
-        In case you want only log the length, use keyword `Get Length` from 
-        BuiltIn library. 
+        If you only want to the length, use keyword `Get Length` from 
+        the BuiltIn library. 
         """
         print '*%s* ' % (_validate_log_level(level)),
         if len(list_) == 0:
@@ -322,7 +322,7 @@ class _List:
                 print '%s: %s' % (i, list_[i])
             
     def _index_to_int(self, index, empty_to_zero=False):    
-        if empty_to_zero and index == '':
+        if empty_to_zero and not index:
             return 0
         try:
             return int(index)
@@ -535,12 +535,12 @@ class _Dictionary:
         self._key_values_should_be_equal(keys, dict1, dict2, msg, values)
 
     def log_dictionary(self, dictionary, level='INFO'):
-        """Logs given `dictionary's` length and content with given `level`
+        """Logs the size and contents of the `dictionary` using given `level`.
         
         Valid levels are TRACE, DEBUG, INFO (default), and WARN.
         
-        In case you want only log the length, use keyword `Get Length` from 
-        BuiltIn library. 
+        If you only want to log the size, use keyword `Get Length` from 
+        the BuiltIn library. 
         """
         print '*%s* ' % (_validate_log_level(level)),
         if len(dictionary) == 0:
