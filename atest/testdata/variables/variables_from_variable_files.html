@@ -1,0 +1,570 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+<meta name="generator" content="HTML Tidy for Mac OS X (vers 31 October 2006 - Apple Inc. build 13), see www.w3.org">
+
+<style type="text/css">
+html { font-family: Arial,Helvetica,sans-serif;
+background-color: white;
+color: black;
+}
+p { max-width: 60em;
+}
+table { border-collapse: collapse;
+empty-cells: show;
+margin: 1em 0em;
+border: 0.1em solid black;
+}
+th, td {
+border-style: solid;
+border-width: 0.05em 0.1em;
+border-color: black;
+padding: 0.1em 0.2em;
+height: 1.5em;
+}
+th {
+background-color: rgb(192, 192, 192);
+color: black;
+border-width: 0.1em;
+font-weight: bold;
+text-align: center;
+text-transform: capitalize;
+letter-spacing: 0.1em;
+}
+/* Widths of named columns */
+col.name {
+width: 10em;
+}
+.action , .value, .arg {
+width: 15em;
+}
+/* Properties for the name column - td:first-child should work in CSS 2.1 avare browsers (tested in Firefox)
+- col.name is against specs but works in IE
+*/
+td:first-child, col.name {
+background-color: rgb(240, 240, 240);
+text-transform: capitalize;
+letter-spacing: 0.1em;
+}
+th { font-style: normal; } /* required for IE */
+</style>
+
+<title>Robot Test Cases</title><link type="text/css" href="resources/css/testdata.css" rel="stylesheet"></head>
+<body>
+<h1>Robot Test Cases for Variables</h1>
+<table border="1">
+<colgroup span="99"><col class="name"><col class="value" span="4"></colgroup>
+<thead>
+<tr>
+<th>Setting</th>
+<th>Value</th>
+<th>Value</th>
+<th>value</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Variables</td>
+<td>variable_file.py</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td align="undefined" valign="undefined"></td>
+<td align="undefined" valign="undefined"></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td align="undefined" valign="undefined"></td>
+<td align="undefined" valign="undefined"></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<br>
+<table style="width: 1073px; height: 66px;" border="1">
+<colgroup span="99"><col class="name"><col class="value" span="4"></colgroup>
+<thead>
+<tr>
+<th>Variable</th>
+<th>Value</th>
+<th>Value</th>
+<th>Value</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr>
+
+</tbody>
+</table>
+<br>
+<table border="1">
+<colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
+<thead>
+<tr>
+<th>Test Case</th>
+<th>Action</th>
+<th>Argument</th>
+<th>Argument</th>
+<th>Argument</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Scalar String</td>
+<td>Should Be Equal</td>
+<td>${STRING}</td>
+<td>Hello world!</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should Be Equal</td><td>I said: "${STRING}"</td><td>I said: "Hello world!"</td>
+
+
+<td></td>
+</tr>
+
+<tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Scalar Non-Strings</td><td>Should Be True</td><td>${INTEGER} == 42</td><td></td><td></td></tr><tr><td></td><td>Should Be True</td><td>${FLOAT} == -1.2</td><td></td><td></td></tr><tr><td></td><td>Should Be True</td><td>${BOOLEAN} == True</td><td></td><td></td></tr><tr><td></td><td>Should Be True</td><td>${NONE VALUE} == None</td><td></td><td></td></tr><tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+
+
+<tr>
+<td align="undefined" valign="undefined">Scalar String
+With&nbsp;Escapes</td>
+<td align="undefined" valign="undefined">Should Be Equal</td>
+<td>${ESCAPES}</td><td>one \\&nbsp;two \\\\
+\${non_existing}</td>
+
+<td></td>
+</tr>
+
+<tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td align="undefined" valign="undefined">Empty Scalar String</td><td>Should Be Equal</td><td>${NO VALUE}</td><td>${EMPTY}<br></td><td></td></tr><tr><td></td><td>Should Be Equal</td><td>"${NO VALUE}${NO VALUE}"</td><td>""</td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr>
+<tr>
+<td>Scalar List</td>
+<td align="undefined" valign="undefined">Should Not Be Equal</td>
+<td align="undefined" valign="undefined">${LIST}</td>
+<td align="undefined" valign="undefined">Hello world !</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td align="undefined" valign="undefined">Should Be True</td>
+<td align="undefined" valign="undefined">${LIST} ==
+['Hello','world', '!']</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td align="undefined" valign="undefined">Should Be Equal</td>
+<td align="undefined" valign="undefined">${LIST[0]}</td>
+<td align="undefined" valign="undefined">Hello</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td align="undefined" valign="undefined">Should Be Equal</td>
+<td align="undefined" valign="undefined">${LIST[1]}</td>
+<td align="undefined" valign="undefined">world</td>
+<td></td>
+</tr>
+<tr><td></td><td align="undefined" valign="undefined">Should Be Equal</td><td align="undefined" valign="undefined">${LIST[2]}</td><td align="undefined" valign="undefined">!</td><td></td></tr>
+
+
+<tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Scalar List With Non-Strings</td><td>Should Be True</td><td>${LIST WITH NON STRINGS} == [42, -1.2, True, None]</td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr>
+<tr>
+<td align="undefined" valign="undefined">Scalar List
+With&nbsp;Escapes</td>
+<td align="undefined" valign="undefined">Should Be Equal</td>
+<td align="undefined" valign="undefined">${LIST WITH ESCAPES [0]}</td>
+<td align="undefined" valign="undefined">one \\</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td align="undefined" valign="undefined">Should Be Equal</td>
+<td align="undefined" valign="undefined">${LIST WITH ESCAPES [1]}</td>
+<td align="undefined" valign="undefined">two \\\\</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td align="undefined" valign="undefined">Should Be Equal</td>
+<td align="undefined" valign="undefined">${LIST WITH ESCAPES [2]}</td>
+<td align="undefined" valign="undefined">three \\\\\\</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td align="undefined" valign="undefined">Should Be Equal</td>
+<td align="undefined" valign="undefined">${LIST WITH ESCAPES [3]}</td>
+<td align="undefined" valign="undefined">\${non_existing}</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>${exp} =</td>
+<td>Create List</td>
+<td>one \\</td>
+<td>two \\\\</td>
+</tr>
+<tr>
+<td></td>
+<td>...</td>
+<td>three \\\\\\</td>
+<td>\${non_existing}</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should Be Equal</td>
+<td>${LIST WITH ESCAPES}</td>
+<td>${exp}</td>
+<td></td>
+</tr>
+<tr>
+<td align="undefined" valign="undefined"></td>
+<td align="undefined" valign="undefined">Should Be True</td>
+<td align="undefined" valign="undefined">${LIST WITH ESCAPES}&nbsp;==<br>
+['one \\\\', 'two \\\\\\\\', 'three \\\\\\\\\\\\',
+'\${non_existing}']</td>
+<td>Backslashes are doubled here because 'Should Be True' uses
+'eval' internally</td>
+<td></td>
+</tr>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>List with One Item</td>
+<td>Should Be True</td>
+<td>@{ONE ITEM}&nbsp;== ['Hello again?']</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should Be Equal</td>
+<td>@{ONE ITEM}[0]</td><td>Hello again?</td>
+
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>List With Multiple Items</td>
+<td>Should Be Equal</td>
+<td>@{LIST}[0]</td>
+<td align="undefined" valign="undefined">Hello</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should Be Equal</td>
+<td>@{LIST}[1]</td>
+<td align="undefined" valign="undefined">again</td>
+<td></td>
+</tr>
+<tr><td></td><td>Should Be Equal</td><td>@{LIST}[2]</td><td align="undefined" valign="undefined">?</td><td></td></tr><tr>
+<td></td>
+<td align="undefined" valign="undefined">Should Be True</td>
+<td align="undefined" valign="undefined">@{LIST} == ['Hello',
+'again', '?']</td>
+<td></td>
+<td></td>
+</tr>
+
+
+
+
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td align="undefined" valign="undefined">List With Escapes</td>
+<td align="undefined" valign="undefined">Should Be Equal</td>
+<td align="undefined" valign="undefined">
+@{LIST WITH ESCAPES}[0]</td>
+<td align="undefined" valign="undefined">one \\</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td align="undefined" valign="undefined">Should Be Equal</td>
+<td align="undefined" valign="undefined">
+@{LIST WITH ESCAPES}[1]</td>
+<td align="undefined" valign="undefined">two \\\\</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td align="undefined" valign="undefined">Should Be Equal</td>
+<td align="undefined" valign="undefined">
+@{LIST WITH ESCAPES}[2]</td>
+<td align="undefined" valign="undefined">three \\\\\\</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td align="undefined" valign="undefined">Should Be Equal</td>
+<td align="undefined" valign="undefined">
+@{LIST WITH ESCAPES}[3]</td>
+<td align="undefined" valign="undefined">\${non_existing}</td>
+<td></td>
+</tr>
+
+
+
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+
+
+
+
+<tr><td>List With No Items</td><td>[Documentation]</td><td>FAIL</td><td>Non-existing variable '\@{EMPTY}[0]'</td><td></td></tr><tr><td></td><td>Should Be True</td><td>@{EMPTY} == [ ]</td><td></td><td></td></tr><tr><td></td><td>${ret} =</td><td>Catenate</td><td>@{EMPTY}</td><td>@{EMPTY}</td></tr><tr><td></td><td>...</td><td>only value</td><td>@{EMPTY}</td><td></td></tr><tr><td></td><td>Should Be Equal</td><td>${ret}</td><td>only value</td><td></td></tr><tr><td></td><td>Log</td><td>@{EMPTY}[0]</td><td></td><td></td></tr><tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+
+
+
+
+
+<tr><td>Scalar Variable Containing
+List Is Different Than List Variable</td><td>${ret} =</td><td>Catenate</td><td>${LIST}</td><td></td></tr><tr><td></td><td>Should Be Equal</td><td>${ret}</td><td>['Hello',&nbsp;'world',&nbsp;'!']</td><td></td></tr><tr><td></td><td>${ret} =</td><td>Catenate</td><td>@{LIST}</td><td></td></tr><tr><td></td><td>Should Be Equal</td><td>${ret}</td><td>Hello again ?</td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Variable Names Are Case Insensitive</td><td>Should Be Equal</td><td>${lowercase}</td><td>Variable name in lower case</td><td></td></tr><tr><td></td><td>Should Be Equal</td><td>${LOWERCASE}</td><td>Variable name in lower case</td><td></td></tr><tr><td></td><td>Should Be Equal</td><td>${LoWerCAse}</td><td>Variable name in lower case</td><td></td></tr><tr><td></td><td>Should Be Equal</td><td>@{lowercase}[0]</td><td>Variable name in lower case</td><td></td></tr><tr><td></td><td>Should Be Equal</td><td>@{LOWERCASE}[0]</td><td>Variable name in lower case</td><td></td></tr><tr><td></td><td>Should Be Equal</td><td>@{lOWErcasE}[0]</td><td>Variable name in lower case</td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Variable Names Are Underscore Insensitive</td><td>Should Be Equal</td><td>${underscores}</td><td>Variable name with under scores</td><td></td></tr><tr><td></td><td>Should Be Equal</td><td>${_U N D_er_Scores__}</td><td>Variable name with under scores</td><td></td></tr><tr>
+<td align="undefined" valign="undefined"></td>
+<td align="undefined" valign="undefined">Should Be Equal</td>
+<td>@{underscores}[0]</td><td>Variable name with under scores</td>
+
+<td align="undefined" valign="undefined"></td>
+</tr>
+<tr><td></td><td>Should Be Equal</td><td>@{ _u_N_de__r _S C &nbsp; ores__ }[0]</td><td>Variable name with under scores</td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</tbody>
+</table>
+<br>
+<table border="1">
+<colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
+<thead>
+<tr>
+<th>Keyword</th>
+<th>Action</th>
+<th>Argument</th>
+<th>Argument</th>
+<th>Argument</th>
+</tr>
+</thead>
+<tbody>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td align="undefined" valign="undefined"></td>
+<td align="undefined" valign="undefined"></td>
+<td align="undefined" valign="undefined"></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td align="undefined" valign="undefined"></td>
+<td align="undefined" valign="undefined"></td>
+<td align="undefined" valign="undefined"></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</body></html>
