@@ -235,13 +235,6 @@ class RunnableTestCase(BaseTestCase):
             return 'Teardown failed:\n%s' % teardown_err
         return '%s\n\nAlso teardown failed:\n%s' % (message, teardown_err)
             
-    def _get_fixture(self, clazz, test, parent):
-        if test is not None:
-            return clazz(test)
-        if parent is not None:
-            return clazz(parent)
-        return clazz()
-    
     def _process_parents(self, parentdatas):
         test_setup = test_teardown = default_tags = test_timeout = None
         force_tags = []
