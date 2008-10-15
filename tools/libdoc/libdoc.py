@@ -181,6 +181,8 @@ class _DocHelper:
         for kw in lib.keywords:
             if utils.eq(name, kw.name):
                 return '<a href="#%s" class="name">%s</a>' % (kw.name, name)
+        if utils.eq_any(name, ['introduction', 'library introduction']):
+            return '<a href="#introduction" class="name">%s</a>' % name
         return '<span class="name">%s</span>' % name
 
 
@@ -423,7 +425,7 @@ DOCUMENT_TEMPLATE = '''
 <p><b>Version:</b> ${LIB.version}</p>
 <!-- END IF -->
 
-<h2>Introduction</h2>
+<h2><a name="introduction"/>Introduction</h2>
 <p class='libdoc'>${LIB.htmldoc}</p>
 
 <h2>Shortcuts</h2>
