@@ -66,9 +66,9 @@ class XmlLogger:
                   'timeout': str(test.timeout) }
         self._writer.start_element('test', attrs)
         self._writer.whole_element('doc', test.doc)
-        self._write_list('tag', test.tags, 'tags')
 
     def end_test(self, test):
+        self._write_list('tag', test.tags, 'tags')
         self._write_status(test, test.message)
         self._writer.end_element('test')
 

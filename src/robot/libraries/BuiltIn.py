@@ -1253,6 +1253,46 @@ class Misc:
             return re.escape(patterns[0])
         return [ re.escape(pattern) for pattern in patterns ]
 
+    def set_tags(self, *tags):
+        """TODO: *******doc*********
+
+        - suites should recurse
+        - should fail if used in suite teardown
+        - should print added/removed tags
+        """
+        tags = utils.normalize_list(tags)
+        handler = lambda test: utils.normalize_list(test.tags + tags)
+        self._set_or_remove_tags(handler)
+        print 'Set tag%s %s' % (utils.plural_or_not(tags), utils.seq2str(tags))
+        
+    def remove_tags(self, *tags):
+        """TODO: *******doc*********"""
+        tags = utils.normalize_list(tags)
+        handler = lambda test: [ t for t in test.tags
+                                 if not utils.matches_any(t, tags) ]
+        self._set_or_remove_tags(handler)
+        print 'Removed tag%s %s' % (utils.plural_or_not(tags),
+                                    utils.seq2str(tags))
+
+    def _set_or_remove_tags(self, handler, suite=None, test=None):
+        if not (suite or test):
+            ns = NAMESPACES.current
+            if ns.test is None:
+                if ns.suite.state == 'TEARDOWN':
+                    raise RuntimeError("'Set Tags' and 'Remove Tags' keywords "
+                                       "cannot be used in suite teardown.")
+                self._set_or_remove_tags(handler, suite=ns.suite)
+            else:
+                self._set_or_remove_tags(handler, test=ns.test)
+                ns.variables.set_test('@{TEST_TAGS}', ns.test.tags)
+        elif suite:
+            for sub in suite.suites:
+                self._set_or_remove_tags(handler, suite=sub)
+            for test in suite.tests:
+                self._set_or_remove_tags(handler, test=test)
+        else:
+            test.tags = handler(test)
+
 
  # TODO: Rename 'Verify' -> '_Verify', etc. because helper classes aren't part
  # of our public API.
