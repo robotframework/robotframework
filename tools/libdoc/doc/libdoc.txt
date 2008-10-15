@@ -212,7 +212,10 @@ importantly, this syntax also automatically creates internal links to
 other keywords in the library. For example documentation of the
 following simple Python library would have link from :name:`Log
 Messages` to :name:`Log Message`, and :code:`\`message\`` and
-:code:`\`level\`` would be formatted specially.
+:code:`\`level\`` would be formatted specially. In addition, using 
+`introduction` or `library introduction` (case insensitive) will generate 
+a link to the 'Introduction' chapter.
+
 
 .. sourcecode:: python
 
