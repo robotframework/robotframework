@@ -227,13 +227,13 @@ least for the following purposes:
 
 - Tags are shown in test reports_, logs_ and, of course, in the test
   data, so they provide metadata to test cases.
-- `Statistics`_ about test cases (total, passed, failed  are 
+- Statistics__ about test cases (total, passed, failed  are 
   automatically collected based on tags.
-- With tags, you can `include or exclude`_ test cases to be executed.
+- With tags, you can `include or exclude`__ test cases to be executed.
 - With tags, you can specify which test cases are considered `critical`_.
 
-.. _statistics: `Configuring statistics`_
-.. _include or exclude: `By tag names`_
+__ `Configuring statistics`_
+__ `By tag names`_
 
 In this section it is only explained how to set tags for test
 cases, and different ways to do it are listed below. These
@@ -259,12 +259,14 @@ approaches can naturally be used together.
    to tags they got elsewhere. This option is only available in Robot
    Framework version 1.8.3 and newer.
 
+`Set Tags`:name: and `Remove Tags`:name: keywords 
+   These `BuiltIn keywords`_ can be used to modify tags during the
+   test execution.  Available in Robot Framework 2.0.3 and newer.
 
 Tags are free text, but they are normalized so that they are converted
 to lowercase and all spaces are removed. If a test case gets the same tag
 several times, other occurrences than the first one are removed. Tags
 can be created using variables, assuming that those variables exist.
-
 
 .. table:: Tagging example
    :class: example
@@ -288,39 +290,50 @@ can be created using variables, assuming that those variables exist.
 .. table:: 
    :class: example
 
-   +---------------+-----------------+----------------------+------------------------------+
-   |   Test Case   |     Action      |       Argument       |           Argument           |
-   +===============+=================+======================+==============================+
-   | No own tags   | [Documentation] | This test has tags   | owner-john, smoke, req-42    |
-   +---------------+-----------------+----------------------+------------------------------+
-   |               | No Operation    |                      |                              |
-   +---------------+-----------------+----------------------+------------------------------+
-   |               |                 |                      |                              |
-   +---------------+-----------------+----------------------+------------------------------+
-   | With own tags | [Documentation] | This test has tags   | not_ready, owner-mrx, req-42 |
-   +---------------+-----------------+----------------------+------------------------------+
-   |               | [Tags]          | owner-mrx            | not_ready                    |
-   +---------------+-----------------+----------------------+------------------------------+
-   |               | No Operation    |                      |                              |
-   +---------------+-----------------+----------------------+------------------------------+
-   |               |                 |                      |                              |
-   +---------------+-----------------+----------------------+------------------------------+
-   | Own tags with | [Documentation] | This test has tags   | host-10.0.1.42, req-42       |
-   | variables     |                 |                      |                              |
-   +---------------+-----------------+----------------------+------------------------------+
-   |               | [Tags]          | host-${HOST}         |                              |
-   +---------------+-----------------+----------------------+------------------------------+
-   |               | No Operation    |                      |                              |
-   +---------------+-----------------+----------------------+------------------------------+
-   |               |                 |                      |                              |
-   +---------------+-----------------+----------------------+------------------------------+
-   | Empty own tags| [Documentation] | This test has tags   | req-42                       |
-   +---------------+-----------------+----------------------+------------------------------+
-   |               | [Tags]          |                      |                              |
-   +---------------+-----------------+----------------------+------------------------------+
-   |               | No Operation    |                      |                              |
-   +---------------+-----------------+----------------------+------------------------------+
-
+   +---------------+-----------------+---------------------+------------------------+
+   |   Test Case   |     Action      |       Argument      |         Argument       |
+   +===============+=================+=====================+========================+
+   | No own tags   | [Documentation] | This test has tags  | owner-john, smoke,     |
+   |               |                 |                     | req-42                 |
+   +---------------+-----------------+---------------------+------------------------+
+   |               | No Operation    |                     |                        |
+   +---------------+-----------------+---------------------+------------------------+
+   |               |                 |                     |                        |
+   +---------------+-----------------+---------------------+------------------------+
+   | With own tags | [Documentation] | This test has tags  | not_ready, owner-mrx,  |
+   |               |                 |                     | req-42                 |
+   +---------------+-----------------+---------------------+------------------------+
+   |               | [Tags]          | owner-mrx           | not_ready              |
+   +---------------+-----------------+---------------------+------------------------+
+   |               | No Operation    |                     |                        |
+   +---------------+-----------------+---------------------+------------------------+
+   |               |                 |                     |                        |
+   +---------------+-----------------+---------------------+------------------------+
+   | Own tags with | [Documentation] | This test has tags  | host-10.0.1.42, req-42 |
+   | variables     |                 |                     |                        |
+   +---------------+-----------------+---------------------+------------------------+
+   |               | [Tags]          | host-${HOST}        |                        |
+   +---------------+-----------------+---------------------+------------------------+
+   |               | No Operation    |                     |                        |
+   +---------------+-----------------+---------------------+------------------------+
+   |               |                 |                     |                        |
+   +---------------+-----------------+---------------------+------------------------+
+   | Empty own tags| [Documentation] | This test has tags  | req-42                 |
+   +---------------+-----------------+---------------------+------------------------+
+   |               | [Tags]          |                     |                        |
+   +---------------+-----------------+---------------------+------------------------+
+   |               | No Operation    |                     |                        |
+   +---------------+-----------------+---------------------+------------------------+
+   |               |                 |                     |                        |
+   +---------------+-----------------+---------------------+------------------------+
+   | Set Tags and  | [Documentation] | This test has tags  | mytag, owner-john      |
+   | Remove Tags   |                 |                     |                        |
+   | Keywords      |                 |                     |                        |
+   +---------------+-----------------+---------------------+------------------------+
+   |               | Set Tags        | mytag               |                        |
+   +---------------+-----------------+---------------------+------------------------+
+   |               | Remove Tags     | smoke               | req-*                  |
+   +---------------+-----------------+---------------------+------------------------+
 
 
 Test setup and teardown
