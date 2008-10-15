@@ -1,0 +1,177 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+<meta name="generator" content="HTML Tidy for Cygwin (vers 1st September 2004), see www.w3.org">
+<style type="text/css">
+html {
+  font-family: Arial,Helvetica,sans-serif;
+  background-color: white;
+  color: black;
+}
+p {
+  max-width: 60em;
+}
+table {
+  border-collapse: collapse;
+  empty-cells: show;
+  margin: 1em 0em;
+  border: 0.1em solid black;
+}
+th, td {
+  border-style: solid;
+  border-width: 0.05em 0.1em;
+  border-color: black;
+  padding: 0.1em 0.2em;
+  height: 1.5em;
+}
+th {
+  background-color: rgb(192, 192, 192);
+  color: black;
+  border-width: 0.1em;
+  font-weight: bold;
+  text-align: center;
+  text-transform: capitalize;
+  letter-spacing: 0.1em;
+}
+/* Widths of named columns */
+col.name {
+  width: 10em;
+}
+.action, .value, .arg {
+  width: 15em;
+}
+/* Properties for the name column 
+- td:first-child should work in CSS 2.1 avare browsers (tested in Firefox)
+- col.name is against specs but works in IE
+*/
+td:first-child, col.name {
+  background-color: rgb(240, 240, 240);
+  text-transform: capitalize;
+  letter-spacing: 0.1em;
+}
+/* required for IE */
+th {
+  font-style: normal;
+}
+</style>
+<title>Robot Test Cases</title></head>
+
+<body>
+<h1>Robot Test Cases</h1>
+<table border="1">
+<colgroup span="99"><col class="name"><col class="value" span="4"></colgroup>
+<thead>
+<tr>
+<th>Setting</th>
+<th>Value</th>
+<th>Value</th>
+<th>value</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr><td>Force Tags</td><td>force-remove-please</td><td>force</td><td></td><td></td></tr><tr><td>Default Tags</td><td>default-remove-also</td><td>default</td><td></td><td></td></tr><tr>
+<td>Suite Setup</td><td>Set And Remove Tags</td>
+
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr><td></td><td></td><td></td><td></td><td></td></tr><tr>
+<td>Library</td>
+<td>Collections</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<table border="1">
+<colgroup span="99"><col class="name"><col class="value" span="4"></colgroup>
+<thead>
+<tr>
+<th>Variable</th>
+<th>Value</th>
+<th>Value</th>
+<th>Value</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>${SUITE_TAGS}&nbsp;=</td>
+<td>default</td>
+<td>force</td><td>force-init</td>
+
+<td>set</td>
+</tr>
+<tr>
+<td>...</td>
+<td>set-init</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<table border="1">
+<colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
+<thead>
+<tr>
+<th>Test Case</th>
+<th>Action</th>
+<th>Argument</th>
+<th>Argument</th>
+<th>Argument</th>
+
+
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Set And Remove Tags In Suite Level</td>
+<td>Should Be Equal</td>
+<td>${TEST_TAGS}</td>
+<td>${SUITE_TAGS}</td>
+<td></td>
+
+
+</tr>
+<tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Set No Tags</td><td>Set Tags</td><td></td><td></td><td></td></tr><tr><td></td><td>Should Be Equal</td><td>${TEST_TAGS}</td><td>${SUITE_TAGS}</td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Set One Tag</td><td>Set Tags</td><td>one</td><td></td><td></td></tr><tr>
+<td></td>
+<td>Tags Should Be Added</td><td>one</td>
+
+<td><br></td><td></td>
+
+
+</tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Set Multiple Tags</td><td>Set Tags</td><td>1</td><td>2</td><td>3</td></tr><tr><td></td><td>Set Tags</td><td>HELLO</td><td><br></td><td>foo-bar</td></tr><tr><td></td><td>Tags Should Be Added</td><td>1</td><td>2</td><td>3</td></tr><tr><td></td><td>...</td><td>hello</td><td>foo-bar</td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Tags Set In One Test Are Not Visible To Others</td><td>Should Be Equal</td><td>${TEST_TAGS}</td><td>${SUITE_TAGS}</td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Remove No Tags</td><td>Remove Tags</td><td></td><td></td><td></td></tr><tr><td></td><td>Should Be Equal</td><td>${TEST_TAGS}</td><td>${SUITE_TAGS}</td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Remove One Tag</td><td>Remove Tags</td><td>force</td><td></td><td></td></tr><tr><td></td><td>Tags Should Be Removed</td><td>force</td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Remove Non-Existing Tag</td><td>Remove Tags</td><td>non-existing</td><td></td><td></td></tr><tr><td></td><td>Should Be Equal</td><td>${TEST_TAGS}</td><td>${SUITE_TAGS}</td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Remove Multiple Tags</td><td>Remove Tags</td><td>default</td><td>SET</td><td>non-existing</td></tr><tr><td></td><td>Remove Tags</td><td></td><td>set-init</td><td></td></tr><tr><td></td><td>Tags Should Be Removed</td><td>default</td><td>set</td><td>set-init</td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Remove Tags With Pattern</td><td>Remove Tags</td><td>???</td><td></td><td></td></tr><tr><td></td><td>Tags Should Be Removed</td><td>set</td><td></td><td></td></tr><tr><td></td><td>Remove Tags</td><td>*-init</td><td>DEF*</td><td>non-existing-*</td></tr><tr><td></td><td>Tags Should Be Removed</td><td>set</td><td>force-init</td><td>set-init</td></tr><tr><td></td><td>...</td><td>default</td><td></td><td></td></tr><tr><td></td><td>Remove Tags </td><td>*</td><td></td><td></td></tr><tr><td></td><td>Should Be True</td><td>${TEST_TAGS} == []</td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Tags Removed In One Test Are Not Removed From Others</td><td>Should Be Equal</td><td>${TEST_TAGS}</td><td>${SUITE_TAGS}</td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Set And Remove Tags In A User Keyword</td><td>Remove Tags</td><td>*</td><td></td><td></td></tr><tr><td></td><td>Set Tags</td><td>tc</td><td>tc-2</td><td></td></tr><tr><td></td><td>Should Be True</td><td>${TEST_TAGS} == ['tc','tc-2']</td><td></td><td></td></tr><tr><td></td><td>Set And Remove Tags In UK</td><td></td><td></td><td></td></tr><tr><td></td><td>Should Be True</td><td>${TEST_TAGS} == ['tc','uk','uk2']</td><td></td><td></td></tr>
+</tbody>
+</table>
+<table border="1">
+<colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
+<thead>
+<tr>
+<th>Keyword</th>
+<th>Action</th>
+<th>Argument</th>
+<th>Argument</th>
+<th>Argument</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Set And Remove Tags</td>
+<td>Set Tags</td>
+<td>set</td>
+<td>set-remove-this</td>
+<td>take-this-out-too</td>
+</tr>
+<tr>
+<td></td>
+<td>Remove Tags</td>
+<td>non-existing</td>
+<td>*-remove-*</td>
+<td>take-this-out-too</td>
+</tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Tags Should Be Added</td><td>[Arguments]</td><td>@{added}</td><td></td><td></td></tr><tr><td></td><td>${tags} =</td><td>Combine Lists</td><td>${SUITE_TAGS}</td><td>${added}</td></tr><tr><td></td><td>Sort List</td><td>${tags}</td><td></td><td></td></tr><tr><td></td><td>Should Be Equal</td><td>${TEST_TAGS}&nbsp;</td><td>${tags}</td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Tags Should Be Removed</td><td>[Arguments]</td><td>@{removed}</td><td></td><td></td></tr><tr><td></td><td>${tags} =</td><td>Copy List</td><td>${SUITE_TAGS}</td><td></td></tr><tr><td></td><td>Remove Values From List</td><td>${tags}</td><td>@{removed}</td><td></td></tr><tr><td></td><td>Should Be Equal</td><td>${TEST_TAGS}&nbsp;</td><td>${tags}</td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Set And Remove Tags In UK</td><td>Should Be True</td><td>${TEST_TAGS} == ['tc','tc-2']</td><td></td><td></td></tr><tr><td></td><td>Set Tags</td><td>uk</td><td>uk-2</td><td>remove-asap</td></tr><tr><td></td><td>Remove Tags</td><td>??-2</td><td>remove-asap</td><td></td></tr><tr><td></td><td>Should Be True</td><td>${TEST_TAGS} == ['tc','uk']</td><td></td><td></td></tr><tr><td></td><td>Set And Remove Tags In UK 2</td><td></td><td></td><td></td></tr><tr><td></td><td>Should Be True</td><td>${TEST_TAGS} == ['tc','uk','uk2']</td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Set And Remove Tags In UK 2</td><td>Should Be True</td><td>${TEST_TAGS} == ['tc','uk']</td><td></td><td></td></tr><tr><td></td><td>Set Tags</td><td><br></td><td>remove-me</td><td>uk2</td></tr><tr><td></td><td>Remove Tags</td><td>??????-??</td><td></td><td></td></tr><tr><td></td><td>Should Be True</td><td>${TEST_TAGS} == ['tc','uk','uk2']</td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr>
+</tbody>
+</table>
+</body></html>
