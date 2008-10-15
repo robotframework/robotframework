@@ -425,7 +425,7 @@ DOCUMENT_TEMPLATE = '''<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional
 <p><b>Version:</b> ${LIB.version}</p>
 <!-- END IF -->
 
-<h2><a name="introduction"></a>Introduction</h2>
+<h2 id="introduction">Introduction</h2>
 <p class='libdoc'>${LIB.htmldoc}</p>
 
 <h2>Shortcuts</h2>
