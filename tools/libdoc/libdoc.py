@@ -340,7 +340,7 @@ if utils.is_jython:
 
 
         
-DOCUMENT_TEMPLATE = '''
+DOCUMENT_TEMPLATE = '''<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
 <title>${LIB.name} - Documentation</title>
@@ -425,7 +425,7 @@ DOCUMENT_TEMPLATE = '''
 <p><b>Version:</b> ${LIB.version}</p>
 <!-- END IF -->
 
-<h2><a name="introduction"/>Introduction</h2>
+<h2><a name="introduction"></a>Introduction</h2>
 <p class='libdoc'>${LIB.htmldoc}</p>
 
 <h2>Shortcuts</h2>
