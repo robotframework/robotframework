@@ -1254,25 +1254,42 @@ class Misc:
         return [ re.escape(pattern) for pattern in patterns ]
 
     def set_tags(self, *tags):
-        """TODO: *******doc*********
+        """Adds given `tags` for the current test or all tests in a suite.
 
-        - suites should recurse
-        - should fail if used in suite teardown
-        - should print added/removed tags
+        When this keyword is used inside a test case, that test gets
+        the specified tags and other tests are not affected.
+
+        If this keyword is used in a suite setup, all test cases in
+        that suite, recursively, gets the given tags. It is a failure
+        to use this keyword in a suite teardown.
+
+        See `Remove Tags` for another keyword to modify tags at test
+        execution time.
         """
         tags = utils.normalize_list(tags)
         handler = lambda test: utils.normalize_list(test.tags + tags)
         self._set_or_remove_tags(handler)
-        print 'Set tag%s %s' % (utils.plural_or_not(tags), utils.seq2str(tags))
+        print 'Set tag%s %s.' % (utils.plural_or_not(tags),
+                                 utils.seq2str(tags))
         
     def remove_tags(self, *tags):
-        """TODO: *******doc*********"""
+        """Removes given `tags` from the current test or all tests in a suite.
+
+        Tags can be given exactly or using a pattern where '*' matches
+        anything and '?' matches one character.
+
+        This keyword can affect either one test case or all test cases in a
+        test suite similarly as `Set Tags` keyword.
+
+        Example:
+        | Remove Tags | mytag | something-* | ?ython |
+        """
         tags = utils.normalize_list(tags)
         handler = lambda test: [ t for t in test.tags
                                  if not utils.matches_any(t, tags) ]
         self._set_or_remove_tags(handler)
-        print 'Removed tag%s %s' % (utils.plural_or_not(tags),
-                                    utils.seq2str(tags))
+        print 'Removed tag%s %s.' % (utils.plural_or_not(tags),
+                                     utils.seq2str(tags))
 
     def _set_or_remove_tags(self, handler, suite=None, test=None):
         if not (suite or test):
