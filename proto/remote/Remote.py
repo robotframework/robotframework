@@ -10,7 +10,7 @@ except ImportError:
 
 class Remote:
     
-    ROBOT_LIBRARY_SCOPE = 'GLOBAL'
+    ROBOT_LIBRARY_SCOPE = 'TEST SUITE'
 
     def __init__(self, uri='http://localhost:8270'):
         if '://' not in uri:
