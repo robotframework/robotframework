@@ -296,13 +296,9 @@ With&nbsp;Escapes</td>
 
 
 
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
+<tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Scalar Object</td><td align="undefined" valign="undefined">Should Not Be Equal</td><td align="undefined" valign="undefined">${OBJECT}</td><td align="undefined" valign="undefined">dude</td><td align="undefined" valign="undefined">Comparing object to
+string</td></tr><tr><td></td><td align="undefined" valign="undefined">Should Be Equal</td><td align="undefined" valign="undefined">Hi ${OBJECT}!!</td><td align="undefined" valign="undefined">Hi dude!!</td><td align="undefined" valign="undefined">Comparing two strings</td></tr><tr><td></td><td align="undefined" valign="undefined">Should Be Equal</td><td align="undefined" valign="undefined">${OBJECT.name}</td><td align="undefined" valign="undefined">dude</td><td></td></tr><tr><td></td><td align="undefined" valign="undefined">Should Be Equal</td><td align="undefined" valign="undefined">${OBJECT.name.capitalize()}
+says hi!</td><td align="undefined" valign="undefined">Dude says hi!</td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr>
 <tr>
 <td>List with One Item</td>
 <td>Should Be True</td>
@@ -403,11 +399,11 @@ With&nbsp;Escapes</td>
 
 
 
-<tr><td>List With No Items</td><td>[Documentation]</td><td>FAIL</td><td>Non-existing variable '\@{EMPTY}[0]'</td><td></td></tr><tr><td></td><td>Should Be True</td><td>@{EMPTY} == [ ]</td><td></td><td></td></tr><tr><td></td><td>${ret} =</td><td>Catenate</td><td>@{EMPTY}</td><td>@{EMPTY}</td></tr><tr><td></td><td>...</td><td>only value</td><td>@{EMPTY}</td><td></td></tr><tr><td></td><td>Should Be Equal</td><td>${ret}</td><td>only value</td><td></td></tr><tr><td></td><td>Log</td><td>@{EMPTY}[0]</td><td></td><td></td></tr><tr>
+<tr><td>List With No Items</td><td>[Documentation]</td><td>FAIL</td><td>Non-existing variable '\@{EMPTY}[0]'</td><td></td></tr><tr><td></td><td>Should Be True</td><td>@{EMPTY} == [ ]</td><td></td><td></td></tr><tr><td></td><td>${ret} =</td><td>Catenate</td><td>@{EMPTY}</td><td>@{EMPTY}</td></tr><tr><td></td><td>...</td><td>only value</td><td>@{EMPTY}</td><td></td></tr><tr><td></td><td>Should Be Equal</td><td>${ret}</td><td>only value</td><td></td></tr><tr><td></td><td>Log</td><td>@{EMPTY}[0]</td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>List With Objects</td><td align="undefined" valign="undefined">Should Be Equal</td><td align="undefined" valign="undefined">@{objects}[0]</td><td align="undefined" valign="undefined">Hello world!</td><td></td></tr><tr><td></td><td align="undefined" valign="undefined">Should Be Equal</td><td align="undefined" valign="undefined">@{objects}[1]</td><td align="undefined" valign="undefined">${42}</td><td></td></tr><tr><td></td><td align="undefined" valign="undefined">Should Be Equal</td><td align="undefined" valign="undefined">@{objects}[2]</td><td align="undefined" valign="undefined">${LIST}</td><td></td></tr><tr><td></td><td align="undefined" valign="undefined">Should Be Equal</td><td align="undefined" valign="undefined">@{objects}[3]</td><td align="undefined" valign="undefined">${OBJECT}</td><td></td></tr><tr><td></td><td align="undefined" valign="undefined">Should Be Equal</td><td align="undefined" valign="undefined">-- @{objects} --</td><td align="undefined" valign="undefined">-- ['${STRING}', ${INTEGER},&nbsp;${LIST}, '${OBJECT}'] --</td><td></td></tr><tr>
 <td></td>
-<td></td>
-<td></td>
-<td></td>
+<td align="undefined" valign="undefined">Should Be Equal</td><td align="undefined" valign="undefined">-- @{objects} --</td><td align="undefined" valign="undefined">-- ['Hello world!', 42, ['Hello', 'world', '!'], 'dude'] --</td>
+
+
 <td></td>
 </tr>
 
@@ -415,7 +411,7 @@ With&nbsp;Escapes</td>
 
 
 
-<tr><td>Scalar Variable Containing
+<tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Scalar Variable Containing
 List Is Different Than List Variable</td><td>${ret} =</td><td>Catenate</td><td>${LIST}</td><td></td></tr><tr><td></td><td>Should Be Equal</td><td>${ret}</td><td>['Hello',&nbsp;'world',&nbsp;'!']</td><td></td></tr><tr><td></td><td>${ret} =</td><td>Catenate</td><td>@{LIST}</td><td></td></tr><tr><td></td><td>Should Be Equal</td><td>${ret}</td><td>Hello again ?</td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Variable Names Are Case Insensitive</td><td>Should Be Equal</td><td>${lowercase}</td><td>Variable name in lower case</td><td></td></tr><tr><td></td><td>Should Be Equal</td><td>${LOWERCASE}</td><td>Variable name in lower case</td><td></td></tr><tr><td></td><td>Should Be Equal</td><td>${LoWerCAse}</td><td>Variable name in lower case</td><td></td></tr><tr><td></td><td>Should Be Equal</td><td>@{lowercase}[0]</td><td>Variable name in lower case</td><td></td></tr><tr><td></td><td>Should Be Equal</td><td>@{LOWERCASE}[0]</td><td>Variable name in lower case</td><td></td></tr><tr><td></td><td>Should Be Equal</td><td>@{lOWErcasE}[0]</td><td>Variable name in lower case</td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Variable Names Are Underscore Insensitive</td><td>Should Be Equal</td><td>${underscores}</td><td>Variable name with under scores</td><td></td></tr><tr><td></td><td>Should Be Equal</td><td>${_U N D_er_Scores__}</td><td>Variable name with under scores</td><td></td></tr><tr>
 <td align="undefined" valign="undefined"></td>
 <td align="undefined" valign="undefined">Should Be Equal</td>

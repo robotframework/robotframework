@@ -1,6 +1,3 @@
-# Variable file used by variables.html and extended_variables.html
-
-
 import sys
 
 
@@ -41,6 +38,5 @@ LIST__empty_list2 = []
 LIST__list_with_escapes2 = list_with_escapes2[:]
 LIST__objects = ['string', obj, list2 ]
 
-string1 = 'This is not added as variables.html already has it'
+string1 = 'This is not included because test data file already has ${STRING1}'
 not_included = 'Not in __all__ thus not included'
-
