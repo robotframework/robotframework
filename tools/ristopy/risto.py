@@ -64,7 +64,7 @@ Options:
                       '?' as wildcards. 'AND' in the tag name is converted
                       to ' & ', to make it easier to plot combined tags.
   -o --output path    Path to the image file to create. If not given, the
-                      image is opened into Matplotlib' viewer.
+                      image is opened into Matplotlib's image viewer.
   -i --title title    Title of the graph. Underscores in the given title
                       are converted to spaces. By default there is no
                       title.
