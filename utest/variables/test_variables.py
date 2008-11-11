@@ -214,13 +214,31 @@ class TestVariables(unittest.TestCase):
         assert_equals(self.varz.replace_scalar('${${whos${name}}${name}}'), [1,2,3])
         assert_equals(self.varz.replace_scalar('- ${${whos${name}}${name}} -'), '- [1, 2, 3] -')
         
+    def test_math_with_internal_vars(self):
+        assert_equals(self.varz.replace_scalar('${${1}+${2}}'), 3)
+        assert_equals(self.varz.replace_scalar('${${1}-${2}}'), -1)
+        assert_equals(self.varz.replace_scalar('${${1}*${2}}'), 2)
+        assert_equals(self.varz.replace_scalar('${${1}/${2}}'), 0)
+
+    def test_math_with_internal_vars_with_spaces(self):
+        assert_equals(self.varz.replace_scalar('${${1} + ${2.5}}'), 3.5)
+        assert_equals(self.varz.replace_scalar('${${1} - ${2} + 1}'), 0)
+        assert_equals(self.varz.replace_scalar('${${1} * ${2} - 1}'), 1)
+        assert_equals(self.varz.replace_scalar('${${1} / ${2.0}}'), 0.5)
+
+    def test_math_with_internal_vars_does_not_work_if_first_var_is_float(self):
+        assert_raises(DataError, self.varz.replace_scalar, '${${1.1}+${2}}')
+        assert_raises(DataError, self.varz.replace_scalar, '${${1.1} - ${2}}')
+        assert_raises(DataError, self.varz.replace_scalar, '${${1.1} * ${2}}')
+        assert_raises(DataError, self.varz.replace_scalar, '${${1.1}/${2}}')
+
     def test_list_variable_as_scalar(self):
         self.varz['@{name}'] = exp = ['spam', 'eggs']
         assert_equals(self.varz.replace_scalar('${name}'), exp)
         assert_equals(self.varz.replace_list(['${name}', 42]), [exp, 42])
         assert_equals(self.varz.replace_string('${name}'), str(exp))
         assert_true(self.varz.has_key('${name}'))
-
+        
     if utils.is_jython:
         
         def test_variable_as_object_in_java(self):
@@ -342,7 +360,7 @@ class TestVariableSplitter(unittest.TestCase):
                 var = '%s{%s{%s}}' % (i, i*count, i*count)
                 self._test(var, var, internal=True)
                 self._test('eggs'+var+'spam', var, start=4, internal=True)
-        
+
     def _test(self, inp, variable, start=0, index=None, identifiers=None,
               internal=False):
         if variable is not None:
