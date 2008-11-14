@@ -271,8 +271,8 @@ described in the subsections below.
 Variable table
 ''''''''''''''
 
-The most common source for variables are Variable tables in test case
-files and resource files. Variable tables are convenient, because they
+The most common source for variables are Variable tables in `test case
+files`_ and `resource files`_. Variable tables are convenient, because they
 allow creating variables in the same place as the rest of the test
 data, and the needed syntax is very simple. Their main disadvantage is
 that they only enable assigning variables into strings or a list of
@@ -367,7 +367,7 @@ name:value`, where :cli:`name` is the name of the variable without
 :var:`${}` and :cli:`value` is its value. Several variables can be
 set by using this option several times. Only scalar variables can be
 set using this syntax and they can only get string values. Many
-special characters are difficult represent in the
+special characters are difficult to represent in the
 command line, but they can be escaped__ with the :opt:`--escape`
 option. 
 
@@ -388,10 +388,12 @@ In the examples above, variables are set so that
 
 `Variable files`_ are given from the command line using the syntax
 :cli:`--variablefile path/to/variables.py`. Which variables actually
-are created depends on which variables there are in the referenced variable
-file. If both variable files and individual variables are given from
-the command line, the latter override possible variables with the same
-name in the variable files.
+are created depends on which variables there are in the referenced
+variable file. If both variable files and individual variables are
+given from the command line, the latter override possible variables
+with the same name in the variable files. Additionally, if multiple
+variable files have same variables, the ones in the file specified
+first are taken into use.
 
 
 Return values from keywords
@@ -455,74 +457,42 @@ example, to set a variable in one test case and use it in another. This is
 because, in general, automated test cases should not depend on each
 other, and accidentally setting a variable that is used elsewhere
 could cause hard-to-debug errors. If there is a genuine need for
-setting a variable in one test case and using it in another, use the
-:name:`Set Suite Variable` or :name:`Set Global Variable` keywords
-available from the `BuiltIn library`_.
+setting a variable in one test case and using it in another, it is
+possible to use built-in keywords as explained in the next section.
 
 
-Variable scopes
-'''''''''''''''
+Using built-in :name:`Set Test/Suite/Global Variable` keywords
+''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 
-Depending on where and how they are created, variables can have a
-global, test suite, test case or user keyword scope.
+The `BuiltIn library`_ has keywords :name:`Set Test Variable`,
+:name:`Set Suite Variable` and :name:`Set Global Variable` which can
+be used for setting variables dynamically during the test
+execution. If a variable already exists within the new scope, its
+value will be overwritten, and otherwise a new variable is created.
 
+Variables set with :name:`Set Test Variable` keyword are available
+everywhere within the scope of the currently executed test case. For
+example, if you set a variable in a user keyword, it is available both
+in the test case level and also in all other user keywords used in the
+current test. Other test cases will not see variables set with this
+keyword.
 
-Global scope
-````````````
+Variables set with :name:`Set Suite Variable` keyword are available
+everywhere within the scope of the currently executed test
+suite. Setting variables with this keyword thus has the same effect as
+creating them using the `Variable table`_ in the test data file or
+importing them from `variable files`_. Other test suites, including
+possible child test suites, will not see variables set with this
+keyword.
 
-Global variables are available everywhere in the test data. These
-variables are normally `set from the command line`__ with the
-:opt:`--variable` and :opt:`--variablefile` options, but it is also 
-possible to create new global variables or change the existing ones
-with the `BuiltIn keyword`_ :name:`Set Global Variable` anywhere in
-the test data.
-
-Global variables override variables defined in Variable tables and in
-variable files imported in the test data. Variables set locally, for
-example using return values from keywords, override even global
-variables in the local scope where they are created.
-
-It is recommended to use capital letters with global variables.
+Variables set with :name:`Set Global Variable` keyword are globally
+available in all test cases and suites executed after setting
+them. Setting variables with this keyword thus has the same effect as
+`creating from the command line`__ using the options :opt:`--variable` or
+:opt:`--variablefile`. Because this keyword can change variables
+everywhere, it should be used with care.
 
 __ `Setting variables in command line`_
-
-
-Test suite scope
-````````````````
-
-Variables with the test suite scope are available anywhere in the test
-suite where they are defined or imported. They can be created in
-Variable tables, imported from `resource and variable files`_, or set with
-the `BuiltIn keyword`_ :name:`Set Suite Variable` anywhere in that
-test suite.
-
-The test suite scope *is not recursive*, which means that variables
-available in a higher-level test suite *are not available* in
-lower-level suites. If necessary, `resource and variable files`_ can
-be used for sharing variables.
-
-Since these variables can be considered global in the test suite where
-they are used, it is recommended to use capital letters also with them.
-
-
-Test case scope
-```````````````
-
-Variables created in test cases from the return values of keywords have a
-test case scope and they are available only in that test
-case. Another possibility to create them is using the `BuiltIn keyword`_
-:name:`Set Test Variable` anywhere in that particular test case. Test
-case variables are local and should use lower-case letters.
-
-
-User keyword scope
-``````````````````
-
-User keywords get their own variables from `arguments passed to
-them`__ and return values from the keywords they use. Also these variables
-are local and should use lower-case letters.
-
-__ `User keyword arguments`_
 
 
 Built-in variables
@@ -705,6 +675,119 @@ of them are not even available all the time.
    +-----------------------+-------------------------------------------------------+----------------+
 
 
+Variable priorities and scopes
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Variables coming from different sources have different priorities and
+are available in different scopes.
+
+Variable priorities
+'''''''''''''''''''
+
+*Variables from the command line*
+
+   Variables `set in the command line`__ have the highest priority of
+   all variables set prior to the actual test execution starts. They
+   override possible variables created in Variable tables in test case
+   files, as well as in resource and variable files imported in the
+   test data.
+
+   Individually set variables (:opt:`--variable` option) override the
+   variables set using `variable files`_ (:opt:`--variablefile`
+   option). Additionally, if multiple variable files have same variables,
+   the ones in the file specified first have the highest priority.
+
+*Variable table in a test case file*
+
+   Variables created using the `Variable table`_ in a test case file
+   are available for all the test cases in that file. These variables
+   override possible variables with same names in imported resource and
+   variable files.
+
+*Imported resource and variable files*
+
+   Variables imported from the `resource and variable files`_ have the
+   lowest priority of all variables created in the test data.
+   Variables from resource files and variable files have the same
+   priority. If several resource and/or variable file have same
+   variables, the ones in the file imported first are taken into use.
+
+   If a resource file imports resource files or variable files,
+   variables in its own Variable table have a higher priority than
+   variables it imports.
+
+*Variables set during test execution*
+
+   Variables set during the test execution either using `return values
+   from keywords`_ or `built-in keywords`__ :name:`Set
+   Test/Suite/Global Variable` always override possible existing
+   variables in the scope where they are set. In a sense they thus
+   have the highest priority, but on the other hand they do not affect
+   variables outside the scope they are defined.
+
+*Built-in variables*
+
+   `Built-in variables`_ like :var:`${TEMPDIR}` and :var:`${TEST_NAME}`
+   have the lowest priority of all variables. They are used only if there
+   is no variable with the same name in the scope where they are used. An
+   exception to this rule is :var:`${CURDIR}`, which is replaced with
+   its value already during the test data processing time.
+
+__ `Setting variables in command line`_
+__ `Using built-in Set Test/Suite/Global Variable keywords`_
+
+
+Variable scopes
+'''''''''''''''
+
+Depending on where and how they are created, variables can have a
+global, test suite, test case or user keyword scope.
+
+*Global scope*
+
+   Global variables are available everywhere in the test data. These
+   variables are normally `set from the command line`__ with the
+   :opt:`--variable` and :opt:`--variablefile` options, but it is also 
+   possible to create new global variables or change the existing ones
+   with the `BuiltIn keyword`_ :name:`Set Global Variable` anywhere in
+   the test data.
+
+   It is recommended to use capital letters with global variables.
+
+*Test suite scope*
+
+   Variables with the test suite scope are available anywhere in the
+   test suite where they are defined or imported. They can be created
+   in Variable tables, imported from `resource and variable files`_,
+   or set during the test execution using the `BuiltIn keyword`_
+   :name:`Set Suite Variable`.
+
+   The test suite scope *is not recursive*, which means that variables
+   available in a higher-level test suite *are not available* in
+   lower-level suites. If necessary, `resource and variable files`_ can
+   be used for sharing variables.
+
+   Since these variables can be considered global in the test suite where
+   they are used, it is recommended to use capital letters also with them.
+
+*Test case scope*
+
+   Variables created in test cases from the return values of keywords have a
+   test case scope and they are available only in that test
+   case. Another possibility to create them is using the `BuiltIn keyword`_
+   :name:`Set Test Variable` anywhere in that particular test case. Test
+   case variables are local and should use lower-case letters.
+
+*User keyword scope*
+
+   User keywords get their own variables from `arguments passed to them`__ 
+   and return values from the keywords they use. Also these variables
+   are local and should use lower-case letters.
+
+__ `Setting variables in command line`_
+__ `User keyword arguments`_
+
+
 Advanced variable features
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -766,7 +849,7 @@ explained below:
 The extended variable syntax is evaluated in the following order:
 
 1. The variable is searched using the full variable name. The extended
-   variable syntax is evaluated only, if no matching variable
+   variable syntax is evaluated only if no matching variable
    is found.
 
 2. The real name of the base variable is created. The body of the name
