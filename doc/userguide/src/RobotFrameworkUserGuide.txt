@@ -123,13 +123,14 @@ Appendices
 .. _suite setup: `Suite setup and teardown`_
 .. _suite teardown: `Suite setup and teardown`_
 .. _tag: `Tagging test cases`_
-.. _tags: `tag`_
+.. _tags: tag_
 .. _test case timeouts: `Test case timeout`_
 .. _test timeout: `Test case timeout`_
 .. _user keyword timeouts: `User keyword timeout`_
 .. _user keyword documentation: `User keyword name and documentation`_
 .. _keyword timeout: `User keyword timeout`_
-.. _variable: `Variables`_
+.. _variable: Variables_
+.. _Variable tables: `Variable table`_
 .. _automatic variable: `Automatic variables`_
 .. _test libraries: `Using test libraries`_
 .. _test library: `test libraries`_

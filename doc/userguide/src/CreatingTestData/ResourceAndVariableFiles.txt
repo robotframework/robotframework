@@ -11,7 +11,7 @@ easy to create them.
 variables. For example, they allow values other than strings and
 enable creating variables dynamically. Their flexibility comes from
 the fact that they are created using Python code, which also makes
-them somewhat more complicated than Variable tables.
+them somewhat more complicated than `Variable tables`_.
 
 
 .. contents:: 
