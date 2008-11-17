@@ -77,7 +77,7 @@ def any_matches(strings, pattern, ignore=[], caseless=True, spaceless=True):
 def contains(str1, str2, ignore=[], caseless=True, spaceless=True):
     str1 = normalize(str1, ignore, caseless, spaceless)
     str2 = normalize(str2, ignore, caseless, spaceless)
-    return str1.count(str2) > 0
+    return str2 in str1
 
 
 def contains_any(string, strings, ignore=[], caseless=True, spaceless=True):
