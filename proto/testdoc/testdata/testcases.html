@@ -1,0 +1,177 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+<meta name="generator" content="HTML Tidy for Cygwin (vers 1st September 2004), see www.w3.org">
+<style type="text/css">
+html {
+  font-family: Arial,Helvetica,sans-serif;
+  background-color: white;
+  color: black;
+}
+p {
+  max-width: 60em;
+}
+table {
+  border-collapse: collapse;
+  empty-cells: show;
+  margin: 1em 0em;
+  border: 0.1em solid black;
+}
+th, td {
+  border-style: solid;
+  border-width: 0.05em 0.1em;
+  border-color: black;
+  padding: 0.1em 0.2em;
+  height: 1.5em;
+}
+th {
+  background-color: rgb(192, 192, 192);
+  color: black;
+  border-width: 0.1em;
+  font-weight: bold;
+  text-align: center;
+  text-transform: capitalize;
+  letter-spacing: 0.1em;
+}
+/* Widths of named columns */
+col.name {
+  width: 10em;
+}
+.action, .value, .arg {
+  width: 15em;
+}
+/* Properties for the name column 
+- td:first-child should work in CSS 2.1 avare browsers (tested in Firefox)
+- col.name is against specs but works in IE
+*/
+td:first-child, col.name {
+  background-color: rgb(240, 240, 240);
+  text-transform: capitalize;
+  letter-spacing: 0.1em;
+}
+/* required for IE */
+th {
+  font-style: normal;
+}
+</style>
+<title>Robot Test Cases</title></head>
+<body>
+<h1>Robot Test Cases</h1>
+<table border="1">
+<colgroup span="99"><col class="name"><col class="value" span="4"></colgroup>
+<thead>
+<tr>
+<th>Setting</th>
+<th>Value</th>
+<th>Value</th>
+<th>value</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Documentation </td>
+<td>This is documentation for test suite and it includes variable ${ENV} and&nbsp;${OTHER VAR}</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Test Setup</td>
+<td>Setup Environment</td>
+<td>${ENV}</td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<table border="1">
+<colgroup span="99"><col class="name"><col class="value" span="4"></colgroup>
+<thead>
+<tr>
+<th>Variable</th>
+<th>Value</th>
+<th>Value</th>
+<th>Value</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>${ENV}</td>
+<td>Foo Bar</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<table border="1">
+<colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
+<thead>
+<tr>
+<th>Test Case</th>
+<th>Action</th>
+<th>Argument</th>
+<th>Argument</th>
+<th>Argument</th>
+<th>Argument</th>
+<th>Argument</th>
+</tr>
+</thead>
+<tbody>
+<tr><td>A Simple Test Case</td><td>[ Documentation ]</td><td>This is test case doc ${VAR}</td><td></td><td></td><td></td><td></td></tr><tr>
+<td><br></td>
+<td>Verify Environment</td>
+<td>${ENV}</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr><td></td><td>Do Some Valuable Stuff</td><td></td><td></td><td></td><td></td><td></td></tr><tr>
+<td></td>
+<td>[ Teardown ]</td>
+<td>Clean Up The Mess</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr><tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Another Test Case</td><td>Do Some Tricky Stuff</td><td></td><td></td><td></td><td></td><td></td></tr><tr><td></td><td>Do Some Trickier Stuff</td><td></td><td></td><td></td><td></td><td></td></tr><tr><td></td><td>It's All Fine And Dandy</td><td></td><td></td><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+</tbody>
+</table>
+<table border="1">
+<colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
+<thead>
+<tr>
+<th>Keyword</th>
+<th>Action</th>
+<th>Argument</th>
+<th>Argument</th>
+<th>Argument</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Verify Environment</td>
+<td>[Arguments]</td>
+<td>${env}</td>
+<td></td>
+<td></td>
+</tr>
+<tr><td></td><td>Do Something</td><td>${env}</td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr>
+<td>Do Some Tricky Stuff</td>
+<td>Verfiy Environment</td>
+<td></td>
+<td></td>
+<td></td>
+</tr><tr><td></td><td>Foo Bar</td><td></td><td></td><td></td></tr>
+</tbody>
+</table>
+</body></html>
