@@ -158,7 +158,8 @@ def _serialize_test_doc(suite, outpath, title):
     namespace = Namespace(gentime_str=str_time, gentime_int=int_time, 
                           version=utils.get_full_version('testdoc.py'), 
                           suite=suite, title=title)
-    tmpl = Template(template=templates.LOG)
+    tmpl = Template(template=templates.LOG.replace('/* Status text colors */', 
+                                                   '.not_executed {color: #663300;}'))
     tmpl.generate(namespace, outfile)
     suite.serialize(serializer)
     outfile.write('</body>\n</html>\n')
