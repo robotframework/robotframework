@@ -158,7 +158,7 @@ class ArgumentParser:
         elif len(args) < len(self._expected_args):
             msg = 'Required argument%s missing.' % plural_or_not(self._expected_args) 
         else:
-            msg = 'Too many argument.'
+            msg = 'Too many arguments.'
         msg += ' Expected %s' % seq2str(self._expected_args)
         if len(args) > 0: 
             msg += ' but got %s' % seq2str(args)
