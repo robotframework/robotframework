@@ -882,7 +882,7 @@ class RunKeyword:
         
     def _get_test_in_teardown(self, kwname):
         test = NAMESPACES.current.test
-        if test is not None and test.state != 'RUNNING':
+        if test is not None and test.status != 'RUNNING':
             return test
         raise DataError("Keyword '%s' can only be used in test teardown" 
                         % kwname)
@@ -942,7 +942,7 @@ class RunKeyword:
             return self.run_keyword(name, *args)
 
     def _get_suite_in_teardown(self, kwname):
-        if NAMESPACES.current.suite.state == 'RUNNING':
+        if NAMESPACES.current.suite.status == 'RUNNING':
             raise DataError("Keyword '%s' can only be used in suite teardown" 
                             % kwname)
         return NAMESPACES.current.suite
