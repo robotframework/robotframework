@@ -43,7 +43,7 @@ class Keyword(BaseKeyword):
         handler = namespace.get_handler(self.handler_name)
         if handler.type == 'user':
             handler.init_user_keyword(namespace.variables)
-        self.name = self._get_name(handler, namespace.variables)
+        self.name = self._get_name(handler.longname, namespace.variables)
         self.doc = handler.shortdoc
         self.timeout = str(handler.timeout)
         self.starttime = utils.get_timestamp()
@@ -69,8 +69,8 @@ class Keyword(BaseKeyword):
             raise err
         return ret
     
-    def _get_name(self, handler, variables):
-        return handler.longname
+    def _get_name(self, handler_name, variables):
+        return handler_name
     
     def _run(self, handler, output, namespace):
         try:
@@ -92,11 +92,11 @@ class SetKeyword(Keyword):
         self.list_var = kwdata.list_var
         Keyword.__init__(self, kwdata.name, kwdata.args, 'set')
         
-    def _get_name(self, handler, variables):
+    def _get_name(self, handler_name, variables):
         varz = self.scalar_vars[:]
         if self.list_var is not None:
             varz.append(self.list_var)
-        return '%s = %s' % (', '.join(varz), handler.longname)
+        return '%s = %s' % (', '.join(varz), handler_name)
     
     def _run(self, handler, output, namespace):
         ret = Keyword._run(self, handler, output, namespace)
@@ -180,16 +180,16 @@ class RepeatKeyword(Keyword):
         if self._error is not None:
             output.fail(self._error)
             raise ExecutionFailed(self._error)
-        for i in range(self._repeat):
+        for _ in range(self._repeat):
             Keyword._run(self, handler, output, namespace)
             
-    def _get_name(self, handler, variables):
+    def _get_name(self, handler_name, variables):
         if not utils.is_integer(self._orig_repeat):
             try:
                 self._repeat = self._get_repeat(variables)
             except DataError, err:
                 self._error = str(err)
-        return '%sx %s' % (self._repeat, handler.longname)
+        return '%sx %s' % (self._repeat, handler_name)
 
     def _get_repeat(self, variables):
         repeat = variables.replace_string(self._orig_repeat)
