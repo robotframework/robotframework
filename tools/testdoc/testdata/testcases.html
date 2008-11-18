@@ -75,7 +75,7 @@ th {
 <td></td>
 <td></td>
 </tr>
-<tr>
+<tr><td>Suite Setup</td><td>${SUITE SETUP}</td><td></td><td></td><td></td></tr><tr><td>Suite Teardown</td><td>${TEARDOWN KW}</td><td>@{ARGS}</td><td></td><td></td></tr><tr><td>Meta: Data</td><td>Value</td><td></td><td></td><td></td></tr><tr><td>Meta: ${NAME}</td><td>${VALUE}</td><td></td><td></td><td></td></tr><tr><td>Default Tags</td><td>def</td><td></td><td></td><td></td></tr><tr><td>Force Tags</td><td>force</td><td>${TAG NAME}</td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr>
 <td>Test Setup</td>
 <td>Setup Environment</td>
 <td>${ENV}</td>
@@ -121,29 +121,29 @@ th {
 <th>Argument</th>
 <th>Argument</th>
 <th>Argument</th>
-<th>Argument</th>
-<th>Argument</th>
+
+
 </tr>
 </thead>
 <tbody>
-<tr><td>A Simple Test Case</td><td>[ Documentation ]</td><td>This is test case doc ${VAR}</td><td></td><td></td><td></td><td></td></tr><tr>
+<tr><td>A Simple Test Case</td><td>[ Documentation ]</td><td>This is test case doc ${VAR}</td><td></td><td></td></tr><tr><td></td><td>[ Tags ]</td><td>test</td><td></td><td></td></tr><tr>
 <td><br></td>
 <td>Verify Environment</td>
 <td>${ENV}</td>
 <td></td>
 <td></td>
-<td></td>
-<td></td>
+
+
 </tr>
-<tr><td></td><td>Do Some Valuable Stuff</td><td></td><td></td><td></td><td></td><td></td></tr><tr>
+<tr><td></td><td>Do Some Valuable Stuff</td><td></td><td></td><td></td></tr><tr>
 <td></td>
 <td>[ Teardown ]</td>
 <td>Clean Up The Mess</td>
 <td></td>
 <td></td>
-<td></td>
-<td></td>
-</tr><tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Another Test Case</td><td>Do Some Tricky Stuff</td><td></td><td></td><td></td><td></td><td></td></tr><tr><td></td><td>Do Some Trickier Stuff</td><td></td><td></td><td></td><td></td><td></td></tr><tr><td></td><td>It's All Fine And Dandy</td><td></td><td></td><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+
+
+</tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Another Test Case</td><td>[ Timeout ]</td><td>10 seconds</td><td>I don't have infinity</td><td></td></tr><tr><td></td><td>Do Some Tricky Stuff</td><td></td><td></td><td></td></tr><tr><td></td><td>Do Some Trickier Stuff</td><td></td><td></td><td></td></tr><tr><td></td><td>It's All Fine And Dandy</td><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr>
 </tbody>
 </table>
 <table border="1">
