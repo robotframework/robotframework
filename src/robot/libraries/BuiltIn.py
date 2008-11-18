@@ -882,7 +882,7 @@ class RunKeyword:
         
     def _get_test_in_teardown(self, kwname):
         test = NAMESPACES.current.test
-        if test is not None and test.state == 'TEARDOWN':
+        if test is not None and test.state != 'RUNNING':
             return test
         raise DataError("Keyword '%s' can only be used in test teardown" 
                         % kwname)
@@ -942,11 +942,10 @@ class RunKeyword:
             return self.run_keyword(name, *args)
 
     def _get_suite_in_teardown(self, kwname):
-        suite = NAMESPACES.current.suite
-        if suite.state == 'TEARDOWN':
-            return suite
-        raise DataError("Keyword '%s' can only be used in suite teardown" 
-                        % kwname)
+        if NAMESPACES.current.suite.state == 'RUNNING':
+            raise DataError("Keyword '%s' can only be used in suite teardown" 
+                            % kwname)
+        return NAMESPACES.current.suite
 
 
 class Misc:
@@ -1295,7 +1294,7 @@ class Misc:
         if not (suite or test):
             ns = NAMESPACES.current
             if ns.test is None:
-                if ns.suite.state == 'TEARDOWN':
+                if ns.suite.status != 'RUNNING':
                     raise RuntimeError("'Set Tags' and 'Remove Tags' keywords "
                                        "cannot be used in suite teardown.")
                 self._set_or_remove_tags(handler, suite=ns.suite)

@@ -24,7 +24,7 @@ class BaseKeyword:
         self.doc = doc
         self.timeout = timeout
         self.type = type
-        self.status = 'NOT_EXECUTED'
+        self.status = 'NOT_RUN'
 
     def serialize(self, serializer):
         serializer.start_keyword(self)

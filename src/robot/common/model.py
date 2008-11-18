@@ -26,7 +26,7 @@ class _TestAndSuiteHelper:
         self.name = name
         self.setup = None 
         self.teardown = None
-        self.status = 'NOT_EXECUTED'
+        self.status = 'NOT_RUN'
     
     def __getattr__(self, name):
         if name == 'htmldoc':
@@ -325,7 +325,6 @@ class BaseTestCase(_TestAndSuiteHelper):
 
     def __init__(self, name=''):
         _TestAndSuiteHelper.__init__(self, name)
-        self.state = 'NOTRUN'
         self.critical = 'yes'
 
     def suite_teardown_failed(self, message):

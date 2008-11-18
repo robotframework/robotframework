@@ -61,7 +61,7 @@ class RunnableTestSuite(BaseTestSuite):
         self.namespace.variables['${SUITE_NAME}'] = self.longname
         init_err = self._init_suite(self.namespace.variables)
         output.start_suite(self)
-        self.state = 'RUN'
+        self.status = 'RUNNING'
         setup_err = self._run_fixture(self.setup, output, self.namespace, error, init_err)
         child_err = self._get_child_error(error, init_err, setup_err)
         for suite in self.suites:
@@ -78,7 +78,6 @@ class RunnableTestSuite(BaseTestSuite):
         self.message = self._get_my_error(error, init_err, setup_err)
         self.namespace.variables['${SUITE_STATUS}'] = self.status
         self.namespace.variables['${SUITE_MESSAGE}'] = self.get_full_message()
-        self.state = 'TEARDOWN'
         teardown_err = self._run_fixture(self.teardown, output, self.namespace, 
                                          error, init_err)
         if teardown_err is not None:
@@ -187,7 +186,7 @@ class RunnableTestCase(BaseTestCase):
     def _run(self, output, namespace):
         namespace.variables['${TEST_NAME}'] = self.name
         namespace.variables['@{TEST_TAGS}'] = self.tags
-        self.state = 'RUN'
+        self.status = 'RUNNING'
         self.timeout.start()
         setup_err = self._run_fixture(self.setup, output, namespace)
         kw_err = self._run_keywords(output, namespace, setup_err)
@@ -195,9 +194,7 @@ class RunnableTestCase(BaseTestCase):
         self.status = self.message == '' and 'PASS' or 'FAIL'
         namespace.variables['${TEST_STATUS}'] = self.status
         namespace.variables['${TEST_MESSAGE}'] = self.message
-        self.state = 'TEARDOWN'
         teardown_err = self._run_fixture(self.teardown, output, namespace)
-        self.state = 'DONE'
         if teardown_err is not None:
             self.message = self._get_message_with_teardown_err(self.message, 
                                                                teardown_err)

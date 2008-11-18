@@ -117,7 +117,7 @@ class _RunnableHandler(BaseHandler):
 
     def _get_timeoutable_items(self, namespace):
         items = namespace.uk_handlers[:]
-        if namespace.test is not None and namespace.test.state != 'TEARDOWN':
+        if namespace.test is not None and namespace.test.status == 'RUNNING':
             items.append(namespace.test)
         return items
     

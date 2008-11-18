@@ -70,11 +70,10 @@ def main(args):
 def process_arguments(args_list):
     argparser = utils.ArgumentParser(__doc__)
     try:
-        opts, args = argparser.parse_args(args_list, pythonpath='pythonpath',
-                                          check_args=True)
-    except DataError:
-        exit(error=__doc__)
-    if opts['help']:
+        opts, args = argparser.parse_args(args_list, pythonpath='pythonpath')
+    except DataError, err:
+        exit(error=str(err))
+    if opts['help'] or not args:
         exit(msg=__doc__)
     output = opts['output'] is not None and opts['output'] or '.'
     format = opts['format'] is not None and opts['format'] or 'HTML'
@@ -129,7 +128,7 @@ def exit(msg=None, error=None):
     if msg:
         sys.stdout.write(msg + '\n')
     if error:
-        sys.stderr.write(error + '\n')
+        sys.stderr.write(error + '\n\nTry --help for usage information.\n')
         sys.exit(1)
     sys.exit(0)
 
