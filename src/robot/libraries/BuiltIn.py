@@ -601,11 +601,12 @@ class Variables:
         scope of the currently executed test suite. Setting variables with this
         keyword thus has the same effect as creating them using the Variable
         table in the test data file or importing them from variable files.
-        Other test suites will not see variables set with this keyword.
+        Other test suites, including possible child test suites, will not see
+        variables set with this keyword. 
         
         The variable name must be given either in the escaped format
-        (e.g. \\${scalar} or \\@{list}) or without curly braces (e.g. $scalar
-        or @list) to prevent it from being resolved.
+        (e.g. \\${SCALAR} or \\@{LIST}) or without curly braces (e.g. $SCALAR
+        or @LIST) to prevent it from being resolved.
         
         If a variable already exists within the new scope, its value will be
         overwritten. Otherwise a new variable is created. If a variable already
