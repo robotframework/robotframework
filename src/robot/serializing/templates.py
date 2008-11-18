@@ -158,7 +158,7 @@ _STYLE = '''
   body {
     background: white;
     padding: 0px; 
-    font-size: 9pt;
+    font-size: 8pt;
   }
   a:link, a:visited {
     color: black;
@@ -166,7 +166,7 @@ _STYLE = '''
   .header, table.details, table.statistics {
     width: 100%;
   }
-  .generated_ago {
+  .generated_ago, .expand {
     display: none;
   }
 </style>
@@ -325,7 +325,7 @@ LOG = '''%(FUNCTIONS)s
 
   /* Folding buttons */
 
-  div.foldingbutton, div.nonfoldingbutton {
+  div.foldingbutton {
     text-align: center;
     line-height: 0.8em;
     font-size: 0.8em;
@@ -338,10 +338,7 @@ LOG = '''%(FUNCTIONS)s
     border: 1px solid black;
     border: 1px solid black;
   }
-  div.nonfoldingbutton {
-    background: #E9E9E9;
-  }
-  div.foldingbutton:hover{
+  div.foldingbutton:hover {
     background: yellow;
   }  
  .expand {
