@@ -22,6 +22,12 @@ from robot.errors import DataError
 
 class _TestAndSuiteHelper:
     
+    def __init__(self, name):
+        self.name = name
+        self.setup = None 
+        self.teardown = None
+        self.status = 'NOT_EXECUTED'
+    
     def __getattr__(self, name):
         if name == 'htmldoc':
             return utils.html_escape(self.doc, formatting=True)
@@ -57,7 +63,7 @@ class BaseTestSuite(_TestAndSuiteHelper):
     """Base class for TestSuite used in runtime and by rebot."""
 
     def __init__(self, name='', source=None):
-        self.name = name
+        _TestAndSuiteHelper.__init__(self, name)
         self.source = source is not None and utils.normpath(source) or None
         self.metadata = {}
         self.suites = []
@@ -66,7 +72,6 @@ class BaseTestSuite(_TestAndSuiteHelper):
         self.filtered = _FilteredBy()
         self.critical_stats = Stat()
         self.all_stats = Stat()
-        self.setup = self.teardown = None
         
     def set_critical_tags(self, critical, non_critical):
         if critical is not None or non_critical is not None:
@@ -319,10 +324,9 @@ class BaseTestSuite(_TestAndSuiteHelper):
 class BaseTestCase(_TestAndSuiteHelper):
 
     def __init__(self, name=''):
-        self.name = name
+        _TestAndSuiteHelper.__init__(self, name)
         self.state = 'NOTRUN'
         self.critical = 'yes'
-        self.setup = self.teardown = None
 
     def suite_teardown_failed(self, message):
         self.status = 'FAIL'

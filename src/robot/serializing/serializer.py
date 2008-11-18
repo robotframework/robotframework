@@ -294,8 +294,7 @@ class LogSuiteSerializer:
 
     def _write_suite_or_test_name(self, item, type_):
         self._writer.start_elements(['tr', 'td'])
-        self._writer.whole_element('a', 'Expand All', {'class': 'expand', 
-                                   'href': "javascript:expand_all_children('%s')" % item.id})
+        self._write_expand_all(item)
         self._write_folding_button(item)
         label = type_ == 'suite' and 'TEST&nbsp;SUITE: ' or 'TEST&nbsp;CASE: '
         self._writer.whole_element('span', label,
@@ -304,6 +303,11 @@ class LogSuiteSerializer:
                                    {'name': '%s_%s' % (type_, item.mediumname),
                                     'class': 'name', 'title': item.longname})
         self._writer.end_elements(['td', 'tr'])
+        
+    def _write_expand_all(self, item):
+        attrs = { 'class': 'expand', 
+                  'href': "javascript:expand_all_children('%s')" % item.id }
+        self._writer.whole_element('a', 'Expand All', attrs)
         
     def _write_keyword_name(self, kw):
         self._writer.start_element('tr', {'id': kw.id})
