@@ -27,13 +27,14 @@ Options:
  -o --output path        Where to write the generated documentation. If the 
                          path is a directory, the documentation is
                          generated there using name '<suitename>_doc.html'.
- -h -? --help            Print this help. 
+ -h --help               Print this help. 
 """
 
 import sys
 import os
 import time
 
+from robot.common import BaseKeyword, BaseTestSuite
 from robot.running import TestSuite
 from robot.conf import RobotSettings
 from robot.output import SystemLogger
@@ -56,7 +57,6 @@ class MySerializer(LogSuiteSerializer):
         self._writer = utils.HtmlWriter(output)
         self._idgen = utils.IdGenerator()
         self._suite_level = 0
-        self._suite = suite
     
     def start_suite(self, suite):
         suite._init_suite(_FakeVariableScopes())
@@ -65,58 +65,39 @@ class MySerializer(LogSuiteSerializer):
     def start_test(self, test):
         test._init_test(_FakeVariableScopes())
         LogSuiteSerializer.start_test(self, test)
-        for kw in test.keywords:
-            LogSuiteSerializer.start_keyword(self, kw)
-            LogSuiteSerializer.end_keyword(self, kw)
     
     def _is_element_open(self, item):
-        return False
+        return isinstance(item, BaseTestSuite)
     
     def _write_times(self, item):
         pass
-    
-    def _write_suite_or_test_name(self, item, type_):
-        self._writer.start_elements(['tr', 'td'])
-        self._writer.whole_element('a', 'Expand All', {'class': 'expand', 
-                                   'href': "javascript:expand_all_children('%s')" % item.id})
-        self._write_folding_button(item)
-        label = type_ == 'suite' and 'TEST&nbsp;SUITE: ' or 'TEST&nbsp;CASE: '
-        self._writer.whole_element('span', label, escape=False)
-        self._writer.whole_element('a', item.name, 
-                                   {'name': '%s_%s' % (type_, item.mediumname),
-                                    'class': 'name', 'title': item.longname})
-        self._writer.end_elements(['td', 'tr'])
         
     def _write_suite_metadata(self, suite):
         self._start_suite_or_test_metadata(suite)
         for name, value in suite.get_metadata(html=True):
             self._write_metadata_row(name, value, escape=False, write_empty=True)
-        for title, values in [ ('Critical Tags', suite.critical.tags),
-                               ('Non-Critical Tags', suite.critical.nons),
-                               ('Included Suites', suite.filtered.suites), 
-                               ('Included Tests', suite.filtered.tests),
-                               ('Included Tags', suite.filtered.incls), 
-                               ('Excluded Tags', suite.filtered.excls) ]:
-            self._write_metadata_row(title, ', '.join(values), escape=False)
         self._writer.end_element('table')
     
     def _write_test_metadata(self, test):
         self._start_suite_or_test_metadata(test)
+        tout = ''
+        if test.timeout.secs > 0:
+            tout = utils.secs_to_timestr(test.timeout.secs)
+            if test.timeout.message:
+                tout += ' | ' + test.timeout.message
+        self._write_metadata_row('Timeout', tout)
         self._write_metadata_row('Tags', ', '.join(test.tags))
-        crit = test.critical == 'yes' and 'critical' or 'non-critical'
         self._writer.end_element('table')
+    
+    def _write_folding_button(self, item):
+        if not isinstance(item, BaseKeyword):
+            LogSuiteSerializer._write_folding_button(self, item)
+
+    def _write_expand_all(self, item):
+        if isinstance(item, BaseTestSuite):
+            LogSuiteSerializer._write_expand_all(self, item)
         
-    def _write_keyword_name(self, kw):
-        self._writer.start_element('tr', {'id': kw.id})
-        self._writer.start_element('td')
-        self._write_folding_button(kw)
-        kw_type = kw.type in ['setup','teardown'] and kw.type.upper() or 'KEYWORD'
-        self._writer.whole_element('span' ) # TODO: some style here
-        self._writer.whole_element('span', kw.name+' ', {'class': 'name'})
-        self._writer.whole_element('span', u', '.join(kw.args), {'class': 'arg'})
-        self._writer.end_elements(['td', 'tr'])
-        
-        
+
 def generate_test_plan(args):
     outpath, datasources = _process_arguments(args)
     suite = TestSuite(datasources, RobotSettings(), SystemLogger())
@@ -148,6 +129,14 @@ def _process_arguments(args_list):
         exit(msg=__doc__)
     output = opts['output'] is not None and opts['output'] or '.'
     return os.path.abspath(output), args
+
+def exit(msg=None, error=None):
+    if msg:
+        sys.stdout.write(msg + '\n')
+    if error:
+        sys.stderr.write(error + '\n')
+        sys.exit(1)
+    sys.exit(0)
 
 def _get_outpath(path, suite_name):
     if os.path.isdir(path):
