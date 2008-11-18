@@ -152,6 +152,9 @@ _STYLE = '''
   .warn {
     color: #FFCC00;
   }
+  .not_run {
+    color: #663300;
+  }
 </style>
       
 <style media="print" type="text/css">

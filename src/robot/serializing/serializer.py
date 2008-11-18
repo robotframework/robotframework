@@ -211,7 +211,7 @@ class LogSyslogSerializer:
         self._writer = utils.HtmlWriter(output)
 
     def start_syslog(self, syslog):
-        if len(syslog.messages) > 0:
+        if syslog.messages:
             self._writer.whole_element('h2', 'Test Execution Errors')
             self._writer.start_element('table', {'class': 'syslog'})
 
@@ -226,7 +226,7 @@ class LogSyslogSerializer:
         self._writer.end_element('tr')    
 
     def end_syslog(self, syslog):
-        if len(syslog.messages) > 0:
+        if syslog.messages:
             self._writer.end_element('table')
 
 
@@ -305,9 +305,9 @@ class LogSuiteSerializer:
         self._writer.end_elements(['td', 'tr'])
         
     def _write_expand_all(self, item):
-        # Overridden by test doc tool.
-        attrs = { 'class': 'expand', 
-                  'href': "javascript:expand_all_children('%s')" % item.id }
+        # Overridden by testdoc.py tool.
+        attrs = { 'href': "javascript:expand_all_children('%s')" % item.id,
+                  'class': 'expand' }
         self._writer.whole_element('a', 'Expand All', attrs)
         
     def _write_keyword_name(self, kw):
@@ -402,13 +402,11 @@ class LogSuiteSerializer:
 
     def _write_metadata_row(self, name, value, attrs={}, escape=True,
                             write_empty=False):
-        if not value and not write_empty:
-            return
-        self._writer.start_element('tr', newline=False)
-        self._writer.whole_element('th', name+':', escape=False, newline=False)
-        self._writer.whole_element('td', value, attrs, escape=escape,
-                                   newline=False)
-        self._writer.end_element('tr')
+        if value or write_empty:
+            self._writer.start_element('tr', newline=False)
+            self._writer.whole_element('th', name+':', escape=False, newline=False)
+            self._writer.whole_element('td', value, attrs, escape=escape, newline=False)
+            self._writer.end_element('tr')
 
     def _write_split_suite_details_link(self):
         pass
