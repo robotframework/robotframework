@@ -73,7 +73,7 @@ import os
 import time
 
 from robot.common import BaseKeyword, BaseTestSuite
-from robot.running import TestSuite
+from robot.running import TestSuite, Keyword
 from robot.conf import RobotSettings
 from robot.output import SystemLogger
 from robot.serializing.serializer import LogSuiteSerializer
@@ -86,6 +86,9 @@ from robot.errors import DataError
 class _FakeVariableScopes:
     
     def replace_from_meta(self, name, item, errors):
+        return item
+
+    def replace_string(self, item):
         return item
 
 
@@ -103,6 +106,11 @@ class MySerializer(LogSuiteSerializer):
     def start_test(self, test):
         test._init_test(_FakeVariableScopes())
         LogSuiteSerializer.start_test(self, test)
+        
+    def start_keyword(self, kw):
+        if isinstance(kw, Keyword):  # Doesn't match For or Parallel
+            kw.name = kw._get_name(kw.name, _FakeVariableScopes())
+        LogSuiteSerializer.start_keyword(self, kw)
     
     def _is_element_open(self, item):
         return isinstance(item, BaseTestSuite)
@@ -119,8 +127,9 @@ class MySerializer(LogSuiteSerializer):
     
     def _write_test_metadata(self, test):
         self._start_suite_or_test_metadata(test)
-        tout = ''
-        if test.timeout.secs > 0:
+        if test.timeout.secs < 0:
+            tout = ''
+        else:
             tout = utils.secs_to_timestr(test.timeout.secs)
             if test.timeout.message:
                 tout += ' | ' + test.timeout.message
