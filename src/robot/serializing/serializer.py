@@ -305,6 +305,7 @@ class LogSuiteSerializer:
         self._writer.end_elements(['td', 'tr'])
         
     def _write_expand_all(self, item):
+        # Overridden by test doc tool.
         attrs = { 'class': 'expand', 
                   'href': "javascript:expand_all_children('%s')" % item.id }
         self._writer.whole_element('a', 'Expand All', attrs)
