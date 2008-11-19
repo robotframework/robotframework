@@ -57,18 +57,19 @@ class _BaseSettings:
                   'MonitorWidth'     : ('monitorwidth', 78),
                   'MonitorColors'    : ('monitorcolors', 'ON') }
     
-    _deprecated = { 'colormonitor'   : 'monitorcolors' }
+    _deprecated = { 'colormonitor'   : 'monitorcolors',
+                    'transform'      : None }
     
     _env_opts = { 'SyslogFile'       : ('ROBOT_SYSLOG_FILE', 'NONE'),
                   'SyslogLevel'      : ('ROBOT_SYSLOG_LEVEL', 'INFO') }
     
-    def __init__(self, opts=None):
+    def __init__(self, opts={}):
         self._opts = {}
         self._errors = []
         self._cli_opts.update(self._extra_cli_opts)
-        if opts is not None:
-            self._process_cli_opts(opts)
-            self._process_env_opts()
+        self._process_deprecated_cli_opts(opts)
+        self._process_cli_opts(opts)
+        self._process_env_opts()
             
     def report_errors(self, syslog):
         for msg, level in self._errors:
@@ -78,7 +79,6 @@ class _BaseSettings:
         self._errors.append((msg, level))
 
     def _process_cli_opts(self, opts):
-        self._handle_deprecated_cli_opts(opts)
         for name, (cli_name, default) in self._cli_opts.items():
             try:
                 value = opts[cli_name]
@@ -88,18 +88,16 @@ class _BaseSettings:
                 value = default
             self[name] = value
 
-    def _handle_deprecated_cli_opts(self, opts):
+    def _process_deprecated_cli_opts(self, opts):
         for oldname, newname in self._deprecated.items():
-            try:
-                value = opts[oldname]
-                if value in [None, []]:
-                    raise KeyError
-            except KeyError:
+            if oldname not in opts or opts[oldname] in [None, []]:
                 continue
+            if newname:
+                self._add_error("Option '--%s' is deprecated. Use '--%s' "
+                                "instead." % (oldname, newname), 'WARN')
+                opts[newname] = opts[oldname]
             else:
-                msg = "Option '--%s' is deprecated. Use '--%s' instead." 
-                self._add_error(msg % (oldname, newname), 'WARN')
-                opts[newname] = value
+                self._add_error("Option '--%s' has been removed." % oldname)
     
     def _process_env_opts(self):
         for name, (env_name, default) in self._env_opts.items():
@@ -130,9 +128,10 @@ class _BaseSettings:
             try:
                 value = int(value)
             except ValueError:
-                self._add_error("Option '--%s' expected integer value but got '%s'. "
-                                "Default value used instead." % (name.lower(), value))
-                value = name == 'MonitorWidth' and 78 or -1
+                self._add_error("Option '--%s' expected integer value but got "
+                                "'%s'. Default value used instead."
+                                % (name.lower(), value))
+                value = self._cli_opts[name][1]
         elif name == 'TagStatLink':
             value = self._process_tag_stat_link(value)
         elif name == 'RemoveKeywords':
@@ -196,12 +195,6 @@ class _BaseSettings:
             raise DataError("Can't create %s file's parent directory '%s': %s"
                             % (type_.lower(), path, utils.get_error_message()))
     
-    def __str__(self):
-        names = self._opts.keys()
-        names.sort()
-        ret = [ '%s: %s' % (name, self._opts[name]) for name in names ]
-        return '\n'.join(ret)
-
     def _process_tag_stat_link(self, value):
         ret = []
         for item in value:
@@ -213,7 +206,12 @@ class _BaseSettings:
             ret.append((tokens[0], ':'.join(tokens[1:-1]), tokens[-1]))
         return ret
 
-    
+    def __str__(self):
+        names = self._opts.keys()
+        names.sort()
+        ret = [ '%s: %s' % (name, self._opts[name]) for name in names ]
+        return '\n'.join(ret)
+
 
 class RobotSettings(_BaseSettings):
     
@@ -224,16 +222,6 @@ class RobotSettings(_BaseSettings):
                         'Listeners'     : ('listener', []), 
                         'DebugFile'     : ('debugfile', 'NONE') }
     _optional_outputs = ['Log', 'Report', 'Summary', 'DebugFile']
-    
-    def __init__(self, opts={}):
-        _BaseSettings.__init__(self, opts)
-        try:
-            if opts['transform'] is not None:
-                self._add_error("Option '--transform' is ignored. Please use "
-                                "'--log' and '--report' to control what "
-                                "outputs to generate.")
-        except KeyError:
-            pass
     
     def is_rebot_needed(self):
         return not ('NONE' == self['Log'] == self['Report'] == self['Summary'])
