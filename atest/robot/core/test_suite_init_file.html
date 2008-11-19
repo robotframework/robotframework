@@ -1,9126 +1,1042 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html><head>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  <style type="text/css">
+<style type="text/css">
 html {
-  font-family: Arial,Helvetica,sans-serif;
-  background-color: white;
-  color: black;
+font-family: Arial,Helvetica,sans-serif;
+background-color: white;
+color: black;
 }
 p {
-  max-width: 60em;
+max-width: 60em;
 }
 table {
-  border-collapse: collapse;
-  empty-cells: show;
-  margin: 1em 0em;
-  border: 0.1em solid black;
+border-collapse: collapse;
+empty-cells: show;
+margin: 1em 0em;
+border: 0.1em solid black;
 }
 th, td {
-  border-style: solid;
-  border-width: 0.05em 0.1em;
-  border-color: black;
-  padding: 0.1em 0.2em;
-  height: 1.5em;
+border-style: solid;
+border-width: 0.05em 0.1em;
+border-color: black;
+padding: 0.1em 0.2em;
+height: 1.5em;
 }
 th {
-  background-color: rgb(192, 192, 192);
-  color: black;
-  border-width: 0.1em;
-  font-weight: bold;
-  text-align: center;
-  text-transform: capitalize;
-  letter-spacing: 0.1em;
+background-color: rgb(192, 192, 192);
+color: black;
+border-width: 0.1em;
+font-weight: bold;
+text-align: center;
+text-transform: capitalize;
+letter-spacing: 0.1em;
 }
 /* Widths of named columns */
 col.name {
-  width: 10em;
+width: 10em;
 }
 .action, .value, .arg {
-  width: 15em;
+width: 15em;
 }
-/* Properties for the name column 
-- td:first-child should work in CSS 2.1 avare browsers (tested in Firefox)
+/* Properties for the name column - td:first-child should work in CSS 2.1 avare browsers (tested in Firefox)
 - col.name is against specs but works in IE
 */
 td:first-child, col.name {
-  background-color: rgb(240, 240, 240);
-  text-transform: capitalize;
-  letter-spacing: 0.1em;
+background-color: rgb(240, 240, 240);
+text-transform: capitalize;
+letter-spacing: 0.1em;
 }
 /* required for IE */
 th {
-  font-style: normal;
+font-style: normal;
 }
-  </style>
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  <title>Robot Test Cases</title></head>
+</style><title>Robot Test Cases</title>
+
+</head>
 <body>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 <h1>Robot Test Cases</h1>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 <table border="1">
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  <colgroup span="99"><col class="name"><col class="value" span="4"></colgroup>
-  <thead>
-  <tr>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    <th>Setting</th>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    <th>Value</th>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    <th>Value</th>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    <th>value</th>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    <th>Value</th>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  </tr>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  </thead>
-  <tbody>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    <tr>
-
-
-
-
-
-
-
-
-
-
-
-
-
-      <td>Force Tags</td>
-
-
-
-
-
-
-
-
-
-
-
-
-
-      <td>regression</td>
-
-
-
-
-
-
-
-
-
-
-
-
-
-      <td>jybot</td>
-
-
-
-
-
-
-
-
-
-
-
-
-
-      <td>pybot</td>
-
-
-
-
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-
-
-
-
-    </tr>
-
-
-
-
-
-
-
-
-
-
-
-
-
-    <tr>
-
-
-
-
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-
-
-
-
-    </tr>
-
-
-
-
-
-
-
-
-
-
-
-
-
-    <tr>
-
-
-
-
-
-
-
-
-
-
-
-
-
-      <td>Suite Setup</td>
-
-
-
-
-
-
-
-
-
-
-
-
-
-      <td>My Setup</td>
-
-
-
-
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-
-
-
-
-      <td><br>
-
-
-
-
-
-
-
-
-
-
-
-
-
-      </td>
-
-
-
-
-
-
-
-
-
-
-
-
-
-    </tr>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    <tr>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      <td>Resource</td>
-
-
-
-
-
-
-
-
-
-
-
-
-
-      <td>../../resources/resource.html</td>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    </tr>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  </tbody>
+<colgroup span="99"><col class="name"><col class="value" span="4"></colgroup> <thead>
+<tr>
+<th>Setting</th>
+<th>Value</th>
+<th>Value</th>
+<th>value</th>
+<th>Value</th>
+</tr>
+</thead> <tbody>
+<tr>
+<td>Force Tags</td>
+<td>regression</td>
+<td>jybot</td>
+<td>pybot</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Suite Setup</td>
+<td>My Setup</td>
+<td></td>
+<td></td>
+<td><br>
+</td>
+</tr>
+<tr>
+<td>Resource</td>
+<td>../../resources/resource.html</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
 </table>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 <table border="1">
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  <colgroup span="99"><col class="name"><col class="value" span="4"></colgroup>
-  <thead>
-  <tr>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    <th>Variable</th>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    <th>Value</th>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    <th>Value</th>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    <th>Value</th>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    <th>Value</th>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  </tr>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  </thead>
-  <tbody>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    <tr>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      <td>${suite}</td>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      <td>These three variables ...<br>
-
-
-
-
-
-
-
-
-      </td>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    </tr>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    <tr>
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">${subsuite_with_init}</td>
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">... get are set in ...</td>
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-
-
-
-
-
-    </tr>
-
-
-
-
-
-
-
-
-    <tr>
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">${subsuite_without_init}</td>
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">... 'My Setup'.</td>
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-
-
-
-
-
-    </tr>
-
-
-
-
-
-
-
-
-    <tr>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    </tr>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  </tbody>
+<colgroup span="99"><col class="name"><col class="value" span="4"></colgroup> <thead>
+<tr>
+<th>Variable</th>
+<th>Value</th>
+<th>Value</th>
+<th>Value</th>
+<th>Value</th>
+</tr>
+</thead> <tbody>
+<tr>
+<td>${suite}</td>
+<td>These three variables ...<br>
+</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td align="undefined" valign="undefined">${subsuite_with_init}</td>
+<td align="undefined" valign="undefined">...
+get are set in ...</td>
+<td align="undefined" valign="undefined"></td>
+<td align="undefined" valign="undefined"></td>
+<td align="undefined" valign="undefined"></td>
+</tr>
+<tr>
+<td align="undefined" valign="undefined">${subsuite_without_init}</td>
+<td align="undefined" valign="undefined">...
+'My Setup'.</td>
+<td align="undefined" valign="undefined"></td>
+<td align="undefined" valign="undefined"></td>
+<td align="undefined" valign="undefined"></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
 </table>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 <table border="1">
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  <colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
-  <thead>
-  <tr>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    <th>Test Case</th>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    <th>Action</th>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    <th>Argument</th>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    <th>Argument</th>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    <th>Argument</th>
-
-
-
-
-
-
-
-
-
-
-
-
-    
-
-
-
-
-  </tr>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  </thead>
-  <tbody>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    
-
-
-    <tr>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      <td>Suite Name
-
-
-      </td>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      <td>Equals</td>
-
-
-
-
-
-
-
-
-
-
-
-
-      <td>${suite.name}</td>
-
-
-
-
-
-
-
-
-
-
-
-
-      <td>Test Suite Dir With Init File</td>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      
-
-      
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-
-
-
-      
-
-
-
-
-    </tr>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    <tr>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-
-
-
-
-
-
-
-      <td>Equals</td>
-
-
-
-
-
-
-
-
-
-
-      <td>${subsuite_with_init.name}</td>
-
-
-
-
-
-
-
-
-
-
-      <td>Sub Suite With Init File</td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-
-
-
-
-
-
-
-    </tr>
-
-
-
-
-
-
-
-
-
-
-    <tr>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-
-
-
-
-
-
-
-      <td>Equals</td>
-
-
-
-
-
-
-
-
-
-
-      <td>${subsuite_without_init.name}</td>
-
-
-
-
-
-
-
-
-
-
-      <td>Sub Suite Without Init File</td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-
-
-
-
-
-
-
-    </tr>
-
-
-
-
-
-
-
-
-
-
-    <tr>
-
-
-
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-
-
-
-      
-    </tr>
-
-
-
-
-
-
-
-
-
-
-
-
-    <tr>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">Suite Documentation</td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">[ Document ]</td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">Setting and not setting documentation for a&nbsp;suite file&nbsp;</td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">and setting doc when there's not suite file.</td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-
-
-
-
-
-
-
-    </tr>
-
-
-
-
-
-
-
-
-
-
-    <tr>
-
-
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined"><br>
-
-
-
-
-
-
-
-
-
-
-      </td>
-
-
-
-
-
-
-
-
-
-
-
-
-      <td>Equals</td>
-
-
-
-
-
-
-
-
-
-
-
-
-      <td>${suite.doc}</td>
-
-
-
-
-
-
-
-
-
-
-
-
-      <td>Setting metadata for&nbsp;test suite directory</td>
-
-
-
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-
-
-
-      
-    </tr>
-
-
-
-
-
-
-
-
-
-
-
-
-    <tr>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-
-
-
-
-
-
-
-      <td>Equals</td>
-
-
-
-
-
-
-
-
-
-
-      <td>${subsuite_with_init.doc}</td>
-
-
-
-
-
-
-
-
-
-
-      <td>\</td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-
-
-
-
-
-
-
-    </tr>
-
-
-
-
-
-
-
-
-
-
-    <tr>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-
-
-
-
-
-
-
-      <td>Equals</td>
-
-
-
-
-
-
-
-
-
-
-      <td>${subsuite_without_init.doc}</td>
-
-
-
-
-
-
-
-
-
-
-      <td>\</td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-
-
-
-
-
-
-
-    </tr>
-
-
-
-
-
-
-
-
-
-
-    <tr>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-
-
-
-      
-
-
-
-
-    </tr>
-
-
-
-
-
-
-
-
-
-
-
-
-    <tr>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">Suite Setup</td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">[ Document ]</td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">Setting and not setting setup using suite file</td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-
-
-
-
-
-
-
-    </tr>
-
-
-
-
-
-
-
-
-
-
-    
-
-
-
-
-
-
-
-
-
-
-    <tr>
-
-
-
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">Check Log Message</td>
-
-
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">${suite.setup.kws[0].msgs[0]}</td>
-
-
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">Setup of test suite directory</td>
-
-
-
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-
-
-
-      
-    </tr>
-
-
-
-
-
-
-
-
-
-
-
-
-    <tr>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">Equals</td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">${subsuite_with_init.setup}</td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">${None}</td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-
-
-
-
-
-
-
-    </tr>
-
-
-
-
-
-
-
-
-
-
-    <tr>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">Equals</td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">${subsuite_without_init.setup}</td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">${None}</td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-
-
-
-
-
-
-
-    </tr>
-
-
-
-
-
-
-
-
-
-
-    <tr>
-
-
-
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-
-
-
-      
-    </tr>
-
-
-
-
-
-
-
-
-
-
-
-
-    <tr>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">Suite Teardown</td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">[ Document ]</td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">Setting and not setting teardown using suite file</td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-
-
-
-
-
-
-
-    </tr>
-
-
-
-
-
-
-
-
-
-
-    <tr>
-
-
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined"><br>
-
-
-
-
-
-
-
-
-
-
-      </td>
-
-
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">Check Log Message</td>
-
-
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">${suite.teardown.kws[1].msgs[0]}</td>
-
-
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">Teardown&nbsp;of test suite directory</td>
-
-
-
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-
-
-
-      
-    </tr>
-
-
-
-
-
-
-
-
-
-
-
-
-    <tr>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">Check Log Message</td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">${subsuite_with_init.teardown<br>
-
+<colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
+<thead> <tr>
+<th>Test Case</th>
+<th>Action</th>
+<th>Argument</th>
+<th>Argument</th>
+<th>Argument</th>
+</tr>
+</thead> <tbody>
+<tr>
+<td>Suite Name </td>
+<td>Equals</td>
+<td>${suite.name}</td>
+<td>Test Suite Dir With Init File</td>
+<td></td>
+</tr>
+<tr>
+<td align="undefined" valign="undefined"></td>
+<td>Equals</td>
+<td>${subsuite_with_init.name}</td>
+<td>Sub Suite With Init File</td>
+<td align="undefined" valign="undefined"></td>
+</tr>
+<tr>
+<td align="undefined" valign="undefined"></td>
+<td>Equals</td>
+<td>${subsuite_without_init.name}</td>
+<td>Sub Suite Without Init File</td>
+<td align="undefined" valign="undefined"></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td align="undefined" valign="undefined">Suite
+Documentation</td>
+<td align="undefined" valign="undefined">[
+Document ]</td>
+<td align="undefined" valign="undefined">Setting
+and not setting documentation for a&nbsp;suite file&nbsp;</td>
+<td align="undefined" valign="undefined">and
+setting doc when there's not suite file.</td>
+<td align="undefined" valign="undefined"></td>
+</tr>
+<tr>
+<td align="undefined" valign="undefined"><br>
+</td>
+<td>Equals</td>
+<td>${suite.doc}</td>
+<td>Setting metadata for&nbsp;test suite directory</td>
+<td></td>
+</tr>
+<tr>
+<td align="undefined" valign="undefined"></td>
+<td>Equals</td>
+<td>${subsuite_with_init.doc}</td>
+<td>\</td>
+<td align="undefined" valign="undefined"></td>
+</tr>
+<tr>
+<td align="undefined" valign="undefined"></td>
+<td>Equals</td>
+<td>${subsuite_without_init.doc}</td>
+<td>\</td>
+<td align="undefined" valign="undefined"></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td align="undefined" valign="undefined">Suite
+Setup</td>
+<td align="undefined" valign="undefined">[
+Document ]</td>
+<td align="undefined" valign="undefined">Setting
+and not setting setup using suite file</td>
+<td align="undefined" valign="undefined"></td>
+<td align="undefined" valign="undefined"></td>
+</tr>
+<tr>
+<td></td>
+<td align="undefined" valign="undefined">Check
+Log Message</td>
+<td align="undefined" valign="undefined">${suite.setup.kws[0].msgs[0]}</td>
+<td align="undefined" valign="undefined">Setup
+of test suite directory</td>
+<td></td>
+</tr>
+<tr>
+<td align="undefined" valign="undefined"></td>
+<td align="undefined" valign="undefined">Equals</td>
+<td align="undefined" valign="undefined">${subsuite_with_init.setup}</td>
+<td align="undefined" valign="undefined">${None}</td>
+<td align="undefined" valign="undefined"></td>
+</tr>
+<tr>
+<td align="undefined" valign="undefined"></td>
+<td align="undefined" valign="undefined">Equals</td>
+<td align="undefined" valign="undefined">${subsuite_without_init.setup}</td>
+<td align="undefined" valign="undefined">${None}</td>
+<td align="undefined" valign="undefined"></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td align="undefined" valign="undefined">Suite
+Teardown</td>
+<td align="undefined" valign="undefined">[
+Document ]</td>
+<td align="undefined" valign="undefined">Setting
+and not setting teardown using suite file</td>
+<td align="undefined" valign="undefined"></td>
+<td align="undefined" valign="undefined"></td>
+</tr>
+<tr>
+<td align="undefined" valign="undefined"><br>
+</td>
+<td align="undefined" valign="undefined">Check
+Log Message</td>
+<td align="undefined" valign="undefined">${suite.teardown.kws[1].msgs[0]}</td>
+<td align="undefined" valign="undefined">Teardown&nbsp;of
+test suite directory</td>
+<td></td>
+</tr>
+<tr>
+<td align="undefined" valign="undefined"></td>
+<td align="undefined" valign="undefined">Check
+Log Message</td>
+<td align="undefined" valign="undefined">${subsuite_with_init.teardown<br>
 .kws[1].msgs[0]}</td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">Teardown&nbsp;of sub test suite directory</td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-
-
-
-
-
-
-
-    </tr>
-
-
-
-
-
-
-
-
-
-
-    <tr>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">Equals</td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">${subsuite_without_init.teardown}&nbsp;</td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">${None}</td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-
-
-
-
-
-
-
-    </tr>
-
-
-
-
-
-
-
-
-
-
-    <tr>
-
-
-
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-
-
-
-      
-    </tr>
-
-
-
-
-
-
-
-
-
-
-
-
-    <tr>
-
-
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">Invalid Suite Metadata</td>
-
-
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">Check Stderr Contains</td>
-
-
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">Test Suite does not have metadata 'Invalid'.&nbsp;</td>
-
-
-
-
-
-
-
-
-
-
-
-
-      <td>Available: 'Default Tags', 'Documentation', 'Force Tags', 'Suite Setup',</td>
-
-
-
-
-
-
-
-
-
-
-
-
-      <td> 'Suite Teardown', 'Test Setup', 'Test Teardown' and 'Test Timeout'</td>
-
-
-
-
-
-
-
-
-
-
-
-
-      
-    </tr>
-
-
-
-
-
-
-
-
-
-
-
-
-    <tr>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">Check Stderr Contains</td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">Test Suite does not have metadata 'Invalid In Sub'.&nbsp;</td>
-
-
-
-
-
-
-
-
-
-
-      <td>Available: 'Default Tags', 'Documentation', 'Force Tags', 'Suite Setup',</td><td> 'Suite Teardown', 'Test Setup', 'Test Teardown' and 'Test Timeout'</td>
-      
-
-
-
-
-
-
-
-
-
-
-      
-
-
-
-
-
-
-
-
-
-    </tr>
-
-
-
-
-
-
-
-
-
-
-    <tr>
-
-
-
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-
-
-
-      
-    </tr>
-
-
-
-
-
-
-
-
-
-
-
-
-    
-    <tr>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">Test Tags</td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">[ Document ]</td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">Settings tags for tests using Force and Default Tags</td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">in different suite levels and also [Tags] in tests</td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-
-
-
-
-
-
-
-    </tr>
-
-
-
-
-
-
-
-
-
-
-    <tr>
-
-
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined"><br>
-
-
-
-
-
-
-
-
-
-
-      </td>
-
-
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">Check Test Tags</td>
-
-
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">TC1 No Metadata</td>
-
-
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">suiteforce</td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">testdefault</td>
-
-
-
-
-
-
-
-
-
-
-
-
-      
-
-      
-    </tr>
-
-
-
-
-
-
-
-
-
-
-
-
-    <tr>
-
-
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">...</td>
-
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">testforce</td>
-
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined"><br>
-
-
-
-
-
-
-
-
-
-
-      </td>
-
-
-
-
-
-
-
-
-
-
-
-    </tr>
-
-
-
-
-
-
-
-
-
-
-
-    <tr>
-
-
-
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">Check Test Tags</td>
-
-
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">TC1 Tags</td>
-
-
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">suiteforce</td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">testforce</td>
-
-
-
-
-
-
-
-
-
-
-
-      
-
-      
-      
-    </tr>
-
-
-
-
-
-
-
-
-
-
-
-    
-    <tr>
-
-
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">...</td>
-
-
-
-
-
-
-
-
-
-
-
-      <td>testtag1</td>
-
-
-
-
-
-
-
-
-
-
-
-      <td>testtag2</td>
-
-
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-
-
-    </tr>
-
-
-
-
-
-
-
-
-
-
-
-    <tr>
-
-
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">Check Test Tags</td>
-
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">TC2 No Metadata</td>
-
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">suitedefault1</td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">suitedefault2</td>
-
-
-
-
-
-
-
-
-
-
-
-      
-    </tr>
-
-
-
-
-
-
-
-
-
-
-
-    <tr>
-
-
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">...</td>
-
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">suiteforce</td>
-
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined"><br>
-
-
-
-
-
-
-
-
-
-
-      </td>
-
-
-
-
-
-
-
-
-
-
-
-    </tr>
-
-
-
-
-
-
-
-
-
-
-
-    <tr>
-
-
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">Check Test Tags</td>
-
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">TC2 Tags</td>
-
-
-
-
-
-
-
-
-
-
-
-      <td>suiteforce
-      </td>
-
-
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-
-
-    </tr>
-
-
-
-
-
-
-
-
-
-
-
-    
-    <tr>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">Check Test Tags</td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">S1TC1 No Metadata</td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">subsuiteforce</td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">suiteforce</td>
-
-
-
-
-
-
-
-
-
-
-    </tr>
-
-
-
-
-
-
-
-
-
-
-    <tr>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">...</td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">testdefault</td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">testforce</td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-
-
-
-
-
-
-
-    </tr>
-
-
-
-
-
-
-
-
-
-
-    <tr>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">Check Test Tags</td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">S1TC1 Tags</td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">subsuiteforce</td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">suiteforce</td>
-
-
-
-
-
-
-
-
-
-
-    </tr>
-
-
-
-
-
-
-
-
-
-
-    <tr>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">...</td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">testforce</td>
-
-
-
-
-
-
-
-
-
-
-      <td>testtag1</td>
-
-
-
-
-
-
-
-
-
-
-      <td>testtag2</td>
-
-
-
-
-
-
-
-
-
-
-    </tr>
-
-
-
-
-
-
-
-
-
-
-    <tr>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">Check Test Tags</td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">S1TC2 No Metadata</td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">subsuitedefault</td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">subsuiteforce</td>
-
-
-
-
-
-
-
-
-
-
-    </tr>
-
-
-
-
-
-
-
-
-
-
-    <tr>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">...</td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">suiteforce</td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined"><br>
-
-
-
-
-
-
-
-
-
-
-      </td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-
-
-
-
-
-
-
-    </tr>
-
-
-
-
-
-
-
-
-
-
-    <tr>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">Check Test Tags</td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">S1TC2 Tags</td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">subsuiteforce</td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">suiteforce</td>
-
-
-
-
-
-
-
-
-
-
-    </tr>
-
-
-
-
-
-
-
-
-
-
-    <tr>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">...</td>
-
-
-
-
-
-
-
-
-
-
-      <td>t1</td>
-
-
-
-
-
-
-
-
-
-
-      <td>t2</td>
-
-
-
-
-
-
-
-
-
-
-      <td>t3</td>
-
-
-
-
-
-
-
-
-
-
-    </tr>
-
-
-
-
-
-
-
-
-
-
-    <tr>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">...</td>
-
-
-
-
-
-
-
-
-
-
-      <td>t4</td>
-
-
-
-
-
-
-
-
-
-
-      <td>t5</td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-
-
-
-
-
-
-
-    </tr>
-
-
-
-
-
-
-
-
-
-
-    <tr>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">Check Test Tags</td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">S2TC1 No Metadata</td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">suiteforce</td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">testdefault</td>
-
-
-
-
-
-
-
-
-
-
-    </tr>
-
-
-
-
-
-
-
-
-
-
-    <tr>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">...</td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">testforce</td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-
-
-
-
-
-
-
-    </tr>
-
-
-
-
-
-
-
-
-
-
-    <tr>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">Check Test Tags</td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">S2TC1 Tags</td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">suiteforce</td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">testforce</td>
-
-
-
-
-
-
-
-
-
-
-    </tr>
-
-
-
-
-
-
-
-
-
-
-    <tr>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">...</td>
-
-
-
-
-
-
-
-
-
-
-      <td>testtag1</td>
-
-
-
-
-
-
-
-
-
-
-      <td>testtag2</td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">testtag3</td>
-
-
-
-
-
-
-
-
-
-
-    </tr>
-
-
-
-
-
-
-
-
-
-
-    <tr>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">Check Test Tags</td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">S2TC2 No Metadata</td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">suitedefault1</td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">suitedefault2</td>
-
-
-
-
-
-
-
-
-
-
-    </tr>
-
-
-
-
-
-
-
-
-
-
-    <tr>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">...</td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">suiteforce</td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-
-
-
-
-
-
-
-    </tr>
-
-
-
-
-
-
-
-
-
-
-    <tr>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">Check Test Tags</td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">S2TC2 Tags</td>
-
-
-
-
-
-
-
-
-
-
-      <td>suiteforce
-      </td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-
-
-
-
-
-
-
-    </tr>
-
-
-
-
-
-
-
-
-
-
-    <tr>
-
-
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-
-
-    </tr>
-
-
-
-
-
-
-
-
-
-
-
-    <tr>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">Test Fixture</td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">[ Document ]</td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">Settings setup and teardown for tests using Test Setup/Teardown</td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">in different suite levels and also [Setup] and [Teardown] in tests</td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-
-
-
-
-
-
-
-    </tr>
-
-
-
-
-
-
-
-
-
-
-    <tr>
-
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined"><br>
-
-
-
-
-
-
-
-
-
-
-      </td>
-
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">Check Test Fixture</td>
-
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">TC1 No Metadata</td>
-
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">Default setup from test file</td>
-
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">Default teardown from test file</td>
-
-
-
-
-
-
-
-
-
-
-
-    </tr>
-
-
-
-
-
-
-
-
-
-
-
-    <tr>
-
-
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">Check Test Fixture</td>
-
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">TC1 Fixture</td>
-
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">Setup defined in test</td>
-
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">Teardown defined in test</td>
-
-
-
-
-
-
-
-
-
-
-
-    </tr>
-
-
-
-
-
-
-
-
-
-
-
-    <tr>
-
-
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">Check Test Fixture</td>
-
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">TC2 No Metadata</td>
-
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">Default setup from suite file</td>
-
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">Default teardown from suite file</td>
-
-
-
-
-
-
-
-
-
-
-
-    </tr>
-
-
-
-
-
-
-
-
-
-
-
-    <tr>
-
-
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">Check Test Fixture</td>
-
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">TC2 Fixture</td>
-
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">Setup defined in test</td>
-
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">Teardown defined in test</td>
-
-
-
-
-
-
-
-
-
-
-
-    </tr>
-
-
-
-
-
-
-
-
-
-
-
-    <tr>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">Check Test Fixture</td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">S1TC1 No Metadata</td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">Default setup from test file</td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">Default teardown from test file</td>
-
-
-
-
-
-
-
-
-
-
-    </tr>
-
-
-
-
-
-
-
-
-
-
-    <tr>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">Check Test Fixture</td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">S1TC1 Fixture</td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">Setup defined in test</td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">Teardown defined in test</td>
-
-
-
-
-
-
-
-
-
-
-    </tr>
-
-
-
-
-
-
-
-
-
-
-    <tr>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">Check Test Fixture</td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">S1TC2 No Metadata</td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">Default setup from sub suite file</td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">Default teardown from suite file</td>
-
-
-
-
-
-
-
-
-
-
-    </tr>
-
-
-
-
-
-
-
-
-
-
-    <tr>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">Check Test Fixture</td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">S1TC2 Fixture</td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">Setup defined in test</td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">Teardown defined in test</td>
-
-
-
-
-
-
-
-
-
-
-    </tr>
-
-
-
-
-
-
-
-
-
-
-    <tr>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">Check Test Fixture</td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">S2TC1 No Metadata</td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">Default setup from test file</td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">Default teardown from test file</td>
-
-
-
-
-
-
-
-
-
-
-    </tr>
-
-
-
-
-
-
-
-
-
-
-    <tr>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">Check Test Fixture</td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">S1TC2 Fixture</td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">Setup defined in test</td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">Teardown defined in test</td>
-
-
-
-
-
-
-
-
-
-
-    </tr>
-
-
-
-
-
-
-
-
-
-
-    <tr>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">Check Test Fixture</td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">S2TC2 No Metadata</td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">Default setup from suite file</td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">Default teardown from suite file</td>
-
-
-
-
-
-
-
-
-
-
-    </tr>
-
-
-
-
-
-
-
-
-
-
-    <tr>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">Check Test Fixture</td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">S2TC2 Fixture</td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">Setup defined in test</td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">Teardown defined in test</td>
-
-
-
-
-
-
-
-
-
-
-    </tr>
-
-
-
-
-
-
-
-
-
-
-    <tr>
-
-
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-
-
-    </tr>
-
-
-
-
-
-
-
-
-
-
-
-    <tr>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">Test Timeout</td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">[ Document ]</td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">Setting timeout for tests using Test Timeout</td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">in different suite levels and also [Timeout] in tests</td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-
-
-
-
-
-
-
-    </tr>
-
-
-
-
-
-
-
-
-
-
-    <tr>
-
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined"><br>
-
-
-
-
-
-
-
-
-
-
-      </td>
-
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">Check Test Timeout</td>
-
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">TC1 No Metadata</td>
-
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">1h 2min 3s</td>
-
-
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-
-
-    </tr>
-
-
-
-
-
-
-
-
-
-
-
-    <tr>
-
-
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">Check Test Timeout</td>
-
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">TC1 Timeout</td>
-
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">1s</td>
-
-
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-
-
-    </tr>
-
-
-
-
-
-
-
-
-
-
-
-    <tr>
-
-
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">Check Test Timeout</td>
-
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">TC2 No Metadata</td>
-
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">13d 6h 50min</td>
-
-
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-
-
-    </tr>
-
-
-
-
-
-
-
-
-
-
-
-    <tr>
-
-
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">Check Test Timeout</td>
-
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">TC2 Timeout</td>
-
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">1h</td>
-
-
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-
-
-    </tr>
-
-
-
-
-
-
-
-
-
-
-    <tr>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">Check Test Timeout</td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">S1TC1 No Metadata</td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">4h 5min 6s</td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-
-
-
-
-
-
-
-    </tr>
-
-
-
-
-
-
-
-
-
-
-    <tr>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">Check Test Timeout</td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">S1TC1 Timeout</td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">1s</td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-
-
-
-
-
-
-
-    </tr>
-
-
-
-
-
-
-
-
-
-
-    <tr>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">Check Test Timeout</td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">S1TC2 No Metadata</td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">1min 52s</td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-
-
-
-
-
-
-
-    </tr>
-
-
-
-
-
-
-
-
-
-
-    <tr>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">Check Test Timeout</td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">S1TC2 Timeout</td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">1d</td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-
-
-
-
-
-
-
-    </tr>
-
-
-
-
-
-
-
-
-
-
-    <tr>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">Check Test Timeout</td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">S2TC1 No Metadata</td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">7h 8min 9s</td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-
-
-
-
-
-
-
-    </tr>
-
-
-
-
-
-
-
-
-
-
-    <tr>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">Check Test Timeout</td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">S2TC1 Timeout</td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">1s</td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-
-
-
-
-
-
-
-    </tr>
-
-
-
-
-
-
-
-
-
-
-    <tr>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">Check Test Timeout</td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">S2TC2 No Metadata</td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">13d 6h 50min</td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-
-
-
-
-
-
-
-    </tr>
-
-
-
-
-
-
-
-
-
-
-    <tr>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">Check Test Timeout</td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">S2TC2 Timeout</td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">1d</td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-
-
-
-
-
-
-
-    </tr>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  </tbody>
+<td align="undefined" valign="undefined">Teardown&nbsp;of
+sub test suite directory</td>
+<td align="undefined" valign="undefined"></td>
+</tr>
+<tr>
+<td align="undefined" valign="undefined"></td>
+<td align="undefined" valign="undefined">Equals</td>
+<td align="undefined" valign="undefined">${subsuite_without_init.teardown}&nbsp;</td>
+<td align="undefined" valign="undefined">${None}</td>
+<td align="undefined" valign="undefined"></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td align="undefined" valign="undefined">Invalid
+Suite Metadata</td>
+<td align="undefined" valign="undefined">Check
+Stderr Contains</td>
+<td align="undefined" valign="undefined">Test
+Suite does not have metadata 'Invalid'.&nbsp;</td>
+<td>Available: 'Default Tags', 'Documentation', 'Force
+Tags', 'Suite Setup',</td>
+<td> 'Suite Teardown', 'Test Setup', 'Test Teardown' and
+'Test Timeout'</td>
+</tr>
+<tr>
+<td align="undefined" valign="undefined"></td>
+<td align="undefined" valign="undefined">Check
+Stderr Contains</td>
+<td align="undefined" valign="undefined">Test
+Suite does not have metadata 'Invalid In Sub'.&nbsp;</td>
+<td>Available: 'Default Tags', 'Documentation', 'Force
+Tags', 'Suite Setup',</td>
+<td> 'Suite Teardown', 'Test Setup', 'Test Teardown' and
+'Test Timeout'</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td align="undefined" valign="undefined">Test
+Tags</td>
+<td align="undefined" valign="undefined">[
+Document ]</td>
+<td align="undefined" valign="undefined">Settings
+tags for tests using Force and Default Tags</td>
+<td align="undefined" valign="undefined">in
+different suite levels and also [Tags] in tests</td>
+<td align="undefined" valign="undefined"></td>
+</tr>
+<tr>
+<td align="undefined" valign="undefined"><br>
+</td>
+<td align="undefined" valign="undefined">Check
+Test Tags</td>
+<td align="undefined" valign="undefined">TC1
+No Metadata</td>
+<td align="undefined" valign="undefined">suiteforce</td>
+<td align="undefined" valign="undefined">testdefault</td>
+</tr>
+<tr>
+<td></td>
+<td align="undefined" valign="undefined">...</td>
+<td align="undefined" valign="undefined">testforce</td>
+<td align="undefined" valign="undefined"></td>
+<td align="undefined" valign="undefined"><br>
+</td>
+</tr>
+<tr>
+<td></td>
+<td align="undefined" valign="undefined">Check
+Test Tags</td>
+<td align="undefined" valign="undefined">TC1
+Tags</td>
+<td align="undefined" valign="undefined">suiteforce</td>
+<td align="undefined" valign="undefined">testforce</td>
+</tr>
+<tr>
+<td></td>
+<td align="undefined" valign="undefined">...</td>
+<td>testtag1</td>
+<td>testtag2</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td align="undefined" valign="undefined">Check
+Test Tags</td>
+<td align="undefined" valign="undefined">TC2
+No Metadata</td>
+<td align="undefined" valign="undefined">suitedefault1</td>
+<td align="undefined" valign="undefined">suitedefault2</td>
+</tr>
+<tr>
+<td></td>
+<td align="undefined" valign="undefined">...</td>
+<td align="undefined" valign="undefined">suiteforce</td>
+<td align="undefined" valign="undefined"></td>
+<td align="undefined" valign="undefined"><br>
+</td>
+</tr>
+<tr>
+<td></td>
+<td align="undefined" valign="undefined">Check
+Test Tags</td>
+<td align="undefined" valign="undefined">TC2
+Tags</td>
+<td>suiteforce </td>
+<td></td>
+</tr>
+<tr>
+<td align="undefined" valign="undefined"></td>
+<td align="undefined" valign="undefined">Check
+Test Tags</td>
+<td align="undefined" valign="undefined">S1TC1
+No Metadata</td>
+<td align="undefined" valign="undefined">subsuiteforce</td>
+<td align="undefined" valign="undefined">suiteforce</td>
+</tr>
+<tr>
+<td align="undefined" valign="undefined"></td>
+<td align="undefined" valign="undefined">...</td>
+<td align="undefined" valign="undefined">testdefault</td>
+<td align="undefined" valign="undefined">testforce</td>
+<td align="undefined" valign="undefined"></td>
+</tr>
+<tr>
+<td></td>
+<td>Comment</td>
+<td>Following two steps are for issue 152</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td align="undefined" valign="undefined">Check
+Test Tags</td>
+<td align="undefined" valign="undefined">S1TC1
+Fixture</td>
+<td align="undefined" valign="undefined">subsuiteforce</td>
+<td align="undefined" valign="undefined">suiteforce</td>
+</tr>
+<tr>
+<td></td>
+<td>...</td>
+<td align="undefined" valign="undefined">testdefault</td>
+<td align="undefined" valign="undefined">testforce</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td align="undefined" valign="undefined">Check
+Test Tags</td>
+<td>S1TC1 Timeout</td>
+<td align="undefined" valign="undefined">subsuiteforce</td>
+<td align="undefined" valign="undefined">suiteforce</td>
+</tr>
+<tr>
+<td></td>
+<td>...</td>
+<td align="undefined" valign="undefined">testdefault</td>
+<td align="undefined" valign="undefined">testforce</td>
+<td></td>
+</tr>
+<tr>
+<td align="undefined" valign="undefined"></td>
+<td align="undefined" valign="undefined">Check
+Test Tags</td>
+<td align="undefined" valign="undefined">S1TC1
+Tags</td>
+<td align="undefined" valign="undefined">subsuiteforce</td>
+<td align="undefined" valign="undefined">suiteforce</td>
+</tr>
+<tr>
+<td align="undefined" valign="undefined"></td>
+<td align="undefined" valign="undefined">...</td>
+<td align="undefined" valign="undefined">testforce</td>
+<td>testtag1</td>
+<td>testtag2</td>
+</tr>
+<tr>
+<td align="undefined" valign="undefined"></td>
+<td align="undefined" valign="undefined">Check
+Test Tags</td>
+<td align="undefined" valign="undefined">S1TC2
+No Metadata</td>
+<td align="undefined" valign="undefined">subsuitedefault</td>
+<td align="undefined" valign="undefined">subsuiteforce</td>
+</tr>
+<tr>
+<td align="undefined" valign="undefined"></td>
+<td align="undefined" valign="undefined">...</td>
+<td align="undefined" valign="undefined">suiteforce</td>
+<td align="undefined" valign="undefined"><br>
+</td>
+<td align="undefined" valign="undefined"></td>
+</tr>
+<tr>
+<td align="undefined" valign="undefined"></td>
+<td align="undefined" valign="undefined">Check
+Test Tags</td>
+<td align="undefined" valign="undefined">S1TC2
+Tags</td>
+<td align="undefined" valign="undefined">subsuiteforce</td>
+<td align="undefined" valign="undefined">suiteforce</td>
+</tr>
+<tr>
+<td align="undefined" valign="undefined"></td>
+<td align="undefined" valign="undefined">...</td>
+<td>t1</td>
+<td>t2</td>
+<td>t3</td>
+</tr>
+<tr>
+<td align="undefined" valign="undefined"></td>
+<td align="undefined" valign="undefined">...</td>
+<td>t4</td>
+<td>t5</td>
+<td align="undefined" valign="undefined"></td>
+</tr>
+<tr>
+<td align="undefined" valign="undefined"></td>
+<td align="undefined" valign="undefined">Check
+Test Tags</td>
+<td align="undefined" valign="undefined">S2TC1
+No Metadata</td>
+<td align="undefined" valign="undefined">suiteforce</td>
+<td align="undefined" valign="undefined">testdefault</td>
+</tr>
+<tr>
+<td align="undefined" valign="undefined"></td>
+<td align="undefined" valign="undefined">...</td>
+<td align="undefined" valign="undefined">testforce</td>
+<td align="undefined" valign="undefined"></td>
+<td align="undefined" valign="undefined"></td>
+</tr>
+<tr>
+<td align="undefined" valign="undefined"></td>
+<td align="undefined" valign="undefined">Check
+Test Tags</td>
+<td align="undefined" valign="undefined">S2TC1
+Tags</td>
+<td align="undefined" valign="undefined">suiteforce</td>
+<td align="undefined" valign="undefined">testforce</td>
+</tr>
+<tr>
+<td align="undefined" valign="undefined"></td>
+<td align="undefined" valign="undefined">...</td>
+<td>testtag1</td>
+<td>testtag2</td>
+<td align="undefined" valign="undefined">testtag3</td>
+</tr>
+<tr>
+<td align="undefined" valign="undefined"></td>
+<td align="undefined" valign="undefined">Check
+Test Tags</td>
+<td align="undefined" valign="undefined">S2TC2
+No Metadata</td>
+<td align="undefined" valign="undefined">suitedefault1</td>
+<td align="undefined" valign="undefined">suitedefault2</td>
+</tr>
+<tr>
+<td align="undefined" valign="undefined"></td>
+<td align="undefined" valign="undefined">...</td>
+<td align="undefined" valign="undefined">suiteforce</td>
+<td align="undefined" valign="undefined"></td>
+<td align="undefined" valign="undefined"></td>
+</tr>
+<tr>
+<td align="undefined" valign="undefined"></td>
+<td align="undefined" valign="undefined">Check
+Test Tags</td>
+<td align="undefined" valign="undefined">S2TC2
+Tags</td>
+<td>suiteforce </td>
+<td align="undefined" valign="undefined"></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td align="undefined" valign="undefined">Test
+Fixture</td>
+<td align="undefined" valign="undefined">[
+Document ]</td>
+<td align="undefined" valign="undefined">Settings
+setup and teardown for tests using Test Setup/Teardown</td>
+<td align="undefined" valign="undefined">in
+different suite levels and also [Setup] and [Teardown] in tests</td>
+<td align="undefined" valign="undefined"></td>
+</tr>
+<tr>
+<td align="undefined" valign="undefined"><br>
+</td>
+<td align="undefined" valign="undefined">Check
+Test Fixture</td>
+<td align="undefined" valign="undefined">TC1
+No Metadata</td>
+<td align="undefined" valign="undefined">Default
+setup from test file</td>
+<td align="undefined" valign="undefined">Default
+teardown from test file</td>
+</tr>
+<tr>
+<td></td>
+<td align="undefined" valign="undefined">Check
+Test Fixture</td>
+<td align="undefined" valign="undefined">TC1
+Fixture</td>
+<td align="undefined" valign="undefined">Setup
+defined in test</td>
+<td align="undefined" valign="undefined">Teardown
+defined in test</td>
+</tr>
+<tr>
+<td></td>
+<td align="undefined" valign="undefined">Check
+Test Fixture</td>
+<td align="undefined" valign="undefined">TC2
+No Metadata</td>
+<td align="undefined" valign="undefined">Default
+setup from suite file</td>
+<td align="undefined" valign="undefined">Default
+teardown from suite file</td>
+</tr>
+<tr>
+<td></td>
+<td align="undefined" valign="undefined">Check
+Test Fixture</td>
+<td align="undefined" valign="undefined">TC2
+Fixture</td>
+<td align="undefined" valign="undefined">Setup
+defined in test</td>
+<td align="undefined" valign="undefined">Teardown
+defined in test</td>
+</tr>
+<tr>
+<td align="undefined" valign="undefined"></td>
+<td align="undefined" valign="undefined">Check
+Test Fixture</td>
+<td align="undefined" valign="undefined">S1TC1
+No Metadata</td>
+<td align="undefined" valign="undefined">Default
+setup from test file</td>
+<td align="undefined" valign="undefined">Default
+teardown from test file</td>
+</tr>
+<tr>
+<td align="undefined" valign="undefined"></td>
+<td align="undefined" valign="undefined">Check
+Test Fixture</td>
+<td align="undefined" valign="undefined">S1TC1
+Fixture</td>
+<td align="undefined" valign="undefined">Setup
+defined in test</td>
+<td align="undefined" valign="undefined">Teardown
+defined in test</td>
+</tr>
+<tr>
+<td align="undefined" valign="undefined"></td>
+<td align="undefined" valign="undefined">Check
+Test Fixture</td>
+<td align="undefined" valign="undefined">S1TC2
+No Metadata</td>
+<td align="undefined" valign="undefined">Default
+setup from sub suite file</td>
+<td align="undefined" valign="undefined">Default
+teardown from suite file</td>
+</tr>
+<tr>
+<td></td>
+<td>Comment</td>
+<td>Following step is for issue 152</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Test Fixture</td>
+<td>S1TC2 Tags</td>
+<td align="undefined" valign="undefined">Default
+setup from sub suite file</td>
+<td align="undefined" valign="undefined">Default
+teardown from suite file</td>
+</tr>
+<tr>
+<td align="undefined" valign="undefined"></td>
+<td align="undefined" valign="undefined">Check
+Test Fixture</td>
+<td align="undefined" valign="undefined">S1TC2
+Fixture</td>
+<td align="undefined" valign="undefined">Setup
+defined in test</td>
+<td align="undefined" valign="undefined">Teardown
+defined in test</td>
+</tr>
+<tr>
+<td align="undefined" valign="undefined"></td>
+<td align="undefined" valign="undefined">Check
+Test Fixture</td>
+<td align="undefined" valign="undefined">S2TC1
+No Metadata</td>
+<td align="undefined" valign="undefined">Default
+setup from test file</td>
+<td align="undefined" valign="undefined">Default
+teardown from test file</td>
+</tr>
+<tr>
+<td align="undefined" valign="undefined"></td>
+<td align="undefined" valign="undefined">Check
+Test Fixture</td>
+<td align="undefined" valign="undefined">S1TC2
+Fixture</td>
+<td align="undefined" valign="undefined">Setup
+defined in test</td>
+<td align="undefined" valign="undefined">Teardown
+defined in test</td>
+</tr>
+<tr>
+<td align="undefined" valign="undefined"></td>
+<td align="undefined" valign="undefined">Check
+Test Fixture</td>
+<td align="undefined" valign="undefined">S2TC2
+No Metadata</td>
+<td align="undefined" valign="undefined">Default
+setup from suite file</td>
+<td align="undefined" valign="undefined">Default
+teardown from suite file</td>
+</tr>
+<tr>
+<td align="undefined" valign="undefined"></td>
+<td align="undefined" valign="undefined">Check
+Test Fixture</td>
+<td align="undefined" valign="undefined">S2TC2
+Fixture</td>
+<td align="undefined" valign="undefined">Setup
+defined in test</td>
+<td align="undefined" valign="undefined">Teardown
+defined in test</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td align="undefined" valign="undefined">Test
+Timeout</td>
+<td align="undefined" valign="undefined">[
+Document ]</td>
+<td align="undefined" valign="undefined">Setting
+timeout for tests using Test Timeout</td>
+<td align="undefined" valign="undefined">in
+different suite levels and also [Timeout] in tests</td>
+<td align="undefined" valign="undefined"></td>
+</tr>
+<tr>
+<td align="undefined" valign="undefined"><br>
+</td>
+<td align="undefined" valign="undefined">Check
+Test Timeout</td>
+<td align="undefined" valign="undefined">TC1
+No Metadata</td>
+<td align="undefined" valign="undefined">1h
+2min 3s</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td align="undefined" valign="undefined">Check
+Test Timeout</td>
+<td align="undefined" valign="undefined">TC1
+Timeout</td>
+<td align="undefined" valign="undefined">1s</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td align="undefined" valign="undefined">Check
+Test Timeout</td>
+<td align="undefined" valign="undefined">TC2
+No Metadata</td>
+<td align="undefined" valign="undefined">13d
+6h 50min</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td align="undefined" valign="undefined">Check
+Test Timeout</td>
+<td align="undefined" valign="undefined">TC2
+Timeout</td>
+<td align="undefined" valign="undefined">1h</td>
+<td></td>
+</tr>
+<tr>
+<td align="undefined" valign="undefined"></td>
+<td align="undefined" valign="undefined">Check
+Test Timeout</td>
+<td align="undefined" valign="undefined">S1TC1
+No Metadata</td>
+<td align="undefined" valign="undefined">4h
+5min 6s</td>
+<td align="undefined" valign="undefined"></td>
+</tr>
+<tr>
+<td align="undefined" valign="undefined"></td>
+<td align="undefined" valign="undefined">Check
+Test Timeout</td>
+<td align="undefined" valign="undefined">S1TC1
+Timeout</td>
+<td align="undefined" valign="undefined">1s</td>
+<td align="undefined" valign="undefined"></td>
+</tr>
+<tr>
+<td align="undefined" valign="undefined"></td>
+<td align="undefined" valign="undefined">Check
+Test Timeout</td>
+<td align="undefined" valign="undefined">S1TC2
+No Metadata</td>
+<td align="undefined" valign="undefined">1min
+52s</td>
+<td align="undefined" valign="undefined"></td>
+</tr>
+<tr>
+<td></td>
+<td>Comment</td>
+<td>Following step is for issue 152</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td align="undefined" valign="undefined">Check
+Test Timeout</td>
+<td align="undefined" valign="undefined">S1TC2
+Tags</td>
+<td align="undefined" valign="undefined">1min
+52s</td>
+<td></td>
+</tr>
+<tr>
+<td align="undefined" valign="undefined"></td>
+<td align="undefined" valign="undefined">Check
+Test Timeout</td>
+<td align="undefined" valign="undefined">S1TC2
+Timeout</td>
+<td align="undefined" valign="undefined">1d</td>
+<td align="undefined" valign="undefined"></td>
+</tr>
+<tr>
+<td align="undefined" valign="undefined"></td>
+<td align="undefined" valign="undefined">Check
+Test Timeout</td>
+<td align="undefined" valign="undefined">S2TC1
+No Metadata</td>
+<td align="undefined" valign="undefined">7h
+8min 9s</td>
+<td align="undefined" valign="undefined"></td>
+</tr>
+<tr>
+<td align="undefined" valign="undefined"></td>
+<td align="undefined" valign="undefined">Check
+Test Timeout</td>
+<td align="undefined" valign="undefined">S2TC1
+Timeout</td>
+<td align="undefined" valign="undefined">1s</td>
+<td align="undefined" valign="undefined"></td>
+</tr>
+<tr>
+<td align="undefined" valign="undefined"></td>
+<td align="undefined" valign="undefined">Check
+Test Timeout</td>
+<td align="undefined" valign="undefined">S2TC2
+No Metadata</td>
+<td align="undefined" valign="undefined">13d
+6h 50min</td>
+<td align="undefined" valign="undefined"></td>
+</tr>
+<tr>
+<td align="undefined" valign="undefined"></td>
+<td align="undefined" valign="undefined">Check
+Test Timeout</td>
+<td align="undefined" valign="undefined">S2TC2
+Timeout</td>
+<td align="undefined" valign="undefined">1d</td>
+<td align="undefined" valign="undefined"></td>
+</tr>
+</tbody>
 </table>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 <table border="1">
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  <colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
-  <thead>
-  <tr>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    <th>Keyword</th>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    <th>Action</th>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    <th>Argument</th>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    <th>Argument</th>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    <th>Argument</th>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  </tr>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  </thead>
-  <tbody>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    <tr>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      <td>My Setup</td>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      <td>Run Tests</td>
-
-
-
-
-
-
-
-
-
-
-
-
-      <td><br>
-
-
-      </td>
-
-
-
-
-
-
-
-
-
-
-
-
-      <td>core${/}test_suite_dir_with_init_file</td>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      
-
-      
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    </tr>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    <tr>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      <td>${suite} =</td>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      <td>Get Test Suite</td>
-
-
-
-
-
-
-
-
-
-
-
-
-      <td>Test Suite Dir With Init File</td>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    </tr>
-
-
-
-
-
-
-
-
-
-
-
-
-    <tr>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">${subsuite_with_init} =</td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">Get Test Suite</td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">Sub Suite With Init File</td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-
-
-
-
-
-
-
-    </tr>
-
-
-
-
-
-
-
-
-
-
-    <tr>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">${subsuite_without_init} =</td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">Get Test Suite</td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">Sub Suite Without Init File</td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-
-
-
-
-
-
-
-    </tr>
-
-
-
-
-
-
-
-
-
-
-    <tr>
-
-
-
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">Set Suite Variable</td>
-
-
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">$SUITE</td>
-
-
-
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-
-
-
-    </tr>
-
-
-
-
-
-
-
-
-
-
-
-
-    <tr>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">Set Suite Variable</td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">$SUBSUITE_WITH_INIT</td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-
-
-
-
-
-
-
-    </tr>
-
-
-
-
-
-
-
-
-
-
-    <tr>
-
-
-
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">Set Suite Variable</td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">$SUBSUITE_WITHOUT_INIT</td>
-
-
-
-
-
-
-
-
-
-
-
-
-      
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-
-
-
-    </tr>
-
-
-
-
-
-
-
-
-
-
-
-
-    <tr>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-
-
-
-
-
-
-
-    </tr>
-
-
-
-
-
-
-
-
-
-
-    <tr>
-
-
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">Check Test Fixture</td>
-
-
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">[ Arguments ]</td>
-
-
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">${test_name}</td>
-
-
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">${setup_msg}</td>
-
-
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">${teardown_msg}</td>
-
-
-
-
-
-
-
-
-
-
-
-
-    </tr>
-
-
-
-
-
-
-
-
-
-
-
-
-    <tr>
-
-
-
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">${test} =</td>
-
-
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">Check Test Case</td>
-
-
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">${test_name}</td>
-
-
-
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-
-
-
-    </tr>
-
-
-
-
-
-
-
-
-
-
-
-
-    <tr>
-
-
-
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">Check Log Message</td>
-
-
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">${test.setup.messages[0]}</td>
-
-
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">${setup_msg}</td>
-
-
-
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-
-
-
-    </tr>
-
-
-
-
-
-
-
-
-
-
-
-
-    <tr>
-
-
-
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">Check Log Message</td>
-
-
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">${test.teardown.messages[0]}</td>
-
-
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">${teardown_msg}</td>
-
-
-
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-
-
-
-    </tr>
-
-
-
-
-
-
-
-
-
-
-
-
-    <tr>
-
-
-
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-
-
-
-    </tr>
-
-
-
-
-
-
-
-
-
-
-
-
-    <tr>
-
-
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">Check Test Timeout</td>
-
-
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">[ Arguments ]</td>
-
-
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">${test_name}</td>
-
-
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">${timeout}</td>
-
-
-
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-
-
-
-    </tr>
-
-
-
-
-
-
-
-
-
-
-
-    <tr>
-
-
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">${test} =</td>
-
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">Check Test Case</td>
-
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">${test_name}</td>
-
-
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-
-
-    </tr>
-
-
-
-
-
-
-
-
-
-
-
-    <tr>
-
-
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">Equals</td>
-
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">${test.timeout}</td>
-
-
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">${timeout}</td>
-
-
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-
-
-    </tr>
-
-
-    <tr>
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-    </tr>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  </tbody>
+<colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
+<thead> <tr>
+<th>Keyword</th>
+<th>Action</th>
+<th>Argument</th>
+<th>Argument</th>
+<th>Argument</th>
+</tr>
+</thead> <tbody>
+<tr>
+<td>My Setup</td>
+<td>Run Tests</td>
+<td><br>
+</td>
+<td>core${/}test_suite_dir_with_init_file</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>${suite} =</td>
+<td>Get Test Suite</td>
+<td>Test Suite Dir With Init File</td>
+<td></td>
+</tr>
+<tr>
+<td align="undefined" valign="undefined"></td>
+<td align="undefined" valign="undefined">${subsuite_with_init}
+=</td>
+<td align="undefined" valign="undefined">Get
+Test Suite</td>
+<td align="undefined" valign="undefined">Sub
+Suite With Init File</td>
+<td align="undefined" valign="undefined"></td>
+</tr>
+<tr>
+<td align="undefined" valign="undefined"></td>
+<td align="undefined" valign="undefined">${subsuite_without_init}
+=</td>
+<td align="undefined" valign="undefined">Get
+Test Suite</td>
+<td align="undefined" valign="undefined">Sub
+Suite Without Init File</td>
+<td align="undefined" valign="undefined"></td>
+</tr>
+<tr>
+<td></td>
+<td align="undefined" valign="undefined">Set
+Suite Variable</td>
+<td align="undefined" valign="undefined">$SUITE</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td align="undefined" valign="undefined"></td>
+<td align="undefined" valign="undefined">Set
+Suite Variable</td>
+<td align="undefined" valign="undefined">$SUBSUITE_WITH_INIT</td>
+<td align="undefined" valign="undefined"></td>
+<td align="undefined" valign="undefined"></td>
+</tr>
+<tr>
+<td></td>
+<td align="undefined" valign="undefined">Set
+Suite Variable</td>
+<td align="undefined" valign="undefined">$SUBSUITE_WITHOUT_INIT</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td align="undefined" valign="undefined"></td>
+<td align="undefined" valign="undefined"></td>
+<td align="undefined" valign="undefined"></td>
+<td align="undefined" valign="undefined"></td>
+<td align="undefined" valign="undefined"></td>
+</tr>
+<tr>
+<td align="undefined" valign="undefined">Check
+Test Fixture</td>
+<td align="undefined" valign="undefined">[
+Arguments ]</td>
+<td align="undefined" valign="undefined">${test_name}</td>
+<td align="undefined" valign="undefined">${setup_msg}</td>
+<td align="undefined" valign="undefined">${teardown_msg}</td>
+</tr>
+<tr>
+<td></td>
+<td align="undefined" valign="undefined">${test}
+=</td>
+<td align="undefined" valign="undefined">Check
+Test Case</td>
+<td align="undefined" valign="undefined">${test_name}</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td align="undefined" valign="undefined">Check
+Log Message</td>
+<td align="undefined" valign="undefined">${test.setup.messages[0]}</td>
+<td align="undefined" valign="undefined">${setup_msg}</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td align="undefined" valign="undefined">Check
+Log Message</td>
+<td align="undefined" valign="undefined">${test.teardown.messages[0]}</td>
+<td align="undefined" valign="undefined">${teardown_msg}</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td align="undefined" valign="undefined">Check
+Test Timeout</td>
+<td align="undefined" valign="undefined">[
+Arguments ]</td>
+<td align="undefined" valign="undefined">${test_name}</td>
+<td align="undefined" valign="undefined">${timeout}</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td align="undefined" valign="undefined">${test}
+=</td>
+<td align="undefined" valign="undefined">Check
+Test Case</td>
+<td align="undefined" valign="undefined">${test_name}</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td align="undefined" valign="undefined">Equals</td>
+<td align="undefined" valign="undefined">${test.timeout}</td>
+<td align="undefined" valign="undefined">${timeout}</td>
+<td></td>
+</tr>
+<tr>
+<td align="undefined" valign="undefined"></td>
+<td align="undefined" valign="undefined"></td>
+<td align="undefined" valign="undefined"></td>
+<td align="undefined" valign="undefined"></td>
+<td align="undefined" valign="undefined"></td>
+</tr>
+</tbody>
 </table>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 </body></html>
