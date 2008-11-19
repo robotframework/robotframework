@@ -1,0 +1,68 @@
+.. include:: ../../../doc/userguide/src/roles.txt
+
+==========
+testdoc.py
+==========
+
+:prog:`testdoc.py` is a tool for generating a high level documentation from
+Robot Framework test data. It is included in source distributions and can also 
+be downloaded from http://code.google.com/p/robotframework/wiki/TestDataDocumentationTool
+
+Synopsis
+--------
+
+::
+
+    testdoc.py [options] data_sources
+
+
+Options
+-------
+
+ -o, --output <path>           Where to write the generated documentation. If 
+                               the path is a directory, the documentation is
+                               generated there using name 
+                               '<suitename>-doc.html'.
+ -T, --title <title>           Set the title of the generated documentation. 
+                               Underscores in the title are converted to spaces.
+ -N, --name <name>             Set the name of the top level test suite. 
+                               See pybot --help or Robot Framework user guide 
+                               for details.
+ -D, --doc <document>          Set the document of the top level test suite.
+                               See pybot --help or Robot Framework user guide 
+                               for details.
+ -M, --metadata <name:value>   Set metadata of the top level test suite. See 
+                               pybot --help for details.
+ -G, --settag <tag>            Sets given tag(s) to all executed test cases. 
+ -t, --test <name>             Select test cases to be included in the 
+                               documentation by name. See pybot --help or Robot
+                               Framework user guide for details on filtering.
+ -s, --suite <name>            Select test suites to be included in the 
+                               documentation by name. See pybot --help or Robot
+                               Framework user guide for details on filtering.
+ -i, --include <tag>           Select test cases to be included in the 
+                               documentation by tag. See pybot --help or Robot
+                               Framework user guide for details on filtering.
+ -e, --exclude <tag>           Select test cases not to be included in the 
+                               documentation by tag. See pybot --help or Robot
+                               Framework user guide for details on filtering.
+ -h, --help                    Print this help in the console. 
+
+
+Description
+-----------
+
+This script compares generates a high level documentation of the given Robot
+Framework data sources. The generated documentation includes the names of the
+suites and tests, as well as the names of the toplevel keywords fir each suite.
+Also the total number of tests per suite is available. It is possible to select
+suites and tests to be included in the documentation similarly as when choosing
+the test cases to be executed with Robot Framework. The test data is parsed 
+similarly as when executing the tests, but the variables are not resolved.
+ 
+
+Examples::
+
+    $ testdoc.py mytestcases.html
+    $ testdoc.py --name smoke_test_plan --include smoke my_tests
+
