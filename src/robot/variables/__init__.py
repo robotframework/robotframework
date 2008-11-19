@@ -31,7 +31,7 @@ def init_global_variables(settings, syslog):
                          ('${:}', os.pathsep),
                          ('${SPACE}', ' '),
                          ('${EMPTY}', ''),
-                         ('${OUTPUTDIR}', settings['OutputDir']),
+                         ('${OUTPUT_DIR}', settings['OutputDir']),
                          ('${OUTPUT_FILE}', settings['Output']),
                          ('${SUMMARY_FILE}', settings['Summary']),
                          ('${REPORT_FILE}', settings['Report']),
@@ -39,8 +39,7 @@ def init_global_variables(settings, syslog):
                          ('${DEBUG_FILE}', settings['DebugFile']),
                          ('${PREV_TEST_NAME}', ''),
                          ('${PREV_TEST_STATUS}', ''),
-                         ('${PREV_TEST_MESSAGE}', ''),
-                        ]:
+                         ('${PREV_TEST_MESSAGE}', '') ]:
         GLOBAL_VARIABLES[name] = value
 
 def _set_cli_vars(settings, syslog):
