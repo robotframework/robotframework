@@ -26,11 +26,11 @@ a test library or a resource file.
 __ ../../tools/libdoc/doc/libdoc.html
 
 
-Testdata documentation tool
-'''''''''''''''''''''''''''
+Test data documentation tool
+''''''''''''''''''''''''''''
 
 `testdoc.py`__ is tool for generating high level documentation of a given test
-suite, including the names of suites and tests as well as toplevel keywords.
+suite, including the names of suites and tests as well as top-level keywords.
 
 __ ../../tools/libdoc/doc/testdoc.html
 
