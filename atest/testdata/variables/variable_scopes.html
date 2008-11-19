@@ -1,0 +1,607 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+<meta name="generator" content="HTML Tidy for Mac OS X (vers 31 October 2006 - Apple Inc. build 13), see www.w3.org">
+
+<style type="text/css">
+html { font-family: Arial,Helvetica,sans-serif;
+background-color: white;
+color: black;
+}
+p { max-width: 60em;
+}
+table { border-collapse: collapse;
+empty-cells: show;
+margin: 1em 0em;
+border: 0.1em solid black;
+}
+th, td {
+border-style: solid;
+border-width: 0.05em 0.1em;
+border-color: black;
+padding: 0.1em 0.2em;
+height: 1.5em;
+}
+th {
+background-color: rgb(192, 192, 192);
+color: black;
+border-width: 0.1em;
+font-weight: bold;
+text-align: center;
+text-transform: capitalize;
+letter-spacing: 0.1em;
+}
+/* Widths of named columns */
+col.name {
+width: 10em;
+}
+.action , .value, .arg {
+width: 15em;
+}
+/* Properties for the name column - td:first-child should work in CSS 2.1 avare browsers (tested in Firefox)
+- col.name is against specs but works in IE
+*/
+td:first-child, col.name {
+background-color: rgb(240, 240, 240);
+text-transform: capitalize;
+letter-spacing: 0.1em;
+}
+th { font-style: normal; } /* required for IE */
+</style>
+
+<title>Robot Test Cases</title><link type="text/css" href="resources/css/testdata.css" rel="stylesheet"></head>
+<body>
+<h1>Robot Test Cases for Variable Scopes</h1>
+<table border="1">
+<colgroup span="99"><col class="name"><col class="value" span="4"></colgroup>
+<thead>
+<tr>
+<th>Setting</th>
+<th>Value</th>
+<th>Value</th>
+<th>value</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+
+<tr>
+<td align="undefined" valign="undefined">Documentation</td>
+<td align="undefined" valign="undefined">These tests are somewhat related to variable_priorities.html tests</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+
+</tbody>
+</table>
+<br>
+<table border="1">
+<colgroup span="99"><col class="name"><col class="value" span="4"></colgroup>
+<thead>
+<tr>
+<th>Variable</th>
+<th>Value</th>
+<th>Value</th>
+<th>Value</th>
+<th>Value</th>
+</tr><tr><td></td><td></td><td></td><td></td><td></td></tr>
+</thead>
+<tbody>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</tbody>
+</table>
+<br>
+<table border="1">
+<colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
+<thead>
+<tr>
+<th>Test Case</th>
+<th>Action</th>
+<th>Argument</th>
+<th>Argument</th>
+<th>Argument</th>
+</tr>
+</thead>
+<tbody>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<tr>
+<td align="undefined" valign="undefined">Variables Set In Test Case Are Seen By User Keywords</td>
+<td align="undefined" valign="undefined">[ Documentation ]</td>
+<td align="undefined" valign="undefined">FAIL</td>
+<td align="undefined" valign="undefined">Recursion limit
+exceeded</td>
+<td></td>
+</tr>
+<tr>
+<td><br></td>
+<td align="undefined" valign="undefined">${test_var} =</td>
+<td align="undefined" valign="undefined">Set Variable</td>
+<td align="undefined" valign="undefined">Variable in test
+level</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td align="undefined" valign="undefined">Set Variable In UK</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td align="undefined" valign="undefined">Variable
+Should Not Exist</td>
+<td align="undefined" valign="undefined">$uk_var</td>
+<td align="undefined" valign="undefined">Variable set in uk must
+not be visible in test level</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td align="undefined" valign="undefined">Check UK Var Does Not
+Exists In Another UK</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td align="undefined" valign="undefined">Check Test Var Exists in
+UK Recursively</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Variables Set In One Test Are Not Visible In Another<br></td>
+<td align="undefined" valign="undefined">Variable
+Should Not Exist</td>
+<td align="undefined" valign="undefined">$test_var</td>
+<td align="undefined" valign="undefined">Variable set in one test
+must not be visible in another</td>
+<td></td>
+</tr>
+<tr><td></td><td></td><td></td><td></td><td></td></tr><tr>
+<td>Variables Set In User Keyword Are Seen Only By Lower Level User Keywords&nbsp;</td>
+<td align="undefined" valign="undefined">${var} =</td>
+<td align="undefined" valign="undefined">Set Variable</td>
+<td align="undefined" valign="undefined">Variable in test
+level</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td align="undefined" valign="undefined">Check Overriding Var In
+UK</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td align="undefined" valign="undefined">Should Be Equal</td>
+<td align="undefined" valign="undefined">${var}</td>
+<td align="undefined" valign="undefined">Variable in test
+level</td>
+<td align="undefined" valign="undefined">Overridden value must not
+be visible in test level</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+
+
+
+
+
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</tbody>
+</table>
+<br>
+<table border="1">
+<colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
+<thead>
+<tr>
+<th>Keyword</th>
+<th>Action</th>
+<th>Argument</th>
+<th>Argument</th>
+<th>Argument</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="undefined" valign="undefined">Set Variable In UK</td>
+<td align="undefined" valign="undefined">${uk_var} =<br></td>
+<td>Set Variable</td>
+<td>Variable in user keyword level</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td align="undefined" valign="undefined">Check UK Var Does Not
+Exists In Another UK</td>
+<td align="undefined" valign="undefined">Variable Should Not
+Exist</td>
+<td align="undefined" valign="undefined">$uk_var</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Check Test Var Exists in UK Recursively</td>
+<td>[ Arguments ]</td>
+<td>${recursion_level}=${10}</td>
+<td></td>
+<td></td>
+</tr>
+
+<tr>
+<td></td>
+<td align="undefined" valign="undefined">Should Be Equal</td>
+<td align="undefined" valign="undefined">${test_var}</td>
+<td align="undefined" valign="undefined">Variable in test
+level</td>
+<td></td>
+</tr>
+
+
+<tr>
+<td></td>
+<td align="undefined" valign="undefined">Should Not Be Equal As
+Integers</td>
+<td align="undefined" valign="undefined">${recursion_level}</td>
+<td align="undefined" valign="undefined">0</td>
+<td align="undefined" valign="undefined">Recursion limit
+exceeded</td>
+</tr>
+<tr>
+<td></td>
+<td>...</td>
+<td>No values</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td align="undefined" valign="undefined">Check Test Var Exists in
+UK Recursively</td>
+<td align="undefined" valign="undefined">${recursion_level -
+1}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td align="undefined" valign="undefined">Check Overriding Var In
+UK</td>
+<td align="undefined" valign="undefined">Should Be Equal</td>
+<td align="undefined" valign="undefined">${var}</td>
+<td align="undefined" valign="undefined">Variable in test
+level</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td align="undefined" valign="undefined">${var} =</td>
+<td align="undefined" valign="undefined">Set Variable</td>
+<td align="undefined" valign="undefined">Variable overridden in
+uk</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td align="undefined" valign="undefined">Should Be Equal</td>
+<td align="undefined" valign="undefined">${var}</td>
+<td align="undefined" valign="undefined">Variable overridden in
+uk</td>
+<td align="undefined" valign="undefined">It must be possible to
+override the value set in test level</td>
+</tr>
+<tr>
+<td></td>
+<td align="undefined" valign="undefined">Check Overriding&nbsp;Var
+In UK 2</td>
+<td align="undefined" valign="undefined">Override again with this
+value</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td align="undefined" valign="undefined">Should Be Equal</td>
+<td align="undefined" valign="undefined">${var}</td>
+<td align="undefined" valign="undefined">Variable overridden in
+uk</td>
+<td align="undefined" valign="undefined">Value overridden again in
+sub keywords must not be visible to the calling keyword</td>
+</tr>
+<tr>
+<td></td>
+<td align="undefined" valign="undefined">Check Overriding&nbsp;Var
+In UK 2</td>
+<td align="undefined" valign="undefined">And once more with
+this</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td align="undefined" valign="undefined">Should Be Equal</td>
+<td align="undefined" valign="undefined">${var}</td>
+<td align="undefined" valign="undefined">Variable overridden in
+uk</td>
+<td align="undefined" valign="undefined">Value overridden again in
+sub keywords must not be visible to the calling keyword</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td align="undefined" valign="undefined">Check Overriding Var In UK
+2</td>
+<td align="undefined" valign="undefined">[ Arguments ]</td>
+<td align="undefined" valign="undefined">${new_value}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><br></td>
+<td align="undefined" valign="undefined">Should Be Equal</td>
+<td align="undefined" valign="undefined">${var}</td>
+<td align="undefined" valign="undefined">Variable overridden in
+uk</td>
+<td></td>
+</tr>
+<tr><td></td><td align="undefined" valign="undefined">Check Overriding&nbsp;Var
+In UK 3</td><td align="undefined" valign="undefined">Variable overridden in
+uk</td><td></td><td></td></tr><tr>
+<td></td>
+<td align="undefined" valign="undefined">${var} =</td>
+<td align="undefined" valign="undefined">Set Variable</td>
+<td align="undefined" valign="undefined">${new_value}</td>
+<td></td>
+</tr>
+<tr><td></td><td align="undefined" valign="undefined">Should Be Equal</td><td align="undefined" valign="undefined">${var}</td><td>${new_value}</td><td></td></tr><tr>
+<td></td>
+<td align="undefined" valign="undefined">Check Overriding&nbsp;Var
+In UK 3</td>
+<td align="undefined" valign="undefined">${new_value}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td align="undefined" valign="undefined">Check Overriding Var In UK
+3</td>
+<td align="undefined" valign="undefined">[ Arguments ]</td>
+<td align="undefined" valign="undefined">${expected_value}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><br></td>
+<td align="undefined" valign="undefined">Should Be Equal</td>
+<td align="undefined" valign="undefined">${var}</td>
+<td align="undefined" valign="undefined">${expected_value}</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</body></html>

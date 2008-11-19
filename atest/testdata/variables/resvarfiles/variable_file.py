@@ -10,7 +10,7 @@ STRING = 'Hello world!'
 INTEGER = 42
 FLOAT = -1.2
 BOOLEAN = True
-NONE_VALUE =None
+NONE_VALUE = None
 ESCAPES = 'one \\ two \\\\ ${non_existing}'
 NO_VALUE = ''
 LIST = ['Hello', 'world', '!']
@@ -28,3 +28,8 @@ lowercase = 'Variable name in lower case'
 LIST__lowercase = [lowercase]
 Und_er__scores_____ = 'Variable name with under scores'
 LIST________UN__der__SCO__r_e_s__ = [Und_er__scores_____]
+
+
+PRIORITIES_1 = PRIORITIES_2 = PRIORITIES_3 = PRIORITIES_4 = PRIORITIES_4B \
+               = 'Variable File'
+

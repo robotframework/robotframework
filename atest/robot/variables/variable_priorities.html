@@ -1,0 +1,158 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+<meta name="generator" content="HTML Tidy for Cygwin (vers 1st September 2004), see www.w3.org">
+<style type="text/css">
+html {
+  font-family: Arial,Helvetica,sans-serif;
+  background-color: white;
+  color: black;
+}
+p {
+  max-width: 60em;
+}
+table {
+  border-collapse: collapse;
+  empty-cells: show;
+  margin: 1em 0em;
+  border: 0.1em solid black;
+}
+th, td {
+  border-style: solid;
+  border-width: 0.05em 0.1em;
+  border-color: black;
+  padding: 0.1em 0.2em;
+  height: 1.5em;
+}
+th {
+  background-color: rgb(192, 192, 192);
+  color: black;
+  border-width: 0.1em;
+  font-weight: bold;
+  text-align: center;
+  text-transform: capitalize;
+  letter-spacing: 0.1em;
+}
+/* Widths of named columns */
+col.name {
+  width: 10em;
+}
+.action, .value, .arg {
+  width: 15em;
+}
+/* Properties for the name column 
+- td:first-child should work in CSS 2.1 avare browsers (tested in Firefox)
+- col.name is against specs but works in IE
+*/
+td:first-child, col.name {
+  background-color: rgb(240, 240, 240);
+  text-transform: capitalize;
+  letter-spacing: 0.1em;
+}
+/* required for IE */
+th {
+  font-style: normal;
+}
+</style>
+<title>Robot Test Cases</title></head>
+<body>
+<h1>Robot Test Cases</h1>
+<table border="1">
+<colgroup span="99"><col class="name"><col class="value" span="4"></colgroup>
+<thead>
+<tr>
+<th>Setting</th>
+<th>Value</th>
+<th>Value</th>
+<th>value</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr><td>Documentation</td><td>Some of these tests are testing same features as tests under core/resource_and_variable_imports.html.</td><td>These tests should all be gone through and all tests moved under variables/.</td><td></td><td></td></tr><tr><td>Force Tags</td><td>pybot</td><td>jybot</td><td>regression</td><td></td></tr><tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr><td>Suite Setup</td><td>Run Tests</td><td>--variable PRIORITIES_1:CLI<br>--variablefile ${VARFILE1}<br>--variablefile ${VARFILE2}</td><td>variables${/}variable_priorities.html</td><td></td></tr><tr>
+<td>Resource</td><td>../../resources/resource.html</td>
+
+<td></td>
+<td></td>
+<td></td>
+</tr><tr><td></td><td></td><td></td><td></td><td></td></tr>
+</tbody>
+</table>
+<table border="1">
+<colgroup span="99"><col class="name"><col class="value" span="4"></colgroup>
+<thead>
+<tr>
+<th>Variable</th>
+<th>Value</th>
+<th>Value</th>
+<th>Value</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+
+<tr>
+<td>${VARDIR}</td>
+<td>
+${CURDIR}${/}..${/}..${/}testdata${/}variables${/}resvarfiles</td>
+<td></td>
+<td></td>
+<td></td>
+</tr><tr><td>${VARFILE1}</td><td>${VARDIR}${/}cli_vars.py</td><td></td><td></td><td></td></tr><tr><td>${VARFILE2}</td><td>${VARDIR}${/}cli_vars_2.py</td><td></td><td></td><td></td></tr>
+</tbody>
+</table>
+<table border="1">
+<colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
+<thead>
+<tr>
+<th>Test Case</th>
+<th>Action</th>
+<th>Argument</th>
+<th>Argument</th>
+<th>Argument</th>
+
+
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Individual CLI Variables Override All Other Variables</td>
+<td>Check Test Case</td>
+<td>Individual CLI Variables Override All Other Variables</td><td></td>
+
+<td></td>
+
+
+</tr>
+<tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Variable Files From CLI Override All Variables In Test Data</td><td>Check Test Case</td><td>Variable Files From CLI Override All Variables In Test Data</td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>When Multiple Variable Files Are Given From CLI The First One Has Highest Priority</td><td>Check Test Case</td><td>When Multiple Variable Files Are Given From CLI The First One Has Highest Priority</td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Variable Tables In test Case Files Override Variables From&nbsp; Resource And Variable Files It Imports</td><td>Check Test Case</td><td>Variable Tables In test Case Files Override Variables From&nbsp; Resource And Variable Files It Imports</td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Variable Tables In Resource Files Override Variables From Resource And Variable Files It Imports</td><td>Check Test Case</td><td>Variable Tables In Resource Files Override Variables From Resource And Variable Files It Imports</td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>When Multiple Resource Or Variable Files Are Imported The First One Has Highest Priority</td><td>Check Test Case</td><td>When Multiple Resource Or Variable Files Are Imported The First One Has Highest Priority</td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Variables With Different Priorities Are Seen Also In User Keywords</td><td>Check Test Case</td><td>Variables With Different Priorities Are Seen Also In User Keywords</td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Variables Set During Test Execution Override All Variables In Their Scope</td><td>Check Test Case</td><td>Variables Set During Test Execution Override All Variables In Their Scope</td><td></td><td></td></tr><tr><td></td><td><br></td><td></td><td></td><td></td></tr>
+</tbody>
+</table>
+<table border="1">
+<colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
+<thead>
+<tr>
+<th>Keyword</th>
+<th>Action</th>
+<th>Argument</th>
+<th>Argument</th>
+<th>Argument</th>
+</tr>
+</thead>
+<tbody>
+
+<tr>
+<td></td>
+<td></td><td></td><td></td>
+
+
+<td></td>
+</tr>
+</tbody>
+</table>
+</body></html>
