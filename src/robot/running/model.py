@@ -35,22 +35,20 @@ def TestSuite(datasources, settings, syslog):
     
 class RunnableTestSuite(BaseTestSuite):
     
-    def __init__(self, suitedata, parentdatas=None):
-        if not parentdatas:
-            parentdatas = []
-        parentdatas = [suitedata] + parentdatas[:]
+    def __init__(self, suitedata, parent_data_list=None):
         BaseTestSuite.__init__(self, suitedata.name, suitedata.source)
         self.variables = GLOBAL_VARIABLES.copy()
         self.variables.set_from_variable_table(suitedata.variables)
-        self.doc = suitedata.doc is not None and suitedata.doc or ''
+        self.doc = suitedata.doc or ''
         self.metadata = suitedata.metadata
         self.imports = suitedata.imports
         self.user_keywords = UserLibrary(suitedata.user_keywords)
         self.setup = utils.get_not_none(suitedata.suite_setup, [])
         self.teardown = utils.get_not_none(suitedata.suite_teardown, [])
-        self.suites = [ RunnableTestSuite(suite, parentdatas) 
+        parent_data_list = [suitedata] + (parent_data_list or [])
+        self.suites = [ RunnableTestSuite(suite, parent_data_list) 
                         for suite in suitedata.suites ]
-        self.tests = [ RunnableTestCase(test, parentdatas) 
+        self.tests = [ RunnableTestCase(test, parent_data_list) 
                        for test in suitedata.tests ]
         if self.name == '':   # suitedata was multisource suite
             self.name = ' & '.join([suite.name for suite in self.suites])
@@ -142,11 +140,11 @@ class RunnableTestSuite(BaseTestSuite):
 
 class RunnableTestCase(BaseTestCase):
     
-    def __init__(self, testdata, parentdatas):
+    def __init__(self, testdata, parent_data_list):
         BaseTestCase.__init__(self, testdata.name)
         self.doc = testdata.doc is not None and testdata.doc or ''
         test_setup, test_teardown, force_tags, default_tags, test_timeout \
-                = self._process_parents(parentdatas)
+                = self._process_parents(parent_data_list)
         self.setup = utils.get_not_none(testdata.setup, test_setup, [])
         self.teardown = utils.get_not_none(testdata.teardown, test_teardown, [])
         self.tags = force_tags + utils.get_not_none(testdata.tags, default_tags, [])
@@ -234,18 +232,18 @@ class RunnableTestCase(BaseTestCase):
             return 'Teardown failed:\n%s' % teardown_err
         return '%s\n\nAlso teardown failed:\n%s' % (message, teardown_err)
             
-    def _process_parents(self, parentdatas):
+    def _process_parents(self, parent_data_list):
         test_setup = test_teardown = default_tags = test_timeout = None
         force_tags = []
-        for parent in parentdatas:
-            if parent.test_setup is not None and test_setup is None:
-                test_setup = parent.test_setup
-            if parent.test_teardown is not None and test_teardown is None:
-                test_teardown = parent.test_teardown
-            if parent.force_tags is not None:
+        for parent in parent_data_list:
+            if parent.force_tags:
                 force_tags.extend(parent.force_tags)
-            if parent.default_tags is not None and default_tags is None:
+            if parent.default_tags and not default_tags:
                 default_tags = parent.default_tags
-            if parent.test_timeout is not None and test_timeout is None:
+            if parent.test_setup and not test_setup:
+                test_setup = parent.test_setup
+            if parent.test_teardown and not test_teardown:
+                test_teardown = parent.test_teardown
+            if parent.test_timeout and not test_timeout:
                 test_timeout = parent.test_timeout
         return test_setup, test_teardown, force_tags, default_tags, test_timeout
