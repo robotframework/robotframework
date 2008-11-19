@@ -35,8 +35,10 @@ def TestSuite(datasources, settings, syslog):
     
 class RunnableTestSuite(BaseTestSuite):
     
-    def __init__(self, suitedata, parentdatas=[]):
-        parentdatas = parentdatas[:] + [suitedata]
+    def __init__(self, suitedata, parentdatas=None):
+        if not parentdatas:
+            parentdatas = []
+        parentdatas = [suitedata] + parentdatas[:]
         BaseTestSuite.__init__(self, suitedata.name, suitedata.source)
         self.variables = GLOBAL_VARIABLES.copy()
         self.variables.set_from_variable_table(suitedata.variables)
@@ -235,7 +237,6 @@ class RunnableTestCase(BaseTestCase):
     def _process_parents(self, parentdatas):
         test_setup = test_teardown = default_tags = test_timeout = None
         force_tags = []
-        parentdatas.reverse()
         for parent in parentdatas:
             if parent.test_setup is not None and test_setup is None:
                 test_setup = parent.test_setup
