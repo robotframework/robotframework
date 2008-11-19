@@ -97,10 +97,10 @@ th {
 </thead>
 <tbody>
 <tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
+<td>${EXPECTED LIST}</td>
+<td>List</td>
+<td>variable</td>
+<td>value</td>
 <td></td>
 </tr>
 <tr>
@@ -143,7 +143,7 @@ th {
 <td></td>
 
 
-</tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Variables From Variable File</td><td>Should Be Equal</td><td>${SCALAR FROM CLI VAR FILE}</td><td>Scalar from variable file from cli</td><td></td></tr><tr><td></td><td>Should Be Equal</td><td>${SCALAR FROM CLI VAR FILE WITH ESCAPES}</td><td>1 \\ 2\\\\ \${inv}</td><td></td></tr><tr><td></td><td>Should Be True</td><td>${list_var_from_cli_varfile} ==<br>'Scalar list from variable file from cli'.split()</td><td></td><td></td></tr><tr><td></td><td>Should Be True</td><td>@{list_var_from_cli_varfile} ==<br>'List from variable file from cli'.split()</td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Variables From Variable File Using 'get_variables'</td><td>Should Be Equal</td><td>${SCALAR FROM CLI VAR FILE 2}</td><td>Variable from second variable file from cli</td><td></td></tr>
+</tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Variables From Variable File</td><td>Should Be Equal</td><td>${SCALAR}</td><td>Scalar from variable file from CLI</td><td></td></tr><tr><td></td><td>Should Be Equal</td><td>${SCALAR&nbsp;WITH ESCAPES}</td><td>1 \\ 2\\\\ \${inv}</td><td></td></tr><tr><td></td><td>Should Be Equal</td><td>${SCALAR LIST}</td><td>${EXPECTED LIST}</td><td></td></tr><tr><td></td><td>Should Be True</td><td>@{LIST} == ${EXPECTED LIST}</td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Variables From Variable File Using 'get_variables'</td><td>Should Be Equal</td><td>${ANOTHER SCALAR}</td><td>Variable from CLI var file with get_variables</td><td></td></tr><tr><td></td><td>Should Be True</td><td>@{ANOTHER LIST} == ['List variable from CLI var file', 'with get_variables']&nbsp;</td><td></td><td></td></tr>
 </tbody>
 </table>
 <table border="1">

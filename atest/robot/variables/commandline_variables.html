@@ -68,7 +68,7 @@ th {
 </tr>
 </thead>
 <tbody>
-<tr><td>Documentation</td><td>These tests use variable files under core/resources_and_variables.</td><td>Everythign there should be gone through and moved under variables/ and possibly merged with files there.</td><td></td><td></td></tr><tr>
+<tr><td>Documentation</td><td>How variables from CLI override other variables is tested in variable_priorities.html</td><td></td><td></td><td></td></tr><tr>
 <td>Force Tags</td>
 <td>pybot</td>
 <td>jybot</td>
@@ -161,7 +161,7 @@ th {
 </tr>
 <tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td></td><td>${escaped} =</td><td>Set Variable</td><td>QUOTIAPOSll take spam AMP eggsEXCLAMEXCLAMQUOT</td><td></td></tr><tr><td></td><td>${escaped2} =</td><td>Set Variable</td><td>DOLLARCURLY1notvarCURLY2</td><td></td></tr><tr><td></td><td align="undefined" valign="undefined">${vardir} =</td><td align="undefined" valign="undefined">Join&nbsp;Path</td><td align="undefined" valign="undefined">
 ${CURDIR}${/}..${/}..${/}testdata</td><td align="undefined" valign="undefined">
-core${/}resources_and_variables</td></tr><tr><td></td><td align="undefined" valign="undefined">${varfile} =&nbsp;</td><td align="undefined" valign="undefined">Join&nbsp;Path</td><td align="undefined" valign="undefined">${vardir}</td><td align="undefined" valign="undefined">vars_from_cli.py</td></tr><tr><td></td><td align="undefined" valign="undefined">${varfile2} =&nbsp;</td><td align="undefined" valign="undefined">Join&nbsp;Path</td><td align="undefined" valign="undefined">${vardir}</td><td align="undefined" valign="undefined">vars_from_cli2.py</td></tr><tr><td></td><td>${options} =</td><td>Catenate</td><td>--variable NORMAL_TEXT:Hello</td><td>--variable no_colon</td></tr><tr><td></td><td>...</td><td>-v ESCAPED:${escaped<br>.replace(' ', 'SPACE')}</td><td>--variable eScApEd2:${escaped2}</td><td></td></tr><tr><td></td><td>...</td><td>--variablefile ${varfile}</td><td>-V ${varfile2}</td><td></td></tr><tr><td></td><td>...</td><td>-E quot:QUOT<br></td><td>-E apos:APOS</td><td>-E dollar:DOLLAR</td></tr><tr><td></td><td>...</td><td>-E amp:AMP</td><td>-E space:SPACE</td><td>-E exclam:EXCLAM</td></tr><tr><td></td><td>...</td><td>-E curly1:CURLY1</td><td>-E curly2:CURLY2</td><td></td></tr><tr>
+variables${/}resvarfiles</td></tr><tr><td></td><td align="undefined" valign="undefined">${varfile} =&nbsp;</td><td align="undefined" valign="undefined">Join&nbsp;Path</td><td align="undefined" valign="undefined">${vardir}</td><td align="undefined" valign="undefined">cli_vars.py</td></tr><tr><td></td><td align="undefined" valign="undefined">${varfile2} =&nbsp;</td><td align="undefined" valign="undefined">Join&nbsp;Path</td><td align="undefined" valign="undefined">${vardir}</td><td align="undefined" valign="undefined">cli_vars_2.py</td></tr><tr><td></td><td>${options} =</td><td>Catenate</td><td>--variable NORMAL_TEXT:Hello</td><td>--variable no_colon</td></tr><tr><td></td><td>...</td><td>-v ESCAPED:${escaped<br>.replace(' ', 'SPACE')}</td><td>--variable eScApEd2:${escaped2}</td><td></td></tr><tr><td></td><td>...</td><td>--variablefile ${varfile}</td><td>-V ${varfile2}</td><td></td></tr><tr><td></td><td>...</td><td>-E quot:QUOT<br></td><td>-E apos:APOS</td><td>-E dollar:DOLLAR</td></tr><tr><td></td><td>...</td><td>-E amp:AMP</td><td>-E space:SPACE</td><td>-E exclam:EXCLAM</td></tr><tr><td></td><td>...</td><td>-E curly1:CURLY1</td><td>-E curly2:CURLY2</td><td></td></tr><tr>
 <td></td>
 <td>Run Tests</td>
 <td>${options}</td>
