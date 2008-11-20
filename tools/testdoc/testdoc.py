@@ -15,37 +15,35 @@
 #  limitations under the License.
 
 
-"""Robot Framework Test Plan Generation Tool
+"""Robot Framework Test Data Documentation Tool
 
-Usage:  testdoc.py [options] data_sources
+Usage:  testdoc.py [options] test_data
 
-This script generates a high level documentation of given suite. Generated  
-documentation includes the names and documentation for each suite and test case
-and also the top level keywords and their documentation for each test.
+This script generates a high level test documentation from a given test data.
+Generated documentation includes the names, documentations and other metadata
+of each test suite and test case, as well as the top-level keywords and their
+arguments. Most of the options accepted by this tool have exactly same
+semantics as same options have when executing test cases.
 
 Options:
- -o --output path       Where to write the generated documentation. If the 
-                        path is a directory, the documentation is
-                        generated there using name '<suitename>-doc.html'.
- -T --title title       Set the title of the generated documentation. 
-                        Underscores in the title are converted to spaces.
- -N --name name         Set the name of the top level test suite. See pybot 
-                        -\\-help for details.
- -D --doc document      Set the document of the top level test suite.
-                        See pybot --help for details.
- -M --metadata name:value *  Set metadata of the top level test suite. See 
-                        pybot --help for details.
- -G --settag tag *      Sets given tag(s) to all executed test cases. 
- -t --test name *       Select test cases to be included in the documentation
-                        by name. See pybot --help for details on filtering.
- -s --suite name *      Select test suites to be included in the documentation 
-                        by name. See pybot --help for details on filtering.
- -i --include tag *     Select test cases to be included in the documentation 
-                        by tag. See pybot --help for details on filtering.
- -e --exclude tag *     Select test cases not to be included in the 
-                        documentation by tag. See pybot --help for details on 
-                        filtering.
- -h --help              Print this help. 
+  -o --output path       Where to write the generated documentation. If the 
+                         path is a directory, the documentation is
+                         generated there using name '<suitename>-doc.html'.
+  -T --title title       Set the title of the generated documentation. 
+                         Underscores in the title are converted to spaces.
+  -N --name name         Set the name of the top level test suite.
+  -D --doc document      Set the document of the top level test suite.
+  -M --metadata name:value *  Set metadata of the top level test suite. 
+  -G --settag tag *      Set given tag(s) to all test cases. 
+  -t --test name *       Include test cases by name. 
+  -s --suite name *      Include test suites by name. 
+  -i --include tag *     Include test cases by tags.
+  -e --exclude tag *     Exclude test cases by tags.
+  -h --help              Print this help.
+
+Examples:
+  $ testdoc.py mytestcases.html
+  $ testdoc.py --name smoke_test_plan --include smoke path/to/my_tests/
 """
 
 import sys
