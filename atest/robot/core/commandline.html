@@ -1260,7 +1260,7 @@ two_parts:one_part -M esc:STQUDOAMHAEXEX --escape star:ST -E quest:QU
 <td>${DUMMY_LIB_TEST}</td>
 <td></td>
 </tr>
-<tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>PYTHONPATH Environment Variable</td><td>[Setup]</td><td>Should Be Equal</td><td>${PREV_TEST_STATUS}</td><td>PASS</td></tr><tr><td></td><td>Set Environment Variable</td><td>PYTHONPATH</td><td>${MYOUTDIR}</td><td></td></tr><tr><td></td><td>Tests Should Be Executed Without Errors</td><td><br></td><td>${DUMMY_LIB_TEST}</td><td></td></tr><tr>
+<tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>PYTHONPATH Environment Variable</td><td>[Setup]</td><td>Should Be Equal</td><td>${PREV_TEST_STATUS}</td><td>PASS</td></tr><tr><td></td><td>Set Environment Variable</td><td>PYTHONPATH</td><td>${MYOUTDIR}${:}spam${:}eggs</td><td></td></tr><tr><td></td><td>Tests Should Be Executed Without Errors</td><td><br></td><td>${DUMMY_LIB_TEST}</td><td></td></tr><tr>
 <td></td>
 <td></td>
 <td></td>
