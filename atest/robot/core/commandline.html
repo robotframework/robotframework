@@ -1204,25 +1204,13 @@ two_parts:one_part -M esc:STQUDOAMHAEXEX --escape star:ST -E quest:QU
 </tr>
 <tr>
 <td></td>
-<td>Run Tests</td>
+<td>Tests Should Fail With Errors</td>
 <td></td>
 <td>${DUMMY_LIB_TEST}</td>
-<td></td>
+<td>Test should pass only when PYTHONPATH is set</td>
 </tr>
-<tr>
-<td></td>
-<td>Equals</td>
-<td>${SUITE.status}</td>
-<td>FAIL</td>
-<td>Test should pass only when --pythonpath correctly set</td>
-</tr>
-<tr>
-<td></td>
-<td>Fail If File Empty</td>
-<td>${STDERR FILE}</td>
-<td></td>
-<td></td>
-</tr>
+
+
 <tr>
 <td></td>
 <td>Tests Should Be Executed Without Errors</td>
@@ -1240,9 +1228,9 @@ two_parts:one_part -M esc:STQUDOAMHAEXEX --escape star:ST -E quest:QU
 <tr>
 <td><a name="test_PythonpathMultpipleTimesSeparatedWithColon">Pythonpath Multpiple Times Separated With Colon</a></td>
 <td>[Setup]</td>
-<td></td>
-<td></td>
-<td></td>
+<td>Should Be Equal</td>
+<td>${PREV_TEST_STATUS}</td>
+<td>PASS</td>
 </tr>
 <tr>
 <td></td>
@@ -1261,9 +1249,9 @@ two_parts:one_part -M esc:STQUDOAMHAEXEX --escape star:ST -E quest:QU
 <tr>
 <td><a name="test_PythonpathAsGlobPattern">Pythonpath As Glob Pattern</a></td>
 <td>[Setup]</td>
-<td></td>
-<td></td>
-<td></td>
+<td>Should Be Equal</td><td>${PREV_TEST_STATUS}</td><td>PASS</td>
+
+
 </tr>
 <tr>
 <td></td>
@@ -1272,7 +1260,7 @@ two_parts:one_part -M esc:STQUDOAMHAEXEX --escape star:ST -E quest:QU
 <td>${DUMMY_LIB_TEST}</td>
 <td></td>
 </tr>
-<tr>
+<tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>PYTHONPATH Environment Variable</td><td>[Setup]</td><td>Should Be Equal</td><td>${PREV_TEST_STATUS}</td><td>PASS</td></tr><tr><td></td><td>Set Environment Variable</td><td>PYTHONPATH</td><td>${MYOUTDIR}</td><td></td></tr><tr><td></td><td>Tests Should Be Executed Without Errors</td><td><br></td><td>${DUMMY_LIB_TEST}</td><td></td></tr><tr>
 <td></td>
 <td></td>
 <td></td>
@@ -1801,13 +1789,7 @@ two_parts:one_part -M esc:STQUDOAMHAEXEX --escape star:ST -E quest:QU
 <td>@{exp_files}</td>
 <td></td>
 </tr>
-<tr>
-<td></td>
-<td>[Timeout]</td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
+
 <tr>
 <td></td>
 <td>${exp_files} =</td>
@@ -1836,18 +1818,12 @@ two_parts:one_part -M esc:STQUDOAMHAEXEX --escape star:ST -E quest:QU
 <td></td>
 <td></td>
 </tr>
+
 <tr>
 <td><a name="keyword_VerifyROBOTSet">Verify ROBOT Set</a></td>
-<td>[Timeout]</td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td>Fail If Equal</td>
+<td>Should Not Be Equal</td>
 <td>${ROBOT}</td>
-<td>\</td>
+<td>${EMPTY}</td>
 <td>This test can be run only after \${ROBOT} is set</td>
 </tr>
 <tr>
@@ -1864,15 +1840,9 @@ two_parts:one_part -M esc:STQUDOAMHAEXEX --escape star:ST -E quest:QU
 <td></td>
 <td></td>
 </tr>
+
 <tr>
 <td><a name="keyword_RunSomeTests">Run Some Tests</a></td>
-<td>[Timeout]</td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
 <td>Verify ROBOT Set</td>
 <td></td>
 <td></td>
@@ -1925,15 +1895,9 @@ two_parts:one_part -M esc:STQUDOAMHAEXEX --escape star:ST -E quest:QU
 <td>[Arguments]</td>
 <td>${options}</td>
 <td>${datasource}</td>
-<td></td>
+<td>${explanation}=Test execution should have passed</td>
 </tr>
-<tr>
-<td></td>
-<td>[Timeout]</td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
+
 <tr>
 <td></td>
 <td>Run Tests</td>
@@ -1946,11 +1910,11 @@ two_parts:one_part -M esc:STQUDOAMHAEXEX --escape star:ST -E quest:QU
 <td>Should Be Equal</td>
 <td>${SUITE.status}</td>
 <td>PASS</td>
-<td></td>
+<td>${explanation}</td>
 </tr>
-<tr>
+<tr><td></td><td>...</td><td>No values</td><td></td><td></td></tr><tr>
 <td></td>
-<td>Fail Unless File Empty</td>
+<td>File Should Be Empty</td>
 <td>${STDERR FILE}</td>
 <td></td>
 <td></td>
@@ -1963,12 +1927,12 @@ two_parts:one_part -M esc:STQUDOAMHAEXEX --escape star:ST -E quest:QU
 <td></td>
 </tr>
 <tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
+<td>Tests Should Fail With Errors</td>
+<td>[Arguments]</td><td>${options}</td><td>${datasource}</td>
+
+
+<td>${explanation}</td>
+</tr><tr><td></td><td>Run Tests</td><td>${options}</td><td>${datasource}</td><td><br></td></tr><tr><td></td><td>Should Be Equal</td><td>${SUITE.status}</td><td>FAIL</td><td>${explanation}</td></tr><tr><td></td><td>...</td><td>No values</td><td></td><td></td></tr><tr><td></td><td>File Should Not Be Empty</td><td>${STDERR FILE}</td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr>
 </tbody></table>
 
 </body></html>
