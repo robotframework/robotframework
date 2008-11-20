@@ -686,8 +686,8 @@ Variable priorities
 
 *Variables from the command line*
 
-   Variables `set in the command line`__ have the highest priority of
-   all variables set prior to the actual test execution starts. They
+   Variables `set in the command line`__ have the highest priority of all
+   variables that can be set before the actual test execution starts. They
    override possible variables created in Variable tables in test case
    files, as well as in resource and variable files imported in the
    test data.
@@ -714,7 +714,8 @@ Variable priorities
 
    If a resource file imports resource files or variable files,
    variables in its own Variable table have a higher priority than
-   variables it imports.
+   variables it imports. All these variables are available for files that
+   import this resource file.
 
 *Variables set during test execution*
 
@@ -728,10 +729,12 @@ Variable priorities
 *Built-in variables*
 
    `Built-in variables`_ like :var:`${TEMPDIR}` and :var:`${TEST_NAME}`
-   have the lowest priority of all variables. They are used only if there
-   is no variable with the same name in the scope where they are used. An
-   exception to this rule is :var:`${CURDIR}`, which is replaced with
-   its value already during the test data processing time.
+   have the highest priority of all variables. They cannot be overridden
+   using Variable table or from command line, but even they can be reset during
+   the test execution. An exception to this rule are `number variables`_, which
+   are resolved dynamically if no variable is found otherwise. They can thus be
+   overridden, but that is generally a bad idea. Additionally :var:`${CURDIR}`
+   is special because it is replaced already during the test data processing time.
 
 __ `Setting variables in command line`_
 __ `Using built-in Set Test/Suite/Global Variable keywords`_
@@ -750,9 +753,9 @@ global, test suite, test case or user keyword scope.
    :opt:`--variable` and :opt:`--variablefile` options, but it is also 
    possible to create new global variables or change the existing ones
    with the `BuiltIn keyword`_ :name:`Set Global Variable` anywhere in
-   the test data.
+   the test data. Additionally also `built-in variables`_ are global.
 
-   It is recommended to use capital letters with global variables.
+   It is recommended to use capital letters with all global variables.
 
 *Test suite scope*
 
