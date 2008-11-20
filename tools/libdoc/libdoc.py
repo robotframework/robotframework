@@ -182,6 +182,8 @@ class _DocHelper:
                 return '<a href="#%s" class="name">%s</a>' % (kw.name, name)
         if utils.eq_any(name, ['introduction', 'library introduction']):
             return '<a href="#introduction" class="name">%s</a>' % name
+        if utils.eq_any(name, ['initialization', 'library initialization']):
+            return '<a href="#initialization" class="name">%s</a>' % name
         return '<span class="name">%s</span>' % name
 
 
@@ -194,10 +196,18 @@ class PythonLibraryDoc(_DocHelper):
         self.name = lib.name
         self.version = utils.html_escape(getattr(lib, 'version', '<unknown>'))
         self.doc = self._process_doc(self._get_doc(lib))
+        self.inits = self._get_initializers(lib)
         self.keywords = [ KeywordDoc(handler, self) 
                           for handler in lib.handlers.values() ]
         self.keywords.sort()
-    
+
+    def _get_initializers(self, lib):
+        if lib.init:
+            init = KeywordDoc(lib.init, lib)
+            if init.args:
+                return [init]
+        return []
+
     def _import(self, name_or_path):
         if os.path.exists(name_or_path):
             parent, name = os.path.split(os.path.normpath(name_or_path))
@@ -231,6 +241,9 @@ class ResourceDoc(PythonLibraryDoc):
     def _get_doc(self, lib):
         return "Documentation for resource file `%s`." % lib.name
     
+    def _get_initializers(self, lib):
+        return []
+
     
 class _BaseKeywordDoc(_DocHelper):
     
@@ -241,6 +254,9 @@ class _BaseKeywordDoc(_DocHelper):
         if name == 'argstr':
             return ', '.join(self.args)
         return _DocHelper.__getattr__(self, name)
+
+    def __repr__(self):
+        return "'Keyword %s from library %s'" % (self.name, self.lib.name)
         
 
 class KeywordDoc(_BaseKeywordDoc):
@@ -287,10 +303,12 @@ if utils.is_jython:
         def __init__(self, path):
             cls = self._get_class(path)
             self.name = cls.qualifiedName()
-            self.version = self._get_version(cls)
+            self.version = utils.html_escape(self._get_version(cls))
             self.doc = self._process_doc(cls.getRawCommentText())
             self.keywords = [ JavaKeywordDoc(method, self) 
                               for method in cls.methods() ]
+            self.inits = [ JavaKeywordDoc(init, self)
+                           for init in cls.constructors() ]
             self.keywords.sort()
                             
         def _get_class(self, path):
@@ -426,6 +444,27 @@ DOCUMENT_TEMPLATE = '''<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional
 
 <h2 id="introduction">Introduction</h2>
 <p class='libdoc'>${LIB.htmldoc}</p>
+
+<!-- IF '${LIB.type}' != 'resource' -->
+<h2 id="initialization">Initialization</h2>
+<!-- END IF -->
+<!-- IF ${LIB.inits} -->
+<table class="keywords">
+<tr>
+  <th class="arg">Arguments</th>
+  <th class="doc">Documentation</th>
+</tr>
+<!-- FOR ${init} IN ${LIB.inits} -->
+<tr>
+  <td class="arg">${init.argstr}</td>
+  <td class="doc">${init.htmldoc}</td>
+</tr>
+<!-- END FOR -->
+</table>
+<!-- END IF -->
+<!-- IF len(${LIB.inits}) == 0 and '${LIB.type}' != 'resource' -->
+<p>This test library does not take any arguments.</p>
+<!-- END IF -->
 
 <h2>Shortcuts</h2>
 <div class='links'>
