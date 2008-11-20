@@ -73,7 +73,7 @@ class _BaseTestLibrary(BaseLibrary):
             self.scope = self._get_scope(libcode)
             self._libcode = libcode
             self._libinst = self.get_instance()
-            self.handlers = self._create_handlers(syslog)
+            self.handlers = self._create_handlers(self._libinst, syslog)
             self._init_scope_handling()
 
     def _get_version(self, code):
@@ -104,8 +104,8 @@ class _BaseTestLibrary(BaseLibrary):
         lib._libinst = self._libinst
         lib._init_scope_handling()
         lib.handlers = utils.NormalizedDict(ignore=['_'])
-        for name, handler in self.handlers.items():
-            lib.handlers[name] = handler.copy(lib)
+        for handler_name, handler in self.handlers.items():
+            lib.handlers[handler_name] = handler.copy(lib)
         return lib
     
     def start_suite(self):
@@ -149,10 +149,10 @@ class _BaseTestLibrary(BaseLibrary):
         except:
             self._raise_creating_instance_failed()
         
-    def _create_handlers(self, syslog):
+    def _create_handlers(self, libinst, syslog):
         success, failure, details = self._get_reporting_methods(syslog)
         handlers = utils.NormalizedDict(ignore=['_'])
-        for name in self._get_handler_names(self._libinst):
+        for name in self._get_handler_names(libinst):
             err_pre = "Adding keyword '%s' to library '%s' failed: " % (name, self.name) 
             try:
                 method = self._get_handler_method(self._libinst, name)
