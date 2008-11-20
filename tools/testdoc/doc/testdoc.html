@@ -487,15 +487,18 @@ pre.literal-block, pre.doctest-block {
 - misc   everything else (synonym to ``text``) -->
 <p><span class="prog">testdoc.py</span> is a tool for generating a high level documentation from
 Robot Framework test data. It is included in source distributions and can also
-be downloaded from <a class="reference external" href="http://code.google.com/p/robotframework/wiki/TestDataDocumentationTool">http://code.google.com/p/robotframework/wiki/TestDataDocumentationTool</a></p>
+be downloaded from
+<a class="reference external" href="http://code.google.com/p/robotframework/wiki/TestDataDocumentationTool">http://code.google.com/p/robotframework/wiki/TestDataDocumentationTool</a>.</p>
 <div class="section" id="synopsis">
 <h1>Synopsis</h1>
 <pre class="literal-block">
-testdoc.py [options] data_sources
+testdoc.py [options] test_data
 </pre>
 </div>
 <div class="section" id="options">
 <h1>Options</h1>
+<p>Most of the options accepted by this tool have exactly same
+semantics as same options have when executing test cases.</p>
 <blockquote>
 <table class="docutils option-list" frame="void" rules="none">
 <col class="option" />
@@ -507,57 +510,45 @@ testdoc.py [options] data_sources
 <tr><td>&nbsp;</td><td>Where to write the generated documentation. If
 the path is a directory, the documentation is
 generated there using name
-'&lt;suitename&gt;-doc.html'.</td></tr>
+<span class="path">&lt;suitename&gt;-doc.html</span>.</td></tr>
 <tr><td class="option-group" colspan="2">
 <kbd><span class="option">-T</span>, <span class="option">--title <var>&lt;title&gt;</var></span></kbd></td>
 </tr>
 <tr><td>&nbsp;</td><td>Set the title of the generated documentation.
-Underscores in the title are converted to spaces.</td></tr>
+Underscores in the title are converted to
+spaces.</td></tr>
 <tr><td class="option-group" colspan="2">
 <kbd><span class="option">-N</span>, <span class="option">--name <var>&lt;name&gt;</var></span></kbd></td>
 </tr>
-<tr><td>&nbsp;</td><td>Set the name of the top level test suite.
-See pybot --help or Robot Framework user guide
-for details.</td></tr>
+<tr><td>&nbsp;</td><td>Set the name of the top level test suite.</td></tr>
 <tr><td class="option-group" colspan="2">
 <kbd><span class="option">-D</span>, <span class="option">--doc <var>&lt;document&gt;</var></span></kbd></td>
 </tr>
-<tr><td>&nbsp;</td><td>Set the document of the top level test suite.
-See pybot --help or Robot Framework user guide
-for details.</td></tr>
+<tr><td>&nbsp;</td><td>Set the document of the top level test suite.</td></tr>
 <tr><td class="option-group" colspan="2">
 <kbd><span class="option">-M</span>, <span class="option">--metadata <var>&lt;name:value&gt;</var></span></kbd></td>
 </tr>
-<tr><td>&nbsp;</td><td>Set metadata of the top level test suite. See
-pybot --help for details.</td></tr>
+<tr><td>&nbsp;</td><td>Set metadata of the top level test suite. See</td></tr>
 <tr><td class="option-group" colspan="2">
 <kbd><span class="option">-G</span>, <span class="option">--settag <var>&lt;tag&gt;</var></span></kbd></td>
 </tr>
-<tr><td>&nbsp;</td><td>Sets given tag(s) to all executed test cases.</td></tr>
+<tr><td>&nbsp;</td><td>Set given tag(s) to all test cases.</td></tr>
 <tr><td class="option-group" colspan="2">
 <kbd><span class="option">-t</span>, <span class="option">--test <var>&lt;name&gt;</var></span></kbd></td>
 </tr>
-<tr><td>&nbsp;</td><td>Select test cases to be included in the
-documentation by name. See pybot --help or Robot
-Framework user guide for details on filtering.</td></tr>
+<tr><td>&nbsp;</td><td>Include test cases by name.</td></tr>
 <tr><td class="option-group" colspan="2">
 <kbd><span class="option">-s</span>, <span class="option">--suite <var>&lt;name&gt;</var></span></kbd></td>
 </tr>
-<tr><td>&nbsp;</td><td>Select test suites to be included in the
-documentation by name. See pybot --help or Robot
-Framework user guide for details on filtering.</td></tr>
+<tr><td>&nbsp;</td><td>Include test suites by name.</td></tr>
 <tr><td class="option-group" colspan="2">
 <kbd><span class="option">-i</span>, <span class="option">--include <var>&lt;tag&gt;</var></span></kbd></td>
 </tr>
-<tr><td>&nbsp;</td><td>Select test cases to be included in the
-documentation by tag. See pybot --help or Robot
-Framework user guide for details on filtering.</td></tr>
+<tr><td>&nbsp;</td><td>Include test cases by tags.</td></tr>
 <tr><td class="option-group" colspan="2">
 <kbd><span class="option">-e</span>, <span class="option">--exclude <var>&lt;tag&gt;</var></span></kbd></td>
 </tr>
-<tr><td>&nbsp;</td><td>Select test cases not to be included in the
-documentation by tag. See pybot --help or Robot
-Framework user guide for details on filtering.</td></tr>
+<tr><td>&nbsp;</td><td>Exclude test cases by tags.</td></tr>
 <tr><td class="option-group">
 <kbd><span class="option">-h</span>, <span class="option">--help</span></kbd></td>
 <td>Print this help in the console.</td></tr>
@@ -567,23 +558,26 @@ Framework user guide for details on filtering.</td></tr>
 </div>
 <div class="section" id="description">
 <h1>Description</h1>
-<p>This script compares generates a high level documentation of the given Robot
-Framework data sources. The generated documentation includes the names of the
-suites and tests, as well as the names of the toplevel keywords fir each suite.
-Also the total number of tests per suite is available. It is possible to select
-suites and tests to be included in the documentation similarly as when choosing
-the test cases to be executed with Robot Framework. The test data is parsed
-similarly as when executing the tests, but the variables are not resolved.</p>
+<p>This tool generates a high level test documentation from a given Robot
+Framework test data. The generated documentation includes the names,
+documentations and other metadata of all test suites and test cases,
+as well as the names and arguments of the top-level keywords.  The
+tool also writes down the total number of test cases per suite.  The
+documentation format is based on the normal test execution logs.</p>
+<p>It is possible to select suites and tests to be included in the
+documentation similarly as when choosing the test cases to be executed
+with Robot Framework. The test data is parsed similarly as when
+executing the tests, but the variables are not resolved.</p>
 <p>Examples:</p>
 <pre class="literal-block">
 $ testdoc.py mytestcases.html
-$ testdoc.py --name smoke_test_plan --include smoke my_tests
+$ testdoc.py --name smoke_test_plan --include smoke path/to/my_tests/
 </pre>
 </div>
 </div>
 <div class="footer">
 <hr class="footer" />
-Generated on: 2008-11-19 11:10 UTC.
+Generated on: 2008-11-20 16:53 UTC.
 
 </div>
 </body>
