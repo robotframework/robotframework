@@ -21,7 +21,8 @@ if __name__ == '__main__':
     sys.stderr.write("Use 'runner' or 'rebot' for executing.\n")
     sys.exit(252)  # 252 == DATA_ERROR
 
-import pythonpathsetter
+if 'pythonpathsetter' not in sys.modules:
+    import pythonpathsetter
 from output import Output, SystemLogger
 from conf import RobotSettings, RebotSettings
 from running import TestSuite
