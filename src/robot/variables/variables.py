@@ -56,7 +56,7 @@ class Variables(utils.NormalizedDict):
             raise DataError("Invalid variable name '%s'" % name)
         try: return utils.NormalizedDict.__getitem__(self, name)
         except KeyError:
-            try: return self._get_num_or_bool_or_none_var(name)
+            try: return self._get_number_var(name)
             except ValueError:
                 try: return self._get_extended_var(name)
                 except ValueError:
@@ -88,16 +88,10 @@ class Variables(utils.NormalizedDict):
             raise DataError("Resolving variable '%s' failed: %s"
                             % (name, utils.get_error_message()))
         
-    def _get_num_or_bool_or_none_var(self, name):
+    def _get_number_var(self, name):
         if name[0] != '$':
             raise ValueError
         base = self._normalize(name)[2:-1]
-        if base == 'true':
-            return True
-        if base == 'false':
-            return False
-        if base in ['none','null']:
-            return None
         try:
             return long(base)
         except ValueError:
