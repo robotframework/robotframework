@@ -28,6 +28,8 @@ def norm_path(path):
     return path
 
 def add_path(path, to_beginning=False):
+    if not path:
+        return
     path = norm_path(path)
     if path not in sys.path and os.path.exists(path):
         if to_beginning:
@@ -57,12 +59,13 @@ remove_path(ROBOTDIR)
 
 # Elements from PYTHONPATH. By default it is not processed in Jython and in
 # Python valid non-absolute paths may be ignored.
-if 'PYTHONPATH' in os.environ:
-    for path in os.environ['PYTHONPATH'].split(os.pathsep):
+PYPATH = os.environ.get('PYTHONPATH')
+if PYPATH:
+    for path in PYPATH.split(os.pathsep):
         add_path(path)
     del path
 
 # Current dir (it seems to be in Jython by default so let's be consistent)
 add_path('.')
 
-del norm_path, add_path, remove_path, ROBOTDIR, PARENTDIR
+del norm_path, add_path, remove_path, ROBOTDIR, PARENTDIR, PYPATH
