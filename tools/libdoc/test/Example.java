@@ -8,6 +8,12 @@ public class Example {
     /**
      * Creates new Example test library
      */
+    public Example() {
+    }
+
+    /**
+     * Creates new Example test library
+     */
     public Example(String arg) {
     }
 
@@ -20,7 +26,7 @@ public class Example {
     /**
      * Should not be visible in library documentation
      */
-    private Example() {
+    private Example(String[] args) {
     }
 
     /** 
