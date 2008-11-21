@@ -152,7 +152,10 @@ class _BaseTestLibrary(BaseLibrary):
 
     def _get_init(self, libinst):
         if hasattr(libinst, '__init__'):
-            return self._create_handler('__init__', libinst.__init__)
+            try:
+                return self._create_handler('__init__', libinst.__init__)
+            except TypeError:
+                pass
         return None
 
     def _create_handlers(self, libinst, syslog):
@@ -235,7 +238,8 @@ class PythonLibrary(_BaseTestLibrary):
         if not utils.is_jython:
             return False
         try:
-            return 'reflectedfunction' in str(type(method.im_func))
+            return 'reflectedfunction' in str(type(method.im_func)) or \
+                   'reflectedconstructor' in str(type(method.im_func))
         except AttributeError:
             return False
 
