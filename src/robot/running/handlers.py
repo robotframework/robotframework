@@ -154,6 +154,8 @@ class PythonHandler(_RunnableHandler):
         elif type(handler) is FunctionType:
             func = handler
             first_arg = 0
+        elif self._is_new_style_init_method(handler):
+            return [], [], '<unknown>'
         else:
             raise FrameworkError("Only MethodType and FunctionType accepted. "
                                  "Got '%s' instead." % type(handler))
@@ -168,6 +170,10 @@ class PythonHandler(_RunnableHandler):
         else:
             varargs = None
         return args, defaults, varargs
+
+    def _is_new_style_init_method(self, handler):
+        return '__init__' in str(handler) and str(type(handler)) in \
+            ["<type 'method-wrapper'>", "<type 'builtin_function_or_method'>"]
             
 
 class JavaHandler(_RunnableHandler):

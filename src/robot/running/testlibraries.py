@@ -74,6 +74,7 @@ class _BaseTestLibrary(BaseLibrary):
             self._libcode = libcode
             self._libinst = self.get_instance()
             self.handlers = self._create_handlers(self._libinst, syslog)
+            self.init =  self._get_init(self._libinst)
             self._init_scope_handling()
 
     def _get_version(self, code):
@@ -148,7 +149,12 @@ class _BaseTestLibrary(BaseLibrary):
             return self._libcode(*self.args)
         except:
             self._raise_creating_instance_failed()
-        
+
+    def _get_init(self, libinst):
+        if hasattr(libinst, '__init__'):
+            return self._create_handler('__init__', libinst.__init__)
+        return None
+
     def _create_handlers(self, libinst, syslog):
         success, failure, details = self._get_reporting_methods(syslog)
         handlers = utils.NormalizedDict(ignore=['_'])
@@ -210,6 +216,9 @@ class ModuleLibrary(_BaseTestLibrary):
         
     def get_instance(self):
         return self._libcode
+
+    def _get_init(self, libinst):
+        return None
     
     def _create_handler(self, handler_name, handler_method):
         return PythonHandler(self, handler_name, handler_method)
