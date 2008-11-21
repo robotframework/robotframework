@@ -196,14 +196,14 @@ class PythonLibraryDoc(_DocHelper):
         self.name = lib.name
         self.version = utils.html_escape(getattr(lib, 'version', '<unknown>'))
         self.doc = self._process_doc(self._get_doc(lib))
-        self.inits = self._get_initializers(lib)
+        self.inits = self._get_initializers(lib.init)
         self.keywords = [ KeywordDoc(handler, self) 
                           for handler in lib.handlers.values() ]
         self.keywords.sort()
 
-    def _get_initializers(self, lib):
-        if lib.init:
-            init = KeywordDoc(lib.init, lib)
+    def _get_initializers(self, lib_init):
+        if lib_init:
+            init = KeywordDoc(lib_init, self)
             if init.args:
                 return [init]
         return []
