@@ -19,7 +19,7 @@
 
 Usage:  testdoc.py [options] test_data
 
-This script generates a high level test documentation from a given test data.
+This tool generates a high level test documentation from a given test data.
 Generated documentation includes the names, documentations and other metadata
 of each test suite and test case, as well as the top-level keywords and their
 arguments. Most of the options accepted by this tool have exactly same
@@ -44,6 +44,8 @@ Options:
 Examples:
   $ testdoc.py mytestcases.html
   $ testdoc.py --name smoke_test_plan --include smoke path/to/my_tests/
+  
+Note that this tool requires Robot Framework 2.0.3 or newer to be installed.
 """
 
 import sys
@@ -53,7 +55,7 @@ import time
 from robot.common import BaseKeyword, BaseTestSuite
 from robot.running import TestSuite, Keyword
 from robot.conf import RobotSettings
-from robot.output import SystemLogger
+from robot.output.abstractlogger import AbstractLogger
 from robot.serializing.serializer import LogSuiteSerializer
 from robot.serializing import templates
 from robot.serializing.templating import Namespace, Template
@@ -68,6 +70,12 @@ class _FakeVariableScopes:
 
     def replace_string(self, item):
         return item
+
+
+class _SystemLogger(AbstractLogger):
+
+    def write(self, msg, level):
+        pass
 
 
 class MySerializer(LogSuiteSerializer):
@@ -122,11 +130,11 @@ class MySerializer(LogSuiteSerializer):
     def _write_expand_all(self, item):
         if isinstance(item, BaseTestSuite):
             LogSuiteSerializer._write_expand_all(self, item)
-        
+
 
 def generate_test_doc(args):
     opts, datasources = process_arguments(args)
-    suite = TestSuite(datasources, RobotSettings(opts), SystemLogger())
+    suite = TestSuite(datasources, RobotSettings(opts), _SystemLogger())
     outpath = get_outpath(opts['output'], suite.name)
     serialize_test_doc(suite, outpath, opts['title'])
     print outpath
