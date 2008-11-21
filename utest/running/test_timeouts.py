@@ -182,13 +182,13 @@ class TestRun(unittest.TestCase):
             tout = KeywordTimeout('1s', *msgcols)
             tout.start()
             tout.run(passing, logger=self.logger)
-            self._verify_debug_msg(self.logger.msgs[0], 'keyword')
+            self._verify_debug_msg(self.logger.msgs[0], 'Keyword')
             tout.secs = 0.01
             assert_raises_with_msg(TimeoutError, ' '.join(msgcols),
                                    tout.run, sleeping, (1,), {}, self.logger)
-            self._verify_debug_msg(self.logger.msgs[1], 'keyword')
+            self._verify_debug_msg(self.logger.msgs[1], 'Keyword')
 
-    def _verify_debug_msg(self, msg, type='test'):
+    def _verify_debug_msg(self, msg, type='Test'):
         assert_equals(msg[0], 'DEBUG')
         assert_true(msg[1].startswith('%s timeout 1s active.' % type), msg[1])
         assert_true(msg[1].endswith('seconds left.'), msg[1])
