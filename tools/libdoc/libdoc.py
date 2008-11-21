@@ -309,6 +309,8 @@ if utils.is_jython:
                               for method in cls.methods() ]
             self.inits = [ JavaKeywordDoc(init, self)
                            for init in cls.constructors() ]
+            if len(self.inits) == 1 and not self.inits[0].args:
+                self.inits = []
             self.keywords.sort()
                             
         def _get_class(self, path):
