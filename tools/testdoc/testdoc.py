@@ -63,78 +63,9 @@ from robot import utils
 from robot.errors import DataError
 
 
-class _FakeVariableScopes:
-    
-    def replace_from_meta(self, name, item, errors):
-        return item
-
-    def replace_string(self, item):
-        return item
-
-
-class _SystemLogger(AbstractLogger):
-
-    def write(self, msg, level):
-        pass
-
-
-class MySerializer(LogSuiteSerializer):
-    
-    def __init__(self, output, suite):
-        self._writer = utils.HtmlWriter(output)
-        self._idgen = utils.IdGenerator()
-        self._suite_level = 0
-    
-    def start_suite(self, suite):
-        suite._init_suite(_FakeVariableScopes())
-        LogSuiteSerializer.start_suite(self, suite)
-    
-    def start_test(self, test):
-        test._init_test(_FakeVariableScopes())
-        LogSuiteSerializer.start_test(self, test)
-        
-    def start_keyword(self, kw):
-        if isinstance(kw, Keyword):  # Doesn't match For or Parallel
-            kw.name = kw._get_name(kw.name, _FakeVariableScopes())
-        LogSuiteSerializer.start_keyword(self, kw)
-    
-    def _is_element_open(self, item):
-        return isinstance(item, BaseTestSuite)
-    
-    def _write_times(self, item):
-        pass
-        
-    def _write_suite_metadata(self, suite):
-        self._start_suite_or_test_metadata(suite)
-        for name, value in suite.get_metadata(html=True):
-            self._write_metadata_row(name, value, escape=False, write_empty=True)
-        self._write_metadata_row('Number of Tests', suite.get_test_count())
-        self._writer.end_element('table')
-    
-    def _write_test_metadata(self, test):
-        self._start_suite_or_test_metadata(test)
-        if test.timeout.secs < 0:
-            tout = ''
-        else:
-            tout = utils.secs_to_timestr(test.timeout.secs)
-            if test.timeout.message:
-                tout += ' | ' + test.timeout.message
-        self._write_metadata_row('Timeout', tout)
-        self._write_metadata_row('Tags', ', '.join(test.tags))
-        self._writer.end_element('table')
-    
-    def _write_folding_button(self, item):
-        if not isinstance(item, BaseKeyword):
-            LogSuiteSerializer._write_folding_button(self, item)
-
-    def _write_expand_all(self, item):
-        if isinstance(item, BaseTestSuite):
-            LogSuiteSerializer._write_expand_all(self, item)
-
-
 def generate_test_doc(args):
     opts, datasources = process_arguments(args)
-    suite = TestSuite(datasources, RobotSettings(opts), _SystemLogger())
+    suite = TestSuite(datasources, RobotSettings(opts), SilentSystemLogger())
     outpath = get_outpath(opts['output'], suite.name)
     serialize_test_doc(suite, outpath, opts['title'])
     print outpath
@@ -182,6 +113,75 @@ def get_outpath(path, suite_name):
     if os.path.isdir(path):
         path = os.path.join(path, '%s-doc.html' % suite_name.replace(' ', '_'))
     return os.path.abspath(path)
+
+
+class MySerializer(LogSuiteSerializer):
+
+    def __init__(self, output, suite):
+        self._writer = utils.HtmlWriter(output)
+        self._idgen = utils.IdGenerator()
+        self._suite_level = 0
+
+    def start_suite(self, suite):
+        suite._init_suite(NonResolvingVariableScopes())
+        LogSuiteSerializer.start_suite(self, suite)
+
+    def start_test(self, test):
+        test._init_test(NonResolvingVariableScopes())
+        LogSuiteSerializer.start_test(self, test)
+
+    def start_keyword(self, kw):
+        if isinstance(kw, Keyword):  # Doesn't match For or Parallel
+            kw.name = kw._get_name(kw.name, NonResolvingVariableScopes())
+        LogSuiteSerializer.start_keyword(self, kw)
+
+    def _is_element_open(self, item):
+        return isinstance(item, BaseTestSuite)
+
+    def _write_times(self, item):
+        pass
+
+    def _write_suite_metadata(self, suite):
+        self._start_suite_or_test_metadata(suite)
+        for name, value in suite.get_metadata(html=True):
+            self._write_metadata_row(name, value, escape=False, write_empty=True)
+        self._write_metadata_row('Number of Tests', suite.get_test_count())
+        self._writer.end_element('table')
+
+    def _write_test_metadata(self, test):
+        self._start_suite_or_test_metadata(test)
+        if test.timeout.secs < 0:
+            tout = ''
+        else:
+            tout = utils.secs_to_timestr(test.timeout.secs)
+            if test.timeout.message:
+                tout += ' | ' + test.timeout.message
+        self._write_metadata_row('Timeout', tout)
+        self._write_metadata_row('Tags', ', '.join(test.tags))
+        self._writer.end_element('table')
+
+    def _write_folding_button(self, item):
+        if not isinstance(item, BaseKeyword):
+            LogSuiteSerializer._write_folding_button(self, item)
+
+    def _write_expand_all(self, item):
+        if isinstance(item, BaseTestSuite):
+            LogSuiteSerializer._write_expand_all(self, item)
+
+
+class NonResolvingVariableScopes:
+
+    def replace_from_meta(self, name, item, errors):
+        return item
+
+    def replace_string(self, item):
+        return item
+
+
+class SilentSystemLogger(AbstractLogger):
+
+    def write(self, msg, level):
+        pass
 
 
 if __name__ == '__main__':
