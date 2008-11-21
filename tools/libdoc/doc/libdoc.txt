@@ -181,6 +181,28 @@ information about how to create these methods and the dynamic library
 API in general.
 
 
+Initialization section
+~~~~~~~~~~~~~~~~~~~~~~
+
+An initialization section is created based on the initialization methods
+of the test library. For a Python library, if it has an  :code:`__init__` method
+that takes arguments in addition to :code:`self`, the documentation of that
+method is shown. For a Java library, if it has a constructor that accepts
+arguments, all its constructors and their javadocs are shown.
+
+.. sourcecode:: python
+
+   class TestLibrary:
+
+       def __init__(self, mode='default')
+           """Creates new TestLibrary. `mode` argument is used to determine mode."""
+           self.mode = mode
+
+       def some_keyword(self, arg):
+           if self.mode == 'secret':
+                # ...
+
+
 Resource files
 ~~~~~~~~~~~~~~
 
@@ -212,19 +234,15 @@ importantly, this syntax also automatically creates internal links to
 other keywords in the library. For example documentation of the
 following simple Python library would have link from :name:`Log
 Messages` to :name:`Log Message`, and :code:`\`message\`` and
-:code:`\`level\`` would be formatted specially. In addition, using 
-`introduction` or `library introduction` (case insensitive) will generate 
-a link to the 'Introduction' chapter.
-
+:code:`\`level\`` would be formatted specially.
 
 .. sourcecode:: python
 
    def log_message(message, level="INFO"):
        """Writes given message to log using specified log level.
 
-       `message` can be any object.
-
-       Valid values for `level` are "INFO" (default), "DEBUG" and "TRACE".
+       `message` can be any object. Valid values for `level` are "INFO" (default),
+       "DEBUG" and "TRACE".
        """
        print "*%s* %s" % (level, message)
 
@@ -237,6 +255,11 @@ a link to the 'Introduction' chapter.
        log_message(message1, level)
        log_message(message2, level)
 
+
+Additionally, using :code:`\`introduction\`` or :code:`\`library introduction\``
+(case insensitive) generates a link to the library introduction in the beginneing
+of the generated documentation. Similarly :code:`\`initialization\``
+or :code:`\`library initialization\`` generates a link to the `initialization section`_.
 
 Internal linking between keywords is used by all `standard
 libraries`_, so their documentation (and source) acts as a more
