@@ -24,22 +24,6 @@ from robot import utils
 class Telnet:
 
     """A test library providing Telnet connections and communicating with them.
-
-    This library takes the optional arguments `timeout`, `newline`,
-    `prompt` and `prompt_is_regexp`. These are default values used
-    when a new connection is opened with the keyword `Open Connection`,
-    and they can be overridden. The purpose of these parameters can be
-    found from the documentation of `Open Connection`.
-    
-    Examples (use only one of these):
-
-    | *Setting* | *Value* | *Value* | *Value* | *Value* | *Value* | *Comment* |
-    | Library | Telnet |     |    |     |    | # default values                |
-    | Library | Telnet | 0.5 |    |     |    | # set only timeout              |
-    | Library | Telnet |     | LF |     |    | # set only newline              |
-    | Library | Telnet | 2.0 | LF |     |    | # set timeout and newline       |
-    | Library | Telnet | 2.0 | CRLF | $ |    | # set also prompt               |
-    | Library | Telnet | 2.0 | LF | ($|~) | True | # set prompt with simple regexp |
     """
 
     ROBOT_LIBRARY_SCOPE = 'TEST_SUITE'
@@ -47,6 +31,23 @@ class Telnet:
 
     def __init__(self, timeout=3.0, newline='CRLF', 
                  prompt=None, prompt_is_regexp=False):
+        """This library takes the optional arguments `timeout`, `newline`,
+        `prompt` and `prompt_is_regexp`. These are default values used when a
+        new connection is opened with the keyword `Open Connection`, and they
+        can be overridden. They can also be set after opening the connection
+        using the `Set Timeout`, `Set Newline` and `Set Prompt` keywords. See
+        these keywords for more information.
+
+        Examples (use only one of these):
+
+        | *Setting* | *Value* | *Value* | *Value* | *Value* | *Value* | *Comment* |
+        | Library | Telnet |     |    |     |    | # default values                |
+        | Library | Telnet | 0.5 |    |     |    | # set only timeout              |
+        | Library | Telnet |     | LF |     |    | # set only newline              |
+        | Library | Telnet | 2.0 | LF |     |    | # set timeout and newline       |
+        | Library | Telnet | 2.0 | CRLF | $ |    | # set also prompt               |
+        | Library | Telnet | 2.0 | LF | ($|~) | True | # set prompt with simple regexp |
+        """
         self._timeout = timeout == '' and 3.0 or timeout
         self._newline = newline == '' and 'CRLF' or newline
         self._prompt = (prompt, prompt_is_regexp)
@@ -98,13 +99,10 @@ class Telnet:
         be used for switching between connections, similarly as the
         index. See `Switch Connection` for more details about that.
 
-        The `timeout`, `newline`, `prompt` and `prompt_is_regexp`
-        arguments got default values when the library is taken into
-        use, but setting them here overrides those values for the
-        opened connection. They can also be set after opening the
-        connection using the `Set Timeout`, `Set Newline` and `Set
-        Prompt` keywords. See these keywords for more information
-        about possible values for these arguments.
+        The `timeout`, `newline`, `prompt` and `prompt_is_regexp` arguments get
+        default values when the library is taken into use, but setting them
+        here overrides those values for this connection. See `library
+        initialization` for more information.
         """
         if timeout is None or timeout == '':
             timeout = self._timeout
