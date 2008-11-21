@@ -3,7 +3,9 @@ class regular:
 
     def __init__(self, arg1='hello', arg2='world'):
         """Constructs a new regular test library
-        
+
+        See `keyword`
+
         Examples:
         
         | regular | foo | bar |
