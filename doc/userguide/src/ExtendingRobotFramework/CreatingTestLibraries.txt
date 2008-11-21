@@ -611,9 +611,9 @@ keyword passed or not.
 Reporting keyword status
 ''''''''''''''''''''''''
 
-Reporting keyword status is done simply using exceptions. If a method
-raises an exception, the keyword status is FAIL, and if it returns
-normally, the status is PASS.
+Reporting keyword status is done simply using exceptions. If an executed
+method raises an exception, the keyword status is :msg:`FAIL`, and if it
+returns normally, the status is :msg:`PASS`.
 
 The error message shown in logs, reports and the console is created
 from the exception type and its message. With generic exceptions (for
@@ -626,8 +626,13 @@ exception message is as informative as possible.
 If the error message is longer than 20 lines, it will be automatically
 cut from the middle to prevent reports from getting too long and
 difficult to read. The full error message is always shown in the log
-message of the failed keyword, so it is not lost even if this happens.
+message of the failed keyword.
 
+The traceback of the exception is also logged using :msg:`DEBUG` `log level`_.
+These messages are not visible in log files by default because they are very
+rarely interesting for normal users. When developing libraries, it is often a
+good idea to run tests using :cli:`--loglevel DEBUG`. Notice that in Robot
+Framework 2.0.2 and earlier the log level for tracebacks was :msg:`INFO`.
 
 Logging information
 '''''''''''''''''''
@@ -1056,7 +1061,7 @@ keyword from a dynamic library is used in the test data, Robot
 Framework uses the library's :code:`run_keyword` method to get it
 executed. This method takes two arguments. The first argument is a
 string containing the name of the keyword to be executed in the same
-format as returned by :code:`get_keword_names`. The second argument is
+format as returned by :code:`get_keyword_names`. The second argument is
 a list of arguments (an object array in Java) given to the keyword in
 the test data.
 
