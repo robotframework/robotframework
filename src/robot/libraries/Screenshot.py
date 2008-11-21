@@ -29,15 +29,6 @@ class Screenshot:
  
     """This library supports taking full-screen screenshots of the desktop.
     
-    The library can be initialized with two arguments: `default_directory` and 
-    `log_file_directory`. If the `default_directory` is provided, all the 
-    screenshots will be saved under that directory by default. If the 
-    `default_directory` is not provided, the system temporary directory is used
-    as default.
-
-    `log_file_directory` is used to create relative paths when screenshots are 
-    logged. By default, absolute paths are used.
-    
     The library depends on standard Java APIs and thus requires a Jython
     runtime environment. The library does not, however, require any specific
     operating system. While the library has been tested on Windows and Linux,
@@ -48,6 +39,14 @@ class Screenshot:
     ROBOT_LIBRARY_VERSION = utils.get_version()
     
     def __init__(self, default_directory=None, log_file_directory=None):
+        """The library can be initialized with two arguments: `default_directory`
+        and `log_file_directory`. If the `default_directory` is provided, all the
+        screenshots will be saved under that directory by default. If the
+        `default_directory` is not provided, the system temporary directory is
+        used as default.
+
+        `log_file_directory` is used to create relative paths when screenshots are
+        logged. By default, absolute paths are used."""
         self.set_screenshot_directories(default_directory, log_file_directory)
     
     def set_screenshot_directories(self, default_directory=None, 
