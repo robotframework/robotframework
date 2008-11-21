@@ -57,9 +57,20 @@ documentation similarly as when choosing the test cases to be executed
 with Robot Framework. The test data is parsed similarly as when
 executing the tests, but the variables are not resolved. 
  
+.. note:: This tool requires Robot Framework 2.0.3 or newer to be installed.
 
 Examples::
 
     $ testdoc.py mytestcases.html
     $ testdoc.py --name smoke_test_plan --include smoke path/to/my_tests/
 
+
+Screenshot
+----------
+
+The figure below shows the test documentation created from Robot Framework
+`Quick Start Guide`__.
+
+__ http://code.google.com/p/robotframework/wiki/QuickStartGuide
+
+.. figure:: test_document.png
