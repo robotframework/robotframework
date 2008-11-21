@@ -81,7 +81,7 @@ class Keyword(BaseKeyword):
             msg, details = utils.get_error_details()
             output.fail(msg)
             if details:
-                output.info(details)
+                output.debug(details)
         raise ExecutionFailed(utils.cut_long_message(msg))
 
 
