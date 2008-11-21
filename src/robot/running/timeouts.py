@@ -75,8 +75,8 @@ class _Timeout:
             raise FrameworkError('Timeout is not active')
         timeout = self.time_left()
         if logger is not None:
-            logger.debug('%s timeout %s active. %s seconds left.' \
-                             % (self.type, self.string, timeout)) 
+            logger.debug('%s timeout %s active. %s seconds left.'
+                         % (self.type.capitalize(), self.string, round(timeout, 3)))
         notifier = Event()
         runner = Runner(runnable, args, kwargs, notifier)
         # Thread's name is important - it's used in utils.outputcapture
