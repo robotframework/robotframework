@@ -21,7 +21,7 @@ from levels import LEVELS, get_level
 
 class AbstractLogger:
     
-    def __init__(self, level): 
+    def __init__(self, level='INFO'):
         self.set_level(level)
         
     def set_level(self, level_string):
