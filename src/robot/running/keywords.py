@@ -59,13 +59,11 @@ class Keyword(BaseKeyword):
             self.status = 'FAIL'
         else:
             self.status = 'PASS'
-            err = None
         self.endtime = utils.get_timestamp()
-        self.elapsedmillis = utils.get_elapsed_millis(self.starttime,
-                                                      self.endtime)
+        self.elapsedmillis = utils.get_elapsed_millis(self.starttime, self.endtime)
         self.elapsedtime = utils.elapsed_millis_to_string(self.elapsedmillis)
         output.end_keyword(self)
-        if err is not None:
+        if self.status == 'FAIL':
             raise err
         return ret
     
@@ -82,7 +80,7 @@ class Keyword(BaseKeyword):
             output.fail(msg)
             if details:
                 output.debug(details)
-        raise ExecutionFailed(utils.cut_long_message(msg))
+            raise ExecutionFailed(utils.cut_long_message(msg))
 
 
 class SetKeyword(Keyword):
@@ -163,10 +161,10 @@ class SetKeyword(Keyword):
         varz = self.scalar_vars[:]
         if self.list_var is not None: 
             varz.append(self.list_var)
-        msg = "Cannot assign return value of keyword '%s' to variable%s %s: %s"
         name = self.name.split(' = ', 1)[1]
-        raise DataError(msg % (name, utils.plural_or_not(varz), 
-                               utils.seq2str(varz), err))
+        raise DataError("Cannot assign return value of keyword '%s' to "
+                        "variable%s %s: %s" % (name, utils.plural_or_not(varz),
+                                               utils.seq2str(varz), err))
 
 
 class RepeatKeyword(Keyword):
