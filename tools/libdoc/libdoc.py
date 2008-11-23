@@ -138,6 +138,8 @@ def LibraryDoc(libname):
     if  ext in ['.html', '.htm', '.xhtml', '.tsv']:
         return ResourceDoc(libname)
     if ext == '.java':
+        if not utils.is_jython:
+            exit(error='Documenting Java test libraries requires Jython.')
         return JavaLibraryDoc(libname)
     return PythonLibraryDoc(libname) 
 
@@ -182,8 +184,8 @@ class _DocHelper:
                 return '<a href="#%s" class="name">%s</a>' % (kw.name, name)
         if utils.eq_any(name, ['introduction', 'library introduction']):
             return '<a href="#introduction" class="name">%s</a>' % name
-        if utils.eq_any(name, ['initialization', 'library initialization']):
-            return '<a href="#initialization" class="name">%s</a>' % name
+        if utils.eq_any(name, ['importing', 'library importing']):
+            return '<a href="#importing" class="name">%s</a>' % name
         return '<span class="name">%s</span>' % name
 
 
@@ -448,7 +450,7 @@ DOCUMENT_TEMPLATE = '''<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional
 <p class='libdoc'>${LIB.htmldoc}</p>
 
 <!-- IF '${LIB.type}' != 'resource' -->
-<h2 id="initialization">Initialization</h2>
+<h2 id="importing">Importing</h2>
 <!-- END IF -->
 <!-- IF ${LIB.inits} -->
 <table class="keywords">

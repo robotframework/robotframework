@@ -181,11 +181,11 @@ information about how to create these methods and the dynamic library
 API in general.
 
 
-Initialization section
-~~~~~~~~~~~~~~~~~~~~~~
+Importing section
+~~~~~~~~~~~~~~~~~
 
-An initialization section is created based on the initialization methods
-of the test library. For a Python library, if it has an  :code:`__init__` method
+A separate section about how the library is imported is created based on its
+initialization methods. For a Python library, if it has an  :code:`__init__` method
 that takes arguments in addition to :code:`self`, the documentation of that
 method is shown. For a Java library, if it has a constructor that accepts
 arguments, all its constructors and their javadocs are shown.
@@ -258,8 +258,8 @@ Messages` to :name:`Log Message`, and :code:`\`message\`` and
 
 Additionally, using :code:`\`introduction\`` or :code:`\`library introduction\``
 (case insensitive) generates a link to the library introduction in the beginneing
-of the generated documentation. Similarly :code:`\`initialization\``
-or :code:`\`library initialization\`` generates a link to the `initialization section`_.
+of the generated documentation. Similarly :code:`\`importing\``
+or :code:`\`library importing\`` generates a link to the `importing section`_.
 
 Internal linking between keywords is used by all `standard
 libraries`_, so their documentation (and source) acts as a more
