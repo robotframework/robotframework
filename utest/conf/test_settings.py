@@ -1,19 +1,19 @@
 import unittest
 
-from robot.output.listeners import _Listener
+from robot.conf.settings import _BaseSettings
 from robot.utils.asserts import assert_equals
 
 
-class ListenerWrapper(_Listener):
+class SettingWrapper(_BaseSettings):
     
     def __init__(self):
         pass
 
 
-class TestNameAndArguments(unittest.TestCase):
+class TestSplitArgsFromName(unittest.TestCase):
     
     def setUp(self):
-        self.method = ListenerWrapper()._split_args
+        self.method = SettingWrapper()._split_args_from_name
         
     def test_with_no_args(self):
         assert_equals(self.method('name'), ('name', []))
