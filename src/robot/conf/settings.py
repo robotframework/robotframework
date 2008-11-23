@@ -125,13 +125,7 @@ class _BaseSettings:
         elif name == 'OutputDir':
             value = utils.normpath(value)
         elif name in ['SplitOutputs', 'SuiteStatLevel', 'MonitorWidth']:
-            try:
-                value = int(value)
-            except ValueError:
-                self._add_error("Option '--%s' expected integer value but got "
-                                "'%s'. Default value used instead."
-                                % (name.lower(), value))
-                value = self._cli_opts[name][1]
+            value = self._convert_to_integer(name, value)
         elif name in ['Listeners']:
             value = [ self._split_args_from_name(item) for item in value ]
         elif name == 'TagStatLink':
@@ -207,6 +201,14 @@ class _BaseSettings:
                 continue
             ret.append((tokens[0], ':'.join(tokens[1:-1]), tokens[-1]))
         return ret
+
+    def _convert_to_integer(self, name, value):
+        try:
+            return int(value)
+        except ValueError:
+            self._add_error("Option '--%s' expected integer value but got '%s'."
+                            " Default value used instead." % (name.lower(), value))
+            return self._cli_opts[name][1]
 
     def _split_args_from_name(self, name):
         if ':' not in name:
