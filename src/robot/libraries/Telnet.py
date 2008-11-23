@@ -29,14 +29,13 @@ class Telnet:
     ROBOT_LIBRARY_SCOPE = 'TEST_SUITE'
     ROBOT_LIBRARY_VERSION = utils.get_version()
 
-    def __init__(self, timeout=3.0, newline='CRLF', 
-                 prompt=None, prompt_is_regexp=False):
-        """This library takes the optional arguments `timeout`, `newline`,
-        `prompt` and `prompt_is_regexp`. These are default values used when a
-        new connection is opened with the keyword `Open Connection`, and they
-        can be overridden. They can also be set after opening the connection
-        using the `Set Timeout`, `Set Newline` and `Set Prompt` keywords. See
-        these keywords for more information.
+    def __init__(self, timeout=3.0, newline='CRLF', prompt=None, prompt_is_regexp=False):
+        """Telnet library can be imported with optional arguments.
+
+        Initialization parameters are used as default values when new
+        connections are opened with `Open Connection` keyword. They can also be
+        set after opening the connection using the `Set Timeout`, `Set Newline` and
+        `Set Prompt` keywords. See these keywords for more information.
 
         Examples (use only one of these):
 
@@ -101,8 +100,8 @@ class Telnet:
 
         The `timeout`, `newline`, `prompt` and `prompt_is_regexp` arguments get
         default values when the library is taken into use, but setting them
-        here overrides those values for this connection. See `library
-        initialization` for more information.
+        here overrides those values for this connection. See `importing` for
+        more information.
         """
         if timeout is None or timeout == '':
             timeout = self._timeout
@@ -183,7 +182,7 @@ class TelnetConnection(telnetlib.Telnet):
         """Sets the timeout used in read operations to the given value.
 
         `timeout` is given in Robot Framework's time format
-        (e.g. 1 minute 20 seconds).
+        (e.g. 1 minute 20 seconds) that is explained in the User Guide.
 
         Read operations that expect some output to appear (`Read
         Until`, `Read Until Regexp`, `Read Until Prompt`) use this

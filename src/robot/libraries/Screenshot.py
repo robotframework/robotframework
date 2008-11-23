@@ -39,27 +39,38 @@ class Screenshot:
     ROBOT_LIBRARY_VERSION = utils.get_version()
     
     def __init__(self, default_directory=None, log_file_directory=None):
-        """The library can be initialized with two arguments: `default_directory`
-        and `log_file_directory`. If the `default_directory` is provided, all the
-        screenshots will be saved under that directory by default. If the
-        `default_directory` is not provided, the system temporary directory is
-        used as default.
+        """Screenshot library can be imported with optional arguments.
 
-        `log_file_directory` is used to create relative paths when screenshots are
-        logged. By default, absolute paths are used."""
+        If the `default_directory` is provided, all the screenshots are saved
+        into that directory by default. Otherwise the default location is the
+        system temporary directory.
+
+        `log_file_directory` is used to create relative paths when screenshots
+        are logged. By default the paths to images in the log file are absolute.
+
+        Examples (use only one of these):
+
+        | *Setting* | *Value*  | *Value* | *Value* |
+        | Library | Screenshot |         |         |
+        | Library | Screenshot | ${CURDIR}/images | |
+        | Library | Screenshot | ${OUTPUTDIR} | ${OUTPUTDIR} |
+
+        It is also possible to set these directories using `Set Screenshot
+        Directories` keyword.
+        """
         self.set_screenshot_directories(default_directory, log_file_directory)
     
     def set_screenshot_directories(self, default_directory=None, 
-                                 log_file_directory=None):
+                                   log_file_directory=None):
         """Used to set `default_directory` and `log_file_directory`.
         
-        See the library documentation for details.
+        See the `library importing` for details.
         """
-        if default_directory is None:
+        if not default_directory:
             self._default_dir = tempfile.gettempdir()
         else:
             self._default_dir = os.path.normpath(default_directory.replace('/', os.sep))
-        if log_file_directory is None:
+        if not log_file_directory:
             self._log_file_dir = None
         else:
             self._log_file_dir = os.path.normpath(log_file_directory.replace('/', os.sep))
