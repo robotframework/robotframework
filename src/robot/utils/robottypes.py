@@ -23,7 +23,8 @@ from match import eq_any
 
 _LIST_TYPES = [ types.ListType, types.TupleType ]
 if os.name == 'java':
-    _LIST_TYPES.append(types.ArrayType)
+    import array
+    _LIST_TYPES.append(array.ArrayType)
 
 
 def is_list(item):
@@ -89,6 +90,8 @@ def to_list(item):
 
 _type_dict = dict([ (getattr(types,attr), attr) for attr in dir(types) 
                     if not attr.startswith('_') and attr != 'StringTypes' ])
+if os.name == 'java':
+    _type_dict[array.ArrayType] = 'ArrayType'
 
 _printable_type_mapping = { 
   'StringType'     : 'string',
