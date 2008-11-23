@@ -499,7 +499,7 @@ It is included in source distributions and can also be downloaded from
 <li><a class="reference internal" href="#python-libraries" id="id10">Python libraries</a></li>
 <li><a class="reference internal" href="#java-libraries" id="id11">Java libraries</a></li>
 <li><a class="reference internal" href="#dynamic-libraries" id="id12">Dynamic libraries</a></li>
-<li><a class="reference internal" href="#initialization-section" id="id13">Initialization section</a></li>
+<li><a class="reference internal" href="#importing-section" id="id13">Importing section</a></li>
 <li><a class="reference internal" href="#resource-files" id="id14">Resource files</a></li>
 <li><a class="reference internal" href="#documentation-formatting" id="id15">Documentation formatting</a></li>
 <li><a class="reference internal" href="#keyword-arguments" id="id16">Keyword arguments</a></li>
@@ -662,10 +662,10 @@ and <span class="code">getKeywordDocumentation</span>). See the <a class="refere
 information about how to create these methods and the dynamic library
 API in general.</p>
 </div>
-<div class="section" id="initialization-section">
-<h2><a class="toc-backref" href="#id13">Initialization section</a></h2>
-<p>An initialization section is created based on the initialization methods
-of the test library. For a Python library, if it has an  <span class="code">__init__</span> method
+<div class="section" id="importing-section">
+<h2><a class="toc-backref" href="#id13">Importing section</a></h2>
+<p>A separate section about how the library is imported is created based on its
+initialization methods. For a Python library, if it has an  <span class="code">__init__</span> method
 that takes arguments in addition to <span class="code">self</span>, the documentation of that
 method is shown. For a Java library, if it has a constructor that accepts
 arguments, all its constructors and their javadocs are shown.</p>
@@ -727,8 +727,8 @@ Messages</span> to <span class="name">Log Message</span>, and <span class="code"
 </pre></div>
 <p>Additionally, using <span class="code">`introduction`</span> or <span class="code">`library introduction`</span>
 (case insensitive) generates a link to the library introduction in the beginneing
-of the generated documentation. Similarly <span class="code">`initialization`</span>
-or <span class="code">`library initialization`</span> generates a link to the <a class="reference internal" href="#initialization-section">initialization section</a>.</p>
+of the generated documentation. Similarly <span class="code">`importing`</span>
+or <span class="code">`library importing`</span> generates a link to the <a class="reference internal" href="#importing-section">importing section</a>.</p>
 <p>Internal linking between keywords is used by all <a class="reference external" href="http://code.google.com/p/robotframework/wiki/TestLibraries">standard
 libraries</a>, so their documentation (and source) acts as a more
 realistic example.</p>
@@ -748,7 +748,7 @@ regardless where keywords originated from.</p>
 </div>
 <div class="footer">
 <hr class="footer" />
-Generated on: 2008-11-21 12:59 UTC.
+Generated on: 2008-11-23 20:37 UTC.
 
 </div>
 </body>
