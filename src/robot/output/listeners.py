@@ -21,13 +21,15 @@ from robot.errors import DataError
 
 class Listeners:
     
-    def __init__(self, names, syslog):
+    def __init__(self, listeners, syslog):
         self._listeners = []
-        for name in names:
+        for name, args in listeners:
             try:
-                self._listeners.append(_Listener(name, syslog))
+                self._listeners.append(_Listener(name, args, syslog))
             except:
                 message, details = utils.get_error_details()
+                if args:
+                    name += ':' + ':'.join(args)
                 syslog.error("Taking listener '%s' into use failed: %s"
                              % (name, message))
                 syslog.info("Details:\n%s" % details)
@@ -67,9 +69,8 @@ class Listeners:
     
 class _Listener:
     
-    def __init__(self, name, syslog):
+    def __init__(self, name, args, syslog):
         self._handlers = {}
-        name, args = self._split_args(name)
         listener, source = utils.import_(name, 'listener')
         if not isinstance(listener, types.ModuleType):
             listener = listener(*args)
@@ -83,15 +84,6 @@ class _Listener:
                      'close']:
             self._handlers[func] = _Handler(listener, name, func, syslog)
 
-    def _split_args(self, name):
-        if ':' not in name:
-            return name, []
-        args = name.split(':')
-        name = args.pop(0)
-        if len(name) == 1 and args[0] and args[0][0] in ['/', '\\']:
-            name = name + ':' + args.pop(0)
-        return name, args
-            
     def __getattr__(self, name):
         try:
             return self._handlers[name]

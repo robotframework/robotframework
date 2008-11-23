@@ -132,6 +132,8 @@ class _BaseSettings:
                                 "'%s'. Default value used instead."
                                 % (name.lower(), value))
                 value = self._cli_opts[name][1]
+        elif name in ['Listeners']:
+            value = [ self._split_args_from_name(item) for item in value ]
         elif name == 'TagStatLink':
             value = self._process_tag_stat_link(value)
         elif name == 'RemoveKeywords':
@@ -205,6 +207,15 @@ class _BaseSettings:
                 continue
             ret.append((tokens[0], ':'.join(tokens[1:-1]), tokens[-1]))
         return ret
+
+    def _split_args_from_name(self, name):
+        if ':' not in name:
+            return name, []
+        args = name.split(':')
+        name = args.pop(0)
+        if len(name) == 1 and args[0] and args[0][0] in ['/', '\\']:
+            name = name + ':' + args.pop(0)
+        return name, args
 
     def __str__(self):
         names = self._opts.keys()
