@@ -154,15 +154,12 @@ setting. Similarly to resource files, the path to the imported
 variable file is considered relative to the directory where the
 importing file is, and if not found, it is searched from the
 directories in PYTHONPATH. The path can also contain variables, and
-slashes are converted to backslashes on Windows.
+slashes are converted to backslashes on Windows. If an `argument file takes
+arguments`__, they are specified in the cells after the path and also they
+can contain variables.
 
 __ `Taking resource files into use`_
-
-The path to the variable file is given in the same way regardless of how
-the file is implemented. If the :code:`get_variables` function is used and
-it takes arguments, those arguments are specified in the cells after the
-path and also they can contain variables.
-
+__ `Getting variables from a special function`_
 
 .. table:: Importing a variable file
    :class: example
@@ -185,24 +182,26 @@ set from the command line override variables from variable files.
 Command line
 ````````````
 
-Another way of introducing variables is using the command line option
-:opt:`--variablefile`::
+Another way to take variable files into use is using the command line option
+:opt:`--variablefile`. Variable files are referenced using a path to them, and
+possible arguments are joined to the path with a colon (:opt:`:`)::
 
    --variablefile myvariables.py
    --variablefile path/variables.py
    --variablefile /absolute/path/common.py
+   --variablefile taking_arguments.py:arg1:arg2
 
 Variables in these files are globally available in all test data
 files, similarly as `individual variables`__ set with the
 :opt:`--variable` option. If both :opt:`--variablefile` and
 :opt:`--variable` options are used and there are variables with same
 names, those that are set individually with
-:opt:`--variable` option take precedence. There is currently no
-possibility to give arguments for variable files taken into use from
-the command line, but there is a `plan to add support for that in the future`__.
+:opt:`--variable` option take precedence.
 
 __ `Setting variables in command line`_
-__ http://code.google.com/p/robotframework/issues/detail?id=105
+
+.. note:: Giving arguments to variable files from the command line works only 
+          in Robot Framework 2.0.3 and newer.
 
 
 Creating variables directly
@@ -412,13 +411,16 @@ anything. The example below is identical to the first examples of
         return variables
 
 
-:code:`get_variables` can also take arguments. This feature facilitates
-changing which variables actually are created. Arguments to the function
-are set just as any other arguments for a Python function, and when
-importing the file, arguments are specified in cells after the
-path to the variable file. The dummy example below illustrates this
-principle. In a more realistic example, the argument could be a path
-to an external text file or database where to read variables from.
+:code:`get_variables` can also take arguments, which facilitates changing
+what variables actually are created. Arguments to the function are set just
+as any other arguments for a Python function. When `taking variable files
+into use`_ in the test data, arguments are specified in cells after the path
+to the variable file, and in the command line they are separated from the
+path with a colon.
+
+The dummy example below shows how to use arguments with variable files. In a
+more realistic example, the argument could be a path to an external text file
+or database where to read variables from.
 
 .. sourcecode:: python 
 

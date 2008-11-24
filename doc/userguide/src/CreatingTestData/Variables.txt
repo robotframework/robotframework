@@ -386,14 +386,16 @@ In the examples above, variables are set so that
   :code:`localhost:7272` and :code:`robot`
 - :var:`${ESCAPED}` gets the value :code:`"quotes and spaces"`
 
-`Variable files`_ are given from the command line using the syntax
-:cli:`--variablefile path/to/variables.py`. Which variables actually
-are created depends on which variables there are in the referenced
-variable file. If both variable files and individual variables are
-given from the command line, the latter override possible variables
-with the same name in the variable files. Additionally, if multiple
-variable files have same variables, the ones in the file specified
-first are taken into use.
+The basic syntax for taking `variable files`_ into use from the command line
+is :cli:`--variablefile path/to/variables.py`, and `Taking variable files into
+use`_ section has more details. What variables actually are created depends on
+what variables there are in the referenced variable file.
+
+If both variable files and individual variables are given from the command line,
+the latter have `higher priority`__. Additionally, if multiple variable files
+have same variables, the ones in the file specified first are taken into use.
+
+__ `Variable priorities and scopes`_
 
 
 Return values from keywords
