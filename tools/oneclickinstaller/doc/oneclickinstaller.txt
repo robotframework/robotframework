@@ -4,20 +4,20 @@
 Robot Framework One Click Installer
 ===================================
 
-An AutoIT__ script for installing Robot Framework and its preconditions
+An AutoIT_ script for installing `Robot Framework`_ and its preconditions
 on a Windows machine. It is included in source distributions and can also be 
 downloaded from 
 http://code.google.com/p/robotframework/wiki/OneClickInstaller.
 
-__ http://www.autoitscript.com/autoit3/
+
 
 Description
 -----------
 
 One Click Installer installs Robot Framework and its preconditions
-Python and Jython (optional). It also sets Robot Framework start-up
-scripts (pybot, jybot, rebot), as well as Python and Jython
-executables, into the %PATH% environment variable, so that they can be
+Python_ and Jython_ (optional). It also sets Robot Framework start-up
+scripts (pybot, jybot, rebot), as well as Python and Jython executables,
+into the :var:`%PATH%` environment variable, so that they can be
 executed from the command line. (Note that you need to restart the
 command prompt for these changes to take effect.) You should use this
 installer ONLY if you do not previously have Python or Jython
@@ -29,13 +29,12 @@ installers in the same directory with it and that they have expected
 names. If Robot Framework or Python installer is missing, the
 installation fails. If Jython installer does not exist, Jython is
 simply not installed. Note that in order to install Jython, Java
-version 1.4 or newer must be already installed. Supported versions are
-Robot Framework version 2.x, Python version 2.5.x and Jython version
-2.2.x, where ".x" means that any minor version (e.g. 2.5 or 2.5.2) is
-acceptable. If these installers are missing, they can be downloaded
-from the respective project web sites. The expected patterns for installer
-names are :path:`robotframework-2.*.exe` , :path:`python-2.5*.msi`, and
-:path:`jython_installer-2.2.*.jar`.
+version 1.4 or newer must be already installed. Mimimum supported versions
+are Robot Framework 2.0, Python 2.5 and Jython 2.1, but latest versions are
+always recommended. These installers can be downloaded from the respective
+project web sites. The expected patterns for installer names are
+:path:`robotframework-2.*.exe` , :path:`python-2.*.msi`, and
+:path:`jython_installer-2.*.jar`.
 
 All you need to specify is the base directory where to install Python and
 Jython. They are installed into the directories :path:`Python25` and
@@ -52,3 +51,7 @@ startup scripts can be found from :path:`[PYTHON]\\Scripts` and code from
 	directories such as :path:`C:\\` and :path:`C:\\APPS`.
 
 
+.. _AutoIT: http://www.autoitscript.com/autoit3/
+.. _`Robot Framework`: http://robotframework.org
+.. _Python: http://www.python.org
+.. _Jython: http://www.jython.org

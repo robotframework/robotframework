@@ -53,7 +53,7 @@ $USAGE = "One Click Installer installs Robot Framework and its preconditions Pyt
          "with it and that they have expected names. If Robot Framework or Python installer is missing, " & _
          "installation fails. If Jython installer does not exist, Jython is simply not installed. Note that " & _
          "in order to install Jython, Java 1.4 or newer must be already installed. Minimum supported versions " & _
-         "are Robot Framework 2.0, Python 2.5 and Jython 2.2, but newer versiosn are always recommened. These " & _
+         "are Robot Framework 2.0, Python 2.5 and Jython 2.2, but latest versions are always recommened. These " & _
          "installers can be downloaded from respective project websites. Expected patterns for installer names are '" & _
          $ROBOT_PATTERN & "', '" & $PYTHON_PATTERN & "' and '" & $JYTHON_PATTERN & "'." & @CRLF & @CRLF & _
          "The only thing you need to specify is the base directory where to install Python and Jython. " & _
