@@ -377,10 +377,10 @@ class TestDynamicLibrary(unittest.TestCase):
         lib = TestLibrary('classes.ArgDocDynamicLibrary')
         assert_equals(lib.handlers['No Arg'].doc, 'Keyword documentation for No Arg')
         
-    def test_handler_is_not_created_if_get_keyword_doc_fails(self):
+    def test_handler_is_created_if_get_keyword_doc_fails(self):
         for reason in ['Attribute', 'Signature']: 
             lib = TestLibrary('classes.Invalid%sArgDocDynamicLibrary' % reason)
-            assert_equals(len(lib.handlers), 0)
+            assert_equals(len(lib.handlers), 4)
         
     def test_get_keyword_arguments_is_used_if_present(self):
         lib = TestLibrary('classes.ArgDocDynamicLibrary')
