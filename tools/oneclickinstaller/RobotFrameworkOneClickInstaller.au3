@@ -46,17 +46,16 @@ $USAGE = "One Click Installer installs Robot Framework and its preconditions Pyt
          "It also sets Robot Framework start-up scripts (pybot, jybot, rebot) as well as Python and Jython executables " & _
          "into %PATH% environment variable so that they can be executed from the command line. (Note that " & _
          "you need to restart the command prompt for these changes to take effect.)" & @CRLF & @CRLF & _
-         "You should use this installer ONLY if you don't previously have Python or Jython installed. " & _
+         "You should use this installer ONLY if you do not previously have Python or Jython installed. " & _
          "In that case, and also if you want to have a custom installation, you need to install needed " & _
          "components separately." & @CRLF & @CRLF & _
          "One Click Installer requires that you have all the required component installers in the same directory " & _
          "with it and that they have expected names. If Robot Framework or Python installer is missing, " & _
-         "installation fails. If Jython installer doesn't exist, Jython is simply not installed. Note that " & _
-         "in order to install Jython, Java 1.4 or newer must be already installed. Supported " & _
-         "versions are Robot Framework 2.x, Python 2.5.x and Jython 2.2.x where '.x' means that any minor version " & _
-         "(e.g. 2.5 or 2.5.2) is OK. These installers can be downloaded from respective project websites if " & _
-         "they are missing. Expected patterns for installer names are '" & $ROBOT_PATTERN & "', '" & _
-         $PYTHON_PATTERN & "' and '" & $JYTHON_PATTERN & "'." & @CRLF & @CRLF & _
+         "installation fails. If Jython installer does not exist, Jython is simply not installed. Note that " & _
+         "in order to install Jython, Java 1.4 or newer must be already installed. Minimum supported versions " & _
+         "are Robot Framework 2.0, Python 2.5 and Jython 2.2, but newer versiosn are always recommened. These " & _
+         "installers can be downloaded from respective project websites. Expected patterns for installer names are '" & _
+         $ROBOT_PATTERN & "', '" & $PYTHON_PATTERN & "' and '" & $JYTHON_PATTERN & "'." & @CRLF & @CRLF & _
          "The only thing you need to specify is the base directory where to install Python and Jython. " & _
          "They are installed into directories '" & $PYTHON_DIR_NAME & "' and '" & $JYTHON_DIR_NAME & "', " & _
          "respectively, inside the given base directory. Robot Framework itself is installed under Python " & _
