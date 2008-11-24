@@ -12,21 +12,19 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-
 from StringIO import StringIO
 try:
     import xml.etree.cElementTree as ET
 except ImportError:
-    try: 
-        import xml.etree.ElementTree as ET 
+    try:
+        import cElementTree as ET
     except ImportError:
         try:
-            import cElementTree as ET
+            import xml.etree.ElementTree as ET
         except ImportError:
             import elementtree.ElementTree as ET
 
 from abstractdomwrapper import AbstractDomWrapper
-
 
 
 class DomWrapper(AbstractDomWrapper):
@@ -43,13 +41,13 @@ class DomWrapper(AbstractDomWrapper):
         internally. 'path' may actually also be an already opened file object
         (or anything accepted by ElementTree.parse).
         """
-        # This should not be changed to if node:. See chapter Truth Testing
+        AbstractDomWrapper.__init__(self, path)
+        # This should NOT be changed to 'if node:'. See chapter Truth Testing
         # from http://effbot.org/zone/element.htm#the-element-type 
         if node is None: 
             node = ET.parse(path or StringIO(string)).getroot()
-        AbstractDomWrapper.__init__(self, path)
         self.name = node.tag
         self.attrs = dict(node.items())
-        self.text = node.text or self.text
+        self.text = node.text or ''
         for child in list(node):
-            self.children.append(DomWrapper(node=child))
+            self.children.append(DomWrapper(path, node=child))
