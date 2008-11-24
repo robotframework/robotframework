@@ -68,16 +68,16 @@ th {
 </tr>
 </thead>
 <tbody>
-<tr><td>Documentation</td><td>How variables from CLI override other variables is tested in variable_priorities.html</td><td></td><td></td><td></td></tr><tr>
-<td>Force Tags</td>
-<td>pybot</td>
-<td>jybot</td>
-<td>regression</td>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
 <td></td>
 </tr>
-<tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Resource</td><td>../../resources/resource.html</td><td></td><td></td><td></td></tr><tr>
-<td>Suite Setup</td>
-<td>Run Test Data</td>
+<tr>
+<td></td>
+<td></td>
 <td></td>
 <td></td>
 <td></td>
@@ -96,8 +96,14 @@ th {
 </tr>
 </thead>
 <tbody>
-
-<tr><td></td><td><br></td><td></td><td></td><td></td></tr><tr>
+<tr>
+<td>${EXPECTED LIST}</td>
+<td>List</td>
+<td>variable</td>
+<td>value</td>
+<td></td>
+</tr>
+<tr>
 <td></td>
 <td></td>
 <td></td>
@@ -115,13 +121,29 @@ th {
 <th>Argument</th>
 <th>Argument</th>
 <th>Argument</th>
-<th>Argument</th>
-<th>Argument</th>
+
+
 </tr>
 </thead>
 <tbody>
-<tr><td>Normal Text</td><td>Check Test Case</td><td>Normal Text</td><td></td><td></td><td></td><td></td></tr><tr><td>Escaped Text</td><td>Check Test Case</td><td>Escaped Text</td><td></td><td></td><td></td><td></td></tr><tr><td>No Colon In Variable</td><td>Check Test Case</td><td>No Colon In Variable</td><td></td><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr>
+<td>Normal Text&nbsp;</td>
+<td>Should Be Equal</td>
+<td>${NORMAL TEXT}</td>
+<td>Hello</td>
+<td></td>
 
+
+</tr>
+<tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Escaped Text</td><td>Should Be Equal</td><td>${ESCAPED}</td><td>"I'll take&nbsp;spam &amp;&nbsp;eggs!!"</td><td></td></tr><tr><td></td><td>Should Be Equal</td><td>${ESCAPED 2}</td><td>\${notvar}</td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr>
+<td>No Colon In Variable</td>
+<td>Should Be Equal</td>
+<td>${NO COLON}</td>
+<td>${EMPTY}</td>
+<td></td>
+
+
+</tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Variables From Variable File</td><td>Should Be Equal</td><td>${SCALAR}</td><td>Scalar from variable file from CLI</td><td></td></tr><tr><td></td><td>Should Be Equal</td><td>${SCALAR&nbsp;WITH ESCAPES}</td><td>1 \\ 2\\\\ \${inv}</td><td></td></tr><tr><td></td><td>Should Be Equal</td><td>${SCALAR LIST}</td><td>${EXPECTED LIST}</td><td></td></tr><tr><td></td><td>Should Be True</td><td>@{LIST} == ${EXPECTED LIST}</td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Variables From Variable File Using 'get_variables'</td><td>Should Be Equal</td><td>${ANOTHER SCALAR}</td><td>Variable from CLI var file with get_variables</td><td></td></tr><tr><td></td><td>Should Be True</td><td>@{ANOTHER LIST} == ['List variable from CLI var file', 'with get_variables']&nbsp;</td><td></td><td></td></tr>
 </tbody>
 </table>
 <table border="1">
@@ -136,12 +158,18 @@ th {
 </tr>
 </thead>
 <tbody>
-
-<tr><td>Run Test Data</td><td>${escaped} =</td><td>Set Variable</td><td>QUOTIAPOSll take spam AMP eggsEXCLAMEXCLAMQUOT</td><td># "I'll take&nbsp;spam &amp;&nbsp;eggs!!"</td></tr><tr><td></td><td>${escaped2} =</td><td>Set Variable</td><td>DOLLARCURLY1notvarCURLY2</td><td># \${notvar}</td></tr><tr><td></td><td>${options} =</td><td>Catenate</td><td>--variable NORMAL_TEXT:Hello</td><td>--variable no_colon</td></tr><tr><td></td><td>...</td><td>-v ESCAPED:${escaped<br>.replace(' ', 'SPACE')}</td><td>--variable eScApEd2:${escaped2}</td><td></td></tr><tr><td></td><td>...</td><td>-E quot:QUOT<br></td><td>-E apos:APOS</td><td>-E dollar:DOLLAR</td></tr><tr><td></td><td>...</td><td>-E amp:AMP</td><td>-E space:SPACE</td><td>-E exclam:EXCLAM</td></tr><tr><td></td><td>...</td><td>-E curly1:CURLY1</td><td>-E curly2:CURLY2</td><td></td></tr><tr>
+<tr>
 <td></td>
-<td>Run Tests</td>
-<td>${options}</td>
-<td>variables${/}commandline_variables.html</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
 <td></td>
 </tr>
 </tbody>

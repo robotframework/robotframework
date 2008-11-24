@@ -120,8 +120,24 @@ th {
 </tr>
 </thead>
 <tbody>
-<tr><td>Normal Text</td><td>Check Test Case</td><td>Normal Text</td><td></td><td></td><td></td><td></td></tr><tr><td>Escaped Text</td><td>Check Test Case</td><td>Escaped Text</td><td></td><td></td><td></td><td></td></tr><tr><td>No Colon In Variable</td><td>Check Test Case</td><td>No Colon In Variable</td><td></td><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-
+<tr>
+<td>Variables From Variable File</td>
+<td>Check Test Case</td>
+<td>Variables From Variable File</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Variables From Variable File Using 'get_variables'</td>
+<td>Check Test Case</td>
+<td>Variables From Variable File Using 'get_variables'</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
 </tbody>
 </table>
 <table border="1">
@@ -137,11 +153,13 @@ th {
 </thead>
 <tbody>
 
-<tr><td>Run Test Data</td><td>${escaped} =</td><td>Set Variable</td><td>QUOTIAPOSll take spam AMP eggsEXCLAMEXCLAMQUOT</td><td># "I'll take&nbsp;spam &amp;&nbsp;eggs!!"</td></tr><tr><td></td><td>${escaped2} =</td><td>Set Variable</td><td>DOLLARCURLY1notvarCURLY2</td><td># \${notvar}</td></tr><tr><td></td><td>${options} =</td><td>Catenate</td><td>--variable NORMAL_TEXT:Hello</td><td>--variable no_colon</td></tr><tr><td></td><td>...</td><td>-v ESCAPED:${escaped<br>.replace(' ', 'SPACE')}</td><td>--variable eScApEd2:${escaped2}</td><td></td></tr><tr><td></td><td>...</td><td>-E quot:QUOT<br></td><td>-E apos:APOS</td><td>-E dollar:DOLLAR</td></tr><tr><td></td><td>...</td><td>-E amp:AMP</td><td>-E space:SPACE</td><td>-E exclam:EXCLAM</td></tr><tr><td></td><td>...</td><td>-E curly1:CURLY1</td><td>-E curly2:CURLY2</td><td></td></tr><tr>
+<tr><td>Run Test Data</td><td align="undefined" valign="undefined">${vardir} =</td><td align="undefined" valign="undefined">Join&nbsp;Path</td><td align="undefined" valign="undefined">
+${CURDIR}${/}..${/}..${/}testdata</td><td align="undefined" valign="undefined">
+variables${/}resvarfiles</td></tr><tr><td></td><td align="undefined" valign="undefined">${varfile} =&nbsp;</td><td align="undefined" valign="undefined">Join&nbsp;Path</td><td align="undefined" valign="undefined">${vardir}</td><td align="undefined" valign="undefined">cli_vars.py</td></tr><tr><td></td><td align="undefined" valign="undefined">${varfile2} =&nbsp;</td><td align="undefined" valign="undefined">Join&nbsp;Path</td><td align="undefined" valign="undefined">${vardir}</td><td align="undefined" valign="undefined">cli_vars_2.py</td></tr><tr>
 <td></td>
 <td>Run Tests</td>
-<td>${options}</td>
-<td>variables${/}commandline_variables.html</td>
+<td>--variablefile ${varfile}<br>-V ${varfile2}</td>
+<td>variables${/}commandline_variable_files.html</td>
 <td></td>
 </tr>
 </tbody>
