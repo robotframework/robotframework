@@ -38,13 +38,15 @@ class DomWrapper(AbstractDomWrapper):
             node = self._get_root(path, string)
         self.name = node.tagName
         self.attrs = dict(node.attributes.items())
+        text = []
         for child in node.childNodes:
             if child.nodeType == child.ELEMENT_NODE:
                 self.children.append(DomWrapper(path, node=child))
             elif child.nodeType == child.TEXT_NODE:
-                self.text += child.data
+                text.append(child.data)
             elif child.nodeType != child.COMMENT_NODE:
                 raise TypeError("Unsupported node type: %s" % child.nodeType)
+        self.text = ''.join(text)
 
     def _get_dom(self, path, string):
         if path is not None:
