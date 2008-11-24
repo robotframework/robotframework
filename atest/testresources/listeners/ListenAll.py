@@ -4,9 +4,11 @@ import tempfile
 
 class ListenAll:
     
-    def __init__(self, path=None):
+    def __init__(self, *path):
         if not path:
             path = os.path.join(tempfile.gettempdir(), 'listen_all.txt')
+        else:
+            path = ':'.join(path)
         self.outfile = open(path, 'w')
         
     def start_suite(self, name, doc):
