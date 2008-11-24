@@ -34,11 +34,11 @@
 ;;
 
 ; Expected patterns for installer names and target directory names.
-$PYTHON_DIR_NAME = "Python25"
-$JYTHON_DIR_NAME = "Jython22"
-$PYTHON_PATTERN = "python-2.5*.msi"
+$PYTHON_DIR_NAME = "Python"
+$JYTHON_DIR_NAME = "Jython"
+$PYTHON_PATTERN = "python-2.*.msi"
 $ROBOT_PATTERN = "robotframework-2.*.exe"
-$JYTHON_PATTERN = "jython_installer-2.2*.jar"
+$JYTHON_PATTERN = "jython_installer-2.*.jar"
 
 ; Usage to show to the user. If major versions of installed software are changed update them also here!!
 ; Patterns and directory names above are used in the usage so that they don't need to be updated.
