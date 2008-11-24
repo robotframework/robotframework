@@ -33,9 +33,9 @@ class DomWrapper(AbstractDomWrapper):
         internally. 'path' may actually also be an already opened file object
         (or anything accepted by minidom.parse).
         """
+        AbstractDomWrapper.__init__(self, path)
         if node is None:
             node = self._get_root(path, string)
-        AbstractDomWrapper.__init__(self, node, path)
         self.name = node.tagName
         self.attrs = dict(node.attributes.items())
         for child in node.childNodes:

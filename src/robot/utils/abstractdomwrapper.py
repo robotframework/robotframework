@@ -20,10 +20,10 @@ class AbstractDomWrapper:
     
     """Base class for pydomwrapper.DomWrapper and jydomwrapper.DomWrapper"""
     
-    def __init__(self, node, path):
+    def __init__(self, path):
         """Public attributes. These must be set by extending classes."""
         self.source = path
-        self.name = node.tagName
+        self.name = ''
         self.attrs = {}
         self.text = ''
         self.children = []

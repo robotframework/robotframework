@@ -33,9 +33,9 @@ class DomWrapper(AbstractDomWrapper):
         Alternative initialization by giving dom 'node' ment to be used only
         internallly.
         """
+        AbstractDomWrapper.__init__(self, path)
         if node is None:
             node = self._get_root(path, string)
-        AbstractDomWrapper.__init__(self, node, path)
         self.name = node.tagName
         for item in self._create_list(node.attributes):
             self.attrs[item.name] = item.value
