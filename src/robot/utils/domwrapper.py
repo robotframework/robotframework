@@ -13,9 +13,13 @@
 #  limitations under the License.
 
 
-import os
+import sys
 
-if os.name == 'java':
-    from jydomwrapper import DomWrapper
+try:
+    from etreedomwrapper import DomWrapper
+except ImportError:
+    pass
+if sys.platform.startswith('java'):
+    from javadomwrapper import DomWrapper
 else:
-    from pydomwrapper import DomWrapper
+    from minidomwrapper import DomWrapper
