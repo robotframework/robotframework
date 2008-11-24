@@ -126,7 +126,7 @@ class _BaseSettings:
             value = utils.normpath(value)
         elif name in ['SplitOutputs', 'SuiteStatLevel', 'MonitorWidth']:
             value = self._convert_to_integer(name, value)
-        elif name in ['Listeners']:
+        elif name in ['Listeners', 'VariableFiles']:
             value = [ self._split_args_from_name(item) for item in value ]
         elif name == 'TagStatLink':
             value = self._process_tag_stat_link(value)

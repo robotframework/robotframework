@@ -47,8 +47,13 @@ def init_global_variables(settings, syslog):
         GLOBAL_VARIABLES[name] = value
 
 def _set_cli_vars(settings, syslog):
-    for varfile in settings['VariableFiles']:
-        GLOBAL_VARIABLES.set_from_file(varfile, [], syslog)
+    for path, args in settings['VariableFiles']:
+        try:
+            GLOBAL_VARIABLES.set_from_file(path, args, syslog)
+        except:
+            msg, details = utils.get_error_details()
+            syslog.error(msg)
+            syslog.info(details)
     for varstr in settings['Variables']:
         try:
             name, value = varstr.split(':', 1)
