@@ -36,6 +36,7 @@ class TestMiscUtils(unittest.TestCase):
                 ( '/tmp', '/x/y/z/bar.txt', '../x/y/z/bar.txt' ),
                 ( '/', '/x/bar.txt', 'x/bar.txt' ) ]
         else:
+            assert os.path.isdir('c:\\temp\\'), "This test requires c:\\temp to exist"
             inputs = [
                 ( 'c:\\temp\\', 'c:\\temp\\bar.txt', 'bar.txt' ),
                 ( 'c:\\temp', 'c:\\temp\\x\\bar.txt', 'x/bar.txt' ),
