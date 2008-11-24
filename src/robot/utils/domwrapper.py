@@ -18,8 +18,7 @@ import sys
 try:
     from etreedomwrapper import DomWrapper
 except ImportError:
-    pass
-if sys.platform.startswith('java'):
-    from javadomwrapper import DomWrapper
-else:
-    from minidomwrapper import DomWrapper
+    if sys.platform.startswith('java'):
+        from javadomwrapper import DomWrapper
+    else:
+        from minidomwrapper import DomWrapper
