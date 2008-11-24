@@ -115,8 +115,8 @@ th {
 <th>Argument</th>
 <th>Argument</th>
 <th>Argument</th>
-<th>Argument</th>
-<th>Argument</th>
+
+
 </tr>
 </thead>
 <tbody>
@@ -126,18 +126,18 @@ th {
 <td>Variables From Variable File</td>
 <td></td>
 <td></td>
-<td></td>
-<td></td>
+
+
 </tr>
 <tr>
-<td>Variables From Variable File Using 'get_variables'</td>
+<td>Arguments To Variable Files</td>
 <td>Check Test Case</td>
-<td>Variables From Variable File Using 'get_variables'</td>
+<td>Arguments To Variable Files</td>
 <td></td>
 <td></td>
-<td></td>
-<td></td>
-</tr>
+
+
+</tr><tr><td>Non-Existing Variable File</td><td>Check Stderr Contains</td><td>[ ERROR ]&nbsp;</td><td> Processing variable file 'non_existing.py' failed:</td><td>Importing 'non_existing.py' failed: File does not exist</td></tr><tr><td>Too Few Arguments To Variable File</td><td>Check Stderr Contains</td><td>[ ERROR ]&nbsp;</td><td>Processing variable file '${VARFILE2}' failed:&nbsp;</td><td>TypeError: get_variables()&nbsp;</td></tr><tr><td>Too Many Arguments To Variable File</td><td>Check Stderr Contains</td><td>[ ERROR ]&nbsp;</td><td>Processing variable file '${VARFILE2}' with arguments [ too | many | args ] failed:</td><td> TypeError: get_variables()&nbsp;<br></td></tr><tr><td>Invalid Variable File</td><td>Check Stderr Contains</td><td>[ ERROR ]&nbsp;</td><td>Processing variable file '${VARFILE2}' with arguments [ FAIL ] failed:</td><td>ZeroDivisionError:</td></tr>
 </tbody>
 </table>
 <table border="1">
@@ -155,13 +155,13 @@ th {
 
 <tr><td>Run Test Data</td><td align="undefined" valign="undefined">${vardir} =</td><td align="undefined" valign="undefined">Join&nbsp;Path</td><td align="undefined" valign="undefined">
 ${CURDIR}${/}..${/}..${/}testdata</td><td align="undefined" valign="undefined">
-variables${/}resvarfiles</td></tr><tr><td></td><td align="undefined" valign="undefined">${varfile} =&nbsp;</td><td align="undefined" valign="undefined">Join&nbsp;Path</td><td align="undefined" valign="undefined">${vardir}</td><td align="undefined" valign="undefined">cli_vars.py</td></tr><tr><td></td><td align="undefined" valign="undefined">${varfile2} =&nbsp;</td><td align="undefined" valign="undefined">Join&nbsp;Path</td><td align="undefined" valign="undefined">${vardir}</td><td align="undefined" valign="undefined">cli_vars_2.py</td></tr><tr>
+variables${/}resvarfiles</td></tr><tr><td></td><td align="undefined" valign="undefined">${varfile} =&nbsp;</td><td align="undefined" valign="undefined">Join&nbsp;Path</td><td align="undefined" valign="undefined">${vardir}</td><td align="undefined" valign="undefined">cli_vars.py</td></tr><tr><td></td><td align="undefined" valign="undefined">${varfile2} =&nbsp;</td><td align="undefined" valign="undefined">Join&nbsp;Path</td><td align="undefined" valign="undefined">${vardir}</td><td align="undefined" valign="undefined">cli_vars_2.py</td></tr><tr><td></td><td align="undefined" valign="undefined">${varfile3} =&nbsp;</td><td align="undefined" valign="undefined">Join&nbsp;Path</td><td align="undefined" valign="undefined">${vardir}</td><td>cli_vars_invalid.py</td></tr><tr>
 <td></td>
 <td>Run Tests</td>
-<td>--variablefile ${varfile}<br>-V ${varfile2}</td>
+<td>--variablefile ${varfile}<br>-V ${varfile2}:arg<br>-V ${varfile2}:arg2:given<br>--variablefile non_existing.py<br>--variablefile ${varfile2}<br>-V ${varfile2}:too:many:args<br>-V ${varfile2}:FAIL</td>
 <td>variables${/}commandline_variable_files.html</td>
 <td></td>
-</tr>
+</tr><tr><td></td><td>Set Suite Variable</td><td>$VARFILE2</td><td></td><td></td></tr>
 </tbody>
 </table>
 </body></html>
