@@ -1,10 +1,8 @@
-import sys, unittest, StringIO
+import sys
+import unittest
+import StringIO
 
-if __name__ == "__main__":
-    sys.path.insert(0, "../../../src")
-
-from robot.utils.asserts import *
-
+from robot.utils.asserts import assert_equals, assert_raises
 from robot.utils import DomWrapper
 
 
