@@ -40,8 +40,12 @@ class BaseHandler:
             exptxt = "%d to %d arguments" % (self.minargs, self.maxargs)
         else:
             exptxt = "at least %d argument%s" % (self.minargs, minend)
-        raise DataError("Keyword '%s' expected %s, got %d." 
-                        % (self.longname, exptxt, len(args)))
+        raise DataError("%s expected %s, got %d."
+                        % (self._get_type_and_name(), exptxt, len(args)))
+
+    def _get_type_and_name(self):
+        # Overridden by InitHandlers
+        return "Keyword '%s'" % self.longname
 
     def _tracelog_args(self, logger, args):
         argstr = ' | '.join([utils.unic(a) for a in args ])

@@ -322,47 +322,27 @@ class DynamicHandler(_RunnableHandler):
         return handler
 
 
-class InitHandler(PythonHandler):
+class _BaseInitHandler:
 
-    def __init__(self, library, handler_method):
+    def __init__(self, baseclass, library, handler_method):
         if handler_method is None:
             self.library = library
             self.minargs = 0
             self.maxargs = 0
         else:
-            PythonHandler.__init__(self, library, '__init__', handler_method)
+            baseclass.__init__(self, library, '__init__', handler_method)
 
-    def _raise_inv_args(self, args):
-        minend = utils.plural_or_not(self.minargs)
-        if self.minargs == self.maxargs:
-            exptxt = "%d argument%s" % (self.minargs, minend)
-        elif self.maxargs != sys.maxint:
-            exptxt = "%d to %d arguments" % (self.minargs, self.maxargs)
-        else:
-            exptxt = "at least %d argument%s" % (self.minargs, minend)
-        raise DataError("Test Library '%s' expected %s, got %d."
-                        % (self.library.name, exptxt, len(args)))
+    def _get_type_and_name(self):
+        return "Test Library '%s'" % self.library.name
 
 
-class JavaInitHandler(JavaHandler):
+class InitHandler(_BaseInitHandler, PythonHandler):
 
     def __init__(self, library, handler_method):
-        if handler_method is None:
-            self.library = library
-            self.minargs = 0
-            self.maxargs = 0
-        else:
-            JavaHandler.__init__(self, library, '__init__', handler_method)
-
-    def _raise_inv_args(self, args):
-        minend = utils.plural_or_not(self.minargs)
-        if self.minargs == self.maxargs:
-            exptxt = "%d argument%s" % (self.minargs, minend)
-        elif self.maxargs != sys.maxint:
-            exptxt = "%d to %d arguments" % (self.minargs, self.maxargs)
-        else:
-            exptxt = "at least %d argument%s" % (self.minargs, minend)
-        raise DataError("Test Library '%s' expected %s, got %d."
-                        % (self.library.name, exptxt, len(args)))
+        _BaseInitHandler.__init__(self, PythonHandler, library, handler_method)
 
 
+class JavaInitHandler(_BaseInitHandler, JavaHandler):
+
+    def __init__(self, library, handler_method):
+        _BaseInitHandler.__init__(self, JavaHandler, library, handler_method)
