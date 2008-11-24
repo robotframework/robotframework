@@ -17,7 +17,7 @@ import sys
 from types import MethodType, FunctionType
 
 from robot import utils
-from robot.errors import FrameworkError
+from robot.errors import DataError, FrameworkError
 from robot.common import BaseHandler
 from runkwregister import RUN_KW_REGISTER
 
@@ -155,7 +155,7 @@ class PythonHandler(_RunnableHandler):
             func = handler
             first_arg = 0
         elif self._is_new_style_init_method(handler):
-            return [], [], '<unknown>'
+            return [], [], None
         else:
             raise FrameworkError("Only MethodType and FunctionType accepted. "
                                  "Got '%s' instead." % type(handler))
@@ -173,7 +173,8 @@ class PythonHandler(_RunnableHandler):
 
     def _is_new_style_init_method(self, handler):
         return '__init__' in str(handler) and str(type(handler)) in \
-            ["<type 'method-wrapper'>", "<type 'builtin_function_or_method'>"]
+            ["<type 'wrapper_descriptor'>", "<type 'builtin_function_or_method'>",
+            "<type 'methoddescr'>"]
             
 
 class JavaHandler(_RunnableHandler):
@@ -191,7 +192,10 @@ class JavaHandler(_RunnableHandler):
         # Ignore methods only in 'java.lang.Object' (e.g. 'equals', 'wait').
         # Also ignore methods declared only in 'org.python.proxies' (there 
         # seems to be 'clone' and 'finalize').
-        co = handler.im_func
+        if 'reflectedconstructor' in str(type(handler)):
+            co = handler
+        else:
+            co = handler.im_func
         # signature is an instance of org.python.ReflectedArgs
         for signature in co.argslist[:co.nargs]:
             # 'getName' may raise an exception -- not sure why but that happens
@@ -208,7 +212,10 @@ class JavaHandler(_RunnableHandler):
         return False
     
     def _get_arg_limits(self, handler):
-        co = handler.im_func
+        if 'reflectedconstructor' in str(type(handler)):
+            co = handler
+        else:
+            co = handler.im_func
         signatures = co.argslist[:co.nargs]
         if len(signatures) == 1:
             return self._get_single_sig_arg_limits(signatures[0])
@@ -313,3 +320,49 @@ class DynamicHandler(_RunnableHandler):
         self._copy_attributes(handler)
         handler._run_keyword_method_name = self._run_keyword_method_name
         return handler
+
+
+class InitHandler(PythonHandler):
+
+    def __init__(self, library, handler_method):
+        if handler_method is None:
+            self.library = library
+            self.minargs = 0
+            self.maxargs = 0
+        else:
+            PythonHandler.__init__(self, library, '__init__', handler_method)
+
+    def _raise_inv_args(self, args):
+        minend = utils.plural_or_not(self.minargs)
+        if self.minargs == self.maxargs:
+            exptxt = "%d argument%s" % (self.minargs, minend)
+        elif self.maxargs != sys.maxint:
+            exptxt = "%d to %d arguments" % (self.minargs, self.maxargs)
+        else:
+            exptxt = "at least %d argument%s" % (self.minargs, minend)
+        raise DataError("Test Library '%s' expected %s, got %d."
+                        % (self.library.name, exptxt, len(args)))
+
+
+class JavaInitHandler(JavaHandler):
+
+    def __init__(self, library, handler_method):
+        if handler_method is None:
+            self.library = library
+            self.minargs = 0
+            self.maxargs = 0
+        else:
+            JavaHandler.__init__(self, library, '__init__', handler_method)
+
+    def _raise_inv_args(self, args):
+        minend = utils.plural_or_not(self.minargs)
+        if self.minargs == self.maxargs:
+            exptxt = "%d argument%s" % (self.minargs, minend)
+        elif self.maxargs != sys.maxint:
+            exptxt = "%d to %d arguments" % (self.minargs, self.maxargs)
+        else:
+            exptxt = "at least %d argument%s" % (self.minargs, minend)
+        raise DataError("Test Library '%s' expected %s, got %d."
+                        % (self.library.name, exptxt, len(args)))
+
+
