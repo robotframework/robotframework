@@ -449,10 +449,8 @@ DOCUMENT_TEMPLATE = '''<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional
 <h2 id="introduction">Introduction</h2>
 <p class='libdoc'>${LIB.htmldoc}</p>
 
-<!-- IF '${LIB.type}' != 'resource' -->
-<h2 id="importing">Importing</h2>
-<!-- END IF -->
 <!-- IF ${LIB.inits} -->
+<h2 id="importing">Importing</h2>
 <table class="keywords">
 <tr>
   <th class="arg">Arguments</th>
@@ -465,9 +463,6 @@ DOCUMENT_TEMPLATE = '''<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional
 </tr>
 <!-- END FOR -->
 </table>
-<!-- END IF -->
-<!-- IF len(${LIB.inits}) == 0 and '${LIB.type}' != 'resource' -->
-<p>This test library does not take any arguments.</p>
 <!-- END IF -->
 
 <h2>Shortcuts</h2>
