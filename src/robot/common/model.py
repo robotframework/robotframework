@@ -197,7 +197,7 @@ class BaseTestSuite(_TestAndSuiteHelper):
         self.filter_by_tags(includes, excludes)
 
     def filter_by_names(self, suites=None, tests=None):
-        suites = utils.to_list(suites)
+        suites = [ (name, name) for name in utils.to_list(suites) ]
         tests = utils.to_list(tests)
         if suites == [] and tests == []:
             return
@@ -205,7 +205,7 @@ class BaseTestSuite(_TestAndSuiteHelper):
             self._raise_no_tests_filtered_by_names(suites, tests)
         
     def _filter_by_names(self, suites, tests):
-        self.filtered.add_suites(suites)
+        self.filtered.add_suites( [ long for long, short in suites ] )
         self.filtered.add_tests(tests)
         suites = self._filter_suite_names(suites)
         self.suites = [ suite for suite in self.suites 
@@ -218,20 +218,21 @@ class BaseTestSuite(_TestAndSuiteHelper):
         return len(self.suites) + len(self.tests) > 0
     
     def _filter_suite_names(self, names):
-        names = [ self._filter_suite_name(name) for name in names ]
-        if names.count(True) > 0:
+    	try:
+        	return [ self._filter_suite_name(long, short) for long, short in names ]
+        except StopIteration:
             return []
-        return names
     
-    def _filter_suite_name(self, name):
-        tokens = name.split('.')
+    def _filter_suite_name(self, long, short):
+        tokens = short.split('.')
         if utils.matches(self.name, tokens[0], ignore=['_']):
             if len(tokens) == 1:
-                return True   # match
-            return '.'.join(tokens[1:])
-        return name
+                raise StopIteration('Match found')
+            return (long, '.'.join(tokens[1:]))
+        return (long, long)
     
     def _raise_no_tests_filtered_by_names(self, suites, tests):
+        suites = [long for long, short in suites ]
         err = "Suite '%s' contains no " % self.name
         if suites == []:
             err += 'test cases named %s.' % utils.seq2str(tests, lastsep=' or ')
