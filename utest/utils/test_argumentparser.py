@@ -1,8 +1,7 @@
 import unittest
-import sys
 import os
 
-from robot.utils.argumentparser import *
+from robot.utils.argumentparser import ArgumentParser
 from robot.utils.asserts import *
 from robot.errors import *
 
@@ -129,11 +128,18 @@ class TestArgumentParserParseArgs(unittest.TestCase):
     def test_check_args_with_correct_args(self):
         for args in [ ('hello',), ('hello world',) ]:
             self.ap.check_args(args)
-    
+
     def test_check_args_with_wrong_number_of_args(self):
         for args in [ (), ('arg1','arg2','arg3') ]:
             assert_raises(DataError, self.ap.check_args, args)
     
+    def test_check_variable_number_of_args(self):
+        ap = ArgumentParser('usage:  robot.py [options] args')
+        ap.check_args(['one_is_ok'])
+        ap.check_args(['two', 'ok'])
+        ap.check_args(['this', 'should', 'also', 'work', 'pretty', 'well'])
+        assert_raises(DataError, ap.check_args, [])
+
     def test_unescape_options(self):
         cli = '--escape quot:Q -E space:SP -E lt:LT -E gt:GT ' \
                 + '-N QQQLTmySPfineSPnameGTQQQ sourceSPwithSPspaces'
@@ -165,6 +171,25 @@ class TestArgumentParserParseArgs(unittest.TestCase):
         assert_equals(ap._get_pythonpath([p1,p2]), [p1,p2])
         assert_equals(ap._get_pythonpath([p1 + ':' + p2]), [p1,p2])
         assert_true(p1 in ap._get_pythonpath(os.path.join(p2,'*')))
+
+        
+class TestPrintHelpAndVersion(unittest.TestCase):
+
+    def setUp(self):
+        self.ap = ArgumentParser(usage, version='testing 1.0')
+
+    def test_print_help(self):
+        assert_raises_with_msg(Information, usage,
+                               self.ap.parse_args, ['--help'], help='help')
+
+    def test_print_version(self):
+        assert_raises_with_msg(Information, 'testing 1.0',
+                               self.ap.parse_args, ['--version'], version='version')
+
+    def test_print_version_when_version_not_set(self):
+        ap = ArgumentParser(usage)
+        assert_raises_with_msg(Information, "No version information available",
+                               ap.parse_args, ['--version'], version='version')
 
 
 if __name__ == "__main__":

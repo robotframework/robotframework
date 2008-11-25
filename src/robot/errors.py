@@ -51,3 +51,5 @@ class RemoteError(RobotError):
         RobotError.__init__(self, message)
         self.traceback = traceback
 
+class Information(RobotError):
+    """Used by argument parser with --help or --version"""

@@ -14,14 +14,13 @@
 
 
 import getopt     # optparse not supported by Jython 2.2
-import os.path
 import os
 import re
 import sys
 import glob
 import string
 
-from robot.errors import DataError, FrameworkError
+from robot.errors import DataError, FrameworkError, Information
 
 from misc import seq2str, plural_or_not
 from robottypes import is_list, is_boolean
@@ -83,11 +82,13 @@ class ArgumentParser:
     \s*$              #
     ''', re.VERBOSE | re.IGNORECASE)
     
-    def __init__(self, usage):
+    def __init__(self, usage, version='No version information available'):
         """Initialization is done using a usage doc explaining options.
         
         See for example 'runner.py' and 'rebot.py' for usage examples. 
         """
+        self._usage = usage
+        self._version = version
         self._short_opts = ''
         self._long_opts = []
         self._multi_opts = []
@@ -98,7 +99,7 @@ class ArgumentParser:
         self._parse_usage(usage)
 
     def parse_args(self, args_list, unescape=None, argfile=None, pythonpath=None,
-                   check_args=False):
+                   help=None, version=None, check_args=False):
         """Parse given arguments and return options and positional arguments.
         
         Arguments must be given as a list and are typically sys.argv[1:].
@@ -137,6 +138,10 @@ class ArgumentParser:
         opts, args = self._parse_args(args_list)
         if unescape:
             opts, args = self._unescape_opts_and_args(opts, args, unescape)
+        if help and opts[help]:
+            raise Information(self._usage)
+        if version and opts[version]:
+            raise Information(self._version)
         if pythonpath:
             sys.path = self._get_pythonpath(opts[pythonpath]) + sys.path
         if check_args:
@@ -157,6 +162,8 @@ class ArgumentParser:
             return
         elif len(args) < len(self._expected_args):
             msg = 'Required argument%s missing.' % plural_or_not(self._expected_args) 
+        elif self._expected_args and self._expected_args[-1].endswith('s'):
+            return
         else:
             msg = 'Too many arguments.'
         msg += ' Expected %s' % seq2str(self._expected_args)
