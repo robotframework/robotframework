@@ -17,7 +17,7 @@
 
 """Robot Framework Test Data Documentation Tool
 
-Usage:  testdoc.py [options] test_data
+Usage:  testdoc.py [options] data_sources
 
 This tool generates a high level test documentation from a given test data.
 Generated documentation includes the names, documentations and other metadata
@@ -60,7 +60,7 @@ from robot.serializing.serializer import LogSuiteSerializer
 from robot.serializing import templates
 from robot.serializing.templating import Namespace, Template
 from robot import utils
-from robot.errors import DataError
+from robot.errors import DataError, Information
 
 
 def generate_test_doc(args):
@@ -68,7 +68,7 @@ def generate_test_doc(args):
     suite = TestSuite(datasources, RobotSettings(opts), SilentSystemLogger())
     outpath = get_outpath(opts['output'], suite.name)
     serialize_test_doc(suite, outpath, opts['title'])
-    print outpath
+    exit(msg=outpath)
     
 def serialize_test_doc(suite, outpath, title):
     outfile = open(outpath, 'w')
@@ -92,20 +92,19 @@ def serialize_test_doc(suite, outpath, title):
 def process_arguments(args_list):
     argparser = utils.ArgumentParser(__doc__)
     try:
-        opts, args = argparser.parse_args(args_list)
+        opts, args = argparser.parse_args(args_list, help='help', check_args=True)
+    except Information, msg:
+        exit(msg=str(msg))
     except DataError, err:
         exit(error=str(err))
-    if opts['help'] or not args:
-        exit(msg=__doc__)
     return opts, args
     
 def exit(msg=None, error=None):
     if msg:
         sys.stdout.write(msg + '\n')
-    if error:
-        sys.stderr.write(error + '\n\nTry --help for usage information.\n')
-        sys.exit(1)
-    sys.exit(0)
+        sys.exit(0)
+    sys.stderr.write(error + '\n\nTry --help for usage information.\n')
+    sys.exit(1)
 
 def get_outpath(path, suite_name):
     if not path:
