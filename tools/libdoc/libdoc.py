@@ -48,9 +48,10 @@ import os
 import re
 
 from robot.running import TestLibrary, UserLibrary
+from robot.running.handlers import _NoInitHandler
 from robot.serializing import Template, Namespace
 from robot import utils
-from robot.errors import DataError
+from robot.errors import DataError, Information
 
 
 def main(args):
@@ -70,11 +71,12 @@ def main(args):
 def process_arguments(args_list):
     argparser = utils.ArgumentParser(__doc__)
     try:
-        opts, args = argparser.parse_args(args_list, pythonpath='pythonpath')
+        opts, args = argparser.parse_args(args_list, pythonpath='pythonpath',
+                                          help='help', check_args=True)
+    except Information, msg:
+        exit(msg=str(msg))
     except DataError, err:
         exit(error=str(err))
-    if opts['help'] or not args:
-        exit(msg=__doc__)
     output = opts['output'] is not None and opts['output'] or '.'
     format = opts['format'] is not None and opts['format'] or 'HTML'
     return os.path.abspath(output), format.upper(), args[0]
@@ -198,14 +200,14 @@ class PythonLibraryDoc(_DocHelper):
         self.name = lib.name
         self.version = utils.html_escape(getattr(lib, 'version', '<unknown>'))
         self.doc = self._process_doc(self._get_doc(lib))
-        self.inits = self._get_initializers(lib.init)
+        self.inits = self._get_initializers(lib)
         self.keywords = [ KeywordDoc(handler, self) 
                           for handler in lib.handlers.values() ]
         self.keywords.sort()
 
-    def _get_initializers(self, lib_init):
-        if lib_init:
-            init = KeywordDoc(lib_init, self)
+    def _get_initializers(self, lib):
+        if lib.init and not isinstance(lib.init, _NoInitHandler):
+            init = KeywordDoc(lib.init, self)
             if init.args:
                 return [init]
         return []
