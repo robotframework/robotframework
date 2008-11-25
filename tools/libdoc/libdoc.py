@@ -205,7 +205,7 @@ class PythonLibraryDoc(_DocHelper):
         self.keywords.sort()
 
     def _get_initializers(self, lib):
-        if not lib.init or lib.init.maxargs == 0:
+        if lib.init.maxargs == 0:
             return []
         return [KeywordDoc(lib.init, self)]
 
