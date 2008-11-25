@@ -20,37 +20,19 @@ import sys
 import glob
 import string
 
-from robot.errors import DataError, FrameworkError, Information
+from robot.errors import DataError, Information, FrameworkError
 
 from misc import seq2str, plural_or_not
 from robottypes import is_list, is_boolean
 
-ESCAPES =  { 'space'   : ' ',
-             'apos'    : "'",
-             'quot'    : '"',
-             'lt'      : '<',
-             'gt'      : '>',
-             'pipe'    : '|',
-             'star'    : '*',
-             'comma'   : ',',
-             'bslash'  : '\\',
-             'slash'   : '/',
-             'semic'   : ';',
-             'colon'   : ':',
-             'quest'   : '?',
-             'hash'    : '#',
-             'amp'     : '&',
-             'dollar'  : '$',
-             'percent' : '%',
-             'at'      : '@',
-             'exclam'  : '!',
-             'paren1'  : '(',
-             'paren2'  : ')',
-             'square1' : '[',
-             'square2' : ']',
-             'curly1'  : '{',
-             'curly2'  : '}',
-}
+
+ESCAPES = { 'space'   : ' ', 'apos'    : "'", 'quot'    : '"', 'lt'      : '<',
+            'gt'      : '>', 'pipe'    : '|', 'star'    : '*', 'comma'   : ',',
+            'slash'   : '/', 'semic'   : ';', 'colon'   : ':', 'quest'   : '?',
+            'hash'    : '#', 'amp'     : '&', 'dollar'  : '$', 'percent' : '%',
+            'at'      : '@', 'exclam'  : '!', 'paren1'  : '(', 'paren2'  : ')',
+            'square1' : '[', 'square2' : ']', 'curly1'  : '{', 'curly2'  : '}',
+            'bslash'  : '\\' }
 
 
 def get_escapes():
@@ -151,11 +133,10 @@ class ArgumentParser:
     def _parse_args(self, args):
         args = [ a.startswith('--') and a.lower() or a for a in args ]
         try:
-            opt_tuple, args = getopt.getopt(args, self._short_opts, self._long_opts)
+            opts, args = getopt.getopt(args, self._short_opts, self._long_opts)
         except getopt.GetoptError, err:
             raise DataError(err)
-        opts = self._process_opts(opt_tuple)
-        return opts, args
+        return self._process_opts(opts), self._glob_args(args)
 
     def check_args(self, args):
         if len(args) == len(self._expected_args):
@@ -167,10 +148,9 @@ class ArgumentParser:
         else:
             msg = 'Too many arguments.'
         msg += ' Expected %s' % seq2str(self._expected_args)
-        if len(args) > 0: 
+        if args: 
             msg += ' but got %s' % seq2str(args)
-        msg += '.'
-        raise DataError(msg)
+        raise DataError(msg + '.')
     
     def _unescape_opts_and_args(self, opts, args, escape_opt):
         try:
@@ -185,20 +165,19 @@ class ArgumentParser:
         return opts, args
     
     def _add_args_from_file(self, args, argfile_opt):
-        argfile_opts = [ '--'+argfile_opt ]
+        argfile_opts = ['--'+argfile_opt]
         for sopt, lopt in self._short_to_long.items():
             if lopt == argfile_opt:
                 argfile_opts.append('-'+sopt)
-        index = -1
-        path = None
         for opt in argfile_opts:
             try:
                 index = args.index(opt)
                 path = args[index+1]
+            except (ValueError, IndexError):
+                path = None
+            else:
                 break
-            except:
-                pass
-        if path is not None:
+        if path:
             args[index:index+2] = self._get_args_from_file(path)
         return args
 
@@ -208,13 +187,11 @@ class ArgumentParser:
         except IOError, err:
             raise DataError("Opening argument file '%s' failed: %s" % (path, err))
         args = []
-        for line in argfile.read().splitlines():
+        for line in argfile.readlines():
             line = line.strip()
-            if line == '' or line.startswith('#'): 
-                continue
-            elif line.startswith('-'):
+            if line.startswith('-'):
                 args.extend(line.split(' ', 1))
-            else:
+            elif line and not line.startswith('#'):
                 args.append(line)
         argfile.close()
         return args
@@ -254,6 +231,16 @@ class ArgumentParser:
             else:
                 opts[name] = value
         return opts
+
+    def _glob_args(self, args):
+        temp = []
+        for path in args:
+            paths = glob.glob(path)
+            if paths:
+                temp.extend(paths)
+            else:
+                temp.append(path)
+        return temp
                 
     def _init_opts(self):
         opts = {}

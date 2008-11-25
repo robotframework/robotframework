@@ -13,9 +13,7 @@
 #  limitations under the License.
 
 
-from robot.errors import Information
 import sys
-import glob
 
 if __name__ == '__main__':
     sys.stderr.write("Use 'runner' or 'rebot' for executing.\n")
@@ -56,8 +54,8 @@ def rebot_from_cli(args, usage):
         suite = rebot(*datasources, **options)
     except DataError:
         _exit(DATA_ERROR, *utils.get_error_details())
-    except (STOPPED_BY_USER, SystemExit):
-        _exit(DATA_ERROR, 'Log/report generation stopped by user')
+    except (KeyboardInterrupt, SystemExit):
+        _exit(STOPPED_BY_USER, 'Log/report generation stopped by user')
     except:
         _exit(FRAMEWORK_ERROR, 'Unexpected error in log/report generation', 
               '\n'.join(utils.get_error_details()))
@@ -137,30 +135,16 @@ def _syslog_start_info(who, sources, settings, syslog):
 def _process_arguments(cliargs, usage, who):
     ap = utils.ArgumentParser(usage % {'VERSION': utils.get_version()},
                               utils.get_full_version(who))
-    ppath = who == 'Robot' and 'pythonpath' or None
     try:
-        opts, args = ap.parse_args(cliargs, argfile='argumentfile',
-                                   unescape='escape', pythonpath=ppath,
-                                   help='help', version='version', check_args=True)
+        return ap.parse_args(cliargs, argfile='argumentfile', unescape='escape',
+                             pythonpath=who == 'Robot' and 'pythonpath' or None,
+                             help='help', version='version', check_args=True)
     except Information, msg:
         print msg
         _exit(INFO_PRINTED)
     except DataError, err:
         _exit(DATA_ERROR, str(err))
-    return opts, _glob_datasources(args)
 
-
-def _glob_datasources(sources):
-    # TODO: move to argumentparser
-    temp = []
-    for path in sources:
-        paths = glob.glob(path)
-        if paths:
-            temp.extend(paths)
-        else:
-            temp.append(path)
-    return temp
-    
 
 def _exit(rc_or_suite, error=None, details=None):
     """Exits with given rc or rc from given output. Syslogs error if given.

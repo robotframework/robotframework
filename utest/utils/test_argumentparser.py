@@ -5,7 +5,8 @@ from robot.utils.argumentparser import ArgumentParser
 from robot.utils.asserts import *
 from robot.errors import *
 
-usage = """
+
+USAGE = """
 usage:  robot.py [options] datafile
 
 options:
@@ -30,7 +31,7 @@ options:
 * denotes options that can be set multiple times
 """
 
-usage2 = """
+USAGE2 = """
 usage:  robot.py [options] arg1 arg2
 
 options:
@@ -42,7 +43,7 @@ options:
 class TestArgumentParserInit(unittest.TestCase):
 
     def setUp(self):
-        self.ap = ArgumentParser(usage)
+        self.ap = ArgumentParser(USAGE)
 
     def test_short_options(self):
         assert_equals(self.ap._short_opts, 'd:r:E:v:N:h?')
@@ -77,7 +78,7 @@ class TestArgumentParserInit(unittest.TestCase):
 class TestArgumentParserParseArgs(unittest.TestCase):
 
     def setUp(self):
-        self.ap = ArgumentParser(usage)
+        self.ap = ArgumentParser(USAGE)
 
     def test_single_options(self):
         inargs = '-d reports --reportfile report.html -? arg'.split()
@@ -117,7 +118,7 @@ class TestArgumentParserParseArgs(unittest.TestCase):
             assert_equals(args, ['arg'])
 
     def test_non_ascii_chars(self):
-        ap = ArgumentParser(usage2)
+        ap = ArgumentParser(USAGE2)
         inargs = '-x foo=bar --variable a=1,2,3 arg1 arg2'.split()
         exp_opts = { 'var-able':'foo=bar', 'variable':'a=1,2,3' }
         exp_args = [ 'arg1', 'arg2' ]
@@ -172,14 +173,24 @@ class TestArgumentParserParseArgs(unittest.TestCase):
         assert_equals(ap._get_pythonpath([p1 + ':' + p2]), [p1,p2])
         assert_true(p1 in ap._get_pythonpath(os.path.join(p2,'*')))
 
+    def test_arguments_are_globbed(self):
+        _, args = self.ap.parse_args([__file__.replace('test_', '?????')])
+        assert_equals(args, [__file__])
+        _, args = self.ap.parse_args(['*'])
+        assert_true(len(args) > 1)
+
+    def test_arguments_with_glob_patterns_arent_removed_if_they_dont_match(self):
+        _, args = self.ap.parse_args(['*.non.existing', 'non.ex.??'])
+        assert_equals(args, ['*.non.existing', 'non.ex.??'])
+
         
 class TestPrintHelpAndVersion(unittest.TestCase):
 
     def setUp(self):
-        self.ap = ArgumentParser(usage, version='testing 1.0')
+        self.ap = ArgumentParser(USAGE, version='testing 1.0')
 
     def test_print_help(self):
-        assert_raises_with_msg(Information, usage,
+        assert_raises_with_msg(Information, USAGE,
                                self.ap.parse_args, ['--help'], help='help')
 
     def test_print_version(self):
@@ -187,7 +198,7 @@ class TestPrintHelpAndVersion(unittest.TestCase):
                                self.ap.parse_args, ['--version'], version='version')
 
     def test_print_version_when_version_not_set(self):
-        ap = ArgumentParser(usage)
+        ap = ArgumentParser(USAGE)
         assert_raises_with_msg(Information, "No version information available",
                                ap.parse_args, ['--version'], version='version')
 
