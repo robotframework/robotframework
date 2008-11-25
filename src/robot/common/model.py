@@ -215,7 +215,7 @@ class BaseTestSuite(_TestAndSuiteHelper):
                            utils.matches_any(test.name, tests, ignore=['_']) ]
         else:
             self.tests = []
-        return len(self.suites) + len(self.tests) > 0
+        return self.suites or self.tests
     
     def _filter_suite_names(self, names):
     	try:
@@ -230,19 +230,17 @@ class BaseTestSuite(_TestAndSuiteHelper):
                 raise StopIteration('Match found')
             return (long, '.'.join(tokens[1:]))
         return (long, long)
-    
+
     def _raise_no_tests_filtered_by_names(self, suites, tests):
-        suites = [long for long, short in suites ]
-        err = "Suite '%s' contains no " % self.name
-        if suites == []:
-            err += 'test cases named %s.' % utils.seq2str(tests, lastsep=' or ')
-        elif tests == []:
-            err += 'test suites named %s.' % utils.seq2str(suites, lastsep=' or ')
+        tests = utils.seq2str(tests, lastsep=' or ')
+        suites = utils.seq2str([long for long, short in suites ], lastsep=' or ')
+        if not suites:
+            msg = 'test cases named %s.' % tests
+        elif not tests:
+            msg = 'test suites named %s.' % suites
         else:
-            err += 'test cases %s in suites %s.' \
-                    % (utils.seq2str(tests, lastsep=' or '),
-                       utils.seq2str(suites, lastsep=' or '))
-        raise DataError(err)
+            msg = 'test cases %s in suites %s.' % (tests, suites)
+        raise DataError("Suite '%s' contains no %s" % (self.name, msg))
 
     def filter_by_tags(self, includes=None, excludes=None):
         if includes is None: includes = []
@@ -265,11 +263,11 @@ class BaseTestSuite(_TestAndSuiteHelper):
         incl = utils.seq2str(incls)
         excl = utils.seq2str(excls)
         msg = "Suite '%s' with "  % self.name
-        if incl != '':
+        if incl:
             msg += 'includes %s ' % incl
-            if excl != '':
+            if excl:
                 msg += 'and '
-        if excl != '':
+        if excl:
             msg += 'excludes %s ' % excl
         raise DataError(msg + 'contains no test cases.')
     
