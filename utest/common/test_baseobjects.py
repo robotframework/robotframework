@@ -13,21 +13,28 @@ class TestFilterByNames(unittest.TestCase):
     def _get_suite(selff):
         suite = BaseTestSuite('Root')
         suite.suites = [ BaseTestSuite('Sub1'), BaseTestSuite('Sub2') ]
-        suite.suites[0].suites = [ BaseTestSuite('Sub11') ]
+        suite.suites[0].suites = [ BaseTestSuite('Sub11') , BaseTestSuite('Sub')]
         suite.suites[0].suites[0].tests \
                 = [ BaseTestCase('T11'), BaseTestCase('T12') ]
+        suite.suites[0].suites[0].suites = [ BaseTestSuite('Sub') ]
+        suite.suites[0].suites[0].suites[0].tests = [ BaseTestCase('T') ]
+
+        suite.suites[0].suites[1].tests = [ BaseTestCase('T') ]
         suite.suites[1].tests = [ BaseTestCase('T21') ]
+        suite.set_names()
         return suite
-        
+    
     def test_with_suites(self):
-        for names, count in [ (['Root'], 3),
-                              (['Sub1'], 2),
-                              (['Sub 11'], 2),
+        for names, count in [ (['Root'], 5),
+                              (['Sub1'], 4),
+                              (['Sub 11'], 3),
                               (['s u b 2'], 1), 
-                              (['Sub?'], 3),
-                              (['Sub 1*'], 2),
-                              (['ROOT','Sub1'], 3),
-                              (['Sub2','Nonex'], 1) ]:
+                              (['Sub?'], 5),
+                              (['Sub 1*'], 4),
+                              (['ROOT','Sub1'], 5),
+                              (['Sub2','Nonex'], 1),
+                              (['Sub11.Sub'], 1),
+                              (['Root.Sub1.Sub'], 1)]:
             suite = self._get_suite()
             suite.filter_by_names(names, [])
             assert_equals(suite.get_test_count(), count, names)
@@ -38,14 +45,17 @@ class TestFilterByNames(unittest.TestCase):
 
     def test_with_suites_no_matches(self):
         suite = self._get_suite()
-        err =  "Suite 'Root' contains no test suites named 'nonex'."
-        assert_raises_with_msg(DataError, err, suite.filter_by_names, ['nonex'], [])
+        err =  "Suite 'Root' contains no test suites named '%s'."
+        assert_raises_with_msg(DataError, err % ('nonex'), 
+                               suite.filter_by_names, ['nonex'], [])
+        assert_raises_with_msg(DataError, err % ('b1.Sub'), 
+                               suite.filter_by_names, ['b1.Sub'], [])
 
     def test_with_tests(self):
         for names, count in [ (['T11'], 1),
                               (['?12'], 1),
                               (['t 2  1'], 1), 
-                              (['t*'], 3),
+                              (['t*'], 5),
                               (['??1'], 2),
                               (['T11','T12'], 2),
                               (['Nonex','T21','Nonex2'], 1) ]:
@@ -69,7 +79,7 @@ class TestFilterByNames(unittest.TestCase):
                                       (['sub1'], ['t11','t2.1'], 1),
                                       (['sub?'], ['t11','t21'], 2),
                                       (['ROOT','nonex'], ['t11','t21'], 2),
-                                      (['*'], ['t*'], 3) ]:
+                                      (['*'], ['t*'], 5) ]:
             suite = self._get_suite()
             suite.filter_by_names(suites, tests)
             assert_equals(suite.get_test_count(), count, '%s & %s'%(suites,tests))
