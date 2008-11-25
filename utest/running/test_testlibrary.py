@@ -403,10 +403,10 @@ class TestDynamicLibrary(unittest.TestCase):
                                           'Keyword documentation for %s' % name, 
                                           min, max)
                 
-        def test_handler_is_not_created_with_invalid_methods(self):
+        def test_handler_is_created_if_arg_or_doc_retrieval_fails(self):
             for reason in ['Attribute', 'Signature']: 
                 lib = TestLibrary('Invalid%sArgDocDynamicJavaLibrary' % reason)
-                assert_equals(len(lib.handlers), 0) 
+                assert_equals(len(lib.handlers), 1)
                 
         def _assert_java_handler(self, handler, doc, minargs, maxargs):
             assert_equals(handler.doc, doc)
