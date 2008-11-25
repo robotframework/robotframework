@@ -87,7 +87,7 @@ class UserHandler(BaseHandler):
         namespace.start_user_keyword(self)
         args = namespace.variables.replace_list(args)
         self._tracelog_args(output, args)
-        self._check_arg_limits(args)
+        self.check_arg_limits(args)
         if len(args) < len(self.args):
             args += self._get_defaults(args, namespace.variables)
         for name, value in zip(self.args, args):

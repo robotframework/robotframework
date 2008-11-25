@@ -143,7 +143,7 @@ class _BaseTestLibrary(BaseLibrary):
         return self._libinst
 
     def _get_instance(self):
-        self.init._check_arg_limits(self.args)
+        self.init.check_arg_limits(self.args)
         try:
             return self._libcode(*self.args)
         except:
@@ -223,7 +223,7 @@ class ModuleLibrary(_BaseTestLibrary):
         return 'GLOBAL'
         
     def get_instance(self):
-        self.init._check_arg_limits(self.args)
+        self.init.check_arg_limits(self.args)
         return self._libcode
     
     def _create_handler(self, handler_name, handler_method):

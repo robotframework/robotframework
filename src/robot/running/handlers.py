@@ -82,7 +82,7 @@ class _RunnableHandler(BaseHandler):
         if index < 0:
             return self._replace_vars_from_args(args, variables)
         if index == 0:
-            return self._check_arg_limits(args)
+            return self.check_arg_limits(args)
         # There might be @{list} variables and those might have more or less 
         # arguments that is needed. Therefore we need to go through arguments 
         # one by one.
@@ -92,12 +92,12 @@ class _RunnableHandler(BaseHandler):
         # In case @{list} variable is unpacked, the arguments going further 
         # needs to be escaped, otherwise those are unescaped twice.
         processed[index:] = [utils.escape(arg) for arg in processed[index:]]
-        return self._check_arg_limits(processed + args)
+        return self.check_arg_limits(processed + args)
     
     def _replace_vars_from_args(self, args, variables):
         """Overridden by JavaHandler"""
         args = variables.replace_list(args)
-        return self._check_arg_limits(args)
+        return self.check_arg_limits(args)
     
     def _run_handler(self, handler, args, output, namespace):
         timeout = self._get_timeout(namespace)

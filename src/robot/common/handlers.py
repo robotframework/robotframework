@@ -27,7 +27,7 @@ class BaseHandler:
         raise AttributeError("%s does not have attribute '%s'" 
                              % (self.__class__.__name__, name))
     
-    def _check_arg_limits(self, args):
+    def check_arg_limits(self, args):
         if not self.minargs <= len(args) <= self.maxargs:
             self._raise_inv_args(args)
         return args
