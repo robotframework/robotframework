@@ -1,8 +1,8 @@
 import unittest
 import sys
     
-from robot.running.testlibraries import PythonLibrary, ModuleLibrary, \
-        TestLibrary, DynamicLibrary, JavaLibrary
+from robot.running.testlibraries import TestLibrary, _ClassLibrary, \
+        _ModuleLibrary, _DynamicLibrary
 from robot.utils.asserts import *
 from robot import utils
 from robot.errors import DataError
@@ -10,8 +10,7 @@ from robot.errors import DataError
 from classes import NameLibrary, DocLibrary, ArgInfoLibrary, GetattrLibrary, \
         SynonymLibrary
 if utils.is_jython:
-    import ArgumentTypes, Extended, MultipleArguments, MultipleSignatures, \
-        NoHandlers, ReturnTypes, ArgDocDynamicJavaLibrary
+    import ArgumentTypes, Extended, MultipleArguments, MultipleSignatures, NoHandlers
 
 
 # Valid keyword names and arguments for some libraries
@@ -33,29 +32,29 @@ class TestLibraryTypes(unittest.TestCase):
     
     def test_python_library(self):
         lib = TestLibrary("BuiltIn")
-        assert_equals(lib.__class__, PythonLibrary)
+        assert_equals(lib.__class__, _ClassLibrary)
         assert_equals(lib.args, [])
         
     def test_python_library_with_args(self):
         lib = TestLibrary("ParameterLibrary", ['my_host', '8080'])
-        assert_equals(lib.__class__, PythonLibrary)
+        assert_equals(lib.__class__, _ClassLibrary)
         assert_equals(lib.args, ['my_host', '8080'])
         
     def test_module_library(self):
         lib = TestLibrary("module_library")
-        assert_equals(lib.__class__, ModuleLibrary)
+        assert_equals(lib.__class__, _ModuleLibrary)
         
     def test_module_library_with_args(self):
         assert_raises(DataError, TestLibrary, "module_library", ['arg'] )
         
     def test_dynamic_python_library(self):
         lib = TestLibrary("RunKeywordLibrary")
-        assert_equals(lib.__class__, DynamicLibrary)     
+        assert_equals(lib.__class__, _DynamicLibrary)
         
     if utils.is_jython:
         def test_java_library(self):
             lib = TestLibrary("ExampleJavaLibrary")
-            assert_equals(lib.__class__, JavaLibrary)
+            assert_equals(lib.__class__, _ClassLibrary)
             
 
 class TestImports(unittest.TestCase):
@@ -373,23 +372,32 @@ class TestHandlers(unittest.TestCase):
 
 class TestDynamicLibrary(unittest.TestCase):
     
-    def test_get_keyword_documentation_is_used_if_present(self):
+    def test_get_keyword_doc_is_used_if_present(self):
         lib = TestLibrary('classes.ArgDocDynamicLibrary')
         assert_equals(lib.handlers['No Arg'].doc, 'Keyword documentation for No Arg')
+
+    def test_get_keyword_doc_and_args_are_ignored_if_not_callable(self):
+        lib = TestLibrary('classes.InvalidAttributeDynamicLibrary')
+        assert_equals(len(lib.handlers), 4)
+        assert_equals(lib.handlers['No Arg'].doc, '')
+        self._assert_handler_args(lib.handlers['No Arg'], 0, sys.maxint)
         
-    def test_handler_is_created_if_get_keyword_doc_fails(self):
-        for reason in ['Attribute', 'Signature']: 
-            lib = TestLibrary('classes.Invalid%sArgDocDynamicLibrary' % reason)
-            assert_equals(len(lib.handlers), 4)
-        
+    def test_handler_is_not_created_if_get_keyword_doc_fails(self):
+        lib = TestLibrary('classes.InvalidGetDocDynamicLibrary')
+        assert_equals(len(lib.handlers), 0)
+
+    def test_handler_is_not_created_if_get_keyword_args_fails(self):
+        lib = TestLibrary('classes.InvalidGetArgsDynamicLibrary')
+        assert_equals(len(lib.handlers), 0)
+
     def test_get_keyword_arguments_is_used_if_present(self):
         lib = TestLibrary('classes.ArgDocDynamicLibrary')
         for name, exp in [ ('No Arg', ()) , ('One Arg', (1,1)), 
                            ('One or Two Args', (1, 2)),
                            ('Many Args', (0, sys.maxint))]:
-            self._assert_handler(lib.handlers[name], *exp)
+            self._assert_handler_args(lib.handlers[name], *exp)
             
-    def _assert_handler(self, handler, minargs=0, maxargs=0):
+    def _assert_handler_args(self, handler, minargs=0, maxargs=0):
         assert_equals(handler.minargs, minargs)
         assert_equals(handler.maxargs, maxargs)
         
@@ -403,14 +411,18 @@ class TestDynamicLibrary(unittest.TestCase):
                                           'Keyword documentation for %s' % name, 
                                           min, max)
                 
-        def test_handler_is_created_if_arg_or_doc_retrieval_fails(self):
-            for reason in ['Attribute', 'Signature']: 
-                lib = TestLibrary('Invalid%sArgDocDynamicJavaLibrary' % reason)
-                assert_equals(len(lib.handlers), 1)
-                
+        def test_get_keyword_doc_and_args_are_ignored_if_not_callable_in_java(self):
+            lib = TestLibrary('InvalidAttributeArgDocDynamicJavaLibrary')
+            assert_equals(len(lib.handlers), 1)
+            self._assert_handler_args(lib.handlers['keyword'], 0, sys.maxint)
+
+        def test_handler_is_not_created_if_get_keyword_doc_fails_in_java(self):
+            lib = TestLibrary('InvalidSignatureArgDocDynamicJavaLibrary')
+            assert_equals(len(lib.handlers), 0)
+            
         def _assert_java_handler(self, handler, doc, minargs, maxargs):
             assert_equals(handler.doc, doc)
-            self._assert_handler(handler, minargs, maxargs)
+            self._assert_handler_args(handler, minargs, maxargs)
     
         
 class _FakeNamespace:

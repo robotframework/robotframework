@@ -1,16 +1,15 @@
 import unittest
-import unittest, sys
+import sys
 from types import * 
 
-from robot.running.handlers import _RunnableHandler, PythonHandler, JavaHandler, \
-        DynamicHandler
+from robot.running.handlers import _RunnableHandler, _PythonHandler, \
+        _JavaHandler, DynamicHandler
 from robot import utils
 from robot.errors import *
 from robot.utils.asserts import *
 from robot.running.testlibraries import TestLibrary
-from BuiltIn import BuiltIn
 
-from classes import NameLibrary, DocLibrary, ArgInfoLibrary, GetattrLibrary
+from classes import NameLibrary, DocLibrary, ArgInfoLibrary
 from ArgumentsPython import ArgumentsPython
 if utils.is_jython:
     import ArgumentsJava
@@ -45,19 +44,19 @@ class TestPythonHandler(unittest.TestCase):
 
     def test_docs(self):
         for method in _get_handler_methods(DocLibrary()):
-            handler = PythonHandler(LibraryMock(), method.__name__, method)
+            handler = _PythonHandler(LibraryMock(), method.__name__, method)
             assert_equals(handler.doc, method.expected_doc)
             assert_equals(handler.shortdoc, method.expected_shortdoc)
 
     def test_get_arg_info(self):
         for method in _get_handler_methods(ArgInfoLibrary()):
-            handler = PythonHandler(LibraryMock(), method.__name__, method)
+            handler = _PythonHandler(LibraryMock(), method.__name__, method)
             expected = eval(method.__doc__)
             assert_equals(handler._get_arg_spec(method), expected, method.__name__)
             
     def test_arg_limits(self):
         for method in _get_handler_methods(ArgumentsPython()):
-            handler = PythonHandler(LibraryMock(), method.__name__, method)
+            handler = _PythonHandler(LibraryMock(), method.__name__, method)
             exp_mina, exp_maxa = eval(method.__doc__)
             assert_equals(handler.minargs, exp_mina)
             assert_equals(handler.maxargs, exp_maxa)
@@ -162,14 +161,14 @@ if utils.is_jython:
         def test_arg_limits_no_defaults_or_varargs(self):
             for count in [ 0, 1, 3 ]:
                 method = handlers['a_%d' % count]
-                handler = JavaHandler(LibraryMock(), method.__name__, method)
+                handler = _JavaHandler(LibraryMock(), method.__name__, method)
                 assert_equals(handler.minargs, count)
                 assert_equals(handler.maxargs, count)
                 
         def test_arg_limits_with_varargs(self):
             for count in [ 0, 1 ]:
                 method = handlers['a_%d_n' % count]
-                handler = JavaHandler(LibraryMock(), method.__name__, method)
+                handler = _JavaHandler(LibraryMock(), method.__name__, method)
                 assert_equals(handler.minargs, count)
                 assert_equals(handler.maxargs, sys.maxint)
 
@@ -177,7 +176,7 @@ if utils.is_jython:
             # defaults i.e. multiple signatures
             for mina, maxa in [ (0,1), (1,3) ]:
                 method = handlers['a_%d_%d' % (mina, maxa)]
-                handler = JavaHandler(LibraryMock(), method.__name__, method)
+                handler = _JavaHandler(LibraryMock(), method.__name__, method)
                 assert_equals(handler.minargs, mina)
                 assert_equals(handler.maxargs, maxa)
 

@@ -141,7 +141,6 @@ class ArgDocDynamicLibrary:
     def get_keyword_arguments(self, name):
         return self._keywords[name].argspec
 
-
 class _KeywordInfo:
     doc_template = 'Keyword documentation for %s' 
     def __init__(self, name, argspec):
@@ -149,12 +148,14 @@ class _KeywordInfo:
         self.argspec = argspec
 
         
-class InvalidSignatureArgDocDynamicLibrary(ArgDocDynamicLibrary):
+class InvalidGetDocDynamicLibrary(ArgDocDynamicLibrary):
     def get_keyword_documentation(self, name, invalid_arg):
         pass
-    def get_keyword_arguments(self, name, invalidarg):
-        pass
 
-class InvalidAttributeArgDocDynamicLibrary(ArgDocDynamicLibrary):
+class InvalidGetArgsDynamicLibrary(ArgDocDynamicLibrary):
+    def get_keyword_arguments(self, name):
+        return 1/0
+
+class InvalidAttributeDynamicLibrary(ArgDocDynamicLibrary):
     get_keyword_documentation = True
     get_keyword_arguments = False
