@@ -21,8 +21,8 @@ from robot.common import BaseTestSuite, BaseTestCase, BaseKeyword
 
 
 def process_outputs(paths, settings, syslog=None):
-    if len(paths) == 0:
-        raise DataError('No Robot output files given.')
+    if not paths:
+        raise DataError('No output files given.')
     if len(paths) == 1:
         return process_output(paths[0], syslog)
     testsuite = CombinedTestSuite(settings['StartTime'], settings['EndTime'])

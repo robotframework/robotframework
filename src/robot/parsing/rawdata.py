@@ -45,6 +45,8 @@ def RawData(path, syslog, strip_comments=True):
     try:
         if utils.is_url(path):
             datafile = urllib.urlopen(path)
+        elif not os.path.isfile(path):
+            raise DataError("Data source '%s' does not exist." % path)
         else:
             datafile = open(path, 'rb')
     except:

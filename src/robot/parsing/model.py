@@ -31,8 +31,8 @@ _PROCESSED_EXTS = ['.html','.xhtml','.htm','.tsv']
 
 def TestSuiteData(datasources, settings, syslog):
     datasources = [ utils.normpath(path) for path in datasources ]
-    if len(datasources) == 0:
-        raise DataError("No Robot data sources given.")
+    if not datasources:
+        raise DataError("No data sources given.")
     elif len(datasources) > 1:
         return MultiSourceSuite(datasources, settings['SuiteNames'], syslog)
     elif os.path.isdir(datasources[0]):
