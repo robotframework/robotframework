@@ -598,9 +598,9 @@ class Collections(_List, _Dictionary):
 
     -------
 
-    List related keywords use variables in format ${Lx} in their examples.
-    this means a list with as many alphabetic characters as specified by 'x'.
-    For example ${L1}' means ['a'] and ${L3} means ['a', 'b', 'c'].
+    List related keywords use variables in format ${Lx} in their examples,
+    which means a list with as many alphabetic characters as specified by 'x'.
+    For example ${L1} means ['a'] and ${L3} means ['a', 'b', 'c'].
 
     Dictionary keywords use similar ${Dx} variable. For example ${D1} means
     {'a': 1} and ${D3} means {'a': 1, 'b': 2, 'c': 3}.

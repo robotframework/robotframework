@@ -13,21 +13,14 @@
 #  limitations under the License.
 
 
-import os
 import sys
 import re
 
-from robot.version import VERSION, RELEASE
-
-
-def get_version():
-    if RELEASE != 'final':
-        return '%s %s' % (VERSION, RELEASE)
-    return VERSION
+from robot.version import get_version
 
 
 def get_java_version():
-    if os.name != 'java':
+    if not sys.platform.startswith('java'):
         return (0, 0)
     try:
         res = re.match("java(\d+)\.(\d+)", sys.platform)

@@ -133,7 +133,7 @@ def _syslog_start_info(who, sources, settings, syslog):
 
 
 def _process_arguments(cliargs, usage, who):
-    ap = utils.ArgumentParser(usage % {'VERSION': utils.get_version()},
+    ap = utils.ArgumentParser(usage % {'VERSION': utils.version},
                               utils.get_full_version(who))
     try:
         return ap.parse_args(cliargs, argfile='argumentfile', unescape='escape',
