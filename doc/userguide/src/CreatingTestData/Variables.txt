@@ -356,8 +356,8 @@ Setting variables in command line
 '''''''''''''''''''''''''''''''''
 
 Variables can be set from the command line either individually with
-the :opt:`--variable` option or using a variable file with the
-:opt:`--variablefile` option. Variables set from the command line
+the :opt:`--variable (-v)` option or using a variable file with the
+:opt:`--variablefile (-V)` option. Variables set from the command line
 are globally available for all executed test data files, and they also
 override possible variables with the same names in the Variable table and in
 variable files imported in the test data.

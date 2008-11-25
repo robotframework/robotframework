@@ -178,7 +178,7 @@ The second example, which still uses Python, is slightly more complicated. It
 writes all the information it gets into a text file in a temporary directory
 without much formatting. The filename may be given from the command line, but
 also has a default value. Note that in real usage, the `debug file`_
-functionality available through the command line option :cli:`--debugfile` is
+functionality available through the command line option :opt:`--debugfile` is
 probably more useful than this example.
 
 .. sourcecode:: python

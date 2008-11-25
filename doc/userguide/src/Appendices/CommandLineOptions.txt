@@ -25,9 +25,9 @@ Command line options for test execution
   -e, --exclude <tag>     `Selects the test cases`_ by tag. 
   -c, --critical <tag>    Tests that have the given tag are `considered critical`_. 
   -n, --noncritical <tag>  Tests that have the given tag are `not critical`_. 
-  --runmode <mode>        `Sets the execution mode`_ for this test run.
-  -v, --variable <name:value>   `Sets individual variables`_ in the test data. 
-  -V, --variablefile <path>  Sets variables using `variable files`_. 
+  --runmode <mode>        Sets the `execution mode`_ for this test run.
+  -v, --variable <name:value>   Sets `individual variables`_.
+  -V, --variablefile <path:args>  Sets variables using `variable files`_. 
   -d, --outputdir <dir>   Defines where to `create output files`_.
   -o, --output <file>     Sets the path to the generated `output file`_.
   -l, --log <file>        Sets the path to the generated `log file`_. 
@@ -112,9 +112,8 @@ Command line options for post-processing outputs
 .. _Selects the test cases: `By tag names`_
 .. _considered critical: `Setting criticality`_
 .. _not critical: `considered critical`_
-.. _Sets the execution mode: `Setting the execution mode`_
-.. _Sets individual variables: `Setting variables`_
-.. _read variables: `Sets individual variables`_
+.. _execution mode: `Setting the execution mode`_
+.. _individual variables: `Setting variables in command line`_
 
 .. _create output files: `Output directory`_
 .. _Adds a timestamp: `Timestamping output files`_

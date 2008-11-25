@@ -285,6 +285,7 @@ illustrate how to use these options::
   --variable name:value
   --variable OS:Linux --variable IP:10.0.0.42
   --variablefile path/to/variables.py
+  --variablefile myvars.py:possible:arguments:here
   --variable ENVIRONMENT:Windows --variablefile c:\resources\windows.py
 
 __ `Setting variables in command line`_
