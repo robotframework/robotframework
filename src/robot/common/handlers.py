@@ -44,7 +44,8 @@ class BaseHandler:
                         % (self._get_type_and_name(), exptxt, len(args)))
 
     def _get_type_and_name(self):
-        # Overridden by InitHandlers
+        if 'Init' in self.__class__.__name__:
+            return "Test Library '%s'" % self.library.name
         return "Keyword '%s'" % self.longname
 
     def _tracelog_args(self, logger, args):

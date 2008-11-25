@@ -24,6 +24,8 @@ from runkwregister import RUN_KW_REGISTER
 
 def Handler(library, name, method):
     if name == '__init__':
+        if method is None:
+            return _NoInitHandler(library)
         if _is_java_method(method):
             return _JavaInitHandler(library, method)
         else:
@@ -36,7 +38,7 @@ def Handler(library, name, method):
 
 
 def _is_java_method(method):
-    if not method or not utils.is_jython:
+    if not utils.is_jython:
         return False
     try:
         return 'reflectedfunction' in str(type(method.im_func))
@@ -338,30 +340,24 @@ class DynamicHandler(_RunnableHandler):
         return handler
 
 
-class _BaseInitHandler:
+class _NoInitHandler(BaseHandler):
 
-    def __init__(self, baseclass, library, handler_method):
-        if handler_method is None:
-            self.library = library
-            self.minargs = 0
-            self.maxargs = 0
-        else:
-            baseclass.__init__(self, library, '__init__', handler_method)
-
-    def _get_type_and_name(self):
-        return "Test Library '%s'" % self.library.name
+    def __init__(self, library):
+        self.library = library
+        self.minargs = 0
+        self.maxargs = 0
 
 
-class _PythonInitHandler(_BaseInitHandler, _PythonHandler):
+class _PythonInitHandler(_PythonHandler):
 
     def __init__(self, library, handler_method):
-        _BaseInitHandler.__init__(self, _PythonHandler, library, handler_method)
+        _PythonHandler.__init__(self, library, '__init__', handler_method)
 
 
-class _JavaInitHandler(_BaseInitHandler, _JavaHandler):
+class _JavaInitHandler(_JavaHandler):
 
     def __init__(self, library, handler_method):
-        _BaseInitHandler.__init__(self, _JavaHandler, library, handler_method)
+        _JavaHandler.__init__(self, library, '__init__', handler_method)
 
     def _get_code_object(self, handler):
         return handler
