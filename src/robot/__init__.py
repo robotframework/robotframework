@@ -13,8 +13,8 @@
 #  limitations under the License.
 
 
+from robot.errors import Information
 import sys
-import os
 import glob
 
 if __name__ == '__main__':
@@ -27,8 +27,8 @@ from output import Output, SystemLogger
 from conf import RobotSettings, RebotSettings
 from running import TestSuite
 from serializing import RobotTestOutput, RebotTestOutput, SplitIndexTestOutput
-from errors import DataError, INFO_PRINTED, DATA_ERROR, STOPPED_BY_USER, \
-     FRAMEWORK_ERROR
+from errors import DataError, Information, INFO_PRINTED, DATA_ERROR, \
+        STOPPED_BY_USER, FRAMEWORK_ERROR
 from variables import init_global_variables
 import utils
 
@@ -135,50 +135,31 @@ def _syslog_start_info(who, sources, settings, syslog):
 
 
 def _process_arguments(cliargs, usage, who):
-    ap = utils.ArgumentParser(usage)
+    ap = utils.ArgumentParser(usage % {'VERSION': utils.get_version()},
+                              utils.get_full_version(who))
     ppath = who == 'Robot' and 'pythonpath' or None
     try:
         opts, args = ap.parse_args(cliargs, argfile='argumentfile',
-                                   unescape='escape', pythonpath=ppath)
+                                   unescape='escape', pythonpath=ppath,
+                                   help='help', version='version', check_args=True)
+    except Information, msg:
+        print msg
+        _exit(INFO_PRINTED)
     except DataError, err:
         _exit(DATA_ERROR, str(err))
-    if opts['help']:
-        _print_help(usage)
-    if opts['version']:
-        _print_version(who)
-    return opts, _process_datasources(args, who)
+    return opts, _glob_datasources(args)
 
 
-def _process_datasources(sources, who):
-    type_ = who == 'Robot' and 'Robot data source' or 'Robot output file'
-    if len(sources) == 0:
-        _exit(DATA_ERROR, 'No %ss given.' % type_)
-    if utils.is_windows:
-        temp = []
-        for path in sources:
-            paths = glob.glob(path)
-            if len(paths) > 0:
-                temp.extend(paths)
-            else:
-                temp.append(path)
-        sources = temp
+def _glob_datasources(sources):
+    # TODO: move to argumentparser
+    temp = []
     for path in sources:
-        if not (os.path.exists(path) or utils.is_url(path)):
-            _exit(DATA_ERROR, "%s '%s' does not exist." % (type_, path))
-    return sources
-
-
-def _print_help(usage):
-    indent = 26
-    escapes = ', '.join(utils.argumentparser.get_escapes())
-    escapes = utils.wrap('Available escapes: '+escapes, 80-indent, indent)
-    print usage.replace('\\','') % {'ESCAPES': escapes, 'VERSION': utils.version}
-    _exit(INFO_PRINTED)
-
-    
-def _print_version(who):
-    print utils.get_full_version(who)
-    _exit(INFO_PRINTED)
+        paths = glob.glob(path)
+        if paths:
+            temp.extend(paths)
+        else:
+            temp.append(path)
+    return temp
     
 
 def _exit(rc_or_suite, error=None, details=None):

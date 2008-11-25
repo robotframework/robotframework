@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 #  Copyright 2008 Nokia Siemens Networks Oyj
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,8 +14,6 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-
-#!/usr/bin/env python
 
 """Robot Framework -- A keyword-driven test automation framework
 
@@ -237,7 +237,6 @@ Options:
                           'with' is the string to escape it with. Note that
                           all given arguments, incl. data sources, are escaped
                           so escape characters ought to be selected carefully.
-%(ESCAPES)s
                           Examples:
                           -\\-escape space:_ --metadata X:Value_with_spaces
                           -E space:SP -E quot:Q -v var:QhelloSPworldQ
