@@ -51,7 +51,6 @@ th { font-style: normal; } /* required for IE */
 </style>
 
 <title>Robot Test Cases</title><link type="text/css" href="resources/css/testdata.css" rel="stylesheet"></head>
-
 <body>
 <h1>Robot Acceptance Test Cases for Rebot</h1>
 <table border="1">
@@ -959,10 +958,9 @@ Try --help for usage information.<br></td>
 </tr>
 <tr>
 <td></td>
-<td>Ends</td>
+<td>Should End With</td>
 <td>${output}</td>
-<td>No Robot output files
-given.${USAGE_TIP}</td>
+<td>Required argument missing. Expected 'robot_outputs'.${USAGE_TIP}</td>
 <td></td>
 <td></td>
 <td></td>
@@ -998,7 +996,7 @@ given.${USAGE_TIP}</td>
 <td></td>
 <td>Check Stderr Matches
 Regexp</td>
-<td>.*Robot output file
+<td>.*Output file
 '.*[/\\\\]non-existing\\.xml' does not exist.\n\n<br>
 Try --help for usage information.</td>
 <td></td>
