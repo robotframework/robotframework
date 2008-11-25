@@ -197,15 +197,13 @@ class BaseTestSuite(_TestAndSuiteHelper):
         self.filter_by_tags(includes, excludes)
 
     def filter_by_names(self, suites=None, tests=None):
-        suites = [ (name, name) for name in utils.to_list(suites) ]
+        suites = [ ([], name.split('.')) for name in utils.to_list(suites) ]
         tests = utils.to_list(tests)
-        if suites == [] and tests == []:
-            return
-        if not self._filter_by_names(suites, tests):
+        if (suites or tests) and not self._filter_by_names(suites, tests):
             self._raise_no_tests_filtered_by_names(suites, tests)
-        
+
     def _filter_by_names(self, suites, tests):
-        self.filtered.add_suites( [ long for long, short in suites ] )
+        self.filtered.add_suites(self._suite_filters_to_str(suites))
         self.filtered.add_tests(tests)
         suites = self._filter_suite_names(suites)
         self.suites = [ suite for suite in self.suites 
@@ -217,23 +215,22 @@ class BaseTestSuite(_TestAndSuiteHelper):
             self.tests = []
         return self.suites or self.tests
     
-    def _filter_suite_names(self, names):
+    def _filter_suite_names(self, suites):
     	try:
-        	return [ self._filter_suite_name(long, short) for long, short in names ]
+        	return [ self._filter_suite_name(p, s) for p, s in suites ]
         except StopIteration:
             return []
     
-    def _filter_suite_name(self, long, short):
-        tokens = short.split('.')
-        if utils.matches(self.name, tokens[0], ignore=['_']):
-            if len(tokens) == 1:
+    def _filter_suite_name(self, parent, suite):
+        if utils.matches(self.name, suite[0], ignore=['_']):
+            if len(suite) == 1:
                 raise StopIteration('Match found')
-            return (long, '.'.join(tokens[1:]))
-        return (long, long)
+            return (parent + [suite[0]], suite[1:])
+        return ([], parent + suite)
 
     def _raise_no_tests_filtered_by_names(self, suites, tests):
         tests = utils.seq2str(tests, lastsep=' or ')
-        suites = utils.seq2str([long for long, short in suites ], lastsep=' or ')
+        suites = utils.seq2str(self._suite_filters_to_str(suites), lastsep=' or ')
         if not suites:
             msg = 'test cases named %s.' % tests
         elif not tests:
@@ -241,6 +238,9 @@ class BaseTestSuite(_TestAndSuiteHelper):
         else:
             msg = 'test cases %s in suites %s.' % (tests, suites)
         raise DataError("Suite '%s' contains no %s" % (self.name, msg))
+    
+    def _suite_filters_to_str(self, suites):
+        return [ '.'.join(p + s) for p, s in suites ]        
 
     def filter_by_tags(self, includes=None, excludes=None):
         if includes is None: includes = []
