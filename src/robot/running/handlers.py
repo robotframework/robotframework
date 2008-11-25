@@ -17,7 +17,7 @@ import sys
 from types import MethodType, FunctionType
 
 from robot import utils
-from robot.errors import DataError, FrameworkError
+from robot.errors import FrameworkError
 from robot.common import BaseHandler
 from runkwregister import RUN_KW_REGISTER
 
@@ -154,7 +154,9 @@ class PythonHandler(_RunnableHandler):
         elif type(handler) is FunctionType:
             func = handler
             first_arg = 0
-        elif self._is_new_style_init_method(handler):
+        # New style classes always inherit __init__ from object.
+        elif getattr(handler, '__name__', '') == '__init__' or \
+                getattr(handler, 'name', '') == '__init__':
             return [], [], None
         else:
             raise FrameworkError("Only MethodType and FunctionType accepted. "
@@ -171,11 +173,6 @@ class PythonHandler(_RunnableHandler):
             varargs = None
         return args, defaults, varargs
 
-    def _is_new_style_init_method(self, handler):
-        return '__init__' in str(handler) and str(type(handler)) in \
-            ["<type 'wrapper_descriptor'>", "<type 'builtin_function_or_method'>",
-            "<type 'methoddescr'>"]
-            
 
 class JavaHandler(_RunnableHandler):
     
@@ -192,10 +189,7 @@ class JavaHandler(_RunnableHandler):
         # Ignore methods only in 'java.lang.Object' (e.g. 'equals', 'wait').
         # Also ignore methods declared only in 'org.python.proxies' (there 
         # seems to be 'clone' and 'finalize').
-        if 'reflectedconstructor' in str(type(handler)):
-            co = handler
-        else:
-            co = handler.im_func
+        co = self._get_code_object(handler)
         # signature is an instance of org.python.ReflectedArgs
         for signature in co.argslist[:co.nargs]:
             # 'getName' may raise an exception -- not sure why but that happens
@@ -212,15 +206,15 @@ class JavaHandler(_RunnableHandler):
         return False
     
     def _get_arg_limits(self, handler):
-        if 'reflectedconstructor' in str(type(handler)):
-            co = handler
-        else:
-            co = handler.im_func
+        co = self._get_code_object(handler)
         signatures = co.argslist[:co.nargs]
         if len(signatures) == 1:
             return self._get_single_sig_arg_limits(signatures[0])
         else:
             return self._get_multi_sig_arg_limits(signatures)
+
+    def _get_code_object(self, handler):
+        return handler.im_func
 
     def _get_single_sig_arg_limits(self, signature):
         args = signature.args
@@ -336,7 +330,7 @@ class _BaseInitHandler:
         return "Test Library '%s'" % self.library.name
 
 
-class InitHandler(_BaseInitHandler, PythonHandler):
+class PythonInitHandler(_BaseInitHandler, PythonHandler):
 
     def __init__(self, library, handler_method):
         _BaseInitHandler.__init__(self, PythonHandler, library, handler_method)
@@ -346,3 +340,6 @@ class JavaInitHandler(_BaseInitHandler, JavaHandler):
 
     def __init__(self, library, handler_method):
         _BaseInitHandler.__init__(self, JavaHandler, library, handler_method)
+
+    def _get_code_object(self, handler):
+        return handler
