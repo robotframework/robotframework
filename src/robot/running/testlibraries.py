@@ -21,37 +21,37 @@ from robot.errors import DataError
 from robot.common import BaseLibrary
 from robot.output import SystemLogger
 
-from handlers import PythonHandler, JavaHandler, DynamicHandler, \
-                        PythonInitHandler, JavaInitHandler
+from handlers import Handler, DynamicHandler
 
 
 def TestLibrary(name, args=None, syslog=None):
     if syslog is None:
         syslog = SystemLogger()
     libcode, source = utils.import_(name)
-    args = utils.to_list(args)
-    if isinstance(libcode, types.ModuleType):
-        if args:
-            raise DataError('Libraries implemented as modules do not take '
-                            'arguments, got: %s' % str(args))
-        return ModuleLibrary(libcode, source, name, args, syslog)
-    if _has_method(libcode, 'get_keyword_names', 'getKeywordNames'):
-        if _has_method(libcode, 'run_keyword', 'runKeyword'):
-            return DynamicLibrary(libcode, source, name, args, syslog)
-        else:
-            return HybridLibrary(libcode, source, name, args, syslog)
-    # Using type check and not isinstance for ClassType, because it does not 
-    # match Java classes whose type is javaclass. 
-    if type(libcode) is types.ClassType or isinstance(libcode, types.TypeType):
-        return PythonLibrary(libcode, source, name, args, syslog)
-    return JavaLibrary(libcode, source, name, args, syslog)
-    
+    libclass = _get_lib_class(libcode)
+    return libclass(libcode, source, name, utils.to_list(args), syslog)
 
-def _has_method(code, *names):
-    for name in names:
-        if hasattr(code, name) and callable(getattr(code, name)):
-            return True
-    return False
+
+def _get_lib_class(libcode):
+    if isinstance(libcode, types.ModuleType):
+        return _ModuleLibrary
+    if _get_dynamic_method(libcode, 'get_keyword_names'):
+        if _get_dynamic_method(libcode, 'run_keyword'):
+            return _DynamicLibrary
+        else:
+            return _HybridLibrary
+    return _ClassLibrary
+
+def _get_dynamic_method(code, underscore_name):
+    tokens = underscore_name.split('_')
+    tokens = [tokens[0]] + [ t.capitalize() for t in tokens[1:] ]
+    camelCaseName = ''.join(tokens)
+    for name in underscore_name, camelCaseName:
+        if hasattr(code, name):
+            method = getattr(code, name)
+            if callable(method):
+                return method
+    return None
 
 
 class _BaseTestLibrary(BaseLibrary):
@@ -74,25 +74,6 @@ class _BaseTestLibrary(BaseLibrary):
             self.handlers = self._create_handlers(self._libinst, syslog)
             self._init_scope_handling()
 
-    def _get_version(self, code):
-        try:
-            return str(code.ROBOT_LIBRARY_VERSION)
-        except AttributeError:
-            try:
-                return str(code.__version__)
-            except AttributeError:
-                return '<unknown>'
-            
-    def _init_scope_handling(self):
-        if self.scope == 'GLOBAL':
-            return
-        self._libinst = None
-        self.start_suite = self._caching_start
-        self.end_suite = self._restoring_end
-        if self.scope == 'TESTCASE':
-            self.start_test = self._caching_start
-            self.end_test = self._restoring_end
-            
     def copy(self, name):
         lib = _BaseTestLibrary(None, self.version, name, self.args, None)
         lib.orig_name = self.name
@@ -118,6 +99,29 @@ class _BaseTestLibrary(BaseLibrary):
     
     def end_test(self):
         pass
+
+    def _get_version(self, code):
+        try:
+            return str(code.ROBOT_LIBRARY_VERSION)
+        except AttributeError:
+            try:
+                return str(code.__version__)
+            except AttributeError:
+                return '<unknown>'
+
+    def _create_init_handler(self, libcode):
+        init_method =  getattr(libcode, '__init__', None)
+        return Handler(self, '__init__', init_method)
+
+    def _init_scope_handling(self):
+        if self.scope == 'GLOBAL':
+            return
+        self._libinst = None
+        self.start_suite = self._caching_start
+        self.end_suite = self._restoring_end
+        if self.scope == 'TESTCASE':
+            self.start_test = self._caching_start
+            self.end_test = self._restoring_end
 
     def _caching_start(self):
         self._instance_cache.append(self._libinst)
@@ -188,36 +192,26 @@ class _BaseTestLibrary(BaseLibrary):
         if not isinstance(method, (types.MethodType, types.FunctionType)):
             raise TypeError('Not a method or function')
         return method
-    
+
+    def _create_handler(self, handler_name, handler_method):
+        return Handler(self, handler_name, handler_method)
+
     def _raise_creating_instance_failed(self):
-        error_msg, error_details = utils.get_error_details()
-        msg = "Creating an instance of the test library '%s' " % self.name
-        if len(self.args) == 0:
-            msg += "with no arguments "
-        elif len(self.args) == 1:
-            msg += "with argument '%s' " % self.args[0]
+        msg, details = utils.get_error_details()
+        if self.args:
+            args = "argument%s %s" % (utils.plural_or_not(self.args),
+                                      utils.seq2str(self.args))
         else:
-            msg += "with arguments %s " % utils.seq2str(self.args)
-        msg += "failed: " + error_msg
-        msg += "\n" + error_details
-        raise DataError(msg)
-
-    def _create_init_handler(self, libcode):
-        init =  getattr(libcode, '__init__', None)
-        if self._is_java_method(init):
-            return JavaInitHandler(self, init)
-        return PythonInitHandler(self, init)
-
-    def _is_java_method(self, method):
-        if not method or not utils.is_jython:
-            return False
-        try:
-            return 'reflectedfunction' in str(type(method.im_func))
-        except AttributeError:
-            return 'reflectedconstructor' in str(type(method))
+            args = "no arguments"
+        raise DataError("Creating an instance of the test library '%s' with %s "
+                        "failed: %s\n%s" % (self.name, args, msg, details))
 
 
-class ModuleLibrary(_BaseTestLibrary):
+class _ClassLibrary(_BaseTestLibrary):
+    pass
+
+
+class _ModuleLibrary(_BaseTestLibrary):
     
     def _get_scope(self, libcode):
         return 'GLOBAL'
@@ -225,20 +219,9 @@ class ModuleLibrary(_BaseTestLibrary):
     def get_instance(self):
         self.init.check_arg_limits(self.args)
         return self._libcode
-    
-    def _create_handler(self, handler_name, handler_method):
-        return PythonHandler(self, handler_name, handler_method)
-    
-    
-class PythonLibrary(_BaseTestLibrary):
-        
-    def _create_handler(self, handler_name, handler_method):
-        if self._is_java_method(handler_method):
-            return JavaHandler(self, handler_name, handler_method)
-        return PythonHandler(self, handler_name, handler_method)
 
 
-class HybridLibrary(PythonLibrary):
+class _HybridLibrary(_BaseTestLibrary):
     
     def _get_handler_names(self, instance):
         try:
@@ -253,23 +236,12 @@ class HybridLibrary(PythonLibrary):
         return syslog.debug, syslog.warn, syslog.info
     
         
-class DynamicLibrary(_BaseTestLibrary):
-    
-    _get_kw_doc_names = ['get_keyword_documentation', 'getKeywordDocumentation']
-    _get_kw_args_names = ['get_keyword_arguments', 'getKeywordArguments']
+class _DynamicLibrary(_BaseTestLibrary):
     
     def __init__(self, libcode, source, name, args, syslog):
-        self._get_keyword_documentation = self._get_method(libcode, *self._get_kw_doc_names)
-        self._get_keyword_arguments = self._get_method(libcode, *self._get_kw_args_names)
+        self._get_kw_doc = _get_dynamic_method(libcode, 'get_keyword_documentation')
+        self._get_kw_args = _get_dynamic_method(libcode, 'get_keyword_arguments')
         _BaseTestLibrary.__init__(self, libcode, source, name, args, syslog)
-        
-    def _get_method(self, libcode, *names):
-        for name in names:
-            if hasattr(libcode, name):
-                method = getattr(libcode, name)
-                if callable(method):
-                    return method 
-        return None
      
     def _get_handler_names(self, instance):
         try:
@@ -284,22 +256,12 @@ class DynamicLibrary(_BaseTestLibrary):
             return instance.runKeyword
         
     def _create_handler(self, handler_name, handler_method):
-        doc = self._get_kw_doc(handler_name)
-        argspec = self._get_kw_argspec(handler_name)
+        if self._get_kw_doc:
+            doc = self._get_kw_doc(self._libinst, handler_name)
+        else:
+            doc = ''
+        if self._get_kw_args:
+            argspec = self._get_kw_args(self._libinst, handler_name)
+        else:
+            argspec = None
         return DynamicHandler(self, handler_name, handler_method, doc, argspec)
-    
-    def _get_kw_doc(self, name):
-        if self._get_keyword_documentation:
-            return self._get_keyword_documentation(self._libinst, name)
-        return ''
-    
-    def _get_kw_argspec(self, name):
-        if self._get_keyword_arguments:
-            return self._get_keyword_arguments(self._libinst, name)
-        return None
-    
-    
-class JavaLibrary(_BaseTestLibrary):
-    
-    def _create_handler(self, handler_name, handler_method):
-        return JavaHandler(self, handler_name, handler_method)

@@ -22,6 +22,28 @@ from robot.common import BaseHandler
 from runkwregister import RUN_KW_REGISTER
 
 
+def Handler(library, name, method):
+    if name == '__init__':
+        if _is_java_method(method):
+            return _JavaInitHandler(library, method)
+        else:
+            return _PythonInitHandler(library, method)
+    else:
+        if _is_java_method(method):
+            return _JavaHandler(library, name, method)
+        else:
+            return _PythonHandler(library, name, method)
+
+
+def _is_java_method(method):
+    if not method or not utils.is_jython:
+        return False
+    try:
+        return 'reflectedfunction' in str(type(method.im_func))
+    except AttributeError:
+        return 'reflectedconstructor' in str(type(method))
+
+
 class _RunnableHandler(BaseHandler):
     """Base class for PythonHandler, JavaHandler and DynamicHandler"""
 
@@ -129,7 +151,7 @@ class _RunnableHandler(BaseHandler):
             sys.stderr.write(stderr+'\n')
 
 
-class PythonHandler(_RunnableHandler):
+class _PythonHandler(_RunnableHandler):
     
     def __init__(self, library, handler_name, handler_method):
         _RunnableHandler.__init__(self, library, handler_name, handler_method)
@@ -174,7 +196,7 @@ class PythonHandler(_RunnableHandler):
         return args, defaults, varargs
 
 
-class JavaHandler(_RunnableHandler):
+class _JavaHandler(_RunnableHandler):
     
     def __init__(self, library, handler_name, handler_method):
         if not self._is_valid_handler(handler_method):
@@ -330,16 +352,16 @@ class _BaseInitHandler:
         return "Test Library '%s'" % self.library.name
 
 
-class PythonInitHandler(_BaseInitHandler, PythonHandler):
+class _PythonInitHandler(_BaseInitHandler, _PythonHandler):
 
     def __init__(self, library, handler_method):
-        _BaseInitHandler.__init__(self, PythonHandler, library, handler_method)
+        _BaseInitHandler.__init__(self, _PythonHandler, library, handler_method)
 
 
-class JavaInitHandler(_BaseInitHandler, JavaHandler):
+class _JavaInitHandler(_BaseInitHandler, _JavaHandler):
 
     def __init__(self, library, handler_method):
-        _BaseInitHandler.__init__(self, JavaHandler, library, handler_method)
+        _BaseInitHandler.__init__(self, _JavaHandler, library, handler_method)
 
     def _get_code_object(self, handler):
         return handler

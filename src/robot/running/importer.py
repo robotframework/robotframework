@@ -34,7 +34,7 @@ class Importer:
         else:
             lib = TestLibrary(name, args, syslog)
             self._libraries[key] = lib
-            libtype = lib.__class__.__name__.replace('Library', '').lower()
+            libtype = lib.__class__.__name__.replace('Library', '').lower()[1:]
             syslog.info("Imported library '%s' with arguments %s (version %s, "
                         "%s type, %s scope, %d keywords, source %s)" 
                         % (name, utils.seq2str2(args), lib.version, libtype, 
