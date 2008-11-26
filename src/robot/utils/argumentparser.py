@@ -38,25 +38,19 @@ ESCAPES = { 'space'   : ' ', 'apos'    : "'", 'quot'    : '"', 'lt'      : '<',
 
 class ArgumentParser:
 
-    _short_opt_chars = '-?a-zA-Z'
-    _long_opt_chars = _short_opt_chars + '_0-9'
-    _value_chars = _long_opt_chars + '\.,=:|/<>*+!$@'
-    
     _opt_line_re = re.compile('''
-    ^([%s ]*?)        # possible short options incl. spaces (group 1)
-    --([%s]{2,})      # required long option (group 2)
-    ([%s ]*?)         # possible value and/or '*' telling that option is allowed
-                      # multiple times (group 3)
-    (\s{2,}.*)?$      # rest of the option line
-    ''' % (_short_opt_chars, _long_opt_chars, _value_chars), re.VERBOSE)
+    ^\s{,4}       # max 4 spaces in the beginning of the line
+    ((-\S\s)*)    # all possible short options incl. spaces (group 1)
+    --(\S{2,})    # required long option (group 3)
+    (\s\S+)?      # optional value (group 4)
+    (\s\*)?       # optional '*' telling option allowed multiple times (group 5)
+    ''', re.VERBOSE)
     
     _usage_line_re = re.compile('''
-    ^usage:           # 
-    .*                #
-    \[options\]       #
-    \s+               #
-    (.*)              # arguments (group 1)
-    \s*$              #
+    ^usage:.*
+    \[options\]\s+
+    (.*)          # arguments (group 1)
+    \s*$
     ''', re.VERBOSE | re.IGNORECASE)
     
     def __init__(self, usage, version=None):
@@ -277,33 +271,29 @@ class ArgumentParser:
         
     def _parse_usage(self, usage):
         for line in usage.splitlines():
-            line = line.strip()
-            if line.startswith('-') and self._opt_line_re.match(line):
-                self._parse_opt_line(line)
-            elif self._usage_line_re.match(line):
-                self._parse_usage_line(line)
-
-    def _parse_usage_line(self, line):
-        res = self._usage_line_re.match(line)
-        self._expected_args = res.group(1).split()
+            res = self._opt_line_re.match(line)
+            if res:
+                self._parse_opt_line(res)
+                continue
+            res = self._usage_line_re.match(line)
+            if res:
+                self._expected_args = res.group(1).split()
         
-    def _parse_opt_line(self, line):
-        res = self._opt_line_re.match(line)
-        long_opt = res.group(2).lower()
+    def _parse_opt_line(self, res):
+        long_opt = res.group(3).lower()
         if long_opt in self._names:
             self._raise_option_multiple_times_in_usage('--' + long_opt)
         self._names.append(long_opt)
-        short_opts = self._parse_short_opts(res.group(1))
+        short_opts = [ opt[1] for opt in res.group(1).split() ]
         for sopt in short_opts:
             if self._short_to_long.has_key(sopt):
                 self._raise_option_multiple_times_in_usage('-' + sopt)
             self._short_to_long[sopt] = long_opt
-        _takes_value, _is_multi = self._process_value(res.group(3))
         # options allowed multiple times
-        if _is_multi:
+        if res.group(5):
             self._multi_opts.append(long_opt)
         # options with arguments
-        if _takes_value:
+        if res.group(4):
             long_opt += '='
             short_opts = [ sopt + ':' for sopt in short_opts ]
         else:
@@ -311,29 +301,6 @@ class ArgumentParser:
         self._long_opts.append(long_opt)
         self._short_opts += (''.join(short_opts))
 
-    def _process_value(self, valstr):
-        if valstr is None or valstr == '':
-            return False, False
-        tokens = valstr.split()
-        if len(tokens) == 1:
-            if tokens[0] == '*': 
-                return False, True
-            else:
-                return True, False
-        if len(tokens) == 2:
-            if tokens[1] == '*':
-                return True, True
-        raise FrameworkError("Invalid option value '%s'" % valstr)
-        
-    def _parse_short_opts(self, optstr):
-        if optstr is None: return []
-        return [ self._parse_short_opt(opt) for opt in optstr.split() ]
-
-    def _parse_short_opt(self, opt):
-        if len(opt) != 2 and opt[0] != '-':
-            raise FrameworkError("Invalid short option '%s'" % opt)
-        return opt[1]
-    
     def _get_pythonpath(self, paths):
         if not is_list(paths):
             paths = [paths]

@@ -13,8 +13,8 @@ Usage:  robot.py [options] datafile
 Version: <VERSION>
 
 Options:
-  -d  --reportdir dir        Explanation
-  -r  --reportfile file      This explanation continues ............... 78
+  -d --reportdir dir        Explanation
+  -r --reportfile file      This explanation continues ............... 78
        ........... to multiple lines.
        Next line is totally empty.
              
@@ -29,7 +29,9 @@ Options:
   --z  No long option here either
   this line doesn't start with a '-' so not an --optionline
   -\\-option     escaped 1
-  -o -\\-option  escaped 2 
+  -o -\\-option  escaped 2
+          --ignored  options cannot be this far
+          --ignored
 
 * denotes options that can be set multiple times
 """
@@ -38,9 +40,9 @@ USAGE2 = """Just Name Here
 usage:  robot.py [options] arg1 arg2
 
 options:
-  -v     --variable name=value  
-  -x     --var-able name=v1,v2   Explanation
-  --42
+  -v --variable name=value  
+  -x --var-able name=v1,v2   Explanation
+  -3 --42
 """
 
 
@@ -62,6 +64,17 @@ class TestArgumentParserInit(unittest.TestCase):
 
     def test_toggle_options(self):
         assert_equals(self.ap._toggle_opts, ['help','version'])
+
+    def test_options_over_4_spaces_from_left_are_ignored(self):
+        assert_equals(ArgumentParser('''Name
+1234567890
+--opt1
+    --opt2        This option is 4 spaces from left -> included
+    -o --opt3 argument  It doesn't matter how far the option gets.
+     --notopt     This option is 5 spaces from left -> not included
+     -i --ignored
+                     --not-in-either
+        ''')._long_opts, ['opt1', 'opt2', 'opt3='])
 
     def test_case_insensitive_long_options(self):
         ap = ArgumentParser(' -f --foo\n -B --BAR\n')
