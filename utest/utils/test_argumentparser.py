@@ -3,13 +3,16 @@ import os
 
 from robot.utils.argumentparser import ArgumentParser
 from robot.utils.asserts import *
-from robot.errors import *
+from robot.errors import Information, DataError, FrameworkError
 
 
-USAGE = """
-usage:  robot.py [options] datafile
+USAGE = """Example Tool -- Stuff before hyphens is considered name
 
-options:
+Usage:  robot.py [options] datafile
+
+Version: <VERSION>
+
+Options:
   -d  --reportdir dir        Explanation
   -r  --reportfile file      This explanation continues ............... 78
        ........... to multiple lines.
@@ -31,12 +34,13 @@ options:
 * denotes options that can be set multiple times
 """
 
-USAGE2 = """
+USAGE2 = """Just Name Here
 usage:  robot.py [options] arg1 arg2
 
 options:
   -v     --variable name=value  
-  -x     --var-able name=v1,v2   Explanation 
+  -x     --var-able name=v1,v2   Explanation
+  --42
 """
 
 
@@ -120,26 +124,26 @@ class TestArgumentParserParseArgs(unittest.TestCase):
     def test_non_ascii_chars(self):
         ap = ArgumentParser(USAGE2)
         inargs = '-x foo=bar --variable a=1,2,3 arg1 arg2'.split()
-        exp_opts = { 'var-able':'foo=bar', 'variable':'a=1,2,3' }
-        exp_args = [ 'arg1', 'arg2' ]
+        exp_opts = {'var-able':'foo=bar', 'variable':'a=1,2,3', '42': False}
+        exp_args = ['arg1', 'arg2']
         opts, args = ap.parse_args(inargs)
         assert_equals(opts, exp_opts)
         assert_equals(args, exp_args)
  
     def test_check_args_with_correct_args(self):
         for args in [ ('hello',), ('hello world',) ]:
-            self.ap.check_args(args)
+            self.ap.parse_args(args, check_args=True)
 
     def test_check_args_with_wrong_number_of_args(self):
         for args in [ (), ('arg1','arg2','arg3') ]:
-            assert_raises(DataError, self.ap.check_args, args)
+            assert_raises(DataError, self.ap._check_args, args)
     
     def test_check_variable_number_of_args(self):
         ap = ArgumentParser('usage:  robot.py [options] args')
-        ap.check_args(['one_is_ok'])
-        ap.check_args(['two', 'ok'])
-        ap.check_args(['this', 'should', 'also', 'work', 'pretty', 'well'])
-        assert_raises(DataError, ap.check_args, [])
+        ap.parse_args(['one_is_ok'], check_args=True)
+        ap.parse_args(['two', 'ok'], check_args=True)
+        ap.parse_args(['this', 'should', 'also', 'work', '!'], check_args=True)
+        assert_raises(DataError, ap._check_args, [])
 
     def test_unescape_options(self):
         cli = '--escape quot:Q -E space:SP -E lt:LT -E gt:GT ' \
@@ -150,7 +154,7 @@ class TestArgumentParserParseArgs(unittest.TestCase):
         assert_equals(args, ['source with spaces'])
 
     def test_split_pythonpath(self):
-        ap = ArgumentParser('')
+        ap = ArgumentParser('ignored')
         data = [ (['path'], ['path']),
                  (['path1','path2'], ['path1','path2']),
                  (['path1:path2'], ['path1','path2']),
@@ -165,7 +169,7 @@ class TestArgumentParserParseArgs(unittest.TestCase):
             assert_equals(ap._split_pythonpath(inp), exp)
 
     def test_get_pythonpath(self):
-        ap = ArgumentParser('')
+        ap = ArgumentParser('ignored')
         p1 = os.path.abspath('.')
         p2 = os.path.abspath('..')
         assert_equals(ap._get_pythonpath(p1), [p1])
@@ -187,20 +191,46 @@ class TestArgumentParserParseArgs(unittest.TestCase):
 class TestPrintHelpAndVersion(unittest.TestCase):
 
     def setUp(self):
-        self.ap = ArgumentParser(USAGE, version='testing 1.0')
+        self.ap = ArgumentParser(USAGE, version='1.0 alpha')
+        self.ap2 = ArgumentParser(USAGE2)
 
     def test_print_help(self):
-        assert_raises_with_msg(Information, USAGE,
-                               self.ap.parse_args, ['--help'], help='help')
+        assert_raises_with_msg(Information, USAGE2,
+                               self.ap2.parse_args, ['--42'], help='42')
+
+    def test_name_is_got_from_first_line_of_the_usage(self):
+        assert_equals(self.ap._name, 'Example Tool')
+        assert_equals(self.ap2._name, 'Just Name Here')
 
     def test_print_version(self):
-        assert_raises_with_msg(Information, 'testing 1.0',
+        assert_raises_with_msg(Information, 'Example Tool 1.0 alpha',
                                self.ap.parse_args, ['--version'], version='version')
 
     def test_print_version_when_version_not_set(self):
-        ap = ArgumentParser(USAGE)
-        assert_raises_with_msg(Information, "No version information available",
-                               ap.parse_args, ['--version'], version='version')
+        assert_raises(FrameworkError, self.ap2.parse_args, ['--42', '-x a'], version='42')
+
+    def test_version_is_replaced_in_help(self):
+        assert_raises_with_msg(Information, USAGE.replace('<VERSION>', '1.0 alpha'),
+                               self.ap.parse_args, ['--help'], help='help')
+
+    def test_escapes_are_replaced_in_help(self):
+        usage = """Name
+ --escape x:y      blaa blaa .............................................. end
+                   <-----------------------ESCAPES---------------------------->
+                   -- next line --
+ --he"""
+        expected = """Name
+ --escape x:y      blaa blaa .............................................. end
+                   Available escapes:
+                   amp (&), apos ('), at (@), bslash (\), colon (:), comma (,),
+                   curly1 ({), curly2 (}), dollar ($), exclam (!), gt (>), hash
+                   (#), lt (<), paren1 ((), paren2 ()), percent (%), pipe (|),
+                   quest (?), quot ("), semic (;), slash (/), space ( ),
+                   square1 ([), square2 (]), star (*)
+                   -- next line --
+ --he"""
+        assert_raises_with_msg(Information, expected,
+                               ArgumentParser(usage).parse_args, ['--he'], help='he')
 
 
 if __name__ == "__main__":

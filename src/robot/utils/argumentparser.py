@@ -24,6 +24,7 @@ from robot.errors import DataError, Information, FrameworkError
 
 from misc import seq2str, plural_or_not
 from robottypes import is_list, is_boolean
+from text import wrap
 
 
 ESCAPES = { 'space'   : ' ', 'apos'    : "'", 'quot'    : '"', 'lt'      : '<',
@@ -34,12 +35,6 @@ ESCAPES = { 'space'   : ' ', 'apos'    : "'", 'quot'    : '"', 'lt'      : '<',
             'square1' : '[', 'square2' : ']', 'curly1'  : '{', 'curly2'  : '}',
             'bslash'  : '\\' }
 
-
-def get_escapes():
-    names = ESCAPES.keys()
-    names.sort()
-    return [ '%s (%s)' % (name, ESCAPES[name]) for name in names ] 
-                
 
 class ArgumentParser:
 
@@ -64,12 +59,18 @@ class ArgumentParser:
     \s*$              #
     ''', re.VERBOSE | re.IGNORECASE)
     
-    def __init__(self, usage, version='No version information available'):
-        """Initialization is done using a usage doc explaining options.
-        
-        See for example 'runner.py' and 'rebot.py' for usage examples. 
+    def __init__(self, usage, version=None):
+        """Available options and tool name are read from the usage.
+
+        Tool name is got from the first row of the usage. It is either the
+        whole row or anything before first ' -- '.
+
+        See for example 'runner.py' and 'rebot.py' for examples.
         """
+        if not usage:
+            raise FrameworkError('Usage cannot be empty')
         self._usage = usage
+        self._name = usage.splitlines()[0].split(' -- ')[0].strip()
         self._version = version
         self._short_opts = ''
         self._long_opts = []
@@ -91,7 +92,8 @@ class ArgumentParser:
         are given multiple times the last value is used) or None if the option
         is not used at all. Value for options that can be given multiple times
         (denoted with '*' in the usage) is a list which contains all the given
-        values and is empty if options are not used.  
+        values and is empty if options are not used. Options not taken
+        arguments have value False when they are not set and True otherwise.
         
         Positional arguments are returned as a list in the order they are given.
         
@@ -110,10 +112,23 @@ class ArgumentParser:
         be added into 'sys.path'. Value can be either a string containing the
         name of the long option used for this purpose or a list containing
         all such long options (i.e. the latter format allows aliases).
+
+        'help' and 'version' make it possible to automatically generate help
+        and version messages. Version is generated based on the tool name
+        and version -- see __init__ for information how to set them. Help
+        contains the whole usage given to __init__. Possible <VERSION> text
+        in the usage is replaced with the given version. Possible <--ESCAPES-->
+        is replaced with available escapes so that they are wrapped to multiple
+        lines but take the same amount of horizontal space as <---ESCAPES--->.
+        The numer of hyphens can be used to contrl the horizontal space. Both
+        help and version are wrapped to Information exception.
         
         If 'check_args' is True, this method will automatically check that 
-        correct number of arguments (as parsed from the usage line) is given.
-        If wrong number of arguments is given DataError is risen in that case. 
+        correct number of arguments, as parsed from the usage line, are given.
+        If the last argument in the usage line ends with the character 's',
+        the maximum number of arguments is infinite.
+
+        Possible errors in processing arguments are reported using DataError.
         """
         if argfile:
             args_list = self._add_args_from_file(args_list, argfile)
@@ -121,13 +136,13 @@ class ArgumentParser:
         if unescape:
             opts, args = self._unescape_opts_and_args(opts, args, unescape)
         if help and opts[help]:
-            raise Information(self._usage)
+            self._raise_help()
         if version and opts[version]:
-            raise Information(self._version)
+            self._raise_version()
         if pythonpath:
             sys.path = self._get_pythonpath(opts[pythonpath]) + sys.path
         if check_args:
-            self.check_args(args)
+            self._check_args(args)
         return opts, args
 
     def _parse_args(self, args):
@@ -138,7 +153,7 @@ class ArgumentParser:
             raise DataError(err)
         return self._process_opts(opts), self._glob_args(args)
 
-    def check_args(self, args):
+    def _check_args(self, args):
         if len(args) == len(self._expected_args):
             return
         elif len(args) < len(self._expected_args):
@@ -207,8 +222,8 @@ class ArgumentParser:
             try:
                 escapes[value] = ESCAPES[name.lower()]
             except KeyError:
-                av = seq2str(get_escapes(), quote='', lastsep=', ')
-                raise DataError("Invalid escape '%s'. Available: %s" % (name, av))
+                raise DataError("Invalid escape '%s'. Available: %s"
+                                % (name, self._get_available_escapes()))
         return escapes
 
     def _unescape(self, value, escapes):
@@ -352,6 +367,26 @@ class ArgumentParser:
         if drive:
             ret.append(drive)
         return ret
+
+    def _get_available_escapes(self):
+        names = ESCAPES.keys()
+        names.sort()
+        return ', '.join([ '%s (%s)' % (n, ESCAPES[n]) for n in names ])
+
+    def _raise_help(self):
+        msg = self._usage
+        if self._version:
+            msg = msg.replace('<VERSION>', self._version)
+        def replace_escapes(res):
+            escapes = 'Available escapes:\n' + self._get_available_escapes()
+            return wrap(escapes, len(res.group(2)), len(res.group(1)))
+        msg = re.sub('( *)(<-+ESCAPES-+>)', replace_escapes, msg)
+        raise Information(msg)
+
+    def _raise_version(self):
+        if not self._version:
+            raise FrameworkError('Version not set')
+        raise Information('%s %s' % (self._name, self._version))
 
     def _raise_option_multiple_times_in_usage(self, opt):
         raise FrameworkError("Option '%s' multiple times in usage" % opt)
