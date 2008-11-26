@@ -7,12 +7,12 @@ Robot Framework One Click Installer
 An AutoIT_ script for installing `Robot Framework`_ and its preconditions
 on a Windows machine. It is included in source distributions and can also be 
 downloaded from 
-http://code.google.com/p/robotframework/wiki/OneClickInstaller.
+http://code.google.com/p/robotframework/downloads.
 
 
 
 Description
------------
+===========
 
 One Click Installer installs Robot Framework and its preconditions
 Python_ and Jython_ (optional). It also sets Robot Framework start-up
@@ -23,6 +23,9 @@ command prompt for these changes to take effect.) You should use this
 installer ONLY if you do not previously have Python or Jython
 installed. In that case, and also if you want to have a custom
 installation, you need to install the needed components separately.
+
+Installers
+==========
 
 One Click Installer requires that you have all the required component
 installers in the same directory with it and that they have expected
@@ -36,19 +39,34 @@ project web sites. The expected patterns for installer names are
 :path:`robotframework-2.*.exe` , :path:`python-2.*.msi`, and
 :path:`jython_installer-2.*.jar`.
 
+Usage
+=====
+
 All you need to specify is the base directory where to install Python and
-Jython. They are installed into the directories :path:`Python25` and
-:path:`Jython22`, respectively, inside the given base directory. Robot
+Jython. They are installed into the directories :path:`Python` and
+:path:`Jython`, respectively, inside the given base directory. Robot
 Framework itself is installed under the Python installation directory. Its
 startup scripts can be found from :path:`[PYTHON]\\Scripts` and code from
 :path:`[PYTHON]\\Lib\\site-packages`.
+
+It is possible to run the One Click Installer from command line by giving the 
+installation path as argument i.e.
+:cli:`RobotFrameworkOneClickInstaller.exe C:\\APPS\\`.
+
 
 .. Note::
 
 	The specified base directory MUST exist, whereas Python and Jython
 	directories inside it must not. It is also not recommended to
 	use a path containing spaces. Good candidates include
-	directories such as :path:`C:\\` and :path:`C:\\APPS`.
+	directories such as :path:`C:\\` and :path:`C:\\APPS\\`.
+
+Screenshot
+==========
+
+.. figure:: oneclickinstaller.png
+   :width: 400
+   :height: 250
 
 
 .. _AutoIT: http://www.autoitscript.com/autoit3/
