@@ -156,7 +156,24 @@ class TestArgumentParserParseArgs(unittest.TestCase):
         ap.parse_args(['one_is_ok'], check_args=True)
         ap.parse_args(['two', 'ok'], check_args=True)
         ap.parse_args(['this', 'should', 'also', 'work', '!'], check_args=True)
-        assert_raises(DataError, ap._check_args, [])
+        assert_raises_with_msg(DataError, "Expected at least 1 argument, got 0.",
+                               ap._check_args, [])
+
+    def test_arg_limits_to_constructor(self):
+        ap = ArgumentParser('usage:  test.py [options] args', arg_limits=(2,4))
+        assert_raises_with_msg(DataError, "Expected 2 to 4 arguments, got 1.",
+                               ap._check_args, ['one is not enough'])
+
+    def test_reading_args_from_usage_when_it_has_just_options(self):
+        ap = ArgumentParser('usage:  test.py [options]')
+        ap.parse_args([], check_args=True)
+        assert_raises_with_msg(DataError, "Expected 0 arguments, got 2.",
+                               ap._check_args, ['1', '2'])
+
+    def test_check_args_fails_when_no_args_specified(self):
+        assert_raises(FrameworkError, ArgumentParser('test').parse_args,
+                      [], check_args=True)
+
 
     def test_unescape_options(self):
         cli = '--escape quot:Q -E space:SP -E lt:LT -E gt:GT ' \

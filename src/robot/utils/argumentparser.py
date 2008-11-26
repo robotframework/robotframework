@@ -22,7 +22,7 @@ import string
 
 from robot.errors import DataError, Information, FrameworkError
 
-from misc import seq2str, plural_or_not
+from misc import plural_or_not
 from robottypes import is_list, is_boolean
 from text import wrap
 
@@ -48,12 +48,12 @@ class ArgumentParser:
     
     _usage_line_re = re.compile('''
     ^usage:.*
-    \[options\]\s+
-    (.*)          # arguments (group 1)
+    \[options\]\s*
+    (.*?)         # arguments (group 1)
     \s*$
     ''', re.VERBOSE | re.IGNORECASE)
     
-    def __init__(self, usage, version=None):
+    def __init__(self, usage, version=None, arg_limits=None):
         """Available options and tool name are read from the usage.
 
         Tool name is got from the first row of the usage. It is either the
@@ -66,6 +66,7 @@ class ArgumentParser:
         self._usage = usage
         self._name = usage.splitlines()[0].split(' -- ')[0].strip()
         self._version = version
+        self._arg_limits = arg_limits
         self._short_opts = ''
         self._long_opts = []
         self._multi_opts = []
@@ -148,18 +149,19 @@ class ArgumentParser:
         return self._process_opts(opts), self._glob_args(args)
 
     def _check_args(self, args):
-        if len(args) == len(self._expected_args):
+        if not self._arg_limits:
+            raise FrameworkError('No argument information specified.')
+        minargs, maxargs = self._arg_limits
+        if minargs <= len(args) <= maxargs:
             return
-        elif len(args) < len(self._expected_args):
-            msg = 'Required argument%s missing.' % plural_or_not(self._expected_args) 
-        elif self._expected_args and self._expected_args[-1].endswith('s'):
-            return
+        minend = plural_or_not(minargs)
+        if minargs == maxargs:
+            exptxt = "%d argument%s" % (minargs, minend)
+        elif maxargs != sys.maxint:
+            exptxt = "%d to %d arguments" % (minargs, maxargs)
         else:
-            msg = 'Too many arguments.'
-        msg += ' Expected %s' % seq2str(self._expected_args)
-        if args: 
-            msg += ' but got %s' % seq2str(args)
-        raise DataError(msg + '.')
+            exptxt = "at least %d argument%s" % (minargs, minend)
+        raise DataError("Expected %s, got %d." % (exptxt, len(args)))
     
     def _unescape_opts_and_args(self, opts, args, escape_opt):
         try:
@@ -271,15 +273,23 @@ class ArgumentParser:
         
     def _parse_usage(self, usage):
         for line in usage.splitlines():
-            res = self._opt_line_re.match(line)
-            if res:
-                self._parse_opt_line(res)
-                continue
-            res = self._usage_line_re.match(line)
-            if res:
-                self._expected_args = res.group(1).split()
+            if not self._parse_opt_line(line) and not self._arg_limits:
+                self._parse_usage_line(line)
+
+    def _parse_usage_line(self, line):
+        res = self._usage_line_re.match(line)
+        if res:
+            args = res.group(1).split()
+            if not args:
+                self._arg_limits = (0, 0)
+            else:
+                maxargs = args[-1].endswith('s') and sys.maxint or len(args)
+                self._arg_limits = (len(args), maxargs)
         
-    def _parse_opt_line(self, res):
+    def _parse_opt_line(self, line):
+        res = self._opt_line_re.match(line)
+        if not res:
+            return False
         long_opt = res.group(3).lower()
         if long_opt in self._names:
             self._raise_option_multiple_times_in_usage('--' + long_opt)
@@ -300,6 +310,7 @@ class ArgumentParser:
             self._toggle_opts.append(long_opt)
         self._long_opts.append(long_opt)
         self._short_opts += (''.join(short_opts))
+        return True
 
     def _get_pythonpath(self, paths):
         if not is_list(paths):
