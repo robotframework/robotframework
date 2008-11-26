@@ -29,6 +29,8 @@ import robot
 ACCDIR = os.path.join(os.path.abspath(os.path.dirname(__file__)))
 ARGUMENTS = ' '.join('''
 --doc RobotSPFrameworkSPacceptanceSPtests
+--reporttitle RobotSPFrameworkSPTestSPReport
+--logtitle RobotSPFrameworkSPTestSPLog
 --metadata interpreter:%(INTERPRETER)s
 --metadata platform:%(PLATFORM)s
 --variable interpreter:%(INTERPRETER)s
