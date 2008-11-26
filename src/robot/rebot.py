@@ -17,7 +17,7 @@
 
 """Rebot -- Robot Framework Report and Log Generator
 
-Version: %(VERSION)s
+Version: <VERSION>
     
 Usage:  rebot [options] robot_outputs
   or:   interpreter /path/robot/rebot.py [options] robot_outputs
@@ -82,8 +82,8 @@ Options:
                           is considered relative to that unless it is absolute.
  -o --output file         XML output file. Not created unless this option is
                           specified. Given path, similarly as paths given to
-                          -\\-log, --report and --summary, is relative to
-                          -\\-outputdir unless given as an absolute path.
+                          --log, --report and --summary, is relative to
+                          --outputdir unless given as an absolute path.
                           Default is 'output.xml'. Example: '--output out.xml'
  -l --log file            HTML log file. Can be disabled by giving a special
                           name 'NONE'. Examples: '--log mylog.html', '-l none'
@@ -118,7 +118,7 @@ Options:
     --tagstatexclude tag *  Exclude these tags from 'Statistics by Tag' and
                           'Test Details by Tag' tables in outputs. This option
                           can be used with --tagstatinclude similarly as
-                          -\\-exclude is used with --include.
+                          --exclude is used with --include.
     --tagstatcombine tags:name *  Create combined statistics based on tags.
                           These statistics are added into 'Statistics by Tag'
                           table and matching tests into 'Test Details by Tag'
@@ -140,21 +140,21 @@ Options:
                           anything) and '?' (matches any char). In case of 
                           multiple matches, documentations are catenated with
                           spaces. Documentation can contain formatting as with
-                          -\\-doc option.
+                          --doc option.
                           Examples:
-                          -\\-tagdoc mytag:My_documentation
-                          -\\-tagdoc regression:*See*_http://info.html
-                          -\\-tagdoc owner-*:Original_author
+                          --tagdoc mytag:My_documentation
+                          --tagdoc regression:*See*_http://info.html
+                          --tagdoc owner-*:Original_author
     --tagstatlink pattern:link:title *  Adds links into 'Statistics by Tag' 
                           table in outputs. Pattern can contain characters '*' 
                           (matches anything) and '?' (matches any character).
                           Character(s) matching to wildcard expression(s) can 
-                          be used in the resulting link with syntax %%N, where N
+                          be used in the resulting link with syntax %N, where N
                           is the index of the match (starting from 1). In title
                           underscores are automatically converted to spaces.
                           Examples:
-                          -\\-tagstatlink mytag:http://my.domain:Link
-                          -\\-tagstatlink bug-*:http://tracker/id=%%1:Bug_Tracker
+                          --tagstatlink mytag:http://my.domain:Link
+                          --tagstatlink bug-*:http://tracker/id=%1:Bug_Tracker
     --removekeywords all|passed  Remove keyword data from generated outputs. 
                           Keyword data is not needed when creating reports and
                           removing it can make the size of an output file
@@ -184,8 +184,9 @@ Options:
                           'with' is the string to escape it with. Note that
                           all given arguments, incl. data sources, are escaped
                           so escape characters ought to be selected carefully.
+                          <---------------------ESCAPES----------------------->
                           Examples:
-                          -\\-escape space:_ --metadata X:Value_with_spaces
+                          --escape space:_ --metadata X:Value_with_spaces
                           -E space:SP -E quot:Q -v var:QhelloSPworldQ
  -A --argumentfile path   Text file to read more arguments from. File can have
                           both options and data sources one per line. Contents
@@ -227,8 +228,8 @@ $ rebot output.xml
 
 # Using options. Note that this is one long command split into multiple lines.
 $ rebot --log none --report myreport.html --reporttitle My_Report 
-    -\\-summary mysummary.html --summarytitle My_Summary 
-    -\\-SplitOutputs 2 --TagStatCombine smokeANDmytag path/to/myoutput.xml
+        --summary mysummary.html --summarytitle My_Summary
+        --SplitOutputs 2 --TagStatCombine smokeANDmytag path/to/myoutput.xml
 
 # Running 'robot/rebot.py' directly and creating combined outputs.
 $ python /path/robot/rebot.py -N Project_X -l x.html -r x.html outputs/*.xml

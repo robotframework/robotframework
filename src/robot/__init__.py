@@ -34,7 +34,7 @@ __version__ = utils.version
 
 
 def run_from_cli(args, usage):
-    options, datasources = _process_arguments(args, usage, 'Robot')
+    options, datasources = _process_arguments(args, usage, 'pythonpath')
     try:
         suite = run(*datasources, **options)
     except DataError:
@@ -49,7 +49,7 @@ def run_from_cli(args, usage):
 
 
 def rebot_from_cli(args, usage):
-    options, datasources = _process_arguments(args, usage, 'Rebot')
+    options, datasources = _process_arguments(args, usage)
     try: 
         suite = rebot(*datasources, **options)
     except DataError:
@@ -132,13 +132,12 @@ def _syslog_start_info(who, sources, settings, syslog):
                 % (utils.plural_or_not(sources), utils.seq2str(sources)))
 
 
-def _process_arguments(cliargs, usage, who):
-    ap = utils.ArgumentParser(usage % {'VERSION': utils.version},
-                              utils.get_full_version(who))
+def _process_arguments(cliargs, usage, pythonpath=None):
+    ap = utils.ArgumentParser(usage, utils.get_full_version())
     try:
         return ap.parse_args(cliargs, argfile='argumentfile', unescape='escape',
-                             pythonpath=who == 'Robot' and 'pythonpath' or None,
-                             help='help', version='version', check_args=True)
+                             pythonpath=pythonpath, help='help',
+                             version='version', check_args=True)
     except Information, msg:
         print msg
         _exit(INFO_PRINTED)

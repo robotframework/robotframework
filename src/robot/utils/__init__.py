@@ -55,5 +55,6 @@ is_cygwin  = 'cygwin' in sys.platform
 platform   = '%sython %s on %s' % (is_jython and 'J' or 'P', 
                                    sys.version.split()[0], sys.platform)
 
-def get_full_version(who):
-    return "%s %s (%s)" % (who, version, platform)
+def get_full_version(who=''):
+    vers = '%s %s (%s)' % (who, version, platform)
+    return vers.strip()

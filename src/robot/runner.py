@@ -17,7 +17,7 @@
 
 """Robot Framework -- A keyword-driven test automation framework
 
-Version: %(VERSION)s
+Version: <VERSION>
 
 Usage:  pybot [options] data_sources
   or:   jybot [options] data_sources
@@ -80,7 +80,7 @@ Options:
                           parent name separated with a dot. For example 
                           '-s X.Y' selects suite 'Y' only if its parent is 'X'.
  -i --include tag *       Select test cases to run by tag. Similarly as name in
-                          -\\-test, tag is case and space insensitive and it 
+                          --test, tag is case and space insensitive and it 
                           can also be a simple pattern. To include only tests
                           which have more than one tag use '&' or 'AND' between
                           tag names. For example '--include tag1&tag2' includes
@@ -107,7 +107,7 @@ Options:
                           and --variablefile for a more powerful variable
                           setting mechanism that allows also list variables.
                           Examples:
-                          -\\-variable str:Hello  =>  ${str} = 'Hello'
+                          --variable str:Hello  =>  ${str} = 'Hello'
                           -v str:Hi_World -E space:_  =>  ${str} = 'Hi World'
                           -v x: -v y:42  =>  ${x} = '', ${y} = '42'
  -V --variablefile path *  File to read variables from (e.g. 'path/vars.py').
@@ -173,7 +173,7 @@ Options:
     --tagstatexclude tag *  Exclude these tags from 'Statistics by Tag' and
                           'Test Details by Tag' tables in outputs. This option
                           can be used with --tagstatinclude similarly as
-                          -\\-exclude is used with --include.
+                          --exclude is used with --include.
     --tagstatcombine tags:name *  Create combined statistics based on tags.
                           These statistics are added into 'Statistics by Tag'
                           table and matching tests into 'Test Details by Tag'
@@ -195,26 +195,26 @@ Options:
                           anything) and '?' (matches any char). In case of 
                           multiple matches, documentations are catenated with
                           spaces. Documentation can contain formatting as with
-                          -\\-doc option.
+                          --doc option.
                           Examples:
-                          -\\-tagdoc mytag:My_documentation
-                          -\\-tagdoc regression:*See*_http://info.html
-                          -\\-tagdoc owner-*:Original_author
+                          --tagdoc mytag:My_documentation
+                          --tagdoc regression:*See*_http://info.html
+                          --tagdoc owner-*:Original_author
     --tagstatlink pattern:link:title *  Add external links into 'Statistics by 
                           Tag' table in outputs. Pattern can contain characters
                           '*' (matches anything) and '?' (matches any char).
                           Character(s) matching to wildcard expression(s) can 
-                          be used in the resulting link with syntax %%N, where N
+                          be used in the resulting link with syntax %N, where N
                           is the index of the match (starting from 1). In title
                           underscores are automatically converted to spaces.
                           Examples:
-                          -\\-tagstatlink mytag:http://my.domain:Link
-                          -\\-tagstatlink bug-*:http://tracker/id=%%1:Bug_Tracker
+                          --tagstatlink mytag:http://my.domain:Link
+                          --tagstatlink bug-*:http://tracker/id=%1:Bug_Tracker
     --listener class *    A class for monitoring test execution. Gets 
                           notifications e.g. when a test case starts and ends.
                           Arguments to listener class can be given after class 
                           name, using colon as separator. For example:
-                          -\\-listener MyListenerClass:arg1:arg2
+                          --listener MyListenerClass:arg1:arg2
  -W --monitorwidth chars  Width of the monitor output. Default is 78.
  -C --monitorcolors on|off|force  Using ANSI colors in console. Normally colors
                           work in unixes but not in Windows. Default is 'on'.
@@ -229,16 +229,17 @@ Options:
                           path can also be a glob pattern matching multiple
                           paths but then it normally must be escaped or quoted.
                           Examples:
-                          -\\-pythonpath libs/
-                          -\\-pythonpath /opt/testlibs:mylibs.zip:yourlibs
+                          --pythonpath libs/
+                          --pythonpath /opt/testlibs:mylibs.zip:yourlibs
                           -E star:STAR -P lib/STAR.jar -P mylib.jar
  -E --escape what:with *  Escape characters which are problematic in console.
                           'what' is the name of the character to escape and
                           'with' is the string to escape it with. Note that
                           all given arguments, incl. data sources, are escaped
                           so escape characters ought to be selected carefully.
+                          <--------------------ESCAPES------------------------>
                           Examples:
-                          -\\-escape space:_ --metadata X:Value_with_spaces
+                          --escape space:_ --metadata X:Value_with_spaces
                           -E space:SP -E quot:Q -v var:QhelloSPworldQ
  -A --argumentfile path   Text file to read more arguments from. File can have
                           both options and data sources one per line. Contents
