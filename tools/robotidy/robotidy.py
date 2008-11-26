@@ -95,13 +95,13 @@ import glob
 
 from robot.parsing import RawData, rawdatatables, rawdata
 from robot.output import SystemLogger
-from robot.errors import DataError
+from robot.errors import DataError, Information
 from robot import utils
 
 rawdata.PROCESS_CURDIR = False
 
 # Rows having comment in the first cell need to be handled differently because
-# otherwise they'd start a new tc or uk. Such row are simply indented one column
+# otherwise they'd start a new tc or uk. Such rows are simply indented one column
 # right if they are after first real tc/uk has started. If there is a comment
 # before first element, a new tc/uk is created with name '#' and it's contents
 # are moved to the firts real tc/uk later if comments are fixed. 
@@ -669,18 +669,12 @@ class TsvSerializer(_SerializerBase):
 if __name__ == '__main__':
     try:
         ap = utils.ArgumentParser(__doc__)
-        opts, args = ap.parse_args(sys.argv[1:])
-        if opts['help']:
-            print __doc__
-        elif opts['inplace']:
+        opts, args = ap.parse_args(sys.argv[1:], help='help')
+        if opts['inplace']:
             if len(args) == 0:
                 raise DataError('--inplace requires at least one argument')
-            for pattern in args:
-                paths = glob.glob(pattern)
-                if not paths:
-                    paths = [pattern]  # no match - error handled later
-                for path in paths:
-                    process_file(path, None, opts)
+            for path in args:
+                process_file(path, None, opts)
         elif opts['recursive']:
             if len(args) != 1:
                 raise DataError('--recursive requires exactly one argument')
@@ -689,8 +683,14 @@ if __name__ == '__main__':
             process_directory(args[0], opts)
         else:
             if len(args) != 2:
-                raise DataError('Both input and output files must be given')
+                if len(args) == 1:
+                    msg = 'Both input and output files must be given'
+                else:
+                    msg = 'Only one input and one output file can be given'
+                raise DataError(msg)
             process_file(args[0], args[1], opts)
+    except Information, msg:
+        print str(msg)
     except KeyboardInterrupt:
         pass
     except:
