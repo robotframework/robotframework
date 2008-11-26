@@ -40,14 +40,13 @@ $PYTHON_PATTERN = "python-2.*.msi"
 $ROBOT_PATTERN = "robotframework-2.*.exe"
 $JYTHON_PATTERN = "jython_installer-2.*.jar"
 
-; Usage to show to the user. If major versions of installed software are changed update them also here!!
-; Patterns and directory names above are used in the usage so that they don't need to be updated.
-$USAGE = "One Click Installer installs Robot Framework and its preconditions Python and Jython (optional)." & @CRLF & @CRLF & _
-         "Please specify the directory where you want to install the software. Make also sure you have the " & _
-         "required Robot Framework and Python installers, optionally Jython installer, in the directory " & _
-         "where you have this installer." & @CRLF & @CRLF & _
-         "See more information from robotframework.org."
-
+$USAGE = "One Click Installer installs Robot Framework and its " & _
+         "preconditions Python and Jython (optional)." & @CRLF & @CRLF & _
+         "Please specify the directory where you want software to be " & _
+         "installed. Also make sure that you have required Robot Framework " & _
+         "and Python installers, and optionally Jython installer, in the " & _
+         "same directory as this installer." & @CRLF & @CRLF & _
+         "For more information see http://robotframework.org/."
 
 ;;
 ;; Main
