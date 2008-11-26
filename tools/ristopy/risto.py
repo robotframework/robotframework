@@ -17,9 +17,9 @@
 
 """risto.py -- Robot Framework's Historical Reporting Tool
 
-Version: %(VERSION)s
+Version: <VERSION>
 
-Usage:  risto.py options input files
+Usage:  risto.py options input_files
   or:   risto.py options1 --- options2 --- optionsN --- input files
   or:   risto.py --argumentfile path
 
@@ -76,12 +76,12 @@ Options:
   -n --namemeta name  Name of the metadata of the top level test suite
                       where to get name of the test round. By default names
                       are got from paths to input files.
-     ---              Used to group options when creating multiple images
+  ---                 Used to group options when creating multiple images
                       at once.
-     --argumentfile path  Read arguments from the specified file.
-     --verbose        Verbose output. 
-     --help           Print this help.
-     --version        Print version information.
+  --argumentfile path  Read arguments from the specified file.
+  --verbose           Verbose output.
+  --help              Print this help.
+  --version           Print version information.
 
 Examples:
   risto.py --output history.png output1.xml output2.xml output3.xml
@@ -90,19 +90,19 @@ Examples:
   risto.py -CAP -t tag1 --- -CAP -t tag2 --- -CAP -t tag3 --- outputs/*.xml
   risto.py --argumentfile arguments.txt
 
-  ====[arguments.txt]===================
-  -\\-title Overview
-  -\\-output overview.png
-  -\\---------------------
-  -\\-nocritical
-  -\\-noall
-  -\\-nopassed
-  -\\-tag smoke1
-  -\\-title Smoke Tests
-  -\\-output smoke.png
-  -\\---------------------
-  path/to/*.xml
-  ======================================
+     ====[arguments.txt]===================
+     --title Overview
+     --output overview.png
+     ----------------------
+     --nocritical
+     --noall
+     --nopassed
+     --tag smoke1
+     --title Smoke Tests
+     --output smoke.png
+     ----------------------
+     path/to/*.xml
+     ======================================
 """
 
 __version__ = '1.0'
@@ -135,10 +135,10 @@ except ImportError:
 
 try:
     from robot import utils
-    from robot.errors import DataError
+    from robot.errors import DataError, Information
 except ImportError:
-    raise ImportError('Could not import Robot modules. '
-                      'Make sure you have Roobt installed.')
+    raise ImportError('Could not import Robot Framework modules. '
+                      'Make sure you have Roobt Framework installed.')
 
 
 class AllStatistics(object):
@@ -434,18 +434,10 @@ class Plotter(object):
 class Ristopy(object):
 
     def __init__(self):
-        self._arg_parser = utils.ArgumentParser(__doc__)    
+        self._arg_parser = utils.ArgumentParser(__doc__, version=__version__)
 
     def main(self, args):
         args = self._process_possible_argument_file(args)
-
-        if '--help' in args:
-            print __doc__.replace('\\','') % {'VERSION': __version__}
-            return
-        if '--version' in args:
-            print 'risto.py', __version__
-            return
-
         try:
             opt_groups, paths = self._split_to_option_groups_and_paths(args)
         except ValueError:
@@ -461,7 +453,7 @@ class Ristopy(object):
             pylab.close('all')
 
     def _plot_one_graph(self, args):
-        opts, paths = self._arg_parser.parse_args(args)
+        opts, paths = self._arg_parser.parse_args(args, help='help', version='version')
         stats = AllStatistics(paths, opts['namemeta'], opts['verbose'])
         output = self._plot(stats, opts)
         return output is None
@@ -527,5 +519,7 @@ class Ristopy(object):
 if __name__ == '__main__':
     try:
         Ristopy().main(sys.argv[1:])
+    except Information, msg:
+        print str(msg)
     except DataError, err:
         print '%s\n\nTry --help for usage information.' % err
