@@ -145,8 +145,7 @@ for Robot Framework. When it is used for installation, it simply uses
 With both of these commands you get a rather long output, and
 something like the following text should appear at the end::
 
-   Creating Robot start-up scripts...
-
+   Creating Robot Framework start-up scripts...
    Installation directory: /usr/lib/python2.5/site-packages/robot
    Python executable: /usr/bin/python
    Jython executable: /cygdrive/c/jython2.2b2/jython.bat (found from system)
@@ -259,12 +258,12 @@ To verify that the installation and environment setup were successful,
 type::
 
    $ pybot --version 
-   Robot 2.0.1 (Python 2.5.1 on cygwin)
+   Robot Framework 2.0.3 (Python 2.5.1 on darwin)
 
 To verify that Robot Framework works also with Jython, type::
 
    $ jybot --version
-   Robot 2.0.1 (Jython 2.2 on java1.6.0_03)
+   Robot Framework 2.0.3 (Jython 2.2 on java1.6.0_03)
 
 In both cases, the exact version and platform information can, of course,
 differ from these. On Jython, you may also get some notifications from

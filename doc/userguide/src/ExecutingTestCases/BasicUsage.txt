@@ -286,13 +286,13 @@ the option :opt:`--version`. This information also contains Python
 or Jython version and the platform type::
 
    $ pybot --version
-   Robot 2.0 (Python 2.5.1 on cygwin)
+   Robot Framework 2.0.3 (Python 2.5.1 on cygwin)
 
    C:\>jybot --version
-   Robot 2.0 (Jython 2.2 on java1.6.0_03)
+   Robot Framework 2.0.3 (Jython 2.2 on java1.5.0_16)
 
    C:\>rebot --version
-   Rebot 2.0 (Python 2.5.2 on win32)
+   Rebot 2.0.3 (Python 2.5.2 on win32)
 
 
 Handling complicated characters
