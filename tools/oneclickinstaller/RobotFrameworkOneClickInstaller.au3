@@ -71,7 +71,7 @@ Exit
 
 Func GetBaseDirectory()
     If $CmdLine[0] == 0 Then
-        $base = InputBox("Robot Framework One Click Installer", $USAGE, "C:\", "", 500, 470)
+        $base = InputBox("Robot Framework One Click Installer", $USAGE, "C:\", "", 400, 250)
     ElseIf $CmdLine[0] == 1 Then
         $base = $CmdLine[1]
     Else
