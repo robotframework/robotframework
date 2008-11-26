@@ -17,7 +17,7 @@
 
 """Diff Tool for Robot Framework Outputs 
     
-Usage:  robotdiff.py [options] input files
+Usage:  robotdiff.py [options] input_files
 
 This script compares two or more Robot Framework output files and creates a 
 report where possible differences between test case statuses in each file 
@@ -75,7 +75,7 @@ def main(args):
     print "Report: %s" % utils.cygpath(diff.close())
 
 def _process_args(cliargs):
-    ap = utils.ArgumentParser(__doc__)
+    ap = utils.ArgumentParser(__doc__, arg_limits=(2, sys.maxint))
     try:
         opts, paths = ap.parse_args(cliargs, unescape='escape', help='help',
                                     check_args=True)
