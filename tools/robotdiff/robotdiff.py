@@ -42,9 +42,9 @@ Options:
                           console. 'what' is the name of the character to 
                           escape and 'with' is the string to escape it with.
                           Available character to escape:
-%(ESCAPES)s
+                          <--------------------ESCAPES------------------------>
                           Example:
-                          -\\-escape space:_ -\\-title My_Fine_Diff_Report
+                          --escape space:_ --title My_Fine_Diff_Report
  -h -? --help             Print this usage instruction.
  
 Options that can be specified multiple times are marked with an asterisk (*).
@@ -59,7 +59,7 @@ import sys
 
 from robot import utils
 from robot.output import TestSuite
-from robot.errors import DataError
+from robot.errors import DataError, Information
 
 
 def main(args):
@@ -76,9 +76,13 @@ def main(args):
 
 def _process_args(cliargs):
     ap = utils.ArgumentParser(__doc__)
-    opts, paths = ap.parse_args(cliargs, unescape='escape')
-    if opts['help'] or len(paths) < 2:
-        exit(usage=True)
+    try:
+        opts, paths = ap.parse_args(cliargs, unescape='escape', help='help',
+                                    check_args=True)
+    except Information, msg:
+        exit(msg=str(msg))
+    except DataError, err:
+        exit(error=str(err))
     return opts, [ utils.normpath(path) for path in paths ]
 
 def _get_names(names, paths):
@@ -90,18 +94,13 @@ def _get_names(names, paths):
          % (len(names), len(paths)))
 
 
-def exit(rc=0, error=None, usage=False):
-    if error is not None:
-        print error
-        if not usage: 
-            print "\nUse '--help' option to get usage information."
+def exit(rc=0, error=None, msg=None):
+    if error:
+        print error, "\n\nUse '--help' option to get usage information."
         if rc == 0:
             rc = 255
-    if usage:
-        indent = 26
-        escapes = utils.wrap(', '.join(utils.argumentparser.get_escapes()), 
-                             80-indent, indent)
-        print __doc__.replace('\\','') % {'ESCAPES': escapes}
+    if msg:
+        print msg
         rc = 1
     sys.exit(rc)
 
