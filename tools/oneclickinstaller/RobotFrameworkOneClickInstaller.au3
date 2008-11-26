@@ -42,28 +42,11 @@ $JYTHON_PATTERN = "jython_installer-2.*.jar"
 
 ; Usage to show to the user. If major versions of installed software are changed update them also here!!
 ; Patterns and directory names above are used in the usage so that they don't need to be updated.
-$USAGE = "One Click Installer installs Robot Framework and its preconditions Python and Jython (optional). " & _
-         "It also sets Robot Framework start-up scripts (pybot, jybot, rebot) as well as Python and Jython executables " & _
-         "into %PATH% environment variable so that they can be executed from the command line. (Note that " & _
-         "you need to restart the command prompt for these changes to take effect.)" & @CRLF & @CRLF & _
-         "You should use this installer ONLY if you do not previously have Python or Jython installed. " & _
-         "In that case, and also if you want to have a custom installation, you need to install needed " & _
-         "components separately." & @CRLF & @CRLF & _
-         "One Click Installer requires that you have all the required component installers in the same directory " & _
-         "with it and that they have expected names. If Robot Framework or Python installer is missing, " & _
-         "installation fails. If Jython installer does not exist, Jython is simply not installed. Note that " & _
-         "in order to install Jython, Java 1.4 or newer must be already installed. Minimum supported versions " & _
-         "are Robot Framework 2.0, Python 2.5 and Jython 2.2, but latest versions are always recommened. These " & _
-         "installers can be downloaded from respective project websites. Expected patterns for installer names are '" & _
-         $ROBOT_PATTERN & "', '" & $PYTHON_PATTERN & "' and '" & $JYTHON_PATTERN & "'." & @CRLF & @CRLF & _
-         "The only thing you need to specify is the base directory where to install Python and Jython. " & _
-         "They are installed into directories '" & $PYTHON_DIR_NAME & "' and '" & $JYTHON_DIR_NAME & "', " & _
-         "respectively, inside the given base directory. Robot Framework itself is installed under Python " & _
-         "installation directory and its startup scripts can be found from '[PYTHON]\Scripts' and code from " & _ 
-         "'[PYTHON]\Lib\site-packages'." & @CRLF & @CRLF & _
-         "Note that the specified base directory MUST exist and Python and Jython directories inside it must not. " & _
-         "It is also not recommended to use a path containing spaces. Good candidates include directories like " & _
-         "'C:\' and 'C:\APPS'."
+$USAGE = "One Click Installer installs Robot Framework and its preconditions Python and Jython (optional)." & @CRLF & @CRLF & _
+         "Please specify the directory where you want to install the software. Make also sure you have the " & _
+         "required Robot Framework and Python installers, optionally Jython installer, in the directory " & _
+         "where you have this installer." & @CRLF & @CRLF & _
+         "See more information from robotframework.org."
 
 
 ;;
@@ -72,10 +55,10 @@ $USAGE = "One Click Installer installs Robot Framework and its preconditions Pyt
 
 $base_dir = GetBaseDirectory()
 $python_installer = GetRequiredInstaller($PYTHON_PATTERN, "Python")
-$robot_installer = GetRequiredInstaller($ROBOT_PATTERN, "Robot")
+$robot_installer = GetRequiredInstaller($ROBOT_PATTERN, "Robot Framework")
 $jython_installer = GetOptionalInstaller($JYTHON_PATTERN)
 $python_dir = GetPythonDir($base_dir & $PYTHON_DIR_NAME)
-$jython_dir = GetJythonDir($base_dir & $PYTHON_DIR_NAME, $jython_installer)
+$jython_dir = GetJythonDir($base_dir & $JYTHON_DIR_NAME, $jython_installer)
 InstallPython($python_installer, $python_dir)
 InstallJython($jython_installer, $jython_dir)
 SetPath($python_dir, $jython_dir)  ; This must be done before InstallRobot to always have msvcrt71.dll in PATH
