@@ -5,9 +5,9 @@ require 'stringio'
 
 class RobotRemoteServer<XMLRPC::Server
   
-  def initialize(library, port=8270)
+  def initialize(library, hostname='localhost', port=8270)
     @library = library
-    super(port, 'localhost')
+    super(port, hostname)
     add_handler('get_keyword_names') { get_keyword_names }
     add_handler('run_keyword') { |name,args| run_keyword(name, args) }
     add_handler('get_keyword_arguments') { |name| get_keyword_arguments(name) }
