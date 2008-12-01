@@ -81,45 +81,47 @@ class TestImports(unittest.TestCase):
         exp = ("Importing test library '%%s' failed: " 
                "ImportError: %so module named %%s\nPYTHONPATH:" 
                % (utils.is_jython and 'n' or 'N'))
-        for inv in [ 'nonexisting', 'non.existing' ]:
+        for name in 'nonexisting', 'nonexi.sting':
             try:
-                TestLibrary(inv)
+                TestLibrary(name)
             except DataError, err:
-                mod = inv.split('.')[0]
-                assert_true(str(err).startswith(exp % (inv, mod)))
+                module = name.split('.')[0]
+                assert_true(str(err).startswith(exp % (name, module)))
             else:
-                raise AssertionError, "DataError not raised"
+                raise AssertionError("DataError not raised")
     
     def test_import_non_existing_class_from_existing_module(self):
         msg = "Test library module 'pythonmodule' does not contain 'NonExisting'"
         assert_raises_with_msg(DataError, msg, 
-                                 TestLibrary, 'pythonmodule.NonExisting')
+                               TestLibrary, 'pythonmodule.NonExisting')
         
     def test_import_invalid_type(self):
         msg = "Imported test library is not a class or module, got '%s' instead"
         assert_raises_with_msg(DataError, msg % 'StringType', 
-                                 TestLibrary, 'pythonmodule.some_string')
+                               TestLibrary, 'pythonmodule.some_string')
         assert_raises_with_msg(DataError, msg % 'InstanceType', 
-                                 TestLibrary, 'pythonmodule.some_object')
-    
+                               TestLibrary, 'pythonmodule.some_object')
+
+    def test_import_with_unicode_name(self):
+        self._verify_lib(TestLibrary(u"BuiltIn"), "BuiltIn", default_keywords)
+        self._verify_lib(TestLibrary(u"BuiltIn.BuiltIn"), "BuiltIn.BuiltIn", default_keywords)
+        self._verify_lib(TestLibrary(u"pythonmodule.library"), "pythonmodule.library", 
+                         [("keyword from submodule", None)])
     
     def test_set_global_scope(self):
-        lib = TestLibrary('libraryscope.Global')
-        assert_equals(lib.scope, 'GLOBAL')
+        assert_equals(TestLibrary('libraryscope.Global').scope, 'GLOBAL')
         
     def test_set_suite_scope(self): 
-        lib = TestLibrary('libraryscope.Suite')
-        assert_equals(lib.scope, 'TESTSUITE')
+        assert_equals(TestLibrary('libraryscope.Suite').scope, 'TESTSUITE')
 
     def test_set_test_scope(self): 
-        lib = TestLibrary('libraryscope.Test')
-        assert_equals(lib.scope, 'TESTCASE')
+        assert_equals(TestLibrary('libraryscope.Test').scope, 'TESTCASE')
         
     def test_set_invalid_scope(self):
-        for libname in [ 'libraryscope.InvalidValue', 
-                         'libraryscope.InvalidEmpty',
-                         'libraryscope.InvalidMethod', 
-                         'libraryscope.InvalidNone' ]:
+        for libname in ['libraryscope.InvalidValue', 
+                        'libraryscope.InvalidEmpty',
+                        'libraryscope.InvalidMethod', 
+                        'libraryscope.InvalidNone']:
             lib = TestLibrary(libname)
             assert_equals(lib.scope, 'TESTCASE')
             

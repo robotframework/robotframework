@@ -15,16 +15,14 @@
 
 import os
 import sys
-import types 
-if os.name == 'java':
+from types import ModuleType, ClassType, TypeType
+if sys.platform.startswith('java'):
     from java.lang import System
     
 from robot.errors import DataError
 from error import get_error_message, get_error_details
 from robottypes import type_as_str
 from normalizing import normpath
-
-_VALID_IMPORT_TYPES = (types.ModuleType, types.ClassType, types.TypeType)
 
 
 def simple_import(path_to_module):
@@ -34,20 +32,15 @@ def simple_import(path_to_module):
     moddir, modname = _split_path_to_module(path_to_module)
     sys.path.insert(0, moddir)
     try:
-        module = __import__(modname)
-        if normpath(moddir) != normpath(os.path.dirname(module.__file__)):
-            reload(module)
-    except:
+        try:
+            module = __import__(modname)
+            if normpath(moddir) != normpath(os.path.dirname(module.__file__)):
+                reload(module)
+        except:
+            raise DataError(err_prefix + get_error_message())
+    finally:
         sys.path.pop(0)
-        raise DataError(err_prefix + get_error_message())
-    sys.path.pop(0)
     return module
-
-
-def _split_path_to_module(path):
-    moddir, modfile = os.path.split(path)
-    modname = os.path.splitext(modfile)[0]
-    return moddir, modname
 
 
 def import_(name, type_='test library'):
@@ -76,32 +69,32 @@ def import_(name, type_='test library'):
         pop_sys_path = True
     else:
         pop_sys_path = False
-    if name.count('.') > 0:
+    if '.' in name:
         parts = name.split('.')
         modname = '.'.join(parts[:-1])
         classname = parts[-1]
-        fromlist = [ str(classname) ]
+        fromlist = [str(classname)]  # Unicode not generally accepted
     else:
         modname = name
         classname = name
         fromlist = []
     try:
-        # It seems that we get class when importing java class from file system
-        # or from a default package of a jar file. Otherwise we get a module.
-        module_or_class = __import__(modname, globals(), locals(), fromlist)
-    except:
+        try:
+            # It seems that we get class when importing java class from file system
+            # or from a default package of a jar file. Otherwise we get a module.
+            module_or_class = __import__(modname, {}, {}, fromlist)
+        except:
+            _raise_import_failed(type_, name)
+    finally:
         if pop_sys_path:
             sys.path.pop(0)
-        _raise_import_failed(type_, name)
-    if pop_sys_path:
-        sys.path.pop(0)
     try:
         code = getattr(module_or_class, classname)
     except AttributeError:
         if fromlist:
             _raise_no_lib_in_module(type_, modname, fromlist[0])
         code = module_or_class
-    if not isinstance(code, _VALID_IMPORT_TYPES):
+    if not isinstance(code, (ModuleType, ClassType, TypeType)):
         _raise_invalid_type(type_, code)
     try:
         source = module_or_class.__file__
@@ -115,21 +108,23 @@ def import_(name, type_='test library'):
     return code, source
 
 
+def _split_path_to_module(path):
+    moddir, modfile = os.path.split(os.path.abspath(path))
+    modname = os.path.splitext(modfile)[0]
+    return moddir, modname
+
 def _raise_import_failed(type_, name):
     error_msg, error_details = get_error_details()
-    msg = "Importing %s '%s' failed: %s\nPYTHONPATH: %s" \
-            % (type_, name, error_msg, str(sys.path))
-    if os.name == 'java':
-        msg += '\nCLASSPATH: %s' % System.getProperty('java.class.path')
-    msg += '\n%s' % (error_details)
-    raise DataError(msg)
-
+    msg = ["Importing %s '%s' failed: %s" % (type_, name, error_msg),
+           "PYTHONPATH: %s" % sys.path, error_details]
+    if sys.platform.startswith('java'):
+        msg.insert(-1, 'CLASSPATH: %s' % System.getProperty('java.class.path'))
+    raise DataError('\n'.join(msg))
 
 def _raise_no_lib_in_module(type_, modname, libname):
     raise DataError("%s module '%s' does not contain '%s'" 
-            % (type_.capitalize(), modname, libname))
-                        
-                        
+                    % (type_.capitalize(), modname, libname))
+
 def _raise_invalid_type(type_, code):                        
     raise DataError("Imported %s is not a class or module, got '%s' instead" 
-            % (type_, type_as_str(code)))
+                    % (type_, type_as_str(code)))
