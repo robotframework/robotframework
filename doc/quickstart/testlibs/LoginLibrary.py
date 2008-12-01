@@ -5,9 +5,9 @@ import sys
 class LoginLibrary:
 
     def __init__(self):
-        sut_path = os.path.join(os.path.dirname(__file__),
+        sut_path = os.path.join(os.path.dirname(os.path.abspath(__file__)),
                                 '..', 'sut', 'login.py')
-        self._command_prefix = '%s %s ' % (sys.executable, sut_path)
+        self._command_prefix = '"%s" "%s" ' % (sys.executable, sut_path)
         self._status = ''
 
     def create_user(self, username, password):
