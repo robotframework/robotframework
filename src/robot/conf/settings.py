@@ -211,7 +211,7 @@ class _BaseSettings:
             return self._cli_opts[name][1]
 
     def _split_args_from_name(self, name):
-        if ':' not in name:
+        if ':' not in name or os.path.exists(name):
             return name, []
         args = name.split(':')
         name = args.pop(0)

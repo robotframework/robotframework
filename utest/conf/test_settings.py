@@ -1,4 +1,5 @@
 import unittest
+import os
 
 from robot.conf.settings import _BaseSettings
 from robot.utils.asserts import assert_equals
@@ -38,7 +39,18 @@ class TestSplitArgsFromName(unittest.TestCase):
         assert_equals(self.method('D:\\APPS\\listener:v1:b2:z3'), 
                       ('D:\\APPS\\listener', ['v1', 'b2', 'z3']))   
         assert_equals(self.method('C:/varz.py:arg'), ('C:/varz.py', ['arg']))
-     
-     
+
+    def test_existing_path_with_colons(self):
+        # Colons aren't allowed in Windows paths (other than in "c:")
+        if os.sep == '\\':
+            return
+        path = 'robot:framework:test:1:2:42'
+        try:
+            os.mkdir(path)
+            assert_equals(self.method(path), (path, []))
+        finally:
+            os.rmdir(path)
+
+
 if __name__ == '__main__':
     unittest.main()
