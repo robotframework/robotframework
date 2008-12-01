@@ -206,8 +206,8 @@ class _BaseSettings:
         try:
             return int(value)
         except ValueError:
-            self._add_error("Option '--%s' expected integer value but got '%s'."
-                            " Default value used instead." % (name.lower(), value))
+            self._add_error("Option '--%s' expected integer value but got '%s'. "
+                            "Default value used instead." % (name.lower(), value))
             return self._cli_opts[name][1]
 
     def _split_args_from_name(self, name):
@@ -215,6 +215,7 @@ class _BaseSettings:
             return name, []
         args = name.split(':')
         name = args.pop(0)
+        # Handle absolute Windows paths with arguments
         if len(name) == 1 and args[0] and args[0][0] in ['/', '\\']:
             name = name + ':' + args.pop(0)
         return name, args
