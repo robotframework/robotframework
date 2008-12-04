@@ -43,7 +43,10 @@ installed. To use this Quick Start Guide, Python is enough.
 
 There are three different ways to install Robot Framework, of which
 the most suitable can be chosen. Detailed installation instructions
-can be found from the `user guide`_.
+can be found from the `project web pages`__.
+
+__ http://code.google.com/p/robotframework/wiki/Installation
+
 
 1.  There is a binary installer for Windows platform. It is enough to
     double-click the installer and follow instructions.
@@ -68,7 +71,7 @@ Successful installation can be verified with command :cli:`pybot
 --version` which should output something like::
 
     $ pybot --version
-    Robot 2.0.1 (Python 2.5.2 on linux2)
+    Robot Framework 2.0.3 (Python 2.5.2 on linux2)
 
 
 Running this demo
