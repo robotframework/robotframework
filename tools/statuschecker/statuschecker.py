@@ -115,8 +115,8 @@ def _check_log_level(expected, test, kw, index):
         return True
     test.status = 'FAIL'
     test.message = ("Wrong level for message %d of keyword '%s'.\n\n"
-                    "Expected: %s\nActual: %s" 
-                    % (index+1, kw.name, expected, actual))
+                    "Expected: %s\nActual: %s.\n%s" 
+                    % (index+1, kw.name, expected, actual, kw.messages[index].message))
     return False
 
 def _check_log_message(expected, test, kw, index):
@@ -154,7 +154,7 @@ class _Expected:
         try:
             kw_indices, msg_index = index_str.split(':')
         except ValueError:
-            kw_indices, msg_index = index_str, '0'
+            kw_indices, msg_index = index_str, '1'
         kw_indices = [ int(index) - 1 for index in kw_indices.split('.') ]
         return kw_indices, int(msg_index) - 1
             
