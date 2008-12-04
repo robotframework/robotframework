@@ -488,27 +488,21 @@ class OperatingSystem:
              
         The optional `timeout` can be used to control the maximum time of
         waiting. The timeout is given as a timeout string, e.g. in a format
-        '15 seconds' or '1min 10s'. The time string format is described in an
-        appendix of Robot Framework User Guide.
+        '15 seconds', '1min 10s' or just '10'. The time string format is
+        described in an appendix of Robot Framework User Guide.
 
-        If the timeout is negative, the keyword is never timed out. The keyword
-        returns immediately, if the file/directory does not exist in the first
-        place. 
+        If the timeout is negative, the keyword is never timed-out. The keyword
+        returns immediately, if the path does not exist in the first place.
         """
         path = self._absnorm(path)
-        matches = glob.glob(path)
-        if len(matches) == 0:
-            self._info("No items found matching to '%s' found" % path)
-        else:
-            self._info('Waiting for following items to be removed: %s'
-                       % ', '.join(matches))
         timeout = utils.timestr_to_secs(timeout)
-        starttime = time.time()
-        while os.path.exists(path):
+        maxtime = time.time() + timeout
+        while glob.glob(path):
             time.sleep(0.1)
-            if timeout >= 0 and time.time() > starttime + timeout:
-                raise AssertionError("Item '%s' was not removed in %s" 
+            if timeout >= 0 and time.time() > maxtime:
+                raise AssertionError("'%s' was not removed in %s" 
                                      % (path, utils.secs_to_timestr(timeout)))
+        self._info("'%s' was removed" % path)
     
     def wait_until_created(self, path, timeout='1 minute'):
         """Waits until the given file or directory is created.
@@ -520,22 +514,21 @@ class OperatingSystem:
 
         The optional `timeout` can be used to control the maximum time of
         waiting. The timeout is given as a timeout string, e.g. in a format
-        '15 seconds' or '1min 10s'. The time string format is described in an
-        appendix of Robot Framework User Guide.
+        '15 seconds', '1min 10s' or just '10'. The time string format is
+        described in an appendix of Robot Framework User Guide.
 
         If the timeout is negative, the keyword is never timed-out. The keyword
-        returns immediately, if the file/directory already exist. 
+        returns immediately, if the path already exists.
         """
         path = self._absnorm(path)
         timeout = utils.timestr_to_secs(timeout)
-        starttime = time.time()
-        matches = glob.glob(path)
-        while len(matches) == 0:
+        maxtime = time.time() + timeout
+        while not glob.glob(path):
             time.sleep(0.1)
-            matches = glob.glob(path)
-            if timeout >= 0 and time.time() > starttime + timeout:
-                raise AssertionError("Item '%s' was not created in %s" 
+            if timeout >= 0 and time.time() > maxtime:
+                raise AssertionError("'%s' was not created in %s" 
                                      % (path, utils.secs_to_timestr(timeout)))
+        self._info("'%s' was created" % path)
 
     # Dir/file empty
 
