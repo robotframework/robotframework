@@ -1,0 +1,2034 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+
+
+
+
+
+  
+  
+  
+  
+  <meta name="generator" content="HTML Tidy, see www.w3.org">
+
+
+
+
+
+  
+  
+  
+  
+  <style type="text/css">
+html { font-family: Arial,Helvetica,sans-serif;
+background-color: white;
+color: black;
+}
+p { max-width: 60em;
+}
+table { border-collapse: collapse;
+empty-cells: show;
+margin: 1em 0em;
+border: 0.1em solid black;
+}
+th, td {
+border-style: solid;
+border-width: 0.05em 0.1em;
+border-color: black;
+padding: 0.1em 0.2em;
+height: 1.5em;
+}
+th {
+background-color: rgb(192, 192, 192);
+color: black;
+border-width: 0.1em;
+font-weight: bold;
+text-align: center;
+text-transform: capitalize;
+letter-spacing: 0.1em;
+}
+/* Widths of named columns */
+col.name {
+width: 10em;
+}
+.action , .value, .arg {
+width: 15em;
+}
+/* Properties for the name column - td:first-child should work in CSS 2.1 avare browsers (tested in Firefox)
+- col.name is against specs but works in IE
+*/
+td:first-child, col.name {
+background-color: rgb(240, 240, 240);
+text-transform: capitalize;
+letter-spacing: 0.1em;
+}
+th { font-style: normal; } /* required for IE */
+  </style>
+  
+
+
+  
+  
+  
+  
+  
+  
+  
+  
+  <title>Robot Test Cases</title><link type="text/css" href="resources/css/testdata.css" rel="stylesheet"></head>
+<body>
+
+
+
+
+
+&nbsp;
+<h1>Robot Test Cases for Operating System Test Library</h1>
+
+
+
+
+
+<table border="1">
+
+
+
+
+
+  <colgroup span="99"><col class="name"><col class="value" span="4"></colgroup> <thead>
+  <tr>
+
+
+
+
+
+    <th>Setting</th>
+
+
+
+
+
+    <th>Value</th>
+
+
+
+
+
+    <th>Value</th>
+
+
+
+
+
+    <th>value</th>
+
+
+
+
+
+    <th>Value</th>
+
+
+
+
+
+  </tr>
+
+
+
+
+
+  </thead> <tbody>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td>Library</td>
+
+
+
+
+
+      <td>OperatingSystem</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Test
+Setup</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Remove Items</td>
+
+
+
+
+
+      <td><br>
+
+
+
+
+
+      </td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Suite
+Teardown</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Remove Items</td>
+
+
+
+
+
+      <td><br>
+
+
+
+
+
+      </td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+  
+  
+  
+  
+  </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+<table border="1">
+
+
+
+
+
+  <colgroup span="99"><col class="name"><col class="value" span="4"></colgroup> <thead>
+  <tr>
+
+
+
+
+
+    <th>Variable</th>
+
+
+
+
+
+    <th>Value</th>
+
+
+
+
+
+    <th>Value</th>
+
+
+
+
+
+    <th>Value</th>
+
+
+
+
+
+    <th>Value</th>
+
+
+
+
+
+  </tr>
+
+
+
+
+
+  </thead> <tbody>
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td>${FILE}</td>
+
+
+
+
+
+      <td>${CURDIR}${/}ROBOTEST-F.txt</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    
+
+
+
+
+
+    
+
+
+
+
+
+    <tr><td>${FILE 2}</td><td>${CURDIR}${/}ROBOTEST-F-2.txt</td><td></td><td></td><td></td></tr><tr>
+
+
+
+
+
+      <td align="undefined" valign="undefined">${DIR}</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">${CURDIR}${/}ROBOTEST-D</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr><td>${FILE PATTERN}</td><td>${CURDIR}${/}ROBOTEST-*.txt</td><td></td><td></td><td></td></tr><tr><td>${DIR PATTERN}</td><td>${CURDIR}${/}ROBOTEST-?</td><td></td><td></td><td></td></tr><tr><td>${BOTH PATTERN}</td><td>${CURDIR}${/}ROBOTEST-*</td><td></td><td></td><td></td></tr>
+
+
+
+
+
+  
+  
+  
+  
+  </tbody>
+</table>
+
+
+
+
+
+<table border="1">
+
+
+
+
+
+  <colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
+  <thead> <tr>
+
+
+
+
+
+    <th>Test Case</th>
+
+
+
+
+
+    <th>Action</th>
+
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+
+  </tr>
+
+
+
+
+
+  </thead> <tbody>
+
+
+
+
+
+    <tr>
+
+
+
+
+      <td>File And Dir Already Removed</td>
+
+
+
+
+      <td>File Should Not Exist</td>
+
+
+
+
+      <td>${FILE}</td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td>Directory Should Not Exist</td>
+
+
+
+
+      <td>${DIR}</td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td>Wait Until Removed</td>
+
+
+
+
+      <td>${FILE}</td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td>Wait Until Removed</td>
+
+
+
+
+      <td>${DIR}</td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td>File And Dir Removed Before Timeout</td>
+
+
+
+
+      <td>Create Items</td>
+
+
+
+
+      <td><br></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td>: PARALLEL</td>
+
+
+
+
+      <td>Wait Until Removed</td>
+
+
+
+
+      <td>${FILE}</td>
+
+
+
+
+      <td>5&nbsp;second</td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td>Wait Until Removed</td>
+
+
+
+
+      <td>${DIR}</td>
+
+
+
+
+      <td>32 seconds 44 millis</td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td>Remove Items After Sleeping</td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>File And Dir Removed With Pattern</td><td>Create Items</td><td><br></td><td></td><td></td></tr>
+
+
+
+
+    <tr><td></td><td>: PARALLEL</td><td>Wait Until Removed</td><td>${FILE PATTERN}</td><td>23</td></tr><tr><td></td><td></td><td>Wait Until Removed</td><td>${DIR PATTERN}</td><td>12 s</td></tr><tr><td></td><td></td><td>Wait Until Removed</td><td>${BOTH PATTERN}</td><td></td></tr><tr><td></td><td></td><td>Remove Items After Sleeping</td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr>
+
+
+
+
+      <td>File Not Removed Before Timeout</td>
+
+
+
+
+      <td>[Documentation]</td>
+
+
+
+
+      <td>FAIL</td>
+
+
+
+
+      <td>'${FILE}' was not removed in 111 milliseconds</td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td>Create Items</td>
+
+
+
+
+      <td><br></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+
+
+      <td>Wait Until Removed</td>
+
+
+
+
+
+      <td>${FILE}</td>
+
+
+
+
+
+      <td>0.111</td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td>Dir Not Removed Before Timeout</td>
+
+
+
+
+      <td>[Documentation]</td>
+
+
+
+
+      <td>FAIL</td>
+
+
+
+
+      <td>'${DIR}' was not removed in 123 milliseconds</td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td>Create Items</td>
+
+
+
+
+      <td><br></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td>Wait Until Removed</td>
+
+
+
+
+      <td>${DIR}</td>
+
+
+
+
+      <td>0day 0sec 123 millis</td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Not Removed Before Timeout With Pattern</td><td>[Documentation]</td><td>FAIL</td><td>'${BOTH PATTERN}' was not removed in 42 milliseconds</td><td></td></tr><tr><td></td><td>Create Items</td><td></td><td></td><td></td></tr><tr><td></td><td>Wait Until Removed</td><td>${BOTH PATTERN}</td><td>0.042</td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Invalid Remove Timeout</td><td>[Documentation]</td><td>FAIL</td><td>Invalid time string 'invalid timeout'</td><td></td></tr><tr><td></td><td>Wait Until Removed</td><td>non-existing</td><td>invalid timeout</td><td></td></tr><tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td>File And Dir Already Created</td>
+
+
+
+
+      <td>Create Items</td>
+
+
+
+
+      <td><br></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td>Wait Until Created</td>
+
+
+
+
+      <td>${FILE}</td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td>Wait Until Created</td>
+
+
+
+
+      <td>${DIR}</td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td>File And Dir Created Before Timeout</td>
+
+
+
+
+      <td>: PARALLEL</td>
+
+
+
+
+      <td>Wait Until Created</td>
+
+
+
+
+      <td>${FILE}</td>
+
+
+
+
+      <td>1111 ms</td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td>Wait Until Created</td>
+
+
+
+
+      <td>${DIR}</td>
+
+
+
+
+      <td>1.111 seconds</td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td>Create Items After Sleeping</td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>File And Dir Created With Pattern</td><td>: PARALLEL</td><td>Wait Until Created</td><td>${FILE PATTERN}</td><td></td></tr><tr><td></td><td></td><td>Wait Until Created</td><td>${DIR PATTERN}</td><td></td></tr><tr><td></td><td></td><td>Wait Until Created</td><td>${BOTH PATTERN}</td><td></td></tr><tr><td></td><td></td><td>Create Items After Sleeping</td><td></td><td><br></td></tr><tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td>File Not Created Before Timeout</td>
+
+
+
+
+      <td>[Documentation]</td>
+
+
+
+
+      <td>FAIL</td>
+
+
+
+
+      <td>'${FILE}' was not created in 1 second 1 millisecond&nbsp;</td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td>Wait Until Created</td>
+
+
+
+
+      <td>${FILE}</td>
+
+
+
+
+      <td>1.001</td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td>Dir Not Created Before Timeout</td>
+
+
+
+
+      <td>[Documentation]</td>
+
+
+
+
+      <td>FAIL</td>
+
+
+
+
+      <td>'${DIR}' was not created in 42 milliseconds&nbsp;</td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td>Wait Until Created</td>
+
+
+
+
+      <td>${DIR}</td>
+
+
+
+
+      <td>0 s 42 ms<br></td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Not&nbsp;Created Before Timeout With Pattern</td><td>[Documentation]</td><td>FAIL</td><td>'${BOTH PATTERN}' was not created in 22 milliseconds</td><td></td></tr><tr><td></td><td>Wait Until Created</td><td>${BOTH PATTERN}</td><td>0.022</td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Invalid Create Timeout</td><td>[Documentation]</td><td>FAIL</td><td>Invalid time string 'invalid timeout'</td><td></td></tr><tr><td></td><td>Wait Until Created</td><td>${CURDIR}</td><td>invalid timeout</td><td></td></tr>
+
+
+
+
+
+  
+  
+  
+  
+  </tbody>
+</table>
+
+
+
+
+
+<table border="1">
+
+
+
+
+
+  <colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
+  <thead> <tr>
+
+
+
+
+
+    <th>Keyword</th>
+
+
+
+
+
+    <th>Action</th>
+
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+
+  </tr>
+
+
+
+
+
+  </thead> <tbody>
+
+
+
+
+
+    
+
+
+
+
+
+    
+
+
+
+
+
+    
+
+
+
+
+
+    
+
+
+
+
+
+    <tr>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Remove Items</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Remove
+File</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">${FILE}</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"><br></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"><br>
+
+
+
+
+
+      </td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr><td></td><td align="undefined" valign="undefined">Remove
+File</td><td align="undefined" valign="undefined">${FILE 2}</td><td></td><td></td></tr><tr>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">Remove
+Directory</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined">${DIR}</td>
+
+
+
+
+
+      <td align="undefined" valign="undefined"><br></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    
+
+
+
+
+
+    
+
+
+
+    
+
+
+
+
+    <tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Create Items</td><td>Create File</td><td>${FILE}</td><td></td><td></td></tr><tr><td></td><td align="undefined" valign="undefined">Create File</td><td align="undefined" valign="undefined">${FILE 2}</td><td></td><td></td></tr><tr><td></td><td align="undefined" valign="undefined">Create Directory</td><td align="undefined" valign="undefined">${DIR}</td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr>
+
+
+
+
+      <td>Remove Items After Sleeping</td>
+
+
+
+
+      <td>Sleep</td><td>0.25 s</td>
+
+
+
+
+      
+
+
+
+
+      <td><br></td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td>Remove Items</td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    
+
+
+
+
+    
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td>Create Items After Sleeping</td>
+
+
+
+
+      <td>Sleep</td><td>0.25 s</td>
+
+
+
+
+      
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td>Create Items</td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+    <tr>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+      <td></td>
+
+
+
+
+    </tr>
+
+
+
+
+
+  
+  
+  
+  
+  </tbody>
+</table>
+
+
+
+
+
+</body></html>
