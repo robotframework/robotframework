@@ -1,8 +1,8 @@
-include src/bin/?ybot src/bin/*.bat src/bin/rebot
+include src/bin/?ybot src/bin/rebot src/bin/*.bat 
 include robot_postinstall.py
 include robot.bmp
 include install.py package.py
-
+include MANIFEST.in
 include LICENSE.txt COPYRIGHT.txt INSTALL.txt PACKAGING.txt
 
 recursive-include tools *.py *.au3 *.sh *.rb *.html *.txt *.tsv *.png
