@@ -102,9 +102,10 @@ def pygments_directive(name, arguments, options, content, lineno,
         lexer = TextLexer()
     # take an arbitrary option if more than one is given
     formatter = options and VARIANTS[options.keys()[0]] or DEFAULT
-    filtered = [ line for line in content if line ]
-    if len(filtered) and os.path.isfile(filtered[0]):
-        content = open(content[0]).read().splitlines() # Read source code from a file
+    # possibility to read the content from an external file
+    filtered = [ line for line in content if line.strip() ]
+    if len(filtered) == 1 and os.path.isfile(filtered[0]):
+        content = open(content[0]).read().splitlines()
     parsed = highlight(u'\n'.join(content), lexer, formatter)
     return [nodes.raw('', parsed, format='html')]
 
