@@ -4,18 +4,19 @@
 
 Usage:  qs2html.py [ cr(eate) | dist | zip ]
 
-create .. Creates the quick start guide in HTML format.
+create .. Creates the HTML version of the Quick Start Guide.
 
-dist .... Creates the quick start guide and copies it and all its dependencies 
-          under directory named robotframework-quickstart
+dist .... Creates the Quick Start Guide and copies it and all its dependencies 
+          under directory named 'robotframework-quickstart-<date>'.
 
-zip ..... Uses 'dist' to create the quick start guide under a directory and then
-          packages the directory into 'robotframework-quickstart.zip'
+zip ..... Uses 'dist' to create the Quick Start Guide distribution and then
+          packages it into 'robotframework-quickstart-<date>.zip'.
 """
 
 import sys
 import os
 import shutil
+import time
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'userguide'))
 import ug2html  # This also initializes docutils and pygments
@@ -24,7 +25,7 @@ import ug2html  # This also initializes docutils and pygments
 def create_quickstart():
     from docutils.core import publish_cmdline
 
-    print 'Creating quick start guide ...'
+    print 'Creating Quick Start Guide ...'
     qsdir = os.path.dirname(os.path.abspath(__file__))
     description = 'Quick Start Guide for Robot Framework'
     arguments = '''
@@ -36,15 +37,15 @@ quickstart.html
 
     os.chdir(qsdir)
     publish_cmdline(writer_name='html', description=description, argv=arguments)
-    qspath = os.path.abspath(arguments[-1])
-    print qspath
+    qspath = arguments[-1]
+    print os.path.abspath(qspath)
     return qspath
 
 
 def create_distribution():
-    qspath = create_quickstart() # we are in doc/quickstart after this
-    outdir = 'robotframework-quickstart'
-    files = { '.': [qspath], 'testlibs': ['LoginLibrary.py'],
+    qspath = create_quickstart()  # we are in doc/quickstart after this
+    outdir = 'robotframework-quickstart-%d%02d%02d' % time.localtime()[:3]
+    files = { '': [qspath], 'testlibs': ['LoginLibrary.py'],
               'sut': ['login.py', 'test_login.py'] }
               
     print 'Creating distribution directory ...'
