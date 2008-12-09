@@ -549,8 +549,12 @@ class Variables:
         | ${template} =   | Get File          | ${CURDIR}${/}template.txt} |
         | ${message} =    | Replace Variables | ${template}                |
         | Should Be Equal | ${message}        | Hello Robot!               |
+
+        If the given `text` contains only a single variable, its value is
+        returned as-is. Otherwise, and always with Robot Framework 2.0.3 and
+        earlier, this keyword returns a string.
         """
-        return self._get_variables().replace_string(text)
+        return self._get_variables().replace_scalar(text)
     
     def set_variable(self, *args):
         """Returns the given arguments -- can be used to set variables.
@@ -1265,6 +1269,8 @@ class Misc:
 
         See `Remove Tags` for another keyword to modify tags at test
         execution time.
+
+        New in Robot Framework version 2.0.3.
         """
         tags = utils.normalize_list(tags)
         handler = lambda test: utils.normalize_list(test.tags + tags)
@@ -1283,6 +1289,8 @@ class Misc:
 
         Example:
         | Remove Tags | mytag | something-* | ?ython |
+
+        New in Robot Framework version 2.0.3.
         """
         tags = utils.normalize_list(tags)
         handler = lambda test: [ t for t in test.tags

@@ -69,7 +69,7 @@ th {
 </tr>
 <tr>
 <td>Documentation</td>
-<td>See also builtin_variables_2.html</td>
+<td>See also&nbsp;variables2.html</td>
 <td></td>
 <td></td>
 <td></td>
@@ -114,14 +114,14 @@ th {
 <th>Value</th>
 </tr>
 <tr>
-<td>@{list}</td>
+<td>@{LIST}</td>
 <td>Hello</td>
 <td>world</td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td>${scalar}</td>
+<td>${SCALAR}</td>
 <td>Hi tellus</td>
 <td></td>
 <td></td>
@@ -403,7 +403,7 @@ th {
 </tr>
 <tr>
 <td></td>
-<td>Fail Unless</td>
+<td>Should Be True</td>
 <td>${scalar} == ['Hello', 'world']</td>
 <td>Hello world</td>
 <td></td>
@@ -459,7 +459,7 @@ th {
 </tr>
 <tr>
 <td><a name="test_Set Test Variable - Lists">Set Test Variable - Lists</a></td>
-<td>Fail Unless</td>
+<td>Should Be True</td>
 <td>@{list} == ['Hello', 'world']</td>
 <td></td>
 <td></td>
@@ -473,7 +473,7 @@ th {
 </tr>
 <tr>
 <td></td>
-<td>Fail Unless</td>
+<td>Should Be True</td>
 <td>@{list} == ['One item']</td>
 <td></td>
 <td></td>
@@ -494,7 +494,7 @@ th {
 </tr>
 <tr>
 <td></td>
-<td>Fail Unless</td>
+<td>Should Be True</td>
 <td>@{list} == ['One','Two','Three']</td>
 <td></td>
 <td></td>
@@ -522,7 +522,7 @@ th {
 </tr>
 <tr>
 <td></td>
-<td>Fail Unless</td>
+<td>Should Be True</td>
 <td>@{list} == ['1','2','3']</td>
 <td></td>
 <td></td>
@@ -543,7 +543,7 @@ th {
 </tr>
 <tr>
 <td></td>
-<td>Fail Unless</td>
+<td>Should Be True</td>
 <td>@{new} == ['This','is','ok']</td>
 <td></td>
 <td></td>
@@ -564,7 +564,7 @@ th {
 </tr>
 <tr>
 <td></td>
-<td>Equals</td>
+<td>Should Be Equal</td>
 <td>${var1}</td>
 <td>One backslash \\ and \${notvar}</td>
 <td></td>
@@ -613,7 +613,7 @@ th {
 </tr>
 <tr>
 <td></td>
-<td>Fail Unless</td>
+<td>Should Be True</td>
 <td>${var3} == ['', '\\\\', '\\\\']</td>
 <td></td>
 <td></td>
@@ -627,7 +627,7 @@ th {
 </tr>
 <tr>
 <td></td>
-<td>Fail Unless</td>
+<td>Should Be True</td>
 <td>${var3} == ['', '\\\\', '\\\\']</td>
 <td></td>
 <td></td>
@@ -795,7 +795,7 @@ th {
 </tr>
 <tr>
 <td></td>
-<td>Fail Unless</td>
+<td>Should Be True</td>
 <td>@{uk_var_3} == ['Value of', 'uk var 3']</td>
 <td></td>
 <td></td>
@@ -823,14 +823,14 @@ th {
 </tr>
 <tr>
 <td><a name="test_Set Test Variable Not Affecting Other Tests">Set Test Variable Not Affecting Other Tests</a></td>
-<td>Equals</td>
+<td>Should Be Equal</td>
 <td>${scalar}</td>
 <td>Hi tellus</td>
 <td></td>
 </tr>
 <tr>
 <td></td>
-<td>Fail Unless</td>
+<td>Should Be True</td>
 <td>@{list} == ['Hello', 'world']</td>
 <td></td>
 <td></td>
@@ -907,7 +907,7 @@ th {
 </tr>
 <tr>
 <td></td>
-<td>Fail Unless</td>
+<td>Should Be True</td>
 <td>@{suite_setup_suite_var} == [ 'Suite var set in', 'suite setup' ]</td>
 <td></td>
 <td></td>
@@ -949,7 +949,7 @@ th {
 </tr>
 <tr>
 <td></td>
-<td>Fail Unless</td>
+<td>Should Be True</td>
 <td>@{test_level_suite_var} == [ 'Suite var set in', 'test' ]</td>
 <td></td>
 <td></td>
@@ -977,7 +977,7 @@ th {
 </tr>
 <tr>
 <td></td>
-<td>Fail Unless</td>
+<td>Should Be True</td>
 <td>@{uk_level_suite_var} == [ 'Suite var set in', 'user keyword' ]</td>
 <td></td>
 <td></td>
@@ -991,7 +991,7 @@ th {
 </tr>
 <tr>
 <td></td>
-<td>Fail Unless</td>
+<td>Should Be True</td>
 <td>@{sub_uk_level_suite_var} == [ 'Suite var set in', 'sub user keyword' ]</td>
 <td></td>
 <td></td>
@@ -1033,7 +1033,7 @@ th {
 </tr>
 <tr>
 <td></td>
-<td>Fail Unless</td>
+<td>Should Be True</td>
 <td>@{test_level_suite_var} == [ 'Suite var set in', 'test' ]</td>
 <td></td>
 <td></td>
@@ -1054,7 +1054,7 @@ th {
 </tr>
 <tr>
 <td></td>
-<td>Fail Unless</td>
+<td>Should Be True</td>
 <td>@{uk_level_suite_var} == [ 'Suite var set in', 'user keyword' ]</td>
 <td></td>
 <td></td>
@@ -1068,7 +1068,7 @@ th {
 </tr>
 <tr>
 <td></td>
-<td>Fail Unless</td>
+<td>Should Be True</td>
 <td>@{sub_uk_level_suite_var} == [ 'Suite var set in', 'sub user keyword' ]</td>
 <td></td>
 <td></td>
@@ -1110,7 +1110,7 @@ th {
 </tr>
 <tr>
 <td></td>
-<td>Fail Unless</td>
+<td>Should Be True</td>
 <td>@{suite_setup_global_var} == [ 'Global var set in', 'suite setup' ]</td>
 <td></td>
 <td></td>
@@ -1152,7 +1152,7 @@ th {
 </tr>
 <tr>
 <td></td>
-<td>Fail Unless</td>
+<td>Should Be True</td>
 <td>@{test_level_global_var} == [ 'Global var set in', 'test' ]</td>
 <td></td>
 <td></td>
@@ -1180,7 +1180,7 @@ th {
 </tr>
 <tr>
 <td></td>
-<td>Fail Unless</td>
+<td>Should Be True</td>
 <td>@{uk_level_global_var} == [ 'Global var set in', 'user keyword' ]</td>
 <td></td>
 <td></td>
@@ -1194,7 +1194,7 @@ th {
 </tr>
 <tr>
 <td></td>
-<td>Fail Unless</td>
+<td>Should Be True</td>
 <td>@{sub_uk_level_global_var} == [ 'Global var set in', 'sub user keyword' ]</td>
 <td></td>
 <td></td>
@@ -1236,7 +1236,7 @@ th {
 </tr>
 <tr>
 <td></td>
-<td>Fail Unless</td>
+<td>Should Be True</td>
 <td>@{test_level_global_var} == [ 'Global var set in', 'test' ]</td>
 <td></td>
 <td></td>
@@ -1250,7 +1250,7 @@ th {
 </tr>
 <tr>
 <td></td>
-<td>Fail Unless</td>
+<td>Should Be True</td>
 <td>@{uk_level_global_var} == [ 'Global var set in', 'user keyword' ]</td>
 <td></td>
 <td></td>
@@ -1264,7 +1264,7 @@ th {
 </tr>
 <tr>
 <td></td>
-<td>Fail Unless</td>
+<td>Should Be True</td>
 <td>@{sub_uk_level_global_var} == [ 'Global var set in', 'sub user keyword' ]</td>
 <td></td>
 <td></td>
@@ -1381,15 +1381,15 @@ th {
 <td>New value 3</td>
 <td></td>
 </tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
+<tr><td></td><td></td><td></td><td></td><td></td></tr><tr>
+<td><a name="test_Replace Variables">Replace Variables</a></td>
+<td>[Documentation]</td>
+<td>FAIL</td>
+<td>Non-existing variable '\${non existing variables}'</td>
 <td></td>
 </tr>
 <tr>
-<td><a name="test_Replace Variables">Replace Variables</a></td>
+<td><a name="test_Replace Variables"><br></a></td>
 <td>${template}=</td>
 <td>Get File</td>
 <td>${CURDIR}${/}template.txt</td>
@@ -1419,9 +1419,9 @@ th {
 <tr>
 <td></td>
 <td>...</td>
+<td>and<br></td>
+<td>gloomy</td>
 <td>evening</td>
-<td></td>
-<td></td>
 </tr>
 <tr>
 <td></td>
@@ -1434,30 +1434,30 @@ th {
 <td></td>
 <td>${replaced} =</td>
 <td>Replace Variables</td>
-<td>I like \${what}!</td>
+<td>I like \${WHAT.upper()}!</td>
 <td></td>
 </tr>
 <tr>
 <td></td>
 <td>Should Be Equal</td>
 <td>${replaced}</td>
-<td>I like Python!</td>
-<td></td>
+<td>I like PYTHON!</td>
+<td>Extended syntax should work</td>
 </tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
+<tr><td></td><td>Replace Variables</td><td>Using ${non existing variables}&nbsp;is an error</td><td></td><td></td></tr><tr>
 <td></td>
 <td></td>
 <td></td>
 <td></td>
 <td></td>
 </tr>
+<tr>
+<td><a name="test_Replace Variables">Replace Variables With Scalar Object</a></td>
+<td>${replaced} =</td>
+<td>Replace Variables</td>
+<td>\${42}</td>
+<td></td>
+</tr><tr><td></td><td>Should Be Equal</td><td>${replaced}</td><td>${42}</td><td>Should be an integer</td></tr><tr><td></td><td>${replaced} =</td><td>Replace Variables</td><td>\${42} is the answer</td><td></td></tr><tr><td></td><td>Should Be Equal</td><td>${replaced}</td><td>42 is the answer</td><td>Should be a string</td></tr><tr><td></td><td>Import Variables</td><td>${CURDIR}/numbers_to_convert.py</td><td></td><td></td></tr><tr><td></td><td>${replaced} =</td><td>Replace Variables</td><td>\${OBJECT}</td><td></td></tr><tr><td></td><td>Should Be Equal</td><td>${replaced}</td><td>${OBJECT}</td><td>Should be a custom object</td></tr><tr><td></td><td>${replaced} =</td><td>Replace Variables</td><td>\${OBJECT.value}</td><td></td></tr><tr><td></td><td>Should Be Equal</td><td>${replaced}</td><td>${1}</td><td>Should be an integer</td></tr><tr><td></td><td>${replaced} =</td><td>Replace Variables</td><td>\${OBJECT}&nbsp;\${OBJECT.value}</td><td></td></tr><tr><td></td><td>Should Be Equal</td><td>${replaced}</td><td>MyObject 1</td><td>Should be a string</td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td><a name="test_Replace Variables">Replace Variables With List Variable</a></td><td>@{replaced} =</td><td>Replace Variables</td><td>\@{LIST}</td><td></td></tr><tr><td></td><td>Should Be Equal</td><td>@{replaced}[0]</td><td>Hello</td><td></td></tr><tr><td></td><td>Should Be Equal</td><td>@{replaced}[1]</td><td>world</td><td></td></tr><tr><td></td><td>@{mixed} =</td><td>Create List</td><td>${1}</td><td>${True}</td></tr><tr><td></td><td>...</td><td>xxx</td><td>${LIST}</td><td></td></tr><tr><td></td><td>@{replaced} =</td><td>Replace Variables</td><td>\@{mixed}</td><td></td></tr><tr><td></td><td>Should Be Equal</td><td>@{replaced}[0]</td><td>${1}</td><td></td></tr><tr><td></td><td>Should Be Equal</td><td>@{replaced}[1]</td><td>${True}</td><td></td></tr><tr><td></td><td>Should Be Equal</td><td>@{replaced}[2]</td><td>xxx</td><td></td></tr><tr><td></td><td>Should Be Equal</td><td>@{replaced}[3]</td><td>${LIST}</td><td></td></tr>
 </tbody></table>
 
 <table border="1">
