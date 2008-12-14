@@ -2,6 +2,7 @@ import sys
 import inspect
 import traceback
 from StringIO import StringIO
+from types import FunctionType, MethodType
 from SimpleXMLRPCServer import SimpleXMLRPCServer
 try:
     import signal
@@ -37,8 +38,14 @@ class RobotRemoteServer(SimpleXMLRPCServer):
         return True
 
     def get_keyword_names(self):
-        names = [ attr for attr in dir(self._library) if attr[0] != '_'
-                  and callable(getattr(self._library, attr)) ]
+        get_kw_names = getattr(self._library, 'get_keyword_names', None) or \
+                       getattr(self._library, 'getKeywordNames', None)
+        if get_kw_names:
+            names = get_kw_names()
+        else:
+            names = [ attr for attr in dir(self._library) if attr[0] != '_'
+                      and isinstance(getattr(self._library, attr),
+                                     (FunctionType, MethodType)) ]
         return names + ['stop_remote_server']
 
     def run_keyword(self, name, args):
