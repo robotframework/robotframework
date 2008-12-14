@@ -17,7 +17,6 @@ import sys
 import inspect
 import traceback
 from StringIO import StringIO
-from types import FunctionType, MethodType
 from SimpleXMLRPCServer import SimpleXMLRPCServer
 try:
     import signal
@@ -27,9 +26,8 @@ except ImportError:
 
 class RobotRemoteServer(SimpleXMLRPCServer):
   
-    def __init__(self, library, hostname='localhost', port=8270):
-        SimpleXMLRPCServer.__init__(self, (hostname, int(port)),
-                                    logRequests=False)
+    def __init__(self, library, host='localhost', port=8270):
+        SimpleXMLRPCServer.__init__(self, (host, int(port)), logRequests=False)
         self._library = library
         self.register_function(self.get_keyword_names)
         self.register_function(self.run_keyword)
@@ -59,8 +57,7 @@ class RobotRemoteServer(SimpleXMLRPCServer):
             names = get_kw_names()
         else:
             names = [ attr for attr in dir(self._library) if attr[0] != '_'
-                      and isinstance(getattr(self._library, attr),
-                                     (FunctionType, MethodType)) ]
+                      and inspect.isroutine(getattr(self._library, attr)) ]
         return names + ['stop_remote_server']
 
     def run_keyword(self, name, args):

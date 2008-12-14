@@ -17,8 +17,8 @@ class StaticLibrary:
         raise exception(message)
     def _not_included(self):
         """Starts with an underscore"""
-    not_included = "Not callable"
-    
+    not_included = "Not a method or function"
+    not_included_2 = NonServingRemoteServer
 
 class HybridLibrary:
     def get_keyword_names(self):
