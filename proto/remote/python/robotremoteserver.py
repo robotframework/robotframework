@@ -53,7 +53,7 @@ class RobotRemoteServer(SimpleXMLRPCServer):
     def get_keyword_names(self):
         get_kw_names = getattr(self._library, 'get_keyword_names', None) or \
                        getattr(self._library, 'getKeywordNames', None)
-        if get_kw_names:
+        if inspect.isroutine(get_kw_names):
             names = get_kw_names()
         else:
             names = [ attr for attr in dir(self._library) if attr[0] != '_'
