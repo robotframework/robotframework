@@ -24,17 +24,12 @@ for humans and the latter mainly for Robot Framework IDE and other tools.
 Documentation can be created for both test libraries and resource files.
 
 Options:
+ -a --argument value *   Possible arguments that a library needs.         
  -f --format HTML|XML    Specifies whether to generate HTML or XML output.
                          The default value is HTML.
- -o --output path        Where to write the generated documentation. If the
-                         given path is a directory, the documentation is
-                         written there using a name like '<name>.<format>'.
-                         If a file with that name already exists, an index is
-                         added after the '<name>' part.  If the given path is
-                         not a directory, it is used directly and possible
-                         existing files are overwritten. The default value for
-                         the path is the directory where the script is
-                         executed from.
+ -o --output path        Where to write the generated documentation. Can be
+                         either a directory or a file. The default value is
+                         the directory where the script is executed from.
  -N --name newname       Sets the name of the documented library or resource.
  -T --title title        Sets the title of the generated HTML documentation.
                          Underscores in the given title are automatically
@@ -64,7 +59,7 @@ from robot.errors import DataError, Information
 def main(args):
     opts, libname = process_arguments(args)
     try:
-        library = LibraryDoc(libname, opts['name'])
+        library = LibraryDoc(libname, opts['argument'], opts['name'])
     except DataError, err:
         exit(error=str(err))
     outpath = get_outpath(opts['output'], library.name, opts['format'])
@@ -151,7 +146,7 @@ def exit(msg=None, error=None):
     sys.exit(0)
 
 
-def LibraryDoc(libname, newname=None):
+def LibraryDoc(libname, arguments=None, newname=None):
     ext = os.path.splitext(libname)[1].lower()
     if  ext in ['.html', '.htm', '.xhtml', '.tsv']:
         lib = ResourceDoc(libname)
@@ -160,7 +155,7 @@ def LibraryDoc(libname, newname=None):
             exit(error='Documenting Java test libraries requires Jython.')
         lib = JavaLibraryDoc(libname)
     else:
-        lib = PythonLibraryDoc(libname)
+        lib = PythonLibraryDoc(libname, arguments)
     if newname:
         lib.name = newname
     return lib
@@ -215,8 +210,8 @@ class PythonLibraryDoc(_DocHelper):
     
     type = 'library'
     
-    def __init__(self, name):
-        lib = self._import(name)
+    def __init__(self, name, arguments=None):
+        lib = self._import(name, arguments)
         self.name = lib.name
         self.version = utils.html_escape(getattr(lib, 'version', '<unknown>'))
         self.doc = self._process_doc(self._get_doc(lib))
@@ -225,8 +220,8 @@ class PythonLibraryDoc(_DocHelper):
                           for handler in lib.handlers.values() ]
         self.keywords.sort()
  
-    def _import(self, name):
-        return TestLibrary(name)
+    def _import(self, name, args):
+        return TestLibrary(name, args)
 
     def _get_doc(self, lib):
         if lib.doc == '':
@@ -243,7 +238,7 @@ class ResourceDoc(PythonLibraryDoc):
     
     type = 'resource'
         
-    def _import(self, path):
+    def _import(self, path, args_are_ignored):
         return UserLibrary(self._find_resource_file(path))
 
     def _find_resource_file(self, path):

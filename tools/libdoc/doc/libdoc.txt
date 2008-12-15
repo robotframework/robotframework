@@ -23,6 +23,9 @@ Synopsis
 Options
 -------
     
+  -a, --argument <value>   Possible arguments that a library needs. Available
+                           only in versions distributed with Robot Framework 
+                           2.0.4 and newer.
   -f, --format <HTML|XML>  Specifies whether to generate HTML or XML output. 
                            The default value is HTML.
   -o, --output <path>      Specifies where to write the generated documentation. 
@@ -35,15 +38,17 @@ Options
                            The default value for the path is the directory
                            where the script is executed from.
   -N, --name <newname>     Sets the name of the documented library or resource.
+                           Available only in 2.0.4 and newer.
   -T, --title <title>      Sets the title of the generated HTML documentation.
                            Underscores in the given title are automatically
-                           converted to spaces.
+                           converted to spaces. Available only in 2.0.4 and 
+                           newer.
   -P, --pythonpath <path>  Additional path(s) to insert into PYTHONPATH.
   -E, --escape <what:with>  Escapes characters which are problematic in console.
                            :opt:`what` is the name of the character to escape 
                            and :opt:`with` is the string to escape it with.
                            Available escapes are listed in the :opt:`--help`
-                           output.
+                           output. Available only in 2.0.4 and newer.
   -h, --help               Prints this help.
 
 
@@ -74,22 +79,34 @@ A Java test library implemented with a normal library API can be
 specified by giving the path to the source code file containing the
 library implementation. Additionally, :path:`tools.jar`, which is part
 of the Sun JDK distribution, must be found from CLASSPATH when
-:prog:`libdoc.py` is executed.
+:prog:`libdoc.py` is executed. When generating documentation for Java 
+libraries, :prog:`libdoc.py` must be executed using Jython.
 
 Libraries using the dynamic library API are handled in the same way as Python 
-libraries are.
+libraries.
+
+Possible arguments to libraries can be given using :opt:`--argument`
+option, which can be used multiple times to specify multiple
+arguments. Libraries always get these arguments as strings. If
+arguments change what keywords the library provides or otherwise
+change its behaviour, it might be a good idea to use :opt:`--name`
+option to also change the library name accordingly. Note that these
+options only work with :prog:`libdoc.py` distributed with Robot
+Framework 2.0.4 and newer.
 
 Resource files must always be specified using a path. If the path does not 
 exist, resource files are also searched from all directories in PYTHONPATH.
 
 Examples::
 
-     $ python libdoc.py OperatingSystem
-     $ python libdoc.py --output doc/MyLib.html src/MyLib.py
-     $ python libdoc.py test/resource.html
-     $ python libdoc.py --format xml OperatingSystem
-     $ python libdoc.py --format xml --output doc test/resource.html
-     $ jython libdoc.py --format xml MyJavaLibrary.java
+   $ python libdoc.py OperatingSystem
+   $ python libdoc.py --output doc/MyLib.html src/MyLib.py
+   $ python libdoc.py --argument arg1 --argument arg2 LibraryWithArgs.py
+   $ python libdoc.py --name MyLibrary --argument 10.0.0.42:8270 Remote.py
+   $ python libdoc.py test/resource.html
+   $ python libdoc.py --format xml OperatingSystem
+   $ python libdoc.py --format xml --output doc test/resource.html
+   $ jython libdoc.py --format xml MyJavaLibrary.java
 
 
 Writing documentation
