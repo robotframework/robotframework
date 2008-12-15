@@ -224,26 +224,20 @@ class PythonLibraryDoc(_DocHelper):
         self.keywords = [ KeywordDoc(handler, self) 
                           for handler in lib.handlers.values() ]
         self.keywords.sort()
+ 
+    def _import(self, name):
+        return TestLibrary(name)
+
+    def _get_doc(self, lib):
+        if lib.doc == '':
+            return "Documentation for test library `%s`." % lib.name
+        return lib.doc
 
     def _get_initializers(self, lib):
         if lib.init.maxargs == 0:
             return []
         return [KeywordDoc(lib.init, self)]
 
-    def _import(self, name_or_path):
-        if os.path.exists(name_or_path):
-            parent, name = os.path.split(os.path.normpath(name_or_path))
-            sys.path.insert(0, parent)
-            name = os.path.splitext(name)[0]
-        else:
-            name = name_or_path
-        return TestLibrary(name)
-
-    def _get_doc(self, lib):
-        if lib.doc == '':
-            return "Documentation for test library  `%s`." % lib.name
-        return lib.doc
-    
 
 class ResourceDoc(PythonLibraryDoc):
     
@@ -258,7 +252,7 @@ class ResourceDoc(PythonLibraryDoc):
         for dire in [ item for item in sys.path if os.path.isdir(item) ]:
             if os.path.isfile(os.path.join(dire, path)):
                 return os.path.join(dire, path)
-        DataError("Resource file '%s' doesn't exist." % path)
+        raise DataError("Resource file '%s' doesn't exist." % path)
     
     def _get_doc(self, lib):
         return "Documentation for resource file `%s`." % lib.name
