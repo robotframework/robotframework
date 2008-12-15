@@ -23,19 +23,28 @@ Synopsis
 Options
 -------
     
-    -f, --format <html|xml>  Specifies whether to generate HTML or XML output. 
-                             The default value is HTML.
-    -o, --output <path>      Specifies where to write the generated documentation. 
-                             If the path is a directory, the documentation is
-                             generated there using the name '<name>.<format>'
-                             with an index after the '<name>' part, if a file
-                             with that name already exists. If the given path
-                             points to a file, this path is used as is, and the
-                             possible existing file is overwritten. The default
-                             value for the path is the directory where the script
-                             is executed from.
-    -P, --pythonpath <path>  Additional path(s) to insert into PYTHONPATH.
-    -h, --help               Prints this help.
+  -f, --format <HTML|XML>  Specifies whether to generate HTML or XML output. 
+                           The default value is HTML.
+  -o, --output <path>      Specifies where to write the generated documentation. 
+                           If the given path is a directory, the documentation
+                           is written there using a file name like 
+                           '<name>.<format>'. If a file with that name already
+                           exists, an index is added after the '<name>' part.
+                           If the given path is not a directory, it is used 
+                           directly and possible existing files are overwritten. 
+                           The default value for the path is the directory
+                           where the script is executed from.
+  -N, --name <newname>     Sets the name of the documented library or resource.
+  -T, --title <title>      Sets the title of the generated HTML documentation.
+                           Underscores in the given title are automatically
+                           converted to spaces.
+  -P, --pythonpath <path>  Additional path(s) to insert into PYTHONPATH.
+  -E, --escape <what:with>  Escapes characters which are problematic in console.
+                           :opt:`what` is the name of the character to escape 
+                           and :opt:`with` is the string to escape it with.
+                           Available escapes are listed in the :opt:`--help`
+                           output.
+  -h, --help               Prints this help.
 
 
 Description

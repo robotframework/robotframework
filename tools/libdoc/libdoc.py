@@ -24,18 +24,26 @@ for humans and the latter mainly for Robot Framework IDE and other tools.
 Documentation can be created for both test libraries and resource files.
 
 Options:
- -f --format html|xml    Specifies whether to generate HTML or XML output.
+ -f --format HTML|XML    Specifies whether to generate HTML or XML output.
                          The default value is HTML.
- -o --output path        Where to write the generated documentation. If the 
-                         path is a directory, the documentation is
-                         generated there using the name '<name>.<format>'.
-                         If there already is a file with the same name, 
-                         an index is added after the '<name>' part. If the
-                         path points to a file, it is is used as-is and
-                         possible existing file is overwritten. The default
-                         value for the path is the directory where the
-                         script is executed from.
+ -o --output path        Where to write the generated documentation. If the
+                         given path is a directory, the documentation is
+                         written there using a name like '<name>.<format>'.
+                         If a file with that name already exists, an index is
+                         added after the '<name>' part.  If the given path is
+                         not a directory, it is used directly and possible
+                         existing files are overwritten. The default value for
+                         the path is the directory where the script is
+                         executed from.
+ -N --name newname       Sets the name of the documented library or resource.
+ -T --title title        Sets the title of the generated HTML documentation.
+                         Underscores in the given title are automatically
+                         converted to spaces.
  -P --pythonpath path *  Additional path(s) to insert into PYTHONPATH.
+ -E --escape what:with *  Escapes characters which are problematic in console.
+                         'what' is the name of the character to escape and
+                         'with' is the string to escape it with.
+                         <--------------------ESCAPES------------------------>
  -h -? --help            Print this help.
 
 See more information from 'tools/libdoc/doc/libdoc.html folder in case of 
@@ -54,31 +62,38 @@ from robot.errors import DataError, Information
 
 
 def main(args):
-    outpath, format, libname = process_arguments(args)
+    opts, libname = process_arguments(args)
     try:
-        library = LibraryDoc(libname)
+        library = LibraryDoc(libname, opts['name'])
     except DataError, err:
         exit(error=str(err))
-    outpath = get_outpath(outpath, library.name, format)
-    if format == 'HTML':
-        create_html_doc(library, outpath)
+    outpath = get_outpath(opts['output'], library.name, opts['format'])
+    if opts['format'] == 'HTML':
+        create_html_doc(library, outpath, opts['title'])
     else:
         create_xml_doc(library, outpath)
-    exit(utils.cygpath(outpath))
+    exit(outpath)
 
 
 def process_arguments(args_list):
     argparser = utils.ArgumentParser(__doc__)
     try:
         opts, args = argparser.parse_args(args_list, pythonpath='pythonpath',
-                                          help='help', check_args=True)
+                                          help='help', unescape='escape',
+                                          check_args=True)
     except Information, msg:
         exit(msg=str(msg))
     except DataError, err:
         exit(error=str(err))
-    output = opts['output'] or '.'
-    format = opts['format'] or 'HTML'
-    return os.path.abspath(output), format.upper(), args[0]
+    if not opts['output']:
+        opts['output'] = '.'
+    opts['output'] = os.path.abspath(opts['output'])
+    if not opts['format']:
+        opts['format'] = 'HTML'
+    opts['format'] = opts['format'].upper()
+    if opts['title']:
+        opts['title'] = opts['title'].replace('_', ' ')
+    return opts, args[0]
 
 
 def get_outpath(path, libname, format):
@@ -97,9 +112,11 @@ def get_unique_path(base, index=1):
     return path
 
 
-def create_html_doc(lib, outpath):
+def create_html_doc(lib, outpath, title=None):
+    if not title:
+        title = '%s - Documentation' % lib.name
     generated = utils.get_timestamp(daysep='-', millissep=None)
-    namespace = Namespace(LIB=lib, GENERATED=generated)
+    namespace = Namespace(LIB=lib, TITLE=title, GENERATED=generated)
     doc = Template(template=DOCUMENT_TEMPLATE).generate(namespace)
     outfile = open(outpath, 'w')
     outfile.write(doc + '\n')
@@ -134,15 +151,19 @@ def exit(msg=None, error=None):
     sys.exit(0)
 
 
-def LibraryDoc(libname):
+def LibraryDoc(libname, newname=None):
     ext = os.path.splitext(libname)[1].lower()
     if  ext in ['.html', '.htm', '.xhtml', '.tsv']:
-        return ResourceDoc(libname)
-    if ext == '.java':
+        lib = ResourceDoc(libname)
+    elif ext == '.java':
         if not utils.is_jython:
             exit(error='Documenting Java test libraries requires Jython.')
-        return JavaLibraryDoc(libname)
-    return PythonLibraryDoc(libname) 
+        lib = JavaLibraryDoc(libname)
+    else:
+        lib = PythonLibraryDoc(libname)
+    if newname:
+        lib.name = newname
+    return lib
 
 
 class _DocHelper:
@@ -363,7 +384,7 @@ if utils.is_jython:
 DOCUMENT_TEMPLATE = '''<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
-<title>${LIB.name} - Documentation</title>
+<title>${TITLE}</title>
 <style>
 
   body {
@@ -440,7 +461,7 @@ DOCUMENT_TEMPLATE = '''<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional
 </style>
 </head>
 <body>
-<h1>${LIB.name} - Documentation</h1>
+<h1>${TITLE}</h1>
 <!-- IF "${LIB.version}" != "&lt;unknown&gt;" -->
 <p><b>Version:</b> ${LIB.version}</p>
 <!-- END IF -->
