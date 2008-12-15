@@ -14,9 +14,10 @@
 
 
 import os
-import shutil
+import sys
 import time
 import glob
+import shutil
 
 from robot import utils
 from robot.errors import DataError
@@ -24,6 +25,8 @@ from robot.output import SYSLOG
 import BuiltIn
 
 
+IS_WINDOWS = os.sep == '\\'
+IS_JYTHON = sys.platform.startswith('java')
 BUILTIN = BuiltIn.BuiltIn()
 PROCESSES = utils.ConnectionCache('No active processes')
 
@@ -137,18 +140,19 @@ class OperatingSystem:
         #   In Jython return code can be between '-255' - '255'
         #   In Python return code must be converted with 'rc >> 8' and it is
         #   between 0-255 after conversion 
-        if utils.is_windows or utils.is_jython:
+        if IS_WINDOWS or IS_JYTHON:
             rc = rc % 256
         else:
             rc = rc >> 8
-        if utils.contains(return_mode, 'rc'):
-            if utils.contains_any(return_mode, ['stdout','output']):
+        return_mode = return_mode.upper()
+        if 'RC' in return_mode:
+            if 'STDOUT' in return_mode or 'OUTPUT' in return_mode:
                 return rc, stdout
             return rc
         return stdout
     
     def _process_command(self, command):
-        if utils.is_jython:
+        if IS_JYTHON:
             # Jython's os.popen doesn't handle Unicode as explained in
             # http://jython.org/bugs/1735774. This bug is still in Jython 2.2.
             command = str(command)
@@ -603,9 +607,10 @@ class OperatingSystem:
         intermediate missing directories, are created.
         """
         path = self._absnorm(path)
-        if utils.contains_any(mode, ['False','No',"Don't"]):
+        mode = mode.upper()
+        if 'FALSE' in mode or 'NO' in mode or "DON'T" in mode:
             self.file_should_not_exist(path)
-        open_mode = utils.contains(mode, 'Append') and 'a' or 'w'
+        open_mode = 'APPEND' in mode and 'a' or 'w'
         parent = os.path.dirname(path)
         if not os.path.exists(parent):
             os.makedirs(parent)
@@ -696,8 +701,10 @@ class OperatingSystem:
         self._info("Removed directory '%s'" % path)
             
     def _is_recursive(self, recursive):
-        return utils.contains_any(recursive, ['yes','true','recursive'])
-
+        for word in 'YES', 'TRUE', 'RECURSIVE':
+            if word in recursive.upper():
+                return True
+        return False
 
     # Moving and copying files and directories
             
@@ -1076,7 +1083,7 @@ class OperatingSystem:
             return utils.timestamp_to_secs(mtime, (' ', ':', '-', '.'))
         except DataError:
             pass
-        mtime = utils.normalize(mtime)
+        mtime = mtime.lower().replace(' ', '')
         now = round(time.time())
         if mtime == 'now':
             return now
