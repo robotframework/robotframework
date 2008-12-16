@@ -148,17 +148,14 @@ def exit(msg=None, error=None):
 
 def LibraryDoc(libname, arguments=None, newname=None):
     ext = os.path.splitext(libname)[1].lower()
-    if  ext in ['.html', '.htm', '.xhtml', '.tsv']:
-        lib = ResourceDoc(libname)
+    if  ext in ('.html', '.htm', '.xhtml', '.tsv'):
+        return ResourceDoc(libname, newname)
     elif ext == '.java':
         if not utils.is_jython:
             exit(error='Documenting Java test libraries requires Jython.')
-        lib = JavaLibraryDoc(libname)
+        return JavaLibraryDoc(libname, newname)
     else:
-        lib = PythonLibraryDoc(libname, arguments)
-    if newname:
-        lib.name = newname
-    return lib
+        return PythonLibraryDoc(libname, arguments, newname)
 
 
 class _DocHelper:
@@ -210,9 +207,9 @@ class PythonLibraryDoc(_DocHelper):
     
     type = 'library'
     
-    def __init__(self, name, arguments=None):
+    def __init__(self, name, arguments=None, newname=None):
         lib = self._import(name, arguments)
-        self.name = lib.name
+        self.name = newname or lib.name
         self.version = utils.html_escape(getattr(lib, 'version', '<unknown>'))
         self.doc = self._process_doc(self._get_doc(lib))
         self.inits = self._get_initializers(lib)
@@ -224,9 +221,7 @@ class PythonLibraryDoc(_DocHelper):
         return TestLibrary(name, args)
 
     def _get_doc(self, lib):
-        if lib.doc == '':
-            return "Documentation for test library `%s`." % lib.name
-        return lib.doc
+        return lib.doc or "Documentation for test library `%s`." % self.name
 
     def _get_initializers(self, lib):
         if lib.init.maxargs == 0:
@@ -238,6 +233,9 @@ class ResourceDoc(PythonLibraryDoc):
     
     type = 'resource'
         
+    def __init__(self, name, newname=None):
+        PythonLibraryDoc.__init__(self, name, newname=newname)
+
     def _import(self, path, args_are_ignored):
         return UserLibrary(self._find_resource_file(path))
 
@@ -249,8 +247,8 @@ class ResourceDoc(PythonLibraryDoc):
                 return os.path.join(dire, path)
         raise DataError("Resource file '%s' doesn't exist." % path)
     
-    def _get_doc(self, lib):
-        return "Documentation for resource file `%s`." % lib.name
+    def _get_doc(self, lib_is_ignored):
+        return "Documentation for resource file `%s`." % self.name
     
     def _get_initializers(self, lib):
         return []
@@ -311,9 +309,9 @@ if utils.is_jython:
         
         type = 'library'
         
-        def __init__(self, path):
+        def __init__(self, path, newname=None):
             cls = self._get_class(path)
-            self.name = cls.qualifiedName()
+            self.name = newname or cls.qualifiedName()
             self.version = utils.html_escape(self._get_version(cls))
             self.doc = self._process_doc(cls.getRawCommentText())
             self.keywords = [ JavaKeywordDoc(method, self) 
