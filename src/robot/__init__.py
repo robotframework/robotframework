@@ -34,28 +34,29 @@ __version__ = utils.version
 
 
 def run_from_cli(args, usage):
-    options, datasources = _process_arguments(args, usage, 'pythonpath')
-    try:
-        suite = run(*datasources, **options)
-    except DataError:
-        _exit(DATA_ERROR, *utils.get_error_details())
-    except (KeyboardInterrupt, SystemExit):
-        _exit(STOPPED_BY_USER, 'Test execution stopped by user')
-    except:
-        _exit(FRAMEWORK_ERROR, 'Unexpected error in test execution',
-              '\n'.join(utils.get_error_details()))
-    else:
-        _exit(suite)
-
+    _run_or_rebot_from_cli(run, args, usage, pythonpath='pythonpath')
 
 def rebot_from_cli(args, usage):
-    options, datasources = _process_arguments(args, usage)
+    _run_or_rebot_from_cli(rebot, args, usage)
+
+def _run_or_rebot_from_cli(method, cliargs, usage, **argparser_config):
+    ap = utils.ArgumentParser(usage, utils.get_full_version())
+    try:
+        options, datasources = \
+            ap.parse_args(cliargs, argfile='argumentfile', unescape='escape',
+                          help='help', version='version', check_args=True,
+                          **argparser_config)
+    except Information, msg:
+        _exit(INFO_PRINTED, str(msg))
+    except DataError, err:
+        _exit(DATA_ERROR, str(err))
+
     try: 
-        suite = rebot(*datasources, **options)
+        suite = method(*datasources, **options)
     except DataError:
         _exit(DATA_ERROR, *utils.get_error_details())
     except (KeyboardInterrupt, SystemExit):
-        _exit(STOPPED_BY_USER, 'Log/report generation stopped by user')
+        _exit(STOPPED_BY_USER, 'Execution stopped by user.')
     except:
         error, details = utils.get_error_details()
         _exit(FRAMEWORK_ERROR, 'Unexpected error: %s' % error, details) 
@@ -132,20 +133,7 @@ def _syslog_start_info(who, sources, settings, syslog):
                 % (utils.plural_or_not(sources), utils.seq2str(sources)))
 
 
-def _process_arguments(cliargs, usage, pythonpath=None):
-    ap = utils.ArgumentParser(usage, utils.get_full_version())
-    try:
-        return ap.parse_args(cliargs, argfile='argumentfile', unescape='escape',
-                             pythonpath=pythonpath, help='help',
-                             version='version', check_args=True)
-    except Information, msg:
-        print msg
-        _exit(INFO_PRINTED)
-    except DataError, err:
-        _exit(DATA_ERROR, str(err))
-
-
-def _exit(rc_or_suite, error=None, details=None):
+def _exit(rc_or_suite, message=None, details=None):
     """Exits with given rc or rc from given output. Syslogs error if given.
     
     Exit code is the number of failed critical tests or error number.
@@ -159,14 +147,16 @@ def _exit(rc_or_suite, error=None, details=None):
     """
     if utils.is_integer(rc_or_suite):
         rc = rc_or_suite
-        if error is not None:
+        if rc == INFO_PRINTED:
+            print message
+        else:
             from robot.output import SYSLOG
             if SYSLOG is None:
                 SYSLOG = SystemLogger()
             if rc == DATA_ERROR:
-                error += '\n\nTry --help for usage information.'
-            SYSLOG.error(error)
-            if details is not None:
+                message += '\n\nTry --help for usage information.'
+            SYSLOG.error(message)
+            if details:
                 SYSLOG.info(details)
     else:
         rc = rc_or_suite.critical_stats.failed

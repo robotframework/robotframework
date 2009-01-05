@@ -13,11 +13,11 @@
 #  limitations under the License.
 
 
-import os
+import os.path
 import sys
 import re
 import traceback
-if os.name == 'java':
+if sys.platform.startswith('java'):
     from java.io import StringWriter, PrintWriter
     from java.lang import Throwable, OutOfMemoryError
     
@@ -73,7 +73,7 @@ def get_error_details():
 
 
 def _is_java_exception(exc):
-    return os.name == 'java' and isinstance(exc, Throwable)
+    return sys.platform.startswith('java') and isinstance(exc, Throwable)
 
 def _get_name(exc_type):
     try:
