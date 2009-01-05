@@ -543,12 +543,13 @@ class Variables:
         If the text contains undefined variables, this keyword fails.
                 
         Example:
+
         The file 'template.txt' contains 'Hello ${NAME}!' and variable
         '${NAME}' has the value 'Robot'.
         
-        | ${template} =   | Get File          | ${CURDIR}${/}template.txt} |
-        | ${message} =    | Replace Variables | ${template}                |
-        | Should Be Equal | ${message}        | Hello Robot!               |
+        | ${template} =   | Get File          | ${CURDIR}/template.txt |
+        | ${message} =    | Replace Variables | ${template}            |
+        | Should Be Equal | ${message}        | Hello Robot!           |
 
         If the given `text` contains only a single variable, its value is
         returned as-is. Otherwise, and always with Robot Framework 2.0.3 and
@@ -730,9 +731,8 @@ class RunKeyword:
         value is either the return value of the keyword or the received error
         message.
         
-        The keyword name and arguments work as in `Run Keyword`.
-        
-        See `Run Keyword If` for a usage example.
+        The keyword name and arguments work as in `Run Keyword`. See
+        `Run Keyword If` for a usage example.
         
         Note: In versions prior to Robot Framework version 1.8.3, this keyword
         only returns the return value or error message of the executed keyword.
@@ -745,10 +745,11 @@ class RunKeyword:
     def run_keyword_and_expect_error(self, expected_error, name, *args):
         """Runs the keyword and checks that the expected error occurred.
         
-        The expected error must be given in the same format as in Robot
-        Framework reports. It can be a pattern containing characters '?',
-        which matches to any single character and '*'. which matches to any
-        number of any characters.
+        The expected error must be given in the same format as in
+        Robot Framework reports. It can be a pattern containing
+        characters '?', which matches to any single character and
+        '*'. which matches to any number of any characters. `name` and
+        `*args` have same semantics as with `Run Keyword`.
         
         If the expected error occurs, the error message is returned and it can
         be further processed/tested, if needed. If there is no error, or the 
@@ -770,6 +771,35 @@ class RunKeyword:
             raise AssertionError("Expected error '%s' but got '%s'" 
                                  % (expected_error, error))
         return error
+
+    def repeat_keyword(self, times, name, *args):
+        """Executes the specified keyword multiple times.
+
+        `name` and `args` define the keyword that is executed
+        similarly as with `Run Keyword`, and `times` specifies how many
+        the keyword should be executed. `times` can be given as an
+        integer or as a string that can be converted to an integer. It
+        can also have postfix 'times' or 'x' (case and space
+        insensitive) to make the expression easier to read.
+
+        If `times` is zero or negative, the keyword is not executed at
+        all. This keyword fails immediately if any of the execution
+        rounds fails.
+
+        Examples:
+        | Repeat Keyword | 5 times | Goto Previous Page |
+        | Repeat Keyword | ${var}  | Some Keyword | arg1 | arg2 |
+        """
+        times = utils.normalize(str(times))
+        if times.endswith('times'):
+            times = times[:-5]
+        elif times.endswith('x'):
+            times = times[:-1]
+        times = self.convert_to_integer(times)
+        for i in xrange(times):
+            self.log('Executing round %d/%d' % (i+1, times))
+            self.run_keyword(name, *args)
+        
 
     def wait_until_keyword_succeeds(self, timeout, retry_interval, name, *args):
         """Waits until the specified keyword succeeds or the given timeout expires.
