@@ -20,6 +20,12 @@ from robot.errors import DataError
 from robot.common import BaseTestSuite, BaseTestCase, BaseKeyword
 
 
+RERAISE = (KeyboardInterrupt, SystemExit, MemoryError)
+if utils.is_jython:
+    from java.lang import OutOfMemoryError
+    RERAISE += (OutOfMemoryError,)
+
+
 def process_outputs(paths, settings, syslog=None):
     if not paths:
         raise DataError('No output files given.')
@@ -46,6 +52,8 @@ def process_output(path, read_level=-1, syslog=None):
         syslog.info("Processing output file '%s'." % path)
     try:
         root = utils.DomWrapper(path)
+    except RERAISE:
+        raise
     except:
         raise DataError("File '%s' is not a valid XML file." % path)
     try:

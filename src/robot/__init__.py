@@ -57,8 +57,8 @@ def rebot_from_cli(args, usage):
     except (KeyboardInterrupt, SystemExit):
         _exit(STOPPED_BY_USER, 'Log/report generation stopped by user')
     except:
-        _exit(FRAMEWORK_ERROR, 'Unexpected error in log/report generation', 
-              '\n'.join(utils.get_error_details()))
+        error, details = utils.get_error_details()
+        _exit(FRAMEWORK_ERROR, 'Unexpected error: %s' % error, details) 
     else:
         _exit(suite)
 

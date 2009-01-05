@@ -19,7 +19,7 @@ import re
 import traceback
 if os.name == 'java':
     from java.io import StringWriter, PrintWriter
-    from java.lang import Throwable
+    from java.lang import Throwable, OutOfMemoryError
     
 from match import eq
 from robottypes import is_str, unic
@@ -91,11 +91,18 @@ def _msg_to_str(msg):
 
 def _get_java_message(exc_type, exc_value):
     exc_name = _get_name(exc_type)
-    exc_msg = exc_value.getMessage()
+    # OOME.getMessage and even toString seem to throw NullPointerException
+    if exc_type is OutOfMemoryError:  
+        exc_msg = str(exc_value)
+    else:
+        exc_msg = exc_value.getMessage()
     return _format_message(exc_name, exc_msg, java=True)
 
 
 def _get_java_details(exc_value):
+    # OOME.printStackTrace seems to throw NullPointerException
+    if isinstance(exc_value, OutOfMemoryError):
+        return ''
     output = StringWriter()
     exc_value.printStackTrace(PrintWriter(output))
     lines = [ line for line in str(output).splitlines() 
