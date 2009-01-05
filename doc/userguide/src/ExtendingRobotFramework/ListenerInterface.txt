@@ -203,7 +203,7 @@ probably more useful than this example.
            if status == 'PASS':
                self.outfile.write('PASS\n')
            else:
-                self.outfile.write('FAIL: %s\n' % message)
+               self.outfile.write('FAIL: %s\n' % message)
             
         def end_suite(self, status, message):
             self.outfile.write('%s\n%s\n' % (status, message))
