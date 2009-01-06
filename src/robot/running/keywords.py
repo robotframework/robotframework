@@ -173,8 +173,15 @@ class RepeatKeyword(Keyword):
         self._orig_repeat = self._repeat = kwdata.repeat
         self._error = None
         Keyword.__init__(self, kwdata.name, kwdata.args, 'repeat')
+        data = ['%s x' % kwdata.repeat, kwdata.name] + kwdata.args
+        self._syntax_example = '| %s |' % ' | '.join(data)
         
     def _run(self, handler, output, namespace):
+        msg = ("Repeating keywords using the special syntax like '%s' "
+               "is deprecated and will be removed in Robot Framework 2.2. "
+               "Use 'BuiltIn.Repeat Keyword' instead." % self._syntax_example)
+        output.warn(msg)
+        output.syslog.warn(msg)
         if self._error is not None:
             output.fail(self._error)
             raise ExecutionFailed(self._error)
