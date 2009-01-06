@@ -1,0 +1,497 @@
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="RobotIDE" /> 
+<style type="text/css">
+html {
+  font-family: Arial,Helvetica,sans-serif;
+  background-color: white;
+  color: black;
+}
+p {
+  max-width: 60em;
+}
+table {
+  border-collapse: collapse;
+  empty-cells: show;
+  margin: 1em 0em;
+  border: 0.1em solid black;
+}
+th, td {
+  border-style: solid;
+  border-width: 0.05em 0.1em;
+  border-color: black;
+  padding: 0.1em 0.2em;
+  height: 1.5em;
+}
+th {
+  background-color: rgb(192, 192, 192);
+  color: black;
+  border-width: 0.1em;
+  font-weight: bold;
+  text-align: center;
+  text-transform: capitalize;
+  letter-spacing: 0.1em;
+}
+/* Widths of named columns */
+col.name {
+  width: 10em;
+}
+.action, .value, .arg {
+  width: 15em;
+}
+/* Properties for the name column 
+- td:first-child should work in CSS 2.1 avare browsers (tested in Firefox)
+- col.name is against specs but works in IE
+*/
+td:first-child, col.name {
+  background-color: rgb(240, 240, 240);
+  text-transform: capitalize;
+  letter-spacing: 0.1em;
+}
+/* required for IE */
+th {
+  font-style: normal;
+}
+</style>
+<title>Repeat Keyword</title>
+</head>
+<body>
+<h1>Repeat Keyword</h1>
+
+<table border="1">
+<colgroup span="99">
+<col class="name">
+<col class="value" span="4"></colgroup>
+<tr>
+<th>Setting</th>
+<th>Value</th>
+<th>Value</th>
+<th>Value</th>
+<th>Value</th>
+</tr>
+<tr>
+<td>Documentation</td>
+<td>\</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</table>
+
+<table border="1">
+<colgroup span="99">
+<col class="name">
+<col class="value" span="4"></colgroup>
+<tr>
+<th>Variable</th>
+<th>Value</th>
+<th>Value</th>
+<th>Value</th>
+<th>Value</th>
+</tr>
+<tr>
+<td>${COUNT}</td>
+<td>0</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</table>
+
+<table border="1">
+<colgroup span="99">
+<col class="name">
+<col class="action">
+<col class="arg" span="3"></colgroup>
+<tr>
+<th>Test Case</th>
+<th>Action</th>
+<th>Argument</th>
+<th>Argument</th>
+<th>Argument</th>
+</tr>
+<tr>
+<td><a name="test_Times as string">Times as string</a></td>
+<td>Repeat Keyword</td>
+<td>2</td>
+<td>Log</td>
+<td>Hello, repeating world!</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="test_Times as integer">Times as integer</a></td>
+<td>Repeat Keyword</td>
+<td>${42}</td>
+<td>Log</td>
+<td>This works too!!</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="test_Times with 'times' postfix">Times with 'times' postfix</a></td>
+<td>Repeat Keyword</td>
+<td>3 times</td>
+<td>Log</td>
+<td>This is done 3 times</td>
+</tr>
+<tr>
+<td></td>
+<td>Repeat Keyword</td>
+<td>2TimeS</td>
+<td>Log</td>
+<td>Case and space insensitive</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="test_Times with 'x' postfix">Times with 'x' postfix</a></td>
+<td>Repeat Keyword</td>
+<td>10 x</td>
+<td>Log</td>
+<td>Close to old repeating syntax</td>
+</tr>
+<tr>
+<td></td>
+<td>Repeat Keyword</td>
+<td>${1}X</td>
+<td>Log</td>
+<td>Case and space</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="test_Zero and negative times">Zero and negative times</a></td>
+<td>Repeat Keyword</td>
+<td>0 times</td>
+<td>This is not executed</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Repeat Keyword</td>
+<td>${-1}</td>
+<td>This is not executed</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="test_Invalid times 1">Invalid times 1</a></td>
+<td>[Documentation]</td>
+<td>FAIL STARTS: '1.3' cannot be converted to an integer: ValueError:</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Repeat Keyword</td>
+<td>${1.3}</td>
+<td>Log</td>
+<td>Not an integer</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="test_Invalid times 2">Invalid times 2</a></td>
+<td>[Documentation]</td>
+<td>FAIL STARTS: 'notaninteger' cannot be converted to an integer: ValueError:</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Repeat Keyword</td>
+<td>Not an integer</td>
+<td>No Operation</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="test_Repeat Keyword arguments as variables">Repeat Keyword arguments as variables</a></td>
+<td>${kw}</td>
+<td>${arg} =</td>
+<td>Set Variable</td>
+<td>Should Be Equal</td>
+</tr>
+<tr>
+<td></td>
+<td>...</td>
+<td>Hello, world!</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Repeat Keyword</td>
+<td>2 times</td>
+<td>${kw}</td>
+<td>${arg}</td>
+</tr>
+<tr>
+<td></td>
+<td>...</td>
+<td>Hello, world!</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>${escaped} =</td>
+<td>Set Variable</td>
+<td>\\ and \${notvar}</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Repeat Keyword</td>
+<td>42 times</td>
+<td>${kw}</td>
+<td>${escaped}</td>
+</tr>
+<tr>
+<td></td>
+<td>...</td>
+<td>\\ and \${notvar}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>@{items} =</td>
+<td>Set Variable</td>
+<td>10 times</td>
+<td>No Operation</td>
+</tr>
+<tr>
+<td></td>
+<td>Repeat Keyword</td>
+<td>@{items}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>@{items} =</td>
+<td>Set Variable</td>
+<td>${kw}</td>
+<td>${escaped}</td>
+</tr>
+<tr>
+<td></td>
+<td>...</td>
+<td>\\ and \${notvar}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Repeat Keyword</td>
+<td>1x</td>
+<td>@{items}</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="test_Repeated keyword as non-existing variable">Repeated keyword as non-existing variable</a></td>
+<td>[Documentation]</td>
+<td>FAIL Non-existing variable '\${non-existing}'</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Repeat Keyword</td>
+<td>1 x</td>
+<td>${non-existing}</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="test_Argument to repeated keyword as non-existing variable">Argument to repeated keyword as non-existing variable</a></td>
+<td>[Documentation]</td>
+<td>FAIL Non-existing variable '\${nonex}'</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Repeat Keyword</td>
+<td>1 x</td>
+<td>Log</td>
+<td>${nonex}</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="test_Repeated keyword failing immediately">Repeated keyword failing immediately</a></td>
+<td>[Documentation]</td>
+<td>FAIL Immediate failure</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Repeat Keyword</td>
+<td>1000 times</td>
+<td>Fail</td>
+<td>Immediate failure</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="test_Repeated keyword failing on third round">Repeated keyword failing on third round</a></td>
+<td>[Documentation]</td>
+<td>FAIL '3 &lt; 3' should be true</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Repeat Keyword</td>
+<td>1000 times</td>
+<td>Keyword Failing On Third Run</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</table>
+
+<table border="1">
+<colgroup span="99">
+<col class="name">
+<col class="action">
+<col class="arg" span="3"></colgroup>
+<tr>
+<th>Keyword</th>
+<th>Action</th>
+<th>Argument</th>
+<th>Argument</th>
+<th>Argument</th>
+</tr>
+<tr>
+<td><a name="keyword_Keyword Failing On Third Run">Keyword Failing On Third Run</a></td>
+<td>${COUNT} =</td>
+<td>Evaluate</td>
+<td>${COUNT} + 1</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should Be True</td>
+<td>${COUNT} &lt; 3</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Set Suite Variable</td>
+<td>$COUNT</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</table>
+
+</body>
+</html>

@@ -1,0 +1,490 @@
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="RobotIDE" /> 
+<style type="text/css">
+html {
+  font-family: Arial,Helvetica,sans-serif;
+  background-color: white;
+  color: black;
+}
+p {
+  max-width: 60em;
+}
+table {
+  border-collapse: collapse;
+  empty-cells: show;
+  margin: 1em 0em;
+  border: 0.1em solid black;
+}
+th, td {
+  border-style: solid;
+  border-width: 0.05em 0.1em;
+  border-color: black;
+  padding: 0.1em 0.2em;
+  height: 1.5em;
+}
+th {
+  background-color: rgb(192, 192, 192);
+  color: black;
+  border-width: 0.1em;
+  font-weight: bold;
+  text-align: center;
+  text-transform: capitalize;
+  letter-spacing: 0.1em;
+}
+/* Widths of named columns */
+col.name {
+  width: 10em;
+}
+.action, .value, .arg {
+  width: 15em;
+}
+/* Properties for the name column 
+- td:first-child should work in CSS 2.1 avare browsers (tested in Firefox)
+- col.name is against specs but works in IE
+*/
+td:first-child, col.name {
+  background-color: rgb(240, 240, 240);
+  text-transform: capitalize;
+  letter-spacing: 0.1em;
+}
+/* required for IE */
+th {
+  font-style: normal;
+}
+</style>
+<title>Repeat Keyword</title>
+</head>
+<body>
+<h1>Repeat Keyword</h1>
+
+<table border="1">
+<colgroup span="99">
+<col class="name">
+<col class="value" span="4"></colgroup>
+<tr>
+<th>Setting</th>
+<th>Value</th>
+<th>Value</th>
+<th>Value</th>
+<th>Value</th>
+</tr>
+<tr>
+<td>Documentation</td>
+<td>\</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Force Tags</td>
+<td>pybot</td>
+<td>jybot</td>
+<td>regression</td>
+<td></td>
+</tr>
+<tr>
+<td>Suite Setup</td>
+<td>Run Tests</td>
+<td></td>
+<td>standard_libraries/builtin/repeat_keyword.html</td>
+<td></td>
+</tr>
+<tr>
+<td>Resource</td>
+<td>../../../resources/resource.html</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</table>
+
+<table border="1">
+<colgroup span="99">
+<col class="name">
+<col class="value" span="4"></colgroup>
+<tr>
+<th>Variable</th>
+<th>Value</th>
+<th>Value</th>
+<th>Value</th>
+<th>Value</th>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</table>
+
+<table border="1">
+<colgroup span="99">
+<col class="name">
+<col class="action">
+<col class="arg" span="3"></colgroup>
+<tr>
+<th>Test Case</th>
+<th>Action</th>
+<th>Argument</th>
+<th>Argument</th>
+<th>Argument</th>
+</tr>
+<tr>
+<td><a name="test_Times As String">Times As String</a></td>
+<td>${tc} =</td>
+<td>Check Test Case</td>
+<td>${TEST NAME}</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Repeated Messages</td>
+<td>${tc.kws[0]}</td>
+<td>2</td>
+<td>Hello, repeating world!</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="test_Times As Integer">Times As Integer</a></td>
+<td>${tc} =</td>
+<td>Check Test Case</td>
+<td>${TEST NAME}</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Repeated Messages</td>
+<td>${tc.kws[0]}</td>
+<td>42</td>
+<td>This works too!!</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="test_Times With 'times' Postfix">Times With 'times' Postfix</a></td>
+<td>${tc} =</td>
+<td>Check Test Case</td>
+<td>${TEST NAME}</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Repeated Messages</td>
+<td>${tc.kws[0]}</td>
+<td>3</td>
+<td>This is done 3 times</td>
+</tr>
+<tr>
+<td></td>
+<td>Check Repeated Messages</td>
+<td>${tc.kws[1]}</td>
+<td>2</td>
+<td>Case and space insensitive</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="test_Times With 'x' Postfix">Times With 'x' Postfix</a></td>
+<td>${tc} =</td>
+<td>Check Test Case</td>
+<td>${TEST NAME}</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Repeated Messages</td>
+<td>${tc.kws[0]}</td>
+<td>10</td>
+<td>Close to old repeating syntax</td>
+</tr>
+<tr>
+<td></td>
+<td>Check Repeated Messages</td>
+<td>${tc.kws[1]}</td>
+<td>1</td>
+<td>Case and space</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="test_Zero And Negative Times">Zero And Negative Times</a></td>
+<td>${tc} =</td>
+<td>Check Test Case</td>
+<td>${TEST NAME}</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Repeated Messages</td>
+<td>${tc.kws[0]}</td>
+<td>0</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Repeated Messages</td>
+<td>${tc.kws[1]}</td>
+<td>0</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="test_Invalid Times">Invalid Times</a></td>
+<td>Check Test Case</td>
+<td>Invalid Times 1</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Test Case</td>
+<td>Invalid Times 2</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="test_Repeat Keyword Arguments As Variables">Repeat Keyword Arguments As Variables</a></td>
+<td>${tc} =</td>
+<td>Check Test Case</td>
+<td>${TEST_NAME}</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Repeated Keyword Name</td>
+<td>${tc.kws[1]}</td>
+<td>2</td>
+<td>BuiltIn.Should Be Equal</td>
+</tr>
+<tr>
+<td></td>
+<td>Check Repeated Keyword Name</td>
+<td>${tc.kws[3]}</td>
+<td>42</td>
+<td>BuiltIn.Should Be Equal</td>
+</tr>
+<tr>
+<td></td>
+<td>Check Repeated Keyword Name</td>
+<td>${tc.kws[5]}</td>
+<td>10</td>
+<td>BuiltIn.No Operation</td>
+</tr>
+<tr>
+<td></td>
+<td>Check Repeated Keyword Name</td>
+<td>${tc.kws[7]}</td>
+<td>1</td>
+<td>BuiltIn.Should Be Equal</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="test_Repeated Keyword As Non-existing Variable">Repeated Keyword As Non-existing Variable</a></td>
+<td>Check Test Case</td>
+<td>${TEST_NAME}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="test_Argument To Repeated Keyword As Non-existing Variable">Argument To Repeated Keyword As Non-existing Variable</a></td>
+<td>Check Test Case</td>
+<td>${TEST_NAME}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="test_Repeated Keyword Failing">Repeated Keyword Failing</a></td>
+<td>Check Test Case</td>
+<td>Repeated Keyword Failing Immediately</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Test Case</td>
+<td>Repeated Keyword Failing On Third Round</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</table>
+
+<table border="1">
+<colgroup span="99">
+<col class="name">
+<col class="action">
+<col class="arg" span="3"></colgroup>
+<tr>
+<th>Keyword</th>
+<th>Action</th>
+<th>Argument</th>
+<th>Argument</th>
+<th>Argument</th>
+</tr>
+<tr>
+<td><a name="keyword_Check Repeated Messages">Check Repeated Messages</a></td>
+<td>[Arguments]</td>
+<td>${kw}</td>
+<td>${count}</td>
+<td>${msg}=${None}</td>
+</tr>
+<tr>
+<td></td>
+<td>Should Be Equal As Integers</td>
+<td>${kw.kw_count}</td>
+<td>${count}</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>: FOR</td>
+<td>${i}</td>
+<td>IN RANGE</td>
+<td>${count}</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td>Check Log Message</td>
+<td>${kw.kws[${i}].msgs[0]}</td>
+<td>Executing round ${i+1}/${count}</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td>Check Log Message</td>
+<td>${kw.kws[${i}].msgs[1]}</td>
+<td>${msg}</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="keyword_Check Repeated Keyword Name">Check Repeated Keyword Name</a></td>
+<td>[Arguments]</td>
+<td>${kw}</td>
+<td>${count}</td>
+<td>${name}=${None}</td>
+</tr>
+<tr>
+<td></td>
+<td>Should Be Equal As Integers</td>
+<td>${kw.kw_count}</td>
+<td>${count}</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>: FOR</td>
+<td>${i}</td>
+<td>IN RANGE</td>
+<td>${count}</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td>Should Be Equal</td>
+<td>${kw.kws[${i}].name}</td>
+<td>${name}</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</table>
+
+</body>
+</html>
