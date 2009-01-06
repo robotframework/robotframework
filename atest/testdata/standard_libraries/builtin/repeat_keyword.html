@@ -128,7 +128,7 @@ th {
 <th>Argument</th>
 </tr>
 <tr>
-<td><a name="test_Times as string">Times as string</a></td>
+<td><a name="test_Times As String">Times As String</a></td>
 <td>Repeat Keyword</td>
 <td>2</td>
 <td>Log</td>
@@ -142,7 +142,7 @@ th {
 <td></td>
 </tr>
 <tr>
-<td><a name="test_Times as integer">Times as integer</a></td>
+<td><a name="test_Times As Integer">Times As Integer</a></td>
 <td>Repeat Keyword</td>
 <td>${42}</td>
 <td>Log</td>
@@ -156,7 +156,7 @@ th {
 <td></td>
 </tr>
 <tr>
-<td><a name="test_Times with 'times' postfix">Times with 'times' postfix</a></td>
+<td><a name="test_Times With 'times' Postfix">Times With 'times' Postfix</a></td>
 <td>Repeat Keyword</td>
 <td>3 times</td>
 <td>Log</td>
@@ -177,7 +177,7 @@ th {
 <td></td>
 </tr>
 <tr>
-<td><a name="test_Times with 'x' postfix">Times with 'x' postfix</a></td>
+<td><a name="test_Times With 'x' Postfix">Times With 'x' Postfix</a></td>
 <td>Repeat Keyword</td>
 <td>10 x</td>
 <td>Log</td>
@@ -198,7 +198,7 @@ th {
 <td></td>
 </tr>
 <tr>
-<td><a name="test_Zero and negative times">Zero and negative times</a></td>
+<td><a name="test_Zero And Negative Times">Zero And Negative Times</a></td>
 <td>Repeat Keyword</td>
 <td>0 times</td>
 <td>This is not executed</td>
@@ -206,20 +206,27 @@ th {
 </tr>
 <tr>
 <td></td>
-<td>Repeat Keyword</td>
-<td>${-1}</td>
+<td>${name} =</td>
+<td>Set Variable</td>
 <td>This is not executed</td>
 <td></td>
 </tr>
 <tr>
 <td></td>
+<td>Repeat Keyword</td>
+<td>${-1}</td>
+<td>${name}</td>
+<td>${nonex}</td>
+</tr>
+<tr>
+<td></td>
 <td></td>
 <td></td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td><a name="test_Invalid times 1">Invalid times 1</a></td>
+<td><a name="test_Invalid Times 1">Invalid Times 1</a></td>
 <td>[Documentation]</td>
 <td>FAIL STARTS: '1.3' cannot be converted to an integer: ValueError:</td>
 <td></td>
@@ -240,7 +247,7 @@ th {
 <td></td>
 </tr>
 <tr>
-<td><a name="test_Invalid times 2">Invalid times 2</a></td>
+<td><a name="test_Invalid Times 2">Invalid Times 2</a></td>
 <td>[Documentation]</td>
 <td>FAIL STARTS: 'notaninteger' cannot be converted to an integer: ValueError:</td>
 <td></td>
@@ -261,7 +268,7 @@ th {
 <td></td>
 </tr>
 <tr>
-<td><a name="test_Repeat Keyword arguments as variables">Repeat Keyword arguments as variables</a></td>
+<td><a name="test_Repeat Keyword Arguments As Variables">Repeat Keyword Arguments As Variables</a></td>
 <td>${kw}</td>
 <td>${arg} =</td>
 <td>Set Variable</td>
@@ -352,7 +359,7 @@ th {
 <td></td>
 </tr>
 <tr>
-<td><a name="test_Repeated keyword as non-existing variable">Repeated keyword as non-existing variable</a></td>
+<td><a name="test_Repeated Keyword As Non-existing Variable">Repeated Keyword As Non-existing Variable</a></td>
 <td>[Documentation]</td>
 <td>FAIL Non-existing variable '\${non-existing}'</td>
 <td></td>
@@ -373,7 +380,7 @@ th {
 <td></td>
 </tr>
 <tr>
-<td><a name="test_Argument to repeated keyword as non-existing variable">Argument to repeated keyword as non-existing variable</a></td>
+<td><a name="test_Argument To Repeated Keyword As Non-existing Variable">Argument To Repeated Keyword As Non-existing Variable</a></td>
 <td>[Documentation]</td>
 <td>FAIL Non-existing variable '\${nonex}'</td>
 <td></td>
@@ -394,7 +401,7 @@ th {
 <td></td>
 </tr>
 <tr>
-<td><a name="test_Repeated keyword failing immediately">Repeated keyword failing immediately</a></td>
+<td><a name="test_Repeated Keyword Failing Immediately">Repeated Keyword Failing Immediately</a></td>
 <td>[Documentation]</td>
 <td>FAIL Immediate failure</td>
 <td></td>
@@ -415,7 +422,7 @@ th {
 <td></td>
 </tr>
 <tr>
-<td><a name="test_Repeated keyword failing on third round">Repeated keyword failing on third round</a></td>
+<td><a name="test_Repeated Keyword Failing On Third Round">Repeated Keyword Failing On Third Round</a></td>
 <td>[Documentation]</td>
 <td>FAIL '3 &lt; 3' should be true</td>
 <td></td>
