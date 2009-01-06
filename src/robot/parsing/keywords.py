@@ -111,16 +111,16 @@ class SetKeyword(BaseKeyword):
         return scalar_vars, list_var
 
 
-_repeat_re = re.compile('^(.+)\s*[xX]$')
-
 class RepeatKeyword(BaseKeyword):
+
+    _repeat_re = re.compile('^(.+)\s*[xX]$')
     
     def __init__(self, kwdata):
         self.repeat, name, args = self._process_data(kwdata)
         BaseKeyword.__init__(self, name, args, type='repeat')
         
     def _process_data(self, kwdata):
-        res = _repeat_re.search(kwdata[0])
+        res = self._repeat_re.search(kwdata[0])
         if res is None:
             raise TypeError('Not RepeatKeyword')
         repeat = res.group(1).strip()
