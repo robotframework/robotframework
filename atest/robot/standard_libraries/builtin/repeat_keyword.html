@@ -416,7 +416,7 @@ th {
 </tr>
 <tr>
 <td></td>
-<td>: FOR</td>
+<td>:: FOR</td>
 <td>${i}</td>
 <td>IN RANGE</td>
 <td>${count}</td>
@@ -426,7 +426,7 @@ th {
 <td></td>
 <td>Check Log Message</td>
 <td>${kw.kws[${i}].msgs[0]}</td>
-<td>Executing round ${i+1}/${count}</td>
+<td>Repeating keyword, round ${i+1}/${count}</td>
 </tr>
 <tr>
 <td></td>
@@ -434,6 +434,20 @@ th {
 <td>Check Log Message</td>
 <td>${kw.kws[${i}].msgs[1]}</td>
 <td>${msg}</td>
+</tr>
+<tr>
+<td></td>
+<td>Run Keyword If</td>
+<td>${count} == 0</td>
+<td>Check Log Message</td>
+<td>${kw.msgs[0]}</td>
+</tr>
+<tr>
+<td></td>
+<td>...</td>
+<td>Keyword 'This is not executed' repeated zero times</td>
+<td></td>
+<td></td>
 </tr>
 <tr>
 <td></td>
@@ -458,7 +472,7 @@ th {
 </tr>
 <tr>
 <td></td>
-<td>: FOR</td>
+<td>:: FOR</td>
 <td>${i}</td>
 <td>IN RANGE</td>
 <td>${count}</td>
