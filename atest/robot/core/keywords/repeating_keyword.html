@@ -114,7 +114,6 @@ th { font-style: normal; } /* required for IE */
   
   
   <title>Robot Test Cases</title><link type="text/css" href="resources/css/testdata.css" rel="stylesheet"></head>
-
 <body>
 
 
@@ -326,7 +325,7 @@ th { font-style: normal; } /* required for IE */
 
 
 
-      <td align="undefined" valign="undefined">Document</td>
+      <td align="undefined" valign="undefined">Documentation</td>
 
 
 
@@ -339,7 +338,7 @@ th { font-style: normal; } /* required for IE */
 
 
 
-      <td></td>
+      <td>This feature has been depreaced in 2.0.4 and will be removed in 2.2.&nbsp;</td>
 
 
 
@@ -352,7 +351,7 @@ th { font-style: normal; } /* required for IE */
 
 
 
-      <td></td>
+      <td>See issue 193 for more information.</td>
 
 
 
@@ -1527,7 +1526,7 @@ th { font-style: normal; } /* required for IE */
 
 
 
-    <tr>
+    <tr><td></td><td>Verify Deprecation Messages</td><td>${test.kws[0].msgs[0]}</td><td>| 1 x |&nbsp;No Operation |</td><td></td></tr><tr><td></td><td>Verify Deprecation Messages</td><td>${test.kws[1].msgs[0]}</td><td>| 1000 x |&nbsp;NOOPERATION |</td><td></td></tr><tr>
 
 
 
@@ -1938,7 +1937,7 @@ th { font-style: normal; } /* required for IE */
 
 
 
-    <tr>
+    <tr><td></td><td>Verify Deprecation Messages</td><td>${test.kws[0].msgs[0]}</td><td>| 1 x | Comment | Nothing is done |</td><td></td></tr><tr>
 
 
 
@@ -2216,7 +2215,7 @@ th { font-style: normal; } /* required for IE */
 
 
 
-    <tr>
+    <tr><td></td><td>Verify Deprecation Messages</td><td>${test.kws[1].msgs[0]}</td><td>| 42 x | Comment | Still | nothing&nbsp;|</td><td></td></tr><tr>
 
 
 
@@ -2768,7 +2767,7 @@ th { font-style: normal; } /* required for IE */
 
 
 
-    <tr>
+    <tr><td></td><td>Verify Deprecation Messages</td><td>${test.kws[0].msgs[0]}</td><td>| 1 x | Log | Hello, world |</td><td></td></tr><tr>
 
 
 
@@ -2814,7 +2813,7 @@ th { font-style: normal; } /* required for IE */
 
 
 
-      <td style="width: 206px;">${test.kws[0].msgs[0]}</td>
+      <td style="width: 206px;">${test.kws[0].msgs[1]}</td>
 
 
 
@@ -2914,147 +2913,7 @@ th { font-style: normal; } /* required for IE */
 
 
 
-    <tr>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      <td style="width: 180px;">Check Log Message</td>
-
-
-
-
-
-
-
-
-
-
-
-      <td style="width: 206px;">${test.kws[1].msgs[0]}</td>
-
-
-
-
-
-
-
-
-
-
-
-      <td style="width: 341px;">Hi, tellus</td>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      
-
-
-
-
-      
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      
-
-
-      
-
-
-      
-
-
-      
-
-
-      
-
-
-      
-
-
-    </tr>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    
-    
-    
-    <tr>
+    <tr><td></td><td>Verify Deprecation Messages</td><td>${test.kws[1].msgs[0]}</td><td>| 33 x | Log |&nbsp;Hi, tellus |</td><td></td></tr><tr>
 
 
 
@@ -3191,6 +3050,9 @@ th { font-style: normal; } /* required for IE */
 
 
 
+    
+    
+    
     <tr>
 
 
@@ -3328,6 +3190,143 @@ th { font-style: normal; } /* required for IE */
 
 
 
+    <tr>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td style="width: 180px;">Check Log Message</td>
+
+
+
+
+
+
+
+
+
+
+
+      <td style="width: 206px;">${test.kws[1].msgs[3]}</td>
+
+
+
+
+
+
+
+
+
+
+
+      <td style="width: 341px;">Hi, tellus</td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      
+
+
+
+
+      
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      
+
+
+      
+
+
+      
+
+
+      
+
+
+      
+
+
+      
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     
 
 
@@ -3370,7 +3369,7 @@ th { font-style: normal; } /* required for IE */
 
 
 
-      <td align="undefined" valign="undefined">${test.kws[1].msgs[32]}</td>
+      <td align="undefined" valign="undefined">${test.kws[1].msgs[33]}</td>
 
 
 
@@ -3772,7 +3771,7 @@ th { font-style: normal; } /* required for IE */
 
 
 
-    <tr>
+    <tr><td></td><td>Verify Deprecation Messages</td><td>${kws[0].msgs[0]}</td><td>| 1 x | Repeating UK | Yo, world |</td><td></td></tr><tr>
 
 
 
@@ -5770,7 +5769,7 @@ th { font-style: normal; } /* required for IE */
 
 
 
-      <td style="width: 206px;">${test.kws[0].msgs[0]}</td>
+      <td style="width: 206px;">${test.kws[0].msgs[1]}</td>
 
 
 
@@ -6482,7 +6481,7 @@ th { font-style: normal; } /* required for IE */
 
 
 
-      <td style="width: 206px;">${test.kws[0].msgs[0]}</td>
+      <td style="width: 206px;">${test.kws[0].msgs[1]}</td>
 
 
 
@@ -6688,7 +6687,7 @@ th { font-style: normal; } /* required for IE */
 
 
 
-      <td style="width: 206px;">${test.kws[0].msgs[0]}</td>
+      <td style="width: 206px;">${test.kws[0].msgs[1]}</td>
 
 
 
@@ -7419,7 +7418,7 @@ th { font-style: normal; } /* required for IE */
 
 
 
-    <tr>
+    <tr><td></td><td>Verify Deprecation Messages</td><td>${test.kws[0].msgs[0]}</td><td>| \${3} x | Log | Repeated \${3} times |</td><td></td></tr><tr>
 
 
 
@@ -7466,37 +7465,6 @@ th { font-style: normal; } /* required for IE */
 
 
 
-      <td>${test.kws[0].msgs[0]}</td>
-
-
-
-      <td>Repeated 3 times</td>
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-    </tr>
-
-
-
-
-    
-    
-    <tr>
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-      <td>Check Log Message</td>
-
-
-
       <td>${test.kws[0].msgs[1]}</td>
 
 
@@ -7513,6 +7481,9 @@ th { font-style: normal; } /* required for IE */
 
 
 
+
+    
+    
     <tr>
 
 
@@ -7526,6 +7497,34 @@ th { font-style: normal; } /* required for IE */
 
 
       <td>${test.kws[0].msgs[2]}</td>
+
+
+
+      <td>Repeated 3 times</td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td>Check Log Message</td>
+
+
+
+      <td>${test.kws[0].msgs[3]}</td>
 
 
 
@@ -7581,7 +7580,7 @@ th { font-style: normal; } /* required for IE */
 
 
 
-      <td>${test.kws[1].msgs[0]}</td>
+      <td>${test.kws[1].msgs[1]}</td>
 
 
 
@@ -7609,7 +7608,7 @@ th { font-style: normal; } /* required for IE */
 
 
 
-      <td>${test.kws[1].msgs[1]}</td>
+      <td>${test.kws[1].msgs[2]}</td>
 
 
 
@@ -7758,31 +7757,7 @@ th { font-style: normal; } /* required for IE */
 
 
 
-    <tr>
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-      <td>Check Log Message</td>
-
-
-
-      <td>${test.kws[1].msgs[0]}</td>
-
-
-
-      <td>Repeated 4 times</td>
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-    </tr>
+    
 
 
 
@@ -7880,17 +7855,17 @@ th { font-style: normal; } /* required for IE */
 
 
 
-      <td></td>
+      <td>Check Log Message</td><td>${test.kws[1].msgs[4]}</td><td>Repeated 4 times</td>
 
 
 
 
-      <td></td>
+      
 
 
 
 
-      <td></td>
+      
 
 
 
@@ -7905,7 +7880,7 @@ th { font-style: normal; } /* required for IE */
 
 
 
-    <tr>
+    <tr><td></td><td></td><td></td><td></td><td></td></tr><tr>
 
       <td>Repeat With Variable Using Different Values</td>
 
@@ -7994,7 +7969,7 @@ th { font-style: normal; } /* required for IE */
 
       <td>Check Log Message</td>
 
-      <td>${test.kws[1].messages[0]}</td>
+      <td>${test.kws[1].messages[1]}</td>
 
 
 
@@ -8146,7 +8121,7 @@ th { font-style: normal; } /* required for IE */
 
       <td>Check Log Message</td>
 
-      <td>${test.kws[0].messages[0]}</td>
+      <td>${test.kws[0].messages[1]}</td>
 
       <td>Non-existing variable '\${foo}'</td>
 
@@ -9337,79 +9312,7 @@ th { font-style: normal; } /* required for IE */
 
 
 
-    <tr>
-
-
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-
-
-    </tr>
+    <tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Verify Deprecation Messages</td><td>[Arguments]</td><td>${msg}</td><td>${example}</td><td></td></tr><tr><td></td><td>${exp} =</td><td>Catenate</td><td>Repeating keywords using the special syntax like '${example}' is deprecated and will be removed in Robot Framework 2.2. </td><td>Use 'BuiltIn.Repeat Keyword' instead.</td></tr><tr><td></td><td>Check Log Message</td><td>${msg}</td><td>${exp}</td><td>WARN</td></tr><tr><td></td><td>Check Syslog Contains</td><td>| WARN \ |&nbsp;<br></td><td>${exp}</td><td></td></tr>
 
 
 
