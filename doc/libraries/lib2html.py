@@ -9,6 +9,7 @@ LIBRARIES = { 'builtin': 'BuiltIn', 'bu': 'BuiltIn',
               'operatingsystem': 'OperatingSystem', 'op': 'OperatingSystem',
               'telnet': 'Telnet', 'te': 'Telnet',
               'collections': 'Collections', 'co': 'Collections',
+              'string': 'String', 'st': 'String',
               'screenshot': 'Screenshot', 'sc': 'Screenshot' }
 
 sys.path.insert(0, os.path.join(ROOT,'tools','libdoc'))
