@@ -21,12 +21,23 @@ from robot.errors import FrameworkError
 from robot.common import BaseHandler
 from runkwregister import RUN_KW_REGISTER
 
+if utils.is_jython:
+    from org.python.core import PyReflectedFunction, PyReflectedConstructor
+
+    def _is_java_init(init):
+        return isinstance(init, PyReflectedConstructor)
+    def _is_java_method(method):
+        return hasattr(method, 'im_func') \
+               and isinstance(method.im_func, PyReflectedFunction)
+else:
+    _is_java_init = _is_java_method = lambda item: False
+    
 
 def Handler(library, name, method):
     if name == '__init__':
         if method is None:
             return _NoInitHandler(library)
-        if _is_java_method(method):
+        elif _is_java_init(method):
             return _JavaInitHandler(library, method)
         else:
             return _PythonInitHandler(library, method)
@@ -35,15 +46,6 @@ def Handler(library, name, method):
             return _JavaHandler(library, name, method)
         else:
             return _PythonHandler(library, name, method)
-
-
-def _is_java_method(method):
-    if not utils.is_jython:
-        return False
-    try:
-        return 'reflectedfunction' in str(type(method.im_func))
-    except AttributeError:
-        return 'reflectedconstructor' in str(type(method))
 
 
 class _RunnableHandler(BaseHandler):
