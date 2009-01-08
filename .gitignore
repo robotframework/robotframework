@@ -1,0 +1,21 @@
+
+# /
+/MANIFEST
+/tmp
+/nbproject
+/build
+/dist
+/.project
+/.pydevproject
+/.git
+*.pyc
+*$py.class
+
+# /atest/
+/atest/results
+
+# /tools/oneclickinstaller/
+/tools/oneclickinstaller/RobotFrameworkOneClickInstaller.exe
+
+# /tools/robotidy/
+/tools/robotidy/testoutput
