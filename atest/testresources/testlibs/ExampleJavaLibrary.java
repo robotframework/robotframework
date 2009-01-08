@@ -4,6 +4,9 @@ import java.util.LinkedList;
 
 public class ExampleJavaLibrary {
 
+	public static final String ROBOT_LIBRARY_SCOPE = "GLOBAL";
+	private int counter = 0;
+
     public void print(Object msg) {
     	print(msg, "INFO");
     }
@@ -23,6 +26,13 @@ public class ExampleJavaLibrary {
     public void javaException(String msg) {
         exception(msg);
     }
+	
+	// Jython creates properties from getters, which should not be accessed
+	// at library creation time. See issue 188.
+	public int getCount() {
+		counter++;
+		return counter;
+	}
     
     private void exception(String msg) {
         throw new ArrayStoreException(msg); 

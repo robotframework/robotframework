@@ -5,12 +5,17 @@ class NewStyleClassLibrary(object):
         arg.reverse()
         return ''.join(arg)
 
-
+    def _property_getter(self):
+        raise SystemExit('This should not be called, ever!!!')
+    
+    prop = property(_property_getter)
+    
+    
 class _MyMetaClass(type):
     
     def __new__(cls, name, bases, ns):
-       ns['kw_created_by_metaclass'] = lambda self, arg: arg.upper()
-       return type.__new__(cls, name, bases, ns)
+        ns['kw_created_by_metaclass'] = lambda self, arg: arg.upper()
+        return type.__new__(cls, name, bases, ns)
 
     def method_in_metaclass(cls):
         pass
@@ -21,4 +26,3 @@ class MetaClassLibrary(object):
 
     def greet(self, name):
         return 'Hello %s!' % name
-
