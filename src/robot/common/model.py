@@ -216,8 +216,8 @@ class BaseTestSuite(_TestAndSuiteHelper):
         return self.suites or self.tests
     
     def _filter_suite_names(self, suites):
-    	try:
-        	return [ self._filter_suite_name(p, s) for p, s in suites ]
+        try:
+            return [ self._filter_suite_name(p, s) for p, s in suites ]
         except StopIteration:
             return []
     
