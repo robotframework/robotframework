@@ -1,4 +1,3 @@
-######################################################
 #  Copyright 2008 Nokia Siemens Networks Oyj
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,7 +12,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-# Marcin TODO: assertions, checks, generate html and check, write internal tests
+
+# TODO: assertions, checks, generate html and check, write internal tests
 
 import os
 import re
@@ -31,7 +31,7 @@ from random import Random
 import string
 
 
-class StringUtils:
+class String:
     
     """This library contains keywords related to string operations."""
 
