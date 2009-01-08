@@ -1,16 +1,28 @@
 #!/usr/bin/env python
 
+"""Usage:  lib2html.py [ library | all ]
+
+Libraries:
+  BuiltIn (bu)
+  Collections (co)
+  OperatingSystem (op)
+  Screenshot (sc)
+  String (st)
+  Telnet (te)
+"""
+
 import sys
 import tempfile
 import os
+import re
 
 ROOT = os.path.normpath(os.path.join(os.path.abspath(__file__),'..','..','..'))
-LIBRARIES = { 'builtin': 'BuiltIn', 'bu': 'BuiltIn',
-              'operatingsystem': 'OperatingSystem', 'op': 'OperatingSystem',
-              'telnet': 'Telnet', 'te': 'Telnet',
-              'collections': 'Collections', 'co': 'Collections',
-              'string': 'String', 'st': 'String',
-              'screenshot': 'Screenshot', 'sc': 'Screenshot' }
+LIBRARIES = {}
+for line in __doc__.splitlines():
+    res = re.search('(\w+) \((\w\w)\)', line)
+    if res:
+        name, alias = res.groups()
+        LIBRARIES[name.lower()] = LIBRARIES[alias] = name
 
 sys.path.insert(0, os.path.join(ROOT,'tools','libdoc'))
 sys.path.insert(0, os.path.join(ROOT,'src'))
@@ -66,6 +78,4 @@ if __name__ == '__main__':
         else:
             create_libdoc(LIBRARIES[name])
     except (IndexError, KeyError):
-        print 'Usage:  lib2html.py [ library | all ]\n\nLibraries:'
-        for name in sorted(set(LIBRARIES.values())):
-            print '  %s (%s)' % (name, name[:2].lower())
+        print __doc__
