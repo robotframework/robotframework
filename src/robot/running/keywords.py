@@ -344,6 +344,9 @@ class _OutputRecorder:
         self._actions = []
     
     def __getattr__(self, name):
+        if name == 'syslog':
+            from robot.output import SYSLOG
+            return SYSLOG
         return lambda *args : self._actions.append((name, args))
         
     def replay(self, output):

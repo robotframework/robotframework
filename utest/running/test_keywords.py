@@ -9,12 +9,12 @@ from robot.utils.asserts import *
 from test_testlibrary import _FakeNamespace
 
 
-class LoggerStub:
+class OutputStub:
     
     def __getattr__(self, name):
-        def accept_all(*args, **kwargs):
-            pass
-        return accept_all
+        if name == 'syslog':
+            return self
+        return lambda *args: None
 
 
 class MockHandler:
@@ -67,13 +67,13 @@ class TestKeyword(unittest.TestCase):
         
     def test_run_error(self):
         kw = Keyword('handler_name', ())
-        assert_raises(ExecutionFailed, kw.run, LoggerStub(), FakeNamespace(error=True))
+        assert_raises(ExecutionFailed, kw.run, OutputStub(), FakeNamespace(error=True))
         
     def _verify_run(self, args):
         kw = Keyword('handler_name', args)
         assert_equals(kw.name, 'handler_name')
         assert_equals(kw.args, args)
-        kw.run(LoggerStub(), FakeNamespace())
+        kw.run(OutputStub(), FakeNamespace())
         assert_equals(kw.name, 'Mocked.handler_name')
         assert_equals(kw.doc, 'Mock Doc')
         assert_equals(kw.handler_name, 'handler_name')
@@ -118,31 +118,31 @@ class TestSetKeyword(unittest.TestCase):
     def test_set_string_to_scalar(self):
         skw = SetKeyword(SetKeywordData(['${var}','KW','RETURN','value']))
         namespace = FakeNamespace()
-        skw.run(LoggerStub(), namespace)
+        skw.run(OutputStub(), namespace)
         assert_equal(namespace.variables['${var}'], 'value')
 
     def test_set_object_to_scalar(self):
         skw = SetKeyword(SetKeywordData(['${var}','KW','RETURN',self]))
         namespace = FakeNamespace()
-        skw.run(LoggerStub(), namespace)
+        skw.run(OutputStub(), namespace)
         assert_equal(namespace.variables['${var}'], self)
 
     def test_set_empty_list_to_scalar(self):
         skw = SetKeyword(SetKeywordData(['${var}','KW','RETURN',[]]))
         namespace = FakeNamespace()
-        skw.run(LoggerStub(), namespace)
+        skw.run(OutputStub(), namespace)
         assert_equal(namespace.variables['${var}'], [])
 
     def test_set_list_with_one_element_to_scalar(self):
         skw = SetKeyword(SetKeywordData(['${var}','KW','RETURN',['hi']]))
         namespace = FakeNamespace()
-        skw.run(LoggerStub(), namespace)
+        skw.run(OutputStub(), namespace)
         assert_equal(namespace.variables['${var}'], ['hi'])
 
     def test_set_strings_to_three_scalars(self):
         skw = SetKeyword(SetKeywordData(['${v1}','${v2}','${v3}','KW','RETURN',['x','y','z']]))
         namespace = FakeNamespace()
-        skw.run(LoggerStub(), namespace)
+        skw.run(OutputStub(), namespace)
         assert_equal(namespace.variables['${v1}'], 'x')
         assert_equal(namespace.variables['${v2}'], 'y')
         assert_equal(namespace.variables['${v3}'], 'z')
@@ -150,7 +150,7 @@ class TestSetKeyword(unittest.TestCase):
     def test_set_objects_to_three_scalars(self):
         skw = SetKeyword(SetKeywordData(['${v1}','${v2}','${v3}','KW','RETURN',[['x','y'],{},None]]))
         namespace = FakeNamespace()        
-        skw.run(LoggerStub(), namespace)
+        skw.run(OutputStub(), namespace)
         assert_equal(namespace.variables['${v1}'], ['x','y'])
         assert_equal(namespace.variables['${v2}'], {})
         assert_equal(namespace.variables['${v3}'], None)
@@ -158,19 +158,19 @@ class TestSetKeyword(unittest.TestCase):
     def test_set_list_of_strings_to_list(self):
         skw = SetKeyword(SetKeywordData(['@{var}','KW','RETURN',['x','y','z']]))
         namespace = FakeNamespace()        
-        skw.run(LoggerStub(), namespace)
+        skw.run(OutputStub(), namespace)
         assert_equal(namespace.variables['@{var}'], ['x','y','z'])
 
     def test_set_empty_list_to_list(self):
         skw = SetKeyword(SetKeywordData(['@{var}','KW','RETURN',[]]))
         namespace = FakeNamespace()        
-        skw.run(LoggerStub(), namespace)
+        skw.run(OutputStub(), namespace)
         assert_equal(namespace.variables['@{var}'], [])
 
     def test_set_objects_to_two_scalars_and_list(self):
         skw = SetKeyword(SetKeywordData(['${v1}','${v2}','@{v3}','KW','RETURN',['a',None,'x','y',{}]]))
         namespace = FakeNamespace()        
-        skw.run(LoggerStub(), namespace)
+        skw.run(OutputStub(), namespace)
         assert_equal(namespace.variables['${v1}'], 'a')
         assert_equal(namespace.variables['${v2}'], None)
         assert_equal(namespace.variables['@{v3}'], ['x','y',{}])
@@ -178,28 +178,28 @@ class TestSetKeyword(unittest.TestCase):
     def test_set_scalars_and_list_so_that_list_is_empty(self):
         skw = SetKeyword(SetKeywordData(['${scal}','@{list}','KW','RETURN',['a']]))
         namespace = FakeNamespace()        
-        skw.run(LoggerStub(), namespace)
+        skw.run(OutputStub(), namespace)
         assert_equal(namespace.variables['${scal}'], 'a')
         assert_equal(namespace.variables['@{list}'], [])
 
     def test_set_more_values_than_variables(self):
         skw = SetKeyword(SetKeywordData(['${v1}','${v2}','KW','RETURN',['x','y','z']]))
         namespace = FakeNamespace()        
-        skw.run(LoggerStub(), namespace)
+        skw.run(OutputStub(), namespace)
         assert_equal(namespace.variables['${v1}'], 'x')
         assert_equal(namespace.variables['${v2}'], ['y','z'])
 
     def test_set_too_few_scalars_raises(self):
         skw = SetKeyword(SetKeywordData(['${v1}','${v2}','KW','RETURN',['x']]))
-        assert_raises(ExecutionFailed, skw.run, LoggerStub(), FakeNamespace())
+        assert_raises(ExecutionFailed, skw.run, OutputStub(), FakeNamespace())
 
     def test_set_list_but_no_list_raises(self):
         skw = SetKeyword(SetKeywordData(['@{list}','KW','RETURN','not a list']))
-        assert_raises(ExecutionFailed, skw.run, LoggerStub(), FakeNamespace())
+        assert_raises(ExecutionFailed, skw.run, OutputStub(), FakeNamespace())
 
     def test_set_too_few_scalars_with_list_raises(self):
         skw = SetKeyword(SetKeywordData(['${v1}','${v2}','@{list}','KW','RETURN',['x']]))
-        assert_raises(ExecutionFailed, skw.run, LoggerStub(), FakeNamespace())
+        assert_raises(ExecutionFailed, skw.run, OutputStub(), FakeNamespace())
 
 
         
@@ -233,7 +233,7 @@ class TestRepeatKeyword(unittest.TestCase):
             namespace = FakeNamespace()
             if var is not None:
                 namespace.variables['${var}'] = var
-            rkw.run(LoggerStub(), namespace)
+            rkw.run(OutputStub(), namespace)
             assert_equal(rkw._repeat, 4)
             assert_equal(rkw._orig_repeat, repeat[:-1].strip())
             assert_equal(rkw.name, '4x Mocked.Log')
@@ -245,21 +245,21 @@ class TestRepeatKeyword(unittest.TestCase):
         for value in [ -123, '-1', 0, '0', 3, '42' ]:
             namespace.variables[variable] = value
             exp_repeat = int(value)
-            rkw.run(LoggerStub(), namespace)
+            rkw.run(OutputStub(), namespace)
             assert_equal(rkw._repeat, exp_repeat, 'Wrong repeat returned')
             assert_equal(rkw._orig_repeat, variable, 'Wrong self.repeat')
             assert_equal(rkw.name, str(exp_repeat) + 'x Mocked.Log', 'Wrong name')
         
     def test_repeat_with_non_existing_variable(self):        
         rkw = RepeatKeyword(RepeatKeywordData(['${non_existing} x','Log','hello']))
-        assert_raises(ExecutionFailed, rkw.run, LoggerStub(), FakeNamespace())
+        assert_raises(ExecutionFailed, rkw.run, OutputStub(), FakeNamespace())
         assert_equal(rkw.name, '${non_existing}x Mocked.Log')
 
     def test_repeat_with_non_integer_variable(self):        
         rkw = RepeatKeyword(RepeatKeywordData(['${non_int} x','Log','hello']))
         namespace = FakeNamespace()
         namespace.variables['${non_int}'] = 'xxx'
-        assert_raises(ExecutionFailed, rkw.run, LoggerStub(), namespace)
+        assert_raises(ExecutionFailed, rkw.run, OutputStub(), namespace)
         assert_equal(rkw.name, '${non_int}x Mocked.Log')
         
         
