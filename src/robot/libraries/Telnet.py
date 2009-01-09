@@ -177,6 +177,7 @@ class TelnetConnection(telnetlib.Telnet):
         self.set_newline(newline)
         self.set_prompt(prompt, prompt_is_regexp)
         self._default_log_level = 'INFO'
+        self.set_option_negotiation_callback(self._negotiate_echo_on) 
 
     def set_timeout(self, timeout):
         """Sets the timeout used in read operations to the given value.
@@ -501,3 +502,13 @@ class TelnetConnection(telnetlib.Telnet):
         if not raise_if_invalid:
             return False
         raise AssertionError("Invalid log level '%s'" % level)
+
+    def _negotiate_echo_on(self, sock, cmd, opt):
+        # This is supposed to turn server side echoing on and turn other options off.
+        if opt == telnetlib.ECHO and cmd in (telnetlib.WILL, telnetlib.WONT):
+            self.sock.sendall(telnetlib.IAC + telnetlib.DO + opt)
+        elif opt != telnetlib.NOOPT:
+            if cmd in (telnetlib.DO, telnetlib.DONT):
+                self.sock.sendall(telnetlib.IAC + telnetlib.WONT + opt)
+            elif cmd in (telnetlib.WILL, telnetlib.WONT):
+                self.sock.sendall(telnetlib.IAC + telnetlib.DONT + opt)
