@@ -46,7 +46,7 @@ only work with Python, so installing it is always recommended.
 Python installation
 '''''''''''''''''''
 
-Python 2.5 is recommended, although Python 2.4 and 2.3 are also
+Python 2.6 or 2.5 are recommended, although Python 2.4 and 2.3 are also
 supported. On most UNIX-like systems, you have Python installed by
 default. If you are on Windows or otherwise need to install Python
 yourself, your best place to start is probably the `Python
@@ -164,8 +164,11 @@ Using binary installers
 
 Use the platform-specific way of installation. For example, on
 Windows, double click the provided executable and follow
-the instructions of the graphical installer.
+the instructions of the graphical installer. 
 
+.. Note:: With 2.6 Python, you need to add the Python installation 
+          directory into :var:`PATH` environment variable before running the 
+          installer. See instructions from `setting up environment`_.
 
 Using Easy Install
 ''''''''''''''''''
