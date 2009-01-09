@@ -354,6 +354,45 @@ illustrated by the examples below.
    \                 \                Log         ${index}    \        \        \
    ================  ===============  ==========  ==========  =======  =======  =======
 
+
+Repeating single keyword
+''''''''''''''''''''''''
+
+For loops can be an overkill in situations where there is only a need to repeat a single keyword. In these cases
+it is often easier to use `BuiltIn keyword`_ :name:`Repeat Keyword` which was added in Robot Framework 2.0.4.
+This keyword takes a keyword and how many times to repeat it as arguments. The times to repeat
+the keyword can have an optional postfix `times` or `x` to make the syntax easier to read.
+
+.. table:: Repeat Keyword examples
+   :class: example
+
+   ===========  ==============  ============  ============  ========  ========
+    Test Case       Action        Argument      Argument    Argument  Argument
+   ===========  ==============  ============  ============  ========  ========
+   Example      Repeat Keyword  5             Some Keyword  arg1      arg2
+   \            Repeat Keyword  42 times      My Keyword    \         \
+   \            Repeat Keyword  ${var}        Another KW    argument  \
+   ===========  ==============  ============  ============  ========  ========
+
+
+Robot Framework also has an older special syntax for repeating a single keyword. Starting from
+Robot Framework 2.0.4 this syntax has been deprecated in favor of :name:`Repeat Keyword`, though, and it will be 
+removed altogether in 2.2 version. The example below shows how easy it is to convert test cases using
+the old syntax to use :name:`Repeat Keyword` instead.
+
+
+.. table:: Replacing deprecated repeating syntax with Repeat Keyword
+   :class: example
+
+   ==================  ==============  ============  ============  ========  ========
+       Test Case           Action        Argument      Argument    Argument  Argument
+   ==================  ==============  ============  ============  ========  ========
+   Deprecated Syntax   10 x            Some Keyword  arg1          arg2      \
+   \                   \               \             \             \         \   
+   Same Functionality  Repeat Keyword  10 x          Some Keyword  arg1      arg2
+   ==================  ==============  ============  ============  ========  ========
+
+
  
 Conditional execution
 ~~~~~~~~~~~~~~~~~~~~~
