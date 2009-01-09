@@ -69,7 +69,15 @@ def windows_binary_uninstall():
 
 def _get_installation_dir():
     """Returns installation location. Works also with easy_install."""
-    import robot
+    try:
+        import robot
+    except:
+        # See http://code.google.com/p/robotframework/issues/detail?id=196
+        class FakeModule:
+            def __getattr(self, name):
+                raise RuntimeError('Fake module set by robot_postinstall.py')
+        sys.modules['urllib'] = FakeModule()
+        import robot
     return os.path.dirname(os.path.abspath(robot.__file__))
 
 def _update_scripts(scripts, script_dir, robot_dir, python_exe=sys.executable):
