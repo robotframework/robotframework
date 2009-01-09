@@ -71,8 +71,9 @@ def _get_installation_dir():
     """Returns installation location. Works also with easy_install."""
     try:
         import robot
-    except:
-        # See http://code.google.com/p/robotframework/issues/detail?id=196
+    except ImportError:
+        # Work around for Windows installer problem with Python 2.6.1 
+        # See more from issue 196.
         class FakeModule:
             def __getattr(self, name):
                 raise RuntimeError('Fake module set by robot_postinstall.py')
