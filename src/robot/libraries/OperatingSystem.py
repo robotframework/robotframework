@@ -14,21 +14,40 @@
 
 
 import os
+import re
 import sys
 import time
 import glob
+import fnmatch
 import shutil
 
-from robot import utils
-from robot.errors import DataError
-from robot.output import SYSLOG
-import BuiltIn
+try:
+    from robot.errors import DataError
+    from robot.output import SYSLOG
+    from robot.utils import get_version, ConnectionCache, seq2str, \
+        timestr_to_secs, secs_to_timestr, plural_or_not, get_time, \
+        secs_to_timestamp, timestamp_to_secs
 
+    __version__ = get_version()
+    PROCESSES = ConnectionCache('No active processes')
 
-IS_WINDOWS = os.sep == '\\'
-IS_JYTHON = sys.platform.startswith('java')
-BUILTIN = BuiltIn.BuiltIn()
-PROCESSES = utils.ConnectionCache('No active processes')
+except ImportError:
+    DataError = RuntimeError
+    SYSLOG = None
+    __version__ = '<unknown>'
+    seq2str = lambda items: ', '.join(["'%s'" % item for item in items])
+    timestr_to_secs = int
+    secs_to_timestr = lambda secs: '%d second%s' % (secs, plural_or_not(secs))
+    plural_or_not = lambda count: count != 1 and 's' or ''
+
+    class _NotImpl:
+        def __getattr__(self, name):
+            raise NotImplementedError('This keyword requires Robot Framework '
+                                      'to be installed. See issue 181 for '
+                                      'more information.')
+
+    get_time = secs_to_timestamp = timestamp_to_secs = PROCESSES = _NotImpl()
+
 
 
 class OperatingSystem:
@@ -59,7 +78,7 @@ class OperatingSystem:
     """
 
     ROBOT_LIBRARY_SCOPE = 'GLOBAL'
-    ROBOT_LIBRARY_VERSION = utils.get_version()
+    ROBOT_LIBRARY_VERSION = __version__
     
     def run(self, command, return_mode='output'):
         """Runs the given command in the system and returns the RC and/or output.
@@ -140,7 +159,7 @@ class OperatingSystem:
         #   In Jython return code can be between '-255' - '255'
         #   In Python return code must be converted with 'rc >> 8' and it is
         #   between 0-255 after conversion 
-        if IS_WINDOWS or IS_JYTHON:
+        if os.sep == '\\' or sys.platform.startswith('java'):
             rc = rc % 256
         else:
             rc = rc >> 8
@@ -152,7 +171,7 @@ class OperatingSystem:
         return stdout
     
     def _process_command(self, command):
-        if IS_JYTHON:
+        if sys.platform.startswith('java'):
             # Jython's os.popen doesn't handle Unicode as explained in
             # http://jython.org/bugs/1735774. This bug is still in Jython 2.2.
             command = str(command)
@@ -269,7 +288,8 @@ class OperatingSystem:
         if mode != '<deprecated>':
             msg = "'mode' argument for 'Read Process Output' keyword is deprecated."
             self._log(msg, 'WARN')
-            SYSLOG.warn(msg)
+            if SYSLOG:
+                SYSLOG.warn(msg)
         return PROCESSES.get_current().read()
         
     def stop_process(self):
@@ -350,7 +370,8 @@ class OperatingSystem:
            returned, if they contain the string.
         """
         content = self.get_file(path, encoding)
-        content = BUILTIN.grep(content, pattern, pattern_type)
+        content = '\n'.join(_filter_lines(content.split('\n'), 
+                                          pattern, pattern_type))
         self._info('Matching file content:\n' + content)
         return content
     
@@ -394,7 +415,7 @@ class OperatingSystem:
         if msg is None:
             if self._is_pattern_path(path):
                 matches.sort()
-                msg = "Path '%s' matches %s" % (path, utils.seq2str(matches))
+                msg = "Path '%s' matches %s" % (path, seq2str(matches))
             else:
                 msg = "Path '%s' exists" % path
         raise AssertionError(msg)
@@ -436,8 +457,7 @@ class OperatingSystem:
             if self._is_pattern_path(path):
                 matches.sort()
                 name = len(matches) == 1 and 'file' or 'files'
-                msg = "Path '%s' matches %s %s" % (path, name,
-                                                   utils.seq2str(matches))
+                msg = "Path '%s' matches %s %s" % (path, name, seq2str(matches))
             else:
                 msg = "File '%s' exists" % path
         raise AssertionError(msg)
@@ -471,8 +491,7 @@ class OperatingSystem:
             if self._is_pattern_path(path):
                 matches.sort()
                 name = len(matches) == 1 and 'directory' or 'directories'
-                msg = "Path '%s' matches %s %s" % (path, name,
-                                                   utils.seq2str(matches))
+                msg = "Path '%s' matches %s %s" % (path, name, seq2str(matches))
             else:
                 msg = "Directory '%s' exists" % path
         raise AssertionError(msg)
@@ -499,13 +518,13 @@ class OperatingSystem:
         returns immediately, if the path does not exist in the first place.
         """
         path = self._absnorm(path)
-        timeout = utils.timestr_to_secs(timeout)
+        timeout = timestr_to_secs(timeout)
         maxtime = time.time() + timeout
         while glob.glob(path):
             time.sleep(0.1)
             if timeout >= 0 and time.time() > maxtime:
                 raise AssertionError("'%s' was not removed in %s" 
-                                     % (path, utils.secs_to_timestr(timeout)))
+                                     % (path, secs_to_timestr(timeout)))
         self._info("'%s' was removed" % path)
     
     def wait_until_created(self, path, timeout='1 minute'):
@@ -525,13 +544,13 @@ class OperatingSystem:
         returns immediately, if the path already exists.
         """
         path = self._absnorm(path)
-        timeout = utils.timestr_to_secs(timeout)
+        timeout = timestr_to_secs(timeout)
         maxtime = time.time() + timeout
         while not glob.glob(path):
             time.sleep(0.1)
             if timeout >= 0 and time.time() > maxtime:
                 raise AssertionError("'%s' was not created in %s" 
-                                     % (path, utils.secs_to_timestr(timeout)))
+                                     % (path, secs_to_timestr(timeout)))
         self._info("'%s' was created" % path)
 
     # Dir/file empty
@@ -548,7 +567,7 @@ class OperatingSystem:
         if len(entries) > 0:
             if msg is None:
                 msg = "Directory '%s' is not empty. Contents: %s" \
-                        % (path, utils.seq2str(entries, lastsep=', '))
+                        % (path, seq2str(entries, lastsep=', '))
             raise AssertionError(msg)
         self._info("Directory '%s' is empty." % path)
     
@@ -563,7 +582,7 @@ class OperatingSystem:
         count = len(self._list_dir(path))
         if count == 0:
             self._fail(msg, "Directory '%s' is empty." % path)
-        plural = utils.plural_or_not(count)
+        plural = plural_or_not(count)
         self._info("Directory '%s' contains %d item%s." % (path, count, plural)) 
 
     def file_should_be_empty(self, path, msg=None):
@@ -1024,7 +1043,7 @@ class OperatingSystem:
         if not os.path.exists(path):
             raise DataError("Getting modified time of '%s' failed: "
                             "Path does not exist" % path)
-        return utils.get_time(format, os.stat(path).st_mtime)
+        return get_time(format, os.stat(path).st_mtime)
 
     def set_modified_time(self, path, mtime):
         """Sets the file modification time.
@@ -1062,12 +1081,12 @@ class OperatingSystem:
             if not os.path.isfile(path):
                 raise DataError('Modified time can only be set to regular files')
             mtime = self._parse_modified_time(mtime)
-        except:
+        except DataError, err:
             raise DataError("Setting modified time of '%s' failed: %s"
-                            % (path, utils.get_error_message()))
+                            % (path, err))
         os.utime(path, (mtime, mtime))
         time.sleep(0.1)  # Give os some time to really set these times
-        tstamp = utils.secs_to_timestamp(mtime, ('-',' ',':'))
+        tstamp = secs_to_timestamp(mtime, ('-',' ',':'))
         self._info("Set modified time of '%s' to %s" % (path, tstamp))
         
     def _parse_modified_time(self, mtime):
@@ -1080,7 +1099,7 @@ class OperatingSystem:
         except ValueError:
             pass
         try:
-            return utils.timestamp_to_secs(mtime, (' ', ':', '-', '.'))
+            return timestamp_to_secs(mtime, (' ', ':', '-', '.'))
         except DataError:
             pass
         mtime = mtime.lower().replace(' ', '')
@@ -1089,9 +1108,9 @@ class OperatingSystem:
             return now
         if mtime.startswith('now'):
             if mtime[3] == '+':
-                return now + utils.timestr_to_secs(mtime[4:])
+                return now + timestr_to_secs(mtime[4:])
             if mtime[3] == '-':
-                return now - utils.timestr_to_secs(mtime[4:])
+                return now - timestr_to_secs(mtime[4:])
         raise DataError("Invalid time format '%s'" % orig_time)
 
     def get_file_size(self, path):
@@ -1100,7 +1119,7 @@ class OperatingSystem:
         path = self._absnorm(path)
         size = os.stat(path).st_size
         self._info("Size of file '%s' is %d byte%s"
-                   % (path, size, utils.plural_or_not(size)))
+                   % (path, size, plural_or_not(size)))
         return size
 
     def list_directory(self, path, pattern=None, pattern_type='simple', 
@@ -1115,7 +1134,7 @@ class OperatingSystem:
         By default, the file and directory names are returned relative to the
         given path (e.g. 'file.txt'). If you want them be returned in the
         absolute format (e.g. '/home/robot/file.txt'), set the `absolute`
-        argument value to 'True', 'Yes' or 'absolute' (case-insensitive).
+        argument to any non-empty string.
 
         If `pattern` is given, only items matching it are
         returned. `pattern` and `pattern_type` arguments have same
@@ -1188,10 +1207,10 @@ class OperatingSystem:
             raise DataError("Directory '%s' does not exist" % path)
         items = os.listdir(path)
         if pattern:
-            items = BUILTIN._filter_lines(items, pattern, pattern_type)
+            items = _filter_lines(items, pattern, pattern_type)
         items.sort()
-        if utils.to_boolean(absolute, true_strs=['absolute'], default=False):
-            path = utils.normpath(path)
+        if absolute:
+            path = os.path.normpath(path)
             items = [ os.path.join(path,item) for item in items ]
         return items
 
@@ -1270,3 +1289,25 @@ class _Process:
         if not self.closed:
             self.stdout.close() 
             self.closed = True
+
+
+def _filter_lines(lines, pattern, ptype):
+    """Helper function to select only matching lines. Used also by BuiltIn."""
+    ptype = ptype.lower().replace(' ','').replace('-','')
+    if not pattern:
+        filtr = lambda line: True
+    elif 'simple' in ptype or 'glob' in ptype:
+        if 'caseinsensitive' in ptype:
+            pattern = pattern.lower()
+            filtr = lambda line: fnmatch.fnmatchcase(line.lower(), pattern)
+        else:
+            filtr = lambda line: fnmatch.fnmatchcase(line, pattern)
+    elif 'regularexpression' in ptype or 'regexp' in ptype:
+        pattern = re.compile(pattern)
+        filtr = lambda line: pattern.search(line)
+    elif 'caseinsensitive' in ptype:
+        pattern = pattern.lower()
+        filtr = lambda line: pattern in line.lower()
+    else:
+        filtr = lambda line: pattern in line
+    return [ line for line in lines if filtr(line) ]

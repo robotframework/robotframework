@@ -16,7 +16,6 @@
 import os
 import re
 import time
-import fnmatch
 
 from robot import output
 from robot.utils import asserts
@@ -24,6 +23,7 @@ from robot.errors import DataError
 from robot import utils
 from robot.variables import is_var, is_list_var
 from robot.running import Keyword, NAMESPACES, RUN_KW_REGISTER
+from robot.libraries.OperatingSystem import _filter_lines
 
 if utils.is_jython:
     from java.lang import String, Number, Long, Double
@@ -1245,28 +1245,8 @@ class Misc:
         5) Otherwise the pattern is considered a literal string and lines
            returned, if they contain the string.
         """
-        lines = self._filter_lines(text.splitlines(), pattern, pattern_type)
+        lines = _filter_lines(text.splitlines(), pattern, pattern_type)
         return '\n'.join(lines)
-
-    def _filter_lines(self, lines, pattern, ptype):
-        # Used also by OperatingSystem.list_dir
-        if not pattern:
-            filtr = lambda line: True
-        elif utils.contains_any(ptype, ['simple','glob']):
-            if utils.contains_any(ptype, ['case insensitive'], ignore=['-']):
-                pattern = pattern.lower()
-                filtr = lambda line: fnmatch.fnmatchcase(line.lower(), pattern)
-            else:
-                filtr = lambda line: fnmatch.fnmatchcase(line, pattern)
-        elif utils.contains_any(ptype, ['regular expression','regexp']):
-            pattern = re.compile(pattern)
-            filtr = lambda line: pattern.search(line)
-        elif utils.contains_any(ptype, ['case insensitive'], ignore=['-']):
-            pattern = pattern.lower()
-            filtr = lambda line: pattern in line.lower()
-        else:
-            filtr = lambda line: pattern in line
-        return [ line for line in lines if filtr(line) ]
 
     def regexp_escape(self, *patterns):
         """Returns each argument string escaped for use as a regular expression.
