@@ -30,9 +30,10 @@ Another possibility for starting the test execution is running the
 :prog:`runner.py` script under the installed__ :code:`robot` module
 directly. This method allows selecting the interpreter and setting
 command line options to it freely. The most common use case is
-altering the options controlling JVM maximum memory consumption.
+altering the options controlling `JVM maximum memory consumption`__.
 
 __ `Where files are installed`_
+__ `Modifying Java startup parameters`_
 
 Regardless of the runner script, a path (or paths) to the test data to be
 executed is given as an argument. Additionally, different command line
@@ -491,16 +492,16 @@ use case is to increase the JVM's maximum memory size as the default maximum
 memory size may not be enough for creating the report and log. How to give the 
 parameters to Java depends on the version of the Jython in use.
 
-With 2.2 Jython you need to modify the jython.bat or jython script by adding
-the needed options i.e. -Xmx1024m to the java command found at the end of the 
-jython script. Example below:
+With Jython 2.2 you need to modify the Jython start-up script
+(:prog:`jython` shell script or :prog:`jython.bat` batch file) by adding
+the needed options (e.g. :opt:`-Xmx1024m`) to the :prog:`java` command::
 
-"C:\Java\jre1.6.0\bin\java.exe" -Xmx1024m -Dpython.home="C:\Jython22" -classpath "C:\Jython22\jython.jar;%CLASSPATH%" org.python.util.jython %ARGS%
+   "C:\\Java\\jre1.6.0\\bin\\java.exe" -Xmx1024m -Dpython.home="C:\\Jython22" -classpath "C:\\Jython22\\jython.jar;%CLASSPATH%" org.python.util.jython %ARGS%
 
-With Jython 2.5 it is possible to give the Java parameters with -J option to the
-Jython interpreter. This means that you can modify the jybot script instead of 
-Jython scripts. The needed parameters can be added to the last line of the 
-jybot script like:
+With Jython 2.5 it is possible to give the Java parameters with
+:opt:`-J` option to the Jython interpreter. This means that you can
+modify the :prog:`jybot` script instead of Jython scripts. The needed
+parameters can be added to the last line of the jybot script like::
 
-$jython -J-Xmx1024m "$runner" $*
+  $jython -J-Xmx1024m "$runner" $*
 
