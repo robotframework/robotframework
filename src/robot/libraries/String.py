@@ -21,11 +21,11 @@ import shutil
 import time
 import fnmatch
 import glob
+from types import ListType
+from types import StringType
 
 from robot import utils
 from robot.errors import DataError
-from types import ListType
-from types import StringType
 import robot.output
 from random import Random
 import string
@@ -42,95 +42,93 @@ class String:
         
       Returns the first line of input: head -1
         """
-        multiLines = lines.splitlines(0)
-        print "*INFO* Got '%d' lines" % len(multiLines)
-        lineCount = len(multiLines)
-        if (lineCount == 0): return ""
-        return multiLines[0]
+        line_list = lines.splitlines(0)
+        print "*INFO* Got '%d' lines" % len(line_list)
+        line_count = len(line_list)
+        if (line_count == 0): return ""
+        return line_list[0]
 
-    def get_second_part_of_lines_after_string(self, lines, splitString):
+    def get_second_part_of_lines_after_string(self, lines, split_string):
         """
-        Splits each line using splitString, returns second part
-        Like awk -F 'splitString' '{print $2}'
+        Splits each line using split_with, returns second part
+        Like awk -F 'split_with' '{print $2}'
         Only lines containing requested string are taken.
         """
-        resultLines=''
-        multilines = lines.splitlines(0)
-        for line in multilines:
+        result_lines=''
+        line_list = lines.splitlines(0)
+        for line in line_list:
             # include only lines which contain requested string
-            if line.count(splitString):
-                splitLine = line.split(splitString)
-                resultLines += splitLine[1] + '\n'
-        return resultLines
+            if line.count(split_string):
+                splitLine = line.split(split_string)
+                result_lines += splitLine[1] + '\n'
+        return result_lines
     
-    def get_head_lines_as_list(self, lines, lineCount):
+    def get_head_lines_as_list(self, lines, line_count):
         """
-      Returns the first lineCount lines of input: head -lineCount
-      as a list
+        Returns the first line_count lines of input: head -line_count
+        as a list
         """
-        lineCount = int(lineCount)
-        multiLines = lines.splitlines(0)
-        print "*INFO* Got '%d' lines" % len(multiLines)
-        totalLineCount = len(multiLines)
-        if (totalLineCount == 0): return ""
-        return multiLines[0 : (lineCount)]
+        line_count = int(line_count)
+        line_list = lines.splitlines(0)
+        print "*INFO* Got '%d' lines" % len(line_list)
+        totalline_count = len(line_list)
+        if (totalline_count == 0): return ""
+        return line_list[0 : (line_count)]
 
     def get_line_count(self, lines):
         """
       Returns the number of lines.
         """
-        multiLines = lines.splitlines(0)
-        print "*INFO* Got '%d' lines" % len(multiLines)
-        lineCount = len(multiLines)
-        return lineCount
+        line_list = lines.splitlines(0)
+        print "*INFO* Got '%d' lines" % len(line_list)
+        line_count = len(line_list)
+        return line_count
         
     def get_last_line(self, lines):
         """
-      Returns the last line of input: tail -1
+        Returns the last line of input
         """
-        multiLines = lines.splitlines(0)
-        print "*INFO* Got '%d' lines" % len(multiLines)
-        lineCount = len(multiLines)
-        if (lineCount == 0): return ""
-        return multiLines[lineCount - 1]
+        line_list = lines.splitlines(0)
+        print "*INFO* Got '%d' lines" % len(line_list)
+        line_count = len(line_list)
+        if (line_count == 0): return ""
+        return line_list[line_count - 1]
 
     def get_all_but_last_line_as_list(self, lines):
         """
       Returns list of all but the last line of input
         """
-        multiLines = lines.splitlines(0)
-        print "*INFO* Got '%d' lines" % len(multiLines)
-        lineCount = len(multiLines)
-        if (lineCount == 0): return []
-        return multiLines[0 : lineCount - 1]
+        line_list = lines.splitlines(0)
+        print "*INFO* Got '%d' lines" % len(line_list)
+        line_count = len(line_list)
+        if (line_count == 0): return []
+        return line_list[0 : line_count - 1]
 
     def get_all_but_last_line(self, lines):
         """
-      Returns all but the last line of input as string (cuts out the last line)
+        Returns all but the last line of input as string (cuts out the last line)
         """
-        multiLines = lines.splitlines(0)
-        allButLast = "";
-        print "*INFO* Got '%d' lines" % len(multiLines)
-        lineCount = len(multiLines)
-        if (lineCount < 2): return ""
-        for i in range (0, lineCount - 1):
-        	allButLast += multiLines[i] + "\n"
-        return allButLast
+        line_list = lines.splitlines(0)
+        all_but_last = "";
+        print "*INFO* Got '%d' lines" % len(line_list)
+        line_count = len(line_list)
+        if (line_count < 2): return ""
+        for i in range (0, line_count - 1):
+        	all_but_last += line_list[i] + "\n"
+        return all_but_last
 
-    def get_lines_as_list(self, lines, removeEmptyLines = 0):
+    def get_lines_as_list(self, lines, remove_empty_lines = 0):
         """
-        
-      Converts multiline input to list of lines. Ends of lines removed.
-      If removeEmptyLines != 0, empty lines are removed
-      
+        Converts multiline input to list of lines. Ends of lines removed.
+        If removeEmptyLines != 0, empty lines are removed
         """
-        multiLines = lines.splitlines(0)
-        print "*INFO* Got '%d' lines" % len(multiLines)
-        lineCount = len(multiLines)
-        if (lineCount == 0): return list()
-        if (removeEmptyLines):
-            multiLines = self._remove_empty_elements_from_list(multiLines)
-        return multiLines
+        line_list = lines.splitlines(0)
+        print "*INFO* Got '%d' lines" % len(line_list)
+        line_count = len(line_list)
+        if (line_count == 0): return list()
+        if (remove_empty_lines):
+            line_list = self._remove_empty_elements_from_list(line_list)
+        return line_list
 
     def _remove_empty_elements_from_list(self, elements):
         """
@@ -145,112 +143,112 @@ class String:
     def split_to_last_line_and_rest(self, lines):
         """
         Splits multiline input to all_but_last and last line.
-        Returns a list [lastline, all_but_last_line]
+        Returns a list [last_line, all_but_last_line]
         Used for getting RC and output from the command executed via SSH, RC being the last line.
         """
-        multiLines = lines.splitlines(0)
-        lineCount = len(multiLines)
-        # we have 1 line
-        if (lineCount < 2):
-            retLines = []
-            retLines.append(multiLines[0])
-            retLines.append('')
-            return retLines
-        lastLine = multiLines[lineCount - 1]
+        line_list = lines.splitlines(0)
+        line_count = len(line_list)
+        if (line_count == 1):
+            return []
+        
+        if (line_count == 1):
+            result_list = []
+            result_list.append(line_list[0])
+            result_list.append('')
+            return result_list
+        last_line = line_list[line_count - 1]
         # if line before last is empty, remove it - comes from additional \n in the echo
-        if (multiLines [lineCount-2] == ""): lineCount = lineCount - 1
-        allButLast = ""
-        for i in range (0, lineCount - 1):
-        	allButLast += multiLines[i] + "\n"
-
-        retLines = [lastLine, allButLast]
-        return retLines
+        if (line_list [line_count-2] == ""): line_count = line_count - 1
+        all_but_last = ""
+        for i in range (0, line_count - 1):
+            all_but_last += line_list[i] + "\n"
+        result_list = [last_line, all_but_last]
+        return result_list
 
     def add_crlf_to_all_lines(self, lines):
         """
         Adds \\r\\n to all lines
         """
         # replace CRLF with LF (in case there's some inside)
-        retLines = ''
-        retLines = lines.replace('\r\n','\n')
-        retLines = retLines.replace('\n','\r\n')
-        return retLines
+        result_list = ''
+        result_list = lines.replace('\r\n','\n')
+        result_list = result_list.replace('\n','\r\n')
+        return result_list
 
-    def replace_string(self, stringToReplaceIn, stringToSearchFor, stringToReplaceWith):
+    def replace_string(self, replace_in, search_for, replace_with):
         """
-        Searches stringToSearchFor in stringToReplaceIn and replaces with stringToReplaceWith)
+        Searches search_for in replace_in and replaces with replace_with)
         """
-        result = stringToReplaceIn.replace(stringToSearchFor, stringToReplaceWith)
+        result = replace_in.replace(search_for, replace_with)
         return result
     
-    def convert_list_to_csv(self, convertList):
+    def convert_list_to_csv(self, convert_list):
         """
         Converts a list of elements to comma-separated element string
         ['a','b','c'] => 'a,b,c'
         """
         result = ''
-        if isinstance(convertList, StringType):
+        if isinstance(convert_list, StringType):
             tempList = []
-            tempList.append(convertList)
-            convertList = tempList
-        for listElement in convertList:
+            tempList.append(convert_list)
+            convert_list = tempList
+        for listElement in convert_list:
             result += listElement + ","
         result = result.rstrip(',')
         return result
 
-    def convert_csv_to_list(self, convertCsv):
+    def convert_csv_to_list(self, csv_string):
         """
         Converts a comma-separated element string to a list of elements
         'a,b,c' => ['a','b','c']
         """
-        result = convertCsv.split(',')
+        result = csv_string.split(',')
         return result
 
-    def split_string(self, stringToSplit, splitString):
+    def split_string(self, to_split, split_with):
         """
-        Split stringToSplit, divided by splitString
+        Split to_split, divided by split_with
         """
-        result = stringToSplit.split(splitString)
+        result = to_split.split(split_with)
         return result
         
-    def get_lines_not_matching_any_of_elements(self, linesToMatch, linesToExcludeList):
+    def get_lines_not_matching_any_of_elements(self, to_match, to_exclude):
         """
-        This keyword returns linesToMatch without lines where any of linesToExclude is a substring.
-        Works like grep -v ???
+        This keyword returns to_match without lines where any of to_exclude is a substring.
+        
         """
-        resultLines = ""
-        someElementMatches = 0
-        linesToMatchList = linesToMatch.splitlines(0)
-        for lineToMatch in linesToMatchList:
-            someElementMatches = 0
-            for lineToExclude in linesToExcludeList:
+        result_lines = ""
+        some_matches = 0
+        to_matchList = to_match.splitlines(0)
+        for line_to_match in to_matchList:
+            some_matches = 0
+            for line_to_exclude in to_exclude:
                 # check if is a substring
-                if (lineToMatch.count(lineToExclude)):
-                    someElementMatches = 1
-            if not (someElementMatches): resultLines = lineToMatch + "\n"
-        return resultLines
+                if (line_to_match.count(line_to_exclude)):
+                    some_matches = 1
+            if not (some_matches): result_lines = line_to_match + "\n"
+        return result_lines
 
-    def generate_Random_String(self,strLength=8, chars=string.letters + string.digits):
+    def generate_Random_String(self, length=8, chars=string.letters + string.digits):
         """
             Generates a random string of the required length (8 by default).
             Second argument is a set of characters to draw from, letters + digits for default
         """        
-        strLength = int(strLength)
-        fromCharsLen = len(chars)
-        times = int(strLength / fromCharsLen)
+        length = int(length)
+        src_len = len(chars)
+        times = int(length / src_len)
         result = ''
         for i in range (0, times):
-            result += ''.join( Random().sample(chars, fromCharsLen) )
-        rest = strLength % fromCharsLen
+            result += ''.join( Random().sample(chars, src_len) )
+        rest = length % src_len
         result += ''.join(Random().sample(chars, rest) )
-        #print "Len : %d" % len(chars)
         return result
 
 
-    def get_substring(self, sourceStr, leftIndex, rightIndex):
+    def get_substring(self, string, left_index, right_index):
         """
-        Returns a substring from leftIndex to rightIndex, which should be numbers (0, len-1)
+        Returns a substring from left_index to right_index, which should be numbers (0, len-1)
         """
-        return sourceStr[int(leftIndex) : int(rightIndex)]
+        return string[int(left_index) : int(right_index)]
     
     
