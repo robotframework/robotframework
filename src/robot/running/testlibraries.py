@@ -241,8 +241,6 @@ class _ClassLibrary(_BaseTestLibrary):
             return True
         if not utils.is_jython or not isinstance(handler, PyReflectedFunction):
             return False
-        if handler_parent is libcode:
-            return True
         if handler_parent is Object:
             return False
         # signature is an instance of org.python.ReflectedArgs
