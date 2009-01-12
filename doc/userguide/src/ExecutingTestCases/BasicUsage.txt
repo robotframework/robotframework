@@ -231,12 +231,14 @@ are created automatically during the test execution. Of course, it is
 not sensible to create the exactly same files, but, for example,
 having one report with all test cases and another with only some
 subset of tests can be useful. Another common usage is creating only
-the output file when running tests and generating logs and reports
-later. Tests can, for example, be executed on different environments,
-output files collected to a central place, and reports and logs
-created there. If generating reports and logs takes a lot of time when
-running tests on Jython, it is a good idea to try if using
-:prog:`rebot`, which always runs on Python, is any faster.
+the output file when running tests (log and report generation can be
+disabled with options :opt:`--log NONE` and :opt:`--report NONE`) and
+generating logs and reports later. Tests can, for example, be executed
+on different environments, output files collected to a central place,
+and reports and logs created there. If generating reports and logs
+takes a lot of time when running tests on Jython, it is a good idea to
+try if using :prog:`rebot`, which always runs on Python, is any
+faster.
 
 ::
 
@@ -245,14 +247,15 @@ running tests on Jython, it is a good idea to try if using
    rebot --include smoke --name Smoke_Tests c:\results\output.xml
 
 
-.. Note:: When running tests with Jython the default JVM maximum memory size 
-          may not be enough for creating reports and logs when dealing with 
-          large outputs. In that case you can either `increase the JVM's maximum 
-          memory`__ or run the tests with options :opt:`--log none` and 
-          :opt:`--report none` and generate reports and logs after the test 
-          execution with :prog:`rebot`. 
+.. Note:: When running tests with Jython, the default JVM maximum
+          memory size may not be enough for creating reports and logs
+          if output files are very large. If that happens, you can
+          either `increase the JVM's maximum memory`__, or disable
+          creating reports and logs when tests are executed and use
+          :prog:`rebot` to generate them afterwards.
 
 __ `Modifying Java startup parameters`_
+
 
 Combining outputs
 '''''''''''''''''
@@ -494,23 +497,26 @@ file is executed.
 
 
 Modifying Java startup parameters
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+'''''''''''''''''''''''''''''''''
 
-Sometimes there is need to alter the Java startup parameters. One quite common 
-use case is increasing the JVM maximum memory size as the default value may 
-not be enough for creating reports and logs when outputs are very big. How to 
-give the parameters to Java depends on the Jython version.
+Sometimes there is need to alter the Java startup parameters. The most
+common use case is increasing the JVM maximum memory size as the
+default value may not be enough for creating reports and logs when
+outputs are very big. How to give the parameters to Java depends on
+the Jython version.
 
 With Jython 2.2 you need to modify the Jython start-up script
-(:prog:`jython` shell script or :prog:`jython.bat` batch file) by adding
-the needed options (e.g. :opt:`-Xmx1024m`) to the :prog:`java` command::
+(:prog:`jython` shell script or :prog:`jython.bat` batch file) by
+adding the needed options (e.g. :opt:`-Xmx1024m` which sets the
+maximum memory to 1024 megabytes) to the :prog:`java` command. On
+Windows the final command could look like this::
 
-   "C:\\Java\\jre1.6.0\\bin\\java.exe" -Xmx1024m -Dpython.home="C:\\Jython22" -classpath "C:\\Jython22\\jython.jar;%CLASSPATH%" org.python.util.jython %ARGS%
+   "C:\Java\jre1.6.0\bin\java.exe" -Xmx1024m -Dpython.home="C:\Jython22" -classpath "C:\Jython22\jython.jar;%CLASSPATH%" org.python.util.jython %ARGS%
 
-With Jython 2.5 it is possible to give the Java parameters with
-:opt:`-J` option to the Jython interpreter. This means that you can
-modify the :prog:`jybot` script instead of Jython scripts. The needed
-parameters can be added to the last line of the jybot script like::
+With Jython 2.5 it is also possible, and easier, to give the Java
+parameters with :opt:`-J` option to the Jython interpreter. This means
+that you can modify the :prog:`jybot` start-up script instead of
+Jython scripts. The last line of the :prog:`jybot` script can, again in
+Windows, be edited like below::
 
-  $jython -J-Xmx1024m "$runner" $*
-
+  %jython% -J-Xmx1024m %runner% %*
