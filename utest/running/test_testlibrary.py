@@ -3,6 +3,7 @@ import sys
     
 from robot.running.testlibraries import TestLibrary, _ClassLibrary, \
         _ModuleLibrary, _DynamicLibrary
+from robot.running.handlers import _NoInitHandler
 from robot.utils.asserts import *
 from robot import utils
 from robot.errors import DataError
@@ -86,7 +87,7 @@ class TestImports(unittest.TestCase):
                 TestLibrary(name)
             except DataError, err:
                 module = name.split('.')[0]
-                assert_true(str(err).startswith(exp % (name, module)))
+                assert_true(str(err).startswith(exp % (name, module)), err)
             else:
                 raise AssertionError("DataError not raised")
     
@@ -164,7 +165,55 @@ class TestImports(unittest.TestCase):
             exp = "%s.%s" % (libname, name)
             assert_equals(utils.normalize(handler.longname), 
                           utils.normalize(exp))
+
+
+class TestLibraryInit(unittest.TestCase):
+    
+    def test_python_library_without_init(self):
+        self._test_init_handler('ExampleLibrary')
+        
+    def test_python_library_with_init(self):
+        self._test_init_handler('ParameterLibrary', ['foo'], 0, 2)
+        
+    def test_new_style_class_without_init(self):
+        self._test_init_handler('newstyleclasses.NewStyleClassLibrary')
+        
+    def test_new_style_class_with_init(self):
+        lib = self._test_init_handler('newstyleclasses.NewStyleClassArgsLibrary', ['value'], 1, 1)
+        assert_equals(len(lib.handlers), 1)
+        
+    def test_library_with_metaclass(self):
+        self._test_init_handler('newstyleclasses.MetaClassLibrary')
+    
+    def _test_init_handler(self, libname, args=None, min=None, max=None):
+        lib = TestLibrary(libname, args)
+        if min is None and max is None:
+            assert_equals(lib.init.__class__, _NoInitHandler)
+        else:
+            assert_equals(lib.init.minargs, min)
+            assert_equals(lib.init.maxargs, max)
+        return lib
+    
+    if utils.is_jython:
+        
+        def test_java_library_without_constructor(self):
+            self._test_init_handler('ExampleJavaLibrary', None, 0, 0)
             
+        def test_java_library_with_constructor(self):
+            self._test_init_handler('JavaVarArgsConstructor', ['arg1', 'arg2'], 1, 3)
+            
+        def test_extended_java_lib_with_no_init_and_no_constructor(self):
+            self._test_init_handler('extendingjava.ExtendJavaLib', None, 0, 0)
+            
+        def test_extended_java_lib_with_no_init_and_contructor(self):
+            self._test_init_handler('extendingjava.ExtendJavaLibWithConstructor', ['arg'], 1, 3)
+            
+        def test_extended_java_lib_with_init_and_no_constructor(self):
+            self._test_init_handler('extendingjava.ExtendJavaLibWithInit', [1,2,3], 0, sys.maxint)
+            
+        def test_extended_java_lib_with_init_and_constructor(self):
+            self._test_init_handler('extendingjava.ExtendJavaLibWithInitAndConstructor', ['arg'], 0, sys.maxint)
+           
             
 class TestVersion(unittest.TestCase):
     

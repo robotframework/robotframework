@@ -11,6 +11,12 @@ class NewStyleClassLibrary(object):
     prop = property(_property_getter)
     
     
+class NewStyleClassArgsLibrary(object):
+    
+    def __init__(self, param):
+        self.get_param = lambda self: param
+    
+    
 class _MyMetaClass(type):
     
     def __new__(cls, name, bases, ns):
