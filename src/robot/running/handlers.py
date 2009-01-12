@@ -34,18 +34,19 @@ else:
     
 
 def Handler(library, name, method):
-    if name == '__init__':
-        if method is None:
-            return _NoInitHandler(library)
-        elif _is_java_init(method):
-            return _JavaInitHandler(library, method)
-        else:
-            return _PythonInitHandler(library, method)
+    if _is_java_method(method):
+        return _JavaHandler(library, name, method)
     else:
-        if _is_java_method(method):
-            return _JavaHandler(library, name, method)
-        else:
-            return _PythonHandler(library, name, method)
+        return _PythonHandler(library, name, method)
+
+
+def InitHandler(library, method):
+    if method is None:
+        return _NoInitHandler(library)
+    elif _is_java_init(method):
+        return _JavaInitHandler(library, method)
+    else:
+        return _PythonInitHandler(library, method)
 
 
 class _RunnableHandler(BaseHandler):
@@ -180,10 +181,6 @@ class _PythonHandler(_RunnableHandler):
         elif type(handler) is FunctionType:
             func = handler
             first_arg = 0
-        # New style classes always inherit __init__ from object.
-        elif getattr(handler, '__name__', '') == '__init__' or \
-                getattr(handler, 'name', '') == '__init__':
-            return [], [], None
         else:
             raise FrameworkError("Only MethodType and FunctionType accepted. "
                                  "Got '%s' instead." % type(handler))
@@ -203,34 +200,9 @@ class _PythonHandler(_RunnableHandler):
 class _JavaHandler(_RunnableHandler):
     
     def __init__(self, library, handler_name, handler_method):
-        if not self._is_valid_handler(handler_method):
-            raise TypeError('Not valid Java handler')
         _RunnableHandler.__init__(self, library, handler_name, handler_method)
         self.minargs, self.maxargs = self._get_arg_limits(handler_method)
         
-    def _is_valid_handler(self, handler):
-        # Ignore overridden methods of parent classes created by Jython.  
-        if str(handler).startswith('super__'):
-            return False
-        # Ignore methods only in 'java.lang.Object' (e.g. 'equals', 'wait').
-        # Also ignore methods declared only in 'org.python.proxies' (there 
-        # seems to be 'clone' and 'finalize').
-        co = self._get_code_object(handler)
-        # signature is an instance of org.python.ReflectedArgs
-        for signature in co.argslist[:co.nargs]:
-            # 'getName' may raise an exception -- not sure why but that happens
-            # at least with handlers declared in class extending JUnit TestCase.
-            # Would be better to investigate but just not excluding these
-            # should be an ok workaround.
-            try:
-                name = signature.declaringClass.getName()
-                if not (name == 'java.lang.Object' 
-                        or name.startswith('org.python.proxies.')):
-                    return True
-            except:
-                return True
-        return False
-    
     def _get_arg_limits(self, handler):
         co = self._get_code_object(handler)
         signatures = co.argslist[:co.nargs]
