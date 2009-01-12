@@ -1,7 +1,7 @@
 import sys
 
 if sys.platform.startswith('java'):
-    from java.lang import *
+    from java.lang import String, Integer, Long, Float, Short, Double
 
     varz = { 'java_string_int': String('1'),
              'java_string_float': String('1.1'),
