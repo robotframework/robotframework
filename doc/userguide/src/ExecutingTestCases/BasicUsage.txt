@@ -245,14 +245,14 @@ running tests on Jython, it is a good idea to try if using
    rebot --include smoke --name Smoke_Tests c:\results\output.xml
 
 
-.. Note:: When running tests with Jython the JVM's default maximum memory size 
-          might not be enough for creating the log and report. In that case you 
-          can run the tests with options :opt:`--log none` and 
-          :opt:`--report none` and generate the report and the log after the 
-          test execution with :prog:`rebot`. Other option is to increase 
-          the JVM's maximum memory size with option :opt:`-Xmx1024m` as 
-          explained in chapter `modifying Java startup parameters`_.
+.. Note:: When running tests with Jython the default JVM maximum memory size 
+          may not be enough for creating reports and logs when dealing with 
+          large outputs. In that case you can either `increase the JVM's maximum 
+          memory`__ or run the tests with options :opt:`--log none` and 
+          :opt:`--report none` and generate reports and logs after the test 
+          execution with :prog:`rebot`. 
 
+__ `Modifying Java startup parameters`_
 
 Combining outputs
 '''''''''''''''''
@@ -497,9 +497,9 @@ Modifying Java startup parameters
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Sometimes there is need to alter the Java startup parameters. One quite common 
-use case is to increase the JVM's maximum memory size as the default maximum 
-memory size may not be enough for creating the report and the log. How to give 
-the parameters to Java depends on the version of the Jython in use.
+use case is increasing the JVM maximum memory size as the default value may 
+not be enough for creating reports and logs when outputs are very big. How to 
+give the parameters to Java depends on the Jython version.
 
 With Jython 2.2 you need to modify the Jython start-up script
 (:prog:`jython` shell script or :prog:`jython.bat` batch file) by adding
