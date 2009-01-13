@@ -796,11 +796,11 @@ class RunKeyword:
         elif times.endswith('x'):
             times = times[:-1]
         times = self.convert_to_integer(times)
+        if times <= 0:
+            self.log("Keyword '%s' repeated zero times" % name)
         for i in xrange(times):
             self.log("Repeating keyword, round %d/%d" % (i+1, times))
             self.run_keyword(name, *args)
-        else:
-            self.log("Keyword '%s' repeated zero times" % name)
             
     def wait_until_keyword_succeeds(self, timeout, retry_interval, name, *args):
         """Waits until the specified keyword succeeds or the given timeout expires.
