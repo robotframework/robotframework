@@ -265,6 +265,15 @@ class RemoteTestLibrary:
         return { 1: {True: False},
                  2: {'A': {'n': None}, 'B': {'o': MyObject(), 'e': {}}} }
 
+    # Non-ascii
+    # TODO: Tests these properly and add more non-ascii tests.
+
+    def log_control_char(self):
+        print '\x01'
+
+    def log_unicode(self):
+        print u'Hyv\u00E4\u00E4 \u00FC\u00F6t\u00E4'
+
     # Not keywords
 
     def _private_method(self):
