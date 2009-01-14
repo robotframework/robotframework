@@ -74,8 +74,10 @@ if __name__ == '__main__':
               '--name %s --include %s %s' % (lang, include, args))
     lib.stop()
     print
-    os.system('../../tools/statuschecker/statuschecker.py logs/output.xml')
-    rc = os.system('rebot --outputdir logs logs/output.xml') >> 8
+    os.system('python ../../tools/statuschecker/statuschecker.py logs/output.xml')
+    rc = os.system('rebot --outputdir logs logs/output.xml')
+    if os.name != 'nt':
+        rc = rc >> 8
     if rc == 0:
         print 'All tests passed'
     else:
