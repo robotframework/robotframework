@@ -1,6 +1,7 @@
 import xmlrpclib
 import socket
 import time
+import sys
 
 try:
     from robot.errors import RemoteError
@@ -42,7 +43,7 @@ class Remote:
 
     def run_keyword(self, name, args):
         result = _Result(self._run_keyword(name, args))
-        print result.output
+        sys.stdout.write(result.output)
         if result.status != 'PASS':
             self._raise_failed(result.error, result.traceback)
         return result.return_
