@@ -2,10 +2,16 @@ import xmlrpclib
 import socket
 import time
 import sys
+try:
+    from xml.parsers.expat import ExpatError
+except ImportError:
+    # Support for Jython 2.2
+    ExpatError = None
 
 try:
     from robot.errors import RemoteError
 except ImportError:
+    # Support for Robot Framework 2.0.2 and earlier.
     RemoteError = None
 
 
@@ -16,7 +22,7 @@ class Remote:
     def __init__(self, uri='http://localhost:8270'):
         if '://' not in uri:
             uri = 'http://' + uri
-        self._library = xmlrpclib.Server(uri)
+        self._library = xmlrpclib.ServerProxy(uri, encoding='UTF-8')
 
     def get_keyword_names(self, attempts=5):
         for i in range(attempts):
@@ -56,6 +62,11 @@ class Remote:
             raise RuntimeError(err.faultString)
         except socket.error, (errno, err):
             raise RuntimeError('Connection to remote server broken: %s' % err)
+        except ExpatError, err:
+            raise RuntimeError('Processing XML-RPC return value failed. '
+                               'Most often this happens when the return value '
+                               'contains characters that are not valid in XML. '
+                               'Original error was: ExpatError: %s' % err)
 
     def _handle_argument(self, arg):
         if isinstance(arg, (basestring, int, long, float, bool)):
@@ -73,11 +84,11 @@ class Remote:
         return str(item)
 
     def _raise_failed(self, message, traceback):
-        if RemoteError is not None:
-            raise RemoteError(message, traceback)
-        # Support for Robot Framework 2.0.2 and earlier.
-        print '*INFO*', traceback
-        raise AssertionError(message)
+        # Support for RF 2.0.2 and earlier
+        if not RemoteError:
+            print '*INFO*', traceback
+            raise AssertionError(message)
+        raise RemoteError(message, traceback)
 
 
 class _Result:

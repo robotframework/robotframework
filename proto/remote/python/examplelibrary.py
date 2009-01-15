@@ -55,6 +55,9 @@ class RemoteTestLibrary:
         print 'Logged message'
         return 'Returned value'
 
+    def log_control_char(self):
+        print '\x01'
+
     # Failures
 
     def base_exception(self):
@@ -271,11 +274,8 @@ class RemoteTestLibrary:
         return { 1: {True: False},
                  2: {'A': {'n': None}, 'B': {'o': MyObject(), 'e': {}}} }
 
-    # Non-ascii
-    # TODO: Tests these properly and add more non-ascii tests.
-
-    def log_control_char(self):
-        print '\x01'
+    def return_control_char(self):
+        return '\x01'
 
     # Not keywords
 
