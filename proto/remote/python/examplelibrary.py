@@ -1,5 +1,8 @@
 class RemoteTestLibrary:
 
+    _unicode = (u'Hyv\u00E4\u00E4 y\u00F6t\u00E4. '
+                u'\u0421\u043F\u0430\u0441\u0438\u0431\u043E!')
+
     # Basic communication (and documenting keywords)
 
     def passing(self):
@@ -40,6 +43,9 @@ class RemoteTestLibrary:
         print '*TRACE* This is ignored'
         print '*WARN* Warning'
 
+    def log_unicode(self):
+        print self._unicode
+        
     def logging_and_failing(self):
         print '*INFO* This keyword will fail!'
         print '*WARN* Run for your lives!!'
@@ -112,7 +118,7 @@ class RemoteTestLibrary:
         self._should_be_equal(arg, self.return_string())
 
     def unicode_string_as_argument(self, arg):
-        self._should_be_equal(arg, self.return_unicode_string())
+        self._should_be_equal(arg, self._unicode)
 
     def empty_string_as_argument(self, arg):
         self._should_be_equal(arg, '')
@@ -190,7 +196,7 @@ class RemoteTestLibrary:
         return 'Hello, world!'
 
     def return_unicode_string(self):
-        return u'Hyv\xE4\xE4 \xFC\xF6t\xE4!'
+        return self._unicode
 
     def return_empty_string(self):
         return ''
@@ -270,9 +276,6 @@ class RemoteTestLibrary:
 
     def log_control_char(self):
         print '\x01'
-
-    def log_unicode(self):
-        print u'Hyv\u00E4\u00E4 \u00FC\u00F6t\u00E4'
 
     # Not keywords
 
