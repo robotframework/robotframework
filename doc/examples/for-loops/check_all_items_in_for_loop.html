@@ -1,0 +1,434 @@
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="RobotIDE" /> 
+<style type="text/css">
+html {
+  font-family: Arial,Helvetica,sans-serif;
+  background-color: white;
+  color: black;
+}
+p {
+  max-width: 60em;
+}
+table {
+  border-collapse: collapse;
+  empty-cells: show;
+  margin: 1em 0em;
+  border: 0.1em solid black;
+}
+th, td {
+  border-style: solid;
+  border-width: 0.05em 0.1em;
+  border-color: black;
+  padding: 0.1em 0.2em;
+  height: 1.5em;
+}
+th {
+  background-color: rgb(192, 192, 192);
+  color: black;
+  border-width: 0.1em;
+  font-weight: bold;
+  text-align: center;
+  text-transform: capitalize;
+  letter-spacing: 0.1em;
+}
+/* Widths of named columns */
+col.name {
+  width: 10em;
+}
+.action, .value, .arg {
+  width: 15em;
+}
+/* Properties for the name column 
+- td:first-child should work in CSS 2.1 avare browsers (tested in Firefox)
+- col.name is against specs but works in IE
+*/
+td:first-child, col.name {
+  background-color: rgb(240, 240, 240);
+  text-transform: capitalize;
+  letter-spacing: 0.1em;
+}
+/* required for IE */
+th {
+  font-style: normal;
+}
+</style>
+<title>Check All Items In For Loop</title>
+</head>
+<body>
+<h1>Check All Items In For Loop</h1>
+
+<table border="1">
+<colgroup span="99">
+<col class="name">
+<col class="value" span="4"></colgroup>
+<tr>
+<th>Setting</th>
+<th>Value</th>
+<th>Value</th>
+<th>Value</th>
+<th>Value</th>
+</tr>
+<tr>
+<td>Documentation</td>
+<td>In some cases there is need to collect all the errors in a for loop and not failing for the first one. These examples demonstrates how to do that. Note: This gets quite complex in the testdata and therefore it might be good idea to use library for this purpose. At least you should use user keywords as shown in the example.</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Library</td>
+<td>CheckMultipleItemsLibrary.py</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</table>
+
+<table border="1">
+<colgroup span="99">
+<col class="name">
+<col class="value" span="4"></colgroup>
+<tr>
+<th>Variable</th>
+<th>Value</th>
+<th>Value</th>
+<th>Value</th>
+<th>Value</th>
+</tr>
+<tr>
+<td>@{FAILING ITEMS}</td>
+<td>some</td>
+<td>Items</td>
+<td>in</td>
+<td>list</td>
+</tr>
+<tr>
+<td>...</td>
+<td>that</td>
+<td>contains</td>
+<td>many</td>
+<td>values</td>
+</tr>
+<tr>
+<td>@{PASSING ITEMS}</td>
+<td>some</td>
+<td>words</td>
+<td>that</td>
+<td>pass</td>
+</tr>
+<tr>
+<td>...</td>
+<td>the</td>
+<td>test</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</table>
+
+<table border="1">
+<colgroup span="99">
+<col class="name">
+<col class="action">
+<col class="arg" span="3"></colgroup>
+<tr>
+<th>Test Case</th>
+<th>Action</th>
+<th>Argument</th>
+<th>Argument</th>
+<th>Argument</th>
+</tr>
+<tr>
+<td><a name="test_Example Demonstrating How To Collect Error Message In FOR Loop">Example Demonstrating How To Collect Error Message In FOR Loop</a></td>
+<td>Items Should Not Contain Letter I</td>
+<td>@{FAILING ITEMS}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="test_And Same With Items Passing The Test">And Same With Items Passing The Test</a></td>
+<td>Items Should Not Contain Letter I</td>
+<td>@{PASSING ITEMS}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="test_Changing The Keyword Used For Doing The Check">Changing The Keyword Used For Doing The Check</a></td>
+<td>[Documentation]</td>
+<td>If there is more often need to this kind of construct, it migh be good idea to give also the keyword which is making the check as an argument to the user keyword.</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check All The Items</td>
+<td>Item Does Not Contain Letter I</td>
+<td>@{PASSING ITEMS}</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check All The Items</td>
+<td>Item Does Not Contain Letter I</td>
+<td>@{FAILING ITEMS}</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="test_And Then Example Using The Library">And Then Example Using The Library</a></td>
+<td>Items Should Not Contain</td>
+<td>i</td>
+<td>@{PASSING ITEMS}</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Items Should Not Contain</td>
+<td>i</td>
+<td>@{FAILING ITEMS}</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</table>
+
+<table border="1">
+<colgroup span="99">
+<col class="name">
+<col class="action">
+<col class="arg" span="3"></colgroup>
+<tr>
+<th>Keyword</th>
+<th>Action</th>
+<th>Argument</th>
+<th>Argument</th>
+<th>Argument</th>
+</tr>
+<tr>
+<td><a name="keyword_Items Should Not Contain Letter I">Items Should Not Contain Letter I</a></td>
+<td>[Arguments]</td>
+<td>@{items}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>${errors found} =</td>
+<td>Set Variable</td>
+<td>${EMPTY}</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>:: FOR</td>
+<td>${item}</td>
+<td>IN</td>
+<td>@{items}</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td>${status}</td>
+<td>${message} =</td>
+<td>Run Keyword And Ignore Error</td>
+</tr>
+<tr>
+<td></td>
+<td>...</td>
+<td>Should Not Contain</td>
+<td>${item}</td>
+<td>i</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td>${errors found} =</td>
+<td>Set Variable If</td>
+<td>'${status}' is 'FAIL'</td>
+</tr>
+<tr>
+<td></td>
+<td>...</td>
+<td>${errors found}${message}\n</td>
+<td>${errors found}</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should Be Empty</td>
+<td>${errors found}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="keyword_Check All The Items">Check All The Items</a></td>
+<td>[Arguments]</td>
+<td>${keyword}</td>
+<td>@{items}</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>[Documentation]</td>
+<td>Note that the dublication is only for the demonstration purposes.</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>${errors found} =</td>
+<td>Set Variable</td>
+<td>${EMPTY}</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>:: FOR</td>
+<td>${item}</td>
+<td>IN</td>
+<td>@{items}</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td>${status}</td>
+<td>${message} =</td>
+<td>Run Keyword And Ignore Error</td>
+</tr>
+<tr>
+<td></td>
+<td>...</td>
+<td>${keyword}</td>
+<td>${item}</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td>${errors found} =</td>
+<td>Set Variable If</td>
+<td>'${status}' is 'FAIL'</td>
+</tr>
+<tr>
+<td></td>
+<td>...</td>
+<td>${errors found}${message}\n</td>
+<td>${errors found}</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Comment</td>
+<td>You can also specify better error message if needed for most of the BuiltIn Library's keywords</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should Be Empty</td>
+<td>${errors found}</td>
+<td>Following errors were found from the items:\n${errors found}</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a name="keyword_Item Does Not Contain Letter I">Item Does Not Contain Letter I</a></td>
+<td>[Arguments]</td>
+<td>${item}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should Not Contain</td>
+<td>${item}</td>
+<td>i</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should Not Contain</td>
+<td>${item}</td>
+<td>I</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</table>
+
+</body>
+</html>
