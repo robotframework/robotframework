@@ -44,9 +44,9 @@ class String:
         """
         line_list = lines.splitlines(0)
         print "*INFO* Got '%d' lines" % len(line_list)
-        line_count = len(line_list)
-        if (line_count == 0): return ""
-        return line_list[0]
+        if line_list:
+            return line_list[0]
+        return ''
 
     def get_second_part_of_lines_after_string(self, lines, split_string):
         """
@@ -58,7 +58,7 @@ class String:
         line_list = lines.splitlines(0)
         for line in line_list:
             # include only lines which contain requested string
-            if line.count(split_string):
+            if (split_string in line):
                 splitLine = line.split(split_string)
                 result_lines += splitLine[1] + '\n'
         return result_lines
@@ -71,9 +71,9 @@ class String:
         line_count = int(line_count)
         line_list = lines.splitlines(0)
         print "*INFO* Got '%d' lines" % len(line_list)
-        totalline_count = len(line_list)
-        if (totalline_count == 0): return ""
-        return line_list[0 : (line_count)]
+        if line_list:
+            return line_list[0 : (line_count)]
+        return ''
 
     def get_line_count(self, lines):
         """
@@ -90,19 +90,20 @@ class String:
         """
         line_list = lines.splitlines(0)
         print "*INFO* Got '%d' lines" % len(line_list)
-        line_count = len(line_list)
-        if (line_count == 0): return ""
-        return line_list[line_count - 1]
+        if line_list:
+            return line_list[- 1]
+        return ""
 
     def get_all_but_last_line_as_list(self, lines):
         """
-      Returns list of all but the last line of input
+        Returns list of all but the last line of input
         """
         line_list = lines.splitlines(0)
         print "*INFO* Got '%d' lines" % len(line_list)
         line_count = len(line_list)
-        if (line_count == 0): return []
-        return line_list[0 : line_count - 1]
+        if line_list:
+            return line_list[0 : line_count - 1]
+        return []
 
     def get_all_but_last_line(self, lines):
         """
@@ -135,10 +136,10 @@ class String:
         Removes empty elements from list. Returns list.
         """
         newelements = []
-        for i in range (0, len(elements) ):
-            if (elements[i] != ''):
-                newelements.append(elements[i])
-        return newelements         
+        for element in elements:
+            if element:
+                newelement.append(element)
+        return newelements
 
     def split_to_last_line_and_rest(self, lines):
         """
@@ -148,15 +149,15 @@ class String:
         """
         line_list = lines.splitlines(0)
         line_count = len(line_list)
-        if (line_count == 1):
-            return []
         
+        # just last line. Return list of [last line, '']        
         if (line_count == 1):
             result_list = []
             result_list.append(line_list[0])
             result_list.append('')
             return result_list
-        last_line = line_list[line_count - 1]
+
+        last_line = line_list[-1]
         # if line before last is empty, remove it - comes from additional \n in the echo
         if (line_list [line_count-2] == ""): line_count = line_count - 1
         all_but_last = ""
@@ -169,11 +170,12 @@ class String:
         """
         Adds \\r\\n to all lines
         """
+
+        result_lines = ''
         # replace CRLF with LF (in case there's some inside)
-        result_list = ''
-        result_list = lines.replace('\r\n','\n')
-        result_list = result_list.replace('\n','\r\n')
-        return result_list
+        result_lines = lines.replace('\r\n','\n')
+        result_lines = result_lines.replace('\n','\r\n')
+        return result_lines
 
     def replace_string(self, replace_in, search_for, replace_with):
         """
@@ -194,7 +196,8 @@ class String:
             convert_list = tempList
         for listElement in convert_list:
             result += listElement + ","
-        result = result.rstrip(',')
+        result = result[0 : -1]
+        #result = result.rstrip(',')
         return result
 
     def convert_csv_to_list(self, csv_string):
@@ -215,7 +218,6 @@ class String:
     def get_lines_not_matching_any_of_elements(self, to_match, to_exclude):
         """
         This keyword returns to_match without lines where any of to_exclude is a substring.
-        
         """
         result_lines = ""
         some_matches = 0
@@ -224,12 +226,12 @@ class String:
             some_matches = 0
             for line_to_exclude in to_exclude:
                 # check if is a substring
-                if (line_to_match.count(line_to_exclude)):
+                if (line_to_exclude in line_to_match):
                     some_matches = 1
             if not (some_matches): result_lines = line_to_match + "\n"
         return result_lines
 
-    def generate_Random_String(self, length=8, chars=string.letters + string.digits):
+    def generate_random_string(self, length=8, chars=string.letters + string.digits):
         """
             Generates a random string of the required length (8 by default).
             Second argument is a set of characters to draw from, letters + digits for default
