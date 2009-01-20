@@ -158,7 +158,8 @@ class String:
             return result_list
 
         last_line = line_list[-1]
-        # if line before last is empty, remove it - comes from additional \n in the echo
+        # if line before last is empty, remove it
+        # - comes from additional \n in the echo
         if (line_list [line_count-2] == ""): line_count = line_count - 1
         all_but_last = ""
         for i in range (0, line_count - 1):
@@ -217,7 +218,8 @@ class String:
         
     def get_lines_not_matching_any_of_elements(self, to_match, to_exclude):
         """
-        This keyword returns to_match without lines where any of to_exclude is a substring.
+        This keyword returns to_match without lines
+        where any of to_exclude is a substring.
         """
         result_lines = ""
         some_matches = 0
@@ -234,7 +236,8 @@ class String:
     def generate_random_string(self, length=8, chars=string.letters + string.digits):
         """
             Generates a random string of the required length (8 by default).
-            Second argument is a set of characters to draw from, letters + digits for default
+            Second argument is a set of characters to draw from,
+            letters + digits for default
         """        
         length = int(length)
         src_len = len(chars)
@@ -249,8 +252,51 @@ class String:
 
     def get_substring(self, string, left_index, right_index):
         """
-        Returns a substring from left_index to right_index, which should be numbers (0, len-1)
+        Returns a substring from left_index to right_index,
+        which should be numbers (0, len-1)
         """
         return string[int(left_index) : int(right_index)]
     
+    def is_a_string(self, item):
+        """ Checks whether item is a string. Returns true or false"""
+        if isinstance(item, basestring):
+            print "*INFO* is a string '%s' lines" % item
+            return True
+        return False
+
+    def should_be_a_string(self, item, msg=None):
+        """ Fails if item is not a string (e.g. list, number)"""
+        if not (self.is_a_string(item)):
+            if msg is None:
+                msg = "Given item is not a string"
+            raise AssertionError(msg)
+        
+    def should_not_be_a_string(self, item, msg=None):
+        """ Fails if item is a string (e.g. list, number)"""
+        if (self.is_a_string(item)):
+            if msg is None:
+                msg = "Given item '%s' is a string" % item
+            raise AssertionError(msg)
+        
     
+    def get_column(self, input_text, column_number, delimiter=' '):
+        """
+        Takes input text, splits into columns using delimiter
+        and returns the column_number column.
+        Column numbering starts from 1. Default delimiter is single space.
+        """
+        if (not delimiter):
+            raise AssertionError("Delimiter should not be empty")
+        
+        lines = input_text.splitlines(0)
+        column = ''
+        
+        column_number = int(column_number - 1)
+        for line in lines:
+            row = line.split(delimiter)
+            try:
+                item = row[column_number]
+            except IndexError:
+                item = ''
+            column += item + '\n'
+        return column    
