@@ -706,6 +706,11 @@ Variable priorities
    override possible variables with same names in imported resource and
    variable files.
 
+   Variables created in the variable tables are available in all other tables
+   in the file where they are created. This means that they can be used also
+   in the Setting table, for example, for importing more variables from
+   resource and variable files.
+
 *Imported resource and variable files*
 
    Variables imported from the `resource and variable files`_ have the
@@ -718,6 +723,11 @@ Variable priorities
    variables in its own Variable table have a higher priority than
    variables it imports. All these variables are available for files that
    import this resource file.
+
+   Notice that variables imported from resource and variable files are not
+   available in the Variable table of the file that imports them. This
+   is due to the Variable table being processed before the Setting table
+   where the resource files and variable files are imported.
 
 *Variables set during test execution*
 
