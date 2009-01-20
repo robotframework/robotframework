@@ -9,7 +9,7 @@ Installation and uninstallation
 Introduction
 ~~~~~~~~~~~~
 
-There are three ways to install Robot Framework:
+There are four ways to install Robot Framework:
 
 `Installing from source`_
     You can get the source code either as a source distribution
@@ -29,6 +29,12 @@ There are three ways to install Robot Framework:
     If Python package managing tool `Easy Install`_ is available, installing Robot 
     Framework is as easy as running command :cli:`easy_install robotframework`. 
     Easy Install support is available from Robot Framework 2.0.1 onwards.
+
+`Using One Click Installer`_ 
+    If you are using Windows and you don't have preconditions Python_ and 
+    Jython_ (optional) installed, you can use `One Click Installer`_ to do all 
+    the needed installations.
+    
 
 Installation packages are available from
 http://downloads.robotframework.org, and source code from
@@ -187,6 +193,32 @@ Framework 2.0.1 onwards.
 
 .. Note:: If you need to use a proxy to access the Internet, you can tell Easy
           Install to use it by setting the :var:`http_proxy` environment variable.
+
+
+Using One Click Installer
+'''''''''''''''''''''''''
+
+The One Click Installer installs Robot Framework and its preconditions Python_ 
+and Jython_ (optional). It also sets Robot Framework start-up scripts 
+(:prog:`pybot`, :prog:`jybot`, :prog:`rebot`), as well as Python and Jython 
+executables, into the :var:`%PATH%` environment variable, so that they can be
+executed from the command line. 
+
+.. Note:: You should use this installer *ONLY* if you do not previously have 
+          Python or Jython installed. In that case, and also if you want to 
+          have a custom installation, you need to install the needed components 
+          separately.
+
+The One Click Installer requires that you have all the required component
+installers in the same directory with it, and that they have expected
+names. If Robot Framework or Python installer is missing, the
+installation fails. If Jython installer does not exist, Jython is
+simply not installed. Minimum supported versions are Robot Framework 2.0, 
+Python 2.5 and Jython 2.2, but latest versions are always recommended. These 
+installers can be downloaded from the respective project web sites. More 
+details are available at `One Click Installer's documentation`__
+
+__ `One Click Installer`_
 
 
 Manual installation
