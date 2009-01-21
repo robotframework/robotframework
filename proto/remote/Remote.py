@@ -5,14 +5,9 @@ import sys
 try:
     from xml.parsers.expat import ExpatError
 except ImportError:
-    # Support for Jython 2.2
-    ExpatError = None
+    ExpatError = None   # Support for Jython 2.2
 
-try:
-    from robot.errors import RemoteError
-except ImportError:
-    # Support for Robot Framework 2.0.2 and earlier.
-    RemoteError = None
+from robot.errors import RemoteError
 
 
 class Remote:
@@ -89,6 +84,10 @@ class Remote:
             print '*INFO*', traceback
             raise AssertionError(message)
         raise RemoteError(message, traceback)
+
+
+class _RmlRpcClient:
+
 
 
 class _Result:
