@@ -17,53 +17,41 @@ class Remote:
     def __init__(self, uri='http://localhost:8270'):
         if '://' not in uri:
             uri = 'http://' + uri
-        self._library = xmlrpclib.ServerProxy(uri, encoding='UTF-8')
+        if uri.startswith('rmi://'):
+            self._client = RmiRemoteClient(uri)
+        else:
+            self._client = XmlRpcRemoteClient(uri)
 
     def get_keyword_names(self, attempts=5):
         for i in range(attempts):
             try:
-                return self._library.get_keyword_names()
-            except socket.error, (errno, err):
+                return self._client.get_keyword_names()
+            except TypeError, err:
                 time.sleep(1)
-            except xmlrpclib.Error, err:
-                err = err.faultString
-                break
         raise RuntimeError('Connecting remote server failed: %s' % err)
 
     def get_keyword_arguments(self, name):
         try:
-            return self._library.get_keyword_arguments(name)
-        except (xmlrpclib.Error, socket.error):
+            return self._client.get_keyword_arguments(name)
+        except TypeError:
             return ['*args']
 
     def get_keyword_documentation(self, name):
         try:
-            return self._library.get_keyword_documentation(name)
-        except (xmlrpclib.Error, socket.error):
+            return self._client.get_keyword_documentation(name)
+        except TypeError:
             return ''
 
     def run_keyword(self, name, args):
-        result = _Result(self._run_keyword(name, args))
+        args = [ self._handle_argument(arg) for arg in args ]
+        result = RemoteResult(self._client.run_keyword(name, args))
         sys.stdout.write(result.output)
         if result.status != 'PASS':
-            self._raise_failed(result.error, result.traceback)
+            raise RemoteError(result.error, result.traceback)
         return result.return_
 
-    def _run_keyword(self, name, args):
-        args = [ self._handle_argument(arg) for arg in args ]
-        try:
-            return self._library.run_keyword(name, args)
-        except xmlrpclib.Error, err:
-            raise RuntimeError(err.faultString)
-        except socket.error, (errno, err):
-            raise RuntimeError('Connection to remote server broken: %s' % err)
-        except ExpatError, err:
-            raise RuntimeError('Processing XML-RPC return value failed. '
-                               'Most often this happens when the return value '
-                               'contains characters that are not valid in XML. '
-                               'Original error was: ExpatError: %s' % err)
-
     def _handle_argument(self, arg):
+        # TODO: Should handle also basic Java types
         if isinstance(arg, (basestring, int, long, float, bool)):
             return arg
         if isinstance(arg, (tuple, list)):
@@ -78,19 +66,8 @@ class Remote:
             return ''
         return str(item)
 
-    def _raise_failed(self, message, traceback):
-        # Support for RF 2.0.2 and earlier
-        if not RemoteError:
-            print '*INFO*', traceback
-            raise AssertionError(message)
-        raise RemoteError(message, traceback)
 
-
-class _RmlRpcClient:
-
-
-
-class _Result:
+class RemoteResult:
 
     def __init__(self, result):
         try:
@@ -100,4 +77,70 @@ class _Result:
             self.error = result.get('error', '')
             self.traceback = result.get('traceback', '')
         except (KeyError, AttributeError):
-            raise RuntimeError('Invalid result dictionary: %s' % result)
+            raise RuntimeError('Invalid remote result dictionary: %s' % result)
+
+
+class XmlRpcRemoteClient:
+
+    def __init__(self, uri):
+        self._server = xmlrpclib.ServerProxy(uri, encoding='UTF-8')
+
+    def get_keyword_names(self):
+        try:
+            return self._server.get_keyword_names()
+        except socket.error, (errno, err):
+            raise TypeError(err)
+        except xmlrpclib.Error, err:
+            raise TypeError(err)
+
+    def get_keyword_arguments(self, name):
+        try:
+            return self._server.get_keyword_arguments(name)
+        except xmlrpclib.Error:
+            return TypeError
+
+    def get_keyword_documentation(self, name):
+        try:
+            return self._server.get_keyword_documentation(name)
+        except xmlrpclib.Error:
+            return TypeError
+
+    def run_keyword(self, name, args):
+        try:
+            return self._server.run_keyword(name, args)
+        except xmlrpclib.Error, err:
+            raise RuntimeError(err.faultString)
+        except socket.error, (errno, err):
+            raise RuntimeError('Connection to remote server broken: %s' % err)
+        except ExpatError, err:
+            raise RuntimeError('Processing XML-RPC return value failed. '
+                               'Most often this happens when the return value '
+                               'contains characters that are not valid in XML. '
+                               'Original error was: ExpatError: %s' % err)
+
+
+if not sys.platform.startswith('java'):
+
+    def RmiRemoteClient(uri):
+        raise RuntimeError('Using RMI requires running tests with Jython')
+
+else:
+
+    # from java.xxx import RMIStuff
+
+    class RmiRemoteClient:
+
+        def __init__(self, uri):
+            pass
+
+        def get_keyword_names(self):
+            return ['test']
+
+        def get_keyword_arguments(self, name):
+            raise TypeError
+
+        def get_keyword_documentation(self, name):
+            raise TypeError
+
+        def run_keyword(self, name, args):
+            return {'status': 'PASS', 'output': 'Hello, world!\n'}
