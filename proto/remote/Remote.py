@@ -5,9 +5,15 @@ import sys
 try:
     from xml.parsers.expat import ExpatError
 except ImportError:
-    ExpatError = None   # Support for Jython 2.2
+    ExpatError = None   # Support for Jython 2.2(.x)
 
-from robot.errors import RemoteError
+try:
+    from robot.errors import RemoteError
+except ImportError:
+    # Support for Robot Framework 2.0.2 and earlier
+    def RemoteError(message, traceback):
+        print '*INFO*', traceback
+        raise AssertionError(message)
 
 
 class Remote:
