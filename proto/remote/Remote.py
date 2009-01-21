@@ -97,13 +97,13 @@ class XmlRpcRemoteClient:
         try:
             return self._server.get_keyword_arguments(name)
         except xmlrpclib.Error:
-            return TypeError
+            raise TypeError
 
     def get_keyword_documentation(self, name):
         try:
             return self._server.get_keyword_documentation(name)
         except xmlrpclib.Error:
-            return TypeError
+            raise TypeError
 
     def run_keyword(self, name, args):
         try:
