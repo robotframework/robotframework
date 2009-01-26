@@ -1,5 +1,5 @@
 Configuring execution
-----------------------
+---------------------
 
 This section explains different command line options that can be used
 for configuring the `test execution`_ or `post-processing
@@ -264,7 +264,7 @@ colon (:) or using this option several times. The given path can also be
 a glob pattern matching multiple paths, but then it normally must be
 escaped__.
 
-__ `Escaping options`_
+__ `Escaping complicated characters`_
 
 Examples::
 

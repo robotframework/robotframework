@@ -132,8 +132,8 @@ Command line options for post-processing outputs
 .. _Sets the width: `Controlling the monitor output`_
 .. _Specifies are colors: `Sets the width`_
 .. _search test libraries: `library search path`_
-.. _Escapes characters: `Escaping options`_
-.. _read more arguments: `Using argument files`_
+.. _Escapes characters: `Escaping complicated characters`_
+.. _read more arguments: `Argument files`_
 .. _usage instructions: `Getting help on the command line`_
 .. _version information: `usage instructions`_
 

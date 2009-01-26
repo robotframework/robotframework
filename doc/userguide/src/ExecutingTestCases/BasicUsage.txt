@@ -41,8 +41,8 @@ options can be used to alter the test execution or generated
 outputs in some way.
 
 
-Specifying the test data to be executed
-'''''''''''''''''''''''''''''''''''''''
+Specifying test data to be executed
+'''''''''''''''''''''''''''''''''''
 
 Robot Framework test cases are created in files__ and directories__,
 and they are executed by giving the path to the file or directory in
@@ -82,6 +82,21 @@ in the second example below::
 
    pybot my_tests.html your_tests.html
    pybot --name Example path/to/tests/pattern_*.html
+
+Test cases in a test suite are executed in the order they are specified
+in the test case file where they are created. Test suites inside a higher level
+test suite are executed in case-insensitive alphabetical order based on the file
+or directory name. Finally, if multiple files and/or directories are given from
+the command line, they are executed in the order they are specified.
+
+If the alphabetical ordering of test suites inside suites is problematic, 
+a good workaround is giving them separately in the required order. This easily
+leads to overly long start-up commands, but `argument files`_  allow listing 
+files nicely one file per line. It is also possible to `randomize the execution 
+order of test cases or test suites`__  using :opt:`--runmode` option.
+
+__ `Setting the execution mode`_
+
 
 
 Using command line options
@@ -282,7 +297,7 @@ meaningful name::
    rebot --name Browser_Compatibility firefox.xml opera.xml safari.xml ie.xml
    rebot --include smoke --name Smoke_Tests c:\results\*.xml
 
-__ `Specifying the test data to be executed`_
+__ `Specifying test data to be executed`_
 
 
 Getting help on the command line
@@ -308,7 +323,7 @@ or Jython version and the platform type::
    Rebot 2.0.3 (Python 2.5.2 on win32)
 
 
-Handling complicated characters
+Escaping complicated characters
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Because spaces are used for separating options from each other, it is
@@ -316,17 +331,13 @@ problematic to use them in option values.  Some options, such as
 :opt:`--name`, automatically convert underscores to spaces, but
 with others spaces must be escaped. Additionally, many special
 characters are complicated to use on the command line.
-
 Because escaping complicated characters with a backslash or quoting
 the values does not always work too well, Robot Framework has its own
-generic escaping mechanism. Another possibility is using argument
-files where options can be specified in the plain text format. Both of
+generic escaping mechanism. Another possibility is using `argument
+files`_ where options can be specified in the plain text format. Both of
 these mechanisms work both when executing tests and when
 post-processing outputs, and also some of the external supporting
 tools have the same or similar capabilities.
-
-Escaping options
-''''''''''''''''
 
 In Robot Framework's command line escaping mechanism,
 problematic characters are escaped with freely selected text. The
@@ -360,9 +371,7 @@ be escaped are listed in the table below:
 The following examples make the syntax more clear. In the
 first example, the metadata :opt:`X` gets the value :code:`Value with
 spaces`, and in the second variable :var:`${VAR}` is assigned to
-:code:`"Hello, world!"`.
-
-::
+:code:`"Hello, world!"`::
 
     --escape space:_ --metadata X:Value_with_spaces
     -E space:SP -E quot:QU -E comma:CO -E exclam:EX -v VAR:QUHelloCOSPworldEXQU
@@ -372,26 +381,34 @@ data, are escaped. Escape character sequences thus need to be
 selected carefully.
 
 
-Using argument files
-''''''''''''''''''''
+Argument files
+~~~~~~~~~~~~~~
 
-Another possibility to handle complicated arguments is placing them
-into a argument file and using :opt:`--argumentfile` (short
-option :opt:`-A`) to specify the path to it, along with possible other
-options. These files can contain both command line options and paths
-to the test data, one per line. Argument files can contain any ASCII
+Problematic characters can often be handled easily using *argument files*.
+These files can contain both command line options and paths
+to the test data, one per line. They are taken into use with 
+:opt:`--argumentfile` option (short option :opt:`-A`) along with possible other
+command line options.  Argument files can contain any ASCII
 characters without escaping, but spaces in the beginning and end
 of lines are ignored. Additionally, empty lines and lines starting with
-a hash mark (#) are ignored.
-
-An example argument file::
+a hash mark (#) are ignored::
 
    --doc This is an example (where "special characters" are ok!)
    --metadata X:Value with spaces
    --variable VAR:Hello, world!
-   # This is a comment line
-   path/to/test directory/
+   # This is a comment
+   path/to/my/tests
 
+Another important usage for argument files is specifying input files or
+directories in certain order. This can be very useful if the `alphabetical
+default execution order`__ is not suitable::
+
+   --name My Example Tests
+   tests/some_tests.html
+   tests/second.html
+   tests/more/tests.html
+   tests/more/another.html
+   tests/even_more_tests.html
 
 When an argument file is used on the command line, its contents are
 placed to the original list of arguments to the same place where the
@@ -402,6 +419,9 @@ with other options and paths::
    pybot --argumentfile all_arguments.txt
    pybot --name example --argumentfile other_options_and_paths.txt
    pybot --argumentfile default_options.txt --name example my_tests.html
+
+
+__ `Specifying test data to be executed`_
 
 
 Creating start-up scripts

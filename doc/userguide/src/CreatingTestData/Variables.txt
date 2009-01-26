@@ -371,7 +371,7 @@ special characters are difficult to represent in the
 command line, but they can be escaped__ with the :opt:`--escape`
 option. 
 
-__ `Escaping options`_
+__ `Escaping complicated characters`_
 
 .. sourcecode:: bash
 
