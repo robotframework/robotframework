@@ -245,7 +245,7 @@ Documentation formatting
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
 The `user guide`_ has an appendix explaining different documentation
-formatting possibilities. Most important fearues are formatting using
+formatting possibilities. Most important features are formatting using
 :code:`*bold*` and :code:`_italic_`, automatic conversion of URLs to
 clickable links, and the possibility to create tables (useful for
 examples) simply with pipe character::
@@ -283,7 +283,7 @@ Messages` to :name:`Log Message`, and :code:`\`message\`` and
 
 
 Additionally, using :code:`\`introduction\`` or :code:`\`library introduction\``
-(case insensitive) generates a link to the library introduction in the beginneing
+(case insensitive) generates a link to the library introduction in the beginning
 of the generated documentation. Similarly :code:`\`importing\``
 or :code:`\`library importing\`` generates a link to the `importing section`_.
 
