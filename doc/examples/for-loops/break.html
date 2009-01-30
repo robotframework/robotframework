@@ -1,0 +1,131 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<style type="text/css">
+html {
+font-family: Arial,Helvetica,sans-serif;
+background-color: white;
+color: black;
+}
+p {
+max-width: 60em;
+}
+table {
+border-collapse: collapse;
+empty-cells: show;
+margin: 1em 0em;
+border: 0.1em solid black;
+}
+th, td {
+border-style: solid;
+border-width: 0.05em 0.1em;
+border-color: black;
+padding: 0.1em 0.2em;
+height: 1.5em;
+}
+th {
+background-color: rgb(192, 192, 192);
+color: black;
+border-width: 0.1em;
+font-weight: bold;
+text-align: center;
+text-transform: capitalize;
+letter-spacing: 0.1em;
+}
+/* Widths of named columns */
+col.name {
+width: 10em;
+}
+.action, .value, .arg {
+width: 15em;
+}
+/* Properties for the name column - td:first-child should work in CSS 2.1 avare browsers (tested in Firefox)
+- col.name is against specs but works in IE
+*/
+td:first-child, col.name {
+background-color: rgb(240, 240, 240);
+text-transform: capitalize;
+letter-spacing: 0.1em;
+}
+/* required for IE */
+th {
+font-style: normal;
+}
+</style><title>Robot Test Cases</title></head>
+<body>
+<h1>Robot Test Cases</h1>
+<table border="1">
+<colgroup span="99"><col class="name"><col class="value" span="4"></colgroup>
+<thead><tr>
+<th>Setting</th>
+<th>Value</th>
+<th>Value</th>
+<th>value</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr><td>Documentation</td><td>In some cases there is need
+to break the for loop to save exectution time. Usually this should be
+done in library code, but some times you need to do it in the test
+data. &nbsp;This example demonstrates how to do that. </td><td> Note: You should avoid this and at least you should hide the implementation into user keyword as shown below.</td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr>
+
+</tbody>
+</table>
+<table border="1">
+<colgroup span="99"><col class="name"><col class="value" span="4"></colgroup>
+<thead><tr>
+<th>Variable</th>
+<th>Value</th>
+<th>Value</th>
+<th>Value</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>@{ITEMS}</td>
+<td>Robot</td>
+<td>says</td><td>hello<br></td>
+<td>world</td></tr><tr><td>...</td><td>and </td><td>have </td><td>a</td><td>nice</td></tr><tr><td>...</td><td>day!</td><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr>
+</tbody>
+</table>
+<table border="1">
+<colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
+<thead><tr>
+<th>Test Case</th>
+<th>Action</th>
+<th>Argument</th>
+<th>Argument</th>
+<th>Argument</th>
+
+
+</tr>
+</thead>
+<tbody>
+
+
+
+
+
+
+<tr><td>Breaking the For Loop</td><td>Word Should Be Found From Items&nbsp; </td><td>hello</td><td>@{ITEMS}</td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Same With going Through The Whole List And Failing At the End</td><td>Word Should Be Found From Items&nbsp; </td><td>fail<br></td><td>@{ITEMS}</td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr>
+</tbody>
+</table>
+<table border="1">
+<colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
+<thead><tr>
+<th>Keyword</th>
+<th>Action</th>
+<th>Argument</th>
+<th>Argument</th>
+<th>Argument</th>
+</tr>
+</thead>
+<tbody>
+
+<tr><td>Word Should Be Found From Items </td><td>[Arguments]</td><td>${word}<br></td><td>@{items}</td><td></td></tr><tr><td></td><td>${status}<br></td><td>${message} =</td><td>Run Keyword And Ignore Error</td><td>Word Should Not Be Found From Items</td></tr><tr><td></td><td>...</td><td>${word}</td><td>@{items}</td><td></td></tr><tr><td></td><td>Run Keyword If</td><td>'${status}' == 'PASS'</td><td>Fail</td><td>Word '${word}' was not found. </td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Word Should Not Be Found From Items</td><td>[Arguments]</td><td>${word}</td><td>@{items}</td><td></td></tr><tr><td></td><td>:FOR</td><td>${item}</td><td>IN</td><td>@{items}
+</td></tr><tr><td></td><td></td><td>Should Not Be Equal </td><td>${word}</td><td>${item}</td></tr><tr><td></td><td></td><td>...</td><td>Word '${word}' was found. </td><td>No values</td></tr>
+</tbody>
+</table>
+</body></html>
