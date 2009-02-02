@@ -112,9 +112,9 @@ def create_html_doc(lib, outpath, title=None):
         title = '%s - Documentation' % lib.name
     generated = utils.get_timestamp(daysep='-', millissep=None)
     namespace = Namespace(LIB=lib, TITLE=title, GENERATED=generated)
-    doc = Template(template=DOCUMENT_TEMPLATE).generate(namespace)
+    doc = Template(template=DOCUMENT_TEMPLATE).generate(namespace) + '\n'
     outfile = open(outpath, 'w')
-    outfile.write(doc + '\n')
+    outfile.write(doc.encode('UTF-8'))
     outfile.close()
 
     
@@ -372,8 +372,8 @@ DOCUMENT_TEMPLATE = '''<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional
 <html>
 <head>
 <title>${TITLE}</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <style>
-
   body {
     background: white;
     color: black;
