@@ -138,7 +138,7 @@ try:
     from robot.errors import DataError, Information
 except ImportError:
     raise ImportError('Could not import Robot Framework modules. '
-                      'Make sure you have Roobt Framework installed.')
+                      'Make sure you have Robot Framework installed.')
 
 
 class AllStatistics(object):
