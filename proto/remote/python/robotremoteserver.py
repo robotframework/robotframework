@@ -26,6 +26,8 @@ except ImportError:
 
 class RobotRemoteServer(SimpleXMLRPCServer):
   
+    allow_reuse_address = True
+
     def __init__(self, library, host='localhost', port=8270):
         SimpleXMLRPCServer.__init__(self, (host, int(port)), logRequests=False)
         self._library = library
