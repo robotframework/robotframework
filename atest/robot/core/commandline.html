@@ -1463,7 +1463,7 @@ two_parts:one_part -M esc:STQUDOAMHAEXEX --escape star:ST -E quest:QU
 <td></td>
 <td></td>
 </tr>
-<tr>
+<tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Two argument Files</td><td>Create File</td><td>${MYOUTDIR}${/}a1.txt</td><td>--metadata A1:Value1</td><td></td></tr><tr><td></td><td>Create File</td><td>${MYOUTDIR}${/}a2.txt</td><td>--metadata A2:Value2</td><td></td></tr><tr><td></td><td>Run Tests</td><td>-A ${MYOUTDIR}${/}a1.txt<br>--argumentfile&nbsp;${MYOUTDIR}${/}a2.txt</td><td>${TESTFILE}</td><td></td></tr><tr><td></td><td>Should Be Equal</td><td>${SUITE.metadata['A1']}</td><td>Value1</td><td></td></tr><tr><td></td><td>Should Be Equal</td><td>${SUITE.metadata['A2']}</td><td>Value2</td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Recursive Argument File</td><td>Create File</td><td>${MYOUTDIR}${/}first.txt</td><td>--metadata First:1\n<br>--argumentfile ${MYOUTDIR}${/}second.txt</td><td></td></tr><tr><td></td><td>Create File</td><td>${MYOUTDIR}${/}second.txt</td><td>--metadata Second:2</td><td></td></tr><tr><td></td><td>Run Tests</td><td>-A ${MYOUTDIR}${/}first.txt<br></td><td>${TESTFILE}</td><td></td></tr><tr><td></td><td>Should Be Equal</td><td>${SUITE.metadata['First']}</td><td>1</td><td></td></tr><tr><td></td><td>Should Be Equal</td><td>${SUITE.metadata['Second']}</td><td>2</td><td></td></tr><tr>
 <td></td>
 <td></td>
 <td></td>
