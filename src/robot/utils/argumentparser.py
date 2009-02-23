@@ -101,7 +101,9 @@ class ArgumentParser:
         'argfile' can be used to automatically read arguments from specified 
         file. Given value must be the name of the long option used for giving 
         the argument file. Typical usage is '--argumentfile path' in usage doc
-        and calling this method with 'argfile="argumentfile"'. 
+        and calling this method with 'argfile="argumentfile"'. If 'argfile' is
+        used, it can always be given multiple times and thus it is recommended
+        to use '*' to denote that (even though '*' is actually ignored).
         
         'pythonpath' can be used to specify option(s) containing extra paths to
         be added into 'sys.path'. Value can be either a string containing the
@@ -179,18 +181,21 @@ class ArgumentParser:
         argfile_opts = ['--'+argfile_opt]
         for sopt, lopt in self._short_to_long.items():
             if lopt == argfile_opt:
-                argfile_opts.append('-'+sopt)
-        for opt in argfile_opts:
+                argfile_opts.append('-'+sopt)        
+        while True:
             try:
-                index = args.index(opt)
+                index = self._get_argfile_index(args, argfile_opts)
                 path = args[index+1]
-            except (ValueError, IndexError):
-                path = None
-            else:
+            except IndexError:
                 break
-        if path:
             args[index:index+2] = self._get_args_from_file(path)
         return args
+
+    def _get_argfile_index(self, args, argfile_opts):
+        for opt in argfile_opts:
+            if opt in args:
+                return args.index(opt)
+        raise IndexError
 
     def _get_args_from_file(self, path):
         try:
