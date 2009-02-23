@@ -35,7 +35,7 @@ def install():
     _remove(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'build'))
     print 'Installing Robot Framework...'
     setup = os.path.join(os.path.dirname(sys.argv[0]), 'setup.py')
-    rc = os.system('%s %s install' % (sys.executable, setup))
+    rc = os.system('"%s" %s install' % (sys.executable, setup))
     if rc != 0:
         print 'Installation failed.'
         sys.exit(rc)
@@ -79,10 +79,9 @@ def _remove_runners():
                  _remove(os.path.join(dirpath, name))
 
 def _remove_egg_info(instdir):
-    egg_info_match = glob.glob(os.path.join(os.path.dirname(instdir), 
-                                            'robotframework*.egg-info'))
-    if len(egg_info_match) > 0:
-        _remove(egg_info_match[0])
+    pattern = os.path.join(os.path.dirname(instdir), 'robotframework-*.egg-info')
+    for path in glob.glob(pattern):
+        _remove(path)
 
 def _remove(path):
     if not os.path.exists(path):
@@ -94,7 +93,6 @@ def _remove(path):
             os.remove(path)
     except Exception, err:
         print "Removing '%s' failed: %s" % (path, err)
-        sys.exit(1)
     else:
         print "Removed '%s'" % path
 
