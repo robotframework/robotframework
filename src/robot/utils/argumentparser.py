@@ -100,10 +100,10 @@ class ArgumentParser:
         
         'argfile' can be used to automatically read arguments from specified 
         file. Given value must be the name of the long option used for giving 
-        the argument file. Typical usage is '--argumentfile path' in usage doc
+        the argument file. Typical usage is '--argumentfile path *' in usage doc
         and calling this method with 'argfile="argumentfile"'. If 'argfile' is
         used, it can always be given multiple times and thus it is recommended
-        to use '*' to denote that (even though '*' is actually ignored).
+        to use '*' to denote that.
         
         'pythonpath' can be used to specify option(s) containing extra paths to
         be added into 'sys.path'. Value can be either a string containing the

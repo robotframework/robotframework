@@ -241,7 +241,7 @@ Options:
                           Examples:
                           --escape space:_ --metadata X:Value_with_spaces
                           -E space:SP -E quot:Q -v var:QhelloSPworldQ
- -A --argumentfile path   Text file to read more arguments from. File can have
+ -A --argumentfile path *  Text file to read more arguments from. File can have
                           both options and data sources one per line. Contents
                           do not need to be escaped but spaces in the beginning
                           and end of lines are removed. Empty lines and lines
