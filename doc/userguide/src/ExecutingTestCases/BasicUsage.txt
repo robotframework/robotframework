@@ -414,11 +414,14 @@ When an argument file is used on the command line, its contents are
 placed to the original list of arguments to the same place where the
 argument file option was. Argument files can be used either alone so
 that they contain all the options and paths to the test data, or along
-with other options and paths::
+with other options and paths. Starting from Robot Framework 2.1 it is
+possible to use :opt:`--argumentfile` option multiple times or even
+recursively::
 
    pybot --argumentfile all_arguments.txt
    pybot --name example --argumentfile other_options_and_paths.txt
    pybot --argumentfile default_options.txt --name example my_tests.html
+   pybot -A first.txt -A second.txt -A third.txt some_tests.tsv
 
 
 __ `Specifying test data to be executed`_
