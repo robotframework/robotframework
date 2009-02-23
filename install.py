@@ -93,6 +93,7 @@ def _remove(path):
             os.remove(path)
     except Exception, err:
         print "Removing '%s' failed: %s" % (path, err)
+        sys.exit(1)
     else:
         print "Removed '%s'" % path
 
