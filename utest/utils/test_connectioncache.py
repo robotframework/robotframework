@@ -1,10 +1,6 @@
 import unittest
 import sys
 
-if __name__ == "__main__":
-    sys.path.insert(0, "../../src")
-    
-
 from robot.utils.asserts import *
 from robot.errors import DataError
 
@@ -39,12 +35,12 @@ class TestConnnectionCache(unittest.TestCase):
         assert_equals(self.cache._aliases, {})
 
     def test_register_multiple(self):
-        c1 = ConnectionMock(); c2 = ConnectionMock(); c3 = ConnectionMock()
-        for i, conn in enumerate([c1,c2,c3]):
+        conns = [ConnectionMock(), ConnectionMock(), ConnectionMock()]
+        for i, conn in enumerate(conns):
             index = self.cache.register(conn)
             assert_equals(index, i+1)
             assert_equals(self.cache.current, conn)
-        assert_equals(self.cache._connections, [c1,c2,c3])
+        assert_equals(self.cache._connections, conns)
         
     def test_switch_with_index(self):
         self._register('a', 'b', 'c')
@@ -71,7 +67,7 @@ class TestConnnectionCache(unittest.TestCase):
         assert_equals(index, 1)
         assert_equals(self.cache.current, conn)
         assert_equals(self.cache._connections, [conn])
-        assert_equals(self.cache._aliases, { 'myconnection' : 1 })
+        assert_equals(self.cache._aliases, {'myconnection': 1})
 
     def test_register_multiple_with_alis(self):
         c1 = ConnectionMock(); c2 = ConnectionMock(); c3 = ConnectionMock()
@@ -79,8 +75,8 @@ class TestConnnectionCache(unittest.TestCase):
             index = self.cache.register(conn, 'c%d' % (i+1))
             assert_equals(index, i+1)
             assert_equals(self.cache.current, conn)
-        assert_equals(self.cache._connections, [c1,c2,c3])
-        assert_equals(self.cache._aliases, {'c1' : 1, 'c2' : 2, 'c3' : 3 })
+        assert_equals(self.cache._connections, [c1, c2, c3])
+        assert_equals(self.cache._aliases, {'c1': 1, 'c2': 2, 'c3': 3})
         
     def test_switch_with_alias(self):
         self._register('a', 'b', 'c', 'd', 'e')
@@ -140,6 +136,6 @@ class TestConnnectionCache(unittest.TestCase):
             connections.append(conn)
         return connections
 
+
 if __name__ == '__main__':
     unittest.main()
-  
