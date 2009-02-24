@@ -522,6 +522,9 @@ operating-system-agnostic.
    |            | systems this is typically :path:`/tmp`, and in Windows           |
    |            | :path:`c:\\Documents and Settings\\<user>\\Local Settings\\Temp`.|
    +------------+------------------------------------------------------------------+
+   | ${EXECDIR} | An absolute path to the directory where test execution was       |
+   |            | started from. New in Robot Framework 2.1.                        |
+   +------------+------------------------------------------------------------------+
    | ${/}       | The system directory path separator. :code:`/` in UNIX-like      |
    |            | systems, :code:`\\` in Windows.                                  |
    +------------+------------------------------------------------------------------+
