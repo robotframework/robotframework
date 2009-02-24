@@ -27,6 +27,7 @@ GLOBAL_VARIABLES = Variables()
 def init_global_variables(settings, syslog):
     _set_cli_vars(settings, syslog)
     for name, value in [ ('${TEMPDIR}', utils.get_temp_dir()),
+                         ('${EXECDIR}', os.path.abspath('.')), 
                          ('${/}', os.sep), 
                          ('${:}', os.pathsep),
                          ('${SPACE}', ' '),
