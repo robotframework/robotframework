@@ -290,7 +290,7 @@ class OperatingSystem:
             self._log(msg, 'WARN')
             if SYSLOG:
                 SYSLOG.warn(msg)
-        return PROCESSES.get_current().read()
+        return PROCESSES.current.read()
         
     def stop_process(self):
         """Stops the current process without reading from it.
@@ -301,7 +301,7 @@ class OperatingSystem:
         
         See `Start Process` and `Switch Process` for more information.
         """
-        PROCESSES.get_current().close()
+        PROCESSES.current.close()
         
     def stop_all_processes(self):
         """Stops all the processes and removes them from the process list.

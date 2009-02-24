@@ -30,17 +30,12 @@ class ConnectionCache:
     """
 
     def __init__(self, no_current_msg='No open connection'):
-        self.current = None
+        self.current = self._no_current = _NoConnection(no_current_msg)
         self.current_index = None
         self._connections = []
         self._aliases = NormalizedDict()
         self._no_current_msg = no_current_msg
-        
-    def get_current(self):
-        if self.current is None:
-            raise DataError(self._no_current_msg)
-        return self.current
-        
+
     def register(self, connection, alias=None):
         """Registers given connection with optional alias and returns its index.
         
@@ -86,7 +81,7 @@ class ConnectionCache:
         """Empties the connections cache.
         
         Indexes of new connections starts from 1 after this."""
-        self.current = None
+        self.current = self._no_current
         self.current_index = None
         self._connections = []
         self._aliases = NormalizedDict()
@@ -110,3 +105,17 @@ class ConnectionCache:
         if not 0 < index <= len(self._connections):
             raise ValueError
         return index
+
+
+class _NoConnection:
+    
+    def __init__(self, msg):
+        self._msg = msg
+
+    def __getattr__(self, name):
+        if name.startswith('__') and name.endswith('__'):
+            raise AttributeError
+        raise DataError(self._msg)
+
+    def __nonzero__(self):
+        return False

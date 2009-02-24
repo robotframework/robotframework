@@ -25,6 +25,12 @@ class TestConnnectionCache(unittest.TestCase):
         
     def test_initial(self):
         self._verify_initial_state()
+
+    def test_no_connection(self):
+        assert_raises_with_msg(DataError, 'No open connection', getattr,
+                               ConnectionCache().current, 'whatever')
+        assert_raises_with_msg(DataError, 'Custom msg', getattr,
+                               ConnectionCache('Custom msg').current, 'xxx')
         
     def test_register_one(self):
         conn = ConnectionMock()
@@ -123,7 +129,7 @@ class TestConnnectionCache(unittest.TestCase):
             assert_false(conn.closed_by_exit)
         
     def _verify_initial_state(self):
-        assert_none(self.cache.current)
+        assert_equals(self.cache.current, self.cache._no_current)
         assert_none(self.cache.current_index)
         assert_equals(self.cache._connections, [])
         assert_equals(self.cache._aliases, {})
