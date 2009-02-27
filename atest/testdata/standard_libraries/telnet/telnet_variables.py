@@ -1,7 +1,7 @@
 HOST = 'localhost'
 USERNAME = 'test'
 PASSWORD = 'test'
-MACHINE = 'jth-laptop'
+MACHINE = 'jth-lt'
 FULL_PROMPT = '%s@%s:~$' % (USERNAME, MACHINE)
 
 pwd = u'pwd'
