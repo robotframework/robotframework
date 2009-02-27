@@ -99,37 +99,41 @@ tables is ignored.
    ============  ======================  ============  ==========
 
 
+Editing test data
+`````````````````
+
 Test data in HTML files can be edited with whichever editor you
 prefer, but a graphic editor, where you can actually see the tables,
 is recommended.  There is also a tool called `Robot IDE`_
 available that is actually designed for editing the test data.
+
+
+Encoding and entity references
+``````````````````````````````
 
 HTML entity references (for example, :code:`&auml;`) are
 supported. Additionally, any encoding can be used, assuming that it is
 specified in the data file. Normal HTML files must use the META
 element as in the example below::
 
- <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 XHTML files should use the XML preamble as in this example::
  
- <?xml version="1.0" encoding="Big5"?>
+  <?xml version="1.0" encoding="Big5"?>
 
 If no encoding is specified, Robot Framework uses ISO-8859-1 by default. 
-
-.. Note:: Before Robot Framework version 1.8.4, the HTML test data was
-          always assumed to be in ASCII format.
 
 
 TSV format
 ''''''''''
 
-In a TSV file, all the data is in one large table. `Test data tables`_
-are recognized from an asterisk (*), followed by a normal table
-name. Robot Framework ignores any other asterisks in the name, so it
-can also be prefixed with another asterisk as in the example below.
-In TSV test data, everything before the first recognized table is
-ignored in Robot Framework.
+The TSV format can be used in Robot Framework's test data for all the
+same purposes as HTML. In a TSV file, all the data is in one large
+table. `Test data tables`_ are recognized from one or more asterisks
+(:code:`*`), followed by a normal table name and an optional closing
+asterisks.  Everything before the first recognized table is ignored
+similarly as data outside tables in HTML data.
 
 .. table:: Using the TSV format
    :class: tsv-example
@@ -156,21 +160,35 @@ ignored in Robot Framework.
    \             Directory Should Exist   ${path}        \
    ============  =======================  =============  =============
 
+
+Editing test data
+`````````````````
+
 You can create and edit TSV files in any spreadsheet program, such as
 Microsoft Excel. Select the tab-separated format when you save the
-file and remember to set the file extension to :path:`.tsv`. The TSV
-format can be used in Robot Framework's test data for all the same
-purposes as HTML.
+file and remember to set the file extension to :path:`.tsv`. It is
+also a good idea to turn all automatic corrections off and configure
+the tool to treat all values in the file as plain text. The TSV format
+is also relatively easy to edit with any text editor, especially if
+the editor supports visually separating tabs from spaces.
 
 Robot Framework parses TSV data by first splitting all the content
 into rows and then rows into cells on the basis of the tabular
 characters. Spreadsheet programs sometimes surround cells with quotes
 (for example, :code:`"my value"`) and Robot Framework removes
 them. Possible quotes inside the data are doubled (for example,
-:code:`"my ""quoted"" value"`) and Robot Framework handles also
-them. If you are using a spreadsheet program to create TSV data, you
-do not need to pay attention to that, but if you create data
-programmatically, you have to add the same quotes as spreadsheets.
+:code:`"my ""quoted"" value"`) and also this is handled correctly.  If
+you are using a spreadsheet program to create TSV data, you should not
+need to pay attention to this, but if you create data
+programmatically, you have to follow the same quoting conventions as
+spreadsheets.
+
+
+Encoding
+````````
+
+TSV files are always expected to use UTF-8 encoding. Because ASCII is
+a subset of UTF-8, plain ASCII is naturally supported too.
 
 
 Test data tables
