@@ -68,10 +68,8 @@ font-style: normal;
 </thead> <tbody>
 <tr>
 <td>Documentation</td>
-<td style="font-weight: bold;">*If you open this
-file to KompoZer or some other editor make sure that it really uses
-entities for all non-ascii chars below!*</td>
-<td>Bug in 1.8.4 was unnoticed because KompoZer with its default settings converts e.g. &amp;auml; into &Auml; in source.</td>
+<td style="font-weight: bold;">*Edit this file only using text editor!!*</td>
+<td>Bug in 1.8.4 was unnoticed because KompoZer had converted e.g. &amp;aum; into real a-with-dots.</td>
 <td></td>
 <td></td>
 </tr>
@@ -109,15 +107,15 @@ entities for all non-ascii chars below!*</td>
 </tr>
 </thead> <tbody>
 <tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
+<td>&#64;{LIST}</td>
+<td>a</td>
+<td>b</td>
+<td>c</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
-<td></td>
+<td>&#36;{SCALAR}</td>
+<td>abc</td>
 <td></td>
 <td></td>
 <td></td>
@@ -139,15 +137,15 @@ entities for all non-ascii chars below!*</td>
 <td>Equals</td>
 <td>Hyv&auml;&auml; &uuml;&ouml;t&auml;
 &Aring;&Auml;&Ouml;</td>
-<td>${scandinavian_letters}</td>
+<td>${SCANDINAVIAN LETTERS}</td>
 <td></td>
 </tr>
 <tr>
-<td align="undefined" valign="undefined"></td>
-<td align="undefined" valign="undefined"></td>
-<td align="undefined" valign="undefined"></td>
-<td align="undefined" valign="undefined"></td>
-<td align="undefined" valign="undefined"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
 </tr>
 <tr>
 <td align="undefined" valign="undefined">XML
@@ -156,27 +154,69 @@ Escapes</td>
 <td>&amp; &amp;amp; &lt; &lt;tag&gt;
 &gt; ' " '" ' &amp;gt;<br>
 </td>
-<td align="undefined" valign="undefined">${xml_escapes}</td>
-<td align="undefined" valign="undefined"></td>
+<td align="undefined" valign="undefined">${XML ESCAPES}</td>
+<td></td>
 </tr>
 <tr>
-<td align="undefined" valign="undefined"></td>
-<td align="undefined" valign="undefined"></td>
-<td align="undefined" valign="undefined"></td>
-<td align="undefined" valign="undefined"></td>
-<td align="undefined" valign="undefined"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
 </tr>
 <tr>
 <td>Other&nbsp;Escapes</td>
 <td>Equals</td>
 <td>&sect;xxx&sect; &tilde; </td>
-<td>${other_escapes}</td>
+<td>${OTHER ESCAPES}</td>
 <td></td>
 </tr>
 <tr>
 <td></td>
 <td></td>
 <td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Numerical escapes</td>
+<td>Should Be Equal</td>
+<td>&#82;&#70;</td>
+<td>RF</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Variables using escapes</td>
+<td>Should Be Equal</td>
+<td>&#36;{SCALAR}</td>
+<td>abc</td>
+<td></td>
+</tr>
+<tr>
+<tr>
+<td></td>
+<td>Should Be Equal</td>
+<td>&#36;{SCALAR}</td>
+<td>${SCALAR}</td>
+<td></td>
+</tr>
+<td></td>
+<td>Should Be True</td>
+<td>&#64;{LIST} == ['a', 'b', 'c']</td>
+<td></td>
+<td></td>
+</tr>
+</tr>
+<td></td>
+<td>Should Be True</td>
+<td>&#64;{LIST} == @{LIST}</td>
 <td></td>
 <td></td>
 </tr>
