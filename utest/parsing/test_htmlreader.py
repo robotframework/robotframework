@@ -102,6 +102,16 @@ class TestHtmlReader(unittest.TestCase):
             self.reader.feed('</table>')        
             assert_equals(self.reader.state, self.reader.IGNORE)
             assert_equals(self.reader.data.tables[name], row_data)
+
+
+class TestEntityAndCharRefs(unittest.TestCase):
+
+    def setUp(self):
+        self.reader = HtmlReader()
+        self.reader.handle_data = self._handle_response
+
+    def _handle_response(self, value, decode):
+        self.response = value
             
     def test_handle_entiryrefs(self):
         for inp, exp in [ ('nbsp', ' '),
@@ -121,14 +131,18 @@ class TestHtmlReader(unittest.TestCase):
                           ('Uuml', u'\u00DC'),
                           ('Aring', u'\u00C5'),
                           ('Ntilde', u'\u00D1'),
-                           ]:
-            act = self.reader._handle_entityref(inp)
-            if type(act) == UnicodeType:
-                assert_true(ord(act) >= 128)
-            else:
-                assert_true(ord(act) < 128)
-            msg = '%s: %r != %r' % (inp, act, exp)
-            assert_equals(act, exp, msg, False)
+                          ('invalid', '&invalid;') ]:
+            self.reader.handle_entityref(inp)
+            msg = '%s: %r != %r' % (inp,  self.response, exp)
+            assert_equals(self.response, exp, msg, False)
+
+    def test_handle_charefs(self):
+        for inp, exp in [ ('82', 'R'),
+                          ('228', u'\u00E4'),
+                          ('invalid', '&#invalid;') ]:
+            self.reader.handle_charref(inp)
+            msg = '%s: %r != %r' % (inp,  self.response, exp)
+            assert_equals(self.response, exp, msg, False)
 
 
 class TestEncoding(unittest.TestCase):

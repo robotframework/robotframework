@@ -18,9 +18,7 @@ from htmlentitydefs import entitydefs
 
 from robot import utils
 
-extra_entitydefs = { 'nbsp' : ' ',
-                     'apos' : "'",
-                     'tilde' : '~' }
+extra_entitydefs = {'nbsp': ' ',  'apos': "'", 'tilde': '~'}
 
 
 class HtmlReader(HTMLParser.HTMLParser):
@@ -50,7 +48,7 @@ class HtmlReader(HTMLParser.HTMLParser):
         self.current_row = None
         self.current_cell = None
         for line in htmlfile.readlines():
-            self.feed(line)  # HTMLParser.feed
+            self.feed(line)
         # Calling close is required by the HTMLParser but may cause problems
         # if the same instance of our HtmlParser is reused. Currently it's
         # used only once so there's no problem.
@@ -76,24 +74,26 @@ class HtmlReader(HTMLParser.HTMLParser):
             
     def handle_entityref(self, name):
         value = self._handle_entityref(name)
-        self.handle_data(value, False)
-        
+        self.handle_data(value, decode=False)
+
     def _handle_entityref(self, name):
         if extra_entitydefs.has_key(name):
             return extra_entitydefs[name]
         try:
-            value = entitydefs[name]
+            return entitydefs[name].decode('ISO-8859-1')
         except KeyError:
             return '&'+name+';'
+
+    def handle_charref(self, number):
+        value = self._handle_charref(number)
+        self.handle_data(value, decode=False)
+
+    def _handle_charref(self, number):
         try:
-            if ord(value) < 128:
-                return value
-        except TypeError:
-            pass
-        if value.startswith('&#'):
-            return unichr(int(value[2:-1]))
-        return value.decode('ISO-8859-1')
-    
+            return unichr(int(number))
+        except ValueError:
+            return '&#'+number+';'
+
     def handle_pi(self, data):
         encoding = self._get_encoding_from_pi(data)
         if encoding:
