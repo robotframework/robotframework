@@ -8,7 +8,6 @@ Force Tags	force1	force2
 
 Suite Setup	Log	Setup		
 Test Teardown	Log	Test Teardown		
-Resource	../resources/html_resource.html			
 Resource	../resources/tsv_resource.tsv			
 Variables	../resources/variables.py			
 Library	OperatingSystem			
@@ -39,16 +38,10 @@ Variable Table	Equals	${table_var}	foo
 	Equals	@{table_listvar}[0]	bar
 	Equals	@{table_listvar}[1]	foo
 
-HTML Resource Keyword	Keyword from HTML resource		
-	Keyword from HTML resource 2		
 
-HTML Resource Variable	Equals	${html_resource_var}	HTML Resource Variable
-	Equals	${html_resource_var2}	HTML Resource Variable From Recursive Resource
-
-TSV Resource Keyword	Keyword from TSV resource		
+Resource File	Keyword from TSV resource		
 	Keyword from TSV resource 2		
-
-TSV Resource Variable	Equals	${tsv_resource_var}	TSV Resource Variable
+	Equals	${tsv_resource_var}	TSV Resource Variable
 	Equals	${tsv_resource_var2}	TSV Resource Variable From Recursive Resource
 
 Variable File	Equals	@{file_listvar}[0]	${True}
