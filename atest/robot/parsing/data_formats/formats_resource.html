@@ -1,0 +1,3567 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+
+
+
+
+
+
+
+
+
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <style type="text/css">
+html {
+  font-family: Arial,Helvetica,sans-serif;
+  background-color: white;
+  color: black;
+}
+p {
+  max-width: 60em;
+}
+table {
+  border-collapse: collapse;
+  empty-cells: show;
+  margin: 1em 0em;
+  border: 0.1em solid black;
+}
+th, td {
+  border-style: solid;
+  border-width: 0.05em 0.1em;
+  border-color: black;
+  padding: 0.1em 0.2em;
+  height: 1.5em;
+}
+th {
+  background-color: rgb(192, 192, 192);
+  color: black;
+  border-width: 0.1em;
+  font-weight: bold;
+  text-align: center;
+  text-transform: capitalize;
+  letter-spacing: 0.1em;
+}
+/* Widths of named columns */
+col.name {
+  width: 10em;
+}
+.action, .value, .arg {
+  width: 15em;
+}
+/* Properties for the name column 
+- td:first-child should work in CSS 2.1 avare browsers (tested in Firefox)
+- col.name is against specs but works in IE
+*/
+td:first-child, col.name {
+  background-color: rgb(240, 240, 240);
+  text-transform: capitalize;
+  letter-spacing: 0.1em;
+}
+/* required for IE */
+th {
+  font-style: normal;
+}
+  </style>
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <title>Robot Test Cases</title></head>
+<body>
+
+
+
+
+
+
+
+
+
+
+<h1>Robot Test Cases</h1>
+
+
+
+
+
+
+
+
+
+
+
+<table border="1">
+
+
+
+
+
+
+
+
+
+
+  <colgroup span="99"><col class="name"><col class="value" span="4"></colgroup>
+  <thead>
+  <tr>
+
+
+
+
+
+
+
+
+
+
+    <th>Setting</th>
+
+
+
+
+
+
+
+
+
+
+    <th>Value</th>
+
+
+
+
+
+
+
+
+
+
+    <th>Value</th>
+
+
+
+
+
+
+
+
+
+
+    <th>value</th>
+
+
+
+
+
+
+
+
+
+
+    <th>Value</th>
+
+
+
+
+
+
+
+
+
+
+  </tr>
+
+
+
+
+
+
+
+
+
+
+  </thead>
+  <tbody>
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+
+    
+
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+
+      <td>Resource</td>
+
+
+
+
+
+
+
+
+
+
+      <td>../../../resources/resource.html</td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+<table border="1">
+
+
+
+
+
+
+
+
+
+
+  <colgroup span="99"><col class="name"><col class="value" span="4"></colgroup>
+  <thead>
+  <tr>
+
+
+
+
+
+
+
+
+
+
+    <th>Variable</th>
+
+
+
+
+
+
+
+
+
+
+    <th>Value</th>
+
+
+
+
+
+
+
+
+
+
+    <th>Value</th>
+
+
+
+
+
+
+
+
+
+
+    <th>Value</th>
+
+
+
+
+
+
+
+
+
+
+    <th>Value</th>
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+
+
+
+  </tr>
+
+
+
+
+
+
+
+
+
+
+  </thead>
+  <tbody>
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+
+      <td>${HTMLDIR}</td>
+
+
+
+
+
+
+
+
+
+
+      <td>parsing${/}html</td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      
+
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    
+
+
+
+    
+
+
+
+
+
+
+    
+
+
+
+
+
+
+    
+
+
+
+
+
+
+    
+
+
+
+
+
+
+    <tr><td>${TSVDIR}</td><td>parsing${/}tsv</td><td></td><td></td><td></td></tr><tr><td>${RESTDIR}</td><td>parsing${/}rest</td><td></td><td></td><td></td></tr><tr><td>${MIXEDDIR}</td><td>parsing${/}mixed_data</td><td></td><td></td><td></td></tr><tr>
+
+
+
+
+
+
+      <td>@{SAMPLE_TESTS}</td>
+
+
+
+
+
+
+      <td>Passing</td><td>Failing</td><td>User Keyword</td><td>Own Tags</td>
+
+
+
+
+
+
+      
+
+
+
+
+
+
+      
+
+
+
+
+
+
+      
+
+
+
+
+
+
+      
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr><td>...</td><td>Default Tags</td><td>Variable Table</td><td>Resource File</td><td>Variable File</td></tr><tr><td>...</td><td>Library Import</td><td>Test Timeout</td><td>Keyword Timeout</td><td>Empty Rows</td></tr><tr><td>...</td><td>Document</td><td>Default Fixture</td><td>Overridden Fixture</td><td>Quotes</td></tr><tr>
+
+
+
+
+
+
+      <td>@{SUBSUITE_TESTS}</td>
+
+
+
+
+
+
+      <td>Suite1 Test</td>
+
+
+
+
+
+
+      <td>Suite2 Test</td>
+
+
+
+
+
+
+      <td><br>
+
+
+
+      </td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  </tbody>
+</table><br><table border="1">
+
+
+
+
+
+
+
+
+
+
+  <colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
+  <thead>
+  <tr>
+
+
+
+
+
+
+
+
+
+
+    <th>Keyword</th>
+
+
+
+
+
+
+
+
+
+
+    <th>Action</th>
+
+
+
+
+
+
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+
+
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+
+
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+
+
+
+
+    <th>Argument</th>
+
+
+
+
+
+
+
+
+
+
+  </tr>
+
+
+
+
+
+
+
+
+
+
+  </thead>
+  <tbody>
+
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+      <td align="undefined" valign="undefined">Run Should Have Been Successful</td>
+
+
+
+      <td>Should Not Be Equal</td>
+
+
+
+      <td>${SUITE}</td>
+
+
+
+      <td>${None}</td>
+
+
+
+      <td>Running tests failed.</td>
+
+
+
+      <td>No Values</td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td align="undefined" valign="undefined">Run Tests And Verify Status</td>
+
+
+
+      <td>[Arguments]</td>
+
+
+
+      <td>@{paths}</td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td>Set Suite Variable</td>
+
+
+
+      <td>$SUITE</td>
+
+
+
+      <td align="undefined" valign="undefined">${None}</td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined">Run Tests</td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined">@{paths}</td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined">Run Should Have Been Successful</td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+
+      <td>Run Sample file and check tests</td>
+
+
+
+
+
+
+
+
+
+
+      <td>[Arguments]</td>
+
+
+
+
+
+
+
+
+
+
+      <td>${path}</td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+      <td>Run Tests And Verify Status</td>
+
+
+
+
+
+
+
+
+
+      <td>${path}</td>
+
+
+
+
+
+
+
+
+
+      <td><br>
+
+
+
+      </td>
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td>Should Be Equal</td>
+
+
+
+
+
+
+      <td>${SUITE.name}</td>
+
+
+
+
+
+
+      <td>Sample</td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td>Should Be Equal</td>
+
+
+
+
+
+
+      <td>${SUITE.doc}</td>
+
+
+
+
+
+
+      <td>A complex testdata file.</td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td>Check Log Message</td>
+
+
+
+
+
+
+      <td>${SUITE.setup.messages[0]}</td>
+
+
+
+
+
+
+      <td>Setup</td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td>Should Be Equal</td>
+
+
+
+
+
+
+      <td>${SUITE.teardown}</td>
+
+
+
+
+
+
+      <td>${None}</td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td>Check Suite Contains Tests</td>
+
+
+
+
+
+
+      <td>${SUITE}</td>
+
+
+
+
+
+
+      <td>@{sample_tests}</td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+    
+
+    
+
+    <tr>
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+      <td>Check Test Tags</td>
+
+
+
+
+
+
+
+
+
+      <td>Own Tags</td>
+
+
+
+
+
+
+
+
+
+      <td>force1</td>
+
+
+
+
+
+
+
+
+
+      <td>force2</td>
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+      <td>...</td>
+
+
+
+
+
+
+
+
+
+      <td>own1</td>
+
+
+
+
+
+
+
+
+
+      <td>own2</td>
+
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+      <td>Check Test Tags</td>
+
+
+
+
+
+
+
+
+      <td>Default Tags</td>
+
+
+
+
+
+
+
+
+      <td>default1</td>
+
+
+
+
+
+
+
+
+      <td>force1</td>
+
+
+
+
+
+
+
+
+      <td>force2</td>
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+    
+
+    
+    
+    
+    
+    
+
+    
+
+    <tr>
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+      <td>${test}=</td>
+
+
+
+
+
+
+
+
+      <td>Check Test Case</td>
+
+
+
+
+
+
+
+
+      <td>Test Timeout</td>
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+      <td>Should Be Equal</td>
+
+
+
+
+
+
+
+
+      <td>${test.timeout}</td>
+
+
+
+
+
+
+
+
+      <td>1s</td>
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+    
+
+    
+
+
+    <tr>
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+      <td>Check Test Doc</td>
+
+
+
+
+
+
+
+
+      <td>Document</td>
+
+
+
+
+
+
+
+
+      <td>Testing the metadata parsing.</td>
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+      <td>${test}=</td>
+
+
+
+
+
+
+      <td>Check Test Case</td>
+
+
+
+
+
+
+
+
+      
+
+      <td>Default Fixture</td>
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td>Should Be Equal</td>
+
+
+
+
+
+
+      <td>${test.setup}</td>
+
+
+
+
+
+
+      <td>${None}</td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+      <td>Check Log Message</td>
+
+
+
+
+
+
+
+
+      <td>${test.teardown.messages[0]}</td>
+
+
+
+
+
+
+
+
+      <td>Test Teardown</td>
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td>${test}=</td>
+
+
+
+
+
+
+      <td>Check Test Case</td>
+
+
+
+
+
+
+      <td>Overridden Fixture</td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td>Check Log Message</td>
+
+
+
+
+
+
+      <td>${test.setup.messages[0]}</td>
+
+
+
+
+
+
+      <td>Own Setup</td>
+
+
+
+
+
+
+      <td>INFO</td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td>Check Log Message</td>
+
+
+
+
+
+
+      <td>${test.teardown.messages[0]}</td>
+
+
+
+
+
+
+      <td>Failing Teardown</td>
+
+
+
+
+
+
+      <td>FAIL</td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+
+
+      <td>Run Suite Dir And Check Results</td>
+
+
+
+
+
+
+
+
+      <td>[Arguments]</td>
+
+
+
+
+
+
+      <td>${path}</td>
+
+
+
+
+
+
+
+
+      
+
+      <td></td>
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+
+
+    <tr>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td>Run Tests And Verify Status</td>
+
+
+
+      <td>${path}</td>
+
+
+
+      <td><br>
+
+
+
+      </td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+    </tr>
+
+
+
+
+
+
+    
+
+
+    <tr>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined">${ignore}</td>
+
+
+
+      <td align="undefined" valign="undefined">${type} =</td>
+
+
+
+      <td align="undefined" valign="undefined">Split Path</td>
+
+
+
+      <td align="undefined" valign="undefined">${path}</td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td>Should Be Equal</td>
+
+
+
+
+
+
+      <td>${SUITE.name}</td>
+
+
+
+
+
+
+      <td>${type.capitalize()}</td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td>Should Be Equal</td>
+
+
+
+
+
+
+      <td>${SUITE.doc}</td>
+
+
+
+
+
+
+      <td>\</td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td>Should Be True</td>
+
+
+
+
+
+
+      <td>${SUITE.suites} == ['Sample', 'With Init']</td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td>Should Be True</td>
+
+
+
+
+
+
+      <td>${SUITE.suites[1].suites} == ['Sub Suite1', 'Sub Suite2'] </td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td>Check Suite Contains Tests</td>
+
+
+
+
+
+
+      <td>${SUITE}</td>
+
+
+
+
+
+
+      <td>@{SAMPLE_TESTS}</td>
+
+
+
+
+
+
+      <td>@{SUBSUITE_TESTS}</td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined">${invalid} =</td>
+
+
+
+      <td align="undefined" valign="undefined">Join Path</td>
+
+
+
+      <td align="undefined" valign="undefined"><span class="arg" title="Joins given paths with base and returns resulted paths.">${DATADIR}</span></td>
+
+
+
+      <td align="undefined" valign="undefined">${path}</td>
+
+
+
+      <td align="undefined" valign="undefined">invalid.${type}</td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td>Check Syslog Contains</td>
+
+
+
+
+
+
+      <td>Parsing data source '${invalid}' failed:</td>
+
+
+
+
+
+
+      <td>Test case file '${invalid}' contains no test cases</td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined">${empty} =</td>
+
+
+
+      <td align="undefined" valign="undefined">Join Path</td>
+
+
+
+      <td align="undefined" valign="undefined"><span class="arg" title="Joins given paths with base and returns resulted paths.">${DATADIR}</span></td>
+
+
+
+      <td align="undefined" valign="undefined">${path}</td>
+
+
+
+      <td align="undefined" valign="undefined">empty.${type}</td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td>Check Syslog Contains</td>
+
+
+
+      <td>Parsing data source '${empty}' failed:</td>
+
+
+
+      <td>Test case file&nbsp;'${empty}' contains no test cases</td>
+
+
+
+
+
+
+      
+
+
+      
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td>Check Suite With Init</td>
+
+
+
+
+
+
+      <td>[Arguments]</td>
+
+
+
+
+
+
+      <td>${suite}</td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined">Should Be Equal</td>
+
+
+
+      <td align="undefined" valign="undefined">${suite.name}</td>
+
+
+
+      <td align="undefined" valign="undefined">With Init</td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td>Should Be Equal</td>
+
+
+
+      <td>${suite.doc}</td>
+
+
+
+      <td>Testing suite init file</td>
+
+
+
+
+
+
+      
+
+
+      
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td>Check Log Message</td>
+
+
+
+      <td>${suite.setup.kws[0].messages[0]}</td>
+
+
+
+      <td>Running suite setup</td>
+
+
+
+
+
+
+      
+
+
+      
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td>Should Be Equal</td>
+
+
+
+
+
+
+      <td>${suite.teardown}</td>
+
+
+
+
+
+
+      <td>${None}</td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined">Should Be True</td>
+
+
+
+      <td align="undefined" valign="undefined">${suite.suites} == [ 'Sub Suite1','Sub Suite2']</td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+      <td align="undefined" valign="undefined"></td>
+
+
+
+    </tr>
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td>Check Suite Contains Tests</td>
+
+
+
+
+
+
+      <td>${suite}</td>
+
+
+
+
+
+
+      <td>@{SUBSUITE_TESTS}</td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+    </tr>
+
+
+
+
+
+
+    
+
+
+    
+
+
+    
+
+
+    
+
+
+    
+
+
+    
+
+
+    
+
+
+    
+
+
+    
+
+
+    
+
+
+    
+
+
+
+
+
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+</body></html>
