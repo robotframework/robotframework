@@ -22,6 +22,7 @@ from robot.errors import DataError
 
 from htmlreader import HtmlReader
 from tsvreader import TsvReader
+from restreader import RestReader
 from rawdatatables import SimpleTable, ComplexTable
 
 
@@ -56,6 +57,8 @@ def RawData(path, syslog, strip_comments=True):
         reader = HtmlReader()
     elif ext in ['.tsv']:
         reader = TsvReader()
+    elif ext in ['.rst', '.rest']:
+        reader = RestReader()
     else:
         raise DataError("Unsupported file format '%s'" % ext)
     rawdata = TabularRawData(path, syslog, strip_comments)

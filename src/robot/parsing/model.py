@@ -26,7 +26,7 @@ from userkeyword import UserHandlerList
 
 _IGNORED_PREFIXES = ['_','.']
 _IGNORED_DIRS = ['CVS']
-_PROCESSED_EXTS = ['.html','.xhtml','.htm','.tsv']
+_PROCESSED_EXTS = ['.html','.xhtml','.htm','.tsv','.rst','.rest']
 
 
 def TestSuiteData(datasources, settings, syslog):
