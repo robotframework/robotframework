@@ -20,16 +20,23 @@ import urllib
 from robot import utils
 from robot.errors import DataError
 
+from rawdatatables import SimpleTable, ComplexTable
 from htmlreader import HtmlReader
 from tsvreader import TsvReader
-from restreader import RestReader
-from rawdatatables import SimpleTable, ComplexTable
+try:
+    from restreader import RestReader
+except ImportError:
+    def RestReader():
+        raise DataError("Using reStructuredText test data requires having "
+                        "'docutils' module installed.")
 
 
 # Hook for external tools for altering ${CURDIR} processing
 PROCESS_CURDIR = True
 
-# Recognized table names
+READERS = { '.html': HtmlReader, '.htm': HtmlReader, '.xhtml': HtmlReader,
+            '.tsv': TsvReader , '.rst': RestReader, '.rest': RestReader }
+
 SETTING_TABLES = ['Setting','Settings','Metadata']
 VARIABLE_TABLES = ['Variable','Variables']
 TESTCASE_TABLES = ['Test Case','Test Cases']
@@ -52,18 +59,20 @@ def RawData(path, syslog, strip_comments=True):
             datafile = open(path, 'rb')
     except:
         raise DataError(utils.get_error_message())
+    try:
+        return _read_data(datafile, path, syslog, strip_comments)
+    finally:
+        datafile.close()
+
+
+def _read_data(datafile, path, syslog, strip_comments):
     ext = os.path.splitext(path)[1].lower()
-    if ext in ['.html','.xhtml','.htm']:
-        reader = HtmlReader()
-    elif ext in ['.tsv']:
-        reader = TsvReader()
-    elif ext in ['.rst', '.rest']:
-        reader = RestReader()
-    else:
+    try:
+        reader = READERS[ext]()
+    except KeyError:
         raise DataError("Unsupported file format '%s'" % ext)
     rawdata = TabularRawData(path, syslog, strip_comments)
     reader.read(datafile, rawdata)
-    datafile.close()
     return rawdata
 
 

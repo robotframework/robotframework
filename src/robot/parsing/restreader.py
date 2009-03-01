@@ -1,7 +1,7 @@
 import tempfile
 import os
 
-from docutils.core import publish_cmdline, default_description
+from docutils.core import publish_cmdline
 
 from htmlreader import HtmlReader
 
@@ -9,16 +9,18 @@ from htmlreader import HtmlReader
 class RestReader(HtmlReader):
 
     def read(self, rstfile, rawdata):
-        filedesc, htmlfilename = tempfile.mkstemp('.html')
-        os.close(filedesc)
-        self.publish(rstfile.name, htmlfilename)
-        suiteData = HtmlReader.read(self, file(htmlfilename), rawdata)
-        os.remove(htmlfilename)
-        return suiteData 
+        htmlpath = self._rest_to_html(rstfile.name)
+        try:
+            htmlfile = open(htmlpath, 'rb')
+            return HtmlReader.read(self, htmlfile, rawdata)
+        finally:
+            os.remove(htmlpath)
+            htmlfile.close()
 
-    def publish(self, rstFilename, htmlFilename):
-        description = ('Generates (X)HTML documents from standalone reStructuredText sources.  ' + default_description)
-        publish_cmdline(writer_name='html', argv=[rstFilename, htmlFilename], description=description)
-    
+    def _rest_to_html(self, rstpath):
+        filedesc, htmlpath = tempfile.mkstemp('.html')
+        os.close(filedesc)
+        publish_cmdline(writer_name='html', argv=[rstpath, htmlpath])
+        return htmlpath
         
 

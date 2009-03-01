@@ -19,14 +19,13 @@ from robot import utils
 from robot.errors import DataError
 from robot.common import BaseTestSuite, BaseTestCase
 
-from rawdata import RawData
+from rawdata import RawData, READERS
 from metadata import TestSuiteMetadata, TestCaseMetadata
 from keywords import KeywordList
 from userkeyword import UserHandlerList
 
 _IGNORED_PREFIXES = ['_','.']
 _IGNORED_DIRS = ['CVS']
-_PROCESSED_EXTS = ['.html','.xhtml','.htm','.tsv','.rst','.rest']
 
 
 def TestSuiteData(datasources, settings, syslog):
@@ -176,7 +175,7 @@ class DirectorySuite(_BaseSuite):
         if os.path.isdir(path):
             return name in _IGNORED_DIRS
         root, ext = os.path.splitext(name.lower())
-        if ext not in _PROCESSED_EXTS:
+        if not READERS.has_key(ext):
             return True
         return not self._is_in_incl_suites(root, incl_suites)
 
@@ -191,7 +190,7 @@ class DirectorySuite(_BaseSuite):
         if not os.path.isfile(path):
             return False
         root, ext = os.path.splitext(name.lower())
-        return root == '__init__' and ext in _PROCESSED_EXTS
+        return root == '__init__' and READERS.has_key(ext)
     
 
 class MultiSourceSuite(_BaseSuite):
