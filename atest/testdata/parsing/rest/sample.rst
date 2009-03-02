@@ -5,16 +5,16 @@ This text should be ignored.
 
 .. Warning:: We have a devious plan to rule the world with robots.
 
-=============  =========  ==============  =====
-  Metadata       Value         Value      Value
-=============  =========  ==============  =====
-Document       A complex  testdata file.  \
+=============  =========  ==============  ===============
+  Metadata       Value         Value           Value
+=============  =========  ==============  ===============
+Document       A complex  testdata file   in rst format.
 Default Tags   default1   \               \
 Force Tags     force1     force2          \
 \              \          \               \
 Suite Setup    Log        Setup           \
 Test Teardown  Log        Test Teardown   \
-=============  =========  ==============  =====
+=============  =========  ==============  ===============
 
 It's possible to separata tables. And have comments here.
 
