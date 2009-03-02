@@ -21,6 +21,15 @@ from docutils.core import publish_cmdline
 from htmlreader import HtmlReader
 
 
+# Ignore custom sourcecode directives at least we use in reST sources.
+# See e.g. ug2html.py for an example how custom directives are created.
+from docutils.parsers.rst import directives
+ignorer = lambda *args: []
+ignorer.content = 1
+directives.register_directive('sourcecode', ignorer)
+del directives, ignorer
+
+
 class RestReader(HtmlReader):
 
     def read(self, rstfile, rawdata):
