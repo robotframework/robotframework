@@ -1441,7 +1441,7 @@ Robot's acceptace tests.<br>
 
 
 
-    <tr>
+    <tr><td>${RESULT_DIR}</td><td>${CURDIR}${/}..${/}results</td><td></td><td></td><td></td></tr><tr>
 
 
 
@@ -1779,151 +1779,7 @@ Robot's acceptace tests.<br>
 
 
 
-    <tr>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      <td>#${TIMESTAMP}</td>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      <td># Comes from variables.py</td>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    </tr>
+    
 
 
 
@@ -3485,198 +3341,7 @@ Robot's acceptace tests.<br>
 
 
 
-    <tr>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      <td>${OUTPUT_NAME}<br>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
- </td>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      <td>${None}</td>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      <td># Can be overridden in tests to<br>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# set user defined output name</td>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    </tr>
+    
 
 
 
@@ -5186,7 +4851,7 @@ Robot's acceptace tests.<br>
 
 
 
-      <td>${OUT_DIR}${/}${OUT_FILE}<br>
+      <td>${OUT_FILE}<br>
 
 
 
@@ -8072,7 +7737,7 @@ Robot's acceptace tests.<br>
 
 
 
-      <td>${OUT_DIR}${/}${OUT_FILE}<br>
+      <td>${OUT_FILE}<br>
 
 
 
@@ -11251,29 +10916,6 @@ Robot's acceptace tests.<br>
 
 
 
-      <td>${OUTPUT_NAME}</td>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
       <td>@{datasources}</td>
 
 
@@ -11297,7 +10939,30 @@ Robot's acceptace tests.<br>
 
 
 
-      <td align="undefined" valign="undefined"></td>
+      <td><br></td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"><br></td>
 
 
 
@@ -12592,7 +12257,7 @@ Robot's acceptace tests.<br>
 
 
 
-      <td>${CURDIR}</td>
+      <td>${RESULT_DIR}</td>
 
 
 
@@ -12616,31 +12281,7 @@ Robot's acceptace tests.<br>
 
 
 
-      <td>..${/}results</td>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      <td>${TIMESTAMP}</td>
+      <td>output</td><td>${name}</td>
 
 
 
@@ -12954,7 +12595,7 @@ Robot's acceptace tests.<br>
 
 
 
-      <td>Create Dir</td>
+      <td>Create Directory</td>
 
 
 
@@ -13191,7 +12832,7 @@ Robot's acceptace tests.<br>
 
 
 
-      <td>${name}-output.xml</td>
+      <td>${OUTDIR}${/}output.xml</td>
 
 
 
@@ -13381,7 +13022,7 @@ Robot's acceptace tests.<br>
 
 
 
-      <td>${OUTDIR}${/}${name}-stdout.txt</td>
+      <td>${OUTDIR}${/}stdout.txt</td>
 
 
 
@@ -13574,7 +13215,7 @@ Robot's acceptace tests.<br>
 
 
 
-      <td>${OUTDIR}${/}${name}-stderr.txt</td>
+      <td>${OUTDIR}${/}stderr.txt</td>
 
 
 
@@ -13763,7 +13404,7 @@ Robot's acceptace tests.<br>
 
 
 
-      <td>${OUTDIR}${/}${name}-syslog.txt</td>
+      <td>${OUTDIR}${/}syslog.txt</td>
 
 
 

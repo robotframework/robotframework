@@ -1,6 +1,5 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html>
-<head>
+<html><head>
 
 
 
@@ -65,10 +64,7 @@ font-style: normal;
   
   
   
-  <title>Robot Test Cases</title>
-</head>
-
-
+  <title>Robot Test Cases</title></head>
 <body>
 
 
@@ -274,7 +270,7 @@ font-style: normal;
 
 
 
-      <td>My Setup</td>
+      <td>Create Input File</td>
 
 
 
@@ -318,7 +314,7 @@ Setup</td>
 
 
       <td align="undefined" valign="undefined">Empty
-Dir</td>
+Directory</td>
 
 
 
@@ -361,20 +357,19 @@ Teardown</td>
 
 
 
-      <td align="undefined" valign="undefined">Remove
-Dir</td>
+      <td align="undefined" valign="undefined">Remove Temps</td>
 
 
 
 
 
-      <td align="undefined" valign="undefined">${MYOUTDIR}</td>
+      <td align="undefined" valign="undefined"></td>
 
 
 
 
 
-      <td align="undefined" valign="undefined">recursive</td>
+      <td align="undefined" valign="undefined"></td>
 
 
 
@@ -752,7 +747,7 @@ Dir</td>
 
 
 
-    <tr>
+    <tr><td>${INPUT FILE}</td><td>${TEMPDIR}${/}robot-test-file.xml</td><td></td><td></td><td></td></tr><tr>
 
 
 
@@ -2576,7 +2571,7 @@ Dir</td>
 
 
 
-      <td align="undefined" valign="undefined">${REBOT_INPUT}</td>
+      <td align="undefined" valign="undefined">${INPUT FILE}</td>
 
 
 
@@ -2740,7 +2735,7 @@ Dir</td>
 
 
 
-      <td align="undefined" valign="undefined">${REBOT_INPUT}</td>
+      <td align="undefined" valign="undefined">${INPUT FILE}</td>
 
 
 
@@ -2924,7 +2919,7 @@ ${ESCAPES}<br>
 
 
 
-      <td align="undefined" valign="undefined">${REBOT_INPUT}</td>
+      <td align="undefined" valign="undefined">${INPUT FILE}</td>
 
 
 
@@ -3164,7 +3159,7 @@ when filtering by tags</td>
 
 
 
-      <td align="undefined" valign="undefined">Message</td>
+      <td align="undefined" valign="undefined">Comment</td>
 
 
 
@@ -3803,7 +3798,7 @@ Equal</td>
 
 
 
-      <td align="undefined" valign="undefined">Message</td>
+      <td align="undefined" valign="undefined">Comment</td>
 
 
 
@@ -3891,7 +3886,7 @@ ${ESCAPES}&nbsp;</td>
 
 
 
-      <td align="undefined" valign="undefined">${OUTDIR}${/}${OUTFILE}</td>
+      <td align="undefined" valign="undefined">${OUTFILE}</td>
 
 
 
@@ -4358,19 +4353,13 @@ Equal</td>
 
 
 
-    <th style="width: 52px;">Argument<br>
+    
 
 
 
 
 
-    </th>
-
-
-
-
-
-    <th>Argument</th>
+    
 
 
 
@@ -4394,7 +4383,7 @@ Equal</td>
 
 
 
-      <td>My Setup</td>
+      <td>Create Input File</td>
 
 
 
@@ -4406,7 +4395,7 @@ Equal</td>
 
 
 
-      <td><br>
+      <td>${INPUT FILE}<br>
 
 
 
@@ -4418,25 +4407,25 @@ Equal</td>
 
 
 
-      <td>myoutput.xml</td>
+      <td><br></td>
 
 
 
 
 
-      <td>${TESTDATA_TEST} </td>
+      <td> ${TESTDATA_TEST}</td>
 
 
 
 
 
-      <td>${TESTDATA_SUITES}</td>
+      
 
 
 
 
 
-      <td></td>
+      
 
 
 
@@ -4448,7 +4437,7 @@ Equal</td>
 
 
 
-    <tr>
+    <tr><td></td><td>...</td><td>${TESTDATA_SUITES}</td><td></td><td></td></tr><tr>
 
 
 
@@ -4460,7 +4449,7 @@ Equal</td>
 
 
 
-      <td style="width: 100px;">Create Dir</td>
+      <td style="width: 100px;">Create Directory</td>
 
 
 
@@ -4484,13 +4473,13 @@ Equal</td>
 
 
 
-      <td></td>
+      
 
 
 
 
 
-      <td></td>
+      
 
 
 
@@ -4502,7 +4491,7 @@ Equal</td>
 
 
 
-    <tr>
+    <tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Remove Temps</td><td>Remove Directory</td><td align="undefined" valign="undefined">${MYOUTDIR}</td><td align="undefined" valign="undefined">recursive</td><td></td></tr><tr><td></td><td>Remove FIle</td><td>${INPUT FILE}</td><td></td><td></td></tr><tr>
 
 
 
@@ -4538,13 +4527,13 @@ Equal</td>
 
 
 
-      <td></td>
+      
 
 
 
 
 
-      <td></td>
+      
 
 
 
@@ -4592,73 +4581,25 @@ Equal</td>
 
 
 
-      <td style="width: 52px;"></td>
+      
 
 
 
 
 
-      <td></td>
-
-
-
-
-
-    </tr>
-
-
-
-
-
-    <tr>
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-      <td style="width: 100px;">Set Suite Variable</td>
-
-
-
-
-
-      <td style="width: 176px;">$SUITE</td>
-
-
-
-
-
-      <td>${None}</td>
-
-
-
-
-
-      <td style="width: 130px;"></td>
-
-
-
-
-
-      <td style="width: 52px;"></td>
-
-
-
-
-
-      <td></td>
+      
 
 
 
 
 
     </tr>
+
+
+
+
+
+    
 
 
 
@@ -4688,7 +4629,7 @@ Equal</td>
 
 
 
-      <td>${REBOT_INPUT}</td>
+      <td>${INPUT FILE}</td>
 
 
 
@@ -4700,13 +4641,13 @@ Equal</td>
 
 
 
-      <td style="width: 52px;"></td>
+      
 
 
 
 
 
-      <td></td>
+      
 
 
 
@@ -4754,13 +4695,13 @@ Equal</td>
 
 
 
-      <td style="width: 52px;"></td>
+      
 
 
 
 
 
-      <td></td>
+      
 
 
 
@@ -4808,13 +4749,13 @@ Equal</td>
 
 
 
-      <td style="width: 52px;"></td>
+      
 
 
 
 
 
-      <td></td>
+      
 
 
 
@@ -4862,13 +4803,13 @@ Equal</td>
 
 
 
-      <td style="width: 52px;"></td>
+      
 
 
 
 
 
-      <td></td>
+      
 
 
 
@@ -4918,13 +4859,13 @@ Unless</td>
 
 
 
-      <td></td>
+      
 
 
 
 
 
-      <td></td>
+      
 
 
 
@@ -4972,13 +4913,13 @@ Unless</td>
 
 
 
-      <td></td>
+      
 
 
 
 
 
-      <td></td>
+      
 
 
 
@@ -5026,13 +4967,13 @@ Unless</td>
 
 
 
-      <td></td>
+      
 
 
 
 
 
-      <td></td>
+      
 
 
 
@@ -5082,13 +5023,13 @@ Unless</td>
 
 
 
-      <td></td>
+      
 
 
 
 
 
-      <td></td>
+      
 
 
 
@@ -5136,13 +5077,13 @@ Unless</td>
 
 
 
-      <td></td>
+      
 
 
 
 
 
-      <td></td>
+      
 
 
 
@@ -5190,13 +5131,13 @@ Unless</td>
 
 
 
-      <td></td>
+      
 
 
 
 
 
-      <td></td>
+      
 
 
 
@@ -5244,13 +5185,13 @@ Unless</td>
 
 
 
-      <td></td>
+      
 
 
 
 
 
-      <td></td>
+      
 
 
 
@@ -5299,13 +5240,13 @@ Unless</td>
 
 
 
-      <td></td>
+      
 
 
 
 
 
-      <td></td>
+      
 
 
 
@@ -5353,13 +5294,13 @@ Unless</td>
 
 
 
-      <td></td>
+      
 
 
 
 
 
-      <td></td>
+      
 
 
 
@@ -5413,13 +5354,13 @@ Unless</td>
 
 
 
-      <td style="width: 52px;"></td>
+      
 
 
 
 
 
-      <td></td>
+      
 
 
 
@@ -5467,13 +5408,13 @@ Unless</td>
 
 
 
-      <td style="width: 52px;"></td>
+      
 
 
 
 
 
-      <td></td>
+      
 
 
 
@@ -5521,13 +5462,13 @@ Unless</td>
 
 
 
-      <td style="width: 52px;"></td>
+      
 
 
 
 
 
-      <td></td>
+      
 
 
 
@@ -5575,13 +5516,13 @@ Unless</td>
 
 
 
-      <td style="width: 52px;"></td>
+      
 
 
 
 
 
-      <td></td>
+      
 
 
 
@@ -5629,13 +5570,13 @@ Unless</td>
 
 
 
-      <td></td>
+      
 
 
 
 
 
-      <td></td>
+      
 
 
 
@@ -5683,13 +5624,13 @@ Unless</td>
 
 
 
-      <td style="width: 52px;"></td>
+      
 
 
 
 
 
-      <td></td>
+      
 
 
 
@@ -5737,13 +5678,13 @@ Unless</td>
 
 
 
-      <td style="width: 52px;"></td>
+      
 
 
 
 
 
-      <td></td>
+      
 
 
 
@@ -5791,13 +5732,13 @@ Unless</td>
 
 
 
-      <td style="width: 52px;"></td>
+      
 
 
 
 
 
-      <td></td>
+      
 
 
 
@@ -5845,13 +5786,13 @@ Unless</td>
 
 
 
-      <td></td>
+      
 
 
 
 
 
-      <td></td>
+      
 
 
 
@@ -5899,13 +5840,13 @@ Unless</td>
 
 
 
-      <td style="width: 52px;"></td>
+      
 
 
 
 
 
-      <td></td>
+      
 
 
 
@@ -5953,17 +5894,13 @@ Unless</td>
 
 
 
-      <td style="width: 52px;">${filtered_tests}</td>
+      
 
 
 
 
 
-      <td>@{tests}<br>
-
-
-
-      </td>
+      
 
 
 
@@ -5975,7 +5912,11 @@ Unless</td>
 
 
 
-    <tr>
+    <tr><td></td><td>...</td><td style="width: 52px;">${filtered_tests}</td><td>@{tests}<br>
+
+
+
+      </td><td></td></tr><tr>
 
 
 
@@ -6011,13 +5952,13 @@ Unless</td>
 
 
 
-      <td style="width: 52px;"></td>
+      
 
 
 
 
 
-      <td></td>
+      
 
 
 
@@ -6065,13 +6006,13 @@ Unless</td>
 
 
 
-      <td style="width: 52px;"></td>
+      
 
 
 
 
 
-      <td></td>
+      
 
 
 
@@ -6121,13 +6062,13 @@ Unless</td>
 
 
 
-      <td style="width: 52px;"></td>
+      
 
 
 
 
 
-      <td></td>
+      
 
 
 
@@ -6177,7 +6118,7 @@ Unless</td>
 
 
 
-      <td></td>
+      
 
 
 
@@ -6225,13 +6166,13 @@ Unless</td>
 
 
 
-      <td></td>
+      
 
 
 
 
 
-      <td></td>
+      
 
 
 
@@ -6279,13 +6220,13 @@ Unless</td>
 
 
 
-      <td></td>
+      
 
 
 
 
 
-      <td></td>
+      
 
 
 
@@ -6333,73 +6274,25 @@ Unless</td>
 
 
 
-      <td style="width: 52px;"></td>
+      
 
 
 
 
 
-      <td></td>
-
-
-
-
-
-    </tr>
-
-
-
-
-
-    <tr>
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-      <td style="width: 100px;">Set Suite Variable</td>
-
-
-
-
-
-      <td style="width: 176px;">$SUITE</td>
-
-
-
-
-
-      <td>${None}</td>
-
-
-
-
-
-      <td style="width: 130px;"></td>
-
-
-
-
-
-      <td style="width: 52px;"></td>
-
-
-
-
-
-      <td></td>
+      
 
 
 
 
 
     </tr>
+
+
+
+
+
+    
 
 
 
@@ -6429,7 +6322,7 @@ Unless</td>
 
 
 
-      <td>${REBOT_INPUT}</td>
+      <td>${INPUT FILE}</td>
 
 
 
@@ -6441,13 +6334,13 @@ Unless</td>
 
 
 
-      <td style="width: 52px;"></td>
+      
 
 
 
 
 
-      <td></td>
+      
 
 
 
@@ -6495,13 +6388,13 @@ Unless</td>
 
 
 
-      <td style="width: 52px;"></td>
+      
 
 
 
 
 
-      <td></td>
+      
 
 
 
@@ -6549,67 +6442,13 @@ Unless</td>
 
 
 
-      <td style="width: 52px;"></td>
+      
 
 
 
 
 
-      <td></td>
-
-
-
-
-
-    </tr>
-
-
-
-
-
-    <tr>
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-      <td style="width: 100px;"></td>
-
-
-
-
-
-      <td style="width: 176px;"></td>
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-      <td style="width: 130px;"></td>
-
-
-
-
-
-      <td style="width: 52px;"></td>
-
-
-
-
-
-      <td></td>
+      
 
 
 
@@ -6657,13 +6496,67 @@ Unless</td>
 
 
 
-      <td style="width: 52px;"></td>
+      
+
+
+
+
+
+      
+
+
+
+
+
+    </tr>
+
+
+
+
+
+    <tr>
 
 
 
 
 
       <td></td>
+
+
+
+
+
+      <td style="width: 100px;"></td>
+
+
+
+
+
+      <td style="width: 176px;"></td>
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+      <td style="width: 130px;"></td>
+
+
+
+
+
+      
+
+
+
+
+
+      
 
 
 
@@ -6711,13 +6604,13 @@ Unless</td>
 
 
 
-      <td style="width: 52px;"></td>
+      
 
 
 
 
 
-      <td></td>
+      
 
 
 
@@ -6765,13 +6658,13 @@ Unless</td>
 
 
 
-      <td style="width: 52px;"></td>
+      
 
 
 
 
 
-      <td></td>
+      
 
 
 
@@ -6825,13 +6718,13 @@ Unless</td>
 
 
 
-      <td style="width: 52px;"></td>
+      
 
 
 
 
 
-      <td></td>
+      
 
 
 
@@ -6880,13 +6773,13 @@ Unless</td>
 
 
 
-      <td style="width: 52px;"></td>
+      
 
 
 
 
 
-      <td></td>
+      
 
 
 
@@ -6934,13 +6827,13 @@ Unless</td>
 
 
 
-      <td style="width: 52px;"></td>
+      
 
 
 
 
 
-      <td></td>
+      
 
 
 
@@ -6988,13 +6881,13 @@ Unless</td>
 
 
 
-      <td style="width: 52px;"></td>
+      
 
 
 
 
 
-      <td></td>
+      
 
 
 
@@ -7042,13 +6935,13 @@ Unless</td>
 
 
 
-      <td style="width: 52px;"></td>
+      
 
 
 
 
 
-      <td></td>
+      
 
 
 
@@ -7096,13 +6989,13 @@ Unless</td>
 
 
 
-      <td style="width: 52px;"></td>
+      
 
 
 
 
 
-      <td></td>
+      
 
 
 
@@ -7151,13 +7044,13 @@ Unless</td>
 
 
 
-      <td style="width: 52px;"></td>
+      
 
 
 
 
 
-      <td></td>
+      
 
 
 
@@ -7206,13 +7099,13 @@ Unless</td>
 
 
 
-      <td style="width: 52px;"></td>
+      
 
 
 
 
 
-      <td></td>
+      
 
 
 
@@ -7260,13 +7153,13 @@ Unless</td>
 
 
 
-      <td style="width: 52px;"></td>
+      
 
 
 
 
 
-      <td></td>
+      
 
 
 
@@ -7314,13 +7207,13 @@ Unless</td>
 
 
 
-      <td style="width: 52px;"></td>
+      
 
 
 
 
 
-      <td></td>
+      
 
 
 
@@ -7368,13 +7261,13 @@ Unless</td>
 
 
 
-      <td style="width: 52px;"></td>
+      
 
 
 
 
 
-      <td></td>
+      
 
 
 
@@ -7423,13 +7316,13 @@ Unless</td>
 
 
 
-      <td style="width: 52px;"></td>
+      
 
 
 
 
 
-      <td></td>
+      
 
 
 
@@ -7478,13 +7371,13 @@ Unless</td>
 
 
 
-      <td style="width: 52px;"></td>
+      
 
 
 
 
 
-      <td></td>
+      
 
 
 
@@ -7496,7 +7389,7 @@ Unless</td>
 
 
 
-    <tr>
+    <tr><td></td><td></td><td></td><td></td><td></td></tr><tr>
 
 
 
@@ -7532,13 +7425,13 @@ Unless</td>
 
 
 
-      <td></td>
+      
 
 
 
 
 
-      <td></td>
+      
 
 
 
@@ -7561,5 +7454,4 @@ Unless</td>
 
 
 
-</body>
-</html>
+</body></html>

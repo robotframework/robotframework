@@ -20,13 +20,18 @@ $ atest/run_atests.py python --splitoutputs 2 atest/robot
 $ atest/run_atests.py /usr/bin/jython22 atest/robot/core/variables.html
 """
 
-import os
+import subprocess
+import os.path
+import shutil
 import sys
+
+CURDIR = os.path.dirname(os.path.abspath(__file__))
+
+sys.path.insert(0, os.path.join(CURDIR, '..', 'src'))
 
 import robot
 
 
-ACCDIR = os.path.join(os.path.abspath(os.path.dirname(__file__)))
 ARGUMENTS = ' '.join('''
 --doc RobotSPFrameworkSPacceptanceSPtests
 --reporttitle RobotSPFrameworkSPTestSPReport
@@ -37,9 +42,9 @@ ARGUMENTS = ' '.join('''
 --pythonpath %(PYTHONPATH)s
 --include %(RUNNER)s
 --outputdir %(OUTPUTDIR)s
---output %(RUNNER)s-output.xml
---report %(RUNNER)s-report.html
---log %(RUNNER)s-log.html
+--output output.xml
+--report report.html
+--log log.html
 --escape space:SP
 --escape star:STAR
 --escape paren1:PAR1
@@ -55,24 +60,28 @@ ARGUMENTS = ' '.join('''
 
 
 def main(interpreter, *params):
+    resultdir = os.path.join(CURDIR, 'results')
+    if os.path.isdir(resultdir):
+        shutil.rmtree(resultdir)
     args = ARGUMENTS % {
-        'PYTHONPATH' : os.path.join(ACCDIR, 'resources'),
-        'OUTPUTDIR' : os.path.join(ACCDIR, 'results'),
+        'PYTHONPATH' : os.path.join(CURDIR, 'resources'),
+        'OUTPUTDIR' : resultdir,
         'INTERPRETER': interpreter,
         'PLATFORM': sys.platform,
-        'RUNNER': ('python' in os.path.basename(interpreter)
-                   and 'pybot' or 'jybot')
+        'RUNNER': ('pybot 'if 'python' in os.path.basename(interpreter)
+                   else 'jybot')
         }
     runner = os.path.join(os.path.dirname(robot.__file__), 'runner.py')
     command = '%s %s %s %s' % (sys.executable, runner, args, ' '.join(params))
     print 'Running command\n%s\n' % command
     sys.stdout.flush()
-    rc = os.system(command)
-    sys.exit(rc)
+    return subprocess.call(command.split())
 
 
 if __name__ == '__main__':
     if len(sys.argv) == 1 or '--help' in sys.argv:
         print __doc__
-        sys.exit(251) 
-    main(*sys.argv[1:])
+        rc = 251
+    else:
+        rc = main(*sys.argv[1:])
+    sys.exit(rc) 

@@ -1,6 +1,5 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html>
-<head>
+<html><head>
 
 
 
@@ -100,10 +99,8 @@ th { font-style: normal; } /* required for IE */
   
   
   
-  <title>Robot Test Cases</title>
-  <link type="text/css" href="resources/css/testdata.css" rel="stylesheet">
-</head>
-
+  
+  <title>Robot Test Cases</title><link type="text/css" href="resources/css/testdata.css" rel="stylesheet"></head>
 <body>
 
 
@@ -465,7 +462,7 @@ with test execution and then with rebot (double filtering)<br>
 
 
 
-      <td>My Setup</td>
+      <td>Create Input</td>
 
 
 
@@ -542,7 +539,7 @@ with test execution and then with rebot (double filtering)<br>
 
 
 
-      <td align="undefined" valign="undefined">Empty Dir</td>
+      <td align="undefined" valign="undefined">Empty Directory</td>
 
 
 
@@ -613,7 +610,7 @@ with test execution and then with rebot (double filtering)<br>
 
 
 
-      <td align="undefined" valign="undefined">Remove Dir</td>
+      <td align="undefined" valign="undefined">Remove Temps</td>
 
 
 
@@ -623,7 +620,7 @@ with test execution and then with rebot (double filtering)<br>
 
 
 
-      <td align="undefined" valign="undefined">${MYOUTDIR}</td>
+      <td align="undefined" valign="undefined"></td>
 
 
 
@@ -633,7 +630,7 @@ with test execution and then with rebot (double filtering)<br>
 
 
 
-      <td align="undefined" valign="undefined">recursive</td>
+      <td align="undefined" valign="undefined"></td>
 
 
 
@@ -1118,7 +1115,7 @@ ${TEMPDIR}${/}robot-test-145435</td>
 
 
 
-    <tr>
+    
 
 
 
@@ -1128,8 +1125,8 @@ ${TEMPDIR}${/}robot-test-145435</td>
 
 
 
-      <td align="undefined" valign="undefined">#${REBOT_INPUT}</td>
 
+    
 
 
 
@@ -1138,7 +1135,7 @@ ${TEMPDIR}${/}robot-test-145435</td>
 
 
 
-      <td align="undefined" valign="undefined"># Set in My Setup</td>
+    
 
 
 
@@ -1147,8 +1144,8 @@ ${TEMPDIR}${/}robot-test-145435</td>
 
 
 
+    
 
-      <td></td>
 
 
 
@@ -1158,235 +1155,8 @@ ${TEMPDIR}${/}robot-test-145435</td>
 
 
 
-      <td></td>
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-    </tr>
-
-
-
-
-
-
-
-
-
-
-    <tr>
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">#${ORIG_START}</td>
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined"># Set in My Setup</td>
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-
-
-
-
-
-    </tr>
-
-
-
-
-
-
-
-
-    <tr>
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">#${ORIG_END}</td>
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined"># Set in My Setup</td>
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-
-
-
-
-
-    </tr>
-
-
-
-
-
-
-
-
-    <tr>
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">#${ORIG_ELAPSED}</td>
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined"># Set in My Setup</td>
-
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-    </tr>
-
-
-
-
-
-
-
-
-
-
-    <tr>
+    <tr><td>${INPUT FILE}</td><td>
+${TEMPDIR}${/}robot-test-145435.xml</td><td></td><td></td><td></td></tr><tr>
 
 
 
@@ -6080,6 +5850,16 @@ Rebot</td>
 
 
 
+      <td>${INPUT FILE}</td>
+
+
+
+
+
+
+
+
+
       <td>--include incl1<br>
 
 
@@ -6090,16 +5870,6 @@ Rebot</td>
 
 
 --exclude nonexisting</td>
-
-
-
-
-
-
-
-
-
-      <td>myout.xml</td>
 
 
 
@@ -6405,17 +6175,17 @@ Matching Rebot</td>
 
 
 
+      <td>${INPUT FILE}</td>
+
+
+
+
+
+
+
+
+
       <td>-i&nbsp;incl1 --exclude excl*</td>
-
-
-
-
-
-
-
-
-
-      <td>myout.xml</td>
 
 
 
@@ -7835,8 +7605,7 @@ ${ESCAPES}&nbsp;</td>
 
 
 
-      <td align="undefined" valign="undefined">
-${OUTDIR}${/}${OUTFILE}</td>
+      <td align="undefined" valign="undefined">${OUTFILE}</td>
 
 
 
@@ -8446,7 +8215,7 @@ ${OUTDIR}${/}${OUTFILE}</td>
 
 
 
-    <th>Argument</th>
+    
 
 
 
@@ -8490,7 +8259,7 @@ ${OUTDIR}${/}${OUTFILE}</td>
 
 
 
-      <td>My Setup</td>
+      <td>Create Input</td>
 
 
 
@@ -8500,12 +8269,12 @@ ${OUTDIR}${/}${OUTFILE}</td>
 
 
 
-      <td></td>
+      <td>${INPUT FILE}</td>
 
 
 
 
-      <td>myout.xml<br>
+      <td><br>
 
 
 
@@ -8519,7 +8288,7 @@ ${OUTDIR}${/}${OUTFILE}</td>
 
 
 
-      <td></td>
+      
 
 
 
@@ -8542,7 +8311,7 @@ ${OUTDIR}${/}${OUTFILE}</td>
 
 
 
-      <td>Create Dir</td>
+      <td>Create Directory</td>
 
 
 
@@ -8562,7 +8331,7 @@ ${OUTDIR}${/}${OUTFILE}</td>
 
 
 
-      <td></td>
+      
 
 
 
@@ -8655,7 +8424,7 @@ ${OUTDIR}${/}${OUTFILE}</td>
 
 
 
-    <tr>
+    <tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Remove Temps</td><td align="undefined" valign="undefined">Remove Directory</td><td align="undefined" valign="undefined">${MYOUTDIR}</td><td align="undefined" valign="undefined">recursive</td><td></td></tr><tr><td></td><td>Remove File</td><td>${INPUT FILE}</td><td></td><td></td></tr><tr>
 
 
 
@@ -8715,7 +8484,7 @@ ${OUTDIR}${/}${OUTFILE}</td>
 
 
 
-      <td></td>
+      
 
 
 
@@ -8805,7 +8574,7 @@ ${OUTDIR}${/}${OUTFILE}</td>
 
 
 
-      <td>@{tests}</td>
+      
 
 
 
@@ -8833,84 +8602,7 @@ ${OUTDIR}${/}${OUTFILE}</td>
 
 
 
-    <tr>
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-      <td>Set Suite Variable</td>
-
-
-
-
-
-
-
-
-
-      <td>$SUITE</td>
-
-
-
-
-
-
-
-
-
-      <td>${None}</td>
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-      
-
-
-
-
-
-
-
-    </tr>
+    <tr><td></td><td>...</td><td>@{tests}</td><td></td><td></td></tr>
 
 
 
@@ -8961,7 +8653,7 @@ ${OUTDIR}${/}${OUTFILE}</td>
 
 
 
-      <td>${REBOT_INPUT}</td>
+      <td>${INPUT FILE}</td>
 
 
 
@@ -8981,7 +8673,7 @@ ${OUTDIR}${/}${OUTFILE}</td>
 
 
 
-      <td></td>
+      
 
 
 
@@ -9071,7 +8763,7 @@ ${OUTDIR}${/}${OUTFILE}</td>
 
 
 
-      <td></td>
+      
 
 
 
@@ -9161,7 +8853,7 @@ ${OUTDIR}${/}${OUTFILE}</td>
 
 
 
-      <td>No values</td>
+      
 
 
 
@@ -9249,7 +8941,7 @@ ${OUTDIR}${/}${OUTFILE}</td>
 
 
 
-      <td></td>
+      
 
 
 
@@ -9343,7 +9035,7 @@ ${OUTDIR}${/}${OUTFILE}</td>
 
 
 
-      <td></td>
+      
 
 
 
@@ -9431,7 +9123,7 @@ ${OUTDIR}${/}${OUTFILE}</td>
 
 
 
-      <td></td>
+      
 
 
 
@@ -9513,7 +9205,7 @@ ${OUTDIR}${/}${OUTFILE}</td>
 
 
 
-      <td align="undefined" valign="undefined"></td>
+      
 
 
 
@@ -9592,7 +9284,7 @@ ${OUTDIR}${/}${OUTFILE}</td>
 
 
 
-      <td align="undefined" valign="undefined"></td>
+      
 
 
 
@@ -9671,7 +9363,7 @@ ${OUTDIR}${/}${OUTFILE}</td>
 
 
 
-      <td align="undefined" valign="undefined"></td>
+      
 
 
 
@@ -9750,7 +9442,7 @@ ${OUTDIR}${/}${OUTFILE}</td>
 
 
 
-      <td align="undefined" valign="undefined"></td>
+      
 
 
 
@@ -9829,7 +9521,7 @@ ${OUTDIR}${/}${OUTFILE}</td>
 
 
 
-      <td align="undefined" valign="undefined"></td>
+      
 
 
 
@@ -9908,7 +9600,7 @@ ${OUTDIR}${/}${OUTFILE}</td>
 
 
 
-      <td align="undefined" valign="undefined"></td>
+      
 
 
 
@@ -9987,7 +9679,7 @@ ${OUTDIR}${/}${OUTFILE}</td>
 
 
 
-      <td align="undefined" valign="undefined"></td>
+      
 
 
 
@@ -10066,7 +9758,7 @@ ${OUTDIR}${/}${OUTFILE}</td>
 
 
 
-      <td align="undefined" valign="undefined"></td>
+      
 
 
 
@@ -10151,7 +9843,7 @@ ${OUTDIR}${/}${OUTFILE}</td>
 
 
 
-      <td></td>
+      
 
 
 
@@ -10239,7 +9931,7 @@ ${OUTDIR}${/}${OUTFILE}</td>
 
 
 
-      <td></td>
+      
 
 
 
@@ -10327,7 +10019,7 @@ ${OUTDIR}${/}${OUTFILE}</td>
 
 
 
-      <td></td>
+      
 
 
 
@@ -10417,7 +10109,7 @@ ${OUTDIR}${/}${OUTFILE}</td>
 
 
 
-      <td></td>
+      
 
 
 
@@ -10507,7 +10199,7 @@ Try --help for usage information.</td>
 
 
 
-      <td></td>
+      
 
 
 
@@ -10589,7 +10281,7 @@ Try --help for usage information.</td>
 
 
 
-      <td align="undefined" valign="undefined"></td>
+      
 
 
 
@@ -10673,5 +10365,4 @@ Try --help for usage information.</td>
 
 
 
-</body>
-</html>
+</body></html>

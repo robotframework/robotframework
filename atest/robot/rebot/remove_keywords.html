@@ -1,6 +1,5 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html>
-<head>
+<html><head>
 
   <style type="text/css">
 html {
@@ -54,9 +53,7 @@ th {
   font-style: normal;
 }
   </style>
-  <title>Robot Test Cases</title>
-</head>
-
+  <title>Robot Test Cases</title></head>
 
 <body>
 
@@ -101,15 +98,15 @@ th {
     <tr>
       <td>Suite Setup</td>
       <td>Create Output With Robot</td>
-      <td></td>
-      <td>kmkw.xml<br>
+      <td>${INPUTFILE}</td>
+      <td><br>
 
 
       </td>
       <td>
 misc${/}pass_and_fail.html</td>
     </tr>
-    <tr>
+    <tr><td>Suite Teardown</td><td>Remove File</td><td>${INPUTFILE}</td><td></td><td></td></tr><tr>
 
       <td>Resource</td>
       <td>../../resources/resource.html</td>
@@ -165,9 +162,9 @@ misc${/}pass_and_fail.html</td>
 
     <tr>
 
-      <td></td>
+      <td>${INPUTFILE}</td>
 
-      <td></td>
+      <td>${TEMPDIR}${/}rebot-test-rmkw.xml</td>
 
       <td></td>
 
@@ -420,32 +417,18 @@ misc${/}pass_and_fail.html</td>
       <td align="undefined" valign="undefined"></td>
       <td align="undefined" valign="undefined"></td>
     </tr>
-    <tr>
-
-      <td><br>
-      </td>
-
-      <td>Set Suite Variable<br>
-      </td>
-
-      <td>$SUITE</td>
-
-      <td>${None}</td>
-
-      <td></td>
-
-    </tr>
+    
 
     <tr>
       <td align="undefined" valign="undefined"></td>
       <td>Run Rebot</td>
       <td>${params}</td>
-      <td>${REBOT_INPUT}</td>
+      <td>${INPUTFILE}</td>
       <td align="undefined" valign="undefined"></td>
     </tr>
     <tr>
       <td align="undefined" valign="undefined"></td>
-      <td align="undefined" valign="undefined">Fail If Equal</td>
+      <td align="undefined" valign="undefined">Should Not Be Equal</td>
       <td align="undefined" valign="undefined">${SUITE}</td>
       <td align="undefined" valign="undefined">${None}</td>
       <td align="undefined" valign="undefined">Errors in test execution</td>
@@ -479,25 +462,13 @@ misc${/}pass_and_fail.html</td>
     </tr>
     <tr>
       <td align="undefined" valign="undefined"></td>
-      <td align="undefined" valign="undefined">Fail Unless</td>
-      <td align="undefined" valign="undefined">${kw.keywords} == []</td>
+      <td align="undefined" valign="undefined">Should Be True</td>
+      <td align="undefined" valign="undefined">${kw.keywords} == ${kw.messages} == ${kw.children} == []</td>
       <td align="undefined" valign="undefined"></td>
       <td align="undefined" valign="undefined"></td>
     </tr>
-    <tr>
-      <td align="undefined" valign="undefined"></td>
-      <td align="undefined" valign="undefined">Fail Unless</td>
-      <td align="undefined" valign="undefined">${kw.messages} == []</td>
-      <td align="undefined" valign="undefined"></td>
-      <td align="undefined" valign="undefined"></td>
-    </tr>
-    <tr>
-      <td align="undefined" valign="undefined"></td>
-      <td align="undefined" valign="undefined">Fail Unless</td>
-      <td align="undefined" valign="undefined">${kw.children} == []</td>
-      <td align="undefined" valign="undefined"></td>
-      <td align="undefined" valign="undefined"></td>
-    </tr>
+    
+    
     <tr>
       <td align="undefined" valign="undefined"></td>
       <td align="undefined" valign="undefined"></td>
@@ -521,7 +492,7 @@ misc${/}pass_and_fail.html</td>
     </tr>
     <tr>
       <td align="undefined" valign="undefined"></td>
-      <td align="undefined" valign="undefined">Fail If&nbsp;</td>
+      <td align="undefined" valign="undefined">Should Not Be True</td>
       <td align="undefined" valign="undefined">${kw.keywords} +<br>
 ${kw.messages} == []</td>
       <td align="undefined" valign="undefined"></td>
@@ -529,7 +500,7 @@ ${kw.messages} == []</td>
     </tr>
     <tr>
       <td align="undefined" valign="undefined"></td>
-      <td align="undefined" valign="undefined">Fail If</td>
+      <td align="undefined" valign="undefined">Should Not Be True</td>
       <td align="undefined" valign="undefined">${kw.children} == []</td>
       <td align="undefined" valign="undefined"></td>
       <td align="undefined" valign="undefined"></td>
@@ -550,14 +521,14 @@ ${kw.messages} == []</td>
     </tr>
     <tr>
       <td align="undefined" valign="undefined"></td>
-      <td align="undefined" valign="undefined">Equals</td>
+      <td align="undefined" valign="undefined">Should Be Equal</td>
       <td align="undefined" valign="undefined">${kw.name}</td>
       <td>${name}</td>
       <td align="undefined" valign="undefined"></td>
     </tr>
     <tr>
       <td align="undefined" valign="undefined"></td>
-      <td align="undefined" valign="undefined">Fail Unless</td>
+      <td align="undefined" valign="undefined">Should Be True</td>
       <td align="undefined" valign="undefined">${kw.args} == ${args}</td>
       <td align="undefined" valign="undefined"></td>
       <td align="undefined" valign="undefined"></td>
@@ -567,5 +538,4 @@ ${kw.messages} == []</td>
 </table>
 
 
-</body>
-</html>
+</body></html>

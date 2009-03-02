@@ -66,7 +66,7 @@ th { font-style: normal; } /* required for IE */
 </thead>
 <tbody>
 <tr>
-<td align="undefined" valign="undefined">Document</td>
+<td align="undefined" valign="undefined">Documentation</td>
 <td align="undefined" valign="undefined">Testing Rebot's command
 line functionality.</td>
 <td align="undefined" valign="undefined">Functionality tested
@@ -78,7 +78,7 @@ elsewere:\n<br>
 <td align="undefined" valign="undefined"></td>
 </tr>
 <tr>
-<td>Default Tags</td>
+<td>Force Tags</td>
 <td>regression</td>
 <td>pybot</td>
 <td>jybot</td>
@@ -100,16 +100,16 @@ elsewere:\n<br>
 </tr>
 <tr>
 <td>Test Setup</td>
-<td>Empty Dir</td>
+<td>Empty Directory</td>
 <td>${MYOUTDIR}</td>
 <td></td>
 <td></td>
 </tr>
 <tr>
 <td>Suite Teardown</td>
-<td>Remove Dir</td>
-<td>${MYOUTDIR}</td>
-<td>recursive</td>
+<td>Remove Temps</td>
+<td></td>
+<td></td>
 <td></td>
 </tr>
 <tr>
@@ -165,7 +165,8 @@ ${TEMPDIR}${/}robot-test-145435</td>
 </tr>
 <tr>
 <td>${MYINPUT}</td>
-<td># Set in My Setup</td>
+<td>
+${TEMPDIR}${/}robot-test-145435.xml</td>
 <td></td>
 <td></td>
 <td></td>
@@ -1885,9 +1886,9 @@ but got 'less_than_3x_:'.\n</td>
 <th>Argument</th>
 <th>Argument</th>
 <th>Argument</th>
-<th>Argument</th>
-<th>Argument</th>
-<th>Argument</th>
+
+
+
 </tr>
 </thead>
 <tbody>
@@ -1898,55 +1899,44 @@ but got 'less_than_3x_:'.\n</td>
 <td>${TESTFILE}</td>
 <td></td>
 <td></td>
-<td></td>
-<td></td>
-<td></td>
+
+
+
 </tr>
-<tr>
-<td></td>
-<td>Set Suite Variable</td>
-<td>$MYINPUT</td>
-<td>
-${OUTDIR}${/}myinput.xml</td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
+
 <tr>
 <td></td>
 <td>Move File</td>
 <td>
-${OUTDIR}${/}${OUTFILE}</td>
+${OUTFILE}</td>
 <td>${MYINPUT}</td>
 <td></td>
 <td></td>
-<td></td>
-<td></td>
-<td></td>
+
+
+
 </tr>
 <tr>
 <td></td>
-<td>Create Dir</td>
+<td>Create Directory</td>
 <td>${MYOUTDIR}</td>
 <td></td>
 <td></td>
 <td></td>
-<td></td>
-<td></td>
-<td></td>
+
+
+
 </tr>
-<tr>
+<tr><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Remove Temps</td><td>Remove Directory</td><td>${MYOUTDIR}</td><td>recursively</td><td></td><td></td></tr><tr><td></td><td>Remove File</td><td>${MYINPUT}</td><td></td><td></td><td></td></tr><tr>
 <td></td>
 <td></td>
 <td></td>
 <td></td>
 <td></td>
 <td></td>
-<td></td>
-<td></td>
-<td></td>
+
+
+
 </tr>
 <tr>
 <td>Directory Should
@@ -1956,9 +1946,9 @@ Contain</td>
 <td>@{exp_files}</td>
 <td></td>
 <td></td>
-<td></td>
-<td></td>
-<td></td>
+
+
+
 </tr>
 <tr>
 <td></td>
@@ -1967,9 +1957,9 @@ Contain</td>
 <td>@{exp_files}</td>
 <td></td>
 <td></td>
-<td></td>
-<td></td>
-<td></td>
+
+
+
 </tr>
 <tr>
 <td></td>
@@ -1978,9 +1968,9 @@ Contain</td>
 <td>${dir_path}</td>
 <td></td>
 <td></td>
-<td></td>
-<td></td>
-<td></td>
+
+
+
 </tr>
 <tr>
 <td></td>
@@ -1989,9 +1979,9 @@ Contain</td>
 <td>${exp_files}</td>
 <td></td>
 <td></td>
-<td></td>
-<td></td>
-<td></td>
+
+
+
 </tr>
 <tr>
 <td></td>
@@ -2000,9 +1990,9 @@ Contain</td>
 <td></td>
 <td></td>
 <td></td>
-<td></td>
-<td></td>
-<td></td>
+
+
+
 </tr>
 <tr>
 <td>Test Critical</td>
@@ -2011,11 +2001,11 @@ Contain</td>
 <td>${input}<br></td>
 <td>${status}</td>
 <td>${msg}</td>
-<td>${crit_tags}</td>
-<td>${crit1}</td>
-<td>${crit2}</td>
+
+
+
 </tr>
-<tr>
+<tr><td></td><td>...</td><td>${crit_tags}</td><td>${crit1}</td><td>${crit2}</td><td><br></td></tr><tr>
 <td></td>
 <td>Set Suite Variable</td>
 <td>$SUITE</td>
@@ -2023,9 +2013,9 @@ Contain</td>
 <td># Make sure<br>
 #&nbsp;$SUITE is set</td>
 <td></td>
-<td></td>
-<td></td>
-<td></td>
+
+
+
 </tr>
 <tr>
 <td></td>
@@ -2034,9 +2024,9 @@ Contain</td>
 <td>${input}</td>
 <td></td>
 <td></td>
-<td></td>
-<td></td>
-<td></td>
+
+
+
 </tr>
 <tr>
 <td></td>
@@ -2045,9 +2035,9 @@ Contain</td>
 <td>${status}</td>
 <td></td>
 <td></td>
-<td></td>
-<td></td>
-<td></td>
+
+
+
 </tr>
 <tr>
 <td></td>
@@ -2057,9 +2047,9 @@ ${SUITE.get_full_message()}</td>
 <td>${msg}</td>
 <td></td>
 <td></td>
-<td></td>
-<td></td>
-<td></td>
+
+
+
 </tr>
 <tr>
 <td></td>
@@ -2069,9 +2059,9 @@ ${crit_tags}</td>
 <td></td>
 <td></td>
 <td></td>
-<td></td>
-<td></td>
-<td></td>
+
+
+
 </tr>
 <tr>
 <td></td>
@@ -2081,9 +2071,9 @@ ${SUITE.tests[0].critical}</td>
 <td>${crit1}</td>
 <td></td>
 <td></td>
-<td></td>
-<td></td>
-<td></td>
+
+
+
 </tr>
 <tr>
 <td></td>
@@ -2093,9 +2083,9 @@ ${SUITE.tests[1].critical}</td>
 <td>${crit2}</td>
 <td></td>
 <td></td>
-<td></td>
-<td></td>
-<td></td>
+
+
+
 </tr>
 <tr>
 <td></td>
@@ -2104,9 +2094,9 @@ ${SUITE.tests[1].critical}</td>
 <td></td>
 <td></td>
 <td></td>
-<td></td>
-<td></td>
-<td></td>
+
+
+
 </tr>
 <tr>
 <td>Verify REBOT Set</td>
@@ -2116,9 +2106,9 @@ ${SUITE.tests[1].critical}</td>
 <td>This test can be run only
 after \${REBOT} is set</td>
 <td>No Values</td>
-<td></td>
-<td></td>
-<td></td>
+
+
+
 </tr>
 <tr>
 <td></td>
@@ -2127,9 +2117,9 @@ after \${REBOT} is set</td>
 <td></td>
 <td></td>
 <td></td>
-<td></td>
-<td></td>
-<td></td>
+
+
+
 </tr>
 <tr>
 <td>Rebot Something</td>
@@ -2138,9 +2128,9 @@ after \${REBOT} is set</td>
 <td></td>
 <td></td>
 <td></td>
-<td></td>
-<td></td>
-<td></td>
+
+
+
 </tr>
 <tr>
 <td></td>
@@ -2150,9 +2140,9 @@ ${MYINPUT}</td>
 <td></td>
 <td></td>
 <td></td>
-<td></td>
-<td></td>
-<td></td>
+
+
+
 </tr>
 <tr>
 <td></td>
@@ -2161,9 +2151,9 @@ ${MYINPUT}</td>
 <td></td>
 <td></td>
 <td></td>
-<td></td>
-<td></td>
-<td></td>
+
+
+
 </tr>
 </tbody>
 </table>

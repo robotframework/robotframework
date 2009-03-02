@@ -1,6 +1,5 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html>
-<head>
+<html><head>
 
   <style type="text/css">
 html {
@@ -56,8 +55,7 @@ th {
   
   </style>
 
-  <title>Robot Test Cases</title>
-</head>
+  <title>Robot Test Cases</title></head>
 
 <body>
 
@@ -100,12 +98,12 @@ th {
     </tr>
     <tr>
       <td>Suite Setup</td>
-      <td>My Setup</td>
+      <td>Create Input Files</td>
       <td></td>
       <td></td>
       <td></td>
     </tr>
-    <tr>
+    <tr><td>Suite Teardown</td><td>Remove Files</td><td>${INPUT1}</td><td>${INPUT2}</td><td></td></tr><tr>
 
       <td>Resource</td>
 
@@ -119,8 +117,8 @@ th {
 
     </tr>
     <tr>
-      <td></td>
-      <td></td>
+      <td>Resource</td><td>rebot_resource.html</td>
+      
       <td></td>
       <td></td>
       <td></td>
@@ -156,12 +154,12 @@ th {
 
 
     <tr>
+      <td>${INPUT1}</td>
+      <td>${TEMPDIR}${/}rebot-test-a.xml</td>
       <td></td>
       <td></td>
       <td></td>
-      <td></td>
-      <td></td>
-    </tr>
+    </tr><tr><td>${INPUT2}</td><td>${TEMPDIR}${/}rebot-test-b.xml</td><td></td><td></td><td></td></tr>
 
   </tbody>
 </table>
@@ -207,13 +205,7 @@ th {
     </tr>
 
 
-    <tr>
-      <td></td>
-      <td>${OUTPUT_NAME} =</td>
-      <td>Set</td>
-      <td>combined </td>
-      <td></td>
-    </tr>
+    
     <tr>
 
       <td></td>
@@ -544,62 +536,30 @@ th {
 
 
 
+    
     <tr>
-      <td>My Setup</td>
-      <td>${OUTPUT_NAME} =</td>
-      <td>Set</td>
-      <td>first</td>
-      <td></td>
-    </tr>
-    <tr>
-      <td><br>
+      <td>Create Input Files<br>
       </td>
-      <td>Run Tests Without Processing Output</td>
-      <td><br>
+      <td>Create Output With Robot</td>
+      <td>${INPUT1}
       </td>
-      <td>misc${/}normal.html</td>
-      <td><br>
+      <td><br></td>
+      <td>misc${/}normal.html
       </td>
     </tr>
     <tr>
       <td></td>
-      <td>Set Suite Variable</td>
-      <td>$INPUT1</td>
-      <td>${OUTDIR}${/}${OUTFILE}<br>
+      <td>Create Output With Robot</td><td>${INPUT2}
       </td>
-      <td></td>
-    </tr>
-    <tr>
-      <td></td>
-      <td>${OUTPUT_NAME} =</td>
-      <td>Set</td>
-      <td align="undefined" valign="undefined">second</td>
-      <td></td>
-    </tr>
-    <tr>
-      <td></td>
-      <td>Run Tests&nbsp;Without Processing Output</td>
+      
       <td><br>
       </td>
       <td>misc${/}suites${/}tsuite1.html</td>
-      <td><br>
-      </td>
     </tr>
-    <tr>
-      <td></td>
-      <td>Set Suite Variable</td>
-      <td>$INPUT2</td>
-      <td>${OUTDIR}${/}${OUTFILE}<br>
-      </td>
-      <td></td>
-    </tr>
-    <tr>
-      <td></td>
-      <td>${OUTPUT_NAME} =</td>
-      <td>Set</td>
-      <td>orig_combined</td>
-      <td></td>
-    </tr>
+    
+    
+    
+    
     <tr>
       <td></td>
       <td>Run Rebot</td>
@@ -639,5 +599,4 @@ th {
   </tbody>
 </table>
 
-</body>
-</html>
+</body></html>

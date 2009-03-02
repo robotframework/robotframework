@@ -1366,7 +1366,7 @@ font-style: normal;
 
 
 
-    <tr>
+    <tr><td>Suite Teardown</td><td>Remove File</td><td>${INPUT FILE}</td><td></td><td></td></tr><tr>
 
 
 
@@ -2159,7 +2159,8 @@ font-style: normal;
 
 
 
-    <tr><td>${INPUT_FILE}</td><td></td><td></td><td></td><td></td></tr><tr><td align="undefined" valign="undefined">${M_000_211}</td><td align="undefined" valign="undefined">
+    <tr><td>${INPUT_FILE}</td><td>
+${TEMPDIR}${/}rebot-test-input.xml</td><td></td><td></td><td></td></tr><tr><td align="undefined" valign="undefined">${M_000_211}</td><td align="undefined" valign="undefined">
 
 
 
@@ -8937,9 +8938,7 @@ pass</td><td align="undefined" valign="undefined">FAIL</td><td align="undefined"
 
     <tr><td>Run Test To Create Output</td><td align="undefined" valign="undefined">Run Tests</td><td align="undefined" valign="undefined">--critical pass<br>--noncritical fail</td><td align="undefined" valign="undefined">
 misc${/}pass_and_fail.html</td><td></td></tr><tr><td></td><td align="undefined" valign="undefined">Move File</td><td align="undefined" valign="undefined">
-${OUTDIR}${/}${OUTFILE}</td><td align="undefined" valign="undefined">
-${OUTDIR}${/}input.xml</td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Test Critical</td><td>[Arguments]</td><td>${options}</td><td>${suite_status}</td><td>${suite_msg}</td></tr><tr><td></td><td>...</td><td>${suite_critical}</td><td>${suite_non_critical}</td><td>${test1_criticality}</td></tr><tr><td></td><td>...</td><td>${test2_criticality}</td><td><br></td><td></td></tr><tr><td></td><td align="undefined" valign="undefined">Rebot Outputs With Given Critical Optins</td><td align="undefined" valign="undefined">${options}</td><td align="undefined" valign="undefined"></td><td></td></tr><tr><td></td><td align="undefined" valign="undefined">Suite Status And Message Should Be</td><td>${suite_status}</td><td>${suite_msg}</td><td></td></tr><tr><td></td><td align="undefined" valign="undefined">Suite's Critical And Non-Critical Tags Should Be</td><td>${suite_critical}</td><td>${suite_non_critical}</td><td></td></tr><tr><td></td><td>Test Criticalities Should Be</td><td>${test1_criticality}</td><td>${test2_criticality}</td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Rebot Outputs With Given Critical Optins</td><td>[Arguments]</td><td>${options}</td><td></td><td></td></tr><tr><td></td><td align="undefined" valign="undefined">Run Rebot</td><td align="undefined" valign="undefined">${options}<br>--escape star:STAR<br>--escape quest:QUEST</td><td align="undefined" valign="undefined">
-${OUTDIR}${/}input.xml</td><td></td></tr><tr><td></td><td>Should Not Be Equal</td><td>${SUITE}</td><td>${None}</td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Suite Status And Message Should Be</td><td>[Arguments]</td><td>${status}</td><td>${message}</td><td></td></tr><tr><td></td><td align="undefined" valign="undefined">Should Be Equal</td><td align="undefined" valign="undefined">${SUITE.status}</td><td>${status}</td><td></td></tr><tr>
+${OUTFILE}</td><td align="undefined" valign="undefined">${INPUT_FILE}</td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Test Critical</td><td>[Arguments]</td><td>${options}</td><td>${suite_status}</td><td>${suite_msg}</td></tr><tr><td></td><td>...</td><td>${suite_critical}</td><td>${suite_non_critical}</td><td>${test1_criticality}</td></tr><tr><td></td><td>...</td><td>${test2_criticality}</td><td><br></td><td></td></tr><tr><td></td><td align="undefined" valign="undefined">Rebot Outputs With Given Critical Optins</td><td align="undefined" valign="undefined">${options}</td><td align="undefined" valign="undefined"></td><td></td></tr><tr><td></td><td align="undefined" valign="undefined">Suite Status And Message Should Be</td><td>${suite_status}</td><td>${suite_msg}</td><td></td></tr><tr><td></td><td align="undefined" valign="undefined">Suite's Critical And Non-Critical Tags Should Be</td><td>${suite_critical}</td><td>${suite_non_critical}</td><td></td></tr><tr><td></td><td>Test Criticalities Should Be</td><td>${test1_criticality}</td><td>${test2_criticality}</td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Rebot Outputs With Given Critical Optins</td><td>[Arguments]</td><td>${options}</td><td></td><td></td></tr><tr><td></td><td align="undefined" valign="undefined">Run Rebot</td><td align="undefined" valign="undefined">${options}<br>--escape star:STAR<br>--escape quest:QUEST</td><td align="undefined" valign="undefined">${INPUT_FILE}</td><td></td></tr><tr><td></td><td>Should Not Be Equal</td><td>${SUITE}</td><td>${None}</td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Suite Status And Message Should Be</td><td>[Arguments]</td><td>${status}</td><td>${message}</td><td></td></tr><tr><td></td><td align="undefined" valign="undefined">Should Be Equal</td><td align="undefined" valign="undefined">${SUITE.status}</td><td>${status}</td><td></td></tr><tr>
 
 
 

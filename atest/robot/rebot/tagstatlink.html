@@ -88,7 +88,7 @@ th {
 <td></td>
 <td></td>
 <td></td>
-</tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Suite Setup</td><td>My Setup</td><td></td><td></td><td></td></tr><tr><td>Test Teardown</td><td>Empty Dir</td><td>${MYOUTDIR}</td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Suite Teardown</td><td align="undefined" valign="undefined">Remove Dir</td><td align="undefined" valign="undefined">${MYOUTDIR}</td><td align="undefined" valign="undefined">recursive</td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr>
+</tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Suite Setup</td><td>My Setup</td><td></td><td></td><td></td></tr><tr><td>Test Teardown</td><td>Empty Dir</td><td>${MYOUTDIR}</td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Suite Teardown</td><td align="undefined" valign="undefined">Remove Temps</td><td align="undefined" valign="undefined"></td><td align="undefined" valign="undefined"></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr>
 </tbody>
 </table>
 
@@ -115,8 +115,8 @@ th {
 </tr>
 
 <tr>
-<td></td>
-<td></td>
+<td>${MYINPUT}</td>
+<td>${TEMPDIR}${/}robot-test-978675.xml</td>
 <td></td>
 <td></td>
 <td></td>
@@ -385,16 +385,15 @@ th {
 
 
 
-<tr><td>My Setup</td><td>Run Tests Without Processing Output</td><td></td><td>misc${/}suites</td><td></td></tr><tr><td></td><td align="undefined" valign="undefined">Set Suite Variable</td><td align="undefined" valign="undefined">$MYINPUT</td><td align="undefined" valign="undefined">
-${OUTDIR}${/}myinput.xml</td><td></td></tr><tr><td></td><td align="undefined" valign="undefined">Move File</td><td align="undefined" valign="undefined">
-${OUTDIR}${/}${OUTFILE}</td><td align="undefined" valign="undefined">${MYINPUT}</td><td></td></tr><tr><td></td><td>Create Dir</td><td>${MYOUTDIR}</td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Report Should Contain Taglink</td><td>[ Arguments ]</td><td>${tag}</td><td>${link}</td><td>${title}</td></tr><tr><td></td><td>${report} =</td><td>Get File</td><td>${MYOUTDIR}${/}report.html</td><td></td></tr><tr><td></td><td>${expected} =</td><td>Catenate</td><td>SEPARATOR=\n</td><td>&lt;td class="col_stat_name"&gt;</td></tr><tr><td></td><td>...</td><td>&lt;div class="stat_name"&gt;&lt;a href="#tag_${tag}"&gt;${tag}&lt;/a&gt;&lt;/div&gt;</td><td>&lt;div class="tag_links"&gt;</td><td>&lt;span&gt;[&lt;a href="${link}"&gt;${title}&lt;/a&gt;]&lt;/span&gt;</td></tr><tr>
+<tr><td>My Setup</td><td>Run Tests Without Processing Output</td><td></td><td>misc${/}suites</td><td></td></tr><tr><td></td><td align="undefined" valign="undefined">Move File</td><td align="undefined" valign="undefined">
+${OUTFILE}</td><td align="undefined" valign="undefined">${MYINPUT}</td><td></td></tr><tr><td></td><td>Create Directory</td><td>${MYOUTDIR}</td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Remove Temps</td><td align="undefined" valign="undefined">Remove Directory</td><td align="undefined" valign="undefined">${MYOUTDIR}</td><td align="undefined" valign="undefined">recursive</td><td></td></tr><tr><td></td><td>Remove File</td><td>${MYINPUT}</td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Report Should Contain Taglink</td><td>[ Arguments ]</td><td>${tag}</td><td>${link}</td><td>${title}</td></tr><tr><td></td><td>${report} =</td><td>Get File</td><td>${MYOUTDIR}${/}report.html</td><td></td></tr><tr><td></td><td>${expected} =</td><td>Catenate</td><td>SEPARATOR=\n</td><td>&lt;td class="col_stat_name"&gt;</td></tr><tr><td></td><td>...</td><td>&lt;div class="stat_name"&gt;&lt;a href="#tag_${tag}"&gt;${tag}&lt;/a&gt;&lt;/div&gt;</td><td>&lt;div class="tag_links"&gt;</td><td>&lt;span&gt;[&lt;a href="${link}"&gt;${title}&lt;/a&gt;]&lt;/span&gt;</td></tr><tr>
 <td></td>
 <td>...</td><td>&lt;/div&gt;</td><td>&lt;/td&gt;</td>
 
 
 <td></td>
 
-</tr><tr><td></td><td>Contains</td><td>${report}</td><td>${expected}</td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Get Expected Link</td><td>[ Arguments ]</td><td>${link}</td><td>${title}</td><td></td></tr><tr><td></td><td>[ Return ]</td><td>&lt;span&gt;[&lt;a href="${link}"&gt;${title}&lt;/a&gt;]&lt;/span&gt;</td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr>
+</tr><tr><td></td><td>Should&nbsp;Contain</td><td>${report}</td><td>${expected}</td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Get Expected Link</td><td>[ Arguments ]</td><td>${link}</td><td>${title}</td><td></td></tr><tr><td></td><td>[ Return ]</td><td>&lt;span&gt;[&lt;a href="${link}"&gt;${title}&lt;/a&gt;]&lt;/span&gt;</td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr>
 </tbody>
 </table>
 </body></html>

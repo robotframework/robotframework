@@ -1,6 +1,5 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html>
-<head>
+<html><head>
 
 
   
@@ -56,10 +55,7 @@ font-style: normal;
 }
   </style>
   
-  <title>Robot Test Resources</title>
-</head>
-
-
+  <title>Robot Test Resources</title></head>
 <body>
 
 
@@ -171,25 +167,7 @@ font-style: normal;
 
 
 
-    <tr>
-
-
-      <td align="undefined" valign="undefined">${REBOT_INPUT}</td>
-
-
-      <td align="undefined" valign="undefined">#&nbsp;Set in Create Output w/ Robot</td>
-
-
-      <td></td>
-
-
-      <td></td>
-
-
-      <td></td>
-
-
-    </tr>
+    
 
 
     <tr>
@@ -198,7 +176,7 @@ font-style: normal;
       <td align="undefined" valign="undefined">${ORIG_START}</td>
 
 
-      <td align="undefined" valign="undefined"># -- ;; --</td>
+      <td align="undefined" valign="undefined">Set in Create Output w/ Robot</td>
 
 
       <td align="undefined" valign="undefined"></td>
@@ -219,9 +197,7 @@ font-style: normal;
       <td align="undefined" valign="undefined">${ORIG_END}</td>
 
 
-      <td align="undefined" valign="undefined"># -- ;; --<br>
-
-      </td>
+      <td align="undefined" valign="undefined">-- ;; --</td>
 
 
       <td align="undefined" valign="undefined"></td>
@@ -242,7 +218,7 @@ font-style: normal;
       <td align="undefined" valign="undefined">${ORIG_ELAPSED}</td>
 
 
-      <td align="undefined" valign="undefined"># -- ;; --</td>
+      <td align="undefined" valign="undefined">-- ;; --</td>
 
 
       <td></td>
@@ -262,7 +238,7 @@ font-style: normal;
 
       <td align="undefined" valign="undefined">${ORIG_MILLIS}</td>
 
-      <td align="undefined" valign="undefined"># -- ;; --</td>
+      <td align="undefined" valign="undefined">-- ;; --</td>
 
       <td align="undefined" valign="undefined"></td>
 
@@ -322,10 +298,10 @@ font-style: normal;
     <th>Argument</th>
 
 
-    <th>Arg</th>
+    
 
 
-    <th>Arg</th>
+    
 
 
   </tr>
@@ -344,20 +320,20 @@ font-style: normal;
       <td>[ Arguments ]</td>
 
 
-      <td>${arguments}</td>
+      <td>${outputname}<br></td>
 
 
-      <td align="undefined" valign="undefined">${outputname}<br>
+      <td align="undefined" valign="undefined">${arguments}
       </td>
 
 
       <td align="undefined" valign="undefined">@{datasource}</td>
 
 
-      <td align="undefined" valign="undefined"></td>
+      
 
 
-      <td align="undefined" valign="undefined"></td>
+      
 
 
     </tr>
@@ -381,10 +357,10 @@ font-style: normal;
       <td align="undefined" valign="undefined"></td>
 
 
-      <td align="undefined" valign="undefined"></td>
+      
 
 
-      <td align="undefined" valign="undefined"></td>
+      
 
 
     </tr>
@@ -409,10 +385,10 @@ Valid Timestamp</td>
       <td align="undefined" valign="undefined"></td>
 
 
-      <td align="undefined" valign="undefined"></td>
+      
 
 
-      <td align="undefined" valign="undefined"></td>
+      
 
 
     </tr>
@@ -437,10 +413,10 @@ Valid Timestamp</td>
       <td align="undefined" valign="undefined"></td>
 
 
-      <td align="undefined" valign="undefined"></td>
+      
 
 
-      <td align="undefined" valign="undefined"></td>
+      
 
 
     </tr>
@@ -465,10 +441,10 @@ Valid Elapsed Time</td>
       <td align="undefined" valign="undefined"></td>
 
 
-      <td align="undefined" valign="undefined"></td>
+      
 
 
-      <td align="undefined" valign="undefined"></td>
+      
 
 
     </tr>
@@ -478,7 +454,7 @@ Valid Elapsed Time</td>
 
       <td align="undefined" valign="undefined"></td>
 
-      <td align="undefined" valign="undefined">Fail Unless</td>
+      <td align="undefined" valign="undefined">Should Be True</td>
 
       <td align="undefined" valign="undefined">type(${SUITE.elapsedmillis}) is type(1)</td>
 
@@ -486,9 +462,9 @@ Valid Elapsed Time</td>
 
       <td align="undefined" valign="undefined"></td>
 
-      <td align="undefined" valign="undefined"></td>
+      
 
-      <td align="undefined" valign="undefined"></td>
+      
 
     </tr>
 
@@ -510,10 +486,10 @@ Valid Elapsed Time</td>
       <td align="undefined" valign="undefined"></td>
 
 
-      <td align="undefined" valign="undefined"></td>
+      
 
 
-      <td align="undefined" valign="undefined"></td>
+      
 
 
     </tr>
@@ -537,10 +513,10 @@ Valid Elapsed Time</td>
       <td align="undefined" valign="undefined"></td>
 
 
-      <td align="undefined" valign="undefined"></td>
+      
 
 
-      <td align="undefined" valign="undefined"></td>
+      
 
 
     </tr>
@@ -564,10 +540,10 @@ Valid Elapsed Time</td>
       <td align="undefined" valign="undefined"></td>
 
 
-      <td align="undefined" valign="undefined"></td>
+      
 
 
-      <td align="undefined" valign="undefined"></td>
+      
 
 
     </tr>
@@ -585,79 +561,46 @@ Valid Elapsed Time</td>
 
       <td align="undefined" valign="undefined"></td>
 
-      <td align="undefined" valign="undefined"></td>
+      
 
-      <td align="undefined" valign="undefined"></td>
+      
 
     </tr>
 
+    
+
+
+    
     <tr>
 
 
       <td align="undefined" valign="undefined"></td>
 
 
-      <td align="undefined" valign="undefined">Set
-Suite Variable</td>
+      <td align="undefined" valign="undefined">Run Keyword Unless</td>
 
 
-      <td align="undefined" valign="undefined">$REBOT_INPUT</td>
+      <td align="undefined" valign="undefined">"${outputname}" == ""</td><td align="undefined" valign="undefined"></td><td align="undefined" valign="undefined"></td>
 
 
-      <td align="undefined" valign="undefined">${OUTDIR}${/}${outputname}</td>
+      
 
 
-      <td align="undefined" valign="undefined"></td>
+      
 
 
-      <td align="undefined" valign="undefined"></td>
+      
 
 
-      <td align="undefined" valign="undefined"></td>
-
-
-    </tr>
-
-
-    <tr>
-      <td></td>
-      <td>Log</td>
-      <td>${REBOT_INPUT}</td>
-      <td></td>
-      <td></td>
-      <td></td>
-      <td></td>
-    </tr>
-    <tr>
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-      <td align="undefined" valign="undefined">Move
-File</td>
-
-
-      <td align="undefined" valign="undefined">${OUTDIR}${/}${OUTFILE}</td>
-
-
-      <td align="undefined" valign="undefined">${REBOT_INPUT}</td>
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-      <td align="undefined" valign="undefined"></td>
+      
 
 
     </tr>
 
 
 
-    <tr>
+    <tr><td></td><td>...</td><td align="undefined" valign="undefined">Move
+File</td><td align="undefined" valign="undefined">${OUTFILE}</td><td align="undefined" valign="undefined">${outputname}</td></tr><tr>
 
 
       <td align="undefined" valign="undefined"></td>
@@ -675,10 +618,10 @@ File</td>
       <td align="undefined" valign="undefined"></td>
 
 
-      <td align="undefined" valign="undefined"></td>
+      
 
 
-      <td align="undefined" valign="undefined"></td>
+      
 
 
     </tr>
@@ -704,16 +647,16 @@ Arguments ]</td>
       <td align="undefined" valign="undefined">${end}</td>
 
 
-      <td align="undefined" valign="undefined">${elapsed}</td>
+      
 
 
-      <td align="undefined" valign="undefined">${millis}</td>
+      
 
 
     </tr>
 
 
-    <tr>
+    <tr><td></td><td>...</td><td align="undefined" valign="undefined">${elapsed}</td><td align="undefined" valign="undefined">${millis}</td><td></td></tr><tr>
 
 
       <td align="undefined" valign="undefined"></td>
@@ -731,10 +674,10 @@ Arguments ]</td>
       <td align="undefined" valign="undefined"></td>
 
 
-      <td align="undefined" valign="undefined"></td>
+      
 
 
-      <td align="undefined" valign="undefined"></td>
+      
 
 
     </tr>
@@ -758,10 +701,10 @@ Arguments ]</td>
       <td align="undefined" valign="undefined"></td>
 
 
-      <td align="undefined" valign="undefined"></td>
+      
 
 
-      <td align="undefined" valign="undefined"></td>
+      
 
 
     </tr>
@@ -785,10 +728,10 @@ Arguments ]</td>
       <td align="undefined" valign="undefined"></td>
 
 
-      <td align="undefined" valign="undefined"></td>
+      
 
 
-      <td align="undefined" valign="undefined"></td>
+      
 
 
     </tr>
@@ -813,37 +756,10 @@ Equal</td>
       <td align="undefined" valign="undefined"></td>
 
 
-      <td align="undefined" valign="undefined"></td>
+      
 
 
-      <td align="undefined" valign="undefined"></td>
-
-
-    </tr>
-
-
-    <tr>
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-      <td align="undefined" valign="undefined"></td>
+      
 
 
     </tr>
@@ -867,175 +783,34 @@ Equal</td>
       <td align="undefined" valign="undefined"></td>
 
 
-      <td align="undefined" valign="undefined"></td>
+      
 
 
-      <td align="undefined" valign="undefined"></td>
-
-
-    </tr>
-
-
-    <tr>
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-      <td align="undefined" valign="undefined"></td>
+      
 
 
     </tr>
 
 
-    <tr>
+    
 
 
-      <td align="undefined" valign="undefined"></td>
+    
 
 
-      <td align="undefined" valign="undefined"></td>
+    
 
 
-      <td align="undefined" valign="undefined"></td>
+    
 
 
-      <td align="undefined" valign="undefined"></td>
+    
 
 
-      <td align="undefined" valign="undefined"></td>
+    
 
 
-      <td align="undefined" valign="undefined"></td>
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-    </tr>
-
-
-    <tr>
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-    </tr>
-
-
-    <tr>
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-    </tr>
-
-
-    <tr>
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-    </tr>
-
-
-    <tr>
-
-
-      <td></td>
-
-
-      <td></td>
-
-
-      <td></td>
-
-
-      <td></td>
-
-
-      <td></td>
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-    </tr>
+    
 
 
   
@@ -1043,5 +818,4 @@ Equal</td>
 </table>
 
 
-</body>
-</html>
+</body></html>
