@@ -24,9 +24,6 @@ from metadata import TestSuiteMetadata, TestCaseMetadata
 from keywords import KeywordList
 from userkeyword import UserHandlerList
 
-_IGNORED_PREFIXES = ['_','.']
-_IGNORED_DIRS = ['CVS']
-
 
 def TestSuiteData(datasources, settings, syslog):
     datasources = [ utils.normpath(path) for path in datasources ]
@@ -104,6 +101,9 @@ class FileSuite(_BaseSuite):
 
             
 class DirectorySuite(_BaseSuite):
+
+    _ignored_prefixes = ['_', '.']
+    _ignored_dirs = ['CVS']
     
     def __init__(self, path, suitenames, syslog):
         syslog.info("Parsing test suite directory '%s'" % path)
@@ -170,10 +170,10 @@ class DirectorySuite(_BaseSuite):
                 self.suites.append(suite)
 
     def _is_ignored(self, name, path, incl_suites):
-        if name[0] in _IGNORED_PREFIXES:
+        if name[0] in self._ignored_prefixes:
             return True
         if os.path.isdir(path):
-            return name in _IGNORED_DIRS
+            return name in self._ignored_dirs
         root, ext = os.path.splitext(name.lower())
         if not READERS.has_key(ext):
             return True
