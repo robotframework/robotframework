@@ -31,7 +31,7 @@ def create_quickstart():
     arguments = '''
 --time
 --stylesheet-path=../userguide/src/userguide.css
-quickstart.txt
+quickstart.rst
 quickstart.html
 '''.split('\n')[1:-1] 
 
