@@ -184,12 +184,12 @@ need to pay attention to this, but if you create data
 programmatically, you have to follow the same quoting conventions as
 spreadsheets.
 
-
 Encoding
 ````````
 
 TSV files are always expected to use UTF-8 encoding. Because ASCII is
 a subset of UTF-8, plain ASCII is naturally supported too.
+
 
 reStructuredText format
 '''''''''''''''''''''''
@@ -199,47 +199,49 @@ used for documentation of Python projects (including Python itself, as well as
 this user guide). Using reST with Robot Framework allows you to mix richly 
 formatted documents and tables that specify test data in a concise text format that 
 is easy to work with using simple text editors, diff tools, and source control
-systems.
+systems. The support for reStructuredText was added to Robot Framework in version 2.1.
 
 Tools to process reStructuredText are freely available as part of the docutils_ 
 project, and there is a `quick reference guide`_ that shows the most common 
 formatting constructs including the tables used by Robot Framework.
 
-.. _docutils: http://docutils.sourceforge.net/rst.html
+.. _docutils: reStructuredText_
 .. _`quick reference guide`: http://docutils.sourceforge.net/docs/user/rst/quickref.html
 
-.. note:: Using reST files with Robot Framework requires docutils to be
-        installed.
+.. note:: Using reST files with Robot Framework requires the Python docutils 
+          module to be installed.
 
-        reStructureText documents are not currently supported by
-        Jybot/Jython. This is anticipated to change when Jython 2.5 fully 
-        supports docutils.
+          reStructureText documents are not currently supported when running
+          tests on Jython. This is anticipated to change when Jython 2.5 
+          fully supports docutils. To use reST files with Jython earlier, it
+          is possible to just convert them to HTML before running tests.
 
 In reST files, test data is defined in tables within the document, similar to
 the HTML format. Robot Framework identifies `test data tables`_ based on the 
-text in the first cell. All content outsided of the recognized table types is
-ignored by Robot.
+text in the first cell and all content outsided of the recognized table types is
+ignored.
 
-An example of each of the four types of test data dable is shown below using 
-the reST "Simple Tables" syntax. Note that  "\\" or ".." is used to indicate an 
-empty cell in the first column of the table::
+An example of each of the four types of test data dable is shown below
+using the reST `Simple Tables` syntax. Note that :code:`\\` or
+:code:`..` must be used to indicate an empty cell in the first column
+of the table::
     
     ============  ================  =======  =======
-    Setting       Value             Value    Value 
+      Setting          Value         Value    Value 
     ============  ================  =======  =======
     Library       OperatingSystem   
     ============  ================  =======  =======
 
 
     ============  ================  =======  =======
-    Variable        Value           Value    Value
+      Variable         Value         Value    Value
     ============  ================  =======  =======
     ${MESSAGE}    Hello, world!    
     ============  ================  =======  =======
    
 
     ============  ===================  ============  =============
-    Test Case           Action         Argument      Argument 
+     Test Case          Action           Argument      Argument 
     ============  ===================  ============  =============
     My Test       [Documentation]      Example test  
     \             Log                  ${MESSAGE}    
@@ -275,7 +277,7 @@ Unlike HTML or TSV formats, Robot Framework does not parse reST files directly.
 Instead, docutils is used to automatically transform reST source files into temporary HTML
 files that are subsequently read by Robot. These temporary files are removed 
 immediately after being read. This HTML file generation and cleanup is handled
-internally by Robot, it does not require the user to directly invoke docutils tools.
+internally by Robot Framework, it does not require the user to directly invoke docutils tools.
 
 
 Syntax errors in reST source files
@@ -284,8 +286,10 @@ Syntax errors in reST source files
 If you create test data or other portions of a reST file that is not syntactically
 correct (a malformed table for example), the reST-to-HTML conversion will not 
 take place and no test cases will be read from that file. When this occurs, 
-Robot will show the docutils error message in it's console output showing the 
+Robot Framework will show the docutils error message in it's console output showing the 
 filename, line number, source context, and type of error.
+
+
 
 Test data tables
 ~~~~~~~~~~~~~~~~
@@ -494,19 +498,20 @@ splitting the data to several rows.
    \            ...               four            five        six
    \            ${var} =          Get X           1           2
    \            ...               3               4           5
-   \            ...               6               \           \
+   \            ...               6               
    ===========  ================  ==============  ==========  ==========
+
 
 Splitting test data in reST tables
 ```````````````````````````````````
 
-In the plaintext markup for reST tables, there are two types of table 
-syntax that can be used to create test data. When using the "Simple Tables"
-syntax for test data tables that have data into several rows, a "\\" or ".." 
-is required in the first cell of a continued row
-in addition to the "..." required by Robot.
+In the plain text markup for reST tables, there are two types of table
+syntax that can be used to create test data. When using the `Simple
+Tables` syntax for test data tables that have data into several rows,
+a :code:`\\` or :code:`..` is required in the first cell of a
+continued row in addition to the :code:`...` required by Robot Framework.
 
-Here is an example using reST "Simple Table" format::
+Here is an example using reST `Simple Table` format::
 
     ===========  ================  ==============  ==========  ==========
      Test Case       Action           Argument      Argument    Argument 
@@ -522,27 +527,27 @@ Here is an example using reST "Simple Table" format::
     \            ...               6                         
     ===========  ================  ==============  ==========  ==========
 
-For "Grid Table" syntax, the first cell in a continued row may be blank,
-and the second cell should contain "..." as with HTML tables::
+For `Grid Table` syntax, the first cell in a continued row may be blank,
+and the second cell should contain :code:`...` as with HTML tables::
 
-    +-----------+--------------------+---------------+------------+-------------+
-    |Test Case  |    Action          | Argument      | Argument   | Argument    |
-    +===========+====================+===============+============+=============+
-    |Example    |  [Documentation]   |Documentation  | for this   | test case.  |
-    +-----------+--------------------+---------------+------------+-------------+
-    |           | ...                |This can get   | quite      | long...     |
-    +-----------+--------------------+---------------+------------+-------------+
-    |           | [Tags]             |t-1            | t-2        | t-3         |
-    +-----------+--------------------+---------------+------------+-------------+
-    |           | ...                |t-4            | t-5        |             |
-    +-----------+--------------------+---------------+------------+-------------+
-    |           | Do X               |one            | two        | three       |
-    +-----------+--------------------+---------------+------------+-------------+
-    |           | ...                |four           | five       | six         |
-    +-----------+--------------------+---------------+------------+-------------+
-    |           | ${var} =           |Get X          | 1          | 2           |
-    +-----------+--------------------+---------------+------------+-------------+
-    |           | ...                |3              | 4          | 5           |
-    +-----------+--------------------+---------------+------------+-------------+
-    |           | ...                |6              |            |             |
-    +-----------+--------------------+---------------+------------+-------------+
+    +-----------+-------------------+---------------+------------+------------+
+    | Test Case |      Action       |   Argument    |  Argument  |  Argument  |
+    +===========+===================+===============+============+============+
+    | Example   | [Documentation]   | Documentation | for this   | test case. |
+    +-----------+-------------------+---------------+------------+------------+
+    |           | ...               | This can get  | quite      | long...    |
+    +-----------+-------------------+---------------+------------+------------+
+    |           | [Tags]            | t-1           | t-2        | t-3        |
+    +-----------+-------------------+---------------+------------+------------+
+    |           | ...               | t-4           | t-5        |            |
+    +-----------+-------------------+---------------+------------+------------+
+    |           | Do X              | one           | two        | three      |
+    +-----------+-------------------+---------------+------------+------------+
+    |           | ...               | four          | five       | six        |
+    +-----------+-------------------+---------------+------------+------------+
+    |           | ${var} =          | Get X         | 1          | 2          |
+    +-----------+-------------------+---------------+------------+------------+
+    |           | ...               | 3             | 4          | 5          |
+    +-----------+-------------------+---------------+------------+------------+
+    |           | ...               | 6             |            |            |
+    +-----------+-------------------+---------------+------------+------------+
