@@ -105,7 +105,7 @@ names (--test/--suite)\n + --MonitorColors/Width\n +
 <td></td>
 <td></td>
 </tr>
-<tr>
+<tr><td></td><td></td><td></td><td></td><td></td></tr><tr>
 <td>Resource</td>
 <td>../../resources/resource.html</td>
 <td></td>
@@ -1056,18 +1056,12 @@ two_parts:one_part -M esc:STQUDOAMHAEXEX --escape star:ST -E quest:QU
 </tr>
 <tr>
 <td><a name="test_Non-ExistingInput">Non-Existing Input</a></td>
-<td>Run Tests</td>
+<td>Run Tests Without Processing Output</td>
 <td></td>
 <td>nonexisting.html</td>
 <td></td>
 </tr>
-<tr>
-<td></td>
-<td>Equals</td>
-<td>${SUITE}</td>
-<td>${None}</td>
-<td></td>
-</tr>
+
 <tr>
 <td></td>
 <td>Check Stderr Matches Regexp</td>
@@ -1444,22 +1438,22 @@ two_parts:one_part -M esc:STQUDOAMHAEXEX --escape star:ST -E quest:QU
 </tr>
 <tr>
 <td></td>
-<td>${SUITE}</td>
-<td>${SYSLOG} =</td>
-<td>Process Output</td>
+<td>${suite}</td>
+<td>${syslog} =</td><td>Process Output<br></td>
+
 <td>${MYOUTDIR}${/}output.xml</td>
 </tr>
 <tr>
 <td></td>
 <td>Equals</td>
-<td>${SUITE.name}</td>
+<td>${suite.name}</td>
 <td>From Arg File</td>
 <td></td>
 </tr>
 <tr>
 <td></td>
 <td>Fail Unless</td>
-<td>${SUITE.critical.tags} == ['c1','c2']</td>
+<td>${suite.critical.tags} == ['c1','c2']</td>
 <td></td>
 <td></td>
 </tr>

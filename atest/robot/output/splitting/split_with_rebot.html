@@ -413,15 +413,15 @@ th {
 <td></td>
 </tr>
 
-<tr>
+<tr><td></td><td>Move File</td><td>${OUTFILE}</td><td>${INPUT}</td><td></td></tr><tr>
 <td></td>
-<td>Run Rebot</td>
+<td>Run Rebot Without Processing Output</td>
 <td>--split 1 --log nosplit --output nosplit</td>
-<td>${OUTFILE}</td>
+<td>${INPUT}</td>
 <td></td>
 </tr>
 
-<tr>
+<tr><td></td><td>${suite}</td><td>${syslog} =</td><td>Process Output</td><td>${OUTDIR}${/}nosplit.xml</td></tr><tr><td></td><td>Should Be Equal</td><td>${suite.name}</td><td>Normal</td><td></td></tr><tr>
 <td></td>
 <td>${files} =</td>
 <td>List Dir</td>

@@ -11,12 +11,11 @@ class TestCheckerLibrary:
         try:
             print "Processing output '%s'" % path
             suite, syslog = readers.process_output(path)
-            suite.set_names()
         except:
-            print 'Processing output failed: ' + utils.get_error_message()
-            return None, None
-        else:
-            return process_suite(suite), syslog
+            raise RuntimeError('Processing output failed: %s'
+                               % utils.get_error_message())
+        suite.set_names()
+        return process_suite(suite), process_syslog(syslog)
 
     def get_test_from_suite(self, suite, name):
         tests = self.get_tests_from_suite(suite, name)
@@ -26,7 +25,7 @@ class TestCheckerLibrary:
             err = "No test '%s' found from suite '%s'"
         else:
             err = "More than one test '%s' found from suite '%s'"
-        raise Exception(err % (name, suite.name))
+        raise RuntimeError(err % (name, suite.name))
         
     def get_tests_from_suite(self, suite, name=None):
         tests = [ test for test in suite.tests 
@@ -43,7 +42,7 @@ class TestCheckerLibrary:
             err = "No suite '%s' found from suite '%s'"
         else:
             err = "More than one suite '%s' found from suite '%s'"
-        raise Exception(err % (name, suite.name))
+        raise RuntimeError(err % (name, suite.name))
 
     def get_suites_from_suite(self, suite, name):
         suites = utils.eq(suite.name, name) and [ suite ] or []
@@ -130,10 +129,9 @@ def process_suite(suite):
     process_keyword(suite.setup)
     process_keyword(suite.teardown)
     return suite
-    
 
 def process_test(test):
-    if test.doc.count('FAIL') > 0:
+    if 'FAIL' in test.doc:
         test.exp_status = 'FAIL'
         test.exp_message = test.doc.split('FAIL', 1)[1].lstrip()
     else:
@@ -146,7 +144,6 @@ def process_test(test):
     process_keyword(test.setup)
     process_keyword(test.teardown)
         
-        
 def process_keyword(kw):
     if kw is None:
         return
@@ -156,3 +153,8 @@ def process_keyword(kw):
     kw.keyword_count = kw.kw_count = len(kw.keywords)
     for subkw in kw.keywords:
         process_keyword(subkw)
+
+def process_syslog(syslog):
+    syslog.msgs = syslog.messages
+    syslog.message_count = syslog.msg_count = len(syslog.messages)
+    return syslog
