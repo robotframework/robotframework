@@ -51,18 +51,17 @@ as needed.
 When a test directory is executed, the files and directories it
 contains are processed recursively as follows:
 
-- Files and folders with names starting with a dot (.) or an
-  underscore (_) are ignored.
-- Files with names not having the :path:`.html`, :path:`.xhtml`,
-  :path:`.htm`, :path:`.rst`, :path:`.rest`, or :path:`.tsv` extension (case-insensitive) are
-  ignored.
-- Directories with the name :path:`CVS` (case-sensitive) are ignored.
+- Files and directories with names starting with a dot (:path:`.`) or an
+  underscore (:path:`_`) are ignored.
+- Directories with the name :path:`CVS` are ignored (case-sensitive).
+- Files not having one of the recognized extensions (:path:`.html`, 
+  :path:`.xhtml`, :path:`.htm`, :path:`.rst`, :path:`.rest`, or :path:`.tsv`)
+  are ignored (case-insensitive).
 - Other files and directories are processed.
 
-The files and directories that are processed are expected to be test
-case files and test directories, respectively, but if they do not
-contain any test cases, they are silently ignored (a message is
-written to the syslog_) and the processing continues. 
+If a file or directory that is processed does not contain any test
+cases, it is silently ignored (a message is written to the syslog_)
+and the processing continues.
 
 
 Initialization files
