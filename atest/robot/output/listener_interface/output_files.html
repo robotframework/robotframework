@@ -83,9 +83,7 @@ th {
 </tr>
 <tr>
 <td>Suite Setup</td>
-<td>Run Listener Tests</td><td>--listener "${LISTENERS}${/}ListenAll.py" --listener "${LISTENERS}${/}JavaListener.java" --log mylog.html
---report myrep.html --summary mysum.html --output myout.xml --debugfile
-mydeb.txt</td><td>misc${/}pass_and_fail.html</td>
+<td>Run Some Tests</td><td></td><td></td>
 
 
 <td></td>
@@ -315,19 +313,21 @@ files. Tests also that the listener can be taken into use with path.</td>
 
 
 <tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
+<td>Run Some Tests</td>
+<td>Run Tests Without Processing Output</td><td>--listener "${LISTENERS}${/}ListenAll.py" --listener "${LISTENERS}${/}JavaListener.java" --log mylog.html
+--report myrep.html --summary mysum.html --output myout.xml --debugfile
+mydeb.txt</td><td>misc${/}pass_and_fail.html</td>
+
+
 <td></td>
 </tr>
 <tr>
 <td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
+<td>${suite}</td>
+<td>${errors} =</td>
+<td>Process Output</td>
+<td>${OUTDIR}${/}myout.xml</td>
 </tr>
-</tbody></table>
+<tr><td></td><td>Should Be Equal</td><td>${suite.name}</td><td>Pass And Fail</td><td></td></tr></tbody></table>
 
 </body></html>
