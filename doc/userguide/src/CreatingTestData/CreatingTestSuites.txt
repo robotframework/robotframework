@@ -54,7 +54,7 @@ contains are processed recursively as follows:
 - Files and folders with names starting with a dot (.) or an
   underscore (_) are ignored.
 - Files with names not having the :path:`.html`, :path:`.xhtml`,
-  :path:`.htm` or :path:`.tsv` extension (case-insensitive) are
+  :path:`.htm`, :path:`.rst`, :path:`.rest`, or :path:`.tsv` extension (case-insensitive) are
   ignored.
 - Directories with the name :path:`CVS` (case-sensitive) are ignored.
 - Other files and directories are processed.

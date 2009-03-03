@@ -37,11 +37,12 @@ Supported file formats
 ~~~~~~~~~~~~~~~~~~~~~~
 
 Robot Framework test data is defined in tabular format, using either
-the HTML (hypertext markup language) or TSV (tab-separated values)
-format. Robot Framework selects a parser for the test data based on
-the file extension. The extension is case-insensitive, and the
+the HTML (hypertext markup language), TSV (tab-separated values)
+or reST (reStructuredText) formats. Robot Framework selects a parser for the test 
+data based on the file extension. The extension is case-insensitive, and the
 recognized extensions are :path:`.html`, :path:`.htm` and
-:path:`.xhtml` for HTML, and :path:`.tsv` for TSV.
+:path:`.xhtml` for HTML, :path:`.tsv` for TSV, and :path:`.rst` or :path:`.rest` 
+for reStructuredText.
 
 Different `test data templates`_ are available to make it easier to
 get started writing tests.
@@ -190,6 +191,101 @@ Encoding
 TSV files are always expected to use UTF-8 encoding. Because ASCII is
 a subset of UTF-8, plain ASCII is naturally supported too.
 
+reStructuredText format
+'''''''''''''''''''''''
+
+reStructuredText (reST) is a easy-to-read plaintext markup syntax that is commonly
+used for documentation of Python projects (including Python itself, as well as 
+this user guide). Using reST with Robot Framework allows you to mix richly 
+formatted documents and tables that specify test data in a concise text format that 
+is easy to work with using simple text editors, diff tools, and source control
+systems.
+
+Tools to process reStructuredText are freely available as part of the docutils_ 
+project, and there is a `quick reference guide`_ that shows the most common 
+formatting constructs including the tables used by Robot Framework.
+
+.. _docutils: http://docutils.sourceforge.net/rst.html
+.. _`quick reference guide`: http://docutils.sourceforge.net/docs/user/rst/quickref.html
+
+.. note:: Using reST files with Robot Framework requires docutils to be
+        installed.
+
+        reStructureText documents are not currently supported by
+        Jybot/Jython. This is anticipated to change when Jython 2.5 fully 
+        supports docutils.
+
+In reST files, test data is defined in tables within the document, similar to
+the HTML format. Robot Framework identifies `test data tables`_ based on the 
+text in the first cell. All content outsided of the recognized table types is
+ignored by Robot.
+
+An example of each of the four types of test data dable is shown below using 
+the reST "Simple Tables" syntax. Note that  "\\" or ".." is used to indicate an 
+empty cell in the first column of the table::
+    
+    ============  ================  =======  =======
+    Setting       Value             Value    Value 
+    ============  ================  =======  =======
+    Library       OperatingSystem   
+    ============  ================  =======  =======
+
+
+    ============  ================  =======  =======
+    Variable        Value           Value    Value
+    ============  ================  =======  =======
+    ${MESSAGE}    Hello, world!    
+    ============  ================  =======  =======
+   
+
+    ============  ===================  ============  =============
+    Test Case           Action         Argument      Argument 
+    ============  ===================  ============  =============
+    My Test       [Documentation]      Example test  
+    \             Log                  ${MESSAGE}    
+    \             My Keyword           /tmp          
+    \ 
+    Another Test  Should Be Equal      ${MESSAGE}    Hello, world!
+    ============  ===================  ============  =============
+
+
+    ============  ======================  ============  ==========
+     Keyword            Action             Argument     Argument
+    ============  ======================  ============  ==========
+    My Keyword    [Argument]              ${path}       
+    \             Directory Should Exist  ${path}       
+    ============  ======================  ============  ==========
+       
+
+Editing test data
+`````````````````
+
+Test data in reST files can be edited with any text editor. It is recommended
+that the editor be configured to use a monospace font to aid with alignment
+of table elements.
+
+The `Robot IDE`_ does not support direct editing of test data in reST source
+files.
+
+
+Temporary files when using reST
+```````````````````````````````
+
+Unlike HTML or TSV formats, Robot Framework does not parse reST files directly.
+Instead, docutils is used to automatically transform reST source files into temporary HTML
+files that are subsequently read by Robot. These temporary files are removed 
+immediately after being read. This HTML file generation and cleanup is handled
+internally by Robot, it does not require the user to directly invoke docutils tools.
+
+
+Syntax errors in reST source files
+``````````````````````````````````
+
+If you create test data or other portions of a reST file that is not syntactically
+correct (a malformed table for example), the reST-to-HTML conversion will not 
+take place and no test cases will be read from that file. When this occurs, 
+Robot will show the docutils error message in it's console output showing the 
+filename, line number, source context, and type of error.
 
 Test data tables
 ~~~~~~~~~~~~~~~~
@@ -233,7 +329,7 @@ When Robot Framework parses the test data, it ignores:
 
 - All tables that do not start with a recognized table name in the first cell
 - Everything else on the first row apart from the first cell
-- Data outside tables in HTML and data before the first table in TSV
+- Data outside tables in HTML/reST and data before the first table in TSV
 - All empty rows, which means these kinds of rows can be used to make
   the tables more readable
 - All empty cells at the end of rows; you must add a backslash (\\) to
@@ -242,7 +338,7 @@ When Robot Framework parses the test data, it ignores:
 - All characters following a hash mark (#), if it is the first
   character of a cell; this means that hash marks can be used to enter
   comments in the test data
-- All formatting in the HTML test data
+- All formatting in the HTML/reST test data
 
 When Robot Framework ignores some data, this data is not available in 
 any resulting reports and, additionally, most tools used with Robot
@@ -400,3 +496,53 @@ splitting the data to several rows.
    \            ...               3               4           5
    \            ...               6               \           \
    ===========  ================  ==============  ==========  ==========
+
+Splitting test data in reST tables
+```````````````````````````````````
+
+In the plaintext markup for reST tables, there are two types of table 
+syntax that can be used to create test data. When using the "Simple Tables"
+syntax for test data tables that have data into several rows, a "\\" or ".." 
+is required in the first cell of a continued row
+in addition to the "..." required by Robot.
+
+Here is an example using reST "Simple Table" format::
+
+    ===========  ================  ==============  ==========  ==========
+     Test Case       Action           Argument      Argument    Argument 
+    ===========  ================  ==============  ==========  ==========
+    Example      [Documentation]   Documentation   for this    test case.
+    \            ...               This can get    quite       long...
+    \            [Tags]            t-1             t-2         t-3
+    \            ...               t-4             t-5         
+    \            Do X              one             two         three
+    \            ...               four            five        six
+    \            ${var} =          Get X           1           2
+    \            ...               3               4           5
+    \            ...               6                         
+    ===========  ================  ==============  ==========  ==========
+
+For "Grid Table" syntax, the first cell in a continued row may be blank,
+and the second cell should contain "..." as with HTML tables::
+
+    +-----------+--------------------+---------------+------------+-------------+
+    |Test Case  |    Action          | Argument      | Argument   | Argument    |
+    +===========+====================+===============+============+=============+
+    |Example    |  [Documentation]   |Documentation  | for this   | test case.  |
+    +-----------+--------------------+---------------+------------+-------------+
+    |           | ...                |This can get   | quite      | long...     |
+    +-----------+--------------------+---------------+------------+-------------+
+    |           | [Tags]             |t-1            | t-2        | t-3         |
+    +-----------+--------------------+---------------+------------+-------------+
+    |           | ...                |t-4            | t-5        |             |
+    +-----------+--------------------+---------------+------------+-------------+
+    |           | Do X               |one            | two        | three       |
+    +-----------+--------------------+---------------+------------+-------------+
+    |           | ...                |four           | five       | six         |
+    +-----------+--------------------+---------------+------------+-------------+
+    |           | ${var} =           |Get X          | 1          | 2           |
+    +-----------+--------------------+---------------+------------+-------------+
+    |           | ...                |3              | 4          | 5           |
+    +-----------+--------------------+---------------+------------+-------------+
+    |           | ...                |6              |            |             |
+    +-----------+--------------------+---------------+------------+-------------+
