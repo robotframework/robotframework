@@ -1000,16 +1000,16 @@ two_parts:one_part -M esc:STQUDOAMHAEXEX --escape star:ST -E quest:QU
 </tr>
 <tr>
 <td><a name="test_NoInput">No Input</a></td>
-<td>Run Tests Without Processing Output</td>
-<td>\</td>
+<td>Verify ROBOT Set</td>
+<td></td>
 <td></td>
 <td></td>
 </tr>
-<tr>
+<tr><td></td><td>${output} =</td><td>Run</td><td>${ROBOT}&nbsp;</td><td></td></tr><tr>
 <td></td>
-<td>Check Stderr Contains</td>
+<td>Should End With</td>
+<td>${output}<br></td>
 <td>Expected at least 1 argument, got 0.${USAGE_TIP}</td>
-<td></td>
 <td></td>
 </tr>
 <tr>
