@@ -430,7 +430,7 @@ th {
 
 
 
-      <td></td>
+      <td>${OUTBASE}</td>
 
 
 
@@ -438,7 +438,7 @@ th {
 
 
 
-      <td><br>
+      <td>output<br>
 
 
 
@@ -672,7 +672,7 @@ th {
 
 
 
-      <td align="undefined" valign="undefined">List Dir</td>
+      <td align="undefined" valign="undefined">List Directory</td>
 
 
 
@@ -1338,7 +1338,7 @@ th {
 
 
 
-    <tr>
+    <tr><td></td><td>${path1}</td><td>${path 2} =</td><td>Set Variable</td><td></td></tr><tr><td></td><td>...</td><td>${OUTDIR}${/}${OUTBASE}-001.xml</td><td>${OUTDIR}${/}${OUTBASE}-002.xml</td><td></td></tr><tr>
 
 
 
@@ -1366,7 +1366,7 @@ th {
 
 
 
-      <td align="undefined" valign="undefined">${OUTDIR}${/}${OUTBASE}-001.xml</td>
+      <td align="undefined" valign="undefined">${path1}</td>
 
 
 
@@ -1464,7 +1464,7 @@ th {
 
 
 
-      <td align="undefined" valign="undefined">${OUTDIR}${/}${OUTBASE}-002.xml</td>
+      <td align="undefined" valign="undefined">${path2}</td>
 
 
 
@@ -2932,37 +2932,9 @@ th {
 
     </tr>
 
-    <tr>
+    
 
-      <td align="undefined" valign="undefined"></td>
-
-      <td align="undefined" valign="undefined">${outname} =</td>
-
-      <td align="undefined" valign="undefined">Get Outname</td>
-
-      <td align="undefined" valign="undefined">${path}</td>
-
-      <td align="undefined" valign="undefined"></td>
-
-      <td align="undefined" valign="undefined"></td>
-
-    </tr>
-
-    <tr>
-
-      <td align="undefined" valign="undefined"></td>
-
-      <td align="undefined" valign="undefined">Set Suite Variable</td>
-
-      <td align="undefined" valign="undefined">$OUTBASE</td>
-
-      <td align="undefined" valign="undefined">${outname}-output</td>
-
-      <td align="undefined" valign="undefined"></td>
-
-      <td align="undefined" valign="undefined"></td>
-
-    </tr>
+    
 
     <tr>
 
@@ -3018,7 +2990,7 @@ th {
 
       <td align="undefined" valign="undefined">@{files} =</td>
 
-      <td align="undefined" valign="undefined">List Dir</td>
+      <td align="undefined" valign="undefined">List Directory</td>
 
       <td align="undefined" valign="undefined">${OUTDIR}</td>
 
@@ -3060,123 +3032,15 @@ th {
 
     </tr>
 
-    <tr>
+    
 
-      <td align="undefined" valign="undefined">Get Outname</td>
+    
 
-      <td align="undefined" valign="undefined">[ Arguments ]</td>
+    
 
-      <td align="undefined" valign="undefined">${path}</td>
+    
 
-      <td align="undefined" valign="undefined"></td>
-
-      <td align="undefined" valign="undefined"></td>
-
-      <td align="undefined" valign="undefined"></td>
-
-    </tr>
-
-    <tr>
-
-      <td align="undefined" valign="undefined"></td>
-
-      <td align="undefined" valign="undefined">${ignore}</td>
-
-      <td align="undefined" valign="undefined">${outname} =</td>
-
-      <td align="undefined" valign="undefined">Split Path</td>
-
-      <td align="undefined" valign="undefined">${path}</td>
-
-      <td align="undefined" valign="undefined"></td>
-
-    </tr>
-
-    <tr>
-
-      <td align="undefined" valign="undefined"></td>
-
-      <td align="undefined" valign="undefined">${outname}</td>
-
-      <td align="undefined" valign="undefined">${ignore}<br>
-
-      </td>
-
-      <td align="undefined" valign="undefined">Split Extension</td>
-
-      <td align="undefined" valign="undefined">${outname}</td>
-
-      <td align="undefined" valign="undefined"></td>
-
-    </tr>
-
-    <tr>
-
-      <td align="undefined" valign="undefined"></td>
-
-      <td align="undefined" valign="undefined">[ Return ]</td>
-
-      <td align="undefined" valign="undefined">${outname}</td>
-
-      <td align="undefined" valign="undefined"></td>
-
-      <td align="undefined" valign="undefined"></td>
-
-      <td align="undefined" valign="undefined"></td>
-
-    </tr>
-
-    <tr>
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-      <td></td>
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-
-
-
-
-    </tr>
+    
 
 
 

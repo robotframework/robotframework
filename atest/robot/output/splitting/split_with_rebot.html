@@ -55,8 +55,6 @@ th {
 }
 </style>
 <title>Split With Rebot</title></head>
-
-
 <body>
 <h1>Split With Rebot</h1>
 
@@ -97,7 +95,7 @@ th {
 <td></td>
 <td></td>
 </tr>
-<tr>
+<tr><td>Suite Teardown</td><td>Remove File</td><td>${INPUT}</td><td></td><td></td></tr><tr>
 <td>Resource</td>
 <td>../../../resources/resource.html</td>
 <td></td>
@@ -131,12 +129,12 @@ th {
 <th>Value</th>
 </tr>
 <tr>
+<td>${INPUT}</td><td>${TEMPDIR}${/}robot-test-split-input.xml</td>
+
 <td></td>
 <td></td>
 <td></td>
-<td></td>
-<td></td>
-</tr>
+</tr><tr><td>${BASEOUT}</td><td>output</td><td></td><td></td><td></td></tr>
 </tbody></table>
 
 <table border="1">
@@ -409,43 +407,31 @@ th {
 </tr>
 <tr>
 <td><a name="test_Only Index Should Be Created If Non-Nested Suite">Only Index Should Be Created If Non-Nested Suite</a></td>
-<td>Run Tests</td>
-<td></td>
-<td>misc${/}normal.html</td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td>Move File</td>
-<td>${OUTDIR}${/}normal-output.xml</td>
-<td>${OUTDIR}${/}notsplit.xml</td>
+<td>Run Tests</td><td></td><td>misc${/}normal.html</td>
+
+
 <td></td>
 </tr>
+
 <tr>
 <td></td>
 <td>Run Rebot</td>
-<td>--split 1 --log notsplit</td>
-<td>${OUTDIR}${/}notsplit.xml</td>
+<td>--split 1 --log nosplit --output nosplit</td>
+<td>${OUTFILE}</td>
 <td></td>
 </tr>
-<tr>
-<td></td>
-<td>Equals</td>
-<td>${SUITE.status}</td>
-<td>PASS</td>
-<td></td>
-</tr>
+
 <tr>
 <td></td>
 <td>${files} =</td>
 <td>List Dir</td>
 <td>${OUTDIR}</td>
-<td>notsplit*.*ml</td>
+<td>nosplit*<br></td>
 </tr>
 <tr>
 <td></td>
 <td>Fail Unless</td>
-<td>${files} == ['notsplit-output.xml', 'notsplit.html', 'notsplit.xml']</td>
+<td>${files} == [ 'nosplit.html', 'nosplit.xml' ]</td>
 <td></td>
 <td></td>
 </tr>
@@ -488,25 +474,12 @@ th {
 <td>misc</td>
 <td></td>
 </tr>
-<tr>
-<td></td>
-<td>Set Suite Variable</td>
-<td>$BASEOUT</td>
-<td>input-output</td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td>Set Suite Variable</td>
-<td>$INPUT</td>
-<td>${OUTDIR}${/}input.xml</td>
-<td></td>
-</tr>
+
+
 <tr>
 <td></td>
 <td>Move File</td>
-<td>${OUTDIR}${/}misc-output.xml</td>
-<td>${INPUT}</td>
+<td>${OUTFILE}</td><td>${INPUT}</td>
 <td></td>
 </tr>
 <tr>
