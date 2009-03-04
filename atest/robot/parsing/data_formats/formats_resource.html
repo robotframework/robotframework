@@ -704,14 +704,14 @@ th {
 
 
 
-      <td></td>
+      <td>${DOCUTILS INSTALLED} </td>
 
 
 
 
 
 
-      <td></td>
+      <td>Set to 'YES' or 'NO' depending is docutils installed or not</td>
 
 
 
@@ -882,7 +882,7 @@ th {
 
 
 
-      <td align="undefined" valign="undefined">Run Should Have Been Successful</td>
+      <td align="undefined" valign="undefined">Previous Run Should Have Been Successful</td>
 
 
 
@@ -1046,7 +1046,7 @@ th {
 
 
 
-      <td align="undefined" valign="undefined">Run Should Have Been Successful</td>
+      <td align="undefined" valign="undefined">Previous Run Should Have Been Successful</td>
 
 
 
@@ -1188,7 +1188,7 @@ th {
 
 
 
-    <tr><td></td><td>Remove File</td><td>${OUTDIR}${/}sample-output.xml</td><td></td><td></td><td></td></tr><tr>
+    <tr>
 
 
 
@@ -3449,7 +3449,7 @@ th {
 
 
 
-    <tr>
+    <tr><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Check is docutils installed</td><td>${output} =</td><td>Run</td><td>${INTERPRETER} -c "import docutils"</td><td></td><td></td></tr><tr>
 
 
 
@@ -3463,42 +3463,42 @@ th {
 
 
 
-      <td></td>
+      <td>${DOCUTILS INSTALLED} =</td><td>Set Variable If</td><td>"""${output}""" == ""</td><td>YES</td>
 
 
 
 
 
 
-      <td></td>
+      
 
 
 
 
 
 
-      <td></td>
+      
 
 
 
 
 
 
-      <td></td>
+      
 
 
 
 
 
 
-      <td></td>
+      <td>NO</td>
 
 
 
 
 
 
-    </tr>
+    </tr><tr><td></td><td>Set Suite Variable</td><td>$DOCUTILS INSTALLED</td><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Make test non-critical and fail it if docutils is not installed</td><td>Run Keyword If</td><td>"${DOCUTILS INSTALLED}" != "YES"</td><td>Remove Tags</td><td>regression</td><td></td></tr><tr><td></td><td>Run Keyword If</td><td>"${DOCUTILS INSTALLED}" != "YES"</td><td>Fail</td><td>docutils module is not instaled</td><td></td></tr>
 
 
 

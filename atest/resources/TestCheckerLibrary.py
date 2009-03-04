@@ -103,6 +103,7 @@ Actual tests   : %s"""  % (str(list(expected_names)), str(actual_tests))
             raise AssertionError("Wrong number of tests." + tests_msg)
         for test in actual_tests:
             if utils.eq_any(test.name, expected_names):
+                print "Verifying test '%s'" % test.name
                 self.check_test_status(test)
                 expected_names.remove(utils.normalize(test.name))
             else:

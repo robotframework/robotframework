@@ -1,3218 +1,607 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html><head>
-
-
-
-
-
-
-
-
-
-
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  <style type="text/css">
+<style type="text/css">
 html {
-  font-family: Arial,Helvetica,sans-serif;
-  background-color: white;
-  color: black;
+font-family: Arial,Helvetica,sans-serif;
+background-color: white;
+color: black;
 }
 p {
-  max-width: 60em;
+max-width: 60em;
 }
 table {
-  border-collapse: collapse;
-  empty-cells: show;
-  margin: 1em 0em;
-  border: 0.1em solid black;
+border-collapse: collapse;
+empty-cells: show;
+margin: 1em 0em;
+border: 0.1em solid black;
 }
 th, td {
-  border-style: solid;
-  border-width: 0.05em 0.1em;
-  border-color: black;
-  padding: 0.1em 0.2em;
-  height: 1.5em;
+border-style: solid;
+border-width: 0.05em 0.1em;
+border-color: black;
+padding: 0.1em 0.2em;
+height: 1.5em;
 }
 th {
-  background-color: rgb(192, 192, 192);
-  color: black;
-  border-width: 0.1em;
-  font-weight: bold;
-  text-align: center;
-  text-transform: capitalize;
-  letter-spacing: 0.1em;
+background-color: rgb(192, 192, 192);
+color: black;
+border-width: 0.1em;
+font-weight: bold;
+text-align: center;
+text-transform: capitalize;
+letter-spacing: 0.1em;
 }
 /* Widths of named columns */
 col.name {
-  width: 10em;
+width: 10em;
 }
 .action, .value, .arg {
-  width: 15em;
+width: 15em;
 }
-/* Properties for the name column 
-- td:first-child should work in CSS 2.1 avare browsers (tested in Firefox)
+/* Properties for the name column - td:first-child should work in CSS 2.1 avare browsers (tested in Firefox)
 - col.name is against specs but works in IE
 */
 td:first-child, col.name {
-  background-color: rgb(240, 240, 240);
-  text-transform: capitalize;
-  letter-spacing: 0.1em;
+background-color: rgb(240, 240, 240);
+text-transform: capitalize;
+letter-spacing: 0.1em;
 }
 /* required for IE */
 th {
-  font-style: normal;
+font-style: normal;
 }
-  </style>
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  <title>Robot Test Cases</title></head>
+</style><title>Robot Test Cases</title>
 
+</head>
 <body>
-
-
-
-
-
-
-
-
-
-
 <h1>Robot Test Cases</h1>
-
-
-
-
-
-
-
-
-
-
-
 <table border="1">
-
-
-
-
-
-
-
-
-
-
-  <colgroup span="99"><col class="name"><col class="value" span="4"></colgroup>
-  <thead>
-  <tr>
-
-
-
-
-
-
-
-
-
-
-    <th>Setting</th>
-
-
-
-
-
-
-
-
-
-
-    <th>Value</th>
-
-
-
-
-
-
-
-
-
-
-    <th>Value</th>
-
-
-
-
-
-
-
-
-
-
-    <th>value</th>
-
-
-
-
-
-
-
-
-
-
-    <th>Value</th>
-
-
-
-
-
-
-
-
-
-
-  </tr>
-
-
-
-
-
-
-
-
-
-
-  </thead>
-  <tbody>
-
-
-
-
-
-
-
-
-
-
-    
-
-
-
-
-
-
-
-
-
-    
-
-
-
-
-
-
-
-
-
-    
-
-
-
-
-
-    <tr>
-
-
-
-
-
-
-
-
-
-
-      <td>Force Tags</td>
-
-
-
-
-
-
-
-
-
-      <td>regression</td>
-
-
-
-
-
-
-
-
-
-      <td>jybot</td>
-
-
-
-
-
-
-
-
-
-      <td>pybot</td>
-
-
-
-
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-
-    </tr>
-
-
-
-
-
-
-
-
-
-
-    <tr>
-
-
-
-
-
-
-
-
-
-
-      <td>Resource</td>
-
-
-
-
-
-
-
-
-
-
-      <td>formats_resource.html</td>
-
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-
-    </tr>
-
-
-
-
-
-
-
-
-
-
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  </tbody>
+<colgroup span="99"><col class="name"><col class="value" span="4"></colgroup> <thead>
+<tr>
+<th>Setting</th>
+<th>Value</th>
+<th>Value</th>
+<th>value</th>
+<th>Value</th>
+</tr>
+</thead> <tbody>
+<tr>
+<td>Force Tags</td>
+<td>regression</td>
+<td>jybot</td>
+<td>pybot</td>
+<td></td>
+</tr>
+<tr>
+<td>Resource</td>
+<td>formats_resource.html</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Suite Setup</td>
+<td>Check is docutils installed</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
 </table>
-
-
-
-
-
-
-
-
-
-
-
 <table border="1">
-
-
-
-
-
-
-
-
-
-
-  <colgroup span="99"><col class="name"><col class="value" span="4"></colgroup>
-  <thead>
-  <tr>
-
-
-
-
-
-
-
-
-
-
-    <th>Variable</th>
-
-
-
-
-
-
-
-
-
-
-    <th>Value</th>
-
-
-
-
-
-
-
-
-
-
-    <th>Value</th>
-
-
-
-
-
-
-
-
-
-
-    <th>Value</th><th>Value</th>
-
-
-
-
-
-
-
-
-
-
-    
-
-
-
-
-
-
-    
-
-
-
-
-
-
-
-
-
-
-  </tr>
-
-
-
-
-
-
-
-
-
-
-  </thead>
-  <tbody>
-
-
-
-
-
-
-
-
-
-
-    
-
-
-
-
-
-
-
-
-
-
-    
-
-
-
-
-
-
-    
-
-
-
-    
-
-
-
-
-
-
-    
-
-
-
-
-
-
-    
-
-
-
-
-
-
-    
-
-
-
-
-
-
-    
-
-
-
-
-
-
-    
-
-
-
-
-
-
-    
-
-
-
-
-
-
-    <tr><td>@{HTML TESTS}</td><td align="undefined" valign="undefined">HTML Passing</td><td align="undefined" valign="undefined">HTML Failing</td><td>TSV Resource</td><td>ReST Resource</td></tr><tr><td>@{TSV TESTS}</td><td align="undefined" valign="undefined">TSV Passing</td><td align="undefined" valign="undefined">TSV&nbsp;Failing</td><td>HTML Resource</td><td>ReST Resource</td></tr><tr><td>@{REST TESTS}</td><td align="undefined" valign="undefined">ReST Passing</td><td align="undefined" valign="undefined">ReST&nbsp;Failing</td><td>HTML Resource</td><td>TSV&nbsp;Resource</td></tr>
-
-
-
-
-
-
-
-
-
-
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  </tbody>
+<colgroup span="99"><col class="name"><col class="value" span="4"></colgroup> <thead>
+<tr>
+<th>Variable</th>
+<th>Value</th>
+<th>Value</th>
+<th>Value</th>
+<th>Value</th>
+</tr>
+</thead> <tbody>
+<tr>
+<td>@{HTML TESTS}</td>
+<td align="undefined" valign="undefined">HTML
+Passing</td>
+<td align="undefined" valign="undefined">HTML
+Failing</td>
+<td>TSV Resource</td>
+<td>ReST Resource</td>
+</tr>
+<tr>
+<td>@{TSV TESTS}</td>
+<td align="undefined" valign="undefined">TSV
+Passing</td>
+<td align="undefined" valign="undefined">TSV&nbsp;Failing</td>
+<td>HTML Resource</td>
+<td>ReST Resource</td>
+</tr>
+<tr>
+<td>@{REST TESTS}</td>
+<td align="undefined" valign="undefined">ReST
+Passing</td>
+<td align="undefined" valign="undefined">ReST&nbsp;Failing</td>
+<td>HTML Resource</td>
+<td>TSV&nbsp;Resource</td>
+</tr>
+</tbody>
 </table>
-
-
-
-
-
-
-
-
-
-
-
 <table border="1">
-
-
-
-
-
-
-
-
-
-
-  <colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
-  <thead>
-  <tr>
-
-
-
-
-
-
-
-
-
-
-    <th>Test Case</th>
-
-
-
-
-
-
-
-
-
-
-    <th>Action</th>
-
-
-
-
-
-
-
-
-
-
-    <th>Argument</th>
-
-
-
-
-
-
-
-
-
-
-    <th>Argument</th>
-
-
-
-
-
-
-
-
-
-
-    <th>Argument</th>
-
-
-
-
-
-
-
-
-
-
-    
-
-
-
-
-
-
-
-
-
-
-    
-
-
-
-
-
-
-
-
-
-
-  </tr>
-
-
-
-
-
-
-
-
-
-
-  </thead>
-  <tbody>
-
-
-
-
-
-
-
-
-
-
-    
-
-
-
-
-
-
-
-
-
-
-    
-
-
-
-
-
-
-
-
-
-    
-
-
-
-
-
-
-    
-
-
-
-
-
-
-
-
-
-    
-
-
-
-
-
-
-
-
-
-    
-
-
-
-
-
-
-    <tr><td>HTML Suite With TSV Resource</td><td>Run Tests And Verify Status</td><td>${MIXEDDIR}${/}HTML.html</td><td></td><td></td></tr><tr><td></td><td>Check Test Case</td><td>TSV Resource</td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>HTML Suite With ReST Resource</td><td>Run Should Have Been Successful</td><td></td><td></td><td></td></tr><tr><td></td><td>Check Test Case</td><td>ReST Resource</td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr>
-
-
-
-
-
-
-
-      <td>TSV Suite With HTML Resource</td><td>Run Tests And Verify Status</td><td>${MIXEDDIR}${/}TSV.tsv</td>
-
-
-
-
-
-
-
-      
-
-
-
-
-
-
-      
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-      
-
-
-
-
-
-
-
-      
-      
-      
-      
-      
-
-
-
-
-
-
-
-    </tr>
-
-
-
-
-
-
-
-    <tr>
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-      <td>Check Test Case</td><td>HTML Resource</td>
-
-
-
-
-
-
-
-      
-
-
-
-
-
-
-
-
-
-      
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-      
-
-
-
-
-
-
-
-
-
-      
-
-
-
-
-
-
-
-
-
-    </tr>
-
-
-
-
-
-
-
-
-
-    <tr>
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-
-
-
-
-      
-
-
-
-
-
-
-
-      
-
-
-
-
-
-
-
-    </tr>
-
-
-
-
-
-
-
-    <tr>
-
-
-
-
-
-
-
-
-
-      <td>TSV Suite With ReST Resource</td><td>Run Should Have Been Successful</td>
-
-
-
-
-
-
-
-
-
-      
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-      
-
-
-
-
-
-
-
-
-
-      
-
-
-
-
-
-
-
-
-
-    </tr>
-
-
-
-
-
-
-
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-
-
-
-
-    <tr>
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-      <td>Check Test Case</td><td>ReST Resource</td>
-
-
-
-      
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-      
-
-
-
-      
-
-
-
-    </tr>
-
-
-
-    
-
-
-
-
-
-
-
-
-
-    
-
-
-
-
-
-
-    
-
-
-
-
-
-
-
-
-    
-    
-
-    
-
-
-
-
-
-
-
-
-
-    
-
-
-
-
-
-
-
-    
-
-
-
-
-
-
-    <tr>
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-      
-
-
-
-
-
-
-
-
-
-      
-
-
-      
-
-
-      
-
-
-      
-
-
-      
-
-
-
-
-
-
-
-
-
-    </tr>
-
-
-
-
-
-
-
-
-
-    <tr>
-
-
-
-
-
-
-
-
-
-      <td>ReST Suite With HTML Resource</td><td>Run Tests And Verify Status</td><td>${MIXEDDIR}${/}REST.rest</td>
-
-
-
-
-
-
-
-
-
-      
-
-
-
-
-
-
-
-      
-
-
-
-
-
-
-
-
-
-      
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-      
-
-
-
-
-
-
-
-
-
-      
-
-
-
-
-
-
-
-
-
-    </tr>
-
-
-
-
-
-
-
-
-
-    <tr>
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-
-
-
-
-      <td>Check Test Case</td><td>HTML Resource</td>
-
-
-
-
-
-
-
-      
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-
-
-
-
-      
-
-
-
-
-
-
-
-      
-
-
-
-
-
-
-
-    </tr>
-
-
-
-
-
-
-
-    <tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>ReST Suite With TSV Resource</td><td>Run Should Have Been Successful</td><td></td><td></td><td></td></tr><tr>
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-
-
-
-
-      <td>Check Test Case</td><td>TSV Resource</td>
-
-
-
-
-
-
-
-      
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-
-
-
-
-      
-
-
-
-
-
-
-
-      
-
-
-
-
-
-
-
-    </tr>
-
-
-
-
-
-
-
-    
-
-
-
-
-
-
-
-    
-
-
-
-
-
-
-
-    
-
-
-
-
-
-
-
-    
-
-
-
-
-
-
-
-    
-
-
-
-
-
-
-    
-
-
-    
-
-
-    
-
-
-
-    
-
-
-
-
-
-
-
-    
-
-
-    
-
-
-
-
-    
-
-
-
-
-
-
-
-
-
-    
-
-
-
-
-
-
-
-
-
-    
-
-
-
-
-
-
-
-
-
-    
-
-
-
-
-    
-    
-    
-
-
-
-    <tr>
-
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-
-      
-
-
-
-
-      
-
-
-
-
-    </tr>
-
-
-
-
-    <tr>
-
-
-
-
-      <td>Directory with Mixed Data</td>
-
-
-
-
-      <td>Run Tests And Verify Status</td>
-
-
-
-
-      <td>${MIXEDDIR}</td>
-
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-
-      
-
-
-
-
-      
-
-
-
-
-    </tr>
-
-
-
-
-    <tr>
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-      <td align="undefined" valign="undefined">Should Be True</td>
-
-
-
-      <td align="undefined" valign="undefined">${SUITE.suites} == ['HTML', 'REST', 'TSV']</td>
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-      
-
-
-
-      
-
-
-
-    </tr>
-
-
-
-    <tr>
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-      <td align="undefined" valign="undefined">Should Be Equal</td>
-
-
-
-      <td align="undefined" valign="undefined">${SUITE.suites[0].doc}</td>
-
-
-
-      <td align="undefined" valign="undefined">Test suite in HTML file</td>
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-      
-
-
-
-      
-
-
-
-    </tr>
-
-
-
-    <tr>
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-      <td align="undefined" valign="undefined">Should Be Equal</td>
-
-
-
-      <td align="undefined" valign="undefined">${SUITE.suites[1].doc}</td>
-
-
-
-      <td align="undefined" valign="undefined">Test suite in ReST file</td>
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-      
-
-
-
-      
-
-
-
-    </tr>
-
-
-
-    <tr><td></td><td align="undefined" valign="undefined">Should Be Equal</td><td align="undefined" valign="undefined">${SUITE.suites[2].doc}</td><td align="undefined" valign="undefined">Test suite in&nbsp;TSV file</td><td></td></tr><tr>
-
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-
-      <td>Check Suite Contains Tests<br>
-
-
-
-      </td>
-
-
-
-      <td>${SUITE.suites[0]}</td>
-
-
-
-      <td align="undefined" valign="undefined">@{HTML TESTS}</td>
-
-
-
-
-      
-      
-      <td align="undefined" valign="undefined"></td>
-
-
-
-
-      
-
-
-
-
-      
-
-
-
-
-    </tr>
-
-
-
-
-    <tr>
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-      <td>Check Suite Contains Tests<br>
-
-
-
-      </td>
-
-
-
-      <td>${SUITE.suites[1]}</td>
-
-
-
-      <td align="undefined" valign="undefined">@{REST TESTS}</td>
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-      
-
-
-
-      
-
-
-
-    </tr>
-
-
-
-    <tr>
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-      <td>Check Suite Contains Tests<br>
-
-
-
-      </td><td>${SUITE.suites[2]}</td><td align="undefined" valign="undefined">@{TSV TESTS}</td><td align="undefined" valign="undefined"></td>
-
-
-
-      
-
-
-
-      
-
-
-
-      
-
-
-
-      
-
-
-
-      
-
-
-
-    </tr>
-
-
-
-    
-
-
-
-
-    <tr><td></td><td></td><td></td><td></td><td></td></tr><tr>
-
-
-
-
-      <td>multiple Data Sources
-
-
-
-      </td>
-
-
-
-
-      <td>Run Tests And Verify Status</td>
-
-
-
-      <td>${HTMLDIR}${/}sample.html
-
-
-
-      </td>
-
-
-
-
-      
-      <td align="undefined" valign="undefined">${TSVDIR}${/}sample.tsv</td>
-
-
-
-
-      <td align="undefined" valign="undefined">${RESTDIR}${/}sample.rst</td>
-
-
-
-
-      
-
-
-
-
-      
-
-
-
-
-    </tr>
-
-
-
-
-    <tr><td></td><td>...</td><td>${MIXEDDIR}</td><td></td><td></td></tr><tr>
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-      <td>Should Be Equal</td>
-
-
-
-
-
-
-
-
-
-      <td>${SUITE.name}</td>
-
-
-
-
-
-
-
-
-
-      <td>Sample &amp; Sample &amp; Sample &amp; Mixed Data</td>
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-      
-
-
-
-
-
-
-
-
-
-      
-
-
-
-
-
-
-
-
-
-    </tr>
-
-
-
-
-
-
-
-
-
-    
-
-
-
-
-
-    
-
-
-
-
-
-    
-
-
-
-
-
-    
-
-
-
-
-
-    <tr>
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-      <td align="undefined" valign="undefined">Should Be True</td>
-
-
-
-      <td align="undefined" valign="undefined">${SUITE.suites} == ['Sample', 'Sample', 'Sample', 'Mixed Data']</td>
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-      
-
-
-
-      
-
-
-
-    </tr>
-
-
-
-    <tr>
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-      <td>Check Suite Contains Tests</td>
-
-
-
-
-
-
-
-
-
-      <td>${SUITE.suites[0]}</td>
-
-
-
-
-
-
-
-
-
-      <td>@{SAMPLE_TESTS}</td>
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-      
-
-
-
-
-
-
-
-
-
-      
-
-
-
-
-
-
-
-
-
-    </tr>
-
-
-
-
-
-
-
-
-
-    <tr>
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-      <td>Check Suite Contains Tests</td>
-
-
-
-      <td>${SUITE.suites[1]}</td>
-
-
-
-      <td>@{SAMPLE_TESTS}</td>
-
-
-
-
-
-
-
-
-
-      
-
-
-
-
-
-      
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-      
-
-
-
-
-
-
-
-
-
-      
-
-
-
-
-
-
-
-
-
-    </tr>
-
-
-
-
-
-
-
-
-
-    <tr><td></td><td>Check Suite Contains Tests</td><td>${SUITE.suites[2]}</td><td>@{SAMPLE_TESTS}</td><td></td></tr><tr>
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-      <td>Check Suite Contains Tests</td>
-
-
-
-      <td>${SUITE.suites[3]}</td>
-
-
-
-
-
-
-
-
-
-      
-
-
-
-
-
-      <td align="undefined" valign="undefined">@{HTML TESTS}</td>
-
-
-
-      <td align="undefined" valign="undefined">@{REST TESTS}</td>
-
-
-
-
-
-
-
-
-
-      
-
-
-
-
-
-      
-
-
-
-      
-
-
-
-
-
-
-
-
-
-      
-
-
-
-
-
-    </tr>
-
-
-
-
-
-
-
-
-
-    <tr>
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-      <td>...</td>
-
-
-
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">@{TSV TESTS}</td><td align="undefined" valign="undefined"><br></td>
-
-
-
-
-
-
-
-
-
-      
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-      
-
-
-
-
-
-
-
-
-
-      
-
-
-
-
-
-
-
-
-
-    </tr>
-
-
-
-
-
-
-
-
-
-    
-
-
-
-
-
-    
-
-
-
-
-
-
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  </tbody>
+<colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
+<thead> <tr>
+<th>Test Case</th>
+<th>Action</th>
+<th>Argument</th>
+<th>Argument</th>
+<th>Argument</th>
+</tr>
+</thead> <tbody>
+<tr>
+<td>HTML Suite With TSV Resource</td>
+<td>Run Tests And Verify Status</td>
+<td>${MIXEDDIR}${/}HTML.html</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Test Case</td>
+<td>TSV Resource</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>HTML Suite With ReST Resource</td>
+<td>[Setup]</td>
+<td>Make test non-critical and fail it if docutils is not
+installed</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><br>
+</td>
+<td>Previous Run Should Have Been Successful</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Test Case</td>
+<td>ReST Resource</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>TSV Suite With HTML Resource</td>
+<td>Run Tests And Verify Status</td>
+<td>${MIXEDDIR}${/}TSV.tsv</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Test Case</td>
+<td>HTML Resource</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>TSV Suite With ReST Resource</td>
+<td>[Setup]</td>
+<td>Make test non-critical and fail it if docutils is not
+installed</td>
+<td align="undefined" valign="undefined"></td>
+<td align="undefined" valign="undefined"></td>
+</tr>
+<tr>
+<td></td>
+<td>Previous Run Should Have Been Successful</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td align="undefined" valign="undefined"></td>
+<td>Check Test Case</td>
+<td>ReST Resource</td>
+<td align="undefined" valign="undefined"></td>
+<td align="undefined" valign="undefined"></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>ReST Suite With HTML Resource</td>
+<td>[Setup]</td>
+<td>Make test non-critical and fail it if docutils is not
+installed</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Run Tests And Verify Status</td>
+<td>${MIXEDDIR}${/}REST.rest</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td align="undefined" valign="undefined"></td>
+<td>Check Test Case</td>
+<td>HTML Resource</td>
+<td align="undefined" valign="undefined"></td>
+<td align="undefined" valign="undefined"></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>ReST Suite With TSV Resource</td>
+<td>[Setup]</td>
+<td>Make test non-critical and fail it if docutils is not
+installed</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Previous Run Should Have Been Successful</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td align="undefined" valign="undefined"></td>
+<td>Check Test Case</td>
+<td>TSV Resource</td>
+<td align="undefined" valign="undefined"></td>
+<td align="undefined" valign="undefined"></td>
+</tr>
+<tr>
+<td align="undefined" valign="undefined"></td>
+<td align="undefined" valign="undefined"></td>
+<td align="undefined" valign="undefined"></td>
+<td align="undefined" valign="undefined"></td>
+<td align="undefined" valign="undefined"></td>
+</tr>
+<tr>
+<td>Directory with Mixed Data</td>
+<td>Run Tests And Verify Status</td>
+<td>${MIXEDDIR}</td>
+<td align="undefined" valign="undefined"></td>
+<td align="undefined" valign="undefined"></td>
+</tr>
+<tr>
+<td align="undefined" valign="undefined"></td>
+<td align="undefined" valign="undefined">Run Keyword If</td>
+<td align="undefined" valign="undefined">"${DOCUTILS INSTALLED}" == "YES"</td>
+<td align="undefined" valign="undefined">Verify Directory with Mixed Data With ReST</td>
+<td align="undefined" valign="undefined"></td>
+</tr>
+<tr>
+<td align="undefined" valign="undefined"></td>
+<td align="undefined" valign="undefined">Run Keyword Unless</td><td align="undefined" valign="undefined">"${DOCUTILS INSTALLED}" == "YES"</td>
+
+<td align="undefined" valign="undefined">Verify Directory with Mixed Data Without ReST</td>
+<td align="undefined" valign="undefined"></td>
+</tr>
+<tr>
+<td align="undefined" valign="undefined"></td>
+<td align="undefined" valign="undefined"></td>
+<td align="undefined" valign="undefined"></td>
+<td align="undefined" valign="undefined"></td>
+<td align="undefined" valign="undefined"></td>
+</tr>
+
+
+
+
+
+<tr>
+<td>multiple Data Sources </td>
+<td>Run Tests And Verify Status</td>
+<td>${HTMLDIR}${/}sample.html </td>
+<td align="undefined" valign="undefined">${TSVDIR}${/}sample.tsv</td>
+<td align="undefined" valign="undefined">${RESTDIR}${/}sample.rst</td>
+</tr>
+<tr>
+<td></td>
+<td>...</td>
+<td>${MIXEDDIR}</td>
+<td></td>
+<td></td>
+</tr>
+
+<tr>
+<td align="undefined" valign="undefined"></td>
+<td align="undefined" valign="undefined">Run Keyword If</td><td align="undefined" valign="undefined">"${DOCUTILS INSTALLED}" == "YES"</td><td align="undefined" valign="undefined">Verify Multiple Data Sources  With ReST</td>
+
+
+<td align="undefined" valign="undefined"></td>
+</tr>
+<tr>
+<td></td>
+<td align="undefined" valign="undefined">Run Keyword Unless</td><td align="undefined" valign="undefined">"${DOCUTILS INSTALLED}" == "YES"</td><td align="undefined" valign="undefined">Verify Multiple Data Sources Without ReST</td>
+
+
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+
+
+
+</tbody>
 </table>
-
-
-
-
-
-
-
-
-
-
-
 <table border="1">
-
-
-
-
-
-
-
-
-
-
-  <colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
-  <thead>
-  <tr>
-
-
-
-
-
-
-
-
-
-
-    <th>Keyword</th>
-
-
-
-
-
-
-
-
-
-
-    <th>Action</th>
-
-
-
-
-
-
-
-
-
-
-    <th>Argument</th>
-
-
-
-
-
-
-
-
-
-
-    <th>Argument</th>
-
-
-
-
-
-
-
-
-
-
-    <th>Argument</th>
-
-
-
-
-
-
-
-
-    
-
-
-
-
-
-
-
-
-
-
-  </tr>
-
-
-
-
-
-
-
-
-
-
-  </thead>
-  <tbody>
-
-
-
-
-
-
-
-
-
-
-    
-
-
-
-    
-
-
-
-    
-
-
-
-    
-
-
-
-    
-
-
-
-    
-
-
-
-    
-
-
-
-    
-
-
-
-
-
-
-
-
-
-
-    
-
-
-
-
-
-
-
-
-
-    
-
-
-
-
-    
-
-
-
-
-
-
-    
-
-
-
-
-
-
-    
-
-
-
-
-
-
-    
-
-
-
-
-
-
-    
-
-
-
-
-
-
-
-
-    
-
-    
-
-    
-
-
-
-
-
-
-
-
-
-    
-
-
-
-
-
-
-
-
-
-    
-
-
-
-
-
-
-
-
-    
-
-    
-    
-    
-    
-    
-
-    
-
-    
-
-
-
-
-
-
-
-
-    
-
-
-
-
-
-
-
-
-    
-
-    
-
-
-    
-
-
-
-
-
-
-
-
-    
-
-
-
-
-
-
-
-
-    
-
-
-
-
-
-
-    
-
-
-
-
-
-
-
-
-    
-
-
-
-
-
-
-    
-
-
-
-
-
-
-    
-
-
-
-
-
-
-    
-
-
-
-
-
-
-    
-
-
-
-
-
-
-
-
-    
-
-
-
-
-
-
-    
-
-
-    
-
-
-
-    
-
-
-
-
-
-
-    
-
-
-
-
-
-
-    
-
-
-
-
-
-
-    
-
-
-
-
-
-
-    
-
-
-
-
-
-
-    
-
-
-
-    
-
-
-
-
-
-
-    
-
-
-
-    
-
-
-
-
-
-
-    
-
-
-
-
-
-
-    
-
-
-
-
-
-
-    
-
-
-
-    
-
-
-
-
-
-
-    
-
-
-
-
-
-
-    
-
-
-
-
-
-
-    
-
-
-
-    <tr>
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-      
-
-
-
-
-
-
-    </tr>
-
-
-
-
-
-
-    <tr>
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-      
-
-
-
-
-
-
-    </tr>
-
-
-
-
-
-
-    
-
-
-    
-
-
-    
-
-
-    
-
-
-    
-
-
-    
-
-
-    
-
-
-    
-
-
-    
-
-
-    
-
-
-    
-
-
-
-
-
-
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  </tbody>
+<colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
+<thead> <tr>
+<th>Keyword</th>
+<th>Action</th>
+<th>Argument</th>
+<th>Argument</th>
+<th>Argument</th>
+</tr>
+</thead> <tbody>
+
+<tr><td align="undefined" valign="undefined">Verify Directory with Mixed Data With ReST</td><td>Should
+Be Equal</td><td>${SUITE.name}</td><td>Mixed Data</td><td></td></tr><tr>
+<td align="undefined" valign="undefined"></td>
+<td align="undefined" valign="undefined">Should
+Be True</td>
+<td align="undefined" valign="undefined">${SUITE.suites}
+== ['HTML', 'REST', 'TSV']</td>
+<td align="undefined" valign="undefined"></td>
+<td align="undefined" valign="undefined"></td>
+</tr>
+<tr>
+<td align="undefined" valign="undefined"></td>
+<td align="undefined" valign="undefined">Should
+Be Equal</td>
+<td align="undefined" valign="undefined">${SUITE.suites[0].doc}</td>
+<td align="undefined" valign="undefined">Test
+suite in HTML file</td>
+<td align="undefined" valign="undefined"></td>
+</tr>
+<tr>
+<td align="undefined" valign="undefined"></td>
+<td align="undefined" valign="undefined">Should
+Be Equal</td>
+<td align="undefined" valign="undefined">${SUITE.suites[1].doc}</td>
+<td align="undefined" valign="undefined">Test
+suite in ReST file</td>
+<td align="undefined" valign="undefined"></td>
+</tr>
+<tr>
+<td></td>
+<td align="undefined" valign="undefined">Should
+Be Equal</td>
+<td align="undefined" valign="undefined">${SUITE.suites[2].doc}</td>
+<td align="undefined" valign="undefined">Test
+suite in&nbsp;TSV file</td>
+<td></td>
+</tr>
+<tr>
+<td align="undefined" valign="undefined"></td>
+<td>Check Suite Contains Tests<br>
+</td>
+<td>${SUITE.suites[0]}</td>
+<td align="undefined" valign="undefined">@{HTML
+TESTS}</td>
+<td align="undefined" valign="undefined"></td>
+</tr>
+<tr>
+<td align="undefined" valign="undefined"></td>
+<td>Check Suite Contains Tests<br>
+</td>
+<td>${SUITE.suites[1]}</td>
+<td align="undefined" valign="undefined">@{REST
+TESTS}</td>
+<td align="undefined" valign="undefined"></td>
+</tr>
+<tr>
+<td align="undefined" valign="undefined"></td>
+<td>Check Suite Contains Tests<br>
+</td>
+<td>${SUITE.suites[2]}</td>
+<td align="undefined" valign="undefined">@{TSV
+TESTS}</td>
+<td align="undefined" valign="undefined"></td>
+</tr>
+<tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Verify Directory with Mixed Data Without ReST</td><td>Should
+Be Equal</td><td>${SUITE.name}</td><td>Mixed Data</td><td></td></tr>
+<tr>
+<td align="undefined" valign="undefined"><br></td>
+<td align="undefined" valign="undefined">Should
+Be True</td>
+<td align="undefined" valign="undefined">${SUITE.suites}
+== ['HTML', 'TSV']</td>
+<td align="undefined" valign="undefined"></td>
+<td align="undefined" valign="undefined"></td>
+</tr>
+<tr>
+<td align="undefined" valign="undefined"></td>
+<td align="undefined" valign="undefined">Should
+Be Equal</td>
+<td align="undefined" valign="undefined">${SUITE.suites[0].doc}</td>
+<td align="undefined" valign="undefined">Test
+suite in HTML file</td>
+<td align="undefined" valign="undefined"></td>
+</tr>
+
+<tr>
+<td></td>
+<td align="undefined" valign="undefined">Should
+Be Equal</td>
+<td align="undefined" valign="undefined">${SUITE.suites[1].doc}</td>
+<td align="undefined" valign="undefined">Test
+suite in&nbsp;TSV file</td>
+<td></td>
+</tr>
+
+
+
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>multiple Data Sources </td>
+<td>Run Tests And Verify Status</td>
+<td>${HTMLDIR}${/}sample.html </td>
+<td align="undefined" valign="undefined">${TSVDIR}${/}sample.tsv</td>
+<td align="undefined" valign="undefined">${RESTDIR}${/}sample.rst</td>
+</tr>
+<tr>
+<td></td>
+<td>...</td>
+<td>${MIXEDDIR}</td>
+<td></td>
+<td></td>
+</tr>
+<tr><td></td><td></td><td></td><td></td><td></td></tr><tr>
+<td align="undefined" valign="undefined">Verify Multiple Data Sources With ReST</td>
+<td>Should Be Equal</td>
+<td>${SUITE.name}</td>
+<td>Sample &amp; Sample &amp; Sample &amp;
+Mixed Data</td>
+<td></td>
+</tr>
+<tr>
+<td align="undefined" valign="undefined"></td>
+<td align="undefined" valign="undefined">Should
+Be True</td>
+<td align="undefined" valign="undefined">${SUITE.suites}
+== ['Sample', 'Sample', 'Sample', 'Mixed Data']</td>
+<td align="undefined" valign="undefined"></td>
+<td align="undefined" valign="undefined"></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Suite Contains Tests</td>
+<td>${SUITE.suites[0]}</td>
+<td>@{SAMPLE_TESTS}</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Suite Contains Tests</td>
+<td>${SUITE.suites[1]}</td>
+<td>@{SAMPLE_TESTS}</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Suite Contains Tests</td>
+<td>${SUITE.suites[2]}</td>
+<td>@{SAMPLE_TESTS}</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Suite Contains Tests</td>
+<td>${SUITE.suites[3]}</td>
+<td align="undefined" valign="undefined">@{HTML
+TESTS}</td>
+<td align="undefined" valign="undefined">@{REST
+TESTS}</td>
+</tr>
+<tr>
+<td></td>
+<td>...</td>
+<td align="undefined" valign="undefined">@{TSV
+TESTS}</td>
+<td align="undefined" valign="undefined"><br>
+</td>
+<td></td>
+</tr> 
+
+<tr><td></td><td></td><td></td><td></td><td></td></tr><tr>
+<td align="undefined" valign="undefined">Verify Multiple Data Sources Without ReST</td>
+<td>Should Be Equal</td>
+<td>${SUITE.name}</td>
+<td>Sample &amp; Sample &amp;
+Mixed Data</td>
+<td></td>
+</tr>
+<tr>
+<td align="undefined" valign="undefined"></td>
+<td align="undefined" valign="undefined">Should
+Be True</td>
+<td align="undefined" valign="undefined">${SUITE.suites}
+== ['Sample', 'Sample', 'Mixed Data']</td>
+<td align="undefined" valign="undefined"></td>
+<td align="undefined" valign="undefined"></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Suite Contains Tests</td>
+<td>${SUITE.suites[0]}</td>
+<td>@{SAMPLE_TESTS}</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Check Suite Contains Tests</td>
+<td>${SUITE.suites[1]}</td>
+<td>@{SAMPLE_TESTS}</td>
+<td></td>
+</tr>
+
+
+
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
 </table>
-
-
-
-
-
-
-
-
-
-
-
 </body></html>
