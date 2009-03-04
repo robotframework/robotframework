@@ -23,9 +23,12 @@ $ atest/run_atests.py /usr/bin/jython22 atest/robot/core/variables.html
 import subprocess
 import os.path
 import shutil
+import glob
 import sys
+from zipfile import ZipFile, ZIP_DEFLATED
 
 CURDIR = os.path.dirname(os.path.abspath(__file__))
+RESULTDIR = os.path.join(CURDIR, 'results')
 
 sys.path.insert(0, os.path.join(CURDIR, '..', 'src'))
 
@@ -59,13 +62,12 @@ ARGUMENTS = ' '.join('''
 '''.strip().splitlines())
 
 
-def main(interpreter, *params):
-    resultdir = os.path.join(CURDIR, 'results')
-    if os.path.isdir(resultdir):
-        shutil.rmtree(resultdir)
+def atests(interpreter, *params):
+    if os.path.isdir(RESULTDIR):
+        shutil.rmtree(RESULTDIR)
     args = ARGUMENTS % {
         'PYTHONPATH' : os.path.join(CURDIR, 'resources'),
-        'OUTPUTDIR' : resultdir,
+        'OUTPUTDIR' : RESULTDIR,
         'INTERPRETER': interpreter,
         'PLATFORM': sys.platform,
         'RUNNER': ('pybot 'if 'python' in os.path.basename(interpreter)
@@ -78,10 +80,24 @@ def main(interpreter, *params):
     return subprocess.call(command.split())
 
 
+def buildbot(interpreter, *params):
+    params = '--log NONE --report NONE --SplitOutputs 1'.split() + list(params)
+    rc = atests(interpreter, *params)
+    zippath = os.path.join(RESULTDIR, 'outputs.zip')
+    zipfile = ZipFile(zippath, 'w', compression=ZIP_DEFLATED)
+    for output in glob.glob(os.path.join(RESULTDIR, '*.xml')):
+        zipfile.write(output, os.path.basename(output))
+    zipfile.close()
+    print 'Archive:', zippath
+    return rc
+
+
 if __name__ == '__main__':
     if len(sys.argv) == 1 or '--help' in sys.argv:
         print __doc__
         rc = 251
+    elif sys.argv[1] == 'buildbot':
+        rc = buildbot(*sys.argv[2:])
     else:
-        rc = main(*sys.argv[1:])
+        rc = atests(*sys.argv[1:])
     sys.exit(rc) 
