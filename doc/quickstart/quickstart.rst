@@ -192,7 +192,6 @@ Robot Framework test cases are created using a simple tabular syntax. For exampl
    \                                      Status Should Be                   Access Denied   \    
    =====================================  =================================  ==============  ==============
 
-
 Notice that these tests read almost like manual tests written in
 English rather than like automated test cases. Robot Framework uses the
 keyword-driven approach that supports writing tests that capture the
@@ -214,7 +213,6 @@ style for writing test cases, and it is possible to use for example
 
 __ http://en.wikipedia.org/wiki/Behavior_driven_development
 
-
 .. table:: 
    :class: example
 
@@ -226,7 +224,6 @@ __ http://en.wikipedia.org/wiki/Behavior_driven_development
    \                         then she can log in with the new password
    \                         and she cannot use the old password anymore
    ========================  ===========================================
-
 
 This kind of use-case or user-story-like test cases are ideally suited
 for *acceptance test-driven development* (ATDD). In ATDD acceptance
@@ -246,7 +243,7 @@ data without duplicating the workflow.
    :class: example
 
    ==================================  ===============================================  =============  ======================
-                Test Case                                    Action                       Password     Expected error message
+                Test Case                                                                 Password     Expected error message
    ==================================  ===============================================  =============  ======================
    Too short password                  Creating user with invalid password should fail  abCD5          ${PWD INVALID LENGTH}
    Too long password                   Creating user with invalid password should fail  abCD567890123  ${PWD INVALID LENGTH}
@@ -258,8 +255,10 @@ data without duplicating the workflow.
 
 In these tests there is only one keyword per test case, and it is
 responsible for trying to create a user with the provided password and
-checking that creation fails with an expected error message. Notice
-that the error messages are specified using variables_.
+checking that creation fails with the expected error message. Because
+only the first cell of the header row is processed, it is possible to
+have meaningful column headers describing the data. Notice also that the
+error messages are specified using variables_.
 
 
 Keywords
