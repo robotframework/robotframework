@@ -2677,7 +2677,7 @@ th {
 
 
 
-      <td>\</td>
+      <td>${EMPTY}</td>
 
 
 
@@ -3498,7 +3498,7 @@ th {
 
 
 
-    </tr><tr><td></td><td>Set Suite Variable</td><td>$DOCUTILS INSTALLED</td><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Make test non-critical and fail it if docutils is not installed</td><td>Run Keyword If</td><td>"${DOCUTILS INSTALLED}" != "YES"</td><td>Remove Tags</td><td>regression</td><td></td></tr><tr><td></td><td>Run Keyword If</td><td>"${DOCUTILS INSTALLED}" != "YES"</td><td>Fail</td><td>docutils module is not instaled</td><td></td></tr>
+    </tr><tr><td></td><td>Set Suite Variable</td><td>$DOCUTILS INSTALLED</td><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Make test non-critical and fail it if docutils is not installed</td><td>Run Keyword If</td><td>"${DOCUTILS INSTALLED}" != "YES"</td><td>Remove Tags</td><td>regression</td><td></td></tr><tr><td></td><td>Run Keyword If</td><td>"${DOCUTILS INSTALLED}" != "YES"</td><td>Fail</td><td>This test is made non-critical and not executed because docutils module is not installed.</td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Run Keyword If/Unless Docutils Installed</td><td>[Arguments]</td><td>${if kw}</td><td>${unless kw}</td><td></td><td></td></tr><tr><td></td><td>Run Keyword If</td><td>"${DOCUTILS INSTALLED}" == "YES"</td><td>${if kw}</td><td></td><td></td></tr><tr><td></td><td>Run Keyword Unless</td><td>"${DOCUTILS INSTALLED}" == "YES"</td><td>${unless kw}</td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td></tr>
 
 
 

@@ -303,18 +303,12 @@ installed</td>
 </tr>
 <tr>
 <td align="undefined" valign="undefined"></td>
-<td align="undefined" valign="undefined">Run Keyword If</td>
-<td align="undefined" valign="undefined">"${DOCUTILS INSTALLED}" == "YES"</td>
+<td align="undefined" valign="undefined">Run Keyword If/Unless Docutils Installed</td>
 <td align="undefined" valign="undefined">Verify Directory with Mixed Data With ReST</td>
-<td align="undefined" valign="undefined"></td>
-</tr>
-<tr>
-<td align="undefined" valign="undefined"></td>
-<td align="undefined" valign="undefined">Run Keyword Unless</td><td align="undefined" valign="undefined">"${DOCUTILS INSTALLED}" == "YES"</td>
-
 <td align="undefined" valign="undefined">Verify Directory with Mixed Data Without ReST</td>
 <td align="undefined" valign="undefined"></td>
 </tr>
+
 <tr>
 <td align="undefined" valign="undefined"></td>
 <td align="undefined" valign="undefined"></td>
@@ -344,18 +338,12 @@ installed</td>
 
 <tr>
 <td align="undefined" valign="undefined"></td>
-<td align="undefined" valign="undefined">Run Keyword If</td><td align="undefined" valign="undefined">"${DOCUTILS INSTALLED}" == "YES"</td><td align="undefined" valign="undefined">Verify Multiple Data Sources  With ReST</td>
+<td align="undefined" valign="undefined">Run Keyword If/Unless Docutils Installed</td><td align="undefined" valign="undefined">Verify Multiple Data Sources  With ReST</td><td align="undefined" valign="undefined">Verify Multiple Data Sources  Without ReST</td>
 
 
 <td align="undefined" valign="undefined"></td>
 </tr>
-<tr>
-<td></td>
-<td align="undefined" valign="undefined">Run Keyword Unless</td><td align="undefined" valign="undefined">"${DOCUTILS INSTALLED}" == "YES"</td><td align="undefined" valign="undefined">Verify Multiple Data Sources Without ReST</td>
 
-
-<td></td>
-</tr>
 <tr>
 <td></td>
 <td></td>
@@ -586,8 +574,24 @@ Be True</td>
 <td></td>
 </tr>
 
-
-
+<tr>
+<td></td>
+<td>Check Suite Contains Tests</td>
+<td>${SUITE.suites[3]}</td>
+<td align="undefined" valign="undefined">@{HTML
+TESTS}</td>
+<td align="undefined" valign="undefined">@{REST
+TESTS}</td>
+</tr>
+<tr>
+<td></td>
+<td>...</td>
+<td align="undefined" valign="undefined">@{TSV
+TESTS}</td>
+<td align="undefined" valign="undefined"><br>
+</td>
+<td></td>
+</tr>
 <tr>
 <td></td>
 <td></td>

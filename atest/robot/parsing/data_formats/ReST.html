@@ -974,7 +974,7 @@ th {
 
 
 
-      <td>Run sample file and check tests</td>
+      <td>[Setup]</td>
 
 
 
@@ -984,7 +984,7 @@ th {
 
 
 
-      <td>${RESTDIR}${/}sample.rst</td>
+      <td></td>
 
 
 
@@ -1058,21 +1058,21 @@ th {
 
 
 
-      <td></td>
+      <td>${status}</td><td>${msg} =</td>
 
 
 
 
 
 
-      <td></td>
+      
 
 
 
 
 
 
-      <td></td>
+      <td>Run Keyword And Ignore Error</td>
 
 
 
@@ -1107,7 +1107,7 @@ th {
 
 
 
-    <tr>
+    <tr><td></td><td>...</td><td>Run sample file and check tests</td><td>${RESTDIR}${/}sample.rst</td><td></td></tr><tr><td></td><td>Run Keyword If</td><td>"${DOCUTILS INSTALLED}" == "YES" and "${status}" == "FAIL"</td><td>FAIL</td><td>${msg}</td></tr><tr><td></td><td>Run Keyword Unless</td><td>"${DOCUTILS INSTALLED}" == "YES"</td><td>Clear error should be given when docutils is not installed</td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr>
 
 
 
@@ -2424,7 +2424,7 @@ th {
 
 
 
-    <tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr>
+    <tr><td>Clear error should be given when docutils is not installed</td><td>${stderr} =</td><td>Get Stderr</td><td></td><td></td></tr><tr><td></td><td>Should Be Equal</td><td>${stderr}</td><td>[ ERROR ] Using reStructuredText test data requires having 'docutils' module installed.\n<br>\n<br>Try --help for usage information.\n</td><td></td></tr>
 
 
 
