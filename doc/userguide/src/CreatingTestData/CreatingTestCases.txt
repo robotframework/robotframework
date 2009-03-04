@@ -76,7 +76,7 @@ demonstrate.
    :class: example
 
    +-------------------+-------------------------+---------+---------+
-   |     Test Case     |         Action          |User Name|Password |
+   |     Test Case     |                         |User Name|Password |
    +===================+=========================+=========+=========+
    | Invalid User Name | Login With Invalid      | invalid | mode    |
    |                   | Credentials Should Fail |         |         |
