@@ -95,7 +95,7 @@ tables is ignored.
    ============  ======================  ============  ==========
      Keyword            Action             Argument     Argument
    ============  ======================  ============  ==========
-   My Keyword    [Argument]              ${path}       \
+   My Keyword    [Arguments]             ${path}       \
    \             Directory Should Exist  ${path}       \
    ============  ======================  ============  ==========
 
@@ -157,7 +157,7 @@ similarly as data outside tables in HTML data.
    \             \                        \              \ 
    \             \                        \              \
    \*Keyword*    \*Action*                \*Argument*    \*Argument*
-   My Keyword    [Argument]               ${path}        \
+   My Keyword    [Arguments]              ${path}        \
    \             Directory Should Exist   ${path}        \
    ============  =======================  =============  =============
 
@@ -254,7 +254,7 @@ of the table::
     ============  ======================  ============  ==========
      Keyword            Action             Argument     Argument
     ============  ======================  ============  ==========
-    My Keyword    [Argument]              ${path}       
+    My Keyword    [Arguments]             ${path}       
     \             Directory Should Exist  ${path}       
     ============  ======================  ============  ==========
        
