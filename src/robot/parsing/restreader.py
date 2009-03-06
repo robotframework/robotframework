@@ -34,12 +34,14 @@ class RestReader(HtmlReader):
 
     def read(self, rstfile, rawdata):
         htmlpath = self._rest_to_html(rstfile.name)
+        htmlfile = None
         try:
             htmlfile = open(htmlpath, 'rb')
             return HtmlReader.read(self, htmlfile, rawdata)
         finally:
+            if htmlfile:
+                htmlfile.close()
             os.remove(htmlpath)
-            htmlfile.close()
 
     def _rest_to_html(self, rstpath):
         filedesc, htmlpath = tempfile.mkstemp('.html')
