@@ -1,0 +1,15 @@
+*Settings*
+Library	SwingLibrary
+
+*Test Cases*
+Login Test	Launch Application	LoginApplication
+	Select Window	Login Application
+	Insert Into Textfield	username_field	demo
+	Insert Into Textfield	password_field	mode
+	Push Button	login_button
+	${text}=	Get Label Content	status_label
+	Should be Equal	${text}	You have logged in as "demo". Now you can logout.
+	Push Button	logout_button
+	${text}=	Get Label Content	status_label
+	Should Be Equal	${text}	${EMPTY}
+
