@@ -70,8 +70,8 @@ def atests(interpreter, *params):
         'OUTPUTDIR' : RESULTDIR,
         'INTERPRETER': interpreter,
         'PLATFORM': sys.platform,
-        'RUNNER': ('pybot 'if 'python' in os.path.basename(interpreter)
-                   else 'jybot')
+        'RUNNER': ('python' in os.path.basename(interpreter) and 'pybot' 
+                   or 'jybot')
         }
     runner = os.path.join(os.path.dirname(robot.__file__), 'runner.py')
     command = '%s %s %s %s' % (sys.executable, runner, args, ' '.join(params))
