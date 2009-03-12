@@ -54,6 +54,10 @@ from robot.running import TestLibrary, UserLibrary
 from robot.serializing import Template, Namespace
 from robot import utils
 from robot.errors import DataError, Information
+from robot.parsing import rawdata
+
+
+rawdata.PROCESS_CURDIR = False
 
 
 def main(args):

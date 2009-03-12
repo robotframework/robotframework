@@ -1,12 +1,12 @@
 *keyword*
-kw	[document]	foo bar `kw 2`.
+kw	[Documentation]	foo bar `kw 2`.
 	noop
 kw 2	[document]	foo bar `kw`.\n baa `${a1}` 
 	[arguments]	${a1}	${a2}
 	noop
 kw 3	[arguments]	${a1}	@{a2}
 kw 4	[arguments]	${a1}=d	@{a2}
-kw 5	[document]	foo bar `kw`.\n baa `${a1}` alskdj alskdjlajd
+kw 5	[ documentation ]	foo bar `kw`.\n baa `${a1}` alskdj alskdjlajd
 	...	askf laskdjf asldkfj alsdkfj alsdkfjasldkfj 
 	...	askf laskdjf _asldkfj_ alsdkfj alsdkfjasldkfj 
 	...	askf *laskdjf* asldkfj alsdkfj alsdkfjasldkfj 
@@ -18,3 +18,4 @@ kw 5	[document]	foo bar `kw`.\n baa `${a1}` alskdj alskdjlajd
 	...	\n
 	...	| *1* | *2* |\n
 	...	| foo | bar |\n
+curdir	[documentation]	${CURDIR}
