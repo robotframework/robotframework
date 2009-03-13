@@ -63,6 +63,17 @@ module or package name must be used (for example,
 library using the `WITH NAME syntax`_, the specified name must be
 used also in the full keyword name.
 
+Starting from Robot Framework 2.0.5 it is possible to use the keyword :name:`Set 
+Library Order` from `BuiltIn library`_ to specify the priority order between 
+the libraries. This order is then used when multiple keywords are found with the 
+same name instead of failing the test execution due conflicting keyword names. 
+If the library order is set, there is no need to use long format for selecting 
+the keyword. This enables using same user keywords with multiple instances of 
+the same library. If every library is used to access one part of the system 
+under test, :name:`Set Library Order` keyword is then used to select the 
+application to be used.
+
+
 Resource files are specified in the full keyword name, similarly as
 library names. The name of the resource is derived from the basename
 of the resource file without the file extension. For example, the
