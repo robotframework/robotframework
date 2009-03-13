@@ -1135,6 +1135,38 @@ class Misc:
         NAMESPACES.current.import_variables(path.replace('/', os.sep),
                                             args, overwrite=True)
         
+    def set_library_order(self, *libraries):
+        """Sets order in which keywords are looked from libraries.
+        
+        By setting order in which keywords are serached it is possible to use 
+        libraries providing keywords with same name without using long format 
+        LibraryName.Keyword Name notation. This keyword is usefull in case
+        there is need to use multiple applications through the same library. By
+        changing library which is used, it is possible to use same resources 
+        instead dublicating the keywords for all the applications.
+        
+        Examples:
+        | Import Library | MyLibrary | WITH NAME | application1 |
+        | Import Library | MyLibrary | WITH NAME | application2 |
+        | Set Default Library | application1 |
+        | Comment | Next step opens application1 using User Keyword |
+        | Comment | Open Application which contains multiple keywords from MyLibrary |
+        | Open Application |
+        | Set Default Library | application2 |
+        | Comment | Now the same keyword is used for opening application2 |
+        | Open Application |
+
+        Note: Set Library Order keyword cannot be used inside parallel keywords.
+        """
+        library_order = NAMESPACES.current.library_order
+        NAMESPACES.current.library_order = libraries
+        return library_order
+        
+    def _get_var(self, name):
+        if NAMESPACES.current.variables.has_key(name):
+            return NAMESPACES.current.variables[lib]
+        return name
+    
     def get_time(self, format='timestamp'):
         """Returns the current time in the requested format. 
         
