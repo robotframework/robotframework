@@ -1,0 +1,11 @@
+"* Setting *"	"* Value *"	"* Value *"	"* Value *"	"* Value *"	"* Value *"
+Library	TestLibrary.py	Library1	WITH NAME	Library1
+Library	TestLibrary.py	Library2	WITH NAME	Library2
+										
+"* Test Case *"	"* Action *"	"* Argument *"	"* Argument *"	"* Argument *"	"* Argument *"
+Default Library Order Should Be Suite Specific
+	Using Keyword Existing In Multiple Libraries Should Fail
+					
+"* Keyword *"	"* Action *"	"* Argument *"	"* Argument *"	"* Argument *"	"* Argument *"
+Using Keyword Existing In Multiple Libraries Should Fail	
+	Run Keyword And Expect Error	Multiple keywords with name 'Get Name' found.\nGive the full name of the keyword you want to use.\nFound: 'Library1.Get Name' and 'Library2.Get Name'	Get Name
