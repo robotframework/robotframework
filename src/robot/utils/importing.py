@@ -95,7 +95,10 @@ def import_(name, type_='test library'):
             _raise_no_lib_in_module(type_, modname, fromlist[0])
         code = module_or_class
     if not isinstance(code, (ModuleType, ClassType, TypeType)):
-        _raise_invalid_type(type_, code)
+        if modname == classname:
+            code = module_or_class
+        else:
+            _raise_invalid_type(type_, code)
     try:
         source = module_or_class.__file__
         if not source:
