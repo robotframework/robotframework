@@ -30,12 +30,11 @@ def simple_import(path_to_module):
     if not os.path.exists(path_to_module):
         raise DataError(err_prefix + 'File does not exist')
     moddir, modname = _split_path_to_module(path_to_module)
-    sys.path.insert(0, moddir)
     try:
         try:
             module = __import__(modname)
             if normpath(moddir) != normpath(os.path.dirname(module.__file__)):
-                reload(module)
+                module = reload(module)
         except:
             raise DataError(err_prefix + get_error_message())
     finally:
@@ -64,57 +63,64 @@ def import_(name, type_='test library'):
     name 'MyLibrary'. 
     """
     if os.path.exists(name):
-        moddir, name = _split_path_to_module(name)
-        sys.path.insert(0, moddir)
-        pop_sys_path = True
+        inserted_to_path, name = _split_path_to_module(name)
     else:
-        pop_sys_path = False
-    if '.' in name:
-        parts = name.split('.')
-        modname = '.'.join(parts[:-1])
-        classname = parts[-1]
-        fromlist = [str(classname)]  # Unicode not generally accepted
-    else:
-        modname = name
-        classname = name
-        fromlist = []
+        inserted_to_path = None
     try:
-        try:
-            # It seems that we get class when importing java class from file system
-            # or from a default package of a jar file. Otherwise we get a module.
-            module_or_class = __import__(modname, {}, {}, fromlist)
-        except:
-            _raise_import_failed(type_, name)
+        code, module = _import(name, type_)
     finally:
-        if pop_sys_path:
+        if inserted_to_path:
             sys.path.pop(0)
-    try:
-        code = getattr(module_or_class, classname)
-    except AttributeError:
-        if fromlist:
-            _raise_no_lib_in_module(type_, modname, fromlist[0])
-        code = module_or_class
-    if not isinstance(code, (ModuleType, ClassType, TypeType)):
-        if modname == classname:
-            code = module_or_class
-        else:
-            _raise_invalid_type(type_, code)
-    try:
-        source = module_or_class.__file__
-        if not source:
-            raise AttributeError
-        dirpath, filename = os.path.split(os.path.abspath(source))
-        source = os.path.join(normpath(dirpath), filename)
-    except AttributeError:
-        # Java classes not packaged in a jar file do not have __file__. 
-        source = '<unknown>'
+    source = _get_module_source(module)
     return code, source
 
 
 def _split_path_to_module(path):
     moddir, modfile = os.path.split(os.path.abspath(path))
     modname = os.path.splitext(modfile)[0]
+    sys.path.insert(0, moddir)
     return moddir, modname
+
+def _import(name, type_):
+    modname, classname, fromlist = _get_import_params(name)
+    try:
+        # It seems that we get class when importing java class from file system
+        # or from a default package of a jar file. Otherwise we get a module.
+        imported = __import__(modname, {}, {}, fromlist)
+    except:
+        _raise_import_failed(type_, name)
+    try:
+        code = getattr(imported, classname)
+    except AttributeError:
+        if fromlist:
+            _raise_no_lib_in_module(type_, modname, fromlist[0])
+        code = imported
+    if not isinstance(code, (ModuleType, ClassType, TypeType)):
+        if fromlist:
+            _raise_invalid_type(type_, code)
+        else:
+            code = imported
+    return code, imported
+
+def _get_import_params(name):
+    if '.' not in name:
+        return name, name, []
+    parts = name.split('.')
+    modname = '.'.join(parts[:-1])
+    classname = parts[-1]
+    fromlist = [str(classname)]  # Unicode not generally accepted
+    return modname, classname, fromlist
+
+def _get_module_source(module):
+    try:
+        source = module.__file__
+        if not source:
+            raise AttributeError
+    except AttributeError:
+        # Java classes not packaged in a jar file do not have __file__. 
+        return '<unknown>'
+    dirpath, filename = os.path.split(os.path.abspath(source))
+    return os.path.join(normpath(dirpath), filename)
 
 def _raise_import_failed(type_, name):
     error_msg, error_details = get_error_details()
