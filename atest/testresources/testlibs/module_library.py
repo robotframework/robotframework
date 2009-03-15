@@ -45,3 +45,8 @@ two_arguments_from_class = notlib.two_arguments
 
 lambda_keyword = lambda arg: int(arg) + 1
 lambda_keyword_with_two_args = lambda x, y: int(x) / int(y)
+
+
+def module_library():
+    return "It should be OK to have an attribute with same name as the module"
+
