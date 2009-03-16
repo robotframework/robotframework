@@ -176,16 +176,20 @@ class _DocHelper:
         ret = ['']
         for line in doc.splitlines():
             line = line.strip()
-            if line == '' and ret[-1] != '':
-                ret.append('\n\n')
-            elif self._list_or_table_regexp.search(line) and ret[-1] != '':
-                ret.append('\n')
-            elif ret[-1].startswith('| ') and ret[-1].endswith(' |'):
-                ret.append('\n')
-            elif ret[-1] != '':
-                ret.append(' ')
+            ret.append(self._get_doc_line_separator(line, ret[-1]))
             ret.append(line)
         return ''.join(ret)
+            
+    def _get_doc_line_separator(self, line, prev):
+        if line == '' and prev != '':
+            return '\n\n'
+        elif self._list_or_table_regexp.search(line) and prev != '':
+            return '\n'
+        elif prev.startswith('| ') and prev.endswith(' |'):
+            return '\n'
+        elif prev != '':
+            return ' '
+        return ''
 
     def _get_htmldoc(self, doc):
         doc = utils.html_escape(doc, formatting=True)
