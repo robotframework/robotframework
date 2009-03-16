@@ -181,15 +181,15 @@ class _DocHelper:
         return ''.join(ret)
             
     def _get_doc_line_separator(self, line, prev):
+        if prev == '':
+            return ''
         if line == '' and prev != '':
             return '\n\n'
-        elif self._list_or_table_regexp.search(line) and prev != '':
+        if self._list_or_table_regexp.search(line) and prev != '':
             return '\n'
-        elif prev.startswith('| ') and prev.endswith(' |'):
+        if prev.startswith('| ') and prev.endswith(' |'):
             return '\n'
-        elif prev != '':
-            return ' '
-        return ''
+        return ' '
 
     def _get_htmldoc(self, doc):
         doc = utils.html_escape(doc, formatting=True)
