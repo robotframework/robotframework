@@ -10,7 +10,7 @@ kw 5	[ documentation ]	foo bar `kw`.\n baa `${a1}` alskdj alskdjlajd
 	...	askf laskdjf asldkfj alsdkfj alsdkfjasldkfj 
 	...	askf laskdjf _asldkfj_ alsdkfj alsdkfjasldkfj 
 	...	askf *laskdjf* asldkfj alsdkfj alsdkfjasldkfj 
-	...	http://foo.bar\n\n
+	...	http://foo.bar\n
 	...	- aaa\n
 	...	- bbb\n
 	...	\n

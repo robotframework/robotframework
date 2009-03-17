@@ -189,6 +189,8 @@ class _DocHelper:
             return '\n'
         if prev.startswith('| ') and prev.endswith(' |'):
             return '\n'
+        if self.type == 'resource':
+            return '\n\n'
         return ' '
 
     def _get_htmldoc(self, doc):
@@ -263,7 +265,11 @@ class ResourceDoc(PythonLibraryDoc):
 
     
 class _BaseKeywordDoc(_DocHelper):
-    
+
+    def __init__(self, library):
+        self.lib = library
+        self.type = library.type
+        
     def __cmp__(self, other):
         return cmp(self.name, other.name)
     
@@ -279,11 +285,11 @@ class _BaseKeywordDoc(_DocHelper):
 class KeywordDoc(_BaseKeywordDoc):
 
     def __init__(self, handler, library):
+        _BaseKeywordDoc.__init__(self, library)
         self.name = handler.name
         self.args = self._get_args(handler) 
         self.doc = self._process_doc(handler.doc)
         self.shortdoc = handler.shortdoc
-        self.lib = library
 
     def _get_args(self, handler):
         required, defaults, varargs = self._parse_args(handler)
@@ -368,12 +374,11 @@ if utils.is_jython:
     class JavaKeywordDoc(_BaseKeywordDoc):
         # TODO: handle keyword default values and varargs.
         def __init__(self, method, library):
+            _BaseKeywordDoc.__init__(self, library)
             self.name = utils.printable_name(method.name(), True)
             self.args = [ param.name() for param in method.parameters() ]
             self.doc = self._process_doc(method.getRawCommentText())
             self.shortdoc = self.doc and self.doc.splitlines()[0] or ''
-            self.lib = library
-
 
         
 DOCUMENT_TEMPLATE = '''<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
