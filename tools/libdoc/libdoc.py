@@ -183,9 +183,9 @@ class _DocHelper:
     def _get_doc_line_separator(self, line, prev):
         if prev == '':
             return ''
-        if line == '' and prev != '':
+        if line == '':
             return '\n\n'
-        if self._list_or_table_regexp.search(line) and prev != '':
+        if self._list_or_table_regexp.search(line):
             return '\n'
         if prev.startswith('| ') and prev.endswith(' |'):
             return '\n'
