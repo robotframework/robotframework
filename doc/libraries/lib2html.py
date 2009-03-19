@@ -5,6 +5,7 @@
 Libraries:
   BuiltIn (bu)
   Collections (co)
+  Dialogs (di)
   OperatingSystem (op)
   Screenshot (sc)
   String (st)
