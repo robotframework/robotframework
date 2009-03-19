@@ -14,33 +14,43 @@
 
 
 """Dialogs is a test library that provides means for pausing the test execution
-and asking for user input"""
+and asking for user input.
+"""
+
+import sys
+try:
+    import robot
+    ROBOT_LIBRARY_VERSION = robot.utils.get_version()
+    del robot
+except ImportError:
+    pass
+
+
+DIALOG_TITLE = 'Robot Framework'
 
 
 def pause_execution(message='Test execution paused. Press OK to continue.'):
-    """Pauses the test execution and shows dialog with text `message`. """
+    """Pauses the test execution and shows dialog with the text `message`. """
     _pause_execution(message)
 
-def execute_manual_step(message='Set keyword status', error='Execution failed'):
-    """Pauses the test execution and shows a dialog with text `message`.
+def execute_manual_step(message, default_error=''):
+    """Pauses the test execution until user sets the keyword status.
 
-    User can choose to pass or fail the test. In case of failing the test,
-    additional dialog is opened for defining the error message. `error` is the
-    default error message.
+    `message` is the instruction shown in the dialog. User can select
+    PASS or FAIL, and in the latter case an additional dialog is
+    opened for defining the error message. `default_error` is the
+    possible default value in the error message dialog.
     """
-    _execute_manual_step(message, error)
+    _execute_manual_step(message, default_error)
 
-def get_value_from_user(message='Give value:', default=''):
-    """Pauses the test execution and asks user to input value.
+def get_value_from_user(message, default_value=''):
+    """Pauses the test execution and asks user to input a value.
 
-    `message` is the instruction to user. `default` is the default value of the
-    input field.
+    `message` is the instruction shown in the dialog. `default_value` is the
+    possible default value in the input field.
     """
-    return _get_value_from_user(message, default)
+    return _get_value_from_user(message, default_value)
 
-
-import sys
-DIALOG_TITLE = 'Robot Framework'
 
 if sys.platform.startswith('java'):
 
@@ -51,11 +61,11 @@ if sys.platform.startswith('java'):
     def _pause_execution(message):
         showMessageDialog(None, message, DIALOG_TITLE, PLAIN_MESSAGE)
 
-    def _execute_manual_step(message, error):
+    def _execute_manual_step(message, default_error):
         status = showOptionDialog(None, message, DIALOG_TITLE, YES_NO_OPTION,
                                   PLAIN_MESSAGE, None, ['PASS', 'FAIL'], None)
         if status != 0:
-            msg = _get_value_from_user('Give error message:', 'Failed') 
+            msg = _get_value_from_user('Give error message:', default_error) 
             raise AssertionError(msg)
 
     def _get_value_from_user(message, default):
@@ -78,14 +88,15 @@ else:
     def _pause_execution(message):
         tkMessageBox.showinfo(DIALOG_TITLE, message)
 
-    def _execute_manual_step(message, error):
-        message += '\n\nYes means PASS, No means FAIL'
+    def _execute_manual_step(message, default_error):
+        message += '\n\n<Yes> means PASS and <No> means FAIL.'
         if not tkMessageBox.askyesno(DIALOG_TITLE, message):
-            msg = _get_value_from_user('Give error message:', 'Failed')
+            msg = _get_value_from_user('Give error message:', default_error)
             raise AssertionError(msg)
 
     def _get_value_from_user(message, default):
-        value = tkSimpleDialog.askstring(DIALOG_TITLE, message, initialvalue=default)
+        value = tkSimpleDialog.askstring(DIALOG_TITLE, message,
+                                         initialvalue=default)
         if value is None:
             raise ValueError('No value provided by user')    
         return value
