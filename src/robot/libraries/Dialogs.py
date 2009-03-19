@@ -13,8 +13,12 @@
 #  limitations under the License.
 
 
-"""Dialogs is a test library that provides means for pausing the test execution
-and asking for user input.
+"""A test library providing dialogs for interacting with users.
+
+Dialogs is a test library that provides means for pausing the test
+execution and getting input from users. The dialogs are slightly
+different depending on are tests run on Python or Jython but they
+provide the same functionality.
 """
 
 import sys
@@ -39,7 +43,7 @@ def execute_manual_step(message, default_error=''):
     `message` is the instruction shown in the dialog. User can select
     PASS or FAIL, and in the latter case an additional dialog is
     opened for defining the error message. `default_error` is the
-    possible default value in the error message dialog.
+    possible default value shown in the error message dialog.
     """
     _execute_manual_step(message, default_error)
 
@@ -47,7 +51,7 @@ def get_value_from_user(message, default_value=''):
     """Pauses the test execution and asks user to input a value.
 
     `message` is the instruction shown in the dialog. `default_value` is the
-    possible default value in the input field.
+    possible default value shown in the input field.
     """
     return _get_value_from_user(message, default_value)
 
