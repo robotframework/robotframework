@@ -1,9 +1,0 @@
-*Settings*
-Library	Dialog
-
-*test cases*
-Pause Execution	Pause Execution	Please pull the plug and press Ok
-Execute Manual Step	Execute Manual Step	Please replace the plug
-Get Value From User	${value} =	Get Value From User
-
-
