@@ -31,10 +31,8 @@ class TestNormalizing(unittest.TestCase):
                 inputs.append((base, exp))
                 inputs.append((base[:2], exp))
                 inputs.append((base + '\\foo\\..\\.\\BAR\\\\', exp + 'bar'))
-                
-        common = [ ('http://foo', 'http://foo'),
-                   ('https://FOO/.', 'https://FOO/.') ]
-        for inp, exp in inputs + common:
+
+        for inp, exp in inputs:
             assert_equal(normpath(inp), exp, inp)
     
     def test_normalize_with_defaults(self):

@@ -187,18 +187,6 @@ class TestMiscUtils(unittest.TestCase):
         assert_equal(act1, exp1, 'Wrong pass percentage' + inp_msg)
         assert_equal(act2, exp2, 'Wrong fail percentage' + inp_msg)
 
-    def test_is_url(self):
-        urls = [ 'http://ser.ver', 'http://ser.ver/path', 'http://s.v/p/f.ext',
-                 'https://ser.ver/path', 'HTTP://ser.ver/path', 'ftp://foo/bar',
-                 'classpath://my/path', 'foo://foo/bar' ]
-        not_urls = [ 'file.txt', 'path/file.txt', 'path\\file.txt', 
-                     '/tmp/file.txt', 'c:\\temp\\file.txt', 'c:/temp/file.txt',
-                     '/tmp/p/f.ext', 'c:\\temp\\p\\f.ext', 'c:/temp/p/f.ext' ]
-        for url in urls:
-            assert_true(is_url(url), url)
-        for not_url in not_urls:
-            assert_false(is_url(not_url), not_url)
-
 
 if __name__ == "__main__":
     unittest.main()
