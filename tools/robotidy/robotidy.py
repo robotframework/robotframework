@@ -96,6 +96,7 @@ import glob
 from robot.parsing import RawData, rawdatatables, rawdata
 from robot.output import SystemLogger
 from robot.errors import DataError, Information
+from robot.variables import is_scalar_var
 from robot import utils
 
 rawdata.PROCESS_CURDIR = False
@@ -352,7 +353,15 @@ class Variables:
 class Keyword:
 
     def __init__(self, data):
+        if self._is_repeat_keyword(data[0]):
+            data.insert(0, 'Repeat Keyword')
         self._data = data
+
+    def _is_repeat_keyword(self, repeat):
+        if not repeat.lower().endswith('x'):
+            return False
+        repeat = repeat[:-1].strip()
+        return repeat.isdigit() or is_scalar_var(repeat)
             
     def serialize(self, serializer):
         serializer.keyword(self._data)
