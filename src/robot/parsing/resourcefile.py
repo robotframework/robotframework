@@ -28,9 +28,19 @@ class ResourceFile:
         rawdata = RawData(self.path, syslog)
         if rawdata.get_type() != rawdata.RESOURCE:
             self._raise_not_resource(rawdata)
-        self.imports = self._get_import_settings(rawdata.settings)
         self.user_keywords = UserHandlerList(rawdata.keywords)
         self.variables = rawdata.variables
+        self.imports = []
+        self.doc = ''
+        for item in rawdata.settings:
+            if utils.eq_any(item.name, ['Library', 'Resource', 'Variables']):
+                self.imports.append(ImportSetting(item))
+            elif utils.eq(item.name, 'Documentation'):
+                self.doc = ' '.join(item.value)
+            else:
+                msg = "Only settings 'Library', 'Resource', 'Variables' and " \
+                      + "'Documentation' allowed in resource files. Found: %s"
+                item.report_invalid_syntax(msg % item.name)
     
     def _raise_not_resource(self, rawdata):
         if rawdata.get_type() == rawdata.EMPTY:
@@ -38,14 +48,3 @@ class ResourceFile:
         else:
             msg = "Parsed file '%s' is not a resource file"
         raise DataError(msg % rawdata.source)
-
-    def _get_import_settings(self, rawsettings):
-        imports = []
-        for item in rawsettings:
-            if utils.eq_any(item.name, ['Library', 'Resource', 'Variables']):
-                imports.append(ImportSetting(item))
-            else:
-                item.report_invalid_syntax("Only settings 'Library', 'Resource' "
-                                           "and 'Variables' allowed in resource "
-                                           "files. Found: %s" % item.name)
-        return imports

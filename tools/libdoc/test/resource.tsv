@@ -1,3 +1,7 @@
+*setting*
+Documentation	This resource file has documentation.
+...	And it is even set in multiple cells.
+
 *keyword*
 kw	[Documentation]	foo bar `kw 2`.
 	noop

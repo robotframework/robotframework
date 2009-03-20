@@ -32,7 +32,9 @@ def PublicUserLibrary(path, syslog=None):
     if syslog is None:
         syslog = SystemLogger()
     resource = ResourceFile(path, syslog)
-    return UserLibrary(resource.user_keywords, path)
+    ret = UserLibrary(resource.user_keywords, path)
+    ret.doc = resource.doc
+    return ret
 
 
 class UserLibrary(BaseLibrary):

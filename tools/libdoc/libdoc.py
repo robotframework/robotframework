@@ -243,9 +243,6 @@ class ResourceDoc(PythonLibraryDoc):
     
     type = 'resource'
         
-    def __init__(self, name, newname=None):
-        PythonLibraryDoc.__init__(self, name, newname=newname)
-
     def _import(self, path, args_are_ignored):
         return UserLibrary(self._find_resource_file(path))
 
@@ -257,8 +254,11 @@ class ResourceDoc(PythonLibraryDoc):
                 return os.path.join(dire, path)
         raise DataError("Resource file '%s' doesn't exist." % path)
     
-    def _get_doc(self, lib_is_ignored):
-        return "Documentation for resource file `%s`." % self.name
+    def _get_doc(self, resource):
+        doc = getattr(resource, 'doc', '')  # doc available only in 2.1+
+        if not doc:
+            doc = "Documentation for resource file `%s`." % self.name
+        return doc
     
     def _get_initializers(self, lib):
         return []
