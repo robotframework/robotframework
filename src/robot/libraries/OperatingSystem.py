@@ -148,9 +148,9 @@ class OperatingSystem:
         if stdout.endswith('\n'):
             stdout = stdout[:-1]
         try:
-            rc = process.close()   # May raise IOError at least in Windows
-        except:
-            rc = -1   # -1 is eventually turned into 255
+            rc = process.close()   
+        except IOError:  # Has occurred sometimes in Windows
+            rc = -1      # -1 is eventually turned into 255
         if rc is None: 
             rc = 0
         # In Windows (Python and Jython) return code is value returned by 
