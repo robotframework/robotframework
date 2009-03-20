@@ -724,7 +724,87 @@ arguments, all its constructors and their javadocs are shown.</p>
 <span class="prog">libdoc.py</span>. First line of the documentation (until the first
 <span class="code">\n</span>) is considered to be the short documentation similarly as
 with test libraries.</p>
+<p>Starting from Robot Framework 2.1 also the resource file itself can
+have <span class="opt">Documentation</span> in the Setting table for documenting the whole resource file.</p>
 <p>Possible variables in resource files are not documented.</p>
+<table border="1" class="example docutils">
+<caption>An example resource file</caption>
+<colgroup>
+<col width="17%" />
+<col width="46%" />
+<col width="38%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Setting</th>
+<th class="head">Value</th>
+<th class="head">Value</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>Documentation</td>
+<td>Resource file for demo purposes.\n</td>
+<td>&nbsp;</td>
+</tr>
+<tr><td>...</td>
+<td>This resource is only used in an example</td>
+<td>and it does't do anything useful.</td>
+</tr>
+</tbody>
+</table>
+<table border="1" class="example docutils">
+<colgroup>
+<col width="16%" />
+<col width="21%" />
+<col width="28%" />
+<col width="36%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Keyword</th>
+<th class="head">Action</th>
+<th class="head">Argument</th>
+<th class="head">Argument</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>My Keyword</td>
+<td>[Documentation]</td>
+<td>Does nothing</td>
+<td>&nbsp;</td>
+</tr>
+<tr><td>&nbsp;</td>
+<td>No Operation</td>
+<td>&nbsp;</td>
+<td>&nbsp;</td>
+</tr>
+<tr><td>&nbsp;</td>
+<td>&nbsp;</td>
+<td>&nbsp;</td>
+<td>&nbsp;</td>
+</tr>
+<tr><td>Your Keyword</td>
+<td>[Arguments]</td>
+<td>${arg}</td>
+<td>&nbsp;</td>
+</tr>
+<tr><td>&nbsp;</td>
+<td>[Documentation]</td>
+<td>Takes one argument and
+*does nothing* with
+it.\n</td>
+<td><div class="first last line-block">
+<div class="line">Example:\n</div>
+<div class="line">| Your Keyword | xxx |\n</div>
+<div class="line">| Your Keyword | yyy |\n</div>
+</div>
+</td>
+</tr>
+<tr><td>&nbsp;</td>
+<td>No Operation</td>
+<td>&nbsp;</td>
+<td>&nbsp;</td>
+</tr>
+</tbody>
+</table>
 </div>
 <div class="section" id="documentation-formatting">
 <h2><a class="toc-backref" href="#id15">Documentation formatting</a></h2>
@@ -785,7 +865,7 @@ regardless where keywords originated from.</p>
 </div>
 <div class="footer">
 <hr class="footer" />
-Generated on: 2009-01-28 23:16 UTC.
+Generated on: 2009-03-20 14:52 UTC.
 
 </div>
 </body>

@@ -238,7 +238,43 @@ Keywords in resource files can have documentation using
 :code:`\\n`) is considered to be the short documentation similarly as
 with test libraries.
 
+Starting from Robot Framework 2.1 also the resource file itself can
+have :opt:`Documentation` in the Setting table for documenting the whole resource file.
+
 Possible variables in resource files are not documented.
+
+
+.. table:: An example resource file
+   :class: example
+
+   +---------------+-----------------------------------------+----------------------------------+
+   |    Setting    |                  Value                  |               Value              |
+   +===============+=========================================+==================================+
+   | Documentation | Resource file for demo purposes.\\n     |                                  |
+   +---------------+-----------------------------------------+----------------------------------+
+   | ...           | This resource is only used in an example| and it does't do anything useful.|
+   +---------------+-----------------------------------------+----------------------------------+
+
+.. table:: 
+   :class: example
+
+   +--------------+------------------+------------------------+-------------------------------+
+   |    Keyword   |      Action      |         Argument       |            Argument           |
+   +==============+==================+========================+===============================+
+   | My Keyword   | [Documentation]  | Does nothing           |                               |
+   +--------------+------------------+------------------------+-------------------------------+
+   |              | No Operation     |                        |                               |
+   +--------------+------------------+------------------------+-------------------------------+
+   |              |                  |                        |                               |
+   +--------------+------------------+------------------------+-------------------------------+
+   | Your Keyword | [Arguments]      | ${arg}                 |                               |
+   +--------------+------------------+------------------------+-------------------------------+
+   |              | [Documentation]  | Takes one argument and | | Example:\\n                 |
+   |              |                  | \*does nothing\* with  | | \| Your Keyword \| xxx \|\\n|
+   |              |                  | it.\\n                 | | \| Your Keyword \| yyy \|\\n|
+   +--------------+------------------+------------------------+-------------------------------+
+   |              | No Operation     |                        |                               |
+   +--------------+------------------+------------------------+-------------------------------+
 
 
 Documentation formatting
