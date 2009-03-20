@@ -186,19 +186,16 @@ class Variables(utils.NormalizedDict):
     def set_from_file(self, path, args, syslog, overwrite=False):
         syslog.info("Importing varible file '%s' with args %s" % (path, args))
         args = utils.to_list(args)
-        if utils.is_url(path):
-            url = path
-            path = utils.download(path)
-        else:
-            url = None
         try:
             module = utils.simple_import(path)
             variables = self._get_variables_from_module(module, args)
             self._set_from_file(variables, overwrite)
         except:
-            self._raise_set_from_file_failed(path, url, args)
+            amsg = args and 'with arguments %s ' % utils.seq2str2(args) or ''
+            raise DataError("Processing variable file '%s' %sfailed: %s"
+                            % (path, amsg, utils.get_error_message()))
         return variables
-            
+                
     # This can be used with variables got from set_from_file directly to 
     # prevent importing same file multiple times
     def _set_from_file(self, variables, overwrite):
@@ -214,12 +211,6 @@ class Variables(utils.NormalizedDict):
             if overwrite or not utils.NormalizedDict.has_key(self, name):
                 self[name] = value
 
-    def _raise_set_from_file_failed(self, path, url, args):
-        msg = "Processing variable file '%s'" % (url is not None and url or path)
-        if args:
-            msg += " with arguments %s" % utils.seq2str2(args)
-        raise DataError("%s failed: %s" % (msg, utils.get_error_message()))
-                
     def set_from_variable_table(self, raw_variables):
         for rawvar in raw_variables:
             try:

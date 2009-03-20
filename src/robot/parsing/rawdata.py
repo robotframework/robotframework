@@ -50,13 +50,10 @@ _WHITESPACE_REGEXP = re.compile('\s+')
 def RawData(path, syslog, strip_comments=True):
     if path is None or os.path.isdir(path):
         return EmptyRawData(path)
+    if not os.path.isfile(path):
+        raise DataError("Data source '%s' does not exist." % path)
     try:
-        if utils.is_url(path):
-            datafile = urllib.urlopen(path)
-        elif not os.path.isfile(path):
-            raise DataError("Data source '%s' does not exist." % path)
-        else:
-            datafile = open(path, 'rb')
+        datafile = open(path, 'rb')
     except:
         raise DataError(utils.get_error_message())
     try:

@@ -17,10 +17,8 @@ import os
 import sys
 import re
 from UserDict import UserDict
-if os.name == 'java':
-    import java.io
-
-import misc
+if sys.platform.startswith('java'):
+    from java.io import File
 
 
 _WHITESPACE_REGEXP = re.compile('\s+')
@@ -29,7 +27,7 @@ if os.sep == '\\':
 else:
     try:
         _CASE_INSENSITIVE_FILESYSTEM = os.listdir('/tmp') == os.listdir('/TMP')
-    except:
+    except OSError:
         _CASE_INSENSITIVE_FILESYSTEM = False
 
 
@@ -60,8 +58,6 @@ def normpath(path, normcase=True):
     On case-insensitive file systems the path is also casenormalized
     (if normcase is True).
     """ 
-    if misc.is_url(path):
-        return path
     path = _absnorm(path)
     if normcase and _CASE_INSENSITIVE_FILESYSTEM:
         path = path.lower()
@@ -77,7 +73,7 @@ def _absnorm(path):
     try:
         path = os.path.abspath(path)
     except:
-        path = java.io.File(path).getAbsolutePath()
+        path = File(path).getAbsolutePath()
     return os.path.normpath(path)
 
 def _is_case_insensitive_filesystem():

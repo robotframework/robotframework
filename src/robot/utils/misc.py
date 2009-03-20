@@ -135,12 +135,6 @@ def download(url, directory=None):
     return downpath
     
 
-_is_url_re = re.compile('^\w{2,}://')
-
-def is_url(string):
-    return _is_url_re.search(string) is not None
-
-
 def plural_or_not(list_or_int):
     if is_integer(list_or_int):
         return list_or_int != 1 and "s" or ""

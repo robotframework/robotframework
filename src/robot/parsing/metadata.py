@@ -149,8 +149,6 @@ class ImportSetting:
     def _get_path(self, name, path, basedir):
         if name == 'Library' and not self._is_library_by_path(path, basedir):
             return path        
-        if utils.is_url(path) or utils.is_url(basedir):
-            return urlparse.urljoin(basedir, path.replace(os.sep, '/'))
         try:
             path = self._resolve_path(path.replace('/', os.sep), basedir)
         except DataError:
