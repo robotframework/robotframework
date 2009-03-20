@@ -147,13 +147,10 @@ class DirectorySuite(_BaseSuite):
             return RawData(path, syslog)
         syslog.info("Parsing test suite directory init file '%s'" % initfile)
         rawdata = RawData(initfile, syslog)
-        if rawdata.get_type() == rawdata.INITFILE:
+        if rawdata.get_type() in [rawdata.INITFILE, rawdata.EMPTY]:
             return rawdata
-        err = "Test suite directory initialization file '%s' contains " % initfile
-        if rawdata.get_type() == rawdata.TESTCASE:
-            syslog.error(err + 'test cases and is ignored.')
-        elif rawdata.get_type() == rawdata.EMPTY:
-            syslog.warn(err + 'no test data.')
+        syslog.error("Test suite directory initialization file '%s' "
+                     "contains test cases and is ignored." % initfile)
         return RawData(path, syslog)
             
     def _process_subsuites(self, paths, suitenames, syslog):
