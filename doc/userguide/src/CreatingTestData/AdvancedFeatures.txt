@@ -385,24 +385,24 @@ the keyword can have an optional postfix `times` or `x` to make the syntax easie
    \            Repeat Keyword  ${var}        Another KW    argument  \
    ===========  ==============  ============  ============  ========  ========
 
-
 Robot Framework also has an older special syntax for repeating a single keyword. Starting from
 Robot Framework 2.0.4 this syntax has been deprecated in favor of :name:`Repeat Keyword`, though, and it will be 
 removed altogether in 2.2 version. The example below shows how easy it is to convert test cases using
 the old syntax to use :name:`Repeat Keyword` instead.
 
-
 .. table:: Replacing deprecated repeating syntax with Repeat Keyword
    :class: example
 
-   ==================  ==============  ============  ============  ========  ========
-       Test Case           Action        Argument      Argument    Argument  Argument
-   ==================  ==============  ============  ============  ========  ========
-   Deprecated Syntax   10 x            Some Keyword  arg1          arg2      \
-   \                   \               \             \             \         \   
-   Same Functionality  Repeat Keyword  10 x          Some Keyword  arg1      arg2
-   ==================  ==============  ============  ============  ========  ========
+   ==================  ==============  ============  ============  ==========
+       Test Case           Action        Argument      Argument     Argument
+   ==================  ==============  ============  ============  ==========
+   Deprecated Syntax   10 x            My Keyword    argument          
+   \                   \               \             \             \       
+   Same Functionality  Repeat Keyword  10 x          My Keyword    argument
+   ==================  ==============  ============  ============  ==========
 
+.. tip:: Starting from Robot Framework 2.1 `robotidy.py`_ automatically
+         replaces the deprecated repeating syntax with :name:`Repeat Keyword`.
 
  
 Conditional execution
