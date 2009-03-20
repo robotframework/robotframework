@@ -26,7 +26,8 @@ for importing libraries, resources, and variables.
    +-----------------+------------------------------------------------------------------+
    | Variables       | Used for `taking variable files into use`_.                      |
    +-----------------+------------------------------------------------------------------+
-   | Documentation   | Used for specifying a `test suite documentation`_.               |
+   | Documentation   | Used for specifying a `test suite`__ or `resource file`__        |
+   |                 | documentation.                                                   |
    +-----------------+------------------------------------------------------------------+ 
    | Meta: <name>    | Used for setting `free test suite metadata`_.                    |
    +-----------------+------------------------------------------------------------------+
@@ -59,6 +60,9 @@ for importing libraries, resources, and variables.
    | Test Timeout    | Used for specifying a default `test case timeout`_.              |
    +-----------------+------------------------------------------------------------------+
  
+__ `Test suite documentation`_
+__ `Documenting resource files`_
+
   
 Test Case table
 ~~~~~~~~~~~~~~~

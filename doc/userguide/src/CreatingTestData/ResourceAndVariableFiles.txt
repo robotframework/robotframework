@@ -61,11 +61,11 @@ Resource file structure
 '''''''''''''''''''''''
 
 The higher-level structure of resource files is the same as that of
-test case files otherwise, but, of course, they cannot contain Test Case
-tables. Additionally, the Setting table in resource files can contain
-only import settings (:opt:`Library`, :opt:`Resource`, and
-:opt:`Variables`). The Variable table and Keyword table are used
-exactly the same way as in test case files.
+test case files otherwise, but, of course, they cannot contain Test
+Case tables. Additionally, the Setting table in resource files can
+contain only import settings (:opt:`Library`, :opt:`Resource`,
+:opt:`Variables`) and :opt:`Documentation`. The Variable table and
+Keyword table are used exactly the same way as in test case files.
 
 If several resource files have a user keyword with the same name, they
 must be used so that the `keyword name is prefixed with the resource
@@ -76,15 +76,38 @@ taken into use.
 
 __ `Handling keywords with same names`_
 
-.. table:: An example resource file 
+
+Documenting resource files
+''''''''''''''''''''''''''
+
+Keywords created in a resource file can be documented__ using
+:opt:`[Documentation]` setting. Starting from Robot Framework 2.1 also
+the resource file itself can have :opt:`Documentation` in the Setting
+table similarly as `test suites`__. 
+
+Both `libdoc.py`_ and `Robot IDE`_ use these documentations, and they
+are naturally available for anyone opening resource files.  The
+first line of the documentation of a keyword is logged when it is run,
+but otherwise resource file documentations are ignored during the test
+execution.
+
+__ `User keyword name and documentation`_
+__ `Test suite name and documentation`_
+
+
+Example resource file
+'''''''''''''''''''''
+
+.. table:: 
    :class: example
 
-   =========  ========================  =======  =======
-    Setting             Value            Value    Value
-   =========  ========================  =======  =======
-   Library    SeleniumLibrary           \        \
-   Resource   ${RESOURCES}/common.html  \        \
-   =========  ========================  =======  =======
+   =============  ========================  =======  =======
+      Setting               Value            Value    Value
+   =============  ========================  =======  =======
+   Documentation  An example resource file  \        \
+   Library        SeleniumLibrary           \        \
+   Resource       ${RESOURCES}/common.html  \        \
+   =============  ========================  =======  =======
 
 .. table::
    :class: example
@@ -101,10 +124,11 @@ __ `Handling keywords with same names`_
 .. table:: 
    :class: example
 
-   ===============  ===============  ==============  ==============  ============
-       Keyword         Action           Argument        Argument       Argument
-   ===============  ===============  ==============  ==============  ============
-   Open Login Page  Open Browser     ${LOGIN_URL}    ${BROWSER}      \
+   ===============  ===============  ==============  ==============  ========
+       Keyword         Action           Argument        Argument     Argument
+   ===============  ===============  ==============  ==============  ========
+   Open Login Page  [Documentation]  Opens browser   to login page
+   \                Open Browser     ${LOGIN_URL}    ${BROWSER}      \
    \                Title Should Be  Login Page      \               \ 
    \                \                \               \               \ 
    Input Name       [Arguments]      ${name}         \               \ 
@@ -112,8 +136,7 @@ __ `Handling keywords with same names`_
    \                \                \               \               \ 
    Input Password   [Arguments]      ${password}     \               \ 
    \                Input Text       password_field  ${password}     \
-   ===============  ===============  ==============  ==============  ============
-
+   ===============  ===============  ==============  ==============  ========
 
 
 Variable files
