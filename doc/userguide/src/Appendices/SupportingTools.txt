@@ -20,111 +20,80 @@ http://code.google.com/p/robotframework/wiki/SupportingTools.
 Library documentation tool
 ''''''''''''''''''''''''''
 
-`libdoc.py`__ is tool for generating HTML or XML documentation from keywords of
+`libdoc.py`_ is tool for generating HTML or XML documentation from keywords of
 a test library or a resource file.
-
-__ ../../tools/libdoc/doc/libdoc.html
-
 
 Test data documentation tool
 ''''''''''''''''''''''''''''
 
-`testdoc.py`__ is tool for generating high level documentation of a given test
+`testdoc.py`_ is tool for generating high level documentation of a given test
 suite, including the names of suites and tests as well as top-level keywords.
-
-__ ../../tools/testdoc/doc/testdoc.html
-
 
 Historical reporting tool
 '''''''''''''''''''''''''
 
-`risto.py`__ is a tool for generating graphs about historical statistics
+`risto.py`_ is a tool for generating graphs about historical statistics
 of test executions.
-
-__ ../../tools/ristopy/doc/ristopy.html
-
 
 Test data tidying tool
 ''''''''''''''''''''''
 
-`robotidy.py`__ is a tool for cleaning Robot Framework test data, changing test 
+`robotidy.py`_ is a tool for cleaning Robot Framework test data, changing test 
 data format between HTML and TSV and fixing inline comments to format supported
 by Robot IDE.
-
-__ ../../tools/robotidy/doc/robotidy.html
-
 
 Test result diffing tool
 ''''''''''''''''''''''''
 
-`robotdiff.py`__ is a tool for generating diff reports from Robot
+`robotdiff.py`_ is a tool for generating diff reports from Robot
 Framework output files.
-
-__ ../../tools/robotdiff/doc/robotdiff.html
-
 
 Execution time reporting tool
 '''''''''''''''''''''''''''''
 
-`times2csv.py`__ is a tool for generating start, end and elapsed
+`times2csv.py`_ is a tool for generating start, end and elapsed
 time information about suites, tests and keywords in CSV format.
-
-__ ../../tools/times2csv/doc/times2csv.html
-
 
 File viewing tool
 '''''''''''''''''
 
-`fileviewer.py`__ is a graphical tool implementing UNIX :prog:`tail` -like 
+`fileviewer.py`_ is a graphical tool implementing UNIX :prog:`tail` -like 
 functionality. It is especially designed to view `debug files`__.
 
-__ ../../tools/fileviewer/doc/fileviewer.html
 __ `Debug file`_
-
 
 One click installer
 '''''''''''''''''''
 
-`One click installer`__ is an `AutoIT`__ script that installs Robot
+`One click installer`_ is an `AutoIT`_ script that installs Robot
 Framework and its dependencies.
-
-__ ../../tools/oneclickinstaller/doc/oneclickinstaller.html
-__ http://www.autoitscript.com/autoit3/
-
 
 Test status checker tool
 ''''''''''''''''''''''''
 
-`statuschecker.py`__ is a tool for verifying that test case statuses
+`statuschecker.py`_ is a tool for verifying that test case statuses
 and messages and also keyword log messages are as expected.
-
-__ ../../tools/statuschecker/doc/statuschecker.html
 
 
 External tools
 ~~~~~~~~~~~~~~
 
-These tools are all available as separate external projects.
-
+These tools are developed as separate projects.
 
 Test data editing tool (Robot IDE)
 ''''''''''''''''''''''''''''''''''
 
 Robot IDE is a standalone tool for editing test data. It helps in
 creating, editing and maintaining of Robot Framework test data.
-The project pages are at http://code.google.com/p/robotframework-ride.
-
+The project pages are at http://code.google.com/p/robotframework-ride/.
 
 Manual test execution tool (mabot)
 ''''''''''''''''''''''''''''''''''
 
 :prog:`mabot` is a standalone tool for reporting manual test execution
 results.  It enables storing and reporting manual test cases along
-with automated Robot Framework test cases.
-
-More information will be added as soon as :prog:`mabot` project is
-made publicly available.
-
+with automated Robot Framework test cases. The project pages are at
+http://code.google.com/p/robotframework-mabot/.
 
 Tools for creating Java test libraries
 ''''''''''''''''''''''''''''''''''''''

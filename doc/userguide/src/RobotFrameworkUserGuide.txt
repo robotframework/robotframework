@@ -188,10 +188,19 @@ Appendices
 .. 5. Appendices
 
 .. _HTML formatting: `Documentation formatting`_
-.. _Robot IDE: `Test data editing tool (Robot IDE)`_
 .. _command line options: `All command line options`_
-.. _libdoc.py: `Library documentation tool`_
+.. _libdoc.py: ../../tools/libdoc/doc/libdoc.html
 .. _libdoc: `libdoc.py`_
+.. _testdoc.py: ../../tools/testdoc/doc/testdoc.html
+.. _risto.py: ../../tools/ristopy/doc/ristopy.html
+.. _robotidy.py: ../../tools/robotidy/doc/robotidy.html
+.. _robotdiff.py: ../../tools/robotdiff/doc/robotdiff.html
+.. _times2csv.py: ../../tools/times2csv/doc/times2csv.html
+.. _fileviewer.py: ../../tools/fileviewer/doc/fileviewer.html
+.. _One click installer: ../../tools/oneclickinstaller/doc/oneclickinstaller.html
+.. _statuschecker.py: ../../tools/statuschecker/doc/statuschecker.html
+.. _Robot IDE: `Test data editing tool (Robot IDE)`_
+.. _mabot: `Manual test execution tool (mabot)`_
 .. _javatools: `Tools for creating Java test libraries`_
 
 .. 6. Misc
@@ -212,3 +221,4 @@ Appendices
 .. _distutils: http://docs.python.org/dist/dist.html
 .. _setuptools: http://peak.telecommunity.com/DevCenter/setuptools
 .. _Easy Install: http://peak.telecommunity.com/DevCenter/EasyInstall
+.. _AutoIT: http://www.autoitscript.com/autoit3
