@@ -97,3 +97,11 @@ Examples::
   robotidy.py --fixcomments --inplace \*.html
 
 
+Fixing deprecated syntax for repeating keywords
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Robot Framework has an old special syntax for repeating a single
+keyword. This syntax has been deprecated in 2.0.4 version in favor of
+built-in :name:`Repeat Keyword`, and it will be removed altogether in
+2.2 version. :prog:`robotidy.py` automatically replaces the deprecated
+syntax with :name:`Repeat Keyword`.

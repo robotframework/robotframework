@@ -590,11 +590,19 @@ robotidy.py --fixcomments orig.html fixed.html
 robotidy.py --fixcomments --inplace \*.html
 </pre>
 </div>
+<div class="section" id="fixing-deprecated-syntax-for-repeating-keywords">
+<h2>Fixing deprecated syntax for repeating keywords</h2>
+<p>Robot Framework has an old special syntax for repeating a single
+keyword. This syntax has been deprecated in 2.0.4 version in favor of
+built-in <span class="name">Repeat Keyword</span>, and it will be removed altogether in
+2.2 version. <span class="prog">robotidy.py</span> automatically replaces the deprecated
+syntax with <span class="name">Repeat Keyword</span>.</p>
+</div>
 </div>
 </div>
 <div class="footer">
 <hr class="footer" />
-Generated on: 2008-09-22 13:12 UTC.
+Generated on: 2009-03-20 12:34 UTC.
 
 </div>
 </body>
