@@ -123,18 +123,6 @@ def get_temp_dir(extrapath=None):
     return tempdir
 
 
-def download(url, directory=None):
-    filename = posixpath.basename(url)
-    if directory is None:
-        directory = get_temp_dir('robot')
-    downpath = os.path.join(directory, filename)
-    try:
-        urllib.urlretrieve(url, downpath)
-    except:
-        raise DataError("Downloading '%s' failed: %s" % (url, get_error_message()))
-    return downpath
-    
-
 def plural_or_not(list_or_int):
     if is_integer(list_or_int):
         return list_or_int != 1 and "s" or ""

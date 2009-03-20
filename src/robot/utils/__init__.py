@@ -27,7 +27,7 @@ from normalizing import normalize, normalize_list, normpath, NormalizedDict
 from match import eq, eq_any, any_eq_any, matches, matches_any, any_matches, \
         contains, contains_any
 from misc import get_temp_dir, get_not_none, plural_or_not, get_link_path, \
-        get_doc, cygpath, printable_name_from_path, printable_name, download, \
+        get_doc, cygpath, printable_name_from_path, printable_name, \
         calc_percents, percents_to_widths, get_directory, seq2str, seq2str2
 from outputcapture import capture_output, release_output
 from robottime import get_timestamp, get_start_timestamp, format_time, \
