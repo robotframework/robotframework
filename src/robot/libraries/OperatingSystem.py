@@ -1174,35 +1174,32 @@ class OperatingSystem:
         absolute format (e.g. '/home/robot/file.txt'), set the `absolute`
         argument to any non-empty string.
 
-        If `pattern` is given, only items matching it are
-        returned. `pattern` and `pattern_type` arguments have same
-        semantics as with `Grep File` keyword.
+        If `pattern` is given, only items matching it are returned. By default
+        `pattern` is considered to be a simple glob pattern where '*' and '?'
+        can be used as wildcards (e.g. '*.txt' or 'file.???'). Using other
+        pattern types has been deprecated in Robot Framework 2.1. 
 
         Examples (using also other `List Directory` variants):
-        | @{items} = | List Directory          | ${TEMPDIR} |
-        | @{files} = | List Files In Directory | ${CURDIR} | *.txt | 
-        | @{files} = | List Files In Directory | ${CURDIR} | *.txt | case-insensitive | absolute | 
-        | @{dirs} = | List Directories In Directory | ${CURDIR} | ^.*backup$ | regexp | 
+        | @{items} = | List Directory           | ${TEMPDIR} |
+        | @{files} = | List Files In Directory  | /tmmp | *.txt | | absolute |
+        | ${count} = | Count Files In Directory | ${CURDIR} | ??? | 
         """
         items = self._list_dir(path, pattern, pattern_type, absolute)
-        for item in items:
-            self._info(item)
+        self._info('\n'.join(items))
         return items
 
     def list_files_in_directory(self, path, pattern=None,
                                 pattern_type='simple', absolute=False):
         """A wrapper for `List Directory` that returns only files."""
         files = self._list_files_in_dir(path, pattern, pattern_type, absolute)
-        for f in files:
-            self._info(f)
+        self._info('\n'.join(files))
         return files
     
     def list_directories_in_directory(self, path, pattern=None,
                                       pattern_type='simple', absolute=False):
         """A wrapper for `List Directory` that returns only directories."""
         dirs = self._list_dirs_in_dir(path, pattern, pattern_type, absolute)
-        for d in dirs: 
-            self._info(d)
+        self._info('\n'.join(dirs))
         return dirs
 
     def count_items_in_directory(self, path, pattern=None, pattern_type='simple'):
@@ -1244,6 +1241,12 @@ class OperatingSystem:
         if not os.path.isdir(path):
             raise DataError("Directory '%s' does not exist" % path)
         items = os.listdir(path)
+        if pattern_type == '':   # 'absolute' given and 'pat_type' left empty
+            pattern_type = 'simple'
+        if pattern_type != 'simple':
+            self._log("'pattern_type' argument of 'List Directory' keywords "
+                      "has been deprecated. In Robot Framework 2.2 all "
+                      "patterns are considered simple glob patterns.", "WARN")
         if pattern:
             items = _filter_lines(items, pattern, pattern_type)
         items.sort()
