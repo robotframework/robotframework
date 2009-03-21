@@ -135,6 +135,8 @@ class Output(AbstractLogger):
     def write(self, msg='', level='INFO', html=False):
         if self._debugfile is not None and self._is_logged(level, 'DEBUG'):
             self._debugfile.message(msg)
+        if level.upper() == 'WARN':
+            self.syslog.warn(msg)
         AbstractLogger.write(self, msg, level, html)
         
     def _write(self, msg):
