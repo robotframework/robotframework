@@ -560,7 +560,7 @@ Teardown</td>
 
 
 
-    </tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>${ANYDIR}</td><td>.*[/\\\\]</td><td></td><td></td><td></td></tr>
+    </tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>${ANYDIR}</td><td>.*[/\\\\]</td><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr>
 
 
 
@@ -6439,7 +6439,7 @@ Empty</td>
 
 
 
-      <td>FileShould Not&nbsp; Be&nbsp;Empty</td>
+      <td>File Should Not&nbsp; Be&nbsp;Empty</td>
 
 
 
@@ -6822,8 +6822,7 @@ File</td>
 
 
 
-      <td align="undefined" valign="undefined">Get
-and Check File</td>
+      <td align="undefined" valign="undefined">Verify File</td>
 
 
 
@@ -6835,7 +6834,7 @@ and Check File</td>
 
 
 
-      <td align="undefined" valign="undefined">\</td>
+      <td align="undefined" valign="undefined">${EMPTY}</td>
 
 
 
@@ -6909,8 +6908,7 @@ in\n3\nlines</td>
 
 
 
-      <td align="undefined" valign="undefined">Get
-and Check File</td>
+      <td align="undefined" valign="undefined">Verify File</td>
 
 
 
@@ -6942,7 +6940,7 @@ in\n3\nlines</td>
 
 
 
-    <tr>
+    <tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Create File With Encoding</td><td>Create And Verify FIle</td><td>Just normal ASCII</td><td>ASCII</td><td></td></tr><tr><td></td><td>Create And Verify FIle</td><td>Hyvää yötä!</td><td>UTF-8<br></td><td></td></tr><tr>
 
 
 
@@ -6954,19 +6952,19 @@ in\n3\nlines</td>
 
 
 
-      <td></td>
+      <td>Create And Verify FIle</td><td>Hyvää yötä!</td><td>ISO-8859-1</td>
 
 
 
 
 
-      <td></td>
+      
 
 
 
 
 
-      <td></td>
+      
 
 
 
@@ -6984,20 +6982,20 @@ in\n3\nlines</td>
 
 
 
-    <tr>
+    <tr><td></td><td>${russian} =</td><td>Evaluate</td><td>u'\\u0421\\u043F\\u0430\\u0441\\u0438\\u0431\\u043E'</td><td></td></tr><tr><td></td><td>Create And Verify FIle</td><td>${russian}</td><td>UTF-8</td><td></td></tr><tr><td></td><td>Create And Verify FIle</td><td>${russian}</td><td>ISO-8859-5</td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Create File Fails If Encoding Is Incorrect</td><td>[Documentation]</td><td>FAIL REGEXP:</td><td>Unicode(Encode|)Error: .*</td><td></td></tr><tr><td><br></td><td>Create File With Encoding</td><td>${TESTFILE}</td><td>Hyvää yötä!</td><td>ASCII</td></tr><tr><td></td><td align="undefined" valign="undefined"></td><td align="undefined" valign="undefined"></td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr>
 
 
 
 
 
       <td align="undefined" valign="undefined">Append
-File</td>
+To File</td>
 
 
 
 
 
-      <td>Create File</td>
+      <td>Append To File</td>
 
 
 
@@ -7016,7 +7014,7 @@ line\n</td>
 
 
 
-      <td align="undefined" valign="undefined">Append</td>
+      <td align="undefined" valign="undefined"><br></td>
 
 
 
@@ -7040,7 +7038,7 @@ line\n</td>
 
 
 
-      <td>Create File</td>
+      <td>Append To File</td>
 
 
 
@@ -7059,7 +7057,7 @@ line\n</td>
 
 
 
-      <td align="undefined" valign="undefined">Append</td>
+      <td align="undefined" valign="undefined">ASCII</td>
 
 
 
@@ -7083,8 +7081,7 @@ line\n</td>
 
 
 
-      <td align="undefined" valign="undefined">Get
-and Check File</td>
+      <td align="undefined" valign="undefined">Verify File</td>
 
 
 
@@ -7170,25 +7167,25 @@ line\n</td>
 
 
 
-      <td>[Document]</td>
+      <td>[Documentation]</td>
 
 
 
 
 
-      <td>FAIL</td>
+      <td>Testing deprecated feature</td>
 
 
 
 
 
-      <td>File '${TESTFILE}' exists</td>
+      <td>FAIL&nbsp;File '${TESTFILE}' exists</td><td><br></td>
 
 
 
 
 
-      <td></td>
+      
 
 
 
@@ -7393,8 +7390,7 @@ content</td>
 
 
 
-      <td align="undefined" valign="undefined">Get
-and Check File</td>
+      <td align="undefined" valign="undefined">Verify File</td>
 
 
 
@@ -7523,9 +7519,8 @@ File</td>
 
 
 
-      <td align="undefined" valign="undefined">Fail
-Unless File
-Exists</td>
+      <td align="undefined" valign="undefined">File
+Should Exist</td>
 
 
 
@@ -7610,8 +7605,7 @@ File</td>
 
 
 
-      <td align="undefined" valign="undefined">Fail
-If Exists</td>
+      <td align="undefined" valign="undefined">Should Not&nbsp;Exist</td>
 
 
 
@@ -7798,7 +7792,7 @@ File</td>
       <td align="undefined" valign="undefined"></td>
 
 
-      <td align="undefined" valign="undefined">Fail Unless File Exists</td>
+      <td align="undefined" valign="undefined">File Should Exist</td>
 
 
       <td align="undefined" valign="undefined">${TESTDIR}${/}myfile.txt</td>
@@ -7840,7 +7834,7 @@ File</td>
       <td align="undefined" valign="undefined"></td>
 
 
-      <td align="undefined" valign="undefined">Ints Equal</td>
+      <td align="undefined" valign="undefined">Should Be Equal As Integers</td>
 
 
       <td align="undefined" valign="undefined">${count}</td>
@@ -7882,7 +7876,7 @@ File</td>
       <td align="undefined" valign="undefined"></td>
 
 
-      <td align="undefined" valign="undefined">Fail Unless Dir Empty</td>
+      <td align="undefined" valign="undefined">Directory Should Be Empty</td>
 
 
       <td align="undefined" valign="undefined">${TESTDIR}</td>
@@ -8026,7 +8020,7 @@ File Fails</td>
 
 
 
-      <td>[Document]</td>
+      <td>[Documentation]</td>
 
 
 
@@ -8333,8 +8327,7 @@ Files</td>
 
 
 
-      <td align="undefined" valign="undefined">Fail
-If Exists</td>
+      <td align="undefined" valign="undefined">Should Not&nbsp;Exist</td>
 
 
 
@@ -8376,8 +8369,7 @@ If Exists</td>
 
 
 
-      <td align="undefined" valign="undefined">Fail
-If Exists</td>
+      <td align="undefined" valign="undefined">Should Not&nbsp;Exist</td>
 
 
 
@@ -8419,8 +8411,7 @@ If Exists</td>
 
 
 
-      <td align="undefined" valign="undefined">Fail
-If Exists</td>
+      <td align="undefined" valign="undefined">Should Not&nbsp;Exist</td>
 
 
 
@@ -10548,8 +10539,7 @@ If Exists</td>
 
 
 
-      <td align="undefined" valign="undefined">Get
-and Check File</td>
+      <td align="undefined" valign="undefined">Verify File</td>
 
 
 
@@ -10857,8 +10847,7 @@ If Exists</td>
 
 
 
-      <td align="undefined" valign="undefined">Get
-and Check File</td>
+      <td align="undefined" valign="undefined">Verify File</td>
 
 
 
@@ -10988,8 +10977,7 @@ If Exists</td>
 
 
 
-      <td align="undefined" valign="undefined">Get
-and Check File</td>
+      <td align="undefined" valign="undefined">Verify File</td>
 
 
 
@@ -11222,8 +11210,7 @@ given<br>
 
 
 
-      <td align="undefined" valign="undefined">Get
-and Check File</td>
+      <td align="undefined" valign="undefined">Verify File</td>
 
 
 
@@ -11364,8 +11351,7 @@ name&nbsp;given<br>
 
 
 
-      <td align="undefined" valign="undefined">Get
-and Check File</td>
+      <td align="undefined" valign="undefined">Verify File</td>
 
 
 
@@ -11931,8 +11917,7 @@ rename)</td>
 
 
 
-      <td align="undefined" valign="undefined">Get
-and Check File</td>
+      <td align="undefined" valign="undefined">Verify File</td>
 
 
 
@@ -11974,8 +11959,7 @@ and Check File</td>
 
 
 
-      <td align="undefined" valign="undefined">Get
-and Check File</td>
+      <td align="undefined" valign="undefined">Verify File</td>
 
 
 
@@ -12017,8 +12001,7 @@ and Check File</td>
 
 
 
-      <td align="undefined" valign="undefined">Get
-and Check File</td>
+      <td align="undefined" valign="undefined">Verify File</td>
 
 
 
@@ -12235,8 +12218,7 @@ dir</td>
 
 
 
-      <td align="undefined" valign="undefined">Get
-and Check File</td>
+      <td align="undefined" valign="undefined">Verify File</td>
 
 
 
@@ -12278,8 +12260,7 @@ and Check File</td>
 
 
 
-      <td align="undefined" valign="undefined">Get
-and Check File</td>
+      <td align="undefined" valign="undefined">Verify File</td>
 
 
 
@@ -12321,8 +12302,7 @@ and Check File</td>
 
 
 
-      <td align="undefined" valign="undefined">Get
-and Check File</td>
+      <td align="undefined" valign="undefined">Verify File</td>
 
 
 
@@ -12491,8 +12471,7 @@ with missing intermediate dirs</td>
 
 
 
-      <td align="undefined" valign="undefined">Get
-and Check File</td>
+      <td align="undefined" valign="undefined">Verify File</td>
 
 
 
@@ -12534,8 +12513,7 @@ and Check File</td>
 
 
 
-      <td align="undefined" valign="undefined">Get
-and Check File</td>
+      <td align="undefined" valign="undefined">Verify File</td>
 
 
 
@@ -12577,8 +12555,7 @@ and Check File</td>
 
 
 
-      <td align="undefined" valign="undefined">Get
-and Check File</td>
+      <td align="undefined" valign="undefined">Verify File</td>
 
 
 
@@ -12861,14 +12838,13 @@ Temps</td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></t
 
 
 
-    <tr>
+    <tr><td align="undefined" valign="undefined">Create And Verify File</td><td>[ Arguments ]</td><td>${content}</td><td>${encoding}</td><td><br></td></tr><tr><td></td><td>Create File With Encoding</td><td>${TESTFILE}</td><td>${content}</td><td>${encoding}</td></tr><tr><td></td><td>Verify File</td><td>${TESTFILE}</td><td>${content}</td><td>${encoding}</td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr>
 
 
 
 
 
-      <td align="undefined" valign="undefined">Get
-And Check File</td>
+      <td align="undefined" valign="undefined">Verify File</td>
 
 
 
@@ -12892,7 +12868,7 @@ And Check File</td>
 
 
 
-      <td></td>
+      <td>${encoding}=UTF-8</td>
 
 
 
@@ -12916,14 +12892,13 @@ And Check File</td>
 
 
 
-      <td align="undefined" valign="undefined">${content}</td>
+      <td align="undefined" valign="undefined">${content} =</td>
 
 
 
 
 
-      <td align="undefined" valign="undefined">Get
-File</td>
+      <td align="undefined" valign="undefined">Log File</td>
 
 
 
@@ -12935,7 +12910,7 @@ File</td>
 
 
 
-      <td></td>
+      <td>${encoding}</td>
 
 
 
@@ -12959,8 +12934,7 @@ File</td>
 
 
 
-      <td align="undefined" valign="undefined">Fail
-Unless Equal</td>
+      <td align="undefined" valign="undefined">Should Be Equal</td>
 
 
 
