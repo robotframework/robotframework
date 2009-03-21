@@ -319,7 +319,7 @@ class OperatingSystem:
         """Returns the contents of a specified file.
         
         This keyword reads the specified file and returns the contents.
-        `encoding` defines the encoding of the file. By default, the value is 
+        `encoding` defines the encoding of the file. By default the value is 
         'UTF-8', which means that UTF-8 and ASCII-encoded files are read
         correctly.
         """
@@ -383,7 +383,7 @@ class OperatingSystem:
         level. 
         """
         content = self.get_file(path, encoding)
-        self._info('File content:\n' + content)
+        self._info(content)
         return content
         
     # File and directory existence
@@ -613,31 +613,69 @@ class OperatingSystem:
     
     # Creating and removing files and directory
 
-    def create_file(self, path, content='', mode='overwrite'):
+    # TODO: In RF 2.2 replace create_file with create_file_with_encoding and
+    # deprecate the latter. Update also doc of append_to_file.
+
+    def create_file(self, path, content='', mode='DEPRECATED'):
         """Creates a file to the given path with the given content.
         
-        If the `mode` contains any of the strings 'False', 'No', 'Don't'
-        (case-insensitive, so e.g. 'Do not' also works) the keyword fails,
-        if the file already exists and the file is not overwritten. If it
-        contains the word 'Append' (case-insensitive), the content is appended.
-        Otherwise the file is overwritten.
+        Old `mode` argument is deprecated in Robot Framework 2.1 and will be
+        replaced with `encoding` in 2.2. Use new `Append To File` keyword if
+        there is a need to append to a file, and use `File Should Not Exist`
+        if you want to avoid overwriting existing files.
+
+        In Robot Framework 2.1 this keyword always uses UTF-8 encoding
+        and `Create File With Encoding` can be used if other encodings
+        are needed. Earlier versions used more limiting ASCII encoding.
         
         If the directory where to create file does not exist it, and possible
         intermediate missing directories, are created.
         """
+        if mode == 'DEPRECATED':
+            open_mode = 'w'
+        else:
+            self._log("'mode' argument for 'Create File' is deprecated and "
+                      "will be replaced with 'encoding' in RF 2.2.", "WARN")
+            mode = mode.upper()
+            if 'FALSE' in mode or 'NO' in mode or "DON'T" in mode:
+                self.file_should_not_exist(path)
+            open_mode = 'APPEND' in mode and 'a' or 'w'
+        path = self._write_to_file(path, content, 'UTF-8', open_mode)
+        self._info("Created file '%s'" % path)
+        
+    def create_file_with_encoding(self, path, content='', encoding='UTF-8'):
+        """Writes the given contend to the specified file.
+
+        Use `Append To File` if you want to append to an existing file.
+        
+        If the directory where to create file does not exist it, and possible
+        intermediate missing directories, are created.
+
+        This is a temporary keyword added in Robot Framework 2.1 and will be
+        deprecated in 2.2 when `Create File` gets `encoding` argument. 
+        """
+        path = self._write_to_file(path, content, encoding, 'w')
+        self._info("Created file '%s'" % path)
+
+    def append_to_file(self, path, content, encoding='UTF-8'):
+        """Appends the given contend to the specified file.
+
+        If the file does not exists, this keyword works exactly the same
+        way as `Create File With Encoding`.
+        """
+        path = self._write_to_file(path, content, encoding, 'a')
+        self._info("Appended to file '%s'" % path)
+
+    def _write_to_file(self, path, content, encoding, mode):
         path = self._absnorm(path)
-        mode = mode.upper()
-        if 'FALSE' in mode or 'NO' in mode or "DON'T" in mode:
-            self.file_should_not_exist(path)
-        open_mode = 'APPEND' in mode and 'a' or 'w'
         parent = os.path.dirname(path)
         if not os.path.exists(parent):
             os.makedirs(parent)
-        f = open(path, open_mode)
-        f.write(content)
+        f = open(path, mode+'b')
+        f.write(content.encode(encoding))
         f.close()
-        self._info("Created file '%s'" % path)
-        
+        return path
+
     def remove_file(self, path):
         """Removes a file with the given path.
         
