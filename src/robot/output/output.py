@@ -145,45 +145,24 @@ class Output(AbstractLogger):
         for msg, level, html in _OutputSplitter(output).messages:
             self.write(msg, level, html)
             
-    def _split_output(self, output):
-        output = output.strip()
-        if output == '':
-            return []
-        tokens = self._split_output_regexp.split(output)
-        # No levels, return output with INFO level
-        if len(tokens) == 1:
-            return [ (output, 'INFO') ]
-        # Output started with a level
-        if tokens[0] == '':
-            tokens = tokens[1:]
-        # No level in the beginning, default first msg to INFO
-        else:
-            tokens.insert(0, '*INFO*')
-        ret = []
-        for i in range(0, len(tokens), 2):
-            level = tokens[i][1:-1]    # remove '*'s around level
-            msg = tokens[i+1].strip()  
-            ret.append((msg,level))
-        return ret
-    
 
 class _OutputSplitter:
     
-    _split_output_regexp = re.compile('^(\*(?:%s|HTML)\*)' % '|'.join(LEVELS.keys()),
+    _split_output_regexp = re.compile('^(\*(?:%s|HTML)\*)' % '|'.join(LEVELS),
                                       re.MULTILINE)
     
     def __init__(self, output):
-        output = output.strip()
-        if output == '':
-            self.messages = []
-        else:
-            tokens = self._split_output_regexp.split(output)
-            if len(tokens) == 1:
-                self.messages = [ (output, 'INFO', False) ]
-            else:
-                self.messages = self._get_messages(tokens)
+        self.messages = self._get_messages(output.strip())
+
+    def _get_messages(self, output):
+        if not output:
+            return []
+        tokens = self._split_output_regexp.split(output)
+        if len(tokens) == 1:
+            return [ (output, 'INFO', False) ]
+        return self._split_messages(tokens)
             
-    def _get_messages(self, tokens):
+    def _split_messages(self, tokens):
         # Output started with a level
         if tokens[0] == '':
             tokens = tokens[1:]
@@ -192,7 +171,7 @@ class _OutputSplitter:
             tokens.insert(0, '*INFO*')
         messages = []
         for i in range(0, len(tokens), 2):
-            level, html = self._get_level_and_html(tokens[i][1:-1])    # remove '*'s around level
+            level, html = self._get_level_and_html(tokens[i][1:-1])
             msg = tokens[i+1].strip()  
             messages.append((msg,level, html))
         return messages
