@@ -332,43 +332,7 @@ class OperatingSystem:
     
     def grep_file(self, path, pattern, pattern_type='literal string', 
                  encoding='UTF-8'):
-        """*DEPRECATED* Use `Get File` with `BuiltIn.Grep` instead. Will be removed in RF 2.2.
-
-        This keyword reads the specified file and returns only lines
-        matching the `pattern`. `encoding` specifies the encoding of the
-        file the same way as with `Get File` keyword.
-        
-        `pattern_type` defines how the given pattern is interpreted as
-        explained below. `pattern_type` argument is case-insensitive
-        and may contain other text. For example, 'regexp', 'REGEXP'
-        and 'Pattern is a regexp' are all considered equal.
-        
-        1) If `pattern_type` contains either the strings 'simple' or
-           'glob', the `pattern` is considered a simple glob pattern
-           having same semantics as patterns given to `File Should
-           Exist` keyword. 
-
-        2) If `pattern_type` contains either 'simple' or 'glob', and
-           additionally contains 'case-insensitive' or 'case
-           insensitive', the glob pattern is considered
-           case-insensitive. This functionality is available in 2.0.2
-           version and newer.
-
-        3) If `pattern_type` contains either the string 'regular
-           expression' or 'regexp', the `pattern` is considered a
-           regular expression. See built-in keyword `Should Match
-           Regexp` for more information about how to use regular
-           expressions in the test data.
-
-        4) If `pattern_type` contains either 'case-insensitive' or
-           'case insensitive' (but does not contain 'simple' or
-           'glob'), `pattern` is considered a literal string and
-           lines returned, if they contain the string, regardless of
-           the case.
-
-        5) Otherwise the pattern is considered a literal string and lines
-           returned, if they contain the string.
-        """
+        """*DEPRECATED* Use `Get File` with `BuiltIn.Grep` instead. Will be removed in RF 2.2."""
         content = self.get_file(path, encoding)
         content = '\n'.join(_filter_lines(content.split('\n'), 
                                           pattern, pattern_type))
@@ -1332,8 +1296,12 @@ class _Process:
             self.closed = True
 
 
+# Helper function to select only matching lines. Used also by BuiltIn.
+#
+# TODO: Move to BuiltIn in RF 2.2 when Grep File keyword and 'pattern_type'
+# argument of List Directory keywords have been removed (issues 258 and 260)
+# and this is not needed in OperatingSystem anymore.
 def _filter_lines(lines, pattern, ptype):
-    """Helper function to select only matching lines. Used also by BuiltIn."""
     ptype = ptype.lower().replace(' ','').replace('-','')
     if not pattern:
         filtr = lambda line: True
