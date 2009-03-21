@@ -1547,7 +1547,7 @@ Parts</td>
 
 
 
-      <td align="undefined" valign="undefined">Check testcase</td>
+      <td align="undefined" valign="undefined">${tc} =</td>
 
 
 
@@ -1557,7 +1557,7 @@ Parts</td>
 
 
 
-      <td align="undefined" valign="undefined">List&nbsp;Directory</td>
+      <td align="undefined" valign="undefined">Check testcase</td><td align="undefined" valign="undefined">List&nbsp;Directory</td>
 
 
 
@@ -1567,7 +1567,7 @@ Parts</td>
 
 
 
-      <td></td>
+      
 
 
 
@@ -1598,7 +1598,7 @@ Parts</td>
 
 
 
-    <tr>
+    <tr><td></td><td>Check Log Message</td><td>${tc.kws[3].msgs[0]}</td><td>bar.txt\nfoo.txt</td><td></td></tr><tr><td></td><td>Check Log Message</td><td>${tc.kws[12].msgs[0]}</td><td>foo.txt</td><td></td></tr><tr>
 
       <td></td>
 
@@ -1632,7 +1632,7 @@ Parts</td>
 
 
 
-      <td>Check testcase</td>
+      <td>${tc} =</td>
 
 
 
@@ -1642,7 +1642,7 @@ Parts</td>
 
 
 
-      <td>List&nbsp;Directory With Patterns</td>
+      <td>Check testcase</td><td>List&nbsp;Directory With Patterns</td>
 
 
 
@@ -1652,7 +1652,7 @@ Parts</td>
 
 
 
-      <td></td>
+      
 
 
 
@@ -1683,21 +1683,23 @@ Parts</td>
 
 
 
-    <tr>
+    <tr><td></td><td>: FOR</td><td>${index}</td><td>IN</td><td>9</td></tr><tr><td></td><td>...</td><td>12</td><td>14</td><td>17</td></tr><tr><td></td><td>...</td><td>20</td><td></td><td></td></tr><tr>
 
       <td></td>
 
       <td></td>
 
-      <td></td>
+      <td>Check Log Message</td><td>${tc.kws[${index}].msgs[0]}</td><td>'pattern_type'
+argument of 'List Directory' keywords has been deprecated. In Robot
+Framework 2.2 all patterns are considered simple glob patterns.</td>
 
-      <td></td>
+      
 
-      <td></td>
+      
 
     </tr>
 
-    <tr>
+    <tr><td></td><td></td><td>...</td><td>WARN</td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr>
 
 
 
@@ -1717,7 +1719,7 @@ Parts</td>
 
 
 
-      <td>Check testcase</td>
+      <td>${tc} =</td>
 
 
 
@@ -1727,7 +1729,7 @@ Parts</td>
 
 
 
-      <td>List&nbsp;Directory With Absolute</td>
+      <td>Check testcase</td><td>List&nbsp;Directory With Absolute</td>
 
 
 
@@ -1737,7 +1739,7 @@ Parts</td>
 
 
 
-      <td></td>
+      
 
 
 
@@ -1768,7 +1770,7 @@ Parts</td>
 
 
 
-    <tr>
+    <tr><td></td><td>${dir} =</td><td>Join Path</td><td>${CURDIR}/../../..</td><td>testdata</td></tr><tr><td></td><td>...</td><td>standard_libraries</td><td>operating_system</td><td>robot_temp_dir</td></tr><tr><td></td><td>Check Log Message</td><td>${tc.kws[4].msgs[0]}</td><td>${dir}${/}bar.txt\n<br>${dir}${/}foo.txt\n<br>${dir}${/}foodir</td><td></td></tr><tr>
 
 
 
