@@ -332,8 +332,8 @@ class OperatingSystem:
     
     def grep_file(self, path, pattern, pattern_type='literal string', 
                  encoding='UTF-8'):
-        """Returns the contents of a specified file grepped using `pattern`.
-        
+        """*DEPRECATED* Use `Get File` with `BuiltIn.Grep` instead. Will be removed in RF 2.2.
+
         This keyword reads the specified file and returns only lines
         matching the `pattern`. `encoding` specifies the encoding of the
         file the same way as with `Get File` keyword.
