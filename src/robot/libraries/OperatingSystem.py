@@ -23,7 +23,6 @@ import shutil
 
 try:
     from robot.errors import DataError
-    from robot.output import SYSLOG
     from robot.utils import get_version, ConnectionCache, seq2str, \
         timestr_to_secs, secs_to_timestr, plural_or_not, get_time, \
         secs_to_timestamp, timestamp_to_secs
@@ -33,7 +32,6 @@ try:
 
 except ImportError:
     DataError = RuntimeError
-    SYSLOG = None
     __version__ = '<unknown>'
     seq2str = lambda items: ', '.join(["'%s'" % item for item in items])
     timestr_to_secs = int
@@ -265,7 +263,7 @@ class OperatingSystem:
         """
         PROCESSES.switch(index_or_alias)
     
-    def read_process_output(self, mode='<deprecated>'):
+    def read_process_output(self, mode='DEPRECATED'):
         """Waits for the process to finish and returns its output.
         
         In Robot Framework versions prior to 2.0.2 it was possible to
@@ -285,11 +283,9 @@ class OperatingSystem:
         See `Start Process` and `Switch Process` for more information
         and examples about running processes.
         """
-        if mode != '<deprecated>':
-            msg = "'mode' argument for 'Read Process Output' keyword is deprecated."
-            self._log(msg, 'WARN')
-            if SYSLOG:
-                SYSLOG.warn(msg)
+        if mode != 'DEPRECATED':
+            self._warn("'mode' argument for 'Read Process Output' keyword is "
+                       "deprecated and will be removed in RF 2.2.")
         return PROCESSES.current.read()
         
     def stop_process(self):
@@ -598,8 +594,8 @@ class OperatingSystem:
         if mode == 'DEPRECATED':
             open_mode = 'w'
         else:
-            self._log("'mode' argument for 'Create File' is deprecated and "
-                      "will be replaced with 'encoding' in RF 2.2.", "WARN")
+            self._warn("'mode' argument for 'Create File' is deprecated and "
+                       "will be replaced with 'encoding' in RF 2.2.")
             mode = mode.upper()
             if 'FALSE' in mode or 'NO' in mode or "DON'T" in mode:
                 self.file_should_not_exist(path)
@@ -1208,9 +1204,9 @@ class OperatingSystem:
         if pattern_type == '':   # 'absolute' given and 'pat_type' left empty
             pattern_type = 'simple'
         if pattern_type != 'simple':
-            self._log("'pattern_type' argument of 'List Directory' keywords "
-                      "has been deprecated. In Robot Framework 2.2 all "
-                      "patterns are considered simple glob patterns.", "WARN")
+            self._warn("'pattern_type' argument of 'List Directory' keywords "
+                       "has been deprecated. In Robot Framework 2.2 all "
+                       "patterns are considered simple glob patterns.")
         if pattern:
             items = _filter_lines(items, pattern, pattern_type)
         items.sort()
@@ -1264,6 +1260,9 @@ class OperatingSystem:
 
     def _info(self, msg):
         self._log(msg, 'INFO')
+        
+    def _warn(self, msg):
+        self._log(msg, 'WARN')
         
     def _log(self, msg, level):
         print '*%s* %s' % (level, msg)
