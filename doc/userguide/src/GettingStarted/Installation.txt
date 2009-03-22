@@ -82,7 +82,9 @@ version 2.1 is not compatible with Robot Framework, and Jython 2.2
 betas and alphas are not supported either. Unfortunately, also Jython
 2.2.1 has certain Unicode problems (for more information, see
 http://bugs.jython.org/issue1802339 and
-http://bugs.jython.org/issue1032).
+http://bugs.jython.org/issue1032). Jython 2.5 is currently under
+development and although it is not yet officially supported it should
+work without problems in most normal usage.
 
 Installing Jython is a fairly easy procedure. First you need to get an
 installer from the `Jython homepage`_ or directly from
@@ -93,7 +95,11 @@ system, the installer runs either in the graphical or the textual
 mode, but in both cases, the actual installation procedure is very
 easy.
 
-When installing Robot Framework, its installer tries to find the
+Jython 2.2 does not have Python's :code:`distutils` module, which
+is required for automatically installing Robot Framework.
+The normal procedure is installing Robot Framework using
+Python but `manual installation`_ is also possible.
+When installing Robot Framework with Python, its installer tries to find the
 Jython executable on the system to create the :prog:`jybot` runner script
 correctly. Jython is found if:
 
