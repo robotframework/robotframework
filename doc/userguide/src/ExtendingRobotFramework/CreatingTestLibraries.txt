@@ -658,13 +658,12 @@ one of the available logging levels :msg:`TRACE`, :msg:`DEBUG`,
 Warnings
 ````````
 Starting from Robot Framework 2.1 messages with :msg:`WARN` level are
-automatically written into `the console and separate Test Execution
+automatically written into `the console and into separate Test Execution
 Errors section`__ in log files. This makes warnings more visible than
 other messages and allows using them for reporting important but 
 non-critical problems to users.
 
 __ `Errors and warnings during execution`_
-
 
 Logging HTML
 ````````````
@@ -957,11 +956,12 @@ runtime. Starting from Robot Framework 2.0.2 this is possible by
 marking these keywords *deprecated*. This makes it easier to find old
 keywords from the test data and remove or replace them.
 
-Keywords are deprecated by starting their documentation with 
-:code:`*DEPRECATED*`. When these keywords are executed, a warning containing rest 
-of the `short documentation`__ is written into the syslog_ and the `log file`_.
-For example, if following keyword is executed there will be a warning like
-shown below in the log file.
+Keywords are deprecated by starting their documentation with
+:code:`*DEPRECATED*`. When these keywords are executed, a warning
+containing rest of the `short documentation`__ is written both into
+`the console and into separate Test Execution Errors section`__ in log
+files.  For example, if following keyword is executed there will be a
+warning like shown below in the log file.
 
 .. sourcecode:: python
 
@@ -982,20 +982,22 @@ shown below in the log file.
      </tr>
    </table>
 
-This deprecation system works with most test libraries and also with `user keywords`__.
-The only exception are keywords implemented in a Java test library that uses 
-the `static library interface`__ because their documentation is not available
-at runtime. With such keywords, it possible to use user keywords as wrappers and
-deprecate them.
+This deprecation system works with most test libraries and also with
+`user keywords`__.  The only exception are keywords implemented in a
+Java test library that uses the `static library interface`__ because
+their documentation is not available at runtime. With such keywords,
+it possible to use user keywords as wrappers and deprecate them.
 
 There is a plan to implement a tool that can use the deprecation
-information for automatically replacing deprecated keywords. The tool will most
-likely get the name of the new keyword from the documentation so that it searches
-words inside backticks (:code:`\``). Thus it would find :name:`Other Keyword` from
-the earlier example. Note that `libdoc.py`_ also automatically creates internal
-links using the same syntax.
+information for automatically replacing deprecated keywords. The tool
+will most likely get the name of the new keyword from the
+documentation so that it searches words inside backticks
+(:code:`\``). Thus it would find :name:`Other Keyword` from the
+earlier example. Note that `libdoc.py`_ also automatically creates
+internal links using the same syntax.
 
 __ `Documenting libraries`_
+__ `Errors and warnings during execution`_
 __ `User keyword name and documentation`_
 __ `Creating static keywords`_
  
