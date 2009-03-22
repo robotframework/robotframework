@@ -320,7 +320,7 @@ class OperatingSystem:
         correctly.
         """
         path = self._absnorm(path)
-        self._info("Getting file '%s'" % path)
+        self._link("Getting file '%s'", path)
         f = open(path, 'rb')
         content = f.read()
         f.close()
@@ -328,7 +328,7 @@ class OperatingSystem:
     
     def grep_file(self, path, pattern, pattern_type='literal string', 
                  encoding='UTF-8'):
-        """*DEPRECATED* Use `Get File` with `BuiltIn.Grep` instead. Will be removed in RF 2.2."""
+        """*DEPRECATED* Use `Get File` with `BuiltIn.Grep` instead. `Grep File` will be removed in RF 2.2."""
         content = self.get_file(path, encoding)
         content = '\n'.join(_filter_lines(content.split('\n'), 
                                           pattern, pattern_type))
@@ -358,7 +358,7 @@ class OperatingSystem:
         path = self._absnorm(path)
         if not glob.glob(path):
             self._fail(msg, "Path '%s' does not match any file or directory" % path)
-        self._info("Path '%s' exists" % path)
+        self._link("Path '%s' exists", path)
         
     def should_not_exist(self, path, msg=None):
         """Fails if the given path (file or directory) exists.
@@ -370,7 +370,7 @@ class OperatingSystem:
         path = self._absnorm(path)
         matches = glob.glob(path)
         if not matches:
-            self._info("Path '%s' does not exist" % path)
+            self._link("Path '%s' does not exist", path)
             return
         if msg is None:
             if self._is_pattern_path(path):
@@ -399,7 +399,7 @@ class OperatingSystem:
         matches = [ p for p in glob.glob(path) if os.path.isfile(p) ]
         if not matches:
             self._fail(msg, "Path '%s' does not match any file" % path)
-        self._info("File '%s' exists" % path)
+        self._link("File '%s' exists", path)
 
     def file_should_not_exist(self, path, msg=None):
         """Fails if the given path points to an existing file.
@@ -411,7 +411,7 @@ class OperatingSystem:
         path = self._absnorm(path)
         matches = [ p for p in glob.glob(path) if os.path.isfile(p) ]
         if not matches:
-            self._info("File '%s' does not exist" % path)
+            self._link("File '%s' does not exist", path)
             return
         if msg is None:
             if self._is_pattern_path(path):
@@ -433,7 +433,7 @@ class OperatingSystem:
         matches = [ p for p in glob.glob(path) if os.path.isdir(p) ]
         if not matches:
             self._fail(msg, "Path '%s' does not match any directory" % path)
-        self._info("Directory '%s' exists" % path)
+        self._link("Directory '%s' exists", path)
 
     def directory_should_not_exist(self, path, msg=None):
         """Fails if the given path points to an existing file.
@@ -445,7 +445,7 @@ class OperatingSystem:
         path = self._absnorm(path)
         matches = [ p for p in glob.glob(path) if os.path.isdir(p) ]
         if not matches:
-            self._info("Directory '%s' does not exist" % path)
+            self._link("Directory '%s' does not exist", path)
             return 
         if msg is None:
             if self._is_pattern_path(path):
@@ -485,7 +485,7 @@ class OperatingSystem:
             if timeout >= 0 and time.time() > maxtime:
                 raise AssertionError("'%s' was not removed in %s" 
                                      % (path, secs_to_timestr(timeout)))
-        self._info("'%s' was removed" % path)
+        self._link("'%s' was removed", path)
     
     def wait_until_created(self, path, timeout='1 minute'):
         """Waits until the given file or directory is created.
@@ -511,7 +511,7 @@ class OperatingSystem:
             if timeout >= 0 and time.time() > maxtime:
                 raise AssertionError("'%s' was not created in %s" 
                                      % (path, secs_to_timestr(timeout)))
-        self._info("'%s' was created" % path)
+        self._link("'%s' was created", path)
 
     # Dir/file empty
 
@@ -529,7 +529,7 @@ class OperatingSystem:
                 msg = "Directory '%s' is not empty. Contents: %s" \
                         % (path, seq2str(entries, lastsep=', '))
             raise AssertionError(msg)
-        self._info("Directory '%s' is empty." % path)
+        self._link("Directory '%s' is empty.", path)
     
     def directory_should_not_be_empty(self, path, msg=None):
         """Fails if the specified directory is empty.
@@ -543,7 +543,8 @@ class OperatingSystem:
         if count == 0:
             self._fail(msg, "Directory '%s' is empty." % path)
         plural = plural_or_not(count)
-        self._info("Directory '%s' contains %d item%s." % (path, count, plural)) 
+        self._link("Directory '%%s' contains %d item%s." % (count, plural),
+                   path)
 
     def file_should_be_empty(self, path, msg=None):
         """Fails unless the specified file is empty.
@@ -556,7 +557,7 @@ class OperatingSystem:
         size = os.stat(path).st_size
         if size > 0:
             self._fail(msg, "File '%s' is not empty. Size: %d bytes" % (path, size))
-        self._info("File '%s' is empty" % path)
+        self._link("File '%s' is empty", path)
     
     def file_should_not_be_empty(self, path, msg=None):
         """Fails if the specified directory is empty.
@@ -569,7 +570,7 @@ class OperatingSystem:
         size = os.stat(path).st_size
         if size == 0:
             self._fail(msg, "File '%s' is empty." % path)
-        self._info("File '%s' contains %d bytes" % (path, size))
+        self._link("File '%%s' contains %d bytes" % size, path)
     
     # Creating and removing files and directory
 
@@ -601,7 +602,7 @@ class OperatingSystem:
                 self.file_should_not_exist(path)
             open_mode = 'APPEND' in mode and 'a' or 'w'
         path = self._write_to_file(path, content, 'UTF-8', open_mode)
-        self._info("Created file '%s'" % path)
+        self._link("Created file '%s'", path)
         
     def create_file_with_encoding(self, path, content='', encoding='UTF-8'):
         """Writes the given contend to the specified file.
@@ -615,7 +616,7 @@ class OperatingSystem:
         deprecated in 2.2 when `Create File` gets `encoding` argument. 
         """
         path = self._write_to_file(path, content, encoding, 'w')
-        self._info("Created file '%s'" % path)
+        self._link("Created file '%s'", path)
 
     def append_to_file(self, path, content, encoding='UTF-8'):
         """Appends the given contend to the specified file.
@@ -624,7 +625,7 @@ class OperatingSystem:
         way as `Create File With Encoding`.
         """
         path = self._write_to_file(path, content, encoding, 'a')
-        self._info("Appended to file '%s'" % path)
+        self._link("Appended to file '%s'", path)
 
     def _write_to_file(self, path, content, encoding, mode):
         path = self._absnorm(path)
@@ -649,12 +650,12 @@ class OperatingSystem:
         path = self._absnorm(path)
         matches = glob.glob(path)
         if not matches:
-            self._info("File '%s' does not exist" % path)
+            self._link("File '%s' does not exist", path)
         for match in matches:
             if not os.path.isfile(match):
                 raise DataError("Path '%s' is not a file" % match)
             os.remove(match)
-            self._info("Removed file '%s'" % match)
+            self._link("Removed file '%s'", match)
         
     def remove_files(self, *paths):
         """Uses `Remove File` to remove multiple files one-by-one.
@@ -674,7 +675,7 @@ class OperatingSystem:
                 shutil.rmtree(item)
             else:
                 os.remove(item)
-        self._info("Emptied directory '%s'" % path)
+        self._link("Emptied directory '%s'", path)
 
     def create_directory(self, path):
         """Creates the specified directory.
@@ -685,12 +686,12 @@ class OperatingSystem:
         """
         path = self._absnorm(path)
         if os.path.isdir(path):
-            self._info("Directory '%s' already exists" % path )
+            self._link("Directory '%s' already exists", path )
             return
         if os.path.exists(path):
             raise DataError("Path '%s' already exists but is not a directory" % path)
         os.makedirs(path)
-        self._info("Created directory '%s'" % path)
+        self._link("Created directory '%s'", path)
     
     def remove_directory(self, path, recursive='no'):
         """Removes the directory pointed to by the given `path`.
@@ -705,7 +706,7 @@ class OperatingSystem:
         """
         path = self._absnorm(path)
         if not os.path.exists(path):
-            self._info("Directory '%s' does not exist" % path)
+            self._link("Directory '%s' does not exist", path)
             return
         if os.path.isfile(path):
             raise DataError("Path '%s' is not a directory" % path)
@@ -715,7 +716,7 @@ class OperatingSystem:
             msg = "Directory '%s' is not empty." % path
             self.directory_should_be_empty(path, msg)
             os.rmdir(path)
-        self._info("Removed directory '%s'" % path)
+        self._link("Removed directory '%s'", path)
             
     def _is_recursive(self, recursive):
         for word in 'YES', 'TRUE', 'RECURSIVE':
@@ -744,7 +745,7 @@ class OperatingSystem:
         exist, it is created.
         """
         source, destination = self._copy_file(source, destination)
-        self._info("Copied file from '%s' to '%s'" % (source, destination))
+        self._link("Copied file from '%s' to '%s'", source, destination)
         
     def move_file(self, source, destination):
         """Moves the source file into a new destination.
@@ -754,7 +755,7 @@ class OperatingSystem:
         """
         source, destination = self._copy_file(source, destination)
         os.remove(source)
-        self._info("Moved file from '%s' to '%s'" % (source, destination))
+        self._link("Moved file from '%s' to '%s'", source, destination)
 
     def _copy_file(self, source, dest):
         source = self._absnorm(source)
@@ -783,8 +784,7 @@ class OperatingSystem:
         directories are created.
         """
         source, destination = self._copy_dir(source, destination)
-        self._info("Copied directory from '%s' to '%s'"
-                   % (source, destination))
+        self._link("Copied directory from '%s' to '%s'", source, destination)
         
     def move_directory(self, source, destination):
         """Moves the source directory into a destination.
@@ -795,7 +795,7 @@ class OperatingSystem:
         """
         source, destination = self._copy_dir(source, destination)
         shutil.rmtree(source)
-        self._info("Moved directory from '%s' to '%s'" % (source, destination))
+        self._link("Moved directory from '%s' to '%s'", source, destination)
 
     def _copy_dir(self, source, dest):
         source = self._absnorm(source)
@@ -805,8 +805,7 @@ class OperatingSystem:
         if not os.path.isdir(source):
             raise DataError("Source directory '%s' is not a directory" % source)
         if os.path.exists(dest) and not os.path.isdir(dest):
-            raise DataError("Destination '%s' exists but is not a directory" 
-                            % dest)
+            raise DataError("Destination '%s' exists but is not a directory" % dest)
         if os.path.exists(dest):
             base = os.path.basename(source)
             dest = os.path.join(dest, base)
@@ -1005,9 +1004,10 @@ class OperatingSystem:
     
     def get_modified_time(self, path, format='timestamp'):
         """Returns the last modification time of a file or directory.
-        
+
         How time is returned is determined based on the given `format`
         string as follows. Note that all checks are case-insensitive.
+        Returned time is also automatically logged.
         
         1) If `format` contains the word 'epoch', the time is returned
            in seconds after the UNIX epoch. The return value is always
@@ -1041,7 +1041,9 @@ class OperatingSystem:
         if not os.path.exists(path):
             raise DataError("Getting modified time of '%s' failed: "
                             "Path does not exist" % path)
-        return get_time(format, os.stat(path).st_mtime)
+        mtime = get_time(format, os.stat(path).st_mtime)
+        self._link("Last modified time of '%%s' is %s" % mtime, path)
+        return mtime
 
     def set_modified_time(self, path, mtime):
         """Sets the file modification time.
@@ -1085,7 +1087,7 @@ class OperatingSystem:
         os.utime(path, (mtime, mtime))
         time.sleep(0.1)  # Give os some time to really set these times
         tstamp = secs_to_timestamp(mtime, ('-',' ',':'))
-        self._info("Set modified time of '%s' to %s" % (path, tstamp))
+        self._link("Set modified time of '%%s' to %s" % tstamp, path)
         
     def _parse_modified_time(self, mtime):
         orig_time = mtime
@@ -1116,8 +1118,8 @@ class OperatingSystem:
         # TODO: Add an option to return size in kilos, megas or gigas
         path = self._absnorm(path)
         size = os.stat(path).st_size
-        self._info("Size of file '%s' is %d byte%s"
-                   % (path, size, plural_or_not(size)))
+        plural = plural_or_not(size)
+        self._link("Size of file '%%s' is %d byte%s" % (size, plural), path)
         return size
 
     def list_directory(self, path, pattern=None, pattern_type='simple', 
@@ -1198,6 +1200,7 @@ class OperatingSystem:
     def _list_dir(self, path, pattern=None, pattern_type='simple', 
                   absolute=False):
         path = self._absnorm(path)
+        self._link("Listing contents of directory '%s'", path)
         if not os.path.isdir(path):
             raise DataError("Directory '%s' does not exist" % path)
         items = os.listdir(path)
@@ -1245,10 +1248,10 @@ class OperatingSystem:
         if os.path.exists(path):
             mtime = round(time.time())
             os.utime(path, (mtime, mtime))
-            self._info("Touched existing file '%s'" % path)
+            self._link("Touched existing file '%s'", path)
         else:
             open(path, 'w').close()
-            self._info("Touched new file '%s'" % path)
+            self._link("Touched new file '%s'", path)
             
     def _absnorm(self, path):
         return os.path.normpath(os.path.abspath(path.replace('/', os.sep)))
@@ -1260,6 +1263,10 @@ class OperatingSystem:
 
     def _info(self, msg):
         self._log(msg, 'INFO')
+
+    def _link(self, msg, *paths):
+        paths = tuple([ '<a href="%s">%s</a>' % (p, p) for p in paths ])
+        self._log(msg % paths, 'HTML')
         
     def _warn(self, msg):
         self._log(msg, 'WARN')
