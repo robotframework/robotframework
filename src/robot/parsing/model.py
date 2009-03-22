@@ -70,7 +70,7 @@ class FileSuite(_BaseSuite):
         syslog.info("Parsing test case file '%s'" % path)
         rawdata = self._get_rawdata(path, syslog)
         _BaseSuite.__init__(self, rawdata)
-        self.tests = self._process_testcases(rawdata, syslog)
+        self.tests = self._process_testcases(rawdata)
 
     def _get_source(self, path):
         return path
@@ -81,22 +81,13 @@ class FileSuite(_BaseSuite):
             return rawdata
         raise DataError("Test case file '%s' contains no test cases."  % path)
 
-    def _process_testcases(self, rawdata, syslog):
-        names = []
+    def _process_testcases(self, rawdata):
         tests = []
         for rawtest in rawdata.testcases:
             try:
-                test = TestCase(rawtest)
+                tests.append(TestCase(rawtest))
             except:
                 rawtest.report_invalid_syntax()
-                continue
-            tests.append(test)
-            name = utils.normalize(test.name)
-            if name in names:
-                msg = "Multiple test cases with name '%s' in test suite '%s'"
-                syslog.warn(msg % (test.name, self.name))
-            else:
-                names.append(name)
         return tests
 
             
