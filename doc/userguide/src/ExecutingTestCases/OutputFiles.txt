@@ -616,10 +616,12 @@ by setting the environment variable :opt:`ROBOT_SYSLOG_FILE` so
 that it contains a path to the selected file.
 
 A system log has the same `log levels`_ as a normal log file, with the
-exception that instead of :msg:`FAIL` it has the :msg:`ERROR` level. The
-threshold level to use can be altered using the
-:opt:`ROBOT_SYSLOG_LEVEL` environment variable.
-
+exception that instead of :msg:`FAIL` it has the :msg:`ERROR`
+level. The threshold level to use can be altered using the
+:opt:`ROBOT_SYSLOG_LEVEL` environment variable like shown in the
+example below.  Possible `unexpected errors and warnings`__ are
+written into the system log in addition to the console and the normal
+log file.
 
 .. sourcecode:: bash
 
@@ -630,3 +632,4 @@ threshold level to use can be altered using the
 
    pybot --name Syslog_example path/to/tests
 
+__ `Errors and warnings during execution`_

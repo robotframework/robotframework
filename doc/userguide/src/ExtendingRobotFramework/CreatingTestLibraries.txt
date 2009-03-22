@@ -653,8 +653,21 @@ messages, specify the log level explicitly by embedding the level into
 the message in the format :msg:`*LEVEL* Actual log message`, where
 :msg:`*LEVEL*` must be in the beginning of a line and :msg:`LEVEL` is
 one of the available logging levels :msg:`TRACE`, :msg:`DEBUG`,
-:msg:`INFO` and :msg:`WARN`.
+:msg:`INFO`, :msg:`WARN` and :msg:`HTML`.
 
+Warnings
+````````
+Starting from Robot Framework 2.1 messages with :msg:`WARN` level are
+automatically written into `the console and separate Test Execution
+Errors section`__ in log files. This makes warnings more visible than
+other messages and allows using them for reporting important but 
+non-critical problems to users.
+
+__ `Errors and warnings during execution`_
+
+
+Logging HTML
+````````````
 Everything normally logged by the library will be converted into a
 format that can be safely represented as HTML. For example,
 :code:`<b>foo</b>` will be displayed in the log exactly like that and
@@ -662,9 +675,18 @@ not as **foo**. If libraries want to use formatting, links, display
 images and so on, they can use a special pseudo log level
 :msg:`HTML`. Robot Framework will write these messages directly into
 the log with the :msg:`INFO` level, so they can use any HTML syntax
-they want. However, this feature needs to be used with care, because
+they want. Notice that this feature needs to be used with care, because
 one badly placed :code:`</table>` tag can ruin the log file quite
 badly.
+
+Logging example
+```````````````
+In most cases, the :msg:`INFO` level is adequate. The levels below it,
+:msg:`DEBUG` and :msg:`TRACE`, are useful for writing debug information.
+These messages are normally not shown, but they can facilitate debugging
+possible problems in the library itself. The :msg:`WARN` level can
+be used to make messages more visible and :msg:`HTML` is useful if any 
+kind of formatting is needed.
 
 The following examples clarify how logging with different levels
 works. Java programmers should regard the code :code:`print 'message'`
@@ -680,7 +702,6 @@ as pseudocode meaning :code:`System.out.println("message");`.
    print '*INFO* This is <b>normal text</b>.'
    print '*HTML* This is <b>bold</b>.'
    print '*HTML* <a href="http://robotframework.org">Robot Framework</a>'
-
 
 .. raw:: html
 
@@ -721,13 +742,6 @@ as pseudocode meaning :code:`System.out.println("message");`.
        <td class="msg"><a href="http://robotframework.org">Robot Framework</a></td>
      </tr>
    </table>
-
-
-In most cases, the :msg:`INFO` level is adequate. The levels below it,
-:msg:`DEBUG` and :msg:`TRACE`, are useful for writing debug information.
-These messages are normally not shown, but they can facilitate debugging
-possible problems in the library itself. The :msg:`WARN` level can
-be used to make messages slightly more visible.
 
 
 Returning values
