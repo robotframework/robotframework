@@ -753,7 +753,7 @@ Timestamp</td>
 
 
 
-      <td align="undefined" valign="undefined">Check testcase</td>
+      <td align="undefined" valign="undefined">${tc} =</td>
 
 
 
@@ -763,7 +763,7 @@ Timestamp</td>
 
 
 
-      <td align="undefined" valign="undefined">Get Modified Time As
+      <td align="undefined" valign="undefined">Check testcase</td><td align="undefined" valign="undefined">Get Modified Time As
 Timestamp</td>
 
 
@@ -774,7 +774,7 @@ Timestamp</td>
 
 
 
-      <td></td>
+      
 
 
 
@@ -805,7 +805,7 @@ Timestamp</td>
 
 
 
-    <tr>
+    <tr><td></td><td>Should Match Regexp</td><td>${tc.kws[0].msgs[0].message}</td><td>Last modified time of '&lt;a href=.*&lt;/a&gt;' is 20\\d\\d-\\d\\d-\\d\\d \\d\\d:\\d\\d:\\d\\d</td><td></td></tr><tr>
 
 
       <td></td>
@@ -847,7 +847,7 @@ Seconds After Epoch</td>
 
 
 
-      <td align="undefined" valign="undefined">Check testcase</td>
+      <td align="undefined" valign="undefined">${tc} =</td>
 
 
 
@@ -857,7 +857,7 @@ Seconds After Epoch</td>
 
 
 
-      <td align="undefined" valign="undefined">Get Modified Time As
+      <td align="undefined" valign="undefined">Check testcase</td><td align="undefined" valign="undefined">Get Modified Time As
 Seconds After Epoch</td>
 
 
@@ -868,7 +868,7 @@ Seconds After Epoch</td>
 
 
 
-      <td></td>
+      
 
 
 
@@ -899,7 +899,7 @@ Seconds After Epoch</td>
 
 
 
-    <tr>
+    <tr><td></td><td>Should Match Regexp</td><td>${tc.kws[0].msgs[0].message}</td><td>Last modified time of&nbsp;'&lt;a href=.*&lt;/a&gt;' is \\d+</td><td></td></tr><tr>
 
 
       <td></td>
@@ -1108,9 +1108,9 @@ Parts</td>
 
       <td>${tc.kws[1].msgs[0]}</td>
 
-      <td>Set modified time of '${path}' to 2007-04-26 11:22:20</td>
+      <td>Set modified time of '&lt;a href="${path}"&gt;${path}&lt;/a&gt;' to 2007-04-26 11:22:20</td>
 
-      <td></td>
+      <td>HTML</td>
 
     </tr>
 
@@ -1180,9 +1180,9 @@ Parts</td>
 
       <td>${tc.kws[1].kws[0].kws[0].msgs[0]}</td>
 
-      <td>Set modified time of '${path}' to 2007-04-26 11:22:30</td>
+      <td>Set modified time of '&lt;a href="${path}"&gt;${path}&lt;/a&gt;' to 2007-04-26 11:22:30</td>
 
-      <td></td>
+      <td>HTML</td>
 
     </tr>
 
@@ -1194,9 +1194,9 @@ Parts</td>
 
       <td>${tc.kws[1].kws[1].kws[0].msgs[0]}</td>
 
-      <td>Set modified time of '${path}' to 2007-04-26 11:22:30</td>
+      <td>Set modified time of '&lt;a href="${path}"&gt;${path}&lt;/a&gt;' to 2007-04-26 11:22:30</td>
 
-      <td></td>
+      <td>HTML</td>
 
     </tr>
 
@@ -1208,9 +1208,9 @@ Parts</td>
 
       <td>${tc.kws[1].kws[2].kws[0].msgs[0]}</td>
 
-      <td>Set modified time of '${path}' to 2007-04-26 11:22:30</td>
+      <td>Set modified time of '&lt;a href="${path}"&gt;${path}&lt;/a&gt;' to 2007-04-26 11:22:30</td>
 
-      <td></td>
+      <td>HTML</td>
 
     </tr>
 
@@ -1238,7 +1238,7 @@ Parts</td>
 
       <td>${tc.kws[1].kws[3].kws[0].msgs[0]}</td>
 
-      <td>Set modified time of '${path}' to 2007-04-26 11:22:30</td>
+      <td>Set modified time of '&lt;a href="${path}"&gt;${path}&lt;/a&gt;' to 2007-04-26 11:22:30</td>
 
 
 
@@ -1264,7 +1264,7 @@ Parts</td>
 
 
 
-      <td></td>
+      <td>HTML</td>
 
 
 
@@ -1476,7 +1476,7 @@ Parts</td>
 
 
 
-      <td>Check Log Message</td><td>${tc.kws[1].msgs[0]}</td><td>Size of file '${path}' is 0 bytes</td>
+      <td>Check Log Message</td><td>${tc.kws[1].msgs[0]}</td><td>Size of file '&lt;a href="${path}"&gt;${path}&lt;/a&gt;' is 0 bytes</td>
 
 
 
@@ -1506,7 +1506,7 @@ Parts</td>
 
 
 
-      <td></td>
+      <td>HTML</td>
 
 
 
@@ -1527,7 +1527,7 @@ Parts</td>
 
 
 
-    <tr><td></td><td>Check Log Message</td><td>${tc.kws[4].msgs[0]}</td><td>Size of file '${path}' is 1 byte</td><td></td></tr><tr><td></td><td>Check Log Message</td><td>${tc.kws[7].msgs[0]}</td><td>Size of file '${path}' is 12 bytes</td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr>
+    <tr><td></td><td>Check Log Message</td><td>${tc.kws[4].msgs[0]}</td><td>Size of file '&lt;a href="${path}"&gt;${path}&lt;/a&gt;' is 1 byte</td><td>HTML</td></tr><tr><td></td><td>Check Log Message</td><td>${tc.kws[7].msgs[0]}</td><td>Size of file '&lt;a href="${path}"&gt;${path}&lt;/a&gt;' is 12 bytes</td><td>HTML</td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr>
 
 
 
@@ -1598,7 +1598,7 @@ Parts</td>
 
 
 
-    <tr><td></td><td>Check Log Message</td><td>${tc.kws[3].msgs[0]}</td><td>bar.txt\nfoo.txt</td><td></td></tr><tr><td></td><td>Check Log Message</td><td>${tc.kws[12].msgs[0]}</td><td>foo.txt</td><td></td></tr><tr>
+    <tr><td></td><td>${dir} =</td><td>Join Path</td><td>${CURDIR}/../../..</td><td>testdata</td></tr><tr><td></td><td>...</td><td>standard_libraries</td><td>operating_system</td><td>robot_temp_dir</td></tr><tr><td></td><td>Check Log Message</td><td>${tc.kws[3].msgs[0]}</td><td>Listing contents of directory '&lt;a href="${dir}"&gt;${dir}&lt;/a&gt;'</td><td>HTML</td></tr><tr><td></td><td>Check Log Message</td><td>${tc.kws[3].msgs[1]}</td><td>bar.txt\nfoo.txt</td><td></td></tr><tr><td></td><td>Check Log Message</td><td>${tc.kws[12].msgs[0]}</td><td>Listing contents of directory '&lt;a href="${dir}"&gt;${dir}&lt;/a&gt;'</td><td>HTML</td></tr><tr><td></td><td>Check Log Message</td><td>${tc.kws[12].msgs[1]}</td><td>foo.txt</td><td></td></tr><tr>
 
       <td></td>
 
@@ -1689,7 +1689,7 @@ Parts</td>
 
       <td></td>
 
-      <td>Check Log Message</td><td>${tc.kws[${index}].msgs[0]}</td><td>'pattern_type'
+      <td>Check Log Message</td><td>${tc.kws[${index}].msgs[1]}</td><td>'pattern_type'
 argument of 'List Directory' keywords has been deprecated. In Robot
 Framework 2.2 all patterns are considered simple glob patterns.</td>
 
@@ -1770,7 +1770,7 @@ Framework 2.2 all patterns are considered simple glob patterns.</td>
 
 
 
-    <tr><td></td><td>${dir} =</td><td>Join Path</td><td>${CURDIR}/../../..</td><td>testdata</td></tr><tr><td></td><td>...</td><td>standard_libraries</td><td>operating_system</td><td>robot_temp_dir</td></tr><tr><td></td><td>Check Log Message</td><td>${tc.kws[4].msgs[0]}</td><td>${dir}${/}bar.txt\n<br>${dir}${/}foo.txt\n<br>${dir}${/}foodir</td><td></td></tr><tr>
+    <tr><td></td><td>${dir} =</td><td>Join Path</td><td>${CURDIR}/../../..</td><td>testdata</td></tr><tr><td></td><td>...</td><td>standard_libraries</td><td>operating_system</td><td>robot_temp_dir</td></tr><tr><td></td><td>Check Log Message</td><td>${tc.kws[4].msgs[0]}</td><td>Listing contents of directory '&lt;a href="${dir}"&gt;${dir}&lt;/a&gt;'</td><td>HTML</td></tr><tr><td></td><td>Check Log Message</td><td>${tc.kws[4].msgs[1]}</td><td>${dir}${/}bar.txt\n<br>${dir}${/}foo.txt\n<br>${dir}${/}foodir</td><td></td></tr><tr>
 
 
 
@@ -2107,11 +2107,11 @@ Directories In&nbsp;Directory</td>
 
 
 
-      <td>Touched new file '${path}'</td>
+      <td>Touched new file '&lt;a href="${path}"&gt;${path}&lt;/a&gt;'</td>
 
 
 
-      <td></td>
+      <td>HTML</td>
 
 
 
@@ -2135,11 +2135,11 @@ Directories In&nbsp;Directory</td>
 
 
 
-      <td>Touched existing file '${path}'</td>
+      <td>Touched existing file '&lt;a href="${path}"&gt;${path}&lt;/a&gt;'</td>
 
 
 
-      <td></td>
+      <td>HTML</td>
 
 
 
@@ -2147,7 +2147,7 @@ Directories In&nbsp;Directory</td>
 
 
 
-    <tr><td></td><td>Check Log Message</td><td>${tc.kws[10].msgs[0]}</td><td>Touched existing file '${path}'</td><td></td></tr><tr>
+    <tr><td></td><td>Check Log Message</td><td>${tc.kws[10].msgs[0]}</td><td>Touched existing file '&lt;a href="${path}"&gt;${path}&lt;/a&gt;'</td><td>HTML</td></tr><tr>
 
       <td></td>
 
