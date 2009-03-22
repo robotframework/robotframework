@@ -574,9 +574,6 @@ class OperatingSystem:
     
     # Creating and removing files and directory
 
-    # TODO: In RF 2.2 replace create_file with create_file_with_encoding and
-    # deprecate the latter. Update also doc of append_to_file.
-
     def create_file(self, path, content='', mode='DEPRECATED'):
         """Creates a file to the given path with the given content.
         
@@ -693,13 +690,12 @@ class OperatingSystem:
         os.makedirs(path)
         self._link("Created directory '%s'", path)
     
-    def remove_directory(self, path, recursive='no'):
+    def remove_directory(self, path, recursive=False):
         """Removes the directory pointed to by the given `path`.
         
-        If the second argument `recursive` contains any of the words 'yes',
-        'true' or 'recursive' (case-insensitive), all of the directory contents
-        are also removed. Otherwise removing fails, if the directory is not
-        empty.
+        If the second argument `recursive` is set to any non-empty string,
+        the directory is removed recursively. Otherwise removing fails if
+        the directory is not empty.
         
         If the directory pointed to by the `path` does not exist, the keyword
         passes, but it fails, if the `path` points to a file.
@@ -710,7 +706,7 @@ class OperatingSystem:
             return
         if os.path.isfile(path):
             raise DataError("Path '%s' is not a directory" % path)
-        if self._is_recursive(recursive):
+        if recursive:
             shutil.rmtree(path)
         else:
             msg = "Directory '%s' is not empty." % path
@@ -718,11 +714,6 @@ class OperatingSystem:
             os.rmdir(path)
         self._link("Removed directory '%s'", path)
             
-    def _is_recursive(self, recursive):
-        for word in 'YES', 'TRUE', 'RECURSIVE':
-            if word in recursive.upper():
-                return True
-        return False
 
     # Moving and copying files and directories
             
