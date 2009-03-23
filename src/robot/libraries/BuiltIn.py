@@ -131,9 +131,6 @@ class Verify:
                 
         See `Should Be True` for details about how `condition` is evaluated and
         how `msg` can be used to override the default error message.
-        
-        New in Robot Framework version 1.8.3. This is intended to replace the
-        old keyword `Fail If`, which still continues to work.
         """
         if msg is None:
             msg = "'%s' should not be true" % condition
@@ -156,9 +153,6 @@ class Verify:
         | Should Be True | '${status}' == 'PASS' | # Strings must be quoted |
         | Should Be True | ${number}   | # Passes if ${number} is not zero |
         | Should Be True | ${list}     | # Passes if ${list} is not empty  | 
-        
-        New in Robot Framework version 1.8.3. This is intended to replace the
-        old keyword `Fail Unless`, which still continues to work.
         """
         if msg is None:
             msg = "'%s' should be true" % condition
@@ -415,9 +409,6 @@ class Verify:
         directly. The final attempt is trying to get the value of the item's
         'length' attribute. If all these attempts are unsuccessful, the keyword
         fails.
-        
-        New in Robot Framework version 1.8.2. Logging the returned value
-        added in 2.0.2.
         """
         length = self._get_length(item)
         self.log('Length is %d' % length)
@@ -443,8 +434,6 @@ class Verify:
         
         The length of the item is got using the `Get Length` keyword. The
         default error message can be overridden with the `msg` argument.
-        
-        New in Robot Framework version 1.8.2.
         """
         try:
             length = int(length)
@@ -462,8 +451,6 @@ class Verify:
         
         The length of the item is got using the `Get Length` keyword. The
         default error message can be overridden with the `msg` argument.
-        
-        New in Robot 1.8.2.
         """
         if self.get_length(item) > 0:
             if msg is None:
@@ -475,8 +462,6 @@ class Verify:
         
         The length of the item is got using the `Get Length` keyword. The
         default error message can be overridden with the `msg` argument.
-        
-        New in Robot Framework version 1.8.2.
         """
         if self.get_length(item) == 0:
             if msg is None:
@@ -707,8 +692,6 @@ class RunKeyword:
         
         In this example, only either 'Some Action' or 'Another Action' is
         executed, based on the status of 'My Keyword'.
-        
-        New in Robot Framework version 1.8.3.
         """
         if self._is_true(condition):
             return self.run_keyword(name, *args)
@@ -717,8 +700,6 @@ class RunKeyword:
         """Runs the given keyword with the given arguments, if `condition` is false.
 
         See `Run Keyword If` for more information and an example.
-        
-        New in Robot Framework version 1.8.3.
         """
         if not self._is_true(condition):
             return self.run_keyword(name, *args)
@@ -733,9 +714,6 @@ class RunKeyword:
         
         The keyword name and arguments work as in `Run Keyword`. See
         `Run Keyword If` for a usage example.
-        
-        Note: In versions prior to Robot Framework version 1.8.3, this keyword
-        only returns the return value or error message of the executed keyword.
         """
         try:
             return 'PASS', self.run_keyword(name, *args)
@@ -816,8 +794,6 @@ class RunKeyword:
         
         Example:
         | Wait Until Keyword Succeeds | 2 min | 5 sec | My keyword | arg1 | arg2 |
-        
-        New in Robot Framework version 1.8.1.
         """
         timeout = utils.timestr_to_secs(timeout)
         retry_interval = utils.timestr_to_secs(retry_interval)
@@ -851,12 +827,12 @@ class RunKeyword:
         - ${var2} = 'value2'
         - ${var3} = None
 
-        It is also possible to have 'Else If' support by replacing the
-        second value with another condition, and having two new values
-        after it.  If the first condition is not true, the second is
-        evaluated and one of the values after it is returned based on
-        its truth value. This can be continued by adding more
-        conditions without a limit.
+        Starting from Robot Framework 2.0.2 it is also possible to have
+        'Else If' support by replacing the second value with another
+        condition, and having two new values after it. If the first
+        condition is not true, the second is evaluated and one of the
+        values after it is returned based on its truth value. This can
+        be continued by adding more conditions without a limit.
 
         | ${var} = | Set Variable If | ${rc} == 0        | zero           | 
         | ...      | ${rc} > 0       | greater than zero | less then zero |
@@ -867,9 +843,6 @@ class RunKeyword:
         | ...      | ${rc} == 2      | two               | 
         | ...      | ${rc} > 2       | greater than two  | 
         | ...      | ${rc} < 0       | less than zero    | 
-
-        This keyword was added in Robot Framework version 1.8.3, and support 
-        for 'Else If' was added in 2.0.2.
         """
         values = self._verify_values_for_set_variable_if(list(values))
         if self._is_true(condition):
@@ -1304,8 +1277,6 @@ class Misc:
         Examples:
         | ${escaped} = | Regexp Escape | ${original} |
         | @{strings} = | Regexp Escape | @{strings}  |
-        
-        New in Robot Framework version 1.8.3.
         """
         if len(patterns) == 0:
             return ''

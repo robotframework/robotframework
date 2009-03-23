@@ -332,8 +332,6 @@ class TelnetConnection(telnetlib.Telnet):
         'myprocess' appears on the output. The command is written
         every 0.5 seconds and the keyword ,fails if 'myprocess' does
         not appear in the output in 5 seconds.
-        
-        New in Robot Framework version 1.8.2.
         """
         timeout = utils.timestr_to_secs(timeout)
         retry_interval = utils.timestr_to_secs(retry_interval)
