@@ -17,8 +17,6 @@ import os
 import sys
 import re
 from UserDict import UserDict
-if sys.platform.startswith('java'):
-    from java.io import File
 
 
 _WHITESPACE_REGEXP = re.compile('\s+')
@@ -42,10 +40,10 @@ def normalize(string, ignore=[], caseless=True, spaceless=True):
     return string
 
 
-def normalize_list(list, ignore=[], caseless=True, spaceless=True):
-    """Normalize list (w/ default values), sort it and remove empty values"""
+def normalize_list(list_, ignore=[], caseless=True, spaceless=True):
+    """Normalize list, sort it and remove empty values"""
     d = NormalizedDict(ignore=ignore, caseless=caseless, spaceless=spaceless)
-    for item in list:
+    for item in list_:
         d[item] = 1
     ret = [ k for k in d.keys() if k != '' ]
     ret.sort()
@@ -58,27 +56,13 @@ def normpath(path, normcase=True):
     On case-insensitive file systems the path is also casenormalized
     (if normcase is True).
     """ 
-    path = _absnorm(path)
+    if os.sep == '\\' and len(path) == 2 and path[1] == ':':
+        path = path + '\\'
+    else:
+        path = os.path.abspath(path)
     if normcase and _CASE_INSENSITIVE_FILESYSTEM:
         path = path.lower()
-    if os.sep == '\\' and len(path) == 2 and path[1] == ':':
-        path += '\\'
     return path
-
-def _absnorm(path):
-    if os.sep == '\\' and len(path) == 2 and path[1] == ':':
-        return path + '\\'
-    # Jython (at least 2.2b1) may raise IOException if path invalid because it
-    # uses java.io.File.getCanonicalPath. java.io.File.getAbsolutePath is safe.
-    try:
-        path = os.path.abspath(path)
-    except:
-        path = File(path).getAbsolutePath()
-    return os.path.normpath(path)
-
-def _is_case_insensitive_filesystem():
-    return os.sep == '\\' or 'cygwin' in sys.platform or \
-                    'darwin' in sys.platform
 
 
 class NormalizedDict(UserDict):
