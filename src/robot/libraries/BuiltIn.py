@@ -18,7 +18,7 @@ import re
 import time
 
 from robot import output
-from robot.utils import asserts
+from robot.utils import asserts, get_error_message
 from robot.errors import DataError
 from robot import utils
 from robot.variables import is_var, is_list_var
@@ -1203,21 +1203,34 @@ class Misc:
         """
         return utils.get_time(format)
 
-    def evaluate(self, expression):
+    def evaluate(self, expression, modules=None):
         """Evaluates the given expression in Python and returns the results.
+
+        `modules` argument can be used to specify a comma separated
+        list of Python modules to be imported and added to the
+        namespace of the evaluated `expression`.
         
-        Examples (expecting ${RC} is -1):
-        | ${status} = | Evaluate | 0 < ${RC} < 10          |
-        | ${dict} =   | Evaluate | { 'a':1, 'b':2, 'c':3 } |
+        Examples (expecting ${result} is 3.14):
+        | ${status} = | Evaluate | 0 < ${result} < 10    |
+        | ${down}   = | Evaluate | int(${result})        |
+        | ${up}     = | Evaluate | math.ceil(${result})  | math |
+        | ${random} = | Evaluate | random.randint(0, sys.maxint) | random,sys |
         =>
-        - ${status} = False
-        - ${dict} = { 'a':1, 'b':2, 'c':3 }
+        - ${status} = True
+        - ${down} = 3
+        - ${up} = 4.0
+        - ${rondom} = <random integer>
+
+        Notice that instead of creating complicated expressions, it is
+        recommended to move the logic into a test library.
         """
+        modules = modules and modules.replace(' ','').split(',') or []
+        namespace = dict([ (m, __import__(m)) for m in modules if m != '' ])
         try:
-            return eval(expression)
-        except Exception, err:
-            raise Exception("Evaluating expression '%s' failed. Error: %s" 
-                            % (expression, err))
+            return eval(expression, namespace)
+        except:
+            raise Exception("Evaluating expression '%s' failed: %s" 
+                            % (expression, get_error_message()))
         
     def call_method(self, object, method_name, *args):
         """Calls the named method of the given object with the provided arguments.
