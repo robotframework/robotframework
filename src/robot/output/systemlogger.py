@@ -16,9 +16,30 @@
 from robot import utils
 from robot.conf import RobotSettings
 
-from abstractlogger import AbstractLogger
+from abstractlogger import AbstractLogger, Message
 from monitor import CommandLineMonitor
 import robot.output
+
+
+class SystemLogger2(AbstractLogger):
+
+    def __init__(self):
+        self._loggers = []
+
+    def write(self, message, level='INFO'):
+        msg = Message(message, level)
+        for logger in self._loggers:
+            logger.write(msg, level)
+
+    def register_logger(self, *loggers):
+        self._loggers.extend(loggers)
+
+    def register_file_logger(self, path=None, level='INFO'):
+        if not path:
+            path = os.env.get('ROBOT_SYSLOG_FILE', None)
+            if not path:
+                return
+            level = os.env.get('ROBOT_SYSLOG_LEVEL', level)
 
 
 class SystemLogger(AbstractLogger):
@@ -35,7 +56,7 @@ class SystemLogger(AbstractLogger):
         else:
             self.monitor = monitor
         try:
-            self._file_logger = self._get_file_logger(settings['SyslogFile'], 
+            self._file_logger = self._get_file_logger(settings['SyslogFile'],
                                                       settings['SyslogLevel'])
         except:
             self._file_logger = None

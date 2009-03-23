@@ -38,9 +38,12 @@ class AbstractLogger:
             if int_value == old_int:
                 return level
     
-    def write(self, msg='', level='INFO', html=False):
+    def write(self, msg, level='INFO', html=False):
+        """Implementing classes must override this or implement _write."""
         if self._is_logged(level):
-            self._write(Message(msg, level, html))
+            if not isinstance(msg, Message):
+                msg = Message(msg, level, html)
+            self._write(msg)
             
     def _is_logged(self, msg_level_str, threshold_level_str=None):
         msg_level = get_level(msg_level_str)
@@ -50,26 +53,29 @@ class AbstractLogger:
             threshold_level = get_level(threshold_level_str)
         return msg_level >= threshold_level
     
-    def _write(self, message):
-        raise NotImplementedError
-    
-    def trace(self, msg=''):
+    def trace(self, msg):
         self.write(msg, 'TRACE')
 
-    def debug(self, msg=''):
+    def debug(self, msg):
         self.write(msg, 'DEBUG')
 
-    def info(self, msg=''):
+    def info(self, msg):
         self.write(msg, 'INFO')
 
-    def warn(self, msg=''):
+    def warn(self, msg):
         self.write(msg, 'WARN')
 
-    def fail(self, msg=''):
+    def fail(self, msg):
         self.write(msg, 'FAIL')
 
-    def error(self, msg=''):
+    def error(self, msg):
         self.write(msg, 'ERROR')
+
+    def output_file(self, name, path):
+        pass
+
+    def close(self):
+        pass
 
 
 class Message:
