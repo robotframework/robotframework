@@ -24,6 +24,12 @@ from robot import utils
 class Telnet:
 
     """A test library providing Telnet connections and communicating with them.
+
+    This library supports multiple simultaneous connections, see `Open
+    Connection` and `Switch Connection` for details. 
+
+    The responses from the server are expected to be ASCII, all characters with
+    different encodings are ignored.
     """
 
     ROBOT_LIBRARY_SCOPE = 'TEST_SUITE'
