@@ -127,7 +127,7 @@ class Verify:
         asserts.fail(msg)
 
     def should_not_be_true(self, condition, msg=None):
-        """Fails if the the given condition is true.
+        """Fails if the given condition is true.
                 
         See `Should Be True` for details about how `condition` is evaluated and
         how `msg` can be used to override the default error message.
@@ -337,7 +337,7 @@ class Verify:
         Regular expression check is done using the Python 're' module, which
         has a pattern syntax derived from Perl, and thus also very similar to
         the one in Java. See the following documents for more details about
-        regexps in general and Python implementation in particular.
+        regular expressions in general and Python implementation in particular.
         
         * http://docs.python.org/lib/module-re.html
         * http://www.amk.ca/python/howto/regex/
@@ -726,7 +726,7 @@ class RunKeyword:
         The expected error must be given in the same format as in
         Robot Framework reports. It can be a pattern containing
         characters '?', which matches to any single character and
-        '*'. which matches to any number of any characters. `name` and
+        '*', which matches to any number of any characters. `name` and
         `*args` have same semantics as with `Run Keyword`.
         
         If the expected error occurs, the error message is returned and it can
@@ -1192,7 +1192,7 @@ class Misc:
         - ${status} = True
         - ${down} = 3
         - ${up} = 4.0
-        - ${rondom} = <random integer>
+        - ${random} = <random integer>
 
         Notice that instead of creating complicated expressions, it is
         recommended to move the logic into a test library.
@@ -1383,7 +1383,7 @@ def register_run_keyword(library, keyword, args_to_process=None):
     1) Why is this method needed
 
     Keywords running other keywords internally (normally using `Run Keyword`
-    or some variants of it in BuiltIn) must have the arguments ment to the
+    or some variants of it in BuiltIn) must have the arguments meant to the
     internally executed keyword handled specially to prevent processing them
     twice. This is done ONLY for keywords registered using this method.
 
