@@ -722,13 +722,13 @@ th {
 <tr>
 <td><a name="test_Import Library 1">Import Library 1</a></td>
 <td>[Documentation]</td>
-<td>Verify that keyword to be imported is not yet available FAIL No keyword with name 'Fail Unless Exists' found.</td>
+<td>Verify that keyword to be imported is not yet available FAIL No keyword with name 'Directory Should Exist' found.</td>
 <td></td>
 <td></td>
 </tr>
 <tr>
 <td></td>
-<td>Fail Unless Exists</td>
+<td>Directory Should Exist</td>
 <td>${CURDIR}</td>
 <td></td>
 <td></td>
@@ -749,7 +749,7 @@ th {
 </tr>
 <tr>
 <td></td>
-<td>Fail Unless Exists</td>
+<td>Directory Should Exist</td>
 <td>${CURDIR}</td>
 <td></td>
 <td></td>
@@ -770,7 +770,7 @@ th {
 </tr>
 <tr>
 <td></td>
-<td>Fail Unless Exists</td>
+<td>Directory Should Exist</td>
 <td>${CURDIR}</td>
 <td></td>
 <td></td>
@@ -1057,7 +1057,7 @@ th {
 </tr>
 <tr>
 <td></td>
-<td>Fail Unless</td>
+<td>Should Be True</td>
 <td>'${time2}' &gt;= '${time1}'</td>
 <td></td>
 <td></td>
@@ -1078,7 +1078,7 @@ th {
 </tr>
 <tr>
 <td></td>
-<td>Fail Unless</td>
+<td>Should Be True</td>
 <td>1000000000 &lt; ${time} &lt; 2000000000</td>
 <td></td>
 <td></td>
@@ -1099,42 +1099,42 @@ th {
 </tr>
 <tr>
 <td></td>
-<td>Fail Unless</td>
+<td>Should Be True</td>
 <td>2000 &lt; @{time}[0] &lt; 2100</td>
 <td></td>
 <td></td>
 </tr>
 <tr>
 <td></td>
-<td>Fail Unless</td>
+<td>Should Be True</td>
 <td>1 &lt;= int('@{time}[1]') &lt;= 12</td>
 <td></td>
 <td></td>
 </tr>
 <tr>
 <td></td>
-<td>Fail Unless</td>
+<td>Should Be True</td>
 <td>1 &lt;= int('@{time}[2]') &lt;= 31</td>
 <td></td>
 <td></td>
 </tr>
 <tr>
 <td></td>
-<td>Fail Unless</td>
+<td>Should Be True</td>
 <td>0 &lt;= int('@{time}[3]') &lt;= 23</td>
 <td></td>
 <td></td>
 </tr>
 <tr>
 <td></td>
-<td>Fail Unless</td>
+<td>Should Be True</td>
 <td>0 &lt;= int('@{time}[4]') &lt;= 59</td>
 <td></td>
 <td></td>
 </tr>
 <tr>
 <td></td>
-<td>Fail Unless</td>
+<td>Should Be True</td>
 <td>0 &lt;= int('@{time}[5]') &lt;= 59</td>
 <td></td>
 <td></td>
@@ -1155,21 +1155,21 @@ th {
 </tr>
 <tr>
 <td></td>
-<td>Fail Unless</td>
+<td>Should Be True</td>
 <td>2000 &lt; ${year} &lt; 2100</td>
 <td></td>
 <td></td>
 </tr>
 <tr>
 <td></td>
-<td>Fail Unless</td>
+<td>Should Be True</td>
 <td>0 &lt;= int('${min}') &lt;= 59</td>
 <td></td>
 <td></td>
 </tr>
 <tr>
 <td></td>
-<td>Fail Unless</td>
+<td>Should Be True</td>
 <td>0 &lt;= int('${sec}') &lt;= 59</td>
 <td></td>
 <td></td>
@@ -1184,7 +1184,7 @@ th {
 <tr>
 <td><a name="test_Evaluate">Evaluate</a></td>
 <td>[Documentation]</td>
-<td>FAIL REGEXP: Evaluating expression 'INVALID' failed. Error: .*</td>
+<td>FAIL STARTS: Evaluating expression 'INVALID' failed: NameError:</td>
 <td></td>
 <td></td>
 </tr>
@@ -1234,7 +1234,7 @@ th {
 <td></td>
 <td>${ten} =</td>
 <td>Evaluate</td>
-<td>100 - 9*11 + 9</td>
+<td>100 - 9*11 + int(9.9)</td>
 <td></td>
 </tr>
 <tr>
@@ -1253,7 +1253,7 @@ th {
 </tr>
 <tr>
 <td></td>
-<td>Fail Unless</td>
+<td>Should Be True</td>
 <td>${dict['a']} + ${dict['b']} == ${dict['c']}</td>
 <td></td>
 <td></td>
@@ -1276,7 +1276,7 @@ th {
 <td></td>
 <td>${hello} =</td>
 <td>Evaluate</td>
-<td>'Hello' + ' ' + 'world'</td>
+<td>'hello'.capitalize() + ' ' + 'world'</td>
 <td></td>
 </tr>
 <tr>
@@ -1307,7 +1307,7 @@ th {
 <td></td>
 <td></td>
 </tr>
-<tr>
+<tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Evaluate With Modules</td><td>[Documentation]</td><td>FAIL REGEXP:</td><td>ImportError: [Nn]o module named nonex_module</td><td></td></tr><tr><td></td><td>${ceil} =</td><td>Evaluate</td><td>math.ceil(1.001)</td><td>math</td></tr><tr><td></td><td>Should Be Equal</td><td>${ceil}</td><td>${2}</td><td></td></tr><tr><td></td><td>${random} =</td><td>Evaluate</td><td>random.randint(0, sys.maxint)</td><td>random,sys</td></tr><tr><td></td><td>${maxint}</td><td>${sep}</td><td>${x}</td><td>${y} =</td></tr><tr><td></td><td>...</td><td>Evaluate</td><td>sys.maxint, os.sep, re.escape('+'), '\\+'</td><td>sys, re,,,,,&nbsp; glob, os,robot,,,</td></tr><tr><td></td><td>Should Be True</td><td>0 &lt;= ${random} &lt;= ${maxint}</td><td></td><td></td></tr><tr><td></td><td>Should Be Equal</td><td>${x}</td><td>${y}</td><td></td></tr><tr><td></td><td>Evaluate</td><td>1</td><td>nonex_module</td><td></td></tr><tr>
 <td></td>
 <td></td>
 <td></td>
@@ -1323,7 +1323,7 @@ th {
 </tr>
 <tr>
 <td></td>
-<td>Fail Unless</td>
+<td>Should Be True</td>
 <td>${obj.args} == ()</td>
 <td></td>
 <td></td>
@@ -1337,7 +1337,7 @@ th {
 </tr>
 <tr>
 <td></td>
-<td>Fail Unless</td>
+<td>Should Be True</td>
 <td>${obj.args} == ('arg',)</td>
 <td></td>
 <td></td>
@@ -1358,7 +1358,7 @@ th {
 </tr>
 <tr>
 <td></td>
-<td>Fail Unless</td>
+<td>Should Be True</td>
 <td>${obj.args} == ('a1','a2')</td>
 <td></td>
 <td></td>
@@ -1484,7 +1484,7 @@ th {
 </tr>
 <tr>
 <td></td>
-<td>Fail Unless</td>
+<td>Should Be True</td>
 <td>${isempty}</td>
 <td></td>
 <td></td>
@@ -1533,7 +1533,7 @@ th {
 </tr>
 <tr>
 <td></td>
-<td>Fail If</td>
+<td>Should Not Be True</td>
 <td>${isempty}</td>
 <td></td>
 <td></td>
@@ -1578,14 +1578,14 @@ th {
 <td>...</td>
 <td>IN</td>
 <td>foo</td>
-<td>\</td>
+<td>${EMPTY}</td>
 </tr>
 <tr>
 <td></td>
 <td>...</td>
 <td>foo\nfoo bar</td>
 <td>o b</td>
-<td>\</td>
+<td>${EMPTY}</td>
 </tr>
 <tr>
 <td></td>
@@ -1598,20 +1598,20 @@ th {
 <td></td>
 <td>...</td>
 <td>Foo</td>
-<td>\</td>
-<td>\</td>
+<td>${EMPTY}</td>
+<td>${EMPTY}</td>
 </tr>
 <tr>
 <td></td>
 <td>...</td>
 <td>${TEXT}</td>
 <td>Should Match</td>
-<td>\</td>
+<td>${EMPTY}</td>
 </tr>
 <tr>
 <td></td>
 <td>...</td>
-<td>\</td>
+<td>${EMPTY}</td>
 <td></td>
 <td></td>
 </tr>
@@ -1661,7 +1661,7 @@ th {
 <td></td>
 <td>...</td>
 <td>bar\nfoo bar</td>
-<td>\</td>
+<td>${EMPTY}</td>
 <td>case insensitive</td>
 </tr>
 <tr>
@@ -1674,7 +1674,7 @@ th {
 <tr>
 <td></td>
 <td>...</td>
-<td>\</td>
+<td>${EMPTY}</td>
 <td></td>
 <td></td>
 </tr>
@@ -1724,7 +1724,7 @@ th {
 <td></td>
 <td>...</td>
 <td>${TEXT}</td>
-<td>\</td>
+<td>${EMPTY}</td>
 <td>glob</td>
 </tr>
 <tr>
@@ -1737,7 +1737,7 @@ th {
 <tr>
 <td></td>
 <td>...</td>
-<td>\</td>
+<td>${EMPTY}</td>
 <td></td>
 <td></td>
 </tr>
@@ -1794,7 +1794,7 @@ th {
 <td></td>
 <td>...</td>
 <td>foo\nbar\nfoo bar</td>
-<td>\</td>
+<td>${EMPTY}</td>
 <td>regexp</td>
 </tr>
 <tr>
@@ -1807,7 +1807,7 @@ th {
 <tr>
 <td></td>
 <td>...</td>
-<td>\</td>
+<td>${EMPTY}</td>
 <td></td>
 <td></td>
 </tr>
@@ -1920,13 +1920,7 @@ th {
 <td></td>
 <td></td>
 </tr>
-<tr>
-<td></td>
-<td>[Timeout]</td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
+
 <tr>
 <td></td>
 <td>Import Variables</td>
@@ -1969,13 +1963,7 @@ th {
 <td></td>
 <td></td>
 </tr>
-<tr>
-<td></td>
-<td>[Timeout]</td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
+
 <tr>
 <td></td>
 <td>Should Be Equal</td>
@@ -2004,13 +1992,7 @@ th {
 <td></td>
 <td></td>
 </tr>
-<tr>
-<td></td>
-<td>[Timeout]</td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
+
 <tr>
 <td></td>
 <td>${res} =</td>
