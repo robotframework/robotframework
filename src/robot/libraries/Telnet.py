@@ -227,7 +227,7 @@ class TelnetConnection(telnetlib.Telnet):
         See `Read` for more information on `loglevel`.
         """
         telnetlib.Telnet.close(self)
-        ret = self.read_all().decode('ASCII', 'replace')
+        ret = self.read_all().decode('ASCII', 'ignore')
         self._log(ret, loglevel)
         return ret
 
@@ -247,10 +247,10 @@ class TelnetConnection(telnetlib.Telnet):
         until the prompt is found. Otherwise, the keyword sleeps for a
         second and reads everything that is available.
         """
-        ret = self.read_until(login_prompt, 'TRACE')
+        ret = self.read_until(login_prompt, 'TRACE').decode('ASCII', 'ignore')
         self.write_bare(username + self._newline)
         ret += username + '\n'
-        ret += self.read_until(password_prompt, 'TRACE')
+        ret += self.read_until(password_prompt, 'TRACE').decode('ASCII', 'ignore')
         self.write_bare(password + self._newline)
         ret += '*' * len(password) + '\n'
         if self._prompt_is_set():
@@ -269,7 +269,7 @@ class TelnetConnection(telnetlib.Telnet):
         time.sleep(1)
         while True:
             try:
-                ret += self.read_until('\n', 'TRACE')
+                ret += self.read_until('\n', 'TRACE').decode('ASCII', 'ignore')
             except AssertionError:
                 return ret  
             else:
@@ -340,7 +340,7 @@ class TelnetConnection(telnetlib.Telnet):
             self.write_bare(text)
             self.read_until(text, loglevel)
             ret = telnetlib.Telnet.read_until(self, expected, 
-                                              retry_interval).decode('ASCII', 'replace')
+                                              retry_interval).decode('ASCII', 'ignore')
             self._log(ret, loglevel)
             if ret.endswith(expected):
                 return ret
@@ -356,7 +356,7 @@ class TelnetConnection(telnetlib.Telnet):
         log level, and the available levels are TRACE, DEBUG, INFO,
         and WARN.
         """
-        ret = self.read_very_eager().decode('ASCII', 'replace')
+        ret = self.read_very_eager().decode('ASCII', 'ignore')
         self._log(ret, loglevel)
         return ret
 
@@ -369,7 +369,7 @@ class TelnetConnection(telnetlib.Telnet):
         See `Read` for more information on `loglevel`.
         """
         ret = telnetlib.Telnet.read_until(self, expected, 
-                                          self._timeout).decode('ASCII', 'replace')
+                                          self._timeout).decode('ASCII', 'ignore')
         self._log(ret, loglevel)
         if not ret.endswith(expected):
             raise AssertionError("No match found for '%s' in %s" 
@@ -402,7 +402,7 @@ class TelnetConnection(telnetlib.Telnet):
             index, _, ret = self.expect(expected, self._timeout)
         except TypeError:
             index, ret = -1, ''
-        ret = ret.decode('ASCII', 'replace')
+        ret = ret.decode('ASCII', 'ignore')
         self._log(ret, loglevel)
         if index == -1:
             expected = [ type(exp) in StringTypes and exp or exp.pattern 
