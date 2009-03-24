@@ -56,9 +56,9 @@ __ `Selecting test cases`_
 __ `Test setup and teardown`_
 __ `Suite setup and teardown`_
 
+
 Screenshots
 ~~~~~~~~~~~
-
 
 Following image shows screenshots of Robot Framework `test data`_, `test 
 reports`_ and `test logs`_.
@@ -72,15 +72,15 @@ reports`_ and `test logs`_.
     Example report and log files
  
 
-
 High-level architecture
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-Robot Framework handles the processing of test data, the controlling of test 
-execution and the reporting of results for testing. The testing and interaction 
-with the target under test is done by test libraries that are plugged into Robot 
-Framework. Test libraries may internally use other test tools, but this is not 
-visible to Robot Framework.
+Robot Framework handles the processing of test data, the controlling
+of test execution and the reporting of results for testing. The
+testing and interaction with the target under test is done by test
+libraries that are plugged into Robot Framework. Test libraries may
+internally use other test tools, but this is not visible to Robot
+Framework.
 
 .. figure:: src/GettingStarted/architecture.png
 
@@ -91,3 +91,60 @@ test data, process it into a format that is appropriate for the attached test
 libraries, invoke the test libraries with the appropriate arguments, receive 
 the data about the test from the test libraries, and then report it. The test 
 libraries are responsible for interacting with the target under test.
+
+
+Getting more information
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+Project pages
+'''''''''''''
+
+The number one place to find more information about Robot Framework
+is the project web site at http://robotframework.org. This User Guide is
+naturally available there but you can also find more documentation__,
+an `issue tracker`__, downloads__, `source code`__ and links to other
+related projects. Robot Framework is hosted on `Google Code`__ which
+provides excellent free services for open source projects.
+
+__ http://code.google.com/p/robotframework/wiki/DocumentationIndex
+__ http://code.google.com/p/robotframework/issues
+__ http://code.google.com/p/robotframework/downloads
+__ http://code.google.com/p/robotframework/source
+__ http://code.google.com
+
+Mailing lists
+'''''''''''''
+
+There are several Robot Framework mailing lists where to ask and
+search for more information. The mailing list archives are open for
+everyone (including the search engines) and everyone can also join
+these lists freely. Only list members can send mails, though, and to
+prevent spam new users are moderated which means that it might take a
+little time before your first message goes through.  Do not be afraid
+to send question to mailing lists but remember `How To Ask Questions
+The Smart Way`__.
+
+robotframework-users__
+   General discussion about all Robot Framework related
+   issues. Questions and problems can be sent to this list. Used also
+   for information sharing for all users.
+
+robotframework-announce__
+    An announcements-only mailing list where only moderators can send
+    messages. All announcements are sent also to the
+    robotframework-users mailing list so there is no need to join both
+    lists.
+
+robotframework-devel__
+   Discussion about Robot Framework development. 
+
+robotframework-commit__
+   Automatically generated mails about commits to the version control
+   system, build results, new and edited issues, and so on. Can be used to
+   follow Robot Framework development.
+
+__ http://www.catb.org/~esr/faqs/smart-questions.html
+__ http://groups.google.com/group/robotframework-users 
+__ http://groups.google.com/group/robotframework-announce
+__ http://groups.google.com/group/robotframework-devel 
+__ http://groups.google.com/group/robotframework-commit
