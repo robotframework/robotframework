@@ -133,12 +133,16 @@ th {
 </tr>
 <tr>
 <td><a name="test_Set Variable">Set Variable</a></td>
-<td>Check Test Case</td>
-<td>Set Variable</td>
-<td></td>
+<td>${tc} =</td>
+<td>Check Test Case</td><td>Set Variable</td>
+
 <td></td>
 </tr>
-<tr>
+<tr><td></td><td>Check Log Message</td><td>${tc.kws[0].msgs[0]}</td><td>\${var} = Hello</td><td></td></tr><tr><td></td><td>Check Log Message</td><td>${tc.kws[7].msgs[0]}</td><td>Using
+'Set Variable' keyword with more or less than one argument is
+deprecated in Robot Framework 2.1 and that usage will be removed in 2.2.</td><td>WARN</td></tr><tr><td></td><td>Check Log Message</td><td>${tc.kws[13].msgs[0]}</td><td>Using 'Set
+Variable' keyword with more or less than one argument is deprecated in
+Robot Framework 2.1 and that usage will be removed in 2.2.</td><td>WARN</td></tr><tr>
 <td></td>
 <td></td>
 <td></td>

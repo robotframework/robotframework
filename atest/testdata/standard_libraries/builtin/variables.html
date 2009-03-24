@@ -159,7 +159,7 @@ th {
 <td>Hello</td>
 <td></td>
 </tr>
-<tr>
+<tr><td></td><td>@{mylist1} =</td><td>Set Variable</td><td>${LIST}</td><td><br></td></tr><tr><td></td><td>${mylist2} =</td><td>Set Variable</td><td>${LIST}</td><td></td></tr><tr><td></td><td>Should Be Equal</td><td>${mylist1}</td><td>${LIST}</td><td></td></tr><tr><td></td><td>Should Be Equal</td><td>${mylist2}</td><td>${LIST}</td><td></td></tr><tr><td></td><td>Comment</td><td>Usage below deprecated in RF 2.1</td><td>and should be removed in 2.2.</td><td></td></tr><tr>
 <td></td>
 <td>${var1}</td>
 <td>${var2} =</td>
@@ -176,20 +176,14 @@ th {
 <tr>
 <td></td>
 <td>Should Be Equal</td>
-<td>${var1}</td>
-<td>Hello</td>
+<td>${var1}+${var2}</td>
+<td>Hello+world</td>
 <td></td>
 </tr>
+
 <tr>
 <td></td>
-<td>Should Be Equal</td>
-<td>${var2}</td>
-<td>world</td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td>@{list} =</td>
+<td>@{mylist} =</td>
 <td>Set Variable</td>
 <td>Hi</td>
 <td>again</td>
@@ -197,52 +191,28 @@ th {
 <tr>
 <td></td>
 <td>Should Be Equal</td>
-<td>'@{list}[0]'</td>
-<td>'Hi'</td>
+<td>@{mylist}[0]+@{mylist}[1]</td>
+<td>Hi+again</td>
 <td></td>
 </tr>
-<tr>
-<td></td>
-<td>Should Be Equal</td>
-<td>'@{list}[1]'</td>
-<td>'again'</td>
-<td></td>
-</tr>
+
 <tr>
 <td></td>
 <td>${scal} =</td>
 <td>Set Variable</td>
-<td>Hi</td>
-<td>again</td>
-</tr>
-<tr>
-<td></td>
-<td>Should Be Equal</td>
-<td>'${scal[0]}'</td>
-<td>'Hi'</td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td>Should Be Equal</td>
-<td>'${scal[1]}'</td>
-<td>'again'</td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td>${scal2} =</td>
-<td>Set Variable</td>
-<td>${scal}</td>
-<td></td>
+<td>Hello</td>
+<td>world</td>
 </tr>
 <tr>
 <td></td>
 <td>Should Be Equal</td>
 <td>${scal}</td>
-<td>${scal2}</td>
+<td>${LIST}</td>
 <td></td>
 </tr>
+
+
+
 <tr>
 <td></td>
 <td>${emp} =</td>
@@ -269,48 +239,12 @@ th {
 
 
 
-<tr>
-<td></td>
-<td>${list} =</td>
-<td>Create List</td>
-<td>Hello</td>
-<td>world</td>
-</tr>
-<tr>
-<td></td>
-<td>${list2} =</td>
-<td>Create List</td>
-<td>Hi</td>
-<td>Tellus</td>
-</tr>
-<tr>
-<td></td>
-<td>@{var} =</td>
-<td>Set Variable If</td>
-<td>True</td>
-<td>${list}</td>
-</tr>
-<tr>
-<td></td>
-<td>...</td>
-<td>${list2}</td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td>Should Be True</td>
-<td>@{var} == [ 'Hello', 'world' ]</td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
+
+
+
+
+
+
 
 
 
