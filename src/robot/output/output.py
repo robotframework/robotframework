@@ -82,8 +82,6 @@ class Output(AbstractLogger):
     def end_suite(self, suite):
         outpath = self.logger.end_suite(suite)
         if outpath is not None:
-            SYSLOG.info('Output: %s' % outpath)
-            self.listeners.output_file('Output', outpath)
             orig_outpath = self._settings['Output']
             suite.namespace.variables.set_global('${OUTPUT_FILE}', orig_outpath)
             self._create_split_log(outpath, suite)
@@ -98,8 +96,6 @@ class Output(AbstractLogger):
         logpath = self._namegen.get_prev()
         output = robot.serializing.SplitSubTestOutput(outpath)
         output.serialize_log(logpath)
-        SYSLOG.info('Log: %s' % logpath)
-        self.listeners.output_file('Log', logpath)   
         suite.namespace.variables.set_global('${LOG_FILE}', self._namegen.get_base())
         
     def start_test(self, test):
