@@ -97,8 +97,18 @@ class TestVariables(unittest.TestCase):
             self.assertRaises(DataError, self.varz.__getitem__, var)
 
     def test_has_key(self):
-        # tested mainly in test_setitem
+        self.varz['${k}'] = 'v'
+        assert self.varz.has_key('${k}')
+        assert self.varz.has_key('${1}')
+        assert self.varz.has_key('${k.upper()}')
         assert not self.varz.has_key('${non-existing}')
+
+    def test_contains(self):
+        self.varz['${k}'] = 'v'
+        assert '${k}' in self.varz
+        assert '${-3}' in self.varz
+        assert '${k.upper()}' in self.varz
+        assert '${nok}' not in self.varz
 
     def test_replace_scalar(self):
         self.varz['${foo}'] = 'bar'
@@ -238,6 +248,13 @@ class TestVariables(unittest.TestCase):
         assert_equals(self.varz.replace_list(['${name}', 42]), [exp, 42])
         assert_equals(self.varz.replace_string('${name}'), str(exp))
         assert_true(self.varz.has_key('${name}'))
+
+    def test_copy(self):
+        varz = variables.Variables(identifiers=['$'])
+        varz['${foo}'] = 'bar'
+        copy = varz.copy()
+        assert_equals(copy['${foo}'], 'bar')
+        assert_equals(copy._identifiers, ['$'])
         
     if utils.is_jython:
         

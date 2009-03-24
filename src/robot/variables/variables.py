@@ -39,12 +39,9 @@ class Variables(utils.NormalizedDict):
     }$           # "}" and end of the string
     ''', re.VERBOSE)
     
-    def __init__(self, identifiers=None):
-        if identifiers is None:
-            self._identifiers = ['$','@','%','&','*']
-        else:
-            self._identifiers = identifiers
+    def __init__(self, identifiers=['$','@','%','&','*']):
         utils.NormalizedDict.__init__(self, ignore=['_'])
+        self._identifiers = identifiers
 
     def __setitem__(self, name, value):
         if not is_var(name):
@@ -286,6 +283,8 @@ class Variables(utils.NormalizedDict):
             return False
         else:
             return True
+
+    __contains__ = has_key
 
 
 class _VariableSplitter:
