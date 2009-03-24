@@ -483,7 +483,7 @@ class Variables:
         """Logs all variables in the current scope with given log level."""
         variables = self._get_variables()
         names = variables.keys()
-        names.sort()
+        names.sort(lambda x, y: cmp(x.lower(), y.lower()))
         for name in names:
             value = variables[name]
             if utils.is_list(value):
