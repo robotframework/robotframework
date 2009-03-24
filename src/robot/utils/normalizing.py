@@ -42,9 +42,9 @@ def normalize(string, ignore=[], caseless=True, spaceless=True):
 
 def normalize_list(list_, ignore=[], caseless=True, spaceless=True):
     """Normalize list, sort it and remove empty values"""
-    d = NormalizedDict(ignore=ignore, caseless=caseless, spaceless=spaceless)
+    d = {}
     for item in list_:
-        d[item] = 1
+        d[normalize(item, ignore, caseless, spaceless)] = 1
     ret = [ k for k in d.keys() if k != '' ]
     ret.sort()
     return ret
@@ -69,19 +69,25 @@ class NormalizedDict(UserDict):
     
     def __init__(self, initial={}, ignore=[], caseless=True, spaceless=True):
         UserDict.__init__(self)
-        self._ignore = ignore
-        self._caseless = caseless
-        self._spaceless = spaceless
+        self._keys = {}
+        self._normalize = lambda s: normalize(s, ignore, caseless, spaceless)
         for key, value in initial.items():
-            self.__setitem__(key, value)
+            self[key] = value
     
     def __setitem__(self, key, value):
-        self.data[self._normalize(key)] = value
+        nkey = self._normalize(key)
+        self._keys.setdefault(nkey, key)
+        self.data[nkey] = value
 
     set = __setitem__
 
     def __getitem__(self, key):
         return self.data[self._normalize(key)]    
+
+    def __delitem__(self, key):
+        nkey = self._normalize(key)
+        del self.data[nkey]
+        del self._keys[nkey]
     
     def get(self, key, default=None):
         try:
@@ -94,5 +100,13 @@ class NormalizedDict(UserDict):
     
     __contains__ = has_key
 
-    def _normalize(self, item):
-        return normalize(item, self._ignore, self._caseless, self._spaceless) 
+    def keys(self):
+        return self._keys.values()
+
+    def items(self):
+        return [ (key, self[key]) for key in self.keys() ]
+
+    def copy(self):
+        copy = UserDict.copy(self)
+        copy._keys = self._keys.copy()
+        return copy
