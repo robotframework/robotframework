@@ -32,6 +32,14 @@ class LoggerMock:
         return LoggerMock(*self.expected)
 
 
+class LoggerMock2(LoggerMock):
+
+    def output_file(self, name, path):
+        self.output_file = (name, path)
+
+    def close(self):
+        self.closed = True
+
 class TestSystemFileLogger(unittest.TestCase):
     
     def setUp(self):
@@ -101,6 +109,21 @@ class TestSystemLogger(unittest.TestCase):
             assert_equals(logger.msg.message, msg)
             assert_equals(logger.msg.level, level)
         
+    def test_all_methods(self):
+        logger = LoggerMock2(('Hello, world!', 'INFO'))
+        self.syslog.register_logger(logger)
+        self.syslog.output_file('name', 'path')
+        self.syslog.close()
+        assert_equals(logger.output_file, ('name', 'path'))
+        assert_true(logger.closed)
+
+    def test_registered_logger_does_not_need_all_methods(self):
+        logger = LoggerMock(('Hello, world!', 'INFO'))
+        self.syslog.register_logger(logger)
+        self.syslog.output_file('name', 'path')
+        self.syslog.close()
+
 
 if __name__ == "__main__":
     unittest.main()
+

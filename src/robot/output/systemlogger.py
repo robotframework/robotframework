@@ -24,15 +24,18 @@ import robot.output
 class SystemLogger2(AbstractLogger):
 
     def __init__(self):
-        self._loggers = []
-
-    def write(self, message, level='INFO'):
-        msg = Message(message, level)
-        for logger in self._loggers:
-            logger.write(msg, level)
+        self._writers = []
+        self._output_filers = []
+        self._closers = []
 
     def register_logger(self, *loggers):
-        self._loggers.extend(loggers)
+        for logger in loggers:
+            if hasattr(logger, 'write'):
+                self._writers.append(logger.write)
+            if hasattr(logger, 'output_file'):
+                self._output_filers.append(logger.output_file)
+            if hasattr(logger, 'close'):
+                self._closers.append(logger.close)
 
     def register_file_logger(self, path=None, level='INFO'):
         if not path:
@@ -41,13 +44,18 @@ class SystemLogger2(AbstractLogger):
         if path:
             self.register_logger(_FileLogger(path, level))
 
-    def close(self):
-        for logger in self._loggers:
-            logger.close()
+    def write(self, message, level='INFO'):
+        msg = Message(message, level)
+        for write in self._writers:
+            write(msg, level)
 
     def output_file(self, name, path):
-        for logger in self._loggers:
-            logger.output_file(name, path)
+        for output_file in self._output_filers:
+            output_file(name, path)
+
+    def close(self):
+        for close in self._closers:
+            close()
 
 
 class SystemLogger(AbstractLogger):
