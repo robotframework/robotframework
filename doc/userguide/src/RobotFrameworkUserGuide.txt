@@ -96,6 +96,8 @@ Appendices
 
 .. 1. Getting started
 
+.. _mailing list: `Mailing lists`_
+
 .. 2. Creating test data
 
 .. _test data: `Creating test data`_

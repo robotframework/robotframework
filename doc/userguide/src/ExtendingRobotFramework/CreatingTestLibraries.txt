@@ -1227,7 +1227,6 @@ are completely optional.
    }
 
 
-
 Hybrid library API
 ~~~~~~~~~~~~~~~~~~
 
@@ -1279,7 +1278,6 @@ __ http://docs.python.org/ref/attribute-access.html
                return external_keyword
            raise AttributeError("Non-existing attribute '%s'" % name)
 
-
 Note that :code:`__getattr__` does not execute the actual keyword like
 :code:`run_keyword` does with the dynamic API. Instead, it only
 returns a callable object that is then executed by Robot Framework.
@@ -1328,3 +1326,51 @@ the keyword name and arguments.
 
 A good example of using the hybrid API is Robot Framework's own
 `Telnet library`_.
+
+
+Using Robot Framework's intermal modules
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Test libraries implemented with Python can use Robot Framework's
+internal modules, for example, to get information about the executed
+tests and the settings that are used. This powerful mechanism to
+communicate with the framework should be used with care, though,
+because all Robot Framework's APIs are not meant to be used by
+externally and they might change radically between different framework
+versions.
+
+The safest API to use are methods implementing keywords in the
+BuiltIn_ library. Changes to keywords are rare and they are always
+done so that old usage is first deprecated. One of the most useful
+methods is :code:`replace_variables` which allows accessing currently
+available variables. The following example demonstrates how to get
+:var:`${OUTPUT_DIR}` which is one of the many handy `automatic
+variables`_. It is also possible to set new variables from libraries
+using :code:`set_test_variable`, :code:`set_suite_variable` and
+:code:`set_global_variable`.
+
+.. sourcecode:: python
+
+   import os.path
+   from robot.libraries.BuiltIn import BuiltIn
+
+   def do_something(argument):
+       output = do_something_that_creates_a_lot_of_output(argument)
+       outputdir = BuiltIn().replace_variables('${OUTPUTDIR}')
+       path = os.path.join(outputdir, 'results.txt')
+       f = open(path, 'w')
+       f.write(output)
+       f.close()
+       print '*HTML* Output written to <a href="results.txt">results.txt</a>'
+
+The only catch with using methods from :code:`BuiltIn` is that all
+:code:`run_keyword` method variants must be handled specially. What
+needs to be done is registering methods that use these methods to be *run
+keywords* themselves using :code: :code:`register_run_keyword` method
+in :code:`BuiltIn` module. This method's documentation explains why
+this needs to be done and obviously also how to do it.
+
+The plan is to document all the internal modules better so that it is
+easier to decide which can be used and how they should be used. If you
+are unsure is using some API safe, please send a question to either
+user or developer `mailing list`_.
