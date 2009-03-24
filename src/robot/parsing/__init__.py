@@ -16,7 +16,6 @@ from model import TestSuiteData
 from rawdata import RawData
 from resourcefile import ResourceFile
 from robot.conf.settings import RobotSettings
-from robot.output.systemlogger import SystemLogger
 
 
 def TestSuite(*datasources, **options):
@@ -27,8 +26,4 @@ def TestSuite(*datasources, **options):
     their names are same as long command line options without hyphens. 
     """
     settings = RobotSettings(options)
-    try:
-        syslog = options['syslog'] 
-    except KeyError: 
-        syslog = SystemLogger(settings)
-    return TestSuiteData(datasources, settings, syslog)
+    return TestSuiteData(datasources, settings)

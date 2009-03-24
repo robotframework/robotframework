@@ -18,6 +18,7 @@ import os.path
 from robot import utils
 from robot.errors import DataError
 from robot.common import BaseTestSuite, BaseTestCase, BaseKeyword
+from robot.output import SYSLOG
 
 
 RERAISE = (KeyboardInterrupt, SystemExit, MemoryError)
@@ -26,21 +27,21 @@ if utils.is_jython:
     RERAISE += (OutOfMemoryError,)
 
 
-def process_outputs(paths, settings, syslog=None):
+def process_outputs(paths, settings):
     if not paths:
         raise DataError('No output files given.')
     if len(paths) == 1:
-        return process_output(paths[0], syslog)
-    testsuite = CombinedTestSuite(settings['StartTime'], settings['EndTime'])
-    testsyslog = CombinedSyslog()
+        return process_output(paths[0])
+    suite = CombinedTestSuite(settings['StartTime'], settings['EndTime'])
+    exec_errors = CombinedExecErrors()
     for path in paths:
-        subsuite, subsyslog = process_output(path, syslog)
-        testsuite.add_suite(subsuite)
-        testsyslog.add(subsyslog)
-    return testsuite, testsyslog
+        subsuite, suberrors = process_output(path)
+        suite.add_suite(subsuite)
+        exec_errors.add(suberrors)
+    return suite, exec_errors
 
 
-def process_output(path, read_level=-1, syslog=None):
+def process_output(path, read_level=-1):
     """Process one Robot output xml file and return TestSuite and Syslog
     
     'read_level' can be used to limit how many suite levels are read. This is
@@ -48,8 +49,7 @@ def process_output(path, read_level=-1, syslog=None):
     """
     if not os.path.isfile(path):
         raise DataError("Output file '%s' does not exist." % path)
-    if syslog is not None:
-        syslog.info("Processing output file '%s'." % path)
+    SYSLOG.info("Processing output file '%s'." % path)
     try:
         root = utils.DomWrapper(path)
     except RERAISE:
@@ -64,7 +64,7 @@ def process_output(path, read_level=-1, syslog=None):
         syslognode = root.get_node('syslog')
     except AttributeError:
         syslognode = None
-    return TestSuite(suite, read_level), Syslog(syslognode)
+    return TestSuite(suite, read_level), ExecErrors(syslognode)
 
     
 def _get_suite_node(root):
@@ -327,7 +327,7 @@ class Message:
         return "'%s %s'" % (self.level, msg.replace("'",'"'))
 
 
-class Syslog:
+class ExecErrors:
     
     def __init__(self, node):
         if node is None:
@@ -342,7 +342,7 @@ class Syslog:
         serializer.end_syslog(self)
 
 
-class CombinedSyslog(Syslog):
+class CombinedExecErrors(ExecErrors):
     
     def __init__(self):
         self.messages = []

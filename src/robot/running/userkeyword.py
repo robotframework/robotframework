@@ -24,14 +24,11 @@ from keywords import KeywordFactory
 from timeouts import KeywordTimeout
 
 
-def PublicUserLibrary(path, syslog=None):
+def PublicUserLibrary(path):
     """Create a user library instance from given resource file."""
     from robot.parsing import ResourceFile
-    from robot.output import SystemLogger
     
-    if syslog is None:
-        syslog = SystemLogger()
-    resource = ResourceFile(path, syslog)
+    resource = ResourceFile(path)
     ret = UserLibrary(resource.user_keywords, path)
     ret.doc = resource.doc
     return ret
