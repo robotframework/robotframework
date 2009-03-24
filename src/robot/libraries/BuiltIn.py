@@ -542,31 +542,35 @@ class Variables:
         """
         return self._get_variables().replace_scalar(text)
     
-    def set_variable(self, *args):
-        """Returns the given arguments -- can be used to set variables.
+    def set_variable(self, *values):
+        """Returns the given argument -- can be used to set variables.
+
+        Can also be used to convert a scalar variable containing list to
+        a list variable or to multiple scalar variables.
         
         Examples:
-        | ${var} =  | Set Variable | Hello  |
-        | ${var1}   | ${var2} =    | Set Variable | Hello  | world  |
-        | @{list} = | Set Variable | Hi     | again  |    | # list variable   |
-        | ${scal} = | Set Variable | Hi     | again  |    | # scalar variable |
-        => 
-        - ${var} = 'Hello'
-        - ${var1} = 'Hello' & ${var2} = 'world'
-        - @{list} = ['Hi','again'] i.e. @{list}[0] = 'Hi' & @{list}[1] = 'again'
-        - ${scal} = ['Hi','again']
+        | ${hi} =   | Set Variable | Hello, world! |
+        | ${hi2} =  | Set Variable | I said: ${hi} |
+        | @{list} = | Set Variable | ${list with some items} |
+        | ${item1}  | ${item2} =   | Set Variable  | ${list with 2 items} |
 
         Variables created with this keyword are available only in the
         scope where they are created. See `Set Global Variable`, `Set
-        Test Variable` and `Set Suite Variable` for information how to
-        set a variable so that it is available also in a larger scope.
+        Test Variable` and `Set Suite Variable` for information on how to
+        set variables so that they are available also in a larger scope.
+
+        Using this keyword with more (or less) than one value has been 
+        deprecated in Robot Framework 2.1 and that usage will be removed
+        in 2.2.
         """
-        if len(args) == 0:
+        if len(values) == 1:
+            return values[0]
+        self.log("Using 'Set Variable' keyword with more or less than one "
+                 "argument is deprecated in Robot Framework 2.1 and that "
+                 "usage will be removed in 2.2.", "WARN")
+        if not values:
             return ''
-        elif len(args) == 1:
-            return args[0]
-        else:
-            return list(args)
+        return list(values)
 
     def set_test_variable(self, name, *values):
         """Makes a variable available everywhere within the scope of the current test.
