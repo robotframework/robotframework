@@ -58,7 +58,7 @@ class Namespace:
             
     def copy(self):
         # Namespace is copied by ParallelKeyword
-        ns = Namespace(None, None, None)
+        ns = Namespace(None, None)
         ns.variables = self.variables.copy_all()
         ns.suite = self.suite
         ns.test = self.test

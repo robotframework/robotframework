@@ -15,7 +15,6 @@
 
 import os
 import sys
-import urlparse
 
 from robot import utils
 from robot.errors import DataError

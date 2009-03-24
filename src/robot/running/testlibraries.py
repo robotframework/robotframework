@@ -78,7 +78,7 @@ class _BaseTestLibrary(BaseLibrary):
             self._init_scope_handling()
 
     def copy(self, name):
-        lib = _BaseTestLibrary(None, self.version, name, self.args, None)
+        lib = _BaseTestLibrary(None, self.version, name, self.args)
         lib.orig_name = self.name
         lib.doc = self.doc
         lib.scope = self.scope
