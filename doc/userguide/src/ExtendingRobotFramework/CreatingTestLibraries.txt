@@ -1328,7 +1328,7 @@ A good example of using the hybrid API is Robot Framework's own
 `Telnet library`_.
 
 
-Using Robot Framework's intermal modules
+Using Robot Framework's internal modules
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Test libraries implemented with Python can use Robot Framework's
