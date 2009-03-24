@@ -49,7 +49,7 @@ class TestSystemFileLogger(unittest.TestCase):
         utils.robottime._current_time = None
 
     def test_write(self):
-        self.logger.write('my message')
+        self.logger.write('my message', 'INFO')
         expected = '20060613 08:37:42.123 | INFO  | my message\n'
         assert_equals(self.logger._writer.getvalue(), expected)
         self.logger.write('my 2nd msg\nwith 2 lines', 'ERROR')
