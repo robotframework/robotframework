@@ -146,7 +146,7 @@ class _BaseTestLibrary(BaseLibrary):
         try:
             scope = libcode.ROBOT_LIBRARY_SCOPE
             scope = utils.normalize(scope, ignore=['_']).upper()
-        except:
+        except (AttributeError, TypeError):
             scope = 'TESTCASE'
         return scope in ['GLOBAL','TESTSUITE'] and scope or 'TESTCASE'
         
