@@ -40,6 +40,7 @@ def rebot_from_cli(args, usage):
     _run_or_rebot_from_cli(rebot, args, usage)
 
 def _run_or_rebot_from_cli(method, cliargs, usage, **argparser_config):
+    SYSLOG.register_command_line_monitor()
     SYSLOG.register_file_logger()
     ap = utils.ArgumentParser(usage, utils.get_full_version())
     try:
@@ -59,7 +60,6 @@ def _run_or_rebot_from_cli(method, cliargs, usage, **argparser_config):
     except (KeyboardInterrupt, SystemExit):
         _exit(STOPPED_BY_USER, 'Execution stopped by user.')
     except:
-        raise
         error, details = utils.get_error_details()
         _exit(FRAMEWORK_ERROR, 'Unexpected error: %s' % error, details) 
     else:
@@ -82,9 +82,9 @@ def run(*datasources, **options):
     pybot --log mylog.html /path/to/tests.html /path/to/tests2.html
     """
     settings = RobotSettings(options)
-    monitor = CommandLineMonitor(settings['MonitorWidth'], settings['MonitorColors'])
-    SYSLOG.register_logger(monitor)
-    output = Output(monitor, settings)
+    SYSLOG.register_command_line_monitor(settings['MonitorWidth'], 
+                                         settings['MonitorColors'])
+    output = Output(settings)
     settings.report_possible_errors()
     init_global_variables(settings)
     _syslog_start_info('Robot', datasources, settings)
@@ -120,8 +120,7 @@ def rebot(*datasources, **options):
     rebot --report myrep.html --log NONE /path/out1.xml /path/out2.xml
     """
     settings = RebotSettings(options)
-    monitor = CommandLineMonitor(settings['MonitorWidth'], settings['MonitorColors'])
-    SYSLOG.register_logger(monitor)
+    SYSLOG.register_command_line_monitor(colors=settings['MonitorColors'])
     settings.report_possible_errors()
     _syslog_start_info('Rebot', datasources, settings)
     testoutput = RebotTestOutput(datasources, settings)

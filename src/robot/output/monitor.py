@@ -27,9 +27,9 @@ ANSI_RESET  = '\033[0m'
 
 class CommandLineMonitor:
 
-    def __init__(self, monitor_width=78, monitor_colors=True):
-        self._width = monitor_width
-        self._colors = monitor_colors
+    def __init__(self, width=78, colors=True):
+        self.width = width
+        self.colors = colors
         self._started = False
         
     def start_suite(self, suite):
@@ -71,7 +71,7 @@ class CommandLineMonitor:
         stream.flush()
 
     def _write_info(self, name, doc, start_suite=False):
-        maxwidth = self._width
+        maxwidth = self.width
         if not start_suite:
             maxwidth -= len(' | PASS |')
         info = self._get_info(name, doc, maxwidth)
@@ -95,7 +95,7 @@ class CommandLineMonitor:
             self._write(message.strip())
 
     def _write_separator(self, sep_char):
-        self._write(sep_char * self._width)
+        self._write(sep_char * self.width)
       
     def _highlight(self, text):
         color = self._get_highlight_color(text)
@@ -103,7 +103,7 @@ class CommandLineMonitor:
         return color + text + reset
     
     def _get_highlight_color(self, text):
-        if self._colors:
+        if self.colors:
             if text in ['FAIL','ERROR']:
                 return ANSI_RED
             elif text == 'WARN':

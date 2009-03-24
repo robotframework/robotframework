@@ -30,9 +30,8 @@ from debugfile import DebugFile
 
 class Output(AbstractLogger):
     
-    def __init__(self, monitor, settings):
+    def __init__(self, settings):
         AbstractLogger.__init__(self, settings['LogLevel'])
-        self.monitor = monitor
         self.logger = None
         self.listeners = Listeners(settings['Listeners'])
         self._execution_errors = _ExecutionErrorLogger()
@@ -75,7 +74,7 @@ class Output(AbstractLogger):
             if self._namegen is not None:
                 suite.namespace.variables.set_global('${LOG_FILE}', 
                                                      self._namegen.get_name())
-        self.monitor.start_suite(suite)
+        SYSLOG.monitor.start_suite(suite)
         self.listeners.start_suite(suite)
         if self._debugfile is not None:
             self._debugfile.start_suite(suite)
@@ -88,7 +87,7 @@ class Output(AbstractLogger):
             orig_outpath = self._settings['Output']
             suite.namespace.variables.set_global('${OUTPUT_FILE}', orig_outpath)
             self._create_split_log(outpath, suite)
-        self.monitor.end_suite(suite)
+        SYSLOG.monitor.end_suite(suite)
         self.listeners.end_suite(suite)
         if self._debugfile is not None:
             self._debugfile.end_suite(suite)
@@ -106,14 +105,14 @@ class Output(AbstractLogger):
     def start_test(self, test):
         SYSLOG.info("Running test case '%s'" % test.name)
         self.logger.start_test(test)
-        self.monitor.start_test(test)
+        SYSLOG.monitor.start_test(test)
         self.listeners.start_test(test)
         if self._debugfile is not None:
             self._debugfile.start_test(test)
         
     def end_test(self, test):
         self.logger.end_test(test)
-        self.monitor.end_test(test)
+        SYSLOG.monitor.end_test(test)
         self.listeners.end_test(test)
         if self._debugfile is not None:
             self._debugfile.end_test(test)

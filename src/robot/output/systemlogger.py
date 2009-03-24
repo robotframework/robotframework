@@ -18,6 +18,7 @@ import os
 from robot import utils
 
 from abstractlogger import AbstractLogger, Message
+from monitor import CommandLineMonitor
 
 
 class SystemLogger(AbstractLogger):
@@ -26,6 +27,7 @@ class SystemLogger(AbstractLogger):
         self._writers = []
         self._output_filers = []
         self._closers = []
+        self.monitor = None
 
     def register_logger(self, *loggers):
         for logger in loggers:
@@ -36,12 +38,27 @@ class SystemLogger(AbstractLogger):
             if hasattr(logger, 'close'):
                 self._closers.append(logger.close)
 
+    def register_command_line_monitor(self, width=78, colors=True):
+        if not self.monitor:
+            self.monitor = CommandLineMonitor(width, colors)
+            self.register_logger(self.monitor)
+        else:
+            self.monitor.width = width
+            self.monitor.colors = colors
+
     def register_file_logger(self, path=None, level='INFO'):
         if not path:
             path = os.environ.get('ROBOT_SYSLOG_FILE', None)
             level = os.environ.get('ROBOT_SYSLOG_LEVEL', level)
-        if path:
-            self.register_logger(_FileLogger(path, level))
+            if not path:
+                return
+        try:
+            logger = _FileLogger(path, level)
+        except:
+            self.error("Opening syslog file '%s' failed: %s"  
+                       % (path, utils.get_error_message()))
+        else:
+            self.register_logger(logger)
 
     def write(self, message, level='INFO'):
         msg = Message(message, level)
@@ -56,63 +73,6 @@ class SystemLogger(AbstractLogger):
         for close in self._closers:
             close()
         self.__init__()
-
-
-class _SystemLogger(AbstractLogger):
-    
-    def __init__(self, settings=None, monitor=None):
-        AbstractLogger.__init__(self, 'WARN')
-        self.messages = []
-        self.listeners = None
-        if settings is None:
-            settings = RobotSettings()
-        if monitor is None:
-            self.monitor = CommandLineMonitor(settings['MonitorWidth'],
-                                              settings['MonitorColors'])
-        else:
-            self.monitor = monitor
-        try:
-            self._file_logger = self._get_file_logger(settings['SyslogFile'],
-                                                      settings['SyslogLevel'])
-        except:
-            self._file_logger = None
-            self.error("Opening syslog file '%s' failed: %s"  
-                       % (settings['SyslogFile'], utils.get_error_message()))
-        robot.output.SYSLOG = self
-        
-    def register_listeners(self, listeners):
-        self.listeners = listeners
-        
-    def _get_file_logger(self, path, level):
-        if utils.eq(path, 'NONE'):
-            return None
-        return _FileLogger(path, level)
-
-    def write(self, msg, level='INFO'):
-        if self._file_logger is not None:
-            self._file_logger.write(msg, level)
-        AbstractLogger.write(self, msg, level)
-        
-    def _write(self, message):
-        self.monitor.error_message(message.message, message.level)
-        self.messages.append(message)
-
-    def close(self):
-        if self._file_logger is not None:
-            self._file_logger.close()
-        self._file_logger = None
-
-    def serialize(self, serializer):
-        serializer.start_syslog(self)
-        for msg in self.messages:
-            serializer.message(msg)
-        serializer.end_syslog(self)
-        
-    def output_file(self, name, path):
-        self.write('%s: %s' % (name, path))
-        self.monitor.output_file(name, path)
-        if self.listeners is not None:
-            self.listeners.output_file(name, path)
 
 
 class _FileLogger(AbstractLogger):
@@ -130,6 +90,9 @@ class _FileLogger(AbstractLogger):
                                     message.message)
         self._writer.write(utils.unic(entry).encode('UTF-8'))
         
+    def output_file(self, name, path):
+        self.info('%s: %s' % (name, path))
+
     def close(self):
         self._writer.close()
 

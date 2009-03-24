@@ -38,7 +38,7 @@ class AbstractLogger:
             if int_value == old_int:
                 return level
     
-    def write(self, msg, level='INFO', html=False):
+    def write(self, msg, level, html=False):
         """Implementing classes must override this or implement _write."""
         if self._is_logged(level):
             if not isinstance(msg, Message):
@@ -70,12 +70,6 @@ class AbstractLogger:
 
     def error(self, msg):
         self.write(msg, 'ERROR')
-
-    def output_file(self, name, path):
-        pass
-
-    def close(self):
-        pass
 
 
 class Message:
