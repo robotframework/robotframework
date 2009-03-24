@@ -956,16 +956,6 @@ class RunKeyword:
                             % kwname)
         return NAMESPACES.current.suite
 
-    def comment(self, *messages):
-        """Displays the given messages in the log file as keyword arguments.
-        
-        This keyword does nothing with the arguments it receives, but as they
-        are visible in the log, this keyword can be used to display simple
-        messages. In more complicated cases, the `Log` or `Log Many` keywords
-        should be used.
-        """
-        pass
-
 
 class Misc:
     
@@ -1044,6 +1034,17 @@ class Misc:
         """Logs the given messages as separate entries with the INFO level."""
         for msg in messages:
             self.log(msg)
+
+    def comment(self, *messages):
+        """Displays the given messages in the log file as keyword arguments.
+        
+        This keyword does nothing with the arguments it receives, but as they
+        are visible in the log, this keyword can be used to display simple
+        messages. Given arguments are ignored so thoroughly that they can even 
+        contain non-existing variables. If you are interested about variable 
+        values, you can use the `Log` or `Log Many` keywords.
+        """
+        pass
 
     def set_log_level(self, level):
         """Sets the log threshold to the specified level and returns the old level.
@@ -1436,5 +1437,6 @@ def register_run_keyword(library, keyword, args_to_process=None):
 
 for name in [ attr for attr in dir(RunKeyword) if not attr.startswith('_') ]:
     register_run_keyword('BuiltIn', getattr(RunKeyword, name))
+register_run_keyword('BuiltIn', 'comment', 0)
 
 del name, attr
