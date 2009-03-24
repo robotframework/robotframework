@@ -212,8 +212,9 @@ class Variables(utils.NormalizedDict):
         for rawvar in raw_variables:
             try:
                 name, value = self._get_var_table_name_and_value(rawvar)
-                if not self.data.has_key(name):
-                    self.data[name] = value
+                # self.has_key would also match if name matches extended syntax
+                if not utils.NormalizedDict.has_key(self, name):
+                    self[name] = value
             except:
                 rawvar.report_invalid_syntax("Setting variable '%s' failed: %s"
                                              % (rawvar.name,
