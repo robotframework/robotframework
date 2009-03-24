@@ -956,6 +956,16 @@ class RunKeyword:
                             % kwname)
         return NAMESPACES.current.suite
 
+    def comment(self, *messages):
+        """Displays the given messages in the log file as keyword arguments.
+        
+        This keyword does nothing with the arguments it receives, but as they
+        are visible in the log, this keyword can be used to display simple
+        messages. In more complicated cases, the `Log` or `Log Many` keywords
+        should be used.
+        """
+        pass
+
 
 class Misc:
     
@@ -1049,16 +1059,6 @@ class Misc:
         self.log('Log level changed from %s to %s' % (old, level.upper()))
         return old
         
-    def comment(self, *messages):
-        """Displays the given messages in the log file as keyword arguments.
-        
-        This keyword does nothing with the arguments it receives, but as they
-        are visible in the log, this keyword can be used to display simple
-        messages. In more complicated cases, the `Log` or `Log Many` keywords
-        should be used.
-        """
-        pass
-
     def syslog(self, message, level="INFO"):
         """Logs the given message with the given level into syslog."""
         output.SYSLOG.write(message, level)
