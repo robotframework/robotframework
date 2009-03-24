@@ -152,7 +152,7 @@ th {
 <tr>
 <td><a name="test_Log Variables In Suite Setup">Log Variables In Suite Setup</a></td>
 <td>${kw} =</td>
-<td>Set</td>
+<td>Set Variable</td>
 <td>${SUITE.suites[0].setup.keywords[7]}</td>
 <td></td>
 </tr>
@@ -181,31 +181,31 @@ th {
 <td></td>
 <td>Check Log Message</td>
 <td>${kw.messages[2]}</td>
-<td>\${clivar1} = CLI1</td>
+<td>\${cli_var_1} = CLI1</td>
 <td></td>
 </tr>
 <tr>
 <td></td>
 <td>Check Log Message</td>
 <td>${kw.messages[3]}</td>
-<td>\${clivar2} = CLI2</td>
+<td>\${cli_var_2} = CLI2</td>
 <td></td>
 </tr>
 <tr>
 <td></td>
 <td>Check Log Message</td>
 <td>${kw.messages[4]}</td>
-<td>\${clivar3} = CLI3</td>
+<td>\${cli_var_3} = CLI3</td>
 <td></td>
 </tr>
 <tr>
 <td></td>
 <td>Check Log Message</td>
 <td>${kw.messages[5]}</td>
-<td>\${debugfile} = NONE</td>
+<td>\${DEBUG_FILE} = NONE</td>
 <td></td>
 </tr>
-<tr><td></td><td>Check Log Message</td><td>${kw.messages[6]}</td><td>\${empty} =</td><td></td></tr><tr><td></td><td>Should Start With</td><td>${kw.messages[7].message}</td><td>\${execdir} =</td><td></td></tr><tr><td></td><td>Should Start With</td><td>${kw.messages[8].message}</td><td>\${false} =</td><td></td></tr><tr>
+<tr><td></td><td>Check Log Message</td><td>${kw.messages[6]}</td><td>\${EMPTY} =</td><td></td></tr><tr><td></td><td>Should Start With</td><td>${kw.messages[7].message}</td><td>\${EXECDIR} =</td><td></td></tr><tr><td></td><td>Should Start With</td><td>${kw.messages[8].message}</td><td>\${False} =</td><td></td></tr><tr>
 <td></td>
 <td>Should Start With</td>
 <td>${kw.messages[9].message}</td>
@@ -216,49 +216,49 @@ th {
 <td></td>
 <td>Check Log Message</td>
 <td>${kw.messages[10]}</td>
-<td>\${logfile} = NONE</td>
+<td>\${LOG_FILE} = NONE</td>
 <td></td>
 </tr>
-<tr><td></td><td>Check Log Message</td><td>${kw.messages[11]}</td><td>\${none} = None</td><td></td></tr><tr><td></td><td>Check Log Message</td><td>${kw.messages[12]}</td><td>\${null} = None</td><td></td></tr><tr>
+<tr><td></td><td>Check Log Message</td><td>${kw.messages[11]}</td><td>\${None} = None</td><td></td></tr><tr><td></td><td>Check Log Message</td><td>${kw.messages[12]}</td><td>\${null} = None</td><td></td></tr><tr>
 <td></td>
 <td>Should Start With</td>
 <td>${kw.messages[13].message}</td>
-<td>\${outputdir} =</td>
+<td>\${OUTPUT_DIR} =</td>
 <td></td>
 </tr>
 <tr>
 <td></td>
 <td>Should Start With</td>
 <td>${kw.messages[14].message}</td>
-<td>\${outputfile} =</td>
+<td>\${OUTPUT_FILE} =</td>
 <td></td>
 </tr>
 <tr>
 <td></td>
 <td>Check Log Message</td>
 <td>${kw.messages[15]}</td>
-<td>\${prevtestmessage} =</td>
+<td>\${PREV_TEST_MESSAGE} =</td>
 <td></td>
 </tr>
 <tr>
 <td></td>
 <td>Check Log Message</td>
 <td>${kw.messages[16]}</td>
-<td>\${prevtestname} =</td>
+<td>\${PREV_TEST_NAME} =</td>
 <td></td>
 </tr>
 <tr>
 <td></td>
 <td>Check Log Message</td>
 <td>${kw.messages[17]}</td>
-<td>\${prevteststatus} =</td>
+<td>\${PREV_TEST_STATUS} =</td>
 <td></td>
 </tr>
 <tr>
 <td></td>
 <td>Check Log Message</td>
 <td>${kw.messages[18]}</td>
-<td>\${reportfile} = NONE</td>
+<td>\${REPORT_FILE} = NONE</td>
 <td></td>
 </tr>
 <tr>
@@ -268,49 +268,49 @@ th {
 <td>\${scalar} = Hi tellus</td>
 <td></td>
 </tr>
-<tr><td></td><td>Check Log Message</td><td>${kw.messages[20]}</td><td>\${space} =</td><td></td></tr><tr>
+<tr><td></td><td>Check Log Message</td><td>${kw.messages[20]}</td><td>\${SPACE} =</td><td></td></tr><tr>
 <td></td>
 <td>Should Start With</td>
 <td>${kw.messages[21].message}</td>
-<td>\${suitename} =</td>
+<td>\${SUITE_NAME} =</td>
 <td></td>
 </tr>
 <tr>
 <td></td>
 <td>Check Log Message</td>
 <td>${kw.messages[22]}</td>
-<td>\${suitesetupglobalvar} = Global var set in suite setup</td>
+<td>\${suite_setup_global_var} = Global var set in suite setup</td>
 <td></td>
 </tr>
 <tr>
 <td></td>
 <td>Check Log Message</td>
 <td>${kw.messages[23]}</td>
-<td>\${suitesetuplocalvar} = [ Variable available only locally | in suite setup ]</td>
+<td>\${suite_setup_local_var} = [ Variable available only locally | in suite setup ]</td>
 <td></td>
 </tr>
 <tr>
 <td></td>
 <td>Check Log Message</td>
 <td>${kw.messages[24]}</td>
-<td>\${suitesetupsuitevar} = Suite var set in suite setup</td>
+<td>\${suite_setup_suite_var} = Suite var set in suite setup</td>
 <td></td>
 </tr>
 <tr>
 <td></td>
 <td>Check Log Message</td>
 <td>${kw.messages[25]}</td>
-<td>\${summaryfile} = NONE</td>
+<td>\${SUMMARY_FILE} = NONE</td>
 <td></td>
 </tr>
 <tr>
 <td></td>
 <td>Should Start With</td>
 <td>${kw.messages[26].message}</td>
-<td>\${tempdir} =</td>
+<td>\${TEMPDIR} =</td>
 <td></td>
 </tr>
-<tr><td></td><td>Should Start With</td><td>${kw.messages[27].message}</td><td>\${true} =&nbsp;</td><td></td></tr><tr>
+<tr><td></td><td>Should Start With</td><td>${kw.messages[27].message}</td><td>\${True} =&nbsp;</td><td></td></tr><tr>
 <td></td>
 <td>Check Log Message</td>
 <td>${kw.messages[28]}</td>
@@ -321,14 +321,14 @@ th {
 <td></td>
 <td>Check Log Message</td>
 <td>${kw.messages[29]}</td>
-<td>\@{suitesetupglobalvar} = [ Global var set in | suite setup ]</td>
+<td>\@{suite_setup_global_var} = [ Global var set in | suite setup ]</td>
 <td></td>
 </tr>
 <tr>
 <td></td>
 <td>Check Log Message</td>
 <td>${kw.messages[30]}</td>
-<td>\@{suitesetupsuitevar} = [ Suite var set in | suite setup ]</td>
+<td>\@{suite_setup_suite_var} = [ Suite var set in | suite setup ]</td>
 <td></td>
 </tr>
 <tr>
@@ -377,84 +377,84 @@ th {
 <td></td>
 <td>Check Log Message</td>
 <td>${kw.messages[3]}</td>
-<td>\${clivar1} = CLI1</td>
+<td>\${cli_var_1} = CLI1</td>
 <td></td>
 </tr>
 <tr>
 <td></td>
 <td>Check Log Message</td>
 <td>${kw.messages[4]}</td>
-<td>\${clivar2} = CLI2</td>
+<td>\${cli_var_2} = CLI2</td>
 <td></td>
 </tr>
 <tr>
 <td></td>
 <td>Check Log Message</td>
 <td>${kw.messages[5]}</td>
-<td>\${clivar3} = CLI3</td>
+<td>\${cli_var_3} = CLI3</td>
 <td></td>
 </tr>
 <tr>
 <td></td>
 <td>Check Log Message</td>
 <td>${kw.messages[6]}</td>
-<td>\${debugfile} = NONE</td>
+<td>\${DEBUG_FILE} = NONE</td>
 <td></td>
 </tr>
 <tr>
 <td></td>
 <td>Check Log Message</td>
 <td>${kw.messages[7]}</td>
-<td>\${empty} =</td>
+<td>\${EMPTY} =</td>
 <td></td>
 </tr>
-<tr><td></td><td>Should Start With</td><td>${kw.messages[8].message}</td><td>\${execdir} =</td><td></td></tr><tr><td></td><td>Should Start With</td><td>${kw.messages[9].message}</td><td>\${false} =</td><td></td></tr><tr><td></td><td>Should Start With</td><td>${kw.messages[10].message}</td><td>\${interpreter} =</td><td></td></tr><tr>
+<tr><td></td><td>Should Start With</td><td>${kw.messages[8].message}</td><td>\${EXECDIR} =</td><td></td></tr><tr><td></td><td>Should Start With</td><td>${kw.messages[9].message}</td><td>\${False} =</td><td></td></tr><tr><td></td><td>Should Start With</td><td>${kw.messages[10].message}</td><td>\${interpreter} =</td><td></td></tr><tr>
 <td></td>
 <td>Check Log Message</td>
 <td>${kw.messages[11]}</td>
-<td>\${logfile} = NONE</td>
+<td>\${LOG_FILE} = NONE</td>
 <td></td>
 </tr>
-<tr><td></td><td>Check Log Message</td><td>${kw.messages[12]}</td><td>\${none} = None</td><td></td></tr><tr><td></td><td>Check Log Message</td><td>${kw.messages[13]}</td><td>\${null} = None</td><td></td></tr><tr>
+<tr><td></td><td>Check Log Message</td><td>${kw.messages[12]}</td><td>\${None} = None</td><td></td></tr><tr><td></td><td>Check Log Message</td><td>${kw.messages[13]}</td><td>\${null} = None</td><td></td></tr><tr>
 <td></td>
 <td>Should Start With</td>
 <td>${kw.messages[14].message}</td>
-<td>\${outputdir} =</td>
+<td>\${OUTPUT_DIR} =</td>
 <td></td>
 </tr>
 <tr>
 <td></td>
 <td>Should Start With</td>
 <td>${kw.messages[15].message}</td>
-<td>\${outputfile} =</td>
+<td>\${OUTPUT_FILE} =</td>
 <td></td>
 </tr>
 <tr>
 <td></td>
 <td>Check Log Message</td>
 <td>${kw.messages[16]}</td>
-<td>\${prevtestmessage} =</td>
+<td>\${PREV_TEST_MESSAGE} =</td>
 <td></td>
 </tr>
 <tr>
 <td></td>
 <td>Check Log Message</td>
 <td>${kw.messages[17]}</td>
-<td>\${prevtestname} = Set Variable</td>
+<td>\${PREV_TEST_NAME} = Set Variable</td>
 <td></td>
 </tr>
 <tr>
 <td></td>
 <td>Check Log Message</td>
 <td>${kw.messages[18]}</td>
-<td>\${prevteststatus} = PASS</td>
+<td>\${PREV_TEST_STATUS} = PASS</td>
 <td></td>
 </tr>
 <tr>
 <td></td>
 <td>Check Log Message</td>
 <td>${kw.messages[19]}</td>
-<td>\${reportfile} = NONE</td>
+<td>\${REPORT_FILE} = NONE</td>
 <td></td>
 </tr>
 <tr>
@@ -464,49 +464,49 @@ th {
 <td>\${scalar} = Hi tellus</td>
 <td></td>
 </tr>
-<tr><td></td><td>Check Log Message</td><td>${kw.messages[21]}</td><td>\${space} =</td><td></td></tr><tr>
+<tr><td></td><td>Check Log Message</td><td>${kw.messages[21]}</td><td>\${SPACE} =</td><td></td></tr><tr>
 <td></td>
 <td>Should Start With</td>
 <td>${kw.messages[22].message}</td>
-<td>\${suitename} =</td>
+<td>\${SUITE_NAME} =</td>
 <td></td>
 </tr>
 <tr>
 <td></td>
 <td>Check Log Message</td>
 <td>${kw.messages[23]}</td>
-<td>\${suitesetupglobalvar} = Global var set in suite setup</td>
+<td>\${suite_setup_global_var} = Global var set in suite setup</td>
 <td></td>
 </tr>
 <tr>
 <td></td>
 <td>Check Log Message</td>
 <td>${kw.messages[24]}</td>
-<td>\${suitesetupsuitevar} = Suite var set in suite setup</td>
+<td>\${suite_setup_suite_var} = Suite var set in suite setup</td>
 <td></td>
 </tr>
 <tr>
 <td></td>
 <td>Check Log Message</td>
 <td>${kw.messages[25]}</td>
-<td>\${summaryfile} = NONE</td>
+<td>\${SUMMARY_FILE} = NONE</td>
 <td></td>
 </tr>
 <tr>
 <td></td>
 <td>Should Start With</td>
 <td>${kw.messages[26].message}</td>
-<td>\${tempdir} =</td>
+<td>\${TEMPDIR} =</td>
 <td></td>
 </tr>
 <tr>
 <td></td>
 <td>Check Log Message</td>
 <td>${kw.messages[27]}</td>
-<td>\${testname} = Log Variables</td>
+<td>\${TEST_NAME} = Log Variables</td>
 <td></td>
 </tr>
-<tr><td></td><td>Should Start With</td><td>${kw.messages[28].message}</td><td>\${true} =&nbsp;</td><td></td></tr><tr>
+<tr><td></td><td>Should Start With</td><td>${kw.messages[28].message}</td><td>\${True} =&nbsp;</td><td></td></tr><tr>
 <td></td>
 <td>Check Log Message</td>
 <td>${kw.messages[29]}</td>
@@ -517,14 +517,14 @@ th {
 <td></td>
 <td>Check Log Message</td>
 <td>${kw.messages[30]}</td>
-<td>\@{suitesetupglobalvar} = [ Global var set in | suite setup ]</td>
+<td>\@{suite_setup_global_var} = [ Global var set in | suite setup ]</td>
 <td></td>
 </tr>
 <tr>
 <td></td>
 <td>Check Log Message</td>
 <td>${kw.messages[31]}</td>
-<td>\@{suitesetupsuitevar} = [ Suite var set in | suite setup ]</td>
+<td>\@{suite_setup_suite_var} = [ Suite var set in | suite setup ]</td>
 <td></td>
 </tr>
 <tr>
@@ -573,91 +573,85 @@ th {
 <td></td>
 <td>Check Log Message</td>
 <td>${kw.messages[3]}</td>
-<td>\${clivar1} = CLI1</td>
+<td>\${cli_var_1} = CLI1</td>
 <td>DEBUG</td>
 </tr>
 <tr>
 <td></td>
 <td>Check Log Message</td>
 <td>${kw.messages[4]}</td>
-<td>\${clivar2} = CLI2</td>
+<td>\${cli_var_2} = CLI2</td>
 <td>DEBUG</td>
 </tr>
 <tr>
 <td></td>
 <td>Check Log Message</td>
 <td>${kw.messages[5]}</td>
-<td>\${clivar3} = CLI3</td>
+<td>\${cli_var_3} = CLI3</td>
 <td>DEBUG</td>
 </tr>
 <tr>
 <td></td>
 <td>Check Log Message</td>
 <td>${kw.messages[6]}</td>
-<td>\${debugfile} = NONE</td>
+<td>\${DEBUG_FILE} = NONE</td>
 <td>DEBUG</td>
 </tr>
-<tr><td></td><td>Check Log Message</td><td>${kw.messages[7]}</td><td>\${empty} =</td><td>DEBUG</td></tr><tr><td></td><td>Should Start With</td><td>${kw.messages[8].message}</td><td>\${execdir} =</td><td></td></tr><tr><td></td><td>Should Start With</td><td>${kw.messages[9].message}</td><td>\${false} =</td><td><br></td></tr><tr>
+<tr><td></td><td>Check Log Message</td><td>${kw.messages[7]}</td><td>\${EMPTY} =</td><td>DEBUG</td></tr><tr><td></td><td>Should Start With</td><td>${kw.messages[8].message}</td><td>\${EXECDIR} =</td><td></td></tr><tr><td></td><td>Should Start With</td><td>${kw.messages[9].message}</td><td>\${False} =</td><td><br></td></tr><tr><td></td><td>Check Log Message</td><td>${kw.messages[10]}</td><td>\${int_list} = [ 0 | 1 | 2 | 3 ]</td><td>DEBUG</td></tr><tr>
 <td></td>
 <td>Should Start With</td>
-<td>${kw.messages[10].message}</td>
+<td>${kw.messages[11].message}</td>
 <td>\${interpreter} =</td>
 <td></td>
 </tr>
-<tr>
-<td></td>
-<td>Check Log Message</td>
-<td>${kw.messages[11]}</td>
-<td>\${intlist} = [ 0 | 1 | 2 | 3 ]</td>
-<td>DEBUG</td>
-</tr>
+
 <tr>
 <td></td>
 <td>Check Log Message</td>
 <td>${kw.messages[12]}</td>
-<td>\${logfile} = NONE</td>
+<td>\${LOG_FILE} = NONE</td>
 <td>DEBUG</td>
 </tr>
-<tr><td></td><td>Check Log Message</td><td>${kw.messages[13]}</td><td>\${none} = None</td><td>DEBUG</td></tr><tr><td></td><td>Check Log Message</td><td>${kw.messages[14]}</td><td>\${null} = None</td><td>DEBUG</td></tr><tr>
+<tr><td></td><td>Check Log Message</td><td>${kw.messages[13]}</td><td>\${None} = None</td><td>DEBUG</td></tr><tr><td></td><td>Check Log Message</td><td>${kw.messages[14]}</td><td>\${null} = None</td><td>DEBUG</td></tr><tr>
 <td></td>
 <td>Should Start With</td>
 <td>${kw.messages[15].message}</td>
-<td>\${outputdir} =</td>
+<td>\${OUTPUT_DIR} =</td>
 <td></td>
 </tr>
 <tr>
 <td></td>
 <td>Should Start With</td>
 <td>${kw.messages[16].message}</td>
-<td>\${outputfile} =</td>
+<td>\${OUTPUT_FILE} =</td>
 <td></td>
 </tr>
 <tr>
 <td></td>
 <td>Check Log Message</td>
 <td>${kw.messages[17]}</td>
-<td>\${prevtestmessage} =</td>
+<td>\${PREV_TEST_MESSAGE} =</td>
 <td>DEBUG</td>
 </tr>
 <tr>
 <td></td>
 <td>Check Log Message</td>
 <td>${kw.messages[18]}</td>
-<td>\${prevtestname} = Set Variable</td>
+<td>\${PREV_TEST_NAME} = Set Variable</td>
 <td>DEBUG</td>
 </tr>
 <tr>
 <td></td>
 <td>Check Log Message</td>
 <td>${kw.messages[19]}</td>
-<td>\${prevteststatus} = PASS</td>
+<td>\${PREV_TEST_STATUS} = PASS</td>
 <td>DEBUG</td>
 </tr>
 <tr>
 <td></td>
 <td>Check Log Message</td>
 <td>${kw.messages[20]}</td>
-<td>\${reportfile} = NONE</td>
+<td>\${REPORT_FILE} = NONE</td>
 <td>DEBUG</td>
 </tr>
 <tr>
@@ -667,49 +661,49 @@ th {
 <td>\${scalar} = Hi tellus</td>
 <td>DEBUG</td>
 </tr>
-<tr><td></td><td>Check Log Message</td><td>${kw.messages[22]}</td><td>\${space} =</td><td>DEBUG</td></tr><tr>
+<tr><td></td><td>Check Log Message</td><td>${kw.messages[22]}</td><td>\${SPACE} =</td><td>DEBUG</td></tr><tr>
 <td></td>
 <td>Should Start With</td>
 <td>${kw.messages[23].message}</td>
-<td>\${suitename} =</td>
+<td>\${SUITE_NAME} =</td>
 <td></td>
 </tr>
 <tr>
 <td></td>
 <td>Check Log Message</td>
 <td>${kw.messages[24]}</td>
-<td>\${suitesetupglobalvar} = Global var set in suite setup</td>
+<td>\${suite_setup_global_var} = Global var set in suite setup</td>
 <td>DEBUG</td>
 </tr>
 <tr>
 <td></td>
 <td>Check Log Message</td>
 <td>${kw.messages[25]}</td>
-<td>\${suitesetupsuitevar} = Suite var set in suite setup</td>
+<td>\${suite_setup_suite_var} = Suite var set in suite setup</td>
 <td>DEBUG</td>
 </tr>
 <tr>
 <td></td>
 <td>Check Log Message</td>
 <td>${kw.messages[26]}</td>
-<td>\${summaryfile} = NONE</td>
+<td>\${SUMMARY_FILE} = NONE</td>
 <td>DEBUG</td>
 </tr>
 <tr>
 <td></td>
 <td>Should Start With</td>
 <td>${kw.messages[27].message}</td>
-<td>\${tempdir} =</td>
+<td>\${TEMPDIR} =</td>
 <td></td>
 </tr>
 <tr>
 <td></td>
 <td>Check Log Message</td>
 <td>${kw.messages[28]}</td>
-<td>\${testname} = Log Variables</td>
+<td>\${TEST_NAME} = Log Variables</td>
 <td>DEBUG</td>
 </tr>
-<tr><td></td><td>Should Start With</td><td>${kw.messages[29].message}</td><td>\${true} =&nbsp;</td><td><br></td></tr><tr>
+<tr><td></td><td>Should Start With</td><td>${kw.messages[29].message}</td><td>\${True} =&nbsp;</td><td><br></td></tr><tr>
 <td></td>
 <td>Check Log Message</td>
 <td>${kw.messages[30]}</td>
@@ -720,7 +714,7 @@ th {
 <td></td>
 <td>Check Log Message</td>
 <td>${kw.messages[31]}</td>
-<td>\@{intlist} = [ 0 | 1 | 2 | 3 ]</td>
+<td>\@{int_list} = [ 0 | 1 | 2 | 3 ]</td>
 <td>DEBUG</td>
 </tr>
 <tr>
@@ -734,14 +728,14 @@ th {
 <td></td>
 <td>Check Log Message</td>
 <td>${kw.messages[33]}</td>
-<td>\@{suitesetupglobalvar} = [ Global var set in | suite setup ]</td>
+<td>\@{suite_setup_global_var} = [ Global var set in | suite setup ]</td>
 <td>DEBUG</td>
 </tr>
 <tr>
 <td></td>
 <td>Check Log Message</td>
 <td>${kw.messages[34]}</td>
-<td>\@{suitesetupsuitevar} = [ Suite var set in | suite setup ]</td>
+<td>\@{suite_setup_suite_var} = [ Suite var set in | suite setup ]</td>
 <td>DEBUG</td>
 </tr>
 <tr>
@@ -790,91 +784,85 @@ th {
 <td></td>
 <td>Check Log Message</td>
 <td>${kw.messages[3]}</td>
-<td>\${clivar1} = CLI1</td>
+<td>\${cli_var_1} = CLI1</td>
 <td></td>
 </tr>
 <tr>
 <td></td>
 <td>Check Log Message</td>
 <td>${kw.messages[4]}</td>
-<td>\${clivar2} = CLI2</td>
+<td>\${cli_var_2} = CLI2</td>
 <td></td>
 </tr>
 <tr>
 <td></td>
 <td>Check Log Message</td>
 <td>${kw.messages[5]}</td>
-<td>\${clivar3} = CLI3</td>
+<td>\${cli_var_3} = CLI3</td>
 <td></td>
 </tr>
 <tr>
 <td></td>
 <td>Check Log Message</td>
 <td>${kw.messages[6]}</td>
-<td>\${debugfile} = NONE</td>
+<td>\${DEBUG_FILE} = NONE</td>
 <td></td>
 </tr>
-<tr><td></td><td>Check Log Message</td><td>${kw.messages[7]}</td><td>\${empty} =</td><td></td></tr><tr><td></td><td>Should Start With</td><td>${kw.messages[8].message}</td><td>\${execdir} =</td><td></td></tr><tr><td></td><td>Should Start With</td><td>${kw.messages[9].message}</td><td>\${false} =</td><td></td></tr><tr>
+<tr><td></td><td>Check Log Message</td><td>${kw.messages[7]}</td><td>\${EMPTY} =</td><td></td></tr><tr><td></td><td>Should Start With</td><td>${kw.messages[8].message}</td><td>\${EXECDIR} =</td><td></td></tr><tr><td></td><td>Should Start With</td><td>${kw.messages[9].message}</td><td>\${False} =</td><td></td></tr><tr><td></td><td>Check Log Message</td><td>${kw.messages[10]}</td><td>\${int_list} = [ 0 | 1 | 2 | 3 ]</td><td></td></tr><tr>
 <td></td>
 <td>Should Start With</td>
-<td>${kw.messages[10].message}</td>
+<td>${kw.messages[11].message}</td>
 <td>\${interpreter} =</td>
 <td></td>
 </tr>
-<tr>
-<td></td>
-<td>Check Log Message</td>
-<td>${kw.messages[11]}</td>
-<td>\${intlist} = [ 0 | 1 | 2 | 3 ]</td>
-<td></td>
-</tr>
+
 <tr>
 <td></td>
 <td>Check Log Message</td>
 <td>${kw.messages[12]}</td>
-<td>\${logfile} = NONE</td>
+<td>\${LOG_FILE} = NONE</td>
 <td></td>
 </tr>
-<tr><td></td><td>Check Log Message</td><td>${kw.messages[13]}</td><td>\${none} = None</td><td></td></tr><tr><td></td><td>Check Log Message</td><td>${kw.messages[14]}</td><td>\${null} = None</td><td></td></tr><tr>
+<tr><td></td><td>Check Log Message</td><td>${kw.messages[13]}</td><td>\${None} = None</td><td></td></tr><tr><td></td><td>Check Log Message</td><td>${kw.messages[14]}</td><td>\${null} = None</td><td></td></tr><tr>
 <td></td>
 <td>Should Start With</td>
 <td>${kw.messages[15].message}</td>
-<td>\${outputdir} =</td>
+<td>\${OUTPUT_DIR} =</td>
 <td></td>
 </tr>
 <tr>
 <td></td>
 <td>Should Start With</td>
 <td>${kw.messages[16].message}</td>
-<td>\${outputfile} =</td>
+<td>\${OUTPUT_FILE} =</td>
 <td></td>
 </tr>
 <tr>
 <td></td>
 <td>Check Log Message</td>
 <td>${kw.messages[17]}</td>
-<td>\${prevtestmessage} =</td>
+<td>\${PREV_TEST_MESSAGE} =</td>
 <td></td>
 </tr>
 <tr>
 <td></td>
 <td>Check Log Message</td>
 <td>${kw.messages[18]}</td>
-<td>\${prevtestname} = Set Variable</td>
+<td>\${PREV_TEST_NAME} = Set Variable</td>
 <td></td>
 </tr>
 <tr>
 <td></td>
 <td>Check Log Message</td>
 <td>${kw.messages[19]}</td>
-<td>\${prevteststatus} = PASS</td>
+<td>\${PREV_TEST_STATUS} = PASS</td>
 <td></td>
 </tr>
 <tr>
 <td></td>
 <td>Check Log Message</td>
 <td>${kw.messages[20]}</td>
-<td>\${reportfile} = NONE</td>
+<td>\${REPORT_FILE} = NONE</td>
 <td></td>
 </tr>
 <tr>
@@ -884,49 +872,49 @@ th {
 <td>\${scalar} = Hi tellus</td>
 <td></td>
 </tr>
-<tr><td></td><td>Check Log Message</td><td>${kw.messages[22]}</td><td>\${space} =</td><td></td></tr><tr>
+<tr><td></td><td>Check Log Message</td><td>${kw.messages[22]}</td><td>\${SPACE} =</td><td></td></tr><tr>
 <td></td>
 <td>Should Start With</td>
 <td>${kw.messages[23].message}</td>
-<td>\${suitename} =</td>
+<td>\${SUITE_NAME} =</td>
 <td></td>
 </tr>
 <tr>
 <td></td>
 <td>Check Log Message</td>
 <td>${kw.messages[24]}</td>
-<td>\${suitesetupglobalvar} = Global var set in suite setup</td>
+<td>\${suite_setup_global_var} = Global var set in suite setup</td>
 <td></td>
 </tr>
 <tr>
 <td></td>
 <td>Check Log Message</td>
 <td>${kw.messages[25]}</td>
-<td>\${suitesetupsuitevar} = Suite var set in suite setup</td>
+<td>\${suite_setup_suite_var} = Suite var set in suite setup</td>
 <td></td>
 </tr>
 <tr>
 <td></td>
 <td>Check Log Message</td>
 <td>${kw.messages[26]}</td>
-<td>\${summaryfile} = NONE</td>
+<td>\${SUMMARY_FILE} = NONE</td>
 <td></td>
 </tr>
 <tr>
 <td></td>
 <td>Should Start With</td>
 <td>${kw.messages[27].message}</td>
-<td>\${tempdir} =</td>
+<td>\${TEMPDIR} =</td>
 <td></td>
 </tr>
 <tr>
 <td></td>
 <td>Check Log Message</td>
 <td>${kw.messages[28]}</td>
-<td>\${testname} = Log Variables</td>
+<td>\${TEST_NAME} = Log Variables</td>
 <td></td>
 </tr>
-<tr><td></td><td>Should Start With</td><td>${kw.messages[29].message}</td><td>\${true} =&nbsp;</td><td></td></tr><tr>
+<tr><td></td><td>Should Start With</td><td>${kw.messages[29].message}</td><td>\${True} =&nbsp;</td><td></td></tr><tr>
 <td></td>
 <td>Check Log Message</td>
 <td>${kw.messages[30]}</td>
@@ -944,7 +932,7 @@ th {
 <td></td>
 <td>Check Log Message</td>
 <td>${kw.messages[32]}</td>
-<td>\@{intlist} = [ 0 | 1 | 2 | 3 ]</td>
+<td>\@{int_list} = [ 0 | 1 | 2 | 3 ]</td>
 <td></td>
 </tr>
 <tr>
@@ -958,14 +946,14 @@ th {
 <td></td>
 <td>Check Log Message</td>
 <td>${kw.messages[34]}</td>
-<td>\@{suitesetupglobalvar} = [ Global var set in | suite setup ]</td>
+<td>\@{suite_setup_global_var} = [ Global var set in | suite setup ]</td>
 <td></td>
 </tr>
 <tr>
 <td></td>
 <td>Check Log Message</td>
 <td>${kw.messages[35]}</td>
-<td>\@{suitesetupsuitevar} = [ Suite var set in | suite setup ]</td>
+<td>\@{suite_setup_suite_var} = [ Suite var set in | suite setup ]</td>
 <td></td>
 </tr>
 <tr>
