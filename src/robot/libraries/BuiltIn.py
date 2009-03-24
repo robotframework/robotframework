@@ -29,7 +29,7 @@ if utils.is_jython:
     from java.lang import String, Number, Long, Double
 
 
-class Converter:
+class _Converter:
     
     def convert_to_integer(self, item):
         """Converts the given item to an integer number."""
@@ -118,7 +118,7 @@ class Converter:
         return list(items)
 
 
-class Verify:
+class _Verify:
 
     # Wrappers for robot.asserts
 
@@ -477,7 +477,7 @@ class Verify:
         return msg
 
     
-class Variables:
+class _Variables:
     
     def log_variables(self, level='INFO'):
         """Logs all variables in the current scope with given log level."""
@@ -666,7 +666,7 @@ class Variables:
         self.log('%s = %s' % (name, utils.cut_long_assign_msg(value)))
 
 
-class RunKeyword:
+class _RunKeyword:
 
     # If you use any of these run keyword variants from another library, you
     # should register those keywords with 'register_run_keyword' method. See
@@ -961,7 +961,7 @@ class RunKeyword:
         return NAMESPACES.current.suite
 
 
-class Misc:
+class _Misc:
     
     def no_operation(self):
         """Does absolutely nothing."""
@@ -1352,10 +1352,7 @@ class Misc:
             test.tags = handler(test)
 
 
- # TODO: Rename 'Verify' -> '_Verify', etc. because helper classes aren't part
- # of our public API.
- 
-class BuiltIn(Verify, Converter, Variables, RunKeyword, Misc):
+class BuiltIn(_Verify, _Converter, _Variables, _RunKeyword, _Misc):
     """BuiltIn library provides a set of often needed generic keywords.
 
     These keywords are available automatically without importing any library.
@@ -1380,7 +1377,6 @@ class BuiltIn(Verify, Converter, Variables, RunKeyword, Misc):
                                 % (condition, utils.get_error_message()))
         return condition and True or False
 
-        
 
 def register_run_keyword(library, keyword, args_to_process=None):
     """Registers 'run keyword' so that its arguments can be handled correctly.
@@ -1439,8 +1435,8 @@ def register_run_keyword(library, keyword, args_to_process=None):
     RUN_KW_REGISTER.register_run_keyword(library, keyword, args_to_process)
 
 
-for name in [ attr for attr in dir(RunKeyword) if not attr.startswith('_') ]:
-    register_run_keyword('BuiltIn', getattr(RunKeyword, name))
+for name in [ attr for attr in dir(_RunKeyword) if not attr.startswith('_') ]:
+    register_run_keyword('BuiltIn', getattr(_RunKeyword, name))
 register_run_keyword('BuiltIn', 'comment', 0)
 
 del name, attr
