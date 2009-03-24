@@ -54,14 +54,14 @@ class CommandLineMonitor:
         self._write_separator('-')
         
     def output_file(self, name, path):
+        # called by SYSLOG
         self._write('%s %s' % ((name+':').ljust(8), utils.cygpath(path)))
      
-    def info_message(self, message):
-        self._write(message)
-    
-    def error_message(self, message, level):
-        message = '[ %s ] %s' % (self._highlight(level), message)
-        self._write(message, stream=sys.stderr)
+    def write(self, msg, level):
+        # called by SYSLOG
+        if level in ['WARN', 'ERROR']:
+            message = '[ %s ] %s' % (self._highlight(level), msg.message)
+            self._write(message, stream=sys.stderr)
         
     def _write(self, message, newline=True, stream=sys.stdout):
         if newline:

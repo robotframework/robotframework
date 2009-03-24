@@ -19,7 +19,7 @@ from robot import utils
 from robot.errors import DataError
 from robot.common import Statistics
 from robot.conf import get_title
-from robot.output import process_outputs, process_output
+from robot.output import SYSLOG, process_outputs, process_output
 
 import templates
 from templating import Namespace, Template
@@ -31,40 +31,39 @@ from serializer import OutputSerializer, SummaryStatisticsSerializer, \
 
 class RobotTestOutput:
 
-    def __init__(self, testsuite, testsyslog, settings=None):
-        self.suite = testsuite
-        self.syslog = testsyslog
+    def __init__(self, suite, exec_errors, settings=None):
+        self.suite = suite
+        self.exec_errors = exec_errors
         if settings is not None:
             params = (settings['SuiteStatLevel'], settings['TagStatInclude'],
                       settings['TagStatExclude'], settings['TagStatCombine'],
                       settings['TagDoc'], settings['TagStatLink'])
         else:
             params = ()
-        self.statistics = Statistics(testsuite, *params)
+        self.statistics = Statistics(suite, *params)
         self._generator = 'Robot'
 
-    def serialize(self, settings, syslog=None, generator='Robot'):
+    def serialize(self, settings, generator='Robot'):
         self._generator = generator
-        self.serialize_output(settings['Output'], settings['SplitOutputs'], syslog)
-        self.serialize_summary(settings['Summary'], settings['SummaryTitle'], syslog)
+        self.serialize_output(settings['Output'], settings['SplitOutputs'])
+        self.serialize_summary(settings['Summary'], settings['SummaryTitle'])
         self.serialize_report(settings['Report'], settings['ReportTitle'],
-                              settings['Log'], settings['SplitOutputs'], syslog)
+                              settings['Log'], settings['SplitOutputs'])
         self.serialize_log(settings['Log'], settings['LogTitle'], 
-                           settings['SplitOutputs'], syslog)
+                           settings['SplitOutputs'])
         
-    def serialize_output(self, path, split=-1, syslog=None):
+    def serialize_output(self, path, split=-1):
         if path == 'NONE':
             return
         serializer = OutputSerializer(path, split)
         self.suite.serialize(serializer)
         self.statistics.serialize(serializer)
-        self.syslog.serialize(serializer)
+        self.exec_errors.serialize(serializer)
         serializer.close()
-        if syslog is not None:
-            syslog.output_file('Output', path)
+        SYSLOG.output_file('Output', path)
         
-    def serialize_summary(self, path, title=None, syslog=None):
-        outfile = self._get_outfile(path, 'summary', syslog)
+    def serialize_summary(self, path, title=None):
+        outfile = self._get_outfile(path, 'summary')
         if outfile is None:
             return
         if title is None:
@@ -73,12 +72,10 @@ class RobotTestOutput:
         self.statistics.serialize(SummaryStatisticsSerializer(outfile))
         outfile.write('</body>\n</html>\n')
         outfile.close()
-        if syslog is not None:
-            syslog.output_file('Summary', path)
+        SYSLOG.output_file('Summary', path)
         
-    def serialize_report(self, path, title=None, logpath=None, split=-1,
-                         syslog=None):
-        outfile = self._get_outfile(path, 'report', syslog)
+    def serialize_report(self, path, title=None, logpath=None, split=-1):
+        outfile = self._get_outfile(path, 'report')
         if outfile is None:
             return
         if title is None:
@@ -94,11 +91,10 @@ class RobotTestOutput:
         self.statistics.tags.serialize(ReportTagStatSerializer(outfile))
         outfile.write('</body>\n</html>\n')
         outfile.close()
-        if syslog is not None:
-            syslog.output_file('Report', path)
+        SYSLOG.output_file('Report', path)
         
-    def serialize_log(self, path, title=None, split=-1, syslog=None):
-        outfile = self._get_outfile(path, 'log', syslog)
+    def serialize_log(self, path, title=None, split=-1):
+        outfile = self._get_outfile(path, 'log')
         if outfile is None:
             return
         if title is None:
@@ -110,17 +106,16 @@ class RobotTestOutput:
             self._serialize_log(outfile)
         outfile.write('</body>\n</html>\n')
         outfile.close()
-        if syslog is not None:
-            syslog.output_file('Log', path)
+        SYSLOG.output_file('Log', path)
             
     def _serialize_log(self, outfile):
         self.statistics.serialize(LogStatisticsSerializer(outfile))
-        self.syslog.serialize(LogSyslogSerializer(outfile))            
+        self.exec_errors.serialize(LogSyslogSerializer(outfile))            
         self.suite.serialize(LogSuiteSerializer(outfile))
             
     def _serialize_split_log(self, outfile, level):
         self.statistics.serialize(SplitLogStatisticsSerializer(outfile, level))
-        self.syslog.serialize(LogSyslogSerializer(outfile))
+        self.exec_errors.serialize(LogSyslogSerializer(outfile))
         self.suite.serialize(SplitLogSuiteSerializer(outfile, level))
         self._create_split_sub_logs(self.suite, level)
         
@@ -139,7 +134,7 @@ class RobotTestOutput:
         tmpl = Template(template=template)
         tmpl.generate(namespace, outfile)
 
-    def _get_outfile(self, outpath, outtype, syslog=None):
+    def _get_outfile(self, outpath, outtype):
         if outpath == 'NONE':
             return None
         try:
@@ -147,20 +142,17 @@ class RobotTestOutput:
         except:
             msg = ("Opening %s file '%s' for writing failed: %s" 
                    % (outtype, outpath, utils.get_error_message()))
-            if syslog is None:
-                raise DataError(msg)
-            syslog.error(msg)
+            SYSLOG.error(msg)
             return None
         
 
 class RebotTestOutput(RobotTestOutput):
     
-    def __init__(self, datasources, settings, syslog):
-        testsuite, testsyslog = process_outputs(datasources, settings, syslog)
-        testsuite.set_options(settings)
-        RobotTestOutput.__init__(self, testsuite, testsyslog, settings)
+    def __init__(self, datasources, settings):
+        suite, exec_errors = process_outputs(datasources, settings)
+        suite.set_options(settings)
+        RobotTestOutput.__init__(self, suite, exec_errors, settings)
         self._namegen = utils.FileNameGenerator(settings['Log'])
-        self._syslog = syslog
         
     def _create_split_sub_logs(self, suite, split_level, suite_level=0):
         if suite_level < split_level:
@@ -171,7 +163,7 @@ class RebotTestOutput(RobotTestOutput):
             
     def _create_split_sub_log(self, suite):
         suite.set_names()
-        outfile = self._get_outfile(self._namegen.get_name(), 'log', self._syslog)
+        outfile = self._get_outfile(self._namegen.get_name(), 'log')
         if outfile is None:
             return
         self._use_template(outfile, templates.LOG, get_title('Log', suite.name))
@@ -184,9 +176,9 @@ class RebotTestOutput(RobotTestOutput):
 class SplitSubTestOutput(RobotTestOutput):
     
     def __init__(self, path):
-        testsuite, testsyslog = process_output(path)
-        testsuite.set_names()
-        RobotTestOutput.__init__(self, testsuite, testsyslog)
+        suite, exec_errors = process_output(path)
+        suite.set_names()
+        RobotTestOutput.__init__(self, suite, exec_errors)
 
 
 class SplitIndexTestOutput(RobotTestOutput):
@@ -196,11 +188,11 @@ class SplitIndexTestOutput(RobotTestOutput):
         # from xml. The former contains information (incl. stats) about all 
         # tests but no messages. The latter contains messages but no info
         # about tests in splitted outputs. 
-        outsuite, outsyslog = process_output(path, settings['SplitOutputs'])
+        outsuite, exec_errors = process_output(path, settings['SplitOutputs'])
         outsuite.set_names()
         self._update_stats(outsuite, runsuite)
-        RobotTestOutput.__init__(self, runsuite, outsyslog, settings)
-        self.outsuite = outsuite
+        RobotTestOutput.__init__(self, runsuite, exec_errors, settings)
+        self._outsuite = outsuite
         
     def _update_stats(self, outsuite, runsuite):
         outsuite.critical_stats = runsuite.critical_stats
@@ -211,5 +203,5 @@ class SplitIndexTestOutput(RobotTestOutput):
 
     def _serialize_split_log(self, outfile, level):
         self.statistics.serialize(SplitLogStatisticsSerializer(outfile, level))
-        self.syslog.serialize(LogSyslogSerializer(outfile))
-        self.outsuite.serialize(SplitLogSuiteSerializer(outfile, level))
+        self.exec_errors.serialize(LogSyslogSerializer(outfile))
+        self._outsuite.serialize(SplitLogSuiteSerializer(outfile, level))

@@ -4,8 +4,7 @@ from StringIO import StringIO
 from robot import utils
 from robot.utils.asserts import *
 
-from robot.output.systemlogger import _FileLogger, SystemLogger2
-SystemLogger = SystemLogger2
+from robot.output.systemlogger import _FileLogger, SystemLogger
 
 
 class MessageMock:
@@ -14,7 +13,6 @@ class MessageMock:
         self.timestamp = timestamp
         self.level = level
         self.message = message
-
     
 class LoggerMock:
 
@@ -31,7 +29,6 @@ class LoggerMock:
     def copy(self):
         return LoggerMock(*self.expected)
 
-
 class LoggerMock2(LoggerMock):
 
     def output_file(self, name, path):
@@ -39,6 +36,7 @@ class LoggerMock2(LoggerMock):
 
     def close(self):
         self.closed = True
+
 
 class TestSystemFileLogger(unittest.TestCase):
     
@@ -122,6 +120,16 @@ class TestSystemLogger(unittest.TestCase):
         self.syslog.register_logger(logger)
         self.syslog.output_file('name', 'path')
         self.syslog.close()
+
+    def test_close_removes_registered_loggers(self):
+        logger = LoggerMock(('Hello, world!', 'INFO'))
+        logger2 = LoggerMock2(('Hello, world!', 'INFO'))
+        self.syslog.register_logger(logger, logger2)
+        self.syslog.close()
+        assert_true(self.syslog._writers == 
+                    self.syslog._output_filers == 
+                    self.syslog._closers == [])
+
 
 
 if __name__ == "__main__":

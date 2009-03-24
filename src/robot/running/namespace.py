@@ -20,6 +20,7 @@ from robot.errors import FrameworkError, DataError
 from robot.libraries import STDLIB_NAMES
 from robot.variables import GLOBAL_VARIABLES
 from robot.common import UserErrorHandler
+from robot.output import SYSLOG
 import robot
 
 from importer import Importer
@@ -35,10 +36,9 @@ class Namespace:
     A new instance of this class is created for each test suite.
     """
 
-    def __init__(self, suite, parent, syslog):
+    def __init__(self, suite, parent):
         if suite is not None:
-            syslog.info("Initializing namespace for test suite '%s'" % suite.longname)
-        self._syslog = syslog
+            SYSLOG.info("Initializing namespace for test suite '%s'" % suite.longname)
         self.variables = _VariableScopes(suite, parent)
         self.suite = suite
         self.test = None
@@ -86,36 +86,36 @@ class Namespace:
     def _import_resource(self, path):
         if path not in self._imported_resource_files:
             self._imported_resource_files.append(path)
-            resource = IMPORTER.import_resource(path, self._syslog)
+            resource = IMPORTER.import_resource(path)
             self.variables.set_from_variable_table(resource.variables)
             self._userlibs.append(resource.user_keywords)
             self._handle_imports(resource.imports)
         else:
-            self._syslog.warn("Resource file '%s' already imported by suite '%s'"
-                              % (path, self.suite.longname))
+            SYSLOG.warn("Resource file '%s' already imported by suite '%s'"
+                        % (path, self.suite.longname))
 
     def import_variables(self, path, args, overwrite=False):
         if (path,args) not in self._imported_variable_files:
             self._imported_variable_files.append((path,args))
-            self.variables.set_from_file(path, args, self._syslog, overwrite)
+            self.variables.set_from_file(path, args, overwrite)
         else:
             msg = "Variable file '%s'" % path
             if args:
                 msg += " with arguments %s" % (utils.seq2str2(args))
-            self._syslog.warn("%s already imported by suite '%s'"
-                              % (msg, self.suite.longname))
+            SYSLOG.warn("%s already imported by suite '%s'"
+                        % (msg, self.suite.longname))
 
     def import_library(self, name, args=None):
         code_name, lib_name, args = self._get_lib_names_and_args(name, args)
         if self._testlibs.has_key(lib_name):
-            self._syslog.warn("Test library '%s' already imported by suite '%s'"
-                              % (lib_name, self.suite.longname))
+            SYSLOG.warn("Test library '%s' already imported by suite '%s'"
+                        % (lib_name, self.suite.longname))
             return
-        lib = IMPORTER.import_library(code_name, args, self._syslog)
+        lib = IMPORTER.import_library(code_name, args)
         if code_name != lib_name:
             lib = lib.copy(lib_name)
-            self._syslog.info("Imported library '%s' with name '%s'"
-                              % (code_name, lib_name))
+            SYSLOG.info("Imported library '%s' with name '%s'"
+                        % (code_name, lib_name))
         self._testlibs[lib_name] = lib
         lib.start_suite()
         if self.test is not None:
@@ -227,7 +227,7 @@ class Namespace:
         else:
             return [hand1, hand2]
         if not RUN_KW_REGISTER.is_run_keyword(ext_hand):
-            self._syslog.warn(
+            SYSLOG.warn(
                 "Keyword '%s' found both from a user created test library "
                 "'%s' and Robot Framework standard library '%s'. The user "
                 "created keyword is used. To select explicitly, and to get "
@@ -299,13 +299,13 @@ class _VariableScopes:
     def replace_string(self, string):
         return self.current.replace_string(string)
     
-    def set_from_file(self, path, args, syslog, overwrite=False):
-        variables = self._suite.set_from_file(path, args, syslog, overwrite)
+    def set_from_file(self, path, args, overwrite=False):
+        variables = self._suite.set_from_file(path, args, overwrite)
         if self._test is not None:
             self._test._set_from_file(variables, overwrite=True)
         for varz in self._uk_handlers:
             varz._set_from_file(variables, overwrite=True)
-        if len(self._uk_handlers) > 0:
+        if self._uk_handlers:
             self.current._set_from_file(variables, overwrite=True)
             
     def set_from_variable_table(self, rawvariables):

@@ -26,8 +26,8 @@ from namespace import Namespace
 from userkeyword import UserLibrary
 
 
-def TestSuite(datasources, settings, syslog):
-    suitedata = TestSuiteData(datasources, settings, syslog)
+def TestSuite(datasources, settings):
+    suitedata = TestSuiteData(datasources, settings)
     suite = RunnableTestSuite(suitedata)
     suite.set_options(settings)
     return suite
@@ -57,7 +57,7 @@ class RunnableTestSuite(BaseTestSuite):
         
     def run(self, output, parent=None, error=None):
         self.starttime = utils.get_timestamp()
-        self.namespace = Namespace(self, parent, output.syslog)
+        self.namespace = Namespace(self, parent)
         self.namespace.variables['${SUITE_NAME}'] = self.longname
         init_err = self._init_suite(self.namespace.variables)
         output.start_suite(self)

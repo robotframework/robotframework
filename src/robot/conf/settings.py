@@ -17,6 +17,7 @@ import os
 
 from robot import utils
 from robot.errors import DataError, FrameworkError
+from robot.output import SYSLOG
 
 
 def get_title(type_, name):
@@ -60,20 +61,16 @@ class _BaseSettings:
     _deprecated = { 'colormonitor'   : 'monitorcolors',
                     'transform'      : None }
     
-    _env_opts = { 'SyslogFile'       : ('ROBOT_SYSLOG_FILE', 'NONE'),
-                  'SyslogLevel'      : ('ROBOT_SYSLOG_LEVEL', 'INFO') }
-    
     def __init__(self, opts={}):
         self._opts = {}
         self._errors = []
         self._cli_opts.update(self._extra_cli_opts)
         self._process_deprecated_cli_opts(opts)
         self._process_cli_opts(opts)
-        self._process_env_opts()
             
-    def report_errors(self, syslog):
+    def report_possible_errors(self):
         for msg, level in self._errors:
-            syslog.write(msg, level)
+            SYSLOG.write(msg, level)
             
     def _add_error(self, msg, level='ERROR'):
         self._errors.append((msg, level))
@@ -99,18 +96,8 @@ class _BaseSettings:
             else:
                 self._add_error("Option '--%s' has been removed." % oldname)
     
-    def _process_env_opts(self):
-        for name, (env_name, default) in self._env_opts.items():
-            try:
-                value = os.environ[env_name].strip()
-                if value == '':
-                    raise KeyError
-            except KeyError:
-                value = default
-            self[name] = value
-            
     def __setitem__(self, name, value):
-        if not (self._cli_opts.has_key(name) or self._env_opts.has_key(name)):
+        if not self._cli_opts.has_key(name):
             raise KeyError("Non-existing settings '%s'" % name)
         elif name == 'Name' and value is not None:
             value = utils.printable_name(value.replace('_', ' '))
@@ -138,7 +125,7 @@ class _BaseSettings:
         self._opts[name] = value
         
     def __getitem__(self, name):
-        if not (self._cli_opts.has_key(name) or self._env_opts.has_key(name)):
+        if not self._cli_opts.has_key(name):
             raise KeyError("Non-existing setting '%s'" % name)
         elif name in ['Output', 'Log', 'Report', 'Summary', 'DebugFile']:
             return self._get_output_file(name)

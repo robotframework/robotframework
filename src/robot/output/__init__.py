@@ -14,17 +14,16 @@
 
 
 from output import Output
-from systemlogger import SystemLogger
+from systemlogger import SYSLOG
+from monitor import CommandLineMonitor
 from xmllogger import XmlLogger
 from levels import LEVELS
 from readers import process_output, process_outputs
 
 
-# Hooks to syslog and output. Set by SystemLogger and Output. 
-# Use only if no other way available (e.g. from BuildIn library)
-SYSLOG = None
+# Hooks to output. Set by Output. 
+# Use only if no other way available (e.g. from BuiltIn library)
 OUTPUT = None
-
 
 
 def TestSuite(outpath):
@@ -35,7 +34,7 @@ def TestSuite(outpath):
     
     If you want statistics get suite first and say Statistics(suite).
     """
-    suite, syslog = process_output(outpath)
+    suite, exec_errors = process_output(outpath)
     suite.set_names()
 
     def write_to_file(path=None):
@@ -48,8 +47,9 @@ def TestSuite(outpath):
         if path is None:
             path = outpath
         suite.set_status()
-        testoutput = RobotTestOutput(suite, syslog)
+        testoutput = RobotTestOutput(suite, exec_errors)
         testoutput.serialize_output(path, suite)
     
     suite.write_to_file = write_to_file
     return suite
+

@@ -23,9 +23,9 @@ from userkeyword import UserHandlerList
 
 class ResourceFile:
     
-    def __init__(self, path, syslog):
+    def __init__(self, path):
         self.path = utils.normpath(path)
-        rawdata = RawData(self.path, syslog)
+        rawdata = RawData(self.path)
         if rawdata.get_type() != rawdata.RESOURCE:
             self._raise_not_resource(rawdata)
         self.user_keywords = UserHandlerList(rawdata.keywords)

@@ -24,8 +24,8 @@ from isvar import is_var, is_scalar_var, is_list_var
 GLOBAL_VARIABLES = Variables()
 
 
-def init_global_variables(settings, syslog):
-    _set_cli_vars(settings, syslog)
+def init_global_variables(settings):
+    _set_cli_vars(settings)
     for name, value in [ ('${TEMPDIR}', utils.get_temp_dir()),
                          ('${EXECDIR}', os.path.abspath('.')), 
                          ('${/}', os.sep), 
@@ -47,14 +47,14 @@ def init_global_variables(settings, syslog):
                          ('${PREV_TEST_MESSAGE}', '') ]:
         GLOBAL_VARIABLES[name] = value
 
-def _set_cli_vars(settings, syslog):
+def _set_cli_vars(settings):
     for path, args in settings['VariableFiles']:
         try:
-            GLOBAL_VARIABLES.set_from_file(path, args, syslog)
+            GLOBAL_VARIABLES.set_from_file(path, args)
         except:
             msg, details = utils.get_error_details()
-            syslog.error(msg)
-            syslog.info(details)
+            SYSLOG.error(msg)
+            SYSLOG.info(details)
     for varstr in settings['Variables']:
         try:
             name, value = varstr.split(':', 1)

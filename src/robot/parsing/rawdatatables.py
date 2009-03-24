@@ -15,6 +15,7 @@
 
 from robot import utils
 from robot.errors import DataError
+from robot.output import SYSLOG
 
 
 _ERR = "Error in file '%s' in table '%s' in element on row %d: %s"
@@ -22,12 +23,11 @@ _ERR = "Error in file '%s' in table '%s' in element on row %d: %s"
 
 class _Table:
     
-    def __init__(self, name, source, data, syslog):
+    def __init__(self, name, source, data):
         self._name = name
         self._source = source
         self._row = 0
         self._data = data
-        self._syslog = syslog
         
     def add_row(self, cells, repeat=1):
         if len(cells) == 0:
@@ -42,7 +42,7 @@ class _Table:
             
     def report_invalid_syntax(self, row, error, level='ERROR'):
         msg = _ERR % (self._source, self._name, row, error)
-        self._syslog.write(msg, level)
+        SYSLOG.write(msg, level)
 
 
 class SimpleTable(_Table):
@@ -60,8 +60,8 @@ class SimpleTable(_Table):
 
 class ComplexTable(_Table):
 
-    def __init__(self, name, source, data, syslog):
-        _Table.__init__(self, name, source, data, syslog)
+    def __init__(self, name, source, data):
+        _Table.__init__(self, name, source, data)
         self._item = None
 
     def _add_row(self, name, data):

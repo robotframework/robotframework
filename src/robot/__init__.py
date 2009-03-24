@@ -21,7 +21,7 @@ if __name__ == '__main__':
 
 if 'pythonpathsetter' not in sys.modules:
     import pythonpathsetter
-from output import Output, SystemLogger
+from output import Output, CommandLineMonitor, SYSLOG
 from conf import RobotSettings, RebotSettings
 from running import TestSuite
 from serializing import RobotTestOutput, RebotTestOutput, SplitIndexTestOutput
@@ -40,6 +40,7 @@ def rebot_from_cli(args, usage):
     _run_or_rebot_from_cli(rebot, args, usage)
 
 def _run_or_rebot_from_cli(method, cliargs, usage, **argparser_config):
+    SYSLOG.register_file_logger()
     ap = utils.ArgumentParser(usage, utils.get_full_version())
     try:
         options, datasources = \
@@ -58,6 +59,7 @@ def _run_or_rebot_from_cli(method, cliargs, usage, **argparser_config):
     except (KeyboardInterrupt, SystemExit):
         _exit(STOPPED_BY_USER, 'Execution stopped by user.')
     except:
+        raise
         error, details = utils.get_error_details()
         _exit(FRAMEWORK_ERROR, 'Unexpected error: %s' % error, details) 
     else:
@@ -80,23 +82,24 @@ def run(*datasources, **options):
     pybot --log mylog.html /path/to/tests.html /path/to/tests2.html
     """
     settings = RobotSettings(options)
-    output = Output(settings)
-    settings.report_errors(output.syslog)
-    init_global_variables(settings, output.syslog)
-    _syslog_start_info('Robot', datasources, settings, output.syslog)
-    suite = TestSuite(datasources, settings, output.syslog)
+    monitor = CommandLineMonitor(settings['MonitorWidth'], settings['MonitorColors'])
+    SYSLOG.register_logger(monitor)
+    output = Output(monitor, settings)
+    settings.report_possible_errors()
+    init_global_variables(settings)
+    _syslog_start_info('Robot', datasources, settings)
+    suite = TestSuite(datasources, settings)
     suite.run(output)
-    output.syslog.info("Tests executed successfully. Statistics:\n%s"
-                       % suite.get_stat_message())
-    testoutput = RobotTestOutput(suite, output.syslog, settings)
+    SYSLOG.info("Tests executed successfully. Statistics:\n%s" % suite.get_stat_message())
+    testoutput = RobotTestOutput(suite, settings)
     output.close1(suite)
     if settings.is_rebot_needed():
         datasources, settings = settings.get_rebot_datasources_and_settings()
         if settings['SplitOutputs'] > 0:
             testoutput = SplitIndexTestOutput(suite, datasources[0], settings)
         else:
-            testoutput = RebotTestOutput(datasources, settings, output.syslog)
-        testoutput.serialize(settings, output.syslog)
+            testoutput = RebotTestOutput(datasources, settings)
+        testoutput.serialize(settings)
     output.close2()
     return suite
 
@@ -117,19 +120,20 @@ def rebot(*datasources, **options):
     rebot --report myrep.html --log NONE /path/out1.xml /path/out2.xml
     """
     settings = RebotSettings(options)
-    syslog = SystemLogger(settings)
-    settings.report_errors(syslog)
-    _syslog_start_info('Rebot', datasources, settings, syslog)
-    testoutput = RebotTestOutput(datasources, settings, syslog)
-    testoutput.serialize(settings, syslog, 'Rebot')
-    syslog.close()
+    monitor = CommandLineMonitor(settings['MonitorWidth'], settings['MonitorColors'])
+    SYSLOG.register_logger(monitor)
+    settings.report_possible_errors()
+    _syslog_start_info('Rebot', datasources, settings)
+    testoutput = RebotTestOutput(datasources, settings)
+    testoutput.serialize(settings, generator='Rebot')
+    SYSLOG.close()
     return testoutput.suite
     
     
-def _syslog_start_info(who, sources, settings, syslog):
-    syslog.info(utils.get_full_version(who))
-    syslog.info('Settings:\n%s' % settings)
-    syslog.info('Starting processing data source%s %s'
+def _syslog_start_info(who, sources, settings):
+    SYSLOG.info(utils.get_full_version(who))
+    SYSLOG.info('Settings:\n%s' % settings)
+    SYSLOG.info('Starting processing data source%s %s'
                 % (utils.plural_or_not(sources), utils.seq2str(sources)))
 
 
@@ -150,9 +154,6 @@ def _exit(rc_or_suite, message=None, details=None):
         if rc == INFO_PRINTED:
             print message
         else:
-            from robot.output import SYSLOG
-            if SYSLOG is None:
-                SYSLOG = SystemLogger()
             if rc == DATA_ERROR:
                 message += '\n\nTry --help for usage information.'
             SYSLOG.error(message)

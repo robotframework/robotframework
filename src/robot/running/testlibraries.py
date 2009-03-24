@@ -20,7 +20,7 @@ import inspect
 from robot import utils
 from robot.errors import DataError
 from robot.common import BaseLibrary
-from robot.output import SystemLogger
+from robot.output import SYSLOG
 
 from handlers import Handler, InitHandler, DynamicHandler
 
@@ -29,12 +29,10 @@ if utils.is_jython:
     from java.lang import Object
 
 
-def TestLibrary(name, args=None, syslog=None):
-    if syslog is None:
-        syslog = SystemLogger()
+def TestLibrary(name, args=None):
     libcode, source = utils.import_(name)
     libclass = _get_lib_class(libcode)
-    return libclass(libcode, source, name, utils.to_list(args), syslog)
+    return libclass(libcode, source, name, utils.to_list(args))
 
 
 def _get_lib_class(libcode):
@@ -61,7 +59,7 @@ def _get_dynamic_method(code, underscore_name):
 
 class _BaseTestLibrary(BaseLibrary):
 
-    def __init__(self, libcode, source, name, args, syslog):
+    def __init__(self, libcode, source, name, args):
         if os.path.exists(name):
             name = os.path.splitext(os.path.basename(name))[0]
         self.source = source
@@ -76,7 +74,7 @@ class _BaseTestLibrary(BaseLibrary):
             self._libcode = libcode
             self.init =  self._create_init_handler(libcode)
             self._libinst = self.get_instance()
-            self.handlers = self._create_handlers(self._libinst, syslog)
+            self.handlers = self._create_handlers(self._libinst)
             self._init_scope_handling()
 
     def copy(self, name):
@@ -167,8 +165,8 @@ class _BaseTestLibrary(BaseLibrary):
         except:
             self._raise_creating_instance_failed()
 
-    def _create_handlers(self, libinst, syslog):
-        success, failure, details = self._get_reporting_methods(syslog)
+    def _create_handlers(self, libinst):
+        success, failure, details = self._get_reporting_methods()
         handlers = utils.NormalizedDict(ignore=['_'])
         for name in self._get_handler_names(libinst):
             err_pre = "Adding keyword '%s' to library '%s' failed: " % (name, self.name) 
@@ -192,9 +190,9 @@ class _BaseTestLibrary(BaseLibrary):
                 details('Details:\n%s' % err_details)
         return handlers
 
-    def _get_reporting_methods(self, syslog):
+    def _get_reporting_methods(self):
         # success, failure, details
-        return syslog.debug, syslog.info, syslog.debug
+        return SYSLOG.debug, SYSLOG.info, SYSLOG.debug
                     
     def _get_handler_names(self, libcode):
         return [ name for name in dir(libcode) 
@@ -276,19 +274,19 @@ class _HybridLibrary(_BaseTestLibrary):
         except AttributeError:
             return instance.getKeywordNames()
 
-    def _get_reporting_methods(self, syslog):
-        # Use syslog.warn for reporting possible failures when creating kws 
+    def _get_reporting_methods(self):
+        # Use SYSLOG.warn for reporting possible failures when creating kws 
         # to make them visible. With hybrid libraries kw names are returned 
         # explicitly so creating them should also pass.
-        return syslog.debug, syslog.warn, syslog.info
+        return SYSLOG.debug, SYSLOG.warn, SYSLOG.info
     
         
 class _DynamicLibrary(_BaseTestLibrary):
     
-    def __init__(self, libcode, source, name, args, syslog):
+    def __init__(self, libcode, source, name, args):
         self._get_kw_doc = _get_dynamic_method(libcode, 'get_keyword_documentation')
         self._get_kw_args = _get_dynamic_method(libcode, 'get_keyword_arguments')
-        _BaseTestLibrary.__init__(self, libcode, source, name, args, syslog)
+        _BaseTestLibrary.__init__(self, libcode, source, name, args)
      
     def _get_handler_names(self, instance):
         try:

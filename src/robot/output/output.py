@@ -21,8 +21,7 @@ import robot
 
 from levels import LEVELS
 from abstractlogger import AbstractLogger
-from monitor import CommandLineMonitor
-from systemlogger import SystemLogger
+from systemlogger import SYSLOG
 from xmllogger import XmlLogger
 from listeners import Listeners
 from debugfile import DebugFile
@@ -31,15 +30,14 @@ from debugfile import DebugFile
 
 class Output(AbstractLogger):
     
-    def __init__(self, settings):
+    def __init__(self, monitor, settings):
         AbstractLogger.__init__(self, settings['LogLevel'])
-        self.monitor = CommandLineMonitor(settings['MonitorWidth'],
-                                          settings['MonitorColors'])
+        self.monitor = monitor
         self.logger = None
-        self.syslog = SystemLogger(settings, self.monitor)
-        self.listeners = Listeners(settings['Listeners'], self.syslog)
-        self.syslog.register_listeners(self.listeners)
-        self._debugfile = DebugFile(settings['DebugFile'], self.syslog)
+        self.listeners = Listeners(settings['Listeners'])
+        self._execution_errors = _ExecutionErrorLogger()
+        SYSLOG.register_logger(self.listeners, self._execution_errors)
+        self._debugfile = DebugFile(settings['DebugFile'])
         self._namegen = self._get_log_name_generator(settings['Log'])
         self._settings = settings
         robot.output.OUTPUT = self
@@ -55,19 +53,19 @@ class Output(AbstractLogger):
                            self._settings['TagDoc'],
                            self._settings['TagStatLink'])
         stats.serialize(self.logger)
-        self.syslog.serialize(self.logger)
+        self._execution_errors.serialize(self.logger)
         self.logger.close()
-        self.syslog.output_file('Output', self._settings['Output'])
+        SYSLOG.output_file('Output', self._settings['Output'])
         if self._debugfile is not None:
-            self.syslog.output_file('Debug', self._debugfile.path)
+            SYSLOG.output_file('Debug', self._debugfile.path)
             self._debugfile.close()
             
     def close2(self):
         self.listeners.close()
-        self.syslog.close()
+        SYSLOG.close()
     
     def start_suite(self, suite):
-        self.syslog.info("Running test suite '%s'" % suite.longname)
+        SYSLOG.info("Running test suite '%s'" % suite.longname)
         if self.logger is None:
             self.logger = XmlLogger(self._settings['Output'], 
                                     self._settings['SplitOutputs'])
@@ -85,7 +83,7 @@ class Output(AbstractLogger):
     def end_suite(self, suite):
         outpath = self.logger.end_suite(suite)
         if outpath is not None:
-            self.syslog.info('Output: %s' % outpath)
+            SYSLOG.info('Output: %s' % outpath)
             self.listeners.output_file('Output', outpath)
             orig_outpath = self._settings['Output']
             suite.namespace.variables.set_global('${OUTPUT_FILE}', orig_outpath)
@@ -101,12 +99,12 @@ class Output(AbstractLogger):
         logpath = self._namegen.get_prev()
         output = robot.serializing.SplitSubTestOutput(outpath)
         output.serialize_log(logpath)
-        self.syslog.info('Log: %s' % logpath)
+        SYSLOG.info('Log: %s' % logpath)
         self.listeners.output_file('Log', logpath)   
         suite.namespace.variables.set_global('${LOG_FILE}', self._namegen.get_base())
         
     def start_test(self, test):
-        self.syslog.info("Running test case '%s'" % test.name)
+        SYSLOG.info("Running test case '%s'" % test.name)
         self.logger.start_test(test)
         self.monitor.start_test(test)
         self.listeners.start_test(test)
@@ -136,7 +134,7 @@ class Output(AbstractLogger):
         if self._debugfile is not None and self._is_logged(level, 'DEBUG'):
             self._debugfile.message(msg)
         if level.upper() == 'WARN':
-            self.syslog.warn(msg)
+            SYSLOG.warn(msg)
         AbstractLogger.write(self, msg, level, html)
         
     def _write(self, msg):
@@ -182,3 +180,20 @@ class _OutputSplitter:
         if token == 'HTML':
             return 'INFO', True
         return token, False
+
+
+class _ExecutionErrorLogger:
+
+    def __init__(self):
+        self._messages = []
+
+    def write(self, msg, level):
+        if level in ['WARN', 'ERROR']:
+            self._messages.append(msg)
+
+    def serialize(self, serializer):
+        serializer.start_syslog(self)
+        for msg in self._messages:
+            serializer.message(msg)
+        serializer.end_syslog(self)
+        

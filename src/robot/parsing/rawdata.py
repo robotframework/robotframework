@@ -15,7 +15,6 @@
 
 import re
 import os
-import urllib
 
 from robot import utils
 from robot.errors import DataError
@@ -47,7 +46,7 @@ _WHITESPACE_REGEXP = re.compile('\s+')
 
 
 # TODO: is strip_comments needed?
-def RawData(path, syslog, strip_comments=True):
+def RawData(path, strip_comments=True):
     if path is None or os.path.isdir(path):
         return EmptyRawData(path)
     if not os.path.isfile(path):
@@ -57,18 +56,18 @@ def RawData(path, syslog, strip_comments=True):
     except:
         raise DataError(utils.get_error_message())
     try:
-        return _read_data(datafile, path, syslog, strip_comments)
+        return _read_data(datafile, path, strip_comments)
     finally:
         datafile.close()
 
 
-def _read_data(datafile, path, syslog, strip_comments):
+def _read_data(datafile, path, strip_comments):
     ext = os.path.splitext(path)[1].lower()
     try:
         reader = READERS[ext]()
     except KeyError:
         raise DataError("Unsupported file format '%s'" % ext)
-    rawdata = TabularRawData(path, syslog, strip_comments)
+    rawdata = TabularRawData(path, strip_comments)
     reader.read(datafile, rawdata)
     return rawdata
 
@@ -118,9 +117,8 @@ class EmptyRawData(_BaseRawData):
 class TabularRawData(_BaseRawData):
     """Populates RawData from tabular test data"""
 
-    def __init__(self, path, syslog, strip_comments=True):
+    def __init__(self, path, strip_comments=True):
         _BaseRawData.__init__(self, path)
-        self._syslog = syslog
         self._table = None
         self._strip_comments = strip_comments
         # ${CURDIR} is replaced the data and thus must be escaped
@@ -138,7 +136,7 @@ class TabularRawData(_BaseRawData):
         name = self._collapse_whitespace(name)
         table, data = self._get_table_and_data(name)
         if table is not None:
-            self._table = table(name, self.source, data, self._syslog)
+            self._table = table(name, self.source, data)
         else:
             self._table = None
         return self._table is not None

@@ -18,6 +18,7 @@ import os
 from robot import utils
 from robot.errors import DataError
 from robot.common import BaseTestSuite, BaseTestCase
+from robot.output import SYSLOG
 
 from rawdata import RawData, READERS
 from metadata import TestSuiteMetadata, TestCaseMetadata
@@ -25,16 +26,16 @@ from keywords import KeywordList
 from userkeyword import UserHandlerList
 
 
-def TestSuiteData(datasources, settings, syslog):
+def TestSuiteData(datasources, settings):
     datasources = [ utils.normpath(path) for path in datasources ]
     if not datasources:
         raise DataError("No data sources given.")
     elif len(datasources) > 1:
-        return MultiSourceSuite(datasources, settings['SuiteNames'], syslog)
+        return MultiSourceSuite(datasources, settings['SuiteNames'])
     elif os.path.isdir(datasources[0]):
-        return DirectorySuite(datasources[0], settings['SuiteNames'], syslog)
+        return DirectorySuite(datasources[0], settings['SuiteNames'])
     else:
-        return FileSuite(datasources[0], syslog)
+        return FileSuite(datasources[0])
 
 
 class _BaseSuite(BaseTestSuite):
@@ -66,17 +67,17 @@ class _BaseSuite(BaseTestSuite):
         
 class FileSuite(_BaseSuite):
     
-    def __init__(self, path, syslog):
-        syslog.info("Parsing test case file '%s'" % path)
-        rawdata = self._get_rawdata(path, syslog)
+    def __init__(self, path):
+        SYSLOG.info("Parsing test case file '%s'" % path)
+        rawdata = self._get_rawdata(path)
         _BaseSuite.__init__(self, rawdata)
         self.tests = self._process_testcases(rawdata)
 
     def _get_source(self, path):
         return path
         
-    def _get_rawdata(self, path, syslog):
-        rawdata = RawData(path, syslog)
+    def _get_rawdata(self, path):
+        rawdata = RawData(path)
         if rawdata.get_type() == rawdata.TESTCASE:
             return rawdata
         raise DataError("Test case file '%s' contains no test cases."  % path)
@@ -96,16 +97,16 @@ class DirectorySuite(_BaseSuite):
     _ignored_prefixes = ['_', '.']
     _ignored_dirs = ['CVS']
     
-    def __init__(self, path, suitenames, syslog):
-        syslog.info("Parsing test suite directory '%s'" % path)
+    def __init__(self, path, suitenames):
+        SYSLOG.info("Parsing test suite directory '%s'" % path)
         # If we are included also all our children are
         if self._is_in_incl_suites(os.path.basename(os.path.normpath(path)),
                                    suitenames):
             suitenames = []  
-        subitems, initfile = self._get_suite_items(path, suitenames, syslog)
-        rawdata = self._get_rawdata(path, initfile, syslog)
+        subitems, initfile = self._get_suite_items(path, suitenames)
+        rawdata = self._get_rawdata(path, initfile)
         _BaseSuite.__init__(self, rawdata)
-        self._process_subsuites(subitems, suitenames, syslog)
+        self._process_subsuites(subitems, suitenames)
         if self.get_test_count() == 0 and len(suitenames) == 0:
             raise DataError("Test suite directory '%s' contains no test cases." 
                             % path)
@@ -114,7 +115,7 @@ class DirectorySuite(_BaseSuite):
         # 'path' points either to directory or __init__ file inside it
         return utils.get_directory(path)
         
-    def _get_suite_items(self, dirpath, suitenames, syslog):
+    def _get_suite_items(self, dirpath, suitenames):
         names = os.listdir(dirpath)
         names.sort(lambda x,y: cmp(x.lower(), y.lower()))
         files = []
@@ -125,35 +126,35 @@ class DirectorySuite(_BaseSuite):
                 if initfile is None:
                     initfile = path
                 else:
-                    syslog.error("Ignoring second test suite init file '%s'" % path)
+                    SYSLOG.error("Ignoring second test suite init file '%s'" % path)
             elif self._is_ignored(name, path, suitenames):
-                syslog.info("Ignoring file or directory '%s'" % name)
+                SYSLOG.info("Ignoring file or directory '%s'" % name)
             else:             
                 files.append(path)
         return files, initfile
 
-    def _get_rawdata(self, path, initfile, syslog):
+    def _get_rawdata(self, path, initfile):
         if initfile is None:
-            syslog.info("No test suite directory init file")
-            return RawData(path, syslog)
-        syslog.info("Parsing test suite directory init file '%s'" % initfile)
-        rawdata = RawData(initfile, syslog)
+            SYSLOG.info("No test suite directory init file")
+            return RawData(path)
+        SYSLOG.info("Parsing test suite directory init file '%s'" % initfile)
+        rawdata = RawData(initfile)
         if rawdata.get_type() in [rawdata.INITFILE, rawdata.EMPTY]:
             return rawdata
-        syslog.error("Test suite directory initialization file '%s' "
+        SYSLOG.error("Test suite directory initialization file '%s' "
                      "contains test cases and is ignored." % initfile)
-        return RawData(path, syslog)
+        return RawData(path)
             
-    def _process_subsuites(self, paths, suitenames, syslog):
+    def _process_subsuites(self, paths, suitenames):
         for path in paths:
             try:
                 if os.path.isdir(path):
-                    suite = DirectorySuite(path, suitenames, syslog)
+                    suite = DirectorySuite(path, suitenames)
                 else:
-                    suite = FileSuite(path, syslog)
+                    suite = FileSuite(path)
             except:
                 msg = "Parsing data source '%s' failed: %s"
-                syslog.info(msg % (path, utils.get_error_message()))
+                SYSLOG.info(msg % (path, utils.get_error_message()))
             else:
                 self.suites.append(suite)
 
@@ -183,17 +184,17 @@ class DirectorySuite(_BaseSuite):
 
 class MultiSourceSuite(_BaseSuite):
     
-    def __init__(self, paths, suitenames, syslog):
-        syslog.info("Parsing multiple data sources %s" % utils.seq2str(paths))
-        _BaseSuite.__init__(self, RawData(None, syslog))
+    def __init__(self, paths, suitenames):
+        SYSLOG.info("Parsing multiple data sources %s" % utils.seq2str(paths))
+        _BaseSuite.__init__(self, RawData(None))
         for path in paths:
             try:
                 if os.path.isdir(path):
-                    suite = DirectorySuite(path, suitenames, syslog)
+                    suite = DirectorySuite(path, suitenames)
                 else:
-                    suite = FileSuite(path, syslog)
+                    suite = FileSuite(path)
             except DataError, err:
-                syslog.error("Parsing data source '%s' failed: %s" % (path, err))
+                SYSLOG.error("Parsing data source '%s' failed: %s" % (path, err))
             else:
                 self.suites.append(suite)
         if self.get_test_count() == 0 and len(suitenames) == 0:

@@ -17,22 +17,23 @@ import types
 
 from robot import utils
 from robot.errors import DataError
+from systemlogger import SYSLOG
 
 
 class Listeners:
     
-    def __init__(self, listeners, syslog):
+    def __init__(self, listeners):
         self._listeners = []
         for name, args in listeners:
             try:
-                self._listeners.append(_Listener(name, args, syslog))
+                self._listeners.append(_Listener(name, args))
             except:
                 message, details = utils.get_error_details()
                 if args:
                     name += ':' + ':'.join(args)
-                syslog.error("Taking listener '%s' into use failed: %s"
+                SYSLOG.error("Taking listener '%s' into use failed: %s"
                              % (name, message))
-                syslog.info("Details:\n%s" % details)
+                SYSLOG.info("Details:\n%s" % details)
                 
     def start_suite(self, suite):
         for listener in self._listeners:
@@ -69,20 +70,20 @@ class Listeners:
     
 class _Listener:
     
-    def __init__(self, name, args, syslog):
+    def __init__(self, name, args):
         self._handlers = {}
         listener, source = utils.import_(name, 'listener')
         if not isinstance(listener, types.ModuleType):
             listener = listener(*args)
         elif args:
             raise DataError("Listeners implemented as modules do not take arguments")
-        syslog.info("Imported listener '%s' with arguments %s (source %s)" 
+        SYSLOG.info("Imported listener '%s' with arguments %s (source %s)" 
                     % (name, utils.seq2str2(args), source))
         for func in ['start_suite', 'end_suite', 'start_test', 'end_test', 
                      'start_keyword', 'end_keyword', 'output_file', 
                      'summary_file', 'report_file', 'log_file', 'debug_file', 
                      'close']:
-            self._handlers[func] = _Handler(listener, name, func, syslog)
+            self._handlers[func] = _Handler(listener, name, func)
 
     def __getattr__(self, name):
         try:
@@ -93,18 +94,17 @@ class _Listener:
 
 class _Handler:
     
-    def __init__(self, listener, listener_name, name, syslog):
+    def __init__(self, listener, listener_name, name):
         try:
             self._handler, self._name = self._get_handler(listener, name)
         except AttributeError:
             self._handler = self._name = None
-            syslog.debug("Listener '%s' does not have method '%s'" 
+            SYSLOG.debug("Listener '%s' does not have method '%s'" 
                          % (listener_name, name))
         else:
-            syslog.debug("Listener '%s' has method '%s'" 
+            SYSLOG.debug("Listener '%s' has method '%s'" 
                          % (listener_name, self._name))
         self._listener_name = listener_name
-        self._syslog = syslog
             
     def __call__(self, *args):
         try:
@@ -112,9 +112,9 @@ class _Handler:
                 self._handler(*args)
         except:
             message, details = utils.get_error_details()
-            self._syslog.error("Calling '%s' method of listener '%s' failed: %s"
+            SYSLOG.error("Calling '%s' method of listener '%s' failed: %s"
                                % (self._name, self._listener_name, message))
-            self._syslog.info("Details:\n%s" % details)
+            SYSLOG.info("Details:\n%s" % details)
             
     def _get_handler(self, listener, name):
         try:
@@ -126,3 +126,4 @@ class _Handler:
     def _toCamelCase(self, name):
         parts = name.split('_')
         return ''.join([parts[0]] + [part.capitalize() for part in parts[1:]])
+

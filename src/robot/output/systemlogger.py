@@ -13,15 +13,14 @@
 #  limitations under the License.
 
 
+import os
+
 from robot import utils
-from robot.conf import RobotSettings
 
 from abstractlogger import AbstractLogger, Message
-from monitor import CommandLineMonitor
-import robot.output
 
 
-class SystemLogger2(AbstractLogger):
+class SystemLogger(AbstractLogger):
 
     def __init__(self):
         self._writers = []
@@ -39,8 +38,8 @@ class SystemLogger2(AbstractLogger):
 
     def register_file_logger(self, path=None, level='INFO'):
         if not path:
-            path = os.env.get('ROBOT_SYSLOG_FILE', None)
-            level = os.env.get('ROBOT_SYSLOG_LEVEL', level)
+            path = os.environ.get('ROBOT_SYSLOG_FILE', None)
+            level = os.environ.get('ROBOT_SYSLOG_LEVEL', level)
         if path:
             self.register_logger(_FileLogger(path, level))
 
@@ -56,9 +55,10 @@ class SystemLogger2(AbstractLogger):
     def close(self):
         for close in self._closers:
             close()
+        self.__init__()
 
 
-class SystemLogger(AbstractLogger):
+class _SystemLogger(AbstractLogger):
     
     def __init__(self, settings=None, monitor=None):
         AbstractLogger.__init__(self, 'WARN')
@@ -132,3 +132,6 @@ class _FileLogger(AbstractLogger):
         
     def close(self):
         self._writer.close()
+
+
+SYSLOG = SystemLogger()

@@ -14,10 +14,11 @@
 
 
 from robot.parsing import ResourceFile
+from robot.output import SYSLOG
+from robot import utils
 
 from testlibraries import TestLibrary
 from userkeyword import UserLibrary
-from robot import utils
 
 
 class Importer:
@@ -26,31 +27,31 @@ class Importer:
         self._libraries = {}
         self._resources = {}
         
-    def import_library(self, name, args, syslog):
+    def import_library(self, name, args):
         key = (name, tuple(args))
         if self._libraries.has_key(key):
-            syslog.info("Found test library '%s' with arguments %s from cache" 
+            SYSLOG.info("Found test library '%s' with arguments %s from cache" 
                         % (name, utils.seq2str2(args)))
         else:
-            lib = TestLibrary(name, args, syslog)
+            lib = TestLibrary(name, args)
             self._libraries[key] = lib
             libtype = lib.__class__.__name__.replace('Library', '').lower()[1:]
-            syslog.info("Imported library '%s' with arguments %s (version %s, "
+            SYSLOG.info("Imported library '%s' with arguments %s (version %s, "
                         "%s type, %s scope, %d keywords, source %s)" 
                         % (name, utils.seq2str2(args), lib.version, libtype, 
                            lib.scope.lower(), len(lib), lib.source))
             if len(lib) == 0:
-                syslog.warn("Imported library '%s' contains no keywords" % name)
+                SYSLOG.warn("Imported library '%s' contains no keywords" % name)
         return self._libraries[key]
     
-    def import_resource(self, path, syslog):
+    def import_resource(self, path):
         if self._resources.has_key(path):
-            syslog.info("Found resource file '%s' from cache" % path)
+            SYSLOG.info("Found resource file '%s' from cache" % path)
         else:
-            resource = ResourceFile(path, syslog)
+            resource = ResourceFile(path)
             resource.user_keywords = UserLibrary(resource.user_keywords, path)
             self._resources[path] = resource
-            syslog.info("Imported resource file '%s' (%d keywords)" 
+            SYSLOG.info("Imported resource file '%s' (%d keywords)" 
                         % (path, len(resource.user_keywords)))
             # Resource file may contain only variables so we should not warn
             # if there are no keywords. Importing an empty resource file fails

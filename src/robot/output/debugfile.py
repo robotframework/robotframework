@@ -14,17 +14,18 @@
 
 
 from robot import utils
+from systemlogger import SYSLOG
 
 
-def DebugFile(path, syslog):
+def DebugFile(path):
     if path == 'NONE':
-        syslog.info('No debug file')
+        SYSLOG.info('No debug file')
         return None
     try:
-        syslog.info('Debug file: %s' % path)
+        SYSLOG.info('Debug file: %s' % path)
         return _DebugFileWriter(path)
     except:
-        syslog.error("Opening debug file '%s' failed and writing to debug file "
+        SYSLOG.error("Opening debug file '%s' failed and writing to debug file "
                      "is disabled. Error: %s" % (path, utils.get_error_message()))
         return None
 
