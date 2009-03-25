@@ -39,6 +39,7 @@ class RunnableTestSuite(BaseTestSuite):
         BaseTestSuite.__init__(self, suitedata.name, suitedata.source)
         self.variables = GLOBAL_VARIABLES.copy()
         self.variables.set_from_variable_table(suitedata.variables)
+        self.source = suitedata.source
         self.doc = suitedata.doc or ''
         self.metadata = suitedata.metadata
         self.imports = suitedata.imports

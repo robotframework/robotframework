@@ -365,6 +365,12 @@ class LogSuiteSerializer:
         self._start_suite_or_test_metadata(suite)
         for name, value in suite.get_metadata(html=True):
             self._write_metadata_row(name, value, escape=False, write_empty=True)
+        if suite.source:
+            if os.path.exists(suite.source):
+                path = '<a href="%s">%s</a>' % (suite.source, suite.source)
+            else:
+                path = suite.source
+            self._write_metadata_row('Source', path, escape=False)
         self._write_times(suite)
         self._write_metadata_row('Overall Status', suite.status, 
                                  {'class': suite.status.lower()})

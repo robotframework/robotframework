@@ -90,6 +90,8 @@ class XmlLogger:
     def _start_suite(self, suite, extra_attrs=None):
         attrs = extra_attrs is not None and extra_attrs or {}
         attrs['name'] = suite.name
+        if suite.source:
+            attrs['source'] = suite.source
         self._writer.start_element('suite', attrs)
         self._writer.whole_element('doc', suite.doc)
         self._writer.start_element('metadata')

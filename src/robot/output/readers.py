@@ -110,6 +110,7 @@ class _SuiteReader(_TestAndSuiteReader):
     
     def __init__(self, node):
         _TestAndSuiteReader.__init__(self, node)
+        self.source = node.attrs.get('source', None)
         del(self.keywords)
         for metanode in node.get_nodes('metadata/item'):
             self.metadata[metanode.get_attr('name')] = metanode.text

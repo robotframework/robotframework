@@ -103,8 +103,8 @@ class DirectorySuite(_BaseSuite):
         if self._is_in_incl_suites(os.path.basename(os.path.normpath(path)),
                                    suitenames):
             suitenames = []  
-        subitems, initfile = self._get_suite_items(path, suitenames)
-        rawdata = self._get_rawdata(path, initfile)
+        subitems, self.initfile = self._get_suite_items(path, suitenames)
+        rawdata = self._get_rawdata(path)
         _BaseSuite.__init__(self, rawdata)
         self._process_subsuites(subitems, suitenames)
         if self.get_test_count() == 0 and len(suitenames) == 0:
@@ -133,16 +133,16 @@ class DirectorySuite(_BaseSuite):
                 files.append(path)
         return files, initfile
 
-    def _get_rawdata(self, path, initfile):
-        if initfile is None:
+    def _get_rawdata(self, path):
+        if self.initfile is None:
             SYSLOG.info("No test suite directory init file")
             return RawData(path)
-        SYSLOG.info("Parsing test suite directory init file '%s'" % initfile)
-        rawdata = RawData(initfile)
+        SYSLOG.info("Parsing test suite directory init file '%s'" % self.initfile)
+        rawdata = RawData(self.initfile)
         if rawdata.get_type() in [rawdata.INITFILE, rawdata.EMPTY]:
             return rawdata
         SYSLOG.error("Test suite directory initialization file '%s' "
-                     "contains test cases and is ignored." % initfile)
+                     "contains test cases and is ignored." % self.initfile)
         return RawData(path)
             
     def _process_subsuites(self, paths, suitenames):
