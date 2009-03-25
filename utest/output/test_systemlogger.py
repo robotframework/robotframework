@@ -134,6 +134,22 @@ class TestSystemLogger(unittest.TestCase):
         self.syslog.register_file_logger('None')
         assert_equals(len(self.syslog._writers), 0)
 
+    def test_cached_messages_are_given_to_registered_writers(self):
+        self.syslog.write('This is a cached message', 'INFO')
+        self.syslog.write('Another cached message', 'TRACE')
+        logger = LoggerMock(('This is a cached message', 'INFO'), 
+                            ('Another cached message', 'TRACE'))
+        self.syslog.register_logger(logger)
+        assert_equals(logger.msg.message, 'Another cached message')
+
+    def test_message_cache_can_be_turned_off(self):
+        self.syslog.message_cache = None
+        self.syslog.write('This message is not cached', 'INFO')
+        logger = LoggerMock(('', ''))
+        self.syslog.register_logger(logger)
+        assert_false(hasattr(logger, 'msg'))
+
+        
 
 
 if __name__ == "__main__":

@@ -27,12 +27,16 @@ class SystemLogger(AbstractLogger):
         self._writers = []
         self._output_filers = []
         self._closers = []
+        self.message_cache = []
         self.monitor = None
 
     def register_logger(self, *loggers):
         for logger in loggers:
             if hasattr(logger, 'write'):
                 self._writers.append(logger.write)
+                if self.message_cache:
+                    for msg in self.message_cache:
+                        logger.write(msg, msg.level)
             if hasattr(logger, 'output_file'):
                 self._output_filers.append(logger.output_file)
             if hasattr(logger, 'close'):
@@ -64,6 +68,8 @@ class SystemLogger(AbstractLogger):
 
     def write(self, message, level='INFO'):
         msg = Message(message, level)
+        if self.message_cache is not None:
+            self.message_cache.append(msg)
         for write in self._writers:
             write(msg, level)
 
