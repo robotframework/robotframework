@@ -132,11 +132,8 @@ class Template:
     def _handle_if(self, expression, block_lines):
         expression = self._handle_variables(expression)
         if_block, else_block = self._get_if_and_else_blocks(block_lines)
-        try:
-            result = eval(expression) and if_block or else_block
-        except:
-            result = if_block
-        if len(result) == 0:
+        result = eval(expression) and if_block or else_block
+        if not result:
             return None
         return self._process('\n'.join(result))
     

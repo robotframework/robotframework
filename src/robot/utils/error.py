@@ -17,14 +17,16 @@ import os.path
 import sys
 import re
 import traceback
-if sys.platform.startswith('java'):
-    from java.io import StringWriter, PrintWriter
-    from java.lang import Throwable, OutOfMemoryError
     
 from match import eq
 from robottypes import is_str, unic
 from robot.errors import DataError, TimeoutError, RemoteError
 
+RERAISED_EXCEPTIONS = (KeyboardInterrupt, SystemExit, MemoryError)
+if sys.platform.startswith('java'):
+    from java.io import StringWriter, PrintWriter
+    from java.lang import Throwable, OutOfMemoryError
+    RERAISED_EXCEPTIONS += (OutOfMemoryError,)
 
 _java_trace_re = re.compile('^\s+at (\w.+)')
 _ignored_java_trace = ('org.python.', 'robot.running.', 'robot$py.', 
@@ -131,7 +133,7 @@ def _get_python_message(exc_type, exc_value):
     name = _get_name(exc_type)
     try:
         msg = unic(exc_value)
-    except:    # Happens at least if exception message is unicode
+    except UnicodeError:   # Happens at least if exception message is unicode
         msg = unic(exc_value.args[0])
     return _format_message(name, msg)
 

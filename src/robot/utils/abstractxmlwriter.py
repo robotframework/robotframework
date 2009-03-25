@@ -16,10 +16,6 @@
 from robottypes import unic
 
 
-BINARY_DATA_ERROR = ('[ Logged data seems to be binary and it is ignored. ' 
-     'Contact developers if you assume the data was valid and should have '
-     'been logged. ]')
-
 # See http://www.spamagogo.com/wiki/index.php/Illegal_XML_characters
 _ILLEGAL_CHARS_IN_XML = [ u'\x00', u'\x01', u'\x02', u'\x03', u'\x04', u'\x05', 
                           u'\x06', u'\x07', u'\x08', u'\x0b', u'\x0c', u'\x0e', 
@@ -48,10 +44,7 @@ class AbstractXmlWriter:
         raise NotImplementedError
     
     def _encode(self, message):
-        try:
-            message = unic(message)
-        except:
-            message = BINARY_DATA_ERROR
+        message = unic(message)
         for char in _ILLEGAL_CHARS_IN_XML:
             message = message.replace(char, '')
         return message

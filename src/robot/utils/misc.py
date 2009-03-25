@@ -30,9 +30,9 @@ from error import get_error_message
 def get_doc(obj):
     try:
         doc = obj.__doc__
-    except:
+    except AttributeError:
         doc = ''
-    if doc is None or doc == '':
+    if not doc:
         return ''
     return '\n'.join([ line.strip() for line in doc.strip().splitlines() ])
 

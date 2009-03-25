@@ -248,6 +248,8 @@ class _ClassLibrary(_BaseTestLibrary):
                 if not (cls is Object or 
                         cls.getName().startswith('org.python.proxies.')):
                     return True
+            except utils.RERAISED_EXCEPTIONS:
+                raise
             except:
                 return True
         return False

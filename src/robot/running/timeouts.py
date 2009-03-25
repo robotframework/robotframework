@@ -88,7 +88,9 @@ class _Timeout:
             return runner.get_result()
         try:
             thread.stop()
-        except: 
+        except utils.RERAISED_EXCEPTIONS:
+            raise
+        except:
             pass
         raise TimeoutError(self.get_message())
     

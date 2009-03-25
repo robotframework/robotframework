@@ -15,7 +15,7 @@
 
 from types import UnicodeType
 
-from abstractxmlwriter import AbstractXmlWriter, BINARY_DATA_ERROR
+from abstractxmlwriter import AbstractXmlWriter
 from htmlutils import html_escape, html_attr_escape
 from robottypes import unic
 
@@ -85,10 +85,7 @@ class HtmlWriter(AbstractXmlWriter):
     
     def _escape_content(self, content):
         if type(content) is not UnicodeType:
-            try:
-                content = unic(content)
-            except:
-                content = BINARY_DATA_ERROR
+            content = unic(content)
         return html_escape(content)
 
     def _write(self, text):

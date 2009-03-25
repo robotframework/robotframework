@@ -21,12 +21,6 @@ from robot.common import BaseTestSuite, BaseTestCase, BaseKeyword
 from robot.output import SYSLOG
 
 
-RERAISE = (KeyboardInterrupt, SystemExit, MemoryError)
-if utils.is_jython:
-    from java.lang import OutOfMemoryError
-    RERAISE += (OutOfMemoryError,)
-
-
 def process_outputs(paths, settings):
     if not paths:
         raise DataError('No output files given.')
@@ -52,7 +46,7 @@ def process_output(path, read_level=-1):
     SYSLOG.info("Processing output file '%s'." % path)
     try:
         root = utils.DomWrapper(path)
-    except RERAISE:
+    except utils.RERAISED_EXCEPTIONS:
         raise
     except:
         raise DataError("File '%s' is not a valid XML file." % path)
@@ -247,7 +241,7 @@ class CombinedTestSuite(TestSuite):
         try:
             seps = (' ', ':', '.', '-', '_')
             secs = utils.timestamp_to_secs(timestamp, seps, millis=True)
-        except:
+        except DataError:
             return 'N/A'
         return utils.secs_to_timestamp(secs, millis=True)
 
