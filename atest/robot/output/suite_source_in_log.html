@@ -1,0 +1,213 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+<meta name="generator" content="HTML Tidy, see www.w3.org">
+<meta content="text/html;charset=ISO-8859-1" http-equiv="Content-Type">
+<style type="text/css">
+html { font-family: Arial,Helvetica,sans-serif;
+background-color: white;
+color: black;
+}
+p { max-width: 60em;
+}
+table { border-collapse: collapse;
+empty-cells: show;
+margin: 1em 0em;
+border: 0.1em solid black;
+}
+th, td {
+border-style: solid;
+border-width: 0.05em 0.1em;
+border-color: black;
+padding: 0.1em 0.2em;
+height: 1.5em;
+}
+th {
+background-color: rgb(192, 192, 192);
+color: black;
+border-width: 0.1em;
+font-weight: bold;
+text-align: center;
+text-transform: capitalize;
+letter-spacing: 0.1em;
+}
+/* Widths of named columns */
+col.name {
+width: 10em;
+}
+.action , .value, .arg {
+width: 15em;
+}
+/* Properties for the name column - td:first-child should work in CSS 2.1 avare browsers (tested in Firefox)
+- col.name is against specs but works in IE
+*/
+td:first-child, col.name {
+background-color: rgb(240, 240, 240);
+text-transform: capitalize;
+letter-spacing: 0.1em;
+}
+th { font-style: normal; } /* required for IE */
+/* Properties for the action column
+- td+td and td+td+td is for CSS 2.1 browsers (tested in Firefox)
+- col.action is for IE
+NOTE: Not used currently because in CSS 2.1 browsers td+td matches the
+first value column of Setting and Variable tables.
+td + td {
+background-color: rgb(240, 240, 240);
+}
+td + td + td {
+background: transparent;
+}
+col.action { /* can't be on the same line as td+td */
+background-color: rgb(240, 240, 240);
+}
+*/
+</style><title>Logging Tests</title>
+
+<link rel="stylesheet" href="resources/css/testdata.css" type="text/css">
+</head>
+<body>
+<h1>Suite Source in Log&nbsp;</h1>
+<table border="1">
+<colgroup span="99"><col class="name"><col class="value" span="4"></colgroup> <thead>
+<tr>
+<th>Setting</th>
+<th>Value</th>
+<th>Value</th>
+<th>value</th>
+<th>Value</th>
+</tr>
+</thead> <tbody>
+<tr>
+<td>Resource</td>
+<td>../../resources/resource.html</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Force Tags</td>
+<td>regression</td>
+<td>pybot</td>
+<td>jybot</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<table border="1">
+<colgroup span="99"><col class="name"><col class="value" span="4"></colgroup> <thead>
+<tr>
+<th>Variable</th>
+<th>Value</th>
+<th>Value</th>
+<th>Value</th>
+<th>Value</th>
+</tr>
+</thead> <tbody>
+<tr>
+<td>${BASE} =</td>
+<td>${CURDIR}/../../testdata/misc</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>${LOGNAME}</td>
+<td>suite_source_log.html</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td align="undefined" valign="undefined"></td>
+<td align="undefined" valign="undefined"></td>
+<td align="undefined" valign="undefined"></td>
+<td align="undefined" valign="undefined"></td>
+<td align="undefined" valign="undefined"></td>
+</tr>
+</tbody>
+</table>
+<table border="1">
+<colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
+<thead> <tr>
+<th>Test Case</th>
+<th>Action</th>
+<th>Argument</th>
+<th>Argument</th>
+<th>Argument</th>
+</tr>
+</thead> <tbody>
+<tr><td>Link For File Suite</td><td>[Setup]</td><td>Run Tests</td><td>--log&nbsp;${LOGNAME}</td><td>misc${/}pass_and_fail.html</td></tr><tr><td></td><td>Verify Suite Source Link</td><td>pass_and_fail.html</td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Links For Directory Suites</td><td>[Setup]</td><td>Run Tests</td><td>--log&nbsp;${LOGNAME}</td><td>misc${/}suites</td></tr><tr><td></td><td>Verify Suite Source Link</td><td>suites</td><td></td><td></td></tr><tr><td></td><td>Verify Suite Source Link</td><td>suites/subsuites</td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Using Rebot Preserves Link</td><td>[Setup]</td><td>Run Rebot</td><td>--log&nbsp;${LOGNAME}</td><td>${OUTFILE}</td></tr><tr><td></td><td>Verify Suite Source Link</td><td>suites</td><td></td><td></td></tr><tr><td></td><td>Verify Suite Source Link</td><td>suites/subsuites</td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Link is not Created For Combined suite</td><td>[Setup]</td><td>Run Tests</td><td>--log&nbsp;${LOGNAME}</td><td>misc${/}pass_and_fail.html&nbsp;</td></tr><tr><td></td><td>...</td><td>misc${/}pass_and_fail.html&nbsp;</td><td></td><td></td></tr><tr><td></td><td>${logfile} =</td><td>Verify Suite Source Link</td><td>pass_and_fail.html</td><td></td></tr><tr><td></td><td>Should Be Equal As Numbers</td><td>${logfile.count('Source:')}</td><td>2</td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr>
+</tbody>
+</table>
+<br>
+<table border="1">
+<colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
+<thead> <tr>
+<th>Keyword</th>
+<th>Action</th>
+<th>Argument</th>
+<th>Argument</th>
+<th>Argument</th>
+</tr>
+</thead> <tbody>
+
+
+
+
+
+
+
+
+
+<tr>
+<td>Verify Suite source Link</td>
+<td>[Arguments]</td>
+<td>${path}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>${path} =</td><td>Join Path</td><td>${BASE}</td>
+
+
+<td>${path}</td>
+</tr>
+<tr>
+<td></td>
+<td>${logfile} =</td><td>Get File</td><td>${OUTDIR}/${LOGNAME}</td>
+
+
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should Contain</td><td>${logfile}</td><td>&lt;a href="${path}"&gt;${path}&lt;/a&gt;</td>
+
+
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>[Return]</td>
+<td>${logfile}</td>
+<td></td>
+<td></td>
+</tr><tr><td></td><td></td><td></td><td></td><td></td></tr>
+</tbody>
+</table>
+</body></html>
