@@ -2,7 +2,7 @@
 Library	TestLibrary.py	Library1	WITH NAME	Library1
 Library	TestLibrary.py	Library2	WITH NAME	Library2
 Library	TestLibrary.py	Library3	WITH NAME	Library3
-Suite Setup	Set Library Order	Library1	Library2	Library3
+Suite Setup	Set Library Search Order	Library1	Library2	Library3
 					
 					
 "* Variable *"	"* Value *"	"* Value *"	"* Value *"	"* Value *"	"* Value *"
@@ -14,32 +14,32 @@ Library Order Set In Suite Setup Should Be Available In Test Cases
 	Active Library Should Be	Library1 					
 
 Empty Library Order Can Be Set
-	Set Library Order
+	Set Library Search Order
 	Library Order Should Be Empty
 
 One Library Can Be Set As Default Library
-	Set Library Order	Library3
+	Set Library Search Order	Library3
 	Active Library Should Be	Library3
 
 Three Libraries Can Be Set As Default Libraries
-	Set Library Order	Library2	Library1	Library3
+	Set Library Search Order	Library2	Library1	Library3
 	Active Library Should Be	Library2
 
 Library Order Should Be Available In the Next Test Case
 	Active Library Should Be	Library2
 
 Setting Library Order Returns Previous Library Order
-	Set Library Order	Library1	Library2
-	@{library order}=	Set Library Order
+	Set Library Search Order	Library1	Library2
+	@{library order}=	Set Library Search Order
 	Should Be Equal	@{library order}[0]	Library1
 	Should Be Equal	@{library order}[1]	Library2
 
 Setting Library Order Allows Setting BuiltIn Library As Default Library
-	Set Library Order	BuiltIn
+	Set Library Search Order	BuiltIn
 	No Operation
 	 						
 Setting Library Order Allows Setting Own Library Before BuiltIn Library
-	Set Library Order	Library1
+	Set Library Search Order	Library1
 	Own Library Should Be Used
 					
 "* Keyword *"	"* Action *"	"* Argument *"	"* Argument *"	"* Argument *"	"* Argument *"
