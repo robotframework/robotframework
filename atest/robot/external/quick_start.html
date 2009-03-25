@@ -88,7 +88,7 @@ th {
 <td></td>
 <td></td>
 </tr>
-<tr>
+<tr><td>Suite teardown</td><td>Remove Directory</td><td>${RESULTDIR}</td><td>recursively</td><td></td></tr><tr>
 <td>Resource</td>
 <td>../../resources/resource.html</td>
 <td></td>
@@ -120,7 +120,7 @@ th {
 <td></td>
 <td></td>
 </tr>
-<tr>
+<tr><td>${RESULTDIR}</td><td>${TEMPDIR}${/}rf-quickstart-result</td><td></td><td></td><td></td></tr><tr>
 <td></td>
 <td></td>
 <td></td>
@@ -187,7 +187,7 @@ th {
 <td>${rc}<br></td>
 <td>${output} =</td>
 <td>Run and Return RC and Output</td>
-<td>${ROBOT} --monitorcolors off ${qs}</td>
+<td>${ROBOT} --monitorcolors off<br>--outputdir ${RESULTDIR} ${qs}</td>
 </tr>
 <tr><td></td><td>Log</td><td>${output}</td><td></td><td></td></tr><tr>
 <td></td>
