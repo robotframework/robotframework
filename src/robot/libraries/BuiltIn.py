@@ -1114,34 +1114,37 @@ class _Misc:
                                             args, overwrite=True)
         
     def set_library_search_order(self, *libraries):
-        """Sets order in which keywords are looked from libraries and returns the old order.
+        """Sets the resolution order to use when a name matches multiple keywords.
         
-        This keyword can be used to set the library search order. It is used 
-        when multiple keywords are found with the same name. When multiple 
-        keywords are found, libraries are gone through in the search order. 
-        The first library containing the keyword is selected and the keyword 
-        from that library is used. If keyword is not found, test execution 
-        fails. When this keyword is used, there is no need to use the long 
-        format LibraryName.Keyword Name notation. Library search order is valid
-        in the suite this keyword was used in.
+        The library search order is used to resolve conflicts when a
+        keyword name in the test data matches multiple keywords. The
+        first library containing the keyword is selected and that
+        keyword implementation used. If keyword is not found from any
+        library, or the library search order is not set, executing the
+        specified keyword fails.
 
-        Instead of having 
+        When this keyword is used, there is no need to use the long
+        `LibraryName.Keyword Name` notation.  For example, instead of
+        having
 
         | MyLibrary.Keyword | arg |
         | MyLibrary.Another Keyword |
         | MyLibrary.Keyword | xxx |
 
-        you can have 
+        you can have
 
-        | Set Library Order | MyLibrary |
+        | Set Library Search Order | MyLibrary |
         | Keyword | arg |
         | Another Keyword |
         | Keyword | xxx |
+
+        The library search order is valid only in the suite where this
+        keyword is used in. The old order is returned and can be used
+        to reset the search order later.
         """
         library_search_order = NAMESPACES.current.library_search_order
         NAMESPACES.current.library_search_order = libraries
         return library_search_order
-        
     
     def get_time(self, format='timestamp'):
         """Returns the current time in the requested format. 
