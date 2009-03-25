@@ -52,6 +52,8 @@ class SystemLogger(AbstractLogger):
             level = os.environ.get('ROBOT_SYSLOG_LEVEL', level)
             if not path:
                 return
+        if path.lower() == 'none':
+            return
         try:
             logger = _FileLogger(path, level)
         except:

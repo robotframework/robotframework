@@ -130,6 +130,10 @@ class TestSystemLogger(unittest.TestCase):
                     self.syslog._output_filers == 
                     self.syslog._closers == [])
 
+    def test_registering_file_logger_with_none_path_does_nothing(self):
+        self.syslog.register_file_logger('None')
+        assert_equals(len(self.syslog._writers), 0)
+
 
 
 if __name__ == "__main__":
