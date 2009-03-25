@@ -57,11 +57,9 @@ class SystemLogger(AbstractLogger):
 
     def register_file_logger(self, path=None, level='INFO'):
         if not path:
-            path = os.environ.get('ROBOT_SYSLOG_FILE', None)
+            path = os.environ.get('ROBOT_SYSLOG_FILE', 'NONE')
             level = os.environ.get('ROBOT_SYSLOG_LEVEL', level)
-            if not path:
-                return
-        if path.lower() == 'none':
+        if path.upper() == 'NONE':
             return
         try:
             logger = _FileLogger(path, level)
