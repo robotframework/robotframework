@@ -27,15 +27,18 @@ class SystemLogger(AbstractLogger):
         self._writers = []
         self._output_filers = []
         self._closers = []
-        self.message_cache = []
+        self._message_cache = []
         self.monitor = None
+
+    def disable_message_cache(self):
+        self._message_cache = None
 
     def register_logger(self, *loggers):
         for logger in loggers:
             if hasattr(logger, 'write'):
                 self._writers.append(logger.write)
-                if self.message_cache:
-                    for msg in self.message_cache:
+                if self._message_cache:
+                    for msg in self._message_cache:
                         logger.write(msg, msg.level)
             if hasattr(logger, 'output_file'):
                 self._output_filers.append(logger.output_file)
@@ -43,12 +46,8 @@ class SystemLogger(AbstractLogger):
                 self._closers.append(logger.close)
 
     def register_command_line_monitor(self, width=78, colors=True):
-        if not self.monitor:
-            self.monitor = CommandLineMonitor(width, colors)
-            self.register_logger(self.monitor)
-        else:
-            self.monitor.width = width
-            self.monitor.colors = colors
+        self.monitor = CommandLineMonitor(width, colors)
+        self.register_logger(self.monitor)
 
     def register_file_logger(self, path=None, level='INFO'):
         if not path:
@@ -68,10 +67,10 @@ class SystemLogger(AbstractLogger):
 
     def write(self, message, level='INFO'):
         msg = Message(message, level)
-        if self.message_cache is not None:
-            self.message_cache.append(msg)
         for write in self._writers:
             write(msg, level)
+        if self._message_cache is not None:
+            self._message_cache.append(msg)
 
     def output_file(self, name, path):
         for output_file in self._output_filers:

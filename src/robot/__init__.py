@@ -40,7 +40,6 @@ def rebot_from_cli(args, usage):
     _run_or_rebot_from_cli(rebot, args, usage)
 
 def _run_or_rebot_from_cli(method, cliargs, usage, **argparser_config):
-    SYSLOG.register_command_line_monitor()
     SYSLOG.register_file_logger()
     ap = utils.ArgumentParser(usage, utils.get_full_version())
     try:
@@ -51,6 +50,7 @@ def _run_or_rebot_from_cli(method, cliargs, usage, **argparser_config):
     except Information, msg:
         _exit(INFO_PRINTED, str(msg))
     except DataError, err:
+        SYSLOG.register_command_line_monitor()
         _exit(DATA_ERROR, str(err))
 
     try: 
@@ -85,12 +85,12 @@ def run(*datasources, **options):
     SYSLOG.register_command_line_monitor(settings['MonitorWidth'], 
                                          settings['MonitorColors'])
     output = Output(settings)
-    settings.report_possible_errors()
     init_global_variables(settings)
     _syslog_start_info('Robot', datasources, settings)
     suite = TestSuite(datasources, settings)
     suite.run(output)
-    SYSLOG.info("Tests executed successfully. Statistics:\n%s" % suite.get_stat_message())
+    SYSLOG.info("Tests execution ended. Statistics:\n%s" 
+                % suite.get_stat_message())
     testoutput = RobotTestOutput(suite, settings)
     output.close1(suite)
     if settings.is_rebot_needed():
@@ -121,7 +121,7 @@ def rebot(*datasources, **options):
     """
     settings = RebotSettings(options)
     SYSLOG.register_command_line_monitor(colors=settings['MonitorColors'])
-    settings.report_possible_errors()
+    SYSLOG.disable_message_cache()
     _syslog_start_info('Rebot', datasources, settings)
     testoutput = RebotTestOutput(datasources, settings)
     testoutput.serialize(settings, generator='Rebot')

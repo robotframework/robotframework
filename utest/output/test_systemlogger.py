@@ -143,13 +143,11 @@ class TestSystemLogger(unittest.TestCase):
         assert_equals(logger.msg.message, 'Another cached message')
 
     def test_message_cache_can_be_turned_off(self):
-        self.syslog.message_cache = None
+        self.syslog.disable_message_cache()
         self.syslog.write('This message is not cached', 'INFO')
         logger = LoggerMock(('', ''))
         self.syslog.register_logger(logger)
         assert_false(hasattr(logger, 'msg'))
-
-        
 
 
 if __name__ == "__main__":

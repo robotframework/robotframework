@@ -63,18 +63,10 @@ class _BaseSettings:
     
     def __init__(self, opts={}):
         self._opts = {}
-        self._errors = []
         self._cli_opts.update(self._extra_cli_opts)
         self._process_deprecated_cli_opts(opts)
         self._process_cli_opts(opts)
             
-    def report_possible_errors(self):
-        for msg, level in self._errors:
-            SYSLOG.write(msg, level)
-            
-    def _add_error(self, msg, level='ERROR'):
-        self._errors.append((msg, level))
-
     def _process_cli_opts(self, opts):
         for name, (cli_name, default) in self._cli_opts.items():
             try:
@@ -90,11 +82,11 @@ class _BaseSettings:
             if oldname not in opts or opts[oldname] in [None, []]:
                 continue
             if newname:
-                self._add_error("Option '--%s' is deprecated. Use '--%s' "
-                                "instead." % (oldname, newname), 'WARN')
+                SYSLOG.warn("Option '--%s' is deprecated. Use '--%s' instead."
+                            % (oldname, newname))
                 opts[newname] = opts[oldname]
             else:
-                self._add_error("Option '--%s' has been removed." % oldname)
+                SYSLOG.error("Option '--%s' has been removed." % oldname)
     
     def __setitem__(self, name, value):
         if not self._cli_opts.has_key(name):
@@ -182,19 +174,19 @@ class _BaseSettings:
         ret = []
         for item in value:
             tokens = item.split(':')
-            if len(tokens) < 3:
-                self._add_error("Invalid format for option '--tagstatlink'. "
-                                "Expected 'tag:link:title' but got '%s'." % item)
-                continue
-            ret.append((tokens[0], ':'.join(tokens[1:-1]), tokens[-1]))
+            if len(tokens) >= 3:
+                ret.append((tokens[0], ':'.join(tokens[1:-1]), tokens[-1]))
+            else:
+                SYSLOG.error("Invalid format for option '--tagstatlink'. "
+                             "Expected 'tag:link:title' but got '%s'." % item)
         return ret
 
     def _convert_to_integer(self, name, value):
         try:
             return int(value)
         except ValueError:
-            self._add_error("Option '--%s' expected integer value but got '%s'. "
-                            "Default value used instead." % (name.lower(), value))
+            SYSLOG.error("Option '--%s' expected integer value but got '%s'. "
+                         "Default value used instead." % (name.lower(), value))
             return self._cli_opts[name][1]
 
     def _split_args_from_name(self, name):

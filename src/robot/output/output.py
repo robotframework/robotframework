@@ -27,7 +27,6 @@ from listeners import Listeners
 from debugfile import DebugFile
 
 
-
 class Output(AbstractLogger):
     
     def __init__(self, settings):
@@ -36,6 +35,7 @@ class Output(AbstractLogger):
         self.listeners = Listeners(settings['Listeners'])
         self._execution_errors = _ExecutionErrorLogger()
         SYSLOG.register_logger(self.listeners, self._execution_errors)
+        SYSLOG.disable_message_cache()
         self._debugfile = DebugFile(settings['DebugFile'])
         self._namegen = self._get_log_name_generator(settings['Log'])
         self._settings = settings
