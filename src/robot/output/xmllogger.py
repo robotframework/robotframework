@@ -96,16 +96,6 @@ class XmlLogger:
         for name, value in suite.get_metadata():        
             self._writer.whole_element('item', value, {'name': name})
         self._writer.end_element('metadata')
-        self._writer.start_element('critical')
-        self._write_list('tag', suite.critical.tags)
-        self._write_list('non', suite.critical.nons)
-        self._writer.end_element('critical')
-        self._writer.start_element('filtered')
-        self._write_list('suite', suite.filtered.suites)
-        self._write_list('test', suite.filtered.tests)
-        self._write_list('incl', suite.filtered.incls)
-        self._write_list('excl', suite.filtered.excls)
-        self._writer.end_element('filtered')
 
     def end_suite(self, suite):
         self._suite_level -= 1

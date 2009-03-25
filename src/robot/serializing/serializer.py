@@ -365,13 +365,6 @@ class LogSuiteSerializer:
         self._start_suite_or_test_metadata(suite)
         for name, value in suite.get_metadata(html=True):
             self._write_metadata_row(name, value, escape=False, write_empty=True)
-        for title, values in [ ('Critical Tags', suite.critical.tags),
-                               ('Non-Critical Tags', suite.critical.nons),
-                               ('Included Suites', suite.filtered.suites), 
-                               ('Included Tests', suite.filtered.tests),
-                               ('Included Tags', suite.filtered.incls), 
-                               ('Excluded Tags', suite.filtered.excls) ]:
-            self._write_metadata_row(title, ', '.join(values), escape=False)
         self._write_times(suite)
         self._write_metadata_row('Overall Status', suite.status, 
                                  {'class': suite.status.lower()})
@@ -594,16 +587,6 @@ class ReportSuiteSerializer(_ReportTableHelper):
             self._writer.whole_element('span', '%s: ' % name, 
                                        {'class': 'meta_name'})
             self._writer.content(value, escape=False)
-            self._writer.start_and_end_element('br')
-        for name, values in [ ('Critical', suite.critical.tags),
-                              ('Non-Critical', suite.critical.nons),
-                              ('Suites', suite.filtered.suites),
-                              ('Tests', suite.filtered.tests),
-                              ('Include', suite.filtered.incls),
-                              ('Exclude', suite.filtered.excls) ]:
-            if values == []: continue
-            self._writer.whole_element('span', '%s: ' % name, {'class': 'meta_name'})
-            self._writer.content(u', '.join(values))
             self._writer.start_and_end_element('br')
         self._writer.end_element('td')
         self._writer.whole_element('td', 'N/A', {'class': 'col_crit not_available'})

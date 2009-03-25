@@ -69,7 +69,6 @@ class BaseTestSuite(_TestAndSuiteHelper):
         self.suites = []
         self.tests = []
         self.critical = _Critical()
-        self.filtered = _FilteredBy()
         self.critical_stats = Stat()
         self.all_stats = Stat()
         
@@ -203,8 +202,6 @@ class BaseTestSuite(_TestAndSuiteHelper):
             self._raise_no_tests_filtered_by_names(suites, tests)
 
     def _filter_by_names(self, suites, tests):
-        self.filtered.add_suites(self._suite_filters_to_str(suites))
-        self.filtered.add_tests(tests)
         suites = self._filter_suite_names(suites)
         self.suites = [ suite for suite in self.suites 
                         if suite._filter_by_names(suites, tests) ]
@@ -230,7 +227,8 @@ class BaseTestSuite(_TestAndSuiteHelper):
 
     def _raise_no_tests_filtered_by_names(self, suites, tests):
         tests = utils.seq2str(tests, lastsep=' or ')
-        suites = utils.seq2str(self._suite_filters_to_str(suites), lastsep=' or ')
+        suites = utils.seq2str([ '.'.join(p + s) for p, s in suites ],
+                               lastsep=' or ')
         if not suites:
             msg = 'test cases named %s.' % tests
         elif not tests:
@@ -239,9 +237,6 @@ class BaseTestSuite(_TestAndSuiteHelper):
             msg = 'test cases %s in suites %s.' % (tests, suites)
         raise DataError("Suite '%s' contains no %s" % (self.name, msg))
     
-    def _suite_filters_to_str(self, suites):
-        return [ '.'.join(p + s) for p, s in suites ]        
-
     def filter_by_tags(self, includes=None, excludes=None):
         if includes is None: includes = []
         if excludes is None: excludes = []
@@ -251,8 +246,6 @@ class BaseTestSuite(_TestAndSuiteHelper):
             self._raise_no_tests_filtered_by_tags(includes, excludes)
         
     def _filter_by_tags(self, incls, excls):
-        self.filtered.add_incls(incls)
-        self.filtered.add_excls(excls)
         self.suites = [ suite for suite in self.suites 
                         if suite._filter_by_tags(incls, excls) ]
         self.tests = [ test for test in self.tests 
@@ -408,25 +401,3 @@ class _Critical:
             if self.is_critical(tag):
                 return True
         return len(self.tags) == 0
-
-
-class _FilteredBy:
-    
-    def __init__(self):
-        self.tests = []
-        self.suites = []
-        self.incls = []
-        self.excls = []
-        
-    def add_tests(self, tests):
-        self.tests = utils.normalize_list(self.tests + tests, ignore=['_'])
-        
-    def add_suites(self, suites):
-        self.suites = utils.normalize_list(self.suites + suites, ignore=['_'])
-
-    def add_incls(self, incls):
-        self.incls = utils.normalize_list(self.incls + incls)
-
-    def add_excls(self, excls):
-        self.excls = utils.normalize_list(self.excls + excls)
-
