@@ -129,11 +129,7 @@ matching tag are critical. If only :opt:`--noncritical` is used,
 tests without a matching tag are critical. Finally, if both are
 used, only test with a critical tag but without a non-critical tag are
 considered critical.  Both of these options accept `simple patterns`_
-and can be given several times.
-
-__ `By tag names`_
-
-::
+and can be given several times::
 
   --critical regression
   --noncritical not_ready
@@ -146,13 +142,22 @@ test execution altogether with the :opt:`--exclude` option, but
 including them as non-critical tests enables you to see when
 they start to pass.
 
-.. Note:: Currently, criticality set when tests are executed is not
-          changed when `post-processing outputs`_, unless
-          :opt:`--critical` or :opt:`--noncritical` is used
-          explicitly. In the future, this will change so that they are
-          to be used always. It is thus recommended to use them with
-          :prog:`rebot` already now.
+`Starting from Robot Framework 2.1`__ criticality set when tests are
+executed is not stored anywhere. If you want to keep same criticality
+when `post-processing outputs`_ with :prog:`rebot`, you need to
+use :opt:`--critical` and/or :opt:`--noncritical` also with it::
 
+  # Use rebot to create new log and report from the output created during execution
+  pybot --critical regression --outputdir all my_tests.html
+  rebot --name Smoke --include smoke --critical regression --outputdir smoke all/output.xml
+
+  # No need to use --critical/--noncritical when no log or report is created
+  jybot --log NONE --report NONE my_tests.html
+  rebot --critical feature1 output.xml
+
+__ `By tag names`_
+__ http://code.google.com/p/robotframework/issues/detail?id=146
+          
 
 Setting metadata
 ~~~~~~~~~~~~~~~~
