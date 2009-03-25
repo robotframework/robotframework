@@ -291,32 +291,26 @@ names (--test/--suite)\n + --MonitorColors/Width\n +
 <tr>
 <td></td>
 <td>@{files} =</td>
-<td>List Dir</td>
+<td>List Directory</td>
 <td>${MYOUTDIR}</td>
 <td></td>
 </tr>
 <tr>
 <td></td>
-<td>Fail If</td>
-<td>len(@{files}) != 1</td>
+<td>Should Be True</td>
+<td>@{files} == ['NONE.xml']</td>
 <td></td>
 <td></td>
 </tr>
+
 <tr>
 <td></td>
-<td>Fail Unless Matches</td>
-<td>@{files}</td>
-<td>NONE.xml</td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td>Fail If File Exists</td>
+<td>File Should Not Exist</td>
 <td>NONE</td>
 <td></td>
 <td></td>
 </tr>
-<tr>
+<tr><td></td><td>File Should Not Exist</td><td>None</td><td></td><td></td></tr><tr><td></td><td>File Should Not Exist</td><td>none</td><td></td><td></td></tr><tr>
 <td></td>
 <td></td>
 <td></td>
@@ -1426,13 +1420,13 @@ two_parts:one_part -M esc:STQUDOAMHAEXEX --escape star:ST -E quest:QU
 <td><a name="test_ArgumentFile">Argument File</a></td>
 <td>Create File</td>
 <td>${MYOUTDIR}${/}a.txt</td>
-<td>--name From_Arg_File\n -c c1\n # comment line\n --outputdir ${MYOUTDIR}\n --log none\n -r none\n \n --output output.xml\n \n</td>
+<td>--name From_Arg_File\n<br>-M Meta1:argfile\n # comment line\n --outputdir ${MYOUTDIR}\n --log none\n -r none\n \n --output output.xml\n \n</td>
 <td></td>
 </tr>
 <tr>
 <td></td>
 <td>Run Tests Without Processing Output</td>
-<td>--critical c2 --argumentfile ${MYOUTDIR}${/}a.txt</td>
+<td>--metadata Meta2:cli --argumentfile ${MYOUTDIR}${/}a.txt</td>
 <td>${TESTFILE}</td>
 <td></td>
 </tr>
@@ -1445,15 +1439,15 @@ two_parts:one_part -M esc:STQUDOAMHAEXEX --escape star:ST -E quest:QU
 </tr>
 <tr>
 <td></td>
-<td>Equals</td>
+<td>Should Be Equal</td>
 <td>${suite.name}</td>
 <td>From Arg File</td>
 <td></td>
 </tr>
 <tr>
 <td></td>
-<td>Fail Unless</td>
-<td>${suite.critical.tags} == ['c1','c2']</td>
+<td>Should Be True</td>
+<td>${suite.metadata} == {'Meta1': 'argfile', 'Meta2': 'cli', 'Something': 'My Value'}</td>
 <td></td>
 <td></td>
 </tr>
