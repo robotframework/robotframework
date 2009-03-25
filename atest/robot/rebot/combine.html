@@ -216,7 +216,7 @@ th {
 
 
 
-    <tr><td>Suite Teardown</td><td>Remove FIles</td><td>${TEMP FILE 1}</td><td>${TEMP FILE 2}</td><td>${TEMP FILE 3}</td></tr><tr>
+    <tr><td>Suite Teardown</td><td>Remove FIles</td><td>${TEMP FILE 1}</td><td>${TEMP FILE 2}</td><td>${TEMP FILE 3}</td></tr><tr><td>#...</td><td>${REPORT 1}</td><td>${REPORT 2}</td><td></td><td></td></tr><tr>
 
 
 
@@ -364,7 +364,15 @@ th {
 
 
 
-    <tr><td>${TEMP FILE 1}</td><td>${TEMPDIR}${/}rebot-test-1.xml</td><td></td><td></td><td></td></tr><tr><td>${TEMP FILE 2}</td><td>${TEMPDIR}${/}rebot-test-2.xml</td><td></td><td></td><td></td></tr><tr><td>${TEMP FILE 3}</td><td>${TEMPDIR}${/}rebot-test-3.xml</td><td></td><td></td><td></td></tr><tr>
+    <tr><td>${TEMP FILE 1}</td><td>${TEMPDIR}${/}rebot-test-1.xml</td><td></td><td></td><td></td></tr><tr><td>${TEMP FILE 2}</td><td>${TEMPDIR}${/}rebot-test-2.xml</td><td></td><td></td><td></td></tr><tr><td>${TEMP FILE 3}</td><td>${TEMPDIR}${/}rebot-test-3.xml</td><td></td><td></td><td></td></tr><tr><td>${REPORT 1}</td><td>${TEMPDIR}${/}rebot-report-1.html</td><td></td><td></td><td></td></tr><tr><td>${REPORT 2}</td><td>${TEMPDIR}${/}rebot-report-2.html</td><td></td><td></td><td></td></tr><tr><td>${REPORT 1 EXP}</td><td>&lt;td class="col_status fail"&gt;FAIL&lt;/td&gt;\n<br>&lt;td
+class="col_msg"&gt;2&amp;nbsp;critical&amp;nbsp;tests,&amp;nbsp;1&amp;nbsp;passed,&amp;nbsp;&lt;span
+class="fail"&gt;1&amp;nbsp;failed&lt;/span&gt;&lt;br
+/&gt;4&amp;nbsp;tests&amp;nbsp;total,&amp;nbsp;3&amp;nbsp;passed,&amp;nbsp;&lt;span
+class="fail"&gt;1&amp;nbsp;failed&lt;/span&gt;&lt;/td&gt;</td><td></td><td></td><td></td></tr><tr><td>${REPORT 2 EXP}</td><td>&lt;td class="col_status fail"&gt;FAIL&lt;/td&gt;\n<br>&lt;td
+class="col_msg"&gt;10&amp;nbsp;critical&amp;nbsp;tests,&amp;nbsp;9&amp;nbsp;passed,&amp;nbsp;&lt;span
+class="fail"&gt;1&amp;nbsp;failed&lt;/span&gt;&lt;br
+/&gt;10&amp;nbsp;tests&amp;nbsp;total,&amp;nbsp;9&amp;nbsp;passed,&amp;nbsp;&lt;span
+class="fail"&gt;1&amp;nbsp;failed&lt;/span&gt;&lt;/td&gt;</td><td></td><td></td><td></td></tr><tr>
 
 
       <td align="undefined" valign="undefined">${SUITE1}</td>
@@ -2451,7 +2459,7 @@ th {
 
 
 
-    <tr>
+    <tr><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Critical Tags Can Be Set From Command LIne</td><td>${report} =</td><td>Get File</td><td>${REPORT 1}</td><td></td><td></td></tr><tr><td></td><td>Should Contain</td><td>${report}</td><td>${REPORT 1 EXP}</td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Critical Tags From Earlier Combines Should Be Ignored</td><td>${report} =</td><td>Get File</td><td>${REPORT 2}</td><td></td><td></td></tr><tr><td></td><td>Should Contain</td><td>${report}</td><td>${REPORT 2 EXP}</td><td></td><td></td></tr><tr>
 
 
 
@@ -2477,170 +2485,6 @@ th {
 
 
       <td align="undefined" valign="undefined"></td>
-
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-
-      
-    </tr>
-
-
-
-
-    <tr>
-
-
-
-
-      <td align="undefined" valign="undefined">Critical Tags</td>
-
-
-
-
-      <td align="undefined" valign="undefined">Critical Tags Should Be</td>
-
-
-
-
-      <td align="undefined" valign="undefined">${SUITE1}</td>
-
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-
-      
-    </tr>
-
-
-
-
-    <tr>
-
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-
-      <td align="undefined" valign="undefined">Critical Tags Should Be</td>
-
-
-
-
-      <td align="undefined" valign="undefined">${SUITE1.suites[0]}</td>
-
-
-
-
-      <td align="undefined" valign="undefined">pass</td>
-
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-
-      
-    </tr>
-
-
-
-
-    <tr>
-
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-
-      <td align="undefined" valign="undefined">Critical Tags Should Be</td>
-
-
-
-
-      <td align="undefined" valign="undefined">${SUITE1.suites[1]}</td>
-
-
-
-
-      <td align="undefined" valign="undefined">f1 nonex</td>
-
-
-
-
-      <td align="undefined" valign="undefined">notag</td>
-
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-
-      
-    </tr>
-
-
-
-
-    <tr>
-
-
-
-
-      <td align="undefined" valign="undefined"></td><td align="undefined" valign="undefined">All Stats Should Be</td>
-
-
-
-
-      
-
-
-
-
-      <td align="undefined" valign="undefined">${SUITE1}</td>
-
-
-
-
-      <td align="undefined" valign="undefined">3</td>
-
-
-
-
-      <td align="undefined" valign="undefined">1</td>
 
 
 
@@ -2661,43 +2505,7 @@ th {
 
 
 
-    <tr>
-
-
-
-
-      <td align="undefined" valign="undefined"></td><td align="undefined" valign="undefined">Critical Stats Should Be</td>
-
-
-
-
-      
-
-
-
-
-      <td align="undefined" valign="undefined">${SUITE1}</td>
-
-
-
-
-      <td align="undefined" valign="undefined">3</td>
-
-
-
-
-      <td align="undefined" valign="undefined">0</td>
-
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-
-      
-    </tr>
+    
 
 
 
@@ -2707,132 +2515,7 @@ th {
 
 
 
-    <tr>
-
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-
-      <td align="undefined" valign="undefined">Critical Tags Should Be</td>
-
-
-
-
-      <td align="undefined" valign="undefined">${SUITE2}</td>
-
-
-
-
-      <td align="undefined" valign="undefined">force</td>
-
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-
-      
-    </tr>
-
-
-
-
-    <tr>
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-      <td align="undefined" valign="undefined">Critical Tags Should Be</td>
-
-
-      <td align="undefined" valign="undefined">${SUITE2.suites[0]}</td>
-
-
-      <td align="undefined" valign="undefined">force</td>
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-    </tr>
-
-
-    <tr>
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-      <td align="undefined" valign="undefined">Critical Tags Should Be</td>
-
-
-      <td align="undefined" valign="undefined">${SUITE2.suites[1]}</td>
-
-
-      <td align="undefined" valign="undefined">force</td>
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-    </tr>
-
-
-    <tr>
-
-
-
-
-      <td align="undefined" valign="undefined"></td><td align="undefined" valign="undefined">All Stats Should Be</td>
-
-
-
-
-      
-
-
-
-
-      <td align="undefined" valign="undefined">${SUITE2}</td>
-
-
-
-
-      <td align="undefined" valign="undefined">3</td>
-
-
-
-
-      <td align="undefined" valign="undefined">1</td>
-
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-
-      
-    </tr>
+    
 
 
 
@@ -2842,43 +2525,7 @@ th {
 
 
 
-    <tr>
-
-
-
-
-      <td align="undefined" valign="undefined"></td><td align="undefined" valign="undefined">Critical Stats Should Be</td>
-
-
-
-
-      
-
-
-
-
-      <td align="undefined" valign="undefined">${SUITE2}</td>
-
-
-
-
-      <td align="undefined" valign="undefined">1</td>
-
-
-
-
-      <td align="undefined" valign="undefined">1</td>
-
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-
-      
-    </tr>
+    
 
 
 
@@ -2888,199 +2535,15 @@ th {
 
 
 
-    <tr>
+    
 
 
-      <td align="undefined" valign="undefined"></td>
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-    </tr>
-
-
-    <tr>
-
-
-      <td align="undefined" valign="undefined">Critical Tags In Recombine</td>
-
-
-      <td align="undefined" valign="undefined">Critical Tags Should Be</td>
-
-
-      <td align="undefined" valign="undefined">${SUITE4}</td>
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-    </tr>
-
-
-    <tr>
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-      <td align="undefined" valign="undefined">Critical Tags Should Be</td>
-
-
-      <td align="undefined" valign="undefined">${SUITE4.suites[0]}</td>
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-    </tr>
-
-
-    <tr>
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-      <td align="undefined" valign="undefined">Critical Tags Should Be</td>
-
-
-      <td align="undefined" valign="undefined">${SUITE4.suites[1]}</td>
-
-
-      <td align="undefined" valign="undefined">force</td>
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-    </tr>
-
-
-    <tr>
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-      <td align="undefined" valign="undefined">Critical Tags Should Be</td>
-
-
-      <td align="undefined" valign="undefined">${SUITE4.suites[1].suites[0]}</td>
-
-
-      <td align="undefined" valign="undefined">force</td>
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-    </tr>
-
-
-    <tr>
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-      <td align="undefined" valign="undefined">Critical Tags Should Be</td>
-
-
-      <td align="undefined" valign="undefined">${SUITE4.suites[1].suites[1]}</td>
-
-
-      <td align="undefined" valign="undefined">force</td>
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-    </tr>
-
-
-    <tr>
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-      <td align="undefined" valign="undefined">All Stats Should Be</td>
-
-
-      <td align="undefined" valign="undefined">${SUITE4}</td>
-
-
-      <td align="undefined" valign="undefined">9</td>
-
-
-      <td align="undefined" valign="undefined">1</td>
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-    </tr>
 
 
     
 
 
-    <tr>
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-      <td align="undefined" valign="undefined">Critical Stats Should Be</td>
-
-
-      <td align="undefined" valign="undefined">${SUITE4}</td>
-
-
-      <td align="undefined" valign="undefined">7</td>
-
-
-      <td align="undefined" valign="undefined">1</td>
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-    </tr>
+    
 
 
     
@@ -3088,28 +2551,54 @@ th {
 
 
 
-    <tr>
+    
 
 
-      <td align="undefined" valign="undefined"></td>
 
 
-      <td align="undefined" valign="undefined"></td>
+    
 
 
-      <td align="undefined" valign="undefined"></td>
 
 
-      <td align="undefined" valign="undefined"></td>
+    
 
 
-      <td align="undefined" valign="undefined"></td>
 
 
-      <td align="undefined" valign="undefined"></td>
+    
 
 
-    </tr>
+    
+
+
+    
+
+
+    
+
+
+    
+
+
+    
+
+
+    
+
+
+    
+
+
+    
+
+
+    
+
+
+
+
+    
 
 
     <tr>
@@ -4680,7 +4169,7 @@ ${MILLIS1} + ${MILLIS2}</td>
 
 
 
---escape space:SP</td>
+--escape space:SP<br>--report ${REPORT 1}</td>
 
 
 
@@ -4915,7 +4404,7 @@ ${MILLIS1} + ${MILLIS2}</td>
 
 
 
-      <td align="undefined" valign="undefined"></td>
+      <td align="undefined" valign="undefined">--report ${REPORT 2}</td>
 
 
 
@@ -5046,41 +4535,7 @@ ${MILLIS1} + ${MILLIS2}</td>
 
 
 
-    <tr><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr>
-
-
-
-
-      <td align="undefined" valign="undefined">Critical Tags Should Be</td>
-
-
-
-
-      <td align="undefined" valign="undefined">[Arguments]</td>
-
-
-
-
-      <td align="undefined" valign="undefined">${suite}</td>
-
-
-
-
-      <td align="undefined" valign="undefined">${critical}=</td>
-
-
-
-
-      <td align="undefined" valign="undefined">${non-critical}=</td>
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-
-    </tr><tr><td></td><td>Fail Unless</td><td>${suite.critical.tags} == "${critical}".split()</td><td></td><td></td><td></td></tr><tr><td></td><td>Fail Unless</td><td>${suite.critical.nons} == "${non-critical}".split()</td><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>All Stats Should Be</td><td align="undefined" valign="undefined">[Arguments]</td><td align="undefined" valign="undefined">${suite}</td><td>${passed}</td><td>${failed}</td><td></td></tr><tr><td></td><td align="undefined" valign="undefined">Should Be Equal As Integers</td><td align="undefined" valign="undefined">${suite.all_stats.passed}</td><td>${passed}</td><td></td><td></td></tr><tr><td></td><td align="undefined" valign="undefined">Should Be Equal As Integers</td><td align="undefined" valign="undefined">${suite.all_stats.failed}</td><td>${failed}</td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Critical Stats Should Be</td><td align="undefined" valign="undefined">[Arguments]</td><td align="undefined" valign="undefined">${suite}</td><td>${passed}</td><td>${failed}</td><td></td></tr><tr><td></td><td align="undefined" valign="undefined">Should Be Equal As Integers</td><td align="undefined" valign="undefined">${suite.critical_stats.passed}</td><td>${passed}</td><td></td><td></td></tr><tr><td></td><td align="undefined" valign="undefined">Should Be Equal As Integers</td><td align="undefined" valign="undefined">${suite.critical_stats.failed}</td><td>${failed}</td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+    <tr><td></td><td></td><td></td><td></td><td></td><td></td></tr>
 
 
 
