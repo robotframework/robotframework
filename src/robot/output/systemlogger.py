@@ -22,6 +22,12 @@ from monitor import CommandLineMonitor
 
 
 class SystemLogger(AbstractLogger):
+    """Global system logger, to which new loggers may be registered.
+
+    Whenever something is written to SYSLOG in code, all registered loggers are
+    notified.  Messages are also cached and cached messasges written to new
+    loggers when they are registered.
+    """
 
     def __init__(self):
         self._writers = []
