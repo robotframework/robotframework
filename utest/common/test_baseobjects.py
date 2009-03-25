@@ -38,10 +38,6 @@ class TestFilterByNames(unittest.TestCase):
             suite = self._get_suite()
             suite.filter_by_names(names, [])
             assert_equals(suite.get_test_count(), count, names)
-            filtered = [ n.lower().replace(' ','') for n in names ]
-            filtered.sort()
-            assert_equals(suite.filtered.suites, filtered)
-            assert_equals(suite.filtered.tests, [])
 
     def test_with_suites_no_matches(self):
         suite = self._get_suite()
@@ -62,10 +58,6 @@ class TestFilterByNames(unittest.TestCase):
             suite = self._get_suite()
             suite.filter_by_names([], names)
             assert_equals(suite.get_test_count(), count)
-            filtered = [ n.lower().replace(' ','') for n in names ]
-            filtered.sort()
-            assert_equals(suite.filtered.tests, filtered)
-            assert_equals(suite.filtered.suites, [])
 
     def test_with_tests_no_matches(self):
         suite = self._get_suite()
@@ -83,11 +75,6 @@ class TestFilterByNames(unittest.TestCase):
             suite = self._get_suite()
             suite.filter_by_names(suites, tests)
             assert_equals(suite.get_test_count(), count, '%s & %s'%(suites,tests))
-            filt_suites = [ n.lower().replace(' ','') for n in suites ]
-            filt_tests = [ n.lower().replace(' ','') for n in tests ]
-            filt_suites.sort(); filt_tests.sort()
-            assert_equals(suite.filtered.suites, filt_suites)
-            assert_equals(suite.filtered.tests, filt_tests)
 
     def test_with_suites_and_tests_no_matches(self):
         suite = self._get_suite()
