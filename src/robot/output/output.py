@@ -82,6 +82,7 @@ class Output(AbstractLogger):
     def end_suite(self, suite):
         outpath = self.logger.end_suite(suite)
         if outpath is not None:
+            SYSLOG.output_file('Output', outpath)
             orig_outpath = self._settings['Output']
             suite.namespace.variables.set_global('${OUTPUT_FILE}', orig_outpath)
             self._create_split_log(outpath, suite)

@@ -30,20 +30,21 @@ class CommandLineMonitor:
     def __init__(self, width=78, colors=True):
         self.width = width
         self.colors = colors
-        self._started = False
+        self._running_suites = 0
         
     def start_suite(self, suite):
-        if not self._started:
+        if not self._running_suites:
             self._write_separator('=')
-        self._started = True
         self._write_info(suite.longname, suite.doc, start_suite=True)
         self._write_separator('=')
+        self._running_suites += 1
                 
     def end_suite(self, suite):
         self._write_info(suite.longname, suite.doc)
         self._write_status(suite.status)
         self._write_message(suite.get_full_message())
         self._write_separator('=')
+        self._running_suites -= 1
                         
     def start_test(self, test):
         self._write_info(test.name, test.doc)
@@ -55,7 +56,8 @@ class CommandLineMonitor:
         
     def output_file(self, name, path):
         # called by SYSLOG
-        self._write('%s %s' % ((name+':').ljust(8), utils.cygpath(path)))
+        if not self._running_suites:  # ignores splitted output files
+            self._write('%s %s' % ((name+':').ljust(8), utils.cygpath(path)))
      
     def write(self, msg, level):
         # called by SYSLOG
