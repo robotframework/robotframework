@@ -42,8 +42,8 @@ class Namespace:
         self.variables = _VariableScopes(suite, parent)
         self.suite = suite
         self.test = None
-        self.library_order = []
         self.uk_handlers = []
+        self.library_search_order = []
         self._testlibs = {}
         self._userlibs = []
         self._imported_resource_files = []
@@ -63,9 +63,9 @@ class Namespace:
         ns.suite = self.suite
         ns.test = self.test
         ns.uk_handlers = self.uk_handlers[:]
+        ns.library_search_order = self.library_search_order[:]
         ns._testlibs = self._testlibs
         ns._userlibs = self._userlibs
-        ns.library_order = self.library_order[:]
         return ns
 
     def _handle_imports(self, import_settings):
@@ -203,7 +203,8 @@ class Namespace:
         # 3) Try to find unique keyword from base keywords
         found = [ lib.get_handler(name)
                   for lib in self._testlibs.values() if lib.has_handler(name) ]
-        found = self._get_handler_based_on_default_library_order(found)
+        if len(found) > 1:
+            found = self._get_handler_based_on_library_search_order(found)
         if len(found) == 2:
             found = self._filter_stdlib_handler(found[0], found[1])
         if len(found) > 1:
@@ -212,12 +213,12 @@ class Namespace:
             return found[0]
         return None
 
-    def _get_handler_based_on_default_library_order(self, handlers):
-        libraries = [handler.library.name for handler in handlers ]
-        for name in self.library_order:
-            if name in libraries:
-                return [handler for handler in handlers if handler.library.name == name]
-        return handlers             
+    def _get_handler_based_on_library_search_order(self, handlers):
+        for libname in self.library_search_order:
+            for handler in handlers:
+                if handler.library.name == libname:
+                    return [handler]
+        return handlers
 
     def _filter_stdlib_handler(self, hand1, hand2):
         if hand1.library.orig_name in STDLIB_NAMES:
