@@ -35,7 +35,6 @@ class _DebugFileWriter:
     _separators = {'SUITE': '=', 'TEST': '-', 'KW': '~'}
     
     def __init__(self, path):
-        self.path = path
         self._indent = 0
         self._kw_level = 0
         self._separator_written_last = False
@@ -50,6 +49,9 @@ class _DebugFileWriter:
         self._separator('SUITE')
         self._end('SUITE', suite.longname, suite.elapsedtime)
         self._separator('SUITE')
+        if self._indent == 0:
+            SYSLOG.output_file('Debug', self._file.name)
+            self.close()
         
     def start_test(self, test):
         self._separator('TEST')
@@ -75,7 +77,8 @@ class _DebugFileWriter:
         self._write(utils.unic(msg).encode('UTF-8').rstrip())
         
     def close(self):
-        self._file.close()
+        if not self._file.closed:
+            self._file.close()
 
     def _get_kw_type(self, kw):
         if kw.type in ['setup','teardown']:
