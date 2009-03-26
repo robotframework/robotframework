@@ -34,9 +34,11 @@ __version__ = utils.version
 
 
 def run_from_cli(args, usage):
+    SYSLOG.info(utils.get_full_version('Robot Framework'))
     _run_or_rebot_from_cli(run, args, usage, pythonpath='pythonpath')
 
 def rebot_from_cli(args, usage):
+    SYSLOG.info(utils.get_full_version('Rebot'))
     _run_or_rebot_from_cli(rebot, args, usage)
 
 def _run_or_rebot_from_cli(method, cliargs, usage, **argparser_config):
@@ -53,6 +55,7 @@ def _run_or_rebot_from_cli(method, cliargs, usage, **argparser_config):
         SYSLOG.register_console_logger()
         _exit(DATA_ERROR, str(err))
 
+    SYSLOG.info('Data sources: %s' % utils.seq2str(datasources))
     try: 
         suite = method(*datasources, **options)
     except DataError:
@@ -86,13 +89,12 @@ def run(*datasources, **options):
                                    settings['MonitorColors'])
     output = Output(settings)
     init_global_variables(settings)
-    _syslog_start_info('Robot', datasources, settings)
     suite = TestSuite(datasources, settings)
     suite.run(output)
     SYSLOG.info("Tests execution ended. Statistics:\n%s" 
                 % suite.get_stat_message())
     testoutput = RobotTestOutput(suite, settings)
-    output.close1(suite)
+    output.close(suite)
     if settings.is_rebot_needed():
         datasources, settings = settings.get_rebot_datasources_and_settings()
         if settings['SplitOutputs'] > 0:
@@ -100,7 +102,7 @@ def run(*datasources, **options):
         else:
             testoutput = RebotTestOutput(datasources, settings)
         testoutput.serialize(settings)
-    output.close2()
+    SYSLOG.close()
     return suite
 
 
@@ -122,19 +124,11 @@ def rebot(*datasources, **options):
     settings = RebotSettings(options)
     SYSLOG.register_console_logger(colors=settings['MonitorColors'])
     SYSLOG.disable_message_cache()
-    _syslog_start_info('Rebot', datasources, settings)
     testoutput = RebotTestOutput(datasources, settings)
     testoutput.serialize(settings, generator='Rebot')
     SYSLOG.close()
     return testoutput.suite
     
-    
-def _syslog_start_info(who, sources, settings):
-    SYSLOG.info(utils.get_full_version(who))
-    SYSLOG.info('Settings:\n%s' % settings)
-    SYSLOG.info('Starting processing data source%s %s'
-                % (utils.plural_or_not(sources), utils.seq2str(sources)))
-
 
 def _exit(rc_or_suite, message=None, details=None):
     """Exits with given rc or rc from given output. Syslogs error if given.

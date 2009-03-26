@@ -43,7 +43,7 @@ class Output(AbstractLogger):
     def _get_log_name_generator(self, log):
         return log != 'NONE' and utils.FileNameGenerator(log) or None
         
-    def close1(self, suite):
+    def close(self, suite):
         stats = Statistics(suite, self._settings['SuiteStatLevel'], 
                            self._settings['TagStatInclude'], 
                            self._settings['TagStatExclude'], 
@@ -57,11 +57,7 @@ class Output(AbstractLogger):
             SYSLOG.output_file('Debug', self._debugfile.path)
             self._debugfile.close()
             
-    def close2(self):
-        SYSLOG.close()  # TODO: move!
-    
     def start_suite(self, suite):
-        SYSLOG.info("Running test suite '%s'" % suite.longname)  # TODO: move!
         SYSLOG.start_suite(suite)
         if self.xmllogger.started_output:
             suite.namespace.variables.set_global('${OUTPUT_FILE}',
@@ -91,7 +87,6 @@ class Output(AbstractLogger):
         suite.namespace.variables.set_global('${LOG_FILE}', self._namegen.get_base())
         
     def start_test(self, test):
-        SYSLOG.info("Running test case '%s'" % test.name)
         SYSLOG.start_test(test)
         if self._debugfile is not None:
             self._debugfile.start_test(test)

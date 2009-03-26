@@ -61,11 +61,12 @@ class _BaseSettings:
     _deprecated = { 'colormonitor'   : 'monitorcolors',
                     'transform'      : None }
     
-    def __init__(self, opts={}):
+    def __init__(self, options={}, log=True):
         self._opts = {}
         self._cli_opts.update(self._extra_cli_opts)
-        self._process_deprecated_cli_opts(opts)
-        self._process_cli_opts(opts)
+        self._process_deprecated_cli_opts(options)
+        self._process_cli_opts(options)
+        if log: SYSLOG.info('Settings:\n%s' % self)
             
     def _process_cli_opts(self, opts):
         for name, (cli_name, default) in self._cli_opts.items():
@@ -221,7 +222,7 @@ class RobotSettings(_BaseSettings):
     
     def get_rebot_datasources_and_settings(self):
         datasources = [ self['Output'] ]
-        settings = RebotSettings()
+        settings = RebotSettings(log=False)
         settings._opts = self._opts.copy()
         for name in ['Variables', 'VariableFiles', 'Listeners']:
             del(settings._opts[name])
