@@ -32,9 +32,9 @@ class Output(AbstractLogger):
     def __init__(self, settings):
         AbstractLogger.__init__(self, settings['LogLevel'])
         self.logger = None
-        self.listeners = Listeners(settings['Listeners'])
+        listeners = Listeners(settings['Listeners'])
         self._execution_errors = _ExecutionErrorLogger()
-        SYSLOG.register_logger(self.listeners, self._execution_errors)
+        SYSLOG.register_logger(listeners, self._execution_errors)
         SYSLOG.disable_message_cache()
         self._debugfile = DebugFile(settings['DebugFile'])
         self._namegen = self._get_log_name_generator(settings['Log'])
@@ -60,7 +60,6 @@ class Output(AbstractLogger):
             self._debugfile.close()
             
     def close2(self):
-        self.listeners.close()
         SYSLOG.close()
     
     def start_suite(self, suite):
@@ -74,8 +73,7 @@ class Output(AbstractLogger):
             if self._namegen is not None:
                 suite.namespace.variables.set_global('${LOG_FILE}', 
                                                      self._namegen.get_name())
-        SYSLOG.monitor.start_suite(suite)
-        self.listeners.start_suite(suite)
+        SYSLOG.start_suite(suite)
         if self._debugfile is not None:
             self._debugfile.start_suite(suite)
         
@@ -86,8 +84,7 @@ class Output(AbstractLogger):
             orig_outpath = self._settings['Output']
             suite.namespace.variables.set_global('${OUTPUT_FILE}', orig_outpath)
             self._create_split_log(outpath, suite)
-        SYSLOG.monitor.end_suite(suite)
-        self.listeners.end_suite(suite)
+        SYSLOG.end_suite(suite)
         if self._debugfile is not None:
             self._debugfile.end_suite(suite)
 
@@ -102,27 +99,25 @@ class Output(AbstractLogger):
     def start_test(self, test):
         SYSLOG.info("Running test case '%s'" % test.name)
         self.logger.start_test(test)
-        SYSLOG.monitor.start_test(test)
-        self.listeners.start_test(test)
+        SYSLOG.start_test(test)
         if self._debugfile is not None:
             self._debugfile.start_test(test)
         
     def end_test(self, test):
         self.logger.end_test(test)
-        SYSLOG.monitor.end_test(test)
-        self.listeners.end_test(test)
+        SYSLOG.end_test(test)
         if self._debugfile is not None:
             self._debugfile.end_test(test)
         
     def start_keyword(self, kw):
         self.logger.start_keyword(kw)
-        self.listeners.start_keyword(kw)
+        SYSLOG.start_keyword(kw)
         if self._debugfile is not None:
             self._debugfile.start_keyword(kw)
         
     def end_keyword(self, kw):
         self.logger.end_keyword(kw)
-        self.listeners.end_keyword(kw)
+        SYSLOG.end_keyword(kw)
         if self._debugfile is not None:
             self._debugfile.end_keyword(kw)
      

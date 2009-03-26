@@ -36,7 +36,6 @@ class SystemLogger(AbstractLogger):
     def __init__(self):
         self._loggers = []
         self._message_cache = []
-        self.monitor = None
 
     def disable_message_cache(self):
         self._message_cache = None
@@ -50,8 +49,8 @@ class SystemLogger(AbstractLogger):
                     logger.write(msg, msg.level)
 
     def register_console_logger(self, width=78, colors=True):
-        self.monitor = CommandLineMonitor(width, colors)
-        self.register_logger(self.monitor)
+        monitor = CommandLineMonitor(width, colors)
+        self.register_logger(monitor)
 
     def register_file_logger(self, path=None, level='INFO'):
         if not path:
