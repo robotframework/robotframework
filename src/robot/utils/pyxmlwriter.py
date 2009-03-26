@@ -26,6 +26,7 @@ class XmlWriter(AbstractXmlWriter):
         self._output = open(path, 'wb')
         self._writer = XMLGenerator(self._output, 'UTF-8')
         self._writer.startDocument()
+        self.closed = False
         
     def start_element(self, name, attributes={}, newline=True):
         attrs = AttributesImpl(attributes)
@@ -45,3 +46,4 @@ class XmlWriter(AbstractXmlWriter):
     def close(self):
         self._writer.endDocument()
         self._output.close()
+        self.closed = True

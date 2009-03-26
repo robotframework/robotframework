@@ -29,6 +29,7 @@ class XmlLogger:
         self._index_writer = None
         self._split_level = split_level
         self._suite_level = 0
+        self._errors = []
 
     def _get_writer(self, path, attrs={}):
         try:
@@ -40,11 +41,21 @@ class XmlLogger:
         return writer
         
     def _close_writer(self, writer):
-        writer.end_element('robot')
-        writer.close()
+        if not writer.closed:
+            writer.end_element('robot')
+            writer.close()
 
-    def close(self):
+    def close(self, serialize_errors=False):
+        if serialize_errors:
+            self.start_syslog()
+            for msg in self._errors:
+                self.message(msg)
+            self.end_syslog()
         self._close_writer(self._writer)
+
+    def write(self, msg, level):
+        if level in ['WARN', 'ERROR']:
+            self._errors.append(msg)
                 
     def message(self, msg):
         html = msg.html and 'yes' or 'no'
@@ -73,13 +84,13 @@ class XmlLogger:
         self._writer.end_element('test')
 
     def start_suite(self, suite):
-        outpath = None
         if self._suite_level == self._split_level:
             self._start_split_output(suite)
-            outpath = self._writer.path
+            self.started_output = self._writer.path
+        else:
+            self.started_output = None
         self._start_suite(suite)
         self._suite_level += 1
-        return outpath
         
     def _start_split_output(self, suite):
         path =  self._namegen.get_name()
@@ -103,7 +114,9 @@ class XmlLogger:
         self._suite_level -= 1
         self._end_suite(suite)
         if self._suite_level == self._split_level:
-            return self._end_split_output(suite)
+            self.ended_output = self._end_split_output(suite)
+        else:
+            self.ended_output = None
 
     def _end_split_output(self, suite):
         outpath = self._writer.path
@@ -157,11 +170,12 @@ class XmlLogger:
         if stat.combined is True:
             return 'combined'
         return ''
-        
-    def start_syslog(self, syslog):
+
+    # TODO: Remove 1) syslog -> errors 2) why arg to this method?
+    def start_syslog(self, syslog=None):
         self._writer.start_element('syslog')
         
-    def end_syslog(self, syslog):
+    def end_syslog(self, syslog=None):
         self._writer.end_element('syslog')
         
     def _write_list(self, tag, items, container=None):

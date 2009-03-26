@@ -30,6 +30,7 @@ class XmlWriter(AbstractXmlWriter):
         self._writer.setResult(StreamResult(self._output))
         self._writer.startDocument()
         self.content('\n')
+        self.closed = False
         
     def start_element(self, name, attributes={}, newline=True):
         attrs = AttributesImpl()
@@ -52,3 +53,4 @@ class XmlWriter(AbstractXmlWriter):
     def close(self):
         self._writer.endDocument()
         self._output.close()
+        self.closed = True
