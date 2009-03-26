@@ -94,7 +94,7 @@ import os
 import glob
 
 from robot.parsing import RawData, rawdatatables, rawdata
-from robot.output import SystemLogger
+from robot.output import SYSLOG
 from robot.errors import DataError, Information
 from robot.variables import is_scalar_var
 from robot import utils
@@ -184,30 +184,50 @@ td.col_name {
 </style>
 '''
 
-SYSLOG = SystemLogger()
+class Processor:
 
+    def __init__(self):
+        self.errors = []
 
-def process_file(infile, outfile, opts):
-    if outfile is not None:
-        print '%s -> %s' % (infile, outfile)
-    else:
-        print infile
-        outfile = infile
-    if not os.path.isfile(infile):
-        SYSLOG.error("'%s' is not a regular file" % infile)
-        return
-    data = TestData(infile, opts['fixcomments'])
-    data.serialize(outfile, opts['format'], opts['title'], opts['style'])
-
-    
-def process_directory(indir, otps):
-    for item in os.listdir(indir):
-        path = os.path.join(indir, item)
-        if os.path.isdir(path):
-            process_directory(path, otps)
-        elif os.path.isfile(path):
-            process_file(path, None, opts)
+    def process_file(self, infile, outfile, opts):
+        try:
+            if outfile is not None:
+                print '%s -> %s' % (infile, outfile)
+            else:
+                print infile
+                outfile = infile
+            if not os.path.isfile(infile):
+                self.errors.append("'%s' is not a regular file" % infile)
+                return
+            data = TestData(infile, opts['fixcomments'])
+            data.serialize(outfile, opts['format'], opts['title'], opts['style'])
+        except KeyboardInterrupt:
+            raise
+        except:
+            error_msg = "ERROR: %s" % (utils.get_error_message())
+            print error_msg
+            self.errors.append(error_msg)
             
+    def process_directory(self, indir, otps):
+        for item in os.listdir(indir):
+            path = os.path.join(indir, item)
+            if not self.valid_robot_file(path, item):
+                continue
+            if os.path.isdir(path):
+                self.process_directory(path, otps)
+            elif os.path.isfile(path):
+                self.process_file(path, None, opts)
+                        
+    def valid_robot_file(self, path, tail):
+        tail = tail.lower()
+        if tail[0] in ['.', '_'] and not tail.startswith('__init__.'):
+            return False
+        if os.path.isdir(path):
+            return True
+        if tail.split('.')[-1] in ['tsv', 'xhtml', 'html']:
+            return True
+        return False
+
 
 class TestData:
     
@@ -215,7 +235,7 @@ class TestData:
         if not os.path.isfile(path) or os.path.splitext(path)[1][1:].upper() \
                 not in _valid_extensions:
             raise DataError("Input format must be either HTML or TSV.")
-        raw = RawData(path, SYSLOG, strip_comments=False)
+        raw = RawData(path, strip_comments=False)
         if raw.is_empty():
             raise DataError("'%s' contains no test data" % path)
         self.settings = Settings(raw.settings, fix_comments)
@@ -676,6 +696,7 @@ class TsvSerializer(_SerializerBase):
 
 
 if __name__ == '__main__':
+    processor = Processor()
     try:
         ap = utils.ArgumentParser(__doc__)
         opts, args = ap.parse_args(sys.argv[1:], help='help')
@@ -683,13 +704,13 @@ if __name__ == '__main__':
             if len(args) == 0:
                 raise DataError('--inplace requires at least one argument')
             for path in args:
-                process_file(path, None, opts)
+                processor.process_file(path, None, opts)
         elif opts['recursive']:
             if len(args) != 1:
                 raise DataError('--recursive requires exactly one argument')
             if not os.path.isdir(args[0]):
                 raise DataError('Parameter to --recursive must be a directory')
-            process_directory(args[0], opts)
+            processor.process_directory(args[0], opts)
         else:
             if len(args) != 2:
                 if len(args) == 1:
@@ -697,7 +718,7 @@ if __name__ == '__main__':
                 else:
                     msg = 'Only one input and one output file can be given'
                 raise DataError(msg)
-            process_file(args[0], args[1], opts)
+            processor.process_file(args[0], args[1], opts)
     except Information, msg:
         print str(msg)
     except KeyboardInterrupt:
@@ -705,3 +726,7 @@ if __name__ == '__main__':
     except:
         SYSLOG.error(utils.get_error_message())
         print '\nUse --help to get usage information.'
+
+    if len(processor.errors) > 1:
+        print "\nFollowing errors occurred during tidying:\n"
+    print '\n'.join(processor.errors)
