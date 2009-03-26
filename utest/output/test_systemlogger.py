@@ -126,13 +126,11 @@ class TestSystemLogger(unittest.TestCase):
         logger2 = LoggerMock2(('Hello, world!', 'INFO'))
         self.syslog.register_logger(logger, logger2)
         self.syslog.close()
-        assert_true(self.syslog._writers == 
-                    self.syslog._output_filers == 
-                    self.syslog._closers == [])
+        assert_equals(self.syslog._loggers, [])
 
     def test_registering_file_logger_with_none_path_does_nothing(self):
         self.syslog.register_file_logger('None')
-        assert_equals(len(self.syslog._writers), 0)
+        assert_equals(self.syslog._loggers, [])
 
     def test_cached_messages_are_given_to_registered_writers(self):
         self.syslog.write('This is a cached message', 'INFO')
@@ -148,6 +146,21 @@ class TestSystemLogger(unittest.TestCase):
         logger = LoggerMock(('', ''))
         self.syslog.register_logger(logger)
         assert_false(hasattr(logger, 'msg'))
+
+    def test_start_and_end_suite_test_and_keyword(self):
+        class Logger:
+            def start_suite(self, suite): self.started_suite = suite
+            def end_suite(self, suite): self.ended_suite = suite
+            def start_test(self, test): self.started_test = test
+            def end_test(self, test): self.ended_test = test
+            def start_keyword(self, keyword): self.started_keyword = keyword
+            def end_keyword(self, keyword): self.ended_keyword = keyword
+        logger = Logger()
+        self.syslog.register_logger(logger)
+        for name in 'suite', 'test', 'keyword':
+            for stend in 'start', 'end':
+                getattr(self.syslog, stend+'_'+name)(name)
+                assert_equals(getattr(logger, stend+'ed_'+name), name)
 
 
 if __name__ == "__main__":

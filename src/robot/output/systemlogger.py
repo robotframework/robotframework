@@ -27,12 +27,14 @@ class SystemLogger(AbstractLogger):
     Whenever something is written to SYSLOG in code, all registered loggers are
     notified.  Messages are also cached and cached messasges written to new
     loggers when they are registered.
+
+    Tools using Robot Framework's internal modules should register their own
+    loggers at least to get notifications about errors and warnings. A shortcut
+    to get errors/warnings into console is using 'register_console_logger'.
     """
 
     def __init__(self):
-        self._writers = []
-        self._output_filers = []
-        self._closers = []
+        self._loggers = []
         self._message_cache = []
         self.monitor = None
 
@@ -40,18 +42,14 @@ class SystemLogger(AbstractLogger):
         self._message_cache = None
 
     def register_logger(self, *loggers):
-        for logger in loggers:
-            if hasattr(logger, 'write'):
-                self._writers.append(logger.write)
-                if self._message_cache:
-                    for msg in self._message_cache:
-                        logger.write(msg, msg.level)
-            if hasattr(logger, 'output_file'):
-                self._output_filers.append(logger.output_file)
-            if hasattr(logger, 'close'):
-                self._closers.append(logger.close)
+        for log in loggers:
+            logger = _Logger(log)
+            self._loggers.append(logger)
+            if self._message_cache:
+                for msg in self._message_cache:
+                    logger.write(msg, msg.level)
 
-    def register_command_line_monitor(self, width=78, colors=True):
+    def register_console_logger(self, width=78, colors=True):
         self.monitor = CommandLineMonitor(width, colors)
         self.register_logger(self.monitor)
 
@@ -71,19 +69,53 @@ class SystemLogger(AbstractLogger):
 
     def write(self, message, level='INFO'):
         msg = Message(message, level)
-        for write in self._writers:
-            write(msg, level)
+        for logger in self._loggers:
+            logger.write(msg, level)
         if self._message_cache is not None:
             self._message_cache.append(msg)
 
+    def start_suite(self, suite):
+        for logger in self._loggers:
+            logger.start_suite(suite)
+
+    def end_suite(self, suite):
+        for logger in self._loggers:
+            logger.end_suite(suite)
+
+    def start_test(self, test):
+        for logger in self._loggers:
+            logger.start_test(test)
+
+    def end_test(self, test):
+        for logger in self._loggers:
+            logger.end_test(test)
+
+    def start_keyword(self, keyword):
+        for logger in self._loggers:
+            logger.start_keyword(keyword)
+
+    def end_keyword(self, keyword):
+        for logger in self._loggers:
+            logger.end_keyword(keyword)
+
     def output_file(self, name, path):
-        for output_file in self._output_filers:
-            output_file(name, path)
+        for logger in self._loggers:
+            logger.output_file(name, path)
 
     def close(self):
-        for close in self._closers:
-            close()
+        for logger in self._loggers:
+            logger.close()
         self.__init__()
+
+
+class _Logger:
+
+    def __init__(self, logger):
+        for name in ['write', 'output_file', 'close',
+                     'start_suite', 'end_suite', 'start_test', 'end_test',
+                     'start_keyword', 'end_keyword']:
+            method = getattr(logger, name, lambda *args: None)
+            setattr(self, name, method)
 
 
 class _FileLogger(AbstractLogger):

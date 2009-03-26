@@ -50,7 +50,7 @@ def _run_or_rebot_from_cli(method, cliargs, usage, **argparser_config):
     except Information, msg:
         _exit(INFO_PRINTED, str(msg))
     except DataError, err:
-        SYSLOG.register_command_line_monitor()
+        SYSLOG.register_console_logger()
         _exit(DATA_ERROR, str(err))
 
     try: 
@@ -82,8 +82,8 @@ def run(*datasources, **options):
     pybot --log mylog.html /path/to/tests.html /path/to/tests2.html
     """
     settings = RobotSettings(options)
-    SYSLOG.register_command_line_monitor(settings['MonitorWidth'], 
-                                         settings['MonitorColors'])
+    SYSLOG.register_console_logger(settings['MonitorWidth'], 
+                                   settings['MonitorColors'])
     output = Output(settings)
     init_global_variables(settings)
     _syslog_start_info('Robot', datasources, settings)
@@ -120,7 +120,7 @@ def rebot(*datasources, **options):
     rebot --report myrep.html --log NONE /path/out1.xml /path/out2.xml
     """
     settings = RebotSettings(options)
-    SYSLOG.register_command_line_monitor(colors=settings['MonitorColors'])
+    SYSLOG.register_console_logger(colors=settings['MonitorColors'])
     SYSLOG.disable_message_cache()
     _syslog_start_info('Rebot', datasources, settings)
     testoutput = RebotTestOutput(datasources, settings)
