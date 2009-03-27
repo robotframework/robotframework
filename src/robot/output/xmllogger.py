@@ -29,7 +29,8 @@ class XmlLogger:
         self._error_is_logged = IsLogged('WARN')
         attrs = { 'generator': utils.get_full_version(generator),
                   'generated': utils.get_timestamp() }
-        self._writer = self._get_writer(path, attrs)
+        self._writer = None
+        self._writer_args = (path, attrs)
         self._index_writer = None
         self._split_level = split_level
         self._suite_level = 0
@@ -95,6 +96,9 @@ class XmlLogger:
         self._writer.end_element('test')
 
     def start_suite(self, suite):
+        if not self._writer:
+            self._writer = self._get_writer(*self._writer_args)
+            del self._writer_args
         if self._suite_level == self._split_level:
             self._start_split_output(suite)
             self.started_output = self._writer.path
