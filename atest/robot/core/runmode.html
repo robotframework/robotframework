@@ -1,9 +1,7 @@
-
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html>
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<meta name="generator" content="RobotIDE" /> 
+<html><head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="generator" content="RobotIDE"> 
 <style type="text/css">
 html {
   font-family: Arial,Helvetica,sans-serif;
@@ -56,16 +54,15 @@ th {
   font-style: normal;
 }
 </style>
-<title>Runmode</title>
-</head>
+<title>Runmode</title></head>
+
+
 <body>
 <h1>Runmode</h1>
 
 <table border="1">
-<colgroup span="99">
-<col class="name">
-<col class="value" span="4"></colgroup>
-<tr>
+<colgroup span="99"><col class="name"><col class="value" span="4"></colgroup>
+<tbody><tr>
 <th>Setting</th>
 <th>Value</th>
 <th>Value</th>
@@ -87,19 +84,17 @@ th {
 <td></td>
 </tr>
 <tr>
-<td></td>
-<td></td>
+<td>Suite Setup</td>
+<td>Check That Default Orders Are Correct</td>
 <td></td>
 <td></td>
 <td></td>
 </tr>
-</table>
+</tbody></table>
 
 <table border="1">
-<colgroup span="99">
-<col class="name">
-<col class="value" span="4"></colgroup>
-<tr>
+<colgroup span="99"><col class="name"><col class="value" span="4"></colgroup>
+<tbody><tr>
 <th>Variable</th>
 <th>Value</th>
 <th>Value</th>
@@ -107,20 +102,17 @@ th {
 <th>Value</th>
 </tr>
 <tr>
+<td>${DEFAULT SUITE ORDER}</td>
+<td>['Suite First', 'Subsuite 1', 'Suite 3', 'Suite 4', 'Suite 5', 'Suite 10', 'Suite 6', 'Suite 7', 'Suite 8', 'Suite 9']</td>
 <td></td>
 <td></td>
 <td></td>
-<td></td>
-<td></td>
-</tr>
-</table>
+</tr><tr><td>${DEFAULT TEST ORDER}</td><td>['Test1', 'Test2', 'Test3', 'Test4', 'Test5', 'Test6', 'Test7', 'Test8', 'Test9', 'Test10', 'Test11', 'Test12']</td><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr>
+</tbody></table>
 
 <table border="1">
-<colgroup span="99">
-<col class="name">
-<col class="action">
-<col class="arg" span="3"></colgroup>
-<tr>
+<colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
+<tbody><tr>
 <th>Test Case</th>
 <th>Action</th>
 <th>Argument</th>
@@ -132,13 +124,13 @@ th {
 <td>[Setup]</td>
 <td>Run Tests</td>
 <td>--runmode random:test</td>
-<td>misc${/}multiple_suites${/}suite1.html</td>
+<td>misc${/}multiple_suites${/}01__suite_first.html</td>
 </tr>
 <tr>
 <td></td>
 <td>Should Not Be Equal As Strings</td>
 <td>${SUITE.tests}</td>
-<td>['Test1', 'Test2', 'Test3', 'Test4', 'Test5', 'Test6', 'Test7', 'Test8', 'Test9', 'Test10', 'Test11', 'Test12']</td>
+<td>${DEFAULT TEST ORDER}</td>
 <td></td>
 </tr>
 <tr>
@@ -159,14 +151,14 @@ th {
 <td></td>
 <td>Should Not Be Equal As Strings</td>
 <td>${SUITE.suites}</td>
-<td>['Suite 1', 'Suite 10', 'Suite 2', 'Suite 3', 'Suite 4', 'Suite 5', 'Suite 6', 'Suite 7', 'Suite 8', 'Suite 9']</td>
+<td>${DEFAULT SUITE ORDER}</td>
 <td></td>
 </tr>
-<tr>
+<tr><td></td><td>Log</td><td>${SUITE.suites}</td><td></td><td></td></tr><tr>
 <td></td>
 <td>Should Be Equal As Strings</td>
 <td>${SUITE.suites[0].tests}</td>
-<td>['Test1', 'Test2', 'Test3', 'Test4', 'Test5', 'Test6', 'Test7', 'Test8', 'Test9', 'Test10', 'Test11', 'Test12']</td>
+<td>${DEFAULT TEST ORDER}</td>
 <td></td>
 </tr>
 <tr>
@@ -187,14 +179,14 @@ th {
 <td></td>
 <td>Should Not Be Equal As Strings</td>
 <td>${SUITE.suites}</td>
-<td>['Suite 1', 'Suite 10', 'Suite 2', 'Suite 3', 'Suite 4', 'Suite 5', 'Suite 6', 'Suite 7', 'Suite 8', 'Suite 9']</td>
+<td>${DEFAULT SUITE ORDER}</td>
 <td></td>
 </tr>
 <tr>
 <td></td>
 <td>Should Not Be Equal As Strings</td>
 <td>${SUITE.suites[0].tests}</td>
-<td>['Test1', 'Test2', 'Test3', 'Test4', 'Test5', 'Test6', 'Test7', 'Test8', 'Test9', 'Test10', 'Test11', 'Test12']</td>
+<td>${DEFAULT TEST ORDER}</td>
 <td></td>
 </tr>
 <tr>
@@ -316,14 +308,11 @@ th {
 <td></td>
 <td></td>
 </tr>
-</table>
+</tbody></table>
 
 <table border="1">
-<colgroup span="99">
-<col class="name">
-<col class="action">
-<col class="arg" span="3"></colgroup>
-<tr>
+<colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
+<tbody><tr>
 <th>Keyword</th>
 <th>Action</th>
 <th>Argument</th>
@@ -331,13 +320,12 @@ th {
 <th>Argument</th>
 </tr>
 <tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-</table>
+<td>Check That Default Orders Are Correct</td>
+<td>Run Tests</td><td></td><td>misc${/}multiple_suites</td>
 
-</body>
-</html>
+
+<td></td>
+</tr><tr><td></td><td>Should&nbsp;Be Equal As Strings</td><td>${SUITE.suites}</td><td>${DEFAULT SUITE ORDER}</td><td></td></tr><tr><td></td><td>Should&nbsp;Be Equal As Strings</td><td>${SUITE.suites[0].tests}</td><td>${DEFAULT TEST ORDER}</td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr>
+</tbody></table>
+
+</body></html>
