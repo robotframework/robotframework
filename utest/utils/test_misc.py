@@ -9,6 +9,7 @@ if utils.is_jython:
     import JavaExceptions
 
 from robot.utils.misc import *
+from robot.utils.misc import _remove_prefix
 
 
 
@@ -104,6 +105,13 @@ class TestMiscUtils(unittest.TestCase):
                           ('','') ]:
             assert_equals(printable_name(inp, code_style=True), exp)
             
+    def test_remove_prefix(self):
+        for inp, exp in [ ('01__hello', 'hello'),
+                          ('textual_prefix__hello', 'hello'),
+                          ('01__actual__name', 'actual__name'),
+                         ]:
+            assert_equals(_remove_prefix(inp), exp)
+    
     def test_calc_percents_zeros(self):
         assert_equals(calc_percents(0, 0), (0, 0))
         

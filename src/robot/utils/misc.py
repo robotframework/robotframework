@@ -171,8 +171,11 @@ def printable_name_from_path(path):
     """
     # Get name of the file/dir without leading path and possible extension
     name = os.path.splitext(os.path.basename(os.path.normpath(path)))[0]
+    name = _remove_prefix(name)
     return printable_name(name, code_style=True)
 
+def _remove_prefix(name):
+    return name.split('__', 1)[-1]
 
 def get_directory(path):
     """Returns the directory part of the given path.
