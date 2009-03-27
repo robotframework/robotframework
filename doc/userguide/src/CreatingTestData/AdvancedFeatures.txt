@@ -73,25 +73,25 @@ cases, either the files or the keywords must be renamed. The full name
 of the keyword is case-, space- and underscore-insensitive, similarly
 as normal keyword names.
 
-Specifying Library Search Order
+Specifying library search order
 '''''''''''''''''''''''''''''''
 
 Starting from Robot Framework 2.1 it is possible to use the keyword :name:`Set
 Library Search Order` from `BuiltIn library`_ to specify the priority order
 between test libraries that are in use. 
-If multiple keywords with the same name are found, libraries are gone through 
-in the library search order. The first library containing the keyword is 
-selected and the keyword from that library is used. If keyword is not found, 
-test execution fails. 
+If multiple keywords with the same name are found, libraries implementing them 
+are gone through in the library search order. The first library containing the 
+keyword is selected and the keyword from that library is used. If keyword is not 
+found, test execution fails. 
 
-There is no need to use the long format LibraryName.Keyword Name notation when 
-library search order is set. This makes it easier to to use multiple instances 
+There is no need to use the long format :name:`LibraryName.Keyword Name` notation 
+when library search order is set. This makes it easier to to use multiple instances 
 of the same library as :name:`Set Library Search Order` keyword can be used to 
 switch between the libraries. This enables using same user keywords instead of 
 duplicating those for all the library instances.
 
-Library search order is valid in the suite level meaning it is available in the 
-same suite where it was set.
+Library search order is valid in the suite level meaning it is available only in 
+the suite where it was set.
 
 
 Timeouts
