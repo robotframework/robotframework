@@ -51,7 +51,8 @@ class Keyword(BaseKeyword):
         output.start_keyword(self)
         if self.doc.startswith('*DEPRECATED*'):
             msg = self.doc.replace('*DEPRECATED*', '', 1).strip()
-            output.warn("Keyword '%s' is deprecated. %s" % (self.name, msg))
+            name = self.name.split('} = ', 1)[-1]  # Remove possible variable
+            output.warn("Keyword '%s' is deprecated. %s" % (name, msg))
         try:
             ret = self._run(handler, output, namespace)
         except ExecutionFailed, err:
