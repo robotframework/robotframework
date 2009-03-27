@@ -18,6 +18,7 @@ import time
 from robot import utils
 from robot.errors import FrameworkError, ExecutionFailed, DataError
 from robot.common import BaseKeyword
+from robot.output import SYSLOG
 from robot.variables import is_list_var
 
 
@@ -49,8 +50,6 @@ class Keyword(BaseKeyword):
         self.starttime = utils.get_timestamp()
         output.start_keyword(self)
         if self.doc.startswith('*DEPRECATED*'):
-            # SYSLOG is not initialized if imported in module
-            from robot.output import SYSLOG
             msg = self.doc.replace('*DEPRECATED*', '', 1).strip()
             SYSLOG.warn("Keyword '%s' is deprecated. %s" % (self.name, msg))
         try:
