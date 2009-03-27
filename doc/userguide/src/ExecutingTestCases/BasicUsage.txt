@@ -83,11 +83,23 @@ in the second example below::
    pybot my_tests.html your_tests.html
    pybot --name Example path/to/tests/pattern_*.html
 
+Test execution order
+''''''''''''''''''''
+
 Test cases in a test suite are executed in the order they are specified
 in the test case file where they are created. Test suites inside a higher level
 test suite are executed in case-insensitive alphabetical order based on the file
 or directory name. Finally, if multiple files and/or directories are given from
 the command line, they are executed in the order they are specified.
+
+In case there is need to specify suite execution order, you might use prefixes 
+like 01, 02, etc. in test suites' names. Starting from version 2.1 it is 
+possible to use prefixes which are removed from suite's name and not visible 
+anywhere in reports or logs. Prefixes are separated from suite 
+name with two underscores :misc:`__` as demonstrated below::
+
+   01__my_suite.html -> My Suite
+   02__another_suite.html -> Another Suite
 
 If the alphabetical ordering of test suites inside suites is problematic, 
 a good workaround is giving them separately in the required order. This easily
