@@ -2371,7 +2371,7 @@ th {
       <td align="undefined" valign="undefined">Fail Unless</td>
 
 
-      <td align="undefined" valign="undefined">len(@{files}) == 4</td>
+      <td align="undefined" valign="undefined">len(@{files}) == 6</td>
 
 
       <td align="undefined" valign="undefined"></td>
@@ -2398,7 +2398,13 @@ th {
       <td align="undefined" valign="undefined">${OUTBASE}-001.xml</td>
 
 
-      <td align="undefined" valign="undefined"># misc/subsuites/sub1.html</td>
+      <td align="undefined" valign="undefined"># misc/suites/multiple_suites/02__subsuite1/first__suite4.html
+
+
+
+
+
+      </td>
 
 
     </tr>
@@ -2419,7 +2425,7 @@ th {
       <td align="undefined" valign="undefined">${OUTBASE}-002.xml</td>
 
 
-      <td align="undefined" valign="undefined"># misc/subsuites/sub2.html</td>
+      <td align="undefined" valign="undefined">#&nbsp;misc/suites/multiple_suites/02__subsuite1/second__suite2.html</td>
 
 
     </tr>
@@ -2440,13 +2446,13 @@ th {
       <td align="undefined" valign="undefined">${OUTBASE}-003.xml</td>
 
 
-      <td align="undefined" valign="undefined"># misc/subsuites2/subsuite3.html</td>
+      <td align="undefined" valign="undefined"># misc/suites/subsuites/sub1.html</td>
 
 
     </tr>
 
 
-    <tr>
+    <tr><td></td><td align="undefined" valign="undefined">Equals</td><td align="undefined" valign="undefined">@{files}[3]</td><td align="undefined" valign="undefined">${OUTBASE}-004.xml</td><td># misc/suites/subsuites/sub2.html</td></tr><tr><td></td><td align="undefined" valign="undefined">Equals</td><td align="undefined" valign="undefined">@{files}[4]</td><td align="undefined" valign="undefined">${OUTBASE}-005.xml</td><td># misc/suites/subsuites2/subsuite3.html</td></tr><tr>
 
 
       <td align="undefined" valign="undefined"></td>
@@ -2455,7 +2461,7 @@ th {
       <td align="undefined" valign="undefined">Equals</td>
 
 
-      <td align="undefined" valign="undefined">@{files}[3]</td>
+      <td align="undefined" valign="undefined">@{files}[5]</td>
 
 
       <td align="undefined" valign="undefined">${OUTBASE}.xml</td>
@@ -2478,10 +2484,10 @@ th {
       <td align="undefined" valign="undefined">Index Should Contain Src Links</td>
 
 
-      <td align="undefined" valign="undefined">Sub 1</td>
+      <td align="undefined" valign="undefined">Suite 4</td><td align="undefined" valign="undefined">${OUTBASE}-001.xml</td>
 
 
-      <td align="undefined" valign="undefined">${OUTBASE}-001.xml</td>
+      
 
 
       <td align="undefined" valign="undefined"><br>
@@ -2489,18 +2495,18 @@ th {
 
 
     </tr>
-    <tr>
+    <tr><td></td><td>...</td><td align="undefined" valign="undefined">Suite 2</td><td align="undefined" valign="undefined">${OUTBASE}-002.xml</td><td></td></tr><tr><td></td><td>...</td><td align="undefined" valign="undefined">Sub 1</td><td align="undefined" valign="undefined">${OUTBASE}-003.xml</td><td></td></tr><tr>
       <td></td>
       <td>...</td>
       <td>Sub 2</td>
-      <td>${OUTBASE}-002.xml</td>
+      <td>${OUTBASE}-004.xml</td>
       <td></td>
     </tr>
     <tr>
       <td></td>
       <td>...</td>
       <td>Subsuite 3</td>
-      <td>${OUTBASE}-003.xml</td>
+      <td>${OUTBASE}-005.xml</td>
       <td></td>
     </tr>
     <tr>
