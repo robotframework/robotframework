@@ -17,7 +17,7 @@ import sys
 from types import MethodType, FunctionType
 
 from robot import utils
-from robot.errors import FrameworkError
+from robot.errors import DataError, FrameworkError
 from robot.common import BaseHandler
 from runkwregister import RUN_KW_REGISTER
 
@@ -273,7 +273,7 @@ class _JavaHandler(_RunnableHandler):
         args = _RunnableHandler._replace_vars_from_args(self, args, variables)
         if self.maxargs == sys.maxint:
             args = self._handle_varargs(args)
-        return args
+        return self._coerce_args(args)
 
     def _handle_varargs(self, args):
         if len(args) == self.minargs:
@@ -291,7 +291,12 @@ class _JavaHandler(_RunnableHandler):
             return args
         for index, arg in enumerate(args):
             if isinstance(arg, basestring):
-                args[index] = self._arg_coercion_functions[index](arg)
+                func = self._arg_coercion_functions[index]
+                try:
+                    args[index] = func(arg)
+                except ValueError:
+                    raise DataError('Argument at position %d cannot be coerced '
+                                    'to integer' % (index+1))
         return args
 
     

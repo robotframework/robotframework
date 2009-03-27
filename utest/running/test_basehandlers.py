@@ -205,6 +205,11 @@ if utils.is_jython:
             handler = self.lib.handlers['booleanArgument']
             assert_equals(handler._coerce_args([42]), [42])
 
+        def test_coercion_fails_with_readable_message(self):
+            msg = 'Argument at position 1 cannot be coerced to %s'
+            handler = self.lib.handlers['intArgument']
+            assert_raises_with_msg(DataError, msg % 'integer', handler._coerce_args, ['invalid'])
+
         def test_no_arg_no_coercion(self):
             handler = self.lib.handlers['noArgument']
             assert_equals(handler._coerce_args([]), [])
@@ -221,7 +226,6 @@ if utils.is_jython:
         def test_coercable_and_uncoercable_args_in_same_kw(self):
             handler = self.lib.handlers['coercableAndUnCoercableArgs']
             assert_equals(handler._coerce_args(['1', 'False', '-23', '0']), ['1', False, -23, '0'])
-
 
 
 if __name__ == '__main__':
