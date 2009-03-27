@@ -18,7 +18,7 @@ import os.path
 from robot import utils
 from robot.errors import DataError
 from robot.common import BaseTestSuite, BaseTestCase, BaseKeyword
-from robot.output import SYSLOG
+from robot.output import LOGGER
 
 
 def process_outputs(paths, settings):
@@ -43,7 +43,7 @@ def process_output(path, read_level=-1):
     """
     if not os.path.isfile(path):
         raise DataError("Output file '%s' does not exist." % path)
-    SYSLOG.info("Processing output file '%s'." % path)
+    LOGGER.info("Processing output file '%s'." % path)
     try:
         root = utils.DomWrapper(path)
     except utils.RERAISED_EXCEPTIONS:

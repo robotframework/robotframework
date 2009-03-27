@@ -20,7 +20,7 @@ from robot.errors import FrameworkError, DataError
 from robot.libraries import STDLIB_NAMES
 from robot.variables import GLOBAL_VARIABLES
 from robot.common import UserErrorHandler
-from robot.output import SYSLOG
+from robot.output import LOGGER
 import robot
 
 from importer import Importer
@@ -38,7 +38,7 @@ class Namespace:
 
     def __init__(self, suite, parent):
         if suite is not None:
-            SYSLOG.info("Initializing namespace for test suite '%s'" % suite.longname)
+            LOGGER.info("Initializing namespace for test suite '%s'" % suite.longname)
         self.variables = _VariableScopes(suite, parent)
         self.suite = suite
         self.test = None
@@ -91,7 +91,7 @@ class Namespace:
             self._userlibs.append(resource.user_keywords)
             self._handle_imports(resource.imports)
         else:
-            SYSLOG.warn("Resource file '%s' already imported by suite '%s'"
+            LOGGER.warn("Resource file '%s' already imported by suite '%s'"
                         % (path, self.suite.longname))
 
     def import_variables(self, path, args, overwrite=False):
@@ -102,19 +102,19 @@ class Namespace:
             msg = "Variable file '%s'" % path
             if args:
                 msg += " with arguments %s" % (utils.seq2str2(args))
-            SYSLOG.warn("%s already imported by suite '%s'"
+            LOGGER.warn("%s already imported by suite '%s'"
                         % (msg, self.suite.longname))
 
     def import_library(self, name, args=None):
         code_name, lib_name, args = self._get_lib_names_and_args(name, args)
         if self._testlibs.has_key(lib_name):
-            SYSLOG.warn("Test library '%s' already imported by suite '%s'"
+            LOGGER.warn("Test library '%s' already imported by suite '%s'"
                         % (lib_name, self.suite.longname))
             return
         lib = IMPORTER.import_library(code_name, args)
         if code_name != lib_name:
             lib = lib.copy(lib_name)
-            SYSLOG.info("Imported library '%s' with name '%s'"
+            LOGGER.info("Imported library '%s' with name '%s'"
                         % (code_name, lib_name))
         self._testlibs[lib_name] = lib
         lib.start_suite()
@@ -228,7 +228,7 @@ class Namespace:
         else:
             return [hand1, hand2]
         if not RUN_KW_REGISTER.is_run_keyword(ext_hand):
-            SYSLOG.warn(
+            LOGGER.warn(
                 "Keyword '%s' found both from a user created test library "
                 "'%s' and Robot Framework standard library '%s'. The user "
                 "created keyword is used. To select explicitly, and to get "

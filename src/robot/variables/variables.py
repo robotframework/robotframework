@@ -19,7 +19,7 @@ from types import DictionaryType
 
 from robot import utils
 from robot.errors import DataError
-from robot.output import SYSLOG
+from robot.output import LOGGER
 
 from isvar import is_var, is_scalar_var, is_list_var
 
@@ -149,7 +149,7 @@ class Variables(utils.NormalizedDict):
         # 1) Handle reserved syntax
         if var.identifier not in ['$','@','%']:
             value = '%s{%s}' % (var.identifier, var.base)
-            SYSLOG.warn("Syntax '%s' is reserved for future use. Please "
+            LOGGER.warn("Syntax '%s' is reserved for future use. Please "
                         "escape it like '\\%s'." % (value, value))
             return value
             
@@ -181,7 +181,7 @@ class Variables(utils.NormalizedDict):
                                 % (var.base, var.index))
 
     def set_from_file(self, path, args, overwrite=False):
-        SYSLOG.info("Importing varible file '%s' with args %s" % (path, args))
+        LOGGER.info("Importing varible file '%s' with args %s" % (path, args))
         args = utils.to_list(args)
         try:
             module = utils.simple_import(path)

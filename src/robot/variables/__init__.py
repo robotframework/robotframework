@@ -16,7 +16,7 @@
 import os
 
 from robot import utils
-from robot.output import SYSLOG
+from robot.output import LOGGER
 
 from variables import Variables
 from isvar import is_var, is_scalar_var, is_list_var
@@ -54,8 +54,8 @@ def _set_cli_vars(settings):
             GLOBAL_VARIABLES.set_from_file(path, args)
         except:
             msg, details = utils.get_error_details()
-            SYSLOG.error(msg)
-            SYSLOG.info(details)
+            LOGGER.error(msg)
+            LOGGER.info(details)
     for varstr in settings['Variables']:
         try:
             name, value = varstr.split(':', 1)

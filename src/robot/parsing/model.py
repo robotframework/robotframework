@@ -18,7 +18,7 @@ import os
 from robot import utils
 from robot.errors import DataError
 from robot.common import BaseTestSuite, BaseTestCase
-from robot.output import SYSLOG
+from robot.output import LOGGER
 
 from rawdata import RawData, READERS
 from metadata import TestSuiteMetadata, TestCaseMetadata
@@ -68,7 +68,7 @@ class _BaseSuite(BaseTestSuite):
 class FileSuite(_BaseSuite):
     
     def __init__(self, path):
-        SYSLOG.info("Parsing test case file '%s'" % path)
+        LOGGER.info("Parsing test case file '%s'" % path)
         rawdata = self._get_rawdata(path)
         _BaseSuite.__init__(self, rawdata)
         self.tests = self._process_testcases(rawdata)
@@ -98,7 +98,7 @@ class DirectorySuite(_BaseSuite):
     _ignored_dirs = ['CVS']
     
     def __init__(self, path, suitenames):
-        SYSLOG.info("Parsing test suite directory '%s'" % path)
+        LOGGER.info("Parsing test suite directory '%s'" % path)
         # If we are included also all our children are
         if self._is_in_incl_suites(os.path.basename(os.path.normpath(path)),
                                    suitenames):
@@ -126,22 +126,22 @@ class DirectorySuite(_BaseSuite):
                 if initfile is None:
                     initfile = path
                 else:
-                    SYSLOG.error("Ignoring second test suite init file '%s'" % path)
+                    LOGGER.error("Ignoring second test suite init file '%s'" % path)
             elif self._is_ignored(name, path, suitenames):
-                SYSLOG.info("Ignoring file or directory '%s'" % name)
+                LOGGER.info("Ignoring file or directory '%s'" % name)
             else:             
                 files.append(path)
         return files, initfile
 
     def _get_rawdata(self, path):
         if self.initfile is None:
-            SYSLOG.info("No test suite directory init file")
+            LOGGER.info("No test suite directory init file")
             return RawData(path)
-        SYSLOG.info("Parsing test suite directory init file '%s'" % self.initfile)
+        LOGGER.info("Parsing test suite directory init file '%s'" % self.initfile)
         rawdata = RawData(self.initfile)
         if rawdata.get_type() in [rawdata.INITFILE, rawdata.EMPTY]:
             return rawdata
-        SYSLOG.error("Test suite directory initialization file '%s' "
+        LOGGER.error("Test suite directory initialization file '%s' "
                      "contains test cases and is ignored." % self.initfile)
         return RawData(path)
             
@@ -154,7 +154,7 @@ class DirectorySuite(_BaseSuite):
                     suite = FileSuite(path)
             except:
                 msg = "Parsing data source '%s' failed: %s"
-                SYSLOG.info(msg % (path, utils.get_error_message()))
+                LOGGER.info(msg % (path, utils.get_error_message()))
             else:
                 self.suites.append(suite)
 
@@ -185,7 +185,7 @@ class DirectorySuite(_BaseSuite):
 class MultiSourceSuite(_BaseSuite):
     
     def __init__(self, paths, suitenames):
-        SYSLOG.info("Parsing multiple data sources %s" % utils.seq2str(paths))
+        LOGGER.info("Parsing multiple data sources %s" % utils.seq2str(paths))
         _BaseSuite.__init__(self, RawData(None))
         for path in paths:
             try:
@@ -194,7 +194,7 @@ class MultiSourceSuite(_BaseSuite):
                 else:
                     suite = FileSuite(path)
             except DataError, err:
-                SYSLOG.error("Parsing data source '%s' failed: %s" % (path, err))
+                LOGGER.error("Parsing data source '%s' failed: %s" % (path, err))
             else:
                 self.suites.append(suite)
         if self.get_test_count() == 0 and len(suitenames) == 0:

@@ -21,11 +21,11 @@ from abstractlogger import AbstractLogger, Message
 from monitor import CommandLineMonitor
 
 
-class SystemLogger(AbstractLogger):
+class _GlobalLogger(AbstractLogger):
     """Global system logger, to which new loggers may be registered.
 
-    Whenever something is written to SYSLOG in code, all registered loggers are
-    notified.  Messages are also cached and cached messasges written to new
+    Whenever something is written to LOGGER in code, all registered loggers are
+    notified.  Messages are also cached and cached messages written to new
     loggers when they are registered.
 
     Tools using Robot Framework's internal modules should register their own
@@ -168,4 +168,4 @@ class _FileLogger(AbstractLogger):
         self._writer.close()
 
 
-SYSLOG = SystemLogger()
+LOGGER = _GlobalLogger()

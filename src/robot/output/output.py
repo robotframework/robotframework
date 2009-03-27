@@ -20,7 +20,7 @@ from robot import utils
 import robot
 
 from abstractlogger import AbstractLogger, Message, LEVELS
-from systemlogger import SYSLOG
+from systemlogger import LOGGER
 from xmllogger import XmlLogger
 from listeners import Listeners
 from debugfile import DebugFile
@@ -38,10 +38,10 @@ class Output(AbstractLogger):
         robot.output.OUTPUT = self
         
     def _register_loggers(self, listeners, debugfile):
-        SYSLOG.register_logger(self._xmllogger)
+        LOGGER.register_logger(self._xmllogger)
         for logger in Listeners(listeners), DebugFile(debugfile):
-            if logger: SYSLOG.register_logger(logger)
-        SYSLOG.disable_message_cache()
+            if logger: LOGGER.register_logger(logger)
+        LOGGER.disable_message_cache()
 
     def _get_log_name_generator(self, log):
         return log != 'NONE' and utils.FileNameGenerator(log) or None
@@ -55,10 +55,10 @@ class Output(AbstractLogger):
                            self._settings['TagStatLink'])
         stats.serialize(self._xmllogger)
         self._xmllogger.close(serialize_errors=True)
-        SYSLOG.output_file('Output', self._settings['Output'])
+        LOGGER.output_file('Output', self._settings['Output'])
             
     def start_suite(self, suite):
-        SYSLOG.start_suite(suite)
+        LOGGER.start_suite(suite)
         if self._xmllogger.started_output:
             suite.namespace.variables.set_global('${OUTPUT_FILE}',
                                                  self._xmllogger.started_output)
@@ -67,9 +67,9 @@ class Output(AbstractLogger):
                                                      self._namegen.get_name())
         
     def end_suite(self, suite):
-        SYSLOG.end_suite(suite)
+        LOGGER.end_suite(suite)
         if self._xmllogger.ended_output:
-            SYSLOG.output_file('Output', self._xmllogger.ended_output)
+            LOGGER.output_file('Output', self._xmllogger.ended_output)
             orig_outpath = self._settings['Output']
             suite.namespace.variables.set_global('${OUTPUT_FILE}', orig_outpath)
             self._create_split_log(self._xmllogger.ended_output, suite)
@@ -83,16 +83,16 @@ class Output(AbstractLogger):
         suite.namespace.variables.set_global('${LOG_FILE}', self._namegen.get_base())
         
     def start_test(self, test):
-        SYSLOG.start_test(test)
+        LOGGER.start_test(test)
         
     def end_test(self, test):
-        SYSLOG.end_test(test)
+        LOGGER.end_test(test)
         
     def start_keyword(self, kw):
-        SYSLOG.start_keyword(kw)
+        LOGGER.start_keyword(kw)
         
     def end_keyword(self, kw):
-        SYSLOG.end_keyword(kw)
+        LOGGER.end_keyword(kw)
 
     def log_output(self, output):
         """Splits given output to levels and messages and logs them"""
@@ -101,7 +101,7 @@ class Output(AbstractLogger):
 
     def _write(self, msg):
         # Called also by AbstractLogger.write
-        SYSLOG.log_message(msg)
+        LOGGER.log_message(msg)
             
     def set_log_level(self, level):
         return self._xmllogger.set_log_level(level)

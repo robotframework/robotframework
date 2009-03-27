@@ -18,7 +18,7 @@ import time
 from robot import utils
 from robot.errors import FrameworkError, ExecutionFailed, DataError
 from robot.common import BaseKeyword
-from robot.output import SYSLOG
+from robot.output import LOGGER
 from robot.variables import is_list_var
 
 
@@ -51,7 +51,7 @@ class Keyword(BaseKeyword):
         output.start_keyword(self)
         if self.doc.startswith('*DEPRECATED*'):
             msg = self.doc.replace('*DEPRECATED*', '', 1).strip()
-            SYSLOG.warn("Keyword '%s' is deprecated. %s" % (self.name, msg))
+            LOGGER.warn("Keyword '%s' is deprecated. %s" % (self.name, msg))
         try:
             ret = self._run(handler, output, namespace)
         except ExecutionFailed, err:
@@ -342,8 +342,7 @@ class _OutputRecorder:
     
     def __getattr__(self, name):
         if name == 'syslog':
-            from robot.output import SYSLOG
-            return SYSLOG
+            return LOGGER
         return lambda *args : self._actions.append((name, args))
         
     def replay(self, output):

@@ -14,19 +14,19 @@
 
 
 from robot import utils
-from systemlogger import SYSLOG
+from systemlogger import LOGGER
 from abstractlogger import IsLogged
 
 
 def DebugFile(path):
     if path == 'NONE':
-        SYSLOG.info('No debug file')
+        LOGGER.info('No debug file')
         return None
     try:
-        SYSLOG.info('Debug file: %s' % path)
+        LOGGER.info('Debug file: %s' % path)
         return _DebugFileWriter(path)
     except:
-        SYSLOG.error("Opening debug file '%s' failed and writing to debug file "
+        LOGGER.error("Opening debug file '%s' failed and writing to debug file "
                      "is disabled. Error: %s" % (path, utils.get_error_message()))
         return None
 
@@ -52,7 +52,7 @@ class _DebugFileWriter:
         self._end('SUITE', suite.longname, suite.elapsedtime)
         self._separator('SUITE')
         if self._indent == 0:
-            SYSLOG.output_file('Debug', self._file.name)
+            LOGGER.output_file('Debug', self._file.name)
             self.close()
         
     def start_test(self, test):

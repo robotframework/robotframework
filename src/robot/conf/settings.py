@@ -17,7 +17,7 @@ import os
 
 from robot import utils
 from robot.errors import DataError, FrameworkError
-from robot.output import SYSLOG
+from robot.output import LOGGER
 
 
 def get_title(type_, name):
@@ -66,7 +66,7 @@ class _BaseSettings:
         self._cli_opts.update(self._extra_cli_opts)
         self._process_deprecated_cli_opts(options)
         self._process_cli_opts(options)
-        if log: SYSLOG.info('Settings:\n%s' % self)
+        if log: LOGGER.info('Settings:\n%s' % self)
             
     def _process_cli_opts(self, opts):
         for name, (cli_name, default) in self._cli_opts.items():
@@ -83,11 +83,11 @@ class _BaseSettings:
             if oldname not in opts or opts[oldname] in [None, []]:
                 continue
             if newname:
-                SYSLOG.warn("Option '--%s' is deprecated. Use '--%s' instead."
+                LOGGER.warn("Option '--%s' is deprecated. Use '--%s' instead."
                             % (oldname, newname))
                 opts[newname] = opts[oldname]
             else:
-                SYSLOG.error("Option '--%s' has been removed." % oldname)
+                LOGGER.error("Option '--%s' has been removed." % oldname)
     
     def __setitem__(self, name, value):
         if not self._cli_opts.has_key(name):
@@ -178,7 +178,7 @@ class _BaseSettings:
             if len(tokens) >= 3:
                 ret.append((tokens[0], ':'.join(tokens[1:-1]), tokens[-1]))
             else:
-                SYSLOG.error("Invalid format for option '--tagstatlink'. "
+                LOGGER.error("Invalid format for option '--tagstatlink'. "
                              "Expected 'tag:link:title' but got '%s'." % item)
         return ret
 
@@ -186,7 +186,7 @@ class _BaseSettings:
         try:
             return int(value)
         except ValueError:
-            SYSLOG.error("Option '--%s' expected integer value but got '%s'. "
+            LOGGER.error("Option '--%s' expected integer value but got '%s'. "
                          "Default value used instead." % (name.lower(), value))
             return self._cli_opts[name][1]
 

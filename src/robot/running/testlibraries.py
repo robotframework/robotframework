@@ -20,7 +20,7 @@ import inspect
 from robot import utils
 from robot.errors import DataError
 from robot.common import BaseLibrary
-from robot.output import SYSLOG
+from robot.output import LOGGER
 
 from handlers import Handler, InitHandler, DynamicHandler
 
@@ -192,7 +192,7 @@ class _BaseTestLibrary(BaseLibrary):
 
     def _get_reporting_methods(self):
         # success, failure, details
-        return SYSLOG.debug, SYSLOG.info, SYSLOG.debug
+        return LOGGER.debug, LOGGER.info, LOGGER.debug
                     
     def _get_handler_names(self, libcode):
         return [ name for name in dir(libcode) 
@@ -277,10 +277,10 @@ class _HybridLibrary(_BaseTestLibrary):
             return instance.getKeywordNames()
 
     def _get_reporting_methods(self):
-        # Use SYSLOG.warn for reporting possible failures when creating kws 
+        # Use LOGGER.warn for reporting possible failures when creating kws 
         # to make them visible. With hybrid libraries kw names are returned 
         # explicitly so creating them should also pass.
-        return SYSLOG.debug, SYSLOG.warn, SYSLOG.info
+        return LOGGER.debug, LOGGER.warn, LOGGER.info
     
         
 class _DynamicLibrary(_BaseTestLibrary):

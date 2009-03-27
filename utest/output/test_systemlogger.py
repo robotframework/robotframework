@@ -4,7 +4,7 @@ from StringIO import StringIO
 from robot import utils
 from robot.utils.asserts import *
 
-from robot.output.systemlogger import _FileLogger, SystemLogger
+from robot.output.systemlogger import _FileLogger, _GlobalLogger
 
 
 class MessageMock:
@@ -72,10 +72,10 @@ class TestSystemFileLogger(unittest.TestCase):
         assert_equals(self.logger._writer.getvalue(), '20060613 08:37:42.123 | DEBUG | msg\n')
         
 
-class TestSystemLogger(unittest.TestCase):
+class TestGlobalLogger(unittest.TestCase):
     
     def setUp(self):
-        self.syslog = SystemLogger()
+        self.syslog = _GlobalLogger()
 
     def test_write_to_one_logger(self):
         logger = LoggerMock(('Hello, world!', 'INFO'))

@@ -1066,7 +1066,7 @@ class _Misc:
         
     def syslog(self, message, level="INFO"):
         """Logs the given message with the given level into syslog."""
-        output.SYSLOG.write(message, level)
+        output.LOGGER.write(message, level)
         
     def import_library(self, name, *args):
         """Imports a library with the given name and optional arguments.

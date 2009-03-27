@@ -17,7 +17,7 @@ import types
 
 from robot import utils
 from robot.errors import DataError
-from systemlogger import SYSLOG
+from systemlogger import LOGGER
 
 
 class Listeners:
@@ -31,9 +31,9 @@ class Listeners:
                 message, details = utils.get_error_details()
                 if args:
                     name += ':' + ':'.join(args)
-                SYSLOG.error("Taking listener '%s' into use failed: %s"
+                LOGGER.error("Taking listener '%s' into use failed: %s"
                              % (name, message))
-                SYSLOG.info("Details:\n%s" % details)
+                LOGGER.info("Details:\n%s" % details)
 
     def __nonzero__(self):
         return len(self._listeners) > 0
@@ -80,7 +80,7 @@ class _Listener:
             listener = listener(*args)
         elif args:
             raise DataError("Listeners implemented as modules do not take arguments")
-        SYSLOG.info("Imported listener '%s' with arguments %s (source %s)" 
+        LOGGER.info("Imported listener '%s' with arguments %s (source %s)" 
                     % (name, utils.seq2str2(args), source))
         for func in ['start_suite', 'end_suite', 'start_test', 'end_test', 
                      'start_keyword', 'end_keyword', 'output_file', 
@@ -102,10 +102,10 @@ class _Handler:
             self._handler, self._name = self._get_handler(listener, name)
         except AttributeError:
             self._handler = self._name = None
-            SYSLOG.debug("Listener '%s' does not have method '%s'" 
+            LOGGER.debug("Listener '%s' does not have method '%s'" 
                          % (listener_name, name))
         else:
-            SYSLOG.debug("Listener '%s' has method '%s'" 
+            LOGGER.debug("Listener '%s' has method '%s'" 
                          % (listener_name, self._name))
         self._listener_name = listener_name
             
@@ -115,9 +115,9 @@ class _Handler:
                 self._handler(*args)
         except:
             message, details = utils.get_error_details()
-            SYSLOG.error("Calling '%s' method of listener '%s' failed: %s"
+            LOGGER.error("Calling '%s' method of listener '%s' failed: %s"
                                % (self._name, self._listener_name, message))
-            SYSLOG.info("Details:\n%s" % details)
+            LOGGER.info("Details:\n%s" % details)
             
     def _get_handler(self, listener, name):
         try:

@@ -19,7 +19,7 @@ from robot import utils
 from robot.errors import DataError
 from robot.common import Statistics
 from robot.conf import get_title
-from robot.output import SYSLOG, process_outputs, process_output
+from robot.output import LOGGER, process_outputs, process_output
 
 import templates
 from templating import Namespace, Template
@@ -60,7 +60,7 @@ class RobotTestOutput:
         self.statistics.serialize(serializer)
         self.exec_errors.serialize(serializer)
         serializer.close()
-        SYSLOG.output_file('Output', path)
+        LOGGER.output_file('Output', path)
         
     def serialize_summary(self, path, title=None):
         outfile = self._get_outfile(path, 'summary')
@@ -72,7 +72,7 @@ class RobotTestOutput:
         self.statistics.serialize(SummaryStatisticsSerializer(outfile))
         outfile.write('</body>\n</html>\n')
         outfile.close()
-        SYSLOG.output_file('Summary', path)
+        LOGGER.output_file('Summary', path)
         
     def serialize_report(self, path, title=None, logpath=None, split=-1):
         outfile = self._get_outfile(path, 'report')
@@ -91,7 +91,7 @@ class RobotTestOutput:
         self.statistics.tags.serialize(ReportTagStatSerializer(outfile))
         outfile.write('</body>\n</html>\n')
         outfile.close()
-        SYSLOG.output_file('Report', path)
+        LOGGER.output_file('Report', path)
         
     def serialize_log(self, path, title=None, split=-1):
         outfile = self._get_outfile(path, 'log')
@@ -106,7 +106,7 @@ class RobotTestOutput:
             self._serialize_log(outfile)
         outfile.write('</body>\n</html>\n')
         outfile.close()
-        SYSLOG.output_file('Log', path)
+        LOGGER.output_file('Log', path)
             
     def _serialize_log(self, outfile):
         self.statistics.serialize(LogStatisticsSerializer(outfile))
@@ -142,7 +142,7 @@ class RobotTestOutput:
         except:
             msg = ("Opening %s file '%s' for writing failed: %s" 
                    % (outtype, outpath, utils.get_error_message()))
-            SYSLOG.error(msg)
+            LOGGER.error(msg)
             return None
         
 

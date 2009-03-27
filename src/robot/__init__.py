@@ -21,7 +21,7 @@ if __name__ == '__main__':
 
 if 'pythonpathsetter' not in sys.modules:
     import pythonpathsetter
-from output import Output, CommandLineMonitor, SYSLOG
+from output import Output, CommandLineMonitor, LOGGER
 from conf import RobotSettings, RebotSettings
 from running import TestSuite
 from serializing import RobotTestOutput, RebotTestOutput, SplitIndexTestOutput
@@ -34,15 +34,15 @@ __version__ = utils.version
 
 
 def run_from_cli(args, usage):
-    SYSLOG.info(utils.get_full_version('Robot Framework'))
+    LOGGER.info(utils.get_full_version('Robot Framework'))
     _run_or_rebot_from_cli(run, args, usage, pythonpath='pythonpath')
 
 def rebot_from_cli(args, usage):
-    SYSLOG.info(utils.get_full_version('Rebot'))
+    LOGGER.info(utils.get_full_version('Rebot'))
     _run_or_rebot_from_cli(rebot, args, usage)
 
 def _run_or_rebot_from_cli(method, cliargs, usage, **argparser_config):
-    SYSLOG.register_file_logger()
+    LOGGER.register_file_logger()
     ap = utils.ArgumentParser(usage, utils.get_full_version())
     try:
         options, datasources = \
@@ -52,10 +52,10 @@ def _run_or_rebot_from_cli(method, cliargs, usage, **argparser_config):
     except Information, msg:
         _exit(INFO_PRINTED, str(msg))
     except DataError, err:
-        SYSLOG.register_console_logger()
+        LOGGER.register_console_logger()
         _exit(DATA_ERROR, str(err))
 
-    SYSLOG.info('Data sources: %s' % utils.seq2str(datasources))
+    LOGGER.info('Data sources: %s' % utils.seq2str(datasources))
     try: 
         suite = method(*datasources, **options)
     except DataError:
@@ -85,13 +85,13 @@ def run(*datasources, **options):
     pybot --log mylog.html /path/to/tests.html /path/to/tests2.html
     """
     settings = RobotSettings(options)
-    SYSLOG.register_console_logger(settings['MonitorWidth'], 
+    LOGGER.register_console_logger(settings['MonitorWidth'], 
                                    settings['MonitorColors'])
     output = Output(settings)
     init_global_variables(settings)
     suite = TestSuite(datasources, settings)
     suite.run(output)
-    SYSLOG.info("Tests execution ended. Statistics:\n%s" 
+    LOGGER.info("Tests execution ended. Statistics:\n%s" 
                 % suite.get_stat_message())
     testoutput = RobotTestOutput(suite, settings)
     output.close(suite)
@@ -102,7 +102,7 @@ def run(*datasources, **options):
         else:
             testoutput = RebotTestOutput(datasources, settings)
         testoutput.serialize(settings)
-    SYSLOG.close()
+    LOGGER.close()
     return suite
 
 
@@ -122,11 +122,11 @@ def rebot(*datasources, **options):
     rebot --report myrep.html --log NONE /path/out1.xml /path/out2.xml
     """
     settings = RebotSettings(options)
-    SYSLOG.register_console_logger(colors=settings['MonitorColors'])
-    SYSLOG.disable_message_cache()
+    LOGGER.register_console_logger(colors=settings['MonitorColors'])
+    LOGGER.disable_message_cache()
     testoutput = RebotTestOutput(datasources, settings)
     testoutput.serialize(settings, generator='Rebot')
-    SYSLOG.close()
+    LOGGER.close()
     return testoutput.suite
     
 
@@ -149,9 +149,9 @@ def _exit(rc_or_suite, message=None, details=None):
         else:
             if rc == DATA_ERROR:
                 message += '\n\nTry --help for usage information.'
-            SYSLOG.error(message)
+            LOGGER.error(message)
             if details:
-                SYSLOG.info(details)
+                LOGGER.info(details)
     else:
         rc = rc_or_suite.critical_stats.failed
         if rc > 250:

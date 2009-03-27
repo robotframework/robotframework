@@ -15,7 +15,7 @@
 
 from robot import utils
 from robot.errors import DataError
-from robot.output import SYSLOG
+from robot.output import LOGGER
 
 
 _ERR = "Error in file '%s' in table '%s' in element on row %d: %s"
@@ -42,7 +42,7 @@ class _Table:
             
     def report_invalid_syntax(self, row, error, level='ERROR'):
         msg = _ERR % (self._source, self._name, row, error)
-        SYSLOG.write(msg, level)
+        LOGGER.write(msg, level)
 
 
 class SimpleTable(_Table):
