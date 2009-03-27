@@ -5,7 +5,8 @@ OUTDIR=testoutput
 
 echo "0) Cleanup"
 rm -rf $OUTDIR
-cp -R $INDIR $OUTDIR
+mkdir $OUTDIR
+cp $INDIR/*.* $OUTDIR
 
 echo "1) Tidying"
 python robotidy.py $OUTDIR/orig.html $OUTDIR/cleaned.html
@@ -22,7 +23,7 @@ cp $OUTDIR/cleaned.tsv $OUTDIR/inplace.tsv
 python robotidy.py --fixcomment --inplace --style NONE $OUTDIR/inplace.*
 
 echo
-echo "3) Runnning tests"
+echo "3) Running tests"
 for data in $OUTDIR/*.*; do
     echo
     echo $data

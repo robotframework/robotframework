@@ -94,12 +94,14 @@ import os
 import glob
 
 from robot.parsing import RawData, rawdatatables, rawdata
-from robot.output import SYSLOG
+from robot.output import LOGGER
 from robot.errors import DataError, Information
 from robot.variables import is_scalar_var
 from robot import utils
 
 rawdata.PROCESS_CURDIR = False
+LOGGER.register_console_logger()
+LOGGER.register_file_logger()
 
 # Rows having comment in the first cell need to be handled differently because
 # otherwise they'd start a new tc or uk. Such rows are simply indented one column
@@ -117,9 +119,6 @@ def _monkey_patched_add_row(self, name, data):
 
 rawdatatables.ComplexTable._orig_add_row = rawdatatables.ComplexTable._add_row
 rawdatatables.ComplexTable._add_row = _monkey_patched_add_row
-
-# Support "x in normdict" in pre Robot 1.8.3 versions
-utils.NormalizedDict.__contains__ = utils.NormalizedDict.has_key
 
 # Order of names is important because settings/metadata are written in this
 # order (except for 'Teardown' and 'Return')
@@ -184,29 +183,25 @@ td.col_name {
 </style>
 '''
 
-class Processor:
+class Tidier:
 
     def __init__(self):
         self.errors = []
 
     def process_file(self, infile, outfile, opts):
+        if outfile is not None:
+            print '%s -> %s' % (infile, outfile)
+        else:
+            print infile
+            outfile = infile
         try:
-            if outfile is not None:
-                print '%s -> %s' % (infile, outfile)
-            else:
-                print infile
-                outfile = infile
             if not os.path.isfile(infile):
-                self.errors.append("'%s' is not a regular file" % infile)
+                LOGGER.error("'%s' is not a regular file" % infile)
                 return
             data = TestData(infile, opts['fixcomments'])
             data.serialize(outfile, opts['format'], opts['title'], opts['style'])
-        except KeyboardInterrupt:
-            raise
         except:
-            error_msg = "ERROR: %s" % (utils.get_error_message())
-            print error_msg
-            self.errors.append(error_msg)
+            LOGGER.error(utils.get_error_message())
             
     def process_directory(self, indir, otps):
         for item in os.listdir(indir):
@@ -219,12 +214,12 @@ class Processor:
                 self.process_file(path, None, opts)
                         
     def valid_robot_file(self, path, tail):
-        tail = tail.lower()
-        if tail[0] in ['.', '_'] and not tail.startswith('__init__.'):
+        tail = tail.upper()
+        if tail[0] in ['.', '_'] and not tail.startswith('__INIT__.'):
             return False
         if os.path.isdir(path):
             return True
-        if tail.split('.')[-1] in ['tsv', 'xhtml', 'html']:
+        if os.path.splitext(tail)[-1][1:] in _valid_extensions:
             return True
         return False
 
@@ -301,9 +296,9 @@ class Settings:
             elif item.name == '':
                 self._comments.append(['#'] + item.value)
             else:
-                SYSLOG.error("Invalid setting '%s'" % item.name)
+                LOGGER.error("Invalid setting '%s'" % item.name)
         if self._comments and fix_comments:
-            SYSLOG.warn('Comments in setting table are not fixed.')
+            LOGGER.warn('Comments in setting table are not fixed.')
 
     def serialize(self, serializer):
         serializer.start_settings()
@@ -431,7 +426,7 @@ class _TcUkBase:
         
     def _add_meta(self, raw):
         if raw.name not in self._mapping:
-            SYSLOG.error("Invalid metadata '%s'" % raw.name)
+            LOGGER.error("Invalid metadata '%s'" % raw.name)
             return
         if self._metadata[self._mapping[raw.name]] is None:
             self._metadata[self._mapping[raw.name]] = []
@@ -481,7 +476,7 @@ class _TcsUksBase:
     def _fix_comments_before_first_item(self):
         comment = self._items.pop(0)
         if not self._items:
-            SYSLOG.warn('Comments in otherwise empty test case or keyword table are ignored.')
+            LOGGER.warn('Comments in otherwise empty test case or keyword table are ignored.')
             return
         for item in reversed(comment._keywords):
             item._comm_data.append('(Comment originally before first item in this table.)')
@@ -696,7 +691,7 @@ class TsvSerializer(_SerializerBase):
 
 
 if __name__ == '__main__':
-    processor = Processor()
+    tidier = Tidier()
     try:
         ap = utils.ArgumentParser(__doc__)
         opts, args = ap.parse_args(sys.argv[1:], help='help')
@@ -704,13 +699,13 @@ if __name__ == '__main__':
             if len(args) == 0:
                 raise DataError('--inplace requires at least one argument')
             for path in args:
-                processor.process_file(path, None, opts)
+                tidier.process_file(path, None, opts)
         elif opts['recursive']:
             if len(args) != 1:
                 raise DataError('--recursive requires exactly one argument')
             if not os.path.isdir(args[0]):
                 raise DataError('Parameter to --recursive must be a directory')
-            processor.process_directory(args[0], opts)
+            tidier.process_directory(args[0], opts)
         else:
             if len(args) != 2:
                 if len(args) == 1:
@@ -718,15 +713,9 @@ if __name__ == '__main__':
                 else:
                     msg = 'Only one input and one output file can be given'
                 raise DataError(msg)
-            processor.process_file(args[0], args[1], opts)
+            tidier.process_file(args[0], args[1], opts)
     except Information, msg:
         print str(msg)
-    except KeyboardInterrupt:
-        pass
-    except:
-        SYSLOG.error(utils.get_error_message())
+    except DataError, err:
+        LOGGER.error(str(err))
         print '\nUse --help to get usage information.'
-
-    if len(processor.errors) > 1:
-        print "\nFollowing errors occurred during tidying:\n"
-    print '\n'.join(processor.errors)
