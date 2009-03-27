@@ -43,6 +43,8 @@ public class ArgTypeCoercion {
 
     public void coercableAndUnCoercableArgs(boolean arg1, boolean arg2, Long arg3, String arg4) {}
 
+    public void coercableAndUnCoercableArgs(String arg1, boolean arg2, Long arg3, String arg4) {}
+
     public void coercableAndUnCoercableArgs(int arg1, boolean arg2, Long arg3) {}
 
     public void coercableAndUnCoercableArgs(int arg1, boolean arg2, Long arg3, boolean arg4) {}
