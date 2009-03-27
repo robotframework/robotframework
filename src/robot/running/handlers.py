@@ -23,6 +23,10 @@ from runkwregister import RUN_KW_REGISTER
 
 if utils.is_jython:
     from org.python.core import PyReflectedFunction, PyReflectedConstructor
+    from java.lang import Byte, Short, Integer, Long, Boolean
+
+    _JAVA_NUMERIC_TYPES = [Byte, Short, Integer, Long]
+    _JAVA_NUMERIC_PRIMITIVE_TYPES = ['byte', 'short', 'int', 'long']
 
     def _is_java_init(init):
         return isinstance(init, PyReflectedConstructor)
@@ -202,10 +206,10 @@ class _JavaHandler(_RunnableHandler):
     def __init__(self, library, handler_name, handler_method):
         _RunnableHandler.__init__(self, library, handler_name, handler_method)
         self.minargs, self.maxargs = self._get_arg_limits(handler_method)
+        self._arg_coercion_functions = self._get_coercion_funcs(handler_method)
         
     def _get_arg_limits(self, handler):
-        co = self._get_code_object(handler)
-        signatures = co.argslist[:co.nargs]
+        signatures = self._get_signatures(handler)
         if len(signatures) == 1:
             return self._get_single_sig_arg_limits(signatures[0])
         else:
@@ -213,6 +217,10 @@ class _JavaHandler(_RunnableHandler):
 
     def _get_code_object(self, handler):
         return handler.im_func
+
+    def _get_signatures(self, handler):
+        co = self._get_code_object(handler)
+        return co.argslist[:co.nargs]
 
     def _get_single_sig_arg_limits(self, signature):
         args = signature.args
@@ -232,6 +240,34 @@ class _JavaHandler(_RunnableHandler):
             if maxa is None or argc > maxa:
                 maxa = argc
         return mina, maxa
+
+    def _get_coercion_funcs(self, handler):
+        def _coerce_to_boolean(arg):
+            if arg.lower() == 'false':
+                return False
+            if arg.lower() == 'true':
+                return True
+            return arg
+
+        _no_coercion = lambda arg: arg
+
+        funcs = {}
+        for sig in self._get_signatures(handler):
+            for pos, arg in enumerate(sig.args):
+                if arg == Boolean or str(arg) == 'boolean':
+                    if funcs.has_key(pos) and funcs[pos] != _coerce_to_boolean:
+                        funcs[pos] = _no_coercion
+                    else:
+                        funcs[pos] = _coerce_to_boolean
+                elif arg in _JAVA_NUMERIC_TYPES or \
+                        str(arg) in _JAVA_NUMERIC_PRIMITIVE_TYPES:
+                    if funcs.has_key(pos) and funcs[pos] != long:
+                        funcs[pos] = _no_coercion
+                    else:
+                        funcs[pos] = long
+                else:
+                    funcs[pos] = _no_coercion
+        return funcs
             
     def _replace_vars_from_args(self, args, variables):
         args = _RunnableHandler._replace_vars_from_args(self, args, variables)
@@ -248,6 +284,14 @@ class _JavaHandler(_RunnableHandler):
             varargs = args[self.minargs:]
             args = args[:self.minargs]
             args.append(varargs)
+        return args
+
+    def _coerce_args(self, args):
+        if not self._arg_coercion_functions:
+            return args
+        for index, arg in enumerate(args):
+            if isinstance(arg, basestring):
+                args[index] = self._arg_coercion_functions[index](arg)
         return args
 
     

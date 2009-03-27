@@ -181,5 +181,48 @@ if utils.is_jython:
                 assert_equals(handler.maxargs, maxa)
 
 
+    class TestArgumentTypeCoercion(unittest.TestCase):
+
+        def setUp(self):
+            self.lib = TestLibrary('ArgTypeCoercion')
+
+        def test_coercing_to_integer(self):
+            handler = self.lib.handlers['intArgument']
+            assert_equals(handler._coerce_args(['1']), [1])
+
+        def test_coercing_to_boolean(self):
+            handler = self.lib.handlers['booleanArgument']
+            assert_equals(handler._coerce_args(['True']), [True])
+            assert_equals(handler._coerce_args(['FALSE']), [ False])
+
+        def test_coercion_with_compatible_types(self):
+            handler = self.lib.handlers['coercableKeywordWithCompatibleTypes']
+            assert_equals(handler._coerce_args(['9999', '-42', 'FaLsE']), [9999, -42, False])
+
+        def test_arguments_that_are_not_strings_are_not_coerced(self):
+            handler = self.lib.handlers['intArgument']
+            assert_equals(handler._coerce_args([self.lib]), [self.lib])
+            handler = self.lib.handlers['booleanArgument']
+            assert_equals(handler._coerce_args([42]), [42])
+
+        def test_no_arg_no_coercion(self):
+            handler = self.lib.handlers['noArgument']
+            assert_equals(handler._coerce_args([]), [])
+
+        def test_coercing_multiple_arguments(self):
+            handler = self.lib.handlers['coercableKeyword']
+            assert_equals(handler._coerce_args(['string', '42', 'tRUe']),
+                          ['string', 42, True])
+        
+        def test_coercion_is_not_done_with_conflicting_signatures(self):
+            handler = self.lib.handlers['unCoercableKeyword']
+            assert_equals(handler._coerce_args(['True', '42']), ['True', '42'])
+
+        def test_coercable_and_uncoercable_args_in_same_kw(self):
+            handler = self.lib.handlers['coercableAndUnCoercableArgs']
+            assert_equals(handler._coerce_args(['1', 'False', '-23', '0']), ['1', False, -23, '0'])
+
+
+
 if __name__ == '__main__':
     unittest.main()
