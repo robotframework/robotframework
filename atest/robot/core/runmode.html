@@ -55,8 +55,6 @@ th {
 }
 </style>
 <title>Runmode</title></head>
-
-
 <body>
 <h1>Runmode</h1>
 
@@ -154,10 +152,10 @@ th {
 <td>${DEFAULT SUITE ORDER}</td>
 <td></td>
 </tr>
-<tr><td></td><td>Log</td><td>${SUITE.suites}</td><td></td><td></td></tr><tr>
+<tr><td></td><td>${tests} =</td><td>Get Tests</td><td></td><td></td></tr><tr>
 <td></td>
 <td>Should Be Equal As Strings</td>
-<td>${SUITE.suites[0].tests}</td>
+<td>${tests}</td>
 <td>${DEFAULT TEST ORDER}</td>
 <td></td>
 </tr>
@@ -182,10 +180,10 @@ th {
 <td>${DEFAULT SUITE ORDER}</td>
 <td></td>
 </tr>
-<tr>
+<tr><td></td><td>${tests} =</td><td>Get Tests</td><td></td><td></td></tr><tr>
 <td></td>
 <td>Should Not Be Equal As Strings</td>
-<td>${SUITE.suites[0].tests}</td>
+<td>${tests}</td>
 <td>${DEFAULT TEST ORDER}</td>
 <td></td>
 </tr>
@@ -325,7 +323,7 @@ th {
 
 
 <td></td>
-</tr><tr><td></td><td>Should&nbsp;Be Equal As Strings</td><td>${SUITE.suites}</td><td>${DEFAULT SUITE ORDER}</td><td></td></tr><tr><td></td><td>Should&nbsp;Be Equal As Strings</td><td>${SUITE.suites[0].tests}</td><td>${DEFAULT TEST ORDER}</td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr>
+</tr><tr><td></td><td>Should&nbsp;Be Equal As Strings</td><td>${SUITE.suites}</td><td>${DEFAULT SUITE ORDER}</td><td></td></tr><tr><td></td><td>Should&nbsp;Be Equal As Strings</td><td>${SUITE.suites[0].tests}</td><td>${DEFAULT TEST ORDER}</td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Get Tests</td><td>Comment</td><td>This keyword is needed as there is also one directory suite, which &nbsp;does not contain tests.</td><td></td><td></td></tr><tr><td></td><td>${tests} =</td><td>Set Variable If</td><td>'${SUITE.suites[0].name}' ==&nbsp;'Subsuite 1'</td><td>${SUITE.suites[0].suites[0].tests}</td></tr><tr><td></td><td>...</td><td>${SUITE.suites[0].tests}</td><td></td><td></td></tr><tr><td></td><td>[ Return ]</td><td>${tests}</td><td></td><td></td></tr>
 </tbody></table>
 
 </body></html>
