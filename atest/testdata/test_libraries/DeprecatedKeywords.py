@@ -6,6 +6,10 @@ class DeprecatedKeywords:
         Some more doc here which is ignored in the warning.
         """
         pass
+
+    def deprecated_keyword_returning(self):
+        """*DEPRECATED* But still returning a value!"""
+        return 42
     
     def not_deprecated_with_doc(self):
         """Some Short Doc
