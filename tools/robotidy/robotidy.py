@@ -101,7 +101,6 @@ from robot import utils
 
 rawdata.PROCESS_CURDIR = False
 LOGGER.register_console_logger()
-LOGGER.register_file_logger()
 
 # Rows having comment in the first cell need to be handled differently because
 # otherwise they'd start a new tc or uk. Such rows are simply indented one column
@@ -185,19 +184,16 @@ td.col_name {
 
 class Tidier:
 
-    def __init__(self):
-        self.errors = []
-
     def process_file(self, infile, outfile, opts):
-        if outfile is not None:
+        if not os.path.isfile(infile):
+            LOGGER.error("'%s' is not a regular file" % infile)
+            return
+        if outfile:
             print '%s -> %s' % (infile, outfile)
         else:
             print infile
             outfile = infile
         try:
-            if not os.path.isfile(infile):
-                LOGGER.error("'%s' is not a regular file" % infile)
-                return
             data = TestData(infile, opts['fixcomments'])
             data.serialize(outfile, opts['format'], opts['title'], opts['style'])
         except:
