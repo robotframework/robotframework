@@ -108,8 +108,8 @@ class TestMiscUtils(unittest.TestCase):
     def test_remove_prefix(self):
         for inp, exp in [ ('01__hello', 'hello'),
                           ('textual_prefix__hello', 'hello'),
-                          ('01__actual__name', 'actual__name'),
-                         ]:
+                          ('01__actual__name.tsv', 'actual__name.tsv'),
+                          ('no_prefix_here.html', 'no_prefix_here.html') ]:
             assert_equals(_remove_prefix(inp), exp)
     
     def test_calc_percents_zeros(self):
