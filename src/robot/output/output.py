@@ -19,8 +19,7 @@ import re
 from robot import utils
 import robot
 
-from levels import LEVELS
-from abstractlogger import AbstractLogger
+from abstractlogger import AbstractLogger, Message, LEVELS
 from systemlogger import SYSLOG
 from xmllogger import XmlLogger
 from listeners import Listeners
@@ -30,19 +29,18 @@ from debugfile import DebugFile
 class Output(AbstractLogger):
     
     def __init__(self, settings):
-        AbstractLogger.__init__(self, settings['LogLevel'])
-        self._xmllogger = XmlLogger(settings['Output'], settings['SplitOutputs'])
-        self._debugfile = DebugFile(settings['DebugFile'])
-        self._register_loggers(settings['Listeners'])
+        AbstractLogger.__init__(self)
+        self._xmllogger = XmlLogger(settings['Output'], settings['LogLevel'],
+                                    settings['SplitOutputs'])
+        self._register_loggers(settings['Listeners'], settings['DebugFile'])
         self._namegen = self._get_log_name_generator(settings['Log'])
         self._settings = settings
         robot.output.OUTPUT = self
         
-    def _register_loggers(self, listeners):
+    def _register_loggers(self, listeners, debugfile):
         SYSLOG.register_logger(self._xmllogger)
-        SYSLOG.register_logger(Listeners(listeners))
-        if self._debugfile:
-            SYSLOG.register_logger(self._debugfile)
+        for logger in Listeners(listeners), DebugFile(debugfile):
+            if logger: SYSLOG.register_logger(logger)
         SYSLOG.disable_message_cache()
 
     def _get_log_name_generator(self, log):
@@ -95,22 +93,19 @@ class Output(AbstractLogger):
         
     def end_keyword(self, kw):
         SYSLOG.end_keyword(kw)
-     
-    def write(self, msg='', level='INFO', html=False):
-        if self._debugfile and self._is_logged(level, 'DEBUG'):
-            self._debugfile.message(msg)
-        if level.upper() == 'WARN':
-            SYSLOG.warn(msg)
-        AbstractLogger.write(self, msg, level, html)
-        
-    def _write(self, msg):
-        self._xmllogger.message(msg)
-    
+
     def log_output(self, output):
         """Splits given output to levels and messages and logs them"""
-        for msg, level, html in _OutputSplitter(output).messages:
-            self.write(msg, level, html)
+        for msg in _OutputSplitter(output).messages:
+            self._write(msg)
+
+    def _write(self, msg):
+        # Called also by AbstractLogger.write
+        SYSLOG.log_message(msg)
             
+    def set_log_level(self, level):
+        return self._xmllogger.set_log_level(level)
+
 
 class _OutputSplitter:
     
@@ -125,7 +120,7 @@ class _OutputSplitter:
             return []
         tokens = self._split_output_regexp.split(output)
         if len(tokens) == 1:
-            return [ (output, 'INFO', False) ]
+            return [Message(output, 'INFO', False)]
         return self._split_messages(tokens)
             
     def _split_messages(self, tokens):
@@ -139,7 +134,7 @@ class _OutputSplitter:
         for i in range(0, len(tokens), 2):
             level, html = self._get_level_and_html(tokens[i][1:-1])
             msg = tokens[i+1].strip()  
-            messages.append((msg,level, html))
+            messages.append(Message(msg,level, html))
         return messages
 
     def _get_level_and_html(self, token):

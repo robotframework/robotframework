@@ -1,5 +1,6 @@
-from robot.utils.asserts import *
 import unittest
+
+from robot.utils.asserts import *
 
 from robot.output.output import _OutputSplitter
 
@@ -40,10 +41,9 @@ class TestOutputSplitter(unittest.TestCase):
         
         
     def _verify_message(self, splitter, msg, level='INFO', html=False, index=0):
-        exp = (msg, level, html)
-        assert_equals(splitter.messages[index], exp)
-
-
+        assert_equals(splitter.messages[index].message, msg)
+        assert_equals(splitter.messages[index].level, level)
+        assert_equals(splitter.messages[index].html, html)
 
         
 if __name__ == '__main__':

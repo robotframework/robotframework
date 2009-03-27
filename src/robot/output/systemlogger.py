@@ -67,11 +67,31 @@ class SystemLogger(AbstractLogger):
             self.register_logger(logger)
 
     def write(self, message, level='INFO'):
-        msg = Message(message, level)
+        """Messages about what the framework is doing, warnings, errors, ..."""
+        self._write(Message(message, level))
+
+    def _write(self, msg):
         for logger in self._loggers:
-            logger.write(msg, level)
+            logger.write(msg, msg.level)   # TODO: Pass only msg?
         if self._message_cache is not None:
             self._message_cache.append(msg)
+
+    def log_message(self, msg):
+        """Log messages written (mainly) by libraries"""
+        for logger in self._loggers:
+            logger.log_message(msg)
+        if msg.level == 'WARN':
+            self._write(msg)
+        
+    def output_file(self, name, path):
+        """Finished output, report, log, summary or debug file (incl. split)"""
+        for logger in self._loggers:
+            logger.output_file(name, path)
+
+    def close(self):
+        for logger in self._loggers:
+            logger.close()
+        self.__init__()
 
     def start_suite(self, suite):
         for logger in self._loggers:
@@ -97,20 +117,11 @@ class SystemLogger(AbstractLogger):
         for logger in self._loggers:
             logger.end_keyword(keyword)
 
-    def output_file(self, name, path):
-        for logger in self._loggers:
-            logger.output_file(name, path)
-
-    def close(self):
-        for logger in self._loggers:
-            logger.close()
-        self.__init__()
-
 
 class _Logger:
 
     def __init__(self, logger):
-        for name in ['write', 'output_file', 'close',
+        for name in ['write', 'log_message', 'output_file', 'close',
                      'start_suite', 'end_suite', 'start_test', 'end_test',
                      'start_keyword', 'end_keyword']:
             method = getattr(logger, name, lambda *args: None)
@@ -149,7 +160,7 @@ class _FileLogger(AbstractLogger):
         
     def end_keyword(self, kw):
         self.debug("Ended keywordt '%s'" % kw.name)
-        
+
     def output_file(self, name, path):
         self.info('%s: %s' % (name, path))
 

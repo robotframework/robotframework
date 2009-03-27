@@ -18,11 +18,15 @@ import os.path
 from robot import utils
 from robot.errors import DataError
 
+from abstractlogger import IsLogged
+
 
 class XmlLogger:
     
-    def __init__(self, path, split_level=-1, generator='Robot'):
+    def __init__(self, path, log_level='TRACE', split_level=-1, generator='Robot'):
         self._namegen = utils.FileNameGenerator(path)
+        self._log_message_is_logged = IsLogged(log_level)
+        self._error_is_logged = IsLogged('WARN')
         attrs = { 'generator': utils.get_full_version(generator),
                   'generated': utils.get_timestamp() }
         self._writer = self._get_writer(path, attrs)
@@ -54,9 +58,16 @@ class XmlLogger:
         self._close_writer(self._writer)
 
     def write(self, msg, level):
-        if level in ['WARN', 'ERROR']:
+        if self._error_is_logged(msg.level):
             self._errors.append(msg)
                 
+    def log_message(self, msg):
+        if self._log_message_is_logged(msg.level):
+            self.message(msg)
+
+    def set_log_level(self, level):
+        return self._log_message_is_logged.set_level(level)
+
     def message(self, msg):
         html = msg.html and 'yes' or 'no'
         attrs = { 'timestamp': msg.timestamp, 'level': msg.level, 'html': html }

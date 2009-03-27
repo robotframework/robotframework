@@ -1060,7 +1060,7 @@ class _Misc:
         The available levels: TRACE, DEBUG, INFO (default), WARN and NONE (no
         logging).
         """
-        old = output.OUTPUT.set_level(level)
+        old = output.OUTPUT.set_log_level(level)
         self.log('Log level changed from %s to %s' % (old, level.upper()))
         return old
         

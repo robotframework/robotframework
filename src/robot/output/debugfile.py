@@ -15,6 +15,7 @@
 
 from robot import utils
 from systemlogger import SYSLOG
+from abstractlogger import IsLogged
 
 
 def DebugFile(path):
@@ -39,6 +40,7 @@ class _DebugFileWriter:
         self._kw_level = 0
         self._separator_written_last = False
         self._file = open(path, 'wb')
+        self._is_logged = IsLogged('DEBUG')
 
     def start_suite(self, suite):
         self._separator('SUITE')
@@ -73,8 +75,9 @@ class _DebugFileWriter:
         self._end(self._get_kw_type(kw), kw.name, kw.elapsedtime)
         self._kw_level -= 1
     
-    def message(self, msg):
-        self._write(utils.unic(msg).encode('UTF-8').rstrip())
+    def log_message(self, msg):
+        if self._is_logged(msg.level):
+            self._write(utils.unic(msg.message).encode('UTF-8').rstrip())
         
     def close(self):
         if not self._file.closed:

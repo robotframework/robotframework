@@ -34,6 +34,9 @@ class Listeners:
                 SYSLOG.error("Taking listener '%s' into use failed: %s"
                              % (name, message))
                 SYSLOG.info("Details:\n%s" % details)
+
+    def __nonzero__(self):
+        return len(self._listeners) > 0
                 
     def start_suite(self, suite):
         for listener in self._listeners:

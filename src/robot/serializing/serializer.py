@@ -22,7 +22,7 @@ from robot.output import XmlLogger
 class OutputSerializer(XmlLogger):
     
     def __init__(self, outpath, split):
-        XmlLogger.__init__(self, outpath, split, generator='Rebot')
+        XmlLogger.__init__(self, outpath, 'TRACE', split, generator='Rebot')
 
 
 class _StatisticsSerializer:

@@ -17,7 +17,7 @@ from output import Output
 from systemlogger import SYSLOG
 from monitor import CommandLineMonitor
 from xmllogger import XmlLogger
-from levels import LEVELS
+from abstractlogger import LEVELS
 from readers import process_output, process_outputs
 
 

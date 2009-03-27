@@ -16,43 +16,33 @@
 from robot import utils
 from robot.errors import DataError
 
-from levels import LEVELS, get_level
+
+LEVELS = {
+  "NONE"  : 100, 
+  "ERROR" : 60,
+  "FAIL"  : 50,
+  "WARN"  : 40,
+  "INFO"  : 30,
+  "DEBUG" : 20,
+  "TRACE" : 10,
+}
 
 
 class AbstractLogger:
     
-    def __init__(self, level='INFO'):
-        self.set_level(level)
+    def __init__(self, level='TRACE'):
+        self._is_logged = IsLogged(level)
         
-    def set_level(self, level_string):
-        old = self._get_old_level()
-        self.level = get_level(level_string)
-        return old
+    def set_level(self, level):
+        return self._is_logged.set_level(level)
 
-    def _get_old_level(self):
-        try:
-            old_int = self.level
-        except AttributeError:
-            return None
-        for level, int_value in LEVELS.items():
-            if int_value == old_int:
-                return level
-    
     def write(self, msg, level, html=False):
         """Implementing classes must override this or implement _write."""
         if self._is_logged(level):
             if not isinstance(msg, Message):
                 msg = Message(msg, level, html)
             self._write(msg)
-            
-    def _is_logged(self, msg_level_str, threshold_level_str=None):
-        msg_level = get_level(msg_level_str)
-        if threshold_level_str is None:
-            threshold_level = self.level
-        else:
-            threshold_level = get_level(threshold_level_str)
-        return msg_level >= threshold_level
-    
+
     def trace(self, msg):
         self.write(msg, 'TRACE')
 
@@ -87,3 +77,23 @@ class Message:
             msg = utils.unic(msg)
         return msg.replace('\r\n', '\n')
 
+
+class IsLogged:
+
+    def __init__(self, level):
+        self._str_level = level
+        self._int_level = self._level_to_int(level)
+
+    def __call__(self, level):
+        return self._level_to_int(level) >= self._int_level
+    
+    def set_level(self, level):
+        old = self._str_level.upper()
+        self.__init__(level)
+        return old
+
+    def _level_to_int(self, level):
+        try:
+            return LEVELS[level.upper()]
+        except KeyError:
+            raise DataError("Invalid log level '%s'" % level)
