@@ -52,11 +52,7 @@ letter-spacing: 0.1em;
 th {
 font-style: normal;
 }
-</style><title>String</title>
-
-</head>
-
-
+</style><title>String</title></head>
 <body>
 <h1>String</h1>
 <table border="1">
@@ -85,8 +81,8 @@ font-style: normal;
 <td></td>
 </tr>
 <tr>
-<td></td>
-<td></td>
+<td>Library</td>
+<td>Collections</td>
 <td></td>
 <td></td>
 <td></td>
@@ -111,7 +107,7 @@ font-style: normal;
 <td></td>
 <td></td>
 <td></td>
-</tr>
+</tr><tr><td>${TEXT IN COLUMNS}</td><td>robot\tframework\nis\tgood\tfor\ttesting</td><td></td><td></td><td></td></tr><tr><td>${FIRST LINE}</td><td>robot\tframework</td><td></td><td></td><td></td></tr><tr><td>${SECOND LINE}</td><td>is\tgood\tfor\ttesting</td><td></td><td></td><td></td></tr><tr><td>${FIRST COLUMN}</td><td>robot\nis\n</td><td></td><td></td><td></td></tr><tr><td>${ERROR MESSAGE}</td><td>My error message</td><td></td><td></td><td></td></tr><tr><td>${FOURTH COLUMN}</td><td>\ntesting\n</td><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr>
 </tbody>
 </table>
 <table border="1">
@@ -188,9 +184,303 @@ font-style: normal;
 <td></td>
 </tr>
 <tr>
+<td>Generate Random String</td>
+<td>${result}=</td>
+<td>Generate Random String</td>
+<td>10</td>
+<td></td>
+</tr>
+<tr><td></td><td></td><td></td><td></td><td></td></tr><tr>
+<td></td>
+<td>Length Should be</td>
+<td>${result}</td>
+<td>10</td>
+<td></td>
+</tr>
+<tr>
 <td></td>
 <td></td>
 <td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Get Column</td>
+<td>${result}=</td>
+<td>Get Column</td>
+<td>${TEXT IN COLUMNS}</td>
+<td>0</td>
+</tr>
+<tr><td></td><td>...</td><td>\t</td><td></td><td></td></tr><tr>
+<td></td>
+<td>Should be equal</td>
+<td>${result}</td>
+<td>${FIRST COLUMN}</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>${result}=</td>
+<td>Get Column</td>
+<td>${TEXT IN COLUMNS}</td>
+<td>3</td>
+</tr>
+<tr>
+<td></td>
+<td>...</td>
+<td>\t</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should be equal</td>
+<td>${result}</td>
+<td>${FOURTH COLUMN}</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Get Line</td>
+<td>${result}=</td>
+<td>Get Line</td>
+<td>${TEXT IN COLUMNS}</td>
+<td>0</td>
+</tr>
+<tr>
+<td></td>
+<td>Should be equal</td>
+<td>${result}</td>
+<td>${FIRST LINE}</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>${result}=</td>
+<td>Get Line</td>
+<td>${TEXT IN COLUMNS}</td>
+<td>1</td>
+</tr>
+<tr>
+<td></td>
+<td>Should be equal</td>
+<td>${result}</td>
+<td>${SECOND LINE}</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Get Line Count</td>
+<td>${result}=</td>
+<td>Get Line Count</td>
+<td>\</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should be equal as integers</td>
+<td>${result}</td>
+<td>${0}</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>${result}=</td>
+<td>Get Line Count</td>
+<td>${SPACE}</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should be equal as integers</td>
+<td>${result}</td>
+<td>${1}</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>${result}</td>
+<td>Get Line Count</td>
+<td>${TEXT IN COLUMNS}</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should be equal as integers</td>
+<td>${result}</td>
+<td>2</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Get Lines as List</td>
+<td>@{result}=</td>
+<td>Get Lines as List</td>
+<td>${TEXT IN COLUMNS}</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should be equal</td>
+<td>@{result}[0]</td>
+<td>${FIRST LINE}</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should be equal</td>
+<td>@{result}[1]</td>
+<td>${SECOND LINE}</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Get Substring</td>
+<td>${result}</td>
+<td>Get Substring</td>
+<td>Robot</td>
+<td>2</td>
+</tr>
+<tr>
+<td></td>
+<td>...</td>
+<td>3</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should be equal</td>
+<td>${result}</td>
+<td>bot</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Replace String</td>
+<td>${result}=</td>
+<td>Replace String</td>
+<td>Robot Framework</td>
+<td>Frame</td>
+</tr>
+<tr>
+<td></td>
+<td>...</td>
+<td>Class</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should be equal</td>
+<td>${result}</td>
+<td>Robot Classwork</td>
+<td></td>
+</tr>
+<tr><td></td><td></td><td></td><td></td><td></td></tr><tr>
+<td>Replace String not found</td>
+<td>${result}=</td>
+<td>Replace String</td>
+<td>Robot</td>
+<td>bat</td>
+</tr>
+<tr>
+<td></td>
+<td>...</td>
+<td>bit</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should be equal</td>
+<td>${result}</td>
+<td>Robot</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Replace with empty String</td>
+<td>${result}=</td>
+<td>Replace String</td>
+<td>Robot Framework</td>
+<td>Framework</td>
+</tr>
+<tr>
+<td></td>
+<td>...</td>
+<td>\</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should be equal</td>
+<td>${result}</td>
+<td>Robot${SPACE}</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Should be String Positive</td>
+<td>Should be String</td>
+<td>Robot</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should be string</td>
+<td>${space}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should be string</td>
+<td>\</td>
 <td></td>
 <td></td>
 </tr>
@@ -202,9 +492,86 @@ font-style: normal;
 <td></td>
 </tr>
 <tr>
+<td>Should be String Negative for Number</td>
+<td>${status}</td>
+<td>${ret val}=</td>
+<td>Run Keyword and Ignore Error</td>
+<td>Should be string</td>
+</tr>
+<tr>
+<td></td>
+<td>...</td>
+<td>${0}</td>
+<td>${ERROR MESSAGE}</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should be equal</td>
+<td>${status}</td>
+<td>FAIL</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should be equal</td>
+<td>${ret val}</td>
+<td>${ERROR MESSAGE}</td>
+<td></td>
+</tr>
+<tr>
 <td></td>
 <td></td>
 <td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Should be String Negative For Boolean</td>
+<td>${status}</td><td>${ret val}=</td><td>Run Keyword and Ignore Error</td><td>Should be string</td>
+
+
+
+</tr>
+<tr>
+<td></td>
+<td>...</td><td>${TRUE}</td><td>${ERROR MESSAGE}</td>
+
+
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should be equal</td><td>${status}</td><td>FAIL</td>
+
+
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should be equal</td><td>${ret val}</td><td>${ERROR MESSAGE}</td>
+
+
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Should Not be String Positive</td>
+<td>Should Not Be String</td>
+<td>${0}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should Not Be String</td>
+<td>${TRUE}</td>
 <td></td>
 <td></td>
 </tr>
@@ -216,402 +583,31 @@ font-style: normal;
 <td></td>
 </tr>
 <tr>
+<td>Should Not be String Negative</td>
+<td>${status}</td><td>${ret val}=</td><td>Run Keyword and Ignore Error</td><td>Should not be string</td>
+
+
+
+</tr>
+<tr>
 <td></td>
-<td></td>
-<td></td>
-<td></td>
+<td>...</td>
+<td>Nokia</td>
+<td>${ERROR MESSAGE}</td>
 <td></td>
 </tr>
 <tr>
 <td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
+<td>Should be equal</td><td>${status}</td><td>FAIL</td>
+
+
 <td></td>
 </tr>
 <tr>
 <td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
+<td>Should be equal</td><td>${ret val}</td><td>${ERROR MESSAGE}</td>
+
+
 <td></td>
 </tr>
 <tr>
