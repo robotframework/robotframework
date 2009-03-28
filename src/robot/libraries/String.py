@@ -74,9 +74,12 @@ class String:
         """
         line_list = lines.splitlines(0)
         line_count = len(line_list)
-        print "*INFO* Got '%d' lines" % line_count
+
         start = self._index_to_int(start)
         end = self._index_to_int(end)
+        if (end == -1):
+            end = line_count
+        print "*TRACE* Got '%d' lines. Returning from %d to %d" % (line_count, start, end)
         
         if (line_count == 0):
             return list()
@@ -127,21 +130,18 @@ class String:
         return result
 
 
-    def get_substring(self, string, left_index, right_index):
+    def get_substring(self, string, position, length):
         """
-        Returns a substring from `left_index` to `right_index`,
+        Returns a substring of given `length` starting from position of `position` ,
         which should be numbers.
-        Numbering starts from '0'. You can also use negative numbers
-        to count from the back ('-1' being the last element).
+        Position starts from '0'. 
 
         Example:
-        | ${first three}= | Get Substring | Robot | 0 | 2 |
-        | ${last four}= | Get Substring | Framework | -4 | -1 |
+        | ${first two}= | Get Substring | Robot | 0 | 2 |
         """
-        left_index = self._index_to_int(left_index)
-        right_index = self._index_to_int(right_index)
-        
-        return string[left_index : right_index]
+        position = self._index_to_int(position)
+        length = self._index_to_int(length)
+        return string[position : position + length]
 
     def should_be_string(self, item, msg=None):
         """ Fails if item is not a string (e.g. list, number)"""
@@ -217,6 +217,5 @@ class String:
             return int(index)
         except ValueError:
             raise ValueError("Cannot convert index '%s' to an integer" % index)
-
 
 
