@@ -25,7 +25,7 @@ import templates
 from templating import Namespace, Template
 from serializer import OutputSerializer, SummaryStatisticsSerializer, \
     ReportStatisticsSerializer, ReportSuiteSerializer, ReportTagStatSerializer, \
-    LogStatisticsSerializer, LogSyslogSerializer, LogSuiteSerializer, \
+    LogStatisticsSerializer, LogErrorsSerializer, LogSuiteSerializer, \
     SplitLogSuiteSerializer, SplitLogStatisticsSerializer, SplitReportSuiteSerializer
 
 
@@ -110,12 +110,12 @@ class RobotTestOutput:
             
     def _serialize_log(self, outfile):
         self.statistics.serialize(LogStatisticsSerializer(outfile))
-        self.exec_errors.serialize(LogSyslogSerializer(outfile))            
+        self.exec_errors.serialize(LogErrorsSerializer(outfile))            
         self.suite.serialize(LogSuiteSerializer(outfile))
             
     def _serialize_split_log(self, outfile, level):
         self.statistics.serialize(SplitLogStatisticsSerializer(outfile, level))
-        self.exec_errors.serialize(LogSyslogSerializer(outfile))
+        self.exec_errors.serialize(LogErrorsSerializer(outfile))
         self.suite.serialize(SplitLogSuiteSerializer(outfile, level))
         self._create_split_sub_logs(self.suite, level)
         
@@ -203,5 +203,5 @@ class SplitIndexTestOutput(RobotTestOutput):
 
     def _serialize_split_log(self, outfile, level):
         self.statistics.serialize(SplitLogStatisticsSerializer(outfile, level))
-        self.exec_errors.serialize(LogSyslogSerializer(outfile))
+        self.exec_errors.serialize(LogErrorsSerializer(outfile))
         self._outsuite.serialize(SplitLogSuiteSerializer(outfile, level))

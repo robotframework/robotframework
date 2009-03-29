@@ -1031,11 +1031,9 @@ ${MYOUTDIR}${/}invalid.txt</td>
 <td>Check Stderr Matches
 Regexp</td>
 <td>(\\[Fatal Error\\] .*:
-Content is not allowed in prolog.\\n)?\\[ ERROR \\] File
-'.*[/\\\\]invalid.txt' is not a valid XML file.${USAGE_TIP}</td>
-<td># "[Fatal Error] ..." part
-appears<br>
-#&nbsp;with Jython</td>
+Content is not allowed in prolog.\\n)?\\[ ERROR \\] Opening XML file
+'.*[/\\\\]invalid.txt' failed: .*${USAGE_TIP}</td>
+<td># "[Fatal Error] ..." part appears &nbsp;with Jython</td>
 <td></td>
 
 
@@ -1085,7 +1083,7 @@ ${MYOUTDIR}${/}invalid.xml</td>
 <td>Check Stderr Matches
 Regexp</td>
 <td>\\[ ERROR \\] File
-'.*[/\\\\]invalid.xml' is not a Robot output file.${USAGE_TIP}</td>
+'.*[/\\\\]invalid.xml' is not Robot Framework output file.${USAGE_TIP}</td>
 <td></td>
 <td></td>
 

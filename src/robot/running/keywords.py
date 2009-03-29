@@ -342,8 +342,6 @@ class _OutputRecorder:
         self._actions = []
     
     def __getattr__(self, name):
-        if name == 'syslog':
-            return LOGGER
         return lambda *args : self._actions.append((name, args))
         
     def replay(self, output):

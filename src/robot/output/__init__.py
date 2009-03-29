@@ -29,16 +29,13 @@ OUTPUT = None
 def TestSuite(outpath):
     """Factory method for getting test suite from an xml output file.
     
-    If you also want the syslog use process_output() that returns both the 
-    suite and syslog instead.
-    
     If you want statistics get suite first and say Statistics(suite).
     """
-    suite, exec_errors = process_output(outpath)
+    suite, errors = process_output(outpath)
     suite.set_names()
 
     def write_to_file(path=None):
-        """Write processed suite (incl. statistics and syslog) back to xml.
+        """Write processed suite (incl. statistics and errors) back to xml.
         
         If path is not given the suite is written into the same file as it 
         originally was read from.
@@ -47,7 +44,7 @@ def TestSuite(outpath):
         if path is None:
             path = outpath
         suite.set_status()
-        testoutput = RobotTestOutput(suite, exec_errors)
+        testoutput = RobotTestOutput(suite, errors)
         testoutput.serialize_output(path, suite)
     
     suite.write_to_file = write_to_file

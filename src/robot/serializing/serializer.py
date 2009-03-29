@@ -24,6 +24,12 @@ class OutputSerializer(XmlLogger):
     def __init__(self, outpath, split):
         XmlLogger.__init__(self, outpath, 'TRACE', split, generator='Rebot')
 
+    def start_errors(self, errors):
+        XmlLogger.start_errors(self)
+        
+    def end_errors(self, errors):
+        XmlLogger.end_errors(self)
+        
 
 class _StatisticsSerializer:
 
@@ -205,15 +211,15 @@ class SplitLogStatisticsSerializer(LogStatisticsSerializer):
         return level, '.'.join(tokens[self._split_level:])
     
 
-class LogSyslogSerializer:
+class LogErrorsSerializer:
     
     def __init__(self, output):
         self._writer = utils.HtmlWriter(output)
 
-    def start_syslog(self, syslog):
-        if syslog.messages:
+    def start_errors(self, errors):
+        if errors.messages:
             self._writer.whole_element('h2', 'Test Execution Errors')
-            self._writer.start_element('table', {'class': 'syslog'})
+            self._writer.start_element('table', {'class': 'errors'})
 
     def message(self, msg):
         self._writer.start_element('tr')
@@ -225,8 +231,8 @@ class LogSyslogSerializer:
         self._writer.whole_element('td', msg.message, {'class': 'msg'})
         self._writer.end_element('tr')    
 
-    def end_syslog(self, syslog):
-        if syslog.messages:
+    def end_errors(self, errors):
+        if errors.messages:
             self._writer.end_element('table')
 
 

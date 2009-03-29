@@ -55,12 +55,12 @@ class CommandLineMonitor:
         self._write_separator('-')
         
     def output_file(self, name, path):
-        # called by SYSLOG
+        # called by LOGGER
         if not self._running_suites:  # ignores splitted output files
             self._write('%s %s' % ((name+':').ljust(8), utils.cygpath(path)))
      
     def write(self, msg, level):
-        # called by SYSLOG
+        # called by LOGGER
         if level in ['WARN', 'ERROR']:
             message = '[ %s ] %s' % (self._highlight(level), msg.message)
             self._write(message, stream=sys.stderr)

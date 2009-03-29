@@ -268,19 +268,19 @@ LOG = '''%(FUNCTIONS)s
   body {
     background: white;
   }       
-  table.suite, table.syslog {
+  table.suite, table.errors {
     width: 100%%;
     border: 1px solid gray;  /* no grey in IE */
     margin: 0.2em 0em;
     padding: 0.2em;
   }
-  table.syslog td.level {
+  table.errors td.level {
     font-weight: bold;
     width: 4em;
     text-align: center;
     vertical-align: top;
   }
-  table.syslog td.time {
+  table.errors td.time {
     width: 10em;
     vertical-align: top;
   }

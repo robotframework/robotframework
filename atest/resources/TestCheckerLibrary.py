@@ -10,12 +10,12 @@ class TestCheckerLibrary:
     def process_output(self, path):
         try:
             print "Processing output '%s'" % path
-            suite, syslog = readers.process_output(path)
+            suite, errors = readers.process_output(path)
         except:
             raise RuntimeError('Processing output failed: %s'
                                % utils.get_error_message())
         suite.set_names()
-        return process_suite(suite), process_syslog(syslog)
+        return process_suite(suite), process_errors(errors)
 
     def get_test_from_suite(self, suite, name):
         tests = self.get_tests_from_suite(suite, name)
@@ -155,7 +155,7 @@ def process_keyword(kw):
     for subkw in kw.keywords:
         process_keyword(subkw)
 
-def process_syslog(syslog):
-    syslog.msgs = syslog.messages
-    syslog.message_count = syslog.msg_count = len(syslog.messages)
-    return syslog
+def process_errors(errors):
+    errors.msgs = errors.messages
+    errors.message_count = errors.msg_count = len(errors.messages)
+    return errors

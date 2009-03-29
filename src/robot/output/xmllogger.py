@@ -52,10 +52,10 @@ class XmlLogger:
 
     def close(self, serialize_errors=False):
         if serialize_errors:
-            self.start_syslog()
+            self.start_errors()
             for msg in self._errors:
                 self.message(msg)
-            self.end_syslog()
+            self.end_errors()
         self._close_writer(self._writer)
 
     def write(self, msg, level):
@@ -186,12 +186,11 @@ class XmlLogger:
             return 'combined'
         return ''
 
-    # TODO: Remove 1) syslog -> errors 2) why arg to this method?
-    def start_syslog(self, syslog=None):
-        self._writer.start_element('syslog')
+    def start_errors(self):
+        self._writer.start_element('errors')
         
-    def end_syslog(self, syslog=None):
-        self._writer.end_element('syslog')
+    def end_errors(self):
+        self._writer.end_element('errors')
         
     def _write_list(self, tag, items, container=None):
         if container is not None:

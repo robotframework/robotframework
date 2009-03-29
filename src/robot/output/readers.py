@@ -27,7 +27,7 @@ def process_outputs(paths, settings):
     if len(paths) == 1:
         return process_output(paths[0])
     suite = CombinedTestSuite(settings['StartTime'], settings['EndTime'])
-    exec_errors = CombinedExecErrors()
+    exec_errors = CombinedExecutionErrors()
     for path in paths:
         subsuite, suberrors = process_output(path)
         suite.add_suite(subsuite)
@@ -36,7 +36,7 @@ def process_outputs(paths, settings):
 
 
 def process_output(path, read_level=-1):
-    """Process one Robot output xml file and return TestSuite and Syslog
+    """Process one output file and return TestSuite and ExecutionErrors
     
     'read_level' can be used to limit how many suite levels are read. This is
     mainly useful when Robot has split outputs and only want to read index.
@@ -49,24 +49,27 @@ def process_output(path, read_level=-1):
     except utils.RERAISED_EXCEPTIONS:
         raise
     except:
-        raise DataError("File '%s' is not a valid XML file." % path)
-    try:
-        suite = _get_suite_node(root)
-    except AttributeError:
-        raise DataError("File '%s' is not a Robot output file." % path)
-    try:
-        syslognode = root.get_node('syslog')
-    except AttributeError:
-        syslognode = None
-    return TestSuite(suite, read_level), ExecErrors(syslognode)
+        raise DataError("Opening XML file '%s' failed: %s" %
+                        (path, utils.get_error_message()))
+    suite = _get_suite_node(root, path)
+    errors = _get_errors_node(root)
+    return TestSuite(suite, read_level), ExecutionErrors(errors)
 
-    
-def _get_suite_node(root):
+def _get_suite_node(root, path):
     if root.name != 'robot': 
-        raise AttributeError
+        raise DataError("File '%s' is not Robot Framework output file." % path)
     node = root.get_node('suite')
-    node.generator = root.get_attr('generator', 'notset').split(' ')[0].lower()
+    node.generator = root.get_attr('generator', 'notset').split()[0].lower()
     return node
+
+def _get_errors_node(root):
+    try:
+        try:
+            return root.get_node('errors')
+        except AttributeError:
+            return root.get_node('syslog') # Compatibility for RF 2.0.x outputs
+    except AttributeError:
+        return None
 
 
 class _BaseReader:
@@ -316,7 +319,7 @@ class Message:
         return "'%s %s'" % (self.level, msg.replace("'",'"'))
 
 
-class ExecErrors:
+class ExecutionErrors:
     
     def __init__(self, node):
         if node is None:
@@ -325,13 +328,13 @@ class ExecErrors:
             self.messages = [ Message(msg) for msg in node.get_nodes('msg') ]
 
     def serialize(self, serializer):
-        serializer.start_syslog(self)
+        serializer.start_errors(self)
         for msg in self.messages:
             msg.serialize(serializer)
-        serializer.end_syslog(self)
+        serializer.end_errors(self)
 
 
-class CombinedExecErrors(ExecErrors):
+class CombinedExecutionErrors(ExecutionErrors):
     
     def __init__(self):
         self.messages = []
