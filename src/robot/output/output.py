@@ -97,10 +97,9 @@ class Output(AbstractLogger):
     def log_output(self, output):
         """Splits given output to levels and messages and logs them"""
         for msg in _OutputSplitter(output).messages:
-            self._write(msg)
+            self.message(msg)
 
-    def _write(self, msg):
-        # Called also by AbstractLogger.write
+    def message(self, msg):
         LOGGER.log_message(msg)
             
     def set_log_level(self, level):
@@ -134,7 +133,7 @@ class _OutputSplitter:
         for i in range(0, len(tokens), 2):
             level, html = self._get_level_and_html(tokens[i][1:-1])
             msg = tokens[i+1].strip()  
-            messages.append(Message(msg,level, html))
+            messages.append(Message(msg, level, html))
         return messages
 
     def _get_level_and_html(self, token):

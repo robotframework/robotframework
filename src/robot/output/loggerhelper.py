@@ -36,13 +36,6 @@ class AbstractLogger:
     def set_level(self, level):
         return self._is_logged.set_level(level)
 
-    def write(self, msg, level, html=False):
-        """Implementing classes must override this or implement _write."""
-        if self._is_logged(level):
-            if not isinstance(msg, Message):
-                msg = Message(msg, level, html)
-            self._write(msg)
-
     def trace(self, msg):
         self.write(msg, 'TRACE')
 
@@ -60,6 +53,12 @@ class AbstractLogger:
 
     def error(self, msg):
         self.write(msg, 'ERROR')
+
+    def write(self, message, level, html=False):
+        self.message(Message(message, level, html))
+
+    def message(self, msg):
+        raise NotImplementedError(self.__class__)
 
 
 class Message:

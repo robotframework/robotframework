@@ -17,6 +17,8 @@ import sys
 
 from robot import utils
 
+from loggerhelper import IsLogged
+
 
 # ANSI colors
 ANSI_RED    = '\033[31m'
@@ -31,6 +33,7 @@ class CommandLineMonitor:
         self._width = width
         self._colors = colors
         self._running_suites = 0
+        self._is_logged = IsLogged('WARN')
         
     def start_suite(self, suite):
         if not self._running_suites:
@@ -59,10 +62,10 @@ class CommandLineMonitor:
         if not self._running_suites:  # ignores splitted output files
             self._write('%s %s' % ((name+':').ljust(8), utils.cygpath(path)))
      
-    def write(self, msg, level):
+    def message(self, msg):
         # called by LOGGER
-        if level in ['WARN', 'ERROR']:
-            message = '[ %s ] %s' % (self._highlight(level), msg.message)
+        if self._is_logged(msg.level):
+            message = '[ %s ] %s' % (self._highlight(msg.level), msg.message)
             self._write(message, stream=sys.stderr)
         
     def _write(self, message, newline=True, stream=sys.stdout):

@@ -28,10 +28,11 @@ class FileLogger(AbstractLogger):
         # Hook for unittests
         return open(path, 'wb')
     
-    def _write(self, message):
-        entry = '%s | %s | %s\n' % (message.timestamp, message.level.ljust(5), 
-                                    message.message)
-        self._writer.write(utils.unic(entry).encode('UTF-8'))
+    def message(self, msg):
+        if self._is_logged(msg.level):
+            entry = '%s | %s | %s\n' % (msg.timestamp, msg.level.ljust(5), 
+                                        msg.message)
+            self._writer.write(utils.unic(entry).encode('UTF-8'))
 
     def start_suite(self, suite):
         self.info("Started test suite '%s'" % suite.name)
@@ -49,7 +50,7 @@ class FileLogger(AbstractLogger):
         self.debug("Started keyword '%s'" % kw.name)
         
     def end_keyword(self, kw):
-        self.debug("Ended keywordt '%s'" % kw.name)
+        self.debug("Ended keyword '%s'" % kw.name)
 
     def output_file(self, name, path):
         self.info('%s: %s' % (name, path))

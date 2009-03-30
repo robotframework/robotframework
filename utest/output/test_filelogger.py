@@ -7,7 +7,7 @@ from robot.utils.asserts import *
 from robot.output.filelogger import FileLogger
 
 
-class TestSystemFileLogger(unittest.TestCase):
+class TestFileLogger(unittest.TestCase):
     
     def setUp(self):
         FileLogger._get_writer = lambda *args: StringIO()

@@ -54,22 +54,22 @@ class XmlLogger:
         if serialize_errors:
             self.start_errors()
             for msg in self._errors:
-                self.message(msg)
+                self._message(msg)
             self.end_errors()
         self._close_writer(self._writer)
 
-    def write(self, msg, level):
+    def message(self, msg):
         if self._error_is_logged(msg.level):
             self._errors.append(msg)
                 
     def log_message(self, msg):
         if self._log_message_is_logged(msg.level):
-            self.message(msg)
+            self._message(msg)
 
     def set_log_level(self, level):
         return self._log_message_is_logged.set_level(level)
 
-    def message(self, msg):
+    def _message(self, msg):
         html = msg.html and 'yes' or 'no'
         attrs = { 'timestamp': msg.timestamp, 'level': msg.level, 'html': html }
         self._writer.whole_element('msg', msg.message, attrs)

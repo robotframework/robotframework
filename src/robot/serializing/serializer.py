@@ -24,6 +24,9 @@ class OutputSerializer(XmlLogger):
     def __init__(self, outpath, split):
         XmlLogger.__init__(self, outpath, 'TRACE', split, generator='Rebot')
 
+    def message(self, msg):
+        self._message(msg)
+
     def start_errors(self, errors):
         XmlLogger.start_errors(self)
         

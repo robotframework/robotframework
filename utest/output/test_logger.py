@@ -17,8 +17,7 @@ class LoggerMock:
     def __init__(self, *expected):
         self.expected = list(expected)
     
-    def write(self, msg, level):
-        assert_equals(msg.level, level)
+    def message(self, msg):
         exp_msg, exp_level = self.expected.pop(0)
         assert_equals(msg.level, exp_level)
         assert_equals(msg.message, exp_msg)
@@ -45,7 +44,7 @@ class TestLogger(unittest.TestCase):
     def test_write_to_one_logger(self):
         logger = LoggerMock(('Hello, world!', 'INFO'))
         self.logger.register_logger(logger)
-        self.logger.write('Hello, world!')
+        self.logger.write('Hello, world!', 'INFO')
         assert_true(logger.msg.timestamp.startswith('20'))
 
     def test_write_to_one_logger_with_trace_level(self):
@@ -59,7 +58,7 @@ class TestLogger(unittest.TestCase):
         logger2 = logger.copy()
         logger3 = logger.copy()
         self.logger.register_logger(logger, logger2, logger3)
-        self.logger.write('Hello, world!')
+        self.logger.message(MessageMock('', 'INFO', 'Hello, world!'))
         assert_true(logger.msg is logger2.msg)
         assert_true(logger.msg is logger.msg)
 
@@ -142,7 +141,7 @@ class TestLogger(unittest.TestCase):
         logger.register_logger(mock)
         logger.disable_automatic_console_logger()
         assert_equals(len(logger._loggers), 1)
-        assert_true(logger._loggers[0].write.im_class is LoggerMock) 
+        assert_true(logger._loggers[0].message.im_class is LoggerMock) 
 
     def test_automatic_logger_can_be_disabled_only_once(self):
         logger = _Logger()

@@ -55,7 +55,7 @@ class _Logger(AbstractLogger):
             self._loggers.append(logger)
             if self._message_cache:
                 for msg in self._message_cache:
-                    logger.write(msg, msg.level)
+                    logger.message(msg)
 
     def register_console_logger(self, width=78, colors=True):
         self.disable_automatic_console_logger()
@@ -79,13 +79,10 @@ class _Logger(AbstractLogger):
         else:
             self.register_logger(logger)
 
-    def write(self, message, level='INFO'):
+    def message(self, msg):
         """Messages about what the framework is doing, warnings, errors, ..."""
-        self._write(Message(message, level))
-
-    def _write(self, msg):
         for logger in self._loggers:
-            logger.write(msg, msg.level)   # TODO: Pass only msg?
+            logger.message(msg)
         if self._message_cache is not None:
             self._message_cache.append(msg)
 
@@ -94,7 +91,7 @@ class _Logger(AbstractLogger):
         for logger in self._loggers:
             logger.log_message(msg)
         if msg.level == 'WARN':
-            self._write(msg)
+            self.message(msg)
         
     def output_file(self, name, path):
         """Finished output, report, log, summary or debug file (incl. split)"""
@@ -136,7 +133,7 @@ class _LoggerProxy:
 
     def __init__(self, logger):
         default = lambda *args: None
-        for name in ['write', 'log_message', 'output_file', 'close',
+        for name in ['message', 'log_message', 'output_file', 'close',
                      'start_suite', 'end_suite', 'start_test', 'end_test',
                      'start_keyword', 'end_keyword']:
             method = getattr(logger, name, default)
