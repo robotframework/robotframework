@@ -2,7 +2,7 @@ import unittest
 
 from robot.utils.asserts import *
 
-from robot.output.logger import _Logger
+from robot.output.logger import _Logger, CommandLineMonitor
 
 
 class MessageMock:
@@ -39,76 +39,77 @@ class LoggerMock2(LoggerMock):
 class TestLogger(unittest.TestCase):
     
     def setUp(self):
-        self.syslog = _Logger()
+        self.logger = _Logger()
+        self.logger.disable_automatic_console_logger()
 
     def test_write_to_one_logger(self):
         logger = LoggerMock(('Hello, world!', 'INFO'))
-        self.syslog.register_logger(logger)
-        self.syslog.write('Hello, world!')
+        self.logger.register_logger(logger)
+        self.logger.write('Hello, world!')
         assert_true(logger.msg.timestamp.startswith('20'))
 
     def test_write_to_one_logger_with_trace_level(self):
         logger = LoggerMock(('expected message', 'TRACE'))
-        self.syslog.register_logger(logger)
-        self.syslog.write('expected message', 'TRACE')
+        self.logger.register_logger(logger)
+        self.logger.write('expected message', 'TRACE')
         assert_true(hasattr(logger, 'msg'))
     
     def test_write_to_multiple_loggers(self):
         logger = LoggerMock(('Hello, world!', 'INFO'))
         logger2 = logger.copy()
         logger3 = logger.copy()
-        self.syslog.register_logger(logger, logger2, logger3)
-        self.syslog.write('Hello, world!')
+        self.logger.register_logger(logger, logger2, logger3)
+        self.logger.write('Hello, world!')
         assert_true(logger.msg is logger2.msg)
         assert_true(logger.msg is logger.msg)
 
     def test_write_multiple_messages(self):
         msgs = [('0', 'ERROR'), ('1', 'WARN'), ('2', 'INFO'), ('3', 'DEBUG'), ('4', 'TRACE')]
         logger = LoggerMock(*msgs)
-        self.syslog.register_logger(logger)
+        self.logger.register_logger(logger)
         for msg, level in msgs:
-            self.syslog.write(msg, level)
+            self.logger.write(msg, level)
             assert_equals(logger.msg.message, msg)
             assert_equals(logger.msg.level, level)
         
     def test_all_methods(self):
         logger = LoggerMock2(('Hello, world!', 'INFO'))
-        self.syslog.register_logger(logger)
-        self.syslog.output_file('name', 'path')
-        self.syslog.close()
+        self.logger.register_logger(logger)
+        self.logger.output_file('name', 'path')
+        self.logger.close()
         assert_equals(logger.output_file, ('name', 'path'))
         assert_true(logger.closed)
 
     def test_registered_logger_does_not_need_all_methods(self):
         logger = LoggerMock(('Hello, world!', 'INFO'))
-        self.syslog.register_logger(logger)
-        self.syslog.output_file('name', 'path')
-        self.syslog.close()
+        self.logger.register_logger(logger)
+        self.logger.output_file('name', 'path')
+        self.logger.close()
 
     def test_close_removes_registered_loggers(self):
         logger = LoggerMock(('Hello, world!', 'INFO'))
         logger2 = LoggerMock2(('Hello, world!', 'INFO'))
-        self.syslog.register_logger(logger, logger2)
-        self.syslog.close()
-        assert_equals(self.syslog._loggers, [])
+        self.logger.register_logger(logger, logger2)
+        self.logger.close()
+        assert_equals(self.logger._loggers, [])
 
     def test_registering_file_logger_with_none_path_does_nothing(self):
-        self.syslog.register_file_logger('None')
-        assert_equals(self.syslog._loggers, [])
+        self.logger.register_file_logger('None')
+        assert_equals(self.logger._loggers, [])
 
     def test_cached_messages_are_given_to_registered_writers(self):
-        self.syslog.write('This is a cached message', 'INFO')
-        self.syslog.write('Another cached message', 'TRACE')
+        self.logger.write('This is a cached message', 'INFO')
+        self.logger.write('Another cached message', 'TRACE')
         logger = LoggerMock(('This is a cached message', 'INFO'), 
                             ('Another cached message', 'TRACE'))
-        self.syslog.register_logger(logger)
+        self.logger.register_logger(logger)
         assert_equals(logger.msg.message, 'Another cached message')
 
     def test_message_cache_can_be_turned_off(self):
-        self.syslog.disable_message_cache()
-        self.syslog.write('This message is not cached', 'INFO')
+        self.logger.disable_message_cache()
+        self.logger.write('This message is not cached', 'INFO')
         logger = LoggerMock(('', ''))
-        self.syslog.register_logger(logger)
+        self.logger.register_logger(logger)
         assert_false(hasattr(logger, 'msg'))
 
     def test_start_and_end_suite_test_and_keyword(self):
@@ -120,11 +121,46 @@ class TestLogger(unittest.TestCase):
             def start_keyword(self, keyword): self.started_keyword = keyword
             def end_keyword(self, keyword): self.ended_keyword = keyword
         logger = Logger()
-        self.syslog.register_logger(logger)
+        self.logger.register_logger(logger)
         for name in 'suite', 'test', 'keyword':
             for stend in 'start', 'end':
-                getattr(self.syslog, stend+'_'+name)(name)
+                getattr(self.logger, stend+'_'+name)(name)
                 assert_equals(getattr(logger, stend+'ed_'+name), name)
+
+    def test_console_logger_is_automatically_registered(self):
+        logger = _Logger()
+        assert_true(logger._loggers[0].start_suite.im_class is CommandLineMonitor) 
+
+    def test_automatic_console_logger_can_be_disabled(self):
+        logger = _Logger()
+        logger.disable_automatic_console_logger()
+        assert_equals(logger._loggers, [])
+
+    def test_automatic_console_logger_can_be_disabled(self):
+        logger = _Logger()
+        mock = LoggerMock()
+        logger.register_logger(mock)
+        logger.disable_automatic_console_logger()
+        assert_equals(len(logger._loggers), 1)
+        assert_true(logger._loggers[0].write.im_class is LoggerMock) 
+
+    def test_automatic_logger_can_be_disabled_only_once(self):
+        logger = _Logger()
+        logger.disable_automatic_console_logger()
+        assert_raises(TypeError, logger.disable_automatic_console_logger)
+
+    def test_automatic_logger_can_be_disabled_only_once_2(self):
+        logger = _Logger()
+        logger.register_logger(LoggerMock())
+        logger.disable_automatic_console_logger()
+        logger.register_logger(LoggerMock())
+        assert_raises(TypeError, logger.disable_automatic_console_logger)
+
+    def test_reigstering_console_logger_disables_automatic_console_logger(self):
+        logger = _Logger()
+        logger.register_console_logger(width=42)
+        assert_equals(len(logger._loggers), 1)
+        assert_equals(logger._loggers[0].start_suite.im_self._width, 42)
 
 
 if __name__ == "__main__":

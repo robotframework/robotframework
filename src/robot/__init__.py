@@ -52,7 +52,6 @@ def _run_or_rebot_from_cli(method, cliargs, usage, **argparser_config):
     except Information, msg:
         _exit(INFO_PRINTED, str(msg))
     except DataError, err:
-        LOGGER.register_console_logger()
         _exit(DATA_ERROR, str(err))
 
     LOGGER.info('Data sources: %s' % utils.seq2str(datasources))

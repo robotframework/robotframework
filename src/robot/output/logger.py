@@ -37,9 +37,17 @@ class _Logger(AbstractLogger):
     def __init__(self):
         self._loggers = []
         self._message_cache = []
+        self._register_console_logger()
+        self._console_logger_disabled = False
 
     def disable_message_cache(self):
         self._message_cache = None
+
+    def disable_automatic_console_logger(self):
+        if self._console_logger_disabled:
+            raise TypeError('Automatic console logging has already been disabled')
+        self._loggers.pop(0)
+        self._console_logger_disabled = True
 
     def register_logger(self, *loggers):
         for log in loggers:
@@ -50,6 +58,10 @@ class _Logger(AbstractLogger):
                     logger.write(msg, msg.level)
 
     def register_console_logger(self, width=78, colors=True):
+        self.disable_automatic_console_logger()
+        self._register_console_logger(width, colors)
+
+    def _register_console_logger(self, width=78, colors=True):
         monitor = CommandLineMonitor(width, colors)
         self.register_logger(monitor)
 
@@ -92,7 +104,8 @@ class _Logger(AbstractLogger):
     def close(self):
         for logger in self._loggers:
             logger.close()
-        self.__init__()
+        self._loggers = []
+        self._message_cache = []
 
     def start_suite(self, suite):
         for logger in self._loggers:

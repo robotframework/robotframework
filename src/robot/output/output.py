@@ -13,9 +13,9 @@
 #  limitations under the License.
 
 
-from robot.common.statistics import Statistics
 import re
 
+from robot.common.statistics import Statistics
 from robot import utils
 import robot
 
