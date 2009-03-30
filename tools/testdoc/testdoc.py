@@ -44,22 +44,25 @@ Options:
 Examples:
   $ testdoc.py mytestcases.html
   $ testdoc.py --name smoke_test_plan --include smoke path/to/my_tests/
-  
-Note that this tool requires Robot Framework 2.0.3 or newer to be installed.
 """
 
 import sys
 import os
 import time
 
+from robot import utils
 from robot.common import BaseKeyword, BaseTestSuite
 from robot.running import TestSuite, Keyword
 from robot.conf import RobotSettings
 from robot.serializing.serializer import LogSuiteSerializer
 from robot.serializing import templates
 from robot.serializing.templating import Namespace, Template
-from robot import utils
 from robot.errors import DataError, Information
+from robot.parsing import rawdata
+from robot.variables import Variables
+
+rawdata.PROCESS_CURDIR = False
+Variables.set_from_variable_table = lambda self, varz: None
 
 
 def generate_test_doc(args):
@@ -71,7 +74,7 @@ def generate_test_doc(args):
     
 def serialize_test_doc(suite, outpath, title):
     outfile = open(outpath, 'w')
-    serializer = MySerializer(outfile, suite)
+    serializer = TestdocSerializer(outfile, suite)
     ttuple = time.localtime()
     str_time = '%s %s' % (utils.format_time(ttuple, daytimesep='&nbsp;'),
                           utils.get_diff_to_gmt())
@@ -113,7 +116,7 @@ def get_outpath(path, suite_name):
     return os.path.abspath(path)
 
 
-class MySerializer(LogSuiteSerializer):
+class TestdocSerializer(LogSuiteSerializer):
 
     def __init__(self, output, suite):
         self._writer = utils.HtmlWriter(output)
@@ -143,6 +146,7 @@ class MySerializer(LogSuiteSerializer):
         self._start_suite_or_test_metadata(suite)
         for name, value in suite.get_metadata(html=True):
             self._write_metadata_row(name, value, escape=False, write_empty=True)
+        self._write_source(suite.source)
         self._write_metadata_row('Number of Tests', suite.get_test_count())
         self._writer.end_element('table')
 
