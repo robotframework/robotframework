@@ -55,14 +55,11 @@ import time
 from robot.common import BaseKeyword, BaseTestSuite
 from robot.running import TestSuite, Keyword
 from robot.conf import RobotSettings
-from robot.output import LOGGER
 from robot.serializing.serializer import LogSuiteSerializer
 from robot.serializing import templates
 from robot.serializing.templating import Namespace, Template
 from robot import utils
 from robot.errors import DataError, Information
-
-LOGGER.register_console_logger()
 
 
 def generate_test_doc(args):

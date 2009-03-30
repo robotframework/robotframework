@@ -100,7 +100,6 @@ from robot.variables import is_scalar_var
 from robot import utils
 
 rawdata.PROCESS_CURDIR = False
-LOGGER.register_console_logger()
 
 # Rows having comment in the first cell need to be handled differently because
 # otherwise they'd start a new tc or uk. Such rows are simply indented one column

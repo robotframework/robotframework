@@ -54,12 +54,10 @@ from robot.running import TestLibrary, UserLibrary
 from robot.serializing import Template, Namespace
 from robot.errors import DataError, Information
 from robot.parsing import rawdata
-from robot.output import LOGGER
 from robot import utils
 
 
 rawdata.PROCESS_CURDIR = False
-LOGGER.register_console_logger()
 
 
 def main(args):
