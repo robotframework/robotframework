@@ -130,7 +130,7 @@ def rebot(*datasources, **options):
     
 
 def _exit(rc_or_suite, message=None, details=None):
-    """Exits with given rc or rc from given output. Syslogs error if given.
+    """Exits with given rc or rc from given output. Reports possible error.
     
     Exit code is the number of failed critical tests or error number.
       0       - Tests executed and all critical tests passed
