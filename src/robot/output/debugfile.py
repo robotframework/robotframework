@@ -14,8 +14,9 @@
 
 
 from robot import utils
-from systemlogger import LOGGER
-from abstractlogger import IsLogged
+
+from logger import LOGGER
+from loggerhelper import IsLogged
 
 
 def DebugFile(path):

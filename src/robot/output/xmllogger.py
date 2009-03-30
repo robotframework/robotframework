@@ -18,7 +18,7 @@ import os.path
 from robot import utils
 from robot.errors import DataError
 
-from abstractlogger import IsLogged
+from loggerhelper import IsLogged
 
 
 class XmlLogger:

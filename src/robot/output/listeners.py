@@ -17,7 +17,7 @@ import types
 
 from robot import utils
 from robot.errors import DataError
-from systemlogger import LOGGER
+from logger import LOGGER
 
 
 class Listeners:

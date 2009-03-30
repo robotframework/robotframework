@@ -1,10 +1,8 @@
 import unittest
-from StringIO import StringIO
 
-from robot import utils
 from robot.utils.asserts import *
 
-from robot.output.systemlogger import _FileLogger, _GlobalLogger
+from robot.output.logger import _Logger
 
 
 class MessageMock:
@@ -38,44 +36,10 @@ class LoggerMock2(LoggerMock):
         self.closed = True
 
 
-class TestSystemFileLogger(unittest.TestCase):
+class TestLogger(unittest.TestCase):
     
     def setUp(self):
-        _FileLogger._get_writer = lambda *args: StringIO()
-        self.logger = _FileLogger('whatever', 'INFO')
-        utils.robottime._current_time = (2006, 6, 13, 8, 37, 42, 123)
-   
-    def tearDown(self):
-        utils.robottime._current_time = None
-
-    def test_write(self):
-        self.logger.write('my message', 'INFO')
-        expected = '20060613 08:37:42.123 | INFO  | my message\n'
-        assert_equals(self.logger._writer.getvalue(), expected)
-        self.logger.write('my 2nd msg\nwith 2 lines', 'ERROR')
-        expected += '20060613 08:37:42.123 | ERROR | my 2nd msg\nwith 2 lines\n'
-        assert_equals(self.logger._writer.getvalue(), expected)
-                        
-    def test_write_helpers(self):
-        self.logger.info('my message')
-        expected = '20060613 08:37:42.123 | INFO  | my message\n'
-        assert_equals(self.logger._writer.getvalue(), expected)
-        self.logger.warn('my 2nd msg\nwith 2 lines')
-        expected += '20060613 08:37:42.123 | WARN  | my 2nd msg\nwith 2 lines\n'
-        assert_equals(self.logger._writer.getvalue(), expected)
-
-    def test_set_level(self):
-        self.logger.write('msg', 'DEBUG')
-        assert_equals(self.logger._writer.getvalue(), '')
-        self.logger.set_level('DEBUG')
-        self.logger.write('msg', 'DEBUG')
-        assert_equals(self.logger._writer.getvalue(), '20060613 08:37:42.123 | DEBUG | msg\n')
-        
-
-class TestGlobalLogger(unittest.TestCase):
-    
-    def setUp(self):
-        self.syslog = _GlobalLogger()
+        self.syslog = _Logger()
 
     def test_write_to_one_logger(self):
         logger = LoggerMock(('Hello, world!', 'INFO'))

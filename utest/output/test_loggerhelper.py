@@ -1,7 +1,7 @@
 import unittest
 
 from robot.errors import DataError 
-from robot.output.abstractlogger import AbstractLogger
+from robot.output.loggerhelper import AbstractLogger
 
 
 class MockFile:

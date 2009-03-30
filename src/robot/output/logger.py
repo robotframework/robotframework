@@ -17,11 +17,12 @@ import os
 
 from robot import utils
 
-from abstractlogger import AbstractLogger, Message
+from loggerhelper import AbstractLogger, Message
+from filelogger import FileLogger
 from monitor import CommandLineMonitor
 
 
-class _GlobalLogger(AbstractLogger):
+class _Logger(AbstractLogger):
     """Global system logger, to which new loggers may be registered.
 
     Whenever something is written to LOGGER in code, all registered loggers are
@@ -42,7 +43,7 @@ class _GlobalLogger(AbstractLogger):
 
     def register_logger(self, *loggers):
         for log in loggers:
-            logger = _Logger(log)
+            logger = _LoggerProxy(log)
             self._loggers.append(logger)
             if self._message_cache:
                 for msg in self._message_cache:
@@ -59,7 +60,7 @@ class _GlobalLogger(AbstractLogger):
         if path.upper() == 'NONE':
             return
         try:
-            logger = _FileLogger(path, level)
+            logger = FileLogger(path, level)
         except:
             self.error("Opening syslog file '%s' failed: %s"  
                        % (path, utils.get_error_message()))
@@ -118,7 +119,7 @@ class _GlobalLogger(AbstractLogger):
             logger.end_keyword(keyword)
 
 
-class _Logger:
+class _LoggerProxy:
 
     def __init__(self, logger):
         for name in ['write', 'log_message', 'output_file', 'close',
@@ -128,44 +129,4 @@ class _Logger:
             setattr(self, name, method)
 
 
-class _FileLogger(AbstractLogger):
-
-    def __init__(self, path, level):
-        AbstractLogger.__init__(self, level)
-        self._writer = self._get_writer(path)
-        
-    def _get_writer(self, path):
-        # Hook for unittests
-        return open(path, 'wb')
-    
-    def _write(self, message):
-        entry = '%s | %s | %s\n' % (message.timestamp, message.level.ljust(5), 
-                                    message.message)
-        self._writer.write(utils.unic(entry).encode('UTF-8'))
-
-    def start_suite(self, suite):
-        self.info("Started test suite '%s'" % suite.name)
-        
-    def end_suite(self, suite):
-        self.info("Ended test suite '%s'" % suite.name)
-        
-    def start_test(self, test):
-        self.info("Started test case '%s'" % test.name)
-        
-    def end_test(self, test):
-        self.info("Ended test case '%s'" % test.name)
-        
-    def start_keyword(self, kw):
-        self.debug("Started keyword '%s'" % kw.name)
-        
-    def end_keyword(self, kw):
-        self.debug("Ended keywordt '%s'" % kw.name)
-
-    def output_file(self, name, path):
-        self.info('%s: %s' % (name, path))
-
-    def close(self):
-        self._writer.close()
-
-
-LOGGER = _GlobalLogger()
+LOGGER = _Logger()

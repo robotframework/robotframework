@@ -19,8 +19,8 @@ import re
 from robot import utils
 import robot
 
-from abstractlogger import AbstractLogger, Message, LEVELS
-from systemlogger import LOGGER
+from loggerhelper import AbstractLogger, Message, LEVELS
+from logger import LOGGER
 from xmllogger import XmlLogger
 from listeners import Listeners
 from debugfile import DebugFile

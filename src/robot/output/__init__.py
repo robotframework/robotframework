@@ -14,10 +14,10 @@
 
 
 from output import Output
-from systemlogger import LOGGER
+from logger import LOGGER
 from monitor import CommandLineMonitor
 from xmllogger import XmlLogger
-from abstractlogger import LEVELS
+from loggerhelper import LEVELS
 from readers import process_output, process_outputs
 
 
