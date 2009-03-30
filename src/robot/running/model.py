@@ -27,7 +27,7 @@ from userkeyword import UserLibrary
 
 
 def TestSuite(datasources, settings):
-    suitedata = TestSuiteData(datasources, settings)
+    suitedata = TestSuiteData(datasources, settings['SuiteNames'])
     suite = RunnableTestSuite(suitedata)
     suite.set_options(settings)
     return suite

@@ -26,14 +26,14 @@ from keywords import KeywordList
 from userkeyword import UserHandlerList
 
 
-def TestSuiteData(datasources, settings):
+def TestSuiteData(datasources, suitenames=[]):
     datasources = [ utils.normpath(path) for path in datasources ]
     if not datasources:
         raise DataError("No data sources given.")
     elif len(datasources) > 1:
-        return MultiSourceSuite(datasources, settings['SuiteNames'])
+        return MultiSourceSuite(datasources, suitenames)
     elif os.path.isdir(datasources[0]):
-        return DirectorySuite(datasources[0], settings['SuiteNames'])
+        return DirectorySuite(datasources[0], suitenames)
     else:
         return FileSuite(datasources[0])
 

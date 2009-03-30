@@ -18,12 +18,10 @@ from resourcefile import ResourceFile
 from robot.conf.settings import RobotSettings
 
 
-def TestSuite(*datasources, **options):
+def TestSuite(*datasources):
     """Creates and returns a parsed test suite object.
     
     Data sources are paths to files and directories, similarly as when running
-    pybot/jybot from command line. Options are given as keywords arguments and
-    their names are same as long command line options without hyphens. 
+    pybot/jybot from command line.
     """
-    settings = RobotSettings(options)
-    return TestSuiteData(datasources, settings)
+    return TestSuiteData(datasources)

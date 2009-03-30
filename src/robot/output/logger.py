@@ -23,7 +23,7 @@ from monitor import CommandLineMonitor
 
 
 class _Logger(AbstractLogger):
-    """Global system logger, to which new loggers may be registered.
+    """A global logger proxy to which new loggers may be registered.
 
     Whenever something is written to LOGGER in code, all registered loggers are
     notified.  Messages are also cached and cached messages written to new
@@ -135,10 +135,11 @@ class _Logger(AbstractLogger):
 class _LoggerProxy:
 
     def __init__(self, logger):
+        default = lambda *args: None
         for name in ['write', 'log_message', 'output_file', 'close',
                      'start_suite', 'end_suite', 'start_test', 'end_test',
                      'start_keyword', 'end_keyword']:
-            method = getattr(logger, name, lambda *args: None)
+            method = getattr(logger, name, default)
             setattr(self, name, method)
 
 
