@@ -1065,7 +1065,7 @@ class _Misc:
         return old
         
     def syslog(self, message, level="INFO"):
-        """Logs the given message with the given level into syslog."""
+        """*DEPRECATED* Use `Log` keyword with WARN level instead. This keyword will be removed in Robot Framework 2.2."""
         output.LOGGER.write(message, level)
         
     def import_library(self, name, *args):
