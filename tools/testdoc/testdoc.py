@@ -65,7 +65,7 @@ from robot.errors import DataError, Information
 
 def generate_test_doc(args):
     opts, datasources = process_arguments(args)
-    suite = TestSuite(datasources, RobotSettings(opts), SilentSystemLogger())
+    suite = TestSuite(datasources, RobotSettings(opts))
     outpath = get_outpath(opts['output'], suite.name)
     serialize_test_doc(suite, outpath, opts['title'])
     exit(msg=outpath)
@@ -175,12 +175,6 @@ class NonResolvingVariableScopes:
 
     def replace_string(self, item):
         return item
-
-
-class SilentSystemLogger(AbstractLogger):
-
-    def write(self, msg, level):
-        pass
 
 
 if __name__ == '__main__':
