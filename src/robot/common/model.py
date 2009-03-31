@@ -23,6 +23,7 @@ from robot.errors import DataError
 class _TestAndSuiteHelper:
     
     def __init__(self, name):
+        self.parent = None
         self.name = name
         self.setup = None 
         self.teardown = None
@@ -35,7 +36,9 @@ class _TestAndSuiteHelper:
                              % (self.__class__.__name__, name))
 
     def set_names(self, name=None, parent=None):
-        if name is not None:
+        if parent:
+            self.parent = parent
+        if name:
             self.name = name
         if parent is None:
             self.mediumname = self.longname = self.name
@@ -46,6 +49,15 @@ class _TestAndSuiteHelper:
             mediumname_parts.append(self.name)
             self.mediumname = '.'.join(mediumname_parts)
             
+    def get_long_name(self, separator='.'):
+        """Returns long name. If separator is None, list of names is returned."""
+        names = [self.name]
+        if self.parent:
+            names = self.parent.get_long_name(None) + names
+        if separator:
+            return separator.join(names)
+        return names
+
     def _set_teardown_fail_msg(self, message):
         if self.message == '':
             self.message = message
