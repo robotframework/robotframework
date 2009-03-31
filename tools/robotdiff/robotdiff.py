@@ -209,7 +209,7 @@ class DiffRobotOutputs:
         self._writer.start_element('td', {'class': col_status})
         if s_or_t.link is not None:
             type = self._get_type(s_or_t)
-            link = '%s#%s_%s' % (s_or_t.link, type, s_or_t.mediumname)
+            link = '%s#%s_%s' % (s_or_t.link, type, s_or_t.longname)
             self._writer.whole_element('a', status, {'class': status.lower(), 
                                                      'href': link, 
                                                      'title': s_or_t.longname })

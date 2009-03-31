@@ -75,7 +75,6 @@ def _get_errors_node(root):
 class _BaseReader:
     
     def __init__(self, node):
-        self.name = node.get_attr('name')
         try:
             self.doc = node.get_node('doc').text
         except AttributeError:
@@ -113,7 +112,6 @@ class _SuiteReader(_TestAndSuiteReader):
     
     def __init__(self, node):
         _TestAndSuiteReader.__init__(self, node)
-        self.source = node.attrs.get('source', None)
         del(self.keywords)
         for metanode in node.get_nodes('metadata/item'):
             self.metadata[metanode.get_attr('name')] = metanode.text
@@ -154,17 +152,16 @@ class _KeywordReader(_BaseReader):
     
 class TestSuite(BaseTestSuite, _SuiteReader):
 
-    def __init__(self, node, read_level=-1, level=1):
+    def __init__(self, node, read_level=-1, level=1, parent=None):
         node = self._get_node(node, read_level, level)
-        BaseTestSuite.__init__(self)
+        BaseTestSuite.__init__(self, node.attrs.get('name'), 
+                               node.attrs.get('source', None), parent)
         _SuiteReader.__init__(self, node)
         for snode in node.get_nodes('suite'):
             snode.generator = node.generator
-            suite = TestSuite(snode, read_level, level+1)
-            self.suites.append(suite)
+            TestSuite(snode, read_level, level+1, parent=self)
         for tnode in node.get_nodes('test'):
-            test = TestCase(tnode, self)
-            self.tests.append(test)
+            TestCase(tnode, parent=self)
         self.set_status()
         if node.generator == 'robot' and \
                 self.teardown is not None and self.teardown.status == 'FAIL':
@@ -226,7 +223,7 @@ class TestSuite(BaseTestSuite, _SuiteReader):
 class CombinedTestSuite(TestSuite):
     
     def __init__(self, starttime, endtime):
-        BaseTestSuite.__init__(self)
+        BaseTestSuite.__init__(self, name='')
         self.doc = ''
         self.message = ''
         self.starttime = self._get_time(starttime)
@@ -243,10 +240,10 @@ class CombinedTestSuite(TestSuite):
             return 'N/A'
         return utils.secs_to_timestamp(secs, millis=True)
 
-    def set_names(self, name=None):
+    def set_name(self, name=None):
         if name is None:
             name = ' & '.join([suite.name for suite in self.suites])
-        return BaseTestSuite.set_names(self, name)
+        return BaseTestSuite.set_name(self, name)
 
     def add_suite(self, suite):
         self.suites.append(suite)
@@ -260,7 +257,7 @@ class CombinedTestSuite(TestSuite):
 class TestCase(BaseTestCase, _TestReader):
 
     def __init__(self, node, parent):
-        BaseTestCase.__init__(self)
+        BaseTestCase.__init__(self, node.get_attr('name'), parent)
         _TestReader.__init__(self, node)
         self.set_criticality(parent.critical)
   
@@ -275,7 +272,7 @@ class Keyword(BaseKeyword, _KeywordReader):
 
     def __init__(self, node):
         self._init_data()
-        BaseKeyword.__init__(self)
+        BaseKeyword.__init__(self, node.get_attr('name'))
         _KeywordReader.__init__(self, node)
         
     def _init_data(self):

@@ -9,16 +9,18 @@ from robot.common.model import BaseTestSuite, BaseTestCase, _Critical
 
 def _get_suite():
     suite = BaseTestSuite('Root')
-    suite.suites = [ BaseTestSuite('Sub1'), BaseTestSuite('Sub2') ]
-    suite.suites[0].suites = [ BaseTestSuite('Sub11') , BaseTestSuite('Sub')]
+    suite.suites = [ BaseTestSuite('Sub1', parent=suite), BaseTestSuite('Sub2', parent=suite) ]
+    suite.suites[0].suites = [ BaseTestSuite('Sub11', parent=suite.suites[0]), 
+                              BaseTestSuite('Sub', parent=suite.suites[0])]
     suite.suites[0].suites[0].tests \
-            = [ BaseTestCase('T11'), BaseTestCase('T12') ]
-    suite.suites[0].suites[0].suites = [ BaseTestSuite('Sub') ]
-    suite.suites[0].suites[0].suites[0].tests = [ BaseTestCase('T') ]
-
-    suite.suites[0].suites[1].tests = [ BaseTestCase('T') ]
-    suite.suites[1].tests = [ BaseTestCase('T21') ]
-    suite.set_names()
+            = [ BaseTestCase('T11', suite.suites[0].suites[0]), 
+               BaseTestCase('T12', suite.suites[0].suites[0]) ]
+    suite.suites[0].suites[0].suites \
+            = [ BaseTestSuite('Sub', parent=suite.suites[0].suites[0]) ]
+    suite.suites[0].suites[0].suites[0].tests \
+            = [ BaseTestCase('T', suite.suites[0].suites[0].suites[0]) ]
+    suite.suites[0].suites[1].tests = [ BaseTestCase('T', parent=suite.suites[0].suites[1]) ]
+    suite.suites[1].tests = [ BaseTestCase('T21', suite.suites[1]) ]
     return suite
 
 class TestGetLongName(unittest.TestCase):
@@ -122,7 +124,7 @@ class TestFilterByNames(unittest.TestCase):
 class TestSetCriticality(unittest.TestCase):
     
     def _test(self, crit, noncrit, exp):
-        test = BaseTestCase()
+        test = BaseTestCase('Name', parent=None)
         critical = _Critical()
         critical.set(crit, noncrit)
         test.tags = ['tag1', 'tag2', 'tag3']

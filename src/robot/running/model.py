@@ -35,8 +35,10 @@ def TestSuite(datasources, settings):
     
 class RunnableTestSuite(BaseTestSuite):
     
-    def __init__(self, suitedata, parent_data_list=None):
-        BaseTestSuite.__init__(self, suitedata.name, suitedata.source)
+    # TODO: Remove parent_data_list as there is now parent available
+    # Also from test case. Check also is there some other parent related stuff 
+    def __init__(self, suitedata, parent_data_list=None, parent=None):
+        BaseTestSuite.__init__(self, suitedata.name, suitedata.source, parent)
         self.variables = GLOBAL_VARIABLES.copy()
         self.variables.set_from_variable_table(suitedata.variables)
         self.source = suitedata.source
@@ -47,10 +49,10 @@ class RunnableTestSuite(BaseTestSuite):
         self.setup = utils.get_not_none(suitedata.suite_setup, [])
         self.teardown = utils.get_not_none(suitedata.suite_teardown, [])
         parent_data_list = [suitedata] + (parent_data_list or [])
-        self.suites = [ RunnableTestSuite(suite, parent_data_list) 
-                        for suite in suitedata.suites ]
-        self.tests = [ RunnableTestCase(test, parent_data_list) 
-                       for test in suitedata.tests ]
+        for suite in suitedata.suites:
+            RunnableTestSuite(suite, parent_data_list, parent=self) 
+        for test in suitedata.tests:
+            RunnableTestCase(test, parent_data_list, parent=self) 
         if self.name == '':   # suitedata was multisource suite
             self.name = ' & '.join([suite.name for suite in self.suites])
         self.message = ''
@@ -141,8 +143,8 @@ class RunnableTestSuite(BaseTestSuite):
 
 class RunnableTestCase(BaseTestCase):
     
-    def __init__(self, testdata, parent_data_list):
-        BaseTestCase.__init__(self, testdata.name)
+    def __init__(self, testdata, parent_data_list, parent):
+        BaseTestCase.__init__(self, testdata.name, parent)
         self.doc = testdata.doc is not None and testdata.doc or ''
         test_setup, test_teardown, force_tags, default_tags, test_timeout \
                 = self._process_parents(parent_data_list)

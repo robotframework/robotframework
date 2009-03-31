@@ -40,9 +40,9 @@ def TestSuiteData(datasources, suitenames=[]):
 
 class _BaseSuite(BaseTestSuite):
 
-    def __init__(self, rawdata):
+    def __init__(self, rawdata, parent=None):
         name, source = self._get_name_and_source(rawdata.source)
-        BaseTestSuite.__init__(self, name, source)
+        BaseTestSuite.__init__(self, name, source, parent)
         metadata = TestSuiteMetadata(rawdata)   
         self.doc = metadata['Documentation']
         self.suite_setup = metadata['SuiteSetup']
@@ -64,14 +64,29 @@ class _BaseSuite(BaseTestSuite):
     def _get_name(self, source):
         return utils.printable_name_from_path(source)
 
-        
+    def _create_subsuites(self, paths, suitenames, error):
+        for path in paths:
+            try:
+                if os.path.isdir(path):
+                    DirectorySuite(path, suitenames, parent=self)
+                else:
+                    FileSuite(path, parent=self)
+            except DataError, err:
+                LOGGER.info("Parsing data source '%s' failed: %s" % (path, err))
+        # The latter check is to get a more informative exception in 
+        # suite.filter_by_names later if --suite option was used.
+        if self.get_test_count() == 0 and len(suitenames) == 0:
+            self.parent.suites.pop()
+            raise DataError(error)
+
+
 class FileSuite(_BaseSuite):
     
-    def __init__(self, path):
+    def __init__(self, path, parent=None):
         LOGGER.info("Parsing test case file '%s'" % path)
         rawdata = self._get_rawdata(path)
-        _BaseSuite.__init__(self, rawdata)
-        self.tests = self._process_testcases(rawdata)
+        _BaseSuite.__init__(self, rawdata, parent)
+        self._create_testcases(rawdata)
 
     def _get_source(self, path):
         return path
@@ -82,14 +97,12 @@ class FileSuite(_BaseSuite):
             return rawdata
         raise DataError("Test case file '%s' contains no test cases."  % path)
 
-    def _process_testcases(self, rawdata):
-        tests = []
+    def _create_testcases(self, rawdata):
         for rawtest in rawdata.testcases:
             try:
-                tests.append(TestCase(rawtest))
+                TestCase(rawtest, self)
             except:
                 rawtest.report_invalid_syntax()
-        return tests
 
             
 class DirectorySuite(_BaseSuite):
@@ -97,7 +110,7 @@ class DirectorySuite(_BaseSuite):
     _ignored_prefixes = ['_', '.']
     _ignored_dirs = ['CVS']
     
-    def __init__(self, path, suitenames):
+    def __init__(self, path, suitenames, parent=None):
         LOGGER.info("Parsing test suite directory '%s'" % path)
         # If we are included also all our children are
         if self._is_in_incl_suites(os.path.basename(os.path.normpath(path)),
@@ -105,11 +118,9 @@ class DirectorySuite(_BaseSuite):
             suitenames = []  
         subitems, self.initfile = self._get_suite_items(path, suitenames)
         rawdata = self._get_rawdata(path)
-        _BaseSuite.__init__(self, rawdata)
-        self._process_subsuites(subitems, suitenames)
-        if self.get_test_count() == 0 and len(suitenames) == 0:
-            raise DataError("Test suite directory '%s' contains no test cases." 
-                            % path)
+        _BaseSuite.__init__(self, rawdata, parent)
+        error = "Test suite directory '%s' contains no test cases." % path
+        self._create_subsuites(subitems, suitenames, error)
         
     def _get_source(self, path):
         # 'path' points either to directory or __init__ file inside it
@@ -145,19 +156,6 @@ class DirectorySuite(_BaseSuite):
                      "contains test cases and is ignored." % self.initfile)
         return RawData(path)
             
-    def _process_subsuites(self, paths, suitenames):
-        for path in paths:
-            try:
-                if os.path.isdir(path):
-                    suite = DirectorySuite(path, suitenames)
-                else:
-                    suite = FileSuite(path)
-            except:
-                msg = "Parsing data source '%s' failed: %s"
-                LOGGER.info(msg % (path, utils.get_error_message()))
-            else:
-                self.suites.append(suite)
-
     def _is_ignored(self, name, path, incl_suites):
         if name[0] in self._ignored_prefixes:
             return True
@@ -187,35 +185,22 @@ class MultiSourceSuite(_BaseSuite):
     def __init__(self, paths, suitenames):
         LOGGER.info("Parsing multiple data sources %s" % utils.seq2str(paths))
         _BaseSuite.__init__(self, RawData(None))
-        for path in paths:
-            try:
-                if os.path.isdir(path):
-                    suite = DirectorySuite(path, suitenames)
-                else:
-                    suite = FileSuite(path)
-            except DataError, err:
-                LOGGER.error("Parsing data source '%s' failed: %s" % (path, err))
-            else:
-                self.suites.append(suite)
-        if self.get_test_count() == 0 and len(suitenames) == 0:
-            # The latter check is to get a more informative exception in 
-            # suite.filter_by_names later if --suite option was used.
-            raise DataError('Data sources %s contain no test cases.' % 
-                            (utils.seq2str(paths)))
+        error = 'Data sources %s contain no test cases.' % (utils.seq2str(paths))
+        self._create_subsuites(paths, suitenames, error)
 
     def _get_name_and_source(self, path):
         return '', None
         
-    def set_names(self, name):
+    def set_name(self, name):
         if name is None:
             name = ' & '.join([suite.name for suite in self.suites])
-        return BaseTestSuite.set_names(self, name)
+        return BaseTestSuite.set_name(self, name)
 
     
 class TestCase(BaseTestCase):
     
-    def __init__(self, rawdata):
-        BaseTestCase.__init__(self, utils.printable_name(rawdata.name))
+    def __init__(self, rawdata, parent):
+        BaseTestCase.__init__(self, utils.printable_name(rawdata.name), parent)
         metadata = TestCaseMetadata(rawdata.metadata)
         self.doc = metadata['Documentation']
         self.tags = metadata['Tags']

@@ -22,9 +22,9 @@ from robot.errors import DataError
 
 class _TestAndSuiteHelper:
     
-    def __init__(self, name):
-        self.parent = None
+    def __init__(self, name, parent=None):
         self.name = name
+        self.parent = parent
         self.setup = None 
         self.teardown = None
         self.status = 'NOT_RUN'
@@ -32,28 +32,22 @@ class _TestAndSuiteHelper:
     def __getattr__(self, name):
         if name == 'htmldoc':
             return utils.html_escape(self.doc, formatting=True)
+        if name == 'longname':
+            return self.get_long_name()
+        if name == 'mediumname':
+            tokens = self.get_long_name(separator=None)
+            return '.'.join([ t[0].lower() for t in tokens[:-1] ] + [tokens[-1]])
         raise AttributeError("%s does not have attribute '%s'" 
                              % (self.__class__.__name__, name))
 
-    def set_names(self, name=None, parent=None):
-        if parent:
-            self.parent = parent
+    def set_name(self, name):
         if name:
             self.name = name
-        if parent is None:
-            self.mediumname = self.longname = self.name
-        else:
-            self.longname = parent.longname + '.' + self.name
-            mediumname_parts = parent.mediumname.split('.')
-            mediumname_parts[-1] = mediumname_parts[-1][0].lower()
-            mediumname_parts.append(self.name)
-            self.mediumname = '.'.join(mediumname_parts)
             
     def get_long_name(self, separator='.'):
         """Returns long name. If separator is None, list of names is returned."""
-        names = [self.name]
-        if self.parent:
-            names = self.parent.get_long_name(None) + names
+        names = self.parent is not None and self.parent.get_long_name(None) or []
+        names.append(self.name)
         if separator:
             return separator.join(names)
         return names
@@ -74,8 +68,8 @@ class _TestAndSuiteHelper:
 class BaseTestSuite(_TestAndSuiteHelper):
     """Base class for TestSuite used in runtime and by rebot."""
 
-    def __init__(self, name='', source=None):
-        _TestAndSuiteHelper.__init__(self, name)
+    def __init__(self, name, source=None, parent=None):
+        _TestAndSuiteHelper.__init__(self, name, parent)
         self.source = source is not None and utils.normpath(source) or None
         self.metadata = {}
         self.suites = []
@@ -83,6 +77,8 @@ class BaseTestSuite(_TestAndSuiteHelper):
         self.critical = _Critical()
         self.critical_stats = Stat()
         self.all_stats = Stat()
+        if parent:
+            parent.suites.append(self)
         
     def set_critical_tags(self, critical, non_critical):
         if critical is not None or non_critical is not None:
@@ -95,15 +91,7 @@ class BaseTestSuite(_TestAndSuiteHelper):
             suite._set_critical_tags(critical)
         for test in self.tests:
             test.set_criticality(critical)
-    
-    def set_names(self, name=None, parent=None):
-        _TestAndSuiteHelper.set_names(self, name, parent)
-        for suite in self.suites:
-            suite.set_names(parent=self)
-        for test in self.tests:
-            test.set_names(parent=self)
-        return self.name
-    
+        
     def set_doc(self, doc):
         if doc is not None:
             self.doc = doc
@@ -296,7 +284,7 @@ class BaseTestSuite(_TestAndSuiteHelper):
         self.set_tags(settings['SetTag'])
         self.filter(settings['SuiteNames'], settings['TestNames'],
                     settings['Include'], settings['Exclude'])
-        self.set_names(settings['Name'])
+        self.set_name(settings['Name'])
         settings['Name'] = self.name
         self.set_doc(settings['Doc'])
         self.set_metadata(settings['Metadata'])
@@ -327,9 +315,11 @@ class BaseTestSuite(_TestAndSuiteHelper):
 
 class BaseTestCase(_TestAndSuiteHelper):
 
-    def __init__(self, name=''):
-        _TestAndSuiteHelper.__init__(self, name)
+    def __init__(self, name, parent):
+        _TestAndSuiteHelper.__init__(self, name, parent)
         self.critical = 'yes'
+        if parent:
+            parent.tests.append(self)
 
     def suite_teardown_failed(self, message):
         self.status = 'FAIL'

@@ -161,8 +161,8 @@ class RebotTestOutput(RobotTestOutput):
         elif suite_level == split_level:
             self._create_split_sub_log(suite)
             
-    def _create_split_sub_log(self, suite):
-        suite.set_names()
+    def _create_split_sub_log(self, suite): 
+        suite.parent = None # TODO: Remove after get long name has splitlevel
         outfile = self._get_outfile(self._namegen.get_name(), 'log')
         if outfile is None:
             return
@@ -177,7 +177,6 @@ class SplitSubTestOutput(RobotTestOutput):
     
     def __init__(self, path):
         suite, exec_errors = process_output(path)
-        suite.set_names()
         RobotTestOutput.__init__(self, suite, exec_errors)
 
 
@@ -189,7 +188,6 @@ class SplitIndexTestOutput(RobotTestOutput):
         # tests but no messages. The latter contains messages but no info
         # about tests in splitted outputs. 
         outsuite, exec_errors = process_output(path, settings['SplitOutputs'])
-        outsuite.set_names()
         self._update_stats(outsuite, runsuite)
         RobotTestOutput.__init__(self, runsuite, exec_errors, settings)
         self._outsuite = outsuite

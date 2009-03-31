@@ -18,6 +18,18 @@ table {
   margin: 1em 0em;
   border: 0.1em solid black;
 }
+table.setting {
+  background-color: rgb(1, 50, 192);
+} 
+table.variable {
+  background-color: rgb(100, 100, 100);
+} 
+table.testcase {
+  background-color: rgb(30, 200, 200);
+} 
+table.keyword {
+  background-color: rgb(250, 100, 100);
+} 
 th, td {
   border-style: solid;
   border-width: 0.05em 0.1em;
@@ -46,7 +58,6 @@ col.name {
 - col.name is against specs but works in IE
 */
 td:first-child, col.name {
-  background-color: rgb(240, 240, 240);
   text-transform: capitalize;
   letter-spacing: 0.1em;
 }
@@ -59,7 +70,7 @@ th {
 </head>
 <body>
 <h1>Robot Test Cases</h1>
-<table border="1">
+<table class="setting" border="1">
 <colgroup span="99">
 <col class="name">
 <col class="value" span="4"></colgroup>
@@ -89,7 +100,7 @@ th {
 </tr>
 </tbody>
 </table>
-<table border="1">
+<table class="variable" border="1">
 <colgroup span="99">
 <col class="name">
 <col class="value" span="4"></colgroup>
@@ -119,7 +130,7 @@ th {
 </tr>
 </tbody>
 </table>
-<table border="1">
+<table class="testcase" border="1">
 <colgroup span="99">
 <col class="name">
 <col class="action">
@@ -156,7 +167,7 @@ th {
 </tr>
 </tbody>
 </table>
-<table border="1">
+<table class="keyword" border="1">
 <colgroup span="99">
 <col class="name">
 <col class="action">

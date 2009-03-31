@@ -14,7 +14,6 @@ class TestCheckerLibrary:
         except:
             raise RuntimeError('Processing output failed: %s'
                                % utils.get_error_message())
-        suite.set_names()
         return process_suite(suite), process_errors(errors)
 
     def get_test_from_suite(self, suite, name):
