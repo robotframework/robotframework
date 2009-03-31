@@ -96,7 +96,7 @@ Configuring logging
 Robot Framework has a global logger that is responsible for error
 reporting and logging in general. This :code:`LOGGER` instance is a
 proxy and it is possible to register new loggers to it. Registered
-loggers get notifications when something happends and they can report
+loggers get notifications when something happens and they can report
 events however they want. A console logger writing warnings and errors
 into the standard error stream is registered automatically but it can
 be disabled. For more information about how to register loggers and
