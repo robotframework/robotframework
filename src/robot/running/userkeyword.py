@@ -111,7 +111,8 @@ class UserHandler(BaseHandler):
             raise DataError('User keyword initialization failed:\n%s' 
                             % '\n'.join(self._errors)) 
         if not (self.keywords or self.return_value):
-            raise DataError("User keyword contains no keywords")
+            raise DataError("User keyword '%s' contains no keywords"
+                            % self.name)
 
     def _get_return_value(self, variables):
         if not self.return_value:

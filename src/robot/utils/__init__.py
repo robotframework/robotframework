@@ -31,10 +31,8 @@ from misc import get_temp_dir, get_not_none, plural_or_not, get_link_path, \
         calc_percents, percents_to_widths, get_directory, seq2str, seq2str2
 from outputcapture import capture_output, release_output
 from robottime import get_timestamp, get_start_timestamp, format_time, \
-        get_time, get_elapsed_time, get_elapsed_millis, \
-        elapsed_string_to_millis, elapsed_millis_to_string, \
-        timestr_to_secs, secs_to_timestr, get_diff_to_gmt, \
-        secs_to_timestamp, timestamp_to_secs
+        get_time, get_elapsed_time, elapsed_time_to_string, \
+        timestr_to_secs, secs_to_timestr, secs_to_timestamp, timestamp_to_secs
 from robottypes import is_list, is_tuple, is_scalar, is_str, is_integer, \
         is_boolean, is_number, is_list_of_str, to_boolean, to_list, \
         type_as_str, unic

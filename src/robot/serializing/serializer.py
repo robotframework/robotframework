@@ -406,7 +406,8 @@ class LogSuiteSerializer:
         self._write_metadata_row('Documentation', item.htmldoc, escape=False)
 
     def _write_times(self, item):
-        times = [item.starttime, item.endtime, item.elapsedtime]
+        times = [item.starttime, item.endtime,
+                 utils.elapsed_time_to_string(item.elapsedtime)]
         self._write_metadata_row('Start / End / Elapsed', '  /  '.join(times))
 
     def _write_metadata_row(self, name, value, attrs={}, escape=True,
@@ -550,11 +551,11 @@ class _ReportTableHelper:
             start = 'N/A'
         else:
             start = item.starttime[:-4].replace(' ', '&nbsp;')
-        if item.elapsedmillis < 0:   # --CombinedTime NONE
+        if item.elapsedtime < 0:   # --CombinedTime NONE
             elapsed = '&nbsp;'
         else:
-            rounded_millis = round(item.elapsedmillis, -3)
-            elapsed = utils.elapsed_millis_to_string(rounded_millis)[:-4]
+            rounded_millis = round(item.elapsedtime, -3)
+            elapsed = utils.elapsed_time_to_string(rounded_millis)[:-4]
         return '%s<br />%s' % (start, elapsed)
 
 
@@ -688,9 +689,9 @@ class ReportTagStatSerializer(_ReportTableHelper):
                 utils.plural_or_not(total), passed, class_, failed)
         
     def _get_elapsed(self, tests):
-        millis = sum([test.elapsedmillis for test in tests])
+        millis = sum([test.elapsedtime for test in tests])
         millis = round(millis, -3)  # millis not shown in report
-        return utils.elapsed_millis_to_string(millis)[:-4]
+        return utils.elapsed_time_to_string(millis)[:-4]
         
     def _get_crit(self, stat):
         if stat.critical:

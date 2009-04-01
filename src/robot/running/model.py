@@ -84,8 +84,7 @@ class RunnableTestSuite(BaseTestSuite):
             err_msg = 'Suite teardown failed:\n%s' % teardown_err
             self.suite_teardown_failed(err_msg)
         self.endtime = utils.get_timestamp()
-        self.elapsedmillis = utils.get_elapsed_millis(self.starttime, self.endtime)
-        self.elapsedtime = utils.elapsed_millis_to_string(self.elapsedmillis)
+        self.elapsedtime = utils.get_elapsed_time(self.starttime, self.endtime)
         self._set_prev_test_variables(GLOBAL_VARIABLES, varz=self.namespace.variables)
         output.end_suite(self)
         self.namespace.end_suite()
@@ -167,8 +166,7 @@ class RunnableTestCase(BaseTestCase):
             self.status = 'FAIL'
             self.message = error
         self.endtime = utils.get_timestamp()
-        self.elapsedmillis = utils.get_elapsed_millis(self.starttime, self.endtime)
-        self.elapsedtime = utils.elapsed_millis_to_string(self.elapsedmillis)
+        self.elapsedtime = utils.get_elapsed_time(self.starttime, self.endtime)
         output.end_test(self)
         namespace.end_test()
 

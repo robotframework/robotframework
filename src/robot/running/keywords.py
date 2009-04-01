@@ -60,8 +60,7 @@ class Keyword(BaseKeyword):
         else:
             self.status = 'PASS'
         self.endtime = utils.get_timestamp()
-        self.elapsedmillis = utils.get_elapsed_millis(self.starttime, self.endtime)
-        self.elapsedtime = utils.elapsed_millis_to_string(self.elapsedmillis)
+        self.elapsedtime = utils.get_elapsed_time(self.starttime, self.endtime)
         output.end_keyword(self)
         if self.status == 'FAIL':
             raise err
@@ -228,8 +227,7 @@ class ForKeyword(BaseKeyword):
             error = None
         self.status = error is None and 'PASS' or 'FAIL'
         self.endtime = utils.get_timestamp()
-        self.elapsedmillis = utils.get_elapsed_millis(self.starttime, self.endtime)
-        self.elapsedtime = utils.elapsed_millis_to_string(self.elapsedmillis)
+        self.elapsedtime = utils.get_elapsed_time(self.starttime, self.endtime)
         output.end_keyword(self)
         if error is not None:
             raise error
@@ -290,8 +288,7 @@ class ForItemKeyword(BaseKeyword):
     def end(self, status):
         self.status = status
         self.endtime = utils.get_timestamp()
-        self.elapsedmillis = utils.get_elapsed_millis(self.starttime, self.endtime)
-        self.elapsedtime = utils.elapsed_millis_to_string(self.elapsedmillis)
+        self.elapsedtime = utils.get_elapsed_time(self.starttime, self.endtime)
 
     
 class ParallelKeyword(BaseKeyword):
@@ -326,8 +323,7 @@ class ParallelKeyword(BaseKeyword):
                 self.status = 'FAIL'
             recorder.replay(output)
         self.endtime = utils.get_timestamp()
-        self.elapsedmillis = utils.get_elapsed_millis(self.starttime, self.endtime)
-        self.elapsedtime = utils.elapsed_millis_to_string(self.elapsedmillis)
+        self.elapsedtime = utils.get_elapsed_time(self.starttime, self.endtime)
         output.end_keyword(self)
         if len(errors) > 0:
             if len(errors) > 1:
@@ -361,7 +357,6 @@ class SyntaxErrorKeyword(BaseKeyword):
         output.start_keyword(self)
         output.fail(self._error)
         self.endtime = utils.get_timestamp()
-        self.elapsedmillis = utils.get_elapsed_millis(self.starttime, self.endtime)
-        self.elapsedtime = utils.elapsed_millis_to_string(self.elapsedmillis)
+        self.elapsedtime = utils.get_elapsed_time(self.starttime, self.endtime)
         output.end_keyword(self)
         raise ExecutionFailed(self._error)

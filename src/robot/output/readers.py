@@ -87,15 +87,7 @@ class _BaseReader:
         self.message = status.text
         self.starttime = status.get_attr('starttime', 'N/A')
         self.endtime = status.get_attr('endtime', 'N/A')
-        self._set_elapsed_time()
-        
-    def _set_elapsed_time(self):
-        if self.starttime != 'N/A' and self.endtime != 'N/A':
-            self.elapsedmillis = utils.get_elapsed_millis(self.starttime, self.endtime)
-            self.elapsedtime = utils.elapsed_millis_to_string(self.elapsedmillis)
-        else:
-            self.elapsedmillis = 0
-            self.elapsedtime = '00:00:00.000'
+        self.elapsedtime = utils.get_elapsed_time(self.starttime, self.endtime)
             
 
 class _TestAndSuiteReader(_BaseReader):
@@ -183,13 +175,9 @@ class TestSuite(BaseTestSuite, _SuiteReader):
     def set_status(self):
         BaseTestSuite.set_status(self)
         if self.starttime == 'N/A' or self.endtime == 'N/A':
-            self._set_elapsed()
-
-    def _set_elapsed(self):
-        subitems = self.suites + self.tests + [self.setup, self.teardown]
-        self.elapsedmillis = sum([ item.elapsedmillis for item in subitems 
-                                   if item is not None ])
-        self.elapsedtime = utils.elapsed_millis_to_string(self.elapsedmillis)
+            subitems = self.suites + self.tests + [self.setup, self.teardown]
+            self.elapsedtime = sum([ item.elapsedtime for item in subitems 
+                                     if item is not None ])
 
     def _set_critical_tags(self, critical):
         BaseTestSuite._set_critical_tags(self, critical)
@@ -227,7 +215,7 @@ class CombinedTestSuite(TestSuite):
         BaseTestSuite.__init__(self, name='')
         self.starttime = self._get_time(starttime)
         self.endtime = self._get_time(endtime)
-        self._set_elapsed_time()
+        self.elapsedtime = utils.get_elapsed_time(self.starttime, self.endtime)
         
     def _get_time(self, timestamp):
         if utils.eq(timestamp, 'N/A'):
@@ -243,9 +231,8 @@ class CombinedTestSuite(TestSuite):
         self.suites.append(suite)
         self._add_suite_to_stats(suite)
         self.status = self.critical_stats.failed == 0 and 'PASS' or 'FAIL'
-        if self.starttime == self.endtime == 'N/A':
-            self.elapsedmillis += suite.elapsedmillis
-            self.elapsedtime = utils.elapsed_millis_to_string(self.elapsedmillis)
+        if self.starttime == 'N/A' or self.endtime == 'N/A':
+            self.elapsedtime += suite.elapsedtime
         
 
 class TestCase(BaseTestCase, _TestReader):

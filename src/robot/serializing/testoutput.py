@@ -125,8 +125,8 @@ class RobotTestOutput:
         
     def _use_template(self, outfile, template, title):
         ttuple = time.localtime()
-        str_time = '%s %s' % (utils.format_time(ttuple, daytimesep='&nbsp;'),
-                              utils.get_diff_to_gmt())
+        str_time = utils.format_time(ttuple, daytimesep='&nbsp;',
+                                     gmtsep='&nbsp;')
         int_time = long(time.mktime(ttuple))
         namespace = Namespace(gentime_str=str_time, gentime_int=int_time, 
                               version=utils.get_full_version(self._generator), 
@@ -140,9 +140,8 @@ class RobotTestOutput:
         try:
             return open(outpath, 'wb')
         except:
-            msg = ("Opening %s file '%s' for writing failed: %s" 
-                   % (outtype, outpath, utils.get_error_message()))
-            LOGGER.error(msg)
+            LOGGER.error("Opening %s file '%s' for writing failed: %s" 
+                         % (outtype, outpath, utils.get_error_message()))
             return None
         
 
