@@ -145,7 +145,6 @@ suite documentation has exactly the same characteristics regarding to where
 it is shown and how it can be created as `test case
 documentation`_. 
 
-
 .. table:: Test suite documentation example
    :class: example
 
@@ -155,7 +154,6 @@ documentation`_.
    Documentation  An example test suite   documentation with      \*some\* _formatting_.
    ...            See test documentation  for more documentation  examples. 
    =============  ======================  ======================  ======================
-
 
 Both the name and documentation of the top-level test suite can be
 overridden in test execution. This can be done with the command line

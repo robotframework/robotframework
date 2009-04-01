@@ -176,15 +176,16 @@ and the test teardown.
 The :opt:`[Documentation]` setting allows you to set a free
 documentation for a test case. That text is shown in the command line
 output, as well as the resulting test logs and test reports. If the
-documentation is long, it can be `split into several cells`__ that
-are catenated together with spaces. It is possible to use simple `HTML
-formatting`_ and even variables_ can be used.
+documentation is long, it can be `split into several cells`__ that are
+catenated together with spaces. It is possible to use simple `HTML
+formatting`_ and variables_ can be used to make the documentation
+dynamic. Possible non-existing variables in documentation are
+just left unchanged starting from Robot Framework 2.1 version.
 
 __ `Dividing test data to several rows`_
 
 .. table:: Test case documentation examples
    :class: example
-
 
    +--------------+-----------------+----------------------+----------------------------+
    |  Test Case   |     Action      |       Argument       |           Argument         |
