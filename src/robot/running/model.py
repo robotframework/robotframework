@@ -91,30 +91,31 @@ class RunnableTestSuite(BaseTestSuite):
         self.namespace.end_suite()
         
     def _init_suite(self, varz):
-        errs = []
-        self.doc = varz.replace_from_meta('Documentation', self.doc, errs)
-        self.setup = Setup(varz.replace_from_meta('Setup', self.setup, errs))
-        self.teardown = Teardown(varz.replace_from_meta('Teardown', self.teardown, errs))
+        errors = []
+        self.doc = varz.replace_meta('Documentation', self.doc, errors)
+        self.setup = Setup(varz.replace_meta('Setup', self.setup, errors))
+        self.teardown = Teardown(
+            varz.replace_meta('Teardown', self.teardown, errors))
         for name, value in self.metadata.items():
-            self.metadata[name] = varz.replace_from_meta(name, value, errs)
-        if errs:
-            return '\n'.join(errs)
+            self.metadata[name] = varz.replace_meta(name, value, errors)
+        if errors:
+            return 'Suite initialization failed:\n%s' % '\n'.join(errors)
         return None
         
     def _get_child_error(self, error, init_error, setup_error):
-        if error is not None:
+        if error:
             return error
-        if init_error is not None:
+        if init_error:
             return 'Initialization of the parent suite failed.'
-        if setup_error is not None:
+        if setup_error:
             return 'Setup of the parent suite failed.'
         return None
 
     def _get_my_error(self, error, init_error, setup_error):
-        if error is not None:
+        if error:
             return error
-        if init_error is not None:
-            return 'Suite initialization failed:\n%s' % init_error
+        if init_error:
+            return init_error
         if setup_error is not None:
             return 'Suite setup failed:\n%s' % setup_error
         return ''
@@ -172,14 +173,17 @@ class RunnableTestCase(BaseTestCase):
         namespace.end_test()
 
     def _init_test(self, varz):
-        errs = []
-        self.doc = varz.replace_from_meta('Documentation', self.doc, errs)
-        self.setup = Setup(varz.replace_from_meta('Setup', self.setup, errs))
-        self.teardown = Teardown(varz.replace_from_meta('Teardown', self.teardown, errs))
-        self.tags = utils.normalize_list(varz.replace_from_meta('Tags', self.tags, errs))
-        self.timeout = TestTimeout(*varz.replace_from_meta('Timeout', self.timeout, errs))
-        if errs:
-            return 'Test case initialization failed:\n%s' % '\n'.join(errs)
+        errors = []
+        self.doc = varz.replace_meta('Documentation', self.doc, errors)
+        self.setup = Setup(varz.replace_meta('Setup', self.setup, errors))
+        self.teardown = Teardown(
+            varz.replace_meta('Teardown', self.teardown, errors))
+        self.tags = utils.normalize_list(
+            varz.replace_meta('Tags', self.tags, errors))
+        self.timeout = TestTimeout(
+            *varz.replace_meta('Timeout', self.timeout, errors))
+        if errors:
+            return 'Test case initialization failed:\n%s' % '\n'.join(errors)
         return None
         
     def _run(self, output, namespace):

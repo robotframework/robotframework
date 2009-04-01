@@ -78,8 +78,8 @@ class UserHandler(BaseHandler):
     
     def init_user_keyword(self, varz):
         self._errors = []
-        self.doc = varz.replace_from_meta('Documentation', self._doc, self._errors)
-        timeout = varz.replace_from_meta('Timeout', self._timeout, self._errors)
+        self.doc = varz.replace_meta('Documentation', self._doc, self._errors)
+        timeout = varz.replace_meta('Timeout', self._timeout, self._errors)
         self.timeout = KeywordTimeout(*timeout)
 
     def run(self, output, namespace, args):
@@ -93,11 +93,7 @@ class UserHandler(BaseHandler):
             namespace.variables[name] = value
         if self.varargs is not None:
             namespace.variables[self.varargs] = self._get_varargs(args)
-        if self._errors:
-            raise DataError('User keyword initialization failed:\n%s' 
-                            % '\n'.join(self._errors)) 
-        if len(self.keywords) == len(self.return_value) == 0:
-            raise DataError("User keyword '%s' contains no keywords" % self.name)
+        self._verify_keyword_is_valid()
         self.timeout.start()
         for kw in self.keywords:
             try:
@@ -110,8 +106,15 @@ class UserHandler(BaseHandler):
         output.trace('Return: %s' % utils.unic(ret))
         return ret
 
+    def _verify_keyword_is_valid(self):
+        if self._errors:
+            raise DataError('User keyword initialization failed:\n%s' 
+                            % '\n'.join(self._errors)) 
+        if not (self.keywords or self.return_value):
+            raise DataError("User keyword contains no keywords")
+
     def _get_return_value(self, variables):
-        if self.return_value == []:
+        if not self.return_value:
             return None
         ret = variables.replace_list(self.return_value)
         if len(ret) != 1 or is_list_var(self.return_value[0]):

@@ -125,7 +125,7 @@ class Variables(utils.NormalizedDict):
             return self._get_variable(var)
         return self.replace_string(item, var)
         
-    def replace_string(self, string, splitted=None):
+    def replace_string(self, string, splitted=None, ignore_errors=False):
         """Replaces variables from a string. Result is always a string."""
         result = []
         if splitted is None:
@@ -135,7 +135,12 @@ class Variables(utils.NormalizedDict):
                 result.append(utils.unescape(string))
                 break
             result.append(utils.unescape(string[:splitted.start]))
-            value = self._get_variable(splitted)
+            try:
+                value = self._get_variable(splitted)
+            except DataError:
+                if not ignore_errors:
+                    raise
+                value = string[splitted.start:splitted.end]
             if not utils.is_str(value):
                 value = utils.unic(value)
             result.append(value)

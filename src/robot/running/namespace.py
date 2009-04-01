@@ -312,18 +312,19 @@ class _VariableScopes:
     def set_from_variable_table(self, rawvariables):
         self._suite.set_from_variable_table(rawvariables)
     
-    def replace_from_meta(self, name, item, errors):
+    def replace_meta(self, name, item, errors):
         error = None
         for varz in [self.current] + self._parents:
             try:
                 if name in ['Setup', 'Teardown']:
                     return varz.replace_list(item[:1]) + item[1:]
+                if name == 'Documentation':
+                    return varz.replace_string(item, ignore_errors=True)
                 if utils.is_list(item):
                     return varz.replace_list(item)
                 return varz.replace_string(item)
-            except DataError, err:
-                if error is None:
-                    error = str(err)
+            except DataError, error:
+                pass
         errors.append("Replacing variables from metadata '%s' failed: %s" 
                       % (name, error))
         return utils.unescape(item)
