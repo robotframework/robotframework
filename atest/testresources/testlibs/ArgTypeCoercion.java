@@ -17,25 +17,36 @@ public class ArgTypeCoercion {
             System.out.println("It is false!");
     }
 
-    public void coercableKeyword(String arg1) {
-        coercableKeyword(arg1, 0, false);
+    public void doubleArgument(double arg) {
+        if (arg > 0)
+            System.out.println("Got a positive argument");
     }
 
-    public void coercableKeyword(String arg1, int arg2) {
-        coercableKeyword(arg1, arg2, false);
+    public void floatArgument(float arg) {
+        if (arg > 0)
+            System.out.println("Got a positive argument");
     }
 
-    public void coercableKeyword(String arg1, int arg2, boolean arg3) {
-        System.out.println("Got: " + arg1 + " and " + arg2 + " and " + arg3);
+    public String coercableKeyword(double arg1) {
+        return coercableKeyword(arg1, 0, false);
+    }
+
+    public String coercableKeyword(double arg1, int arg2) {
+        return coercableKeyword(arg1, arg2, false);
+    }
+
+    public String coercableKeyword(double arg1, int arg2, boolean arg3) {
+        doubleArgument(arg1);
         intArgument(arg2);
         booleanArgument(arg3);
+        return "Got: " + arg1 + " and " + arg2 + " and " + arg3;
     }
 
-    public void coercableKeywordWithCompatibleTypes(int arg1, Short arg2, Boolean arg3) {}
+    public void coercableKeywordWithCompatibleTypes(int arg1, Short arg2, Boolean arg3, float arg4) {}
 
-    public void coercableKeywordWithCompatibleTypes(byte arg1, Long arg2, boolean arg3) {}
+    public void coercableKeywordWithCompatibleTypes(byte arg1, Long arg2, boolean arg3, Float arg4) {}
 
-    public void coercableKeywordWithCompatibleTypes(Integer arg1, long arg2, boolean arg3) {}
+    public void coercableKeywordWithCompatibleTypes(Integer arg1, long arg2, boolean arg3, Double arg4) {}
 
     public void unCoercableKeyword(int arg1, boolean arg2) {}
 
