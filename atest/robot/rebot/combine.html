@@ -216,7 +216,7 @@ th {
 
 
 
-    <tr><td>Suite Teardown</td><td>Remove FIles</td><td>${TEMP FILE 1}</td><td>${TEMP FILE 2}</td><td>${TEMP FILE 3}</td></tr><tr><td>#...</td><td>${REPORT 1}</td><td>${REPORT 2}</td><td></td><td></td></tr><tr>
+    <tr><td>Suite Teardown</td><td>Remove FIles</td><td>${TEMP FILE 1}</td><td>${TEMP FILE 2}</td><td>${TEMP FILE 3}</td></tr><tr><td>...</td><td>${REPORT 1}</td><td>${REPORT 2}</td><td></td><td></td></tr><tr>
 
 
 
@@ -2739,7 +2739,7 @@ class="fail"&gt;1&amp;nbsp;failed&lt;/span&gt;&lt;/td&gt;</td><td></td><td></td>
 
 
 
-      <td align="undefined" valign="undefined">${SUITE3.elapsedmillis} ==<br>
+      <td align="undefined" valign="undefined">${SUITE3.elapsedtime} ==<br>
 
 
 
@@ -2908,7 +2908,7 @@ ${MILLIS1} + ${MILLIS2} + 9999</td>
 
 
 
-      <td align="undefined" valign="undefined">${SUITE3.suites[0].elapsedmillis}</td>
+      <td align="undefined" valign="undefined">${SUITE3.suites[0].elapsedtime}</td>
 
 
 
@@ -3072,7 +3072,7 @@ ${MILLIS1} + ${MILLIS2} + 9999</td>
 
 
 
-      <td align="undefined" valign="undefined">${SUITE3.suites[1].elapsedmillis}</td>
+      <td align="undefined" valign="undefined">${SUITE3.suites[1].elapsedtime}</td>
 
 
 
@@ -3162,6 +3162,10 @@ ${MILLIS1} + ${MILLIS2} + 9999</td>
 
 
 
+    
+
+
+
     <tr>
 
 
@@ -3175,38 +3179,6 @@ ${MILLIS1} + ${MILLIS2} + 9999</td>
 
 
       <td align="undefined" valign="undefined">${SUITE3.suites[2].elapsedtime}</td>
-
-
-
-      <td align="undefined" valign="undefined">00:00:09.999</td>
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-    </tr>
-
-
-
-    <tr>
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-      <td align="undefined" valign="undefined">Should Be Equal</td>
-
-
-
-      <td align="undefined" valign="undefined">${SUITE3.suites[2].elapsedmillis}</td>
 
 
 
@@ -3338,7 +3310,7 @@ ${MILLIS1} + ${MILLIS2} + 9999</td>
       <td align="undefined" valign="undefined">Should Be True</td>
 
 
-      <td align="undefined" valign="undefined">${SUITE4.elapsedmillis} ==<br>
+      <td align="undefined" valign="undefined">${SUITE4.elapsedtime} ==<br>
 
 
 9999 +
@@ -3415,7 +3387,7 @@ ${MILLIS1} + ${MILLIS2}</td>
       <td align="undefined" valign="undefined">Should Be Equal</td>
 
 
-      <td align="undefined" valign="undefined">${SUITE4.suites[0].elapsedmillis}</td>
+      <td align="undefined" valign="undefined">${SUITE4.suites[0].elapsedtime}</td>
 
 
       <td align="undefined" valign="undefined">${9999}</td>
@@ -3559,7 +3531,7 @@ ${MILLIS1} + ${MILLIS2}</td>
       <td align="undefined" valign="undefined">Should Be Equal</td>
 
 
-      <td align="undefined" valign="undefined">${SUITE4.suites[1].suites[0].elapsedmillis}</td>
+      <td align="undefined" valign="undefined">${SUITE4.suites[1].suites[0].elapsedtime}</td>
 
 
       <td align="undefined" valign="undefined">${MILLIS1}</td>
@@ -3655,7 +3627,7 @@ ${MILLIS1} + ${MILLIS2}</td>
       <td align="undefined" valign="undefined">Should Be Equal</td>
 
 
-      <td align="undefined" valign="undefined">${SUITE4.suites[1].suites[1].elapsedmillis}</td>
+      <td align="undefined" valign="undefined">${SUITE4.suites[1].suites[1].elapsedtime}</td>
 
 
       <td align="undefined" valign="undefined">${MILLIS2}</td>
@@ -3853,7 +3825,7 @@ ${MILLIS1} + ${MILLIS2}</td>
 
 
 
-      <td align="undefined" valign="undefined">${ORIG_MILLIS}</td>
+      <td align="undefined" valign="undefined">${ORIG_ELAPSED}</td>
 
 
 
@@ -3968,7 +3940,7 @@ ${MILLIS1} + ${MILLIS2}</td>
 
 
 
-      <td align="undefined" valign="undefined">${ORIG_MILLIS}</td>
+      <td align="undefined" valign="undefined">${ORIG_ELAPSED}</td>
 
 
 
