@@ -128,7 +128,9 @@ class RobotTestOutput:
         str_time = utils.format_time(ttuple, daytimesep='&nbsp;',
                                      gmtsep='&nbsp;')
         int_time = long(time.mktime(ttuple))
-        namespace = Namespace(gentime_str=str_time, gentime_int=int_time, 
+        elapsed_time = utils.elapsed_time_to_string(self.suite.elapsedtime)
+        namespace = Namespace(gentime_str=str_time, gentime_int=int_time,
+                              elapsed_time=elapsed_time,
                               version=utils.get_full_version(self._generator), 
                               suite=self.suite, title=title)
         tmpl = Template(template=template)

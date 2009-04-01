@@ -805,7 +805,7 @@ class _RunKeyword:
         while time.time() - starttime < timeout:
             try:
                 return self.run_keyword(name, *args)
-            except (KeyboardInterrupt, SystemExit):
+            except utils.RERAISED_EXCEPTIONS:
                 raise
             except:
                 time.sleep(retry_interval)

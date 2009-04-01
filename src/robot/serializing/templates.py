@@ -15,7 +15,6 @@
 
 _STYLE = '''
 <style media="all" type="text/css">
-
   /* Generic styles */ 
   body {
     font-family: sans-serif;
@@ -26,7 +25,6 @@ _STYLE = '''
   h2 {
     margin-top: 1.2em;
   }
-
   /* Statistics Table */
   table.statistics {
     width: 58em;
@@ -64,7 +62,6 @@ _STYLE = '''
   .tag_links span {
     margin-left: 0.2em;
   }
-  
   /* Statistics Table Graph */
   .pass_bar { 
     background: #00f000;
@@ -90,7 +87,6 @@ _STYLE = '''
     float: left;
     font-size: 4px;  /* to make graphs thin also in IE */
   }
-
   /* Tables in documentation */
   table.doc {
     border: 1px solid gray;
@@ -104,7 +100,6 @@ _STYLE = '''
     padding: 0.1em 0.3em;
     height: 1.2em;
   }
-    
   /* Misc Styles */
   .not_available {
     color: gray;      /* no grey in IE */
@@ -118,7 +113,6 @@ _STYLE = '''
     text-decoration: underline;
     color: purple;
   }
-  
   /* Headers */
   .header {
     width: 58em;
@@ -126,7 +120,7 @@ _STYLE = '''
   }
   h1 {
     margin: 0px;
-    width: 73%;
+    width: 70%;
     float: left;
   }
   .times {
@@ -141,7 +135,6 @@ _STYLE = '''
     font-size: 0.8em;
     clear: both;
   }
-  
   /* Status text colors */
   .error, .fail {
     color: red;
@@ -156,7 +149,6 @@ _STYLE = '''
     color: #663300;
   }
 </style>
-      
 <style media="print" type="text/css">
   body {
     background: white;
@@ -173,7 +165,7 @@ _STYLE = '''
     display: none;
   }
 </style>
-'''
+'''[1:-1]
 
 
 _FUNCTIONS = '''
@@ -182,7 +174,6 @@ _FUNCTIONS = '''
 <meta http-equiv="Expires" content="Mon, 20 Jan 2001 20:01:21 GMT" />
 <meta name="generator" content="${version}" />
 <!-- END FUNCTION -->
-
 <!-- FUNCTION generate_header ${title} -->
 <div class="header">
   <h1>${title}</h1>
@@ -209,7 +200,6 @@ _FUNCTIONS = '''
   function get_year_str(years) {
     return years + ' year' + get_end(years)
   }
-
   generated = ${GENTIME_INT}
   current = Math.round(new Date().getTime() / 1000)  // getTime returns millis
   elapsed = current - generated
@@ -226,7 +216,6 @@ _FUNCTIONS = '''
   hours = Math.floor(elapsed / (60*60)) % 24
   days  = Math.floor(elapsed / (60*60*24)) % 365
   years = Math.floor(elapsed / (60*60*24*365))
-  
   if (years > 0) { 
     // compencate the effect of leap years (not perfect but should be enough)
     days = days - Math.floor(years / 4)
@@ -262,9 +251,7 @@ LOG = '''%(FUNCTIONS)s
 <!-- CALL meta ${version} -->
 %(STYLE)s
 <style media="all" type="text/css">
-
   /* Tables */
-
   body {
     background: white;
   }       
@@ -325,9 +312,7 @@ LOG = '''%(FUNCTIONS)s
     width: 4em;
     text-align: center;
   }
-
   /* Folding buttons */
-
   div.foldingbutton {
     text-align: center;
     line-height: 0.8em;
@@ -349,9 +334,7 @@ LOG = '''%(FUNCTIONS)s
    margin-right: 0.5em;
    font-size: 0.8em;
   }  
-
   /* Test, suite and kw names */
-
   .name, .splitname {   
     font-weight: bold;
     text-decoration: none;
@@ -361,7 +344,6 @@ LOG = '''%(FUNCTIONS)s
     color: black;
   }
 </style>
-
 <script type="text/javascript">
     function toggle_child_visibility(element_id) {
         if (document.getElementById(element_id + '_children') != null) {
@@ -377,7 +359,6 @@ LOG = '''%(FUNCTIONS)s
             toggle_visibility(element_id + '_unfoldlink')
         }
     }
-    
     function toggle_visibility(element_id) {
         var element = document.getElementById(element_id)
         if (element == null) {
@@ -390,7 +371,6 @@ LOG = '''%(FUNCTIONS)s
             element.style.display = 'none'
         }
     }
-
     function expand_all_children(element_id) {
         var elements = document.getElementById(element_id).getElementsByTagName('div')
         for (var i=0; i<elements.length; i++) {
@@ -400,7 +380,6 @@ LOG = '''%(FUNCTIONS)s
             }
         }
     }
-    
     function open_element_by_url() {
         var name = get_element_name_from_url()
         if (name != null) {
@@ -408,7 +387,6 @@ LOG = '''%(FUNCTIONS)s
             window.location.hash = name  // does not seem to work with Opera 
         }
     }
-
     function get_element_name_from_url() {
         var hash = window.location.hash
         if (hash == '' || hash == '#' || hash == null) {
@@ -416,7 +394,6 @@ LOG = '''%(FUNCTIONS)s
         }
         return hash.slice(1).replace(/%%20/g, ' ')        
     }
-
     function set_element_visible(name) {
         var elements = document.body.getElementsByTagName('a')
         for (var i=0; i<elements.length; i++) {
@@ -426,7 +403,6 @@ LOG = '''%(FUNCTIONS)s
             }
         }
     }
-
     // Find right type of parent element, open it and its parents
     function open_parents(element) {
         var parent = element.parentNode
@@ -454,11 +430,8 @@ REPORT = '''%(FUNCTIONS)s
 <html>
 <head>
 <!-- CALL meta ${version} -->
-
 <style media="all" type="text/css">
-
   /* Background color (green or red) */
-
   body {
 <!-- IF ${suite.critical_stats.failed} == 0 -->
     background: #99FF66;
@@ -466,9 +439,7 @@ REPORT = '''%(FUNCTIONS)s
     background: #FF3333;
 <!-- END IF -->
   }
-      
   /* Generic Table Styles */
-
   table {
     background: white;
     border: 1px solid black;
@@ -484,9 +455,7 @@ REPORT = '''%(FUNCTIONS)s
     background: #C6C6C6;
     color: black;
   }
-      
   /* Test by Suite/Tag Tables */
-
   table.tests_by_suite, table.tests_by_tag {
     width: 100%%;
   }
@@ -514,27 +483,20 @@ REPORT = '''%(FUNCTIONS)s
   .col_times {
     width: 9em;
   }
-
   td.col_times{
     text-align: right;    
   }
-
   .suite_row, .tag_row{
     background: #E9E9E9;
   }
-
   /* Metadata */
-
   .meta_name {
     font-weight: bold;
   }
-  
   /* Details Table */
-
   table.details {
     width: 58em;
   }
-
   table.details th {
     background: white;
     width: 9em;
@@ -549,7 +511,6 @@ REPORT = '''%(FUNCTIONS)s
     border: none;
     padding: 2px 4px;
   }
-    
   .status_fail {
     color: red;
     font-weight: bold;
@@ -557,45 +518,43 @@ REPORT = '''%(FUNCTIONS)s
   .status_pass {
     color: #009900;
   }
-
 </style>
 %(STYLE)s
 <title>${title}</title>
 </head>
 <body>
 <!-- CALL generate_header ${title} -->
-
 <h2>Summary Information</h2>
 
 <table class="details">
 <tr>
   <th>Status:</th>
-<!-- IF ${suite.all_stats.failed} == 0 -->
+<!-- IF ${SUITE.all_stats.failed} == 0 -->
   <td class="status_pass">All tests passed</td>
 <!-- END IF -->
-<!-- IF ${suite.all_stats.failed} != 0 and ${suite.critical_stats.failed} == 0 -->
+<!-- IF ${SUITE.all_stats.failed} != 0 and ${SUITE.critical_stats.failed} == 0 -->
   <td class="status_pass">All critical tests passed</td>
 <!-- END IF -->
-<!-- IF ${suite.critical_stats.failed} == 1 -->
+<!-- IF ${SUITE.critical_stats.failed} == 1 -->
   <td class="status_fail">1 critical test failed</td>
 <!-- END IF -->
-<!-- IF ${suite.critical_stats.failed} > 1 -->
-  <td class="status_fail">${suite.critical_stats.failed} critical tests failed</td>
+<!-- IF ${SUITE.critical_stats.failed} > 1 -->
+  <td class="status_fail">${SUITE.critical_stats.failed} critical tests failed</td>
 <!-- END IF -->
 </tr>
-<!-- IF """${suite.htmldoc}""" != '' -->
-  <tr><th>Documentation:</th><td>${suite.htmldoc}</td></tr>
+<!-- IF """${SUITE.htmldoc}""" != '' -->
+  <tr><th>Documentation:</th><td>${SUITE.htmldoc}</td></tr>
 <!-- END IF --> 
-<!-- FOR ${meta} IN ${suite.get_metadata(html=True)} -->
+<!-- FOR ${meta} IN ${SUITE.get_metadata(html=True)} -->
   <tr><th>${meta[0]}:</th><td>${meta[1]}</td></tr>
 <!-- END FOR -->
-<!-- IF '${suite.starttime}' != 'N/A' -->
-  <tr><th>Start Time:</th><td>${suite.starttime}</td></tr>
+<!-- IF '${SUITE.starttime}' != 'N/A' -->
+  <tr><th>Start Time:</th><td>${SUITE.starttime}</td></tr>
 <!-- END IF -->
-<!-- IF '${suite.endtime}' != 'N/A' -->
-  <tr><th>End Time:</th><td>${suite.endtime}</td></tr>
+<!-- IF '${SUITE.endtime}' != 'N/A' -->
+  <tr><th>End Time:</th><td>${SUITE.endtime}</td></tr>
 <!-- END IF -->
-<tr><th>Elapsed Time:</th><td>${suite.elapsedtime}</td></tr>
+<tr><th>Elapsed Time:</th><td>${ELAPSEDTIME}</td></tr>
 </table>
 ''' % {'STYLE': _STYLE, 'FUNCTIONS': _FUNCTIONS}
 
