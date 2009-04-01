@@ -140,28 +140,28 @@ th {
 </tr>
 <tr>
 <td></td>
-<td>Equals</td>
+<td>Should Be Equal</td>
 <td>${SUITE.name}</td>
 <td>Normal</td>
 <td></td>
 </tr>
 <tr>
 <td></td>
-<td>Equals</td>
+<td>Should Be Equal</td>
 <td>${SUITE.doc}</td>
 <td>Normal test cases</td>
 <td></td>
 </tr>
 <tr>
 <td></td>
-<td>Equals</td>
+<td>Should Be Equal</td>
 <td>${SUITE.metadata['Something']}</td>
 <td>My Value</td>
 <td></td>
 </tr>
 <tr>
 <td></td>
-<td>Fail Unless</td>
+<td>Should Be True</td>
 <td>${SUITE.metadata} == {'Something' : 'My Value'}</td>
 <td></td>
 <td></td>
@@ -175,14 +175,14 @@ th {
 </tr>
 <tr>
 <td></td>
-<td>Equals</td>
+<td>Should Be Equal</td>
 <td>${SUITE.get_full_message()}</td>
 <td>2 critical tests, 2 passed, 0 failed\n 2 tests total, 2 passed, 0 failed</td>
 <td></td>
 </tr>
 <tr>
 <td></td>
-<td>Equals</td>
+<td>Should Be Equal</td>
 <td>${SUITE.get_stat_message()}</td>
 <td>2 critical tests, 2 passed, 0 failed\n 2 tests total, 2 passed, 0 failed</td>
 <td></td>
@@ -210,7 +210,7 @@ th {
 </tr>
 <tr>
 <td></td>
-<td>Equals</td>
+<td>Should Be Equal</td>
 <td>${SUITE.get_full_message(html=True)}</td>
 <td>${exp}</td>
 <td></td>
@@ -245,28 +245,28 @@ th {
 </tr>
 <tr>
 <td></td>
-<td>Equals</td>
+<td>Should Be Equal</td>
 <td>${SUITE.name}</td>
 <td>My Name</td>
 <td></td>
 </tr>
 <tr>
 <td></td>
-<td>Equals</td>
+<td>Should Be Equal</td>
 <td>${SUITE.doc}</td>
 <td>Something</td>
 <td></td>
 </tr>
 <tr>
 <td></td>
-<td>Equals</td>
+<td>Should Be Equal</td>
 <td>${SUITE.metadata['X']}</td>
 <td><a href="http://x.fi">http://x.fi</a></td>
 <td></td>
 </tr>
 <tr>
 <td></td>
-<td>Fail Unless</td>
+<td>Should Be True</td>
 <td>${SUITE.get_metadata(html=True)} == [ ('X', '&lt;a href="http://x.fi"&gt;http://x.fi&lt;/a&gt;') ]</td>
 <td></td>
 <td></td>
@@ -294,28 +294,28 @@ th {
 </tr>
 <tr>
 <td></td>
-<td>My Run Rebot</td>
+<td>Run Rebot</td>
+<td><br></td>
 <td>rebot${/}created_minimal.xml</td>
-<td></td>
 <td></td>
 </tr>
 <tr>
 <td></td>
-<td>Equals</td>
+<td>Should Be Equal</td>
 <td>${SUITE.name}</td>
 <td>My Name</td>
 <td></td>
 </tr>
 <tr>
 <td></td>
-<td>Equals</td>
+<td>Should Be Equal</td>
 <td>${SUITE.status}</td>
 <td>PASS</td>
 <td></td>
 </tr>
 <tr>
 <td></td>
-<td>Fail Unless</td>
+<td>Should Be True</td>
 <td>${SUITE.suites}+${SUITE.tests}==[]</td>
 <td></td>
 <td></td>
@@ -343,9 +343,9 @@ th {
 </tr>
 <tr>
 <td></td>
-<td>My Run Rebot</td>
+<td>Run Rebot</td>
+<td><br></td>
 <td>rebot${/}created_normal.xml</td>
-<td></td>
 <td></td>
 </tr>
 <tr>
@@ -357,7 +357,7 @@ th {
 </tr>
 <tr>
 <td></td>
-<td>Fail Unless</td>
+<td>Should Be True</td>
 <td>${SUITE.suites} == ['Sub 1','Sub 2']</td>
 <td></td>
 <td></td>
@@ -499,13 +499,7 @@ th {
 <td>@{paths}</td>
 <td></td>
 </tr>
-<tr>
-<td></td>
-<td>[Timeout]</td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
+
 <tr>
 <td></td>
 <td>Run Tests Without Processing Output</td>
@@ -515,10 +509,10 @@ th {
 </tr>
 <tr>
 <td></td>
-<td>My Run Rebot</td>
+<td>Run Rebot</td>
+<td><br></td>
 <td>${OUTFILE}</td>
 <td></td>
-<td></td>
 </tr>
 <tr>
 <td></td>
@@ -527,69 +521,15 @@ th {
 <td></td>
 <td></td>
 </tr>
-<tr>
-<td><a name="keyword_My Run Rebot">My Run Rebot</a></td>
-<td>[Arguments]</td>
-<td>@{paths}</td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td>[Timeout]</td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td>Run Rebot</td>
-<td></td>
-<td>@{paths}</td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td>Verify Rebot OK</td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td><a name="keyword_Verify Rebot OK">Verify Rebot OK</a></td>
-<td>[Timeout]</td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td>Fail If Equal</td>
-<td>${SUITE}</td>
-<td>${None}</td>
-<td>Running Rebot failed</td>
-</tr>
-<tr>
-<td></td>
-<td>...</td>
-<td>No Values</td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
+
+
+
+
+
+
+
+
+
 <tr>
 <td><a name="keyword_Check Normal Suite Defaults">Check Normal Suite Defaults</a></td>
 <td>[Arguments]</td>
@@ -604,13 +544,7 @@ th {
 <td></td>
 <td></td>
 </tr>
-<tr>
-<td></td>
-<td>[Timeout]</td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
+
 <tr>
 <td></td>
 <td>Log</td>
@@ -653,13 +587,7 @@ th {
 <td>${message}=</td>
 <td></td>
 </tr>
-<tr>
-<td></td>
-<td>[Timeout]</td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
+
 <tr>
 <td></td>
 <td>Check Suite Defaults</td>
@@ -688,13 +616,7 @@ th {
 <td></td>
 <td></td>
 </tr>
-<tr>
-<td></td>
-<td>[Timeout]</td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
+
 <tr>
 <td></td>
 <td>Is Valid Timestamp</td>
@@ -718,8 +640,8 @@ th {
 </tr>
 <tr>
 <td></td>
-<td>Fail Unless</td>
-<td>${mysuite.elapsedmillis} &gt;= 1</td>
+<td>Should Be True</td>
+<td>${mysuite.elapsedtime} &gt;= 1</td>
 <td></td>
 <td></td>
 </tr>
@@ -737,41 +659,28 @@ th {
 <td></td>
 <td></td>
 </tr>
+
 <tr>
 <td></td>
-<td>[Timeout]</td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td>Equals</td>
+<td>Should Be Equal</td>
 <td>${mysuite.starttime}</td>
 <td>N/A</td>
 <td></td>
 </tr>
 <tr>
 <td></td>
-<td>Equals</td>
+<td>Should Be Equal</td>
 <td>${mysuite.endtime}</td>
 <td>N/A</td>
 <td></td>
 </tr>
 <tr>
 <td></td>
-<td>Equals</td>
+<td>Should Be Equal</td>
 <td>${mysuite.elapsedtime}</td>
-<td>00:00:00.000</td>
-<td></td>
+<td>${0}</td><td></td>
 </tr>
-<tr>
-<td></td>
-<td>Fail Unless</td>
-<td>${mysuite.elapsedmillis} == 0</td>
-<td></td>
-<td></td>
-</tr>
+
 <tr>
 <td></td>
 <td></td>
@@ -793,30 +702,24 @@ th {
 <td></td>
 <td></td>
 </tr>
+
 <tr>
 <td></td>
-<td>[Timeout]</td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td>Equals</td>
+<td>Should Be Equal</td>
 <td>${mysuite.message}</td>
 <td>${message}</td>
 <td></td>
 </tr>
 <tr>
 <td></td>
-<td>Fail Unless</td>
+<td>Should Be True</td>
 <td>${mysuite.critical.tags} == []</td>
 <td></td>
 <td></td>
 </tr>
 <tr>
 <td></td>
-<td>Fail Unless</td>
+<td>Should Be True</td>
 <td>${mysuite.critical.nons} == []</td>
 <td></td>
 <td></td>
@@ -827,7 +730,7 @@ th {
 
 <tr>
 <td></td>
-<td>Equals</td>
+<td>Should Be Equal</td>
 <td>${mysuite.setup}</td>
 <td>${None}</td>
 <td></td>
@@ -835,13 +738,13 @@ th {
 <tr>
 <td></td>
 <td>${teardown_name} =</td>
-<td>String</td>
+<td>Convert To String</td>
 <td>${mysuite.teardown}</td>
 <td></td>
 </tr>
 <tr>
 <td></td>
-<td>Equals</td>
+<td>Should Be Equal</td>
 <td>${teardown_name}</td>
 <td>${teardown}</td>
 <td></td>
@@ -853,15 +756,9 @@ th {
 <td></td>
 <td></td>
 </tr>
+
 <tr>
 <td><a name="keyword_Check Suite Got From Misc/suites/ Directory">Check Suite Got From Misc/suites/ Directory</a></td>
-<td>[Timeout]</td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
 <td>Check Normal Suite Defaults</td>
 <td>${SUITE}</td>
 <td></td>
@@ -876,35 +773,35 @@ th {
 </tr>
 <tr>
 <td></td>
-<td>Equals</td>
+<td>Should Be Equal</td>
 <td>${SUITE.status}</td>
 <td>FAIL</td>
 <td></td>
 </tr>
 <tr>
 <td></td>
-<td>Fail Unless</td>
+<td>Should Be True</td>
 <td>${SUITE.suites} == ['Fourth', 'Subsuites', 'Subsuites 2', 'Tsuite 1', 'Tsuite 2', 'Tsuite 3']</td>
 <td></td>
 <td></td>
 </tr>
 <tr>
 <td></td>
-<td>Fail Unless</td>
+<td>Should Be True</td>
 <td>${SUITE.tests} == []</td>
 <td></td>
 <td></td>
 </tr>
 <tr>
 <td></td>
-<td>Fail Unless</td>
+<td>Should Be True</td>
 <td>${SUITE.suites[1].suites} == ['Sub 1', 'Sub 2']</td>
 <td></td>
 <td></td>
 </tr>
 <tr>
 <td></td>
-<td>Fail Unless</td>
+<td>Should Be True</td>
 <td>${SUITE.suites[0].suites} + ${SUITE.suites[1].suites[0].suites}+
 ${SUITE.suites[1].suites[1].suites}+
 ${SUITE.suites[2].suites[0].suites}+ ${SUITE.suites[3].suites} +
