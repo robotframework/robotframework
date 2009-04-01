@@ -35,23 +35,23 @@ def TestSuite(datasources, settings):
     
 class RunnableTestSuite(BaseTestSuite):
     
-    def __init__(self, suitedata, testdefaults=None, parent=None):
-        BaseTestSuite.__init__(self, suitedata.name, suitedata.source, parent)
+    def __init__(self, data, testdefaults=None, parent=None):
+        BaseTestSuite.__init__(self, data.name, data.source, parent)
         self.variables = GLOBAL_VARIABLES.copy()
-        self.variables.set_from_variable_table(suitedata.variables)
-        self.source = suitedata.source
-        self.doc = suitedata.doc or ''
-        self.metadata = suitedata.metadata
-        self.imports = suitedata.imports
-        self.user_keywords = UserLibrary(suitedata.user_keywords)
-        self.setup = utils.get_not_none(suitedata.suite_setup, [])
-        self.teardown = utils.get_not_none(suitedata.suite_teardown, [])
+        self.variables.set_from_variable_table(data.variables)
+        self.source = data.source
+        self.doc = data.doc or ''
+        self.metadata = data.metadata
+        self.imports = data.imports
+        self.user_keywords = UserLibrary(data.user_keywords)
+        self.setup = data.suite_setup or []
+        self.teardown = data.suite_teardown or []
         if not testdefaults:
             testdefaults = _TestCaseDefaults()
-        testdefaults.add_defaults(suitedata)
-        for suite in suitedata.suites:
+        testdefaults.add_defaults(data)
+        for suite in data.suites:
             RunnableTestSuite(suite, testdefaults.copy(), parent=self) 
-        for test in suitedata.tests:
+        for test in data.tests:
             RunnableTestCase(test, testdefaults, parent=self) 
         self._exit_on_failure = False
         
@@ -140,17 +140,16 @@ class RunnableTestSuite(BaseTestSuite):
 
 class RunnableTestCase(BaseTestCase):
     
-    def __init__(self, testdata, defaults, parent):
-        BaseTestCase.__init__(self, testdata.name, parent)
-        self.doc = testdata.doc or ''
-        self.setup = utils.get_not_none(testdata.setup, defaults.test_setup)
-        self.teardown = utils.get_not_none(testdata.teardown,
+    def __init__(self, data, defaults, parent):
+        BaseTestCase.__init__(self, data.name, parent)
+        self.doc = data.doc or ''
+        self.setup = utils.get_not_none(data.setup, defaults.test_setup)
+        self.teardown = utils.get_not_none(data.teardown,
                                            defaults.test_teardown)
         self.tags = defaults.force_tags \
-                    + utils.get_not_none(testdata.tags, defaults.default_tags)
-        self.timeout = utils.get_not_none(testdata.timeout,
-                                          defaults.test_timeout)
-        self.keywords = [ KeywordFactory(kw) for kw in testdata.keywords ]
+                    + utils.get_not_none(data.tags, defaults.default_tags)
+        self.timeout = utils.get_not_none(data.timeout, defaults.test_timeout)
+        self.keywords = [ KeywordFactory(kw) for kw in data.keywords ]
         
     def run(self, output, namespace, error=None):
         self.starttime = utils.get_timestamp()
