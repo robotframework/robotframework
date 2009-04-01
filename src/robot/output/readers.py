@@ -82,7 +82,8 @@ class _BaseReader:
         status = node.get_node('status')
         self.status = status.get_attr('status','').upper()
         if self.status not in ['PASS','FAIL']:
-            raise DataError("Item '%s' has invalid status '%s'" % (self.name, status))
+            raise DataError("Item '%s' has invalid status '%s'"
+                            % (self.name, status))
         self.message = status.text
         self.starttime = status.get_attr('starttime', 'N/A')
         self.endtime = status.get_attr('endtime', 'N/A')
@@ -224,8 +225,6 @@ class CombinedTestSuite(TestSuite):
     
     def __init__(self, starttime, endtime):
         BaseTestSuite.__init__(self, name='')
-        self.doc = ''
-        self.message = ''
         self.starttime = self._get_time(starttime)
         self.endtime = self._get_time(endtime)
         self._set_elapsed_time()
@@ -239,11 +238,6 @@ class CombinedTestSuite(TestSuite):
         except DataError:
             return 'N/A'
         return utils.secs_to_timestamp(secs, millis=True)
-
-    def set_name(self, name=None):
-        if name is None:
-            name = ' & '.join([suite.name for suite in self.suites])
-        return BaseTestSuite.set_name(self, name)
 
     def add_suite(self, suite):
         self.suites.append(suite)

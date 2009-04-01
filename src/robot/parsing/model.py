@@ -191,11 +191,6 @@ class MultiSourceSuite(_BaseSuite):
     def _get_name_and_source(self, path):
         return '', None
         
-    def set_name(self, name):
-        if name is None:
-            name = ' & '.join([suite.name for suite in self.suites])
-        return BaseTestSuite.set_name(self, name)
-
     
 class TestCase(BaseTestCase):
     

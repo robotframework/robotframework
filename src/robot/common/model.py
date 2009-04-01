@@ -24,6 +24,7 @@ class _TestAndSuiteHelper:
     
     def __init__(self, name, parent=None):
         self.name = name
+        self.doc = ''
         self.parent = parent
         self.setup = None 
         self.teardown = None
@@ -42,10 +43,6 @@ class _TestAndSuiteHelper:
         raise AttributeError("%s does not have attribute '%s'" 
                              % (self.__class__.__name__, name))
 
-    def set_name(self, name):
-        if name:
-            self.name = name
-            
     def get_long_name(self, separator='.'):
         """Returns long name. If separator is None, list of names is returned."""
         names = self.parent is not None and self.parent.get_long_name(None) or []
@@ -82,6 +79,12 @@ class BaseTestSuite(_TestAndSuiteHelper):
         if parent:
             parent.suites.append(self)
         
+    def set_name(self, name):
+        if name:
+            self.name = name
+        elif not self.parent and self.name == '':  # MultiSourceSuite
+            self.name = ' & '.join([suite.name for suite in self.suites])
+            
     def set_critical_tags(self, critical, non_critical):
         if critical is not None or non_critical is not None:
             self.critical.set(critical, non_critical)
