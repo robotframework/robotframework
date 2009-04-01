@@ -56,10 +56,10 @@ th {
   font-style: normal;
 }
 </style>
-<title>Suite Execution Order</title>
+<title>Test Suite Names</title>
 </head>
 <body>
-<h1>Suite Execution Order</h1>
+<h1>Test Suite Names</h1>
 
 <table border="1">
 <colgroup span="99">
@@ -74,16 +74,16 @@ th {
 </tr>
 <tr>
 <td>Force Tags</td>
-<td>pybot</td>
-<td>jybot</td>
 <td>regression</td>
+<td>jybot</td>
+<td>pybot</td>
 <td></td>
 </tr>
 <tr>
-<td>Suite Setup</td>
-<td>Run Tests</td>
+<td>Test Setup</td>
+<td>Run Multiple Suites If It Is Not Already Executed</td>
 <td></td>
-<td>misc${/}multiple_suites</td>
+<td></td>
 <td></td>
 </tr>
 <tr>
@@ -114,8 +114,8 @@ th {
 <th>Value</th>
 </tr>
 <tr>
-<td>${DEFAULT SUITE ORDER}</td>
-<td>['Suite First', 'Subsuite 1', 'Suite 3', 'Suite 4', 'Suite 5', 'Suite 10', 'Suite 6', 'Suite 7', 'Suite 8', 'Suite 9']</td>
+<td>${SUITE}</td>
+<td>NOT INITIALIZED</td>
 <td></td>
 <td></td>
 <td></td>
@@ -142,17 +142,115 @@ th {
 <th>Argument</th>
 </tr>
 <tr>
-<td>Suites Are Ordered Based On The Prefixes</td>
-<td>Should Be Equal As Strings</td>
-<td>${SUITE.suites}</td>
-<td>${DEFAULT SUITE ORDER}</td>
+<td>Prefix is Removed From Directory Suite Name</td>
+<td>Should Be Equal</td>
+<td>${SUITE.suites[1].name}</td>
+<td>Subsuite 1</td>
 <td></td>
 </tr>
 <tr>
 <td></td>
-<td>Should Be Equal As Strings</td>
-<td>${SUITE.suites[1].suites}</td>
-<td>['Suite 4', 'Suite 2']</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Root Directory Suite Name</td>
+<td>Should Be Equal</td>
+<td>${SUITE.name}</td>
+<td>Multiple Suites</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Prefix is Removed From File Suite Name</td>
+<td>Should Be Equal</td>
+<td>${SUITE.suites[0].name}</td>
+<td>Suite First</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Child File Suite Name</td>
+<td>Should Be Equal</td>
+<td>${SUITE.suites[6].name}</td>
+<td>Suite 6</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Child Directory Suite Name</td>
+<td>[Setup]</td>
+<td>Run Tests</td>
+<td></td>
+<td>misc${/}suites</td>
+</tr>
+<tr>
+<td></td>
+<td>Should Be Equal</td>
+<td>${SUITE.suites[2].name}</td>
+<td>Subsuites 2</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Root File Suite Name</td>
+<td>[Setup]</td>
+<td>Run Tests</td>
+<td></td>
+<td>misc${/}pass_and_fail.html</td>
+</tr>
+<tr>
+<td></td>
+<td>Should Be Equal</td>
+<td>${SUITE.name}</td>
+<td>Pass And Fail</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Suite Name Ending With Dot</td>
+<td>[Setup]</td>
+<td>Run Tests</td>
+<td>--name something_ending_with_dot.</td>
+<td>misc${/}pass_and_fail.html</td>
+</tr>
+<tr>
+<td></td>
+<td>Should Be Equal</td>
+<td>${SUITE.name}</td>
+<td>Something Ending With Dot.</td>
 <td></td>
 </tr>
 <tr>
@@ -182,6 +280,27 @@ th {
 <th>Argument</th>
 <th>Argument</th>
 <th>Argument</th>
+</tr>
+<tr>
+<td>Run Multiple Suites If It Is Not Already Executed</td>
+<td>Run Keyword If</td>
+<td>"""${SUITE}""" != """Multiple Suites""" &nbsp;</td>
+<td>Run Tests</td>
+<td>\</td>
+</tr>
+<tr>
+<td></td>
+<td>...</td>
+<td>misc${/}multiple_suites</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
 </tr>
 <tr>
 <td></td>
