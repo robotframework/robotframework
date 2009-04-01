@@ -28,6 +28,7 @@ class _TestAndSuiteHelper:
         self.setup = None 
         self.teardown = None
         self.status = 'NOT_RUN'
+        self.message = ''
     
     def __getattr__(self, name):
         if name == 'htmldoc':
@@ -36,7 +37,8 @@ class _TestAndSuiteHelper:
             return self.get_long_name()
         if name == 'mediumname':
             tokens = self.get_long_name(separator=None)
-            return '.'.join([ t[0].lower() for t in tokens[:-1] ] + [tokens[-1]])
+            tokens[:-1] = [ t[0].lower() for t in tokens[:-1] ]
+            return '.'.join(tokens)
         raise AttributeError("%s does not have attribute '%s'" 
                              % (self.__class__.__name__, name))
 
