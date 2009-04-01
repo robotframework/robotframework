@@ -181,51 +181,62 @@ if utils.is_jython:
                 assert_equals(handler.maxargs, maxa)
 
 
-    class TestArgumentTypeCoercion(unittest.TestCase):
+    class TestArgumentCoercer(unittest.TestCase):
 
         def setUp(self):
             self.lib = TestLibrary('ArgTypeCoercion')
 
         def test_coercing_to_integer(self):
             handler = self.lib.handlers['intArgument']
-            assert_equals(handler._coerce_args(['1']), [1])
+            assert_equals(handler._arg_coercer(['1']), [1])
 
         def test_coercing_to_boolean(self):
             handler = self.lib.handlers['booleanArgument']
-            assert_equals(handler._coerce_args(['True']), [True])
-            assert_equals(handler._coerce_args(['FALSE']), [ False])
+            assert_equals(handler._arg_coercer(['True']), [True])
+            assert_equals(handler._arg_coercer(['FALSE']), [ False])
+
+        def test_coercing_to_real_number(self):
+            handler = self.lib.handlers['doubleArgument']
+            assert_equals(handler._arg_coercer(['1.42']), [1.42])
+            handler = self.lib.handlers['floatArgument']
+            assert_equals(handler._arg_coercer(['-9991.098']), [-9991.098])
 
         def test_coercion_with_compatible_types(self):
             handler = self.lib.handlers['coercableKeywordWithCompatibleTypes']
-            assert_equals(handler._coerce_args(['9999', '-42', 'FaLsE']), [9999, -42, False])
+            assert_equals(handler._arg_coercer(['9999', '-42', 'FaLsE', '31.31']), 
+                                               [9999, -42, False, 31.31])
 
         def test_arguments_that_are_not_strings_are_not_coerced(self):
             handler = self.lib.handlers['intArgument']
-            assert_equals(handler._coerce_args([self.lib]), [self.lib])
+            assert_equals(handler._arg_coercer([self.lib]), [self.lib])
             handler = self.lib.handlers['booleanArgument']
-            assert_equals(handler._coerce_args([42]), [42])
+            assert_equals(handler._arg_coercer([42]), [42])
 
-        def test_coercion_fails_with_readable_message(self):
+        def test_coercion_fails_with_reasonable_message(self):
             msg = 'Argument at position 1 cannot be coerced to %s'
             handler = self.lib.handlers['intArgument']
-            assert_raises_with_msg(DataError, msg % 'integer', handler._coerce_args, ['invalid'])
+            assert_raises_with_msg(DataError, msg % 'integer', handler._arg_coercer, ['invalid'])
+            handler = self.lib.handlers['booleanArgument']
+            assert_raises_with_msg(DataError, msg % 'boolean', handler._arg_coercer, ['invalid'])
+            handler = self.lib.handlers['floatArgument']
+            assert_raises_with_msg(DataError, msg % 'floating point number', handler._arg_coercer, ['invalid'])
 
         def test_no_arg_no_coercion(self):
             handler = self.lib.handlers['noArgument']
-            assert_equals(handler._coerce_args([]), [])
+            assert_equals(handler._arg_coercer([]), [])
 
         def test_coercing_multiple_arguments(self):
             handler = self.lib.handlers['coercableKeyword']
-            assert_equals(handler._coerce_args(['string', '42', 'tRUe']),
-                          ['string', 42, True])
+            assert_equals(handler._arg_coercer(['10.0', '42', 'tRUe']),
+                          [10.0, 42, True])
         
         def test_coercion_is_not_done_with_conflicting_signatures(self):
             handler = self.lib.handlers['unCoercableKeyword']
-            assert_equals(handler._coerce_args(['True', '42']), ['True', '42'])
+            assert_equals(handler._arg_coercer(['True', '42']), ['True', '42'])
 
         def test_coercable_and_uncoercable_args_in_same_kw(self):
             handler = self.lib.handlers['coercableAndUnCoercableArgs']
-            assert_equals(handler._coerce_args(['1', 'False', '-23', '0']), ['1', False, -23, '0'])
+            assert_equals(handler._arg_coercer(['1', 'False', '-23', '0']), ['1', False, -23, '0'])
 
 
 if __name__ == '__main__':
