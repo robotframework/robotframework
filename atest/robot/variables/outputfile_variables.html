@@ -258,7 +258,7 @@ th {
 
 
 
-      <td align="undefined" valign="undefined">Tests for automatic variables ${OUTPUT_FILE}, ${LOG_FILE}<br>and ${REPORT_FILE}</td>
+      <td align="undefined" valign="undefined">Tests for automatic variables \${OUTPUT_FILE}, \${LOG_FILE}<br>and \${REPORT_FILE}</td>
 
 
 
@@ -1806,7 +1806,7 @@ th {
 
 
 
-      </td><td>core${/}outputfile_variables</td>
+      </td><td>variables${/}outputfile_variables</td>
       
       
       <td align="undefined" valign="undefined"></td>
@@ -1848,7 +1848,7 @@ th {
 
 
 
-      </td><td>core${/}outputfile_variables</td>
+      </td><td>variables${/}outputfile_variables</td>
 
       
 
@@ -1958,7 +1958,7 @@ th {
 
 
 
-      </td><td>core${/}outputfile_variables</td>
+      </td><td>variables${/}outputfile_variables</td>
       
       
       <td align="undefined" valign="undefined"></td>
@@ -2060,7 +2060,7 @@ th {
 
 
 
-      </td><td>core${/}outputfile_variables</td>
+      </td><td>variables${/}outputfile_variables</td>
       
       
       <td align="undefined" valign="undefined"></td>
@@ -2185,7 +2185,7 @@ th {
 
 
 
-    <th>Argument</th><th>Argument</th>
+    <th>Argument</th>
 
 
 
@@ -2290,7 +2290,7 @@ th {
 
 
 
-      <td></td><td></td>
+      <td></td>
 
 
 
@@ -2316,13 +2316,13 @@ th {
 
 
 
-    <tr><td></td><td>@{indices} =</td><td>Evaluate</td><td>[ i for i in range(len(@{files})) ]</td><td></td><td></td></tr>
-    <tr><td></td><td>: FOR</td><td>${i}</td><td>IN</td><td>@{indices}</td><td></td></tr><tr><td></td><td></td><td>Check Log Message</td><td>${test.kws[0].msgs[${i}]}</td><td>@{files}[${i}]</td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr>
+    <tr><td></td><td>@{indices} =</td><td>Evaluate</td><td>[ i for i in range(len(@{files})) ]</td><td></td></tr>
+    <tr><td></td><td>: FOR</td><td>${i}</td><td>IN</td><td>@{indices}</td></tr><tr><td></td><td></td><td>Check Log Message</td><td>${test.kws[0].msgs[${i}]}</td><td>@{files}[${i}]</td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr>
       <td align="undefined" valign="undefined"></td>
       <td align="undefined" valign="undefined"></td>
       <td align="undefined" valign="undefined"></td>
       <td align="undefined" valign="undefined"></td>
-      <td align="undefined" valign="undefined"></td><td></td>
+      <td align="undefined" valign="undefined"></td>
     </tr>
 
 
