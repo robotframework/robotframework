@@ -1139,7 +1139,7 @@ be set in metadata and the name is capitalized</td>
 
 
 
-      <td>Equals</td>
+      <td>Should Be Equal</td>
 
 
 
@@ -1312,7 +1312,7 @@ backslashes are escaped correctly.</td>
 
 
 
-      <td>Equal</td>
+      <td>Should Be Equal</td>
 
 
 
@@ -1328,11 +1328,15 @@ backslashes are escaped correctly.</td>
 
 
 
-      <td>Test cases for metadata in Setting table (incl. imports)&nbsp;
+      <td>Test
+cases for metadata in Setting table (incl. imports)&nbsp;
 and within Test Case and&nbsp; Keyword tables. Text from multiple
 columns and&nbsp; lines is catenated with spaces. Real newlines
-need to be added with 'backslash+n' (e.g. '\n'). Also variables work since
-Robot&nbsp; 1.2, and they work from commandline too: Hello. Of course escaping
+need to be added with 'backslash+n' (e.g. '\n'). Also variables work
+since
+Robot&nbsp; 1.2, and they work from commandline too: Hello. Starting
+from RF 2.1 \${nonexisting} variables are just left unchanged. Of
+course escaping
 (e.g. '\${non-existing-in-suite-doc}' and '\\') works too.</td>
 
 
@@ -3693,7 +3697,7 @@ With Non-Existing Variables</td>
 
 
 
-      <td align="undefined" valign="undefined">\${non-existing-var-in-tc-doc}</td><td align="undefined" valign="undefined">FAIL</td><td>Test case initialization failed:\n<br>Replacing variables from metadata 'Documentation' failed: Non-existing variable '\${non-existing-var-in-tc-doc}'</td>
+      <td align="undefined" valign="undefined">Starting from RF 2.1 \${NONEX} variables are just left unchanged in all documentations. Existing ones are replaced: "1 sec"<br></td><td align="undefined" valign="undefined"></td><td></td>
 
 
 
@@ -5749,7 +5753,7 @@ Timeout</td>
 
 
 
-      <td>Set</td>
+      <td>Create List</td>
 
 
 
@@ -6152,7 +6156,7 @@ Contains</td>
 
 
 
-      <td align="undefined" valign="undefined">[ ERROR ]&nbsp;Error in file '${PATH}' &nbsp;in table 'Test Case' in element on row 85:</td>
+      <td align="undefined" valign="undefined">[ ERROR ]&nbsp;Error in file '${PATH}' &nbsp;in table 'Test Case' in element on row 86:</td>
       <td>Test Case does not have metadata 'Invalid Test Meta'.&nbsp;</td>
 
 
@@ -7599,8 +7603,7 @@ documentation since Robot 1.2</td>
 
     <tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>User Keyword Documentation
 with non Existing Variables</td><td>${tc} =</td><td>Check testcase</td><td>User Keyword Documentation
-with non Existing Variables</td><td></td></tr><tr><td></td><td>Equals</td><td>${tc.kws[0].doc}</td><td>
-\${non-existing-var-in-uk-doc} causes UK to fail</td><td></td></tr><tr>
+with non Existing Variables</td><td></td></tr><tr><td></td><td>Equals</td><td>${tc.kws[0].doc}</td><td>Starting from RF 2.1 \@{non-existing} variables are just left unchanged in keyword documentation.</td><td></td></tr><tr>
 
 
 
@@ -9075,11 +9078,10 @@ metadata 'Invalid'. </td>
 
 
 
-  </tr><tr><td>Non Existing Variable In Suite Documentation</td><td>Run Tests</td><td>--variable suite_fixture_from_cli:Log<br>-v meta_from_cli:whatever</td><td>core${/}metadata.html</td><td></td></tr><tr><td></td><td>Equals</td><td>${SUITE.status}</td><td>FAIL</td><td></td></tr><tr><td></td><td>Equals</td><td>${SUITE.message}</td><td>Suite initialization failed:\n<br>Replacing variables from metadata 'Documentation' failed: Non-existing variable&nbsp;'\${SUITE_DOC_FROM_CLI}'</td><td></td></tr><tr><td></td><td>${tc} =</td><td>Get Test Case</td><td>Test Case Documentation</td><td></td></tr><tr><td></td><td>Equals</td><td>${tc.status}</td><td>FAIL</td><td></td></tr><tr><td></td><td>Equals</td><td>${tc.message}</td><td>Initialization of the parent suite failed.</td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Non Existing Variable In Suite Setup and Teardown</td><td>Run Tests</td><td></td><td>core${/}metadata.html</td><td></td></tr><tr><td></td><td>Equals</td><td>${SUITE.status}</td><td>FAIL</td><td></td></tr><tr><td></td><td>${exp} =</td><td>Catenate</td><td>SEPARATOR=\n</td><td>Suite initialization failed:</td></tr><tr><td></td><td>...</td><td>
-Replacing variables from metadata 'Documentation' failed: Non-existing variable '\${SUITE_DOC_FROM_CLI}'</td><td>
+  </tr><tr><td>Non Existing Variable In Suite Setup and Teardown</td><td>Run Tests</td><td></td><td>core${/}metadata.html</td><td></td></tr><tr><td></td><td>Equals</td><td>${SUITE.status}</td><td>FAIL</td><td></td></tr><tr><td></td><td>${exp} =</td><td>Catenate</td><td>SEPARATOR=\n</td><td>Suite initialization failed:</td></tr><tr><td></td><td>...</td><td>
 Replacing variables from metadata 'Setup' failed: Non-existing variable '\${SUITE_FIXTURE_FROM_CLI}'</td><td>
-Replacing variables from metadata 'Teardown' failed: Non-existing variable '\${SUITE_FIXTURE_FROM_CLI}'</td></tr><tr><td></td><td>...</td><td>
-Replacing variables from metadata 'Var From CLI' failed: Non-existing variable '\${META_FROM_CLI}'</td><td></td><td></td></tr><tr><td></td><td>Equals</td><td>${SUITE.message}</td><td>${exp}</td><td></td></tr><tr><td></td><td>${tc} =</td><td>Get Test Case</td><td>Test Case Documentation</td><td></td></tr><tr><td></td><td>Equals</td><td>${tc.status}</td><td>FAIL</td><td></td></tr><tr><td></td><td>Equals</td><td>${tc.message}</td><td>Initialization of the parent suite failed.</td><td></td></tr>
+Replacing variables from metadata 'Teardown' failed: Non-existing variable '\${SUITE_FIXTURE_FROM_CLI}'</td><td>
+Replacing variables from metadata 'Var From CLI' failed: Non-existing variable '\${META_FROM_CLI}'</td></tr><tr><td></td><td>Equals</td><td>${SUITE.message}</td><td>${exp}</td><td></td></tr><tr><td></td><td>${tc} =</td><td>Get Test Case</td><td>Test Case Documentation</td><td></td></tr><tr><td></td><td>Equals</td><td>${tc.status}</td><td>FAIL</td><td></td></tr><tr><td></td><td>Equals</td><td>${tc.message}</td><td>Initialization of the parent suite failed.</td><td></td></tr>
 
 
 
