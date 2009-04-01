@@ -12,10 +12,10 @@ class TestFileLogger(unittest.TestCase):
     def setUp(self):
         FileLogger._get_writer = lambda *args: StringIO()
         self.logger = FileLogger('whatever', 'INFO')
-        utils.robottime._current_time = (2006, 6, 13, 8, 37, 42, 123)
+        utils.robottime._CURRENT_TIME = (2006, 6, 13, 8, 37, 42, 123)
    
     def tearDown(self):
-        utils.robottime._current_time = None
+        utils.robottime._CURRENT_TIME = None
 
     def test_write(self):
         self.logger.write('my message', 'INFO')
