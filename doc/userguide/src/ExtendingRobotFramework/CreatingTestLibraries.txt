@@ -589,7 +589,7 @@ no possibility to automatically convert strings to other types when
 using Python libraries. Calling a Python method implementing a keyword
 with a correct number of arguments always succeeds, but the execution
 fails later if the arguments are incompatible. Luckily with Python it
-is simpler to convert arguments to suitable types inside keywords:
+is simple to convert arguments to suitable types inside keywords:
 
 .. sourcecode:: python
 
