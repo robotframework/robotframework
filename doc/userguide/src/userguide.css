@@ -304,7 +304,6 @@ table.example caption, table.tsv-example caption, table.tabular caption {
     text-align: left;
     padding-bottom: 0.5em;
     font-style: italic;
-    margin: 0.5em 2em;
 }
 table.example th, table.example td, table.tsv-example td {
     border: 1px solid #808080;
