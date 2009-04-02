@@ -594,9 +594,36 @@ keywords. Because arguments in Python do not have any type, calling a Python
 method implementing a keyword always succeeds, but the execution fails
 later, if the given arguments are incompatible. Java arguments are typed,
 and using a Java keyword with incompatible arguments causes
-a :code:`TypeError` at the calling time. However, Jython does some argument
-coercion automatically. So, for example, a method expecting
-:code:`double` can be called with any number, but not with a string.
+a :code:`TypeError` at runtime. 
+
+Robot Framework does automatic type coercion to Java primitive types whenever
+it is possible. This means that arguments can be Strings in the test data, but
+will be coerced to correct type at runtime. The types that can be coerced are:
+integer types (:code:`byte`, :code:`short`, :code:`int`, :code:`long`),
+floating point types (:code:`float` and :code:`double`) and the :code:`boolean`
+type. Additionally, the coercion also works to the Object versions of the above
+mentioned types, e.g. `java.lang.Integer`. The coercion is done for arguments
+that have the same or compatible type across all the signatures of the keyword
+method. In the following example, the conversion can be done for keywords
+:code:`intArgument` and :code:`compatibleTypes`, but not for
+:code:`conflictingTypes`.
+
+.. sourcecode:: java
+  
+   public void intArgument(int arg) {
+   }
+
+   public void compatibleTypes(long arg1, boolean arg2, float arg3) {
+   }
+
+   public void compatibleTypes(Integer arg1, Boolean arg2, Double arg3, String arg4) {
+   }
+
+   public void conflictingTypes(int arg1, double arg2) {
+   }
+
+   public void conflictingTypes(double arg1, int arg2) {
+   }
 
 
 Communicating with Robot Framework
