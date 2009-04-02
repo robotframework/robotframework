@@ -34,6 +34,9 @@ def TestSuite(datasources, settings):
     
     
 class RunnableTestSuite(BaseTestSuite):
+
+    _exit_on_failure_error = ('Critical failure occurred and ExitOnFailure '
+                              'option is in use')
     
     def __init__(self, data, testdefaults=None, parent=None):
         BaseTestSuite.__init__(self, data.name, data.source, parent)
@@ -62,30 +65,30 @@ class RunnableTestSuite(BaseTestSuite):
         init_err = self._init_suite(self.namespace.variables)
         output.start_suite(self)
         self.status = 'RUNNING'
-        setup_err = self._run_fixture(self.setup, output, self.namespace, error, init_err)
+        setup_err = self._run_fixture(self.setup, output, error, init_err)
         child_err = self._get_child_error(error, init_err, setup_err)
         for suite in self.suites:
             suite.run(output, self, child_err)
-            if self._exit_on_failure and not child_err and suite.critical_stats.failed:
-                child_err = 'Critical failure occurred and ExitOnFailure option is in use'
+            if self._exit_on_failure and not child_err and \
+                   suite.critical_stats.failed:
+                child_err = self._exit_on_failure_error
         for test in self.tests:
             test.run(output, self.namespace, child_err)
             if self._exit_on_failure and not child_err and \
                     test.status == 'FAIL' and test.critical == 'yes':
-                child_err = 'Critical failure occurred and ExitOnFailure option is in use'
+                child_err = self._exit_on_failure_error
             self._set_prev_test_variables(self.namespace.variables, test)
         self.set_status()
         self.message = self._get_my_error(error, init_err, setup_err)
         self.namespace.variables['${SUITE_STATUS}'] = self.status
         self.namespace.variables['${SUITE_MESSAGE}'] = self.get_full_message()
-        teardown_err = self._run_fixture(self.teardown, output, self.namespace, 
-                                         error, init_err)
-        if teardown_err is not None:
-            err_msg = 'Suite teardown failed:\n%s' % teardown_err
-            self.suite_teardown_failed(err_msg)
+        td_err = self._run_fixture(self.teardown, output, error, init_err)
+        if td_err:
+            self.suite_teardown_failed('Suite teardown failed:\n%s' % td_err)
         self.endtime = utils.get_timestamp()
         self.elapsedtime = utils.get_elapsed_time(self.starttime, self.endtime)
-        self._set_prev_test_variables(GLOBAL_VARIABLES, varz=self.namespace.variables)
+        self._set_prev_test_variables(GLOBAL_VARIABLES,
+                                      varz=self.namespace.variables)
         output.end_suite(self)
         self.namespace.end_suite()
         
@@ -99,7 +102,6 @@ class RunnableTestSuite(BaseTestSuite):
             self.metadata[name] = varz.replace_meta(name, value, errors)
         if errors:
             return 'Suite initialization failed:\n%s' % '\n'.join(errors)
-        return None
         
     def _get_child_error(self, error, init_error, setup_error):
         if error:
@@ -115,17 +117,16 @@ class RunnableTestSuite(BaseTestSuite):
             return error
         if init_error:
             return init_error
-        if setup_error is not None:
+        if setup_error:
             return 'Suite setup failed:\n%s' % setup_error
         return ''
 
-    def _run_fixture(self, fixture, output, namespace, error, init_error):   
-        if fixture is None or error is not None or init_error is not None:
-            return None
-        try:
-            fixture.run(output, namespace)
-        except ExecutionFailed:
-            return utils.get_error_message()
+    def _run_fixture(self, fixture, output, error, init_error):   
+        if fixture and not (error or init_error):
+            try:
+                fixture.run(output, self.namespace)
+            except ExecutionFailed:
+                return utils.get_error_message()
     
     def _set_prev_test_variables(self, destination, test=None, varz=None):
         if test is not None:
@@ -154,13 +155,10 @@ class RunnableTestCase(BaseTestCase):
     def run(self, output, namespace, error=None):
         self.starttime = utils.get_timestamp()
         init_err = self._init_test(namespace.variables)
-        if error is None:
-            error = init_err
-        if error is None and len(self.keywords) == 0:
-            error = 'Test case contains no keywords'
+        error = error or init_err
         namespace.start_test(self)
         output.start_test(self)
-        if error is None:
+        if not error:
             self._run(output, namespace)
         else:
             self.status = 'FAIL'
@@ -182,7 +180,8 @@ class RunnableTestCase(BaseTestCase):
             *varz.replace_meta('Timeout', self.timeout, errors))
         if errors:
             return 'Test case initialization failed:\n%s' % '\n'.join(errors)
-        return None
+        if not self.keywords:
+            return 'Test case contains no keywords'
         
     def _run(self, output, namespace):
         namespace.variables['${TEST_NAME}'] = self.name
@@ -195,40 +194,35 @@ class RunnableTestCase(BaseTestCase):
         self.status = self.message == '' and 'PASS' or 'FAIL'
         namespace.variables['${TEST_STATUS}'] = self.status
         namespace.variables['${TEST_MESSAGE}'] = self.message
-        teardown_err = self._run_fixture(self.teardown, output, namespace)
-        if teardown_err is not None:
-            self.message = self._get_message_with_teardown_err(self.message, 
-                                                               teardown_err)
+        td_err = self._run_fixture(self.teardown, output, namespace)
+        if td_err:
+            self.message = self._get_teardown_error(self.message, td_err)
             self.status = 'FAIL' 
         if self.status == 'PASS' and self.timeout.timed_out():
             self.status = 'FAIL' 
             self.message = self.timeout.get_message()
 
     def _run_fixture(self, fixture, output, namespace):
-        if fixture is None:
-            return None
-        try:
-            fixture.run(output, namespace)
-        except ExecutionFailed:
-            return utils.get_error_message()
+        if fixture:
+            try:
+                fixture.run(output, namespace)
+            except ExecutionFailed:
+                return utils.get_error_message()
 
     def _run_keywords(self, output, namespace, setup_err):
-        if setup_err is None:
+        if not setup_err:
             for kw in self.keywords:
                 try:
                     kw.run(output, namespace)
                 except ExecutionFailed:
                     return utils.get_error_message()
-        return None
 
     def _get_message(self, setup_err, kw_err):
-        if setup_err is None and kw_err is None:
-            return ''
-        if setup_err is not None:
+        if setup_err:
             return 'Setup failed:\n%s' % setup_err
-        return kw_err
+        return kw_err or ''
     
-    def _get_message_with_teardown_err(self, message, teardown_err):
+    def _get_teardown_error(self, message, teardown_err):
         if message == '':
             return 'Teardown failed:\n%s' % teardown_err
         return '%s\n\nAlso teardown failed:\n%s' % (message, teardown_err)
