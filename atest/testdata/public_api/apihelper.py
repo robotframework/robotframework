@@ -43,7 +43,7 @@ def verify_attribute(name, actual, expected):
         return 0
     else:
         print '%s | FAIL |' % title.ljust(70)
-        print '  Expected: %s' % expected, "(types: %s, %s" % (type(actual), type(expected))
+        print '  Expected: %s' % expected, "(types: %s, %s)" % (type(actual), type(expected))
         return 1
     
 def parse_data(path):

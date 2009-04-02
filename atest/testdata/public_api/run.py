@@ -1,14 +1,19 @@
 import os
+import sys
 
 from robot import run
 
 from apihelper import verify_suites, verify_tests, remove_outputdir
 
+BASE = os.path.dirname(os.path.abspath(sys.argv[0]))
+DATA = os.path.join(BASE, 'testdata')
+OUTPUT = os.path.join(BASE, 'output')
 
-def run_suite(base):
-    suite = run(os.path.join(base, 'testdata'), outputdir=os.path.join(base, 'output'))
-    fails = verify_suites(suite, os.path.join(base, 'testdata', 'run_suite_data.txt'))
-    fails += verify_tests(suite, os.path.join(base, 'testdata', 'run_test_data.txt'))
+
+def run_suite():
+    suite = run(DATA, outputdir=OUTPUT, monitorcolors='off')
+    fails = verify_suites(suite, os.path.join(DATA, 'run_suite_data.txt'))
+    fails += verify_tests(suite, os.path.join(DATA,'run_test_data.txt'))
                     
     print 'Total failures: %d' % fails 
     remove_outputdir()
@@ -17,6 +22,4 @@ def run_suite(base):
     
 
 if __name__ == '__main__':
-    import sys
-    base = os.path.dirname(os.path.abspath(sys.argv[0]))
-    sys.exit(run_suite(base))
+    sys.exit(run_suite())
