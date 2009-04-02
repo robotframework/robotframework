@@ -589,7 +589,7 @@ no possibility to automatically convert strings to other types when
 using Python libraries. Calling a Python method implementing a keyword
 with a correct number of arguments always succeeds, but the execution
 fails later if the arguments are incompatible. Luckily with Python it
-is simplel to convert arguments to suitable types inside keywords:
+is simpler to convert arguments to suitable types inside keywords:
 
 .. sourcecode:: python
 
@@ -600,7 +600,7 @@ is simplel to convert arguments to suitable types inside keywords:
 Argument types with Java
 ````````````````````````
 Arguments to Java methods have types, and starting from Robot
-Framework 2.1 all the base types are handled automatically.  This
+Framework 2.1 all the base types are handled automatically. This
 means that arguments that are normal strings in the test data are
 coerced to correct type at runtime. The types that can be coerced
 are:
@@ -625,7 +625,7 @@ and :code:`compatibleTypes`, but not for :code:`conflictingTypes`.
    public void conflictingTypes(String arg1, int arg2) {}
    public void conflictingTypes(int arg1, String arg2) {}
 
-The coarcion works with the numeric types if the test data has a
+The coercion works with the numeric types if the test data has a
 string containing a number, and with the boolean type the data must
 contain either string :code:`true` or :code:`false`. Coercion is only
 done if the original value was a string from the test data, but it is
