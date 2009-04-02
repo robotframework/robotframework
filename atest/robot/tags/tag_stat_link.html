@@ -143,7 +143,7 @@ th {
 <td>Tag Links Without Patterns</td>
 <td>Run Tests</td>
 <td>--tagstatlink sub3:http://example.com:title --outputdir ${OUTPUT DIRECTORY} &nbsp;--report report.html</td>
-<td>misc${/}suites</td>
+<td>misc/suites</td>
 <td></td>
 
 </tr>
@@ -170,7 +170,7 @@ th {
 
 <tr>
 <td>Tag Links With Pattern&nbsp;</td>
-<td>Run Tests</td><td>--tagstatlink ?1:http://example.com/%1:Title --outputdir ${OUTPUT DIRECTORY} &nbsp;--report report.html</td><td>misc${/}suites</td>
+<td>Run Tests</td><td>--tagstatlink ?1:http://example.com/%1:Title --outputdir ${OUTPUT DIRECTORY} &nbsp;--report report.html</td><td>misc/suites</td>
 
 
 <td></td>
@@ -206,7 +206,7 @@ th {
 
 </tr>
 
-<tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Tag Links With Many Patterns</td><td>Run Tests</td><td>--tagstatlink *?u?*:%2-%3-%2-%1-%4:Title --outputdir ${OUTPUT DIRECTORY} &nbsp;--report report.html</td><td>misc${/}suites</td><td></td></tr><tr><td></td><td>Report Should Contain Taglink</td><td>sub3</td><td>s-b-s--3</td><td>Title</td></tr><tr>
+<tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Tag Links With Many Patterns</td><td>Run Tests</td><td>--tagstatlink *?u?*:%2-%3-%2-%1-%4:Title --outputdir ${OUTPUT DIRECTORY} &nbsp;--report report.html</td><td>misc/suites</td><td></td></tr><tr><td></td><td>Report Should Contain Taglink</td><td>sub3</td><td>s-b-s--3</td><td>Title</td></tr><tr>
 <td></td>
 <td></td>
 <td></td>
@@ -217,7 +217,7 @@ th {
 
 <tr><td>Tag Link Used Multiple Times</td><td>${mail_to} =</td><td>Catenate</td><td>SEPARATOR=</td><td>mailto:</td></tr><tr><td></td><td>...</td><td>%1@dot.com</td><td>#?subject=%1AMPbody=%1</td><td>#This does not work on Jython in&nbsp; Windows</td></tr><tr>
 <td></td>
-<td>Run Tests</td><td>--tagstatlink ?2:ftp://%1:My_Title<br>--tagstatlink s???:${mail_to}:mail_to<br>--outputdir ${OUTPUT DIRECTORY} <br>--report report.html<br>--escape amp:AMP<br></td><td>misc${/}suites</td>
+<td>Run Tests</td><td>--tagstatlink ?2:ftp://%1:My_Title<br>--tagstatlink s???:${mail_to}:mail_to<br>--outputdir ${OUTPUT DIRECTORY} <br>--report report.html<br>--escape amp:AMP<br></td><td>misc/suites</td>
 
 
 <td></td>
@@ -264,7 +264,7 @@ th {
 <td>Same Tag Matches Multiple Links</td>
 <td>Run Tests</td>
 <td>--tagstatlink sub3:one:First_Link<br>--tagstatlink *3:%1:Second_Link<br>--tagstatlink ??b?:%1-%2:Third<br>--outputdir ${OUTPUT DIRECTORY} &nbsp;<br>--critical none<br>--report report.html</td>
-<td>misc${/}suites</td>
+<td>misc/suites</td>
 <td></td>
 
 </tr>
