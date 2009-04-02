@@ -147,7 +147,6 @@ to the library, as well as the library name itself, can be specified
 using variables, so it is possible to alter them, for example, from the command
 line.
 
-
 .. table:: Importing a test library with arguments
    :class: example
 
@@ -158,10 +157,8 @@ line.
    Library    AnotherLib   ${VAR}     \
    =========  ===========  =========  =======
 
-
 Example implementations, first one in Python and second in Java, for
 the libraries used in the above example:
-
 
 .. sourcecode:: python
 
@@ -174,7 +171,6 @@ the libraries used in the above example:
 
       def send_message(self, message):
           self._conn.send(message)
-
 
 .. sourcecode:: java
 
@@ -231,7 +227,6 @@ a string and it can have the following three values:
   is shared by all test cases and test suites. Libraries created from
   modules are always global.
 
-
 When the :code:`TEST SUITE` or :code:`GLOBAL` scopes are used with test
 libraries that have a state, it is recommended that libraries have some
 special keyword for cleaning up the state. This keyword can then be
@@ -242,11 +237,9 @@ using the same browser in different test cases without having to
 reopen it, and it also has the :name:`Close All Browsers` keyword for
 easily closing all open browsers.
 
-
 Example Python library using the :code:`TEST SUITE` scope:
 
 .. sourcecode:: python
-
 
     class ExampleLibrary:
 
@@ -261,7 +254,6 @@ Example Python library using the :code:`TEST SUITE` scope:
 
         def clear_counter(self):
             self._counter = 0
-
 
 Example Java library using the :code:`GLOBAL` scope:
 
@@ -310,7 +302,6 @@ An example Python module using :code:`__version__`:
 
     def keyword():
         pass
-
 
 A Java class using :code:`ROBOT_LIBRARY_VERSION`:
 
@@ -378,7 +369,6 @@ in the `library search path`_. Note that in the subsequent examples all
 boilerplates, such as taking a library into use and creating a test
 case, is excluded.
 
-
 .. table:: Using simple example library
    :class: example  
 
@@ -428,15 +418,17 @@ Example Python keywords taking different numbers of arguments:
       print "Keyword got three arguments '%s', '%s' and '%s'" % (a1, a2, a3)
 
 
-Default values
-``````````````
+Default values to keywords
+''''''''''''''''''''''''''
 
 It is often useful that some of the arguments that a keyword uses have
-default values. Python and Java have different syntaxes for handling these
-kinds of situations, and the natural syntaxes of these languages can be
+default values. Python and Java have different syntax for handling default
+values to methods, and the natural syntax of these languages can be
 used when creating test libraries for Robot Framework.
 
-In Python, a method has always exactly one implementation and possible
+Default values with Python
+``````````````````````````
+In Python a method has always exactly one implementation and possible
 default values are specified in the method signature. The syntax,
 which is familiar to all Python programmers, is illustrated below:
 
@@ -448,7 +440,6 @@ which is familiar to all Python programmers, is illustrated below:
    def multiple_defaults(arg1, arg2='default 1', arg3='default 2'):
        print "Got arguments %s, %s and %s" % (arg1, arg2, arg3)
 
-
 The first example keyword above can be used either with zero or one
 arguments. If no arguments are given, :code:`arg` gets the value
 :code:`default`. If there is one argument, :code:`arg` gets that value,
@@ -457,12 +448,27 @@ second example, one argument is always required, but the second and
 the third one have default values, so it is possible to use the keyword
 with one to three arguments.
 
-In Java, one method can have several implementations with different
+.. table:: Using keywords with variable number of arguments
+   :class: example
+
+   ===========  ==================  =============  ============  =============
+    Test Case         Action          Argument       Argument       Argument 
+   ===========  ==================  =============  ============  =============
+   Defaults     One Default         \              \             \
+   \            One Default         argument       \             \
+   \            Multiple Defaults   required arg   \             \
+   \            Multiple Defaults   required arg   optional      \
+   \            Multiple Defaults   required arg   optional 1    optional 2
+   ===========  ==================  =============  ============  =============
+
+Default values with Java
+````````````````````````
+In Java one method can have several implementations with different
 signatures. Robot Framework regards all these implementations as one
 keyword, which can be used with different arguments. This syntax can
 thus be used to provide support for the default values. This is
-illustrated by the examples below, identical to the earlier Python
-examples:
+illustrated by the example below, which is functionally identical to
+the earlier Python example:
 
 .. sourcecode:: java
   
@@ -487,30 +493,15 @@ examples:
    }
 
 
-The keywords above can be used in the test data as illustrated in the example below:
-
-
-.. table:: Using keywords with a variable number of arguments
-   :class: example
-
-   ===========  ==================  =============  ============  =============
-    Test Case         Action          Argument       Argument       Argument 
-   ===========  ==================  =============  ============  =============
-   Defaults     One Default         \              \             \
-   \            One Default         argument       \             \
-   \            Multiple Defaults   required arg   \             \
-   \            Multiple Defaults   required arg   optional      \
-   \            Multiple Defaults   required arg   optional 1    optional 2
-   ===========  ==================  =============  ============  =============
-
-
 Variable number of arguments
-````````````````````````````
+''''''''''''''''''''''''''''
 
 Robot Framework supports also keywords that take any number of
 arguments. Similarly as with the default values, the actual syntax to use
 in test libraries is different in Python and Java.
 
+Variable number of arguments with Python
+````````````````````````````````````````
 Python itself has a good support for methods accepting any
 number of arguments. The same syntax works in libraries and, as
 the examples below show, it can also be combined with other ways of
@@ -531,42 +522,6 @@ specifying arguments:
   def also_defaults(req, def1="default 1", def2="default 2", *rest):
       print req, def1, def2, rest
 
-
-In Java, there is no syntax for a variable number of arguments, but Robot
-Framework has its own support for them. If the last argument in a keyword
-signature is an array, all leftover arguments are packed into
-it. This also works, if the keyword is used with one argument less than
-the actual number of arguments in the signature - in this case the
-array at the end will be empty. 
-
-This system has one limitation: it only works if the method has one
-signature. Thus it is not possible to have a Java keyword that has
-both the default values and a variable number of arguments. Of course, having the required
-values with a variable number of arguments is possible, as
-the examples below illustrate:
-
-.. sourcecode:: java
-
-  public void anyArguments(String[] args) {
-      System.out.println("Got arguments:");
-      for (int i; i < args.length; i++) {
-          System.out.println(args[i]);
-      }
-  }
-
-  public void oneRequired(String required, String[] others) {
-      System.out.println("Required: " + required + "\nOthers:");
-      for (int i; i < others.length; i++) {
-          System.out.println(others[i]);
-      }
-  }
-
-
-Finally, here are examples on how keywords in the examples above can be used in
-the test data. Note that the last examples do not work with Java because of
-the limitations explained above.
-
-
 .. table:: Using keywords with a variable number of arguments
    :class: example
 
@@ -585,45 +540,114 @@ the limitations explained above.
    \            ...             4              5             6
    ===========  ==============  =============  ============  ==============
 
+Variable number of arguments with Java
+``````````````````````````````````````
+In Java, there is no syntax for a variable number of arguments, but Robot
+Framework has its own support for them. If the last argument in a keyword
+signature is an array, all leftover arguments are packed into
+it. This also works, if the keyword is used with one argument less than
+the actual number of arguments in the signature - in this case the
+array at the end will be empty. 
+
+This system has one limitation: it only works if the method has one
+signature. Thus it is not possible to have a Java keyword that has
+both the default values and a variable number of arguments. Of course,
+having the required values with a variable number of arguments is
+possible, as the examples below illustrate:
+
+.. sourcecode:: java
+
+  public void anyArguments(String[] args) {
+      System.out.println("Got arguments:");
+      for (int i; i < args.length; i++) {
+          System.out.println(args[i]);
+      }
+  }
+
+  public void oneRequired(String required, String[] others) {
+      System.out.println("Required: " + required + "\nOthers:");
+      for (int i; i < others.length; i++) {
+          System.out.println(others[i]);
+      }
+  }
+
 
 Argument types
-``````````````
+''''''''''''''
 
-Robot Framework does not do any argument-type checking when it uses
-keywords. Because arguments in Python do not have any type, calling a Python
-method implementing a keyword always succeeds, but the execution fails
-later, if the given arguments are incompatible. Java arguments are typed,
-and using a Java keyword with incompatible arguments causes
-a :code:`TypeError` at runtime. 
+Normally keyword arguments come to Robot Framework as strings. If
+keywords require some other types, it is possible to either use
+variables_ or convert strings to required types inside keywords. With
+`Java keywords`__ base types are also coerced automatically.
 
-Robot Framework does automatic type coercion to Java primitive types whenever
-it is possible. This means that arguments can be Strings in the test data, but
-will be coerced to correct type at runtime. The types that can be coerced are:
-integer types (:code:`byte`, :code:`short`, :code:`int`, :code:`long`),
-floating point types (:code:`float` and :code:`double`) and the :code:`boolean`
-type. Additionally, the coercion also works to the Object versions of the above
-mentioned types, e.g. `java.lang.Integer`. The coercion is done for arguments
-that have the same or compatible type across all the signatures of the keyword
-method. In the following example, the conversion can be done for keywords
-:code:`intArgument` and :code:`compatibleTypes`, but not for
-:code:`conflictingTypes`.
+__ `Argument types with Java`_
+
+Argument types with Python
+``````````````````````````
+Because arguments in Python do not have any type information, there is
+no possibility to automatically convert strings to other types when
+using Python libraries. Calling a Python method implementing a keyword
+with a correct number of arguments always succeeds, but the execution
+fails later if the arguments are incompatible. Luckily with Python it
+is simplel to convert arguments to suitable types inside keywords:
+
+.. sourcecode:: python
+
+  def connect_to_host(address, port=25):
+      port = int(port)
+      # ...
+
+Argument types with Java
+````````````````````````
+Arguments to Java methods have types, and starting from Robot
+Framework 2.1 all the base types are handled automatically.  This
+means that arguments that are normal strings in the test data are
+coerced to correct type at runtime. The types that can be coerced
+are:
+
+- integer types (:code:`byte`, :code:`short`, :code:`int`, :code:`long`)
+- floating point types (:code:`float` and :code:`double`)
+- the :code:`boolean` type
+- object versions of the above types e.g. :code:`java.lang.Integer`
+
+The coercion is done for arguments that have the same or compatible
+type across all the signatures of the keyword method. In the following
+example, the conversion can be done for keywords :code:`doubleArgument`
+and :code:`compatibleTypes`, but not for :code:`conflictingTypes`.
 
 .. sourcecode:: java
   
-   public void intArgument(int arg) {
-   }
+   public void doubleArgument(double arg) {}
 
-   public void compatibleTypes(long arg1, boolean arg2, float arg3) {
-   }
+   public void compatibleTypes(String arg1, Integer arg2) {}
+   public void compatibleTypes(String arg2, Integer arg2, Boolean arg3) {}
 
-   public void compatibleTypes(Integer arg1, Boolean arg2, Double arg3, String arg4) {
-   }
+   public void conflictingTypes(String arg1, int arg2) {}
+   public void conflictingTypes(int arg1, String arg2) {}
 
-   public void conflictingTypes(int arg1, double arg2) {
-   }
+The coarcion works with the numeric types if the test data has a
+string containing a number, and with the boolean type the data must
+contain either string :code:`true` or :code:`false`. Coercion is only
+done if the original value was a string from the test data, but it is
+of course still possible to use variables containing correct types with
+these keywords. With keywords having conflicting signatures using
+variables is the only option.
 
-   public void conflictingTypes(double arg1, int arg2) {
-   }
+.. table:: Using automatic type coercion
+   :class: example
+
+   ===========  =================  =============  ==========  =====================
+    Test Case         Action          Argument     Argument        Argument 
+   ===========  =================  =============  ==========  =====================
+   Coercion     Double Argument    3.14
+   \            Double Argument    2e16                       # scientific notation
+   \            Compatible Types   Hello, world!  1234          
+   \            Compatible Types   Hi again!      -10         true
+   \
+   No Coercion  Double Argument    ${3.14}                         
+   \            Conflicting Types  1              ${2}        # must use variables
+   \            Conflicting Types  ${1}           2              
+   ===========  =================  =============  ==========  =====================
 
 
 Communicating with Robot Framework
@@ -798,7 +822,6 @@ __ `Scalar variables`_
   def return_object(name):
       return MyObject(name)
 
-
 .. table:: Return one value from keywords
    :class: example
 
@@ -859,7 +882,6 @@ the examples below.
 .. _docstrings: http://www.python.org/dev/peps/pep-0257/
 .. _javadoc: http://java.sun.com/j2se/javadoc/writingdoccomments/index.html
 
-
 .. sourcecode:: python
 
     class MyLibrary:
@@ -876,7 +898,6 @@ the examples below.
             multiple lines or paragraphs.
             """
             pass
-
 
 .. sourcecode:: java
 
@@ -901,7 +922,6 @@ the examples below.
         }
 
     }
-
 
 Both Python and Java have tools for creating an API documentation of a
 library documented as above. However, outputs from these tools can be slightly
@@ -1177,7 +1197,6 @@ translate them to string arrays.
    | Variable number | Last argument has          | :code:`['*arguments']`,       | 0/any,|
    | of arguments    | :code:`*` before its name. | :code:`['a', 'b=42', '*rest']`| 1/any |
    +-----------------+----------------------------+-------------------------------+-------+
-
 
 When the :code:`get_keyword_arguments` is used, Robot Framework
 automatically calculates how many arguments the keywords require. If a
