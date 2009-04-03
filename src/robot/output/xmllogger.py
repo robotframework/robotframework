@@ -174,8 +174,8 @@ class XmlLogger:
         if stat.type == 'tag':
             attrs['info'] = self._get_tag_stat_info(stat)
         if stat.doc is not None:
-            attrs['doc'] = stat.doc
-        self._writer.whole_element('stat', stat.name, attrs)
+            attrs['doc'] = stat.get_doc(self._split_level)
+        self._writer.whole_element('stat', stat.get_name(self._split_level), attrs)
 
     def _get_tag_stat_info(self, stat):
         if stat.critical is True:

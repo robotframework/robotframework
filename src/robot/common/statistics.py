@@ -66,27 +66,52 @@ class Stat:
     def __cmp__(self, other):
         return cmp(self.name, other.name)
 
+    def get_name(self, split_level=-1):
+        return self.name
+
+    def get_doc(self, split_level=-1):
+        return self.doc
+    
+    def get_link(self, split_level=-1):
+        return self.link
+    
+    def should_link_to_sub_log(self, split_level=-1):
+        return False
+
 
 class SuiteStat(Stat):
 
     type = 'suite'
 
-    def __init__(self, name, doc, name_parts):
-        Stat.__init__(self, name, doc, link=doc)
-        self.name_parts = name_parts
-    
+    def __init__(self, suite):
+        Stat.__init__(self, suite.name)
+        self._suite = suite
+
+    def get_name(self, split_level=-1):
+        return self._suite.get_medium_name(split_level=split_level)
+
+    def get_doc(self, split_level=-1):
+        return self._suite.get_long_name(split_level=split_level)
+
+    def get_link(self, split_level=-1):
+        return self._suite.get_long_name(split_level=split_level)
+        
+    def should_link_to_sub_log(self, split_level=-1):
+        return len(self._suite.get_long_name(separator=None)) == split_level + 1
+
+
 class TagStat(Stat):
 
     type = 'tag'
     
     def __init__(self, name, critical=False, non_critical=False, info=None):
-        doc = info is not None and info.get_doc(name) or None 
+        doc = info and info.get_doc(name) or None 
         Stat.__init__(self, name, doc, link=name)
         self.critical = critical
         self.non_critical = non_critical
         self.combined = False
         self.tests = []
-        self.links = info is not None and info.get_links(name) or []
+        self.links = info and info.get_links(name) or []
         
     def add_test(self, test):
         Stat.add_test(self, test)
@@ -118,10 +143,8 @@ class SuiteStatistics:
     
     def __init__(self, suite, tag_stats, suite_stat_level=-1):
         self.name = suite.mediumname
-        title = suite.longname
-        name_parts = suite.get_long_name(separator=None)
-        self.all = SuiteStat(self.name, title, name_parts)
-        self.critical = SuiteStat(self.name, title, name_parts)
+        self.all = SuiteStat(suite)
+        self.critical = SuiteStat(suite)
         self.suites = []
         self._process_suites(suite, tag_stats)
         self._process_tests(suite, tag_stats)

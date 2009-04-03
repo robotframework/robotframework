@@ -53,6 +53,34 @@ class TestGetLongName(unittest.TestCase):
     def test_get_long_name_for_test_with_parts(self):
         assert_equals(self.suite.suites[0].suites[0].tests[0].get_long_name(None), 
                       ['Root', 'Sub1', 'Sub11', 'T11'])
+
+    def test_get_long_name_for_sub_suite_with_split_level_smaller(self):
+        assert_equals(self.suite.suites[0].get_long_name(split_level=1), 
+                      'Sub1')
+
+    def test_get_long_name_for_sub_suite_with_split_level_same(self):
+        assert_equals(self.suite.suites[0].get_long_name(split_level=2), 
+                      'Root.Sub1')
+
+    def test_get_long_name_for_sub_suite_with_split_level_larger(self):
+        assert_equals(self.suite.suites[0].get_long_name(split_level=3), 
+                      'Root.Sub1')
+
+    def test_get_long_name_for_test_with_split_level_smaller(self):
+        assert_equals(self.suite.suites[0].suites[0].tests[0].get_long_name(split_level=2), 
+                      'Sub11.T11')
+
+    def test_get_long_name_for_test_with_split_level_at_parent_suite_level(self):
+        assert_equals(self.suite.suites[0].suites[0].tests[0].get_long_name(split_level=3), 
+                      'Root.Sub1.Sub11.T11')
+
+    def test_get_long_name_for_test_with_split_level_same(self):
+        assert_equals(self.suite.suites[0].suites[0].tests[0].get_long_name(split_level=4), 
+                      'Root.Sub1.Sub11.T11')
+
+    def test_get_long_name_for_test_with_split_level_larger(self):
+        assert_equals(self.suite.suites[0].suites[0].tests[0].get_long_name(split_level=5), 
+                      'Root.Sub1.Sub11.T11')
     
 
 class TestFilterByNames(unittest.TestCase):

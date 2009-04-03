@@ -122,26 +122,26 @@ class _StatisticsSerializer:
             attrs = self._get_link_attributes(stat)
         else:
             attrs = {}
-        title = self._get_title_attribute(stat)
-        if title:
-            attrs['title'] = title
+        doc = self._get_doc_attribute(stat)
+        if doc:
+            attrs['title'] = doc
         name = self._get_name_attribute(stat)
         self._writer.whole_element(elem, name, attrs, newline=False)
         self._write_criticality(stat)
         self._writer.end_element('div')
 
-    def _get_title_attribute(self, stat):
-        return stat.doc
+    def _get_doc_attribute(self, stat):
+        return stat.get_doc()
 
     def _get_name_attribute(self, stat):
-        return stat.name
-    
-    def _get_element_name(self, stat):
-        raise NotImplementedError
+        return stat.get_name()
         
     def _get_link_attributes(self, stat):
         raise NotImplementedError
-    
+
+    def _get_element_name(self, stat):
+        raise NotImplementedError
+            
     def _write_criticality(self, stat):
         if stat.type == 'tag' and stat.critical is True:
             self._writer.content(' (critical)')
@@ -160,30 +160,42 @@ class _StatisticsSerializer:
         self._writer.end_element('div')
 
 
-class LogStatisticsSerializer(_StatisticsSerializer):
+class _BaseLogStatisticsSerializer(_StatisticsSerializer):
 
     def __init__(self, output, split_level=-1):
         _StatisticsSerializer.__init__(self, output)
         self._split_level = split_level
-        
-    def _get_title_attribute(self, stat):
-        return stat.type == 'suite' and get_splitted_name(stat.name_parts, self._split_level) or stat.doc
 
     def _get_element_name(self, stat):
         return stat.type == 'suite' and 'a' or 'span'
 
-    def _get_name_attribute(self, stat):
-        if stat.type == 'suite':
-            return get_splitted_name(stat.name_parts, self._split_level, medium_name=True)
-        return stat.name
-
     def _get_link_attributes(self, stat):
-        name = stat.type == 'suite' and get_splitted_name(stat.name_parts, 
-                                                          self._split_level) or stat.link
-        target = '%s_%s' % (stat.type, name)
+        target = '%s_%s' % (stat.type, stat.get_link(self._split_level))
         return { 'href': '#' + target, 
                  'onclick': "set_element_visible('%s')" % target }
+        
 
+class LogStatisticsSerializer(_BaseLogStatisticsSerializer):
+
+    def _get_doc_attribute(self, stat):
+        return stat.get_doc(self._split_level)
+
+    def _get_name_attribute(self, stat):
+        return stat.get_name(self._split_level)
+
+
+class SplitLogStatisticsSerializer(_BaseLogStatisticsSerializer):
+    
+    def __init__(self, output, split_level):
+        _BaseLogStatisticsSerializer.__init__(self, output, split_level)
+        self._namegen = utils.FileNameGenerator(os.path.basename(output.name))
+                
+    def _get_link_attributes(self, stat):        
+        if not stat.should_link_to_sub_log(self._split_level):
+            return _BaseLogStatisticsSerializer._get_link_attributes(self, stat)
+        self._link_target = self._namegen.get_name()
+        return { 'href': '%s#%s_%s' % (self._link_target, stat.type, 
+                                       stat.get_link(self._split_level)) }
 
 
 class ReportStatisticsSerializer(_StatisticsSerializer):
@@ -192,7 +204,7 @@ class ReportStatisticsSerializer(_StatisticsSerializer):
         return stat.type in ['suite', 'tag'] and 'a' or 'span'
 
     def _get_link_attributes(self, stat):
-        return { 'href': '#%s_%s' % (stat.type, stat.link) }
+        return { 'href': '#%s_%s' % (stat.type, stat.get_link()) }
     
     
 class SummaryStatisticsSerializer(_StatisticsSerializer):
@@ -200,30 +212,6 @@ class SummaryStatisticsSerializer(_StatisticsSerializer):
     def _get_element_name(self, stat):
         return 'span'
     
-
-class SplitLogStatisticsSerializer(LogStatisticsSerializer):
-    
-    def __init__(self, output, split_level):
-        LogStatisticsSerializer.__init__(self, output)
-        self._namegen = utils.FileNameGenerator(os.path.basename(output.name))
-        self._split_level = split_level
-                
-    def _get_link_attributes(self, stat):
-        if not stat.type == 'suite' or not self._is_sub_log(stat):
-            return LogStatisticsSerializer._get_link_attributes(self, stat)
-        name = get_splitted_name(stat.name_parts, self._split_level)
-        self._link_target = self._namegen.get_name()
-        return { 'href': '%s#%s_%s' % (self._link_target, stat.type, name) }
-
-    def _get_title_attribute(self, stat):
-        return stat.doc
-    
-    def _get_name_attribute(self, stat):
-        return stat.name
-
-    def _is_sub_log(self, stat):
-        return len(stat.name_parts) == self._split_level + 1
-
 
 class LogErrorsSerializer:
     
@@ -313,15 +301,14 @@ class LogSuiteSerializer:
         self._writer.whole_element('td', msg.message, {'class': 'msg'}, escape=not msg.html)
         self._writer.end_elements(['tr', 'table'])    
 
-    def _write_suite_or_test_name(self, item, type_, add_level=0):
+    def _write_suite_or_test_name(self, item, type_):
         self._writer.start_elements(['tr', 'td'])
         self._write_expand_all(item)
         self._write_folding_button(item)
         label = type_ == 'suite' and 'TEST&nbsp;SUITE: ' or 'TEST&nbsp;CASE: '
         self._writer.whole_element('span', label,
                                    {'class': item.status.lower()}, escape=False)
-        name = get_splitted_name(item.get_long_name(separator=None), 
-                                 self._split_level + add_level)
+        name = item.get_long_name(split_level=self._split_level)
         self._writer.whole_element('a', item.name, 
                                    {'name': '%s_%s' % (type_, name),
                                     'class': 'name', 'title': name})
@@ -416,7 +403,7 @@ class LogSuiteSerializer:
 
     def _start_suite_or_test_metadata(self, item):
         self._writer.start_element('table', {'class': 'metadata'})
-        self._write_metadata_row('Full Name', item.longname) #TODO:check
+        self._write_metadata_row('Full Name', item.longname) 
         self._write_metadata_row('Documentation', item.htmldoc, escape=False)
 
     def _write_times(self, item):
@@ -474,10 +461,9 @@ class SplitLogSuiteSerializer(LogSuiteSerializer):
         if self._suite_level <= self._split_level:
             LogSuiteSerializer.message(self, msg)
             
-    def _write_suite_or_test_name(self, item, type_):        
-        add_level = type_ == 'test' and self._suite_level == self._split_level and 1 or 0
+    def _write_suite_or_test_name(self, item, type_):
         if type_ == 'test' or self._suite_level < self._split_level:
-            LogSuiteSerializer._write_suite_or_test_name(self, item, type_, add_level)
+            LogSuiteSerializer._write_suite_or_test_name(self, item, type_)
         elif self._suite_level == self._split_level:
             self._write_split_suite_name(item)
             
@@ -654,8 +640,7 @@ class SplitReportSuiteSerializer(ReportSuiteSerializer):
 
     def _set_split_link(self, item):
         item.linkpath = self._split_loglink
-        item.linkname = get_splitted_name(item.get_long_name(separator=None), 
-                                           self._split_level)
+        item.linkname = item.get_long_name(split_level=self._split_level)
 
     
 class ReportTagStatSerializer(_ReportTableHelper):
@@ -714,11 +699,3 @@ class ReportTagStatSerializer(_ReportTableHelper):
         if stat.non_critical:
             return 'non-c.'
         return ''
-
-
-def get_splitted_name(parts, level, medium_name=False):
-    if level >= 0 and len(parts) > level:
-        parts = parts[level:]    
-    if medium_name:
-        parts = [ i[0].lower() for i in parts[:-1] ] + [parts[-1]]
-    return '.'.join(parts)
