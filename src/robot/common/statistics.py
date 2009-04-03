@@ -39,9 +39,10 @@ class Statistics:
 
 class Stat:
     
-    def __init__(self, name=None, doc=None):
+    def __init__(self, name=None, doc=None, link=None):
         self.name = name
         self.doc = doc
+        self.link = link
         self.passed = 0
         self.failed = 0
         
@@ -67,22 +68,24 @@ class Stat:
 
 
 class SuiteStat(Stat):
+
+    type = 'suite'
+
+    def __init__(self, name, doc, name_parts):
+        Stat.__init__(self, name, doc, link=doc)
+        self.name_parts = name_parts
     
-    def __init__(self, name, doc):
-        Stat.__init__(self, name, doc)
-        self.type = 'suite'
-
-
 class TagStat(Stat):
+
+    type = 'tag'
     
     def __init__(self, name, critical=False, non_critical=False, info=None):
         doc = info is not None and info.get_doc(name) or None 
-        Stat.__init__(self, name, doc)
+        Stat.__init__(self, name, doc, link=name)
         self.critical = critical
         self.non_critical = non_critical
         self.combined = False
         self.tests = []
-        self.type = 'tag'
         self.links = info is not None and info.get_links(name) or []
         
     def add_test(self, test):
@@ -108,17 +111,17 @@ class CombinedTagStat(TagStat):
         
 class TotalStat(Stat):
     
-    def __init__(self, name):
-        Stat.__init__(self, name)
-        self.type = 'total'
+    type = 'total'
 
         
 class SuiteStatistics:
     
     def __init__(self, suite, tag_stats, suite_stat_level=-1):
         self.name = suite.mediumname
-        self.all = SuiteStat(self.name, suite.longname)
-        self.critical = SuiteStat(self.name, suite.longname)
+        title = suite.longname
+        name_parts = suite.get_long_name(separator=None)
+        self.all = SuiteStat(self.name, title, name_parts)
+        self.critical = SuiteStat(self.name, title, name_parts)
         self.suites = []
         self._process_suites(suite, tag_stats)
         self._process_tests(suite, tag_stats)

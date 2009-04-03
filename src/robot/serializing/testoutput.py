@@ -160,16 +160,15 @@ class RebotTestOutput(RobotTestOutput):
             for sub in suite.suites:
                 self._create_split_sub_logs(sub, split_level, suite_level+1)
         elif suite_level == split_level:
-            self._create_split_sub_log(suite)
+            self._create_split_sub_log(suite, split_level)
             
-    def _create_split_sub_log(self, suite): 
-        suite.parent = None # TODO: Remove after get long name has splitlevel
+    def _create_split_sub_log(self, suite, split_level): 
         outfile = self._get_outfile(self._namegen.get_name(), 'log')
         if outfile is None:
             return
         self._use_template(outfile, templates.LOG, get_title('Log', suite.name))
-        Statistics(suite).serialize(LogStatisticsSerializer(outfile))
-        suite.serialize(LogSuiteSerializer(outfile))
+        Statistics(suite).serialize(LogStatisticsSerializer(outfile, split_level))
+        suite.serialize(LogSuiteSerializer(outfile, split_level))
         outfile.write('</body>\n</html>\n')
         outfile.close()
 

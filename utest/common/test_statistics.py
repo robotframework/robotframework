@@ -10,22 +10,26 @@ from robot.errors import DataError
 
 class SuiteMock:
 
-    def __init__(self, name='My Name', crit_tags=None, medname_prefix=''):
+    def __init__(self, name='My Name', crit_tags=None):
         self.name = name
-        self.medname_prefix = medname_prefix
-        self.mediumname = medname_prefix + name
-        if medname_prefix == '':
-            self.longname = name
-        else:
-            self.longname = 'Long Name.' + name
+        self.mediumname = self.get_medium_name()
+        self.longname = self.get_long_name()
         self.critical = _Critical(crit_tags)
         self.suites = []
         self.tests = []
         self.message = ''
+
+    def get_long_name(self, separator="."):
+        if separator is None:
+            return self.name.split('.')
+        return self.name.replace('.', separator)
+        
+    def get_medium_name(self, separator='.'):
+        parts = self.name.split('.')
+        return '.'.join([ i[0].lower() for i in parts[:-1] ] + [parts[-1]])
     
     def add_suite(self, name):
-        suite = SuiteMock(name, self.critical.tags,
-                          self.medname_prefix + self.name[0].lower() + '.')
+        suite = SuiteMock(name, self.critical.tags)
         self.suites.append(suite)
         return suite
         
@@ -61,12 +65,12 @@ def verify_suite(suite, name, crit_pass, crit_fail, all_pass=None, all_fail=None
 
 def generate_default_suite():
     suite = SuiteMock('Root Suite', ['smoke'])
-    s1 = suite.add_suite('First Sub Suite')
-    s2 = suite.add_suite('Second Sub Suite')
-    s11 = s1.add_suite('Sub Suite 1.1')
-    s12 = s1.add_suite('Sub Suite 1.2')
-    s13 = s1.add_suite('Sub Suite 1.3')
-    s21 = s2.add_suite('Sub Suite 2.1')
+    s1 = suite.add_suite('Root Suite.First Sub Suite')
+    s2 = suite.add_suite('Root Suite.Second Sub Suite')
+    s11 = s1.add_suite('Root Suite.First Sub Suite.Sub Suite 1_1')
+    s12 = s1.add_suite('Root Suite.First Sub Suite.Sub Suite 1_2')
+    s13 = s1.add_suite('Root Suite.First Sub Suite.Sub Suite 1_3')
+    s21 = s2.add_suite('Root Suite.Second Sub Suite.Sub Suite 2_1')
     s11.add_test('PASS')
     s11.add_test('FAIL', ['t1'])
     s12.add_test('PASS', ['t1','t2',])
@@ -113,12 +117,12 @@ class TestStatisticsNotSoSimple(unittest.TestCase):
         verify_suite(s2, 'r.Second Sub Suite', 0, 1, 0, 1)
         assert_equals(len(s1.suites), 3)
         s11, s12, s13 = s1.suites
-        verify_suite(s11, 'r.f.Sub Suite 1.1', 0, 0, 1, 1)
-        verify_suite(s12, 'r.f.Sub Suite 1.2', 1, 1, 2, 1)
-        verify_suite(s13, 'r.f.Sub Suite 1.3', 1, 0, 1, 0)
+        verify_suite(s11, 'r.f.Sub Suite 1_1', 0, 0, 1, 1)
+        verify_suite(s12, 'r.f.Sub Suite 1_2', 1, 1, 2, 1)
+        verify_suite(s13, 'r.f.Sub Suite 1_3', 1, 0, 1, 0)
         assert_equals(len(s2.suites), 1)
         s21 = s2.suites[0]
-        verify_suite(s21, 'r.s.Sub Suite 2.1', 0, 1, 0, 1)
+        verify_suite(s21, 'r.s.Sub Suite 2_1', 0, 1, 0, 1)
 
     def test_tags(self):
         tags = self.statistics.tags
