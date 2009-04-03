@@ -96,3 +96,22 @@ class IsLogged:
             return LEVELS[level.upper()]
         except KeyError:
             raise DataError("Invalid log level '%s'" % level)
+
+
+class AbstractLoggerProxy:
+
+    _methods = NotImplemented
+         
+    def __init__(self, logger):
+        default = lambda *args: None
+        for name in self._methods:
+            try:
+                method = getattr(logger, name)
+            except AttributeError:
+                method = getattr(logger, self._toCamelCase(name), default)
+            setattr(self, name, method)
+    
+    def _toCamelCase(self, name):
+        parts = name.split('_')
+        return ''.join([parts[0]] + [part.capitalize() for part in parts[1:]])
+

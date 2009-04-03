@@ -17,16 +17,26 @@ import types
 
 from robot import utils
 from robot.errors import DataError
+from loggerhelper import AbstractLoggerProxy
 from logger import LOGGER
 
+if utils.is_jython:
+    from java.lang import Object
+        
 
 class Listeners:
     
     def __init__(self, listeners):
-        self._listeners = []
-        for name, args in listeners:
+        self._listeners = self._import_listneres(listeners)
+
+    def __nonzero__(self):
+        return len(self._listeners) > 0
+
+    def _import_listneres(self, listener_data):
+        listeners = []
+        for name, args in listener_data:
             try:
-                self._listeners.append(_Listener(name, args))
+                listeners.append(_ListenerProxy(name, args))
             except:
                 message, details = utils.get_error_details()
                 if args:
@@ -34,47 +44,93 @@ class Listeners:
                 LOGGER.error("Taking listener '%s' into use failed: %s"
                              % (name, message))
                 LOGGER.info("Details:\n%s" % details)
+        return listeners
 
-    def __nonzero__(self):
-        return len(self._listeners) > 0
-                
     def start_suite(self, suite):
-        for listener in self._listeners:
-            listener.start_suite(suite.name, suite.doc)
-        
+        for li in self._listeners:
+            if li.version == 1:
+                li.call_method(li.start_suite, suite.name, suite.doc)
+            else:
+                li.call_method(li.start_suite, suite.name, 
+                               self._get_args(suite, ['doc']))
+
     def end_suite(self, suite):
-        for listener in self._listeners:
-            listener.end_suite(suite.status, suite.get_full_message())
+        for li in self._listeners:
+            if li.version == 1:
+                li.call_method(li.end_suite, suite.status, 
+                               suite.get_full_message())
+            else:
+                args = self._get_args(suite, ['status'], 
+                                      {'message': 'get_full_message'})
+                li.call_method(li.end_suite, suite.name, args)
     
     def start_test(self, test):
-        for listener in self._listeners:
-            listener.start_test(test.name, test.doc, test.tags)
-
+        for li in self._listeners:
+            if li.version == 1:
+                li.call_method(li.start_test, test.name, test.doc, test.tags)
+            else:
+                li.call_method(li.start_test, test.name, 
+                               self._get_args(test, ['doc', 'tags']))
+                
     def end_test(self, test):
-        for listener in self._listeners:
-            listener.end_test(test.status, test.message)
+        for li in self._listeners:
+            if li.version == 1:
+                li.call_method(li.end_test, test.status, test.message)
+            else:
+                li.call_method(li.end_test, test.name, 
+                               self._get_args(test, ['status', 'message']))
 
     def start_keyword(self, kw):
-        for listener in self._listeners:
-            listener.start_keyword(kw.name, kw.args)
+        for li in self._listeners:
+            if li.version == 1:
+                li.call_method(li.start_keyword, kw.name, kw.args)
+            else:
+                li.call_method(li.start_keyword, kw.name, 
+                               self._get_args(kw, ['args']))
         
     def end_keyword(self, kw):
-        for listener in self._listeners:
-            listener.end_keyword(kw.status)
+        for li in self._listeners:
+            if li.version == 1:
+                li.call_method(li.end_keyword, kw.status)
+            else:
+                li.call_method(li.end_keyword, kw.name, 
+                               self._get_args(kw, ['status']))
 
     def output_file(self, name, path):
-        for listener in self._listeners:
-            getattr(listener, '%s_file' % name.lower())(path)
+        for li in self._listeners:
+            li.call_method(getattr(li, '%s_file' % name.lower()), path)
             
     def close(self):
-        for listener in self._listeners:
-            listener.close()
+        for li in self._listeners:
+            li.call_method(li.close)
 
+    def _get_args(self, item, name_list=None, name_dict=None):
+        if not name_dict:
+            name_dict = {}
+        if name_list:
+            name_dict.update(dict([(n, n) for n in name_list]))
+        attrs = {}
+        for name, attr in name_dict.items():
+            attr = getattr(item, attr)
+            if callable(attr):
+                attr = attr()
+            attrs[name] = attr
+        return attrs
     
-class _Listener:
-    
+ 
+class _ListenerProxy(AbstractLoggerProxy):
+    _methods = ['start_suite', 'end_suite', 'start_test', 'end_test', 
+                'start_keyword', 'end_keyword', 'output_file', 'summary_file', 
+                'report_file', 'log_file', 'debug_file', 'close']
+
     def __init__(self, name, args):
-        self._handlers = {}
+        listener = self._import_listener(name, args)
+        AbstractLoggerProxy.__init__(self, listener)
+        self.name = name
+        self.version = getattr(listener, 'ROBOT_LISTENER_API_VERSION', 1)
+        self.is_java = utils.is_jython and isinstance(listener, Object)
+
+    def _import_listener(self, name, args):
         listener, source = utils.import_(name, 'listener')
         if not isinstance(listener, types.ModuleType):
             listener = listener(*args)
@@ -82,51 +138,16 @@ class _Listener:
             raise DataError("Listeners implemented as modules do not take arguments")
         LOGGER.info("Imported listener '%s' with arguments %s (source %s)" 
                     % (name, utils.seq2str2(args), source))
-        for func in ['start_suite', 'end_suite', 'start_test', 'end_test', 
-                     'start_keyword', 'end_keyword', 'output_file', 
-                     'summary_file', 'report_file', 'log_file', 'debug_file', 
-                     'close']:
-            self._handlers[func] = _Handler(listener, name, func)
+        return listener
 
-    def __getattr__(self, name):
+    def call_method(self, method, *args):
+        if self.is_java and len(args) == 2 and isinstance(args[1], dict):
+            args = (args[0], utils.dict2map(args[1]))
         try:
-            return self._handlers[name]
-        except KeyError:
-            raise AttributeError
-    
-
-class _Handler:
-    
-    def __init__(self, listener, listener_name, name):
-        try:
-            self._handler, self._name = self._get_handler(listener, name)
-        except AttributeError:
-            self._handler = self._name = None
-            LOGGER.debug("Listener '%s' does not have method '%s'" 
-                         % (listener_name, name))
-        else:
-            LOGGER.debug("Listener '%s' has method '%s'" 
-                         % (listener_name, self._name))
-        self._listener_name = listener_name
-            
-    def __call__(self, *args):
-        try:
-            if self._handler is not None:
-                self._handler(*args)
+            method(*args)
         except:
             message, details = utils.get_error_details()
             LOGGER.error("Calling '%s' method of listener '%s' failed: %s"
-                               % (self._name, self._listener_name, message))
+                         % (method.__name__, self.name, message))
             LOGGER.info("Details:\n%s" % details)
-            
-    def _get_handler(self, listener, name):
-        try:
-            return getattr(listener, name), name
-        except AttributeError:
-            name =  self._toCamelCase(name)
-            return getattr(listener, name), name
-    
-    def _toCamelCase(self, name):
-        parts = name.split('_')
-        return ''.join([parts[0]] + [part.capitalize() for part in parts[1:]])
 

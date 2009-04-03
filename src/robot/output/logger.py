@@ -17,7 +17,7 @@ import os
 
 from robot import utils
 
-from loggerhelper import AbstractLogger, Message
+from loggerhelper import AbstractLogger, Message, AbstractLoggerProxy
 from filelogger import FileLogger
 from monitor import CommandLineMonitor
 
@@ -129,15 +129,11 @@ class _Logger(AbstractLogger):
             logger.end_keyword(keyword)
 
 
-class _LoggerProxy:
+class _LoggerProxy(AbstractLoggerProxy):
 
-    def __init__(self, logger):
-        default = lambda *args: None
-        for name in ['message', 'log_message', 'output_file', 'close',
-                     'start_suite', 'end_suite', 'start_test', 'end_test',
-                     'start_keyword', 'end_keyword']:
-            method = getattr(logger, name, default)
-            setattr(self, name, method)
+    _methods = ['message', 'log_message', 'output_file', 'close',
+                'start_suite', 'end_suite', 'start_test', 'end_test',
+                'start_keyword', 'end_keyword']
 
 
 LOGGER = _Logger()

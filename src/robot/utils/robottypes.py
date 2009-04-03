@@ -22,7 +22,8 @@ from match import eq_any
 
 
 _LIST_TYPES = [ types.ListType, types.TupleType ]
-if os.name == 'java':
+if sys.platform.startswith('java'):
+    from java.util import HashMap
     import array
     _LIST_TYPES.append(array.ArrayType)
 
@@ -86,6 +87,15 @@ def to_list(item):
         raise FrameworkError('Expected list, tuple or None, got %s'
                              % type_as_str(item, True))
     return list(item)
+
+
+def dict2map(dictionary):
+    if not sys.platform.startswith('java'):
+        return dictionary
+    map = HashMap() 
+    for key, value in dictionary.items():
+        map.put(key, value)
+    return map
 
 
 _type_dict = dict([ (getattr(types,attr), attr) for attr in dir(types) 
