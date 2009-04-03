@@ -43,7 +43,7 @@ def normalize(string, ignore=[], caseless=True, spaceless=True):
 def normalize_tags(tags):
     """Removes duplicates (normalized) and empty tags and sorts tags"""
     ret = []
-    dupes = NormalizedDict()
+    dupes = NormalizedDict({'': 1})
     for tag in tags:
         if not dupes.has_key(tag):
             ret.append(tag)
