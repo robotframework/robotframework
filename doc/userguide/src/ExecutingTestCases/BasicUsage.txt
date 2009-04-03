@@ -83,6 +83,7 @@ in the second example below::
    pybot my_tests.html your_tests.html
    pybot --name Example path/to/tests/pattern_*.html
 
+
 Test execution order
 ''''''''''''''''''''
 
@@ -92,11 +93,13 @@ test suite are executed in case-insensitive alphabetical order based on the file
 or directory name. Finally, if multiple files and/or directories are given from
 the command line, they are executed in the order they are specified.
 
-In case there is need to specify suite execution order, you might use prefixes 
-like 01, 02, etc. in test suites' names. Starting from version 2.1 it is 
-possible to use prefixes which are removed from suite's name and not visible 
-anywhere in reports or logs. Prefixes are separated from suite 
-name with two underscores :misc:`__` as demonstrated below::
+If there is a need to use certain test suite execution order inside a
+directory, it is possible to add prefixes like :path:`01` and
+:path:`02` into file and directory names. Starting from Robot
+Framework 2.1, such prefixes are automatically removed if they are
+separated from the base name with two underscores like in the examples
+below. These prefixes will not be visible anywhere in reports or
+logs::
 
    01__my_suite.html -> My Suite
    02__another_suite.html -> Another Suite
@@ -108,7 +111,6 @@ files nicely one file per line. It is also possible to `randomize the execution
 order of test cases or test suites`__  using :opt:`--runmode` option.
 
 __ `Setting the execution mode`_
-
 
 
 Using command line options
@@ -303,7 +305,6 @@ faster.
    rebot output.xml
    rebot path/to/output_file.xml
    rebot --include smoke --name Smoke_Tests c:\results\output.xml
-
 
 .. Note:: When running tests with Jython, the default JVM maximum
           memory size may not be enough for creating reports and logs
