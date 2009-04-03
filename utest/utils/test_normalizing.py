@@ -142,6 +142,16 @@ class TestNormalizedDict(unittest.TestCase):
         values = nd.values()
         assert_equals(items, zip(keys, values))
 
+    def test_len(self):
+        nd = NormalizedDict()
+        assert_equals(len(nd), 0)
+        nd['a'] = nd['b'] = nd['c'] = 1
+        assert_equals(len(nd), 3)
+
+    def test_true_and_false(self):
+        assert_false(NormalizedDict())
+        assert_true(NormalizedDict({'a': 1}))
+
     def test_copy(self):
         nd = NormalizedDict({'a': 1, 'B': 1})
         cd = nd.copy()
