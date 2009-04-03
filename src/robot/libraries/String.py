@@ -103,6 +103,24 @@ class String:
         result = replace_in.replace(search_for, replace_with)
         return result
 
+    def replace_pattern(self, replace_in, pattern, replace_with, count=0):
+        """
+        Searches for pattern matching `regexp` in `replace_in`
+        and replaces with `replace_with`.
+        You can specify that maximum `count` pattern occurrences are replaced,
+        otherwise all are replaced.
+
+        Regular expression format is according to Python 're' module, which
+        has a pattern syntax derived from Perl, and thus also very similar to
+        the one in Java. See the following documents for more details about
+        regular expressions in general and Python implementation in particular.
+        
+        * http://docs.python.org/lib/module-re.html
+        
+        """
+        p = re.compile(pattern)
+        return p.sub(replace_with, replace_in, count)
+
     def split_string(self, to_split, split_with, max_split=-1):
         """
         Return a list of the words in the `to_split` string,
@@ -151,7 +169,7 @@ class String:
             raise AssertionError(msg)
         
     def should_not_be_string(self, item, msg=None):
-        """ Fails if item is a string (e.g. list, number)"""
+        """ Fails if item is a string """
         if isinstance(item, basestring):
             if msg is None:
                 msg = "Given item '%s' is a string" % item
@@ -160,7 +178,7 @@ class String:
     def get_column(self, input_text, column_number, delimiter=' '):
         """
         Takes input text, splits into columns using delimiter
-        and returns the column_number column.
+        and returns the `column_number` column.
         Column numbering starts from 0. Default delimiter is single space.
         """
         if not delimiter:
