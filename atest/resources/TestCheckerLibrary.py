@@ -3,6 +3,8 @@ import re
 
 from robot import utils
 from robot.output import readers
+from robot.common import Statistics
+from robot.libraries.BuiltIn import BuiltIn
 
 
 class TestCheckerLibrary:
@@ -14,7 +16,10 @@ class TestCheckerLibrary:
         except:
             raise RuntimeError('Processing output failed: %s'
                                % utils.get_error_message())
-        return process_suite(suite), process_errors(errors)
+        setter = BuiltIn().set_suite_variable
+        setter('$SUITE', process_suite(suite))
+        setter('$STATISTICS', Statistics(suite))
+        setter('$ERRORS', process_errors(errors))
 
     def get_test_from_suite(self, suite, name):
         tests = self.get_tests_from_suite(suite, name)
