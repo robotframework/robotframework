@@ -64,17 +64,17 @@ class TestNormalizing(unittest.TestCase):
         assert_equals(normalize('Foo_\n bar\n', ignore=['\n'], 
                                 spaceless=False), 'foo_ bar')
 
-    def test_normalize_list(self):
+    def test_normalize_tags(self):
         for inp, exp in [ ([], []),
-                          (['nothingtodo'], ['nothingtodo']),
-                          (['UPPERgoesLower'], ['uppergoeslower']),
-                          (['Spaces & unds removed'], ['spaces&undsremoved']),
-                          (['empty\trem','  ','\n',''], ['emptyrem']),
-                          (['dublic rem','DUBLICREM','dubliCREM'],['dublicrem']),
-                          (['SORT','1','B','2','a'], ['1','2','a','b','sort']),
-                          (['ALL','all','10','1','A','a','','A LL',' '],
-                           ['1','10','a','all']) ]:
-            assert_equals(normalize_list(inp), exp)
+                          (['lower'], ['lower']),
+                          (['UPPER', 'MiXeD'], ['MiXeD', 'UPPER']),
+                          (['Some spaces here'], ['Some spaces here']),
+                          (['remove empty', '', '  ', '\n'], ['remove empty']),
+                          (['dupes', 'DUPES', 'DuPeS', 'd u p e s'],['dupes']),
+                          (['SORT','1','B','2','a'], ['1','2','a','B','SORT']),
+                          (['ALL', 'all', '10', '1', 'A', 'a', '', 'A  L  L'],
+                           ['1', '10', 'A', 'ALL']) ]:
+            assert_equals(normalize_tags(inp), exp)
 
 
 class TestNormalizedDict(unittest.TestCase):

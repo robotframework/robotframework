@@ -48,7 +48,7 @@ class TestMock:
 
 
 def verify_stat(stat, name, passed, failed, critical=None, non_crit=None):
-    assert_equals(stat.name, name)
+    assert_equals(stat.name, name, 'stat.name')
     assert_equals(stat.passed, passed)
     assert_equals(stat.failed, failed)
     if critical is not None:
@@ -57,7 +57,6 @@ def verify_stat(stat, name, passed, failed, critical=None, non_crit=None):
         assert_equals(stat.non_critical, non_crit)
         
 def verify_suite(suite, name, crit_pass, crit_fail, all_pass=None, all_fail=None):
-    assert_equals(suite.name, name)
     verify_stat(suite.critical, name, crit_pass, crit_fail)
     if all_pass is None:
         all_pass, all_fail = crit_pass, crit_fail
@@ -113,28 +112,29 @@ class TestStatisticsNotSoSimple(unittest.TestCase):
         verify_suite(suite, 'Root Suite', 2, 2, 4, 3)
         assert_equals(len(suite.suites), 2)
         s1, s2 = suite.suites
-        verify_suite(s1, 'r.First Sub Suite', 2, 1, 4, 2)
-        verify_suite(s2, 'r.Second Sub Suite', 0, 1, 0, 1)
+        verify_suite(s1, 'Root Suite.First Sub Suite', 2, 1, 4, 2)
+        verify_suite(s2, 'Root Suite.Second Sub Suite', 0, 1, 0, 1)
         assert_equals(len(s1.suites), 3)
         s11, s12, s13 = s1.suites
-        verify_suite(s11, 'r.f.Sub Suite 1_1', 0, 0, 1, 1)
-        verify_suite(s12, 'r.f.Sub Suite 1_2', 1, 1, 2, 1)
-        verify_suite(s13, 'r.f.Sub Suite 1_3', 1, 0, 1, 0)
+        pre  ='Root Suite.First Sub Suite.'
+        verify_suite(s11, pre+'Sub Suite 1_1', 0, 0, 1, 1)
+        verify_suite(s12, pre+'Sub Suite 1_2', 1, 1, 2, 1)
+        verify_suite(s13, pre+'Sub Suite 1_3', 1, 0, 1, 0)
         assert_equals(len(s2.suites), 1)
         s21 = s2.suites[0]
-        verify_suite(s21, 'r.s.Sub Suite 2_1', 0, 1, 0, 1)
+        pre  ='Root Suite.Second Sub Suite.'
+        verify_suite(s21, pre+'Sub Suite 2_1', 0, 1, 0, 1)
 
     def test_tags(self):
         tags = self.statistics.tags
         keys = tags.stats.keys()
         assert_equals(len(keys), 4)
         keys.sort()
-        assert_equals(keys, [('smoke',True,False), ('t1',False,False),
-                             ('t2',False,False), ('t3',False,False)])
-        verify_stat(tags.stats[('smoke',True,False)], 'smoke', 2, 2, True, False)
-        verify_stat(tags.stats[('t1',False,False)], 't1', 3, 2, False, False)
-        verify_stat(tags.stats[('t2',False,False)], 't2', 2, 1, False, False)      
-        verify_stat(tags.stats[('t3',False,False)], 't3', 0, 2, False, False)      
+        assert_equals(keys, 'smoke t1 t2 t3'.split())
+        verify_stat(tags.stats['smoke'], 'smoke', 2, 2, True, False)
+        verify_stat(tags.stats['t1'], 't1', 3, 2, False, False)
+        verify_stat(tags.stats['t2'], 't2', 2, 1, False, False)      
+        verify_stat(tags.stats['t3'], 't3', 0, 2, False, False)      
    
 
 _incl_excl_data = [
@@ -160,7 +160,7 @@ class TestTagStatistics(unittest.TestCase):
             keys = tagstats.stats.keys()
             keys.sort()
             tags.sort()
-            exp_keys = [ (tag, False, False) for tag in tags 
+            exp_keys = [ tag for tag in tags 
                          if incl == [] or utils.matches_any(tag, incl) ]
             assert_equal(keys, exp_keys, "Incls: %s " % incl)
         
@@ -171,7 +171,7 @@ class TestTagStatistics(unittest.TestCase):
             keys = tagstats.stats.keys()
             keys.sort()
             tags.sort()
-            exp_keys = [ (tag, False, False) for tag in tags 
+            exp_keys = [ tag for tag in tags 
                          if not utils.matches_any(tag, excl) ]
             assert_equal(keys, exp_keys, "Excls: %s" % excl)
 
@@ -188,7 +188,6 @@ class TestTagStatistics(unittest.TestCase):
             tagstats.add_test(TestMock('PASS', tags), _Critical())
             keys = tagstats.stats.keys()
             keys.sort()
-            exp = [ (e, False, False) for e in exp ]
             assert_equal(keys, exp, "Incls: %s, Excls: %s" % (incl, excl))
 
     def test_set_combine_and(self):
@@ -318,19 +317,18 @@ class TestTagStatistics(unittest.TestCase):
             names = [ stat.name for stat in stats ]  
             # 3) Expected values
             exp_crit = []; exp_noncr = []; exp_comb = []
-            for tag in utils.normalize_list(all_tags):
+            for tag in utils.normalize_tags(all_tags):
                 if tag in crit_tags:
                     exp_crit.append(tag)
                 else:
                     exp_noncr.append(tag)
             for comb, count in zip(comb_tags, comb_matches):
                 name = comb.replace('&',' & ').replace('NOT',' NOT ')
-                key = (name, False, False)
                 exp_comb.append(name)
                 try:
-                    assert_equals(len(tagstats.stats[key].tests), count, key)
+                    assert_equals(len(tagstats.stats[name].tests), count)
                 except KeyError:
-                    fail("No key %s. Stats: %s" % (key, tagstats.stats))
+                    fail("No key %s. Stats: %s" % (name, tagstats.stats))
             exp_comb.sort()
             exp_names = exp_crit + exp_comb + exp_noncr
             # 4) Verify names (match counts were already verified)
@@ -349,12 +347,7 @@ class TestTagStatistics(unittest.TestCase):
         exp_names = [ name for name, count in expected ]
         assert_equals(names, exp_names)
         for name, count in expected:
-            if name == 'smoke':
-                key = (name, True, False)
-            else:
-                key = (name, False, False)
-            assert_equals(len(statistics.tags.stats[key].tests), count, name)
-
+            assert_equals(len(statistics.tags.stats[name].tests), count, name)
 
 
 class TestTagStatLink(unittest.TestCase):
