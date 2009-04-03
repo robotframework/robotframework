@@ -142,7 +142,7 @@ th {
 <tr>
 <td>Tag Links Without Patterns</td>
 <td>Run Rebot Without Processing Output</td>
-<td>--tagstatlink sub3:http://example.com:title --outputdir ${MYOUTDIR} &nbsp;--report report.html</td>
+<td>--tagstatlink SUB3:http://example.com:title --outputdir ${MYOUTDIR} &nbsp;--report report.html</td>
 <td>${MYINPUT}</td>
 <td></td>
 
@@ -336,21 +336,14 @@ th {
 <td></td>
 <td></td>
 <td>${expected} =</td>
-<td>Set</td>
+<td>Set Variable</td>
 <td>${expected}\n${exp_link}</td>
 
 </tr>
 
-<tr>
-<td></td>
-<td>${expected} =</td><td>Set</td><td>${expected}\n&lt;/div&gt;\n&lt;/td&gt;</td>
 
 
-<td></td>
-
-</tr>
-
-<tr><td></td><td>Contains</td><td>${report}</td><td>${expected}</td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr>
+<tr><td></td><td>Should Contain</td><td>${report}</td><td>${expected}\n&lt;/div&gt;\n&lt;/td&gt;</td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr>
 </tbody>
 </table>
 
