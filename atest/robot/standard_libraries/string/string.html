@@ -1,63 +1,70 @@
+
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html><head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<meta name="generator" content="RobotIDE">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="RobotIDE" /> 
 <style type="text/css">
 html {
-font-family: Arial,Helvetica,sans-serif;
-background-color: white;
-color: black;
+  font-family: Arial,Helvetica,sans-serif;
+  background-color: white;
+  color: black;
 }
 p {
-max-width: 60em;
+  max-width: 60em;
 }
 table {
-border-collapse: collapse;
-empty-cells: show;
-margin: 1em 0em;
-border: 0.1em solid black;
+  border-collapse: collapse;
+  empty-cells: show;
+  margin: 1em 0em;
+  border: 0.1em solid black;
 }
 th, td {
-border-style: solid;
-border-width: 0.05em 0.1em;
-border-color: black;
-padding: 0.1em 0.2em;
-height: 1.5em;
+  border-style: solid;
+  border-width: 0.05em 0.1em;
+  border-color: black;
+  padding: 0.1em 0.2em;
+  height: 1.5em;
 }
 th {
-background-color: rgb(192, 192, 192);
-color: black;
-border-width: 0.1em;
-font-weight: bold;
-text-align: center;
-text-transform: capitalize;
-letter-spacing: 0.1em;
+  background-color: rgb(192, 192, 192);
+  color: black;
+  border-width: 0.1em;
+  font-weight: bold;
+  text-align: center;
+  text-transform: capitalize;
+  letter-spacing: 0.1em;
 }
 /* Widths of named columns */
 col.name {
-width: 10em;
+  width: 10em;
 }
 .action, .value, .arg {
-width: 15em;
+  width: 15em;
 }
-/* Properties for the name column - td:first-child should work in CSS 2.1 avare browsers (tested in Firefox)
+/* Properties for the name column 
+- td:first-child should work in CSS 2.1 avare browsers (tested in Firefox)
 - col.name is against specs but works in IE
 */
 td:first-child, col.name {
-background-color: rgb(240, 240, 240);
-text-transform: capitalize;
-letter-spacing: 0.1em;
+  background-color: rgb(240, 240, 240);
+  text-transform: capitalize;
+  letter-spacing: 0.1em;
 }
 /* required for IE */
 th {
-font-style: normal;
+  font-style: normal;
 }
-</style><title>String</title></head>
+</style>
+<title>String</title>
+</head>
 <body>
 <h1>String</h1>
+
 <table border="1">
-<colgroup span="99"><col class="name"><col class="value" span="4"></colgroup>
-<tbody>
+<colgroup span="99">
+<col class="name">
+<col class="value" span="4"></colgroup>
 <tr>
 <th>Setting</th>
 <th>Value</th>
@@ -65,7 +72,6 @@ font-style: normal;
 <th>Value</th>
 <th>Value</th>
 </tr>
-
 <tr>
 <td>Force Tags</td>
 <td>pybot</td>
@@ -74,17 +80,32 @@ font-style: normal;
 <td></td>
 </tr>
 <tr>
+<td>Suite Setup</td>
+<td>Run Tests</td>
+<td></td>
+<td>standard_libraries${/}string${/}string.html</td>
+<td></td>
+</tr>
+<tr>
 <td>Resource</td>
 <td>../../../resources/resource.html</td>
 <td></td>
 <td></td>
 <td></td>
-</tr><tr><td>Suite Setup</td><td>Run Tests</td><td></td><td>standard_libraries${/}string${/}string.html</td><td></td></tr>
-</tbody>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
 </table>
+
 <table border="1">
-<colgroup span="99"><col class="name"><col class="value" span="4"></colgroup>
-<tbody>
+<colgroup span="99">
+<col class="name">
+<col class="value" span="4"></colgroup>
 <tr>
 <th>Variable</th>
 <th>Value</th>
@@ -92,8 +113,6 @@ font-style: normal;
 <th>Value</th>
 <th>Value</th>
 </tr>
-
-
 <tr>
 <td></td>
 <td></td>
@@ -101,11 +120,13 @@ font-style: normal;
 <td></td>
 <td></td>
 </tr>
-</tbody>
 </table>
+
 <table border="1">
-<colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
-<tbody>
+<colgroup span="99">
+<col class="name">
+<col class="action">
+<col class="arg" span="3"></colgroup>
 <tr>
 <th>Test Case</th>
 <th>Action</th>
@@ -117,7 +138,7 @@ font-style: normal;
 <td>Fetch From Left</td>
 <td>Check Test Case</td>
 <td>${TESTNAME}</td>
-<td># This is the easiest way check test if it has same name on both sides. This automatically checks status</td>
+<td></td>
 <td></td>
 </tr>
 <tr>
@@ -129,633 +150,24 @@ font-style: normal;
 </tr>
 <tr>
 <td>Fetch From Right</td>
-<td>${tc} =</td>
 <td>Check Test Case</td>
-<td>Fetch From Right</td>
-<td># You can also store test to variable and test it further. With this lib you probably don't need other than Check Log Message</td>
+<td>${TESTNAME}</td>
+<td></td>
+<td></td>
 </tr>
 <tr>
 <td></td>
-<td>Check Log Message</td>
-<td>${tc.kws[0].msgs[1]}</td>
-<td>No such msg so this fails</td>
-<td># possible to have level here</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
 </tr>
-<tr><td></td><td></td><td></td><td></td><td></td></tr><tr>
+<tr>
 <td>Split String</td>
+<td>Check Test Case</td>
+<td>${TESTNAME}</td>
 <td></td>
 <td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td><td></td><td></td>
-
-
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td><td></td><td></td>
-
-
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
 </tr>
 <tr>
 <td></td>
@@ -765,18 +177,11 @@ font-style: normal;
 <td></td>
 </tr>
 <tr>
+<td>Generate Random String</td>
+<td>Check Test Case</td>
+<td>${TESTNAME}</td>
 <td></td>
 <td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
 </tr>
 <tr>
 <td></td>
@@ -786,11 +191,11 @@ font-style: normal;
 <td></td>
 </tr>
 <tr>
-<td></td>
-<td></td>
+<td>Get Column</td>
+<td>Check Test Case</td>
+<td>${TESTNAME}</td>
 <td></td>
 <td></td>
-<td></td>
 </tr>
 <tr>
 <td></td>
@@ -800,9 +205,9 @@ font-style: normal;
 <td></td>
 </tr>
 <tr>
-<td></td>
-<td></td>
-<td></td>
+<td>Get Line</td>
+<td>Check Test Case</td>
+<td>${TESTNAME}</td>
 <td></td>
 <td></td>
 </tr>
@@ -814,11 +219,11 @@ font-style: normal;
 <td></td>
 </tr>
 <tr>
+<td>Get Line Count</td>
+<td>Check Test Case</td>
+<td>${TESTNAME}</td>
 <td></td>
 <td></td>
-<td></td>
-<td></td>
-<td></td>
 </tr>
 <tr>
 <td></td>
@@ -828,11 +233,11 @@ font-style: normal;
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td>Get Lines As List</td>
+<td>Check Test Case</td>
+<td>${TESTNAME}</td>
 <td></td>
 <td></td>
-<td></td>
-<td></td>
 </tr>
 <tr>
 <td></td>
@@ -842,11 +247,11 @@ font-style: normal;
 <td></td>
 </tr>
 <tr>
-<td></td>
-<td></td>
+<td>Get Substring</td>
+<td>Check Test Case</td>
+<td>${TESTNAME}</td>
 <td></td>
 <td></td>
-<td></td>
 </tr>
 <tr>
 <td></td>
@@ -856,9 +261,9 @@ font-style: normal;
 <td></td>
 </tr>
 <tr>
-<td></td>
-<td></td>
-<td></td>
+<td>Replace String</td>
+<td>Check Test Case</td>
+<td>${TESTNAME}</td>
 <td></td>
 <td></td>
 </tr>
@@ -870,11 +275,11 @@ font-style: normal;
 <td></td>
 </tr>
 <tr>
+<td>Replace String Not Found</td>
+<td>Check Test Case</td>
+<td>${TESTNAME}</td>
 <td></td>
 <td></td>
-<td></td>
-<td></td>
-<td></td>
 </tr>
 <tr>
 <td></td>
@@ -884,11 +289,11 @@ font-style: normal;
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td>Replace With Empty String</td>
+<td>Check Test Case</td>
+<td>${TESTNAME}</td>
 <td></td>
 <td></td>
-<td></td>
-<td></td>
 </tr>
 <tr>
 <td></td>
@@ -898,11 +303,11 @@ font-style: normal;
 <td></td>
 </tr>
 <tr>
-<td></td>
-<td></td>
+<td>Should Be String Positive</td>
+<td>Check Test Case</td>
+<td>${TESTNAME}</td>
 <td></td>
 <td></td>
-<td></td>
 </tr>
 <tr>
 <td></td>
@@ -912,9 +317,9 @@ font-style: normal;
 <td></td>
 </tr>
 <tr>
-<td></td>
-<td></td>
-<td></td>
+<td>Should Be String Negative For Number</td>
+<td>Check Test Case</td>
+<td>${TESTNAME}</td>
 <td></td>
 <td></td>
 </tr>
@@ -926,11 +331,11 @@ font-style: normal;
 <td></td>
 </tr>
 <tr>
+<td>Should Be String Negative For Boolean</td>
+<td>Check Test Case</td>
+<td>${TESTNAME}</td>
 <td></td>
 <td></td>
-<td></td>
-<td></td>
-<td></td>
 </tr>
 <tr>
 <td></td>
@@ -940,11 +345,11 @@ font-style: normal;
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td>Should Not Be String Positive</td>
+<td>Check Test Case</td>
+<td>${TESTNAME}</td>
 <td></td>
 <td></td>
-<td></td>
-<td></td>
 </tr>
 <tr>
 <td></td>
@@ -954,9 +359,9 @@ font-style: normal;
 <td></td>
 </tr>
 <tr>
-<td></td>
-<td></td>
-<td></td>
+<td>Should Not Be String Negative</td>
+<td>Check Test Case</td>
+<td>${TESTNAME}</td>
 <td></td>
 <td></td>
 </tr>
@@ -974,11 +379,13 @@ font-style: normal;
 <td></td>
 <td></td>
 </tr>
-</tbody>
 </table>
+
 <table border="1">
-<colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
-<tbody>
+<colgroup span="99">
+<col class="name">
+<col class="action">
+<col class="arg" span="3"></colgroup>
 <tr>
 <th>Keyword</th>
 <th>Action</th>
@@ -993,62 +400,7 @@ font-style: normal;
 <td></td>
 <td></td>
 </tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-</tbody>
 </table>
-</body></html>
+
+</body>
+</html>
