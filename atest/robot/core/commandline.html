@@ -1432,22 +1432,22 @@ two_parts:one_part -M esc:STQUDOAMHAEXEX --escape star:ST -E quest:QU
 </tr>
 <tr>
 <td></td>
-<td>${suite}</td>
-<td>${syslog} =</td><td>Process Output<br></td>
+<td>Process Output<br></td><td>${MYOUTDIR}${/}output.xml</td>
+<td></td>
 
-<td>${MYOUTDIR}${/}output.xml</td>
+<td></td>
 </tr>
 <tr>
 <td></td>
 <td>Should Be Equal</td>
-<td>${suite.name}</td>
+<td>${SUITE.name}</td>
 <td>From Arg File</td>
 <td></td>
 </tr>
 <tr>
 <td></td>
 <td>Should Be True</td>
-<td>${suite.metadata} == {'Meta1': 'argfile', 'Meta2': 'cli', 'Something': 'My Value'}</td>
+<td>${SUITE.metadata} == {'Meta1': 'argfile', 'Meta2': 'cli', 'Something': 'My Value'}</td>
 <td></td>
 <td></td>
 </tr>

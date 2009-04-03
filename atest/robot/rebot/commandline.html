@@ -548,7 +548,7 @@ ${MYINPUT}</td>
 <td></td>
 <td>@{files}=</td>
 <td style="width: 58px;">List
-Dir</td>
+Directory</td>
 <td style="width: 79px;">
 ${MYOUTDIR}</td>
 <td></td>
@@ -557,7 +557,7 @@ ${MYOUTDIR}</td>
 </tr>
 <tr>
 <td></td>
-<td>Fail Unless</td>
+<td>Should Be True</td>
 <td>len(@{files}) == 2</td>
 <td>&nbsp;</td>
 <td></td>
@@ -609,7 +609,7 @@ ${MYOUTDIR}</td>
 <td></td>
 <td>@{files}=</td>
 <td style="width: 58px;">List
-Dir</td>
+Directory</td>
 <td style="width: 79px;">
 ${MYOUTDIR}</td>
 <td></td>
@@ -618,7 +618,7 @@ ${MYOUTDIR}</td>
 </tr>
 <tr>
 <td></td>
-<td>Fail Unless</td>
+<td>Should Be True</td>
 <td>len(@{files}) == 4</td>
 <td></td>
 <td></td>
@@ -703,7 +703,7 @@ execution.</td>
 </tr>
 <tr><td></td><td>...</td><td>n.</td><td></td><td></td></tr><tr>
 <td></td>
-<td>Equals</td>
+<td>Should Be Equal</td>
 <td>${SUITE.doc}</td>
 <td>Normal test cases</td>
 <td></td>
@@ -712,7 +712,7 @@ execution.</td>
 </tr>
 <tr>
 <td></td>
-<td>Equals</td>
+<td>Should Be Equal</td>
 <td>
 ${SUITE.metadata['Something']}</td>
 <td>My Value</td>
@@ -788,7 +788,7 @@ execution.</td>
 </tr>
 <tr><td></td><td>...</td><td>m.</td><td></td><td></td></tr><tr>
 <td></td>
-<td>Equals</td>
+<td>Should Be Equal</td>
 <td>${SUITE.doc}</td>
 <td>Even cooooler doc!?</td>
 <td></td>
@@ -797,7 +797,7 @@ execution.</td>
 </tr>
 <tr>
 <td></td>
-<td>Equals</td>
+<td>Should Be Equal</td>
 <td>
 ${SUITE.metadata['Something']}</td>
 <td>New</td>
@@ -806,7 +806,7 @@ ${SUITE.metadata['Something']}</td>
 </tr>
 <tr>
 <td></td>
-<td>Equals</td>
+<td>Should Be Equal</td>
 <td>${SUITE.metadata['Two
 Parts']}</td>
 <td>one_part</td>
@@ -816,7 +816,7 @@ Parts']}</td>
 </tr>
 <tr>
 <td></td>
-<td>Equals</td>
+<td>Should Be Equal</td>
 <td>
 ${SUITE.metadata['Esc']}</td>
 <td>*?$&amp;#!!</td>
@@ -923,7 +923,7 @@ Try --help for usage information.<br></td>
 </tr>
 <tr>
 <td></td>
-<td>Fail Unless</td>
+<td>Should Be True</td>
 <td>${SUITE.suites} == ['Normal'] * 2</td>
 <td></td>
 <td></td>
@@ -1122,7 +1122,7 @@ parent is made read only.</td>
 </tr>
 <tr>
 <td></td>
-<td>Create Dir</td>
+<td>Create Directory</td>
 <td>${MYOUTDIR}${/}x</td>
 <td></td>
 <td></td>
@@ -1208,7 +1208,7 @@ can't be opened)</td>
 </tr>
 <tr>
 <td></td>
-<td>Create Dir</td>
+<td>Create Directory</td>
 <td>
 ${MYOUTDIR}${/}directory.ext</td>
 <td></td>
@@ -1292,7 +1292,7 @@ summary &nbsp;file '.*[/\\\\]directory.ext' for writing failed:
 </tr>
 <tr>
 <td></td>
-<td>Equals</td>
+<td>Should Be Equal</td>
 <td>${rc}</td>
 <td>${251}</td>
 <td></td>
@@ -1313,7 +1313,7 @@ to<br>
 </tr>
 <tr>
 <td></td>
-<td>Starts</td>
+<td>Should Start With</td>
 <td>${help}</td>
 <td>Rebot -- Robot Framework Report
 and Log Generator\n<br>
@@ -1325,7 +1325,7 @@ Version: \</td>
 </tr>
 <tr>
 <td></td>
-<td>Ends</td>
+<td>Should End With</td>
 <td>${help}</td>
 <td>\n\n# Running
 'robot/rebot.py' directly and creating combined outputs.\n<br>
@@ -1337,7 +1337,7 @@ outputs/*.xml\n</td>
 </tr>
 <tr>
 <td></td>
-<td>Fail If Contains</td>
+<td>Should Not Contain</td>
 <td>${help}</td>
 <td>ERROR</td>
 <td></td>
@@ -1385,7 +1385,7 @@ outputs/*.xml\n</td>
 </tr>
 <tr>
 <td></td>
-<td>Fail Unless</td>
+<td>Should Be True</td>
 <td>len(@{long}) == 0</td>
 <td>Too long (&gt;= 80) help
 line(s)</td>
@@ -1404,7 +1404,7 @@ line(s)</td>
 </tr>
 <tr>
 <td></td>
-<td>Equals</td>
+<td>Should Be Equal</td>
 <td>${help}</td>
 <td>${help2}</td>
 <td></td>
@@ -1422,11 +1422,10 @@ line(s)</td>
 </tr>
 <tr>
 <td>Version</td>
-<td>Fail If Equal</td>
-<td>${REBOT}</td>
-<td>\</td>
-<td>This test can be run only
-after \${REBOT} is set</td>
+<td>Verify REBOT Set</td>
+<td></td>
+<td></td>
+<td></td>
 
 
 </tr>
@@ -1441,7 +1440,7 @@ after \${REBOT} is set</td>
 </tr>
 <tr>
 <td></td>
-<td>Equals</td>
+<td>Should Be Equal</td>
 <td>${rc}</td>
 <td>${251}</td>
 <td></td>
@@ -1485,11 +1484,10 @@ after \${REBOT} is set</td>
 </tr>
 <tr>
 <td>Argument File</td>
-<td>Fail If Equal</td>
-<td>${REBOT}</td>
-<td>\</td>
-<td>This test can be run only
-after \${REBOT} is set</td>
+<td>Verify REBOT Set</td>
+<td></td>
+<td></td>
+<td></td>
 
 
 </tr>
@@ -1522,7 +1520,7 @@ ${MYINPUT}</td>
 </tr>
 <tr>
 <td></td>
-<td>Fail If Contains</td>
+<td>Should Not Contain</td>
 <td>${output}</td>
 <td>ERROR</td>
 <td></td>
@@ -1531,18 +1529,18 @@ ${MYINPUT}</td>
 </tr>
 <tr>
 <td></td>
-<td>${suite}</td>
-<td>${syslog} =</td>
-<td>Process Output</td>
-<td>
+<td>Process Output</td><td>
 ${MYOUTDIR}${/}output.xml</td>
+
+<td></td>
+<td></td>
 
 
 </tr>
 <tr>
 <td></td>
-<td>Equals</td>
-<td>${suite.name}</td>
+<td>Should Be Equal</td>
+<td>${SUITE.name}</td>
 <td>From Arg File</td>
 <td></td>
 
@@ -1550,8 +1548,8 @@ ${MYOUTDIR}${/}output.xml</td>
 </tr>
 <tr>
 <td></td>
-<td>Fail Unless</td>
-<td>${suite.critical.tags} ==
+<td>Should Be True</td>
+<td>${SUITE.critical.tags} ==
 []</td>
 <td></td>
 <td></td>
@@ -1587,7 +1585,7 @@ ${MYOUTDIR}${/}output.xml</td>
 </tr>
 <tr>
 <td></td>
-<td>Fail If File Empty</td>
+<td>File Should Not Be Empty</td>
 <td>${MYOUTDIR}${/}syslog.txt</td>
 <td></td>
 <td></td>
@@ -1623,7 +1621,7 @@ ${MYOUTDIR}${/}output.xml</td>
 </tr>
 <tr>
 <td></td>
-<td>Fail If File Exists</td>
+<td>File Should Not Exist</td>
 <td>${MYOUTDIR}${/}syslog.txt</td>
 <td></td>
 <td></td>
@@ -1650,7 +1648,7 @@ ${MYOUTDIR}${/}output.xml</td>
 </tr>
 <tr>
 <td></td>
-<td>Fail If File Exists</td>
+<td>File Should Not Exist</td>
 <td>${MYOUTDIR}${/}syslog.txt</td>
 <td></td>
 <td></td>
@@ -1758,7 +1756,7 @@ ${MYOUTDIR}${/}output.xml</td>
 </tr>
 <tr>
 <td></td>
-<td>Fail Unless File Empty<br></td>
+<td>File Should Be Empty</td>
 <td>${MYOUTDIR}${/}syslog.txt</td>
 <td></td>
 <td></td>
@@ -1794,7 +1792,7 @@ ${MYOUTDIR}${/}output.xml</td>
 </tr>
 <tr>
 <td></td>
-<td>Equals</td>
+<td>Should Be Equal</td>
 <td>${rc}</td>
 <td>${252}</td>
 <td></td>
@@ -1857,7 +1855,7 @@ but got 'less_than_3x_:'.\n</td>
 </tr>
 <tr>
 <td></td>
-<td>Equals</td>
+<td>Should Be Equal</td>
 <td>${SUITE.status}</td>
 <td>PASS</td>
 <td></td>
@@ -1964,7 +1962,7 @@ Contain</td>
 </tr>
 <tr>
 <td></td>
-<td>Fail Unless Equal</td>
+<td>Should Be Equal</td>
 <td>${act_files}</td>
 <td>${exp_files}</td>
 <td></td>
@@ -2020,7 +2018,7 @@ Contain</td>
 </tr>
 <tr>
 <td></td>
-<td>Equals</td>
+<td>Should Be Equal</td>
 <td>${SUITE.status}</td>
 <td>${status}</td>
 <td></td>
@@ -2031,7 +2029,7 @@ Contain</td>
 </tr>
 <tr>
 <td></td>
-<td>Equals</td>
+<td>Should Be Equal</td>
 <td>
 ${SUITE.get_full_message()}</td>
 <td>${msg}</td>
@@ -2043,7 +2041,7 @@ ${SUITE.get_full_message()}</td>
 </tr>
 <tr>
 <td></td>
-<td>Fail Unless</td>
+<td>Should Be True</td>
 <td>${SUITE.critical_tags} ==
 ${crit_tags}</td>
 <td></td>
@@ -2055,7 +2053,7 @@ ${crit_tags}</td>
 </tr>
 <tr>
 <td></td>
-<td>Equals</td>
+<td>Should Be Equal</td>
 <td>
 ${SUITE.tests[0].critical}</td>
 <td>${crit1}</td>
@@ -2067,7 +2065,7 @@ ${SUITE.tests[0].critical}</td>
 </tr>
 <tr>
 <td></td>
-<td>Equals</td>
+<td>Should Be Equal</td>
 <td>
 ${SUITE.tests[1].critical}</td>
 <td>${crit2}</td>
@@ -2090,7 +2088,7 @@ ${SUITE.tests[1].critical}</td>
 </tr>
 <tr>
 <td>Verify REBOT Set</td>
-<td>Fail If Equal</td>
+<td>Should Not Be Equal</td>
 <td>${REBOT}</td>
 <td>\</td>
 <td>This test can be run only

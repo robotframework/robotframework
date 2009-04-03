@@ -421,7 +421,7 @@ th {
 <td></td>
 </tr>
 
-<tr><td></td><td>${suite}</td><td>${syslog} =</td><td>Process Output</td><td>${OUTDIR}${/}nosplit.xml</td></tr><tr><td></td><td>Should Be Equal</td><td>${suite.name}</td><td>Normal</td><td></td></tr><tr>
+<tr><td></td><td>Process Output</td><td>${OUTDIR}${/}nosplit.xml</td><td></td><td></td></tr><tr><td></td><td>Should Be Equal</td><td>${SUITE.name}</td><td>Normal</td><td></td></tr><tr>
 <td></td>
 <td>${files} =</td>
 <td>List Dir</td>
@@ -430,7 +430,7 @@ th {
 </tr>
 <tr>
 <td></td>
-<td>Fail Unless</td>
+<td>Should Be True</td>
 <td>${files} == [ 'nosplit.html', 'nosplit.xml' ]</td>
 <td></td>
 <td></td>
