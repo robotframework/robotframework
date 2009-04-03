@@ -23,7 +23,7 @@ from error import get_error_message, get_error_details, RERAISED_EXCEPTIONS
 from htmlutils import html_escape, html_attr_escape
 from htmlwriter import HtmlWriter
 from importing import simple_import, import_
-from normalizing import normalize, normalize_list, normpath, NormalizedDict
+from normalizing import normalize, normalize_tags, normpath, NormalizedDict
 from match import eq, eq_any, any_eq_any, matches, matches_any, any_matches, \
         contains, contains_any
 from misc import get_temp_dir, get_not_none, plural_or_not, get_link_path, \

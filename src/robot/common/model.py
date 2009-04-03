@@ -201,7 +201,7 @@ class BaseTestSuite(_TestAndSuiteHelper):
     def set_tags(self, tags):
         if tags:
             for test in self.tests:
-                test.tags = utils.normalize_list(test.tags + tags)
+                test.tags = utils.normalize_tags(test.tags + tags)
             for suite in self.suites:
                 suite.set_tags(tags)
     
@@ -405,8 +405,8 @@ class _Critical:
         self.set(tags, nons)
 
     def set(self, tags, nons):
-        self.tags = utils.normalize_list(utils.to_list(tags))
-        self.nons = utils.normalize_list(utils.to_list(nons))
+        self.tags = utils.normalize_tags(utils.to_list(tags))
+        self.nons = utils.normalize_tags(utils.to_list(nons))
         
     def is_critical(self, tag):
         return utils.matches_any(tag, self.tags)

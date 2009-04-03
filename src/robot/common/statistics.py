@@ -97,7 +97,7 @@ class SuiteStat(Stat):
         return self._suite.get_long_name(split_level=split_level)
         
     def should_link_to_sub_log(self, split_level=-1):
-        return len(self._suite.get_long_name(separator=None)) == split_level + 1
+        return len(self._suite.get_long_name(separator=None)) == split_level+1
 
 
 class TagStat(Stat):
@@ -182,12 +182,12 @@ class TagStatistics:
     
     def __init__(self, include=None, exclude=None, combine=None, docs=None, 
                  links=None):
-        self.stats = {}
+        self.stats = utils.NormalizedDict()
         self._include = utils.to_list(include)
         self._exclude = utils.to_list(exclude)
         self._combine_and, self._combine_not = self._get_combine(combine)
         self._taginfo = TagStatInfo(utils.to_list(docs), utils.to_list(links))
-                
+
     def _get_combine(self, combine):
         ands = []
         nots = []
@@ -216,10 +216,11 @@ class TagStatistics:
         for tag in test.tags:
             if not self._is_included(tag):
                 continue
-            key = (tag, critical.is_critical(tag), critical.is_non_critical(tag))
-            if not self.stats.has_key(key):
-                self.stats[key] = TagStat(tag, key[1], key[2], self._taginfo)
-            self.stats[key].add_test(test)
+            if not self.stats.has_key(tag):
+                self.stats[tag] = TagStat(tag, critical.is_critical(tag),
+                                          critical.is_non_critical(tag),
+                                          self._taginfo)
+            self.stats[tag].add_test(test)
         self._add_test_to_combined(test, self._combine_and, ' & ',
                                    self._is_combined_with_and)
         self._add_test_to_combined(test, self._combine_not, ' NOT ',
@@ -229,11 +230,10 @@ class TagStatistics:
         for tags, name in combined_tags:
             if name is None:
                 name = joiner.join(tags)
-            key = (name, False, False)  # Combined tag stats aren't critical
-            if not self.stats.has_key(key):
-                self.stats[key] = CombinedTagStat(name)
+            if not self.stats.has_key(name):
+                self.stats[name] = CombinedTagStat(name)
             if is_combined(tags, test.tags):
-                self.stats[key].add_test(test)
+                self.stats[name].add_test(test)
             
     def _is_combined_with_and(self, comb_tags, test_tags):
         for c_tag in comb_tags:
@@ -255,7 +255,7 @@ class TagStatistics:
         return not utils.matches_any(tag, self._exclude)
     
     def serialize(self, serializer):
-        if self.stats == {} and (self._include != [] or self._exclude != []):
+        if self.stats and (self._include or self._exclude):
             return
         serializer.start_tag_stats(self)
         stats = self.stats.values()
@@ -357,4 +357,3 @@ class TagStatLink:
         if open_parenthesis:
             regexp.append(')')
         return re.compile('^%s$' % ''.join(regexp))
- 

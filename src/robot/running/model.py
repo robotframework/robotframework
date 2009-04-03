@@ -174,7 +174,7 @@ class RunnableTestCase(BaseTestCase):
         self.setup = Setup(varz.replace_meta('Setup', self.setup, errors))
         self.teardown = Teardown(
             varz.replace_meta('Teardown', self.teardown, errors))
-        self.tags = utils.normalize_list(
+        self.tags = utils.normalize_tags(
             varz.replace_meta('Tags', self.tags, errors))
         self.timeout = TestTimeout(
             *varz.replace_meta('Timeout', self.timeout, errors))

@@ -40,16 +40,17 @@ def normalize(string, ignore=[], caseless=True, spaceless=True):
     return string
 
 
-def normalize_list(list_, ignore=[], caseless=True, spaceless=True):
-    """Normalize list, sort it and remove empty values"""
-    d = {}
-    for item in list_:
-        d[normalize(item, ignore, caseless, spaceless)] = 1
-    ret = [ k for k in d.keys() if k != '' ]
-    ret.sort()
+def normalize_tags(tags):
+    """Removes duplicates (normalized) and empty tags and sorts tags"""
+    ret = []
+    dupes = NormalizedDict()
+    for tag in tags:
+        if not dupes.has_key(tag):
+            ret.append(tag)
+            dupes[tag] = 1
+    ret.sort(lambda x, y: cmp(normalize(x), normalize(y)))
     return ret
     
-
 def normpath(path, normcase=True):
     """Returns path in normalized and absolute format.
     

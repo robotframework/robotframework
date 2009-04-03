@@ -1305,8 +1305,8 @@ class _Misc:
 
         New in Robot Framework version 2.0.3.
         """
-        tags = utils.normalize_list(tags)
-        handler = lambda test: utils.normalize_list(test.tags + tags)
+        tags = utils.normalize_tags(tags)
+        handler = lambda test: utils.normalize_tags(test.tags + tags)
         self._set_or_remove_tags(handler)
         print 'Set tag%s %s.' % (utils.plural_or_not(tags),
                                  utils.seq2str(tags))
@@ -1325,7 +1325,7 @@ class _Misc:
 
         New in Robot Framework version 2.0.3.
         """
-        tags = utils.normalize_list(tags)
+        tags = utils.normalize_tags(tags)
         handler = lambda test: [ t for t in test.tags
                                  if not utils.matches_any(t, tags) ]
         self._set_or_remove_tags(handler)
