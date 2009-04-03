@@ -493,32 +493,14 @@ font-style: normal;
 </tr>
 <tr>
 <td>Should be String Negative for Number</td>
-<td>${status}</td>
-<td>${ret val}=</td>
-<td>Run Keyword and Ignore Error</td>
 <td>Should be string</td>
+<td>${0}</td><td>${ERROR MESSAGE}</td>
+
+<td><br></td>
 </tr>
-<tr>
-<td></td>
-<td>...</td>
-<td>${0}</td>
-<td>${ERROR MESSAGE}</td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td>Should be equal</td>
-<td>${status}</td>
-<td>FAIL</td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td>Should be equal</td>
-<td>${ret val}</td>
-<td>${ERROR MESSAGE}</td>
-<td></td>
-</tr>
+<tr><td></td><td>[Documentation]</td><td>FAIL ${ERROR MESSAGE}</td><td></td><td></td></tr>
+
+
 <tr>
 <td></td>
 <td></td>
@@ -528,32 +510,20 @@ font-style: normal;
 </tr>
 <tr>
 <td>Should be String Negative For Boolean</td>
-<td>${status}</td><td>${ret val}=</td><td>Run Keyword and Ignore Error</td><td>Should be string</td>
+<td>[Documentation]</td><td>FAIL ${ERROR MESSAGE}</td><td></td><td></td>
 
 
 
 </tr>
 <tr>
 <td></td>
-<td>...</td><td>${TRUE}</td><td>${ERROR MESSAGE}</td>
+<td>Should be string</td><td>${TRUE}</td><td>${ERROR MESSAGE}</td>
 
 
 <td></td>
 </tr>
-<tr>
-<td></td>
-<td>Should be equal</td><td>${status}</td><td>FAIL</td>
 
 
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td>Should be equal</td><td>${ret val}</td><td>${ERROR MESSAGE}</td>
-
-
-<td></td>
-</tr>
 <tr>
 <td></td>
 <td></td>
@@ -584,28 +554,28 @@ font-style: normal;
 </tr>
 <tr>
 <td>Should Not be String Negative</td>
-<td>${status}</td><td>${ret val}=</td><td>Run Keyword and Ignore Error</td><td>Should not be string</td>
+<td>[Documentation]</td><td>FAIL ${ERROR MESSAGE}</td><td></td><td></td>
 
 
 
 </tr>
 <tr>
 <td></td>
-<td>...</td>
+<td>Should not be string</td>
 <td>Nokia</td>
 <td>${ERROR MESSAGE}</td>
 <td></td>
 </tr>
 <tr>
 <td></td>
-<td>Should be equal</td><td>${status}</td><td>FAIL</td>
+<td></td><td></td><td></td>
 
 
 <td></td>
 </tr>
 <tr>
 <td></td>
-<td>Should be equal</td><td>${ret val}</td><td>${ERROR MESSAGE}</td>
+<td></td><td></td><td></td>
 
 
 <td></td>
