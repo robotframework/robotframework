@@ -1,0 +1,457 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+
+
+  
+  <style type="text/css">
+html { font-family: Arial,Helvetica,sans-serif;
+background-color: white;
+color: black;
+}
+p { max-width: 60em;
+}
+table { border-collapse: collapse;
+empty-cells: show;
+margin: 1em 0em;
+border: 0.1em solid black;
+}
+th, td {
+border-style: solid;
+border-width: 0.05em 0.1em;
+border-color: black;
+padding: 0.1em 0.2em;
+height: 1.5em;
+}
+th {
+background-color: rgb(192, 192, 192);
+color: black;
+border-width: 0.1em;
+font-weight: bold;
+text-align: center;
+text-transform: capitalize;
+letter-spacing: 0.1em;
+}
+/* Widths of named columns */
+col.name {
+width: 10em;
+}
+.action , .value, .arg {
+width: 15em;
+}
+/* Properties for the name column - td:first-child should work in CSS 2.1 avare browsers (tested in Firefox)
+- col.name is against specs but works in IE
+*/
+td:first-child, col.name {
+background-color: rgb(240, 240, 240);
+text-transform: capitalize;
+letter-spacing: 0.1em;
+}
+th { font-style: normal; } /* required for IE */
+  </style>
+  
+
+
+  
+  
+  <title>Robot Test Cases</title><link type="text/css" href="resources/css/testdata.css" rel="stylesheet"></head>
+<body>
+
+
+<h1>Robot Acceptance Test Cases for Tags</h1>
+
+
+<table border="1">
+
+
+  <colgroup span="99"><col class="name"><col class="value" span="4"></colgroup> <thead>
+  <tr>
+
+
+    <th>Setting</th>
+
+
+    <th>Value</th>
+
+
+    <th>Value</th>
+
+
+    <th>value</th>
+
+
+    <th>Value</th>
+
+
+  </tr>
+
+
+  </thead> <tbody>
+
+
+    <tr>
+
+
+      <td>Resource</td>
+
+
+      <td>../../resources/resource.html</td>
+
+
+      <td></td>
+      <td></td>
+
+
+      
+
+      <td></td>
+
+
+    </tr>
+
+
+    
+
+    
+
+    <tr>
+
+
+      <td>Force Tags</td>
+      <td>regression</td>
+
+
+      
+
+      <td>jybot</td>
+      <td>pybot</td>
+
+
+      
+
+      <td>smoke</td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td>Suite Setup</td>
+
+
+      <td>Run Tests</td>
+
+
+      <td>--include upper<br>--include onespace<br>--include HYP-HENandD.O.T.S.<br>--include A?<br>--include HeLLo <br>--include TAG<br>--exclude exclude<br>--exclude EXCLUDE2<br>--critical HELLO<br></td>
+
+
+      <td>tags/tags_are_not_normalized.html</td>
+
+
+      <td><br></td>
+
+
+    </tr>
+
+
+  
+  </tbody>
+</table>
+
+
+<br>
+
+
+<table border="1">
+
+
+  <colgroup span="99"><col class="name"><col class="value" span="4"></colgroup> <thead>
+  <tr>
+
+
+    <th>Variable</th>
+
+
+    <th>Value</th>
+
+
+    <th>Value</th>
+
+
+    <th>Value</th>
+
+
+    <th>Value</th>
+
+
+  </tr>
+
+
+  </thead> <tbody>
+
+
+    <tr>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+  
+  </tbody>
+</table>
+
+
+<br>
+
+
+<table border="1">
+
+
+  <colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
+  <thead> <tr>
+
+
+    <th>Test Case</th>
+
+
+    <th>Action</th>
+
+
+    <th>Argument</th>
+
+
+    <th>Argument</th>
+
+
+    <th>Argument</th><th>Argument</th>
+
+
+    
+
+
+    
+
+
+  </tr>
+
+
+  </thead> <tbody>
+
+
+    <tr>
+
+
+      <td>Case Is Not Altered</td>
+
+
+      <td>Check Test Tags</td>
+
+
+      <td>Case Is Not Altered </td>
+
+
+      <td>lower</td>
+
+
+      <td>MiXeD</td><td>UPPER</td>
+
+
+      
+
+
+      
+
+
+    </tr>
+
+
+    
+
+
+    <tr>
+
+
+      <td>Spaces Are Not Removed</td>
+
+
+      <td>Check Test Tags</td>
+
+
+      <td>Spaces Are Not Removed</td>
+
+
+      <td align="undefined" valign="undefined">2 \ spaces</td><td align="undefined" valign="undefined">One space<br></td><td>Seven${SPACE*7}spaces</td>
+
+
+      
+
+
+      
+
+
+      
+
+
+      
+
+
+    </tr>
+
+
+    
+
+
+    <tr>
+
+
+      <td align="undefined" valign="undefined">Undersscores and similar are not removed</td>
+
+
+      <td>Check Test Tags</td>
+
+
+      <td>Undersscores and similar are not removed</td>
+
+
+      <td align="undefined" valign="undefined">!"#%&amp;/()=</td><td align="undefined" valign="undefined">_under_scores_</td><td>hyp-HEN and d.o.t.s.</td>
+
+
+      
+
+
+      
+
+
+      
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td align="undefined" valign="undefined">Sorting Is Normalized</td>
+
+
+      <td align="undefined" valign="undefined">Check Test Tags</td>
+
+
+      <td align="undefined" valign="undefined">Sorting Is Normalized</td>
+
+
+      <td align="undefined" valign="undefined">A&nbsp;0</td>
+
+
+      <td align="undefined" valign="undefined">a1</td><td>A2</td>
+
+
+      
+
+
+      
+
+
+    </tr><tr><td>Normalized Duplicates Are Removed&nbsp;</td><td>Check Test Tags</td><td>Normalized Duplicates Are Removed&nbsp;</td><td>hello</td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Statistics Are Counted In Normalized Manner</td><td>Should Be Equal</td><td>${STATISTICS.tags.stats['tag'].failed}</td><td>${5}</td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Including And Excluding Works in Normalized Manner</td><td>Comment</td><td>Including is actually tested using --include when running tests. If&nbsp;all previous tests pass then including works.</td><td></td><td></td><td></td></tr><tr><td></td><td>Should Be True</td><td>'Excluded' not in ${SUITE.tests}</td><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Criticality Works In Normalized Manner</td><td>Check Stdout Contains</td><td>1 critical test, 1 passed, 0 failed\n<br>10 tests total, 5 passed, 5 failed</td><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Rebot Keeps Tags In Original Format</td><td>Run Rebot</td><td>--exclude LOWER<br>--exclude 2spaces<br>--exclude *D?O?T?S*<br>--settag AddedSPACEtag<br>--escape space:SPACE</td><td>${OUTFILE}</td><td></td><td></td></tr><tr><td></td><td align="undefined" valign="undefined">Check Test Tags</td><td align="undefined" valign="undefined">Sorting Is Normalized</td><td align="undefined" valign="undefined">A&nbsp;0</td><td align="undefined" valign="undefined">a1</td><td>A2</td></tr><tr><td></td><td>...</td><td>Added tag</td><td></td><td></td><td></td></tr><tr><td></td><td>Check Test Tags</td><td>Normalized Duplicates Are Removed&nbsp;</td><td>Added tag</td><td>hello</td><td></td></tr><tr><td></td><td>Should Be Equal</td><td>${STATISTICS.tags.stats['tag'].failed}</td><td>${5}</td><td></td><td></td></tr>
+
+
+  
+  </tbody>
+</table>
+
+
+<br>
+
+
+<table border="1">
+
+
+  <colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
+  <thead> <tr>
+
+
+    <th>Keyword</th>
+
+
+    <th>Action</th>
+
+
+    <th>Argument</th>
+
+
+    <th>Argument</th>
+
+
+    <th>Argument</th>
+
+
+  </tr>
+
+
+  </thead> <tbody>
+
+
+    <tr>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+    <tr>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+      <td></td>
+
+
+    </tr>
+
+
+  
+  </tbody>
+</table>
+
+
+</body></html>
