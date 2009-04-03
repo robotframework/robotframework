@@ -20,3 +20,15 @@ class TestHelper:
         
     def _get_name(self, path):
         return os.path.splitext(os.path.basename(path))[0]
+    
+    def should_contain_item_x_times(self, string, item, count):
+        if string.count(item) != int(count):
+            raise AssertionError("'%s' does not contain '%s' '%s' "
+                                 "times!" % (string, item, count))
+
+    def get_splitted_full_name(self, full_name, splitlevel):
+        splitlevel = int(splitlevel)
+        parts = full_name.split('.')
+        if splitlevel > 0 and splitlevel <= len(parts):
+            parts = parts[splitlevel:]
+        return '.'.join(parts)

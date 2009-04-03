@@ -53,7 +53,6 @@ th {
 }
 </style>
 <title>Robot Test Cases</title></head>
-
 <body>
 <h1>Robot Test Cases</h1>
 
@@ -175,7 +174,7 @@ th {
 
 <td>${name}</td>
 <td></td>
-</tr><tr><td></td><td>Should Be Equal</td><td>${tc.name}</td><td>${name}</td><td></td></tr><tr><td></td><td>Should Be Equal</td><td>${tc.kws[0].name}</td><td>${name}</td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Check Name In Log</td><td>[ Arguments ]</td><td>${name_in_attrs}</td><td>${name_in_text}=${None}</td><td></td></tr><tr><td></td><td>${name_in_text} =</td><td>Set Variable If</td><td>${name_in_text}</td><td><br></td></tr><tr><td></td><td>...</td><td>${name_in_text}</td><td>${name_in_attrs}</td><td></td></tr><tr><td></td><td>${attrs} =</td><td>Catenate</td><td>class="name"</td><td>name="test_n.${name_in_attrs}"</td></tr><tr><td></td><td>...</td><td>title="Names Needing Escaping.${name_in_attrs}"</td><td></td><td></td></tr><tr><td></td><td>${exp} = </td><td>Set Variable</td><td>&lt;a ${attrs}&gt;${name_in_text}&lt;/a&gt;</td><td></td></tr><tr><td></td><td>Should Contain</td><td>${LOG}</td><td>${exp}</td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr>
+</tr><tr><td></td><td>Should Be Equal</td><td>${tc.name}</td><td>${name}</td><td></td></tr><tr><td></td><td>Should Be Equal</td><td>${tc.kws[0].name}</td><td>${name}</td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Check Name In Log</td><td>[ Arguments ]</td><td>${name_in_attrs}</td><td>${name_in_text}=${None}</td><td></td></tr><tr><td></td><td>${name_in_text} =</td><td>Set Variable If</td><td>${name_in_text}</td><td><br></td></tr><tr><td></td><td>...</td><td>${name_in_text}</td><td>${name_in_attrs}</td><td></td></tr><tr><td></td><td>${attrs} =</td><td>Catenate</td><td>class="name"</td><td>name="test_Names Needing Escaping.${name_in_attrs}"</td></tr><tr><td></td><td>...</td><td>title="Names Needing Escaping.${name_in_attrs}"</td><td></td><td></td></tr><tr><td></td><td>${exp} = </td><td>Set Variable</td><td>&lt;a ${attrs}&gt;${name_in_text}&lt;/a&gt;</td><td></td></tr><tr><td></td><td>Should Contain</td><td>${LOG}</td><td>${exp}</td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr>
 </tbody>
 </table>
 

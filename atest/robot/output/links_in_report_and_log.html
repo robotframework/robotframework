@@ -1,0 +1,343 @@
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="RobotIDE" /> 
+<style type="text/css">
+html {
+  font-family: Arial,Helvetica,sans-serif;
+  background-color: white;
+  color: black;
+}
+p {
+  max-width: 60em;
+}
+table {
+  border-collapse: collapse;
+  empty-cells: show;
+  margin: 1em 0em;
+  border: 0.1em solid black;
+}
+th, td {
+  border-style: solid;
+  border-width: 0.05em 0.1em;
+  border-color: black;
+  padding: 0.1em 0.2em;
+  height: 1.5em;
+}
+th {
+  background-color: rgb(192, 192, 192);
+  color: black;
+  border-width: 0.1em;
+  font-weight: bold;
+  text-align: center;
+  text-transform: capitalize;
+  letter-spacing: 0.1em;
+}
+/* Widths of named columns */
+col.name {
+  width: 10em;
+}
+.action, .value, .arg {
+  width: 15em;
+}
+/* Properties for the name column 
+- td:first-child should work in CSS 2.1 avare browsers (tested in Firefox)
+- col.name is against specs but works in IE
+*/
+td:first-child, col.name {
+  background-color: rgb(240, 240, 240);
+  text-transform: capitalize;
+  letter-spacing: 0.1em;
+}
+/* required for IE */
+th {
+  font-style: normal;
+}
+</style>
+<title>Links In Report And Log</title>
+</head>
+<body>
+<h1>Links In Report And Log</h1>
+
+<table border="1">
+<colgroup span="99">
+<col class="name">
+<col class="value" span="4"></colgroup>
+<tr>
+<th>Setting</th>
+<th>Value</th>
+<th>Value</th>
+<th>Value</th>
+<th>Value</th>
+</tr>
+<tr>
+<td>Force Tags</td>
+<td>pybot</td>
+<td>jybot</td>
+<td>regression</td>
+<td></td>
+</tr>
+<tr>
+<td>Suite Setup</td>
+<td>Create Report And Log And Read Those Content</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Resource</td>
+<td>../../resources/resource.html</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</table>
+
+<table border="1">
+<colgroup span="99">
+<col class="name">
+<col class="value" span="4"></colgroup>
+<tr>
+<th>Variable</th>
+<th>Value</th>
+<th>Value</th>
+<th>Value</th>
+<th>Value</th>
+</tr>
+<tr>
+<td>${PREFIX}</td>
+<td>links_in_report_and_log</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>${REPORT FILE NAME}</td>
+<td>${PREFIX}_report.html</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>${LOG FILE NAME}</td>
+<td>${PREFIX}_log.html</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</table>
+
+<table border="1">
+<colgroup span="99">
+<col class="name">
+<col class="action">
+<col class="arg" span="3"></colgroup>
+<tr>
+<th>Test Case</th>
+<th>Action</th>
+<th>Argument</th>
+<th>Argument</th>
+<th>Argument</th>
+</tr>
+<tr>
+<td>Link From Report's "Statistics By Tag" Table To "Test Details By Tag" Table</td>
+<td>Should Contain</td>
+<td>${REPORT}</td>
+<td>&lt;div class="stat_name"&gt;&lt;a href="#tag_some"&gt;some&lt;/a&gt;&lt;/div&gt;</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should Contain</td>
+<td>${REPORT}</td>
+<td>&lt;td class="col_name"&gt;&lt;a name="tag_some"&gt;&lt;/a&gt;some&lt;/td&gt;</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Link From Report's "Statistics By Suite" Table To "Test Details By Suite" Table</td>
+<td>Should Contain</td>
+<td>${REPORT}</td>
+<td>&lt;div class="stat_name"&gt;&lt;a href="#suite_Multiple Suites.Suite 3" title="Multiple Suites.Suite 3"&gt;m.Suite 3&lt;/a&gt;&lt;/div&gt;</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should Contain</td>
+<td>${REPORT}</td>
+<td>&lt;td class="col_name"&gt;&lt;a href="links_in_report_and_log_log.html#suite_Multiple Suites.Suite 3" id="suite_Multiple Suites.Suite 3" title="Multiple Suites.Suite 3"&gt;m.Suite 3&lt;/a&gt;&lt;/td&gt;</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Link From Report's "Test Details By Suite" Table To Log's Details</td>
+<td>Should Contain</td>
+<td>${REPORT}</td>
+<td>&lt;td class="col_name"&gt;&lt;a href="links_in_report_and_log_log.html#test_Multiple Suites.Suite 3.Test1"</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should Contain</td>
+<td>${LOG}</td>
+<td>&lt;a class="name" name="test_Multiple Suites.Suite 3.Test1" title="Multiple Suites.Suite 3.Test1"&gt;Test1&lt;/a&gt;</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Link From Report's "Test Details By Tags" Table To Log's Details</td>
+<td>${expected} =</td>
+<td>Set Variable</td>
+<td>&lt;td class="col_name"&gt;&lt;a href="links_in_report_and_log_log.html#test_Multiple Suites.Suite 6.Test12" id="test_Multiple Suites.Suite 6.Test12" title="Multiple Suites.Suite 6.Test12"&gt;m.s.Test12&lt;/a&gt;&lt;/td&gt;</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should Contain Item X Times</td>
+<td>${REPORT}</td>
+<td>${expected}</td>
+<td>2</td>
+</tr>
+<tr>
+<td></td>
+<td>Should Contain</td>
+<td>${LOG}</td>
+<td>&lt;a class="name" name="test_Multiple Suites.Suite 6.Test12" title="Multiple Suites.Suite 6.Test12"&gt;Test12&lt;/a&gt;</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Link From Log's "Statistics By Suite" Table To Log's Details</td>
+<td>Should Contain</td>
+<td>${LOG}</td>
+<td>&lt;div class="stat_name"&gt;&lt;a href="#suite_Multiple Suites.Subsuite 1.Suite 4" onclick="set_element_visible('suite_Multiple Suites.Subsuite 1.Suite 4')" title="Multiple Suites.Subsuite 1.Suite 4"&gt;m.s.Suite 4&lt;/a&gt;&lt;/div&gt;</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should Contain</td>
+<td>${LOG}</td>
+<td>&lt;a class="name" name="suite_Multiple Suites.Subsuite 1.Suite 4" title="Multiple Suites.Subsuite 1.Suite 4"&gt;Suite 4&lt;/a&gt;</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</table>
+
+<table border="1">
+<colgroup span="99">
+<col class="name">
+<col class="action">
+<col class="arg" span="3"></colgroup>
+<tr>
+<th>Keyword</th>
+<th>Action</th>
+<th>Argument</th>
+<th>Argument</th>
+<th>Argument</th>
+</tr>
+<tr>
+<td>Create Report And Log And Read Those Content</td>
+<td>Run Tests</td>
+<td>--report ${REPORT FILE NAME} --log ${LOG FILE NAME}</td>
+<td>misc${/}multiple_suites</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>${log} =</td>
+<td>Get File</td>
+<td>${OUTDIR}${/}${LOG FILE NAME}</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Set Suite Variable</td>
+<td>$LOG</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>${report} =</td>
+<td>Get File</td>
+<td>${OUTDIR}${/}${REPORT FILE NAME}</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Set Suite Variable</td>
+<td>$REPORT</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</table>
+
+</body>
+</html>

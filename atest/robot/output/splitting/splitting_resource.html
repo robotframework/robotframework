@@ -114,17 +114,10 @@ th {
 <th>Argument</th>
 </tr>
 <tr>
-<td><a name="keyword_Stat Link To Itself Should Be Ok">Stat Link To Itself Should Be Ok</a></td>
+<td>Stat Link To Itself Should Be Ok</td>
 <td>[Arguments]</td>
 <td>${file}</td>
 <td>${name}</td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td>[Timeout]</td>
-<td></td>
-<td></td>
 <td></td>
 </tr>
 <tr>
@@ -142,18 +135,11 @@ th {
 <td></td>
 </tr>
 <tr>
-<td><a name="keyword_Stat Link In Index To Sub Log Should Be Ok">Stat Link In Index To Sub Log Should Be Ok</a></td>
+<td>Stat Link In Index To Sub Log Should Be Ok</td>
 <td>[Arguments]</td>
 <td>${file}</td>
 <td>${name}</td>
 <td>${link}</td>
-</tr>
-<tr>
-<td></td>
-<td>[Timeout]</td>
-<td></td>
-<td></td>
-<td></td>
 </tr>
 <tr>
 <td></td>
@@ -184,18 +170,11 @@ th {
 <td></td>
 </tr>
 <tr>
-<td><a name="keyword_Test Link In Index To Sub Log Should Be Ok">Test Link In Index To Sub Log Should Be Ok</a></td>
+<td>Test Link In Index To Sub Log Should Be Ok</td>
 <td>[Arguments]</td>
 <td>${file}</td>
 <td>${name}</td>
 <td>${link}</td>
-</tr>
-<tr>
-<td></td>
-<td>[Timeout]</td>
-<td></td>
-<td></td>
-<td></td>
 </tr>
 <tr>
 <td></td>
@@ -226,17 +205,10 @@ th {
 <td></td>
 </tr>
 <tr>
-<td><a name="keyword_Suite Anchor In Sub Log Should Be Ok">Suite Anchor In Sub Log Should Be Ok</a></td>
+<td>Suite Anchor In Sub Log Should Be Ok</td>
 <td>[Arguments]</td>
 <td>${file}</td>
 <td>${name}</td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td>[Timeout]</td>
-<td></td>
-<td></td>
 <td></td>
 </tr>
 <tr>
@@ -254,17 +226,10 @@ th {
 <td></td>
 </tr>
 <tr>
-<td><a name="keyword_Test Anchor In Sub Log Should Be Ok">Test Anchor In Sub Log Should Be Ok</a></td>
+<td>Test Anchor In Sub Log Should Be Ok</td>
 <td>[Arguments]</td>
 <td>${file}</td>
 <td>${name}</td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td>[Timeout]</td>
-<td></td>
-<td></td>
 <td></td>
 </tr>
 <tr>
@@ -285,7 +250,7 @@ th {
 <td></td>
 <td>Contains</td>
 <td>${file}</td>
-<td>&lt;span class="pass"&gt;TEST&amp;nbsp;CASE: &lt;/span&gt;\n &lt;a class="name" name="test_${med}" title="${full}"&gt;${normal}&lt;/a&gt;</td>
+<td>&lt;span class="pass"&gt;TEST&amp;nbsp;CASE: &lt;/span&gt;\n &lt;a class="name" name="test_${full}" title="${full}"&gt;${normal}&lt;/a&gt;</td>
 <td></td>
 </tr>
 <tr>
@@ -296,7 +261,7 @@ th {
 <td></td>
 </tr>
 <tr>
-<td><a name="keyword_Link In Report To Index Log Should Be Ok">Link In Report To Index Log Should Be Ok</a></td>
+<td>Link In Report To Index Log Should Be Ok</td>
 <td>[Arguments]</td>
 <td>${file}</td>
 <td>${name}</td>
@@ -311,13 +276,6 @@ th {
 </tr>
 <tr>
 <td></td>
-<td>[Timeout]</td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
 <td>${full}</td>
 <td>${med}</td>
 <td>${normal} =</td>
@@ -334,7 +292,7 @@ th {
 <td></td>
 <td>Contains</td>
 <td>${file}</td>
-<td>&lt;td class="col_name"&gt;&lt;a href="${link}#${type}_${med}" id="${type}_${med}" title="${full}"&gt;${med}&lt;/a&gt;&lt;/td&gt;</td>
+<td>&lt;td class="col_name"&gt;&lt;a href="${link}#${type}_${full}" id="${type}_${full}" title="${full}"&gt;${med}&lt;/a&gt;&lt;/td&gt;</td>
 <td></td>
 </tr>
 <tr>
@@ -345,7 +303,7 @@ th {
 <td></td>
 </tr>
 <tr>
-<td><a name="keyword_Link In Report To Sub Log Should Be Ok">Link In Report To Sub Log Should Be Ok</a></td>
+<td>Link In Report To Sub Log Should Be Ok</td>
 <td>[Arguments]</td>
 <td>${file}</td>
 <td>${name}</td>
@@ -360,13 +318,6 @@ th {
 </tr>
 <tr>
 <td></td>
-<td>[Timeout]</td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
 <td>${full}</td>
 <td>${med}</td>
 <td>${normal} =</td>
@@ -381,16 +332,16 @@ th {
 </tr>
 <tr>
 <td></td>
-<td>${submed} =</td>
-<td>Evaluate</td>
-<td>"${med}"[2*${splitlevel}:]</td>
-<td></td>
+<td>${subfull} =</td>
+<td>Get Splitted Full Name</td>
+<td>${full}</td>
+<td>${splitlevel}</td>
 </tr>
 <tr>
 <td></td>
 <td>Contains</td>
 <td>${file}</td>
-<td>&lt;td class="col_name"&gt;&lt;a href="${link}#${type}_${submed}" id="${type}_${med}" title="${full}"&gt;${med}&lt;/a&gt;&lt;/td&gt;</td>
+<td>&lt;td class="col_name"&gt;&lt;a href="${link}#${type}_${subfull}" id="${type}_${full}" title="${full}"&gt;${med}&lt;/a&gt;&lt;/td&gt;</td>
 <td></td>
 </tr>
 <tr>
@@ -401,16 +352,9 @@ th {
 <td></td>
 </tr>
 <tr>
-<td><a name="keyword_Get Names">Get Names</a></td>
+<td>Get Names</td>
 <td>[Arguments]</td>
 <td>${fullname}</td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td>[Timeout]</td>
-<td></td>
 <td></td>
 <td></td>
 </tr>
