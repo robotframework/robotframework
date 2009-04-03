@@ -219,7 +219,7 @@ class BaseTestSuite(_TestAndSuiteHelper):
         suites = self._filter_suite_names(suites)
         self.suites = [ suite for suite in self.suites 
                         if suite._filter_by_names(suites, tests) ]
-        if suites == []:
+        if not suites:
             self.tests = [ test for test in self.tests if tests == [] or
                            utils.matches_any(test.name, tests, ignore=['_']) ]
         else:
@@ -252,10 +252,10 @@ class BaseTestSuite(_TestAndSuiteHelper):
         raise DataError("Suite '%s' contains no %s" % (self.name, msg))
     
     def filter_by_tags(self, includes=None, excludes=None):
-        if includes is None: includes = []
-        if excludes is None: excludes = []
-        if includes == [] and excludes == []:
+        if not (includes or excludes):
             return
+        if not includes: includes = []
+        if not excludes: excludes = []
         if not self._filter_by_tags(includes, excludes):
             self._raise_no_tests_filtered_by_tags(includes, excludes)
         
@@ -305,9 +305,9 @@ class BaseTestSuite(_TestAndSuiteHelper):
         self.set_critical_tags(settings['Critical'], settings['NonCritical'])
         try:
             self.set_runmode(settings['RunMode'])
-        except (KeyError, AttributeError) :
+        except (KeyError, AttributeError) : # Only applicable when running tcs
             pass
-        if len(self.suites) == 0:
+        if not self.suites:
             settings['SplitOutputs'] = -2
         try:
             self.remove_keywords(settings['RemoveKeywords'])
@@ -347,7 +347,7 @@ class BaseTestCase(_TestAndSuiteHelper):
         
         If no 'incl_tags' are given all tests are considered to be included.
         """
-        included = len(incl_tags) == 0 or self._contains_any_tag(incl_tags)
+        included = not incl_tags or self._contains_any_tag(incl_tags)
         excluded = self._contains_any_tag(excl_tags)
         return included and not excluded
 
