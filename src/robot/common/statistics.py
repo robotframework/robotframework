@@ -255,7 +255,7 @@ class TagStatistics:
         return not utils.matches_any(tag, self._exclude)
     
     def serialize(self, serializer):
-        if self.stats and (self._include or self._exclude):
+        if not self.stats and (self._include or self._exclude):
             return
         serializer.start_tag_stats(self)
         stats = self.stats.values()
