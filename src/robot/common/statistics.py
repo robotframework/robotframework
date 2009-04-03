@@ -142,7 +142,6 @@ class TotalStat(Stat):
 class SuiteStatistics:
     
     def __init__(self, suite, tag_stats, suite_stat_level=-1):
-        self.name = suite.mediumname
         self.all = SuiteStat(suite)
         self.critical = SuiteStat(suite)
         self.suites = []
