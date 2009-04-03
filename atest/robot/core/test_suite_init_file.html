@@ -50,9 +50,7 @@ letter-spacing: 0.1em;
 th {
 font-style: normal;
 }
-</style><title>Robot Test Cases</title>
-
-</head>
+</style><title>Robot Test Cases</title></head>
 <body>
 <h1>Robot Test Cases</h1>
 <table border="1">
@@ -151,21 +149,21 @@ get are set in ...</td>
 </thead> <tbody>
 <tr>
 <td>Suite Name </td>
-<td>Equals</td>
+<td>Should Be Equal</td>
 <td>${suite.name}</td>
 <td>Test Suite Dir With Init File</td>
 <td></td>
 </tr>
 <tr>
 <td align="undefined" valign="undefined"></td>
-<td>Equals</td>
+<td>Should Be Equal</td>
 <td>${subsuite_with_init.name}</td>
 <td>Sub Suite With Init File</td>
 <td align="undefined" valign="undefined"></td>
 </tr>
 <tr>
 <td align="undefined" valign="undefined"></td>
-<td>Equals</td>
+<td>Should Be Equal</td>
 <td>${subsuite_without_init.name}</td>
 <td>Sub Suite Without Init File</td>
 <td align="undefined" valign="undefined"></td>
@@ -191,23 +189,23 @@ setting doc when there's not suite file.</td>
 <tr>
 <td align="undefined" valign="undefined"><br>
 </td>
-<td>Equals</td>
+<td>Should Be Equal</td>
 <td>${suite.doc}</td>
 <td>Setting metadata for&nbsp;test suite directory</td>
 <td></td>
 </tr>
 <tr>
 <td align="undefined" valign="undefined"></td>
-<td>Equals</td>
+<td>Should Be Equal</td>
 <td>${subsuite_with_init.doc}</td>
-<td>\</td>
+<td>${EMPTY}</td>
 <td align="undefined" valign="undefined"></td>
 </tr>
 <tr>
 <td align="undefined" valign="undefined"></td>
-<td>Equals</td>
+<td>Should Be Equal</td>
 <td>${subsuite_without_init.doc}</td>
-<td>\</td>
+<td>${EMPTY}</td>
 <td align="undefined" valign="undefined"></td>
 </tr>
 <tr>
@@ -238,14 +236,14 @@ of test suite directory</td>
 </tr>
 <tr>
 <td align="undefined" valign="undefined"></td>
-<td align="undefined" valign="undefined">Equals</td>
+<td align="undefined" valign="undefined">Should Be Equal</td>
 <td align="undefined" valign="undefined">${subsuite_with_init.setup}</td>
 <td align="undefined" valign="undefined">${None}</td>
 <td align="undefined" valign="undefined"></td>
 </tr>
 <tr>
 <td align="undefined" valign="undefined"></td>
-<td align="undefined" valign="undefined">Equals</td>
+<td align="undefined" valign="undefined">Should Be Equal</td>
 <td align="undefined" valign="undefined">${subsuite_without_init.setup}</td>
 <td align="undefined" valign="undefined">${None}</td>
 <td align="undefined" valign="undefined"></td>
@@ -289,7 +287,7 @@ sub test suite directory</td>
 </tr>
 <tr>
 <td align="undefined" valign="undefined"></td>
-<td align="undefined" valign="undefined">Equals</td>
+<td align="undefined" valign="undefined">Should Be Equal</td>
 <td align="undefined" valign="undefined">${subsuite_without_init.teardown}&nbsp;</td>
 <td align="undefined" valign="undefined">${None}</td>
 <td align="undefined" valign="undefined"></td>
@@ -349,13 +347,13 @@ different suite levels and also [Tags] in tests</td>
 Test Tags</td>
 <td align="undefined" valign="undefined">TC1
 No Metadata</td>
-<td align="undefined" valign="undefined">suiteforce</td>
-<td align="undefined" valign="undefined">testdefault</td>
+<td align="undefined" valign="undefined">suite force</td>
+<td align="undefined" valign="undefined">test default</td>
 </tr>
 <tr>
 <td></td>
 <td align="undefined" valign="undefined">...</td>
-<td align="undefined" valign="undefined">testforce</td>
+<td align="undefined" valign="undefined">test force</td>
 <td align="undefined" valign="undefined"></td>
 <td align="undefined" valign="undefined"><br>
 </td>
@@ -366,14 +364,14 @@ No Metadata</td>
 Test Tags</td>
 <td align="undefined" valign="undefined">TC1
 Tags</td>
-<td align="undefined" valign="undefined">suiteforce</td>
-<td align="undefined" valign="undefined">testforce</td>
+<td align="undefined" valign="undefined">suite force</td>
+<td align="undefined" valign="undefined">test force</td>
 </tr>
 <tr>
 <td></td>
 <td align="undefined" valign="undefined">...</td>
-<td>testtag1</td>
-<td>testtag2</td>
+<td>test tag 1</td>
+<td>test tag 2</td>
 <td></td>
 </tr>
 <tr>
@@ -382,13 +380,13 @@ Tags</td>
 Test Tags</td>
 <td align="undefined" valign="undefined">TC2
 No Metadata</td>
-<td align="undefined" valign="undefined">suitedefault1</td>
+<td align="undefined" valign="undefined">suite default 1</td>
 <td align="undefined" valign="undefined">suitedefault2</td>
 </tr>
 <tr>
 <td></td>
 <td align="undefined" valign="undefined">...</td>
-<td align="undefined" valign="undefined">suiteforce</td>
+<td align="undefined" valign="undefined">suite force</td>
 <td align="undefined" valign="undefined"></td>
 <td align="undefined" valign="undefined"><br>
 </td>
@@ -399,7 +397,7 @@ No Metadata</td>
 Test Tags</td>
 <td align="undefined" valign="undefined">TC2
 Tags</td>
-<td>suiteforce </td>
+<td>suite force </td>
 <td></td>
 </tr>
 <tr>
@@ -408,14 +406,14 @@ Tags</td>
 Test Tags</td>
 <td align="undefined" valign="undefined">S1TC1
 No Metadata</td>
-<td align="undefined" valign="undefined">subsuiteforce</td>
-<td align="undefined" valign="undefined">suiteforce</td>
+<td align="undefined" valign="undefined">sub suite&nbsp;force</td>
+<td align="undefined" valign="undefined">suite force</td>
 </tr>
 <tr>
 <td align="undefined" valign="undefined"></td>
 <td align="undefined" valign="undefined">...</td>
-<td align="undefined" valign="undefined">testdefault</td>
-<td align="undefined" valign="undefined">testforce</td>
+<td align="undefined" valign="undefined">test default</td>
+<td align="undefined" valign="undefined">test force</td>
 <td align="undefined" valign="undefined"></td>
 </tr>
 <tr>
@@ -431,14 +429,14 @@ No Metadata</td>
 Test Tags</td>
 <td align="undefined" valign="undefined">S1TC1
 Fixture</td>
-<td align="undefined" valign="undefined">subsuiteforce</td>
-<td align="undefined" valign="undefined">suiteforce</td>
+<td align="undefined" valign="undefined">sub suite&nbsp;force</td>
+<td align="undefined" valign="undefined">suite force</td>
 </tr>
 <tr>
 <td></td>
 <td>...</td>
-<td align="undefined" valign="undefined">testdefault</td>
-<td align="undefined" valign="undefined">testforce</td>
+<td align="undefined" valign="undefined">test default</td>
+<td align="undefined" valign="undefined">test force</td>
 <td></td>
 </tr>
 <tr>
@@ -446,14 +444,14 @@ Fixture</td>
 <td align="undefined" valign="undefined">Check
 Test Tags</td>
 <td>S1TC1 Timeout</td>
-<td align="undefined" valign="undefined">subsuiteforce</td>
-<td align="undefined" valign="undefined">suiteforce</td>
+<td align="undefined" valign="undefined">sub suite&nbsp;force</td>
+<td align="undefined" valign="undefined">suite force</td>
 </tr>
 <tr>
 <td></td>
 <td>...</td>
-<td align="undefined" valign="undefined">testdefault</td>
-<td align="undefined" valign="undefined">testforce</td>
+<td align="undefined" valign="undefined">test default</td>
+<td align="undefined" valign="undefined">test force</td>
 <td></td>
 </tr>
 <tr>
@@ -462,15 +460,15 @@ Test Tags</td>
 Test Tags</td>
 <td align="undefined" valign="undefined">S1TC1
 Tags</td>
-<td align="undefined" valign="undefined">subsuiteforce</td>
-<td align="undefined" valign="undefined">suiteforce</td>
+<td align="undefined" valign="undefined">sub suite&nbsp;force</td>
+<td align="undefined" valign="undefined">suite force</td>
 </tr>
 <tr>
 <td align="undefined" valign="undefined"></td>
 <td align="undefined" valign="undefined">...</td>
-<td align="undefined" valign="undefined">testforce</td>
-<td>testtag1</td>
-<td>testtag2</td>
+<td align="undefined" valign="undefined">test force</td>
+<td>test tag 1</td>
+<td>test tag 2</td>
 </tr>
 <tr>
 <td align="undefined" valign="undefined"></td>
@@ -478,13 +476,13 @@ Tags</td>
 Test Tags</td>
 <td align="undefined" valign="undefined">S1TC2
 No Metadata</td>
-<td align="undefined" valign="undefined">subsuitedefault</td>
-<td align="undefined" valign="undefined">subsuiteforce</td>
+<td align="undefined" valign="undefined">sub suite default</td>
+<td align="undefined" valign="undefined">sub suite&nbsp;force</td>
 </tr>
 <tr>
 <td align="undefined" valign="undefined"></td>
 <td align="undefined" valign="undefined">...</td>
-<td align="undefined" valign="undefined">suiteforce</td>
+<td align="undefined" valign="undefined">suite force</td>
 <td align="undefined" valign="undefined"><br>
 </td>
 <td align="undefined" valign="undefined"></td>
@@ -495,8 +493,8 @@ No Metadata</td>
 Test Tags</td>
 <td align="undefined" valign="undefined">S1TC2
 Tags</td>
-<td align="undefined" valign="undefined">subsuiteforce</td>
-<td align="undefined" valign="undefined">suiteforce</td>
+<td align="undefined" valign="undefined">sub suite&nbsp;force</td>
+<td align="undefined" valign="undefined">suite force</td>
 </tr>
 <tr>
 <td align="undefined" valign="undefined"></td>
@@ -518,13 +516,13 @@ Tags</td>
 Test Tags</td>
 <td align="undefined" valign="undefined">S2TC1
 No Metadata</td>
-<td align="undefined" valign="undefined">suiteforce</td>
-<td align="undefined" valign="undefined">testdefault</td>
+<td align="undefined" valign="undefined">suite force</td>
+<td align="undefined" valign="undefined">test default</td>
 </tr>
 <tr>
 <td align="undefined" valign="undefined"></td>
 <td align="undefined" valign="undefined">...</td>
-<td align="undefined" valign="undefined">testforce</td>
+<td align="undefined" valign="undefined">test force</td>
 <td align="undefined" valign="undefined"></td>
 <td align="undefined" valign="undefined"></td>
 </tr>
@@ -534,15 +532,15 @@ No Metadata</td>
 Test Tags</td>
 <td align="undefined" valign="undefined">S2TC1
 Tags</td>
-<td align="undefined" valign="undefined">suiteforce</td>
-<td align="undefined" valign="undefined">testforce</td>
+<td align="undefined" valign="undefined">suite force</td>
+<td align="undefined" valign="undefined">test force</td>
 </tr>
 <tr>
 <td align="undefined" valign="undefined"></td>
 <td align="undefined" valign="undefined">...</td>
-<td>testtag1</td>
-<td>testtag2</td>
-<td align="undefined" valign="undefined">testtag3</td>
+<td>test tag 1</td>
+<td>test tag 2</td>
+<td align="undefined" valign="undefined">test tag 3</td>
 </tr>
 <tr>
 <td align="undefined" valign="undefined"></td>
@@ -550,13 +548,13 @@ Tags</td>
 Test Tags</td>
 <td align="undefined" valign="undefined">S2TC2
 No Metadata</td>
-<td align="undefined" valign="undefined">suitedefault1</td>
+<td align="undefined" valign="undefined">suite default 1</td>
 <td align="undefined" valign="undefined">suitedefault2</td>
 </tr>
 <tr>
 <td align="undefined" valign="undefined"></td>
 <td align="undefined" valign="undefined">...</td>
-<td align="undefined" valign="undefined">suiteforce</td>
+<td align="undefined" valign="undefined">suite force</td>
 <td align="undefined" valign="undefined"></td>
 <td align="undefined" valign="undefined"></td>
 </tr>
@@ -566,7 +564,7 @@ No Metadata</td>
 Test Tags</td>
 <td align="undefined" valign="undefined">S2TC2
 Tags</td>
-<td>suiteforce </td>
+<td>suite force </td>
 <td align="undefined" valign="undefined"></td>
 </tr>
 <tr>
@@ -1025,7 +1023,7 @@ Test Case</td>
 </tr>
 <tr>
 <td></td>
-<td align="undefined" valign="undefined">Equals</td>
+<td align="undefined" valign="undefined">Should Be Equal</td>
 <td align="undefined" valign="undefined">${test.timeout}</td>
 <td align="undefined" valign="undefined">${timeout}</td>
 <td></td>
