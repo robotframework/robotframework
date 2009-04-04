@@ -6,8 +6,8 @@ from distutils.sysconfig import get_python_lib
 def egg_preinstall(temp_robot_path, scripts):
     """Updates platform specific startup scripts.
     
-    Run as part of the easy_install egg creation procedure. This is the only way 
-    to get the scripts updated when the easy_install is used. Updates the 
+    Run as part of the easy_install egg creation procedure. This is the only 
+    way to get the scripts updated when the easy_install is used. Updates the 
     scripts before the egg is created and therefore the created egg cannot be
     used at any other machine unless the Python and Jython installations are 
     exactly equal.
@@ -72,10 +72,10 @@ def _get_installation_dir():
     try:
         import robot
     except ImportError:
-        # Work around for Windows installer problem with Python 2.6.1 
-        # See more from issue 196.
+        # Workaround for Windows installer problem with Python 2.6.1
+        # http://code.google.com/p/robotframework/issues/detail?id=196
         class FakeModule:
-            def __getattr(self, name):
+            def __getattr__(self, name):
                 raise RuntimeError('Fake module set by robot_postinstall.py')
         sys.modules['urllib'] = FakeModule()
         import robot

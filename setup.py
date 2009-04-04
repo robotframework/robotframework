@@ -22,13 +22,14 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'src','robot'))
 from version import get_version
 import robot_postinstall
 
+
 # Maximum width in Windows installer seems to be 70 characters
 DESCRIPTION = """
 Robot Framework is a Python-based keyword-driven test automation
-framework for acceptance level testing and acceptance test-driven 
-development (ATDD). It has an easy-to-use tabular syntax for creating 
-test cases and its testing capabilities can be extended by test 
-libraries implemented either with Python or Java.  Users can also 
+framework for acceptance level testing and acceptance test-driven
+development (ATDD). It has an easy-to-use tabular syntax for creating
+test cases and its testing capabilities can be extended by test
+libraries implemented either with Python or Java. Users can also
 create new keywords from existing ones using the same simple syntax
 that is used for creating test cases.
 """[1:-1]
@@ -77,10 +78,9 @@ def main():
           packages     = PACKAGES,
           scripts      = inst_scripts,
     )
+    
     if 'install' in sys.argv:
-        def absnorm(path):
-            return os.path.abspath(os.path.normpath(path))
-        
+        absnorm = lambda path: os.path.abspath(os.path.normpath(path))
         script_dir = absnorm(dist.command_obj['install_scripts'].install_dir)
         module_dir = absnorm(dist.command_obj['install_lib'].install_dir)
         robot_dir = os.path.join(module_dir, 'robot')
