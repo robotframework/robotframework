@@ -5,8 +5,7 @@ include install.py package.py
 include MANIFEST.in
 include LICENSE.txt COPYRIGHT.txt INSTALL.txt PACKAGING.txt
 
-recursive-include tools *.py *.au3 *.sh *.rb *.html *.txt *.tsv *.png
-recursive-include proto *.py *.au3 *.sh *.rb *.html *.txt *.tsv *.rnc
+recursive-include tools *.py *.au3 *.rb *.html *.txt *.tsv *.png
+recursive-include doc *.txt *.html *.png *.py *.dia
 include templates/*.html templates/*.tsv templates/*.txt
-recursive-include doc *.txt *.html *.png *.sh *.py *.dia
 
