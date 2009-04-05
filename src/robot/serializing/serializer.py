@@ -67,28 +67,28 @@ class _StatisticsSerializer:
             self._tag_stat_link(stat)
         self._writer.end('td')
         self._writer.element('td', str(stat.passed + stat.failed), 
-                                   {'class': 'col_stat'})
+                             {'class': 'col_stat'})
         self._writer.element('td', stat.passed, {'class': 'col_stat'})
         self._writer.element('td', stat.failed, {'class': 'col_stat'})
         self._writer.start('td', {'class': 'col_graph'})
         self._writer.start('div', {'class': 'graph'})
-        pass_title, fail_title, pass_width, fail_width = self._get_percents(stat)
-        self._writer.element('b', None, {'class': 'pass_bar', 
-                                               'style': 'width: %s;' % pass_width,
-                                               'title': pass_title})
-        self._writer.element('b', None, {'class': 'fail_bar', 
-                                               'style': 'width: %s;' % fail_width,
-                                               'title': fail_title})
+        pass_attrs, fail_attrs = self._get_graph_attrs(stat)
+        self._writer.element('b', None, pass_attrs)
+        self._writer.element('b', None, fail_attrs)
         self._writer.ends(['div', 'td', 'tr'])
         
-    def _get_percents(self, stat):
-        # See utils.percents_to_widths to understand why different title and 
+    def _get_graph_attrs(self, stat):
+        # See utils.percents_to_widths to understand why different percent and 
         # width values are needed 
         percents = utils.calc_percents(stat.passed, stat.failed)
-        pass_title, fail_title = [ '%.1f%%' % item for item in percents ]
-        pass_width, fail_width = [ '%.2f%%' % item for item in 
-                                   utils.percents_to_widths(*percents) ]
-        return pass_title, fail_title, pass_width, fail_width
+        widths = utils.percents_to_widths(*percents)
+        pass_attrs = {'class': 'pass_bar',
+                      'title': '%.1f%%' % percents[0],
+                      'style': 'width: %.2f%%;' % widths[0]}
+        fail_attrs = {'class': 'fail_bar',
+                      'title': '%.1f%%' % percents[1],
+                      'style': 'width: %.2f%%;' % widths[1]}
+        return pass_attrs, fail_attrs
 
     def _statistics_table(self, statistics, title):
         self._writer.start('table', {'class': 'statistics'})
@@ -112,16 +112,13 @@ class _StatisticsSerializer:
         self._writer.start('td', {'class': 'col_graph'})
         self._writer.start('div', {'class': 'graph'})
         self._writer.element('b', None, {'class': 'no_tags_bar', 
-                                               'style': 'width: 100%;'})
+                                         'style': 'width: 100%;'})
         self._writer.ends(['div', 'td', 'tr'])
 
     def _stat_name(self, stat):
         self._writer.start('div', {'class': 'stat_name'}, newline=False)
         elem = self._get_element_name(stat)
-        if elem == 'a':
-            attrs = self._get_link_attributes(stat)
-        else:
-            attrs = {}
+        attrs = elem == 'a' and self._get_link_attributes(stat) or {}
         doc = self._get_doc_attribute(stat)
         if doc:
             attrs['title'] = doc
@@ -143,16 +140,15 @@ class _StatisticsSerializer:
         raise NotImplementedError
             
     def _write_criticality(self, stat):
-        if stat.type == 'tag' and stat.critical is True:
+        if stat.type == 'tag' and stat.critical:
             self._writer.content(' (critical)')
-        if stat.type == 'tag' and stat.non_critical is True:
+        if stat.type == 'tag' and stat.non_critical:
             self._writer.content(' (non-critical)')
 
     def _tag_stat_link(self, stat):
         self._writer.start('div', {'class': 'tag_links'})
-        for item in stat.links:
+        for link, title in stat.links:
             self._writer.start('span', newline=False)
-            link, title = item
             self._writer.content('[')
             self._writer.element('a', title, {'href': link}, newline=False)
             self._writer.content(']')
@@ -171,7 +167,7 @@ class _BaseLogStatisticsSerializer(_StatisticsSerializer):
 
     def _get_link_attributes(self, stat):
         target = '%s_%s' % (stat.type, stat.get_link(self._split_level))
-        return { 'href': '#' + target, 
+        return { 'href': '#' + target,
                  'onclick': "set_element_visible('%s')" % target }
         
 
@@ -226,8 +222,7 @@ class LogErrorsSerializer:
     def message(self, msg):
         self._writer.start('tr')
         timestamp = msg.timestamp.replace(' ', '&nbsp;')
-        self._writer.element('td', timestamp, {'class': 'time'}, 
-                                   escape=False)
+        self._writer.element('td', timestamp, {'class': 'time'}, escape=False)
         level_class = '%s level' % (msg.level.lower())
         self._writer.element('td', msg.level, {'class': level_class})
         self._writer.element('td', msg.message, {'class': 'msg'})
@@ -252,10 +247,9 @@ class LogSuiteSerializer:
         self._writer.start('table', {'class': 'suite', 'id': suite.id})
         self._write_suite_or_test_name(suite, 'suite')
         self._writer.starts(['tr', 'td'])
-        self._writer.start('div', 
-                                   {'class': 'indent', 
-                                    'style': self._get_display_style(suite),
-                                    'id': '%s_children' % suite.id})
+        self._writer.start('div', {'class': 'indent', 
+                                   'style': self._get_display_style(suite),
+                                   'id': '%s_children' % suite.id})
         self._write_suite_metadata(suite)
         self._suite_level += 1
         
@@ -268,10 +262,9 @@ class LogSuiteSerializer:
         self._writer.start('table', {'class': 'test', 'id': test.id})
         self._write_suite_or_test_name(test, 'test')
         self._writer.starts(['tr', 'td'])
-        self._writer.start('div', 
-                                   {'class': 'indent', 
-                                    'style': self._get_display_style(test),
-                                    'id': '%s_children' % test.id})
+        self._writer.start('div', {'class': 'indent', 
+                                   'style': self._get_display_style(test),
+                                   'id': '%s_children' % test.id})
         self._write_test_metadata(test)
     
     def end_test(self, test):
@@ -284,8 +277,8 @@ class LogSuiteSerializer:
         self._writer.start('tr', {'id': kw.id})
         self._writer.start('td', newline=True)
         self._writer.start('div', {'class': 'indent', 
-                                           'style': self._get_display_style(kw),
-                                           'id': '%s_children' % kw.id})
+                                   'style': self._get_display_style(kw),
+                                   'id': '%s_children' % kw.id})
         self._write_keyword_info(kw)
 
     def end_keyword(self, kw):
@@ -296,9 +289,10 @@ class LogSuiteSerializer:
         self._writer.start('tr')
         timestamp = msg.timestamp.split()[1]   # don't log date
         self._writer.element('td', timestamp, {'class': 'time'})
-        level_class = '%s level' % (msg.level.lower())
-        self._writer.element('td', msg.level, {'class': level_class})
-        self._writer.element('td', msg.message, {'class': 'msg'}, escape=not msg.html)
+        self._writer.element('td', msg.level,
+                             {'class': '%s level' % msg.level.lower()})
+        self._writer.element('td', msg.message, {'class': 'msg'},
+                             escape=not msg.html)
         self._writer.ends(['tr', 'table'])    
 
     def _write_suite_or_test_name(self, item, type_):
@@ -306,12 +300,11 @@ class LogSuiteSerializer:
         self._write_expand_all(item)
         self._write_folding_button(item)
         label = type_ == 'suite' and 'TEST&nbsp;SUITE: ' or 'TEST&nbsp;CASE: '
-        self._writer.element('span', label,
-                                   {'class': item.status.lower()}, escape=False)
+        self._writer.element('span', label, {'class': item.status.lower()},
+                             escape=False)
         name = item.get_long_name(split_level=self._split_level)
-        self._writer.element('a', item.name, 
-                                   {'name': '%s_%s' % (type_, name),
-                                    'class': 'name', 'title': name})
+        self._writer.element('a', item.name, {'name': '%s_%s' % (type_, name),
+                                              'class': 'name', 'title': name})
         self._writer.ends(['td', 'tr'])
         
     def _write_expand_all(self, item):
@@ -334,10 +327,10 @@ class LogSuiteSerializer:
         elif kw.type == 'parallel':
             self._writer.element('span', 'PARALLEL:', status)
         else:
-            kw_type = kw.type in ['setup','teardown'] and kw.type.upper() or 'KEYWORD'
-            self._writer.element('span', kw_type+': ', status)
+            kw_type = kw.type in ['setup','teardown'] and kw.type or 'keyword'
+            self._writer.element('span', kw_type.upper()+': ', status)
             self._writer.element('span', kw.name+' ', {'class': 'name'})
-            self._writer.element('span', u', '.join(kw.args), {'class': 'arg'})
+            self._writer.element('span', ', '.join(kw.args), {'class': 'arg'})
         self._writer.ends(['td', 'tr'])
         
     def _write_keyword_info(self, kw):
@@ -369,12 +362,13 @@ class LogSuiteSerializer:
 
     def _get_display_style(self, item):
         style = self._is_element_open(item) and 'block' or 'none'
-        return 'display: %s;' % (style)
+        return 'display: %s;' % style
 
     def _write_suite_metadata(self, suite):
         self._start_suite_or_test_metadata(suite)
         for name, value in suite.get_metadata(html=True):
-            self._write_metadata_row(name, value, escape=False, write_empty=True)
+            self._write_metadata_row(name, value, escape=False,
+                                     write_empty=True)
         self._write_source(suite.source)
         self._write_times(suite)
         self._write_metadata_row('Overall Status', suite.status, 
@@ -416,7 +410,8 @@ class LogSuiteSerializer:
         if value or write_empty:
             self._writer.start('tr', newline=False)
             self._writer.element('th', name+':', escape=False, newline=False)
-            self._writer.element('td', value, attrs, escape=escape, newline=False)
+            self._writer.element('td', value, attrs, escape=escape,
+                                 newline=False)
             self._writer.end('tr')
 
     def _write_split_suite_details_link(self):
@@ -471,15 +466,12 @@ class SplitLogSuiteSerializer(LogSuiteSerializer):
         self._writer.starts(['tr', 'td'])
         self._write_folding_button(suite)
         self._writer.element('span', 'TEST&nbsp;SUITE: ',
-                                   {'class': suite.status.lower()}, 
-                                   escape=False)
+                             {'class': suite.status.lower()}, escape=False)
         link = '%s#suite_%s' % (self._namegen.get_name(), suite.name)
-        
         self._writer.element('a', suite.name, 
-                                   {'name': 'suite_%s' % (suite.mediumname),
-                                    'href': link,
-                                    'class': 'splitname',
-                                    'title': suite.longname})
+                             {'name': 'suite_%s' % (suite.mediumname),
+                              'href': link, 'class': 'splitname',
+                              'title': suite.longname})
         self._writer.ends(['td', 'tr'])
     
     def _write_split_suite_details_link(self):
@@ -497,12 +489,12 @@ class _ReportTableHelper:
         self._writer.element('th', 'Name', {'class': 'col_name'})
         self._writer.element('th', 'Documentation', {'class': 'col_doc'})
         self._writer.element('th', tag_column_name, 
-                                   {'class': 'col_tags'}, escape=False)
+                             {'class': 'col_tags'}, escape=False)
         self._writer.element('th', 'Crit.', {'class': 'col_crit'})
         self._writer.element('th', 'Status', {'class': 'col_status'})
         self._writer.element('th', 'Message', {'class': 'col_msg'})
         self._writer.element('th', 'Start&nbsp;/&nbsp;Elapsed', 
-                                   {'class': 'col_times'}, escape=False)
+                             {'class': 'col_times'}, escape=False)
         self._writer.end('tr')
 
     def _test_row(self, test):
@@ -517,15 +509,15 @@ class _ReportTableHelper:
         self._writer.start('tr', {'class': '%s_row' % type_})
         self._writer.start('td', {'class': 'col_name'}, newline=False)
         elem, attrs = self._get_name_params(item, type_)
-        self._writer.element(elem, item.mediumname, attrs, newline=False)        
+        self._writer.element(elem, item.mediumname, attrs, newline=False)
         self._writer.end('td')
         self._writer.element('td', item.htmldoc, {'class': 'col_doc'}, 
-                                   escape=False)
+                             escape=False)
 
     def _get_name_params(self, item, type_):
         attrs = { 'id' : '%s_%s' % (type_, item.longname),
                   'title' : item.longname }
-        if item.linkpath is not None:
+        if item.linkpath:
             elem = 'a'
             attrs['href'] = '%s#%s_%s' % (item.linkpath, type_, item.linkname)
         else:
@@ -536,10 +528,10 @@ class _ReportTableHelper:
         self._writer.element('td', ', '.join(test.tags), {'class': 'col_tags'})
         self._writer.element('td', test.critical, {'class': 'col_crit'})
         self._writer.element('td', test.status, 
-                                   {'class': 'col_status %s' % test.status.lower()})
+                             {'class': 'col_status %s' % test.status.lower()})
         self._writer.element('td', test.message, {'class': 'col_msg'})
         self._writer.element('td', self._get_times(test), 
-                                   {'class': 'col_times'}, escape=False )
+                             {'class': 'col_times'}, escape=False )
         self._writer.end('tr')
 
     def _get_times(self, item):
@@ -562,11 +554,11 @@ class _ReportTableHelper:
 
 class ReportSuiteSerializer(_ReportTableHelper):
 
-    end_test = start_keyword = end_keyword = message = lambda self, arg : None
+    end_test = start_keyword = end_keyword = message = lambda self, arg: None
 
     def __init__(self, output, logpath=None):
         self._writer = utils.HtmlWriter(output)
-        self._loglink = logpath is not None and \
+        self._loglink = logpath and \
                 utils.get_link_path(logpath, output.name) or None
         self._suite_level = 0
         
@@ -602,18 +594,17 @@ class ReportSuiteSerializer(_ReportTableHelper):
     def _end_suite_row(self, suite):
         self._writer.start('td', {'class': 'col_tags'})
         for name, value in suite.get_metadata(html=True):
-            self._writer.element('span', '%s: ' % name, 
-                                       {'class': 'meta_name'})
+            self._writer.element('span', '%s: ' % name, {'class': 'meta_name'})
             self._writer.content(value, escape=False)
             self._writer.start_and_end('br')
         self._writer.end('td')
         self._writer.element('td', 'N/A', {'class': 'col_crit not_available'})
         self._writer.element('td', suite.status, 
-                                   {'class': 'col_status %s' % suite.status.lower()})
+                             {'class': 'col_status %s' % suite.status.lower()})
         self._writer.element('td', suite.get_full_message(html=True),
-                                   {'class': 'col_msg'}, escape=False)
+                             {'class': 'col_msg'}, escape=False)
         self._writer.element('td', self._get_times(suite),
-                                   {'class': 'col_times'}, escape=False)
+                             {'class': 'col_times'}, escape=False)
         self._writer.end('tr')
 
     
@@ -649,12 +640,12 @@ class ReportTagStatSerializer(_ReportTableHelper):
         self._writer = utils.HtmlWriter(output)
     
     def start_tag_stats(self, stats):
-        if stats.stats != {}:
+        if stats.stats:
             self._writer.element('h2', 'Test Details by Tag')
             self._start_table('tests_by_tag', 'Tags')
 
     def end_tag_stats(self, stats):
-        if stats.stats != {}:
+        if stats.stats:
             self._writer.end('table')
 
     def stat(self, stat):
@@ -666,7 +657,7 @@ class ReportTagStatSerializer(_ReportTableHelper):
         self._writer.start('tr', {'class': 'tag_row'})
         self._writer.start('td', {'class': 'col_name'}, newline=False)
         self._writer.element('a', None, {'name': 'tag_%s' % stat.name},
-                                   newline=False)
+                             newline=False)
         self._writer.content(stat.name)
         self._writer.end('td')
         doc = stat.doc is not None and utils.html_escape(stat.doc, True) or ''
@@ -675,18 +666,18 @@ class ReportTagStatSerializer(_ReportTableHelper):
         self._writer.element('td', self._get_crit(stat), {'class': 'col_crit'})
         status = stat.failed == 0 and 'PASS' or 'FAIL'
         self._writer.element('td', status, 
-                                   {'class': 'col_status %s' % status.lower()})
+                             {'class': 'col_status %s' % status.lower()})
         self._writer.element('td', self._get_msg(stat.passed, stat.failed), 
-                                   {'class': 'col_msg'}, escape=False)
+                             {'class': 'col_msg'}, escape=False)
         self._writer.element('td', self._get_elapsed(stat.tests),
-                                   {'class': 'col_times'})
+                             {'class': 'col_times'})
         self._writer.end('tr')
         
     def _get_msg(self, passed, failed):
         total = passed + failed
         class_ = failed > 0 and ' class="fail"' or ''
-        return '%d test%s, %d passed, <span%s>%d failed</span>' % (total,
-                utils.plural_or_not(total), passed, class_, failed)
+        return '%d test%s, %d passed, <span%s>%d failed</span>' \
+               % (total, utils.plural_or_not(total), passed, class_, failed)
         
     def _get_elapsed(self, tests):
         millis = sum([test.elapsedtime for test in tests])
