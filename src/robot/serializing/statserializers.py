@@ -149,8 +149,8 @@ class _BaseLogStatSerializer(_StatSerializer):
 
     def _get_link_attributes(self, stat):
         target = '%s_%s' % (stat.type, stat.get_link(self._split_level))
-        return { 'href': '#' + target,
-                 'onclick': "set_element_visible('%s')" % target }
+        return {'href': '#' + target,
+                'onclick': "set_element_visible('%s')" % target}
         
 
 class LogStatSerializer(_BaseLogStatSerializer):
@@ -172,8 +172,8 @@ class SplitLogStatSerializer(_BaseLogStatSerializer):
         if not stat.should_link_to_sub_log(self._split_level):
             return _BaseLogStatSerializer._get_link_attributes(self, stat)
         self._link_target = self._namegen.get_name()
-        return { 'href': '%s#%s_%s' % (self._link_target, stat.type, 
-                                       stat.get_link(self._split_level)) }
+        return {'href': '%s#%s_%s' % (self._link_target, stat.type, 
+                                      stat.get_link(self._split_level))}
 
 
 class ReportStatSerializer(_StatSerializer):
@@ -182,9 +182,9 @@ class ReportStatSerializer(_StatSerializer):
         return stat.type in ['suite', 'tag'] and 'a' or 'span'
 
     def _get_link_attributes(self, stat):
-        return { 'href': '#%s_%s' % (stat.type, stat.get_link()) }
-    
-    
+        return {'href': '#%s_%s' % (stat.type, stat.get_link())}
+
+
 class SummaryStatSerializer(_StatSerializer):
 
     def _get_element_name(self, stat):
