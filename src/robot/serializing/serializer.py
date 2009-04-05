@@ -219,10 +219,10 @@ class LogErrorsSerializer:
 
     def message(self, msg):
         self._writer.start('tr')
-        timestamp = msg.timestamp.replace(' ', '&nbsp;')
-        self._writer.element('td', timestamp, {'class': 'time'}, escape=False)
-        level_class = '%s level' % (msg.level.lower())
-        self._writer.element('td', msg.level, {'class': level_class})
+        self._writer.element('td', msg.timestamp.replace(' ', '&nbsp;')
+                             {'class': 'time'}, escape=False)
+        self._writer.element('td', msg.level,
+                             {'class': '%s level' % msg.level.lower()})
         self._writer.element('td', msg.message, {'class': 'msg'})
         self._writer.end('tr')    
 
@@ -285,8 +285,8 @@ class LogSuiteSerializer:
     def message(self, msg):
         self._writer.start('table', {'class': 'messages'})
         self._writer.start('tr')
-        timestamp = msg.timestamp.split()[1]   # don't log date
-        self._writer.element('td', timestamp, {'class': 'time'})
+        self._writer.element('td', msg.timestamp.split()[1],  # log only time
+                             {'class': 'time'})
         self._writer.element('td', msg.level,
                              {'class': '%s level' % msg.level.lower()})
         self._writer.element('td', msg.message, {'class': 'msg'},
