@@ -60,12 +60,6 @@ class Stat:
         self.failed += self.passed
         self.passed = 0
                         
-    def serialize(self, serializer):
-        serializer.stat(self)
-        
-    def __cmp__(self, other):
-        return cmp(self.name, other.name)
-
     def get_name(self, split_level=-1):
         return self.name
 
@@ -77,6 +71,9 @@ class Stat:
     
     def should_link_to_sub_log(self, split_level=-1):
         return False
+
+    def __cmp__(self, other):
+        return cmp(self.name, other.name)
 
 
 class SuiteStat(Stat):
@@ -99,6 +96,9 @@ class SuiteStat(Stat):
     def should_link_to_sub_log(self, split_level=-1):
         return len(self._suite.get_long_name(separator=None)) == split_level+1
 
+    def serialize(self, serializer):
+        serializer.suite_stat(self)
+        
 
 class TagStat(Stat):
 
@@ -126,6 +126,9 @@ class TagStat(Stat):
             return self.combined is True and -1 or 1
         return cmp(self.name, other.name)
 
+    def serialize(self, serializer):
+        serializer.tag_stat(self)
+
 
 class CombinedTagStat(TagStat):
     
@@ -135,10 +138,18 @@ class CombinedTagStat(TagStat):
 
         
 class TotalStat(Stat):
-    
+
     type = 'total'
 
-        
+    def __init__(self, name, suite_stat):
+        Stat.__init__(self, name)
+        self.passed = suite_stat.passed
+        self.failed = suite_stat.failed
+
+    def serialize(self, serializer):
+        serializer.total_stat(self)
+
+
 class SuiteStatistics:
     
     def __init__(self, suite, tag_stats, suite_stat_level=-1):
@@ -271,15 +282,9 @@ class TagStatistics:
 class TotalStatistics:
     
     def __init__(self, suite): 
-        self.critical = self._get_stat('Critical Tests', suite.critical)
-        self.all = self._get_stat('All Tests', suite.all)
+        self.critical = TotalStat('Critical Tests', suite.critical)
+        self.all = TotalStat('All Tests', suite.all)
                              
-    def _get_stat(self, name, suite_stat):
-        stat = TotalStat(name)
-        stat.passed = suite_stat.passed
-        stat.failed = suite_stat.failed
-        return stat
-        
     def serialize(self, serializer):
         serializer.start_total_stats(self)
         self.critical.serialize(serializer)

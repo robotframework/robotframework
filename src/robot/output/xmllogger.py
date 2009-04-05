@@ -169,7 +169,16 @@ class XmlLogger:
     def end_suite_stats(self, tag_stats):
         self._writer.end('suite')
 
-    def stat(self, stat):
+    def total_stat(self, stat):
+        self._stat(stat)
+
+    def suite_stat(self, stat):
+        self._stat(stat)
+
+    def tag_stat(self, stat):
+        self._stat(stat)
+
+    def _stat(self, stat):
         attrs = { 'pass' : str(stat.passed), 'fail' : str(stat.failed) }
         if stat.type == 'tag':
             attrs['info'] = self._get_tag_stat_info(stat)

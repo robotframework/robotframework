@@ -43,7 +43,16 @@ class _StatSerializer:
 
     end_tag_stats = end_suite_stats = end_total_stats
 
-    def stat(self, stat):
+    def total_stat(self, stat):
+        self._stat(stat)
+
+    def suite_stat(self, stat):
+        self._stat(stat)
+
+    def tag_stat(self, stat):
+        self._stat(stat)
+
+    def _stat(self, stat):
         self._writer.start('tr')
         self._writer.start('td', {'class': 'col_stat_name'})
         self._stat_name(stat)

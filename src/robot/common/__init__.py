@@ -17,4 +17,4 @@ from model import BaseTestSuite, BaseTestCase
 from keyword import BaseKeyword
 from handlers import BaseHandler, UserErrorHandler
 from libraries import BaseLibrary
-from statistics import Statistics, Stat
+from statistics import Statistics

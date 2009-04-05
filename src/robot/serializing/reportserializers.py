@@ -43,25 +43,25 @@ class _TableHelper:
     def _start_suite_or_test_row(self, item, type_):
         self._writer.start('tr', {'class': '%s_row' % type_})
         self._writer.start('td', {'class': 'col_name'}, newline=False)
-        name, elem, attrs = self._get_name_params(item, type_)
-        self._writer.element(elem, name, attrs, newline=False)
+        self._write_name(item, type_)
         self._writer.end('td')
         self._writer.element('td', item.htmldoc, {'class': 'col_doc'}, 
                              escape=False)
 
-    def _get_name_params(self, item, type_):
+    def _write_name(self, item, type_):
         attrs = {'id': '%s_%s' % (type_,item.longname), 'title': item.longname}
         if item.linkpath:
             elem = 'a'
             attrs['href'] = '%s#%s_%s' % (item.linkpath, type_, item.linkname)
         else:
             elem = 'span'
-        return self._get_name(item, type_), elem, attrs
+        self._writer.start(elem, attrs, newline=False)
+        self._write_item_name(item, type_)
+        self._writer.end(elem, newline=False)
 
-    def _get_name(self, item, type_):
-        if type_ == 'suite':
-            return item.longname
-        return item.name
+    def _write_item_name(self, item, type_):
+        name = type_ == 'suite' and item.longname or item.name
+        return self._writer.content(name)
 
     def _end_test_row(self, test):
         self._writer.element('td', ', '.join(test.tags), {'class': 'col_tags'})
@@ -187,13 +187,13 @@ class TagDetailsSerializer(_TableHelper):
         if stats.stats:
             self._writer.end('table')
 
-    def stat(self, stat):
+    def tag_stat(self, stat):
         self._tag_row(stat)
         for test in stat.tests:
             self._test_row(test)
 
-    def _get_name(self, stat, type_is_ignored):
-        return stat.mediumname
+    def _write_item_name(self, stat, type_is_ignored):
+        self._writer.content(stat.mediumname)
 
     def _tag_row(self, stat):
         self._writer.start('tr', {'class': 'tag_row'})
