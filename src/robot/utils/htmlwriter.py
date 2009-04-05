@@ -32,11 +32,11 @@ class HtmlWriter(AbstractXmlWriter):
         """
         self.output = output
         
-    def start_element(self, name, attrs=None, newline=True):
-        self._start_element(name, attrs, close=False, newline=newline)
+    def start(self, name, attrs=None, newline=True):
+        self._start(name, attrs, close=False, newline=newline)
         
-    def start_and_end_element(self, name, attrs=None, newline=True):
-        self._start_element(name, attrs, close=True, newline=newline) 
+    def start_and_end(self, name, attrs=None, newline=True):
+        self._start(name, attrs, close=True, newline=newline) 
                 
     def content(self, content=None, escape=True):
         if content is not None:
@@ -44,27 +44,27 @@ class HtmlWriter(AbstractXmlWriter):
                 content = self._escape_content(content)
             self._write(content)
 
-    def end_element(self, name, newline=True):
+    def end(self, name, newline=True):
         elem = '</%s>' % name
         if newline:
             elem += '\n'
         self._write(elem)
             
-    def whole_element(self, name, content=None, attrs=None, escape=True,
+    def element(self, name, content=None, attrs=None, escape=True,
                       newline=True):
-        self.start_element(name, attrs, newline=False)
+        self.start(name, attrs, newline=False)
         self.content(content, escape)
-        self.end_element(name, newline)
+        self.end(name, newline)
     
-    def start_elements(self, names, newline=True):
+    def starts(self, names, newline=True):
         for name in names:
-            self.start_element(name, newline=newline)
+            self.start(name, newline=newline)
             
-    def end_elements(self, names, newline=True):
+    def ends(self, names, newline=True):
         for name in names:
-            self.end_element(name, newline)
+            self.end(name, newline)
 
-    def _start_element(self, name, attrs, close=False, newline=True):
+    def _start(self, name, attrs, close=False, newline=True):
         elem = '<%s' % name
         attrs = self._process_attrs(attrs)
         if attrs:

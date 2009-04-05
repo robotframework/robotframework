@@ -32,7 +32,7 @@ class XmlWriter(AbstractXmlWriter):
         self.content('\n')
         self.closed = False
         
-    def start_element(self, name, attributes={}, newline=True):
+    def start(self, name, attributes={}, newline=True):
         attrs = AttributesImpl()
         for attrname, attrvalue in attributes.items():
             attrs.addAttribute('', '', attrname, '', attrvalue)
@@ -45,7 +45,7 @@ class XmlWriter(AbstractXmlWriter):
             content = self._encode(content)
             self._writer.characters(content, 0, len(content))
 
-    def end_element(self, name, newline=True):
+    def end(self, name, newline=True):
         self._writer.endElement('', '', name)
         if newline:
             self.content('\n')

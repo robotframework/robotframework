@@ -28,7 +28,7 @@ class XmlWriter(AbstractXmlWriter):
         self._writer.startDocument()
         self.closed = False
         
-    def start_element(self, name, attributes={}, newline=True):
+    def start(self, name, attributes={}, newline=True):
         attrs = AttributesImpl(attributes)
         self._writer.startElement(name, attrs)
         if newline:
@@ -38,7 +38,7 @@ class XmlWriter(AbstractXmlWriter):
         if content is not None:
             self._writer.characters(self._encode(content))
 
-    def end_element(self, name, newline=True):
+    def end(self, name, newline=True):
         self._writer.endElement(name)
         if newline:
             self.content('\n')

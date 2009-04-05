@@ -42,12 +42,12 @@ class XmlLogger:
         except:
             raise DataError("Opening output file '%s' for writing failed: %s"
                             % (path, utils.get_error_message()))
-        writer.start_element('robot', attrs)
+        writer.start('robot', attrs)
         return writer
         
     def _close_writer(self, writer):
         if not writer.closed:
-            writer.end_element('robot')
+            writer.end('robot')
             writer.close()
 
     def close(self, serialize_errors=False):
@@ -72,28 +72,28 @@ class XmlLogger:
     def _message(self, msg):
         html = msg.html and 'yes' or 'no'
         attrs = { 'timestamp': msg.timestamp, 'level': msg.level, 'html': html }
-        self._writer.whole_element('msg', msg.message, attrs)
+        self._writer.element('msg', msg.message, attrs)
 
     def start_keyword(self, kw):
         attrs = { 'name': kw.name, 'type': kw.type, 'timeout': kw.timeout }
-        self._writer.start_element('kw', attrs)
-        self._writer.whole_element('doc', kw.doc)
+        self._writer.start('kw', attrs)
+        self._writer.element('doc', kw.doc)
         self._write_list('arg', [utils.unic(a) for a in kw.args], 'arguments')
 
     def end_keyword(self, kw):
         self._write_status(kw)
-        self._writer.end_element('kw')
+        self._writer.end('kw')
 
     def start_test(self, test):
         attrs = { 'name': test.name, 'critical': test.critical,
                   'timeout': str(test.timeout) }
-        self._writer.start_element('test', attrs)
-        self._writer.whole_element('doc', test.doc)
+        self._writer.start('test', attrs)
+        self._writer.element('doc', test.doc)
 
     def end_test(self, test):
         self._write_list('tag', test.tags, 'tags')
         self._write_status(test, test.message)
-        self._writer.end_element('test')
+        self._writer.end('test')
 
     def start_suite(self, suite):
         if not self._writer:
@@ -118,12 +118,12 @@ class XmlLogger:
         attrs['name'] = suite.name
         if suite.source:
             attrs['source'] = suite.source
-        self._writer.start_element('suite', attrs)
-        self._writer.whole_element('doc', suite.doc)
-        self._writer.start_element('metadata')
+        self._writer.start('suite', attrs)
+        self._writer.element('doc', suite.doc)
+        self._writer.start('metadata')
         for name, value in suite.get_metadata():        
-            self._writer.whole_element('item', value, {'name': name})
-        self._writer.end_element('metadata')
+            self._writer.element('item', value, {'name': name})
+        self._writer.end('metadata')
 
     def end_suite(self, suite):
         self._suite_level -= 1
@@ -143,31 +143,31 @@ class XmlLogger:
     def _end_suite(self, suite):
         # Note that suites statistics message is _not_ written into xml
         self._write_status(suite, suite.message)
-        self._writer.end_element('suite')
+        self._writer.end('suite')
 
     def start_statistics(self, stats):
-        self._writer.start_element('statistics')
+        self._writer.start('statistics')
 
     def end_statistics(self, stats):
-        self._writer.end_element('statistics')
+        self._writer.end('statistics')
         
     def start_total_stats(self, total_stats):
-        self._writer.start_element('total')
+        self._writer.start('total')
 
     def end_total_stats(self, total_stats):
-        self._writer.end_element('total')
+        self._writer.end('total')
 
     def start_tag_stats(self, tag_stats):
-        self._writer.start_element('tag')
+        self._writer.start('tag')
 
     def end_tag_stats(self, tag_stats):
-        self._writer.end_element('tag')
+        self._writer.end('tag')
 
     def start_suite_stats(self, tag_stats):
-        self._writer.start_element('suite')
+        self._writer.start('suite')
 
     def end_suite_stats(self, tag_stats):
-        self._writer.end_element('suite')
+        self._writer.end('suite')
 
     def stat(self, stat):
         attrs = { 'pass' : str(stat.passed), 'fail' : str(stat.failed) }
@@ -175,7 +175,7 @@ class XmlLogger:
             attrs['info'] = self._get_tag_stat_info(stat)
         if stat.doc is not None:
             attrs['doc'] = stat.get_doc(self._split_level)
-        self._writer.whole_element('stat', stat.get_name(self._split_level), attrs)
+        self._writer.element('stat', stat.get_name(self._split_level), attrs)
 
     def _get_tag_stat_info(self, stat):
         if stat.critical is True:
@@ -187,20 +187,20 @@ class XmlLogger:
         return ''
 
     def start_errors(self):
-        self._writer.start_element('errors')
+        self._writer.start('errors')
         
     def end_errors(self):
-        self._writer.end_element('errors')
+        self._writer.end('errors')
         
     def _write_list(self, tag, items, container=None):
         if container is not None:
-            self._writer.start_element(container)
+            self._writer.start(container)
         for item in items:
-            self._writer.whole_element(tag, item)
+            self._writer.element(tag, item)
         if container is not None:
-            self._writer.end_element(container)
+            self._writer.end(container)
 
     def _write_status(self, item, message=None):
         attrs = { 'status': item.status, 'starttime': item.starttime, 
                   'endtime': item.endtime } 
-        self._writer.whole_element('status', message, attrs)
+        self._writer.element('status', message, attrs)

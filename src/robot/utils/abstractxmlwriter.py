@@ -26,19 +26,19 @@ _ILLEGAL_CHARS_IN_XML = [ u'\x00', u'\x01', u'\x02', u'\x03', u'\x04', u'\x05',
 
 class AbstractXmlWriter:
         
-    def start_element(self, name, attributes={}, newline=True):
+    def start(self, name, attributes={}, newline=True):
         raise NotImplementedError
         
     def content(self, content):
         raise NotImplementedError
 
-    def end_element(self, name, newline=True):
+    def end(self, name, newline=True):
         raise NotImplementedError
     
-    def whole_element(self, name, content=None, attributes={}, newline=True):
-        self.start_element(name, attributes, newline=False)
+    def element(self, name, content=None, attributes={}, newline=True):
+        self.start(name, attributes, newline=False)
         self.content(content)
-        self.end_element(name, newline)
+        self.end(name, newline)
 
     def close(self):
         raise NotImplementedError
