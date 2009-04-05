@@ -219,7 +219,7 @@ class LogErrorsSerializer:
 
     def message(self, msg):
         self._writer.start('tr')
-        self._writer.element('td', msg.timestamp.replace(' ', '&nbsp;')
+        self._writer.element('td', msg.timestamp.replace(' ', '&nbsp;'),
                              {'class': 'time'}, escape=False)
         self._writer.element('td', msg.level,
                              {'class': '%s level' % msg.level.lower()})
