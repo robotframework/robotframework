@@ -23,10 +23,12 @@ from robot.output import LOGGER, process_outputs, process_output
 
 import templates
 from templating import Namespace, Template
-from serializer import OutputSerializer, SummaryStatSerializer, \
-    ReportStatSerializer, ReportSuiteSerializer, ReportTagStatSerializer, \
-    LogStatSerializer, LogErrorsSerializer, LogSuiteSerializer, \
-    SplitLogSuiteSerializer, SplitLogStatSerializer, SplitReportSuiteSerializer
+from outputserializers import OutputSerializer
+from statserializers import LogStatSerializer, SplitLogStatSerializer, \
+     ReportStatSerializer, SummaryStatSerializer
+from logserializers import LogSuiteSerializer, SplitLogSuiteSerializer, \
+     LogErrorsSerializer
+from reportserializers import ReportSuiteSerializer, SplitReportSuiteSerializer, ReportTagStatSerializer
 
 
 class RobotTestOutput:
