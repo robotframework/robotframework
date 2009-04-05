@@ -1166,13 +1166,7 @@ title="Suites.Fourth.Suite4 First"&gt;Suite4 First&lt;/a&gt;</td>
 <td>${test}</td>
 <td>${status}=pass</td>
 </tr>
-<tr>
-<td></td>
-<td>${med_name} =</td>
-<td>Get Suite Medium Name</td>
-<td>${name}</td>
-<td>${suite}</td>
-</tr>
+
 <tr>
 <td></td>
 <td>${expected} =</td>
@@ -1183,7 +1177,7 @@ title="Suites.Fourth.Suite4 First"&gt;Suite4 First&lt;/a&gt;</td>
 <tr>
 <td></td>
 <td>...</td>
-<td>&lt;a class="splitname" href="${link}#suite_${name}" name="suite_${med_name}" title="${suite}.${name}"&gt;${name}&lt;/a&gt;</td>
+<td>&lt;a class="splitname" href="${link}#suite_${name}" name="suite_${suite}.${name}" title="${suite}.${name}"&gt;${name}&lt;/a&gt;</td>
 <td>&lt;/td&gt;\n &lt;/tr&gt;</td>
 <td></td>
 </tr>
@@ -1215,34 +1209,10 @@ title="Suites.Fourth.Suite4 First"&gt;Suite4 First&lt;/a&gt;</td>
 <td></td>
 <td></td>
 </tr>
-<tr>
-<td>Get Suite Medium Name</td>
-<td>[Arguments]</td>
-<td>${name}</td>
-<td>${suite}</td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td>${pre} =</td>
-<td>Evaluate</td>
-<td>'.'.join([ t[0].lower() for t in '${suite}'.split('.') ])</td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td>[Return]</td>
-<td>${pre}.${name}</td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
+
+
+
+
 <tr>
 <td>Log Should Contain Sub Log Content</td>
 <td>[Arguments]</td>

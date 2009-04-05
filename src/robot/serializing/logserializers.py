@@ -254,7 +254,7 @@ class SplitLogSerializer(LogSerializer):
                              {'class': suite.status.lower()}, escape=False)
         link = '%s#suite_%s' % (self._namegen.get_name(), suite.name)
         self._writer.element('a', suite.name, 
-                             {'name': 'suite_%s' % (suite.mediumname),
+                             {'name': 'suite_%s' % suite.longname,
                               'href': link, 'class': 'splitname',
                               'title': suite.longname})
         self._writer.end_many(['td', 'tr'])
