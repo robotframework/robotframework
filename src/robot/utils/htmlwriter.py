@@ -22,8 +22,8 @@ class HtmlWriter(AbstractXmlWriter):
     def __init__(self, output):
         """'output' is an open file object.
         
-        Given 'output' must have been opened with 'wb' to be able to write into
-        it with UTF-8 encoding.
+        Given 'output' must have been opened with 'wb' to be able to
+        write into it with UTF-8 encoding.
         
         'self.output.name' is later used by serializers
         """
@@ -36,7 +36,8 @@ class HtmlWriter(AbstractXmlWriter):
         self._start(name, attrs, close=True, newline=newline) 
                 
     def content(self, content=None, escape=True):
-        if content:
+        """Given content doesn't need to be a string"""
+        if content is not None:
             if escape:
                 content = self._escape_content(content)
             self._write(content)

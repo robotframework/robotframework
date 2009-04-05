@@ -82,12 +82,12 @@ class TestHtmlWriter(unittest.TestCase):
 
     def test_content_with_non_ascii_data(self):
         self.writer.start('robot', newline=False)
-        self.writer.content(u'Circle is 360\u00B0 ')
-        self.writer.content(u'Hyv\u00E4\u00E4 \u00FC\u00F6t\u00E4')
+        self.writer.content(u'Circle is 360\u00B0. ')
+        self.writer.content(u'Hyv\u00E4\u00E4 \u00FC\u00F6t\u00E4!')
         self.writer.end('robot', newline=False)
-        expected = u'<robot>Circle is 360\u00B0 Hyv\u00E4\u00E4 \u00FC\u00F6t\u00E4</robot>'
-        self._verify(expected)
-                   
+        expected = u'Circle is 360\u00B0. Hyv\u00E4\u00E4 \u00FC\u00F6t\u00E4!'
+        self._verify('<robot>%s</robot>' % expected)
+
     def test_multiple_content(self):
         self.writer.start('robot')
         self.writer.content('Hello world!')
@@ -104,6 +104,12 @@ class TestHtmlWriter(unittest.TestCase):
         self.writer.content(None)
         self._verify('<robot>\n')
     
+    def test_content_with_non_strings(self):
+        for i in range(10):
+            self.writer.content(i)
+        self.writer.content(False)
+        self._verify('0123456789False')
+        
     def test_close_empty(self):
         self.writer.end('suite', False)
         self._verify('</suite>')
