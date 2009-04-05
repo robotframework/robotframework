@@ -288,7 +288,7 @@ th {
 </tr>
 <tr>
 <td></td>
-<td>Link In Report To Index Log Should Be Ok</td>
+<td>Link In Suite Details Table To Index Log Should Be Ok</td>
 <td>${details}</td>
 <td>Misc</td>
 <td>split2.html</td>
@@ -302,7 +302,7 @@ th {
 </tr>
 <tr>
 <td></td>
-<td>Link In Report To Index Log Should Be Ok</td>
+<td>Link In&nbsp;Suite Details Table To Index Log Should Be Ok</td>
 <td>${details}</td>
 <td>Misc.Dummy Lib Test.Dummy Test</td>
 <td>split2.html</td>
@@ -316,7 +316,7 @@ th {
 </tr>
 <tr>
 <td></td>
-<td>Link In Report To Sub Log Should Be Ok</td>
+<td>Link In&nbsp;Suite Details Table To Sub Log Should Be Ok</td>
 <td>${details}</td>
 <td>Misc.Suites.Fourth</td>
 <td>split2-011.html</td>
@@ -330,7 +330,7 @@ th {
 </tr>
 <tr>
 <td></td>
-<td>Link In Report To Sub Log Should Be Ok</td>
+<td>Link In&nbsp;Suite Details Table To Sub Log Should Be Ok</td>
 <td>${details}</td>
 <td>Misc.Suites.Fourth.Suite4 First</td>
 <td>split2-011.html</td>
@@ -344,21 +344,15 @@ th {
 </tr>
 <tr>
 <td></td>
-<td>Link In Report To Index Log Should Be Ok</td>
+<td>Link In Tag Details Table To Index Log Should Be Ok</td>
 <td>${tags}</td>
 <td>Misc.Many Tests.First</td>
 <td>split2.html</td>
 </tr>
+
 <tr>
 <td></td>
-<td>...</td>
-<td>test</td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td>Link In Report To Sub Log Should Be Ok</td>
+<td>Link In Tag Details Table To Sub Log Should Be Ok</td>
 <td>${tags}</td>
 <td>Misc.Suites.Subsuites 2.Subsuite 3.SubSuite3 Second</td>
 <td>split2-013.html</td>
@@ -366,8 +360,8 @@ th {
 <tr>
 <td></td>
 <td>...</td>
-<td>test</td>
 <td>2</td>
+<td></td>
 <td></td>
 </tr>
 <tr>
@@ -462,18 +456,12 @@ th {
 </tr>
 <tr>
 <td><a name="keyword_Run Some Tests">Run Some Tests</a></td>
-<td>[Timeout]</td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td>Run Tests</td>
-<td></td>
-<td>misc</td>
+<td>Run Tests</td><td></td><td>misc</td>
+
+
 <td></td>
 </tr>
+
 
 
 <tr>
@@ -496,13 +484,7 @@ th {
 <td></td>
 <td></td>
 </tr>
-<tr>
-<td></td>
-<td>[Timeout]</td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
+
 <tr>
 <td></td>
 <td>Run Rebot</td>
@@ -512,7 +494,7 @@ th {
 </tr>
 <tr>
 <td></td>
-<td>Equals</td>
+<td>Should Be Equal</td>
 <td>${SUITE.status}</td>
 <td>FAIL</td>
 <td></td>
@@ -531,13 +513,7 @@ th {
 <td>${ext}</td>
 <td>${exp_count}</td>
 </tr>
-<tr>
-<td></td>
-<td>[Timeout]</td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
+
 <tr>
 <td></td>
 <td>@{files} =</td>
@@ -547,7 +523,7 @@ th {
 </tr>
 <tr>
 <td></td>
-<td>Fail Unless</td>
+<td>Should Be True</td>
 <td>len(@{files}) == ${exp_count}</td>
 <td></td>
 <td></td>
@@ -576,13 +552,13 @@ th {
 <tr>
 <td></td>
 <td></td>
-<td>Equals</td>
+<td>Should Be Equal</td>
 <td>@{files}[${i}]</td>
 <td>${base}-${id}.${ext}</td>
 </tr>
 <tr>
 <td></td>
-<td>Equals</td>
+<td>Should Be Equal</td>
 <td>@{files}[${id}]</td>
 <td>${base}.${ext}</td>
 <td></td>

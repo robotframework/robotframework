@@ -1,9 +1,7 @@
-
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html>
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<meta name="generator" content="RobotIDE" /> 
+<html><head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="generator" content="RobotIDE"> 
 <style type="text/css">
 html {
   font-family: Arial,Helvetica,sans-serif;
@@ -56,16 +54,13 @@ th {
   font-style: normal;
 }
 </style>
-<title>Split Log</title>
-</head>
+<title>Split Log</title></head>
 <body>
 <h1>Split Log</h1>
 
 <table border="1">
-<colgroup span="99">
-<col class="name">
-<col class="value" span="4"></colgroup>
-<tr>
+<colgroup span="99"><col class="name"><col class="value" span="4"></colgroup>
+<tbody><tr>
 <th>Setting</th>
 <th>Value</th>
 <th>Value</th>
@@ -74,30 +69,26 @@ th {
 </tr>
 <tr>
 <td>Documentation</td>
-<td>Tests for making sure splitting logs into multiple html files works while running tests These tests assume that splitting outputs to multiple xmls works in the first place.</td>
+<td>Tests for making sure splitting logs into multiple html files works
+while running tests These tests assume that splitting outputs to
+multiple xmls works in the first place.</td>
 <td></td>
 <td></td>
 <td></td>
 </tr>
-<tr>
-<td>Default Tags</td>
-<td>regression</td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
+
 <tr>
 <td>Force Tags</td>
 <td>pybot</td>
 <td>jybot</td>
-<td></td>
+<td>regression</td>
 <td></td>
 </tr>
 <tr>
 <td>Suite Setup</td>
 <td>My Run Tests</td>
 <td>--splitoutputs 1 --log subsuites-log --report subsuites-report --variable SLEEP:1.1s</td>
-<td>misc${/}suites${/}subsuites</td>
+<td>misc/suites/subsuites</td>
 <td></td>
 </tr>
 <tr>
@@ -121,13 +112,11 @@ th {
 <td></td>
 <td></td>
 </tr>
-</table>
+</tbody></table>
 
 <table border="1">
-<colgroup span="99">
-<col class="name">
-<col class="value" span="4"></colgroup>
-<tr>
+<colgroup span="99"><col class="name"><col class="value" span="4"></colgroup>
+<tbody><tr>
 <th>Variable</th>
 <th>Value</th>
 <th>Value</th>
@@ -141,14 +130,11 @@ th {
 <td></td>
 <td></td>
 </tr>
-</table>
+</tbody></table>
 
 <table border="1">
-<colgroup span="99">
-<col class="name">
-<col class="action">
-<col class="arg" span="3"></colgroup>
-<tr>
+<colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
+<tbody><tr>
 <th>Test Case</th>
 <th>Action</th>
 <th>Argument</th>
@@ -158,7 +144,7 @@ th {
 <tr>
 <td>Correct Sub Logs Should Be Created</td>
 <td>@{files} =</td>
-<td>List Dir</td>
+<td>List Directory</td>
 <td>${OUTDIR}</td>
 <td>${LOGBASE}*.html</td>
 </tr>
@@ -201,21 +187,21 @@ th {
 <td>Sub Logs Should Have Been Created Before Finishing Index</td>
 <td>${sub1} =</td>
 <td>Get Modified Time</td>
-<td>${OUTDIR}${/}${LOGBASE}-001.html</td>
+<td>${OUTDIR}/${LOGBASE}-001.html</td>
 <td>epoch</td>
 </tr>
 <tr>
 <td></td>
 <td>${sub2} =</td>
 <td>Get Modified Time</td>
-<td>${OUTDIR}${/}${LOGBASE}-002.html</td>
+<td>${OUTDIR}/${LOGBASE}-002.html</td>
 <td>epoch</td>
 </tr>
 <tr>
 <td></td>
 <td>${index} =</td>
 <td>Get Modified Time</td>
-<td>${OUTDIR}${/}${LOGBASE}.html</td>
+<td>${OUTDIR}/${LOGBASE}.html</td>
 <td>epoch</td>
 </tr>
 <tr>
@@ -236,7 +222,7 @@ th {
 <td>Index Log Should Have Links To Sub Logs But No Sub Log Content</td>
 <td>${index} =</td>
 <td>Get File</td>
-<td>${OUTDIR}${/}${LOGBASE}.html</td>
+<td>${OUTDIR}/${LOGBASE}.html</td>
 <td></td>
 </tr>
 <tr>
@@ -278,7 +264,7 @@ th {
 <td>Sub Logs Should Have Correct Content</td>
 <td>${sublog} =</td>
 <td>Get File</td>
-<td>${OUTDIR}${/}${LOGBASE}-002.html</td>
+<td>${OUTDIR}/${LOGBASE}-002.html</td>
 <td></td>
 </tr>
 <tr>
@@ -312,15 +298,15 @@ th {
 <tr>
 <td>Report Should Have Correct Links</td>
 <td>${report} =</td>
-<td>Set</td>
-<td>${LOGBASE.replace('log','report')}.html</td>
-<td></td>
+<td>Set Variable</td>
+<td>${LOGBASE.replace('log','report')}</td>
+<td><br></td>
 </tr>
 <tr>
 <td></td>
 <td>${index} =</td>
 <td>Get File</td>
-<td>${OUTDIR}${/}${report}</td>
+<td>${OUTDIR}/${report}.html</td>
 <td></td>
 </tr>
 <tr>
@@ -332,7 +318,7 @@ th {
 </tr>
 <tr>
 <td></td>
-<td>Link In Report To Index Log Should Be Ok</td>
+<td>Link In Suite Details Table To Index Log Should Be Ok</td>
 <td>${details}</td>
 <td>Subsuites</td>
 <td>${LOGBASE}.html</td>
@@ -346,7 +332,7 @@ th {
 </tr>
 <tr>
 <td></td>
-<td>Link In Report To Sub Log Should Be Ok</td>
+<td>Link In Suite Details Table To Sub Log Should Be Ok</td>
 <td>${details}</td>
 <td>Subsuites.Sub 1</td>
 <td>${LOGBASE}-001.html</td>
@@ -360,7 +346,7 @@ th {
 </tr>
 <tr>
 <td></td>
-<td>Link In Report To Sub Log Should Be Ok</td>
+<td>Link In Suite Details Table To Sub Log Should Be Ok</td>
 <td>${details}</td>
 <td>Subsuites.Sub 1.SubSuite1 First</td>
 <td>${LOGBASE}-001.html</td>
@@ -374,32 +360,20 @@ th {
 </tr>
 <tr>
 <td></td>
-<td>Link In Report To Sub Log Should Be Ok</td>
+<td>Link In Tag&nbsp;Details Table To Sub Log Should Be Ok</td>
 <td>${tags}</td>
 <td>Subsuites.Sub 1.SubSuite1 First</td>
 <td>${LOGBASE}-001.html</td>
 </tr>
+
 <tr>
 <td></td>
-<td>...</td>
-<td>test</td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td>Link In Report To Sub Log Should Be Ok</td>
+<td>Link In Tag&nbsp;Details Table To Sub Log Should Be Ok</td>
 <td>${tags}</td>
 <td>Subsuites.Sub 2.SubSuite2 First</td>
 <td>${LOGBASE}-002.html</td>
 </tr>
-<tr>
-<td></td>
-<td>...</td>
-<td>test</td>
-<td></td>
-<td></td>
-</tr>
+
 <tr>
 <td></td>
 <td></td>
@@ -440,7 +414,7 @@ th {
 <td>@{files} =</td>
 <td>My Run Tests</td>
 <td>--SplitOutputs 1 --log mylog.html</td>
-<td>misc${/}normal.html</td>
+<td>misc/normal.html</td>
 </tr>
 <tr>
 <td></td>
@@ -460,7 +434,7 @@ th {
 <td></td>
 <td>${index} =</td>
 <td>Get File</td>
-<td>${OUTDIR}${/}mylog.html</td>
+<td>${OUTDIR}/mylog.html</td>
 <td></td>
 </tr>
 <tr>
@@ -509,7 +483,7 @@ th {
 <td></td>
 <td>${index} =</td>
 <td>Log File</td>
-<td>${OUTDIR}${/}${LOGBASE}.html</td>
+<td>${OUTDIR}/${LOGBASE}.html</td>
 <td></td>
 </tr>
 <tr>
@@ -698,14 +672,16 @@ th {
 <td></td>
 <td>${index} =</td>
 <td>Get File</td>
-<td>${OUTDIR}${/}nestedsuite2.html</td>
+<td>${OUTDIR}/nestedsuite2.html</td>
 <td></td>
 </tr>
 <tr>
 <td></td>
 <td>Should Contain</td>
 <td>${index}</td>
-<td>&lt;span class="fail"&gt;TEST&amp;nbsp;CASE: &lt;/span&gt;\n&lt;a class="name" name="test_Suites.Fourth.Suite4 First" title="Suites.Fourth.Suite4 First"&gt;Suite4 First&lt;/a&gt;</td>
+<td>&lt;span class="fail"&gt;TEST&amp;nbsp;CASE: &lt;/span&gt;\n&lt;a
+class="name" name="test_Suites.Fourth.Suite4 First"
+title="Suites.Fourth.Suite4 First"&gt;Suite4 First&lt;/a&gt;</td>
 <td></td>
 </tr>
 <tr>
@@ -775,7 +751,7 @@ th {
 <td></td>
 <td>${index} =</td>
 <td>Get File</td>
-<td>${OUTDIR}${/}${LOGBASE}.html</td>
+<td>${OUTDIR}/${LOGBASE}.html</td>
 <td></td>
 </tr>
 <tr>
@@ -873,21 +849,16 @@ th {
 <td></td>
 <td>${sub_outs} =</td>
 <td>Join Path</td>
-<td>${OUTPUTDIR}</td>
-<td>output${/}suites</td>
-</tr>
-<tr>
-<td></td>
-<td>...</td>
-<td>output-*.xml</td>
-<td></td>
-<td></td>
-</tr>
+<td>${OUTPUTDIR}/output/suites
+
+
+</td>
+<td>output-*.xml</td></tr>
 <tr>
 <td></td>
 <td>Run Tests Without Processing Output</td>
 <td>--SplitOutputs 1 --log rm_sub_outs_1.html --variable SUITE_TEARDOWN_KW:Remove_File --variable SUITE_TEARDOWN_ARG:${sub_outs}</td>
-<td>misc${/}suites</td>
+<td>misc/suites</td>
 <td></td>
 </tr>
 <tr>
@@ -943,7 +914,7 @@ th {
 <td></td>
 <td>Run Tests Without Processing Output</td>
 <td>--SplitOutputs 2 --log rm_sub_outs_2.html --variable SUITE_TEARDOWN_KW:Remove_File --variable SUITE_TEARDOWN_ARG:${sub_outs}</td>
-<td>misc${/}suites</td>
+<td>misc/suites</td>
 <td></td>
 </tr>
 <tr>
@@ -984,7 +955,7 @@ th {
 <tr>
 <td></td>
 <td></td>
-<td>Contains</td>
+<td>Should Contain</td>
 <td>${index}</td>
 <td>Removed file '&lt;a href="${path}"&gt;${path}&lt;/a&gt;'</td>
 </tr>
@@ -1002,14 +973,11 @@ th {
 <td></td>
 <td></td>
 </tr>
-</table>
+</tbody></table>
 
 <table border="1">
-<colgroup span="99">
-<col class="name">
-<col class="action">
-<col class="arg" span="3"></colgroup>
-<tr>
+<colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
+<tbody><tr>
 <th>Keyword</th>
 <th>Action</th>
 <th>Argument</th>
@@ -1028,7 +996,7 @@ th {
 <td>@{files} =</td>
 <td>My Run Tests</td>
 <td>--SplitOutputs ${level} --log nestedsuite${level} --critical t1</td>
-<td>misc${/}suites</td>
+<td>misc/suites</td>
 </tr>
 <tr>
 <td></td>
@@ -1110,7 +1078,7 @@ th {
 <tr>
 <td></td>
 <td>Remove File</td>
-<td>${OUTDIR}${/}${LOGBASE}*.html</td>
+<td>${OUTDIR}/${LOGBASE}*.html</td>
 <td></td>
 <td></td>
 </tr>
@@ -1496,7 +1464,7 @@ th {
 <td></td>
 <td>${index} =</td>
 <td>Get File</td>
-<td>${logdir}${/}${logname}.html</td>
+<td>${logdir}/${logname}.html</td>
 <td></td>
 </tr>
 <tr>
@@ -1657,7 +1625,7 @@ th {
 <td></td>
 <td>${index} =</td>
 <td>Get File</td>
-<td>${logdir}${/}${logname}.html</td>
+<td>${logdir}/${logname}.html</td>
 <td></td>
 </tr>
 <tr>
@@ -1737,7 +1705,6 @@ th {
 <td></td>
 <td></td>
 </tr>
-</table>
+</tbody></table>
 
-</body>
-</html>
+</body></html>
