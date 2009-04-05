@@ -50,18 +50,16 @@ class _StatSerializer:
         if stat.type == 'tag':
             self._tag_stat_link(stat)
         self._writer.end('td')
-        self._writer.element('td', str(stat.passed + stat.failed), 
+        self._writer.element('td', stat.passed + stat.failed,
                              {'class': 'col_stat'})
         self._writer.element('td', stat.passed, {'class': 'col_stat'})
         self._writer.element('td', stat.failed, {'class': 'col_stat'})
         self._writer.start('td', {'class': 'col_graph'})
         self._writer.start('div', {'class': 'graph'})
-        pass_attrs, fail_attrs = self._get_graph_attrs(stat)
-        self._writer.element('b', None, pass_attrs)
-        self._writer.element('b', None, fail_attrs)
+        self._write_graph(stat)
         self._writer.end_many(['div', 'td', 'tr'])
         
-    def _get_graph_attrs(self, stat):
+    def _write_graph(self, stat):
         # See utils.percents_to_widths to understand why different percent and 
         # width values are needed 
         percents = utils.calc_percents(stat.passed, stat.failed)
@@ -70,7 +68,8 @@ class _StatSerializer:
                       'style': 'width: %.2f%%;' % widths[0]}
         fail_attrs = {'class': 'fail_bar', 'title': '%.1f%%' % percents[1],
                       'style': 'width: %.2f%%;' % widths[1]}
-        return pass_attrs, fail_attrs
+        self._writer.element('b', None, pass_attrs)
+        self._writer.element('b', None, fail_attrs)
 
     def _statistics_table(self, statistics, title):
         self._writer.start('table', {'class': 'statistics'})
