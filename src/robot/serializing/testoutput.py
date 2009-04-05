@@ -26,9 +26,9 @@ from templating import Namespace, Template
 from outputserializers import OutputSerializer
 from statserializers import LogStatSerializer, SplitLogStatSerializer, \
      ReportStatSerializer, SummaryStatSerializer
-from logserializers import LogSuiteSerializer, SplitLogSuiteSerializer, \
-     LogErrorsSerializer
-from reportserializers import ReportSuiteSerializer, SplitReportSuiteSerializer, ReportTagStatSerializer
+from logserializers import LogSerializer, SplitLogSerializer, ErrorSerializer
+from reportserializers import ReportSerializer, SplitReportSerializer, \
+     TagDetailsSerializer
 
 
 class RobotTestOutput:
@@ -66,9 +66,9 @@ class RobotTestOutput:
         
     def serialize_summary(self, path, title=None):
         outfile = self._get_outfile(path, 'summary')
-        if outfile is None:
+        if not outfile:
             return
-        if title is None:
+        if not title:
             title = get_title('Summary', self.suite.name)
         self._use_template(outfile, templates.REPORT, title)
         self.statistics.serialize(SummaryStatSerializer(outfile))
@@ -78,28 +78,28 @@ class RobotTestOutput:
         
     def serialize_report(self, path, title=None, logpath=None, split=-1):
         outfile = self._get_outfile(path, 'report')
-        if outfile is None:
+        if not outfile:
             return
-        if title is None:
+        if not title:
             title = get_title('Report', self.suite.name)
         if logpath == 'NONE':
             logpath = None
         self._use_template(outfile, templates.REPORT, title)
         self.statistics.serialize(ReportStatSerializer(outfile))
-        if split > 0 and logpath is not None:
-            self.suite.serialize(SplitReportSuiteSerializer(outfile, logpath, split))
+        if split > 0 and logpath:
+            self.suite.serialize(SplitReportSerializer(outfile, logpath, split))
         else:
-            self.suite.serialize(ReportSuiteSerializer(outfile, logpath))
-        self.statistics.tags.serialize(ReportTagStatSerializer(outfile))
+            self.suite.serialize(ReportSerializer(outfile, logpath))
+        self.statistics.tags.serialize(TagDetailsSerializer(outfile))
         outfile.write('</body>\n</html>\n')
         outfile.close()
         LOGGER.output_file('Report', path)
         
     def serialize_log(self, path, title=None, split=-1):
         outfile = self._get_outfile(path, 'log')
-        if outfile is None:
+        if not outfile:
             return
-        if title is None:
+        if not title:
             title = get_title('Log', self.suite.name)
         self._use_template(outfile, templates.LOG, title)
         if split > 0:
@@ -112,13 +112,13 @@ class RobotTestOutput:
             
     def _serialize_log(self, outfile):
         self.statistics.serialize(LogStatSerializer(outfile))
-        self.exec_errors.serialize(LogErrorsSerializer(outfile))            
-        self.suite.serialize(LogSuiteSerializer(outfile))
+        self.exec_errors.serialize(ErrorSerializer(outfile))            
+        self.suite.serialize(LogSerializer(outfile))
             
     def _serialize_split_log(self, outfile, level):
         self.statistics.serialize(SplitLogStatSerializer(outfile, level))
-        self.exec_errors.serialize(LogErrorsSerializer(outfile))
-        self.suite.serialize(SplitLogSuiteSerializer(outfile, level))
+        self.exec_errors.serialize(ErrorSerializer(outfile))
+        self.suite.serialize(SplitLogSerializer(outfile, level))
         self._create_split_sub_logs(self.suite, level)
         
     def _create_split_sub_logs(self, suite, level):
@@ -166,11 +166,11 @@ class RebotTestOutput(RobotTestOutput):
             
     def _create_split_sub_log(self, suite, split_level): 
         outfile = self._get_outfile(self._namegen.get_name(), 'log')
-        if outfile is None:
+        if not outfile:
             return
         self._use_template(outfile, templates.LOG, get_title('Log', suite.name))
         Statistics(suite).serialize(LogStatSerializer(outfile, split_level))
-        suite.serialize(LogSuiteSerializer(outfile, split_level))
+        suite.serialize(LogSerializer(outfile, split_level))
         outfile.write('</body>\n</html>\n')
         outfile.close()
 
@@ -203,5 +203,5 @@ class SplitIndexTestOutput(RobotTestOutput):
 
     def _serialize_split_log(self, outfile, level):
         self.statistics.serialize(SplitLogStatSerializer(outfile, level))
-        self.exec_errors.serialize(LogErrorsSerializer(outfile))
-        self._outsuite.serialize(SplitLogSuiteSerializer(outfile, level))
+        self.exec_errors.serialize(ErrorSerializer(outfile))
+        self._outsuite.serialize(SplitLogSerializer(outfile, level))

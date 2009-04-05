@@ -16,7 +16,7 @@
 from robot import utils
 
 
-class _ReportTableHelper:
+class _TableHelper:
 
     def _start_table(self, name, tag_column_name):
         self._writer.start('table', {'class': name})
@@ -50,8 +50,7 @@ class _ReportTableHelper:
                              escape=False)
 
     def _get_name_params(self, item, type_):
-        attrs = { 'id' : '%s_%s' % (type_, item.longname),
-                  'title' : item.longname }
+        attrs = {'id': '%s_%s' % (type_,item.longname), 'title': item.longname}
         if item.linkpath:
             elem = 'a'
             attrs['href'] = '%s#%s_%s' % (item.linkpath, type_, item.linkname)
@@ -66,7 +65,7 @@ class _ReportTableHelper:
                              {'class': 'col_status %s' % test.status.lower()})
         self._writer.element('td', test.message, {'class': 'col_msg'})
         self._writer.element('td', self._get_times(test), 
-                             {'class': 'col_times'}, escape=False )
+                             {'class': 'col_times'}, escape=False)
         self._writer.end('tr')
 
     def _get_times(self, item):
@@ -87,7 +86,7 @@ class _ReportTableHelper:
         return '%s<br />%s' % (start, elapsed)
 
 
-class ReportSuiteSerializer(_ReportTableHelper):
+class ReportSerializer(_TableHelper):
 
     end_test = start_keyword = end_keyword = message = lambda self, arg: None
 
@@ -122,7 +121,7 @@ class ReportSuiteSerializer(_ReportTableHelper):
         
     def _set_test_link(self, test):
         # Separate _set_test/suite_link methods are needed to allow overriding
-        # them separately in SplitReportSuiteSerializer
+        # them separately in SplitReportSerializer
         test.linkpath = self._loglink
         test.linkname = test.longname
             
@@ -143,16 +142,16 @@ class ReportSuiteSerializer(_ReportTableHelper):
         self._writer.end('tr')
 
     
-class SplitReportSuiteSerializer(ReportSuiteSerializer):
+class SplitReportSerializer(ReportSerializer):
     
     def __init__(self, output, logpath, split_level):
-        ReportSuiteSerializer.__init__(self, output, logpath)
+        ReportSerializer.__init__(self, output, logpath)
         self._split_level = split_level
         self._namegen = utils.FileNameGenerator(self._loglink)
         
     def _set_suite_link(self, suite):
         if self._suite_level <= self._split_level:
-            ReportSuiteSerializer._set_suite_link(self, suite)
+            ReportSerializer._set_suite_link(self, suite)
         else:
             if self._suite_level == self._split_level + 1:
                 self._split_loglink = self._namegen.get_name()
@@ -160,7 +159,7 @@ class SplitReportSuiteSerializer(ReportSuiteSerializer):
         
     def _set_test_link(self, test):
         if self._suite_level <= self._split_level:
-            ReportSuiteSerializer._set_test_link(self, test)
+            ReportSerializer._set_test_link(self, test)
         else:
             self._set_split_link(test)
 
@@ -169,7 +168,7 @@ class SplitReportSuiteSerializer(ReportSuiteSerializer):
         item.linkname = item.get_long_name(split_level=self._split_level)
 
     
-class ReportTagStatSerializer(_ReportTableHelper):
+class TagDetailsSerializer(_TableHelper):
     
     def __init__(self, output):
         self._writer = utils.HtmlWriter(output)

@@ -18,31 +18,7 @@ import os.path
 from robot import utils
     
 
-class LogErrorsSerializer:
-    
-    def __init__(self, output):
-        self._writer = utils.HtmlWriter(output)
-
-    def start_errors(self, errors):
-        if errors.messages:
-            self._writer.element('h2', 'Test Execution Errors')
-            self._writer.start('table', {'class': 'errors'})
-
-    def message(self, msg):
-        self._writer.start('tr')
-        self._writer.element('td', msg.timestamp.replace(' ', '&nbsp;'),
-                             {'class': 'time'}, escape=False)
-        self._writer.element('td', msg.level,
-                             {'class': '%s level' % msg.level.lower()})
-        self._writer.element('td', msg.message, {'class': 'msg'})
-        self._writer.end('tr')    
-
-    def end_errors(self, errors):
-        if errors.messages:
-            self._writer.end('table')
-
-
-class LogSuiteSerializer:
+class LogSerializer:
 
     def __init__(self, output, split_level=-1):
         self._writer = utils.HtmlWriter(output)
@@ -118,8 +94,8 @@ class LogSuiteSerializer:
         
     def _write_expand_all(self, item):
         # Overridden by testdoc.py tool.
-        attrs = { 'href': "javascript:expand_all_children('%s')" % item.id,
-                  'class': 'expand' }
+        attrs = {'href': "javascript:expand_all_children('%s')" % item.id,
+                 'class': 'expand'}
         self._writer.element('a', 'Expand All', attrs)
         
     def _write_keyword_name(self, kw):
@@ -157,8 +133,8 @@ class LogSuiteSerializer:
         self._write_button(fold, 'block', item.id+'_foldlink', onclk)
         
     def _write_button(self, label, display, id_, onclick):
-        attrs = { 'style': 'display: %s;' % display, 'class': 'foldingbutton', 
-                  'id': id_, 'onclick': onclick }
+        attrs = {'style': 'display: %s;' % display, 'class': 'foldingbutton', 
+                 'id': id_, 'onclick': onclick}
         self._writer.element('div', label, attrs)
         
     def _is_element_open(self, item):
@@ -227,47 +203,47 @@ class LogSuiteSerializer:
         pass
 
 
-class SplitLogSuiteSerializer(LogSuiteSerializer):
+class SplitLogSerializer(LogSerializer):
 
     def __init__(self, output, split_level):
-        LogSuiteSerializer.__init__(self, output, split_level)
+        LogSerializer.__init__(self, output, split_level)
         self._namegen = utils.FileNameGenerator(os.path.basename(output.name))
         
     def start_suite(self, suite):
         if self._suite_level <= self._split_level:
-            LogSuiteSerializer.start_suite(self, suite)
+            LogSerializer.start_suite(self, suite)
         else:
             self._suite_level += 1
         
     def end_suite(self, suite):
         if self._suite_level <= self._split_level + 1:
-            LogSuiteSerializer.end_suite(self, suite)
+            LogSerializer.end_suite(self, suite)
         else:
             self._suite_level -= 1
 
     def start_test(self, test):
         if self._suite_level <= self._split_level:
-            LogSuiteSerializer.start_test(self, test)
+            LogSerializer.start_test(self, test)
             
     def end_test(self, test):
         if self._suite_level <= self._split_level:
-            LogSuiteSerializer.end_test(self, test)
+            LogSerializer.end_test(self, test)
             
     def start_keyword(self, kw):
         if self._suite_level <= self._split_level:
-            LogSuiteSerializer.start_keyword(self, kw)
+            LogSerializer.start_keyword(self, kw)
             
     def end_keyword(self, kw):
         if self._suite_level <= self._split_level:
-            LogSuiteSerializer.end_keyword(self, kw)
+            LogSerializer.end_keyword(self, kw)
     
     def message(self, msg):
         if self._suite_level <= self._split_level:
-            LogSuiteSerializer.message(self, msg)
+            LogSerializer.message(self, msg)
             
     def _write_suite_or_test_name(self, item, type_):
         if type_ == 'test' or self._suite_level < self._split_level:
-            LogSuiteSerializer._write_suite_or_test_name(self, item, type_)
+            LogSerializer._write_suite_or_test_name(self, item, type_)
         elif self._suite_level == self._split_level:
             self._write_split_suite_name(item)
             
@@ -288,3 +264,27 @@ class SplitLogSuiteSerializer(LogSuiteSerializer):
             name = self._namegen.get_prev()
             link = '<a href="%s">%s</a>' % (name, name)
             self._write_metadata_row('Details', link, escape=False)
+
+
+class ErrorSerializer:
+    
+    def __init__(self, output):
+        self._writer = utils.HtmlWriter(output)
+
+    def start_errors(self, errors):
+        if errors.messages:
+            self._writer.element('h2', 'Test Execution Errors')
+            self._writer.start('table', {'class': 'errors'})
+
+    def message(self, msg):
+        self._writer.start('tr')
+        self._writer.element('td', msg.timestamp.replace(' ', '&nbsp;'),
+                             {'class': 'time'}, escape=False)
+        self._writer.element('td', msg.level,
+                             {'class': '%s level' % msg.level.lower()})
+        self._writer.element('td', msg.message, {'class': 'msg'})
+        self._writer.end('tr')    
+
+    def end_errors(self, errors):
+        if errors.messages:
+            self._writer.end('table')
