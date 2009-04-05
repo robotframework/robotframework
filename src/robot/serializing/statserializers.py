@@ -44,21 +44,50 @@ class _StatSerializer:
     end_tag_stats = end_suite_stats = end_total_stats
 
     def total_stat(self, stat):
-        self._stat(stat)
+        elem = self._start_stat_name(stat)
+        self._write_stat_name(stat)
+        self._end_stat_name(elem)
+        self._write_numbers_and_graph(stat)
 
     def suite_stat(self, stat):
-        self._stat(stat)
+        elem = self._start_stat_name(stat)
+        self._write_stat_name(stat)
+        self._end_stat_name(elem)
+        self._write_numbers_and_graph(stat)
 
     def tag_stat(self, stat):
-        self._stat(stat)
+        elem = self._start_stat_name(stat)
+        self._write_stat_name(stat)
+        self._end_tag_stat_name(elem, stat)
+        self._write_numbers_and_graph(stat)
 
-    def _stat(self, stat):
+    def _start_stat_name(self, stat):
         self._writer.start('tr')
         self._writer.start('td', {'class': 'col_stat_name'})
-        self._stat_name(stat)
-        if stat.type == 'tag':
-            self._tag_stat_link(stat)
+        self._writer.start('div', {'class': 'stat_name'}, newline=False)
+        elem, attrs = self._get_element_name_and_attrs(stat)
+        doc = self._get_doc(stat)
+        if doc:
+            attrs['title'] = doc
+        self._writer.start(elem, attrs, newline=False)
+        return elem
+
+    def _write_stat_name(self, stat):
+        self._writer.content(self._get_name(stat))
+
+    def _end_stat_name(self, elem):
+        self._writer.end(elem, newline=False)
+        self._writer.end('div')
         self._writer.end('td')
+
+    def _end_tag_stat_name(self, elem, stat):
+        self._writer.end(elem, newline=False)
+        self._write_tag_criticality(stat)
+        self._writer.end('div')
+        self._write_tag_stat_link(stat)
+        self._writer.end('td')
+
+    def _write_numbers_and_graph(self, stat):
         self._writer.element('td', stat.passed + stat.failed,
                              {'class': 'col_stat'})
         self._writer.element('td', stat.passed, {'class': 'col_stat'})
@@ -105,37 +134,19 @@ class _StatSerializer:
                                          'style': 'width: 100%;'})
         self._writer.end_many(['div', 'td', 'tr'])
 
-    def _stat_name(self, stat):
-        self._writer.start('div', {'class': 'stat_name'}, newline=False)
-        elem = self._get_element_name(stat)
-        attrs = elem == 'a' and self._get_link_attributes(stat) or {}
-        doc = self._get_doc_attribute(stat)
-        if doc:
-            attrs['title'] = doc
-        name = self._get_name_attribute(stat)
-        self._writer.element(elem, name, attrs, newline=False)
-        self._write_criticality(stat)
-        self._writer.end('div')
-
-    def _get_doc_attribute(self, stat):
+    def _get_doc(self, stat):
         return stat.get_doc()
 
-    def _get_name_attribute(self, stat):
+    def _get_name(self, stat):
         return stat.get_name()
-        
-    def _get_link_attributes(self, stat):
-        raise NotImplementedError
-
-    def _get_element_name(self, stat):
-        raise NotImplementedError
             
-    def _write_criticality(self, stat):
-        if stat.type == 'tag' and stat.critical:
+    def _write_tag_criticality(self, stat):
+        if stat.critical:
             self._writer.content(' (critical)')
-        if stat.type == 'tag' and stat.non_critical:
+        if stat.non_critical:
             self._writer.content(' (non-critical)')
 
-    def _tag_stat_link(self, stat):
+    def _write_tag_stat_link(self, stat):
         self._writer.start('div', {'class': 'tag_links'})
         for link, title in stat.links:
             self._writer.start('span', newline=False)
@@ -152,8 +163,10 @@ class _BaseLogStatSerializer(_StatSerializer):
         _StatSerializer.__init__(self, output)
         self._split_level = split_level
 
-    def _get_element_name(self, stat):
-        return stat.type == 'suite' and 'a' or 'span'
+    def _get_element_name_and_attrs(self, stat):
+        if stat.type == 'suite':
+            return 'a', self._get_link_attributes(stat)
+        return 'span', {}
 
     def _get_link_attributes(self, stat):
         target = '%s_%s' % (stat.type, stat.get_link(self._split_level))
@@ -163,10 +176,10 @@ class _BaseLogStatSerializer(_StatSerializer):
 
 class LogStatSerializer(_BaseLogStatSerializer):
 
-    def _get_doc_attribute(self, stat):
+    def _get_doc(self, stat):
         return stat.get_doc(self._split_level)
 
-    def _get_name_attribute(self, stat):
+    def _get_name(self, stat):
         return stat.get_name(self._split_level)
 
 
@@ -177,23 +190,21 @@ class SplitLogStatSerializer(_BaseLogStatSerializer):
         self._namegen = utils.FileNameGenerator(os.path.basename(output.name))
                 
     def _get_link_attributes(self, stat):        
-        if not stat.should_link_to_sub_log(self._split_level):
-            return _BaseLogStatSerializer._get_link_attributes(self, stat)
-        self._link_target = self._namegen.get_name()
-        return {'href': '%s#%s_%s' % (self._link_target, stat.type, 
-                                      stat.get_link(self._split_level))}
+        if stat.should_link_to_sub_log(self._split_level):
+            return {'href': '%s#%s_%s' % (self._namegen.get_name(), stat.type, 
+                                          stat.get_link(self._split_level))}
+        return _BaseLogStatSerializer._get_link_attributes(self, stat)
 
 
 class ReportStatSerializer(_StatSerializer):
 
-    def _get_element_name(self, stat):
-        return stat.type in ['suite', 'tag'] and 'a' or 'span'
-
-    def _get_link_attributes(self, stat):
-        return {'href': '#%s_%s' % (stat.type, stat.get_link())}
+    def _get_element_name_and_attrs(self, stat):
+        if stat.type in ['suite', 'tag']:
+            return 'a', {'href': '#%s_%s' % (stat.type, stat.get_link())}
+        return 'span', {}
 
 
 class SummaryStatSerializer(_StatSerializer):
 
-    def _get_element_name(self, stat):
-        return 'span'
+    def _get_element_name_and_attrs(self, stat):
+        return 'span', {}
