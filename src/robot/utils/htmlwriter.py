@@ -12,9 +12,6 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-
-from types import UnicodeType
-
 from abstractxmlwriter import AbstractXmlWriter
 from htmlutils import html_escape, html_attr_escape
 from robottypes import unic
@@ -39,7 +36,7 @@ class HtmlWriter(AbstractXmlWriter):
         self._start(name, attrs, close=True, newline=newline) 
                 
     def content(self, content=None, escape=True):
-        if content is not None:
+        if content:
             if escape:
                 content = self._escape_content(content)
             self._write(content)
@@ -51,42 +48,38 @@ class HtmlWriter(AbstractXmlWriter):
         self._write(elem)
             
     def element(self, name, content=None, attrs=None, escape=True,
-                      newline=True):
+                newline=True):
         self.start(name, attrs, newline=False)
         self.content(content, escape)
         self.end(name, newline)
     
-    def starts(self, names, newline=True):
+    def start_many(self, names, newline=True):
         for name in names:
             self.start(name, newline=newline)
             
-    def ends(self, names, newline=True):
+    def end_many(self, names, newline=True):
         for name in names:
             self.end(name, newline)
 
     def _start(self, name, attrs, close=False, newline=True):
         elem = '<%s' % name
-        attrs = self._process_attrs(attrs)
-        if attrs:
-            elem += ' ' + attrs
+        elem = self._add_attrs(elem, attrs)
         elem += (close and ' />' or '>')
         if newline:
             elem += '\n'
         self._write(elem)            
             
-    def _process_attrs(self, attrs):
-        if attrs is None:
-            return ''
+    def _add_attrs(self, elem, attrs):
+        if not attrs:
+            return elem
         attrs = attrs.items()
         attrs.sort()
         attrs = [ '%s="%s"' % (name, html_attr_escape(value))
                   for name, value in attrs ]
-        return ' '.join(attrs)
+        return '%s %s' % (elem, ' '.join(attrs))
     
     def _escape_content(self, content):
-        if type(content) is not UnicodeType:
-            content = unic(content)
-        return html_escape(content)
+        return html_escape(unic(content))
 
     def _write(self, text):
         self.output.write(text.encode('UTF-8'))

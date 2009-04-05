@@ -75,18 +75,16 @@ class _StatSerializer:
         pass_attrs, fail_attrs = self._get_graph_attrs(stat)
         self._writer.element('b', None, pass_attrs)
         self._writer.element('b', None, fail_attrs)
-        self._writer.ends(['div', 'td', 'tr'])
+        self._writer.end_many(['div', 'td', 'tr'])
         
     def _get_graph_attrs(self, stat):
         # See utils.percents_to_widths to understand why different percent and 
         # width values are needed 
         percents = utils.calc_percents(stat.passed, stat.failed)
         widths = utils.percents_to_widths(*percents)
-        pass_attrs = {'class': 'pass_bar',
-                      'title': '%.1f%%' % percents[0],
+        pass_attrs = {'class': 'pass_bar', 'title': '%.1f%%' % percents[0],
                       'style': 'width: %.2f%%;' % widths[0]}
-        fail_attrs = {'class': 'fail_bar',
-                      'title': '%.1f%%' % percents[1],
+        fail_attrs = {'class': 'fail_bar', 'title': '%.1f%%' % percents[1],
                       'style': 'width: %.2f%%;' % widths[1]}
         return pass_attrs, fail_attrs
 
@@ -113,7 +111,7 @@ class _StatSerializer:
         self._writer.start('div', {'class': 'graph'})
         self._writer.element('b', None, {'class': 'no_tags_bar', 
                                          'style': 'width: 100%;'})
-        self._writer.ends(['div', 'td', 'tr'])
+        self._writer.end_many(['div', 'td', 'tr'])
 
     def _stat_name(self, stat):
         self._writer.start('div', {'class': 'stat_name'}, newline=False)
@@ -246,7 +244,7 @@ class LogSuiteSerializer:
         suite.id = self._idgen.get_id('suite')
         self._writer.start('table', {'class': 'suite', 'id': suite.id})
         self._write_suite_or_test_name(suite, 'suite')
-        self._writer.starts(['tr', 'td'])
+        self._writer.start_many(['tr', 'td'])
         self._writer.start('div', {'class': 'indent', 
                                    'style': self._get_display_style(suite),
                                    'id': '%s_children' % suite.id})
@@ -254,21 +252,21 @@ class LogSuiteSerializer:
         self._suite_level += 1
         
     def end_suite(self, suite):
-        self._writer.ends(['div','td','tr','table'])
+        self._writer.end_many(['div','td','tr','table'])
         self._suite_level -= 1
         
     def start_test(self, test):
         test.id = self._idgen.get_id('test')
         self._writer.start('table', {'class': 'test', 'id': test.id})
         self._write_suite_or_test_name(test, 'test')
-        self._writer.starts(['tr', 'td'])
+        self._writer.start_many(['tr', 'td'])
         self._writer.start('div', {'class': 'indent', 
                                    'style': self._get_display_style(test),
                                    'id': '%s_children' % test.id})
         self._write_test_metadata(test)
     
     def end_test(self, test):
-        self._writer.ends(['div','td','tr','table'])
+        self._writer.end_many(['div','td','tr','table'])
      
     def start_keyword(self, kw):
         kw.id = self._idgen.get_id('kw')
@@ -282,7 +280,7 @@ class LogSuiteSerializer:
         self._write_keyword_info(kw)
 
     def end_keyword(self, kw):
-        self._writer.ends(['div','td','tr','table'])
+        self._writer.end_many(['div','td','tr','table'])
 
     def message(self, msg):
         self._writer.start('table', {'class': 'messages'})
@@ -293,10 +291,10 @@ class LogSuiteSerializer:
                              {'class': '%s level' % msg.level.lower()})
         self._writer.element('td', msg.message, {'class': 'msg'},
                              escape=not msg.html)
-        self._writer.ends(['tr', 'table'])    
+        self._writer.end_many(['tr', 'table'])    
 
     def _write_suite_or_test_name(self, item, type_):
-        self._writer.starts(['tr', 'td'])
+        self._writer.start_many(['tr', 'td'])
         self._write_expand_all(item)
         self._write_folding_button(item)
         label = type_ == 'suite' and 'TEST&nbsp;SUITE: ' or 'TEST&nbsp;CASE: '
@@ -305,7 +303,7 @@ class LogSuiteSerializer:
         name = item.get_long_name(split_level=self._split_level)
         self._writer.element('a', item.name, {'name': '%s_%s' % (type_, name),
                                               'class': 'name', 'title': name})
-        self._writer.ends(['td', 'tr'])
+        self._writer.end_many(['td', 'tr'])
         
     def _write_expand_all(self, item):
         # Overridden by testdoc.py tool.
@@ -331,7 +329,7 @@ class LogSuiteSerializer:
             self._writer.element('span', kw_type.upper()+': ', status)
             self._writer.element('span', kw.name+' ', {'class': 'name'})
             self._writer.element('span', ', '.join(kw.args), {'class': 'arg'})
-        self._writer.ends(['td', 'tr'])
+        self._writer.end_many(['td', 'tr'])
         
     def _write_keyword_info(self, kw):
         self._writer.start('table', {'class': 'metadata'})
@@ -463,7 +461,7 @@ class SplitLogSuiteSerializer(LogSuiteSerializer):
             self._write_split_suite_name(item)
             
     def _write_split_suite_name(self, suite):
-        self._writer.starts(['tr', 'td'])
+        self._writer.start_many(['tr', 'td'])
         self._write_folding_button(suite)
         self._writer.element('span', 'TEST&nbsp;SUITE: ',
                              {'class': suite.status.lower()}, escape=False)
@@ -472,7 +470,7 @@ class SplitLogSuiteSerializer(LogSuiteSerializer):
                              {'name': 'suite_%s' % (suite.mediumname),
                               'href': link, 'class': 'splitname',
                               'title': suite.longname})
-        self._writer.ends(['td', 'tr'])
+        self._writer.end_many(['td', 'tr'])
     
     def _write_split_suite_details_link(self):
         if self._suite_level == self._split_level:
