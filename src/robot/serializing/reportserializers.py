@@ -43,8 +43,8 @@ class _TableHelper:
     def _start_suite_or_test_row(self, item, type_):
         self._writer.start('tr', {'class': '%s_row' % type_})
         self._writer.start('td', {'class': 'col_name'}, newline=False)
-        elem, attrs = self._get_name_params(item, type_)
-        self._writer.element(elem, item.mediumname, attrs, newline=False)
+        name, elem, attrs = self._get_name_params(item, type_)
+        self._writer.element(elem, name, attrs, newline=False)
         self._writer.end('td')
         self._writer.element('td', item.htmldoc, {'class': 'col_doc'}, 
                              escape=False)
@@ -56,7 +56,12 @@ class _TableHelper:
             attrs['href'] = '%s#%s_%s' % (item.linkpath, type_, item.linkname)
         else:
             elem = 'span'
-        return elem, attrs
+        return self._get_name(item, type_), elem, attrs
+
+    def _get_name(self, item, type_):
+        if type_ == 'suite':
+            return item.longname
+        return item.name
 
     def _end_test_row(self, test):
         self._writer.element('td', ', '.join(test.tags), {'class': 'col_tags'})
@@ -112,7 +117,7 @@ class ReportSerializer(_TableHelper):
     def start_test(self, test):
         self._set_test_link(test)
         self._test_row(test)
-        
+
     def _set_suite_link(self, suite):
         # linkpath and linkname are also used when TagStats are serialized.
         # This is rather ugly and should be refactored at some point.
@@ -186,6 +191,9 @@ class TagDetailsSerializer(_TableHelper):
         self._tag_row(stat)
         for test in stat.tests:
             self._test_row(test)
+
+    def _get_name(self, stat, type_is_ignored):
+        return stat.mediumname
 
     def _tag_row(self, stat):
         self._writer.start('tr', {'class': 'tag_row'})
