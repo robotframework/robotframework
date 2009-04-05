@@ -34,7 +34,7 @@ class OutputSerializer(XmlLogger):
         XmlLogger.end_errors(self)
         
 
-class _StatisticsSerializer:
+class _StatSerializer:
 
     def __init__(self, output):
         self._writer = utils.HtmlWriter(output)
@@ -156,10 +156,10 @@ class _StatisticsSerializer:
         self._writer.end('div')
 
 
-class _BaseLogStatisticsSerializer(_StatisticsSerializer):
+class _BaseLogStatSerializer(_StatSerializer):
 
     def __init__(self, output, split_level=-1):
-        _StatisticsSerializer.__init__(self, output)
+        _StatSerializer.__init__(self, output)
         self._split_level = split_level
 
     def _get_element_name(self, stat):
@@ -171,7 +171,7 @@ class _BaseLogStatisticsSerializer(_StatisticsSerializer):
                  'onclick': "set_element_visible('%s')" % target }
         
 
-class LogStatisticsSerializer(_BaseLogStatisticsSerializer):
+class LogStatSerializer(_BaseLogStatSerializer):
 
     def _get_doc_attribute(self, stat):
         return stat.get_doc(self._split_level)
@@ -180,21 +180,21 @@ class LogStatisticsSerializer(_BaseLogStatisticsSerializer):
         return stat.get_name(self._split_level)
 
 
-class SplitLogStatisticsSerializer(_BaseLogStatisticsSerializer):
+class SplitLogStatSerializer(_BaseLogStatSerializer):
     
     def __init__(self, output, split_level):
-        _BaseLogStatisticsSerializer.__init__(self, output, split_level)
+        _BaseLogStatSerializer.__init__(self, output, split_level)
         self._namegen = utils.FileNameGenerator(os.path.basename(output.name))
                 
     def _get_link_attributes(self, stat):        
         if not stat.should_link_to_sub_log(self._split_level):
-            return _BaseLogStatisticsSerializer._get_link_attributes(self, stat)
+            return _BaseLogStatSerializer._get_link_attributes(self, stat)
         self._link_target = self._namegen.get_name()
         return { 'href': '%s#%s_%s' % (self._link_target, stat.type, 
                                        stat.get_link(self._split_level)) }
 
 
-class ReportStatisticsSerializer(_StatisticsSerializer):
+class ReportStatSerializer(_StatSerializer):
 
     def _get_element_name(self, stat):
         return stat.type in ['suite', 'tag'] and 'a' or 'span'
@@ -203,7 +203,7 @@ class ReportStatisticsSerializer(_StatisticsSerializer):
         return { 'href': '#%s_%s' % (stat.type, stat.get_link()) }
     
     
-class SummaryStatisticsSerializer(_StatisticsSerializer):
+class SummaryStatSerializer(_StatSerializer):
 
     def _get_element_name(self, stat):
         return 'span'
