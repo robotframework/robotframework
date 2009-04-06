@@ -1,7 +1,7 @@
 #!/bin/bash
 
-INDIR=testdata
-OUTDIR=testoutput
+INDIR=test/data
+OUTDIR=test/testoutput
 
 echo "0) Cleanup"
 rm -rf $OUTDIR
