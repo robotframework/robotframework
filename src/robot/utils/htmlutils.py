@@ -16,10 +16,9 @@
 import re
 import os.path
 
-from robottypes import is_str
+from robottypes import is_str, unic
 
-_table_line_re = re.compile('^\s*\| (.* |)\|\s*$')
-_table_line_splitter = re.compile(' \|(?= )')
+
 _hr_re = re.compile('^-{3,} *$')
 _bold_re = re.compile('''
 (                         # prefix (group 1)
@@ -50,7 +49,7 @@ _url_re = re.compile('''
 
 def html_escape(text, formatting=False):
     if not is_str(text):
-        return text
+        text = unic(text)
 
     for name, value in [('&', '&amp;'), ('<', '&lt;'), ('>', '&gt;')]:
         text = text.replace(name, value)
@@ -60,8 +59,8 @@ def html_escape(text, formatting=False):
     hr = None
 
     for line in text.splitlines():
-        if formatting and _table_line_re.search(line) is not None:
-            if hr is not None:
+        if formatting and table.is_table_row(line):
+            if hr:
                 ret.append(hr)
                 hr = None
             table.add_row(line)
@@ -76,14 +75,14 @@ def html_escape(text, formatting=False):
             hr = '<hr />\n'
         else:
             line = _format_line(line, formatting)
-            if hr is not None:
+            if hr:
                 line = hr + line
                 hr = None
             ret.append(line)
 
     if table.is_started():
         ret.append(table.end())
-    if hr is not None:
+    if hr:
         ret.append(hr)
         
     return '<br />\n'.join(ret)
@@ -100,12 +99,18 @@ def html_attr_escape(attr):
 
 class _Table:
 
+    _is_line = re.compile('^\s*\| (.* |)\|\s*$')
+    _line_splitter = re.compile(' \|(?= )')
+
     def __init__(self):
         self._rows = []
 
+    def is_table_row(self, row):
+        return self._is_line.match(row) is not None
+
     def add_row(self, text):
         text = text.strip()[1:-1]   # remove outer whitespace and pipes
-        cells = [ cell.strip() for cell in _table_line_splitter.split(text) ]
+        cells = [ cell.strip() for cell in self._line_splitter.split(text) ]
         self._rows.append(cells)
 
     def end(self):
@@ -118,7 +123,7 @@ class _Table:
 
     def _format(self, rows):
         maxlen = max([ len(row) for row in rows ])
-        table = [ '<table border="1" class="doc">' ]
+        table = ['<table border="1" class="doc">']
         for row in rows:
             row += [''] * (maxlen - len(row))  # fix ragged tables
             table.append('<tr>')

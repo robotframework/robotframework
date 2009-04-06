@@ -11,8 +11,18 @@ _format_table = _Table()._format
 class TestHtmlEscape(unittest.TestCase):
 
     def test_no_changes(self):
-        for inp in [ '', 'nothing to change' ]:
+        for inp in ['', 'nothing to change']:
             assert_equals(html_escape(inp), inp)
+
+    def test_non_strings(self):
+        for inp in [1, None, True]:
+            assert_equals(html_escape(inp), str(inp))
+
+    def test_non_string_with_str_needing_escaping(self):
+        class NonString:
+            def __str__(self):
+                return '<hello>'
+        assert_equals(html_escape(NonString()), '&lt;hello&gt;')
             
     def test_new_lines_and_paragraphs(self):
         for inp in [ 'Text on first line.\nText on second line.'
@@ -60,17 +70,17 @@ class TestHtmlEscape(unittest.TestCase):
                 ('hello http://link world',
                  'hello <a href="http://link">http://link</a> world'),
                 ('multi\nhttp://link\nline',
-                 'multi<br />\n<a href="http://link">http://link</a><br />\nline'),
+                 'multi<br />\n<a href="http://link">http://link</a><br />\n'
+                 'line'),
                 ('http://link, ftp://link2.',
-                 '<a href="http://link">http://link</a>, ' \
-                   + '<a href="ftp://link2">ftp://link2</a>.'),
+                 '<a href="http://link">http://link</a>, '
+                 '<a href="ftp://link2">ftp://link2</a>.'),
                 ('x (http://y, z)', 
                  'x (<a href="http://y">http://y</a>, z)'),
                 ('Hello http://one, ftp://kaksi/; "gopher://3.0"',
-                 'Hello <a href="http://one">http://one</a>, ' \
-                   + '<a href="ftp://kaksi/">ftp://kaksi/</a>; ' \
-                   + '"<a href="gopher://3.0">gopher://3.0</a>"')
-                ]:
+                 'Hello <a href="http://one">http://one</a>, '
+                 '<a href="ftp://kaksi/">ftp://kaksi/</a>; '
+                 '"<a href="gopher://3.0">gopher://3.0</a>"') ]:
             assert_equals(html_escape(inp, True), exp)
             assert_equals(html_escape(inp, False), exp)
         
