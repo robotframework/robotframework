@@ -173,18 +173,20 @@ class XmlLogger:
         self._stat(stat)
 
     def suite_stat(self, stat):
-        self._stat(stat)
+        self._stat(stat, stat.get_long_name(split_level=self._split_level))
 
     def tag_stat(self, stat):
-        self._stat(stat)
+        self._stat(stat, attrs={'info': self._get_tag_stat_info(stat)})
 
-    def _stat(self, stat):
-        attrs = { 'pass' : str(stat.passed), 'fail' : str(stat.failed) }
-        if stat.type == 'tag':
-            attrs['info'] = self._get_tag_stat_info(stat)
-        if stat.doc is not None:
-            attrs['doc'] = stat.get_doc(self._split_level)
-        self._writer.element('stat', stat.get_name(self._split_level), attrs)
+    def _stat(self, stat, name=None, attrs=None):
+        name = name or stat.name
+        attrs = attrs or {}
+        attrs['pass'] = str(stat.passed)
+        attrs['fail'] = str(stat.failed)
+        doc = stat.get_doc(self._split_level)
+        if doc:
+            attrs['doc'] = doc
+        self._writer.element('stat', name, attrs)
 
     def _get_tag_stat_info(self, stat):
         if stat.critical is True:

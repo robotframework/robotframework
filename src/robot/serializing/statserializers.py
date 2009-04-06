@@ -20,8 +20,9 @@ from robot import utils
 
 class _StatSerializer:
 
-    def __init__(self, output):
+    def __init__(self, output, split_level=-1):
         self._writer = utils.HtmlWriter(output)
+        self._split_level = split_level
 
     def start_statistics(self, statistics):
         self._writer.element('h2', 'Test Statistics')
@@ -66,21 +67,17 @@ class _StatSerializer:
         self._writer.start('td', {'class': 'col_stat_name'})
         self._writer.start('div', {'class': 'stat_name'}, newline=False)
         elem, attrs = self._get_element_name_and_attrs(stat)
-        doc = self._get_doc(stat)
+        doc = stat.get_doc(self._split_level)
         if doc:
             attrs['title'] = doc
         self._writer.start(elem, attrs, newline=False)
         return elem
 
     def _write_stat_name(self, stat):
-        self._writer.content(self._get_name(stat))
+        self._writer.content(stat.name)
 
     def _write_suite_stat_name(self, stat):
-        # TODO:
-        # 1) Should handle also split levels
-        # 2) Can _get_name be removed?
-        # 3) Can mediumname be removed altogether??
-        tokens = stat._suite.get_long_name(separator=None)
+        tokens = stat.get_long_name(separator=None, split_level=self._split_level)
         if len(tokens) > 1:
             self._writer.element('span', ' . '.join(tokens[:-1]+['']),
                                  {'class': 'parent_name'}, newline=False)
@@ -145,12 +142,6 @@ class _StatSerializer:
                                          'style': 'width: 100%;'})
         self._writer.end_many(['div', 'td', 'tr'])
 
-    def _get_doc(self, stat):
-        return stat.get_doc()
-
-    def _get_name(self, stat):
-        return stat.get_name()
-            
     def _write_tag_criticality(self, stat):
         if stat.critical:
             self._writer.content(' (critical)')
@@ -168,11 +159,7 @@ class _StatSerializer:
         self._writer.end('div')
 
 
-class _BaseLogStatSerializer(_StatSerializer):
-
-    def __init__(self, output, split_level=-1):
-        _StatSerializer.__init__(self, output)
-        self._split_level = split_level
+class LogStatSerializer(_StatSerializer):
 
     def _get_element_name_and_attrs(self, stat):
         if stat.type == 'suite':
@@ -180,31 +167,31 @@ class _BaseLogStatSerializer(_StatSerializer):
         return 'span', {}
 
     def _get_link_attributes(self, stat):
-        target = '%s_%s' % (stat.type, stat.get_link(self._split_level))
+        target = 'suite_%s' % stat.get_link(self._split_level)
         return {'href': '#' + target,
                 'onclick': "set_element_visible('%s')" % target}
         
 
-class LogStatSerializer(_BaseLogStatSerializer):
-
-    def _get_doc(self, stat):
-        return stat.get_doc(self._split_level)
-
-    def _get_name(self, stat):
-        return stat.get_name(self._split_level)
-
-
-class SplitLogStatSerializer(_BaseLogStatSerializer):
+class SplitLogStatSerializer(LogStatSerializer):
     
     def __init__(self, output, split_level):
-        _BaseLogStatSerializer.__init__(self, output, split_level)
+        LogStatSerializer.__init__(self, output, split_level=-1)
+        self._split_border = split_level
+        self._link_target = None
         self._namegen = utils.FileNameGenerator(os.path.basename(output.name))
                 
-    def _get_link_attributes(self, stat):        
-        if stat.should_link_to_sub_log(self._split_level):
-            return {'href': '%s#%s_%s' % (self._namegen.get_name(), stat.type, 
-                                          stat.get_link(self._split_level))}
-        return _BaseLogStatSerializer._get_link_attributes(self, stat)
+    def _get_link_attributes(self, stat):
+        border = self._before_after_or_on_split_border(stat)      
+        if border < 0:
+            return LogStatSerializer._get_link_attributes(self, stat)
+        if border == 0:
+            self._link_target = self._namegen.get_name()
+        return {'href': '%s#suite_%s' % (self._link_target,
+                                         stat.get_link(self._split_border))}
+        
+    def _before_after_or_on_split_border(self, stat):
+        tokens = stat.get_long_name(separator=None)
+        return cmp(len(tokens), self._split_border+1)
 
 
 class ReportStatSerializer(_StatSerializer):

@@ -41,8 +41,8 @@ class Stat:
     
     def __init__(self, name=None, doc=None, link=None):
         self.name = name
-        self.doc = doc
-        self.link = link
+        self._doc = doc
+        self._link = link
         self.passed = 0
         self.failed = 0
         
@@ -59,18 +59,12 @@ class Stat:
     def fail_all(self):
         self.failed += self.passed
         self.passed = 0
-                        
-    def get_name(self, split_level=-1):
-        return self.name
 
     def get_doc(self, split_level=-1):
-        return self.doc
+        return self._doc
     
     def get_link(self, split_level=-1):
-        return self.link
-    
-    def should_link_to_sub_log(self, split_level=-1):
-        return False
+        return self._link
 
     def __cmp__(self, other):
         return cmp(self.name, other.name)
@@ -82,20 +76,14 @@ class SuiteStat(Stat):
 
     def __init__(self, suite):
         Stat.__init__(self, suite.name)
-        self._suite = suite
-
-    def get_name(self, split_level=-1):
-        return self._suite.get_medium_name(split_level=split_level)
+        self.get_long_name = suite.get_long_name
 
     def get_doc(self, split_level=-1):
-        return self._suite.get_long_name(split_level=split_level)
+        return self.get_long_name(split_level=split_level)
 
     def get_link(self, split_level=-1):
-        return self._suite.get_long_name(split_level=split_level)
+        return self.get_long_name(split_level=split_level)
         
-    def should_link_to_sub_log(self, split_level=-1):
-        return len(self._suite.get_long_name(separator=None)) == split_level+1
-
     def serialize(self, serializer):
         serializer.suite_stat(self)
         

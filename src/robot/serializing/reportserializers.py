@@ -205,7 +205,7 @@ class TagDetailsSerializer(_TableHelper):
                              newline=False)
         self._writer.content(stat.name)
         self._writer.end('td')
-        doc = stat.doc and utils.html_escape(stat.doc, formatting=True) or ''
+        doc = utils.html_escape(stat.get_doc() or '', formatting=True)
         self._writer.element('td', doc, {'class': 'col_doc'}, escape=False)
         self._writer.element('td', 'N/A', {'class': 'col_tags not_available'})
         self._writer.element('td', self._get_crit(stat), {'class': 'col_crit'})
