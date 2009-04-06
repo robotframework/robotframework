@@ -692,7 +692,7 @@ execution.</td>
 
 
 </tr>
-<tr><td></td><td>...</td><td>n.</td><td></td><td></td></tr><tr>
+<tr>
 <td></td>
 <td>Check Names</td>
 <td>${SUITE.tests[1]}</td>
@@ -701,7 +701,7 @@ execution.</td>
 
 
 </tr>
-<tr><td></td><td>...</td><td>n.</td><td></td><td></td></tr><tr>
+<tr>
 <td></td>
 <td>Should Be Equal</td>
 <td>${SUITE.doc}</td>
@@ -777,7 +777,7 @@ execution.</td>
 
 
 </tr>
-<tr><td></td><td>...</td><td>m.</td><td></td><td></td></tr><tr>
+<tr>
 <td></td>
 <td>Check Names</td>
 <td>${SUITE.tests[1]}</td>
@@ -786,7 +786,7 @@ execution.</td>
 
 
 </tr>
-<tr><td></td><td>...</td><td>m.</td><td></td><td></td></tr><tr>
+<tr>
 <td></td>
 <td>Should Be Equal</td>
 <td>${SUITE.doc}</td>
@@ -1458,14 +1458,14 @@ line(s)</td>
 </tr>
 <tr>
 <td></td>
-<td>Matches Regexp</td>
+<td>Should Match Regexp</td>
 <td>${output}</td>
 <td>^Rebot (2\\.\\d+(\\.\\d+)?( (alpha|beta|rc)\\d*)?|trunk 2\\d{7}) \\([PJ]ython 2\\.[\\d.]+ on .+\\)$</td>
 <td></td>
 </tr>
 <tr>
 <td></td>
-<td>Fail Unless</td>
+<td>Should Be True</td>
 <td>len("${output}") &lt;
 80</td>
 <td>Too long version line</td>
@@ -1729,7 +1729,7 @@ ${MYOUTDIR}${/}output.xml</td>
 </tr>
 <tr>
 <td></td>
-<td>Fail Unless</td>
+<td>Should Be True</td>
 <td>0&nbsp;&lt; ${size1} &lt;= ${size2}&nbsp;</td>
 <td></td>
 <td></td>
