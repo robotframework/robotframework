@@ -188,8 +188,8 @@ class DiffRobotOutputs:
                 #Generates column containg status
                 s_or_t = self._get_s_or_t_by_column_name(column_name, value)
                 self._write_s_or_t_status(s_or_t)
-            self._writer.end_element('tr', newline=True)
-        self._writer.end_element('table', newline=True)        
+            self._writer.end('tr', newline=True)
+        self._writer.end('table', newline=True)        
         self._write_end()
         
     def close(self):
@@ -201,21 +201,21 @@ class DiffRobotOutputs:
             self._col_status_content(s_or_t)
         else:
             col_status = 'col_status not_available'
-            self._writer.whole_element('td', 'N/A', {'class': col_status})
+            self._writer.element('td', 'N/A', {'class': col_status})
 
     def _col_status_content(self, s_or_t):
         status = s_or_t.status
         col_status = 'col_status %s' % status.lower()
-        self._writer.start_element('td', {'class': col_status})
+        self._writer.start('td', {'class': col_status})
         if s_or_t.link is not None:
             type = self._get_type(s_or_t)
             link = '%s#%s_%s' % (s_or_t.link, type, s_or_t.longname)
-            self._writer.whole_element('a', status, {'class': status.lower(), 
+            self._writer.element('a', status, {'class': status.lower(), 
                                                      'href': link, 
                                                      'title': s_or_t.longname })
         else:
             self._writer.content(status)
-        self._writer.end_element('td')
+        self._writer.end('td')
             
     def _get_type(self, s_or_t):
         if dir(s_or_t).count('tests') == 1:
@@ -225,7 +225,7 @@ class DiffRobotOutputs:
 
     def _write_start_of_s_or_t_row(self, name, value):
             row_status = self._get_row_status(value)
-            self._writer.whole_element('th', name, {'class': row_status})
+            self._writer.element('th', name, {'class': row_status})
 
     def _get_sorted_items(self, suites_and_tests):
         items = suites_and_tests.items()
@@ -252,13 +252,13 @@ class DiffRobotOutputs:
         return None
 
     def _write_headers(self):
-        self._writer.start_element('table')
-        self._writer.start_element('tr')
-        self._writer.whole_element('th', 'Name', {'class': 'col_name'})
+        self._writer.start('table')
+        self._writer.start('tr')
+        self._writer.element('th', 'Name', {'class': 'col_name'})
         for name in self.column_names:
             name = name.replace(self._get_prefix(self.column_names), '')
-            self._writer.whole_element('th', name, {'class': 'col_status'})
-        self._writer.end_element('tr')
+            self._writer.element('th', name, {'class': 'col_status'})
+        self._writer.end('tr')
 
     def _get_prefix(self, paths):
         paths = [os.path.dirname(p) for p in paths ]        
@@ -285,8 +285,8 @@ class DiffRobotOutputs:
         self._output.write('<div class="spacer">&nbsp;</div>')
             
     def _write_end(self):
-        self._writer.end_element('body')
-        self._writer.end_element('html')
+        self._writer.end('body')
+        self._writer.end('html')
 
 
 START_HTML = '''
