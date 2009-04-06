@@ -41,6 +41,7 @@ import os
 import csv
 
 from robot.output import TestSuite
+from robot import utils
 
 
 def process_file(inpath, outpath, items):
@@ -89,9 +90,9 @@ def process_item(item, writer, level, item_type, long_name=False):
         name = item.longname
     else:
         name = item.name
-    row = [ indent+item_type, name, item.status, item.starttime,
-            item.endtime, item.elapsedtime, item.elapsedmillis/1000.0 ]
-    writer.writerow(row)
+    writer.writerow([indent+item_type, name, item.status, item.starttime,
+                     item.endtime, utils.elapsed_time_to_string(item.elapsedtime), 
+                     item.elapsedtime/1000.0])
 
 
 if __name__ == '__main__':
