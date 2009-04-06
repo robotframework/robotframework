@@ -636,7 +636,7 @@ ${MYOUTDIR}${/}s.htm</td>
 </tr>
 <tr>
 <td><a name="test_InvalidDebugfile">Invalid Debugfile</a></td>
-<td>Create Dir</td>
+<td>Create Directory</td>
 <td>${MYOUTDIR}${/}debug.txt</td>
 <td></td>
 <td></td>
@@ -658,7 +658,7 @@ to debug file is disabled. Error: (IOError|FileNotFoundException): .*</td>
 </tr>
 <tr>
 <td></td>
-<td>Check Stdout contains</td>
+<td>Check Stdout Contains</td>
 <td>2 critical tests, 2 passed, 0 failed\n 2 tests total, 2 passed, 0 failed</td>
 <td></td>
 <td></td>
@@ -729,13 +729,13 @@ to debug file is disabled. Error: (IOError|FileNotFoundException): .*</td>
 <tr>
 <td></td>
 <td>@{files} =</td>
-<td>List Dir</td>
+<td>List Directory</td>
 <td>${MYOUTDIR}</td>
 <td></td>
 </tr>
 <tr>
 <td></td>
-<td>Fail Unless</td>
+<td>Should Be True</td>
 <td>len(@{files}) == 3</td>
 <td></td>
 <td></td>
@@ -771,13 +771,13 @@ to debug file is disabled. Error: (IOError|FileNotFoundException): .*</td>
 <tr>
 <td></td>
 <td>@{files} =</td>
-<td>List Dir</td>
+<td>List Directory</td>
 <td>${MYOUTDIR}</td>
 <td></td>
 </tr>
 <tr>
 <td></td>
-<td>Fail Unless</td>
+<td>Should Be True</td>
 <td>len(@{files}) == 4</td>
 <td></td>
 <td></td>
@@ -833,13 +833,7 @@ have faster execution.</td>
 <td>First One</td>
 <td>Normal.</td>
 </tr>
-<tr>
-<td></td>
-<td>...</td>
-<td>n.</td>
-<td></td>
-<td></td>
-</tr>
+
 <tr>
 <td></td>
 <td>Check Names</td>
@@ -847,23 +841,17 @@ have faster execution.</td>
 <td>Second One</td>
 <td>Normal.</td>
 </tr>
+
 <tr>
 <td></td>
-<td>...</td>
-<td>n.</td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td>Equals</td>
+<td>Should Be Equal</td>
 <td>${SUITE.doc}</td>
 <td>Normal test cases</td>
 <td></td>
 </tr>
 <tr>
 <td></td>
-<td>Equals</td>
+<td>Should Be Equal</td>
 <td>${SUITE.metadata['Something']}</td>
 <td>My Value</td>
 <td></td>
@@ -908,13 +896,7 @@ two_parts:one_part -M esc:STQUDOAMHAEXEX --escape star:ST -E quest:QU
 <td>First One</td>
 <td>My COOL Name!!.</td>
 </tr>
-<tr>
-<td></td>
-<td>...</td>
-<td>m.</td>
-<td></td>
-<td></td>
-</tr>
+
 <tr>
 <td></td>
 <td>Check Names</td>
@@ -922,37 +904,31 @@ two_parts:one_part -M esc:STQUDOAMHAEXEX --escape star:ST -E quest:QU
 <td>Second One</td>
 <td>My COOL Name!!.</td>
 </tr>
+
 <tr>
 <td></td>
-<td>...</td>
-<td>m.</td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td>Equals</td>
+<td>Should Be Equal</td>
 <td>${SUITE.doc}</td>
 <td>Even cooooler doc!?</td>
 <td></td>
 </tr>
 <tr>
 <td></td>
-<td>Equals</td>
+<td>Should Be Equal</td>
 <td>${SUITE.metadata['Something']}</td>
 <td>New</td>
 <td></td>
 </tr>
 <tr>
 <td></td>
-<td>Equals</td>
+<td>Should Be Equal</td>
 <td>${SUITE.metadata['Two Parts']}</td>
 <td>one_part</td>
 <td></td>
 </tr>
 <tr>
 <td></td>
-<td>Equals</td>
+<td>Should Be Equal</td>
 <td>${SUITE.metadata['Esc']}</td>
 <td>*?$&amp;#!!</td>
 <td></td>
@@ -980,7 +956,7 @@ two_parts:one_part -M esc:STQUDOAMHAEXEX --escape star:ST -E quest:QU
 </tr>
 <tr>
 <td></td>
-<td>Fail Unless</td>
+<td>Should Be True</td>
 <td>${SUITE.suites} == ['Tsuite 1', 'Tsuite 2', 'Tsuite 3']</td>
 <td></td>
 <td></td>
@@ -1271,7 +1247,7 @@ two_parts:one_part -M esc:STQUDOAMHAEXEX --escape star:ST -E quest:QU
 </tr>
 <tr>
 <td></td>
-<td>Equals</td>
+<td>Should Be Equal</td>
 <td>${rc}</td>
 <td>${251}</td>
 <td></td>
@@ -1285,28 +1261,28 @@ two_parts:one_part -M esc:STQUDOAMHAEXEX --escape star:ST -E quest:QU
 </tr>
 <tr>
 <td></td>
-<td>Starts</td>
+<td>Should Start With</td>
 <td>${help}</td>
 <td>Robot Framework -- A keyword-driven test automation framework\n\nVersion: \</td>
 <td></td>
 </tr>
 <tr>
 <td></td>
-<td>Ends</td>
+<td>Should End With</td>
 <td>${help}</td>
 <td>\n\n# Setting syslog file before running tests.\n $ export ROBOT_SYSLOG_FILE=/tmp/syslog.txt\n $ pybot tests.html\n</td>
 <td></td>
 </tr>
 <tr>
 <td></td>
-<td>Fail If Contains</td>
+<td>Should Not Contain</td>
 <td>${help}</td>
 <td>[ ERROR ]</td>
 <td></td>
 </tr>
 <tr>
 <td></td>
-<td>Fail If Contains</td>
+<td>Should Not Contain</td>
 <td>${help}</td>
 <td>[ WARN \ ]</td>
 <td></td>
@@ -1341,7 +1317,7 @@ two_parts:one_part -M esc:STQUDOAMHAEXEX --escape star:ST -E quest:QU
 </tr>
 <tr>
 <td></td>
-<td>Fail Unless</td>
+<td>Should Be True</td>
 <td>len(@{long}) == 0</td>
 <td>Too long (&gt;= 80) help line(s)</td>
 <td></td>
@@ -1355,7 +1331,7 @@ two_parts:one_part -M esc:STQUDOAMHAEXEX --escape star:ST -E quest:QU
 </tr>
 <tr>
 <td></td>
-<td>Equals</td>
+<td>Should Be Equal</td>
 <td>${help}</td>
 <td>${help2}</td>
 <td></td>
@@ -1383,7 +1359,7 @@ two_parts:one_part -M esc:STQUDOAMHAEXEX --escape star:ST -E quest:QU
 </tr>
 <tr>
 <td></td>
-<td>Equals</td>
+<td>Should Be Equal</td>
 <td>${rc}</td>
 <td>${251}</td>
 <td></td>
@@ -1397,14 +1373,14 @@ two_parts:one_part -M esc:STQUDOAMHAEXEX --escape star:ST -E quest:QU
 </tr>
 <tr>
 <td></td>
-<td>Matches Regexp</td>
+<td>Should Match Regexp</td>
 <td>${output}</td>
 <td>^Robot Framework (2\\.\\d+(\\.\\d+)?( (alpha|beta|rc)\\d*)?|trunk 2\\d{7}) \\([PJ]ython 2\\.[\\d.]+ on .+\\)$</td>
 <td></td>
 </tr>
 <tr>
 <td></td>
-<td>Fail Unless</td>
+<td>Should Be True</td>
 <td>len("${output}") &lt; 80</td>
 <td>Too long version line</td>
 <td></td>
@@ -1474,7 +1450,7 @@ two_parts:one_part -M esc:STQUDOAMHAEXEX --escape star:ST -E quest:QU
 </tr>
 <tr>
 <td></td>
-<td>Fail If File Empty</td>
+<td>File Should Not Be Empty</td>
 <td>${MYOUTDIR}${/}syslog.txt</td>
 <td></td>
 <td></td>
@@ -1502,7 +1478,7 @@ two_parts:one_part -M esc:STQUDOAMHAEXEX --escape star:ST -E quest:QU
 </tr>
 <tr>
 <td></td>
-<td>Fail If File Exists</td>
+<td>File Should Not Exist</td>
 <td>${MYOUTDIR}${/}syslog.txt</td>
 <td></td>
 <td></td>
@@ -1523,7 +1499,7 @@ two_parts:one_part -M esc:STQUDOAMHAEXEX --escape star:ST -E quest:QU
 </tr>
 <tr>
 <td></td>
-<td>Fail If File Exists</td>
+<td>File Should Not Exist</td>
 <td>${MYOUTDIR}${/}syslog.txt</td>
 <td></td>
 <td></td>
@@ -1544,7 +1520,7 @@ two_parts:one_part -M esc:STQUDOAMHAEXEX --escape star:ST -E quest:QU
 </tr>
 <tr>
 <td></td>
-<td>Contains</td>
+<td>Should Contain</td>
 <td>${output}</td>
 <td>] Opening syslog file '${MYOUTDIR}' failed: IOError:</td>
 <td></td>
@@ -1614,7 +1590,7 @@ two_parts:one_part -M esc:STQUDOAMHAEXEX --escape star:ST -E quest:QU
 </tr>
 <tr>
 <td></td>
-<td>Fail Unless</td>
+<td>Should Be True</td>
 <td>0 &lt; ${size1} &lt; ${size2}</td>
 <td></td>
 <td></td>
@@ -1635,7 +1611,7 @@ two_parts:one_part -M esc:STQUDOAMHAEXEX --escape star:ST -E quest:QU
 </tr>
 <tr>
 <td></td>
-<td>Fail Unless File Empty</td>
+<td>File Should Be Empty</td>
 <td>${MYOUTDIR}${/}syslog.txt</td>
 <td></td>
 <td></td>
@@ -1656,7 +1632,7 @@ two_parts:one_part -M esc:STQUDOAMHAEXEX --escape star:ST -E quest:QU
 </tr>
 <tr>
 <td></td>
-<td>Contains</td>
+<td>Should Contain</td>
 <td>${output}</td>
 <td>] Opening syslog file '${MYOUTDIR}${/}syslog.txt' failed: Invalid log level 'invalid'</td>
 <td></td>
@@ -1677,7 +1653,7 @@ two_parts:one_part -M esc:STQUDOAMHAEXEX --escape star:ST -E quest:QU
 </tr>
 <tr>
 <td></td>
-<td>Equals</td>
+<td>Should Be Equal</td>
 <td>${rc}</td>
 <td>${252}</td>
 <td></td>
@@ -1719,7 +1695,7 @@ two_parts:one_part -M esc:STQUDOAMHAEXEX --escape star:ST -E quest:QU
 </tr>
 <tr>
 <td></td>
-<td>Equals</td>
+<td>Should Be Equal</td>
 <td>${SUITE.status}</td>
 <td>PASS</td>
 <td></td>
@@ -1778,23 +1754,17 @@ two_parts:one_part -M esc:STQUDOAMHAEXEX --escape star:ST -E quest:QU
 <td></td>
 </tr>
 
-<tr>
-<td></td>
-<td>${exp_files} =</td>
-<td>List</td>
-<td>@{exp_files}</td>
-<td></td>
-</tr>
+
 <tr>
 <td></td>
 <td>${act_files} =</td>
-<td>List Dir</td>
+<td>List Directory</td>
 <td>${dir_path}</td>
 <td></td>
 </tr>
 <tr>
 <td></td>
-<td>Fail Unless Equal</td>
+<td>Should Be Equal</td>
 <td>${act_files}</td>
 <td>${exp_files}</td>
 <td></td>
