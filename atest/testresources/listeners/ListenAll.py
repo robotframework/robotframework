@@ -3,6 +3,8 @@ import tempfile
 
 
 class ListenAll:
+
+    ROBOT_LISTENER_API_VERSION = '2'
     
     def __init__(self, *path):
         if not path:
@@ -11,28 +13,30 @@ class ListenAll:
             path = ':'.join(path)
         self.outfile = open(path, 'w')
         
-    def start_suite(self, name, doc):
-        self.outfile.write("SUITE START: %s '%s'\n" % (name, doc))
+    def start_suite(self, name, attrs):
+        self.outfile.write("SUITE START: %s '%s'\n" % (name, attrs['doc']))
         
-    def start_test(self, name, doc, tags):
-        tags = [ str(tag) for tag in tags ]
-        self.outfile.write("TEST START: %s '%s' %s\n" % (name, doc, tags))
+    def start_test(self, name, attrs):
+        tags = [ str(tag) for tag in attrs['tags'] ]
+        self.outfile.write("TEST START: %s '%s' %s\n" % (name, attrs['doc'], tags))
     
-    def start_keyword(self, name, args):
-        args = [ str(arg) for arg in args ]
+    def start_keyword(self, name, attrs):
+        args = [ str(arg) for arg in attrs['args'] ]
         self.outfile.write("KW START: %s %s\n" % (name, args))
         
-    def end_keyword(self, status):
-        self.outfile.write("KW END: %s\n" % (status))        
+    def end_keyword(self, name, attrs):
+        self.outfile.write("KW END: %s\n" % (attrs['status']))        
     
-    def end_test(self, status, message):
-        if status == 'PASS':
+    def end_test(self, name, attrs):
+        if attrs['status'] == 'PASS':
             self.outfile.write('TEST END: PASS\n')
         else:
-            self.outfile.write("TEST END: %s %s\n" % (status, message))        
+            self.outfile.write("TEST END: %s %s\n" 
+                               % (attrs['status'], attrs['message']))
             
-    def end_suite(self, status, message):
-        self.outfile.write('SUITE END: %s %s\n' % (status, message))
+    def end_suite(self, name, attrs):
+        self.outfile.write('SUITE END: %s %s\n'
+                            % (attrs['status'], attrs['message']))
 
     def output_file(self, path):
         self._out_file('Output', path)

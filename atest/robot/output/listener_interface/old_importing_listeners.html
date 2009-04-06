@@ -84,7 +84,7 @@ th {
 <tr>
 <td>Suite Setup</td>
 <td>Run Tests</td><td>--listener OldListenAll <br>--listener
-old_listeners.ListenSome <br>--listener old_module_listener<br>--listener old_listeners.WithArgs:value<br>--listener old_listeners.WithArgs:a1:a2 <br>--listener ${LISTENERS}${/}OldListenAll.py:${TEMPDIR}${/}${ALL_FILE2}<br>--listener old_listeners.WithArgs<br>--listener&nbsp;old_listeners.WithArgs:1:2:3 <br>--listener JavaListener <br>--listener JavaListenerWithArgs:Hello:world!<br>--listener JavaListenerWithArgs<br>--listener JavaListenerWithArgs:b:a:r<br>--listener
+old_listeners.ListenSome <br>--listener old_module_listener<br>--listener old_listeners.WithArgs:value<br>--listener old_listeners.WithArgs:a1:a2 <br>--listener ${LISTENERS}${/}OldListenAll.py:${TEMPDIR}${/}${ALL_FILE2}<br>--listener old_listeners.WithArgs<br>--listener&nbsp;old_listeners.WithArgs:1:2:3 <br>--listener OldJavaListener <br>--listener OldJavaListenerWithArgs:Hello:world!<br>--listener OldJavaListenerWithArgs<br>--listener OldJavaListenerWithArgs:b:a:r<br>--listener
 NonExistingListener&nbsp;&nbsp;</td><td>misc${/}pass_and_fail.html</td>
 
 
@@ -175,7 +175,7 @@ listener 'NonExistingListener' failed: ImportError:&nbsp;</td><td></td><td></td>
 <td></td>
 <td></td>
 </tr>
-<tr><td></td><td>Listener Import Message Should Be In Syslog</td><td>JavaListener<br></td><td> [&nbsp; ]</td><td></td></tr><tr>
+<tr><td></td><td>Listener Import Message Should Be In Syslog</td><td>OldJavaListener<br></td><td> [&nbsp; ]</td><td></td></tr><tr>
 <td></td>
 <td></td>
 <td></td>
@@ -188,7 +188,7 @@ listener 'NonExistingListener' failed: ImportError:&nbsp;</td><td></td><td></td>
 
 <td></td>
 <td></td>
-</tr><tr><td></td><td>Listener Import Message Should Be In Syslog</td><td>JavaListenerWithArgs<br></td><td> [ Hello | world! ]</td><td></td></tr><tr><td></td><td>Check Listener File</td><td>${JAVA_ARGS_FILE}</td><td>I got arguments 'Hello' and 'world!'</td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Java Listener With Wrong Number Of Arguments</td><td>[ Tags ]</td><td>jybot</td><td></td><td></td></tr><tr><td></td><td>Check Syslog contains</td><td>Taking listener 'JavaListenerWithArgs' into use failed: TypeError: JavaListenerWithArgs(): expected 2 args; got 0</td><td></td><td></td></tr><tr><td></td><td>Check Syslog contains</td><td>Taking listener 'JavaListenerWithArgs:b:a:r' into use failed: TypeError: JavaListenerWithArgs(): expected 2 args; got 3</td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr>
+</tr><tr><td></td><td>Listener Import Message Should Be In Syslog</td><td>OldJavaListenerWithArgs<br></td><td> [ Hello | world! ]</td><td></td></tr><tr><td></td><td>Check Listener File</td><td>${JAVA_ARGS_FILE}</td><td>I got arguments 'Hello' and 'world!'</td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Java Listener With Wrong Number Of Arguments</td><td>[ Tags ]</td><td>jybot</td><td></td><td></td></tr><tr><td></td><td>Check Syslog contains</td><td>Taking listener 'OldJavaListenerWithArgs' into use failed: TypeError: OldJavaListenerWithArgs(): expected 2 args; got 0</td><td></td><td></td></tr><tr><td></td><td>Check Syslog contains</td><td>Taking listener 'OldJavaListenerWithArgs:b:a:r' into use failed: TypeError: OldJavaListenerWithArgs(): expected 2 args; got 3</td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr>
 
 
 
