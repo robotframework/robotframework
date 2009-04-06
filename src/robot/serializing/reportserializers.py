@@ -170,7 +170,7 @@ class SplitReportSerializer(ReportSerializer):
 
     def _set_split_link(self, item):
         item.linkpath = self._split_loglink
-        item.linkname = item.get_long_name(split_level=self._split_level)
+        item.linkname = item.get_long_name(self._split_level)
 
     
 class TagDetailsSerializer(_TableHelper):

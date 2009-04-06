@@ -87,7 +87,7 @@ class LogSerializer:
         label = type_ == 'suite' and 'TEST&nbsp;SUITE: ' or 'TEST&nbsp;CASE: '
         self._writer.element('span', label, {'class': item.status.lower()},
                              escape=False)
-        name = item.get_long_name(split_level=self._split_level)
+        name = item.get_long_name(self._split_level)
         self._writer.element('a', item.name, {'name': '%s_%s' % (type_, name),
                                               'class': 'name', 'title': name})
         self._writer.end_many(['td', 'tr'])

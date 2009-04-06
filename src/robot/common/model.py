@@ -36,14 +36,12 @@ class _TestAndSuiteHelper:
             return utils.html_escape(self.doc, formatting=True)
         if name == 'longname':
             return self.get_long_name()
-        if name == 'mediumname':
-            return self.get_medium_name()
         raise AttributeError("%s does not have attribute '%s'" 
                              % (self.__class__.__name__, name))
 
-    def get_long_name(self, separator='.', split_level=-1):
+    def get_long_name(self, split_level=-1, separator='.'):
         """Returns long name. If separator is None, list of names is returned."""
-        names = self.parent is not None and self.parent.get_long_name(None) or []
+        names = self.parent and self.parent.get_long_name(separator=None) or []
         names.append(self.name)
         slice_level = self._get_name_slice_index(len(names), split_level)
         if split_level >= 0 and len(names) > slice_level:
@@ -54,11 +52,6 @@ class _TestAndSuiteHelper:
 
     def _get_name_slice_index(self, name_parts_count, split_level):
         return split_level
-
-    def get_medium_name(self, separator='.', split_level=-1):
-            tokens = self.get_long_name(separator=None, split_level=split_level)
-            tokens[:-1] = [ t[0].lower() for t in tokens[:-1] ]
-            return separator.join(tokens)
 
     def _set_teardown_fail_msg(self, message):
         if self.message == '':

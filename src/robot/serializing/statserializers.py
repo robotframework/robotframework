@@ -77,7 +77,7 @@ class _StatSerializer:
         self._writer.content(stat.name)
 
     def _write_suite_stat_name(self, stat):
-        tokens = stat.get_long_name(separator=None, split_level=self._split_level)
+        tokens = stat.get_long_name(self._split_level, separator=None)
         if len(tokens) > 1:
             self._writer.element('span', ' . '.join(tokens[:-1]+['']),
                                  {'class': 'parent_name'}, newline=False)

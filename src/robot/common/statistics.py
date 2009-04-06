@@ -79,10 +79,10 @@ class SuiteStat(Stat):
         self.get_long_name = suite.get_long_name
 
     def get_doc(self, split_level=-1):
-        return self.get_long_name(split_level=split_level)
+        return self.get_long_name(split_level)
 
     def get_link(self, split_level=-1):
-        return self.get_long_name(split_level=split_level)
+        return self.get_long_name(split_level)
         
     def serialize(self, serializer):
         serializer.suite_stat(self)
