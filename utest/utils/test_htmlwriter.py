@@ -105,10 +105,15 @@ class TestHtmlWriter(unittest.TestCase):
         self._verify('<robot>\n')
     
     def test_content_with_non_strings(self):
+        class NonString:
+            def __nonzero__(self):
+                return False
+            def __str__(self):
+                return 'nonzero'
         for i in range(10):
             self.writer.content(i)
-        self.writer.content(False)
-        self._verify('0123456789False')
+        self.writer.content(NonString())
+        self._verify('0123456789nonzero')
         
     def test_close_empty(self):
         self.writer.end('suite', False)
