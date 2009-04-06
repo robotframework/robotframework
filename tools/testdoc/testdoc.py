@@ -54,7 +54,7 @@ from robot import utils
 from robot.common import BaseKeyword, BaseTestSuite
 from robot.running import TestSuite, Keyword
 from robot.conf import RobotSettings
-from robot.serializing.serializer import LogSuiteSerializer
+from robot.serializing.logserializers import LogSerializer
 from robot.serializing import templates
 from robot.serializing.templating import Namespace, Template
 from robot.errors import DataError, Information
@@ -76,8 +76,7 @@ def serialize_test_doc(suite, outpath, title):
     outfile = open(outpath, 'w')
     serializer = TestdocSerializer(outfile, suite)
     ttuple = time.localtime()
-    str_time = '%s %s' % (utils.format_time(ttuple, daytimesep='&nbsp;'),
-                          utils.get_diff_to_gmt())
+    str_time = utils.format_time(ttuple, daytimesep='&nbsp;', gmtsep='&nbsp;')
     int_time = long(time.mktime(ttuple))
     if title:
         title = title.replace('_', ' ')
@@ -116,25 +115,26 @@ def get_outpath(path, suite_name):
     return os.path.abspath(path)
 
 
-class TestdocSerializer(LogSuiteSerializer):
+class TestdocSerializer(LogSerializer):
 
     def __init__(self, output, suite):
         self._writer = utils.HtmlWriter(output)
         self._idgen = utils.IdGenerator()
+        self._split_level = -1
         self._suite_level = 0
 
     def start_suite(self, suite):
         suite._init_suite(NonResolvingVariableScopes())
-        LogSuiteSerializer.start_suite(self, suite)
+        LogSerializer.start_suite(self, suite)
 
     def start_test(self, test):
         test._init_test(NonResolvingVariableScopes())
-        LogSuiteSerializer.start_test(self, test)
+        LogSerializer.start_test(self, test)
 
     def start_keyword(self, kw):
         if isinstance(kw, Keyword):  # Doesn't match For or Parallel
             kw.name = kw._get_name(kw.name, NonResolvingVariableScopes())
-        LogSuiteSerializer.start_keyword(self, kw)
+        LogSerializer.start_keyword(self, kw)
 
     def _is_element_open(self, item):
         return isinstance(item, BaseTestSuite)
@@ -148,7 +148,7 @@ class TestdocSerializer(LogSuiteSerializer):
             self._write_metadata_row(name, value, escape=False, write_empty=True)
         self._write_source(suite.source)
         self._write_metadata_row('Number of Tests', suite.get_test_count())
-        self._writer.end_element('table')
+        self._writer.end('table')
 
     def _write_test_metadata(self, test):
         self._start_suite_or_test_metadata(test)
@@ -160,20 +160,20 @@ class TestdocSerializer(LogSuiteSerializer):
                 tout += ' | ' + test.timeout.message
         self._write_metadata_row('Timeout', tout)
         self._write_metadata_row('Tags', ', '.join(test.tags))
-        self._writer.end_element('table')
+        self._writer.end('table')
 
     def _write_folding_button(self, item):
         if not isinstance(item, BaseKeyword):
-            LogSuiteSerializer._write_folding_button(self, item)
+            LogSerializer._write_folding_button(self, item)
 
     def _write_expand_all(self, item):
         if isinstance(item, BaseTestSuite):
-            LogSuiteSerializer._write_expand_all(self, item)
+            LogSerializer._write_expand_all(self, item)
 
 
 class NonResolvingVariableScopes:
 
-    def replace_from_meta(self, name, item, errors):
+    def replace_meta(self, name, item, errors):
         return item
 
     def replace_string(self, item):
