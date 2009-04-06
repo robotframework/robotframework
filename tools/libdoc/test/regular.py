@@ -23,6 +23,6 @@ class regular:
     def get_hello(self):
         """Get the intialization variables
 
-        See `initialization` for explanation of arguments
+        See `importing` for explanation of arguments
         and `introduction` for introduction"""
         return self.arg1, self.arg2

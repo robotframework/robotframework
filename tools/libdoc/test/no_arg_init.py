@@ -13,7 +13,7 @@ class no_arg_init:
     def get_hello(self, arg):
         """Returns 'Hello `arg`!'.
 
-        See `initialization` for explanation of arguments and `introduction`
+        See `importing` for explanation of arguments and `introduction`
         for introduction. Neither of them really exist, though.
         """
         return 'Hello %s' % arg

@@ -18,6 +18,6 @@ def keyword():
 def get_hello():
     """Get the intialization variables
 
-    See `initialization` for explanation of arguments
+    See `importing` for explanation of arguments
     and `introduction` for introduction"""
     return 'foo'
