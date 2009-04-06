@@ -187,7 +187,7 @@ class TestNewStyleListeners(_BaseListenerTest, unittest.TestCase):
     listener_name = 'test_listeners.ListenAllNewStyle'
 
     def test_importing(self):
-        assert_equals(self.listener.version, '2')
+        assert_equals(self.listener.version, 2)
         assert_false(self.listener.is_java)
 
 
@@ -219,7 +219,7 @@ if utils.is_jython:
         listener_name = 'NewStyleJavaListener'
 
         def test_importing(self):
-            assert_equals(self.listener.version, '2')
+            assert_equals(self.listener.version, 2)
             assert_true(self.listener.is_java)
 
 

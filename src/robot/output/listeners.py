@@ -127,7 +127,7 @@ class _ListenerProxy(AbstractLoggerProxy):
         listener = self._import_listener(name, args)
         AbstractLoggerProxy.__init__(self, listener)
         self.name = name
-        self.version = getattr(listener, 'ROBOT_LISTENER_API_VERSION', 1)
+        self.version = self._get_version(listener)
         self.is_java = utils.is_jython and isinstance(listener, Object)
 
     def _import_listener(self, name, args):
@@ -139,6 +139,12 @@ class _ListenerProxy(AbstractLoggerProxy):
         LOGGER.info("Imported listener '%s' with arguments %s (source %s)" 
                     % (name, utils.seq2str2(args), source))
         return listener
+
+    def _get_version(self, listener):
+        try:
+            return int(getattr(listener, 'ROBOT_LISTENER_API_VERSION', 1))
+        except ValueError:
+            return 1
 
     def call_method(self, method, *args):
         if self.is_java and len(args) == 2 and isinstance(args[1], dict):
