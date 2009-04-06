@@ -1256,7 +1256,7 @@ class OperatingSystem:
         self._log(msg, 'INFO')
 
     def _link(self, msg, *paths):
-        paths = tuple([ '<a href="%s">%s</a>' % (p, p) for p in paths ])
+        paths = tuple([ '<a href="file://%s">%s</a>' % (p, p) for p in paths ])
         self._log(msg % paths, 'HTML')
         
     def _warn(self, msg):
