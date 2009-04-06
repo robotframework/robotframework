@@ -1,5 +1,4 @@
 name|suite.name| Testdata | Empty Settings | Everything
-mediumname|suite.mediumname| Testdata | t.Empty Settings | t.Everything
 longname|suite.longname | Testdata | Testdata.Empty Settings | Testdata.Everything
 status | suite.status | FAIL | PASS | FAIL
 setup | suite.setup | None | None | N/A

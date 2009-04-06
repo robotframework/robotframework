@@ -19,7 +19,6 @@ def run_suite():
     remove_outputdir()
     return fails
 
-    
 
 if __name__ == '__main__':
     sys.exit(run_suite())

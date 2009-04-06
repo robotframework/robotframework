@@ -1,5 +1,4 @@
 name|test.name| Empty Metadata | Passing Test | Failing Test | Test
-mediumname|test.mediumname| t.e.Empty Metadata | t.e.Passing Test | t.e.Failing Test | t.m.Test
 longname|test.longname | Testdata.Empty Settings.Empty Metadata | Testdata.Everything.Passing Test | Testdata.Everything.Failing Test | Testdata.Minimum.Test
 status | test.status | PASS | PASS | PASS | PASS
 tags | test.tags | [] | ['force1', 'tag1', 'tag2'] | ['default1', 'force1'] | []
