@@ -193,7 +193,10 @@ class TagDetailsSerializer(_TableHelper):
             self._test_row(test)
 
     def _write_item_name(self, stat, type_is_ignored):
-        self._writer.content(stat.mediumname)
+        tokens = stat.get_long_name(separator=None)
+        self._writer.element('span', ' . '.join(tokens[:-1]+['']),
+                             {'class': 'parent_name'}, newline=False)
+        self._writer.content(tokens[-1])
 
     def _tag_row(self, stat):
         self._writer.start('tr', {'class': 'tag_row'})
@@ -202,7 +205,7 @@ class TagDetailsSerializer(_TableHelper):
                              newline=False)
         self._writer.content(stat.name)
         self._writer.end('td')
-        doc = stat.doc is not None and utils.html_escape(stat.doc, True) or ''
+        doc = stat.doc and utils.html_escape(stat.doc, formatting=True) or ''
         self._writer.element('td', doc, {'class': 'col_doc'}, escape=False)
         self._writer.element('td', 'N/A', {'class': 'col_tags not_available'})
         self._writer.element('td', self._get_crit(stat), {'class': 'col_crit'})

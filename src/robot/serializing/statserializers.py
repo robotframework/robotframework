@@ -51,7 +51,7 @@ class _StatSerializer:
 
     def suite_stat(self, stat):
         elem = self._start_stat_name(stat)
-        self._write_stat_name(stat)
+        self._write_suite_stat_name(stat)
         self._end_stat_name(elem)
         self._write_numbers_and_graph(stat)
 
@@ -74,6 +74,17 @@ class _StatSerializer:
 
     def _write_stat_name(self, stat):
         self._writer.content(self._get_name(stat))
+
+    def _write_suite_stat_name(self, stat):
+        # TODO:
+        # 1) Should handle also split levels
+        # 2) Can _get_name be removed?
+        # 3) Can mediumname be removed altogether??
+        tokens = stat._suite.get_long_name(separator=None)
+        if len(tokens) > 1:
+            self._writer.element('span', ' . '.join(tokens[:-1]+['']),
+                                 {'class': 'parent_name'}, newline=False)
+        self._writer.content(tokens[-1])
 
     def _end_stat_name(self, elem):
         self._writer.end(elem, newline=False)

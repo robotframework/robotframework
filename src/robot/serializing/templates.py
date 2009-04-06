@@ -105,6 +105,10 @@ _STYLE = '''
     color: gray;      /* no grey in IE */
     font-weight: normal;
   }
+  .parent_name {
+    font-size: 0.7em;
+    letter-spacing: -0.07em;
+  }
   a:link, a:visited {
     text-decoration: none;
     color: blue;
