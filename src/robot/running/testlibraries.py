@@ -16,6 +16,7 @@
 import os
 import types
 import inspect
+import copy
 
 from robot import utils
 from robot.errors import DataError
@@ -88,7 +89,10 @@ class _BaseTestLibrary(BaseLibrary):
         lib._init_scope_handling()
         lib.handlers = utils.NormalizedDict(ignore=['_'])
         for handler_name, handler in self.handlers.items():
-            lib.handlers[handler_name] = handler.copy(lib)
+            copied = copy.copy(handler)
+            copied.library = lib
+            copied.longname = '%s.%s' % (lib.name, copied.name)
+            lib.handlers[handler_name] = copied
         return lib
     
     def start_suite(self):

@@ -66,17 +66,6 @@ class _RunnableHandler(BaseHandler):
         self.doc = ''
         self.timeout = ''  # Needed for set_attributes in runner.start_keyword
 
-    def copy(self, library):
-        handler = _RunnableHandler(library, self._handler_name, None)
-        self._copy_attributes(handler)
-        return handler
-        
-    def _copy_attributes(self, handler):
-        handler._method = self._method
-        handler.minargs = self.minargs
-        handler.maxargs = self.maxargs
-        handler.doc = self.doc
-        
     def run(self, output, namespace, args):
         """Executes the represented handler with given 'args'.
         
@@ -256,14 +245,13 @@ class _JavaHandler(_RunnableHandler):
             args.append(varargs)
         return args
 
-    
+
 class DynamicHandler(_RunnableHandler):
     
     def __init__(self, library, handler_name, handler_method, doc='', 
-                 argspec=None, copy=False):
+                 argspec=None):
         _RunnableHandler.__init__(self, library, handler_name, handler_method)
-        if not copy:
-            self._run_keyword_method_name = handler_method.__name__
+        self._run_keyword_method_name = handler_method.__name__
         self.doc = doc is not None and utils.unic(doc) or ''
         self.args, self.defaults, self.varargs = self._get_arg_spec(argspec)
         self.minargs = len(self.args) - len(self.defaults)
@@ -313,12 +301,6 @@ class DynamicHandler(_RunnableHandler):
             return runner(name, list(args))
         return handler
     
-    def copy(self, library):
-        handler = DynamicHandler(library, self._handler_name, None, copy=True)
-        self._copy_attributes(handler)
-        handler._run_keyword_method_name = self._run_keyword_method_name
-        return handler
-
 
 class _NoInitHandler(BaseHandler):
 
