@@ -311,15 +311,16 @@ class _List:
         If you only want to the length, use keyword `Get Length` from 
         the BuiltIn library. 
         """
-        print '*%s* ' % (_validate_log_level(level)),
+        print '*%s* ' % level.upper(),
         if len(list_) == 0:
             print 'List is empty'
         elif len(list_) == 1:
-            print "List has one item '%s'" % (list_[0])
+            print 'List has one item:\n%s' % list_[0]
         else:
-            print "List length is '%s'" % (len(list_))
-            for i in range(0, len(list_)):
-                print '%s: %s' % (i, list_[i])
+            print 'List length is %d and it contains following items:' \
+                  % len(list_)
+            for index, item in enumerate(list_):
+                print '%s: %s' % (index, item)
             
     def _index_to_int(self, index, empty_to_zero=False):    
         if empty_to_zero and not index:
@@ -330,7 +331,7 @@ class _List:
             raise ValueError("Cannot convert index '%s' to an integer" % index)
 
     def _index_error(self, list_, index):
-        raise IndexError("Given index '%s' out of range 0-%s"
+        raise IndexError('Given index %s is out of the range 0-%d'
                          % (index, len(list_)-1))
 
 
@@ -542,15 +543,16 @@ class _Dictionary:
         If you only want to log the size, use keyword `Get Length` from 
         the BuiltIn library. 
         """
-        print '*%s* ' % (_validate_log_level(level)),
+        print '*%s* ' % level.upper(),
         if len(dictionary) == 0:
             print 'Dictionary is empty'
         elif len(dictionary) == 1:
-            print "Dictionary has one item '%s: %s'" % (dictionary.items()[0])
+            print 'Dictionary has one item:'
         else:
-            print "Dictionary length is '%s'" % (len(dictionary))
-            for key in self.get_dictionary_keys(dictionary):
-                print '%s: %s' % (key, dictionary[key])
+            print 'Dictionary size is %d and it contains following items:' \
+                  % len(dictionary)
+        for key in self.get_dictionary_keys(dictionary):
+            print '%s: %s' % (key, dictionary[key])
 
     def _keys_should_be_equal(self, dict1, dict2, msg, values):
         keys1 = self.get_dictionary_keys(dict1)
@@ -626,9 +628,3 @@ def _verify_condition(condition, default_msg, given_msg, values=False):
         if values:
             raise AssertionError(given_msg + '\n' + default_msg)
         raise AssertionError(given_msg)
-
-def _validate_log_level(level):
-    level = level.upper()
-    if not output.LEVELS.has_key(level):
-        raise DataError("Invalid log level '%s'" % level)
-    return level
