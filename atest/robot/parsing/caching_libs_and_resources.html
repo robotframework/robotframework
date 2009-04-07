@@ -55,8 +55,6 @@ th {
 }
 </style>
 <title>Caching Libs And Resources</title></head>
-
-
 <body>
 <h1>Caching Libs And Resources</h1>
 
@@ -122,7 +120,7 @@ th {
 <tr>
 <td><a name="test_Import Libraries Only Once">Import Libraries Only Once</a></td>
 <td>[Setup]</td>
-<td>My Run Tests</td>
+<td>Run Tests And Set $SYSLOG</td>
 <td>parsing${/}library_caching</td>
 <td></td>
 </tr>
@@ -149,33 +147,33 @@ th {
 </tr>
 <tr>
 <td></td>
-<td>Syslog File Should Contain N Times</td>
-<td>Imported library 'BuiltIn' with arguments [ ]</td>
-<td>1</td>
-<td></td>
+<td>Should Contain X Times</td><td>${SYSLOG}</td>
+
+<td>Imported library 'BuiltIn' with arguments [ ]</td><td>1</td>
+
 </tr>
 <tr>
 <td></td>
-<td>Syslog File Should Contain N Times</td>
-<td>Found test library 'BuiltIn' with arguments [ ] from cache</td>
-<td>2</td>
-<td></td>
+<td>Should Contain X Times</td><td>${SYSLOG}</td>
+
+<td>Found test library 'BuiltIn' with arguments [ ] from cache</td><td>2</td>
+
 </tr>
 <tr>
 <td></td>
-<td>Syslog File Should Contain N Times</td>
-<td>Imported library 'OperatingSystem' with arguments [ ]</td>
-<td>1</td>
-<td></td>
+<td>Should Contain X Times</td><td>${SYSLOG}</td>
+
+<td>Imported library 'OperatingSystem' with arguments [ ]</td><td>1</td>
+
 </tr>
 <tr>
 <td></td>
-<td>Syslog File Should Contain N Times</td>
-<td>Found test library 'OperatingSystem' with arguments [ ] from cache</td>
-<td>1</td>
-<td></td>
+<td>Should Contain X Times</td><td>${SYSLOG}</td>
+
+<td>Found test library 'OperatingSystem' with arguments [ ] from cache</td><td>3</td>
+
 </tr>
-<tr>
+<tr><td></td><td>Check Log Message</td><td>${ERRORS.msgs[0]}</td><td>Test library 'OperatingSystem' already imported by suite 'Library Caching.File 1'</td><td>WARN</td></tr><tr><td></td><td>Check Log Message</td><td>${ERRORS.msgs[1]}</td><td>Test library 'OperatingSystem' already imported by suite 'Library Caching.File 2'</td><td>WARN</td></tr><tr>
 <td></td>
 <td></td>
 <td></td>
@@ -185,13 +183,13 @@ th {
 <tr>
 <td><a name="test_Process Resource Files Only Once">Process Resource Files Only Once</a></td>
 <td>[Setup]</td>
-<td>My Run Tests</td>
+<td>Run Tests And Set $SYSLOG</td>
 <td>parsing${/}resource_parsing</td>
 <td></td>
 </tr>
 <tr>
 <td></td>
-<td>Message</td>
+<td>Comment</td>
 <td>Check that tests are run ok</td>
 <td></td>
 <td></td>
@@ -275,7 +273,7 @@ th {
 </tr>
 <tr>
 <td></td>
-<td>Message</td>
+<td>Comment</td>
 <td>Check that resources were parsed only once</td>
 <td></td>
 <td></td>
@@ -284,16 +282,10 @@ th {
 <td></td>
 <td>${dir} =</td>
 <td>Join Path</td>
-<td>${CURDIR}${/}..${/}..</td>
-<td>testdata</td>
+<td>${CURDIR}/../../testdata</td>
+<td>parsing/resource_parsing</td>
 </tr>
-<tr>
-<td></td>
-<td>...</td>
-<td>parsing</td>
-<td>resource_parsing</td>
-<td></td>
-</tr>
+
 <tr>
 <td></td>
 <td>Syslog File Should Contain In Order</td>
@@ -424,55 +416,13 @@ th {
 <th>Argument</th>
 <th>Argument</th>
 </tr>
-<tr>
-<td><a name="keyword_Syslog File Should Contain N Times">Syslog File Should Contain N Times</a></td>
-<td>[Arguments]</td>
-<td>${text}</td>
-<td>${exp_count}</td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td>[Timeout]</td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td>${lines} =</td>
-<td>Grep</td>
-<td>${SYSLOGFILE}</td>
-<td>${text}</td>
-</tr>
-<tr>
-<td></td>
-<td>Log</td>
-<td>${SYSLOGFILE}</td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td>${count} =</td>
-<td>Evaluate</td>
-<td>len("""${lines}""".splitlines())</td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td>Ints Equal</td>
-<td>${count}</td>
-<td>${exp_count}</td>
-<td>${text}</td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
+
+
+
+
+
+
+
 <tr>
 <td><a name="keyword_Syslog File Should Contain In Order">Syslog File Should Contain In Order</a></td>
 <td>[Arguments]</td>
@@ -480,13 +430,7 @@ th {
 <td></td>
 <td></td>
 </tr>
-<tr>
-<td></td>
-<td>[Timeout]</td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
+
 <tr>
 <td></td>
 <td>${text} =</td>
@@ -494,31 +438,25 @@ th {
 <td>@{parts}</td>
 <td></td>
 </tr>
+
 <tr>
 <td></td>
-<td>${text} =</td>
-<td>Set</td>
-<td>${text.replace("\\","/")}</td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td>Syslog File Should Contain N Times</td>
-<td>${text}</td>
-<td>1</td>
-<td></td>
+<td>Should Contain X Times</td><td>${SYSLOG}</td>
+
+<td>${text}</td><td>1</td>
+
 </tr>
 <tr>
 <td></td>
 <td>${pre}</td>
 <td>${post} =</td>
-<td>Set</td>
-<td>${SYSLOGFILE.split("${text}")}</td>
+<td>Set Variable</td>
+<td>${SYSLOG.split("${text}")}</td>
 </tr>
 <tr>
 <td></td>
 <td>Set Suite Variable</td>
-<td>$SYSLOGFILE</td>
+<td>${SYSLOG}</td>
 <td>${post}</td>
 <td></td>
 </tr>
@@ -530,19 +468,13 @@ th {
 <td></td>
 </tr>
 <tr>
-<td><a name="keyword_My Run Tests">My Run Tests</a></td>
+<td><a name="keyword_My Run Tests">Run Tests And Set $SYSLOG</a></td>
 <td>[Arguments]</td>
 <td>${path}</td>
 <td></td>
 <td></td>
 </tr>
-<tr>
-<td></td>
-<td>[Timeout]</td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
+
 <tr>
 <td></td>
 <td>Run Tests</td>
@@ -550,41 +482,23 @@ th {
 <td>${path}</td>
 <td></td>
 </tr>
+
 <tr>
 <td></td>
-<td>Set Suite Variable</td>
-<td>$SUITE</td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td>${SYSLOGFILE} =</td>
+<td>${SYSLOG} =</td>
 <td>Get Syslog</td>
 <td></td>
 <td></td>
 </tr>
-<tr>
-<td></td>
-<td>Log</td>
-<td>${SYSLOGFILE}</td>
-<td></td>
-<td></td>
-</tr>
+
 <tr>
 <td></td>
 <td>Set Suite Variable</td>
-<td>$SYSLOGFILE</td>
-<td>${SYSLOGFILE.replace("\\","/")}</td>
+<td>${SYSLOG}</td>
+<td><br></td>
 <td></td>
 </tr>
-<tr>
-<td></td>
-<td>Verify My Run Tests</td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
+
 <tr>
 <td></td>
 <td></td>
@@ -592,27 +506,9 @@ th {
 <td></td>
 <td></td>
 </tr>
-<tr>
-<td><a name="keyword_Verify My Run Tests">Verify My Run Tests</a></td>
-<td>[Timeout]</td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td>Fail If Equal</td>
-<td>${SUITE}</td>
-<td>${None}</td>
-<td>Running tests failed</td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
+
+
+
 <tr>
 <td></td>
 <td></td>
