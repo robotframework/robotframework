@@ -60,4 +60,7 @@ public class ArgTypeCoercion {
 
     public void coercableAndUnCoercableArgs(int arg1, boolean arg2, Long arg3, boolean arg4) {}
 
+	public void primitiveAndArray(int arg1, int[] arg2) {
+	}
+
 }
