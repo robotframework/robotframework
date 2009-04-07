@@ -1,7 +1,9 @@
+
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html><head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<meta name="generator" content="RobotIDE"> 
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="RobotIDE" /> 
 <style type="text/css">
 html {
   font-family: Arial,Helvetica,sans-serif;
@@ -54,13 +56,16 @@ th {
   font-style: normal;
 }
 </style>
-<title>Split Log</title></head>
+<title>Split Log</title>
+</head>
 <body>
 <h1>Split Log</h1>
 
 <table border="1">
-<colgroup span="99"><col class="name"><col class="value" span="4"></colgroup>
-<tbody><tr>
+<colgroup span="99">
+<col class="name">
+<col class="value" span="4"></colgroup>
+<tr>
 <th>Setting</th>
 <th>Value</th>
 <th>Value</th>
@@ -69,14 +74,11 @@ th {
 </tr>
 <tr>
 <td>Documentation</td>
-<td>Tests for making sure splitting logs into multiple html files works
-while running tests These tests assume that splitting outputs to
-multiple xmls works in the first place.</td>
+<td>Tests for making sure splitting logs into multiple html files works while running tests These tests assume that splitting outputs to multiple xmls works in the first place.</td>
 <td></td>
 <td></td>
 <td></td>
 </tr>
-
 <tr>
 <td>Force Tags</td>
 <td>pybot</td>
@@ -112,11 +114,13 @@ multiple xmls works in the first place.</td>
 <td></td>
 <td></td>
 </tr>
-</tbody></table>
+</table>
 
 <table border="1">
-<colgroup span="99"><col class="name"><col class="value" span="4"></colgroup>
-<tbody><tr>
+<colgroup span="99">
+<col class="name">
+<col class="value" span="4"></colgroup>
+<tr>
 <th>Variable</th>
 <th>Value</th>
 <th>Value</th>
@@ -130,11 +134,14 @@ multiple xmls works in the first place.</td>
 <td></td>
 <td></td>
 </tr>
-</tbody></table>
+</table>
 
 <table border="1">
-<colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
-<tbody><tr>
+<colgroup span="99">
+<col class="name">
+<col class="action">
+<col class="arg" span="3"></colgroup>
+<tr>
 <th>Test Case</th>
 <th>Action</th>
 <th>Argument</th>
@@ -300,7 +307,7 @@ multiple xmls works in the first place.</td>
 <td>${report} =</td>
 <td>Set Variable</td>
 <td>${LOGBASE.replace('log','report')}</td>
-<td><br></td>
+<td></td>
 </tr>
 <tr>
 <td></td>
@@ -360,20 +367,18 @@ multiple xmls works in the first place.</td>
 </tr>
 <tr>
 <td></td>
-<td>Link In Tag&nbsp;Details Table To Sub Log Should Be Ok</td>
+<td>Link In Tag Details Table To Sub Log Should Be Ok</td>
 <td>${tags}</td>
 <td>Subsuites.Sub 1.SubSuite1 First</td>
 <td>${LOGBASE}-001.html</td>
 </tr>
-
 <tr>
 <td></td>
-<td>Link In Tag&nbsp;Details Table To Sub Log Should Be Ok</td>
+<td>Link In Tag Details Table To Sub Log Should Be Ok</td>
 <td>${tags}</td>
 <td>Subsuites.Sub 2.SubSuite2 First</td>
 <td>${LOGBASE}-002.html</td>
 </tr>
-
 <tr>
 <td></td>
 <td></td>
@@ -679,9 +684,7 @@ multiple xmls works in the first place.</td>
 <td></td>
 <td>Should Contain</td>
 <td>${index}</td>
-<td>&lt;span class="fail"&gt;TEST&amp;nbsp;CASE: &lt;/span&gt;\n&lt;a
-class="name" name="test_Suites.Fourth.Suite4 First"
-title="Suites.Fourth.Suite4 First"&gt;Suite4 First&lt;/a&gt;</td>
+<td>&lt;span class="fail"&gt;TEST&amp;nbsp;CASE: &lt;/span&gt;\n&lt;a class="name" name="test_Suites.Fourth.Suite4 First" title="Suites.Fourth.Suite4 First"&gt;Suite4 First&lt;/a&gt;</td>
 <td></td>
 </tr>
 <tr>
@@ -849,11 +852,9 @@ title="Suites.Fourth.Suite4 First"&gt;Suite4 First&lt;/a&gt;</td>
 <td></td>
 <td>${sub_outs} =</td>
 <td>Join Path</td>
-<td>${OUTPUTDIR}/output/suites
-
-
-</td>
-<td>output-*.xml</td></tr>
+<td>${OUTPUTDIR}/output/suites</td>
+<td>output-*.xml</td>
+</tr>
 <tr>
 <td></td>
 <td>Run Tests Without Processing Output</td>
@@ -908,7 +909,7 @@ title="Suites.Fourth.Suite4 First"&gt;Suite4 First&lt;/a&gt;</td>
 <td></td>
 <td>Should Contain</td>
 <td>${index}</td>
-<td>Removed file '&lt;a href="${path}"&gt;${path}&lt;/a&gt;'</td>
+<td>Removed file '&lt;a href="file://${path}"&gt;${path}&lt;/a&gt;'</td>
 </tr>
 <tr>
 <td></td>
@@ -957,7 +958,112 @@ title="Suites.Fourth.Suite4 First"&gt;Suite4 First&lt;/a&gt;</td>
 <td></td>
 <td>Should Contain</td>
 <td>${index}</td>
-<td>Removed file '&lt;a href="${path}"&gt;${path}&lt;/a&gt;'</td>
+<td>Removed file '&lt;a href="file://${path}"&gt;</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Statistcs By Suite Table Should Contain Correct Links In Index Log</td>
+<td>${name} =</td>
+<td>Set Variable</td>
+<td>statistics_by_suite_links_log</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Run Tests</td>
+<td>--log ${name} --splitoutput 2</td>
+<td>misc</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Statistics Table Should Contain Link</td>
+<td>${name}.html</td>
+<td></td>
+<td>Misc</td>
+</tr>
+<tr>
+<td></td>
+<td>...</td>
+<td>Misc</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Statistics Table Should Contain Link</td>
+<td>${name}.html</td>
+<td>${name}-002.html</td>
+<td>Subsuite 1.Suite 2</td>
+</tr>
+<tr>
+<td></td>
+<td>...</td>
+<td>Misc.Multiple Suites.Subsuite 1.Suite 2</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Statistics Table Should Contain Link</td>
+<td>${name}.html</td>
+<td>${name}-010.html</td>
+<td>Suite 9</td>
+</tr>
+<tr>
+<td></td>
+<td>...</td>
+<td>Misc.Multiple Suites.Suite 9</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Statistics Table Should Contain Link</td>
+<td>${name}.html</td>
+<td></td>
+<td>Misc.Normal</td>
+</tr>
+<tr>
+<td></td>
+<td>...</td>
+<td>Misc.Normal</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Statistics Table Should Contain Link</td>
+<td>${name}.html</td>
+<td>${name}-012.html</td>
+<td>Subsuites.Sub 1</td>
+</tr>
+<tr>
+<td></td>
+<td>...</td>
+<td>Misc.Suites.Subsuites.Sub 1</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Statistics Table Should Contain Link</td>
+<td>${name}.html</td>
+<td></td>
+<td>Misc.Unicode</td>
+</tr>
+<tr>
+<td></td>
+<td>...</td>
+<td>Misc.Unicode</td>
+<td></td>
+<td></td>
 </tr>
 <tr>
 <td></td>
@@ -973,11 +1079,14 @@ title="Suites.Fourth.Suite4 First"&gt;Suite4 First&lt;/a&gt;</td>
 <td></td>
 <td></td>
 </tr>
-</tbody></table>
+</table>
 
 <table border="1">
-<colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
-<tbody><tr>
+<colgroup span="99">
+<col class="name">
+<col class="action">
+<col class="arg" span="3"></colgroup>
+<tr>
 <th>Keyword</th>
 <th>Action</th>
 <th>Argument</th>
@@ -1166,7 +1275,6 @@ title="Suites.Fourth.Suite4 First"&gt;Suite4 First&lt;/a&gt;</td>
 <td>${test}</td>
 <td>${status}=pass</td>
 </tr>
-
 <tr>
 <td></td>
 <td>${expected} =</td>
@@ -1209,10 +1317,6 @@ title="Suites.Fourth.Suite4 First"&gt;Suite4 First&lt;/a&gt;</td>
 <td></td>
 <td></td>
 </tr>
-
-
-
-
 <tr>
 <td>Log Should Contain Sub Log Content</td>
 <td>[Arguments]</td>
@@ -1669,12 +1773,69 @@ title="Suites.Fourth.Suite4 First"&gt;Suite4 First&lt;/a&gt;</td>
 <td></td>
 </tr>
 <tr>
+<td>Statistics Table Should Contain Link</td>
+<td>[Arguments]</td>
+<td>${file}</td>
+<td>${path}</td>
+<td>${link}</td>
+</tr>
+<tr>
+<td></td>
+<td>...</td>
+<td>${name}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>${content} =</td>
+<td>Get File</td>
+<td>${OUTDIR}${/}${file}</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>${on click} =</td>
+<td>Set Variable If</td>
+<td>"${link}" == "${name}"</td>
+<td>onclick="set_element_visible('suite_${name}')"${SPACE}</td>
+</tr>
+<tr>
+<td></td>
+<td>...</td>
+<td>${EMPTY}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>${name span} =</td>
+<td>Get Name Span In Statistics Table</td>
+<td>${name}</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should Contain</td>
+<td>${content}</td>
+<td>&lt;div class="stat_name"&gt;&lt;a href="${path}#suite_${link}" ${on click}title="${name}"&gt;${name span}&lt;/a&gt;&lt;/div&gt;</td>
+<td></td>
+</tr>
+<tr>
 <td></td>
 <td></td>
 <td></td>
 <td></td>
 <td></td>
 </tr>
-</tbody></table>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</table>
 
-</body></html>
+</body>
+</html>
