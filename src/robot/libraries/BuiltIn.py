@@ -548,10 +548,9 @@ class _Variables:
     def variable_should_exist(self, name, msg=None):
         """Fails unless the given variable exists within the current scope.
         
-        The variable name must be given in the escaped format, e.g. \\${scalar}
-        or \\@{list} to prevent it from being resolved. Alternatively, in this
-        case, it is possible to give the variable name in a special format
-        without curly braces, e.g. $scalar or @list.
+        The name of the variable can be given either as a normal variable name
+        (e.g. ${NAME}) or in escaped format (e.g. \\${NAME}). Notice that the
+        former works only in Robot Framework 2.1 and newer.
         
         The default error message can be overridden with the `msg` argument.
         """
@@ -566,10 +565,9 @@ class _Variables:
     def variable_should_not_exist(self, name, msg=None):
         """Fails if the given variable exists within the current scope.
         
-        The variable name must be given in the escaped format, e.g. \\${scalar}
-        or \\@{list} to prevent it from being resolved. Alternatively, in this
-        case, it is possible to give the variable name in the special format
-        without curly braces, e.g. $scalar or @list.
+        The name of the variable can be given either as a normal variable name
+        (e.g. ${NAME}) or in escaped format (e.g. \\${NAME}). Notice that the
+        former works only in Robot Framework 2.1 and newer.
         
         The default error message can be overridden with the `msg` argument.
         """
@@ -658,8 +656,8 @@ class _Variables:
         variables set with this keyword. 
         
         The name of the variable can be given either as a normal variable name
-        (e.g. ${NAME}) or in escaped format (e.g. \\${NAME}), but the former
-        works only in Robot Framework 2.1 and newer.
+        (e.g. ${NAME}) or in escaped format (e.g. \\${NAME}). Notice that the
+        former works only in Robot Framework 2.1 and newer.
         
         If a variable already exists within the new scope, its value will be
         overwritten. Otherwise a new variable is created. If a variable already
