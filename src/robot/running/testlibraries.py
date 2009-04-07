@@ -16,7 +16,6 @@
 import os
 import types
 import inspect
-import copy
 
 from robot import utils
 from robot.errors import DataError
@@ -76,25 +75,8 @@ class _BaseTestLibrary(BaseLibrary):
             self.init =  self._create_init_handler(libcode)
             self._libinst = self.get_instance()
             self.handlers = self._create_handlers(self._libinst)
-            self._init_scope_handling()
+            self.init_scope_handling()
 
-    def copy(self, name):
-        lib = _BaseTestLibrary(None, self.version, name, self.args)
-        lib.orig_name = self.name
-        lib.doc = self.doc
-        lib.scope = self.scope
-        lib._libcode = self._libcode
-        lib._libinst = self._libinst
-        lib.init = self.init
-        lib._init_scope_handling()
-        lib.handlers = utils.NormalizedDict(ignore=['_'])
-        for handler_name, handler in self.handlers.items():
-            copied = copy.copy(handler)
-            copied.library = lib
-            copied.longname = '%s.%s' % (lib.name, copied.name)
-            lib.handlers[handler_name] = copied
-        return lib
-    
     def start_suite(self):
         pass
     
@@ -129,7 +111,7 @@ class _BaseTestLibrary(BaseLibrary):
             return True
         return False
     
-    def _init_scope_handling(self):
+    def init_scope_handling(self):
         if self.scope == 'GLOBAL':
             return
         self._libinst = None

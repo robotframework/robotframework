@@ -14,6 +14,7 @@
 
 
 import os.path
+import copy
 
 from robot import utils
 from robot.errors import FrameworkError, DataError
@@ -113,7 +114,7 @@ class Namespace:
             return
         lib = IMPORTER.import_library(code_name, args)
         if code_name != lib_name:
-            lib = lib.copy(lib_name)
+            lib = self._copy_library(lib, lib_name)
             LOGGER.info("Imported library '%s' with name '%s'"
                         % (code_name, lib_name))
         self._testlibs[lib_name] = lib
@@ -133,7 +134,19 @@ class Namespace:
         else:
             lib_name = name
         return name, lib_name, args
-        
+
+    def _copy_library(self, lib, newname): 
+        libcopy = copy.copy(lib)
+        libcopy.name = newname
+        libcopy.init_scope_handling()
+        libcopy.handlers = utils.NormalizedDict(ignore=['_'])
+        for handler in lib.handlers.values():
+            handcopy = copy.copy(handler)
+            handcopy.library = libcopy
+            handcopy.longname = '%s.%s' % (libcopy.name, handcopy.name)
+            libcopy.handlers[handler.name] = handcopy
+        return libcopy
+    
     def _import_deprecated_standard_libs(self, name):
         if name in ['BuiltIn', 'OperatingSystem']:
             self.import_library('Deprecated' + name)
