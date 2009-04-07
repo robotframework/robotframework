@@ -140,8 +140,8 @@ variables_to_verify.py</td>
 <th>Action</th>
 <th>Argument</th>
 <th>Argument</th>
-<th>Argument</th>
-<th>Argument</th>
+
+
 </tr>
 </thead>
 
@@ -171,28 +171,28 @@ Default Error Message</td>
 <td>FAIL</td>
 <td>Variable \${non-existing}
 does not exist</td>
-<td></td>
-<td></td>
+
+
 </tr>
 
 <tr>
 <td><br>
  </td>
 <td>Variable Should Exist</td>
-<td>\${scalar}</td>
+<td>${scalar}</td>
 <td><br>
 </td>
-<td></td>
-<td></td>
+
+
 </tr>
 
 <tr>
 <td></td>
 <td>Variable Should Exist</td>
-<td>\${non-existing}</td>
+<td>${non-existing}</td>
 <td></td>
-<td></td>
-<td></td>
+
+
 </tr>
 
 <tr>
@@ -200,8 +200,8 @@ does not exist</td>
 <td></td>
 <td></td>
 <td></td>
-<td></td>
-<td></td>
+
+
 </tr>
 
 <tr>
@@ -211,37 +211,37 @@ Given Error Message</td>
 <td>FAIL</td>
 <td>My non-default error
 message</td>
-<td></td>
-<td></td>
+
+
 </tr>
 
 <tr>
 <td></td>
 <td>Variable Should Exist</td>
-<td>\${scalar}</td>
+<td>${scalar}</td>
 <td>This would be the error
 message</td>
-<td></td>
-<td></td>
+
+
 </tr>
 
 <tr>
 <td></td>
 <td>Variable Should Exist</td>
-<td>\${non-existing}</td>
+<td>${non-existing}</td>
 <td>My non-default error
 message</td>
-<td></td>
-<td></td>
+
+
 </tr>
 
-<tr>
+<tr><td></td><td></td><td></td><td></td></tr><tr><td>Variable Should Exist With&nbsp;Error Message Containing Variables</td><td>[ Document ]</td><td>FAIL</td><td>Error with vars: ${scalar}</td></tr><tr><td></td><td>Variable Should Exist</td><td>${non-existing}</td><td>Error with vars: ${scalar}</td></tr><tr>
 <td></td>
 <td></td>
 <td></td>
 <td></td>
-<td></td>
-<td></td>
+
+
 </tr>
 
 <tr>
@@ -251,8 +251,8 @@ Exist&nbsp;Using $name format</td>
 <td>FAIL</td>
 <td>Variable \${non-existing}
 does not exist</td>
-<td></td>
-<td></td>
+
+
 </tr>
 
 <tr>
@@ -261,8 +261,8 @@ does not exist</td>
 <td>$scalar</td>
 <td>This would be the error
 message</td>
-<td></td>
-<td></td>
+
+
 </tr>
 
 <tr>
@@ -270,17 +270,19 @@ message</td>
 <td>Variable Should Exist</td>
 <td>$non-existing</td>
 <td></td>
-<td></td>
-<td></td>
+
+
 </tr>
 
-<tr>
+<tr><td></td><td></td><td></td><td></td></tr><tr><td>Variable Should
+Exist&nbsp;Using Escaped format</td><td>[ Document ]</td><td>FAIL</td><td>Variable \${non-existing}
+does not exist</td></tr><tr><td></td><td>Variable Should Exist</td><td>\${scalar}</td><td></td></tr><tr><td></td><td>Variable Should Exist</td><td>\${non-existing}</td><td></td></tr><tr>
 <td></td>
 <td></td>
 <td></td>
 <td></td>
-<td></td>
-<td></td>
+
+
 </tr>
 
 <tr>
@@ -288,8 +290,8 @@ message</td>
 <td>Variable Should Exist</td>
 <td>\${TEMPDIR}</td>
 <td></td>
-<td></td>
-<td></td>
+
+
 </tr>
 
 <tr>
@@ -297,8 +299,8 @@ message</td>
 <td>Variable Should Exist</td>
 <td>\${/}</td>
 <td></td>
-<td></td>
-<td></td>
+
+
 </tr>
 
 <tr>
@@ -306,8 +308,8 @@ message</td>
 <td>Variable Should Exist</td>
 <td>\${10}</td>
 <td></td>
-<td></td>
-<td></td>
+
+
 </tr>
 
 <tr>
@@ -315,8 +317,8 @@ message</td>
 <td>Variable Should Exist</td>
 <td>\${TRUE}</td>
 <td></td>
-<td></td>
-<td></td>
+
+
 </tr>
 
 <tr>
@@ -324,8 +326,8 @@ message</td>
 <td>Variable Should Exist</td>
 <td>\${CURDIR}</td>
 <td></td>
-<td></td>
-<td></td>
+
+
 </tr>
 
 <tr>
@@ -333,8 +335,8 @@ message</td>
 <td></td>
 <td></td>
 <td></td>
-<td></td>
-<td></td>
+
+
 </tr>
 
 <tr>
@@ -342,8 +344,8 @@ message</td>
 <td>[ Document ]</td>
 <td>FAIL</td>
 <td>Variable \${length attribute.missing} does not exist</td>
-<td></td>
-<td></td>
+
+
 </tr>
 
 <tr>
@@ -352,8 +354,8 @@ message</td>
 <td>\${length
 attribute.length}</td>
 <td></td>
-<td></td>
-<td></td>
+
+
 </tr>
 
 <tr>
@@ -361,8 +363,8 @@ attribute.length}</td>
 <td>Variable Should Exist</td>
 <td>\${length attribute.missing}</td>
 <td></td>
-<td></td>
-<td></td>
+
+
 </tr>
 
 <tr>
@@ -370,8 +372,8 @@ attribute.length}</td>
 <td></td>
 <td></td>
 <td></td>
-<td></td>
-<td></td>
+
+
 </tr>
 
 <tr>
@@ -380,8 +382,8 @@ Object</td>
 <td>[ Document ]</td>
 <td>FAIL</td>
 <td>Variable&nbsp;\${missing.missing} does not exist</td>
-<td></td>
-<td></td>
+
+
 </tr>
 
 <tr>
@@ -389,8 +391,8 @@ Object</td>
 <td>Variable Should Exist</td>
 <td>\${missing.missing}</td>
 <td></td>
-<td></td>
-<td></td>
+
+
 </tr>
 
 <tr>
@@ -398,8 +400,8 @@ Object</td>
 <td></td>
 <td></td>
 <td></td>
-<td></td>
-<td></td>
+
+
 </tr>
 
 <tr>
@@ -409,8 +411,8 @@ Invalid name</td>
 <td>FAIL</td>
 <td>Invalid variable syntax
 'invalid'</td>
-<td></td>
-<td></td>
+
+
 </tr>
 
 <tr>
@@ -418,47 +420,24 @@ Invalid name</td>
 <td>Variable Should Exist</td>
 <td>invalid</td>
 <td></td>
-<td></td>
-<td></td>
+
+
 </tr>
 
-<tr>
+<tr><td></td><td></td><td></td><td></td></tr><tr>
 <td></td>
 <td></td>
 <td></td>
 <td></td>
-<td></td>
-<td></td>
+
+
 </tr>
 
-<tr>
-<td>Variable Should Exist
-With&nbsp;Empty name</td>
-<td>[ Document ]</td>
-<td>FAIL</td>
-<td>Invalid variable syntax
-''</td>
-<td></td>
-<td></td>
-</tr>
 
-<tr>
-<td></td>
-<td>Variable Should Exist</td>
-<td>\</td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
 
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
+
+
+
 
 <tr>
 <td>Variable Should Not Exist
@@ -467,8 +446,8 @@ With&nbsp;Default error message</td>
 <td>FAIL</td>
 <td>Variable&nbsp;\${scalar}
 exists</td>
-<td></td>
-<td></td>
+
+
 </tr>
 
 <tr>
@@ -476,20 +455,20 @@ exists</td>
  </td>
 <td>Variable Should Not
 Exist&nbsp;</td>
-<td>\${non-existing}</td>
+<td>${non-existing}</td>
 <td></td>
-<td></td>
-<td></td>
+
+
 </tr>
 
 <tr>
 <td></td>
 <td>Variable Should Not
 Exist&nbsp;</td>
-<td>\${scalar}</td>
+<td>${scalar}</td>
 <td></td>
-<td></td>
-<td></td>
+
+
 </tr>
 
 <tr>
@@ -497,8 +476,8 @@ Exist&nbsp;</td>
 <td></td>
 <td></td>
 <td></td>
-<td></td>
-<td></td>
+
+
 </tr>
 
 <tr>
@@ -508,38 +487,39 @@ With Given Error Message</td>
 <td>FAIL</td>
 <td>This is the error
 message</td>
-<td></td>
-<td></td>
+
+
 </tr>
 
 <tr>
 <td></td>
 <td>Variable Should Not
 Exist&nbsp;</td>
-<td>\${non-existing}</td>
+<td>${non-existing}</td>
 <td>This should not fail</td>
-<td></td>
-<td></td>
+
+
 </tr>
 
 <tr>
 <td></td>
 <td>Variable Should Not
 Exist&nbsp;</td>
-<td>\${scalar}</td>
+<td>${scalar}</td>
 <td>This is the error
 message</td>
-<td></td>
-<td></td>
+
+
 </tr>
 
-<tr>
+<tr><td></td><td></td><td></td><td></td></tr><tr><td>Variable Should Not Exist With Error Message Containing Variables</td><td>[ Document ]</td><td>FAIL</td><td>Error with vars: ${scalar} &amp; ${42}</td></tr><tr><td></td><td>Variable Should Not
+Exist&nbsp;</td><td>${scalar}</td><td>Error with vars: ${scalar} &amp; ${42}</td></tr><tr>
 <td></td>
 <td></td>
 <td></td>
 <td></td>
-<td></td>
-<td></td>
+
+
 </tr>
 
 <tr>
@@ -547,8 +527,8 @@ message</td>
 <td>[ Document ]</td>
 <td>FAIL</td>
 <td>Variable \${10} exists</td>
-<td></td>
-<td></td>
+
+
 </tr>
 
 <tr>
@@ -556,8 +536,8 @@ message</td>
 <td>Variable Should Not Exist&nbsp;</td>
 <td>\${10}</td>
 <td></td>
-<td></td>
-<td></td>
+
+
 </tr>
 
 <tr>
@@ -565,8 +545,8 @@ message</td>
 <td></td>
 <td></td>
 <td></td>
-<td></td>
-<td></td>
+
+
 </tr>
 
 <tr>
@@ -574,8 +554,8 @@ message</td>
 <td>[ Document ]</td>
 <td>FAIL</td>
 <td>Variable \${length attribute.length} exists</td>
-<td></td>
-<td></td>
+
+
 </tr>
 
 <tr>
@@ -583,8 +563,8 @@ message</td>
 <td>Variable Should Not Exist&nbsp;</td>
 <td>\${length attribute.missing}</td>
 <td></td>
-<td></td>
-<td></td>
+
+
 </tr>
 
 <tr>
@@ -592,8 +572,8 @@ message</td>
 <td>Variable Should Not Exist&nbsp;</td>
 <td>\${length attribute.length}</td>
 <td></td>
-<td></td>
-<td></td>
+
+
 </tr>
 
 <tr>
@@ -601,8 +581,8 @@ message</td>
 <td></td>
 <td></td>
 <td></td>
-<td></td>
-<td></td>
+
+
 </tr>
 
 <tr>
@@ -612,8 +592,8 @@ Missing Object</td>
 <td>\${missing.missing}</td>
 <td><br>
 </td>
-<td></td>
-<td></td>
+
+
 </tr>
 
 <tr>
@@ -621,19 +601,18 @@ Missing Object</td>
 <td></td>
 <td></td>
 <td></td>
-<td></td>
-<td></td>
+
+
 </tr>
 
 <tr>
-<td>Variable Should Not
-Exist&nbsp;Using the $name format</td>
+<td>Variable Should Not Exist Using $name format</td>
 <td>[ Document ]</td>
 <td>FAIL</td>
 <td>Variable&nbsp;\${scalar}
 exists</td>
-<td></td>
-<td></td>
+
+
 </tr>
 
 <tr>
@@ -642,8 +621,8 @@ exists</td>
 Exist&nbsp;</td>
 <td>$non-existing</td>
 <td></td>
-<td></td>
-<td></td>
+
+
 </tr>
 
 <tr>
@@ -652,17 +631,21 @@ Exist&nbsp;</td>
 Exist&nbsp;</td>
 <td>$scalar</td>
 <td></td>
-<td></td>
-<td></td>
+
+
 </tr>
 
-<tr>
+<tr><td></td><td></td><td></td><td></td></tr><tr><td>Variable Should Not
+Exist&nbsp;Using Escaped format</td><td>[ Document ]</td><td>FAIL</td><td>Variable&nbsp;\${scalar}
+exists</td></tr><tr><td></td><td>Variable Should Not
+Exist&nbsp;</td><td>\${non-existing}</td><td></td></tr><tr><td></td><td>Variable Should Not
+Exist&nbsp;</td><td>\${scalar}</td><td></td></tr><tr>
 <td></td>
 <td></td>
 <td></td>
 <td></td>
-<td></td>
-<td></td>
+
+
 </tr>
 
 <tr>
@@ -672,8 +655,8 @@ With&nbsp;Invalid name</td>
 <td>FAIL</td>
 <td>Invalid variable syntax
 'invalid'</td>
-<td></td>
-<td></td>
+
+
 </tr>
 
 <tr>
@@ -682,8 +665,8 @@ With&nbsp;Invalid name</td>
 Exist&nbsp;</td>
 <td>invalid</td>
 <td></td>
-<td></td>
-<td></td>
+
+
 </tr>
 
 <tr>
@@ -691,38 +674,21 @@ Exist&nbsp;</td>
 <td></td>
 <td></td>
 <td></td>
-<td></td>
-<td></td>
+
+
 </tr>
 
-<tr>
-<td>Variable Should Not Exist
-With Empty Name</td>
-<td>[ Document ]</td>
-<td>FAIL</td>
-<td>Invalid variable syntax
-''</td>
-<td></td>
-<td></td>
-</tr>
 
-<tr>
-<td></td>
-<td>Variable Should Not
-Exist&nbsp;</td>
-<td>\</td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
+
+
 
 <tr>
 <td></td>
 <td></td>
 <td></td>
 <td></td>
-<td></td>
-<td></td>
+
+
 </tr>
 
 
@@ -1018,8 +984,8 @@ Exist&nbsp;</td>
 <td></td>
 <td></td>
 <td></td>
-<td></td>
-<td></td>
+
+
 </tr>
 </tbody>
 </table>
