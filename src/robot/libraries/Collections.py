@@ -23,8 +23,8 @@ class _List:
     def convert_to_list(self, item):
         """Converts the given `item` to a list.
         
-        Mainly useful for converting tuples to lists. Use `Create List` from
-        the BuiltIn library for constructing new lists. 
+        Mainly useful for converting tuples and other iterable to lists.
+        Use `Create List` from the BuiltIn library for constructing new lists. 
         """
         return list(item)
 
@@ -33,7 +33,7 @@ class _List:
         
         Example:
         | Append To List | ${L1} | xxx |   |   |
-        | Append To List | ${L2} | x | y | z |
+        | Append To List | ${L2} | x   | y | z |
         =>
         - ${L1} = ['a', 'xxx']
         - ${L2} = ['a', 'b', 'x', 'y', 'z']
@@ -45,11 +45,15 @@ class _List:
         """Inserts `value` into `list` to the position specified with `index`.
         
         Index '0' adds the value into the first position, '1' to the second,
-        and so on. Similarly, '-1' is the last position, '-2' second last, and
-        so on. If the absolute value of the index is greater than the length of
-        the list, the value is added at the end (positive index) or the
-        beginning (negative index). An index can be given either as an integer
-        or a string that can be converted to an integer. 
+        and so on. Inserting from right works with negative indices so that
+        '-1' is the second last position, '-2' third last, and so on. Use
+        `Append To List` to add items to the end of the list.
+
+        If the absolute value of the index is greater than
+        the length of the list, the value is added at the end
+        (positive index) or the beginning (negative index). An index
+        can be given either as an integer or a string that can be
+        converted to an integer.
         
         Example:
         | Insert Into List | ${L1} | 0     | xxx |
@@ -88,9 +92,10 @@ class _List:
         an integer.
 
         Example: 
-        | Set List Value | ${L3} | 1 | xxx |
+        | Set List Value | ${L3} | 1  | xxx |
+        | Set List Value | ${L3} | -1 | yyy |
         =>
-        - ${L3} = ['a', 'xxx', 'c']
+        - ${L3} = ['a', 'xxx', 'yyy']
         """ 
         try:
             list_[self._index_to_int(index)] = value
@@ -99,6 +104,8 @@ class _List:
     
     def remove_values_from_list(self, list_, *values):
         """Removes all occurences of given `values` from `list`.
+
+        It is not an error is a value does not exist in the list at all.
         
         Example:
         | Remove Values From List | ${L4} | a | c | e | f |
@@ -141,12 +148,12 @@ class _List:
         to an integer.
 
         Examples (including Python equivalents in comments):
-        | ${x} = | Get From List | ${L5} | 0 | # L5[0]    |
-        | ${y} = | Get From List | ${L5} | 2 | # L5[2]    |
+        | ${x} = | Get From List | ${L5} | 0  | # L5[0]  |
+        | ${y} = | Get From List | ${L5} | -2 | # L5[-2] |
         =>
         - ${x} = 'a'
-        - ${y} = 'c'
-        - ${L1} and ${L2} are not changed.
+        - ${y} = 'd'
+        - ${L5} is not changed
         """
         try:
             return list_[self._index_to_int(index)]
@@ -176,7 +183,7 @@ class _List:
         - ${x} = ['c', 'd']
         - ${y} = ['b', 'c', 'd', 'e']
         - ${z} = ['a', 'b', 'c']
-        - ${L5} is not changed.
+        - ${L5} is not changed
         """
         start = self._index_to_int(start, True)
         if end is not None:
@@ -190,10 +197,11 @@ class _List:
         `end` indexes having the same semantics as in the `Get Slice From List`
         keyword. The given list is never altered by this keyword.
 
+        Example:
         | ${x} = | Count Values In List | ${L3} | b |
         =>
         - ${x} = 1
-        - ${L3} is not changed.
+        - ${L3} is not changed
         """
         return self.get_slice_from_list(list_, start, end).count(value)
         
@@ -205,10 +213,11 @@ class _List:
         keyword. In case the value is not found, -1 is returned. The given list
         is never altered by this keyword.
 
+        Example:
         | ${x} = | Get Index From List | ${L5} | d |
         =>
         - ${x} = 3
-        - ${L5} is not changed.
+        - ${L5} is not changed
         """
         if start == '':
             start = 0
@@ -294,7 +303,8 @@ class _List:
     def list_should_contain_sub_list(self, list1, list2, msg=None, values=True):
         """Fails if not all of the elements in `list2` are found in `list1`.
         
-        The order of values and the number of values are not taken into account.
+        The order of values and the number of values are not taken into
+        account.
         
         See the use of `msg` and `values` from the `Lists Should Be Equal`
         keyword.
@@ -372,7 +382,8 @@ class _Dictionary:
     def remove_from_dictionary(self, dictionary, *keys):
         """Removes the given `keys` from the `dictionary`.
 
-        If the given `key` cannot be found from the `dictionary`, it is ignored.
+        If the given `key` cannot be found from the `dictionary`, it
+        is ignored.
 
         Example:
         | Remove From Dictionary | ${D3} | b | x | y | 
@@ -389,7 +400,8 @@ class _Dictionary:
     def keep_in_dictionary(self, dictionary, *keys):
         """Keeps the given `keys` in the `dictionary` and removes all other.
 
-        If the given `key` cannot be found from the `dictionary`, it is ignored.
+        If the given `key` cannot be found from the `dictionary`, it
+        is ignored.
         
         Example:
         | Keep In Dictionary | ${D5} | b | x | d | 
@@ -466,7 +478,7 @@ class _Dictionary:
         try:
             return dictionary[key]
         except KeyError:
-            raise AssertionError("Dictionary does not contain key '%s'" % key)
+            raise DataError("Dictionary does not contain key '%s'" % key)
 
     def dictionary_should_contain_key(self, dictionary, key, msg=None):
         """Fails if `key` is not found from `dictionary`.
@@ -580,24 +592,22 @@ class Collections(_List, _Dictionary):
     
     """A library providing keywords for handling Python lists and dictionaries.
 
-    List keywords that do not alter given list can also be used with tuples,
-    and to some extend also with other iterables.
+    List keywords that do not alter the given list can also be used
+    with tuples, and to some extend also with other iterables.
 
-    Following keywords from the BuiltIn library can be used both with lists and
-    dictionaries:
-
-    - `Get Length`
-    - `Length Should Be`
-    - `Should Be Empty`
-    - `Should Not Be Empty`
-    
-    Following keywords from the BuiltIn library can also be used with lists:
-
-    - `Create List`
-    - `Should Contain`
-    - `Should Not Contain` 
-    - `Should Contain X Times` 
-    - `Should Not Contain X Times` 
+    Following keywords from the BuiltIn library can also be used with
+    lists and dictionaries:
+    | *Keyword Name*               | *Applicable With* |
+    | `Create List`                | lists |
+    | `Get Length`                 | both  |
+    | `Length Should Be`           | both  |
+    | `Should Be Empty`            | both  |
+    | `Should Not Be Empty`        | both  |
+    | `Should Contain`             | lists |
+    | `Should Not Contain`         | lists |
+    | `Should Contain X Times`     | lists |
+    | `Should Not Contain X Times` | lists |
+    | `Get Count`                  | lists |
 
     All list keywords expect a scalar variable (e.g. ${list}) as an
     argument.  Starting with Robot Framework 2.0.3, it is possible to
@@ -611,7 +621,7 @@ class Collections(_List, _Dictionary):
     which means a list with as many alphabetic characters as specified by 'x'.
     For example ${L1} means ['a'] and ${L3} means ['a', 'b', 'c'].
 
-    Dictionary keywords use similar ${Dx} variable. For example ${D1} means
+    Dictionary keywords use similar ${Dx} variables. For example ${D1} means
     {'a': 1} and ${D3} means {'a': 1, 'b': 2, 'c': 3}.
 
     --------
