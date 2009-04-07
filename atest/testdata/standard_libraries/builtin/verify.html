@@ -109,9 +109,9 @@ th { font-style: normal; } /* required for IE */
 <td>${LIST}</td>
 <td>a</td>
 <td>b</td>
-<td>c</td>
+<td>cee</td>
 <td>b</td>
-</tr>
+</tr><tr><td>...</td><td>${42}</td><td></td><td></td><td></td></tr>
 </tbody>
 </table>
 <table border="1">
@@ -2023,11 +2023,11 @@ Document ]</td>
 <td>2</td>
 <td></td>
 </tr>
-<tr>
+<tr><td></td><td>Should Contain X Times</td><td>hello</td><td>ello</td><td>1</td><td></td></tr><tr><td></td><td>Should Contain X Times</td><td>hello</td><td>hello</td><td>1</td><td></td></tr><tr><td></td><td>Should Contain X Times</td><td>hello</td><td>x</td><td>0</td><td></td></tr><tr>
 <td>Should Contain X Times With List</td>
 <td>Should Contain X Times</td>
 <td>${LIST}</td>
-<td>a</td>
+<td>cee</td>
 <td>1</td>
 <td></td>
 </tr>
@@ -2039,7 +2039,7 @@ Document ]</td>
 <td>2</td>
 <td></td>
 </tr>
-<tr><td>Should Contain X Times With Tuple</td><td>Should Contain X Times</td><td>${TUPLE3}</td><td>a</td><td>1</td><td></td></tr><tr><td>Should Contain X With Java Array and Vector</td><td>Should Contain X Times</td><td>${ARRAY3}</td><td>a</td><td>1</td><td></td></tr><tr><td></td><td>Should Contain X Times</td><td>${VECTOR3}</td><td>a</td><td>1</td><td></td></tr><tr><td>Should Contain X With Invalid Item</td><td>[Documentation]</td><td>FAIL STARTS:</td><td>Converting '10' to list failed: TypeError: </td><td></td><td></td></tr><tr><td></td><td>Should Contain X Times</td><td>${10}</td><td>a</td><td>1</td><td></td></tr><tr><td>Should Contain X Times With Invalid count</td><td>[Documentation]</td><td>FAIL STARTS:</td><td>'invalid' cannot be converted to an integer: ValueError: </td><td></td><td></td></tr><tr><td></td><td>Should Contain X Times</td><td>hello</td><td>l</td><td>invalid</td><td></td></tr><tr>
+<tr><td></td><td>Should Contain X Times</td><td>${LIST}</td><td>${42}</td><td>1</td><td></td></tr><tr><td></td><td>Should Contain X Times</td><td>${LIST}</td><td>42</td><td>0</td><td></td></tr><tr><td>Should Contain X Times With Tuple</td><td>Should Contain X Times</td><td>${TUPLE3}</td><td>a</td><td>1</td><td></td></tr><tr><td>Should Contain X With Java Array and Vector</td><td>Should Contain X Times</td><td>${ARRAY3}</td><td>a</td><td>1</td><td></td></tr><tr><td></td><td>Should Contain X Times</td><td>${VECTOR3}</td><td>a</td><td>1</td><td></td></tr><tr><td>Should Contain X With Invalid Item</td><td>[Documentation]</td><td>FAIL STARTS:</td><td>Converting '10' to list failed: TypeError: </td><td></td><td></td></tr><tr><td></td><td>Should Contain X Times</td><td>${10}</td><td>a</td><td>1</td><td></td></tr><tr><td>Should Contain X Times With Invalid count</td><td>[Documentation]</td><td>FAIL STARTS:</td><td>'invalid' cannot be converted to an integer: ValueError: </td><td></td><td></td></tr><tr><td></td><td>Should Contain X Times</td><td>hello</td><td>l</td><td>invalid</td><td></td></tr><tr>
 <td>Should Contain X Times Failing With Default Message</td>
 <td>[Documentation]</td>
 <td>FAIL</td>
@@ -2067,7 +2067,7 @@ Document ]</td>
 <td></td>
 <td>Should Contain X Times</td>
 <td>hello</td>
-<td>l</td>
+<td>nonex</td>
 <td>3</td>
 <td>My message</td>
 </tr>
@@ -2080,7 +2080,7 @@ Document ]</td>
 <td>2</td>
 <td></td>
 </tr>
-<tr>
+<tr><td></td><td>Should Not Contain X Times</td><td>hello</td><td>nonex</td><td>100</td><td></td></tr><tr>
 <td>Should Not Contain X Times With List</td>
 <td>Should Not Contain X Times</td>
 <td>${LIST}</td>
@@ -2103,7 +2103,7 @@ Document ]</td>
 <td>My message</td>
 <td></td>
 <td></td>
-</tr><tr><td></td><td>Should Not Contain X Times</td><td>${LIST}</td><td>b</td><td>2</td><td>My message</td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+</tr><tr><td></td><td>Should Not Contain X Times</td><td>${LIST}</td><td>b</td><td>2</td><td>My message</td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Get Count</td><td>[Documentation]</td><td>This keyword is already tested pretty well by Should (Not) Contain X Times keywords that use this one as a helper. </td><td>FAIL STARTS: Converting 'None' to list failed: TypeError:</td><td></td><td></td></tr><tr><td></td><td>Verify Get Count</td><td>Hello, world!</td><td>o</td><td>2</td><td></td></tr><tr><td></td><td>Verify Get Count</td><td>${LIST}</td><td>cee</td><td>1</td><td></td></tr><tr><td></td><td>Verify Get Count</td><td>${TUPLE3}</td><td>a</td><td>1</td><td></td></tr><tr><td></td><td>Verify Get Count</td><td>${SPACE * 100}</td><td>${SPACE * 2}</td><td>50</td><td></td></tr><tr><td></td><td>Verify Get Count</td><td>Hello, world!</td><td>no match here</td><td>0</td><td></td></tr><tr><td></td><td>Get Count</td><td>${None}</td><td>x</td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td></tr>
 
 
 </tbody>
@@ -2126,13 +2126,7 @@ Document ]</td>
 <td>${exp}</td>
 <td></td>
 </tr>
-<tr>
-<td></td>
-<td>Log</td>
-<td>${item}</td>
-<td></td>
-<td></td>
-</tr>
+
 <tr>
 <td></td>
 <td>${length} =</td>
@@ -2154,14 +2148,14 @@ Document ]</td>
 <td>${exp}</td>
 <td></td>
 </tr>
-<tr>
+<tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Verify Get Count</td><td>[Arguments]</td><td>${item1}</td><td>${item2}</td><td>${exp}</td></tr><tr>
 <td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
+<td>${count} =</td><td>Get Count</td>
+
+<td>${item1}</td><td>${item2}</td>
+
 </tr>
-<tr>
+<tr><td></td><td>${exp} =</td><td>Convert To Integer</td><td>${exp}</td><td></td></tr><tr><td></td><td>Should Be Equal</td><td>${count}</td><td>${exp}</td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr>
 <td align="undefined" valign="undefined">Verify
 Length Of Java Type</td>
 <td>[Arguments]</td>
