@@ -307,42 +307,55 @@ class _Verify:
     def should_contain_x_times(self, item1, item2, count, msg=None):
         """Fails if `item1` does not contain `item2` `count` times.
         
-        Works with strings and lists. Default error message can be overridden 
-        with `msg`.
+        Works with strings, lists and all objects that `Get Count` works
+        with. The default error message can be overridden with `msg` and
+        the actual count is always logged.
 
         Examples:
         | Should Contain X Times | ${output}    | hello  | 2 |
         | Should Contain X Times | ${some list} | value  | 3 |
         """
-        item1, count = self._convert_item_and_count(item1, count)
         if not msg:
-            msg = "'%s' does not contain '%s' %d times" % (item1, item2, count)
-        asserts.fail_unless(item1.count(item2) == count, msg)
+            msg = "'%s' does not contain '%s' %s times" % (item1, item2, count)
+        self.should_be_equal_as_integers(self.get_count(item1, item2),
+                                         count, msg, values=False)
         
     def should_not_contain_x_times(self, item1, item2, count, msg=None):
         """Fails if `item1` contains `item2` `count` times.
         
-        Works with strings and lists. Default error message can be overridden 
-        with `msg`.
+        Works with strings, lists and all objects that `Get Count` works
+        with. The default error message can be overridden with `msg` and
+        the actual count is always logged.
 
         Examples:
         | Should Not Contain X Times | ${output}    | hello  | 3 |
         | Should Not Contain X Times | ${some list} | value  | 2 |
         """
-        item1, count = self._convert_item_and_count(item1, count)
         if not msg:
-            msg = "'%s' contains '%s' %d times" % (item1, item2, count)
-        asserts.fail_unless(item1.count(item2) != count, msg)
+            msg = "'%s' contains '%s' %s times" % (item1, item2, count)
+        self.should_not_be_equal_as_integers(self.get_count(item1, item2),
+                                             count, msg, values=False)
 
-    def _convert_item_and_count(self, item, count):
-        if not utils.is_str(item):
+    def get_count(self, item1, item2):
+        """Returns and logs how many times `item2` is found from `item1`.
+
+        This keyword works with Python strings and lists and all objects
+        that either have 'count' method or can be converted to Python lists.
+
+        Example:
+        | ${count} = | Get Count | ${some item} | interesting value |
+        | Should Be True | 5 < ${count} < 10 |
+        """
+        if not hasattr(item1, 'count'):
             try:
-                item = list(item)
+                item1 = list(item1)
             except:
                 raise DataError("Converting '%s' to list failed: %s" 
-                                % (item, utils.get_error_message()))
-        count = self.convert_to_integer(count)
-        return item, count
+                                % (item1, utils.get_error_message()))
+        count = item1.count(item2)
+        self.log('Item found from the first item %d time%s'
+                 % (count, utils.plural_or_not(count)))
+        return count
 
     def should_not_match(self, string, pattern, msg=None, values=True):
         """Fails if the given `string` matches the given `pattern`.
