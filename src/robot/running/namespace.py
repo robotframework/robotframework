@@ -14,7 +14,6 @@
 
 
 import os.path
-import copy
 
 from robot import utils
 from robot.errors import FrameworkError, DataError
@@ -107,46 +106,17 @@ class Namespace:
                         % (msg, self.suite.longname))
 
     def import_library(self, name, args=None):
-        code_name, lib_name, args = self._get_lib_names_and_args(name, args)
-        if self._testlibs.has_key(lib_name):
+        lib = IMPORTER.import_library(name, args)
+        if self._testlibs.has_key(lib.name):
             LOGGER.warn("Test library '%s' already imported by suite '%s'"
-                        % (lib_name, self.suite.longname))
+                        % (lib.name, self.suite.longname))
             return
-        lib = IMPORTER.import_library(code_name, args)
-        if code_name != lib_name:
-            lib = self._copy_library(lib, lib_name)
-            LOGGER.info("Imported library '%s' with name '%s'"
-                        % (code_name, lib_name))
-        self._testlibs[lib_name] = lib
+        self._testlibs[lib.name] = lib
         lib.start_suite()
-        if self.test is not None:
+        if self.test:
             lib.start_test()
-        self._import_deprecated_standard_libs(lib_name)
+        self._import_deprecated_standard_libs(lib.name)
 
-    def _get_lib_names_and_args(self, name, args):
-        # Ignore spaces unless importing by path
-        if not os.path.exists(name):
-            name = name.replace(' ', '')
-        args = utils.to_list(args)
-        if len(args) >= 2 and args[-2].upper() == 'WITH NAME':
-            lib_name = args[-1].replace(' ', '')
-            args = args[:-2]
-        else:
-            lib_name = name
-        return name, lib_name, args
-
-    def _copy_library(self, lib, newname): 
-        libcopy = copy.copy(lib)
-        libcopy.name = newname
-        libcopy.init_scope_handling()
-        libcopy.handlers = utils.NormalizedDict(ignore=['_'])
-        for handler in lib.handlers.values():
-            handcopy = copy.copy(handler)
-            handcopy.library = libcopy
-            handcopy.longname = '%s.%s' % (libcopy.name, handcopy.name)
-            libcopy.handlers[handler.name] = handcopy
-        return libcopy
-    
     def _import_deprecated_standard_libs(self, name):
         if name in ['BuiltIn', 'OperatingSystem']:
             self.import_library('Deprecated' + name)

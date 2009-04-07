@@ -13,6 +13,9 @@
 #  limitations under the License.
 
 
+import os.path
+import copy
+
 from robot.parsing import ResourceFile
 from robot.output import LOGGER
 from robot import utils
@@ -28,21 +31,12 @@ class Importer:
         self._resources = {}
         
     def import_library(self, name, args):
-        key = (name, tuple(args))
-        if self._libraries.has_key(key):
-            LOGGER.info("Found test library '%s' with arguments %s from cache" 
-                        % (name, utils.seq2str2(args)))
-        else:
-            lib = TestLibrary(name, args)
-            self._libraries[key] = lib
-            libtype = lib.__class__.__name__.replace('Library', '').lower()[1:]
-            LOGGER.info("Imported library '%s' with arguments %s (version %s, "
-                        "%s type, %s scope, %d keywords, source %s)" 
-                        % (name, utils.seq2str2(args), lib.version, libtype, 
-                           lib.scope.lower(), len(lib), lib.source))
-            if len(lib) == 0:
-                LOGGER.warn("Imported library '%s' contains no keywords" % name)
-        return self._libraries[key]
+        code_name, name, args = self._get_lib_names_and_args(name, args)
+        lib = self._import_library(code_name, args)
+        if code_name != name:
+            lib = self._copy_library(lib, name)
+            LOGGER.info("Imported library '%s' with name '%s'" % (code_name, name))
+        return lib
     
     def import_resource(self, path):
         if self._resources.has_key(path):
@@ -57,4 +51,45 @@ class Importer:
             # if there are no keywords. Importing an empty resource file fails
             # already earlier so no need to check that here either.
         return self._resources[path]
+ 
+    def _get_lib_names_and_args(self, name, args):
+        # Ignore spaces unless importing by path
+        if not os.path.exists(name):
+            name = name.replace(' ', '')
+        args = utils.to_list(args)
+        if len(args) >= 2 and args[-2].upper() == 'WITH NAME':
+            lib_name = args[-1].replace(' ', '')
+            args = args[:-2]
+        else:
+            lib_name = name
+        return name, lib_name, args
+
+    def _import_library(self, name, args):
+        key = (name, tuple(args))
+        if self._libraries.has_key(key):
+            LOGGER.info("Found test library '%s' with arguments %s from cache" 
+                        % (name, utils.seq2str2(args)))
+            return self._libraries[key]
+        lib = TestLibrary(name, args)
+        self._libraries[key] = lib
+        libtype = lib.__class__.__name__.replace('Library', '').lower()[1:]
+        LOGGER.info("Imported library '%s' with arguments %s (version %s, "
+                    "%s type, %s scope, %d keywords, source %s)" 
+                    % (name, utils.seq2str2(args), lib.version, libtype, 
+                       lib.scope.lower(), len(lib), lib.source))
+        if len(lib) == 0:
+            LOGGER.warn("Imported library '%s' contains no keywords" % name)
+        return lib
+
+    def _copy_library(self, lib, newname): 
+        libcopy = copy.copy(lib)
+        libcopy.name = newname
+        libcopy.init_scope_handling()
+        libcopy.handlers = utils.NormalizedDict(ignore=['_'])
+        for handler in lib.handlers.values():
+            handcopy = copy.copy(handler)
+            handcopy.library = libcopy
+            handcopy.longname = '%s.%s' % (libcopy.name, handcopy.name)
+            libcopy.handlers[handler.name] = handcopy
+        return libcopy
  
