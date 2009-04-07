@@ -451,7 +451,7 @@ th {
 <td>${pre}</td>
 <td>${post} =</td>
 <td>Set Variable</td>
-<td>${SYSLOG.split("${text}")}</td>
+<td>${SYSLOG.split("${text.replace('\\','\\\\')}")}</td>
 </tr>
 <tr>
 <td></td>
