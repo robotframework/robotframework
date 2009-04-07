@@ -89,7 +89,6 @@ class Importer:
         for handler in lib.handlers.values():
             handcopy = copy.copy(handler)
             handcopy.library = libcopy
-            handcopy.longname = '%s.%s' % (libcopy.name, handcopy.name)
             libcopy.handlers[handler.name] = handcopy
         return libcopy
  

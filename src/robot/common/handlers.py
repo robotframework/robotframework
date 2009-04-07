@@ -22,8 +22,10 @@ from robot import utils
 class BaseHandler:
     
     def __getattr__(self, name):
+        if name == 'longname':
+            return '%s.%s' % (self.library.name, self.name)
         if name == 'shortdoc':
-            return self.doc != '' and self.doc.splitlines()[0] or ''
+            return self.doc and self.doc.splitlines()[0] or ''
         raise AttributeError("%s does not have attribute '%s'" 
                              % (self.__class__.__name__, name))
     

@@ -60,7 +60,6 @@ class _RunnableHandler(BaseHandler):
         self.library = library
         self._handler_name = handler_name
         self.name = utils.printable_name(handler_name, code_style=True)
-        self.longname = '%s.%s' % (library.name, self.name)
         self._method = library.scope == 'GLOBAL' and \
                 self._get_global_handler(handler_method, handler_name) or None
         self.doc = ''
