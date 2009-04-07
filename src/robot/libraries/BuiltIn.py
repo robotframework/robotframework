@@ -304,6 +304,46 @@ class _Verify:
         msg = self._get_string_msg(item1, item2, msg, values, 'does not contain')
         asserts.fail_unless(item2 in item1, msg)
 
+    def should_contain_x_times(self, item1, item2, count, msg=None):
+        """Fails if `item1` does not contain `item2` `count` times.
+        
+        Works with strings and lists. Default error message can be overridden 
+        with `msg`.
+
+        Examples:
+        | Should Contain X Times | ${output}    | hello  | 2 |
+        | Should Contain X Times | ${some list} | value  | 3 |
+        """
+        item1, count = self._convert_item_and_count(item1, count)
+        if not msg:
+            msg = "'%s' does not contain '%s' %d times" % (item1, item2, count)
+        asserts.fail_unless(item1.count(item2) == count, msg)
+        
+    def should_not_contain_x_times(self, item1, item2, count, msg=None):
+        """Fails if `item1` contains `item2` `count` times.
+        
+        Works with strings and lists. Default error message can be overridden 
+        with `msg`.
+
+        Examples:
+        | Should Not Contain X Times | ${output}    | hello  | 3 |
+        | Should Not Contain X Times | ${some list} | value  | 2 |
+        """
+        item1, count = self._convert_item_and_count(item1, count)
+        if not msg:
+            msg = "'%s' contains '%s' %d times" % (item1, item2, count)
+        asserts.fail_unless(item1.count(item2) != count, msg)
+
+    def _convert_item_and_count(self, item, count):
+        if not utils.is_str(item):
+            try:
+                item = list(item)
+            except:
+                raise DataError("Converting '%s' to list failed: %s" 
+                                % (item, utils.get_error_message()))
+        count = self.convert_to_integer(count)
+        return item, count
+
     def should_not_match(self, string, pattern, msg=None, values=True):
         """Fails if the given `string` matches the given `pattern`.
 
@@ -598,9 +638,9 @@ class _Variables:
         Other test suites, including possible child test suites, will not see
         variables set with this keyword. 
         
-        The variable name must be given either in the escaped format
-        (e.g. \\${SCALAR} or \\@{LIST}) or without curly braces (e.g. $SCALAR
-        or @LIST) to prevent it from being resolved.
+        The name of the variable can be given either as a normal variable name
+        (e.g. ${NAME}) or in escaped format (e.g. \\${NAME}), but the former
+        works only in Robot Framework 2.1 and newer.
         
         If a variable already exists within the new scope, its value will be
         overwritten. Otherwise a new variable is created. If a variable already
@@ -608,9 +648,9 @@ class _Variables:
         variable within the new scope gets the value within the current scope.
 
         Examples:
-        | Set Suite Variable | $GREET  | Hello, world! |        
-        | ${ID} =            | Get ID  |
-        | Set Suite Variable | \\${ID} |
+        | Set Suite Variable | ${GREET} | Hello, world! |        
+        | ${ID} =            | Get ID   |
+        | Set Suite Variable | ${ID}    |
 
         See also `Set Global Variable` and `Set Test Variable`.
         """
@@ -640,23 +680,31 @@ class _Variables:
     def _get_variables(self):
         return NAMESPACES.current.variables
 
-    def _get_var_name(self, name):
-        if is_var(name):
-            return name
-        if utils.is_str(name) and name != '' and name[0] in ['$','@']:
-            newname = name[0] + '{' + name[1:] + '}'
-            if is_var(newname):
-                return newname
-        raise DataError("Invalid variable syntax '%s'" % name)
+    def _get_var_name(self, origname):
+        name = self._get_var_name_helper(origname)
+        if not name:
+            raise DataError("Invalid variable syntax '%s'" % origname)
+        return name
+    
+    def _get_var_name_helper(self, name):
+        if not (utils.is_str(name) and name):
+            return None
+        if name.startswith('\\'):
+            name = name[1:]
+        elif name[0] in ['$','@'] and '{' not in name:
+            name = name[0] + '{' + name[1:] + '}'
+        if not is_var(name):
+            return None
+        return name
         
     def _get_var_value(self, name, values):
-        if len(values) == 0:
-            variables = self._get_variables()
+        variables = self._get_variables()
+        values = variables.replace_list(values)
+        if not values:
             return variables[name]
-        elif len(values) == 1 and name[0] == '$':
+        if len(values) == 1 and name[0] == '$':
             return values[0]
-        else:
-            return list(values)
+        return list(values)
 
     def _log_set_variable(self, name, value):
         if is_list_var(name):
@@ -670,7 +718,9 @@ class _RunKeyword:
 
     # If you use any of these run keyword variants from another library, you
     # should register those keywords with 'register_run_keyword' method. See
-    # the documentation of that method at the end of this file.
+    # the documentation of that method at the end of this file. There are also
+    # other run keyword variant keywords in BuiltIn which can also be seen 
+    # at the end of this file.
     
     def run_keyword(self, name, *args):
         """Executes the given keyword with the given arguments.
@@ -1438,6 +1488,6 @@ def register_run_keyword(library, keyword, args_to_process=None):
 
 for name in [ attr for attr in dir(_RunKeyword) if not attr.startswith('_') ]:
     register_run_keyword('BuiltIn', getattr(_RunKeyword, name))
-register_run_keyword('BuiltIn', 'comment', 0)
-
+for name in ['comment', 'set_test_variable', 'set_suite_variable', 'set_global_variable']:
+    register_run_keyword('BuiltIn', name, 0)
 del name, attr

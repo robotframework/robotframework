@@ -581,14 +581,21 @@ class Collections(_List, _Dictionary):
     List keywords that do not alter given list can also be used with tuples,
     and to some extend also with other iterables.
 
-    Following keywords from the BuiltIn library can also be used with lists and
+    Following keywords from the BuiltIn library can be used both with lists and
     dictionaries:
 
-    - `Create List`
     - `Get Length`
     - `Length Should Be`
     - `Should Be Empty`
     - `Should Not Be Empty`
+    
+    Following keywords from the BuiltIn library can also be used with lists:
+
+    - `Create List`
+    - `Should Contain`
+    - `Should Not Contain` 
+    - `Should Contain X Times` 
+    - `Should Not Contain X Times` 
 
     All list keywords expect a scalar variable (e.g. ${list}) as an
     argument.  Starting with Robot Framework 2.0.3, it is possible to
