@@ -556,9 +556,12 @@ class _Variables:
         The default error message can be overridden with the `msg` argument.
         """
         name = self._get_var_name(name)
-        if msg is None:
+        variables = self._get_variables()
+        if msg:
+            msg = variables.replace_string(msg)
+        else:
             msg = "Variable %s does not exist" % name
-        asserts.fail_unless(self._get_variables().has_key(name), msg)
+        asserts.fail_unless(variables.has_key(name), msg)
         
     def variable_should_not_exist(self, name, msg=None):
         """Fails if the given variable exists within the current scope.
@@ -571,9 +574,12 @@ class _Variables:
         The default error message can be overridden with the `msg` argument.
         """
         name = self._get_var_name(name)
-        if msg is None:
+        variables = self._get_variables()
+        if msg:
+            msg = variables.replace_string(msg)
+        else:
             msg = "Variable %s exists" % name
-        asserts.fail_if(self._get_variables().has_key(name), msg)
+        asserts.fail_if(variables.has_key(name), msg)
 
     def replace_variables(self, text):
         """Replaces variables in the given text with their current values.
@@ -1501,6 +1507,7 @@ def register_run_keyword(library, keyword, args_to_process=None):
 
 for name in [ attr for attr in dir(_RunKeyword) if not attr.startswith('_') ]:
     register_run_keyword('BuiltIn', getattr(_RunKeyword, name))
-for name in ['comment', 'set_test_variable', 'set_suite_variable', 'set_global_variable']:
+for name in ['set_test_variable', 'set_suite_variable', 'set_global_variable',
+             'variable_should_exist', 'variable_should_not_exist', 'comment']:
     register_run_keyword('BuiltIn', name, 0)
 del name, attr
