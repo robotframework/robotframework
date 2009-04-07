@@ -590,10 +590,14 @@ class _Dictionary:
 
 class Collections(_List, _Dictionary):
     
-    """A library providing keywords for handling Python lists and dictionaries.
+    """A library providing keywords for handling lists and dictionaries.
 
-    List keywords that do not alter the given list can also be used
-    with tuples, and to some extend also with other iterables.
+    Collections is Robot Framework's standard library that provides a
+    set of keywords for handling Python lists and dictionaries. This
+    library has keywords, for example, for modifying and getting
+    values from lists and dictionaries (e.g. `Append To List`, `Get
+    From Dictionary`) and for verifying their contents (e.g. `Lists
+    Should Be Equal`, `Dictionary Should Contain Value`).
 
     Following keywords from the BuiltIn library can also be used with
     lists and dictionaries:
@@ -615,6 +619,11 @@ class Collections(_List, _Dictionary):
     '@' with '$'. With earlier versions, list variables must be
     converted to scalar variables first. 
 
+    List keywords that do not alter the given list can also be used
+    with tuples, and to some extend also with other iterables.
+    `Convert To List` can be used to convert tuples and other iterables
+    to lists.
+    
     -------
 
     List related keywords use variables in format ${Lx} in their examples,
