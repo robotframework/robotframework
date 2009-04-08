@@ -63,6 +63,7 @@ class String:
     """
 
     ROBOT_LIBRARY_SCOPE = 'GLOBAL'
+    ROBOT_LIBRARY_VERSION = utils.get_version()
 
     def get_line_count(self, string):
         """Returns the number of lines."""
