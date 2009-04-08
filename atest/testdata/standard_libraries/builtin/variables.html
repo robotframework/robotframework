@@ -1217,14 +1217,14 @@ th {
 <td></td>
 <td></td>
 </tr>
-<tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Set Variables With Normal Variable Syntax</td><td>Set Test Variable</td><td>${non existing variable}</td><td>test</td><td></td></tr><tr><td></td><td>Set Suite Variable</td><td>@{non existing variable}</td><td>suite</td><td></td></tr><tr><td></td><td>Set Global Variable</td><td>${other non existing variable}</td><td>world</td><td></td></tr><tr><td></td><td>Should Be Equal</td><td>${non existing variable}</td><td>test</td><td></td></tr><tr><td></td><td>Should Be Equal</td><td>@{non existing variable}</td><td>suite</td><td></td></tr><tr><td></td><td>Should Be Equal</td><td>${other non existing variable}</td><td>world</td><td></td></tr><tr>
+<tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Set test/Suite/Global Variables With Normal Variable Syntax 1</td><td>Set Test Variable</td><td>${new test var}</td><td>test</td><td></td></tr><tr><td></td><td>Set Suite Variable</td><td>@{new suite var}</td><td>suite</td><td>variable</td></tr><tr><td></td><td>Set Global Variable</td><td>@{new global var}</td><td>global</td><td></td></tr><tr><td></td><td>Should Be Equal</td><td>${new test var}</td><td>test</td><td></td></tr><tr><td></td><td>Should Be True</td><td>@{new suite var} == 'suite variable'.split()</td><td><br></td><td></td></tr><tr><td></td><td>Should Be Equal</td><td>@{new global var}&nbsp;</td><td>global</td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Set test/Suite/Global Variables With Normal Variable Syntax 2</td><td>Should Be True</td><td>@{new suite var} == 'suite variable'.split()</td><td><br></td><td></td></tr><tr><td></td><td>Should Be Equal</td><td>@{new global var}</td><td>global</td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>It Should Be Possible To Set Test/Suite/Global Variable using Empty List Variable 1</td><td>@{empty} =</td><td>Create List</td><td></td><td></td></tr><tr><td></td><td>Set Test Variable</td><td>${new test var}</td><td>@{empty}</td><td></td></tr><tr><td></td><td>Set Suite Variable</td><td>@{this suite var is really new}</td><td>@{empty}</td><td></td></tr><tr><td></td><td>Set Suite Variable</td><td>${new global var}</td><td>@{empty}</td><td></td></tr><tr><td></td><td>Should Be True</td><td>${new test var} == []</td><td></td><td></td></tr><tr><td></td><td>Should Be True</td><td>@{this suite var is really new} == []</td><td></td><td></td></tr><tr><td></td><td>Should Be True</td><td>${new global var} == []</td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>It Should Be Possible To Set Test/Suite/Global Variable using Empty List Variable 2</td><td>Should Be True</td><td>@{this suite var is really new} == []</td><td></td><td></td></tr><tr>
 <td></td>
-<td></td>
-<td></td>
+<td>Should Be True</td><td>${new global var} == []</td>
+
 <td></td>
 <td></td>
 </tr>
-<tr>
+<tr><td></td><td></td><td></td><td></td><td></td></tr><tr>
 <td><a name="test_Scopes And Overriding 1">Scopes And Overriding 1</a></td>
 <td>Should Be Equal</td>
 <td>${cli_var_1}</td>
