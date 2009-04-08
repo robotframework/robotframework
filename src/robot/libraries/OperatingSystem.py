@@ -37,23 +37,35 @@ except ImportError:
     timestr_to_secs = int
     secs_to_timestr = lambda secs: '%d second%s' % (secs, plural_or_not(secs))
     plural_or_not = lambda count: count != 1 and 's' or ''
-
     class _NotImpl:
         def __getattr__(self, name):
             raise NotImplementedError('This keyword requires Robot Framework '
-                                      'to be installed. See issue 181 for '
-                                      'more information.')
-
+                                      'to be installed.')
     get_time = secs_to_timestamp = timestamp_to_secs = PROCESSES = _NotImpl()
-
 
 
 class OperatingSystem:
     
-    """This test library enables multiple operating-system-related tasks.
+    """A test library providing keywords for OS related tasks.
+
+    `OperatingSystem` is Robot Framework's standard library that
+    enables various operating system related tasks to be performed in
+    the system where Robot Framework is running. It can, among other
+    things, execute commands (e.g. `Run`), create and remove files and
+    directories (e.g. `Create File`, `Remove Directory`), check
+    whether files or directories exists or contain something
+    (e.g. `File Should Exist`, `Directory Should Be Empty`) and
+    manipulate environment variables (e.g. `Set Environment Variable`).
+
+    Starting from Robot Framework 2.0.2, all keywords expecting paths
+    as arguments accept a forward slash as a path separator regardless
+    the operating system. This only works if an argument is only a
+    path, *not if a path is part of an argument*, like it often is
+    with `Run` and `Start Process` keywords. In these cases, and with
+    earlier versions, built-in variable ${/} can be used to keep the
+    test data platform independent.
 
     Example usage:
-
     |  *Setting*  |     *Value*     |
     | Library     | OperatingSystem |
 
@@ -65,14 +77,6 @@ class OperatingSystem:
     |             | File Should Exist | ${PATH}    |                     |
     |             | Copy File         | ${PATH}    | ${TEMPDIR}/stuff    |
     |             | ${output} =       | Run | ${CURDIR}${/}script.py arg |
-    
-    Starting from Robot Framework 2.0.2, all keywords expecting paths
-    as arguments accept a forward slash as a path separator regardless
-    the operating system. This only works if an argument is only a
-    path, *not if a path is part of an argument*, like it often is
-    with `Run` and `Start Process` keywords. In these cases, and with
-    earlier versions, built-in variable ${/} can be used to keep the
-    test data platform independent.
     """
 
     ROBOT_LIBRARY_SCOPE = 'GLOBAL'

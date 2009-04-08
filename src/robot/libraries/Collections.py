@@ -590,7 +590,7 @@ class _Dictionary:
 
 class Collections(_List, _Dictionary):
     
-    """A library providing keywords for handling lists and dictionaries.
+    """A test library providing keywords for handling lists and dictionaries.
 
     Collections is Robot Framework's standard library that provides a
     set of keywords for handling Python lists and dictionaries. This
