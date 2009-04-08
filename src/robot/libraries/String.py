@@ -28,9 +28,18 @@ from types import StringType
 from robot import utils
 from robot.errors import DataError
 import robot.output
-from random import Random
 import string as STRING
 
+from random import Random
+#No sample method in Jython
+if utils.is_jython:
+    def _sample(self, chars, length):
+        result = ''
+        while len(result) < length:
+            result += chars[self.randint(0, len(chars)-1)]
+        return result
+    
+    Random.sample = _sample
 
 class String:
     
@@ -57,13 +66,13 @@ class String:
 
     def get_line_count(self, string):
         """Returns the number of lines."""
-        return len(string.splitlines(0))
+        return len(string.splitlines())
 
-    def split_to_lines(self, string, start=0, end=-1):
+    def split_to_lines(self, string, start=0, end=None):
         """Converts `string` to list of lines. 
         
         Ends of lines are removed. It is possible to get only selection of 
-        lines, from `start` to `end`. Line numbering starts from 0.
+        lines, from `start` to `end`. Line numbering starts from 0. 
 
         Example:
         | @{lines} = | Get Lines as List | ${multilines} |
@@ -71,12 +80,11 @@ class String:
         """
         lines = string.splitlines()
         start = self._convert_to_int(start, 'start')
-        end = self._convert_to_int(end, 'end')
-        print "*TRACE* Got '%d' lines. Returning from %d to %d" % (len(lines), start, end)        
         if not lines:
             return []
-        if end == -1:
+        if not end:
             return lines[start:]
+        end = self._convert_to_int(end, 'end')
         return lines[start:end]
 
     def replace_string(self, string, search_for, replace_with, count=0):
@@ -90,9 +98,9 @@ class String:
             return string.replace(search_for, replace_with)
         return string.replace(search_for, replace_with, count)
 
-    #TODO: Better name: replace_string_with_regexp
     def replace_string_with_regexp(self, string, pattern, replace_with, count=0):
         """Replaces matches with `pattern` in `string` with `replace_with`.
+
         You can specify how many `pattern` occurrences are replaced with `count`,
         otherwise all occurrences are replaced.
 
@@ -109,19 +117,26 @@ class String:
         return p.sub(replace_with, string, count)
 
     def split_string(self, string, separator=None, max_split=-1):
-        # Add doc for separator
-        """
-        Return a list of the words in the `string`,
+        # TODO: Add doc for separator which is by default None is splitting 
+        # from space, tab, and new lines 
+        """Return a list of the words in the `string`,
         using `split_with` as the delimiter string.
         If max_split is given, at most `max_split` splits are done
         (thus, the list will have at most 'max_split+1' elements) 
         """
-        self._convert_to_int(max_split, 'max_split')
+        max_split = self._convert_to_int(max_split, 'max_split')
         return string.split(separator, max_split)
 
     def split_string_from_right(self, string, separator=None, max_split=-1):
-        #no need to to have separate fetch from left
-        pass
+        """Return a list of the words in the `string`,
+        using `split_with` as the delimiter string.
+        If max_split is given, at most `max_split` splits are done from right.
+        (thus, the list will have at most 'max_split+1' elements) 
+        """
+        # Jython does not have rsplit for string and therefore 
+        reversed = self.split_string(string[::-1], separator, max_split)
+        reversed = [ r[::-1] for r in reversed ]
+        return reversed[::-1]
     
     def generate_random_string(self, length=8, chars=STRING.letters+STRING.digits):
         """
@@ -135,20 +150,21 @@ class String:
         return ''.join( Random().sample(chars, length) )
 
 
-    # TODO: Should this be position, length or start, end. If start, end is used, there is 
-    # possibility to remove x characters from behind of the string by using negative index.
-    def get_substring(self, string, position, length):
-        """
-        Returns a substring of given `length` starting from position of `position` ,
-        which should be numbers.
-        Position starts from '0'. 
-
+    def get_substring(self, string, start, end=None):
+        """Returns a substring from `start` index to `end` index. 
+        First item's index is 0. it is possible to use also negative `start` and   
+        end indexes which means 
         Example:
-        | ${first two}= | Get Substring | Robot | 0 | 2 |
+        | ${first two} =           | Get Substring | Robot       | 0  |  2 |
+        | Should Be Equal          | ${first two}  | Ro          |
+        | ${two from almost end} = | Get Substring | Hello Robot | -3 | -1 |
+        | Should Be Equal          | ${two from almost end} | bo |
         """
-        position = self._convert_to_int(position, 'position')
-        length = self._convert_to_int(length, 'length')
-        return string[position : position + length]
+        start = self._convert_to_int(start, 'start')
+        if not end:
+            return string[start:]
+        end = self._convert_to_int(end, 'end')
+        return string[start:end]
 
     def should_be_string(self, item, msg=None):
         """ Fails if item is not a string (e.g. list, number)"""

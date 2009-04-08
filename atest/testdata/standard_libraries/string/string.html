@@ -454,12 +454,12 @@ th {
 <td>${result} =</td>
 <td>Get Substring</td>
 <td>Robot</td>
-<td>2</td>
+<td>0</td>
 </tr>
 <tr>
 <td></td>
 <td>...</td>
-<td>3</td>
+<td>2</td>
 <td></td>
 <td></td>
 </tr>
@@ -467,7 +467,28 @@ th {
 <td></td>
 <td>Should be equal</td>
 <td>${result}</td>
-<td>bot</td>
+<td>Ro</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>${result} =</td>
+<td>Get Substring</td>
+<td>Hello Robot</td>
+<td>-3</td>
+</tr>
+<tr>
+<td></td>
+<td>...</td>
+<td>-1</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should be equal</td>
+<td>${result}</td>
+<td>bo</td>
 <td></td>
 </tr>
 <tr>
@@ -664,6 +685,48 @@ th {
 <td>Should not be string</td>
 <td>Nokia</td>
 <td>${ERROR MESSAGE}</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Split String From Right</td>
+<td>${result} =</td>
+<td>Split String From Right</td>
+<td>${NSN}</td>
+<td>_</td>
+</tr>
+<tr>
+<td></td>
+<td>Should Be Equal As Strings</td>
+<td>${result}</td>
+<td>[u'nokia', u'siemens', u'networks']</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>${result} =</td>
+<td>Split String From Right</td>
+<td>${NSN}</td>
+<td>_</td>
+</tr>
+<tr>
+<td></td>
+<td>...</td>
+<td>1</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should Be Equal As Strings</td>
+<td>${result}</td>
+<td>[u'nokia_siemens', u'networks']</td>
 <td></td>
 </tr>
 <tr>
