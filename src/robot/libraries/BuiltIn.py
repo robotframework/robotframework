@@ -716,9 +716,9 @@ class _Variables:
         
     def _get_var_value(self, name, values):
         variables = self._get_variables()
-        values = variables.replace_list(values)
         if not values:
             return variables[name]
+        values = variables.replace_list(values)
         if len(values) == 1 and name[0] == '$':
             return values[0]
         return list(values)
