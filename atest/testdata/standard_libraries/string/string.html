@@ -1,63 +1,70 @@
+
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html><head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<meta name="generator" content="RobotIDE">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="RobotIDE" /> 
 <style type="text/css">
 html {
-font-family: Arial,Helvetica,sans-serif;
-background-color: white;
-color: black;
+  font-family: Arial,Helvetica,sans-serif;
+  background-color: white;
+  color: black;
 }
 p {
-max-width: 60em;
+  max-width: 60em;
 }
 table {
-border-collapse: collapse;
-empty-cells: show;
-margin: 1em 0em;
-border: 0.1em solid black;
+  border-collapse: collapse;
+  empty-cells: show;
+  margin: 1em 0em;
+  border: 0.1em solid black;
 }
 th, td {
-border-style: solid;
-border-width: 0.05em 0.1em;
-border-color: black;
-padding: 0.1em 0.2em;
-height: 1.5em;
+  border-style: solid;
+  border-width: 0.05em 0.1em;
+  border-color: black;
+  padding: 0.1em 0.2em;
+  height: 1.5em;
 }
 th {
-background-color: rgb(192, 192, 192);
-color: black;
-border-width: 0.1em;
-font-weight: bold;
-text-align: center;
-text-transform: capitalize;
-letter-spacing: 0.1em;
+  background-color: rgb(192, 192, 192);
+  color: black;
+  border-width: 0.1em;
+  font-weight: bold;
+  text-align: center;
+  text-transform: capitalize;
+  letter-spacing: 0.1em;
 }
 /* Widths of named columns */
 col.name {
-width: 10em;
+  width: 10em;
 }
 .action, .value, .arg {
-width: 15em;
+  width: 15em;
 }
-/* Properties for the name column - td:first-child should work in CSS 2.1 avare browsers (tested in Firefox)
+/* Properties for the name column 
+- td:first-child should work in CSS 2.1 avare browsers (tested in Firefox)
 - col.name is against specs but works in IE
 */
 td:first-child, col.name {
-background-color: rgb(240, 240, 240);
-text-transform: capitalize;
-letter-spacing: 0.1em;
+  background-color: rgb(240, 240, 240);
+  text-transform: capitalize;
+  letter-spacing: 0.1em;
 }
 /* required for IE */
 th {
-font-style: normal;
+  font-style: normal;
 }
-</style><title>String</title></head>
+</style>
+<title>String</title>
+</head>
 <body>
 <h1>String</h1>
+
 <table border="1">
-<colgroup span="99"><col class="name"><col class="value" span="4"></colgroup>
-<tbody>
+<colgroup span="99">
+<col class="name">
+<col class="value" span="4"></colgroup>
 <tr>
 <th>Setting</th>
 <th>Value</th>
@@ -75,8 +82,7 @@ font-style: normal;
 <tr>
 <td>Library</td>
 <td>String</td>
-<td><br>
-</td>
+<td></td>
 <td></td>
 <td></td>
 </tr>
@@ -87,11 +93,19 @@ font-style: normal;
 <td></td>
 <td></td>
 </tr>
-</tbody>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
 </table>
+
 <table border="1">
-<colgroup span="99"><col class="name"><col class="value" span="4"></colgroup>
-<tbody>
+<colgroup span="99">
+<col class="name">
+<col class="value" span="4"></colgroup>
 <tr>
 <th>Variable</th>
 <th>Value</th>
@@ -99,20 +113,76 @@ font-style: normal;
 <th>Value</th>
 <th>Value</th>
 </tr>
-
-
 <tr>
 <td>${NSN}</td>
 <td>nokia_siemens_networks</td>
 <td></td>
 <td></td>
 <td></td>
-</tr><tr><td>${TEXT IN COLUMNS}</td><td>robot\tframework\nis\tgood\tfor\ttesting</td><td></td><td></td><td></td></tr><tr><td>${FIRST LINE}</td><td>robot\tframework</td><td></td><td></td><td></td></tr><tr><td>${SECOND LINE}</td><td>is\tgood\tfor\ttesting</td><td></td><td></td><td></td></tr><tr><td>${FIRST COLUMN}</td><td>robot\nis\n</td><td></td><td></td><td></td></tr><tr><td>${ERROR MESSAGE}</td><td>My error message</td><td></td><td></td><td></td></tr><tr><td>${FOURTH COLUMN}</td><td>\ntesting\n</td><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr>
-</tbody>
+</tr>
+<tr>
+<td>${TEXT IN COLUMNS}</td>
+<td>robot\tframework\nis\tgood\tfor\ttesting</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>${FIRST LINE}</td>
+<td>robot\tframework</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>${SECOND LINE}</td>
+<td>is\tgood\tfor\ttesting</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>${ERROR MESSAGE}</td>
+<td>My error message</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>${FIRST COLUMN}</td>
+<td>robot</td>
+<td>is</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>${FOURTH COLUMN}</td>
+<td></td>
+<td>testing</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>${FOURTH COLUMN}</td>
+<td></td>
+<td>testing</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
 </table>
+
 <table border="1">
-<colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
-<tbody>
+<colgroup span="99">
+<col class="name">
+<col class="action">
+<col class="arg" span="3"></colgroup>
 <tr>
 <th>Test Case</th>
 <th>Action</th>
@@ -122,7 +192,7 @@ font-style: normal;
 </tr>
 <tr>
 <td>Fetch From Left</td>
-<td>${result}=</td>
+<td>${result} =</td>
 <td>Fetch From Left</td>
 <td>${NSN}</td>
 <td>_siemens</td>
@@ -134,9 +204,16 @@ font-style: normal;
 <td>nokia</td>
 <td></td>
 </tr>
-<tr><td></td><td></td><td></td><td></td><td></td></tr><tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
 <td>Fetch From Right</td>
-<td>${result}=</td>
+<td>${result} =</td>
 <td>Fetch From Right</td>
 <td>${NSN}</td>
 <td>_siemens_</td>
@@ -148,9 +225,16 @@ font-style: normal;
 <td>networks</td>
 <td></td>
 </tr>
-<tr><td></td><td></td><td></td><td></td><td></td></tr><tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
 <td>Split String</td>
-<td>@{result}=</td>
+<td>@{result} =</td>
 <td>Split String</td>
 <td>${NSN}</td>
 <td>\_</td>
@@ -164,16 +248,16 @@ font-style: normal;
 </tr>
 <tr>
 <td></td>
-<td>Should be equal</td><td>@{result}[1]</td><td>siemens</td>
-
-
+<td>Should be equal</td>
+<td>@{result}[1]</td>
+<td>siemens</td>
 <td></td>
 </tr>
 <tr>
 <td></td>
-<td>Should be equal</td><td>@{result}[2]</td><td>networks</td>
-
-
+<td>Should be equal</td>
+<td>@{result}[2]</td>
+<td>networks</td>
 <td></td>
 </tr>
 <tr>
@@ -185,12 +269,12 @@ font-style: normal;
 </tr>
 <tr>
 <td>Generate Random String</td>
-<td>${result}=</td>
+<td>${result} =</td>
 <td>Generate Random String</td>
 <td>10</td>
 <td></td>
 </tr>
-<tr><td></td><td></td><td></td><td></td><td></td></tr><tr>
+<tr>
 <td></td>
 <td>Length Should be</td>
 <td>${result}</td>
@@ -205,13 +289,20 @@ font-style: normal;
 <td></td>
 </tr>
 <tr>
-<td>Get Column</td>
-<td>${result}=</td>
-<td>Get Column</td>
+<td>Get Columns</td>
+<td>${result} =</td>
+<td>Get Columns</td>
 <td>${TEXT IN COLUMNS}</td>
 <td>0</td>
 </tr>
-<tr><td></td><td>...</td><td>\t</td><td></td><td></td></tr><tr>
+<tr>
+<td></td>
+<td>...</td>
+<td>\t</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
 <td></td>
 <td>Should be equal</td>
 <td>${result}</td>
@@ -220,8 +311,8 @@ font-style: normal;
 </tr>
 <tr>
 <td></td>
-<td>${result}=</td>
-<td>Get Column</td>
+<td>${result} =</td>
+<td>Get Columns</td>
 <td>${TEXT IN COLUMNS}</td>
 <td>3</td>
 </tr>
@@ -248,7 +339,7 @@ font-style: normal;
 </tr>
 <tr>
 <td>Get Line</td>
-<td>${result}=</td>
+<td>${result} =</td>
 <td>Get Line</td>
 <td>${TEXT IN COLUMNS}</td>
 <td>0</td>
@@ -262,7 +353,7 @@ font-style: normal;
 </tr>
 <tr>
 <td></td>
-<td>${result}=</td>
+<td>${result} =</td>
 <td>Get Line</td>
 <td>${TEXT IN COLUMNS}</td>
 <td>1</td>
@@ -283,7 +374,7 @@ font-style: normal;
 </tr>
 <tr>
 <td>Get Line Count</td>
-<td>${result}=</td>
+<td>${result} =</td>
 <td>Get Line Count</td>
 <td>\</td>
 <td></td>
@@ -297,7 +388,7 @@ font-style: normal;
 </tr>
 <tr>
 <td></td>
-<td>${result}=</td>
+<td>${result} =</td>
 <td>Get Line Count</td>
 <td>${SPACE}</td>
 <td></td>
@@ -311,7 +402,7 @@ font-style: normal;
 </tr>
 <tr>
 <td></td>
-<td>${result}</td>
+<td>${result} =</td>
 <td>Get Line Count</td>
 <td>${TEXT IN COLUMNS}</td>
 <td></td>
@@ -331,9 +422,9 @@ font-style: normal;
 <td></td>
 </tr>
 <tr>
-<td>Get Lines as List</td>
-<td>@{result}=</td>
-<td>Get Lines as List</td>
+<td>Split To Lines</td>
+<td>@{result} =</td>
+<td>Split To Lines</td>
 <td>${TEXT IN COLUMNS}</td>
 <td></td>
 </tr>
@@ -360,7 +451,7 @@ font-style: normal;
 </tr>
 <tr>
 <td>Get Substring</td>
-<td>${result}</td>
+<td>${result} =</td>
 <td>Get Substring</td>
 <td>Robot</td>
 <td>2</td>
@@ -388,7 +479,7 @@ font-style: normal;
 </tr>
 <tr>
 <td>Replace String</td>
-<td>${result}=</td>
+<td>${result} =</td>
 <td>Replace String</td>
 <td>Robot Framework</td>
 <td>Frame</td>
@@ -407,9 +498,16 @@ font-style: normal;
 <td>Robot Classwork</td>
 <td></td>
 </tr>
-<tr><td></td><td></td><td></td><td></td><td></td></tr><tr>
-<td>Replace String not found</td>
-<td>${result}=</td>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Replace String Not Found</td>
+<td>${result} =</td>
 <td>Replace String</td>
 <td>Robot</td>
 <td>bat</td>
@@ -436,8 +534,8 @@ font-style: normal;
 <td></td>
 </tr>
 <tr>
-<td>Replace with empty String</td>
-<td>${result}=</td>
+<td>Replace With Empty String</td>
+<td>${result} =</td>
 <td>Replace String</td>
 <td>Robot Framework</td>
 <td>Framework</td>
@@ -464,7 +562,7 @@ font-style: normal;
 <td></td>
 </tr>
 <tr>
-<td>Should be String Positive</td>
+<td>Should Be String Positive</td>
 <td>Should be String</td>
 <td>Robot</td>
 <td></td>
@@ -492,15 +590,19 @@ font-style: normal;
 <td></td>
 </tr>
 <tr>
-<td>Should be String Negative for Number</td>
+<td>Should Be String Negative For Number</td>
+<td>[Documentation]</td>
+<td>FAIL ${ERROR MESSAGE}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
 <td>Should be string</td>
-<td>${0}</td><td>${ERROR MESSAGE}</td>
-
-<td><br></td>
+<td>${0}</td>
+<td>${ERROR MESSAGE}</td>
+<td></td>
 </tr>
-<tr><td></td><td>[Documentation]</td><td>FAIL ${ERROR MESSAGE}</td><td></td><td></td></tr>
-
-
 <tr>
 <td></td>
 <td></td>
@@ -509,30 +611,28 @@ font-style: normal;
 <td></td>
 </tr>
 <tr>
-<td>Should be String Negative For Boolean</td>
-<td>[Documentation]</td><td>FAIL ${ERROR MESSAGE}</td><td></td><td></td>
-
-
-
-</tr>
-<tr>
-<td></td>
-<td>Should be string</td><td>${TRUE}</td><td>${ERROR MESSAGE}</td>
-
-
-<td></td>
-</tr>
-
-
-<tr>
-<td></td>
-<td></td>
-<td></td>
+<td>Should Be String Negative For Boolean</td>
+<td>[Documentation]</td>
+<td>FAIL ${ERROR MESSAGE}</td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td>Should Not be String Positive</td>
+<td></td>
+<td>Should be string</td>
+<td>${TRUE}</td>
+<td>${ERROR MESSAGE}</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Should Not Be String Positive</td>
 <td>Should Not Be String</td>
 <td>${0}</td>
 <td></td>
@@ -553,11 +653,11 @@ font-style: normal;
 <td></td>
 </tr>
 <tr>
-<td>Should Not be String Negative</td>
-<td>[Documentation]</td><td>FAIL ${ERROR MESSAGE}</td><td></td><td></td>
-
-
-
+<td>Should Not Be String Negative</td>
+<td>[Documentation]</td>
+<td>FAIL ${ERROR MESSAGE}</td>
+<td></td>
+<td></td>
 </tr>
 <tr>
 <td></td>
@@ -568,20 +668,6 @@ font-style: normal;
 </tr>
 <tr>
 <td></td>
-<td></td><td></td><td></td>
-
-
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td><td></td><td></td>
-
-
-<td></td>
-</tr>
-<tr>
-<td></td>
 <td></td>
 <td></td>
 <td></td>
@@ -594,368 +680,13 @@ font-style: normal;
 <td></td>
 <td></td>
 </tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-</tbody>
 </table>
+
 <table border="1">
-<colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
-<tbody>
+<colgroup span="99">
+<col class="name">
+<col class="action">
+<col class="arg" span="3"></colgroup>
 <tr>
 <th>Keyword</th>
 <th>Action</th>
@@ -970,62 +701,7 @@ font-style: normal;
 <td></td>
 <td></td>
 </tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-</tbody>
 </table>
-</body></html>
+
+</body>
+</html>

@@ -15,6 +15,7 @@
 
 # TODO: assertions, checks, generate html and check, write internal tests
 # TODO: `` comments
+# TODO: Check documentation and use short docs. Is some more examples needed?
 import os
 import re
 import shutil
@@ -28,7 +29,7 @@ from robot import utils
 from robot.errors import DataError
 import robot.output
 from random import Random
-import string
+import string as STRING
 
 
 class String:
@@ -54,61 +55,46 @@ class String:
 
     ROBOT_LIBRARY_SCOPE = 'GLOBAL'
 
-    def get_line_count(self, lines):
-        """
-        Returns the number of lines.
-        """
-        line_list = lines.splitlines(0)
-        print "*INFO* Got '%d' lines" % len(line_list)
-        return len(line_list)
+    def get_line_count(self, string):
+        """Returns the number of lines."""
+        return len(string.splitlines(0))
 
-    def get_lines_as_list(self, lines, start=0, end=-1):
-        """
-        Converts multiline input to list of lines. Ends of lines removed.
-        It is possible to get only selection of lines, from `start` to `end`.
-        Line numbering starts from 0.
+    def split_to_lines(self, string, start=0, end=-1):
+        """Converts `string` to list of lines. 
+        
+        Ends of lines are removed. It is possible to get only selection of 
+        lines, from `start` to `end`. Line numbering starts from 0.
 
         Example:
-        | @{lines} | Get Lines as List | ${multilines} |
-        | @{first two lines} | Get Lines as List | ${multilines} | 0 | 1 |
+        | @{lines} = | Get Lines as List | ${multilines} |
+        | @{first two lines} = | Get Lines as List | ${multilines} | 0 | 1 |
         """
-        line_list = lines.splitlines(0)
-        line_count = len(line_list)
+        lines = string.splitlines()
+        start = self._convert_to_int(start, 'start')
+        end = self._convert_to_int(end, 'end')
+        print "*TRACE* Got '%d' lines. Returning from %d to %d" % (len(lines), start, end)        
+        if not lines:
+            return []
+        if end == -1:
+            return lines[start:]
+        return lines[start:end]
 
-        start = self._index_to_int(start)
-        end = self._index_to_int(end)
-        if (end == -1):
-            end = line_count
-        print "*TRACE* Got '%d' lines. Returning from %d to %d" % (line_count, start, end)
-        
-        if (line_count == 0):
-            return list()
-        
-        return line_list[start : end]
+    def replace_string(self, string, search_for, replace_with, count=0):
+        """ Replaces `search_for` in `string` with `replace_with`.
 
-    def _remove_empty_elements_from_list(self, elements):
-        """
-        Removes empty elements from list. Returns list.
-        """
-        newelements = []
-        for element in elements:
-            if element:
-                newelements.append(element)
-        return newelements
+        You can specify how many occurrences are replaced with `count`,
+        otherwise all occurrences are replaced.
+        """        
+        count = self._convert_to_int(count, 'count')
+        if count <= 0:
+            return string.replace(search_for, replace_with)
+        return string.replace(search_for, replace_with, count)
 
-    def replace_string(self, replace_in, search_for, replace_with):
-        """
-        Searches `search_for` in `replace_in` and replaces with `replace_with`
-        """
-        result = replace_in.replace(search_for, replace_with)
-        return result
-
-    def replace_pattern(self, replace_in, pattern, replace_with, count=0):
-        """
-        Searches for pattern matching `regexp` in `replace_in`
-        and replaces with `replace_with`.
-        You can specify that maximum `count` pattern occurrences are replaced,
-        otherwise all are replaced.
+    #TODO: Better name: replace_string_with_regexp
+    def replace_string_with_regexp(self, string, pattern, replace_with, count=0):
+        """Replaces matches with `pattern` in `string` with `replace_with`.
+        You can specify how many `pattern` occurrences are replaced with `count`,
+        otherwise all occurrences are replaced.
 
         Regular expression format is according to Python 're' module, which
         has a pattern syntax derived from Perl, and thus also very similar to
@@ -118,36 +104,39 @@ class String:
         * http://docs.python.org/lib/module-re.html
         
         """
+        count = self._convert_to_int(count, 'count')
         p = re.compile(pattern)
-        return p.sub(replace_with, replace_in, count)
+        return p.sub(replace_with, string, count)
 
-    def split_string(self, to_split, split_with, max_split=-1):
+    def split_string(self, string, separator=None, max_split=-1):
+        # Add doc for separator
         """
-        Return a list of the words in the `to_split` string,
+        Return a list of the words in the `string`,
         using `split_with` as the delimiter string.
-        If maxsplit is given, at most `maxsplit` splits are done
-        (thus, the list will have at most 'maxsplit+1' elements) 
+        If max_split is given, at most `max_split` splits are done
+        (thus, the list will have at most 'max_split+1' elements) 
         """
-        return to_split.split(split_with, max_split)
+        self._convert_to_int(max_split, 'max_split')
+        return string.split(separator, max_split)
 
-    def generate_random_string(self, length=8, chars=string.letters \
-                               + string.digits):
+    def split_string_from_right(self, string, separator=None, max_split=-1):
+        #no need to to have separate fetch from left
+        pass
+    
+    def generate_random_string(self, length=8, chars=STRING.letters+STRING.digits):
         """
         Generates a random string of the required `length` (8 by default).
         Second argument is a set of characters to draw from,
-         letters + digits for default
-        """        
-        length = int(length)
-        src_len = len(chars)
-        times = int(length / src_len)
-        result = ''
-        for i in range (0, times):
-            result += ''.join( Random().sample(chars, src_len) )
-        rest = length % src_len
-        result += ''.join(Random().sample(chars, rest) )
-        return result
+        lower and upper case letters, and digits by default.
+         
+         
+        """
+        length = self._convert_to_int(length, 'length')
+        return ''.join( Random().sample(chars, length) )
 
 
+    # TODO: Should this be position, length or start, end. If start, end is used, there is 
+    # possibility to remove x characters from behind of the string by using negative index.
     def get_substring(self, string, position, length):
         """
         Returns a substring of given `length` starting from position of `position` ,
@@ -157,8 +146,8 @@ class String:
         Example:
         | ${first two}= | Get Substring | Robot | 0 | 2 |
         """
-        position = self._index_to_int(position)
-        length = self._index_to_int(length)
+        position = self._convert_to_int(position, 'position')
+        length = self._convert_to_int(length, 'length')
         return string[position : position + length]
 
     def should_be_string(self, item, msg=None):
@@ -174,66 +163,55 @@ class String:
             if msg is None:
                 msg = "Given item '%s' is a string" % item
             raise AssertionError(msg)
-        
-    def get_column(self, input_text, column_number, delimiter=' '):
+    
+    def get_columns(self, string, column_number, delimiter=' '):
         """
-        Takes input text, splits into columns using delimiter
+        Takes `string`, splits into columns using delimiter
         and returns the `column_number` column.
         Column numbering starts from 0. Default delimiter is single space.
         """
         if not delimiter:
             raise AssertionError("Delimiter should not be empty")
-        
-        lines = input_text.splitlines(0)
-        column = ''
-        
-        column_number = self._index_to_int(column_number)
-        for line in lines:
-            row = line.split(delimiter)
-            try:
-                item = row[column_number]
-            except IndexError:
-                item = ''
-            column += item + '\n'
-        return column    
+        column_number = self._convert_to_int(column_number, 'column_number')
 
-    def get_line(self, lines, number):
+        columns = []
+        for line in string.splitlines():
+            items = line.split(delimiter)
+            try:
+                columns.append(items[column_number])
+            except IndexError:
+                columns.append('')
+        return columns
+
+    def get_line(self, string, number):
         """
-        From given `lines`, extracts line with given `number`.
+        From given `string`, extracts line with given `number`.
         '0' is the first line. '-1' is the last line.
         Line is returned without the end-of-line character.
 
         Example:
-        | ${first line}= | Get Line | ${lines} | 0 |
+        | ${first line}= | Get Line | ${string} | 0 |
         """
-        lines_list = lines.splitlines(0)
-        number = self._index_to_int(number)
-        return lines_list[number]
+        number = self._convert_to_int(number, 'number')
+        return string.splitlines()[number]
 
     def fetch_from_left(self, string, to_find):
         """
-        Fetches the `string` part before the FIRST occurence of `to_find`.
+        Fetches the `string` part before the FIRST occurrence of `to_find`.
         If `to_find` is not found, whole string is returned.
         """
-        split_string = string.split(to_find)
-        return split_string[0]
-        
+        return string.split(to_find)[0]
         
     def fetch_from_right(self, string, to_find):
         """
         Fetches the `string` after the LAST occurence of `to_find`.
         If `to_find` not found within `string`, whole string is returned.
         """
-        split_string = string.split(to_find)
-        return split_string[-1]
+        return string.split(to_find)[-1]
 
-    def _index_to_int(self, index, empty_to_zero=False):
-        # copied from Collections
-        if empty_to_zero and not index:
-            return 0
+    def _convert_to_int(self, value, name):
         try:
-            return int(index)
+            return int(value)
         except ValueError:
-            raise ValueError("Cannot convert index '%s' to an integer" % index)
-
+            raise ValueError("Cannot convert '%s' value '%s' to an integer" % (name, value))
 
