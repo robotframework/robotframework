@@ -47,19 +47,82 @@ Examples::
 Available listener interface methods
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Robot Framework creates an instance of the listener class when test
-execution starts. No arguments are given to the constructor of the
-listener class. During the test execution, Robot Framework calls
-listeners' methods when test suites, test cases and keywords start and end. It 
+Robot Framework creates an instance of the listener class with given arguments
+when test execution starts. During the test execution, Robot Framework calls
+listeners' methods when test suites, test cases and keywords start and end. It
 also calls the appropriate methods when output files are ready, and finally at
 the end it calls the :code:`close` method. A listener is not required to
-implement any official interface, and it only needs to have the
-methods it actually needs.
+implement any official interface, and it only needs to have the methods it
+actually needs.
 
-The following table lists all the available methods in the listener
-interface. All of these methods have also camelCase aliases. Thus,
-for example, :code:`startSuite` is a synonym to
-:code:`start_suite`. All the arguments are strings, unless stated otherwise.
+Starting from Robot Framework 2.1, all listener methods related to test execution
+progress have the same signature :code:`method`(name, attributes), where
+:code:`attributes` is a dictionary containing details of the event. The
+following table lists all the available methods in the listener interface, and
+the contents of the :code:`attributes` dictionary, where applicable. Keys of
+the dictionary are strings. All of these methods have also camelCase aliases.
+Thus, for example, :code:`startSuite` is a synonym to :code:`start_suite`. 
+ 
+.. table:: Available methods in the listener interface
+   :class: tabular
+
+   +---------------+------------------+--------------------------------------------------+
+   |    Method     |    Arguments     |                     Attributes                   |
+   +===============+==================+==================================================+
+   | start_suite   | name, attributes | 'doc' is the documentation of the suite, which   |
+   |               |				  |  may be empty.                                   |
+   +---------------+------------------+--------------------------------------------------+
+   | end_suite     | name, attributes | 'status' is either PASS or FAIL. 'message'       |
+   |               |                  | contains suite statistics and an error message,  |
+   |               |                  | if the suite setup or teardown has failed.       |
+   +---------------+------------------+--------------------------------------------------+
+   | start_test    | name, attributes | 'doc' is the documentation of the test, which    |
+   |               |                  | may be empty. 'tags' contains the tags of the    |
+   |               |                  | test case, given as a list of strings.           |
+   +---------------+------------------+--------------------------------------------------+
+   | end_test      | name, attributes | 'status' is either PASS or FAIL. 'message'       |
+   |               |                  | contains an error message, if the test has       |
+   |               |                  | failed and is empty otherwise.                   |       |
+   +---------------+------------------+--------------------------------------------------+
+   | start_keyword | name, attributes | 'args' contains the keyword arguments, given as  |
+   |               |                  | a list of strings. Available 			         |
+   |               |                  | from Robot Framework 2.0.2 onwards.              |
+   +---------------+------------------+--------------------------------------------------+
+   | end_keyword   | name, attributes | 'status' is either PASS or FAIL. Available       |
+   |               |                  | from Robot Framework 2.0.2 onwards.              |
+   +---------------+------------------+--------------------------------------------------+
+   | output_file   | path             | Called when writing to an output file is         |
+   |               |                  | finished. The path is an absolute path to the    |
+   |               |                  | file. When `outputs are split`_, called for each |
+   |               |                  | finished file.                                   |
+   +---------------+------------------+--------------------------------------------------+
+   | log_file      | path             | Called when writing to a log file is             |
+   |               |                  | finished. The path is an absolute path to the    |
+   |               |                  | file. When `outputs are split`_, called for each |
+   |               |                  | finished file.                                   |
+   +---------------+------------------+--------------------------------------------------+
+   | report_file   | path             | Called when writing to a report file is          |
+   |               |                  | finished. The path is an absolute path to the    |
+   |               |                  | file.                                            |
+   +---------------+------------------+--------------------------------------------------+
+   | summary_file  | path             | Called when writing to a summary file is         |
+   |               |                  | finished. The path is an absolute path to the    |
+   |               |                  | file.                                            |
+   +---------------+------------------+--------------------------------------------------+
+   | debug_file    | path             | Called when writing to a debug file is           |
+   |               |                  | finished. The path is an absolute path to the    |
+   |               |                  | file.                                            |
+   +---------------+------------------+--------------------------------------------------+
+   | close         |                  | Called after all test suites, and test cases in  |
+   |               |                  | them, have been executed.                        |
+   +---------------+------------------+--------------------------------------------------+
+
+
+The following table lists all the available methods of the deprecated listener
+interface. With Robot Framework 2.1 and newer, methods listed above should be
+used.  All of these methods have also camelCase aliases. Thus, for example,
+:code:`startSuite` is a synonym to :code:`start_suite`. All the arguments are
+strings, unless stated otherwise.
 
 
 .. table:: Available methods in the listener interface
