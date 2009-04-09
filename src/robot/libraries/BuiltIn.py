@@ -600,11 +600,16 @@ class _Variables:
         return self._get_variables().replace_scalar(text)
     
     def set_variable(self, *values):
-        """Returns the given argument -- can be used to set variables.
+        """Returns the given argument which can then be assigned to a variable.
 
-        Can also be used to convert a scalar variable containing list to
-        a list variable or to multiple scalar variables.
+        This keyword is mainly used for setting scalar variables.
+        Additionally it can be used for converting a scalar variable
+        containing a list to a list variable or to multiple scalar variables.
         
+        Using this keyword with more (or less) than one value has been 
+        deprecated in Robot Framework 2.1 and that usage will be removed
+        in 2.2 version.
+
         Examples:
         | ${hi} =   | Set Variable | Hello, world! |
         | ${hi2} =  | Set Variable | I said: ${hi} |
@@ -615,10 +620,6 @@ class _Variables:
         scope where they are created. See `Set Global Variable`, `Set
         Test Variable` and `Set Suite Variable` for information on how to
         set variables so that they are available also in a larger scope.
-
-        Using this keyword with more (or less) than one value has been 
-        deprecated in Robot Framework 2.1 and that usage will be removed
-        in 2.2.
         """
         if len(values) == 1:
             return values[0]
