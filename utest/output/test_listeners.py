@@ -169,10 +169,10 @@ class _BaseListenerTest:
         self.listeners.close()
         self._assert_output('Closing...')
 
-    def _assert_output(self, excpeted):
+    def _assert_output(self, expected):
         stdout, stderr = utils.release_output()
         assert_equals(stderr, '')
-        assert_equals(stdout, '%s\n' % excpeted)
+        assert_equals(stdout.rstrip(), expected)
 
 
 class TestOldStyleListeners(_BaseListenerTest, unittest.TestCase):
