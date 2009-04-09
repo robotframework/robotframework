@@ -84,77 +84,88 @@ class OperatingSystem:
     ROBOT_LIBRARY_SCOPE = 'GLOBAL'
     ROBOT_LIBRARY_VERSION = __version__
     
-    def run(self, command, mode='DEPRECATED'):
-        """Runs the given command in the system and returns the RC and/or output.
+    def run(self, command, return_mode='DEPRECATED'):
+        """Runs the given command in the system and returns the output.
 
         The execution status of the command *is not checked* by this
-        keyword, and it must be done separately based on the return code
-        (RC) or the returned output. Documentation below explains how to
-        control returning RC and output, and examples at the
-        end illustrate few different possibilities for checking the
-        outcome.
+        keyword, and it must be done separately based on the returned
+        output. If the return code of execution is needed, either `Run
+        And Return RC` or `Run And Return RC And Output` can be used.
+        `return_mode` argument for this keyword is deprecated and will
+        be removed in Robot Framework 2.2 version.
 
-        Starting from Robot Framework 2.0.2, the standard error stream is
-        automatically redirected to the standard output stream by
-        adding '2>&1' after the executed command. This is done mainly
-        as a workaround for a bug in Jython that makes it hang if a
-        lot of text is written to the standard error
-        (http://bugs.jython.org/issue1124). Additionally, it also makes 
-        possible errors in executing the command available automatically.
-
-        The automatic redirection of the standard error is done only
-        when the executed command does not contain additional output
+        Starting from Robot Framework 2.0.2, the standard error stream
+        is automatically redirected to the standard output stream by
+        adding '2>&1' after the executed command. The automatic
+        redirection of the standard error is done only when the
+        executed command does not contain additional output
         redirections. You can thus freely forward the standard error
         somewhere else, for example, like 'my_command 2>stderr.txt'.
-        
-        ---
-
-        `return_mode` defines whether the RC, output or both is returned.
-        All checks explained below are case-insensitive.
-        
-        - If `return_mode` contains the word 'RC' and the word 'output',
-          both the RC and output are returned. 
-        - Otherwise, if it contains the word 'RC', only the RC is returned.
-        - Otherwise, and by default, only the output is returned.
-
-        The RC is returned as a positive integer in range from 0 to
-        255 as returned by the executed command. On some operating
-        systems (notable Windows) original return codes can be
-        something else, but this keyword always maps them to the 0-255
-        range. Since the RC is an integer, it must be checked
-        e.g. with the keyword `Should Be Equal As Integers` instead of
-        `Should Be Equal` (both are built-in keywords).
         
         The returned output contains everything written into the
         standard output or error by the command (unless either of them
         is redirected explicitly). Many commands add an extra newline
         (\\n) after the output to make it easier to read in the
-        console. To ease processing the returned output, Robot
-        Framework strips this possible newline.        
-        
-        ---
+        console. To ease processing the returned output, this possible
+        trailing newline is stripped.
         
         Examples:
-        
-        | ${output} = | Run        | ls -lhF /tmp | 
-        | Log         | ${output}  |
-        |             |            |
-        | ${rc} =     | Run        | ${CURDIR}${/}script.py arg | Return RC |
-        | Should Be Equal As Integers | ${rc} | 0 |
-        |                |            |
-        | ${rc}          | ${out} =   | Run | /opt/script.sh 2>/tmp/stderr.txt | RC,Output |
-        | Should Be True | ${rc} > 42 |
-        | Should Contain | ${out}     | TEST PASSED |
+        | ${output} =        | Run       | ls -lhF /tmp | 
+        | Log                | ${output} |
+        | ${result} =        | Run       | ${CURDIR}${/}tester.py arg1 arg2 |
+        | Should Not Contain | ${result} | FAIL |
+        | ${stdout} =        | Run       | /opt/script.sh 2>/tmp/stderr.txt |
+        | Should Be Equal    | ${stdout} | TEST PASSED |
         | File Should Be Empty | /tmp/stderr.txt |
         """
-        if mode != 'DEPRECATED':
-            LOGGER.warn("'mode' argument of 'Run' keyword is deprecated. "
-                        "Use 'Run And Return RC' or 'Run And Return RC And "
-                        "Output' instead.")
+        if return_mode != 'DEPRECATED':
+            LOGGER.warn("'return_mode' argument of 'Run' keyword is "
+                        "deprecated and will be removed in Robot "
+                        "Framework 2.1. Use 'Run And Return RC' or "
+                        "'Run And Return RC And Output' instead.")
         else:
-            mode = 'output'
-        return self._run(command, mode)
+            return_mode = 'output'
+        return self._run(command, return_mode)
 
+    def run_and_return_rc(self, command):
+        """Runs the given command in the system and returns the returnn code.
+
+        The return code (RC) is returned as a positive integer in
+        range from 0 to 255 as returned by the executed command. On
+        some operating systems (notable Windows) original return codes
+        can be something else, but this keyword always maps them to
+        the 0-255 range. Since the RC is an integer, it must be
+        checked e.g. with the keyword `Should Be Equal As Integers`
+        instead of `Should Be Equal` (both are built-in keywords).
+        
+        Examples:
+        | ${rc} = | Run and Return RC | ${CURDIR}${/}script.py arg |
+        | Should Be Equal As Integers | ${rc} | 0 |
+        | ${rc} = | Run and Return RC | /path/to/example.rb arg1 arg2 |
+        | Should Be True | 0 < ${rc} < 42 |
+
+        See `Run` and `Run And Return RC And Output` if you need to get the
+        output of the executed comand.
+        """
+        return self._run(command, 'RC')
+    
+    def run_and_return_rc_and_output(self, command):
+        """Runs the given command in the system and returns the RC and output.
+
+        The return code (RC) is returned similarly as with `Run And Return RC`
+        and the output similarly as with `Run`.
+
+        Examples:
+        | ${rc} | ${output} =  | Run and Return RC and Output | ${CURDIR}${/}mytool |
+        | Should Be Equal As Integers | ${rc}    | 0    |
+        | Should Not Contain   | ${output}       | FAIL |
+        | ${rc} | ${stdout} =  | Run and Return RC and Output | /opt/script.sh 2>/tmp/stderr.txt |
+        | Should Be True       | ${rc} > 42      |
+        | Should Be Equal      | ${stdout}       | TEST PASSED |
+        | File Should Be Empty | /tmp/stderr.txt |
+        """
+        return self._run(command, 'RC,Output')
+    
     def _run(self, command, mode):
         process = os.popen(self._process_command(command))
         stdout = process.read()
@@ -195,33 +206,6 @@ class OperatingSystem:
                 command += ' 2>&1'
         self._info("Running command '%s'" % command)
         return command
-    
-    def run_and_return_rc(self, command):
-        """Wrapper for `Run` keyword that returns only the return code.
-        
-        Following two examples are equivalent but the latter is easier to
-        understand and thus recommended. See `Run` keyword for more information
-        about the characteristics of the returned RC.
-        
-        | ${rc} = | Run               | my_command | RC |
-        | ${rc} = | Run and Return RC | my_command |    |
-        """
-        return self._run(command, 'RC')
-    
-    def run_and_return_rc_and_output(self, command):
-        """Wrapper for the `Run` keyword that returns both the RC and stdout.
-        
-        The following two examples are equivalent, but the latter is easier to
-        understand and thus recommended.
-        
-        | ${rc} | ${output} = | Run                  | my_command | RC, Output |
-        | ${rc} | ${output} = | Run and Return RC and Output | my_command |    |
-        
-        Note that similarly as the normal `Run`, this keyword only returns the 
-        standard output and not the standard error. See `Run` keyword for more
-        information.
-        """
-        return self._run(command, 'RC,Output')
     
     def start_process(self, command, stdin=None, alias=None):
         """Starts the given command as a background process.
