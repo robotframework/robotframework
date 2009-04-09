@@ -76,8 +76,8 @@ class String:
         lines, from `start` to `end`. Line numbering starts from 0. 
 
         Example:
-        | @{lines} = | Get Lines as List | ${multilines} |
-        | @{first two lines} = | Get Lines as List | ${multilines} | 0 | 1 |
+        | @{lines} = | Split to lines | ${manylines} |
+        | @{first two lines} = | Split to lines | ${manylines} | 0 | 1 |
         """
         lines = string.splitlines()
         start = self._convert_to_int(start, 'start')
@@ -111,17 +111,19 @@ class String:
         regular expressions in general and Python implementation in particular.
         
         * http://docs.python.org/lib/module-re.html
-        
         """
         count = self._convert_to_int(count, 'count')
         p = re.compile(pattern)
         return p.sub(replace_with, string, count)
 
     def split_string(self, string, separator=None, max_split=-1):
-        # TODO: Add doc for separator which is by default None is splitting 
-        # from space, tab, and new lines 
-        """Return a list of the words in the `string`,
-        using `split_with` as the delimiter string.
+        """Return a list of the words in the `string`.
+
+        Uses `separator` as the delimiter string. If `separator` is not
+        specified: runs of consecutive whitespace are regarded as a
+        single separator, and the result will contain no empty strings
+        at the start or end if the string has leading or trailing whitespace.
+        
         If max_split is given, at most `max_split` splits are done
         (thus, the list will have at most 'max_split+1' elements) 
         """
@@ -129,8 +131,9 @@ class String:
         return string.split(separator, max_split)
 
     def split_string_from_right(self, string, separator=None, max_split=-1):
-        """Return a list of the words in the `string`,
-        using `split_with` as the delimiter string.
+        """Return a list of the words in the `string`, starting from right.
+
+        Uses `split_with` as the delimiter string.
         If max_split is given, at most `max_split` splits are done from right.
         (thus, the list will have at most 'max_split+1' elements) 
         """
@@ -142,10 +145,9 @@ class String:
     def generate_random_string(self, length=8, chars=STRING.letters+STRING.digits):
         """
         Generates a random string of the required `length` (8 by default).
+        
         Second argument is a set of characters to draw from,
-        lower and upper case letters, and digits by default.
-         
-         
+        lower and upper case letters, and digits by default. 
         """
         length = self._convert_to_int(length, 'length')
         return ''.join( Random().sample(chars, length) )
@@ -153,6 +155,7 @@ class String:
 
     def get_substring(self, string, start, end=None):
         """Returns a substring from `start` index to `end` index. 
+
         First item's index is 0. it is possible to use also negative `start` and   
         end indexes which means 
         Example:
@@ -161,6 +164,7 @@ class String:
         | ${two from almost end} = | Get Substring | Hello Robot | -3 | -1 |
         | Should Be Equal          | ${two from almost end} | bo |
         """
+        
         start = self._convert_to_int(start, 'start')
         if not end:
             return string[start:]
@@ -168,7 +172,7 @@ class String:
         return string[start:end]
 
     def should_be_string(self, item, msg=None):
-        """ Fails if item is not a string (e.g. list, number)"""
+        """ Fails if item is not a string (e.g. boolean, number)"""
         if not isinstance(item, basestring):
             if msg is None:
                 msg = "Given item is not a string"
@@ -181,11 +185,12 @@ class String:
                 msg = "Given item '%s' is a string" % item
             raise AssertionError(msg)
     
-    def get_columns(self, string, column_number, delimiter=' '):
+    def get_columns(self, string, column_number, delimiter=None):
         """
-        Takes `string`, splits into columns using delimiter
-        and returns the `column_number` column.
-        Column numbering starts from 0. Default delimiter is single space.
+        Takes `string`, splits into columns using delimiter.
+        
+        Returns the columns as list.
+        See `split_string` for the description of default delimiter.
         """
         if not delimiter:
             raise AssertionError("Delimiter should not be empty")
@@ -203,6 +208,7 @@ class String:
     def get_line(self, string, number):
         """
         From given `string`, extracts line with given `number`.
+        
         '0' is the first line. '-1' is the last line.
         Line is returned without the end-of-line character.
 
@@ -215,6 +221,7 @@ class String:
     def fetch_from_left(self, string, to_find):
         """
         Fetches the `string` part before the FIRST occurrence of `to_find`.
+        
         If `to_find` is not found, whole string is returned.
         """
         return string.split(to_find)[0]
@@ -222,6 +229,7 @@ class String:
     def fetch_from_right(self, string, to_find):
         """
         Fetches the `string` after the LAST occurence of `to_find`.
+        
         If `to_find` not found within `string`, whole string is returned.
         """
         return string.split(to_find)[-1]
