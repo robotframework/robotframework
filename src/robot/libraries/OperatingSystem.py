@@ -23,6 +23,7 @@ import shutil
 
 try:
     from robot.errors import DataError
+    from robot.output import LOGGER
     from robot.utils import get_version, ConnectionCache, seq2str, \
         timestr_to_secs, secs_to_timestr, plural_or_not, get_time, \
         secs_to_timestamp, timestamp_to_secs
@@ -37,11 +38,12 @@ except ImportError:
     timestr_to_secs = int
     secs_to_timestr = lambda secs: '%d second%s' % (secs, plural_or_not(secs))
     plural_or_not = lambda count: count != 1 and 's' or ''
-    class _NotImpl:
+    class _NotImplemented:
         def __getattr__(self, name):
-            raise NotImplementedError('This keyword requires Robot Framework '
+            raise NotImplementedError('This usage requires Robot Framework '
                                       'to be installed.')
-    get_time = secs_to_timestamp = timestamp_to_secs = PROCESSES = _NotImpl()
+    LOGGER = get_time = secs_to_timestamp = timestamp_to_secs = PROCESSES \
+             = _NotImplemented()
 
 
 class OperatingSystem:
@@ -82,7 +84,7 @@ class OperatingSystem:
     ROBOT_LIBRARY_SCOPE = 'GLOBAL'
     ROBOT_LIBRARY_VERSION = __version__
     
-    def run(self, command, return_mode='output'):
+    def run(self, command, mode='DEPRECATED'):
         """Runs the given command in the system and returns the RC and/or output.
 
         The execution status of the command *is not checked* by this
@@ -145,6 +147,15 @@ class OperatingSystem:
         | Should Contain | ${out}     | TEST PASSED |
         | File Should Be Empty | /tmp/stderr.txt |
         """
+        if mode != 'DEPRECATED':
+            LOGGER.warn("'mode' argument of 'Run' keyword is deprecated. "
+                        "Use 'Run And Return RC' or 'Run And Return RC And "
+                        "Output' instead.")
+        else:
+            mode = 'output'
+        return self._run(command, mode)
+
+    def _run(self, command, mode):
         process = os.popen(self._process_command(command))
         stdout = process.read()
         if stdout.endswith('\n'):
@@ -165,9 +176,9 @@ class OperatingSystem:
             rc = rc % 256
         else:
             rc = rc >> 8
-        return_mode = return_mode.upper()
-        if 'RC' in return_mode:
-            if 'STDOUT' in return_mode or 'OUTPUT' in return_mode:
+        mode = mode.upper()
+        if 'RC' in mode:
+            if 'STDOUT' in mode or 'OUTPUT' in mode:
                 return rc, stdout
             return rc
         return stdout
@@ -195,7 +206,7 @@ class OperatingSystem:
         | ${rc} = | Run               | my_command | RC |
         | ${rc} = | Run and Return RC | my_command |    |
         """
-        return self.run(command, 'RC')
+        return self._run(command, 'RC')
     
     def run_and_return_rc_and_output(self, command):
         """Wrapper for the `Run` keyword that returns both the RC and stdout.
@@ -210,7 +221,7 @@ class OperatingSystem:
         standard output and not the standard error. See `Run` keyword for more
         information.
         """
-        return self.run(command, 'RC,Output')
+        return self._run(command, 'RC,Output')
     
     def start_process(self, command, stdin=None, alias=None):
         """Starts the given command as a background process.
