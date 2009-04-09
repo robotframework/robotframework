@@ -57,14 +57,22 @@ def normpath(path, normcase=True):
     On case-insensitive file systems the path is also casenormalized
     (if normcase is True).
     """ 
-    if os.sep == '\\' and len(path) == 2 and path[1] == ':':
-        path = path + '\\'
-    else:
-        path = os.path.abspath(path)
+    path = _abspath(path)
     if normcase and _CASE_INSENSITIVE_FILESYSTEM:
         path = path.lower()
     return path
 
+def _abspath(path):
+    pathlen = len(path) 
+    # Return 'x:\' both when the given path is 'x:\' and 'x:'. Notice that
+    # os.path.abspath('x:') returns the current dir (we don't want that) and
+    # with Jython os.path.abspath('x:\') returns 'x:' (don't want that either)
+    if os.sep == '\\' and pathlen > 1 and path[1] == ':':
+        if pathlen == 2:
+            return path + '\\'
+        if pathlen == 3: 
+            return path
+    return os.path.abspath(path)
 
 class NormalizedDict(UserDict):
     
