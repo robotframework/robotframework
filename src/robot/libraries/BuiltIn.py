@@ -1422,12 +1422,15 @@ class _Misc:
 
 
 class BuiltIn(_Verify, _Converter, _Variables, _RunKeyword, _Misc):
-    """BuiltIn library provides a set of often needed generic keywords.
 
-    These keywords are available automatically without importing any library.
-    They allow functionality for verifications (e.g. `Should Be Equal`),
+    """An always available standard library with often needed keywords.
+
+    `BuiltIn` is Robot Framework's standard library that provides a set
+    of generic keywords needed often. It is imported automatically and
+    thus always available.  The provided keywords can be used, for example,
+    for verifications (e.g. `Should Be Equal`, `Should Contain`),
     conversions (e.g. `Convert To Integer`) and for various other purposes
-    (e.g. `Sleep`, `Run Keyword If`).
+    (e.g. `Log`, `Sleep`, `Run Keyword If`, `Set Global Variable`).
     """
 
     ROBOT_LIBRARY_SCOPE = 'GLOBAL'
