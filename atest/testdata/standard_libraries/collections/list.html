@@ -1307,14 +1307,14 @@ th {
 <td>1</td>
 <td>My error message!</td>
 </tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
+<tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>List Should Not Contain Duplicates With No Duplicates</td><td>${iterable}</td><td>${tuple} =</td><td>Evaluate</td><td>xrange(100), (0, 1, 2, '0', '1', '2')</td></tr><tr><td><br></td><td>: FOR</td><td>${list}</td><td>IN</td><td>${L0}</td></tr><tr><td></td><td>...</td><td>${L1}</td><td>${L2}</td><td>${L3}</td></tr><tr><td></td><td>...</td><td>${L4}</td><td>${iterable}</td><td>${tuple}</td></tr><tr><td></td><td></td><td>List Should Not Contain Duplicates</td><td>${list}</td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>List Should Not Contain Duplicates Is Case And Space Sensitive</td><td>${list} =</td><td>Create List</td><td>item</td><td>ITEM</td></tr><tr><td></td><td>...</td><td>i tem</td><td>i t e m</td><td>ITE_m</td></tr><tr><td></td><td>List Should Not Contain Duplicates</td><td>${list}</td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>List Should Not Contain Duplicates With One Duplicate</td><td>[Documentation]</td><td>FAIL</td><td>'item' found multiple times</td><td></td></tr><tr>
+<td><br></td>
+<td>${list} =</td>
+<td>Create List</td>
+<td>item</td>
+<td>item</td>
 </tr>
-<tr>
+<tr><td></td><td>...</td><td>another item</td><td>fourth item</td><td>ITEM</td></tr><tr><td></td><td>List Should Not Contain Duplicates</td><td>${list}</td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>List Should Not Contain Duplicates With Multiple Duplicates</td><td>[Documentation]</td><td>FAIL</td><td>'2', 'None', '4', '[1, 2, 3]' and '[]'&nbsp; found multiple times</td><td></td></tr><tr><td></td><td>${list} =</td><td>Evaluate </td><td>[1, 2, '2', 2, None, '4', '4', '4', '4', '42', [1, 2, 3],&nbsp;{}, (), False] + [[]]*10 + [[1, 2, 3], None, (1, 2, 3), 'a', 'A']</td><td></td></tr><tr><td></td><td>List Should Not Contain Duplicates</td><td>${list}</td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>List Should Not Contain Duplicates&nbsp;With Custom Error Message</td><td>[Documentation]</td><td>FAIL</td><td>My special error</td><td></td></tr><tr><td></td><td>List Should Not Contain Duplicates</td><td>${L0}</td><td>This would be the error but this time the keyword passes</td><td></td></tr><tr><td></td><td>${list} =</td><td>Evaluate</td><td>(42,) * 42</td><td></td></tr><tr><td></td><td>List Should Not Contain Duplicates</td><td>${list}</td><td>My special error</td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr>
 <td><a name="test_ListsShouldBeEqual">Lists Should Be Equal</a></td>
 <td>Lists Should Be Equal</td>
 <td>${L4}</td>
@@ -1608,7 +1608,7 @@ th {
 <td></td>
 <td></td>
 </tr>
-<tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Log List With Different Log Levels</td><td>Log List</td><td>${L3}</td><td></td><td></td></tr><tr><td></td><td>Log List</td><td>${L3}</td><td>tRAce</td><td></td></tr><tr><td></td><td>Log List</td><td>${L3}</td><td>warn</td><td></td></tr><tr><td></td><td>Log List</td><td>${L3}</td><td>DEbug</td><td></td></tr><tr><td></td><td>Log List</td><td>${L3}</td><td>INFO</td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Log List With Different Lists</td><td>Log List</td><td>${L0}</td><td></td><td></td></tr><tr><td></td><td>Log List</td><td>${L1}</td><td></td><td></td></tr><tr><td></td><td>${tuple} =</td><td>Evaluate</td><td>(1, 2, 3)</td><td></td></tr><tr><td></td><td>${list} =</td><td>Create List</td><td>${tuple}</td><td>${3.12}</td></tr><tr>
+<tr><td>Log List With Different Log Levels</td><td>Log List</td><td>${L3}</td><td></td><td></td></tr><tr><td></td><td>Log List</td><td>${L3}</td><td>tRAce</td><td></td></tr><tr><td></td><td>Log List</td><td>${L3}</td><td>warn</td><td></td></tr><tr><td></td><td>Log List</td><td>${L3}</td><td>DEbug</td><td></td></tr><tr><td></td><td>Log List</td><td>${L3}</td><td>INFO</td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Log List With Different Lists</td><td>Log List</td><td>${L0}</td><td></td><td></td></tr><tr><td></td><td>Log List</td><td>${L1}</td><td></td><td></td></tr><tr><td></td><td>${tuple} =</td><td>Evaluate</td><td>(1, 2, 3)</td><td></td></tr><tr><td></td><td>${list} =</td><td>Create List</td><td>${tuple}</td><td>${3.12}</td></tr><tr>
 <td></td>
 <td>Log List</td>
 <td>${list}</td>
