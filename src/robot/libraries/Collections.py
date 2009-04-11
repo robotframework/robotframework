@@ -279,7 +279,32 @@ class _List:
         """
         default = "%s contains value '%s'" % (utils.seq2str2(list_), value)
         _verify_condition(value not in list_, default, msg)
-    
+
+    def list_should_not_contain_duplicates(self, list_, msg=None):
+        """Fails if any element in the `list` is found from it more than once.
+
+        The default error message lists all the elements that were found
+        from the `list` multiple times, but it can be overridded by giving
+        a custom `msg`. All multiple times found items and their counts are
+        also logged.
+
+        This keyword works with all iterables that can be converted to a list.
+        The original iterable is never altered.
+        """
+        if not isinstance(list_, list):
+            list_ = list(list_)
+        dupes = []
+        for item in list_:
+            if item not in dupes:
+                count = list_.count(item)
+                if count > 1:
+                    print "*INFO* '%s' found %d times" % (item, count)
+                    dupes.append(item)
+        if dupes:
+            if not msg:
+                msg = '%s found multiple times' % utils.seq2str(dupes)
+            raise AssertionError(msg)
+        
     def lists_should_be_equal(self, list1, list2, msg=None, values=True):
         """Fails if given lists are unequal. 
         
