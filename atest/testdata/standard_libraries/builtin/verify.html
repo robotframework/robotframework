@@ -2072,38 +2072,10 @@ Document ]</td>
 <td>My message</td>
 </tr>
 
-<tr><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr>
-<td>Should Not Contain X Times With String</td>
-<td>Should Not Contain X Times</td>
-<td>hello</td>
-<td>e</td>
-<td>2</td>
-<td></td>
-</tr>
-<tr><td></td><td>Should Not Contain X Times</td><td>hello</td><td>nonex</td><td>100</td><td></td></tr><tr>
-<td>Should Not Contain X Times With List</td>
-<td>Should Not Contain X Times</td>
-<td>${LIST}</td>
-<td>b</td>
-<td>1</td>
-<td></td>
-</tr>
-<tr><td>Should Not Contain X Times With Tuple</td><td>Should Not Contain X Times</td><td>${TUPLE3}</td><td>a</td><td>2</td><td></td></tr><tr><td>Should Not Contain X Times With Invalid Item</td><td>[Documentation]</td><td>FAIL STARTS:</td><td>Converting '10' to list failed: TypeError:</td><td></td><td></td></tr><tr><td></td><td>Should Not Contain X Times</td><td>${10}</td><td>a</td><td>1</td><td></td></tr><tr><td>Should Not Contain X Times With Invalid count</td><td>[Documentation]</td><td>FAIL STARTS:</td><td>'invalid' cannot be converted to an integer: ValueError:</td><td></td><td></td></tr><tr><td></td><td>Should Not Contain X Times</td><td>hello</td><td>l</td><td>invalid</td><td></td></tr><tr>
-<td>Should Not Contain X Times Failing With Default Message</td>
-<td>[Documentation]</td>
-<td>FAIL</td>
-<td>'hello' contains 'l' 2 times&nbsp;</td>
-<td></td>
-<td></td>
-</tr>
-<tr><td></td><td>Should Not Contain X Times</td><td>hello</td><td>l</td><td>2</td><td></td></tr><tr>
-<td>Should Not Contain X Times Failing With Defined Message</td>
-<td>[Documentation]</td>
-<td>FAIL</td>
-<td>My message</td>
-<td></td>
-<td></td>
-</tr><tr><td></td><td>Should Not Contain X Times</td><td>${LIST}</td><td>b</td><td>2</td><td>My message</td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Get Count</td><td>[Documentation]</td><td>This keyword is already tested pretty well by Should (Not) Contain X Times keywords that use this one as a helper. </td><td>FAIL STARTS: Converting 'None' to list failed: TypeError:</td><td></td><td></td></tr><tr><td></td><td>Verify Get Count</td><td>Hello, world!</td><td>o</td><td>2</td><td></td></tr><tr><td></td><td>Verify Get Count</td><td>${LIST}</td><td>cee</td><td>1</td><td></td></tr><tr><td></td><td>Verify Get Count</td><td>${TUPLE3}</td><td>a</td><td>1</td><td></td></tr><tr><td></td><td>Verify Get Count</td><td>${SPACE * 100}</td><td>${SPACE * 2}</td><td>50</td><td></td></tr><tr><td></td><td>Verify Get Count</td><td>Hello, world!</td><td>no match here</td><td>0</td><td></td></tr><tr><td></td><td>Get Count</td><td>${None}</td><td>x</td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+
+
+<tr><td>Get Count</td><td>[Documentation]</td><td>This keyword is already tested pretty well by Should Contain X Times keyword that uses this one as a helper. </td><td>FAIL STARTS: Converting 'None' to list failed: TypeError:</td><td></td><td></td></tr><tr><td></td><td>Verify Get Count</td><td>Hello, world!</td><td>o</td><td>2</td><td></td></tr><tr><td></td><td>Verify Get Count</td><td>${LIST}</td><td>cee</td><td>1</td><td></td></tr><tr><td></td><td>Verify Get Count</td><td>${TUPLE3}</td><td>a</td><td>1</td><td></td></tr><tr><td></td><td>Verify Get Count</td><td>${SPACE * 100}</td><td>${SPACE * 2}</td><td>50</td><td></td></tr><tr><td></td><td>Verify Get Count</td><td>Hello, world!</td><td>no match here</td><td>0</td><td></td></tr><tr><td></td><td>Get Count</td><td>${None}</td><td>x</td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td></tr>
 
 
 </tbody>
