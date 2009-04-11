@@ -18,6 +18,7 @@ from robot.common import BaseTestSuite, BaseTestCase
 from robot.parsing import TestSuiteData
 from robot.errors import ExecutionFailed
 from robot.variables import GLOBAL_VARIABLES
+from robot.output import LOGGER
 
 from fixture import Setup, Teardown
 from timeouts import TestTimeout
@@ -72,12 +73,18 @@ class RunnableTestSuite(BaseTestSuite):
             if self._exit_on_failure and not child_err and \
                    suite.critical_stats.failed:
                 child_err = self._exit_on_failure_error
+        testnames = utils.NormalizedDict()
         for test in self.tests:
             test.run(output, self.namespace, child_err)
             if self._exit_on_failure and not child_err and \
                     test.status == 'FAIL' and test.critical == 'yes':
                 child_err = self._exit_on_failure_error
             self._set_prev_test_variables(self.namespace.variables, test)
+            if testnames.has_key(test.name):
+                LOGGER.warn("Test case '%s' in suite '%s' executed multiple "
+                            "times"% (test.name, self.longname))
+            else:
+                testnames[test.name] = True
         self.set_status()
         self.message = self._get_my_error(error, init_err, setup_err)
         self.namespace.variables['${SUITE_STATUS}'] = self.status
