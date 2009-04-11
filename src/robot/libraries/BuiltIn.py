@@ -320,22 +320,6 @@ class _Verify:
         self.should_be_equal_as_integers(self.get_count(item1, item2),
                                          count, msg, values=False)
         
-    def should_not_contain_x_times(self, item1, item2, count, msg=None):
-        """Fails if `item1` contains `item2` `count` times.
-        
-        Works with strings, lists and all objects that `Get Count` works
-        with. The default error message can be overridden with `msg` and
-        the actual count is always logged.
-
-        Examples:
-        | Should Not Contain X Times | ${output}    | hello  | 3 |
-        | Should Not Contain X Times | ${some list} | value  | 2 |
-        """
-        if not msg:
-            msg = "'%s' contains '%s' %s times" % (item1, item2, count)
-        self.should_not_be_equal_as_integers(self.get_count(item1, item2),
-                                             count, msg, values=False)
-
     def get_count(self, item1, item2):
         """Returns and logs how many times `item2` is found from `item1`.
 
