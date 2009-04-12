@@ -70,7 +70,7 @@ Thus, for example, :code:`startSuite` is a synonym to :code:`start_suite`.
    |    Method     |    Arguments     |                     Attributes                   |
    +===============+==================+==================================================+
    | start_suite   | name, attributes | 'doc' is the documentation of the suite, which   |
-   |               |				  |  may be empty.                                   |
+   |               |                  |  may be empty.                                   |
    +---------------+------------------+--------------------------------------------------+
    | end_suite     | name, attributes | 'status' is either PASS or FAIL. 'message'       |
    |               |                  | contains suite statistics and an error message,  |
@@ -82,10 +82,10 @@ Thus, for example, :code:`startSuite` is a synonym to :code:`start_suite`.
    +---------------+------------------+--------------------------------------------------+
    | end_test      | name, attributes | 'status' is either PASS or FAIL. 'message'       |
    |               |                  | contains an error message, if the test has       |
-   |               |                  | failed and is empty otherwise.                   |       |
+   |               |                  | failed and is empty otherwise.                   | 
    +---------------+------------------+--------------------------------------------------+
    | start_keyword | name, attributes | 'args' contains the keyword arguments, given as  |
-   |               |                  | a list of strings. Available 			         |
+   |               |                  | a list of strings. Available                     |
    |               |                  | from Robot Framework 2.0.2 onwards.              |
    +---------------+------------------+--------------------------------------------------+
    | end_keyword   | name, attributes | 'status' is either PASS or FAIL. Available       |
@@ -117,13 +117,11 @@ Thus, for example, :code:`startSuite` is a synonym to :code:`start_suite`.
    |               |                  | them, have been executed.                        |
    +---------------+------------------+--------------------------------------------------+
 
-
 The following table lists all the available methods of the deprecated listener
 interface. With Robot Framework 2.1 and newer, methods listed above should be
 used.  All of these methods have also camelCase aliases. Thus, for example,
 :code:`startSuite` is a synonym to :code:`start_suite`. All the arguments are
 strings, unless stated otherwise.
-
 
 .. table:: Available methods in the listener interface
    :class: tabular
@@ -178,13 +176,11 @@ strings, unless stated otherwise.
    |               |                 | them, have been executed.                        |
    +---------------+-----------------+--------------------------------------------------+
 
-
 .. _outputs are split: `Splitting outputs`_
 
 The available methods and their arguments are also shown in a formal Java interface
 specification below. It should be remembered that a listener *does not*
 need to implement any explicit interface or have all these methods.
-
 
 .. sourcecode:: java
 
