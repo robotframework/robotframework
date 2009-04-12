@@ -141,12 +141,19 @@ Appendices
 .. _`With Name syntax`: `Setting custom name to test library`_
 .. _BuiltIn keyword: `BuiltIn library`_
 .. _BuiltIn keywords: `BuiltIn library`_
-.. _BuiltIn: `Builtin library`_
+.. _BuiltIn: `BuiltIn library`_
+.. _OperatingSystem: `OperatingSystem library`_
+.. _Telnet: `Telnet library`_
 .. _Collections: `Collections library`_
+.. _String: `String library`_
+.. _Dialogs: `Dialogs library`_
+.. _Screenshot: `Screenshot library`_
 .. _BuiltIn library documentation: ../libraries/BuiltIn.html
 .. _OperatingSystem library documentation: ../libraries/OperatingSystem.html
 .. _Telnet library documentation: ../libraries/Telnet.html
 .. _Collections library documentation: ../libraries/Collections.html
+.. _String library documentation: ../libraries/String.html
+.. _Dialogs library documentation: ../libraries/Dialogs.html
 .. _Screenshot library documentation: ../libraries/Screenshot.html
 .. _SeleniumLibrary: http://code.google.com/p/robotframework-seleniumlibrary
 .. _SwingLibrary: http://code.google.com/p/robotframework-swinglibrary
