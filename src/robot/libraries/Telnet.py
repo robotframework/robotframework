@@ -23,13 +23,16 @@ from robot import utils
 
 class Telnet:
 
-    """A test library providing Telnet connections and communicating with them.
+    """A test library providing communication over Telnet connections.
 
-    This library supports multiple simultaneous connections, see `Open
-    Connection` and `Switch Connection` for details. 
+    `Telnet` is Robot Framework's standard library that makes it
+    possible to connect to Telnet servers and execute commands on the
+    opened connections.
 
-    The responses from the server are expected to be ASCII, all characters with
-    different encodings are ignored.
+    See `Open Connection` and `Switch Connection` for details on how
+    to handle multiple simultaneous connections. The responses are
+    expected to be ASCII encoded and all non-ASCII characters are
+    silently ignored.
     """
 
     ROBOT_LIBRARY_SCOPE = 'TEST_SUITE'

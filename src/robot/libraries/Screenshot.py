@@ -27,12 +27,12 @@ from robot.errors import DataError
 
 class Screenshot:
  
-    """This library supports taking full-screen screenshots of the desktop.
-    
-    The library depends on standard Java APIs and thus requires a Jython
-    runtime environment. The library does not, however, require any specific
-    operating system. While the library has been tested on Windows and Linux,
-    any operating system for which the JDK is available, should be sufficient. 
+    """A test library for taking full-screen screenshots of the desktop.
+
+    `Screenshot` is Robot Framework's standard library that provides
+    keywords to capture and store screenshots of the whole desktop.
+    This library is implemented with Java AWT APIs, so it can be used
+    only when running Robot Framework on Jython. 
     """
 
     ROBOT_LIBRARY_SCOPE = 'TEST SUITE'

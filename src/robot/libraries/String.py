@@ -16,50 +16,38 @@
 # TODO: assertions, checks, generate html and check, write internal tests
 # TODO: `` comments
 # TODO: Check documentation and use short docs. Is some more examples needed?
-import os
 import re
-import shutil
-import time
-import fnmatch
-import glob
-from types import ListType
-from types import StringType
+import string as STRING
+try:
+    from random import sample
+except ImportError:   # No random.sample in Jython 2.2
+    from random import randint
+    def sample(chars, length):
+        max_index = len(chars) - 1
+        return [ chars[randint(0, max_index)] for i in xrange(length) ]
 
 from robot import utils
-from robot.errors import DataError
-import robot.output
-import string as STRING
 
-from random import Random
-#No sample method in Jython
-if utils.is_jython:
-    def _sample(self, chars, length):
-        result = ''
-        while len(result) < length:
-            result += chars[self.randint(0, len(chars)-1)]
-        return result
-    
-    Random.sample = _sample
 
 class String:
     
-    """
-    This library contains keywords related to string manipulation.
+    """A test library for string manipulation and verification.
 
-    Following keywords from the BuiltIn library can be used with strings:
+    `String` is Robot Framework's standard library for manipulating
+    strings (e.g. `Replace String With Regexp`, `Split To Lines`) and
+    verifying their contents (e.g. `Should Be String`).
 
+    Following keywords from the BuiltIn library can also be used with
+    strings:
     - `Catenate`
     - `Get Length`
-    - `Grep`
+    - `Length Should Be`
     - `Should (Not) Match (Regexp)`
     - `Should (Not) Be Empty`
-    - `Should (Not) Be Equal As Strings`
+    - `Should (Not) Be Equal (As Strings)`
     - `Should (Not) Contain`
-    - `Should (Not) End With`
     - `Should (Not) Start With`
-    
-    From Collections library, `Length Should Be` can be used with strings as well.
-
+    - `Should (Not) End With`
     """
 
     ROBOT_LIBRARY_SCOPE = 'GLOBAL'
@@ -150,7 +138,7 @@ class String:
         lower and upper case letters, and digits by default. 
         """
         length = self._convert_to_int(length, 'length')
-        return ''.join( Random().sample(chars, length) )
+        return ''.join(sample(chars, length))
 
 
     def get_substring(self, string, start, end=None):

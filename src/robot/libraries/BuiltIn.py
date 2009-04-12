@@ -1411,7 +1411,7 @@ class BuiltIn(_Verify, _Converter, _Variables, _RunKeyword, _Misc):
 
     `BuiltIn` is Robot Framework's standard library that provides a set
     of generic keywords needed often. It is imported automatically and
-    thus always available.  The provided keywords can be used, for example,
+    thus always available. The provided keywords can be used, for example,
     for verifications (e.g. `Should Be Equal`, `Should Contain`),
     conversions (e.g. `Convert To Integer`) and for various other purposes
     (e.g. `Log`, `Sleep`, `Run Keyword If`, `Set Global Variable`).

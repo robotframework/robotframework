@@ -15,19 +15,20 @@
 
 """A test library providing dialogs for interacting with users.
 
-Dialogs is a test library that provides means for pausing the test
-execution and getting input from users. The dialogs are slightly
-different depending on are tests run on Python or Jython but they
-provide the same functionality.
+`Dialogs` is Robot Framework's standard library that provides means
+for pausing the test execution and getting input from users. The
+dialogs are slightly different depending on are tests run on Python or
+Jython but they provide the same functionality.
 """
 
 import sys
+
 try:
-    import robot
-    ROBOT_LIBRARY_VERSION = robot.utils.get_version()
-    del robot
+    from robot import utils
 except ImportError:
-    pass
+    __version__ = 'unknown'
+else:
+    __version__ = utils.get_version()
 
 
 DIALOG_TITLE = 'Robot Framework'
@@ -45,7 +46,9 @@ def execute_manual_step(message, default_error=''):
     opened for defining the error message. `default_error` is the
     possible default value shown in the error message dialog.
     """
-    _execute_manual_step(message, default_error)
+    if not _execute_manual_step(message, default_error):
+        msg = get_value_from_user('Give error message:', default_error)
+        raise AssertionError(msg)
 
 def get_value_from_user(message, default_value=''):
     """Pauses the test execution and asks user to input a value.
@@ -53,12 +56,15 @@ def get_value_from_user(message, default_value=''):
     `message` is the instruction shown in the dialog. `default_value` is the
     possible default value shown in the input field.
     """
-    return _get_value_from_user(message, default_value)
+    value = _get_value_from_user(message, default_value)
+    if value is None:
+        raise ValueError('No value provided by user')    
+    return value
 
 
 if sys.platform.startswith('java'):
 
-    from javax.swing.JOptionPane import showMessageDialog, showOptionDialog,\
+    from javax.swing.JOptionPane import showMessageDialog, showOptionDialog, \
         showInputDialog, YES_NO_OPTION, PLAIN_MESSAGE
 
 
@@ -68,17 +74,11 @@ if sys.platform.startswith('java'):
     def _execute_manual_step(message, default_error):
         status = showOptionDialog(None, message, DIALOG_TITLE, YES_NO_OPTION,
                                   PLAIN_MESSAGE, None, ['PASS', 'FAIL'], None)
-        if status != 0:
-            msg = _get_value_from_user('Give error message:', default_error) 
-            raise AssertionError(msg)
+        return status == 0
 
     def _get_value_from_user(message, default):
-        value = showInputDialog(None, message, DIALOG_TITLE, PLAIN_MESSAGE,
-                                None, None, default)
-        if value is None:
-            raise ValueError('No value provided by user')    
-        return value
-
+        return showInputDialog(None, message, DIALOG_TITLE, PLAIN_MESSAGE,
+                               None, None, default)
 
 else:
 
@@ -94,14 +94,8 @@ else:
 
     def _execute_manual_step(message, default_error):
         message += '\n\n<Yes> means PASS and <No> means FAIL.'
-        if not tkMessageBox.askyesno(DIALOG_TITLE, message):
-            msg = _get_value_from_user('Give error message:', default_error)
-            raise AssertionError(msg)
+        return tkMessageBox.askyesno(DIALOG_TITLE, message)
 
     def _get_value_from_user(message, default):
-        value = tkSimpleDialog.askstring(DIALOG_TITLE, message,
-                                         initialvalue=default)
-        if value is None:
-            raise ValueError('No value provided by user')    
-        return value
-
+        return tkSimpleDialog.askstring(DIALOG_TITLE, message,
+                                        initialvalue=default)
