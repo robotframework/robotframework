@@ -1260,7 +1260,7 @@ class _Misc:
         try:
             return eval(expression, namespace)
         except:
-            raise Exception("Evaluating expression '%s' failed: %s" 
+            raise DataError("Evaluating expression '%s' failed: %s" 
                             % (expression, get_error_message()))
         
     def call_method(self, object, method_name, *args):
@@ -1281,46 +1281,12 @@ class _Misc:
         try:
             method = getattr(object, method_name)
         except AttributeError:
-            raise Exception("Object '%s' does not have a method '%s'" 
+            raise DataError("Object '%s' does not have a method '%s'" 
                             % (object, method_name))
         return method(*args)
 
     def grep(self, text, pattern, pattern_type='literal string'):
-        """Returns the text grepped using `pattern`.
-
-        `pattern_type` defines how the given pattern is interpreted as
-        explained below. `pattern_type` argument is case-insensitive
-        and may contain other text. For example, 'regexp', 'REGEXP'
-        and 'Pattern is a regexp' are all considered equal.
-        
-        1) If `pattern_type` contains either the strings 'simple' or
-           'glob', the `pattern` is considered a simple glob pattern
-           where:
-           | *        | matches everything |
-           | ?        | matches any single character |
-           | [chars]  | matches any character inside square brackets (e.g. '[abc]' matches either 'a', 'b' or 'c') |
-           | [!chars] | matches any character not inside square brackets |
-
-        2) If `pattern_type` contains either 'simple' or 'glob', and
-           additionally contains 'case-insensitive' or 'case
-           insensitive', the glob pattern is considered
-           case-insensitive. This functionality is available in 2.0.2
-           version and newer.
-
-        3) If `pattern_type` contains either the string 'regular
-           expression' or 'regexp', the `pattern` is considered a
-           regular expression. See `Should Match Regexp` for more information
-           about using regular expressions.
-
-        4) If `pattern_type` contains either 'case-insensitive' or
-           'case insensitive' (but does not contain 'simple' or
-           'glob'), `pattern` is considered a literal string and
-           lines returned, if they contain the string, regardless of
-           the case.
-
-        5) Otherwise the pattern is considered a literal string and lines
-           returned, if they contain the string.
-        """
+        """*DEPRECATED* Use `Get Lines Matching XXX` keywords from `String` library instead. This keyword will be removed in Robot Framework 2.2."""
         lines = _filter_lines(text.splitlines(), pattern, pattern_type)
         return '\n'.join(lines)
 

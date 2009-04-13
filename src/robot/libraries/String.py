@@ -78,6 +78,24 @@ class String:
         return lines[start:end]
 
     def get_lines_containing_string(self, string, pattern, case_insensitive=False):
+        """Returns lines of the given `string` that contain the `pattern`.
+
+        The `pattern` is always considered to be a normal string and a
+        line matches if the `pattern` is found anywhere in it. By
+        default the match is case-sensitive, but setting
+        `case_insensitive` to any value makes it case-insensitive.
+        
+        Lines are returned as one string catenated back together with
+        newlines. Possible trailing newline is never returned. The
+        number of matching lines is automatically logged.
+
+        Examples:
+        | ${lines} = | Get Lines Containing String | ${result} | An example |
+        | ${ret} =   | Get Lines Containing String | ${ret} | FAIL | case-insensitive |
+
+        See `Get Lines Matching Pattern` and `Get Lines Matching Regexp`
+        if you need more complex pattern matching.
+        """
         if case_insensitive:
             pattern = pattern.lower()
             contains = lambda line: pattern in line.lower()
@@ -86,6 +104,27 @@ class String:
         return self._get_matching_lines(string, contains)
 
     def get_lines_matching_pattern(self, string, pattern, case_insensitive=False):
+        """Returns lines of the given `string` that match the `pattern`.
+
+        The `pattern` is a _glob pattern_ where _*_ and _?_ can be
+        used as wildcards so that the former matches anything and the
+        latter any single character. A line matches only if it matches
+        the `pattern` fully.  By default the match is case-sensitive,
+        but setting `case_insensitive` to any value makes it
+        case-insensitive.
+        
+        Lines are returned as one string catenated back together with
+        newlines. Possible trailing newline is never returned.The
+        number of matching lines is automatically logged.
+
+        Examples:
+        | ${lines} = | Get Lines Matching Pattern | ${result} | Wild???? example |
+        | ${ret} = | Get Lines Matching Pattern | ${ret} | FAIL: * | case-insensitive |
+
+        See `Get Lines Matching Regexp` if you need more complex
+        patterns and `Get Lines Containing String` if searching
+        literal strings is enough.
+        """
         if case_insensitive:
             pattern = pattern.lower()
             matches = lambda line: fnmatchcase(line.lower(), pattern)
@@ -94,6 +133,26 @@ class String:
         return self._get_matching_lines(string, matches)
 
     def get_lines_matching_regexp(self, string, pattern):
+        """Returns lines of the given `string` that match the regexp `pattern`.
+
+        See `BuiltIn.Should Match Regexp` for more information about
+        Python regular expression syntax in general and how to use it
+        in Robot Framework test data in particular. A line matches
+        only if it matches the `pattern` fully. Notice that to make
+        the match case-insensitive, you need to embed case-insensitive
+        flag into the pattern.
+        
+        Lines are returned as one string catenated back together with
+        newlines. Possible trailing newline is never returned. The
+        number of matching lines is automatically logged.
+
+        Examples:
+        | ${lines} = | Get Lines Matching Regexp | ${result} | Reg\\\\w{3} example |
+        | ${ret} = | Get Lines Matching Pattern | ${ret} | (?i)FAIL: .* |
+
+        See `Get Lines Matching Pattern` and `Get Lines Containing
+        String` if you do not need full regular expression powers.
+        """
         regexp = re.compile('^%s$' % pattern)
         return self._get_matching_lines(string, regexp.match)
 
