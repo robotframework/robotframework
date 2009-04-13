@@ -54,7 +54,6 @@ th {
 }
 </style>
 <title>Robot Test Cases</title></head>
-
 <body>
 <h1>Robot Test Cases</h1>
 <table border="1">
@@ -144,7 +143,9 @@ th {
 <td>SameTestwith &nbsp; &nbsp;Different CASE and s p a c e s</td>
 
 
-</tr><tr><td></td><td>...</td><td>Same Test In Data But Only One Executed</td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>There Should Be Warning When Multiple Tests With Same Name Are Executed</td><td>Check Log Message</td><td>${ERRORS.msgs[0]}</td><td>Test case 'Same Test Multiple Times' in suite 'Same Test Multiple Times In Suite' executed multiple times</td><td>WARN</td></tr><tr><td></td><td>Check Log Message</td><td>${ERRORS.msgs[1]}</td><td>Test case 'Same Test Multiple Times' in suite 'Same Test Multiple Times In Suite' executed multiple times</td><td>WARN</td></tr><tr><td></td><td>Check Log Message</td><td>${ERRORS.msgs[2]}</td><td>Test case 'SameTestwith Different CASE And S P A C E S' in suite 'Same Test Multiple Times In Suite' executed multiple times</td><td>WARN</td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>There Should Be No Warning When There Are Multiple Tests With Same Name In Data But Only One Is Executed</td><td>${tc} =</td><td>Check Test Case</td><td>Same Test In Data But Only One Executed</td><td></td></tr><tr><td></td><td>Check Log Message</td><td>${tc.kws[0].msgs[0]}</td><td>This is executed!</td><td></td></tr><tr><td></td><td>Should Be Equal As Integers</td><td>${ERRORS.msg_count}</td><td>3</td><td></td></tr>
+</tr><tr><td></td><td>...</td><td>Same Test In Data But Only One Executed</td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>There Should Be Warning When Multiple Tests With Same Name Are Executed</td><td>Check Log Message</td><td>${ERRORS.msgs[0]}</td><td>Multiple test cases with name 'Same Test Multiple Times' executed in test suite 'Same Test Multiple Times In Suite'</td><td>WARN</td></tr><tr><td></td><td>Check Log Message</td><td>${ERRORS.msgs[1]}</td><td>Multiple test cases with name 'Same Test Multiple Times' executed in test suite 'Same Test Multiple Times In Suite'</td><td>WARN</td></tr><tr><td></td><td>Check Log Message</td><td>${ERRORS.msgs[2]}</td><td>Multiple
+test cases with name 'SameTestwith Different CASE And S P A C E S'
+executed in test suite 'Same Test Multiple Times In Suite'</td><td>WARN</td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>There Should Be No Warning When There Are Multiple Tests With Same Name In Data But Only One Is Executed</td><td>${tc} =</td><td>Check Test Case</td><td>Same Test In Data But Only One Executed</td><td></td></tr><tr><td></td><td>Check Log Message</td><td>${tc.kws[0].msgs[0]}</td><td>This is executed!</td><td></td></tr><tr><td></td><td>Should Be Equal As Integers</td><td>${ERRORS.msg_count}</td><td>3</td><td></td></tr>
 </tbody>
 </table>
 <table border="1">

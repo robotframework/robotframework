@@ -77,8 +77,8 @@ class RunnableTestSuite(BaseTestSuite):
         for test in self.tests:
             normname = utils.normalize(test.name)
             if normname in executed_tests:
-                LOGGER.warn("Test case '%s' in suite '%s' executed multiple "
-                            "times"% (test.name, self.longname))
+                LOGGER.warn("Multiple test cases with name '%s' executed in "
+                            "test suite '%s'"% (test.name, self.longname))
             executed_tests.append(normname)
             test.run(output, self.namespace, child_err)
             if self._exit_on_failure and not child_err and \
