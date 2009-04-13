@@ -17,6 +17,7 @@
 # TODO: `` comments
 # TODO: Check documentation and use short docs. Is some more examples needed?
 import re
+from fnmatch import fnmatchcase
 import string as STRING
 try:
     from random import sample
@@ -76,6 +77,32 @@ class String:
         end = self._convert_to_int(end, 'end')
         return lines[start:end]
 
+    def get_lines_containing_string(self, string, pattern, case_insensitive=False):
+        if case_insensitive:
+            pattern = pattern.lower()
+            contains = lambda line: pattern in line.lower()
+        else:
+            contains = lambda line: pattern in line
+        return self._get_matching_lines(string, contains)
+
+    def get_lines_matching_pattern(self, string, pattern, case_insensitive=False):
+        if case_insensitive:
+            pattern = pattern.lower()
+            matches = lambda line: fnmatchcase(line.lower(), pattern)
+        else:
+            matches = lambda line: fnmatchcase(line, pattern)
+        return self._get_matching_lines(string, matches)
+
+    def get_lines_matching_regexp(self, string, pattern):
+        regexp = re.compile('^%s$' % pattern)
+        return self._get_matching_lines(string, regexp.match)
+
+    def _get_matching_lines(self, string, matches):
+        lines = string.splitlines()
+        matching = [ line for line in lines if matches(line) ]
+        print '*INFO* %d out of %d lines matched' % (len(matching), len(lines))
+        return '\n'.join(matching)
+    
     def replace_string(self, string, search_for, replace_with, count=0):
         """ Replaces `search_for` in `string` with `replace_with`.
 
