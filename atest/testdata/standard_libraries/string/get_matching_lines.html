@@ -1,0 +1,512 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+<meta name="generator" content="HTML Tidy for Cygwin (vers 1st September 2004), see www.w3.org">
+<style type="text/css">
+html {
+font-family: Arial,Helvetica,sans-serif;
+background-color: white;
+color: black;
+}
+p {
+max-width: 60em;
+}
+table {
+border-collapse: collapse;
+empty-cells: show;
+margin: 1em 0em;
+border: 0.1em solid black;
+}
+th, td {
+border-style: solid;
+border-width: 0.05em 0.1em;
+border-color: black;
+padding: 0.1em 0.2em;
+height: 1.5em;
+}
+th {
+background-color: rgb(192, 192, 192);
+color: black;
+border-width: 0.1em;
+font-weight: bold;
+text-align: center;
+text-transform: capitalize;
+letter-spacing: 0.1em;
+}
+/* Widths of named columns */
+col.name {
+width: 10em;
+}
+.action, .value, .arg {
+width: 15em;
+}
+/* Properties for the name column - td:first-child should work in CSS 2.1 avare browsers (tested in Firefox)
+- col.name is against specs but works in IE
+*/
+td:first-child, col.name {
+background-color: rgb(240, 240, 240);
+text-transform: capitalize;
+letter-spacing: 0.1em;
+}
+/* required for IE */
+th {
+font-style: normal;
+}
+</style><title>Robot Test Cases</title>
+
+</head>
+
+<body>
+<h1>Robot Test Cases</h1>
+<table border="1">
+<colgroup span="99"><col class="name"><col class="value" span="4"></colgroup>
+<thead><tr>
+<th>Setting</th>
+<th>Value</th>
+<th>Value</th>
+<th>value</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Library</td>
+<td>String</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<table border="1">
+<colgroup span="99"><col class="name"><col class="value" span="4"></colgroup>
+<thead><tr>
+<th>Variable</th>
+<th>Value</th>
+<th>Value</th>
+<th>Value</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>${INPUT}</td>
+<td>Line 1\nLine 2\nThird line\n\nOne more row here</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<table border="1">
+<colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
+<thead><tr>
+<th>Test Case</th>
+<th>Action</th>
+<th>Argument</th>
+<th>Argument</th>
+<th>Argument</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Get Lines Containing String When Input Is Empty</td>
+<td>Test Get Lines Containing String</td>
+<td>${EMPTY}</td>
+<td>whatever</td>
+<td>${EMPTY}</td>
+</tr>
+<tr>
+<td>Get Lines Containing String When Pattern Is Empty</td>
+<td>Test Get Lines Containing String</td>
+<td>${INPUT}</td>
+<td>${EMPTY}</td>
+<td>${INPUT}</td>
+</tr>
+<tr>
+<td>Get Lines Containing String Matching One Line</td>
+<td>Test Get Lines Containing String</td>
+<td>${INPUT}</td>
+<td>Third line</td>
+<td>Third line</td>
+</tr>
+<tr>
+<td>Get Lines Containing String Matching Some Lines</td>
+<td>Test Get Lines Containing String</td>
+<td>${INPUT}</td>
+<td>Line</td>
+<td>Line 1\nLine 2</td>
+</tr>
+<tr>
+<td>Get Lines Containing String With Case-Insensitive</td>
+<td>Test Get Lines Containing String</td>
+<td>${INPUT}</td>
+<td>Line</td>
+<td>Line 1\nLine 2\nThird line</td>
+</tr>
+<tr>
+<td></td>
+<td>...</td>
+<td>case-insensitive</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><br>
+</td>
+<td>Test Get Lines Containing String</td>
+<td>${INPUT}</td>
+<td>ROW</td>
+<td>One more row here</td>
+</tr>
+<tr>
+<td></td>
+<td>...</td>
+<td>whatever</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Test Get Lines Containing String</td>
+<td>${INPUT}</td>
+<td>ROW</td>
+<td>${EMPTY}</td>
+</tr>
+<tr>
+<td></td>
+<td>...</td>
+<td>${EMPTY}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Get Lines Matching Pattern When Input Is Empty</td>
+<td>Test Get Lines Matching Pattern</td>
+<td>${EMPTY}</td>
+<td>what*ever</td>
+<td>${EMPTY}</td>
+</tr>
+<tr>
+<td>Get Lines Matching Pattern When Pattern Is Empty</td>
+<td>Test Get Lines Matching Pattern</td>
+<td>${INPUT}</td>
+<td>${EMPTY}</td>
+<td>${EMPTY}</td>
+</tr>
+<tr>
+<td>Get Lines Matching Pattern Matching One Line</td>
+<td>Test Get Lines Matching Pattern</td>
+<td>${INPUT}</td>
+<td>Third*</td>
+<td>Third line</td>
+</tr>
+<tr>
+<td></td>
+<td>Test Get Lines Matching Pattern</td>
+<td>${INPUT}</td>
+<td>???? 1</td>
+<td>Line 1</td>
+</tr>
+<tr>
+<td>Get Lines Matching Pattern Matching Some Lines</td>
+<td>Test Get Lines Matching Pattern</td>
+<td>${INPUT}</td>
+<td>Line ?</td>
+<td>Line 1\nLine 2</td>
+</tr>
+<tr>
+<td></td>
+<td>Test Get Lines Matching Pattern</td>
+<td>${INPUT}</td>
+<td>?in*</td>
+<td>Line 1\nLine 2</td>
+</tr>
+<tr>
+<td></td>
+<td>Test Get Lines Matching Pattern</td>
+<td>${INPUT}</td>
+<td>*</td>
+<td>${INPUT}</td>
+</tr>
+<tr>
+<td></td>
+<td>Test Get Lines Matching Pattern</td>
+<td>${INPUT}</td>
+<td>??????</td>
+<td>Line 1\nLine 2</td>
+</tr>
+<tr>
+<td>Get Lines Matching Pattern With Case-Insensitive</td>
+<td>Test Get Lines Matching Pattern</td>
+<td>${INPUT}</td>
+<td>*line*</td>
+<td>Line 1\nLine 2\nThird line</td>
+</tr>
+<tr>
+<td></td>
+<td>...</td>
+<td>case-insensitive</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><br>
+</td>
+<td>Test Get Lines Matching Pattern</td>
+<td>${INPUT}</td>
+<td>*LINE</td>
+<td>Third line</td>
+</tr>
+<tr>
+<td></td>
+<td>...</td>
+<td>whatever</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Test Get Lines Matching Pattern</td>
+<td>${INPUT}</td>
+<td>*LINE*</td>
+<td>${EMPTY}</td>
+</tr>
+<tr>
+<td></td>
+<td>...</td>
+<td>${EMPTY}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Get Lines Matching Regexp When Input Is Empty</td>
+<td>Test Get Lines Matching Regexp</td>
+<td>${EMPTY}</td>
+<td>what.*ever</td>
+<td>${EMPTY}</td>
+</tr>
+<tr>
+<td>Get Lines Matching&nbsp;Regexp When Pattern Is Empty</td>
+<td>Test Get Lines Matching Regexp</td>
+<td>${INPUT}</td>
+<td>${EMPTY}</td>
+<td>${EMPTY}</td>
+</tr>
+<tr>
+<td>Get Lines Matching&nbsp;Regexp Matching One Line</td>
+<td>Test Get Lines Matching Regexp</td>
+<td>${INPUT}</td>
+<td>Third.*</td>
+<td>Third line</td>
+</tr>
+<tr>
+<td></td>
+<td>Test Get Lines Matching Regexp</td>
+<td>${INPUT}</td>
+<td>[LMNOPQ]in. 1+</td>
+<td>Line 1</td>
+</tr>
+<tr>
+<td>Get Lines Matching&nbsp;Regexp Matching Some Lines</td>
+<td>Test Get Lines Matching Regexp</td>
+<td>${INPUT}</td>
+<td>.* \\d</td>
+<td>Line 1\nLine 2</td>
+</tr>
+<tr>
+<td></td>
+<td>Test Get Lines Matching Regexp</td>
+<td>${INPUT}</td>
+<td>(Line|Wine) [1-9]</td>
+<td>Line 1\nLine 2</td>
+</tr>
+<tr>
+<td></td>
+<td>Test Get Lines Matching Regexp</td>
+<td>${INPUT}</td>
+<td>.*</td>
+<td>${INPUT}</td>
+</tr>
+<tr>
+<td></td>
+<td>Test Get Lines Matching Regexp</td>
+<td>${INPUT}</td>
+<td>.{6}</td>
+<td>Line 1\nLine 2</td>
+</tr>
+<tr>
+<td>Get Lines Matching Regexp With Case-Insensitive</td>
+<td>Test Get Lines Matching Regexp</td>
+<td>${INPUT}</td>
+<td>(?i).*line.*</td>
+<td>Line 1\nLine 2\nThird line</td>
+</tr>
+
+<tr>
+<td><br>
+</td>
+<td>Test Get Lines Matching Regexp</td>
+<td>${INPUT}</td>
+<td>(?i).*LINE</td>
+<td>Third line</td>
+</tr>
+
+<tr>
+<td></td>
+<td>Test Get Lines Matching Regexp</td>
+<td>${INPUT}</td>
+<td>.*LINE.*</td>
+<td>${EMPTY}</td>
+</tr>
+
+</tbody>
+</table>
+<table border="1">
+<colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
+<thead><tr>
+<th>Keyword</th>
+<th>Action</th>
+<th>Argument</th>
+<th>Argument</th>
+<th>Argument</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Test Get Lines Containing String</td>
+<td>[Arguments]</td>
+<td>${input}</td>
+<td>${pattern}</td>
+<td>${expected}</td>
+</tr>
+<tr>
+<td></td>
+<td>...</td>
+<td>${case-insensitive}=${False}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>${actual} =</td>
+<td>Get Lines Containing String</td>
+<td>${input}</td>
+<td>${pattern}</td>
+</tr>
+<tr>
+<td></td>
+<td>...</td>
+<td>${case-insensitive}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should Be Equal</td>
+<td>${actual}</td>
+<td>${expected}</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Test Get Lines Matching Pattern</td>
+<td>[Arguments]</td>
+<td>${input}</td>
+<td>${pattern}</td>
+<td>${expected}</td>
+</tr>
+<tr>
+<td></td>
+<td>...</td>
+<td>${case-insensitive}=${False}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>${actual} =</td>
+<td>Get Lines Matching Pattern</td>
+<td>${input}</td>
+<td>${pattern}</td>
+</tr>
+<tr>
+<td></td>
+<td>...</td>
+<td>${case-insensitive}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should Be Equal</td>
+<td>${actual}</td>
+<td>${expected}</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Test Get Lines Matching Regexp</td>
+<td>[Arguments]</td>
+<td>${input}</td>
+<td>${pattern}</td>
+<td>${expected}</td>
+</tr>
+
+<tr>
+<td></td>
+<td>${actual} =</td>
+<td>Get Lines Matching Regexp</td>
+<td>${input}</td>
+<td>${pattern}</td>
+</tr>
+
+<tr>
+<td></td>
+<td>Should Be Equal</td>
+<td>${actual}</td>
+<td>${expected}</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</body></html>
