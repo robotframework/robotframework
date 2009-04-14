@@ -5,14 +5,15 @@ require 'stringio'
 
 class RobotRemoteServer<XMLRPC::Server
   
-  def initialize(library, hostname='localhost', port=8270)
+  def initialize(library, host='localhost', port=8270)
     @library = library
-    super(port, hostname)
+    super(port, host)  # TODO: Disable logging to stdout
     add_handler('get_keyword_names') { get_keyword_names }
     add_handler('run_keyword') { |name,args| run_keyword(name, args) }
     add_handler('get_keyword_arguments') { |name| get_keyword_arguments(name) }
     add_handler('get_keyword_documentation') { |name| get_keyword_documentation(name) }
     add_handler('stop_remote_server') { shutdown }
+    puts "Robot Framework remote library started at #{host}:#{port}"
     serve
   end
 
