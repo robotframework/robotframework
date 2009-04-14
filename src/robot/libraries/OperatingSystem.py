@@ -325,13 +325,42 @@ class OperatingSystem:
         f.close()
         return unicode(content, encoding).replace('\r\n', '\n')
     
-    def grep_file(self, path, pattern, pattern_type='literal string', encoding='UTF-8'):
-        """*DEPRECATED* Use `Get File` with `BuiltIn.Grep` instead. `Grep File` will be removed in RF 2.2."""
-        content = self.get_file(path, encoding)
-        content = '\n'.join(_filter_lines(content.split('\n'), 
-                                          pattern, pattern_type))
-        self._info('Matching file content:\n' + content)
-        return content
+    def grep_file(self, path, pattern, pattern_type='DEPRECATED', encoding='UTF-8'):
+        """Returns the lines of the specified file that match the `pattern`.
+
+        This keyword reads a file from the file system using the defined
+        `path` and `encoding` similarly as `Get File`. A difference is
+        that only the lines that match the given `pattern` are returned.
+        Lines are returned as a single string catenated back together with
+        newlines and the number of mached lines is automatically logged.
+        Possible trailing newline is never returned.
+
+        Starting from Robot Framework 2.1 the `pattern` is, by default,
+        considered to be a similar _glob pattern_ as with `File Should Exist`
+        keyword. A line matches if it contains the `pattern` anywhere in it
+        i.e. it does not need to match the pattern fully. Using other pattern
+        types has been deprecated and that functionality will be removed in
+        2.2 version.
+
+        If more complex pattern matching is needed, it is possible to use
+        `Get File` in combination with String library keywords like `Get
+        Lines Matching Regexp`.
+
+        Examples:
+        | ${errors} = | Grep File | /var/log/myapp.log | ERROR |
+        | ${ret} = | Grep File | ${CURDIR}/file.txt | [Ww]ildc??d ex*ple |
+        """
+        if pattern_type in ['DEPRECATED', '']:
+            pattern_type = 'simple'
+            pattern = '*%s*' % pattern
+        else:
+            self._warn("'pattern_type' argument of 'Grep File' keyword "
+                       "has been deprecated and will be removed in Robot "
+                       "Framework 2.2.")
+        lines = self.get_file(path, encoding).splitlines()
+        matches = _filter_lines(lines, pattern, pattern_type)
+        self._info('%d out of %d lines matched' % (len(matches), len(lines)))
+        return '\n'.join(matches)
     
     def log_file(self, path, encoding='UTF-8'):
         """Wrapper for `Get File` that also logs the returned file.
@@ -1293,9 +1322,9 @@ class _Process:
 
 # Helper function to select only matching lines. Used also by BuiltIn.
 #
-# TODO: Move to BuiltIn in RF 2.2 when Grep File keyword and 'pattern_type'
-# argument of List Directory keywords have been removed (issues 258 and 260)
-# and this is not needed in OperatingSystem anymore.
+# TODO: Remove altogether in RF 2.2 when 'pattern_type' argument of
+# Grep File and List Directory keywords and the whole BuiltIn.Grep have
+# been removed (issues 258, 260 and 285)
 def _filter_lines(lines, pattern, ptype):
     ptype = ptype.lower().replace(' ','').replace('-','')
     if not pattern:
