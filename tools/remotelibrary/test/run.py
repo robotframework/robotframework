@@ -15,16 +15,20 @@ import sys
 import xmlrpclib
 import time
 import os
+import subprocess
+import shutil
 import socket
 
 REMOTEDIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 OUTPUTDIR = os.path.join(REMOTEDIR, 'test', 'logs')
+if os.path.exists(OUTPUTDIR):
+    shutil.rmtree(OUTPUTDIR)
+os.mkdir(OUTPUTDIR)
 
 
 class Library:
 
     def __init__(self, language=None):
-        self._stdout = self._stderr = None
         self.language = language
         if language:
             self._start_library(language)
@@ -34,11 +38,14 @@ class Library:
     def _start_library(self, lang):
         opts = self._environment_setup(lang)
         ext = {'python': 'py', 'jython': 'py', 'ruby': 'rb'}[lang]
-        cmd = '%s%s%s' % (lang, opts, os.path.join(REMOTEDIR, 'test', 'libs',
-                                                   'examplelibrary.%s' % ext))
+        lib = os.path.join(REMOTEDIR, 'test', 'libs', 'examplelib.%s' % ext)
+        stdout = os.path.join(OUTPUTDIR, 'stdout.txt')
+        stderr = os.path.join(OUTPUTDIR, 'stderr.txt')
+        cmd = '%s%s%s 1> %s 2> %s' % (lang, opts, lib, stdout, stderr)
         print 'Starting %s remote library with command:\n%s' % (lang, cmd)
-        stdin, self._stdout, self._stderr = os.popen3(cmd)
+        stdin, stdouterr = os.popen4(cmd) 
         stdin.close()
+        stdouterr.close()
 
     def _environment_setup(self, lang):
         if lang == 'jython':
@@ -65,13 +72,10 @@ class Library:
         return False
 
     def stop(self, port=8270):
-        if not self.test(port):
-            return
-        xmlrpclib.ServerProxy('http://localhost:%s' % port).stop_remote_server()
-        if self._stdout:
-            self._stdout.close()
-            self._stderr.close()
-        print "Remote library on port %s stopped" % port
+        if self.test(port):
+            server = xmlrpclib.ServerProxy('http://localhost:%s' % port)
+            server.stop_remote_server()
+            print "Remote library on port %s stopped" % port
 
 
 if __name__ == '__main__':
@@ -84,19 +88,19 @@ if __name__ == '__main__':
     
     lib = Library(sys.argv[1])
     include = lib.language if lib.language != 'jython' else 'python'
+    output = os.path.join(OUTPUTDIR, 'output.xml')
+    args = ['pybot', '--log', 'NONE', '--report', 'NONE', '--output', output,
+            '--name', lib.language, '--include', include]
     if len(sys.argv) == 2:
-        args = os.path.join(REMOTEDIR, 'test', 'data')
+        args.append(os.path.join(REMOTEDIR, 'test', 'data'))
     else:
-        args = ' '.join(sys.argv[2:])
-    os.system('pybot --log none --report none --output %s/output.xml --name %s '
-              '--include %s %s' % (OUTPUTDIR, lib.language, include, args))
+        args.extend(sys.argv[2:])
+    subprocess.call(args)
     lib.stop()
     print
-    os.system('python %s/../statuschecker/statuschecker.py %s/output.xml'
-              % (REMOTEDIR, OUTPUTDIR))
-    rc = os.system('rebot --outputdir %s %s/output.xml' % (OUTPUTDIR, OUTPUTDIR))
-    if os.name != 'nt':
-        rc = rc >> 8
+    checker = os.path.join(REMOTEDIR,'..','statuschecker','statuschecker.py')
+    subprocess.call(['python', checker, output])
+    rc = subprocess.call(['rebot', '--outputdir', OUTPUTDIR, output])
     if rc == 0:
         print 'All tests passed'
     else:
