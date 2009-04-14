@@ -48,7 +48,6 @@ Robot Framework runs both on Python_ and Jython_, and you need to have
 at least one of them to be able to use it. However, the provided installers
 only work with Python, so installing it is always recommended.
 
-
 Python installation
 '''''''''''''''''''
 
@@ -65,7 +64,6 @@ information about the installation and Python in general.
           without problems, but, for example, installing certain
           libraries may require copying those non-Python files
           manually.
-
 
 Jython installation
 '''''''''''''''''''
@@ -170,7 +168,6 @@ something like the following text should appear at the end::
           operate in accordance with the host operating system
           conventions.
 
-
 Using binary installers
 '''''''''''''''''''''''
 
@@ -185,21 +182,41 @@ the instructions of the graphical installer.
 Using Easy Install
 ''''''''''''''''''
 
-An obvious precondition for using `Easy Install`_ is to have it installed. The 
-actual command to install Robot Framework with Easy Install is
-:cli:`easy_install robotframework`. Easy Install support is available from Robot 
-Framework 2.0.1 onwards.
+An obvious precondition for using `Easy Install`_ is to have it
+installed, and you can refer to its documentation on how to do that on
+your operating system. The command to install Robot Framework with
+Easy Install depends on do you want to install the latest version or
+some specific version::
 
+   easy_install robotframework         # latest version
+   easy_install robotframework==2.0.4  # specified version (2.0.4)
 
-.. Note:: When using Easy Install on Windows, you need to run :prog:`robot_postinstall.py`
-          script after the installation to configure `runner scripts`_. 
-          The installation output should define where the post-install script is
-          installed, and you can execute it by double clicking it or running it
-          from command line like :cli:`python C:\\Python25\\Scripts\\robot_postinstall.py`.
+If you need to use a proxy to access the Internet, you can tell Easy
+Install to use it by setting the :var:`http_proxy` environment
+variable.
 
-.. Note:: If you need to use a proxy to access the Internet, you can tell Easy
-          Install to use it by setting the :var:`http_proxy` environment variable.
+A part of the Robot Framework installation is updating :prog:`pybot`,
+:prog:`jybot` and :prog:`rebot` `runner scripts`_ to work on the
+system where the framework is installed. How this is done is slightly
+fragile and it does not succeed with Easy Install on all environments.
+If automatically updating the runner script fails, executing them will
+not succeed unless they are fixed manually. Two known situations where
+the runner scripts are not updated correctly are explained below:
 
+- On Windows you always need to run :prog:`robot_postinstall.py`
+  script after the installation to configure the runner scripts. The
+  installation output should tell where the post-install script is
+  located, and you can execute it by double clicking it or running it
+  from command line like :cli:`python
+  C:\\Python25\\Scripts\\robot_postinstall.py`.
+
+- On OS X using Easy Install with virtualenv__ fails because the
+  installation picks up the system wide Python installation (`issue
+  236`__). A workaround is updating the runner scripts manually after
+  the installation or `installing from source`_.
+
+__ http://pypi.python.org/pypi/virtualenv
+__ http://code.google.com/p/robotframework/issues/detail?id=236
 
 Using One Click Installer
 '''''''''''''''''''''''''
@@ -223,7 +240,6 @@ __ `One Click Installer`_
           have a custom installation, you need to install the needed components 
           separately.
 
-
 Manual installation
 '''''''''''''''''''
 
@@ -240,7 +256,6 @@ always do it manually following these steps:
 
 3. Create the needed runner scripts. If you have a source package or
    a checkout, you can get templates from :path:`src/bin` directory.
-
 
 Where files are installed
 '''''''''''''''''''''''''
@@ -260,7 +275,6 @@ location. On UNIX-like systems, they normally go to :path:`/usr/bin`
 and are thus immediately available from the command line. On Windows,
 the operating system does not provide a similar natural place, and
 Python copies these scripts into :path:`[PythonInstallationDir]\\Scripts`.
-
 
 Setting up environment
 ''''''''''''''''''''''
@@ -288,7 +302,6 @@ Setting the :var:`PATH` environment variable on Windows:
 
 3. Start a new command prompt for the changes to take effect.
 
-
 Verifying installation
 ''''''''''''''''''''''
 
@@ -296,12 +309,12 @@ To verify that the installation and environment setup were successful,
 type::
 
    $ pybot --version 
-   Robot Framework 2.0.3 (Python 2.5.1 on darwin)
+   Robot Framework 2.1 (Python 2.5.1 on darwin)
 
 To verify that Robot Framework works also with Jython, type::
 
    $ jybot --version
-   Robot Framework 2.0.3 (Jython 2.2 on java1.6.0_03)
+   Robot Framework 2.1 (Jython 2.2 on java1.6.0_03)
 
 In both cases, the exact version and platform information can, of course,
 differ from these. On Jython, you may also get some notifications from

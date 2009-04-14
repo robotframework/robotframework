@@ -217,6 +217,7 @@ Appendices
 .. _download page: http://downloads.robotframework.org
 .. _project page: http://robotframework.org
 .. _source code: http://source.robotframework.org
+.. _issue tracker: http://issues.robotframework.org
 
 .. External link targets
 
