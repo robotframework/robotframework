@@ -355,8 +355,7 @@ class OperatingSystem:
             pattern = '*%s*' % pattern
         else:
             self._warn("'pattern_type' argument of 'Grep File' keyword "
-                       "has been deprecated and will be removed in Robot "
-                       "Framework 2.2.")
+                       "has been deprecated and will be removed in RF 2.2.")
         lines = self.get_file(path, encoding).splitlines()
         matches = _filter_lines(lines, pattern, pattern_type)
         self._info('%d out of %d lines matched' % (len(matches), len(lines)))
@@ -1226,8 +1225,7 @@ class OperatingSystem:
             pattern_type = 'simple'
         else:
             self._warn("'pattern_type' argument of 'List Directory' keywords "
-                       "has been deprecated. In Robot Framework 2.2 all "
-                       "patterns will be considered glob patterns.")
+                       "has been deprecated and will be removed in RF 2.2.")
         if pattern:
             items = _filter_lines(items, pattern, pattern_type)
         items.sort()
