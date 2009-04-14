@@ -207,7 +207,7 @@ class String:
     def split_string_from_right(self, string, separator=None, max_split=-1):
         """Return a list of the words in the `string`, starting from right.
 
-        Uses `split_with` as the delimiter string.
+        Uses `separator` as the delimiter string.
         If max_split is given, at most `max_split` splits are done from right.
         (thus, the list will have at most 'max_split+1' elements) 
         """
@@ -220,8 +220,8 @@ class String:
         """
         Generates a random string of the required `length` (8 by default).
         
-        Second argument is a set of characters to draw from,
-        lower and upper case letters, and digits by default. 
+        Second argument is a set of characters to draw from:
+        letters (lower and upper case) and digits by default. 
         """
         length = self._convert_to_int(length, 'length')
         return ''.join(sample(chars, length))
