@@ -1281,7 +1281,7 @@ lines</td>
 
 
 
-      <td align="undefined" valign="undefined">${file}</td>
+      <td align="undefined" valign="undefined">${file} =</td>
 
 
 
@@ -1311,7 +1311,7 @@ lines</td>
 
 
 
-      <td>ascii</td>
+      <td><br></td>
 
 
 
@@ -1369,7 +1369,7 @@ lines</td>
 
 
 
-      <td align="undefined" valign="undefined">Fail Unless Equal</td>
+      <td align="undefined" valign="undefined">Should Be Equal</td>
 
 
 
@@ -1494,7 +1494,8 @@ lines</td>
 
 
 
-    <tr>
+    <tr><td></td><td align="undefined" valign="undefined">${file} =</td><td align="undefined" valign="undefined">Get File</td><td align="undefined" valign="undefined">${testfile}</td><td>ascii</td><td></td></tr><tr><td></td><td align="undefined" valign="undefined">Should Be Equal</td><td align="undefined" valign="undefined">${file}</td><td align="undefined" valign="undefined">hello world\nwith two
+lines</td><td></td><td></td></tr><tr>
 
 
 
@@ -1703,7 +1704,7 @@ lines</td>
 
 
 
-      <td align="undefined" valign="undefined">${file}</td>
+      <td align="undefined" valign="undefined">${file} =</td>
 
 
 
@@ -1785,7 +1786,7 @@ lines</td>
 
 
 
-      <td align="undefined" valign="undefined">Fail Unless Equal</td>
+      <td align="undefined" valign="undefined">Should Be Equal</td>
 
 
 
@@ -1912,7 +1913,7 @@ lines</td>
 
 
 
-      <td>${file}</td>
+      <td>${file} =</td>
 
 
 
@@ -2068,84 +2069,7 @@ lines</td>
 
 
 
-    <tr>
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-      <td>Log</td>
-
-
-
-
-
-
-
-
-
-      <td>${RESULT}</td>
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-
-      
-
-
-
-
-
-
-    </tr>
+    
 
 
 
@@ -2264,7 +2188,7 @@ lines</td>
 
 
 
-      <td>Fail Unless Equal</td>
+      <td>Should Be Equal</td>
 
 
 
@@ -2440,7 +2364,7 @@ lines</td>
 
 
 
-      <td>${file}</td>
+      <td>${file} =</td>
 
 
 
@@ -2528,7 +2452,7 @@ lines</td>
 
 
 
-      <td>Fail Unless Equal</td>
+      <td>Should Be Equal</td>
 
 
 
@@ -2980,7 +2904,7 @@ invalid data|)</td>
 
 
 
-      <td>${file}</td>
+      <td>${file} =</td>
 
 
 
@@ -3068,7 +2992,7 @@ invalid data|)</td>
 
 
 
-      <td>Fail Unless Equal</td>
+      <td>Should Be Equal</td>
 
 
 
@@ -3244,7 +3168,7 @@ invalid data|)</td>
 
 
 
-      <td>${file}</td>
+      <td>${file} =</td>
 
 
 
@@ -3350,6 +3274,58 @@ invalid data|)</td>
 
 
 
+    
+
+
+
+
+
+
+    
+
+
+
+
+
+
+    
+
+
+
+
+
+
+    
+
+
+
+
+
+    
+
+
+
+
+
+    
+
+
+
+
+
+
+    
+
+
+
+
+
+    
+
+
+
+
+
     <tr>
 
 
@@ -3357,7 +3333,350 @@ invalid data|)</td>
 
 
 
-      <td align="undefined" valign="undefined">Grep File String
+      <td align="undefined" valign="undefined">Grep File</td>
+
+
+
+
+
+
+      <td>Create File</td>
+
+
+
+
+
+
+      <td>${TESTFILE}</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">foo\nbar\nfoo
+bar\n\nA Foo</td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr><td></td><td>Grep And Check File</td><td></td><td>foo\nbar\nfoo
+bar\n\nA Foo</td><td></td><td></td></tr><tr><td></td><td align="undefined" valign="undefined">Grep And Check File</td><td align="undefined" valign="undefined">foo</td><td align="undefined" valign="undefined">foo\nfoo bar</td><td></td><td></td></tr><tr>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Grep And Check File</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">foo?</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">foo bar</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"><br></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined"><br></td>
+
+
+
+
+
+
+      
+
+
+
+    </tr>
+
+
+
+
+
+
+    
+
+
+
+
+
+
+    
+
+
+
+
+
+
+    <tr><td></td><td align="undefined" valign="undefined">Grep And Check File</td><td align="undefined" valign="undefined">?foo</td><td align="undefined" valign="undefined">${EMPTY}</td><td></td><td></td></tr><tr><td></td><td align="undefined" valign="undefined">Grep And Check File</td><td align="undefined" valign="undefined">?oo</td><td align="undefined" valign="undefined">foo\nfoo bar\nA Foo</td><td></td><td></td></tr><tr>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Grep And Check File</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">[Ff]oo</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">foo\nfoo bar\nA Foo</td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      
+
+
+
+    </tr>
+
+
+
+
+
+
+    
+
+
+
+
+
+
+    
+
+
+
+
+
+
+    
+
+
+
+
+
+
+    <tr><td></td><td>Grep And Check File</td><td>f*a</td><td>foo bar</td><td></td><td></td></tr><tr><td></td><td>Grep And Check File</td><td>?</td><td>foo\nbar\nfoo
+bar\nA Foo</td><td></td><td></td></tr><tr>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Grep And Check File</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">????</td>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">foo bar\nA Foo</td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr><td></td><td align="undefined" valign="undefined">Grep And Check File</td><td align="undefined" valign="undefined">foo bar</td><td align="undefined" valign="undefined">foo bar</td><td></td><td></td></tr><tr><td></td><td>Create File</td><td>${TESTFILE}</td><td>${EMPTY}</td><td></td><td></td></tr><tr><td></td><td align="undefined" valign="undefined">Grep And Check File</td><td align="undefined" valign="undefined">*</td><td align="undefined" valign="undefined">${EMPTY}</td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td align="undefined" valign="undefined">Grep File With Deprecated String
+Pattern</td><td>Create File</td><td>${testfile}</td><td align="undefined" valign="undefined">foo\nbar\nfoo
+bar\nFoo</td><td></td><td></td></tr><tr><td></td><td align="undefined" valign="undefined">${file} =</td><td align="undefined" valign="undefined">Grep File</td><td align="undefined" valign="undefined">${testfile}</td><td align="undefined" valign="undefined">foo</td><td>literal string</td></tr><tr><td></td><td align="undefined" valign="undefined">Should Be Equal</td><td align="undefined" valign="undefined">${file}</td><td align="undefined" valign="undefined">foo\nfoo bar</td><td></td><td></td></tr><tr><td></td><td align="undefined" valign="undefined">${file} =</td><td align="undefined" valign="undefined">Grep File</td><td align="undefined" valign="undefined">${testfile}</td><td align="undefined" valign="undefined">foo</td><td>case insensitive</td></tr><tr><td></td><td align="undefined" valign="undefined">Should Be Equal</td><td align="undefined" valign="undefined">${file}</td><td>foo\nfoo
+bar\nFoo</td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td align="undefined" valign="undefined">Grep File With Deprecated Glob/Simple
+Pattern</td><td>Create File</td><td>${testfile}</td><td align="undefined" valign="undefined">foo\nbar\nfoo
+bar\nFoo</td><td></td><td></td></tr><tr><td></td><td align="undefined" valign="undefined">${file} =</td><td align="undefined" valign="undefined">Grep File</td><td align="undefined" valign="undefined">${testfile}</td><td align="undefined" valign="undefined">foo*</td><td>glob</td></tr><tr><td></td><td align="undefined" valign="undefined">Should Be Equal</td><td align="undefined" valign="undefined">${file}</td><td align="undefined" valign="undefined">foo\nfoo bar</td><td></td><td></td></tr><tr><td></td><td align="undefined" valign="undefined">${file} =</td><td align="undefined" valign="undefined">Grep File</td><td align="undefined" valign="undefined">${testfile}</td><td align="undefined" valign="undefined">?oo</td><td>simple</td></tr><tr><td></td><td align="undefined" valign="undefined">Should Be Equal</td><td align="undefined" valign="undefined">${file}</td><td align="undefined" valign="undefined">foo\nFoo</td><td></td><td></td></tr><tr>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      <td></td>
+
+
+
+
+
+
+      
+
+
+
+    </tr>
+
+
+
+
+
+
+    <tr>
+
+
+
+
+
+
+      <td align="undefined" valign="undefined">Grep File With Deprecated Regexp
 Pattern</td>
 
 
@@ -3380,7 +3699,7 @@ Pattern</td>
 
 
       <td align="undefined" valign="undefined">foo\nbar\nfoo
-bar\nFoo</td>
+bar\nFoo\n\nzap</td>
 
 
 
@@ -3426,1059 +3745,7 @@ bar\nFoo</td>
 
 
 
-      <td align="undefined" valign="undefined">${file}</td>
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">Grep File</td>
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">${testfile}</td>
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">foo</td>
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-      
-
-
-
-    </tr>
-
-
-
-
-
-
-    <tr>
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">Fail Unless Equal</td>
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">${file}</td>
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">foo\nfoo bar</td>
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-      
-
-
-
-    </tr>
-
-
-
-
-
-
-    <tr>
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-      
-
-
-    </tr>
-
-
-
-
-
-    <tr>
-
-
-
-
-
-      <td>Grep File Case insensitive</td>
-
-
-
-
-
-      <td>Create File</td>
-
-
-
-
-
-      <td>${testfile}</td>
-
-
-
-
-
-      <td align="undefined" valign="undefined">foo\nbar\nfoo
-bar\nFoo</td>
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-      
-
-
-    </tr>
-
-
-
-
-
-    <tr>
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">${file}</td>
-
-
-
-
-
-      <td align="undefined" valign="undefined">Grep File</td>
-
-
-
-
-
-      <td align="undefined" valign="undefined">${testfile}</td>
-
-
-
-
-
-      <td align="undefined" valign="undefined">foo</td>
-
-
-
-
-
-
-      
-      
-      
-      <td>case insensitive</td>
-
-
-
-
-
-
-      
-
-
-
-    </tr>
-
-
-
-
-
-
-    <tr>
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-      <td align="undefined" valign="undefined">Fail Unless Equal</td>
-
-
-
-
-
-      <td align="undefined" valign="undefined">${file}</td>
-
-
-
-
-
-      <td>foo\nfoo
-bar\nFoo</td>
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-      
-
-
-    </tr>
-
-
-
-
-
-    <tr>
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-      
-
-
-    </tr>
-
-
-
-
-
-    <tr>
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">Grep File Simple
-Pattern</td>
-
-
-
-
-
-
-      <td>Create File</td>
-
-
-
-
-
-
-      <td>${testfile}</td>
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">foo\nbar\nfoo
-bar\nFoo</td>
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-      
-
-
-
-    </tr>
-
-
-
-
-
-
-    <tr>
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">${file}</td>
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">Grep File</td>
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">${testfile}</td>
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">foo*</td>
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">simple</td>
-
-
-
-
-
-
-      
-
-
-
-    </tr>
-
-
-
-
-
-
-    <tr>
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">Fail Unless Equal</td>
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">${file}</td>
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">foo\nfoo bar</td>
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-      
-
-
-
-    </tr>
-
-
-
-
-
-
-    <tr>
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">${file}</td>
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">Grep File</td>
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">${testfile}</td>
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">?oo*</td>
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">simple</td>
-
-
-
-
-
-
-      
-
-
-
-    </tr>
-
-
-
-
-
-
-    <tr>
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">Fail Unless Equal</td>
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">${file}</td>
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">foo\nfoo bar\nFoo</td>
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-      
-
-
-
-    </tr>
-
-
-
-
-
-
-    <tr>
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-      
-
-
-
-    </tr>
-
-
-
-
-
-
-    <tr>
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">Grep File Glob
-Pattern</td>
-
-
-
-
-
-
-      <td>Create File</td>
-
-
-
-
-
-
-      <td>${testfile}</td>
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">foo\nbar\nfoo
-bar\nFoo</td>
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-      
-
-
-
-    </tr>
-
-
-
-
-
-
-    <tr>
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">${file}</td>
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">Grep File</td>
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">${testfile}</td>
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">foo*</td>
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">glob</td>
-
-
-
-
-
-
-      
-
-
-
-    </tr>
-
-
-
-
-
-
-    <tr>
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">Fail Unless Equal</td>
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">${file}</td>
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">foo\nfoo bar</td>
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-      
-
-
-
-    </tr>
-
-
-
-
-
-
-    <tr>
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-      
-
-
-
-    </tr>
-
-
-
-
-
-
-    <tr>
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">Grep File Regexp
-Pattern</td>
-
-
-
-
-
-
-      <td>Create File</td>
-
-
-
-
-
-
-      <td>${testfile}</td>
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">foo\nbar\nfoo
-bar\nFoo</td>
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-      
-
-
-
-    </tr>
-
-
-
-
-
-
-    <tr>
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-      <td align="undefined" valign="undefined">${file}</td>
+      <td align="undefined" valign="undefined">${file} =</td>
 
 
 
@@ -4544,7 +3811,7 @@ bar\nFoo</td>
 
 
 
-      <td align="undefined" valign="undefined">Fail Unless Equal</td>
+      <td align="undefined" valign="undefined">Should Be Equal</td>
 
 
 
@@ -4849,7 +4116,7 @@ bar\nFoo</td>
 
 
 
-      <td align="undefined" valign="undefined">${content}</td>
+      <td align="undefined" valign="undefined">${content} =</td>
 
 
 
@@ -4920,7 +4187,7 @@ bar\nFoo</td>
 
 
 
-      <td align="undefined" valign="undefined">Fail Unless Equal</td>
+      <td align="undefined" valign="undefined">Should Be Equal</td>
 
 
 
@@ -4999,7 +4266,7 @@ bar\nFoo</td>
 
 
 
-    <tr>
+    <tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Grep And Check File</td><td>[ Arguments ]</td><td>${pattern}</td><td>${expected}</td><td></td></tr><tr><td></td><td align="undefined" valign="undefined">${content} =</td><td align="undefined" valign="undefined">Grep File</td><td align="undefined" valign="undefined">${TESTFILE}</td><td>${pattern}</td></tr><tr><td></td><td align="undefined" valign="undefined">Should Be Equal</td><td align="undefined" valign="undefined">${content}</td><td align="undefined" valign="undefined">${expected}</td><td></td></tr><tr>
 
 
 
@@ -5161,7 +4428,7 @@ bar\nFoo</td>
 
 
 
-      <td align="undefined" valign="undefined">Remove Dir</td>
+      <td align="undefined" valign="undefined">Remove Directory</td>
 
 
 

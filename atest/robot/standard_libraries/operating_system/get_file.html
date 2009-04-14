@@ -1121,7 +1121,18 @@ ${tc.kws[0].messages[1]}</td>
 
 
 
-    <tr>
+    <tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Grep File</td><td>${tc} =&nbsp;</td><td>Check testcase</td><td>Grep File</td><td></td></tr><tr><td></td><td>Check Log Message</td><td>
+${tc.kws[1].kws[0].msgs[1]}</td><td>5 out of 5 lines matched</td><td></td></tr><tr><td></td><td>Check Log Message</td><td>
+${tc.kws[2].kws[0].msgs[1]}</td><td>2&nbsp;out of 5 lines matched</td><td></td></tr><tr><td></td><td>Check Log Message</td><td>
+${tc.kws[3].kws[0].msgs[1]}</td><td>1&nbsp;out of 5 lines matched</td><td></td></tr><tr><td></td><td>Check Log Message</td><td>
+${tc.kws[4].kws[0].msgs[1]}</td><td>0&nbsp;out of 5 lines matched</td><td></td></tr><tr><td></td><td>Check Log Message</td><td>
+${tc.kws[5].kws[0].msgs[1]}</td><td>3&nbsp;out of 5 lines matched</td><td></td></tr><tr><td></td><td>Check Log Message</td><td>
+${tc.kws[6].kws[0].msgs[1]}</td><td>3&nbsp;out of 5 lines matched</td><td></td></tr><tr><td></td><td>Check Log Message</td><td>
+${tc.kws[7].kws[0].msgs[1]}</td><td>1 out of 5 lines matched</td><td></td></tr><tr><td></td><td>Check Log Message</td><td>
+${tc.kws[8].kws[0].msgs[1]}</td><td>4&nbsp;out of 5 lines matched</td><td></td></tr><tr><td></td><td>Check Log Message</td><td>
+${tc.kws[9].kws[0].msgs[1]}</td><td>2&nbsp;out of 5 lines matched</td><td></td></tr><tr><td></td><td>Check Log Message</td><td>
+${tc.kws[10].kws[0].msgs[1]}</td><td>1&nbsp;out of 5 lines matched</td><td></td></tr><tr><td></td><td>Check Log Message</td><td>
+${tc.kws[12].kws[0].msgs[1]}</td><td>0&nbsp;out of 0 lines matched</td><td></td></tr><tr>
 
 
 
@@ -1153,7 +1164,7 @@ ${tc.kws[0].messages[1]}</td>
 
 
 
-      <td align="undefined" valign="undefined">Grep File String
+      <td align="undefined" valign="undefined">Grep File With Deprecated String
 Pattern</td>
 
 
@@ -1165,7 +1176,8 @@ Pattern</td>
       <td>Check testcase</td>
 
 
-      <td>Grep File String Pattern</td>
+      <td>Grep File With Deprecated String
+Pattern</td>
 
 
 
@@ -1179,9 +1191,7 @@ Pattern</td>
 
 
     <tr><td></td><td>Check Log Message</td><td>
-${tc.kws[1].msgs[0]}</td><td>Keyword
-'OperatingSystem.Grep File' is deprecated. Use `Get File` with
-`BuiltIn.Grep` instead. `Grep File` will be removed in RF 2.2.</td><td>WARN</td></tr><tr>
+${tc.kws[1].msgs[0]}</td><td>'pattern_type' argument of 'Grep File' keyword has been deprecated and will be removed in Robot Framework 2.2.</td><td>WARN</td></tr><tr>
 
 
       <td></td>
@@ -1194,10 +1204,7 @@ ${tc.kws[1].msgs[0]}</td><td>Keyword
 ${tc.kws[1].msgs[2]}</td>
 
 
-      <td>Matching file content:\n<br>
-
-
-foo\nfoo bar</td>
+      <td>2&nbsp;out of 4 lines matched</td>
 
 
       <td></td>
@@ -1208,49 +1215,14 @@ foo\nfoo bar</td>
 
 
     
-    <tr>
+    
 
 
-      <td></td>
+    
 
 
-      <td></td>
-
-
-      <td></td>
-
-
-      <td></td>
-
-
-      <td></td>
-
-
-    </tr>
-
-
-    <tr>
-
-
-      <td>grep File&nbsp;Case insensitive</td>
-
-
-      <td>${tc} =&nbsp;</td>
-
-
-      <td>Check testcase</td>
-
-
-      <td>Grep File&nbsp;Case Insensitive</td>
-
-
-      <td></td>
-
-
-    </tr>
-
-
-    <tr>
+    <tr><td></td><td>Check Log Message</td><td>
+${tc.kws[3].msgs[0]}</td><td>'pattern_type' argument of 'Grep File' keyword has been deprecated and will be removed in Robot Framework 2.2.</td><td>WARN</td></tr><tr>
 
 
 
@@ -1262,40 +1234,12 @@ foo\nfoo bar</td>
 
 
       <td>
-${tc.kws[1].msgs[2]}</td>
+${tc.kws[3].msgs[2]}</td>
 
 
 
       
-      <td>Matching file content:\n<br>
-
-
-foo\nfoo
-bar\nFoo</td>
-
-
-
-      <td></td>
-
-
-
-    </tr>
-
-
-
-    <tr>
-
-
-      <td></td>
-
-
-      <td></td>
-
-
-      <td></td>
-
-
-      <td></td>
+      <td>3 out of 4 lines matched<br></td><td></td></tr><tr><td></td><td></td><td></td><td></td>
 
 
       <td></td>
@@ -1308,7 +1252,7 @@ bar\nFoo</td>
 
 
 
-      <td align="undefined" valign="undefined">Grep File Simple
+      <td align="undefined" valign="undefined">Grep File With Deprecated Glob/Simple
 Pattern</td>
 
 
@@ -1320,7 +1264,8 @@ Pattern</td>
       <td>Check testcase</td>
 
 
-      <td>Grep File Simple Pattern</td>
+      <td>Grep File With Deprecated Glob/Simple
+Pattern</td>
 
 
 
@@ -1333,7 +1278,8 @@ Pattern</td>
 
 
 
-    <tr>
+    <tr><td></td><td>Check Log Message</td><td>
+${tc.kws[1].msgs[0]}</td><td>'pattern_type' argument of 'Grep File' keyword has been deprecated and will be removed in Robot Framework 2.2.</td><td>WARN</td></tr><tr>
 
 
 
@@ -1350,10 +1296,37 @@ ${tc.kws[1].msgs[2]}</td>
 
 
       
-      <td>Matching file content:\n<br>
+      <td>2&nbsp;out of 4 lines matched</td>
 
 
-foo\nfoo bar</td>
+
+      <td></td>
+
+
+
+    </tr>
+
+
+
+    <tr><td></td><td>Check Log Message</td><td>
+${tc.kws[3].msgs[0]}</td><td>'pattern_type' argument of 'Grep File' keyword has been deprecated and will be removed in Robot Framework 2.2.</td><td>WARN</td></tr><tr><td></td><td>Check Log Message</td><td>
+${tc.kws[3].msgs[2]}</td><td>2&nbsp;out of 4 lines matched</td><td></td></tr><tr>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
+
+
+
+      <td></td>
 
 
 
@@ -1369,37 +1342,9 @@ foo\nfoo bar</td>
 
 
 
-      <td></td>
 
 
-
-      <td></td>
-
-
-
-      <td></td>
-
-
-
-      <td></td>
-
-
-
-      <td></td>
-
-
-
-    </tr>
-
-
-
-    <tr>
-
-
-
-
-
-      <td align="undefined" valign="undefined">Grep File Regexp
+      <td align="undefined" valign="undefined">Grep File With Deprecated Regexp
 Pattern</td>
 
 
@@ -1411,7 +1356,8 @@ Pattern</td>
       <td>Check testcase</td>
 
 
-      <td>Grep File Regexp Pattern</td>
+      <td>Grep File With Deprecated Regexp
+Pattern</td>
 
 
 
@@ -1434,7 +1380,8 @@ Pattern</td>
 
 
 
-    <tr>
+    <tr><td></td><td>Check Log Message</td><td>
+${tc.kws[1].msgs[0]}</td><td>'pattern_type' argument of 'Grep File' keyword has been deprecated and will be removed in Robot Framework 2.2.</td><td>WARN</td></tr><tr>
 
 
 
@@ -1451,11 +1398,7 @@ ${tc.kws[1].msgs[2]}</td>
 
 
       
-      <td>Matching file content:\n<br>
-
-
-foo\nbar\nfoo
-bar\nFoo</td>
+      <td>4&nbsp;out of 6 lines matched</td>
 
 
 
