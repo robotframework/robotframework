@@ -18,7 +18,7 @@ import os
 import socket
 
 REMOTEDIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-OUTPUTDIR = os.path.join(REMOTEDIR, 'logs')
+OUTPUTDIR = os.path.join(REMOTEDIR, 'test', 'logs')
 
 
 class Library:
