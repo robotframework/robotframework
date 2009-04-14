@@ -485,12 +485,12 @@ th {
       <td style="vertical-align: top;"><br>
       </td>
     </tr>
-    <tr>
+    <tr><td></td><td>${exp} =</td><td>Set Variable If</td><td>"${LANG}" == "jython"</td><td></td></tr><tr><td></td><td>...</td><td>{'1': 2, '0': 1}</td><td>{'1': 2, 'False': True}</td><td></td></tr><tr>
       <td><br>
       </td>
       <td>Return Value Should Be</td>
       <td>Return&nbsp;Dictionary&nbsp;With Non String Keys</td>
-      <td>{'1': 2, 'False': True}</td>
+      <td>${exp}</td>
       <td><br>
       </td>
     </tr>
@@ -556,15 +556,18 @@ key'}</td>
       <td style="vertical-align: top;"><br>
       </td>
     </tr>
-    <tr>
+    <tr><td></td><td>${exp} =</td><td>Set Variable If</td><td>"${LANG}" == "jython"</td><td></td></tr><tr><td></td><td>...</td><td>{'1': {'1': 0},<br>
+&nbsp; '2': {'A': {'n': ''},<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp; 'B': {'o': '&lt;MyObject&gt;',
+'e': {}}} }</td><td>{'1': {'True': False},<br>
+&nbsp; '2': {'A': {'n': ''},<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp; 'B': {'o': '&lt;MyObject&gt;',
+'e': {}}} }</td><td></td></tr><tr>
       <td><br>
       </td>
       <td>Return Value Should Be</td>
       <td>Return Nested Dictionary</td>
-      <td>{'1': {'True': False},<br>
-&nbsp; '2': {'A': {'n': ''},<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp; 'B': {'o': '&lt;MyObject&gt;',
-'e': {}}} }</td>
+      <td>${exp}</td>
       <td><br>
       </td>
     </tr>

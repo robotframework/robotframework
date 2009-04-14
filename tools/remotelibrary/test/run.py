@@ -90,7 +90,8 @@ if __name__ == '__main__':
     include = lib.language if lib.language != 'jython' else 'python'
     output = os.path.join(OUTPUTDIR, 'output.xml')
     args = ['pybot', '--log', 'NONE', '--report', 'NONE', '--output', output,
-            '--name', lib.language, '--include', include]
+            '--name', lib.language, '--include', include,
+            '--variable', 'LANG:%s' % lib.language]
     if len(sys.argv) == 2:
         args.append(os.path.join(REMOTEDIR, 'test', 'atest'))
     else:
