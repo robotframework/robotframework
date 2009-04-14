@@ -1,3 +1,18 @@
+# Copyright 2008-2009 Nokia Siemens Networks Oyj
+# 
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# 
+#     http://www.apache.org/licenses/LICENSE-2.0
+# 
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+
 import xmlrpclib
 import socket
 import time
@@ -7,13 +22,7 @@ try:
 except ImportError:
     ExpatError = None   # Support for Jython 2.2(.x)
 
-try:
-    from robot.errors import RemoteError
-except ImportError:
-    # Support for Robot Framework 2.0.2 and earlier
-    def RemoteError(message, traceback):
-        print '*INFO*', traceback
-        raise AssertionError(message)
+from robot.errors import RemoteError
 
 
 class Remote:
@@ -23,10 +32,7 @@ class Remote:
     def __init__(self, uri='http://localhost:8270'):
         if '://' not in uri:
             uri = 'http://' + uri
-        if uri.startswith('rmi://'):
-            self._client = RmiRemoteClient(uri)
-        else:
-            self._client = XmlRpcRemoteClient(uri)
+        self._client = XmlRpcRemoteClient(uri)
 
     def get_keyword_names(self, attempts=5):
         for i in range(attempts):
@@ -123,30 +129,3 @@ class XmlRpcRemoteClient:
                                'Most often this happens when the return value '
                                'contains characters that are not valid in XML. '
                                'Original error was: ExpatError: %s' % err)
-
-
-if not sys.platform.startswith('java'):
-
-    def RmiRemoteClient(uri):
-        raise RuntimeError('Using RMI requires running tests with Jython')
-
-else:
-
-    # from java.xxx import RMIStuff
-
-    class RmiRemoteClient:
-
-        def __init__(self, uri):
-            pass
-
-        def get_keyword_names(self):
-            return ['test']
-
-        def get_keyword_arguments(self, name):
-            raise TypeError
-
-        def get_keyword_documentation(self, name):
-            raise TypeError
-
-        def run_keyword(self, name, args):
-            return {'status': 'PASS', 'output': 'Hello, world!\n'}
