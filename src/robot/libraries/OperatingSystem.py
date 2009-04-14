@@ -325,8 +325,7 @@ class OperatingSystem:
         f.close()
         return unicode(content, encoding).replace('\r\n', '\n')
     
-    def grep_file(self, path, pattern, pattern_type='literal string', 
-                 encoding='UTF-8'):
+    def grep_file(self, path, pattern, pattern_type='literal string', encoding='UTF-8'):
         """*DEPRECATED* Use `Get File` with `BuiltIn.Grep` instead. `Grep File` will be removed in RF 2.2."""
         content = self.get_file(path, encoding)
         content = '\n'.join(_filter_lines(content.split('\n'), 
@@ -522,11 +521,11 @@ class OperatingSystem:
         path = self._absnorm(path)
         if not os.path.isdir(path):
             raise AssertionError("Directory '%s' does not exist" % path)
-        entries = self._list_dir(path)
-        if len(entries) > 0:
-            if msg is None:
+        items = self._list_dir(path)
+        if items:
+            if not msg:
                 msg = "Directory '%s' is not empty. Contents: %s" \
-                        % (path, seq2str(entries, lastsep=', '))
+                        % (path, seq2str(items, lastsep=', '))
             raise AssertionError(msg)
         self._link("Directory '%s' is empty.", path)
     
@@ -1112,7 +1111,7 @@ class OperatingSystem:
         self._link("Size of file '%%s' is %d byte%s" % (size, plural), path)
         return size
 
-    def list_directory(self, path, pattern=None, pattern_type='simple', 
+    def list_directory(self, path, pattern=None, pattern_type='DEPRECATED', 
                        absolute=False):
         """Returns items from a directory, optionally filtered with `pattern`.
                 
@@ -1141,20 +1140,20 @@ class OperatingSystem:
         return items
 
     def list_files_in_directory(self, path, pattern=None,
-                                pattern_type='simple', absolute=False):
+                                pattern_type='DEPRECATED', absolute=False):
         """A wrapper for `List Directory` that returns only files."""
         files = self._list_files_in_dir(path, pattern, pattern_type, absolute)
         self._info('\n'.join(files))
         return files
     
     def list_directories_in_directory(self, path, pattern=None,
-                                      pattern_type='simple', absolute=False):
+                                      pattern_type='DEPRECATED', absolute=False):
         """A wrapper for `List Directory` that returns only directories."""
         dirs = self._list_dirs_in_dir(path, pattern, pattern_type, absolute)
         self._info('\n'.join(dirs))
         return dirs
 
-    def count_items_in_directory(self, path, pattern=None, pattern_type='simple'):
+    def count_items_in_directory(self, path, pattern=None, pattern_type='DEPRECATED'):
         """Returns the number of all items in the given directory.
         
         The arguments `pattern` and `pattern_type` have the same
@@ -1165,7 +1164,7 @@ class OperatingSystem:
         items = self._list_dir(path, pattern, pattern_type)
         return len(items)
     
-    def count_files_in_directory(self, path, pattern=None, pattern_type='simple'):
+    def count_files_in_directory(self, path, pattern=None, pattern_type='DEPRECATED'):
         """Returns the number of files in the given directory.
         
         The arguments `pattern` and `pattern_type` have the same
@@ -1176,7 +1175,7 @@ class OperatingSystem:
         files = self._list_files_in_dir(path, pattern, pattern_type)
         return len(files)
     
-    def count_directories_in_directory(self, path, pattern=None, pattern_type='simple'):
+    def count_directories_in_directory(self, path, pattern=None, pattern_type='DEPRECATED'):
         """Returns the number of subdirectories in the given directory.
         
         The arguments `pattern` and `pattern_type` have the same
@@ -1187,19 +1186,19 @@ class OperatingSystem:
         dirs = self._list_dirs_in_dir(path, pattern, pattern_type)
         return len(dirs)
 
-    def _list_dir(self, path, pattern=None, pattern_type='simple', 
+    def _list_dir(self, path, pattern=None, pattern_type='DEPRECATED', 
                   absolute=False):
         path = self._absnorm(path)
         self._link("Listing contents of directory '%s'", path)
         if not os.path.isdir(path):
             raise DataError("Directory '%s' does not exist" % path)
         items = os.listdir(path)
-        if pattern_type == '':   # 'absolute' given and 'pat_type' left empty
+        if pattern_type == 'DEPRECATED' or pattern_type == '':
             pattern_type = 'simple'
-        if pattern_type != 'simple':
+        else:
             self._warn("'pattern_type' argument of 'List Directory' keywords "
                        "has been deprecated. In Robot Framework 2.2 all "
-                       "patterns are considered simple glob patterns.")
+                       "patterns will be considered glob patterns.")
         if pattern:
             items = _filter_lines(items, pattern, pattern_type)
         items.sort()
@@ -1208,13 +1207,13 @@ class OperatingSystem:
             items = [ os.path.join(path,item) for item in items ]
         return items
 
-    def _list_files_in_dir(self, path, pattern=None, pattern_type='simple',
+    def _list_files_in_dir(self, path, pattern=None, pattern_type='DEPRECATED',
                            absolute=False):
         return [ item for item in 
                  self._list_dir(path, pattern, pattern_type, absolute)
                  if os.path.isfile(os.path.join(path,item)) ]
 
-    def _list_dirs_in_dir(self, path, pattern=None, pattern_type='simple',
+    def _list_dirs_in_dir(self, path, pattern=None, pattern_type='DEPRECATED',
                           absolute=False):
         return [ item for item in 
                  self._list_dir(path, pattern, pattern_type, absolute)
