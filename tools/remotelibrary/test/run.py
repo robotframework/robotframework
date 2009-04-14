@@ -92,7 +92,7 @@ if __name__ == '__main__':
     args = ['pybot', '--log', 'NONE', '--report', 'NONE', '--output', output,
             '--name', lib.language, '--include', include]
     if len(sys.argv) == 2:
-        args.append(os.path.join(REMOTEDIR, 'test', 'data'))
+        args.append(os.path.join(REMOTEDIR, 'test', 'atest'))
     else:
         args.extend(sys.argv[2:])
     subprocess.call(args)
