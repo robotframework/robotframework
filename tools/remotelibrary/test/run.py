@@ -23,20 +23,31 @@ OUTPUTDIR = os.path.join(REMOTEDIR, 'test', 'logs')
 
 class Library:
 
-    def __init__(self, lang=None):
-        if lang is None:
-            self._stdout = self._stderr = None
-            return
-        ext = {'python': 'py', 'jython': 'py', 'ruby': 'rb', 'perl': 'pl'}[lang]
-        path = os.path.join(REMOTEDIR, 'test', 'libs', 'examplelibrary.%s' % ext)
-        cmd = '%s %s' % (lang, path)
-        os.environ['PYTHONPATH'] = os.environ['LOAD_PATH'] = REMOTEDIR
+    def __init__(self, language=None):
+        self._stdout = self._stderr = None
+        self.language = language
+        if language:
+            self._start_library(language)
+            if not self.test(attempts=7):
+                raise RuntimeError("Starting %s library failed" % language)
+
+    def _start_library(self, lang):
+        opts = self._environment_setup(lang)
+        ext = {'python': 'py', 'jython': 'py', 'ruby': 'rb'}[lang]
+        cmd = '%s%s%s' % (lang, opts, os.path.join(REMOTEDIR, 'test', 'libs',
+                                                   'examplelibrary.%s' % ext))
+        print 'Starting %s remote library with command:\n%s' % (lang, cmd)
         stdin, self._stdout, self._stderr = os.popen3(cmd)
         stdin.close()
-        if not self.test(attempts=7):
-            raise RuntimeError("Starting %s library failed. Executed command:\n"
-                               "%s" % (lang, cmd))
-        
+
+    def _environment_setup(self, lang):
+        if lang == 'jython':
+            return ' -Dpython.path=%s ' % REMOTEDIR
+        varname = {'python': 'PYTHONPATH', 'ruby': 'LOAD_PATH'}[lang]
+        os.environ[varname] = REMOTEDIR
+        print '%s: %s' % (varname, REMOTEDIR)
+        return ' '
+
     def test(self, port=8270, attempts=1):
         url = 'http://localhost:%s' % port
         for i in range(attempts):
@@ -48,9 +59,9 @@ class Library:
                 errmsg = err.faultString
                 break
             else:
-                print "Server is running on port %s." % port
+                print "Remote library is running on port %s" % port
                 return True
-        print "Failed to connect to server on port %s: %s" % (port, errmsg)
+        print "Failed to connect to library on port %s: %s" % (port, errmsg)
         return False
 
     def stop(self, port=8270):
@@ -60,26 +71,25 @@ class Library:
         if self._stdout:
             self._stdout.close()
             self._stderr.close()
-        print "Server on port %s stopped." % port
+        print "Remote library on port %s stopped" % port
 
 
 if __name__ == '__main__':
     if len(sys.argv) < 2:
         print __doc__
         sys.exit(1)
-    lang = sys.argv[1]
-    if lang == 'stop':
+    if sys.argv[1] == 'stop':
         Library().stop(*sys.argv[2:])
         sys.exit()
     
-    lib = Library(lang)
-    include = lang if lang != 'jython' else 'python'
+    lib = Library(sys.argv[1])
+    include = lib.language if lib.language != 'jython' else 'python'
     if len(sys.argv) == 2:
         args = os.path.join(REMOTEDIR, 'test', 'data')
     else:
         args = ' '.join(sys.argv[2:])
-    os.system('pybot --log none --report none --output %s/output.xml '
-              '--name %s --include %s %s' % (OUTPUTDIR, lang, include, args))
+    os.system('pybot --log none --report none --output %s/output.xml --name %s '
+              '--include %s %s' % (OUTPUTDIR, lib.language, include, args))
     lib.stop()
     print
     os.system('python %s/../statuschecker/statuschecker.py %s/output.xml'
