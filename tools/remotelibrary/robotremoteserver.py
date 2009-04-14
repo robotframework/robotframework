@@ -41,6 +41,7 @@ class RobotRemoteServer(SimpleXMLRPCServer):
             signal.signal(signal.SIGHUP, callback)
         if hasattr(signal, 'SIGINT'):
             signal.signal(signal.SIGINT, callback)
+        print 'Robot Framework remote server started at %s:%s' % (host, port)
         self.serve_forever()
 
     def serve_forever(self):

@@ -1,6 +1,11 @@
 #!/usr/bin/env python
 
 import unittest
+import sys
+import os.path
+
+remotedir = os.path.dirname(os.path.dirname(os.path.dirname((__file__))))
+sys.path.insert(0, remotedir)
 
 from robotremoteserver import RobotRemoteServer
 
@@ -8,7 +13,6 @@ from robotremoteserver import RobotRemoteServer
 class NonServingRemoteServer(RobotRemoteServer):
     def __init__(self, library):
         self._library = library
-
 
 class StaticLibrary:
     def passing_keyword(self):
@@ -18,7 +22,7 @@ class StaticLibrary:
     def _not_included(self):
         """Starts with an underscore"""
     not_included = "Not a method or function"
-    not_included_2 = NonServingRemoteServer
+    not_included_2 = NonServingRemoteServer  # Callable but not method/function
 
 class HybridLibrary:
     def get_keyword_names(self):
@@ -61,7 +65,6 @@ class TestStaticApi(unittest.TestCase):
             ret = self.server.run_keyword('failing_keyword', [exception, ''])
             self.assertEquals(ret['status'], 'FAIL')
             self.assertEquals(ret['error'], exception.__name__)
-        
                 
 
 class TestHybridApi(TestStaticApi):

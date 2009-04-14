@@ -289,6 +289,6 @@ end
 class MyException<Exception
 end
 
-require "ruby/robotremoteserver"
+require "robotremoteserver"
 RobotRemoteServer.new(RubyLibraryExample.new, *ARGV)
 

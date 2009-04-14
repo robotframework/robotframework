@@ -1,14 +1,13 @@
 #!/usr/bin/env python
 """Script for running the remote library tests against different servers.
 
-Usage 1: run_tests.py lang [[options] datasources]
+Usage 1: run.py lang [[options] datasources]
 
-Valid languages are 'python', 'jython' or 'ruby'. By default, all
-tests under 'test' directory are run, but this can be changed by
-providing options, which can be any Robot Framework command line
-options.
+Valid languages are 'python', 'jython' or 'ruby'. By default, all tests
+under 'test/data' directory are run, but this can be changed by providing
+options, which can be any Robot Framework command line options.
 
-Usage 2: run_tests.py stop [port]
+Usage 2: run.py stop [port]
 
 Stops remote server in specified port. Default port is 8270..
 """
@@ -18,6 +17,9 @@ import time
 import os
 import socket
 
+REMOTEDIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+OUTPUTDIR = os.path.join(REMOTEDIR, 'logs')
+
 
 class Library:
 
@@ -26,11 +28,14 @@ class Library:
             self._stdout = self._stderr = None
             return
         ext = {'python': 'py', 'jython': 'py', 'ruby': 'rb', 'perl': 'pl'}[lang]
-        dirname = lang if lang != 'jython' else 'python'
-        cmd = '%s %s/examplelibrary.%s' % (lang, dirname, ext)
+        path = os.path.join(REMOTEDIR, 'test', 'libs', 'examplelibrary.%s' % ext)
+        cmd = '%s %s' % (lang, path)
+        os.environ['PYTHONPATH'] = os.environ['LOAD_PATH'] = REMOTEDIR
         stdin, self._stdout, self._stderr = os.popen3(cmd)
         stdin.close()
-        self.test(attempts=10)
+        if not self.test(attempts=7):
+            raise RuntimeError("Starting %s library failed. Executed command:\n"
+                               "%s" % (lang, cmd))
         
     def test(self, port=8270, attempts=1):
         url = 'http://localhost:%s' % port
@@ -67,15 +72,19 @@ if __name__ == '__main__':
         Library().stop(*sys.argv[2:])
         sys.exit()
     
-    include = lang if lang != 'jython' else 'python'
-    args = 'test' if len(sys.argv) == 2 else ' '.join(sys.argv[2:])
     lib = Library(lang)
-    os.system('pybot --log none --report none --output logs/output.xml '
-              '--name %s --include %s %s' % (lang, include, args))
+    include = lang if lang != 'jython' else 'python'
+    if len(sys.argv) == 2:
+        args = os.path.join(REMOTEDIR, 'test', 'data')
+    else:
+        args = ' '.join(sys.argv[2:])
+    os.system('pybot --log none --report none --output %s/output.xml '
+              '--name %s --include %s %s' % (OUTPUTDIR, lang, include, args))
     lib.stop()
     print
-    os.system('python ../../tools/statuschecker/statuschecker.py logs/output.xml')
-    rc = os.system('rebot --outputdir logs logs/output.xml')
+    os.system('python %s/../statuschecker/statuschecker.py %s/output.xml'
+              % (REMOTEDIR, OUTPUTDIR))
+    rc = os.system('rebot --outputdir %s %s/output.xml' % (OUTPUTDIR, OUTPUTDIR))
     if os.name != 'nt':
         rc = rc >> 8
     if rc == 0:
