@@ -3,30 +3,31 @@ import tempfile
     
 outpath = os.path.join(tempfile.gettempdir(), 'listen_by_module.txt')
 OUTFILE = open(outpath, 'w')
+ROBOT_LISTENER_API_VERSION = 2
 
     
-def start_suite(name, doc):
-    OUTFILE.write("SUITE START: %s '%s'\n" % (name, doc))
+def start_suite(name, attrs):
+    OUTFILE.write("SUITE START: %s '%s'\n" % (name, attrs['doc']))
     
-def start_test(name, doc, tags):
-    tags = [ str(tag) for tag in tags ]
-    OUTFILE.write("TEST START: %s '%s' %s\n" % (name, doc, tags))
+def start_test(name, attrs):
+    tags = [ str(tag) for tag in attrs['tags'] ]
+    OUTFILE.write("TEST START: %s '%s' %s\n" % (name, attrs['doc'], tags))
 
-def start_keyword(name, args):
-    args = [ str(arg) for arg in args ]
+def start_keyword(name, attrs):
+    args = [ str(arg) for arg in attrs['args'] ]
     OUTFILE.write("KW START: %s %s\n" % (name, args))
     
-def end_keyword(status):
-    OUTFILE.write("KW END: %s\n" % (status))        
+def end_keyword(name, attrs):
+    OUTFILE.write("KW END: %s\n" % (attrs['status']))        
 
-def end_test(status, message):
-    if status == 'PASS':
+def end_test(name, attrs):
+    if attrs['status'] == 'PASS':
         OUTFILE.write('TEST END: PASS\n')
     else:
-        OUTFILE.write("TEST END: %s %s\n" % (status, message))        
+        OUTFILE.write("TEST END: %s %s\n" % (attrs['status'], attrs['message']))        
         
-def end_suite(status, message):
-    OUTFILE.write('SUITE END: %s %s\n' % (status, message))
+def end_suite(name, attrs):
+    OUTFILE.write('SUITE END: %s %s\n' % (attrs['status'], attrs['statistics']))
 
 def output_file(path):
     _out_file('Output', path)

@@ -14,7 +14,7 @@ class ListenSome:
         self.outfile.write(name + '\n')
 
     def endSuite(self, name, attrs):
-        self.outfile.write(attrs['message'] + '\n')
+        self.outfile.write(attrs['statistics'] + '\n')
         
     def close(self):
         self.outfile.close()

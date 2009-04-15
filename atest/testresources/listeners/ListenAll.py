@@ -36,7 +36,7 @@ class ListenAll:
             
     def end_suite(self, name, attrs):
         self.outfile.write('SUITE END: %s %s\n'
-                            % (attrs['status'], attrs['message']))
+                            % (attrs['status'], attrs['statistics']))
 
     def output_file(self, path):
         self._out_file('Output', path)

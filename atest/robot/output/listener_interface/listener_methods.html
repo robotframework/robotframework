@@ -87,7 +87,7 @@ font-style: normal;
 listeners.ListenSome <br>
 --listener JavaListener<br>
 --listener
-listeners.InvalidMethods</td>
+listeners.InvalidMethods<br>--listener attributeverifyinglistener</td>
 <td>misc${/}pass_and_fail.html</td>
 <td></td>
 </tr>
@@ -388,7 +388,7 @@ Method Raising Exception</a></td>
 'listeners.InvalidMethods' failed:</td>
 <td>Here comes an exception!</td>
 </tr>
-<tr>
+<tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Correct Attributes To Listener Methods</td><td>${status} =</td><td>Log File</td><td>${TEMPDIR}/${ATTR_TYPE_FILE}</td><td></td></tr><tr><td></td><td>Check Stderr Does Not Contain</td><td> attributeverifyinglistener</td><td></td><td></td></tr><tr><td></td><td>Should Not Contain</td><td>${status}</td><td>FAILED</td><td></td></tr><tr><td></td><td>Should Contain X Times</td><td>${status}</td><td>PASSED</td><td>125</td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Correct Attributes To Java Listener Methods</td><td>[Tags]</td><td>jybot</td><td></td><td></td></tr><tr><td><br></td><td>${status} =</td><td>Log File</td><td>${JAVATEMPDIR}/${ATTR_TYPE_FILE}</td><td></td></tr><tr><td></td><td>Check Stderr Does Not Contain</td><td>JavaAttributeVerifyingListener</td><td></td><td></td></tr><tr><td></td><td>Should Not Contain</td><td>${status}</td><td>FAILED</td><td></td></tr><tr><td></td><td>Should Contain X Times</td><td>${status}</td><td>PASSED</td><td>125</td></tr><tr>
 <td></td>
 <td></td>
 <td></td>
