@@ -22,10 +22,14 @@ from logger import LOGGER
 
 if utils.is_jython:
     from java.lang import Object
-        
+
+
 
 class Listeners:
     
+    _start_attrs = ['doc', 'starttime', 'longname']
+    _end_attrs = _start_attrs + ['endtime', 'elapsedtime', 'status', 'message']
+        
     def __init__(self, listeners):
         self._listeners = self._import_listneres(listeners)
 
@@ -51,8 +55,8 @@ class Listeners:
             if li.version == 1:
                 li.call_method(li.start_suite, suite.name, suite.doc)
             else:
-                li.call_method(li.start_suite, suite.name, 
-                               self._get_args(suite, ['doc']))
+                attrs = self._get_start_attrs(suite, [])
+                li.call_method(li.start_suite, suite.name, attrs) 
 
     def end_suite(self, suite):
         for li in self._listeners:
@@ -60,41 +64,41 @@ class Listeners:
                 li.call_method(li.end_suite, suite.status, 
                                suite.get_full_message())
             else:
-                args = self._get_args(suite, ['status'], 
-                                      {'message': 'get_full_message'})
-                li.call_method(li.end_suite, suite.name, args)
+                attrs = self._get_end_attrs(suite, [], 
+                                            {'statistics': 'get_stat_message'})
+                li.call_method(li.end_suite, suite.name, attrs)
     
     def start_test(self, test):
         for li in self._listeners:
             if li.version == 1:
                 li.call_method(li.start_test, test.name, test.doc, test.tags)
             else:
-                li.call_method(li.start_test, test.name, 
-                               self._get_args(test, ['doc', 'tags']))
+                attrs = self._get_start_attrs(test, ['tags'])
+                li.call_method(li.start_test, test.name, attrs)
                 
     def end_test(self, test):
         for li in self._listeners:
             if li.version == 1:
                 li.call_method(li.end_test, test.status, test.message)
             else:
-                li.call_method(li.end_test, test.name, 
-                               self._get_args(test, ['status', 'message']))
+                attrs = self._get_end_attrs(test, ['tags'])
+                li.call_method(li.end_test, test.name, attrs)
 
     def start_keyword(self, kw):
         for li in self._listeners:
             if li.version == 1:
                 li.call_method(li.start_keyword, kw.name, kw.args)
             else:
-                li.call_method(li.start_keyword, kw.name, 
-                               self._get_args(kw, ['args']))
-        
+                attrs = self._get_start_attrs(kw, ['args', '-longname'])
+                li.call_method(li.start_keyword, kw.name, attrs) 
+ 
     def end_keyword(self, kw):
         for li in self._listeners:
             if li.version == 1:
                 li.call_method(li.end_keyword, kw.status)
             else:
-                li.call_method(li.end_keyword, kw.name, 
-                               self._get_args(kw, ['status']))
+                attrs = self._get_end_attrs(kw, ['args', '-longname', '-message'])
+                li.call_method(li.end_keyword, kw.name, attrs)
 
     def output_file(self, name, path):
         for li in self._listeners:
@@ -104,13 +108,24 @@ class Listeners:
         for li in self._listeners:
             li.call_method(li.close)
 
-    def _get_args(self, item, name_list=None, name_dict=None):
-        if not name_dict:
-            name_dict = {}
-        if name_list:
-            name_dict.update(dict([(n, n) for n in name_list]))
+    def _get_start_attrs(self, item, names, mapping=None):
+        return self._get_attrs(item, self._start_attrs, names, mapping)
+                              
+    def _get_end_attrs(self, item, names, mapping=None):
+        return self._get_attrs(item, self._end_attrs, names, mapping)
+
+    def _get_attrs(self, item, defaults, extras, mapping=None):
+        names = defaults[:]
+        for name in extras:
+            if name.startswith('-'):
+                names.remove(name[1:])
+            else:
+                names.append(name)
+        if not mapping:
+            mapping = {}
+        mapping.update(dict([(n, n) for n in names]))
         attrs = {}
-        for name, attr in name_dict.items():
+        for name, attr in mapping.items():
             attr = getattr(item, attr)
             if callable(attr):
                 attr = attr()
