@@ -1,23 +1,17 @@
 
 
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta http-equiv="Expires" content="Mon, 20 Jan 2001 20:01:21 GMT" />
-<meta name="generator" content="Rebot devel 20080531 (Python 2.5.2 on linux2)" />
-
+<meta name="generator" content="Robot trunk 20090408 (Python 2.5.2 on linux2)" />
 <style media="all" type="text/css">
-
   /* Background color (green or red) */
-
   body {
     background: #99FF66;
   }
-      
   /* Generic Table Styles */
-
   table {
     background: white;
     border: 1px solid black;
@@ -33,9 +27,7 @@
     background: #C6C6C6;
     color: black;
   }
-      
   /* Test by Suite/Tag Tables */
-
   table.tests_by_suite, table.tests_by_tag {
     width: 100%;
   }
@@ -63,27 +55,20 @@
   .col_times {
     width: 9em;
   }
-
   td.col_times{
     text-align: right;    
   }
-
   .suite_row, .tag_row{
     background: #E9E9E9;
   }
-
   /* Metadata */
-
   .meta_name {
     font-weight: bold;
   }
-  
   /* Details Table */
-
   table.details {
     width: 58em;
   }
-
   table.details th {
     background: white;
     width: 9em;
@@ -98,7 +83,6 @@
     border: none;
     padding: 2px 4px;
   }
-    
   .status_fail {
     color: red;
     font-weight: bold;
@@ -106,13 +90,9 @@
   .status_pass {
     color: #009900;
   }
-
 </style>
-
 <style media="all" type="text/css">
-
   /* Generic styles */ 
-
   body {
     font-family: sans-serif;
     font-size: 0.8em;
@@ -122,9 +102,7 @@
   h2 {
     margin-top: 1.2em;
   }
-
   /* Statistics Table */
-
   table.statistics {
     width: 58em;
     border: 1px solid black;
@@ -161,9 +139,7 @@
   .tag_links span {
     margin-left: 0.2em;
   }
-  
   /* Statistics Table Graph */
-
   .pass_bar { 
     background: #00f000;
   }
@@ -188,14 +164,28 @@
     float: left;
     font-size: 4px;  /* to make graphs thin also in IE */
   }
-
+  /* Tables in documentation */
+  table.doc {
+    border: 1px solid gray;
+    background: transparent;
+    border-collapse: collapse;
+    empty-cells: show;
+    font-size: 0.9em;
+  }
+  table.doc td {
+    border: 1px solid gray;
+    padding: 0.1em 0.3em;
+    height: 1.2em;
+  }
   /* Misc Styles */
-
   .not_available {
     color: gray;      /* no grey in IE */
     font-weight: normal;
   }
-
+  .parent_name {
+    font-size: 0.7em;
+    letter-spacing: -0.07em;
+  }
   a:link, a:visited {
     text-decoration: none;
     color: blue;
@@ -204,16 +194,14 @@
     text-decoration: underline;
     color: purple;
   }
-  
   /* Headers */
-
   .header {
     width: 58em;
     margin: 6px 0px;
   }
   h1 {
     margin: 0px;
-    width: 73%;
+    width: 70%;
     float: left;
   }
   .times {
@@ -228,7 +216,6 @@
     font-size: 0.8em;
     clear: both;
   }
-  
   /* Status text colors */
   .error, .fail {
     color: red;
@@ -239,13 +226,15 @@
   .warn {
     color: #FFCC00;
   }
+  .not_run {
+    color: #663300;
+  }
 </style>
-      
 <style media="print" type="text/css">
   body {
     background: white;
     padding: 0px; 
-    font-size: 9pt;
+    font-size: 8pt;
   }
   a:link, a:visited {
     color: black;
@@ -253,18 +242,17 @@
   .header, table.details, table.statistics {
     width: 100%;
   }
-  .generated_ago {
+  .generated_ago, .expand {
     display: none;
   }
 </style>
-
 <title>Login Tests Summary Report</title>
 </head>
 <body>
 <div class="header">
   <h1>Login Tests Summary Report</h1>
   <div class="times">
-    <span class="generated_time">Generated<br />20080613&nbsp;14:43:48 GMT +02:00</span><br />
+    <span class="generated_time">Generated<br />20090415&nbsp;07:28:17&nbsp;GMT +03:00</span><br />
 	<span class="generated_ago">
 <script type="text/javascript">
   function get_end(number) {
@@ -286,8 +274,7 @@
   function get_year_str(years) {
     return years + ' year' + get_end(years)
   }
-
-  generated = 1213357428
+  generated = 1239769697
   current = Math.round(new Date().getTime() / 1000)  // getTime returns millis
   elapsed = current - generated
   // elapsed should only be negative if clocks are not in sync
@@ -303,7 +290,6 @@
   hours = Math.floor(elapsed / (60*60)) % 24
   days  = Math.floor(elapsed / (60*60*24)) % 365
   years = Math.floor(elapsed / (60*60*24*365))
-  
   if (years > 0) { 
     // compencate the effect of leap years (not perfect but should be enough)
     days = days - Math.floor(years / 4)
@@ -328,7 +314,6 @@
   </div>
 </div>
 <div class="spacer">&nbsp;</div>
-
 <h2>Summary Information</h2>
 
 <table class="details">
@@ -336,10 +321,9 @@
   <th>Status:</th>
   <td class="status_pass">All tests passed</td>
 </tr>
-  <tr><th>Documentation:</th><td>Demo test cases for Robot Framework using Selenium test library</td></tr>
-  <tr><th>Start Time:</th><td>20080613 14:42:56.430</td></tr>
-  <tr><th>End Time:</th><td>20080613 14:43:29.388</td></tr>
-<tr><th>Elapsed Time:</th><td>00:00:32.958</td></tr>
+  <tr><th>Start Time:</th><td>20090415 07:27:33.858</td></tr>
+  <tr><th>End Time:</th><td>20090415 07:28:17.678</td></tr>
+<tr><th>Elapsed Time:</th><td>00:00:43.820</td></tr>
 </table>
 <h2>Test Statistics</h2>
 <table class="statistics">
@@ -444,7 +428,7 @@
 </tr>
 <tr>
 <td class="col_stat_name">
-<div class="stat_name"><span title="Login Tests.Higher Level Login">l.Higher Level Login</span></div>
+<div class="stat_name"><span title="Login Tests.Higher Level Login"><span class="parent_name">Login Tests . </span>Higher Level Login</span></div>
 </td>
 <td class="col_stat">3</td>
 <td class="col_stat">3</td>
@@ -458,7 +442,7 @@
 </tr>
 <tr>
 <td class="col_stat_name">
-<div class="stat_name"><span title="Login Tests.Invalid Login">l.Invalid Login</span></div>
+<div class="stat_name"><span title="Login Tests.Invalid Login"><span class="parent_name">Login Tests . </span>Invalid Login</span></div>
 </td>
 <td class="col_stat">6</td>
 <td class="col_stat">6</td>
@@ -472,7 +456,7 @@
 </tr>
 <tr>
 <td class="col_stat_name">
-<div class="stat_name"><span title="Login Tests.Simple Login">l.Simple Login</span></div>
+<div class="stat_name"><span title="Login Tests.Simple Login"><span class="parent_name">Login Tests . </span>Simple Login</span></div>
 </td>
 <td class="col_stat">1</td>
 <td class="col_stat">1</td>
