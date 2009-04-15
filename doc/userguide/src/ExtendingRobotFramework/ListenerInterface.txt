@@ -78,32 +78,31 @@ Thus, for example, :code:`startSuite` is a synonym to :code:`start_suite`.
    :class: tabular
 
    +---------------+------------------+--------------------------------------------------+
-   |    Method     |    Arguments     |             Attributes/Explanation               |
+   |    Method     |    Arguments     |             Attributes / Explanation             |
    +===============+==================+==================================================+
    | start_suite   | name, attributes | Keys in the attributes dictionary:               |
-   |               |                  |  * 'doc': suite documentation, may be empty      |
+   |               |                  |  * doc: test suite documentation                 |
    +---------------+------------------+--------------------------------------------------+
    | end_suite     | name, attributes | Keys in the attributes dictionary:               |
-   |               |                  |  * 'status': either PASS or FAIL.                |
-   |               |                  |  * 'message': suite statistics and an error      |
+   |               |                  |  * status: either PASS or FAIL                   |
+   |               |                  |  * message: suite statistics and an error        |
    |               |                  |    message, if the suite setup or teardown has   | 
    |               |                  |    failed                                        |
    +---------------+------------------+--------------------------------------------------+
    | start_test    | name, attributes | Keys in the attributes dictionary:               | 
-   |               |                  |  * 'doc': test documentation,  may be empty.     |
-   |               |                  |  * 'tags': contains the tags of the              |
-   |               |                  |    test case, given as a list of strings.        |
+   |               |                  |  * doc: test case documentation                  |
+   |               |                  |  * tags: test case tags as a list of strings     |
    +---------------+------------------+--------------------------------------------------+
    | end_test      | name, attributes | Keys in the attributes dictionary:               | 
-   |               |                  |  * 'status': either PASS or FAIL.                |
-   |               |                  |  * 'message': contains an error message, if the  |
-   |               |                  |    test has failed and is empty otherwise.       |
+   |               |                  |  * status: either PASS or FAIL                   |
+   |               |                  |  * message: contains an error message if the     |
+   |               |                  |    test has failed and is empty otherwise        |
    +---------------+------------------+--------------------------------------------------+
    | start_keyword | name, attributes | Keys in the attributes dictionary:               | 
-   |               |                  |  * 'args': keyword arguments, a list of strings. |
+   |               |                  |  * args: keyword arguments as a list of strings  |
    +---------------+------------------+--------------------------------------------------+
    | end_keyword   | name, attributes | Keys in the attributes dictionary:               | 
-   |               |                  |   * 'status': either PASS or FAIL.               |
+   |               |                  |  * status: either PASS or FAIL                   |
    +---------------+------------------+--------------------------------------------------+
    | output_file   | path             | Called when writing to an output file is         |
    |               |                  | finished. The path is an absolute path to the    |
