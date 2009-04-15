@@ -56,11 +56,15 @@ implement any official interface, and it only needs to have the methods it
 actually needs.
 
 The signatures of methods related to test execution progress were changed in
-Robot Framework 2.1.  The old signatures will continue to work, but they will
-be deprecated in some future version, so all new listeners should be
-implemented with signatures described in the table below. The most recent
-detailed description of the old listener interface can be found in User Guide
-of Robot Framework 2.0.4.
+Robot Framework 2.1. This change was made so that new information can be added
+to listener interface without breaking existing listeners. The old signatures
+will continue to work, but they will be deprecated in some future version, so
+all new listeners should be implemented with signatures described in the table
+below. The most recent detailed description of the old listener interface can
+be found in User Guide of Robot Framework 2.0.4. In order for a listener to be
+recognized as a new style listener, the listener class or module must have
+attribute :code:`ROBOT_LISTENER_API_VERSION`, whose value is 2 (either as a
+string or as an integer).
 
 Starting from Robot Framework 2.1, all listener methods related to test
 execution progress have the same signature :code:`method(name, attributes)`,
@@ -138,6 +142,8 @@ to implement any explicit interface or have all these methods.
 
    public interface RobotListenerInterface {
 
+       public static final int ROBOT_LISTENER_API_VERSION = 2;
+
        void startSuite(String name, java.util.Map attributes);
 
        void endSuite(String name, java.util.Map attributes);
@@ -172,6 +178,8 @@ illustrates that using the listener interface is not very complicated.
 
 .. sourcecode:: python
 
+   ROBOT_LISTENER_API_VERSION = 2
+
    def start_test(name, attrs):
        print 'Executing test %s' % name
        
@@ -199,6 +207,8 @@ probably more useful than this example.
 
 
    class PythonListener:
+
+       ROBOT_LISTENER_API_VERSION = 2
     
        def __init__(self, filename='listen.txt'):
            outpath = os.path.join(tempfile.gettempdir(), filename)
@@ -235,6 +245,7 @@ The third example implements the same functionality as the previous one, but use
 
    public class JavaListener {
    
+       public static final int ROBOT_LISTENER_API_VERSION = 2;
        public static final String DEFAULT_FILENAME = "listen_java.txt";
        private BufferedWriter outfile = null;
 
