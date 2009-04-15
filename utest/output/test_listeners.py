@@ -7,9 +7,7 @@ from robot.utils.asserts import *
 from robot import utils
 
 
-
 class SuiteMock:
-
     def __init__(self):
         self.name = 'suitemock'
         self.doc = 'somedoc'
@@ -19,7 +17,6 @@ class SuiteMock:
         return 'full message'
 
 class TestMock:
-
     def __init__(self):
         self.name = 'testmock'
         self.doc = 'cod'
@@ -28,11 +25,11 @@ class TestMock:
         self.status = 'FAIL'
 
 class KwMock:
-
     def __init__(self):
         self.name = 'kwmock'
         self.args = ['a1', 'a2']
         self.status = 'PASS'
+
 
 class ListenAllOldStyle:
     
@@ -67,6 +64,7 @@ class ListenAllOldStyle:
         print '%s: %s' % (name, path)
     def close(self):
         print 'Closing...'
+
 
 class ListenAllNewStyle:
 
@@ -225,4 +223,4 @@ if utils.is_jython:
 
 if __name__ == '__main__':
     unittest.main()
-        
+
