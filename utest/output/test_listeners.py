@@ -7,16 +7,23 @@ from robot.utils.asserts import *
 from robot import utils
 
 
-class SuiteMock:
+class _Mock:
+    def __getattr__(self, name):
+        return ''
+
+class SuiteMock(_Mock):
     def __init__(self):
         self.name = 'suitemock'
         self.doc = 'somedoc'
         self.status = 'PASS'
 
+    def get_stat_message(self):
+        return 'full message'
+
     def get_full_message(self):
         return 'full message'
 
-class TestMock:
+class TestMock(_Mock):
     def __init__(self):
         self.name = 'testmock'
         self.doc = 'cod'
@@ -24,7 +31,7 @@ class TestMock:
         self.message = 'Expected failure'
         self.status = 'FAIL'
 
-class KwMock:
+class KwMock(_Mock):
     def __init__(self):
         self.name = 'kwmock'
         self.args = ['a1', 'a2']
@@ -86,7 +93,7 @@ class ListenAllNewStyle:
         else:
             print "TEST END: %s %s" % (attrs['status'], attrs['message'])        
     def end_suite(self, name, attrs):
-        print 'SUITE END: %s %s' % (attrs['status'], attrs['message'])
+        print 'SUITE END: %s %s' % (attrs['status'], attrs['statistics'])
     def output_file(self, path):
         self._out_file('Output', path)
     def summary_file(self, path):
