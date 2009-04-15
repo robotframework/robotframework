@@ -1195,6 +1195,7 @@ class _Misc:
         to reset the search order later.
         """
         library_search_order = NAMESPACES.current.library_search_order
+        libraries = [ lib.replace(' ', '') for lib in libraries ]
         NAMESPACES.current.library_search_order = libraries
         return library_search_order
     

@@ -2,6 +2,7 @@
 Library	TestLibrary.py	Library1	WITH NAME	Library1
 Library	TestLibrary.py	Library2	WITH NAME	Library2
 Library	TestLibrary.py	Library3	WITH NAME	Library3
+Library	TestLibrary.py	Library With Space	WITH NAME	Library With Space
 Suite Setup	Set Library Search Order	Library1	Library2	Library3
 					
 					
@@ -41,6 +42,13 @@ Setting Library Order Allows Setting BuiltIn Library As Default Library
 Setting Library Order Allows Setting Own Library Before BuiltIn Library
 	Set Library Search Order	Library1
 	Own Library Should Be Used
+	
+Setting Library Order With Spaces In Name
+	Set Library Search Order	Library With Space	Library1	Library3
+	Active Library Should Be	Library With Space
+	Set Library Search Order	Library With Space
+	Active Library Should Be	Library With Space
+    
 					
 "* Keyword *"	"* Action *"	"* Argument *"	"* Argument *"	"* Argument *"	"* Argument *"
 Active Library Should Be	[ Arguments ]	${expected library name}
@@ -48,7 +56,7 @@ Active Library Should Be	[ Arguments ]	${expected library name}
 	Should Be Equal	${library name}	${expected library name}
 
 Library Order Should Be Empty
-	Run Keyword And Expect Error	Multiple keywords with name 'Get Name' found.\nGive the full name of the keyword you want to use.\nFound: 'Library1.Get Name', 'Library2.Get Name' and 'Library3.Get Name'	Get Name
+	Run Keyword And Expect Error	Multiple keywords with name 'Get Name' found.\nGive the full name of the keyword you want to use.\nFound: 'Library1.Get Name', 'Library2.Get Name', 'Library3.Get Name' and 'LibraryWithSpace.Get Name'	Get Name
 	
 Own Library Should Be Used
 	Run Keyword And Expect Error	"No operation used in TestLibrary!"	No operation
