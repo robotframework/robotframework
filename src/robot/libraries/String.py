@@ -42,7 +42,7 @@ class String:
     - `Length Should Be`
     - `Should (Not) Match (Regexp)`
     - `Should (Not) Be Empty`
-    - `Should (Not) Be Equal (As Strings)`
+    - `Should (Not) Be Equal (As Strings/Integers/Numbers)`
     - `Should (Not) Contain`
     - `Should (Not) Start With`
     - `Should (Not) End With`
@@ -52,27 +52,33 @@ class String:
     ROBOT_LIBRARY_VERSION = utils.get_version()
 
     def get_line_count(self, string):
-        """Returns the number of lines."""
+        """Returns the number of lines in the given `string`."""
         return len(string.splitlines())
 
     def split_to_lines(self, string, start=0, end=None):
-        """Converts `string` to list of lines. 
+        """Converts the `string` into a list of lines. 
         
-        Ends of lines are removed. It is possible to get only selection of 
-        lines, from `start` to `end`. Line numbering starts from 0. 
+        It is possible to get only a selection of lines from `start`
+        to `end` so that `start` index is inclusive and `end` is
+        exclusive. Line numbering starts from 0, and it is possible to
+        use negative indices to refer lines from the end.
+
+        Lines are returned without the newlines. The number of
+        returned lines is automatically logged.
 
         Example:
-        | @{lines} = | Split To Lines | ${manylines} |
-        | @{first two lines} = | Split To Lines | ${manylines} | 0 | 1 |
+        | @{lines} =        | Split To Lines | ${manylines} |    |    |
+        | @{ignore first} = | Split To Lines | ${manylines} | 1  |    |
+        | @{ignore last} =  | Split To Lines | ${manylines} |    | -1 |
+        | @{5th to 10th} =  | Split To Lines | ${manylines} | 4  | 10 |
+        | @{first two} =    | Split To Lines | ${manylines} |    | 1  |
+        | @{last two} =     | Split To Lines | ${manylines} | -2 |    |
         """
-        lines = string.splitlines()
-        start = self._convert_to_int(start, 'start')
-        if not lines:
-            return []
-        if not end:
-            return lines[start:]
-        end = self._convert_to_int(end, 'end')
-        return lines[start:end]
+        start = self._convert_to_index(start, 'start')
+        end = self._convert_to_index(end, 'end')
+        lines = string.splitlines()[start:end]
+        print '*INF* %d lines returned' % len(lines)
+        return lines
 
     def get_lines_containing_string(self, string, pattern, case_insensitive=False):
         """Returns lines of the given `string` that contain the `pattern`.
@@ -103,15 +109,18 @@ class String:
     def get_lines_matching_pattern(self, string, pattern, case_insensitive=False):
         """Returns lines of the given `string` that match the `pattern`.
 
-        The `pattern` is a _glob pattern_ where _*_ and _?_ can be
-        used as wildcards so that the former matches anything and the
-        latter any single character. A line matches only if it matches
-        the `pattern` fully.  By default the match is case-sensitive,
-        but setting `case_insensitive` to any value makes it
-        case-insensitive.
+        The `pattern` is a _glob pattern_ where:
+        | *        | matches everything |
+        | ?        | matches any single character |
+        | [chars]  | matches any character inside square brackets (e.g. '[abc]' matches either 'a', 'b' or 'c') |
+        | [!chars] | matches any character not inside square brackets |
+
+        A line matches only if it matches the `pattern` fully.  By
+        default the match is case-sensitive, but setting
+        `case_insensitive` to any value makes it case-insensitive.
         
         Lines are returned as one string catenated back together with
-        newlines. Possible trailing newline is never returned.The
+        newlines. Possible trailing newline is never returned. The
         number of matching lines is automatically logged.
 
         Examples:
@@ -159,33 +168,37 @@ class String:
         print '*INFO* %d out of %d lines matched' % (len(matching), len(lines))
         return '\n'.join(matching)
     
-    def replace_string(self, string, search_for, replace_with, count=0):
+    def replace_string(self, string, search_for, replace_with, count=-1):
         """ Replaces `search_for` in `string` with `replace_with`.
 
-        You can specify how many occurrences are replaced with `count`,
-        otherwise all occurrences are replaced.
+        If the optional argument `count` is given and positive, only that many
+        occurrences from left are replaced.
+
+        Examples:
+        | ${str} = | Replace String | ${str} | Hello | Hi     |   |
+        | ${str} = | Replace String | ${str} | world | tellus | 1 |
         """        
-        count = self._convert_to_int(count, 'count')
-        if count <= 0:
-            return string.replace(search_for, replace_with)
+        count = self._convert_to_index(count, 'count')
+        if count <= 0: count = -1
         return string.replace(search_for, replace_with, count)
 
-    def replace_string_with_regexp(self, string, pattern, replace_with, count=0):
+    def replace_string_with_regexp(self, string, pattern, replace_with, count=-1):
         """Replaces matches with `pattern` in `string` with `replace_with`.
 
-        You can specify how many `pattern` occurrences are replaced with `count`,
-        otherwise all occurrences are replaced.
+        See `BuiltIn.Should Match Regexp` for more information about
+        Python regular expression syntax in general and how to use it
+        in Robot Framework test data in particular.
 
-        Regular expression format is according to Python 're' module, which
-        has a pattern syntax derived from Perl, and thus also very similar to
-        the one in Java. See the following documents for more details about
-        regular expressions in general and Python implementation in particular.
-        
-        * http://docs.python.org/lib/module-re.html
+        If the optional argument `count` is given and positive, only that many
+        occurrences from left are replaced.
+
+        Examples:
+        | ${str} = | Replace String With Regexp | ${str} | (Hello|Hi) | Hei  |   |
+        | ${str} = | Replace String With Regexp | ${str} | 20\\d\\d-\\d\\d-\\dd\\d | <DATE>  | 2  |
         """
-        count = self._convert_to_int(count, 'count')
-        p = re.compile(pattern)
-        return p.sub(replace_with, string, count)
+        count = self._convert_to_index(count, 'count')
+        if count <= 0: count = -1
+        return re.sub(pattern, replace_with, string, count)
 
     def split_string(self, string, separator=None, max_split=-1):
         #TODO: Improve short doc
@@ -199,7 +212,7 @@ class String:
         If max_split is given, at most `max_split` splits are done
         (thus, the list will have at most 'max_split+1' elements) 
         """
-        max_split = self._convert_to_int(max_split, 'max_split')
+        max_split = self._convert_to_index(max_split, 'max_split')
         return string.split(separator, max_split)
 
     def split_string_from_right(self, string, separator=None, max_split=-1):
@@ -222,7 +235,7 @@ class String:
         Second argument is a set of characters to draw from:
         letters (lower and upper case) and digits by default. 
         """
-        length = self._convert_to_int(length, 'length')
+        length = self._convert_to_index(length, 'length')
         return ''.join(sample(chars, length))
 
 
@@ -238,10 +251,10 @@ class String:
         | Should Be Equal          | ${two from almost end} | bo |
         """
         
-        start = self._convert_to_int(start, 'start')
+        start = self._convert_to_index(start, 'start')
         if not end:
             return string[start:]
-        end = self._convert_to_int(end, 'end')
+        end = self._convert_to_index(end, 'end')
         return string[start:end]
 
     def should_be_string(self, item, msg=None):
@@ -268,7 +281,7 @@ class String:
         Example:
         | ${first line}= | Get Line | ${string} | 0 |
         """
-        number = self._convert_to_int(number, 'number')
+        number = self._convert_to_index(number, 'number')
         return string.splitlines()[number]
 
     def fetch_from_left(self, string, to_find):
@@ -287,9 +300,13 @@ class String:
         """
         return string.split(to_find)[-1]
 
-    def _convert_to_int(self, value, name):
+    def _convert_to_index(self, value, name):
+        if value == '':
+            return 0
+        if value is None:
+            return None
         try:
             return int(value)
         except ValueError:
-            raise ValueError("Cannot convert argument %s's value '%s' to an integer!" % (name, value))
+            raise ValueError("Cannot convert '%s' argument '%s' to an integer" % (name, value))
 
