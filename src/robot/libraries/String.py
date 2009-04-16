@@ -15,7 +15,7 @@
 
 import re
 from fnmatch import fnmatchcase
-import string as STRING
+from string import ascii_lowercase, ascii_uppercase, digits
 try:
     from random import sample
 except ImportError:   # No random.sample in Jython 2.2
@@ -52,8 +52,10 @@ class String:
     ROBOT_LIBRARY_VERSION = utils.get_version()
 
     def get_line_count(self, string):
-        """Returns the number of lines in the given `string`."""
-        return len(string.splitlines())
+        """Returns and logs the number of lines in the given `string`."""
+        count = len(string.splitlines())
+        print '*INFO* %d lines' % count
+        return count
 
     def split_to_lines(self, string, start=0, end=None):
         """Converts the `string` into a list of lines. 
@@ -61,18 +63,20 @@ class String:
         It is possible to get only a selection of lines from `start`
         to `end` so that `start` index is inclusive and `end` is
         exclusive. Line numbering starts from 0, and it is possible to
-        use negative indices to refer lines from the end.
+        use negative indices to refer to lines from the end.
 
         Lines are returned without the newlines. The number of
         returned lines is automatically logged.
 
-        Example:
+        Examples:
         | @{lines} =        | Split To Lines | ${manylines} |    |    |
         | @{ignore first} = | Split To Lines | ${manylines} | 1  |    |
         | @{ignore last} =  | Split To Lines | ${manylines} |    | -1 |
         | @{5th to 10th} =  | Split To Lines | ${manylines} | 4  | 10 |
         | @{first two} =    | Split To Lines | ${manylines} |    | 1  |
         | @{last two} =     | Split To Lines | ${manylines} | -2 |    |
+
+        Use `Get Line` if you only need to get a single line.
         """
         start = self._convert_to_index(start, 'start')
         end = self._convert_to_index(end, 'end')
@@ -157,7 +161,8 @@ class String:
         | ${ret} = | Get Lines Matching Pattern | ${ret} | (?i)FAIL: .* |
 
         See `Get Lines Matching Pattern` and `Get Lines Containing
-        String` if you do not need full regular expression powers.
+        String` if you do not need full regular expression powers (and
+        complexity).
         """
         regexp = re.compile('^%s$' % pattern)
         return self._get_matching_lines(string, regexp.match)
@@ -169,144 +174,199 @@ class String:
         return '\n'.join(matching)
     
     def replace_string(self, string, search_for, replace_with, count=-1):
-        """ Replaces `search_for` in `string` with `replace_with`.
+        """Replaces `search_for` in the given `string` with `replace_with`.
 
-        If the optional argument `count` is given and positive, only that many
-        occurrences from left are replaced.
+        `search_for` is used as a literal string. See `Replace String
+        With Regexp` if more powerful pattern matching is needed.
+
+        If the optional argument `count` is given, only that many
+        occurrences from left are replaced. Negative `count` means
+        that all occurrences are replaced and zero means that nothing
+        is done.
+
+        A modified version of the string is returned and the original
+        string is not altered.
 
         Examples:
         | ${str} = | Replace String | ${str} | Hello | Hi     |   |
         | ${str} = | Replace String | ${str} | world | tellus | 1 |
         """        
-        count = self._convert_to_index(count, 'count')
-        if count <= 0: count = -1
+        count = self._convert_to_integer(count, 'count')
         return string.replace(search_for, replace_with, count)
 
     def replace_string_with_regexp(self, string, pattern, replace_with, count=-1):
-        """Replaces matches with `pattern` in `string` with `replace_with`.
+        """Replaces `pattern` in the given `string` with `replace_with`.
 
-        See `BuiltIn.Should Match Regexp` for more information about
-        Python regular expression syntax in general and how to use it
-        in Robot Framework test data in particular.
-
-        If the optional argument `count` is given and positive, only that many
-        occurrences from left are replaced.
+        This keyword is otherwise identical to `Replace String`, but
+        the `pattern` to search for is considered to be a regular
+        expression.  See `BuiltIn.Should Match Regexp` for more
+        information about Python regular expression syntax in general
+        and how to use it in Robot Framework test data in particular.
 
         Examples:
         | ${str} = | Replace String With Regexp | ${str} | (Hello|Hi) | Hei  |   |
-        | ${str} = | Replace String With Regexp | ${str} | 20\\d\\d-\\d\\d-\\dd\\d | <DATE>  | 2  |
+        | ${str} = | Replace String With Regexp | ${str} | 20\\d\\d-\\d\\d-\\d\\d | <DATE>  | 2  |
         """
-        count = self._convert_to_index(count, 'count')
-        if count <= 0: count = 0
+        count = self._convert_to_integer(count, 'count')
+        # re.sub handles 0 and negative counts differently than string.replace
+        if count < 0:
+            count = 0
+        elif count == 0:
+            count = -1
         return re.sub(pattern, replace_with, string, count)
 
     def split_string(self, string, separator=None, max_split=-1):
-        #TODO: Improve short doc
-        """Return a list of the words in the `string`.
+        """Splits the `string` using `separator` as a delimiter string.
 
-        Uses `separator` as the delimiter string. If `separator` is not
-        specified: runs of consecutive whitespace are regarded as a
-        single separator, and the result will contain no empty strings
-        at the start or end if the string has leading or trailing whitespace.
+        If a `separator` is not given, any whitepace string is a
+        separator. In that case also possible consecutive whitespace
+        as well as leading and trailing whitespace is ignored.
         
-        If max_split is given, at most `max_split` splits are done
-        (thus, the list will have at most 'max_split+1' elements) 
+        Split words are returned as a list. If the optional
+        `max_split` is given, at most `max_split` splits are done, and
+        the returned list will have maximum `max_split + 1` elements.
+
+        Examples:
+        | @{words} =         | Split String | ${string} |
+        | @{words} =         | Split String | ${string} | ,${SPACE} |
+        | ${pre} | ${post} = | Split String | ${string} | ::    | 1 |
+
+        See `Split String From Right` if you want to start splitting
+        from right, and `Fetch From Right` and `Fetch From Right` if
+        you only want to get first/last part of the string.
         """
-        max_split = self._convert_to_index(max_split, 'max_split')
+        if separator == '':
+            separator = None
+        max_split = self._convert_to_integer(max_split, 'max_split')
         return string.split(separator, max_split)
 
     def split_string_from_right(self, string, separator=None, max_split=-1):
-        #TODO: Improve short doc
-        """Return a list of the words in the `string`, starting from right.
+        """Splits the `string` using `separator` starting from right.
 
-        Uses `separator` as the delimiter string.
-        If max_split is given, at most `max_split` splits are done from right.
-        (thus, the list will have at most 'max_split+1' elements) 
+        Same as `Split String`, but splitting is started from right. This has
+        an effect only when `max_split` is given.
+
+        Examples:
+        | ${first} | ${others} = | Split String | ${string} | - | 1 |
+        | ${others} | ${last} = | Split String From Right | ${string} | - | 1 |
         """
-        # Jython does not have rsplit for string
+        # Strings in Jython 2.2 don't have 'rsplit' methods
         reversed = self.split_string(string[::-1], separator, max_split)
-        reversed = [ r[::-1] for r in reversed ]
-        return reversed[::-1]
+        return [ r[::-1] for r in reversed ][::-1]
     
-    def generate_random_string(self, length=8, chars=STRING.letters+STRING.digits):
-        """
-        Generates a random string of the required `length` (8 by default).
-        
-        Second argument is a set of characters to draw from:
-        letters (lower and upper case) and digits by default. 
-        """
-        length = self._convert_to_index(length, 'length')
-        return ''.join(sample(chars, length))
+    def generate_random_string(self, length=8, chars='[LETTERS][NUMBERS]'):
+        """Generates a string with a desired `lenght` from the given `chars`.
 
+        The population sequence `chars` contains the characters to use
+        when generating the random string. It can contain any
+        characters, and it is possible to use special markers
+        explained in the table below:
+
+        | _[LOWER]_   | Lowercase ASCII characters from 'a' to 'z'. |
+        | _[UPPER]_   | Uppercase ASCII characters from 'A' to 'Z'. |
+        | _[LETTERS]_ | Lowercase and uppercase ASCII characters.   |
+        | _[NUMBERS]_ | Numbers for 0 to 9. |
+
+        Examples:
+        | ${ret} = | Generate Random String |
+        | ${low} = | Generate Random String | 12 | [LOWER]         |
+        | ${bin} = | Generate Random String | 8  | 01              |
+        | ${hex} = | Generate Random String | 4  | [NUMBERS]abcdef |
+        """
+        if length == '':
+            length = 8
+        length = self._convert_to_integer(length, 'length')
+        for name, value in [('[LOWER]', ascii_lowercase),
+                            ('[UPPER]', ascii_uppercase),
+                            ('[LETTERS]', ascii_lowercase + ascii_uppercase),
+                            ('[NUMBERS]', digits)]:
+            chars.replace(name, value)
+        return ''.join(sample(chars, length))
 
     def get_substring(self, string, start, end=None):
         """Returns a substring from `start` index to `end` index. 
 
-        First item's index is 0. it is possible to use also negative `start` and   
-        end indexes which means 
-        Example:
-        | ${first two} =           | Get Substring | Robot       | 0  |  2 |
-        | Should Be Equal          | ${first two}  | Ro          |
-        | ${two from almost end} = | Get Substring | Hello Robot | -3 | -1 |
-        | Should Be Equal          | ${two from almost end} | bo |
+        The `start` index is inclusive and `end` is exclusive.
+        Indexing starts from 0, and it is possible to use
+        negative indices to refer to characters from the end.
+
+        Examples:
+        | ${ignore first} = | Get Substring | ${string} | 1  |    |
+        | ${ignore last} =  | Get Substring | ${string} |    | -1 |
+        | ${5th to 10th} =  | Get Substring | ${string} | 4  | 10 |
+        | ${first two} =    | Get Substring | ${string} |    | 1  |
+        | ${last two} =     | Get Substring | ${string} | -2 |    |
         """
-        
         start = self._convert_to_index(start, 'start')
-        if not end:
-            return string[start:]
         end = self._convert_to_index(end, 'end')
         return string[start:end]
 
     def should_be_string(self, item, msg=None):
-        """ Fails if item is not a string (e.g. boolean, number)"""
+        """Fails if the given `item` is not a string.
+
+        The defaul error message can be overridded with the optional
+        `msg` argumet.
+        """
         if not isinstance(item, basestring):
-            if msg is None:
-                msg = "Given item is not a string"
+            if not msg:
+                msg = "Given item '%s' is not a string" % item
             raise AssertionError(msg)
         
     def should_not_be_string(self, item, msg=None):
-        """ Fails if item is a string """
+        """Fails if the given `item` is a string.
+
+        The defaul error message can be overridded with the optional
+        `msg` argumet.
+        """
         if isinstance(item, basestring):
-            if msg is None:
+            if not msg:
                 msg = "Given item '%s' is a string" % item
             raise AssertionError(msg)
 
-    def get_line(self, string, number):
-        """
-        From given `string`, extracts line with given `number`.
-        
-        '0' is the first line. '-1' is the last line.
-        Line is returned without the end-of-line character.
+    def get_line(self, string, line_number):
+        """Returns the specified line from the given `string`.
 
-        Example:
-        | ${first line}= | Get Line | ${string} | 0 |
-        """
-        number = self._convert_to_index(number, 'number')
-        return string.splitlines()[number]
+        Line numbering starts from 0 and it is possible to use
+        negative indices to refer to lines from the end. The line is
+        returned without the newline character.
 
-    def fetch_from_left(self, string, to_find):
+        Examples:
+        | ${first} =    | Get Line | ${string} | 0  |
+        | ${2nd last} = | Get Line | ${string} | -2 |
         """
-        Fetches the `string` part before the FIRST occurrence of `to_find`.
+        line_number = self._convert_to_integer(line_number, 'line_number')
+        return string.splitlines()[line_number]
+
+    def fetch_from_left(self, string, marker):
+        """Returns contents of the `string` before the first occurrence of `marker`.
         
-        If `to_find` is not found, whole string is returned.
+        If the `marker` is not found, whole string is returned.
+
+        See also `Fetch From Right`, `Split String` and `Split String
+        From Right`.
         """
-        return string.split(to_find)[0]
+        return string.split(marker)[0]
         
-    def fetch_from_right(self, string, to_find):
-        """
-        Fetches the `string` after the LAST occurence of `to_find`.
+    def fetch_from_right(self, string, marker):
+        """Returns contents of the `string` after the last occurrence of `marker`.
         
-        If `to_find` not found within `string`, whole string is returned.
+        If the `marker` is not found, whole string is returned.
+
+        See also `Fetch From Left`, `Split String` and `Split String
+        From Right`.
         """
-        return string.split(to_find)[-1]
+        return string.split(marker)[-1]
 
     def _convert_to_index(self, value, name):
         if value == '':
             return 0
         if value is None:
             return None
+        return self._convert_to_integer(value, name)
+
+    def _convert_to_integer(self, value, name):
         try:
             return int(value)
         except ValueError:
-            raise ValueError("Cannot convert '%s' argument '%s' to an integer" % (name, value))
-
+            raise ValueError("Cannot convert '%s' argument '%s' to an integer"
+                             % (name, value))
