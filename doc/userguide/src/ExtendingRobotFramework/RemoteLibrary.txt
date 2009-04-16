@@ -1,0 +1,21 @@
+Remote library interface
+------------------------
+
+xxx
+
+.. contents:: 
+   :depth: 2
+   :local: 
+
+
+Introduction
+~~~~~~~~~~~~
+
+.. figure:: src/ExtendingRobotFramework/remote.png
+
+   Architecture with Remote library
+
+
+
+Taking Remote library into use
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
