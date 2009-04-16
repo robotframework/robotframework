@@ -64,7 +64,7 @@ class Remote:
 
     def _handle_argument(self, arg):
         # TODO: Should handle also basic Java types
-        if isinstance(arg, (basestring, int, long, float, bool)):
+        if isinstance(arg, (basestring, int, long, float)):
             return arg
         if isinstance(arg, (tuple, list)):
             return [ self._handle_argument(item) for item in arg ]
