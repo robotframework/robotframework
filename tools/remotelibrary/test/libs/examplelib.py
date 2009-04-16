@@ -1,7 +1,14 @@
+import sys
+
+
 class RemoteTestLibrary:
 
     _unicode = (u'Hyv\u00E4\u00E4 y\u00F6t\u00E4. '
                 u'\u0421\u043F\u0430\u0441\u0438\u0431\u043E!')
+
+    def get_server_language(self):
+        lang = sys.platform.startswith('java') and 'jython' or 'python'
+        return '%s%d%d' % (lang, sys.version_info[0], sys.version_info[1])
 
     # Basic communication (and documenting keywords)
 

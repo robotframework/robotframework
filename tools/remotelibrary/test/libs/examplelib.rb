@@ -1,5 +1,9 @@
 class RubyLibraryExample
 
+  def get_server_language
+    'ruby'
+  end
+
   # Basic communication
 
   def passing

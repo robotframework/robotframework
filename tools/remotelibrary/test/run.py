@@ -91,7 +91,7 @@ if __name__ == '__main__':
     output = os.path.join(OUTPUTDIR, 'output.xml')
     args = ['pybot', '--log', 'NONE', '--report', 'NONE', '--output', output,
             '--name', lib.language, '--include', include,
-            '--variable', 'LANG:%s' % lib.language]
+            '--noncritical', 'non-critical']
     if len(sys.argv) == 2:
         args.append(os.path.join(REMOTEDIR, 'test', 'atest'))
     else:
@@ -101,7 +101,8 @@ if __name__ == '__main__':
     print
     checker = os.path.join(REMOTEDIR,'..','statuschecker','statuschecker.py')
     subprocess.call(['python', checker, output])
-    rc = subprocess.call(['rebot', '--outputdir', OUTPUTDIR, output])
+    rc = subprocess.call(['rebot', '--noncritical', 'non-critical',
+                          '--outputdir', OUTPUTDIR, output])
     if rc == 0:
         print 'All tests passed'
     else:

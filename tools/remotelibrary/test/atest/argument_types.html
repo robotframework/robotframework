@@ -100,7 +100,9 @@ th {
       </td>
       <td><br>
       </td>
-    </tr>
+    </tr><tr><td>Suite Setup<br>
+      </td><td>Set Server Language<br>
+      </td><td></td><td></td><td></td></tr>
   </tbody>
 </table>
 <table border="1">
@@ -125,10 +127,10 @@ th {
       </td>
     </tr>
     <tr>
-      <td><br>
+      <td>${SERVER_LANGUAGE}=&nbsp;<br>
+      </td><td>&lt;NOTSET&gt;<br>
       </td>
-      <td><br>
-      </td>
+      
       <td><br>
       </td>
       <td><br>
@@ -549,7 +551,7 @@ th {
       
       
       
-    </tr><tr><td></td><td>${arg} =<br>
+    </tr><tr><td></td><td>Run Keyword If</td><td>"${SERVER_LANGUAGE}" == "jython22"</td><td>Set Tags</td><td>non-critical</td></tr><tr><td></td><td>${arg} =<br>
       </td><td>Evaluate<br>
       </td><td>'\\x01'<br>
       </td><td></td></tr><tr><td></td><td>String As Argument</td><td>${arg}</td><td></td><td></td></tr>
@@ -602,12 +604,12 @@ th {
     </td>
   </tr>
   <tr>
-    <td><br>
+    <td>Set Server Language
+    </td><td>${SERVER_LANGUAGE} =<br>
+    </td><td>Get Server Language<br>
     </td>
-    <td><br>
-    </td>
-    <td><br>
-    </td>
+    
+    
     <td><br>
     </td>
     <td><br>
@@ -616,10 +618,8 @@ th {
   <tr>
     <td><br>
     </td>
-    <td><br>
-    </td>
-    <td><br>
-    </td>
+    <td>Set Suite Variable</td><td>${SERVER_LANGUAGE}&nbsp;</td>
+    
     <td><br>
     </td>
     <td><br>
