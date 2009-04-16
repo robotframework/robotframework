@@ -201,7 +201,7 @@ message is provided, the default error message :msg:`Keyword timeout
         Keyword             Action                 Argument                           Argument
    =================  =================  ==========================  ===========================================
    Timed Keyword      [Documentation]    Set only the timeout value  and not the custom message.
-   \                  [Timeout]          1 minute 42 second s        \
+   \                  [Timeout]          1 minute 42 seconds        \
    \                  Do Something       \                           \
    \                  Do Something Else  \                           \
    \                  \                  \                           \
