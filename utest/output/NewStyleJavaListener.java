@@ -10,7 +10,7 @@ public class NewStyleJavaListener {
     }
 
 	public void endSuite(String name, Map attrs) {
-        System.out.println("SUITE END: " + attrs.get("status") + " " + attrs.get("message"));
+        System.out.println("SUITE END: " + attrs.get("status") + " " + attrs.get("statistics"));
     }
 
 	public void startTest(String name, Map attrs) {
