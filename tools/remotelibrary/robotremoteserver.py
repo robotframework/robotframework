@@ -90,7 +90,6 @@ class RobotRemoteServer(SimpleXMLRPCServer):
             args.append('*%s' % varargs)
         return args
 
-    # TODO: Not tested
     def get_keyword_documentation(self, name):
         return inspect.getdoc(self._get_keyword(name)) or ''
 
