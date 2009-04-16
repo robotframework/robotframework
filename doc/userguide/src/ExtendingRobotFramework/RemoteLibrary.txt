@@ -11,11 +11,37 @@ xxx
 Introduction
 ~~~~~~~~~~~~
 
+* Allows having libs on other machines - reason for the name
+
+* Allows writing libs using any language that has a support for XML-RPC
+
+  - Provided support for Python/Jython and Ruby
+  - Possible for ...
+
+
 .. figure:: src/ExtendingRobotFramework/remote.png
 
    Architecture with Remote library
 
 
-
 Taking Remote library into use
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+* Starting remote server
+* Importing Remote is similar to importing any other RF lib
+
+  - Just need to give URL pointing to the remote server
+  - Default port is 8270 (= RF)
+
+
+Creating libraries on top of the remote server
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+* Currently support provided only for Python/Jython and Ruby
+
+
+Creating new remote servers
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+* Existing Python and Ruby servers used as examples
+
