@@ -44,9 +44,10 @@ class RobotRemoteServer<XMLRPC::Server
     begin
       return_value = @library.send(name, *args)
       result[:return] = handle_return_value(return_value)
-    rescue => exception
+    rescue Exception => exception
       result[:status] = 'FAIL'
       result[:error] = exception.message
+      result[:traceback] = "Traceback:\n" + exception.backtrace.join("\n")
     end
     result[:output] = restore_stdout
     return result
