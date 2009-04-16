@@ -101,9 +101,11 @@ Thus, for example, :code:`startSuite` is a synonym to :code:`start_suite`.
    |               |                  |  * starttime: execution start time               |
    |               |                  |  * endtime: execution end time                   |
    |               |                  |  * elapsetime: execution time in milliseconds    |
+   |               |                  |    as an integer                                 |
    |               |                  |  * status: either PASS or FAIL                   |
    |               |                  |  * statistics: suite statistics (number of       | 
    |               |                  |    passed and failed tests in the suite)         |
+   |               |                  |    as a string                                   |
    |               |                  |  * message: error message, if the suite setup    | 
    |               |                  |    or teardown has failed, empty otherwise       |
    +---------------+------------------+--------------------------------------------------+
@@ -117,6 +119,9 @@ Thus, for example, :code:`startSuite` is a synonym to :code:`start_suite`.
    |               |                  |  * doc: test case documentation                  |
    |               |                  |  * longname: test name including parent suites   |
    |               |                  |  * starttime: execution start time               |
+   |               |                  |  * endtime: execution end time                   |
+   |               |                  |  * elapsetime: execution time in milliseconds    |
+   |               |                  |    as an integer                                 |
    |               |                  |  * tags: test case tags as a list of strings     |
    |               |                  |  * status: either PASS or FAIL                   |
    |               |                  |  * message: contains an error message if the     |
@@ -130,6 +135,9 @@ Thus, for example, :code:`startSuite` is a synonym to :code:`start_suite`.
    | end_keyword   | name, attributes | Keys in the attributes dictionary:               | 
    |               |                  |  * doc: keyword documentation                    |
    |               |                  |  * starttime: execution start time               |
+   |               |                  |  * endtime: execution end time                   |
+   |               |                  |  * elapsetime: execution time in milliseconds    |
+   |               |                  |    as an integer                                 |
    |               |                  |  * args: keyword arguments as a list of strings  |
    |               |                  |  * status: either PASS or FAIL                   |
    +---------------+------------------+--------------------------------------------------+
