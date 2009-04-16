@@ -13,9 +13,6 @@
 #  limitations under the License.
 
 
-# TODO: assertions, checks, generate html and check, write internal tests
-# TODO: `` comments
-# TODO: Check documentation and use short docs. Is some more examples needed?
 import re
 from fnmatch import fnmatchcase
 import string as STRING
@@ -65,8 +62,8 @@ class String:
         lines, from `start` to `end`. Line numbering starts from 0. 
 
         Example:
-        | @{lines} = | Split to lines | ${manylines} |
-        | @{first two lines} = | Split to lines | ${manylines} | 0 | 1 |
+        | @{lines} = | Split To Lines | ${manylines} |
+        | @{first two lines} = | Split To Lines | ${manylines} | 0 | 1 |
         """
         lines = string.splitlines()
         start = self._convert_to_int(start, 'start')
@@ -191,6 +188,7 @@ class String:
         return p.sub(replace_with, string, count)
 
     def split_string(self, string, separator=None, max_split=-1):
+        #TODO: Improve short doc
         """Return a list of the words in the `string`.
 
         Uses `separator` as the delimiter string. If `separator` is not
@@ -205,13 +203,14 @@ class String:
         return string.split(separator, max_split)
 
     def split_string_from_right(self, string, separator=None, max_split=-1):
+        #TODO: Improve short doc
         """Return a list of the words in the `string`, starting from right.
 
         Uses `separator` as the delimiter string.
         If max_split is given, at most `max_split` splits are done from right.
         (thus, the list will have at most 'max_split+1' elements) 
         """
-        # Jython does not have rsplit for string and therefore 
+        # Jython does not have rsplit for string
         reversed = self.split_string(string[::-1], separator, max_split)
         reversed = [ r[::-1] for r in reversed ]
         return reversed[::-1]
@@ -258,26 +257,6 @@ class String:
             if msg is None:
                 msg = "Given item '%s' is a string" % item
             raise AssertionError(msg)
-    
-    def get_columns(self, string, column_number, delimiter=None):
-        """
-        Takes `string`, splits into columns using delimiter.
-        
-        Returns the columns as list.
-        See `split_string` for the description of default delimiter.
-        """
-        if not delimiter:
-            raise AssertionError("Delimiter should not be empty")
-        column_number = self._convert_to_int(column_number, 'column_number')
-
-        columns = []
-        for line in string.splitlines():
-            items = line.split(delimiter)
-            try:
-                columns.append(items[column_number])
-            except IndexError:
-                columns.append('')
-        return columns
 
     def get_line(self, string, number):
         """
@@ -312,5 +291,5 @@ class String:
         try:
             return int(value)
         except ValueError:
-            raise ValueError("Cannot convert '%s' value '%s' to an integer" % (name, value))
+            raise ValueError("Cannot convert argument %s's value '%s' to an integer!" % (name, value))
 
