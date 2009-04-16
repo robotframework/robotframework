@@ -70,7 +70,7 @@ be found in User Guide of Robot Framework 2.0.4.
 .. note:: A listener must have attribute :code:`ROBOT_LISTENER_API_VERSION` 
   defined in order to be recognized as a new style listener. Value of the
   :code:`ROBOT_LISTENER_API_VERSION` attribute must be 2, either as a string or
-  as an integer.
+  as an integer. The examples below are implemented as new style listeners.
 
 
 Listener interface method signatures
