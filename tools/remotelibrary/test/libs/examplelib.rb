@@ -21,18 +21,57 @@ class RubyLibraryExample
     'returned string'
   end
 
-  # Errors
+  # Logging
 
+  def one_message_without_level
+	puts 'Hello, world!'
+  end	 
+
+  def multiple_messages_with_different_levels
+		puts 'Info message'
+		puts '*DEBUG* Debug message'
+		puts '*INFO* Second info'
+		puts 'this time with two lines'
+		puts '*INFO* Third info'
+		puts '*TRACE* This is ignored'
+		puts '*WARN* Warning'
+  end
+  
+  def logging_and_failing
+		puts '*INFO* This keyword will fail!'
+    puts '*WARN* Run for your lives!!'
+    raise RuntimeError, 'Too slow'
+	end
+
+	def logging_and_returning
+		puts 'Logged message'
+    'Returned value'
+	end
+
+	def log_control_char
+  	puts "\x01"
+	end
+	
+  # Failures
+
+  def base_exception
+    raise Exception, 'My message'
+  end
+
+  def exception_without_message
+	raise Exception
+  end
+
+  def runtime_error
+	raise RuntimeError, 'Error message'
+  end
+ 
   def name_error
     non_existing
   end
 
   def attribute_error
-    @non_existing
-  end
-
-  def index_error
-    [][0]
+    ''.non_existing
   end
 
   def zero_division
@@ -42,6 +81,13 @@ class RubyLibraryExample
   def custom_exception
     raise MyException, 'My message'
   end
+
+  def failure_deeper(rounds=10)
+    if rounds == 1
+      raise RuntimeError, 'Finally failing'
+	end
+	failure_deeper(rounds-1)
+  end  
 
   # Argument counts
 
@@ -109,11 +155,11 @@ class RubyLibraryExample
   end
 
   def boolean_true_as_argument(arg)
-    should_be_equal(arg, true)
+    should_be_equal(arg, true, 1)
   end
 
   def boolean_false_as_argument(arg)
-    should_be_equal(arg, false)
+    should_be_equal(arg, false, 0)
   end
 
   def none_as_argument(arg)
@@ -125,7 +171,7 @@ class RubyLibraryExample
   end
 
   def list_as_argument(arg)
-    should_be_equal(arg, ['One', -2, false])
+    should_be_equal(arg, ['One', -2, false], ['One', -2, 0])
   end
 
   def empty_list_as_argument(arg)
@@ -142,7 +188,8 @@ class RubyLibraryExample
 
   def nested_list_as_argument(arg)
      exp = [ [true, false], [[1, '', '<MyObject>', {}]] ]
-    should_be_equal(arg, exp)
+     exp2 = [ [1, 0], [[1, '', '<MyObject>', {}]] ]
+    should_be_equal(arg, exp, exp2)
   end
 
   def dictionary_as_argument(arg)
@@ -154,7 +201,7 @@ class RubyLibraryExample
   end
 
   def dictionary_with_non_string_keys_as_argument(arg)
-    should_be_equal(arg, {'1'=>2, 'False'=>true})
+    should_be_equal(arg, {'1'=>2, ''=>true}, {'1'=>2, ''=>1})
   end
 
   def dictionary_containing_none_as_argument(arg)
@@ -166,9 +213,11 @@ class RubyLibraryExample
   end
 
   def nested_dictionary_as_argument(arg)
-    exp = { '1'=>{'True'=>false},
+    exp = { '1'=>{''=>false},
             '2'=>{'A'=>{'n'=>''}, 'B'=>{'o'=>'<MyObject>', 'e'=>{}}} }
-    should_be_equal(arg, exp)
+    exp2 = { '1'=>{''=>0},
+            '2'=>{'A'=>{'n'=>''}, 'B'=>{'o'=>'<MyObject>', 'e'=>{}}} }
+    should_be_equal(arg, exp, exp2)
   end
 
   # Return values
@@ -265,6 +314,10 @@ class RubyLibraryExample
       2=>{'A'=>{'n'=>nil}, 'B'=>{'o'=>MyObject.new, 'e'=>{}}} }
   end
 
+	def return_control_char
+  	"\x01"
+	end
+	
   @@attribute = "Not keyword"
 
   private 
@@ -272,8 +325,9 @@ class RubyLibraryExample
   def private_method
   end
 
-  def should_be_equal(arg, exp)
-    if arg != exp
+  def should_be_equal(arg, exp, exp2=nil)
+		# exp2 is used because true/false are converted to 1/0 with Jython2.2
+    if arg != exp and arg !=exp2
       raise "#{arg} != #{exp}"
     end    
   end

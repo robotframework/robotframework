@@ -128,7 +128,7 @@ _STYLE = '''
     float: left;
   }
   .times {
-    width: 26%;
+    width: 29%;
     float: right;
     text-align: right;
   }

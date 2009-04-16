@@ -171,11 +171,11 @@ def format_time(timetuple, daysep='', daytimesep=' ', timesep=':',
     day = daysep.join(daytimeparts[:3])
     time_ = timesep.join(daytimeparts[3:6])    
     millis = millissep and '%s%03d' % (millissep, timetuple[6]) or ''
-    gmt = gmtsep and '%s%s' % (gmtsep, _diff_to_gmt()) or ''
-    return day + daytimesep + time_ + millis + gmt
+    return day + daytimesep + time_ + millis + _diff_to_gmt(gmtsep)
 
-
-def _diff_to_gmt():
+def _diff_to_gmt(sep):
+    if not sep:
+        return ''
     if time.altzone == 0:
         sign = ''
     elif time.altzone > 0:
@@ -184,7 +184,7 @@ def _diff_to_gmt():
         sign = '+'
     minutes = abs(time.altzone) / 60.0
     hours, minutes = divmod(minutes, 60)
-    return 'GMT %s%02d:%02d' % (sign, hours, minutes)
+    return '%sGMT%s%s%02d:%02d' % (sep, sep, sign, hours, minutes)
 
 
 def get_time(format='timestamp', time_=None):
