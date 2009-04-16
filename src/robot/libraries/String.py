@@ -232,7 +232,7 @@ class String:
     def split_string(self, string, separator=None, max_split=-1):
         """Splits the `string` using `separator` as a delimiter string.
 
-        If a `separator` is not given, any whitepace string is a
+        If a `separator` is not given, any whitespace string is a
         separator. In that case also possible consecutive whitespace
         as well as leading and trailing whitespace is ignored.
         
@@ -289,7 +289,7 @@ class String:
         return string.split(marker)[-1]
 
     def generate_random_string(self, length=8, chars='[LETTERS][NUMBERS]'):
-        """Generates a string with a desired `lenght` from the given `chars`.
+        """Generates a string with a desired `length` from the given `chars`.
 
         The population sequence `chars` contains the characters to use
         when generating the random string. It can contain any
@@ -338,8 +338,8 @@ class String:
     def should_be_string(self, item, msg=None):
         """Fails if the given `item` is not a string.
 
-        The defaul error message can be overridded with the optional
-        `msg` argumet.
+        The default error message can be overridden with the optional
+        `msg` argument.
         """
         if not isinstance(item, basestring):
             if not msg:
@@ -349,8 +349,8 @@ class String:
     def should_not_be_string(self, item, msg=None):
         """Fails if the given `item` is a string.
 
-        The defaul error message can be overridded with the optional
-        `msg` argumet.
+        The default error message can be overridden with the optional
+        `msg` argument.
         """
         if isinstance(item, basestring):
             if not msg:
