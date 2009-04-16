@@ -1,15 +1,16 @@
 #!/usr/bin/env python
 """Script for running the remote library tests against different servers.
 
-Usage 1: run.py lang [[options] datasources]
+Usage 1: run.py language[:runner] [[options] datasources]
 
-Valid languages are 'python', 'jython' or 'ruby'. By default, all tests
-under 'test/data' directory are run, but this can be changed by providing
+Valid languages are 'python', 'jython' or 'ruby', and runner can
+either by 'pybot' (default) or 'jybot'. By default, all tests under
+'test/data' directory are run, but this can be changed by providing
 options, which can be any Robot Framework command line options.
 
 Usage 2: run.py stop [port]
 
-Stops remote server in specified port. Default port is 8270..
+Stops remote server in specified port. Default port is 8270.
 """
 import sys
 import xmlrpclib
@@ -29,7 +30,6 @@ os.mkdir(OUTPUTDIR)
 class Library:
 
     def __init__(self, language=None):
-        self.language = language
         if language:
             self._start_library(language)
             if not self.test(attempts=7):
@@ -82,24 +82,29 @@ if __name__ == '__main__':
     if len(sys.argv) < 2:
         print __doc__
         sys.exit(1)
-    if sys.argv[1] == 'stop':
+    mode = sys.argv[1]
+    if mode == 'stop':
         Library().stop(*sys.argv[2:])
         sys.exit()
-    
-    lib = Library(sys.argv[1])
-    include = lib.language if lib.language != 'jython' else 'python'
+
+    if ':' in mode:
+        lang, runner = mode.split(':')
+    else:
+        lang, runner = mode, 'pybot'
+    lib = Library(lang)
+    include = lang if lang != 'jython' else 'python'
     output = os.path.join(OUTPUTDIR, 'output.xml')
-    args = ['pybot', '--log', 'NONE', '--report', 'NONE', '--output', output,
-            '--name', lib.language, '--include', include,
-            '--noncritical', 'non-critical']
+    args = [runner, '--log', 'NONE', '--report', 'NONE', '--output', output,
+            '--name', mode, '--include', include, '--noncritical', 'non-critical']
     if len(sys.argv) == 2:
         args.append(os.path.join(REMOTEDIR, 'test', 'atest'))
     else:
         args.extend(sys.argv[2:])
+    print 'Running tests with command:\n%s' % ' '.join(args) 
     subprocess.call(args)
     lib.stop()
     print
-    checker = os.path.join(REMOTEDIR,'..','statuschecker','statuschecker.py')
+    checker = os.path.join(REMOTEDIR, '..', 'statuschecker', 'statuschecker.py')
     subprocess.call(['python', checker, output])
     rc = subprocess.call(['rebot', '--noncritical', 'non-critical',
                           '--outputdir', OUTPUTDIR, output])

@@ -81,18 +81,7 @@ th {
       <td><br>
       </td>
     </tr>
-    <tr>
-      <td>Suite Setup<br>
-      </td>
-      <td>Set Server Language<br>
-      </td>
-      <td><br>
-      </td>
-      <td><br>
-      </td>
-      <td><br>
-      </td>
-    </tr>
+    <tr><td>Resource</td><td>resource.html</td><td></td><td></td><td></td></tr>
   </tbody>
 </table>
 <table border="1">
@@ -117,10 +106,8 @@ th {
       </td>
     </tr>
     <tr>
-      <td>${SERVER_LANGUAGE}=&nbsp;<br>
-      </td>
-      <td>&lt;NOTSET&gt;<br>
-      </td>
+      <td></td>
+      <td></td>
       <td><br>
       </td>
       <td><br>
@@ -158,7 +145,7 @@ th {
       <td><br>
       </td>
     </tr>
-    <tr><td></td><td>Run Keyword If</td><td>"${SERVER_LANGUAGE}" == "jython22"</td><td>Set Tags</td><td>non-critical</td></tr><tr>
+    <tr><td></td><td>Run Keyword If Server Or Client Is Jython22</td><td>Set Tags</td><td>non-critical</td><td></td></tr><tr>
       <td><br>
       </td>
       <td>Return Value Should Be</td>
@@ -485,12 +472,12 @@ th {
       <td style="vertical-align: top;"><br>
       </td>
     </tr>
-    <tr><td></td><td>${exp} =</td><td>Set Variable If</td><td>"${SERVER_LANGUAGE}" == "jython22"</td><td></td></tr><tr><td></td><td>...</td><td>{'1': 2, '0': 1}</td><td>{'1': 2, 'False': True}</td><td></td></tr><tr>
+    <tr>
       <td><br>
       </td>
       <td>Return Value Should Be</td>
       <td>Return&nbsp;Dictionary&nbsp;With Non String Keys</td>
-      <td>${exp}</td>
+      <td>{'1': 2, '': 1}</td>
       <td><br>
       </td>
     </tr>
@@ -556,18 +543,15 @@ key'}</td>
       <td style="vertical-align: top;"><br>
       </td>
     </tr>
-    <tr><td></td><td>${exp} =</td><td>Set Variable If</td><td>"${SERVER_LANGUAGE}" == "jython22"</td><td></td></tr><tr><td></td><td>...</td><td>{'1': {'1': 0},<br>
-&nbsp; '2': {'A': {'n': ''},<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp; 'B': {'o': '&lt;MyObject&gt;',
-'e': {}}} }</td><td>{'1': {'True': False},<br>
-&nbsp; '2': {'A': {'n': ''},<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp; 'B': {'o': '&lt;MyObject&gt;',
-'e': {}}} }</td><td></td></tr><tr>
+    <tr>
       <td><br>
       </td>
       <td>Return Value Should Be</td>
       <td>Return Nested Dictionary</td>
-      <td>${exp}</td>
+      <td>{'1': {'': False},<br>
+&nbsp; '2': {'A': {'n': ''},<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp; 'B': {'o': '&lt;MyObject&gt;',
+'e': {}}} }</td>
       <td><br>
       </td>
     </tr>
@@ -606,7 +590,7 @@ Original error was: ExpatError: .*
       </td>
       <td><br>
       </td>
-    </tr><tr><td></td><td>Run Keyword If</td><td>"${SERVER_LANGUAGE}" == "jython22"</td><td>Set Tags</td><td>non-critical</td></tr><tr><td></td><td>Return Control Char</td><td></td><td></td><td></td></tr>
+    </tr><tr><td></td><td>Run Keyword If Server Or Client Is Jython22</td><td>Set Tags</td><td>non-critical</td><td></td></tr><tr><td></td><td>Return Control Char</td><td></td><td></td><td></td></tr>
   </tbody>
 </table>
 <table border="1">
@@ -652,18 +636,7 @@ Original error was: ExpatError: .*
     <td><br>
     </td>
   </tr>
-  <tr><td></td><td></td><td></td><td></td><td></td></tr><tr>
-    <td>Set Server Language
-    </td>
-    <td>${SERVER_LANGUAGE} =<br>
-    </td>
-    <td>Get Server Language<br>
-    </td>
-    <td><br>
-    </td>
-    <td><br>
-    </td>
-  </tr><tr><td></td><td>Set Suite Variable</td><td>${SERVER_LANGUAGE}&nbsp;</td><td></td><td></td></tr>
+  <tr><td></td><td></td><td></td><td></td><td></td></tr>
   
   
   </thead> <tbody>

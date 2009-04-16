@@ -11,6 +11,6 @@ LIST_WITH_OBJECTS = [MyObject(1), MyObject(2)]
 NESTED_LIST = [ [True, False], [[1, None, MyObject(), {}]] ]
 NESTED_TUPLE = ( (True, False), [(1, None, MyObject(), {})] )
 DICT_WITH_OBJECTS = {'As value': MyObject(1), MyObject(2): 'As key'}
-NESTED_DICT = { 1: {True: False},
+NESTED_DICT = { 1: {None: False},
                 2: {'A': {'n': None},
                     'B': {'o': MyObject(), 'e': {}}} }

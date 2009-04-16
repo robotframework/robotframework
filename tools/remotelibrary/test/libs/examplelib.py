@@ -183,7 +183,7 @@ class RemoteTestLibrary:
         self._should_be_equal(arg, {})
 
     def dictionary_with_non_string_keys_as_argument(self, arg):
-        self._should_be_equal(arg, {'1': 2, 'False': True})
+        self._should_be_equal(arg, {'1': 2, '': True})
 
     def dictionary_containing_none_as_argument(self, arg):
         self._should_be_equal(arg, {'As value': '', '': 'As key'})
@@ -192,7 +192,7 @@ class RemoteTestLibrary:
         self._should_be_equal(arg, {'As value': '<MyObject1>', '<MyObject2>': 'As key'})
 
     def nested_dictionary_as_argument(self, arg):
-        exp = { '1': {'True': False},
+        exp = { '1': {'': False},
                 '2': {'A': {'n': ''}, 'B': {'o': '<MyObject>', 'e': {}}} }
         self._should_be_equal(arg, exp)
 
@@ -269,7 +269,7 @@ class RemoteTestLibrary:
         return {}
 
     def return_dictionary_with_non_string_keys(self):
-        return {1: 2, False: True}
+        return {1: 2, None: True}
 
     def return_dictionary_containing_none(self):
         return {'As value': None, None: 'As key'}
@@ -278,7 +278,7 @@ class RemoteTestLibrary:
         return {'As value': MyObject(1), MyObject(2): 'As key'}
 
     def return_nested_dictionary(self):
-        return { 1: {True: False},
+        return { 1: {None: False},
                  2: {'A': {'n': None}, 'B': {'o': MyObject(), 'e': {}}} }
 
     def return_control_char(self):
