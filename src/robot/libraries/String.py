@@ -77,7 +77,7 @@ class String:
         start = self._convert_to_index(start, 'start')
         end = self._convert_to_index(end, 'end')
         lines = string.splitlines()[start:end]
-        print '*INF* %d lines returned' % len(lines)
+        print '*INFO* %d lines returned' % len(lines)
         return lines
 
     def get_lines_containing_string(self, string, pattern, case_insensitive=False):
@@ -197,7 +197,7 @@ class String:
         | ${str} = | Replace String With Regexp | ${str} | 20\\d\\d-\\d\\d-\\dd\\d | <DATE>  | 2  |
         """
         count = self._convert_to_index(count, 'count')
-        if count <= 0: count = -1
+        if count <= 0: count = 0
         return re.sub(pattern, replace_with, string, count)
 
     def split_string(self, string, separator=None, max_split=-1):
