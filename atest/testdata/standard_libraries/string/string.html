@@ -1,70 +1,67 @@
-
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html>
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<meta name="generator" content="RobotIDE" /> 
+<html><head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="generator" content="RobotIDE">
 <style type="text/css">
 html {
-  font-family: Arial,Helvetica,sans-serif;
-  background-color: white;
-  color: black;
+font-family: Arial,Helvetica,sans-serif;
+background-color: white;
+color: black;
 }
 p {
-  max-width: 60em;
+max-width: 60em;
 }
 table {
-  border-collapse: collapse;
-  empty-cells: show;
-  margin: 1em 0em;
-  border: 0.1em solid black;
+border-collapse: collapse;
+empty-cells: show;
+margin: 1em 0em;
+border: 0.1em solid black;
 }
 th, td {
-  border-style: solid;
-  border-width: 0.05em 0.1em;
-  border-color: black;
-  padding: 0.1em 0.2em;
-  height: 1.5em;
+border-style: solid;
+border-width: 0.05em 0.1em;
+border-color: black;
+padding: 0.1em 0.2em;
+height: 1.5em;
 }
 th {
-  background-color: rgb(192, 192, 192);
-  color: black;
-  border-width: 0.1em;
-  font-weight: bold;
-  text-align: center;
-  text-transform: capitalize;
-  letter-spacing: 0.1em;
+background-color: rgb(192, 192, 192);
+color: black;
+border-width: 0.1em;
+font-weight: bold;
+text-align: center;
+text-transform: capitalize;
+letter-spacing: 0.1em;
 }
 /* Widths of named columns */
 col.name {
-  width: 10em;
+width: 10em;
 }
 .action, .value, .arg {
-  width: 15em;
+width: 15em;
 }
-/* Properties for the name column 
-- td:first-child should work in CSS 2.1 avare browsers (tested in Firefox)
+/* Properties for the name column - td:first-child should work in CSS 2.1 avare browsers (tested in Firefox)
 - col.name is against specs but works in IE
 */
 td:first-child, col.name {
-  background-color: rgb(240, 240, 240);
-  text-transform: capitalize;
-  letter-spacing: 0.1em;
+background-color: rgb(240, 240, 240);
+text-transform: capitalize;
+letter-spacing: 0.1em;
 }
 /* required for IE */
 th {
-  font-style: normal;
+font-style: normal;
 }
-</style>
-<title>String</title>
+</style><title>String</title>
+
 </head>
+
+
 <body>
 <h1>String</h1>
-
 <table border="1">
-<colgroup span="99">
-<col class="name">
-<col class="value" span="4"></colgroup>
+<colgroup span="99"><col class="name"><col class="value" span="4"></colgroup>
+<tbody>
 <tr>
 <th>Setting</th>
 <th>Value</th>
@@ -100,12 +97,11 @@ th {
 <td></td>
 <td></td>
 </tr>
+</tbody>
 </table>
-
 <table border="1">
-<colgroup span="99">
-<col class="name">
-<col class="value" span="4"></colgroup>
+<colgroup span="99"><col class="name"><col class="value" span="4"></colgroup>
+<tbody>
 <tr>
 <th>Variable</th>
 <th>Value</th>
@@ -176,13 +172,11 @@ th {
 <td></td>
 <td></td>
 </tr>
+</tbody>
 </table>
-
 <table border="1">
-<colgroup span="99">
-<col class="name">
-<col class="action">
-<col class="arg" span="3"></colgroup>
+<colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
+<tbody>
 <tr>
 <th>Test Case</th>
 <th>Action</th>
@@ -237,7 +231,7 @@ th {
 <td>@{result} =</td>
 <td>Split String</td>
 <td>${NSN}</td>
-<td>\_</td>
+<td>_</td>
 </tr>
 <tr>
 <td></td>
@@ -262,6 +256,119 @@ th {
 </tr>
 <tr>
 <td></td>
+<td>Length Should be</td>
+<td>${result}</td>
+<td>3</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Split String With Whitespaces and Separator Is None</td>
+<td>@{result} =</td>
+<td>Split String</td>
+<td>hello\nworld\t${SPACE*5}again</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should be equal</td>
+<td>@{result}[0]</td>
+<td>hello</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should be equal</td>
+<td>@{result}[1]</td>
+<td>world</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should be equal</td>
+<td>@{result}[2]</td>
+<td>again</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Length Should be</td>
+<td>${result}</td>
+<td>3</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Split String not Found</td>
+<td>@{result} =</td>
+<td>Split String</td>
+<td>${NSN}</td>
+<td>NSN</td>
+</tr>
+<tr>
+<td></td>
+<td>Length Should be</td>
+<td>${result}</td>
+<td>1</td>
+<td></td>
+</tr>
+<tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Split String&nbsp;With Invalid Count</td><td>[Documentation]</td><td>FAIL ValueError:&nbsp;Cannot convert&nbsp;
+'count' argument&nbsp;'invalid' to an integer</td><td></td><td></td></tr><tr>
+<td></td>
+<td>@{result} =</td><td>Split String</td><td>${NSN}</td><td>NSN</td>
+
+
+
+</tr>
+<tr><td></td><td>...</td><td>invalid</td><td></td><td></td></tr><tr>
+<td>Split String From Right</td>
+<td>${result} =</td>
+<td>Split String From Right</td>
+<td>${NSN}</td>
+<td>_</td>
+</tr>
+<tr>
+<td></td>
+<td>Should Be Equal As Strings</td>
+<td>${result}</td>
+<td>[u'nokia', u'siemens', u'networks']</td>
+<td></td>
+</tr>
+<tr><td></td><td></td><td></td><td></td><td></td></tr><tr>
+<td>Split String From Right With Count</td>
+<td>${result} =</td>
+<td>Split String From Right</td>
+<td>${NSN}</td>
+<td>_</td>
+</tr>
+<tr>
+<td></td>
+<td>...</td>
+<td>1</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should Be Equal As Strings</td>
+<td>${result}</td>
+<td>[u'nokia_siemens', u'networks']</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
 <td></td>
 <td></td>
 <td></td>
@@ -279,55 +386,6 @@ th {
 <td>Length Should be</td>
 <td>${result}</td>
 <td>10</td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td>Get Columns</td>
-<td>${result} =</td>
-<td>Get Columns</td>
-<td>${TEXT IN COLUMNS}</td>
-<td>0</td>
-</tr>
-<tr>
-<td></td>
-<td>...</td>
-<td>\t</td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td>Should be equal</td>
-<td>${result}</td>
-<td>${FIRST COLUMN}</td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td>${result} =</td>
-<td>Get Columns</td>
-<td>${TEXT IN COLUMNS}</td>
-<td>3</td>
-</tr>
-<tr>
-<td></td>
-<td>...</td>
-<td>\t</td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td>Should be equal</td>
-<td>${result}</td>
-<td>${FOURTH COLUMN}</td>
 <td></td>
 </tr>
 <tr>
@@ -376,7 +434,7 @@ th {
 <td>Get Line Count</td>
 <td>${result} =</td>
 <td>Get Line Count</td>
-<td>\</td>
+<td>${EMPTY}</td>
 <td></td>
 </tr>
 <tr>
@@ -430,6 +488,13 @@ th {
 </tr>
 <tr>
 <td></td>
+<td>Length Should Be</td>
+<td>${result}</td>
+<td>2</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
 <td>Should be equal</td>
 <td>@{result}[0]</td>
 <td>${FIRST LINE}</td>
@@ -441,6 +506,170 @@ th {
 <td>@{result}[1]</td>
 <td>${SECOND LINE}</td>
 <td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Split To Lines With Start Only</td>
+<td>@{result} =</td>
+<td>Split To Lines</td>
+<td>${TEXT IN COLUMNS}</td>
+<td>1</td>
+</tr>
+<tr>
+<td></td>
+<td>Should be equal</td>
+<td>@{result}[0]</td>
+<td>${SECOND LINE}</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Split To Lines With Start And End</td>
+<td>@{result} =</td>
+<td>Split To Lines</td>
+<td>${TEXT IN COLUMNS}</td>
+<td>0</td>
+</tr>
+<tr>
+<td></td>
+<td>...</td>
+<td>1</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Length Should Be</td>
+<td>${result}</td>
+<td>1</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should be equal</td>
+<td>@{result}[0]</td>
+<td>${FIRST LINE}</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Split To Lines With End Only</td>
+<td>@{result} =</td>
+<td>Split To Lines</td>
+<td>${TEXT IN COLUMNS}</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>...</td>
+<td></td>
+<td>1</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Length Should Be</td>
+<td>${result}</td>
+<td>1</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should be equal</td>
+<td>@{result}[0]</td>
+<td>${FIRST LINE}</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Split To Lines With Negative Values</td>
+<td>@{result} =</td>
+<td>Split To Lines</td>
+<td>${TEXT IN COLUMNS}</td>
+<td>-1</td>
+</tr>
+<tr>
+<td></td>
+<td>Length Should Be</td>
+<td>${result}</td>
+<td>1</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should be equal</td>
+<td>@{result}[0]</td>
+<td>${SECOND LINE}</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Split To Lines With Invalid Start</td>
+<td>[Documentation]</td>
+<td>FAIL ValueError:&nbsp;Cannot convert&nbsp;
+'start' argument&nbsp;'invalid' to an integer</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Split To Lines</td>
+<td>${TEXT IN COLUMNS}</td>
+<td>invalid</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Split To Lines With Invalid End</td>
+<td>[Documentation]</td>
+<td>FAIL&nbsp;ValueError: Cannot convert&nbsp;
+'end' argument&nbsp;'invalid' to an integer</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Split To Lines</td>
+<td>${TEXT IN COLUMNS}</td>
+<td>0<br>
+</td>
+<td>invalid</td>
 </tr>
 <tr>
 <td></td>
@@ -521,6 +750,27 @@ th {
 </tr>
 <tr>
 <td></td>
+<td>${result} =</td>
+<td>Replace String</td>
+<td>Robot Framework</td>
+<td>o</td>
+</tr>
+<tr>
+<td></td>
+<td>...</td>
+<td>0</td>
+<td>2</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should be equal</td>
+<td>${result}</td>
+<td>R0b0t Framework</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
 <td></td>
 <td></td>
 <td></td>
@@ -564,7 +814,7 @@ th {
 <tr>
 <td></td>
 <td>...</td>
-<td>\</td>
+<td>${EMPTY}</td>
 <td></td>
 <td></td>
 </tr>
@@ -573,6 +823,140 @@ th {
 <td>Should be equal</td>
 <td>${result}</td>
 <td>Robot${SPACE}</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Replace String With Invalid Count</td>
+<td>[Documentation]</td>
+<td>FAIL ValueError: Cannot convert&nbsp; 'count'
+argument&nbsp;'invalid' to an integer</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Replace String</td>
+<td>abc</td>
+<td>b</td>
+<td>c</td>
+</tr>
+<tr>
+<td></td>
+<td>...</td>
+<td>invalid</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Replace String With RegExp</td>
+<td>${result} =</td>
+<td>Replace String With RegExp</td>
+<td>Robot Framework</td>
+<td>F.*k</td>
+</tr>
+<tr>
+<td></td>
+<td>...</td>
+<td>Class</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should be equal</td>
+<td>${result}</td>
+<td>Robot Class</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>${result} =</td>
+<td>Replace String With RegExp</td>
+<td>Robot Framework</td>
+<td>o\\w</td>
+</tr>
+<tr>
+<td></td>
+<td>...</td>
+<td>foo</td>
+<td>2</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should be equal</td>
+<td>${result}</td>
+<td>Rfoofoo Framework</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Replace String With RegExp Not Found</td>
+<td>${result} =</td>
+<td>Replace String With RegExp</td>
+<td>Robot Framework</td>
+<td>Fnot.*k</td>
+</tr>
+<tr>
+<td></td>
+<td>...</td>
+<td>Class</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should be equal</td>
+<td>${result}</td>
+<td>Robot Framework</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Replace String With RegExp Count Is Invalid</td>
+<td>[Documentation]</td>
+<td>FAIL ValueError: Cannot convert&nbsp; 'count'
+argument&nbsp;'invalid' to an integer</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Replace String With RegExp</td>
+<td>Robot Framework</td>
+<td>.*</td>
+<td>foo</td>
+</tr>
+<tr>
+<td></td>
+<td>...</td>
+<td>invalid</td>
+<td></td>
 <td></td>
 </tr>
 <tr>
@@ -695,61 +1079,17 @@ th {
 <td></td>
 </tr>
 <tr>
-<td>Split String From Right</td>
-<td>${result} =</td>
-<td>Split String From Right</td>
-<td>${NSN}</td>
-<td>_</td>
-</tr>
-<tr>
-<td></td>
-<td>Should Be Equal As Strings</td>
-<td>${result}</td>
-<td>[u'nokia', u'siemens', u'networks']</td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td>${result} =</td>
-<td>Split String From Right</td>
-<td>${NSN}</td>
-<td>_</td>
-</tr>
-<tr>
-<td></td>
-<td>...</td>
-<td>1</td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td>Should Be Equal As Strings</td>
-<td>${result}</td>
-<td>[u'nokia_siemens', u'networks']</td>
-<td></td>
-</tr>
-<tr>
 <td></td>
 <td></td>
 <td></td>
 <td></td>
 <td></td>
 </tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
+</tbody>
 </table>
-
 <table border="1">
-<colgroup span="99">
-<col class="name">
-<col class="action">
-<col class="arg" span="3"></colgroup>
+<colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
+<tbody>
 <tr>
 <th>Keyword</th>
 <th>Action</th>
@@ -764,7 +1104,6 @@ th {
 <td></td>
 <td></td>
 </tr>
+</tbody>
 </table>
-
-</body>
-</html>
+</body></html>
