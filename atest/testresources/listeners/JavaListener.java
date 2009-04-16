@@ -49,7 +49,7 @@ public class JavaListener {
 	}
 		
 	public void endSuite(String name, Map attrs) throws IOException {
-		this.outfile.write("END SUITE: " + attrs.get("status") + ": " + attrs.get("message") + "\n");
+		this.outfile.write("END SUITE: " + attrs.get("status") + ": " + attrs.get("statistics") + "\n");
 	}
 	
 	public void outputFile(String path) throws IOException {
