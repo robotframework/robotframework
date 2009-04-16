@@ -84,6 +84,20 @@ class String:
         print '*INFO* %d lines returned' % len(lines)
         return lines
 
+    def get_line(self, string, line_number):
+        """Returns the specified line from the given `string`.
+
+        Line numbering starts from 0 and it is possible to use
+        negative indices to refer to lines from the end. The line is
+        returned without the newline character.
+
+        Examples:
+        | ${first} =    | Get Line | ${string} | 0  |
+        | ${2nd last} = | Get Line | ${string} | -2 |
+        """
+        line_number = self._convert_to_integer(line_number, 'line_number')
+        return string.splitlines()[line_number]
+
     def get_lines_containing_string(self, string, pattern, case_insensitive=False):
         """Returns lines of the given `string` that contain the `pattern`.
 
@@ -254,6 +268,26 @@ class String:
         reversed = self.split_string(string[::-1], separator, max_split)
         return [ r[::-1] for r in reversed ][::-1]
     
+    def fetch_from_left(self, string, marker):
+        """Returns contents of the `string` before the first occurrence of `marker`.
+        
+        If the `marker` is not found, whole string is returned.
+
+        See also `Fetch From Right`, `Split String` and `Split String
+        From Right`.
+        """
+        return string.split(marker)[0]
+        
+    def fetch_from_right(self, string, marker):
+        """Returns contents of the `string` after the last occurrence of `marker`.
+        
+        If the `marker` is not found, whole string is returned.
+
+        See also `Fetch From Left`, `Split String` and `Split String
+        From Right`.
+        """
+        return string.split(marker)[-1]
+
     def generate_random_string(self, length=8, chars='[LETTERS][NUMBERS]'):
         """Generates a string with a desired `lenght` from the given `chars`.
 
@@ -322,40 +356,6 @@ class String:
             if not msg:
                 msg = "Given item '%s' is a string" % item
             raise AssertionError(msg)
-
-    def get_line(self, string, line_number):
-        """Returns the specified line from the given `string`.
-
-        Line numbering starts from 0 and it is possible to use
-        negative indices to refer to lines from the end. The line is
-        returned without the newline character.
-
-        Examples:
-        | ${first} =    | Get Line | ${string} | 0  |
-        | ${2nd last} = | Get Line | ${string} | -2 |
-        """
-        line_number = self._convert_to_integer(line_number, 'line_number')
-        return string.splitlines()[line_number]
-
-    def fetch_from_left(self, string, marker):
-        """Returns contents of the `string` before the first occurrence of `marker`.
-        
-        If the `marker` is not found, whole string is returned.
-
-        See also `Fetch From Right`, `Split String` and `Split String
-        From Right`.
-        """
-        return string.split(marker)[0]
-        
-    def fetch_from_right(self, string, marker):
-        """Returns contents of the `string` after the last occurrence of `marker`.
-        
-        If the `marker` is not found, whole string is returned.
-
-        See also `Fetch From Left`, `Split String` and `Split String
-        From Right`.
-        """
-        return string.split(marker)[-1]
 
     def _convert_to_index(self, value, name):
         if value == '':
