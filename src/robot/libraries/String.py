@@ -172,7 +172,7 @@ class String:
 
         Examples:
         | ${lines} = | Get Lines Matching Regexp | ${result} | Reg\\\\w{3} example |
-        | ${ret} = | Get Lines Matching Pattern | ${ret} | (?i)FAIL: .* |
+        | ${ret} = | Get Lines Matching Regexp | ${ret} | (?i)FAIL: .* |
 
         See `Get Lines Matching Pattern` and `Get Lines Containing
         String` if you do not need full regular expression powers (and
@@ -195,8 +195,8 @@ class String:
 
         If the optional argument `count` is given, only that many
         occurrences from left are replaced. Negative `count` means
-        that all occurrences are replaced and zero means that nothing
-        is done.
+        that all occurrences are replaced (default behaviour) and zero
+        means that nothing is done.
 
         A modified version of the string is returned and the original
         string is not altered.
@@ -299,7 +299,7 @@ class String:
         | _[LOWER]_   | Lowercase ASCII characters from 'a' to 'z'. |
         | _[UPPER]_   | Uppercase ASCII characters from 'A' to 'Z'. |
         | _[LETTERS]_ | Lowercase and uppercase ASCII characters.   |
-        | _[NUMBERS]_ | Numbers for 0 to 9. |
+        | _[NUMBERS]_ | Numbers from 0 to 9. |
 
         Examples:
         | ${ret} = | Generate Random String |
