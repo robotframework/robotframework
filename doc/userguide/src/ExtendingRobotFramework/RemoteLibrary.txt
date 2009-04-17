@@ -69,7 +69,7 @@ that the Remote library uses if no address is given. Similarly port
 and 70 are the ASCII codes of letters `R` and `F`, respectively.)
 
 Before the Remote library can be imported using a certain URL, the
-remore server providing the actual keywords must be started. It is
+remote server providing the actual keywords must be started. It is
 possible to start the server before launching the test execution, or
 other keywords, for example from OperatingSystem or SSH library, can
 start it up. Notice that in the latter case you may need to import the
@@ -79,25 +79,42 @@ Remote library `using Import Library keyword`_.
 Creating libraries on top of the remote server
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. better name for this section....
+Robot Framework 2.1 includes remote server implementation written both in
+`Python`__ and `Ruby`__.  A test library using the remote server must be
+implemented so that it can be started from the command line.  When started, it
+must start the remote server and register itself to it.
 
-This section is targeted for people who want to use existing remote
-servers with their own test libraries. 
+Below are simple example libraries implemented in Python and Ruby that
+demonstrate how test libraries use the remote server.  There is also a simple
+`test case file`__ that uses the keywords from these libraries. 
 
-*TODO*
+__ ../../tools/remotelibrary/robotremoteserver.py
+__ ../../tools/remotelibrary/robotremoteserver.rb
+__ ../../tools/remotelibrary/example/example.html
 
 
+.. sourcecode:: python 
+
+   ../../tools/remotelibrary/example/examplelibrary.py
+
+
+.. sourcecode:: ruby 
+
+   ../../tools/remotelibrary/example/examplelibrary.rb
+
+
+.. include:: ../../../../tools/remotelibrary/example/README.txt
 
 
 Remote protocol
 ~~~~~~~~~~~~~~~
 
-This section explains the protocal that is used between the Remote
+This section explains the protocol that is used between the Remote
 library and remote servers. This information is mainly targeted for
 people who want to create new remote servers.
 
 The remote protocol is implemented on top of the `XML-RPC`_ which is a
-simple remote procedure call protocal. Most widely used languages
+simple remote procedure call protocol. Most widely used languages
 (Python, Java, C, Ruby, Perl, Javascript, PHP, ...) have a support for
 XML-RPC and many even have the support built-in.
 
