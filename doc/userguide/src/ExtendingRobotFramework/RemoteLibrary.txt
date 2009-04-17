@@ -1,7 +1,15 @@
 Remote library interface
 ------------------------
 
-xxx
+Remote library interface provides means for having test libraries on
+different machines than where Robot Framework is running, and also for
+implementing libraries using other languages than the natively
+supported Python and Java. For a test library user remote
+libraries look pretty much the same as any other test library, and
+developing test libraries using the Remote library interface is also
+similar to creating `normal test libraries`__.
+
+__ `Creating test libraries`_
 
 .. contents:: 
    :depth: 2
@@ -11,37 +19,84 @@ xxx
 Introduction
 ~~~~~~~~~~~~
 
-* Allows having libs on other machines - reason for the name
-
-* Allows writing libs using any language that has a support for XML-RPC
-
-  - Provided support for Python/Jython and Ruby
-  - Possible for ...
-
+Remote library interface is provided by Remote library that is one of
+the `standard libraries`_ starting from Robot Framework 2.1. This
+library does not have any keywords of its own, and it works as a proxy
+to keywords implemented elsewhere. The Remote library communicates
+with the actual library implementation using a simple `remote
+protocol`_ on top of an `XML-RPC`__ channel.  The high level
+architecture of Remote library is illustrated in the picture below:
 
 .. figure:: src/ExtendingRobotFramework/remote.png
 
-   Architecture with Remote library
+   Robot Framework architecture with Remote library
+
+There are two main reasons for using the remote library API:
+
+* It is possible to have actual libraries on different machines than
+  where Robot Framework itself is running. This allows interesting
+  possibilities for distributed testing.
+
+* Test libraries can be implemented using any language that support
+  XML-RPC protocol. Robot Framework 2.1 contains generic remote servers
+  for Python/Jython and Ruby and it is possible to implement them for
+  other languages too.
+
+__ http://www.xmlrpc.com/
 
 
 Taking Remote library into use
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-* Starting remote server
-* Importing Remote is similar to importing any other RF lib
+When Remote library is taken into use, it needs to get an address of
+the remote server as an argument, but otherwise importing it and using
+keywords that it provides is no different to how other libraries are
+used. If you need to use Remote library multiple times in a test
+suite, or just want to give it a more describing name, you need to
+import it using the `WITH NAME syntax`_.
 
-  - Just need to give URL pointing to the remote server
-  - Default port is 8270 (= RF)
+.. table:: Importing Remote library using WITH NAME syntax
+   :class: example
+
+   =========  ===========  ======================  =========  =========
+    Setting      Value              Value            Value      Value
+   =========  ===========  ======================  =========  =========
+   Library    Remote       \http://localhost:8270  WITH NAME  Example1
+   Library    Remote       \http://10.0.0.42:7777  WITH NAME  Example2
+   =========  ===========  ======================  =========  =========
+
+The first URL used in the above examples is also the default address
+that the Remote library uses if no address is given. Similarly port
+:code:`8270` is the default port the provided remote servers use. (82
+and 70 are the ASCII codes of letters `R` and `F`, respectively.)
+
+Before the Remote library can be imported using a certain URL, the
+remore server providing the actual keywords must be started. It is
+possible to start the server before launching the test execution, or
+other keywords, for example from OperatingSystem or SSH library, can
+start it up. Notice that in the latter case you may need to import the
+Remote library `using Import Library keyword`_.
 
 
 Creating libraries on top of the remote server
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-* Currently support provided only for Python/Jython and Ruby
+.. better name for this section....
+
+This section is targeted for people who want to use existing remote
+servers with their own test libraries. 
+
+*TODO*
 
 
-Creating new remote servers
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-* Existing Python and Ruby servers used as examples
+
+Remote protocol
+~~~~~~~~~~~~~~~
+
+This section explains the protocal that is used between the
+Remote library and remote servers. This information is mainly targeted
+for people who want to create new remote servers.
+
+*TODO*
 
