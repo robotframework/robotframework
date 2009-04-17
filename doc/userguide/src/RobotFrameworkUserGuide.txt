@@ -71,9 +71,9 @@ Extending Robot Framework
    :local: 
 
 .. include:: ExtendingRobotFramework/CreatingTestLibraries.txt
+.. include:: ExtendingRobotFramework/RemoteLibrary.txt
 .. include:: ExtendingRobotFramework/ListenerInterface.txt
 .. include:: ExtendingRobotFramework/InternalAPI.txt
-.. include:: ExtendingRobotFramework/RemoteLibrary.txt
 
 
 Appendices
