@@ -19,30 +19,24 @@ Introduction
 Supported programming languages
 '''''''''''''''''''''''''''''''
 
-Robot Framework itself is written with Python_, so naturally, test 
+Robot Framework itself is written with Python_ and naturally test
 libraries extending it can be implemented using the same
-language. Additionally, it is possible to write libraries using Java_,
-which requires running the framework on the Jython_ interpreter. Pure
-Python code works both on Python and Jython interpreters, assuming
-that it does not use syntax or libraries that are not available on
-Jython.
+language. When running the framework on Jython_, libraries can also be
+implemented using Java_. Pure Python code works both on Python and
+Jython, assuming that it does not use syntax or modules that are not
+available on Jython. When using Python, it is also possible to
+implement libraries with C using `Python C API`__, although it is
+often easier to interact with C code from Python libraries using
+ctypes__ module.
 
-It is also possible to implement a test library with C by using
-`Python C API`_. Another, and in most cases easier, method to
-interact with C code from a library is using Python's ctypes_ module.
+Libraries implemented using these natively supported languages can
+also act as wrappers to functionality implemented using other
+programming languages. A good example of this approach is the `Remote
+library`_, and another widely used approaches is running external
+scripts or tools as separate processes.
 
-.. _Python C API: http://docs.python.org/api/api.html
-.. _ctypes: http://docs.python.org/lib/module-ctypes.html
-
-Finally, it is possible to implement the actual test library
-functionality using any language and call that from a thin Python or
-Java wrapper library. Possible approaches include calling external
-scripts or tools through the operating system or using XML-RPC to
-connect the wrapper with the real implementation. The former approach
-is quite widely used and there is a proof-of-concept prototype also
-for the latter. The plan is to have XML-RPC support built in to Robot
-Framework in the future.
-
+__ http://docs.python.org/api/api.html
+__ http://docs.python.org/lib/module-ctypes.html
 
 Different test library APIs
 '''''''''''''''''''''''''''
@@ -99,7 +93,6 @@ In Robot Framework 2.0.1 and earlier, it is possible to use only classic
 classes as test libraries. Both classic and new style classes are 
 supported from 2.0.2 onwards.
 
-
 Test library names
 ''''''''''''''''''
 
@@ -127,7 +120,6 @@ full name. For example, the class :code:`MyLib` in the
 .. Tip:: If the library name is really long, for example when the Java
          package name is long, it is recommended to give the library a
          simpler alias by using the `WITH NAME syntax`_.
-
 
 Providing arguments to test libraries
 '''''''''''''''''''''''''''''''''''''
@@ -188,7 +180,6 @@ the libraries used in the above example:
            }
        }
    }
-
 
 Test library scope
 ''''''''''''''''''
@@ -274,7 +265,6 @@ Example Java library using the :code:`GLOBAL` scope:
             counter = 0;
         }
     }
-
 
 Specifying library version
 ''''''''''''''''''''''''''
@@ -388,7 +378,6 @@ case, is excluded.
    \            Hello        world         \
    ===========  ===========  ============  ============
 
-
 Keyword arguments
 '''''''''''''''''
 
@@ -416,7 +405,6 @@ Example Python keywords taking different numbers of arguments:
 
   def multiple_arguments(a1, a2, a3):
       print "Keyword got three arguments '%s', '%s' and '%s'" % (a1, a2, a3)
-
 
 Default values to keywords
 ''''''''''''''''''''''''''
@@ -491,7 +479,6 @@ the earlier Python example:
    public void multipleDefaults(String arg1) {
        multipleDefaults(arg1, "default 1");
    }
-
 
 Variable number of arguments
 ''''''''''''''''''''''''''''
@@ -570,7 +557,6 @@ possible, as the examples below illustrate:
           System.out.println(others[i]);
       }
   }
-
 
 Argument types
 ''''''''''''''
@@ -793,7 +779,6 @@ as pseudocode meaning :code:`System.out.println("message");`.
      </tr>
    </table>
 
-
 Returning values
 ''''''''''''''''
 
@@ -835,7 +820,7 @@ __ `Scalar variables`_
 Keywords can also return values so that they can be assigned into
 several `scalar variables`_ at once, into `a list variable`__, or
 into scalar variables and a list variable. All these usages require
-that returned values are Python lists or tuples or, since Robot 1.8.6,
+that returned values are Python lists or tuples or
 Java arrays. If there is a need, support for other iterables can be
 added in the future.
 
@@ -939,7 +924,6 @@ does not work with Java libraries using the static API,
 because their documentations are lost in compilation and not available
 at runtime.
 
-
 Testing libraries
 '''''''''''''''''
 
@@ -968,7 +952,6 @@ acceptance tests ensure that keywords do work through Robot
 Framework. If you cannot decide, of course it is possible to use both
 the approaches.
 
-
 Packaging libraries
 '''''''''''''''''''
 
@@ -991,7 +974,6 @@ before running tests, but it is easy to `create a start-up`__ script that
 does that automatically.
 
 __ `Creating start-up scripts`_
-
 
 Deprecating keywords
 ''''''''''''''''''''
@@ -1092,7 +1074,6 @@ possible. However, if you use Java, you may want to examine
 reusable tools supports several ways of creating keywords, and it is
 likely that it already has a mechanism that suites your needs.
 
-
 Getting keyword names
 '''''''''''''''''''''
 
@@ -1113,7 +1094,6 @@ example, :code:`['first keyword', 'second keyword']`,
 Dynamic libraries must always have this method. If it is missing, or
 if calling it fails for some reason, the library is considered a
 static library, instead.
-
 
 Running keywords
 ''''''''''''''''
@@ -1150,7 +1130,6 @@ trivial) dynamic library.
        def run_keyword(self, name, args):
            print "Running keyword %s with arguments %s" % (name, args)
 
-
 Getting keyword arguments
 '''''''''''''''''''''''''
 
@@ -1163,12 +1142,12 @@ because most real keywords expect a certain number of keywords, and
 under these circumstances they would need to check the argument counts
 themselves.
 
-Starting from Robot Framework version 1.8.4, dynamic libraries can
-tell Robot Framework what arguments the keywords that it implements
-actually expect. This is done with the :code:`get_keyword_arguments`
-(alias :code:`getKeywordArguments`) method, which takes the name of a
-keyword as an argument and returns a list of strings (a string array
-in Java) containing the arguments accepted by that keyword.
+Dynamic libraries can tell Robot Framework what arguments the keywords
+that it implements actually expect using
+:code:`get_keyword_arguments` (alias :code:`getKeywordArguments`)
+method. This method takes the name of a keyword as an argument and returns a
+list of strings (a string array in Java) containing the arguments
+accepted by that keyword.
 
 Similarly as static keywords, dynamic keywords can require any number
 of arguments, have default values and accept a variable number of
@@ -1211,7 +1190,6 @@ other hand, if the `libdoc.py`_ tool is used for documenting the
 library, arguments are shown in the documentation, in which case they
 need to have meaningful names.
 
-
 Getting keyword documentation
 '''''''''''''''''''''''''''''
 
@@ -1219,8 +1197,7 @@ The final special method that dynamic libraries can implement is
 :code:`get_keyword_documentation` (alias
 :code:`getKeywordDocumentation`). It takes a keyword name as an
 argument and, as the method name implies, returns its documentation as
-a string. This method also only works starting from Robot Framework
-version 1.8.4.
+a string. 
 
 The returned documentation is used similarly as the keyword
 documentation string with static libraries implemented with
@@ -1228,7 +1205,6 @@ Python. The main use case is getting keywords' documentations into a
 library documentation generated with `libdoc.py`_. Additionally,
 the first line of the documentation (until the first :code:`\\n`) is
 shown in test logs.
-
 
 Summary
 '''''''
@@ -1248,7 +1224,6 @@ camelCase aliases function in exactly the same way.
    get_keyword_arguments       name              To return keyword's argument specification. Optional.
    get_keyword_documentation   name              To return keyword's documentation. Optional.
    ==========================  ================  ======================================================
-
 
 It is possible to write a formal interface specification in Java, as
 below. However, remember that libraries *do not need* to implement
@@ -1280,7 +1255,6 @@ The hybrid library API is, as its name implies, a hybrid between the
 static API and the dynamic API. Just as with the dynamic API, it is
 possible to implement a library using the hybrid API only as a class.
 
-
 Getting keyword names
 '''''''''''''''''''''
 
@@ -1288,7 +1262,6 @@ Keyword names are got in the exactly same way as with the dynamic
 API. In practice, the library needs to have the
 :code:`get_keyword_names` or :code:`getKeywordNames` method returning
 a list of keyword names that the library implements.
-
 
 Running keywords
 ''''''''''''''''
@@ -1341,7 +1314,6 @@ possible to handle missing methods with it. Of course, it is possible
 to implement all the methods in the library class, but that brings few
 benefits compared to the static API.
 
-
 Getting keyword arguments and documentation
 '''''''''''''''''''''''''''''''''''''''''''
 
@@ -1351,7 +1323,6 @@ getting a reference to the method, it searches for arguments and
 documentation from it, in the same way as when using the static
 API. Thus there is no need for special methods for getting arguments
 and documentation like there is with the dynamic API.
-
 
 Summary
 '''''''
