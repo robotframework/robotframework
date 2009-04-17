@@ -218,13 +218,15 @@ of items, even zero.
    \                            \            Log               ${item}     \     
    ===========================  ===========  ================  ==========  ==========
 
-The last example above illustrates how a variable number of arguments
-accepted by a user keyword can be used in a `For loops`_. This
-combination of two rather advanced functions can sometimes be very
-useful.
+Notice that in the last example above, the second argument :var:`${opt}` gets 
+the given value when the keyword is used with more than one argument. In case it 
+is left empty it gets empty string as value instead of the default value. The 
+last example also illustrates how a variable number of arguments accepted by a 
+user keyword can be used in a `For loops`_. This combination of two rather 
+advanced functions can sometimes be very useful.
 
-Again, Pythonistas probably notice that the :var:`varargs` syntax is
-very close to the one in Python.
+Again, Pythonistas probably notice that the variable number of arguments syntax 
+is very close to the one in Python.
 
 
 User keyword return values
