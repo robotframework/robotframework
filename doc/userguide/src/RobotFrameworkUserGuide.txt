@@ -191,6 +191,7 @@ Appendices
 .. 4. Extending
 
 .. _library API: `Creating test libraries`_
+.. _Remote library: `Remote library interface`_
 .. _listener interface: `Using listener interface`_
 .. _listener: `listener interface`_
 .. _listeners: `listener interface`_
@@ -233,3 +234,5 @@ Appendices
 .. _setuptools: http://peak.telecommunity.com/DevCenter/setuptools
 .. _Easy Install: http://peak.telecommunity.com/DevCenter/EasyInstall
 .. _AutoIT: http://www.autoitscript.com/autoit3
+.. _XML-RPC: http://www.xmlrpc.com/
+
