@@ -126,7 +126,7 @@ full name. For example, the class :code:`MyLib` in the
 
 .. Tip:: If the library name is really long, for example when the Java
          package name is long, it is recommended to give the library a
-         simpler alias by using the `With Name syntax`_.
+         simpler alias by using the `WITH NAME syntax`_.
 
 
 Providing arguments to test libraries
