@@ -53,7 +53,6 @@ and `test suite initialization files`_. Keywords created in resource
 files are available for files using them, whereas other keywords are
 only available in the files where they are created.
 
-
 Settings in the Keyword table
 '''''''''''''''''''''''''''''
 
@@ -145,7 +144,6 @@ to use lower-case letters in variable names, either as
    \                Log          3rd argument: ${arg3}     \           \
    ===============  ===========  ========================  ==========  ==========
 
-
 Default values
 ''''''''''''''
 
@@ -218,15 +216,16 @@ of items, even zero.
    \                            \            Log               ${item}     \     
    ===========================  ===========  ================  ==========  ==========
 
-Notice that in the last example above, the second argument :var:`${opt}` gets 
-the given value when the keyword is used with more than one argument. In case it 
-is left empty it gets empty string as value instead of the default value. The 
-last example also illustrates how a variable number of arguments accepted by a 
-user keyword can be used in a `For loops`_. This combination of two rather 
-advanced functions can sometimes be very useful.
+Notice that if the last keyword above is used with more than one
+argument, the second argument :var:`${opt}` always gets the given
+value instead of the default value. This happens even if the given
+value is empty. The last example also illustrates how a variable
+number of arguments accepted by a user keyword can be used in a `for
+loops`_. This combination of two rather advanced functions can
+sometimes be very useful.
 
-Again, Pythonistas probably notice that the variable number of arguments syntax 
-is very close to the one in Python.
+Again, Pythonistas probably notice that the variable number of
+arguments syntax is very close to the one in Python.
 
 
 User keyword return values
@@ -275,4 +274,3 @@ specifying those values in different cells after the
    \                    \             \               \            \ 
    Return Three Values  [Return]      foo             bar          zap
    ===================  ============  ==============  ===========  ==========
-
