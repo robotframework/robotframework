@@ -55,8 +55,6 @@ th {
 }
 </style>
 <title>String</title></head>
-
-
 <body>
 <h1>String</h1>
 
@@ -154,48 +152,12 @@ th {
 <td></td>
 <td></td>
 </tr>
-<tr>
-<td>Split String</td>
-<td>Check Test Case</td>
-<td>${TESTNAME}</td>
-<td></td>
-<td></td>
-</tr>
-<tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Split String With Whitespaces and Separator Is None</td><td>Check Test Case</td><td>${TESTNAME}</td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Split String not Found</td><td>Check Test Case</td><td>${TESTNAME}</td><td></td><td></td></tr><tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td>Split String From Right</td>
-<td>Check Test Case</td>
-<td>${TESTNAME}</td>
-<td></td>
-<td></td>
-</tr>
-<tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Split String From Right With Count</td><td>Check Test Case</td><td>${TESTNAME}</td><td></td><td></td></tr><tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td>Generate Random String</td>
-<td>Check Test Case</td>
-<td>${TESTNAME}</td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
+
+
+
+
+
+
 
 
 <tr>
@@ -229,11 +191,11 @@ th {
 <tr>
 <td>Split To Lines</td>
 <td>${tc} =</td>
-<td>Check Test Case</td><td>Split To Lines</td>
+<td>Check Test Case</td><td>${TESTNAME}</td>
 
 <td></td>
 </tr>
-<tr><td></td><td>Check Log Message</td><td>${tc.kws[0].msgs[0]}</td><td>2&nbsp;lines returned </td><td></td></tr><tr><td></td><td>Check Test Case</td><td>Split To Lines With Start Only</td><td></td><td></td></tr><tr><td></td><td>Check Test Case</td><td>Split To Lines With Start And End</td><td></td><td></td></tr><tr><td></td><td>Check Test Case</td><td>Split To Lines With End Only</td><td></td><td></td></tr><tr><td></td><td>Check Test Case</td><td>Split To Lines With Negative Values</td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Split To Lines With Invalid Start</td><td>Check Test Case</td><td>${TESTNAME}</td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr>
+<tr><td></td><td>Check Log Message</td><td>${tc.kws[0].msgs[0]}</td><td>2&nbsp;lines returned </td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Split To Lines With Start Only</td><td>Check Test Case</td><td>${TESTNAME}</td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Split To Lines With Start And End</td><td>Check Test Case</td><td>${TESTNAME}</td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Split To Lines With End Only</td><td>Check Test Case</td><td>${TESTNAME}</td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Split To Lines With Negative Values</td><td>Check Test Case</td><td>${TESTNAME}</td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Split To Lines With Invalid Start</td><td>Check Test Case</td><td>${TESTNAME}</td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr>
 <td>Split To Lines With Invalid End</td>
 <td>Check Test Case</td><td>${TESTNAME}</td>
 
@@ -247,49 +209,19 @@ th {
 <td></td>
 <td></td>
 </tr>
-<tr>
+<tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Get Substring With Negative Values</td><td>Check Test Case</td><td>${TESTNAME}</td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Get Substring With Start Only</td><td>Check Test Case</td><td>${TESTNAME}</td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Get Substring With Invalid Start</td><td>Check Test Case</td><td>${TESTNAME}</td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Get Substring With Invalid End</td><td>Check Test Case</td><td>${TESTNAME}</td><td></td><td></td></tr><tr>
 <td></td>
 <td></td>
 <td></td>
 <td></td>
 <td></td>
 </tr>
-<tr>
-<td>Replace String</td>
-<td>Check Test Case</td>
-<td>${TESTNAME}</td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td>Replace String Not Found</td>
-<td>Check Test Case</td>
-<td>${TESTNAME}</td>
-<td></td>
-<td></td>
-</tr>
-<tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Replace String With RegExp</td><td>Check Test Case</td><td>${TESTNAME}</td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Replace String With RegExp Not Found</td><td>Check Test Case</td><td>${TESTNAME}</td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Replace String With RegExp Count Is Invalid</td><td>Check Test Case</td><td>${TESTNAME}</td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr>
-<tr>
-<td>Replace With Empty String</td>
-<td>Check Test Case</td>
-<td>${TESTNAME}</td>
-<td></td>
-<td></td>
-</tr>
-<tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Replace String With Invalid Count</td><td>Check Test Case</td><td>${TESTNAME}</td><td></td><td></td></tr><tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
+
+
+
+
+
+
 <tr>
 <td>Should Be String Positive</td>
 <td>Check Test Case</td>

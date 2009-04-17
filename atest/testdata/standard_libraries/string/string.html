@@ -52,11 +52,7 @@ letter-spacing: 0.1em;
 th {
 font-style: normal;
 }
-</style><title>String</title>
-
-</head>
-
-
+</style><title>String</title></head>
 <body>
 <h1>String</h1>
 <table border="1">
@@ -69,13 +65,7 @@ font-style: normal;
 <th>Value</th>
 <th>Value</th>
 </tr>
-<tr>
-<td>Documentation</td>
-<td>\</td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
+
 <tr>
 <td>Library</td>
 <td>String</td>
@@ -83,13 +73,7 @@ font-style: normal;
 <td></td>
 <td></td>
 </tr>
-<tr>
-<td>Library</td>
-<td>Collections</td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
+
 <tr>
 <td></td>
 <td></td>
@@ -144,27 +128,9 @@ font-style: normal;
 <td></td>
 <td></td>
 </tr>
-<tr>
-<td>${FIRST COLUMN}</td>
-<td>robot</td>
-<td>is</td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td>${FOURTH COLUMN}</td>
-<td></td>
-<td>testing</td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td>${FOURTH COLUMN}</td>
-<td></td>
-<td>testing</td>
-<td></td>
-<td></td>
-</tr>
+
+
+
 <tr>
 <td></td>
 <td></td>
@@ -226,175 +192,30 @@ font-style: normal;
 <td></td>
 <td></td>
 </tr>
-<tr>
-<td>Split String</td>
-<td>@{result} =</td>
-<td>Split String</td>
-<td>${NSN}</td>
-<td>_</td>
-</tr>
-<tr>
-<td></td>
-<td>Should be equal</td>
-<td>@{result}[0]</td>
-<td>nokia</td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td>Should be equal</td>
-<td>@{result}[1]</td>
-<td>siemens</td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td>Should be equal</td>
-<td>@{result}[2]</td>
-<td>networks</td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td>Length Should be</td>
-<td>${result}</td>
-<td>3</td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td>Split String With Whitespaces and Separator Is None</td>
-<td>@{result} =</td>
-<td>Split String</td>
-<td>hello\nworld\t${SPACE*5}again</td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td>Should be equal</td>
-<td>@{result}[0]</td>
-<td>hello</td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td>Should be equal</td>
-<td>@{result}[1]</td>
-<td>world</td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td>Should be equal</td>
-<td>@{result}[2]</td>
-<td>again</td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td>Length Should be</td>
-<td>${result}</td>
-<td>3</td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td>Split String not Found</td>
-<td>@{result} =</td>
-<td>Split String</td>
-<td>${NSN}</td>
-<td>NSN</td>
-</tr>
-<tr>
-<td></td>
-<td>Length Should be</td>
-<td>${result}</td>
-<td>1</td>
-<td></td>
-</tr>
-<tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Split String&nbsp;With Invalid Count</td><td>[Documentation]</td><td>FAIL ValueError:&nbsp;Cannot convert&nbsp;
-'count' argument&nbsp;'invalid' to an integer</td><td></td><td></td></tr><tr>
-<td></td>
-<td>@{result} =</td><td>Split String</td><td>${NSN}</td><td>NSN</td>
 
 
 
-</tr>
-<tr><td></td><td>...</td><td>invalid</td><td></td><td></td></tr><tr>
-<td>Split String From Right</td>
-<td>${result} =</td>
-<td>Split String From Right</td>
-<td>${NSN}</td>
-<td>_</td>
-</tr>
-<tr>
-<td></td>
-<td>Should Be Equal As Strings</td>
-<td>${result}</td>
-<td>[u'nokia', u'siemens', u'networks']</td>
-<td></td>
-</tr>
-<tr><td></td><td></td><td></td><td></td><td></td></tr><tr>
-<td>Split String From Right With Count</td>
-<td>${result} =</td>
-<td>Split String From Right</td>
-<td>${NSN}</td>
-<td>_</td>
-</tr>
-<tr>
-<td></td>
-<td>...</td>
-<td>1</td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td>Should Be Equal As Strings</td>
-<td>${result}</td>
-<td>[u'nokia_siemens', u'networks']</td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td>Generate Random String</td>
-<td>${result} =</td>
-<td>Generate Random String</td>
-<td>10</td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td>Length Should be</td>
-<td>${result}</td>
-<td>10</td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 <tr>
 <td>Get Line</td>
 <td>${result} =</td>
@@ -699,8 +520,8 @@ font-style: normal;
 <td>Ro</td>
 <td></td>
 </tr>
-<tr>
-<td></td>
+<tr><td></td><td></td><td></td><td></td><td></td></tr><tr>
+<td>Get Substring With Negative Values</td>
 <td>${result} =</td>
 <td>Get Substring</td>
 <td>Hello Robot</td>
@@ -720,252 +541,43 @@ font-style: normal;
 <td>bo</td>
 <td></td>
 </tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td>Replace String</td>
-<td>${result} =</td>
-<td>Replace String</td>
-<td>Robot Framework</td>
-<td>Frame</td>
-</tr>
-<tr>
-<td></td>
-<td>...</td>
-<td>Class</td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td>Should be equal</td>
-<td>${result}</td>
-<td>Robot Classwork</td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td>${result} =</td>
-<td>Replace String</td>
-<td>Robot Framework</td>
-<td>o</td>
-</tr>
-<tr>
-<td></td>
-<td>...</td>
-<td>0</td>
-<td>2</td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td>Should be equal</td>
-<td>${result}</td>
-<td>R0b0t Framework</td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td>Replace String Not Found</td>
-<td>${result} =</td>
-<td>Replace String</td>
-<td>Robot</td>
-<td>bat</td>
-</tr>
-<tr>
-<td></td>
-<td>...</td>
-<td>bit</td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td>Should be equal</td>
-<td>${result}</td>
-<td>Robot</td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td>Replace With Empty String</td>
-<td>${result} =</td>
-<td>Replace String</td>
-<td>Robot Framework</td>
-<td>Framework</td>
-</tr>
-<tr>
-<td></td>
-<td>...</td>
-<td>${EMPTY}</td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td>Should be equal</td>
-<td>${result}</td>
-<td>Robot${SPACE}</td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td>Replace String With Invalid Count</td>
-<td>[Documentation]</td>
-<td>FAIL ValueError: Cannot convert&nbsp; 'count'
-argument&nbsp;'invalid' to an integer</td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td>Replace String</td>
-<td>abc</td>
-<td>b</td>
-<td>c</td>
-</tr>
-<tr>
-<td></td>
-<td>...</td>
-<td>invalid</td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td>Replace String With RegExp</td>
-<td>${result} =</td>
-<td>Replace String With RegExp</td>
-<td>Robot Framework</td>
-<td>F.*k</td>
-</tr>
-<tr>
-<td></td>
-<td>...</td>
-<td>Class</td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td>Should be equal</td>
-<td>${result}</td>
-<td>Robot Class</td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td>${result} =</td>
-<td>Replace String With RegExp</td>
-<td>Robot Framework</td>
-<td>o\\w</td>
-</tr>
-<tr>
-<td></td>
-<td>...</td>
-<td>foo</td>
-<td>2</td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td>Should be equal</td>
-<td>${result}</td>
-<td>Rfoofoo Framework</td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td>Replace String With RegExp Not Found</td>
-<td>${result} =</td>
-<td>Replace String With RegExp</td>
-<td>Robot Framework</td>
-<td>Fnot.*k</td>
-</tr>
-<tr>
-<td></td>
-<td>...</td>
-<td>Class</td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td>Should be equal</td>
-<td>${result}</td>
-<td>Robot Framework</td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td>Replace String With RegExp Count Is Invalid</td>
-<td>[Documentation]</td>
-<td>FAIL ValueError: Cannot convert&nbsp; 'count'
-argument&nbsp;'invalid' to an integer</td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td>Replace String With RegExp</td>
-<td>Robot Framework</td>
-<td>.*</td>
-<td>foo</td>
-</tr>
-<tr>
-<td></td>
-<td>...</td>
-<td>invalid</td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
+<tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Get Substring With Start Only</td><td>${result} =</td><td>Get Substring</td><td>Hello Robot</td><td>6</td></tr><tr><td></td><td>Should be equal</td><td>${result}</td><td>Robot</td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Get Substring With Empty Start</td><td>${result} =</td><td>Get Substring</td><td>Hello Robot</td><td></td></tr><tr><td></td><td>...</td><td></td><td>5</td><td></td></tr><tr><td></td><td>Should be equal</td><td>${result}</td><td>Hello</td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Get Substring With Invalid Start</td><td>[Documentation]</td><td>FAIL ValueError:&nbsp;Cannot convert&nbsp;
+'start' argument&nbsp;'invalid' to an integer</td><td></td><td></td></tr><tr><td></td><td>Get Substring</td><td>Hello Robot</td><td>invalid</td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Get Substring With Invalid End</td><td>[Documentation]</td><td>FAIL ValueError:&nbsp;Cannot convert&nbsp;
+'end' argument&nbsp;'invalid' to an integer</td><td></td><td></td></tr><tr><td></td><td>Get Substring</td><td>Hello Robot</td><td>2<br></td><td>invalid</td></tr>
+<tr><td></td><td></td><td></td><td></td><td></td></tr>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 <tr>
 <td>Should Be String Positive</td>
 <td>Should be String</td>
