@@ -1,22 +1,42 @@
-Robot Framework Remote Library
+Robot Framework Remote Servers
 ==============================
 
 Introduction
 ------------
 
-This directory contains implementation of Robot Framework Remote Library. 
-Remote Library is documented in the Robot Framework user guide,
-which can be found at http://code.google.com/p/robotframework/wiki/UserGuide.
+This directory contains remote server implementations that can be used
+with the Remote library. The main source for information related to the
+Remote library and remote servers is the User Guide. 
 
-Remote server is currently implemented with Python and Ruby. Future plans include
-implementing the server also with Java. There are also tests for all implementations.
+Implemented Remote Servers
+--------------------------
+
+There are currently remote server implemenations for Python and Ruby in
+`robotremoteserver.py` and `robotremoteserver.rb` files, respectively.
+The plan is to implement at least Java and Perl versions in the future.
+
+Examples Using Remote Servers
+-----------------------------
+
+Examples on how to use the remote servers can be found from `example`
+directory. These example servers can be started with following
+commands, assuming that the module search path is set so
+that the respective remote server modules can be imported::
+
+   python example/examplelibrary.py
+   ruby example/examplelibrary.rb
+
+These examples will start the remote server so that it provided
+keywords implemented in the example module. After the remote server is
+started, an example test case file can be executed normally::
+
+   pybot example/example.html
 
 
-Running tests
--------------
+Testing Remote Servers
+----------------------
 
-A runner script `run_tests.py` is used to execute the tests.
-To get more help run::
-
-	run_tests.py --help
-
+Tests for the remote servers are inside `test` directory. Acceptance tests
+can be executed using `tests/run.py` script and running the script without
+arguments provided more information. Notice that tests are not included in 
+source distributions.

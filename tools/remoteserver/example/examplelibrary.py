@@ -1,9 +1,11 @@
 import os
+import sys
+
 
 class ExampleRemoteLibrary:
     
-    def count_files(self, path):
-        return len([ f for f in os.listdir(path) if os.path.isfile(os.path.join(path, f))])
+    def count_items(self, path):
+        return len([ i for i in os.listdir(path) if not i.startswith('.') ])
 
     def strings_should_be_equal(self, str1, str2):
         print "Comparing '%s' to '%s'" % (str1, str2)
@@ -12,7 +14,5 @@ class ExampleRemoteLibrary:
 
 
 if __name__ == '__main__':
-    import sys
     from robotremoteserver import RobotRemoteServer
-
     RobotRemoteServer(ExampleRemoteLibrary(), *sys.argv[1:])

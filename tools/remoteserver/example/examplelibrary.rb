@@ -1,7 +1,7 @@
 class ExampleRemoteLibrary
 
-  def count_files directory
-      return Dir.new(directory).entries.find_all{|f| File.file? f}.length
+  def count_items directory
+    Dir.entries(directory).find_all{|i| not i.match('^\.')}.length
   end 
 
   def strings_should_be_equal str1, str2
@@ -12,6 +12,7 @@ class ExampleRemoteLibrary
   end
 
 end
+
 
 if __FILE__ == $0
   require "robotremoteserver"
