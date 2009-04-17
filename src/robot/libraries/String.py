@@ -309,12 +309,8 @@ class String:
                             ('[LETTERS]', ascii_lowercase + ascii_uppercase),
                             ('[NUMBERS]', digits)]:
             chars = chars.replace(name, value)
-        return ''.join(self._sample(chars, length))
-
-    def _sample(self, chars, length):
-        max_index = len(chars) - 1
-        return [ chars[randint(0, max_index)] for i in xrange(length) ]
-
+        maxi = len(chars) - 1
+        return ''.join([ chars[randint(0, maxi)] for i in xrange(length) ])
 
     def get_substring(self, string, start, end=None):
         """Returns a substring from `start` index to `end` index. 
