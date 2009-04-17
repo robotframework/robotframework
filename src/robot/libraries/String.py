@@ -15,14 +15,8 @@
 
 import re
 from fnmatch import fnmatchcase
+from random import randint
 from string import ascii_lowercase, ascii_uppercase, digits
-try:
-    from random import sample
-except ImportError:   # No random.sample in Jython 2.2
-    from random import randint
-    def sample(chars, length):
-        max_index = len(chars) - 1
-        return [ chars[randint(0, max_index)] for i in xrange(length) ]
 
 from robot import utils
 
@@ -314,8 +308,13 @@ class String:
                             ('[UPPER]', ascii_uppercase),
                             ('[LETTERS]', ascii_lowercase + ascii_uppercase),
                             ('[NUMBERS]', digits)]:
-            chars.replace(name, value)
-        return ''.join(sample(chars, length))
+            chars = chars.replace(name, value)
+        return ''.join(self._sample(chars, length))
+
+    def _sample(self, chars, length):
+        max_index = len(chars) - 1
+        return [ chars[randint(0, max_index)] for i in xrange(length) ]
+
 
     def get_substring(self, string, start, end=None):
         """Returns a substring from `start` index to `end` index. 
