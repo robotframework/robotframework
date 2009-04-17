@@ -35,8 +35,8 @@ programming languages. A good example of this approach is the `Remote
 library`_, and another widely used approaches is running external
 scripts or tools as separate processes.
 
-__ http://docs.python.org/api/api.html
-__ http://docs.python.org/lib/module-ctypes.html
+__ http://docs.python.org/c-api/index.html
+__ http://docs.python.org/library/ctypes.html
 
 Different test library APIs
 '''''''''''''''''''''''''''
