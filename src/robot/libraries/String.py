@@ -32,7 +32,7 @@ class String:
     """A test library for string manipulation and verification.
 
     `String` is Robot Framework's standard library for manipulating
-    strings (e.g. `Replace String With Regexp`, `Split To Lines`) and
+    strings (e.g. `Replace String Using Regexp`, `Split To Lines`) and
     verifying their contents (e.g. `Should Be String`).
 
     Following keywords from the BuiltIn library can also be used with
@@ -191,7 +191,7 @@ class String:
         """Replaces `search_for` in the given `string` with `replace_with`.
 
         `search_for` is used as a literal string. See `Replace String
-        With Regexp` if more powerful pattern matching is needed.
+        Using Regexp` if more powerful pattern matching is needed.
 
         If the optional argument `count` is given, only that many
         occurrences from left are replaced. Negative `count` means
@@ -208,7 +208,7 @@ class String:
         count = self._convert_to_integer(count, 'count')
         return string.replace(search_for, replace_with, count)
 
-    def replace_string_with_regexp(self, string, pattern, replace_with, count=-1):
+    def replace_string_using_regexp(self, string, pattern, replace_with, count=-1):
         """Replaces `pattern` in the given `string` with `replace_with`.
 
         This keyword is otherwise identical to `Replace String`, but
@@ -218,8 +218,8 @@ class String:
         and how to use it in Robot Framework test data in particular.
 
         Examples:
-        | ${str} = | Replace String With Regexp | ${str} | (Hello|Hi) | Hei  |   |
-        | ${str} = | Replace String With Regexp | ${str} | 20\\d\\d-\\d\\d-\\d\\d | <DATE>  | 2  |
+        | ${str} = | Replace String Using Regexp | ${str} | (Hello|Hi) | Hei  |   |
+        | ${str} = | Replace String Using Regexp | ${str} | 20\\\\d\\\\d-\\\\d\\\\d-\\\\d\\\\d | <DATE>  | 2  |
         """
         count = self._convert_to_integer(count, 'count')
         # re.sub handles 0 and negative counts differently than string.replace
