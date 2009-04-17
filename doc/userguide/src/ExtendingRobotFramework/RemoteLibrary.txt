@@ -24,7 +24,7 @@ the `standard libraries`_ starting from Robot Framework 2.1. This
 library does not have any keywords of its own, and it works as a proxy
 to keywords implemented elsewhere. The Remote library communicates
 with the actual library implementation using a simple `remote
-protocol`_ on top of an `XML-RPC`__ channel.  The high level
+protocol`_ on top of an `XML-RPC`_ channel.  The high level
 architecture of Remote library is illustrated in the picture below:
 
 .. figure:: src/ExtendingRobotFramework/remote.png
@@ -41,8 +41,6 @@ There are two main reasons for using the remote library API:
   XML-RPC protocol. Robot Framework 2.1 contains generic remote servers
   for Python/Jython and Ruby and it is possible to implement them for
   other languages too.
-
-__ http://www.xmlrpc.com/
 
 
 Taking Remote library into use
@@ -94,9 +92,52 @@ servers with their own test libraries.
 Remote protocol
 ~~~~~~~~~~~~~~~
 
-This section explains the protocal that is used between the
-Remote library and remote servers. This information is mainly targeted
-for people who want to create new remote servers.
+This section explains the protocal that is used between the Remote
+library and remote servers. This information is mainly targeted for
+people who want to create new remote servers.
+
+The remote protocol is implemented on top of the `XML-RPC`_ which is a
+simple remote procedure call protocal. Most widely used languages
+(Python, Java, C, Ruby, Perl, Javascript, PHP, ...) have a support for
+XML-RPC and many even have the support built-in.
+
+A remote server is an XML-RPC server that must have the same methods
+as the `dynamic library API`_ has. Only :code:`get_keyword_names` and
+:code:`run_keyword` are actually required, but
+:code:`get_keyword_arguments` and :code:`get_keyword_documentation`
+are also recommended. Notice that using camelCase format in method
+names is not possible, but a support for that can be added later.
+How the actual keywords are implemented is not relevant for the Remote
+library.  A remote server can either act as a wrapper for real test
+libraries, like the provided Python and Ruby servers do, or it can
+implement keywords itself.
+
+
+Getting remote keyword names
+''''''''''''''''''''''''''''
+
+The Remote library gets a list of keywords that the remote server
+provides using :code:`get_keyword_names` method. This method must
+return the keyword names as a list of strings.
+
+Executing remote keywords
+'''''''''''''''''''''''''
+
+:code:`run_keyword`.
 
 *TODO*
+
+Getting remote keywords' arguments and documentation
+''''''''''''''''''''''''''''''''''''''''''''''''''''
+
+Remote servers can, and should, also implement
+:code:`get_keyword_arguments` and :code:`get_keyword_documentation`
+methods to provide more information about the keywords. Arguments must
+be returned as a list of strings the same way with `dynamic
+libraries`__. Documentation must be returned as a string, again the
+same ways as with `dynamic libraries`__
+
+
+__ `Getting keyword arguments`_
+__ `Getting keyword documentation`_
 
