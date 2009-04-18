@@ -219,6 +219,7 @@ standard libraries:
   - `String`_
   - `Dialogs`_
   - `Screenshot`_
+  - `Remote`_
 
 The BuiltIn library is special, because it is taken into use
 automatically and thus its keywords are always available. Other
@@ -299,10 +300,10 @@ String library
 
 The String library enables manipulating strings (e.g. :name:`Replace
 String With Regexp`, :name:`Split To Lines`) and verifying their
-contents (e.g. :name:`Should Be String`). This library is new in Robot
-Framework 2.1.
+contents (e.g. :name:`Should Be String`).
 
-For more information, see the `String library documentation`_.
+For more information, see the `String library documentation`_. This
+library is new in Robot Framework 2.1.
 
 Dialogs library
 '''''''''''''''
@@ -310,9 +311,10 @@ Dialogs library
 The Dialogs library provides means for pausing the test execution and
 getting input from users. The dialogs are slightly different depending
 on are tests run on Python or Jython but they provide the same
-functionality. This library is new in Robot Framework 2.1.
+functionality. 
 
-For more information, see the `Dialogs library documentation`_.
+For more information, see the `Dialogs library documentation`_. This
+library is new in Robot Framework 2.1.
 
 Screenshot library
 ''''''''''''''''''
@@ -322,6 +324,19 @@ of the whole desktop. This library is implemented with Java AWT APIs,
 so it can be used only when running Robot Framework on Jython.
 
 For more information, see the `Screenshot library documentation`_.
+
+Remote library
+''''''''''''''
+
+The Remote library is totally different than the other standard
+libraries. It does not have any keywords of its own but it works as a
+proxy between Robot Framework and actual test library implementations.
+These libraries can be running on other machines than the core
+framework and can even be implemented using languages not supported by
+Robot Framework natively.
+
+See separate `Remote library interface`_ section for more information
+about the concept. This library is new in Robot Framework 2.1.
 
 
 External libraries
