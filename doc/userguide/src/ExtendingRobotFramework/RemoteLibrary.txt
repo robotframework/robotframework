@@ -1,10 +1,10 @@
 Remote library interface
 ------------------------
 
-Remote library interface provides means for having test libraries on
-different machines than where Robot Framework is running, and also for
-implementing libraries using other languages than the natively
-supported Python and Java. For a test library user remote
+The remote library interface provides means for having test libraries
+on different machines than where Robot Framework itself is running,
+and also for implementing libraries using other languages than the
+natively supported Python and Java. For a test library user remote
 libraries look pretty much the same as any other test library, and
 developing test libraries using the Remote library interface is also
 similar to creating `normal test libraries`__.
@@ -19,41 +19,46 @@ __ `Creating test libraries`_
 Introduction
 ~~~~~~~~~~~~
 
-Remote library interface is provided by Remote library that is one of
-the `standard libraries`_ starting from Robot Framework 2.1. This
-library does not have any keywords of its own, and it works as a proxy
-to keywords implemented elsewhere. The Remote library communicates
-with the actual library implementation using a simple `remote
-protocol`_ on top of an `XML-RPC`_ channel.  The high level
-architecture of Remote library is illustrated in the picture below:
+There are two main reasons for using the remote library API:
+
+* It is possible to have actual libraries on different machines than
+  where Robot Framework is running. This allows interesting
+  possibilities for distributed testing.
+
+* Test libraries can be implemented using any language that support
+  `XML-RPC`_ protocol. Robot Framework 2.1 contains generic `remote
+  servers`__ for Python/Jython and Ruby and it is possible to
+  generic servers for other languages too.
+
+The remote library interface is provided by the Remote library that is
+one of the `standard libraries`_ starting from Robot Framework
+2.1. This library does not have any keywords of its own, but it works
+as a proxy between the core framework and keywords implemented
+elsewhere. The Remote library communicates with the actual library
+implementation using a simple `remote protocol`_ on top of an
+XML-RPC channel.  The high level architecture of Remote library is
+illustrated in the picture below:
 
 .. figure:: src/ExtendingRobotFramework/remote.png
 
    Robot Framework architecture with Remote library
 
-There are two main reasons for using the remote library API:
-
-* It is possible to have actual libraries on different machines than
-  where Robot Framework itself is running. This allows interesting
-  possibilities for distributed testing.
-
-* Test libraries can be implemented using any language that support
-  XML-RPC protocol. Robot Framework 2.1 contains generic remote servers
-  for Python/Jython and Ruby and it is possible to implement them for
-  other languages too.
+__ `Using remote servers`_
 
 
 Taking Remote library into use
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-When Remote library is taken into use, it needs to get an address of
-the remote server as an argument, but otherwise importing it and using
-keywords that it provides is no different to how other libraries are
-used. If you need to use Remote library multiple times in a test
-suite, or just want to give it a more describing name, you need to
-import it using the `WITH NAME syntax`_.
+Importing Remote library
+''''''''''''''''''''''''
 
-.. table:: Importing Remote library using WITH NAME syntax
+The Remote library needs to know the address of the remote server but
+otherwise importing it and using keywords that it provides is no
+different to how other libraries are used. If you need to use the Remote
+library multiple times in a test suite, or just want to give it a more
+describing name, you cam to import it using the `WITH NAME syntax`_.
+
+.. table:: Importing Remote library
    :class: example
 
    =========  ===========  ======================  =========  =========
@@ -63,10 +68,13 @@ import it using the `WITH NAME syntax`_.
    Library    Remote       \http://10.0.0.42:7777  WITH NAME  Example2
    =========  ===========  ======================  =========  =========
 
-The first URL used in the above examples is also the default address
+The URL used by the first example above is also the default address
 that the Remote library uses if no address is given. Similarly port
 :code:`8270` is the default port the provided remote servers use. (82
 and 70 are the ASCII codes of letters `R` and `F`, respectively.)
+
+Starting and stopping remote servers
+''''''''''''''''''''''''''''''''''''
 
 Before the Remote library can be imported using a certain URL, the
 remote server providing the actual keywords must be started. It is
@@ -75,12 +83,49 @@ other keywords, for example from OperatingSystem or SSH library, can
 start it up. Notice that in the latter case you may need to import the
 Remote library `using Import Library keyword`_.
 
+How a remote server can be stopped depends on how it is
+implemented. Following methods work with the servers coming with Robot
+Framework:
 
-Creating libraries on top of the remote server
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+* Regardless the actual library used, remote servers provide
+  :name:`Stop Remote Servers` keyword that can be used from the test data.
+* Remote servers have :code:`stop_remote_server` method in their
+  XML-RPC interface.
+* :code:`Ctrl-c` stops the server if it is running on a terminal
+  window. Unfortunately it does not work with all servers on all
+  operating systems.
+* The server process can be terminated using tools provided by the
+  operating system (e.g. :prog:`kill`).
+
+
+Supported argument and return value types
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Because the XML-RPC protocol does not support all possible object
+types, the values transferred between the Remote library and remote
+servers must be converted to compatible types. This applies to the
+keyword arguments the Remote library passes to remote servers and to
+the return values servers pass back to the Remote library.
+
+The conversions are done using following rules:
+
+* Strings, numbers and boolean values are passed without modifications.
+* None/null/nil value is passed as an empty string.
+* Lists and tuples are passed as lists so that their contents are 
+  converted recursively.
+* Dictionaries/maps are passed so that their contents are converted
+  recursively. Additionally their keys are converted to strings.
+* Other types are converted to strings.
+
+
+Using remote servers
+~~~~~~~~~~~~~~~~~~~~
+
+**THIS SECTION IS UNDER CONSTRUCTION**
 
 Robot Framework 2.1 includes remote server implementation written both in
-`Python`__ and `Ruby`__.  A test library using the remote server must be
+`Python`__ and `Ruby`__, and the former is also compatible with Jython. 
+A test library using the remote server must be
 implemented so that it can be started from the command line.  When started, it
 must start the remote server and register itself to it.
 
@@ -88,22 +133,19 @@ Below are simple example libraries implemented in Python and Ruby that
 demonstrate how test libraries use the remote server.  There is also a simple
 `test case file`__ that uses the keywords from these libraries. 
 
-__ ../../tools/remotelibrary/robotremoteserver.py
-__ ../../tools/remotelibrary/robotremoteserver.rb
-__ ../../tools/remotelibrary/example/example.html
+__ ../../tools/remoteserver/robotremoteserver.py
+__ ../../tools/remoteserver/robotremoteserver.rb
+__ ../../tools/remoteserver/example/example.html
 
 
 .. sourcecode:: python 
 
-   ../../tools/remotelibrary/example/examplelibrary.py
+   ../../tools/remoteserver/example/examplelibrary.py
 
 
 .. sourcecode:: ruby 
 
-   ../../tools/remotelibrary/example/examplelibrary.rb
-
-
-.. include:: ../../../../tools/remotelibrary/example/README.txt
+   ../../tools/remoteserver/example/examplelibrary.rb
 
 
 Remote protocol
@@ -111,50 +153,85 @@ Remote protocol
 
 This section explains the protocol that is used between the Remote
 library and remote servers. This information is mainly targeted for
-people who want to create new remote servers.
+people who want to create new remote servers. The provided Python and
+Ruby servers can also be used as examples.
 
-The remote protocol is implemented on top of the `XML-RPC`_ which is a
-simple remote procedure call protocol. Most widely used languages
+The remote protocol is implemented on top of `XML-RPC`_, which is a
+simple remote procedure call protocol. Most mainstream languages
 (Python, Java, C, Ruby, Perl, Javascript, PHP, ...) have a support for
-XML-RPC and many even have the support built-in.
+XML-RPC either built-in or as extensions.
+
+Required methods
+''''''''''''''''
 
 A remote server is an XML-RPC server that must have the same methods
-as the `dynamic library API`_ has. Only :code:`get_keyword_names` and
-:code:`run_keyword` are actually required, but
-:code:`get_keyword_arguments` and :code:`get_keyword_documentation`
-are also recommended. Notice that using camelCase format in method
-names is not possible, but a support for that can be added later.
-How the actual keywords are implemented is not relevant for the Remote
+in its public interface as the `dynamic library API`_ has. Only
+:code:`get_keyword_names` and :code:`run_keyword` are actually
+required, but :code:`get_keyword_arguments` and
+:code:`get_keyword_documentation` are also recommended. Notice that
+using camelCase format in method names is not possible currently. How
+the actual keywords are implemented is not relevant for the Remote
 library.  A remote server can either act as a wrapper for real test
 libraries, like the provided Python and Ruby servers do, or it can
 implement keywords itself.
 
+Remote servers should also have :code:`stop_remote_server` method in
+their public interface. Additionally they should provide it as a
+keyword so that it can be used in the test data.
 
-Getting remote keyword names
-''''''''''''''''''''''''''''
+Getting remote keyword names and other information
+''''''''''''''''''''''''''''''''''''''''''''''''''
 
 The Remote library gets a list of keywords that the remote server
 provides using :code:`get_keyword_names` method. This method must
 return the keyword names as a list of strings.
 
-Executing remote keywords
-'''''''''''''''''''''''''
-
-:code:`run_keyword`.
-
-*TODO*
-
-Getting remote keywords' arguments and documentation
-''''''''''''''''''''''''''''''''''''''''''''''''''''
-
 Remote servers can, and should, also implement
 :code:`get_keyword_arguments` and :code:`get_keyword_documentation`
-methods to provide more information about the keywords. Arguments must
-be returned as a list of strings the same way with `dynamic
-libraries`__. Documentation must be returned as a string, again the
-same ways as with `dynamic libraries`__
-
+methods to provide more information about the keywords. Both of these
+keywords get the name of the keyword as an argument. Arguments must be
+returned as a list of strings in the `same format as with dynamic
+libraries`__, and documentation must be returned `as a string`__.
 
 __ `Getting keyword arguments`_
 __ `Getting keyword documentation`_
 
+Executing remote keywords
+'''''''''''''''''''''''''
+
+When the Remote library wants the server to execute some keyword, it
+calls remote server's :code:`run_keyword` method and passes it the
+keyword name and a list of arguments. Base types can be used as
+arguments directly but more complex types are `converted to supported
+types`__. The server must return results of the execution in a result
+dictionary (or map, depending on terminology) containing items
+explained in the following table.
+
+.. table:: Entries in the remote result dictionary
+   :class: tabular
+
+   +------------+--------------------------------------------------------+
+   |     Name   |                     Explanation                        |
+   +============+========================================================+
+   | status     | Mandatory execution status. Either PASS or FAIL.       |
+   +------------+--------------------------------------------------------+
+   | output     | Possible output to write into the log file. Must be    |
+   |            | given as a single string but can contain multiple      |
+   |            | messages and different `log levels`__ in format        |
+   |            | :msg:`*INFO* First message\\n*INFO* Second\\n*WARN*    |
+   |            | Another message`.                                      |
+   +------------+--------------------------------------------------------+
+   | return     | Possible return value. Must be one of the `supported   |
+   |            | types`__.                                              |
+   +------------+--------------------------------------------------------+
+   | error      | Possible error message. Used only when the execution   |
+   |            | fails.                                                 |
+   +------------+--------------------------------------------------------+
+   | traceback  | Possible stack trace to `write into the log file`__    |
+   |            | using DEBUG level when the execution fails.            |
+   +------------+--------------------------------------------------------+
+
+__ `Supported argument and return value types`_
+__ `Logging information`_
+__ `Supported argument and return value types`_
+__ `Reporting keyword status`_
