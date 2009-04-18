@@ -297,7 +297,7 @@ LOG = '''%(FUNCTIONS)s
     font-size: 1.2em;
   }
   table.metadata th {
-    width: 12em;
+    width: 13em;
     text-align: left;
     vertical-align: top;
   }
