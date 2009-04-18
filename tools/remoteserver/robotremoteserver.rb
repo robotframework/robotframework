@@ -56,9 +56,9 @@ class RobotRemoteServer<XMLRPC::Server
   def get_keyword_arguments(name)
     # This algorithm doesn't return correct number of maximum arguments when 
     # args have default values. It seems that there's no easy way to get that
-    # in formation in Ruby, see e.g. http://www.ruby-forum.com/topic/147614.
-    # Additionally it would be much better to return real argument names 
-    # because that information could be used to create librart documentation. 
+    # information in Ruby, see e.g. http://www.ruby-forum.com/topic/147614.
+    # Additionally, it would be much better to return real argument names 
+    # because that information could be used to create library documentation. 
     arity = @library.method(name).arity
     if arity >= 0
       return ['arg'] * arity
