@@ -1,10 +1,10 @@
 class ExampleRemoteLibrary
 
-  def count_items directory
+  def count_items(directory)
     Dir.entries(directory).find_all{|i| not i.match('^\.')}.length
   end 
 
-  def strings_should_be_equal str1, str2
+  def strings_should_be_equal(str1, str2)
     puts "Comparing '#{str1}' to '#{str2}'"
     if str1 != str2
       raise RuntimeError, "Given strings are not equal"

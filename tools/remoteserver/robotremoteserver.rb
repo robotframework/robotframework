@@ -18,7 +18,7 @@ require 'xmlrpc/utils'
 require 'stringio'
 
 
-class RobotRemoteServer<XMLRPC::Server
+class RobotRemoteServer < XMLRPC::Server
   
   def initialize(library, host='localhost', port=8270)
     @library = library
