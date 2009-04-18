@@ -1,7 +1,9 @@
+#!/usr/bin/env ruby
+
 class ExampleRemoteLibrary
 
-  def count_items(directory)
-    Dir.entries(directory).find_all{|i| not i.match('^\.')}.length
+  def count_items_in_directory(path)
+    Dir.entries(path).find_all{|i| not i.match('^\.')}.length
   end 
 
   def strings_should_be_equal(str1, str2)
