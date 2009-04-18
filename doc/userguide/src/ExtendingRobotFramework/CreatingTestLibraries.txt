@@ -1211,7 +1211,7 @@ Summary
 
 All special methods in the dynamic API are listed in the table
 below. Method names are listed in the underscore format, but their
-camelCase aliases function in exactly the same way.
+camelCase aliases work exactly the same way.
 
 .. table:: All special methods in the dynamic API
    :class: tabular
@@ -1246,6 +1246,9 @@ are completely optional.
        String getKeywordDocumentation(String name);
 
    }
+
+A good example of using the dynamic API is Robot Framework's own
+`Remote library`_.
 
 
 Hybrid library API
