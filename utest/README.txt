@@ -1,6 +1,5 @@
 Unit Tests
-================
-
+==========
 
 Introduction
 ------------
@@ -17,13 +16,12 @@ its limits (and eat our own dog food). As a consequence to this is
 that some features are not unit tested at all and in general there are
 not that many unit tests.
 
-
 License and Copyright
 ---------------------
 
 All the content in the 'utest' folder is under following copyright:
 
-  Copyright 2008 Nokia Siemens Networks Oyj
+  Copyright 2008-2009 Nokia Siemens Networks Oyj
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -37,7 +35,6 @@ All the content in the 'utest' folder is under following copyright:
   See the License for the specific language governing permissions and
   limitations under the License.
 
-
 Running Unit Tests
 ------------------
 
@@ -47,8 +44,9 @@ to verify interoperability with both supported interpreters. Unit test files
 should always start with prefix 'test_'. This is the mechanism the unit tests 
 are found by the 'run_utests.py' script. 
 
-To run only certain unit tests you need to set the Robot Framework's 'src' folder to PYTHONPATH and run the test like 'python path/test_xxx.py'.
-There are also some unit tests that need some other modules i.e. libraries 
-used also in acceptance tests. The full list of paths needed to run
-all the unit tests can be found from the beginning of the 'run_utests.py'
-file. Usually it is just easier to run all of the unit tests.
+To run only certain unit tests you need to set the Robot Framework's 'src'
+folder to PYTHONPATH and run the test like 'python path/test_xxx.py'. There are
+are also some unit tests that need some other modules i.e. libraries used also
+in acceptance tests. The full list of paths needed to run all the unit tests
+can be found from the beginning of the 'run_utests.py' file. Usually it is just
+easier to run all the unit tests.
