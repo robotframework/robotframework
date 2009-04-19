@@ -1281,7 +1281,7 @@ to most Python programmers and they can immediately understand the
 following example. Others may find it easier to consult `Python Reference
 Manual`__ first.
 
-__ http://docs.python.org/ref/attribute-access.html
+__ http://docs.python.org/reference/datamodel.html#attribute-access
 
 .. sourcecode:: python
 
