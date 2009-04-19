@@ -1,7 +1,6 @@
 Acceptance Tests
 ================
 
-
 Introduction
 ------------
 
@@ -9,13 +8,12 @@ Acceptance tests for Robot Framework are naturally created using Robot
 Framework itself. This folder contains all those acceptance tests and other
 test data they need. 
 
-
 License and Copyright
 ---------------------
 
 All the content in the atest folder is under following copyright::
 
-    Copyright 2008 Nokia Siemens Networks Oyj
+    Copyright 2008-2009 Nokia Siemens Networks Oyj
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -28,7 +26,6 @@ All the content in the atest folder is under following copyright::
     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
     See the License for the specific language governing permissions and
     limitations under the License.
-
 
 Directory contents
 ------------------
@@ -56,7 +53,6 @@ results/
     The place for test execution results like reports, logs and outputs. 
     This directory is generated when acceptance tests are executed. It
     is in 'svn:ignore' and can be safely deleted.
-
 
 Running Acceptance Tests
 ------------------------
@@ -86,7 +82,6 @@ To run all the acceptance tests, execute the 'atest/robot' folder entirely:
 
     python atest/run_atests.py python atest/robot
 
-
 A sub test suite can be executed simply by running the folder or file 
 containing it. On modern machines running all acceptance tests ought to
 take less than ten minutes with Python, but with Jython the execution time 
@@ -108,11 +103,10 @@ directory contains output, log and report files that are named based on
 the startup script used to run the test cases (e.g. 'jybot-log.html'). 
 The directory also contains time-stampped folders for other test outputs.
 
-
 Test Data
 ---------
 
-The test data is divided to two, test data part ('testdata' folder') and
+The test data is divided to two, test data part ('testdata' folder) and
 running part ('robot' folder). Test data side contains test cases for
 different features. Running side contains the actual acceptance test cases
 that run the test cases on the test data side and verify their results.
