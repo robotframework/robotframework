@@ -48,7 +48,7 @@ is listening as a variable::
    jybot example/remote_tests.html
    pybot --variable PORT:7777 example/remote_tests.html 
 
-The results should be the same regardless the example library or start-up
+The results should be the same regardless of the example library or start-up
 script used.
 
 Testing Remote Servers
