@@ -13,13 +13,11 @@
 | Copyright |copy| Nokia Siemens Networks 2008-2009
 | Licensed under the Apache License, Version 2.0
 
-
 .. contents:: Table of Contents
    :depth: 2
 
 .. sectnum::
    :depth: 3
-
 
 Getting started
 ===============
@@ -32,7 +30,6 @@ Getting started
 .. include:: GettingStarted/CopyrightAndLicense.txt
 .. include:: GettingStarted/Installation.txt
 .. include:: GettingStarted/Demonstration.txt
-
 
 Creating test data
 ==================
@@ -50,7 +47,6 @@ Creating test data
 .. include:: CreatingTestData/ResourceAndVariableFiles.txt
 .. include:: CreatingTestData/AdvancedFeatures.txt
 
-
 Executing test cases
 ====================
 
@@ -61,7 +57,6 @@ Executing test cases
 .. include:: ExecutingTestCases/BasicUsage.txt
 .. include:: ExecutingTestCases/ConfiguringExecution.txt
 .. include:: ExecutingTestCases/OutputFiles.txt
-
 
 Extending Robot Framework
 =========================
@@ -74,7 +69,6 @@ Extending Robot Framework
 .. include:: ExtendingRobotFramework/RemoteLibrary.txt
 .. include:: ExtendingRobotFramework/ListenerInterface.txt
 .. include:: ExtendingRobotFramework/InternalAPI.txt
-
 
 Appendices
 ==========
@@ -192,6 +186,7 @@ Appendices
 .. 4. Extending
 
 .. _library API: `Creating test libraries`_
+.. _static library API: `Creating static keywords`_
 .. _listener interface: `Using listener interface`_
 .. _listener: `listener interface`_
 .. _listeners: `listener interface`_
