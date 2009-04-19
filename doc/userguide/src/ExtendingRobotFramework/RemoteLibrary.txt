@@ -6,7 +6,7 @@ on different machines than where Robot Framework itself is running,
 and also for implementing libraries using other languages than the
 natively supported Python and Java. For a test library user remote
 libraries look pretty much the same as any other test library, and
-developing test libraries using the Remote library interface is also
+developing test libraries using the remote library interface is also
 very close to creating `normal test libraries`__.
 
 __ `Creating test libraries`_
@@ -25,25 +25,24 @@ There are two main reasons for using the remote library API:
   where Robot Framework is running. This allows interesting
   possibilities for distributed testing.
 
-* Test libraries can be implemented using any language that support
+* Test libraries can be implemented using any language that supports
   `XML-RPC`_ protocol. Robot Framework 2.1 contains generic `remote
-  servers`__ for Python/Jython and Ruby, and the plan is to implement
+  servers`_ for Python/Jython and Ruby, and the plan is to implement
   generic servers for other languages like Java and Perl in the future.
 
 The remote library interface is provided by the Remote library that is
 one of the `standard libraries`_ starting from Robot Framework
 2.1. This library does not have any keywords of its own, but it works
 as a proxy between the core framework and keywords implemented
-elsewhere. The Remote library communicates with the actual library
-implementation using a simple `remote protocol`_ on top of an
+elsewhere. The Remote library interacts with actual library
+implementations through `remote servers`_, and the Remote library and
+servers communicate using a simple `remote protocol`_ on top of an
 XML-RPC channel.  The high level architecture of all this is
 illustrated in the picture below:
 
 .. figure:: src/ExtendingRobotFramework/remote.png
 
    Robot Framework architecture with Remote library
-
-__ `Using remote servers`_
 
 
 Taking Remote library into use
@@ -56,7 +55,7 @@ The Remote library needs to know the address of the remote server but
 otherwise importing it and using keywords that it provides is no
 different to how other libraries are used. If you need to use the Remote
 library multiple times in a test suite, or just want to give it a more
-describing name, you cam to import it using the `WITH NAME syntax`_.
+describing name, you can import it using the `WITH NAME syntax`_.
 
 .. table:: Importing Remote library
    :class: example
@@ -87,8 +86,8 @@ How a remote server can be stopped depends on how it is
 implemented. Following methods work with the servers distributed with
 Robot Framework:
 
-* Regardless the actual library used, remote servers provide
-  :name:`Stop Remote Servers` keyword that can be used from the test data.
+* Regardless of the library used, remote servers provide :name:`Stop
+  Remote Servers` keyword that can be used from the test data.
 * Remote servers have :code:`stop_remote_server` method in their
   XML-RPC interface.
 * :code:`Ctrl-c` stops the server if it is running on a terminal

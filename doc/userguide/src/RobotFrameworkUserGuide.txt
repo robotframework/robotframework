@@ -187,6 +187,7 @@ Appendices
 
 .. _library API: `Creating test libraries`_
 .. _static library API: `Creating static keywords`_
+.. _remote servers: `Using remote servers`_ 
 .. _listener interface: `Using listener interface`_
 .. _listener: `listener interface`_
 .. _listeners: `listener interface`_
