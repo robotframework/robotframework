@@ -153,7 +153,7 @@ class LogSerializer:
         self._start_suite_or_test_metadata(suite)
         for name, value in suite.get_metadata(html=True):
             self._write_metadata_row(name, value, escape=False,
-                                     escape_header=True, write_empty=True)
+                                     escape_name=True, write_empty=True)
         self._write_source(suite.source)
         self._write_times(suite)
         self._write_metadata_row('Overall Status', suite.status, 
@@ -192,10 +192,10 @@ class LogSerializer:
         self._write_metadata_row(titles, times)
 
     def _write_metadata_row(self, name, value, attrs={}, escape=True,
-                            escape_header=False, write_empty=False):
+                            escape_name=False, write_empty=False):
         if value or write_empty:
             self._writer.start('tr', newline=False)
-            self._writer.element('th', name+':', escape=escape_header,
+            self._writer.element('th', name+':', escape=escape_name,
                                  newline=False)
             self._writer.element('td', value, attrs, escape=escape,
                                  newline=False)
