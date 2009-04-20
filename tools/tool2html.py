@@ -123,6 +123,7 @@ def create_tooldoc(tool_name):
 
 BASEDIR = os.path.dirname(os.path.abspath(__file__))
 VALID_TOOLS = [ name for name in os.listdir(BASEDIR) if '.' not in name ]
+VALID_TOOLS = [ n for n in VALID_TOOLS if os.path.isdir(os.path.join(BASEDIR, n, 'doc')) ]
 
 
 if __name__ == '__main__':
