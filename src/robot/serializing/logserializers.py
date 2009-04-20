@@ -153,7 +153,7 @@ class LogSerializer:
         self._start_suite_or_test_metadata(suite)
         for name, value in suite.get_metadata(html=True):
             self._write_metadata_row(name, value, escape=False,
-                                     write_empty=True)
+                                     escape_header=True, write_empty=True)
         self._write_source(suite.source)
         self._write_times(suite)
         self._write_metadata_row('Overall Status', suite.status, 
@@ -186,15 +186,17 @@ class LogSerializer:
         self._write_metadata_row('Documentation', item.htmldoc, escape=False)
 
     def _write_times(self, item):
-        times = [item.starttime, item.endtime,
-                 utils.elapsed_time_to_string(item.elapsedtime)]
-        self._write_metadata_row('Start / End / Elapsed', '  /  '.join(times))
+        titles = '&nbsp;/&nbsp;'.join(['Start','End','Elapsed'])
+        times = ' / '.join([item.starttime, item.endtime,
+                            utils.elapsed_time_to_string(item.elapsedtime)])
+        self._write_metadata_row(titles, times)
 
     def _write_metadata_row(self, name, value, attrs={}, escape=True,
-                            write_empty=False):
+                            escape_header=False, write_empty=False):
         if value or write_empty:
             self._writer.start('tr', newline=False)
-            self._writer.element('th', name+':', escape=False, newline=False)
+            self._writer.element('th', name+':', escape=escape_header,
+                                 newline=False)
             self._writer.element('td', value, attrs, escape=escape,
                                  newline=False)
             self._writer.end('tr')
