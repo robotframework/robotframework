@@ -55,7 +55,7 @@ The Remote library needs to know the address of the remote server but
 otherwise importing it and using keywords that it provides is no
 different to how other libraries are used. If you need to use the Remote
 library multiple times in a test suite, or just want to give it a more
-describing name, you can import it using the `WITH NAME syntax`_.
+descriptive name, you can import it using the `WITH NAME syntax`_.
 
 .. table:: Importing Remote library
    :class: example
@@ -75,12 +75,13 @@ and 70 are the ASCII codes of letters `R` and `F`, respectively.)
 Starting and stopping remote servers
 ''''''''''''''''''''''''''''''''''''
 
-Before the Remote library can be imported using a certain URL, the
-remote server providing the actual keywords must be started. It is
-possible to start the server before launching the test execution, or
-other keywords, for example from OperatingSystem or SSH library, can
-start it up. Notice that in the latter case you may need to import the
-Remote library `using Import Library keyword`_.
+Before the Remote library can be imported, the remote server providing
+the actual keywords must be started.  If the server is started before
+launching the test execution, it is possible to use the normal
+:opt:`Library` setting like in the above example. Alternatively other
+keywords, for example from OperatingSystem or SSH libraries, can start
+the server up, but then you may need to use `Import Library keyword`__
+because the library is not available when the test execution starts.
 
 How a remote server can be stopped depends on how it is
 implemented. Following methods work with the servers distributed with
@@ -95,6 +96,8 @@ Robot Framework:
   operating systems.
 * The server process can be terminated using tools provided by the
   operating system (e.g. :prog:`kill`).
+
+__ `Using Import Library keyword`_
 
 
 Supported argument and return value types
@@ -193,9 +196,11 @@ library.  A remote server can either act as a wrapper for real test
 libraries, like the provided Python and Ruby servers do, or it can
 implement keywords itself.
 
-Remote servers should also have :code:`stop_remote_server` method in
-their public interface. Additionally they should provide it as a
-keyword so that it can be used in the test data.
+Remote servers should additionally have :code:`stop_remote_server`
+method in their public interface to ease stopping them. They should
+also expose this method as :name:`Stop Remote Server` keyword
+automatically so that it can be used in the test data regardless of
+the test library.
 
 Getting remote keyword names and other information
 ''''''''''''''''''''''''''''''''''''''''''''''''''
