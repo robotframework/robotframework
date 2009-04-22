@@ -679,11 +679,12 @@ users. In addition to that, methods can also send messages to `log
 files`_ simply by writing to standard output (stdout) or standard
 error (stderr), and they can even use different `log levels`_.
 
-By default, everything written by a method to stdout is written into a
-log file as a single entry with the log level
-:msg:`INFO`. Messages written into stderr are handled similarly
+By default, everything written by a method into standard output is written
+to the log file as a single entry with the log level
+:msg:`INFO`. Messages written into standard error are handled similarly
 otherwise, but they are echoed back to the original stderr after the
-keyword execution has finished.
+keyword execution has finished. It is thus possible to use stderr if you need
+some messages to be visible on the console where tests are executed.
 
 To use other log levels than :msg:`INFO`, or to create several
 messages, specify the log level explicitly by embedding the level into
