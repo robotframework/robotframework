@@ -20,10 +20,8 @@ There are four ways to install Robot Framework:
     the created directory and run the ``python setup.py install``
     command.
 
-`Using binary installers`_
-    Binary installers are platform-specific. There is currently only
-    one binary distribution available, a graphical installer for
-    Windows.
+`Using Windows installer`_
+    There is a special graphical installer for Windows operating system.
 
 `Using Easy Install`_
     If Python package managing tool `Easy Install`_ is available, installing Robot 
@@ -168,16 +166,24 @@ something like the following text should appear at the end::
           operate in accordance with the host operating system
           conventions.
 
-Using binary installers
+Using Windows installer
 '''''''''''''''''''''''
 
-Use the platform-specific way of installation. For example, on
-Windows, double click the provided executable and follow
-the instructions of the graphical installer. 
+The installation itself requires only double clicking the provided
+Windows installer and following instructions. After the installation
+you probably want to `set the environment`__ so that Robot Framework
+start-up scripts can be executed easily. Notice that the framework
+is automatically installed `under the Python installation`__ and that
+location cannot be altered at this point.
 
-.. Note:: With 2.6 Python, you need to add the Python installation 
-          directory into :var:`PATH` environment variable before running the 
-          installer. See instructions from `setting up environment`_.
+.. Note:: With Python 2.6 you need to add the Python installation 
+          directory into :var:`PATH` environment variable *before*
+          running the Robot Framework installer. `Setting up environment`_
+          section has more information about setting environment variables.
+
+__ `Setting up environment`_
+__ `Where files are installed`_
+
 
 Using Easy Install
 ''''''''''''''''''
@@ -296,11 +302,15 @@ Setting the :var:`PATH` environment variable on Windows:
 
 2. To edit the existing :var:`PATH`, select ``Edit`` and add
    :path:`;[PythonInstallationDir]\\Scripts\\` at the end of the
-   value. Note that the leading colon (;) is important, as it
+   value. Note that the leading colon (:path:`;`) is important, as it
    separates different entries. To add a new value, select ``New`` and
    provide both the name and the value, this time without the colon.
 
 3. Start a new command prompt for the changes to take effect.
+
+.. Note:: Python installer on Windows does not create
+          :path:`[PythonInstallationDir]\\Scripts` directory, but 
+          it is automatically created during Robot Framework installation.
 
 Verifying installation
 ''''''''''''''''''''''
