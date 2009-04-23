@@ -125,7 +125,7 @@ def create_html_doc(lib, outpath, title=None):
 def create_xml_doc(lib, outpath):
     writer = utils.XmlWriter(outpath)
     writer.start('keywordspec', {'name': lib.name, 'type': lib.type,
-                                         'generated': utils.get_timestamp(millissep=None)})
+                                 'generated': utils.get_timestamp(millissep=None)})
     writer.element('doc', lib.doc)
     writer.start('keywords')
     for kw in lib.keywords:
