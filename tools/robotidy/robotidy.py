@@ -637,27 +637,28 @@ class HtmlSerializer(_SerializerBase):
         self._writer = utils.HtmlWriter(output)
 
     def close(self):
-        self._writer.end_elements(['body','html'])
+        self._writer.end('body')
+        self._writer.end('html')
         self._writer.output.close()
 
     def _start_table(self, headers, width):
-        self._writer.start_element('table', {'border':'1'})
+        self._writer.start('table', {'border':'1'})
         _SerializerBase._start_table(self, headers, width)
 
     def _end_table(self):
-        self._writer.end_element('table')
+        self._writer.end('table')
 
     def _start_row(self):
-        self._writer.start_element('tr')
+        self._writer.start('tr')
         self._row_empty = True
         
     def _end_row(self):
-        self._writer.end_element('tr')
+        self._writer.end('tr')
 
     def _cell(self, data, header=False):
         elem = header and 'th' or 'td'
         cls = self._row_empty and 'col_name' or 'col_value'
-        self._writer.whole_element(elem, data, {'class': cls})
+        self._writer.element(elem, data, {'class': cls})
         self._row_empty = False
 
 

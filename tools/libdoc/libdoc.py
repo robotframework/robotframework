@@ -124,20 +124,20 @@ def create_html_doc(lib, outpath, title=None):
     
 def create_xml_doc(lib, outpath):
     writer = utils.XmlWriter(outpath)
-    writer.start_element('keywordspec', {'name': lib.name, 'type': lib.type,
+    writer.start('keywordspec', {'name': lib.name, 'type': lib.type,
                                          'generated': utils.get_timestamp(millissep=None)})
-    writer.whole_element('doc', lib.doc)
-    writer.start_element('keywords')
+    writer.element('doc', lib.doc)
+    writer.start('keywords')
     for kw in lib.keywords:
-        writer.start_element('kw', {'name': kw.name})
-        writer.whole_element('doc', kw.doc)
-        writer.start_element('arguments')
+        writer.start('kw', {'name': kw.name})
+        writer.element('doc', kw.doc)
+        writer.start('arguments')
         for arg in kw.args:
-            writer.whole_element('arg', arg)
-        writer.end_element('arguments')
-        writer.end_element('kw')
-    writer.end_element('keywords')
-    writer.end_element('keywordspec')
+            writer.element('arg', arg)
+        writer.end('arguments')
+        writer.end('kw')
+    writer.end('keywords')
+    writer.end('keywordspec')
     writer.close()
 
 
