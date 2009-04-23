@@ -181,6 +181,10 @@ location cannot be altered at this point.
           running the Robot Framework installer. `Setting up environment`_
           section has more information about setting environment variables.
 
+.. Note:: On Windows Vista installing Robot Framework requires
+          administrator privileges. Select ``Run as administrator`` from
+          the context menu when starting the installer.
+
 __ `Setting up environment`_
 __ `Where files are installed`_
 
