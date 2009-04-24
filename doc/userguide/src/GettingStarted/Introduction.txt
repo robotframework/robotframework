@@ -57,40 +57,41 @@ __ `Test setup and teardown`_
 __ `Suite setup and teardown`_
 
 
-Screenshots
-~~~~~~~~~~~
-
-Following image shows screenshots of Robot Framework `test data`_, `test 
-reports`_ and `test logs`_.
-
-.. figure:: src/GettingStarted/testdata_screenshots.png
-
-   Example test case files
-
-.. figure:: src/GettingStarted/screenshots.png
-
-    Example report and log files
- 
-
 High-level architecture
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-Robot Framework handles the processing of test data, the controlling
-of test execution and the reporting of results for testing. The
-testing and interaction with the target under test is done by test
-libraries that are plugged into Robot Framework. Test libraries may
-internally use other test tools, but this is not visible to Robot
-Framework.
+Robot Framework is a generic, application and technology independent
+framework. It has a highly modular architecture illustrated in the
+diagram below.
 
 .. figure:: src/GettingStarted/architecture.png
 
-   High-level architecture
+   Robot Framework architecture
 
-As shown in the figure, Robot Framework's role in a test framework is to take 
-test data, process it into a format that is appropriate for the attached test 
-libraries, invoke the test libraries with the appropriate arguments, receive 
-the data about the test from the test libraries, and then report it. The test 
-libraries are responsible for interacting with the target under test.
+The `test data`_ is in simple, easy-to-edit tabular format. When
+Robot Framework is started, it processes the test data, `executes test
+cases`__ and generates logs and reports. The core framework does not
+know anything about the target under test, and the interaction with it
+is handled by `test libraries`__. Libraries can either use application
+interfaces directly or use lower level test tools as drivers.
+
+__ `Executing test cases`_
+__ `Creating test libraries`_
+
+
+Screenshots
+~~~~~~~~~~~
+
+Following screenshots show examples of the `test data`_ and created
+reports_ and logs_.
+
+.. figure:: src/GettingStarted/testdata_screenshots.png
+
+   Test case files
+
+.. figure:: src/GettingStarted/screenshots.png
+
+   Reports and logs
 
 
 Getting more information
