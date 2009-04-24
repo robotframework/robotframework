@@ -138,9 +138,7 @@ _import_map = _create_mapping(_import_names)
 _setting_map = _create_mapping(_setting_names)
 _test_map = _create_mapping(_test_names)
 _keyword_map = _create_mapping(_keyword_names)
-
 _valid_extensions = ['TSV','HTML','HTM','XHTML']
-
 _default_styles = '''
 <style type="text/css">
 html {
@@ -199,24 +197,18 @@ class Tidier:
             LOGGER.error(utils.get_error_message())
             
     def process_directory(self, indir, otps):
-        for item in os.listdir(indir):
-            path = os.path.join(indir, item)
-            if not self.valid_robot_file(path, item):
-                continue
+        for name in os.listdir(indir):
+            path = os.path.join(indir, name)
             if os.path.isdir(path):
                 self.process_directory(path, otps)
-            elif os.path.isfile(path):
+            elif os.path.isfile(path) and self._is_valid_robot_file(name):
                 self.process_file(path, None, opts)
                         
-    def valid_robot_file(self, path, tail):
-        tail = tail.upper()
-        if tail[0] in ['.', '_'] and not tail.startswith('__INIT__.'):
+    def _is_valid_robot_file(self, name):
+        base, ext = os.path.splitext(name)
+        if not base or (base[0] in ['.', '_'] and base.lower() != '__init__'):
             return False
-        if os.path.isdir(path):
-            return True
-        if os.path.splitext(tail)[-1][1:] in _valid_extensions:
-            return True
-        return False
+        return ext.upper()[1:] in _valid_extensions
 
 
 class TestData:
