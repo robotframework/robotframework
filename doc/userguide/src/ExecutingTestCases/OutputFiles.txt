@@ -69,16 +69,14 @@ log files are always created and their default name is
 :path:`log.html`.
 
 .. figure:: src/ExecutingTestCases/log_passed.png
-   :width: 550
-   :height: 515
    :target: src/ExecutingTestCases/log_passed.html
+   :width: 500
 
    An example of beginning of log file
 
 .. figure:: src/ExecutingTestCases/log_failed.png
-   :width: 550
-   :height: 515
    :target: src/ExecutingTestCases/log_failed.html
+   :width: 500
 
    An example of log file with keyword details visible
 
@@ -101,16 +99,14 @@ created unless :opt:`NONE` is used as a value, and their default
 name is :path:`report.html`.
 
 .. figure:: src/ExecutingTestCases/report_passed.png
-   :width: 550
-   :height: 502
    :target: src/ExecutingTestCases/report_passed.html
+   :width: 500
 
    An example report file of successful test execution
 
 .. figure:: src/ExecutingTestCases/report_failed.png
-   :width: 550
-   :height: 514
    :target: src/ExecutingTestCases/report_failed.html
+   :width: 500
 
    An example report file of failed test execution
 
@@ -128,9 +124,8 @@ can be created using the command line option :opt:`--summary
 (-S)`.
 
 .. figure:: src/ExecutingTestCases/summary_passed.png
-   :width: 550
-   :height: 395
    :target: src/ExecutingTestCases/summary_passed.html
+   :width: 350
 
    An example summary file
 
@@ -171,7 +166,7 @@ Setting titles
 ''''''''''''''
 
 The default titles for log_, report_ and summary_ files are generated
-by prefixing the name of the top-level test suite with :name:`Test
+by prefixing the name of the top-level test suite wtih :name:`Test
 Log`, :name:`Test Report` or :name:`Summary Report`. Custom titles can
 be given from the command line using the options
 :opt:`--logtitle`, :opt:`--reporttitle` and
@@ -483,8 +478,9 @@ executed with these options::
     --tagstatcombine smokeNOTowner-janne*
 
 .. figure:: src/ExecutingTestCases/tagstatcombine.png
+   :width: 550
 
-    Examples of combined tag statistics
+   Examples of combined tag statistics
 
 As the above example shows, the name of the added combined statistic is, by default,
 generated from the given pattern. In certain situations this name can look pretty
@@ -520,8 +516,9 @@ Tag` table when example test data is executed with these options::
     --tagstatlink owner-*:mailto:%1@domain.com?subject=Acceptance_Tests:Send_Mail
 
 .. figure:: src/ExecutingTestCases/tagstatlink.png
+   :width: 550
 
-    Examples of links from tag names
+   Examples of links from tag names
 
 Adding documentation to tags
 ''''''''''''''''''''''''''''
