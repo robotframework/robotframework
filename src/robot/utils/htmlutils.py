@@ -146,7 +146,7 @@ def _format_line(line, formatting=False):
 
 def _repl_url(res, formatting):
     pre = res.group(1)
-    url = res.group(3)
+    url = res.group(3).replace('"', '&quot;')
     if formatting and os.path.splitext(url)[1].lower() \
            in ['.jpg', '.jpeg', '.png', '.gif', '.bmp']:
         return '%s<img src="%s" title="%s" style="border: 1px solid gray" />' % (pre, url, url)

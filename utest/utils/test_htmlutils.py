@@ -43,10 +43,13 @@ class TestHtmlEscape(unittest.TestCase):
                 assert_equals(html_escape(inp), exp) 
                 assert_equals(html_escape(inp, True), exp)
         assert_equals(html_escape('"<&>"'), '"&lt;&amp;&gt;"')
+
                 
+class TestLinks(unittest.TestCase):
+
     def test_not_links(self):
-        for nolink in [ 'http no link', 'http:/no', 'xx://no', 'tooolong10://no',
-                        'http://', 'http:// no' ]:
+        for nolink in ['http no link', 'http:/no', 'xx://no',
+                       'tooolong10://no', 'http://', 'http:// no']:
             assert_equals(html_escape(nolink, True), nolink)
             assert_equals(html_escape(nolink, False), nolink)
 
@@ -95,6 +98,10 @@ class TestHtmlEscape(unittest.TestCase):
             assert_equals(html_escape(inp, False), link % (url, url))
             assert_equals(html_escape(inp.upper(), True), img % (uprl, uprl))
             assert_equals(html_escape(inp.upper(), False), link % (uprl, uprl))
+
+    def test_link_with_quot(self):
+        assert_equals(html_escape('http://foo"bar'),
+                      '<a href="http://foo&quot;bar">http://foo&quot;bar</a>')
 
 
 class TestHtmlEscapeWithFormatting(unittest.TestCase):
