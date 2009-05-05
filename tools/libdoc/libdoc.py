@@ -126,19 +126,23 @@ def create_xml_doc(lib, outpath):
     writer = utils.XmlWriter(outpath)
     writer.start('keywordspec', {'name': lib.name, 'type': lib.type,
                                  'generated': utils.get_timestamp(millissep=None)})
+    writer.element('version', lib.version)
     writer.element('doc', lib.doc)
-    writer.start('keywords')
-    for kw in lib.keywords:
-        writer.start('kw', {'name': kw.name})
+    _write_keywords_to_xml(writer, 'init', lib.inits)
+    _write_keywords_to_xml(writer, 'kw', lib.keywords)
+    writer.end('keywordspec')
+    writer.close()
+
+def _write_keywords_to_xml(writer, kwtype, keywords):
+    for kw in keywords:
+        attrs = kwtype == 'kw' and {'name': kw.name} or {}
+        writer.start(kwtype, attrs)
         writer.element('doc', kw.doc)
         writer.start('arguments')
         for arg in kw.args:
             writer.element('arg', arg)
         writer.end('arguments')
-        writer.end('kw')
-    writer.end('keywords')
-    writer.end('keywordspec')
-    writer.close()
+        writer.end(kwtype)
 
 
 def exit(msg=None, error=None):
