@@ -60,12 +60,12 @@ class RunnableTestSuite(BaseTestSuite):
         self._exit_on_failure = False
         
     def run(self, output, parent=None, error=None):
+        self.status = 'RUNNING'
         self.starttime = utils.get_timestamp()
         self.namespace = Namespace(self, parent)
         self.namespace.variables['${SUITE_NAME}'] = self.longname
         init_err = self._init_suite(self.namespace.variables)
         output.start_suite(self)
-        self.status = 'RUNNING'
         setup_err = self._run_fixture(self.setup, output, error, init_err)
         child_err = self._get_child_error(error, init_err, setup_err)
         for suite in self.suites:
