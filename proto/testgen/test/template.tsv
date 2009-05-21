@@ -12,7 +12,7 @@ ${SCALAR}	foo
 
 Test
 	[ Documentation ]	This is test doc 
-	[ Setup ]	${EMPTY}
+	[ Setup ]	Log	Bar
 	Keyword 1	${arg2}
 	Keyword 2	${arg1}
 	[ Teardown ]	My TD
@@ -20,5 +20,5 @@ Test
 * keywords *
 
 Keyword 1	[Arguments]	${arg1}	${arg2}=foo
-	Log ${arg1}
+	Log	${arg1}
 	[ Return ]	${arg2}
