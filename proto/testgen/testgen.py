@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 """A tool for creating data driven test case for Robot Framework
 
 Usage:  testgen.py variablefile template output
