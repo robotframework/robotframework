@@ -1,0 +1,24 @@
+* Settings *
+Meta: Foo	Bar
+Library	OperatingSystem
+Resource	resource.tsv
+Variables	vars.py
+
+* Variables *
+${SCALAR}	foo
+@{LIST}	1	2	3	4
+
+* Test Cases *
+
+Test
+	[ Documentation ]	This is test doc 
+	[ Setup ]	${EMPTY}
+	Keyword 1	${arg2}
+	Keyword 2	${arg1}
+	[ Teardown ]	My TD
+
+* keywords *
+
+Keyword 1	[Arguments]	${arg1}	${arg2}=foo
+	Log ${arg1}
+	[ Return ]	${arg2}
