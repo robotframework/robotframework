@@ -172,7 +172,7 @@ Options:
     --endtime timestamp   Same as --starttime but for ending time. If both 
                           options are used, elapsed time is calculated based on
                           them. Otherwise it is calculated by adding elapsed 
-                          times of sub tests suites together.
+                          times of combined test suites together.
  -C --monitorcolors on|off|force  Using ANSI colors in console. Normally colors
                           work in unixes but not in Windows. Default is 'on'.
                           'on'    - use colors in unixes but not in Windows
