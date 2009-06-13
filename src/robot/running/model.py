@@ -160,6 +160,7 @@ class RunnableTestCase(BaseTestCase):
         self.keywords = [ KeywordFactory(kw) for kw in data.keywords ]
         
     def run(self, output, namespace, error=None):
+        self.status = 'RUNNING'
         self.starttime = utils.get_timestamp()
         init_err = self._init_test(namespace.variables)
         error = error or init_err
@@ -193,7 +194,6 @@ class RunnableTestCase(BaseTestCase):
     def _run(self, output, namespace):
         namespace.variables['${TEST_NAME}'] = self.name
         namespace.variables['@{TEST_TAGS}'] = self.tags
-        self.status = 'RUNNING'
         self.timeout.start()
         setup_err = self._run_fixture(self.setup, output, namespace)
         kw_err = self._run_keywords(output, namespace, setup_err)
