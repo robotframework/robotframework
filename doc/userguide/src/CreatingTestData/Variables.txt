@@ -640,7 +640,7 @@ of them are not even available all the time.
    | ${TEST_STATUS}        | The status of the current test case, either PASS or   | Test teardown  |
    |                       | FAIL.                                                 |                |
    +-----------------------+-------------------------------------------------------+----------------+
-   | ${TEST_MESSSAGE}      | The possible error message of the current test case.  | Test teardown  |
+   | ${TEST_MESSAGE}       | The possible error message of the current test case.  | Test teardown  |
    +-----------------------+-------------------------------------------------------+----------------+
    | ${PREV_TEST_NAME}     | The name of the previous test case, or an empty string| Everywhere     |
    |                       | if no tests have been executed yet.                   |                |
@@ -649,7 +649,7 @@ of them are not even available all the time.
    |                       | FAIL or an empty string when no tests have been       |                |
    |                       | executed.                                             |                |
    +-----------------------+-------------------------------------------------------+----------------+
-   | ${PREV_TEST_MESSSAGE} | The possible error message of the previous test case. | Everywhere     |
+   | ${PREV_TEST_MESSAGE}  | The possible error message of the previous test case. | Everywhere     |
    +-----------------------+-------------------------------------------------------+----------------+
    | ${SUITE_NAME}         | The full name of the current test suite.              | Everywhere     |
    +-----------------------+-------------------------------------------------------+----------------+
