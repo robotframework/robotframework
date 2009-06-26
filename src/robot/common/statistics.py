@@ -327,7 +327,6 @@ class TagStatLink:
         return url
 
     def _get_match_regexp(self, pattern):
-        pattern = utils.normalize(pattern)
         regexp = []
         open_parenthesis = False
         for token in self._match_pattern_tokenizer.split(pattern):
@@ -348,4 +347,4 @@ class TagStatLink:
             regexp.append(re.escape(token))
         if open_parenthesis:
             regexp.append(')')
-        return re.compile('^%s$' % ''.join(regexp))
+        return re.compile('^%s$' % (''.join(regexp)), re.IGNORECASE)

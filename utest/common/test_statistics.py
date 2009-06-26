@@ -353,8 +353,8 @@ class TestTagStatistics(unittest.TestCase):
 class TestTagStatLink(unittest.TestCase):
 
     def test_valid_string_is_parsed_correctly(self):
-        for arg, exp in [(('tag', 'bar/foo.html', 'foobar'),
-                          ('^tag$', 'bar/foo.html', 'foobar')),
+        for arg, exp in [(('Tag', 'bar/foo.html', 'foobar'),
+                          ('^Tag$', 'bar/foo.html', 'foobar')),
                          (('hello', 'gopher://hello.world:8090/hello.html', 'Hello World'),
                           ('^hello$', 'gopher://hello.world:8090/hello.html', 'Hello World'))
                          ]:
@@ -367,7 +367,7 @@ class TestTagStatLink(unittest.TestCase):
         for arg, exp_pattern in [('*', '^(.*)$'), ('f*r', '^f(.*)r$'),
                                  ('*a*', '^(.*)a(.*)$'),  ('?', '^(.)$'),
                                  ('??', '^(..)$'), ('f???ar', '^f(...)ar$'),
-                                 ('F*B?R*?', '^f(.*)b(.)r(.*)(.)$') 
+                                 ('F*B?R*?', '^F(.*)B(.)R(.*)(.)$') 
                                  ]:
             link = TagStatLink(arg, 'some_url', 'some_title')
             assert_equal(exp_pattern, link._regexp.pattern)
@@ -386,18 +386,26 @@ class TestTagStatLink(unittest.TestCase):
     
     def test_get_link_returns_none_when_no_match(self):
         link = TagStatLink('smoke', 'http://tobacco.com', 'Lung cancer')
-        for tag in ['foo', 'b a r', 'SMOKE', 's moke']:
+        for tag in ['foo', 'b a r', 's moke']:
             assert_none(link.get_link(tag))
-            
+
+    def test_pattern_matches_case_insensitively(self):
+        exp = 'http://tobacco.com', 'Lung cancer'
+        link = TagStatLink('smoke', *exp)
+        for tag in ['Smoke', 'SMOKE', 'smoke']:
+            assert_equals(exp, link.get_link(tag))
+
+    def test_pattern_matches_when_spaces(self):
+        exp = 'http://tobacco.com', 'Lung cancer'
+        link = TagStatLink('smoking kills', *exp)
+        for tag in ['Smoking Kills', 'SMOKING KILLS']:
+            assert_equals(exp, link.get_link(tag))
+
     def test_pattern_match(self):
         link = TagStatLink('f?o*r', 'http://foo/bar.html', 'FooBar')
         for tag in ['foobar', 'foor', 'f_ofoobarfoobar', 'fOoBAr']:
             assert_equal(link.get_link(tag), ('http://foo/bar.html', 'FooBar'))
-            
-    def test_pattern_is_normalized(self):
-        link = TagStatLink('FOO-*', 'foo/%1.html', 'FooBar')
-        assert_equal(link.get_link('foo-b'), ('foo/b.html', 'FooBar'))
-        
+                    
     def test_pattern_substitution_with_one_match(self):
         link = TagStatLink('tag-*', 'http://tracker/?id=%1', 'Tracker')
         for id in ['1', '23', '456']:
