@@ -347,4 +347,4 @@ class TagStatLink:
             regexp.append(re.escape(token))
         if open_parenthesis:
             regexp.append(')')
-        return re.compile('^%s$' % (''.join(regexp)), re.IGNORECASE)
+        return re.compile('^%s$' % ''.join(regexp), re.IGNORECASE)
