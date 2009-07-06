@@ -1,0 +1,268 @@
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="RobotIDE" /> 
+<style type="text/css">
+html {
+  font-family: Arial,Helvetica,sans-serif;
+  background-color: white;
+  color: black;
+}
+p {
+  max-width: 60em;
+}
+table {
+  border-collapse: collapse;
+  empty-cells: show;
+  margin: 1em 0em;
+  border: 0.1em solid black;
+}
+th, td {
+  border-style: solid;
+  border-width: 0.05em 0.1em;
+  border-color: black;
+  padding: 0.1em 0.2em;
+  height: 1.5em;
+}
+th {
+  background-color: rgb(192, 192, 192);
+  color: black;
+  border-width: 0.1em;
+  font-weight: bold;
+  text-align: center;
+  text-transform: capitalize;
+  letter-spacing: 0.1em;
+}
+/* Widths of named columns */
+col.name {
+  width: 10em;
+}
+.action, .value, .arg {
+  width: 15em;
+}
+/* Properties for the name column 
+- td:first-child should work in CSS 2.1 avare browsers (tested in Firefox)
+- col.name is against specs but works in IE
+*/
+td:first-child, col.name {
+  background-color: rgb(240, 240, 240);
+  text-transform: capitalize;
+  letter-spacing: 0.1em;
+}
+/* required for IE */
+th {
+  font-style: normal;
+}
+</style>
+<title>Ping Host</title>
+</head>
+<body>
+<h1>Ping Host</h1>
+
+<table border="1">
+<colgroup span="99">
+<col class="name">
+<col class="value" span="4"></colgroup>
+<tr>
+<th>Setting</th>
+<th>Value</th>
+<th>Value</th>
+<th>Value</th>
+<th>Value</th>
+</tr>
+<tr>
+<td>Documentation</td>
+<td>Simple host reachability test using system 'ping' command. Verifies the return code, should be 0 if everything is OK. Run by executing: pybot ping_host.html<br />
+This file also demonstrates use of tags. To execute testcase marked with 'linux' tag:<br />
+pybot -i linux ping_host.html</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Library</td>
+<td>OperatingSystem</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</table>
+
+<table border="1">
+<colgroup span="99">
+<col class="name">
+<col class="value" span="4"></colgroup>
+<tr>
+<th>Variable</th>
+<th>Value</th>
+<th>Value</th>
+<th>Value</th>
+<th>Value</th>
+</tr>
+<tr>
+<td>${hostname}</td>
+<td>robotframework.org</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</table>
+
+<table border="1">
+<colgroup span="99">
+<col class="name">
+<col class="action">
+<col class="arg" span="3"></colgroup>
+<tr>
+<th>Test Case</th>
+<th>Action</th>
+<th>Argument</th>
+<th>Argument</th>
+<th>Argument</th>
+</tr>
+<tr>
+<td>Host Should Respond To Ping on Windows</td>
+<td>[Documentation]</td>
+<td>Pings the host specified in the hostname variable. Succeeds when the return code is 0.</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>[Tags]</td>
+<td>windows</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>[Timeout]</td>
+<td>20 seconds</td>
+<td>Host ${hostname} did not respond to ping within 20 seconds</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>${RC}</td>
+<td>${output} =</td>
+<td>Run and return RC and Output</td>
+<td>ping ${hostname}</td>
+</tr>
+<tr>
+<td></td>
+<td>Log</td>
+<td>RC: ${RC}\nOutput:\n${output}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should be equal</td>
+<td>${RC}</td>
+<td>${0}</td>
+<td>Host ${hostname} unreachable. Reason:\n${output}</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Host Should Respond To Ping on Linux</td>
+<td>[Documentation]</td>
+<td>Pings the host specified in the hostname variable. Succeeds when the return code is 0.</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>[Tags]</td>
+<td>linux</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>[Timeout]</td>
+<td>20 seconds</td>
+<td>Host ${hostname} did not respond to ping within 20 seconds</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>${RC}</td>
+<td>${output} =</td>
+<td>Run and return RC and Output</td>
+<td>ping -c 4 ${hostname}</td>
+</tr>
+<tr>
+<td></td>
+<td>Log</td>
+<td>RC: ${RC}\nOutput:\n${output}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Should be equal</td>
+<td>${RC}</td>
+<td>${0}</td>
+<td>Host ${hostname} unreachable. Reason:\n${output}</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</table>
+
+<table border="1">
+<colgroup span="99">
+<col class="name">
+<col class="action">
+<col class="arg" span="3"></colgroup>
+<tr>
+<th>Keyword</th>
+<th>Action</th>
+<th>Argument</th>
+<th>Argument</th>
+<th>Argument</th>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</table>
+
+</body>
+</html>
