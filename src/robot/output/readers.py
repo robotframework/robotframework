@@ -229,6 +229,7 @@ class CombinedTestSuite(TestSuite):
 
     def add_suite(self, suite):
         self.suites.append(suite)
+        suite.parent = self
         self._add_suite_to_stats(suite)
         self.status = self.critical_stats.failed == 0 and 'PASS' or 'FAIL'
         if self.starttime == 'N/A' or self.endtime == 'N/A':
