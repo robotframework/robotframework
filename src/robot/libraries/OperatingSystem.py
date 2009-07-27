@@ -27,7 +27,6 @@ try:
     from robot.utils import get_version, ConnectionCache, seq2str, \
         timestr_to_secs, secs_to_timestr, plural_or_not, get_time, \
         secs_to_timestamp, timestamp_to_secs
-
     __version__ = get_version()
     PROCESSES = ConnectionCache('No active processes')
 
@@ -851,7 +850,16 @@ class OperatingSystem:
         return ret
         
     def set_environment_variable(self, name, value):
-        """Sets an environment variable to a specified value."""
+        """Sets an environment variable to a specified value.
+
+        Starting from Robot Framework 2.1.1, values are converted to strings
+        automatically.
+        """
+        # Cannot convert to Unicode because they aren't generally supported in
+        # environment variables, but don't want to change deliberately given
+        # Unicode strings either.
+        if not isinstance(value, basestring):
+            value = str(value)
         os.environ[name] = value
         self._info("Environment variable '%s' set to value '%s'" % (name, value))
 
