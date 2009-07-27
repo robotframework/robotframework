@@ -534,7 +534,8 @@ class _Variables:
         
         The name of the variable can be given either as a normal variable name
         (e.g. ${NAME}) or in escaped format (e.g. \\${NAME}). Notice that the
-        former works only in Robot Framework 2.1 and newer.
+        former works only in Robot Framework 2.1 and newer. See also note from 
+        `Set Suite Variable`.
         
         The default error message can be overridden with the `msg` argument.
         """
@@ -654,6 +655,15 @@ class _Variables:
         | ${ID} =            | Get ID   |
         | Set Suite Variable | ${ID}    |
 
+        Note:
+        In case your variable have value which is variable name or escaped
+        variable name, you need to use the escaped format as first argument.
+        This limitation applies to all set variable variants and `Variable 
+        Should Exist` keyword.
+        | ${NAME} = | Set Variable | \${variable} |
+        | Set Suite Variable | \${NAME} | new value | # This works |
+        | Set Suite Variable | ${NAME} | new value | # This does not work |
+
         See also `Set Global Variable` and `Set Test Variable`.
         """
         name = self._get_var_name(name)
@@ -683,10 +693,25 @@ class _Variables:
         return NAMESPACES.current.variables
 
     def _get_var_name(self, origname):
-        name = self._get_var_name_helper(origname)
+        name = self._get_variable_name_in_uk(origname) or origname
+        print name
+        name = self._get_var_name_helper(name)
+        print name
         if not name:
             raise DataError("Invalid variable syntax '%s'" % origname)
         return name
+
+    def _get_variable_name_in_uk(self, origname):
+        if not is_var(origname):
+            return None
+        vars = self._get_variables()
+        if not vars.has_key(origname):
+            return None
+        name = vars[origname]
+        if not self._get_var_name_helper(name):
+            return None
+        return name
+        
     
     def _get_var_name_helper(self, name):
         if not (utils.is_str(name) and name):
