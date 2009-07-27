@@ -262,7 +262,7 @@ class ResourceDoc(PythonLibraryDoc):
         doc = getattr(resource, 'doc', '')  # doc available only in 2.1+
         if not doc:
             doc = "Documentation for resource file `%s`." % self.name
-        return doc
+        return utils.unescape(doc)
     
     def _get_initializers(self, lib):
         return []
