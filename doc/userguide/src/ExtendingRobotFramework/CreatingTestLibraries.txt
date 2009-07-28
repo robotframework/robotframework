@@ -1387,7 +1387,7 @@ using :code:`set_test_variable`, :code:`set_suite_variable` and
 The only catch with using methods from :code:`BuiltIn` is that all
 :code:`run_keyword` method variants must be handled specially. What
 needs to be done is registering methods that use these methods to be *run
-keywords* themselves using :code: :code:`register_run_keyword` method
+keywords* themselves using :code:`register_run_keyword` method
 in :code:`BuiltIn` module. This method's documentation explains why
 this needs to be done and obviously also how to do it.
 
