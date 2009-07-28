@@ -534,8 +534,8 @@ class _Variables:
         
         The name of the variable can be given either as a normal variable name
         (e.g. ${NAME}) or in escaped format (e.g. \\${NAME}). Notice that the
-        former works only in Robot Framework 2.1 and newer. See also note from 
-        `Set Suite Variable`.
+        former works only in Robot Framework 2.1 and newer, and it has some 
+        limitations explained in `Set Suite Variable`.
         
         The default error message can be overridden with the `msg` argument.
         """
@@ -552,7 +552,8 @@ class _Variables:
         
         The name of the variable can be given either as a normal variable name
         (e.g. ${NAME}) or in escaped format (e.g. \\${NAME}). Notice that the
-        former works only in Robot Framework 2.1 and newer.
+        former works only in Robot Framework 2.1 and newer, and it has some 
+        limitations explained in `Set Suite Variable`.
         
         The default error message can be overridden with the `msg` argument.
         """
@@ -655,16 +656,15 @@ class _Variables:
         | ${ID} =            | Get ID   |
         | Set Suite Variable | ${ID}    |
 
-        Note:
-        In case your variable have value which is variable name or escaped
-        variable name, you need to use the escaped format as first argument.
-        This limitation applies to all set variable variants and `Variable 
-        Should Exist` keyword.
-        | ${NAME} = | Set Variable | \${variable} |
-        | Set Suite Variable | \${NAME} | new value | # This works |
-        | Set Suite Variable | ${NAME} | new value | # This does not work |
-
-        See also `Set Global Variable` and `Set Test Variable`.
+        *NOTE:* If the variable has value which itself is a variable (escaped
+        or not), you must always use the escaped format like in the example 
+        below. This limitation applies to `Set Test/Suite/Global Variable`
+        and `Variable Should (Not) Exist` keywords.
+        
+        Example:
+        | ${NAME} =          | Set Variable | \${variable} |
+        | Set Suite Variable | ${NAME}      | new value    | # Does not work |
+        | Set Suite Variable | \${NAME}     | new value    | # This works    |
         """
         name = self._get_var_name(name)
         value = self._get_var_value(name, values)
@@ -692,36 +692,29 @@ class _Variables:
     def _get_variables(self):
         return NAMESPACES.current.variables
 
-    def _get_var_name(self, origname):
-        name = self._get_variable_name_in_uk(origname) or origname
-        print name
-        name = self._get_var_name_helper(name)
-        print name
-        if not name:
-            raise DataError("Invalid variable syntax '%s'" % origname)
-        return name
+    def _get_var_name(self, orig):
+        name = self._resolve_possible_variable(orig)
+        try:
+            return self._unescape_variable_if_needed(name)
+        except DataError:
+            raise DataError("Invalid variable syntax '%s'" % orig)
 
-    def _get_variable_name_in_uk(self, origname):
-        if not is_var(origname):
-            return None
-        vars = self._get_variables()
-        if not vars.has_key(origname):
-            return None
-        name = vars[origname]
-        if not self._get_var_name_helper(name):
-            return None
-        return name
+    def _resolve_possible_variable(self, name):
+        try:
+            resolved = self._get_variables()[name]
+            return self._unescape_variable_if_needed(resolved)
+        except (KeyError, DataError):
+            return name
         
-    
-    def _get_var_name_helper(self, name):
+    def _unescape_variable_if_needed(self, name):
         if not (utils.is_str(name) and name):
-            return None
+            raise DataError
         if name.startswith('\\'):
             name = name[1:]
         elif name[0] in ['$','@'] and '{' not in name:
             name = name[0] + '{' + name[1:] + '}'
         if not is_var(name):
-            return None
+            raise DataError
         return name
         
     def _get_var_value(self, name, values):
