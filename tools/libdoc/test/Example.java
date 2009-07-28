@@ -6,19 +6,19 @@
 public class Example {
 
     /**
-     * Creates new Example test library
+     * Creates new Example test library 1
      */
     public Example() {
     }
 
     /**
-     * Creates new Example test library
+     * Creates new Example test library 2
      */
     public Example(String arg) {
     }
 
     /**
-     * Creates new Example test library
+     * Creates new Example test library 3
      */
     public Example(int i) {
     }
@@ -30,7 +30,7 @@ public class Example {
     }
 
     /** 
-     * Does nothing 
+     * Does nothing & <doc> has "stuff" to 'escape'!!
      */
     public void myKeyword() {
     }

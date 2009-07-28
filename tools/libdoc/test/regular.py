@@ -15,7 +15,7 @@ class regular:
         self.arg2 = arg2
 
     def keyword(self):
-        """A keyword
+        """A "keyword" & it contains 'stuff' to <escape> 
 
         See `get hello` for details"""
         pass
