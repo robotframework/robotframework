@@ -174,6 +174,8 @@ class _DocHelper:
     def __getattr__(self, name):
         if name == 'htmldoc':
             return self._get_htmldoc(self.doc)
+        if name == 'htmlshortdoc':
+            return utils.html_attr_escape(self.shortdoc)
         raise AttributeError("Non-existing attribute '%s'" % name)
 
     def _process_doc(self, doc):
@@ -492,7 +494,7 @@ DOCUMENT_TEMPLATE = '''<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional
 <h2>Shortcuts</h2>
 <div class='links'>
 <!-- FOR ${kw} IN ${LIB.keywords} -->
-<a href="#${kw.name}" title="${kw.shortdoc}">${kw.name.replace(' ','&nbsp;')}</a>&nbsp;
+<a href="#${kw.name}" title="${kw.htmlshortdoc}">${kw.name.replace(' ','&nbsp;')}</a>&nbsp;
 <!-- END FOR -->
 </div>
 
