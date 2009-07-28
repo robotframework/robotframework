@@ -7884,7 +7884,7 @@ Try --help for usage information.</td>
       
 
 
-    </tr>
+    </tr><tr><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Filter Suite When Suites are Ordered With Prefix</td><td>Run Suites</td><td>--suite Suite2</td><td>${DATADIR}${/}misc${/}multiple_suites</td><td></td><td></td></tr><tr><td></td><td>Should Be True</td><td>${SUITE.suites} == ['Subsuite 1']</td><td></td><td></td><td></td></tr><tr><td></td><td>Should Be True</td><td>${SUITE.suites[0].suites} == ['Suite 2']</td><td></td><td></td><td></td></tr>
 
 
     
@@ -9735,7 +9735,7 @@ Try --help for usage information.</td>
 
 
 
-      <td></td>
+      <td>${testdata}=${TESTDATA_SUITES}</td>
 
 
 
@@ -9939,7 +9939,7 @@ Try --help for usage information.</td>
 
 
 
-      <td>${TESTDATA_SUITES}</td>
+      <td>${testdata}</td>
 
 
 
