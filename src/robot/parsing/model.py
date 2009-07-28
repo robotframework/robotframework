@@ -171,6 +171,7 @@ class DirectorySuite(_BaseSuite):
             return True
         # Match only to the last part of name given like '--suite parent.child'
         incl_suites = [ incl.split('.')[-1] for incl in incl_suites ]
+        name = name.split('__', 1)[-1]  # Strip possible prefix
         return utils.matches_any(name, incl_suites, ignore=['_'])
 
     def _is_suite_init_file(self, name, path):
