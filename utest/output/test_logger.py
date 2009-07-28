@@ -143,17 +143,16 @@ class TestLogger(unittest.TestCase):
         assert_equals(len(logger._loggers), 1)
         assert_true(logger._loggers[0].message.im_class is LoggerMock) 
 
-    def test_automatic_logger_can_be_disabled_only_once(self):
+    def test_disabling_automatic_logger_multiple_times_has_no_effect(self):
         logger = _Logger()
         logger.disable_automatic_console_logger()
-        assert_raises(TypeError, logger.disable_automatic_console_logger)
-
-    def test_automatic_logger_can_be_disabled_only_once_2(self):
-        logger = _Logger()
+        assert_equals(len(logger._loggers), 0)
+        logger.disable_automatic_console_logger()
+        logger.disable_automatic_console_logger()
+        assert_equals(len(logger._loggers), 0)
         logger.register_logger(LoggerMock())
         logger.disable_automatic_console_logger()
-        logger.register_logger(LoggerMock())
-        assert_raises(TypeError, logger.disable_automatic_console_logger)
+        assert_equals(len(logger._loggers), 1)
 
     def test_reigstering_console_logger_disables_automatic_console_logger(self):
         logger = _Logger()

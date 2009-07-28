@@ -44,10 +44,9 @@ class _Logger(AbstractLogger):
         self._message_cache = None
 
     def disable_automatic_console_logger(self):
-        if self._console_logger_disabled:
-            raise TypeError('Automatic console logging has already been disabled')
-        self._loggers.pop(0)
-        self._console_logger_disabled = True
+        if not self._console_logger_disabled:
+            self._loggers.pop(0)
+            self._console_logger_disabled = True
 
     def register_logger(self, *loggers):
         for log in loggers:
