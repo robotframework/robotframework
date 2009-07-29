@@ -76,7 +76,8 @@ class _BaseSuite(BaseTestSuite):
         # The latter check is to get a more informative exception in 
         # suite.filter_by_names later if --suite option was used.
         if self.get_test_count() == 0 and len(suitenames) == 0:
-            self.parent.suites.pop()
+            if self.parent is not None:
+                self.parent.suites.pop()
             raise DataError(error)
 
 
