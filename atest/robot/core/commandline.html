@@ -172,13 +172,7 @@ names (--test/--suite)\n + --MonitorColors/Width\n +
 <td></td>
 <td></td>
 </tr>
-<tr>
-<td>${USAGE_TIP}</td>
-<td>\n\nTry --help for usage information.</td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
+
 <tr>
 <td></td>
 <td></td>
@@ -1046,70 +1040,15 @@ two_parts:one_part -M esc:STQUDOAMHAEXEX --escape star:ST -E quest:QU
 <td></td>
 <td></td>
 </tr>
-<tr>
-<td><a name="test_InvalidInput">Invalid Input</a></td>
-<td>Create File</td>
-<td>${MYOUTDIR}${/}invalid.txt</td>
-<td>Hello, world</td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td>Run Tests Without Processing Output</td>
-<td></td>
-<td>${MYOUTDIR}${/}invalid.txt</td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td>Check Stderr Contains</td>
-<td>[ ERROR ] Unsupported file format '.txt'</td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td><a name="test_Non-CompatibleInput">Non-Compatible Input</a></td>
-<td>[Documentation]</td>
-<td>Test handling of html files not containing Robot test data</td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td>Create File</td>
-<td>${MYOUTDIR}${/}invalid.html</td>
-<td>&lt;html&gt;&lt;body&gt;&lt;table&gt;&lt;th&gt;&lt;/th&gt;&lt;tr&gt;&lt;/tr&gt;
-&lt;/tr&gt;&lt;/table&gt;&lt;/body&gt;&lt;/html&gt;</td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td>Run Tests Without Processing Output</td>
-<td></td>
-<td>${MYOUTDIR}${/}invalid.html</td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td>Check Stderr Matches Regexp</td>
-<td>\\[ ERROR \\] Test case file '.*[/\\\\]invalid.html' contains no test cases.${USAGE_TIP}</td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
+
+
+
+
+
+
+
+
+
 <tr>
 <td><a name="test_InvalidOutputFiles">Invalid Output Files</a></td>
 <td>[Documentation]</td>
