@@ -179,7 +179,7 @@ td.col_name {
 </style>
 '''
 
-class Tidier:
+class Tidy:
 
     def process_file(self, infile, outfile, opts):
         if not os.path.isfile(infile):
@@ -196,11 +196,11 @@ class Tidier:
         except:
             LOGGER.error(utils.get_error_message())
             
-    def process_directory(self, indir, otps):
+    def process_directory(self, indir, opts):
         for name in os.listdir(indir):
             path = os.path.join(indir, name)
             if os.path.isdir(path):
-                self.process_directory(path, otps)
+                self.process_directory(path, opts)
             elif os.path.isfile(path) and self._is_valid_robot_file(name):
                 self.process_file(path, None, opts)
                         
@@ -679,7 +679,7 @@ class TsvSerializer(_SerializerBase):
 
 
 if __name__ == '__main__':
-    tidier = Tidier()
+    tidy = Tidy()
     try:
         ap = utils.ArgumentParser(__doc__)
         opts, args = ap.parse_args(sys.argv[1:], help='help')
@@ -687,13 +687,13 @@ if __name__ == '__main__':
             if len(args) == 0:
                 raise DataError('--inplace requires at least one argument')
             for path in args:
-                tidier.process_file(path, None, opts)
+                tidy.process_file(path, None, opts)
         elif opts['recursive']:
             if len(args) != 1:
                 raise DataError('--recursive requires exactly one argument')
             if not os.path.isdir(args[0]):
                 raise DataError('Parameter to --recursive must be a directory')
-            tidier.process_directory(args[0], opts)
+            tidy.process_directory(args[0], opts)
         else:
             if len(args) != 2:
                 if len(args) == 1:
@@ -701,7 +701,7 @@ if __name__ == '__main__':
                 else:
                     msg = 'Only one input and one output file can be given'
                 raise DataError(msg)
-            tidier.process_file(args[0], args[1], opts)
+            tidy.process_file(args[0], args[1], opts)
     except Information, msg:
         print str(msg)
     except DataError, err:
