@@ -1,0 +1,729 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="generator" content="RobotIDE">
+<meta name="rf-template" content="False">
+<style type="text/css">
+html {
+font-family: Arial,Helvetica,sans-serif;
+background-color: white;
+color: black;
+}
+table {
+border-collapse: collapse;
+empty-cells: show;
+margin: 1em 0em;
+border: 0.1em solid black;
+}
+th, td {
+border-style: solid;
+border-width: 0.05em 0.1em;
+border-color: black;
+padding: 0.1em 0.2em;
+height: 1.5em;
+width: 12em;
+}
+th {
+background-color: rgb(192, 192, 192);
+color: black;
+border-width: 0.1em;
+font-weight: bold;
+text-align: center;
+letter-spacing: 0.1em;
+}
+td.name {
+background-color: rgb(240, 240, 240);
+letter-spacing: 0.1em;
+}
+td.name, th.name {
+width: 10em;
+}
+</style><title>Variables</title></head>
+<body>
+<h1>Variables</h1>
+<table id="settings" border="1">
+<tbody>
+<tr>
+<th class="name">Setting</th>
+<th>Value</th>
+<th>Value</th>
+<th>Value</th>
+<th>Value</th>
+</tr>
+
+
+
+<tr>
+<td class="name">Library</td>
+<td>OperatingSystem</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<table id="variables" border="1">
+<tbody>
+<tr>
+<th class="name">Variable</th>
+<th>Value</th>
+<th>Value</th>
+<th>Value</th>
+<th>Value</th>
+</tr>
+<tr>
+<td class="name">@{LIST}</td>
+<td>Hello</td>
+<td>world</td>
+<td></td>
+<td></td>
+</tr>
+
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<table id="testcases" border="1">
+<tbody>
+<tr>
+<th class="name">Test Case</th>
+<th>Action</th>
+<th>Argument</th>
+<th>Argument</th>
+<th>Argument</th>
+</tr>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<tr>
+<td class="name"><a name="test_Replace Variables">Replace
+Variables</a></td>
+<td>${template} =</td>
+<td>Get File</td>
+<td>${CURDIR}${/}template.txt</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Replace Variables And Verify Content</td>
+<td>${template}</td>
+<td>Pekka</td>
+<td>fine</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>...</td>
+<td>morning</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Replace Variables And Verify Content</td>
+<td>${template}</td>
+<td>Juha</td>
+<td>dark</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>...</td>
+<td>and</td>
+<td>gloomy</td>
+<td>evening</td>
+</tr>
+<tr><td></td><td></td><td></td><td></td><td></td></tr><tr>
+<td class="name">Replace Variables Using Extended Variable Syntax</td>
+<td>${what} =</td>
+<td>Set Variable</td>
+<td>Python</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${replaced} =</td>
+<td>Replace Variables</td>
+<td>I like \${WHAT.upper()}! Me ${1 * 2}!!</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Should Be Equal</td>
+<td>${replaced}</td>
+<td>I like PYTHON! Me 2!!</td>
+<td></td>
+</tr>
+<tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td class="name"><a name="test_Replace Variables">Replace
+Variables Fails When Variable Does Not Exist</a></td><td>[Documentation]</td><td>FAIL Non-existing variable '\${non existing variables}'</td><td></td><td></td></tr><tr>
+<td class="name"></td>
+<td>Replace Variables</td>
+<td>Using \${non existing variables} is an error</td>
+<td></td>
+<td></td>
+</tr>
+<tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Replace Variables With Escaped Variables</td><td>${result} =</td><td>Replace Variables</td><td>\\\${non existing} but escaped</td><td></td></tr><tr><td></td><td>Should Be Equal</td><td>${result}</td><td>\${non existing} but escaped</td><td></td></tr><tr><td></td><td>${result} =</td><td>Replace Variables</td><td> \@{LIST}[0]&nbsp;\\\@{LIST}[1]</td><td></td></tr><tr><td></td><td>Should Be Equal</td><td>${result}</td><td> Hello \@{LIST}[1]</td><td></td></tr><tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="test_Replace Variables With Scalar Object">Replace
+Variables With Scalar Object</a></td>
+<td>${replaced} =</td>
+<td>Replace Variables</td>
+<td>\${42}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Should Be Equal</td>
+<td>${replaced}</td>
+<td>${42}</td>
+<td>Should be an integer</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${replaced} =</td>
+<td>Replace Variables</td>
+<td>\${42} is the answer</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Should Be Equal</td>
+<td>${replaced}</td>
+<td>42 is the answer</td>
+<td>Should be a string</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Import Variables</td>
+<td>${CURDIR}/numbers_to_convert.py</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${replaced} =</td>
+<td>Replace Variables</td>
+<td>\${OBJECT}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Should Be Equal</td>
+<td>${replaced}</td>
+<td>${OBJECT}</td>
+<td>Should be a custom object</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${replaced} =</td>
+<td>Replace Variables</td>
+<td>\${OBJECT.value}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Should Be Equal</td>
+<td>${replaced}</td>
+<td>${1}</td>
+<td>Should be an integer</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${replaced} =</td>
+<td>Replace Variables</td>
+<td>\${OBJECT} \${OBJECT.value}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Should Be Equal</td>
+<td>${replaced}</td>
+<td>MyObject 1</td>
+<td>Should be a string</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="test_Replace Variables With List Variable">Replace
+Variables With List Variable</a></td>
+<td>@{replaced} =</td>
+<td>Replace Variables</td>
+<td>\@{LIST}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Should Be Equal</td>
+<td>@{replaced}[0]</td>
+<td>Hello</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Should Be Equal</td>
+<td>@{replaced}[1]</td>
+<td>world</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>@{mixed} =</td>
+<td>Create List</td>
+<td>${1}</td>
+<td>${True}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>...</td>
+<td>xxx</td>
+<td>${LIST}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>@{replaced} =</td>
+<td>Replace Variables</td>
+<td>\@{mixed}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Should Be Equal</td>
+<td>@{replaced}[0]</td>
+<td>${1}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Should Be Equal</td>
+<td>@{replaced}[1]</td>
+<td>${True}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Should Be Equal</td>
+<td>@{replaced}[2]</td>
+<td>xxx</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Should Be Equal</td>
+<td>@{replaced}[3]</td>
+<td>${LIST}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</tbody>
+</table>
+<table id="keywords" border="1">
+<tbody>
+<tr>
+<th class="name">Keyword</th>
+<th>Action</th>
+<th>Argument</th>
+<th>Argument</th>
+<th>Argument</th>
+</tr>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<tr>
+<td class="name"><a name="keyword_Replace Variables And Verify Content">Replace
+Variables And Verify Content</a></td>
+<td>[Arguments]</td>
+<td>${template}</td>
+<td>${name}</td>
+<td>@{occasion}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${replaced} =</td>
+<td>Replace Variables</td>
+<td>${template}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Should Be Equal</td>
+<td>${replaced}</td>
+<td>Hello ${name}!\n<br>
+How are you on this @{occasion}?\n<br>
+</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</tbody>
+</table>
+</body></html>
