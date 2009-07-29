@@ -56,8 +56,14 @@ yourself, your best place to start is probably the `Python
 homepage`_. There you can download a suitable installer and get more
 information about the installation and Python in general.
 
-.. Note:: The Python installation framework coming with Python 2.3
-          does not have functions for copying other than Python
+.. Note:: Robot Framework is not compatible with Python 3.x
+          versions. Python 3.0 was intentionally backwards
+          incompatible with earlier Python releases, and supporting it
+          as long as we need to support very old Python versions (most
+          notably Jython 2.2) is not feasible.
+
+.. Note:: The Python installation framework included with Python 2.3
+          does not have functionality to copy other than Python
           files. Robot Framework itself can be installed with it
           without problems, but, for example, installing certain
           libraries may require copying those non-Python files
@@ -78,9 +84,13 @@ version 2.1 is not compatible with Robot Framework, and Jython 2.2
 betas and alphas are not supported either. Unfortunately, also Jython
 2.2.1 has certain Unicode problems (for more information, see
 http://bugs.jython.org/issue1802339 and
-http://bugs.jython.org/issue1032). Jython 2.5 is currently under
-development and although it is not yet officially supported it should
-work without problems in most normal usage.
+http://bugs.jython.org/issue1032). 
+
+.. Note:: Although Robot Framework does not yet officially support the
+          newly released Jython 2.5, this version ought to work pretty
+          well and problems are most likely limited to Unicode
+          support.  For more information and current status see
+          http://code.google.com/p/robotframework/issues/detail?id=198
 
 Installing Jython is a fairly easy procedure. First you need to get an
 installer from the `Jython homepage`_ or directly from
