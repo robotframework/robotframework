@@ -45,22 +45,17 @@ text-transform: capitalize;
 letter-spacing: 0.1em;
 }
 th { font-style: normal; } /* required for IE */
-  
-</style>
+</style><title>Robot Test Cases</title>
 
-
-<title>Robot Test Cases</title><link type="text/css" href="resources/css/testdata.css" rel="stylesheet"></head>
+<link type="text/css" href="resources/css/testdata.css" rel="stylesheet">
+</head>
 <body>
-<h1>Test Cases for BuildIn's Variable Should Exist And&nbsp;Variable Should Not Exist Keywords</h1>
-
+<h1>Test Cases for BuildIn's Variable Should Exist
+And&nbsp;Variable Should Not Exist Keywords</h1>
 <br>
- 
-
 <table border="1">
 <colgroup span="99"><col class="name"><col class="value" span="4"></colgroup>
-
-<thead>
-<tr>
+<thead><tr>
 <th>Setting</th>
 <th>Value</th>
 <th>Value</th>
@@ -68,10 +63,7 @@ th { font-style: normal; } /* required for IE */
 <th>Value</th>
 </tr>
 </thead>
-
 <tbody>
-
-
 <tr>
 <td>Variables</td>
 <td>
@@ -80,9 +72,6 @@ variables_to_verify.py</td>
 <td></td>
 <td></td>
 </tr>
-
-
-
 <tr>
 <td></td>
 <td></td>
@@ -92,15 +81,10 @@ variables_to_verify.py</td>
 </tr>
 </tbody>
 </table>
-
 <br>
- 
-
 <table border="1">
 <colgroup span="99"><col class="name"><col class="value" span="4"></colgroup>
-
-<thead>
-<tr>
+<thead><tr>
 <th>Variable</th>
 <th>Value</th>
 <th>Value</th>
@@ -108,16 +92,14 @@ variables_to_verify.py</td>
 <th>Value</th>
 </tr>
 </thead>
-
 <tbody>
 <tr>
-<td>${scalar}</td><td>Hi tellus</td>
-
+<td>${scalar}</td>
+<td>Hi tellus</td>
 <td></td>
 <td></td>
 <td></td>
 </tr>
-
 <tr>
 <td></td>
 <td></td>
@@ -127,43 +109,17 @@ variables_to_verify.py</td>
 </tr>
 </tbody>
 </table>
-
 <br>
- 
-
 <table border="1">
 <colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
-
-<thead>
-<tr>
+<thead><tr>
 <th>Test Case</th>
 <th>Action</th>
 <th>Argument</th>
 <th>Argument</th>
-
-
 </tr>
 </thead>
-
 <tbody>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 <tr>
 <td>Variable Should Exist With
 Default Error Message</td>
@@ -171,39 +127,27 @@ Default Error Message</td>
 <td>FAIL</td>
 <td>Variable \${non-existing}
 does not exist</td>
-
-
 </tr>
-
 <tr>
 <td><br>
- </td>
+</td>
 <td>Variable Should Exist</td>
 <td>${scalar}</td>
 <td><br>
 </td>
-
-
 </tr>
-
 <tr>
 <td></td>
 <td>Variable Should Exist</td>
 <td>${non-existing}</td>
 <td></td>
-
-
 </tr>
-
 <tr>
 <td></td>
 <td></td>
 <td></td>
 <td></td>
-
-
 </tr>
-
 <tr>
 <td>Variable Should Exist With
 Given Error Message</td>
@@ -211,39 +155,46 @@ Given Error Message</td>
 <td>FAIL</td>
 <td>My non-default error
 message</td>
-
-
 </tr>
-
 <tr>
 <td></td>
 <td>Variable Should Exist</td>
 <td>${scalar}</td>
 <td>This would be the error
 message</td>
-
-
 </tr>
-
 <tr>
 <td></td>
 <td>Variable Should Exist</td>
 <td>${non-existing}</td>
 <td>My non-default error
 message</td>
-
-
 </tr>
-
-<tr><td></td><td></td><td></td><td></td></tr><tr><td>Variable Should Exist With&nbsp;Error Message Containing Variables</td><td>[ Document ]</td><td>FAIL</td><td>Error with vars: ${scalar}</td></tr><tr><td></td><td>Variable Should Exist</td><td>${non-existing}</td><td>Error with vars: ${scalar}</td></tr><tr>
+<tr>
 <td></td>
 <td></td>
 <td></td>
 <td></td>
-
-
 </tr>
-
+<tr>
+<td>Variable Should Exist With&nbsp;Error Message
+Containing Variables</td>
+<td>[ Document ]</td>
+<td>FAIL</td>
+<td>Error with vars: ${scalar}</td>
+</tr>
+<tr>
+<td></td>
+<td>Variable Should Exist</td>
+<td>${non-existing}</td>
+<td>Error with vars: ${scalar}</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
 <tr>
 <td>Variable Should
 Exist&nbsp;Using $name format</td>
@@ -251,159 +202,133 @@ Exist&nbsp;Using $name format</td>
 <td>FAIL</td>
 <td>Variable \${non-existing}
 does not exist</td>
-
-
 </tr>
-
 <tr>
 <td></td>
 <td>Variable Should Exist</td>
 <td>$scalar</td>
 <td>This would be the error
 message</td>
-
-
 </tr>
-
 <tr>
 <td></td>
 <td>Variable Should Exist</td>
 <td>$non-existing</td>
 <td></td>
-
-
 </tr>
-
-<tr><td></td><td></td><td></td><td></td></tr><tr><td>Variable Should
-Exist&nbsp;Using Escaped format</td><td>[ Document ]</td><td>FAIL</td><td>Variable \${non-existing}
-does not exist</td></tr><tr><td></td><td>Variable Should Exist</td><td>\${scalar}</td><td></td></tr><tr><td></td><td>Variable Should Exist</td><td>\${non-existing}</td><td></td></tr><tr>
+<tr>
 <td></td>
 <td></td>
 <td></td>
 <td></td>
-
-
 </tr>
-
+<tr>
+<td>Variable Should
+Exist&nbsp;Using Escaped format</td>
+<td>[ Document ]</td>
+<td>FAIL</td>
+<td>Variable \${non-existing}
+does not exist</td>
+</tr>
+<tr>
+<td></td>
+<td>Variable Should Exist</td>
+<td>\${scalar}</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Variable Should Exist</td>
+<td>\${non-existing}</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
 <tr>
 <td>Variable Should Exist With Built In Variables</td>
 <td>Variable Should Exist</td>
 <td>\${TEMPDIR}</td>
 <td></td>
-
-
 </tr>
-
 <tr>
 <td></td>
 <td>Variable Should Exist</td>
 <td>\${/}</td>
 <td></td>
-
-
 </tr>
-
 <tr>
 <td></td>
 <td>Variable Should Exist</td>
 <td>\${10}</td>
 <td></td>
-
-
 </tr>
-
 <tr>
 <td></td>
 <td>Variable Should Exist</td>
 <td>\${TRUE}</td>
 <td></td>
-
-
 </tr>
-
 <tr>
 <td>#Currently this is not working</td>
 <td>Variable Should Exist</td>
 <td>\${CURDIR}</td>
 <td></td>
-
-
 </tr>
-
 <tr>
 <td></td>
 <td></td>
 <td></td>
 <td></td>
-
-
 </tr>
-
 <tr>
 <td>Variable Should Exist With Extended Variable Syntax</td>
 <td>[ Document ]</td>
 <td>FAIL</td>
 <td>Variable \${length attribute.missing} does not exist</td>
-
-
 </tr>
-
 <tr>
 <td></td>
 <td>Variable Should Exist</td>
 <td>\${length
 attribute.length}</td>
 <td></td>
-
-
 </tr>
-
 <tr>
 <td></td>
 <td>Variable Should Exist</td>
 <td>\${length attribute.missing}</td>
 <td></td>
-
-
 </tr>
-
 <tr>
 <td></td>
 <td></td>
 <td></td>
 <td></td>
-
-
 </tr>
-
 <tr>
-<td>Variable Should Exist With Extended Variable Syntax And Missing
+<td>Variable Should Exist With Extended Variable Syntax And
+Missing
 Object</td>
 <td>[ Document ]</td>
 <td>FAIL</td>
 <td>Variable&nbsp;\${missing.missing} does not exist</td>
-
-
 </tr>
-
 <tr>
 <td></td>
 <td>Variable Should Exist</td>
 <td>\${missing.missing}</td>
 <td></td>
-
-
 </tr>
-
 <tr>
 <td></td>
 <td></td>
 <td></td>
 <td></td>
-
-
 </tr>
-
 <tr>
 <td>Variable Should Exist With
 Invalid name</td>
@@ -411,34 +336,25 @@ Invalid name</td>
 <td>FAIL</td>
 <td>Invalid variable syntax
 'invalid'</td>
-
-
 </tr>
-
 <tr>
 <td></td>
 <td>Variable Should Exist</td>
 <td>invalid</td>
 <td></td>
-
-
 </tr>
-
-<tr><td></td><td></td><td></td><td></td></tr><tr>
+<tr>
 <td></td>
 <td></td>
 <td></td>
 <td></td>
-
-
 </tr>
-
-
-
-
-
-
-
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
 <tr>
 <td>Variable Should Not Exist
 With&nbsp;Default error message</td>
@@ -446,40 +362,28 @@ With&nbsp;Default error message</td>
 <td>FAIL</td>
 <td>Variable&nbsp;\${scalar}
 exists</td>
-
-
 </tr>
-
 <tr>
 <td><br>
- </td>
+</td>
 <td>Variable Should Not
 Exist&nbsp;</td>
 <td>${non-existing}</td>
 <td></td>
-
-
 </tr>
-
 <tr>
 <td></td>
 <td>Variable Should Not
 Exist&nbsp;</td>
 <td>${scalar}</td>
 <td></td>
-
-
 </tr>
-
 <tr>
 <td></td>
 <td></td>
 <td></td>
 <td></td>
-
-
 </tr>
-
 <tr>
 <td>Variable Should Not Exist
 With Given Error Message</td>
@@ -487,20 +391,14 @@ With Given Error Message</td>
 <td>FAIL</td>
 <td>This is the error
 message</td>
-
-
 </tr>
-
 <tr>
 <td></td>
 <td>Variable Should Not
 Exist&nbsp;</td>
 <td>${non-existing}</td>
 <td>This should not fail</td>
-
-
 </tr>
-
 <tr>
 <td></td>
 <td>Variable Should Not
@@ -508,146 +406,145 @@ Exist&nbsp;</td>
 <td>${scalar}</td>
 <td>This is the error
 message</td>
-
-
 </tr>
-
-<tr><td></td><td></td><td></td><td></td></tr><tr><td>Variable Should Not Exist With Error Message Containing Variables</td><td>[ Document ]</td><td>FAIL</td><td>Error with vars: ${scalar} &amp; ${42}</td></tr><tr><td></td><td>Variable Should Not
-Exist&nbsp;</td><td>${scalar}</td><td>Error with vars: ${scalar} &amp; ${42}</td></tr><tr>
+<tr>
 <td></td>
 <td></td>
 <td></td>
 <td></td>
-
-
 </tr>
-
+<tr>
+<td>Variable Should Not Exist With Error Message Containing
+Variables</td>
+<td>[ Document ]</td>
+<td>FAIL</td>
+<td>Error with vars: ${scalar} &amp; ${42}</td>
+</tr>
+<tr>
+<td></td>
+<td>Variable Should Not
+Exist&nbsp;</td>
+<td>${scalar}</td>
+<td>Error with vars: ${scalar} &amp; ${42}</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
 <tr>
 <td>Variable Should Not Exist With Built In Variables</td>
 <td>[ Document ]</td>
 <td>FAIL</td>
 <td>Variable \${10} exists</td>
-
-
 </tr>
-
 <tr>
 <td></td>
 <td>Variable Should Not Exist&nbsp;</td>
 <td>\${10}</td>
 <td></td>
-
-
 </tr>
-
 <tr>
 <td></td>
 <td></td>
 <td></td>
 <td></td>
-
-
 </tr>
-
 <tr>
 <td>Variable Should Not Exist With Extended Variable Syntax</td>
 <td>[ Document ]</td>
 <td>FAIL</td>
 <td>Variable \${length attribute.length} exists</td>
-
-
 </tr>
-
 <tr>
 <td></td>
 <td>Variable Should Not Exist&nbsp;</td>
 <td>\${length attribute.missing}</td>
 <td></td>
-
-
 </tr>
-
 <tr>
 <td></td>
 <td>Variable Should Not Exist&nbsp;</td>
 <td>\${length attribute.length}</td>
 <td></td>
-
-
 </tr>
-
 <tr>
 <td></td>
 <td></td>
 <td></td>
 <td></td>
-
-
 </tr>
-
 <tr>
-<td>Variable Should Not Exist With Extended Variable Syntax And
+<td>Variable Should Not Exist With Extended Variable Syntax
+And
 Missing Object</td>
 <td>Variable Should Not Exist</td>
 <td>\${missing.missing}</td>
 <td><br>
 </td>
-
-
 </tr>
-
 <tr>
 <td></td>
 <td></td>
 <td></td>
 <td></td>
-
-
 </tr>
-
 <tr>
 <td>Variable Should Not Exist Using $name format</td>
 <td>[ Document ]</td>
 <td>FAIL</td>
 <td>Variable&nbsp;\${scalar}
 exists</td>
-
-
 </tr>
-
 <tr>
 <td></td>
 <td>Variable Should Not
 Exist&nbsp;</td>
 <td>$non-existing</td>
 <td></td>
-
-
 </tr>
-
 <tr>
 <td></td>
 <td>Variable Should Not
 Exist&nbsp;</td>
 <td>$scalar</td>
 <td></td>
-
-
 </tr>
-
-<tr><td></td><td></td><td></td><td></td></tr><tr><td>Variable Should Not
-Exist&nbsp;Using Escaped format</td><td>[ Document ]</td><td>FAIL</td><td>Variable&nbsp;\${scalar}
-exists</td></tr><tr><td></td><td>Variable Should Not
-Exist&nbsp;</td><td>\${non-existing}</td><td></td></tr><tr><td></td><td>Variable Should Not
-Exist&nbsp;</td><td>\${scalar}</td><td></td></tr><tr>
+<tr>
 <td></td>
 <td></td>
 <td></td>
 <td></td>
-
-
 </tr>
-
+<tr>
+<td>Variable Should Not
+Exist&nbsp;Using Escaped format</td>
+<td>[ Document ]</td>
+<td>FAIL</td>
+<td>Variable&nbsp;\${scalar}
+exists</td>
+</tr>
+<tr>
+<td></td>
+<td>Variable Should Not
+Exist&nbsp;</td>
+<td>\${non-existing}</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Variable Should Not
+Exist&nbsp;</td>
+<td>\${scalar}</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
 <tr>
 <td>Variable Should Not Exist
 With&nbsp;Invalid name</td>
@@ -655,349 +552,94 @@ With&nbsp;Invalid name</td>
 <td>FAIL</td>
 <td>Invalid variable syntax
 'invalid'</td>
-
-
 </tr>
-
 <tr>
 <td></td>
 <td>Variable Should Not
 Exist&nbsp;</td>
 <td>invalid</td>
 <td></td>
-
-
 </tr>
-
 <tr>
 <td></td>
 <td></td>
 <td></td>
 <td></td>
-
-
 </tr>
 
 
+<tr>
+<td class="name"><a name="test_Checking Variable Existence In User Keyword When Variable Name Is Argument">Variable Should Exist In User Keyword When Variable Name Is Argument And Variable Exists</a></td>
+<td>Set Test Variable</td>
+<td>${foo}</td>
+<td>\${bar}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Check Variable Exists In UK</td>
+<td>\${foo}</td>
+<td></td>
+<td></td>
+</tr>
+
+<tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td><a name="test_Checking Variable Existence In User Keyword When Variable Name Is Argument">Variable Should Exist In User Keyword Fails When Variable Name Is Argument And Variable Does Not Exists</a></td><td>[Documentation]</td><td>FAIL<br></td><td>Variable \${foo} does not exist</td><td></td></tr><tr><td></td><td>Check Variable Exists In UK</td><td>\${foo}</td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td><a name="test_Checking Variable Existence In User Keyword When Variable Name Is Argument">Variable Should Not Exists In User Keyword When Variable Name Is Argument</a></td><td>[Documentation]</td><td>FAIL<br></td><td>Variable \${foo} exists</td><td></td></tr><tr><td></td><td>Check Variable Does Not Exist In UK</td><td>\${foo}</td><td></td><td></td></tr><tr>
+<td class="name"></td>
+<td>Set Test Variable</td><td>${foo}</td><td>\${bar}</td>
 
 
-
+<td></td>
+</tr>
+<tr><td></td><td>Check Variable Does Not Exist In UK</td><td>\${foo}</td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr>
+<td class="name"><a name="keyword_Check Variable Does Not Exist In UK">Variable Should Exist When Variable Has Variable Like Value</a></td>
+<td>${variable} =</td>
+<td>Set Variable</td>
+<td>\${value}</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Variable Should Exist</td>
+<td>\${variable}</td>
+<td></td>
+<td></td>
+</tr>
 <tr>
 <td></td>
 <td></td>
 <td></td>
 <td></td>
-
-
+<td></td>
 </tr>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+<tr>
+<td class="name"><a name="keyword_Check Variable Does Not Exist In UK">Variable Should Not Exist Fails When Variable Has Variable Like
+Value</a></td>
+<td>[Documentation]</td>
+<td>FAIL</td>
+<td>Variable \${variable} exists<br>
+</td>
+<td></td>
+</tr>
 <tr>
 <td></td>
+<td>${variable} =</td>
+<td>Set Variable</td>
+<td>\${value}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Variable Should Not Exist</td>
+<td>\${variable}</td>
 <td></td>
 <td></td>
-<td></td>
-
-
 </tr>
 </tbody>
 </table>
-
 <br>
- 
-
 <table border="1">
 <colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
-
-<thead>
-<tr>
+<thead><tr>
 <th>Keyword</th>
 <th>Action</th>
 <th>Argument</th>
@@ -1005,217 +647,48 @@ Exist&nbsp;</td>
 <th>Argument</th>
 </tr>
 </thead>
-
 <tbody>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr>
+<tr>
+<td class="name"><a name="keyword_Check Variable Exists In UK">Check Variable
+Exists In UK</a></td>
+<td>[Arguments]</td>
+<td>${variable name}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Variable Should Exist</td>
+<td>${variable name}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="keyword_Check Variable Does Not Exist In UK">Check
+Variable Does Not Exist In UK</a></td>
+<td>[Arguments]</td>
+<td>${variable name}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Variable Should Not Exist</td>
+<td>${variable name}</td>
+<td></td>
+<td></td>
+</tr>
+
+
+
+<tr>
 <td></td>
 <td></td>
 <td></td>
