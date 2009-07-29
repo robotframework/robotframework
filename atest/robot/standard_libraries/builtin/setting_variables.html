@@ -1,0 +1,595 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="generator" content="RobotIDE"> 
+<meta name="rf-template" content="False"> 
+<style type="text/css">
+html {
+  font-family: Arial,Helvetica,sans-serif;
+  background-color: white;
+  color: black;
+}
+table {
+  border-collapse: collapse;
+  empty-cells: show;
+  margin: 1em 0em;
+  border: 0.1em solid black;
+}
+th, td {
+  border-style: solid;
+  border-width: 0.05em 0.1em;
+  border-color: black;
+  padding: 0.1em 0.2em;
+  height: 1.5em;
+  width: 12em;
+}
+th {
+  background-color: rgb(192, 192, 192);
+  color: black;
+  border-width: 0.1em;
+  font-weight: bold;
+  text-align: center;
+  letter-spacing: 0.1em;
+}
+td.name {
+  background-color: rgb(240, 240, 240);
+  letter-spacing: 0.1em;
+}
+td.name, th.name {
+  width: 10em;
+}
+</style>
+<title>Variables</title></head>
+<body>
+<h1>Variables</h1>
+<table id="settings" border="1">
+<tbody><tr>
+<th class="name">Setting</th>
+<th>Value</th>
+<th>Value</th>
+<th>Value</th>
+<th>Value</th>
+</tr>
+<tr>
+<td class="name">Documentation</td>
+<td>Tests for set variable and set test/suite/global variable keywords</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name">Force Tags</td>
+<td>regression</td>
+<td>jybot</td>
+<td>pybot</td>
+<td></td>
+</tr>
+<tr>
+<td class="name">Suite Setup</td>
+<td>Run Tests</td>
+<td>--variable cli_var_1:CLI1 --variable cli_var_2:CLI2 --variable cli_var_3:CLI3</td>
+<td>standard_libraries/builtin/setting_variables</td>
+<td><br></td>
+</tr>
+<tr>
+<td class="name">Resource</td>
+<td>../../../resources/resource.html</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody></table>
+<table id="variables" border="1">
+<tbody><tr>
+<th class="name">Variable</th>
+<th>Value</th>
+<th>Value</th>
+<th>Value</th>
+<th>Value</th>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody></table>
+<table id="testcases" border="1">
+<tbody><tr>
+<th class="name">Test Case</th>
+<th>Action</th>
+<th>Argument</th>
+<th>Argument</th>
+<th>Argument</th>
+</tr>
+<tr>
+<td class="name"><a name="test_Set Variable">Set Variable</a></td>
+<td>${tc} =</td>
+<td>Check Test Case</td>
+<td>Set Variable</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Check Log Message</td>
+<td>${tc.kws[0].msgs[0]}</td>
+<td>\${var} = Hello</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Check Log Message</td>
+<td>${tc.kws[7].msgs[0]}</td>
+<td>Using 'Set Variable' keyword with more or less than one argument is
+deprecated in Robot Framework 2.1 and that usage will be removed in 2.2.</td>
+<td>WARN</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Check Log Message</td>
+<td>${tc.kws[13].msgs[0]}</td>
+<td>Using 'Set Variable' keyword with more or less than one argument is
+deprecated in Robot Framework 2.1 and that usage will be removed in 2.2.</td>
+<td>WARN</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<tr>
+<td class="name"><a name="test_Set Test Variable">Set Test Variable</a></td>
+<td>Check Test Case</td>
+<td>Set Test Variable - Scalars</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Check Test Case</td>
+<td>Set Test Variable - Lists</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Check Test Case</td>
+<td>Set Test Variable Needing Escaping</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Check Test Case</td>
+<td>Set Test Variable in User Keyword</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Check Test Case</td>
+<td>Set Test Variable Not Affecting Other Tests</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Check Test Case</td>
+<td>Check Test Vars Set In One Suite Are Not Available In Another</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="test_Set Suite Variable">Set Suite Variable</a></td>
+<td>Check Test Case</td>
+<td>Set Suite Variable 1</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Check Test Case</td>
+<td>Set Suite Variable 2</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Check Test Case</td>
+<td>Check Suite Vars Set In One Suite Are Not Available In Another</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Check Suite Teardown Passed</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="test_Set Global Variables">Set Global Variables</a></td>
+<td>Check Test Case</td>
+<td>Set Global Variable 1</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Check Test Case</td>
+<td>Set Global Variable 2</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Check Test Case</td>
+<td>Check Global Vars Set In One Suite Are Available In Another</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Check Suite Teardown Passed</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="test_Variable Scopes And Overriding">Variable Scopes And Overriding</a></td>
+<td>Check Test Case</td>
+<td>Scopes And Overriding 1</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Check Test Case</td>
+<td>Scopes And Overriding 2</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Check Test Case</td>
+<td>Scopes And Overriding 3</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="test_Set Test/Suite/Global Variables With Normal Variable Syntax">Set Test/Suite/Global Variables With Normal Variable Syntax</a></td>
+<td>Check Test Case</td>
+<td>Set Test/Suite/Global Variables With Normal Variable Syntax 1</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Check Test Case</td>
+<td>Set Test/Suite/Global Variables With Normal Variable Syntax 2</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="test_It Should Be Possible To Set Test/Suite/Global Variable Using Empty List Variable">It Should Be Possible To Set Test/Suite/Global Variable Using Empty List Variable</a></td>
+<td>Check Test Case</td>
+<td>It Should Be Possible To Set Test/Suite/Global Variable using Empty List Variable 1</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Check Test Case</td>
+<td>It Should Be Possible To Set Test/Suite/Global Variable using Empty List Variable 2</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+
+
+
+
+
+
+<tr>
+<td class="name"><a name="test_Set Test/Suite/Global Varible In User Keyword When Variable Name Is Used As Argument">Set Test/Suite/Global Varible In User Keyword When Variable Name Is Used As Argument</a></td>
+<td>Check Test Case</td>
+<td>${TEST NAME}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="test_Setting Variable Which Value Is In Variable Like Syntax">Setting Variable Which Value Is In Variable Like Syntax</a></td>
+<td>Check Test Case</td>
+<td>${TEST NAME}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="test_Setting Variable Which Value Is In Variable Syntax">Setting Variable Which Value Is In Variable Syntax</a></td>
+<td>Check Test Case</td>
+<td>${TEST NAME}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="test_Checking Variable Existence In User Keyword When Variable Name Is Argument">Checking Variable Existence In User Keyword When Variable Name Is Argument</a></td>
+<td>Check Test Case</td>
+<td>${TEST NAME}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="keyword_Check Variable Does Not Exist In UK">Check
+Variable Exists When Variable Exists And It Has Variable Like Value</a><a name="test_Checking Variable Existence In User Keyword When Variable Name Is Argument"></a></td><td>Check Test Case</td><td>${TEST NAME}</td>
+
+
+<td></td>
+<td></td>
+</tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td class="name"><a name="keyword_Check Variable Does Not Exist In UK">Variable Does Not Exist Fails When Variable Exists And It Has Variable Like
+Value</a><a name="test_Checking Variable Existence In User Keyword When Variable Name Is Argument"></a></td><td>Check Test Case</td><td>${TEST NAME}</td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Overiding variable when it has&nbsp;string value</td><td>Check Test Case</td><td>${TEST NAME}</td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Overiding&nbsp;variable when it has&nbsp;non-string value</td><td>Check Test Case</td><td>${TEST NAME}</td><td></td><td></td></tr>
+</tbody></table>
+<table id="keywords" border="1">
+<tbody><tr>
+<th class="name">Keyword</th>
+<th>Action</th>
+<th>Argument</th>
+<th>Argument</th>
+<th>Argument</th>
+</tr>
+<tr>
+<td class="name"><a name="keyword_Check Suite Teardown Passed">Check Suite Teardown Passed</a></td>
+<td>${suite} =</td>
+<td>Get Test Suite</td>
+<td>Variables</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Should Be Equal</td>
+<td>${suite.teardown.status}</td>
+<td>PASS</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody></table>
+</body></html>
