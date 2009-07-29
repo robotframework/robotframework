@@ -56,6 +56,11 @@ class _Logger(AbstractLogger):
                 for msg in self._message_cache:
                     logger.message(msg)
 
+    def unregister_logger(self, *loggers):
+        for log in loggers:
+            self._loggers = [ proxy for proxy in self._loggers
+                              if proxy.logger is not log ]
+
     def register_console_logger(self, width=78, colors=True):
         self.disable_automatic_console_logger()
         self._register_console_logger(width, colors)

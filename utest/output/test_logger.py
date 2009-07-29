@@ -46,7 +46,7 @@ class TestLogger(unittest.TestCase):
         self.logger.register_logger(logger)
         self.logger.write('Hello, world!', 'INFO')
         assert_true(logger.msg.timestamp.startswith('20'))
-
+        
     def test_write_to_one_logger_with_trace_level(self):
         logger = LoggerMock(('expected message', 'TRACE'))
         self.logger.register_logger(logger)
@@ -159,6 +159,20 @@ class TestLogger(unittest.TestCase):
         logger.register_console_logger(width=42)
         assert_equals(len(logger._loggers), 1)
         assert_equals(logger._loggers[0].start_suite.im_self._width, 42)
+
+    def test_unregister_logger(self):
+        logger1, logger2, logger3 = LoggerMock(), LoggerMock(), LoggerMock()
+        self.logger.register_logger(logger1, logger2, logger3)
+        self.logger.unregister_logger(logger2)
+        assert_equals(len(self.logger._loggers), 2)
+        self.logger.unregister_logger(logger3, logger1)
+        assert_equals(len(self.logger._loggers), 0)
+
+    def test_unregistering_non_registered_logger_is_ok(self):
+        logger1, logger2 = LoggerMock(), LoggerMock()
+        self.logger.register_logger(logger1)
+        self.logger.unregister_logger(logger2)
+        self.logger.unregister_logger(None)
 
 
 if __name__ == "__main__":

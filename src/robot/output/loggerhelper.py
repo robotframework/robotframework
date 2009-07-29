@@ -103,6 +103,7 @@ class AbstractLoggerProxy:
     _methods = NotImplemented
          
     def __init__(self, logger):
+        self.logger = logger
         default = lambda *args: None
         for name in self._methods:
             try:

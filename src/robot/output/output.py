@@ -55,6 +55,7 @@ class Output(AbstractLogger):
                            self._settings['TagStatLink'])
         stats.serialize(self._xmllogger)
         self._xmllogger.close(serialize_errors=True)
+        LOGGER.unregister_logger(self._xmllogger)
         LOGGER.output_file('Output', self._settings['Output'])
             
     def start_suite(self, suite):
