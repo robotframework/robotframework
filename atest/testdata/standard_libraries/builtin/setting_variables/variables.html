@@ -767,7 +767,7 @@ Test Variable Not Affecting Other Tests</a></td>
 <td></td>
 <td></td>
 </tr>
-<tr>
+<tr><td></td><td>Variable Should Not Exist</td><td>$parent_suite_setup_suite_var</td><td></td><td></td></tr><tr><td></td><td>Set Suite Variable</td><td>$parent_suite_setup_suite_var</td><td>Parent should not see this value</td><td></td></tr><tr>
 <td class="name"></td>
 <td>Variable Should Not Exist</td>
 <td>$suite_setup_local_var</td>
@@ -799,7 +799,7 @@ Test Variable Not Affecting Other Tests</a></td>
 <tr>
 <td class="name"></td>
 <td>@{test_level_suite_var} =</td>
-<td>List</td>
+<td>Create List</td>
 <td>Suite var set in</td>
 <td>test</td>
 </tr>
@@ -984,7 +984,7 @@ user keyword' ]</td>
 <td></td>
 <td></td>
 </tr>
-<tr>
+<tr><td></td><td>Should Be Equal</td><td>${parent_suite_setup_global_var}</td><td>Set in __init__</td><td></td></tr><tr>
 <td class="name"></td>
 <td>Should Be Equal</td>
 <td>${suite_setup_global_var}</td>
@@ -1009,7 +1009,7 @@ user keyword' ]</td>
 <tr>
 <td class="name"></td>
 <td>@{test_level_global_var} =</td>
-<td>List</td>
+<td>Create List</td>
 <td>Global var set in</td>
 <td>test</td>
 </tr>
@@ -1389,7 +1389,7 @@ Variable 2</a></td>
 <td>New value 3</td>
 <td></td>
 </tr>
-<tr>
+<tr><td></td><td>Set Global Variable</td><td>$parent_suite_setup_global_var_to_reset</td><td>Set in test!</td><td></td></tr><tr>
 <td class="name"></td>
 <td>Should Be Equal</td>
 <td>${cli_var_1}</td>
@@ -1412,12 +1412,12 @@ Variable 2</a></td>
 </tr>
 <tr>
 <td class="name"></td>
-<td></td>
-<td></td>
-<td></td>
+<td>Should Be Equal</td>
+<td>${parent_suite_setup_global_var_to_reset}</td><td>Set in test!</td>
+
 <td></td>
 </tr>
-<tr>
+<tr><td></td><td></td><td></td><td></td><td></td></tr><tr>
 <td class="name"><a name="test_Scopes And Overriding 2">Scopes And Overriding 2</a></td>
 <td>Should Be Equal</td>
 <td>${cli_var_1}</td>
@@ -1737,7 +1737,7 @@ locally', 'in suite setup' ]</td>
 <td></td>
 <td></td>
 </tr>
-<tr>
+<tr><td></td><td>Variable Should Not Exist</td><td>$parent_suite_setup_suite_var</td><td></td><td></td></tr><tr><td></td><td>Should Be Equal</td><td>${parent_suite_setup_global_var}</td><td>Set in __init__</td><td></td></tr><tr>
 <td class="name"></td>
 <td></td>
 <td></td>
