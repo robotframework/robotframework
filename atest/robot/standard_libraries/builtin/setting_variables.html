@@ -114,7 +114,7 @@ td.name, th.name {
 <td class="name"><a name="test_Set Variable">Set Variable</a></td>
 <td>${tc} =</td>
 <td>Check Test Case</td>
-<td>Set Variable</td>
+<td>${TESTNAME}</td>
 <td></td>
 </tr>
 <tr>
@@ -124,10 +124,10 @@ td.name, th.name {
 <td>\${var} = Hello</td>
 <td></td>
 </tr>
-<tr>
+<tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td class="name">Set Variable With More Or Less Than One Value is Deprecated in RF 2.1</td><td>${tc} =</td><td>Check Test Case</td><td>${TESTNAME}</td><td></td></tr><tr>
 <td class="name"></td>
 <td>Check Log Message</td>
-<td>${tc.kws[7].msgs[0]}</td>
+<td>${tc.kws[0].msgs[0]}</td>
 <td>Using 'Set Variable' keyword with more or less than one argument is
 deprecated in Robot Framework 2.1 and that usage will be removed in 2.2.</td>
 <td>WARN</td>
@@ -135,7 +135,7 @@ deprecated in Robot Framework 2.1 and that usage will be removed in 2.2.</td>
 <tr>
 <td class="name"></td>
 <td>Check Log Message</td>
-<td>${tc.kws[13].msgs[0]}</td>
+<td>${tc.kws[6].msgs[0]}</td>
 <td>Using 'Set Variable' keyword with more or less than one argument is
 deprecated in Robot Framework 2.1 and that usage will be removed in 2.2.</td>
 <td>WARN</td>
@@ -295,47 +295,41 @@ deprecated in Robot Framework 2.1 and that usage will be removed in 2.2.</td>
 
 
 <tr>
-<td class="name"><a name="test_Set Test Variable">Set Test Variable</a></td>
+<td class="name">Set Test Variable - Scalars</td>
 <td>Check Test Case</td>
-<td>Set Test Variable - Scalars</td>
+<td>${TESTNAME}</td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td class="name"></td>
+<td class="name">Set Test Variable - Lists</td>
 <td>Check Test Case</td>
-<td>Set Test Variable - Lists</td>
+<td>${TESTNAME}</td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td class="name"></td>
+<td class="name">Set Test Variable Needing Escaping</td>
 <td>Check Test Case</td>
-<td>Set Test Variable Needing Escaping</td>
+<td>${TESTNAME}</td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td class="name"></td>
+<td class="name">Set Test Variable in User Keyword</td>
 <td>Check Test Case</td>
-<td>Set Test Variable in User Keyword</td>
+<td>${TESTNAME}</td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td class="name"></td>
+<td class="name">Set Test Variable Not Affecting Other Tests</td>
 <td>Check Test Case</td>
-<td>Set Test Variable Not Affecting Other Tests</td>
+<td>${TESTNAME}</td>
 <td></td>
 <td></td>
 </tr>
-<tr>
-<td class="name"></td>
-<td>Check Test Case</td>
-<td>Check Test Vars Set In One Suite Are Not Available In Another</td>
-<td></td>
-<td></td>
-</tr>
+<tr><td>Check Test Vars Set In One Suite Are Not Available In Another</td><td>Check Test Case</td><td>${TESTNAME}</td><td></td></tr>
 <tr>
 <td class="name"></td>
 <td></td>
@@ -357,20 +351,14 @@ deprecated in Robot Framework 2.1 and that usage will be removed in 2.2.</td>
 <td></td>
 <td></td>
 </tr>
-<tr>
-<td class="name"></td>
+<tr><td class="name"></td><td>Check Suite Teardown Passed</td><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr>
+<td class="name">Check Suite Vars Set In One Suite Are Not Available In Another</td>
 <td>Check Test Case</td>
 <td>Check Suite Vars Set In One Suite Are Not Available In Another</td>
 <td></td>
 <td></td>
 </tr>
-<tr>
-<td class="name"></td>
-<td>Check Suite Teardown Passed</td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
+
 <tr>
 <td class="name"></td>
 <td></td>
@@ -392,20 +380,14 @@ deprecated in Robot Framework 2.1 and that usage will be removed in 2.2.</td>
 <td></td>
 <td></td>
 </tr>
-<tr>
-<td class="name"></td>
+<tr><td class="name"></td><td>Check Suite Teardown Passed</td><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr>
+<td class="name">Check Global Vars Set In One Suite Are Available In Another</td>
 <td>Check Test Case</td>
 <td>Check Global Vars Set In One Suite Are Available In Another</td>
 <td></td>
 <td></td>
 </tr>
-<tr>
-<td class="name"></td>
-<td>Check Suite Teardown Passed</td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
+
 <tr>
 <td class="name"></td>
 <td></td>
@@ -434,7 +416,7 @@ deprecated in Robot Framework 2.1 and that usage will be removed in 2.2.</td>
 <td></td>
 <td></td>
 </tr>
-<tr>
+<tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Overiding&nbsp;variable when it has&nbsp;non-string value</td><td>Check Test Case</td><td>${TEST NAME}</td><td></td><td></td></tr><tr>
 <td class="name"></td>
 <td></td>
 <td></td>
@@ -531,29 +513,9 @@ deprecated in Robot Framework 2.1 and that usage will be removed in 2.2.</td>
 <td></td>
 <td></td>
 </tr>
-<tr>
-<td class="name"><a name="test_Checking Variable Existence In User Keyword When Variable Name Is Argument">Checking Variable Existence In User Keyword When Variable Name Is Argument</a></td>
-<td>Check Test Case</td>
-<td>${TEST NAME}</td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td class="name"></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td class="name"><a name="keyword_Check Variable Does Not Exist In UK">Check
-Variable Exists When Variable Exists And It Has Variable Like Value</a><a name="test_Checking Variable Existence In User Keyword When Variable Name Is Argument"></a></td><td>Check Test Case</td><td>${TEST NAME}</td>
 
 
-<td></td>
-<td></td>
-</tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td class="name"><a name="keyword_Check Variable Does Not Exist In UK">Variable Does Not Exist Fails When Variable Exists And It Has Variable Like
-Value</a><a name="test_Checking Variable Existence In User Keyword When Variable Name Is Argument"></a></td><td>Check Test Case</td><td>${TEST NAME}</td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Overiding variable when it has&nbsp;string value</td><td>Check Test Case</td><td>${TEST NAME}</td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Overiding&nbsp;variable when it has&nbsp;non-string value</td><td>Check Test Case</td><td>${TEST NAME}</td><td></td><td></td></tr>
+
 </tbody></table>
 <table id="keywords" border="1">
 <tbody><tr>
