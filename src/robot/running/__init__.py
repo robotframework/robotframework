@@ -33,5 +33,10 @@ class _Namespaces:
     def end_suite(self):
         self.current = self._namespaces.pop()
 
+    def __iter__(self):
+        namespaces = self._namespaces + [self.current]
+        return iter([ns for ns in namespaces if ns is not None])
+
+
 # Hook to namespaces
 NAMESPACES = _Namespaces()

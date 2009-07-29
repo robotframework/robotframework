@@ -336,7 +336,8 @@ class _VariableScopes:
         
     def set_global(self, name, value):
         GLOBAL_VARIABLES[name] = value
-        self.set_suite(name, value)
+        for ns in robot.running.NAMESPACES:
+            ns.variables.set_suite(name, value)
         
     def set_suite(self, name, value):
         self._suite[name] = value
