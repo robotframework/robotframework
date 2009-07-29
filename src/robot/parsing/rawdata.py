@@ -68,7 +68,10 @@ def _read_data(datafile, path, strip_comments):
     except KeyError:
         raise DataError("Unsupported file format '%s'" % ext)
     rawdata = TabularRawData(path, strip_comments)
-    reader.read(datafile, rawdata)
+    try:
+        reader.read(datafile, rawdata)
+    except:
+        raise DataError("Parsing '%s' failed: %s" % (path, utils.get_error_message()))
     return rawdata
 
 
