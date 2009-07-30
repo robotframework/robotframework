@@ -62,6 +62,10 @@ information about the installation and Python in general.
           as long as we need to support very old Python versions (most
           notably Jython 2.2) is not feasible.
 
+.. Note:: On Windows, and especially on Windows Vista, it is
+          recommended to install Python to all users, and to run the
+          installation as an administrator.
+
 .. Note:: The Python installation framework included with Python 2.3
           does not have functionality to copy other than Python
           files. Robot Framework itself can be installed with it
