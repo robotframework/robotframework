@@ -138,7 +138,8 @@ _import_map = _create_mapping(_import_names)
 _setting_map = _create_mapping(_setting_names)
 _test_map = _create_mapping(_test_names)
 _keyword_map = _create_mapping(_keyword_names)
-_valid_extensions = ['TSV','HTML','HTM','XHTML']
+_valid_formats = utils.NormalizedDict({'TSV':'TSV','HTML':'HTML', 
+                                          'HTM':'HTML','XHTML':'HTML'})
 _default_styles = '''
 <style type="text/css">
 html {
@@ -185,16 +186,36 @@ class Tidy:
         if not os.path.isfile(infile):
             LOGGER.error("'%s' is not a regular file" % infile)
             return
-        if outfile:
-            print '%s -> %s' % (infile, outfile)
-        else:
-            print infile
-            outfile = infile
+        print infile, 
         try:
             data = TestData(infile, opts['fixcomments'])
-            data.serialize(outfile, opts['format'], opts['title'], opts['style'])
+            format = self._get_format(data, opts['format'])
+            outfile, remove_infile = self._get_outfile(infile, outfile, format, data)
+            data.serialize(outfile, format, opts['title'], opts['style']) 
         except:
             LOGGER.error(utils.get_error_message())
+        else:
+            if infile != outfile:
+                print '-> %s' % outfile
+            else:
+                print
+            if remove_infile:
+                os.remove(infile)
+
+    def _get_format(self, data, format):
+        if format is None:
+            format = data.format
+        elif format not in _valid_formats:
+            raise DataError("Invalid output format '%s'. Only HTML and TSV "
+                            "are supported." % format)
+        return _valid_formats[format]
+
+    def _get_outfile(self, infile, outfile, format, data):
+        if outfile:
+            return outfile, False
+        if format != data.format: # inplace and format changed
+            return infile[:-len(data.format)] + format.lower(), True
+        return infile, False
             
     def process_directory(self, indir, opts):
         for name in os.listdir(indir):
@@ -208,14 +229,15 @@ class Tidy:
         base, ext = os.path.splitext(name)
         if not base or (base[0] in ['.', '_'] and base.lower() != '__init__'):
             return False
-        return ext.upper()[1:] in _valid_extensions
+        return ext[1:] in _valid_formats
 
 
 class TestData:
     
     def __init__(self, path, fix_comments=False):
-        if not os.path.isfile(path) or os.path.splitext(path)[1][1:].upper() \
-                not in _valid_extensions:
+        try:
+            self.format = _valid_formats[os.path.splitext(path)[1][1:]]
+        except:
             raise DataError("Input format must be either HTML or TSV.")
         raw = RawData(path, strip_comments=False)
         if raw.is_empty():
@@ -234,12 +256,6 @@ class TestData:
         serializer.close()
         
     def _get_serializer(self, path, format, title, style):
-        if format is None:
-            format = os.path.splitext(path)[1][1:]
-        format = format.upper()
-        if format not in _valid_extensions:
-            raise DataError("Invalid output format '%s'. Only HTML and TSV "
-                            "are supported." % format)
         title = self._get_title(title, path)
         if format == 'TSV':
             return TsvSerializer(open(path, 'wb'), title)
