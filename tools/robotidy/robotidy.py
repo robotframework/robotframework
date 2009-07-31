@@ -183,40 +183,17 @@ td.col_name {
 class Tidy:
 
     def process_file(self, infile, outfile, opts):
-        if not os.path.isfile(infile):
-            LOGGER.error("'%s' is not a regular file" % infile)
-            return
-        print infile, 
+        print infile
         try:
             data = TestData(infile, opts['fixcomments'])
-            format = self._get_format(data, opts['format'])
-            outfile, remove_infile = self._get_outfile(infile, outfile, format, data)
-            data.serialize(outfile, format, opts['title'], opts['style']) 
+            outfile = data.serialize(outfile, opts['format'], opts['title'], 
+                                     opts['style']) 
         except:
             LOGGER.error(utils.get_error_message())
         else:
             if infile != outfile:
-                print '-> %s' % outfile
-            else:
-                print
-            if remove_infile:
-                os.remove(infile)
+                print ' `--> %s' % outfile
 
-    def _get_format(self, data, format):
-        if format is None:
-            format = data.format
-        elif format not in _valid_formats:
-            raise DataError("Invalid output format '%s'. Only HTML and TSV "
-                            "are supported." % format)
-        return _valid_formats[format]
-
-    def _get_outfile(self, infile, outfile, format, data):
-        if outfile:
-            return outfile, False
-        if format != data.format: # inplace and format changed
-            return infile[:-len(data.format)] + format.lower(), True
-        return infile, False
-            
     def process_directory(self, indir, opts):
         for name in os.listdir(indir):
             path = os.path.join(indir, name)
@@ -235,6 +212,9 @@ class Tidy:
 class TestData:
     
     def __init__(self, path, fix_comments=False):
+        if not os.path.isfile(path):
+            raise DataError("'%s' is not a regular file" % path)
+        self.path = path
         try:
             self.format = _valid_formats[os.path.splitext(path)[1][1:]]
         except:
@@ -247,13 +227,34 @@ class TestData:
         self.testcases = TestCases(raw.testcases, fix_comments)
         self.keywords = UserKeywords(raw.keywords, fix_comments)
 
-    def serialize(self, path, format=None, title=None, style=None):
-        serializer = self._get_serializer(path, format, title, style)
+    def serialize(self, outpath, format=None, title=None, style=None):
+        format = self._get_format(format)
+        outpath, rm_orig = self._get_outpath_and_remove_orig(outpath, format)
+        serializer = self._get_serializer(outpath, format, title, style)
         self.settings.serialize(serializer)
         self.variables.serialize(serializer)
         self.testcases.serialize(serializer)
         self.keywords.serialize(serializer)
         serializer.close()
+        if rm_orig:
+            os.remove(self.path)
+        return outpath
+    
+    def _get_format(self, format):
+        if format is None:
+            return self.format
+        try:
+            return _valid_formats[format]
+        except KeyError:
+            raise DataError("Invalid output format '%s'. Only HTML and TSV "
+                            "are supported." % format)
+
+    def _get_outpath_and_remove_orig(self, outpath, format):
+        if outpath is not None:
+            return outpath, False
+        if format == self.format:  # inplace, format not changed  
+            return self.path, False
+        return '%s.%s' % (os.path.splitext(self.path)[0], format.lower()), True
         
     def _get_serializer(self, path, format, title, style):
         title = self._get_title(title, path)
@@ -276,8 +277,8 @@ class TestData:
         except IOError, err:
             raise DataError("Opening style sheet file '%s' failed: %s" 
                             % (given_style_path, str(err)))
-      
 
+            
 class Settings:
 
     def __init__(self, raw_settings, fix_comments):
