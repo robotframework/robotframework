@@ -1,0 +1,61 @@
+*Setting*	*Value*	*Value*	*Value*	*Value*	*Value*	*Value*	*Value*
+Test Setup	Clear Output Directory And Copy Needed Files						
+Library	OperatingSystem						
+							
+*Variable*	*Value*	*Value*	*Value*	*Value*	*Value*	*Value*	*Value*
+${OUTDIR}	${CURDIR}${/}testoutput						
+${HTML}	${OUTDIR}${/}foo.html						
+${TSV}	${OUTDIR}${/}foo.tsv						
+${HTML2}	${OUTDIR}${/}foo2.html						
+${TSV2}	${OUTDIR}${/}foo2.tsv						
+${->}	\n${space}`-->${space}						
+							
+*Test Case*	*Action*	*Argument*	*Argument*	*Argument*	*Argument*	*Argument*	*Argument*
+Test Inplace When Format Is Not Changed	Run Robotidy	--inplace -F TSV ${TSV}	0	${TSV}			
+	Files Should Exist In Output Dir	${TSV}					
+							
+Test Inplace When Format Is Changed From TSV To HTML	Run Robotidy	--inplace -F HTML ${TSV}	0	${TSV}${->}${HTML}			
+	Files Should Exist In Output Dir	${HTML}					
+							
+Test Inplace When Format Is Changed From HTML To TSV	Run Robotidy	--format HTML ${TSV} ${HTML}	0	${TSV}${->}${HTML}			
+	Run Robotidy	--inplace -F TSV ${HTML}	0	${HTML}${->}${TSV}			
+	Files Should Exist In Output Dir	${TSV}					
+							
+Test Recursive When Format Is Not Changed	Run Robotidy	--recursive --format TSV ${OUTDIR}	0	${TSV}			
+	Files Should Exist In Output Dir	${TSV}					
+							
+Test Recursive When Format Is Changed	Run Robotidy	--recursive --format HTML ${OUTDIR}	0	${TSV}${->}${HTML}			
+	Files Should Exist In Output Dir	${HTML}					
+							
+Test Recursive When Format Is Changed With Mixed Data	Run Robotidy	--format HTML ${TSV} ${HTML 2}	0	${TSV}${->}${HTML2}			
+	Run Robotidy	--recursive --format TSV ${OUTDIR}	0	${HTML2}${->}${TSV2}\n${TSV}			
+	Files Should Exist In Output Dir	${TSV}	${TSV2}				
+							
+Test Changing Format	Run Robotidy	--format HTML ${TSV} ${HTML}	0	${TSV}${->}${HTML}			
+	Files Should Exist In Output Dir	${TSV}	${HTML}				
+							
+Test Using Format When Not Changing It	Run Robotidy	--format TSV ${TSV} ${TSV}	0	${TSV}			
+	Files Should Exist In Output Dir	${TSV}					
+							
+Using Format And Giving Output File With Wrong ExtensionWhen Not Changing It	Run Robotidy	--format HTML ${TSV} ${TSV}.foo	0	${TSV}${->}${TSV}.foo			
+	Files Should Exist In Output Dir	${TSV}	${TSV}.foo				
+							
+							
+*Keyword*	*Action*	*Argument*	*Argument*	*Argument*	*Argument*	*Argument*	*Argument*
+Run Robotidy	[Arguments]	${options}	${expected rc}=0	${expected output}=			
+	${rc}	${output} =	Run And Return Rc And Output	python ${CURDIR}${/}..${/}robotidy.py ${options}			
+	Should Be Equal As Integers	${rc}	${expected rc}				
+	Run Keyword If	"""""""${expected output}"""""""	Should Be Equal	${output}	${expected output}		
+							
+Clear Output Directory And Copy Needed Files	@{files} =	List Files In Directory	${OUTDIR}	${EMPTY}	${EMPTY}	True	
+	Remove Files	@{files}					
+	Create File	${TSV}	*** Test Cases ***\nFoo\tBar\n				
+							
+Files Should Exist In Output Dir	[Arguments]	@{files}					
+	:: FOR	${file}	IN	@{files}			
+		File Should Exist	${file}				
+	${expected number of files} =	Get Length	${files}				
+	${number of files} =	Count Files In Directory	${OUTDIR}				
+	Should Be Equal As Numbers	${expected number of files}	${number of files}				
+							
+							
