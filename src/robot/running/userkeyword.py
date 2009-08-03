@@ -13,11 +13,13 @@
 #  limitations under the License.
 
 
+import copy
 import os
+import re
 
 from robot.common import BaseHandler, BaseLibrary, UserErrorHandler
 from robot.errors import DataError, ExecutionFailed
-from robot.variables import is_list_var
+from robot.variables import is_list_var, VariableSplitter
 from robot import utils
 
 from keywords import KeywordFactory
@@ -133,3 +135,35 @@ class UserHandler(BaseHandler):
         vararg_count = len(args) - len(self.args)
         varargs = args[len(args)-vararg_count:]
         return varargs  # Variables already replaced
+
+
+class EmbeddedArgsUserHandler(UserHandler):
+    
+    def __init__(self, handlerdata, libname):
+        self._embedded_args, self._name_regexp \
+                = self._read_embedded_args_and_regexp(handlerdata.name)
+        if not self._embedded_args:
+            raise TypeError
+        UserHandler.__init__(self, handlerdata, libname)
+        
+    def _read_embedded_args_and_regexp(self, name):
+        args = []
+        regexp = []
+        while True:
+            splitted = VariableSplitter(name, ['$'])
+            if splitted.identifier is None:
+                break
+            args.append(name[splitted.start:splitted.end])
+            regexp.append(re.escape(name[:splitted.start]))
+            regexp.append('(.*?)')
+            name = name[splitted.end:]
+        regexp = regexp + [re.escape(name), '$']
+        return args, re.compile(''.join(regexp))
+        
+    def get_matching_handler(self, name):
+        match = self._name_regexp.match(name)
+        if not match:
+            return None
+        handler = copy.copy(self)
+        handler._args_values = match.groups()
+        return handler
