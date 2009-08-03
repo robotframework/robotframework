@@ -140,25 +140,33 @@ class UserHandler(BaseHandler):
 class EmbeddedArgsUserHandler(UserHandler):
     
     def __init__(self, handlerdata, libname):
+        if handlerdata.args:
+            raise TypeError
         self._embedded_args, self._name_regexp \
                 = self._read_embedded_args_and_regexp(handlerdata.name)
         if not self._embedded_args:
             raise TypeError
         UserHandler.__init__(self, handlerdata, libname)
         
-    def _read_embedded_args_and_regexp(self, name):
+    def _read_embedded_args_and_regexp(self, string):
         args = []
-        regexp = []
+        regexp = ['^']
         while True:
-            splitted = VariableSplitter(name, ['$'])
-            if splitted.identifier is None:
+            before, variable, rest = self._split_from_variable(string)
+            if before is None:
                 break
-            args.append(name[splitted.start:splitted.end])
-            regexp.append(re.escape(name[:splitted.start]))
-            regexp.append('(.*?)')
-            name = name[splitted.end:]
-        regexp = regexp + [re.escape(name), '$']
+            args.append(variable)
+            regexp.extend([re.escape(before), '(.*?)'])
+            string = rest
+        regexp.extend([re.escape(rest), '$'])
         return args, re.compile(''.join(regexp))
+
+    def _split_from_variable(self, string):
+        splitted = VariableSplitter(string, identifiers=['$'])
+        if splitted.identifier is None:
+            return None, None, string
+        start, end = splitted.start, splitted.end
+        return string[:start], string[start:end], string[end:]
         
     def get_matching_handler(self, name):
         match = self._name_regexp.match(name)

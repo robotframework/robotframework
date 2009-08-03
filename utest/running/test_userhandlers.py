@@ -6,9 +6,9 @@ from robot.utils.asserts import *
 
 class HandlerDataMock:
     
-    def __init__(self, name):
+    def __init__(self, name, args=[]):
         self.name = name
-        self.args = []
+        self.args = args
         self.metadata = {}
         self.keywords = []
         self.defaults = []
@@ -18,12 +18,15 @@ class HandlerDataMock:
         self.return_value = None
         
         
-def EAUH(name):
-    return EmbeddedArgsUserHandler(HandlerDataMock(name), None)
+def EAUH(*args):
+    return EmbeddedArgsUserHandler(HandlerDataMock(*args), None)
 
     
 class TestEmbeddedArgsUserHandler(unittest.TestCase):
-    
+
+    def test_keyword_has_normal_arguments(self):  
+        assert_raises(TypeError, EAUH, 'Name has ${args}', ['${norm arg}'])
+  
     def test_no_embedded_args(self):
         assert_raises(TypeError, EAUH, 'No embedded args here')
     
@@ -31,27 +34,27 @@ class TestEmbeddedArgsUserHandler(unittest.TestCase):
         handler = EAUH('User selects ${item} from list')
         assert_equals(handler._embedded_args, ['${item}'])
         assert_equals(handler._name_regexp.pattern, 
-                      'User\\ selects\\ (.*?)\\ from\\ list$')
+                      '^User\\ selects\\ (.*?)\\ from\\ list$')
 
     def test_get_multiple_embedded_args_and_regexp(self):
         handler = EAUH('${x} selects ${y} from ${z}')
         assert_equals(handler._embedded_args, ['${x}', '${y}', '${z}'])
         assert_equals(handler._name_regexp.pattern, 
-                      '(.*?)\\ selects\\ (.*?)\\ from\\ (.*?)$')
+                      '^(.*?)\\ selects\\ (.*?)\\ from\\ (.*?)$')
 
     def test_get_matching_handler_when_no_match(self):
         handler = EAUH('User selects ${item}')
-        self.assertEquals(handler.get_matching_handler('Not matching'), None)
+        assert_equals(handler.get_matching_handler('Not matching'), None)
     
     def test_get_matching_handler_when_one_variable_matches(self):
         handler = EAUH('User selects ${item}')
         runnable_handler = handler.get_matching_handler('User selects book')
-        self.assertEquals(runnable_handler._args_values, ('book',))
+        assert_equals(runnable_handler._args_values, ('book',))
 
     def test_get_matching_handler_return_deepcopy_of_the_handler(self):
         handler = EAUH('User selects ${item}')
         runnable_handler = handler.get_matching_handler('User selects book')
-        self.assertNotEquals(handler, runnable_handler)
+        assert_not_equals(handler, runnable_handler)
         
 
 
