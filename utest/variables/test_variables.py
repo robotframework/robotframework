@@ -391,7 +391,7 @@ class TestVariableSplitter(unittest.TestCase):
             start = end = -1
         if not identifiers:
             identifiers = self._identifiers
-        res = variables._VariableSplitter(inp, identifiers)
+        res = variables.VariableSplitter(inp, identifiers)
         assert_equals(res.base, base, "'%s' base" % inp)
         assert_equals(res.start, start, "'%s' start" % inp)
         assert_equals(res.end, end, "'%s' end" % inp)

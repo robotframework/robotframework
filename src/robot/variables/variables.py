@@ -119,7 +119,7 @@ class Variables(utils.NormalizedDict):
         """
         if not utils.is_str(item):
             return item
-        var = _VariableSplitter(item, self._identifiers)
+        var = VariableSplitter(item, self._identifiers)
         if var.identifier and var.base and \
                var.start == 0 and var.end == len(item):
             return self._get_variable(var)
@@ -129,7 +129,7 @@ class Variables(utils.NormalizedDict):
         """Replaces variables from a string. Result is always a string."""
         result = []
         if splitted is None:
-            splitted = _VariableSplitter(string, self._identifiers)
+            splitted = VariableSplitter(string, self._identifiers)
         while True:
             if splitted.identifier is None:
                 result.append(utils.unescape(string))
@@ -145,12 +145,12 @@ class Variables(utils.NormalizedDict):
                 value = utils.unic(value)
             result.append(value)
             string = string[splitted.end:]
-            splitted = _VariableSplitter(string, self._identifiers)
+            splitted = VariableSplitter(string, self._identifiers)
         result = ''.join(result)
         return result
         
     def _get_variable(self, var):
-        """'var' is an instance of a _VariableSplitter"""
+        """'var' is an instance of a VariableSplitter"""
         # 1) Handle reserved syntax
         if var.identifier not in ['$','@','%']:
             value = '%s{%s}' % (var.identifier, var.base)
@@ -293,7 +293,7 @@ class Variables(utils.NormalizedDict):
     __contains__ = has_key
 
 
-class _VariableSplitter:
+class VariableSplitter:
     
     def __init__(self, string, identifiers):
         self.identifier = None

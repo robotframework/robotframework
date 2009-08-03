@@ -18,7 +18,7 @@ import os
 from robot import utils
 from robot.output import LOGGER
 
-from variables import Variables
+from variables import Variables, VariableSplitter
 from isvar import is_var, is_scalar_var, is_list_var
 
 
