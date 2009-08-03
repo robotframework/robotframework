@@ -5,7 +5,7 @@ Robot Framework One Click Installer
 ===================================
 
 An AutoIT_ script for installing `Robot Framework`_ and its preconditions
-on Windows machines. For download instructions see the tool's wiki page at
+on Windows XP machines. For download instructions see the tool's wiki page at
 http://code.google.com/p/robotframework/wiki/OneClickInstaller.
 
 
@@ -21,6 +21,8 @@ command prompt for these changes to take effect. You should use this
 installer *ONLY* if you do not previously have Python or Jython
 installed. In that case, and also if you want to have a custom
 installation, you need to install the needed components separately.
+
+.. Note:: The One Click Installer works only on Windows XP.
 
 
 Installers
