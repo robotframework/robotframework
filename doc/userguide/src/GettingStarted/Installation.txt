@@ -29,7 +29,7 @@ There are four ways to install Robot Framework:
     Easy Install support is available from Robot Framework 2.0.1 onwards.
 
 `Using One Click Installer`_ 
-    If you are using Windows and you do not have preconditions (Python_ and 
+    If you are using Windows XP and you do not have preconditions (Python_ and 
     optional Jython_) installed, you can use `One Click Installer`_ to do all 
     the needed installations.
     
@@ -249,6 +249,8 @@ The One Click Installer installs Robot Framework and its preconditions Python_
 and Jython_ (optional). It also automatically `sets up environment`__ so that 
 Robot Framework start-up scripts, as well as Python and Jython executables are 
 in PATH. 
+
+.. Note:: The One Click Installer works only on Windows XP.
 
 __ `Setting up environment`_
 
