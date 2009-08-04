@@ -58,11 +58,11 @@ class TestUserLibrary(unittest.TestCase):
         self._orig_userhandler = userkeyword.UserHandler
         self._orig_embeddedargs_userhandler = userkeyword.EmbeddedArgsUserHandler
         userkeyword.UserHandler = UserHandlerMock
-        userkeyword.EmbeddedArgsUserHandler = EmbeddedArgsUserHandlerMock
+        userkeyword.EmbeddedArgsUserHandlerTemplate = EmbeddedArgsUserHandlerMock
         
     def tearDown(self):
         userkeyword.UserHandler = self._orig_userhandler
-        userkeyword.EmbeddedArgsUserHandler = self._orig_embeddedargs_userhandler
+        userkeyword.EmbeddedArgsUserHandlerTemplate = self._orig_embeddedargs_userhandler
         
     def test_name_from_resource(self):
         for source, exp in [ ('resources.html', 'resources'), 
@@ -115,7 +115,6 @@ class TestUserLibrary(unittest.TestCase):
         assert_true(lib.handlers.has_key('mykw'))
         err = "Keyword 'My Kw' defined multiple times"
         assert_equals(lib.handlers['mykw']._error, err)
-
 
     def test_has_handler_with_non_existing_keyword(self):
         lib = self._get_userlibrary('source', 'kw')

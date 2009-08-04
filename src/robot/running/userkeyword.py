@@ -48,7 +48,7 @@ class UserLibrary(BaseLibrary):
         for handler in handlerdata:
             if handler.type != 'error':
                 try:
-                    handler = EmbeddedArgsUserHandler(handler, self.name)
+                    handler = EmbeddedArgsUserHandlerTemplate(handler, self.name)
                     self.embedded_arg_handlers.append(handler)
                 except TypeError:
                     handler = UserHandler(handler, self.name)
@@ -164,17 +164,23 @@ class UserHandler(BaseHandler):
         return varargs  # Variables already replaced
 
 
-class EmbeddedArgsUserHandler(UserHandler):
+class EmbeddedArgsUserHandlerTemplate(UserHandler):
     
     def __init__(self, handlerdata, libname):
         if handlerdata.args:
             raise TypeError
-        self._embedded_args, self._name_regexp \
+        self.embedded_args, self.name_regexp \
                 = self._read_embedded_args_and_regexp(handlerdata.name)
-        if not self._embedded_args:
+        if not self.embedded_args:
             raise TypeError
         UserHandler.__init__(self, handlerdata, libname)
-        
+
+    def get_matching_handler(self, name):
+        try:
+            return EmbeddedArgsUserHandler(name, self)
+        except TypeError:
+            return None
+    
     def _read_embedded_args_and_regexp(self, string):
         args = []
         regexp = ['^']
@@ -186,7 +192,7 @@ class EmbeddedArgsUserHandler(UserHandler):
             regexp.extend([re.escape(before), '(.*?)'])
             string = rest
         regexp.extend([re.escape(rest), '$'])
-        return args, re.compile(''.join(regexp))
+        return args, re.compile(''.join(regexp), re.IGNORECASE)
 
     def _split_from_variable(self, string):
         splitted = VariableSplitter(string, identifiers=['$'])
@@ -194,11 +200,30 @@ class EmbeddedArgsUserHandler(UserHandler):
             return None, None, string
         start, end = splitted.start, splitted.end
         return string[:start], string[start:end], string[end:]
-        
-    def get_matching_handler(self, name):
-        match = self._name_regexp.match(name)
+
+
+class EmbeddedArgsUserHandler(UserHandler):
+    
+    def __init__(self, name, template):
+        match = template.name_regexp.match(name)
         if not match:
-            return None
-        handler = copy.copy(self)
-        handler._args_values = match.groups()
-        return handler
+            raise TypeError
+        self.embedded_args = zip(template.embedded_args, match.groups())
+        self.name = name
+        self.longname = template.longname.replace(template.name, self.name)
+        self.keywords = template.keywords
+        self.args = template.args
+        self.defaults = template.defaults
+        self.varargs = template.varargs
+        self.minargs = template.minargs
+        self.maxargs = template.maxargs
+        self.return_value = template.return_value
+        self._doc = template._doc
+        self.doc = template.doc
+        self._timeout = template._timeout
+        self.timeout = template.timeout
+
+    def run(self, output, namespace, args):
+        for name, value in self.embedded_args:
+            namespace.variables[name] = value
+        return UserHandler.run(self, output, namespace, args)
