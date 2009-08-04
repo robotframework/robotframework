@@ -1,0 +1,25 @@
+*** Settings ***
+Force Tags	regression	pybot	jybot
+Suite Setup	Run Tests	${EMPTY}	core/keywords/embedded_argument_in_keyword_names.tsv
+Resource	../../../resources/resource.html
+
+*** Test Cases ***
+Embedded Arguments In Suite's User Keyword	
+	${tc} =	Check Test Case	${TEST NAME}
+	Should Be Equal	${tc.keywords[0].name}	
+	...	\${name}, \${book} = User Peke Selects Advanced Python From Webshop
+
+Embedded Arguments In User Keyword Name Used In Different Case
+	Check Test Case	${TEST NAME}
+
+Embedded Arguments In Resource File's User Keyword
+	Check Test Case	${TEST NAME}
+
+Embedded Arguments In Resource File's User Keyword Used Explicitly
+	Check Test Case	${TEST NAME}
+
+Variable Used In UK's Name
+	Check Test Case	${TEST NAME}
+	
+Variable Used In UK's Name When UK Have Args
+	Check Test Case	${TEST NAME}

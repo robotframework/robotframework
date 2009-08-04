@@ -1,0 +1,47 @@
+*** Settings ***
+Resource	resources/embedded_args_in_uk.tsv
+
+*** Test Cases ***
+Embedded Arguments In Suite's User Keyword
+	${name}	${book} =	User Peke Selects Advanced Python From Webshop
+	Should Be Equal	${name}	Peke
+	Should Be Equal	${book}	Advanced Python
+
+Embedded Arguments In User Keyword Name Used In Different Case
+	x Gets y From The z
+	x gets y from the z
+	x GETS y from the z
+	x gets y FROM THE z
+
+Embedded Arguments In Resource File's User Keyword
+	${kw name} =	Juha Uses Resource File
+	Should Be Equal	${kw name}	Juha Uses Resource File
+
+Embedded Arguments In Resource File's User Keyword Used Explicitly
+	${kw name} =	embedded_args_in_uk.Juha Uses Resource File
+	Should Be Equal	${kw name}	Juha Uses Resource File
+
+Variable Used In UK's Name
+	Normal keyword with ${variable} in name
+
+Variable Used In UK's Name When UK Have Args
+	Normal keyword with ${variable} in name with args	foo	bar
+
+	
+*** Keywords ***
+User ${user} Selects ${item} From Webshop
+	[Return]	${user}	${item}
+	
+${x} gets ${y} from the ${z}
+	Variable Should Exist	${x}
+	Variable Should Exist	${y}
+	Variable Should Exist	${z}
+
+Normal keyword with ${variable} in name
+	Variable Should Not Exist	${variable}
+
+Normal keyword with ${variable} in name with args
+	[Arguments]	${arg1}	${arg2}
+	Variable Should Not Exist	${variable}
+	Should Be Equal	${arg1}	foo	
+	Should Be Equal	${arg2}	bar

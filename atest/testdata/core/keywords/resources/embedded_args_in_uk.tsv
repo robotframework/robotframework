@@ -1,0 +1,3 @@
+*** Keywords ***
+${name} Uses ${type} File
+	[Return]	${name} Uses ${type} File
