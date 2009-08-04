@@ -109,7 +109,7 @@ User keyword arguments
 Most user keywords need to take some arguments. The syntax for
 specifying them is probably the most complicated feature normally
 needed with Robot Framework, but even that is relatively easy,
-particularly in most common cases. Arguments are always specified with
+particularly in most common cases. Arguments are normally specified with
 the :opt:`[Arguments]` setting, and argument names use the same
 syntax as variables_, for example :var:`${arg}`.
 
@@ -124,10 +124,11 @@ The syntax is such that first the :opt:`[Arguments]` setting is
 given and then argument names are defined in the subsequent
 cells. Each argument is in its own cell, using the same syntax as with
 variables. The keyword must be used with as many arguments as there
-are argument names in its signature. Argument names should be
-descriptive, but the actual value is not important. It is recommended
+are argument names in its signature. The actual argument names do not
+matter to the framework, but from users' perspective they should should
+be as descriptive as possible. It is recommended
 to use lower-case letters in variable names, either as
-:var:`${my_arg}` or :var:`${myArg}`.
+:var:`${my_arg}`, :var:`${my arg}` or :var:`${myArg}`.
 
 .. table:: User keyword taking different number of arguments
    :class: example
@@ -153,7 +154,7 @@ keyword that takes a different number of arguments and has default
 values for those that are not given. Also user keywords allow this,
 and the needed new syntax does not add very much to the already
 discussed basic syntax. In short, default values are added to
-arguments, so that first there is the equals sign ( :code:`=`) and then
+arguments, so that first there is the equals sign (:code:`=`) and then
 the value, for example :var:`${arg}=default`. There can be many
 arguments with defaults, but they all must be given after the normal
 positional arguments.
@@ -181,7 +182,6 @@ positional arguments.
 
 As all Pythonistas must have already noticed, the syntax for specifying default arguments
 is heavily inspired by Python syntax for function default values.
-
 
 Variable number of arguments
 ''''''''''''''''''''''''''''
@@ -226,6 +226,42 @@ sometimes be very useful.
 
 Again, Pythonistas probably notice that the variable number of
 arguments syntax is very close to the one in Python.
+
+
+Embedding arguments to keyword name
+'''''''''''''''''''''''''''''''''''
+
+
+.. table:: Test cases using keywords with embedded arguments
+
+   ====================  =============================
+        Test Case                   Step
+   ====================  =============================
+   Add two numbers       Given I have Calculator open
+   \                     When I add 2 and 40
+   \                     Then the result should be 42
+   \
+   Add negative numbers  Given I have Calculator open
+   \                     When I add 1 and -2
+   \                     Then the result should be -1
+   ====================  =============================
+
+.. table:: 
+   :class: example
+
+   ======================================  ===============  ============  ============
+                  Keyword                       Action        Argument      Argument
+   ======================================  ===============  ============  ============
+   Given I have ${program} open            Start Program    ${program}
+   \
+   When I add ${number 1} and ${number 2}  Input Number     ${number 1}
+   \                                       Push Button      \+
+   \                                       Input Number     ${number 2}
+   \                                       Push Button      \=
+   \
+   Then the result should be ${expected}   ${result} =      Get Result
+   \                                       Should Be Equal  ${result}     ${expected}
+   ======================================  ===============  ============  ============
 
 
 User keyword return values
