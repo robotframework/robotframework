@@ -48,36 +48,37 @@ class UserLibrary(BaseLibrary):
         for handler in handlerdata:
             if handler.type != 'error':
                 try:
-                    handler = EmbeddedArgsUserHandlerTemplate(handler, self.name)
-                    self.embedded_arg_handlers.append(handler)
+                    handler = EmbeddedArgsTemplate(handler, self.name)
                 except TypeError:
                     handler = UserHandler(handler, self.name)
+                else:
+                    self.embedded_arg_handlers.append(handler)
             if self.handlers.has_key(handler.name):
                 err = "Keyword '%s' defined multiple times" % handler.name
                 handler = UserErrorHandler(handler.name, err)
             self.handlers[handler.name] = handler
 
     def has_handler(self, name):
-        if BaseLibrary.has_handler(self, name) or \
-            self._get_embedded_arg_handler(name) is not None:
+        try:
+            self.get_handler(name)
+        except DataError:
+            return False
+        else:
             return True
-        return False
             
     def get_handler(self, name):
         try:
             return BaseLibrary.get_handler(self, name)
-        except DataError:
-            embedded_handler = self._get_embedded_arg_handler(name)
-            if embedded_handler:
-                return embedded_handler
-            raise
+        except DataError, error:
+            return self._try_to_get_embedded_arg_handler(name, error)
     
-    def _get_embedded_arg_handler(self, name):
-        for handler in self.embedded_arg_handlers:
-            found_handler = handler.get_matching_handler(name)
-            if found_handler:
-                return found_handler
-        return None
+    def _try_to_get_embedded_arg_handler(self, name, error):
+        for template in self.embedded_arg_handlers:
+            try:
+                return EmbeddedArgs(name, template)
+            except TypeError:
+                pass
+        raise error
 
 
 class UserHandler(BaseHandler):
@@ -164,7 +165,7 @@ class UserHandler(BaseHandler):
         return varargs  # Variables already replaced
 
 
-class EmbeddedArgsUserHandlerTemplate(UserHandler):
+class EmbeddedArgsTemplate(UserHandler):
     
     def __init__(self, handlerdata, libname):
         if handlerdata.args:
@@ -174,12 +175,6 @@ class EmbeddedArgsUserHandlerTemplate(UserHandler):
         if not self.embedded_args:
             raise TypeError
         UserHandler.__init__(self, handlerdata, libname)
-
-    def get_matching_handler(self, name):
-        try:
-            return EmbeddedArgsUserHandler(name, self)
-        except TypeError:
-            return None
     
     def _read_embedded_args_and_regexp(self, string):
         args = []
@@ -202,7 +197,7 @@ class EmbeddedArgsUserHandlerTemplate(UserHandler):
         return string[:start], string[start:end], string[end:]
 
 
-class EmbeddedArgsUserHandler(UserHandler):
+class EmbeddedArgs(UserHandler):
     
     def __init__(self, name, template):
         match = template.name_regexp.match(name)
