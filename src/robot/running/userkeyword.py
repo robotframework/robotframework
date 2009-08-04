@@ -13,7 +13,6 @@
 #  limitations under the License.
 
 
-import copy
 import os
 import re
 
@@ -169,11 +168,11 @@ class EmbeddedArgsTemplate(UserHandler):
     
     def __init__(self, handlerdata, libname):
         if handlerdata.args:
-            raise TypeError
+            raise TypeError('Cannot have normal arguments')
         self.embedded_args, self.name_regexp \
                 = self._read_embedded_args_and_regexp(handlerdata.name)
         if not self.embedded_args:
-            raise TypeError
+            raise TypeError('Must have embedded arguments')
         UserHandler.__init__(self, handlerdata, libname)
     
     def _read_embedded_args_and_regexp(self, string):
@@ -205,7 +204,15 @@ class EmbeddedArgs(UserHandler):
             raise TypeError
         self.embedded_args = zip(template.embedded_args, match.groups())
         self.name = name
-        self.longname = template.longname.replace(template.name, self.name)
+        self.longname = template.longname[:-len(template.name)] + name
+        self._copy_attrs_from_template(template)
+
+    def run(self, output, namespace, args):
+        for name, value in self.embedded_args:
+            namespace.variables[name] = value
+        return UserHandler.run(self, output, namespace, args)
+        
+    def _copy_attrs_from_template(self, template):
         self.keywords = template.keywords
         self.args = template.args
         self.defaults = template.defaults
@@ -217,8 +224,3 @@ class EmbeddedArgs(UserHandler):
         self.doc = template.doc
         self._timeout = template._timeout
         self.timeout = template.timeout
-
-    def run(self, output, namespace, args):
-        for name, value in self.embedded_args:
-            namespace.variables[name] = value
-        return UserHandler.run(self, output, namespace, args)

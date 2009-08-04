@@ -20,7 +20,7 @@ class HandlerDataMock:
         
         
 def EAT(*args):
-    return EmbeddedArgsTemplate(HandlerDataMock(*args), None)
+    return EmbeddedArgsTemplate(HandlerDataMock(*args), 'resource')
 
     
 class TestEmbeddedArgs(unittest.TestCase):
@@ -39,6 +39,8 @@ class TestEmbeddedArgs(unittest.TestCase):
         assert_equals(self.tmp1.embedded_args, ['${item}'])
         assert_equals(self.tmp1.name_regexp.pattern, 
                       '^User\\ selects\\ (.*?)\\ from\\ list$')
+        assert_equals(self.tmp1.name, 'User Selects ${item} From List')
+        assert_equals(self.tmp1.longname, 'resource.User Selects ${item} From List')
 
     def test_get_multiple_embedded_args_and_regexp(self):
         assert_equals(self.tmp2.embedded_args, ['${x}', '${y}', '${z}'])
@@ -51,9 +53,13 @@ class TestEmbeddedArgs(unittest.TestCase):
     def test_create_handler_with_one_embedded_arg(self):
         handler = EmbeddedArgs('User selects book from list', self.tmp1)
         assert_equals(handler.embedded_args, [('${item}', 'book')])
+        assert_equals(handler.name, 'User selects book from list')
+        assert_equals(handler.longname, 'resource.User selects book from list')
         handler = EmbeddedArgs('User selects radio from list', self.tmp1)
         assert_equals(handler.embedded_args, [('${item}', 'radio')])
-
+        assert_equals(handler.name, 'User selects radio from list')
+        assert_equals(handler.longname, 'resource.User selects radio from list')
+        
     def test_create_handler_with_many_embedded_args(self):
         handler = EmbeddedArgs('User * book from "list"', self.tmp2)
         assert_equals(handler.embedded_args, 
@@ -79,6 +85,12 @@ class TestEmbeddedArgs(unittest.TestCase):
         handler = EmbeddedArgs("This doesn't really work---", template) 
         assert_equals(handler.embedded_args, 
                       [('${could}', "doesn't"), ('${work}', 'really work'), ('${OK}', '--')])
+
+    def test_creating_handlers_is_case_insensitive(self):
+        handler = EmbeddedArgs('User SELECts book frOm liST', self.tmp1)
+        assert_equals(handler.embedded_args, [('${item}', 'book')])
+        assert_equals(handler.name, 'User SELECts book frOm liST')
+        assert_equals(handler.longname, 'resource.User SELECts book frOm liST')
 
     def test_embedded_args_handler_has_all_needed_attributes(self):
         normal = UserHandler(HandlerDataMock('My name'), None)
