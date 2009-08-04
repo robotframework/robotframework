@@ -189,11 +189,10 @@ class EmbeddedArgsTemplate(UserHandler):
         return args, re.compile(''.join(regexp), re.IGNORECASE)
 
     def _split_from_variable(self, string):
-        splitted = VariableSplitter(string, identifiers=['$'])
-        if splitted.identifier is None:
+        var = VariableSplitter(string, identifiers=['$'])
+        if var.identifier is None:
             return None, None, string
-        start, end = splitted.start, splitted.end
-        return string[:start], string[start:end], string[end:]
+        return string[:var.start], string[var.start:var.end], string[var.end:]
 
 
 class EmbeddedArgs(UserHandler):
@@ -201,7 +200,7 @@ class EmbeddedArgs(UserHandler):
     def __init__(self, name, template):
         match = template.name_regexp.match(name)
         if not match:
-            raise TypeError
+            raise TypeError('Does not match given name')
         self.embedded_args = zip(template.embedded_args, match.groups())
         self.name = name
         self.longname = template.longname[:-len(template.name)] + name
