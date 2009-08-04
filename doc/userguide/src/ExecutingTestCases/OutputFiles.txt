@@ -190,14 +190,13 @@ messages are written by Robot Framework itself, but also executed
 keywords can `log information`__ using different levels. The available
 log levels are:
 
-__ `Logging information`_
-
 :msg:`FAIL`
    Used when a keyword fails. Can be used only by Robot Framework.
 
 :msg:`WARN`
-   Used to display warnings. Note that warnings do not change the
-   test case status, so they can easily be missed.
+   Used to display warnings. They shown also in `the console and in
+   the Test Execution Errors section in log files`__, but they
+   do not affect the test case status.
  
 :msg:`INFO` 
    The default level for normal messages. By default,
@@ -211,6 +210,8 @@ __ `Logging information`_
    Another debugging level. Robot Framework itself logs the actual values
    of keyword arguments and the return values using this level.
 
+__ `Logging information`_
+__ `Errors and warnings during execution`_
 
 Setting log level
 '''''''''''''''''
