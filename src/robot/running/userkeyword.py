@@ -44,13 +44,40 @@ class UserLibrary(BaseLibrary):
         else:
             self.name = None
         self.handlers = utils.NormalizedDict(ignore=['_'])
+        self.embedded_arg_handlers = []
         for handler in handlerdata:
             if handler.type != 'error':
-                handler = UserHandler(handler, self.name)
+                try:
+                    handler = EmbeddedArgsUserHandler(handler, self.name)
+                    self.embedded_arg_handlers.append(handler)
+                except TypeError:
+                    handler = UserHandler(handler, self.name)
             if self.handlers.has_key(handler.name):
                 err = "Keyword '%s' defined multiple times" % handler.name
                 handler = UserErrorHandler(handler.name, err)
             self.handlers[handler.name] = handler
+
+    def has_handler(self, name):
+        if BaseLibrary.has_handler(self, name) or \
+            self._get_embedded_arg_handler(name) is not None:
+            return True
+        return False
+            
+    def get_handler(self, name):
+        try:
+            return BaseLibrary.get_handler(self, name)
+        except DataError:
+            embedded_handler = self._get_embedded_arg_handler(name)
+            if embedded_handler:
+                return embedded_handler
+            raise
+    
+    def _get_embedded_arg_handler(self, name):
+        for handler in self.embedded_arg_handlers:
+            found_handler = handler.get_matching_handler(name)
+            if found_handler:
+                return found_handler
+        return None
 
 
 class UserHandler(BaseHandler):
