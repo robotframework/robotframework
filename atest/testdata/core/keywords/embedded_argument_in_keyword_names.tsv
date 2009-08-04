@@ -21,6 +21,9 @@ Embedded Arguments as Variables
 	Should Be Equal	${name}-${item}	42-
 	${name}	${item} =	User ${name} Selects ${SPACE * 10} From Webshop
 	Should Be Equal	${name}-${item}	42-${SPACE*10}
+	${name}	${item} =	User ${name} Selects ${TEST TAGS} From Webshop
+	Should Be Equal	${name}	${42}
+	Should Be True	${item} == []
 
 Non-Existing Variable in Embedded Arguments
 	[Documentation]	FAIL Non-existing variable '${non existing}'
