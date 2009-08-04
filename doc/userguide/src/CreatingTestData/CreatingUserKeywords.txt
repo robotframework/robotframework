@@ -233,6 +233,7 @@ Embedding arguments to keyword name
 
 
 .. table:: Test cases using keywords with embedded arguments
+   :class: example
 
    ====================  =============================
         Test Case                   Step
