@@ -13,7 +13,8 @@ Documentation	This resource file has documentation.
 *keyword*
 kw	[Documentation]	foo bar `kw 2`.
 	noop
-kw 2	[document]	foo bar `kw` & some "stuff" to <escape> .\n baa `${a1}`
+Keyword with some "stuff" to <escape>
+	[document]	foo bar `kw` & some "stuff" to <escape> .\n baa `${a1}`
 	[arguments]	${a1}	${a2}
 	noop
 kw 3	[arguments]	${a1}	@{a2}
