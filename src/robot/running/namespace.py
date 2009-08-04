@@ -171,30 +171,45 @@ class Namespace:
         return handler
 
     def _get_implicit_handler(self, name):
-        # 1) Try to find handler from test case file user keywords
+        for method in [ self._get_handler_from_test_case_file_user_keywords,
+                        self._get_handler_from_resource_file_user_keywords,
+                        self._get_handler_from_library_keywords ]:
+            handler = method(name)
+            if handler:
+                return handler
+        return None
+        
+    def _get_handler_from_test_case_file_user_keywords(self, name):
         try:
             return self.suite.user_keywords.get_handler(name)
         except DataError:
-            pass
-        # 2) Try to find unique keyword from resource file user keywords
-        found = [ lib.get_handler(name)
-                  for lib in self._userlibs if lib.has_handler(name) ]
+            return None
+        
+    def _get_handler_from_resource_file_user_keywords(self, name):
+        found = []
+        for lib in self._userlibs:
+            try:
+                found.append(lib.get_handler(name))
+            except DataError:
+                pass
+        if not found:
+            return None
         if len(found) == 1:
             return found[0]
-        if len(found) > 1:
-            self._raise_multiple_keywords_found(name, found)
-        # 3) Try to find unique keyword from base keywords
+        self._raise_multiple_keywords_found(name, found)
+        
+    def _get_handler_from_library_keywords(self, name):
         found = [ lib.get_handler(name)
                   for lib in self._testlibs.values() if lib.has_handler(name) ]
+        if not found:
+            return None
         if len(found) > 1:
             found = self._get_handler_based_on_library_search_order(found)
         if len(found) == 2:
             found = self._filter_stdlib_handler(found[0], found[1])
-        if len(found) > 1:
-            raise self._raise_multiple_keywords_found(name, found)
         if len(found) == 1:
             return found[0]
-        return None
+        self._raise_multiple_keywords_found(name, found)
 
     def _get_handler_based_on_library_search_order(self, handlers):
         for libname in self.library_search_order:
