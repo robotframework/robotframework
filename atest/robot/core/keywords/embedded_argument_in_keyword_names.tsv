@@ -1,25 +1,68 @@
 *** Settings ***
+
 Force Tags	regression	pybot	jybot
 Suite Setup	Run Tests	${EMPTY}	core/keywords/embedded_argument_in_keyword_names.tsv
 Resource	../../../resources/resource.html
 
+
 *** Test Cases ***
-Embedded Arguments In Suite's User Keyword	
+
+Embedded Arguments In User Keyword Name	
 	${tc} =	Check Test Case	${TEST NAME}
-	Should Be Equal	${tc.keywords[0].name}	
+	Check Log Message	${tc.kws[0].kws[0].msgs[0]}	This is always executed
+	Should Be Equal	${tc.kws[0].name}	
 	...	\${name}, \${book} = User Peke Selects Advanced Python From Webshop
-
-Embedded Arguments In User Keyword Name Used In Different Case
-	Check Test Case	${TEST NAME}
-
-Embedded Arguments In Resource File's User Keyword
-	Check Test Case	${TEST NAME}
-
-Embedded Arguments In Resource File's User Keyword Used Explicitly
-	Check Test Case	${TEST NAME}
-
-Variable Used In UK's Name
-	Check Test Case	${TEST NAME}
+	Check Log Message	${tc.kws[2].kws[0].msgs[0]}	This is always executed
+	Should Be Equal	${tc.kws[2].name}	
+	...	\${name}, \${book} = User Juha Selects Playboy From Webshop
 	
-Variable Used In UK's Name When UK Have Args
+Complex Embedded Arguments
+	${tc} =	Check Test Case	${TEST NAME}
+	Check Log Message	${tc.kws[0].kws[0].msgs[0]}	feature-works
+	Check Log Message	${tc.kws[1].kws[0].msgs[0]}	test case-is *executed*
+	Check Log Message	${tc.kws[2].kws[0].msgs[0]}	issue-is about to be done!
+
+Embedded Arguments as Variables
+	${tc} =	Check Test Case	${TEST NAME}
+	Should Be Equal	${tc.kws[0].name}	
+	...	\${name}, \${item} = User \${42} Selects \${EMPTY} From Webshop
+	Should Be Equal	${tc.kws[2].name}	
+	...	\${name}, \${item} = User \${name} Selects \${SPACE * 10} From Webshop
+
+Non-Existing Variable in Embedded Arguments
+	${tc} =	Check Test Case	${TEST NAME}
+	Should Be Equal	${tc.kws[0].name}	
+	...	User \${non existing} Selects \${variables} From Webshop
+	
+Escaping Values Given As Embedded Arguments
+	${tc} =	Check Test Case	${TEST NAME}
+	Should Be Equal	${tc.kws[0].name}	
+	...	\${name}, \${item} = User \\\${nonex} Selects \\\\ From Webshop
+	Should Be Equal	${tc.kws[2].name}	
+	...	\${name}, \${item} = User \\ Selects \\ \\ From Webshop
+	
+Embedded Arguments Syntax Is Case Insensitive
+	${tc} =	Check Test Case	${TEST NAME}
+	Should Be Equal	${tc.kws[0].name}	x Gets y From The z
+	Should Be Equal	${tc.kws[1].name}	x gets y from the z
+	Should Be Equal	${tc.kws[2].name}	x GETS y from the z
+	Should Be Equal	${tc.kws[3].name}	x gets y FROM THE z	
+
+Embedded Arguments Syntax is Space and Underscore Sensitive
+	Check Test Case	Embedded Arguments Syntax is Space Sensitive
+	Check Test Case	Embedded Arguments Syntax is Underscore Sensitive
+	
+Embedded Arguments In Resource File
+	${tc} =	Check Test Case	${TEST NAME}
+	Should Be Equal	${tc.kws[0].name}	\${ret} = embedded_args_in_uk.Juha Uses Resource File
+
+Embedded Arguments In Resource File Used Explicitly
+	${tc} =	Check Test Case	${TEST NAME}
+	Should Be Equal	${tc.kws[0].name}	\${ret} = embedded_args_in_uk.peke uses resource file
+
+Keyword with normal arguments cannot have embedded arguments
 	Check Test Case	${TEST NAME}
+
+Keyword with embedded args can be used as "normal" keyword
+	${tc} =	Check Test Case	${TEST NAME}
+	Check Log Message	${tc.kws[1].kws[0].msgs[0]}	This is always executed

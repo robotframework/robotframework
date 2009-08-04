@@ -1,47 +1,89 @@
 *** Settings ***
+
 Resource	resources/embedded_args_in_uk.tsv
 
-*** Test Cases ***
-Embedded Arguments In Suite's User Keyword
-	${name}	${book} =	User Peke Selects Advanced Python From Webshop
-	Should Be Equal	${name}	Peke
-	Should Be Equal	${book}	Advanced Python
 
-Embedded Arguments In User Keyword Name Used In Different Case
+*** Test Cases ***
+
+Embedded Arguments In User Keyword Name
+	${name}	${book} =	User Peke Selects Advanced Python From Webshop
+	Should Be Equal	${name}-${book}	Peke-Advanced Python
+	${name}	${book} =	User Juha Selects Playboy From Webshop
+	Should Be Equal	${name}-${book}	Juha-Playboy
+
+Complex Embedded Arguments
+	Given this "feature" works
+	When this "test case" is *executed*
+	Then this "issue" is about to be done!
+
+Embedded Arguments as Variables
+	${name}	${item} =	User ${42} Selects ${EMPTY} From Webshop
+	Should Be Equal	${name}-${item}	42-
+	${name}	${item} =	User ${name} Selects ${SPACE * 10} From Webshop
+	Should Be Equal	${name}-${item}	42-${SPACE*10}
+
+Non-Existing Variable in Embedded Arguments
+	[Documentation]	FAIL Non-existing variable '${non existing}'
+	User ${non existing} Selects ${variables} From Webshop
+	
+Escaping Values Given As Embedded Arguments
+	${name}	${item} =	User \${nonex} Selects \\ From Webshop
+	Should Be Equal	${name}-${item}	\${nonex}-\\
+	${name}	${item} =	User \ Selects \ \ From Webshop
+	Should Be Equal	${name}-${item}	-${SPACE}
+	
+Embedded Arguments Syntax Is Case Insensitive
 	x Gets y From The z
 	x gets y from the z
 	x GETS y from the z
 	x gets y FROM THE z
-
-Embedded Arguments In Resource File's User Keyword
-	${kw name} =	Juha Uses Resource File
-	Should Be Equal	${kw name}	Juha Uses Resource File
-
-Embedded Arguments In Resource File's User Keyword Used Explicitly
-	${kw name} =	embedded_args_in_uk.Juha Uses Resource File
-	Should Be Equal	${kw name}	Juha Uses Resource File
-
-Variable Used In UK's Name
-	Normal keyword with ${variable} in name
-
-Variable Used In UK's Name When UK Have Args
-	Normal keyword with ${variable} in name with args	foo	bar
-
 	
+Embedded Arguments Syntax is Space Sensitive
+	[Documentation]	FAIL No keyword with name 'User Janne Selects x fromwebshop' found.
+	User Janne Selects x from webshop
+	User Janne Selects x fromwebshop
+
+Embedded Arguments Syntax is Underscore Sensitive
+	[Documentation]	FAIL No keyword with name 'User Janne Selects x from_webshop' found.
+	User Janne Selects x from webshop
+	User Janne Selects x from_webshop
+	
+Embedded Arguments In Resource File
+	${ret} =	Juha Uses Resource File
+	Should Be Equal	${ret}	Juha-Resource
+
+Embedded Arguments In Resource File Used Explicitly
+	${ret} =	embedded_args_in_uk.peke uses resource file
+	Should Be Equal	${ret}	peke-resource
+
+Keyword with normal arguments cannot have embedded arguments
+	[Documentation]	FAIL No keyword with name 'Keyword with value and normal args' found.
+	Keyword with ${variable} and normal args	foo	bar
+	Keyword with value and normal args	foo	bar
+
+Keyword with embedded args can be used as "normal" keyword
+	[Documentation]	FAIL Non-existing variable '${user}'
+	Normal keyword with ${variable} in name
+	User ${user} Selects ${item} From Webshop
+
+
 *** Keywords ***
+
 User ${user} Selects ${item} From Webshop
+	Log	This is always executed
 	[Return]	${user}	${item}
 	
+${Given/When/Then} this "${item}" ${no good name for this arg ...}
+	Log	${item}-${no good name for this arg ...}
+	
 ${x} gets ${y} from the ${z}
-	Variable Should Exist	${x}
-	Variable Should Exist	${y}
-	Variable Should Exist	${z}
+	Should Be Equal	${x}-${y}-${z}	x-y-z
 
-Normal keyword with ${variable} in name
-	Variable Should Not Exist	${variable}
-
-Normal keyword with ${variable} in name with args
+Keyword with ${variable} and normal args
 	[Arguments]	${arg1}	${arg2}
 	Variable Should Not Exist	${variable}
 	Should Be Equal	${arg1}	foo	
 	Should Be Equal	${arg2}	bar
+	
+Normal keyword with ${variable} in name
+	Variable Should Not Exist	${variable}
