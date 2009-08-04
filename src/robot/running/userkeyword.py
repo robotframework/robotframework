@@ -209,7 +209,7 @@ class EmbeddedArgs(UserHandler):
 
     def run(self, output, namespace, args):
         for name, value in self.embedded_args:
-            namespace.variables[name] = value
+            namespace.variables[name] = namespace.variables.replace_string(value)
         return UserHandler.run(self, output, namespace, args)
         
     def _copy_attrs_from_template(self, template):
