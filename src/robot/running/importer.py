@@ -57,7 +57,7 @@ class Importer:
         if not os.path.exists(name):
             name = name.replace(' ', '')
         args = utils.to_list(args)
-        if len(args) >= 2 and args[-2].upper() == 'WITH NAME':
+        if len(args) >= 2 and utils.is_str(args[-2]) and args[-2].upper() == 'WITH NAME':
             lib_name = args[-1].replace(' ', '')
             args = args[:-2]
         else:
