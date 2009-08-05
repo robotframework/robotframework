@@ -27,8 +27,8 @@ from userkeyword import UserLibrary
 class Importer:
 
     def __init__(self):
-        self._libraries = {}
-        self._resources = {}
+        self._libraries = _LibraryCache()
+        self._resources = _LibraryCache()
         
     def import_library(self, name, args):
         code_name, name, args = self._get_lib_names_and_args(name, args)
@@ -57,7 +57,8 @@ class Importer:
         if not os.path.exists(name):
             name = name.replace(' ', '')
         args = utils.to_list(args)
-        if len(args) >= 2 and utils.is_str(args[-2]) and args[-2].upper() == 'WITH NAME':
+        if len(args) >= 2 and utils.is_str(args[-2]) \
+               and args[-2].upper() == 'WITH NAME':
             lib_name = args[-1].replace(' ', '')
             args = args[:-2]
         else:
@@ -65,7 +66,7 @@ class Importer:
         return name, lib_name, args
 
     def _import_library(self, name, args):
-        key = (name, tuple(args))
+        key = (name, args)
         if self._libraries.has_key(key):
             LOGGER.info("Found test library '%s' with arguments %s from cache" 
                         % (name, utils.seq2str2(args)))
@@ -92,3 +93,24 @@ class Importer:
             libcopy.handlers[handler.name] = handcopy
         return libcopy
  
+
+class _LibraryCache:
+    """Cache for libs/resources that doesn't require mutable keys like dicts"""
+
+    def __init__(self):
+        self._keys = []
+        self._libs = []
+
+    def __setitem__(self, key, library):
+        self._keys.append(key)
+        self._libs.append(library)
+
+    def __getitem__(self, key):
+        try:
+            return self._libs[self._keys.index(key)]
+        except ValueError:
+            raise KeyError
+
+    def has_key(self, key):
+        return key in self._keys
+
