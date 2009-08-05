@@ -1,15 +1,15 @@
+
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html><head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<meta name="generator" content="RobotIDE"> 
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="RobotIDE" /> 
+<meta name="rf-template" content="False" /> 
 <style type="text/css">
 html {
   font-family: Arial,Helvetica,sans-serif;
   background-color: white;
   color: black;
-}
-p {
-  max-width: 60em;
 }
 table {
   border-collapse: collapse;
@@ -23,6 +23,7 @@ th, td {
   border-color: black;
   padding: 0.1em 0.2em;
   height: 1.5em;
+  width: 12em;
 }
 th {
   background-color: rgb(192, 192, 192);
@@ -30,714 +31,804 @@ th {
   border-width: 0.1em;
   font-weight: bold;
   text-align: center;
-  text-transform: capitalize;
   letter-spacing: 0.1em;
 }
-/* Widths of named columns */
-col.name {
+td.name {
+  background-color: rgb(240, 240, 240);
+  letter-spacing: 0.1em;
+}
+td.name, th.name {
   width: 10em;
 }
-.action, .value, .arg {
-  width: 15em;
-}
-/* Properties for the name column 
-- td:first-child should work in CSS 2.1 avare browsers (tested in Firefox)
-- col.name is against specs but works in IE
-*/
-td:first-child, col.name {
-  background-color: rgb(240, 240, 240);
-  text-transform: capitalize;
-  letter-spacing: 0.1em;
-}
-/* required for IE */
-th {
-  font-style: normal;
-}
 </style>
-<title>With Name</title></head>
+<title>With Name</title>
+</head>
 <body>
 <h1>With Name</h1>
-
-<table border="1">
-<colgroup span="99"><col class="name"><col class="value" span="4"></colgroup>
-<tbody><tr>
-<th>Setting</th>
+<table id="settings" border="1">
+<tr>
+<th class="name">Setting</th>
 <th>Value</th>
 <th>Value</th>
 <th>Value</th>
 <th>Value</th>
 </tr>
 <tr>
-<td>Default Tags</td>
+<td class="name">Default Tags</td>
 <td>pybot</td>
 <td>jybot</td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td>Force Tags</td>
+<td class="name">Force Tags</td>
 <td>regression</td>
 <td></td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td>Suite Setup</td>
+<td class="name">Suite Setup</td>
 <td>My Setup</td>
 <td></td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td>Resource</td>
+<td class="name">Resource</td>
 <td>../../resources/resource.html</td>
 <td></td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td></td>
 <td></td>
 <td></td>
 <td></td>
 </tr>
-</tbody></table>
-
-<table border="1">
-<colgroup span="99"><col class="name"><col class="value" span="4"></colgroup>
-<tbody><tr>
-<th>Variable</th>
+</table>
+<table id="variables" border="1">
+<tr>
+<th class="name">Variable</th>
 <th>Value</th>
 <th>Value</th>
 <th>Value</th>
 <th>Value</th>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td></td>
 <td></td>
 <td></td>
 <td></td>
 </tr>
-</tbody></table>
-
-<table border="1">
-<colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
-<tbody><tr>
-<th>Test Case</th>
+</table>
+<table id="testcases" border="1">
+<tr>
+<th class="name">Test Case</th>
 <th>Action</th>
 <th>Argument</th>
 <th>Argument</th>
 <th>Argument</th>
 </tr>
 <tr>
-<td><a name="test_ImportLibraryNormallyBeforeImportingWithNameInAnotherSuiter">Import Library Normally Before Importing With Name In Another Suite</a></td>
+<td class="name"><a name="test_Import Library Normally Before Importing With Name In Another Suite">Import Library Normally Before Importing With Name In Another Suite</a></td>
 <td>${test} =</td>
 <td>Check Test Case</td>
 <td>Import Library Normally Before Importing With Name In Another Suite</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Should Be Equal</td>
 <td>${test.kws[0].name}</td>
 <td>OperatingSystem.Should Exist</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Should Be Equal</td>
 <td>${test.kws[1].name}</td>
 <td>\${p1}, \${p2} = ParameterLibrary.Parameters</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Check Syslog Contains</td>
 <td>Imported library 'OperatingSystem' with arguments [ ] (version ${ROBOT VERSION}, class type, global scope,</td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Check Syslog Contains</td>
 <td>Imported library 'ParameterLibrary' with arguments [ before1 | before2 ] (version &lt;unknown&gt;, class type, testcase scope,</td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td></td>
 <td></td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td><a name="test_ImportLibraryWithNameBeforeImportingWithNameInAnotherSuite">Import Library With Name Before Importing With Name In Another Suite</a></td>
+<td class="name"><a name="test_Import Library With Name Before Importing With Name In Another Suite">Import Library With Name Before Importing With Name In Another Suite</a></td>
 <td>${test} =</td>
 <td>Check Test Case</td>
 <td>Import Library With Name Before Importing With Name In Another Suite</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Should Be Equal</td>
 <td>${test.kws[0].name}</td>
 <td>\${p1}, \${p2} = Params.Parameters</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Check Syslog Contains</td>
 <td>Imported library 'ParameterLibrary' with arguments [ after1 | after2 ] (version &lt;unknown&gt;, class type, testcase scope,</td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td></td>
 <td></td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td><a name="test_ImportLibraryNormallyAfterImportingWithNameInAnotherSuite">Import Library Normally After Importing With Name In Another Suite</a></td>
+<td class="name"><a name="test_Import Library Normally After Importing With Name In Another Suite">Import Library Normally After Importing With Name In Another Suite</a></td>
 <td>${test} =</td>
 <td>Check Test Case</td>
 <td>Import Library Normally After Importing With Name In Another Suite</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Should Be Equal</td>
 <td>${test.kws[0].name}</td>
 <td>OperatingSystem.Should Exist</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Should Be Equal</td>
 <td>${test.kws[1].name}</td>
 <td>\${p1}, \${p2} = ParameterLibrary.Parameters</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td></td>
 <td></td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td><a name="test_ImportLibraryWithNameAfterImportingWithNameInAnotherSuite">Import Library With Name After Importing With Name In Another Suite</a></td>
+<td class="name"><a name="test_Import Library With Name After Importing With Name In Another Suite">Import Library With Name After Importing With Name In Another Suite</a></td>
 <td>${test} =</td>
 <td>Check Test Case</td>
 <td>Import Library With Name After Importing With Name In Another Suite</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Should Be Equal</td>
 <td>${test.kws[0].name}</td>
 <td>\${a1}, \${a2} = Params.Parameters</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td></td>
 <td></td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td><a name="test_NameGivenUsing&quot;WithName&quot;CanBeReusedInDifferentSuites">Name Given Using "With Name" Can Be Reused In Different Suites</a></td>
+<td class="name"><a name="test_Name Given Using &quot;With Name&quot; Can Be Reused In Different Suites">Name Given Using "With Name" Can Be Reused In Different Suites</a></td>
 <td>${test} =</td>
 <td>Check Test Case</td>
 <td>Import Library With Name Before Importing With Name In Another Suite</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Should Be Equal</td>
 <td>${test.kws[0].name}</td>
 <td>\${p1}, \${p2} = Params.Parameters</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>${test} =</td>
 <td>Check Test Case</td>
 <td>Name Given Using "With Name" Can Be Reused in Different Suites</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Should Be Equal</td>
 <td>${test.kws[0].name}</td>
 <td>Params.Keyword In My Lib File</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Check Log Message</td>
 <td>${test.kws[0].msgs[0]}</td>
 <td>Here we go!!</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>${test} =</td>
 <td>Check Test Case</td>
 <td>Import Library With Name After Importing With Name In Another Suite</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Should Be Equal</td>
 <td>${test.kws[0].name}</td>
 <td>\${a1}, \${a2} = Params.Parameters</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td></td>
 <td></td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td><a name="test_NoArguments">No Arguments</a></td>
+<td class="name"><a name="test_No Arguments">No Arguments</a></td>
 <td>${test} =</td>
 <td>Check Test Case</td>
 <td>No Arguments</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Should Be Equal</td>
 <td>${test.kws[0].name}</td>
 <td>OS.Directory Should Exist</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Should Be Equal</td>
 <td>${test.kws[1].name}</td>
 <td>OS.Should Exist</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Check Syslog Contains</td>
 <td>Imported library 'OperatingSystem' with name 'OS'</td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td></td>
 <td></td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td><a name="test_WithArgumentsAndImportSameLibraryTwice">With Arguments And Import Same Library Twice</a></td>
+<td class="name"><a name="test_With Arguments And Import Same Library Twice">With Arguments And Import Same Library Twice</a></td>
 <td>${test} =</td>
 <td>Check Test Case</td>
 <td>With Arguments And Import Same Library Twice</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Should Be Equal</td>
 <td>${test.kws[0].name}</td>
 <td>\${a1}, \${a2} = Param1.Parameters</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Should Be Equal</td>
 <td>${test.kws[3].name}</td>
 <td>\${a1}, \${a2} = Param2.Parameters</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Check Syslog Contains</td>
 <td>Imported library 'ParameterLibrary' with arguments [ arg1a | arg1b ] (version &lt;unknown&gt;, class type, testcase scope,</td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Check Syslog Contains</td>
 <td>Imported library 'ParameterLibrary' with name 'Param1'</td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Check Syslog Contains</td>
 <td>Imported library 'ParameterLibrary' with arguments [ arg2a | arg2b ] (version &lt;unknown&gt;, class type, testcase scope,</td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Check Syslog Contains</td>
 <td>Imported library 'ParameterLibrary' with name 'Param2'</td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td></td>
 <td></td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td><a name="test_WithNameHasNoEffectIfNotSecondLast">With Name Has No Effect If Not Second Last</a></td>
+<td class="name"><a name="test_With Name Has No Effect If Not Second Last">With Name Has No Effect If Not Second Last</a></td>
 <td>${test} =</td>
 <td>Check Test Case</td>
 <td>With Name Has No Effect If Not Second Last</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Should Be Equal</td>
 <td>${test.kws[0].name}</td>
 <td>\${a1}, \${a2} = ParameterLibrary.Parameters</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Check Syslog Contains</td>
-<td>Imported library 'ParameterLibrary' with arguments [ whatever |
-with name ] (version &lt;unknown&gt;, class type, testcase scope,</td>
+<td>Imported library 'ParameterLibrary' with arguments [ whatever | with name ] (version &lt;unknown&gt;, class type, testcase scope,</td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td></td>
 <td></td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td><a name="test_WithNameAfterNormalImport">With Name After Normal Import</a></td>
+<td class="name"><a name="test_With Name After Normal Import">With Name After Normal Import</a></td>
 <td>${test} =</td>
 <td>Check Test Case</td>
 <td>With Name After Normal Import</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Should Be Equal</td>
 <td>${test.kws[0].name}</td>
 <td>B2.Fail</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Check Syslog Contains</td>
 <td>Imported library 'BuiltIn' with name 'B2'</td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td></td>
 <td></td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td><a name="test_ModuleLibrary">Module Library</a></td>
+<td class="name"><a name="test_Module Library">Module Library</a></td>
 <td>${test} =</td>
 <td>Check Test Case</td>
 <td>Module Library</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Should Be Equal</td>
 <td>${test.kws[0].name}</td>
 <td>MOD1.Argument</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Should Be Equal</td>
 <td>${test.kws[1].name}</td>
 <td>\${s} = mod2.Keyword From Submodule</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Should Be Equal</td>
 <td>${test.kws[3].name}</td>
 <td>MOD1.Failing</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Check Syslog Contains</td>
 <td>Imported library 'module_library' with name 'MOD1'</td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Check Syslog Contains</td>
 <td>Imported library 'pythonmodule.library' with name 'mod2'</td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td></td>
 <td></td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td><a name="test_JavaLibrary">Java Library</a></td>
+<td class="name"><a name="test_Java Library">Java Library</a></td>
 <td>[Tags]</td>
 <td>jybot</td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>${test} =</td>
 <td>Check Test Case</td>
 <td>Java Library</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Should Be Equal</td>
 <td>${test.kws[0].name}</td>
 <td>\${s} = JavaLib.Return String From Library</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Should Be Equal</td>
 <td>${test.kws[2].name}</td>
 <td>\${obj} = JavaLib.Get Java Object</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Check Syslog Contains</td>
 <td>Imported library 'ExampleJavaLibrary' with name 'JavaLib'</td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td></td>
 <td></td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td><a name="test_JavaLibraryInPackage">Java Library In Package</a></td>
+<td class="name"><a name="test_Java Library In Package">Java Library In Package</a></td>
 <td>[Tags]</td>
 <td>jybot</td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>${test} =</td>
 <td>Check Test Case</td>
 <td>Java Library In Package</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Should Be Equal</td>
 <td>${test.kws[0].name}</td>
 <td>\${s1} = JavaPkg.Return Value</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Should Be Equal</td>
 <td>${test.kws[1].name}</td>
 <td>\${s2} = JavaPkg.Return Value</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Check Syslog Contains</td>
 <td>Imported library 'javapkg.JavaPackageExample' with name 'JavaPkg'</td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td></td>
 <td></td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td><a name="test_ImportLibraryKeyword">Import Library Keyword</a></td>
+<td class="name"><a name="test_Import Library Keyword">Import Library Keyword</a></td>
 <td>${test} =</td>
 <td>Check Test Case</td>
 <td>Import Library Keyword</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Should Be Equal</td>
 <td>${test.kws[1].name}</td>
 <td>MyOS.Directory Should Exist</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Should Be Equal</td>
 <td>${test.kws[3].name}</td>
 <td>\${a1}, \${a2} = MyParamLib.Parameters</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td></td>
 <td></td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td><a name="test_CorrectErrorWhenUsingKeywordFromSameLibraryWithDifferentNamesWithoutPrefix">Correct Error When Using Keyword From Same Library With Different Names Without Prefix</a></td>
+<td class="name"><a name="test_Correct Error When Using Keyword From Same Library With Different Names Without Prefix">Correct Error When Using Keyword From Same Library With Different Names Without Prefix</a></td>
 <td>Check Test Case</td>
 <td>Correct Error When Using Keyword From Same Library With Different Names Without Prefix 1</td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Check Test Case</td>
 <td>Correct Error When Using Keyword From Same Library With Different Names Without Prefix 2</td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Check Test Case</td>
 <td>Correct Error When Using Keyword From Same Library With Different Names Without Prefix 3</td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td></td>
 <td></td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td><a name="test_DynamicLibrary">Dynamic Library</a></td>
+<td class="name"><a name="test_Dynamic Library">Dynamic Library</a></td>
 <td>Check Test Case</td>
 <td>Dynamic Library</td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td></td>
 <td></td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td><a name="test_DynamicJavaLibrary">Dynamic Java Library</a></td>
+<td class="name"><a name="test_Dynamic Java Library">Dynamic Java Library</a></td>
 <td>[Tags]</td>
 <td>jybot</td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Check Test Case</td>
 <td>Dynamic Java Library</td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td></td>
 <td></td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td>Global Scope</td>
+<td class="name"><a name="test_Global Scope">Global Scope</a></td>
 <td>Check Test Case</td>
 <td>Global Scope 1.1</td>
 <td></td>
 <td></td>
-</tr><tr><td></td><td>Check Test Case</td><td>Global Scope 1.2</td><td></td><td></td></tr><tr><td></td><td>Check Test Case</td><td>Global Scope 2.1</td><td></td><td></td></tr><tr><td></td><td>Check Test Case</td><td>Global Scope 2.2</td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Test Suite Scope</td><td>Check Test Case</td><td>Test Suite Scope 1.1</td><td></td><td></td></tr><tr><td></td><td>Check Test Case</td><td>Test Suite Scope 1.2</td><td></td><td></td></tr><tr><td></td><td>Check Test Case</td><td>Test Suite Scope 2.1</td><td></td><td></td></tr><tr><td></td><td>Check Test Case</td><td>Test Suite Scope 2.2</td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Test Case Scope</td><td>Check Test Case</td><td>Test Case&nbsp;Scope 1.1</td><td></td><td></td></tr><tr><td></td><td>Check Test Case</td><td>Test Case&nbsp;Scope 1.2</td><td></td><td></td></tr><tr><td></td><td>Check Test Case</td><td>Test Case&nbsp;Scope 2.1</td><td></td><td></td></tr><tr><td></td><td>Check Test Case</td><td>Test Case&nbsp;Scope 2.2</td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr>
-</tbody></table>
-
-<table border="1">
-<colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
-<tbody><tr>
-<th>Keyword</th>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Check Test Case</td>
+<td>Global Scope 1.2</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Check Test Case</td>
+<td>Global Scope 2.1</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Check Test Case</td>
+<td>Global Scope 2.2</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="test_Test Suite Scope">Test Suite Scope</a></td>
+<td>Check Test Case</td>
+<td>Test Suite Scope 1.1</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Check Test Case</td>
+<td>Test Suite Scope 1.2</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Check Test Case</td>
+<td>Test Suite Scope 2.1</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Check Test Case</td>
+<td>Test Suite Scope 2.2</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="test_Test Case Scope">Test Case Scope</a></td>
+<td>Check Test Case</td>
+<td>Test Case Scope 1.1</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Check Test Case</td>
+<td>Test Case Scope 1.2</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Check Test Case</td>
+<td>Test Case Scope 2.1</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Check Test Case</td>
+<td>Test Case Scope 2.2</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="test_With Name When Library Arguments Are Not Strings">With Name When Library Arguments Are Not Strings</a></td>
+<td>Check Syslog Contains</td>
+<td>Imported library 'ParameterLibrary' with arguments [ 1 | 2 ]</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</table>
+<table id="keywords" border="1">
+<tr>
+<th class="name">Keyword</th>
 <th>Action</th>
 <th>Argument</th>
 <th>Argument</th>
 <th>Argument</th>
 </tr>
 <tr>
-<td><a name="keyword_MySetup">My Setup</a></td>
-<td>[Timeout]</td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
+<td class="name"><a name="keyword_My Setup">My Setup</a></td>
 <td>Run Tests</td>
 <td></td>
 <td>test_libraries${/}with_name_1.html</td>
 <td>test_libraries${/}with_name_2.html</td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>...</td>
 <td>test_libraries${/}with_name_3.html</td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Should Be Equal</td>
 <td>${SUITE.name}</td>
 <td>With Name 1 &amp; With Name 2 &amp; With Name 3</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td></td>
 <td></td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td></td>
 <td></td>
 <td></td>
 <td></td>
 </tr>
-</tbody></table>
-
-</body></html>
+</table>
+</body>
+</html>
