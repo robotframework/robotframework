@@ -1,24 +1,15 @@
+
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html><head>
-
-
-
-
-
-
-  
-  
-  
-  
-  
-  <style type="text/css">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="RobotIDE" /> 
+<meta name="rf-template" content="False" /> 
+<style type="text/css">
 html {
   font-family: Arial,Helvetica,sans-serif;
   background-color: white;
   color: black;
-}
-p {
-  max-width: 60em;
 }
 table {
   border-collapse: collapse;
@@ -32,6 +23,7 @@ th, td {
   border-color: black;
   padding: 0.1em 0.2em;
   height: 1.5em;
+  width: 12em;
 }
 th {
   background-color: rgb(192, 192, 192);
@@ -39,778 +31,167 @@ th {
   border-width: 0.1em;
   font-weight: bold;
   text-align: center;
-  text-transform: capitalize;
   letter-spacing: 0.1em;
 }
-/* Widths of named columns */
-col.name {
+td.name {
+  background-color: rgb(240, 240, 240);
+  letter-spacing: 0.1em;
+}
+td.name, th.name {
   width: 10em;
 }
-.action, .value, .arg {
-  width: 15em;
-}
-/* Properties for the name column 
-- td:first-child should work in CSS 2.1 avare browsers (tested in Firefox)
-- col.name is against specs but works in IE
-*/
-td:first-child, col.name {
-  background-color: rgb(240, 240, 240);
-  text-transform: capitalize;
-  letter-spacing: 0.1em;
-}
-/* required for IE */
-th {
-  font-style: normal;
-}
-  </style>
-  
-  
-  
-  
-  
-  <title>Robot Test Cases</title></head>
+</style>
+<title>Library Imports With Args</title>
+</head>
 <body>
-
-
-
-
-
-
-<h1>Robot Test Cases</h1>
-
-
-
-
-
-
-
-<table border="1">
-
-
-
-
-
-
-  <colgroup span="99"><col class="name"><col class="value" span="4"></colgroup>
-  <thead>
-  <tr>
-
-
-
-
-
-
-    <th>Setting</th>
-
-
-
-
-
-
-    <th>Value</th>
-
-
-
-
-
-
-    <th>Value</th>
-
-
-
-
-
-
-    <th>value</th>
-
-
-
-
-
-
-    <th>Value</th>
-
-
-
-
-
-
-  </tr>
-
-
-
-
-
-
-  </thead>
-  <tbody>
-
-
-
-
-
-
-    
-
-
-
-
-
-
-    
-
-
-
-    
-
-
-
-
-    
-
-
-
-
-    
-
-
-
-    
-
-
-    
-
-
-    <tr>
-
-
-      <td align="undefined" valign="undefined">Library</td>
-
-
-      <td align="undefined" valign="undefined">ExampleLibrary</td><td align="undefined" valign="undefined">invalid</td>
-
-
-      
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-    </tr>
-
-
-    <tr>
-
-
-
-      <td align="undefined" valign="undefined">Library</td><td align="undefined" valign="undefined">ExampleJavaLibrary</td><td align="undefined" valign="undefined">invalid</td>
-
-
-
-      
-
-
-
-      
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-    </tr>
-
-
-
-    <tr><td align="undefined" valign="undefined">Library</td><td align="undefined" valign="undefined">PythonVarArgsConstructor</td><td>WITH NAME</td><td>VarArgs1</td><td></td></tr><tr><td align="undefined" valign="undefined">Library</td><td align="undefined" valign="undefined">PythonVarArgsConstructor</td><td>mandatory</td><td>WITH NAME</td><td>VarArgs2</td></tr><tr><td align="undefined" valign="undefined">Library</td><td align="undefined" valign="undefined">PythonVarArgsConstructor</td><td align="undefined" valign="undefined">valid argument<br></td><td>another arg</td><td></td></tr><tr><td align="undefined" valign="undefined">Library</td><td align="undefined" valign="undefined">JavaVarArgsConstructor</td><td>WITH NAME</td><td>JavaVarArgs1</td><td></td></tr><tr>
-
-
-
-      <td align="undefined" valign="undefined">Library</td><td align="undefined" valign="undefined">JavaVarArgsConstructor</td><td>mandatory</td><td>WITH NAME</td><td>JavaVarArgs2</td>
-
-
-
-      
-
-
-
-      
-
-
-
-      
-
-
-
-      
-
-
-
-    </tr><tr><td align="undefined" valign="undefined">Library</td><td align="undefined" valign="undefined">JavaVarArgsConstructor</td><td align="undefined" valign="undefined">valid argument<br></td><td>another arg</td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr>
-
-
-
-
-
-
-  
-  
-  
-  
-  
-  </tbody>
+<h1>Library Imports With Args</h1>
+<table id="settings" border="1">
+<tr>
+<th class="name">Setting</th>
+<th>Value</th>
+<th>Value</th>
+<th>Value</th>
+<th>Value</th>
+</tr>
+<tr>
+<td class="name">Library</td>
+<td>ExampleLibrary</td>
+<td>invalid</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name">Library</td>
+<td>ExampleJavaLibrary</td>
+<td>invalid</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name">Library</td>
+<td>PythonVarArgsConstructor</td>
+<td>WITH NAME</td>
+<td>VarArgs1</td>
+<td></td>
+</tr>
+<tr>
+<td class="name">Library</td>
+<td>PythonVarArgsConstructor</td>
+<td>mandatory</td>
+<td>WITH NAME</td>
+<td>VarArgs2</td>
+</tr>
+<tr>
+<td class="name">Library</td>
+<td>PythonVarArgsConstructor</td>
+<td>valid argument</td>
+<td>another arg</td>
+<td></td>
+</tr>
+<tr>
+<td class="name">Library</td>
+<td>JavaVarArgsConstructor</td>
+<td>WITH NAME</td>
+<td>JavaVarArgs1</td>
+<td></td>
+</tr>
+<tr>
+<td class="name">Library</td>
+<td>JavaVarArgsConstructor</td>
+<td>mandatory</td>
+<td>WITH NAME</td>
+<td>JavaVarArgs2</td>
+</tr>
+<tr>
+<td class="name">Library</td>
+<td>JavaVarArgsConstructor</td>
+<td>valid argument</td>
+<td>another arg</td>
+<td></td>
+</tr>
+<tr>
+<td class="name">Variables</td>
+<td>../../testresources/res_and_var_files/different_type_of_variables.py</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name">Library</td>
+<td>ParameterLibrary</td>
+<td>${list1}</td>
+<td>${dictionary1}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
 </table>
-
-
-
-
-
-
-
-<table border="1">
-
-
-
-
-
-
-  <colgroup span="99"><col class="name"><col class="value" span="4"></colgroup>
-  <thead>
-  <tr>
-
-
-
-
-
-
-    <th>Variable</th>
-
-
-
-
-
-
-    <th>Value</th>
-
-
-
-
-
-
-    <th>Value</th>
-
-
-
-
-
-
-    <th>Value</th>
-
-
-
-
-
-
-    <th>Value</th>
-
-
-
-
-
-
-  </tr>
-
-
-
-
-
-
-  </thead>
-  <tbody>
-
-
-
-
-
-
-    <tr>
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-    </tr>
-
-
-
-
-
-
-    <tr>
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-    </tr>
-
-
-
-
-
-
-  
-  
-  
-  
-  
-  </tbody>
+<table id="variables" border="1">
+<tr>
+<th class="name">Variable</th>
+<th>Value</th>
+<th>Value</th>
+<th>Value</th>
+<th>Value</th>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
 </table>
-
-
-
-
-
-
-
-<table border="1">
-
-
-
-
-
-
-  <colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
-  <thead>
-  <tr>
-
-
-
-
-
-
-    <th>Test Case</th>
-
-
-
-
-
-
-    <th>Action</th>
-
-
-
-
-
-
-    <th>Argument</th>
-
-
-
-
-
-
-    <th>Argument</th>
-
-
-
-
-
-
-    <th>Argument</th>
-
-
-
-
-
-
-
-
-  </tr>
-
-
-
-
-
-
-  </thead>
-  <tbody>
-
-
-
-
-
-
-    <tr>
-
-
-
-
-
-
-      <td>Test</td>
-
-
-
-
-
-      <td>Comment</td>
-
-
-
-
-
-      <td>Tests only failing library imports.</td>
-
-
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-
-
-    </tr>
-
-
-
-
-
-
-    
-
-
-
-
-    
-
-
-
-    
-
-
-
-
-    
-
-
-
-
-    
-
-
-
-
-    
-
-
-
-    
-
-
-
-    
-
-
-
-
-    
-
-
-
-
-    
-
-
-
-
-    
-
-
-
-
-    
-
-
-    
-
-
-    
-
-
-    
-
-
-    
-
-
-    
-
-    <tr>
-
-      <td align="undefined" valign="undefined"></td>
-
-      <td align="undefined" valign="undefined"></td>
-
-      <td align="undefined" valign="undefined"></td>
-
-      <td align="undefined" valign="undefined"></td>
-
-      <td align="undefined" valign="undefined"></td>
-
-    </tr>
-
-
-
-
-
-
-  
-  
-  
-  
-  
-  </tbody>
+<table id="testcases" border="1">
+<tr>
+<th class="name">Test Case</th>
+<th>Action</th>
+<th>Argument</th>
+<th>Argument</th>
+<th>Argument</th>
+</tr>
+<tr>
+<td class="name"><a name="test_Test">Test</a></td>
+<td>Comment</td>
+<td>Tests only failing library imports.</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
 </table>
-
-
-
-
-
-
-
-<table border="1">
-
-
-
-
-
-
-  <colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
-  <thead>
-  <tr>
-
-
-
-
-
-
-    <th>Keyword</th>
-
-
-
-
-
-
-    <th>Action</th>
-
-
-
-
-
-
-    <th>Argument</th>
-
-
-
-
-
-
-    <th>Argument</th>
-
-
-
-
-
-
-    <th>Argument</th>
-
-
-
-
-
-
-  </tr>
-
-
-
-
-
-
-  </thead>
-  <tbody>
-
-
-
-
-
-
-    
-
-
-
-
-
-
-    
-
-
-    <tr>
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-      <td></td>
-
-
-
-
-
-
-    </tr>
-
-
-
-
-
-
-  
-  
-  
-  
-  
-  </tbody>
+<table id="keywords" border="1">
+<tr>
+<th class="name">Keyword</th>
+<th>Action</th>
+<th>Argument</th>
+<th>Argument</th>
+<th>Argument</th>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
 </table>
-
-
-
-
-
-
-
-</body></html>
+</body>
+</html>
