@@ -201,15 +201,20 @@ formatted documents and tables that specify test data in a concise text format t
 is easy to work with using simple text editors, diff tools, and source control
 systems. The support for reStructuredText was added to Robot Framework in version 2.1.
 
-Tools to process reStructuredText are freely available as part of the docutils_ 
-project, and there is a `quick reference guide`_ that shows the most common 
-formatting constructs including the tables used by Robot Framework.
+Tools to process reStructuredText are freely available as part of the
+docutils__ project, and there is a `quick reference guide`__ that
+shows the most common formatting constructs including the tables used
+by Robot Framework. Notice that Robot Framework converts test data in
+reST format internally to HTML before starting to actually parse
+it. The data must thus follow reST syntax strictly or otherwise
+processing it will not succeed.
+       
+__ reStructuredText_
+__ http://docutils.sourceforge.net/docs/user/rst/quickref.html
 
-.. _docutils: reStructuredText_
-.. _`quick reference guide`: http://docutils.sourceforge.net/docs/user/rst/quickref.html
 
 .. note:: Using reST files with Robot Framework requires the Python docutils 
-          module to be installed.
+          module to be installed. 
 
           reStructureText documents are not currently supported when running
           tests on Jython. This is anticipated to change when Jython 2.5 
@@ -257,7 +262,6 @@ of the table::
     My Keyword    [Arguments]             ${path}       
     \             Directory Should Exist  ${path}       
     ============  ======================  ============  ==========
-       
 
 Editing test data
 `````````````````
