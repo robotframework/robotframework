@@ -226,21 +226,78 @@ arguments syntax is very close to the one in Python.
 Embedding arguments to keyword name
 '''''''''''''''''''''''''''''''''''
 
+Robot Framework has, starting from 2.1.1 version, also another
+approach for passing arguments to user keywords than specifying them
+in cells after the keyword name. This method is based on embedding the
+arguments directly into the keyword name, and its main benefit is
+making it easier to use real sentences as keywords. It has always been
+possible to use keywords like :name:`Select dog from list` and
+:name:`Selects cat from list`, but all such keywords must have been
+implemented separately. The idea of embedding arguments into the
+keyword name is that all you need is a keyword with name like
+:name:`Selects ${animal} from list`.
+
+.. table:: An example keyword with arguments embedded into its name
+   :class: example
+
+   ===========================  =====================  =============  ==========
+              Keyword                   Action           Argument      Argument
+   ===========================  =====================  =============  ==========
+   Select ${animal} from list   Open Page              Pet Selection
+   \                            Select Item From List  animal_list    ${animal}
+   ===========================  =====================  =============  ==========
+
+Keywords using embedded arguments cannot take any positional arguments
+(specified with :opt:`[Arguments]`) but otherwise they are created and
+used like other user keywords. The arguments used in the name will
+naturally be available inside the keyword and they have different
+value depending on how the keyword is called. Obviously it is not
+mandatory to use all these arguments inside the keyword and they can
+thus be used as wildcards.
+
+One tricky part in using embedded arguments is making sure that the
+values used when calling the keyword match the correct arguments. This
+is a problem especially if there are multiple arguments and characters
+separating them may also appear in the given values. For example
+:name:`Select ${city} ${team}` leads to unexpected results if used
+with city containing too parts like :name:`Select Los Angeles
+Lakers`. One solution to this problem is quoting the arguments like
+:name:`Select "${city}" "${team}"` or separating them from each others
+otherwise, but sometimes it is easiest to just use positional
+arguments instead.
+
+Embedded arguments do not support default values or variable number of
+arguments similarly as positional arguments. Using variables when
+calling these keyword is possible, but that can reduce readability and
+is not generally recommended. Notice also that embedded arguments only
+work with user keywords and keywords in libraries can only use
+positional arguments.
+
+The biggest benefit of having arguments as part of the keyword name is
+that it makes it easier to use higher-level sentence-like
+keywords. These keywords are especially useful when test cases act as
+requirements that also non-technical project stakeholders must
+understand. These `Executable Requirements` are a corner stone of a
+process commonlyy called `Acceptance Test Driven Development
+(ATDD)`. One way to write these requirements/tests is using
+`Given-When-Then` style popularized by `Behavior Driven Development
+(BDD)`, and that approach is illustrated in the bit longer example
+below.
 
 .. table:: Test cases using keywords with embedded arguments
    :class: example
 
-   ====================  =============================
-        Test Case                   Step
-   ====================  =============================
-   Add two numbers       Given I have Calculator open
-   \                     When I add 2 and 40
-   \                     Then the result should be 42
+   ============================  ===============================
+             Test Case                         Step
+   ============================  ===============================
+   Add two numbers               Given I have Calculator open
+   \                             When I add 2 and 40
+   \                             Then the result should be 42
    \
-   Add negative numbers  Given I have Calculator open
-   \                     When I add 1 and -2
-   \                     Then the result should be -1
-   ====================  =============================
+   Add negative numbers          Given I have Calculator open
+   \                             When I add 1 and -2
+   \                             Then the result should be -1
+   ============================  ===============================
 
 .. table:: 
    :class: example
@@ -259,6 +316,11 @@ Embedding arguments to keyword name
    \                                       Should Be Equal  ${result}     ${expected}
    ======================================  ===============  ============  ============
 
+.. note:: Embedded arguments feature in Robot Framework is inspired by
+          how `step definitions` are created in popular BDD tool
+          called Cucumber__. 
+
+__ http://cukes.info
 
 User keyword return values
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
