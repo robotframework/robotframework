@@ -223,37 +223,46 @@ sometimes be very useful.
 Again, Pythonistas probably notice that the variable number of
 arguments syntax is very close to the one in Python.
 
-Embedding arguments to keyword name
-'''''''''''''''''''''''''''''''''''
+Embedding arguments into keyword name
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Robot Framework has, starting from 2.1.1 version, also another
 approach for passing arguments to user keywords than specifying them
-in cells after the keyword name. This method is based on embedding the
-arguments directly into the keyword name, and its main benefit is
-making it easier to use real sentences as keywords. It has always been
-possible to use keywords like :name:`Select dog from list` and
-:name:`Selects cat from list`, but all such keywords must have been
-implemented separately. The idea of embedding arguments into the
-keyword name is that all you need is a keyword with name like
-:name:`Selects ${animal} from list`.
+in cells after the keyword name as explained in the previous
+section. This method is based on embedding the arguments directly into
+the keyword name, and its main benefit is making it easier to use real
+and clear sentences as keywords. It has always been possible to use
+keywords like :name:`Select dog from list` and :name:`Selects cat from
+list`, but all such keywords must have been implemented
+separately. The idea of embedding arguments into the keyword name is
+that all you need is a keyword with name like :name:`Selects ${animal}
+from list`.
 
 .. table:: An example keyword with arguments embedded into its name
    :class: example
 
-   ===========================  =====================  =============  ==========
-              Keyword                   Action           Argument      Argument
-   ===========================  =====================  =============  ==========
+   ===========================  =====================  =============  ============
+              Keyword                   Action            Argument      Argument
+   ===========================  =====================  =============  ============
    Select ${animal} from list   Open Page              Pet Selection
    \                            Select Item From List  animal_list    ${animal}
-   ===========================  =====================  =============  ==========
+   ===========================  =====================  =============  ============
 
-Keywords using embedded arguments cannot take any positional arguments
-(specified with :opt:`[Arguments]`) but otherwise they are created and
-used like other user keywords. The arguments used in the name will
-naturally be available inside the keyword and they have different
-value depending on how the keyword is called. Obviously it is not
-mandatory to use all these arguments inside the keyword and they can
+Keywords using embedded arguments cannot take any "normal" arguments
+(specified with :opt:`[Arguments]` setting) but otherwise they are
+created just like other user keywords. The arguments used in the name
+will naturally be available inside the keyword and they have different
+value depending on how the keyword is called. For example
+:var:`${animal}` in the previous has value :code:`dog` if the keyword
+is used like :name:`Select doc from list`. Obviously it is not
+mandatory to use all these arguments inside the keyword, and they can
 thus be used as wildcards.
+
+This kind of keywords are also used the same way as other keywords
+except that spaces and underscores are not ignored in their
+names. They are, however, case-insensitive like other keywords. For
+example the keyword in the above example could be used like
+:name:`select x from list` but not like :name:`Select x fromlist`.
 
 One tricky part in using embedded arguments is making sure that the
 values used when calling the keyword match the correct arguments. This
@@ -267,24 +276,24 @@ otherwise, but sometimes it is easiest to just use positional
 arguments instead.
 
 Embedded arguments do not support default values or variable number of
-arguments similarly as positional arguments. Using variables when
-calling these keyword is possible, but that can reduce readability and
-is not generally recommended. Notice also that embedded arguments only
-work with user keywords and keywords in libraries can only use
-positional arguments.
+arguments similarly as traditional arguments. Using variables when
+calling these keyword is possible but that can reduce readability. 
+Notice also that embedded arguments only work with user keywords.
+
+Behavior-driven development example
+'''''''''''''''''''''''''''''''''''
 
 The biggest benefit of having arguments as part of the keyword name is
 that it makes it easier to use higher-level sentence-like
 keywords. These keywords are especially useful when test cases act as
 requirements that also non-technical project stakeholders must
 understand. These `Executable Requirements` are a corner stone of a
-process commonlyy called `Acceptance Test Driven Development
-(ATDD)`. One way to write these requirements/tests is using
-`Given-When-Then` style popularized by `Behavior Driven Development
-(BDD)`, and that approach is illustrated in the bit longer example
-below.
+process commonly called `Acceptance Test Driven Development`_
+(ATDD). One way to write these requirements/tests is using
+`Given-When-Then` style popularized by `Behavior Driven Development`_
+(BDD), and that approach is illustrated in the example below.
 
-.. table:: Test cases using keywords with embedded arguments
+.. table:: Embedded arguments used by BDD style tests
    :class: example
 
    ============================  ===============================
@@ -317,7 +326,7 @@ below.
    ======================================  ===============  ============  ============
 
 .. note:: Embedded arguments feature in Robot Framework is inspired by
-          how `step definitions` are created in popular BDD tool
+          how `step definitions` are created in a popular BDD tool
           called Cucumber__. 
 
 __ http://cukes.info
