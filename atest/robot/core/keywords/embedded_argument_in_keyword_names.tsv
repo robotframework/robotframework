@@ -54,11 +54,11 @@ Embedded Arguments Syntax is Space and Underscore Sensitive
 	
 Embedded Arguments In Resource File
 	${tc} =	Check Test Case	${TEST NAME}
-	Should Be Equal	${tc.kws[0].name}	\${ret} = embedded_args_in_uk.Juha Uses Resource File
+	Should Be Equal	${tc.kws[0].name}	\${ret} = embedded_args_in_uk_1.Juha Uses Resource File
 
 Embedded Arguments In Resource File Used Explicitly
 	${tc} =	Check Test Case	${TEST NAME}
-	Should Be Equal	${tc.kws[0].name}	\${ret} = embedded_args_in_uk.peke uses resource file
+	Should Be Equal	${tc.kws[0].name}	\${ret} = embedded_args_in_uk_1.peke uses resource file
 
 Keyword with normal arguments cannot have embedded arguments
 	Check Test Case	${TEST NAME}
