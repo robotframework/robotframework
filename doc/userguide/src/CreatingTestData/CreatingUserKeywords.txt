@@ -227,7 +227,7 @@ Embedding arguments into keyword name
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Robot Framework has, starting from 2.1.1 version, also another
-approach for passing arguments to user keywords than specifying them
+approach to pass arguments to user keywords than specifying them
 in cells after the keyword name as explained in the previous
 section. This method is based on embedding the arguments directly into
 the keyword name, and its main benefit is making it easier to use real
@@ -254,7 +254,7 @@ created just like other user keywords. The arguments used in the name
 will naturally be available inside the keyword and they have different
 value depending on how the keyword is called. For example
 :var:`${animal}` in the previous has value :code:`dog` if the keyword
-is used like :name:`Select doc from list`. Obviously it is not
+is used like :name:`Select dog from list`. Obviously it is not
 mandatory to use all these arguments inside the keyword, and they can
 thus be used as wildcards.
 
