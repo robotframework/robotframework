@@ -66,3 +66,12 @@ Keyword with normal arguments cannot have embedded arguments
 Keyword with embedded args can be used as "normal" keyword
 	${tc} =	Check Test Case	${TEST NAME}
 	Check Log Message	${tc.kws[1].kws[0].msgs[0]}	This is always executed
+
+Keyword matching multiple keywords in test case file
+	${tc} =	Check Test Case	${TEST NAME}
+
+Keyword matching multiple keywords in one resource file
+	${tc} =	Check Test Case	${TEST NAME}
+
+Keyword matching multiple keywords in different resource files
+	${tc} =	Check Test Case	${TEST NAME}
