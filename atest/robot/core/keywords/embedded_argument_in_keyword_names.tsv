@@ -69,9 +69,19 @@ Keyword with embedded args can be used as "normal" keyword
 
 Keyword matching multiple keywords in test case file
 	${tc} =	Check Test Case	${TEST NAME}
+	Check Log Message	${tc.kws[0].kws[0].msgs[0]}	foo+tc+bar
+	Check Log Message	${tc.kws[1].kws[0].msgs[0]}	foo-tc-bar
+	Check Log Message	${tc.kws[2].kws[0].msgs[0]}	foo+tc+bar+tc+zap
 
 Keyword matching multiple keywords in one resource file
 	${tc} =	Check Test Case	${TEST NAME}
+	Check Log Message	${tc.kws[0].kws[0].msgs[0]}	foo+r1+bar
+	Check Log Message	${tc.kws[1].kws[0].msgs[0]}	foo-r1-bar
 
 Keyword matching multiple keywords in different resource files
+	${tc} =	Check Test Case	${TEST NAME}
+	Check Log Message	${tc.kws[0].kws[0].msgs[0]}	foo-r1-bar
+	Check Log Message	${tc.kws[1].kws[0].msgs[0]}	foo-r2-bar
+
+Keyword matching multiple keywords in one and different resource files
 	${tc} =	Check Test Case	${TEST NAME}
