@@ -58,27 +58,46 @@ class UserLibrary(BaseLibrary):
             self.handlers[handler.name] = handler
 
     def has_handler(self, name):
-        try:
-            self.get_handler(name)
-        except DataError:
-            return False
-        else:
+        if BaseLibrary.has_handler(self, name):
             return True
-            
+        for template in self.embedded_arg_handlers:
+            try:
+                EmbeddedArgs(name, template)
+            except TypeError:
+                pass
+            else:
+                return True
+        return False
+        
     def get_handler(self, name):
         try:
             return BaseLibrary.get_handler(self, name)
         except DataError, error:
-            return self._try_to_get_embedded_arg_handler(name, error)
-    
-    def _try_to_get_embedded_arg_handler(self, name, error):
+            found = self._get_embedded_arg_handlers(name)
+            if not found:
+                raise error
+            if len(found) == 1:
+                return found[0]
+            self._raise_multiple_matching_keywords_found(name, found)
+
+    def _get_embedded_arg_handlers(self, name):
+        found = []
         for template in self.embedded_arg_handlers:
             try:
-                return EmbeddedArgs(name, template)
+                found.append(EmbeddedArgs(name, template))
             except TypeError:
                 pass
-        raise error
+        return found
 
+    def _raise_multiple_matching_keywords_found(self, name, found):
+        names = utils.seq2str([f.orig_name for f in found])
+        if self.name is None:
+            where = "Test case file"
+        else:
+            where = "Resource file '%s'" % self.name
+        raise DataError("%s contains multiple keywords matching name '%s'\n"
+                        "Found: %s" % (where, name, names))
+    
 
 class UserHandler(BaseHandler):
 
@@ -203,6 +222,7 @@ class EmbeddedArgs(UserHandler):
             raise TypeError('Does not match given name')
         self.embedded_args = zip(template.embedded_args, match.groups())
         self.name = name
+        self.orig_name = template.name
         self.longname = template.longname[:-len(template.name)] + name
         self._copy_attrs_from_template(template)
 

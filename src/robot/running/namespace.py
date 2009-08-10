@@ -180,18 +180,12 @@ class Namespace:
         return None
         
     def _get_handler_from_test_case_file_user_keywords(self, name):
-        try:
+        if self.suite.user_keywords.has_handler(name):
             return self.suite.user_keywords.get_handler(name)
-        except DataError:
-            return None
         
     def _get_handler_from_resource_file_user_keywords(self, name):
-        found = []
-        for lib in self._userlibs:
-            try:
-                found.append(lib.get_handler(name))
-            except DataError:
-                pass
+        found = [ lib.get_handler(name)
+                  for lib in self._userlibs if lib.has_handler(name) ]
         if not found:
             return None
         if len(found) == 1:
