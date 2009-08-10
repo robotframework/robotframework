@@ -92,6 +92,15 @@ Keyword Matching Multiple Keywords In Different Resource Files
 	foo-r2-bar
 	foo-r1-bar-r2-zap
 
+Keyword Matching Multiple Keywords In Different Resource Files
+	[Documentation]	FAIL	
+	foo-r1-bar
+	foo-r2-bar
+	foo-r1-bar-r2-zap
+
+Keyword Matching Multiple Keywords In One And Different Resource Files
+	-r1-r2-+r1+
+
 
 *** Keywords ***
 
