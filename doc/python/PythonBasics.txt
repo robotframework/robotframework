@@ -1,0 +1,502 @@
+Python Basics for Robot Test Library Developers
+===============================================
+
+.. contents::
+
+Introduction
+------------
+
+* This is self learning material for `Python language`_. The target is
+  to learn enough Python to be able to learn how to create test
+  libraries for `Robot Framework`_.
+
+* Earlier programming experience is expected but not absolutely
+  necessarily.
+
+* The main study material for this training is *Dive Into Python* book
+  which is really good and freely available for online reading,
+  downloading or printing from http://diveintopython.org.
+
+* That book is targeted for people who already know how to program. If
+  you are a novice programmer it might better to start with `How to
+  Think Like a (Python) Programmer`_ book which is also available for
+  free.
+
+* `Python Tutorial`_, available at http://python.org and included into
+  the standard Python installation, is also good. Some of the sections
+  in this training refer to it instead of or in addition to Dive Into Python.
+
+* http://python.org is a good place for more Python information in
+  general and `Google search`_ returns a lot of hits too.
+
+.. _Python language: http://python.org
+.. _Robot Framework: https://cwiki.nokia.com/RobotFramework
+.. _Python Tutorial: http://docs.python.org/tut/tut.html
+.. _Google search: http://www.google.fi/search?q=python+tutorial
+.. _How to Think Like a (Python) Programmer: http://www.greenteapress.com/thinkpython/
+
+
+Installation
+------------
+
+* Everyone is supposed to have Python installed because Robot Framework
+  requires it. 
+
+* If you don't have it, get an installer e.g. from
+  http://python.org. Python 2.5(.x) is recommended but 2.4 and 2.3 are
+  ok too.
+
+* It is highly recommended that you configure your system so that you
+  can run Python from command line simply by typing ``python`` and pressing
+  enter.
+
+  - On Windows, and possible some other systems, that requires adding
+    Python installation directory into PATH environment variable. For
+    instruction see
+    e.g. https://cwiki.nokia.com/RobotFramework/SettingPath
+
+
+Interactive Console
+-------------------
+
+* Start from command line by typing ``python``. In Windows you can
+  also start it from ``Start > All Programs > Python 2.x``.
+
+* To exit press first ``Ctrl-Z`` and then enter on Windows and
+  ``Ctrl-D`` on other systems. 
+
+  - You can exit Python 2.5 interpreter also with command ``exit()``.
+
+* See http://diveintopython.org/installing_python/shell.html for some
+  examples. 
+
+
+Strings, Numbers and Other Basic Types 
+--------------------------------------
+
+* Python has strings, integers, floating point numbers, boolean values
+  (``True`` and ``False``) similarly as most other programming languages.
+
+* Strings can be enclosed into double or single quotes (they don't
+  have any difference like they do in Perl). 
+
+* Unicode strings have a special syntax like ``u"Hyv\xE4\xE4 y\xF6\t\xE4!"``. 
+  Using Unicode with Python is not coverred otherwise in this training
+  but you can find a lot of information about it with search engines.
+
+* ``None`` is a special value meaning nothing similarly as ``null`` in
+  Java.
+
+* Try at least these on on the interpreter::
+
+    >>> a = 2
+    >>> b = 2.5
+    >>> print a * b
+    5.0
+    >>> print 'This is easy'
+    This is easy
+    >>> print "Ain't it?"
+    Ain't it?
+
+
+Python Editors
+--------------
+
+* There are a lot of different Python editors available.
+
+* Most general editors (Emacs, vi, Eclipse, UltraEdit...) can be
+  used very well but
+
+  - learning curve can be quite steep unless you already know them, and
+  - having a mode or pluging that highlights the source, handles
+    indentation, etc. is nearly mandatory.
+
+* Standard Python installation includes `IDLE editor`_ that comes with
+  an interactive console. If you don't know any better editor you can
+  at least get started with it without problems.
+
+.. _IDLE editor: http://hkn.eecs.berkeley.edu/~dyoo/python/idle_intro/
+
+
+Simplest Possible Program (Mandatory "Hello, world!" Example)
+-----------------------------------------------------------------------
+
+* Create a file ``hello.py`` with your editor of choise.
+
+* Write ``print "Hello, world!"`` into the file, run it from command
+  line like  
+
+    python hello.py
+
+  and you should get ``Hello, world!`` printed into the console.
+
+* You can of course add more code to the same file too. 
+
+* For a lot more interesting example see
+  http://diveintopython.org/getting_to_know_python/index.html
+
+
+Functions ("Hello, world!" Strikes Back)
+---------------------------------------------------
+
+* Creating functions in Python is super easy. For example earlier ``Hello,
+  world!`` example could be written like this::
+
+    def hello():
+        print "Hello, world!"
+
+    hello()
+
+* Note that in Python code blocks must be indented (four spaces is the
+  norm and highly recommended) and you close the block simply by
+  returning to the earlier indentation level.
+
+* Note also that this ``hello`` function is actually already a valid
+  keyword for Robot!
+
+* A function with arguments is not that more complicated::
+
+    def hello(name):
+        print "Hello, %s!" % name
+
+    hello("World")
+    hello("Robot")
+
+* The hard part in this example is string formatting (i.e. ``"Hello,
+  %s!" % name``). For more information about it see e.g.
+  http://diveintopython.org/native_data_types/formatting_strings.html 
+
+* For more information about declaring functions read
+  http://diveintopython.org/getting_to_know_python/declaring_functions.html
+
+
+Documenting Functions
+---------------------
+
+* Documenting functions, classes, etc. in Python is both easy and important:
+  http://diveintopython.org/getting_to_know_python/documenting_functions.html
+
+* Interestingly docs are also available dynamicly. Try this out::
+
+    def hello():
+        """Prints 'Hello, world!' to the standard output."""
+        print "Hello, world!"
+
+    print hello.__doc__
+
+* With Robot documenting functions that are used as keywords is extra
+  important because there are tools for generating library
+  documentation from them.
+
+
+Lists, Tuples and Dictionaries
+------------------------------
+
+* Python has nice *collection* types build into the language with a
+  really nice syntax similarly as e.g. Perl and Ruby. You are going to
+  use them a lot!
+
+* A list is an ordered collection of items which you normally access
+  by index.
+
+    >>> x = ["Some", "strings", "here"]
+    >>> x[0]
+    'Some'
+    >>> x[1]
+    'strings'
+    >>> x[-1]
+    'here'
+    >>> x[2] = x[2].upper()
+    >>> x.append(42)
+    >>> x
+    ['Some', 'strings', 'HERE', 42]
+
+* A tuple is a list which you can't change after you have created
+  it. 
+
+    >>> t = (1,2,'x')
+    >>> t[0]
+    1
+    >>> t[-1]
+    'x'
+
+* A dictionary is an unordered collection of key-value pairs. 
+
+    >>> d = {'x': 'some value', 'a': 1, 'b': 2} 
+    >>> d['a']
+    1
+    >>> d['x']
+    'some value'
+    >>> d['a'] = d['b']
+    >>> d['tuple'] = t  
+    >>> d
+    {'a': 2, 'x': 'some value', 'b': 2, 'tuple': (1, 2, 'x')}
+
+* A lot more examples, including slice syntax not shown here, and good
+  theory at http://diveintopython.org/native_data_types/
+
+
+Control Flow
+------------
+
+* Python has "normal" control flow structures:
+
+  - ``if/elif/else`` for conditional execution.
+  -  ``for`` and ``while`` loops with ``break`` and ``continue``
+     statements.
+
+* For examples and more information:
+
+  - http://docs.python.org/tut/node6.html
+  - http://diveintopython.org/file_handling/for_loops.html
+
+* Iterating over lists (and other iterable objects) with Python's
+  ``for`` loop is really nice (especially compared to similar loops
+  e.g. in C or Java).
+
+* Instead of ``for`` you should, however, often use `list
+  comprehension`_. It may feel weird and hard to read first but after
+  using it a few times you are likely to love it.
+
+* Because iterating over lists with ``for`` is so nice you don't
+  normally need C-like ``for (int i=0; i<10; i++)`` syntax where ``i``
+  is just a temporaty variable used for accessing items in an
+  array. If you really need that ``i`` you can use ``range()`` or
+  ``enumerate()`` methods with a ``for`` loop. 
+
+.. _list comprehension: http://diveintopython.org/native_data_types/mapping_lists.html
+
+
+Optional And Named Arguments for Functions (Return of the "Hello, world!")
+--------------------------------------------------------------------------
+
+* Functions can have default values for some or all of it's
+  arguments.
+
+    >>> def hello(name="World"):
+    ...     print "Hello, %s!" % name
+    ... 
+    >>> hello()
+    Hello, World!
+    >>> hello("Robot")
+    Hello, Robot!
+
+* If there are several optional arguments it's also possible to
+  specify only some of them by giving their name along with the value
+  as the example below illustrates. Those arguments that don't have
+  default values must always be given.
+
+    >>> def test(a, b=1, c=2, d=3):
+    ...   print a, b, c, d
+    ... 
+    >>> test(0)
+    0 1 2 3
+    >>> test(0, 42)
+    0 42 2 3
+    >>> test(1, c=10)
+    1 1 10 3
+    >>> test(2, c=100, d=200)
+    2 1 100 200
+
+* Robot keywords can have default values but they are always used with
+  positional arguments. For example if above ``hello`` method was used
+  as a keyword, it could be used with zero or one argument. 
+
+* For more information about optional and named arguments: 
+  http://diveintopython.org/power_of_introspection/optional_arguments.html
+
+
+Variable Number of Arguments
+----------------------------
+
+* Function can also be created so that they take any number of
+  arguments. This is done by prefixing an argument after required and
+  optional arguments with an asterisk like ``*args`` and it means that
+  the specified argument gets all the "extra" arguments as a tuple.
+
+    >>> def example(arg1, arg2, *rest):
+    ...     print arg1, arg2, rest
+    ... 
+    >>> example(1, 2)
+    1 2 ()
+    >>> example(1, 2, 3)  
+    >>> example(1, 2, 3, 4, 5)
+    1 2 (3, 4, 5)
+
+* Similarly all named arguments not matching any argument in the
+  keyword signature can be collected into a special argument like
+  ``**named``. 
+
+* Using variable number of arguments works with Robot keywords but
+  named arguments don't.
+
+* Python tutorial explains everything in this and earlier section in
+  detail: http://docs.python.org/tut/node6.html#SECTION006700000000000000000
+
+
+Importing Modules
+-----------------
+
+* Importing existing Python modules is as simply as saying ``import
+  modulename``. 
+
+* Alternative syntax is ``from modulename import submodule``. 
+
+* Python has a comprehensive `standard library`_ so already there's
+  plenty of existing code to be imported!
+
+
+Creating Modules
+----------------
+
+* Every ``.py`` file is effectively a Python module so you have
+  already created some modules.
+
+* For example we could have following code in a file called  ``test.py``::
+
+    def hello(name="World"):
+        print "Hello, %s!" % name
+
+    if __name__ == "__main__":
+        hello()
+
+  and then be able to use it like::
+
+    >>> import test
+    >>> test.hello("Tellus")
+    Hello, Tellus!
+
+* ``if __name__ == "__main__"`` block in the previous example is
+  important because it allows executing the file as a script (``python
+  test.py``) and using it as a module like above. Automatic
+  ``__name__`` attribute (Python has many of these as you'll see if
+  you study it more) gets value ``"__main___"`` when the file is run
+  as a script and the ``if`` block is thus executed only in that case.
+
+* Bigger modules can be organized into several files and a higher
+  level module (also called package) created to contain them as
+  submodules. In this case the higher level module is a directory with
+  a special ``___init___.py`` file. 
+
+* For more information about modules see http://docs.python.org/tut/node8.html
+
+.. _standard library: http://docs.python.org/lib/lib.html
+
+
+Module search path (PYTHONPATH)
+-------------------------------
+
+* Python modules aren't automatically searched everywhere on you
+  machine. Python has certain default places to search modules for
+  (e.g. it's own library directory which is often in place like
+  ``C:\Python25\Lib`` or ``/usr/lib/python2.5``) and additionally it
+  looks for them from so called PYTHONPATH. 
+
+* PYTHONPATH is an environment variable which contains places (mainly
+  directories) to look for Python modules. It is similar to
+  PATH environment variable which is used by an operating system to
+  look for executable programs.
+
+* PYTHONPATH is important also with Robot because it can import test
+  libraries only if the module containing the library can be imported.
+
+
+Classes and Instances
+---------------------
+
+* Python is an object-oriented language but as we've seen you don't
+  need to use classes everywhere like you need to in Java for
+  example. It's totally ok to just have a module with functions if
+  that's suites your needs but often object oriented features are
+  really handy.
+
+* The syntax for creating classes and then instances from them is
+  relatively straightforwarded::
+
+    >>> class MyClass:
+    ...     def __init__(self, name):
+    ...         self._name = name
+    ...     def hello(self, other="World"):
+    ...         print "%s says hello to %s!" % (self._name, other)
+    ... 
+    >>> c = MyClass('Robot')
+    >>> c.hello()
+    Robot says hello to World!
+    >>> c.hello('Tellus')
+    Robot says hello to Tellus!
+
+* The really weird thing in the syntac is that every class method must
+  have ``self`` as the first argument in the signature. After you
+  create an instance of the class Python *binds* the method and takes
+  care of passing the ``self`` argument automatically so you don't use
+  it when calling the method.
+
+* To learn more about classes you can follow `a pretty interesting
+  example from Dive Into Python
+  <http://diveintopython.org/object_oriented_framework/index.html>`_
+  or/and study `a detailed information from Python Tutorial
+  <http://docs.python.org/tut/node11.html>`_
+    
+* A Robot test library can either be a module or a class. Modules are
+  normally adequate for simple libraries but classes offer more
+  flexibility and power.
+
+
+Exceptions
+----------
+
+* Python has an exception system similar to many other languages.
+  Exceptions are classes and the normal way to raise them is ``raise
+  SomeException("Error message")``. Exceptions are handled in a
+  ``try/except`` block.
+
+* Compared to Java there are some terminology differences (``raise``
+  vs. ``throw`` and ``except`` vs.``catch``) but the biggest real
+  difference to is that there are no checked exceptions i.e. you don't
+  need to add ``throws SomeException`` to those methods that possible
+  raise exceptions.
+
+* More info: http://diveintopython.org/file_handling/index.html
+
+* Exceptions are an important part of the Robot Library API because
+  keywords use them to communicate failures to the framework.
+
+
+Regular Expressions
+-------------------
+
+* Regular expressions are really handy for processing strings which is
+  a really common need in test automation. 
+
+* Python has a really fast regular expression engine and it uses a
+  syntax that is derived from Perl's regexp syntax similarlys as
+  e.g. Java.
+
+* A good introduction is
+  http://diveintopython.org/regular_expressions/index.html
+
+
+Unit Testing
+------------
+
+* Unit testing is important especially when you start having more
+  code and unit testing your test library code can be a really good
+  idea.
+
+* Python has several unit testing frameworks. Two of them,
+  ``unittest`` and ``doctest``, are in the standard library. The
+  former is immediatelly familiar for anyone who has used JUnit or
+  some other xUnit framework and the other is interesting because it
+  allows using function doc strings for tests.
+
+* Dive Into Python has really good chapters about 
+
+  - `unit testing`_,
+  - `test-driven development`_ (TDD), and 
+  - refactoring_.
+
+.. _unit testing: http://diveintopython.org/unit_testing/index.html
+.. _test-driven development: http://diveintopython.org/unit_testing/stage_1.html
+.. _refactoring: http://diveintopython.org/refactoring/index.html
+
+
