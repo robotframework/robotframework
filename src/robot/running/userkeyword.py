@@ -90,7 +90,7 @@ class UserLibrary(BaseLibrary):
         return found
 
     def _raise_multiple_matching_keywords_found(self, name, found):
-        names = utils.seq2str([f.orig_name for f in found])
+        names = utils.seq2str([f.origname for f in found])
         if self.name is None:
             where = "Test case file"
         else:
@@ -222,15 +222,15 @@ class EmbeddedArgs(UserHandler):
             raise TypeError('Does not match given name')
         self.embedded_args = zip(template.embedded_args, match.groups())
         self.name = name
-        self.orig_name = template.name
-        self.longname = template.longname[:-len(template.name)] + name
+        self.longname = template.longname[:-len(template.name)] + self.name
+        self.origname = template.name
         self._copy_attrs_from_template(template)
 
     def run(self, output, namespace, args):
         for name, value in self.embedded_args:
             namespace.variables[name] = namespace.variables.replace_scalar(value)
         return UserHandler.run(self, output, namespace, args)
-        
+
     def _copy_attrs_from_template(self, template):
         self.keywords = template.keywords
         self.args = template.args
