@@ -59,6 +59,7 @@ Embedded Arguments In Resource File
 Embedded Arguments In Resource File Used Explicitly
 	${ret} =	embedded_args_in_uk_1.peke uses resource file
 	Should Be Equal	${ret}	peke-resource
+	embedded_args_in_uk_2.-r1-r2-+r1+
 
 Keyword with normal arguments cannot have embedded arguments
 	[Documentation]	FAIL No keyword with name 'Keyword with value and normal args' found.
@@ -69,7 +70,6 @@ Keyword with embedded args can be used as "normal" keyword
 	[Documentation]	FAIL Non-existing variable '${user}'
 	Normal keyword with ${variable} in name
 	User ${user} Selects ${item} From Webshop
-
 
 Keyword Matching Multiple Keywords In Test Case File
 	[Documentation]	FAIL
@@ -88,12 +88,6 @@ Keyword Matching Multiple Keywords In Different Resource Files
 	[Documentation]	FAIL	Multiple keywords with name 'foo-r1-bar-r2-zap' found.\n
 	...	Give the full name of the keyword you want to use.\n
 	...	Found: 'embedded_args_in_uk_1.foo-r1-bar-r2-zap' and 'embedded_args_in_uk_2.foo-r1-bar-r2-zap'
-	foo-r1-bar
-	foo-r2-bar
-	foo-r1-bar-r2-zap
-
-Keyword Matching Multiple Keywords In Different Resource Files
-	[Documentation]	FAIL	
 	foo-r1-bar
 	foo-r2-bar
 	foo-r1-bar-r2-zap
