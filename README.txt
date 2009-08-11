@@ -33,8 +33,8 @@ directory. For more information, see http://robotframework.org.
 License
 -------
 
-Robot Framework code and tests are provided under Apache License 2.0,
-and documentation, demos, and other content use Creative Commons
+Robot Framework code and tests are provided under Apache License 2.0.
+Documentation and other similar content use Creative Commons
 Attribution 3.0 Unported license.
 
  - http://apache.org/licenses/LICENSE-2.0
