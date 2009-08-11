@@ -313,13 +313,12 @@ table.example caption, table.tsv-example caption, table.tabular caption {
     text-align: left;
     padding-bottom: 0.5em;
     font-style: italic;
-    margin: 0.5em 2em;
 }
 table.example th, table.example td, table.tsv-example td {
     border: 1px solid #808080;
     font-family: arial,helvetica,sans-serif;
     height: 1.2em;
-    font-size: 0.85em;
+    font-size: 0.8em;
 }
 table.example th {
     padding: 0.1em 1em;
@@ -491,49 +490,49 @@ Processed by unicode2rstsubs.py, part of Docutils:
 - path   file names and paths
 - misc   everything else (synonym to ``text``) -->
 <div class="line-block">
-<div class="line">Copyright © Nokia Siemens Networks 2008</div>
-<div class="line">Licensed under the Apache License, Version 2.0</div>
+<div class="line">Copyright © Nokia Siemens Networks 2008-2009</div>
+<div class="line">Licensed under the <a class="reference external" href="http://creativecommons.org/licenses/by/3.0/">Creative Commons Attribution 3.0 Unported</a> license</div>
 </div>
 <div class="contents topic" id="table-of-contents">
 <p class="topic-title first">Table of Contents</p>
 <ul class="simple">
-<li><a class="reference internal" href="#introduction" id="id7">Introduction</a><ul>
-<li><a class="reference internal" href="#overview" id="id8">Overview</a></li>
-<li><a class="reference internal" href="#installation" id="id9">Installation</a></li>
-<li><a class="reference internal" href="#running-this-demo" id="id10">Running this demo</a></li>
-<li><a class="reference internal" href="#introducing-the-sample-application" id="id11">Introducing the sample application</a></li>
+<li><a class="reference internal" href="#introduction" id="id8">Introduction</a><ul>
+<li><a class="reference internal" href="#overview" id="id9">Overview</a></li>
+<li><a class="reference internal" href="#installation" id="id10">Installation</a></li>
+<li><a class="reference internal" href="#running-this-demo" id="id11">Running this demo</a></li>
+<li><a class="reference internal" href="#introducing-the-sample-application" id="id12">Introducing the sample application</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#test-cases" id="id12">Test cases</a><ul>
-<li><a class="reference internal" href="#first-test-cases" id="id13">First test cases</a></li>
-<li><a class="reference internal" href="#higher-level-test-cases" id="id14">Higher-level test cases</a></li>
-<li><a class="reference internal" href="#data-driven-test-cases" id="id15">Data-driven test cases</a></li>
+<li><a class="reference internal" href="#test-cases" id="id13">Test cases</a><ul>
+<li><a class="reference internal" href="#first-test-cases" id="id14">First test cases</a></li>
+<li><a class="reference internal" href="#higher-level-test-cases" id="id15">Higher-level test cases</a></li>
+<li><a class="reference internal" href="#data-driven-test-cases" id="id16">Data-driven test cases</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#keywords" id="id16">Keywords</a><ul>
-<li><a class="reference internal" href="#built-in-keywords" id="id17">Built-in keywords</a></li>
-<li><a class="reference internal" href="#library-keywords" id="id18">Library keywords</a></li>
-<li><a class="reference internal" href="#user-defined-keywords" id="id19">User-defined keywords</a></li>
+<li><a class="reference internal" href="#keywords" id="id17">Keywords</a><ul>
+<li><a class="reference internal" href="#built-in-keywords" id="id18">Built-in keywords</a></li>
+<li><a class="reference internal" href="#library-keywords" id="id19">Library keywords</a></li>
+<li><a class="reference internal" href="#user-defined-keywords" id="id20">User-defined keywords</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#variables" id="id20">Variables</a><ul>
-<li><a class="reference internal" href="#defining-variables" id="id21">Defining Variables</a></li>
-<li><a class="reference internal" href="#using-variables" id="id22">Using variables</a></li>
+<li><a class="reference internal" href="#variables" id="id21">Variables</a><ul>
+<li><a class="reference internal" href="#defining-variables" id="id22">Defining Variables</a></li>
+<li><a class="reference internal" href="#using-variables" id="id23">Using variables</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#organizing-test-cases" id="id23">Organizing test cases</a><ul>
-<li><a class="reference internal" href="#test-suites" id="id24">Test suites</a></li>
-<li><a class="reference internal" href="#setup-and-teardown" id="id25">Setup and teardown</a></li>
-<li><a class="reference internal" href="#using-tags" id="id26">Using tags</a></li>
+<li><a class="reference internal" href="#organizing-test-cases" id="id24">Organizing test cases</a><ul>
+<li><a class="reference internal" href="#test-suites" id="id25">Test suites</a></li>
+<li><a class="reference internal" href="#setup-and-teardown" id="id26">Setup and teardown</a></li>
+<li><a class="reference internal" href="#using-tags" id="id27">Using tags</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#creating-test-libraries" id="id27">Creating test libraries</a></li>
+<li><a class="reference internal" href="#creating-test-libraries" id="id28">Creating test libraries</a></li>
 </ul>
 </div>
 <div class="section" id="introduction">
-<h1><a class="toc-backref" href="#id7">Introduction</a></h1>
+<h1><a class="toc-backref" href="#id8">Introduction</a></h1>
 <div class="section" id="overview">
-<h2><a class="toc-backref" href="#id8">Overview</a></h2>
+<h2><a class="toc-backref" href="#id9">Overview</a></h2>
 <p>Robot Framework is a keyword-driven test automation framework.  Test
 cases live in HTML or TSV (tab-separated values) test files and make
 use of keywords implemented in test libraries to drive the software
@@ -548,7 +547,7 @@ basic concepts of Robot Framework.  For a detailed technical
 description, please refer to <a class="reference external" href="http://code.google.com/p/robotframework/wiki/UserGuide">Robot Framework User Guide</a>.</p>
 </div>
 <div class="section" id="installation">
-<h2><a class="toc-backref" href="#id9">Installation</a></h2>
+<h2><a class="toc-backref" href="#id10">Installation</a></h2>
 <p>A precondition for installing Robot Framework is having <a class="reference external" href="http://python.org">Python</a> installed.
 In addition, to use test libraries written in Java, <a class="reference external" href="http://jython.org">Jython</a> must be
 installed. To use this Quick Start Guide, Python is enough.</p>
@@ -580,7 +579,7 @@ Robot Framework 2.0.3 (Python 2.5.2 on linux2)
 </pre>
 </div>
 <div class="section" id="running-this-demo">
-<h2><a class="toc-backref" href="#id10">Running this demo</a></h2>
+<h2><a class="toc-backref" href="#id11">Running this demo</a></h2>
 <p>This Quick Start Guide also acts as an executable demo.  To run it,
 open a command shell, cd to the directory where this file is, and type the
 following command at the command line:</p>
@@ -612,7 +611,7 @@ pybot --log mylog.html --name My_Fine_Tests quickstart.html
 </div>
 </div>
 <div class="section" id="introducing-the-sample-application">
-<h2><a class="toc-backref" href="#id11">Introducing the sample application</a></h2>
+<h2><a class="toc-backref" href="#id12">Introducing the sample application</a></h2>
 <p>The sample application for this guide is a variation on a classic
 login example: it is a command-line based authentication server written
 in Python. At the moment, the sample application allows a user to do
@@ -669,9 +668,9 @@ directory.</p>
 </div>
 </div>
 <div class="section" id="test-cases">
-<h1><a class="toc-backref" href="#id12">Test cases</a></h1>
+<h1><a class="toc-backref" href="#id13">Test cases</a></h1>
 <div class="section" id="first-test-cases">
-<h2><a class="toc-backref" href="#id13">First test cases</a></h2>
+<h2><a class="toc-backref" href="#id14">First test cases</a></h2>
 <p>Robot Framework test cases are created using a simple tabular syntax. For example the following table has two tests:</p>
 <blockquote>
 <ul class="simple">
@@ -739,7 +738,7 @@ cases are constructed from keywords (normally in the second column) and
 their possible arguments.</p>
 </div>
 <div class="section" id="higher-level-test-cases">
-<h2><a class="toc-backref" href="#id14">Higher-level test cases</a></h2>
+<h2><a class="toc-backref" href="#id15">Higher-level test cases</a></h2>
 <p>Test cases can also be created using only high-level keywords that
 take no arguments. This style allows using totally free text which is
 suitable for communication even with non-technical customers or
@@ -778,7 +777,7 @@ tests are written before implementing actual product features and they
 act also as requirements.</p>
 </div>
 <div class="section" id="data-driven-test-cases">
-<h2><a class="toc-backref" href="#id15">Data-driven test cases</a></h2>
+<h2><a class="toc-backref" href="#id16">Data-driven test cases</a></h2>
 <p>Quite often several test cases are otherwise similar but they have
 slightly different input or output data. In these situations
 <em>data-driven</em> test cases, like six tests below, allow varying the test
@@ -839,21 +838,21 @@ error messages are specified using <a class="reference internal" href="#variable
 </div>
 </div>
 <div class="section" id="keywords">
-<h1><a class="toc-backref" href="#id16">Keywords</a></h1>
+<h1><a class="toc-backref" href="#id17">Keywords</a></h1>
 <p>Test cases are created from keywords that can come from three sources:
 <a class="reference internal" href="#built-in-keywords">built-in keywords</a> are always available, <a class="reference internal" href="#library-keywords">library keywords</a> come
 from imported test libraries, and so called <a class="reference internal" href="#user-defined-keywords">user keywords</a> can be
 created using the same tabular syntax that is used for creating test
 cases.</p>
 <div class="section" id="built-in-keywords">
-<h2><a class="toc-backref" href="#id17">Built-in keywords</a></h2>
+<h2><a class="toc-backref" href="#id18">Built-in keywords</a></h2>
 <p>Some generally useful keywords such as <span class="name">Get Time</span> and
 <span class="name">Should Be Equal</span> are always available. Technically these
 keywords come from a test library called <a class="reference external" href="http://code.google.com/p/robotframework/wiki/BuiltInLibrary">BuiltIn</a> and you can
 see its documentation for a complete list of available keywords.</p>
 </div>
 <div class="section" id="library-keywords">
-<h2><a class="toc-backref" href="#id18">Library keywords</a></h2>
+<h2><a class="toc-backref" href="#id19">Library keywords</a></h2>
 <p>All lowest level keywords are defined in test libraries which are
 implemented using standard programming languages. Robot Framework
 comes with a <a class="reference external" href="http://code.google.com/p/robotframework/wiki/TestLibraries">handful of libraries</a> including an <a class="reference external" href="http://code.google.com/p/robotframework/wiki/OperatingSystemLibrary">OperatingSystem</a>
@@ -890,7 +889,7 @@ credentials</span>). Both of these libraries are imported in so called
 </table>
 </div>
 <div class="section" id="user-defined-keywords">
-<h2><a class="toc-backref" href="#id19">User-defined keywords</a></h2>
+<h2><a class="toc-backref" href="#id20">User-defined keywords</a></h2>
 <p>One of the most powerful features of Robot Framework is the ability to
 easily create new higher-level keywords from other keywords. The
 syntax for creating these so called <em>user-defined keywords</em>, or <em>user
@@ -1036,9 +1035,9 @@ different situations.</p>
 </div>
 </div>
 <div class="section" id="variables">
-<h1><a class="toc-backref" href="#id20">Variables</a></h1>
+<h1><a class="toc-backref" href="#id21">Variables</a></h1>
 <div class="section" id="defining-variables">
-<h2><a class="toc-backref" href="#id21">Defining Variables</a></h2>
+<h2><a class="toc-backref" href="#id22">Defining Variables</a></h2>
 <p>Variables are an integral part of Robot Framework. Usually any data used in
 tests that is subject to change is best defined as variables. Syntax for
 variable definition is quite simple, as seen in this table:</p>
@@ -1090,7 +1089,7 @@ variables that are always available. These variables include
 <span class="var">${TEMPDIR}</span> and <span class="var">${/}</span> which are used in the above table.</p>
 </div>
 <div class="section" id="using-variables">
-<h2><a class="toc-backref" href="#id22">Using variables</a></h2>
+<h2><a class="toc-backref" href="#id23">Using variables</a></h2>
 <p>Variables can be used in most places in the test data. They are most
 commonly used as arguments to keywords like the following test case
 demonstrates.  Return values from keywords can also be assigned to
@@ -1188,9 +1187,9 @@ values.</p>
 </div>
 </div>
 <div class="section" id="organizing-test-cases">
-<h1><a class="toc-backref" href="#id23">Organizing test cases</a></h1>
+<h1><a class="toc-backref" href="#id24">Organizing test cases</a></h1>
 <div class="section" id="test-suites">
-<h2><a class="toc-backref" href="#id24">Test suites</a></h2>
+<h2><a class="toc-backref" href="#id25">Test suites</a></h2>
 <p>Collections of test cases are called test suites in Robot
 Framework. Every input file which contains test cases forms a test
 suite. When <a class="reference internal" href="#running-this-demo">running this demo</a>, you see test suite
@@ -1209,7 +1208,7 @@ pybot .
 </pre>
 </div>
 <div class="section" id="setup-and-teardown">
-<h2><a class="toc-backref" href="#id25">Setup and teardown</a></h2>
+<h2><a class="toc-backref" href="#id26">Setup and teardown</a></h2>
 <p>If you want a set of actions to occur before and after each test
 executes, use the <span class="name">Test Setup</span> and <span class="name">Test Teardown</span>
 settings like so:</p>
@@ -1237,7 +1236,7 @@ Teardown</span> settings to specify actions to be executed before and after
 an entire test suite executes.</p>
 </div>
 <div class="section" id="using-tags">
-<h2><a class="toc-backref" href="#id26">Using tags</a></h2>
+<h2><a class="toc-backref" href="#id27">Using tags</a></h2>
 <p>Robot Framework allows setting tags for test cases to give them free
 metadata.  Tags can be set for all test cases in a file with
 <span class="name">Default Tags</span> or <span class="name">Force Tags</span> settings like in the table
@@ -1278,7 +1277,7 @@ pybot --exclude database quickstart.html
 </div>
 </div>
 <div class="section" id="creating-test-libraries">
-<h1><a class="toc-backref" href="#id27">Creating test libraries</a></h1>
+<h1><a class="toc-backref" href="#id28">Creating test libraries</a></h1>
 <p>Robot Framework offers a simple API for creating test libraries, both with
 Python and Java. The <a class="reference external" href="http://code.google.com/p/robotframework/wiki/UserGuide">user guide</a> contains detailed description with examples.</p>
 <p>Below is the source code of <span class="name">LoginLibrary</span> test library used in
@@ -1322,7 +1321,7 @@ User</span> is mapped to actual implementation of method
 <div class="footer">
 <hr class="footer" />
 <p>Generated by <a class="reference external" href="http://docutils.sourceforge.net/rst.html">reStructuredText</a>. Syntax highlighting by <a class="reference external" href="http://pygments.org/">Pygments</a>.</p>
-<p>Generated on: 2009-03-04 23:23 UTC.
+<p>Generated on: 2009-08-11 11:05 UTC.
 </p>
 
 </div>
