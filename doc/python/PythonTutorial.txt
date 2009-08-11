@@ -1,7 +1,15 @@
-Python Basics for Robot Test Library Developers
-===============================================
+.. include:: <isonum.txt>
 
-.. contents::
+Python Tutorial for Robot Framework Test Library Developers
+===========================================================
+
+| Copyright |copy| Nokia Siemens Networks 2009
+| Licensed under the `Creative Commons Attribution 3.0 Unported`__ license
+
+__ http://creativecommons.org/licenses/by/3.0/
+
+.. contents:: Table of Contents
+   :depth: 2
 
 Introduction
 ------------
