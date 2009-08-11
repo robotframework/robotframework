@@ -11,10 +11,10 @@ Introduction
   libraries for `Robot Framework`_.
 
 * Earlier programming experience is expected but not absolutely
-  necessarily.
+  necessary.
 
 * The main study material for this training is *Dive Into Python* book
-  which is really good and freely available for online reading,
+  which is really good and freely available for on-line reading,
   downloading or printing from http://diveintopython.org.
 
 * That book is targeted for people who already know how to program. If
@@ -30,7 +30,7 @@ Introduction
   general and `Google search`_ returns a lot of hits too.
 
 .. _Python language: http://python.org
-.. _Robot Framework: https://cwiki.nokia.com/RobotFramework
+.. _Robot Framework: http://robotframework.org
 .. _Python Tutorial: http://docs.python.org/tut/tut.html
 .. _Google search: http://www.google.fi/search?q=python+tutorial
 .. _How to Think Like a (Python) Programmer: http://www.greenteapress.com/thinkpython/
@@ -40,63 +40,85 @@ Installation
 ------------
 
 * Everyone is supposed to have Python installed because Robot Framework
-  requires it. 
+  requires it.
 
 * If you don't have it, get an installer e.g. from
-  http://python.org. Python 2.5(.x) is recommended but 2.4 and 2.3 are
-  ok too.
+  http://python.org. Python 2.6(.x) is recommended but 2.5 and 2.4 can
+  be also used.
 
 * It is highly recommended that you configure your system so that you
   can run Python from command line simply by typing ``python`` and pressing
   enter.
 
-  - On Windows, and possible some other systems, that requires adding
+  - On Windows, and possibly on some other systems, this requires adding
     Python installation directory into PATH environment variable. For
-    instruction see
-    e.g. https://cwiki.nokia.com/RobotFramework/SettingPath
+    instructions see e.g. http://robotframework.googlecode.com/svn/tags/robotframework-2.1/doc/userguide/RobotFrameworkUserGuide.html#setting-up-environment
 
 
-Interactive Console
--------------------
+Interactive Interpreter
+-----------------------
 
 * Start from command line by typing ``python``. In Windows you can
   also start it from ``Start > All Programs > Python 2.x``.
 
+* Statements and expressions can be written in the console. Pressing <Enter>
+  will interpret the line and any possible results are echoed. Try for example::
+
+	>>> 1+2
+	3
+
 * To exit press first ``Ctrl-Z`` and then enter on Windows and
-  ``Ctrl-D`` on other systems. 
+  ``Ctrl-D`` on other systems.
 
-  - You can exit Python 2.5 interpreter also with command ``exit()``.
+  - You can exit Python 2.5/2.6 interpreter also with command ``exit()``.
 
-* See http://diveintopython.org/installing_python/shell.html for some
-  examples. 
+* See http://diveintopython.org/installing_python/shell.html for some examples.
 
 
-Strings, Numbers and Other Basic Types 
---------------------------------------
+Basic Data Types
+----------------
 
 * Python has strings, integers, floating point numbers, boolean values
   (``True`` and ``False``) similarly as most other programming languages.
 
 * Strings can be enclosed into double or single quotes (they don't
-  have any difference like they do in Perl). 
+  have any difference like they do in Perl).
 
-* Unicode strings have a special syntax like ``u"Hyv\xE4\xE4 y\xF6\t\xE4!"``. 
-  Using Unicode with Python is not coverred otherwise in this training
+* Unicode strings have a special syntax like ``u"Hyv\xE4\xE4 y\xF6\t\xE4!"``.
+  Using Unicode with Python is not covered otherwise in this training
   but you can find a lot of information about it with search engines.
 
 * ``None`` is a special value meaning nothing similarly as ``null`` in
   Java.
 
-* Try at least these on on the interpreter::
+* Try at least these on the interpreter::
 
-    >>> a = 2
-    >>> b = 2.5
-    >>> print a * b
+    >>> 2 * 2.5
     5.0
-    >>> print 'This is easy'
+    >>> 'This is easy'
     This is easy
-    >>> print "Ain't it?"
+    >>> "Ain't it?"
     Ain't it?
+
+
+Variables
+---------
+
+* Valid characters in variables identifiers are letters and underscore.
+
+* Variables are not declared, they start to exist when they are first assigned.
+
+* Try it out::
+
+    >>> a = 3
+    >>> a
+    3
+    >>> b = 4
+    >>> a*b
+    12
+    >>> greeting = 'Hello'
+    >>> greeting
+    'Hello'
 
 
 Python Editors
@@ -104,11 +126,11 @@ Python Editors
 
 * There are a lot of different Python editors available.
 
-* Most general editors (Emacs, vi, Eclipse, UltraEdit...) can be
+* Most general editors (Emacs, vim, Eclipse, UltraEdit...) can be
   used very well but
 
   - learning curve can be quite steep unless you already know them, and
-  - having a mode or pluging that highlights the source, handles
+  - having a mode or plug-in that highlights the source, handles
     indentation, etc. is nearly mandatory.
 
 * Standard Python installation includes `IDLE editor`_ that comes with
@@ -121,16 +143,16 @@ Python Editors
 Simplest Possible Program (Mandatory "Hello, world!" Example)
 -----------------------------------------------------------------------
 
-* Create a file ``hello.py`` with your editor of choise.
+* Create a file ``hello.py`` with your editor of choice.
 
 * Write ``print "Hello, world!"`` into the file, run it from command
-  line like  
+  line like
 
     python hello.py
 
-  and you should get ``Hello, world!`` printed into the console.
+  You should get ``Hello, world!`` printed into the console.
 
-* You can of course add more code to the same file too. 
+* You can of course add more code to the same file too.
 
 * For a lot more interesting example see
   http://diveintopython.org/getting_to_know_python/index.html
@@ -164,7 +186,7 @@ Functions ("Hello, world!" Strikes Back)
 
 * The hard part in this example is string formatting (i.e. ``"Hello,
   %s!" % name``). For more information about it see e.g.
-  http://diveintopython.org/native_data_types/formatting_strings.html 
+  http://diveintopython.org/native_data_types/formatting_strings.html
 
 * For more information about declaring functions read
   http://diveintopython.org/getting_to_know_python/declaring_functions.html
@@ -176,7 +198,7 @@ Documenting Functions
 * Documenting functions, classes, etc. in Python is both easy and important:
   http://diveintopython.org/getting_to_know_python/documenting_functions.html
 
-* Interestingly docs are also available dynamicly. Try this out::
+* Interestingly docs are also available dynamically. Try this out::
 
     def hello():
         """Prints 'Hello, world!' to the standard output."""
@@ -212,7 +234,7 @@ Lists, Tuples and Dictionaries
     ['Some', 'strings', 'HERE', 42]
 
 * A tuple is a list which you can't change after you have created
-  it. 
+  it.
 
     >>> t = (1,2,'x')
     >>> t[0]
@@ -220,15 +242,15 @@ Lists, Tuples and Dictionaries
     >>> t[-1]
     'x'
 
-* A dictionary is an unordered collection of key-value pairs. 
+* A dictionary is an unordered collection of key-value pairs.
 
-    >>> d = {'x': 'some value', 'a': 1, 'b': 2} 
+    >>> d = {'x': 'some value', 'a': 1, 'b': 2}
     >>> d['a']
     1
     >>> d['x']
     'some value'
     >>> d['a'] = d['b']
-    >>> d['tuple'] = t  
+    >>> d['tuple'] = t
     >>> d
     {'a': 2, 'x': 'some value', 'b': 2, 'tuple': (1, 2, 'x')}
 
@@ -245,7 +267,24 @@ Control Flow
   -  ``for`` and ``while`` loops with ``break`` and ``continue``
      statements.
 
-* For examples and more information:
+* For example::
+
+    def good_morning_or_night(name, morning=True):
+        if morning:
+            print 'Good morning %s' % name
+        else:
+            print 'Good night %s' % name
+
+    def greet_many(names):
+        for name in names:
+            print 'Hello %s' % name
+
+    if __name__ == '__main__':
+        good_morning_or_night('Luke')
+        good_morning_or_night('Dad', morning=False)
+        greet_many(['Luke', 'Yoda'])
+
+* For more examples and information:
 
   - http://docs.python.org/tut/node6.html
   - http://diveintopython.org/file_handling/for_loops.html
@@ -258,12 +297,6 @@ Control Flow
   comprehension`_. It may feel weird and hard to read first but after
   using it a few times you are likely to love it.
 
-* Because iterating over lists with ``for`` is so nice you don't
-  normally need C-like ``for (int i=0; i<10; i++)`` syntax where ``i``
-  is just a temporaty variable used for accessing items in an
-  array. If you really need that ``i`` you can use ``range()`` or
-  ``enumerate()`` methods with a ``for`` loop. 
-
 .. _list comprehension: http://diveintopython.org/native_data_types/mapping_lists.html
 
 
@@ -275,7 +308,7 @@ Optional And Named Arguments for Functions (Return of the "Hello, world!")
 
     >>> def hello(name="World"):
     ...     print "Hello, %s!" % name
-    ... 
+    ...
     >>> hello()
     Hello, World!
     >>> hello("Robot")
@@ -288,7 +321,7 @@ Optional And Named Arguments for Functions (Return of the "Hello, world!")
 
     >>> def test(a, b=1, c=2, d=3):
     ...   print a, b, c, d
-    ... 
+    ...
     >>> test(0)
     0 1 2 3
     >>> test(0, 42)
@@ -300,9 +333,9 @@ Optional And Named Arguments for Functions (Return of the "Hello, world!")
 
 * Robot keywords can have default values but they are always used with
   positional arguments. For example if above ``hello`` method was used
-  as a keyword, it could be used with zero or one argument. 
+  as a keyword, it could be used with zero or one argument.
 
-* For more information about optional and named arguments: 
+* For more information about optional and named arguments:
   http://diveintopython.org/power_of_introspection/optional_arguments.html
 
 
@@ -316,7 +349,7 @@ Variable Number of Arguments
 
     >>> def example(arg1, arg2, *rest):
     ...     print arg1, arg2, rest
-    ... 
+    ...
     >>> example(1, 2)
     1 2 ()
     >>> example(1, 2, 3)  
@@ -389,7 +422,7 @@ Module search path (PYTHONPATH)
 * Python modules aren't automatically searched everywhere on you
   machine. Python has certain default places to search modules for
   (e.g. it's own library directory which is often in place like
-  ``C:\Python25\Lib`` or ``/usr/lib/python2.5``) and additionally it
+  ``C:\Python26\Lib`` or ``/usr/lib/python2.6``) and additionally it
   looks for them from so called PYTHONPATH. 
 
 * PYTHONPATH is an environment variable which contains places (mainly
@@ -411,7 +444,7 @@ Classes and Instances
   really handy.
 
 * The syntax for creating classes and then instances from them is
-  relatively straightforwarded::
+  relatively straightforward::
 
     >>> class MyClass:
     ...     def __init__(self, name):
@@ -425,7 +458,7 @@ Classes and Instances
     >>> c.hello('Tellus')
     Robot says hello to Tellus!
 
-* The really weird thing in the syntac is that every class method must
+* The really weird thing in the syntax is that every class method must
   have ``self`` as the first argument in the signature. After you
   create an instance of the class Python *binds* the method and takes
   care of passing the ``self`` argument automatically so you don't use
@@ -436,7 +469,7 @@ Classes and Instances
   <http://diveintopython.org/object_oriented_framework/index.html>`_
   or/and study `a detailed information from Python Tutorial
   <http://docs.python.org/tut/node11.html>`_
-    
+
 * A Robot test library can either be a module or a class. Modules are
   normally adequate for simple libraries but classes offer more
   flexibility and power.
@@ -453,7 +486,7 @@ Exceptions
 * Compared to Java there are some terminology differences (``raise``
   vs. ``throw`` and ``except`` vs.``catch``) but the biggest real
   difference to is that there are no checked exceptions i.e. you don't
-  need to add ``throws SomeException`` to those methods that possible
+  need to add ``throws SomeException`` to those methods that possibly
   raise exceptions.
 
 * More info: http://diveintopython.org/file_handling/index.html
@@ -466,10 +499,10 @@ Regular Expressions
 -------------------
 
 * Regular expressions are really handy for processing strings which is
-  a really common need in test automation. 
+  a really common need in test automation.
 
 * Python has a really fast regular expression engine and it uses a
-  syntax that is derived from Perl's regexp syntax similarlys as
+  syntax that is derived from Perl's regexp syntax similarly as
   e.g. Java.
 
 * A good introduction is
@@ -485,14 +518,14 @@ Unit Testing
 
 * Python has several unit testing frameworks. Two of them,
   ``unittest`` and ``doctest``, are in the standard library. The
-  former is immediatelly familiar for anyone who has used JUnit or
+  former is immediately familiar for anyone who has used JUnit or
   some other xUnit framework and the other is interesting because it
   allows using function doc strings for tests.
 
-* Dive Into Python has really good chapters about 
+* Dive Into Python has really good chapters about
 
   - `unit testing`_,
-  - `test-driven development`_ (TDD), and 
+  - `test-driven development`_ (TDD), and
   - refactoring_.
 
 .. _unit testing: http://diveintopython.org/unit_testing/index.html
