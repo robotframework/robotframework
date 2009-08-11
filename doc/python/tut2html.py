@@ -2,7 +2,7 @@
 
 """tut2html.py -- Creates HTML version of Python Tutorial
 
-Usage:  ug2html.py
+Usage:  tut2html.py
 """
 
 import os
@@ -116,7 +116,7 @@ def create_tutorial():
     print 'Creating Python tutorial ...'
     ugdir = os.path.dirname(os.path.abspath(__file__))
 
-    description = 'HTML generator for Robot Framework User Guide.'
+    description = 'HTML generator for Python Tutorial.'
     arguments = '''
 --time
 PythonTutorial.txt
