@@ -22,6 +22,7 @@ from robot.errors import DataError
 from rawdatatables import SimpleTable, ComplexTable
 from htmlreader import HtmlReader
 from tsvreader import TsvReader
+from txtreader import TxtReader
 try:
     from restreader import RestReader
 except ImportError:
@@ -34,7 +35,8 @@ except ImportError:
 PROCESS_CURDIR = True
 
 READERS = { '.html': HtmlReader, '.htm': HtmlReader, '.xhtml': HtmlReader,
-            '.tsv': TsvReader , '.rst': RestReader, '.rest': RestReader }
+            '.tsv': TsvReader , '.rst': RestReader, '.rest': RestReader,
+            '.txt': TxtReader}
 
 SETTING_TABLES = ['Setting','Settings','Metadata']
 VARIABLE_TABLES = ['Variable','Variables']
