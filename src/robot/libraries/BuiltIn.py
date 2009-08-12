@@ -1217,8 +1217,8 @@ class _Misc:
         NAMESPACES.current.library_search_order = libraries
         return library_search_order
     
-    def get_time(self, format='timestamp'):
-        """Returns the current time in the requested format. 
+    def get_time(self, format='timestamp', time_='NOW'):
+        """Returns the given time in the requested format. 
         
         How time is returned is determined based on the given `format` string
         as follows. Note that all checks are case-insensitive.
@@ -1234,7 +1234,27 @@ class _Misc:
 
         - Otherwise (and by default) the time is returned as a timestamp string
           in the format '2006-02-24 15:08:31'.
-        
+
+        `time`, new argument in Robot Framework 2.1.1, can be given in four 
+        different formats. By default the current time is used.
+
+        1) If `time` is a floating point number, it is interpreted as
+           seconds since epoch (Jan 1, 1970 0:00:00). This
+           documentation is written about 1177654467 seconds since
+           epoch.
+
+        2) If `time` is a valid timestamp, that time will be used. Valid
+           timestamp formats are 'YYYY-MM-DD hh:mm:ss' and 'YYYYMMDD hhmmss'.
+
+        3) If `time` is equal to 'NOW' (case-insensitive), the
+           current time is used.
+
+        4) If `time` is in the format 'NOW - 1 day' or 'NOW + 1 hour
+           30 min', the current time plus/minus the time specified
+           with the time string is used. The time string format is
+           described in an appendix of Robot Framework User Guide.
+
+
         Examples (expecting the current time is 2006-03-29 15:06:21):
         | ${time} = | Get Time |             |  |  |
         | ${secs} = | Get Time | epoch       |  |  |
@@ -1250,8 +1270,21 @@ class _Misc:
         - @{time} = ['2006', '03', '29', '15', '06', '21']
         - ${y} = '2006'
         - ${s} = '21'
+        
+        | ${time} = | Get Time |      | 1177654467 |
+        | ${secs} = | Get Time | sec  | 2007-04-27 09:14:27 |
+        | ${year} = | Get Time | year | NOW                | # The time of execution |
+        | ${day} = | Get Time | day  | NOW - 1d           | # 1 day subtraced from NOW |
+        | @{time} = | Get Time | hour min sec | NOW + 1h 2min 3s   | # 1h 2min 3s added to NOW |
+        => 
+        - ${time} = '2007-04-27 09:14:27'
+        - ${secs} = 27
+        - ${year} = '2006'
+        - ${day} = '28'
+        - @{time} = ['16', '08', '24']
+
         """
-        return utils.get_time(format)
+        return utils.get_time(format, utils.parse_time(time_))
 
     def evaluate(self, expression, modules=None):
         """Evaluates the given expression in Python and returns the results.
