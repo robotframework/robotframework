@@ -1,38 +1,40 @@
-"This text should be ignored, even though it's no a comment."            
+This text should be ignored, even though it's no a comment.
 We have a devious plan to rule the world with robots.            
-*Setting*  *Value*   *Value*   *Value*   *Value*
 
-Document   A complex testdata file   in tsv format.      
+*Setting*      *Value*
+
+Document       A complex testdata file   in txt format.      
 Default Tags   default1         
-Force Tags   force1   force2      
+Force Tags     force1   force2      
 
-Suite Setup   Log   Setup      
-Test Teardown   Log   Test Teardown      
-Resource   ../resources/tsv_resource.tsv         
-Variables   ../resources/variables.py         
-Library   OperatingSystem         
+Suite Setup    Log   Setup      
+Test Teardown  Log   Test Teardown      
+Resource       ../resources/tsv_resource.tsv         
+Variables      ../resources/variables.py         
+Library       OperatingSystem         
 
 
-*Variable*   *Value*   *Value*   *Value*   *Value*
+* Variable
 
 ${table_var}   foo         
 @{table_listvar}   bar   ${table_var}      
 ${quoted}   """this has """"many "" quotes """""         
 ${single_quoted}   s'ingle'qu'ot'es''         
 
-*Test Case*   *Action*   *Argument*   *Argument*   *Argument*
+
+***Test Case***
 
 Passing   Log   Passing test case.      
 
-Failing   [Document]   FAIL    Failing test case.   
-   Fail   Failing test case.      
-User Keyword   [Document]   FAIL   A cunning argument. != something   
-   My Keyword With Arg   A cunning argument.      
+Failing        [Document]   FAIL    Failing test case.   
+   Fail                     Failing test case.      
+User Keyword   [Document]   FAIL    A cunning argument. != something   
+   My Keyword With Arg      A cunning argument.      
 
 Own Tags   [Tags]   own1   own2
    Log   tags test   
 
-Default Tags   noop      
+Default Tags   No Operation
 
 Variable Table   Equals   ${table_var}   foo
    Equals   @{table_listvar}[0]   bar
