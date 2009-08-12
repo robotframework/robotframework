@@ -225,7 +225,40 @@ class TestTime(unittest.TestCase):
         seps = ('-', ' ', ':', '.')
         elapsed = get_elapsed_time(get_timestamp(*seps), seps=seps)
         assert_true(elapsed < 100)
-        
+
+    def test_parse_modified_time_with_valid_times(self):
+        for input, expected in [('100', 100), 
+                                ('2009-08-21 21:00:00', 1250877600), 
+                                ('20090821 210000', 1250877600)]:
+            assert_equals(parse_time(input), expected)
+
+    def test_parse_modified_time_with_now(self):
+        for input, adjusted in [('now', 0),
+                                ('NOW', 0),
+                                ('Now', 0),
+                                ('now + 100 seconds', 100),
+                                ('now - 100 seconds', -100),
+                                ('now + 1 day 100 seconds', 86500),
+                                ('now - 1 day 100 seconds', -86500),
+                                ('now + 1 day 10 hours 1 minute 10 seconds', 
+                                 122470),
+                                ('now - 1 day 10 hours 1 minute 10 seconds', 
+                                 -122470),
+                                ('now +   100 seconds', 100),
+                                ]:
+            exp = get_time('epoch') + adjusted
+            parsed = parse_time(input)            
+            assert_true(exp <= parsed <= exp +1, 
+                        "%d <= %d <= %d" % (exp, parsed, exp+1) )
+
+    def test_parse_modified_time_with_invalid_times(self):
+        for value, msg in \
+         [("-100", "Epoch time must be positive (got -100)"),
+          ("YYYY-MM-DD hh:mm:ss", "Invalid time format 'YYYY-MM-DD hh:mm:ss'"),
+          ("now + foo", "Invalid time string 'foo'"),
+          ("now +    2a ", "Invalid time string '2a'")]:
+            assert_raises_with_msg(DataError, msg, parse_time, value)
+
 
 if __name__ == "__main__":
     unittest.main()

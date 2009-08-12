@@ -26,7 +26,7 @@ try:
     from robot.output import LOGGER
     from robot.utils import get_version, ConnectionCache, seq2str, \
         timestr_to_secs, secs_to_timestr, plural_or_not, get_time, \
-        secs_to_timestamp, timestamp_to_secs
+        secs_to_timestamp, parse_time
     __version__ = get_version()
     PROCESSES = ConnectionCache('No active processes')
 
@@ -41,7 +41,7 @@ except ImportError:
         def __getattr__(self, name):
             raise NotImplementedError('This usage requires Robot Framework '
                                       'to be installed.')
-    LOGGER = get_time = secs_to_timestamp = timestamp_to_secs = PROCESSES \
+    LOGGER = get_time = secs_to_timestamp = parse_time = PROCESSES \
              = _NotImplemented()
 
 
@@ -1105,7 +1105,7 @@ class OperatingSystem:
                 raise DataError('File does not exist')
             if not os.path.isfile(path):
                 raise DataError('Modified time can only be set to regular files')
-            mtime = self._parse_modified_time(mtime)
+            mtime = parse_time(mtime)
         except DataError, err:
             raise DataError("Setting modified time of '%s' failed: %s"
                             % (path, err))
@@ -1114,29 +1114,6 @@ class OperatingSystem:
         tstamp = secs_to_timestamp(mtime, ('-',' ',':'))
         self._link("Set modified time of '%%s' to %s" % tstamp, path)
         
-    def _parse_modified_time(self, mtime):
-        orig_time = mtime
-        try:
-            mtime = round(float(mtime))
-            if mtime < 0:
-                raise DataError("Epoch time must be positive (got %d)" % mtime)
-            return mtime
-        except ValueError:
-            pass
-        try:
-            return timestamp_to_secs(mtime, (' ', ':', '-', '.'))
-        except DataError:
-            pass
-        mtime = mtime.lower().replace(' ', '')
-        now = round(time.time())
-        if mtime == 'now':
-            return now
-        if mtime.startswith('now'):
-            if mtime[3] == '+':
-                return now + timestr_to_secs(mtime[4:])
-            if mtime[3] == '-':
-                return now - timestr_to_secs(mtime[4:])
-        raise DataError("Invalid time format '%s'" % orig_time)
 
     def get_file_size(self, path):
         """Returns and logs file size as an integer in bytes"""

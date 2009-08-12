@@ -301,3 +301,37 @@ def _split_timestamp(timestamp, seps):
     secs = int(timestamp[12:14])
     millis = int(timestamp[14:17])
     return years, mons, days, hours, mins, secs, millis
+
+def parse_time(time_):
+    """ Parses the time since epoch from given time.
+    
+        Given time can be in four different formats.
+        
+        1) Floating point number is interpreted as time since epoch.
+        2) Valid timestamp ('YYYY-MM-DD hh:mm:ss' and 'YYYYMMDD hhmmss').
+        3) 'NOW' (case-insensitive) is the current time.
+        4) Format 'NOW - 1 day' or 'NOW + 1 hour 30 min' is the current time 
+           plus/minus the time specified with the time string.
+    """    
+    orig_time = time_
+    try:
+        time_ = round(float(time_))
+        if time_ < 0:
+            raise DataError("Epoch time must be positive (got %d)" % time_)
+        return time_
+    except ValueError:
+        pass
+    try:
+        return timestamp_to_secs(time_, (' ', ':', '-', '.'))
+    except DataError:
+        pass
+    time_ = time_.lower().replace(' ', '')
+    now = round(time.time())
+    if time_ == 'now':
+        return now
+    if time_.startswith('now'):
+        if time_[3] == '+':
+            return now + timestr_to_secs(time_[4:])
+        if time_[3] == '-':
+            return now - timestr_to_secs(time_[4:])
+    raise DataError("Invalid time format '%s'" % orig_time)
