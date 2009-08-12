@@ -35,8 +35,8 @@ except ImportError:
     __version__ = '<unknown>'
     seq2str = lambda items: ', '.join(["'%s'" % item for item in items])
     timestr_to_secs = int
-    secs_to_timestr = lambda secs: '%d second%s' % (secs, plural_or_not(secs))
     plural_or_not = lambda count: count != 1 and 's' or ''
+    secs_to_timestr = lambda secs: '%d second%s' % (secs, plural_or_not(secs))
     class _NotImplemented:
         def __getattr__(self, name):
             raise NotImplementedError('This usage requires Robot Framework '
