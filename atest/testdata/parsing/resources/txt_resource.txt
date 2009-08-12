@@ -1,0 +1,11 @@
+*Setting*  Value  Value  Value  Value
+
+Resource   txt_resource2.txt      
+
+
+*Variable*  Value  Value  Value  Value
+${txt_resource_var}  TXT Resource Variable      
+
+
+*User Keywords  Action  Argument  Argument  Argument
+Keyword from TXT resource  Noop      

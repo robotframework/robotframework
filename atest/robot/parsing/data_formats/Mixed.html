@@ -1,593 +1,792 @@
+
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html><head>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="RobotIDE" /> 
+<meta name="rf-template" content="False" /> 
 <style type="text/css">
 html {
-font-family: Arial,Helvetica,sans-serif;
-background-color: white;
-color: black;
-}
-p {
-max-width: 60em;
+  font-family: Arial,Helvetica,sans-serif;
+  background-color: white;
+  color: black;
 }
 table {
-border-collapse: collapse;
-empty-cells: show;
-margin: 1em 0em;
-border: 0.1em solid black;
+  border-collapse: collapse;
+  empty-cells: show;
+  margin: 1em 0em;
+  border: 0.1em solid black;
 }
 th, td {
-border-style: solid;
-border-width: 0.05em 0.1em;
-border-color: black;
-padding: 0.1em 0.2em;
-height: 1.5em;
+  border-style: solid;
+  border-width: 0.05em 0.1em;
+  border-color: black;
+  padding: 0.1em 0.2em;
+  height: 1.5em;
+  width: 12em;
 }
 th {
-background-color: rgb(192, 192, 192);
-color: black;
-border-width: 0.1em;
-font-weight: bold;
-text-align: center;
-text-transform: capitalize;
-letter-spacing: 0.1em;
+  background-color: rgb(192, 192, 192);
+  color: black;
+  border-width: 0.1em;
+  font-weight: bold;
+  text-align: center;
+  letter-spacing: 0.1em;
 }
-/* Widths of named columns */
-col.name {
-width: 10em;
+td.name {
+  background-color: rgb(240, 240, 240);
+  letter-spacing: 0.1em;
 }
-.action, .value, .arg {
-width: 15em;
+td.name, th.name {
+  width: 10em;
 }
-/* Properties for the name column - td:first-child should work in CSS 2.1 avare browsers (tested in Firefox)
-- col.name is against specs but works in IE
-*/
-td:first-child, col.name {
-background-color: rgb(240, 240, 240);
-text-transform: capitalize;
-letter-spacing: 0.1em;
-}
-/* required for IE */
-th {
-font-style: normal;
-}
-</style><title>Robot Test Cases</title></head>
+</style>
+<title>Mixed</title>
+</head>
 <body>
-<h1>Robot Test Cases</h1>
-<table border="1">
-<colgroup span="99"><col class="name"><col class="value" span="4"></colgroup> <thead>
+<h1>Mixed</h1>
+<table id="settings" border="1">
 <tr>
-<th>Setting</th>
+<th class="name">Setting</th>
 <th>Value</th>
 <th>Value</th>
-<th>value</th>
+<th>Value</th>
 <th>Value</th>
 </tr>
-</thead> <tbody>
 <tr>
-<td>Force Tags</td>
+<td class="name">Force Tags</td>
 <td>regression</td>
 <td>jybot</td>
 <td>pybot</td>
 <td></td>
 </tr>
 <tr>
-<td>Resource</td>
+<td class="name">Suite Setup</td>
+<td>Check is docutils installed</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name">Resource</td>
 <td>formats_resource.html</td>
 <td></td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td>Suite Setup</td>
-<td>Check is docutils installed</td>
+<td class="name"></td>
+<td></td>
 <td></td>
 <td></td>
 <td></td>
 </tr>
-</tbody>
 </table>
-<table border="1">
-<colgroup span="99"><col class="name"><col class="value" span="4"></colgroup> <thead>
+<table id="variables" border="1">
 <tr>
-<th>Variable</th>
+<th class="name">Variable</th>
 <th>Value</th>
 <th>Value</th>
 <th>Value</th>
 <th>Value</th>
 </tr>
-</thead> <tbody>
 <tr>
-<td>@{HTML TESTS}</td>
-<td align="undefined" valign="undefined">HTML
-Passing</td>
-<td align="undefined" valign="undefined">HTML
-Failing</td>
+<td class="name">@{HTML TESTS}</td>
+<td>HTML Passing</td>
+<td>HTML Failing</td>
 <td>TSV Resource</td>
 <td>ReST Resource</td>
 </tr>
 <tr>
-<td>@{TSV TESTS}</td>
-<td align="undefined" valign="undefined">TSV
-Passing</td>
-<td align="undefined" valign="undefined">TSV&nbsp;Failing</td>
+<td class="name">...</td>
+<td>TXT Resource</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name">@{TSV TESTS}</td>
+<td>TSV Passing</td>
+<td>TSV Failing</td>
 <td>HTML Resource</td>
 <td>ReST Resource</td>
 </tr>
 <tr>
-<td>@{REST TESTS}</td>
-<td align="undefined" valign="undefined">ReST
-Passing</td>
-<td align="undefined" valign="undefined">ReST&nbsp;Failing</td>
-<td>HTML Resource</td>
-<td>TSV&nbsp;Resource</td>
+<td class="name">...</td>
+<td>TXT Resource</td>
+<td></td>
+<td></td>
+<td></td>
 </tr>
-</tbody>
+<tr>
+<td class="name">@{REST TESTS}</td>
+<td>ReST Passing</td>
+<td>ReST Failing</td>
+<td>HTML Resource</td>
+<td>TSV Resource</td>
+</tr>
+<tr>
+<td class="name">...</td>
+<td>TXT Resource</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name">@{TXT TESTS}</td>
+<td>TXT Passing</td>
+<td>TXT Failing</td>
+<td>HTML Resource</td>
+<td>ReST Resource</td>
+</tr>
+<tr>
+<td class="name">...</td>
+<td>TSV Resource</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
 </table>
-<table border="1">
-<colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
-<thead> <tr>
-<th>Test Case</th>
+<table id="testcases" border="1">
+<tr>
+<th class="name">Test Case</th>
 <th>Action</th>
 <th>Argument</th>
 <th>Argument</th>
 <th>Argument</th>
 </tr>
-</thead> <tbody>
 <tr>
-<td>HTML Suite With TSV Resource</td>
+<td class="name"><a name="test_HTML Suite With TSV Resource">HTML Suite With TSV Resource</a></td>
 <td>Run Tests And Verify Status</td>
 <td>${MIXEDDIR}${/}HTML.html</td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Check Test Case</td>
 <td>TSV Resource</td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td></td>
 <td></td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td>HTML Suite With ReST Resource</td>
+<td class="name"><a name="test_HTML Suite With ReST Resource">HTML Suite With ReST Resource</a></td>
 <td>[Setup]</td>
-<td>Make test non-critical and fail it if docutils is not
-installed</td>
+<td>Make test non-critical and fail it if docutils is not installed</td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td><br>
-</td>
+<td class="name"></td>
 <td>Previous Run Should Have Been Successful</td>
 <td></td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Check Test Case</td>
 <td>ReST Resource</td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td></td>
 <td></td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td>TSV Suite With HTML Resource</td>
+<td class="name"><a name="test_HTML Suite With TXT Resource">HTML Suite With TXT Resource</a></td>
+<td>Previous Run Should Have Been Successful</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Check Test Case</td>
+<td>TXT Resource</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="test_TSV Suite With HTML Resource">TSV Suite With HTML Resource</a></td>
 <td>Run Tests And Verify Status</td>
 <td>${MIXEDDIR}${/}TSV.tsv</td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Check Test Case</td>
 <td>HTML Resource</td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td></td>
 <td></td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td>TSV Suite With ReST Resource</td>
+<td class="name"><a name="test_TSV Suite With ReST Resource">TSV Suite With ReST Resource</a></td>
 <td>[Setup]</td>
-<td>Make test non-critical and fail it if docutils is not
-installed</td>
-<td align="undefined" valign="undefined"></td>
-<td align="undefined" valign="undefined"></td>
+<td>Make test non-critical and fail it if docutils is not installed</td>
+<td></td>
+<td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Previous Run Should Have Been Successful</td>
 <td></td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td align="undefined" valign="undefined"></td>
+<td class="name"></td>
 <td>Check Test Case</td>
 <td>ReST Resource</td>
-<td align="undefined" valign="undefined"></td>
-<td align="undefined" valign="undefined"></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td>ReST Suite With HTML Resource</td>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="test_TSV Suite With TXT Resource">TSV Suite With TXT Resource</a></td>
+<td>Previous Run Should Have Been Successful</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Check Test Case</td>
+<td>TXT Resource</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="test_ReST Suite With HTML Resource">ReST Suite With HTML Resource</a></td>
 <td>[Setup]</td>
-<td>Make test non-critical and fail it if docutils is not
-installed</td>
+<td>Make test non-critical and fail it if docutils is not installed</td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Run Tests And Verify Status</td>
 <td>${MIXEDDIR}${/}REST.rest</td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td align="undefined" valign="undefined"></td>
+<td class="name"></td>
 <td>Check Test Case</td>
 <td>HTML Resource</td>
-<td align="undefined" valign="undefined"></td>
-<td align="undefined" valign="undefined"></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td>ReST Suite With TSV Resource</td>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="test_ReST Suite With TSV Resource">ReST Suite With TSV Resource</a></td>
 <td>[Setup]</td>
-<td>Make test non-critical and fail it if docutils is not
-installed</td>
+<td>Make test non-critical and fail it if docutils is not installed</td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Previous Run Should Have Been Successful</td>
 <td></td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td align="undefined" valign="undefined"></td>
+<td class="name"></td>
 <td>Check Test Case</td>
 <td>TSV Resource</td>
-<td align="undefined" valign="undefined"></td>
-<td align="undefined" valign="undefined"></td>
+<td></td>
+<td></td>
 </tr>
 <tr>
-<td align="undefined" valign="undefined"></td>
-<td align="undefined" valign="undefined"></td>
-<td align="undefined" valign="undefined"></td>
-<td align="undefined" valign="undefined"></td>
-<td align="undefined" valign="undefined"></td>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
 </tr>
 <tr>
-<td>Directory with Mixed Data</td>
+<td class="name"><a name="test_ReST Suite With TXT Resource">ReST Suite With TXT Resource</a></td>
+<td>[Setup]</td>
+<td>Make test non-critical and fail it if docutils is not installed</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Previous Run Should Have Been Successful</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Check Test Case</td>
+<td>TXT Resource</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="test_TXT Suite With HTML Resource">TXT Suite With HTML Resource</a></td>
+<td>Run Tests And Verify Status</td>
+<td>${MIXEDDIR}${/}TXT.txt</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Check Test Case</td>
+<td>HTML Resource</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="test_TXT Suite With ReST Resource">TXT Suite With ReST Resource</a></td>
+<td>[Setup]</td>
+<td>Make test non-critical and fail it if docutils is not installed</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Previous Run Should Have Been Successful</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Check Test Case</td>
+<td>ReST Resource</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="test_TXT Suite With TSV Resource">TXT Suite With TSV Resource</a></td>
+<td>Previous Run Should Have Been Successful</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Check Test Case</td>
+<td>TSV Resource</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="test_Directory With Mixed Data">Directory With Mixed Data</a></td>
 <td>Run Tests And Verify Status</td>
 <td>${MIXEDDIR}</td>
-<td align="undefined" valign="undefined"></td>
-<td align="undefined" valign="undefined"></td>
-</tr>
-<tr>
-<td align="undefined" valign="undefined"></td>
-<td align="undefined" valign="undefined">Run Keyword If/Unless Docutils Installed</td>
-<td align="undefined" valign="undefined">Verify Directory with Mixed Data With ReST</td>
-<td align="undefined" valign="undefined">Verify Directory with Mixed Data Without ReST</td>
-<td align="undefined" valign="undefined"></td>
-</tr>
-
-<tr>
-<td align="undefined" valign="undefined"></td>
-<td align="undefined" valign="undefined"></td>
-<td align="undefined" valign="undefined"></td>
-<td align="undefined" valign="undefined"></td>
-<td align="undefined" valign="undefined"></td>
-</tr>
-
-
-
-
-
-<tr>
-<td>multiple Data Sources </td>
-<td>Run Tests And Verify Status</td>
-<td>${HTMLDIR}${/}sample.html </td>
-<td align="undefined" valign="undefined">${TSVDIR}${/}sample.tsv</td>
-<td align="undefined" valign="undefined">${RESTDIR}${/}sample.rst</td>
-</tr>
-<tr>
 <td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Run Keyword If/Unless Docutils Installed</td>
+<td>Verify Directory with Mixed Data With ReST</td>
+<td>Verify Directory with Mixed Data Without ReST</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="test_Multiple Data Sources">Multiple Data Sources</a></td>
+<td>Run Tests And Verify Status</td>
+<td>${HTMLDIR}${/}sample.html</td>
+<td>${TSVDIR}${/}sample.tsv</td>
+<td>${RESTDIR}${/}sample.rst</td>
+</tr>
+<tr>
+<td class="name"></td>
 <td>...</td>
+<td>${TXTDIR}${/}sample.txt</td>
 <td>${MIXEDDIR}</td>
 <td></td>
-<td></td>
 </tr>
-
 <tr>
-<td align="undefined" valign="undefined"></td>
-<td align="undefined" valign="undefined">Run Keyword If/Unless Docutils Installed</td><td align="undefined" valign="undefined">Verify Multiple Data Sources  With ReST</td><td align="undefined" valign="undefined">Verify Multiple Data Sources  Without ReST</td>
-
-
-<td align="undefined" valign="undefined"></td>
+<td class="name"></td>
+<td>Run Keyword If/Unless Docutils Installed</td>
+<td>Verify Multiple Data Sources With ReST</td>
+<td>Verify Multiple Data Sources Without ReST</td>
+<td></td>
 </tr>
-
 <tr>
-<td></td>
+<td class="name"></td>
 <td></td>
 <td></td>
 <td></td>
 <td></td>
 </tr>
-
-
-
-</tbody>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
 </table>
-<table border="1">
-<colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
-<thead> <tr>
-<th>Keyword</th>
+<table id="keywords" border="1">
+<tr>
+<th class="name">Keyword</th>
 <th>Action</th>
 <th>Argument</th>
 <th>Argument</th>
 <th>Argument</th>
 </tr>
-</thead> <tbody>
-
-<tr><td align="undefined" valign="undefined">Verify Directory with Mixed Data With ReST</td><td>Should
-Be Equal</td><td>${SUITE.name}</td><td>Mixed Data</td><td></td></tr><tr>
-<td align="undefined" valign="undefined"></td>
-<td align="undefined" valign="undefined">Should
-Be True</td>
-<td align="undefined" valign="undefined">${SUITE.suites}
-== ['HTML', 'REST', 'TSV']</td>
-<td align="undefined" valign="undefined"></td>
-<td align="undefined" valign="undefined"></td>
-</tr>
 <tr>
-<td align="undefined" valign="undefined"></td>
-<td align="undefined" valign="undefined">Should
-Be Equal</td>
-<td align="undefined" valign="undefined">${SUITE.suites[0].doc}</td>
-<td align="undefined" valign="undefined">Test
-suite in HTML file</td>
-<td align="undefined" valign="undefined"></td>
-</tr>
-<tr>
-<td align="undefined" valign="undefined"></td>
-<td align="undefined" valign="undefined">Should
-Be Equal</td>
-<td align="undefined" valign="undefined">${SUITE.suites[1].doc}</td>
-<td align="undefined" valign="undefined">Test
-suite in ReST file</td>
-<td align="undefined" valign="undefined"></td>
-</tr>
-<tr>
-<td></td>
-<td align="undefined" valign="undefined">Should
-Be Equal</td>
-<td align="undefined" valign="undefined">${SUITE.suites[2].doc}</td>
-<td align="undefined" valign="undefined">Test
-suite in&nbsp;TSV file</td>
-<td></td>
-</tr>
-<tr>
-<td align="undefined" valign="undefined"></td>
-<td>Check Suite Contains Tests<br>
-</td>
-<td>${SUITE.suites[0]}</td>
-<td align="undefined" valign="undefined">@{HTML
-TESTS}</td>
-<td align="undefined" valign="undefined"></td>
-</tr>
-<tr>
-<td align="undefined" valign="undefined"></td>
-<td>Check Suite Contains Tests<br>
-</td>
-<td>${SUITE.suites[1]}</td>
-<td align="undefined" valign="undefined">@{REST
-TESTS}</td>
-<td align="undefined" valign="undefined"></td>
-</tr>
-<tr>
-<td align="undefined" valign="undefined"></td>
-<td>Check Suite Contains Tests<br>
-</td>
-<td>${SUITE.suites[2]}</td>
-<td align="undefined" valign="undefined">@{TSV
-TESTS}</td>
-<td align="undefined" valign="undefined"></td>
-</tr>
-<tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Verify Directory with Mixed Data Without ReST</td><td>Should
-Be Equal</td><td>${SUITE.name}</td><td>Mixed Data</td><td></td></tr>
-<tr>
-<td align="undefined" valign="undefined"><br></td>
-<td align="undefined" valign="undefined">Should
-Be True</td>
-<td align="undefined" valign="undefined">${SUITE.suites}
-== ['HTML', 'TSV']</td>
-<td align="undefined" valign="undefined"></td>
-<td align="undefined" valign="undefined"></td>
-</tr>
-<tr>
-<td align="undefined" valign="undefined"></td>
-<td align="undefined" valign="undefined">Should
-Be Equal</td>
-<td align="undefined" valign="undefined">${SUITE.suites[0].doc}</td>
-<td align="undefined" valign="undefined">Test
-suite in HTML file</td>
-<td align="undefined" valign="undefined"></td>
-</tr>
-
-<tr>
-<td></td>
-<td align="undefined" valign="undefined">Should
-Be Equal</td>
-<td align="undefined" valign="undefined">${SUITE.suites[1].doc}</td>
-<td align="undefined" valign="undefined">Test
-suite in&nbsp;TSV file</td>
-<td></td>
-</tr>
-
-
-
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td>multiple Data Sources </td>
-<td>Run Tests And Verify Status</td>
-<td>${HTMLDIR}${/}sample.html </td>
-<td align="undefined" valign="undefined">${TSVDIR}${/}sample.tsv</td>
-<td align="undefined" valign="undefined">${RESTDIR}${/}sample.rst</td>
-</tr>
-<tr>
-<td></td>
-<td>...</td>
-<td>${MIXEDDIR}</td>
-<td></td>
-<td></td>
-</tr>
-<tr><td></td><td></td><td></td><td></td><td></td></tr><tr>
-<td align="undefined" valign="undefined">Verify Multiple Data Sources With ReST</td>
+<td class="name"><a name="keyword_Verify Directory With Mixed Data With ReST">Verify Directory With Mixed Data With ReST</a></td>
 <td>Should Be Equal</td>
 <td>${SUITE.name}</td>
-<td>Sample &amp; Sample &amp; Sample &amp;
-Mixed Data</td>
+<td>Mixed Data</td>
 <td></td>
 </tr>
 <tr>
-<td align="undefined" valign="undefined"></td>
-<td align="undefined" valign="undefined">Should
-Be True</td>
-<td align="undefined" valign="undefined">${SUITE.suites}
-== ['Sample', 'Sample', 'Sample', 'Mixed Data']</td>
-<td align="undefined" valign="undefined"></td>
-<td align="undefined" valign="undefined"></td>
+<td class="name"></td>
+<td>Should Be True</td>
+<td>${SUITE.suites} == ['HTML', 'REST', 'TSV', 'TXT']</td>
+<td></td>
+<td></td>
 </tr>
 <tr>
+<td class="name"></td>
+<td>Should Be Equal</td>
+<td>${SUITE.suites[0].doc}</td>
+<td>Test suite in HTML file</td>
 <td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Should Be Equal</td>
+<td>${SUITE.suites[1].doc}</td>
+<td>Test suite in ReST file</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Should Be Equal</td>
+<td>${SUITE.suites[2].doc}</td>
+<td>Test suite in TSV file</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Should Be Equal</td>
+<td>${SUITE.suites[3].doc}</td>
+<td>Test suite in TXT file</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
 <td>Check Suite Contains Tests</td>
 <td>${SUITE.suites[0]}</td>
-<td>@{SAMPLE_TESTS}</td>
+<td>@{HTML TESTS}</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Check Suite Contains Tests</td>
 <td>${SUITE.suites[1]}</td>
-<td>@{SAMPLE_TESTS}</td>
+<td>@{REST TESTS}</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Check Suite Contains Tests</td>
 <td>${SUITE.suites[2]}</td>
-<td>@{SAMPLE_TESTS}</td>
+<td>@{TSV TESTS}</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Check Suite Contains Tests</td>
 <td>${SUITE.suites[3]}</td>
-<td align="undefined" valign="undefined">@{HTML
-TESTS}</td>
-<td align="undefined" valign="undefined">@{REST
-TESTS}</td>
+<td>@{TXT TESTS}</td>
+<td></td>
 </tr>
 <tr>
+<td class="name"></td>
 <td></td>
-<td>...</td>
-<td align="undefined" valign="undefined">@{TSV
-TESTS}</td>
-<td align="undefined" valign="undefined"><br>
-</td>
 <td></td>
-</tr> 
-
-<tr><td></td><td></td><td></td><td></td><td></td></tr><tr>
-<td align="undefined" valign="undefined">Verify Multiple Data Sources Without ReST</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="keyword_Verify Directory With Mixed Data Without ReST">Verify Directory With Mixed Data Without ReST</a></td>
 <td>Should Be Equal</td>
 <td>${SUITE.name}</td>
-<td>Sample &amp; Sample &amp;
-Mixed Data</td>
+<td>Mixed Data</td>
 <td></td>
 </tr>
 <tr>
-<td align="undefined" valign="undefined"></td>
-<td align="undefined" valign="undefined">Should
-Be True</td>
-<td align="undefined" valign="undefined">${SUITE.suites}
-== ['Sample', 'Sample', 'Mixed Data']</td>
-<td align="undefined" valign="undefined"></td>
-<td align="undefined" valign="undefined"></td>
+<td class="name"></td>
+<td>Should Be True</td>
+<td>${SUITE.suites} == ['HTML', 'TSV', 'TXT']</td>
+<td></td>
+<td></td>
 </tr>
 <tr>
+<td class="name"></td>
+<td>Should Be Equal</td>
+<td>${SUITE.suites[0].doc}</td>
+<td>Test suite in HTML file</td>
 <td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Should Be Equal</td>
+<td>${SUITE.suites[1].doc}</td>
+<td>Test suite in TSV file</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Should Be Equal</td>
+<td>${SUITE.suites[2].doc}</td>
+<td>Test suite in TXT file</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Check Suite Contains Tests</td>
+<td>${SUITE.suites[0]}</td>
+<td>@{HTML TESTS}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Check Suite Contains Tests</td>
+<td>${SUITE.suites[1]}</td>
+<td>@{TSV TESTS}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Check Suite Contains Tests</td>
+<td>${SUITE.suites[2]}</td>
+<td>@{TXT TESTS}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="keyword_Verify Multiple Data Sources With ReST">Verify Multiple Data Sources With ReST</a></td>
+<td>Should Be Equal</td>
+<td>${SUITE.name}</td>
+<td>Sample &amp; Sample &amp; Sample &amp; Sample &amp; Mixed Data</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Should Be True</td>
+<td>${SUITE.suites} == ['Sample', 'Sample', 'Sample', 'Sample', 'Mixed Data']</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
 <td>Check Suite Contains Tests</td>
 <td>${SUITE.suites[0]}</td>
 <td>@{SAMPLE_TESTS}</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Check Suite Contains Tests</td>
 <td>${SUITE.suites[1]}</td>
 <td>@{SAMPLE_TESTS}</td>
 <td></td>
 </tr>
-
-
-
 <tr>
+<td class="name"></td>
+<td>Check Suite Contains Tests</td>
+<td>${SUITE.suites[2]}</td>
+<td>@{SAMPLE_TESTS}</td>
 <td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Check Suite Contains Tests</td>
+<td>${SUITE.suites[3]}</td>
+<td>@{SAMPLE_TESTS}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Check Suite Contains Tests</td>
+<td>${SUITE.suites[4]}</td>
+<td>@{HTML TESTS}</td>
+<td>@{REST TESTS}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>...</td>
+<td>@{TSV TESTS}</td>
+<td>@{TXT TESTS}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
 <td></td>
 <td></td>
 <td></td>
 <td></td>
 </tr>
 <tr>
+<td class="name"><a name="keyword_Verify Multiple Data Sources Without ReST">Verify Multiple Data Sources Without ReST</a></td>
+<td>Should Be Equal</td>
+<td>${SUITE.name}</td>
+<td>Sample &amp; Sample &amp; Sample &amp; Mixed Data</td>
 <td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Should Be True</td>
+<td>${SUITE.suites} == ['Sample', 'Sample', 'Sample', 'Mixed Data']</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Check Suite Contains Tests</td>
+<td>${SUITE.suites[0]}</td>
+<td>@{SAMPLE_TESTS}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Check Suite Contains Tests</td>
+<td>${SUITE.suites[1]}</td>
+<td>@{SAMPLE_TESTS}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Check Suite Contains Tests</td>
+<td>${SUITE.suites[2]}</td>
+<td>@{SAMPLE_TESTS}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Check Suite Contains Tests</td>
+<td>${SUITE.suites[3]}</td>
+<td>@{HTML TESTS}</td>
+<td>@{TSV TESTS}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>...</td>
+<td>@{TXT TESTS}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
 <td></td>
 <td></td>
 <td></td>
 <td></td>
 </tr>
-</tbody>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
 </table>
-</body></html>
+</body>
+</html>

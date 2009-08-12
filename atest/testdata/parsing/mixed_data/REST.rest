@@ -4,6 +4,7 @@ Setting       \
 Documentation Test suite in ReST file
 Resource      ../resources/html_resource.html
 Resource      ../resources/tsv_resource.tsv
+Resource      ../resources/txt_resource.txt
 ============= ===============================
 
 ======== ======== ===== ===== ===== =====
@@ -46,6 +47,19 @@ ${msg}   \*ERROR* \     \     \     \
 |               |                 |                      | Variable           |
 +---------------+-----------------+----------------------+--------------------+
 |               | Equals          | ${tsv_resource_var2} | TSV Resource       |
+|               |                 |                      | Variable From      |
+|               |                 |                      | Recursive Resource |
++---------------+-----------------+----------------------+--------------------+
+| TXT Resource  | Keyword from    |                      |                    |
+|               | TXT resource    |                      |                    |
++---------------+-----------------+----------------------+--------------------+
+|               | Keyword from    |                      |                    |
+|               | TXT resource 2  |                      |                    |
++---------------+-----------------+----------------------+--------------------+
+|               | Equals          | ${TXT_resource_var}  | TXT Resource       |
+|               |                 |                      | Variable           |
++---------------+-----------------+----------------------+--------------------+
+|               | Equals          | ${TXT_resource_var2} | TXT Resource       |
 |               |                 |                      | Variable From      |
 |               |                 |                      | Recursive Resource |
 +---------------+-----------------+----------------------+--------------------+

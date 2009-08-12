@@ -1,20 +1,15 @@
+
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html><head>
-
-
-
-
-  
-  
-  
-  <style type="text/css">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="RobotIDE" /> 
+<meta name="rf-template" content="False" /> 
+<style type="text/css">
 html {
   font-family: Arial,Helvetica,sans-serif;
   background-color: white;
   color: black;
-}
-p {
-  max-width: 60em;
 }
 table {
   border-collapse: collapse;
@@ -28,6 +23,7 @@ th, td {
   border-color: black;
   padding: 0.1em 0.2em;
   height: 1.5em;
+  width: 12em;
 }
 th {
   background-color: rgb(192, 192, 192);
@@ -35,584 +31,279 @@ th {
   border-width: 0.1em;
   font-weight: bold;
   text-align: center;
-  text-transform: capitalize;
   letter-spacing: 0.1em;
 }
-/* Widths of named columns */
-col.name {
+td.name {
+  background-color: rgb(240, 240, 240);
+  letter-spacing: 0.1em;
+}
+td.name, th.name {
   width: 10em;
 }
-.action, .value, .arg {
-  width: 15em;
-}
-/* Properties for the name column 
-- td:first-child should work in CSS 2.1 avare browsers (tested in Firefox)
-- col.name is against specs but works in IE
-*/
-td:first-child, col.name {
-  background-color: rgb(240, 240, 240);
-  text-transform: capitalize;
-  letter-spacing: 0.1em;
-}
-/* required for IE */
-th {
-  font-style: normal;
-}
-  </style>
-  
-  
-  
-  <title>Robot Test Cases</title></head>
-
+</style>
+<title>HTML</title>
+</head>
 <body>
-
-
-
-
-<h1>Robot Test Cases</h1>
-
-
-
-
-
-<table border="1">
-
-
-
-
-  <colgroup span="99"><col class="name"><col class="value" span="4"></colgroup>
-  <thead>
-  <tr>
-
-
-
-
-    <th>Setting</th>
-
-
-
-
-    <th>Value</th>
-
-
-
-
-    <th>Value</th>
-
-
-
-
-    <th>value</th>
-
-
-
-
-    <th>Value</th>
-
-
-
-
-  </tr>
-
-
-
-
-  </thead>
-  <tbody>
-
-
-
-
-    <tr>
-
-
-
-
-      <td>Document</td>
-
-
-
-
-      <td>Test suite in HTML file</td>
-
-
-
-
-      <td></td>
-
-
-
-
-      <td></td>
-
-
-
-
-      <td></td>
-
-
-
-
-    </tr>
-
-
-
-
-    <tr>
-
-
-
-
-      <td>Resource</td><td>../resources/tsv_resource.tsv</td>
-
-
-
-
-      
-
-
-
-
-      <td></td>
-
-
-
-
-      <td></td>
-
-
-
-
-      <td></td>
-
-
-
-
-    </tr><tr><td>Resource</td><td>../resources/rest_resource.rst</td><td></td><td></td><td></td></tr>
-
-
-
-
-  
-  
-  
-  </tbody>
+<h1>HTML</h1>
+<table id="settings" border="1">
+<tr>
+<th class="name">Setting</th>
+<th>Value</th>
+<th>Value</th>
+<th>Value</th>
+<th>Value</th>
+</tr>
+<tr>
+<td class="name">Documentation</td>
+<td>Test suite in HTML file</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name">Resource</td>
+<td>../resources/tsv_resource.tsv</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name">Resource</td>
+<td>../resources/rest_resource.rst</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name">Resource</td>
+<td>../resources/txt_resource.txt</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
 </table>
-
-
-
-
-
-<table border="1">
-
-
-
-
-  <colgroup span="99"><col class="name"><col class="value" span="4"></colgroup>
-  <thead>
-  <tr>
-
-
-
-
-    <th>Variable</th>
-
-
-
-
-    <th>Value</th>
-
-
-
-
-    <th>Value</th>
-
-
-
-
-    <th>Value</th>
-
-
-
-
-    <th>Value</th>
-
-
-
-
-  </tr>
-
-
-
-
-  </thead>
-  <tbody>
-
-
-
-
-    <tr>
-
-
-
-
-      <td>${msg}</td>
-
-
-
-
-      <td>*ERROR*</td>
-
-
-
-
-      <td></td>
-
-
-
-
-      <td></td>
-
-
-
-
-      <td></td>
-
-
-
-
-    </tr>
-
-
-
-
-    <tr>
-
-
-
-
-      <td></td>
-
-
-
-
-      <td></td>
-
-
-
-
-      <td></td>
-
-
-
-
-      <td></td>
-
-
-
-
-      <td></td>
-
-
-
-
-    </tr>
-
-
-
-
-  
-  
-  
-  </tbody>
+<table id="variables" border="1">
+<tr>
+<th class="name">Variable</th>
+<th>Value</th>
+<th>Value</th>
+<th>Value</th>
+<th>Value</th>
+</tr>
+<tr>
+<td class="name">${msg}</td>
+<td>*ERROR*</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
 </table>
-
-
-
-
-
-<table border="1">
-
-
-
-
-  <colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
-  <thead>
-  <tr>
-
-
-
-
-    <th>Test Case</th>
-
-
-
-
-    <th>Action</th>
-
-
-
-
-    <th>Argument</th>
-
-
-
-
-    <th>Argument</th>
-
-
-
-
-    <th>Argument</th>
-
-
-
-
-    
-
-    
-
-  </tr>
-
-
-
-
-  </thead>
-  <tbody>
-
-
-
-
-    <tr>
-
-
-
-
-      <td>HTML Passing</td>
-
-
-
-
-      <td>NOOP</td>
-
-
-
-
-      <td></td>
-
-
-
-
-      <td></td>
-
-
-
-
-      <td></td>
-
-
-
-
-      
-
-      
-
-    </tr>
-
-
-
-
-    <tr>
-
-
-
-
-      <td>HTML Failing</td>
-
-
-
-
-      <td>[Document]</td>
-
-
-
-
-      <td>FAIL</td>
-
-
-
-
-      <td>**ERROR**</td>
-
-
-
-
-      <td></td>
-
-
-
-
-      
-
-      
-
-    </tr>
-
-    <tr>
-
-      <td align="undefined" valign="undefined"></td>
-
-      <td>Failing</td>
-
-      <td>*${msg}*<br>
-
-      </td>
-
-      <td align="undefined" valign="undefined"></td>
-
-      <td align="undefined" valign="undefined"></td>
-
-    </tr><tr><td>TSV Resource</td><td>Keyword from TSV resource</td><td></td><td></td><td></td></tr><tr><td></td><td>Keyword from TSV resource 2</td><td></td><td></td><td></td></tr><tr><td></td><td>Should Be Equal</td><td>${tsv_resource_var}</td><td>TSV Resource Variable</td><td></td></tr><tr><td></td><td>Should Be Equal</td><td>${tsv_resource_var2}</td><td>TSV Resource Variable&nbsp; From Recursive Resource</td><td></td></tr><tr><td>ReST Resource</td><td>Keyword from ReST resource</td><td></td><td></td><td></td></tr><tr><td></td><td>Keyword from REST resource 2</td><td></td><td></td><td></td></tr><tr><td></td><td>Should Be Equal</td><td>${rest_resource_var}</td><td>ReST Resource Variable</td><td></td></tr><tr><td></td><td>Should Be Equal</td><td>${rest_resource_var2}</td><td>ReST Resource Variable&nbsp; From Recursive Resource</td><td></td></tr>
-
-
-
-
-  
-  
-  
-  </tbody>
+<table id="testcases" border="1">
+<tr>
+<th class="name">Test Case</th>
+<th>Action</th>
+<th>Argument</th>
+<th>Argument</th>
+<th>Argument</th>
+</tr>
+<tr>
+<td class="name"><a name="test_HTML Passing">HTML Passing</a></td>
+<td>NOOP</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="test_HTML Failing">HTML Failing</a></td>
+<td>[Documentation]</td>
+<td>FAIL **ERROR**</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Failing</td>
+<td>*${msg}*</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="test_TSV Resource">TSV Resource</a></td>
+<td>Keyword from TSV resource</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Keyword from TSV resource 2</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Should Be Equal</td>
+<td>${tsv_resource_var}</td>
+<td>TSV Resource Variable</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Should Be Equal</td>
+<td>${tsv_resource_var2}</td>
+<td>TSV Resource Variable From Recursive Resource</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="test_ReST Resource">ReST Resource</a></td>
+<td>Keyword from ReST resource</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Keyword from REST resource 2</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Should Be Equal</td>
+<td>${rest_resource_var}</td>
+<td>ReST Resource Variable</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Should Be Equal</td>
+<td>${rest_resource_var2}</td>
+<td>ReST Resource Variable From Recursive Resource</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="test_TXT Resource">TXT Resource</a></td>
+<td>Keyword from TXT resource</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Keyword from TXT resource 2</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Should Be Equal</td>
+<td>${txt_resource_var}</td>
+<td>TXT Resource Variable</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Should Be Equal</td>
+<td>${txt_resource_var2}</td>
+<td>TXT Resource Variable From Recursive Resource</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
 </table>
-
-
-
-
-
-<table border="1">
-
-
-
-
-  <colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
-  <thead>
-  <tr>
-
-
-
-
-    <th>Keyword</th>
-
-
-
-
-    <th>Action</th>
-
-
-
-
-    <th>Argument</th>
-
-
-
-
-    <th>Argument</th>
-
-
-
-
-    <th>Argument</th>
-
-
-
-
-  </tr>
-
-
-
-
-  </thead>
-  <tbody>
-
-
-
-
-    <tr>
-
-
-
-
-      <td>Failing</td>
-
-
-
-
-      <td>[Arguments]</td>
-
-
-
-
-      <td>${msg}</td>
-
-
-
-
-      <td></td>
-
-
-
-
-      <td></td>
-
-
-
-
-    </tr>
-
-
-
-
-    <tr>
-
-
-
-
-      <td></td>
-
-
-
-
-      <td>Fail</td>
-
-      <td>${msg}</td>
-
-
-
-
-      
-
-
-      <td></td>
-
-
-
-
-      <td></td>
-
-
-
-
-    </tr>
-
-
-
-
-  
-  
-  
-  </tbody>
+<table id="keywords" border="1">
+<tr>
+<th class="name">Keyword</th>
+<th>Action</th>
+<th>Argument</th>
+<th>Argument</th>
+<th>Argument</th>
+</tr>
+<tr>
+<td class="name"><a name="keyword_Failing">Failing</a></td>
+<td>[Arguments]</td>
+<td>${msg}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Fail</td>
+<td>${msg}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
 </table>
-
-
-
-
-
-</body></html>
+</body>
+</html>
