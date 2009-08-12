@@ -26,9 +26,8 @@ Introduction
   downloading or printing from http://diveintopython.org.
 
 * That book is targeted for people who already know how to program. If
-  you are a novice programmer it might better to start with `How to
-  Think Like a (Python) Programmer`_ book which is also available for
-  free.
+  you are a novice programmer it might better to start with `Think Python`_
+  book which is also available for free.
 
 * `Python Tutorial`_, available at http://python.org and included into
   the standard Python installation, is also good. Some of the sections
@@ -39,9 +38,9 @@ Introduction
 
 .. _Python language: http://python.org
 .. _Robot Framework: http://robotframework.org
+.. _Think Python: http://www.greenteapress.com/thinkpython/thinkpython.html
 .. _Python Tutorial: http://docs.python.org/tut/tut.html
 .. _Google search: http://www.google.fi/search?q=python+tutorial
-.. _How to Think Like a (Python) Programmer: http://www.greenteapress.com/thinkpython/
 
 
 Installation
@@ -60,7 +59,9 @@ Installation
 
   - On Windows, and possibly on some other systems, this requires adding
     Python installation directory into PATH environment variable. For
-    instructions see e.g. http://robotframework.googlecode.com/svn/tags/robotframework-2.1/doc/userguide/RobotFrameworkUserGuide.html#setting-up-environment
+    instructions see e.g. `Robot Framework user guide`_.
+	
+.. _Robot Framework user guide: http://robotframework.googlecode.com/svn/tags/robotframework-2.1/doc/userguide/RobotFrameworkUserGuide.html#setting-up-environment
 
 
 Interactive Interpreter
@@ -70,7 +71,9 @@ Interactive Interpreter
   also start it from ``Start > All Programs > Python 2.x``.
 
 * Statements and expressions can be written in the console. Pressing <Enter>
-  will interpret the line and any possible results are echoed. Try for example::
+  will interpret the line and any possible results are echoed. Try for example:
+
+  .. sourcecode:: python
 
 	>>> 1+2
 	3
@@ -80,7 +83,9 @@ Interactive Interpreter
 
   - You can exit Python 2.5/2.6 interpreter also with command ``exit()``.
 
-* See http://diveintopython.org/installing_python/shell.html for some examples.
+* `Dive Into Python`__ has some examples.
+
+.. __: http://diveintopython.org/installing_python/shell.html
 
 
 Basic Data Types
@@ -99,24 +104,29 @@ Basic Data Types
 * ``None`` is a special value meaning nothing similarly as ``null`` in
   Java.
 
-* Try at least these on the interpreter::
+* Try at least these on the interpreter:
+
+  .. sourcecode:: python
 
     >>> 2 * 2.5
     5.0
     >>> 'This is easy'
-    This is easy
-    >>> "Ain't it?"
-    Ain't it?
+    'This is easy'
+    >>> "Ain't it"
+    "Ain't it"
 
 
 Variables
 ---------
 
-* Valid characters in variables identifiers are letters and underscore.
+* Valid characters in variable identifiers are letters and underscore.
 
-* Variables are not declared, they start to exist when they are first assigned.
+* A variable needs not to be declared, it starts to exist when a value is
+  assigned for the first time.
 
-* Try it out::
+* Try it out:
+
+  .. sourcecode:: python
 
     >>> a = 3
     >>> a
@@ -134,7 +144,7 @@ Python Editors
 
 * There are a lot of different Python editors available.
 
-* Most general editors (Emacs, vim, Eclipse, UltraEdit...) can be
+* Most general editors (Emacs, VIM, Eclipse, UltraEdit...) can be
   used very well but
 
   - learning curve can be quite steep unless you already know them, and
@@ -162,20 +172,23 @@ Simplest Possible Program (Mandatory "Hello, world!" Example)
 
 * You can of course add more code to the same file too.
 
-* For a lot more interesting example see
-  http://diveintopython.org/getting_to_know_python/index.html
+* `Dive Into Python`__ has a lot more interesting examples.
+
+.. __:  http://diveintopython.org/getting_to_know_python/index.html
 
 
 Functions ("Hello, world!" Strikes Back)
 ---------------------------------------------------
 
 * Creating functions in Python is super easy. For example earlier ``Hello,
-  world!`` example could be written like this::
+  world!`` example could be written like this:
+
+  .. sourcecode:: python
 
     def hello():
         print "Hello, world!"
 
-    hello()
+        hello()
 
 * Note that in Python code blocks must be indented (four spaces is the
   norm and highly recommended) and you close the block simply by
@@ -184,7 +197,9 @@ Functions ("Hello, world!" Strikes Back)
 * Note also that this ``hello`` function is actually already a valid
   keyword for Robot!
 
-* A function with arguments is not that more complicated::
+* A function with arguments is not that more complicated:
+
+  .. sourcecode:: python
 
     def hello(name):
         print "Hello, %s!" % name
@@ -193,11 +208,10 @@ Functions ("Hello, world!" Strikes Back)
     hello("Robot")
 
 * The hard part in this example is string formatting (i.e. ``"Hello,
-  %s!" % name``). For more information about it see e.g.
-  http://diveintopython.org/native_data_types/formatting_strings.html
+  %s!" % name``). Python has similar string formatting as for example C.
+  More information about it can be found e.g. from `Dive Into Python`__.
 
-* For more information about declaring functions read
-  http://diveintopython.org/getting_to_know_python/declaring_functions.html
+.. __: http://diveintopython.org/native_data_types/formatting_strings.html
 
 
 Documenting Functions
@@ -206,7 +220,9 @@ Documenting Functions
 * Documenting functions, classes, etc. in Python is both easy and important:
   http://diveintopython.org/getting_to_know_python/documenting_functions.html
 
-* Interestingly docs are also available dynamically. Try this out::
+* Interestingly docs are also available dynamically. Try this out:
+
+  .. sourcecode:: python
 
     def hello():
         """Prints 'Hello, world!' to the standard output."""
@@ -229,6 +245,8 @@ Lists, Tuples and Dictionaries
 * A list is an ordered collection of items which you normally access
   by index.
 
+  .. sourcecode:: python
+
     >>> x = ["Some", "strings", "here"]
     >>> x[0]
     'Some'
@@ -244,6 +262,8 @@ Lists, Tuples and Dictionaries
 * A tuple is a list which you can't change after you have created
   it.
 
+  .. sourcecode:: python
+
     >>> t = (1,2,'x')
     >>> t[0]
     1
@@ -251,6 +271,8 @@ Lists, Tuples and Dictionaries
     'x'
 
 * A dictionary is an unordered collection of key-value pairs.
+
+  .. sourcecode:: python
 
     >>> d = {'x': 'some value', 'a': 1, 'b': 2}
     >>> d['a']
@@ -275,7 +297,9 @@ Control Flow
   -  ``for`` and ``while`` loops with ``break`` and ``continue``
      statements.
 
-* For example::
+* For example:
+
+  .. sourcecode:: python
 
     def good_morning_or_night(name, morning=True):
         if morning:
@@ -314,18 +338,22 @@ Optional And Named Arguments for Functions (Return of the "Hello, world!")
 * Functions can have default values for some or all of it's
   arguments.
 
+  .. sourcecode:: python
+
     >>> def hello(name="World"):
-    ...     print "Hello, %s!" % name
+    ...     print "Hello, %s" % name
     ...
     >>> hello()
-    Hello, World!
+    Hello, World
     >>> hello("Robot")
-    Hello, Robot!
+    Hello, Robot
 
 * If there are several optional arguments it's also possible to
   specify only some of them by giving their name along with the value
   as the example below illustrates. Those arguments that don't have
   default values must always be given.
+
+  .. sourcecode:: python
 
     >>> def test(a, b=1, c=2, d=3):
     ...   print a, b, c, d
@@ -343,8 +371,9 @@ Optional And Named Arguments for Functions (Return of the "Hello, world!")
   positional arguments. For example if above ``hello`` method was used
   as a keyword, it could be used with zero or one argument.
 
-* For more information about optional and named arguments:
-  http://diveintopython.org/power_of_introspection/optional_arguments.html
+* For more information about optional and named arguments, see `Dive Into Python`__.
+
+.. __:  http://diveintopython.org/power_of_introspection/optional_arguments.html
 
 
 Variable Number of Arguments
@@ -355,6 +384,8 @@ Variable Number of Arguments
   optional arguments with an asterisk like ``*args`` and it means that
   the specified argument gets all the "extra" arguments as a tuple.
 
+  .. sourcecode:: python
+
     >>> def example(arg1, arg2, *rest):
     ...     print arg1, arg2, rest
     ...
@@ -364,15 +395,12 @@ Variable Number of Arguments
     >>> example(1, 2, 3, 4, 5)
     1 2 (3, 4, 5)
 
-* Similarly all named arguments not matching any argument in the
-  keyword signature can be collected into a special argument like
-  ``**named``. 
+* Using variable number of arguments works with Robot keywords.
 
-* Using variable number of arguments works with Robot keywords but
-  named arguments don't.
+* `Python tutorial`__ explains everything in this and earlier section in
+  detail.
 
-* Python tutorial explains everything in this and earlier section in
-  detail: http://docs.python.org/tut/node6.html#SECTION006700000000000000000
+.. __: http://docs.python.org/tut/node6.html#SECTION006700000000000000000
 
 
 Importing Modules
@@ -393,19 +421,23 @@ Creating Modules
 * Every ``.py`` file is effectively a Python module so you have
   already created some modules.
 
-* For example we could have following code in a file called  ``test.py``::
+* For example we could have following code in a file called  ``test.py``:
+
+  .. sourcecode:: python
 
     def hello(name="World"):
-        print "Hello, %s!" % name
+        print "Hello, %s" % name
 
     if __name__ == "__main__":
         hello()
 
-  and then be able to use it like::
+  and then be able to use it like:
+
+  .. sourcecode:: python
 
     >>> import test
     >>> test.hello("Tellus")
-    Hello, Tellus!
+    Hello, Tellus
 
 * ``if __name__ == "__main__"`` block in the previous example is
   important because it allows executing the file as a script (``python
@@ -452,19 +484,21 @@ Classes and Instances
   really handy.
 
 * The syntax for creating classes and then instances from them is
-  relatively straightforward::
+  relatively straightforward:
+
+  .. sourcecode:: python
 
     >>> class MyClass:
     ...     def __init__(self, name):
     ...         self._name = name
     ...     def hello(self, other="World"):
-    ...         print "%s says hello to %s!" % (self._name, other)
+    ...         print "%s says hello to %s." % (self._name, other)
     ... 
     >>> c = MyClass('Robot')
     >>> c.hello()
-    Robot says hello to World!
+    Robot says hello to World.
     >>> c.hello('Tellus')
-    Robot says hello to Tellus!
+    Robot says hello to Tellus.
 
 * The really weird thing in the syntax is that every class method must
   have ``self`` as the first argument in the signature. After you
