@@ -18,12 +18,15 @@ class TsvReader:
     def read(self, tsvfile, rawdata):
         process = False
         for row in tsvfile.readlines():
-            cells = [ self._process(cell) for cell in row.rstrip().split('\t') ]
+            cells = [ self._process(cell) for cell in self._split_row(row) ]
             name = len(cells) > 0 and cells[0].strip() or ''
             if name.startswith('*') and rawdata.start_table(name.replace('*','')):
                 process = True
             elif process:
                 rawdata.add_row(cells)
+
+    def _split_row(self, row):
+        return row.rstrip().split('\t')
    
     def _process(self, cell):
         if len(cell) > 1 and cell[0] == cell[-1] == '"':
