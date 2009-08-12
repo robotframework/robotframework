@@ -57,7 +57,6 @@ th {
 <title>Misc</title></head>
 <body>
 <h1>Misc</h1>
-
 <table border="1">
 <colgroup span="99"><col class="name"><col class="value" span="4"></colgroup>
 <tbody><tr>
@@ -82,7 +81,6 @@ th {
 <td></td>
 </tr>
 </tbody></table>
-
 <table border="1">
 <colgroup span="99"><col class="name"><col class="value" span="4"></colgroup>
 <tbody><tr>
@@ -114,7 +112,6 @@ th {
 <td></td>
 </tr>
 </tbody></table>
-
 <table border="1">
 <colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
 <tbody><tr>
@@ -1035,146 +1032,6 @@ th {
 <td></td>
 </tr>
 <tr>
-<td><a name="test_Get Time As Timestamp">Get Time As Timestamp</a></td>
-<td>${time1} =</td>
-<td>Get Time</td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td>Should Match Regexp</td>
-<td>${time1}</td>
-<td>\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}</td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td>${time2} =</td>
-<td>Get Time</td>
-<td>give me timestamp, please</td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td>Should Be True</td>
-<td>'${time2}' &gt;= '${time1}'</td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td><a name="test_Get Time As Seconds After Epoch">Get Time As Seconds After Epoch</a></td>
-<td>${time} =</td>
-<td>Get Time</td>
-<td>epoch</td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td>Should Be True</td>
-<td>1000000000 &lt; ${time} &lt; 2000000000</td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td><a name="test_Get Time As Parts">Get Time As Parts</a></td>
-<td>@{time} =</td>
-<td>Get Time</td>
-<td>year, month, day, hour, min, sec</td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td>Should Be True</td>
-<td>2000 &lt; @{time}[0] &lt; 2100</td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td>Should Be True</td>
-<td>1 &lt;= int('@{time}[1]') &lt;= 12</td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td>Should Be True</td>
-<td>1 &lt;= int('@{time}[2]') &lt;= 31</td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td>Should Be True</td>
-<td>0 &lt;= int('@{time}[3]') &lt;= 23</td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td>Should Be True</td>
-<td>0 &lt;= int('@{time}[4]') &lt;= 59</td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td>Should Be True</td>
-<td>0 &lt;= int('@{time}[5]') &lt;= 59</td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td>${year}</td>
-<td>${min}</td>
-<td>${sec} =</td>
-<td>Get Time</td>
-</tr>
-<tr>
-<td></td>
-<td>...</td>
-<td>seconds and minutes and year and whatnot</td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td>Should Be True</td>
-<td>2000 &lt; ${year} &lt; 2100</td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td>Should Be True</td>
-<td>0 &lt;= int('${min}') &lt;= 59</td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td>Should Be True</td>
-<td>0 &lt;= int('${sec}') &lt;= 59</td>
-<td></td>
-<td></td>
-</tr>
-<tr>
 <td></td>
 <td></td>
 <td></td>
@@ -1903,7 +1760,6 @@ th {
 <td></td>
 </tr>
 </tbody></table>
-
 <table border="1">
 <colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
 <tbody><tr>
@@ -1920,7 +1776,6 @@ th {
 <td></td>
 <td></td>
 </tr>
-
 <tr>
 <td></td>
 <td>Import Variables</td>
@@ -1963,7 +1818,6 @@ th {
 <td></td>
 <td></td>
 </tr>
-
 <tr>
 <td></td>
 <td>Should Be Equal</td>
@@ -1992,7 +1846,6 @@ th {
 <td></td>
 <td></td>
 </tr>
-
 <tr>
 <td></td>
 <td>${res} =</td>
@@ -2029,5 +1882,4 @@ th {
 <td></td>
 </tr>
 </tbody></table>
-
 </body></html>
