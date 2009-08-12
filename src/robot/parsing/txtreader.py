@@ -29,6 +29,6 @@ class TxtReader(TsvReader):
                 row = '  ' + row
         if row.endswith('  |'):
             row = row[:-1].rstrip()
-            if row.startswith('  |'):
+            if row.endswith('  |'):
                 row = row + '  '
         return self._splitter.split(row)
