@@ -1,0 +1,9 @@
+*Settings*
+Variables  ../escaping_variables.py
+
+*Test Cases *
+|  Escaping Pipe  |  Should Be Pipe  |  \|  |
+
+*Keywords*
+|  Should Be Pipe  |  [Arguments]      |  ${arg}  |
+|                  |  Should Be Equal  |  ${arg}  |  ${pipe}  |  
