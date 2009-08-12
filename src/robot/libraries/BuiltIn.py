@@ -1223,20 +1223,23 @@ class _Misc:
         How time is returned is determined based on the given `format` string
         as follows. Note that all checks are case-insensitive.
         
-        - If `format` contains the word 'epoch', the time is returned in
-          seconds after the UNIX epoch. The return value is always an integer.
+        1) If `format` contains the word 'epoch', the time is returned
+           in seconds after the UNIX epoch. The return value is always
+           an integer.
 
-        - If `format` contains any of the words 'year', 'month', 'day', 'hour',
-          'min', or 'sec', only the selected parts are returned. The order of
-          the returned parts is always the one in the previous sentence and the
-          order of words in `format` is not significant. The parts are returned
-          as zero-padded strings (e.g. May -> '05').
+        2) If `format` contains any of the words 'year', 'month',
+           'day', 'hour', 'min', or 'sec', only the selected parts are
+           returned. The order of the returned parts is always the one
+           in the previous sentence and the order of words in `format`
+           is not significant. The parts are returned as zero-padded
+           strings (e.g. May -> '05').
 
-        - Otherwise (and by default) the time is returned as a timestamp string
-          in the format '2006-02-24 15:08:31'.
+        3) Otherwise (and by default) the time is returned as a
+           timestamp string in the format '2006-02-24 15:08:31'.
 
-        `time`, new argument in Robot Framework 2.1.1, can be given in four 
-        different formats. By default the current time is used.
+        By default this keyword returns the current time, but that can be
+        altered using `time` argument as explained below. Notice that this
+        argument is only available in Robot Framework 2.1.1 and newer.
 
         1) If `time` is a floating point number, it is interpreted as
            seconds since epoch (Jan 1, 1970 0:00:00). This
