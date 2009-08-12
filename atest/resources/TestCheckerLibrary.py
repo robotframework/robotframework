@@ -112,7 +112,7 @@ Actual tests   : %s"""  % (str(list(expected_names)), str(actual_tests))
                 expected_names.remove(utils.normalize(test.name))
             else:
                 raise AssertionError("Test '%s' was not expected to be run.%s"
-                                     % test.name, tests_msg)
+                                     % (test.name, tests_msg))
         if len(expected_names) != 0:
             raise Exception("Bug in test library")
         
