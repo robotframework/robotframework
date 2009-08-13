@@ -17,18 +17,14 @@ import re
 from tsvreader import TsvReader
 
 
+
 class TxtReader(TsvReader):
 
-    _splitter = re.compile(' {2,}(?:\| {2,})?')
-        
+    _space_splitter = re.compile(' {2,}')
+
     def _split_row(self, row):
         row = row.rstrip()
-        if row.startswith('|  '):
-            row = row[1:].lstrip()
-            if row.startswith('|  '):
-                row = '  ' + row
-        if row.endswith('  |'):
-            row = row[:-1].rstrip()
-            if row.endswith('  |'):
-                row = row + '  '
-        return self._splitter.split(row)
+        if row.startswith('|') and row.endswith('|'):
+            return row[1:-1].split(' | ')
+        return self._space_splitter.split(row)
+
