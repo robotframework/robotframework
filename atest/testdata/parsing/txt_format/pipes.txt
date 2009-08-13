@@ -1,5 +1,5 @@
 *Test Cases*
-|Minimum Pipes | No Operation|
+| Minimum Pipes | No Operation
 
 |  Pipes All Around  |  No Operation  | 
 |                    |  Log  |  New Line  |

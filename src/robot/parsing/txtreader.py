@@ -24,7 +24,9 @@ class TxtReader(TsvReader):
 
     def _split_row(self, row):
         row = row.rstrip()
-        if row.startswith('|') and row.endswith('|'):
-            return row[1:-1].split(' | ')
+        if row.startswith('| '):
+            if row.endswith(' |'):
+                row = row[:-1]
+            return row[1:].split(' | ')
         return self._space_splitter.split(row)
 
