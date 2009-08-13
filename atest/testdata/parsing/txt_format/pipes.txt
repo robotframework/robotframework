@@ -5,10 +5,23 @@ Minimum Pipes  |  No Operation
 |                    |  Log  |  New Line  |
 
 |  Extra Pipes At The End  |       |                      |       |        |
-|                          |  Log  |  Line Ends to |    |       |        |
+|                          |  Log  |  Line Ends to |  |    |       |
 |                          |  Log  |  Line Ends to | + 1 space   |       |        | 
 |                          |  Log  |  Line Ends to | + 2 space   |       |        |  
 |                          |  Log  |  Line Ends to | + 3 space   |       |        |   
 |                          |  Log  |  Line Ends to | + 4 space   |       |        |    
 |                          |  Log  |  Line Ends to | + 10 space   |       |        |          
 |                          |  Log  |  Line Ends to | + 100 space   |       |        |                                                                                                    
+
+|  Empty Cells In Middle  |  Cells Should Be Empty  |  |    |      |        |  ${EMPTY}  |
+
+|  Using FOR Loop With Pipes  |
+|         |  [Documentation]  |  FAIL    |  for loop executed  |
+|         |  :FOR  |  ${value}  |  IN   |  a    |   a   |   for loop executed   |  for loop not executed  |
+|         |        |  Should Be Equal  |  ${value}  |  a   |  ${value}  |  no values  |
+
+*Keywords*
+|  Cells Should Be Empty  |
+|       |  [Arguments]  |  @{args}          |
+|       |  :FOR         |  ${arg}           |  IN      |  @{args}   |
+|       |               |  Should Be Equal  |  ${arg}  |  ${EMPTY}  |
