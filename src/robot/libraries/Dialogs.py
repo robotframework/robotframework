@@ -22,7 +22,6 @@ Jython but they provide the same functionality.
 """
 
 import sys
-import time
 
 try:
     from robot import utils
@@ -63,7 +62,32 @@ def get_value_from_user(message, default_value=''):
     return value
 
 
-if sys.platform.startswith('java'):
+if not sys.platform.startswith('java'):
+    # CPython implementation
+
+    from Tkinter import Tk
+    import tkMessageBox
+    import tkSimpleDialog
+    
+    Tk().withdraw() # Hides the main frame.
+
+
+    def _pause_execution(message):
+        tkMessageBox.showinfo(DIALOG_TITLE, message)
+
+    def _execute_manual_step(message):
+        message += '\n\n<Yes> means PASS and <No> means FAIL.'
+        return tkMessageBox.askyesno(DIALOG_TITLE, message)
+
+    def _get_value_from_user(message, default):
+        return tkSimpleDialog.askstring(DIALOG_TITLE, message,
+                                        initialvalue=default)
+
+
+else:
+    # Jython implementation
+
+    import time
     from javax.swing import JOptionPane
     from javax.swing.JOptionPane import PLAIN_MESSAGE, YES_NO_OPTION, \
         OK_CANCEL_OPTION, DEFAULT_OPTION, UNINITIALIZED_VALUE, CLOSED_OPTION
@@ -117,24 +141,4 @@ if sys.platform.startswith('java'):
         if value in options:
             return options.index(value)
         return CLOSED_OPTION
-
-else:
-
-    from Tkinter import Tk
-    import tkMessageBox
-    import tkSimpleDialog
-    
-    Tk().withdraw() # Hides the main frame.
-
-
-    def _pause_execution(message):
-        tkMessageBox.showinfo(DIALOG_TITLE, message)
-
-    def _execute_manual_step(message):
-        message += '\n\n<Yes> means PASS and <No> means FAIL.'
-        return tkMessageBox.askyesno(DIALOG_TITLE, message)
-
-    def _get_value_from_user(message, default):
-        return tkSimpleDialog.askstring(DIALOG_TITLE, message,
-                                        initialvalue=default)
 
