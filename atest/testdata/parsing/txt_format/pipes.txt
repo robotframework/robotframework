@@ -22,6 +22,8 @@
 
 *Keywords*
 |  Cells Should Be Empty  |
-|       |  [Arguments]  |  @{args}          |
-|       |  :FOR         |  ${arg}           |  IN      |  @{args}   |
-|       |               |  Should Be Equal  |  ${arg}  |  ${EMPTY}  |
+|       | [Arguments]     | @{args}          |
+|       | :FOR            | ${arg}           |  IN      |  @{args}   |
+|       |                 | Should Be Equal  |  ${arg}  |  ${EMPTY}  |
+|       | ${length} =     | Get Length       | ${args}  |
+|       | Should Be Equal | ${length}        | ${5}     | Amount of empty cells |
