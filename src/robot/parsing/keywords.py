@@ -27,7 +27,7 @@ def KeywordList(rawkeywords):
     for row in rawkeywords:
         if len(row) == 0:
             continue
-        if block is not None and row[0] == '':
+        if block is not None and row[0] in ['', '\\']:
             block.add_row(row[1:])
         else:
             try:
