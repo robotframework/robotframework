@@ -16,4 +16,4 @@ Extra Spaces At The End
 Using FOR Loop With Spaces
          [Documentation]  FAIL  for loop executed
          :FOR  ${value}  IN  a     a    for loop executed  for loop not executed      
-               Should Be Equal    ${value}   a  ${value}  no values
+|        |    | Should Be Equal | ${value} | a  | ${value} | no values |

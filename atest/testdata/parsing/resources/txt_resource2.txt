@@ -1,6 +1,6 @@
-*Variable             |  Value                                          |  Value  |  Value  |  Value
-${txt_resource_var2}  |  TXT Resource Variable From Recursive Resource  |
+| *Variable             |  Value                                          |  Value  |  Value  |  Value |
+| ${txt_resource_var2}  |  TXT Resource Variable From Recursive Resource  |
 
 
-*Keyword                     |  Action  |  Argument  |  Argument  |  Argument
-Keyword from TXT resource 2  |  Noop    |
+| *Keyword                     |  Action  |  Argument  |  Argument  |  Argument |
+| Keyword from TXT resource 2  |  Noop    |
