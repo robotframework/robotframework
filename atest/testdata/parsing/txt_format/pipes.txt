@@ -13,7 +13,13 @@
 |                          |  Log  |  Line Ends to \| + 10 space   |       |        |          
 |                          |  Log  |  Line Ends to \| + 100 space   |       |        |                                                                                                    
 
-|  Empty Cells In Middle  |  Cells Should Be Empty  |  |    |      |        |  ${EMPTY}  |
+| Empty Cells In Middle | Cells Should Be Empty  |  |     |  |   | ${EMPTY}  |
+|                       |                        |
+|  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  | |
+|  |
+|  |
+|  |
+|  |
 
 |  Using FOR Loop With Pipes  |
 |         |  [Documentation]  |  FAIL    |  for loop executed  |
