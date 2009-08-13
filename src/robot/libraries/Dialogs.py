@@ -66,24 +66,18 @@ def get_value_from_user(message, default_value=''):
 if sys.platform.startswith('java'):
     from javax.swing import JOptionPane
     from javax.swing.JOptionPane import PLAIN_MESSAGE, YES_NO_OPTION, \
-        OK_CANCEL_OPTION, DEFAULT_OPTION, UNINITIALIZED_VALUE, CLOSED_OPTION #, \
-#        showOptionDialog, showInputDialog, showMessageDialog
+        OK_CANCEL_OPTION, DEFAULT_OPTION, UNINITIALIZED_VALUE, CLOSED_OPTION
 
     def _pause_execution(message):
         _show_dialog(message, PLAIN_MESSAGE)
-#        showMessageDialog(None, message, DIALOG_TITLE, PLAIN_MESSAGE)
 
     def _execute_manual_step(message):
         return 0 == _show_dialog(message, PLAIN_MESSAGE, 
-                                   YES_NO_OPTION, ['PASS', 'FAIL'])
-#        return 0 == showOptionDialog(None, message, DIALOG_TITLE, YES_NO_OPTION,
-#                                  PLAIN_MESSAGE, None, ['PASS', 'FAIL'], None)
+                                 YES_NO_OPTION, ['PASS', 'FAIL'])
 
     def _get_value_from_user(message, default):
-        print _show_dialog(message, PLAIN_MESSAGE, OK_CANCEL_OPTION, 
-                              initial_value=default, input=True)
-#        print showInputDialog(None, message, DIALOG_TITLE, PLAIN_MESSAGE,
-#                               None, None, default)
+        return _show_dialog(message, PLAIN_MESSAGE, OK_CANCEL_OPTION, 
+                            initial_value=default, input=True)
 
     def _show_dialog(message, message_type, option_type=DEFAULT_OPTION, 
                      options=None, initial_value=None, input=False):
@@ -144,7 +138,3 @@ else:
         return tkSimpleDialog.askstring(DIALOG_TITLE, message,
                                         initialvalue=default)
 
-#if __name__ == '__main__':
-#    _pause_execution('FOO')
-#    _execute_manual_step('FOO')
-#    _get_value_from_user('FOO', 'DEFAULT')
