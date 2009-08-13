@@ -22,6 +22,7 @@ Jython but they provide the same functionality.
 """
 
 import sys
+import time
 
 try:
     from robot import utils
@@ -46,7 +47,7 @@ def execute_manual_step(message, default_error=''):
     opened for defining the error message. `default_error` is the
     possible default value shown in the error message dialog.
     """
-    if not _execute_manual_step(message, default_error):
+    if not _execute_manual_step(message):
         msg = get_value_from_user('Give error message:', default_error)
         raise AssertionError(msg)
 
@@ -63,22 +64,65 @@ def get_value_from_user(message, default_value=''):
 
 
 if sys.platform.startswith('java'):
-
-    from javax.swing.JOptionPane import showMessageDialog, showOptionDialog, \
-        showInputDialog, YES_NO_OPTION, PLAIN_MESSAGE
-
+    from javax.swing import JOptionPane
+    from javax.swing.JOptionPane import PLAIN_MESSAGE, YES_NO_OPTION, \
+        OK_CANCEL_OPTION, DEFAULT_OPTION, UNINITIALIZED_VALUE, CLOSED_OPTION #, \
+#        showOptionDialog, showInputDialog, showMessageDialog
 
     def _pause_execution(message):
-        showMessageDialog(None, message, DIALOG_TITLE, PLAIN_MESSAGE)
+        _show_dialog(message, PLAIN_MESSAGE)
+#        showMessageDialog(None, message, DIALOG_TITLE, PLAIN_MESSAGE)
 
-    def _execute_manual_step(message, default_error):
-        status = showOptionDialog(None, message, DIALOG_TITLE, YES_NO_OPTION,
-                                  PLAIN_MESSAGE, None, ['PASS', 'FAIL'], None)
-        return status == 0
+    def _execute_manual_step(message):
+        return 0 == _show_dialog(message, PLAIN_MESSAGE, 
+                                   YES_NO_OPTION, ['PASS', 'FAIL'])
+#        return 0 == showOptionDialog(None, message, DIALOG_TITLE, YES_NO_OPTION,
+#                                  PLAIN_MESSAGE, None, ['PASS', 'FAIL'], None)
 
     def _get_value_from_user(message, default):
-        return showInputDialog(None, message, DIALOG_TITLE, PLAIN_MESSAGE,
-                               None, None, default)
+        print _show_dialog(message, PLAIN_MESSAGE, OK_CANCEL_OPTION, 
+                              initial_value=default, input=True)
+#        print showInputDialog(None, message, DIALOG_TITLE, PLAIN_MESSAGE,
+#                               None, None, default)
+
+    def _show_dialog(message, message_type, option_type=DEFAULT_OPTION, 
+                     options=None, initial_value=None, input=False):
+        pane = JOptionPane(message, message_type, option_type, 
+                           None, options, initial_value)
+        pane.setInitialSelectionValue(initial_value)
+        pane.setWantsInput(input)
+        _create_dialog_and_wait_it_to_be_closed(pane)
+        return _get_value_from_dialog(pane, options, input)
+
+    def _create_dialog_and_wait_it_to_be_closed(pane):
+        dialog = pane.createDialog(None, DIALOG_TITLE)
+        dialog.setModal(0);
+        dialog.show()
+        while dialog.isShowing():
+            time.sleep(0.2)
+        dialog.dispose()
+
+    def _get_value_from_dialog(pane, options, input):
+        if input:
+            return _get_input_value(pane)
+        return _get_selected_button_index(pane, options)
+
+    def _get_input_value(pane):
+        value = pane.getInputValue()
+        if value == UNINITIALIZED_VALUE:
+            return None
+        return value
+
+    def _get_selected_button_index(pane, options):
+        value = pane.getValue();
+        if options is None:
+            try:
+                return int(value)
+            except ValueError, TypeError:
+                return CLOSED_OPTION
+        if value in options:
+            return options.index(value)
+        return CLOSED_OPTION
 
 else:
 
@@ -92,10 +136,15 @@ else:
     def _pause_execution(message):
         tkMessageBox.showinfo(DIALOG_TITLE, message)
 
-    def _execute_manual_step(message, default_error):
+    def _execute_manual_step(message):
         message += '\n\n<Yes> means PASS and <No> means FAIL.'
         return tkMessageBox.askyesno(DIALOG_TITLE, message)
 
     def _get_value_from_user(message, default):
         return tkSimpleDialog.askstring(DIALOG_TITLE, message,
                                         initialvalue=default)
+
+#if __name__ == '__main__':
+#    _pause_execution('FOO')
+#    _execute_manual_step('FOO')
+#    _get_value_from_user('FOO', 'DEFAULT')
