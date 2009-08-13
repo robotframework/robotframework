@@ -17,7 +17,6 @@ import re
 from tsvreader import TsvReader
 
 
-
 class TxtReader(TsvReader):
 
     _space_splitter = re.compile(' {2,}')
@@ -25,8 +24,12 @@ class TxtReader(TsvReader):
     def _split_row(self, row):
         row = row.rstrip()
         if row.startswith('| '):
-            if row.endswith(' |'):
-                row = row[:-1]
-            return row[1:].split(' | ')
+            return self._pipe_splitter(row)
         return self._space_splitter.split(row)
 
+    def _pipe_splitter(self, row):
+        if row.endswith(' |'):
+            row = row[1:-1]
+        else:
+            row = row[1:]
+        return row.split(' | ')
