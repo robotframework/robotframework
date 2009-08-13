@@ -110,7 +110,9 @@ else:
         pane.setInitialSelectionValue(initial_value)
         pane.setWantsInput(input)
         _create_dialog_and_wait_it_to_be_closed(pane)
-        return _get_value_from_dialog(pane, options, input)
+        if input:
+            return _get_input_value(pane)
+        return _get_selected_button_index(pane, options)
 
     def _create_dialog_and_wait_it_to_be_closed(pane):
         dialog = pane.createDialog(None, DIALOG_TITLE)
@@ -119,11 +121,6 @@ else:
         while dialog.isShowing():
             time.sleep(0.2)
         dialog.dispose()
-
-    def _get_value_from_dialog(pane, options, input):
-        if input:
-            return _get_input_value(pane)
-        return _get_selected_button_index(pane, options)
 
     def _get_input_value(pane):
         value = pane.getInputValue()
