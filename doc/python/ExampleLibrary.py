@@ -1,8 +1,8 @@
 class ExampleLibrary:
 
-    def simplest_keyword(self):
+    def simple_keyword(self):
         """Log a message"""
-        print 'You have used the Simplest Keyword.'
+        print 'You have used the simplest keyword.'
 
     def greet(self, name):
         """Logs a friendly greeting to person given as argument"""
@@ -18,5 +18,5 @@ class ExampleLibrary:
 
     def numbers_should_be_equal(self, first, second):
         print '*DEBUG* Got %s and %s'
-        if int(first) != int(second):
+        if float(first) != float(second):
             raise AssertionError('Given numbers are unequal!')

@@ -1,0 +1,15 @@
+***Settings***
+Library	ExampleLibrary
+
+
+***Test Cases***
+Simple Test
+	Simple Keyword
+	Greet	Robot
+
+Returning Value
+	${result} =	Multiply By Two	4.1
+	Numbers Should Be Equal	${result}	8.2
+
+Failing Test
+	Numbers Should Be Equal	2	3
