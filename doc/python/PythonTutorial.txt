@@ -512,10 +512,6 @@ Classes and Instances
   or/and study `a detailed information from Python Tutorial
   <http://docs.python.org/tut/node11.html>`_
 
-* A Robot test library can either be a module or a class. Modules are
-  normally adequate for simple libraries but classes offer more
-  flexibility and power.
-
 
 Exceptions
 ----------
@@ -575,3 +571,32 @@ Unit Testing
 .. _refactoring: http://diveintopython.org/refactoring/index.html
 
 
+Writing Test Libraries
+----------------------
+
+Robot Framework's test library API is really simple. The test library can be
+either a module or a class.  In case of a module, a keyword will be created for
+each top-level function in the module. In case of a class, a keyword will be
+created for each public method of the class.
+
+Keyword may return values using the `return` statement. A failure is generated
+by raising an exception. `print` statement can be used to log a message from a
+keyword. The example library below illustrates these:
+
+.. sourcecode:: python
+
+	ExampleLib.py
+
+These keyword may be tested for example using a TSV test file below::
+
+  * Settings *
+  Library	ExampleLib
+
+  * Test Cases *
+  Simple Test Simplest Keyword
+  	  Greet   Robot
+
+  Returning Value ${result} = Multiply By Two 4.1
+  	Should Be Equal ${result}   ${8.2}
+
+  Failing Test    Numbers Should Be Equal 2   3
