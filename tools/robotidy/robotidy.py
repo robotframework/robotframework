@@ -228,7 +228,7 @@ class TestData:
         self.keywords = UserKeywords(raw.keywords, fix_comments)
 
     def serialize(self, outpath, format=None, title=None, style=None):
-        format = self._get_format(format)
+        format = self._get_format(format, outpath)
         outpath, rm_orig = self._get_outpath_and_remove_orig(outpath, format)
         serializer = self._get_serializer(outpath, format, title, style)
         self.settings.serialize(serializer)
@@ -240,9 +240,12 @@ class TestData:
             os.remove(self.path)
         return outpath
     
-    def _get_format(self, format):
+    def _get_format(self, format, outpath):
         if format is None:
-            return self.format
+            if outpath is None:
+                format = self.format
+            else:
+                format = os.path.splitext(outpath)[1][1:]
         try:
             return _valid_formats[format]
         except KeyError:
