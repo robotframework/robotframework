@@ -1,5 +1,5 @@
 *Settings*
-Variables  ../escaping_variables.py
+Variables  ../../escaping_variables.py
 
 *Test Cases *
 |  Escaping Pipe  |  Should Be Pipe  |  \|  |

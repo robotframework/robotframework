@@ -48,7 +48,7 @@ Resource File   Keyword from TSV resource
 
 Variable File   Equals   @{file_listvar}[0]   ${True}
    Equals   @{file_listvar}[1]   ${3.14}
-   Equals   @{file_listvar}[2]   "Hello, world!!"
+   Equals   @{file_listvar}[2]   Hello, world!!
    Equals   ${file_var1}   ${-314}
    Equals   ${file_var2}   file variable 2
 
