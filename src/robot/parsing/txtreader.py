@@ -31,3 +31,6 @@ class TxtReader(TsvReader):
         else:
             row = row[1:]
         return self._pipe_splitter.split(row)
+    
+    def _process(self, cell):
+        return cell.decode('UTF-8')
