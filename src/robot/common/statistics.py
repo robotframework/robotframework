@@ -283,7 +283,7 @@ class TotalStatistics:
 class TagStatInfo:
     
     def __init__(self, docs, links):
-        self._docs = dict([ self._parse_doc(doc) for doc in docs ])
+        self._docs = [ self._parse_doc(doc) for doc in docs ]
         self._links = [ TagStatLink(*link) for link in links ]
 
     def _parse_doc(self, cli_item):
@@ -295,9 +295,9 @@ class TagStatInfo:
 
     def get_doc(self, tag):
         docs = []
-        for key, value in self._docs.items():
-            if utils.matches(tag, key):
-                docs.append(value)
+        for pattern, doc in self._docs:
+            if utils.matches(tag, pattern):
+                docs.append(doc)
         return docs and ' '.join(docs) or None
 
     def get_links(self, tag):
