@@ -20,16 +20,14 @@ from tsvreader import TsvReader
 class TxtReader(TsvReader):
 
     _space_splitter = re.compile(' {2,}')
+    _pipe_splitter = re.compile(' \|(?= )')
 
     def _split_row(self, row):
         row = row.rstrip()
-        if row.startswith('| '):
-            return self._pipe_splitter(row)
-        return self._space_splitter.split(row)
-
-    def _pipe_splitter(self, row):
+        if not row.startswith('| '):
+            return self._space_splitter.split(row)
         if row.endswith(' |'):
             row = row[1:-1]
         else:
             row = row[1:]
-        return row.split(' | ')
+        return self._pipe_splitter.split(row)
