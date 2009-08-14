@@ -5,6 +5,13 @@
 |  Pipes All Around  |  No Operation  | 
 |                    |  Log  |  New Line  |
 
+| Pipes In Data | 
+|               | Should Be Equal | |foo\| | |foo| |
+|               | Should Be Equal | |foo|  | |foo\|
+|               | Should Be Equal | \|     | \|    |
+|               | Should Be Equal | ||||   | ||||  |
+
+
 |  Extra Pipes At The End  |       |                      |       |        |
 |                          |  Log  |  Line Ends to \|  |    |       |
 |                          |  Log  |  Line Ends to \| + 1 space   |       |        | 
