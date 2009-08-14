@@ -7,6 +7,18 @@
 <title>Python Tutorial for Robot Framework Test Library Developers</title>
 <style type="text/css">
 
+/* Robot Framework User Guide Style Sheet
+
+   This stylesheet contains styles from restructuredText's default 
+   'html4css1.css' and after that modifications needed for Robot Framework User
+   Guide. These styles are added into the same file against suggestions at 
+   reST's stylesheet  howto mentioned below, because we want to be able to 
+   embed all styles into the created HTML file. Everything before 'Robot 
+   Framework User Guide Modifications' text is from 'html4css1.css' without 
+   any changes so that part can still be changed easily.
+*/
+
+
 /*
 :Author: David Goodger (goodger@python.org)
 :Id: $Id: html4css1.css 5196 2007-06-03 20:25:28Z wiemann $
@@ -281,6 +293,180 @@ h4 tt.docutils, h5 tt.docutils, h6 tt.docutils {
 ul.auto-toc {
   list-style-type: none }
 
+
+/* **************************************** *
+ * Robot Framework User Guide Modifications * 
+ * **************************************** */
+
+/* Tables
+   - example, tsv-example: test data examples
+   - messages: log message examples
+   - tabular: normal tabular information
+*/
+table.example, table.tsv-example, table.messages, table.tabular {
+    border: 1px solid #808080;
+    border-collapse: collapse;
+    empty-cell: show;
+    margin: 0.5em 2em;
+}
+table.example caption, table.tsv-example caption, table.tabular caption {
+    text-align: left;
+    padding-bottom: 0.5em;
+    font-style: italic;
+}
+table.example th, table.example td, table.tsv-example td {
+    border: 1px solid #808080;
+    font-family: arial,helvetica,sans-serif;
+    height: 1.2em;
+    font-size: 0.8em;
+}
+table.example th {
+    padding: 0.1em 1em;
+    background: #E0E0E0;
+}
+table.example td, table.tsv-example td {
+    padding: 0.1em 1em 0.1em 0.3em;
+}
+table.tabular th, table.tabular td {
+    border: 1px solid black;
+    padding: 0.1em 0.3em;
+    height: 1.2em;
+    font-size: 0.9em;
+}
+table.messages {
+    border: 1px solid gray;
+    font-family: monospace;
+    margin: 1em 2em;
+    width: 60%;
+}
+table.messages td {
+    vertical-align: top;
+    padding: 0.1em 0.2em;
+}
+table.messages td.time {
+    width: 7em;
+    letter-spacing: -0.05em;
+} 
+table.messages td.level {
+    width: 5em;
+    text-align: center;
+}
+table.messages td.fail, table.messages td.error {
+    color: red;
+}
+table.messages td.pass {
+    color: #009900;
+}
+table.messages td.warn {
+    color: #FFCC00;
+}
+
+/* Roles -- these are defined in roles.txt file */
+
+.var {
+    background: #f4f4f4;
+    font-size: 0.9em;
+}
+.opt {
+    font-style: italic;
+}
+.prog, .code, .cli {
+    background: #f4f4f4;
+    font-family: monospace;
+}
+.msg {
+    font-family: monospace;
+}
+.name {  
+    font-style: italic;
+}
+.path {
+    font-style: italic;
+}
+.misc, .literal {
+    background: #f4f4f4;
+}
+
+
+/* Overridden and modified styles */
+
+div.admonition, div.attention, div.caution, div.danger, div.error,
+div.hint, div.important, div.note, div.tip, div.warning {
+    border: 2px solid gray;
+}
+pre.literal-block, pre.doctest-block {
+    background: #f4f4f4;
+}
+
+
+/* Pygments 
+
+- Styles generated using "HtmlFormatter().get_style_defs('.highlight')"
+- Changed only background (f8f8f8 -> f4f4f4) and added margin
+- For more details see e.g. http://pygments.org/docs/quickstart/
+*/
+
+.highlight  { background: #f4f4f4; margin: 1em 2em; }
+.highlight .c { color: #408080; font-style: italic } /* Comment */
+.highlight .err { border: 1px solid #FF0000 } /* Error */
+.highlight .k { color: #008000; font-weight: bold } /* Keyword */
+.highlight .o { color: #666666 } /* Operator */
+.highlight .cm { color: #408080; font-style: italic } /* Comment.Multiline */
+.highlight .cp { color: #BC7A00 } /* Comment.Preproc */
+.highlight .c1 { color: #408080; font-style: italic } /* Comment.Single */
+.highlight .cs { color: #408080; font-style: italic } /* Comment.Special */
+.highlight .gd { color: #A00000 } /* Generic.Deleted */
+.highlight .ge { font-style: italic } /* Generic.Emph */
+.highlight .gr { color: #FF0000 } /* Generic.Error */
+.highlight .gh { color: #000080; font-weight: bold } /* Generic.Heading */
+.highlight .gi { color: #00A000 } /* Generic.Inserted */
+.highlight .go { color: #808080 } /* Generic.Output */
+.highlight .gp { color: #000080; font-weight: bold } /* Generic.Prompt */
+.highlight .gs { font-weight: bold } /* Generic.Strong */
+.highlight .gu { color: #800080; font-weight: bold } /* Generic.Subheading */
+.highlight .gt { color: #0040D0 } /* Generic.Traceback */
+.highlight .kc { color: #008000; font-weight: bold } /* Keyword.Constant */
+.highlight .kd { color: #008000; font-weight: bold } /* Keyword.Declaration */
+.highlight .kp { color: #008000 } /* Keyword.Pseudo */
+.highlight .kr { color: #008000; font-weight: bold } /* Keyword.Reserved */
+.highlight .kt { color: #B00040 } /* Keyword.Type */
+.highlight .m { color: #666666 } /* Literal.Number */
+.highlight .s { color: #BA2121 } /* Literal.String */
+.highlight .na { color: #7D9029 } /* Name.Attribute */
+.highlight .nb { color: #008000 } /* Name.Builtin */
+.highlight .nc { color: #0000FF; font-weight: bold } /* Name.Class */
+.highlight .no { color: #880000 } /* Name.Constant */
+.highlight .nd { color: #AA22FF } /* Name.Decorator */
+.highlight .ni { color: #999999; font-weight: bold } /* Name.Entity */
+.highlight .ne { color: #D2413A; font-weight: bold } /* Name.Exception */
+.highlight .nf { color: #0000FF } /* Name.Function */
+.highlight .nl { color: #A0A000 } /* Name.Label */
+.highlight .nn { color: #0000FF; font-weight: bold } /* Name.Namespace */
+.highlight .nt { color: #008000; font-weight: bold } /* Name.Tag */
+.highlight .nv { color: #19177C } /* Name.Variable */
+.highlight .ow { color: #AA22FF; font-weight: bold } /* Operator.Word */
+.highlight .w { color: #bbbbbb } /* Text.Whitespace */
+.highlight .mf { color: #666666 } /* Literal.Number.Float */
+.highlight .mh { color: #666666 } /* Literal.Number.Hex */
+.highlight .mi { color: #666666 } /* Literal.Number.Integer */
+.highlight .mo { color: #666666 } /* Literal.Number.Oct */
+.highlight .sb { color: #BA2121 } /* Literal.String.Backtick */
+.highlight .sc { color: #BA2121 } /* Literal.String.Char */
+.highlight .sd { color: #BA2121; font-style: italic } /* Literal.String.Doc */
+.highlight .s2 { color: #BA2121 } /* Literal.String.Double */
+.highlight .se { color: #BB6622; font-weight: bold } /* Literal.String.Escape */
+.highlight .sh { color: #BA2121 } /* Literal.String.Heredoc */
+.highlight .si { color: #BB6688; font-weight: bold } /* Literal.String.Interpol */
+.highlight .sx { color: #008000 } /* Literal.String.Other */
+.highlight .sr { color: #BB6688 } /* Literal.String.Regex */
+.highlight .s1 { color: #BA2121 } /* Literal.String.Single */
+.highlight .ss { color: #19177C } /* Literal.String.Symbol */
+.highlight .bp { color: #008000 } /* Name.Builtin.Pseudo */
+.highlight .vc { color: #19177C } /* Name.Variable.Class */
+.highlight .vg { color: #19177C } /* Name.Variable.Global */
+.highlight .vi { color: #19177C } /* Name.Variable.Instance */
+.highlight .il { color: #666666 } /* Literal.Number.Integer.Long */
+
 </style>
 </head>
 <body>
@@ -380,8 +566,8 @@ also start it from <tt class="docutils literal"><span class="pre">Start</span> <
 </li>
 <li><p class="first">Statements and expressions can be written in the console. Pressing &lt;Enter&gt;
 will interpret the line and any possible results are echoed. Try for example:</p>
-<div class="highlight"><pre><span style="color: #666666">&gt;&gt;&gt;</span> <span style="color: #666666">1+2</span>
-<span style="color: #666666">3</span>
+<div class="highlight"><pre><span class="o">&gt;&gt;&gt;</span> <span class="mf">1</span><span class="o">+</span><span class="mf">2</span>
+<span class="mf">3</span>
 </pre></div>
 </li>
 <li><p class="first">To exit press first <tt class="docutils literal"><span class="pre">Ctrl-Z</span></tt> and then enter on Windows and
@@ -428,12 +614,12 @@ but you can find a lot of information about it with search engines.</p>
 Java.</p>
 </li>
 <li><p class="first">Try at least these on the interpreter:</p>
-<div class="highlight"><pre><span style="color: #666666">&gt;&gt;&gt;</span> <span style="color: #666666">2</span> <span style="color: #666666">*</span> <span style="color: #666666">2.5</span>
-<span style="color: #666666">5.0</span>
-<span style="color: #666666">&gt;&gt;&gt;</span> <span style="color: #BA2121">&#39;This is easy&#39;</span>
-<span style="color: #BA2121">&#39;This is easy&#39;</span>
-<span style="color: #666666">&gt;&gt;&gt;</span> <span style="color: #BA2121">&quot;Ain&#39;t it&quot;</span>
-<span style="color: #BA2121">&quot;Ain&#39;t it&quot;</span>
+<div class="highlight"><pre><span class="o">&gt;&gt;&gt;</span> <span class="mf">2</span> <span class="o">*</span> <span class="mf">2.5</span>
+<span class="mf">5.0</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="s">&#39;This is easy&#39;</span>
+<span class="s">&#39;This is easy&#39;</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="s">&quot;Ain&#39;t it&quot;</span>
+<span class="s">&quot;Ain&#39;t it&quot;</span>
 </pre></div>
 </li>
 </ul>
@@ -447,15 +633,15 @@ Java.</p>
 assigned for the first time.</p>
 </li>
 <li><p class="first">Try it out:</p>
-<div class="highlight"><pre><span style="color: #666666">&gt;&gt;&gt;</span> a <span style="color: #666666">=</span> <span style="color: #666666">3</span>
-<span style="color: #666666">&gt;&gt;&gt;</span> a
-<span style="color: #666666">3</span>
-<span style="color: #666666">&gt;&gt;&gt;</span> b <span style="color: #666666">=</span> <span style="color: #666666">4</span>
-<span style="color: #666666">&gt;&gt;&gt;</span> a<span style="color: #666666">*</span>b
-<span style="color: #666666">12</span>
-<span style="color: #666666">&gt;&gt;&gt;</span> greeting <span style="color: #666666">=</span> <span style="color: #BA2121">&#39;Hello&#39;</span>
-<span style="color: #666666">&gt;&gt;&gt;</span> greeting
-<span style="color: #BA2121">&#39;Hello&#39;</span>
+<div class="highlight"><pre><span class="o">&gt;&gt;&gt;</span> <span class="n">a</span> <span class="o">=</span> <span class="mf">3</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">a</span>
+<span class="mf">3</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">b</span> <span class="o">=</span> <span class="mf">4</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">a</span><span class="o">*</span><span class="n">b</span>
+<span class="mf">12</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">greeting</span> <span class="o">=</span> <span class="s">&#39;Hello&#39;</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">greeting</span>
+<span class="s">&#39;Hello&#39;</span>
 </pre></div>
 </li>
 </ul>
@@ -485,10 +671,10 @@ line like</p>
 <ul>
 <li><p class="first">Creating functions in Python is super easy. For example earlier <tt class="docutils literal"><span class="pre">Hello,</span>
 <span class="pre">world!</span></tt> example could be written like this:</p>
-<div class="highlight"><pre><span style="color: #008000; font-weight: bold">def</span> <span style="color: #0000FF">hello</span>():
-    <span style="color: #008000; font-weight: bold">print</span> <span style="color: #BA2121">&quot;Hello, world!&quot;</span>
+<div class="highlight"><pre><span class="k">def</span> <span class="nf">hello</span><span class="p">():</span>
+    <span class="k">print</span> <span class="s">&quot;Hello, world!&quot;</span>
 
-    hello()
+    <span class="n">hello</span><span class="p">()</span>
 </pre></div>
 </li>
 <li><p class="first">Note that in Python code blocks must be indented (four spaces is the
@@ -499,11 +685,11 @@ returning to the earlier indentation level.</p>
 keyword for Robot!</p>
 </li>
 <li><p class="first">A function with arguments is not that more complicated:</p>
-<div class="highlight"><pre><span style="color: #008000; font-weight: bold">def</span> <span style="color: #0000FF">hello</span>(name):
-    <span style="color: #008000; font-weight: bold">print</span> <span style="color: #BA2121">&quot;Hello, </span><span style="color: #BB6688; font-weight: bold">%s</span><span style="color: #BA2121">!&quot;</span> <span style="color: #666666">%</span> name
+<div class="highlight"><pre><span class="k">def</span> <span class="nf">hello</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
+    <span class="k">print</span> <span class="s">&quot;Hello, </span><span class="si">%s</span><span class="s">!&quot;</span> <span class="o">%</span> <span class="n">name</span>
 
-hello(<span style="color: #BA2121">&quot;World&quot;</span>)
-hello(<span style="color: #BA2121">&quot;Robot&quot;</span>)
+<span class="n">hello</span><span class="p">(</span><span class="s">&quot;World&quot;</span><span class="p">)</span>
+<span class="n">hello</span><span class="p">(</span><span class="s">&quot;Robot&quot;</span><span class="p">)</span>
 </pre></div>
 </li>
 <li><p class="first">The hard part in this example is string formatting (i.e. <tt class="docutils literal"><span class="pre">&quot;Hello,</span>
@@ -519,11 +705,11 @@ More information about it can be found e.g. from <a class="reference external" h
 <a class="reference external" href="http://diveintopython.org/getting_to_know_python/documenting_functions.html">http://diveintopython.org/getting_to_know_python/documenting_functions.html</a></p>
 </li>
 <li><p class="first">Interestingly docs are also available dynamically. Try this out:</p>
-<div class="highlight"><pre><span style="color: #008000; font-weight: bold">def</span> <span style="color: #0000FF">hello</span>():
-    <span style="color: #BA2121; font-style: italic">&quot;&quot;&quot;Prints &#39;Hello, world!&#39; to the standard output.&quot;&quot;&quot;</span>
-    <span style="color: #008000; font-weight: bold">print</span> <span style="color: #BA2121">&quot;Hello, world!&quot;</span>
+<div class="highlight"><pre><span class="k">def</span> <span class="nf">hello</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Prints &#39;Hello, world!&#39; to the standard output.&quot;&quot;&quot;</span>
+    <span class="k">print</span> <span class="s">&quot;Hello, world!&quot;</span>
 
-<span style="color: #008000; font-weight: bold">print</span> hello<span style="color: #666666">.</span>__doc__
+<span class="k">print</span> <span class="n">hello</span><span class="o">.</span><span class="n">__doc__</span>
 </pre></div>
 </li>
 <li><p class="first">With Robot documenting functions that are used as keywords is extra
@@ -537,30 +723,30 @@ documentation from them.</p>
 <ul>
 <li><p class="first">Functions can have default values for some or all of it's
 arguments.</p>
-<div class="highlight"><pre><span style="color: #666666">&gt;&gt;&gt;</span> <span style="color: #008000; font-weight: bold">def</span> <span style="color: #0000FF">hello</span>(name<span style="color: #666666">=</span><span style="color: #BA2121">&quot;World&quot;</span>):
-<span style="color: #666666">...</span>     <span style="color: #008000; font-weight: bold">print</span> <span style="color: #BA2121">&quot;Hello, </span><span style="color: #BB6688; font-weight: bold">%s</span><span style="color: #BA2121">&quot;</span> <span style="color: #666666">%</span> name
-<span style="color: #666666">...</span>
-<span style="color: #666666">&gt;&gt;&gt;</span> hello()
-Hello, World
-<span style="color: #666666">&gt;&gt;&gt;</span> hello(<span style="color: #BA2121">&quot;Robot&quot;</span>)
-Hello, Robot
+<div class="highlight"><pre><span class="o">&gt;&gt;&gt;</span> <span class="k">def</span> <span class="nf">hello</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">&quot;World&quot;</span><span class="p">):</span>
+<span class="o">...</span>     <span class="k">print</span> <span class="s">&quot;Hello, </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">name</span>
+<span class="o">...</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">hello</span><span class="p">()</span>
+<span class="n">Hello</span><span class="p">,</span> <span class="n">World</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">hello</span><span class="p">(</span><span class="s">&quot;Robot&quot;</span><span class="p">)</span>
+<span class="n">Hello</span><span class="p">,</span> <span class="n">Robot</span>
 </pre></div>
 </li>
 <li><p class="first">If there are several optional arguments it's also possible to
 specify only some of them by giving their name along with the value
 as the example below illustrates. Those arguments that don't have
 default values must always be given.</p>
-<div class="highlight"><pre><span style="color: #666666">&gt;&gt;&gt;</span> <span style="color: #008000; font-weight: bold">def</span> <span style="color: #0000FF">test</span>(a, b<span style="color: #666666">=1</span>, c<span style="color: #666666">=2</span>, d<span style="color: #666666">=3</span>):
-<span style="color: #666666">...</span>   <span style="color: #008000; font-weight: bold">print</span> a, b, c, d
-<span style="color: #666666">...</span>
-<span style="color: #666666">&gt;&gt;&gt;</span> test(<span style="color: #666666">0</span>)
-<span style="color: #666666">0</span> <span style="color: #666666">1</span> <span style="color: #666666">2</span> <span style="color: #666666">3</span>
-<span style="color: #666666">&gt;&gt;&gt;</span> test(<span style="color: #666666">0</span>, <span style="color: #666666">42</span>)
-<span style="color: #666666">0</span> <span style="color: #666666">42</span> <span style="color: #666666">2</span> <span style="color: #666666">3</span>
-<span style="color: #666666">&gt;&gt;&gt;</span> test(<span style="color: #666666">1</span>, c<span style="color: #666666">=10</span>)
-<span style="color: #666666">1</span> <span style="color: #666666">1</span> <span style="color: #666666">10</span> <span style="color: #666666">3</span>
-<span style="color: #666666">&gt;&gt;&gt;</span> test(<span style="color: #666666">2</span>, c<span style="color: #666666">=100</span>, d<span style="color: #666666">=200</span>)
-<span style="color: #666666">2</span> <span style="color: #666666">1</span> <span style="color: #666666">100</span> <span style="color: #666666">200</span>
+<div class="highlight"><pre><span class="o">&gt;&gt;&gt;</span> <span class="k">def</span> <span class="nf">test</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mf">1</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="mf">2</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="mf">3</span><span class="p">):</span>
+<span class="o">...</span>   <span class="k">print</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">d</span>
+<span class="o">...</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">test</span><span class="p">(</span><span class="mf">0</span><span class="p">)</span>
+<span class="mf">0</span> <span class="mf">1</span> <span class="mf">2</span> <span class="mf">3</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">test</span><span class="p">(</span><span class="mf">0</span><span class="p">,</span> <span class="mf">42</span><span class="p">)</span>
+<span class="mf">0</span> <span class="mf">42</span> <span class="mf">2</span> <span class="mf">3</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">test</span><span class="p">(</span><span class="mf">1</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="mf">10</span><span class="p">)</span>
+<span class="mf">1</span> <span class="mf">1</span> <span class="mf">10</span> <span class="mf">3</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">test</span><span class="p">(</span><span class="mf">2</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="mf">100</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="mf">200</span><span class="p">)</span>
+<span class="mf">2</span> <span class="mf">1</span> <span class="mf">100</span> <span class="mf">200</span>
 </pre></div>
 </li>
 <li><p class="first">Robot keywords can have default values but they are always used with
@@ -578,14 +764,14 @@ as a keyword, it could be used with zero or one argument.</p>
 arguments. This is done by prefixing an argument after required and
 optional arguments with an asterisk like <tt class="docutils literal"><span class="pre">*args</span></tt> and it means that
 the specified argument gets all the &quot;extra&quot; arguments as a tuple.</p>
-<div class="highlight"><pre><span style="color: #666666">&gt;&gt;&gt;</span> <span style="color: #008000; font-weight: bold">def</span> <span style="color: #0000FF">example</span>(arg1, arg2, <span style="color: #666666">*</span>rest):
-<span style="color: #666666">...</span>     <span style="color: #008000; font-weight: bold">print</span> arg1, arg2, rest
-<span style="color: #666666">...</span>
-<span style="color: #666666">&gt;&gt;&gt;</span> example(<span style="color: #666666">1</span>, <span style="color: #666666">2</span>)
-<span style="color: #666666">1</span> <span style="color: #666666">2</span> ()
-<span style="color: #666666">&gt;&gt;&gt;</span> example(<span style="color: #666666">1</span>, <span style="color: #666666">2</span>, <span style="color: #666666">3</span>)
-<span style="color: #666666">&gt;&gt;&gt;</span> example(<span style="color: #666666">1</span>, <span style="color: #666666">2</span>, <span style="color: #666666">3</span>, <span style="color: #666666">4</span>, <span style="color: #666666">5</span>)
-<span style="color: #666666">1</span> <span style="color: #666666">2</span> (<span style="color: #666666">3</span>, <span style="color: #666666">4</span>, <span style="color: #666666">5</span>)
+<div class="highlight"><pre><span class="o">&gt;&gt;&gt;</span> <span class="k">def</span> <span class="nf">example</span><span class="p">(</span><span class="n">arg1</span><span class="p">,</span> <span class="n">arg2</span><span class="p">,</span> <span class="o">*</span><span class="n">rest</span><span class="p">):</span>
+<span class="o">...</span>     <span class="k">print</span> <span class="n">arg1</span><span class="p">,</span> <span class="n">arg2</span><span class="p">,</span> <span class="n">rest</span>
+<span class="o">...</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">example</span><span class="p">(</span><span class="mf">1</span><span class="p">,</span> <span class="mf">2</span><span class="p">)</span>
+<span class="mf">1</span> <span class="mf">2</span> <span class="p">()</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">example</span><span class="p">(</span><span class="mf">1</span><span class="p">,</span> <span class="mf">2</span><span class="p">,</span> <span class="mf">3</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">example</span><span class="p">(</span><span class="mf">1</span><span class="p">,</span> <span class="mf">2</span><span class="p">,</span> <span class="mf">3</span><span class="p">,</span> <span class="mf">4</span><span class="p">,</span> <span class="mf">5</span><span class="p">)</span>
+<span class="mf">1</span> <span class="mf">2</span> <span class="p">(</span><span class="mf">3</span><span class="p">,</span> <span class="mf">4</span><span class="p">,</span> <span class="mf">5</span><span class="p">)</span>
 </pre></div>
 </li>
 <li><p class="first">Using variable number of arguments works with Robot keywords.</p>
@@ -605,38 +791,38 @@ use them a lot!</p>
 </li>
 <li><p class="first">A list is an ordered collection of items which you normally access
 by index.</p>
-<div class="highlight"><pre><span style="color: #666666">&gt;&gt;&gt;</span> x <span style="color: #666666">=</span> [<span style="color: #BA2121">&quot;Some&quot;</span>, <span style="color: #BA2121">&quot;strings&quot;</span>, <span style="color: #BA2121">&quot;here&quot;</span>]
-<span style="color: #666666">&gt;&gt;&gt;</span> x[<span style="color: #666666">0</span>]
-<span style="color: #BA2121">&#39;Some&#39;</span>
-<span style="color: #666666">&gt;&gt;&gt;</span> x[<span style="color: #666666">1</span>]
-<span style="color: #BA2121">&#39;strings&#39;</span>
-<span style="color: #666666">&gt;&gt;&gt;</span> x[<span style="color: #666666">-1</span>]
-<span style="color: #BA2121">&#39;here&#39;</span>
-<span style="color: #666666">&gt;&gt;&gt;</span> x[<span style="color: #666666">2</span>] <span style="color: #666666">=</span> x[<span style="color: #666666">2</span>]<span style="color: #666666">.</span>upper()
-<span style="color: #666666">&gt;&gt;&gt;</span> x<span style="color: #666666">.</span>append(<span style="color: #666666">42</span>)
-<span style="color: #666666">&gt;&gt;&gt;</span> x
-[<span style="color: #BA2121">&#39;Some&#39;</span>, <span style="color: #BA2121">&#39;strings&#39;</span>, <span style="color: #BA2121">&#39;HERE&#39;</span>, <span style="color: #666666">42</span>]
+<div class="highlight"><pre><span class="o">&gt;&gt;&gt;</span> <span class="n">x</span> <span class="o">=</span> <span class="p">[</span><span class="s">&quot;Some&quot;</span><span class="p">,</span> <span class="s">&quot;strings&quot;</span><span class="p">,</span> <span class="s">&quot;here&quot;</span><span class="p">]</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">x</span><span class="p">[</span><span class="mf">0</span><span class="p">]</span>
+<span class="s">&#39;Some&#39;</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">x</span><span class="p">[</span><span class="mf">1</span><span class="p">]</span>
+<span class="s">&#39;strings&#39;</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">x</span><span class="p">[</span><span class="o">-</span><span class="mf">1</span><span class="p">]</span>
+<span class="s">&#39;here&#39;</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">x</span><span class="p">[</span><span class="mf">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="mf">2</span><span class="p">]</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">x</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mf">42</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">x</span>
+<span class="p">[</span><span class="s">&#39;Some&#39;</span><span class="p">,</span> <span class="s">&#39;strings&#39;</span><span class="p">,</span> <span class="s">&#39;HERE&#39;</span><span class="p">,</span> <span class="mf">42</span><span class="p">]</span>
 </pre></div>
 </li>
 <li><p class="first">A tuple is a list which you can't change after you have created
 it.</p>
-<div class="highlight"><pre><span style="color: #666666">&gt;&gt;&gt;</span> t <span style="color: #666666">=</span> (<span style="color: #666666">1</span>,<span style="color: #666666">2</span>,<span style="color: #BA2121">&#39;x&#39;</span>)
-<span style="color: #666666">&gt;&gt;&gt;</span> t[<span style="color: #666666">0</span>]
-<span style="color: #666666">1</span>
-<span style="color: #666666">&gt;&gt;&gt;</span> t[<span style="color: #666666">-1</span>]
-<span style="color: #BA2121">&#39;x&#39;</span>
+<div class="highlight"><pre><span class="o">&gt;&gt;&gt;</span> <span class="n">t</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1</span><span class="p">,</span><span class="mf">2</span><span class="p">,</span><span class="s">&#39;x&#39;</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">t</span><span class="p">[</span><span class="mf">0</span><span class="p">]</span>
+<span class="mf">1</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">t</span><span class="p">[</span><span class="o">-</span><span class="mf">1</span><span class="p">]</span>
+<span class="s">&#39;x&#39;</span>
 </pre></div>
 </li>
 <li><p class="first">A dictionary is an unordered collection of key-value pairs.</p>
-<div class="highlight"><pre><span style="color: #666666">&gt;&gt;&gt;</span> d <span style="color: #666666">=</span> {<span style="color: #BA2121">&#39;x&#39;</span>: <span style="color: #BA2121">&#39;some value&#39;</span>, <span style="color: #BA2121">&#39;a&#39;</span>: <span style="color: #666666">1</span>, <span style="color: #BA2121">&#39;b&#39;</span>: <span style="color: #666666">2</span>}
-<span style="color: #666666">&gt;&gt;&gt;</span> d[<span style="color: #BA2121">&#39;a&#39;</span>]
-<span style="color: #666666">1</span>
-<span style="color: #666666">&gt;&gt;&gt;</span> d[<span style="color: #BA2121">&#39;x&#39;</span>]
-<span style="color: #BA2121">&#39;some value&#39;</span>
-<span style="color: #666666">&gt;&gt;&gt;</span> d[<span style="color: #BA2121">&#39;a&#39;</span>] <span style="color: #666666">=</span> d[<span style="color: #BA2121">&#39;b&#39;</span>]
-<span style="color: #666666">&gt;&gt;&gt;</span> d[<span style="color: #BA2121">&#39;tuple&#39;</span>] <span style="color: #666666">=</span> t
-<span style="color: #666666">&gt;&gt;&gt;</span> d
-{<span style="color: #BA2121">&#39;a&#39;</span>: <span style="color: #666666">2</span>, <span style="color: #BA2121">&#39;x&#39;</span>: <span style="color: #BA2121">&#39;some value&#39;</span>, <span style="color: #BA2121">&#39;b&#39;</span>: <span style="color: #666666">2</span>, <span style="color: #BA2121">&#39;tuple&#39;</span>: (<span style="color: #666666">1</span>, <span style="color: #666666">2</span>, <span style="color: #BA2121">&#39;x&#39;</span>)}
+<div class="highlight"><pre><span class="o">&gt;&gt;&gt;</span> <span class="n">d</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;x&#39;</span><span class="p">:</span> <span class="s">&#39;some value&#39;</span><span class="p">,</span> <span class="s">&#39;a&#39;</span><span class="p">:</span> <span class="mf">1</span><span class="p">,</span> <span class="s">&#39;b&#39;</span><span class="p">:</span> <span class="mf">2</span><span class="p">}</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">d</span><span class="p">[</span><span class="s">&#39;a&#39;</span><span class="p">]</span>
+<span class="mf">1</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">d</span><span class="p">[</span><span class="s">&#39;x&#39;</span><span class="p">]</span>
+<span class="s">&#39;some value&#39;</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">d</span><span class="p">[</span><span class="s">&#39;a&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">d</span><span class="p">[</span><span class="s">&#39;b&#39;</span><span class="p">]</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">d</span><span class="p">[</span><span class="s">&#39;tuple&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">t</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">d</span>
+<span class="p">{</span><span class="s">&#39;a&#39;</span><span class="p">:</span> <span class="mf">2</span><span class="p">,</span> <span class="s">&#39;x&#39;</span><span class="p">:</span> <span class="s">&#39;some value&#39;</span><span class="p">,</span> <span class="s">&#39;b&#39;</span><span class="p">:</span> <span class="mf">2</span><span class="p">,</span> <span class="s">&#39;tuple&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">1</span><span class="p">,</span> <span class="mf">2</span><span class="p">,</span> <span class="s">&#39;x&#39;</span><span class="p">)}</span>
 </pre></div>
 </li>
 <li><p class="first">A lot more examples, including slice syntax not shown here, and good
@@ -655,20 +841,20 @@ statements.</li>
 </ul>
 </li>
 <li><p class="first">For example:</p>
-<div class="highlight"><pre><span style="color: #008000; font-weight: bold">def</span> <span style="color: #0000FF">good_morning_or_night</span>(name, morning<span style="color: #666666">=</span><span style="color: #008000">True</span>):
-    <span style="color: #008000; font-weight: bold">if</span> morning:
-        <span style="color: #008000; font-weight: bold">print</span> <span style="color: #BA2121">&#39;Good morning </span><span style="color: #BB6688; font-weight: bold">%s</span><span style="color: #BA2121">&#39;</span> <span style="color: #666666">%</span> name
-    <span style="color: #008000; font-weight: bold">else</span>:
-        <span style="color: #008000; font-weight: bold">print</span> <span style="color: #BA2121">&#39;Good night </span><span style="color: #BB6688; font-weight: bold">%s</span><span style="color: #BA2121">&#39;</span> <span style="color: #666666">%</span> name
+<div class="highlight"><pre><span class="k">def</span> <span class="nf">good_morning_or_night</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">morning</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">morning</span><span class="p">:</span>
+        <span class="k">print</span> <span class="s">&#39;Good morning </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">name</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">print</span> <span class="s">&#39;Good night </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">name</span>
 
-<span style="color: #008000; font-weight: bold">def</span> <span style="color: #0000FF">greet_many</span>(names):
-    <span style="color: #008000; font-weight: bold">for</span> name <span style="color: #AA22FF; font-weight: bold">in</span> names:
-        <span style="color: #008000; font-weight: bold">print</span> <span style="color: #BA2121">&#39;Hello </span><span style="color: #BB6688; font-weight: bold">%s</span><span style="color: #BA2121">&#39;</span> <span style="color: #666666">%</span> name
+<span class="k">def</span> <span class="nf">greet_many</span><span class="p">(</span><span class="n">names</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">names</span><span class="p">:</span>
+        <span class="k">print</span> <span class="s">&#39;Hello </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">name</span>
 
-<span style="color: #008000; font-weight: bold">if</span> __name__ <span style="color: #666666">==</span> <span style="color: #BA2121">&#39;__main__&#39;</span>:
-    good_morning_or_night(<span style="color: #BA2121">&#39;Luke&#39;</span>)
-    good_morning_or_night(<span style="color: #BA2121">&#39;Dad&#39;</span>, morning<span style="color: #666666">=</span><span style="color: #008000">False</span>)
-    greet_many([<span style="color: #BA2121">&#39;Luke&#39;</span>, <span style="color: #BA2121">&#39;Yoda&#39;</span>])
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">good_morning_or_night</span><span class="p">(</span><span class="s">&#39;Luke&#39;</span><span class="p">)</span>
+    <span class="n">good_morning_or_night</span><span class="p">(</span><span class="s">&#39;Dad&#39;</span><span class="p">,</span> <span class="n">morning</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+    <span class="n">greet_many</span><span class="p">([</span><span class="s">&#39;Luke&#39;</span><span class="p">,</span> <span class="s">&#39;Yoda&#39;</span><span class="p">])</span>
 </pre></div>
 </li>
 <li><p class="first">For more examples and information:</p>
@@ -706,16 +892,16 @@ plenty of existing code to be imported!</li>
 already created some modules.</p>
 </li>
 <li><p class="first">For example we could have following code in a file called  <tt class="docutils literal"><span class="pre">test.py</span></tt>:</p>
-<div class="highlight"><pre><span style="color: #008000; font-weight: bold">def</span> <span style="color: #0000FF">hello</span>(name<span style="color: #666666">=</span><span style="color: #BA2121">&quot;World&quot;</span>):
-    <span style="color: #008000; font-weight: bold">print</span> <span style="color: #BA2121">&quot;Hello, </span><span style="color: #BB6688; font-weight: bold">%s</span><span style="color: #BA2121">&quot;</span> <span style="color: #666666">%</span> name
+<div class="highlight"><pre><span class="k">def</span> <span class="nf">hello</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">&quot;World&quot;</span><span class="p">):</span>
+    <span class="k">print</span> <span class="s">&quot;Hello, </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">name</span>
 
-<span style="color: #008000; font-weight: bold">if</span> __name__ <span style="color: #666666">==</span> <span style="color: #BA2121">&quot;__main__&quot;</span>:
-    hello()
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">hello</span><span class="p">()</span>
 </pre></div>
 <p>and then be able to use it like:</p>
-<div class="highlight"><pre><span style="color: #666666">&gt;&gt;&gt;</span> <span style="color: #008000; font-weight: bold">import</span> <span style="color: #0000FF; font-weight: bold">test</span>
-<span style="color: #666666">&gt;&gt;&gt;</span> test<span style="color: #666666">.</span>hello(<span style="color: #BA2121">&quot;Tellus&quot;</span>)
-Hello, Tellus
+<div class="highlight"><pre><span class="o">&gt;&gt;&gt;</span> <span class="k">import</span> <span class="nn">test</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">test</span><span class="o">.</span><span class="n">hello</span><span class="p">(</span><span class="s">&quot;Tellus&quot;</span><span class="p">)</span>
+<span class="n">Hello</span><span class="p">,</span> <span class="n">Tellus</span>
 </pre></div>
 </li>
 <li><p class="first"><tt class="docutils literal"><span class="pre">if</span> <span class="pre">__name__</span> <span class="pre">==</span> <span class="pre">&quot;__main__&quot;</span></tt> block in the previous example is
@@ -762,17 +948,17 @@ really handy.</p>
 </li>
 <li><p class="first">The syntax for creating classes and then instances from them is
 relatively straightforward:</p>
-<div class="highlight"><pre><span style="color: #666666">&gt;&gt;&gt;</span> <span style="color: #008000; font-weight: bold">class</span> <span style="color: #0000FF; font-weight: bold">MyClass</span>:
-<span style="color: #666666">...</span>     <span style="color: #008000; font-weight: bold">def</span> <span style="color: #0000FF">__init__</span>(<span style="color: #008000">self</span>, name):
-<span style="color: #666666">...</span>         <span style="color: #008000">self</span><span style="color: #666666">.</span>_name <span style="color: #666666">=</span> name
-<span style="color: #666666">...</span>     <span style="color: #008000; font-weight: bold">def</span> <span style="color: #0000FF">hello</span>(<span style="color: #008000">self</span>, other<span style="color: #666666">=</span><span style="color: #BA2121">&quot;World&quot;</span>):
-<span style="color: #666666">...</span>         <span style="color: #008000; font-weight: bold">print</span> <span style="color: #BA2121">&quot;</span><span style="color: #BB6688; font-weight: bold">%s</span><span style="color: #BA2121"> says hello to </span><span style="color: #BB6688; font-weight: bold">%s</span><span style="color: #BA2121">.&quot;</span> <span style="color: #666666">%</span> (<span style="color: #008000">self</span><span style="color: #666666">.</span>_name, other)
-<span style="color: #666666">...</span>
-<span style="color: #666666">&gt;&gt;&gt;</span> c <span style="color: #666666">=</span> MyClass(<span style="color: #BA2121">&#39;Robot&#39;</span>)
-<span style="color: #666666">&gt;&gt;&gt;</span> c<span style="color: #666666">.</span>hello()
-Robot says hello to World<span style="color: #666666">.</span>
-<span style="color: #666666">&gt;&gt;&gt;</span> c<span style="color: #666666">.</span>hello(<span style="color: #BA2121">&#39;Tellus&#39;</span>)
-Robot says hello to Tellus<span style="color: #666666">.</span>
+<div class="highlight"><pre><span class="o">&gt;&gt;&gt;</span> <span class="k">class</span> <span class="nc">MyClass</span><span class="p">:</span>
+<span class="o">...</span>     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+<span class="o">...</span>         <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">=</span> <span class="n">name</span>
+<span class="o">...</span>     <span class="k">def</span> <span class="nf">hello</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="o">=</span><span class="s">&quot;World&quot;</span><span class="p">):</span>
+<span class="o">...</span>         <span class="k">print</span> <span class="s">&quot;</span><span class="si">%s</span><span class="s"> says hello to </span><span class="si">%s</span><span class="s">.&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="p">,</span> <span class="n">other</span><span class="p">)</span>
+<span class="o">...</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">c</span> <span class="o">=</span> <span class="n">MyClass</span><span class="p">(</span><span class="s">&#39;Robot&#39;</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">c</span><span class="o">.</span><span class="n">hello</span><span class="p">()</span>
+<span class="n">Robot</span> <span class="n">says</span> <span class="n">hello</span> <span class="n">to</span> <span class="n">World</span><span class="o">.</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">c</span><span class="o">.</span><span class="n">hello</span><span class="p">(</span><span class="s">&#39;Tellus&#39;</span><span class="p">)</span>
+<span class="n">Robot</span> <span class="n">says</span> <span class="n">hello</span> <span class="n">to</span> <span class="n">Tellus</span><span class="o">.</span>
 </pre></div>
 </li>
 <li><p class="first">The really weird thing in the syntax is that every class method must
@@ -843,49 +1029,123 @@ each top-level function in the module. In case of a class, a keyword will be
 created for each public method of the class.</p>
 <p>Keyword may return values using the <cite>return</cite> statement. A failure is generated
 by raising an exception. <cite>print</cite> statement can be used to log a message from a
-keyword. The example library below illustrates these:</p>
-<div class="highlight"><pre><span style="color: #008000; font-weight: bold">class</span> <span style="color: #0000FF; font-weight: bold">ExampleLib</span>:
+keyword. The example library below illustrates these features:</p>
+<div class="highlight"><pre><span class="k">class</span> <span class="nc">ExampleLibrary</span><span class="p">:</span>
 
-    <span style="color: #008000; font-weight: bold">def</span> <span style="color: #0000FF">simplest_keyword</span>(<span style="color: #008000">self</span>):
-        <span style="color: #BA2121; font-style: italic">&quot;&quot;&quot;Log a message&quot;&quot;&quot;</span>
-        <span style="color: #008000; font-weight: bold">print</span> <span style="color: #BA2121">&#39;You have used the Simplest Keyword.&#39;</span>
+    <span class="k">def</span> <span class="nf">simple_keyword</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Log a message&quot;&quot;&quot;</span>
+        <span class="k">print</span> <span class="s">&#39;You have used the simplest keyword.&#39;</span>
 
-    <span style="color: #008000; font-weight: bold">def</span> <span style="color: #0000FF">greet</span>(<span style="color: #008000">self</span>, name):
-        <span style="color: #BA2121; font-style: italic">&quot;&quot;&quot;Logs a friendly greeting to person given as argument&quot;&quot;&quot;</span>
-        <span style="color: #008000; font-weight: bold">print</span> <span style="color: #BA2121">&#39;Hello </span><span style="color: #BB6688; font-weight: bold">%s</span><span style="color: #BA2121">!&#39;</span> <span style="color: #666666">%</span> name
+    <span class="k">def</span> <span class="nf">greet</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Logs a friendly greeting to person given as argument&quot;&quot;&quot;</span>
+        <span class="k">print</span> <span class="s">&#39;Hello </span><span class="si">%s</span><span class="s">!&#39;</span> <span class="o">%</span> <span class="n">name</span>
 
-    <span style="color: #008000; font-weight: bold">def</span> <span style="color: #0000FF">multiply_by_two</span>(<span style="color: #008000">self</span>, number):
-        <span style="color: #BA2121; font-style: italic">&quot;&quot;&quot;Returns the given number multiplied by two</span>
-<span style="color: #BA2121; font-style: italic">        </span>
-<span style="color: #BA2121; font-style: italic">        The result is always a floating point number.</span>
-<span style="color: #BA2121; font-style: italic">        This keyword fails if the given `number` cannot be converted to number.</span>
-<span style="color: #BA2121; font-style: italic">        &quot;&quot;&quot;</span>
-        <span style="color: #008000; font-weight: bold">return</span> <span style="color: #008000">float</span>(number) <span style="color: #666666">*</span> <span style="color: #666666">2</span>
+    <span class="k">def</span> <span class="nf">multiply_by_two</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">number</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns the given number multiplied by two</span>
+<span class="sd">        </span>
+<span class="sd">        The result is always a floating point number.</span>
+<span class="sd">        This keyword fails if the given `number` cannot be converted to number.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">number</span><span class="p">)</span> <span class="o">*</span> <span class="mf">2</span>
 
-    <span style="color: #008000; font-weight: bold">def</span> <span style="color: #0000FF">numbers_should_be_equal</span>(<span style="color: #008000">self</span>, first, second):
-        <span style="color: #008000; font-weight: bold">print</span> <span style="color: #BA2121">&#39;*DEBUG* Got </span><span style="color: #BB6688; font-weight: bold">%s</span><span style="color: #BA2121"> and </span><span style="color: #BB6688; font-weight: bold">%s</span><span style="color: #BA2121">&#39;</span>
-        <span style="color: #008000; font-weight: bold">if</span> <span style="color: #008000">int</span>(first) <span style="color: #666666">!=</span> <span style="color: #008000">int</span>(second):
-            <span style="color: #008000; font-weight: bold">raise</span> <span style="color: #D2413A; font-weight: bold">AssertionError</span>(<span style="color: #BA2121">&#39;Given numbers are unequal!&#39;</span>)
+    <span class="k">def</span> <span class="nf">numbers_should_be_equal</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">first</span><span class="p">,</span> <span class="n">second</span><span class="p">):</span>
+        <span class="k">print</span> <span class="s">&#39;*DEBUG* Got </span><span class="si">%s</span><span class="s"> and </span><span class="si">%s</span><span class="s">&#39;</span>
+        <span class="k">if</span> <span class="nb">float</span><span class="p">(</span><span class="n">first</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">float</span><span class="p">(</span><span class="n">second</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">AssertionError</span><span class="p">(</span><span class="s">&#39;Given numbers are unequal!&#39;</span><span class="p">)</span>
 </pre></div>
 <p>These keyword may be tested for example using a TSV test file below:</p>
-<pre class="literal-block">
-* Settings *
-Library       ExampleLib
-
-* Test Cases *
-Simple Test Simplest Keyword
-        Greet   Robot
-
-Returning Value ${result} = Multiply By Two 4.1
-      Should Be Equal ${result}   ${8.2}
-
-Failing Test    Numbers Should Be Equal 2   3
-</pre>
+<table border="1" class="tsv-example docutils">
+<colgroup>
+<col width="25%" />
+<col width="25%" />
+<col width="25%" />
+<col width="25%" />
+</colgroup>
+<tbody valign="top">
+<tr><td><strong>*Settings*</strong></td>
+<td>&nbsp;</td>
+<td>&nbsp;</td>
+<td>&nbsp;</td>
+</tr>
+<tr><td>Library</td>
+<td>ExampleLibrary</td>
+<td>&nbsp;</td>
+<td>&nbsp;</td>
+</tr>
+<tr><td>&nbsp;</td>
+<td>&nbsp;</td>
+<td>&nbsp;</td>
+<td>&nbsp;</td>
+</tr>
+<tr><td>&nbsp;</td>
+<td>&nbsp;</td>
+<td>&nbsp;</td>
+<td>&nbsp;</td>
+</tr>
+<tr><td><strong>*Test Cases*</strong></td>
+<td>&nbsp;</td>
+<td>&nbsp;</td>
+<td>&nbsp;</td>
+</tr>
+<tr><td>Simple Test</td>
+<td>&nbsp;</td>
+<td>&nbsp;</td>
+<td>&nbsp;</td>
+</tr>
+<tr><td>&nbsp;</td>
+<td>Simple Keyword</td>
+<td>&nbsp;</td>
+<td>&nbsp;</td>
+</tr>
+<tr><td>&nbsp;</td>
+<td>Greet</td>
+<td>Robot</td>
+<td>&nbsp;</td>
+</tr>
+<tr><td>&nbsp;</td>
+<td>&nbsp;</td>
+<td>&nbsp;</td>
+<td>&nbsp;</td>
+</tr>
+<tr><td>Returning Value</td>
+<td>&nbsp;</td>
+<td>&nbsp;</td>
+<td>&nbsp;</td>
+</tr>
+<tr><td>&nbsp;</td>
+<td>${result} =</td>
+<td>Multiply By Two</td>
+<td>4.1</td>
+</tr>
+<tr><td>&nbsp;</td>
+<td>Numbers Should Be Equal</td>
+<td>${result}</td>
+<td>8.2</td>
+</tr>
+<tr><td>&nbsp;</td>
+<td>&nbsp;</td>
+<td>&nbsp;</td>
+<td>&nbsp;</td>
+</tr>
+<tr><td>Failing Test</td>
+<td>&nbsp;</td>
+<td>&nbsp;</td>
+<td>&nbsp;</td>
+</tr>
+<tr><td>&nbsp;</td>
+<td>Numbers Should Be Equal</td>
+<td>2</td>
+<td>3</td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
 <div class="footer">
 <hr class="footer" />
-Generated on: 2009-08-14 03:51 UTC.
+<p>Generated by <a class="reference external" href="http://docutils.sourceforge.net/rst.html">reStructuredText</a>. Syntax highlighting by <a class="reference external" href="http://pygments.org/">Pygments</a>.</p>
+<p>Generated on: 2009-08-14 14:33 UTC.
+</p>
 
 </div>
 </body>
