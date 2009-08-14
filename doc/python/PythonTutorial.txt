@@ -43,8 +43,11 @@ Introduction
 .. _Google search: http://www.google.fi/search?q=python+tutorial
 
 
+Getting Started
+---------------
+
 Installation
-------------
+''''''''''''
 
 * Everyone is supposed to have Python installed because Robot Framework
   requires it.
@@ -60,12 +63,12 @@ Installation
   - On Windows, and possibly on some other systems, this requires adding
     Python installation directory into PATH environment variable. For
     instructions see e.g. `Robot Framework user guide`_.
-	
+
 .. _Robot Framework user guide: http://robotframework.googlecode.com/svn/tags/robotframework-2.1/doc/userguide/RobotFrameworkUserGuide.html#setting-up-environment
 
 
 Interactive Interpreter
------------------------
+'''''''''''''''''''''''
 
 * Start from command line by typing ``python``. In Windows you can
   also start it from ``Start > All Programs > Python 2.x``.
@@ -86,6 +89,25 @@ Interactive Interpreter
 * `Dive Into Python`__ has some examples.
 
 .. __: http://diveintopython.org/installing_python/shell.html
+
+
+Python Editors
+''''''''''''''
+
+* There are a lot of different Python editors available.
+
+* Most general editors (Emacs, VIM, Eclipse, UltraEdit...) can be
+  used very well but
+
+  - learning curve can be quite steep unless you already know them, and
+  - having a mode or plug-in that highlights the source, handles
+    indentation, etc. is nearly mandatory.
+
+* Standard Python installation includes `IDLE editor`_ that comes with
+  an interactive console. If you don't know any better editor you can
+  at least get started with it without problems.
+
+.. _IDLE editor: http://hkn.eecs.berkeley.edu/~dyoo/python/idle_intro/
 
 
 Basic Data Types
@@ -139,27 +161,8 @@ Variables
     'Hello'
 
 
-Python Editors
---------------
-
-* There are a lot of different Python editors available.
-
-* Most general editors (Emacs, VIM, Eclipse, UltraEdit...) can be
-  used very well but
-
-  - learning curve can be quite steep unless you already know them, and
-  - having a mode or plug-in that highlights the source, handles
-    indentation, etc. is nearly mandatory.
-
-* Standard Python installation includes `IDLE editor`_ that comes with
-  an interactive console. If you don't know any better editor you can
-  at least get started with it without problems.
-
-.. _IDLE editor: http://hkn.eecs.berkeley.edu/~dyoo/python/idle_intro/
-
-
 Simplest Possible Program (Mandatory "Hello, world!" Example)
------------------------------------------------------------------------
+--------------------------------------------------------------
 
 * Create a file ``hello.py`` with your editor of choice.
 
@@ -178,7 +181,10 @@ Simplest Possible Program (Mandatory "Hello, world!" Example)
 
 
 Functions ("Hello, world!" Strikes Back)
----------------------------------------------------
+-----------------------------------------
+
+Creating functions
+''''''''''''''''''
 
 * Creating functions in Python is super easy. For example earlier ``Hello,
   world!`` example could be written like this:
@@ -215,7 +221,7 @@ Functions ("Hello, world!" Strikes Back)
 
 
 Documenting Functions
----------------------
+'''''''''''''''''''''
 
 * Documenting functions, classes, etc. in Python is both easy and important:
   http://diveintopython.org/getting_to_know_python/documenting_functions.html
@@ -233,6 +239,77 @@ Documenting Functions
 * With Robot documenting functions that are used as keywords is extra
   important because there are tools for generating library
   documentation from them.
+
+
+Optional And Named Arguments for Functions (Return of the "Hello, world!")
+''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+
+* Functions can have default values for some or all of it's
+  arguments.
+
+  .. sourcecode:: python
+
+    >>> def hello(name="World"):
+    ...     print "Hello, %s" % name
+    ...
+    >>> hello()
+    Hello, World
+    >>> hello("Robot")
+    Hello, Robot
+
+* If there are several optional arguments it's also possible to
+  specify only some of them by giving their name along with the value
+  as the example below illustrates. Those arguments that don't have
+  default values must always be given.
+
+  .. sourcecode:: python
+
+    >>> def test(a, b=1, c=2, d=3):
+    ...   print a, b, c, d
+    ...
+    >>> test(0)
+    0 1 2 3
+    >>> test(0, 42)
+    0 42 2 3
+    >>> test(1, c=10)
+    1 1 10 3
+    >>> test(2, c=100, d=200)
+    2 1 100 200
+
+* Robot keywords can have default values but they are always used with
+  positional arguments. For example if above ``hello`` method was used
+  as a keyword, it could be used with zero or one argument.
+
+* For more information about optional and named arguments, see `Dive Into Python`__.
+
+.. __:  http://diveintopython.org/power_of_introspection/optional_arguments.html
+
+
+Variable Number of Arguments
+''''''''''''''''''''''''''''
+
+* Function can also be created so that they take any number of
+  arguments. This is done by prefixing an argument after required and
+  optional arguments with an asterisk like ``*args`` and it means that
+  the specified argument gets all the "extra" arguments as a tuple.
+
+  .. sourcecode:: python
+
+    >>> def example(arg1, arg2, *rest):
+    ...     print arg1, arg2, rest
+    ...
+    >>> example(1, 2)
+    1 2 ()
+    >>> example(1, 2, 3)  
+    >>> example(1, 2, 3, 4, 5)
+    1 2 (3, 4, 5)
+
+* Using variable number of arguments works with Robot keywords.
+
+* `Python tutorial`__ explains everything in this and earlier section in
+  detail.
+
+.. __: http://docs.python.org/tut/node6.html#SECTION006700000000000000000
 
 
 Lists, Tuples and Dictionaries
@@ -331,80 +408,11 @@ Control Flow
 
 .. _list comprehension: http://diveintopython.org/native_data_types/mapping_lists.html
 
-
-Optional And Named Arguments for Functions (Return of the "Hello, world!")
---------------------------------------------------------------------------
-
-* Functions can have default values for some or all of it's
-  arguments.
-
-  .. sourcecode:: python
-
-    >>> def hello(name="World"):
-    ...     print "Hello, %s" % name
-    ...
-    >>> hello()
-    Hello, World
-    >>> hello("Robot")
-    Hello, Robot
-
-* If there are several optional arguments it's also possible to
-  specify only some of them by giving their name along with the value
-  as the example below illustrates. Those arguments that don't have
-  default values must always be given.
-
-  .. sourcecode:: python
-
-    >>> def test(a, b=1, c=2, d=3):
-    ...   print a, b, c, d
-    ...
-    >>> test(0)
-    0 1 2 3
-    >>> test(0, 42)
-    0 42 2 3
-    >>> test(1, c=10)
-    1 1 10 3
-    >>> test(2, c=100, d=200)
-    2 1 100 200
-
-* Robot keywords can have default values but they are always used with
-  positional arguments. For example if above ``hello`` method was used
-  as a keyword, it could be used with zero or one argument.
-
-* For more information about optional and named arguments, see `Dive Into Python`__.
-
-.. __:  http://diveintopython.org/power_of_introspection/optional_arguments.html
-
-
-Variable Number of Arguments
-----------------------------
-
-* Function can also be created so that they take any number of
-  arguments. This is done by prefixing an argument after required and
-  optional arguments with an asterisk like ``*args`` and it means that
-  the specified argument gets all the "extra" arguments as a tuple.
-
-  .. sourcecode:: python
-
-    >>> def example(arg1, arg2, *rest):
-    ...     print arg1, arg2, rest
-    ...
-    >>> example(1, 2)
-    1 2 ()
-    >>> example(1, 2, 3)  
-    >>> example(1, 2, 3, 4, 5)
-    1 2 (3, 4, 5)
-
-* Using variable number of arguments works with Robot keywords.
-
-* `Python tutorial`__ explains everything in this and earlier section in
-  detail.
-
-.. __: http://docs.python.org/tut/node6.html#SECTION006700000000000000000
-
+Modules
+-------
 
 Importing Modules
------------------
+'''''''''''''''''
 
 * Importing existing Python modules is as simply as saying ``import
   modulename``. 
@@ -416,7 +424,7 @@ Importing Modules
 
 
 Creating Modules
-----------------
+''''''''''''''''
 
 * Every ``.py`` file is effectively a Python module so you have
   already created some modules.
@@ -457,7 +465,7 @@ Creating Modules
 
 
 Module search path (PYTHONPATH)
--------------------------------
+'''''''''''''''''''''''''''''''
 
 * Python modules aren't automatically searched everywhere on you
   machine. Python has certain default places to search modules for
