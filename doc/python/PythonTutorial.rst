@@ -76,10 +76,10 @@ Installation
   can run Python from command line simply by typing :cli:`python` and pressing
   enter. 
 
-   - On Windows, and possibly on some other systems, this requires
-     adding Python installation directory into :var:`PATH` environment
-     variable. For example `Robot Framework User Guide`_ has
-     instructions on how to do it in its *Installation* section.
+  - On Windows, and possibly on some other systems, this requires
+    adding Python installation directory into :var:`PATH` environment
+    variable. For example `Robot Framework User Guide`_ has
+    instructions on how to do it in its *Installation* section.
 
 
 Interactive interpreter
@@ -116,7 +116,7 @@ Python editors
   also some editors specially for Python.
 
 * The most important editor features are source highlighting and
-  handling indentation. Make sure your editor of choise supports them
+  handling indentation. Make sure your editor of choice supports them
   either natively or via Python plugin or mode.
 
 * If you do not know any editor, you can at least get started with
@@ -279,7 +279,7 @@ Optional and named arguments
 * If there are several optional arguments, it is also possible to
   specify only some of them by giving their name along with the value
   as the example below illustrates. Those arguments that do not have
-  default values cannot be omited.
+  default values cannot be omitted.
 
   .. sourcecode:: pycon
 
@@ -439,7 +439,7 @@ Tuples
       File "<stdin>", line 1, in <module>
     TypeError: 'tuple' object does not support item assignment
 
-* Notice thay you must use a trailing comma to create a tuple with one
+* Notice that you must use a trailing comma to create a tuple with one
   element:
 
   .. sourcecode:: pycon
@@ -477,7 +477,7 @@ Conditional execution
 * Python has similar :code:`if/elif/else` structure as most other
   programming languages.
 
-* Notice that no parantheses are needed around the expression as in
+* Notice that no parentheses are needed around the expression as in
   Java or C.
 
   .. sourcecode:: python
@@ -676,8 +676,8 @@ Classes and instances
   example from Dive Into Python and/or study detailed information from
   Python Tutorial:
 
-    - http://diveintopython.org/object_oriented_framework
-    - http://docs.python.org/tut/node11.html
+  - http://diveintopython.org/object_oriented_framework
+  - http://docs.python.org/tut/node11.html
 
 
 Exceptions
