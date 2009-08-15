@@ -15,7 +15,7 @@ Introduction
 ------------
 
 * This is self learning material for `Python language`_. The target is
-  to learn enough Python to be able to learn how to create test
+  to learn enough Python to be able to start creating test
   libraries for `Robot Framework`_.
 
 * Earlier programming experience is expected but not absolutely
@@ -23,60 +23,69 @@ Introduction
 
 * The main study material for this training is *Dive Into Python* book
   which is really good and freely available for on-line reading,
-  downloading or printing from http://diveintopython.org.
+  downloading or printing from http://diveintopython.org.  It is
+  targeted for people who already know how to program but do not know
+  Python before.
 
-* That book is targeted for people who already know how to program. If
-  you are a novice programmer it might better to start with `Think Python`_
-  book which is also available for free.
+* If you are a novice programmer, it might better to start with `Think
+  Python`_ book. It is also available for free and its target audience
+  is people without any earlier programming knowledge.
 
 * `Python Tutorial`_, available at http://python.org and included into
-  the standard Python installation, is also good. Some of the sections
-  in this training refer to it instead of or in addition to Dive Into Python.
+  the standard Python installation at least on Windows, is also
+  good. Some of the sections in this training refer to it instead of
+  or in addition to Dive Into Python.
 
-* http://python.org is a good place for more Python information in
-  general and `Google search`_ returns a lot of hits too.
+* The official Python website at http://python.org is a good place to
+  search for more documentation and Python related information in
+  general.
+
+* If you need information about Jython, the Java implementation of
+  Python, you can start from http://jython.org.
 
 .. _Python language: http://python.org
 .. _Robot Framework: http://robotframework.org
 .. _Think Python: http://www.greenteapress.com/thinkpython/thinkpython.html
 .. _Python Tutorial: http://docs.python.org/tut/tut.html
-.. _Google search: http://www.google.fi/search?q=python+tutorial
 
 
-Getting Started
+Getting started
 ---------------
 
 Installation
 ''''''''''''
 
-* Everyone is supposed to have Python installed because Robot Framework
-  requires it.
+* Most Linux distributions, OS X, and other UNIX like machines have
+  Python installed automatically, but on Windows you probably need to
+  install it separately. Installers for different platforms can be
+  found from http://python.org.
 
-* If you don't have it, get an installer e.g. from
-  http://python.org. Python 2.6(.x) is recommended but 2.5 and 2.4 can
-  be also used.
+* Robot Framework does not yet support Python 3.x and also this
+  tutorial is based on Python 2.x. Any 2.x version up from 2.3 is
+  sufficient but the latest versions are recommended.
 
 * It is highly recommended that you configure your system so that you
   can run Python from command line simply by typing ``python`` and pressing
   enter.
 
-  - On Windows, and possibly on some other systems, this requires adding
-    Python installation directory into PATH environment variable. For
-    instructions see e.g. `Robot Framework user guide`_.
+   - On Windows, and possibly on some other systems, this requires
+     adding Python installation directory into PATH environment
+     variable. For more information and instructions on how to do it
+     see `Robot Framework user guide`_.
 
 .. _Robot Framework user guide: http://robotframework.googlecode.com/svn/tags/robotframework-2.1/doc/userguide/RobotFrameworkUserGuide.html#setting-up-environment
 
 
-Interactive Interpreter
+Interactive interpreter
 '''''''''''''''''''''''
 
-* Start from command line by typing ``python``. In Windows you can
+* Start from command line by typing ``python``. On Windows you can
   also start it from ``Start > All Programs > Python 2.x``.
 
 * Statements and expressions can be written in the console. Pressing <Enter>
   will interpret the line and any possible results are echoed. Try for example:
 
-  .. sourcecode:: python
+  .. sourcecode:: pycon
 
     >>> 1+2
     3
@@ -84,51 +93,53 @@ Interactive Interpreter
 * To exit press first ``Ctrl-Z`` and then enter on Windows and
   ``Ctrl-D`` on other systems.
 
-  - You can exit Python 2.5/2.6 interpreter also with command ``exit()``.
+  - With Python 2.5 and newer you can exit the interpreter also with
+    command ``exit()``.
 
-* `Dive Into Python`__ has some examples.
+* `Dive Into Python`__ has some more examples.
 
 .. __: http://diveintopython.org/installing_python/shell.html
 
 
-Python Editors
+Python editors
 ''''''''''''''
 
-* There are a lot of different Python editors available.
+* Most general purpose text editors (Emacs, VIM, UltraEdit, ...) and
+  IDEs (Eclipse, Netbeans, ...) can be used to edit Python. There are
+  also some editors specially for Python.
 
-* Most general editors (Emacs, VIM, Eclipse, UltraEdit...) can be
-  used very well but
+* The most important editor features are source highlighting and
+  handling indentation. Make sure your editor of choise supports them
+  either natively or via Python plugin or mode.
 
-  - learning curve can be quite steep unless you already know them, and
-  - having a mode or plug-in that highlights the source, handles
-    indentation, etc. is nearly mandatory.
+* If you don't know any editor, you can at least get started with
+  `IDLE`_.  It is included in the standard Python installation on
+  Windows and can be installed also on other system.
 
-* Standard Python installation includes `IDLE editor`_ that comes with
-  an interactive console. If you don't know any better editor you can
-  at least get started with it without problems.
-
-.. _IDLE editor: http://hkn.eecs.berkeley.edu/~dyoo/python/idle_intro/
+.. _IDLE: http://hkn.eecs.berkeley.edu/~dyoo/python/idle_intro/
 
 
-Basic Data Types
-----------------
+Variables
+---------
 
-* Python has strings, integers, floating point numbers, boolean values
+Basic data types
+''''''''''''''''
+
+* Python has strings, integers, floating point numbers, Boolean values
   (``True`` and ``False``) similarly as most other programming languages.
 
-* Strings can be enclosed into double or single quotes (they don't
-  have any difference like they do in Perl).
+* Strings can be enclosed into double or single quotes (they do not
+  have any difference like they do for example in Perl).
 
-* Unicode strings have a special syntax like ``u"Hyv\xE4\xE4 y\xF6\t\xE4!"``.
-  Using Unicode with Python is not covered otherwise in this training
-  but you can find a lot of information about it with search engines.
+* Unicode strings have a special syntax like ``u"Hyv\xE4\xE4 y\xF6\t\xE4!"``
+  Using Unicode with Python is not covered otherwise in this tutorial.
 
 * ``None`` is a special value meaning nothing similarly as ``null`` in
   Java.
 
 * Try at least these on the interpreter:
 
-  .. sourcecode:: python
+  .. sourcecode:: pycon
 
     >>> 2 * 2.5
     5.0
@@ -138,17 +149,22 @@ Basic Data Types
     "Ain't it"
 
 
-Variables
----------
+Declaring variables
+'''''''''''''''''''
 
-* Valid characters in variable identifiers are letters and underscore.
+* All different values can be assigned to variables. Valid characters
+  in variable identifiers are letters, underscore, and numbers,
+  although numbers cannot start the variable name.
 
 * A variable needs not to be declared, it starts to exist when a value is
   assigned for the first time.
 
+* There is no need to specify the variable type either as the type is
+  got from the assigned variable automatically.
+
 * Try it out:
 
-  .. sourcecode:: python
+  .. sourcecode:: pycon
 
     >>> a = 3
     >>> a
@@ -160,109 +176,130 @@ Variables
     >>> greeting
     'Hello'
 
+* It is even possible to assign multiple variables at once:
 
-Simplest Possible Program (Mandatory "Hello, world!" Example)
---------------------------------------------------------------
+  .. sourcecode:: pycon
 
-* Create a file ``hello.py`` with your editor of choice.
+    >>> x, y = 'first', 'second'
+    >>> x
+    'first'
 
-* Write ``print "Hello, world!"`` into the file, run it from command
-  line like
+
+First program
+-------------
+
+* Create a file ``hello.py`` with your editor of choice and write this
+  content into it:
+
+  .. sourcecode:: python
+
+    print "Hello, world!"
+
+* Then execute the file on the console like this:
+
+  .. sourcecode:: console
 
     python hello.py
 
-  You should get ``Hello, world!`` printed into the console.
+* As a result you should get ``Hello, world!`` printed into the screen.
 
-* You can of course add more code to the same file too.
+* For more interesting examples see `Dive Into Python`__.
 
-* `Dive Into Python`__ has a lot more interesting examples.
-
-.. __:  http://diveintopython.org/getting_to_know_python/index.html
+__ http://diveintopython.org/getting_to_know_python/index.html
 
 
-Functions ("Hello, world!" Strikes Back)
------------------------------------------
+Functions
+---------
 
 Creating functions
 ''''''''''''''''''
 
-* Creating functions in Python is super easy. For example earlier ``Hello,
-  world!`` example could be written like this:
+* Creating functions in Python is super easy. This example uses the
+  interpreter again, but you can also write the code into the prevous
+  ``hello.py`` file.
 
-  .. sourcecode:: python
+  .. sourcecode:: pycon
 
-    def hello():
-        print "Hello, world!"
-
-        hello()
+     >>> def hello():
+     ...     print "Hello, world!"
+     ... 
+     >>> hello()
+     Hello, world!
 
 * Note that in Python code blocks must be indented (four spaces is the
   norm and highly recommended) and you close the block simply by
   returning to the earlier indentation level.
 
 * Note also that this ``hello`` function is actually already a valid
-  keyword for Robot!
+  keyword for Robot Framework!
 
 * A function with arguments is not that more complicated:
 
-  .. sourcecode:: python
+  .. sourcecode:: pycon
 
-    def hello(name):
-        print "Hello, %s!" % name
-
-    hello("World")
-    hello("Robot")
+    >>> def hello(name):
+    ...     print "Hello, %s!" % name
+    ...
+    >>> hello("Python")
+    Hello, Python!
+    >>> hello("Robot Framework")
+    Hello, Robot Framework!
 
 * The hard part in this example is string formatting (i.e. ``"Hello,
   %s!" % name``). Python has similar string formatting as for example C.
   More information about it can be found e.g. from `Dive Into Python`__.
 
-.. __: http://diveintopython.org/native_data_types/formatting_strings.html
+__ http://diveintopython.org/native_data_types/formatting_strings.html
 
 
-Documenting Functions
+Documenting functions
 '''''''''''''''''''''
 
-* Documenting functions, classes, etc. in Python is both easy and important:
-  http://diveintopython.org/getting_to_know_python/documenting_functions.html
+* In Python functions, as well as classes and modules, are documented with
+  so called `doc strings`_:
 
-* Interestingly docs are also available dynamically. Try this out:
+  .. sourcecode:: pycon
 
-  .. sourcecode:: python
+     >>> def hello():
+     ...     """Prints 'Hello, world!' to the standard output."""
+     ...     print "Hello, world!"
+     ... 
 
-    def hello():
-        """Prints 'Hello, world!' to the standard output."""
-        print "Hello, world!"
+* Interestingly the documentation is available dynamically:
+ 
+  .. sourcecode:: pycon
+     >>> print hello.__doc__
+     Prints 'Hello, world!' to the standard output.
 
-    print hello.__doc__
+* Robot Framework has `libdoc.py`_ tool that can generate test library
+  documentation based on these doc strings. Documenting functions that
+  are used as keywords is thus very important.
 
-* With Robot documenting functions that are used as keywords is extra
-  important because there are tools for generating library
-  documentation from them.
+.. _doc strings: http://diveintopython.org/getting_to_know_python/documenting_functions.html
+.. _libdoc.py: http://code.google.com/p/robotframework/wiki/LibraryDocumentationTool
 
 
-Optional And Named Arguments for Functions (Return of the "Hello, world!")
-''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+Optional and named arguments
+''''''''''''''''''''''''''''
 
-* Functions can have default values for some or all of it's
-  arguments.
+* Functions can have default values for some or all of its arguments:
 
-  .. sourcecode:: python
+  .. sourcecode:: pycon
 
     >>> def hello(name="World"):
-    ...     print "Hello, %s" % name
+    ...     print "Hello, %s!" % name
     ...
     >>> hello()
-    Hello, World
+    Hello, World!
     >>> hello("Robot")
-    Hello, Robot
+    Hello, Robot!
 
-* If there are several optional arguments it's also possible to
+* If there are several optional arguments, it is also possible to
   specify only some of them by giving their name along with the value
-  as the example below illustrates. Those arguments that don't have
-  default values must always be given.
+  as the example below illustrates. Those arguments that do not have
+  default values cannot be omited.
 
-  .. sourcecode:: python
+  .. sourcecode:: pycon
 
     >>> def test(a, b=1, c=2, d=3):
     ...   print a, b, c, d
@@ -276,35 +313,38 @@ Optional And Named Arguments for Functions (Return of the "Hello, world!")
     >>> test(2, c=100, d=200)
     2 1 100 200
 
-* Robot keywords can have default values but they are always used with
-  positional arguments. For example if above ``hello`` method was used
-  as a keyword, it could be used with zero or one argument.
+* Robot Framework keywords can have default values but they are always
+  used with positional arguments. For example if above ``hello``
+  method was used as a keyword, it could be used with zero or one
+  argument, and ``test`` could be used with one to four arguments.
 
 * For more information about optional and named arguments, see `Dive Into Python`__.
 
-.. __:  http://diveintopython.org/power_of_introspection/optional_arguments.html
+__ http://diveintopython.org/power_of_introspection/optional_arguments.html
 
 
-Variable Number of Arguments
+Variable number of arguments
 ''''''''''''''''''''''''''''
 
 * Function can also be created so that they take any number of
   arguments. This is done by prefixing an argument after required and
-  optional arguments with an asterisk like ``*args`` and it means that
+  optional arguments with an asterisk like ``*args``, and it means that
   the specified argument gets all the "extra" arguments as a tuple.
 
-  .. sourcecode:: python
+  .. sourcecode:: pycon
 
     >>> def example(arg1, arg2, *rest):
     ...     print arg1, arg2, rest
     ...
     >>> example(1, 2)
     1 2 ()
-    >>> example(1, 2, 3)  
+    >>> example(1, 2, 3)
+    1 2 (3,)
     >>> example(1, 2, 3, 4, 5)
     1 2 (3, 4, 5)
 
-* Using variable number of arguments works with Robot keywords.
+* Using variable number of arguments works also with Robot Framework
+  keywords.
 
 * `Python tutorial`__ explains everything in this and earlier section in
   detail.
@@ -312,19 +352,50 @@ Variable Number of Arguments
 .. __: http://docs.python.org/tut/node6.html#SECTION006700000000000000000
 
 
-Lists, Tuples and Dictionaries
-------------------------------
+Returning values
+''''''''''''''''
 
-* Python has nice *collection* types build into the language with a
-  really nice syntax similarly as e.g. Perl and Ruby. You are going to
-  use them a lot!
+* Functions can use ``return`` statement to return values that can be
+  assigned to variables or passed to other functions:
+
+  .. sourcecode:: pycon
+
+   >>> def multiply_by_two(number):
+   ...     return number * 2
+   ... 
+   >>> result = multiply_by_two(10)
+   >>> result
+   20
+   >>> result = multiply_by_two(multiply_by_two(2))
+   >>> result
+   8
+
+* Robot Framework keywords can also return values that can be assigned
+  to variables and then used as arguments to other keywords.
+
+
+Container data types
+--------------------
+
+* Python has a nice set of container data types build into the
+  language with a really simple syntax similarly as in Perl and
+  Ruby. You are going to use them a lot!
+
+* See for example `Dive Into Python`__ for more information and examples
+  than shown here.
+
+__ http://diveintopython.org/native_data_types/
+
+
+Lists
+'''''
 
 * A list is an ordered collection of items which you normally access
   by index.
 
-  .. sourcecode:: python
+  .. sourcecode:: pycon
 
-    >>> x = ["Some", "strings", "here"]
+    >>> x = ['Some', 'strings', 'here']
     >>> x[0]
     'Some'
     >>> x[1]
@@ -336,20 +407,30 @@ Lists, Tuples and Dictionaries
     >>> x
     ['Some', 'strings', 'HERE', 42]
 
-* A tuple is a list which you can't change after you have created
-  it.
+Tuples
+''''''
 
-  .. sourcecode:: python
+* A tuple is a list like structure which you cannot alter after creating it.
 
-    >>> t = (1,2,'x')
+  .. sourcecode:: pycon
+
+    >>> t = (1, 2, 'x')
     >>> t[0]
     1
     >>> t[-1]
     'x'
+    >>> t[0] = 'new value'
+    Traceback (most recent call last):
+      File "<stdin>", line 1, in <module>
+    TypeError: 'tuple' object does not support item assignment
 
-* A dictionary is an unordered collection of key-value pairs.
+Dictionaries
+''''''''''''
 
-  .. sourcecode:: python
+* A dictionary is an unordered collection of key-value pairs. Called
+  hashmap in some other languages.
+
+  .. sourcecode:: pycon
 
     >>> d = {'x': 'some value', 'a': 1, 'b': 2}
     >>> d['a']
@@ -361,52 +442,91 @@ Lists, Tuples and Dictionaries
     >>> d
     {'a': 2, 'x': 'some value', 'b': 2, 'tuple': (1, 2, 'x')}
 
-* A lot more examples, including slice syntax not shown here, and good
-  theory at http://diveintopython.org/native_data_types/
-
 
 Control Flow
 ------------
 
-* Python has "normal" control flow structures:
+Conditional execution
+'''''''''''''''''''''
 
-  - ``if/elif/else`` for conditional execution.
-  -  ``for`` and ``while`` loops with ``break`` and ``continue``
-     statements.
+* Python has similar :code:`if/elif/else` structure as most other
+  programming languages.
 
-* For example:
+* Notice that no parantheses are needed around the expression as, for
+  example, Java and C require.
 
   .. sourcecode:: python
 
-    def good_morning_or_night(name, morning=True):
-        if morning:
-            print 'Good morning %s' % name
+    def is_positive(number):
+    	if number > 0:
+            return True
         else:
+            return False
+
+    def greet(name, time):
+        if 7 < time < 12:
+            print 'Good morning %s' % name
+        elif time < 18:
+            print 'Good afternoon %s' % name
+        elif time < 23:
             print 'Good night %s' % name
+	else:
+            print '%s, you should be sleeping!' % name
+
+
+Looping
+'''''''
+
+* For loop allows iterating over a sequence of items such as
+  list. This is probably the loop you are going to use most often.
+
+  .. sourcecode:: python
 
     def greet_many(names):
         for name in names:
             print 'Hello %s' % name
 
-    if __name__ == '__main__':
-        good_morning_or_night('Luke')
-        good_morning_or_night('Dad', morning=False)
-        greet_many(['Luke', 'Yoda'])
+    def count_up(limit):
+        for num in range(limit):
+            if num == 0:
+                print 'Blastoff!'
+            else:
+                print num
+
+* While loop iterates as long as given expression is true. Very handy
+  in testing when waiting some event to occur.
+
+  .. sourcecode:: python
+
+    def wait_until_message_received:
+        msg = try_to_receive_message()
+        while msg is None:
+            time.sleep(5)
+            msg = try_to_receive_message()
+        return msg
+            
+* Both for and while loops have typical :code:`continue` and
+  :code:`break` statements that can be used to end the current
+  iteration or exit the loop altogether.
+
+* Quite often for loops can be replaced with even more concise list
+  comprehensions or generator expressions:
+
+  .. sourcecode:: pycon
+  
+    >>> numbers = [1, -5, 4, -32, 0, 42]
+    >>> positive = [ num for num in numbers if num > 0 ]
+    >>> positive
+    [1, 4, 42]
+    >>> sum(num for num in positive)
+    47
 
 * For more examples and information:
 
   - http://docs.python.org/tut/node6.html
   - http://diveintopython.org/file_handling/for_loops.html
+  - http://diveintopython.org/native_data_types/mapping_lists.html
 
-* Iterating over lists (and other iterable objects) with Python's
-  ``for`` loop is really nice (especially compared to similar loops
-  e.g. in C or Java).
-
-* Instead of ``for`` you should, however, often use `list
-  comprehension`_. It may feel weird and hard to read first but after
-  using it a few times you are likely to love it.
-
-.. _list comprehension: http://diveintopython.org/native_data_types/mapping_lists.html
 
 Modules
 -------
@@ -441,7 +561,7 @@ Creating Modules
 
   and then be able to use it like:
 
-  .. sourcecode:: python
+  .. sourcecode:: pycon
 
     >>> import test
     >>> test.hello("Tellus")
@@ -494,7 +614,7 @@ Classes and Instances
 * The syntax for creating classes and then instances from them is
   relatively straightforward:
 
-  .. sourcecode:: python
+  .. sourcecode:: pycon
 
     >>> class MyClass:
     ...     def __init__(self, name):
