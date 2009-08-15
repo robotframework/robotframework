@@ -531,30 +531,31 @@ Looping
 Modules
 -------
 
-Importing Modules
+Importing modules
 '''''''''''''''''
 
-* Importing existing Python modules is as simply as saying ``import
-  modulename``. 
+* Importing existing Python modules is as simply as saying :code:`import
+  modulename`. 
 
-* Alternative syntax is ``from modulename import submodule``. 
+* An alternative syntax is :code:`from modulename import something`. 
 
-* Python has a comprehensive `standard library`_ so already there's
-  plenty of existing code to be imported!
+* Python has a comprehensive `standard library`_ so there is plenty of
+  existing code to be imported. It is recommended to study what is
+  available to avoid reinventing wheels.
 
 
-Creating Modules
+Creating modules
 ''''''''''''''''
 
-* Every ``.py`` file is effectively a Python module so you have
-  already created some modules.
+* Every :path:`.py` file is effectively a Python module, so you have
+  already created at least :code:`hello` module.
 
-* For example we could have following code in a file called  ``test.py``:
+* For example we could have following code in a file called  :path:`example.py`:
 
   .. sourcecode:: python
 
     def hello(name="World"):
-        print "Hello, %s" % name
+        print "Hello, %s!" % name
 
     if __name__ == "__main__":
         hello()
@@ -563,21 +564,20 @@ Creating Modules
 
   .. sourcecode:: pycon
 
-    >>> import test
-    >>> test.hello("Tellus")
-    Hello, Tellus
+    >>> import example
+    >>> example.hello("Tellus")
+    Hello, Tellus!
 
-* ``if __name__ == "__main__"`` block in the previous example is
-  important because it allows executing the file as a script (``python
-  test.py``) and using it as a module like above. Automatic
-  ``__name__`` attribute (Python has many of these as you'll see if
-  you study it more) gets value ``"__main___"`` when the file is run
-  as a script and the ``if`` block is thus executed only in that case.
+* :code:`if __name__ == "__main__"` block in the previous example is
+  important because it allows executing the file also as a script like
+  :cli:`python example.py`. Automatic :code:`__name__` attribute
+  (Python has many of these as you will see if you study it more) gets
+  value :code:`"__main___"` when the file is run as a script and the
+  if block is thus executed only in that case.
 
-* Bigger modules can be organized into several files and a higher
-  level module (also called package) created to contain them as
-  submodules. In this case the higher level module is a directory with
-  a special ``___init___.py`` file. 
+* Bigger modules can be organized into several files inside a higher
+  level module as submodules. In this case the higher level module is
+  a directory with a special :path:`___init___.py` file.
 
 * For more information about modules see http://docs.python.org/tut/node8.html
 
@@ -587,29 +587,30 @@ Creating Modules
 Module search path (PYTHONPATH)
 '''''''''''''''''''''''''''''''
 
-* Python modules aren't automatically searched everywhere on you
+* Python modules are not automatically searched everywhere on you
   machine. Python has certain default places to search modules for
-  (e.g. it's own library directory which is often in place like
-  ``C:\Python26\Lib`` or ``/usr/lib/python2.6``) and additionally it
-  looks for them from so called PYTHONPATH. 
+  (e.g. its own library directory which is often in place like
+  :path:`C:\Python26\Lib` or :path:`/usr/lib/python2.6`) and
+  additionally it looks for them from so called :var:`PYTHONPATH`.
 
-* PYTHONPATH is an environment variable which contains places (mainly
-  directories) to look for Python modules. It is similar to
-  PATH environment variable which is used by an operating system to
-  look for executable programs.
+* :var:`PYTHONPATH` is most often controlled using an environment
+  variable with the same name that contains places (mainly
+  directories) to look for Python modules. It is similar to Java's
+  :var:`CLASSPATH` and also to :var:`PATH` environment variable which
+  is used by an operating system to look for executable programs.
 
-* PYTHONPATH is important also with Robot because it can import test
-  libraries only if the module containing the library can be imported.
+* :var:`PYTHONPATH` is important also with Robot Framework because it
+  can import test libraries only if the module containing the library
+  can be imported.
 
 
-Classes and Instances
+Classes and instances
 ---------------------
 
-* Python is an object-oriented language but as we've seen you don't
-  need to use classes everywhere like you need to in Java for
-  example. It's totally ok to just have a module with functions if
-  that's suites your needs but often object oriented features are
-  really handy.
+* Python is an object-oriented language but as we have seen you do not
+  need to use classes everywhere like you need to with Java. It is
+  totally fine to just have a module with functions if that suites
+  your needs but object oriented features are often really handy.
 
 * The syntax for creating classes and then instances from them is
   relatively straightforward:
@@ -628,11 +629,11 @@ Classes and Instances
     >>> c.hello('Tellus')
     Robot says hello to Tellus.
 
-* The really weird thing in the syntax is that every class method must
-  have ``self`` as the first argument in the signature. After you
-  create an instance of the class Python *binds* the method and takes
-  care of passing the ``self`` argument automatically so you don't use
-  it when calling the method.
+* The only surprising part in the syntax is that every class method
+  must have :code:`self` as the first argument in the signature. After
+  you create an instance of the class Python binds the method and
+  takes care of passing the :code:`self` argument automatically so you
+  do not use it when calling the method.
 
 * To learn more about classes you can follow `a pretty interesting
   example from Dive Into Python
@@ -645,20 +646,22 @@ Exceptions
 ----------
 
 * Python has an exception system similar to many other languages.
-  Exceptions are classes and the normal way to raise them is ``raise
-  SomeException("Error message")``. Exceptions are handled in a
-  ``try/except`` block.
+  Exceptions are classes and the normal way to raise them is
+  :code:`raise SomeException("Error message")`.
 
-* Compared to Java there are some terminology differences (``raise``
-  vs. ``throw`` and ``except`` vs.``catch``) but the biggest real
-  difference to is that there are no checked exceptions i.e. you don't
-  need to add ``throws SomeException`` to those methods that possibly
-  raise exceptions.
+* Exceptions are handled in a :code:`try/except` block which can have
+  an optional :code:`finally` branch.
+
+* Compared to Java there are some terminology differences
+  (:code:`raise` vs. :code:`throw` and :code:`except`
+  vs. :code:`catch`) but the biggest real difference to is that there
+  are no checked exceptions. This means that you do not need to add
+  :code:`throws SomeException` to methods that may raise an exception.
 
 * More info: http://diveintopython.org/file_handling/index.html
 
-* Exceptions are an important part of the Robot Library API because
-  keywords use them to communicate failures to the framework.
+* Exceptions are an important part of the Robot Framework Library API
+  because keywords use them to communicate failures to the framework.
 
 
 Regular Expressions
@@ -668,8 +671,8 @@ Regular Expressions
   a really common need in test automation.
 
 * Python has a really fast regular expression engine and it uses a
-  syntax that is derived from Perl's regexp syntax similarly as
-  e.g. Java.
+  syntax derived from Perl's regexp syntax similarly as Java and many
+  other languages.
 
 * A good introduction is
   http://diveintopython.org/regular_expressions/index.html
@@ -683,10 +686,10 @@ Unit Testing
   idea.
 
 * Python has several unit testing frameworks. Two of them,
-  ``unittest`` and ``doctest``, are in the standard library. The
-  former is immediately familiar for anyone who has used JUnit or
-  some other xUnit framework and the other is interesting because it
-  allows using function doc strings for tests.
+  :code:`unittest` and :code:`doctest`, are in the standard
+  library. The former is immediately familiar for anyone who has used
+  JUnit or some other xUnit framework and the other is interesting
+  because it allows using function doc strings for tests.
 
 * Dive Into Python has really good chapters about
 
@@ -702,14 +705,19 @@ Unit Testing
 Writing Test Libraries
 ----------------------
 
-Robot Framework's test library API is really simple. The test library can be
-either a module or a class.  In case of a module, a keyword will be created for
-each top-level function in the module. In case of a class, a keyword will be
-created for each public method of the class.
+Robot Framework's test library API is really simple. It is explained
+fully in the `User Guide`_ but the basic features are covered here
+with an example.
 
-Keyword may return values using the `return` statement. A failure is generated
-by raising an exception. `print` statement can be used to log a message from a
-keyword. The example library below illustrates these features:
+The test library can be either a module or a class.  In case of a
+module, a keyword will be created for each top-level function in the
+module. In case of a class, a keyword will be created for each public
+method of the class.
+
+Keyword may return values using the :code:`return` statement, a
+failure is generated by raising an exception, and :code:`print`
+statement can be used to log a message from a keyword. The example
+library below illustrates these features:
 
 .. sourcecode:: python
    
@@ -725,5 +733,6 @@ These keyword may be tested for example using a TSV test file below:
 
 .. footer:: Generated by reStructuredText_. Syntax highlighting by Pygments_.
 
+.. _user guide: http://code.google.com/p/robotframework/wiki/UserGuide
 .. _reStructuredText: http://docutils.sourceforge.net/rst.html
 .. _Pygments: http://pygments.org/
