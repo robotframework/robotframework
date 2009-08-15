@@ -478,6 +478,17 @@ pre.literal-block, pre.doctest-block {
 <http://www.w3.org/2003/entities/xml/>.
 Processed by unicode2rstsubs.py, part of Docutils:
 <http://docutils.sourceforge.net>. -->
+<!-- Roles to use in text like :rolename:`text`. Styled in userguide.css.
+- var    variables
+- opt    settings in setting table (e.g. Force Tags), tc/kw tables
+         (e.g [Documentation]) and command line options (e.g. - -name)
+- prog   program names (e.g. rebot, risto.py)
+- code   programming code
+- msg    test case status and message, as well as log messages and levels
+- name   keyword, library, test case, test suite, etc. names
+- cli    command line examples (note that options alone use opt)
+- path   file names and paths
+- misc   everything else (synonym to ``text``) -->
 <div class="line-block">
 <div class="line">Copyright © Nokia Siemens Networks 2009</div>
 <div class="line">Licensed under the <a class="reference external" href="http://creativecommons.org/licenses/by/3.0/">Creative Commons Attribution 3.0 Unported</a> license</div>
@@ -486,533 +497,735 @@ Processed by unicode2rstsubs.py, part of Docutils:
 <p class="topic-title first">Table of Contents</p>
 <ul class="simple">
 <li><a class="reference internal" href="#introduction" id="id8">Introduction</a></li>
-<li><a class="reference internal" href="#getting-started" id="id9">Getting Started</a><ul>
+<li><a class="reference internal" href="#getting-started" id="id9">Getting started</a><ul>
 <li><a class="reference internal" href="#installation" id="id10">Installation</a></li>
-<li><a class="reference internal" href="#interactive-interpreter" id="id11">Interactive Interpreter</a></li>
-<li><a class="reference internal" href="#python-editors" id="id12">Python Editors</a></li>
+<li><a class="reference internal" href="#interactive-interpreter" id="id11">Interactive interpreter</a></li>
+<li><a class="reference internal" href="#python-editors" id="id12">Python editors</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#basic-data-types" id="id13">Basic Data Types</a></li>
-<li><a class="reference internal" href="#variables" id="id14">Variables</a></li>
-<li><a class="reference internal" href="#simplest-possible-program-mandatory-hello-world-example" id="id15">Simplest Possible Program (Mandatory &quot;Hello, world!&quot; Example)</a></li>
-<li><a class="reference internal" href="#functions-hello-world-strikes-back" id="id16">Functions (&quot;Hello, world!&quot; Strikes Back)</a><ul>
-<li><a class="reference internal" href="#creating-functions" id="id17">Creating functions</a></li>
-<li><a class="reference internal" href="#documenting-functions" id="id18">Documenting Functions</a></li>
-<li><a class="reference internal" href="#optional-and-named-arguments-for-functions-return-of-the-hello-world" id="id19">Optional And Named Arguments for Functions (Return of the &quot;Hello, world!&quot;)</a></li>
-<li><a class="reference internal" href="#variable-number-of-arguments" id="id20">Variable Number of Arguments</a></li>
+<li><a class="reference internal" href="#variables" id="id13">Variables</a><ul>
+<li><a class="reference internal" href="#basic-data-types" id="id14">Basic data types</a></li>
+<li><a class="reference internal" href="#declaring-variables" id="id15">Declaring variables</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#lists-tuples-and-dictionaries" id="id21">Lists, Tuples and Dictionaries</a></li>
-<li><a class="reference internal" href="#control-flow" id="id22">Control Flow</a></li>
-<li><a class="reference internal" href="#modules" id="id23">Modules</a><ul>
-<li><a class="reference internal" href="#importing-modules" id="id24">Importing Modules</a></li>
-<li><a class="reference internal" href="#creating-modules" id="id25">Creating Modules</a></li>
-<li><a class="reference internal" href="#module-search-path-pythonpath" id="id26">Module search path (PYTHONPATH)</a></li>
+<li><a class="reference internal" href="#first-program" id="id16">First program</a></li>
+<li><a class="reference internal" href="#functions" id="id17">Functions</a><ul>
+<li><a class="reference internal" href="#creating-functions" id="id18">Creating functions</a></li>
+<li><a class="reference internal" href="#optional-and-named-arguments" id="id19">Optional and named arguments</a></li>
+<li><a class="reference internal" href="#variable-number-of-arguments" id="id20">Variable number of arguments</a></li>
+<li><a class="reference internal" href="#returning-values" id="id21">Returning values</a></li>
+<li><a class="reference internal" href="#documenting-functions" id="id22">Documenting functions</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#classes-and-instances" id="id27">Classes and Instances</a></li>
-<li><a class="reference internal" href="#exceptions" id="id28">Exceptions</a></li>
-<li><a class="reference internal" href="#regular-expressions" id="id29">Regular Expressions</a></li>
-<li><a class="reference internal" href="#unit-testing" id="id30">Unit Testing</a></li>
-<li><a class="reference internal" href="#writing-test-libraries" id="id31">Writing Test Libraries</a></li>
+<li><a class="reference internal" href="#container-data-types" id="id23">Container data types</a><ul>
+<li><a class="reference internal" href="#lists" id="id24">Lists</a></li>
+<li><a class="reference internal" href="#tuples" id="id25">Tuples</a></li>
+<li><a class="reference internal" href="#dictionaries" id="id26">Dictionaries</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#control-flow" id="id27">Control Flow</a><ul>
+<li><a class="reference internal" href="#conditional-execution" id="id28">Conditional execution</a></li>
+<li><a class="reference internal" href="#looping" id="id29">Looping</a></li>
+<li><a class="reference internal" href="#list-comprehensions" id="id30">List comprehensions</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#modules" id="id31">Modules</a><ul>
+<li><a class="reference internal" href="#importing-modules" id="id32">Importing modules</a></li>
+<li><a class="reference internal" href="#creating-modules" id="id33">Creating modules</a></li>
+<li><a class="reference internal" href="#module-search-path-pythonpath" id="id34">Module search path (PYTHONPATH)</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#advanced-features" id="id35">Advanced features</a><ul>
+<li><a class="reference internal" href="#classes-and-instances" id="id36">Classes and instances</a></li>
+<li><a class="reference internal" href="#exceptions" id="id37">Exceptions</a></li>
+<li><a class="reference internal" href="#regular-expressions" id="id38">Regular expressions</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#unit-testing" id="id39">Unit testing</a></li>
+<li><a class="reference internal" href="#writing-test-libraries" id="id40">Writing test libraries</a><ul>
+<li><a class="reference internal" href="#library-api-basics" id="id41">Library API basics</a></li>
+<li><a class="reference internal" href="#executable-example" id="id42">Executable example</a></li>
+</ul>
+</li>
 </ul>
 </div>
 <div class="section" id="introduction">
 <h1><a class="toc-backref" href="#id8">Introduction</a></h1>
 <ul class="simple">
-<li>This is self learning material for <a class="reference external" href="http://python.org">Python language</a>. The target is
-to learn enough Python to be able to learn how to create test
-libraries for <a class="reference external" href="http://robotframework.org">Robot Framework</a>.</li>
+<li>This is self learning material to learn how to program using <a class="reference external" href="http://python.org">Python
+language</a>. The target is to learn enough Python to be able to start
+creating test libraries for <a class="reference external" href="http://robotframework.org">Robot Framework</a>.</li>
 <li>Earlier programming experience is expected but not absolutely
 necessary.</li>
 <li>The main study material for this training is <em>Dive Into Python</em> book
 which is really good and freely available for on-line reading,
-downloading or printing from <a class="reference external" href="http://diveintopython.org">http://diveintopython.org</a>.</li>
-<li>That book is targeted for people who already know how to program. If
-you are a novice programmer it might better to start with <a class="reference external" href="http://www.greenteapress.com/thinkpython/thinkpython.html">Think Python</a>
-book which is also available for free.</li>
+downloading or printing from <a class="reference external" href="http://diveintopython.org">http://diveintopython.org</a>.  It is
+targeted for people who already know how to program but do not know
+Python before.</li>
+<li>If you are a novice programmer, it might better to start with <a class="reference external" href="http://www.greenteapress.com/thinkpython/thinkpython.html">Think
+Python</a> book. It is also available for free and its target audience
+is people without any earlier programming knowledge.</li>
 <li><a class="reference external" href="http://docs.python.org/tut/tut.html">Python Tutorial</a>, available at <a class="reference external" href="http://python.org">http://python.org</a> and included into
-the standard Python installation, is also good. Some of the sections
-in this training refer to it instead of or in addition to Dive Into Python.</li>
-<li><a class="reference external" href="http://python.org">http://python.org</a> is a good place for more Python information in
-general and <a class="reference external" href="http://www.google.fi/search?q=python+tutorial">Google search</a> returns a lot of hits too.</li>
+the standard Python installation at least on Windows, is also very
+good. Some of the sections in this training refer to it instead of
+or in addition to Dive Into Python.</li>
+<li>Python coding style guidelines are specified in <a class="reference external" href="http://www.python.org/dev/peps/pep-0008/">PEP-8</a>. Notice that
+Dive Into Python book uses <span class="code">thisStyle</span> for methods instead of
+<span class="code">this_style</span> although the latter format recommended.</li>
+<li>Another highly recommended style guide, covering many essential
+Python idioms and techniques in depth, is <em>Code Like a Pythonista:
+Idiomatic Python</em> available at
+<a class="reference external" href="http://python.net/~goodger/projects/pycon/2007/idiomatic/handout.html">http://python.net/~goodger/projects/pycon/2007/idiomatic/handout.html</a></li>
+<li>The official Python website at <a class="reference external" href="http://python.org">http://python.org</a> is a good place to
+find more documentation and Python related information in
+general.</li>
+<li>If you need information about Jython, the Java implementation of
+Python, you can start from <a class="reference external" href="http://jython.org">http://jython.org</a>.</li>
 </ul>
 </div>
 <div class="section" id="getting-started">
-<h1><a class="toc-backref" href="#id9">Getting Started</a></h1>
+<h1><a class="toc-backref" href="#id9">Getting started</a></h1>
 <div class="section" id="installation">
 <h2><a class="toc-backref" href="#id10">Installation</a></h2>
 <ul class="simple">
-<li>Everyone is supposed to have Python installed because Robot Framework
-requires it.</li>
-<li>If you don't have it, get an installer e.g. from
-<a class="reference external" href="http://python.org">http://python.org</a>. Python 2.6(.x) is recommended but 2.5 and 2.4 can
-be also used.</li>
+<li>Most Linux distributions, OS X, and other UNIX like machines have
+Python installed by default, but on Windows you probably need to
+install it separately. Installers for different platforms can be
+found from <a class="reference external" href="http://python.org">http://python.org</a>.</li>
+<li>Robot Framework does not yet support Python 3.x versions and also
+this tutorial is based on Python 2.x. Any 2.x version up from 2.3 is
+sufficient but the latest versions are recommended.</li>
 <li>It is highly recommended that you configure your system so that you
-can run Python from command line simply by typing <tt class="docutils literal"><span class="pre">python</span></tt> and pressing
+can run Python from command line simply by typing <span class="cli">python</span> and pressing
 enter.<ul>
-<li>On Windows, and possibly on some other systems, this requires adding
-Python installation directory into PATH environment variable. For
-instructions see e.g. <a class="reference external" href="http://robotframework.googlecode.com/svn/tags/robotframework-2.1/doc/userguide/RobotFrameworkUserGuide.html#setting-up-environment">Robot Framework user guide</a>.</li>
+<li>On Windows, and possibly on some other systems, this requires
+adding Python installation directory into <span class="var">PATH</span> environment
+variable. For example <a class="reference external" href="http://code.google.com/p/robotframework/wiki/UserGuide">Robot Framework User Guide</a> has
+instructions on how to do it in its <em>Installation</em> section.</li>
 </ul>
 </li>
 </ul>
 </div>
 <div class="section" id="interactive-interpreter">
-<h2><a class="toc-backref" href="#id11">Interactive Interpreter</a></h2>
+<h2><a class="toc-backref" href="#id11">Interactive interpreter</a></h2>
 <ul>
-<li><p class="first">Start from command line by typing <tt class="docutils literal"><span class="pre">python</span></tt>. In Windows you can
-also start it from <tt class="docutils literal"><span class="pre">Start</span> <span class="pre">&gt;</span> <span class="pre">All</span> <span class="pre">Programs</span> <span class="pre">&gt;</span> <span class="pre">Python</span> <span class="pre">2.x</span></tt>.</p>
+<li><p class="first">Open the command prompt and type <span class="cli">python</span>. On Windows you can
+also start the interpreter by selecting <tt class="docutils literal"><span class="pre">Start</span> <span class="pre">&gt;</span> <span class="pre">All</span> <span class="pre">Programs</span> <span class="pre">&gt;</span>
+<span class="pre">Python</span> <span class="pre">2.x</span></tt>.</p>
 </li>
-<li><p class="first">Statements and expressions can be written in the console. Pressing &lt;Enter&gt;
-will interpret the line and any possible results are echoed. Try for example:</p>
-<div class="highlight"><pre><span class="o">&gt;&gt;&gt;</span> <span class="mf">1</span><span class="o">+</span><span class="mf">2</span>
-<span class="mf">3</span>
+<li><p class="first">Statements and expressions can be written in the interpreter.
+Pressing enter will interpret the line and possible results are
+echoed. Try for example:</p>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="mf">1</span> <span class="o">+</span> <span class="mf">2</span>
+<span class="go">3</span>
 </pre></div>
 </li>
-<li><p class="first">To exit press first <tt class="docutils literal"><span class="pre">Ctrl-Z</span></tt> and then enter on Windows and
-<tt class="docutils literal"><span class="pre">Ctrl-D</span></tt> on other systems.</p>
+<li><p class="first">Use <span class="cli">Ctrl-D</span> to exit on UNIX like machines and <span class="cli">Ctrl-Z</span>
+and enter on Windows.</p>
 <ul class="simple">
-<li>You can exit Python 2.5/2.6 interpreter also with command <tt class="docutils literal"><span class="pre">exit()</span></tt>.</li>
+<li>With Python 2.5 and newer you can exit the interpreter also with
+command <span class="code">exit()</span>.</li>
 </ul>
 </li>
-<li><p class="first"><a class="reference external" href="http://diveintopython.org/installing_python/shell.html">Dive Into Python</a> has some examples.</p>
+<li><p class="first">Dive Into Python has some more examples:
+<a class="reference external" href="http://diveintopython.org/installing_python/shell.html">http://diveintopython.org/installing_python/shell.html</a></p>
 </li>
 </ul>
 </div>
 <div class="section" id="python-editors">
-<h2><a class="toc-backref" href="#id12">Python Editors</a></h2>
+<h2><a class="toc-backref" href="#id12">Python editors</a></h2>
 <ul class="simple">
-<li>There are a lot of different Python editors available.</li>
-<li>Most general editors (Emacs, VIM, Eclipse, UltraEdit...) can be
-used very well but<ul>
-<li>learning curve can be quite steep unless you already know them, and</li>
-<li>having a mode or plug-in that highlights the source, handles
-indentation, etc. is nearly mandatory.</li>
-</ul>
-</li>
-<li>Standard Python installation includes <a class="reference external" href="http://hkn.eecs.berkeley.edu/~dyoo/python/idle_intro/">IDLE editor</a> that comes with
-an interactive console. If you don't know any better editor you can
-at least get started with it without problems.</li>
+<li>Most general purpose text editors (Emacs, VIM, UltraEdit, ...) and
+IDEs (Eclipse, Netbeans, ...) can be used to edit Python. There are
+also some editors specially for Python.</li>
+<li>The most important editor features are source highlighting and
+handling indentation. Make sure your editor of choice supports them
+either natively or via Python plugin or mode.</li>
+<li>If you do not know any editor, you can at least get started with
+<a class="reference external" href="http://hkn.eecs.berkeley.edu/~dyoo/python/idle_intro/">IDLE</a>.  It is included in the standard Python installation on
+Windows and can be installed also on other system.</li>
 </ul>
 </div>
 </div>
+<div class="section" id="variables">
+<h1><a class="toc-backref" href="#id13">Variables</a></h1>
 <div class="section" id="basic-data-types">
-<h1><a class="toc-backref" href="#id13">Basic Data Types</a></h1>
+<h2><a class="toc-backref" href="#id14">Basic data types</a></h2>
 <ul>
-<li><p class="first">Python has strings, integers, floating point numbers, boolean values
-(<tt class="docutils literal"><span class="pre">True</span></tt> and <tt class="docutils literal"><span class="pre">False</span></tt>) similarly as most other programming languages.</p>
+<li><p class="first">Python has strings, integers, floating point numbers, Boolean values
+(<span class="code">True</span> and <span class="code">False</span>) similarly as most other programming
+languages.</p>
 </li>
-<li><p class="first">Strings can be enclosed into double or single quotes (they don't
-have any difference like they do in Perl).</p>
+<li><p class="first">Strings can be enclosed into double or single quotes. They do not
+have any difference like they do for example in Perl.</p>
 </li>
-<li><p class="first">Unicode strings have a special syntax like <tt class="docutils literal"><span class="pre">u&quot;Hyv\xE4\xE4</span> <span class="pre">y\xF6\t\xE4!&quot;</span></tt>.
-Using Unicode with Python is not covered otherwise in this training
-but you can find a lot of information about it with search engines.</p>
+<li><p class="first">Unicode strings have a special syntax like <span class="code">u&quot;HyvxE4xE4
+yxF6txE4!&quot;</span>. Using Unicode with Python is not covered otherwise
+in this tutorial.</p>
 </li>
-<li><p class="first"><tt class="docutils literal"><span class="pre">None</span></tt> is a special value meaning nothing similarly as <tt class="docutils literal"><span class="pre">null</span></tt> in
-Java.</p>
+<li><p class="first"><span class="code">None</span> is a special value meaning nothing similarly as
+<span class="code">null</span> in Java.</p>
 </li>
 <li><p class="first">Try at least these on the interpreter:</p>
-<div class="highlight"><pre><span class="o">&gt;&gt;&gt;</span> <span class="mf">2</span> <span class="o">*</span> <span class="mf">2.5</span>
-<span class="mf">5.0</span>
-<span class="o">&gt;&gt;&gt;</span> <span class="s">&#39;This is easy&#39;</span>
-<span class="s">&#39;This is easy&#39;</span>
-<span class="o">&gt;&gt;&gt;</span> <span class="s">&quot;Ain&#39;t it&quot;</span>
-<span class="s">&quot;Ain&#39;t it&quot;</span>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="mf">2</span> <span class="o">*</span> <span class="mf">2.5</span>
+<span class="go">5.0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="s">&#39;This is easy&#39;</span>
+<span class="go">&#39;This is easy&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="s">&quot;Ain&#39;t it&quot;</span>
+<span class="go">&quot;Ain&#39;t it&quot;</span>
 </pre></div>
 </li>
 </ul>
 </div>
-<div class="section" id="variables">
-<h1><a class="toc-backref" href="#id14">Variables</a></h1>
+<div class="section" id="declaring-variables">
+<h2><a class="toc-backref" href="#id15">Declaring variables</a></h2>
 <ul>
-<li><p class="first">Valid characters in variable identifiers are letters and underscore.</p>
+<li><p class="first">All different values can be assigned to variables. Valid characters
+in variable identifiers are letters, underscore, and numbers,
+although numbers cannot start the variable name.</p>
 </li>
 <li><p class="first">A variable needs not to be declared, it starts to exist when a value is
 assigned for the first time.</p>
 </li>
+<li><p class="first">There is no need to specify the variable type either as the type is
+got from the assigned variable automatically.</p>
+</li>
 <li><p class="first">Try it out:</p>
-<div class="highlight"><pre><span class="o">&gt;&gt;&gt;</span> <span class="n">a</span> <span class="o">=</span> <span class="mf">3</span>
-<span class="o">&gt;&gt;&gt;</span> <span class="n">a</span>
-<span class="mf">3</span>
-<span class="o">&gt;&gt;&gt;</span> <span class="n">b</span> <span class="o">=</span> <span class="mf">4</span>
-<span class="o">&gt;&gt;&gt;</span> <span class="n">a</span><span class="o">*</span><span class="n">b</span>
-<span class="mf">12</span>
-<span class="o">&gt;&gt;&gt;</span> <span class="n">greeting</span> <span class="o">=</span> <span class="s">&#39;Hello&#39;</span>
-<span class="o">&gt;&gt;&gt;</span> <span class="n">greeting</span>
-<span class="s">&#39;Hello&#39;</span>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="mf">3</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span>
+<span class="go">3</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">b</span> <span class="o">=</span> <span class="mf">4</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">*</span><span class="n">b</span>
+<span class="go">12</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">greeting</span> <span class="o">=</span> <span class="s">&#39;Hello&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">greeting</span>
+<span class="go">&#39;Hello&#39;</span>
+</pre></div>
+</li>
+<li><p class="first">It is even possible to assign multiple variables at once:</p>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="s">&#39;first&#39;</span><span class="p">,</span> <span class="s">&#39;second&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span>
+<span class="go">&#39;first&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y</span>
+<span class="go">&#39;second&#39;</span>
 </pre></div>
 </li>
 </ul>
 </div>
-<div class="section" id="simplest-possible-program-mandatory-hello-world-example">
-<h1><a class="toc-backref" href="#id15">Simplest Possible Program (Mandatory &quot;Hello, world!&quot; Example)</a></h1>
+</div>
+<div class="section" id="first-program">
+<h1><a class="toc-backref" href="#id16">First program</a></h1>
 <ul>
-<li><p class="first">Create a file <tt class="docutils literal"><span class="pre">hello.py</span></tt> with your editor of choice.</p>
+<li><p class="first">Create a file <span class="path">hello.py</span> with your editor of choice and write
+this content into it:</p>
+<div class="highlight"><pre><span class="k">print</span> <span class="s">&quot;Hello, world!&quot;</span>
+</pre></div>
 </li>
-<li><p class="first">Write <tt class="docutils literal"><span class="pre">print</span> <span class="pre">&quot;Hello,</span> <span class="pre">world!&quot;</span></tt> into the file, run it from command
-line like</p>
-<blockquote>
-<p>python hello.py</p>
-</blockquote>
-<p>You should get <tt class="docutils literal"><span class="pre">Hello,</span> <span class="pre">world!</span></tt> printed into the console.</p>
+<li><p class="first">Then execute the file on the console like this:</p>
+<div class="highlight"><pre>python hello.py
+</pre></div>
 </li>
-<li><p class="first">You can of course add more code to the same file too.</p>
+<li><p class="first">As a result you should get <span class="code">Hello, world!</span> printed into the
+screen. With Robot Framework keywords such messages would end up
+into the log file.</p>
 </li>
-<li><p class="first"><a class="reference external" href="http://diveintopython.org/getting_to_know_python/index.html">Dive Into Python</a> has a lot more interesting examples.</p>
+<li><p class="first">For more interesting examples see for example Dive Into Python:
+<a class="reference external" href="http://diveintopython.org/getting_to_know_python/index.html">http://diveintopython.org/getting_to_know_python/index.html</a></p>
 </li>
 </ul>
 </div>
-<div class="section" id="functions-hello-world-strikes-back">
-<h1><a class="toc-backref" href="#id16">Functions (&quot;Hello, world!&quot; Strikes Back)</a></h1>
+<div class="section" id="functions">
+<h1><a class="toc-backref" href="#id17">Functions</a></h1>
 <div class="section" id="creating-functions">
-<h2><a class="toc-backref" href="#id17">Creating functions</a></h2>
+<h2><a class="toc-backref" href="#id18">Creating functions</a></h2>
 <ul>
-<li><p class="first">Creating functions in Python is super easy. For example earlier <tt class="docutils literal"><span class="pre">Hello,</span>
-<span class="pre">world!</span></tt> example could be written like this:</p>
-<div class="highlight"><pre><span class="k">def</span> <span class="nf">hello</span><span class="p">():</span>
-    <span class="k">print</span> <span class="s">&quot;Hello, world!&quot;</span>
-
-    <span class="n">hello</span><span class="p">()</span>
+<li><p class="first">Creating functions in Python is super easy. This example uses the
+interpreter again, but you can also write the code into the previous
+<span class="path">hello.py</span> file.</p>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">hello</span><span class="p">():</span>
+<span class="gp">... </span>    <span class="k">print</span> <span class="s">&quot;Hello, world!&quot;</span>
+<span class="gp">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">hello</span><span class="p">()</span>
+<span class="go">Hello, world!</span>
 </pre></div>
 </li>
 <li><p class="first">Note that in Python code blocks must be indented (four spaces is the
 norm and highly recommended) and you close the block simply by
 returning to the earlier indentation level.</p>
 </li>
-<li><p class="first">Note also that this <tt class="docutils literal"><span class="pre">hello</span></tt> function is actually already a valid
-keyword for Robot!</p>
+<li><p class="first">Notice also that this <span class="code">hello</span> function is actually already a
+valid keyword for Robot Framework!</p>
 </li>
 <li><p class="first">A function with arguments is not that more complicated:</p>
-<div class="highlight"><pre><span class="k">def</span> <span class="nf">hello</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
-    <span class="k">print</span> <span class="s">&quot;Hello, </span><span class="si">%s</span><span class="s">!&quot;</span> <span class="o">%</span> <span class="n">name</span>
-
-<span class="n">hello</span><span class="p">(</span><span class="s">&quot;World&quot;</span><span class="p">)</span>
-<span class="n">hello</span><span class="p">(</span><span class="s">&quot;Robot&quot;</span><span class="p">)</span>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">hello</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="k">print</span> <span class="s">&quot;Hello, </span><span class="si">%s</span><span class="s">!&quot;</span> <span class="o">%</span> <span class="n">name</span>
+<span class="gp">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">hello</span><span class="p">(</span><span class="s">&quot;Python&quot;</span><span class="p">)</span>
+<span class="go">Hello, Python!</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">hello</span><span class="p">(</span><span class="s">&quot;Robot Framework&quot;</span><span class="p">)</span>
+<span class="go">Hello, Robot Framework!</span>
 </pre></div>
 </li>
-<li><p class="first">The hard part in this example is string formatting (i.e. <tt class="docutils literal"><span class="pre">&quot;Hello,</span>
-<span class="pre">%s!&quot;</span> <span class="pre">%</span> <span class="pre">name</span></tt>). Python has similar string formatting as for example C.
-More information about it can be found e.g. from <a class="reference external" href="http://diveintopython.org/native_data_types/formatting_strings.html">Dive Into Python</a>.</p>
+<li><p class="first">The hard part in this example is string formatting (i.e. <span class="code">&quot;Hello,
+%s!&quot; % name</span>) which uses similar logic as for example C language.
+More information about it can be found e.g. from Dive Into Python:
+<a class="reference external" href="http://diveintopython.org/native_data_types/formatting_strings.html">http://diveintopython.org/native_data_types/formatting_strings.html</a></p>
 </li>
 </ul>
 </div>
-<div class="section" id="documenting-functions">
-<h2><a class="toc-backref" href="#id18">Documenting Functions</a></h2>
+<div class="section" id="optional-and-named-arguments">
+<h2><a class="toc-backref" href="#id19">Optional and named arguments</a></h2>
 <ul>
-<li><p class="first">Documenting functions, classes, etc. in Python is both easy and important:
-<a class="reference external" href="http://diveintopython.org/getting_to_know_python/documenting_functions.html">http://diveintopython.org/getting_to_know_python/documenting_functions.html</a></p>
-</li>
-<li><p class="first">Interestingly docs are also available dynamically. Try this out:</p>
-<div class="highlight"><pre><span class="k">def</span> <span class="nf">hello</span><span class="p">():</span>
-    <span class="sd">&quot;&quot;&quot;Prints &#39;Hello, world!&#39; to the standard output.&quot;&quot;&quot;</span>
-    <span class="k">print</span> <span class="s">&quot;Hello, world!&quot;</span>
-
-<span class="k">print</span> <span class="n">hello</span><span class="o">.</span><span class="n">__doc__</span>
+<li><p class="first">Functions can have default values for some or all of its arguments:</p>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">hello</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">&quot;World&quot;</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="k">print</span> <span class="s">&quot;Hello, </span><span class="si">%s</span><span class="s">!&quot;</span> <span class="o">%</span> <span class="n">name</span>
+<span class="gp">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">hello</span><span class="p">()</span>
+<span class="go">Hello, World!</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">hello</span><span class="p">(</span><span class="s">&quot;Robot&quot;</span><span class="p">)</span>
+<span class="go">Hello, Robot!</span>
 </pre></div>
 </li>
-<li><p class="first">With Robot documenting functions that are used as keywords is extra
-important because there are tools for generating library
-documentation from them.</p>
-</li>
-</ul>
-</div>
-<div class="section" id="optional-and-named-arguments-for-functions-return-of-the-hello-world">
-<h2><a class="toc-backref" href="#id19">Optional And Named Arguments for Functions (Return of the &quot;Hello, world!&quot;)</a></h2>
-<ul>
-<li><p class="first">Functions can have default values for some or all of it's
-arguments.</p>
-<div class="highlight"><pre><span class="o">&gt;&gt;&gt;</span> <span class="k">def</span> <span class="nf">hello</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">&quot;World&quot;</span><span class="p">):</span>
-<span class="o">...</span>     <span class="k">print</span> <span class="s">&quot;Hello, </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">name</span>
-<span class="o">...</span>
-<span class="o">&gt;&gt;&gt;</span> <span class="n">hello</span><span class="p">()</span>
-<span class="n">Hello</span><span class="p">,</span> <span class="n">World</span>
-<span class="o">&gt;&gt;&gt;</span> <span class="n">hello</span><span class="p">(</span><span class="s">&quot;Robot&quot;</span><span class="p">)</span>
-<span class="n">Hello</span><span class="p">,</span> <span class="n">Robot</span>
-</pre></div>
-</li>
-<li><p class="first">If there are several optional arguments it's also possible to
+<li><p class="first">If there are several optional arguments, it is also possible to
 specify only some of them by giving their name along with the value
-as the example below illustrates. Those arguments that don't have
-default values must always be given.</p>
-<div class="highlight"><pre><span class="o">&gt;&gt;&gt;</span> <span class="k">def</span> <span class="nf">test</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mf">1</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="mf">2</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="mf">3</span><span class="p">):</span>
-<span class="o">...</span>   <span class="k">print</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">d</span>
-<span class="o">...</span>
-<span class="o">&gt;&gt;&gt;</span> <span class="n">test</span><span class="p">(</span><span class="mf">0</span><span class="p">)</span>
-<span class="mf">0</span> <span class="mf">1</span> <span class="mf">2</span> <span class="mf">3</span>
-<span class="o">&gt;&gt;&gt;</span> <span class="n">test</span><span class="p">(</span><span class="mf">0</span><span class="p">,</span> <span class="mf">42</span><span class="p">)</span>
-<span class="mf">0</span> <span class="mf">42</span> <span class="mf">2</span> <span class="mf">3</span>
-<span class="o">&gt;&gt;&gt;</span> <span class="n">test</span><span class="p">(</span><span class="mf">1</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="mf">10</span><span class="p">)</span>
-<span class="mf">1</span> <span class="mf">1</span> <span class="mf">10</span> <span class="mf">3</span>
-<span class="o">&gt;&gt;&gt;</span> <span class="n">test</span><span class="p">(</span><span class="mf">2</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="mf">100</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="mf">200</span><span class="p">)</span>
-<span class="mf">2</span> <span class="mf">1</span> <span class="mf">100</span> <span class="mf">200</span>
+as the example below illustrates. Those arguments that do not have
+default values cannot be omitted.</p>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">test</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mf">1</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="mf">2</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="mf">3</span><span class="p">):</span>
+<span class="gp">... </span>  <span class="k">print</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">d</span>
+<span class="gp">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">test</span><span class="p">(</span><span class="mf">0</span><span class="p">)</span>
+<span class="go">0 1 2 3</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">test</span><span class="p">(</span><span class="mf">0</span><span class="p">,</span> <span class="mf">42</span><span class="p">)</span>
+<span class="go">0 42 2 3</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">test</span><span class="p">(</span><span class="mf">1</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="mf">10</span><span class="p">)</span>
+<span class="go">1 1 10 3</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">test</span><span class="p">(</span><span class="mf">2</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="mf">100</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="mf">200</span><span class="p">)</span>
+<span class="go">2 1 100 200</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">test</span><span class="p">(</span><span class="n">b</span><span class="o">=</span><span class="mf">0</span><span class="p">)</span>
+<span class="gt">Traceback (most recent call last):</span>
+  File <span class="nb">&quot;&lt;stdin&gt;&quot;</span>, line <span class="m">1</span>, in <span class="n-Identifier">&lt;module&gt;</span>
+<span class="nc">TypeError</span>: <span class="n-Identifier">test() takes at least 1 non-keyword argument (0 given)</span>
 </pre></div>
 </li>
-<li><p class="first">Robot keywords can have default values but they are always used with
-positional arguments. For example if above <tt class="docutils literal"><span class="pre">hello</span></tt> method was used
-as a keyword, it could be used with zero or one argument.</p>
+<li><p class="first">Robot Framework keywords can have default values but they are always
+used with positional arguments. For example if above <span class="code">hello</span>
+method was used as a keyword, it could be used with zero or one
+argument, and <span class="code">test</span> could be used with one to four arguments.</p>
 </li>
-<li><p class="first">For more information about optional and named arguments, see <a class="reference external" href="http://diveintopython.org/power_of_introspection/optional_arguments.html">Dive Into Python</a>.</p>
+<li><p class="first">Dive Into Python has good explanation for about optional and named arguments:
+<a class="reference external" href="http://diveintopython.org/power_of_introspection/optional_arguments.html">http://diveintopython.org/power_of_introspection/optional_arguments.html</a></p>
 </li>
 </ul>
 </div>
 <div class="section" id="variable-number-of-arguments">
-<h2><a class="toc-backref" href="#id20">Variable Number of Arguments</a></h2>
-<ul>
-<li><p class="first">Function can also be created so that they take any number of
+<h2><a class="toc-backref" href="#id20">Variable number of arguments</a></h2>
+<ul class="simple">
+<li>Function can also be created so that they take any number of
 arguments. This is done by prefixing an argument after required and
-optional arguments with an asterisk like <tt class="docutils literal"><span class="pre">*args</span></tt> and it means that
-the specified argument gets all the &quot;extra&quot; arguments as a tuple.</p>
-<div class="highlight"><pre><span class="o">&gt;&gt;&gt;</span> <span class="k">def</span> <span class="nf">example</span><span class="p">(</span><span class="n">arg1</span><span class="p">,</span> <span class="n">arg2</span><span class="p">,</span> <span class="o">*</span><span class="n">rest</span><span class="p">):</span>
-<span class="o">...</span>     <span class="k">print</span> <span class="n">arg1</span><span class="p">,</span> <span class="n">arg2</span><span class="p">,</span> <span class="n">rest</span>
-<span class="o">...</span>
-<span class="o">&gt;&gt;&gt;</span> <span class="n">example</span><span class="p">(</span><span class="mf">1</span><span class="p">,</span> <span class="mf">2</span><span class="p">)</span>
-<span class="mf">1</span> <span class="mf">2</span> <span class="p">()</span>
-<span class="o">&gt;&gt;&gt;</span> <span class="n">example</span><span class="p">(</span><span class="mf">1</span><span class="p">,</span> <span class="mf">2</span><span class="p">,</span> <span class="mf">3</span><span class="p">)</span>
-<span class="o">&gt;&gt;&gt;</span> <span class="n">example</span><span class="p">(</span><span class="mf">1</span><span class="p">,</span> <span class="mf">2</span><span class="p">,</span> <span class="mf">3</span><span class="p">,</span> <span class="mf">4</span><span class="p">,</span> <span class="mf">5</span><span class="p">)</span>
-<span class="mf">1</span> <span class="mf">2</span> <span class="p">(</span><span class="mf">3</span><span class="p">,</span> <span class="mf">4</span><span class="p">,</span> <span class="mf">5</span><span class="p">)</span>
+optional arguments with an asterisk like <span class="code">*args</span>, and it means that
+the specified argument gets all the &quot;extra&quot; arguments as a <a class="reference internal" href="#tuples">tuple</a>.</li>
+</ul>
+<blockquote>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">example</span><span class="p">(</span><span class="n">arg1</span><span class="p">,</span> <span class="n">arg2</span><span class="p">,</span> <span class="o">*</span><span class="n">rest</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="k">print</span> <span class="n">arg1</span><span class="p">,</span> <span class="n">arg2</span><span class="p">,</span> <span class="n">rest</span>
+<span class="gp">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">example</span><span class="p">(</span><span class="mf">1</span><span class="p">,</span> <span class="mf">2</span><span class="p">)</span>
+<span class="go">1 2 ()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">example</span><span class="p">(</span><span class="mf">1</span><span class="p">,</span> <span class="mf">2</span><span class="p">,</span> <span class="mf">3</span><span class="p">)</span>
+<span class="go">1 2 (3,)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">example</span><span class="p">(</span><span class="mf">1</span><span class="p">,</span> <span class="mf">2</span><span class="p">,</span> <span class="mf">3</span><span class="p">,</span> <span class="mf">4</span><span class="p">,</span> <span class="mf">5</span><span class="p">)</span>
+<span class="go">1 2 (3, 4, 5)</span>
+</pre></div>
+</blockquote>
+<ul class="simple">
+<li>Using variable number of arguments works also with Robot Framework
+keywords.</li>
+<li>Python tutorial explains everything in this and earlier section in
+detail:
+<a class="reference external" href="http://docs.python.org/tut/node6.html#SECTION006700000000000000000">http://docs.python.org/tut/node6.html#SECTION006700000000000000000</a></li>
+</ul>
+</div>
+<div class="section" id="returning-values">
+<h2><a class="toc-backref" href="#id21">Returning values</a></h2>
+<ul>
+<li><p class="first">Functions can use :code`return` statement to return values that can be
+assigned to variables or passed to other functions:</p>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">multiply_by_two</span><span class="p">(</span><span class="n">number</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="k">return</span> <span class="n">number</span> <span class="o">*</span> <span class="mf">2</span>
+<span class="gp">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">result</span> <span class="o">=</span> <span class="n">multiply_by_two</span><span class="p">(</span><span class="mf">10</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">result</span>
+<span class="go">20</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">result</span> <span class="o">=</span> <span class="n">multiply_by_two</span><span class="p">(</span><span class="n">multiply_by_two</span><span class="p">(</span><span class="mf">2</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">result</span>
+<span class="go">8</span>
 </pre></div>
 </li>
-<li><p class="first">Using variable number of arguments works with Robot keywords.</p>
+<li><p class="first">Robot Framework keywords can also return values that can be assigned
+to variables and then used as arguments to other keywords.</p>
 </li>
-<li><p class="first"><a class="reference external" href="http://docs.python.org/tut/node6.html#SECTION006700000000000000000">Python tutorial</a> explains everything in this and earlier section in
-detail.</p>
+</ul>
+</div>
+<div class="section" id="documenting-functions">
+<h2><a class="toc-backref" href="#id22">Documenting functions</a></h2>
+<ul>
+<li><p class="first">In Python functions, as well as classes and modules, are documented with
+so called doc strings:</p>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">hello</span><span class="p">():</span>
+<span class="gp">... </span>    <span class="sd">&quot;&quot;&quot;Prints &#39;Hello, world!&#39; to the standard output.&quot;&quot;&quot;</span>
+<span class="gp">... </span>    <span class="k">print</span> <span class="s">&quot;Hello, world!&quot;</span>
+<span class="gp">...</span>
+</pre></div>
+</li>
+<li><p class="first">Interestingly the documentation is available dynamically:</p>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">hello</span><span class="o">.</span><span class="n">__doc__</span>
+<span class="go">Prints &#39;Hello, world!&#39; to the standard output.</span>
+</pre></div>
+</li>
+<li><p class="first">Doc strings are covered pretty well in Dive Into Python:
+<a class="reference external" href="http://diveintopython.org/getting_to_know_python/documenting_functions.html">http://diveintopython.org/getting_to_know_python/documenting_functions.html</a></p>
+</li>
+<li><p class="first">Robot Framework has <a class="reference external" href="http://code.google.com/p/robotframework/wiki/LibraryDocumentationTool">libdoc.py</a> tool that can generate test library
+documentation based on these doc strings. Documenting functions that
+are used as keywords is thus very important.</p>
 </li>
 </ul>
 </div>
 </div>
-<div class="section" id="lists-tuples-and-dictionaries">
-<h1><a class="toc-backref" href="#id21">Lists, Tuples and Dictionaries</a></h1>
+<div class="section" id="container-data-types">
+<h1><a class="toc-backref" href="#id23">Container data types</a></h1>
+<ul class="simple">
+<li>Python has a nice set of container data types build into the
+language with a really simple syntax similarly as in Perl and
+Ruby. You are going to use them a lot!</li>
+<li>See for example Dive Into Python for more information and examples
+than shown here: <a class="reference external" href="http://diveintopython.org/native_data_types">http://diveintopython.org/native_data_types</a></li>
+</ul>
+<div class="section" id="lists">
+<h2><a class="toc-backref" href="#id24">Lists</a></h2>
 <ul>
-<li><p class="first">Python has nice <em>collection</em> types build into the language with a
-really nice syntax similarly as e.g. Perl and Ruby. You are going to
-use them a lot!</p>
-</li>
 <li><p class="first">A list is an ordered collection of items which you normally access
 by index.</p>
-<div class="highlight"><pre><span class="o">&gt;&gt;&gt;</span> <span class="n">x</span> <span class="o">=</span> <span class="p">[</span><span class="s">&quot;Some&quot;</span><span class="p">,</span> <span class="s">&quot;strings&quot;</span><span class="p">,</span> <span class="s">&quot;here&quot;</span><span class="p">]</span>
-<span class="o">&gt;&gt;&gt;</span> <span class="n">x</span><span class="p">[</span><span class="mf">0</span><span class="p">]</span>
-<span class="s">&#39;Some&#39;</span>
-<span class="o">&gt;&gt;&gt;</span> <span class="n">x</span><span class="p">[</span><span class="mf">1</span><span class="p">]</span>
-<span class="s">&#39;strings&#39;</span>
-<span class="o">&gt;&gt;&gt;</span> <span class="n">x</span><span class="p">[</span><span class="o">-</span><span class="mf">1</span><span class="p">]</span>
-<span class="s">&#39;here&#39;</span>
-<span class="o">&gt;&gt;&gt;</span> <span class="n">x</span><span class="p">[</span><span class="mf">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="mf">2</span><span class="p">]</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
-<span class="o">&gt;&gt;&gt;</span> <span class="n">x</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mf">42</span><span class="p">)</span>
-<span class="o">&gt;&gt;&gt;</span> <span class="n">x</span>
-<span class="p">[</span><span class="s">&#39;Some&#39;</span><span class="p">,</span> <span class="s">&#39;strings&#39;</span><span class="p">,</span> <span class="s">&#39;HERE&#39;</span><span class="p">,</span> <span class="mf">42</span><span class="p">]</span>
-</pre></div>
 </li>
-<li><p class="first">A tuple is a list which you can't change after you have created
-it.</p>
-<div class="highlight"><pre><span class="o">&gt;&gt;&gt;</span> <span class="n">t</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1</span><span class="p">,</span><span class="mf">2</span><span class="p">,</span><span class="s">&#39;x&#39;</span><span class="p">)</span>
-<span class="o">&gt;&gt;&gt;</span> <span class="n">t</span><span class="p">[</span><span class="mf">0</span><span class="p">]</span>
-<span class="mf">1</span>
-<span class="o">&gt;&gt;&gt;</span> <span class="n">t</span><span class="p">[</span><span class="o">-</span><span class="mf">1</span><span class="p">]</span>
-<span class="s">&#39;x&#39;</span>
+<li><p class="first">They also have handy methods like <span class="code">append</span>, <span class="code">insert</span> and
+<span class="code">pop</span> to add or remove items.</p>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;Some&#39;</span><span class="p">,</span> <span class="s">&#39;strings&#39;</span><span class="p">,</span> <span class="s">&#39;here&#39;</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="p">[</span><span class="mf">0</span><span class="p">]</span>
+<span class="go">&#39;Some&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="p">[</span><span class="mf">1</span><span class="p">]</span>
+<span class="go">&#39;strings&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="p">[</span><span class="o">-</span><span class="mf">1</span><span class="p">]</span>
+<span class="go">&#39;here&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="p">[</span><span class="mf">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="mf">2</span><span class="p">]</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mf">42</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span>
+<span class="go">[&#39;Some&#39;, &#39;strings&#39;, &#39;HERE&#39;, 42]</span>
 </pre></div>
-</li>
-<li><p class="first">A dictionary is an unordered collection of key-value pairs.</p>
-<div class="highlight"><pre><span class="o">&gt;&gt;&gt;</span> <span class="n">d</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;x&#39;</span><span class="p">:</span> <span class="s">&#39;some value&#39;</span><span class="p">,</span> <span class="s">&#39;a&#39;</span><span class="p">:</span> <span class="mf">1</span><span class="p">,</span> <span class="s">&#39;b&#39;</span><span class="p">:</span> <span class="mf">2</span><span class="p">}</span>
-<span class="o">&gt;&gt;&gt;</span> <span class="n">d</span><span class="p">[</span><span class="s">&#39;a&#39;</span><span class="p">]</span>
-<span class="mf">1</span>
-<span class="o">&gt;&gt;&gt;</span> <span class="n">d</span><span class="p">[</span><span class="s">&#39;x&#39;</span><span class="p">]</span>
-<span class="s">&#39;some value&#39;</span>
-<span class="o">&gt;&gt;&gt;</span> <span class="n">d</span><span class="p">[</span><span class="s">&#39;a&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">d</span><span class="p">[</span><span class="s">&#39;b&#39;</span><span class="p">]</span>
-<span class="o">&gt;&gt;&gt;</span> <span class="n">d</span><span class="p">[</span><span class="s">&#39;tuple&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">t</span>
-<span class="o">&gt;&gt;&gt;</span> <span class="n">d</span>
-<span class="p">{</span><span class="s">&#39;a&#39;</span><span class="p">:</span> <span class="mf">2</span><span class="p">,</span> <span class="s">&#39;x&#39;</span><span class="p">:</span> <span class="s">&#39;some value&#39;</span><span class="p">,</span> <span class="s">&#39;b&#39;</span><span class="p">:</span> <span class="mf">2</span><span class="p">,</span> <span class="s">&#39;tuple&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mf">1</span><span class="p">,</span> <span class="mf">2</span><span class="p">,</span> <span class="s">&#39;x&#39;</span><span class="p">)}</span>
-</pre></div>
-</li>
-<li><p class="first">A lot more examples, including slice syntax not shown here, and good
-theory at <a class="reference external" href="http://diveintopython.org/native_data_types/">http://diveintopython.org/native_data_types/</a></p>
 </li>
 </ul>
 </div>
-<div class="section" id="control-flow">
-<h1><a class="toc-backref" href="#id22">Control Flow</a></h1>
+<div class="section" id="tuples">
+<h2><a class="toc-backref" href="#id25">Tuples</a></h2>
 <ul>
-<li><p class="first">Python has &quot;normal&quot; control flow structures:</p>
-<ul class="simple">
-<li><tt class="docutils literal"><span class="pre">if/elif/else</span></tt> for conditional execution.</li>
-<li><tt class="docutils literal"><span class="pre">for</span></tt> and <tt class="docutils literal"><span class="pre">while</span></tt> loops with <tt class="docutils literal"><span class="pre">break</span></tt> and <tt class="docutils literal"><span class="pre">continue</span></tt>
-statements.</li>
-</ul>
+<li><p class="first">A tuple is a list like structure which you cannot alter after creating it.</p>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">t</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1</span><span class="p">,</span> <span class="mf">2</span><span class="p">,</span> <span class="s">&#39;x&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="p">[</span><span class="mf">0</span><span class="p">]</span>
+<span class="go">1</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="p">[</span><span class="o">-</span><span class="mf">1</span><span class="p">]</span>
+<span class="go">&#39;x&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="p">[</span><span class="mf">0</span><span class="p">]</span> <span class="o">=</span> <span class="s">&#39;new value&#39;</span>
+<span class="gt">Traceback (most recent call last):</span>
+  File <span class="nb">&quot;&lt;stdin&gt;&quot;</span>, line <span class="m">1</span>, in <span class="n-Identifier">&lt;module&gt;</span>
+<span class="nc">TypeError</span>: <span class="n-Identifier">&#39;tuple&#39; object does not support item assignment</span>
+</pre></div>
 </li>
-<li><p class="first">For example:</p>
-<div class="highlight"><pre><span class="k">def</span> <span class="nf">good_morning_or_night</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">morning</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
-    <span class="k">if</span> <span class="n">morning</span><span class="p">:</span>
-        <span class="k">print</span> <span class="s">&#39;Good morning </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">name</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="k">print</span> <span class="s">&#39;Good night </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">name</span>
+<li><p class="first">Notice that you must use a trailing comma to create a tuple with one
+element:</p>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">empty</span> <span class="o">=</span> <span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">one</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1</span><span class="p">,)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">two</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1</span><span class="p">,</span> <span class="mf">2</span><span class="p">)</span>
+</pre></div>
+</li>
+</ul>
+</div>
+<div class="section" id="dictionaries">
+<h2><a class="toc-backref" href="#id26">Dictionaries</a></h2>
+<ul>
+<li><p class="first">A dictionary is an unordered collection of key-value pairs. The same
+data structure is called hashmap in some other languages.</p>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;x&#39;</span><span class="p">:</span> <span class="s">&#39;some value&#39;</span><span class="p">,</span> <span class="s">&#39;a&#39;</span><span class="p">:</span> <span class="mf">1</span><span class="p">,</span> <span class="s">&#39;b&#39;</span><span class="p">:</span> <span class="mf">2</span><span class="p">}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="p">[</span><span class="s">&#39;a&#39;</span><span class="p">]</span>
+<span class="go">1</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="p">[</span><span class="s">&#39;x&#39;</span><span class="p">]</span>
+<span class="go">&#39;some value&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="p">[</span><span class="s">&#39;a&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">d</span><span class="p">[</span><span class="s">&#39;b&#39;</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="p">[</span><span class="s">&#39;tuple&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">t</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span>
+<span class="go">{&#39;a&#39;: 2, &#39;x&#39;: &#39;some value&#39;, &#39;b&#39;: 2, &#39;tuple&#39;: (1, 2, &#39;x&#39;)}</span>
+</pre></div>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="control-flow">
+<h1><a class="toc-backref" href="#id27">Control Flow</a></h1>
+<div class="section" id="conditional-execution">
+<h2><a class="toc-backref" href="#id28">Conditional execution</a></h2>
+<ul>
+<li><p class="first">Python has similar <span class="code">if/elif/else</span> structure as most other
+programming languages.</p>
+</li>
+<li><p class="first">Notice that no parentheses are needed around the expression as in
+Java or C.</p>
+<div class="highlight"><pre><span class="k">def</span> <span class="nf">is_positive</span><span class="p">(</span><span class="n">number</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">number</span> <span class="o">&gt;</span> <span class="mf">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">True</span>
+    <span class="k">return</span> <span class="bp">False</span>
 
-<span class="k">def</span> <span class="nf">greet_many</span><span class="p">(</span><span class="n">names</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">greet</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">time</span><span class="p">):</span>
+    <span class="k">if</span> <span class="mf">7</span> <span class="o">&lt;</span> <span class="n">time</span> <span class="o">&lt;</span> <span class="mf">12</span><span class="p">:</span>
+        <span class="k">print</span> <span class="s">&#39;Good morning </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">name</span>
+    <span class="k">elif</span> <span class="n">time</span> <span class="o">&lt;</span> <span class="mf">18</span><span class="p">:</span>
+        <span class="k">print</span> <span class="s">&#39;Good afternoon </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">name</span>
+    <span class="k">elif</span> <span class="n">time</span> <span class="o">&lt;</span> <span class="mf">23</span><span class="p">:</span>
+        <span class="k">print</span> <span class="s">&#39;Good night </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">name</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">print</span> <span class="s">&#39;</span><span class="si">%s</span><span class="s">, you should be sleeping!&#39;</span> <span class="o">%</span> <span class="n">name</span>
+</pre></div>
+</li>
+</ul>
+</div>
+<div class="section" id="looping">
+<h2><a class="toc-backref" href="#id29">Looping</a></h2>
+<ul>
+<li><p class="first"><span class="code">for</span> loops allow iterating over a sequence of items such as
+a list. This is probably the loop you are going to use most often.</p>
+<div class="highlight"><pre><span class="k">def</span> <span class="nf">greet_many</span><span class="p">(</span><span class="n">names</span><span class="p">):</span>
     <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">names</span><span class="p">:</span>
         <span class="k">print</span> <span class="s">&#39;Hello </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">name</span>
 
-<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&#39;__main__&#39;</span><span class="p">:</span>
-    <span class="n">good_morning_or_night</span><span class="p">(</span><span class="s">&#39;Luke&#39;</span><span class="p">)</span>
-    <span class="n">good_morning_or_night</span><span class="p">(</span><span class="s">&#39;Dad&#39;</span><span class="p">,</span> <span class="n">morning</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
-    <span class="n">greet_many</span><span class="p">([</span><span class="s">&#39;Luke&#39;</span><span class="p">,</span> <span class="s">&#39;Yoda&#39;</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">count_up</span><span class="p">(</span><span class="n">limit</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">num</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mf">1</span><span class="p">,</span> <span class="n">limit</span><span class="o">+</span><span class="mf">1</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">num</span> <span class="o">==</span> <span class="n">limit</span><span class="p">:</span>
+            <span class="k">print</span> <span class="s">&#39;bye!&#39;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">print</span> <span class="n">num</span>
 </pre></div>
 </li>
-<li><p class="first">For more examples and information:</p>
+<li><p class="first"><span class="code">while</span> loops iterate as long as given expression is true. Very handy
+when waiting some event to occur.</p>
+<div class="highlight"><pre><span class="k">def</span> <span class="nf">wait_until_message_received</span><span class="p">:</span>
+    <span class="n">msg</span> <span class="o">=</span> <span class="n">try_to_receive_message</span><span class="p">()</span>
+    <span class="k">while</span> <span class="n">msg</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">5</span><span class="p">)</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="n">try_to_receive_message</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">msg</span>
+</pre></div>
+</li>
+<li><p class="first">Both <span class="code">for</span> and <span class="code">while</span> loops have typical
+<span class="code">continue</span> and <span class="code">break</span> statements that can be used to
+end the current iteration or exit the loop altogether.</p>
+</li>
+<li><p class="first">For more examples and information see</p>
 <ul class="simple">
-<li><a class="reference external" href="http://docs.python.org/tut/node6.html">http://docs.python.org/tut/node6.html</a></li>
-<li><a class="reference external" href="http://diveintopython.org/file_handling/for_loops.html">http://diveintopython.org/file_handling/for_loops.html</a></li>
+<li>Python Tutorial: <a class="reference external" href="http://docs.python.org/tut/node6.html">http://docs.python.org/tut/node6.html</a></li>
+<li>Dive Into Python: <a class="reference external" href="http://diveintopython.org/file_handling/for_loops.html">http://diveintopython.org/file_handling/for_loops.html</a></li>
 </ul>
-</li>
-<li><p class="first">Iterating over lists (and other iterable objects) with Python's
-<tt class="docutils literal"><span class="pre">for</span></tt> loop is really nice (especially compared to similar loops
-e.g. in C or Java).</p>
-</li>
-<li><p class="first">Instead of <tt class="docutils literal"><span class="pre">for</span></tt> you should, however, often use <a class="reference external" href="http://diveintopython.org/native_data_types/mapping_lists.html">list
-comprehension</a>. It may feel weird and hard to read first but after
-using it a few times you are likely to love it.</p>
 </li>
 </ul>
 </div>
+<div class="section" id="list-comprehensions">
+<h2><a class="toc-backref" href="#id30">List comprehensions</a></h2>
+<ul>
+<li><p class="first">Quite often <span class="code">for</span> loops can be replaced with even more concise list
+comprehensions or generator expressions:</p>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">numbers</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1</span><span class="p">,</span> <span class="o">-</span><span class="mf">5</span><span class="p">,</span> <span class="mf">4</span><span class="p">,</span> <span class="o">-</span><span class="mf">32</span><span class="p">,</span> <span class="mf">0</span><span class="p">,</span> <span class="mf">42</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">positive</span> <span class="o">=</span> <span class="p">[</span> <span class="n">num</span> <span class="k">for</span> <span class="n">num</span> <span class="ow">in</span> <span class="n">numbers</span> <span class="k">if</span> <span class="n">num</span> <span class="o">&gt;</span> <span class="mf">0</span> <span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">positive</span>
+<span class="go">[1, 4, 42]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">sum</span><span class="p">(</span><span class="n">num</span> <span class="k">for</span> <span class="n">num</span> <span class="ow">in</span> <span class="n">positive</span><span class="p">)</span>
+<span class="go">47</span>
+</pre></div>
+</li>
+<li><p class="first">This syntax might look a bit strange first but you will love it very
+soon. To learn more see, for example, Dive Into Python:
+<a class="reference external" href="http://diveintopython.org/native_data_types/mapping_lists.html">http://diveintopython.org/native_data_types/mapping_lists.html</a></p>
+</li>
+</ul>
+</div>
+</div>
 <div class="section" id="modules">
-<h1><a class="toc-backref" href="#id23">Modules</a></h1>
+<h1><a class="toc-backref" href="#id31">Modules</a></h1>
 <div class="section" id="importing-modules">
-<h2><a class="toc-backref" href="#id24">Importing Modules</a></h2>
+<h2><a class="toc-backref" href="#id32">Importing modules</a></h2>
 <ul class="simple">
-<li>Importing existing Python modules is as simply as saying <tt class="docutils literal"><span class="pre">import</span>
-<span class="pre">modulename</span></tt>.</li>
-<li>Alternative syntax is <tt class="docutils literal"><span class="pre">from</span> <span class="pre">modulename</span> <span class="pre">import</span> <span class="pre">submodule</span></tt>.</li>
-<li>Python has a comprehensive <a class="reference external" href="http://docs.python.org/lib/lib.html">standard library</a> so already there's
-plenty of existing code to be imported!</li>
+<li>Importing existing Python modules is as simply as saying <span class="code">import
+modulename</span>.</li>
+<li>An alternative syntax is <span class="code">from modulename import something</span>.</li>
+<li>Python has a comprehensive <a class="reference external" href="http://docs.python.org/lib/lib.html">standard library</a> and a <a class="reference external" href="http://pypi.python.org">package
+index</a> with external modules so there is plenty of existing code to
+be imported. It is recommended to study what is available to avoid
+reinventing wheels.</li>
 </ul>
 </div>
 <div class="section" id="creating-modules">
-<h2><a class="toc-backref" href="#id25">Creating Modules</a></h2>
+<h2><a class="toc-backref" href="#id33">Creating modules</a></h2>
 <ul>
-<li><p class="first">Every <tt class="docutils literal"><span class="pre">.py</span></tt> file is effectively a Python module so you have
-already created some modules.</p>
+<li><p class="first">Because every <span class="path">.py</span> file is effectively a Python module, you
+have already created at least <span class="code">hello</span> module.</p>
 </li>
-<li><p class="first">For example we could have following code in a file called  <tt class="docutils literal"><span class="pre">test.py</span></tt>:</p>
+<li><p class="first">For example if we have the following code in a file called
+<span class="path">example.py</span>:</p>
 <div class="highlight"><pre><span class="k">def</span> <span class="nf">hello</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">&quot;World&quot;</span><span class="p">):</span>
-    <span class="k">print</span> <span class="s">&quot;Hello, </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">name</span>
+    <span class="k">print</span> <span class="s">&quot;Hello, </span><span class="si">%s</span><span class="s">!&quot;</span> <span class="o">%</span> <span class="n">name</span>
 
 <span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&quot;__main__&quot;</span><span class="p">:</span>
     <span class="n">hello</span><span class="p">()</span>
 </pre></div>
-<p>and then be able to use it like:</p>
-<div class="highlight"><pre><span class="o">&gt;&gt;&gt;</span> <span class="k">import</span> <span class="nn">test</span>
-<span class="o">&gt;&gt;&gt;</span> <span class="n">test</span><span class="o">.</span><span class="n">hello</span><span class="p">(</span><span class="s">&quot;Tellus&quot;</span><span class="p">)</span>
-<span class="n">Hello</span><span class="p">,</span> <span class="n">Tellus</span>
+<p>then we can use it in the interpreter (or from other modules) like:</p>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">import</span> <span class="nn">example</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">example</span><span class="o">.</span><span class="n">hello</span><span class="p">(</span><span class="s">&quot;Tellus&quot;</span><span class="p">)</span>
+<span class="go">Hello, Tellus!</span>
 </pre></div>
 </li>
-<li><p class="first"><tt class="docutils literal"><span class="pre">if</span> <span class="pre">__name__</span> <span class="pre">==</span> <span class="pre">&quot;__main__&quot;</span></tt> block in the previous example is
-important because it allows executing the file as a script (<tt class="docutils literal"><span class="pre">python</span>
-<span class="pre">test.py</span></tt>) and using it as a module like above. Automatic
-<tt class="docutils literal"><span class="pre">__name__</span></tt> attribute (Python has many of these as you'll see if
-you study it more) gets value <tt class="docutils literal"><span class="pre">&quot;__main___&quot;</span></tt> when the file is run
-as a script and the <tt class="docutils literal"><span class="pre">if</span></tt> block is thus executed only in that case.</p>
+<li><p class="first"><span class="code">if __name__ == &quot;__main__&quot;</span> block in the previous example is
+important because it allows executing the file also as a script like
+<span class="cli">python example.py</span>.</p>
 </li>
-<li><p class="first">Bigger modules can be organized into several files and a higher
-level module (also called package) created to contain them as
-submodules. In this case the higher level module is a directory with
-a special <tt class="docutils literal"><span class="pre">___init___.py</span></tt> file.</p>
+<li><p class="first">The automatic <span class="code">__name__</span> attribute (Python has many of these
+as you will see if you study it more) gets value <span class="code">&quot;__main___&quot;</span>
+when the file is run as a script and the <span class="code">if</span> block is thus
+executed only in that case.</p>
 </li>
-<li><p class="first">For more information about modules see <a class="reference external" href="http://docs.python.org/tut/node8.html">http://docs.python.org/tut/node8.html</a></p>
+<li><p class="first">Bigger modules can be organized into several files inside a higher
+level module as submodules. In this case the higher level module is
+a directory with a special <span class="path">___init___.py</span> file.</p>
+</li>
+<li><p class="first">For more information about modules see Python Tutorial:
+<a class="reference external" href="http://docs.python.org/tut/node8.html">http://docs.python.org/tut/node8.html</a></p>
 </li>
 </ul>
 </div>
 <div class="section" id="module-search-path-pythonpath">
-<h2><a class="toc-backref" href="#id26">Module search path (PYTHONPATH)</a></h2>
+<h2><a class="toc-backref" href="#id34">Module search path (PYTHONPATH)</a></h2>
 <ul class="simple">
-<li>Python modules aren't automatically searched everywhere on you
+<li>Python modules are not automatically searched everywhere on you
 machine. Python has certain default places to search modules for
-(e.g. it's own library directory which is often in place like
-<tt class="docutils literal"><span class="pre">C:\Python26\Lib</span></tt> or <tt class="docutils literal"><span class="pre">/usr/lib/python2.6</span></tt>) and additionally it
-looks for them from so called PYTHONPATH.</li>
-<li>PYTHONPATH is an environment variable which contains places (mainly
-directories) to look for Python modules. It is similar to
-PATH environment variable which is used by an operating system to
-look for executable programs.</li>
-<li>PYTHONPATH is important also with Robot because it can import test
-libraries only if the module containing the library can be imported.</li>
+(e.g. its own library directory which is often in place like
+<span class="path">C:\Python26\Lib</span> or <span class="path">/usr/lib/python2.6</span>) and
+additionally it looks for them from so called <span class="var">PYTHONPATH</span>.</li>
+<li><span class="var">PYTHONPATH</span> is most often controlled using an environment
+variable with the same name that contains places (mainly
+directories) to look for Python modules. It is similar to Java's
+<span class="var">CLASSPATH</span> and also to <span class="var">PATH</span> environment variable which
+is used by an operating system to look for executable programs.</li>
+<li><span class="var">PYTHONPATH</span> is important also with Robot Framework because it
+can import test libraries only if the module containing the library
+can be imported.</li>
 </ul>
 </div>
 </div>
+<div class="section" id="advanced-features">
+<h1><a class="toc-backref" href="#id35">Advanced features</a></h1>
 <div class="section" id="classes-and-instances">
-<h1><a class="toc-backref" href="#id27">Classes and Instances</a></h1>
+<h2><a class="toc-backref" href="#id36">Classes and instances</a></h2>
 <ul>
-<li><p class="first">Python is an object-oriented language but as we've seen you don't
-need to use classes everywhere like you need to in Java for
-example. It's totally ok to just have a module with functions if
-that's suites your needs but often object oriented features are
-really handy.</p>
+<li><p class="first">Python is an object-oriented language but as we have seen you do not
+need to use classes everywhere like you need to with Java. It is
+totally fine to just have a module with functions if that suites
+your needs, but object oriented features are often really handy.</p>
 </li>
 <li><p class="first">The syntax for creating classes and then instances from them is
 relatively straightforward:</p>
-<div class="highlight"><pre><span class="o">&gt;&gt;&gt;</span> <span class="k">class</span> <span class="nc">MyClass</span><span class="p">:</span>
-<span class="o">...</span>     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
-<span class="o">...</span>         <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">=</span> <span class="n">name</span>
-<span class="o">...</span>     <span class="k">def</span> <span class="nf">hello</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="o">=</span><span class="s">&quot;World&quot;</span><span class="p">):</span>
-<span class="o">...</span>         <span class="k">print</span> <span class="s">&quot;</span><span class="si">%s</span><span class="s"> says hello to </span><span class="si">%s</span><span class="s">.&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="p">,</span> <span class="n">other</span><span class="p">)</span>
-<span class="o">...</span>
-<span class="o">&gt;&gt;&gt;</span> <span class="n">c</span> <span class="o">=</span> <span class="n">MyClass</span><span class="p">(</span><span class="s">&#39;Robot&#39;</span><span class="p">)</span>
-<span class="o">&gt;&gt;&gt;</span> <span class="n">c</span><span class="o">.</span><span class="n">hello</span><span class="p">()</span>
-<span class="n">Robot</span> <span class="n">says</span> <span class="n">hello</span> <span class="n">to</span> <span class="n">World</span><span class="o">.</span>
-<span class="o">&gt;&gt;&gt;</span> <span class="n">c</span><span class="o">.</span><span class="n">hello</span><span class="p">(</span><span class="s">&#39;Tellus&#39;</span><span class="p">)</span>
-<span class="n">Robot</span> <span class="n">says</span> <span class="n">hello</span> <span class="n">to</span> <span class="n">Tellus</span><span class="o">.</span>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">MyClass</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+<span class="gp">... </span>        <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">=</span> <span class="n">name</span>
+<span class="gp">... </span>    <span class="k">def</span> <span class="nf">hello</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="o">=</span><span class="s">&quot;World&quot;</span><span class="p">):</span>
+<span class="gp">... </span>        <span class="k">print</span> <span class="s">&quot;</span><span class="si">%s</span><span class="s"> says hello to </span><span class="si">%s</span><span class="s">.&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="p">,</span> <span class="n">other</span><span class="p">)</span>
+<span class="gp">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span> <span class="o">=</span> <span class="n">MyClass</span><span class="p">(</span><span class="s">&#39;Robot&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">hello</span><span class="p">()</span>
+<span class="go">Robot says hello to World.</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span><span class="o">.</span><span class="n">hello</span><span class="p">(</span><span class="s">&#39;Tellus&#39;</span><span class="p">)</span>
+<span class="go">Robot says hello to Tellus.</span>
 </pre></div>
 </li>
-<li><p class="first">The really weird thing in the syntax is that every class method must
-have <tt class="docutils literal"><span class="pre">self</span></tt> as the first argument in the signature. After you
-create an instance of the class Python <em>binds</em> the method and takes
-care of passing the <tt class="docutils literal"><span class="pre">self</span></tt> argument automatically so you don't use
-it when calling the method.</p>
+<li><p class="first">The only surprising part in the syntax is that every class method
+must have <span class="code">self</span> as the first argument in the signature. After
+you create an instance of the class Python binds the method and
+takes care of passing the <span class="code">self</span> argument automatically so you
+do not use it when calling the method.</p>
 </li>
-<li><p class="first">To learn more about classes you can follow <a class="reference external" href="http://diveintopython.org/object_oriented_framework/index.html">a pretty interesting
-example from Dive Into Python</a>
-or/and study <a class="reference external" href="http://docs.python.org/tut/node11.html">a detailed information from Python Tutorial</a></p>
+<li><p class="first">To learn more about classes you can follow a pretty interesting
+example from Dive Into Python and/or study detailed information from
+Python Tutorial:</p>
+<ul class="simple">
+<li><a class="reference external" href="http://diveintopython.org/object_oriented_framework">http://diveintopython.org/object_oriented_framework</a></li>
+<li><a class="reference external" href="http://docs.python.org/tut/node11.html">http://docs.python.org/tut/node11.html</a></li>
+</ul>
 </li>
 </ul>
 </div>
 <div class="section" id="exceptions">
-<h1><a class="toc-backref" href="#id28">Exceptions</a></h1>
-<ul class="simple">
-<li>Python has an exception system similar to many other languages.
-Exceptions are classes and the normal way to raise them is <tt class="docutils literal"><span class="pre">raise</span>
-<span class="pre">SomeException(&quot;Error</span> <span class="pre">message&quot;)</span></tt>. Exceptions are handled in a
-<tt class="docutils literal"><span class="pre">try/except</span></tt> block.</li>
-<li>Compared to Java there are some terminology differences (<tt class="docutils literal"><span class="pre">raise</span></tt>
-vs. <tt class="docutils literal"><span class="pre">throw</span></tt> and <tt class="docutils literal"><span class="pre">except</span></tt> vs.``catch``) but the biggest real
-difference to is that there are no checked exceptions i.e. you don't
-need to add <tt class="docutils literal"><span class="pre">throws</span> <span class="pre">SomeException</span></tt> to those methods that possibly
-raise exceptions.</li>
-<li>More info: <a class="reference external" href="http://diveintopython.org/file_handling/index.html">http://diveintopython.org/file_handling/index.html</a></li>
-<li>Exceptions are an important part of the Robot Library API because
-keywords use them to communicate failures to the framework.</li>
+<h2><a class="toc-backref" href="#id37">Exceptions</a></h2>
+<ul>
+<li><p class="first">Python has an exception system similar to many other languages.
+Exceptions are classes and the normal way to raise them is
+<span class="code">raise SomeException(&quot;Error message&quot;)</span>.</p>
+</li>
+<li><p class="first">Exceptions are handled in a <span class="code">try/except</span> block:</p>
+<div class="highlight"><pre><span class="k">try</span><span class="p">:</span>
+    <span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+<span class="k">except</span> <span class="ne">IOError</span><span class="p">,</span> <span class="n">err</span><span class="p">:</span>
+    <span class="k">print</span> <span class="s">&quot;Opening file </span><span class="si">%s</span><span class="s"> for reading failed: </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">err</span><span class="p">)</span>
+</pre></div>
+</li>
+<li><p class="first">The <span class="code">try/except</span> block can have multiple <span class="code">except</span>
+branches, an optional <span class="code">else</span> to execute if no exception
+occurred, and <span class="code">finally</span> to execute both when an exception
+occurred and when it did not.</p>
+</li>
+<li><p class="first">Compared to Java there are some terminology differences
+(<span class="code">raise</span> vs. <span class="code">throw</span> and <span class="code">except</span>
+vs. <span class="code">catch</span>) but the biggest real difference is that there are
+no checked exceptions. This means that you do not need to add
+<span class="code">throws SomeException</span> to methods that may raise an exception.</p>
+</li>
+<li><p class="first">More information can be found, for example, from Dive Into Python:
+<a class="reference external" href="http://diveintopython.org/file_handling/index.html">http://diveintopython.org/file_handling/index.html</a></p>
+</li>
+<li><p class="first">Exceptions are an important part of the Robot Framework Library API
+because keywords use them to communicate failures to the framework.</p>
+</li>
 </ul>
 </div>
 <div class="section" id="regular-expressions">
-<h1><a class="toc-backref" href="#id29">Regular Expressions</a></h1>
+<h2><a class="toc-backref" href="#id38">Regular expressions</a></h2>
 <ul class="simple">
 <li>Regular expressions are really handy for processing strings which is
 a really common need in test automation.</li>
 <li>Python has a really fast regular expression engine and it uses a
-syntax that is derived from Perl's regexp syntax similarly as
-e.g. Java.</li>
-<li>A good introduction is
+syntax derived from Perl's regexp syntax similarly as Java and many
+other languages.</li>
+<li>Dive Into Python contains a good introduction again:
 <a class="reference external" href="http://diveintopython.org/regular_expressions/index.html">http://diveintopython.org/regular_expressions/index.html</a></li>
+<li>Notice that Python strings also have many useful methods
+(e.g. <span class="code">startswith</span>, <span class="code">find</span>, <span class="code">isdigit</span>) so regexps
+are not needed as often as in Perl or Ruby.</li>
 </ul>
 </div>
+</div>
 <div class="section" id="unit-testing">
-<h1><a class="toc-backref" href="#id30">Unit Testing</a></h1>
+<h1><a class="toc-backref" href="#id39">Unit testing</a></h1>
 <ul class="simple">
 <li>Unit testing is important especially when you start having more
 code and unit testing your test library code can be a really good
 idea.</li>
 <li>Python has several unit testing frameworks. Two of them,
-<tt class="docutils literal"><span class="pre">unittest</span></tt> and <tt class="docutils literal"><span class="pre">doctest</span></tt>, are in the standard library. The
-former is immediately familiar for anyone who has used JUnit or
-some other xUnit framework and the other is interesting because it
-allows using function doc strings for tests.</li>
+<span class="code">unittest</span> and <span class="code">doctest</span>, are in the standard
+library. The former is immediately familiar for anyone who has used
+JUnit or some other xUnit framework and the other is interesting
+because it allows using function doc strings for tests.</li>
 <li>Dive Into Python has really good chapters about<ul>
 <li><a class="reference external" href="http://diveintopython.org/unit_testing/index.html">unit testing</a>,</li>
 <li><a class="reference external" href="http://diveintopython.org/unit_testing/stage_1.html">test-driven development</a> (TDD), and</li>
@@ -1022,14 +1235,38 @@ allows using function doc strings for tests.</li>
 </ul>
 </div>
 <div class="section" id="writing-test-libraries">
-<h1><a class="toc-backref" href="#id31">Writing Test Libraries</a></h1>
-<p>Robot Framework's test library API is really simple. The test library can be
-either a module or a class.  In case of a module, a keyword will be created for
-each top-level function in the module. In case of a class, a keyword will be
-created for each public method of the class.</p>
-<p>Keyword may return values using the <cite>return</cite> statement. A failure is generated
-by raising an exception. <cite>print</cite> statement can be used to log a message from a
-keyword. The example library below illustrates these features:</p>
+<h1><a class="toc-backref" href="#id40">Writing test libraries</a></h1>
+<p>Robot Framework's test library API is really simple. It is explained
+fully in <a class="reference external" href="http://code.google.com/p/robotframework/wiki/UserGuide">Robot Framework User Guide</a> and this tutorial only covers
+the very basic features with an executable example.</p>
+<div class="section" id="library-api-basics">
+<h2><a class="toc-backref" href="#id41">Library API basics</a></h2>
+<p>The test library can be either a module or a class.  In case of a
+module, a keyword will be created for each top-level function in the
+module. In case of a class, a keyword will be created for each public
+method of the class.</p>
+<p>The most important ways keywords can interact with the framework have already
+been covered in this tutorial:</p>
+<blockquote>
+<ul class="simple">
+<li>Keyword name maps to the function name (case insensitively and
+underscores removed).</li>
+<li>Keywords have same arguments as implementing functions.</li>
+<li>Failures are reported by raising exceptions.</li>
+<li><span class="code">print</span> statement can be used to log messages.</li>
+<li>Values can be returned using the <span class="code">return</span> statement.</li>
+<li>Doc strings are used to document keywords.</li>
+</ul>
+</blockquote>
+</div>
+<div class="section" id="executable-example">
+<h2><a class="toc-backref" href="#id42">Executable example</a></h2>
+<p>The example library and associated test data shown below demonstrate
+the most important features of the test library API. You can execute
+these test cases in your own environment and edit them to test also
+other features. A precondition is having Robot Framework <a class="reference external" href="http://code.google.com/p/robotframework/wiki/Installation">installed</a>,
+but then you only need to get <a class="reference external" href="ExampleLibrary.py">the library</a> and <a class="reference external" href="example_tests.tsv">the data</a>, and
+run command <span class="cli">pybot example_tests.tsv</span>.</p>
 <div class="highlight"><pre><span class="k">class</span> <span class="nc">ExampleLibrary</span><span class="p">:</span>
 
     <span class="k">def</span> <span class="nf">simple_keyword</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -1053,8 +1290,8 @@ keyword. The example library below illustrates these features:</p>
         <span class="k">if</span> <span class="nb">float</span><span class="p">(</span><span class="n">first</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">float</span><span class="p">(</span><span class="n">second</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">AssertionError</span><span class="p">(</span><span class="s">&#39;Given numbers are unequal!&#39;</span><span class="p">)</span>
 </pre></div>
-<p>These keyword may be tested for example using a TSV test file below:</p>
 <table border="1" class="tsv-example docutils">
+<caption>Simple test cases using keywords from ExampleLibrary</caption>
 <colgroup>
 <col width="25%" />
 <col width="25%" />
@@ -1141,10 +1378,11 @@ keyword. The example library below illustrates these features:</p>
 </table>
 </div>
 </div>
+</div>
 <div class="footer">
 <hr class="footer" />
 <p>Generated by <a class="reference external" href="http://docutils.sourceforge.net/rst.html">reStructuredText</a>. Syntax highlighting by <a class="reference external" href="http://pygments.org/">Pygments</a>.</p>
-<p>Generated on: 2009-08-14 14:33 UTC.
+<p>Generated on: 2009-08-15 23:17 UTC.
 </p>
 
 </div>
