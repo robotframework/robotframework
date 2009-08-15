@@ -104,8 +104,10 @@ def pygments_directive(name, arguments, options, content, lineno,
     formatter = options and VARIANTS[options.keys()[0]] or DEFAULT
     # possibility to read the content from an external file
     filtered = [ line for line in content if line.strip() ]
-    if len(filtered) == 1 and os.path.isfile(filtered[0]):
-        content = open(content[0]).read().splitlines()
+    if len(filtered) == 1:
+        path = filtered[0].replace('/', os.sep)
+        if os.path.isfile(path):
+            content = open(path).read().splitlines()
     parsed = highlight(u'\n'.join(content), lexer, formatter)
     return [nodes.raw('', parsed, format='html')]
 
