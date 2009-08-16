@@ -37,7 +37,9 @@ scripts or tools as separate processes.
 
 .. tip:: `Python Tutorial for Robot Framework Test Library Developers`__
          covers enough of Python language to get started writing test
-         libraries using it.
+         libraries using it. It also contains a simple example library
+         and test cases that you can execute and otherwise investigate 
+         on your machine. 
 
 __ http://docs.python.org/c-api/index.html
 __ http://docs.python.org/library/ctypes.html
