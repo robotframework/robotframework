@@ -35,8 +35,13 @@ programming languages. A good example of this approach is the `Remote
 library`_, and another widely used approaches is running external
 scripts or tools as separate processes.
 
+.. tip:: `Python Tutorial for Robot Framework Test Library Developers`__
+         covers enough of Python language to get started writing test
+         libraries using it.
+
 __ http://docs.python.org/c-api/index.html
 __ http://docs.python.org/library/ctypes.html
+__ http://code.google.com/p/robotframework/wiki/PythonTutorial
 
 Different test library APIs
 '''''''''''''''''''''''''''
