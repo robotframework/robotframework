@@ -25,8 +25,8 @@ Introduction
 * Earlier programming experience is expected but not absolutely
   necessary.
 
-* The main study material for this training is *Dive Into Python* book
-  which is really good and freely available for on-line reading,
+* The main study material for this training is excellent *Dive Into
+  Python* book which is freely available for on-line reading,
   downloading or printing from http://diveintopython.org.  It is
   targeted for people who already know how to program but do not know
   Python before.
@@ -35,17 +35,17 @@ Introduction
   Python`_ book. It is also available for free and its target audience
   is people without any earlier programming knowledge.
 
-* `Python Tutorial`_, available at http://python.org and included into
+* `Python Tutorial`_, available at http://python.org and included in
   the standard Python installation at least on Windows, is also very
   good. Some of the sections in this training refer to it instead of
   or in addition to Dive Into Python.
 
 * Python coding style guidelines are specified in PEP-8_. Notice that
-  Dive Into Python book uses :code:`thisStyle` for methods instead of
-  :code:`this_style` although the latter format recommended.
+  the Dive Into Python book uses :code:`camelCaseStyle` instead of the
+  recommended :code:`underline_style`.
 
 * Another highly recommended style guide, covering many essential
-  Python idioms and techniques in depth, is *Code Like a Pythonista:
+  Python idioms and techniques, is *Code Like a Pythonista:
   Idiomatic Python* available at
   http://python.net/~goodger/projects/pycon/2007/idiomatic/handout.html
 
@@ -68,9 +68,9 @@ Installation
   install it separately. Installers for different platforms can be
   found from http://python.org.
 
-* Robot Framework does not yet support Python 3.x versions and also
-  this tutorial is based on Python 2.x. Any 2.x version up from 2.3 is
-  sufficient but the latest versions are recommended.
+* Robot Framework does not yet support Python 3.x versions and this
+  tutorial is also based on Python 2.x. Any 2.x version up from 2.3 is
+  sufficient but the latter versions are recommended.
 
 * It is highly recommended that you configure your system so that you
   can run Python from command line simply by typing :cli:`python` and pressing
@@ -121,7 +121,7 @@ Python editors
 
 * If you do not know any editor, you can at least get started with
   `IDLE`_.  It is included in the standard Python installation on
-  Windows and can be installed also on other system.
+  Windows and can be installed also on other systems.
 
 
 Variables
@@ -134,11 +134,11 @@ Basic data types
   (:code:`True` and :code:`False`) similarly as most other programming
   languages.
 
-* Strings can be enclosed into double or single quotes. They do not
-  have any difference like they do for example in Perl.
+* Strings can be enclosed into double or single quotes. Different
+  quotest do not have any difference like they do for example in Perl.
 
-* Unicode strings have a special syntax like :code:`u"Hyv\xE4\xE4
-  y\xF6\t\xE4!"`. Using Unicode with Python is not covered otherwise
+* Unicode strings have a special syntax like :code:`u"Hyv\\xE4\\xE4
+  y\\xF6\\t\\xE4!"`. Using Unicode with Python is not covered otherwise
   in this tutorial.
 
 * :code:`None` is a special value meaning nothing similarly as
@@ -182,6 +182,8 @@ Declaring variables
     >>> greeting = 'Hello'
     >>> greeting
     'Hello'
+    >>> greeting.upper()
+    'HELLO'
 
 * It is even possible to assign multiple variables at once:
 
@@ -214,7 +216,7 @@ First program
   screen. With Robot Framework keywords such messages would end up
   into the log file.
 
-* For more interesting examples see for example Dive Into Python:
+* For more interesting examples see Dive Into Python:
   http://diveintopython.org/getting_to_know_python/index.html
 
 
@@ -225,8 +227,8 @@ Creating functions
 ------------------
 
 * Creating functions in Python is super easy. This example uses the
-  interpreter again, but you can also write the code into the previous
-  :path:`hello.py` file.
+  interpreter, but you can also write the code into the previous
+  :path:`hello.py` file and execute it.
 
   .. sourcecode:: pycon
 
@@ -238,7 +240,8 @@ Creating functions
 
 * Note that in Python code blocks must be indented (four spaces is the
   norm and highly recommended) and you close the block simply by
-  returning to the earlier indentation level.
+  returning to the earlier indentation level. Inside a block you must
+  use the indentation level consistently.
 
 * Notice also that this :code:`hello` function is actually already a
   valid keyword for Robot Framework!
@@ -256,7 +259,7 @@ Creating functions
     Hello, Robot Framework!
 
 * The hard part in this example is string formatting (i.e. :code:`"Hello,
-  %s!" % name`) which uses similar logic as for example C language.
+  %s!" % name`) which uses similar syntax as for example C language.
   More information about it can be found e.g. from Dive Into Python:
   http://diveintopython.org/native_data_types/formatting_strings.html
 
@@ -300,11 +303,11 @@ Optional and named arguments
     TypeError: test() takes at least 1 non-keyword argument (0 given)
 
 * Robot Framework keywords can have default values but they are always
-  used with positional arguments. For example if above :code:`hello`
+  used with positional arguments. For example, if the above :code:`hello`
   method was used as a keyword, it could be used with zero or one
   argument, and :code:`test` could be used with one to four arguments.
 
-* Dive Into Python has good explanation for about optional and named arguments:
+* Dive Into Python explains both optional and named arguments very well:
   http://diveintopython.org/power_of_introspection/optional_arguments.html
 
 
@@ -333,15 +336,15 @@ Variable number of arguments
 * Using variable number of arguments works also with Robot Framework
   keywords.
 
-* Python tutorial explains everything in this and earlier section in
-  detail:
-  http://docs.python.org/tut/node6.html#SECTION006700000000000000000
+* Python tutorial explains everything in this and the prvious section
+  in detail:
+  http://docs.python.org/tutorial/controlflow.html#more-on-defining-functions
 
 
 Returning values
 ----------------
 
-* Functions can use :code`return` statement to return values that can be
+* Functions can use :code:`return` statement to return values that can be
   assigned to variables or passed to other functions:
 
   .. sourcecode:: pycon
@@ -391,12 +394,12 @@ Documenting functions
 Container data types
 ====================
 
-* Python has a nice set of container data types build into the
+* Python has a nice set of container data types built into the
   language with a really simple syntax similarly as in Perl and
   Ruby. You are going to use them a lot!
 
-* See for example Dive Into Python for more information and examples
-  than shown here: http://diveintopython.org/native_data_types
+* See Dive Into Python for more information and examples than shown
+  below: http://diveintopython.org/native_data_types
 
 
 Lists
@@ -406,7 +409,7 @@ Lists
   by index.
 
 * They also have handy methods like :code:`append`, :code:`insert` and
-  :code:`pop` to add or remove items.
+  :code:`pop` to access or alter the list.
 
   .. sourcecode:: pycon
 
@@ -453,7 +456,7 @@ Dictionaries
 ------------
 
 * A dictionary is an unordered collection of key-value pairs. The same
-  data structure is called hashmap in some other languages.
+  data structure is often called hashmap.
 
   .. sourcecode:: pycon
 
@@ -466,6 +469,10 @@ Dictionaries
     >>> d['tuple'] = t
     >>> d
     {'a': 2, 'x': 'some value', 'b': 2, 'tuple': (1, 2, 'x')}
+    >>> 'x' in d
+    True
+    >>> 'z' in d
+    False
 
 
 Control Flow
@@ -533,9 +540,9 @@ Looping
   :code:`continue` and :code:`break` statements that can be used to
   end the current iteration or exit the loop altogether.
 
-* For more examples and information see
+* For more examples and information see:
 
-  - Python Tutorial: http://docs.python.org/tut/node6.html
+  - Python Tutorial: http://docs.python.org/tutorial/controlflow.html
   - Dive Into Python: http://diveintopython.org/file_handling/for_loops.html
 
 
@@ -551,11 +558,11 @@ List comprehensions
     >>> positive = [ num for num in numbers if num > 0 ]
     >>> positive
     [1, 4, 42]
-    >>> sum(num for num in positive)
-    47
+    >>> sum(num * 2 for num in positive)
+    94
 
-* This syntax might look a bit strange first but you will love it very
-  soon. To learn more see, for example, Dive Into Python:
+* This syntax might look a bit strange at first but you will love it
+  very soon. To learn more see, for example, Dive Into Python:
   http://diveintopython.org/native_data_types/mapping_lists.html
 
 
@@ -615,7 +622,7 @@ Creating modules
   a directory with a special :path:`___init___.py` file.
 
 * For more information about modules see Python Tutorial:
-  http://docs.python.org/tut/node8.html
+  http://docs.python.org/tutorial/modules.html
 
 
 Module search path (PYTHONPATH)
@@ -668,17 +675,16 @@ Classes and instances
 
 * The only surprising part in the syntax is that every class method
   must have :code:`self` as the first argument in the signature. After
-  you create an instance of the class Python binds the method and
-  takes care of passing the :code:`self` argument automatically so you
-  do not use it when calling the method.
+  you create an instance of the class Python binds the method, and it
+  also takes care of passing the :code:`self` argument automatically
+  so you do not use it when calling the method.
 
-* To learn more about classes you can follow a pretty interesting
-  example from Dive Into Python and/or study detailed information from
-  Python Tutorial:
+* To learn more about classes you can follow an interesting example
+  from Dive Into Python and/or study detailed information from Python
+  Tutorial:
 
   - http://diveintopython.org/object_oriented_framework
-  - http://docs.python.org/tut/node11.html
-
+  - http://docs.python.org/tutorial/classes.html
 
 Exceptions
 ----------
@@ -745,11 +751,8 @@ Unit testing
   JUnit or some other xUnit framework and the other is interesting
   because it allows using function doc strings for tests.
 
-* Dive Into Python has really good chapters about
-
-  - `unit testing`__,
-  - `test-driven development`__ (TDD), and
-  - refactoring__.
+* Dive Into Python has really good chapters about `unit testing`__,
+  `test-driven development`__ (TDD), and refactoring__.
 
 __ http://diveintopython.org/unit_testing/index.html
 __ http://diveintopython.org/unit_testing/stage_1.html
@@ -774,13 +777,13 @@ method of the class.
 The most important ways keywords can interact with the framework have already
 been covered in this tutorial:
 
-  * Keyword name maps to the function name (case insensitively and
-    underscores removed).
-  * Keywords have same arguments as implementing functions.
-  * Failures are reported by raising exceptions.
-  * :code:`print` statement can be used to log messages.
-  * Values can be returned using the :code:`return` statement.
-  * Doc strings are used to document keywords.
+* Keyword name maps to the function name (case insensitively and
+  underscores removed).
+* Keywords have same arguments as implementing functions.
+* Failures are reported by raising exceptions.
+* :code:`print` statement can be used to log messages.
+* Values can be returned using the :code:`return` statement.
+* Doc strings are used to document keywords.
 
 Executable example
 ------------------
@@ -811,7 +814,7 @@ __ example_tests.tsv
 .. _Python language: http://python.org
 .. _Robot Framework: http://robotframework.org
 .. _Think Python: http://www.greenteapress.com/thinkpython/thinkpython.html
-.. _Python Tutorial: http://docs.python.org/tut/tut.html
+.. _Python Tutorial: http://docs.python.org/tutorial
 .. _PEP-8: http://www.python.org/dev/peps/pep-0008/
 .. _Robot Framework User Guide: http://code.google.com/p/robotframework/wiki/UserGuide
 .. _libdoc.py: http://code.google.com/p/robotframework/wiki/LibraryDocumentationTool
