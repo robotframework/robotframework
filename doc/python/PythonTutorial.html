@@ -393,9 +393,18 @@ table.messages td.warn {
 div.admonition, div.attention, div.caution, div.danger, div.error,
 div.hint, div.important, div.note, div.tip, div.warning {
     border: 2px solid gray;
+    margin: 1em 2em;
 }
 pre.literal-block, pre.doctest-block {
     background: #f4f4f4;
+}
+li, li p.first {
+    margin-top: 0.3em;
+    margin-bottom: 0.3em;
+}
+div.contents li {
+    margin-top: 0em;
+    margin-bottom: 0em;
 }
 
 
@@ -557,23 +566,23 @@ language</a>. The target is to learn enough Python to be able to start
 creating test libraries for <a class="reference external" href="http://robotframework.org">Robot Framework</a>.</li>
 <li>Earlier programming experience is expected but not absolutely
 necessary.</li>
-<li>The main study material for this training is <em>Dive Into Python</em> book
-which is really good and freely available for on-line reading,
+<li>The main study material for this training is excellent <em>Dive Into
+Python</em> book which is freely available for on-line reading,
 downloading or printing from <a class="reference external" href="http://diveintopython.org">http://diveintopython.org</a>.  It is
 targeted for people who already know how to program but do not know
 Python before.</li>
 <li>If you are a novice programmer, it might better to start with <a class="reference external" href="http://www.greenteapress.com/thinkpython/thinkpython.html">Think
 Python</a> book. It is also available for free and its target audience
 is people without any earlier programming knowledge.</li>
-<li><a class="reference external" href="http://docs.python.org/tut/tut.html">Python Tutorial</a>, available at <a class="reference external" href="http://python.org">http://python.org</a> and included into
+<li><a class="reference external" href="http://docs.python.org/tutorial">Python Tutorial</a>, available at <a class="reference external" href="http://python.org">http://python.org</a> and included in
 the standard Python installation at least on Windows, is also very
 good. Some of the sections in this training refer to it instead of
 or in addition to Dive Into Python.</li>
 <li>Python coding style guidelines are specified in <a class="reference external" href="http://www.python.org/dev/peps/pep-0008/">PEP-8</a>. Notice that
-Dive Into Python book uses <span class="code">thisStyle</span> for methods instead of
-<span class="code">this_style</span> although the latter format recommended.</li>
+the Dive Into Python book uses <span class="code">camelCaseStyle</span> instead of the
+recommended <span class="code">underline_style</span>.</li>
 <li>Another highly recommended style guide, covering many essential
-Python idioms and techniques in depth, is <em>Code Like a Pythonista:
+Python idioms and techniques, is <em>Code Like a Pythonista:
 Idiomatic Python</em> available at
 <a class="reference external" href="http://python.net/~goodger/projects/pycon/2007/idiomatic/handout.html">http://python.net/~goodger/projects/pycon/2007/idiomatic/handout.html</a></li>
 <li>The official Python website at <a class="reference external" href="http://python.org">http://python.org</a> is a good place to
@@ -592,9 +601,9 @@ Python, you can start from <a class="reference external" href="http://jython.org
 Python installed by default, but on Windows you probably need to
 install it separately. Installers for different platforms can be
 found from <a class="reference external" href="http://python.org">http://python.org</a>.</li>
-<li>Robot Framework does not yet support Python 3.x versions and also
-this tutorial is based on Python 2.x. Any 2.x version up from 2.3 is
-sufficient but the latest versions are recommended.</li>
+<li>Robot Framework does not yet support Python 3.x versions and this
+tutorial is also based on Python 2.x. Any 2.x version up from 2.3 is
+sufficient but the latter versions are recommended.</li>
 <li>It is highly recommended that you configure your system so that you
 can run Python from command line simply by typing <span class="cli">python</span> and pressing
 enter.<ul>
@@ -643,7 +652,7 @@ handling indentation. Make sure your editor of choice supports them
 either natively or via Python plugin or mode.</li>
 <li>If you do not know any editor, you can at least get started with
 <a class="reference external" href="http://hkn.eecs.berkeley.edu/~dyoo/python/idle_intro/">IDLE</a>.  It is included in the standard Python installation on
-Windows and can be installed also on other system.</li>
+Windows and can be installed also on other systems.</li>
 </ul>
 </div>
 </div>
@@ -656,11 +665,11 @@ Windows and can be installed also on other system.</li>
 (<span class="code">True</span> and <span class="code">False</span>) similarly as most other programming
 languages.</p>
 </li>
-<li><p class="first">Strings can be enclosed into double or single quotes. They do not
-have any difference like they do for example in Perl.</p>
+<li><p class="first">Strings can be enclosed into double or single quotes. Different
+quotest do not have any difference like they do for example in Perl.</p>
 </li>
-<li><p class="first">Unicode strings have a special syntax like <span class="code">u&quot;HyvxE4xE4
-yxF6txE4!&quot;</span>. Using Unicode with Python is not covered otherwise
+<li><p class="first">Unicode strings have a special syntax like <span class="code">u&quot;Hyv\xE4\xE4
+y\xF6\t\xE4!&quot;</span>. Using Unicode with Python is not covered otherwise
 in this tutorial.</p>
 </li>
 <li><p class="first"><span class="code">None</span> is a special value meaning nothing similarly as
@@ -700,6 +709,8 @@ got from the assigned variable automatically.</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">greeting</span> <span class="o">=</span> <span class="s">&#39;Hello&#39;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">greeting</span>
 <span class="go">&#39;Hello&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">greeting</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
+<span class="go">&#39;HELLO&#39;</span>
 </pre></div>
 </li>
 <li><p class="first">It is even possible to assign multiple variables at once:</p>
@@ -729,7 +740,7 @@ this content into it:</p>
 screen. With Robot Framework keywords such messages would end up
 into the log file.</p>
 </li>
-<li><p class="first">For more interesting examples see for example Dive Into Python:
+<li><p class="first">For more interesting examples see Dive Into Python:
 <a class="reference external" href="http://diveintopython.org/getting_to_know_python/index.html">http://diveintopython.org/getting_to_know_python/index.html</a></p>
 </li>
 </ul>
@@ -740,8 +751,8 @@ into the log file.</p>
 <h2><a class="toc-backref" href="#id18">Creating functions</a></h2>
 <ul>
 <li><p class="first">Creating functions in Python is super easy. This example uses the
-interpreter again, but you can also write the code into the previous
-<span class="path">hello.py</span> file.</p>
+interpreter, but you can also write the code into the previous
+<span class="path">hello.py</span> file and execute it.</p>
 <div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">hello</span><span class="p">():</span>
 <span class="gp">... </span>    <span class="k">print</span> <span class="s">&quot;Hello, world!&quot;</span>
 <span class="gp">...</span>
@@ -751,7 +762,8 @@ interpreter again, but you can also write the code into the previous
 </li>
 <li><p class="first">Note that in Python code blocks must be indented (four spaces is the
 norm and highly recommended) and you close the block simply by
-returning to the earlier indentation level.</p>
+returning to the earlier indentation level. Inside a block you must
+use the indentation level consistently.</p>
 </li>
 <li><p class="first">Notice also that this <span class="code">hello</span> function is actually already a
 valid keyword for Robot Framework!</p>
@@ -767,7 +779,7 @@ valid keyword for Robot Framework!</p>
 </pre></div>
 </li>
 <li><p class="first">The hard part in this example is string formatting (i.e. <span class="code">&quot;Hello,
-%s!&quot; % name</span>) which uses similar logic as for example C language.
+%s!&quot; % name</span>) which uses similar syntax as for example C language.
 More information about it can be found e.g. from Dive Into Python:
 <a class="reference external" href="http://diveintopython.org/native_data_types/formatting_strings.html">http://diveintopython.org/native_data_types/formatting_strings.html</a></p>
 </li>
@@ -808,11 +820,11 @@ default values cannot be omitted.</p>
 </pre></div>
 </li>
 <li><p class="first">Robot Framework keywords can have default values but they are always
-used with positional arguments. For example if above <span class="code">hello</span>
+used with positional arguments. For example, if the above <span class="code">hello</span>
 method was used as a keyword, it could be used with zero or one
 argument, and <span class="code">test</span> could be used with one to four arguments.</p>
 </li>
-<li><p class="first">Dive Into Python has good explanation for about optional and named arguments:
+<li><p class="first">Dive Into Python explains both optional and named arguments very well:
 <a class="reference external" href="http://diveintopython.org/power_of_introspection/optional_arguments.html">http://diveintopython.org/power_of_introspection/optional_arguments.html</a></p>
 </li>
 </ul>
@@ -840,15 +852,15 @@ the specified argument gets all the &quot;extra&quot; arguments as a <a class="r
 <ul class="simple">
 <li>Using variable number of arguments works also with Robot Framework
 keywords.</li>
-<li>Python tutorial explains everything in this and earlier section in
-detail:
-<a class="reference external" href="http://docs.python.org/tut/node6.html#SECTION006700000000000000000">http://docs.python.org/tut/node6.html#SECTION006700000000000000000</a></li>
+<li>Python tutorial explains everything in this and the prvious section
+in detail:
+<a class="reference external" href="http://docs.python.org/tutorial/controlflow.html#more-on-defining-functions">http://docs.python.org/tutorial/controlflow.html#more-on-defining-functions</a></li>
 </ul>
 </div>
 <div class="section" id="returning-values">
 <h2><a class="toc-backref" href="#id21">Returning values</a></h2>
 <ul>
-<li><p class="first">Functions can use :code`return` statement to return values that can be
+<li><p class="first">Functions can use <span class="code">return</span> statement to return values that can be
 assigned to variables or passed to other functions:</p>
 <div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">multiply_by_two</span><span class="p">(</span><span class="n">number</span><span class="p">):</span>
 <span class="gp">... </span>    <span class="k">return</span> <span class="n">number</span> <span class="o">*</span> <span class="mf">2</span>
@@ -895,11 +907,11 @@ are used as keywords is thus very important.</p>
 <div class="section" id="container-data-types">
 <h1><a class="toc-backref" href="#id23">Container data types</a></h1>
 <ul class="simple">
-<li>Python has a nice set of container data types build into the
+<li>Python has a nice set of container data types built into the
 language with a really simple syntax similarly as in Perl and
 Ruby. You are going to use them a lot!</li>
-<li>See for example Dive Into Python for more information and examples
-than shown here: <a class="reference external" href="http://diveintopython.org/native_data_types">http://diveintopython.org/native_data_types</a></li>
+<li>See Dive Into Python for more information and examples than shown
+below: <a class="reference external" href="http://diveintopython.org/native_data_types">http://diveintopython.org/native_data_types</a></li>
 </ul>
 <div class="section" id="lists">
 <h2><a class="toc-backref" href="#id24">Lists</a></h2>
@@ -908,7 +920,7 @@ than shown here: <a class="reference external" href="http://diveintopython.org/n
 by index.</p>
 </li>
 <li><p class="first">They also have handy methods like <span class="code">append</span>, <span class="code">insert</span> and
-<span class="code">pop</span> to add or remove items.</p>
+<span class="code">pop</span> to access or alter the list.</p>
 <div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;Some&#39;</span><span class="p">,</span> <span class="s">&#39;strings&#39;</span><span class="p">,</span> <span class="s">&#39;here&#39;</span><span class="p">]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="p">[</span><span class="mf">0</span><span class="p">]</span>
 <span class="go">&#39;Some&#39;</span>
@@ -952,7 +964,7 @@ element:</p>
 <h2><a class="toc-backref" href="#id26">Dictionaries</a></h2>
 <ul>
 <li><p class="first">A dictionary is an unordered collection of key-value pairs. The same
-data structure is called hashmap in some other languages.</p>
+data structure is often called hashmap.</p>
 <div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;x&#39;</span><span class="p">:</span> <span class="s">&#39;some value&#39;</span><span class="p">,</span> <span class="s">&#39;a&#39;</span><span class="p">:</span> <span class="mf">1</span><span class="p">,</span> <span class="s">&#39;b&#39;</span><span class="p">:</span> <span class="mf">2</span><span class="p">}</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="p">[</span><span class="s">&#39;a&#39;</span><span class="p">]</span>
 <span class="go">1</span>
@@ -962,6 +974,10 @@ data structure is called hashmap in some other languages.</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="p">[</span><span class="s">&#39;tuple&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">t</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">d</span>
 <span class="go">{&#39;a&#39;: 2, &#39;x&#39;: &#39;some value&#39;, &#39;b&#39;: 2, &#39;tuple&#39;: (1, 2, &#39;x&#39;)}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="s">&#39;x&#39;</span> <span class="ow">in</span> <span class="n">d</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="s">&#39;z&#39;</span> <span class="ow">in</span> <span class="n">d</span>
+<span class="go">False</span>
 </pre></div>
 </li>
 </ul>
@@ -1026,9 +1042,9 @@ when waiting some event to occur.</p>
 <span class="code">continue</span> and <span class="code">break</span> statements that can be used to
 end the current iteration or exit the loop altogether.</p>
 </li>
-<li><p class="first">For more examples and information see</p>
+<li><p class="first">For more examples and information see:</p>
 <ul class="simple">
-<li>Python Tutorial: <a class="reference external" href="http://docs.python.org/tut/node6.html">http://docs.python.org/tut/node6.html</a></li>
+<li>Python Tutorial: <a class="reference external" href="http://docs.python.org/tutorial/controlflow.html">http://docs.python.org/tutorial/controlflow.html</a></li>
 <li>Dive Into Python: <a class="reference external" href="http://diveintopython.org/file_handling/for_loops.html">http://diveintopython.org/file_handling/for_loops.html</a></li>
 </ul>
 </li>
@@ -1043,12 +1059,12 @@ comprehensions or generator expressions:</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">positive</span> <span class="o">=</span> <span class="p">[</span> <span class="n">num</span> <span class="k">for</span> <span class="n">num</span> <span class="ow">in</span> <span class="n">numbers</span> <span class="k">if</span> <span class="n">num</span> <span class="o">&gt;</span> <span class="mf">0</span> <span class="p">]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">positive</span>
 <span class="go">[1, 4, 42]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">sum</span><span class="p">(</span><span class="n">num</span> <span class="k">for</span> <span class="n">num</span> <span class="ow">in</span> <span class="n">positive</span><span class="p">)</span>
-<span class="go">47</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">sum</span><span class="p">(</span><span class="n">num</span> <span class="o">*</span> <span class="mf">2</span> <span class="k">for</span> <span class="n">num</span> <span class="ow">in</span> <span class="n">positive</span><span class="p">)</span>
+<span class="go">94</span>
 </pre></div>
 </li>
-<li><p class="first">This syntax might look a bit strange first but you will love it very
-soon. To learn more see, for example, Dive Into Python:
+<li><p class="first">This syntax might look a bit strange at first but you will love it
+very soon. To learn more see, for example, Dive Into Python:
 <a class="reference external" href="http://diveintopython.org/native_data_types/mapping_lists.html">http://diveintopython.org/native_data_types/mapping_lists.html</a></p>
 </li>
 </ul>
@@ -1152,13 +1168,13 @@ relatively straightforward:</p>
 </li>
 <li><p class="first">The only surprising part in the syntax is that every class method
 must have <span class="code">self</span> as the first argument in the signature. After
-you create an instance of the class Python binds the method and
-takes care of passing the <span class="code">self</span> argument automatically so you
-do not use it when calling the method.</p>
+you create an instance of the class Python binds the method, and it
+also takes care of passing the <span class="code">self</span> argument automatically
+so you do not use it when calling the method.</p>
 </li>
-<li><p class="first">To learn more about classes you can follow a pretty interesting
-example from Dive Into Python and/or study detailed information from
-Python Tutorial:</p>
+<li><p class="first">To learn more about classes you can follow an interesting example
+from Dive Into Python and/or study detailed information from Python
+Tutorial:</p>
 <ul class="simple">
 <li><a class="reference external" href="http://diveintopython.org/object_oriented_framework">http://diveintopython.org/object_oriented_framework</a></li>
 <li><a class="reference external" href="http://docs.python.org/tut/node11.html">http://docs.python.org/tut/node11.html</a></li>
@@ -1226,12 +1242,8 @@ idea.</li>
 library. The former is immediately familiar for anyone who has used
 JUnit or some other xUnit framework and the other is interesting
 because it allows using function doc strings for tests.</li>
-<li>Dive Into Python has really good chapters about<ul>
-<li><a class="reference external" href="http://diveintopython.org/unit_testing/index.html">unit testing</a>,</li>
-<li><a class="reference external" href="http://diveintopython.org/unit_testing/stage_1.html">test-driven development</a> (TDD), and</li>
-<li><a class="reference external" href="http://diveintopython.org/refactoring/index.html">refactoring</a>.</li>
-</ul>
-</li>
+<li>Dive Into Python has really good chapters about <a class="reference external" href="http://diveintopython.org/unit_testing/index.html">unit testing</a>,
+<a class="reference external" href="http://diveintopython.org/unit_testing/stage_1.html">test-driven development</a> (TDD), and <a class="reference external" href="http://diveintopython.org/refactoring/index.html">refactoring</a>.</li>
 </ul>
 </div>
 <div class="section" id="writing-test-libraries">
@@ -1247,7 +1259,6 @@ module. In case of a class, a keyword will be created for each public
 method of the class.</p>
 <p>The most important ways keywords can interact with the framework have already
 been covered in this tutorial:</p>
-<blockquote>
 <ul class="simple">
 <li>Keyword name maps to the function name (case insensitively and
 underscores removed).</li>
@@ -1257,7 +1268,6 @@ underscores removed).</li>
 <li>Values can be returned using the <span class="code">return</span> statement.</li>
 <li>Doc strings are used to document keywords.</li>
 </ul>
-</blockquote>
 </div>
 <div class="section" id="executable-example">
 <h2><a class="toc-backref" href="#id42">Executable example</a></h2>
@@ -1382,7 +1392,7 @@ run command <span class="cli">pybot example_tests.tsv</span>.</p>
 <div class="footer">
 <hr class="footer" />
 <p>Generated by <a class="reference external" href="http://docutils.sourceforge.net/rst.html">reStructuredText</a>. Syntax highlighting by <a class="reference external" href="http://pygments.org/">Pygments</a>.</p>
-<p>Generated on: 2009-08-15 23:17 UTC.
+<p>Generated on: 2009-08-16 20:28 UTC.
 </p>
 
 </div>
