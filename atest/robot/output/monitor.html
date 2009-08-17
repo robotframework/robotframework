@@ -3903,47 +3903,7 @@ ${SEP_LINE1}\n<br>
 
 
 
-    <tr>
-
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-
-      <td align="undefined" valign="undefined">Check Stderr Does Not Contain</td>
-
-
-
-      <td align="undefined" valign="undefined">[ ERROR ]</td>
-
-
-
-
-      
-      <td align="undefined" valign="undefined"># Actual output contains binary color codes around&nbsp;ERROR</td>
-
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-
-      <td align="undefined" valign="undefined"></td>
-
-
-
-
-    </tr>
+    
 
 
 
@@ -3956,11 +3916,11 @@ ${SEP_LINE1}\n<br>
 
 
 
-      <td align="undefined" valign="undefined">Check Stderr&nbsp;Contains</td>
+      <td align="undefined" valign="undefined">Check Stderr Is Formatted Correctly</td>
 
 
 
-      <td align="undefined" valign="undefined">ERROR</td>
+      <td align="undefined" valign="undefined"></td>
 
 
 
@@ -5393,7 +5353,7 @@ ${SEP_CHAR2 * 20}\n<br>
 
 
 
-    <tr><td></td><td>Should Be Equal</td><td>${content.count("${expected}")}</td><td>${1}</td><td></td></tr><tr>
+    <tr><td></td><td>Should Be Equal</td><td>${content.count("${expected}")}</td><td>${1}</td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Check Stderr Is Formatted Correctly</td><td>${exp} =&nbsp;</td><td>Set Variable If</td><td>os.sep=='/'</td><td>ERROR</td></tr><tr><td></td><td>...</td><td>[ ERROR ]</td><td></td><td></td></tr><tr><td></td><td>Check Stderr Contains</td><td>${exp}</td><td></td><td></td></tr><tr>
 
 
 
