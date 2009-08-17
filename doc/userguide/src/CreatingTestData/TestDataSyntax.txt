@@ -209,7 +209,7 @@ Space separated format
 The number of spaces used as separator can vary, as long as there are
 at least two spaces, and it is thus possible to align the data nicely.
 This is a clear benefit over editing the TSV format in a text editor
-because there alignment cannot be controlled.
+because with TSV the alignment cannot be controlled.
 
 ::
 
@@ -272,11 +272,11 @@ the same separator. Pipe and space separated lines are recognized by
 the mandatory leading pipe, but the pipe at the end of the line is
 optional. There must always be at least one space on both sides of the
 pipe (except at the beginning and end) but there is no need to align
-the pipes other than it makes the data more clear.
+the pipes other than if it makes the data clearer.
 
 There is no need to escape empty cells (other than the `trailing empty
 cells`__) when using the pipe and space separated format. The only
-thing to take into accound is that possible pipes surrounded by spaces
+thing to take into account is that possible pipes surrounded by spaces
 in the actual test data must be escaped with a backslash::
 
   | ${file count} = | Execute Command | ls -1 *.txt \| wc -l |
