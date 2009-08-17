@@ -383,8 +383,10 @@ table.messages td.warn {
 
 div.admonition, div.attention, div.caution, div.danger, div.error,
 div.hint, div.important, div.note, div.tip, div.warning {
-    border: 2px solid gray;
+    border: 0.1em solid gray;
     margin: 1em 2em;
+    padding: 0.7em 1em;
+    font-size: 0.9em;
 }
 pre.literal-block, pre.doctest-block {
     background: #f4f4f4;
