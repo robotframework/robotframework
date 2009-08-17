@@ -82,7 +82,6 @@ def _timestr_to_secs(timestr):
     return sign * (float(millis)/1000 + float(secs) + float(mins)*60 
                    + float(hours)*60*60 + float(days)*60*60*24)
 
-
 def _normalize_timestr(timestr):
     if is_number(timestr):
         return timestr
@@ -225,9 +224,45 @@ def get_time(format='timestamp', time_=None):
         return parts
 
 
+def parse_time(timestr):
+    """Parses the time string and returns its value as seconds since epoch.
+    
+    Time can be given in four different formats:
+    
+    1) Numbers are interpreted as time since epoch directly. It is possible to
+       use also ints and floats, not only strings containing numbers.
+    2) Valid timestamp ('YYYY-MM-DD hh:mm:ss' and 'YYYYMMDD hhmmss').
+    3) 'NOW' (case-insensitive) is the current time.
+    4) Format 'NOW - 1 day' or 'NOW + 1 hour 30 min' is the current time 
+       plus/minus the time specified with the time string.
+    """    
+    try:
+        ret = long(timestr)
+        if ret < 0:
+            raise DataError("Epoch time must be positive (got %s)" % timestr)
+        return ret
+    except ValueError:
+        pass
+    try:
+        return timestamp_to_secs(timestr, (' ', ':', '-', '.'))
+    except DataError:
+        pass
+    normtime = timestr.lower().replace(' ', '')
+    now = round(time.time())
+    if normtime == 'now':
+        return now
+    if normtime.startswith('now'):
+        if normtime[3] == '+':
+            return now + timestr_to_secs(normtime[4:])
+        if normtime[3] == '-':
+            return now - timestr_to_secs(normtime[4:])
+    raise DataError("Invalid time format '%s'" % timestr)
+
+
 def get_timestamp(daysep='', daytimesep=' ', timesep=':', millissep='.'):
     timetuple = _get_time()
     return format_time(timetuple, daysep, daytimesep, timesep, millissep)
+
     
 def timestamp_to_secs(timestamp, seps=('', ' ', ':', '.'), millis=False):
     try:
@@ -238,6 +273,7 @@ def timestamp_to_secs(timestamp, seps=('', ' ', ':', '.'), millis=False):
         return round(secs, 3)
     return long(round(secs))
 
+
 def secs_to_timestamp(secs, seps=None, millis=False):
     if seps is None:
         seps = ('', ' ', ':', millis and '.' or None)
@@ -247,8 +283,10 @@ def secs_to_timestamp(secs, seps=None, millis=False):
         ttuple = ttuple + (int(millis),)
     return format_time(ttuple, *seps)
 
+
 def get_start_timestamp(daysep='', daytimesep=' ', timesep=':', millissep=None):
     return format_time(START_TIME, daysep, daytimesep, timesep, millissep)
+
     
 def get_elapsed_time(start_time, end_time=None, seps=('', ' ', ':', '.')):
     """Returns the time between given timestamps in milliseconds.
@@ -266,6 +304,7 @@ def get_elapsed_time(start_time, end_time=None, seps=('', ' ', ':', '.')):
     start_millis = _timestamp_to_millis(start_time, seps)
     end_millis = _timestamp_to_millis(end_time, seps)
     return end_millis - start_millis
+
 
 def elapsed_time_to_string(elapsed_millis):
     """Converts elapsed time in millisecods to format 'hh:mm:ss.mil'"""
@@ -301,37 +340,3 @@ def _split_timestamp(timestamp, seps):
     secs = int(timestamp[12:14])
     millis = int(timestamp[14:17])
     return years, mons, days, hours, mins, secs, millis
-
-def parse_time(time_):
-    """ Parses the time since epoch from given time.
-    
-        Given time can be in four different formats.
-        
-        1) Floating point number is interpreted as time since epoch.
-        2) Valid timestamp ('YYYY-MM-DD hh:mm:ss' and 'YYYYMMDD hhmmss').
-        3) 'NOW' (case-insensitive) is the current time.
-        4) Format 'NOW - 1 day' or 'NOW + 1 hour 30 min' is the current time 
-           plus/minus the time specified with the time string.
-    """    
-    orig_time = time_
-    try:
-        time_ = round(float(time_))
-        if time_ < 0:
-            raise DataError("Epoch time must be positive (got %d)" % time_)
-        return time_
-    except ValueError:
-        pass
-    try:
-        return timestamp_to_secs(time_, (' ', ':', '-', '.'))
-    except DataError:
-        pass
-    time_ = time_.lower().replace(' ', '')
-    now = round(time.time())
-    if time_ == 'now':
-        return now
-    if time_.startswith('now'):
-        if time_[3] == '+':
-            return now + timestr_to_secs(time_[4:])
-        if time_[3] == '-':
-            return now - timestr_to_secs(time_[4:])
-    raise DataError("Invalid time format '%s'" % orig_time)
