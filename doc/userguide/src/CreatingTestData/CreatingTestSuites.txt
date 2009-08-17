@@ -36,7 +36,6 @@ test suite:
    :opt:`Suite Precondition` and :opt:`Suite Postcondition`, respectively.
 
 
-
 Test suite directories
 ~~~~~~~~~~~~~~~~~~~~~~
 
@@ -54,14 +53,16 @@ contains are processed recursively as follows:
 - Files and directories with names starting with a dot (:path:`.`) or an
   underscore (:path:`_`) are ignored.
 - Directories with the name :path:`CVS` are ignored (case-sensitive).
-- Files not having one of the recognized extensions (:path:`.html`, 
-  :path:`.xhtml`, :path:`.htm`, :path:`.rst`, :path:`.rest`, or :path:`.tsv`)
-  are ignored (case-insensitive).
+- Files not having one of the `recognized extensions`__ (:path:`.html`, 
+  :path:`.xhtml`, :path:`.htm`, :path:`.tsv`, :path:`.txt`, :path:`.rst`, 
+  or :path:`.rest`) are ignored (case-insensitive).
 - Other files and directories are processed.
 
 If a file or directory that is processed does not contain any test
 cases, it is silently ignored (a message is written to the syslog_)
 and the processing continues.
+
+__ `Supported file formats`_
 
 
 Initialization files
