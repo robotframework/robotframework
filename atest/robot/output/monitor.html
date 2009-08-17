@@ -3658,7 +3658,7 @@ ${SEP_LINE1}\n<br>
 
 
 
-      <td align="undefined" valign="undefined">[ ERROR ]<br>
+      <td align="undefined" valign="undefined">&nbsp;ERROR&nbsp;<br>
 
 
 
@@ -3693,7 +3693,7 @@ ${SEP_LINE1}\n<br>
 
 
 
-    <tr>
+    <tr><td></td><td>Log File</td><td>${STDERR FILE}</td><td></td><td></td><td></td><td></td></tr><tr>
 
 
 
@@ -4804,7 +4804,11 @@ ${SEP_CHAR2 * 20}\n<br>
 
 
 
-    <tr>
+    <tr><td>Errors In Processing Command Line Options Should Be Only Displayed Once</td><td align="undefined" valign="undefined">Run Tests</td><td align="undefined" valign="undefined"><br>
+
+
+
+--splitoutputs this_causes_error</td><td align="undefined" valign="undefined">misc${/}pass_and_fail.html</td><td></td><td></td><td></td></tr><tr><td></td><td>File Should Contain Exactly Once</td><td>${STDERR FILE}</td><td>Option '--splitoutputs' expected integer value but got 'this_causes_error'. Default value used instead.</td><td></td><td></td><td></td></tr><tr>
 
 
 
@@ -5246,7 +5250,7 @@ ${SEP_CHAR2 * 20}\n<br>
 
 
 
-      <td></td>
+      <td>File Should Contain&nbsp;Exactly Once</td>
 
 
 
@@ -5257,7 +5261,7 @@ ${SEP_CHAR2 * 20}\n<br>
 
 
 
-      <td></td>
+      <td>[ Arguments ]</td>
 
 
 
@@ -5268,7 +5272,7 @@ ${SEP_CHAR2 * 20}\n<br>
 
 
 
-      <td></td>
+      <td>${path}</td>
 
 
 
@@ -5279,7 +5283,7 @@ ${SEP_CHAR2 * 20}\n<br>
 
 
 
-      <td></td>
+      <td>${expected}</td>
 
 
 
@@ -5334,7 +5338,7 @@ ${SEP_CHAR2 * 20}\n<br>
 
 
 
-      <td></td>
+      <td>${content} =</td>
 
 
 
@@ -5345,7 +5349,7 @@ ${SEP_CHAR2 * 20}\n<br>
 
 
 
-      <td></td>
+      <td>Get File</td>
 
 
 
@@ -5356,7 +5360,7 @@ ${SEP_CHAR2 * 20}\n<br>
 
 
 
-      <td></td>
+      <td>${path}</td>
 
 
 
@@ -5389,7 +5393,7 @@ ${SEP_CHAR2 * 20}\n<br>
 
 
 
-    <tr>
+    <tr><td></td><td>Should Be Equal</td><td>${content.count("${expected}")}</td><td>${1}</td><td></td></tr><tr>
 
 
 
