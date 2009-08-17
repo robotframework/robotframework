@@ -37,15 +37,16 @@ Supported file formats
 ~~~~~~~~~~~~~~~~~~~~~~
 
 Robot Framework test data is defined in tabular format, using either
-the HTML (hypertext markup language), TSV (tab-separated values)
-or reST (reStructuredText) formats. Robot Framework selects a parser for the test 
-data based on the file extension. The extension is case-insensitive, and the
-recognized extensions are :path:`.html`, :path:`.htm` and
-:path:`.xhtml` for HTML, :path:`.tsv` for TSV, and :path:`.rst` or :path:`.rest` 
-for reStructuredText.
+the hypertext markup language (HTML), tab-separated values (TSV),
+plain text, or reStructuredText (reST) formats. Robot Framework
+selects a parser for the test data based on the file extension. The
+extension is case-insensitive, and the recognized extensions are
+:path:`.html`, :path:`.htm` and :path:`.xhtml` for HTML, :path:`.tsv`
+for TSV, :path:`.txt` for plain text, and :path:`.rst` or
+:path:`.rest` for reStructuredText.
 
-Different `test data templates`_ are available to make it easier to
-get started writing tests.
+Different `test data templates`_ are available for HTML and TSV
+formats to make it easier to get started writing tests.
 
 
 HTML format
@@ -99,7 +100,6 @@ tables is ignored.
    \             Directory Should Exist  ${path}       \
    ============  ======================  ============  ==========
 
-
 Editing test data
 `````````````````
 
@@ -107,7 +107,6 @@ Test data in HTML files can be edited with whichever editor you
 prefer, but a graphic editor, where you can actually see the tables,
 is recommended.  There is also a tool called `Robot IDE`_
 available that is actually designed for editing the test data.
-
 
 Encoding and entity references
 ``````````````````````````````
@@ -161,7 +160,6 @@ similarly as data outside tables in HTML data.
    \             Directory Should Exist   ${path}        \
    ============  =======================  =============  =============
 
-
 Editing test data
 `````````````````
 
@@ -189,6 +187,111 @@ Encoding
 
 TSV files are always expected to use UTF-8 encoding. Because ASCII is
 a subset of UTF-8, plain ASCII is naturally supported too.
+
+
+Plain text format
+'''''''''''''''''
+
+The plain text format technically otherwise similar to the `TSV
+format`_ but the separator used between cells is different. The TSV
+format uses tabs, but in the plain text format you can use either two
+or more spaces or a pipe character surrounded with spaces. In both
+cases the `test data tables`_ must have one or more asterisk before
+its name similarly as with the TSV format, and everything before the
+first table is ignored.
+
+.. note:: The plain text format is only supported in Robot Framework 2.1.1
+          and newer.
+
+Space separated format
+``````````````````````
+
+The number of spaces used as separator can vary, as long as there are
+at least two spaces, and it is thus possible to align the data nicely.
+This is a clear benefit over editing the TSV format in a text editor
+because there alignment cannot be controlled.
+
+::
+
+   ***Settings***
+   Library     OperatingSystem
+
+   ***Variables***
+   ${MESSAGE}  Hello, world!
+
+   ***Test Cases***
+   My Test  [Documentation]  Example test
+       Log          ${MESSAGE}  
+       My Keyword   /tmp        
+
+   Another Test
+       Should Be Equal   ${MESSAGE}   Hello, world!
+
+   ***Keywords***
+   My Keyword   [Arguments]   ${path}
+       Directory Should Exist   ${path}
+
+Because space is used as separator, all empty cells must be escaped__
+with :var:`${EMPTY}` variable or a single backslash. Otherwise
+`handling whitespace`_ is not different than in other test data
+because leading, trailing, and consecutive spaces must always be
+escaped.
+
+__ Escaping_
+
+Pipe and space separated format
+```````````````````````````````
+
+The biggest problem of the space delimited format is that visually
+separating keywords form arguments can be tricky. This is a problem
+especially if keywords take a lot of arguments and/or arguments
+contain spaces. In such cases the pipe and space delimited variant can
+work better because it makes the cell boundary more visible.
+
+::
+
+   | *Setting*  |     *Value*     |
+   | Library    | OperatingSystem |
+
+   | *Variable* |     *Value*     |
+   | ${MESSAGE} | Hello, world!   |
+
+   | *Test Case*  | *Action*        | *Argument*   |
+   | My Test      | [Documentation] | Example test |
+   |              | Log             | ${MESSAGE}   |
+   |              | My Keyword      | /tmp         |
+   | Another Test | Should Be Equal | ${MESSAGE}   | Hello, world!
+
+   | *Keyword*  |
+   | My Keyword | [Arguments] | ${path}
+   |            | Directory Should Exist | ${path}
+
+A plain text file can contain test data in both space-only and
+space-and-pipe separated formats, but a single line must always use
+the same separator. Pipe and space separated lines are recognized by
+the mandatory leading pipe, but the pipe at the end of the line is
+optional. There must always be at least one space on both sides of the
+pipe (except at the beginning and end) but there is no need to align
+the pipes other than it makes the data more clear.
+
+There is no need to escape empty cells (other than the `trailing empty
+cells`__) when using the pipe and space separated format. The only
+thing to take into accound is that possible pipes surrounded by spaces
+in the actual test data must be escaped with a backslash::
+
+  | ${file count} = | Execute Command | ls -1 *.txt \| wc -l |
+  | Should Be Equal | ${file count}   | 42                   | 
+
+__ Escaping_
+
+Editing and encoding
+````````````````````
+
+The biggest benefit of the plain text format over HTML and TSV
+is that it is very easy to edit using normal text editors. 
+
+Similarly as with the TSV test data, plain text files are always expected
+to use UTF-8 encoding. As a consequence also ASCII files are supported.
 
 
 reStructuredText format
@@ -273,7 +376,6 @@ of table elements.
 The `Robot IDE`_ does not support direct editing of test data in reST source
 files.
 
-
 Temporary files when using reST
 ```````````````````````````````
 
@@ -283,7 +385,6 @@ files that are subsequently read by Robot. These temporary files are removed
 immediately after being read. This HTML file generation and cleanup is handled
 internally by Robot Framework, it does not require the user to directly invoke docutils tools.
 
-
 Syntax errors in reST source files
 ``````````````````````````````````
 
@@ -292,7 +393,6 @@ correct (a malformed table for example), the reST-to-HTML conversion will not
 take place and no test cases will be read from that file. When this occurs, 
 Robot Framework will show the docutils error message in it's console output showing the 
 filename, line number, source context, and type of error.
-
 
 
 Test data tables
@@ -324,7 +424,6 @@ used as a table name.
    | table        | lower-level keywords                      | User Keyword,     |
    |              |                                           | User Keywords     |
    +--------------+-------------------------------------------+-------------------+
-
 
 
 Rules for parsing the data
@@ -400,9 +499,10 @@ To prevent Robot Framework from parsing data according to these rules, a backsla
 - With :code:`t` to create a tab character, for example :code:`text\\tmore text`
 - With :code:`r` to create a carriage return, for example :code:`text\\rmore text`
 
-Another, and often easier, possibility for representing leading,
+Another, and often clearer, possibility for representing leading,
 trailing, or consecutive spaces is using `built-in variable`__
-:var:`${SPACE}`.
+:var:`${SPACE}`. The `extended variable syntax`_ even allows syntax
+like :var:`${SPACE * 8}` which makes handling consecutive spaces very simple.
 
 __ `Space and empty variables`_
 
