@@ -46,9 +46,7 @@ class TestTime(unittest.TestCase):
                           ('0.5ms', 0.001),
                           (0, 0),
                           ('0', 0),
-                          ('0day 0hour 0minute 0seconds 0millisecond', 0)
-                         ]:
-             
+                          ('0day 0hour 0minute 0seconds 0millisecond', 0) ]:
              assert_equals(timestr_to_secs(inp), exp, inp)
     
     def test_timestr_to_secs_invalid(self):
@@ -57,33 +55,30 @@ class TestTime(unittest.TestCase):
                                    timestr_to_secs, inv)
      
     def test_secs_to_timestr(self):
-        for inp, compact, verbose in [ (0.001, '1ms', '1 millisecond'),
-                                       (0.002, '2ms', '2 milliseconds'),
-                                       (1, '1s', '1 second'),
-                                       (2, '2s', '2 seconds'),
-                                       (60, '1min', '1 minute'),
-                                       (120, '2min', '2 minutes'),
-                                       (3600, '1h', '1 hour'),
-                                       (7200, '2h', '2 hours'),
-                                       (60*60*24, '1d', '1 day'),
-                                       (60*60*48, '2d', '2 days'),
-                                       (171967.667, '1d 23h 46min 7s 667ms', 
-                                        '1 day 23 hours 46 minutes 7 seconds 667 milliseconds' ),
-                                       (7320, '2h 2min', '2 hours 2 minutes'),
-                                       (7210.05, '2h 10s 50ms', 
-                                        '2 hours 10 seconds 50 milliseconds') ,
-                                       (11.1111111, '11s 111ms', 
-                                        '11 seconds 111 milliseconds'),
-                                       (0.55555555, '556ms', '556 milliseconds'),
-                                       (0, '0s', '0 seconds') ,
-                                       (-1, '- 1s', '- 1 second'),
-                                       (-171967.667, '- 1d 23h 46min 7s 667ms', 
-                                        '- 1 day 23 hours 46 minutes 7 seconds 667 milliseconds' ),
-                                   ]:
+        for inp, compact, verbose in [
+            (0.001, '1ms', '1 millisecond'),
+            (0.002, '2ms', '2 milliseconds'),
+            (1, '1s', '1 second'),
+            (2, '2s', '2 seconds'),
+            (60, '1min', '1 minute'),
+            (120, '2min', '2 minutes'),
+            (3600, '1h', '1 hour'),
+            (7200, '2h', '2 hours'),
+            (60*60*24, '1d', '1 day'),
+            (60*60*48, '2d', '2 days'),
+            (171967.667, '1d 23h 46min 7s 667ms', 
+             '1 day 23 hours 46 minutes 7 seconds 667 milliseconds'),
+            (7320, '2h 2min', '2 hours 2 minutes'),
+            (7210.05, '2h 10s 50ms', '2 hours 10 seconds 50 milliseconds') ,
+            (11.1111111, '11s 111ms', '11 seconds 111 milliseconds'),
+            (0.55555555, '556ms', '556 milliseconds'),
+            (0, '0s', '0 seconds') ,
+            (-1, '- 1s', '- 1 second'),
+            (-171967.667, '- 1d 23h 46min 7s 667ms', 
+             '- 1 day 23 hours 46 minutes 7 seconds 667 milliseconds'),
+            ]:
             assert_equals(secs_to_timestr(inp), verbose)
             assert_equals(secs_to_timestr(inp, compact=True), compact)
-
-
             
     def test_format_time(self):
         tt = (2005, 11, 2, 14, 23, 12, 123)   # timetuple
@@ -227,36 +222,37 @@ class TestTime(unittest.TestCase):
         assert_true(elapsed < 100)
 
     def test_parse_modified_time_with_valid_times(self):
-        for input, expected in [('100', 100), 
-                                ('2009-08-21 21:00:00', 1250877600), 
-                                ('20090821 210000', 1250877600)]:
+        for input, expected in [ ('100', 100), 
+                                 ('2009-08-21 21:00:00', 1250877600), 
+                                 ('20090821 210000', 1250877600) ]:
             assert_equals(parse_time(input), expected)
 
     def test_parse_modified_time_with_now(self):
-        for input, adjusted in [('now', 0),
-                                ('NOW', 0),
-                                ('Now', 0),
-                                ('now + 100 seconds', 100),
-                                ('now - 100 seconds', -100),
-                                ('now + 1 day 100 seconds', 86500),
-                                ('now - 1 day 100 seconds', -86500),
-                                ('now + 1 day 10 hours 1 minute 10 seconds', 
-                                 122470),
-                                ('now - 1 day 10 hours 1 minute 10 seconds', 
-                                 -122470),
-                                ('now +   100 seconds', 100),
-                                ]:
+        for input, adjusted in [ ('now', 0),
+                                 ('NOW', 0),
+                                 ('Now', 0),
+                                 ('now + 100 seconds', 100),
+                                 ('now - 100 seconds', -100),
+                                 ('now + 1 day 100 seconds', 86500),
+                                 ('now - 1 day 100 seconds', -86500),
+                                 ('now + 1 day 10 hours 1 minute 10 seconds', 
+                                  122470),
+                                 ('now - 1 day 10 hours 1 minute 10 seconds', 
+                                  -122470),
+                                 ('now +   100 seconds', 100) ]:
             exp = get_time('epoch') + adjusted
             parsed = parse_time(input)            
             assert_true(exp <= parsed <= exp +1, 
                         "%d <= %d <= %d" % (exp, parsed, exp+1) )
 
     def test_parse_modified_time_with_invalid_times(self):
-        for value, msg in \
-         [("-100", "Epoch time must be positive (got -100)"),
-          ("YYYY-MM-DD hh:mm:ss", "Invalid time format 'YYYY-MM-DD hh:mm:ss'"),
-          ("now + foo", "Invalid time string 'foo'"),
-          ("now +    2a ", "Invalid time string '2a'")]:
+        for value, msg in [
+            ("-100", "Epoch time must be positive (got -100)"),
+            ("YYYY-MM-DD hh:mm:ss", 
+             "Invalid time format 'YYYY-MM-DD hh:mm:ss'"),
+            ("now + foo", "Invalid time string 'foo'"),
+            ("now +    2a ", "Invalid time string '2a'")
+            ]:
             assert_raises_with_msg(DataError, msg, parse_time, value)
 
 
