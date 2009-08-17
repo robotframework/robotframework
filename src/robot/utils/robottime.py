@@ -208,7 +208,7 @@ def get_time(format='timestamp', time_=None):
     format = format.lower()
     # 1) Return time in seconds since epoc
     if 'epoch' in format:
-        return long(round(time_))
+        return long(time_)
     timetuple = time.localtime(time_)
     parts = []
     for i, match in enumerate(['year','month','day','hour','min','sec']):
@@ -232,7 +232,8 @@ def parse_time(timestr):
     1) Numbers are interpreted as time since epoch directly. It is possible to
        use also ints and floats, not only strings containing numbers.
     2) Valid timestamp ('YYYY-MM-DD hh:mm:ss' and 'YYYYMMDD hhmmss').
-    3) 'NOW' (case-insensitive) is the current time.
+    3) 'NOW' (case-insensitive) is the current time rounded down to the
+       closest second.
     4) Format 'NOW - 1 day' or 'NOW + 1 hour 30 min' is the current time 
        plus/minus the time specified with the time string.
     """    
@@ -248,7 +249,7 @@ def parse_time(timestr):
     except DataError:
         pass
     normtime = timestr.lower().replace(' ', '')
-    now = round(time.time())
+    now = int(time.time())
     if normtime == 'now':
         return now
     if normtime.startswith('now'):

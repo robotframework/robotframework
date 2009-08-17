@@ -255,6 +255,13 @@ class TestTime(unittest.TestCase):
             ]:
             assert_raises_with_msg(DataError, msg, parse_time, value)
 
+    def test_parse_time_and_get_time_must_round_seconds_down(self):
+        for i in range(5):
+            secs = int(time.time()) % 60
+            assert_equal(get_time()[-2:], '%02d' % secs)
+            assert_equal(parse_time('NOW') % 60, secs)
+            time.sleep(0.1)
+            
 
 if __name__ == "__main__":
     unittest.main()
