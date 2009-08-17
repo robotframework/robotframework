@@ -1822,34 +1822,34 @@ Values</td>
 </tr>
 <tr>
 <td></td>
-<td>Check Stderr Contains</td>
-<td>[ ERROR ]&nbsp;</td>
+<td>Verify Correct Errors in Stderr</td>
 <td>Option '--suitestatlevel'
-expected integer value but got 'not_int'.</td>
-<td>Default value used
+expected integer value but got 'not_int'.</td><td>Default value used
 instead.\n</td>
+
+<td></td>
 
 
 </tr>
 <tr>
 <td></td>
-<td>Check Stderr Contains</td>
-<td>[ ERROR ]&nbsp;</td>
+<td>Verify Correct Errors in Stderr</td>
 <td>Option '--splitoutputs'
-expected integer value but got 'not_int'.</td>
-<td>Default value used
+expected integer value but got 'not_int'.</td><td>Default value used
 instead.\n</td>
+
+<td></td>
 
 
 </tr>
 <tr>
 <td></td>
-<td>Check Stderr Contains</td>
-<td>[ ERROR ]&nbsp;</td>
+<td>Verify Correct Errors in Stderr</td>
 <td>Invalid format for option
-'--tagstatlink'.</td>
-<td>Expected 'tag:link:title'
+'--tagstatlink'.</td><td>Expected 'tag:link:title'
 but got 'less_than_3x_:'.\n</td>
+
+<td></td>
 
 
 </tr>
@@ -2132,17 +2132,17 @@ ${MYINPUT}</td>
 
 
 </tr>
-<tr>
+<tr><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Verify Correct Errors in Stderr</td><td>[Arguments]</td><td>@{errors}</td><td></td><td></td><td></td></tr><tr><td></td><td>${error} =</td><td>Set Variable If</td><td>os.sep=='/'</td><td></td><td></td></tr><tr><td></td><td>...</td><td>ERROR</td><td>[ ERROR ]</td><td></td><td></td></tr><tr><td></td><td>Check Stderr Contains</td><td>${error}</td><td></td><td></td><td></td></tr><tr>
 <td></td>
-<td></td>
-<td></td>
+<td>Check Stderr Contains</td><td>@{errors}</td>
+
 <td></td>
 <td></td>
 <td></td>
 
 
 
-</tr>
+</tr><tr><td></td><td></td><td></td><td></td><td></td><td></td></tr>
 </tbody>
 </table>
 <br>
