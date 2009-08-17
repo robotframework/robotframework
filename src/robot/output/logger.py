@@ -50,11 +50,15 @@ class _Logger(AbstractLogger):
 
     def register_logger(self, *loggers):
         for log in loggers:
-            logger = _LoggerProxy(log)
-            self._loggers.append(logger)
+            logger = self._register_logger(log)
             if self._message_cache:
                 for msg in self._message_cache:
                     logger.message(msg)
+
+    def _register_logger(self, log):
+        logger = _LoggerProxy(log)
+        self._loggers.append(logger)
+        return logger
 
     def unregister_logger(self, *loggers):
         for log in loggers:
@@ -69,7 +73,7 @@ class _Logger(AbstractLogger):
         if colors is None:
             colors = os.sep == '/'
         monitor = CommandLineMonitor(width, colors)
-        self.register_logger(monitor)
+        self._register_logger(monitor)
 
     def register_file_logger(self, path=None, level='INFO'):
         if not path:
