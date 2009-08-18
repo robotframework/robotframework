@@ -157,7 +157,7 @@ def exit(msg=None, error=None):
 def LibraryDoc(libname, arguments=None, newname=None):
     ext = os.path.splitext(libname)[1].lower()
     if  ext in ('.html', '.htm', '.xhtml', '.tsv'):
-        return ResourceDoc(libname, None, newname)
+        return ResourceDoc(libname, arguments, newname)
     elif ext == '.java':
         if not utils.is_jython:
             exit(error='Documenting Java test libraries requires Jython.')
@@ -251,7 +251,9 @@ class ResourceDoc(PythonLibraryDoc):
     
     type = 'resource'
         
-    def _import(self, path, args_are_ignored):
+    def _import(self, path, arguments):
+        if arguments:
+            raise DataError("Resource file cannot take arguments.")
         return UserLibrary(self._find_resource_file(path))
 
     def _find_resource_file(self, path):
