@@ -30,7 +30,7 @@ class _Table:
         self._data = data
         
     def add_row(self, cells, repeat=1):
-        if len(cells) == 0:
+        if not cells:
             self._row += repeat
             return
         try:
@@ -111,7 +111,7 @@ class ComplexItem(_Item):
 
     def add_subitem(self, data):
         self._current_row += 1
-        if len(data) == 0: 
+        if not data:
             return
         name = data[0]
         if name == '...':

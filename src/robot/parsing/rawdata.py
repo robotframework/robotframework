@@ -36,15 +36,13 @@ PROCESS_CURDIR = True
 
 READERS = { '.html': HtmlReader, '.htm': HtmlReader, '.xhtml': HtmlReader,
             '.tsv': TsvReader , '.rst': RestReader, '.rest': RestReader,
-            '.txt': TxtReader}
+            '.txt': TxtReader }
 
 SETTING_TABLES = ['Setting','Settings','Metadata']
 VARIABLE_TABLES = ['Variable','Variables']
 TESTCASE_TABLES = ['Test Case','Test Cases']
 KEYWORD_TABLES = ['Keyword','Keywords','User Keyword','User Keywords']
 TABLE_NAMES = SETTING_TABLES + VARIABLE_TABLES + TESTCASE_TABLES + KEYWORD_TABLES
-
-_WHITESPACE_REGEXP = re.compile('\s+')
 
 
 # TODO: is strip_comments needed?
@@ -81,13 +79,9 @@ class _BaseRawData:
     """Represents all unprocessed test data in one target file/directory."""
 
     EMPTY = 1
-    """No test data found"""
     RESOURCE = 2
-    """Resource file i.e. variables and/or settings and/or keywords"""
     INITFILE = 3
-    """Test suite init file -- same high level structure as in resource files"""
     TESTCASE = 4
-    """Test case file i.e. test cases and optionally resources"""
 
     def __init__(self, source):
         self.source = source
@@ -121,6 +115,8 @@ class EmptyRawData(_BaseRawData):
                 
 class TabularRawData(_BaseRawData):
     """Populates RawData from tabular test data"""
+
+    _whitespace_regexp = re.compile('\s+')
 
     def __init__(self, path, strip_comments=True):
         _BaseRawData.__init__(self, path)
@@ -190,4 +186,4 @@ class TabularRawData(_BaseRawData):
     
     def _collapse_whitespace(self, cell):
         # Remove leading and trailing whitespace and collapse internal
-        return _WHITESPACE_REGEXP.sub(' ', cell).strip()
+        return self._whitespace_regexp.sub(' ', cell).strip()
