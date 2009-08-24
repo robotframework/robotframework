@@ -9,6 +9,9 @@ from robot.errors import *
 
 from robot.utils.robottime import *
 
+
+EXAMPLE_TIME = time.mktime((2007, 9, 20, 16, 15, 14, 0, 0, -1))
+
     
 class TestTime(unittest.TestCase):
     
@@ -104,15 +107,15 @@ class TestTime(unittest.TestCase):
         assert_equals(get_start_timestamp(millissep='.'), start)
         
     def test_timestamp_to_secs_with_default(self):
-        assert_equals(timestamp_to_secs('20070920 16:15:14.123'), 1190294114)
+        assert_equals(timestamp_to_secs('20070920 16:15:14.123'), EXAMPLE_TIME)
 
     def test_timestamp_to_secs_with_seps(self):
         result = timestamp_to_secs('2007-09-20#16x15x14M123', ('-','#','x','M'))
-        assert_equals(result, 1190294114)
+        assert_equals(result, EXAMPLE_TIME)
         
     def test_timestamp_to_secs_with_millis(self):
         result = timestamp_to_secs('20070920 16:15:14.123', millis=True)
-        assert_equals(result, 1190294114.123)
+        assert_equals(result, EXAMPLE_TIME + 0.123)
         
     def test_get_elapsed_time_without_millis(self):
         starttime = '20060526 14:01:10'
@@ -223,8 +226,8 @@ class TestTime(unittest.TestCase):
 
     def test_parse_modified_time_with_valid_times(self):
         for input, expected in [ ('100', 100), 
-                                 ('2009-08-21 21:00:00', 1250877600), 
-                                 ('20090821 210000', 1250877600) ]:
+                                 ('2007-09-20 16:15:14', EXAMPLE_TIME), 
+                                 ('20070920 161514', EXAMPLE_TIME) ]:
             assert_equals(parse_time(input), expected)
 
     def test_parse_modified_time_with_now(self):
