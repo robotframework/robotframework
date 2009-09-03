@@ -7,13 +7,22 @@ Licenced under apache 2.0 license.
 #include <string.h>
 #include "password-validator.h"
 
+struct User
+{
+	const char* name;
+	const char* password;
+};
 
-const char* JOHN = "john";
+#define NR_USERS 2
+
+const struct User VALID_USERS[NR_USERS] = { "john" , "long", "demo", "mode" };
+
+/*const char* JOHN = "john";
 const char* LONG = "long";
 
 const char* DEMO = "demo";
 const char* MODE = "mode";
-
+*/
 const int MAX_LEN = 100;
 
 /*
@@ -25,14 +34,20 @@ System has command line interface and direct api for testing.
 */
 
 int validate_user(const char* name, const char* password) {
-	if (0 == strncmp(LONG, name, strlen(LONG)))
-		if (0 == strncmp(JOHN, password, strlen(JOHN)))
-			return 1;
 
-	if (0 == strncmp(DEMO, name, strlen(DEMO)))
-		if (0 == strncmp(MODE, password, strlen(MODE)))
-			return 1;
+	int i;
+	for (i = 0; i < NR_USERS; ++i)
+	{
+		if (0 == strncmp(VALID_USERS[i].name, name, strlen(VALID_USERS[i].name)))
+			if (0 == strncmp(VALID_USERS[i].password, password, strlen(VALID_USERS[i].password)))
+				return 1;
+	}
+	
 	return 0;
+}
+
+int check_password(const char* name, const char* user) {
+	return validate_user(name, user);
 }
 
 int main(int argc, char* argv) {

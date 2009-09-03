@@ -6,15 +6,15 @@ OBJ = password-validator.o
 OBJ_STUB = passwordvalidatorstub.o
 
 libpasswordvalidatorstub: $(OBJ_STUB)
-	$(CC) -shared -Wl,-soname,libpasswordvalidatorstub.so.1 -o libpasswordvalidatorstub.so.1.0.0 passwordvalidatorstub.o password-validator.o
+	$(CC) -shared -Wl,-soname,libpasswordvalidatorstub.so.1 -o libpasswordvalidatorstub.so.1.0.0 password-validator.o
 
-passwordvalidatorstub: $(OBJ) $(OBJ_STUB) password-validator
-	$(CC) -o $@ $^ $(SO_CFLAGS)
+#passwordvalidatorstub: $(OBJ) $(OBJ_STUB) password-validator
+#	$(CC) -o $@ $^ $(SO_CFLAGS)
 
 password-validator: $(OBJ) password-validator.h
 	$(CC) -o $@ $^ $(CFLAGS)
 
-libpasswordvalidatorstub passwordvalidatorstub: password-validator
+libpasswordvalidatorstub: password-validator
 
 clean:
 	rm -f $(OBJ) 
