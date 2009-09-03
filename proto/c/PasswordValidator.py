@@ -15,7 +15,7 @@ class PasswordValidator:
 
     def check_user(self, username, password):
         """ Validates user name and password using imported shared C library."""
-        if not self._lib.check_password(c_char_p(username), c_char_p(password)):
+        if not self._lib.validate_user(c_char_p(username), c_char_p(password)):
             raise AssertionError('Wrong username/password combination')
 
 

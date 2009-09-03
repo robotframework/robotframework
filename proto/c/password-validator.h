@@ -5,7 +5,4 @@ other user names are invalid.
 */
 
 /* Valid user return 1 */
-extern int validate_user(const char* name, const char* password);
-
-int check_password(const char* name, const char* user);
-
+int validate_user(const char* name, const char* password);

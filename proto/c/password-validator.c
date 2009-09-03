@@ -1,5 +1,5 @@
 /*
-Copyright Ran Nyman 2009
+Copyright NSN 2009
 Licenced under apache 2.0 license.
 */
 
@@ -27,12 +27,16 @@ const int MAX_LEN = 100;
 
 /*
 Simple system that validates passwords and user names. There are two users in
-system with valid user name and password. "demo mode" and "long john". All 
+system with valid user name and password. "demo mode" and "john long". All 
 other user names are invalid. 
 
 System has command line interface and direct api for testing.
 */
 
+
+/*
+This is api that is called from python class to validate user.
+*/
 int validate_user(const char* name, const char* password) {
 
 	int i;
@@ -46,10 +50,6 @@ int validate_user(const char* name, const char* password) {
 	return 0;
 }
 
-int check_password(const char* name, const char* user) {
-	return validate_user(name, user);
-}
-
 int main(int argc, char* argv) {
 	char password[MAX_LEN];
 	char username[MAX_LEN];
@@ -60,7 +60,7 @@ int main(int argc, char* argv) {
 	scanf("%s", password);
 
 	if (validate_user(username, password))
-		printf("Hello %s you now are in system\n", username);
+		printf("Hello %s you are now in system\n", username);
 	else
 		printf("Incorrect username and password combination\n");
 }
