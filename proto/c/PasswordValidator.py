@@ -19,19 +19,26 @@
 C code can be used with RF if is compiled as shared library.
 """
 
-__version__=0.01
 
 from ctypes import CDLL, c_char_p
 
 
-class PasswordValidator:
-
-    def __init__(self, library):
-        self._lib = CDLL(library)
-
-    def check_user(self, username, password):
-        """ Validates user name and password using imported shared C library."""
-        if not self._lib.validate_user(c_char_p(username), c_char_p(password)):
-            raise AssertionError('Wrong username/password combination')
+LIBRARY = CDLL('./libpasswordvalidatorstub.so.1.0.0')
 
 
+def check_user(username, password):
+    """ Validates user name and password using imported shared C library."""
+    if not LIBRARY.validate_user(c_char_p(username), c_char_p(password)):
+        raise AssertionError('Wrong username/password combination')
+
+
+if __name__ == '__main__':
+    import sys
+    try:
+        check_user(*sys.argv[1:])
+    except AssertionError, err:
+        print err
+    except TypeError:
+        print 'Usage:  %s username password' % sys.argv[0]
+    else:
+        print 'Valid password'
