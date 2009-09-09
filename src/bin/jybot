@@ -32,4 +32,4 @@ if uname | grep -q CYGWIN; then
 fi
 
 # Run Robot on Jython interpreter
-$jython "$runner" $*
+$jython "$runner" "$@"

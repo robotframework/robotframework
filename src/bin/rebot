@@ -26,4 +26,4 @@ python="[PYTHON_EXECUTABLE]"
 rebot="[ROBOT_DIR]/rebot.py" 
 
 # Run Rebot on Python interpreter
-$python "$rebot" $*
+$python "$rebot" "$@"

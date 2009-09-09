@@ -26,4 +26,4 @@ python="[PYTHON_EXECUTABLE]"
 runner="[ROBOT_DIR]/runner.py" 
 
 # Run Robot on Python interpreter
-$python "$runner" $*
+$python "$runner" "$@"
