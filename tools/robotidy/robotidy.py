@@ -138,8 +138,9 @@ _import_map = _create_mapping(_import_names)
 _setting_map = _create_mapping(_setting_names)
 _test_map = _create_mapping(_test_names)
 _keyword_map = _create_mapping(_keyword_names)
-_valid_formats = utils.NormalizedDict({'TSV':'TSV','HTML':'HTML', 
-                                          'HTM':'HTML','XHTML':'HTML'})
+_valid_formats = utils.NormalizedDict({'TSV': 'TSV', 'TXT': 'TXT', 
+                                       'HTML': 'HTML', 'HTM': 'HTML', 
+                                       'XHTML': 'HTML'})
 _default_styles = '''
 <style type="text/css">
 html {
@@ -217,8 +218,8 @@ class TestData:
         self.path = path
         try:
             self.format = _valid_formats[os.path.splitext(path)[1][1:]]
-        except:
-            raise DataError("Input format must be either HTML or TSV.")
+        except KeyError:
+            raise DataError("Valid input formats are HTML, TSV and TXT")
         raw = RawData(path, strip_comments=False)
         if raw.is_empty():
             raise DataError("'%s' contains no test data" % path)
@@ -247,6 +248,8 @@ class TestData:
             else:
                 format = os.path.splitext(outpath)[1][1:]
         try:
+            if format.upper() == 'TXT': 
+                raise KeyError
             return _valid_formats[format]
         except KeyError:
             raise DataError("Invalid output format '%s'. Only HTML and TSV "
