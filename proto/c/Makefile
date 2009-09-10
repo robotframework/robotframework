@@ -1,32 +1,10 @@
-#  Copyright 2009 Nokia Siemens Networks Oyj
-#
-#  Licensed under the Apache License, Version 2.0 (the "License");
-#  you may not use this file except in compliance with the License.
-#  You may obtain a copy of the License at
-#
-#      http://www.apache.org/licenses/LICENSE-2.0
-#
-#  Unless required by applicable law or agreed to in writing, software
-#  distributed under the License is distributed on an "AS IS" BASIS,
-#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-#  See the License for the specific language governing permissions and
-#  limitations under the License.
-
-
 CC=gcc
-CFLAGS=-I.
-OBJ = password-validator.o
+SRC=login.c
+SO=liblogin.so
 
-libpasswordvalidatorstub: $(OBJ)
-	$(CC) -shared -Wl,-soname,libpasswordvalidatorstub.so.1 -o libpasswordvalidatorstub.so.1.0.0 password-validator.o
-
-password-validator: $(OBJ) password-validator.h
-	$(CC) -o $@ $^ $(CFLAGS)
-
-libpasswordvalidatorstub: password-validator
+$(SO): $(SRC)
+	$(CC) -shared -o $(SO) $(SRC)
 
 clean:
-	rm -f $(OBJ) 
-	rm -f libpasswordvalidatorstub.so.1.0.0
-	rm -f password-validator
-	rm -f PasswordValidator.pyc
+	rm -f $(SO)
+
