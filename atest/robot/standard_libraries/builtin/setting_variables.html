@@ -1,8 +1,10 @@
+
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html><head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<meta name="generator" content="RobotIDE"> 
-<meta name="rf-template" content="False"> 
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="RobotIDE" /> 
+<meta name="rf-template" content="False" /> 
 <style type="text/css">
 html {
   font-family: Arial,Helvetica,sans-serif;
@@ -39,22 +41,24 @@ td.name, th.name {
   width: 10em;
 }
 </style>
-<title>Variables</title></head>
+<title>Setting Variables</title>
+</head>
 <body>
-<h1>Variables</h1>
+<h1>Setting Variables</h1>
 <table id="settings" border="1">
-<tbody><tr>
+<tr>
 <th class="name">Setting</th>
-<th>Value</th>
-<th>Value</th>
-<th>Value</th>
-<th>Value</th>
+<th colspan="4">Value</th>
 </tr>
 <tr>
 <td class="name">Documentation</td>
-<td>Tests for set variable and set test/suite/global variable keywords</td>
-<td></td>
-<td></td>
+<td colspan="4">Tests for set variable and set test/suite/global variable keywords</td>
+</tr>
+<tr>
+<td class="name">Suite Setup</td>
+<td>Run Tests</td>
+<td>--variable cli_var_1:CLI1 --variable cli_var_2:CLI2 --variable cli_var_3:CLI3</td>
+<td>standard_libraries/builtin/setting_variables</td>
 <td></td>
 </tr>
 <tr>
@@ -63,13 +67,6 @@ td.name, th.name {
 <td>jybot</td>
 <td>pybot</td>
 <td></td>
-</tr>
-<tr>
-<td class="name">Suite Setup</td>
-<td>Run Tests</td>
-<td>--variable cli_var_1:CLI1 --variable cli_var_2:CLI2 --variable cli_var_3:CLI3</td>
-<td>standard_libraries/builtin/setting_variables</td>
-<td><br></td>
 </tr>
 <tr>
 <td class="name">Resource</td>
@@ -85,30 +82,13 @@ td.name, th.name {
 <td></td>
 <td></td>
 </tr>
-</tbody></table>
-<table id="variables" border="1">
-<tbody><tr>
-<th class="name">Variable</th>
-<th>Value</th>
-<th>Value</th>
-<th>Value</th>
-<th>Value</th>
-</tr>
-<tr>
-<td class="name"></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-</tbody></table>
+</table>
+<table id="variables" border="1"></table>
 <table id="testcases" border="1">
-<tbody><tr>
+<tr>
 <th class="name">Test Case</th>
 <th>Action</th>
-<th>Argument</th>
-<th>Argument</th>
-<th>Argument</th>
+<th colspan="3">Arguments</th>
 </tr>
 <tr>
 <td class="name"><a name="test_Set Variable">Set Variable</a></td>
@@ -124,20 +104,32 @@ td.name, th.name {
 <td>\${var} = Hello</td>
 <td></td>
 </tr>
-<tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td class="name">Set Variable With More Or Less Than One Value is Deprecated in RF 2.1</td><td>${tc} =</td><td>Check Test Case</td><td>${TESTNAME}</td><td></td></tr><tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="test_Set Variable With More Or Less Than One Value Is Deprecated In RF 2.1">Set Variable With More Or Less Than One Value Is Deprecated In RF 2.1</a></td>
+<td>${tc} =</td>
+<td>Check Test Case</td>
+<td>${TESTNAME}</td>
+<td></td>
+</tr>
+<tr>
 <td class="name"></td>
 <td>Check Log Message</td>
 <td>${tc.kws[0].msgs[0]}</td>
-<td>Using 'Set Variable' keyword with more or less than one argument is
-deprecated in Robot Framework 2.1 and that usage will be removed in 2.2.</td>
+<td>Using 'Set Variable' keyword with more or less than one argument is deprecated in Robot Framework 2.1 and that usage will be removed in 2.2.</td>
 <td>WARN</td>
 </tr>
 <tr>
 <td class="name"></td>
 <td>Check Log Message</td>
 <td>${tc.kws[6].msgs[0]}</td>
-<td>Using 'Set Variable' keyword with more or less than one argument is
-deprecated in Robot Framework 2.1 and that usage will be removed in 2.2.</td>
+<td>Using 'Set Variable' keyword with more or less than one argument is deprecated in Robot Framework 2.1 and that usage will be removed in 2.2.</td>
 <td>WARN</td>
 </tr>
 <tr>
@@ -147,189 +139,83 @@ deprecated in Robot Framework 2.1 and that usage will be removed in 2.2.</td>
 <td></td>
 <td></td>
 </tr>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 <tr>
-<td class="name">Set Test Variable - Scalars</td>
+<td class="name"><a name="test_Set Test Variable - Scalars">Set Test Variable - Scalars</a></td>
 <td>Check Test Case</td>
 <td>${TESTNAME}</td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td class="name">Set Test Variable - Lists</td>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="test_Set Test Variable - Lists">Set Test Variable - Lists</a></td>
 <td>Check Test Case</td>
 <td>${TESTNAME}</td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td class="name">Set Test Variable Needing Escaping</td>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="test_Set Test Variable Needing Escaping">Set Test Variable Needing Escaping</a></td>
 <td>Check Test Case</td>
 <td>${TESTNAME}</td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td class="name">Set Test Variable in User Keyword</td>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="test_Set Test Variable In User Keyword">Set Test Variable In User Keyword</a></td>
 <td>Check Test Case</td>
 <td>${TESTNAME}</td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td class="name">Set Test Variable Not Affecting Other Tests</td>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="test_Set Test Variable Not Affecting Other Tests">Set Test Variable Not Affecting Other Tests</a></td>
 <td>Check Test Case</td>
 <td>${TESTNAME}</td>
 <td></td>
 <td></td>
 </tr>
-<tr><td>Check Test Vars Set In One Suite Are Not Available In Another</td><td>Check Test Case</td><td>${TESTNAME}</td><td></td></tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="test_Check Test Vars Set In One Suite Are Not Available In Another">Check Test Vars Set In One Suite Are Not Available In Another</a></td>
+<td>Check Test Case</td>
+<td>${TESTNAME}</td>
+<td></td>
+<td></td>
+</tr>
 <tr>
 <td class="name"></td>
 <td></td>
@@ -351,14 +237,27 @@ deprecated in Robot Framework 2.1 and that usage will be removed in 2.2.</td>
 <td></td>
 <td></td>
 </tr>
-<tr><td class="name"></td><td>Check Suite Teardown Passed</td><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr>
-<td class="name">Check Suite Vars Set In One Suite Are Not Available In Another</td>
+<tr>
+<td class="name"></td>
+<td>Check Suite Teardown Passed</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="test_Check Suite Vars Set In One Suite Are Not Available In Another">Check Suite Vars Set In One Suite Are Not Available In Another</a></td>
 <td>Check Test Case</td>
 <td>Check Suite Vars Set In One Suite Are Not Available In Another</td>
 <td></td>
 <td></td>
 </tr>
-
 <tr>
 <td class="name"></td>
 <td></td>
@@ -380,14 +279,27 @@ deprecated in Robot Framework 2.1 and that usage will be removed in 2.2.</td>
 <td></td>
 <td></td>
 </tr>
-<tr><td class="name"></td><td>Check Suite Teardown Passed</td><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr>
-<td class="name">Check Global Vars Set In One Suite Are Available In Another</td>
+<tr>
+<td class="name"></td>
+<td>Check Suite Teardown Passed</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="test_Check Global Vars Set In One Suite Are Available In Another">Check Global Vars Set In One Suite Are Available In Another</a></td>
 <td>Check Test Case</td>
 <td>Check Global Vars Set In One Suite Are Available In Another</td>
 <td></td>
 <td></td>
 </tr>
-
 <tr>
 <td class="name"></td>
 <td></td>
@@ -416,7 +328,21 @@ deprecated in Robot Framework 2.1 and that usage will be removed in 2.2.</td>
 <td></td>
 <td></td>
 </tr>
-<tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Overiding&nbsp;variable when it has&nbsp;non-string value</td><td>Check Test Case</td><td>${TEST NAME}</td><td></td><td></td></tr><tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="test_Overiding Variable When It Has Non-string Value">Overiding Variable When It Has Non-string Value</a></td>
+<td>Check Test Case</td>
+<td>${TEST NAME}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
 <td class="name"></td>
 <td></td>
 <td></td>
@@ -465,12 +391,6 @@ deprecated in Robot Framework 2.1 and that usage will be removed in 2.2.</td>
 <td></td>
 <td></td>
 </tr>
-
-
-
-
-
-
 <tr>
 <td class="name"><a name="test_Set Test/Suite/Global Varible In User Keyword When Variable Name Is Used As Argument">Set Test/Suite/Global Varible In User Keyword When Variable Name Is Used As Argument</a></td>
 <td>Check Test Case</td>
@@ -486,7 +406,7 @@ deprecated in Robot Framework 2.1 and that usage will be removed in 2.2.</td>
 <td></td>
 </tr>
 <tr>
-<td class="name"><a name="test_Setting Variable Which Value Is In Variable Like Syntax">Setting Variable Which Value Is In Variable Like Syntax</a></td>
+<td class="name"><a name="test_Setting Test/Suite/Global Variable Which Value Is In Variable Like Syntax">Setting Test/Suite/Global Variable Which Value Is In Variable Like Syntax</a></td>
 <td>Check Test Case</td>
 <td>${TEST NAME}</td>
 <td></td>
@@ -500,7 +420,7 @@ deprecated in Robot Framework 2.1 and that usage will be removed in 2.2.</td>
 <td></td>
 </tr>
 <tr>
-<td class="name"><a name="test_Setting Variable Which Value Is In Variable Syntax">Setting Variable Which Value Is In Variable Syntax</a></td>
+<td class="name"><a name="test_Setting Test/Suite/Global Variable Which Value Is In Variable Syntax">Setting Test/Suite/Global Variable Which Value Is In Variable Syntax</a></td>
 <td>Check Test Case</td>
 <td>${TEST NAME}</td>
 <td></td>
@@ -513,17 +433,32 @@ deprecated in Robot Framework 2.1 and that usage will be removed in 2.2.</td>
 <td></td>
 <td></td>
 </tr>
-
-
-
-</tbody></table>
+<tr>
+<td class="name"><a name="test_Set Test/Suite/Global Variable With Internal Variables In Name">Set Test/Suite/Global Variable With Internal Variables In Name</a></td>
+<td>[Documentation]</td>
+<td colspan="3">This obscure test is here to prevent this bug from reappearing:\n<br />
+<a href="http://code.google.com/p/robotframework/issues/detail?id=397">http://code.google.com/p/robotframework/issues/detail?id=397</a></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Check Test Case</td>
+<td>${TEST NAME}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</table>
 <table id="keywords" border="1">
-<tbody><tr>
+<tr>
 <th class="name">Keyword</th>
 <th>Action</th>
-<th>Argument</th>
-<th>Argument</th>
-<th>Argument</th>
+<th colspan="3">Arguments</th>
 </tr>
 <tr>
 <td class="name"><a name="keyword_Check Suite Teardown Passed">Check Suite Teardown Passed</a></td>
@@ -546,12 +481,6 @@ deprecated in Robot Framework 2.1 and that usage will be removed in 2.2.</td>
 <td></td>
 <td></td>
 </tr>
-<tr>
-<td class="name"></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-</tbody></table>
-</body></html>
+</table>
+</body>
+</html>

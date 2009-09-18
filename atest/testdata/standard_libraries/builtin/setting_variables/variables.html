@@ -1,61 +1,58 @@
+
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html><head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<meta name="generator" content="RobotIDE">
-<meta name="rf-template" content="False">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="RobotIDE" /> 
+<meta name="rf-template" content="False" /> 
 <style type="text/css">
 html {
-font-family: Arial,Helvetica,sans-serif;
-background-color: white;
-color: black;
+  font-family: Arial,Helvetica,sans-serif;
+  background-color: white;
+  color: black;
 }
 table {
-border-collapse: collapse;
-empty-cells: show;
-margin: 1em 0em;
-border: 0.1em solid black;
+  border-collapse: collapse;
+  empty-cells: show;
+  margin: 1em 0em;
+  border: 0.1em solid black;
 }
 th, td {
-border-style: solid;
-border-width: 0.05em 0.1em;
-border-color: black;
-padding: 0.1em 0.2em;
-height: 1.5em;
-width: 12em;
+  border-style: solid;
+  border-width: 0.05em 0.1em;
+  border-color: black;
+  padding: 0.1em 0.2em;
+  height: 1.5em;
+  width: 12em;
 }
 th {
-background-color: rgb(192, 192, 192);
-color: black;
-border-width: 0.1em;
-font-weight: bold;
-text-align: center;
-letter-spacing: 0.1em;
+  background-color: rgb(192, 192, 192);
+  color: black;
+  border-width: 0.1em;
+  font-weight: bold;
+  text-align: center;
+  letter-spacing: 0.1em;
 }
 td.name {
-background-color: rgb(240, 240, 240);
-letter-spacing: 0.1em;
+  background-color: rgb(240, 240, 240);
+  letter-spacing: 0.1em;
 }
 td.name, th.name {
-width: 10em;
+  width: 10em;
 }
-</style><title>Variables</title></head>
+</style>
+<title>Variables</title>
+</head>
 <body>
 <h1>Variables</h1>
 <table id="settings" border="1">
-<tbody>
 <tr>
 <th class="name">Setting</th>
-<th>Value</th>
-<th>Value</th>
-<th>Value</th>
-<th>Value</th>
+<th colspan="4">Value</th>
 </tr>
 <tr>
 <td class="name">Documentation</td>
-<td>See also variables2.html</td>
-<td></td>
-<td></td>
-<td></td>
+<td colspan="4">See also variables2.html</td>
 </tr>
 <tr>
 <td class="name">Suite Setup</td>
@@ -85,16 +82,11 @@ width: 10em;
 <td></td>
 <td></td>
 </tr>
-</tbody>
 </table>
 <table id="variables" border="1">
-<tbody>
 <tr>
 <th class="name">Variable</th>
-<th>Value</th>
-<th>Value</th>
-<th>Value</th>
-<th>Value</th>
+<th colspan="4">Value</th>
 </tr>
 <tr>
 <td class="name">@{LIST}</td>
@@ -117,20 +109,15 @@ width: 10em;
 <td></td>
 <td></td>
 </tr>
-</tbody>
 </table>
 <table id="testcases" border="1">
-<tbody>
 <tr>
 <th class="name">Test Case</th>
 <th>Action</th>
-<th>Argument</th>
-<th>Argument</th>
-<th>Argument</th>
+<th colspan="3">Arguments</th>
 </tr>
 <tr>
-<td class="name"><a name="test_Set Variable">Set
-Variable</a></td>
+<td class="name"><a name="test_Set Variable">Set Variable</a></td>
 <td>${var} =</td>
 <td>Set Variable</td>
 <td>Hello</td>
@@ -171,9 +158,15 @@ Variable</a></td>
 <td>${LIST}</td>
 <td></td>
 </tr>
-
-<tr><td></td><td></td><td></td><td></td><td></td></tr><tr>
-<td class="name">Set Variable With More Or Less Than One Value is Deprecated in RF 2.1</td>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="test_Set Variable With More Or Less Than One Value Is Deprecated In RF 2.1">Set Variable With More Or Less Than One Value Is Deprecated In RF 2.1</a></td>
 <td>${var1}</td>
 <td>${var2} =</td>
 <td>Set Variable</td>
@@ -242,22 +235,10 @@ Variable</a></td>
 <td></td>
 <td></td>
 </tr>
-
-
-
-
-
-
-
-
-
 <tr>
-<td class="name"><a name="test_Set Test Variable - Scalars">Set Test Variable -
-Scalars</a></td>
+<td class="name"><a name="test_Set Test Variable - Scalars">Set Test Variable - Scalars</a></td>
 <td>[Documentation]</td>
-<td>FAIL Non-existing variable '\${non_existing}'</td>
-<td></td>
-<td></td>
+<td colspan="3">FAIL Non-existing variable '\${non_existing}'</td>
 </tr>
 <tr>
 <td class="name"></td>
@@ -330,8 +311,7 @@ Scalars</a></td>
 <td></td>
 </tr>
 <tr>
-<td class="name"><a name="test_Set Test Variable - Lists">Set Test Variable -
-Lists</a></td>
+<td class="name"><a name="test_Set Test Variable - Lists">Set Test Variable - Lists</a></td>
 <td>Should Be True</td>
 <td>@{list} == ['Hello', 'world']</td>
 <td></td>
@@ -429,8 +409,7 @@ Lists</a></td>
 <td></td>
 </tr>
 <tr>
-<td class="name"><a name="test_Set Test Variable Needing Escaping">Set Test
-Variable Needing Escaping</a></td>
+<td class="name"><a name="test_Set Test Variable Needing Escaping">Set Test Variable Needing Escaping</a></td>
 <td>Set Test Variable</td>
 <td>$var1</td>
 <td>One backslash \\ and \${notvar}</td>
@@ -612,8 +591,7 @@ Variable Needing Escaping</a></td>
 <td></td>
 </tr>
 <tr>
-<td class="name"><a name="test_Set Test Variable In User Keyword">Set Test
-Variable In User Keyword</a></td>
+<td class="name"><a name="test_Set Test Variable In User Keyword">Set Test Variable In User Keyword</a></td>
 <td>${new_var} =</td>
 <td>Set</td>
 <td>Value of new var</td>
@@ -697,8 +675,7 @@ Variable In User Keyword</a></td>
 <td></td>
 </tr>
 <tr>
-<td class="name"><a name="test_Set Test Variable Not Affecting Other Tests">Set
-Test Variable Not Affecting Other Tests</a></td>
+<td class="name"><a name="test_Set Test Variable Not Affecting Other Tests">Set Test Variable Not Affecting Other Tests</a></td>
 <td>Should Be Equal</td>
 <td>${scalar}</td>
 <td>Hi tellus</td>
@@ -763,11 +740,23 @@ Test Variable Not Affecting Other Tests</a></td>
 <tr>
 <td class="name"><a name="test_Set Suite Variable 1">Set Suite Variable 1</a></td>
 <td>[Documentation]</td>
-<td>FAIL Non-existing variable '\${non_existing}'</td>
+<td colspan="3">FAIL Non-existing variable '\${non_existing}'</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Variable Should Not Exist</td>
+<td>$parent_suite_setup_suite_var</td>
 <td></td>
 <td></td>
 </tr>
-<tr><td></td><td>Variable Should Not Exist</td><td>$parent_suite_setup_suite_var</td><td></td><td></td></tr><tr><td></td><td>Set Suite Variable</td><td>$parent_suite_setup_suite_var</td><td>Parent should not see this value</td><td></td></tr><tr>
+<tr>
+<td class="name"></td>
+<td>Set Suite Variable</td>
+<td>$parent_suite_setup_suite_var</td>
+<td>Parent should not see this value</td>
+<td></td>
+</tr>
+<tr>
 <td class="name"></td>
 <td>Variable Should Not Exist</td>
 <td>$suite_setup_local_var</td>
@@ -784,8 +773,7 @@ Test Variable Not Affecting Other Tests</a></td>
 <tr>
 <td class="name"></td>
 <td>Should Be True</td>
-<td>@{suite_setup_suite_var} == [ 'Suite var set in',
-'suite setup' ]</td>
+<td>@{suite_setup_suite_var} == [ 'Suite var set in', 'suite setup' ]</td>
 <td></td>
 <td></td>
 </tr>
@@ -827,8 +815,7 @@ Test Variable Not Affecting Other Tests</a></td>
 <tr>
 <td class="name"></td>
 <td>Should Be True</td>
-<td>@{test_level_suite_var} == [ 'Suite var set in', 'test'
-]</td>
+<td>@{test_level_suite_var} == [ 'Suite var set in', 'test' ]</td>
 <td></td>
 <td></td>
 </tr>
@@ -856,8 +843,7 @@ Test Variable Not Affecting Other Tests</a></td>
 <tr>
 <td class="name"></td>
 <td>Should Be True</td>
-<td>@{uk_level_suite_var} == [ 'Suite var set in', 'user
-keyword' ]</td>
+<td>@{uk_level_suite_var} == [ 'Suite var set in', 'user keyword' ]</td>
 <td></td>
 <td></td>
 </tr>
@@ -871,8 +857,7 @@ keyword' ]</td>
 <tr>
 <td class="name"></td>
 <td>Should Be True</td>
-<td>@{sub_uk_level_suite_var} == [ 'Suite var set in', 'sub
-user keyword' ]</td>
+<td>@{sub_uk_level_suite_var} == [ 'Suite var set in', 'sub user keyword' ]</td>
 <td></td>
 <td></td>
 </tr>
@@ -900,9 +885,7 @@ user keyword' ]</td>
 <tr>
 <td class="name"><a name="test_Set Suite Variable 2">Set Suite Variable 2</a></td>
 <td>[Documentation]</td>
-<td>FAIL Invalid variable syntax 'invalid'</td>
-<td></td>
-<td></td>
+<td colspan="3">FAIL Invalid variable syntax 'invalid'</td>
 </tr>
 <tr>
 <td class="name"></td>
@@ -914,8 +897,7 @@ user keyword' ]</td>
 <tr>
 <td class="name"></td>
 <td>Should Be True</td>
-<td>@{test_level_suite_var} == [ 'Suite var set in', 'test'
-]</td>
+<td>@{test_level_suite_var} == [ 'Suite var set in', 'test' ]</td>
 <td></td>
 <td></td>
 </tr>
@@ -936,8 +918,7 @@ user keyword' ]</td>
 <tr>
 <td class="name"></td>
 <td>Should Be True</td>
-<td>@{uk_level_suite_var} == [ 'Suite var set in', 'user
-keyword' ]</td>
+<td>@{uk_level_suite_var} == [ 'Suite var set in', 'user keyword' ]</td>
 <td></td>
 <td></td>
 </tr>
@@ -951,8 +932,7 @@ keyword' ]</td>
 <tr>
 <td class="name"></td>
 <td>Should Be True</td>
-<td>@{sub_uk_level_suite_var} == [ 'Suite var set in', 'sub
-user keyword' ]</td>
+<td>@{sub_uk_level_suite_var} == [ 'Suite var set in', 'sub user keyword' ]</td>
 <td></td>
 <td></td>
 </tr>
@@ -980,11 +960,16 @@ user keyword' ]</td>
 <tr>
 <td class="name"><a name="test_Set Global Variable 1">Set Global Variable 1</a></td>
 <td>[Documentation]</td>
-<td>FAIL Non-existing variable '\@{non_existing}'</td>
-<td></td>
+<td colspan="3">FAIL Non-existing variable '\@{non_existing}'</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Should Be Equal</td>
+<td>${parent_suite_setup_global_var}</td>
+<td>Set in __init__</td>
 <td></td>
 </tr>
-<tr><td></td><td>Should Be Equal</td><td>${parent_suite_setup_global_var}</td><td>Set in __init__</td><td></td></tr><tr>
+<tr>
 <td class="name"></td>
 <td>Should Be Equal</td>
 <td>${suite_setup_global_var}</td>
@@ -994,8 +979,7 @@ user keyword' ]</td>
 <tr>
 <td class="name"></td>
 <td>Should Be True</td>
-<td>@{suite_setup_global_var} == [ 'Global var set in',
-'suite setup' ]</td>
+<td>@{suite_setup_global_var} == [ 'Global var set in', 'suite setup' ]</td>
 <td></td>
 <td></td>
 </tr>
@@ -1037,8 +1021,7 @@ user keyword' ]</td>
 <tr>
 <td class="name"></td>
 <td>Should Be True</td>
-<td>@{test_level_global_var} == [ 'Global var set in',
-'test' ]</td>
+<td>@{test_level_global_var} == [ 'Global var set in', 'test' ]</td>
 <td></td>
 <td></td>
 </tr>
@@ -1066,8 +1049,7 @@ user keyword' ]</td>
 <tr>
 <td class="name"></td>
 <td>Should Be True</td>
-<td>@{uk_level_global_var} == [ 'Global var set in', 'user
-keyword' ]</td>
+<td>@{uk_level_global_var} == [ 'Global var set in', 'user keyword' ]</td>
 <td></td>
 <td></td>
 </tr>
@@ -1081,8 +1063,7 @@ keyword' ]</td>
 <tr>
 <td class="name"></td>
 <td>Should Be True</td>
-<td>@{sub_uk_level_global_var} == [ 'Global var set in',
-'sub user keyword' ]</td>
+<td>@{sub_uk_level_global_var} == [ 'Global var set in', 'sub user keyword' ]</td>
 <td></td>
 <td></td>
 </tr>
@@ -1110,9 +1091,7 @@ keyword' ]</td>
 <tr>
 <td class="name"><a name="test_Set Global Variable 2">Set Global Variable 2</a></td>
 <td>[Documentation]</td>
-<td>FAIL Invalid variable syntax 'invalid syntax'</td>
-<td></td>
-<td></td>
+<td colspan="3">FAIL Invalid variable syntax 'invalid syntax'</td>
 </tr>
 <tr>
 <td class="name"></td>
@@ -1124,8 +1103,7 @@ keyword' ]</td>
 <tr>
 <td class="name"></td>
 <td>Should Be True</td>
-<td>@{test_level_global_var} == [ 'Global var set in',
-'test' ]</td>
+<td>@{test_level_global_var} == [ 'Global var set in', 'test' ]</td>
 <td></td>
 <td></td>
 </tr>
@@ -1139,8 +1117,7 @@ keyword' ]</td>
 <tr>
 <td class="name"></td>
 <td>Should Be True</td>
-<td>@{uk_level_global_var} == [ 'Global var set in', 'user
-keyword' ]</td>
+<td>@{uk_level_global_var} == [ 'Global var set in', 'user keyword' ]</td>
 <td></td>
 <td></td>
 </tr>
@@ -1154,8 +1131,7 @@ keyword' ]</td>
 <tr>
 <td class="name"></td>
 <td>Should Be True</td>
-<td>@{sub_uk_level_global_var} == [ 'Global var set in',
-'sub user keyword' ]</td>
+<td>@{sub_uk_level_global_var} == [ 'Global var set in', 'sub user keyword' ]</td>
 <td></td>
 <td></td>
 </tr>
@@ -1181,8 +1157,7 @@ keyword' ]</td>
 <td></td>
 </tr>
 <tr>
-<td class="name"><a name="test_Set Test/Suite/Global Variables With Normal Variable Syntax 1">Set
-Test/Suite/Global Variables With Normal Variable Syntax 1</a></td>
+<td class="name"><a name="test_Set Test/Suite/Global Variables With Normal Variable Syntax 1">Set Test/Suite/Global Variables With Normal Variable Syntax 1</a></td>
 <td>Set Test Variable</td>
 <td>${new test var 1}</td>
 <td>test</td>
@@ -1238,8 +1213,7 @@ Test/Suite/Global Variables With Normal Variable Syntax 1</a></td>
 <td></td>
 </tr>
 <tr>
-<td class="name"><a name="test_Set Test/Suite/Global Variables With Normal Variable Syntax 2">Set
-Test/Suite/Global Variables With Normal Variable Syntax 2</a></td>
+<td class="name"><a name="test_Set Test/Suite/Global Variables With Normal Variable Syntax 2">Set Test/Suite/Global Variables With Normal Variable Syntax 2</a></td>
 <td>Should Be True</td>
 <td>@{new suite var 1} == 'suite variable'.split()</td>
 <td></td>
@@ -1267,9 +1241,7 @@ Test/Suite/Global Variables With Normal Variable Syntax 2</a></td>
 <td></td>
 </tr>
 <tr>
-<td class="name"><a name="test_It Should Be Possible To Set Test/Suite/Global Variable Using Empty List Variable 1">It
-Should Be Possible To Set Test/Suite/Global Variable Using Empty List
-Variable 1</a></td>
+<td class="name"><a name="test_It Should Be Possible To Set Test/Suite/Global Variable Using Empty List Variable 1">It Should Be Possible To Set Test/Suite/Global Variable Using Empty List Variable 1</a></td>
 <td>@{empty} =</td>
 <td>Create List</td>
 <td></td>
@@ -1325,9 +1297,7 @@ Variable 1</a></td>
 <td></td>
 </tr>
 <tr>
-<td class="name"><a name="test_It Should Be Possible To Set Test/Suite/Global Variable Using Empty List Variable 2">It
-Should Be Possible To Set Test/Suite/Global Variable Using Empty List
-Variable 2</a></td>
+<td class="name"><a name="test_It Should Be Possible To Set Test/Suite/Global Variable Using Empty List Variable 2">It Should Be Possible To Set Test/Suite/Global Variable Using Empty List Variable 2</a></td>
 <td>Should Be True</td>
 <td>@{new suite var 2} == []</td>
 <td></td>
@@ -1389,7 +1359,14 @@ Variable 2</a></td>
 <td>New value 3</td>
 <td></td>
 </tr>
-<tr><td></td><td>Set Global Variable</td><td>$parent_suite_setup_global_var_to_reset</td><td>Set in test!</td><td></td></tr><tr>
+<tr>
+<td class="name"></td>
+<td>Set Global Variable</td>
+<td>$parent_suite_setup_global_var_to_reset</td>
+<td>Set in test!</td>
+<td></td>
+</tr>
+<tr>
 <td class="name"></td>
 <td>Should Be Equal</td>
 <td>${cli_var_1}</td>
@@ -1413,11 +1390,18 @@ Variable 2</a></td>
 <tr>
 <td class="name"></td>
 <td>Should Be Equal</td>
-<td>${parent_suite_setup_global_var_to_reset}</td><td>Set in test!</td>
-
+<td>${parent_suite_setup_global_var_to_reset}</td>
+<td>Set in test!</td>
 <td></td>
 </tr>
-<tr><td></td><td></td><td></td><td></td><td></td></tr><tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
 <td class="name"><a name="test_Scopes And Overriding 2">Scopes And Overriding 2</a></td>
 <td>Should Be Equal</td>
 <td>${cli_var_1}</td>
@@ -1438,51 +1422,57 @@ Variable 2</a></td>
 <td>New value 3</td>
 <td></td>
 </tr>
-<tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Overiding&nbsp;variable when it has&nbsp;non-string value</td><td>${v1} =</td><td>Set Variable</td><td>${1}</td><td></td></tr><tr><td></td><td>${v2} =</td><td>Create List</td><td>a</td><td>b</td></tr><tr><td></td><td>Set Test Variable</td><td>${v1}</td><td>a string</td><td></td></tr><tr><td></td><td>Set Global Variable</td><td>${v2}</td><td>${42}</td><td></td></tr><tr><td></td><td>Should&nbsp;Be Equal</td><td>${v1} - ${v2}</td><td>a string - 42</td><td></td></tr><tr>
+<tr>
 <td class="name"></td>
 <td></td>
 <td></td>
 <td></td>
 <td></td>
 </tr>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 <tr>
-<td class="name"><a name="test_Set Test/Suite/Global Varible In User Keyword When Variable Name Is Used As Argument">Set
-Test/Suite/Global Varible In User Keyword When Variable Name Is Used As
-Argument</a></td>
+<td class="name"><a name="test_Overiding Variable When It Has Non-string Value">Overiding Variable When It Has Non-string Value</a></td>
+<td>${v1} =</td>
+<td>Set Variable</td>
+<td>${1}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${v2} =</td>
+<td>Create List</td>
+<td>a</td>
+<td>b</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Set Test Variable</td>
+<td>${v1}</td>
+<td>a string</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Set Global Variable</td>
+<td>${v2}</td>
+<td>${42}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Should Be Equal</td>
+<td>${v1} - ${v2}</td>
+<td>a string - 42</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="test_Set Test/Suite/Global Varible In User Keyword When Variable Name Is Used As Argument">Set Test/Suite/Global Varible In User Keyword When Variable Name Is Used As Argument</a></td>
 <td>:: FOR</td>
 <td>${type}</td>
 <td>IN</td>
@@ -1517,8 +1507,7 @@ Argument</a></td>
 <td></td>
 </tr>
 <tr>
-<td class="name"><a name="test_Setting Variable Which Value Is In Variable Like Syntax">Setting
-Variable Which Value Is In Variable Like Syntax</a></td>
+<td class="name"><a name="test_Setting Test/Suite/Global Variable Which Value Is In Variable Like Syntax">Setting Test/Suite/Global Variable Which Value Is In Variable Like Syntax</a></td>
 <td>Set Test Variable</td>
 <td>${variable}</td>
 <td>\\\${foo}</td>
@@ -1547,14 +1536,14 @@ Variable Which Value Is In Variable Like Syntax</a></td>
 </tr>
 <tr>
 <td class="name"></td>
-<td>Set Test Variable</td>
+<td>Set Suite Variable</td>
 <td>${variable}</td>
 <td>\\\${foo}</td>
 <td></td>
 </tr>
 <tr>
 <td class="name"></td>
-<td>Set Test Variable</td>
+<td>Set Suite Variable</td>
 <td>\${variable}</td>
 <td>bar</td>
 <td></td>
@@ -1574,8 +1563,7 @@ Variable Which Value Is In Variable Like Syntax</a></td>
 <td></td>
 </tr>
 <tr>
-<td class="name"><a name="test_Setting Variable Which Value Is In Variable Syntax">Setting
-Variable Which Value Is In Variable Syntax</a></td>
+<td class="name"><a name="test_Setting Test/Suite/Global Variable Which Value Is In Variable Syntax">Setting Test/Suite/Global Variable Which Value Is In Variable Syntax</a></td>
 <td>Set Test Variable</td>
 <td>${variable}</td>
 <td>\${foo}</td>
@@ -1604,14 +1592,14 @@ Variable Which Value Is In Variable Syntax</a></td>
 </tr>
 <tr>
 <td class="name"></td>
-<td>Set Test Variable</td>
+<td>Set Suite Variable</td>
 <td>${variable}</td>
 <td>\${foo}</td>
 <td></td>
 </tr>
 <tr>
 <td class="name"></td>
-<td>Set Test Variable</td>
+<td>Set Suite Variable</td>
 <td>\${variable}</td>
 <td>bar</td>
 <td></td>
@@ -1630,27 +1618,85 @@ Variable Which Value Is In Variable Syntax</a></td>
 <td></td>
 <td></td>
 </tr>
-
-
-
-
-
-
-
-</tbody>
+<tr>
+<td class="name"><a name="test_Set Test/Suite/Global Variable With Internal Variables In Name">Set Test/Suite/Global Variable With Internal Variables In Name</a></td>
+<td>[Documentation]</td>
+<td colspan="3">This obscure test is here to prevent this bug from reappearing:\n<br />
+ <a href="http://code.google.com/p/robotframework/issues/detail?id=397\n">http://code.google.com/p/robotframework/issues/detail?id=397\n</a><br />
+FAIL Non-existing variable '\${nonex}'</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${x} =</td>
+<td>Set Variable</td>
+<td>bar</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Set Test Variable</td>
+<td>\${foo ${x}}</td>
+<td>value</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Should Be Equal</td>
+<td>${foo bar}</td>
+<td>value</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Set Suite Variable</td>
+<td>${${x}${x[:-1]}ari}</td>
+<td>conan</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Should Be Equal</td>
+<td>${barbaari}</td>
+<td>conan</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Set Global Variable</td>
+<td>$${x}</td>
+<td>pub</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Should Be Equal</td>
+<td>${bar}</td>
+<td>pub</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Set Test Variable</td>
+<td>${xxx &nbsp;${nonex}}</td>
+<td>whatever</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
 </table>
 <table id="keywords" border="1">
-<tbody>
 <tr>
 <th class="name">Keyword</th>
 <th>Action</th>
-<th>Argument</th>
-<th>Argument</th>
-<th>Argument</th>
+<th colspan="3">Arguments</th>
 </tr>
 <tr>
-<td class="name"><a name="keyword_My Suite Setup">My
-Suite Setup</a></td>
+<td class="name"><a name="keyword_My Suite Setup">My Suite Setup</a></td>
 <td>${suite_setup_local_var} =</td>
 <td>Set Variable</td>
 <td>Variable available only locally</td>
@@ -1698,12 +1744,10 @@ Suite Setup</a></td>
 <td>Global var set in</td>
 <td>suite setup</td>
 </tr>
-
 <tr>
 <td class="name"></td>
 <td>Should Be True</td>
-<td>${suite_setup_local_var} == [ 'Variable available only
-locally', 'in suite setup' ]</td>
+<td>${suite_setup_local_var} == [ 'Variable available only locally', 'in suite setup' ]</td>
 <td></td>
 <td></td>
 </tr>
@@ -1717,8 +1761,7 @@ locally', 'in suite setup' ]</td>
 <tr>
 <td class="name"></td>
 <td>Should Be True</td>
-<td>@{suite_setup_suite_var} == [ 'Suite var set in',
-'suite setup' ]</td>
+<td>@{suite_setup_suite_var} == [ 'Suite var set in', 'suite setup' ]</td>
 <td></td>
 <td></td>
 </tr>
@@ -1732,12 +1775,25 @@ locally', 'in suite setup' ]</td>
 <tr>
 <td class="name"></td>
 <td>Should Be True</td>
-<td>@{suite_setup_global_var} == [ 'Global var set in',
-'suite setup' ]</td>
+<td>@{suite_setup_global_var} == [ 'Global var set in', 'suite setup' ]</td>
 <td></td>
 <td></td>
 </tr>
-<tr><td></td><td>Variable Should Not Exist</td><td>$parent_suite_setup_suite_var</td><td></td><td></td></tr><tr><td></td><td>Should Be Equal</td><td>${parent_suite_setup_global_var}</td><td>Set in __init__</td><td></td></tr><tr>
+<tr>
+<td class="name"></td>
+<td>Variable Should Not Exist</td>
+<td>$parent_suite_setup_suite_var</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Should Be Equal</td>
+<td>${parent_suite_setup_global_var}</td>
+<td>Set in __init__</td>
+<td></td>
+</tr>
+<tr>
 <td class="name"></td>
 <td></td>
 <td></td>
@@ -1849,13 +1905,8 @@ locally', 'in suite setup' ]</td>
 <td></td>
 <td></td>
 </tr>
-
-
-
-
 <tr>
-<td class="name"><a name="keyword_Set Test Variables In UK">Set Test Variables
-In UK</a></td>
+<td class="name"><a name="keyword_Set Test Variables In UK">Set Test Variables In UK</a></td>
 <td>Should Be Equal</td>
 <td>${scalar}</td>
 <td>Hi tellus</td>
@@ -1911,8 +1962,7 @@ In UK</a></td>
 <td></td>
 </tr>
 <tr>
-<td class="name"><a name="keyword_Check Test Variables Available In UK">Check
-Test Variables Available In UK</a></td>
+<td class="name"><a name="keyword_Check Test Variables Available In UK">Check Test Variables Available In UK</a></td>
 <td>Should Be Equal</td>
 <td>${scalar}</td>
 <td>Hi tellus</td>
@@ -1961,8 +2011,7 @@ Test Variables Available In UK</a></td>
 <td></td>
 </tr>
 <tr>
-<td class="name"><a name="keyword_Check Test Variables Not Available In UK">Check
-Test Variables Not Available In UK</a></td>
+<td class="name"><a name="keyword_Check Test Variables Not Available In UK">Check Test Variables Not Available In UK</a></td>
 <td>Equals</td>
 <td>${scalar}</td>
 <td>Hi tellus</td>
@@ -2018,8 +2067,7 @@ Test Variables Not Available In UK</a></td>
 <td></td>
 </tr>
 <tr>
-<td class="name"><a name="keyword_Set Suite Variables In UK">Set Suite Variables
-In UK</a></td>
+<td class="name"><a name="keyword_Set Suite Variables In UK">Set Suite Variables In UK</a></td>
 <td>${uk_level_suite_var} =</td>
 <td>String</td>
 <td>Suite var set in user keyword</td>
@@ -2049,8 +2097,7 @@ In UK</a></td>
 <tr>
 <td class="name"></td>
 <td>Should Be True</td>
-<td>@{uk_level_suite_var} == [ 'Suite var set in', 'user
-keyword' ]</td>
+<td>@{uk_level_suite_var} == [ 'Suite var set in', 'user keyword' ]</td>
 <td></td>
 <td></td>
 </tr>
@@ -2071,8 +2118,7 @@ keyword' ]</td>
 <tr>
 <td class="name"></td>
 <td>Should Be True</td>
-<td>@{sub_uk_level_suite_var} == [ 'Suite var set in', 'sub
-user keyword' ]</td>
+<td>@{sub_uk_level_suite_var} == [ 'Suite var set in', 'sub user keyword' ]</td>
 <td></td>
 <td></td>
 </tr>
@@ -2084,8 +2130,7 @@ user keyword' ]</td>
 <td></td>
 </tr>
 <tr>
-<td class="name"><a name="keyword_Set Suite Variables In Sub UK">Set Suite
-Variables In Sub UK</a></td>
+<td class="name"><a name="keyword_Set Suite Variables In Sub UK">Set Suite Variables In Sub UK</a></td>
 <td>Set Suite Variable</td>
 <td>\${sub_uk_level_suite_var}</td>
 <td>Suite var set in sub user keyword</td>
@@ -2108,8 +2153,7 @@ Variables In Sub UK</a></td>
 <tr>
 <td class="name"></td>
 <td>Should Be True</td>
-<td>@{sub_uk_level_suite_var} == [ 'Suite var set in', 'sub
-user keyword' ]</td>
+<td>@{sub_uk_level_suite_var} == [ 'Suite var set in', 'sub user keyword' ]</td>
 <td></td>
 <td></td>
 </tr>
@@ -2121,8 +2165,7 @@ user keyword' ]</td>
 <td></td>
 </tr>
 <tr>
-<td class="name"><a name="keyword_Check Suite Variables Available In UK">Check
-Suite Variables Available In UK</a></td>
+<td class="name"><a name="keyword_Check Suite Variables Available In UK">Check Suite Variables Available In UK</a></td>
 <td>Fail If Variable Exists</td>
 <td>$suite_setup_local_var</td>
 <td></td>
@@ -2138,8 +2181,7 @@ Suite Variables Available In UK</a></td>
 <tr>
 <td class="name"></td>
 <td>Should Be True</td>
-<td>@{suite_setup_suite_var} == [ 'Suite var set in',
-'suite setup' ]</td>
+<td>@{suite_setup_suite_var} == [ 'Suite var set in', 'suite setup' ]</td>
 <td></td>
 <td></td>
 </tr>
@@ -2153,8 +2195,7 @@ Suite Variables Available In UK</a></td>
 <tr>
 <td class="name"></td>
 <td>Should Be True</td>
-<td>@{test_level_suite_var} == [ 'Suite var set in', 'test'
-]</td>
+<td>@{test_level_suite_var} == [ 'Suite var set in', 'test' ]</td>
 <td></td>
 <td></td>
 </tr>
@@ -2175,8 +2216,7 @@ Suite Variables Available In UK</a></td>
 <tr>
 <td class="name"></td>
 <td>Should Be True</td>
-<td>@{uk_level_suite_var} == [ 'Suite var set in', 'user
-keyword' ]</td>
+<td>@{uk_level_suite_var} == [ 'Suite var set in', 'user keyword' ]</td>
 <td></td>
 <td></td>
 </tr>
@@ -2190,8 +2230,7 @@ keyword' ]</td>
 <tr>
 <td class="name"></td>
 <td>Should Be True</td>
-<td>@{sub_uk_level_suite_var} == [ 'Suite var set in', 'sub
-user keyword' ]</td>
+<td>@{sub_uk_level_suite_var} == [ 'Suite var set in', 'sub user keyword' ]</td>
 <td></td>
 <td></td>
 </tr>
@@ -2203,8 +2242,7 @@ user keyword' ]</td>
 <td></td>
 </tr>
 <tr>
-<td class="name"><a name="keyword_Set Global Variables In UK">Set Global
-Variables In UK</a></td>
+<td class="name"><a name="keyword_Set Global Variables In UK">Set Global Variables In UK</a></td>
 <td>${uk_level_global_var} =</td>
 <td>String</td>
 <td>Global var set in user keyword</td>
@@ -2234,8 +2272,7 @@ Variables In UK</a></td>
 <tr>
 <td class="name"></td>
 <td>Should Be True</td>
-<td>@{uk_level_global_var} == [ 'Global var set in', 'user
-keyword' ]</td>
+<td>@{uk_level_global_var} == [ 'Global var set in', 'user keyword' ]</td>
 <td></td>
 <td></td>
 </tr>
@@ -2256,8 +2293,7 @@ keyword' ]</td>
 <tr>
 <td class="name"></td>
 <td>Should Be True</td>
-<td>@{sub_uk_level_global_var} == [ 'Global var set in',
-'sub user keyword' ]</td>
+<td>@{sub_uk_level_global_var} == [ 'Global var set in', 'sub user keyword' ]</td>
 <td></td>
 <td></td>
 </tr>
@@ -2269,8 +2305,7 @@ keyword' ]</td>
 <td></td>
 </tr>
 <tr>
-<td class="name"><a name="keyword_Set Global Variables In Sub UK">Set Global
-Variables In Sub UK</a></td>
+<td class="name"><a name="keyword_Set Global Variables In Sub UK">Set Global Variables In Sub UK</a></td>
 <td>Set Global Variable</td>
 <td>\${sub_uk_level_global_var}</td>
 <td>Global var set in sub user keyword</td>
@@ -2293,8 +2328,7 @@ Variables In Sub UK</a></td>
 <tr>
 <td class="name"></td>
 <td>Should Be True</td>
-<td>@{sub_uk_level_global_var} == [ 'Global var set in',
-'sub user keyword' ]</td>
+<td>@{sub_uk_level_global_var} == [ 'Global var set in', 'sub user keyword' ]</td>
 <td></td>
 <td></td>
 </tr>
@@ -2306,8 +2340,7 @@ Variables In Sub UK</a></td>
 <td></td>
 </tr>
 <tr>
-<td class="name"><a name="keyword_Check Global Variables Available In UK">Check
-Global Variables Available In UK</a></td>
+<td class="name"><a name="keyword_Check Global Variables Available In UK">Check Global Variables Available In UK</a></td>
 <td>Should Be Equal</td>
 <td>${suite_setup_global_var}</td>
 <td>Global var set in suite setup</td>
@@ -2316,8 +2349,7 @@ Global Variables Available In UK</a></td>
 <tr>
 <td class="name"></td>
 <td>Should Be True</td>
-<td>@{suite_setup_global_var} == [ 'Global var set in',
-'suite setup' ]</td>
+<td>@{suite_setup_global_var} == [ 'Global var set in', 'suite setup' ]</td>
 <td></td>
 <td></td>
 </tr>
@@ -2331,8 +2363,7 @@ Global Variables Available In UK</a></td>
 <tr>
 <td class="name"></td>
 <td>Should Be True</td>
-<td>@{test_level_global_var} == [ 'Global var set in',
-'test' ]</td>
+<td>@{test_level_global_var} == [ 'Global var set in', 'test' ]</td>
 <td></td>
 <td></td>
 </tr>
@@ -2353,8 +2384,7 @@ Global Variables Available In UK</a></td>
 <tr>
 <td class="name"></td>
 <td>Should Be True</td>
-<td>@{uk_level_global_var} == [ 'Global var set in', 'user
-keyword' ]</td>
+<td>@{uk_level_global_var} == [ 'Global var set in', 'user keyword' ]</td>
 <td></td>
 <td></td>
 </tr>
@@ -2368,8 +2398,7 @@ keyword' ]</td>
 <tr>
 <td class="name"></td>
 <td>Should Be True</td>
-<td>@{sub_uk_level_global_var} == [ 'Global var set in',
-'sub user keyword' ]</td>
+<td>@{sub_uk_level_global_var} == [ 'Global var set in', 'sub user keyword' ]</td>
 <td></td>
 <td></td>
 </tr>
@@ -2380,13 +2409,8 @@ keyword' ]</td>
 <td></td>
 <td></td>
 </tr>
-
-
-
-
 <tr>
-<td class="name"><a name="keyword_Test Setting Variable In User Keyword">Test
-Setting Variable In User Keyword</a></td>
+<td class="name"><a name="keyword_Test Setting Variable In User Keyword">Test Setting Variable In User Keyword</a></td>
 <td>[Arguments]</td>
 <td>${arg}</td>
 <td>${type}</td>
@@ -2404,8 +2428,7 @@ Setting Variable In User Keyword</a></td>
 <td>Should Not Be Equal</td>
 <td>${arg}</td>
 <td>value</td>
-<td>Value is set to variable \${arg} even it should be set
-to variable \${variable}</td>
+<td>Value is set to variable \${arg} even it should be set to variable \${variable}</td>
 </tr>
 <tr>
 <td class="name"></td>
@@ -2428,16 +2451,6 @@ to variable \${variable}</td>
 <td></td>
 <td></td>
 </tr>
-
-
-
-
-
-
-
-
-
-
-</tbody>
 </table>
-</body></html>
+</body>
+</html>
