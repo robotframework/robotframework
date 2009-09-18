@@ -696,26 +696,30 @@ class _Variables:
         name = self._resolve_possible_variable(orig)
         try:
             return self._unescape_variable_if_needed(name)
-        except DataError:
+        except ValueError:
             raise DataError("Invalid variable syntax '%s'" % orig)
 
     def _resolve_possible_variable(self, name):
         try:
             resolved = self._get_variables()[name]
             return self._unescape_variable_if_needed(resolved)
-        except (KeyError, DataError):
+        except (KeyError, ValueError, DataError):
             return name
         
     def _unescape_variable_if_needed(self, name):
-        if not (utils.is_str(name) and name):
-            raise DataError
+        if not (utils.is_str(name) and len(name) > 1):
+            raise ValueError
         if name.startswith('\\'):
             name = name[1:]
-        elif name[0] in ['$','@'] and '{' not in name:
-            name = name[0] + '{' + name[1:] + '}'
-        if not is_var(name):
-            raise DataError
-        return name
+        elif name[0] in ['$','@'] and name[1] != '{':
+            name = '%s{%s}' % (name[0], name[1:])
+        if is_var(name):
+            return name
+        # Support for possible internal variables (issue 397)
+        name = '%s{%s}' % (name[0], self.replace_variables(name[2:-1]))
+        if is_var(name):
+            return name
+        raise ValueError
         
     def _get_var_value(self, name, values):
         variables = self._get_variables()
