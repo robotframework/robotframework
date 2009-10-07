@@ -392,8 +392,10 @@ table.messages td.warn {
 
 div.admonition, div.attention, div.caution, div.danger, div.error,
 div.hint, div.important, div.note, div.tip, div.warning {
-    border: 2px solid gray;
+    border: 0.1em solid gray;
     margin: 1em 2em;
+    padding: 0.7em 1em;
+    font-size: 0.9em;
 }
 pre.literal-block, pre.doctest-block {
     background: #f4f4f4;
@@ -1118,7 +1120,7 @@ level module as submodules. In this case the higher level module is
 a directory with a special <span class="path">___init___.py</span> file.</p>
 </li>
 <li><p class="first">For more information about modules see Python Tutorial:
-<a class="reference external" href="http://docs.python.org/tut/node8.html">http://docs.python.org/tut/node8.html</a></p>
+<a class="reference external" href="http://docs.python.org/tutorial/modules.html">http://docs.python.org/tutorial/modules.html</a></p>
 </li>
 </ul>
 </div>
@@ -1177,7 +1179,7 @@ from Dive Into Python and/or study detailed information from Python
 Tutorial:</p>
 <ul class="simple">
 <li><a class="reference external" href="http://diveintopython.org/object_oriented_framework">http://diveintopython.org/object_oriented_framework</a></li>
-<li><a class="reference external" href="http://docs.python.org/tut/node11.html">http://docs.python.org/tut/node11.html</a></li>
+<li><a class="reference external" href="http://docs.python.org/tutorial/classes.html">http://docs.python.org/tutorial/classes.html</a></li>
 </ul>
 </li>
 </ul>
@@ -1277,28 +1279,26 @@ these test cases in your own environment and edit them to test also
 other features. A precondition is having Robot Framework <a class="reference external" href="http://code.google.com/p/robotframework/wiki/Installation">installed</a>,
 but then you only need to get <a class="reference external" href="ExampleLibrary.py">the library</a> and <a class="reference external" href="example_tests.tsv">the data</a>, and
 run command <span class="cli">pybot example_tests.tsv</span>.</p>
-<div class="highlight"><pre><span class="k">class</span> <span class="nc">ExampleLibrary</span><span class="p">:</span>
+<div class="highlight"><pre><span class="k">def</span> <span class="nf">simple_keyword</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Log a message&quot;&quot;&quot;</span>
+    <span class="k">print</span> <span class="s">&#39;You have used the simplest keyword.&#39;</span>
 
-    <span class="k">def</span> <span class="nf">simple_keyword</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Log a message&quot;&quot;&quot;</span>
-        <span class="k">print</span> <span class="s">&#39;You have used the simplest keyword.&#39;</span>
+<span class="k">def</span> <span class="nf">greet</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Logs a friendly greeting to person given as argument&quot;&quot;&quot;</span>
+    <span class="k">print</span> <span class="s">&#39;Hello </span><span class="si">%s</span><span class="s">!&#39;</span> <span class="o">%</span> <span class="n">name</span>
 
-    <span class="k">def</span> <span class="nf">greet</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Logs a friendly greeting to person given as argument&quot;&quot;&quot;</span>
-        <span class="k">print</span> <span class="s">&#39;Hello </span><span class="si">%s</span><span class="s">!&#39;</span> <span class="o">%</span> <span class="n">name</span>
+<span class="k">def</span> <span class="nf">multiply_by_two</span><span class="p">(</span><span class="n">number</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Returns the given number multiplied by two</span>
+<span class="sd">    </span>
+<span class="sd">    The result is always a floating point number.</span>
+<span class="sd">    This keyword fails if the given `number` cannot be converted to number.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">number</span><span class="p">)</span> <span class="o">*</span> <span class="mf">2</span>
 
-    <span class="k">def</span> <span class="nf">multiply_by_two</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">number</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Returns the given number multiplied by two</span>
-<span class="sd">        </span>
-<span class="sd">        The result is always a floating point number.</span>
-<span class="sd">        This keyword fails if the given `number` cannot be converted to number.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">number</span><span class="p">)</span> <span class="o">*</span> <span class="mf">2</span>
-
-    <span class="k">def</span> <span class="nf">numbers_should_be_equal</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">first</span><span class="p">,</span> <span class="n">second</span><span class="p">):</span>
-        <span class="k">print</span> <span class="s">&#39;*DEBUG* Got </span><span class="si">%s</span><span class="s"> and </span><span class="si">%s</span><span class="s">&#39;</span>
-        <span class="k">if</span> <span class="nb">float</span><span class="p">(</span><span class="n">first</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">float</span><span class="p">(</span><span class="n">second</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">AssertionError</span><span class="p">(</span><span class="s">&#39;Given numbers are unequal!&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">numbers_should_be_equal</span><span class="p">(</span><span class="n">first</span><span class="p">,</span> <span class="n">second</span><span class="p">):</span>
+    <span class="k">print</span> <span class="s">&#39;*DEBUG* Got arguments </span><span class="si">%s</span><span class="s"> and </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">first</span><span class="p">,</span> <span class="n">second</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">float</span><span class="p">(</span><span class="n">first</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">float</span><span class="p">(</span><span class="n">second</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">AssertionError</span><span class="p">(</span><span class="s">&#39;Given numbers are unequal!&#39;</span><span class="p">)</span>
 </pre></div>
 <table border="1" class="tsv-example docutils">
 <caption>Simple test cases using keywords from ExampleLibrary</caption>
@@ -1346,7 +1346,12 @@ run command <span class="cli">pybot example_tests.tsv</span>.</p>
 </tr>
 <tr><td>&nbsp;</td>
 <td>Greet</td>
-<td>Robot</td>
+<td>Robot Framework</td>
+<td>&nbsp;</td>
+</tr>
+<tr><td>&nbsp;</td>
+<td>Greet</td>
+<td>World</td>
 <td>&nbsp;</td>
 </tr>
 <tr><td>&nbsp;</td>
@@ -1382,6 +1387,11 @@ run command <span class="cli">pybot example_tests.tsv</span>.</p>
 <tr><td>&nbsp;</td>
 <td>Numbers Should Be Equal</td>
 <td>2</td>
+<td>2</td>
+</tr>
+<tr><td>&nbsp;</td>
+<td>Numbers Should Be Equal</td>
+<td>2</td>
 <td>3</td>
 </tr>
 </tbody>
@@ -1392,7 +1402,7 @@ run command <span class="cli">pybot example_tests.tsv</span>.</p>
 <div class="footer">
 <hr class="footer" />
 <p>Generated by <a class="reference external" href="http://docutils.sourceforge.net/rst.html">reStructuredText</a>. Syntax highlighting by <a class="reference external" href="http://pygments.org/">Pygments</a>.</p>
-<p>Generated on: 2009-08-16 20:28 UTC.
+<p>Generated on: 2009-10-07 13:04 UTC.
 </p>
 
 </div>
