@@ -19,7 +19,7 @@ class TsvReader:
         process = False
         for row in tsvfile.readlines():
             cells = [ self._process(cell) for cell in self._split_row(row) ]
-            name = len(cells) > 0 and cells[0].strip() or ''
+            name = cells and cells[0].strip() or ''
             if name.startswith('*') and rawdata.start_table(name.replace('*','')):
                 process = True
             elif process:
