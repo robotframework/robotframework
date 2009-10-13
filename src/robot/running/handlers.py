@@ -17,7 +17,7 @@ import sys
 from types import MethodType, FunctionType
 
 from robot import utils
-from robot.errors import DataError, FrameworkError
+from robot.errors import FrameworkError
 from robot.common import BaseHandler
 from runkwregister import RUN_KW_REGISTER
 

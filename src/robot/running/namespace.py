@@ -12,8 +12,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-
-import os.path
+import copy
 
 from robot import utils
 from robot.errors import FrameworkError, DataError
@@ -154,11 +153,7 @@ class Namespace:
         
     def get_handler(self, name):
         try:
-            handler = None
-            if '.' in name:
-                handler = self._get_explicit_handler(name)
-            if handler is None:
-                handler = self._get_implicit_handler(name)
+            handler = self._get_handler(name)
             if handler is None:
                 raise DataError("No keyword with name '%s' found." % name)
         except:
@@ -169,6 +164,26 @@ class Namespace:
         except AttributeError:  # only applicable for UserHandlers
             pass
         return handler
+
+    def _get_handler(self, name):
+        handler = None
+        if '.' in name:
+            handler = self._get_explicit_handler(name)
+        if not handler:
+            handler = self._get_implicit_handler(name)
+        if not handler:
+            handler = self._get_bdd_style_handler(name)
+        return handler
+
+    def _get_bdd_style_handler(self, name):
+        for prefix in ['given ', 'when ', 'then ', 'and ']:
+            if name.lower().startswith(prefix):
+                handler = self._get_handler(name[len(prefix):])
+                if handler:
+                    handler = copy.copy(handler)
+                    handler.name = name
+                return handler
+        return None
 
     def _get_implicit_handler(self, name):
         for method in [ self._get_handler_from_test_case_file_user_keywords,

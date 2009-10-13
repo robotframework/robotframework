@@ -100,15 +100,13 @@ class UserLibrary(BaseLibrary):
     
 
 class UserHandler(BaseHandler):
-
     type = 'user'
+    longname = property(lambda self: not self._libname and self.name
+                        or '%s.%s' % (self._libname, self.name))
 
     def __init__(self, handlerdata, libname):
         self.name = utils.printable_name(handlerdata.name)
-        if libname is None: 
-            self.longname = self.name
-        else:
-            self.longname = '%s.%s' % (libname, self.name)
+        self._libname = libname
         self._set_variable_dependent_metadata(handlerdata.metadata)
         self.keywords = [ KeywordFactory(kw) for kw in handlerdata.keywords ]
         self.args = handlerdata.args
@@ -117,7 +115,7 @@ class UserHandler(BaseHandler):
         self.minargs = handlerdata.minargs
         self.maxargs = handlerdata.maxargs
         self.return_value = handlerdata.return_value
-        
+
     def _set_variable_dependent_metadata(self, metadata):
         self._doc = metadata.get('Documentation', '')
         self.doc = utils.unescape(self._doc)
@@ -215,14 +213,13 @@ class EmbeddedArgsTemplate(UserHandler):
 
 
 class EmbeddedArgs(UserHandler):
-    
+
     def __init__(self, name, template):
         match = template.name_regexp.match(name)
         if not match:
             raise TypeError('Does not match given name')
         self.embedded_args = zip(template.embedded_args, match.groups())
         self.name = name
-        self.longname = template.longname[:-len(template.name)] + self.name
         self.origname = template.name
         self._copy_attrs_from_template(template)
 
@@ -232,6 +229,7 @@ class EmbeddedArgs(UserHandler):
         return UserHandler.run(self, output, namespace, args)
 
     def _copy_attrs_from_template(self, template):
+        self._libname = template._libname
         self.keywords = template.keywords
         self.args = template.args
         self.defaults = template.defaults
