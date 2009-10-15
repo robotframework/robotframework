@@ -1,8 +1,8 @@
-"""Robot Framework Library and Resource File Documentation Uploader
+"""Robot Framework Library Uploader
 
 Usage:  python rfdoc_uploader.py url file_name [--o]
 options:
-    --o    Overwrites the documentation in the server, if it already exists.
+    --o    Overwrites the library in the server, if it already exists.
 """
 
 import sys
@@ -15,8 +15,8 @@ class RFDocUploader(object):
     def upload(self, file_path, url, override=True):
         fields = {'override': 'true'}
         resp = self._post_multipart(url, fields, file_path, override)
-        success = self._validate_success(resp)
-        print 'SUCCESS: ', success
+        return self._validate_success(resp)
+        
 
     def _post_multipart(self, host, fields, file_path, override):
         content_type, body = self._encode_multipart_formdata(file_path, override)
@@ -54,8 +54,7 @@ class RFDocUploader(object):
         status = resp.status
         reason = resp.reason
         html = resp.read()
-        print html
-        if status is not '200' and re.search('Successfully uploaded library', html):
+        if status is 200 and re.search('Successfully uploaded library', html):
             return True
         # TODO parse error messages
         return False
@@ -73,7 +72,10 @@ def main(args):
         else:
             print __doc__
             sys.exit()
-    RFDocUploader().upload(file_path, url, override)   
+    if RFDocUploader().upload(file_path, url, override):
+        print 'Library successfully uploaded!'
+    else:
+        print 'Failed to upload library!'
 
 if __name__ == '__main__':
     main(sys.argv[1:])
