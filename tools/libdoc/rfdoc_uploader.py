@@ -10,6 +10,7 @@ Example: python rfdoc_uploader.py ExampleLibrary_version_1.xml localhost:8000
 import sys
 import re
 from httplib import HTTPConnection
+from htmllib import HTMLParser
 
 
 class RFDocUploader(object):
@@ -37,7 +38,7 @@ class RFDocUploader(object):
             L.append('Content-Disposition: form-data; name="override"')
             L.append('')
             L.append('on')
-        
+
         file = open(file_path, 'rb')
         L.append('--' + BOUNDARY)
         L.append('Content-Disposition: form-data; name="file"; filename="%s"' % file.name)
@@ -54,9 +55,45 @@ class RFDocUploader(object):
         status = resp.status
         html = resp.read()
         if status is 200 and re.search('Successfully uploaded library', html):
-            return True
-        # TODO parse error messages
-        return False
+            return None
+        errors = self._parse_errors(html)
+        return errors
+
+    def _parse_errors(self, html):
+        parser = _ErrorParser()
+        parser.parse(html)
+        parser.close()
+        return parser.errors
+
+
+class _ErrorParser(HTMLParser):
+    _inside_errors = False
+    _is_error_line = False
+
+    def __init__(self, verbose=0):
+        HTMLParser.__init__(self, verbose)
+        self.errors = []
+
+    def parse(self, html):
+        self.feed(html)
+        self.close()
+
+    def handle_starttag(self, tag, method, attributes):
+        for attr in attributes:
+            if attr[1] == 'errorlist':
+                self._inside_errors = True
+        if self._inside_errors and tag == 'li':
+            self._is_error_line = True
+
+    def handle_endtag(self, tag, method):
+        if tag == 'ul' and self._inside_errors:
+            self._inside_errors = False
+
+    def handle_data(self, data):
+        if self._is_error_line:
+            self.errors.append(data)
+            self._is_error_line = False
+
 
 def main(args):
     if len(args) < 2 or len(args) > 3:
@@ -71,10 +108,13 @@ def main(args):
         else:
             print __doc__
             sys.exit()
-    if RFDocUploader().upload(file_path, host, override):
+    errors = RFDocUploader().upload(file_path, host, override)
+    if not errors:
         print 'Library successfully uploaded!'
     else:
-        print 'Failed to upload library!'
+        print 'Failed to upload library! Errors:'
+        for err in errors:
+            print '    -', err
 
 if __name__ == '__main__':
     main(sys.argv[1:])
