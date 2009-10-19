@@ -60,6 +60,8 @@ class RFDocUploader(object):
         return errors
 
     def _parse_errors(self, html):
+        if re.search('Internal error occurred', html):
+            return ['Internal error occurred']
         parser = _ErrorParser()
         parser.parse(html)
         parser.close()
