@@ -181,7 +181,7 @@ def exit(msg=None, error=None):
 
 def LibraryDoc(libname, arguments=None, newname=None):
     ext = os.path.splitext(libname)[1].lower()
-    if  ext in ('.html', '.htm', '.xhtml', '.tsv'):
+    if  ext in ('.html', '.htm', '.xhtml', '.tsv', '.txt'):
         return ResourceDoc(libname, arguments, newname)
     elif ext == '.java':
         if not utils.is_jython:
