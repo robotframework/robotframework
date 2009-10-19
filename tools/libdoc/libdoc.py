@@ -121,7 +121,7 @@ def create_html_doc(lib, outpath, title=None):
     outfile.write(doc.encode('UTF-8'))
     outfile.close()
 
-    
+
 def create_xml_doc(lib, outpath):
     writer = utils.XmlWriter(outpath)
     writer.start('keywordspec', {'name': lib.name, 'type': lib.type,
@@ -222,9 +222,9 @@ class _DocHelper:
 
 
 class PythonLibraryDoc(_DocHelper):
-    
+
     type = 'library'
-    
+
     def __init__(self, name, arguments=None, newname=None):
         lib = self._import(name, arguments)
         self.name = newname or lib.name
@@ -234,7 +234,7 @@ class PythonLibraryDoc(_DocHelper):
         self.keywords = [ KeywordDoc(handler, self) 
                           for handler in lib.handlers.values() ]
         self.keywords.sort()
- 
+
     def _import(self, name, args):
         return TestLibrary(name, args)
 
@@ -248,7 +248,7 @@ class PythonLibraryDoc(_DocHelper):
 
 
 class ResourceDoc(PythonLibraryDoc):
-    
+
     type = 'resource'
         
     def _import(self, path, arguments):
@@ -263,26 +263,26 @@ class ResourceDoc(PythonLibraryDoc):
             if os.path.isfile(os.path.join(dire, path)):
                 return os.path.join(dire, path)
         raise DataError("Resource file '%s' doesn't exist." % path)
-    
+
     def _get_doc(self, resource):
         doc = getattr(resource, 'doc', '')  # doc available only in 2.1+
         if not doc:
             doc = "Documentation for resource file `%s`." % self.name
         return utils.unescape(doc)
-    
+
     def _get_initializers(self, lib):
         return []
 
-    
+
 class _BaseKeywordDoc(_DocHelper):
 
     def __init__(self, library):
         self.lib = library
         self.type = library.type
-        
+
     def __cmp__(self, other):
         return cmp(self.name, other.name)
-    
+
     def __getattr__(self, name):
         if name == 'argstr':
             return ', '.join(self.args)
@@ -290,7 +290,7 @@ class _BaseKeywordDoc(_DocHelper):
 
     def __repr__(self):
         return "'Keyword %s from library %s'" % (self.name, self.lib.name)
-        
+
 
 class KeywordDoc(_BaseKeywordDoc):
 
@@ -326,13 +326,13 @@ class KeywordDoc(_BaseKeywordDoc):
             varargs = varargs[2:-1]
         return required, defaults, varargs
 
-   
+
 if utils.is_jython:
-    
+
     class JavaLibraryDoc(_DocHelper):
-        
+
         type = 'library'
-        
+
         def __init__(self, path, newname=None):
             cls = self._get_class(path)
             self.name = newname or cls.qualifiedName()
@@ -345,7 +345,7 @@ if utils.is_jython:
             if len(self.inits) == 1 and not self.inits[0].args:
                 self.inits = []
             self.keywords.sort()
-                            
+
         def _get_class(self, path):
             """Processes the given Java source file and returns ClassDoc.
             
@@ -372,7 +372,7 @@ if utils.is_jython:
                                            List.nil(), False, List.nil(),
                                            List.nil(), False, False, True)
             return root.classes()[0]
-        
+
         def _get_version(self, cls):
             for field in cls.fields():
                 if field.name() == 'ROBOT_LIBRARY_VERSION' \
@@ -390,7 +390,7 @@ if utils.is_jython:
             self.doc = self._process_doc(method.getRawCommentText())
             self.shortdoc = self.doc and self.doc.splitlines()[0] or ''
 
-        
+
 DOCUMENT_TEMPLATE = '''<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
