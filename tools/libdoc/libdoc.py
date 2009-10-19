@@ -52,7 +52,7 @@ http://code.google.com/p/robotframework/wiki/LibraryDocumentationTool
 import sys
 import os
 import re
-
+import tempfile
 from httplib import HTTPConnection
 from HTMLParser import HTMLParser
 
@@ -83,7 +83,7 @@ def main(args):
             create_html_doc(library, outpath, opts['title'])
         else:
             create_xml_doc(library, outpath)
-    except DataError, err:
+    except Exception, err:
         exit(error=str(err))
     exit(outpath)
 
@@ -137,22 +137,14 @@ def create_html_doc(lib, outpath, title=None):
 
 def create_xml_doc(lib, outpath):
     if _uploading(outpath):
-        upload = outpath
-        outpath = '/tmp/upload.xml' # TODO use temp file module
+        uploadurl = outpath
+        outpath = os.path.join(tempfile.gettempdir(), 'libdoc_upload.xml')
     else:
-        upload = None
+        uploadurl = None
     _create_xml_doc(lib, outpath)
-    if upload:
-        upload_xml_doc(outpath, upload)
+    if uploadurl:
+        RFDocUploader().upload(outpath, uploadurl)
         os.remove(outpath)
-
-def upload_xml_doc(file_path, host):
-    try:
-        errors = RFDocUploader().upload(file_path, host)
-    except Exception, err:
-        errors = [str(err)]
-    if errors:
-        raise DataError('Failed to upload library:\n%s' % '\n'.join(errors))
 
 def _create_xml_doc(lib, outpath):
     writer = utils.XmlWriter(outpath)
@@ -428,14 +420,11 @@ class RFDocUploader(object):
         xml_file = open(file_path, 'rb')
         conn = HTTPConnection(host)
         try:
-            return self._upload(conn, xml_file)
+            resp = self._post_multipart(conn, xml_file)
+            self._validate_success(resp)
         finally:
             xml_file.close()
             conn.close()
-
-    def _upload(self, host, xml_file):
-        resp = self._post_multipart(host, xml_file)
-        return self._validate_success(resp)
 
     def _post_multipart(self, conn, xml_file):
         conn.connect()
@@ -463,10 +452,9 @@ Content-Type: text/xml
     def _validate_success(self, resp):
         html = resp.read()
         if resp.status != 200:
-            return [resp.reason.strip()]
-        if 'Successfully uploaded library' in html:
-            return None
-        return _ErrorParser(html).errors
+            raise DataError(resp.reason.strip())
+        if 'Successfully uploaded library' not in html:
+            raise DataError('\n'.join(_ErrorParser(html).errors))
 
 
 class _ErrorParser(HTMLParser):
