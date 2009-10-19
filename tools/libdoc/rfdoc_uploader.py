@@ -1,8 +1,6 @@
 """Robot Framework Library Uploader
 
-Usage:  python rfdoc_uploader.py host file_name [--o]
-options:
-    --o    Overwrites the library in the server, if it already exists.
+Usage:  python rfdoc_uploader.py host file_name
 
 Example: python rfdoc_uploader.py ExampleLibrary_version_1.xml localhost:8000
 """
@@ -10,113 +8,89 @@ Example: python rfdoc_uploader.py ExampleLibrary_version_1.xml localhost:8000
 import sys
 import re
 from httplib import HTTPConnection
-from htmllib import HTMLParser
+from HTMLParser import HTMLParser
 
 
 class RFDocUploader(object):
 
-    def upload(self, file_path, host, override=True):
-        resp = self._post_multipart(host, file_path, override)
+    def upload(self, file_path, host):
+        xml_file = open(file_path, 'rb')
+        conn = HTTPConnection(host)
+        try:
+            return self._upload(conn, xml_file)
+        finally:
+            xml_file.close()
+            conn.close()
+
+    def _upload(self, host, xml_file):
+        resp = self._post_multipart(host, xml_file)
         return self._validate_success(resp)
 
-    def _post_multipart(self, host, file_path, override):
-        content_type, body = self._encode_multipart_formdata(file_path, override)
-        conn = HTTPConnection(host)
+    def _post_multipart(self, conn, xml_file):
         conn.connect()
-        headers = {'User-Agent': 'Python post', 'Content-Type': content_type}
+        content_type, body = self._encode_multipart_formdata(xml_file)
+        headers = {'User-Agent': 'libdoc.py', 'Content-Type': content_type}
         conn.request('POST', '/upload/', body, headers)
-        resp = conn.getresponse()
-        conn.close()
-        return resp
+        return conn.getresponse()
 
-    def _encode_multipart_formdata(self, file_path, override):
-        BOUNDARY = '----------ThIs_Is_tHe_bouNdaRY_$'
-        CRLF = '\r\n'
-        L = []
-        if override:
-            L.append('--' + BOUNDARY)
-            L.append('Content-Disposition: form-data; name="override"')
-            L.append('')
-            L.append('on')
+    def _encode_multipart_formdata(self, xml_file):
+        boundary = '----------ThIs_Is_tHe_bouNdaRY_$'
+        body = """--%(boundary)s
+Content-Disposition: form-data; name="override"
 
-        file = open(file_path, 'rb')
-        L.append('--' + BOUNDARY)
-        L.append('Content-Disposition: form-data; name="file"; filename="%s"' % file.name)
-        L.append('Content-Type: %s' % 'Content-Type: text/xml') 
-        L.append('')
-        L.append(file.read())
-        L.append('--' + BOUNDARY + '--')
-        L.append('')
-        body = CRLF.join(L)
-        content_type = 'multipart/form-data; boundary=%s' % BOUNDARY
-        return content_type, body
+on
+--%(boundary)s
+Content-Disposition: form-data; name="file"; filename="%(filename)s"
+Content-Type: text/xml
+
+%(content)s
+--%(boundary)s--
+""" % {'boundary': boundary, 'filename': xml_file.name, 'content': xml_file.read()}
+        content_type = 'multipart/form-data; boundary=%s' % boundary
+        return content_type, body.replace('\n', '\r\n')
 
     def _validate_success(self, resp):
-        status = resp.status
         html = resp.read()
-        if status is 200 and re.search('Successfully uploaded library', html):
+        if resp.status != 200:
+            return [resp.reason.strip()]
+        if 'Successfully uploaded library' in html:
             return None
-        errors = self._parse_errors(html)
-        return errors
-
-    def _parse_errors(self, html):
-        if re.search('Internal error occurred', html):
-            return ['Internal error occurred']
-        parser = _ErrorParser()
-        parser.parse(html)
-        parser.close()
-        return parser.errors
+        return _ErrorParser(html).errors
 
 
 class _ErrorParser(HTMLParser):
-    _inside_errors = False
-    _is_error_line = False
 
-    def __init__(self, verbose=0):
-        HTMLParser.__init__(self, verbose)
+    def __init__(self, html):
+        HTMLParser.__init__(self)
+        self._inside_errors = False
         self.errors = []
-
-    def parse(self, html):
         self.feed(html)
         self.close()
 
-    def handle_starttag(self, tag, method, attributes):
-        for attr in attributes:
-            if attr[1] == 'errorlist':
-                self._inside_errors = True
-        if self._inside_errors and tag == 'li':
-            self._is_error_line = True
+    def handle_starttag(self, tag, attributes):
+        if ('class', 'errorlist') in attributes:
+            self._inside_errors = True
 
-    def handle_endtag(self, tag, method):
-        if tag == 'ul' and self._inside_errors:
+    def handle_endtag(self, tag):
+        if tag == 'ul':
             self._inside_errors = False
 
     def handle_data(self, data):
-        if self._is_error_line:
+        if self._inside_errors and data.strip():
             self.errors.append(data)
-            self._is_error_line = False
 
-
-def main(args):
-    if len(args) < 2 or len(args) > 3:
-        print __doc__
-        sys.exit()
-    file_path = args[0]
-    host = args[1]
-    override = False
-    if len(args) == 3:
-        if args[2] == '--o':
-            override = True
-        else:
-            print __doc__
-            sys.exit()
-    errors = RFDocUploader().upload(file_path, host, override)
-    if not errors:
-        print 'Library successfully uploaded!'
-    else:
-        print 'Failed to upload library! Errors:'
-        for err in errors:
-            print '    -', err
 
 if __name__ == '__main__':
-    main(sys.argv[1:])
+    try:
+        errors = RFDocUploader().upload(*sys.argv[1:])
+    except TypeError:
+        print __doc__
+        sys.exit(-1)
+    except Exception, err:
+        errors = [str(err)]
+    else:
+        print 'Library successfully uploaded'
+        sys.exit(0)
+    print 'Failed to upload library:\n%s' % '\n'.join(errors)
+    sys.exit(1)
+
