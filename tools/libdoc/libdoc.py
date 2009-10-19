@@ -20,15 +20,18 @@
 Usage:  libdoc.py [options] library_or_resource
 
 This script can generate keyword documentation in HTML or XML. The former is
-for humans and the latter mainly for Robot Framework IDE and other tools.
+for humans and the latter mainly for RIDE and other tools.
 Documentation can be created for both test libraries and resource files.
+
+***************  TODO! Document uploading *********************
 
 Options:
  -a --argument value *   Possible arguments that a library needs.         
  -f --format HTML|XML    Specifies whether to generate HTML or XML output.
                          The default value is HTML.
  -o --output path        Where to write the generated documentation. Can be
-                         either a directory or a file. The default value is
+                         either a directory or a file or server address in which
+                         case the file is uploaded there. The default value is
                          the directory where the script is executed from.
  -N --name newname       Sets the name of the documented library or resource.
  -T --title title        Sets the title of the generated HTML documentation.
@@ -50,6 +53,9 @@ import sys
 import os
 import re
 
+from httplib import HTTPConnection
+from HTMLParser import HTMLParser
+
 from robot.running import TestLibrary, UserLibrary
 from robot.serializing import Template, Namespace
 from robot.errors import DataError, Information
@@ -61,41 +67,48 @@ rawdata.PROCESS_CURDIR = False
 
 
 def main(args):
-    opts, libname = process_arguments(args)
+    try:
+        opts, libname = process_arguments(args)
+    except Information, msg:
+        exit(msg=str(msg))
+    except DataError, err:
+        exit(error=str(err))
     try:
         library = LibraryDoc(libname, opts['argument'], opts['name'])
     except DataError, err:
         exit(error=str(err))
     outpath = get_outpath(opts['output'], library.name, opts['format'])
-    if opts['format'] == 'HTML':
-        create_html_doc(library, outpath, opts['title'])
-    else:
-        create_xml_doc(library, outpath)
+    try:
+        if opts['format'] == 'HTML':
+            create_html_doc(library, outpath, opts['title'])
+        else:
+            create_xml_doc(library, outpath)
+    except DataError, err:
+        exit(error=str(err))
     exit(outpath)
 
 
 def process_arguments(args_list):
     argparser = utils.ArgumentParser(__doc__)
-    try:
-        opts, args = argparser.parse_args(args_list, pythonpath='pythonpath',
-                                          help='help', unescape='escape',
-                                          check_args=True)
-    except Information, msg:
-        exit(msg=str(msg))
-    except DataError, err:
-        exit(error=str(err))
+    opts, args = argparser.parse_args(args_list, pythonpath='pythonpath',
+                                      help='help', unescape='escape',
+                                      check_args=True)
     if not opts['output']:
         opts['output'] = '.'
-    opts['output'] = os.path.abspath(opts['output'])
     if not opts['format']:
-        opts['format'] = 'HTML'
+        opts['format'] = _uploading(opts['output']) and 'XML' or 'HTML'
     opts['format'] = opts['format'].upper()
     if opts['title']:
         opts['title'] = opts['title'].replace('_', ' ')
     return opts, args[0]
 
+def _uploading(output):
+    return output.startswith('http://')
 
 def get_outpath(path, libname, format):
+    if _uploading(path):
+        return path
+    path = os.path.abspath(path)
     if os.path.isdir(path):
         path = os.path.join(path, '%s.%s' % (libname, format.lower()))
         if os.path.exists(path):
@@ -123,9 +136,27 @@ def create_html_doc(lib, outpath, title=None):
 
 
 def create_xml_doc(lib, outpath):
+    if _uploading(outpath):
+        upload = outpath
+        outpath = '/tmp/upload.xml' # TODO use temp file module
+    else:
+        upload = None
+    _create_xml_doc(lib, outpath)
+    if upload:
+        upload_xml_doc(outpath, upload)
+        os.remove(outpath)
+
+def upload_xml_doc(file_path, host):
+    try:
+        errors = RFDocUploader().upload(file_path, host)
+    except Exception, err:
+        errors = [str(err)]
+    if errors:
+        raise DataError('Failed to upload library:\n%s' % '\n'.join(errors))
+
+def _create_xml_doc(lib, outpath):
     writer = utils.XmlWriter(outpath)
-    writer.start('keywordspec', {'name': lib.name, 'type': lib.type,
-                                 'generated': utils.get_timestamp(millissep=None)})
+    writer.start('keywordspec', {'name': lib.name, 'type': lib.type, 'generated': utils.get_timestamp(millissep=None)})
     writer.element('version', lib.version)
     writer.element('doc', lib.doc)
     _write_keywords_to_xml(writer, 'init', lib.inits)
@@ -147,6 +178,8 @@ def _write_keywords_to_xml(writer, kwtype, keywords):
 
 def exit(msg=None, error=None):
     if msg:
+        if _uploading(msg):
+            msg = 'Library successfully uploaded to ' + msg
         sys.stdout.write(msg + '\n')
     if error:
         sys.stderr.write(error + '\n\nTry --help for usage information.\n')
@@ -167,7 +200,6 @@ def LibraryDoc(libname, arguments=None, newname=None):
 
 
 class _DocHelper:
-
     _name_regexp = re.compile("`(.+?)`")
     _list_or_table_regexp = re.compile('^(\d+\.|[-*|]|\[\d+\]) .')
 
@@ -222,7 +254,6 @@ class _DocHelper:
 
 
 class PythonLibraryDoc(_DocHelper):
-
     type = 'library'
 
     def __init__(self, name, arguments=None, newname=None):
@@ -248,9 +279,8 @@ class PythonLibraryDoc(_DocHelper):
 
 
 class ResourceDoc(PythonLibraryDoc):
-
     type = 'resource'
-        
+
     def _import(self, path, arguments):
         if arguments:
             raise DataError("Resource file cannot take arguments.")
@@ -330,7 +360,6 @@ class KeywordDoc(_BaseKeywordDoc):
 if utils.is_jython:
 
     class JavaLibraryDoc(_DocHelper):
-
         type = 'library'
 
         def __init__(self, path, newname=None):
@@ -389,6 +418,77 @@ if utils.is_jython:
             self.args = [ param.name() for param in method.parameters() ]
             self.doc = self._process_doc(method.getRawCommentText())
             self.shortdoc = self.doc and self.doc.splitlines()[0] or ''
+
+
+class RFDocUploader(object):
+
+    def upload(self, file_path, host):
+        if host.startswith('http://'):
+            host = host[len('http://'):]
+        xml_file = open(file_path, 'rb')
+        conn = HTTPConnection(host)
+        try:
+            return self._upload(conn, xml_file)
+        finally:
+            xml_file.close()
+            conn.close()
+
+    def _upload(self, host, xml_file):
+        resp = self._post_multipart(host, xml_file)
+        return self._validate_success(resp)
+
+    def _post_multipart(self, conn, xml_file):
+        conn.connect()
+        content_type, body = self._encode_multipart_formdata(xml_file)
+        headers = {'User-Agent': 'libdoc.py', 'Content-Type': content_type}
+        conn.request('POST', '/upload/', body, headers)
+        return conn.getresponse()
+
+    def _encode_multipart_formdata(self, xml_file):
+        boundary = '----------ThIs_Is_tHe_bouNdaRY_$'
+        body = """--%(boundary)s
+Content-Disposition: form-data; name="override"
+
+on
+--%(boundary)s
+Content-Disposition: form-data; name="file"; filename="%(filename)s"
+Content-Type: text/xml
+
+%(content)s
+--%(boundary)s--
+""" % {'boundary': boundary, 'filename': xml_file.name, 'content': xml_file.read()}
+        content_type = 'multipart/form-data; boundary=%s' % boundary
+        return content_type, body.replace('\n', '\r\n')
+
+    def _validate_success(self, resp):
+        html = resp.read()
+        if resp.status != 200:
+            return [resp.reason.strip()]
+        if 'Successfully uploaded library' in html:
+            return None
+        return _ErrorParser(html).errors
+
+
+class _ErrorParser(HTMLParser):
+
+    def __init__(self, html):
+        HTMLParser.__init__(self)
+        self._inside_errors = False
+        self.errors = []
+        self.feed(html)
+        self.close()
+
+    def handle_starttag(self, tag, attributes):
+        if ('class', 'errorlist') in attributes:
+            self._inside_errors = True
+
+    def handle_endtag(self, tag):
+        if tag == 'ul':
+            self._inside_errors = False
+
+    def handle_data(self, data):
+        if self._inside_errors and data.strip():
+            self.errors.append(data)
 
 
 DOCUMENT_TEMPLATE = '''<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
