@@ -2,8 +2,9 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
 <head>
-<meta name="generator" content="robotidy.py" />
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="RobotIDE" /> 
+<meta name="rf-template" content="False" /> 
 <style type="text/css">
 html {
   font-family: Arial,Helvetica,sans-serif;
@@ -22,6 +23,7 @@ th, td {
   border-color: black;
   padding: 0.1em 0.2em;
   height: 1.5em;
+  width: 12em;
 }
 th {
   background-color: rgb(192, 192, 192);
@@ -29,287 +31,251 @@ th {
   border-width: 0.1em;
   font-weight: bold;
   text-align: center;
-  text-transform: capitalize;
   letter-spacing: 0.1em;
 }
-.col_name, .col_value {
-  width: 12em;
-}
-td.col_name {
+td.name {
   background-color: rgb(240, 240, 240);
-  text-transform: capitalize;
   letter-spacing: 0.1em;
+}
+td.name, th.name {
+  width: 10em;
 }
 </style>
-<title>Txt Format</title>
+<title>Txt Special Cases</title>
 </head>
 <body>
-<h1>Txt Format</h1>
-<table border="1">
+<h1>Txt Special Cases</h1>
+<table id="settings" border="1">
 <tr>
-<th class="col_name">Setting</th>
-<th class="col_value">Value</th>
-<th class="col_value">Value</th>
-<th class="col_value">Value</th>
+<th class="name">Setting</th>
+<th colspan="4">Value</th>
 </tr>
 <tr>
-<td class="col_name">Resource</td>
-<td class="col_value">../../../resources/resource.html</td>
-<td class="col_value"></td>
-<td class="col_value"></td>
+<td class="name">Suite Setup</td>
+<td>Run Tests</td>
+<td></td>
+<td>parsing/data_formats/txt_special_cases</td>
+<td></td>
 </tr>
 <tr>
-<td class="col_name">Suite Setup</td>
-<td class="col_value">Run Tests</td>
-<td class="col_value"></td>
-<td class="col_value">parsing/data_formats/txt_special_cases</td>
+<td class="name">Force Tags</td>
+<td>regression</td>
+<td>jybot</td>
+<td>pybot</td>
+<td></td>
 </tr>
 <tr>
-<td class="col_name">Force Tags</td>
-<td class="col_value">regression</td>
-<td class="col_value">jybot</td>
-<td class="col_value">pybot</td>
+<td class="name">Resource</td>
+<td>../../../resources/resource.html</td>
+<td></td>
+<td></td>
+<td></td>
 </tr>
 <tr>
-<td class="col_name"></td>
-<td class="col_value"></td>
-<td class="col_value"></td>
-<td class="col_value"></td>
-</tr>
-</table>
-<table border="1">
-<tr>
-<th class="col_name">Variable</th>
-<th class="col_value">Value</th>
-<th class="col_value">Value</th>
-<th class="col_value">Value</th>
-</tr>
-<tr>
-<td class="col_name"></td>
-<td class="col_value"></td>
-<td class="col_value"></td>
-<td class="col_value"></td>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
 </tr>
 </table>
-<table border="1">
+<table id="variables" border="1"></table>
+<table id="testcases" border="1">
 <tr>
-<th class="col_name">Test Case</th>
-<th class="col_value">Action</th>
-<th class="col_value">Argument</th>
-<th class="col_value">Argument</th>
-<th class="col_value">Argument</th>
-<th class="col_value">Argument</th>
+<th class="name">Test Case</th>
+<th>Action</th>
+<th colspan="3">Arguments</th>
 </tr>
 <tr>
-<td class="col_name">Escaping Pipe</td>
-<td class="col_value">Check Test Case</td>
-<td class="col_value">${TEST NAME}</td>
-<td class="col_value"></td>
-<td class="col_value"></td>
-<td class="col_value"></td>
+<td class="name"><a name="test_Escaping Pipe">Escaping Pipe</a></td>
+<td>Check Test Case</td>
+<td>${TEST NAME}</td>
+<td></td>
+<td></td>
 </tr>
 <tr>
-<td class="col_name"></td>
-<td class="col_value"></td>
-<td class="col_value"></td>
-<td class="col_value"></td>
-<td class="col_value"></td>
-<td class="col_value"></td>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
 </tr>
 <tr>
-<td class="col_name">Using " In Data</td>
-<td class="col_value">Check Test Case</td>
-<td class="col_value">${TEST NAME}</td>
-<td class="col_value"></td>
-<td class="col_value"></td>
-<td class="col_value"></td>
+<td class="name"><a name="test_Using &quot; In Data">Using " In Data</a></td>
+<td>Check Test Case</td>
+<td>${TEST NAME}</td>
+<td></td>
+<td></td>
 </tr>
 <tr>
-<td class="col_name"></td>
-<td class="col_value"></td>
-<td class="col_value"></td>
-<td class="col_value"></td>
-<td class="col_value"></td>
-<td class="col_value"></td>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
 </tr>
 <tr>
-<td class="col_name">Minimum Spaces</td>
-<td class="col_value">Check Test Case</td>
-<td class="col_value">${TEST NAME}</td>
-<td class="col_value"></td>
-<td class="col_value"></td>
-<td class="col_value"></td>
+<td class="name"><a name="test_Minimum Spaces">Minimum Spaces</a></td>
+<td>Check Test Case</td>
+<td>${TEST NAME}</td>
+<td></td>
+<td></td>
 </tr>
 <tr>
-<td class="col_name"></td>
-<td class="col_value"></td>
-<td class="col_value"></td>
-<td class="col_value"></td>
-<td class="col_value"></td>
-<td class="col_value"></td>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
 </tr>
 <tr>
-<td class="col_name">Spaces All Around</td>
-<td class="col_value">Check Test Case</td>
-<td class="col_value">${TEST NAME}</td>
-<td class="col_value"></td>
-<td class="col_value"></td>
-<td class="col_value"></td>
+<td class="name"><a name="test_Spaces All Around">Spaces All Around</a></td>
+<td>Check Test Case</td>
+<td>${TEST NAME}</td>
+<td></td>
+<td></td>
 </tr>
 <tr>
-<td class="col_name"></td>
-<td class="col_value"></td>
-<td class="col_value"></td>
-<td class="col_value"></td>
-<td class="col_value"></td>
-<td class="col_value"></td>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
 </tr>
 <tr>
-<td class="col_name">Extra Spaces At The End</td>
-<td class="col_value">Check Test Case</td>
-<td class="col_value">${TEST NAME}</td>
-<td class="col_value"></td>
-<td class="col_value"></td>
-<td class="col_value"></td>
+<td class="name"><a name="test_Extra Spaces At The End">Extra Spaces At The End</a></td>
+<td>Check Test Case</td>
+<td>${TEST NAME}</td>
+<td></td>
+<td></td>
 </tr>
 <tr>
-<td class="col_name"></td>
-<td class="col_value"></td>
-<td class="col_value"></td>
-<td class="col_value"></td>
-<td class="col_value"></td>
-<td class="col_value"></td>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
 </tr>
 <tr>
-<td class="col_name">Using FOR Loop With Spaces</td>
-<td class="col_value">Check Test Case</td>
-<td class="col_value">${TEST NAME}</td>
-<td class="col_value"></td>
-<td class="col_value"></td>
-<td class="col_value"></td>
+<td class="name"><a name="test_Using FOR Loop With Spaces">Using FOR Loop With Spaces</a></td>
+<td>Check Test Case</td>
+<td>${TEST NAME}</td>
+<td></td>
+<td></td>
 </tr>
 <tr>
-<td class="col_name"></td>
-<td class="col_value"></td>
-<td class="col_value"></td>
-<td class="col_value"></td>
-<td class="col_value"></td>
-<td class="col_value"></td>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
 </tr>
 <tr>
-<td class="col_name">Minimum Pipes</td>
-<td class="col_value">Check Test Case</td>
-<td class="col_value">${TEST NAME}</td>
-<td class="col_value"></td>
-<td class="col_value"></td>
-<td class="col_value"></td>
+<td class="name"><a name="test_Minimum Pipes">Minimum Pipes</a></td>
+<td>Check Test Case</td>
+<td>${TEST NAME}</td>
+<td></td>
+<td></td>
 </tr>
 <tr>
-<td class="col_name"></td>
-<td class="col_value"></td>
-<td class="col_value"></td>
-<td class="col_value"></td>
-<td class="col_value"></td>
-<td class="col_value"></td>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
 </tr>
 <tr>
-<td class="col_name">Pipes All Around</td>
-<td class="col_value">Check Test Case</td>
-<td class="col_value">${TEST NAME}</td>
-<td class="col_value"></td>
-<td class="col_value"></td>
-<td class="col_value"></td>
+<td class="name"><a name="test_Pipes All Around">Pipes All Around</a></td>
+<td>Check Test Case</td>
+<td>${TEST NAME}</td>
+<td></td>
+<td></td>
 </tr>
 <tr>
-<td class="col_name"></td>
-<td class="col_value"></td>
-<td class="col_value"></td>
-<td class="col_value"></td>
-<td class="col_value"></td>
-<td class="col_value"></td>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
 </tr>
 <tr>
-<td class="col_name">Pipes In Data</td>
-<td class="col_value">Check Test Case</td>
-<td class="col_value">${TEST NAME}</td>
-<td class="col_value"></td>
-<td class="col_value"></td>
-<td class="col_value"></td>
+<td class="name"><a name="test_Pipes In Data">Pipes In Data</a></td>
+<td>Check Test Case</td>
+<td>${TEST NAME}</td>
+<td></td>
+<td></td>
 </tr>
 <tr>
-<td class="col_name"></td>
-<td class="col_value"></td>
-<td class="col_value"></td>
-<td class="col_value"></td>
-<td class="col_value"></td>
-<td class="col_value"></td>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
 </tr>
 <tr>
-<td class="col_name">Extra Pipes At The End</td>
-<td class="col_value">Check Test Case</td>
-<td class="col_value">${TEST NAME}</td>
-<td class="col_value"></td>
-<td class="col_value"></td>
-<td class="col_value"></td>
+<td class="name"><a name="test_Extra Pipes At The End">Extra Pipes At The End</a></td>
+<td>Check Test Case</td>
+<td>${TEST NAME}</td>
+<td></td>
+<td></td>
 </tr>
 <tr>
-<td class="col_name"></td>
-<td class="col_value"></td>
-<td class="col_value"></td>
-<td class="col_value"></td>
-<td class="col_value"></td>
-<td class="col_value"></td>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
 </tr>
 <tr>
-<td class="col_name">Empty Cells In Middle</td>
-<td class="col_value">Check Test Case</td>
-<td class="col_value">${TEST NAME}</td>
-<td class="col_value"></td>
-<td class="col_value"></td>
-<td class="col_value"></td>
+<td class="name"><a name="test_Empty Cells In Middle">Empty Cells In Middle</a></td>
+<td>Check Test Case</td>
+<td>${TEST NAME}</td>
+<td></td>
+<td></td>
 </tr>
 <tr>
-<td class="col_name"></td>
-<td class="col_value"></td>
-<td class="col_value"></td>
-<td class="col_value"></td>
-<td class="col_value"></td>
-<td class="col_value"></td>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
 </tr>
 <tr>
-<td class="col_name">Using FOR Loop With Pipes</td>
-<td class="col_value">Check Test Case</td>
-<td class="col_value">${TEST NAME}</td>
-<td class="col_value"></td>
-<td class="col_value"></td>
-<td class="col_value"></td>
+<td class="name"><a name="test_Using FOR Loop With Pipes">Using FOR Loop With Pipes</a></td>
+<td>Check Test Case</td>
+<td>${TEST NAME}</td>
+<td></td>
+<td></td>
 </tr>
 <tr>
-<td class="col_name"></td>
-<td class="col_value"></td>
-<td class="col_value"></td>
-<td class="col_value"></td>
-<td class="col_value"></td>
-<td class="col_value"></td>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="test_Tabs In Txt File">Tabs In Txt File</a></td>
+<td>${tc} =</td>
+<td>Check Test Case</td>
+<td>Test With Tabs</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Check Log Message</td>
+<td>${tc.kws[0].msgs[0]}</td>
+<td>I ignore tabs</td>
+<td>DEBUG</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
 </tr>
 </table>
-<table border="1">
-<tr>
-<th class="col_name">Keyword</th>
-<th class="col_value">Action</th>
-<th class="col_value">Argument</th>
-<th class="col_value">Argument</th>
-<th class="col_value">Argument</th>
-<th class="col_value">Argument</th>
-</tr>
-<tr>
-<td class="col_name"></td>
-<td class="col_value"></td>
-<td class="col_value"></td>
-<td class="col_value"></td>
-<td class="col_value"></td>
-<td class="col_value"></td>
-</tr>
-</table>
+<table id="keywords" border="1"></table>
 </body>
 </html>
