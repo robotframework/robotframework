@@ -68,66 +68,14 @@ from robot import utils
 rawdata.PROCESS_CURDIR = False
 
 
-def main(args):
-    try:
-        opts, libname = process_arguments(args)
-    except Information, msg:
-        exit(msg=str(msg))
-    except DataError, err:
-        exit(error=str(err))
-    try:
-        library = LibraryDoc(libname, opts['argument'], opts['name'])
-    except DataError, err:
-        exit(error=str(err))
-    outpath = get_outpath(opts['output'], library.name, opts['format'])
-    try:
-        if opts['format'] == 'HTML':
-            create_html_doc(library, outpath, opts['title'])
-        else:
-            create_xml_doc(library, outpath)
-    except Exception, err:
-        exit(error=str(err))
-    exit(outpath)
-
-
-def process_arguments(args_list):
-    argparser = utils.ArgumentParser(__doc__)
-    opts, args = argparser.parse_args(args_list, pythonpath='pythonpath',
-                                      help='help', unescape='escape',
-                                      check_args=True)
-    if not opts['output']:
-        opts['output'] = '.'
-    if not opts['format']:
-        opts['format'] = _uploading(opts['output']) and 'XML' or 'HTML'
-    opts['format'] = opts['format'].upper()
-    if opts['title']:
-        opts['title'] = opts['title'].replace('_', ' ')
-    return opts, args[0]
-
 def _uploading(output):
     return output.startswith('http://')
 
-def get_outpath(path, libname, format):
-    if _uploading(path):
-        return path
-    path = os.path.abspath(path)
-    if os.path.isdir(path):
-        path = os.path.join(path, '%s.%s' % (libname, format.lower()))
-        if os.path.exists(path):
-            path = get_unique_path(path)
-    return path
-
-
-def get_unique_path(base, index=1):
-    body, ext = os.path.splitext(base)
-    path = '%s-%d%s' % (body, index, ext)
-    if os.path.exists(path):
-        path = get_unique_path(base, index+1)
-    return path
-
 
 def create_html_doc(lib, outpath, title=None):
-    if not title:
+    if title:
+        title = title.replace('_', ' ')
+    else:
         title = '%s - Documentation' % lib.name
     generated = utils.get_timestamp(daysep='-', millissep=None)
     namespace = Namespace(LIB=lib, TITLE=title, GENERATED=generated)
@@ -138,17 +86,6 @@ def create_html_doc(lib, outpath, title=None):
 
 
 def create_xml_doc(lib, outpath):
-    if _uploading(outpath):
-        uploadurl = outpath
-        outpath = os.path.join(tempfile.gettempdir(), 'libdoc_upload.xml')
-    else:
-        uploadurl = None
-    _create_xml_doc(lib, outpath)
-    if uploadurl:
-        RFDocUploader().upload(outpath, uploadurl)
-        os.remove(outpath)
-
-def _create_xml_doc(lib, outpath):
     writer = utils.XmlWriter(outpath)
     writer.start('keywordspec', {'name': lib.name, 'type': lib.type, 'generated': utils.get_timestamp(millissep=None)})
     writer.element('version', lib.version)
@@ -157,6 +94,11 @@ def _create_xml_doc(lib, outpath):
     _write_keywords_to_xml(writer, 'kw', lib.keywords)
     writer.end('keywordspec')
     writer.close()
+
+
+def upload_xml_doc(outpath, uploadurl):
+    RFDocUploader().upload(outpath, uploadurl)
+
 
 def _write_keywords_to_xml(writer, kwtype, keywords):
     for kw in keywords:
@@ -170,17 +112,6 @@ def _write_keywords_to_xml(writer, kwtype, keywords):
         writer.end(kwtype)
 
 
-def exit(msg=None, error=None):
-    if msg:
-        if _uploading(msg):
-            msg = 'Library successfully uploaded to ' + msg
-        sys.stdout.write(msg + '\n')
-    if error:
-        sys.stderr.write(error + '\n\nTry --help for usage information.\n')
-        sys.exit(1)
-    sys.exit(0)
-
-
 def LibraryDoc(libname, arguments=None, newname=None):
     ext = os.path.splitext(libname)[1].lower()
     if  ext in ('.html', '.htm', '.xhtml', '.tsv', '.txt'):
@@ -189,7 +120,8 @@ def LibraryDoc(libname, arguments=None, newname=None):
         return XmlLibraryDoc(libname, newname)
     elif ext == '.java':
         if not utils.is_jython:
-            exit(error='Documenting Java test libraries requires Jython.')
+            print 'Documenting Java test libraries requires Jython.\nTry --help for usage information.'
+            sys.exit(1)
         return JavaLibraryDoc(libname, newname)
     else:
         return PythonLibraryDoc(libname, arguments, newname)
@@ -641,4 +573,51 @@ on ${GENERATED}.
 '''
 
 if __name__ == '__main__':
-    main(sys.argv[1:])
+
+    def get_format(format, output):
+        if format:
+            return format.upper()
+        if os.path.splitext(output)[1].upper() == '.XML':
+            return 'XML'
+        return 'HTML'
+
+    def get_unique_path(base, ext, index=0):
+        if index == 0:
+            path = '%s.%s' % (base, ext)
+        else:
+            path = '%s-%d.%s' % (base, index, ext)
+        if os.path.exists(path):
+            return get_unique_path(base, ext, index+1)
+        return path
+
+
+    try:
+        argparser = utils.ArgumentParser(__doc__)
+        opts, args = argparser.parse_args(sys.argv[1:], pythonpath='pythonpath',
+                                          help='help', unescape='escape',
+                                          check_args=True)
+        libname = args[0]
+        library = LibraryDoc(libname, opts['argument'], opts['name'])
+        output = opts['output'] or '.'
+        if _uploading(output):
+            file_path = os.path.join(tempfile.gettempdir(), 'libdoc_upload.xml')
+            create_xml_doc(library, file_path)
+            upload_xml_doc(file_path, output)
+            os.remove(file_path)
+        else:
+            format = get_format(opts['format'], output)
+            if os.path.isdir(output):
+                output = get_unique_path(os.path.join(output, libname), format.lower())
+            output = os.path.abspath(output)
+            if format == 'HTML':
+                create_html_doc(library, output, opts['title'])
+            else:
+                create_xml_doc(library, output)
+    except Information, msg:
+        print msg
+    except DataError, err:
+        print err, '\n\nTry --help for usage information.'
+    except Exception, err:
+        print err
+    else:
+        print '%s -> %s' % (library.name, output)
