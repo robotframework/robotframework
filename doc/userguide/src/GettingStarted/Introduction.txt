@@ -50,7 +50,7 @@ Why Robot Framework?
   several diverse interfaces.
 
 __ `Executing test cases`_
-__ `Workflow tests vs. data-driven tests`_ 
+__ `Data-driven style`_
 __ `Tagging test cases`_
 __ `Selecting test cases`_
 __ `Test setup and teardown`_

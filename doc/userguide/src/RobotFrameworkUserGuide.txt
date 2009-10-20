@@ -107,7 +107,7 @@ Appendices
 .. _user keyword: `Creating user keywords`_
 .. _user keywords: `user keyword`_
 .. _higher-level keywords: `user keyword`_
-.. _data-driven approach: `Workflow tests vs. data-driven tests`_
+.. _data-driven approach: `Data-driven style`_
 .. _test case file: `Test case files`_
 .. _test suite directory: `Test suite directories`_
 .. _initialization file: `Initialization files`_
