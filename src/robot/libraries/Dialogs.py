@@ -54,7 +54,8 @@ def get_value_from_user(message, default_value=''):
     """Pauses the test execution and asks user to input a value.
 
     `message` is the instruction shown in the dialog. `default_value` is the
-    possible default value shown in the input field.
+    possible default value shown in the input field. Selecting 'Cancel' fails 
+    the keyword.
     """
     value = _get_value_from_user(message, default_value)
     if value is None:
