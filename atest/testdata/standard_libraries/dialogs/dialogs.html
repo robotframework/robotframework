@@ -4,14 +4,12 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="RobotIDE" /> 
+<meta name="rf-template" content="False" /> 
 <style type="text/css">
 html {
   font-family: Arial,Helvetica,sans-serif;
   background-color: white;
   color: black;
-}
-p {
-  max-width: 60em;
 }
 table {
   border-collapse: collapse;
@@ -25,6 +23,7 @@ th, td {
   border-color: black;
   padding: 0.1em 0.2em;
   height: 1.5em;
+  width: 12em;
 }
 th {
   background-color: rgb(192, 192, 192);
@@ -32,200 +31,189 @@ th {
   border-width: 0.1em;
   font-weight: bold;
   text-align: center;
-  text-transform: capitalize;
   letter-spacing: 0.1em;
 }
-/* Widths of named columns */
-col.name {
-  width: 10em;
-}
-.action, .value, .arg {
-  width: 15em;
-}
-/* Properties for the name column 
-- td:first-child should work in CSS 2.1 avare browsers (tested in Firefox)
-- col.name is against specs but works in IE
-*/
-td:first-child, col.name {
+td.name {
   background-color: rgb(240, 240, 240);
-  text-transform: capitalize;
   letter-spacing: 0.1em;
 }
-/* required for IE */
-th {
-  font-style: normal;
+td.name, th.name {
+  width: 10em;
 }
 </style>
 <title>Dialogs</title>
 </head>
 <body>
 <h1>Dialogs</h1>
-
-<table border="1">
-<colgroup span="99">
-<col class="name">
-<col class="value" span="4"></colgroup>
+<table id="settings" border="1">
 <tr>
-<th>Setting</th>
-<th>Value</th>
-<th>Value</th>
-<th>Value</th>
-<th>Value</th>
+<th class="name">Setting</th>
+<th colspan="4">Value</th>
 </tr>
 <tr>
-<td>Library</td>
+<td class="name">Library</td>
 <td>Dialogs</td>
 <td></td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-</table>
-
-<table border="1">
-<colgroup span="99">
-<col class="name">
-<col class="value" span="4"></colgroup>
-<tr>
-<th>Variable</th>
-<th>Value</th>
-<th>Value</th>
-<th>Value</th>
-<th>Value</th>
-</tr>
-<tr>
-<td></td>
+<td class="name"></td>
 <td></td>
 <td></td>
 <td></td>
 <td></td>
 </tr>
 </table>
-
-<table border="1">
-<colgroup span="99">
-<col class="name">
-<col class="action">
-<col class="arg" span="3"></colgroup>
+<table id="variables" border="1"></table>
+<table id="testcases" border="1">
 <tr>
-<th>Test Case</th>
+<th class="name">Test Case</th>
 <th>Action</th>
-<th>Argument</th>
-<th>Argument</th>
-<th>Argument</th>
+<th colspan="3">Arguments</th>
 </tr>
 <tr>
-<td>Pause Execution</td>
+<td class="name"><a name="test_Pause Execution">Pause Execution</a></td>
 <td>Pause Execution</td>
 <td>Robot Framework Acceptance test execution is now paused.\nPlease press OK to continue.</td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td></td>
 <td></td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td>Execute Manual Step</td>
+<td class="name"><a name="test_Execute Manual Step">Execute Manual Step</a></td>
 <td>[Documentation]</td>
-<td>FAIL Predefined Error Message</td>
-<td></td>
-<td></td>
+<td colspan="3">FAIL Predefined Error Message</td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Execute Manual Step</td>
 <td>Please make this step pass.</td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Execute Manual Step</td>
 <td>Please choose FAIL and then Ok to fail this test with error message 'Predefined Error Message'.</td>
 <td>Predefined Error Message</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td></td>
 <td></td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td>Get Value From User</td>
-<td>[Documentation]</td>
-<td>FAIL ValueError: No value provided by user</td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
+<td class="name"><a name="test_Get Value From User Passes">Get Value From User Passes</a></td>
 <td>${value} =</td>
 <td>Get Value From User</td>
 <td>Please input 'value' in the field to make this test pass</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Should Be Equal</td>
 <td>${value}</td>
 <td>value</td>
 <td></td>
 </tr>
 <tr>
+<td class="name"></td>
 <td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="test_Get Value From User Fails">Get Value From User Fails</a></td>
+<td>[Documentation]</td>
+<td colspan="3">FAIL ValueError: No value provided by user</td>
+</tr>
+<tr>
+<td class="name"></td>
 <td>Get Value From User</td>
 <td>Choose cancel to fail this test as expected</td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td></td>
 <td></td>
 <td></td>
 <td></td>
 </tr>
 <tr>
+<td class="name"><a name="test_Get Selection From User Passes">Get Selection From User Passes</a></td>
+<td>${value} =</td>
+<td>Get Selection From User</td>
+<td>Please select 'value' to make this test pass</td>
+<td>zip</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>...</td>
+<td>zap</td>
+<td>foo</td>
+<td>value</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>...</td>
+<td>bar</td>
 <td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Should Be Equal</td>
+<td>${value}</td>
+<td>value</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="test_Get Selection From User Fails">Get Selection From User Fails</a></td>
+<td>[Documentation]</td>
+<td colspan="3">FAIL ValueError: No value provided by user</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Get Selection From User</td>
+<td>Choose cancel to fail this test as expected</td>
+<td>zip</td>
+<td>zap</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>...</td>
+<td>foo</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
 <td></td>
 <td></td>
 <td></td>
 <td></td>
 </tr>
 </table>
-
-<table border="1">
-<colgroup span="99">
-<col class="name">
-<col class="action">
-<col class="arg" span="3"></colgroup>
-<tr>
-<th>Keyword</th>
-<th>Action</th>
-<th>Argument</th>
-<th>Argument</th>
-<th>Argument</th>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-</table>
-
+<table id="keywords" border="1"></table>
 </body>
 </html>
