@@ -114,7 +114,7 @@ def _write_keywords_to_xml(writer, kwtype, keywords):
 
 def LibraryDoc(libname, arguments=None, newname=None):
     ext = os.path.splitext(libname)[1].lower()
-    if  ext in ('.html', '.htm', '.xhtml', '.tsv', '.txt'):
+    if  ext in ('.html', '.htm', '.xhtml', '.tsv', '.txt', '.rst', '.rest'):
         return ResourceDoc(libname, arguments, newname)
     elif ext == '.xml':
         return XmlLibraryDoc(libname, newname)
@@ -607,7 +607,7 @@ if __name__ == '__main__':
         else:
             format = get_format(opts['format'], output)
             if os.path.isdir(output):
-                output = get_unique_path(os.path.join(output, libname), format.lower())
+                output = get_unique_path(os.path.join(output, library.name), format.lower())
             output = os.path.abspath(output)
             if format == 'HTML':
                 create_html_doc(library, output, opts['title'])
