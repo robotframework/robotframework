@@ -352,27 +352,45 @@ class String:
                 msg = "Given item '%s' is a string" % item
             raise AssertionError(msg)
 
-    def should_be_lowercase(self, item, msg=None):
-        """Fails if the given `item` is not in lowercase.
+    def should_be_lowercase(self, string, msg=None):
+        """Fails if the given `string` is not in lowercase.
 
         The default error message can be overridden with the optional
         `msg` argument.
-        """
-        if not isinstance(item, basestring) or not item.islower():
-            if not msg:
-                msg = "Given item '%s' is not in lowercase" % item
-            raise AssertionError(msg)
 
-    def should_be_uppercase(self, item, msg=None):
-        """Fails if the given `item` is not in uppercase.
+        For example 'string' and 'with specials!' would pass, and 'String', ''
+        and ' ' would fail.
+        """
+        if not string.islower():
+            raise AssertionError(msg or "'%s' is not lowercase" % string)
+
+    def should_be_uppercase(self, string, msg=None):
+        """Fails if the given `string` is not in uppercase.
 
         The default error message can be overridden with the optional
         `msg` argument.
+
+        For example 'STRING' and 'WITH SPECIALS!' would pass, and 'String', ''
+        and ' ' would fail.
         """
-        if not isinstance(item, basestring) or not item.isupper():
-            if not msg:
-                msg = "Given item '%s' is not in uppercase" % item
-            raise AssertionError(msg)
+        if not string.isupper():
+            raise AssertionError(msg or "'%s' is not uppercase" % string)
+
+    def should_be_titlecase(self, string, msg=None):
+        """Fails if given `string` is not title.
+
+        `string` is a titlecased string if there is at least one
+        character in it, uppercase characters only follow uncased
+        characters and lowercase characters only cased ones.
+
+        The default error message can be overridden with the optional
+        `msg` argument.
+
+        For example 'This Is Title' would pass, and 'Word In UPPER',
+        'Word In lower', '' and ' ' would fail.
+        """
+        if not string.istitle():
+            raise AssertionError(msg or "'%s' is not titlecase" % string)
 
     def _convert_to_index(self, value, name):
         if value == '':
