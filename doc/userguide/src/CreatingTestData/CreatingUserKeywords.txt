@@ -264,6 +264,14 @@ names. They are, however, case-insensitive like other keywords. For
 example the keyword in the above example could be used like
 :name:`select x from list` but not like :name:`Select x fromlist`.
 
+Embedded arguments do not support default values or variable number of
+arguments similarly as traditional arguments. Using variables when
+calling these keyword is possible but that can reduce readability. 
+Notice also that embedded arguments only work with user keywords.
+
+Embedded arguments matching too much
+''''''''''''''''''''''''''''''''''''
+
 One tricky part in using embedded arguments is making sure that the
 values used when calling the keyword match the correct arguments. This
 is a problem especially if there are multiple arguments and characters
@@ -275,10 +283,11 @@ Lakers`. One solution to this problem is quoting the arguments like
 otherwise, but sometimes it is easiest to just use positional
 arguments instead.
 
-Embedded arguments do not support default values or variable number of
-arguments similarly as traditional arguments. Using variables when
-calling these keyword is possible but that can reduce readability. 
-Notice also that embedded arguments only work with user keywords.
+The same problem occurs often when trying to create keywords `ignoring
+given/when/then/and prefixes`_. For example :name:`${name} goes home`
+matches :name:`Given Janne goes home` so that :var:`${name}` gets
+value :code:`Given Janne`. Quotes around the variable, like
+:name:`"${name}" goes home` resolve also this problem.
 
 Behavior-driven development example
 '''''''''''''''''''''''''''''''''''
@@ -297,11 +306,11 @@ of the keyword definitions`__.
    ============================  ===============================
    Add two numbers               Given I have Calculator open
    \                             When I add 2 and 40
-   \                             Then the result should be 42
+   \                             Then result should be 42
    \
    Add negative numbers          Given I have Calculator open
    \                             When I add 1 and -2
-   \                             Then the result should be -1
+   \                             Then result should be -1
    ============================  ===============================
 
 .. table:: 
@@ -317,7 +326,7 @@ of the keyword definitions`__.
    \                                       Input Number     ${number 2}
    \                                       Push Button      \=
    \
-   the result should be ${expected}        ${result} =      Get Result
+   Result should be ${expected}            ${result} =      Get Result
    \                                       Should Be Equal  ${result}     ${expected}
    ======================================  ===============  ============  ============
 
