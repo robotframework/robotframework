@@ -703,32 +703,13 @@ td.name, th.name {
 <tr>
 <td class="name"><a name="test_Should Be Lowercase Negative">Should Be Lowercase Negative</a></td>
 <td>[Documentation]</td>
-<td colspan="3">FAIL Given item 'foo and bAr' is not in lowercase</td>
+<td colspan="3">FAIL 'foo and bAr' is not lowercase</td>
 </tr>
 <tr>
 <td class="name"></td>
 <td>Should be lowercase</td>
 <td>foo and bAr</td>
 <td></td>
-<td></td>
-</tr>
-<tr>
-<td class="name"></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td class="name"><a name="test_Should Be Lowercase Negative For Boolean">Should Be Lowercase Negative For Boolean</a></td>
-<td>[Documentation]</td>
-<td colspan="3">FAIL ${ERROR MESSAGE}</td>
-</tr>
-<tr>
-<td class="name"></td>
-<td>Should be lowercase</td>
-<td>${TRUE}</td>
-<td>${ERROR MESSAGE}</td>
 <td></td>
 </tr>
 <tr>
@@ -755,7 +736,7 @@ td.name, th.name {
 <tr>
 <td class="name"><a name="test_Should Be Uppercase Negative">Should Be Uppercase Negative</a></td>
 <td>[Documentation]</td>
-<td colspan="3">FAIL Given item 'FOO AND BaR' is not in uppercase</td>
+<td colspan="3">FAIL 'FOO AND BaR' is not uppercase</td>
 </tr>
 <tr>
 <td class="name"></td>
@@ -772,15 +753,29 @@ td.name, th.name {
 <td></td>
 </tr>
 <tr>
-<td class="name"><a name="test_Should Be Uppercase Negative For Boolean">Should Be Uppercase Negative For Boolean</a></td>
-<td>[Documentation]</td>
-<td colspan="3">FAIL ${ERROR MESSAGE}</td>
+<td class="name"><a name="test_Should Be Titlecase Positive">Should Be Titlecase Positive</a></td>
+<td>Should be titlecase</td>
+<td>Foo Bar!</td>
+<td></td>
+<td></td>
 </tr>
 <tr>
 <td class="name"></td>
-<td>Should be uppercase</td>
-<td>${TRUE}</td>
-<td>${ERROR MESSAGE}</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="test_Should Be Titlecase Negative">Should Be Titlecase Negative</a></td>
+<td>[Documentation]</td>
+<td colspan="3">FAIL 'Foo and Bar' is not titlecase</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Should be titlecase</td>
+<td>Foo and Bar</td>
+<td></td>
 <td></td>
 </tr>
 <tr>
