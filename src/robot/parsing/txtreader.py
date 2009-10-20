@@ -23,7 +23,7 @@ class TxtReader(TsvReader):
     _pipe_splitter = re.compile(' \|(?= )')
 
     def _split_row(self, row):
-        row = row.rstrip()
+        row = row.rstrip().replace('\t', '  ')
         if not row.startswith('| '):
             return self._space_splitter.split(row)
         if row.endswith(' |'):
