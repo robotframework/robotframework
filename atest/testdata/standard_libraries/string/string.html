@@ -1,721 +1,796 @@
+
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html><head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<meta name="generator" content="RobotIDE">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="RobotIDE" /> 
+<meta name="rf-template" content="False" /> 
 <style type="text/css">
 html {
-font-family: Arial,Helvetica,sans-serif;
-background-color: white;
-color: black;
-}
-p {
-max-width: 60em;
+  font-family: Arial,Helvetica,sans-serif;
+  background-color: white;
+  color: black;
 }
 table {
-border-collapse: collapse;
-empty-cells: show;
-margin: 1em 0em;
-border: 0.1em solid black;
+  border-collapse: collapse;
+  empty-cells: show;
+  margin: 1em 0em;
+  border: 0.1em solid black;
 }
 th, td {
-border-style: solid;
-border-width: 0.05em 0.1em;
-border-color: black;
-padding: 0.1em 0.2em;
-height: 1.5em;
+  border-style: solid;
+  border-width: 0.05em 0.1em;
+  border-color: black;
+  padding: 0.1em 0.2em;
+  height: 1.5em;
+  width: 12em;
 }
 th {
-background-color: rgb(192, 192, 192);
-color: black;
-border-width: 0.1em;
-font-weight: bold;
-text-align: center;
-text-transform: capitalize;
-letter-spacing: 0.1em;
+  background-color: rgb(192, 192, 192);
+  color: black;
+  border-width: 0.1em;
+  font-weight: bold;
+  text-align: center;
+  letter-spacing: 0.1em;
 }
-/* Widths of named columns */
-col.name {
-width: 10em;
+td.name {
+  background-color: rgb(240, 240, 240);
+  letter-spacing: 0.1em;
 }
-.action, .value, .arg {
-width: 15em;
+td.name, th.name {
+  width: 10em;
 }
-/* Properties for the name column - td:first-child should work in CSS 2.1 avare browsers (tested in Firefox)
-- col.name is against specs but works in IE
-*/
-td:first-child, col.name {
-background-color: rgb(240, 240, 240);
-text-transform: capitalize;
-letter-spacing: 0.1em;
-}
-/* required for IE */
-th {
-font-style: normal;
-}
-</style><title>String</title></head>
+</style>
+<title>String</title>
+</head>
 <body>
 <h1>String</h1>
-<table border="1">
-<colgroup span="99"><col class="name"><col class="value" span="4"></colgroup>
-<tbody>
+<table id="settings" border="1">
 <tr>
-<th>Setting</th>
-<th>Value</th>
-<th>Value</th>
-<th>Value</th>
-<th>Value</th>
+<th class="name">Setting</th>
+<th colspan="4">Value</th>
 </tr>
-
 <tr>
-<td>Library</td>
+<td class="name">Library</td>
 <td>String</td>
 <td></td>
 <td></td>
 <td></td>
 </tr>
-
 <tr>
-<td></td>
+<td class="name"></td>
 <td></td>
 <td></td>
 <td></td>
 <td></td>
 </tr>
-</tbody>
 </table>
-<table border="1">
-<colgroup span="99"><col class="name"><col class="value" span="4"></colgroup>
-<tbody>
+<table id="variables" border="1">
 <tr>
-<th>Variable</th>
-<th>Value</th>
-<th>Value</th>
-<th>Value</th>
-<th>Value</th>
+<th class="name">Variable</th>
+<th colspan="4">Value</th>
 </tr>
 <tr>
-<td>${NSN}</td>
+<td class="name">${NSN}</td>
 <td>nokia_siemens_networks</td>
 <td></td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td>${TEXT IN COLUMNS}</td>
+<td class="name">${TEXT IN COLUMNS}</td>
 <td>robot\tframework\nis\tgood\tfor\ttesting</td>
 <td></td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td>${FIRST LINE}</td>
+<td class="name">${FIRST LINE}</td>
 <td>robot\tframework</td>
 <td></td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td>${SECOND LINE}</td>
+<td class="name">${SECOND LINE}</td>
 <td>is\tgood\tfor\ttesting</td>
 <td></td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td>${ERROR MESSAGE}</td>
+<td class="name">${ERROR MESSAGE}</td>
 <td>My error message</td>
 <td></td>
 <td></td>
 <td></td>
 </tr>
-
-
-
 <tr>
-<td></td>
+<td class="name"></td>
 <td></td>
 <td></td>
 <td></td>
 <td></td>
 </tr>
-</tbody>
 </table>
-<table border="1">
-<colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
-<tbody>
+<table id="testcases" border="1">
 <tr>
-<th>Test Case</th>
+<th class="name">Test Case</th>
 <th>Action</th>
-<th>Argument</th>
-<th>Argument</th>
-<th>Argument</th>
+<th colspan="3">Arguments</th>
 </tr>
 <tr>
-<td>Fetch From Left</td>
+<td class="name"><a name="test_Fetch From Left">Fetch From Left</a></td>
 <td>${result} =</td>
 <td>Fetch From Left</td>
 <td>${NSN}</td>
 <td>_siemens</td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Should be Equal</td>
 <td>${result}</td>
 <td>nokia</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td></td>
 <td></td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td>Fetch From Right</td>
+<td class="name"><a name="test_Fetch From Right">Fetch From Right</a></td>
 <td>${result} =</td>
 <td>Fetch From Right</td>
 <td>${NSN}</td>
 <td>_siemens_</td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Should Be Equal</td>
 <td>${result}</td>
 <td>networks</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td></td>
 <td></td>
 <td></td>
 <td></td>
 </tr>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 <tr>
-<td>Get Line</td>
+<td class="name"><a name="test_Get Line">Get Line</a></td>
 <td>${result} =</td>
 <td>Get Line</td>
 <td>${TEXT IN COLUMNS}</td>
 <td>0</td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Should be equal</td>
 <td>${result}</td>
 <td>${FIRST LINE}</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>${result} =</td>
 <td>Get Line</td>
 <td>${TEXT IN COLUMNS}</td>
 <td>1</td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Should be equal</td>
 <td>${result}</td>
 <td>${SECOND LINE}</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td></td>
 <td></td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td>Get Line Count</td>
+<td class="name"><a name="test_Get Line Count">Get Line Count</a></td>
 <td>${result} =</td>
 <td>Get Line Count</td>
 <td>${EMPTY}</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Should be equal as integers</td>
 <td>${result}</td>
 <td>${0}</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>${result} =</td>
 <td>Get Line Count</td>
 <td>${SPACE}</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Should be equal as integers</td>
 <td>${result}</td>
 <td>${1}</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>${result} =</td>
 <td>Get Line Count</td>
 <td>${TEXT IN COLUMNS}</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Should be equal as integers</td>
 <td>${result}</td>
 <td>2</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td></td>
 <td></td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td>Split To Lines</td>
+<td class="name"><a name="test_Split To Lines">Split To Lines</a></td>
 <td>@{result} =</td>
 <td>Split To Lines</td>
 <td>${TEXT IN COLUMNS}</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Length Should Be</td>
 <td>${result}</td>
 <td>2</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Should be equal</td>
 <td>@{result}[0]</td>
 <td>${FIRST LINE}</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Should be equal</td>
 <td>@{result}[1]</td>
 <td>${SECOND LINE}</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td></td>
 <td></td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td>Split To Lines With Start Only</td>
+<td class="name"><a name="test_Split To Lines With Start Only">Split To Lines With Start Only</a></td>
 <td>@{result} =</td>
 <td>Split To Lines</td>
 <td>${TEXT IN COLUMNS}</td>
 <td>1</td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Should be equal</td>
 <td>@{result}[0]</td>
 <td>${SECOND LINE}</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td></td>
 <td></td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td>Split To Lines With Start And End</td>
+<td class="name"><a name="test_Split To Lines With Start And End">Split To Lines With Start And End</a></td>
 <td>@{result} =</td>
 <td>Split To Lines</td>
 <td>${TEXT IN COLUMNS}</td>
 <td>0</td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>...</td>
 <td>1</td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Length Should Be</td>
 <td>${result}</td>
 <td>1</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Should be equal</td>
 <td>@{result}[0]</td>
 <td>${FIRST LINE}</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td></td>
 <td></td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td>Split To Lines With End Only</td>
+<td class="name"><a name="test_Split To Lines With End Only">Split To Lines With End Only</a></td>
 <td>@{result} =</td>
 <td>Split To Lines</td>
 <td>${TEXT IN COLUMNS}</td>
-<td></td>
+<td>${EMPTY}</td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>...</td>
-<td></td>
 <td>1</td>
 <td></td>
+<td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Length Should Be</td>
 <td>${result}</td>
 <td>1</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Should be equal</td>
 <td>@{result}[0]</td>
 <td>${FIRST LINE}</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td></td>
 <td></td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td>Split To Lines With Negative Values</td>
+<td class="name"><a name="test_Split To Lines With Negative Values">Split To Lines With Negative Values</a></td>
 <td>@{result} =</td>
 <td>Split To Lines</td>
 <td>${TEXT IN COLUMNS}</td>
 <td>-1</td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Length Should Be</td>
 <td>${result}</td>
 <td>1</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Should be equal</td>
 <td>@{result}[0]</td>
 <td>${SECOND LINE}</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td></td>
 <td></td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td>Split To Lines With Invalid Start</td>
+<td class="name"><a name="test_Split To Lines With Invalid Start">Split To Lines With Invalid Start</a></td>
 <td>[Documentation]</td>
-<td>FAIL ValueError:&nbsp;Cannot convert&nbsp;
-'start' argument&nbsp;'invalid' to an integer</td>
-<td></td>
-<td></td>
+<td colspan="3">FAIL ValueError: Cannot convert 'start' argument 'invalid' to an integer</td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Split To Lines</td>
 <td>${TEXT IN COLUMNS}</td>
 <td>invalid</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td></td>
 <td></td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td>Split To Lines With Invalid End</td>
+<td class="name"><a name="test_Split To Lines With Invalid End">Split To Lines With Invalid End</a></td>
 <td>[Documentation]</td>
-<td>FAIL&nbsp;ValueError: Cannot convert&nbsp;
-'end' argument&nbsp;'invalid' to an integer</td>
-<td></td>
-<td></td>
+<td colspan="3">FAIL ValueError: Cannot convert 'end' argument 'invalid' to an integer</td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Split To Lines</td>
 <td>${TEXT IN COLUMNS}</td>
-<td>0<br>
-</td>
+<td>0</td>
 <td>invalid</td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td></td>
 <td></td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td>Get Substring</td>
+<td class="name"><a name="test_Get Substring">Get Substring</a></td>
 <td>${result} =</td>
 <td>Get Substring</td>
 <td>Robot</td>
 <td>0</td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>...</td>
 <td>2</td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Should be equal</td>
 <td>${result}</td>
 <td>Ro</td>
 <td></td>
 </tr>
-<tr><td></td><td></td><td></td><td></td><td></td></tr><tr>
-<td>Get Substring With Negative Values</td>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="test_Get Substring With Negative Values">Get Substring With Negative Values</a></td>
 <td>${result} =</td>
 <td>Get Substring</td>
 <td>Hello Robot</td>
 <td>-3</td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>...</td>
 <td>-1</td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Should be equal</td>
 <td>${result}</td>
 <td>bo</td>
 <td></td>
 </tr>
-<tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Get Substring With Start Only</td><td>${result} =</td><td>Get Substring</td><td>Hello Robot</td><td>6</td></tr><tr><td></td><td>Should be equal</td><td>${result}</td><td>Robot</td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Get Substring With Empty Start</td><td>${result} =</td><td>Get Substring</td><td>Hello Robot</td><td></td></tr><tr><td></td><td>...</td><td></td><td>5</td><td></td></tr><tr><td></td><td>Should be equal</td><td>${result}</td><td>Hello</td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Get Substring With Invalid Start</td><td>[Documentation]</td><td>FAIL ValueError:&nbsp;Cannot convert&nbsp;
-'start' argument&nbsp;'invalid' to an integer</td><td></td><td></td></tr><tr><td></td><td>Get Substring</td><td>Hello Robot</td><td>invalid</td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Get Substring With Invalid End</td><td>[Documentation]</td><td>FAIL ValueError:&nbsp;Cannot convert&nbsp;
-'end' argument&nbsp;'invalid' to an integer</td><td></td><td></td></tr><tr><td></td><td>Get Substring</td><td>Hello Robot</td><td>2<br></td><td>invalid</td></tr>
-<tr><td></td><td></td><td></td><td></td><td></td></tr>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 <tr>
-<td>Should Be String Positive</td>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="test_Get Substring With Start Only">Get Substring With Start Only</a></td>
+<td>${result} =</td>
+<td>Get Substring</td>
+<td>Hello Robot</td>
+<td>6</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Should be equal</td>
+<td>${result}</td>
+<td>Robot</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="test_Get Substring With Empty Start">Get Substring With Empty Start</a></td>
+<td>${result} =</td>
+<td>Get Substring</td>
+<td>Hello Robot</td>
+<td>${EMPTY}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>...</td>
+<td>5</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Should be equal</td>
+<td>${result}</td>
+<td>Hello</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="test_Get Substring With Invalid Start">Get Substring With Invalid Start</a></td>
+<td>[Documentation]</td>
+<td colspan="3">FAIL ValueError: Cannot convert 'start' argument 'invalid' to an integer</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Get Substring</td>
+<td>Hello Robot</td>
+<td>invalid</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="test_Get Substring With Invalid End">Get Substring With Invalid End</a></td>
+<td>[Documentation]</td>
+<td colspan="3">FAIL ValueError: Cannot convert 'end' argument 'invalid' to an integer</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Get Substring</td>
+<td>Hello Robot</td>
+<td>2</td>
+<td>invalid</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="test_Should Be String Positive">Should Be String Positive</a></td>
 <td>Should be String</td>
 <td>Robot</td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Should be string</td>
 <td>${space}</td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Should be string</td>
 <td>\</td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td></td>
 <td></td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td>Should Be String Negative For Number</td>
+<td class="name"><a name="test_Should Be String Negative For Number">Should Be String Negative For Number</a></td>
 <td>[Documentation]</td>
-<td>FAIL ${ERROR MESSAGE}</td>
-<td></td>
-<td></td>
+<td colspan="3">FAIL ${ERROR MESSAGE}</td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Should be string</td>
 <td>${0}</td>
 <td>${ERROR MESSAGE}</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td></td>
 <td></td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td>Should Be String Negative For Boolean</td>
+<td class="name"><a name="test_Should Be String Negative For Boolean">Should Be String Negative For Boolean</a></td>
 <td>[Documentation]</td>
-<td>FAIL ${ERROR MESSAGE}</td>
-<td></td>
-<td></td>
+<td colspan="3">FAIL ${ERROR MESSAGE}</td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Should be string</td>
 <td>${TRUE}</td>
 <td>${ERROR MESSAGE}</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td></td>
 <td></td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td>Should Not Be String Positive</td>
+<td class="name"><a name="test_Should Not Be String Positive">Should Not Be String Positive</a></td>
 <td>Should Not Be String</td>
 <td>${0}</td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Should Not Be String</td>
 <td>${TRUE}</td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td></td>
 <td></td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td>Should Not Be String Negative</td>
+<td class="name"><a name="test_Should Not Be String Negative">Should Not Be String Negative</a></td>
 <td>[Documentation]</td>
-<td>FAIL ${ERROR MESSAGE}</td>
-<td></td>
-<td></td>
+<td colspan="3">FAIL ${ERROR MESSAGE}</td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Should not be string</td>
 <td>Nokia</td>
 <td>${ERROR MESSAGE}</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td></td>
 <td></td>
 <td></td>
 <td></td>
 </tr>
 <tr>
+<td class="name"><a name="test_Should Be Lowercase Positive">Should Be Lowercase Positive</a></td>
+<td>Should Be Lowercase</td>
+<td>foo bar</td>
 <td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
 <td></td>
 <td></td>
 <td></td>
 <td></td>
 </tr>
-</tbody>
+<tr>
+<td class="name"><a name="test_Should Be Lowercase Negative">Should Be Lowercase Negative</a></td>
+<td>[Documentation]</td>
+<td colspan="3">FAIL Given item 'foo and bAr' is not in lowercase</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Should be lowercase</td>
+<td>foo and bAr</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="test_Should Be Lowercase Negative For Boolean">Should Be Lowercase Negative For Boolean</a></td>
+<td>[Documentation]</td>
+<td colspan="3">FAIL ${ERROR MESSAGE}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Should be lowercase</td>
+<td>${TRUE}</td>
+<td>${ERROR MESSAGE}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="test_Should Be Uppercase Positive">Should Be Uppercase Positive</a></td>
+<td>Should Be Uppercase</td>
+<td>FOO BAR</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="test_Should Be Uppercase Negative">Should Be Uppercase Negative</a></td>
+<td>[Documentation]</td>
+<td colspan="3">FAIL Given item 'FOO AND BaR' is not in uppercase</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Should be uppercase</td>
+<td>FOO AND BaR</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="test_Should Be Uppercase Negative For Boolean">Should Be Uppercase Negative For Boolean</a></td>
+<td>[Documentation]</td>
+<td colspan="3">FAIL ${ERROR MESSAGE}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Should be uppercase</td>
+<td>${TRUE}</td>
+<td>${ERROR MESSAGE}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
 </table>
-<table border="1">
-<colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
-<tbody>
-<tr>
-<th>Keyword</th>
-<th>Action</th>
-<th>Argument</th>
-<th>Argument</th>
-<th>Argument</th>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-</tbody>
-</table>
-</body></html>
+<table id="keywords" border="1"></table>
+</body>
+</html>
