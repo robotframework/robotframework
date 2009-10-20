@@ -1,0 +1,34 @@
+*setting*
+Documentation   This resource file has documentation.
+...  And it is even set in multiple cells with _formatting_.
+...  \n
+...  -------------\n
+...  \n
+...  | *TABLE* |\n
+...  | ${NONEX} | ${CURDIR} | ${TEMPDIR} |\n
+...  \n
+...  tabs \t\t\t here
+
+
+*keyword*
+kw  [Documentation] foo bar `kw 2`.
+    noop
+Keyword with some "stuff" to <escape>
+    [document]  foo bar `kw` & some "stuff" to <escape> .\n baa `${a1}`
+    [arguments] ${a1}   ${a2}
+    noop
+kw 3    [arguments] ${a1}   @{a2}
+kw 4    [arguments] ${a1}=d @{a2}
+kw 5    [ documentation ]   foo bar `kw`.\n baa `${a1}` alskdj alskdjlajd
+    ... askf laskdjf asldkfj alsdkfj alsdkfjasldkfj 
+    ... askf laskdjf _asldkfj_ alsdkfj alsdkfjasldkfj 
+    ... askf *laskdjf* asldkfj `introduction` alsdkfj 
+    ... http://foo.bar\n
+    ... - aaa\n
+    ... - bbb\n
+    ... \n
+    ... -------------\n
+    ... \n
+    ... | *1* | *2* |\n
+    ... | foo | bar |\n
+curdir  [documentation] ${CURDIR}
