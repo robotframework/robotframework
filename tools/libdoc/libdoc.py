@@ -183,6 +183,8 @@ def LibraryDoc(libname, arguments=None, newname=None):
     ext = os.path.splitext(libname)[1].lower()
     if  ext in ('.html', '.htm', '.xhtml', '.tsv', '.txt'):
         return ResourceDoc(libname, arguments, newname)
+    elif ext == '.xml':
+        return XmlLibraryDoc(libname, newname)
     elif ext == '.java':
         if not utils.is_jython:
             exit(error='Documenting Java test libraries requires Jython.')
@@ -296,6 +298,18 @@ class ResourceDoc(PythonLibraryDoc):
         return []
 
 
+class XmlLibraryDoc(_DocHelper):
+
+    def __init__(self, libname, newname):
+        dom = utils.DomWrapper(libname)
+        self.name = dom.get_attr('name')
+        self.type = dom.get_attr('type')
+        self.version = dom.get_node('version').text
+        self.doc = dom.get_node('doc').text
+        self.inits = [ XmlKeywordDoc(node, self) for node in dom.get_nodes('init') ]
+        self.keywords = [ XmlKeywordDoc(node, self) for node in dom.get_nodes('kw') ]
+
+
 class _BaseKeywordDoc(_DocHelper):
 
     def __init__(self, library):
@@ -347,6 +361,16 @@ class KeywordDoc(_BaseKeywordDoc):
         if handler.type == 'user' and varargs is not None:
             varargs = varargs[2:-1]
         return required, defaults, varargs
+
+
+class XmlKeywordDoc(_BaseKeywordDoc):
+
+    def __init__(self, node, library):
+        _BaseKeywordDoc.__init__(self, library)
+        self.name = node.get_attr('name', '')
+        self.args = [ arg.text for arg in node.get_nodes('arguments/arg') ]
+        self.doc = node.get_node('doc').text
+        self.shortdoc = self.doc and self.doc.splitlines()[0] or ''
 
 
 if utils.is_jython:
