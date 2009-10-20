@@ -208,15 +208,14 @@ else:
     class _AbstractSwingDialog:
 
         def __init__(self, message):
-            self._message = message
-            self.result = self._show_dialog()
+            self.result = self._show_dialog(message)
 
-        def _show_dialog(self):
-            self._create_pane()
-            self._create_dialog_and_wait_it_to_be_closed()
+        def _show_dialog(self, message):
+            self._init_dialog(message)
+            self._show_dialog_and_wait_it_to_be_closed()
             return self._get_value()
 
-        def _create_dialog_and_wait_it_to_be_closed(self):
+        def _show_dialog_and_wait_it_to_be_closed(self):
             dialog = self._pane.createDialog(None, DIALOG_TITLE)
             dialog.setModal(0);
             dialog.show()
@@ -233,9 +232,8 @@ else:
 
     class MessageDialog(_AbstractSwingDialog):
 
-        def _create_pane(self):
-            self._pane = JOptionPane(self._message, PLAIN_MESSAGE,
-                                     DEFAULT_OPTION)
+        def _init_dialog(self, message):
+            self._pane = JOptionPane(message, PLAIN_MESSAGE, DEFAULT_OPTION)
 
 
     class InputDialog(_AbstractSwingDialog):
@@ -244,9 +242,8 @@ else:
             self._default = default
             _AbstractSwingDialog.__init__(self, message)
 
-        def _create_pane(self):
-            self._pane = JOptionPane(self._message, PLAIN_MESSAGE,
-                                     OK_CANCEL_OPTION)
+        def _init_dialog(self, message):
+            self._pane = JOptionPane(message, PLAIN_MESSAGE, OK_CANCEL_OPTION)
             self._pane.setWantsInput(True)
             self._pane.setInitialSelectionValue(self._default)
 
@@ -257,18 +254,17 @@ else:
             self._options = options
             _AbstractSwingDialog.__init__(self, message)
 
-        def _create_pane(self):
-            self._pane = JOptionPane(self._message, PLAIN_MESSAGE,
-                                     OK_CANCEL_OPTION)
+        def _init_dialog(self, message):
+            self._pane = JOptionPane(message, PLAIN_MESSAGE, OK_CANCEL_OPTION)
             self._pane.setWantsInput(True)
             self._pane.setSelectionValues(self._options)
 
 
     class PassFailDialog(_AbstractSwingDialog):
 
-        def _create_pane(self):
+        def _init_dialog(self, message):
             self._buttons = ['PASS', 'FAIL']
-            self._pane = JOptionPane(self._message, PLAIN_MESSAGE, YES_NO_OPTION,
+            self._pane = JOptionPane(message, PLAIN_MESSAGE, YES_NO_OPTION,
                                      None, self._buttons, 'PASS')
 
         def _get_value(self):
