@@ -59,7 +59,7 @@ def get_value_from_user(message, default_value=''):
     """
     value = _get_value_from_user(message, default_value)
     if value is None:
-        raise ValueError('No value provided by user')    
+        raise ValueError('No value provided by user')
     return value
 
 def get_selection_from_user(message, *values):
@@ -70,7 +70,7 @@ def get_selection_from_user(message, *values):
     """
     value = _get_selection_from_user(message, values)
     if value is None:
-        raise ValueError('No value provided by user')    
+        raise ValueError('No value provided by user')
     return value
 
 def _pause_execution(message):
@@ -87,7 +87,6 @@ def _get_selection_from_user(message, values):
 
 
 if not sys.platform.startswith('java'):
-    # CPython implementation
 
     from Tkinter import Tk, Toplevel, Frame, Listbox, Label, Button,\
                         BOTH, END, ACTIVE, LEFT
@@ -99,7 +98,7 @@ if not sys.platform.startswith('java'):
 
 
     class _AbstractTkDialog(Toplevel):
-    
+
         def __init__(self, title):
             parent = Tk()
             parent.withdraw() # Hides the main frame.
@@ -112,14 +111,14 @@ if not sys.platform.startswith('java'):
             body.pack(padx=5, pady=5, expand=1, fill=BOTH)
             self.buttonbox()
             self.grab_set()
-            if not self.initial_focus:
-                self.initial_focus = self
             self.protocol("WM_DELETE_WINDOW", self._right_clicked)
             self.geometry("+%d+%d" % (parent.winfo_rootx()+50,
-            parent.winfo_rooty()+50))
+                                      parent.winfo_rooty()+50))
+            if not self.initial_focus:
+                self.initial_focus = self
             self.initial_focus.focus_set()
             self.wait_window(self)
-    
+
         def buttonbox(self):
             box = Frame(self)
             w = Button(box, text=self._left_button, width=10, command=self._left_clicked, default=ACTIVE)
@@ -129,7 +128,7 @@ if not sys.platform.startswith('java'):
             self.bind("&lt;Return>", self._left_clicked)
             self.bind("&lt;Escape>", self._right_clicked)
             box.pack()
-    
+
         def _left_clicked(self, event=None):
             if not self.validate():
                 self.initial_focus.focus_set()
@@ -138,11 +137,11 @@ if not sys.platform.startswith('java'):
             self.update_idletasks()
             self.apply()
             self._right_clicked()
-    
+
         def _right_clicked(self, event=None):
             self.parent.focus_set()
             self.destroy()
-    
+
         def body(self, parent):
             raise NotImplementedError()
 
@@ -209,7 +208,6 @@ if not sys.platform.startswith('java'):
 
 
 else:
-    # Jython implementation
 
     import time
     from javax.swing import JOptionPane
@@ -227,7 +225,7 @@ else:
             self._create_pane()
             self._create_dialog_and_wait_it_to_be_closed()
             return self._get_value()
-    
+
         def _create_dialog_and_wait_it_to_be_closed(self):
             dialog = self._pane.createDialog(None, DIALOG_TITLE)
             dialog.setModal(0);
@@ -235,7 +233,7 @@ else:
             while dialog.isShowing():
                 time.sleep(0.2)
             dialog.dispose()
-    
+
         def _get_value(self):
             value = self._pane.getInputValue()
             if value == UNINITIALIZED_VALUE:
@@ -257,10 +255,11 @@ else:
             _AbstractSwingDialog.__init__(self, message)
 
         def _create_pane(self):
-            self._pane = JOptionPane(self._message, PLAIN_MESSAGE, 
+            self._pane = JOptionPane(self._message, PLAIN_MESSAGE,
                                      OK_CANCEL_OPTION)
             self._pane.setWantsInput(True)
             self._pane.setInitialSelectionValue(self._default)
+
 
     class _SelectionDialog(_AbstractSwingDialog):
 
@@ -269,7 +268,7 @@ else:
             _AbstractSwingDialog.__init__(self, message)
 
         def _create_pane(self):
-            self._pane = JOptionPane(self._message, PLAIN_MESSAGE, 
+            self._pane = JOptionPane(self._message, PLAIN_MESSAGE,
                                      OK_CANCEL_OPTION)
             self._pane.setWantsInput(True)
             self._pane.setSelectionValues(self._options)
@@ -287,4 +286,3 @@ else:
             if value in self._buttons and self._buttons.index(value) == 0:
                 return True
             return False
-
