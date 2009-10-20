@@ -19,34 +19,36 @@
 
 Usage:  libdoc.py [options] library_or_resource
 
-This script can generate keyword documentation in HTML or XML. The former is
-for humans and the latter mainly for RIDE and other tools.
-Documentation can be created for both test libraries and resource files.
+This script can generate keyword documentation in HTML and XML formats. The
+former is suitable for humans and the latter for RIDE, RFDoc, and other tools.
+This script can also upload XML documentation to RFDoc system.
 
-***************  TODO! Document uploading *********************
+Documentation can be created for both test libraries and resource files. All
+library and resource file types are supported, and also earlier generated
+documentation in XML format can be used as input.
 
 Options:
- -a --argument value *   Possible arguments that a library needs.         
- -f --format HTML|XML    Specifies whether to generate HTML or XML output.
-                         The default value is HTML.
- -o --output path        Where to write the generated documentation. Can be
-                         either a directory or a file or server address in which
-                         case the file is uploaded there. The default value is
-                         the directory where the script is executed from.
- -N --name newname       Sets the name of the documented library or resource.
- -T --title title        Sets the title of the generated HTML documentation.
-                         Underscores in the given title are automatically
-                         converted to spaces.
- -P --pythonpath path *  Additional path(s) to insert into PYTHONPATH.
+ -a --argument value *    Possible arguments that a library needs.
+ -f --format HTML|XML     Specifies whether to generate HTML or XML output.
+                          The default value is HTML.
+ -o --output path         Where to write the generated documentation. Can be
+                          either a directory or a file, or a URL pointing to
+                          RFDoc system's upload page. The default value is the
+                          directory where the script is executed from.
+ -N --name newname        Sets the name of the documented library or resource.
+ -T --title title         Sets the title of the generated HTML documentation.
+                          Underscores in the given title are automatically
+                          converted to spaces.
+ -P --pythonpath path *   Additional path(s) to insert into PYTHONPATH.
  -E --escape what:with *  Escapes characters which are problematic in console.
-                         'what' is the name of the character to escape and
-                         'with' is the string to escape it with.
-                         <--------------------ESCAPES------------------------>
- -h -? --help            Print this help.
+                          'what' is the name of the character to escape and
+                          'with' is the string to escape it with.
+                          <-------------------ESCAPES------------------------>
+ -h --help                Print this help.
 
-See more information from 'tools/libdoc/doc/libdoc.html folder in case of 
-source distribution or from 
-http://code.google.com/p/robotframework/wiki/LibraryDocumentationTool 
+For more information see either the tool's wiki page at
+http://code.google.com/p/robotframework/wiki/LibraryDocumentationTool
+or tools/libdoc/doc/libdoc.html file inside source distributions.
 """
 
 import sys
