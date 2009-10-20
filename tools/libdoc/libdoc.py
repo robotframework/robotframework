@@ -30,11 +30,14 @@ documentation in XML format can be used as input.
 Options:
  -a --argument value *    Possible arguments that a library needs.
  -f --format HTML|XML     Specifies whether to generate HTML or XML output.
-                          The default value is HTML.
+                          The default value is got from the output file
+                          extension and if the output is not specified the 
+                          default is HTML.
  -o --output path         Where to write the generated documentation. Can be
                           either a directory or a file, or a URL pointing to
                           RFDoc system's upload page. The default value is the
-                          directory where the script is executed from.
+                          directory where the script is executed from. If
+                          a URL is given, it must start with 'http://'.
  -N --name newname        Sets the name of the documented library or resource.
  -T --title title         Sets the title of the generated HTML documentation.
                           Underscores in the given title are automatically
