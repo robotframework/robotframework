@@ -283,15 +283,11 @@ Notice also that embedded arguments only work with user keywords.
 Behavior-driven development example
 '''''''''''''''''''''''''''''''''''
 
-The biggest benefit of having arguments as part of the keyword name is
-that it makes it easier to use higher-level sentence-like
-keywords. These keywords are especially useful when test cases act as
-requirements that also non-technical project stakeholders must
-understand. These `Executable Requirements` are a corner stone of a
-process commonly called `Acceptance Test Driven Development`_
-(ATDD). One way to write these requirements/tests is using
-`Given-When-Then` style popularized by `Behavior Driven Development`_
-(BDD), and that approach is illustrated in the example below.
+The biggest benefit of having arguments as part of the keyword name is that it
+makes it easier to use higher-level sentence-like keywords when writing test
+cases in `behavior-driven style`_. The example below illustrates this. Notice
+also that prefixes :name:`Given`, :name:`When` and :name:`Then` are `left out
+of the keyword definitions`__.
 
 .. table:: Embedded arguments used by BDD style tests
    :class: example
@@ -314,14 +310,14 @@ process commonly called `Acceptance Test Driven Development`_
    ======================================  ===============  ============  ============
                   Keyword                       Action        Argument      Argument
    ======================================  ===============  ============  ============
-   Given I have ${program} open            Start Program    ${program}
+   I have ${program} open                  Start Program    ${program}
    \
-   When I add ${number 1} and ${number 2}  Input Number     ${number 1}
+   I add ${number 1} and ${number 2}       Input Number     ${number 1}
    \                                       Push Button      \+
    \                                       Input Number     ${number 2}
    \                                       Push Button      \=
    \
-   Then the result should be ${expected}   ${result} =      Get Result
+   the result should be ${expected}        ${result} =      Get Result
    \                                       Should Be Equal  ${result}     ${expected}
    ======================================  ===============  ============  ============
 
@@ -329,6 +325,7 @@ process commonly called `Acceptance Test Driven Development`_
           how `step definitions` are created in a popular BDD tool
           called Cucumber__. 
 
+__ `Ignoring Given/When/Then/And prefixes`_
 __ http://cukes.info
 
 User keyword return values
