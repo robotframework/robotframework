@@ -340,7 +340,7 @@ class String:
             if not msg:
                 msg = "Given item '%s' is not a string" % item
             raise AssertionError(msg)
-        
+
     def should_not_be_string(self, item, msg=None):
         """Fails if the given `item` is a string.
 
@@ -350,6 +350,28 @@ class String:
         if isinstance(item, basestring):
             if not msg:
                 msg = "Given item '%s' is a string" % item
+            raise AssertionError(msg)
+
+    def should_be_lowercase(self, item, msg=None):
+        """Fails if the given `item` is not in lowercase.
+
+        The default error message can be overridden with the optional
+        `msg` argument.
+        """
+        if not isinstance(item, basestring) or not item.islower():
+            if not msg:
+                msg = "Given item '%s' is not in lowercase" % item
+            raise AssertionError(msg)
+
+    def should_be_uppercase(self, item, msg=None):
+        """Fails if the given `item` is not in uppercase.
+
+        The default error message can be overridden with the optional
+        `msg` argument.
+        """
+        if not isinstance(item, basestring) or not item.isupper():
+            if not msg:
+                msg = "Given item '%s' is not in uppercase" % item
             raise AssertionError(msg)
 
     def _convert_to_index(self, value, name):
