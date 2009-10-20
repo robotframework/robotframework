@@ -192,16 +192,23 @@ a subset of UTF-8, plain ASCII is naturally supported too.
 Plain text format
 '''''''''''''''''
 
-The plain text format technically otherwise similar to the `TSV
-format`_ but the separator used between cells is different. The TSV
+The plain text format is technically otherwise similar to the `TSV
+format`_ but the separator between cells is different. The TSV
 format uses tabs, but in the plain text format you can use either two
-or more spaces or a pipe character surrounded with spaces. In both
+or more spaces or a pipe character surrounded with spaces :code:`( | )`. In both
 cases the `test data tables`_ must have one or more asterisk before
 its name similarly as with the TSV format, and everything before the
 first table is ignored.
 
-.. note:: The plain text format is only supported in Robot Framework 2.1.1
+.. Note:: The plain text format is only supported in Robot Framework 2.1.1
           and newer.
+
+Starting from Robot Framework 2.1.2 tabs in plain text files are automatically
+converted to two spaces. This allows using a single tab as a separator similarly
+as in the TSV format. Notice, however, that in the plain text format multiple
+tabs are considered to be a single separator whereas in the TSV format every
+tab would be a separator.
+
 
 Space separated format
 ``````````````````````
@@ -221,15 +228,15 @@ because with TSV the alignment cannot be controlled.
 
    ***Test Cases***
    My Test  [Documentation]  Example test
-       Log          ${MESSAGE}  
-       My Keyword   /tmp        
+       Log         ${MESSAGE}
+       My Keyword  /tmp
 
    Another Test
-       Should Be Equal   ${MESSAGE}   Hello, world!
+       Should Be Equal  ${MESSAGE}  Hello, world!
 
    ***Keywords***
-   My Keyword   [Arguments]   ${path}
-       Directory Should Exist   ${path}
+   My Keyword  [Arguments]  ${path}
+       Directory Should Exist  ${path}
 
 Because space is used as separator, all empty cells must be escaped__
 with :var:`${EMPTY}` variable or a single backslash. Otherwise
@@ -272,15 +279,15 @@ the same separator. Pipe and space separated lines are recognized by
 the mandatory leading pipe, but the pipe at the end of the line is
 optional. There must always be at least one space on both sides of the
 pipe (except at the beginning and end) but there is no need to align
-the pipes other than if it makes the data clearer.
+the pipes other than if it makes the data more clear.
 
 There is no need to escape empty cells (other than the `trailing empty
 cells`__) when using the pipe and space separated format. The only
 thing to take into account is that possible pipes surrounded by spaces
 in the actual test data must be escaped with a backslash::
 
-  | ${file count} = | Execute Command | ls -1 *.txt \| wc -l |
-  | Should Be Equal | ${file count}   | 42                   | 
+   | ${file count} = | Execute Command | ls -1 *.txt \| wc -l |
+   | Should Be Equal | ${file count}   | 42                   |
 
 __ Escaping_
 
