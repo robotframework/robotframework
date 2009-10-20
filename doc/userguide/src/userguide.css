@@ -381,6 +381,9 @@ table.messages td.warn {
 
 /* Overridden and modified styles */
 
+cite {
+    font-size: 0.9em;
+}
 div.admonition, div.attention, div.caution, div.danger, div.error,
 div.hint, div.important, div.note, div.tip, div.warning {
     border: 0.1em solid gray;
