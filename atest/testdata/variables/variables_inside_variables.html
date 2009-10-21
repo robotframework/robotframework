@@ -1,14 +1,15 @@
+
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html><head>
-<meta name="generator" content="HTML Tidy for Cygwin (vers 1st September 2004), see www.w3.org">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="RobotIDE" /> 
+<meta name="rf-template" content="False" /> 
 <style type="text/css">
 html {
   font-family: Arial,Helvetica,sans-serif;
   background-color: white;
   color: black;
-}
-p {
-  max-width: 60em;
 }
 table {
   border-collapse: collapse;
@@ -22,6 +23,7 @@ th, td {
   border-color: black;
   padding: 0.1em 0.2em;
   height: 1.5em;
+  width: 12em;
 }
 th {
   background-color: rgb(192, 192, 192);
@@ -29,143 +31,379 @@ th {
   border-width: 0.1em;
   font-weight: bold;
   text-align: center;
-  text-transform: capitalize;
   letter-spacing: 0.1em;
 }
-/* Widths of named columns */
-col.name {
+td.name {
+  background-color: rgb(240, 240, 240);
+  letter-spacing: 0.1em;
+}
+td.name, th.name {
   width: 10em;
 }
-.action, .value, .arg {
-  width: 15em;
-}
-/* Properties for the name column 
-- td:first-child should work in CSS 2.1 avare browsers (tested in Firefox)
-- col.name is against specs but works in IE
-*/
-td:first-child, col.name {
-  background-color: rgb(240, 240, 240);
-  text-transform: capitalize;
-  letter-spacing: 0.1em;
-}
-/* required for IE */
-th {
-  font-style: normal;
-}
 </style>
-<title>Robot Test Cases</title></head>
+<title>Variables Inside Variables</title>
+</head>
 <body>
-<h1>Robot Test Cases</h1>
-<table border="1">
-<colgroup span="99"><col class="name"><col class="value" span="4"></colgroup>
-<thead>
+<h1>Variables Inside Variables</h1>
+<table id="settings" border="1">
 <tr>
-<th>Setting</th>
-<th>Value</th>
-<th>Value</th>
-<th>value</th>
-<th>Value</th>
+<th class="name">Setting</th>
+<th colspan="4">Value</th>
 </tr>
-</thead>
-<tbody>
 <tr>
-<td></td>
+<td class="name"></td>
 <td></td>
 <td></td>
 <td></td>
 <td></td>
 </tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-</tbody>
 </table>
-<table border="1">
-<colgroup span="99"><col class="name"><col class="value" span="4"></colgroup>
-<thead>
+<table id="variables" border="1">
 <tr>
-<th>Variable</th>
-<th>Value</th>
-<th>Value</th>
-<th>Value</th>
-<th>Value</th>
+<th class="name">Variable</th>
+<th colspan="4">Value</th>
 </tr>
-</thead>
-<tbody>
-
-<tr><td>${i}</td><td>1</td><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>${JOHN HOME}</td><td>/home/john</td><td></td><td></td><td></td></tr><tr>
-<td>${JANE HOME}</td>
+<tr>
+<td class="name">${i}</td>
+<td>1</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name">${JOHN HOME}</td>
+<td>/home/john</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name">${JANE HOME}</td>
 <td>/home/jane</td>
 <td></td>
 <td></td>
 <td></td>
-</tr><tr><td>@{PERSONS}</td><td>John</td><td>Jane</td><td></td><td></td></tr><tr><td>${PERSON}</td><td>@{PERSONS}[${${i}-${${${i}}}}]</td><td></td><td></td><td></td></tr><tr><td>${PERSON2}</td><td>@{PERSONS}[${i}]</td><td></td><td></td><td></td></tr><tr><td>${HOME}</td><td>${${PERSON} HOME}</td><td></td><td></td><td></td></tr><tr><td>${HOME2}</td><td>${${PERSON${2}} HOME}</td><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>${X}</td><td>x</td><td></td><td></td><td></td></tr><tr><td>${X2}</td><td>${${X}}</td><td></td><td></td><td></td></tr><tr><td>${X3}</td><td>${${${${ ${${${x}}} ${${${i}}+${i}} }}}}</td><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr>
-</tbody>
-</table>
-<table border="1">
-<colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
-<thead>
-<tr>
-<th>Test Case</th>
-<th>Action</th>
-<th>Argument</th>
-<th>Argument</th>
-<th>Argument</th>
-
-
 </tr>
-</thead>
-<tbody>
 <tr>
-<td>Variable Inside Variable In Variable Table</td>
+<td class="name">@{PERSONS}</td>
+<td>John</td>
+<td>Jane</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name">${PERSON}</td>
+<td>@{PERSONS}[${${i}-${${${i}}}}]</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name">${PERSON2}</td>
+<td>@{PERSONS}[${i}]</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name">${HOME}</td>
+<td>${${PERSON} HOME}</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name">${HOME2}</td>
+<td>${${PERSON${2}} HOME}</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name">${X}</td>
+<td>x</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name">${X2}</td>
+<td>${${X}}</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name">${X3}</td>
+<td>${${${${ ${${${x}}} ${${${i}}+${i}} }}}}</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</table>
+<table id="testcases" border="1">
+<tr>
+<th class="name">Test Case</th>
+<th>Action</th>
+<th colspan="3">Arguments</th>
+</tr>
+<tr>
+<td class="name"><a name="test_Variable Inside Variable In Variable Table">Variable Inside Variable In Variable Table</a></td>
 <td>Should Be Equal</td>
 <td>${HOME}</td>
 <td>/home/john</td>
 <td></td>
-
-
 </tr>
-<tr><td></td><td>Should Be Equal</td><td>${HOME2}</td><td>/home/jane</td><td></td></tr><tr><td></td><td>Should Be Equal</td><td>${X2}</td><td>x</td><td></td></tr><tr>
-<td></td>
+<tr>
+<td class="name"></td>
 <td>Should Be Equal</td>
-<td>${X3}</td><td>x</td>
-
+<td>${HOME2}</td>
+<td>/home/jane</td>
 <td></td>
-
-
-</tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Variable Inside Variable In Test Case</td><td>${place} =</td><td>Set Variable</td><td>home</td><td></td></tr><tr><td></td><td>Should Be Equal</td><td>${${person${2}} ${place}}</td><td>/home/jane</td><td></td></tr><tr><td></td><td>${name}</td><td>${my string}</td><td>${method}</td><td>${,} =</td></tr><tr><td></td><td>...</td><td>Set Variable</td><td>my string</td><td>a,b,c</td></tr><tr><td></td><td>...</td><td>split</td><td>,</td><td></td></tr><tr><td></td><td align="undefined" valign="undefined">${a}</td><td align="undefined" valign="undefined">${b}</td><td>${c} =</td><td></td></tr><tr><td></td><td>...</td><td>Set Variable</td><td>${ ${name} . ${method} ('${,}' ${,} ${${${i}}+${i}}) }</td><td></td></tr><tr><td></td><td>Comment</td><td>Above is:</td><td>'a,b,c' . split (',' , 2)</td><td></td></tr><tr><td></td><td>Should Be Equal</td><td>-${a}-${b}-${c}-</td><td>-a-b-c-</td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Variable Inside Variable In User Keyword</td><td>My UK</td><td>john</td><td>${${PER SON} HOME}</td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Variable Inside List Variable Index</td><td>Should Be Equal</td><td>-${PERSON}-${PERSON2}-</td><td>-John-Jane-</td><td>In variable table</td></tr><tr><td></td><td>Should Be Equal</td><td>${ @{PERSONS}[ <br>${${i}+${${${i}}}-${${i}*2}} ]<br>HOME.upper()}</td><td>/HOME/JOHN</td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Variable Inside Variable And Extended Variable Syntax</td><td>Should Be Equal</td><td>${ ${ ${PERSON${3*2-4}} HOME.split('/')[${i}] }<br>[-4:].capitalize() }</td><td>John</td><td>This is slightly complicated =)</td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Non-Existing Variable Inside Variable</td><td>[Documentation]</td><td>FAIL</td><td>Non-existing variable '\${nonex1}'</td><td></td></tr><tr><td></td><td>Log</td><td>${whatever ${nonex${${i}}}}</td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr>
-</tbody>
-</table>
-<table border="1">
-<colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
-<thead>
-<tr>
-<th>Keyword</th>
-<th>Action</th>
-<th>Argument</th>
-<th>Argument</th>
-<th>Argument</th>
 </tr>
-</thead>
-<tbody>
 <tr>
+<td class="name"></td>
+<td>Should Be Equal</td>
+<td>${X2}</td>
+<td>x</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Should Be Equal</td>
+<td>${X3}</td>
+<td>x</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="test_Variable Inside Variable In Test Case">Variable Inside Variable In Test Case</a></td>
+<td>${place} =</td>
+<td>Set Variable</td>
+<td>home</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Should Be Equal</td>
+<td>${${person${2}} ${place}}</td>
+<td>/home/jane</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${name}</td>
+<td>${my string}</td>
+<td>${method}</td>
+<td>${,} =</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>...</td>
+<td>Create List</td>
+<td>my string</td>
+<td>a,b,c</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>...</td>
+<td>split</td>
+<td>,</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${a}</td>
+<td>${b}</td>
+<td>${c} =</td>
+<td>Set Variable</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>...</td>
+<td>${ ${name} . ${method} ('${,}' ${,} ${${${i}}+${i}}) }</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Comment</td>
+<td>Above is:</td>
+<td>'a,b,c' . split (',' , 2)</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Should Be Equal</td>
+<td>-${a}-${b}-${c}-</td>
+<td>-a-b-c-</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="test_Variable Inside Variable In User Keyword">Variable Inside Variable In User Keyword</a></td>
 <td>My UK</td>
+<td>john</td>
+<td>${${PER SON} HOME}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="test_Variable Inside List Variable">Variable Inside List Variable</a></td>
+<td>${var} =</td>
+<td>Set Variable</td>
+<td>PER</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${names} =</td>
+<td>Catenate</td>
+<td>SEPARATOR=&amp;</td>
+<td>@{${var}SONS}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Should Be Equal</td>
+<td>${names}</td>
+<td>John&amp;Jane</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Should Be True</td>
+<td>@{${var}SONS} == ['John', 'Jane']</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Should Be Equal</td>
+<td>@{${VAR} SONS}[0]</td>
+<td>John</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Should Be Equal</td>
+<td>@{ ${ v a r } s o n s }[${1}]</td>
+<td>Jane</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="test_Variable Inside List Variable Index">Variable Inside List Variable Index</a></td>
+<td>Should Be Equal</td>
+<td>-${PERSON}-${PERSON2}-</td>
+<td>-John-Jane-</td>
+<td>In variable table</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Should Be Equal</td>
+<td>${ @{PERSONS}[ ${${i}+${${${i}}}-${${i}*2}} ] HOME.upper()}</td>
+<td>/HOME/JOHN</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="test_Variable Inside Variable And Extended Variable Syntax">Variable Inside Variable And Extended Variable Syntax</a></td>
+<td>Should Be Equal</td>
+<td>${ ${ ${PERSON${3*2-4}} HOME.split('/')[${i}] } [-4:].capitalize() }</td>
+<td>John</td>
+<td>This is slightly complicated =)</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="test_Non-Existing Variable Inside Variable">Non-Existing Variable Inside Variable</a></td>
+<td>[Documentation]</td>
+<td colspan="3">FAIL Non-existing variable '\${nonex1}'</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Log</td>
+<td>${whatever ${nonex${${i}}}}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</table>
+<table id="keywords" border="1">
+<tr>
+<th class="name">Keyword</th>
+<th>Action</th>
+<th colspan="3">Arguments</th>
+</tr>
+<tr>
+<td class="name"><a name="keyword_My UK">My UK</a></td>
 <td>[Arguments]</td>
 <td>${name}</td>
 <td>${exp home}</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Should Be Equal</td>
 <td>${${name} HOME}</td>
 <td>${exp home}</td>
 <td></td>
 </tr>
-</tbody>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
 </table>
-</body></html>
+</body>
+</html>
