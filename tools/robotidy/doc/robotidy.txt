@@ -36,7 +36,7 @@ Options
   -T, --title text   The title to use in the test data. By default, the title is got 
                     from the name of the output file. If the output file is
                     HTML, the title is used with "h1" and "title" tags, and with
-                    TSV, it is simply printed before the first table. Possible
+                    TSV and TXT it is simply printed before the first table. Possible
                     underscores in the given title are converted to spaces.
   -S, --style <path>  Reads styles from an external style sheet file and replaces
                     the default styles with them. If the path has a special value
@@ -87,14 +87,14 @@ Fixing comments
 RIDE is a great tool for editing the test data, but at least currently, it
 totally ignores comments. This tool can be used to convert comments, so that 
 they are not lost when the test data is opened in RIDE. Comments in Test
-Case and user keyword tables are changed, so that instead of "#", a built-in 
-:name:`Comment` keyword is used. In Variable tables, comments are converted to "@{#}"
-or "${#}". Comments in Setting tables are not fixed. 
+Case and Keyword tables are changed, so that instead of :name:`#`, a built-in 
+:name:`Comment` keyword is used. In Variable tables, comments are converted to
+:var:`@{#}` or :var:`${#}`. Comments in Setting tables are not fixed. 
 
 Examples::
 
   robotidy.py --fixcomments orig.html fixed.html
-  robotidy.py --fixcomments --inplace \*.html
+  robotidy.py --fixcomments --inplace *.html
 
 
 Fixing deprecated syntax for repeating keywords

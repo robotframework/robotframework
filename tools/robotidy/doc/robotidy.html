@@ -547,7 +547,7 @@ the extension of the output file.</td></tr>
 <tr><td>&nbsp;</td><td>The title to use in the test data. By default, the title is got
 from the name of the output file. If the output file is
 HTML, the title is used with &quot;h1&quot; and &quot;title&quot; tags, and with
-TSV, it is simply printed before the first table. Possible
+TSV and TXT it is simply printed before the first table. Possible
 underscores in the given title are converted to spaces.</td></tr>
 <tr><td class="option-group" colspan="2">
 <kbd><span class="option">-S</span>, <span class="option">--style <var>&lt;path&gt;</var></span></kbd></td>
@@ -597,13 +597,13 @@ robotidy.py --format html tests.tsv tests.xxx
 <p>RIDE is a great tool for editing the test data, but at least currently, it
 totally ignores comments. This tool can be used to convert comments, so that
 they are not lost when the test data is opened in RIDE. Comments in Test
-Case and user keyword tables are changed, so that instead of &quot;#&quot;, a built-in
-<span class="name">Comment</span> keyword is used. In Variable tables, comments are converted to &quot;&#64;{#}&quot;
-or &quot;${#}&quot;. Comments in Setting tables are not fixed.</p>
+Case and Keyword tables are changed, so that instead of <span class="name">#</span>, a built-in
+<span class="name">Comment</span> keyword is used. In Variable tables, comments are converted to
+<span class="var">&#64;{#}</span> or <span class="var">${#}</span>. Comments in Setting tables are not fixed.</p>
 <p>Examples:</p>
 <pre class="literal-block">
 robotidy.py --fixcomments orig.html fixed.html
-robotidy.py --fixcomments --inplace \*.html
+robotidy.py --fixcomments --inplace *.html
 </pre>
 </div>
 <div class="section" id="fixing-deprecated-syntax-for-repeating-keywords">
@@ -618,7 +618,7 @@ syntax with <span class="name">Repeat Keyword</span>.</p>
 </div>
 <div class="footer">
 <hr class="footer" />
-Generated on: 2009-10-21 16:35 UTC.
+Generated on: 2009-10-21 17:34 UTC.
 
 </div>
 </body>
