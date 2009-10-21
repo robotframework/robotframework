@@ -25,9 +25,9 @@ from isvar import is_var, is_scalar_var
 
 
 class Variables(utils.NormalizedDict):
-    
+
     """Represents a set of variables including both ${scalars} and @{lists}.
-    
+
     Contains methods for replacing variables from list, scalars, and strings.
     On top of ${scalar} and @{list} variables these methods handle also
     %{environment} variables.
@@ -36,10 +36,10 @@ class Variables(utils.NormalizedDict):
     _extended_var_re = re.compile(r'''
     ^\${         # start of the string and "${" 
     (.+?)        # base name (group 1)
-    ([^\s\w].+)  # extended part (any non-alphanum or space)ast once) (group 2)
+    ([^\s\w].+)  # extended part (group 2)
     }$           # "}" and end of the string
     ''', re.VERBOSE)
-    
+
     def __init__(self, identifiers=['$','@','%','&','*']):
         utils.NormalizedDict.__init__(self, ignore=['_'])
         self._identifiers = identifiers
