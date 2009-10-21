@@ -591,19 +591,19 @@ class _SerializerBase:
     def _row(self, data, indent=0, started=False):
         if not started:
             self._start_row()
-            self._empty_cell(indent)
+            self._indent(indent)
         index = indent
         for item in data:
             if index > indent and index % self._width == 0:
                 self._end_row()
                 self._start_row()
-                self._empty_cell(indent)
+                self._indent(indent)
                 self._cell('...')
                 index = indent + 1
             self._cell(item)
             index += 1
         while index % self._width != 0:
-            self._empty_cell()
+            self._padding()
             index += 1
         self._end_row()
         self._table_is_empty = self._tckw_is_empty = False
@@ -617,6 +617,12 @@ class _SerializerBase:
     def _empty_cell(self, count=1):
         for i in range(count):
             self._cell('')
+
+    def _indent(self, count=1):
+        self._empty_cell(count)
+
+    def _padding(self):
+        self._empty_cell()
 
     def _end_table(self):
         pass
@@ -694,17 +700,36 @@ class _PlainTextWriter(_SerializerBase):
     def _end_row(self):
         self._output.write('\n')
 
+
+class TsvSerializer(_PlainTextWriter):
+
     def _cell(self, data, header=False):
         if header:
             data = '*%s*' % data
-        self._output.write(data.encode('UTF-8') + self._separator)
+        self._output.write(data.encode('UTF-8') + '\t')
 
-
-class TsvSerializer(_PlainTextWriter):
-    _separator = '\t'
 
 class TxtSerializer(_PlainTextWriter):
-    _separator = '  '
+
+    def _cell(self, data, header=False):
+        if header:
+            data = '*%s*' % data
+        else:
+            data = data.strip() or '${EMPTY}'
+        self._output.write(data.encode('UTF-8') + '  ')
+
+    def _empty_row(self):
+        self._output.write('\n')
+
+    def _indent(self, count=1):
+        for i in range(count):
+            if i == 0:
+                self._output.write('  ')
+            else:
+                self._output.write('\\  ')
+
+    def _padding(self):
+        pass
 
 
 if __name__ == '__main__':
