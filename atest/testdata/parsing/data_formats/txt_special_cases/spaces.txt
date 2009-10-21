@@ -2,6 +2,7 @@
 Minimum Spaces  No Operation
 
 Spaces All Around  No Operation  
+                                   
                   Log           New Line  
 
 Extra Spaces At The End                             
@@ -15,5 +16,6 @@ Extra Spaces At The End
 
 Using FOR Loop With Spaces
          [Documentation]  FAIL  for loop executed
-         :FOR  ${value}  IN  a     a    for loop executed  for loop not executed      
-  \     Should Be Equal   ${value}   a    ${value}   no values  
+         :FOR  ${value}  IN  a     A    for loop executed
+  \     Should Be Equal   ${value.lower()}   a    ${value}   
+  \  ...  no values  
