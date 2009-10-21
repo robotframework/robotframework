@@ -289,9 +289,23 @@ td.name, th.name {
 </tr>
 <tr>
 <td class="name"></td>
+<td>${names} =</td>
+<td>Catenate</td>
+<td>SEPARATOR=&amp;</td>
+<td>@{ ${ v a r } S O N S }</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>...</td>
+<td>${names}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
 <td>Should Be Equal</td>
 <td>${names}</td>
-<td>John&amp;Jane</td>
+<td>John&amp;Jane&amp;John&amp;Jane</td>
 <td></td>
 </tr>
 <tr>
