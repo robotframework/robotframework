@@ -21,7 +21,7 @@ from robot import utils
 from robot.errors import DataError
 from robot.output import LOGGER
 
-from isvar import is_var, is_scalar_var, is_list_var
+from isvar import is_var, is_scalar_var
 
 
 class Variables(utils.NormalizedDict):
@@ -104,11 +104,20 @@ class Variables(utils.NormalizedDict):
         """
         results = []
         for item in utils.to_list(items):
-            if is_list_var(item):
-                results.extend(self[item])
+            listvar = self._replace_variables_inside_possible_list_var(item)
+            if listvar:
+                results.extend(self[listvar])
             else:
                 results.append(self.replace_scalar(item))
         return results
+    
+    def _replace_variables_inside_possible_list_var(self, item):
+        if not (utils.is_str(item) and item.startswith('@{') and item[-1] == '}'):
+            return None
+        var = VariableSplitter(item, self._identifiers)
+        if var.start != 0 or var.end != len(item):
+            return None
+        return '@{%s}' % var.get_replaced_base(self) 
         
     def replace_scalar(self, item):
         """Replaces variables from a scalar item.
