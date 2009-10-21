@@ -16,6 +16,16 @@ Extra Spaces At The End
 
 Using FOR Loop With Spaces
          [Documentation]  FAIL  for loop executed
-         :FOR  ${value}  IN  a     A    for loop executed
-  \     Should Be Equal   ${value.lower()}   a    ${value}   
-  \  ...  no values  
+
+	 ${error} =  Set Variable  \
+
+	 : FOR  ${word}  IN  for  loop  executed
+
+         \  ${error} =  Catenate  
+         ...  ${error}  ${word}
+
+         :FOR  ${value}  IN  aaa     AAA  aAa    
+         ...       AaA         AAa       aAA    ${error.strip()}
+
+         \     Should Be Equal   ${value.lower()}   aaa    ${value}   
+         \  ...  no values  
