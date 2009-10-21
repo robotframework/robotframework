@@ -84,7 +84,6 @@ Examples:
   robotidy.py --fixcomments orig.html fixed.html
   robotidy.py --fixcomments --inplace *.html
 
-
 Outputs are always written using UTF-8 encoding.
 """
 
