@@ -26,7 +26,7 @@ def create_doc():
     arguments = '''
 --time
 --stylesheet-path=../../userguide/src/userguide.css
-README
+README.txt
 README.html
 '''.split('\n')[1:-1]
 
@@ -40,7 +40,7 @@ README.html
 def create_distribution():
     outpath = create_doc()  # we are in doc/examples/c_example after this
     outdir = 'robotframework-c-example-%d%02d%02d' % time.localtime()[:3]
-    files = ['login.c', 'LoginLibrary.py', 'LoginTests.tsv', 'Makefile', 'README', 'README.html']
+    files = ['login.c', 'LoginLibrary.py', 'LoginTests.tsv', 'Makefile', 'README.txt']
     print 'Creating distribution directory ...'
     if os.path.exists(outdir):
         print 'Removing previous distribution'
