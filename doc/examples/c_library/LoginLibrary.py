@@ -9,7 +9,8 @@ to test the C code manually.
 
 from ctypes import CDLL, c_char_p
 
-LIBRARY = CDLL('./liblogin.so')
+LIBRARY = CDLL('./liblogin.so')  # On Windows we'd use '.dll'
+
 
 def check_user(username, password):
     """Validates user name and password using imported shared C library."""
