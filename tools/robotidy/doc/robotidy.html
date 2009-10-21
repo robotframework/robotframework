@@ -313,13 +313,14 @@ table.example caption, table.tsv-example caption, table.tabular caption {
     text-align: left;
     padding-bottom: 0.5em;
     font-style: italic;
-    margin: 0.5em 2em;
+    font-size: 0.9em;
+    width: 100%;
 }
 table.example th, table.example td, table.tsv-example td {
     border: 1px solid #808080;
     font-family: arial,helvetica,sans-serif;
     height: 1.2em;
-    font-size: 0.85em;
+    font-size: 0.8em;
 }
 table.example th {
     padding: 0.1em 1em;
@@ -332,7 +333,7 @@ table.tabular th, table.tabular td {
     border: 1px solid black;
     padding: 0.1em 0.3em;
     height: 1.2em;
-    font-size: 0.9em;
+    font-size: 0.8em;
 }
 table.messages {
     border: 1px solid gray;
@@ -391,12 +392,26 @@ table.messages td.warn {
 
 /* Overridden and modified styles */
 
+cite {
+    font-size: 0.95em;
+}
 div.admonition, div.attention, div.caution, div.danger, div.error,
 div.hint, div.important, div.note, div.tip, div.warning {
-    border: 2px solid gray;
+    border: 0.1em solid gray;
+    margin: 1em 2em;
+    padding: 0.7em 1em;
+    font-size: 0.9em;
 }
 pre.literal-block, pre.doctest-block {
     background: #f4f4f4;
+}
+li, li p.first {
+    margin-top: 0.3em;
+    margin-bottom: 0.3em;
+}
+div.contents li {
+    margin-top: 0em;
+    margin-bottom: 0em;
 }
 
 
@@ -521,11 +536,11 @@ option is used.</td></tr>
 </tr>
 <tr><td>&nbsp;</td><td>Fixes comments in the test data.</td></tr>
 <tr><td class="option-group" colspan="2">
-<kbd><span class="option">-F</span>, <span class="option">--format <var>&lt;html|tsv&gt;</var></span></kbd></td>
+<kbd><span class="option">-F</span>, <span class="option">--format <var>&lt;html|tsv|txt&gt;</var></span></kbd></td>
 </tr>
-<tr><td>&nbsp;</td><td>The format to use for output. Possible values are HTML and TSV.
-If this option is not used, the format is got from the
-extension of the output file.</td></tr>
+<tr><td>&nbsp;</td><td>Format to use for output. Possible values are HTML,
+TSV and TXT. If this option is not used, the format is got from
+the extension of the output file.</td></tr>
 <tr><td class="option-group" colspan="2">
 <kbd><span class="option">-T</span>, <span class="option">--title <var>text</var></span></kbd></td>
 </tr>
@@ -564,23 +579,24 @@ robotidy.py messed_up_tests.html cleaned_tests.html
 robotidy.py --style new_styles.css my_tests.html my_tests.html
 </pre>
 </div>
-<div class="section" id="changing-format-between-html-and-tsv">
-<h2>Changing format between HTML and TSV</h2>
-<p>Robot Framework supports test data in HTML and TSV formats, and this tool eases
+<div class="section" id="changing-format-between-html-tsv-and-txt">
+<h2>Changing format between HTML, TSV and TXT</h2>
+<p>Robot Framework supports test data in HTML, TSV and TXT formats, and this tool eases
 changing between formats. The input format is always determined from the
 extension of the input file. The output format is also got from the output file
 extension by default, but it can also be set explicitly with the <span class="opt">--format</span> option.</p>
 <p>Examples:</p>
 <pre class="literal-block">
 robotidy.py tests_in_html.html tests_in_tsv.tsv
+robotidy.py tests_in_tsv.tsv tests_in_txt.txt
 robotidy.py --format html tests.tsv tests.xxx
 </pre>
 </div>
 <div class="section" id="fixing-comments">
 <h2>Fixing comments</h2>
-<p>Robot IDE is a great tool for editing the test data, but at least currently, it
+<p>RIDE is a great tool for editing the test data, but at least currently, it
 totally ignores comments. This tool can be used to convert comments, so that
-they are not lost when the test data is opened in IDE. Comments in Test
+they are not lost when the test data is opened in RIDE. Comments in Test
 Case and user keyword tables are changed, so that instead of &quot;#&quot;, a built-in
 <span class="name">Comment</span> keyword is used. In Variable tables, comments are converted to &quot;&#64;{#}&quot;
 or &quot;${#}&quot;. Comments in Setting tables are not fixed.</p>
@@ -602,7 +618,7 @@ syntax with <span class="name">Repeat Keyword</span>.</p>
 </div>
 <div class="footer">
 <hr class="footer" />
-Generated on: 2009-03-20 12:34 UTC.
+Generated on: 2009-10-21 16:35 UTC.
 
 </div>
 </body>
