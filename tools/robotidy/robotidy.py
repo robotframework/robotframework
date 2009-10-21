@@ -31,10 +31,10 @@ Options:
                    are processed in place similarly as when '--inplace'
                    option is used.
  -X --fixcomments  Fix comments in the test data.
- -F --format html|tsv  
-                   Format to use for output. Possible values are HTML and TSV.
-                   If this option is not used, the format is got from the
-                   extension of the output file.     
+ -F --format html|tsv|txt
+                   Format to use for output. Possible values are HTML, TSV and
+                   TXT. If this option is not used, the format is got from the
+                   extension of the output file.
  -T --title text   Title to use in the test data. By default the title is got 
                    from the name of the output file. If the output file is
                    HTML the title is used with 'h1' and 'title' tags, and with
@@ -60,11 +60,11 @@ Examples:
   robotidy.py messed_up_tests.html cleaned_tests.html 
   robotidy.py --style new_styles.css my_tests.html my_tests.html
 
-2) Change format between HTML and TSV.
+2) Change format between HTML, TSV and TXT.
 
-Robot Framework supports test data in HTML and TSV formats and this tools makes
-changing between formats trivial. Input format is always determined from the
-extension of the input file. Output format is also got from the output file
+Robot Framework supports test data in HTML, TSV and TXT formats and this tools
+makes changing between formats trivial. Input format is always determined from
+the extension of the input file. Output format is also got from the output file
 extension by default but it can also be set explicitly with '--format' option.
 
 Examples:
@@ -248,11 +248,9 @@ class TestData:
             else:
                 format = os.path.splitext(outpath)[1][1:]
         try:
-            if format.upper() == 'TXT': 
-                raise KeyError
             return _valid_formats[format]
         except KeyError:
-            raise DataError("Invalid output format '%s'. Only HTML and TSV "
+            raise DataError("Invalid output format '%s'. Only HTML, TSV and TXT"
                             "are supported." % format)
 
     def _get_outpath_and_remove_orig(self, outpath, format):
@@ -266,6 +264,8 @@ class TestData:
         title = self._get_title(title, path)
         if format == 'TSV':
             return TsvSerializer(open(path, 'wb'), title)
+        if format == 'TXT':
+            return TxtSerializer(open(path, 'wb'), title)
         return HtmlSerializer(open(path, 'wb'), title, self._get_style(style))
 
     def _get_title(self, given_title, path):
@@ -677,8 +677,7 @@ class HtmlSerializer(_SerializerBase):
         self._row_empty = False
 
 
-class TsvSerializer(_SerializerBase):
-    
+class _PlainTextWriter(_SerializerBase):
     _setvar_width = 8 
     _tckw_width = 8
     
@@ -698,7 +697,14 @@ class TsvSerializer(_SerializerBase):
     def _cell(self, data, header=False):
         if header:
             data = '*%s*' % data
-        self._output.write(data.encode('UTF-8') + '\t')
+        self._output.write(data.encode('UTF-8') + self._separator)
+
+
+class TsvSerializer(_PlainTextWriter):
+    _separator = '\t'
+
+class TxtSerializer(_PlainTextWriter):
+    _separator = '  '
 
 
 if __name__ == '__main__':

@@ -11,6 +11,7 @@ cp $INDIR/*.* $OUTDIR
 echo "1) Tidying"
 python robotidy.py $OUTDIR/orig.html $OUTDIR/cleaned.html
 python robotidy.py $OUTDIR/orig.html $OUTDIR/cleaned.tsv
+python robotidy.py $OUTDIR/orig.html $OUTDIR/cleaned.txt
 python robotidy.py --fixcomments --title My_Cool_Title \
     $OUTDIR/orig.html $OUTDIR/fixed.html
 python robotidy.py --format tsv -X $OUTDIR/orig.html $OUTDIR/fixed.whatever
