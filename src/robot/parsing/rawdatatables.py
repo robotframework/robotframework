@@ -34,7 +34,7 @@ class _Table:
             self._row += repeat
             return
         try:
-            for i in range(repeat):
+            for _ in range(repeat):
                 self._row += 1
                 self._add_row(cells[0], cells[1:])
         except:
@@ -116,7 +116,7 @@ class ComplexItem(_Item):
         name = data[0]
         if name == '...':
             self._add_to_previous(data[1:])
-        elif name == '' and len(data) > 1 and data[1] == '...':
+        elif name in ['', '\\'] and len(data) > 1 and data[1] == '...':
             self._add_to_previous(data[2:])
         elif name.startswith('[') and name.endswith(']'):
             name = name[1:-1].strip()   # removes '[' and ']'
