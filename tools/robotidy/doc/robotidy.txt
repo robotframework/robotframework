@@ -84,9 +84,9 @@ Examples::
 Fixing comments
 ~~~~~~~~~~~~~~~
 
-Robot IDE is a great tool for editing the test data, but at least currently, it
+RIDE is a great tool for editing the test data, but at least currently, it
 totally ignores comments. This tool can be used to convert comments, so that 
-they are not lost when the test data is opened in IDE. Comments in Test 
+they are not lost when the test data is opened in RIDE. Comments in Test
 Case and user keyword tables are changed, so that instead of "#", a built-in 
 :name:`Comment` keyword is used. In Variable tables, comments are converted to "@{#}"
 or "${#}". Comments in Setting tables are not fixed. 
