@@ -3,7 +3,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<meta name="generator" content="RobotIDE" /> 
+<meta name="generator" content="RIDE" /> 
 <meta name="rf-template" content="False" /> 
 <style type="text/css">
 html {
@@ -166,7 +166,7 @@ td.name, th.name {
 <td></td>
 </tr>
 <tr>
-<td class="name"><a name="test_Set Variable With More Or Less Than One Value Is Deprecated In RF 2.1">Set Variable With More Or Less Than One Value Is Deprecated In RF 2.1</a></td>
+<td class="name"><a name="test_Set Variable With More Or Less Than One Value">Set Variable With More Or Less Than One Value</a></td>
 <td>${var1}</td>
 <td>${var2} =</td>
 <td>Set Variable</td>
@@ -225,7 +225,7 @@ td.name, th.name {
 <td class="name"></td>
 <td>Should Be Equal</td>
 <td>${emp}</td>
-<td>\</td>
+<td>${EMPTY}</td>
 <td></td>
 </tr>
 <tr>
@@ -1473,7 +1473,7 @@ td.name, th.name {
 </tr>
 <tr>
 <td class="name"><a name="test_Set Test/Suite/Global Varible In User Keyword When Variable Name Is Used As Argument">Set Test/Suite/Global Varible In User Keyword When Variable Name Is Used As Argument</a></td>
-<td>:: FOR</td>
+<td>:FOR</td>
 <td>${type}</td>
 <td>IN</td>
 <td>Test</td>
@@ -1623,7 +1623,7 @@ td.name, th.name {
 <td>[Documentation]</td>
 <td colspan="3">This obscure test is here to prevent this bug from reappearing:\n<br />
  <a href="http://code.google.com/p/robotframework/issues/detail?id=397\n">http://code.google.com/p/robotframework/issues/detail?id=397\n</a><br />
-FAIL Non-existing variable '\${nonex}'</td>
+ FAIL Non-existing variable '\${nonex}'</td>
 </tr>
 <tr>
 <td class="name"></td>
@@ -1677,7 +1677,7 @@ FAIL Non-existing variable '\${nonex}'</td>
 <tr>
 <td class="name"></td>
 <td>Set Test Variable</td>
-<td>${xxx &nbsp;${nonex}}</td>
+<td>${xxx ${nonex}}</td>
 <td>whatever</td>
 <td></td>
 </tr>
