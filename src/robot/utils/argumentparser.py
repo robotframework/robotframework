@@ -143,12 +143,20 @@ class ArgumentParser:
         return opts, args
 
     def _parse_args(self, args):
-        args = [ a.startswith('--') and a.lower() or a for a in args ]
+        args = [ self._lowercase_long_option(a) for a in args ]
         try:
             opts, args = getopt.getopt(args, self._short_opts, self._long_opts)
         except getopt.GetoptError, err:
             raise DataError(err)
         return self._process_opts(opts), self._glob_args(args)
+
+    def _lowercase_long_option(self, opt):
+        if not opt.startswith('--'):
+            return opt
+        if '=' not in opt:
+            return opt.lower()
+        opt, value = opt.split('=', 1)
+        return '%s=%s' % (opt.lower(), value)
 
     def _check_args(self, args):
         if not self._arg_limits:

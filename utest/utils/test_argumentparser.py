@@ -133,6 +133,17 @@ class TestArgumentParserParseArgs(unittest.TestCase):
             opts, args = self.ap.parse_args(inargs.split())
             assert_equals(opts['name'], 'Bar')
             assert_equals(args, ['arg'])
+            
+    def test_case_insensitive_long_options(self):
+        opts, args = self.ap.parse_args('--EsCape X:y --HELP arg'.split())
+        assert_equals(opts['escape'], ['X:y'])
+        assert_equals(opts['help'], True)
+        assert_equals(args, ['arg'])
+
+    def test_case_insensitive_long_options_with_equal_sign(self):
+        opts, args = self.ap.parse_args('--EsCape=X:y --escAPE=ZZ'.split())
+        assert_equals(opts['escape'], ['X:y', 'ZZ'])
+        assert_equals(args, [])
 
     def test_non_ascii_chars(self):
         ap = ArgumentParser(USAGE2)
