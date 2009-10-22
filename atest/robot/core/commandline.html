@@ -1,15 +1,15 @@
+
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html><head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<meta name="generator" content="RobotIDE"> 
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="RIDE" /> 
+<meta name="rf-template" content="False" /> 
 <style type="text/css">
 html {
   font-family: Arial,Helvetica,sans-serif;
   background-color: white;
   color: black;
-}
-p {
-  max-width: 60em;
 }
 table {
   border-collapse: collapse;
@@ -23,6 +23,7 @@ th, td {
   border-color: black;
   padding: 0.1em 0.2em;
   height: 1.5em;
+  width: 12em;
 }
 th {
   background-color: rgb(192, 192, 192);
@@ -30,1800 +31,1941 @@ th {
   border-width: 0.1em;
   font-weight: bold;
   text-align: center;
-  text-transform: capitalize;
   letter-spacing: 0.1em;
 }
-/* Widths of named columns */
-col.name {
+td.name {
+  background-color: rgb(240, 240, 240);
+  letter-spacing: 0.1em;
+}
+td.name, th.name {
   width: 10em;
 }
-.action, .value, .arg {
-  width: 15em;
-}
-/* Properties for the name column 
-- td:first-child should work in CSS 2.1 avare browsers (tested in Firefox)
-- col.name is against specs but works in IE
-*/
-td:first-child, col.name {
-  background-color: rgb(240, 240, 240);
-  text-transform: capitalize;
-  letter-spacing: 0.1em;
-}
-/* required for IE */
-th {
-  font-style: normal;
-}
 </style>
-<title>Commandline</title></head>
+<title>Commandline</title>
+</head>
 <body>
 <h1>Commandline</h1>
-
-<table border="1">
-<colgroup span="99"><col class="name"><col class="value" span="4"></colgroup>
-<tbody><tr>
-<th>Setting</th>
-<th>Value</th>
-<th>Value</th>
-<th>Value</th>
-<th>Value</th>
+<table id="settings" border="1">
+<tr>
+<th class="name">Setting</th>
+<th colspan="4">Value</th>
 </tr>
 <tr>
-<td>Documentation</td>
-<td>Testing Robot's command line functionality. Functionality tested
-elsewere:\n + filtering by tags (--include/--exclude)\n + filtering by
-names (--test/--suite)\n + --MonitorColors/Width\n +
---critical/--noncritical\n + --loglevel</td>
-<td></td>
-<td></td>
-<td></td>
+<td class="name">Documentation</td>
+<td colspan="4">Testing Robot's command line functionality. Functionality tested elsewere:\n<br />
+ + filtering by tags (--include/--exclude)\n<br />
+ + filtering by names (--test/--suite)\n<br />
+ + --MonitorColors/Width\n<br />
+ + --critical/--noncritical\n<br />
+ + --loglevel</td>
 </tr>
 <tr>
-<td>Default Tags</td>
-<td>regression</td>
-<td>pybot</td>
-<td>jybot</td>
-<td></td>
-</tr>
-<tr>
-<td>Suite Setup</td>
+<td class="name">Suite Setup</td>
 <td>Create Dir</td>
 <td>${MYOUTDIR}</td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td>Suite Teardown</td>
+<td class="name">Suite Teardown</td>
 <td>Remove Dir</td>
 <td>${MYOUTDIR}</td>
 <td>recursive</td>
 <td></td>
 </tr>
 <tr>
-<td>Test Setup</td>
+<td class="name">Test Setup</td>
 <td>Empty Dir</td>
 <td>${MYOUTDIR}</td>
 <td></td>
 <td></td>
 </tr>
-<tr><td></td><td></td><td></td><td></td><td></td></tr><tr>
-<td>Resource</td>
+<tr>
+<td class="name">Resource</td>
 <td>../../resources/resource.html</td>
 <td></td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td></td>
 <td></td>
 <td></td>
 <td></td>
 </tr>
-</tbody></table>
-
-<table border="1">
-<colgroup span="99"><col class="name"><col class="value" span="4"></colgroup>
-<tbody><tr>
-<th>Variable</th>
-<th>Value</th>
-<th>Value</th>
-<th>Value</th>
-<th>Value</th>
+</table>
+<table id="variables" border="1">
+<tr>
+<th class="name">Variable</th>
+<th colspan="4">Value</th>
 </tr>
 <tr>
-<td>${TESTFILE}</td>
+<td class="name">${TESTFILE}</td>
 <td>misc${/}normal.html</td>
 <td></td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td>${PASS_FAIL_FILE}</td>
+<td class="name">${PASS_FAIL_FILE}</td>
 <td>misc${/}pass_and_fail.html</td>
 <td></td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td>${DUMMY_LIB_TEST}</td>
+<td class="name">${DUMMY_LIB_TEST}</td>
 <td>misc${/}dummy_lib_test.html</td>
 <td></td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td>${UNICODE_TEST}</td>
+<td class="name">${UNICODE_TEST}</td>
 <td>misc${/}unicode.html</td>
 <td></td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td>${MYOUTDIR}</td>
+<td class="name">${MYOUTDIR}</td>
 <td>${TEMPDIR}${/}robot-test-145789</td>
 <td></td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td>${M_110_211}</td>
+<td class="name">${M_110_211}</td>
 <td>1 critical test, 1 passed, 0 failed\n 2 tests total, 1 passed, 1 failed</td>
 <td></td>
 <td></td>
 <td></td>
 </tr>
-
 <tr>
-<td></td>
+<td class="name"></td>
 <td></td>
 <td></td>
 <td></td>
 <td></td>
 </tr>
-</tbody></table>
-
-<table border="1">
-<colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
-<tbody><tr>
-<th>Test Case</th>
+</table>
+<table id="testcases" border="1">
+<tr>
+<th class="name">Test Case</th>
 <th>Action</th>
-<th>Argument</th>
-<th>Argument</th>
-<th>Argument</th>
+<th colspan="3">Arguments</th>
 </tr>
 <tr>
-<td><a name="test_OutputOnly">Output Only</a></td>
+<td class="name"><a name="test_Output Only">Output Only</a></td>
 <td>Run Tests Without Processing Output</td>
 <td>--outputdir ${MYOUTDIR} --output myoutput.xml --report none --log none</td>
 <td>${TESTFILE}</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Directory Should Contain</td>
 <td>${MYOUTDIR}</td>
 <td>myoutput.xml</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td></td>
 <td></td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td><a name="test_OutputAndReport">Output And Report</a></td>
+<td class="name"><a name="test_Output And Report">Output And Report</a></td>
 <td>Run Tests Without Processing Output</td>
 <td>--outputdir ${MYOUTDIR} --output myoutput.xml --report myreport.html --log none</td>
 <td>${TESTFILE}</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Directory Should Contain</td>
 <td>${MYOUTDIR}</td>
 <td>myoutput.xml</td>
 <td>myreport.html</td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td></td>
 <td></td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td><a name="test_OutputAndLog">Output And Log</a></td>
+<td class="name"><a name="test_Output And Log">Output And Log</a></td>
 <td>Run Tests Without Processing Output</td>
 <td>--outputdir ${MYOUTDIR} --output myoutput.xml --report none --log mylog.html --summary none</td>
 <td>${TESTFILE}</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Directory Should Contain</td>
 <td>${MYOUTDIR}</td>
 <td>mylog.html</td>
 <td>myoutput.xml</td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td></td>
 <td></td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td><a name="test_OutputAndSummary">Output And Summary</a></td>
+<td class="name"><a name="test_Output And Summary">Output And Summary</a></td>
 <td>Run Tests Without Processing Output</td>
 <td>--outputdir ${MYOUTDIR} -o myoutput.xml -r NONE -l none --summary mysummary.html</td>
 <td>${TESTFILE}</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Directory Should Contain</td>
 <td>${MYOUTDIR}</td>
 <td>myoutput.xml</td>
 <td>mysummary.html</td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td></td>
 <td></td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td><a name="test_OutputNone">Output None</a></td>
+<td class="name"><a name="test_Output None">Output None</a></td>
 <td>Run Tests Without Processing Output</td>
 <td>--outputdir ${MYOUTDIR} -o NONE -r None -l none</td>
 <td>${TESTFILE}</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>@{files} =</td>
 <td>List Directory</td>
 <td>${MYOUTDIR}</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Should Be True</td>
 <td>@{files} == ['NONE.xml']</td>
 <td></td>
 <td></td>
 </tr>
-
 <tr>
-<td></td>
+<td class="name"></td>
 <td>File Should Not Exist</td>
 <td>NONE</td>
 <td></td>
 <td></td>
 </tr>
-<tr><td></td><td>File Should Not Exist</td><td>None</td><td></td><td></td></tr><tr><td></td><td>File Should Not Exist</td><td>none</td><td></td><td></td></tr><tr>
+<tr>
+<td class="name"></td>
+<td>File Should Not Exist</td>
+<td>None</td>
 <td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>File Should Not Exist</td>
+<td>none</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
 <td></td>
 <td></td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td><a name="test_AllOutputs">All Outputs</a></td>
+<td class="name"><a name="test_All Outputs">All Outputs</a></td>
 <td>Run Tests Without Processing Output</td>
-<td>--outputdir ${MYOUTDIR} --output myoutput.xml --report myreport.html --log mylog.html -S mysummary.html</td>
+<td>--outputdir=${MYOUTDIR} --output=myoutput.xml --report=myreport.html --log=mylog.html -S mysummary.html</td>
 <td>${TESTFILE}</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Directory Should Contain</td>
 <td>${MYOUTDIR}</td>
 <td>mylog.html</td>
 <td>myoutput.xml</td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>...</td>
 <td>myreport.html</td>
 <td>mysummary.html</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td></td>
 <td></td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td><a name="test_AllOutputsWithDefaultNames">All Outputs With Default Names</a></td>
+<td class="name"><a name="test_All Outputs With Default Names">All Outputs With Default Names</a></td>
 <td>Verify ROBOT Set</td>
 <td></td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>${path} =</td>
 <td>Join Path</td>
 <td>${CURDIR}${/}..${/}..</td>
 <td>testdata</td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>...</td>
 <td>${TESTFILE}</td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Run</td>
 <td>${ROBOT} --outputdir ${MYOUTDIR} ${path}</td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Directory Should Contain</td>
 <td>${MYOUTDIR}</td>
 <td>log.html</td>
 <td>output.xml</td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>...</td>
 <td>report.html</td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td></td>
 <td></td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td><a name="test_AllOutputsWithoutExtensions">All Outputs Without Extensions</a></td>
+<td class="name"><a name="test_All Outputs Without Extensions">All Outputs Without Extensions</a></td>
 <td>Run Tests Without Processing Output</td>
 <td>--outputdir ${MYOUTDIR} -o myoutput -r myreport -l mylog -S mysummary</td>
 <td>${TESTFILE}</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Directory Should Contain</td>
 <td>${MYOUTDIR}</td>
 <td>mylog.html</td>
 <td>myoutput.xml</td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>...</td>
 <td>myreport.html</td>
 <td>mysummary.html</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td></td>
 <td></td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td><a name="test_OutputsIntoDifferentDirs">Outputs Into Different Dirs</a></td>
+<td class="name"><a name="test_Outputs Into Different Dirs">Outputs Into Different Dirs</a></td>
 <td>Run Tests Without Processing Output</td>
-<td>--outputdir ::invalid:: -o ${MYOUTDIR}${/}o${/}o.xml -r
-${MYOUTDIR}${/}r${/}r.html -l ${MYOUTDIR}${/}l${/}l.html --summary
-${MYOUTDIR}${/}s.htm</td>
+<td>--outputdir ::invalid:: -o ${MYOUTDIR}${/}o${/}o.xml -r ${MYOUTDIR}${/}r${/}r.html -l ${MYOUTDIR}${/}l${/}l.html --summary ${MYOUTDIR}${/}s.htm</td>
 <td>${TESTFILE}</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Directory Should Contain</td>
 <td>${MYOUTDIR}${/}o</td>
 <td>o.xml</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Directory Should Contain</td>
 <td>${MYOUTDIR}${/}r</td>
 <td>r.html</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Directory Should Contain</td>
 <td>${MYOUTDIR}${/}l</td>
 <td>l.html</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Directory Should Contain</td>
 <td>${MYOUTDIR}</td>
 <td>l</td>
 <td>o</td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>...</td>
 <td>r</td>
 <td>s.htm</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td></td>
 <td></td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td><a name="test_Debugfile">Debugfile</a></td>
+<td class="name"><a name="test_Debugfile">Debugfile</a></td>
 <td>Run Tests Without Processing Output</td>
-<td>--outputdir ${MYOUTDIR} --debugfile debug.txt -o o.xml</td>
+<td>--outputdir=${MYOUTDIR} --debugfile=DeBug.TXT -o o.xml</td>
 <td>${TESTFILE}</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Directory Should Contain</td>
 <td>${MYOUTDIR}</td>
-<td>debug.txt</td>
+<td>DeBug.TXT</td>
 <td>o.xml</td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>${content} =</td>
 <td>Log File</td>
-<td>${MYOUTDIR}${/}debug.txt</td>
+<td>${MYOUTDIR}${/}DeBug.TXT</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Should Contain</td>
 <td>${content}</td>
 <td>+ START SUITE: Normal</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Should Contain</td>
 <td>${content}</td>
 <td>+- START TEST: First One</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Should Contain</td>
 <td>${content}</td>
 <td>+-- START KW: BuiltIn.Log [ Test 1 ]\n Test 1\n +-- END KW: BuiltIn.Log</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Should Contain</td>
 <td>${content}</td>
 <td>+-- START KW: BuiltIn.Log [ Logging with debug level | DEBUG ]\n Logging with debug level\n +-- END KW: BuiltIn.Log</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Should Contain</td>
 <td>${content}</td>
 <td>+ END SUITE: Normal</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Check Syslog Contains</td>
-<td>DebugFile: debug.txt</td>
+<td>DebugFile: DeBug.TXT</td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>${path} =</td>
-<td>Set</td>
-<td>[:.\\w /\\\\~+-]*debug\\.txt</td>
+<td>Set Variable</td>
+<td>[:.\\w /\\\\~+-]*DeBug\\.TXT</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Check Stdout Matches Regexp</td>
 <td>(?s).*Debug: {3}${path}.*</td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Check Syslog Matches Regexp</td>
 <td>(?s).*Debug: ${path}.*</td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td></td>
 <td></td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td><a name="test_DebugfileLogLevelShouldAlwaysBeDebug">Debugfile Log Level Should Always Be Debug</a></td>
+<td class="name"><a name="test_Debugfile Log Level Should Always Be Debug">Debugfile Log Level Should Always Be Debug</a></td>
 <td>[Documentation]</td>
-<td>--loglevel option should not affect what's written to debugfile</td>
-<td></td>
-<td></td>
+<td colspan="3">--loglevel option should not affect what's written to debugfile</td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Run Tests Without Processing Output</td>
 <td>--outputdir ${MYOUTDIR} -b debug.txt -o o.xml --loglevel WARN</td>
 <td>${TESTFILE}</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>${content} =</td>
 <td>Log File</td>
 <td>${MYOUTDIR}${/}debug.txt</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Should Contain</td>
 <td>${content}</td>
 <td>+-- START KW: BuiltIn.Log [ Test 1 ]\n Test 1\n +-- END KW: BuiltIn.Log</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Should Contain</td>
 <td>${content}</td>
 <td>+-- START KW: BuiltIn.Log [ Logging with debug level | DEBUG ]\n Logging with debug level\n +-- END KW: BuiltIn.Log</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td></td>
 <td></td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td><a name="test_NoDebugfile">No Debugfile</a></td>
+<td class="name"><a name="test_No Debugfile">No Debugfile</a></td>
 <td>Run Tests Without Processing Output</td>
 <td>--outputdir ${MYOUTDIR} --debugfile None -o o.xml</td>
 <td>${TESTFILE}</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Directory Should Contain</td>
 <td>${MYOUTDIR}</td>
 <td>o.xml</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Check Syslog Contains</td>
 <td>DebugFile: NONE</td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td></td>
 <td></td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td><a name="test_InvalidDebugfile">Invalid Debugfile</a></td>
+<td class="name"><a name="test_Invalid Debugfile">Invalid Debugfile</a></td>
 <td>Create Directory</td>
 <td>${MYOUTDIR}${/}debug.txt</td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Run Tests Without Processing Output</td>
 <td>--outputdir ${MYOUTDIR} -b debug.txt</td>
 <td>${TESTFILE}</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Check Stderr Matches Regexp</td>
-<td>\\[ ERROR \\] Opening debug file '.*debug.txt' failed and writing
-to debug file is disabled. Error: (IOError|FileNotFoundException): .*</td>
+<td>\\[ ERROR \\] Opening debug file '.*debug.txt' failed and writing to debug file is disabled. Error: (IOError|FileNotFoundException): .*</td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Check Stdout Contains</td>
 <td>2 critical tests, 2 passed, 0 failed\n 2 tests total, 2 passed, 0 failed</td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td></td>
 <td></td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td><a name="test_WritingUnicodeToDebugfile">Writing Unicode To Debugfile</a></td>
+<td class="name"><a name="test_Writing Unicode To Debugfile">Writing Unicode To Debugfile</a></td>
 <td>[Documentation]</td>
-<td>Tests also that '.txt' is appended if no extension given</td>
-<td></td>
-<td></td>
+<td colspan="3">Tests also that '.txt' is appended if no extension given</td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Run Tests Without Processing Output</td>
 <td>--outputdir ${MYOUTDIR} --debugfile debug -o o.xml</td>
 <td>${UNICODE_TEST}</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Directory Should Contain</td>
 <td>${MYOUTDIR}</td>
 <td>debug.txt</td>
 <td>o.xml</td>
 </tr>
-<tr><td></td><td>Stderr Should Be Empty</td><td></td><td></td><td></td></tr><tr>
+<tr>
+<td class="name"></td>
+<td>Stderr Should Be Empty</td>
 <td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
 <td></td>
 <td></td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td><a name="test_TimestampedOutputs">Timestamped Outputs</a></td>
+<td class="name"><a name="test_Timestamped Outputs">Timestamped Outputs</a></td>
 <td>Verify ROBOT Set</td>
 <td></td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>${path} =</td>
 <td>Join Path</td>
 <td>${CURDIR}${/}..${/}..</td>
 <td>testdata</td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>...</td>
 <td>${TESTFILE}</td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Run</td>
 <td>${ROBOT} --outputdir ${MYOUTDIR} --timestampoutputs ${path}</td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>@{files} =</td>
 <td>List Directory</td>
 <td>${MYOUTDIR}</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Should Be True</td>
 <td>len(@{files}) == 3</td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td></td>
-<td>:: FOR</td>
+<td class="name"></td>
+<td>:FOR</td>
 <td>${file}</td>
 <td>IN</td>
 <td>@{files}</td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td></td>
 <td>Fail Unless Regexp Matches</td>
 <td>${file}</td>
 <td>(log|output|report)-20\\d{6}-\\d{6}\\.(html|xml)</td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td></td>
 <td></td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td><a name="test_TimestampedOutputsWithNames">Timestamped Outputs With Names</a></td>
+<td class="name"><a name="test_Timestamped Outputs With Names">Timestamped Outputs With Names</a></td>
 <td>Run Tests Without Processing Output</td>
 <td>--outputdir ${MYOUTDIR} --TimestampOutputs -l l -r r.html -o o -S s</td>
 <td>${TESTFILE}</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>@{files} =</td>
 <td>List Directory</td>
 <td>${MYOUTDIR}</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Should Be True</td>
 <td>len(@{files}) == 4</td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td></td>
-<td>:: FOR</td>
+<td class="name"></td>
+<td>:FOR</td>
 <td>${file}</td>
 <td>IN</td>
 <td>@{files}</td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td></td>
 <td>Fail Unless Regexp Matches</td>
 <td>${file}</td>
 <td>(l|o|r|s)-20\\d{6}-\\d{6}\\.(html|xml)</td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td></td>
 <td></td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td><a name="test_DefaultName,Doc&amp;Metadata">Default Name, Doc &amp; Metadata</a></td>
+<td class="name"><a name="test_Default Name, Doc &amp; Metadata">Default Name, Doc & Metadata</a></td>
 <td>[Documentation]</td>
-<td>Using default values (read from xml) for name, doc and metadata.
-Tests are run together to have less Robot runs with same input i.e. to
-have faster execution.</td>
-<td></td>
-<td></td>
+<td colspan="3">Using default values (read from xml) for name, doc and metadata. Tests are run together to have less Robot runs with same input i.e. to have faster execution.</td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Run tests</td>
 <td></td>
 <td>${TESTFILE}</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Check Names</td>
 <td>${SUITE}</td>
 <td>Normal</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Check Names</td>
 <td>${SUITE.tests[0]}</td>
 <td>First One</td>
 <td>Normal.</td>
 </tr>
-
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Check Names</td>
 <td>${SUITE.tests[1]}</td>
 <td>Second One</td>
 <td>Normal.</td>
 </tr>
-
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Should Be Equal</td>
 <td>${SUITE.doc}</td>
 <td>Normal test cases</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Should Be Equal</td>
 <td>${SUITE.metadata['Something']}</td>
 <td>My Value</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td></td>
 <td></td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td><a name="test_OverridingName,Doc&amp;MetadataAndEscaping">Overriding Name, Doc &amp; Metadata And Escaping</a></td>
+<td class="name"><a name="test_Overriding Name, Doc &amp; Metadata And Escaping">Overriding Name, Doc & Metadata And Escaping</a></td>
 <td>[Documentation]</td>
-<td>Overriding name, doc and metadata. Also testing escaping values.
-Tests are run together to have less Robot runs with same input i.e. to
-have faster execution.</td>
-<td></td>
-<td></td>
+<td colspan="3">Overriding name, doc and metadata. Also testing escaping values. Tests are run together to have less Robot runs with same input i.e. to have faster execution.</td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Run Tests</td>
-<td>-N this_is_overridden_next --name my_COOL_NameEXEX --doc
-Even_cooooler_docEXQU --metadata something:New --metadata
-two_parts:one_part -M esc:STQUDOAMHAEXEX --escape star:ST -E quest:QU
--E dollar:DO -E amp:AM -E hash:HA -E exclam:EX</td>
+<td>-N this_is_overridden_next --name my_COOL_NameEXEX --doc Even_cooooler_docEXQU --metadata something:New --metadata two_parts:one_part -M esc:STQUDOAMHAEXEX --escape star:ST -E quest:QU -E dollar:DO -E amp:AM -E hash:HA -E exclam:EX</td>
 <td>${TESTFILE}</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Check Names</td>
 <td>${SUITE}</td>
 <td>My COOL Name!!</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Check Names</td>
 <td>${SUITE.tests[0]}</td>
 <td>First One</td>
 <td>My COOL Name!!.</td>
 </tr>
-
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Check Names</td>
 <td>${SUITE.tests[1]}</td>
 <td>Second One</td>
 <td>My COOL Name!!.</td>
 </tr>
-
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Should Be Equal</td>
 <td>${SUITE.doc}</td>
 <td>Even cooooler doc!?</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Should Be Equal</td>
 <td>${SUITE.metadata['Something']}</td>
 <td>New</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Should Be Equal</td>
 <td>${SUITE.metadata['Two Parts']}</td>
 <td>one_part</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Should Be Equal</td>
 <td>${SUITE.metadata['Esc']}</td>
 <td>*?$&amp;#!!</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td></td>
 <td></td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td><a name="test_ItShouldBePossibleToUseWildcardsInDatasources">It Should Be Possible To Use Wildcards In Datasources</a></td>
+<td class="name"><a name="test_It Should Be Possible To Use Wildcards In Datasources">It Should Be Possible To Use Wildcards In Datasources</a></td>
 <td>Set Test Variable</td>
 <td>$OUTPUTNAME</td>
 <td>mysuite</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Run Tests</td>
 <td></td>
 <td>misc${/}suites${/}tsuite?.*ml</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Should Be True</td>
 <td>${SUITE.suites} == ['Tsuite 1', 'Tsuite 2', 'Tsuite 3']</td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td></td>
 <td></td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td><a name="test_NoInput">No Input</a></td>
+<td class="name"><a name="test_No Input">No Input</a></td>
 <td>Verify ROBOT Set</td>
 <td></td>
 <td></td>
 <td></td>
 </tr>
-<tr><td></td><td>${output} =</td><td>Run</td><td>${ROBOT}&nbsp;</td><td></td></tr><tr>
+<tr>
+<td class="name"></td>
+<td>${output} =</td>
+<td>Run</td>
+<td>${ROBOT}</td>
 <td></td>
+</tr>
+<tr>
+<td class="name"></td>
 <td>Should End With</td>
-<td>${output}<br></td>
+<td>${output}</td>
 <td>Expected at least 1 argument, got 0.${USAGE_TIP}</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td></td>
 <td></td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td><a name="test_InvalidOptions">Invalid Options</a></td>
+<td class="name"><a name="test_Invalid Options">Invalid Options</a></td>
 <td>Run Tests Without Processing Output</td>
 <td>--invalid option</td>
 <td>${TESTFILE}</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Check Stderr Contains</td>
 <td>option --invalid not recognized${USAGE_TIP}</td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Run Tests Without Processing Output</td>
 <td>--name valid -X</td>
 <td>${TESTFILE}</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Check Stderr Contains</td>
 <td>option -X not recognized${USAGE_TIP}</td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td></td>
 <td></td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td><a name="test_Non-ExistingInput">Non-Existing Input</a></td>
+<td class="name"><a name="test_Non-Existing Input">Non-Existing Input</a></td>
 <td>Run Tests Without Processing Output</td>
 <td></td>
 <td>nonexisting.html</td>
 <td></td>
 </tr>
-
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Check Stderr Matches Regexp</td>
 <td>.*Data source '.*[/\\\\]nonexisting\\.html' does not exist.${USAGE_TIP}</td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td></td>
 <td></td>
 <td></td>
 <td></td>
 </tr>
-
-
-
-
-
-
-
-
-
 <tr>
-<td><a name="test_InvalidOutputFiles">Invalid Output Files</a></td>
+<td class="name"><a name="test_Invalid Output Files">Invalid Output Files</a></td>
 <td>[Documentation]</td>
-<td>Test error handling when output files (output, report, etc.) are invalid (i.e. can't be opened)</td>
-<td></td>
-<td></td>
+<td colspan="3">Test error handling when output files (output, report, etc.) are invalid (i.e. can't be opened)</td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Create Dir</td>
 <td>${MYOUTDIR}${/}directory.html</td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Run Tests Without Processing Output</td>
 <td>--outputdir ${MYOUTDIR} --output directory.html --report report.html</td>
 <td>${TESTFILE}</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Check Stderr Matches Regexp</td>
 <td>\\[ ERROR \\] Opening output file '.*directory.html' for writing failed: (IOError|FileNotFoundException): .*${USAGE_TIP}</td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Run Tests Without Processing Output</td>
 <td>--outputdir ${MYOUTDIR} --summary directory.html --report myreport --log mylog.html</td>
 <td>${TESTFILE}</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Check Stderr Matches Regexp</td>
 <td>\\[ ERROR \\] Opening summary file '.*directory.html' for writing failed: IOError: .*</td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td></td>
 <td></td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td><a name="test_Pythonpath">Pythonpath</a></td>
+<td class="name"><a name="test_Pythonpath">Pythonpath</a></td>
 <td>Create File</td>
 <td>${MYOUTDIR}${/}DummyLib.py</td>
 <td>class DummyLib:\n \tdef dummykw(self):\n \t\tpass</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Tests Should Fail With Errors</td>
 <td></td>
 <td>${DUMMY_LIB_TEST}</td>
 <td>Test should pass only when PYTHONPATH is set</td>
 </tr>
-
-
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Tests Should Be Executed Without Errors</td>
 <td>--pythonpath ${MYOUTDIR}</td>
 <td>${DUMMY_LIB_TEST}</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td></td>
 <td></td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td><a name="test_PythonpathMultpipleTimesSeparatedWithColon">Pythonpath Multpiple Times Separated With Colon</a></td>
+<td class="name"><a name="test_Pythonpath Multpiple Times Separated With Colon">Pythonpath Multpiple Times Separated With Colon</a></td>
 <td>[Setup]</td>
 <td>Should Be Equal</td>
 <td>${PREV_TEST_STATUS}</td>
 <td>PASS</td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Tests Should Be Executed Without Errors</td>
 <td>-P .:${MYOUTDIR}${/}:${TEMPDIR} -P ${CURDIR}</td>
 <td>${DUMMY_LIB_TEST}</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td></td>
 <td></td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td><a name="test_PythonpathAsGlobPattern">Pythonpath As Glob Pattern</a></td>
+<td class="name"><a name="test_Pythonpath As Glob Pattern">Pythonpath As Glob Pattern</a></td>
 <td>[Setup]</td>
-<td>Should Be Equal</td><td>${PREV_TEST_STATUS}</td><td>PASS</td>
-
-
+<td>Should Be Equal</td>
+<td>${PREV_TEST_STATUS}</td>
+<td>PASS</td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Tests Should Be Executed Without Errors</td>
 <td>--pythonpath ${TEMPDIR}${/}STAR --escape star:STAR</td>
 <td>${DUMMY_LIB_TEST}</td>
 <td></td>
 </tr>
-<tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>PYTHONPATH Environment Variable</td><td>[Setup]</td><td>Should Be Equal</td><td>${PREV_TEST_STATUS}</td><td>PASS</td></tr><tr><td></td><td>Set Environment Variable</td><td>PYTHONPATH</td><td>${MYOUTDIR}${:}spam${:}eggs</td><td></td></tr><tr><td></td><td>Tests Should Be Executed Without Errors</td><td><br></td><td>${DUMMY_LIB_TEST}</td><td></td></tr><tr>
-<td></td>
+<tr>
+<td class="name"></td>
 <td></td>
 <td></td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td><a name="test_Help">Help</a></td>
+<td class="name"><a name="test_PYTHONPATH Environment Variable">PYTHONPATH Environment Variable</a></td>
+<td>[Setup]</td>
+<td>Should Be Equal</td>
+<td>${PREV_TEST_STATUS}</td>
+<td>PASS</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Set Environment Variable</td>
+<td>PYTHONPATH</td>
+<td>${MYOUTDIR}${:}spam${:}eggs</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Tests Should Be Executed Without Errors</td>
+<td></td>
+<td>${DUMMY_LIB_TEST}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="test_Help">Help</a></td>
 <td>Verify ROBOT Set</td>
 <td></td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>${rc}</td>
 <td>${help} =</td>
 <td>Run And Return Rc And Output</td>
 <td>${ROBOT} --help 2&gt;&amp;1</td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Should Be Equal</td>
 <td>${rc}</td>
 <td>${251}</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Log</td>
 <td>${help.replace(' ','_').replace('\\t','_'*8)}</td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Should Start With</td>
 <td>${help}</td>
 <td>Robot Framework -- A keyword-driven test automation framework\n\nVersion: \</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Should End With</td>
 <td>${help}</td>
 <td>\n\n# Setting syslog file before running tests.\n $ export ROBOT_SYSLOG_FILE=/tmp/syslog.txt\n $ pybot tests.html\n</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Should Not Contain</td>
 <td>${help}</td>
 <td>[ ERROR ]</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Should Not Contain</td>
 <td>${help}</td>
 <td>[ WARN \ ]</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>@{lines} =</td>
 <td>Evaluate</td>
 <td>[ '%d\\t%s' % (len(line), line) for line in ${help.splitlines()} ]</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Log Many</td>
 <td>@{lines}</td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>@{long} =</td>
 <td>Evaluate</td>
 <td>[ line for line in ${help.splitlines()} if len(line) - line.count('\\\\') &gt;= 80 ]</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Log Many</td>
 <td>@{long}</td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Should Be True</td>
 <td>len(@{long}) == 0</td>
 <td>Too long (&gt;= 80) help line(s)</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>${help2} =</td>
 <td>Run</td>
 <td>${ROBOT} -h 2&gt;&amp;1</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Should Be Equal</td>
 <td>${help}</td>
 <td>${help2}</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td></td>
 <td></td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td><a name="test_Version">Version</a></td>
+<td class="name"><a name="test_Version">Version</a></td>
 <td>Verify ROBOT Set</td>
 <td></td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>${rc}</td>
 <td>${output} =</td>
 <td>Run And Return Rc And Output</td>
 <td>${ROBOT} --version 2&gt;&amp;1</td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Should Be Equal</td>
 <td>${rc}</td>
 <td>${251}</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Log</td>
 <td>${output}</td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Should Match Regexp</td>
 <td>${output}</td>
 <td>^Robot Framework (2\\.\\d+(\\.\\d+)?( (alpha|beta|rc)\\d*)?|trunk 2\\d{7}) \\([PJ]ython 2\\.[\\d.]+ on .+\\)$</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Should Be True</td>
 <td>len("${output}") &lt; 80</td>
 <td>Too long version line</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td></td>
 <td></td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td><a name="test_ArgumentFile">Argument File</a></td>
+<td class="name"><a name="test_Argument File">Argument File</a></td>
 <td>Create File</td>
 <td>${MYOUTDIR}${/}a.txt</td>
-<td>--name From_Arg_File\n<br>-M Meta1:argfile\n # comment line\n --outputdir ${MYOUTDIR}\n --log none\n -r none\n \n --output output.xml\n \n</td>
+<td>--name From_Arg_File\n -M Meta1:argfile\n # comment line\n --outputdir ${MYOUTDIR}\n --log none\n -r none\n \n --output output.xml\n \n</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Run Tests Without Processing Output</td>
 <td>--metadata Meta2:cli --argumentfile ${MYOUTDIR}${/}a.txt</td>
 <td>${TESTFILE}</td>
 <td></td>
 </tr>
 <tr>
+<td class="name"></td>
+<td>Process Output</td>
+<td>${MYOUTDIR}${/}output.xml</td>
 <td></td>
-<td>Process Output<br></td><td>${MYOUTDIR}${/}output.xml</td>
-<td></td>
-
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Should Be Equal</td>
 <td>${SUITE.name}</td>
 <td>From Arg File</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Should Be True</td>
 <td>${SUITE.metadata} == {'Meta1': 'argfile', 'Meta2': 'cli', 'Something': 'My Value'}</td>
 <td></td>
 <td></td>
 </tr>
-<tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Two argument Files</td><td>Create File</td><td>${MYOUTDIR}${/}a1.txt</td><td>--metadata A1:Value1</td><td></td></tr><tr><td></td><td>Create File</td><td>${MYOUTDIR}${/}a2.txt</td><td>--metadata A2:Value2</td><td></td></tr><tr><td></td><td>Run Tests</td><td>-A ${MYOUTDIR}${/}a1.txt<br>--argumentfile&nbsp;${MYOUTDIR}${/}a2.txt</td><td>${TESTFILE}</td><td></td></tr><tr><td></td><td>Should Be Equal</td><td>${SUITE.metadata['A1']}</td><td>Value1</td><td></td></tr><tr><td></td><td>Should Be Equal</td><td>${SUITE.metadata['A2']}</td><td>Value2</td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Recursive Argument File</td><td>Create File</td><td>${MYOUTDIR}${/}first.txt</td><td>--metadata First:1\n<br>--argumentfile ${MYOUTDIR}${/}second.txt</td><td></td></tr><tr><td></td><td>Create File</td><td>${MYOUTDIR}${/}second.txt</td><td>--metadata Second:2</td><td></td></tr><tr><td></td><td>Run Tests</td><td>-A ${MYOUTDIR}${/}first.txt<br></td><td>${TESTFILE}</td><td></td></tr><tr><td></td><td>Should Be Equal</td><td>${SUITE.metadata['First']}</td><td>1</td><td></td></tr><tr><td></td><td>Should Be Equal</td><td>${SUITE.metadata['Second']}</td><td>2</td><td></td></tr><tr>
-<td></td>
+<tr>
+<td class="name"></td>
 <td></td>
 <td></td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td><a name="test_SettingSyslogFile">Setting Syslog File</a></td>
+<td class="name"><a name="test_Two Argument Files">Two Argument Files</a></td>
+<td>Create File</td>
+<td>${MYOUTDIR}${/}a1.txt</td>
+<td>--metadata A1:Value1</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Create File</td>
+<td>${MYOUTDIR}${/}a2.txt</td>
+<td>--metadata A2:Value2</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Run Tests</td>
+<td>-A ${MYOUTDIR}${/}a1.txt --argumentfile ${MYOUTDIR}${/}a2.txt</td>
+<td>${TESTFILE}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Should Be Equal</td>
+<td>${SUITE.metadata['A1']}</td>
+<td>Value1</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Should Be Equal</td>
+<td>${SUITE.metadata['A2']}</td>
+<td>Value2</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="test_Recursive Argument File">Recursive Argument File</a></td>
+<td>Create File</td>
+<td>${MYOUTDIR}${/}first.txt</td>
+<td>--metadata First:1\n --argumentfile ${MYOUTDIR}${/}second.txt</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Create File</td>
+<td>${MYOUTDIR}${/}second.txt</td>
+<td>--metadata Second:2</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Run Tests</td>
+<td>-A ${MYOUTDIR}${/}first.txt</td>
+<td>${TESTFILE}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Should Be Equal</td>
+<td>${SUITE.metadata['First']}</td>
+<td>1</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Should Be Equal</td>
+<td>${SUITE.metadata['Second']}</td>
+<td>2</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="test_Setting Syslog File">Setting Syslog File</a></td>
 <td>Set Environment Variable</td>
 <td>ROBOT_SYSLOG_FILE</td>
 <td>${MYOUTDIR}${/}syslog.txt</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Run Some Tests</td>
 <td></td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>File Should Not Be Empty</td>
 <td>${MYOUTDIR}${/}syslog.txt</td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Remove File</td>
 <td>${MYOUTDIR}${/}syslog.txt</td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Delete Environment Variable</td>
 <td>ROBOT_SYSLOG_FILE</td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Run Some Tests</td>
 <td></td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>File Should Not Exist</td>
 <td>${MYOUTDIR}${/}syslog.txt</td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Set Environment Variable</td>
 <td>ROBOT_SYSLOG_FILE</td>
 <td>none</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Run Some Tests</td>
 <td></td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>File Should Not Exist</td>
 <td>${MYOUTDIR}${/}syslog.txt</td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Set Environment Variable</td>
 <td>ROBOT_SYSLOG_FILE</td>
 <td>${MYOUTDIR}</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>${output} =</td>
 <td>Run Some Tests</td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Should Contain</td>
 <td>${output}</td>
 <td>] Opening syslog file '${MYOUTDIR}' failed: IOError:</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td></td>
 <td></td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td><a name="test_SettingSyslogLevel">Setting Syslog Level</a></td>
-<td>[Teardown]</td>
-<td>Set Environment Variable</td>
-<td>ROBOT_SYSLOG_LEVEL</td>
-<td>INFO</td>
-</tr>
-<tr>
-<td></td>
+<td class="name"><a name="test_Setting Syslog Level">Setting Syslog Level</a></td>
 <td>Set Environment Variable</td>
 <td>ROBOT_SYSLOG_FILE</td>
 <td>${MYOUTDIR}${/}syslog.txt</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Set Environment Variable</td>
 <td>ROBOT_SYSLOG_LEVEL</td>
 <td>INFO</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Run Some Tests</td>
 <td></td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>${size1} =</td>
 <td>Get File Size</td>
 <td>${MYOUTDIR}${/}syslog.txt</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Set Environment Variable</td>
 <td>ROBOT_SYSLOG_LEVEL</td>
 <td>DEBUG</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Run Some Tests</td>
 <td></td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>${size2} =</td>
 <td>Get File Size</td>
 <td>${MYOUTDIR}${/}syslog.txt</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Should Be True</td>
 <td>0 &lt; ${size1} &lt; ${size2}</td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Set Environment Variable</td>
 <td>ROBOT_SYSLOG_LEVEL</td>
 <td>warn</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Run Some Tests</td>
 <td></td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>File Should Be Empty</td>
 <td>${MYOUTDIR}${/}syslog.txt</td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Set Environment Variable</td>
 <td>ROBOT_SYSLOG_LEVEL</td>
 <td>invalid</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>${output} =</td>
 <td>Run Some Tests</td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Should Contain</td>
 <td>${output}</td>
 <td>] Opening syslog file '${MYOUTDIR}${/}syslog.txt' failed: Invalid log level 'invalid'</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
+<td>[Teardown]</td>
+<td>Set Environment Variable</td>
+<td>ROBOT_SYSLOG_LEVEL</td>
+<td>INFO</td>
+</tr>
+<tr>
+<td class="name"></td>
 <td></td>
 <td></td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td><a name="test_CorrectRCWhenInvalidData">Correct RC When Invalid Data</a></td>
+<td class="name"><a name="test_Correct RC When Invalid Data">Correct RC When Invalid Data</a></td>
 <td>${rc} =</td>
 <td>Run And Return Rc</td>
 <td>${ROBOT} 2&gt;&amp;1</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Should Be Equal</td>
 <td>${rc}</td>
 <td>${252}</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td></td>
 <td></td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td><a name="test_InvalidArgumentValues">Invalid Argument Values</a></td>
+<td class="name"><a name="test_Invalid Argument Values">Invalid Argument Values</a></td>
 <td>Run Tests</td>
 <td>--splitoutputs not_int --suitestatlevel not_int --tagstatlink less_than_3x_:</td>
 <td>${TESTFILE}</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Verify Correct Errors in Stderr</td>
-<td>Option '--suitestatlevel' expected integer value but got 'not_int'.</td><td>Default value used instead.\n</td>
-
+<td>Option '--suitestatlevel' expected integer value but got 'not_int'.</td>
+<td>Default value used instead.\n</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Verify Correct Errors in Stderr</td>
-<td>Option '--splitoutputs' expected integer value but got 'not_int'.</td><td>Default value used instead.\n</td>
-
+<td>Option '--splitoutputs' expected integer value but got 'not_int'.</td>
+<td>Default value used instead.\n</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Verify Correct Errors in Stderr</td>
-<td>Invalid format for option '--tagstatlink'.</td><td>Expected 'tag:link:title' but got 'less_than_3x_:'.\n</td>
-
+<td>Invalid format for option '--tagstatlink'.</td>
+<td>Expected 'tag:link:title' but got 'less_than_3x_:'.\n</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Should Be Equal</td>
 <td>${SUITE.status}</td>
 <td>PASS</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td></td>
 <td></td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td><a name="test_TransformIsIgnored">Transform Is Ignored</a></td>
+<td class="name"><a name="test_Transform Is Ignored">Transform Is Ignored</a></td>
 <td>Run Tests</td>
 <td>--transform none</td>
 <td>${TESTFILE}</td>
 <td></td>
 </tr>
-<tr><td></td><td>Verify Correct Errors in Stderr</td><td>Option '--transform'&nbsp;has been removed.</td><td></td><td></td></tr>
 <tr>
+<td class="name"></td>
+<td>Verify Correct Errors in Stderr</td>
+<td>Option '--transform' has been removed.</td>
 <td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
 <td></td>
 <td></td>
 <td></td>
 <td></td>
 </tr>
+</table>
+<table id="keywords" border="1">
 <tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-</tbody></table>
-
-<table border="1">
-<colgroup span="99"><col class="name"><col class="action"><col class="arg" span="3"></colgroup>
-<tbody><tr>
-<th>Keyword</th>
+<th class="name">Keyword</th>
 <th>Action</th>
-<th>Argument</th>
-<th>Argument</th>
-<th>Argument</th>
+<th colspan="3">Arguments</th>
 </tr>
 <tr>
-<td><a name="keyword_DirectoryShouldContain">Directory Should Contain</a></td>
+<td class="name"><a name="keyword_Directory Should Contain">Directory Should Contain</a></td>
 <td>[Arguments]</td>
 <td>${dir_path}</td>
 <td>@{exp_files}</td>
 <td></td>
 </tr>
-
-
 <tr>
-<td></td>
+<td class="name"></td>
 <td>${act_files} =</td>
 <td>List Directory</td>
 <td>${dir_path}</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Should Be Equal</td>
 <td>${act_files}</td>
 <td>${exp_files}</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td></td>
 <td></td>
 <td></td>
 <td></td>
 </tr>
-
 <tr>
-<td><a name="keyword_VerifyROBOTSet">Verify ROBOT Set</a></td>
+<td class="name"><a name="keyword_Verify ROBOT Set">Verify ROBOT Set</a></td>
 <td>Should Not Be Equal</td>
 <td>${ROBOT}</td>
 <td>${EMPTY}</td>
 <td>This test can be run only after \${ROBOT} is set</td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>...</td>
 <td>No Values</td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td></td>
 <td></td>
 <td></td>
 <td></td>
 </tr>
-
 <tr>
-<td><a name="keyword_RunSomeTests">Run Some Tests</a></td>
+<td class="name"><a name="keyword_Run Some Tests">Run Some Tests</a></td>
 <td>Verify ROBOT Set</td>
 <td></td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>${path} =</td>
 <td>Join Path</td>
 <td>${CURDIR}${/}..${/}..</td>
 <td>testdata</td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>...</td>
 <td>${TESTFILE}</td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>${output} =</td>
 <td>Run</td>
 <td>${ROBOT} -l none -r none -d ${MYOUTDIR} ${path} 2&gt;&amp;1</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Should Contain</td>
 <td>${output}</td>
 <td>Output:</td>
 <td>Running tests failed for some reason</td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>[Return]</td>
 <td>${output}</td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td></td>
 <td></td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td><a name="keyword_TestsShouldBeExecutedWithoutErrors">Tests Should Be Executed Without Errors</a></td>
+<td class="name"><a name="keyword_Tests Should Be Executed Without Errors">Tests Should Be Executed Without Errors</a></td>
 <td>[Arguments]</td>
 <td>${options}</td>
 <td>${datasource}</td>
 <td>${explanation}=Test execution should have passed</td>
 </tr>
-
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Run Tests</td>
 <td>${options}</td>
 <td>${datasource}</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td>Should Be Equal</td>
 <td>${SUITE.status}</td>
 <td>PASS</td>
 <td>${explanation}</td>
 </tr>
-<tr><td></td><td>...</td><td>No values</td><td></td><td></td></tr><tr>
+<tr>
+<td class="name"></td>
+<td>...</td>
+<td>No values</td>
 <td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
 <td>File Should Be Empty</td>
 <td>${STDERR FILE}</td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td class="name"></td>
 <td></td>
 <td></td>
 <td></td>
 <td></td>
 </tr>
 <tr>
-<td>Tests Should Fail With Errors</td>
-<td>[Arguments]</td><td>${options}</td><td>${datasource}</td>
-
-
+<td class="name"><a name="keyword_Tests Should Fail With Errors">Tests Should Fail With Errors</a></td>
+<td>[Arguments]</td>
+<td>${options}</td>
+<td>${datasource}</td>
 <td>${explanation}</td>
-</tr><tr><td></td><td>Run Tests</td><td>${options}</td><td>${datasource}</td><td><br></td></tr><tr><td></td><td>Should Be Equal</td><td>${SUITE.status}</td><td>FAIL</td><td>${explanation}</td></tr><tr><td></td><td>...</td><td>No values</td><td></td><td></td></tr><tr><td></td><td>File Should Not Be Empty</td><td>${STDERR FILE}</td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Verify Correct Errors in Stderr</td><td>[Arguments]</td><td>@{errors}</td><td></td><td></td></tr><tr><td></td><td>${error} =</td><td>Set Variable If</td><td>os.sep=='/'</td><td></td></tr><tr><td></td><td>...</td><td>ERROR</td><td>[ ERROR ]</td><td></td></tr><tr><td></td><td>Check Stderr Contains</td><td>${error}</td><td></td><td></td></tr><tr><td></td><td>Check Stderr Contains</td><td>@{errors}</td><td><br></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr>
-</tbody></table>
-
-</body></html>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Run Tests</td>
+<td>${options}</td>
+<td>${datasource}</td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Should Be Equal</td>
+<td>${SUITE.status}</td>
+<td>FAIL</td>
+<td>${explanation}</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>...</td>
+<td>No values</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>File Should Not Be Empty</td>
+<td>${STDERR FILE}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"><a name="keyword_Verify Correct Errors In Stderr">Verify Correct Errors In Stderr</a></td>
+<td>[Arguments]</td>
+<td>@{errors}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>${error} =</td>
+<td>Set Variable If</td>
+<td>os.sep=='/'</td>
+<td>ERROR</td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>...</td>
+<td>[ ERROR ]</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Check Stderr Contains</td>
+<td>${error}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td>Check Stderr Contains</td>
+<td>@{errors}</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td class="name"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</table>
+</body>
+</html>
