@@ -586,35 +586,31 @@ class _Variables:
         return self._get_variables().replace_scalar(text)
     
     def set_variable(self, *values):
-        """Returns the given argument which can then be assigned to a variable.
+        """Returns the given values which can then be assigned to a variables.
 
         This keyword is mainly used for setting scalar variables.
         Additionally it can be used for converting a scalar variable
         containing a list to a list variable or to multiple scalar variables.
-        
-        Using this keyword with more (or less) than one value has been 
-        deprecated in Robot Framework 2.1 and that usage will be removed
-        in 2.2 version.
+        It is recommended to use `Create List' when creating new lists.
 
         Examples:
         | ${hi} =   | Set Variable | Hello, world! |
         | ${hi2} =  | Set Variable | I said: ${hi} |
+        | ${var1}   | ${var2} =    | Set Variable | Hello | world |
         | @{list} = | Set Variable | ${list with some items} |
         | ${item1}  | ${item2} =   | Set Variable  | ${list with 2 items} |
-
+        
         Variables created with this keyword are available only in the
         scope where they are created. See `Set Global Variable`, `Set
         Test Variable` and `Set Suite Variable` for information on how to
         set variables so that they are available also in a larger scope.
         """
-        if len(values) == 1:
-            return values[0]
-        self.log("Using 'Set Variable' keyword with more or less than one "
-                 "argument is deprecated in Robot Framework 2.1 and that "
-                 "usage will be removed in 2.2.", "WARN")
-        if not values:
+        if len(values) == 0:
             return ''
-        return list(values)
+        elif len(values) == 1:
+            return values[0]
+        else:
+            return list(values)
 
     def set_test_variable(self, name, *values):
         """Makes a variable available everywhere within the scope of the current test.
