@@ -23,11 +23,11 @@ The example consists of four files:
 To use this example run `make` in the directory where you unzipped the
 `robotframework-c-example.zip` package. This will create library
 `liblogin.so`, a shared library that is needed to use ctypes
-module. Run test by typing::
+module. Run test by typing:
 
   pybot LoginTests.tsv
 
-You can also run the application as standalone using command::
+You can also run the application as standalone using command:
 
   python LoginLibrary.py demo mode
 
