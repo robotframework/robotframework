@@ -1,0 +1,7 @@
+*** Settings ***
+Variables	vars.py
+
+*** Test Cases ***
+Test
+	Should Be Equal	bar	${variable}
+	Variable Should Not Exist	${SUITE 1}
