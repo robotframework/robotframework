@@ -90,7 +90,7 @@ class Namespace:
             self._userlibs.append(resource.user_keywords)
             self._handle_imports(resource.imports)
         else:
-            LOGGER.warn("Resource file '%s' already imported by suite '%s'"
+            LOGGER.info("Resource file '%s' already imported by suite '%s'"
                         % (path, self.suite.longname))
 
     def import_variables(self, path, args, overwrite=False):
@@ -100,14 +100,14 @@ class Namespace:
         else:
             msg = "Variable file '%s'" % path
             if args:
-                msg += " with arguments %s" % (utils.seq2str2(args))
-            LOGGER.warn("%s already imported by suite '%s'"
+                msg += " with arguments %s" % utils.seq2str2(args)
+            LOGGER.info("%s already imported by suite '%s'"
                         % (msg, self.suite.longname))
 
     def import_library(self, name, args=None):
         lib = IMPORTER.import_library(name, args)
         if self._testlibs.has_key(lib.name):
-            LOGGER.warn("Test library '%s' already imported by suite '%s'"
+            LOGGER.info("Test library '%s' already imported by suite '%s'"
                         % (lib.name, self.suite.longname))
             return
         self._testlibs[lib.name] = lib
