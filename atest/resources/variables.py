@@ -6,5 +6,5 @@ import tempfile
 __all__ = ['robotpath', 'javatempdir', 'robotversion']
 
 robotpath = os.path.abspath(os.path.dirname(robot.__file__))
-javatempdir = sys.platform == 'darwin' and '/tmp' or tempfile.gettempdir()
+javatempdir = tempfile.gettempdir() # Used to be different on OSX and elsewhere
 robotversion = robot.utils.get_version()
