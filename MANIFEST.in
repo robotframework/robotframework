@@ -7,6 +7,6 @@ include LICENSE.txt COPYRIGHT.txt INSTALL.txt PACKAGING.txt
 
 recursive-include tools *.py *.au3 *.rb *.html *.txt *.tsv *.png
 prune tools/*/test
-recursive-include doc *.txt *.rst *.html *.png *.py *.dia
+recursive-include doc *.tsv *.txt *.rst *.html *.png *.py *.dia *.c Makefile *.sh
 include templates/*.html templates/*.tsv templates/*.txt
 
