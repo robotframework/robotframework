@@ -34,7 +34,8 @@ def simple_import(path_to_module):
         try:
             module = __import__(modname)
             if normpath(moddir) != normpath(os.path.dirname(module.__file__)):
-                module = reload(module)
+                del sys.modules[modname]
+                module = __import__(modname)
         except:
             raise DataError(err_prefix + get_error_message())
     finally:
