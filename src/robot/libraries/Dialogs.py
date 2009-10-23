@@ -64,6 +64,8 @@ def get_selection_from_user(message, *values):
 
     `message` is the instruction shown in the dialog. and `values` are 
     the options given to the user. Selecting 'Cancel' fails the keyword.
+
+    This keyword was added into Robot Framework 2.1.2.
     """
     return _validate_user_input(SelectionDialog(message, values).result)
 
