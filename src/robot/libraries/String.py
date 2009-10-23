@@ -361,7 +361,8 @@ class String:
         For example 'string' and 'with specials!' would pass, and 'String', ''
         and ' ' would fail.
 
-        This keyword was added into Robot Framework 2.1.2.
+        See also `Should Be Uppercase` and `Should Be Titlecase`.
+        These keyword were added into Robot Framework 2.1.2.
         """
         if not string.islower():
             raise AssertionError(msg or "'%s' is not lowercase" % string)
@@ -374,8 +375,9 @@ class String:
 
         For example 'STRING' and 'WITH SPECIALS!' would pass, and 'String', ''
         and ' ' would fail.
-
-        This keyword was added into Robot Framework 2.1.2.
+ 
+        See also `Should Be Titlecase` and `Should Be Lowercase`.
+        These keyword were added into Robot Framework 2.1.2.
         """
         if not string.isupper():
             raise AssertionError(msg or "'%s' is not uppercase" % string)
@@ -393,7 +395,8 @@ class String:
         For example 'This Is Title' would pass, and 'Word In UPPER',
         'Word In lower', '' and ' ' would fail.
 
-        This keyword was added into Robot Framework 2.1.2.
+        See also `Should Be Uppercase` and `Should Be Lowercase`.
+        These keyword were added into Robot Framework 2.1.2.
         """
         if not string.istitle():
             raise AssertionError(msg or "'%s' is not titlecase" % string)
