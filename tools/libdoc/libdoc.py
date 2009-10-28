@@ -123,8 +123,7 @@ def LibraryDoc(libname, arguments=None, newname=None):
         return XmlLibraryDoc(libname, newname)
     elif ext == '.java':
         if not utils.is_jython:
-            print 'Documenting Java test libraries requires Jython.\nTry --help for usage information.'
-            sys.exit(1)
+            raise DataError('Documenting Java test libraries requires Jython.')
         return JavaLibraryDoc(libname, newname)
     else:
         return PythonLibraryDoc(libname, arguments, newname)
