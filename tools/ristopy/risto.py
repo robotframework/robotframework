@@ -149,12 +149,11 @@ class AllStatistics(object):
 
     def _get_stats(self, paths, namemeta, verbose):
         paths = self._glob_paths(paths)
-        if namemeta is not None:
+        if namemeta:
             return [ Statistics(path, namemeta=namemeta, verbose=verbose)
                      for path in paths ]
-        names = self._get_names(paths)
         return [ Statistics(path, name, verbose=verbose)
-                 for path, name in zip(paths, names) ]
+                 for path, name in zip(paths, self._get_names(paths)) ]
 
     def _glob_paths(self, orig):
         paths = []
@@ -167,13 +166,17 @@ class AllStatistics(object):
     def _get_names(self, paths):
         paths = [ os.path.splitext(os.path.abspath(p))[0] for p in paths ]
         path_tokens = [ p.replace('\\','/').split('/') for p in paths ]
+        min_tokens = min([ len(t) for t in path_tokens ])
         index = -1
-        while self._tokens_are_same(path_tokens, index):
+        while self._tokens_are_same_at_index(path_tokens, index):
             index -= 1
+            if abs(index) > min_tokens:
+                index = -1
+                break
         names = [ tokens[index] for tokens in path_tokens ]
         return [ utils.printable_name(n, code_style=True) for n in names ]
 
-    def _tokens_are_same(self, token_list, index):
+    def _tokens_are_same_at_index(self, token_list, index):
         first = token_list[0][index]
         for tokens in token_list[1:]:
             if first != tokens[index]:
@@ -267,7 +270,6 @@ class Legend(Line2D):
 
 
 class Plotter(object):
-
     _total_color = 'blue'
     _pass_color = 'green'
     _fail_color = 'red'
@@ -427,7 +429,7 @@ class Plotter(object):
             legends.append(Legend(label='failed', color=self._fail_color))
         labels = [ l.get_label() for l in legends ]
         self._figure.legend(legends, labels, loc='center right',
-                            numpoints=3, pad=0.1,
+                            numpoints=3, borderpad=0.1,
                             prop=FontProperties(size=self._font_size))
 
 
