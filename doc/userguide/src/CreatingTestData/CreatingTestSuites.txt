@@ -136,8 +136,16 @@ The test suite name is got directly from the file or directory name, but
 a possible file extension is ignored. The name is created so that
 underscores are replaced with spaces, words in camelCaseFormat
 separated, and first letters of all words capitalized. For example,
-:path:`some_tests.html` becomes :code:`Some Tests` and
-:path:`MyTestDir` becomes :code:`My Test Dir`.
+:path:`some_tests.html` becomes :name:`Some Tests` and
+:path:`MyTestDir` becomes :name:`My Test Dir`.
+
+The file or directory name can contain a prefix to control the `test
+execution order`_. The prefix is separated from the base name by two
+underscores and, when constructing the actual test suite name, both
+the prefix and underscores are removed. For example files
+:path:`01__some_tests.txt` and :path:`02__more_tests.txt` create test
+suites :name:`Some Tests` and :name:`More Tests`, respectively, and
+the former is executed before the latter.
 
 The documentation for a test suite is set using the :opt:`Documentation`
 setting in the Setting table. It can be used in test case files
