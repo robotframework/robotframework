@@ -138,7 +138,7 @@ EndFunc
 
 
 Func InstallPython($installer, $dir)
-    $cmd = "msiexec /i " & $installer & " TARGETDIR=" & $dir & " /qb!" 
+    $cmd = "msiexec /i " & $installer & " TARGETDIR=""" & $dir & """ /qb!" 
     RunWait($cmd)   
 EndFunc
 
@@ -147,7 +147,7 @@ Func InstallJython($installer, $dir)
     If $installer == "" Then
         return
     EndIf
-    $cmd = "java -jar " & $installer & " -s -d " & $dir
+    $cmd = "java -jar " & $installer & " -s -d """ & $dir & """"
     RunWait($cmd)
 EndFunc
 
