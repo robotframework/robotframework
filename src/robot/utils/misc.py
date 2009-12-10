@@ -15,16 +15,13 @@
 
 import os
 import sys
-import re
 import tempfile
 import urllib
 import posixpath
-from types import IntType
-    
-from robot.errors import DataError, FrameworkError
+
+from robot.errors import FrameworkError
 from robottypes import is_str, is_list, unic, is_integer
 from normalizing import normpath
-from error import get_error_message
 
 
 def get_doc(obj):
