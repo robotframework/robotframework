@@ -749,6 +749,8 @@ class _RunKeyword:
         can be a variable and thus set dynamically, e.g. from a return value of
         another keyword or from the command line.
         """
+        if not utils.is_str(name):
+            raise DataError('Keyword name must be a string')
         kw = Keyword(name, args)
         return kw.run(output.OUTPUT, NAMESPACES.current)
     
