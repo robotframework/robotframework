@@ -166,7 +166,8 @@ class LogSerializer:
     def _write_source(self, source):
         if source:
             if os.path.exists(source):
-                source = '<a href="file://%s">%s</a>' % (source, source)
+                ref = utils.get_link_path(source, self._writer.output.name)
+                source = '<a href="%s">%s</a>' % (ref, source)
             self._write_metadata_row('Source', source, escape=False)
 
     def _write_test_metadata(self, test):
