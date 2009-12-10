@@ -192,38 +192,47 @@ def get_directory(path):
     
 
 def get_link_path(target, base):
-    target = normpath(target)
-    base = normpath(base)
-    if not os.path.isdir(base):
-        base = get_directory(base)
-    common = os.path.commonprefix([base,target])
+    """Returns a relative path to a target from a base. If base is an existing
+    file, then its parent directory is considered. Otherwise, base is assumed
+    to be a directory.
+
+    Rationale: os.path.relpath is not available before Python 2.6
+    """
+
+    target = os.path.normcase(os.path.abspath(os.path.normpath(target)))
+    base = os.path.normcase(os.path.abspath(os.path.normpath(base)))
+    if os.path.isfile(base):
+        base = os.path.dirname(base)
+    if base == target:
+        return urllib.pathname2url(os.path.basename(target))
+    base_drive, base_path = os.path.splitdrive(base)
     # if in Windows and base and link on different drives
-    if common == '':
-        return 'file:///' + target.replace('\\', '/')
-    base_to_common = _base_to_common(base, common)
-    common_to_target = _commom_to_target(common, target)
-    link = os.path.join(base_to_common, common_to_target)
-    return link.replace('\\', '/')
+    if os.path.splitdrive(target)[0] != base_drive:
+        return 'file:' + urllib.pathname2url(target)
+    common_len = len(_common_path(base, target))
+    if base_path == os.sep:
+        return urllib.pathname2url(target[common_len:])
+    if common_len == len(base_drive) + len(os.sep):
+        common_len -= len(os.sep)
+    dirs_up = os.sep.join([os.pardir] * base[common_len:].count(os.sep))
+    return urllib.pathname2url(os.path.join(dirs_up, target[common_len + len(os.sep):]))
 
-def _base_to_common(base, common):
-    parts = _split_to_parts(base, common)
-    parts = ['..'] * len(parts)
-    return os.sep.join(parts)
 
-def _commom_to_target(common, target):
-    parts = _split_to_parts(target, common)
-    return os.sep.join(parts)
-    
-def _split_to_parts(path, prefix):
-    prefix = os.path.normpath(prefix)
-    parts = []
-    prevpath = None
-    while os.path.normpath(path) != prefix and path != prevpath:
-        prevpath = path
-        path, part = os.path.split(path)
-        parts.insert(0, part)
-    return parts
+def _common_path(p1, p2):
+    """Returns the longest path common to p1 and p2.
 
+    Rationale: as os.path.commonprefix is character based, it doesn't consider
+    path separators as such, so it may return invalid paths:
+    commonprefix(('/foo/bar/', '/foo/baz.txt')) -> '/foo/ba' (instead of /foo)
+    """
+    while p1 and p2:
+        if p1 == p2:
+            return p1
+        if len(p1) > len(p2):
+            p1 = os.path.dirname(p1)
+        else:
+            p2 = os.path.dirname(p2)
+    return ""
 
 def calc_percents(passed, failed):
     total = passed + failed

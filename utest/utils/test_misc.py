@@ -35,9 +35,16 @@ class TestMiscUtils(unittest.TestCase):
                 ( '/tmp/', '/x/y/z/bar.txt', '../x/y/z/bar.txt' ),
                 ( '/tmp', '/x/bar.txt', '../x/bar.txt' ),
                 ( '/tmp', '/x/y/z/bar.txt', '../x/y/z/bar.txt' ),
-                ( '/', '/x/bar.txt', 'x/bar.txt' ) ]
+                ( '/', '/x/bar.txt', 'x/bar.txt' ),
+                ( '/path/to', '/path/to/result_in_same_dir.html', 'result_in_same_dir.html' ),
+                ( '/path/to/dir', '/path/to/result_in_parent_dir.html', '../result_in_parent_dir.html' ),
+                ( '/path/to', '/path/to/dir/result_in_sub_dir.html', 'dir/result_in_sub_dir.html' ),
+                ( '/commonprefix/sucks/baR', '/commonprefix/sucks/baZ.txt', '../baZ.txt' ),
+                ( '/a/very/long/path', '/no/depth/limitation', '../../../../no/depth/limitation' ),
+                ( '/etc/fstab', '/path/to/existing/file', '../path/to/existing/file' ),
+                ( '/path/to/identity', '/path/to/identity', 'identity' ),
+            ]
         else:
-            assert os.path.isdir('c:\\temp\\'), "This test requires c:\\temp to exist"
             inputs = [
                 ( 'c:\\temp\\', 'c:\\temp\\bar.txt', 'bar.txt' ),
                 ( 'c:\\temp', 'c:\\temp\\x\\bar.txt', 'x/bar.txt' ),
@@ -48,8 +55,16 @@ class TestMiscUtils(unittest.TestCase):
                 ( 'c:\\temp', 'c:\\x\\y\\bar.txt', '../x/y/bar.txt' ),  
                 ( 'c:\\temp', 'c:\\x\\bar.txt', '../x/bar.txt' ),
                 ( 'c:\\temp', 'c:\\x\\y\\z\\bar.txt', '../x/y/z/bar.txt' ),
-                ( 'c:\\temp\\', 'r:\\x\\y\\bar.txt', 'file:///r:/x/y/bar.txt' ),
-                ( 'c:\\', 'c:\\x\\bar.txt', 'x/bar.txt' ) ]
+                ( 'c:\\temp\\', 'r:\\x\\y\\bar.txt', 'file:///R:/x/y/bar.txt' ),
+                ( 'c:\\', 'c:\\x\\bar.txt', 'x/bar.txt' ),
+                ( 'c:\\path\\to', 'c:\\path\\to\\result_in_same_dir.html', 'result_in_same_dir.html' ),
+                ( 'c:\\path\\to\\dir', 'c:\\path\\to\\result_in_parent_dir.html', '../result_in_parent_dir.html' ),
+                ( 'c:\\path\\to', 'c:\\path\\to\\dir\\result_in_sub_dir.html', 'dir/result_in_sub_dir.html' ),
+                ( 'c:\\commonprefix\\sucks\\baR', 'c:\\commonprefix\\sucks\\baZ.txt', '../baz.txt' ),
+                ( 'c:\\a\\very\\long\\path', 'c:\\no\\depth\\limitation', '../../../../no/depth/limitation' ),
+                ( 'c:\\boot.ini', 'c:\\path\\to\\existing\\file', 'path/to/existing/file' ),
+                ( 'c:\\path\\to\\identity', 'c:\\path\\to\\identity', 'identity' ),
+            ]
 
         for basedir, target, expected in inputs:
             assert_equal(get_link_path(target, basedir), expected,
