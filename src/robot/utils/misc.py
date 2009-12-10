@@ -196,8 +196,8 @@ def get_link_path(target, base):
     Rationale: os.path.relpath is not available before Python 2.6
     """
 
-    target = os.path.normcase(os.path.abspath(os.path.normpath(target)))
-    base = os.path.normcase(os.path.abspath(os.path.normpath(base)))
+    target = normpath(target)
+    base = normpath(base)
     if os.path.isfile(base):
         base = os.path.dirname(base)
     if base == target:
