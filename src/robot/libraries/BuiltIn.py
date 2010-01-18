@@ -1093,13 +1093,17 @@ class _Misc:
 
         Valid levels are TRACE, DEBUG, INFO (default), HTML and WARN.
 
-        HTML level is special because it writes the message into the
-        log file without escaping HTML code from it. For example
-        logging a message like '<img src="image.png">' with that level
-        creates an image, but with other levels you see just that
-        string.  Logging HTML messages should be used with care,
-        because invalid messages can corrupt the whole log file.  The
+        The HTML level is special because it allows writing messages
+        without HTML code in them being escaped. For example, logging
+        a message '<img src="image.png">' using the HTML level creates
+        an image, but with other levels the message would be that exact
+        string. Notice that invalid HTML can easily corrupt the whole
+        log file so this feature should be used with care. The
         actual log level used for HTML messages is INFO.
+
+        Messages logged with the WARN level will be visible also in
+        the console and in the Test Execution Errors section in the
+        log file.
         """
         level = level.upper()
         if not output.LEVELS.has_key(level) and level != 'HTML':
