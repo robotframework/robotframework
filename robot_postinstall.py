@@ -16,7 +16,7 @@ def egg_preinstall(temp_robot_path, scripts):
     version = os.path.basename(temp_robot_path)
     version = version.replace('-', '_').replace('_', '-', 1)
     egg_name = '%s-py%s.%s.egg' % (version, major, minor)
-    robot_dir = os.path.join(get_python_lib(), egg_name, 'robot')
+    robot_dir = os.path.join(_find_easy_install_dir() or get_python_lib(), egg_name, 'robot')
     _update_scripts(scripts, temp_robot_path, robot_dir)
 
 
@@ -66,6 +66,31 @@ def windows_binary_uninstall():
                 except Exception, err:
                     print "Failed to remove Jython compiled file '%s': %s" \
                             % (path, str(err))
+
+def _find_easy_install_dir():
+    """Returns the installation directory that easy_install will actually use.
+
+    This is a workaround because:
+    1. distutils.sysconfig.get_python_lib() is not aware of easy_install
+       way of managing installation paths.
+    2. easy_install doesn't pass its install_dir as a command line argument
+       to the setup script.
+    """
+    try:
+        import inspect
+        f = inspect.currentframe()
+        try:
+            while True:
+                if f is None:
+                    return
+                instance = f.f_locals.get("self")
+                if instance and hasattr(instance, "install_dir"):
+                    return getattr(instance, "install_dir")
+                f = f.f_back
+        finally:
+            del f
+    except Exception, err:
+        print "Failed to retrieve easy_install_dir: %s" % str(err)
 
 def _get_installation_dir():
     """Returns installation location. Works also with easy_install."""
