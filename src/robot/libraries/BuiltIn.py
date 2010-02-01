@@ -873,16 +873,20 @@ class _RunKeyword:
         """
         timeout = utils.timestr_to_secs(timeout)
         retry_interval = utils.timestr_to_secs(retry_interval)
-        starttime = time.time()
-        while time.time() - starttime < timeout:
+        maxtime = time.time() + timeout
+        error = None
+        while not error:
             try:
                 return self.run_keyword(name, *args)
             except utils.RERAISED_EXCEPTIONS:
                 raise
             except:
-                time.sleep(retry_interval)
-        raise AssertionError("Timeout %s exceeded"
-                             % utils.secs_to_timestr(timeout))
+                if time.time() > maxtime:
+                    error = utils.get_error_message()
+                else:
+                    time.sleep(retry_interval)
+        raise AssertionError("Timeout %s exceeded. The last error was: %s"
+                             % (utils.secs_to_timestr(timeout), error))
     
     def set_variable_if(self, condition, *values):
         """Sets variable based on the given condition.
