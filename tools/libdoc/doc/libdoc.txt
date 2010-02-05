@@ -161,7 +161,6 @@ strings, see `PEP-257`_.
 .. sourcecode:: python
 
     class ExampleLib:
-
         """Library for demo purposes.
 
         This library is only used in an example and it does't do anything useful.
@@ -224,7 +223,7 @@ To be able to generate meaningful documentation for dynamic libraries,
 they must return keyword argument names and documentation using
 :code:`get_keyword_arguments` and :code:`get_keyword_documentation`
 methods (or using their camelCase variants :code:`getKeywordArguments`
-and :code:`getKeywordDocumentation`). See the `user guide`_ for more
+and :code:`getKeywordDocumentation`). See the `User Guide`_ for more
 information about how to create these methods and the dynamic library
 API in general.
 
@@ -298,11 +297,16 @@ Possible variables in resource files are not documented.
    +--------------+------------------+------------------------+-------------------------------+
 
 
-Documentation formatting
+Documentation syntax
+--------------------
+
+Generic formatting rules
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
-The `user guide`_ has an appendix explaining different documentation
-formatting possibilities. Most important features are formatting using
+
+The `User Guide`_ has an appendix explaining different documentation
+formatting possibilities supported by Robot Framework. 
+Most important features are formatting using
 :code:`*bold*` and :code:`_italic_`, automatic conversion of URLs to
 clickable links, and the possibility to create tables (useful for
 examples) simply with pipe character::
@@ -310,7 +314,10 @@ examples) simply with pipe character::
    | Some Keyword    | arg |
    | Another Keyword |     |
 
-In addition to the formatting explained in the user guide,
+Special formatting and internal linking
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+In addition to the formatting explained in the User Guide,
 :prog:`libdoc.py` supports also special formatting of keyword names
 and arguments with backtick character :code:`\``. Even more
 importantly, this syntax also automatically creates internal links to
@@ -348,14 +355,13 @@ Internal linking between keywords is used by all `standard
 libraries`_, so their documentation (and source) acts as a more
 realistic example.
 
+Keywords' arguments
+~~~~~~~~~~~~~~~~~~~
 
-Keyword arguments
-~~~~~~~~~~~~~~~~~
-
-:prog:`libdoc.py` handles keyword arguments automatically so that
+:prog:`libdoc.py` handles keywords' arguments automatically so that
 arguments specified for methods in libraries or user keywords in
 resource files are listed in a separate column. Possible trailing
-spaces in argument names are stripped to make it possible to use
+underscores in argument names are stripped to make it possible to use
 arguments like :code:`list_` in the code and still have :code:`list`
 in documentation. Additionally, user keyword arguments are shown
 without :var:`${}` or :var:`@{}` to make arguments look the same
@@ -368,4 +374,3 @@ regardless where keywords originated from.
 .. _user guide: http://code.google.com/p/robotframework/wiki/UserGuide
 .. _Robot Framework User Guide: `user guide`_
 .. _PEP-257: http://www.python.org/dev/peps/pep-0257
-
