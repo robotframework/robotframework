@@ -17,7 +17,7 @@ import os
 
 from robot import utils
 
-from loggerhelper import AbstractLogger, Message, AbstractLoggerProxy
+from loggerhelper import AbstractLogger, AbstractLoggerProxy
 from filelogger import FileLogger
 from monitor import CommandLineMonitor
 
