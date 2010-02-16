@@ -24,20 +24,28 @@ Listen Some
 Java Listener
   [Documentation]  Listener listening all methods implemented with Java
   [Tags]  jybot
-  @{expected} =  Create List  START SUITE: Pass And Fail 'Some tests here'
+  @{expected} =  Create List  Got settings on level: INFO
+  ...  START SUITE: Pass And Fail 'Some tests here'
   ...  START KW: My Keyword [Suite Setup]
   ...  START KW: BuiltIn.Log [Hello says "\${who}"!\${LEVEL1}]
+  ...  LOG MESSAGE: [INFO] Hello says "Suite Setup"!
   ...  START KW: BuiltIn.Log [Debug message\${LEVEL2}]
+  ...  LOG MESSAGE: [DEBUG] Debug message
   ...  START TEST: Pass '' [forcepass]
   ...  START KW: My Keyword [Pass]
   ...  START KW: BuiltIn.Log [Hello says "\${who}"!\${LEVEL1}]
+  ...  LOG MESSAGE: [INFO] Hello says "Pass"!
   ...  START KW: BuiltIn.Log [Debug message\${LEVEL2}]
+  ...  LOG MESSAGE: [DEBUG] Debug message
   ...  END TEST: PASS
   ...  START TEST: Fail 'FAIL Expected failure' [failforce]
   ...  START KW: My Keyword [Fail]
   ...  START KW: BuiltIn.Log [Hello says "\${who}"!\${LEVEL1}]
+  ...  LOG MESSAGE: [INFO] Hello says "Fail"!
   ...  START KW: BuiltIn.Log [Debug message\${LEVEL2}]
+  ...  LOG MESSAGE: [DEBUG] Debug message
   ...  START KW: BuiltIn.Fail [Expected failure]
+  ...  LOG MESSAGE: [FAIL] Expected failure
   ...  END TEST: FAIL: Expected failure
   ...  END SUITE: FAIL: 2 critical tests, 1 passed, 1 failed
   ...  2 tests total, 1 passed, 1 failed
