@@ -24,8 +24,6 @@ class ListenAll:
         args = [ str(arg) for arg in attrs['args'] ]
         self.outfile.write("KW START: %s %s\n" % (name, args))
 
-    def message(self, message):
-        self.outfile.write('MESSAGE: [%s] %s \n' % (message.level, message.message))
     def end_keyword(self, name, attrs):
         self.outfile.write("KW END: %s\n" % (attrs['status']))
 
