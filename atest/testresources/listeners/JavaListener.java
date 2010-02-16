@@ -38,6 +38,18 @@ public class JavaListener {
 		this.outfile.write("]\n");
 	}
 
+	public void logMessage(String message, String level) throws IOException {
+		if (!level.equals("TRACE") && message.indexOf("Traceback") < 0) {
+			this.outfile.write("LOG MESSAGE: [" + level + "] " + message + "\n");
+		}
+	}
+
+	public void message(String message, String level) throws IOException {
+		if (message.indexOf("Settings") >= 0) {
+			this.outfile.write("Got settings on level: " + level + "\n");
+		}
+	}
+	
 	public void endTest(String name, Map attrs) throws IOException {
         String status = attrs.get("status").toString();
 		if (status.equals("PASS")) {
