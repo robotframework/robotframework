@@ -101,13 +101,18 @@ class Listeners:
 
     def log_message(self, msg):
         for li in self._listeners:
-            if li.version != 1:
-                li.call_method(li.log_message, msg.message, msg.level)
+            if li.version == 2:
+                li.call_method(li.log_message, self._create_msg_dict(msg))
 
     def message(self, msg):
         for li in self._listeners:
-            if li.version != 1:
-                li.call_method(li.message, msg.message, msg.level)
+            if li.version == 2:
+                li.call_method(li.message, self._create_msg_dict(msg))
+
+    def _create_msg_dict(self, msg):
+        return {'message': msg.message, 'level': msg.level,
+                'timestamp': msg.timestamp,
+                'html': msg.html and 'TRUE' or 'FALSE'}
 
     def output_file(self, name, path):
         for li in self._listeners:
@@ -172,8 +177,8 @@ class _ListenerProxy(AbstractLoggerProxy):
             return 1
 
     def call_method(self, method, *args):
-        if self.is_java and len(args) == 2 and isinstance(args[1], dict):
-            args = (args[0], utils.dict2map(args[1]))
+        if self.is_java:
+            args = self._convert_dictionaries_to_maps(args)
         try:
             method(*args)
         except:
@@ -182,3 +187,5 @@ class _ListenerProxy(AbstractLoggerProxy):
                          % (method.__name__, self.name, message))
             LOGGER.info("Details:\n%s" % details)
 
+    def _convert_dictionaries_to_maps(self, args):
+        return [ isinstance(a, dict) and utils.dict2map(a) or a for a in args ]
