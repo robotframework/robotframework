@@ -21,6 +21,10 @@ def log_message(message, level):
     if level != 'TRACE' and 'Traceback' not in message:
         OUTFILE.write('LOG MESSAGE: [%s] %s\n' % (level, message))
 
+def message(message, level):
+    if 'Settings' in message:
+        OUTFILE.write('Got settings on level: %s\n' % level)
+
 def end_keyword(name, attrs):
     OUTFILE.write("KW END: %s\n" % (attrs['status']))        
 

@@ -28,6 +28,10 @@ class ListenAll:
         if level != 'TRACE' and 'Traceback' not in message:
             self.outfile.write('LOG MESSAGE: [%s] %s\n' % (level, message))
 
+    def message(self, message, level):
+        if 'Settings' in message:
+            self.outfile.write('Got settings on level: %s\n' % level)
+
     def end_keyword(self, name, attrs):
         self.outfile.write("KW END: %s\n" % (attrs['status']))
 
