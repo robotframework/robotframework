@@ -1,0 +1,60 @@
+*** Settings ***
+Suite Setup     Run Tests  --listener ListenAll --listener ListenAll:${TEMPDIR}${/}${ALL_FILE2} --listener module_listener --listener listeners.ListenSome --listener JavaListener --listener listeners.InvalidMethods --listener attributeverifyinglistener --listener JavaAttributeVerifyingListener  misc${/}pass_and_fail.html
+Suite Teardown  Remove Listener Files
+Force Tags      regression
+Default Tags    pybot  jybot
+Resource        listener_resource.html
+
+*** Test Cases ***
+Listen All
+    [Documentation]  Listener listening all methods. Method names with underscore.
+    Check Listen All File  ${ALL_FILE}
+
+Listen All With Arguments To Listener
+    Check Listen All File  ${ALL_FILE2}
+
+Listen All Module Listener
+    Check Listen All File  ${MODULE_FILE}
+
+Listen Some
+    [Documentation]  Only listening some methods. Method names with camelCase.
+    @{expected} =  Create List  Pass  Fail  ${SUITE_MSG}
+    Check Listener File  ${SOME_FILE}  @{expected}
+
+Java Listener
+    [Documentation]  Listener listening all methods implemented with Java
+    [Tags]  jybot
+    @{expected} =  Create List  START SUITE: Pass And Fail 'Some tests here'  START KW: My Keyword [Suite Setup]  START KW: BuiltIn.Log [Hello says "\${who}"!\${LEVEL1}]  START KW: BuiltIn.Log [Debug message\${LEVEL2}]  START TEST: Pass '' [forcepass]  START KW: My Keyword [Pass]
+    ...  START KW: BuiltIn.Log [Hello says "\${who}"!\${LEVEL1}]  START KW: BuiltIn.Log [Debug message\${LEVEL2}]  END TEST: PASS  START TEST: Fail 'FAIL Expected failure' [failforce]  START KW: My Keyword [Fail]  START KW: BuiltIn.Log [Hello says "\${who}"!\${LEVEL1}]  START KW: BuiltIn.Log [Debug message\${LEVEL2}]
+    ...  START KW: BuiltIn.Fail [Expected failure]  END TEST: FAIL: Expected failure  END SUITE: FAIL: 2 critical tests, 1 passed, 1 failed  2 tests total, 1 passed, 1 failed  Output (java): output.xml  The End
+    Check Listener File  ${JAVA_FILE}  @{expected}
+
+Invalid Args For Listener Method
+    Check Stderr Contains  [ ERROR ]  Calling 'start_suite' method of listener 'listeners.InvalidMethods' failed:  TypeError: start_suite() takes
+
+Listener Method Raising Exception
+    Check Stderr Contains  [ ERROR ]  Calling 'end_suite' method of listener 'listeners.InvalidMethods' failed:  Here comes an exception!
+
+Correct Attributes To Listener Methods
+    ${status} =  Log File  ${TEMPDIR}/${ATTR_TYPE_FILE}
+    Check Stderr Does Not Contain  attributeverifyinglistener
+    Should Not Contain  ${status}  FAILED
+    Should Contain X Times  ${status}  PASSED  125
+
+Correct Attributes To Java Listener Methods
+    [Tags]  jybot
+    ${status} =  Log File  ${JAVATEMPDIR}/${JAVA_ATTR_TYPE_FILE}
+    Check Stderr Does Not Contain  JavaAttributeVerifyingListener
+    Should Not Contain  ${status}  FAILED
+    Should Contain X Times  ${status}  PASSED  125
+
+*** Keywords ***
+Check Listen All File
+    [Arguments]  ${filename}
+    @{expected} =  Create List  SUITE START: Pass And Fail 'Some tests here'  KW START: My Keyword ['Suite Setup']  KW START: BuiltIn.Log ['Hello says "\${who}"!', '\${LEVEL1}']  KW END: PASS  KW START: BuiltIn.Log ['Debug message', '\${LEVEL2}']  KW END: PASS
+    ...  KW END: PASS  TEST START: Pass '' ['force', 'pass']  KW START: My Keyword ['Pass']  KW START: BuiltIn.Log ['Hello says "\${who}"!', '\${LEVEL1}']  KW END: PASS  KW START: BuiltIn.Log ['Debug message', '\${LEVEL2}']  KW END: PASS
+    ...  KW END: PASS  TEST END: PASS  TEST START: Fail 'FAIL Expected failure' ['fail', 'force']  KW START: My Keyword ['Fail']  KW START: BuiltIn.Log ['Hello says "\${who}"!', '\${LEVEL1}']  KW END: PASS  KW START: BuiltIn.Log ['Debug message', '\${LEVEL2}']
+    ...  KW END: PASS  KW END: PASS  KW START: BuiltIn.Fail ['Expected failure']  KW END: FAIL  TEST END: FAIL Expected failure  SUITE END: FAIL 2 critical tests, 1 passed, 1 failed  2 tests total, 1 passed, 1 failed
+    ...  Output: output.xml  Closing...
+    Check Listener File  ${filename}  @{expected}
+
