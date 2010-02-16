@@ -85,19 +85,24 @@ Check Listen All File
   ...  TEST START: Pass '' ['force', 'pass']
   ...  KW START: My Keyword ['Pass']
   ...  KW START: BuiltIn.Log ['Hello says "\${who}"!', '\${LEVEL1}']
+  ...  LOG MESSAGE: [INFO] Hello says "Pass"
   ...  KW END: PASS
   ...  KW START: BuiltIn.Log ['Debug message', '\${LEVEL2}']
+  ...  LOG MESSAGE: [DEBUG] Debug message
   ...  KW END: PASS
   ...  KW END: PASS
   ...  TEST END: PASS
   ...  TEST START: Fail 'FAIL Expected failure' ['fail', 'force']
   ...  KW START: My Keyword ['Fail']
   ...  KW START: BuiltIn.Log ['Hello says "\${who}"!', '\${LEVEL1}']
+  ...  LOG MESSAGE: [INFO] Hello says "Fail"
   ...  KW END: PASS
   ...  KW START: BuiltIn.Log ['Debug message', '\${LEVEL2}']
+  ...  LOG MESSAGE: [DEBUG] Debug message
   ...  KW END: PASS
   ...  KW END: PASS
   ...  KW START: BuiltIn.Fail ['Expected failure']
+  ...  LOG MESSAGE: [FAIL] Expected failure
   ...  KW END: FAIL
   ...  TEST END: FAIL Expected failure
   ...  SUITE END: FAIL 2 critical tests, 1 passed, 1 failed

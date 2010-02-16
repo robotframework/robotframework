@@ -26,10 +26,10 @@ if utils.is_jython:
 
 
 class Listeners:
-    
+
     _start_attrs = ['doc', 'starttime', 'longname']
     _end_attrs = _start_attrs + ['endtime', 'elapsedtime', 'status', 'message']
-        
+
     def __init__(self, listeners):
         self._listeners = self._import_listneres(listeners)
 
@@ -56,18 +56,18 @@ class Listeners:
                 li.call_method(li.start_suite, suite.name, suite.doc)
             else:
                 attrs = self._get_start_attrs(suite, [])
-                li.call_method(li.start_suite, suite.name, attrs) 
+                li.call_method(li.start_suite, suite.name, attrs)
 
     def end_suite(self, suite):
         for li in self._listeners:
             if li.version == 1:
-                li.call_method(li.end_suite, suite.status, 
+                li.call_method(li.end_suite, suite.status,
                                suite.get_full_message())
             else:
-                attrs = self._get_end_attrs(suite, [], 
+                attrs = self._get_end_attrs(suite, [],
                                             {'statistics': 'get_stat_message'})
                 li.call_method(li.end_suite, suite.name, attrs)
-    
+
     def start_test(self, test):
         for li in self._listeners:
             if li.version == 1:
@@ -75,7 +75,7 @@ class Listeners:
             else:
                 attrs = self._get_start_attrs(test, ['tags'])
                 li.call_method(li.start_test, test.name, attrs)
-                
+
     def end_test(self, test):
         for li in self._listeners:
             if li.version == 1:
@@ -90,8 +90,8 @@ class Listeners:
                 li.call_method(li.start_keyword, kw.name, kw.args)
             else:
                 attrs = self._get_start_attrs(kw, ['args', '-longname'])
-                li.call_method(li.start_keyword, kw.name, attrs) 
- 
+                li.call_method(li.start_keyword, kw.name, attrs)
+
     def end_keyword(self, kw):
         for li in self._listeners:
             if li.version == 1:
@@ -103,14 +103,14 @@ class Listeners:
     def output_file(self, name, path):
         for li in self._listeners:
             li.call_method(getattr(li, '%s_file' % name.lower()), path)
-            
+
     def close(self):
         for li in self._listeners:
             li.call_method(li.close)
 
     def _get_start_attrs(self, item, names, mapping=None):
         return self._get_attrs(item, self._start_attrs, names, mapping)
-                              
+
     def _get_end_attrs(self, item, names, mapping=None):
         return self._get_attrs(item, self._end_attrs, names, mapping)
 
@@ -131,11 +131,11 @@ class Listeners:
                 attr = attr()
             attrs[name] = attr
         return attrs
-    
- 
+
+
 class _ListenerProxy(AbstractLoggerProxy):
-    _methods = ['start_suite', 'end_suite', 'start_test', 'end_test', 
-                'start_keyword', 'end_keyword', 'output_file', 'summary_file', 
+    _methods = ['start_suite', 'end_suite', 'start_test', 'end_test',
+                'start_keyword', 'end_keyword', 'output_file', 'summary_file',
                 'report_file', 'log_file', 'debug_file', 'close']
 
     def __init__(self, name, args):
@@ -151,7 +151,7 @@ class _ListenerProxy(AbstractLoggerProxy):
             listener = listener(*args)
         elif args:
             raise DataError("Listeners implemented as modules do not take arguments")
-        LOGGER.info("Imported listener '%s' with arguments %s (source %s)" 
+        LOGGER.info("Imported listener '%s' with arguments %s (source %s)"
                     % (name, utils.seq2str2(args), source))
         return listener
 
