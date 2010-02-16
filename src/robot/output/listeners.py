@@ -24,19 +24,18 @@ if utils.is_jython:
     from java.lang import Object
 
 
-
 class Listeners:
 
     _start_attrs = ['doc', 'starttime', 'longname']
     _end_attrs = _start_attrs + ['endtime', 'elapsedtime', 'status', 'message']
 
     def __init__(self, listeners):
-        self._listeners = self._import_listneres(listeners)
+        self._listeners = self._import_listeners(listeners)
 
     def __nonzero__(self):
         return len(self._listeners) > 0
 
-    def _import_listneres(self, listener_data):
+    def _import_listeners(self, listener_data):
         listeners = []
         for name, args in listener_data:
             try:
