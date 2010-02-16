@@ -99,6 +99,11 @@ class Listeners:
                 attrs = self._get_end_attrs(kw, ['args', '-longname', '-message'])
                 li.call_method(li.end_keyword, kw.name, attrs)
 
+    def log_message(self, msg):
+        for li in self._listeners:
+            if li.version != 1:
+                li.call_method(li.log_message, msg.message, msg.level)
+
     def output_file(self, name, path):
         for li in self._listeners:
             li.call_method(getattr(li, '%s_file' % name.lower()), path)
@@ -134,8 +139,8 @@ class Listeners:
 
 class _ListenerProxy(AbstractLoggerProxy):
     _methods = ['start_suite', 'end_suite', 'start_test', 'end_test',
-                'start_keyword', 'end_keyword', 'output_file', 'summary_file',
-                'report_file', 'log_file', 'debug_file', 'close']
+                'start_keyword', 'end_keyword', 'log_message', 'output_file',
+                'summary_file', 'report_file', 'log_file', 'debug_file', 'close']
 
     def __init__(self, name, args):
         listener = self._import_listener(name, args)
