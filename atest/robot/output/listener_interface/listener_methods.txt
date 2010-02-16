@@ -79,13 +79,16 @@ Check Listen All File
   @{expected}=  Create List  SUITE START: Pass And Fail 'Some tests here'
   ...  KW START: My Keyword ['Suite Setup']
   ...  KW START: BuiltIn.Log ['Hello says "\${who}"!', '\${LEVEL1}']
-  ...  KW END: PASS  KW START: BuiltIn.Log ['Debug message', '\${LEVEL2}']
+  ...  LOG MESSAGE: [INFO] Hello says "Suite Setup"!
+  ...  KW END: PASS
+  ...  KW START: BuiltIn.Log ['Debug message', '\${LEVEL2}']
+  ...  LOG MESSAGE: [DEBUG] Debug message
   ...  KW END: PASS
   ...  KW END: PASS
   ...  TEST START: Pass '' ['force', 'pass']
   ...  KW START: My Keyword ['Pass']
   ...  KW START: BuiltIn.Log ['Hello says "\${who}"!', '\${LEVEL1}']
-  ...  LOG MESSAGE: [INFO] Hello says "Pass"
+  ...  LOG MESSAGE: [INFO] Hello says "Pass"!
   ...  KW END: PASS
   ...  KW START: BuiltIn.Log ['Debug message', '\${LEVEL2}']
   ...  LOG MESSAGE: [DEBUG] Debug message
@@ -95,7 +98,7 @@ Check Listen All File
   ...  TEST START: Fail 'FAIL Expected failure' ['fail', 'force']
   ...  KW START: My Keyword ['Fail']
   ...  KW START: BuiltIn.Log ['Hello says "\${who}"!', '\${LEVEL1}']
-  ...  LOG MESSAGE: [INFO] Hello says "Fail"
+  ...  LOG MESSAGE: [INFO] Hello says "Fail"!
   ...  KW END: PASS
   ...  KW START: BuiltIn.Log ['Debug message', '\${LEVEL2}']
   ...  LOG MESSAGE: [DEBUG] Debug message
