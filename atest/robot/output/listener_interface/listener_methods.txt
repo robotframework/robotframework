@@ -76,7 +76,8 @@ Run Tests With Listeners
 
 Check Listen All File
   [Arguments]  ${filename}
-  @{expected}=  Create List  SUITE START: Pass And Fail 'Some tests here'
+  @{expected}=  Create List  Got settings on level: INFO
+  ...  SUITE START: Pass And Fail 'Some tests here'
   ...  KW START: My Keyword ['Suite Setup']
   ...  KW START: BuiltIn.Log ['Hello says "\${who}"!', '\${LEVEL1}']
   ...  LOG MESSAGE: [INFO] Hello says "Suite Setup"!
