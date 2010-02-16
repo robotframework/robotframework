@@ -1,5 +1,6 @@
 import os
 import tempfile
+import time
 
 
 class ListenAll:
@@ -24,13 +25,24 @@ class ListenAll:
         args = [ str(arg) for arg in attrs['args'] ]
         self.outfile.write("KW START: %s %s\n" % (name, args))
 
-    def log_message(self, message, level):
-        if level != 'TRACE' and 'Traceback' not in message:
-            self.outfile.write('LOG MESSAGE: [%s] %s\n' % (level, message))
+    def log_message(self, message):
+        msg, level = self._check_message_validity(message)
+        if level != 'TRACE' and 'Traceback' not in msg:
+            self.outfile.write('LOG MESSAGE: [%s] %s\n' % (level, msg))
 
-    def message(self, message, level):
-        if 'Settings' in message:
+    def message(self, message):
+        msg, level = self._check_message_validity(message)
+        if 'Settings' in msg:
             self.outfile.write('Got settings on level: %s\n' % level)
+
+    def _check_message_validity(self, message):
+        if message['html'] not in ['TRUE', 'FALSE']:
+            self.outfile.write('Log message has invalid `html` attribute %s' %
+                               message['html'])
+        if not message['timestamp'].startswith(str(time.localtime()[0])):
+            self.outfile.write('Log message has invalid timestamp %s' %
+                               message['timestamp'])
+        return message['message'], message['level']
 
     def end_keyword(self, name, attrs):
         self.outfile.write("KW END: %s\n" % (attrs['status']))

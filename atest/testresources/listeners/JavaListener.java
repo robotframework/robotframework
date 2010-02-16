@@ -38,14 +38,28 @@ public class JavaListener {
 		this.outfile.write("]\n");
 	}
 
-	public void logMessage(String message, String level) throws IOException {
-		if (!level.equals("TRACE") && message.indexOf("Traceback") < 0) {
-			this.outfile.write("LOG MESSAGE: [" + level + "] " + message + "\n");
+	public void logMessage(Map message) throws IOException {
+		String msg = (String)message.get("message");
+		String level = (String)message.get("level");
+		String html = (String)message.get("html");
+		String timestamp = (String)message.get("timestamp");
+		if (!html.equals("TRUE") && !html.equals("FALSE")) {
+			this.outfile.write("Log message has invalid `html` attribute" + html);
+		}
+		if (!level.equals("TRACE") && msg.indexOf("Traceback") < 0) {
+			this.outfile.write("LOG MESSAGE: [" + level + "] " + msg + "\n");
 		}
 	}
 
-	public void message(String message, String level) throws IOException {
-		if (message.indexOf("Settings") >= 0) {
+	public void message(Map message) throws IOException {
+		String msg = (String)message.get("message");
+		String level = (String)message.get("level");
+		String html = (String)message.get("html");
+		String timestamp = (String)message.get("timestamp");
+		if (!html.equals("TRUE") && !html.equals("FALSE")) {
+			this.outfile.write("Log message has invalid `html` attribute" + html);
+		}
+		if (msg.indexOf("Settings") >= 0) {
 			this.outfile.write("Got settings on level: " + level + "\n");
 		}
 	}

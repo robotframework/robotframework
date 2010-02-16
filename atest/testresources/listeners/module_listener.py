@@ -17,12 +17,14 @@ def start_keyword(name, attrs):
     args = [ str(arg) for arg in attrs['args'] ]
     OUTFILE.write("KW START: %s %s\n" % (name, args))
 
-def log_message(message, level):
-    if level != 'TRACE' and 'Traceback' not in message:
-        OUTFILE.write('LOG MESSAGE: [%s] %s\n' % (level, message))
+def log_message(message):
+    msg, level = message['message'], message['level']
+    if level != 'TRACE' and 'Traceback' not in msg:
+        OUTFILE.write('LOG MESSAGE: [%s] %s\n' % (level, msg))
 
-def message(message, level):
-    if 'Settings' in message:
+def message(message):
+    msg, level = message['message'], message['level']
+    if 'Settings' in msg:
         OUTFILE.write('Got settings on level: %s\n' % level)
 
 def end_keyword(name, attrs):
