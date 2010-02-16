@@ -24,6 +24,10 @@ class ListenAll:
         args = [ str(arg) for arg in attrs['args'] ]
         self.outfile.write("KW START: %s %s\n" % (name, args))
 
+    def log_message(self, message, level):
+        if level != 'TRACE' and 'Traceback' not in message:
+            self.outfile.write('LOG MESSAGE: [%s] %s\n' % (level, message))
+
     def end_keyword(self, name, attrs):
         self.outfile.write("KW END: %s\n" % (attrs['status']))
 

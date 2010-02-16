@@ -16,7 +16,11 @@ def start_test(name, attrs):
 def start_keyword(name, attrs):
     args = [ str(arg) for arg in attrs['args'] ]
     OUTFILE.write("KW START: %s %s\n" % (name, args))
-    
+
+def log_message(message, level):
+    if level != 'TRACE' and 'Traceback' not in message:
+        OUTFILE.write('LOG MESSAGE: [%s] %s\n' % (level, message))
+
 def end_keyword(name, attrs):
     OUTFILE.write("KW END: %s\n" % (attrs['status']))        
 
