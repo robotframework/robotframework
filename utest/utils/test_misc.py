@@ -65,7 +65,7 @@ class TestMiscUtils(unittest.TestCase):
         for basedir, target, expected in inputs:
             assert_equals(get_link_path(target, basedir), expected,
                          '%s -> %s' % (target, basedir))
-                  
+
     def test_printable_name_from_path(self):
         paths_and_names = [ ('tests.html', 'Tests'),
                             ('my tests.html', 'My Tests'),
@@ -86,7 +86,6 @@ class TestMiscUtils(unittest.TestCase):
         for path, expected in paths_and_names:
             actual = printable_name_from_path(path)
             assert_equals(expected, actual, path)
-    
 
     def test_printable_name(self):
         for inp, exp in [ ('simple', 'Simple'),
@@ -100,7 +99,7 @@ class TestMiscUtils(unittest.TestCase):
                           ('with 89 numbers', 'With 89 Numbers'),
                           ('', '') ]:
             assert_equals(printable_name(inp), exp)
-        
+
     def test_printable_name_with_code_style(self):
         for inp, exp in [ ('simple', 'Simple'),
                           ('ALLCAPS', 'ALLCAPS'),
@@ -115,17 +114,17 @@ class TestMiscUtils(unittest.TestCase):
                           ('foo-bar', 'Foo-bar'),
                           ('','') ]:
             assert_equals(printable_name(inp, code_style=True), exp)
-            
+
     def test_remove_prefix(self):
         for inp, exp in [ ('01__hello', 'hello'),
                           ('textual_prefix__hello', 'hello'),
                           ('01__actual__name.tsv', 'actual__name.tsv'),
                           ('no_prefix_here.html', 'no_prefix_here.html') ]:
             assert_equals(_remove_prefix(inp), exp)
-    
+
     def test_calc_percents_zeros(self):
         assert_equals(calc_percents(0, 0), (0, 0))
-        
+
     def test_calc_percents_below_limit(self):
         for in1, in2 in [ (1, 9999), (2, 9998), (9, 9991), (1244, 145431435) ]:
             assert_equals(calc_percents(in1, in2), (0.1, 99.9))
@@ -135,7 +134,7 @@ class TestMiscUtils(unittest.TestCase):
         for count in [ 1, 2, 10, 42, 100, 1234, 999999999 ]:
             assert_equals(calc_percents(count, 0), (100.0, 0))
             assert_equals(calc_percents(0, count), (0, 100.0))
-        
+
     def test_calc_percents_same(self):
         for count in [ 1, 2, 10, 42, 100, 1234, 999999999 ]:
             assert_equals(calc_percents(count, count), (50.0, 50.0))
@@ -161,17 +160,17 @@ class TestMiscUtils(unittest.TestCase):
                                     (7778, 2222, 77.8, 22.2) ]:
             assert_equals(calc_percents(in1, in2), (ex1, ex2))
             assert_equals(calc_percents(in2, in1), (ex2, ex1))
-        
+
     def test_calc_percents_rounding_both_up(self):
         for in1, in2, ex1, ex2 in [ (3, 13, 18.8, 81.3),
                                     (105, 9895, 1.1, 99.0),
                                     (4445, 5555, 44.5, 55.6) ]:
             assert_equals(calc_percents(in1, in2), (ex1, ex2))
             assert_equals(calc_percents(in2, in1), (ex2, ex1))
-                     
+
     def test_percentages_to_widths_zeros(self):
         self._verify_percentages_to_widths(0.0, 0.0)
-        
+
     def test_percentages_to_widths_no_changes(self):
         for in1, in2 in [ (0.0, 100.0),
                           (1.0, 99.0),
@@ -179,7 +178,7 @@ class TestMiscUtils(unittest.TestCase):
                           (50.0, 50.0) ]:
             self._verify_percentages_to_widths(in1, in2)
             self._verify_percentages_to_widths(in2, in1)
-        
+
     def test_percentages_to_widths_below_limit(self):
         for in1, in2 in [ (0.1, 99.9), (0.2, 99.8), (0.9, 99.1) ]:
             self._verify_percentages_to_widths(in1, in2, 1.0, 99.0)
