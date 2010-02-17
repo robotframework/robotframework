@@ -112,7 +112,7 @@ class Listeners:
     def _create_msg_dict(self, msg):
         return {'message': msg.message, 'level': msg.level,
                 'timestamp': msg.timestamp,
-                'html': msg.html and 'TRUE' or 'FALSE'}
+                'html': msg.html and 'yes' or 'no'}
 
     def output_file(self, name, path):
         for li in self._listeners:
