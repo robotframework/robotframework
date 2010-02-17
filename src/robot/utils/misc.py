@@ -195,7 +195,7 @@ def get_link_path(target, base):
 
     Rationale: os.path.relpath is not available before Python 2.6
     """
-
+    target = target.encode('UTF-8')
     target = normpath(target)
     base = normpath(base)
     if os.path.isfile(base):
