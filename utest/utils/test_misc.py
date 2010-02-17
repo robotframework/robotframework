@@ -1,20 +1,17 @@
-import unittest
-import sys
 import os
-from types import *
+import unittest
 
-from robot.utils.asserts import *
+from robot.utils.asserts import assert_equals
 from robot import utils
 if utils.is_jython:
     import JavaExceptions
 
-from robot.utils.misc import *
-from robot.utils.misc import _remove_prefix
-
+from robot.utils.misc import seq2str, get_link_path, printable_name, \
+    printable_name_from_path, calc_percents, percents_to_widths, _remove_prefix
 
 
 class TestMiscUtils(unittest.TestCase):
-    
+
     def test_seq2str(self):
         for exp, seq in [ ( "", () ),
                           ( "'One'", ("One",) ),
@@ -23,7 +20,6 @@ class TestMiscUtils(unittest.TestCase):
                             ("1","2","3","f o u r","fi ve","6") ) ]:
             assert_equals(exp, seq2str(seq))
 
-            
     def test_get_link_path(self):
         if os.sep == '/':
             inputs = [
@@ -67,7 +63,7 @@ class TestMiscUtils(unittest.TestCase):
             ]
 
         for basedir, target, expected in inputs:
-            assert_equal(get_link_path(target, basedir), expected,
+            assert_equals(get_link_path(target, basedir), expected,
                          '%s -> %s' % (target, basedir))
                   
     def test_printable_name_from_path(self):
@@ -207,8 +203,8 @@ class TestMiscUtils(unittest.TestCase):
             else:
                 exp2 -= 0.01
         inp_msg = ' with inputs (%s, %s)' % (inp1, inp2)
-        assert_equal(act1, exp1, 'Wrong pass percentage' + inp_msg)
-        assert_equal(act2, exp2, 'Wrong fail percentage' + inp_msg)
+        assert_equals(act1, exp1, 'Wrong pass percentage' + inp_msg)
+        assert_equals(act2, exp2, 'Wrong fail percentage' + inp_msg)
 
 
 if __name__ == "__main__":
