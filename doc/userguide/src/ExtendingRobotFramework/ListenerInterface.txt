@@ -141,6 +141,21 @@ Thus, for example, :code:`startSuite` is a synonym to :code:`start_suite`.
    |               |                  |  * args: keyword arguments as a list of strings  |
    |               |                  |  * status: either PASS or FAIL                   |
    +---------------+------------------+--------------------------------------------------+
+   | log_message   | message          | Called when a library keyword creates log message|
+   |               |                  | 'message' is a dictionary with following keys:   |
+   |               |                  |  * message: the content of the message           |
+   |               |                  |  * level: log level used in logging the message  |
+   |               |                  |  * timestamp: message creation time, format is   |
+   |               |                  |    YYYY-MM-DD hh:mm:ss.mil                       |
+   |               |                  |  * level: log level used in logging the message  |
+   |               |                  |  * html: String TRUE or FALSE denoting whether   |
+   |               |                  |    message is HTML or not                        |
+   +---------------+------------------+--------------------------------------------------+
+   | message       | message          | Called when framework creates a message. These   |
+   |               |                  | messages are also available in syslog_.          |
+   |               |                  | 'message' is a dictionary with same keys as with |
+   |               |                  | log_message method.                              |
+   +---------------+------------------+--------------------------------------------------+
    | output_file   | path             | Called when writing to an output file is         |
    |               |                  | finished. The path is an absolute path to the    |
    |               |                  | file. When `outputs are split`_, called for each |
