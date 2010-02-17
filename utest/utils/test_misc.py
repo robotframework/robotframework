@@ -66,6 +66,9 @@ class TestMiscUtils(unittest.TestCase):
             assert_equals(get_link_path(target, basedir), expected,
                          '%s -> %s' % (target, basedir))
 
+    def test_get_link_path_with_unicode(self):
+        assert_equals(get_link_path(u'\xe4\xf6.txt', ''),'%C3%A4%C3%B6.txt') 
+
     def test_printable_name_from_path(self):
         paths_and_names = [ ('tests.html', 'Tests'),
                             ('my tests.html', 'My Tests'),
