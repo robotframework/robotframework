@@ -81,7 +81,7 @@ execution progress have the same signature :code:`method(name, attributes)`,
 where :code:`attributes` is a dictionary containing details of the event. The
 following table lists all the available methods in the listener interface and
 the contents of the :code:`attributes` dictionary, where applicable. Keys of
-the dictionary are strings. All of these methods have also camelCase aliases.
+the dictionary are strings. All of these methods have also `camelCase` aliases.
 Thus, for example, :code:`startSuite` is a synonym to :code:`start_suite`. 
  
 .. table:: Available methods in the listener interface
@@ -91,72 +91,80 @@ Thus, for example, :code:`startSuite` is a synonym to :code:`start_suite`.
    |    Method     |    Arguments     |             Attributes / Explanation             |
    +===============+==================+==================================================+
    | start_suite   | name, attributes | Keys in the attributes dictionary:               |
-   |               |                  |  * doc: test suite documentation                 |
-   |               |                  |  * longname: suite name including parent suites  |
-   |               |                  |  * starttime: execution start time               |
+   |               |                  |                                                  |
+   |               |                  | * doc: test suite documentation                  |
+   |               |                  | * longname: suite name including parent suites   |
+   |               |                  | * starttime: execution start time                |
    +---------------+------------------+--------------------------------------------------+
    | end_suite     | name, attributes | Keys in the attributes dictionary:               |
-   |               |                  |  * doc: test suite documentation                 |
-   |               |                  |  * longname: test suite name including parents   |
-   |               |                  |  * starttime: execution start time               |
-   |               |                  |  * endtime: execution end time                   |
-   |               |                  |  * elapsetime: execution time in milliseconds    |
-   |               |                  |    as an integer                                 |
-   |               |                  |  * status: either PASS or FAIL                   |
-   |               |                  |  * statistics: suite statistics (number of       | 
-   |               |                  |    passed and failed tests in the suite)         |
-   |               |                  |    as a string                                   |
-   |               |                  |  * message: error message, if the suite setup    | 
-   |               |                  |    or teardown has failed, empty otherwise       |
+   |               |                  |                                                  |
+   |               |                  | * doc: test suite documentation                  |
+   |               |                  | * longname: test suite name including parents    |
+   |               |                  | * starttime: execution start time                |
+   |               |                  | * endtime: execution end time                    |
+   |               |                  | * elapsetime: execution time in milliseconds     |
+   |               |                  |   as an integer                                  |
+   |               |                  | * status: either :code:`PASS` or :code:`FAIL`    |
+   |               |                  | * statistics: suite statistics (number of passed | 
+   |               |                  |   and failed tests in the suite) as a string     |
+   |               |                  | * message: error message, if the suite setup     | 
+   |               |                  |   or teardown has failed, empty otherwise        |
    +---------------+------------------+--------------------------------------------------+
    | start_test    | name, attributes | Keys in the attributes dictionary:               | 
-   |               |                  |  * doc: test case documentation                  |
-   |               |                  |  * longname: test name including parent suites   |
-   |               |                  |  * starttime: execution start time               |
-   |               |                  |  * tags: test case tags as a list of strings     |
+   |               |                  |                                                  |
+   |               |                  | * doc: test case documentation                   |
+   |               |                  | * longname: test name including parent suites    |
+   |               |                  | * starttime: execution start time                |
+   |               |                  | * tags: test case tags as a list of strings      |
    +---------------+------------------+--------------------------------------------------+
    | end_test      | name, attributes | Keys in the attributes dictionary:               | 
-   |               |                  |  * doc: test case documentation                  |
-   |               |                  |  * longname: test name including parent suites   |
-   |               |                  |  * starttime: execution start time               |
-   |               |                  |  * endtime: execution end time                   |
-   |               |                  |  * elapsetime: execution time in milliseconds    |
-   |               |                  |    as an integer                                 |
-   |               |                  |  * tags: test case tags as a list of strings     |
-   |               |                  |  * status: either PASS or FAIL                   |
-   |               |                  |  * message: contains an error message if the     |
-   |               |                  |    test has failed and is empty otherwise        |
+   |               |                  |                                                  |
+   |               |                  | * doc: test case documentation                   |
+   |               |                  | * longname: test name including parent suites    |
+   |               |                  | * starttime: execution start time                |
+   |               |                  | * endtime: execution end time                    |
+   |               |                  | * elapsetime: execution time in milliseconds     |
+   |               |                  |   as an integer                                  |
+   |               |                  | * tags: test case tags as a list of strings      |
+   |               |                  | * status: either :code:`PASS` or :code:`FAIL`    |
+   |               |                  | * message: contains an error message if the      |
+   |               |                  |   test has failed and is empty otherwise         |
    +---------------+------------------+--------------------------------------------------+
    | start_keyword | name, attributes | Keys in the attributes dictionary:               | 
-   |               |                  |  * doc: keyword documentation                    |
-   |               |                  |  * starttime: execution start time               |
-   |               |                  |  * args: keyword arguments as a list of strings  |
+   |               |                  |                                                  |
+   |               |                  | * doc: keyword documentation                     |
+   |               |                  | * starttime: execution start time                |
+   |               |                  | * args: keyword arguments as a list of strings   |
    +---------------+------------------+--------------------------------------------------+
    | end_keyword   | name, attributes | Keys in the attributes dictionary:               | 
-   |               |                  |  * doc: keyword documentation                    |
-   |               |                  |  * starttime: execution start time               |
-   |               |                  |  * endtime: execution end time                   |
-   |               |                  |  * elapsetime: execution time in milliseconds    |
-   |               |                  |    as an integer                                 |
-   |               |                  |  * args: keyword arguments as a list of strings  |
-   |               |                  |  * status: either PASS or FAIL                   |
+   |               |                  |                                                  |
+   |               |                  | * doc: keyword documentation                     |
+   |               |                  | * starttime: execution start time                |
+   |               |                  | * endtime: execution end time                    |
+   |               |                  | * elapsetime: execution time in milliseconds     |
+   |               |                  |   as an integer                                  |
+   |               |                  | * args: keyword's arguments as a list of strings |
+   |               |                  | * status: either :code:`PASS` or :code:`FAIL`    |
    +---------------+------------------+--------------------------------------------------+
-   | log_message   | message          | Called when a library keyword creates log        |
-   |               |                  | message. `message` is a dictionary with          |
+   | log_message   | message          | Called when an executed keyword writes a log     |
+   |               |                  | message. :code:`message` is a dictionary with    |
    |               |                  | following keys:                                  |
    |               |                  |                                                  |
-   |               |                  |  * message: the content of the message           |
-   |               |                  |  * level: log level used in logging the message  |
-   |               |                  |  * timestamp: message creation time, format is   |
-   |               |                  |    YYYY-MM-DD hh:mm:ss.mil                       |
-   |               |                  |  * level: log level used in logging the message  |
-   |               |                  |  * html: String TRUE or FALSE denoting whether   |
-   |               |                  |    message is HTML or not                        |
+   |               |                  | * message: the content of the message            |
+   |               |                  | * level: `log level`_ used in logging the message|
+   |               |                  | * timestamp: message creation time, format is    |
+   |               |                  |   :code:`YYYY-MM-DD hh:mm:ss.mil`                |
+   |               |                  | * html: string :code:`yes` or :code:`no` denoting|
+   |               |                  |   whether the message should be interpreted as   |
+   |               |                  |   HTML or not                                    |
+   |               |                  |                                                  |
+   |               |                  | New in Robot Framework 2.1.3.                    |
    +---------------+------------------+--------------------------------------------------+
-   | message       | message          | Called when framework creates a message. These   |
-   |               |                  | messages are also available in syslog_.          |
-   |               |                  | 'message' is a dictionary with same keys as with |
-   |               |                  | log_message method.                              |
+   | message       | message          | Called when the framework itself writes a syslog_|
+   |               |                  | message. :code:`message` is a dictionary with    |
+   |               |                  | same keys as with :code:`log_message` method.    |
+   |               |                  |                                                  |
+   |               |                  | New in Robot Framework 2.1.3.                    |
    +---------------+------------------+--------------------------------------------------+
    | output_file   | path             | Called when writing to an output file is         |
    |               |                  | finished. The path is an absolute path to the    |
@@ -194,35 +202,20 @@ to implement any explicit interface or have all these methods.
 .. sourcecode:: java
 
    public interface RobotListenerInterface {
-
        public static final int ROBOT_LISTENER_API_VERSION = 2;
-
        void startSuite(String name, java.util.Map attributes);
-
        void endSuite(String name, java.util.Map attributes);
-
        void startTest(String name, java.util.Map attributes);
-
        void endTest(String name, java.util.Map attributes);
-
        void startKeyword(String name, java.util.Map attributes);
-
        void endKeyword(String name, java.util.Map attributes);
-
        void logMessage(java.util.Map message);
-
        void message(java.util.Map message);
-
        void outputFile(String path);
-
        void logFile(String path);
-
        void reportFile(String path);
-
        void summaryFile(String path);
-
        void debugFile(String path);
-
        void close();
    }
 
