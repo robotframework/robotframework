@@ -141,8 +141,10 @@ Thus, for example, :code:`startSuite` is a synonym to :code:`start_suite`.
    |               |                  |  * args: keyword arguments as a list of strings  |
    |               |                  |  * status: either PASS or FAIL                   |
    +---------------+------------------+--------------------------------------------------+
-   | log_message   | message          | Called when a library keyword creates log message|
-   |               |                  | 'message' is a dictionary with following keys:   |
+   | log_message   | message          | Called when a library keyword creates log        |
+   |               |                  | message. `message` is a dictionary with          |
+   |               |                  | following keys:                                  |
+   |               |                  |                                                  |
    |               |                  |  * message: the content of the message           |
    |               |                  |  * level: log level used in logging the message  |
    |               |                  |  * timestamp: message creation time, format is   |
