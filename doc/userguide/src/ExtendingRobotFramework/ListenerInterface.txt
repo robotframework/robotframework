@@ -209,6 +209,10 @@ to implement any explicit interface or have all these methods.
 
        void endKeyword(String name, java.util.Map attributes);
 
+       void logMessage(java.util.Map message);
+
+       void message(java.util.Map message);
+
        void outputFile(String path);
 
        void logFile(String path);
