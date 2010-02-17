@@ -43,8 +43,8 @@ public class JavaListener {
 		String level = (String)message.get("level");
 		String html = (String)message.get("html");
 		String timestamp = (String)message.get("timestamp");
-		if (!html.equals("TRUE") && !html.equals("FALSE")) {
-			this.outfile.write("Log message has invalid `html` attribute" + html);
+		if (!html.equals("yes") && !html.equals("no")) {
+			this.outfile.write("Log message has invalid `html` attribute " + html);
 		}
 		if (!level.equals("TRACE") && msg.indexOf("Traceback") < 0) {
 			this.outfile.write("LOG MESSAGE: [" + level + "] " + msg + "\n");
@@ -56,8 +56,8 @@ public class JavaListener {
 		String level = (String)message.get("level");
 		String html = (String)message.get("html");
 		String timestamp = (String)message.get("timestamp");
-		if (!html.equals("TRUE") && !html.equals("FALSE")) {
-			this.outfile.write("Log message has invalid `html` attribute" + html);
+		if (!html.equals("yes") && !html.equals("no")) {
+			this.outfile.write("Log message has invalid `html` attribute " + html);
 		}
 		if (msg.indexOf("Settings") >= 0) {
 			this.outfile.write("Got settings on level: " + level + "\n");

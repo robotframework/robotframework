@@ -36,7 +36,7 @@ class ListenAll:
             self.outfile.write('Got settings on level: %s\n' % level)
 
     def _check_message_validity(self, message):
-        if message['html'] not in ['TRUE', 'FALSE']:
+        if message['html'] not in ['yes', 'no']:
             self.outfile.write('Log message has invalid `html` attribute %s' %
                                message['html'])
         if not message['timestamp'].startswith(str(time.localtime()[0])):
