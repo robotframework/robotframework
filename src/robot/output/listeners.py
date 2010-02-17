@@ -178,7 +178,7 @@ class _ListenerProxy(AbstractLoggerProxy):
 
     def call_method(self, method, *args):
         if self.is_java:
-            args = self._convert_dictionaries_to_maps(args)
+            args = [ self._convert_possible_dict_to_map(a) for a in args ]
         try:
             method(*args)
         except:
@@ -187,5 +187,7 @@ class _ListenerProxy(AbstractLoggerProxy):
                          % (method.__name__, self.name, message))
             LOGGER.info("Details:\n%s" % details)
 
-    def _convert_dictionaries_to_maps(self, args):
-        return [ isinstance(a, dict) and utils.dict2map(a) or a for a in args ]
+    def _convert_possible_dict_to_map(self, arg):
+        if isinstance(arg, dict):
+            return utils.dict2map(arg)
+        return arg
