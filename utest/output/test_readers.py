@@ -12,7 +12,7 @@ data = '''<?xml version="1.0" encoding="UTF-8"?>
 
 class TestBaseReader(unittest.TestCase):
 
-    def test_missing_statistics_tag(self):
+    def test_missing_status_tag(self):
         reader = _BaseReader(DomWrapper(string=data))
         assert_equals(reader.status, 'FAIL')
         assert_equals(reader.starttime, 'N/A')
