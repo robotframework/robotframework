@@ -1,0 +1,3 @@
+*Test Cases*
+Test In Unicode Directory
+  Log  Hello from unicode directory

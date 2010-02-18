@@ -1,0 +1,12 @@
+* Settings *
+Force Tags  regression  pybot  jybot
+Suite Setup  Run Tests  \  parsing/unicode_paths
+Resource  ../../resources/resource.html
+Variables  unicode_names.py
+
+* Test Cases *
+Unicode characters in test data directory and file names
+  ${tc}=  Check Test Case  Test In Unicode Filename
+  Should Be Equal  ${tc.longname}  ${test_in_file}
+  ${tc}=  Check Test Case  Test In Unicode Directory
+  Should Be Equal  ${tc.longname}  ${test_in_dir}
