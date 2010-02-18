@@ -3,8 +3,7 @@ Force Tags      regression  pybot  jybot
 Resource        ../../resources/resource.html
 
 *** Variables ***
-${RELATIVE}  /../../testdata/misc
-${BASE}  ${CURDIR}${RELATIVE}
+${BASE}  ${CURDIR}/../../testdata/misc
 ${LOGNAME}  suite_source_log.html
 
 *** Test Cases ***
@@ -30,9 +29,8 @@ Link Is Not Created For Combined Suite
 *** Keywords ***
 Verify Suite Source Link
     [Arguments]  ${path}
-    ${relpath}=  Set Variable  ${RELATIVE}${/}${path}
-    ${abspath}=  Join Path  ${BASE}      ${path}
-    ${logfile}=  Get File  ${OUTDIR}/${LOGNAME}
-    Should Contain  ${logfile}  <a href="..${relpath}">${abspath}</a>
+    ${path} =  Join Path  ${BASE}  ${path}
+    ${logfile} =  Get File  ${OUTDIR}/${LOGNAME}
+    Should Contain  ${logfile}  <a href="file://${path}">${path}</a>
     [Return]  ${logfile}
 
