@@ -15,6 +15,7 @@
 
 import re
 import os
+import sys
 
 from robot import utils
 from robot.errors import DataError
@@ -123,8 +124,12 @@ class TabularRawData(_BaseRawData):
         self._table = None
         self._strip_comments = strip_comments
         # ${CURDIR} is replaced the data and thus must be escaped
-        self._curdir = utils.get_directory(path).replace('\\','\\\\')
-                
+        self._curdir = self._get_curdir(path)
+
+    def _get_curdir(self, path):
+        curdir = utils.get_directory(path).replace('\\','\\\\')
+        return curdir.decode(sys.getfilesystemencoding(), 'ignore')
+
     def start_table(self, name):
         """Makes rawdata instance ready to receive new data
         

@@ -14,6 +14,7 @@
 
 
 import os
+import sys
 
 from robot import utils
 from robot.errors import DataError
@@ -58,9 +59,10 @@ class _BaseSuite(BaseTestSuite):
         self.user_keywords = UserHandlerList(rawdata.keywords)
 
     def _get_name_and_source(self, path):
-        source = self._get_source(path)
+        source = self._get_source(path).decode(sys.getfilesystemencoding(),
+                                               'ignore')
         return self._get_name(source), source
-        
+
     def _get_name(self, source):
         return utils.printable_name_from_path(source)
 
