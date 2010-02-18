@@ -37,7 +37,7 @@ def process_outputs(paths, settings):
 
 def process_output(path, read_level=-1):
     """Process one output file and return TestSuite and ExecutionErrors
-    
+
     'read_level' can be used to limit how many suite levels are read. This is
     mainly useful when Robot has split outputs and only want to read index.
     """
@@ -56,7 +56,7 @@ def process_output(path, read_level=-1):
     return TestSuite(suite, read_level), ExecutionErrors(errors)
 
 def _get_suite_node(root, path):
-    if root.name != 'robot': 
+    if root.name != 'robot':
         raise DataError("File '%s' is not Robot Framework output file." % path)
     node = root.get_node('suite')
     node.generator = root.get_attr('generator', 'notset').split()[0].lower()
@@ -73,7 +73,7 @@ def _get_errors_node(root):
 
 
 class _BaseReader:
-    
+
     def __init__(self, node):
         try:
             self.doc = node.get_node('doc').text
@@ -88,10 +88,10 @@ class _BaseReader:
         self.starttime = status.get_attr('starttime', 'N/A')
         self.endtime = status.get_attr('endtime', 'N/A')
         self.elapsedtime = utils.get_elapsed_time(self.starttime, self.endtime)
-            
+
 
 class _TestAndSuiteReader(_BaseReader):
-    
+
     def __init__(self, node):
         _BaseReader.__init__(self, node)
         self.keywords = [ Keyword(kw) for kw in node.get_nodes('kw') ]
@@ -100,18 +100,18 @@ class _TestAndSuiteReader(_BaseReader):
         if len(self.keywords) > 0 and self.keywords[-1].type == 'teardown':
             self.teardown = self.keywords.pop(-1)
 
-        
+
 class _SuiteReader(_TestAndSuiteReader):
-    
+
     def __init__(self, node):
         _TestAndSuiteReader.__init__(self, node)
         del(self.keywords)
         for metanode in node.get_nodes('metadata/item'):
             self.metadata[metanode.get_attr('name')] = metanode.text
-            
+
     def _get_texts(self, node, path):
         return [ item.text for item in node.get_nodes(path) ]
-            
+
 
 class _TestReader(_TestAndSuiteReader):
 
@@ -121,7 +121,7 @@ class _TestReader(_TestAndSuiteReader):
         self.timeout = node.get_attr('timeout', '')
 
 
-class _KeywordReader(_BaseReader): 
+class _KeywordReader(_BaseReader):
 
     def __init__(self, node):
         _BaseReader.__init__(self, node)
@@ -135,19 +135,19 @@ class _KeywordReader(_BaseReader):
         for child in node.children:
             if child.name == 'kw':
                 kw = Keyword(child)
-                self.keywords.append(kw) 
-                self.children.append(kw) 
+                self.keywords.append(kw)
+                self.children.append(kw)
             elif child.name == 'msg':
                 msg = Message(child)
-                self.messages.append(msg) 
-                self.children.append(msg) 
+                self.messages.append(msg)
+                self.children.append(msg)
 
-    
+
 class TestSuite(BaseTestSuite, _SuiteReader):
 
     def __init__(self, node, read_level=-1, level=1, parent=None):
         node = self._get_node(node, read_level, level)
-        BaseTestSuite.__init__(self, node.attrs.get('name'), 
+        BaseTestSuite.__init__(self, node.attrs.get('name'),
                                node.attrs.get('source', None), parent)
         _SuiteReader.__init__(self, node)
         for snode in node.get_nodes('suite'):
@@ -176,13 +176,13 @@ class TestSuite(BaseTestSuite, _SuiteReader):
         BaseTestSuite.set_status(self)
         if self.starttime == 'N/A' or self.endtime == 'N/A':
             subitems = self.suites + self.tests + [self.setup, self.teardown]
-            self.elapsedtime = sum([ item.elapsedtime for item in subitems 
+            self.elapsedtime = sum([ item.elapsedtime for item in subitems
                                      if item is not None ])
 
     def _set_critical_tags(self, critical):
         BaseTestSuite._set_critical_tags(self, critical)
         self.set_status()
-        
+
     def _filter_by_tags(self, incls, excls):
         ret = BaseTestSuite._filter_by_tags(self, incls, excls)
         self.starttime = self.endtime = 'N/A'
@@ -194,9 +194,9 @@ class TestSuite(BaseTestSuite, _SuiteReader):
         self.starttime = self.endtime = 'N/A'
         self.set_status()
         return ret
-    
+
     def remove_keywords(self, how):
-        how = how.upper() 
+        how = how.upper()
         if how not in ['ALL','PASSED']:
             return
         if how == 'ALL' or (how == 'PASSED' and self.critical_stats.failed == 0):
@@ -210,13 +210,13 @@ class TestSuite(BaseTestSuite, _SuiteReader):
 
 
 class CombinedTestSuite(TestSuite):
-    
+
     def __init__(self, starttime, endtime):
         BaseTestSuite.__init__(self, name='')
         self.starttime = self._get_time(starttime)
         self.endtime = self._get_time(endtime)
         self.elapsedtime = utils.get_elapsed_time(self.starttime, self.endtime)
-        
+
     def _get_time(self, timestamp):
         if utils.eq(timestamp, 'N/A'):
             return 'N/A'
@@ -234,7 +234,7 @@ class CombinedTestSuite(TestSuite):
         self.status = self.critical_stats.failed == 0 and 'PASS' or 'FAIL'
         if self.starttime == 'N/A' or self.endtime == 'N/A':
             self.elapsedtime += suite.elapsedtime
-        
+
 
 class TestCase(BaseTestCase, _TestReader):
 
@@ -242,35 +242,35 @@ class TestCase(BaseTestCase, _TestReader):
         BaseTestCase.__init__(self, node.get_attr('name'), parent)
         _TestReader.__init__(self, node)
         self.set_criticality(parent.critical)
-  
+
     def remove_keywords(self, how):
         if how == 'ALL' or (how == 'PASSED' and self.status == 'PASS'):
             for kw in self.keywords + [self.setup, self.teardown]:
                 if kw is not None:
                     kw.remove_data()
 
-        
+
 class Keyword(BaseKeyword, _KeywordReader):
 
     def __init__(self, node):
         self._init_data()
         BaseKeyword.__init__(self, node.get_attr('name'))
         _KeywordReader.__init__(self, node)
-        
+
     def _init_data(self):
         self.messages = []
         self.keywords = []
         self.children = []
-            
+
     def remove_data(self):
         self._init_data()
-            
+
     def __str__(self):
         return self.name
 
     def __repr__(self):
         return "'%s'" % self.name
-    
+
     def serialize(self, serializer):
         serializer.start_keyword(self)
         for child in self.children:
@@ -291,7 +291,7 @@ class Message:
 
     def __str__(self):
         return '%s %s %s' % (self.timestamp, self.level, self.message)
-    
+
     def __repr__(self):
         lines = self.message.split('\n')
         msg = len(lines) > 1 and lines[0] + '...' or lines[0]
@@ -299,7 +299,7 @@ class Message:
 
 
 class ExecutionErrors:
-    
+
     def __init__(self, node):
         if node is None:
             self.messages = []
@@ -314,9 +314,9 @@ class ExecutionErrors:
 
 
 class CombinedExecutionErrors(ExecutionErrors):
-    
+
     def __init__(self):
         self.messages = []
-        
+
     def add(self, other):
         self.messages += other.messages
