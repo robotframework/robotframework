@@ -1,0 +1,36 @@
+*** Settings ***
+Force Tags      regression  pybot  jybot
+Resource        ../../resources/resource.html
+
+*** Variables ***
+${BASE}  ${CURDIR}/../../testdata/misc
+${LOGNAME}  suite_source_log.html
+
+*** Test Cases ***
+Link For File Suite
+    [Setup]  Run Tests  --log ${LOGNAME}  misc${/}pass_and_fail.html
+    Verify Suite Source Link  pass_and_fail.html
+
+Links For Directory Suites
+    [Setup]  Run Tests  --log ${LOGNAME}  misc${/}suites
+    Verify Suite Source Link  suites
+    Verify Suite Source Link  suites/subsuites
+
+Using Rebot Preserves Link
+    [Setup]  Run Rebot  --log ${LOGNAME}  ${OUTFILE}
+    Verify Suite Source Link  suites
+    Verify Suite Source Link  suites/subsuites
+
+Link Is Not Created For Combined Suite
+    [Setup]  Run Tests  --log ${LOGNAME}  misc${/}pass_and_fail.html  misc${/}pass_and_fail.html
+    ${logfile} =  Verify Suite Source Link  pass_and_fail.html
+    Should Be Equal As Numbers  ${logfile.count('Source:')}  2
+
+*** Keywords ***
+Verify Suite Source Link
+    [Arguments]  ${path}
+    ${path} =  Join Path  ${BASE}  ${path}
+    ${logfile} =  Get File  ${OUTDIR}/${LOGNAME}
+    Should Contain  ${logfile}  <a href="file://${path}">${path}</a>
+    [Return]  ${logfile}
+
