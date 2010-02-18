@@ -128,7 +128,9 @@ class TabularRawData(_BaseRawData):
 
     def _get_curdir(self, path):
         curdir = utils.get_directory(path).replace('\\','\\\\')
-        return curdir.decode(sys.getfilesystemencoding(), 'ignore')
+        if not utils.is_jython:
+            curdir = curdir.decode(sys.getfilesystemencoding(), 'ignore')
+        return curdir
 
     def start_table(self, name):
         """Makes rawdata instance ready to receive new data

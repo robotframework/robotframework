@@ -59,8 +59,9 @@ class _BaseSuite(BaseTestSuite):
         self.user_keywords = UserHandlerList(rawdata.keywords)
 
     def _get_name_and_source(self, path):
-        source = self._get_source(path).decode(sys.getfilesystemencoding(),
-                                               'ignore')
+        source = self._get_source(path)
+        if not utils.is_jython:
+            source = source.decode(sys.getfilesystemencoding(), 'ignore')
         return self._get_name(source), source
 
     def _get_name(self, source):
