@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<robot generated="20100218 10:42:52.363" generator="Robot trunk 20091023 (Python 2.6.4 on linux2)">
+<suite source="/home/jth/workspace/robotframework/tools/fixml/test/suite" name="Suite">
+<doc></doc>
+<metadata>
+</metadata>
+<suite source="/home/jth/workspace/robotframework/tools/fixml/test/suite/tests.txt" name="Tests">
+<doc></doc>
+<metadata>
+</metadata>
+<test critical="yes" name="Test" timeout="">
+<doc></doc>
+<kw type="kw" name="My Keyword" timeout="">
+<doc></doc>
+<arguments>
+<arg>fixml</arg>
+</arguments>
+<kw type="kw" name="BuiltIn.Log" timeout="">
+<doc>Logs the given message with the given level.</doc>
+<arguments>
+<arg>${arg}</arg>
+</arguments>
+<msg timestamp="20100218 10:42:52.401" html="no" level="INFO">fixml</msg>
+<status status="PASS" endtime="20100218 10:42:52.401" starttime="20100218 10:42:52.400"></status>
+</kw>
+<kw type="kw" name="BuiltIn.Log" timeout="">
+<doc>Logs the given message with the given level.</doc>
+<arguments>
+<arg>${arg*10}</arg>
+</arguments>
+<msg timestamp="20100218 10:42:52.402" html="no" level="INFO">fixmlfixmlfixmlfixmlfixmlfixmlfixmlfixmlfixmlfixml</msg>
+<status status="PASS" endtime="20100218 10:42:52.402" starttime="20100218 10:42:52.401"></status>
+</kw>
+<status status="PASS" endtime="20100218 10:42:52.402" starttime="20100218 10:42:52.399"></status>
+</kw>
+<tags>
+</tags>
+<status status="PASS" endtime="20100218 10:42:52.403" starttime="20100218 10:42:52.399"></status>
+</test>
+<test critical="yes" name="Failing Test" timeout="">
+<doc></doc>
+<kw type="kw" name="Fail Spectacularly" timeout="">
+<doc></doc>
+<arguments>
+</arguments>
+<kw type="kw" name="BuiltIn.Fail" timeout="">
+<doc>Fails the test immediately with the given (optional) message.</doc>
+<arguments>
+<arg>Spectacular Failure</arg>
+</arguments>
+<msg timestamp="20100218 10:42:52.406"

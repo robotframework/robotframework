@@ -1,0 +1,16 @@
+* Test Cases *
+Test
+  My Keyword  fixml
+
+Failing Test
+  Fail Spectacularly
+
+* Keywords *
+My Keyword
+  [Arguments]  ${arg}
+  Log  ${arg}
+  Log  ${arg*10}
+
+Fail Spectacularly
+  Fail  Spectacular Failure
+
