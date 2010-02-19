@@ -73,6 +73,7 @@ def _get_errors_node(root):
 
 
 class _MissingStatus:
+    '''If XML was fixed for example by fixml.py, status tag may be  missing'''
     text = 'Broken output file'
     get_attr = lambda self, name, default: 'N/A'
 
@@ -88,8 +89,6 @@ class _BaseReader:
             status = node.get_node('status')
             self.status = status.get_attr('status','').upper()
         except AttributeError:
-            # If XML was fixed for example by fixml.py, status tag may be
-            # missing
             status = _MissingStatus()
             self.status = 'FAIL'
         if self.status not in ['PASS','FAIL']:
