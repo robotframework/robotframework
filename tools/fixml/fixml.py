@@ -1,7 +1,11 @@
 #!/usr/bin/env python
 
 import sys
-from BeautifulSoup import BeautifulStoneSoup
+try:
+    from BeautifulSoup import BeautifulStoneSoup
+except ImportError:
+    raise ImportError('fixml.py requires BeautifulSoup (%s) to be installed.'
+                      % 'http://www.crummy.com/software/BeautifulSoup/')
 
 
 class Fixml(BeautifulStoneSoup):
