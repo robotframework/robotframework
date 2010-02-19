@@ -1,0 +1,32 @@
+.. include:: ../../../doc/userguide/src/roles.txt
+
+=================================================================
+  fixml.py -- A tool to fix broken Robot Framework output files
+=================================================================
+
+:prog:`fixml.py` is a tool to fix Robot Framework output files that
+are not properly finished or are missing elements from the middle. It
+should be possible to generate reports and logs from the fixed output
+afterwards with the :prog:`rebot` tool.
+
+Synopsis
+--------
+
+::
+
+    fixml.py inpath [outpath]
+
+If :code:`outpath` is not given, the file is produced in-place.
+
+
+Installation
+------------
+
+:prog:`fixml.py` is included in source distributions and can also be downloaded
+from http://code.google.com/p/robotframework/wiki/OutputFileFixingTool.
+
+The tool uses BeautifulSoup module which must be installed
+separately. See http://www.crummy.com/software/BeautifulSoup for more
+information.
+
+The tool is only compatible with Robot Framework 2.1.3 or newer.
