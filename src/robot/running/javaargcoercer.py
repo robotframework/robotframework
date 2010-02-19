@@ -13,6 +13,8 @@
 #  limitations under the License.
 
 
+import sys
+
 from java.lang import Byte, Short, Integer, Long, Boolean, Float, Double
 
 from robot.errors import DataError
@@ -32,7 +34,7 @@ class ArgumentCoercer:
         types = types.items()
         types.sort()
         return types
-        
+
     def __call__(self, args):
         return [ coercer(arg) for coercer, arg in zip(self._coercers, args) ]
 
@@ -40,18 +42,24 @@ class ArgumentCoercer:
 class _CoercionFunction:
 
     _bool_types = [Boolean]
-    _bool_primitives = ['boolean']
     _int_types = [Byte, Short, Integer, Long]
-    _int_primitives = ['byte', 'short', 'int', 'long']
     _float_types = [Float, Double]
+    _bool_primitives = ['boolean']
+    _int_primitives = ['byte', 'short', 'int', 'long']
     _float_primitives = ['float', 'double']
+    if sys.version_info[:2] > (2,2):
+        pattern = "<type '%s'>"
+        _bool_primitives =  [ pattern % 'boolean' ]
+        _int_primitives =   [ pattern % p for p in _int_primitives ]
+        _float_primitives = [ pattern % p for p in _float_primitives ]
+        del pattern
 
     def __init__(self, arg_types, position):
         self._position = position
         self.__coercer = None
         for arg in arg_types:
-            if not (self._set_bool(arg) or 
-                    self._set_int(arg) or 
+            if not (self._set_bool(arg) or
+                    self._set_int(arg) or
                     self._set_float(arg)):
                 self.__coercer = self._no_coercion
 
@@ -61,15 +69,15 @@ class _CoercionFunction:
         return self.__coercer(arg)
 
     def _set_bool(self, arg):
-        return self._set_coercer(arg, self._bool_types, 
+        return self._set_coercer(arg, self._bool_types,
                                  self._bool_primitives, self._to_bool)
 
     def _set_int(self, arg):
-        return self._set_coercer(arg, self._int_types, 
+        return self._set_coercer(arg, self._int_types,
                                  self._int_primitives, self._to_int)
 
     def _set_float(self, arg):
-        return self._set_coercer(arg, self._float_types, 
+        return self._set_coercer(arg, self._float_types,
                                  self._float_primitives, self._to_float)
 
     def _set_coercer(self, arg, type_list, primitive_list, coercer):
