@@ -73,9 +73,9 @@ def _get_errors_node(root):
 
 
 class _MissingStatus:
-    '''If XML was fixed for example by fixml.py, status tag may be  missing'''
+    """If XML was fixed for example by fixml.py, status tag may be missing"""
     text = 'Broken output file'
-    get_attr = lambda self, name, default: 'N/A'
+    get_attr = lambda self, name, default: name == 'status' and 'FAIL' or 'N/A'
 
 
 class _BaseReader:
@@ -87,10 +87,9 @@ class _BaseReader:
             self.doc = ''
         try:
             status = node.get_node('status')
-            self.status = status.get_attr('status','').upper()
         except AttributeError:
             status = _MissingStatus()
-            self.status = 'FAIL'
+        self.status = status.get_attr('status','').upper()
         if self.status not in ['PASS','FAIL']:
             raise DataError("Item '%s' has invalid status '%s'"
                             % (self.name, status))
