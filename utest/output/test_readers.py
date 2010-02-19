@@ -17,7 +17,7 @@ class TestBaseReader(unittest.TestCase):
         assert_equals(reader.status, 'FAIL')
         assert_equals(reader.starttime, 'N/A')
         assert_equals(reader.endtime, 'N/A')
-        assert_equals(reader.message, 'Broken output file')
+        assert_equals(reader.message, 'Could not find status.')
 
 
 if __name__ == '__main__':

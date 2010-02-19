@@ -74,7 +74,7 @@ def _get_errors_node(root):
 
 class _MissingStatus:
     """If XML was fixed for example by fixml.py, status tag may be missing"""
-    text = 'Broken output file'
+    text = 'Could not find status.'
     get_attr = lambda self, name, default: name == 'status' and 'FAIL' or 'N/A'
 
 
