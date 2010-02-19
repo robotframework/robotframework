@@ -2,7 +2,6 @@
 
 import os
 import sys
-import subprocess
 import unittest
 
 BASEDIR = os.path.dirname(os.path.abspath(__file__))
@@ -10,7 +9,11 @@ BASEDIR = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.join(BASEDIR, '..', '..', 'src'))
 
 from robot.output import TestSuite
-from robot.utils.asserts import assert_equals, assert_true
+from robot.output.readers import TestSuite as TestSuiteReader
+from robot.utils.asserts import assert_equals
+from robot import utils
+
+import fixml
 
 OUTDIR = os.path.join(BASEDIR, 'test', 'output')
 if not os.path.exists(OUTDIR):
@@ -43,6 +46,16 @@ class TestFixml(unittest.TestCase):
         self._assert_statistics(suite, 1, 1)
         assert_equals(len(suite.tests[1].keywords[0].keywords), 1)
 
+    def test_with_increasing_cut_from_end(self):
+        input = open(os.path.join('test', 'orig-output.xml')).read()
+        while len(input) > 250:
+            input = input[:-10]
+            fixxxed = fixml.Fixxxer(input)
+            suite_node = utils.DomWrapper(string=str(fixxxed)).get_node('suite')
+            suite_node.generator = 'fixml unit test'
+            suite = TestSuiteReader(suite_node)
+            assert_equals(suite.name, 'Suite')
+
     def _fix_xml_and_parse(self, base):
         outfile = self._fix_xml(base)
         return TestSuite(outfile).suites[0]
@@ -50,8 +63,7 @@ class TestFixml(unittest.TestCase):
     def _fix_xml(self, base):
         infile = os.path.join('test', '%s.xml' % base)
         outfile = os.path.join(OUTDIR, '%s-fixed.xml' % base)
-        subprocess.call(['python', 'fixml.py', infile, outfile])
-        return outfile
+        return fixml.main(infile, outfile)
 
     def _assert_statistics(self, suite, passed, failed):
         assert_equals(suite.critical_stats.passed, passed)
