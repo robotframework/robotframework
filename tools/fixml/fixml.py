@@ -21,11 +21,11 @@ Usage:  fixml.py inpath [outpath]
 
 This tool can fix Robot Framework output files that are not properly finished
 or are missing elements from the middle. It should be possible to generate
-reports and logs from the fixed output afterwards with rebot.
+reports and logs from the fixed output afterwards with the `rebot` tool.
 
-The tool uses BeautifulSoup module which must be installed separately. See
-http://www.crummy.com/software/BeautifulSoup/ for more information. The tool
-is only compatible with Robot Framework 2.1.3 or newer.
+The tool uses BeautifulSoup module which must be installed separately.
+See http://www.crummy.com/software/BeautifulSoup for more information.
+Additionally, the tool is only compatible with Robot Framework 2.1.3 or newer.
 
 If `outpath` is not given, the file is fixed in-place.
 """
