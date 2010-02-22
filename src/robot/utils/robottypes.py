@@ -127,20 +127,3 @@ def type_as_str(item, printable=False):
     if printable and _printable_type_mapping.has_key(ret):
         ret = _printable_type_mapping[ret]
     return ret
-
-
-def unic(item):
-    """Convert non-strings to unicode."""
-    typ = type(item)
-    if typ is types.UnicodeType:
-        return item
-    if typ is types.StringType:
-        # There's some weird bug in Jython that requires this to unicode to
-        # work but this causes other issues........ =/
-        if os.name == 'java':
-            return item
-        return item.decode('UTF-8', 'ignore')
-    # Workaround for bug in Jython 2.2a1
-    if os.name == 'java' and sys.version_info[:4] == (2,2,0,'alpha'):
-        return str(item)
-    return unicode(item)
