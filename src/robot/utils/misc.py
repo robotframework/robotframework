@@ -20,7 +20,8 @@ import urllib
 import posixpath
 
 from robot.errors import FrameworkError
-from robottypes import is_str, is_list, unic, is_integer
+from robottypes import is_str, is_list, is_integer
+from unic import unic
 from normalizing import normpath
 
 

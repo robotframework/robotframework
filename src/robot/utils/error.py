@@ -18,8 +18,8 @@ import sys
 import re
 import traceback
 
-from match import eq
-from robottypes import is_str, unic
+from robottypes import is_str
+from unic import unic
 from robot.errors import DataError, TimeoutError, RemoteError
 
 RERAISED_EXCEPTIONS = (KeyboardInterrupt, SystemExit, MemoryError)

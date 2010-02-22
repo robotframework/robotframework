@@ -13,7 +13,7 @@
 #  limitations under the License.
 
 
-from robottypes import unic
+from unic import unic
 
 
 # See http://www.spamagogo.com/wiki/index.php/Illegal_XML_characters

@@ -13,7 +13,8 @@
 #  limitations under the License.
 
 
-from robottypes import is_str, unic
+from robottypes import is_str
+from unic import unic
 
 
 _MAX_ASSIGN_LENGTH = 200

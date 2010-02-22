@@ -16,7 +16,8 @@
 import re
 import os.path
 
-from robottypes import is_str, unic
+from robottypes import is_str
+from unic import unic
 
 
 _hr_re = re.compile('^-{3,} *$')

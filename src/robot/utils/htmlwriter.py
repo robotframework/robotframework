@@ -12,9 +12,10 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+
 from abstractxmlwriter import AbstractXmlWriter
 from htmlutils import html_escape, html_attr_escape
-from robottypes import unic
+from unic import unic
 
 
 class HtmlWriter(AbstractXmlWriter):
