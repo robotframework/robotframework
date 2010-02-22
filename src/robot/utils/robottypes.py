@@ -61,13 +61,13 @@ _default_true_strs = ['True', 'Yes']
 _default_false_strs = ['False', 'No']
 
 def _get_boolean_strs(given, defaults):
-        if given is None: 
+        if given is None:
             return defaults
         return given + defaults
 
 def to_boolean(value, true_strs=None, false_strs=None, default=False):
     if is_boolean(value):
-        return value 
+        return value
     if is_number(value):
         return value != 0
     if is_str(value):
@@ -92,18 +92,18 @@ def to_list(item):
 def dict2map(dictionary):
     if not sys.platform.startswith('java'):
         return dictionary
-    map = HashMap() 
+    map = HashMap()
     for key, value in dictionary.items():
         map.put(key, value)
     return map
 
 
-_type_dict = dict([ (getattr(types,attr), attr) for attr in dir(types) 
+_type_dict = dict([ (getattr(types,attr), attr) for attr in dir(types)
                     if not attr.startswith('_') and attr != 'StringTypes' ])
 if os.name == 'java':
     _type_dict[array.ArrayType] = 'ArrayType'
 
-_printable_type_mapping = { 
+_printable_type_mapping = {
   'StringType'     : 'string',
   'UnicodeType'    : 'string',
   'DictionaryType' : 'dictionary',
@@ -117,7 +117,7 @@ _printable_type_mapping = {
   'FloatType'      : 'floating point number',
   'ArrayType'      : 'array'
 }
-                       
+
 
 def type_as_str(item, printable=False):
     try:
