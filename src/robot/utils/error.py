@@ -17,7 +17,7 @@ import os.path
 import sys
 import re
 import traceback
-    
+
 from match import eq
 from robottypes import is_str, unic
 from robot.errors import DataError, TimeoutError, RemoteError
@@ -29,19 +29,19 @@ if sys.platform.startswith('java'):
     RERAISED_EXCEPTIONS += (OutOfMemoryError,)
 
 _java_trace_re = re.compile('^\s+at (\w.+)')
-_ignored_java_trace = ('org.python.', 'robot.running.', 'robot$py.', 
+_ignored_java_trace = ('org.python.', 'robot.running.', 'robot$py.',
                        'sun.reflect.', 'java.lang.reflect.')
 _ignore_trace_until = (os.path.join('robot','running','handlers.py'), '_run_handler')
-_generic_exceptions = ('AssertionError', 'AssertionFailedError', 'Exception', 
+_generic_exceptions = ('AssertionError', 'AssertionFailedError', 'Exception',
                        'Error', 'RuntimeError', 'RuntimeException',
                        'DataError', 'TimeoutError', 'ExecutionFailed', 'RemoteError')
 
 
 def get_error_message():
     """Returns error message of the last occurred exception.
-    
+
     This method handles also exceptions containing unicode messages. Thus it
-    MUST be used to get messages from all exceptions originating outside the 
+    MUST be used to get messages from all exceptions originating outside the
     framework.
     """
     exc_type, exc_value, exc_traceback = sys.exc_info()
@@ -54,12 +54,12 @@ def get_error_message():
 
 def get_error_details():
     """Returns error message and details of the last occurred exception.
-    
+
     Error message contains exception's type and message and details contains
-    stacktrace. 
-    
+    stacktrace.
+
     This method handles also exceptions containing unicode messages. Thus it
-    MUST be used to get messages from all exceptions originating outside the 
+    MUST be used to get messages from all exceptions originating outside the
     framework.
     """
     exc_type, exc_value, exc_traceback = sys.exc_info()
@@ -82,7 +82,7 @@ def _get_name(exc_type):
         return exc_type.__name__
     except AttributeError:
         return unic(exc_type)
-    
+
 def _msg_to_str(msg):
     if msg is None:
         return ''
@@ -94,7 +94,7 @@ def _msg_to_str(msg):
 def _get_java_message(exc_type, exc_value):
     exc_name = _get_name(exc_type)
     # OOME.getMessage and even toString seem to throw NullPointerException
-    if exc_type is OutOfMemoryError:  
+    if exc_type is OutOfMemoryError:
         exc_msg = str(exc_value)
     else:
         exc_msg = exc_value.getMessage()
@@ -107,9 +107,9 @@ def _get_java_details(exc_value):
         return ''
     output = StringWriter()
     exc_value.printStackTrace(PrintWriter(output))
-    lines = [ line for line in str(output).splitlines() 
+    lines = [ line for line in str(output).splitlines()
               if line and not _is_ignored_stacktrace_line(line) ]
-    details = '\n'.join(lines) 
+    details = '\n'.join(lines)
     msg = _msg_to_str(exc_value.getMessage())
     if msg:
         details = details.replace(msg, '', 1)
@@ -149,7 +149,7 @@ def _get_python_details(exc_value, exc_tb):
             tb = tb[row+1:]
             break
     details = 'Traceback (most recent call last):\n' \
-            + ''.join(traceback.format_list(tb)) 
+            + ''.join(traceback.format_list(tb))
     return details.strip()
 
 
@@ -164,7 +164,7 @@ def _format_message(name, message, java=False):
         return message
     return '%s: %s' % (name, message)
 
-    
+
 def _clean_up_java_message(msg, name):
     # Remove possible stack trace from messages
     lines = msg.splitlines()
