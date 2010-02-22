@@ -24,7 +24,7 @@ _ERROR_CUT_EXPLN = ('    [ Message content over the limit has been removed. ]')
 
 def cut_long_message(msg):
     if not is_str(msg):
-        msg = unic(msg) 
+        msg = unic(msg)
     lines = msg.splitlines()
     lengths = _count_line_lenghts(lines)
     if sum(lengths) <= _MAX_ERROR_LINES:
@@ -59,7 +59,7 @@ def _cut_long_line(line, used, from_end):
         else:
             line = '...' + line[-available_chars:]
     return line
-    
+
 def _count_line_lenghts(lines):
     return [ _count_virtual_line_length(line) for line in lines ]
 
@@ -81,8 +81,8 @@ def cut_long_assign_msg(msg):
 
 def wrap(text, width, indent=0):
     """Wraps given text so that it fits into given width with optional indent.
-    
-    Preserves existing line breaks and most spaces in the text. Expects that 
+
+    Preserves existing line breaks and most spaces in the text. Expects that
     existing line breaks are posix newlines (\n).
 
     Based on a recipe from ActiveState Python Cookbook at
