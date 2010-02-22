@@ -18,23 +18,23 @@ from robottypes import unic
 
 
 class HtmlWriter(AbstractXmlWriter):
- 
+
     def __init__(self, output):
         """'output' is an open file object.
-        
+
         Given 'output' must have been opened with 'wb' to be able to
         write into it with UTF-8 encoding.
-        
+
         'self.output.name' is later used by serializers
         """
         self.output = output
-        
+
     def start(self, name, attrs=None, newline=True):
         self._start(name, attrs, close=False, newline=newline)
-        
+
     def start_and_end(self, name, attrs=None, newline=True):
-        self._start(name, attrs, close=True, newline=newline) 
-                
+        self._start(name, attrs, close=True, newline=newline)
+
     def content(self, content=None, escape=True):
         """Given content doesn't need to be a string"""
         if content is not None:
@@ -47,17 +47,17 @@ class HtmlWriter(AbstractXmlWriter):
         if newline:
             elem += '\n'
         self._write(elem)
-            
+
     def element(self, name, content=None, attrs=None, escape=True,
                 newline=True):
         self.start(name, attrs, newline=False)
         self.content(content, escape)
         self.end(name, newline)
-    
+
     def start_many(self, names, newline=True):
         for name in names:
             self.start(name, newline=newline)
-            
+
     def end_many(self, names, newline=True):
         for name in names:
             self.end(name, newline)
@@ -68,8 +68,8 @@ class HtmlWriter(AbstractXmlWriter):
         elem += (close and ' />' or '>')
         if newline:
             elem += '\n'
-        self._write(elem)            
-            
+        self._write(elem)
+
     def _add_attrs(self, elem, attrs):
         if not attrs:
             return elem
@@ -78,7 +78,7 @@ class HtmlWriter(AbstractXmlWriter):
         attrs = [ '%s="%s"' % (name, html_attr_escape(value))
                   for name, value in attrs ]
         return '%s %s' % (elem, ' '.join(attrs))
-    
+
     def _escape_content(self, content):
         return html_escape(unic(content))
 
