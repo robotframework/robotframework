@@ -517,6 +517,7 @@ class _Verify:
 class _Variables:
 
     def get_variables(self):
+        """Returns a dictionary containing all variables in the current scope."""
         return NAMESPACES.current.variables
 
     def log_variables(self, level='INFO'):
