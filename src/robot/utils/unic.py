@@ -25,7 +25,7 @@ if os.name == 'java':
         if isinstance(item, basestring):
             return item
         if sys.version_info[:2] > (2,2) and isinstance(item, Object):
-            item = item.toString()
+            item = item.toString()  # http://bugs.jython.org/issue1563
         return unicode(item)
 
 else:
