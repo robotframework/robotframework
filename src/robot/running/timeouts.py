@@ -74,6 +74,8 @@ class _Timeout:
         if not self.active():
             raise FrameworkError('Timeout is not active')
         timeout = self.time_left()
+        if timeout <= 0:
+            raise TimeoutError(self.get_message())
         if logger is not None:
             logger.debug('%s timeout %s active. %s seconds left.'
                          % (self.type.capitalize(), self.string, round(timeout, 3)))
