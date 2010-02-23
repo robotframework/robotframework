@@ -1,0 +1,33 @@
+* Settings *
+Force Tags  regression  pybot  jybot
+Suite Setup  Run Tests  --variable cmd_line:cmd_value  standard_libraries/builtin/get_variables.txt
+Resource    ../../../resources/resource.html
+
+* Test Cases *
+Automatic and Command Line Variables
+  Check test Case  Automatic and Command Line Variables
+
+Variable Table
+  Check Test Case  Variable Table
+
+Global Variables
+  Check Test Case  Global Variables
+
+Suite Variable
+  Check Test Case  Suite Variables
+  Check Test Case  Suite Variables 2
+
+Resource File
+  Check Test Case  Resource File
+
+Variable File
+  Check Test Case  Variable File
+
+Test Case Variable
+  Check Test Case  Test Case Variable
+
+Set Variable in User Keyword
+  Check Test Case  Set Variable in User Keyword
+
+Local Variables in Test Case Leak
+  Check Test Case  Local Variables in Test Case Leak
