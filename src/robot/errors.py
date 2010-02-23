@@ -41,6 +41,9 @@ class DataError(RobotError):
 
 class ExecutionFailed(RobotError):
     """Used for cummunicating failures in test execution"""
+    def __init__(self, message, timeouted=False):
+        RobotError.__init__(self, message)
+        self.timeouted = timeouted
     
 class TimeoutError(RobotError):
     """Used when test execution is timed out"""

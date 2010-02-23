@@ -16,7 +16,8 @@
 import time
 
 from robot import utils
-from robot.errors import FrameworkError, ExecutionFailed, DataError
+from robot.errors import FrameworkError, ExecutionFailed, DataError, \
+    TimeoutError
 from robot.common import BaseKeyword
 from robot.output import LOGGER
 from robot.variables import is_list_var
@@ -74,12 +75,17 @@ class Keyword(BaseKeyword):
             return handler.run(output, namespace, self.args[:])
         except ExecutionFailed:
             raise 
+        except TimeoutError:
+            self._report_failure(output, timeouted=True)
         except:
-            msg, details = utils.get_error_details()
-            output.fail(msg)
-            if details:
-                output.debug(details)
-            raise ExecutionFailed(utils.cut_long_message(msg))
+            self._report_failure(output)
+
+    def _report_failure(self, output, timeouted=False):
+        msg, details = utils.get_error_details()
+        output.fail(msg)
+        if details:
+            output.debug(details)
+        raise ExecutionFailed(utils.cut_long_message(msg), timeouted)
 
 
 class SetKeyword(Keyword):
