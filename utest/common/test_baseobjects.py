@@ -1,7 +1,8 @@
 import unittest
 import sys
 
-from robot.utils.asserts import assert_equals, assert_raises_with_msg
+from robot.utils.asserts import assert_equals, assert_raises_with_msg,\
+    assert_true, assert_false
 from robot import utils
 from robot.errors import DataError
 
@@ -193,6 +194,74 @@ class TestSetCriticality(unittest.TestCase):
         self._test(['?a?3'], ['nomatch-*'], 'yes')
         self._test(['?a?3'], ['tag*'], 'no')
 
+
+class TC(BaseTestCase):
+
+    def __init__(self, tags=[]):
+        self.tags = tags
+
+class TestFilterByTags(unittest.TestCase):
+
+    def setUp(self):
+        self._tag1 = TC(['tag1'])
+        self._tags12 = TC(['tag1', 'tag2'])
+        self._tags123 = TC(['tag1', 'tag2', 'tag3'])
+
+    def test_no_tags_no_incl_no_excl(self):
+        assert_true(TC().is_included([], []))
+
+    def test_tags_no_incl_no_excl(self):
+        assert_true(self._tags12.is_included([], []))
+
+    def test_simple_include(self):
+        assert_true(self._tag1.is_included(['tag1'], []))
+        assert_false(self._tag1.is_included(['tag2'], []))
+
+    def test_simple_exclude(self):
+        assert_false(self._tag1.is_included([], ['tag1']))
+        assert_true(self._tag1.is_included([], ['tag2']))
+
+    def test_include_and_exclude(self):
+        assert_false(self._tags12.is_included(['tag1'], ['tag2']))
+
+    def test_include_with_and(self):
+        assert_true(self._tags12.is_included(['tag1&tag2'], []))
+        assert_false(self._tags12.is_included(['tag1&tag3'], []))
+
+    def test_exclude_with_and(self):
+        assert_false(self._tags12.is_included([], ['tag1&tag2']))
+        assert_true(self._tags12.is_included([], ['tag1&tag3']))
+
+    def test_include_with_not(self):
+        assert_false(self._tags12.is_included(['tag1NOTtag2'], []))
+        assert_true(self._tags12.is_included(['tag1NOTtag3'], []))
+
+    def test_exclude_with_not(self):
+        assert_true(self._tags12.is_included([], ['tag1NOTtag2']))
+        assert_false(self._tags12.is_included([], ['tag1NOTtag3']))
+
+    def test_include_with_multiple_nots(self):
+        assert_false(self._tags123.is_included(['tag1NOTtag2NOTtag3'], []))
+        assert_false(self._tags123.is_included(['tag1NOTtag4NOTtag2'], []))
+        assert_true(self._tags123.is_included(['tag1NOTtag4NOTtag5'], []))
+
+    def test_exclude_with_multiple_nots(self):
+        assert_true(self._tags123.is_included([], ['tag1NOTtag2NOTtag3']))
+        assert_true(self._tags123.is_included([], ['tag1NOTtag4NOTtag2']))
+        assert_false(self._tags123.is_included([], ['tag1NOTtag4NOTtag5']))
+
+    def test_include_with_multiple_nots_and_ands(self):
+        assert_true(self._tag1.is_included(['tag1NOTtag2&tag3NOTtag4&tag5'], []))
+        assert_true(TC(['tag1', 'tag2', 'tag4']).is_included(['tag1NOTtag2&tag3NOTtag4&tag5'], []))
+        assert_false(TC(['tag1', 'tag2', 'tag3']).is_included(['tag1NOTtag2&tag3NOTtag4&tag5'], []))
+        assert_false(TC(['tag1', 'tag4', 'tag5']).is_included(['tag1NOTtag2&tag3NOTtag4&tag5'], []))
+        assert_false(TC(['tag1', 'tag4']).is_included(['tag1NOTtag2NOTtag3NOTtag4NOTtag5'], []))
+
+    def test_invalid(self):
+        for invalid in [ 'NOT', 'NOTNOT', 'xNOTNOTy', 'NOTa', 'bNOT', 
+                         'NOTaNOTb', 'aNOTbNOT' ]:
+            assert_false(self._tag1.is_included([invalid], []))
+            assert_true(self._tag1.is_included(['tag1'], [invalid]))
 
 if __name__ == "__main__":
     unittest.main()
