@@ -59,7 +59,7 @@ Wait Until With Longer Test Timeout
 
 Wait Until With Shorter Test Timeout
     [Timeout]  0.1 seconds
-    [Documentation]  FAIL  Test timeout 100ms exceeded
+    [Documentation]  FAIL  Test timeout 100 milliseconds exceeded.
     Wait Until Keyword Succeeds  1minute  0.1s  Fail  This won't be the final error
 
 Wait Until With Longer Keyword Timeout
@@ -68,7 +68,7 @@ Wait Until With Longer Keyword Timeout
     Timeouted UK with Wait Until KW
 
 Wait Until With Shorter Keyword Timeout
-    [Documentation]  FAIL  Keyword timeout 40ms exceeded
+    [Documentation]  FAIL  Keyword timeout 40 milliseconds exceeded.
     ${timeout} =  Set Variable  40 milliseconds
     Timeouted UK with Wait Until KW
 

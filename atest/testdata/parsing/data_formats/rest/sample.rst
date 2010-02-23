@@ -109,15 +109,15 @@ Library    OperatingSystem
 +---------------+-----------------+----------------------+--------------------+
 | Test Timeout  | [Timeout]       | 1second              |                    |
 +---------------+-----------------+----------------------+--------------------+
-|               | [Documentation] | FAIL                 | Test timeout 1s    |
-|               |                 |                      | exceeded           |
+|               | [Documentation] | FAIL                 | Test timeout       |
+|               |                 |                      | 1 second exceeded. |
 +---------------+-----------------+----------------------+--------------------+
 |               | Sleep           | 2 seconds            |                    |
 +---------------+-----------------+----------------------+--------------------+
 |               |                 |                      |                    |
 +---------------+-----------------+----------------------+--------------------+
-| Keyword       | [Documentation] | FAIL                 | Keyword timeout 1s |
-|   Timeout     |                 |                      | exceeded           |
+| Keyword       | [Documentation] | FAIL                 | Keyword timeout    |
+| Timeout       |                 |                      | 1 second exceeded. |
 +---------------+-----------------+----------------------+--------------------+
 |               | Timeouted       |                      |                    |
 |               | Keyword         |                      |                    |

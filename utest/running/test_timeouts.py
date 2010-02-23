@@ -23,10 +23,10 @@ class TestInit(unittest.TestCase):
         self._verify_tout(TestTimeout())
         
     def test_timeout_string(self):
-        for tout_str, exp_str, exp_secs in [ ('1s', '1s', 1), 
-                                             ('10 sec', '10s', 10), 
-                                             ('2h 1minute', '2h 1min', 7260),
-                                             ('42', '42s', 42) ]:
+        for tout_str, exp_str, exp_secs in [ ('1s', '1 second', 1), 
+                                             ('10 sec', '10 seconds', 10), 
+                                             ('2h 1minute', '2 hours 1 minute', 7260),
+                                             ('42', '42 seconds', 42) ]:
             self._verify_tout(TestTimeout(tout_str), exp_str, exp_secs)
 
     def test_invalid_timeout_string(self):
@@ -42,7 +42,7 @@ class TestInit(unittest.TestCase):
                          ['Message in','two colums'],
                          ['My','message','in','quite','many','columns','.'] ]:
             tout = TestTimeout('10sec', *msgcols)
-            self._verify_tout(tout, str='10s', secs=10, msg=' '.join(msgcols))
+            self._verify_tout(tout, str='10 seconds', secs=10, msg=' '.join(msgcols))
 
     def _verify_tout(self, tout, str='', secs=-1, msg=None, err=None):
         assert_equals(tout.string, str)
@@ -88,19 +88,19 @@ class TestComparisons(unittest.TestCase):
 
     def test_compare_when_all_timeouted(self):
         touts = self._create_timeouts(['1min','42seconds','43','1h1min','99'])
-        assert_equals(min(touts).string, '42s')
-        assert_equals(max(touts).string, '1h 1min')
+        assert_equals(min(touts).string, '42 seconds')
+        assert_equals(max(touts).string, '1 hour 1 minute')
         
     def test_compare_with_timeouted_and_non_timeouted(self):
         touts = self._create_timeouts(['','1min','42sec','','43','1h1m','99',''])
         assert_equals(min(touts).string, '')
-        assert_equals(max(touts).string, '1h 1min')
+        assert_equals(max(touts).string, '1 hour 1 minute')
     
     def test_that_compare_uses_starttime(self):
         touts = self._create_timeouts(['1min','42seconds','43','1h1min','99'])
         touts[2].starttime -= 2
-        assert_equals(min(touts).string, '43s')
-        assert_equals(max(touts).string, '1h 1min')
+        assert_equals(min(touts).string, '43 seconds')
+        assert_equals(max(touts).string, '1 hour 1 minute')
         
     def _create_timeouts(self, tout_strs):
         touts = []
@@ -165,7 +165,7 @@ class TestRun(unittest.TestCase):
     def test_method_stopped_if_timeout(self):
         os.environ['ROBOT_THREAD_TESTING'] = 'initial value'
         self.tout.secs = 0.01
-        assert_raises_with_msg(TimeoutError, 'Test timeout 1s exceeded',
+        assert_raises_with_msg(TimeoutError, 'Test timeout 1 second exceeded.',
                                self.tout.run, sleeping, (0.05,), {}, self.logger)
         self._verify_debug_msg(self.logger.msgs[0])
         time.sleep(0.1)
@@ -190,7 +190,7 @@ class TestRun(unittest.TestCase):
 
     def _verify_debug_msg(self, msg, type='Test'):
         assert_equals(msg[0], 'DEBUG')
-        assert_true(msg[1].startswith('%s timeout 1s active.' % type), msg[1])
+        assert_true(msg[1].startswith('%s timeout 1 second active.' % type), msg[1])
         assert_true(msg[1].endswith('seconds left.'), msg[1])
 
 

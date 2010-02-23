@@ -58,10 +58,10 @@ Library Import	Fail If Dir Empty	${CURDIR}
 
 
 Test Timeout	[Timeout]	1second	
-	[Document]	FAIL	Test timeout 1s exceeded
+	[Document]	FAIL	Test timeout 1 second exceeded.
 	Sleep	2	
 
-Keyword Timeout	[Document]	FAIL	Keyword timeout 1s exceeded
+Keyword Timeout	[Document]	FAIL	Keyword timeout 1 second exceeded.
 	Timeouted Keyword		
 
 
