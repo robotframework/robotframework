@@ -17,7 +17,7 @@
 
 """fixml.py -- A tool to fix broken Robot Framework output files
 
-Usage:  fixml.py inpath [outpath]
+Usage:  fixml.py inpath outpath
 
 This tool can fix Robot Framework output files that are not properly finished
 or are missing elements from the middle. It should be possible to generate
@@ -26,8 +26,6 @@ reports and logs from the fixed output afterwards with the `rebot` tool.
 The tool uses BeautifulSoup module which must be installed separately.
 See http://www.crummy.com/software/BeautifulSoup for more information.
 Additionally, the tool is only compatible with Robot Framework 2.1.3 or newer.
-
-If `outpath` is not given, the file is fixed in-place.
 """
 
 import sys
@@ -60,8 +58,8 @@ class Fixxxer(BeautifulStoneSoup):
 
     def unknown_starttag(self, name, attrs, selfClosing=0):
         if name == 'robot':
-            attrs = [ (name, name == 'generator' and 'fixml.py' or value)
-                      for name, value in attrs ]
+            attrs = [ (key, key == 'generator' and 'fixml.py' or value)
+                      for key, value in attrs ]
         if self.__close_on_open:
             self._popToTag(self.__close_on_open)
             self.__close_on_open = None
@@ -75,9 +73,7 @@ class Fixxxer(BeautifulStoneSoup):
             self.__close_on_open = None
 
 
-def main(inpath, outpath=None):
-    if not outpath:
-        outpath = inpath
+def main(inpath, outpath):
     outfile = open(outpath, 'w')
     outfile.write(str(Fixxxer(open(inpath))))
     outfile.close()
