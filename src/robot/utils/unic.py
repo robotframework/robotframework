@@ -22,7 +22,6 @@ if os.name == 'java':
     from java.lang import Object
 
     def unic(item):
-        """Convert non-strings to unicode."""
         if isinstance(item, basestring):
             return item
         if sys.version_info[:2] > (2,2) and isinstance(item, Object):
@@ -32,9 +31,9 @@ if os.name == 'java':
 else:
 
     def unic(item):
-        """Convert non-strings to unicode."""
-        if isinstance(item, unicode):
-            return item
-        if isinstance(item, str):
-            return unicode(item, 'UTF-8', 'ignore')
-        return unicode(item)
+        # Based on a recipe from http://code.activestate.com/recipes/466341
+        try:
+            return unicode(item)
+        except UnicodeDecodeError:
+            ascii_text = str(item).encode('string_escape')
+            return unicode(ascii_text)
