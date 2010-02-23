@@ -1,45 +1,23 @@
-W A I T   U N T I L   K E Y W O R D   S U C C E E D S
+***Settings***
+Resource     ../../../resources/resource.html  
+Force Tags  jybot  pybot  regression
+Suite Setup  Run Tests  ${EMPTY}  standard_libraries/builtin/wait_until_keyword_succeeds.html  
 
-*Setting*  *Value*  *Value*  *Value*  *Value*  *Value*  *Value*  *Value*  
-Resource  ../../../resources/resource.html  
-Documentation  Tests for BuiltIn library's wait until succeeds functionality  
-Suite Setup  Run Tests  ${EMPTY}  standard_libraries${/}builtin${/}wait_until_keyword_succeeds.html  
-Default Tags  jybot  pybot  
-Force Tags  regression  
-
-
-*Variable*  *Value*  *Value*  *Value*  *Value*  *Value*  *Value*  *Value*  
-
-
-*Test Case*  *Action*  *Argument*  *Argument*  *Argument*  *Argument*  *Argument*  *Argument*  
-Fail Because Timeout exceeded  Check Test Case  Fail Because Timeout exceeded  
-
-Pass with first Try  Check Test Case  Pass with first Try  
-
-Pass With Some Medium Try  Check Test Case  Pass With Some Medium Try  
-
-Pass With Last Possible Try  Check Test Case  Pass With Last Possible Try  
-
-Pass With Returning Value Correctly  Check Test Case  Pass With Returning Value Correctly  
-
-Fail With Invalid Timeout Value  Check Test Case  Fail With Invalid Timeout Value  
-
-Fail With None Timeout Value  Check Test Case  Fail With None Timeout Value  
-
-Fail With Invalid Retry Interval Value  Check Test Case  Fail With Invalid Retry Interval Value  
-
-Fail With None Retry Interval Value  Check Test Case  Fail With None Retry Interval Value  
-
-Wait Until In User Keyword  Check Test Case  Wait Until In User Keyword  
-
-Failing User Keyword with Wait Until  Check Test Case  Failing User Keyword with Wait Until  
-
-Passing User Keyword with Wait Until  Check Test Case  Passing User Keyword with Wait Until  
-
-Variable Values Should Not Be Visible As Keyword's Arguments  ${tc} =  Check Test Case  Pass With First Try  
+***Test Cases***
+Fail Because Timeout exceeded            Check Test Case  ${TEST NAME}
+Pass with first Try                      Check Test Case  ${TEST NAME}
+Pass With Some Medium Try                Check Test Case  ${TEST NAME}
+Pass With Last Possible Try              Check Test Case  ${TEST NAME}
+Pass With Returning Value Correctly      Check Test Case  ${TEST NAME}
+Fail With Invalid Timeout Value          Check Test Case  ${TEST NAME}
+Fail With None Timeout Value             Check Test Case  ${TEST NAME}
+Fail With Invalid Retry Interval Value   Check Test Case  ${TEST NAME}
+Fail With None Retry Interval Value      Check Test Case  ${TEST NAME}
+Wait Until In User Keyword               Check Test Case  ${TEST NAME}
+Failing User Keyword with Wait Until     Check Test Case  ${TEST NAME}
+Passing User Keyword with Wait Until     Check Test Case  ${TEST NAME}
+Variable Values Should Not Be Visible As Keyword's Arguments
+  ${tc} =  Check Test Case  Pass With First Try  
   Check KW Arguments  ${tc.kws[0].kws[0]}  \${HELLO}  
-
-
-*Keyword*  *Action*  *Argument*  *Argument*  *Argument*  *Argument*  *Argument*  *Argument*  
 
 
