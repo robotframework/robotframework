@@ -52,6 +52,26 @@ Passing User Keyword with Wait Until
     ${return value} =  Wait Until Keyword Succeeds  10 minutes  10 milliseconds  User Keyword  
     Should Be Equal  ${return value}  From User Keyword  Returned value should be the one defined in user keyword.  
 
+Wait Until With Longer Test Timeout
+    [Timeout]  10 seconds
+    [Documentation]  FAIL  Timeout 50 milliseconds exceeded. The last error was: My error 
+    Wait Until Keyword Succeeds  0.05s  0.01s  Fail  My error
+
+Wait Until With Shorter Test Timeout
+    [Timeout]  0.1 seconds
+    [Documentation]  FAIL  Test timeout 100ms exceeded
+    Wait Until Keyword Succeeds  1minute  0.1s  Fail  This won't be the final error
+
+Wait Until With Longer Keyword Timeout
+    [Documentation]  FAIL  Timeout 42 milliseconds exceeded. The last error was: Error in timeouted UK
+    ${timeout} =  Set Variable  1 hour
+    Timeouted UK with Wait Until KW
+
+Wait Until With Shorter Keyword Timeout
+    [Documentation]  FAIL  Keyword timeout 40ms exceeded
+    ${timeout} =  Set Variable  40 milliseconds
+    Timeouted UK with Wait Until KW
+
 
 ***Keywords***
 User Keyword
@@ -60,3 +80,7 @@ User Keyword
 
 Wait Until Inside User Keyword
     Wait Until Keyword Succeeds  3.99 seconds  0.1  Fail Until Retried Often Enough  
+
+Timeouted UK with Wait Until KW
+    [Timeout]  ${timeout}
+    Wait Until Keyword Succeeds  42ms  10ms  Fail  Error in timeouted UK

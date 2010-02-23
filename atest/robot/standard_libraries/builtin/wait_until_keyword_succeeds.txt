@@ -1,7 +1,7 @@
 ***Settings***
-Resource     ../../../resources/resource.html  
+Resource     ../../../resources/resource.html
 Force Tags  jybot  pybot  regression
-Suite Setup  Run Tests  ${EMPTY}  standard_libraries/builtin/wait_until_keyword_succeeds.html  
+Suite Setup  Run Tests  ${EMPTY}  standard_libraries/builtin/wait_until_keyword_succeeds.txt
 
 ***Test Cases***
 Fail Because Timeout exceeded            Check Test Case  ${TEST NAME}
@@ -16,6 +16,10 @@ Fail With None Retry Interval Value      Check Test Case  ${TEST NAME}
 Wait Until In User Keyword               Check Test Case  ${TEST NAME}
 Failing User Keyword with Wait Until     Check Test Case  ${TEST NAME}
 Passing User Keyword with Wait Until     Check Test Case  ${TEST NAME}
+Wait Until With Longer Test Timeout      Check Test Case  ${TEST NAME}
+Wait Until With Shorter Test Timeout     Check Test Case  ${TEST NAME}
+Wait Until With Longer Keyword Timeout   Check Test Case  ${TEST NAME}
+Wait Until With Shorter Keyword Timeout  Check Test Case  ${TEST NAME}
 Variable Values Should Not Be Visible As Keyword's Arguments
   ${tc} =  Check Test Case  Pass With First Try  
   Check KW Arguments  ${tc.kws[0].kws[0]}  \${HELLO}  
