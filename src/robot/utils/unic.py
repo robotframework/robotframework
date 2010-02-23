@@ -15,10 +15,10 @@
 
 import os
 import sys
-import types
 
 
 if os.name == 'java':
+
     from java.lang import Object
 
     def unic(item):
@@ -28,12 +28,13 @@ if os.name == 'java':
         if sys.version_info[:2] > (2,2) and isinstance(item, Object):
             item = item.toString()
         return unicode(item)
+
 else:
+
     def unic(item):
         """Convert non-strings to unicode."""
-        typ = type(item)
-        if typ is types.UnicodeType:
+        if isinstance(item, unicode):
             return item
-        if typ is types.StringType:
-            return item.decode('UTF-8', 'ignore')
+        if isinstance(item, str):
+            return unicode(item, 'UTF-8', 'ignore')
         return unicode(item)
