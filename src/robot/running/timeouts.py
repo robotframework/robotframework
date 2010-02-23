@@ -39,7 +39,7 @@ class _Timeout:
             return self._defaults
         secs = utils.timestr_to_secs(params[0])
         msg = len(params) > 1 and ' '.join(params[1:]) or None
-        return utils.secs_to_timestr(secs, True), secs, msg
+        return utils.secs_to_timestr(secs), secs, msg
         
     def start(self):
         self.starttime = time.time()
@@ -99,7 +99,7 @@ class _Timeout:
     def get_message(self):
         if self.message is not None:
             return self.message
-        return '%s timeout %s exceeded' % (self.type.capitalize(), self.string)
+        return '%s timeout %s exceeded.' % (self.type.capitalize(), self.string)
         
 
 class TestTimeout(_Timeout):
