@@ -19,7 +19,7 @@ import time
 
 from robot import output
 from robot.utils import asserts, get_error_message
-from robot.errors import DataError
+from robot.errors import DataError, ExecutionFailed
 from robot import utils
 from robot.variables import is_var, is_list_var
 from robot.running import Keyword, NAMESPACES, RUN_KW_REGISTER
@@ -879,9 +879,9 @@ class _RunKeyword:
         while not error:
             try:
                 return self.run_keyword(name, *args)
-            except utils.RERAISED_EXCEPTIONS:
-                raise
-            except:
+            except ExecutionFailed, err:
+                if err.timeouted:
+                    raise
                 if time.time() > maxtime:
                     error = utils.get_error_message()
                 else:
