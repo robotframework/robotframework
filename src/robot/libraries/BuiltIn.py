@@ -516,9 +516,12 @@ class _Verify:
 
 class _Variables:
 
+    def get_variables(self):
+        return NAMESPACES.current.variables
+
     def log_variables(self, level='INFO'):
         """Logs all variables in the current scope with given log level."""
-        variables = self._get_variables()
+        variables = self.get_variables()
         names = variables.keys()
         names.sort(lambda x, y: cmp(x.lower(), y.lower()))
         for name in names:
@@ -540,7 +543,7 @@ class _Variables:
         The default error message can be overridden with the `msg` argument.
         """
         name = self._get_var_name(name)
-        variables = self._get_variables()
+        variables = self.get_variables()
         if msg:
             msg = variables.replace_string(msg)
         else:
@@ -558,7 +561,7 @@ class _Variables:
         The default error message can be overridden with the `msg` argument.
         """
         name = self._get_var_name(name)
-        variables = self._get_variables()
+        variables = self.get_variables()
         if msg:
             msg = variables.replace_string(msg)
         else:
@@ -583,7 +586,7 @@ class _Variables:
         returned as-is. Otherwise, and always with Robot Framework 2.0.3 and
         earlier, this keyword returns a string.
         """
-        return self._get_variables().replace_scalar(text)
+        return self.get_variables().replace_scalar(text)
 
     def set_variable(self, *values):
         """Returns the given values which can then be assigned to a variables.
@@ -625,7 +628,7 @@ class _Variables:
         """
         name = self._get_var_name(name)
         value = self._get_var_value(name, values)
-        self._get_variables().set_test(name, value)
+        self.get_variables().set_test(name, value)
         self._log_set_variable(name, value)
 
     def set_suite_variable(self, name, *values):
@@ -664,7 +667,7 @@ class _Variables:
         """
         name = self._get_var_name(name)
         value = self._get_var_value(name, values)
-        self._get_variables().set_suite(name, value)
+        self.get_variables().set_suite(name, value)
         self._log_set_variable(name, value)
 
     def set_global_variable(self, name, *values):
@@ -680,13 +683,10 @@ class _Variables:
         """
         name = self._get_var_name(name)
         value = self._get_var_value(name, values)
-        self._get_variables().set_global(name, value)
+        self.get_variables().set_global(name, value)
         self._log_set_variable(name, value)
 
     # Helpers
-
-    def _get_variables(self):
-        return NAMESPACES.current.variables
 
     def _get_var_name(self, orig):
         name = self._resolve_possible_variable(orig)
@@ -697,7 +697,7 @@ class _Variables:
 
     def _resolve_possible_variable(self, name):
         try:
-            resolved = self._get_variables()[name]
+            resolved = self.get_variables()[name]
             return self._unescape_variable_if_needed(resolved)
         except (KeyError, ValueError, DataError):
             return name
@@ -718,7 +718,7 @@ class _Variables:
         raise ValueError
 
     def _get_var_value(self, name, values):
-        variables = self._get_variables()
+        variables = self.get_variables()
         if not values:
             return variables[name]
         values = variables.replace_list(values)
