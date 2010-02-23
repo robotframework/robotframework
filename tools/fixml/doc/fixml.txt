@@ -14,10 +14,7 @@ Synopsis
 
 ::
 
-    fixml.py inpath [outpath]
-
-If :code:`outpath` is not given, the file is produced in-place.
-
+    fixml.py inpath outpath
 
 Installation
 ------------
