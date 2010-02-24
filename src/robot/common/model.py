@@ -340,23 +340,21 @@ class BaseTestCase(_TestAndSuiteHelper):
 
         If no 'incl_tags' are given all tests are considered to be included.
         """
-        included = not incl_tags or self._matches_tag_rules(incl_tags)
-        excluded = self._matches_tag_rules(excl_tags)
+        included = not incl_tags or self._matches_any_of_the(incl_tags)
+        excluded = self._matches_any_of_the(excl_tags)
         return included and not excluded
 
-    def _matches_tag_rules(self, tag_rules):
-        """Returns True if tag_rules matches self.tags
+    def _matches_any_of_the(self, tag_rules):
+        """Returns True if any of tag_rules matches self.tags
         
         Matching equals supporting AND, & and NOT boolean operators and simple 
         pattern matching. NOT is 'or' operation meaning if any of the NOTs is
         matching, False is returned.
         """
-        if not tag_rules:
-            return False
         for rule in tag_rules:
-            if not self._matches_tag_rule(rule):
-                return False
-        return True
+            if self._matches_tag_rule(rule):
+                return True
+        return False
 
     def _matches_tag_rule(self, tag_rule):
         that_should_be, that_should_not_be = self._split_boolean_operators(tag_rule)
@@ -377,7 +375,7 @@ class BaseTestCase(_TestAndSuiteHelper):
         return '', []
 
     def _split_nots(self, tag_rule):
-        parts = [ utils.normalize(t) for t in tag_rule.split('NOT') ]
+        parts = tag_rule.split('NOT')
         if '' not in parts:
             return parts[0], parts[1:]
         return self._empty_split()

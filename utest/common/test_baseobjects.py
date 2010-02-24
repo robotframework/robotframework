@@ -257,6 +257,16 @@ class TestFilterByTags(unittest.TestCase):
         assert_false(TC(['tag1', 'tag4', 'tag5']).is_included(['tag1NOTtag2&tag3NOTtag4&tag5'], []))
         assert_false(TC(['tag1', 'tag4']).is_included(['tag1NOTtag2NOTtag3NOTtag4NOTtag5'], []))
 
+    def test_multiple_includes(self):
+        assert_true(self._tags123.is_included(['incl', 'tag2'], []))
+        assert_true(self._tags123.is_included(['tag1', 'tag2', 'tag3'], []))
+        assert_false(self._tags123.is_included(['tag', 'incl', 'not', 'matching'], []))
+
+    def test_multiple_excludes(self):
+        assert_false(self._tags123.is_included([], ['incl', 'tag2']))
+        assert_false(self._tags123.is_included([], ['tag1', 'tag2', 'tag3']))
+        assert_true(self._tags123.is_included([], ['tag', 'excl', 'not', 'matching']))
+
     def test_invalid(self):
         for invalid in [ 'NOT', 'NOTNOT', 'xNOTNOTy', 'NOTa', 'bNOT', 
                          'NOTaNOTb', 'aNOTbNOT' ]:
