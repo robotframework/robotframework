@@ -21,18 +21,18 @@ Benefits:
     only need convenient asserts is not so nice)
   - Saved typing and shorter lines because no need to have 'self.' before
     asserts. These are static functions after all so that is OK.
-  - All 'equals' methods (by default) report given values even if optional 
+  - All 'equals' methods (by default) report given values even if optional
     message given. This behavior can be controlled with the optional values
     argument.
-    
+
 Drawbacks:
   - unittest is not able to filter as much non-interesting traceback away
     as with its own methods because AssertionErrors occur outside
 
 
-Most of the functions are copied more or less directly from unittest.TestCase 
+Most of the functions are copied more or less directly from unittest.TestCase
 which comes with the following license. Further information about unittest in
-general can be found from http://pyunit.sourceforge.net/. This module can be 
+general can be found from http://pyunit.sourceforge.net/. This module can be
 used freely in same terms as unittest.
 
 
@@ -61,10 +61,10 @@ import unittest
 from robot.util.asserts import *
 
 class MyTests(unittest.TestCase):
-    
+
     def test_old_style(self):
         self.assertEquals(1, 2, 'my msg')
-        
+
     def test_new_style(self):
         assert_equals(1, 2, 'my msg')
 
@@ -103,7 +103,7 @@ FAILED (failures=2)
 def fail(msg=None):
     """Fail test immediately with the given message."""
     _report_failure(msg)
-    
+
 def error(msg=None):
     """Error test immediately with the given message."""
     _report_error(msg)
@@ -115,7 +115,7 @@ def fail_if(expr, msg=None):
 def fail_unless(expr, msg=None):
     """Fail the test unless the expression is True."""
     if not expr: _report_failure(msg)
-    
+
 def fail_if_none(obj, msg=None, values=True):
     """Fail the test if given object is None."""
     _msg = 'is None'
@@ -125,7 +125,7 @@ def fail_if_none(obj, msg=None, values=True):
         elif values is True:
             msg = '%s: %s' % (msg, _msg)
         _report_failure(msg)
-    
+
 def fail_unless_none(obj, msg=None, values=True):
     """Fail the test if given object is not None."""
     _msg = '%r is not None' % obj

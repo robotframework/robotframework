@@ -60,6 +60,9 @@ class Fixxxer(BeautifulStoneSoup):
         if name == 'robot':
             attrs = [ (key, key == 'generator' and 'fixml.py' or value)
                       for key, value in attrs ]
+        if name == 'kw' and ('type', 'teardown') in attrs:
+            while self.tagStack[-1].name not in ['test', 'suite']:
+                self._popToTag(self.tagStack[-1].name)
         if self.__close_on_open:
             self._popToTag(self.__close_on_open)
             self.__close_on_open = None
