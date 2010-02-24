@@ -54,6 +54,15 @@ Include And Exclude
     Run And Check Include and Exclude  -i force --exclude excl2  @{INCL_ALL}  Excl-1
     Run And Check Include and Exclude  --include STARcl2 -i nonex -e e???2 -i forceANDi*1  @{INCL_ALL}
 
+Include with NOT
+    Run And Check include and Exclude  --include incl1NOTincl3  Incl-1  Incl-12
+
+Exclude with NOT
+    Run And Check include and Exclude  --exclude excl1NOTexcl2ANDexcl3  Excl-123  @{INCL_ALL}
+
+Include and Exclude with NOT
+    Run And Check include and Exclude  --include incl1NOTincl3 --exclude incl1NOTincl2  Incl-12
+
 Non Matching Include
     Run And Check Error  --include nonex  includes 'nonex'
     Run And Check Error  --include nonex -i nonex2  includes 'nonex' and 'nonex2'
