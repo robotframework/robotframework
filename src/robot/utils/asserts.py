@@ -13,6 +13,9 @@
 #  limitations under the License.
 
 
+from unic import unic
+
+
 """Convenience functions for testing both in unit and higher levels.
 
 Benefits:
@@ -161,7 +164,7 @@ def fail_unless_raises_with_msg(exc_class, expected_msg, callable_obj, *args,
     try:
         callable_obj(*args, **kwargs)
     except exc_class, err:
-        assert_equal(expected_msg, str(err), 'Correct exception but wrong message')
+        assert_equal(expected_msg, unic(err), 'Correct exception but wrong message')
     else:
         if hasattr(exc_class,'__name__'):
             exc_name = exc_class.__name__
