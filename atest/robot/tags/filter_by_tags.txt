@@ -1,0 +1,80 @@
+*** Settings ***
+Documentation   Tests for including and excluding tests
+Force Tags      regression  jybot  pybot
+Resource        ../../resources/resource.html
+
+*** Variables ***
+${ESCAPES}  --escape star:STAR --escape quest:QUEST --escape amp:AMP
+@{INCL_ALL}  Incl-1  Incl-12  Incl-123
+@{EXCL_ALL}  Excl-1  Excl-12  Excl-123
+@{ALL}  @{INCL_ALL}  @{EXCL_ALL}
+
+*** Test Cases ***
+No Includes Or Excludes
+    Run And Check include and Exclude  ${EMPTY}  @{ALL}
+
+One Include
+    Run And Check include and Exclude  --include incl1  @{INCL_ALL}
+
+Matching And Non Matching Includes
+    Run And Check Include and Exclude  -i INCL3 -i nonexisting  Incl-123
+
+More Includes
+    Run And Check include and Exclude  -i incl2 --include incl3 -i _ --include incl2  Incl-12  Incl-123
+
+Includes With AND
+    [Documentation]  Testing including like "--include tag1&tag2" both with "&" and "AND"
+    Run And Check Include and Exclude  --include incl1ANDincl2  Incl-12  Incl-123
+    Run And Check Include and Exclude  -i incl1AMPincl2AMPincl3  Incl-123
+
+Include With Patterns
+    Run And Check include and Exclude  --include incl?  @{INCL_ALL}
+    Run And Check Include and Exclude  -i STARcl3 -i iSTAR2  Incl-12  Incl-123  Excl-123
+    Run And Check Include and Exclude  -i i?*3ANDFORCE --include iSTAR  @{INCL_ALL}
+
+One Exclude
+    Run And Check include and Exclude  --exclude excl1  @{INCL_ALL}
+
+Matching And Non Matching Excludes
+    Run And Check Include and Exclude  -e EXCL3 -e nonexisting  @{INCL_ALL}  Excl-1  Excl-12
+
+More Excludes
+    Run And Check include and Exclude  --exclude excl3 -e excl2  @{INCL_ALL}  Excl-1
+
+Exclude With AND
+    Run And Check include and Exclude  --exclude excl1AMPexcl2  @{INCL_ALL}  Excl-1
+    Run And Check Include and Exclude  -e excl1AMPexcl2ANDexcl3  @{INCL_ALL}  Excl-1  Excl-12
+
+Exclude With Patterns
+    Run And Check include and Exclude  --exclude exc??  @{INCL_ALL}
+    Run And Check Include and Exclude  -e STAR3 -e eSTAR2 -e eSTAR1  Incl-1  Incl-12
+
+Include And Exclude
+    [Documentation]  Include and exclude together with and without patterns and ANDing
+    Run And Check Include and Exclude  -i force --exclude excl2  @{INCL_ALL}  Excl-1
+    Run And Check Include and Exclude  --include STARcl2 -i nonex -e e???2 -i forceANDi*1  @{INCL_ALL}
+
+Non Matching Include
+    Run And Check Error  --include nonex  includes 'nonex'
+    Run And Check Error  --include nonex -i nonex2  includes 'nonex' and 'nonex2'
+
+Non Matching Exclude
+    Run And Check include and Exclude  --exclude nonexisting -e nonex2 -e nonex3  @{ALL}
+
+Non Matching Include And Exclude
+    Run And Check Error  -i nonex -e nonex2  includes 'nonex' and excludes 'nonex2'
+    Run And Check Error  --include nonex -i incl? -e STAR1 -e STAR2 -e STAR3  includes 'nonex' and 'incl?' and excludes '*1', '*2' and '*3'
+
+*** Keywords ***
+Run And Check Include And Exclude
+    [Arguments]  ${params}  @{tests}
+    Run Tests  ${params} ${ESCAPES}  tags/filter_by_tags.html
+    Stderr Should Be Empty
+    Check Suite Contains Tests  ${SUITE}  @{tests}
+
+Run And Check Error
+    [Arguments]  ${params}  ${filter_msg}
+    Run Tests Without Processing Output  ${params} ${ESCAPES}  tags/filter_by_tags.html
+    ${stderr} =  Get File  ${STDERR_FILE}
+    Should Be Equal  ${stderr.strip()}  [ ERROR ] Suite 'Filter By Tags' with ${filter_msg} contains no test cases.\n\n Try --help for usage information.
+

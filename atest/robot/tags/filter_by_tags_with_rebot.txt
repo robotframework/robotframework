@@ -1,0 +1,130 @@
+*** Settings ***
+Documentation   Testing Rebot's filtering by tags command line functionality. Tests also filtering first with test execution and then with rebot (double filtering)
+Suite Setup     Create Input
+Suite Teardown  Remove Temps
+Test Setup      Empty Directory  ${MYOUTDIR}
+Default Tags    regression  pybot  jybot
+Resource        ../../resources/rebot_resource.html
+
+*** Variables ***
+${TESTFILE}  tags${/}filter_by_tags.html
+${MYOUTDIR}  ${TEMPDIR}${/}robot-test-145435
+${INPUT FILE}  ${TEMPDIR}${/}robot-test-145435.xml
+${ESCAPES}  --escape star:STAR --escape quest:QUEST --escape amp:AMP
+@{INCL_ALL}  Incl-1  Incl-12  Incl-123
+@{EXCL_ALL}  Excl-1  Excl-12  Excl-123
+@{ALL}  @{INCL_ALL}  @{EXCL_ALL}
+
+*** Test Cases ***
+No Includes Or Excludes
+    Run And Check include and Exclude  ${EMPTY}  @{ALL}
+
+One Include
+    Run And Check include and Exclude  --include incl1  @{INCL_ALL}
+
+Matching And Non Matching Includes
+    Run And Check Include and Exclude  -i INCL3 -i nonexisting  Incl-123
+
+More Includes
+    Run And Check include and Exclude  -i incl2 --include incl3 -i _ --include incl2  Incl-12  Incl-123
+
+Includes With AND
+    [Documentation]  Testing including like "--include tag1&tag2" both with "&" and "AND"
+    Run And Check Include and Exclude  --include incl1ANDincl2  Incl-12  Incl-123
+    Run And Check Include and Exclude  -i incl1AMPincl2AMPincl3  Incl-123
+
+Include With Patterns
+    Run And Check include and Exclude  --include incl?  @{INCL_ALL}
+    Run And Check Include and Exclude  -i STARcl3 -i iSTAR2  Incl-12  Incl-123  Excl-123
+    Run And Check Include and Exclude  -i i?*3ANDFORCE --include iSTAR  @{INCL_ALL}
+
+One Exclude
+    Run And Check include and Exclude  --exclude excl1  @{INCL_ALL}
+
+Matching And Non Matching Excludes
+    Run And Check Include and Exclude  -e EXCL3 -e nonexisting  @{INCL_ALL}  Excl-1  Excl-12
+
+More Excludes
+    Run And Check Include and Exclude  --exclude excl3 -e excl2  @{INCL_ALL}  Excl-1
+
+Exclude With AND
+    Run And Check Include and Exclude  --exclude excl1AMPexcl2  @{INCL_ALL}  Excl-1
+    Run And Check Include and Exclude  -e excl1AMPexcl2ANDexcl3  @{INCL_ALL}  Excl-1  Excl-12
+
+Exclude With Patterns
+    Run And Check Include and Exclude  --exclude exc??  @{INCL_ALL}
+    Run And Check Include and Exclude  -e STAR3 -e eSTAR2 -e eSTAR1  Incl-1  Incl-12
+
+Include And Exclude
+    [Documentation]  Include and exclude together with and without patterns and ANDing
+    Run And Check Include and Exclude  -i force --exclude excl2  @{INCL_ALL}  Excl-1
+    Run And Check Include and Exclude  --include STARcl2 -i nonex -e e???2 -i forceANDi*1  @{INCL_ALL}
+
+Non Matching Include
+    Run And Check Error  --include nonex  includes 'nonex'
+    Run And Check Error  --include nonex -i nonex2  includes 'nonex' and 'nonex2'
+
+Non Matching Exclude
+    Run And Check include and Exclude  --exclude nonexisting -e nonex2 -e nonex3  @{ALL}
+
+Non Matching Include And Exclude
+    Run And Check Error  -i nonex -e nonex2  includes 'nonex' and excludes 'nonex2'
+    Run And Check Error  --include nonex -i incl? -e STAR1 -e STAR2 -e STAR3  includes 'nonex' and 'incl?' and excludes '*1', '*2' and '*3'
+
+Including With Robot And Including And Excluding With Rebot
+    Create Output With Robot  ${INPUT FILE}  --include incl1 --exclude nonexisting  ${TESTFILE}
+    Run And Check include and Exclude  -i iSTAR2STAR -e nonexisting -e incl3  Incl-12
+
+Excluding With Robot And Including And Excluding Without Matching Rebot
+    Create Output With Robot  ${INPUT FILE}  -i incl1 --exclude excl*  ${TESTFILE}
+    Run And Check include and Exclude  -e nonexisting -e excl3  @{INCL_ALL}
+
+Elapsed Time
+    [Documentation]  Test setting start, end and elapsed times correctly when filtering by tags
+    Comment  1) Rebot hand-edited output with predefined times and  check that times are read correctly.
+    Run Rebot  ${EMPTY}  rebot${/}times.xml
+    Check Times  ${SUITE.tests[0]}  20061227 12:00:00.000  20061227 12:00:01.000  1000
+    Check Times  ${SUITE.tests[1]}  20061227 12:00:01.000  20061227 12:00:03.000  2000
+    Check Times  ${SUITE.tests[2]}  20061227 12:00:03.000  20061227 12:00:07.000  4000
+    Check Times  ${SUITE.tests[3]}  20061227 12:00:07.000  20061227 12:00:07.001  0001
+    Check Times  ${SUITE.tests[4]}  20061227 12:00:07.001  20061227 12:00:07.003  0002
+    Check Times  ${SUITE.tests[5]}  20061227 12:00:07.003  20061227 12:00:07.007  0004
+    Check Times  ${SUITE}  20061227 11:59:59.000  20061227 12:00:08.999  9999
+    Should Be Equal As Numbers  ${SUITE.test_count}  6
+    Comment  2) Filter ouput created in earlier step and check  that times are set accordingly.
+    Run Rebot  --include incl2 --include excl3 ${ESCAPES}  ${OUTFILE}
+    Check Times  ${SUITE}  N/A  N/A  6004
+    Check Times  ${SUITE.tests[0]}  20061227 12:00:01.000  20061227 12:00:03.000  2000
+    Check Times  ${SUITE.tests[1]}  20061227 12:00:03.000  20061227 12:00:07.000  4000
+    Check Times  ${SUITE.tests[2]}  20061227 12:00:07.003  20061227 12:00:07.007  004
+    Should Be Equal As Numbers  ${SUITE.test_count}  3
+
+*** Keywords ***
+Create Input
+    Create Output With Robot  ${INPUT FILE}  ${EMPTY}  ${TESTFILE}
+    Create Directory  ${MYOUTDIR}
+
+Remove Temps
+    Remove Directory  ${MYOUTDIR}  recursive
+    Remove File  ${INPUT FILE}
+
+Run And Check Include And Exclude
+    [Arguments]  ${params}  @{tests}
+    Run Rebot  ${params} ${ESCAPES}  ${INPUT FILE}
+    Stderr Should Be Empty
+    Check Suite Contains Tests  ${SUITE}  @{tests}
+    Should Be True  ${SUITE.all_stats.passed} == len(@{tests})
+    Should Be True  ${SUITE.all_stats.failed} == 0
+    ${exp_start} =  Evaluate  "${params}" == "" and "${ORIG_START}" or "N/A"
+    ${exp_end} =  Evaluate  "${params}" == "" and "${ORIG_END}" or "N/A"
+    Should Be Equal  ${SUITE.starttime}  ${exp_start}
+    Should Be Equal  ${SUITE.endtime}  ${exp_end}
+    Is Valid Elapsed Time  ${SUITE.elapsedtime}
+    Should Be True  ${SUITE.elapsedtime} <= ${ORIGELAPSED}
+
+Run And Check Error
+    [Arguments]  ${params}  ${filter_msg}
+    Run Tests Without Processing Output  ${params} ${ESCAPES}  ${TESTFILE}
+    ${stderr} =  Get Stderr
+    Should Be Equal  ${stderr.strip()}  [ ERROR ] Suite 'Filter By Tags' with ${filter_msg} contains no test cases.\n\n Try --help for usage information.
+
