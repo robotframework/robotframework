@@ -24,10 +24,15 @@ if os.name == 'java':
     def unic(item):
         if isinstance(item, basestring):
             return item
-        if sys.version_info[:2] > (2,2) and isinstance(item, Object):
-            if not isinstance(item, Class): #http://bugs.jython.org/issue1564
-                item = item.toString()  # http://bugs.jython.org/issue1563
+        if sys.version_info[:2] > (2,2):
+            if hasattr(item, '__iter__'):
+                item = [ _to_string(i) for i in item ]
+            elif not isinstance(item, Class): #http://bugs.jython.org/issue1564
+                item = _to_string(item)  # http://bugs.jython.org/issue1563
         return unicode(item)
+
+    def _to_string(item):
+        return isinstance(item, Object) and item.toString() or item
 
 else:
 
