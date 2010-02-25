@@ -27,7 +27,7 @@ def KeywordFactory(kwdata):
     if kwdata.type == 'kw':
         return Keyword(kwdata.name, kwdata.args)
     try:
-        clazz = { 'set': SetKeyword, 'repeat': RepeatKeyword, 
+        clazz = { 'set': SetKeyword, 'repeat': RepeatKeyword,
                   'for': ForKeyword, 'parallel': ParallelKeyword,
                   'error': SyntaxErrorKeyword }[kwdata.type]
         return clazz(kwdata)
@@ -40,7 +40,7 @@ class Keyword(BaseKeyword):
     def __init__(self, name, args, type='kw'):
         BaseKeyword.__init__(self, name, args, type=type)
         self.handler_name = name
-        
+
     def run(self, output, namespace):
         handler = namespace.get_handler(self.handler_name)
         if handler.type == 'user':
@@ -66,15 +66,15 @@ class Keyword(BaseKeyword):
         if self.status == 'FAIL':
             raise err
         return ret
-    
+
     def _get_name(self, handler_name, variables):
         return handler_name
-    
+
     def _run(self, handler, output, namespace):
         try:
             return handler.run(output, namespace, self.args[:])
         except ExecutionFailed:
-            raise 
+            raise
         except TimeoutError:
             self._report_failure(output, timeouted=True)
         except:
@@ -89,18 +89,18 @@ class Keyword(BaseKeyword):
 
 
 class SetKeyword(Keyword):
-    
+
     def __init__(self, kwdata):
         self.scalar_vars = kwdata.scalar_vars
         self.list_var = kwdata.list_var
         Keyword.__init__(self, kwdata.name, kwdata.args, 'set')
-        
+
     def _get_name(self, handler_name, variables):
         varz = self.scalar_vars[:]
         if self.list_var is not None:
             varz.append(self.list_var)
         return '%s = %s' % (', '.join(varz), handler_name)
-    
+
     def _run(self, handler, output, namespace):
         ret = Keyword._run(self, handler, output, namespace)
         try:
@@ -116,7 +116,7 @@ class SetKeyword(Keyword):
             else:
                 value = utils.unic(value)
             output.info('%s = %s' % (name, utils.cut_long_assign_msg(value)))
-        
+
     def _get_vars_to_set(self, ret):
         if ret is None:
             return self._get_vars_to_set_when_ret_is_none()
@@ -145,7 +145,7 @@ class SetKeyword(Keyword):
             return zip(self.scalar_vars, ret)
         return zip(self.scalar_vars[:-1], ret) \
                     + [(self.scalar_vars[-1], ret[needed-1:])]
-    
+
     def _get_vars_to_set_with_scalars_and_list(self, ret):
         ret = list(ret)
         needed_scalars = len(self.scalar_vars)
@@ -164,7 +164,7 @@ class SetKeyword(Keyword):
         else:
             err = 'Need more values than %d' % len(ret)
         varz = self.scalar_vars[:]
-        if self.list_var is not None: 
+        if self.list_var is not None:
             varz.append(self.list_var)
         name = self.name.split(' = ', 1)[1]
         raise DataError("Cannot assign return value of keyword '%s' to "
@@ -173,14 +173,14 @@ class SetKeyword(Keyword):
 
 
 class RepeatKeyword(Keyword):
-    
+
     def __init__(self, kwdata):
         self._orig_repeat = self._repeat = kwdata.repeat
         self._error = None
         Keyword.__init__(self, kwdata.name, kwdata.args, 'repeat')
         data = ['%s x' % kwdata.repeat, kwdata.name] + kwdata.args
         self._example = '| %s |' % ' | '.join(data)
-        
+
     def _run(self, handler, output, namespace):
         output.warn("Repeating keywords using the special syntax like '%s' is "
                     "deprecated and will be removed in Robot Framework 2.2. "
@@ -190,7 +190,7 @@ class RepeatKeyword(Keyword):
             raise ExecutionFailed(self._error)
         for _ in range(self._repeat):
             Keyword._run(self, handler, output, namespace)
-            
+
     def _get_name(self, handler_name, variables):
         if not utils.is_integer(self._orig_repeat):
             try:
@@ -204,13 +204,13 @@ class RepeatKeyword(Keyword):
         try:
             return int(repeat)
         except ValueError:
-            t = utils.type_as_str(repeat, printable=True) 
+            t = utils.type_as_str(repeat, printable=True)
             raise DataError("Value of a repeat variable '%s' should be an "
                             "integer, got %s instead" % (self._orig_repeat, t))
 
 
 class ForKeyword(BaseKeyword):
-   
+
     def __init__(self, kwdata):
         self.vars = kwdata.vars
         self.items = kwdata.items
@@ -237,7 +237,7 @@ class ForKeyword(BaseKeyword):
         output.end_keyword(self)
         if error is not None:
             raise error
-            
+
     def _run(self, output, namespace):
         items = self._replace_vars_from_items(namespace.variables)
         for i in range(0, len(items), len(self.vars)):
@@ -268,7 +268,7 @@ class ForKeyword(BaseKeyword):
             return items
         raise DataError('Number of FOR loop values should be multiple of '
                         'variables. Got %d variables (%s) but %d value%s.'
-                        % (len(self.vars), utils.seq2str(self.vars), 
+                        % (len(self.vars), utils.seq2str(self.vars),
                            len(items), utils.plural_or_not(items)))
 
     def _get_range_items(self, items):
@@ -281,28 +281,28 @@ class ForKeyword(BaseKeyword):
             raise DataError('FOR IN RANGE expected 1-3 arguments, '
                             'got %d instead.' % len(items))
         return range(*items)
-    
-     
+
+
 class ForItemKeyword(BaseKeyword):
-    
+
     def __init__(self, vars, items):
         name = ', '.join([ '%s = %s' % (var, utils.cut_long_assign_msg(item))
                            for var, item in zip(vars, items) ])
         BaseKeyword.__init__(self, name, type='foritem')
         self.starttime = utils.get_timestamp()
-        
+
     def end(self, status):
         self.status = status
         self.endtime = utils.get_timestamp()
         self.elapsedtime = utils.get_elapsed_time(self.starttime, self.endtime)
 
-    
+
 class ParallelKeyword(BaseKeyword):
-    
+
     def __init__(self, kwdata):
         BaseKeyword.__init__(self, kwdata.name, type='parallel')
         self.keywords = [ KeywordFactory(kw) for kw in kwdata.keywords ]
-                   
+
     def run(self, output, namespace):
         self.starttime = utils.get_timestamp()
         self.status = 'PASS'
@@ -317,8 +317,8 @@ class ParallelKeyword(BaseKeyword):
             running_keywords.append((runner, recorder))
             # Give started keyword some time to really start. This is ugly
             # but required because there seems to be some threading problems
-            # at least on faster machines otherwise. Would be better to 
-            # investigate more but parallel execution is so little used 
+            # at least on faster machines otherwise. Would be better to
+            # investigate more but parallel execution is so little used
             # feature that it does not make much sense right now.
             time.sleep(0.1)
         for runner, recorder in running_keywords:
@@ -333,30 +333,30 @@ class ParallelKeyword(BaseKeyword):
         output.end_keyword(self)
         if len(errors) > 0:
             if len(errors) > 1:
-                errors = [ 'Error %d: %s' % (i+1, err) 
+                errors = [ 'Error %d: %s' % (i+1, err)
                            for i, err in enumerate(errors) ]
             raise ExecutionFailed('\n\n'.join(errors))
 
 
 class _OutputRecorder:
-    
+
     def __init__(self):
         self._actions = []
-    
+
     def __getattr__(self, name):
         return lambda *args : self._actions.append((name, args))
-        
+
     def replay(self, output):
         for name, args in self._actions:
             getattr(output, name)(*args)
-            
+
 
 class SyntaxErrorKeyword(BaseKeyword):
-    
+
     def __init__(self, kwdata):
         BaseKeyword.__init__(self, kwdata.name, type='error')
         self._error = kwdata.error
-        
+
     def run(self, output, namespace):
         self.starttime = utils.get_timestamp()
         self.status = 'FAIL'
