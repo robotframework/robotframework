@@ -19,13 +19,14 @@ import sys
 
 if os.name == 'java':
 
-    from java.lang import Object
+    from java.lang import Object, Class
 
     def unic(item):
         if isinstance(item, basestring):
             return item
         if sys.version_info[:2] > (2,2) and isinstance(item, Object):
-            item = item.toString()  # http://bugs.jython.org/issue1563
+            if not isinstance(item, Class): #http://bugs.jython.org/issue1564
+                item = item.toString()  # http://bugs.jython.org/issue1563
         return unicode(item)
 
 else:
