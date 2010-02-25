@@ -44,7 +44,7 @@ class AbstractDomWrapper:
         if path is invalid.
         """
         if type(path) not in StringTypes or path == '' or path[0] == '/' or path[-1] == '/':
-            raise AttributeError("Invalid path '%s'" % str(path))
+            raise AttributeError("Invalid path '%s'" % path)
         matches = []
         for child in self.children:
             matches += child._get_matching_elements(path.split('/'))
