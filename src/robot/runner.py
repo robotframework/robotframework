@@ -80,16 +80,20 @@ Options:
                           parent name separated with a dot. For example 
                           '-s X.Y' selects suite 'Y' only if its parent is 'X'.
  -i --include tag *       Select test cases to run by tag. Similarly as name in
-                          --test, tag is case and space insensitive and it 
-                          can also be a simple pattern. To include only tests
-                          which have more than one tag use '&' or 'AND' between
-                          tag names. For example '--include tag1&tag2' includes
-                          only those tests that have both 'tag1' and 'tag2'.
+                          --test, tag is case and space insensitive. There are
+                          three ways to include test based on tags:
+                          1) One tag as a simple pattern. Tests having a tag
+                          matching the pattern are included. Example: 'it-*'
+                          2) Two or more tags (or patterns) separated by '&' or
+                          'AND'. Only tests having all these tags are included.
+                          Examples: 'tag1&tag2', 'smokeANDowner-*ANDit-10'
+                          3) Two or more tags (or patterns) separated by 'NOT'.
+                          Tests having the first tag but not any of the latter
+                          ones are included. Example: 'it-10NOTsmoke'
  -e --exclude tag *       Select test cases not to run by tag. These tests are
-                          not run even if they are included with --include. Tag
-                          names are handled similarly as in --include and
-                          excluding only tests containing multiple tags works
-                          the same way using '&' or 'AND'.
+                          not run even if they are included with --include.
+                          Tags are excluded using the rules explained in
+                          --include.
  -c --critical tag *      Tests having given tag are considered critical. If no
                           critical tags are set, all tags are critical. Tags
                           can be given as a pattern like e.g. with --test.
@@ -179,15 +183,8 @@ Options:
                           table and matching tests into 'Test Details by Tag'
                           table. Unless the optional 'name' is used, name of
                           the added combined tag is got from specified tags.
-                          There are three ways to give tags to combine:
-                          1) One tag as a simple pattern. Tests having a tag
-                          matching the pattern are included. Example: 'it-*'
-                          2) Two or more tags (or patterns) separated by '&' or
-                          'AND'. Only tests having all these tags are included.
-                          Examples: 'tag1&tag2', 'smokeANDowner-*ANDit-10'
-                          3) Two or more tags (or patterns) separated by 'NOT'.
-                          Tests having the first tag but not any of the latter
-                          ones are included. Example: 'it-10NOTsmoke'
+                          Tags are combined using the rules explained in
+                          --include.
     --tagdoc pattern:doc *  Add documentation to tags matching given pattern.
                           Documentation is shown in 'Test Details by Tag' 
                           table and also as a tooltip in 'Statistics by Tag' 
