@@ -80,12 +80,15 @@ Both :opt:`--include` and :opt:`--exclude` can be used several
 times to match multiple tags, and their arguments can be `simple
 patterns`_. In these cases, the rules for selecting test cases apply,
 so that test cases with a tag matching any include patterns are
-selected, and tests with a tag matching exclude patterns are not.  It
+selected, and tests with a tag matching exclude patterns are not. It
 is also possible to select only test cases that have two or more
 specified tags by separating the tags either with :code:`&` or
-:code:`AND` (case-sensitive). Similarly, only tests with a certain
-tag, but without some others, can be selected by separating these tags
-with :code:`NOT` (case-sensitive).
+:code:`AND` (case-sensitive). Starting from Robot Framework 2.1.3, only tests
+with a certain tag, but without any others, can be selected by separating these
+tags with :code:`NOT` (case-sensitive). In case any of the pattern between
+multiple :code:`NOT`s is matching, the test case is not selected. Patterns can be
+`simple patterns`_ or :code:`AND` rule specifying that test is not selected if
+all the tags separated with :code:`AND` are matching.
 
 ::
 
@@ -93,6 +96,7 @@ with :code:`NOT` (case-sensitive).
   --include regressionANDiter-42
   --include tag1&tag2&tag3&tag4
   --exclude regressionNOTowner-*
+  --include tag1NOTtag2NOTtag3&tag4  (includes tests which have `tag1`, but not tests which additionally have `tag2` or both tags `tag3` and `tag4`)
 
 Selecting test cases by tags is a very flexible mechanism and allows
 many interesting possibilities:
