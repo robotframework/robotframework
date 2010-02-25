@@ -19,7 +19,6 @@ from robot import utils
 from robot.errors import FrameworkError, ExecutionFailed, DataError, \
     TimeoutError
 from robot.common import BaseKeyword
-from robot.output import LOGGER
 from robot.variables import is_list_var
 
 
