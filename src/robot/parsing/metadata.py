@@ -19,7 +19,7 @@ import sys
 from robot import utils
 from robot.errors import DataError
 
-    
+
 class _Metadata:
 
     def __init__(self, metadata=None):
@@ -29,7 +29,7 @@ class _Metadata:
         if metadata is not None:
             for item in metadata:
                 self.set(item)
-        
+
     def set(self, item):
         try:
             name = self._names[utils.normalize(item.name)].replace(' ', '')
@@ -49,7 +49,7 @@ class _Metadata:
         item.report_invalid_syntax(msg % (name, item.name, available))
 
     def _get_available_names(self):
-        names = dict([ (name, 1) for name in self._names.values() ]).keys() 
+        names = dict([ (name, 1) for name in self._names.values() ]).keys()
         names.sort()
         return utils.seq2str(names)
 
@@ -60,43 +60,43 @@ class _Metadata:
         if key == 'Documentation':
             return ' '.join(value)
         return value
-        
+
     def __getitem__(self, key):
         return self.get(key)
-                
+
 
 class TestCaseMetadata(_Metadata):
-    _names = { 'documentation': 'Documentation', 
+    _names = { 'documentation': 'Documentation',
                'document': 'Documentation',
-               'setup': 'Setup', 
-               'precondition': 'Setup', 
-               'teardown': 'Teardown', 
-               'postcondition': 'Teardown', 
-               'tags': 'Tags', 
+               'setup': 'Setup',
+               'precondition': 'Setup',
+               'teardown': 'Teardown',
+               'postcondition': 'Teardown',
+               'tags': 'Tags',
                'timeout': 'Timeout' }
-    
+
 
 class UserKeywordMetadata(_Metadata):
-    _names = { 'documentation': 'Documentation', 
+    _names = { 'documentation': 'Documentation',
                'document': 'Documentation',
-               'arguments': 'Arguments', 
-               'return': 'Return', 
+               'arguments': 'Arguments',
+               'return': 'Return',
                'timeout': 'Timeout' }
 
 
 class TestSuiteMetadata(_Metadata):
-    _names = { 'documentation': 'Documentation', 
+    _names = { 'documentation': 'Documentation',
                'document': 'Documentation',
-               'suitesetup': 'Suite Setup', 
-               'suiteprecondition': 'Suite Setup', 
-               'suiteteardown': 'Suite Teardown', 
-               'suitepostcondition': 'Suite Teardown', 
-               'testsetup': 'Test Setup', 
-               'testprecondition': 'Test Setup', 
-               'testteardown': 'Test Teardown', 
+               'suitesetup': 'Suite Setup',
+               'suiteprecondition': 'Suite Setup',
+               'suiteteardown': 'Suite Teardown',
+               'suitepostcondition': 'Suite Teardown',
+               'testsetup': 'Test Setup',
+               'testprecondition': 'Test Setup',
+               'testteardown': 'Test Teardown',
                'testpostcondition': 'Test Teardown',
-               'defaulttags': 'Default Tags', 
-               'forcetags': 'Force Tags', 
+               'defaulttags': 'Default Tags',
+               'forcetags': 'Force Tags',
                'testtimeout': 'Test Timeout' }
 
     def __init__(self, rawdata=None):
@@ -105,7 +105,7 @@ class TestSuiteMetadata(_Metadata):
         self.imports = []
         if rawdata is not None:
             self._set_rawdata(rawdata)
-        
+
     def _set_rawdata(self, rawdata):
         for item in rawdata.settings:
             name = item.name.lower()
@@ -115,7 +115,7 @@ class TestSuiteMetadata(_Metadata):
                 self._set_user_metadata(item.name[5:].strip(), item.value)
             else:
                 self.set(item)
-            
+
     def _set_user_metadata(self, name, value):
         name = utils.printable_name(name)
         value = ' '.join(value)
@@ -125,18 +125,18 @@ class TestSuiteMetadata(_Metadata):
 
 
 class ImportSetting:
-    
+
     def __init__(self, item):
         self._item = item
         self.name = item.name = utils.normalize(item.name).capitalize()
         self.value = None
-    
+
     def replace_variables(self, variables):
         item = self._item.copy()
         try:
             self.value = variables.replace_list(item.value)
         except DataError, err:
-            raise DataError("Replacing variables from setting '%s' failed: %s" 
+            raise DataError("Replacing variables from setting '%s' failed: %s"
                             % (self.name, str(err)))
         if len(self.value) == 0:
             raise DataError("Setting '%s' requires a value" % self.name)
@@ -147,7 +147,7 @@ class ImportSetting:
 
     def _get_path(self, name, path, basedir):
         if name == 'Library' and not self._is_library_by_path(path, basedir):
-            return path        
+            return path
         try:
             path = self._resolve_path(path.replace('/', os.sep), basedir)
         except DataError:
@@ -160,7 +160,7 @@ class ImportSetting:
         else:
             path = utils.normpath(path)
         return path
-    
+
     def _is_library_by_path(self, path, basedir):
         if os.path.splitext(path)[1].lower() in ['.py','.java','.class']:
             return os.path.isfile(os.path.join(basedir, path))
@@ -168,7 +168,7 @@ class ImportSetting:
             return False
         init = os.path.join(basedir, path.replace('/',os.sep), '__init__.py')
         return os.path.isfile(init)
-        
+
     def _resolve_path(self, respath, basedir):
         for base in [basedir] + sys.path:
             if not os.path.isdir(base):
@@ -177,6 +177,6 @@ class ImportSetting:
             if os.path.exists(path):
                 return path
         raise DataError()
-    
+
     def report_invalid_syntax(self):
         self._item.report_invalid_syntax()
