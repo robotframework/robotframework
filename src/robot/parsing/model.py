@@ -44,7 +44,7 @@ class _BaseSuite(BaseTestSuite):
     def __init__(self, rawdata, parent=None):
         name, source = self._get_name_and_source(rawdata.source)
         BaseTestSuite.__init__(self, name, source, parent)
-        metadata = TestSuiteMetadata(rawdata)   
+        metadata = TestSuiteMetadata(rawdata)
         self.doc = metadata['Documentation']
         self.suite_setup = metadata['SuiteSetup']
         self.suite_teardown = metadata['SuiteTeardown']
@@ -53,7 +53,7 @@ class _BaseSuite(BaseTestSuite):
         self.default_tags = metadata['DefaultTags']
         self.force_tags = metadata['ForceTags']
         self.test_timeout = metadata['TestTimeout']
-        self.metadata = metadata.user_metadata 
+        self.metadata = metadata.user_metadata
         self.imports = metadata.imports
         self.variables = rawdata.variables
         self.user_keywords = UserHandlerList(rawdata.keywords)
@@ -76,7 +76,7 @@ class _BaseSuite(BaseTestSuite):
                     FileSuite(path, parent=self)
             except DataError, err:
                 LOGGER.info("Parsing data source '%s' failed: %s" % (path, err))
-        # The latter check is to get a more informative exception in 
+        # The latter check is to get a more informative exception in
         # suite.filter_by_names later if --suite option was used.
         if self.get_test_count() == 0 and len(suitenames) == 0:
             if self.parent is not None:
@@ -85,7 +85,7 @@ class _BaseSuite(BaseTestSuite):
 
 
 class FileSuite(_BaseSuite):
-    
+
     def __init__(self, path, parent=None):
         LOGGER.info("Parsing test case file '%s'" % path)
         rawdata = self._get_rawdata(path)
@@ -94,7 +94,7 @@ class FileSuite(_BaseSuite):
 
     def _get_source(self, path):
         return path
-        
+
     def _get_rawdata(self, path):
         rawdata = RawData(path)
         if rawdata.get_type() == rawdata.TESTCASE:
@@ -108,28 +108,28 @@ class FileSuite(_BaseSuite):
             except:
                 rawtest.report_invalid_syntax()
 
-            
+
 class DirectorySuite(_BaseSuite):
 
     _ignored_prefixes = ['_', '.']
     _ignored_dirs = ['CVS']
-    
+
     def __init__(self, path, suitenames, parent=None):
         LOGGER.info("Parsing test suite directory '%s'" % path)
         # If we are included also all our children are
         if self._is_in_incl_suites(os.path.basename(os.path.normpath(path)),
                                    suitenames):
-            suitenames = []  
+            suitenames = []
         subitems, self.initfile = self._get_suite_items(path, suitenames)
         rawdata = self._get_rawdata(path)
         _BaseSuite.__init__(self, rawdata, parent)
         error = "Test suite directory '%s' contains no test cases." % path
         self._create_subsuites(subitems, suitenames, error)
-        
+
     def _get_source(self, path):
         # 'path' points either to directory or __init__ file inside it
         return utils.get_directory(path)
-        
+
     def _get_suite_items(self, dirpath, suitenames):
         names = os.listdir(dirpath)
         names.sort(lambda x,y: cmp(x.lower(), y.lower()))
@@ -144,7 +144,7 @@ class DirectorySuite(_BaseSuite):
                     LOGGER.error("Ignoring second test suite init file '%s'" % path)
             elif self._is_ignored(name, path, suitenames):
                 LOGGER.info("Ignoring file or directory '%s'" % name)
-            else:             
+            else:
                 files.append(path)
         return files, initfile
 
@@ -159,7 +159,7 @@ class DirectorySuite(_BaseSuite):
         LOGGER.error("Test suite directory initialization file '%s' "
                      "contains test cases and is ignored." % self.initfile)
         return RawData(path)
-            
+
     def _is_ignored(self, name, path, incl_suites):
         if name[0] in self._ignored_prefixes:
             return True
@@ -183,10 +183,10 @@ class DirectorySuite(_BaseSuite):
             return False
         root, ext = os.path.splitext(name.lower())
         return root == '__init__' and READERS.has_key(ext)
-    
+
 
 class MultiSourceSuite(_BaseSuite):
-    
+
     def __init__(self, paths, suitenames):
         LOGGER.info("Parsing multiple data sources %s" % utils.seq2str(paths))
         _BaseSuite.__init__(self, RawData(None))
@@ -195,10 +195,10 @@ class MultiSourceSuite(_BaseSuite):
 
     def _get_name_and_source(self, path):
         return '', None
-        
-    
+
+
 class TestCase(BaseTestCase):
-    
+
     def __init__(self, rawdata, parent):
         BaseTestCase.__init__(self, utils.printable_name(rawdata.name), parent)
         metadata = TestCaseMetadata(rawdata.metadata)
@@ -206,5 +206,5 @@ class TestCase(BaseTestCase):
         self.tags = metadata['Tags']
         self.setup = metadata['Setup']
         self.teardown = metadata['Teardown']
-        self.timeout = metadata['Timeout'] 
+        self.timeout = metadata['Timeout']
         self.keywords = KeywordList(rawdata.keywords)
