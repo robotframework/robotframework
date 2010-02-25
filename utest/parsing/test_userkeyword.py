@@ -28,13 +28,13 @@ class TestUserHandler(unittest.TestCase):
 
 
 class TestGetArgSpec(unittest.TestCase):
-    
+
     def setUp(self):
         self.handler = UserHandler(KwDataMock())
 
     def test_no_args(self):
         self._verify('', (), (), None)
-        
+
     def test_one_arg(self):
         self._verify('${arg1}', ('${arg1}',), (), None)
 
@@ -42,16 +42,16 @@ class TestGetArgSpec(unittest.TestCase):
         self._verify('@{varargs}', (), (), '@{varargs}')
 
     def test_one_default(self):
-        self._verify('${arg1} ${arg2}=default @{varargs}', 
+        self._verify('${arg1} ${arg2}=default @{varargs}',
                      ('${arg1}', '${arg2}'), ('default',), '@{varargs}')
 
     def test_one_empty_default(self):
-        self._verify('${arg1} ${arg2}= @{varargs}', 
+        self._verify('${arg1} ${arg2}= @{varargs}',
                      ('${arg1}', '${arg2}'), ('',), '@{varargs}')
 
     def test_many_defaults(self):
         self._verify('${arg1}=default1 ${arg2}=default2 ${arg3}=default3',
-                     ('${arg1}', '${arg2}', '${arg3}'), 
+                     ('${arg1}', '${arg2}', '${arg3}'),
                      ('default1', 'default2', 'default3'), None)
 
     def _verify(self, in_args, exp_args, exp_defaults, exp_varargs):
