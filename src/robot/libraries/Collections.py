@@ -14,7 +14,6 @@
 
 
 from robot import utils
-from robot import output
 from robot.errors import DataError
 
 
@@ -334,7 +333,7 @@ class _List:
         See the use of `msg` and `values` from the `Lists Should Be Equal`
         keyword.
         """
-        diffs = ', '.join([ str(item) for item in list2 if item not in list1 ])
+        diffs = ', '.join([ utils.unic(item) for item in list2 if item not in list1 ])
         default = 'Following values were not found from first list: ' + diffs
         _verify_condition(diffs == '', default, msg, values)
 
@@ -566,7 +565,7 @@ class _Dictionary:
         The given dictionaries are never altered by this keyword.
         """
         keys = self.get_dictionary_keys(dict2)
-        diffs = [ str(k) for k in keys if k not in dict1 ]
+        diffs = [ utils.unic(k) for k in keys if k not in dict1 ]
         default = "Following keys missing from first dictionary: %s" \
                   % ', '.join(diffs)
         _verify_condition(diffs == [], default, msg, values)
@@ -594,8 +593,8 @@ class _Dictionary:
     def _keys_should_be_equal(self, dict1, dict2, msg, values):
         keys1 = self.get_dictionary_keys(dict1)
         keys2 = self.get_dictionary_keys(dict2)
-        miss1 = [ str(k) for k in keys2 if k not in dict1 ]
-        miss2 = [ str(k) for k in keys1 if k not in dict2 ]
+        miss1 = [ utils.unic(k) for k in keys2 if k not in dict1 ]
+        miss2 = [ utils.unic(k) for k in keys1 if k not in dict2 ]
         error = []
         if miss1:
             error += [ 'Following keys missing from first dictionary: %s'
