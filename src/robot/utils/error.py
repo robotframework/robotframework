@@ -107,7 +107,7 @@ def _get_java_details(exc_value):
         return ''
     output = StringWriter()
     exc_value.printStackTrace(PrintWriter(output))
-    lines = [ line for line in str(output).splitlines()
+    lines = [ line for line in output.toString().splitlines()
               if line and not _is_ignored_stacktrace_line(line) ]
     details = '\n'.join(lines)
     msg = _msg_to_str(exc_value.getMessage())
