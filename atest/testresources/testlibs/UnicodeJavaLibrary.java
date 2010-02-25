@@ -26,6 +26,10 @@ public class UnicodeJavaLibrary {
         return object;
     }
 
+    public JavaObject[] javaObjectArray() {
+        return new JavaObject[]{ new JavaObject(this.messages[0]), new JavaObject(this.messages[1]) };
+    }
+
     public void raiseUnicodeError() {
         throw new AssertionError(this.message);
     }
