@@ -1,7 +1,7 @@
-import unittest, sys
+import unittest
 from types import *
 
-from robot.parsing.userkeyword import UserHandler
+from robot.parsing.userkeyword import UserHandler, UserHandlerList, UserErrorHandler
 from robot.errors import *
 from robot.utils.asserts import *
 
@@ -11,10 +11,27 @@ class LibraryMock:
         self.name = name
 
 class KwDataMock:
-    def __init__(self, name='My Keyword'):
+    def __init__(self, name='My Keyword', metadata=None):
         self.name = name
-        self.metadata = None
+        self.metadata = metadata
         self.keywords = []
+
+    def report_invalid_syntax(self, msg):
+        self.error = msg
+
+class MetaMock:
+    def __init__(self, name, value):
+        self.name = name
+        self.value = value
+
+
+class TestUserHandlerList(unittest.TestCase):
+
+    def test_invalid_argument_contains_unicode(self):
+        mock = KwDataMock(metadata=[MetaMock('arguments', [u'\xe4'])])
+        handler = UserHandlerList([mock])[0]
+        assert_true(isinstance(handler, UserErrorHandler))
+        assert_equals(handler._error, u"Invalid argument '\xe4'")
 
 
 class TestUserHandler(unittest.TestCase):
