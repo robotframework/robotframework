@@ -105,7 +105,7 @@ class SetKeyword(Keyword):
         try:
             vars_to_set = self._get_vars_to_set(ret)
         except DataError, err:
-            msg = str(err)
+            msg = utils.unic(err)
             output.fail(msg)
             raise ExecutionFailed(msg)
         for name, value in vars_to_set:
@@ -195,7 +195,7 @@ class RepeatKeyword(Keyword):
             try:
                 self._repeat = self._get_repeat(variables)
             except DataError, err:
-                self._error = str(err)
+                self._error = utils.unic(err)
         return '%sx %s' % (self._repeat, handler_name)
 
     def _get_repeat(self, variables):
@@ -225,7 +225,7 @@ class ForKeyword(BaseKeyword):
         except ExecutionFailed, err:
             error = err
         except DataError, err:
-            msg = str(err)
+            msg = utils.unic(err)
             output.fail(msg)
             error = ExecutionFailed(msg)
         else:
