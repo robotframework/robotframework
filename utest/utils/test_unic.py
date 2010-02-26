@@ -15,11 +15,16 @@ class TestUnic(unittest.TestCase):
             assert_equals(unic(JavaObject(data)), data)
 
         def test_with_class_type(self):
-            assert_equals(unic(String('').getClass()), "<type 'java.lang.String'>")
+            assert_true('java.lang.String' in unic(String('').getClass()))
 
         def test_with_array_containing_unicode_objects(self):
             assert_true('Circle is 360' in
                         unic(UnicodeJavaLibrary().javaObjectArray()))
+
+        def test_with_iterator(self):
+            iterator = UnicodeJavaLibrary().javaIterator()
+            assert_true('java.util' in unic(iterator))
+            assert_true('Circle is 360' in iterator.next())
 
 
 if __name__ == '__main__':

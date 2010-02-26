@@ -12,34 +12,35 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-
 import os
 import sys
 
 
-if os.name == 'java':
+def unic(item):
+    # Based on a recipe from http://code.activestate.com/recipes/466341
+    try:
+        return unicode(item)
+    except UnicodeDecodeError:
+        ascii_text = str(item).encode('string_escape')
+        return unicode(ascii_text)
+
+
+if os.name == 'java' and sys.version_info[:2] > (2,2):
 
     from java.lang import Object, Class
+    _unic = unic
 
     def unic(item):
         if isinstance(item, basestring):
             return item
-        if sys.version_info[:2] > (2,2):
-            if hasattr(item, '__iter__'):
-                item = [ _to_string(i) for i in item ]
-            elif not isinstance(item, Class): #http://bugs.jython.org/issue1564
-                item = _to_string(item)  # http://bugs.jython.org/issue1563
-        return unicode(item)
+        if isinstance(item, Object) and not isinstance(item, Class): # http://bugs.jython.org/issue1564
+            item = item.toString()  # http://bugs.jython.org/issue1563
+        return _unic(item)
 
-    def _to_string(item):
-        return isinstance(item, Object) and item.toString() or item
 
-else:
+elif os.name == 'java':
 
     def unic(item):
-        # Based on a recipe from http://code.activestate.com/recipes/466341
-        try:
-            return unicode(item)
-        except UnicodeDecodeError:
-            ascii_text = str(item).encode('string_escape')
-            return unicode(ascii_text)
+        if isinstance(item, basestring):
+            return item
+        return unicode(item)
