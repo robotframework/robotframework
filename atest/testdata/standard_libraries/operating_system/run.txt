@@ -67,6 +67,10 @@ Run And Return RC And Output
     Equals  ${rc}  ${42}
     Equals  ${output}  hello
 
+Run non-ascii command returning non-ascii output
+  ${output}=  Run  echo ä
+  Should Be Equal  ${output}  ä
+
 It Is Possible To Start Background Processes
     ${output} =  Run  ${PROG} foo bar&
     Should Contain  ${output}  foo

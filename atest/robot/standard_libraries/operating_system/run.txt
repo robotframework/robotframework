@@ -35,6 +35,9 @@ Run And Return RC
 Run And Return RC And Output
     Check testcase  Run and return RC and output
 
+Run non-ascii command returning non-ascii output
+    Check testcase  Run non-ascii command returning non-ascii output
+
 It Is Possible To Start Background Processes
     Check testcase  It is possible To Start Background Processes
 
