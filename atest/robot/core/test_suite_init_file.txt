@@ -33,8 +33,14 @@ Suite Teardown
     Should Be Equal   ${subsuite_without_init.teardown}   ${None}
 
 Invalid Suite Metadata
-    Check Stderr Contains   Test Suite does not have metadata 'Invalid'.   Available: 'Default Tags', 'Documentation', 'Force Tags', 'Suite Setup',   'Suite Teardown', 'Test Setup', 'Test Teardown' and 'Test Timeout'
-    Check Stderr Contains   Test Suite does not have metadata 'Invalid In Sub'.   Available: 'Default Tags', 'Documentation', 'Force Tags', 'Suite Setup',   'Suite Teardown', 'Test Setup', 'Test Teardown' and 'Test Timeout'
+    Check Stderr Contains  Test Suite Init File does not have metadata 'Invalid'.   Available: 'Default Tags', 'Documentation', 'Force Tags', 'Suite Setup',   'Suite Teardown', 'Test Setup', 'Test Teardown' and 'Test Timeout'
+    Check Stderr Contains   Test Suite Init File does not have metadata 'Invalid In Sub'.   Available: 'Default Tags', 'Documentation', 'Force Tags', 'Suite Setup',   'Suite Teardown', 'Test Setup', 'Test Teardown' and 'Test Timeout'
+
+Deprecated Metadata In Init File
+    Check Stderr Contains   Using setting 'Default Tags' in init file is deprecated and will be removed in the next major release.
+    Check Stderr Contains   Using setting 'Test Setup' in init file is deprecated and will be removed in the next major release.
+    Check Stderr Contains   Using setting 'Test Teardown' in init file is deprecated and will be removed in the next major release.
+    Check Stderr Contains   Using setting 'Test Timeout' in init file is deprecated and will be removed in the next major release.
 
 Test Tags
     [Documentation]   Settings tags for tests using Force and Default Tags in different suite levels and also [Tags] in tests
