@@ -12,7 +12,6 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-
 import time
 
 from robot import utils
@@ -21,7 +20,7 @@ from robot.errors import TimeoutError, DataError, FrameworkError
 
 
 class _Timeout:
-    
+
     _defaults = ('', -1, None)
 
     def __init__(self, *params):
@@ -33,32 +32,32 @@ class _Timeout:
             self.secs = 0.000001
             self.error = 'Setting %s timeout failed: %s' % (self.type, err)
         self.starttime = 0
-        
+
     def _process_params(self, params):
         if len(params) == 0:
             return self._defaults
         secs = utils.timestr_to_secs(params[0])
         msg = len(params) > 1 and ' '.join(params[1:]) or None
         return utils.secs_to_timestr(secs), secs, msg
-        
+
     def start(self):
         self.starttime = time.time()
-        
+
     def time_left(self):
         if self.starttime == 0:
             raise FrameworkError('Timeout not started')
         elapsed = time.time() - self.starttime
         return self.secs - elapsed
-    
+
     def active(self):
         return self.secs > 0
-    
+
     def timed_out(self):
         return self.active() and self.time_left() < 0
-    
+
     def __str__(self):
         return self.string
-    
+
     def __cmp__(self, other):
         if utils.is_str(other):
             return cmp(str(self), other)
@@ -67,7 +66,7 @@ class _Timeout:
         if not other.active():
             return -1
         return cmp(self.time_left(), other.time_left())
-    
+
     def run(self, runnable, args=None, kwargs=None, logger=None):
         if self.error is not None:
             raise DataError(self.error)
@@ -95,12 +94,12 @@ class _Timeout:
         except:
             pass
         raise TimeoutError(self.get_message())
-    
+
     def get_message(self):
         if self.message is not None:
             return self.message
         return '%s timeout %s exceeded.' % (self.type.capitalize(), self.string)
-        
+
 
 class TestTimeout(_Timeout):
     type = 'test'
