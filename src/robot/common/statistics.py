@@ -28,7 +28,7 @@ class Statistics:
         self.suite = SuiteStatistics(suite, self.tags, suite_stat_level)
         self.total = TotalStatistics(self.suite)
         self.tags.sort()
-        
+
     def serialize(self, serializer):
         serializer.start_statistics(self)
         self.total.serialize(serializer)
@@ -177,40 +177,43 @@ class SuiteStatistics:
 
 
 class TagStatistics:
-    
-    def __init__(self, include=None, exclude=None, combine=None, docs=None, 
-                 links=None):
+
+    def __init__(self, include=None, exclude=None, tag_stat_combine=None,
+                 docs=None, links=None):
         self.stats = utils.NormalizedDict()
         self._include = utils.to_list(include)
         self._exclude = utils.to_list(exclude)
-        self._combine_and, self._combine_not = self._get_combine(combine)
+        self._patterns_and_names = self._get_patterns_and_names(tag_stat_combine)
         self._taginfo = TagStatInfo(utils.to_list(docs), utils.to_list(links))
 
-    def _get_combine(self, combine):
-        ands = []
-        nots = []
-        if combine is None or combine == []:
-            return ands, nots
-        for tags in combine:
-            tags, name = self._split_tag_stat_combine_option(tags)
-            if 'NOT' in tags:
-                parts = [ utils.normalize(t) for t in tags.split('NOT') ]
-                if '' not in parts:
-                    nots.append((parts, name))
-            else:
-                parts = [ tag for tag in utils.normalize(tags).split('&') 
-                          if tag != '' ]
-                if parts != []:
-                    ands.append((parts, name))
-        return ands, nots
+    def _get_patterns_and_names(self, tag_stat_combine_options):
+        if not tag_stat_combine_options:
+            return []
+        return [ self._parse_name_and_pattern_from(option) \
+                 for option in tag_stat_combine_options ]
 
-    def _split_tag_stat_combine_option(self, tags):
-        if ':' in tags:
-            index = tags.rfind(':')
-            return tags[:index], utils.printable_name(tags[index+1:], True)
-        return tags, None
+    def _parse_name_and_pattern_from(self, option):
+        pattern, name = self._split_pattern_and_name(option)
+        name = self._get_printable_name(pattern, name)
+        return pattern, name
+
+    def _split_pattern_and_name(self, pattern):
+        option_separator = ':'
+        if not option_separator in pattern:
+            return pattern, pattern
+        index = pattern.rfind(option_separator)
+        return pattern[:index], pattern[index+1:]
+
+    def _get_printable_name(self, pattern, name):
+        if pattern != name:
+            name = utils.printable_name(name, True)
+        return name.replace('&', ' & ').replace('NOT', ' NOT ')
 
     def add_test(self, test, critical):
+        self._add_tags_statistics(test, critical)
+        self._add_tagstatcombine_statistics(test)
+
+    def _add_tags_statistics(self, test, critical):
         for tag in test.tags:
             if not self._is_included(tag):
                 continue
@@ -219,39 +222,19 @@ class TagStatistics:
                                           critical.is_non_critical(tag),
                                           self._taginfo)
             self.stats[tag].add_test(test)
-        self._add_test_to_combined(test, self._combine_and, ' & ',
-                                   self._is_combined_with_and)
-        self._add_test_to_combined(test, self._combine_not, ' NOT ',
-                                   self._is_combined_with_not)
-    
-    def _add_test_to_combined(self, test, combined_tags, joiner, is_combined):
-        for tags, name in combined_tags:
-            if name is None:
-                name = joiner.join(tags)
-            if not self.stats.has_key(name):
-                self.stats[name] = CombinedTagStat(name)
-            if is_combined(tags, test.tags):
-                self.stats[name].add_test(test)
-            
-    def _is_combined_with_and(self, comb_tags, test_tags):
-        for c_tag in comb_tags:
-            if not utils.any_matches(test_tags, c_tag):
-                return False
-        return True
 
-    def _is_combined_with_not(self, comb_tags, test_tags):
-        if not utils.any_matches(test_tags, comb_tags[0]):
-            return False
-        for not_tag in comb_tags[1:]:
-            if utils.any_matches(test_tags, not_tag):
-                return False
-        return True
-            
     def _is_included(self, tag):
         if self._include != [] and not utils.matches_any(tag, self._include):
             return False
         return not utils.matches_any(tag, self._exclude)
-    
+
+    def _add_tagstatcombine_statistics(self, test):
+        for pattern, name in self._patterns_and_names:
+            if not self.stats.has_key(name):
+                self.stats[name] = CombinedTagStat(name)
+            if test.is_included([pattern], []):
+                self.stats[name].add_test(test)
+
     def serialize(self, serializer):
         if not self.stats and (self._include or self._exclude):
             return

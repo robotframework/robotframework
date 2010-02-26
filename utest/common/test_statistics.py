@@ -4,7 +4,7 @@ import sys
 from robot import utils
 from robot.utils.asserts import *
 from robot.common.statistics import *
-from robot.common.model import _Critical
+from robot.common.model import _Critical, BaseTestCase
 from robot.errors import DataError
 
 
@@ -40,11 +40,13 @@ class SuiteMock:
         return test
         
 
-class TestMock:
+class TestMock(BaseTestCase):
+
     def __init__(self, status='PASS', tags=None, critical=True):
         self.status = status
         self.tags = tags is not None and tags or []
         self.critical = critical and 'yes' or 'no'
+        self.name = ''
 
 
 def verify_stat(stat, name, passed, failed, critical=None, non_crit=None):
@@ -190,105 +192,65 @@ class TestTagStatistics(unittest.TestCase):
             keys.sort()
             assert_equal(keys, exp, "Incls: %s, Excls: %s" % (incl, excl))
 
-    def test_set_combine_and(self):
-        for inp, exp in [ ( ['t'], [(['t'], None)] ),
-                          ( ['not*'], [(['not*'], None)] ),
-                          ( ['T1','T2'], [(['t1'], None), (['t2'], None)] ),
-                          ( ['t1&t2&t3'], [(['t1', 't2', 't3'], None)] ),
-                          ( ['','&','&a&'], [(['a'], None)] ),
-                          ( ['T 1  &  T 2','3&2&1&A','UP'], 
-                            [(['t1', 't2'], None), 
-                             (['3', '2', '1', 'a'], None), 
-                             (['up'], None)] ) ]:
-            assert_equals(TagStatistics([], [], inp)._combine_and, exp)
-            assert_equals(TagStatistics([], [], inp)._combine_not, [])
+    def test_combine_with_name(self):
+        for comb_tags, expected_name in [ 
+                ( [], '' ),
+                ( ['t1&t2:my_name'], 'My Name' ),
+                ( ['t1NOTt3:others'], 'Others' ),
+                ( ['1:2&2:3:name'], 'Name' ),
+                ( ['3*'], '3*' ),
+                ( ['4NOT5:some new name'], 'Some New Name' )]:
+            stats = TagStatistics(tag_stat_combine=comb_tags)
+            test = TestMock()
+            stats._add_tagstatcombine_statistics(test)
+            assert_equals(len(stats.stats), expected_name != '')
+            if expected_name:
+                assert_equals(stats.stats[expected_name].name, expected_name)
 
-    def test_set_combine_not(self):
-        for inp, exp, in [ ( ['t1NOTt2'], 
-                             [(['t1', 't2'], None)] ),
-                           ( ['t1NOTT2NOTx*'], 
-                             [(['t1','t2','x*'], None)] ),
-                           ( ['notNOTNOtt'], 
-                             [(['not','nott'], None)] ),
-                           ( ['t1NOTt2','3NOT4','5NOT6NOT7NOT8'], 
-                             [(['t1','t2'], None),
-                              (['3','4'], None),
-                              (['5','6','7','8'], None)] ) ]:
-            assert_equals(TagStatistics([], [], inp)._combine_not, exp)
-            assert_equals(TagStatistics([], [], inp)._combine_and, [])
-        for invalid in [ 'NOT', 'NOTNOT', 'xNOTNOTy', 'NOTa', 'bNOT', 
-                         'NOTaNOTb', 'aNOTbNOT' ]:
-            assert_equals(TagStatistics([], [], [invalid])._combine_not, [])
-            assert_equals(TagStatistics([], [], [invalid])._combine_and, [])
-                        
-    def test_set_combine_and_not_together(self):
-        for inp, exp_and, exp_not in [ 
-                ( [], [], [] ),
-                ( ['t1&t2', 't1NOTt3'],
-                  [(['t1', 't2'], None)], 
-                  [(['t1', 't3'], None)] ),
-                ( ['1&2','3*','4NOT5'], 
-                  [(['1', '2'], None), (['3*'], None)], 
-                  [(['4', '5'], None)] ),
-                ( ['7NOT8','1&2&3','4NOT5NOT6'], 
-                  [(['1', '2', '3'], None)], 
-                  [(['7', '8'], None), (['4', '5', '6'], None)] ) ]:
-            assert_equals(TagStatistics([], [], inp)._combine_and, exp_and)
-            assert_equals(TagStatistics([], [], inp)._combine_not, exp_not)
-
-    def test_set_combine_and_give_name(self):
-        for inp, exp_and, exp_not in [ 
-                ( [], [], [] ),
-                ( ['t1&t2:my_name','t1NOTt3:others'], 
-                  [(['t1', 't2'], 'My Name')], 
-                  [(['t1', 't3'], 'Others')] ),
-                ( ['1:2&2:3:name','3*','4NOT5:some new name'], 
-                  [(['1:2', '2:3'], 'Name'), (['3*'], None)], 
-                  [(['4', '5'], 'Some New Name')] ) ]:
-            assert_equals(TagStatistics([], [], inp)._combine_and, exp_and)
-            assert_equals(TagStatistics([], [], inp)._combine_not, exp_not)
-
-
-    def test_is_combined_with_and(self):
-        stats = TagStatistics()
-        for comb_tags, test_tags, exp in [
-                (['t1'], ['t1'], True),
-                (['t1'], ['t2'], False),
-                (['t1','t2'], ['t1'], False),
-                (['t1','t2'], ['t1','t2'], True),
-                (['t1','t2'], ['T1','t 2','t3'], True),
-                (['t*'], ['s','t','u'], True),
-                (['t*'], ['s','tee','t'], True),
-                (['t*','s'], ['s','tee','t'], True),
-                (['t*','s','non'], ['s','tee','t'], False)
+    def test_is_combined_with_and_statements(self):
+        for comb_tags, test_tags, expected_count in [
+                (['t1'], ['t1'], 1),
+                (['t1'], ['t2'], 0),
+                (['t1&t2'], ['t1'], 0),
+                (['t1&t2'], ['t1','t2'], 1),
+                (['t1&t2'], ['T1','t 2','t3'], 1),
+                (['t*'], ['s','t','u'], 1),
+                (['t*'], ['s','tee','t'], 1),
+                (['t*&s'], ['s','tee','t'], 1),
+                (['t*&s&non'], ['s','tee','t'], 0)
                 ]:
-            assert_equals(stats._is_combined_with_and(comb_tags, test_tags), exp,
+            self._test_combined_statistics(comb_tags, test_tags, expected_count)
+
+    def _test_combined_statistics(self, comb_tags, test_tags, expected_count):
+            stats = TagStatistics(tag_stat_combine=['%s:name' % rule for rule in comb_tags])
+            test = TestMock(tags=test_tags)
+            stats._add_tagstatcombine_statistics(test)
+            assert_equals(len(stats.stats['Name'].tests), expected_count,
                           'comb: %s, test: %s' % (comb_tags, test_tags))
-            
-    def test_is_combined_with_not(self):
+
+    def test_is_combined_with_not_statements(self):
         stats = TagStatistics()
-        for comb_tags, test_tags, exp in [
-                ( ['t1','t2'], [], False ),
-                ( ['t1','t2'], ['t1'], True ),
-                ( ['t1','t2'], ['t1','t2'], False ),
-                ( ['t1','t2'], ['t3'], False ),
-                ( ['t1','t2'], ['t3','t2'], False ),
-                ( ['t*','t2'], ['t1'], True ),
-                ( ['t*','t2'], ['t'], True ),
-                ( ['t*','t2'], ['TEE'], True ),
-                ( ['t*','t2'], ['T2'], False ),
-                ( ['T*','T?'], ['t'], True ),
-                ( ['T*','T?'], ['tt'], False ),
-                ( ['T*','T?'], ['ttt'], True ),
-                ( ['T*','T?'], ['tt','t'], False ),
-                ( ['T*','T?'], ['ttt','something'], True ),
-                ( ['t','s*','r'], ['t'], True ),
-                ( ['t','s*','r'], ['t','s'], False ),
-                ( ['t','s*','r'], ['R','T'], False ),
-                ( ['t','s*','r'], ['R','T','s'], False ),
+        for comb_tags, test_tags, expected_count in [
+                ( ['t1NOTt2'], [], 0 ),
+                ( ['t1NOTt2'], ['t1'], 1 ),
+                ( ['t1NOTt2'], ['t1','t2'], 0 ),
+                ( ['t1NOTt2'], ['t3'], 0 ),
+                ( ['t1NOTt2'], ['t3','t2'], 0 ),
+                ( ['t*NOTt2'], ['t1'], 1 ),
+                ( ['t*NOTt2'], ['t'], 1 ),
+                ( ['t*NOTt2'], ['TEE'], 1 ),
+                ( ['t*NOTt2'], ['T2'], 0 ),
+                ( ['T*NOTT?'], ['t'], 1 ),
+                ( ['T*NOTT?'], ['tt'], 0 ),
+                ( ['T*NOTT?'], ['ttt'], 1 ),
+                ( ['T*NOTT?'], ['tt','t'], 0 ),
+                ( ['T*NOTT?'], ['ttt','something'], 1 ),
+                ( ['tNOTs*NOTr'], ['t'], 1 ),
+                ( ['tNOTs*NOTr'], ['t','s'], 0 ),
+                ( ['tNOTs*NOTr'], ['R','T'], 0 ),
+                ( ['tNOTs*NOTr'], ['R','T','s'], 0 ),
                 ]:
-            assert_equals(stats._is_combined_with_not(comb_tags, test_tags), exp,
-                          'comb: %s, test: %s' % (comb_tags, test_tags))
+            self._test_combined_statistics(comb_tags, test_tags, expected_count)
 
     def test_combine(self):
         # This test is more like an acceptance test than a unit test and 
@@ -301,7 +263,7 @@ class TestTagStatistics(unittest.TestCase):
                 ( ['t?&s'], [2], [['t1','s'],['tt','s','u'],['tee','s'],['s']], [] ),
                 ( ['t*&s','*'], [2,3], [['s','t','u'],['tee','s'],[],['x']], [] ),
                 ( ['tNOTs'], [1], [['t','u'],['t','s']], [] ),
-                ( ['tNOTs','t&s','tNOTsNOTu'], [3,2,2], 
+                ( ['tNOTs','t&s','tNOTsNOTu', 't&sNOTu'], [3,2,2,1], 
                   [['t','u'],['t','s'],['s','t','u'],['t'],['t','v']], ['t'] ),
                 ( ['nonex'], [0], [['t1'],['t1,t2'],[]], [] )
                 ]:
@@ -339,6 +301,7 @@ class TestTagStatistics(unittest.TestCase):
         suite.critical_tags = ['smoke']
         statistics = Statistics(suite, -1, ['t*','smoke'], ['t3'],
                                 ['t1&t2','t?&smoke','t1NOTt2','none&t1'])
+        #TODO: Demeter
         stats = statistics.tags.stats.values()
         stats.sort()
         expected = [ ('smoke', 4), ('none & t1', 0), ('t1 & t2', 3), 
@@ -347,6 +310,7 @@ class TestTagStatistics(unittest.TestCase):
         exp_names = [ name for name, count in expected ]
         assert_equals(names, exp_names)
         for name, count in expected:
+            #TODO: Demeter
             assert_equals(len(statistics.tags.stats[name].tests), count, name)
 
 
