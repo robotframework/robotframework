@@ -85,10 +85,9 @@ is also possible to select only test cases that have two or more
 specified tags by separating the tags either with :code:`&` or
 :code:`AND` (case-sensitive). Starting from Robot Framework 2.1.3, only tests
 with a certain tag, but without any others, can be selected by separating these
-tags with :code:`NOT` (case-sensitive). In case any of the pattern between
-multiple :code:`NOT`s is matching, the test case is not selected. Patterns can be
-`simple patterns`_ or :code:`AND` rule specifying that test is not selected if
-all the tags separated with :code:`AND` are matching.
+tags with :code:`NOT` (case-sensitive). In case any of the patterns between
+multiple :code:`NOT` is matching, the test case is not selected. Patterns can be
+`simple patterns`_ or :code:`AND` rule.
 
 ::
 
