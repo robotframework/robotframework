@@ -50,9 +50,9 @@ def _run_or_rebot_from_cli(method, cliargs, usage, **argparser_config):
                           help='help', version='version', check_args=True,
                           **argparser_config)
     except Information, msg:
-        _exit(INFO_PRINTED, str(msg))
+        _exit(INFO_PRINTED, utils.unic(msg))
     except DataError, err:
-        _exit(DATA_ERROR, str(err))
+        _exit(DATA_ERROR, utils.unic(err))
 
     LOGGER.info('Data sources: %s' % utils.seq2str(datasources))
     try: 
