@@ -1,0 +1,40 @@
+*** Settings ***
+Suite Setup     Run Tests  ${EMPTY} standard_libraries${/}operating_system${/}run.txt
+Force Tags      regression  jybot  pybot
+Resource        ../../../resources/resource.html
+
+*** Test Cases ***
+Run
+    Check testcase  Run
+
+Run With RC And Stdout Checks
+    Check testcase  Run With RC And Stdout Checks
+    Check Log Message  ${ERRORS.msgs[0]}  'return_mode' argument of 'Run' keyword is deprecated and will be removed in Robot Framework 2.1. Use 'Run And Return RC' or 'Run And Return RC And Output' instead.  WARN
+
+Run With RC Checks
+    Check testcase  Run With RC Checks
+
+Run With Stdout Checks
+    Check testcase  Run With Stdout Checks
+
+Run With Stderr
+    Check testcase  Run With Stderr
+
+Run With Stderr Redirected To Stdout
+    Check testcase  Run With Stderr Redirected To Stdout
+
+Run With Stderr Redirected To File
+    Check testcase  Run With Stderr Redirected To File
+
+Run When Command Writes Lot Of Stdout And Stderr
+    Check testcase  Run When Command Writes Lot Of Stdout And stderr
+
+Run And Return RC
+    Check testcase  Run and return RC
+
+Run And Return RC And Output
+    Check testcase  Run and return RC and output
+
+It Is Possible To Start Background Processes
+    Check testcase  It is possible To Start Background Processes
+
