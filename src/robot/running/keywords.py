@@ -324,7 +324,7 @@ class ParallelKeyword(BaseKeyword):
             try:
                 runner.get_result()
             except ExecutionFailed, err:
-                errors.append(str(err))
+                errors.append(utils.unic(err))
                 self.status = 'FAIL'
             recorder.replay(output)
         self.endtime = utils.get_timestamp()
