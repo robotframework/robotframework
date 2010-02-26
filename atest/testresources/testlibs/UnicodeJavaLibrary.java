@@ -1,3 +1,6 @@
+import java.util.Iterator;
+import java.util.Arrays;
+
 public class UnicodeJavaLibrary {
 
     private String[] messages = { 
@@ -28,6 +31,10 @@ public class UnicodeJavaLibrary {
 
     public JavaObject[] javaObjectArray() {
         return new JavaObject[]{ new JavaObject(this.messages[0]), new JavaObject(this.messages[1]) };
+    }
+
+    public Iterator javaIterator() {
+        return Arrays.asList(messages).iterator();
     }
 
     public void raiseUnicodeError() {
