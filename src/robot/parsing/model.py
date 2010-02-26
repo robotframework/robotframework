@@ -22,7 +22,7 @@ from robot.common import BaseTestSuite, BaseTestCase
 from robot.output import LOGGER
 
 from rawdata import RawData, READERS
-from metadata import TestSuiteMetadata, TestCaseMetadata
+from metadata import TestCaseFileMetadata, TestSuiteInitFileMetadata, TestCaseMetadata
 from keywords import KeywordList
 from userkeyword import UserHandlerList
 
@@ -44,7 +44,7 @@ class _BaseSuite(BaseTestSuite):
     def __init__(self, rawdata, parent=None):
         name, source = self._get_name_and_source(rawdata.source)
         BaseTestSuite.__init__(self, name, source, parent)
-        metadata = TestSuiteMetadata(rawdata)
+        metadata = self._get_metadata(rawdata)
         self.doc = metadata['Documentation']
         self.suite_setup = metadata['SuiteSetup']
         self.suite_teardown = metadata['SuiteTeardown']
@@ -92,6 +92,9 @@ class FileSuite(_BaseSuite):
         _BaseSuite.__init__(self, rawdata, parent)
         self._create_testcases(rawdata)
 
+    def _get_metadata(self, rawdata):
+        return TestCaseFileMetadata(rawdata)
+
     def _get_source(self, path):
         return path
 
@@ -125,6 +128,9 @@ class DirectorySuite(_BaseSuite):
         _BaseSuite.__init__(self, rawdata, parent)
         error = "Test suite directory '%s' contains no test cases." % path
         self._create_subsuites(subitems, suitenames, error)
+
+    def _get_metadata(self, rawdata):
+        return TestSuiteInitFileMetadata(rawdata)
 
     def _get_source(self, path):
         # 'path' points either to directory or __init__ file inside it
@@ -192,6 +198,9 @@ class MultiSourceSuite(_BaseSuite):
         _BaseSuite.__init__(self, RawData(None))
         error = 'Data sources %s contain no test cases.' % (utils.seq2str(paths))
         self._create_subsuites(paths, suitenames, error)
+
+    def _get_metadata(self, rawdata):
+        return TestCaseFileMetadata(rawdata)
 
     def _get_name_and_source(self, path):
         return '', None

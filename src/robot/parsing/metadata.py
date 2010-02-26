@@ -84,7 +84,7 @@ class UserKeywordMetadata(_Metadata):
                'timeout': 'Timeout' }
 
 
-class TestSuiteMetadata(_Metadata):
+class TestCaseFileMetadata(_Metadata):
     _names = { 'documentation': 'Documentation',
                'document': 'Documentation',
                'suitesetup': 'Suite Setup',
@@ -122,6 +122,18 @@ class TestSuiteMetadata(_Metadata):
         if self.user_metadata.has_key(name):
             value = '%s %s' % (self.user_metadata[name], value)
         self.user_metadata[name] = value
+
+
+class TestSuiteInitFileMetadata(TestCaseFileMetadata):
+    _deprecated_metadata = ['testsetup', 'testteardown', 'defaulttags',
+                            'testtimeout']
+
+    def set(self, item):
+        TestCaseFileMetadata.set(self, item)
+        if utils.normalize(item.name) in self._deprecated_metadata:
+            msg = "Using setting '%s' in init file is deprecated and will be " \
+                    "removed in the next major release." % (item.name)
+            item.report_invalid_syntax(msg, 'WARN')
 
 
 class ImportSetting:
