@@ -45,14 +45,14 @@ class ArgumentParser:
     (\s\S+)?      # optional value (group 4)
     (\s\*)?       # optional '*' telling option allowed multiple times (group 5)
     ''', re.VERBOSE)
-    
+
     _usage_line_re = re.compile('''
     ^usage:.*
     \[options\]\s*
     (.*?)         # arguments (group 1)
     \s*$
     ''', re.VERBOSE | re.IGNORECASE)
-    
+
     def __init__(self, usage, version=None, arg_limits=None):
         """Available options and tool name are read from the usage.
 
@@ -79,9 +79,9 @@ class ArgumentParser:
     def parse_args(self, args_list, unescape=None, argfile=None, pythonpath=None,
                    help=None, version=None, check_args=False):
         """Parse given arguments and return options and positional arguments.
-        
+
         Arguments must be given as a list and are typically sys.argv[1:].
-        
+
         Options are retuned as a dictionary where long options are keys. Value
         is a string for those options that can be given only one time (if they
         are given multiple times the last value is used) or None if the option
@@ -89,22 +89,22 @@ class ArgumentParser:
         (denoted with '*' in the usage) is a list which contains all the given
         values and is empty if options are not used. Options not taken
         arguments have value False when they are not set and True otherwise.
-        
+
         Positional arguments are returned as a list in the order they are given.
-        
+
         'unescape' option can be used to automatically unescape problematic
-        characters given in an escaped format. Given value must be the name of 
-        the long option used for escaping. Typically usage is having 
+        characters given in an escaped format. Given value must be the name of
+        the long option used for escaping. Typically usage is having
         '--escape name:value *' in usage doc and specifying 'enescape="escape"'
         when calling this method.
-        
-        'argfile' can be used to automatically read arguments from specified 
-        file. Given value must be the name of the long option used for giving 
+
+        'argfile' can be used to automatically read arguments from specified
+        file. Given value must be the name of the long option used for giving
         the argument file. Typical usage is '--argumentfile path *' in usage doc
         and calling this method with 'argfile="argumentfile"'. If 'argfile' is
         used, it can always be given multiple times and thus it is recommended
         to use '*' to denote that.
-        
+
         'pythonpath' can be used to specify option(s) containing extra paths to
         be added into 'sys.path'. Value can be either a string containing the
         name of the long option used for this purpose or a list containing
@@ -119,8 +119,8 @@ class ArgumentParser:
         lines but take the same amount of horizontal space as <---ESCAPES--->.
         The numer of hyphens can be used to contrl the horizontal space. Both
         help and version are wrapped to Information exception.
-        
-        If 'check_args' is True, this method will automatically check that 
+
+        If 'check_args' is True, this method will automatically check that
         correct number of arguments, as parsed from the usage line, are given.
         If the last argument in the usage line ends with the character 's',
         the maximum number of arguments is infinite.
@@ -172,7 +172,7 @@ class ArgumentParser:
         else:
             exptxt = "at least %d argument%s" % (minargs, minend)
         raise DataError("Expected %s, got %d." % (exptxt, len(args)))
-    
+
     def _unescape_opts_and_args(self, opts, args, escape_opt):
         try:
             escape_strings = opts[escape_opt]
@@ -184,12 +184,12 @@ class ArgumentParser:
                 opts[name] = self._unescape(value, escapes)
         args = [ self._unescape(arg, escapes) for arg in args ]
         return opts, args
-    
+
     def _add_args_from_file(self, args, argfile_opt):
         argfile_opts = ['--'+argfile_opt]
         for sopt, lopt in self._short_to_long.items():
             if lopt == argfile_opt:
-                argfile_opts.append('-'+sopt)        
+                argfile_opts.append('-'+sopt)
         while True:
             try:
                 index = self._get_argfile_index(args, argfile_opts)
@@ -219,7 +219,7 @@ class ArgumentParser:
                 args.append(line)
         argfile.close()
         return args
-    
+
     def _get_escapes(self, escape_strings):
         escapes = {}
         for estr in escape_strings:
@@ -243,7 +243,7 @@ class ArgumentParser:
         for esc_name, esc_value in escapes.items():
             value = value.replace(esc_name, esc_value)
         return value
-    
+
     def _process_opts(self, opt_tuple):
         opts = self._init_opts()
         for name, value in opt_tuple:
@@ -265,7 +265,7 @@ class ArgumentParser:
             else:
                 temp.append(path)
         return temp
-                
+
     def _init_opts(self):
         opts = {}
         for name in self._names:
@@ -276,14 +276,14 @@ class ArgumentParser:
             else:
                 opts[name] = None
         return opts
-        
+
     def _get_name(self, name):
         name = name.lstrip('-')
         try:
             return self._short_to_long[name]
         except KeyError:
             return name
-        
+
     def _parse_usage(self, usage):
         for line in usage.splitlines():
             if not self._parse_opt_line(line) and not self._arg_limits:
@@ -298,7 +298,7 @@ class ArgumentParser:
             else:
                 maxargs = args[-1].endswith('s') and sys.maxint or len(args)
                 self._arg_limits = (len(args), maxargs)
-        
+
     def _parse_opt_line(self, line):
         res = self._opt_line_re.match(line)
         if not res:

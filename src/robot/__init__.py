@@ -55,7 +55,7 @@ def _run_or_rebot_from_cli(method, cliargs, usage, **argparser_config):
         _exit(DATA_ERROR, utils.unic(err))
 
     LOGGER.info('Data sources: %s' % utils.seq2str(datasources))
-    try: 
+    try:
         suite = method(*datasources, **options)
     except DataError:
         _exit(DATA_ERROR, *utils.get_error_details())
@@ -63,34 +63,34 @@ def _run_or_rebot_from_cli(method, cliargs, usage, **argparser_config):
         _exit(STOPPED_BY_USER, 'Execution stopped by user.')
     except:
         error, details = utils.get_error_details()
-        _exit(FRAMEWORK_ERROR, 'Unexpected error: %s' % error, details) 
+        _exit(FRAMEWORK_ERROR, 'Unexpected error: %s' % error, details)
     else:
         _exit(suite)
 
-           
+
 def run(*datasources, **options):
     """Executes given Robot data sources with given options.
-    
+
     Data sources are paths to files and directories, similarly as when running
     pybot/jybot from command line. Options are given as keywords arguments and
     their names are same as long command line options without hyphens.
-    
+
     Examples:
-    run('/path/to/tests.html')  
+    run('/path/to/tests.html')
     run('/path/to/tests.html', '/path/to/tests2.html', log='mylog.html')
-    
+
     Equivalent command line usage:
-    pybot /path/to/tests.html 
+    pybot /path/to/tests.html
     pybot --log mylog.html /path/to/tests.html /path/to/tests2.html
     """
     settings = RobotSettings(options)
-    LOGGER.register_console_logger(settings['MonitorWidth'], 
+    LOGGER.register_console_logger(settings['MonitorWidth'],
                                    settings['MonitorColors'])
     output = Output(settings)
     init_global_variables(settings)
     suite = TestSuite(datasources, settings)
     suite.run(output)
-    LOGGER.info("Tests execution ended. Statistics:\n%s" 
+    LOGGER.info("Tests execution ended. Statistics:\n%s"
                 % suite.get_stat_message())
     testoutput = RobotTestOutput(suite, settings)
     output.close(suite)
@@ -107,15 +107,15 @@ def run(*datasources, **options):
 
 def rebot(*datasources, **options):
     """Creates reports/logs from given Robot output files with given options.
-    
+
     Given input files are paths to Robot output files similarly as when running
     rebot from command line. Options are given as keywords arguments and
     their names are same as long command line options without hyphens.
-    
+
     Examples:
     rebot('/path/to/output.xml')
     rebot('/path/out1.xml', '/path/out2.xml', report='myrep.html', log='NONE')
-    
+
     Equivalent command line usage:
     rebot /path/to/output.xml
     rebot --report myrep.html --log NONE /path/out1.xml /path/out2.xml
@@ -127,11 +127,11 @@ def rebot(*datasources, **options):
     testoutput.serialize(settings, generator='Rebot')
     LOGGER.close()
     return testoutput.suite
-    
+
 
 def _exit(rc_or_suite, message=None, details=None):
     """Exits with given rc or rc from given output. Reports possible error.
-    
+
     Exit code is the number of failed critical tests or error number.
       0       - Tests executed and all critical tests passed
       1-250   - Tests executed but returned number of critical tests failed
