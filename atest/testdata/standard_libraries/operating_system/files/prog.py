@@ -1,19 +1,14 @@
 import sys
 
 
-def output(stdout=None, stderr=None, count=1):
-    if stdout is not None:
+def output(rc=0, stdout='', stderr='', count=1):
+    if stdout:
         sys.stdout.write((stdout+'\n') * int(count))
-    if stderr is not None:
+    if stderr:
         sys.stderr.write((stderr+'\n') * int(count))
-    
+    return int(rc)
+
 
 if __name__ == '__main__':
-    args = sys.argv[1:]
-    try:
-        rc = int(args[0])
-        args = args[1:]
-    except (IndexError, ValueError):
-        rc = 0
-    output(*args)
+    rc = output(*sys.argv[1:])
     sys.exit(rc)
