@@ -45,6 +45,9 @@ except ImportError:
              = _NotImplemented()
 
 
+SYSTEM_ENCODING = sys.stdin.encoding
+
+
 class OperatingSystem:
 
     """A test library providing keywords for OS related tasks.
@@ -167,7 +170,7 @@ class OperatingSystem:
 
     def _run(self, command, mode):
         process = os.popen(self._process_command(command))
-        stdout = process.read().decode(sys.stdin.encoding)
+        stdout = self._decode_from_system(process.read())
         if stdout.endswith('\n'):
             stdout = stdout[:-1]
         try:
@@ -204,7 +207,13 @@ class OperatingSystem:
             else:
                 command += ' 2>&1'
         self._info("Running command '%s'" % command)
-        return command.encode(sys.stdin.encoding)
+        return self._encode_to_system(command)
+
+    def _encode_to_system(self, string):
+        return SYSTEM_ENCODING and string.encode(SYSTEM_ENCODING) or string
+
+    def _decode_from_system(self, string):
+        return SYSTEM_ENCODING and string.decode(SYSTEM_ENCODING) or string
 
     def start_process(self, command, stdin=None, alias=None):
         """Starts the given command as a background process.
