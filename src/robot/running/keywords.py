@@ -20,6 +20,7 @@ from robot.errors import FrameworkError, ExecutionFailed, DataError, \
     TimeoutError
 from robot.common import BaseKeyword
 from robot.variables import is_list_var
+from robot.output import LOGGER
 
 
 def KeywordFactory(kwdata):
@@ -301,6 +302,7 @@ class ParallelKeyword(BaseKeyword):
     def __init__(self, kwdata):
         BaseKeyword.__init__(self, kwdata.name, type='parallel')
         self.keywords = [ KeywordFactory(kw) for kw in kwdata.keywords ]
+        LOGGER.write('Parallel execution of keywords is deprecated and will be removed in the next major release.', 'WARN')
 
     def run(self, output, namespace):
         self.starttime = utils.get_timestamp()
