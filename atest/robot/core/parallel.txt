@@ -1,0 +1,236 @@
+*** Settings ***
+Documentation   Parallel execution of keywords
+Suite Setup     Run Tests  ${EMPTY}  core${/}parallel.html
+Force Tags      regression
+Default Tags    pybot  jybot
+Resource        ../../resources/resource.html
+
+*** Test Cases ***
+Simple Parallel
+    ${test} =  Check Test Case  Simple Parallel
+    Check Log Message  ${test.kws[0].msgs[0]}  Not yet parallel
+    Check Parallel Keyword  ${test.kws[1]}  3
+    Check Log Message  ${test.kws[1].kws[0].msgs[0]}  Slept 500 milliseconds
+    Check Log Message  ${test.kws[1].kws[1].msgs[0]}  Slept 150 milliseconds
+    Check Log Message  ${test.kws[1].kws[2].msgs[0]}  Parallel with Sleeps
+    Check KW1 Ended After KW2 Ended  ${test.kws[1].kws[0]}  ${test.kws[1].kws[1]}
+    Check KW1 Ended After KW2 Ended  ${test.kws[1].kws[0]}  ${test.kws[1].kws[2]}
+    Check KW1 Ended After KW2 Ended  ${test.kws[1].kws[1]}  ${test.kws[1].kws[2]}
+    Check Log Message  ${test.kws[2].msgs[0]}  Not parallel anymore
+    ${test2} =  Check Test Case  Simple Parallel 2
+    Check Log Message  ${test2.kws[0].kws[0].msgs[0]}  Slept 100 milliseconds
+    Check Log Message  ${test2.kws[0].kws[1].msgs[0]}  Slept 200 milliseconds
+
+Parallel Failing
+    ${test} =  Check Test Case  Parallel Failing
+    Check Parallel Keyword  ${test.kws[0]}  3
+    Check Log Message  ${test.kws[0].kws[0].msgs[0]}  Slept 500 milliseconds
+    Check Log Message  ${test.kws[0].kws[1].msgs[0]}  Here we fail!  FAIL
+    Check Log Message  ${test.kws[0].kws[2].msgs[0]}  Hello after failed kw
+    Check KW1 Ended After KW2 Ended  ${test.kws[0].kws[0]}  ${test.kws[0].kws[1]}
+
+Parallel Failing Multiple Times
+    ${test} =  Check Test Case  Parallel Failing Multiple times
+    Check Parallel Keyword  ${test.kws[0]}  4
+
+Parallel With User Keywords
+    ${test} =  Check Test Case  Parallel with User Keywords
+    Check Parallel Keyword  ${test.kws[0]}  5
+    Equals  ${test.kws[0].kws[0].name}  My UK
+    Equals  ${test.kws[0].kws[0].kws[0].name}  BuiltIn.No Operation
+    Equals  ${test.kws[0].kws[0].kws[1].name}  BuiltIn.Log
+    Check Log Message  ${test.kws[0].kws[0].kws[1].msgs[0]}  We are in My UK
+    Check Log Message  ${test.kws[0].kws[2].kws[0].kws[1].msgs[0]}  We are in My UK
+    Check Log Message  ${test.kws[0].kws[2].kws[1].msgs[0]}  My UK 2 got argument "something"
+
+Parallel With Failures In User Keywords
+    ${test} =  Check Test Case  Parallel With Failures In User Keywords
+    Check Parallel Keyword  ${test.kws[0]}  3
+
+Many Parallels In One Test
+    ${test} =  Check Test Case  Many Parallels in One Test
+    Check Parallel Keyword  ${test.kws[0]}  1
+    Check Log Message  ${test.kws[0].kws[0].msgs[0]}  First parallel
+    Check Parallel Keyword  ${test.kws[1]}  2
+    Check Log Message  ${test.kws[1].kws[0].msgs[0]}  Second parallel
+    Check Log Message  ${test.kws[1].kws[1].msgs[0]}  This time with two kws
+    Check Log Message  ${test.kws[2].msgs[0]}  This is not parallel
+    Check Parallel Keyword  ${test.kws[3]}  3
+    Check Log Message  ${test.kws[3].kws[0].msgs[0]}  Once more ...
+    Check Log Message  ${test.kws[3].kws[1].msgs[0]}  ... we are ...
+    Check Log Message  ${test.kws[3].kws[2].msgs[0]}  ... parallel
+
+Parallel With Keyword Args On Multiple Rows
+    ${test} =  Check Test Case  Parallel With Keyword Args On Multiple Rows
+    Check Parallel Keyword  ${test.kws[0]}  2
+    Check Log Message  ${test.kws[0].kws[0].msgs[0]}  three
+    Check Log Message  ${test.kws[0].kws[0].msgs[1]}  log
+    Check Log Message  ${test.kws[0].kws[0].msgs[2]}  messages
+    Check Log Message  ${test.kws[0].kws[1].msgs[0]}  1
+    Check Log Message  ${test.kws[0].kws[1].msgs[1]}  2
+    Check Log Message  ${test.kws[0].kws[1].msgs[2]}  3
+    Check Log Message  ${test.kws[0].kws[1].msgs[3]}  4
+    Check Log Message  ${test.kws[0].kws[1].msgs[4]}  5
+    Check Log Message  ${test.kws[0].kws[1].msgs[5]}  6
+    Check Log Message  ${test.kws[0].kws[1].msgs[6]}  7
+
+Parallel In User Keywords
+    ${test} =  Check Test Case  Parallel In User Keywords
+    Check "Parallel In UK"  ${test.kws[0]}
+    Check "Parallel In UK 2"  ${test.kws[1]}
+
+Nested Parallel In User Keywords
+    ${test} =  Check Test Case  Nested Parallel In User Keywords
+    Check "Nested Parallel In UK"  ${test.kws[0]}
+
+Parallel In Test And User Keywords
+    ${test} =  Check Test Case  Parallel in Test And user Keywords
+    Check Parallel Keyword  ${test.kws[0]}  3
+    Check "Parallel In UK"  ${test.kws[0].kws[0]}
+    Check "Parallel In UK 2"  ${test.kws[0].kws[1]}
+    Check "Nested Parallel In UK"  ${test.kws[0].kws[2]}
+
+Parallel With Keywords Logging Multiple Times
+    ${test} =  Check Test Case  Parallel With Keywords Logging Multiple Times
+    Check Parallel Keyword  ${test.kws[0]}  5
+    Check Log Message  ${test.kws[0].kws[0].msgs[0]}  My Message\nMy Message
+    Check Log Message  ${test.kws[0].kws[1].msgs[0]}  Slept 700 milliseconds
+    ${exp} =  Evaluate  """Msg 2\n""" * 7
+    Check Log Message  ${test.kws[0].kws[2].msgs[0]}  ${exp[:-1]}
+    Check Log Message  ${test.kws[0].kws[3].msgs[0]}  Slept 500 milliseconds
+    Check KW1 Ended After KW2 Ended  ${test.kws[0].kws[2]}  ${test.kws[0].kws[3]}
+    ${exp} =  Evaluate  """Not parallel\n""" * 10
+    Check Log Message  ${test.kws[0].kws[4].msgs[0]}  Multiple messages
+    Check Log Message  ${test.kws[0].kws[4].msgs[1]}  Multiple messages
+    Check Log Message  ${test.kws[0].kws[4].msgs[2]}  Multiple messages
+    Check Log Message  ${test.kws[1].msgs[0]}  ${exp[:-1]}
+
+Parallel With Set
+    ${test} =  Check Test Case  Parallel With Set
+    Check Parallel Keyword  ${test.kws[0]}  3
+    Check Log Message  ${test.kws[0].kws[0].msgs[0]}  \${v1} = value 1
+    Check Log Message  ${test.kws[0].kws[1].msgs[0]}  \${v2} = value 2
+    Check Log Message  ${test.kws[0].kws[1].msgs[1]}  \${v3} = value 3
+    Check Log Message  ${test.kws[0].kws[2].msgs[0]}  \@{list} = [ 1 | 2 | 3 ]
+
+Parallel With Repeat
+    ${test} =  Check Test Case  Parallel With Repeat
+    Check Parallel Keyword  ${test.kws[0]}  5
+    Equals  ${test.kws[0].kws[0].name}  0x BuiltIn.Fail
+    Check Log Message  ${test.kws[0].kws[1].msgs[1]}  Executed once
+    Check Log Message  ${test.kws[0].kws[2].msgs[1]}  Executed twice
+    Check Log Message  ${test.kws[0].kws[2].msgs[1]}  Executed twice
+    Equals  ${test.kws[0].kws[3].name}  2x My UK
+    Equals  ${test.kws[0].kws[3].kws[0].name}  BuiltIn.No Operation
+    Check Log Message  ${test.kws[0].kws[3].kws[1].msgs[0]}  We are in My UK
+    Equals  ${test.kws[0].kws[3].kws[2].name}  BuiltIn.No Operation
+    Check Log Message  ${test.kws[0].kws[3].kws[3].msgs[0]}  We are in My UK
+    Check Log Message  ${test.kws[0].kws[4].msgs[1]}  Executed 5 times
+    Check Log Message  ${test.kws[0].kws[4].msgs[1]}  Executed 5 times
+    Check Log Message  ${test.kws[0].kws[4].msgs[2]}  Executed 5 times
+    Check Log Message  ${test.kws[0].kws[4].msgs[3]}  Executed 5 times
+    Check Log Message  ${test.kws[0].kws[4].msgs[4]}  Executed 5 times
+
+Parallel With Non Existing Keyword
+    ${test} =  Check Test Case  Parallel With Non Existing Keyword
+    Check Log Message  ${test.kws[0].kws[1].msgs[0]}  Hello, world!
+
+Parallel With Non Existing Variable
+    ${test} =  Check Test Case  Parallel With Non Existing Variable
+    Check Log Message  ${test.kws[0].kws[1].msgs[0]}  Hi, world!
+
+Parallel With Invalid Set
+    ${test} =  Check Test Case  Parallel With Invalid Set
+    Check Log Message  ${test.kws[0].kws[1].msgs[0]}  Hello, tellus!
+
+Simple Parallel With Java Keywords
+    [Tags]  jybot
+    ${test} =  Check Test Case  Simple Parallel With Java Keywords
+    Check Parallel Keyword  ${test.kws[0]}  4
+    Check Log Message  ${test.kws[0].kws[0].msgs[0]}  Hello from Java world!
+    Check Log Message  ${test.kws[0].kws[1].msgs[0]}  \${obj} = My Name
+    Check Log Message  ${test.kws[0].kws[2].msgs[0]}  Slept 0.2 seconds in Java
+    Check Log Message  ${test.kws[0].kws[3].msgs[0]}  Warning from Java world!  WARN
+    Check Log Message  ${test.kws[2].msgs[0]}  The End
+
+Parallel With Failing Java Keywords
+    [Tags]  jybot
+    ${test} =  Check Test Case  Parallel With Failing Java Keywords
+    Check Parallel Keyword  ${test.kws[0]}  2
+    Check Log Message  ${test.kws[0].kws[0].msgs[0]}  ArithmeticException: / by zero  FAIL
+    Check Log Message  ${test.kws[0].kws[1].msgs[0]}  \${x} = Using Java keyword here
+
+Nested Parallel With Java Keywords
+    [Tags]  jybot
+    ${test} =  Check Test Case  Nested Parallel With Java Keywords
+    Check Parallel Keyword  ${test.kws[0]}  3
+    Check Parallel Keyword  ${test.kws[0].kws[0].kws[0]}  2
+    Check KW1 Ended After KW2 Ended  ${test.kws[0].kws[0].kws[0].kws[0]}  ${test.kws[0].kws[0].kws[0].kws[1]}
+    Check Log Message  ${test.kws[0].kws[0].kws[0].kws[0].msgs[0]}  Slept 0.2 seconds in Java
+    Check Log Message  ${test.kws[0].kws[0].kws[0].kws[1].msgs[0]}  \${x} = String from Java keyword
+    Check "Nested parallel in UK"  ${test.kws[0].kws[1]}
+    Check Parallel Keyword  ${test.kws[0].kws[2].kws[0]}  3
+    Check Log Message  ${test.kws[0].kws[2].kws[0].kws[0].msgs[0]}  \${obj} = Some name
+    Check "Nested parallel in UK"  ${test.kws[0].kws[2].kws[0].kws[1]}
+    Check Log Message  ${test.kws[0].kws[2].kws[0].kws[2].msgs[0]}  Hello, Java world!
+
+Parallel With Java Keywords Logging Multiple Times
+    [Tags]  jybot
+    ${test} =  Check Test Case  Parallel With Java Keywords Logging Multiple Times
+    Check Parallel Keyword  ${test.kws[0]}  4
+    Check Log Message  ${test.kws[0].kws[0].msgs[0]}  First message.\nSecong line of the first message.
+    Check Log Message  ${test.kws[0].kws[0].msgs[1]}  Looping and sleeping next..  WARN
+    ${exp} =  Evaluate  ''.join([str(i) for i in range(100)])
+    Check Log Message  ${test.kws[0].kws[0].msgs[2]}  ${exp}
+    Check Log Message  ${test.kws[0].kws[1].msgs[0]}  Python\nPython\nPython
+    Check Log Message  ${test.kws[0].kws[2].msgs[0]}  Slept 0.3 seconds in Java
+    Check Log Message  ${test.kws[0].kws[3].msgs[0]}  Python 2
+    Check Log Message  ${test.kws[0].kws[3].msgs[1]}  Python 2
+
+Deprecation
+    Check Syslog Contains  Parallel execution of keywords is deprecated and will be removed in the next major release.
+
+*** Keywords ***
+Check Parallel Keyword
+    [Arguments]  ${kw}  ${subcount}
+    Equals  ${kw.type}  parallel  Not a parallel keyword
+    Ints Equal  ${kw.keyword_count}  ${subcount}  Wrong number of sub keywords
+
+Check KW1 Ended After KW2 Ended
+    [Arguments]  ${kw1}  ${kw2}
+    Log Many  ${kw1.name}  ${kw2.name}
+    Fail Unless  '${kw1.endtime}' >= '${kw2.endtime}'
+
+Check "Parallel In UK"
+    [Arguments]  ${kw}
+    Check Log Message  ${kw.kws[0].msgs[0]}  Not parallel yet
+    Check Parallel Keyword  ${kw.kws[1]}  3
+    Check Log Message  ${kw.kws[1].kws[0].msgs[0]}  Slept 1 second
+    Check Log Message  ${kw.kws[1].kws[1].msgs[0]}  This is parallel
+    Check KW1 Ended After KW2 Ended  ${kw.kws[1].kws[0]}  ${kw.kws[1].kws[1]}
+    Check Log Message  ${kw.kws[1].kws[2].kws[1].msgs[0]}  We are in My UK
+
+Check "Parallel In UK 2"
+    [Arguments]  ${kw}
+    Check Parallel Keyword  ${kw.kws[0]}  2
+    Check Log Message  ${kw.kws[0].kws[0].msgs[0]}  Para 1.1
+    Check Log Message  ${kw.kws[0].kws[1].msgs[0]}  Para 1.2
+    Check Parallel Keyword  ${kw.kws[1]}  1
+    Check Log Message  ${kw.kws[1].kws[0].msgs[0]}  Para 2.1
+    Check Parallel Keyword  ${kw.kws[2]}  3
+    Check Log Message  ${kw.kws[2].kws[0].msgs[0]}  Para 3.1
+    Check Log Message  ${kw.kws[2].kws[1].msgs[0]}  Para 3.2
+    Check Log Message  ${kw.kws[2].kws[2].msgs[0]}  Para 3.3
+
+Check "Nested Parallel In UK"
+    [Arguments]  ${kw}
+    Check Parallel Keyword  ${kw.kws[0]}  3
+    Check "Parallel In UK"  ${kw.kws[0].kws[0]}
+    Check "Parallel In UK 2"  ${kw.kws[0].kws[1]}
+    ${kw3} =  Set  ${kw.kws[0].kws[2]}
+    Equals  ${kw3.name}  Nested Parallel In UK 2
+    Check Parallel Keyword  ${kw3.kws[0]}  3
+    Check "Parallel In UK"  ${kw3.kws[0].kws[0]}
+    Check "Parallel In UK 2"  ${kw3.kws[0].kws[1]}
+    Check Log Message  ${kw3.kws[0].kws[2].msgs[0]}  This ought to be enough
+
