@@ -21,6 +21,9 @@ class _MockItem:
     def extend(self, value):
         self.value.extend(value)
 
+    def report_invalid_syntax(self, error, level='ERROR'):
+        pass
+
 def _is_string_name(name):
     return utils.eq_any(name, ['Documentation'])
 
@@ -75,10 +78,10 @@ class TestUserKeywordMetadata(unittest.TestCase):
         test_set(self.meta, uk_names)
     
     
-class TestTestSuiteMetadata(unittest.TestCase):
+class TestTestCaseFileMetadata(unittest.TestCase):
     
     def setUp(self):
-        self.meta = TestSuiteMetadata()
+        self.meta = TestCaseFileMetadata()
         
     def test_initial(self):
         test_initial(self.meta, suite_names)
