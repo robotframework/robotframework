@@ -167,7 +167,7 @@ class OperatingSystem:
 
     def _run(self, command, mode):
         process = os.popen(self._process_command(command))
-        stdout = process.read().decode(sys.getfilesystemencoding())
+        stdout = process.read().decode(sys.stdin.encoding)
         if stdout.endswith('\n'):
             stdout = stdout[:-1]
         try:
@@ -204,7 +204,7 @@ class OperatingSystem:
             else:
                 command += ' 2>&1'
         self._info("Running command '%s'" % command)
-        return command.encode(sys.getfilesystemencoding())
+        return command.encode(sys.stdin.encoding)
 
     def start_process(self, command, stdin=None, alias=None):
         """Starts the given command as a background process.
