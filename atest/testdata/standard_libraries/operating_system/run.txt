@@ -1,9 +1,11 @@
 *** Settings ***
 Library         OperatingSystem
+Variables  files/result.py
 
 *** Variables ***
 ${#}  Usage of prog.py: prog.py rc=0 stdout='' stderr='' count=1
 ${PROG}  python ${CURDIR}${/}files${/}prog.py
+
 
 *** Test Cases ***
 Run
@@ -68,8 +70,8 @@ Run And Return RC And Output
     Equals  ${output}  hello
 
 Run non-ascii command returning non-ascii output
-  ${output}=  Run  echo ä
-  Should Be Equal  ${output}  ä
+  ${output}=  Run  ${PROG} 0 "${result}"
+  Should Be Equal  ${output}  ${result}
 
 It Is Possible To Start Background Processes
     ${output} =  Run  ${PROG} foo bar&
