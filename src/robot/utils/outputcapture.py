@@ -32,7 +32,7 @@ def release_output():
 
 
 class _Output:
-    
+
     def __init__(self):
         self._outs = {}
         self._sema = Semaphore()
@@ -61,15 +61,15 @@ class _Output:
         self._sema.release()
         return msg
 
-    
+
 class _PythonOutput(_Output):
 
     def _get_stream(self):
         return StringIO()
-    
+
     def _get_msg(self, key):
         return self._outs[key].getvalue()
-    
+
     def flush(self):
         self._sema.acquire()
         thrd = current_thread()
@@ -77,7 +77,7 @@ class _PythonOutput(_Output):
         if self._outs.has_key(key):
             self._outs[key].flush()
         self._sema.release()
-    
+
 
 if os.name == 'java':
 
@@ -86,10 +86,10 @@ if os.name == 'java':
         def __init__(self):
             OutputStream.__init__(self)
             _Output.__init__(self)
-            
+
         def _get_stream(self):
             return ByteArrayOutputStream()
-        
+
         def _get_msg(self, key):
             return self._outs[key].toString()
 
@@ -126,7 +126,7 @@ class _OutputCapture:
             self._release_output()
         self._sema.release()
         return out, err
-    
+
     def _get_output(self):
         if os.name == 'java':
             out = self._capt_java_out.get_value()
