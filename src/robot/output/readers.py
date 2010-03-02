@@ -16,7 +16,7 @@
 import os.path
 
 from robot import utils
-from robot.errors import DataError
+from robot.errors import DataError, XmlParsingError
 from robot.common import BaseTestSuite, BaseTestCase, BaseKeyword
 from robot.output import LOGGER
 
@@ -49,8 +49,9 @@ def process_output(path, read_level=-1):
     except utils.RERAISED_EXCEPTIONS:
         raise
     except:
-        raise DataError("Opening XML file '%s' failed: %s" %
-                        (path, utils.get_error_message()))
+        message, traceback = utils.get_error_details()
+        raise XmlParsingError("Opening XML file '%s' failed: %s" %
+                        (path, message), traceback)
     suite = _get_suite_node(root, path)
     errors = _get_errors_node(root)
     return TestSuite(suite, read_level), ExecutionErrors(errors)

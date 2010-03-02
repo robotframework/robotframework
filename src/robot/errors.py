@@ -48,11 +48,17 @@ class ExecutionFailed(RobotError):
 class TimeoutError(RobotError):
     """Used when test execution is timed out"""
 
-class RemoteError(RobotError):
-    """Used by Remote library to report remote errors"""
+class _RobotErrorWithTrace(RobotError):
+
     def __init__(self, message, traceback):
         RobotError.__init__(self, message)
         self.traceback = traceback
+
+class RemoteError(_RobotErrorWithTrace):
+    """Used by Remote library to report remote errors"""
+
+class XmlParsingError(_RobotErrorWithTrace):
+    """Used when parsing XML fails"""
 
 class Information(RobotError):
     """Used by argument parser with --help or --version"""
