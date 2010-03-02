@@ -70,8 +70,8 @@ Run And Return RC And Output
     Equals  ${output}  hello
 
 Run non-ascii command returning non-ascii output
-  ${output}=  Run  ${PROG} 0 "${result}"
-  Should Be Equal  ${output}  ${result}
+  ${output}=  Run  echo "${result}"
+  Should Be Equal  ${output.strip()}  "${result}"
 
 It Is Possible To Start Background Processes
     ${output} =  Run  ${PROG} foo bar&

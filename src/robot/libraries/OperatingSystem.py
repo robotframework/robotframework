@@ -210,7 +210,7 @@ class OperatingSystem:
         return self._encode_to_system(command)
 
     def _encode_to_system(self, string):
-        return SYSTEM_ENCODING and string.encode(SYSTEM_ENCODING) or string
+        return string.encode(sys.getfilesystemencoding())
 
     def _decode_from_system(self, string):
         return SYSTEM_ENCODING and string.decode(SYSTEM_ENCODING) or string
