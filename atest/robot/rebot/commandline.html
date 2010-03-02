@@ -1032,7 +1032,7 @@ ${MYOUTDIR}${/}invalid.txt</td>
 Regexp</td>
 <td>(\\[Fatal Error\\] .*:
 Content is not allowed in prolog.\\n)?\\[ ERROR \\] Opening XML file
-'.*[/\\\\]invalid.txt' failed: .*${USAGE_TIP}</td>
+'.*[/\\\\]invalid.txt' failed: .*</td>
 <td># "[Fatal Error] ..." part appears &nbsp;with Jython</td>
 <td></td>
 
@@ -1040,8 +1040,8 @@ Content is not allowed in prolog.\\n)?\\[ ERROR \\] Opening XML file
 </tr>
 <tr>
 <td></td>
-<td></td>
-<td></td>
+<td>Check Syslog Matches Regexp</td>
+<td>.*| INFO  | Traceback (most recent call last):\\n  File ".*readers.py", line .*, in process_output.*</td>
 <td></td>
 <td></td>
 
