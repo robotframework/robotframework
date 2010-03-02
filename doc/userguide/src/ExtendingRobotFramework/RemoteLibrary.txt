@@ -88,7 +88,7 @@ implemented. Following methods work with the servers distributed with
 Robot Framework:
 
 * Regardless of the library used, remote servers provide :name:`Stop
-  Remote Servers` keyword that can be used from the test data.
+  Remote Server` keyword that can be used from the test data.
 * Remote servers have :code:`stop_remote_server` method in their
   XML-RPC interface.
 * :code:`Ctrl-c` stops the server if it is running on a terminal
