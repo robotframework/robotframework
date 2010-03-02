@@ -65,7 +65,13 @@ def _run_or_rebot_from_cli(method, cliargs, usage, **argparser_config):
         error, details = utils.get_error_details()
         _exit(FRAMEWORK_ERROR, 'Unexpected error: %s' % error, details)
     else:
-        _exit(suite)
+        _exit(_failed_critical_test_count(suite))
+
+def _failed_critical_test_count(suite):
+    rc = suite.critical_stats.failed
+    if rc > 250:
+        rc = 250
+    return rc
 
 
 def run(*datasources, **options):
@@ -129,7 +135,7 @@ def rebot(*datasources, **options):
     return testoutput.suite
 
 
-def _exit(rc_or_suite, message=None, details=None):
+def _exit(rc, message=None, details=None):
     """Exits with given rc or rc from given output. Reports possible error.
 
     Exit code is the number of failed critical tests or error number.
@@ -141,18 +147,12 @@ def _exit(rc_or_suite, message=None, details=None):
       253     - Execution stopped by user
       255     - Internal and unexpected error occurred in the framework itself
     """
-    if utils.is_integer(rc_or_suite):
-        rc = rc_or_suite
-        if rc == INFO_PRINTED:
-            print message
-        else:
-            if rc == DATA_ERROR:
-                message += '\n\nTry --help for usage information.'
-            LOGGER.error(message)
-            if details:
-                LOGGER.info(details)
+    if rc == INFO_PRINTED:
+        print message
     else:
-        rc = rc_or_suite.critical_stats.failed
-        if rc > 250:
-            rc = 250
+        if rc == DATA_ERROR:
+            message += '\n\nTry --help for usage information.'
+        LOGGER.error(message)
+        if details:
+            LOGGER.info(details)
     sys.exit(rc)
