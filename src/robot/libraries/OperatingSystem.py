@@ -45,9 +45,6 @@ except ImportError:
              = _NotImplemented()
 
 
-SYSTEM_ENCODING = sys.stdin.encoding
-
-
 class OperatingSystem:
 
     """A test library providing keywords for OS related tasks.
@@ -197,9 +194,9 @@ class OperatingSystem:
         return stdout
 
     def _process_command(self, command):
-        if sys.platform.startswith('java'):
-            # Jython's os.popen doesn't handle Unicode as explained in
-            # http://jython.org/bugs/1735774. This bug is still in Jython 2.2.
+        if self._is_jython22():
+            # os.popen doesn't handle Unicode in Jython 2.2 as explained in
+            # http://jython.org/bugs/1735774.
             command = str(command)
         if '>' not in command:
             if command.endswith('&'):
@@ -210,10 +207,18 @@ class OperatingSystem:
         return self._encode_to_system(command)
 
     def _encode_to_system(self, string):
-        return string.encode(sys.getfilesystemencoding())
+        if self._is_jython22():
+            return string
+        encoding = sys.getfilesystemencoding()
+        return encoding and string.encode(encoding) or string
 
     def _decode_from_system(self, string):
-        return SYSTEM_ENCODING and string.decode(SYSTEM_ENCODING) or string
+        if self._is_jython22():
+            return string
+        return string.decode(sys.stdin.encoding)
+
+    def _is_jython22(self):
+        return sys.platform.startswith('java') and sys.version_info[:2] == (2,2)
 
     def start_process(self, command, stdin=None, alias=None):
         """Starts the given command as a background process.
