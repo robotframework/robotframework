@@ -169,7 +169,9 @@ class OperatingSystem:
     def _run(self, command, mode):
         process = os.popen(self._process_command(command))
         stdout = self._decode_from_system(process.read())
-        if stdout.endswith('\n'):
+        if stdout.endswith('\r\n'):
+            stdout = stdout[:-2]
+        elif stdout.endswith('\n'):
             stdout = stdout[:-1]
         try:
             rc = process.close()
@@ -1312,7 +1314,9 @@ class _Process:
         if self.closed:
             raise DataError('Cannot read from a closed process')
         out = self.stdout.read()
-        if out.endswith('\n'):
+        if out.endswith('\r\n'):
+            out = out[:-2]
+        elif out.endswith('\n'):
             out = out[:-1]
         self.close()
         return out
