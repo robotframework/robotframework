@@ -26,7 +26,7 @@ try:
     from robot.output import LOGGER
     from robot.utils import get_version, ConnectionCache, seq2str, \
         timestr_to_secs, secs_to_timestr, plural_or_not, get_time, \
-        secs_to_timestamp, parse_time
+        secs_to_timestamp, parse_time, unic
     __version__ = get_version()
     PROCESSES = ConnectionCache('No active processes')
 
@@ -37,6 +37,7 @@ except ImportError:
     timestr_to_secs = int
     plural_or_not = lambda count: count != 1 and 's' or ''
     secs_to_timestr = lambda secs: '%d second%s' % (secs, plural_or_not(secs))
+    unic = unicode
     class _NotImplemented:
         def __getattr__(self, name):
             raise NotImplementedError('This usage requires Robot Framework '
@@ -215,7 +216,7 @@ class OperatingSystem:
     def _decode_from_system(self, string):
         if self._is_jython22():
             return string
-        return string.decode(sys.stdin.encoding)
+        return unic(string, sys.stdin.encoding, 'ignore')
 
     def _is_jython22(self):
         return sys.platform.startswith('java') and sys.version_info[:2] == (2,2)
