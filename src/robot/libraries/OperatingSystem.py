@@ -216,7 +216,12 @@ class OperatingSystem:
     def _decode_from_system(self, string):
         if self._is_jython22():
             return string
-        return unic(string, sys.stdin.encoding, 'ignore')
+        encoding = sys.stdin.encoding
+        if not encoding and os.sep == '\\':
+            encoding = 'cp437'
+        if encoding:
+            return unic(string, encoding)
+        return unic(string)
 
     def _is_jython22(self):
         return sys.platform.startswith('java') and sys.version_info[:2] == (2,2)
