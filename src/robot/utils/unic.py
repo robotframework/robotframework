@@ -16,10 +16,10 @@ import os
 import sys
 
 
-def unic(item):
+def unic(item, *args):
     # Based on a recipe from http://code.activestate.com/recipes/466341
     try:
-        return unicode(item)
+        return unicode(item, *args)
     except UnicodeDecodeError:
         ascii_text = str(item).encode('string_escape')
         return unicode(ascii_text)
@@ -30,17 +30,17 @@ if os.name == 'java' and sys.version_info[:2] > (2,2):
     from java.lang import Object, Class
     _unic = unic
 
-    def unic(item):
-        if isinstance(item, basestring):
+    def unic(item, *args):
+        if isinstance(item, basestring) and not args:
             return item
         if isinstance(item, Object) and not isinstance(item, Class): # http://bugs.jython.org/issue1564
             item = item.toString()  # http://bugs.jython.org/issue1563
-        return _unic(item)
+        return _unic(item, *args)
 
 
 elif os.name == 'java':
 
-    def unic(item):
+    def unic(item, *args):
         if isinstance(item, basestring):
             return item
         return unicode(item)
