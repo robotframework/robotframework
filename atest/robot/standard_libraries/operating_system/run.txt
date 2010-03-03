@@ -38,6 +38,9 @@ Run And Return RC And Output
 Run non-ascii command returning non-ascii output
     Check testcase  Run non-ascii command returning non-ascii output
 
+Trailing newline is removed automatically
+    Check test case  ${TESTNAME}
+
 It Is Possible To Start Background Processes
     Check testcase  It is possible To Start Background Processes
 

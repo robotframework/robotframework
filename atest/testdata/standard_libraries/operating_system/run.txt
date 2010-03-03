@@ -70,8 +70,13 @@ Run And Return RC And Output
     Equals  ${output}  hello
 
 Run non-ascii command returning non-ascii output
-  ${output}=  Run  echo ${result}
-  Should Be Equal  ${output.strip()}  ${result}
+    ${output} =  Run  echo ${result}
+    Should Be Equal  ${output.strip()}  ${result}
+
+Trailing newline is removed automatically
+    ${output} =  Run  echo hello
+    Log  ${output.__repr__()}
+    Should Be True  '${output}'[-1] not in ['\\n', '\\r']
 
 It Is Possible To Start Background Processes
     ${output} =  Run  ${PROG} foo bar&
