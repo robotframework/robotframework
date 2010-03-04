@@ -15,16 +15,16 @@ from thread_resources import passing, failing, sleeping, returning, MyException
 if os.name == 'java':
     from java.lang import Error as JavaError
     from thread_resources import java_failing
-    
+
 
 class TestInit(unittest.TestCase):
-    
+
     def test_no_params(self):
         self._verify_tout(TestTimeout())
-        
+
     def test_timeout_string(self):
-        for tout_str, exp_str, exp_secs in [ ('1s', '1 second', 1), 
-                                             ('10 sec', '10 seconds', 10), 
+        for tout_str, exp_str, exp_secs in [ ('1s', '1 second', 1),
+                                             ('10 sec', '10 seconds', 10),
                                              ('2h 1minute', '2 hours 1 minute', 7260),
                                              ('42', '42 seconds', 42) ]:
             self._verify_tout(TestTimeout(tout_str), exp_str, exp_secs)
@@ -37,7 +37,7 @@ class TestInit(unittest.TestCase):
                 self._verify_tout(tout, secs=0.000001, err=err % inv)
 
     def test_message(self):
-        for msgcols in [ ['mymessage'], 
+        for msgcols in [ ['mymessage'],
                          ['This is my message!'],
                          ['Message in','two colums'],
                          ['My','message','in','quite','many','columns','.'] ]:
@@ -50,37 +50,37 @@ class TestInit(unittest.TestCase):
         assert_equals(tout.message, msg)
         assert_equals(tout.error, err)
 
-        
+
 class TestTimer(unittest.TestCase):
-      
+
     def test_time_left(self):
         tout = TestTimeout('1s')
         tout.start()
         assert_true(tout.time_left() > 0.9)
         time.sleep(0.2)
         assert_true(tout.time_left() < 0.9)
-        
+
     def test_timed_out_with_no_timeout(self):
         tout = TestTimeout()
         tout.start()
         time.sleep(0.01)
         assert_false(tout.timed_out())
-        
+
     def test_timed_out_with_non_exceeded_timeout(self):
         tout = TestTimeout('10s')
         tout.start()
         time.sleep(0.01)
         assert_false(tout.timed_out())
-        
+
     def test_timed_out_with_exceeded_timeout(self):
         tout = TestTimeout('1ms')
         tout.start()
         time.sleep(0.02)
         assert_true(tout.timed_out())
-        
-        
+
+
 class TestComparisons(unittest.TestCase):
-    
+
     def test_compare_when_none_timeouted(self):
         touts = self._create_timeouts([''] * 10)
         assert_equals(min(touts).string, '')
@@ -90,18 +90,18 @@ class TestComparisons(unittest.TestCase):
         touts = self._create_timeouts(['1min','42seconds','43','1h1min','99'])
         assert_equals(min(touts).string, '42 seconds')
         assert_equals(max(touts).string, '1 hour 1 minute')
-        
+
     def test_compare_with_timeouted_and_non_timeouted(self):
         touts = self._create_timeouts(['','1min','42sec','','43','1h1m','99',''])
         assert_equals(min(touts).string, '')
         assert_equals(max(touts).string, '1 hour 1 minute')
-    
+
     def test_that_compare_uses_starttime(self):
         touts = self._create_timeouts(['1min','42seconds','43','1h1min','99'])
         touts[2].starttime -= 2
         assert_equals(min(touts).string, '43 seconds')
         assert_equals(max(touts).string, '1 hour 1 minute')
-        
+
     def _create_timeouts(self, tout_strs):
         touts = []
         for tout_str in tout_strs:
@@ -120,16 +120,16 @@ class MockLogger:
 
 
 class TestRun(unittest.TestCase):
-    
+
     def setUp(self):
         self.tout = TestTimeout('1s')
         self.tout.start()
         self.logger = MockLogger()
-    
+
     def test_passing(self):
         assert_none(self.tout.run(passing, logger=self.logger))
         self._verify_debug_msg(self.logger.msgs[0])
-        
+
     def test_returning(self):
         for arg in [ 10, 'hello', ['l','i','s','t'], unittest]:
             ret = self.tout.run(returning, args=(arg,), logger=self.logger)
@@ -144,7 +144,7 @@ class TestRun(unittest.TestCase):
         else:
             fail('run did not raise an exception as expected')
 
-    if os.name == 'java':        
+    if os.name == 'java':
         def test_java_failing(self):
             try:
                 self.tout.run(java_failing, args=('hi tellus',))
@@ -175,7 +175,7 @@ class TestRun(unittest.TestCase):
         for tout in [ 0, 0.0, -0.01, -1, -1000 ]:
             self.tout.time_left = lambda : tout
             assert_raises(TimeoutError, self.tout.run, sleeping, (10,))
-            
+
     def test_customized_message(self):
         for msgcols in [ ['mymessage'], ['My','message','in','5','cols'] ]:
             self.logger.msgs = []
