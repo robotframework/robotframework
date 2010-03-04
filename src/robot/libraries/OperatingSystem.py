@@ -197,7 +197,7 @@ class OperatingSystem:
         return stdout
 
     def _process_command(self, command):
-        if self._is_jython22():
+        if self._is_jython(2, 2):
             # os.popen doesn't handle Unicode in Jython 2.2 as explained in
             # http://jython.org/bugs/1735774.
             command = str(command)
@@ -210,23 +210,29 @@ class OperatingSystem:
         return self._encode_to_system(command)
 
     def _encode_to_system(self, string):
-        if self._is_jython22():
+        if self._is_jython(2, 2):
             return string
         encoding = sys.getfilesystemencoding()
         return encoding and string.encode(encoding) or string
 
     def _decode_from_system(self, string):
-        if self._is_jython22():
+        if self._is_jython(2, 2):
             return string
-        encoding = sys.__stdout__.encoding or sys.__stdin__.encoding
+        encoding = self._get_console_encoding()
         if encoding:
             return unic(string, encoding)
-        if os.sep == '\\':
-            return unic(string, 'cp437') # Use default DOS encoding
         return unic(string)
 
-    def _is_jython22(self):
-        return sys.platform.startswith('java') and sys.version_info[:2] == (2,2)
+    def _get_console_encoding(self):
+        if os.sep == '\\' and self._is_jython(2, 5):
+            return 'cp437'
+        encoding = sys.__stdout__.encoding or sys.__stdin__.encoding
+        if not encoding and os.sep == '\\':
+            return 'cp437'
+        return encoding
+
+    def _is_jython(self, *version):
+        return sys.platform.startswith('java') and sys.version_info[:2] == version
 
     def start_process(self, command, stdin=None, alias=None):
         """Starts the given command as a background process.
