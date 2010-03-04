@@ -29,8 +29,8 @@ def UserHandlerList(rawkeywords):
     for data in rawkeywords:
         try:
             handler = UserHandler(data)
-        except DataError, err:
-            msg = utils.unic(err)
+        except DataError:
+            msg = utils.get_error_message()
             _report_creating_failed(data, msg)
             handler = UserErrorHandler(data.name, msg)
         handler = _check_for_duplicates(handlers, handler, data)
