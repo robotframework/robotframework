@@ -218,11 +218,11 @@ class OperatingSystem:
     def _decode_from_system(self, string):
         if self._is_jython22():
             return string
-        encoding = sys.stdin.encoding
-        if not encoding and os.sep == '\\':
-            encoding = 'cp437'
+        encoding = sys.stdout.encoding or sys.stdin.encoding
         if encoding:
             return unic(string, encoding)
+        if os.sep == '\\':
+            return unic(string, 'cp437') # Use default DOS encoding
         return unic(string)
 
     def _is_jython22(self):
