@@ -48,10 +48,10 @@ class TestMiscUtils(unittest.TestCase):
                 ( 'c:\\temp', 'c:\\temp\\x\\y\\z\\bar.txt',
                   'x/y/z/bar.txt' ),
                 ( 'c:\\temp\\', 'c:\\x\\y\\bar.txt', '../x/y/bar.txt' ),
-                ( 'c:\\temp', 'c:\\x\\y\\bar.txt', '../x/y/bar.txt' ),  
+                ( 'c:\\temp', 'c:\\x\\y\\bar.txt', '../x/y/bar.txt' ),
                 ( 'c:\\temp', 'c:\\x\\bar.txt', '../x/bar.txt' ),
                 ( 'c:\\temp', 'c:\\x\\y\\z\\bar.txt', '../x/y/z/bar.txt' ),
-                ( 'c:\\temp\\', 'r:\\x\\y\\bar.txt', 'file:///R:/x/y/bar.txt' ),
+                ( 'c:\\temp\\', 'r:\\x\\y\\bar.txt', 'file:///r:/x/y/bar.txt' ),
                 ( 'c:\\', 'c:\\x\\bar.txt', 'x/bar.txt' ),
                 ( 'c:\\path\\to', 'c:\\path\\to\\result_in_same_dir.html', 'result_in_same_dir.html' ),
                 ( 'c:\\path\\to\\dir', 'c:\\path\\to\\result_in_parent_dir.html', '../result_in_parent_dir.html' ),
@@ -63,11 +63,11 @@ class TestMiscUtils(unittest.TestCase):
             ]
 
         for basedir, target, expected in inputs:
-            assert_equals(get_link_path(target, basedir), expected,
+            assert_equals(get_link_path(target, basedir).replace('R:', 'r:'), expected,
                          '%s -> %s' % (target, basedir))
 
     def test_get_link_path_with_unicode(self):
-        assert_equals(get_link_path(u'\xe4\xf6.txt', ''),'%C3%A4%C3%B6.txt') 
+        assert_equals(get_link_path(u'\xe4\xf6.txt', ''),'%C3%A4%C3%B6.txt')
 
     def test_printable_name_from_path(self):
         paths_and_names = [ ('tests.html', 'Tests'),
@@ -112,8 +112,8 @@ class TestMiscUtils(unittest.TestCase):
                           ('camelCaseName', 'Camel Case Name'),
                           ('camelCaseWithDigit1', 'Camel Case With Digit 1'),
                           ('name42WithNumbers666', 'Name 42 With Numbers 666'),
-                          ('12more34numbers', '12 More 34 Numbers'), 
-                          ('mixedCAPSCamelName', 'Mixed CAPS Camel Name'), 
+                          ('12more34numbers', '12 More 34 Numbers'),
+                          ('mixedCAPSCamelName', 'Mixed CAPS Camel Name'),
                           ('foo-bar', 'Foo-bar'),
                           ('','') ]:
             assert_equals(printable_name(inp, code_style=True), exp)
