@@ -167,73 +167,16 @@ class OperatingSystem:
         return self._run(command, 'RC,Output')
 
     def _run(self, command, mode):
-        process = os.popen(self._process_command(command))
-        stdout = self._process_output(process.read())
-        try:
-            rc = process.close()
-        except IOError:  # Has occurred sometimes in Windows
-            rc = -1      # -1 is eventually turned into 255
-        if rc is None:
-            rc = 0
-        # In Windows (Python and Jython) return code is value returned by
-        # command (can be almost anything)
-        # In other OS:
-        #   In Jython return code can be between '-255' - '255'
-        #   In Python return code must be converted with 'rc >> 8' and it is
-        #   between 0-255 after conversion
-        if os.sep == '\\' or sys.platform.startswith('java'):
-            rc = rc % 256
-        else:
-            rc = rc >> 8
+        process = _Process(command)
+        self._info("Running command '%s'" % process)
+        stdout = process.read()
+        rc = process.close()
         mode = mode.upper()
         if 'RC' in mode:
             if 'STDOUT' in mode or 'OUTPUT' in mode:
                 return rc, stdout
             return rc
         return stdout
-
-    def _process_command(self, command):
-        if self._is_jython(2, 2):
-            # os.popen doesn't handle Unicode in Jython 2.2 as explained in
-            # http://jython.org/bugs/1735774.
-            command = str(command)
-        if '>' not in command:
-            if command.endswith('&'):
-                command = command[:-1] + ' 2>&1 &'
-            else:
-                command += ' 2>&1'
-        self._info("Running command '%s'" % command)
-        return self._encode_to_system(command)
-
-    def _encode_to_system(self, string):
-        if self._is_jython(2, 2):
-            return string
-        encoding = sys.getfilesystemencoding()
-        return encoding and string.encode(encoding) or string
-
-    def _process_output(self, stdout):
-        stdout = stdout.replace('\r\n', '\n') # http://bugs.jython.org/issue1566
-        if stdout.endswith('\n'):
-            stdout = stdout[:-1]
-        if self._is_jython(2, 2):
-            return stdout
-        encoding = self._get_console_encoding()
-        if encoding:
-            return unic(stdout, encoding)
-        return unic(stdout)
-
-    def _get_console_encoding(self):
-        encoding = sys.__stdout__.encoding or sys.__stdin__.encoding
-        if os.sep == '/':
-            return encoding
-        # Use default DOS encoding if no encoding found (guess)
-        # or on buggy Jython 2.5: http://bugs.jython.org/issue1568
-        if not encoding or self._is_jython(2, 5):
-            return 'cp437'
-        return encoding
-
-    def _is_jython(self, *version):
-        return sys.platform.startswith('java') and sys.version_info[:2] == version
 
     def start_process(self, command, stdin=None, alias=None):
         """Starts the given command as a background process.
@@ -269,7 +212,8 @@ class OperatingSystem:
         | Should Contain | ${output}            | Expected text |
         | [Teardown]     | Stop All Processes   |
         """
-        process = _Process(self._process_command(command), stdin)
+        process = _Process2(command, stdin)
+        self._info("Running command '%s'" % process)
         return PROCESSES.register(process, alias)
 
     def switch_process(self, index_or_alias):
@@ -313,7 +257,9 @@ class OperatingSystem:
         if mode != 'DEPRECATED':
             self._warn("'mode' argument for 'Read Process Output' keyword is "
                        "deprecated and will be removed in RF 2.2.")
-        return self._process_output(PROCESSES.current.read())
+        output = PROCESSES.current.read()
+        PROCESSES.current.close()
+        return output
 
     def stop_process(self):
         """Stops the current process without reading from it.
@@ -1305,13 +1251,83 @@ class OperatingSystem:
         print '*%s* %s' % (level, msg)
 
 
-# TODO: Could we use _Process also with Run keyword? We would get rid of
-# duplicate code and have all process related code in separate class.
-
 class _Process:
 
+    def __init__(self, command):
+        self._command = self._process_command(command)
+        self._process = os.popen(self._command)
+
+    def __str__(self):
+        return self._command
+
+    def read(self):
+        return self._process_output(self._process.read())
+
+    def close(self):
+        try:
+            rc = self._process.close()
+        except IOError:  # Has occurred sometimes in Windows
+            return 255
+        if rc is None:
+            return 0
+        # In Windows (Python and Jython) return code is value returned by
+        # command (can be almost anything)
+        # In other OS:
+        #   In Jython return code can be between '-255' - '255'
+        #   In Python return code must be converted with 'rc >> 8' and it is
+        #   between 0-255 after conversion
+        if os.sep == '\\' or sys.platform.startswith('java'):
+            return rc % 256
+        return rc >> 8
+
+    def _process_command(self, command):
+        if self._is_jython(2, 2):
+            # os.popen doesn't handle Unicode in Jython 2.2 as explained in
+            # http://jython.org/bugs/1735774.
+            command = str(command)
+        if '>' not in command:
+            if command.endswith('&'):
+                command = command[:-1] + ' 2>&1 &'
+            else:
+                command += ' 2>&1'
+        return self._encode_to_system(command)
+
+    def _encode_to_system(self, string):
+        if self._is_jython(2, 2):
+            return string
+        encoding = sys.getfilesystemencoding()
+        return encoding and string.encode(encoding) or string
+
+    def _process_output(self, stdout):
+        stdout = stdout.replace('\r\n', '\n') # http://bugs.jython.org/issue1566
+        if stdout.endswith('\n'):
+            stdout = stdout[:-1]
+        if self._is_jython(2, 2):
+            return stdout
+        encoding = self._get_console_encoding()
+        if encoding:
+            return unic(stdout, encoding)
+        return unic(stdout)
+
+    def _get_console_encoding(self):
+        encoding = sys.__stdout__.encoding or sys.__stdin__.encoding
+        if os.sep == '/':
+            return encoding
+        # Use default DOS encoding if no encoding found (guess)
+        # or on buggy Jython 2.5: http://bugs.jython.org/issue1568
+        if not encoding or self._is_jython(2, 5):
+            return 'cp437'
+        return encoding
+
+    def _is_jython(self, *version):
+        return sys.platform.startswith('java') and sys.version_info[:2] == version
+
+
+class _Process2(_Process):
+
     def __init__(self, command, input_):
-        stdin, self.stdout = os.popen2(command)
+        self._command = self._process_command(command)
+        stdin, self.stdout = os.popen2(self._command)
         if input_:
             stdin.write(input_)
         stdin.close()
@@ -1320,13 +1336,7 @@ class _Process:
     def read(self):
         if self.closed:
             raise DataError('Cannot read from a closed process')
-        out = self.stdout.read()
-        if out.endswith('\r\n'):
-            out = out[:-2]
-        elif out.endswith('\n'):
-            out = out[:-1]
-        self.close()
-        return out
+        return self._process_output(self.stdout.read())
 
     def close(self):
         if not self.closed:
