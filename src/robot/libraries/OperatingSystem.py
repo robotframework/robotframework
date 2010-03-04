@@ -218,7 +218,7 @@ class OperatingSystem:
     def _decode_from_system(self, string):
         if self._is_jython22():
             return string
-        encoding = sys.stdout.encoding or sys.stdin.encoding
+        encoding = sys.__stdout__.encoding or sys.__stdin__.encoding
         if encoding:
             return unic(string, encoding)
         if os.sep == '\\':
