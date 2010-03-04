@@ -17,11 +17,8 @@ from unic import unic
 
 
 # See http://www.spamagogo.com/wiki/index.php/Illegal_XML_characters
-_ILLEGAL_CHARS_IN_XML = [ u'\x00', u'\x01', u'\x02', u'\x03', u'\x04', u'\x05',
-                          u'\x06', u'\x07', u'\x08', u'\x0b', u'\x0c', u'\x0e',
-                          u'\x0f', u'\x10', u'\x11', u'\x12', u'\x13', u'\x14',
-                          u'\x15', u'\x16', u'\x17', u'\x18', u'\x19', u'\x1a',
-                          u'\x1b', u'\x1c', u'\x1d', u'\x1e', u'\x1f' ]
+_ILLEGAL_CHARS_IN_XML = u'\x00\x01\x02\x03\x04\x05\x06\x07\x08\x0b\x0c\x0e' \
+    + u'\x0f\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1a\x1b\x1c\x1d\x1e\x1f\ufffe'
 
 
 class AbstractXmlWriter:
