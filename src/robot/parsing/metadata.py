@@ -147,9 +147,9 @@ class ImportSetting:
         item = self._item.copy()
         try:
             self.value = variables.replace_list(item.value)
-        except DataError, err:
+        except DataError:
             raise DataError("Replacing variables from setting '%s' failed: %s"
-                            % (self.name, utils.unic(err)))
+                            % (self.name, utils.get_error_message()))
         if len(self.value) == 0:
             raise DataError("Setting '%s' requires a value" % self.name)
         if self.name == 'Resource' and len(self.value) > 1:
