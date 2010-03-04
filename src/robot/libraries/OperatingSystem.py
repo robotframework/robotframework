@@ -224,10 +224,12 @@ class OperatingSystem:
         return unic(string)
 
     def _get_console_encoding(self):
-        if os.sep == '\\' and self._is_jython(2, 5):
-            return 'cp437'
         encoding = sys.__stdout__.encoding or sys.__stdin__.encoding
-        if not encoding and os.sep == '\\':
+        if os.sep == '/':
+            return encoding
+        # Use default DOS encoding if no encoding found (guess)
+        # or on buggy Jython 2.5: http://bugs.jython.org/issue1568
+        if not encoding or self._is_jython(2, 5):
             return 'cp437'
         return encoding
 
