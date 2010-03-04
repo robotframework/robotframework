@@ -30,7 +30,7 @@ Link Is Not Created For Combined Suite
 *** Keywords ***
 Verify Suite Source Link
     [Arguments]  ${path}
-    ${relpath}=  Set Variable  ../${RELATIVE}${/}${path}
+    ${relpath}=  Set Variable  ../${RELATIVE}/${path}
     ${abspath}=  Join Path  ${BASE}      ${path}
     ${logfile}=  Get File  ${OUTDIR}/${LOGNAME}
     Should Contain  ${logfile}  <a href="${relpath}">${abspath}</a>
