@@ -168,11 +168,7 @@ class OperatingSystem:
 
     def _run(self, command, mode):
         process = os.popen(self._process_command(command))
-        stdout = self._decode_from_system(process.read())
-        if stdout.endswith('\r\n'):
-            stdout = stdout[:-2]
-        elif stdout.endswith('\n'):
-            stdout = stdout[:-1]
+        stdout = self._process_output(process.read())
         try:
             rc = process.close()
         except IOError:  # Has occurred sometimes in Windows
@@ -215,13 +211,16 @@ class OperatingSystem:
         encoding = sys.getfilesystemencoding()
         return encoding and string.encode(encoding) or string
 
-    def _decode_from_system(self, string):
+    def _process_output(self, stdout):
+        stdout = stdout.replace('\r\n', '\n') # http://bugs.jython.org/issue1566
+        if stdout.endswith('\n'):
+            stdout = stdout[:-1]
         if self._is_jython(2, 2):
-            return string
+            return stdout
         encoding = self._get_console_encoding()
         if encoding:
-            return unic(string, encoding)
-        return unic(string)
+            return unic(stdout, encoding)
+        return unic(stdout)
 
     def _get_console_encoding(self):
         encoding = sys.__stdout__.encoding or sys.__stdin__.encoding
@@ -314,7 +313,7 @@ class OperatingSystem:
         if mode != 'DEPRECATED':
             self._warn("'mode' argument for 'Read Process Output' keyword is "
                        "deprecated and will be removed in RF 2.2.")
-        return PROCESSES.current.read()
+        return self._process_output(PROCESSES.current.read())
 
     def stop_process(self):
         """Stops the current process without reading from it.
