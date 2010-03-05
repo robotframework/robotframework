@@ -76,7 +76,7 @@ class TestThread(unittest.TestCase):
         
     def test_noname(self):        
         name = Thread(Runner(None)).getName()
-        assert_true(isinstance(name), basestring)
+        assert_true(isinstance(name, basestring))
         assert_true(len(name) > 0)
 
 if __name__ == '__main__':
