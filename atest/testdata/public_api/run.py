@@ -1,6 +1,7 @@
 import os
 import sys
 
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..', '..', 'src'))
 from robot import run
 
 from apihelper import verify_suites, verify_tests, remove_outputdir
@@ -14,8 +15,8 @@ def run_suite():
     suite = run(DATA, outputdir=OUTPUT, monitorcolors='off')
     fails = verify_suites(suite, os.path.join(DATA, 'run_suite_data.txt'))
     fails += verify_tests(suite, os.path.join(DATA,'run_test_data.txt'))
-                    
-    print 'Total failures: %d' % fails 
+
+    print 'Total failures: %d' % fails
     remove_outputdir()
     return fails
 
