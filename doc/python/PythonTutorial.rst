@@ -25,7 +25,7 @@ Introduction
 * Earlier programming experience is expected but not absolutely
   necessary.
 
-* The main study material for this training is excellent *Dive Into
+* The main study material for this training is the excellent *Dive Into
   Python* book which is freely available for on-line reading,
   downloading or printing from http://diveintopython.org.  It is
   targeted for people who already know how to program but do not know
@@ -55,6 +55,10 @@ Introduction
 
 * If you need information about Jython, the Java implementation of
   Python, you can start from http://jython.org.
+
+* *The Definitive Guide to Jython* covers Jython in detail and is
+  useful especially if you are interested about Jython-Java
+  integration. It is freely available at http://jythonbook.com.
 
 
 Getting started
