@@ -3,7 +3,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<meta name="generator" content="Docutils 0.5: http://docutils.sourceforge.net/" />
+<meta name="generator" content="Docutils 0.6: http://docutils.sourceforge.net/" />
 <title>Python Tutorial for Robot Framework Test Library Developers</title>
 <style type="text/css">
 
@@ -313,6 +313,8 @@ table.example caption, table.tsv-example caption, table.tabular caption {
     text-align: left;
     padding-bottom: 0.5em;
     font-style: italic;
+    font-size: 0.9em;
+    width: 100%;
 }
 table.example th, table.example td, table.tsv-example td {
     border: 1px solid #808080;
@@ -331,7 +333,7 @@ table.tabular th, table.tabular td {
     border: 1px solid black;
     padding: 0.1em 0.3em;
     height: 1.2em;
-    font-size: 0.9em;
+    font-size: 0.8em;
 }
 table.messages {
     border: 1px solid gray;
@@ -390,6 +392,9 @@ table.messages td.warn {
 
 /* Overridden and modified styles */
 
+cite {
+    font-size: 0.95em;
+}
 div.admonition, div.attention, div.caution, div.danger, div.error,
 div.hint, div.important, div.note, div.tip, div.warning {
     border: 0.1em solid gray;
@@ -568,7 +573,7 @@ language</a>. The target is to learn enough Python to be able to start
 creating test libraries for <a class="reference external" href="http://robotframework.org">Robot Framework</a>.</li>
 <li>Earlier programming experience is expected but not absolutely
 necessary.</li>
-<li>The main study material for this training is excellent <em>Dive Into
+<li>The main study material for this training is the excellent <em>Dive Into
 Python</em> book which is freely available for on-line reading,
 downloading or printing from <a class="reference external" href="http://diveintopython.org">http://diveintopython.org</a>.  It is
 targeted for people who already know how to program but do not know
@@ -592,6 +597,9 @@ find more documentation and Python related information in
 general.</li>
 <li>If you need information about Jython, the Java implementation of
 Python, you can start from <a class="reference external" href="http://jython.org">http://jython.org</a>.</li>
+<li><em>The Definitive Guide to Jython</em> covers Jython in detail and is
+useful especially if you are interested about Jython-Java
+integration. It is freely available at <a class="reference external" href="http://jythonbook.com">http://jythonbook.com</a>.</li>
 </ul>
 </div>
 <div class="section" id="getting-started">
@@ -621,13 +629,13 @@ instructions on how to do it in its <em>Installation</em> section.</li>
 <h2><a class="toc-backref" href="#id11">Interactive interpreter</a></h2>
 <ul>
 <li><p class="first">Open the command prompt and type <span class="cli">python</span>. On Windows you can
-also start the interpreter by selecting <tt class="docutils literal"><span class="pre">Start</span> <span class="pre">&gt;</span> <span class="pre">All</span> <span class="pre">Programs</span> <span class="pre">&gt;</span>
-<span class="pre">Python</span> <span class="pre">2.x</span></tt>.</p>
+also start the interpreter by selecting <tt class="docutils literal">Start &gt; All Programs &gt;
+Python 2.x</tt>.</p>
 </li>
 <li><p class="first">Statements and expressions can be written in the interpreter.
 Pressing enter will interpret the line and possible results are
 echoed. Try for example:</p>
-<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="mf">1</span> <span class="o">+</span> <span class="mf">2</span>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="mi">1</span> <span class="o">+</span> <span class="mi">2</span>
 <span class="go">3</span>
 </pre></div>
 </li>
@@ -678,7 +686,7 @@ in this tutorial.</p>
 <span class="code">null</span> in Java.</p>
 </li>
 <li><p class="first">Try at least these on the interpreter:</p>
-<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="mf">2</span> <span class="o">*</span> <span class="mf">2.5</span>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="mi">2</span> <span class="o">*</span> <span class="mf">2.5</span>
 <span class="go">5.0</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="s">&#39;This is easy&#39;</span>
 <span class="go">&#39;This is easy&#39;</span>
@@ -702,10 +710,10 @@ assigned for the first time.</p>
 got from the assigned variable automatically.</p>
 </li>
 <li><p class="first">Try it out:</p>
-<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="mf">3</span>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="mi">3</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">a</span>
 <span class="go">3</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">b</span> <span class="o">=</span> <span class="mf">4</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">b</span> <span class="o">=</span> <span class="mi">4</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">*</span><span class="n">b</span>
 <span class="go">12</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">greeting</span> <span class="o">=</span> <span class="s">&#39;Hello&#39;</span>
@@ -735,7 +743,7 @@ this content into it:</p>
 </pre></div>
 </li>
 <li><p class="first">Then execute the file on the console like this:</p>
-<div class="highlight"><pre>python hello.py
+<div class="highlight"><pre><span class="go">python hello.py</span>
 </pre></div>
 </li>
 <li><p class="first">As a result you should get <span class="code">Hello, world!</span> printed into the
@@ -804,18 +812,18 @@ More information about it can be found e.g. from Dive Into Python:
 specify only some of them by giving their name along with the value
 as the example below illustrates. Those arguments that do not have
 default values cannot be omitted.</p>
-<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">test</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mf">1</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="mf">2</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="mf">3</span><span class="p">):</span>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">test</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="mi">3</span><span class="p">):</span>
 <span class="gp">... </span>  <span class="k">print</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">d</span>
 <span class="gp">...</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">test</span><span class="p">(</span><span class="mf">0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">test</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
 <span class="go">0 1 2 3</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">test</span><span class="p">(</span><span class="mf">0</span><span class="p">,</span> <span class="mf">42</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">test</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">42</span><span class="p">)</span>
 <span class="go">0 42 2 3</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">test</span><span class="p">(</span><span class="mf">1</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="mf">10</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">test</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
 <span class="go">1 1 10 3</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">test</span><span class="p">(</span><span class="mf">2</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="mf">100</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="mf">200</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">test</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="mi">200</span><span class="p">)</span>
 <span class="go">2 1 100 200</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">test</span><span class="p">(</span><span class="n">b</span><span class="o">=</span><span class="mf">0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">test</span><span class="p">(</span><span class="n">b</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 <span class="gt">Traceback (most recent call last):</span>
   File <span class="nb">&quot;&lt;stdin&gt;&quot;</span>, line <span class="m">1</span>, in <span class="n-Identifier">&lt;module&gt;</span>
 <span class="nc">TypeError</span>: <span class="n-Identifier">test() takes at least 1 non-keyword argument (0 given)</span>
@@ -843,11 +851,11 @@ the specified argument gets all the &quot;extra&quot; arguments as a <a class="r
 <div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">example</span><span class="p">(</span><span class="n">arg1</span><span class="p">,</span> <span class="n">arg2</span><span class="p">,</span> <span class="o">*</span><span class="n">rest</span><span class="p">):</span>
 <span class="gp">... </span>    <span class="k">print</span> <span class="n">arg1</span><span class="p">,</span> <span class="n">arg2</span><span class="p">,</span> <span class="n">rest</span>
 <span class="gp">...</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">example</span><span class="p">(</span><span class="mf">1</span><span class="p">,</span> <span class="mf">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">example</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
 <span class="go">1 2 ()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">example</span><span class="p">(</span><span class="mf">1</span><span class="p">,</span> <span class="mf">2</span><span class="p">,</span> <span class="mf">3</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">example</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
 <span class="go">1 2 (3,)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">example</span><span class="p">(</span><span class="mf">1</span><span class="p">,</span> <span class="mf">2</span><span class="p">,</span> <span class="mf">3</span><span class="p">,</span> <span class="mf">4</span><span class="p">,</span> <span class="mf">5</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">example</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
 <span class="go">1 2 (3, 4, 5)</span>
 </pre></div>
 </blockquote>
@@ -865,12 +873,12 @@ in detail:
 <li><p class="first">Functions can use <span class="code">return</span> statement to return values that can be
 assigned to variables or passed to other functions:</p>
 <div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">multiply_by_two</span><span class="p">(</span><span class="n">number</span><span class="p">):</span>
-<span class="gp">... </span>    <span class="k">return</span> <span class="n">number</span> <span class="o">*</span> <span class="mf">2</span>
+<span class="gp">... </span>    <span class="k">return</span> <span class="n">number</span> <span class="o">*</span> <span class="mi">2</span>
 <span class="gp">...</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">result</span> <span class="o">=</span> <span class="n">multiply_by_two</span><span class="p">(</span><span class="mf">10</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">result</span> <span class="o">=</span> <span class="n">multiply_by_two</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">result</span>
 <span class="go">20</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">result</span> <span class="o">=</span> <span class="n">multiply_by_two</span><span class="p">(</span><span class="n">multiply_by_two</span><span class="p">(</span><span class="mf">2</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">result</span> <span class="o">=</span> <span class="n">multiply_by_two</span><span class="p">(</span><span class="n">multiply_by_two</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">result</span>
 <span class="go">8</span>
 </pre></div>
@@ -924,14 +932,14 @@ by index.</p>
 <li><p class="first">They also have handy methods like <span class="code">append</span>, <span class="code">insert</span> and
 <span class="code">pop</span> to access or alter the list.</p>
 <div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;Some&#39;</span><span class="p">,</span> <span class="s">&#39;strings&#39;</span><span class="p">,</span> <span class="s">&#39;here&#39;</span><span class="p">]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="p">[</span><span class="mf">0</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 <span class="go">&#39;Some&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="p">[</span><span class="mf">1</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
 <span class="go">&#39;strings&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="p">[</span><span class="o">-</span><span class="mf">1</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
 <span class="go">&#39;here&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="p">[</span><span class="mf">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="mf">2</span><span class="p">]</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mf">42</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mi">42</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">x</span>
 <span class="go">[&#39;Some&#39;, &#39;strings&#39;, &#39;HERE&#39;, 42]</span>
 </pre></div>
@@ -942,12 +950,12 @@ by index.</p>
 <h2><a class="toc-backref" href="#id25">Tuples</a></h2>
 <ul>
 <li><p class="first">A tuple is a list like structure which you cannot alter after creating it.</p>
-<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">t</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1</span><span class="p">,</span> <span class="mf">2</span><span class="p">,</span> <span class="s">&#39;x&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="p">[</span><span class="mf">0</span><span class="p">]</span>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">t</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s">&#39;x&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 <span class="go">1</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="p">[</span><span class="o">-</span><span class="mf">1</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
 <span class="go">&#39;x&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="p">[</span><span class="mf">0</span><span class="p">]</span> <span class="o">=</span> <span class="s">&#39;new value&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="s">&#39;new value&#39;</span>
 <span class="gt">Traceback (most recent call last):</span>
   File <span class="nb">&quot;&lt;stdin&gt;&quot;</span>, line <span class="m">1</span>, in <span class="n-Identifier">&lt;module&gt;</span>
 <span class="nc">TypeError</span>: <span class="n-Identifier">&#39;tuple&#39; object does not support item assignment</span>
@@ -956,8 +964,8 @@ by index.</p>
 <li><p class="first">Notice that you must use a trailing comma to create a tuple with one
 element:</p>
 <div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">empty</span> <span class="o">=</span> <span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">one</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1</span><span class="p">,)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">two</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1</span><span class="p">,</span> <span class="mf">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">one</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="p">,)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">two</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
 </pre></div>
 </li>
 </ul>
@@ -967,7 +975,7 @@ element:</p>
 <ul>
 <li><p class="first">A dictionary is an unordered collection of key-value pairs. The same
 data structure is often called hashmap.</p>
-<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;x&#39;</span><span class="p">:</span> <span class="s">&#39;some value&#39;</span><span class="p">,</span> <span class="s">&#39;a&#39;</span><span class="p">:</span> <span class="mf">1</span><span class="p">,</span> <span class="s">&#39;b&#39;</span><span class="p">:</span> <span class="mf">2</span><span class="p">}</span>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;x&#39;</span><span class="p">:</span> <span class="s">&#39;some value&#39;</span><span class="p">,</span> <span class="s">&#39;a&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s">&#39;b&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">}</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="p">[</span><span class="s">&#39;a&#39;</span><span class="p">]</span>
 <span class="go">1</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">d</span><span class="p">[</span><span class="s">&#39;x&#39;</span><span class="p">]</span>
@@ -996,16 +1004,16 @@ programming languages.</p>
 <li><p class="first">Notice that no parentheses are needed around the expression as in
 Java or C.</p>
 <div class="highlight"><pre><span class="k">def</span> <span class="nf">is_positive</span><span class="p">(</span><span class="n">number</span><span class="p">):</span>
-    <span class="k">if</span> <span class="n">number</span> <span class="o">&gt;</span> <span class="mf">0</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">number</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">True</span>
     <span class="k">return</span> <span class="bp">False</span>
 
 <span class="k">def</span> <span class="nf">greet</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">time</span><span class="p">):</span>
-    <span class="k">if</span> <span class="mf">7</span> <span class="o">&lt;</span> <span class="n">time</span> <span class="o">&lt;</span> <span class="mf">12</span><span class="p">:</span>
+    <span class="k">if</span> <span class="mi">7</span> <span class="o">&lt;</span> <span class="n">time</span> <span class="o">&lt;</span> <span class="mi">12</span><span class="p">:</span>
         <span class="k">print</span> <span class="s">&#39;Good morning </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">name</span>
-    <span class="k">elif</span> <span class="n">time</span> <span class="o">&lt;</span> <span class="mf">18</span><span class="p">:</span>
+    <span class="k">elif</span> <span class="n">time</span> <span class="o">&lt;</span> <span class="mi">18</span><span class="p">:</span>
         <span class="k">print</span> <span class="s">&#39;Good afternoon </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">name</span>
-    <span class="k">elif</span> <span class="n">time</span> <span class="o">&lt;</span> <span class="mf">23</span><span class="p">:</span>
+    <span class="k">elif</span> <span class="n">time</span> <span class="o">&lt;</span> <span class="mi">23</span><span class="p">:</span>
         <span class="k">print</span> <span class="s">&#39;Good night </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">name</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">print</span> <span class="s">&#39;</span><span class="si">%s</span><span class="s">, you should be sleeping!&#39;</span> <span class="o">%</span> <span class="n">name</span>
@@ -1023,7 +1031,7 @@ a list. This is probably the loop you are going to use most often.</p>
         <span class="k">print</span> <span class="s">&#39;Hello </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">name</span>
 
 <span class="k">def</span> <span class="nf">count_up</span><span class="p">(</span><span class="n">limit</span><span class="p">):</span>
-    <span class="k">for</span> <span class="n">num</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mf">1</span><span class="p">,</span> <span class="n">limit</span><span class="o">+</span><span class="mf">1</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">num</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">limit</span><span class="o">+</span><span class="mi">1</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">num</span> <span class="o">==</span> <span class="n">limit</span><span class="p">:</span>
             <span class="k">print</span> <span class="s">&#39;bye!&#39;</span>
         <span class="k">else</span><span class="p">:</span>
@@ -1035,7 +1043,7 @@ when waiting some event to occur.</p>
 <div class="highlight"><pre><span class="k">def</span> <span class="nf">wait_until_message_received</span><span class="p">:</span>
     <span class="n">msg</span> <span class="o">=</span> <span class="n">try_to_receive_message</span><span class="p">()</span>
     <span class="k">while</span> <span class="n">msg</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
-        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">5</span><span class="p">)</span>
+        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
         <span class="n">msg</span> <span class="o">=</span> <span class="n">try_to_receive_message</span><span class="p">()</span>
     <span class="k">return</span> <span class="n">msg</span>
 </pre></div>
@@ -1057,11 +1065,11 @@ end the current iteration or exit the loop altogether.</p>
 <ul>
 <li><p class="first">Quite often <span class="code">for</span> loops can be replaced with even more concise list
 comprehensions or generator expressions:</p>
-<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">numbers</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1</span><span class="p">,</span> <span class="o">-</span><span class="mf">5</span><span class="p">,</span> <span class="mf">4</span><span class="p">,</span> <span class="o">-</span><span class="mf">32</span><span class="p">,</span> <span class="mf">0</span><span class="p">,</span> <span class="mf">42</span><span class="p">]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">positive</span> <span class="o">=</span> <span class="p">[</span> <span class="n">num</span> <span class="k">for</span> <span class="n">num</span> <span class="ow">in</span> <span class="n">numbers</span> <span class="k">if</span> <span class="n">num</span> <span class="o">&gt;</span> <span class="mf">0</span> <span class="p">]</span>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">numbers</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">5</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="o">-</span><span class="mi">32</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">42</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">positive</span> <span class="o">=</span> <span class="p">[</span> <span class="n">num</span> <span class="k">for</span> <span class="n">num</span> <span class="ow">in</span> <span class="n">numbers</span> <span class="k">if</span> <span class="n">num</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="p">]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">positive</span>
 <span class="go">[1, 4, 42]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">sum</span><span class="p">(</span><span class="n">num</span> <span class="o">*</span> <span class="mf">2</span> <span class="k">for</span> <span class="n">num</span> <span class="ow">in</span> <span class="n">positive</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">sum</span><span class="p">(</span><span class="n">num</span> <span class="o">*</span> <span class="mi">2</span> <span class="k">for</span> <span class="n">num</span> <span class="ow">in</span> <span class="n">positive</span><span class="p">)</span>
 <span class="go">94</span>
 </pre></div>
 </li>
@@ -1101,7 +1109,7 @@ have already created at least <span class="code">hello</span> module.</p>
     <span class="n">hello</span><span class="p">()</span>
 </pre></div>
 <p>then we can use it in the interpreter (or from other modules) like:</p>
-<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">import</span> <span class="nn">example</span>
+<div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">example</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">example</span><span class="o">.</span><span class="n">hello</span><span class="p">(</span><span class="s">&quot;Tellus&quot;</span><span class="p">)</span>
 <span class="go">Hello, Tellus!</span>
 </pre></div>
@@ -1293,7 +1301,7 @@ run command <span class="cli">pybot example_tests.tsv</span>.</p>
 <span class="sd">    The result is always a floating point number.</span>
 <span class="sd">    This keyword fails if the given `number` cannot be converted to number.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">number</span><span class="p">)</span> <span class="o">*</span> <span class="mf">2</span>
+    <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">number</span><span class="p">)</span> <span class="o">*</span> <span class="mi">2</span>
 
 <span class="k">def</span> <span class="nf">numbers_should_be_equal</span><span class="p">(</span><span class="n">first</span><span class="p">,</span> <span class="n">second</span><span class="p">):</span>
     <span class="k">print</span> <span class="s">&#39;*DEBUG* Got arguments </span><span class="si">%s</span><span class="s"> and </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">first</span><span class="p">,</span> <span class="n">second</span><span class="p">)</span>
@@ -1402,7 +1410,7 @@ run command <span class="cli">pybot example_tests.tsv</span>.</p>
 <div class="footer">
 <hr class="footer" />
 <p>Generated by <a class="reference external" href="http://docutils.sourceforge.net/rst.html">reStructuredText</a>. Syntax highlighting by <a class="reference external" href="http://pygments.org/">Pygments</a>.</p>
-<p>Generated on: 2009-10-07 13:04 UTC.
+<p>Generated on: 2010-03-10 09:49 UTC.
 </p>
 
 </div>
