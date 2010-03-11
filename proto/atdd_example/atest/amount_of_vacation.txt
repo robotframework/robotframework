@@ -1,0 +1,20 @@
+*** Test Cases ***
+Employee have worked less than a year before the holiday credit year starts
+  Given employee starts working 1.1.2009
+  When she works 14 or more days per month
+  Then she has 6 day vacation on the holiday credit year 2010 (period from 1 April 2010 to 31 March 2011)
+
+Employee have worked exactly a year before the holiday credit year starts
+  When employee starts 1.4.2009 then she have 24 day vacation on year 2010
+
+Employee have worked day over a year before the holiday credit year starts
+  When employee starts 31.3.2009 then she have 30 day vacation on year 2010
+
+Employee have less than 14 days during the first month of employment
+  When employee starts 10.2.2010 then she have 2 day vacation on year 2010
+
+Employee have 14 days during the first month of employment
+  When employee starts 9.2.2010 then she have 4 day vacation on year 2010
+
+Employee have worked years before the holiday credit year starts
+  When employee starts 21.1.2000 then she have 30 day vacation on year 2010
