@@ -80,9 +80,12 @@ class HtmlReader(HTMLParser.HTMLParser):
         if extra_entitydefs.has_key(name):
             return extra_entitydefs[name]
         try:
-            return entitydefs[name].decode('ISO-8859-1')
+            value = entitydefs[name]
         except KeyError:
             return '&'+name+';'
+        if value.startswith('&#'):
+            return unichr(int(value[2:-1]))
+        return value.decode('ISO-8859-1')
 
     def handle_charref(self, number):
         value = self._handle_charref(number)

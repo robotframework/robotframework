@@ -131,6 +131,8 @@ class TestEntityAndCharRefs(unittest.TestCase):
                           ('Uuml', u'\u00DC'),
                           ('Aring', u'\u00C5'),
                           ('Ntilde', u'\u00D1'),
+                          ('nabla', u'\u2207'),
+                          ('ldquo', u'\u201c'),
                           ('invalid', '&invalid;') ]:
             self.reader.handle_entityref(inp)
             msg = '%s: %r != %r' % (inp,  self.response, exp)
