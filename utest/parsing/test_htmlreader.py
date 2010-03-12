@@ -11,11 +11,11 @@ ROW_TEMPLATE = '<tr><td>%s</td><td>%s</td><td>%s</td></tr>'
 
 
 class TestDataMock:
-    
+
     def __init__(self):
         self.tables = {}
         self.current = None
-    
+
     def start_table(self, name):
         if name in VALID_TABLES:
             self.tables[name] = []
@@ -24,22 +24,22 @@ class TestDataMock:
         else:
             self.current = None
             return False
-    
+
     def add_row(self, cells):
         self.tables[self.current].append(cells)
-    
+
 
 class TestHtmlReader(unittest.TestCase):
 
     def setUp(self):
         self.reader = HtmlReader()
         self.reader.data = TestDataMock()
-        
+
     def test_initial_state(self):
         self.reader.state = self.reader.IGNORE
         self.reader.feed('<table>')
         assert_equals(self.reader.state, self.reader.INITIAL)
-        self.reader.feed('</table>')        
+        self.reader.feed('</table>')
         assert_equals(self.reader.state, self.reader.IGNORE)
 
     def test_start_valid_table(self):
@@ -48,7 +48,7 @@ class TestHtmlReader(unittest.TestCase):
             self.reader.feed(ROW_TEMPLATE % (name, 'Value 1', 'Value2'))
             assert_equals(self.reader.state, self.reader.PROCESS)
             assert_equals(self.reader.data.current, name)
-            self.reader.feed('</table>')        
+            self.reader.feed('</table>')
             assert_equals(self.reader.state, self.reader.IGNORE)
 
     def test_process_invalid_table(self):
@@ -60,8 +60,8 @@ class TestHtmlReader(unittest.TestCase):
             self.reader.feed(ROW_TEMPLATE % ('This', 'row', 'is ignored'))
             assert_equals(self.reader.state, self.reader.IGNORE)
             assert_equals(len(self.reader.data.tables.values()), 0)
-            self.reader.feed('</table>')        
-            assert_equals(self.reader.state, self.reader.IGNORE)        
+            self.reader.feed('</table>')
+            assert_equals(self.reader.state, self.reader.IGNORE)
 
     def test_br(self):
         inp = ('x<br>y', '1<br />2', '<br><br>')
@@ -72,7 +72,7 @@ class TestHtmlReader(unittest.TestCase):
             self.reader.feed(ROW_TEMPLATE % inp)
             self.reader.feed('</table>')
             assert_equals(self.reader.data.tables[name], [ exp ])
-            
+
     def test_processing(self):
         self._row_processing(ROW_TEMPLATE)
 
@@ -93,13 +93,13 @@ class TestHtmlReader(unittest.TestCase):
         for name in VALID_TABLES:
             self.reader.feed('<table>')
             self.reader.feed(row_template % (name, 'Value 1', 'Value2'))
-            row_data = [ ['Just', 'some', 'data'], 
+            row_data = [ ['Just', 'some', 'data'],
                          ['here', '', 'for'],
                          ['', 'these', 'rows'] ]
             for data in row_data:
                 self.reader.feed(row_template % tuple(data))
             assert_equals(self.reader.state, self.reader.PROCESS)
-            self.reader.feed('</table>')        
+            self.reader.feed('</table>')
             assert_equals(self.reader.state, self.reader.IGNORE)
             assert_equals(self.reader.data.tables[name], row_data)
 
@@ -112,7 +112,7 @@ class TestEntityAndCharRefs(unittest.TestCase):
 
     def _handle_response(self, value, decode):
         self.response = value
-            
+
     def test_handle_entiryrefs(self):
         for inp, exp in [ ('nbsp', ' '),
                           ('apos', "'"),
@@ -146,7 +146,7 @@ class TestEntityAndCharRefs(unittest.TestCase):
 
 
 class TestEncoding(unittest.TestCase):
-    
+
     def test_default_encoding(self):
         assert_equals(HtmlReader()._encoding, 'ISO-8859-1')
 
@@ -156,7 +156,7 @@ class TestEncoding(unittest.TestCase):
         assert_equals(reader._encoding, 'utf-8')
         reader.feed('<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">')
         assert_equals(reader._encoding, 'UTF-8')
-        
+
     def test_valid_http_equiv_is_required(self):
         reader = HtmlReader()
         reader.feed('<meta content="text/html; charset=utf-8" />')
@@ -180,7 +180,7 @@ class TestEncoding(unittest.TestCase):
         assert_equals(reader.current_cell, [u'\xe4', u'iti'])
         reader.feed('</tr>')
         assert_equals(reader.data.tables['Setting'][0], [u'\xe4iti'])
-        
-        
+
+
 if __name__ == '__main__':
     unittest.main()

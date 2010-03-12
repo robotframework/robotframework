@@ -27,7 +27,7 @@ class HtmlReader(HTMLParser.HTMLParser):
     IGNORE = 0
     INITIAL = 1
     PROCESS = 2
-    
+
     def __init__(self):
         HTMLParser.HTMLParser.__init__(self)
         self._encoding = 'ISO-8859-1'
@@ -41,7 +41,7 @@ class HtmlReader(HTMLParser.HTMLParser):
                            'th_end'      : self.td_end,
                            'br_start'    : self.br_start,
                            'meta_start'  : self.meta_start }
-        
+
     def read(self, htmlfile, rawdata):
         self.data = rawdata
         self.state = self.IGNORE
@@ -57,12 +57,12 @@ class HtmlReader(HTMLParser.HTMLParser):
 
     def handle_starttag(self, tag, attrs):
         handler = self._handlers.get(tag+'_start')
-        if handler is not None:            
+        if handler is not None:
             handler(attrs)
 
     def handle_endtag(self, tag):
         handler = self._handlers.get(tag+'_end')
-        if handler is not None:            
+        if handler is not None:
             handler()
 
     def handle_data(self, data, decode=True):
@@ -71,7 +71,7 @@ class HtmlReader(HTMLParser.HTMLParser):
         if decode:
             data = data.decode(self._encoding)
         self.current_cell.append(data)
-            
+
     def handle_entityref(self, name):
         value = self._handle_entityref(name)
         self.handle_data(value, decode=False)
@@ -98,7 +98,7 @@ class HtmlReader(HTMLParser.HTMLParser):
         encoding = self._get_encoding_from_pi(data)
         if encoding:
             self._encoding = encoding
-            
+
     def unknown_decl(self, data):
         # Ignore everything even if it's invalid. This kind of stuff comes
         # at least from MS Excel
@@ -108,7 +108,7 @@ class HtmlReader(HTMLParser.HTMLParser):
         self.state = self.INITIAL
         self.current_row = None
         self.current_cell = None
-        
+
     def table_end(self):
         if self.current_row is not None:
             self.tr_end()
@@ -118,7 +118,7 @@ class HtmlReader(HTMLParser.HTMLParser):
         if self.current_row is not None:
             self.tr_end()
         self.current_row = []
-        
+
     def tr_end(self):
         if self.current_row is None:
             return
@@ -149,7 +149,7 @@ class HtmlReader(HTMLParser.HTMLParser):
             cell = ''.join(self.current_cell)
             self.current_row.append(cell)
         self.current_cell = None
-        
+
     def br_start(self, attrs=None):
         if self.current_cell is not None and self.state != self.IGNORE:
             self.current_cell.append('\n')
@@ -172,7 +172,7 @@ class HtmlReader(HTMLParser.HTMLParser):
                     if token.lower().startswith('charset='):
                         encoding = token[8:]
         return valid_http_equiv and encoding or None
-        
+
     def _get_encoding_from_pi(self, data):
         data = data.strip()
         if not data.lower().startswith('xml '):
@@ -188,7 +188,7 @@ class HtmlReader(HTMLParser.HTMLParser):
         return None
 
 
-# Workaround for following bug in Python 2.6: http://bugs.python.org/issue3932 
+# Workaround for following bug in Python 2.6: http://bugs.python.org/issue3932
 if utils.py_version > (2, 5):
     def unescape_from_py25(self, s):
         if '&' not in s:
