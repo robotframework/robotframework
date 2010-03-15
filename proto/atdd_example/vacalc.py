@@ -26,9 +26,7 @@ class EmployeeStore(object):
         return employees
 
     def get_employee(self, name):
-        for row in csv.reader(open(self._db_file)):
-            if row[0] == name:
-                return Employee(row[0], row[1])
+        return self._employees[name]
 
     def add_employee(self, name, startdate):
         if name in self._employees:
