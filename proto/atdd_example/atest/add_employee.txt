@@ -15,7 +15,7 @@ Add already existing employee
     Given no users exist in the system
     And employee JR is added with start date 2009-1-1
     When employee JR is added with start date 2010-1-1
-    Then error message "Employee 'JR' already exists in the system with start date 2009-1-1" is shown
+    Then error message "Employee 'JR' already exists in the system" is shown
 
 *** Keywords ***
 Given no users exist in the system
@@ -29,6 +29,9 @@ Then message "${msg}" is shown
 
 User queries info about ${name}
     Get User  ${name}
+
+Then error message "${msg}" is shown
+    Status Should Be  ${msg}
 
 
 *** Settings ***
