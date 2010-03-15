@@ -1,3 +1,5 @@
+*** Test Cases ***
+
 Add employee
   Given no users exists in the system
   When employee Janne H is added with start date 1.1.2010
