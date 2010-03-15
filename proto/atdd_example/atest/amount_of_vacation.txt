@@ -21,9 +21,9 @@ Employee has worked years before the holiday credit year starts
 
 *** Keywords ***
 When employee starts on ${startdate} then she has ${exp_vacation} day vacation on year ${year}
-  ${vacation} =  Count Holiday  ${startdate}  ${year}
+  ${vacation} =  Count Vacation  ${startdate}  ${year}
   Should Be Equal As Integers  ${vacation}  ${exp_vacation}
 
 *** Settings ***
-Library  holidaycalc.HolidayCalculatorLibrary
+Library  vacalc.VacationCalculatorLibrary
 
