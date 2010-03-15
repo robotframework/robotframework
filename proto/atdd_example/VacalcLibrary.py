@@ -20,6 +20,9 @@ class VacalcLibrary(object):
     def add_user(self, name, startdate):
         self._run('add_user', name, startdate)
 
+    def get_user(self, name):
+        self._run('get_user', name)
+
     def _run(self, command, *args):
         cmd = [sys.executable, 'vacalc.py', command] + list(args)
         print subprocess.list2cmdline(cmd)

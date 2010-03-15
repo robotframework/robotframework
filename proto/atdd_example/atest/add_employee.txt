@@ -9,7 +9,7 @@ Added Employee is done persistently
     Given no users exist in the system
     And employee Pekka K is added with start date 2009-1-1
     When user queries info about Pekka K
-    Then message "Pekka K: start date 2009-1-1" is shown
+    Then message "Pekka K: start date 2009-01-01" is shown
 
 Add already existing employee
     Given no users exist in the system
@@ -26,6 +26,10 @@ Employee ${name} is added with start date ${date}
 
 Then message "${msg}" is shown
     Status Should Be  ${msg}
+
+User queries info about ${name}
+    Get User  ${name}
+
 
 *** Settings ***
 Resource  resource.txt
