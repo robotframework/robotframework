@@ -39,6 +39,8 @@ class EmployeeStore(object):
         return employee
 
     def _serialize(self, employee):
+        if not self._db_file:
+            return
         with open(self._db_file, 'a') as db:
             writer = csv.writer(db, lineterminator='\n')
             writer.writerow([employee.name, employee.startdate.isoformat()])
