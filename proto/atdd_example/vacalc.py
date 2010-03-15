@@ -58,6 +58,10 @@ class VacationCalculator(object):
         user = self._userstore.add_user(name, startdate)
         return "Successfully added user '%s'." % user.name
 
+    def get_user(self, name):
+        user = self._userstore.get_user(name)
+        return '%s: start date %s' % (user.name, user.startdate.isoformat())
+
 
 class User(object):
 
