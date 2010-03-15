@@ -26,7 +26,10 @@ class EmployeeStore(object):
         return employees
 
     def get_employee(self, name):
-        return self._employees[name]
+        try:
+            return self._employees[name]
+        except KeyError:
+            raise VacalcError("Employee '%s' not found" % name)
 
     def add_employee(self, name, startdate):
         if name in self._employees:
