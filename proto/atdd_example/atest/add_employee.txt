@@ -1,0 +1,16 @@
+Add employee
+  Given no users exists in the system
+  When employee Janne H is added with start date 1.1.2010
+  Then message "Succesfully added user 'Janne H' with start date 1.1.2010" is shown
+
+Added Employee is done persistently
+  Given no users exists in the system
+  And employee Pekka L is added with start date 1.1.2009
+  When user queries info about Pekka L
+  Then message "Pekka L: start date 1.1.2009" is shown
+
+Add already existing employee
+  Given no users exists in the system
+  And employee JR is added with start date 1.1.2009
+  When employee JR is added with start date 1.1.2010
+  Then error message "Employee 'JR' already exists in the system with start date 1.1.2009" is shown
