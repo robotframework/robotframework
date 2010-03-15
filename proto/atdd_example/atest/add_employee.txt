@@ -1,18 +1,31 @@
 *** Test Cases ***
 
 Add employee
-  Given no users exists in the system
-  When employee Janne H is added with start date 1.1.2010
-  Then message "Succesfully added user 'Janne H' with start date 1.1.2010" is shown
+    Given no users exist in the system
+    When employee Janne H is added with start date 2010-1-1
+    Then message "Successfully added user 'Janne H'." is shown
 
 Added Employee is done persistently
-  Given no users exists in the system
-  And employee Pekka L is added with start date 1.1.2009
-  When user queries info about Pekka L
-  Then message "Pekka L: start date 1.1.2009" is shown
+    Given no users exist in the system
+    And employee Pekka K is added with start date 2009-1-1
+    When user queries info about Pekka K
+    Then message "Pekka K: start date 2009-1-1" is shown
 
 Add already existing employee
-  Given no users exists in the system
-  And employee JR is added with start date 1.1.2009
-  When employee JR is added with start date 1.1.2010
-  Then error message "Employee 'JR' already exists in the system with start date 1.1.2009" is shown
+    Given no users exist in the system
+    And employee JR is added with start date 2009-1-1
+    When employee JR is added with start date 2010-1-1
+    Then error message "Employee 'JR' already exists in the system with start date 2009-1-1" is shown
+
+*** Keywords ***
+Given no users exist in the system
+   Clear Database
+
+Employee ${name} is added with start date ${date}
+    Add User  ${name}  ${date}
+
+Then message "${msg}" is shown
+    Status Should Be  ${msg}
+
+*** Settings ***
+Resource  resource.txt

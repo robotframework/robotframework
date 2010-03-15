@@ -1,23 +1,23 @@
 *** Test Cases ***
 Employee has worked less than a year before the holiday credit year starts
-  Given employee starts working 1.1.2010
+  Given employee starts working 2010-1-1
   When she works 14 or more days per month
   Then she has 6 day vacation on the holiday credit year 2010 (period from 1 April 2010 to 31 March 2011)
 
 Employee has worked exactly a year before the holiday credit year starts
-  When employee starts on 1.4.2009 then she has 24 day vacation on year 2010
+  When employee starts on 2009-4-1 then she has 24 day vacation on year 2010
 
 Employee has worked day over a year before the holiday credit year starts
-  When employee starts on 31.3.2009 then she has 30 day vacation on year 2010
+  When employee starts on 2009-3-31 then she has 30 day vacation on year 2010
 
 Employee has less than 14 days during the first month of employment
-  When employee starts on 10.2.2010 then she has 2 day vacation on year 2010
+  When employee starts on 2010-2-10 then she has 2 day vacation on year 2010
 
 Employee has 14 days during the first month of employment
-  When employee starts on 9.2.2010 then she has 4 day vacation on year 2010
+  When employee starts on 2010-2-9 then she has 4 day vacation on year 2010
 
 Employee has worked years before the holiday credit year starts
-  When employee starts on 21.1.2000 then she has 30 day vacation on year 2010
+  When employee starts on 2000-1-21 then she has 30 day vacation on year 2010
 
 *** Keywords ***
 When employee starts on ${startdate} then she has ${exp_vacation} day vacation on year ${year}
@@ -25,5 +25,5 @@ When employee starts on ${startdate} then she has ${exp_vacation} day vacation o
   Should Be Equal As Integers  ${vacation}  ${exp_vacation}
 
 *** Settings ***
-Library  vacalc.VacationCalculatorLibrary
+Resource  resource.txt
 
