@@ -2,7 +2,7 @@ import os
 import sys
 import subprocess
 
-from vacalc import User, UserStore
+from vacalc import Employee, EmployeeStore
 
 
 class VacalcLibrary(object):
@@ -11,17 +11,17 @@ class VacalcLibrary(object):
         self._db_file = db_file
 
     def count_vacation(self, startdate, year):
-        return User('Foo', startdate).count_vacation(year)
+        return Employee('Foo', startdate).count_vacation(year)
 
     def clear_database(self):
         if os.path.isfile(self._db_file):
             os.remove(self._db_file)
 
-    def add_user(self, name, startdate):
-        self._run('add_user', name, startdate)
+    def add_employee(self, name, startdate):
+        self._run('add_employee', name, startdate)
 
-    def get_user(self, name):
-        self._run('get_user', name)
+    def get_employee(self, name):
+        self._run('get_employee', name)
 
     def _run(self, command, *args):
         cmd = [sys.executable, 'vacalc.py', command] + list(args)

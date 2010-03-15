@@ -3,7 +3,7 @@
 Add employee
     Given no users exist in the system
     When employee Janne H is added with start date 2010-1-1
-    Then message "Successfully added user 'Janne H'." is shown
+    Then message "Successfully added employee 'Janne H'." is shown
 
 Added Employee is done persistently
     Given no users exist in the system
@@ -22,13 +22,13 @@ Given no users exist in the system
    Clear Database
 
 Employee ${name} is added with start date ${date}
-    Add User  ${name}  ${date}
+    Add Employee  ${name}  ${date}
 
 Then message "${msg}" is shown
     Status Should Be  ${msg}
 
 User queries info about ${name}
-    Get User  ${name}
+    Get Employee  ${name}
 
 Then error message "${msg}" is shown
     Status Should Be  ${msg}
