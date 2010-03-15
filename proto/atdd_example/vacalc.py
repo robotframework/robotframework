@@ -6,7 +6,6 @@ import datetime
 
 
 class VacalcError(Exception): pass
-class DuplicateUser(VacalcError): pass
 
 
 class UserStore(object):
@@ -33,7 +32,7 @@ class UserStore(object):
 
     def add_user(self, name, startdate):
         if name in self._users:
-            raise DuplicateUser(name)
+            raise VacalcError("Employee '%s' already exists in the system" % name)
         user = User(name, startdate)
         self._users[user.name] = user
         self._serialize(user)
