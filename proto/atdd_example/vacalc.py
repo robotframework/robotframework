@@ -61,6 +61,58 @@ class Employee(object):
         return datetime.date(int(year), int(month), int(day))
 
 
+class Vacation(object):
+    _infininty = 13
+
+    def __init__(self, emp_startdate, vacation_year):
+        self.days = self._calculate_vacation(emp_startdate, vacation_year)
+
+    def _calculate_vacation(self, start, year):
+        months = self._calc_months(start, year)
+        if months == self._infininty:
+            return 30
+        return months * 2
+
+    def _calc_months(self, start, year):
+        if self._has_worked_longer_than_year(start, year):
+            return self._infininty
+        if self._started_after_holiday_credit_year_ended(start, year):
+            return 0
+        return self._count_working_months(start)
+
+    def _has_worked_longer_than_year(self, start, year):
+        return year-start.year > 1 or (year-start.year == 1 and start.month <= 3)
+
+    def _started_after_holiday_credit_year_ended(self, start, year):
+        return year == start.year and start.month > 3
+
+    def _count_working_months(self, start):
+        months = 4 - start.month
+        if months <= 0:
+            months += 12
+        if self._first_month_has_too_few_working_days(start):
+            months -= 1
+        return months
+
+    def _first_month_has_too_few_working_days(self, start):
+        days = 0
+        date = start
+        while date:
+            if self._is_working_day(date):
+                days += 1
+            date = self._next_date(date)
+        return days < 14
+
+    def _is_working_day(self, date):
+        return date.weekday() < 5
+
+    def _next_date(self, date):
+        try:
+            return date.replace(day=date.day+1)
+        except ValueError:
+            return None
+
+
 class VacationCalculator(object):
 
     def __init__(self, employeestore):

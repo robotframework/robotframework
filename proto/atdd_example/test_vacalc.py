@@ -1,7 +1,7 @@
 import datetime
 import unittest
 
-from vacalc import Employee, EmployeeStore, VacalcError
+from vacalc import Employee, EmployeeStore, VacalcError, Vacation
 
 
 class TestEmployee(unittest.TestCase):
@@ -10,6 +10,12 @@ class TestEmployee(unittest.TestCase):
         employee = Employee('Juan von Rantanen', '2010-3-15')
         self.assertEquals(employee.name, 'Juan von Rantanen')
         self.assertEquals(employee._startdate, datetime.date(2010, 3, 15))
+
+
+class TestVacation(unittest.TestCase):
+
+    def test_creating_vacation(self):
+        vacation = Vacation(datetime.date(2010, 3, 16), 2010)
 
 
 class TestEmployeeStore(unittest.TestCase):
