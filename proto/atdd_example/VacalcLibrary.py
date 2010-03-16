@@ -1,8 +1,9 @@
 import os
 import sys
 import subprocess
+import datetime
 
-from vacalc import Employee, EmployeeStore
+from vacalc import Employee, EmployeeStore, Vacation
 
 
 class VacalcLibrary(object):
@@ -11,7 +12,8 @@ class VacalcLibrary(object):
         self._db_file = db_file
 
     def count_vacation(self, startdate, year):
-        return Employee('Foo', startdate).count_vacation(year)
+        resource = Employee('Test Resource', startdate)
+        return Vacation(resource._startdate, int(year)).days
 
     def clear_database(self):
         if os.path.isfile(self._db_file):
