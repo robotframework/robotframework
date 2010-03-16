@@ -3,6 +3,7 @@ import os
 import sys
 import csv
 import datetime
+import tempfile
 
 
 class VacalcError(Exception): pass
@@ -10,10 +11,10 @@ class VacalcError(Exception): pass
 
 class EmployeeStore(object):
 
-    def __init__(self, db_file='db.csv'):
+    def __init__(self, db_file):
         self._db_file = db_file
-        if db_file and os.path.isfile(db_file):
-            self._employees = self._read_employees(db_file)
+        if self._db_file and os.path.isfile(self._db_file):
+            self._employees = self._read_employees(self._db_file)
         else:
             self._employees = {}
 
@@ -50,11 +51,10 @@ class EmployeeStore(object):
 
 
 class Employee(object):
-    startdate = property(lambda self: self._startdate.isoformat())
 
     def __init__(self, name, startdate):
         self.name = name
-        self._startdate = self._parse_date(startdate)
+        self.startdate = self._parse_date(startdate)
 
     def _parse_date(self, datestring):
         year, month, day = datestring.split('-')
@@ -62,32 +62,32 @@ class Employee(object):
 
 
 class Vacation(object):
-    _infininty = 13
+    max_vacation = 12 * 2.5
+    no_vacation = 0
+    vacation_per_month = 2
+    credit_start_month = 4
+    work_days_required= 14
 
-    def __init__(self, emp_startdate, vacation_year):
-        self.days = self._calculate_vacation(emp_startdate, vacation_year)
+    def __init__(self, empstartdate, vacation_year):
+        self.days = self._calculate_vacation(empstartdate, vacation_year)
 
     def _calculate_vacation(self, start, year):
-        months = self._calc_months(start, year)
-        if months == self._infininty:
-            return 30
-        return months * 2
-
-    def _calc_months(self, start, year):
         if self._has_worked_longer_than_year(start, year):
-            return self._infininty
+            return self.max_vacation
         if self._started_after_holiday_credit_year_ended(start, year):
-            return 0
-        return self._count_working_months(start)
+            return self.no_vacation
+        return self._count_working_months(start) * self.vacation_per_month
 
     def _has_worked_longer_than_year(self, start, year):
-        return year-start.year > 1 or (year-start.year == 1 and start.month <= 3)
+        return year-start.year > 1 or \
+                (year-start.year == 1 and start.month < self.credit_start_month)
 
     def _started_after_holiday_credit_year_ended(self, start, year):
-        return year == start.year and start.month > 3 or start.year - year > 0
+        return start.year-year > 0 or \
+                (year == start.year and start.month >= self.credit_start_month)
 
     def _count_working_months(self, start):
-        months = 4 - start.month
+        months = self.credit_start_month - start.month
         if months <= 0:
             months += 12
         if self._first_month_has_too_few_working_days(start):
@@ -101,7 +101,7 @@ class Vacation(object):
             if self._is_working_day(date):
                 days += 1
             date = self._next_date(date)
-        return days < 14
+        return days < self.work_days_required
 
     def _is_working_day(self, date):
         return date.weekday() < 5
@@ -120,8 +120,9 @@ class VacationCalculator(object):
 
     def show_vacation(self, name, year):
         employee = self._employeestore.get_employee(name)
-        vacation = Vacation(employee._startdate, int(year))
-        return "%s has %d vacation days in year %s" % (name, vacation.days, year)
+        vacation = Vacation(employee.startdate, int(year))
+        return "%s has %d vacation days in year %s" \
+                % (name, vacation.days, year)
 
     def add_employee(self, name, startdate):
         employee = Employee(name, startdate)
@@ -134,8 +135,11 @@ class VacationCalculator(object):
 
 
 def main(args):
+    db_file = os.environ.get('VACALC_DB', os.path.join(tempfile.gettempdir(),
+                                                        'vacalcdb.csv'))
     try:
-        return getattr(VacationCalculator(EmployeeStore()), args[0])(*args[1:])
+        cmd = getattr(VacationCalculator(EmployeeStore(db_file)), args[0])
+        return cmd(*args[1:])
     except (AttributeError, TypeError):
         raise VacalcError('invalid command or arguments')
 
