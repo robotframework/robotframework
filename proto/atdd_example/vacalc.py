@@ -47,6 +47,17 @@ class EmployeeStore(object):
             writer.writerow([employee.name, employee.startdate.isoformat()])
 
 
+class Employee(object):
+
+    def __init__(self, name, startdate):
+        self.name = name
+        self.startdate = self._parse_date(startdate)
+
+    def _parse_date(self, datestring):
+        year, month, day = datestring.split('-')
+        return datetime.date(int(year), int(month), int(day))
+
+
 class VacationCalculator(object):
 
     def __init__(self, employeestore):
@@ -63,20 +74,6 @@ class VacationCalculator(object):
     def get_employee(self, name):
         employee = self._employeestore.get_employee(name)
         return '%s: start date %s' % (employee.name, employee.startdate.isoformat())
-
-
-class Employee(object):
-
-    def __init__(self, name, startdate):
-        self.name = name
-        self.startdate = self._parse_date(startdate)
-
-    def _parse_date(self, datestring):
-        year, month, day = datestring.split('-')
-        return datetime.date(int(year), int(month), int(day))
-
-    def count_vacation(self, year):
-        fail
 
 
 def main(args):
