@@ -84,7 +84,7 @@ class Vacation(object):
         return year-start.year > 1 or (year-start.year == 1 and start.month <= 3)
 
     def _started_after_holiday_credit_year_ended(self, start, year):
-        return year == start.year and start.month > 3
+        return year == start.year and start.month > 3 or start.year - year > 0
 
     def _count_working_months(self, start):
         months = 4 - start.month
