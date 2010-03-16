@@ -9,7 +9,7 @@ class TestEmployee(unittest.TestCase):
     def test_creating_employee(self):
         employee = Employee('Juan von Rantanen', '2010-3-15')
         self.assertEquals(employee.name, 'Juan von Rantanen')
-        self.assertEquals(employee.startdate, datetime.date(2010, 3, 15))
+        self.assertEquals(employee._startdate, datetime.date(2010, 3, 15))
 
 
 class TestEmployeeStore(unittest.TestCase):

@@ -46,14 +46,15 @@ class EmployeeStore(object):
             return
         with open(self._db_file, 'a') as db:
             writer = csv.writer(db, lineterminator='\n')
-            writer.writerow([employee.name, employee.startdate.isoformat()])
+            writer.writerow([employee.name, employee.startdate])
 
 
 class Employee(object):
+    startdate = property(lambda self: self._startdate.isoformat())
 
     def __init__(self, name, startdate):
         self.name = name
-        self.startdate = self._parse_date(startdate)
+        self._startdate = self._parse_date(startdate)
 
     def _parse_date(self, datestring):
         year, month, day = datestring.split('-')
@@ -76,7 +77,7 @@ class VacationCalculator(object):
 
     def get_employee(self, name):
         employee = self._employeestore.get_employee(name)
-        return '%s: start date %s' % (employee.name, employee.startdate.isoformat())
+        return '%s: start date %s' % (employee.name, employee.startdate)
 
 
 def main(args):
