@@ -25,9 +25,8 @@ class VacalcLibrary(object):
     def get_employee(self, name):
         self._run('get_employee', name)
 
-    def get_vacation(self, name, year):
-        self._run('get_vacation', name, year)
-
+    def show_vacation(self, name, year):
+        self._run('show_vacation', name, year)
 
     def _run(self, command, *args):
         cmd = [sys.executable, 'vacalc.py', command] + list(args)
