@@ -17,22 +17,7 @@ Add already existing employee
     When employee JR is added with start date 2010-1-1
     Then error message "Employee 'JR' already exists in the system" is shown
 
-*** Keywords ***
-Given no users exist in the system
-   Clear Database
-
-Employee ${name} is added with start date ${date}
-    Add Employee  ${name}  ${date}
-
-Then message "${msg}" is shown
-    Status Should Be  ${msg}
-
-User queries info about ${name}
-    Get Employee  ${name}
-
-Then error message "${msg}" is shown
-    Status Should Be  ${msg}
-
 
 *** Settings ***
+
 Resource  resource.txt

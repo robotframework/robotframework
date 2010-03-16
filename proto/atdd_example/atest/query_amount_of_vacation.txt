@@ -1,0 +1,22 @@
+*** Test Cases ***
+
+Employee vacations can be queried
+  Given no users exist in the system
+  And employee Kari H is added with start date 2010-1-1
+  When amount of vacation days for Kari H is queried for year 2010
+  Then message "Kari H has 6 days for vacation during holiday credit year 2010" is shown
+
+Employee vacations queary fails if employee does not exist
+  Given no users exist in the system
+  When amount of vacation days for Kari H is queried for year 2010
+  Then error message "Kari H does not exist in the system" is shown
+
+
+*** User Keywords ***
+
+When amount of vacation days for ${name} is queried for year ${year}
+  Get vacation  "${name}"  ${year}
+
+
+*** Settings ***
+Resource  resource.txt

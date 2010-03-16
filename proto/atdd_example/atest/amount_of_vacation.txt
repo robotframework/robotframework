@@ -1,28 +1,36 @@
-*** Test Cases ***
-Employee has worked less than a year before the holiday credit year starts
-  Given employee starts working 2010-1-1
-  When she works 14 or more days per month
-  Then she has 6 day vacation on the holiday credit year 2010 (period from 1 April 2010 to 31 March 2011)
+holiday credit year: period from 1 April to 31 March
 
-Employee has worked exactly a year before the holiday credit year starts
+*** Test Cases ***
+Employee has started exactly a year before the holiday credit year starts
   When employee starts on 2009-4-1 then she has 24 day vacation on year 2010
 
-Employee has worked day over a year before the holiday credit year starts
+Employee has started day over a year before the holiday credit year starts
   When employee starts on 2009-3-31 then she has 30 day vacation on year 2010
 
 Employee has less than 14 days during the first month of employment
-  When employee starts on 2010-2-10 then she has 2 day vacation on year 2010
+  Amount of vacation should be  2010-2-10  2010  2
 
 Employee has 14 days during the first month of employment
-  When employee starts on 2010-2-9 then she has 4 day vacation on year 2010
+  Amount of vacation should be  2010-2-9  2010  4
 
-Employee has worked years before the holiday credit year starts
-  When employee starts on 2000-1-21 then she has 30 day vacation on year 2010
+Employee has started during the holiday credit year
+  Amount of vacation should be  2010-6-1  2010  0
+
+Employee has started after the holiday credit year
+  Amount of vacation should be  2011-6-1  2010  0
+
+Employee has started more than year before the holiday credit year starts
+  Amount of vacation should be  2000-1-21  2010  30
+
 
 *** Keywords ***
-When employee starts on ${startdate} then she has ${exp_vacation} day vacation on year ${year}
-  ${vacation} =  Count Vacation  ${startdate}  ${year}
-  Should Be Equal As Integers  ${vacation}  ${exp_vacation}
+When employee starts on ${startdate} then she has ${expected vacation} day vacation on year ${year}
+  Amount of vacation should be  ${startdate}  ${year}  ${expected vacation}
+
+Amount of vacation should be
+  [Arguments]  ${employee startdate}  ${vacation year}  ${expected amount of vacation}
+  ${amount of vacation} =  Count Vacation  ${employee startdate}  ${vacation year}
+  Should Be Equal As Integers  ${amount of vacation}  ${expected amount of vacation}
 
 *** Settings ***
 Resource  resource.txt
