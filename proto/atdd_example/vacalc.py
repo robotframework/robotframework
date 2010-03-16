@@ -31,13 +31,15 @@ class EmployeeStore(object):
         except KeyError:
             raise VacalcError("Employee '%s' not found" % name)
 
-    def add_employee(self, name, startdate):
-        if name in self._employees:
-            raise VacalcError("Employee '%s' already exists in the system" % name)
-        employee = Employee(name, startdate)
+    def get_all_employees(self):
+        return self._employees.values()
+
+    def add_employee(self, employee):
+        if employee.name in self._employees:
+            raise VacalcError("Employee '%s' already exists in the system" %
+                              employee.name)
         self._employees[employee.name] = employee
         self._serialize(employee)
-        return employee
 
     def _serialize(self, employee):
         if not self._db_file:
@@ -68,7 +70,8 @@ class VacationCalculator(object):
         return employee.count_vacation(year)
 
     def add_employee(self, name, startdate):
-        employee = self._employeestore.add_employee(name, startdate)
+        employee = Employee(name, startdate)
+        self._employeestore.add_employee(employee)
         return "Successfully added employee '%s'." % employee.name
 
     def get_employee(self, name):
