@@ -4,7 +4,7 @@ import subprocess
 import datetime
 import tempfile
 
-from vacalc import Employee, EmployeeStore, Vacation
+import vacalc
 
 
 class VacalcLibrary(object):
@@ -14,8 +14,8 @@ class VacalcLibrary(object):
                                      'vacalc-atestdb.csv')
 
     def count_vacation(self, startdate, year):
-        resource = Employee('Test Resource', startdate)
-        return Vacation(resource.startdate, int(year)).days
+        resource = vacalc.Employee('Test Resource', startdate)
+        return vacalc.Vacation(resource.startdate, int(year)).days
 
     def clear_database(self):
         if os.path.isfile(self._db_file):
@@ -32,7 +32,7 @@ class VacalcLibrary(object):
         self._run('show_vacation', name, year)
 
     def _run(self, command, *args):
-        cmd = [sys.executable, 'vacalc.py', command] + list(args)
+        cmd = [sys.executable, vacalc.__file__, command] + list(args)
         print subprocess.list2cmdline(cmd)
         proc = subprocess.Popen(cmd, stdout=subprocess.PIPE,
                                 stderr=subprocess.STDOUT,
