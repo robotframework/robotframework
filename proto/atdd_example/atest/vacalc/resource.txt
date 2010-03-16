@@ -1,0 +1,22 @@
+*** Settings ***
+
+Library  VacalcLibrary
+
+
+*** User Keywords ***
+
+Given no users exist in the system
+   Clear Database
+
+Then message "${msg}" is shown
+    Status Should Be  ${msg}
+
+Then error message "${msg}" is shown
+    Status Should Be  ${msg}
+
+Employee ${name} is added with start date ${date}
+    Add Employee  ${name}  ${date}
+
+User queries info about ${name}
+    Get Employee  ${name}
+

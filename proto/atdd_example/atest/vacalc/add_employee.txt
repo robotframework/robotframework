@@ -1,0 +1,23 @@
+*** Test Cases ***
+
+Add employee
+    Given no users exist in the system
+    When employee Janne H is added with start date 2010-1-1
+    Then message "Successfully added employee 'Janne H'." is shown
+
+Added Employee is done persistently
+    Given no users exist in the system
+    And employee Pekka K is added with start date 2009-1-1
+    When user queries info about Pekka K
+    Then message "Pekka K: start date 2009-01-01" is shown
+
+Add already existing employee
+    Given no users exist in the system
+    And employee JR is added with start date 2009-1-1
+    When employee JR is added with start date 2010-1-1
+    Then error message "Employee 'JR' already exists in the system" is shown
+
+
+*** Settings ***
+
+Resource  resource.txt
