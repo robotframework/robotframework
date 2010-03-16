@@ -20,5 +20,3 @@ Employee ${name} is added with start date ${date}
 User queries info about ${name}
     Get Employee  ${name}
 
-
-
