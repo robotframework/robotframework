@@ -118,9 +118,10 @@ class VacationCalculator(object):
     def __init__(self, employeestore):
         self._employeestore = employeestore
 
-    def vacation(self, name, year):
-        employee = self._employeestore.get_employee(name, year)
-        return employee.count_vacation(year)
+    def show_vacation(self, name, year):
+        employee = self._employeestore.get_employee(name)
+        vacation = Vacation(employee._startdate, int(year))
+        return "%s has %d vacation days in year %s" % (name, vacation.days, year)
 
     def add_employee(self, name, startdate):
         employee = Employee(name, startdate)
