@@ -1,0 +1,96 @@
+*** Settings ***
+Suite Teardown  Remove Temps
+Test Setup      Remove Temps
+Library         OperatingSystem
+Variables       files/result.py
+
+*** Variables ***
+${testfile}  ${CURDIR}${/}robot_temp_file.txt
+${testdir}  ${CURDIR}${/}robot_temp_dir
+${utf-8file}  ${CURDIR}${/}files${/}utf-8.txt
+${asciifile}  ${CURDIR}${/}files${/}ascii.txt
+${latin-1file}  ${CURDIR}${/}files${/}latin-1.txt
+
+*** Test Cases ***
+Get File
+    Create File  ${testfile}  hello world\nwith two lines
+    ${file} =  Get File  ${testfile}
+    Should Be Equal  ${file}  hello world\nwith two lines
+    ${file} =  Get File  ${testfile}  ascii
+    Should Be Equal  ${file}  hello world\nwith two lines
+
+Log File
+    Create File  ${testfile}  hello world\nwith two lines
+    ${file} =  Log File  ${testfile}
+    Should Be Equal  ${file}  hello world\nwith two lines
+
+Get Utf-8 File
+    ${file} =  Get File  ${utf-8file}
+    Log Variables
+    Log  ${file}
+    Should Be Equal  ${file}  ${RESULT}
+
+Get Ascii File With Default Encoding
+    ${file} =  Get File  ${asciifile}
+    Should Be Equal  ${file}  Hyvaa yota
+
+Get Latin-1 With Default Encoding
+    [Documentation]  FAIL REGEXP: (UnicodeDecodeError: .*invalid data.*|UnicodeError: utf-8 decoding error: invalid data|)
+    ${file} =  Get File  ${latin-1file}
+
+Get Latin-1 With Latin-1 Encoding
+    ${file} =  Get File  ${latin-1file}  Latin-1
+    Should Be Equal  ${file}  ${result}
+
+Log Latin-1 With Latin-1 Encoding
+    ${file} =  Log File  ${latin-1file}  Latin-1
+
+Grep File
+    Create File  ${TESTFILE}  foo\nbar\nfoo bar\n\nA Foo
+    Grep And Check File  ${EMPTY}  foo\nbar\nfoo bar\n\nA Foo
+    Grep And Check File  foo  foo\nfoo bar
+    Grep And Check File  foo?  foo bar
+    Grep And Check File  ?foo  ${EMPTY}
+    Grep And Check File  ?oo  foo\nfoo bar\nA Foo
+    Grep And Check File  [Ff]oo  foo\nfoo bar\nA Foo
+    Grep And Check File  f*a  foo bar
+    Grep And Check File  ?  foo\nbar\nfoo bar\nA Foo
+    Grep And Check File  ????  foo bar\nA Foo
+    Grep And Check File  foo bar  foo bar
+    Create File  ${TESTFILE}  ${EMPTY}
+    Grep And Check File  *  ${EMPTY}
+
+Grep File With Deprecated String Pattern
+    Create File  ${testfile}  foo\nbar\nfoo bar\nFoo
+    ${file} =  Grep File  ${testfile}  foo  literal string
+    Should Be Equal  ${file}  foo\nfoo bar
+    ${file} =  Grep File  ${testfile}  foo  case insensitive
+    Should Be Equal  ${file}  foo\nfoo bar\nFoo
+
+Grep File With Deprecated Glob/Simple Pattern
+    Create File  ${testfile}  foo\nbar\nfoo bar\nFoo
+    ${file} =  Grep File  ${testfile}  foo*  glob
+    Should Be Equal  ${file}  foo\nfoo bar
+    ${file} =  Grep File  ${testfile}  ?oo  simple
+    Should Be Equal  ${file}  foo\nFoo
+
+Grep File With Deprecated Regexp Pattern
+    Create File  ${testfile}  foo\nbar\nfoo bar\nFoo\n\nzap
+    ${file} =  Grep File  ${testfile}  (?i)foo|bar  regexp
+    Should Be Equal  ${file}  foo\nbar\nfoo bar\nFoo
+
+*** Keywords ***
+Get And Check File
+    [Arguments]  ${path}  ${expected}
+    ${content} =  Get File  ${path}
+    Should Be Equal  ${content}  ${expected}
+
+Grep And Check File
+    [Arguments]  ${pattern}  ${expected}
+    ${content} =  Grep File  ${TESTFILE}  ${pattern}
+    Should Be Equal  ${content}  ${expected}
+
+Remove Temps
+    Remove File  ${testfile}
+    Remove Directory  ${testdir}  recursive
+
