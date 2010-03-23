@@ -54,10 +54,10 @@ Tag Doc With Multiple Matches In Output Statistics
 
 *** Keywords ***
 Run Tests And Read Outputs
-    Run Tests Without Processing Output  ${EMPTY}  misc${/}normal.html
+    Run Tests Without Processing Output  ${EMPTY}  misc/normal.html
     Run Rebot  --log log.html --report report.html --tagdoc f1:Some_documentation --tagdoc t1:http://some.url_*bold* --tagdoc d?:Doc_for_many_tags --tagdoc D2:More_doc  ${OUT_FILE}
-    ${LOG} =  Get File  ${OUT_DIR}${/}log.html
-    ${REPORT} =  Get File  ${OUT_DIR}${/}report.html
+    ${LOG} =  Get File  ${OUT_DIR}/log.html
+    ${REPORT} =  Get File  ${OUT_DIR}/report.html
     ${OUTPUT} =  Get File  ${OUT_FILE}
     Set Suite Variable  $LOG
     Set Suite Variable  $REPORT
@@ -82,6 +82,6 @@ Format In Report Details Should Be Correct
 
 Format In Output Statistics Should Be Correct
     [Arguments]  ${tag}  ${doc}
-    ${stat_line} =  Grep  ${OUTPUT}  ${tag}</stat>
+    ${stat_line} =  Get Lines Containing String  ${OUTPUT}  ${tag}</stat>
     Should Contain  ${stat_line}  doc="${doc}"
 
