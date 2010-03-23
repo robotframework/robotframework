@@ -381,7 +381,7 @@ class OperatingSystem:
         if not matches:
             self._link("Path '%s' does not exist", path)
             return
-        if msg is None:
+        if not msg:
             if self._is_pattern_path(path):
                 matches.sort()
                 msg = "Path '%s' matches %s" % (path, seq2str(matches))
@@ -414,7 +414,7 @@ class OperatingSystem:
         if not matches:
             self._link("File '%s' does not exist", path)
             return
-        if msg is None:
+        if not msg:
             if self._is_pattern_path(path):
                 matches.sort()
                 name = len(matches) == 1 and 'file' or 'files'
@@ -448,7 +448,7 @@ class OperatingSystem:
         if not matches:
             self._link("Directory '%s' does not exist", path)
             return
-        if msg is None:
+        if not msg:
             if self._is_pattern_path(path):
                 matches.sort()
                 name = len(matches) == 1 and 'directory' or 'directories'
@@ -814,7 +814,7 @@ class OperatingSystem:
         given. Otherwise fails the test case.
 
         Note that you can also access environment variables directly using
-        the variable syntax %{ENV_VAR_NAME}.
+        the variable syntax `%{ENV_VAR_NAME}`.
         """
         ret = os.environ.get(name, default)
         if ret is None:
@@ -1234,9 +1234,7 @@ class OperatingSystem:
         return os.path.normpath(os.path.abspath(path.replace('/', os.sep)))
 
     def _fail(self, error, default):
-        if error is None:
-            error = default
-        raise AssertionError(error)
+        raise AssertionError(error or default)
 
     def _info(self, msg):
         self._log(msg, 'INFO')
