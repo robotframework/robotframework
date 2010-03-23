@@ -1,0 +1,48 @@
+*** Settings ***
+Suite Setup     Run Tests  --variable FALSE:CLI --variable 77:CLI  variables${/}builtin_variables.txt
+Force Tags      pybot  jybot  regression
+Resource        ../resources/resource.html
+
+*** Test Cases ***
+Number Variables
+    Check Test Case  Number Variables
+
+Boolean Variables
+    Check Test Case  Boolean Variables
+
+${None} And ${null}
+    Check Test Case  \${None} and \${null}
+
+${SPACE}
+    Check Test Case  \${SPACE}
+
+${EMPTY}
+    Check Test Case  \${EMPTY}
+
+${/}
+    Check Test Case  \${/}
+
+${:}
+    Check Test Case  \${:}
+
+${TEMPDIR}
+    Check Test Case  \${TEMPDIR}
+
+${EXECDIR}
+    Check Test Case  \${EXECDIR}
+
+$CURDIR
+    Check Test Case  $CURDIR
+
+Built-In Variables Cannot Be Overridden In Variable Table Or From CLI
+    [Documentation]  Except for number variabels
+    Check Test Case  Built-In Variables Cannot be Overridden In Variable Table Or From CLI
+
+Number Variables Can Be Overridden In Variable Table And From CLI
+    Check Test Case  Number Variables Can Be Overridden In Variable Table And From CLI
+
+Built-In Variables Can Be Overridden In Local Scope
+    [Documentation]  Actually $CURDIR cannot be ever overridden
+    Check Test Case  Built-In Variables Can Be Overridden In Local Scope 1
+    Check Test Case  Built-In Variables Can Be Overridden In Local Scope 2
+
