@@ -1,0 +1,86 @@
+*** Settings ***
+Suite Setup     Run Tests And Read Outputs
+Force Tags      pybot  jybot  regression
+Resource        ../../resources/resource.html
+
+*** Test Cases ***
+Tag Doc In Report Statistics
+    Format In Report Statistics Should Be Correct  f1  Some documentation
+
+Tag Doc In Log Statistics
+    Format In Log Statistics Should Be Correct  f1  Some documentation
+
+Tag Doc In Report Details
+    Format In Report Details Should Be Correct  f1  Some documentation
+
+Tag Doc In Output Statistics
+    Format In Output Statistics Should Be Correct  f1  Some documentation
+
+Tag Doc With Formatting In Report Statistics
+    Format In Report Statistics Should Be Correct  t1  http://some.url *bold*
+
+Tag Doc With Formatting In Log Statistics
+    Format In Log Statistics Should Be Correct  t1  http://some.url *bold*
+
+Tag Doc With Formatting In Report Details
+    Format In Report Details Should Be Correct  t1  <a href="http://some.url">http://some.url</a> <b>bold</b>
+
+Tag Doc With Formatting In Output Statistics
+    Format In Output Statistics Should Be Correct  t1  http://some.url *bold*
+
+Tag Doc With Pattern In Report Statistics
+    Format In Report Statistics Should Be Correct  d1  Doc for many tags
+
+Tag Doc With Pattern In Log Statistics
+    Format In Log Statistics Should Be Correct  d1  Doc for many tags
+
+Tag Doc With Pattern In Report Details
+    Format In Report Details Should Be Correct  d1  Doc for many tags
+
+Tag Doc With Pattern In Output Statistics
+    Format In Output Statistics Should Be Correct  d1  Doc for many tags
+
+Tag Doc With Multiple Matches In Report Statistics
+    Format In Report Details Should Be Correct  d2  Doc for many tags More doc
+
+Tag Doc With Multiple Matches In Log Statistics
+    Format In Log Statistics Should Be Correct  d2  Doc for many tags More doc
+
+Tag Doc With Multiple Matches In Report Details
+    Format In Report Details Should Be Correct  d2  Doc for many tags More doc
+
+Tag Doc With Multiple Matches In Output Statistics
+    Format In Output Statistics Should Be Correct  d2  Doc for many tags More doc
+
+*** Keywords ***
+Run Tests And Read Outputs
+    Run Tests  --log log.html --report report.html --tagdoc f1:Some_documentation --tagdoc t1:http://some.url_*bold* --tagdoc d?:Doc_for_many_tags --tagdoc D2:More_doc  misc/normal.html
+    ${LOG} =  Get File  ${OUT_DIR}${/}log.html
+    ${REPORT} =  Get File  ${OUT_DIR}${/}report.html
+    ${OUTPUT} =  Get File  ${OUT_FILE}
+    Set Suite Variable  $LOG
+    Set Suite Variable  $REPORT
+    Set Suite Variable  $OUTPUT
+
+Format In Report Statistics Should Be Correct
+    [Arguments]  ${tag}  ${doc}
+    ${expected} =  Catenate  SEPARATOR=  <div class="stat_name">  <a href="#tag_${tag}" title="${doc}">  ${tag}</a></div>\n
+    Should Contain  ${REPORT}  ${expected}
+    [Return]  ${expected}
+
+Format In Log Statistics Should Be Correct
+    [Arguments]  ${tag}  ${doc}
+    ${expected} =  Catenate  SEPARATOR=  <div class="stat_name">  <span title="${doc}">  ${tag}</span></div>\n
+    Should Contain  ${LOG}  ${expected}
+
+Format In Report Details Should Be Correct
+    [Arguments]  ${tag}  ${doc}
+    ${expected} =  Catenate  SEPARATOR=  <td class="col_name">  <a name="tag_${tag}"></a>  ${tag}  </td>\n  <td class="col_doc">
+    ...  ${doc}  </td>\n  <td class="col_tags not_available">  N/A  </td>\n
+    Should Contain  ${REPORT}  ${expected}
+
+Format In Output Statistics Should Be Correct
+    [Arguments]  ${tag}  ${doc}
+    ${stat_line} =  Grep  ${OUTPUT}  ${tag}</stat>
+    Should Contain  ${stat_line}  doc="${doc}"
+
