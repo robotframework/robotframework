@@ -1,0 +1,85 @@
+*** Settings ***
+Suite Setup     Run Tests  ${EMPTY}  standard_libraries/operating_system/misc.txt
+Force Tags      regression  jybot  pybot
+Resource        ../../../resources/resource.html
+
+*** Test Cases ***
+Get Modified Time As Timestamp
+    ${tc} =  Check testcase  Get Modified Time As Timestamp
+    Should Match Regexp  ${tc.kws[0].msgs[0].message}  Last modified time of '<a href=.*</a>' is 20\\d\\d-\\d\\d-\\d\\d \\d\\d:\\d\\d:\\d\\d
+
+Get Modified Time As Seconds After Epoch
+    ${tc} =  Check testcase  Get Modified Time As Seconds After Epoch
+    Should Match Regexp  ${tc.kws[0].msgs[0].message}  Last modified time of '<a href=.*</a>' is \\d+
+
+Get Modified Time As Parts
+    Check testcase  Get Modified Time As Parts
+
+Get Modified Time Fails When Path Does Not Exist
+    Check testcase  get modified Time Fails When Path Does Not Exist
+
+Set Modified Time Using Epoch
+    ${tc} =  Check testcase  Set Modified Time Using Epoch
+    ${path} =  Join Path  ${CURDIR}/../../..  testdata  standard_libraries  operating_system  robot_temp_file.txt
+    Check Log Message  ${tc.kws[1].msgs[0]}  Set modified time of '<a href="file://${path}">${path}</a>' to 2007-04-26 11:22:20  HTML
+
+Set Modified Time Using Timestamp
+    ${tc} =  Check testcase  Set modified Time Using Timestamp
+    ${path} =  Join Path  ${CURDIR}/../../..  testdata  standard_libraries  operating_system  robot_temp_file.txt
+    Check Log Message  ${tc.kws[1].kws[0].kws[0].msgs[0]}  Set modified time of '<a href="file://${path}">${path}</a>' to 2007-04-26 11:22:30  HTML
+    Check Log Message  ${tc.kws[1].kws[1].kws[0].msgs[0]}  Set modified time of '<a href="file://${path}">${path}</a>' to 2007-04-26 11:22:30  HTML
+    Check Log Message  ${tc.kws[1].kws[2].kws[0].msgs[0]}  Set modified time of '<a href="file://${path}">${path}</a>' to 2007-04-26 11:22:30  HTML
+    Check Log Message  ${tc.kws[1].kws[3].kws[0].msgs[0]}  Set modified time of '<a href="file://${path}">${path}</a>' to 2007-04-26 11:22:30  HTML
+
+Set Modified Time Using NOW
+    Check testcase  Set Modified Time Using NOW
+
+Set Modified Time Fails When Path Does Not Exist
+    Check testcase  Set Modified Time Fails When Path Does Not Exist
+
+Set Modified Time Fails When Path Is Directory
+    Check testcase  Set Modified Time Fails When Path Is Directory
+
+Get File Size
+    ${tc} =  Check testcase  Get File Size
+    ${path} =  Join Path  ${CURDIR}/../../..  testdata  standard_libraries  operating_system  robot_temp_file.txt
+    Check Log Message  ${tc.kws[1].msgs[0]}  Size of file '<a href="file://${path}">${path}</a>' is 0 bytes  HTML
+    Check Log Message  ${tc.kws[4].msgs[0]}  Size of file '<a href="file://${path}">${path}</a>' is 1 byte  HTML
+    Check Log Message  ${tc.kws[7].msgs[0]}  Size of file '<a href="file://${path}">${path}</a>' is 12 bytes  HTML
+
+List Directory
+    ${tc} =  Check testcase  List Directory
+    ${dir} =  Join Path  ${CURDIR}/../../..  testdata  standard_libraries  operating_system  robot_temp_dir
+    Check Log Message  ${tc.kws[3].msgs[0]}  Listing contents of directory '<a href="file://${dir}">${dir}</a>'  HTML
+    Check Log Message  ${tc.kws[3].msgs[1]}  bar.txt\nfoo.txt
+    Check Log Message  ${tc.kws[12].msgs[0]}  Listing contents of directory '<a href="file://${dir}">${dir}</a>'  HTML
+    Check Log Message  ${tc.kws[12].msgs[1]}  foo.txt
+
+List Directory With Patterns
+    ${tc} =  Check testcase  List Directory With Patterns
+    :FOR  ${index}  IN  9  12  14  17  20
+    \  Check Log Message  ${tc.kws[${index}].msgs[1]}  'pattern_type' argument of 'List Directory' keywords has been deprecated and will be removed in RF 2.2.  WARN
+
+List Directory With Absolute
+    ${tc} =  Check testcase  List Directory With Absolute
+    ${dir} =  Join Path  ${CURDIR}/../../..  testdata  standard_libraries  operating_system  robot_temp_dir
+    Check Log Message  ${tc.kws[4].msgs[0]}  Listing contents of directory '<a href="file://${dir}">${dir}</a>'  HTML
+    Check Log Message  ${tc.kws[4].msgs[1]}  ${dir}${/}bar.txt\n ${dir}${/}foo.txt\n ${dir}${/}foodir
+
+List And Count Files And Directories In Directory
+    [Documentation]  Tests 'List Files In Directory', 'List Directories In Directory', 'Count Files In Directory', 'Count Directories In Directory' and 'Count Items In Directory'
+    Check testcase  List And Count Files And Directories In Directory
+
+Touch
+    ${tc} =  Check testcase  Touch
+    ${path} =  Join Path  ${CURDIR}/../../..  testdata  standard_libraries  operating_system  robot_temp_file.txt
+    Check Log Message  ${tc.kws[1].msgs[0]}  Touched new file '<a href="file://${path}">${path}</a>'  HTML
+    Check Log Message  ${tc.kws[5].msgs[0]}  Touched existing file '<a href="file://${path}">${path}</a>'  HTML
+    Check Log Message  ${tc.kws[9].msgs[0]}  Touched existing file '<a href="file://${path}">${path}</a>'  HTML
+
+Touch Dir Fails
+    Check testcase  Touch Dir Fails
+
+Touch When Parent Does Not Exist Fails
+    Check testcase  Touch When Parent Does Not Exist Fails
+
