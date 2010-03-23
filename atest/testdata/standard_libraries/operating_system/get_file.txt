@@ -60,25 +60,6 @@ Grep File
     Create File  ${TESTFILE}  ${EMPTY}
     Grep And Check File  *  ${EMPTY}
 
-Grep File With Deprecated String Pattern
-    Create File  ${testfile}  foo\nbar\nfoo bar\nFoo
-    ${file} =  Grep File  ${testfile}  foo  literal string
-    Should Be Equal  ${file}  foo\nfoo bar
-    ${file} =  Grep File  ${testfile}  foo  case insensitive
-    Should Be Equal  ${file}  foo\nfoo bar\nFoo
-
-Grep File With Deprecated Glob/Simple Pattern
-    Create File  ${testfile}  foo\nbar\nfoo bar\nFoo
-    ${file} =  Grep File  ${testfile}  foo*  glob
-    Should Be Equal  ${file}  foo\nfoo bar
-    ${file} =  Grep File  ${testfile}  ?oo  simple
-    Should Be Equal  ${file}  foo\nFoo
-
-Grep File With Deprecated Regexp Pattern
-    Create File  ${testfile}  foo\nbar\nfoo bar\nFoo\n\nzap
-    ${file} =  Grep File  ${testfile}  (?i)foo|bar  regexp
-    Should Be Equal  ${file}  foo\nbar\nfoo bar\nFoo
-
 *** Keywords ***
 Get And Check File
     [Arguments]  ${path}  ${expected}

@@ -44,22 +44,3 @@ Grep File
     Check Log Message  ${tc.kws[10].kws[0].msgs[1]}  1 out of 5 lines matched
     Check Log Message  ${tc.kws[12].kws[0].msgs[1]}  0 out of 0 lines matched
 
-Grep File With Deprecated String Pattern
-    ${tc} =  Check testcase  Grep File With Deprecated String Pattern
-    Check Log Message  ${tc.kws[1].msgs[0]}  'pattern_type' argument of 'Grep File' keyword has been deprecated and will be removed in RF 2.2.  WARN
-    Check Log Message  ${tc.kws[1].msgs[2]}  2 out of 4 lines matched
-    Check Log Message  ${tc.kws[3].msgs[0]}  'pattern_type' argument of 'Grep File' keyword has been deprecated and will be removed in RF 2.2.  WARN
-    Check Log Message  ${tc.kws[3].msgs[2]}  3 out of 4 lines matched
-
-Grep File With Deprecated Glob/Simple Pattern
-    ${tc} =  Check testcase  Grep File With Deprecated Glob/Simple Pattern
-    Check Log Message  ${tc.kws[1].msgs[0]}  'pattern_type' argument of 'Grep File' keyword has been deprecated and will be removed in RF 2.2.  WARN
-    Check Log Message  ${tc.kws[1].msgs[2]}  2 out of 4 lines matched
-    Check Log Message  ${tc.kws[3].msgs[0]}  'pattern_type' argument of 'Grep File' keyword has been deprecated and will be removed in RF 2.2.  WARN
-    Check Log Message  ${tc.kws[3].msgs[2]}  2 out of 4 lines matched
-
-Grep File With Deprecated Regexp Pattern
-    ${tc} =  Check testcase  Grep File With Deprecated Regexp Pattern
-    Check Log Message  ${tc.kws[1].msgs[0]}  'pattern_type' argument of 'Grep File' keyword has been deprecated and will be removed in RF 2.2.  WARN
-    Check Log Message  ${tc.kws[1].msgs[2]}  4 out of 6 lines matched
-
