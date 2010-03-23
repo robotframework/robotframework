@@ -136,22 +136,6 @@ Call Non Existing Java Method
     [Tags]  jybot
     Check Test Case  Call Non Existing Java Method
 
-Grep Literal
-    Check Test Case  Grep Literal
-
-Grep Case Insensitive
-    Check Test Case  Grep Case Insensitive
-
-Grep Simple Pattern
-    Check Test Case  Grep Simple Pattern
-
-Grep Regexp
-    Check Test Case  Grep Regexp
-
-Grep Is Deprecated
-    Check Log Message  ${ERRORS.msgs[2]}  Keyword 'BuiltIn.Grep' is deprecated. Use `Get Lines Matching XXX` keywords from `String` library instead. This keyword will be removed in Robot Framework 2.2.  WARN
-    Check Log Message  ${ERRORS.msgs[18]}  Keyword 'BuiltIn.Grep' is deprecated. Use `Get Lines Matching XXX` keywords from `String` library instead. This keyword will be removed in Robot Framework 2.2.  WARN
-
 Regexp Escape
     Check Test Case  Regexp Escape
 
