@@ -1,0 +1,157 @@
+*** Settings ***
+Documentation   Tests for BuiltIn library's misc functionality
+Suite Setup     Run Tests  ${EMPTY}  standard_libraries/builtin/misc.txt
+Force Tags      regression
+Default Tags    jybot  pybot
+Resource        ../../../resources/resource.html
+
+*** Test Cases ***
+No Operation
+    Check Test Case  No Operation
+
+Sleep
+    ${tc} =  Check Test Case  Sleep
+    Check Log Message  ${tc.kws[1].msgs[0]}  Slept 1 second 1 millisecond
+    Check Log Message  ${tc.kws[3].msgs[0]}  Slept 1 second 234 milliseconds
+    Check Log Message  ${tc.kws[5].msgs[0]}  Slept 1 second 112 milliseconds
+
+Sleep With Negative Time
+    ${tc} =  Check Test Case  Sleep With Negative Time
+    Check Log Message  ${tc.kws[1].msgs[0]}  Slept 0 seconds
+    Check Log Message  ${tc.kws[2].msgs[0]}  Slept 0 seconds
+
+Sleep With Reason
+    ${tc} =  Check Test Case  Sleep With Reason
+    Check Log Message  ${tc.kws[0].msgs[0]}  Slept 42 milliseconds
+    Check Log Message  ${tc.kws[0].msgs[1]}  No good reason
+
+Catenate
+    Check Test Case  Catenate
+
+Log
+    ${tc} =  Check Test Case  Log
+    Check Log Message  ${tc.kws[0].msgs[0]}  Hello, world!
+    Check Log Message  ${tc.kws[1].msgs[0]}  42
+    Check Log Message  ${tc.kws[2].msgs[0]}  None
+    Check Log Message  ${tc.kws[3].msgs[0]}  String presentation of MyObject
+
+Log With Different Levels
+    ${tc} =  Check Test Case  Log With Different Levels
+    Comment  Test set log level to trace so  the logged message is second  and first contains resolved args
+    Check Log Message  ${tc.kws[0].msgs[1]}  Log says: Hello from tests!  INFO
+    Check Log Message  ${tc.kws[1].msgs[1]}  Trace level  TRACE
+    Check Log Message  ${tc.kws[2].msgs[1]}  Debug level  DEBUG
+    Check Log Message  ${tc.kws[3].msgs[1]}  Info level  INFO
+    Check Log Message  ${tc.kws[4].msgs[1]}  Warn level  WARN
+    Check Log Message  ${ERRORS.msgs[0]}  Warn level  WARN
+    Check Log Message  ${tc.kws[5].msgs[1]}  Fail level  FAIL
+    Check Log Message  ${tc.kws[6].msgs[1]}  Error level  ERROR
+
+Log HTML
+    ${tc} =  Check Test Case  Log HTML
+    Check Log Message  ${tc.kws[0].msgs[0]}  <b>not bold</b>  INFO
+    Check Log Message  ${tc.kws[1].msgs[0]}  <b>bold</b>  HTML
+    Check Log Message  ${tc.kws[3].msgs[0]}  <img src="nonex.png">  INFO
+    Check Log Message  ${tc.kws[4].msgs[0]}  <img src="nonex.png">  HTML
+
+Log Many
+    ${tc} =  Check Test Case  Log Many
+    Check Log Message  ${tc.kws[0].msgs[0]}  Log Many says:  INFO
+    Check Log Message  ${tc.kws[0].msgs[1]}  Hello  INFO
+    Check Log Message  ${tc.kws[0].msgs[2]}  from  INFO
+    Check Log Message  ${tc.kws[0].msgs[3]}  tests!  INFO
+    Check Log Message  ${tc.kws[1].msgs[0]}  Log Many says: Hi!!  INFO
+
+Comment
+    ${tc} =  Check Test Case  Comment
+    Should Be Equal As Integers  ${tc.kws[0].msg_count}  0
+    Should Be Equal As Integers  ${tc.kws[1].msg_count}  0
+    Should Be Equal As Integers  ${tc.kws[2].msg_count}  0
+
+Set Log Level
+    ${tc} =  Check Test Case  Set Log Level
+    Check Log Message  ${tc.kws[1].msgs[1]}  This is logged  TRACE
+    Check Log Message  ${tc.kws[2].msgs[1]}  This is logged  DEBUG
+    Check Log Message  ${tc.kws[3].msgs[1]}  This is logged  INFO
+    Should Be Equal As Integers  ${tc.kws[6].message_count}  0
+    Check Log Message  ${tc.kws[7].msgs[0]}  This is logged  DEBUG
+    Check Log Message  ${tc.kws[8].msgs[0]}  This is logged  INFO
+    Should Be Equal As Integers  ${tc.kws[10].message_count}  0
+    Should Be Equal As Integers  ${tc.kws[11].message_count}  0
+    Check Log Message  ${tc.kws[12].msgs[0]}  This is logged  INFO
+    Should Be Equal As Integers  ${tc.kws[15].message_count}  0
+    Check Log Message  ${tc.kws[16].msgs[0]}  This is logged  ERROR
+    Should Be Equal As Integers  ${tc.kws[18].message_count}  0
+    Should Be Equal As Integers  ${tc.kws[19].message_count}  0
+    Should Be Equal As Integers  ${tc.kws[20].message_count}  0
+
+Import Library
+    Check Test Case  Import Library 1
+    Check Test Case  Import Library 2
+    Check Test Case  Import Library 3
+
+Import Library With Parameter
+    Check Test Case  Import Library With Parameter
+
+Import Library Using Physical Path
+    Check Test Case  Import Library Using Physical Path
+
+Import Library Using Physical Path, Arguments And WITH NAME
+    Check Test Case  Import Library Using Physical Path, Arguments and WITH NAME
+
+Import Variables
+    Check Test Case  Import Variables 1
+    Check Test Case  Import Variables 2
+
+Import Variables With Parameter
+    Check Test Case  Import Variables With Parameter
+
+Import Variables In User Keyword
+    Check Test Case  Import Variables In User Keyword
+    Check Test Case  Import Variables In User Keyword 2
+
+Evaluate
+    Check Test Case  Evaluate
+
+Evaluate With Modules
+    Check Test Case  Evaluate With Modules
+
+Call Method
+    Check Test Case  Call Method
+
+Call Method Returns
+    Check Test Case  Call Method Returns
+
+Call Method From Module
+    Check Test Case  Call Method From Module
+
+Call Non Existing Method
+    Check Test Case  Call Non Existing Method
+
+Call Java Method
+    [Tags]  jybot
+    Check Test Case  Call Java Method
+
+Call Non Existing Java Method
+    [Tags]  jybot
+    Check Test Case  Call Non Existing Java Method
+
+Grep Literal
+    Check Test Case  Grep Literal
+
+Grep Case Insensitive
+    Check Test Case  Grep Case Insensitive
+
+Grep Simple Pattern
+    Check Test Case  Grep Simple Pattern
+
+Grep Regexp
+    Check Test Case  Grep Regexp
+
+Grep Is Deprecated
+    Check Log Message  ${ERRORS.msgs[2]}  Keyword 'BuiltIn.Grep' is deprecated. Use `Get Lines Matching XXX` keywords from `String` library instead. This keyword will be removed in Robot Framework 2.2.  WARN
+    Check Log Message  ${ERRORS.msgs[18]}  Keyword 'BuiltIn.Grep' is deprecated. Use `Get Lines Matching XXX` keywords from `String` library instead. This keyword will be removed in Robot Framework 2.2.  WARN
+
+Regexp Escape
+    Check Test Case  Regexp Escape
+

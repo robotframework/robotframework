@@ -1,0 +1,302 @@
+*** Settings ***
+Variables       objects_for_call_method.py
+
+*** Variables ***
+@{HELLO}  Hello  world
+${TEXT}  foo\nbar\nfoo bar\nFoo
+
+*** Test Cases ***
+No Operation
+    No Operation
+
+Sleep
+    ${time1} =  Get Time
+    Sleep  1.001
+    ${time2} =  Get Time
+    Sleep  0 hours 0 mins 1 S E C O N D 234 milliseconds
+    ${time3} =  Get Time
+    Sleep  ${1.1115}
+    ${time4} =  Get Time
+    Should Be True  '${time4}' > '${time3}' > '${time2}' > '${time1}'
+
+Sleep With Negative Time
+    ${start} =  Get Time  epoch
+    Sleep  -1
+    Sleep  -10 hours
+    ${end} =  Get Time  epoch
+    Should Be True  ${start} == ${end} or ${start} == ${end} - 1
+
+Sleep With Reason
+    Sleep  42 ms  No good reason
+
+Catenate
+    ${str} =  Catenate  Hello  world  !!
+    Should Be Equal  ${str}  Hello world !!
+    ${str} =  Catenate  SEPARATOR=-  @{HELLO}  !!
+    Should Be Equal  ${str}  Hello-world-!!
+    ${str} =  Catenate  SEPARATOR=XXX  @{HELLO}  !!
+    Should Be Equal  ${str}  HelloXXXworldXXX!!
+    ${str} =  Catenate  SEPARATOR=  @{HELLO}  !!
+    Should Be Equal  ${str}  Helloworld!!
+    ${str} =  Catenate
+    Should Be Equal  ${str}  \
+    ${str} =  Catenate  SEPARATOR=xxx
+    Should Be Equal  ${str}  \
+    ${str} =  Catenate  Hello
+    Should Be Equal  ${str}  Hello
+    ${str} =  Catenate  SEPARATOR=xxx  Hello
+    Should Be Equal  ${str}  Hello
+    ${str} =  Catenate  This  SEPARATOR=won't work
+    Should Be Equal  ${str}  This SEPARATOR=won't work
+    ${str} =  Catenate  SEPARATOR-This  won't work
+    Should Be Equal  ${str}  SEPARATOR-This won't work
+    ${str} =  Catenate  separator=This  won't work
+    Should Be Equal  ${str}  separator=This won't work
+
+Log
+    Log  Hello, world!
+    Log  ${42}
+    Log  ${None}
+    Log  ${OBJ}
+
+Log With Different Levels
+    [Documentation]  FAIL Invalid log level 'INVALID'
+    [Setup]  Set Log Level  TRACE
+    Log  Log says: Hello from tests!
+    Log  Trace level  TRACE
+    Log  Debug level  debug
+    Log  Info level  Info
+    Log  Warn level  wArN
+    Log  Fail level  FAIL
+    Log  Error level  ERROR
+    Log  Invalid level  INVALID
+    [Teardown]  Set Log Level  INFO
+
+Log HTML
+    Log  <b>not bold</b>
+    Log  <b>bold</b>  HTML
+    ${html} =  Set Variable  <img src="nonex.png">
+    Log  ${html}
+    Log  ${html}  HTML
+
+Log Many
+    Log Many  Log Many says:  Hello  from  tests!
+    Log Many  Log Many says: Hi!!
+
+Comment
+    Comment  This text is shown  as keyword arguments  but ignored otherwise
+    Comment  One message
+    Comment
+    Comment  Should work also with ${NON EXISTING} variable and  ${OTHER NON EXISTING} variable
+    Comment  @{NON EXISTING LIST} variable should work also  @{OTHER NON EXISTING LIST}
+
+Set Log Level
+    [Documentation]  FAIL Invalid log level 'INVALID'
+    Set Log Level  TRACE
+    Log  This is logged  TRACE
+    Log  This is logged  DEBUG
+    Log  This is logged  INFO
+    ${old} =  Set Log Level  debug
+    Should Be Equal  ${old}  TRACE
+    Log  This is NOT logged  TRACE
+    Log  This is logged  DEBUG
+    Log  This is logged  INFO
+    Set Log Level  Info
+    Log  This is NOT logged  TRACE
+    Log  This is NOT logged  DEBUG
+    Log  This is logged  INFO
+    ${old} =  Set Log Level  ErRoR
+    Should Be Equal  ${old}  INFO
+    Log  This is NOT logged  INFO
+    Log  This is logged  ERROR
+    Set Log Level  NONE
+    Log  NOT logged
+    Log  NOT logged  FAIL
+    Set Log Level  INVALID
+    [Teardown]  Set Log Level  INFO
+
+Syslog
+    Syslog  Syslog says: Hello from tests!
+
+Import Library 1
+    [Documentation]  Verify that keyword to be imported is not yet available FAIL No keyword with name 'Directory Should Exist' found.
+    Directory Should Exist  ${CURDIR}
+
+Import Library 2
+    Import Library  OperatingSystem
+    Directory Should Exist  ${CURDIR}
+
+Import Library 3
+    [Documentation]  Verify that keyword from lib imported by earlier kw is still available
+    Directory Should Exist  ${CURDIR}
+
+Import Library With Parameter
+    Import Library  ParameterLibrary  myhost  4242
+    ${host}  ${port} =  Parameters
+    Should Be Equal  ${host}  myhost
+    Should Be Equal  ${port}  4242
+
+Import Library Using Physical Path
+    Import Library  ${CURDIR}${/}RegisteredClass.py
+    RegisteredClass. Run Keyword If Method  False  Fail  This is not executed
+    Import Library  ${CURDIR}/../../test_libraries/spaces in path/SpacePathLib.py
+    ${ret} =  Spaces in Library Path
+    Should Be Equal  ${ret}  here was a bug
+
+Import Library Using Physical Path, Arguments And WITH NAME
+    ${dir} =  Join Path  ${CURDIR}/../../..  testresources/testlibs
+    Import Library  ${dir}/ParameterLibrary.py  first param  ${2}  WITH NAME  Params With Path
+    ${params} =  Params With Path.Parameters
+    Should Be True  ${params} == ('first param', 2)
+
+Import Variables 1
+    Variable Should Not Exist  $IMPORT_VARIABLES_1
+    Import Variables  ${CURDIR}${/}variables_to_import_1.py
+    Should Be Equal  ${IMPORT_VARIABLES_1}  Simple variable file
+
+Import Variables 2
+    [Documentation]  Verify that variable imported by earlier kw is still available
+    Should Be Equal  ${IMPORT_VARIABLES_1}  Simple variable file
+
+Import Variables With Parameter
+    [Documentation]  FAIL REGEXP: Processing variable file '.*variables_to_import_2.py' with arguments \\[ 1 | 2 | 3\\] failed: TypeError: .*
+    Import Variables  ${CURDIR}${/}variables_to_import_2.py  my  args
+    Should Be Equal  ${IMPORT_VARIABLES_2}  Dynamic variable file
+    Should Be Equal  ${IMPORT_VARIABLES_2_ARGS}  my args
+    Import Variables  ${CURDIR}/variables_to_import_2.py  one arg only
+    Should Be Equal  ${IMPORT_VARIABLES_2}  Dynamic variable file
+    Should Be Equal  ${IMPORT_VARIABLES_2_ARGS}  one arg only default
+    Comment  Copy to (hopefully) shorter path to  prevent cutting error message
+    Copy File  ${CURDIR}/variables_to_import_2.py  ${TEMPDIR}/variables_to_import_2.py
+    Import Variables  ${TEMPDIR}/variables_to_import_2.py  1  2  3
+    Comment  OperatingSystem library imported by  Import Library test
+    [Teardown]  Remove File  ${TEMPDIR}/variables_to_import_2.py
+
+Import Variables In User Keyword
+    Import Variables In User Keyword  Set in  user keyword
+    Should Be Equal  ${IMPORT_VARIABLES_2_ARGS}  Set in user keyword
+    Importted Variable Should Be Set To  Set in user keyword
+
+Import Variables In User Keyword 2
+    Should Be Equal  ${IMPORT_VARIABLES_2_ARGS}  Set in user keyword
+    Importted Variable Should Be Set To  Set in user keyword
+    Import Variables In User Keyword  Set again in  user keyword
+    Should Be Equal  ${IMPORT_VARIABLES_2_ARGS}  Set again in user keyword
+    Importted Variable Should Be Set To  Set again in user keyword
+
+Evaluate
+    [Documentation]  FAIL STARTS: Evaluating expression 'INVALID' failed: NameError:
+    ${stat} =  Evaluate  True
+    Should Be Equal  ${stat}  ${True}
+    ${stat} =  Evaluate  False
+    Should Be Equal  ${stat}  ${False}
+    ${n} =  Evaluate  None
+    Should Be Equal  ${n}  ${None}
+    ${ten} =  Evaluate  100 - 9*11 + int(9.9)
+    Should Be Equal  ${ten}  ${10}
+    ${dict} =  Evaluate  { 'a' : 1, 'b' : 2, 'c' : 3 }
+    Should Be True  ${dict['a']} + ${dict['b']} == ${dict['c']}
+    ${len} =  Evaluate  len(@{HELLO})
+    Should Be Equal As Integers  ${len}  2
+    ${hello} =  Evaluate  'hello'.capitalize() + ' ' + 'world'
+    Should Be Equal  ${hello}  Hello world
+    ${stat} =  Evaluate  "${hello}" == ' '.join(@{HELLO})
+    Should Be Equal  ${stat}  ${True}
+    Evaluate  INVALID
+
+Evaluate With Modules
+    [Documentation]  FAIL REGEXP: ImportError: [Nn]o module named nonex_module
+    ${ceil} =  Evaluate  math.ceil(1.001)  math
+    Should Be Equal  ${ceil}  ${2}
+    ${random} =  Evaluate  random.randint(0, sys.maxint)  random,sys
+    ${maxint}  ${sep}  ${x}  ${y} =  Evaluate  sys.maxint, os.sep, re.escape('+'), '\\+'  sys, re,,,,, glob, os,robot,,,
+    Should Be True  0 <= ${random} <= ${maxint}
+    Should Be Equal  ${x}  ${y}
+    Evaluate  1  nonex_module
+
+Call Method
+    Call Method  ${obj}  my_method
+    Should Be True  ${obj.args} == ()
+    Call Method  ${obj}  my_method  arg
+    Should Be True  ${obj.args} == ('arg',)
+    Call Method  ${obj}  my_method  a1  a2
+    Should Be True  ${obj.args} == ('a1','a2')
+
+Call Method Returns
+    ${res} =  Call Method  my_str  upper
+    Should Be Equal  ${res}  MY_STR
+    ${a}  ${b}  ${c} =  Call Method  a,b,c  split  ,
+    Should Be Equal  ${a}  a
+    Should Be Equal  ${b}  b
+    Should Be Equal  ${c}  c
+
+Call Method From Module
+    ${path} =  Call Method  ${os.path}  join  ${CURDIR}  foo  bar.txt
+    Should Be Equal  ${path}  ${CURDIR}${/}foo${/}bar.txt
+
+Call Non Existing Method
+    [Documentation]  FAIL Object 'String presentation of MyObject' does not have a method 'non_existing'
+    Call Method  ${obj}  non_existing
+
+Call Java Method
+    ${isempty} =  Call Method  ${hashtable}  isEmpty
+    Should Be True  ${isempty}
+    Call Method  ${hashtable}  put  myname  myvalue
+    ${value} =  Call Method  ${hashtable}  get  myname
+    Should Be Equal  ${value}  myvalue
+    ${isempty} =  Call Method  ${hashtable}  isEmpty
+    Should Not Be True  ${isempty}
+
+Call Non Existing Java Method
+    [Documentation]  FAIL Object '{myname=myvalue}' does not have a method 'nonExisting'
+    Call Method  ${hashtable}  nonExisting
+
+Grep Literal
+    :FOR  ${pattern}  ${type}  ${exp}  IN  foo  ${EMPTY}  foo\nfoo bar
+    ...  o b  ${EMPTY}  foo bar  Foo  not matching any predefined type  Foo  ${EMPTY}
+    ...  ${EMPTY}  ${TEXT}  Should Match  ${EMPTY}  ${EMPTY}
+    \  Verify grep  ${pattern}  ${type}  ${exp}
+
+Grep Case Insensitive
+    :FOR  ${pattern}  ${type}  ${exp}  IN  foo  case insensitive  foo\nfoo bar\nFoo
+    ...  BAR  this is CASE InsensitivE  bar\nfoo bar  ${EMPTY}  case insensitive  ${TEXT}  Should Match
+    ...  case insensitive  ${EMPTY}
+    \  Verify grep  ${pattern}  ${type}  ${exp}
+
+Grep Simple Pattern
+    :FOR  ${pattern}  ${type}  ${exp}  IN  foo*  Simple Pattern  foo\nfoo bar
+    ...  *  glob  ${TEXT}  ${EMPTY}  glob  ${TEXT}  Should Match
+    ...  glob  ${EMPTY}
+    \  Verify grep  ${pattern}  ${type}  ${exp}
+
+Grep Regexp
+    :FOR  ${pattern}  ${type}  ${exp}  IN  foo|bar  regexp  foo\nbar\nfoo bar
+    ...  (?i)foo|bar  regexp  foo\nbar\nfoo bar\nFoo  [a-f]o*|b[a-r]*  regular expression  foo\nbar\nfoo bar  ${EMPTY}
+    ...  regexp  ${TEXT}  Should Match  regular expression  ${EMPTY}
+    \  Verify grep  ${pattern}  ${type}  ${exp}
+
+Regexp Escape
+    ${escaped} =  Regexp Escape  f$o^o$b[a]r()?\\
+    Should Be Equal  ${escaped}  f\\$o\\^o\\$b\\[a\\]r\\(\\)\\?\\\\
+    Should Match Regexp  f$o^o$b[a]r()?\\  ${escaped}
+    @{patterns} =  Create List  $  ^  $  [  ]  so%me&te[]?*x*t
+    @{escaped} =  Regexp Escape  @{patterns}
+    Should Be True  @{escaped} == ['\\$', '\\^', '\\$', '\\[', '\\]', 'so\\%me\\&te\\[\\]\\?\\*x\\*t']
+
+*** Keywords ***
+Import Variables In User Keyword
+    [Arguments]  @{value}
+    Import Variables  ${CURDIR}${/}variables_to_import_2.py  @{value}
+    ${value} =  Catenate  @{value}
+    Should Be Equal  ${IMPORT_VARIABLES_2_ARGS}  ${value}
+    Importted Variable Should Be Set To  ${value}
+
+Importted Variable Should Be Set To
+    [Arguments]  ${value}
+    Should Be Equal  ${IMPORT_VARIABLES_2_ARGS}  ${value}
+
+Verify Grep
+    [Arguments]  ${pattern}  ${pattern_type}  ${exp_result}  ${grep_text}=${TEXT}
+    ${res} =  Grep  ${grep_text}  ${pattern}  ${pattern_type}
+    Should Be Equal  ${res}  ${exp_result}
+
