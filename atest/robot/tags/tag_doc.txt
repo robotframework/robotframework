@@ -81,6 +81,6 @@ Format In Report Details Should Be Correct
 
 Format In Output Statistics Should Be Correct
     [Arguments]  ${tag}  ${doc}
-    ${stat_line} =  Grep  ${OUTPUT}  ${tag}</stat>
+    ${stat_line} =  Get Lines Containing String  ${OUTPUT}  ${tag}</stat>
     Should Contain  ${stat_line}  doc="${doc}"
 
