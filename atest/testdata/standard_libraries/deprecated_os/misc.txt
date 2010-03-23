@@ -9,7 +9,6 @@ ${TESTDIR}  ${CURDIR}${/}robot_temp_dir
 
 *** Test Cases ***
 List Dir
-    [Documentation]  This test also tests setting variables
     Create Dir  ${TESTDIR}
     Create File  ${TESTDIR}${/}foo.txt
     Create File  ${TESTDIR}${/}bar.txt
@@ -42,19 +41,6 @@ List Dir With Patterns
     Create Dir  ${TESTDIR}${/}foodir
     ${names} =  List Dir  ${TESTDIR}  *.txt
     Fail Unless  ${names} == ['bar.txt', 'foo.txt']
-    Fail Unless  len(${names}) == 2
-    ${name_count} =  Evaluate  len(${names})
-    Ints Equal  ${name_count}  2
-    ${names} =  List Dir  ${TESTDIR}  ???.txt  simple pattern
-    Fail Unless  ${names} == ['bar.txt', 'foo.txt']
-    ${names} =  List Dir  ${TESTDIR}  o+  this is regexp
-    Fail Unless  ${names} == ['foo.txt', 'foodir']
-    ${names} =  List Dir  ${TESTDIR}  (?i)FO{2}  regular expression
-    Fail Unless  ${names} == ['foo.txt', 'foodir']
-    ${names} =  List Dir  ${TESTDIR}  foo  literal string
-    Fail Unless  ${names} == ['foo.txt', 'foodir']
-    ${names} =  List Dir  ${TESTDIR}  ?oodi*  \
-    Fail Unless  ${names} == ['foodir']
 
 List Dir With Absolute
     [Documentation]  This tests also List Files In Dir And List Dirs In Dir
@@ -86,7 +72,7 @@ List And Count Files And Dirs In Dir
     Fail Unless  ${files} == ['bar.txt','foo.txt','zap.txt']
     Fail Unless  ${bar_files} == ['bar.txt']
     ${dirs} =  List Dirs In Dir  ${TESTDIR}
-    ${foo_dirs} =  List Dirs In Dir  ${TESTDIR}  o+  regexp
+    ${foo_dirs} =  List Dirs In Dir  ${TESTDIR}  *oo*
     Fail Unless  ${dirs} == ['bardir', 'foodir']
     Fail Unless  ${foo_dirs} == ['foodir']
     ${file_count} =  Count Files In Dir  ${TESTDIR}
@@ -94,7 +80,7 @@ List And Count Files And Dirs In Dir
     Ints Equal  ${file_count}  3
     Equals  ${file_count}  ${txt_file_count}
     ${dir_count} =  Count Dirs In Dir  ${TESTDIR}
-    ${dir_dir_count} =  Count Dirs In Dir  ${TESTDIR}  dir  literal
+    ${dir_dir_count} =  Count Dirs In Dir  ${TESTDIR}  *dir
     Ints Equal  ${dir_count}  2
     Equals  ${dir_count}  ${dir_dir_count}
     ${count} =  Count Items In Dir  ${TESTDIR}
