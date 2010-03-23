@@ -362,7 +362,7 @@ class String:
         and ' ' would fail.
 
         See also `Should Be Uppercase` and `Should Be Titlecase`.
-        These keyword were added into Robot Framework 2.1.2.
+        All these keywords were added in Robot Framework 2.1.2.
         """
         if not string.islower():
             raise AssertionError(msg or "'%s' is not lowercase" % string)
@@ -377,7 +377,7 @@ class String:
         and ' ' would fail.
 
         See also `Should Be Titlecase` and `Should Be Lowercase`.
-        These keyword were added into Robot Framework 2.1.2.
+        All these keywords were added in Robot Framework 2.1.2.
         """
         if not string.isupper():
             raise AssertionError(msg or "'%s' is not uppercase" % string)
@@ -396,7 +396,7 @@ class String:
         'Word In lower', '' and ' ' would fail.
 
         See also `Should Be Uppercase` and `Should Be Lowercase`.
-        These keyword were added into Robot Framework 2.1.2.
+        All theses keyword were added in Robot Framework 2.1.2.
         """
         if not string.istitle():
             raise AssertionError(msg or "'%s' is not titlecase" % string)
