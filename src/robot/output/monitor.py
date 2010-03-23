@@ -34,40 +34,40 @@ class CommandLineMonitor:
         self._colors = colors
         self._running_suites = 0
         self._is_logged = IsLogged('WARN')
-        
+
     def start_suite(self, suite):
         if not self._running_suites:
             self._write_separator('=')
         self._write_info(suite.longname, suite.doc, start_suite=True)
         self._write_separator('=')
         self._running_suites += 1
-                
+
     def end_suite(self, suite):
         self._write_info(suite.longname, suite.doc)
         self._write_status(suite.status)
         self._write_message(suite.get_full_message())
         self._write_separator('=')
         self._running_suites -= 1
-                        
+
     def start_test(self, test):
         self._write_info(test.name, test.doc)
-        
+
     def end_test(self, test):
         self._write_status(test.status)
         self._write_message(test.message)
         self._write_separator('-')
-        
+
     def output_file(self, name, path):
         # called by LOGGER
         if not self._running_suites:  # ignores splitted output files
             self._write('%s %s' % ((name+':').ljust(8), utils.cygpath(path)))
-     
+
     def message(self, msg):
         # called by LOGGER
         if self._is_logged(msg.level):
             message = '[ %s ] %s' % (self._highlight(msg.level), msg.message)
             self._write(message, stream=sys.stderr)
-        
+
     def _write(self, message, newline=True, stream=sys.stdout):
         if newline:
             message += '\n'
@@ -81,7 +81,7 @@ class CommandLineMonitor:
             maxwidth -= len(' | PASS |')
         info = self._get_info(name, doc, maxwidth)
         self._write(info.ljust(maxwidth), newline=start_suite)
-            
+
     def _get_info(self, name, doc, maxwidth):
         if len(name) > maxwidth:
             return '...' + name[-maxwidth+3:]
@@ -91,22 +91,22 @@ class CommandLineMonitor:
         if len(info) > maxwidth:
             info = info[:maxwidth-3] + '...'
         return info
-            
+
     def _write_status(self, status):
         self._write(' | %s |' % self._highlight(status))
-        
+
     def _write_message(self, message):
         if message:
             self._write(message.strip())
 
     def _write_separator(self, sep_char):
         self._write(sep_char * self._width)
-      
+
     def _highlight(self, text):
         color = self._get_highlight_color(text)
         reset = color != '' and ANSI_RESET or ''
         return color + text + reset
-    
+
     def _get_highlight_color(self, text):
         if self._colors:
             if text in ['FAIL','ERROR']:

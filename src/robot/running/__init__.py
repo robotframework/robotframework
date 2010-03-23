@@ -21,15 +21,15 @@ from runkwregister import RUN_KW_REGISTER
 
 
 class _Namespaces:
-    
+
     def __init__(self):
         self._namespaces = []
         self.current = None
-        
+
     def start_suite(self, namespace):
         self._namespaces.append(self.current)
         self.current = namespace
-        
+
     def end_suite(self):
         self.current = self._namespaces.pop()
 

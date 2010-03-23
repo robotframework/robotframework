@@ -22,13 +22,13 @@ _ERR = "Error in file '%s' in table '%s' in element on row %d: %s"
 
 
 class _Table:
-    
+
     def __init__(self, name, source, data):
         self._name = name
         self._source = source
         self._row = 0
         self._data = data
-        
+
     def add_row(self, cells, repeat=1):
         if not cells:
             self._row += repeat
@@ -39,14 +39,14 @@ class _Table:
                 self._add_row(cells[0], cells[1:])
         except:
             self.report_invalid_syntax(self._row, utils.get_error_message())
-            
+
     def report_invalid_syntax(self, row, error, level='ERROR'):
         msg = _ERR % (self._source, self._name, row, error)
         LOGGER.write(msg, level)
 
 
 class SimpleTable(_Table):
-    
+
     def _add_row(self, name, value):
         if name == '...':
             try:
@@ -79,7 +79,7 @@ class _Item:
         self.name = name
         self._row = row
         self._parent = parent
-        
+
     def report_invalid_syntax(self, error=None, level='ERROR'):
         if error is None:
             error = utils.get_error_message()
@@ -87,21 +87,21 @@ class _Item:
 
 
 class SimpleItem(_Item):
-    
+
     def __init__(self, name, value, row, parent):
         _Item.__init__(self, name, row, parent)
         self.value = value
 
     def extend(self, value):
         self.value.extend(value)
-        
+
     def copy(self):
         return SimpleItem(self.name, self.value[:], self._row, self._parent)
-        
+
 
 class ComplexItem(_Item):
     """Represents one item in Test Case or Keyword table"""
-    
+
     def __init__(self, name, row, parent):
         _Item.__init__(self, name, row, parent)
         self.metadata = []

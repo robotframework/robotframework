@@ -22,13 +22,13 @@ BUILTIN = BuiltIn.BuiltIn()
 
 class DeprecatedBuiltIn:
     ROBOT_LIBRARY_SCOPE = 'GLOBAL'
-    
+
     integer = BUILTIN.convert_to_integer
     float = BUILTIN.convert_to_number
     string = BUILTIN.convert_to_string
     boolean = BUILTIN.convert_to_boolean
     list = BUILTIN.create_list
-    
+
     equal = equals = fail_unless_equal = BUILTIN.should_be_equal
     not_equal = not_equals = fail_if_equal = BUILTIN.should_not_be_equal
     is_true = fail_unless = BUILTIN.should_be_true
@@ -47,14 +47,14 @@ class DeprecatedBuiltIn:
     matches = fail_unless_matches = BUILTIN.should_match
     does_not_match_regexp = fail_if_regexp_matches = BUILTIN.should_not_match_regexp
     matches_regexp = fail_unless_regexp_matches = BUILTIN.should_match_regexp
-    
+
     noop = BUILTIN.no_operation
     set_ = BUILTIN.set_variable
     message = BUILTIN.comment
-    
+
     variable_exists = fail_unless_variable_exists = BUILTIN.variable_should_exist
     variable_does_not_exist = fail_if_variable_exists = BUILTIN.variable_should_not_exist
-    
+
     def error(self, msg=None):
         """Errors the test immediately with the given message."""
         asserts.error(msg)

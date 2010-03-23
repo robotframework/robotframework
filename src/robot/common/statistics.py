@@ -19,11 +19,11 @@ from robot import utils
 
 
 class Statistics:
-    
-    def __init__(self, suite, suite_stat_level=-1, tag_stat_include=None, 
+
+    def __init__(self, suite, suite_stat_level=-1, tag_stat_include=None,
                  tag_stat_exclude=None, tag_stat_combine=None, tag_doc=None,
                  tag_stat_link=None):
-        self.tags = TagStatistics(tag_stat_include, tag_stat_exclude, 
+        self.tags = TagStatistics(tag_stat_include, tag_stat_exclude,
                                   tag_stat_combine, tag_doc, tag_stat_link)
         self.suite = SuiteStatistics(suite, self.tags, suite_stat_level)
         self.total = TotalStatistics(self.suite)
@@ -38,14 +38,14 @@ class Statistics:
 
 
 class Stat:
-    
+
     def __init__(self, name=None, doc=None, link=None):
         self.name = name
         self._doc = doc
         self._link = link
         self.passed = 0
         self.failed = 0
-        
+
     def add_stat(self, other):
         self.passed += other.passed
         self.failed += other.failed
@@ -54,15 +54,15 @@ class Stat:
         if test.status == 'PASS':
             self.passed += 1
         else:
-            self.failed += 1 
-                        
+            self.failed += 1
+
     def fail_all(self):
         self.failed += self.passed
         self.passed = 0
 
     def get_doc(self, split_level=-1):
         return self._doc
-    
+
     def get_link(self, split_level=-1):
         return self._link
 
@@ -83,24 +83,24 @@ class SuiteStat(Stat):
 
     def get_link(self, split_level=-1):
         return self.get_long_name(split_level)
-        
+
     def serialize(self, serializer):
         serializer.suite_stat(self)
-        
+
 
 class TagStat(Stat):
 
     type = 'tag'
-    
+
     def __init__(self, name, critical=False, non_critical=False, info=None):
-        doc = info and info.get_doc(name) or None 
+        doc = info and info.get_doc(name) or None
         Stat.__init__(self, name, doc, link=name)
         self.critical = critical
         self.non_critical = non_critical
         self.combined = False
         self.tests = []
         self.links = info and info.get_links(name) or []
-        
+
     def add_test(self, test):
         Stat.add_test(self, test)
         self.tests.append(test)
@@ -119,12 +119,12 @@ class TagStat(Stat):
 
 
 class CombinedTagStat(TagStat):
-    
+
     def __init__(self, name):
         TagStat.__init__(self, name)
         self.combined = True
 
-        
+
 class TotalStat(Stat):
 
     type = 'total'
@@ -139,7 +139,7 @@ class TotalStat(Stat):
 
 
 class SuiteStatistics:
-    
+
     def __init__(self, suite, tag_stats, suite_stat_level=-1):
         self.all = SuiteStat(suite)
         self.critical = SuiteStat(suite)
@@ -147,28 +147,28 @@ class SuiteStatistics:
         self._process_suites(suite, tag_stats)
         self._process_tests(suite, tag_stats)
         self._suite_stat_level = suite_stat_level
-        
+
     def _process_suites(self, suite, tag_stats):
         for subsuite in suite.suites:
             substat = SuiteStatistics(subsuite, tag_stats)
             self.suites.append(substat)
             self.all.add_stat(substat.all)
             self.critical.add_stat(substat.critical)
-        
+
     def _process_tests(self, suite, tag_stats):
         for test in suite.tests:
             self.all.add_test(test)
             if test.critical == 'yes':
                 self.critical.add_test(test)
             tag_stats.add_test(test, suite.critical)
-        
+
     def serialize(self, serializer):
         if self._suite_stat_level == 0:
             return
         serializer.start_suite_stats(self)
         self._serialize(serializer, self._suite_stat_level)
         serializer.end_suite_stats(self)
-        
+
     def _serialize(self, serializer, max_suite_level, suite_level=1):
         self.all.serialize(serializer)
         if max_suite_level < 0 or max_suite_level > suite_level:
@@ -251,20 +251,20 @@ class TagStatistics:
 
 
 class TotalStatistics:
-    
-    def __init__(self, suite): 
+
+    def __init__(self, suite):
         self.critical = TotalStat('Critical Tests', suite.critical)
         self.all = TotalStat('All Tests', suite.all)
-                             
+
     def serialize(self, serializer):
         serializer.start_total_stats(self)
         self.critical.serialize(serializer)
         self.all.serialize(serializer)
         serializer.end_total_stats(self)
-        
-        
+
+
 class TagStatInfo:
-    
+
     def __init__(self, docs, links):
         self._docs = [ self._parse_doc(doc) for doc in docs ]
         self._links = [ TagStatLink(*link) for link in links ]
@@ -285,24 +285,24 @@ class TagStatInfo:
 
     def get_links(self, tag):
         links = [ link.get_link(tag) for link in self._links ]
-        return [ link for link in links if link is not None ] 
-        
-        
+        return [ link for link in links if link is not None ]
+
+
 class TagStatLink:
     _match_pattern_tokenizer = re.compile('(\*|\?)')
-    
+
     def __init__(self, pattern, link, title):
-        self._regexp = self._get_match_regexp(pattern) 
+        self._regexp = self._get_match_regexp(pattern)
         self._link = link
         self._title = title.replace('_', ' ')
-    
+
     def get_link(self, tag):
         match = self._regexp.match(tag)
-        if match is not None: 
+        if match is not None:
             link = self._replace_matches(self._link, match)
             return link, self._title
         return None
-    
+
     def _replace_matches(self, url, match):
         groups = match.groups()
         for i, group in enumerate(groups):

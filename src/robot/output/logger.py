@@ -84,7 +84,7 @@ class _Logger(AbstractLogger):
         try:
             logger = FileLogger(path, level)
         except:
-            self.error("Opening syslog file '%s' failed: %s"  
+            self.error("Opening syslog file '%s' failed: %s"
                        % (path, utils.get_error_message()))
         else:
             self.register_logger(logger)
@@ -102,7 +102,7 @@ class _Logger(AbstractLogger):
             logger.log_message(msg)
         if msg.level == 'WARN':
             self.message(msg)
-        
+
     def output_file(self, name, path):
         """Finished output, report, log, summary or debug file (incl. split)"""
         for logger in self._loggers:

@@ -50,7 +50,7 @@ def unescape(item):
         unprocessed = unprocessed[res.end():]
         # Append every second escape char to result
         result.append('\\' * (len(escapes) / 2))
-        # Handle '\n', '\r' and '\t'. Note that both '\n' and '\n ' are 
+        # Handle '\n', '\r' and '\t'. Note that both '\n' and '\n ' are
         # converted to '\n'
         if len(escapes) % 2 == 0 or len(nextchars) == 0 \
                     or nextchars[0] not in ['n','r','t']:
@@ -68,12 +68,12 @@ def unescape(item):
 
 
 def escape_file_name(filename):
-    """Escapes filename. 
-    
+    """Escapes filename.
+
     Use only with actual file name and not with full path because possible
     '/' and '\\' in the given name are also escaped!
     """
-    return ''.join([ _escape_char(c) for c in filename ])        
+    return ''.join([ _escape_char(c) for c in filename ])
 
 
 _ok_chars = string.ascii_letters + string.digits + '-+.'
@@ -83,7 +83,7 @@ _replaced_chars = { u'\xe4' : 'a',  u'\xe5' : 'a',
                     u'\xfc' : 'u',  u'\xdc' : 'U', }
 
 def _escape_char(char):
-    if char in _ok_chars:  
+    if char in _ok_chars:
         return char
     elif _replaced_chars.has_key(char):
         return _replaced_chars[char]

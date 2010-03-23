@@ -28,7 +28,7 @@ from timeouts import KeywordTimeout
 def PublicUserLibrary(path):
     """Create a user library instance from given resource file."""
     from robot.parsing import ResourceFile
-    
+
     resource = ResourceFile(path)
     ret = UserLibrary(resource.user_keywords, path)
     ret.doc = resource.doc
@@ -68,7 +68,7 @@ class UserLibrary(BaseLibrary):
             else:
                 return True
         return False
-        
+
     def get_handler(self, name):
         try:
             return BaseLibrary.get_handler(self, name)
@@ -97,7 +97,7 @@ class UserLibrary(BaseLibrary):
             where = "Resource file '%s'" % self.name
         raise DataError("%s contains multiple keywords matching name '%s'\n"
                         "Found: %s" % (where, name, names))
-    
+
 
 class UserHandler(BaseHandler):
     type = 'user'
@@ -121,7 +121,7 @@ class UserHandler(BaseHandler):
         self.doc = utils.unescape(self._doc)
         self._timeout = metadata.get('Timeout', [])
         self.timeout = [ utils.unescape(item) for item in self._timeout ]
-    
+
     def init_user_keyword(self, varz):
         self._errors = []
         self.doc = varz.replace_meta('Documentation', self._doc, self._errors)
@@ -154,8 +154,8 @@ class UserHandler(BaseHandler):
 
     def _verify_keyword_is_valid(self):
         if self._errors:
-            raise DataError('User keyword initialization failed:\n%s' 
-                            % '\n'.join(self._errors)) 
+            raise DataError('User keyword initialization failed:\n%s'
+                            % '\n'.join(self._errors))
         if not (self.keywords or self.return_value):
             raise DataError("User keyword '%s' contains no keywords"
                             % self.name)
@@ -167,13 +167,13 @@ class UserHandler(BaseHandler):
         if len(ret) != 1 or is_list_var(self.return_value[0]):
             return ret
         return ret[0]
-                
+
     def _get_defaults(self, args, variables):
         """Returns as many default values as needed"""
         defaults_needed = len(self.args) - len(args)
         defaults = self.defaults[len(self.defaults)-defaults_needed:]
         return tuple(variables.replace_list(defaults))
-    
+
     def _get_varargs(self, args):
         """Returns args leftoever from argspec and thus belonging to varargs"""
         vararg_count = len(args) - len(self.args)
@@ -182,7 +182,7 @@ class UserHandler(BaseHandler):
 
 
 class EmbeddedArgsTemplate(UserHandler):
-    
+
     def __init__(self, handlerdata, libname):
         if handlerdata.args:
             raise TypeError('Cannot have normal arguments')
@@ -191,7 +191,7 @@ class EmbeddedArgsTemplate(UserHandler):
         if not self.embedded_args:
             raise TypeError('Must have embedded arguments')
         UserHandler.__init__(self, handlerdata, libname)
-    
+
     def _read_embedded_args_and_regexp(self, string):
         args = []
         regexp = ['^']

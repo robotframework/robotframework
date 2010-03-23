@@ -23,32 +23,32 @@ class FileLogger(AbstractLogger):
     def __init__(self, path, level):
         AbstractLogger.__init__(self, level)
         self._writer = self._get_writer(path)
-        
+
     def _get_writer(self, path):
         # Hook for unittests
         return open(path, 'wb')
-    
+
     def message(self, msg):
         if self._is_logged(msg.level):
-            entry = '%s | %s | %s\n' % (msg.timestamp, msg.level.ljust(5), 
+            entry = '%s | %s | %s\n' % (msg.timestamp, msg.level.ljust(5),
                                         msg.message)
             self._writer.write(utils.unic(entry).encode('UTF-8'))
 
     def start_suite(self, suite):
         self.info("Started test suite '%s'" % suite.name)
-        
+
     def end_suite(self, suite):
         self.info("Ended test suite '%s'" % suite.name)
-        
+
     def start_test(self, test):
         self.info("Started test case '%s'" % test.name)
-        
+
     def end_test(self, test):
         self.info("Ended test case '%s'" % test.name)
-        
+
     def start_keyword(self, kw):
         self.debug("Started keyword '%s'" % kw.name)
-        
+
     def end_keyword(self, kw):
         self.debug("Ended keyword '%s'" % kw.name)
 

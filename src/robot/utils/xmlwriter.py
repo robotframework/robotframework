@@ -18,4 +18,4 @@ import os
 if os.name == 'java':
     from jyxmlwriter import XmlWriter
 else:
-    from pyxmlwriter import XmlWriter 
+    from pyxmlwriter import XmlWriter

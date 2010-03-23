@@ -21,12 +21,12 @@ RESERVED_KEYWORDS = [ 'for', 'while', 'break', 'continue', 'end',
 
 
 class Reserved:
-    
+
     ROBOT_LIBRARY_SCOPE = 'GLOBAL'
-    
+
     def get_keyword_names(self):
         return RESERVED_KEYWORDS
-    
+
     def run_keyword(self, name, args):
         raise Exception("'%s' is a reserved keyword" % utils.printable_name(name))
 

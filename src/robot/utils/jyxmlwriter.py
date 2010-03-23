@@ -31,7 +31,7 @@ class XmlWriter(AbstractXmlWriter):
         self._writer.startDocument()
         self.content('\n')
         self.closed = False
-        
+
     def start(self, name, attributes={}, newline=True):
         attrs = AttributesImpl()
         for attrname, attrvalue in attributes.items():

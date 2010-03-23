@@ -21,53 +21,53 @@ from robot.output import LOGGER
 
 
 def get_title(type_, name):
-    endings = { 'Log' : 'Test Log', 
-                'Report' : 'Test Report', 
+    endings = { 'Log' : 'Test Log',
+                'Report' : 'Test Report',
                 'Summary' : 'Summary Report' }
     return '%s %s' % (name, endings[type_])
 
 
 class _BaseSettings:
-    
-    _cli_opts = { 'Name'             : ('name', None), 
-                  'Doc'              : ('doc', None), 
-                  'Metadata'         : ('metadata', []), 
+
+    _cli_opts = { 'Name'             : ('name', None),
+                  'Doc'              : ('doc', None),
+                  'Metadata'         : ('metadata', []),
                   'TestNames'        : ('test', []),
-                  'SuiteNames'       : ('suite', []), 
+                  'SuiteNames'       : ('suite', []),
                   'SetTag'           : ('settag', []),
-                  'Include'          : ('include', []), 
-                  'Exclude'          : ('exclude', []), 
+                  'Include'          : ('include', []),
+                  'Exclude'          : ('exclude', []),
                   'Critical'         : ('critical', None),
                   'NonCritical'      : ('noncritical', None),
-                  'OutputDir'        : ('outputdir', '.'), 
-                  'Log'              : ('log', 'log.html'), 
-                  'Report'           : ('report', 'report.html'), 
-                  'Summary'          : ('summary', 'NONE'), 
+                  'OutputDir'        : ('outputdir', '.'),
+                  'Log'              : ('log', 'log.html'),
+                  'Report'           : ('report', 'report.html'),
+                  'Summary'          : ('summary', 'NONE'),
                   'SplitOutputs'     : ('splitoutputs', -1),
                   'TimestampOutputs' : ('timestampoutputs', False),
-                  'LogTitle'         : ('logtitle', None), 
-                  'ReportTitle'      : ('reporttitle', None), 
-                  'SummaryTitle'     : ('summarytitle', None), 
-                  'SuiteStatLevel'   : ('suitestatlevel', -1), 
+                  'LogTitle'         : ('logtitle', None),
+                  'ReportTitle'      : ('reporttitle', None),
+                  'SummaryTitle'     : ('summarytitle', None),
+                  'SuiteStatLevel'   : ('suitestatlevel', -1),
                   'TagStatInclude'   : ('tagstatinclude', []),
-                  'TagStatExclude'   : ('tagstatexclude', []), 
+                  'TagStatExclude'   : ('tagstatexclude', []),
                   'TagStatCombine'   : ('tagstatcombine', []),
                   'TagDoc'           : ('tagdoc', []),
-                  'TagStatLink'      : ('tagstatlink', []), 
-                  'LogLevel'         : ('loglevel', 'INFO'), 
+                  'TagStatLink'      : ('tagstatlink', []),
+                  'LogLevel'         : ('loglevel', 'INFO'),
                   'MonitorWidth'     : ('monitorwidth', 78),
                   'MonitorColors'    : ('monitorcolors', 'ON') }
-    
+
     _deprecated = { 'colormonitor'   : 'monitorcolors',
                     'transform'      : None }
-    
+
     def __init__(self, options={}, log=True):
         self._opts = {}
         self._cli_opts.update(self._extra_cli_opts)
         self._process_deprecated_cli_opts(options)
         self._process_cli_opts(options)
         if log: LOGGER.info('Settings:\n%s' % self)
-            
+
     def _process_cli_opts(self, opts):
         for name, (cli_name, default) in self._cli_opts.items():
             try:
@@ -88,7 +88,7 @@ class _BaseSettings:
                 opts[newname] = opts[oldname]
             else:
                 LOGGER.error("Option '--%s' has been removed." % oldname)
-    
+
     def __setitem__(self, name, value):
         if not self._cli_opts.has_key(name):
             raise KeyError("Non-existing settings '%s'" % name)
@@ -116,7 +116,7 @@ class _BaseSettings:
             value = (utils.eq(value, 'ON') and not utils.is_windows) \
                          or utils.eq(value, 'FORCE')
         self._opts[name] = value
-        
+
     def __getitem__(self, name):
         if not self._cli_opts.has_key(name):
             raise KeyError("Non-existing setting '%s'" % name)
@@ -125,16 +125,16 @@ class _BaseSettings:
         elif name in ['LogTitle', 'ReportTitle', 'SummaryTitle']:
             return self._get_output_title(name)
         return self._opts[name]
-        
+
     def _get_output_title(self, type_):
         value = self._opts[type_]
         if value is not None:
             return value.replace('_', ' ')
         return get_title(type_.replace('Title',''), self['Name'])
-        
+
     def _get_output_file(self, type_):
         """Returns path of the requested ouput file and creates needed dirs.
-        
+
         Type can be 'Output', 'Log', 'Report' or 'Summary'.
         """
         name = self._opts[type_]
@@ -144,14 +144,14 @@ class _BaseSettings:
         path = utils.normpath(os.path.join(self['OutputDir'], name), False)
         self._create_output_dir(os.path.dirname(path), type_)
         return path
-    
+
     def _process_output_name(self, name, type_):
         base, ext = os.path.splitext(name)
         if self['TimestampOutputs']:
             base = '%s-%s' % (base, utils.get_start_timestamp('', '-', ''))
         ext = self._get_output_extension(ext, type_)
         return base + ext
-        
+
     def _get_output_extension(self, ext, type_):
         if ext != '':
             return ext
@@ -170,7 +170,7 @@ class _BaseSettings:
         except:
             raise DataError("Can't create %s file's parent directory '%s': %s"
                             % (type_.lower(), path, utils.get_error_message()))
-    
+
     def _process_tag_stat_link(self, value):
         ret = []
         for item in value:
@@ -208,18 +208,18 @@ class _BaseSettings:
 
 
 class RobotSettings(_BaseSettings):
-    
+
     _extra_cli_opts = { 'Output'        : ('output', 'output.xml'),
                         'RunMode'       : ('runmode', 'normal'),
                         'Variables'     : ('variable', []),
-                        'VariableFiles' : ('variablefile', []), 
-                        'Listeners'     : ('listener', []), 
+                        'VariableFiles' : ('variablefile', []),
+                        'Listeners'     : ('listener', []),
                         'DebugFile'     : ('debugfile', 'NONE') }
     _optional_outputs = ['Log', 'Report', 'Summary', 'DebugFile']
-    
+
     def is_rebot_needed(self):
         return not ('NONE' == self['Log'] == self['Report'] == self['Summary'])
-    
+
     def get_rebot_datasources_and_settings(self):
         datasources = [ self['Output'] ]
         settings = RebotSettings(log=False)
@@ -231,10 +231,10 @@ class RobotSettings(_BaseSettings):
         for name in ['Output', 'RemoveKeywords']:
             settings._opts[name] = 'NONE'
         return datasources, settings
-            
-            
+
+
 class RebotSettings(_BaseSettings):
-    
+
     _extra_cli_opts = { 'Output'         : ('output', 'NONE'),
                         'RemoveKeywords' : ('removekeywords', 'NONE'),
                         'StartTime'      : ('starttime', 'N/A'),

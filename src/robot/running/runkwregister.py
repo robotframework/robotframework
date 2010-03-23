@@ -19,17 +19,17 @@ from robot import utils
 
 
 class _RunKeywordRegister:
-    
+
     def __init__(self):
         self._libs = {}
 
     def register_run_keyword(self, library, keyword, args_to_process=None):
-        if args_to_process is None:            
+        if args_to_process is None:
             args_to_process = self._get_args_from_method(keyword)
             keyword =  keyword.__name__
         keyword = utils.printable_name(keyword, code_style=True)
         self._libs.setdefault(library, {})[keyword] = int(args_to_process)
-            
+
     def get_args_to_process(self, library, keyword):
         if library in self._libs and keyword in self._libs[library]:
             return self._libs[library][keyword]

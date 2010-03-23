@@ -99,21 +99,21 @@ class _BaseRawData:
         if self._type is None:
             self._type = self._get_type()
         return self._type
-    
+
     def _get_type(self):
         if len(self.testcases) > 0:
             return self.TESTCASE
         if len(self.settings) + len(self.variables) + len(self.keywords) == 0:
             return self.EMPTY
         if os.path.splitext(os.path.basename(self.source))[0].lower() == '__init__':
-            return self.INITFILE    
+            return self.INITFILE
         return self.RESOURCE
 
 
 class EmptyRawData(_BaseRawData):
     pass
 
-                
+
 class TabularRawData(_BaseRawData):
     """Populates RawData from tabular test data"""
 
@@ -134,7 +134,7 @@ class TabularRawData(_BaseRawData):
 
     def start_table(self, name):
         """Makes rawdata instance ready to receive new data
-        
+
         This method should be called with table's name before adding table's
         data with 'add_row'.
         Returns False if data from specified table will not be processed.
@@ -148,7 +148,7 @@ class TabularRawData(_BaseRawData):
         else:
             self._table = None
         return self._table is not None
-            
+
     def _get_table_and_data(self, name):
         if utils.eq_any(name, SETTING_TABLES):
             return SimpleTable, self.settings
@@ -162,16 +162,16 @@ class TabularRawData(_BaseRawData):
 
     def add_row(self, cells, repeat=1):
         """Processes cells from given row.
-        
+
         Client can use 'repeat' to tell that it has that many similar rows
         instead of calling add_row that many times.
         """
         if self._table is not None:
             self._table.add_row(self._process_cells(cells), repeat)
-                
+
     def _process_cells(self, cells):
         """Trims cells and process ${CURDIR}.
-        
+
         Trimming means collapsing whitespace, removing trailing empty cells and
         removing comments.
         """
@@ -190,7 +190,7 @@ class TabularRawData(_BaseRawData):
             else:
                 temp.pop()
         return temp
-    
+
     def _collapse_whitespace(self, cell):
         # Remove leading and trailing whitespace and collapse internal
         return self._whitespace_regexp.sub(' ', cell).strip()

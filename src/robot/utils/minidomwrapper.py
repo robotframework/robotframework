@@ -20,15 +20,15 @@ from abstractdomwrapper import AbstractDomWrapper
 
 
 class DomWrapper(AbstractDomWrapper):
-    
+
     """A wrapper for Python's XML DOM for simplifying reading data from it.
-    
+
     See documentation of AbstractDomWrapper for further usage information.
     """
 
     def __init__(self, path=None, string=None, node=None):
         """Initialize by giving 'path' to an xml file or xml as a 'string'.
-        
+
         Alternative initialization by giving dom 'node' ment to be used only
         internally. 'path' may actually also be an already opened file object
         (or anything accepted by minidom.parse).

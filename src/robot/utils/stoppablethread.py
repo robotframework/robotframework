@@ -20,12 +20,12 @@ import threading
 class StoppablePythonThread(threading.Thread):
 
     """A subclass of threading.Thread, with a stop() method.
-    
+
     Original version posted by Connelly Barnes to python-list and available at
     http://mail.python.org/pipermail/python-list/2004-May/219465.html
-    
+
     This version mainly has kill() changed to stop() to match java.lang.Thread.
-    
+
     This is a hack but seems to be the best way the get this done. Only used
     in Python because in Jython we can use java.lang.Thread.
     """

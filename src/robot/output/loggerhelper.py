@@ -18,7 +18,7 @@ from robot.errors import DataError
 
 
 LEVELS = {
-  "NONE"  : 100, 
+  "NONE"  : 100,
   "ERROR" : 60,
   "FAIL"  : 50,
   "WARN"  : 40,
@@ -29,10 +29,10 @@ LEVELS = {
 
 
 class AbstractLogger:
-    
+
     def __init__(self, level='TRACE'):
         self._is_logged = IsLogged(level)
-        
+
     def set_level(self, level):
         return self._is_logged.set_level(level)
 
@@ -62,14 +62,14 @@ class AbstractLogger:
 
 
 class Message:
-    
+
     def __init__(self, message, level, html=False):
         self.timestamp = utils.get_timestamp(daysep='', daytimesep=' ',
                                              timesep=':', millissep='.')
         self.level = level.upper()
         self.message = self._process_message(message)
         self.html = html
-        
+
     def _process_message(self, msg):
         """Makes sure we have a string and no extra CR is written to log"""
         if not utils.is_str(msg):
@@ -85,7 +85,7 @@ class IsLogged:
 
     def __call__(self, level):
         return self._level_to_int(level) >= self._int_level
-    
+
     def set_level(self, level):
         old = self._str_level.upper()
         self.__init__(level)
@@ -101,7 +101,7 @@ class IsLogged:
 class AbstractLoggerProxy:
 
     _methods = NotImplemented
-         
+
     def __init__(self, logger):
         self.logger = logger
         default = lambda *args: None
@@ -111,7 +111,7 @@ class AbstractLoggerProxy:
             except AttributeError:
                 method = getattr(logger, self._toCamelCase(name), default)
             setattr(self, name, method)
-    
+
     def _toCamelCase(self, name):
         parts = name.split('_')
         return ''.join([parts[0]] + [part.capitalize() for part in parts[1:]])

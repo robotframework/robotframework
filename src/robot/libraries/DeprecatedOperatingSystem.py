@@ -19,11 +19,11 @@ OPSYS = OperatingSystem.OperatingSystem()
 
 class DeprecatedOperatingSystem:
     ROBOT_LIBRARY_SCOPE = 'GLOBAL'
-    
+
     delete_environment_variable = OPSYS.remove_environment_variable
     environment_variable_is_set = OPSYS.environment_variable_should_be_set
     environment_variable_is_not_set = OPSYS.environment_variable_should_not_be_set
-    
+
     fail_unless_exists = OPSYS.should_exist
     fail_if_exists = OPSYS.should_not_exist
     fail_unless_file_exists = OPSYS.file_should_exist
@@ -34,7 +34,7 @@ class DeprecatedOperatingSystem:
     fail_if_dir_empty = OPSYS.directory_should_not_be_empty
     fail_unless_file_empty = OPSYS.file_should_be_empty
     fail_if_file_empty = OPSYS.file_should_not_be_empty
-    
+
     empty_dir = OPSYS.empty_directory
     remove_dir = OPSYS.remove_directory
     copy_dir = OPSYS.copy_directory

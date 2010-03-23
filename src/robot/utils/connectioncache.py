@@ -24,7 +24,7 @@ class ConnectionCache:
     This cache stores connections and allows switching between them using
     generated indexes or user given aliases. Can be used for example by web
     testing libraries where there's need for multiple concurrent connections.
-    
+
     Note that in most cases there should be only one instance of this class but
     this is not enforced.
     """
@@ -38,8 +38,8 @@ class ConnectionCache:
 
     def register(self, connection, alias=None):
         """Registers given connection with optional alias and returns its index.
-        
-        Given connection is set to be the current connection. Alias must be 
+
+        Given connection is set to be the current connection. Alias must be
         a string. The index of the first connection after initialization or
         close_all or empty_cache is 1, second is 2, etc.
         """
@@ -49,10 +49,10 @@ class ConnectionCache:
         if isinstance(alias, basestring):
             self._aliases[alias] = self.current_index
         return self.current_index
-    
+
     def switch(self, index_or_alias):
         """Switches to the connection specified by given index or alias.
-        
+
         If alias is given it must be a string. Indexes can be either integers
         or strings that can be converted into integer. Raises a DataError
         if no connection with given index or alias found.
@@ -67,31 +67,31 @@ class ConnectionCache:
 
     def close_all(self, closer_method='close'):
         """Closes connections using given closer method and empties cache.
-        
+
         If simply calling the closer method is not adequate for closing
         connections, clients should close connections themselves and use
-        empty_cache afterwards.         
+        empty_cache afterwards.
         """
         for conn in self._connections:
             getattr(conn, closer_method)()
         self.empty_cache()
         return self.current
-                
+
     def empty_cache(self):
         """Empties the connections cache.
-        
+
         Indexes of new connections starts from 1 after this."""
         self.current = self._no_current
         self.current_index = None
         self._connections = []
         self._aliases = NormalizedDict()
-        
+
     def _get_index(self, index_or_alias):
         try:
             return self._resolve_alias(index_or_alias)
         except ValueError:
             return self._resolve_index(index_or_alias)
-    
+
     def _resolve_alias(self, alias):
         if isinstance(alias, basestring):
             try:
@@ -108,7 +108,7 @@ class ConnectionCache:
 
 
 class _NoConnection:
-    
+
     def __init__(self, msg):
         self._msg = msg
 

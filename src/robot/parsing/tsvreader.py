@@ -14,7 +14,7 @@
 
 
 class TsvReader:
-        
+
     def read(self, tsvfile, rawdata):
         process = False
         for row in tsvfile.readlines():
@@ -27,7 +27,7 @@ class TsvReader:
 
     def _split_row(self, row):
         return row.rstrip().split('\t')
-   
+
     def _process(self, cell):
         if len(cell) > 1 and cell[0] == cell[-1] == '"':
             cell = cell[1:-1].replace('""','"')

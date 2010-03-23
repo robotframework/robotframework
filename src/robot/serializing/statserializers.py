@@ -104,10 +104,10 @@ class _StatSerializer:
         self._writer.start('div', {'class': 'graph'})
         self._write_graph(stat)
         self._writer.end_many(['div', 'td', 'tr'])
-        
+
     def _write_graph(self, stat):
-        # See utils.percents_to_widths to understand why different percent and 
-        # width values are needed 
+        # See utils.percents_to_widths to understand why different percent and
+        # width values are needed
         percents = utils.calc_percents(stat.passed, stat.failed)
         widths = utils.percents_to_widths(*percents)
         pass_attrs = {'class': 'pass_bar', 'title': '%.1f%%' % percents[0],
@@ -138,7 +138,7 @@ class _StatSerializer:
         self._writer.element('td', None, {'class': 'col_stat'})
         self._writer.start('td', {'class': 'col_graph'})
         self._writer.start('div', {'class': 'graph'})
-        self._writer.element('b', None, {'class': 'no_tags_bar', 
+        self._writer.element('b', None, {'class': 'no_tags_bar',
                                          'style': 'width: 100%;'})
         self._writer.end_many(['div', 'td', 'tr'])
 
@@ -170,25 +170,25 @@ class LogStatSerializer(_StatSerializer):
         target = 'suite_%s' % stat.get_link(self._split_level)
         return {'href': '#' + target,
                 'onclick': "set_element_visible('%s')" % target}
-        
+
 
 class SplitLogStatSerializer(LogStatSerializer):
-    
+
     def __init__(self, output, split_level):
         LogStatSerializer.__init__(self, output, split_level=-1)
         self._split_border = split_level
         self._link_target = None
         self._namegen = utils.FileNameGenerator(os.path.basename(output.name))
-                
+
     def _get_link_attributes(self, stat):
-        border = self._before_after_or_on_split_border(stat)      
+        border = self._before_after_or_on_split_border(stat)
         if border < 0:
             return LogStatSerializer._get_link_attributes(self, stat)
         if border == 0:
             self._link_target = self._namegen.get_name()
         return {'href': '%s#suite_%s' % (self._link_target,
                                          stat.get_link(self._split_border))}
-        
+
     def _before_after_or_on_split_border(self, stat):
         tokens = stat.get_long_name(separator=None)
         return cmp(len(tokens), self._split_border+1)

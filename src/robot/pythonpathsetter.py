@@ -36,7 +36,7 @@ def add_path(path, to_beginning=False):
             sys.path.insert(0, path)
         else:
             sys.path.append(path)
-                
+
 def remove_path(path):
     path = norm_path(path)
     while path in sys.path:

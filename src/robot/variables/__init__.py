@@ -28,8 +28,8 @@ GLOBAL_VARIABLES = Variables()
 def init_global_variables(settings):
     _set_cli_vars(settings)
     for name, value in [ ('${TEMPDIR}', utils.get_temp_dir()),
-                         ('${EXECDIR}', os.path.abspath('.')), 
-                         ('${/}', os.sep), 
+                         ('${EXECDIR}', os.path.abspath('.')),
+                         ('${/}', os.sep),
                          ('${:}', os.pathsep),
                          ('${SPACE}', ' '),
                          ('${EMPTY}', ''),

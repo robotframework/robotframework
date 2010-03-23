@@ -43,17 +43,17 @@ class Template:
             tfile.close()
             self.parent_dir = os.path.dirname(os.path.abspath(os.path.normpath(path)))
         else:
-            self.parent_dir = None                    
+            self.parent_dir = None
         self._template = template
         self._functions = functions or utils.NormalizedDict()
-        # True means handlers for more than single line       
+        # True means handlers for more than single line
         self._handlers = { 'INCLUDE': (self._handle_include, False),
                            'IMPORT': (self._handle_import, False),
                            'CALL': (self._handle_call, False),
                            'IF': (self._handle_if, True),
                            'FOR': (self._handle_for, True),
                            'FUNCTION': (self._handle_function, True) }
-    
+
     def generate(self, namespace, output=None):
         self._namespace = namespace
         return self._process(self._template, output)
@@ -68,7 +68,7 @@ class Template:
             except ValueError:
                 result.add(self._handle_variables(line))
         return result.get_result()
-                
+
     def _process_line(self, line, lines):
         if not line.startswith(PRE) and line.endswith(POST):
             raise ValueError
@@ -83,8 +83,8 @@ class Template:
         return handler(expression)
 
     def _get_multi_line_block(self, name, lines):
-        """Returns string containing lines before END matching given name. 
-        
+        """Returns string containing lines before END matching given name.
+
         Removes the returned lines from given 'lines'.
         """
         block_lines = []
@@ -128,7 +128,7 @@ class Template:
         if not result:
             return None
         return '\n'.join(result)
-    
+
     def _handle_if(self, expression, block_lines):
         expression = self._handle_variables(expression)
         if_block, else_block = self._get_if_and_else_blocks(block_lines)
@@ -136,8 +136,8 @@ class Template:
         if not result:
             return None
         return self._process('\n'.join(result))
-    
-    def _get_if_and_else_blocks(self, block_lines):        
+
+    def _get_if_and_else_blocks(self, block_lines):
         else_line = PRE + 'ELSE' + POST
         if_block = []
         else_block = []
@@ -148,7 +148,7 @@ class Template:
             else:
                 block.append(line)
         return if_block, else_block
-        
+
     def _handle_call(self, expression):
         func_tokens = expression.split()
         name = func_tokens[0]
@@ -157,7 +157,7 @@ class Template:
         try:
             func_args, func_body = self._functions[name]
         except KeyError:
-            raise DataError("Non-existing function '%s', available: %s" 
+            raise DataError("Non-existing function '%s', available: %s"
                             % (name, self._functions.keys()))
         for key, value in zip(func_args, args):
             namespace[key] = namespace.replace_string(value)
@@ -169,32 +169,32 @@ class Template:
         name = signature_tokens[0]
         args = signature_tokens[1:]
         self._functions[name] = (args, '\n'.join(block_lines))
-    
+
     def _get_full_path(self, path):
         if self.parent_dir is None:
             raise FrameworkError('Parent directory is None. Probably template '
-                                 'was string and other files was referred. ' 
+                                 'was string and other files was referred. '
                                  'That is not supported.')
-        abs_path = os.path.join(self.parent_dir, path)       
+        abs_path = os.path.join(self.parent_dir, path)
         if os.path.exists(abs_path):
             return abs_path
         else:
             raise DataError("File '%s' does not exist." % abs_path)
-                
+
 
 class Result:
-    
+
     def __init__(self, output=None):
         self._output = output
         self._result = []
-        
+
     def add(self, text):
         if text is not None:
             if self._output is None:
                 self._result.append(text)
             else:
                 self._output.write(text.encode('UTF-8') + '\n')
-            
+
     def get_result(self):
         if not self._result:
             return None

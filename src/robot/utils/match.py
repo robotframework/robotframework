@@ -26,7 +26,7 @@ def eq(str1, str2, ignore=[], caseless=True, spaceless=True):
     str2 = normalize(str2, ignore, caseless, spaceless)
     return str1 == str2
 
-        
+
 def eq_any(str_, str_list, ignore=[], caseless=True, spaceless=True):
     str_ = normalize(str_, ignore, caseless, spaceless)
     for s in str_list:
@@ -59,7 +59,7 @@ def _get_match_regexp(pattern):
             regexp.append(re.escape(token))
     return '^%s$' % ''.join(regexp)
 
-    
+
 def matches_any(string, patterns, ignore=[], caseless=True, spaceless=True):
     for pattern in patterns:
         if matches(string, pattern, ignore, caseless, spaceless):

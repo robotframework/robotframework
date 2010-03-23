@@ -29,7 +29,7 @@ class Importer:
     def __init__(self):
         self._libraries = _LibraryCache()
         self._resources = _LibraryCache()
-        
+
     def import_library(self, name, args):
         code_name, name, args = self._get_lib_names_and_args(name, args)
         lib = self._import_library(code_name, args)
@@ -37,7 +37,7 @@ class Importer:
             lib = self._copy_library(lib, name)
             LOGGER.info("Imported library '%s' with name '%s'" % (code_name, name))
         return lib
-    
+
     def import_resource(self, path):
         if self._resources.has_key(path):
             LOGGER.info("Found resource file '%s' from cache" % path)
@@ -45,13 +45,13 @@ class Importer:
             resource = ResourceFile(path)
             resource.user_keywords = UserLibrary(resource.user_keywords, path)
             self._resources[path] = resource
-            LOGGER.info("Imported resource file '%s' (%d keywords)" 
+            LOGGER.info("Imported resource file '%s' (%d keywords)"
                         % (path, len(resource.user_keywords)))
             # Resource file may contain only variables so we should not warn
             # if there are no keywords. Importing an empty resource file fails
             # already earlier so no need to check that here either.
         return self._resources[path]
- 
+
     def _get_lib_names_and_args(self, name, args):
         # Ignore spaces unless importing by path
         if not os.path.exists(name):
@@ -68,21 +68,21 @@ class Importer:
     def _import_library(self, name, args):
         key = (name, args)
         if self._libraries.has_key(key):
-            LOGGER.info("Found test library '%s' with arguments %s from cache" 
+            LOGGER.info("Found test library '%s' with arguments %s from cache"
                         % (name, utils.seq2str2(args)))
             return self._libraries[key]
         lib = TestLibrary(name, args)
         self._libraries[key] = lib
         libtype = lib.__class__.__name__.replace('Library', '').lower()[1:]
         LOGGER.info("Imported library '%s' with arguments %s (version %s, "
-                    "%s type, %s scope, %d keywords, source %s)" 
-                    % (name, utils.seq2str2(args), lib.version, libtype, 
+                    "%s type, %s scope, %d keywords, source %s)"
+                    % (name, utils.seq2str2(args), lib.version, libtype,
                        lib.scope.lower(), len(lib), lib.source))
         if len(lib) == 0:
             LOGGER.warn("Imported library '%s' contains no keywords" % name)
         return lib
 
-    def _copy_library(self, lib, newname): 
+    def _copy_library(self, lib, newname):
         libcopy = copy.copy(lib)
         libcopy.name = newname
         libcopy.init_scope_handling()
@@ -92,7 +92,7 @@ class Importer:
             handcopy.library = libcopy
             libcopy.handlers[handler.name] = handcopy
         return libcopy
- 
+
 
 class _LibraryCache:
     """Cache for libs/resources that doesn't require mutable keys like dicts"""

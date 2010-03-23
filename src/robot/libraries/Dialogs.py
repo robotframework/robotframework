@@ -54,7 +54,7 @@ def get_value_from_user(message, default_value=''):
     """Pauses the test execution and asks user to input a value.
 
     `message` is the instruction shown in the dialog. `default_value` is the
-    possible default value shown in the input field. Selecting 'Cancel' fails 
+    possible default value shown in the input field. Selecting 'Cancel' fails
     the keyword.
     """
     return _validate_user_input(InputDialog(message, default_value).result)
@@ -62,7 +62,7 @@ def get_value_from_user(message, default_value=''):
 def get_selection_from_user(message, *values):
     """Pauses the test execution and asks user to select value
 
-    `message` is the instruction shown in the dialog. and `values` are 
+    `message` is the instruction shown in the dialog. and `values` are
     the options given to the user. Selecting 'Cancel' fails the keyword.
 
     This keyword was added into Robot Framework 2.1.2.

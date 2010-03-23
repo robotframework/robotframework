@@ -21,12 +21,12 @@ from robot.errors import DataError
 
 
 class _TestAndSuiteHelper:
-    
+
     def __init__(self, name, parent=None):
         self.name = name
         self.doc = ''
         self.parent = parent
-        self.setup = None 
+        self.setup = None
         self.teardown = None
         self.status = 'NOT_RUN'
         self.message = ''
@@ -36,7 +36,7 @@ class _TestAndSuiteHelper:
             return utils.html_escape(self.doc, formatting=True)
         if name == 'longname':
             return self.get_long_name()
-        raise AttributeError("%s does not have attribute '%s'" 
+        raise AttributeError("%s does not have attribute '%s'"
                              % (self.__class__.__name__, name))
 
     def get_long_name(self, split_level=-1, separator='.'):
@@ -61,7 +61,7 @@ class _TestAndSuiteHelper:
 
     def __str__(self):
         return self.name
-    
+
     def __repr__(self):
         return "'%s'" % self.name
 
@@ -155,7 +155,7 @@ class BaseTestSuite(_TestAndSuiteHelper):
 
     def set_status(self):
         """Sets status and statistics based on subsuite and test statuses.
-        
+
         Can/should be used when statuses have been changed somehow.
         """
         self._set_stats()
@@ -169,7 +169,7 @@ class BaseTestSuite(_TestAndSuiteHelper):
             self._add_suite_to_stats(suite)
         for test in self.tests:
             self._add_test_to_stats(test)
-    
+
     def _add_test_to_stats(self, test):
         self.all_stats.add_test(test)
         if test.critical == 'yes':
@@ -210,7 +210,7 @@ class BaseTestSuite(_TestAndSuiteHelper):
 
     def _filter_by_names(self, suites, tests):
         suites = self._filter_suite_names(suites)
-        self.suites = [ suite for suite in self.suites 
+        self.suites = [ suite for suite in self.suites
                         if suite._filter_by_names(suites, tests) ]
         if not suites:
             self.tests = [ test for test in self.tests if tests == [] or
@@ -253,9 +253,9 @@ class BaseTestSuite(_TestAndSuiteHelper):
             self._raise_no_tests_filtered_by_tags(includes, excludes)
 
     def _filter_by_tags(self, incls, excls):
-        self.suites = [ suite for suite in self.suites 
+        self.suites = [ suite for suite in self.suites
                         if suite._filter_by_tags(incls, excls) ]
-        self.tests = [ test for test in self.tests 
+        self.tests = [ test for test in self.tests
                        if test.is_included(incls, excls) ]
         return len(self.suites) + len(self.tests) > 0
 
@@ -346,8 +346,8 @@ class BaseTestCase(_TestAndSuiteHelper):
 
     def _matches_any_of_the(self, tag_rules):
         """Returns True if any of tag_rules matches self.tags
-        
-        Matching equals supporting AND, & and NOT boolean operators and simple 
+
+        Matching equals supporting AND, & and NOT boolean operators and simple
         pattern matching. NOT is 'or' operation meaning if any of the NOTs is
         matching, False is returned.
         """
@@ -383,7 +383,7 @@ class BaseTestCase(_TestAndSuiteHelper):
     def _contains_any_tag(self, tags):
         """Returns True if any of the given tags matches a tag from self.tags.
 
-        Note that one tag may be ANDed combination of multiple tags (e.g.  
+        Note that one tag may be ANDed combination of multiple tags (e.g.
         tag1&tag2) and then all of them must match some tag from selg.tags.
         """
         for tag in tags:
@@ -394,7 +394,7 @@ class BaseTestCase(_TestAndSuiteHelper):
     def _contains_tag(self, tag):
         """Returns True if given tag matches any tag from self.tags.
 
-        Note that given tag may be ANDed combination of multiple tags (e.g.  
+        Note that given tag may be ANDed combination of multiple tags (e.g.
         tag1&tag2) and then all of them must match some tag from selg.tags.
         """
         for item in tag.split('&'):
@@ -424,7 +424,7 @@ class BaseTestCase(_TestAndSuiteHelper):
 
     def _get_name_slice_index(self, name_parts_count, split_level):
         if name_parts_count == split_level + 1:
-            return split_level + 1 
+            return split_level + 1
         return split_level
 
 

@@ -33,7 +33,7 @@ if utils.is_jython:
                and isinstance(method.im_func, PyReflectedFunction)
 else:
     _is_java_init = _is_java_method = lambda item: False
-    
+
 
 def Handler(library, name, method):
     if _is_java_method(method):
@@ -67,7 +67,7 @@ class _RunnableHandler(BaseHandler):
 
     def run(self, output, namespace, args):
         """Executes the represented handler with given 'args'.
-        
+
         Note: This method MUST NOT change this object's internal state.
         """
         if self._method is not None:
@@ -84,14 +84,14 @@ class _RunnableHandler(BaseHandler):
             self._release_and_log_output(output)
         output.trace('Return: %s' % utils.unic(ret))
         return ret
-    
+
     def _get_global_handler(self, method, name):
         return method
-    
+
     def _get_handler(self, lib_instance, handler_name):
         """Overridden by DynamicHandler"""
         return getattr(lib_instance, handler_name)
-            
+
     def _process_args(self, args, variables):
         index = RUN_KW_REGISTER.get_args_to_process(self.library.orig_name, self.name)
         # Negative index means that this is not Run Keyword variant and all
@@ -100,22 +100,22 @@ class _RunnableHandler(BaseHandler):
             return self._replace_vars_from_args(args, variables)
         if index == 0:
             return self.check_arg_limits(args)
-        # There might be @{list} variables and those might have more or less 
-        # arguments that is needed. Therefore we need to go through arguments 
+        # There might be @{list} variables and those might have more or less
+        # arguments that is needed. Therefore we need to go through arguments
         # one by one.
         processed = []
-        while len(processed) < index and args: 
+        while len(processed) < index and args:
             processed += variables.replace_list([args.pop(0)])
-        # In case @{list} variable is unpacked, the arguments going further 
+        # In case @{list} variable is unpacked, the arguments going further
         # needs to be escaped, otherwise those are unescaped twice.
         processed[index:] = [utils.escape(arg) for arg in processed[index:]]
         return self.check_arg_limits(processed + args)
-    
+
     def _replace_vars_from_args(self, args, variables):
         """Overridden by JavaHandler"""
         args = variables.replace_list(args)
         return self.check_arg_limits(args)
-    
+
     def _run_handler(self, handler, args, output, namespace):
         timeout = self._get_timeout(namespace)
         if timeout is not None and timeout.active():
@@ -137,7 +137,7 @@ class _RunnableHandler(BaseHandler):
         if namespace.test is not None and namespace.test.status == 'RUNNING':
             items.append(namespace.test)
         return items
-    
+
     def _release_and_log_output(self, logger):
         stdout, stderr = utils.release_output()
         logger.log_output(stdout)
@@ -147,7 +147,7 @@ class _RunnableHandler(BaseHandler):
 
 
 class _PythonHandler(_RunnableHandler):
-    
+
     def __init__(self, library, handler_name, handler_method):
         _RunnableHandler.__init__(self, library, handler_name, handler_method)
         self.doc = utils.get_doc(handler_method)
@@ -155,7 +155,7 @@ class _PythonHandler(_RunnableHandler):
                 = self._get_arg_spec(handler_method)
         self.minargs = len(self.args) - len(self.defaults)
         self.maxargs = self.varargs is not None and sys.maxint or len(self.args)
-        
+
     def _get_arg_spec(self, handler):
         """Returns info about args in a tuple (args, defaults, varargs)
 
@@ -163,8 +163,8 @@ class _PythonHandler(_RunnableHandler):
         defaults - tuple of default values
         varargs  - name of the argument accepting varargs or None
         """
-        # Code below is based on inspect module's getargs and getargspec 
-        # methods. See their documentation and/or source for more details. 
+        # Code below is based on inspect module's getargs and getargspec
+        # methods. See their documentation and/or source for more details.
         if type(handler) is MethodType:
             func = handler.im_func
             first_arg = 1        # this drops 'self' from methods' args
@@ -188,13 +188,13 @@ class _PythonHandler(_RunnableHandler):
 
 
 class _JavaHandler(_RunnableHandler):
-    
+
     def __init__(self, library, handler_name, handler_method):
         _RunnableHandler.__init__(self, library, handler_name, handler_method)
         signatures = self._get_signatures(handler_method)
         self.minargs, self.maxargs = self._get_arg_limits(signatures)
         self._arg_coercer = ArgumentCoercer(signatures)
-        
+
     def _get_arg_limits(self, signatures):
         if len(signatures) == 1:
             return self._get_single_sig_arg_limits(signatures[0])
@@ -216,7 +216,7 @@ class _JavaHandler(_RunnableHandler):
         else:
             mina = maxa = len(args)
         return mina, maxa
-    
+
     def _get_multi_sig_arg_limits(self, signatures):
         mina = maxa = None
         for sig in signatures:
@@ -226,7 +226,7 @@ class _JavaHandler(_RunnableHandler):
             if maxa is None or argc > maxa:
                 maxa = argc
         return mina, maxa
-            
+
     def _replace_vars_from_args(self, args, variables):
         args = _RunnableHandler._replace_vars_from_args(self, args, variables)
         if self.maxargs == sys.maxint:
@@ -246,8 +246,8 @@ class _JavaHandler(_RunnableHandler):
 
 
 class DynamicHandler(_RunnableHandler):
-    
-    def __init__(self, library, handler_name, handler_method, doc='', 
+
+    def __init__(self, library, handler_name, handler_method, doc='',
                  argspec=None):
         _RunnableHandler.__init__(self, library, handler_name, handler_method)
         self._run_keyword_method_name = handler_method.__name__
@@ -258,18 +258,18 @@ class DynamicHandler(_RunnableHandler):
 
     def _get_arg_spec(self, argspec):
         if argspec is None:
-            return [], [], '<unknown>' 
+            return [], [], '<unknown>'
         try:
             if utils.is_str(argspec):
                 raise TypeError
             return self._parse_arg_spec(list(argspec))
         except TypeError:
             raise TypeError('Argument specification should be list/array of Strings.')
-        
+
     def _parse_arg_spec(self, argspec):
         if argspec == []:
             return [], [], None
-        args = [] 
+        args = []
         defaults = []
         vararg = None
         for token in argspec:
@@ -287,11 +287,11 @@ class DynamicHandler(_RunnableHandler):
                 raise TypeError
             args.append(token)
         return args, defaults, vararg
-        
+
     def _get_handler(self, lib_instance, handler_name):
         runner = getattr(lib_instance, self._run_keyword_method_name)
         return self._get_dynamic_handler(runner, handler_name)
-    
+
     def _get_global_handler(self, method, name):
         return self._get_dynamic_handler(method, name)
 
@@ -299,7 +299,7 @@ class DynamicHandler(_RunnableHandler):
         def handler(*args):
             return runner(name, list(args))
         return handler
-    
+
 
 class _NoInitHandler(BaseHandler):
 

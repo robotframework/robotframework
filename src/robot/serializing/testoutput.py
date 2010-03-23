@@ -51,9 +51,9 @@ class RobotTestOutput:
         self.serialize_summary(settings['Summary'], settings['SummaryTitle'])
         self.serialize_report(settings['Report'], settings['ReportTitle'],
                               settings['Log'], settings['SplitOutputs'])
-        self.serialize_log(settings['Log'], settings['LogTitle'], 
+        self.serialize_log(settings['Log'], settings['LogTitle'],
                            settings['SplitOutputs'])
-        
+
     def serialize_output(self, path, split=-1):
         if path == 'NONE':
             return
@@ -63,7 +63,7 @@ class RobotTestOutput:
         self.exec_errors.serialize(serializer)
         serializer.close()
         LOGGER.output_file('Output', path)
-        
+
     def serialize_summary(self, path, title=None):
         outfile = self._get_outfile(path, 'summary')
         if not outfile:
@@ -75,7 +75,7 @@ class RobotTestOutput:
         outfile.write('</body>\n</html>\n')
         outfile.close()
         LOGGER.output_file('Summary', path)
-        
+
     def serialize_report(self, path, title=None, logpath=None, split=-1):
         outfile = self._get_outfile(path, 'report')
         if not outfile:
@@ -94,7 +94,7 @@ class RobotTestOutput:
         outfile.write('</body>\n</html>\n')
         outfile.close()
         LOGGER.output_file('Report', path)
-        
+
     def serialize_log(self, path, title=None, split=-1):
         outfile = self._get_outfile(path, 'log')
         if not outfile:
@@ -109,22 +109,22 @@ class RobotTestOutput:
         outfile.write('</body>\n</html>\n')
         outfile.close()
         LOGGER.output_file('Log', path)
-            
+
     def _serialize_log(self, outfile):
         self.statistics.serialize(LogStatSerializer(outfile))
-        self.exec_errors.serialize(ErrorSerializer(outfile))            
+        self.exec_errors.serialize(ErrorSerializer(outfile))
         self.suite.serialize(LogSerializer(outfile))
-            
+
     def _serialize_split_log(self, outfile, level):
         self.statistics.serialize(SplitLogStatSerializer(outfile, level))
         self.exec_errors.serialize(ErrorSerializer(outfile))
         self.suite.serialize(SplitLogSerializer(outfile, level))
         self._create_split_sub_logs(self.suite, level)
-        
+
     def _create_split_sub_logs(self, suite, level):
         # Overridden by RebotTestOutput
         pass
-        
+
     def _use_template(self, outfile, template, title):
         ttuple = time.localtime()
         str_time = utils.format_time(ttuple, daytimesep='&nbsp;',
@@ -133,7 +133,7 @@ class RobotTestOutput:
         elapsed_time = utils.elapsed_time_to_string(self.suite.elapsedtime)
         namespace = Namespace(gentime_str=str_time, gentime_int=int_time,
                               elapsed_time=elapsed_time,
-                              version=utils.get_full_version(self._generator), 
+                              version=utils.get_full_version(self._generator),
                               suite=self.suite, title=title)
         tmpl = Template(template=template)
         tmpl.generate(namespace, outfile)
@@ -144,27 +144,27 @@ class RobotTestOutput:
         try:
             return open(outpath, 'wb')
         except:
-            LOGGER.error("Opening %s file '%s' for writing failed: %s" 
+            LOGGER.error("Opening %s file '%s' for writing failed: %s"
                          % (outtype, outpath, utils.get_error_message()))
             return None
-        
+
 
 class RebotTestOutput(RobotTestOutput):
-    
+
     def __init__(self, datasources, settings):
         suite, exec_errors = process_outputs(datasources, settings)
         suite.set_options(settings)
         RobotTestOutput.__init__(self, suite, exec_errors, settings)
         self._namegen = utils.FileNameGenerator(settings['Log'])
-        
+
     def _create_split_sub_logs(self, suite, split_level, suite_level=0):
         if suite_level < split_level:
             for sub in suite.suites:
                 self._create_split_sub_logs(sub, split_level, suite_level+1)
         elif suite_level == split_level:
             self._create_split_sub_log(suite, split_level)
-            
-    def _create_split_sub_log(self, suite, split_level): 
+
+    def _create_split_sub_log(self, suite, split_level):
         outfile = self._get_outfile(self._namegen.get_name(), 'log')
         if not outfile:
             return
@@ -174,26 +174,26 @@ class RebotTestOutput(RobotTestOutput):
         outfile.write('</body>\n</html>\n')
         outfile.close()
 
-        
+
 class SplitSubTestOutput(RobotTestOutput):
-    
+
     def __init__(self, path):
         suite, exec_errors = process_output(path)
         RobotTestOutput.__init__(self, suite, exec_errors)
 
 
 class SplitIndexTestOutput(RobotTestOutput):
-    
+
     def __init__(self, runsuite, path, settings):
         # 'runsuite' is the one got when running tests and 'outsuite' is read
-        # from xml. The former contains information (incl. stats) about all 
+        # from xml. The former contains information (incl. stats) about all
         # tests but no messages. The latter contains messages but no info
-        # about tests in splitted outputs. 
+        # about tests in splitted outputs.
         outsuite, exec_errors = process_output(path, settings['SplitOutputs'])
         self._update_stats(outsuite, runsuite)
         RobotTestOutput.__init__(self, runsuite, exec_errors, settings)
         self._outsuite = outsuite
-        
+
     def _update_stats(self, outsuite, runsuite):
         outsuite.critical_stats = runsuite.critical_stats
         outsuite.all_stats = runsuite.all_stats

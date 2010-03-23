@@ -16,24 +16,24 @@
 from xml.sax.saxutils import XMLGenerator
 from xml.sax.xmlreader import AttributesImpl
 
-from abstractxmlwriter import AbstractXmlWriter 
+from abstractxmlwriter import AbstractXmlWriter
 
 
 class XmlWriter(AbstractXmlWriter):
-    
+
     def __init__(self, path):
         self.path = path
         self._output = open(path, 'wb')
         self._writer = XMLGenerator(self._output, 'UTF-8')
         self._writer.startDocument()
         self.closed = False
-        
+
     def start(self, name, attributes={}, newline=True):
         attrs = AttributesImpl(attributes)
         self._writer.startElement(name, attrs)
         if newline:
             self.content('\n')
-        
+
     def content(self, content):
         if content is not None:
             self._writer.characters(self._encode(content))
@@ -42,7 +42,7 @@ class XmlWriter(AbstractXmlWriter):
         self._writer.endElement(name)
         if newline:
             self.content('\n')
-        
+
     def close(self):
         self._writer.endDocument()
         self._output.close()

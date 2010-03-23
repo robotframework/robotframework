@@ -27,7 +27,7 @@ from debugfile import DebugFile
 
 
 class Output(AbstractLogger):
-    
+
     def __init__(self, settings):
         AbstractLogger.__init__(self)
         self._xmllogger = XmlLogger(settings['Output'], settings['LogLevel'],
@@ -36,7 +36,7 @@ class Output(AbstractLogger):
         self._namegen = self._get_log_name_generator(settings['Log'])
         self._settings = settings
         robot.output.OUTPUT = self
-        
+
     def _register_loggers(self, listeners, debugfile):
         LOGGER.register_logger(self._xmllogger)
         for logger in Listeners(listeners), DebugFile(debugfile):
@@ -45,11 +45,11 @@ class Output(AbstractLogger):
 
     def _get_log_name_generator(self, log):
         return log != 'NONE' and utils.FileNameGenerator(log) or None
-        
+
     def close(self, suite):
-        stats = Statistics(suite, self._settings['SuiteStatLevel'], 
-                           self._settings['TagStatInclude'], 
-                           self._settings['TagStatExclude'], 
+        stats = Statistics(suite, self._settings['SuiteStatLevel'],
+                           self._settings['TagStatInclude'],
+                           self._settings['TagStatExclude'],
                            self._settings['TagStatCombine'],
                            self._settings['TagDoc'],
                            self._settings['TagStatLink'])
@@ -57,16 +57,16 @@ class Output(AbstractLogger):
         self._xmllogger.close(serialize_errors=True)
         LOGGER.unregister_logger(self._xmllogger)
         LOGGER.output_file('Output', self._settings['Output'])
-            
+
     def start_suite(self, suite):
         LOGGER.start_suite(suite)
         if self._xmllogger.started_output:
             suite.namespace.variables.set_global('${OUTPUT_FILE}',
                                                  self._xmllogger.started_output)
             if self._namegen:
-                suite.namespace.variables.set_global('${LOG_FILE}', 
+                suite.namespace.variables.set_global('${LOG_FILE}',
                                                      self._namegen.get_name())
-        
+
     def end_suite(self, suite):
         LOGGER.end_suite(suite)
         if self._xmllogger.ended_output:
@@ -82,16 +82,16 @@ class Output(AbstractLogger):
         output = robot.serializing.SplitSubTestOutput(outpath)
         output.serialize_log(logpath)
         suite.namespace.variables.set_global('${LOG_FILE}', self._namegen.get_base())
-        
+
     def start_test(self, test):
         LOGGER.start_test(test)
-        
+
     def end_test(self, test):
         LOGGER.end_test(test)
-        
+
     def start_keyword(self, kw):
         LOGGER.start_keyword(kw)
-        
+
     def end_keyword(self, kw):
         LOGGER.end_keyword(kw)
 
@@ -102,16 +102,16 @@ class Output(AbstractLogger):
 
     def message(self, msg):
         LOGGER.log_message(msg)
-            
+
     def set_log_level(self, level):
         return self._xmllogger.set_log_level(level)
 
 
 class _OutputSplitter:
-    
+
     _split_output_regexp = re.compile('^(\*(?:%s|HTML)\*)' % '|'.join(LEVELS),
                                       re.MULTILINE)
-    
+
     def __init__(self, output):
         self.messages = self._get_messages(output.strip())
 
@@ -122,7 +122,7 @@ class _OutputSplitter:
         if len(tokens) == 1:
             return [Message(output, 'INFO', False)]
         return self._split_messages(tokens)
-            
+
     def _split_messages(self, tokens):
         # Output started with a level
         if tokens[0] == '':
@@ -133,7 +133,7 @@ class _OutputSplitter:
         messages = []
         for i in range(0, len(tokens), 2):
             level, html = self._get_level_and_html(tokens[i][1:-1])
-            msg = tokens[i+1].strip()  
+            msg = tokens[i+1].strip()
             messages.append(Message(msg, level, html))
         return messages
 

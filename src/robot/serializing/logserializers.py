@@ -16,7 +16,7 @@
 import os.path
 
 from robot import utils
-    
+
 
 class LogSerializer:
 
@@ -32,36 +32,36 @@ class LogSerializer:
         self._writer.start('table', {'class': 'suite', 'id': suite.id})
         self._write_suite_or_test_name(suite, 'suite')
         self._writer.start_many(['tr', 'td'])
-        self._writer.start('div', {'class': 'indent', 
+        self._writer.start('div', {'class': 'indent',
                                    'style': self._get_display_style(suite),
                                    'id': '%s_children' % suite.id})
         self._write_suite_metadata(suite)
         self._suite_level += 1
-        
+
     def end_suite(self, suite):
         self._writer.end_many(['div','td','tr','table'])
         self._suite_level -= 1
-        
+
     def start_test(self, test):
         test.id = self._idgen.get_id('test')
         self._writer.start('table', {'class': 'test', 'id': test.id})
         self._write_suite_or_test_name(test, 'test')
         self._writer.start_many(['tr', 'td'])
-        self._writer.start('div', {'class': 'indent', 
+        self._writer.start('div', {'class': 'indent',
                                    'style': self._get_display_style(test),
                                    'id': '%s_children' % test.id})
         self._write_test_metadata(test)
-    
+
     def end_test(self, test):
         self._writer.end_many(['div','td','tr','table'])
-     
+
     def start_keyword(self, kw):
         kw.id = self._idgen.get_id('kw')
         self._writer.start('table', {'class': 'keyword'})
         self._write_keyword_name(kw)
         self._writer.start('tr', {'id': kw.id})
         self._writer.start('td', newline=True)
-        self._writer.start('div', {'class': 'indent', 
+        self._writer.start('div', {'class': 'indent',
                                    'style': self._get_display_style(kw),
                                    'id': '%s_children' % kw.id})
         self._write_keyword_info(kw)
@@ -78,7 +78,7 @@ class LogSerializer:
                              {'class': '%s level' % msg.level.lower()})
         self._writer.element('td', msg.message, {'class': 'msg'},
                              escape=not msg.html)
-        self._writer.end_many(['tr', 'table'])    
+        self._writer.end_many(['tr', 'table'])
 
     def _write_suite_or_test_name(self, item, type_):
         self._writer.start_many(['tr', 'td'])
@@ -91,13 +91,13 @@ class LogSerializer:
         self._writer.element('a', item.name, {'name': '%s_%s' % (type_, name),
                                               'class': 'name', 'title': name})
         self._writer.end_many(['td', 'tr'])
-        
+
     def _write_expand_all(self, item):
         # Overridden by testdoc.py tool.
         attrs = {'href': "javascript:expand_all_children('%s')" % item.id,
                  'class': 'expand'}
         self._writer.element('a', 'Expand All', attrs)
-        
+
     def _write_keyword_name(self, kw):
         self._writer.start('tr', {'id': kw.id})
         self._writer.start('td')
@@ -117,7 +117,7 @@ class LogSerializer:
             self._writer.element('span', kw.name+' ', {'class': 'name'})
             self._writer.element('span', ', '.join(kw.args), {'class': 'arg'})
         self._writer.end_many(['td', 'tr'])
-        
+
     def _write_keyword_info(self, kw):
         self._writer.start('table', {'class': 'metadata'})
         doc = utils.html_escape(kw.doc, formatting=True)
@@ -125,18 +125,18 @@ class LogSerializer:
         self._write_metadata_row('Timeout', kw.timeout)
         self._write_times(kw)
         self._writer.end('table')
-        
+
     def _write_folding_button(self, item):
         fold, unfold = self._is_element_open(item) and ('-','+') or ('+','-')
         onclk = "toggle_child_visibility('%s');" % item.id
         self._write_button(unfold, 'none', item.id+'_unfoldlink', onclk)
         self._write_button(fold, 'block', item.id+'_foldlink', onclk)
-        
+
     def _write_button(self, label, display, id_, onclick):
-        attrs = {'style': 'display: %s;' % display, 'class': 'foldingbutton', 
+        attrs = {'style': 'display: %s;' % display, 'class': 'foldingbutton',
                  'id': id_, 'onclick': onclick}
         self._writer.element('div', label, attrs)
-        
+
     def _is_element_open(self, item):
         if item.status == 'FAIL':
             return True
@@ -156,7 +156,7 @@ class LogSerializer:
                                      escape_name=True, write_empty=True)
         self._write_source(suite.source)
         self._write_times(suite)
-        self._write_metadata_row('Overall Status', suite.status, 
+        self._write_metadata_row('Overall Status', suite.status,
                                  {'class': suite.status.lower()})
         self._write_metadata_row('Message', suite.get_full_message(html=True),
                                  escape=False)
@@ -176,14 +176,14 @@ class LogSerializer:
         self._write_metadata_row('Tags', ', '.join(test.tags))
         self._write_times(test)
         crit = test.critical == 'yes' and 'critical' or 'non-critical'
-        self._write_metadata_row('Status', '%s (%s)' % (test.status, crit), 
+        self._write_metadata_row('Status', '%s (%s)' % (test.status, crit),
                                  {'class': test.status.lower()})
         self._write_metadata_row('Message', test.message)
         self._writer.end('table')
 
     def _start_suite_or_test_metadata(self, item):
         self._writer.start('table', {'class': 'metadata'})
-        self._write_metadata_row('Full Name', item.longname) 
+        self._write_metadata_row('Full Name', item.longname)
         self._write_metadata_row('Documentation', item.htmldoc, escape=False)
 
     def _write_times(self, item):
@@ -211,13 +211,13 @@ class SplitLogSerializer(LogSerializer):
     def __init__(self, output, split_level):
         LogSerializer.__init__(self, output, split_level)
         self._namegen = utils.FileNameGenerator(os.path.basename(output.name))
-        
+
     def start_suite(self, suite):
         if self._suite_level <= self._split_level:
             LogSerializer.start_suite(self, suite)
         else:
             self._suite_level += 1
-        
+
     def end_suite(self, suite):
         if self._suite_level <= self._split_level + 1:
             LogSerializer.end_suite(self, suite)
@@ -227,41 +227,41 @@ class SplitLogSerializer(LogSerializer):
     def start_test(self, test):
         if self._suite_level <= self._split_level:
             LogSerializer.start_test(self, test)
-            
+
     def end_test(self, test):
         if self._suite_level <= self._split_level:
             LogSerializer.end_test(self, test)
-            
+
     def start_keyword(self, kw):
         if self._suite_level <= self._split_level:
             LogSerializer.start_keyword(self, kw)
-            
+
     def end_keyword(self, kw):
         if self._suite_level <= self._split_level:
             LogSerializer.end_keyword(self, kw)
-    
+
     def message(self, msg):
         if self._suite_level <= self._split_level:
             LogSerializer.message(self, msg)
-            
+
     def _write_suite_or_test_name(self, item, type_):
         if type_ == 'test' or self._suite_level < self._split_level:
             LogSerializer._write_suite_or_test_name(self, item, type_)
         elif self._suite_level == self._split_level:
             self._write_split_suite_name(item)
-            
+
     def _write_split_suite_name(self, suite):
         self._writer.start_many(['tr', 'td'])
         self._write_folding_button(suite)
         self._writer.element('span', 'TEST&nbsp;SUITE: ',
                              {'class': suite.status.lower()}, escape=False)
         link = '%s#suite_%s' % (self._namegen.get_name(), suite.name)
-        self._writer.element('a', suite.name, 
+        self._writer.element('a', suite.name,
                              {'name': 'suite_%s' % suite.longname,
                               'href': link, 'class': 'splitname',
                               'title': suite.longname})
         self._writer.end_many(['td', 'tr'])
-    
+
     def _write_split_suite_details_link(self):
         if self._suite_level == self._split_level:
             name = self._namegen.get_prev()
@@ -270,7 +270,7 @@ class SplitLogSerializer(LogSerializer):
 
 
 class ErrorSerializer:
-    
+
     def __init__(self, output):
         self._writer = utils.HtmlWriter(output)
 
@@ -286,7 +286,7 @@ class ErrorSerializer:
         self._writer.element('td', msg.level,
                              {'class': '%s level' % msg.level.lower()})
         self._writer.element('td', msg.message, {'class': 'msg'})
-        self._writer.end('tr')    
+        self._writer.end('tr')
 
     def end_errors(self, errors):
         if errors.messages:

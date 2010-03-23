@@ -20,7 +20,7 @@ from robot.conf.settings import RobotSettings
 
 def TestSuite(*datasources):
     """Creates and returns a parsed test suite object.
-    
+
     Data sources are paths to files and directories, similarly as when running
     pybot/jybot from command line.
     """

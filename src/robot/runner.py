@@ -66,7 +66,7 @@ Options:
                           automatically capitalized and underscores converted
                           to spaces. Value can contain same HTML formatting as
                           --doc. Example: '--metadata version:1.2'
- -G --settag tag *        Sets given tag(s) to all executed test cases. 
+ -G --settag tag *        Sets given tag(s) to all executed test cases.
  -t --test name *         Select test cases to run by name. Name is case and
                           space insensitive and it can also be a simple pattern
                           where '*' matches anything and '?' matches any char.
@@ -77,7 +77,7 @@ Options:
                           test cases in matching suites and also matching other
                           filtering criteria are selected. Name can be a simple
                           pattern similarly as with --test and it can contain
-                          parent name separated with a dot. For example 
+                          parent name separated with a dot. For example
                           '-s X.Y' selects suite 'Y' only if its parent is 'X'.
  -i --include tag *       Select test cases to run by tag. Similarly as name in
                           --test, tag is case and space insensitive. There are
@@ -99,14 +99,14 @@ Options:
                           can be given as a pattern like e.g. with --test.
  -n --noncritical tag *   Tests with given tag are not critical even if they
                           have a tag set with --critical. Tag can be a pattern.
-    --runmode mode        Possible values are 'random:test', 'random:suite',  
-                          'random:all' and 'exitonfailure'. Any other value is 
-                          ignored. First three change the execution order of 
+    --runmode mode        Possible values are 'random:test', 'random:suite',
+                          'random:all' and 'exitonfailure'. Any other value is
+                          ignored. First three change the execution order of
                           suites or tests (or both). 'exitonfailure' causes the
                           execution of tests to be stopped if a critical test
-                          fails.  
+                          fails.
  -v --variable name:value *  Set variables in the test data. Only scalar
-                          variables are supported and name is given without 
+                          variables are supported and name is given without
                           '${}'. See --escape for how to use special characters
                           and --variablefile for a more powerful variable
                           setting mechanism that allows also list variables.
@@ -129,11 +129,11 @@ Options:
                           directory where tests are run from and the given path
                           is considered relative to that unless it is absolute.
  -o --output file         XML output file. Given path, similarly as paths given
-                          to --log, --report, --summary and --debugfile, is 
-                          relative to --outputdir unless given as an absolute 
-                          path. Other output files are created from XML output 
+                          to --log, --report, --summary and --debugfile, is
+                          relative to --outputdir unless given as an absolute
+                          path. Other output files are created from XML output
                           file after the test execution and XML output can also
-                          be further processed with Rebot tool (e.g. combined 
+                          be further processed with Rebot tool (e.g. combined
                           with other XML output files). Default: output.xml
  -l --log file            HTML log file. Can be disabled by giving a special
                           name 'NONE'. Default: log.html
@@ -142,21 +142,21 @@ Options:
                           similarly as --log. Default: report.html
  -S --summary file        HTML summary report. Not created unless this option
                           is specified. Example: '--summary summary.html'
- -b --debugfile file      Debug file written during execution. Not created 
+ -b --debugfile file      Debug file written during execution. Not created
                           unless this option is specified.
     --transform ignored   This option is ignored. Please use '--log' and
                           '--report' to control what outputs to generate.
  -T --timestampoutputs    When this option is used, timestamp in a format
-                          'YYYYMMDD-hhmmss' is added to all generated output 
+                          'YYYYMMDD-hhmmss' is added to all generated output
                           files between their basename and extension. For
                           example '-T -o output.xml -r report.html -l none'
-                          creates files like 'output-20070503-154410.xml' and 
+                          creates files like 'output-20070503-154410.xml' and
                           'report-20070503-154410.html'.
     --splitoutputs level  Split output and log files from specified suite
                           level. This makes generated files smaller and lower
                           level files available immediately when a respective
                           test suite is executed. Top level files have links to
-                          lower level files for easy navigation. 
+                          lower level files for easy navigation.
     --logtitle title      Title for the generated test log. The default title
                           is '<Name Of The Suite> Test Log'. Underscores in
                           the title are converted into spaces in all titles.
@@ -164,11 +164,11 @@ Options:
                           title is '<Name Of The Suite> Test Report'.
     --summarytitle title  Title for the generated summary report. The default
                           title is '<Name Of The Suite> Summary Report'.
- -L --loglevel level      Threshold level for logging. Available levels: 
+ -L --loglevel level      Threshold level for logging. Available levels:
                           TRACE, DEBUG, INFO (default), WARN, NONE (no logging)
     --suitestatlevel level  How many levels to show in 'Statistics by Suite'
                           table in outputs. By default all suite levels are
-                          shown. If zero (0) is given the whole table is 
+                          shown. If zero (0) is given the whole table is
                           removed. Example: '--SuiteStatLevel 3'
     --tagstatinclude tag *  Include only these tags in 'Statistics by Tag' and
                           and 'Test Details by Tag' tables in outputs. By
@@ -186,10 +186,10 @@ Options:
                           Tags are combined using the rules explained in
                           --include.
     --tagdoc pattern:doc *  Add documentation to tags matching given pattern.
-                          Documentation is shown in 'Test Details by Tag' 
-                          table and also as a tooltip in 'Statistics by Tag' 
-                          table. Pattern can contain characters '*' (matches 
-                          anything) and '?' (matches any char). In case of 
+                          Documentation is shown in 'Test Details by Tag'
+                          table and also as a tooltip in 'Statistics by Tag'
+                          table. Pattern can contain characters '*' (matches
+                          anything) and '?' (matches any char). In case of
                           multiple matches, documentations are catenated with
                           spaces. Documentation can contain formatting as with
                           --doc option.
@@ -197,19 +197,19 @@ Options:
                           --tagdoc mytag:My_documentation
                           --tagdoc regression:*See*_http://info.html
                           --tagdoc owner-*:Original_author
-    --tagstatlink pattern:link:title *  Add external links into 'Statistics by 
+    --tagstatlink pattern:link:title *  Add external links into 'Statistics by
                           Tag' table in outputs. Pattern can contain characters
                           '*' (matches anything) and '?' (matches any char).
-                          Character(s) matching to wildcard expression(s) can 
+                          Character(s) matching to wildcard expression(s) can
                           be used in the resulting link with syntax %N, where N
                           is the index of the match (starting from 1). In title
                           underscores are automatically converted to spaces.
                           Examples:
                           --tagstatlink mytag:http://my.domain:Link
                           --tagstatlink bug-*:http://tracker/id=%1:Bug_Tracker
-    --listener class *    A class for monitoring test execution. Gets 
+    --listener class *    A class for monitoring test execution. Gets
                           notifications e.g. when a test case starts and ends.
-                          Arguments to listener class can be given after class 
+                          Arguments to listener class can be given after class
                           name, using colon as separator. For example:
                           --listener MyListenerClass:arg1:arg2
  -W --monitorwidth chars  Width of the monitor output. Default is 78.
@@ -253,7 +253,7 @@ Options:
  --version                Print version information.
 
 Options that are marked with an asterisk (*) can be specified multiple times.
-For example '--test first --test third' selects test cases with name 'first' 
+For example '--test first --test third' selects test cases with name 'first'
 and 'third'. If other options are given multiple times, the last value is used.
 
 Long option format is case-insensitive. For example --SuiteStatLevel is
@@ -265,17 +265,17 @@ latter matches --log, --logtitle and --loglevel.
 Environment Variables:
 
 ROBOT_SYSLOG_FILE         Path to the syslog file. If not specified, or set to
-                          special value 'NONE', writing to syslog file is 
-                          disabled. Path must be absolute. 
+                          special value 'NONE', writing to syslog file is
+                          disabled. Path must be absolute.
 ROBOT_SYSLOG_LEVEL        Log level to use when writing to the syslog file.
-                          Available levels are the same as for --loglevel 
+                          Available levels are the same as for --loglevel
                           option and the default is INFO.
 
 Examples:
 
 # Simple test run with 'pybot' without options.
 $ pybot tests.html
-  
+
 # Using options and running with 'jybot'.
 $ jybot --include smoke --name Smoke_Tests /path/to/tests.html
 
@@ -297,7 +297,7 @@ import sys
 
 try:
     import pythonpathsetter
-except ImportError:  
+except ImportError:
     # Get here when run as 'python -m robot.runner' and then importing robot
     # works without this and pythonpathsetter is imported again later.
     pass

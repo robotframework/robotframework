@@ -22,7 +22,7 @@ from loggerhelper import IsLogged
 
 
 class XmlLogger:
-    
+
     def __init__(self, path, log_level='TRACE', split_level=-1, generator='Robot'):
         self._namegen = utils.FileNameGenerator(path)
         self._log_message_is_logged = IsLogged(log_level)
@@ -44,7 +44,7 @@ class XmlLogger:
                             % (path, utils.get_error_message()))
         writer.start('robot', attrs)
         return writer
-        
+
     def _close_writer(self, writer):
         if not writer.closed:
             writer.end('robot')
@@ -61,7 +61,7 @@ class XmlLogger:
     def message(self, msg):
         if self._error_is_logged(msg.level):
             self._errors.append(msg)
-                
+
     def log_message(self, msg):
         if self._log_message_is_logged(msg.level):
             self._message(msg)
@@ -106,13 +106,13 @@ class XmlLogger:
             self.started_output = None
         self._start_suite(suite)
         self._suite_level += 1
-        
+
     def _start_split_output(self, suite):
         path =  self._namegen.get_name()
         self._start_suite(suite, {'src': os.path.basename(path)})
         self._index_writer = self._writer
         self._writer = self._get_writer(path)
-    
+
     def _start_suite(self, suite, extra_attrs=None):
         attrs = extra_attrs is not None and extra_attrs or {}
         attrs['name'] = suite.name
@@ -121,7 +121,7 @@ class XmlLogger:
         self._writer.start('suite', attrs)
         self._writer.element('doc', suite.doc)
         self._writer.start('metadata')
-        for name, value in suite.get_metadata():        
+        for name, value in suite.get_metadata():
             self._writer.element('item', value, {'name': name})
         self._writer.end('metadata')
 
@@ -139,7 +139,7 @@ class XmlLogger:
         self._writer = self._index_writer
         self._end_suite(suite)
         return outpath
-    
+
     def _end_suite(self, suite):
         # Note that suites statistics message is _not_ written into xml
         self._write_status(suite, suite.message)
@@ -150,7 +150,7 @@ class XmlLogger:
 
     def end_statistics(self, stats):
         self._writer.end('statistics')
-        
+
     def start_total_stats(self, total_stats):
         self._writer.start('total')
 
@@ -199,10 +199,10 @@ class XmlLogger:
 
     def start_errors(self):
         self._writer.start('errors')
-        
+
     def end_errors(self):
         self._writer.end('errors')
-        
+
     def _write_list(self, tag, items, container=None):
         if container is not None:
             self._writer.start(container)
@@ -212,6 +212,6 @@ class XmlLogger:
             self._writer.end(container)
 
     def _write_status(self, item, message=None):
-        attrs = { 'status': item.status, 'starttime': item.starttime, 
-                  'endtime': item.endtime } 
+        attrs = { 'status': item.status, 'starttime': item.starttime,
+                  'endtime': item.endtime }
         self._writer.element('status', message, attrs)

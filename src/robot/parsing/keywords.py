@@ -19,7 +19,7 @@ from robot import utils
 from robot.errors import DataError
 from robot.common import BaseKeyword
 from robot.variables import is_var, is_scalar_var
-   
+
 
 def KeywordList(rawkeywords):
     keywords = []
@@ -37,8 +37,8 @@ def KeywordList(rawkeywords):
                 block = None
             keywords.append(kw)
     return keywords
-    
-    
+
+
 def KeywordFactory(kwdata):
     try:
         try:
@@ -52,7 +52,7 @@ def KeywordFactory(kwdata):
     except:
         return SyntaxErrorKeyword(kwdata, utils.get_error_message())
     return BaseKeyword(kwdata[0], kwdata[1:])
-        
+
 
 def BlockKeywordFactory(data):
     if data[0].startswith(':'):
@@ -65,10 +65,10 @@ def BlockKeywordFactory(data):
         except:
             return SyntaxErrorKeyword(data, utils.get_error_message())
     raise TypeError('Not BlockKeyword')
-            
+
 
 class SetKeyword(BaseKeyword):
-    
+
     def __init__(self, kwdata):
         self.scalar_vars, self.list_var, name, args = self._process_data(kwdata)
         BaseKeyword.__init__(self, name, args, type='set')
@@ -84,7 +84,7 @@ class SetKeyword(BaseKeyword):
         except IndexError:
             raise DataError('No keyword specified')
         return scalar_vars, list_var, name, args
-        
+
     def _get_vars(self, data):
         scalar_vars = []
         list_var = None
@@ -114,11 +114,11 @@ class SetKeyword(BaseKeyword):
 class RepeatKeyword(BaseKeyword):
 
     _repeat_re = re.compile('^(.+)\s*[xX]$')
-    
+
     def __init__(self, kwdata):
         self.repeat, name, args = self._process_data(kwdata)
         BaseKeyword.__init__(self, name, args, type='repeat')
-        
+
     def _process_data(self, kwdata):
         res = self._repeat_re.search(kwdata[0])
         if res is None:
@@ -136,7 +136,7 @@ class RepeatKeyword(BaseKeyword):
 
 
 class _BlockKeyword(BaseKeyword):
-    
+
     def add_row(self, data):
         if len(data) > 0:
             kw = KeywordFactory(data)
@@ -144,11 +144,11 @@ class _BlockKeyword(BaseKeyword):
 
 
 class ForKeyword(_BlockKeyword):
-   
+
     def __init__(self, params):
         self.vars, self.items, self.range = self._process_params(params)
         self.keywords = []
-        name = '%s %s [ %s ]' % (' | '.join(self.vars), 
+        name = '%s %s [ %s ]' % (' | '.join(self.vars),
                                  self.range and 'IN RANGE' or 'IN',
                                  ' | '.join(self.items))
         _BlockKeyword.__init__(self, name, type='for')
@@ -158,7 +158,7 @@ class ForKeyword(_BlockKeyword):
         vars = self._validate_vars(params[:in_index])
         items = params[in_index+1:]
         return vars, items, range_
-        
+
     def _get_in_index(self, params):
         for index, item in enumerate(params):
             if utils.eq(item, 'IN'):
@@ -166,7 +166,7 @@ class ForKeyword(_BlockKeyword):
             if utils.eq(item, 'IN RANGE'):
                 return index, True
         self._raise_invalid_syntax()
-    
+
     def _validate_vars(self, vars):
         if len(vars) == 0:
             self._raise_invalid_syntax()
@@ -174,27 +174,27 @@ class ForKeyword(_BlockKeyword):
             if not is_scalar_var(var):
                 self._raise_invalid_syntax()
         return vars
-    
+
     def _raise_invalid_syntax(self):
         raise DataError('Invalid syntax in FOR loop. Expected format:\n'
                         '| : FOR | ${var} | IN | item1 | item2 |')
 
-     
+
 class ParallelKeyword(_BlockKeyword):
-    
+
     def __init__(self, first_row):
         _BlockKeyword.__init__(self, type='parallel')
         self.keywords = []
         self.add_row(first_row)
-           
+
 
 class SyntaxErrorKeyword(BaseKeyword):
-    
+
     def __init__(self, kwdata, error):
         name = ' '.join(kwdata)
         BaseKeyword.__init__(self, name, type='error')
         self.error = 'Syntax error: ' + error
-        
+
     def add_row(self, row):
         # Can be used also as a syntax errored block keyword
         pass

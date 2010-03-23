@@ -15,13 +15,13 @@
 
 _STYLE = '''
 <style media="all" type="text/css">
-  /* Generic styles */ 
+  /* Generic styles */
   body {
     font-family: sans-serif;
     font-size: 0.8em;
     color: black;
-    padding: 6px; 
-  }      
+    padding: 6px;
+  }
   h2 {
     margin-top: 1.2em;
   }
@@ -42,7 +42,7 @@ _STYLE = '''
     background: #C6C6C6;
   }
   .col_stat_name {
-    width: 40em;        
+    width: 40em;
   }
   .col_stat {
     width: 3em;
@@ -63,7 +63,7 @@ _STYLE = '''
     margin-left: 0.2em;
   }
   /* Statistics Table Graph */
-  .pass_bar { 
+  .pass_bar {
     background: #00f000;
   }
   .fail_bar {
@@ -72,7 +72,7 @@ _STYLE = '''
   .no_tags_bar {
     background: #E9E9E9;
   }
-  .graph { 
+  .graph {
     position: relative;
     border: 1px solid black;
     width: 11em;
@@ -134,7 +134,7 @@ _STYLE = '''
   }
   .generated_time, .generated_ago {
     font-size: 0.9em;
-  }              
+  }
   .spacer {
     font-size: 0.8em;
     clear: both;
@@ -156,7 +156,7 @@ _STYLE = '''
 <style media="print" type="text/css">
   body {
     background: white;
-    padding: 0px; 
+    padding: 0px;
     font-size: 8pt;
   }
   a:link, a:visited {
@@ -220,13 +220,13 @@ _FUNCTIONS = '''
   hours = Math.floor(elapsed / (60*60)) % 24
   days  = Math.floor(elapsed / (60*60*24)) % 365
   years = Math.floor(elapsed / (60*60*24*365))
-  if (years > 0) { 
+  if (years > 0) {
     // compencate the effect of leap years (not perfect but should be enough)
     days = days - Math.floor(years / 4)
     if (days < 0) { days = 0 }
     output = get_year_str(years) + get_day_str(days)
   }
-  else if (days > 0) { 
+  else if (days > 0) {
     output = get_day_str(days) +  get_hour_str(hours)
   }
   else if (hours > 0) {
@@ -258,7 +258,7 @@ LOG = '''%(FUNCTIONS)s
   /* Tables */
   body {
     background: white;
-  }       
+  }
   table.suite, table.errors {
     width: 100%%;
     border: 1px solid gray;  /* no grey in IE */
@@ -311,7 +311,7 @@ LOG = '''%(FUNCTIONS)s
   table.messages td.time {
     width: 6em;
     letter-spacing: -0.05em;
-  } 
+  }
   table.messages td.level {
     width: 4em;
     text-align: center;
@@ -326,20 +326,20 @@ LOG = '''%(FUNCTIONS)s
     width: 0.9em;
     float: left;
     text-decoration: none;
-    font-weight: bold; 
+    font-weight: bold;
     border: 1px solid black;
     border: 1px solid black;
   }
   div.foldingbutton:hover {
     background: yellow;
-  }  
+  }
  .expand {
    float: right;
    margin-right: 0.5em;
    font-size: 0.8em;
-  }  
+  }
   /* Test, suite and kw names */
-  .name, .splitname {   
+  .name, .splitname {
     font-weight: bold;
     text-decoration: none;
   }
@@ -388,7 +388,7 @@ LOG = '''%(FUNCTIONS)s
         var name = get_element_name_from_url()
         if (name != null) {
             set_element_visible(name)
-            window.location.hash = name  // does not seem to work with Opera 
+            window.location.hash = name  // does not seem to work with Opera
         }
     }
     function get_element_name_from_url() {
@@ -396,7 +396,7 @@ LOG = '''%(FUNCTIONS)s
         if (hash == '' || hash == '#' || hash == null) {
             return null
         }
-        return hash.slice(1).replace(/%%20/g, ' ')        
+        return hash.slice(1).replace(/%%20/g, ' ')
     }
     function set_element_visible(name) {
         var elements = document.body.getElementsByTagName('a')
@@ -488,7 +488,7 @@ REPORT = '''%(FUNCTIONS)s
     width: 9em;
   }
   td.col_times{
-    text-align: right;    
+    text-align: right;
   }
   .suite_row, .tag_row{
     background: #E9E9E9;
@@ -518,7 +518,7 @@ REPORT = '''%(FUNCTIONS)s
   .status_fail {
     color: red;
     font-weight: bold;
-  }        
+  }
   .status_pass {
     color: #009900;
   }
@@ -548,7 +548,7 @@ REPORT = '''%(FUNCTIONS)s
 </tr>
 <!-- IF """${SUITE.htmldoc}""" != '' -->
   <tr><th>Documentation:</th><td>${SUITE.htmldoc}</td></tr>
-<!-- END IF --> 
+<!-- END IF -->
 <!-- FOR ${meta} IN ${SUITE.get_metadata(html=True)} -->
   <tr><th>${meta[0]}:</th><td>${meta[1]}</td></tr>
 <!-- END FOR -->

@@ -50,39 +50,39 @@ def normalize_tags(tags):
             dupes[tag] = 1
     ret.sort(lambda x, y: cmp(normalize(x), normalize(y)))
     return ret
-    
+
 def normpath(path, normcase=True):
     """Returns path in normalized and absolute format.
-    
+
     On case-insensitive file systems the path is also casenormalized
     (if normcase is True).
-    """ 
+    """
     path = _abspath(path)
     if normcase and _CASE_INSENSITIVE_FILESYSTEM:
         path = path.lower()
     return path
 
 def _abspath(path):
-    pathlen = len(path) 
+    pathlen = len(path)
     # Return 'x:\' both when the given path is 'x:\' and 'x:'. Notice that
     # os.path.abspath('x:') returns the current dir (we don't want that) and
     # with Jython os.path.abspath('x:\') returns 'x:' (don't want that either)
     if os.sep == '\\' and pathlen > 1 and path[1] == ':':
         if pathlen == 2:
             return path + '\\'
-        if pathlen == 3: 
+        if pathlen == 3:
             return path
     return os.path.abspath(path)
 
 class NormalizedDict(UserDict):
-    
+
     def __init__(self, initial={}, ignore=[], caseless=True, spaceless=True):
         UserDict.__init__(self)
         self._keys = {}
         self._normalize = lambda s: normalize(s, ignore, caseless, spaceless)
         for key, value in initial.items():
             self[key] = value
-    
+
     def __setitem__(self, key, value):
         nkey = self._normalize(key)
         self._keys.setdefault(nkey, key)
@@ -91,13 +91,13 @@ class NormalizedDict(UserDict):
     set = __setitem__
 
     def __getitem__(self, key):
-        return self.data[self._normalize(key)]    
+        return self.data[self._normalize(key)]
 
     def __delitem__(self, key):
         nkey = self._normalize(key)
         del self.data[nkey]
         del self._keys[nkey]
-    
+
     def get(self, key, default=None):
         try:
             return self.__getitem__(key)
@@ -106,7 +106,7 @@ class NormalizedDict(UserDict):
 
     def has_key(self, key):
         return self.data.has_key(self._normalize(key))
-    
+
     __contains__ = has_key
 
     def keys(self):

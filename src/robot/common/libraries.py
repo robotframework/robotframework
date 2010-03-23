@@ -17,7 +17,7 @@ from robot.errors import DataError
 
 
 class BaseLibrary:
-    
+
     def get_handler(self, name):
         try:
             return self.handlers[name]
@@ -26,6 +26,6 @@ class BaseLibrary:
 
     def has_handler(self, name):
         return self.handlers.has_key(name)
-    
+
     def __len__(self):
         return len(self.handlers)

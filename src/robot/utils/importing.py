@@ -18,7 +18,7 @@ import sys
 from types import ModuleType, ClassType, TypeType
 if sys.platform.startswith('java'):
     from java.lang import System
-    
+
 from robot.errors import DataError
 from error import get_error_message, get_error_details
 from robottypes import type_as_str
@@ -51,7 +51,7 @@ def import_(name, type_='test library'):
     afterwards.
 
     'type_' is used in error message if importing fails.
-        
+
     Class can either live in a module/package or be 'standalone'. In the former
     case tha name is something like 'MyClass' and in the latter it could be
     'your.package.YourLibrary'). Python classes always live in a module but if
@@ -61,7 +61,7 @@ def import_(name, type_='test library'):
     Example: If you have a Python class 'MyLibrary' in a module 'mymodule'
     it must be imported with name 'mymodule.MyLibrary'. If the name of
     the module is also 'MyLibrary' then it is possible to use only
-    name 'MyLibrary'. 
+    name 'MyLibrary'.
     """
     if os.path.exists(name):
         inserted_to_path, name = _split_path_to_module(name)
@@ -118,7 +118,7 @@ def _get_module_source(module):
         if not source:
             raise AttributeError
     except AttributeError:
-        # Java classes not packaged in a jar file do not have __file__. 
+        # Java classes not packaged in a jar file do not have __file__.
         return '<unknown>'
     dirpath, filename = os.path.split(os.path.abspath(source))
     return os.path.join(normpath(dirpath), filename)
@@ -132,9 +132,9 @@ def _raise_import_failed(type_, name):
     raise DataError('\n'.join(msg))
 
 def _raise_no_lib_in_module(type_, modname, libname):
-    raise DataError("%s module '%s' does not contain '%s'" 
+    raise DataError("%s module '%s' does not contain '%s'"
                     % (type_.capitalize(), modname, libname))
 
-def _raise_invalid_type(type_, code):                        
-    raise DataError("Imported %s is not a class or module, got '%s' instead" 
+def _raise_invalid_type(type_, code):
+    raise DataError("Imported %s is not a class or module, got '%s' instead"
                     % (type_, type_as_str(code)))

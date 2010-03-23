@@ -17,33 +17,33 @@ import os.path
 
 
 class IdGenerator:
-    
+
     def __init__(self, padding=6):
         self._pattern = '%%s%%0%dd' % padding
         self._ids = {}
-        
+
     def get_id(self, type_=''):
         if not self._ids.has_key(type_):
             self._ids[type_] = 0
         self._ids[type_] += 1
         return self._pattern % (type_, self._ids[type_])
-    
+
     def get_prev(self, type_=''):
         return self._pattern % (type_, self._ids[type_])
 
 
 class FileNameGenerator:
-    
+
     def __init__(self, basename):
         self._name, self._ext = os.path.splitext(basename)
         self._idgen = IdGenerator(padding=3)
-    
+
     def get_name(self):
         return self._get_name(self._idgen.get_id())
 
     def get_prev(self):
         return self._get_name(self._idgen.get_prev())
-    
+
     def get_base(self):
         return self._name + self._ext
 

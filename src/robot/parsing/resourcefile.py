@@ -22,7 +22,7 @@ from userkeyword import UserHandlerList
 
 
 class ResourceFile:
-    
+
     def __init__(self, path):
         self.source = utils.normpath(path)
         rawdata = RawData(self.source)
@@ -41,7 +41,7 @@ class ResourceFile:
                 msg = "Only settings 'Library', 'Resource', 'Variables' and " \
                       + "'Documentation' allowed in resource files. Found: %s"
                 item.report_invalid_syntax(msg % item.name)
-    
+
     def _raise_not_resource(self, rawdata):
         if rawdata.get_type() == rawdata.EMPTY:
             msg = "Parsed file '%s' contains no resources"

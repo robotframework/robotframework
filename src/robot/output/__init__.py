@@ -21,22 +21,22 @@ from loggerhelper import LEVELS
 from readers import process_output, process_outputs
 
 
-# Hooks to output. Set by Output. 
+# Hooks to output. Set by Output.
 # Use only if no other way available (e.g. from BuiltIn library)
 OUTPUT = None
 
 
 def TestSuite(outpath):
     """Factory method for getting test suite from an xml output file.
-    
+
     If you want statistics get suite first and say Statistics(suite).
     """
     suite, errors = process_output(outpath)
 
     def write_to_file(path=None):
         """Write processed suite (incl. statistics and errors) back to xml.
-        
-        If path is not given the suite is written into the same file as it 
+
+        If path is not given the suite is written into the same file as it
         originally was read from.
         """
         from robot.serializing import RobotTestOutput
@@ -45,7 +45,7 @@ def TestSuite(outpath):
         suite.set_status()
         testoutput = RobotTestOutput(suite, errors)
         testoutput.serialize_output(path, suite)
-    
+
     suite.write_to_file = write_to_file
     return suite
 

@@ -31,7 +31,7 @@ IMPORTER = Importer()
 
 class Namespace:
     """A database for keywords and variables.
-    
+
     A new instance of this class is created for each test suite.
     """
 
@@ -47,14 +47,14 @@ class Namespace:
         self._userlibs = []
         self._imported_resource_files = []
         self._imported_variable_files = []
-        # suite is None only when used internally by copy 
+        # suite is None only when used internally by copy
         if suite is not None:
             self.import_library('BuiltIn')
             self.import_library('Reserved')
             if suite.source is not None:
                 self._handle_imports(suite.imports)
             robot.running.NAMESPACES.start_suite(self)
-            
+
     def copy(self):
         # Namespace is copied by ParallelKeyword
         ns = Namespace(None, None)
@@ -81,7 +81,7 @@ class Namespace:
                     raise FrameworkError("Invalid import setting: %s" % item)
             except:
                 item.report_invalid_syntax()
-        
+
     def _import_resource(self, path):
         if path not in self._imported_resource_files:
             self._imported_resource_files.append(path)
@@ -125,32 +125,32 @@ class Namespace:
         self.test = test
         for lib in self._testlibs.values():
             lib.start_test()
-        
+
     def end_test(self):
         self.test = None
         self.variables.end_test()
         self.uk_handlers = []
         for lib in self._testlibs.values():
             lib.end_test()
-        
+
     def end_suite(self):
         self.suite = None
         self.variables.end_suite()
         for lib in self._testlibs.values():
             lib.end_suite()
         robot.running.NAMESPACES.end_suite()
-                    
+
     def start_user_keyword(self, handler):
         self.variables.start_uk(handler)
         self.uk_handlers.append(handler)
-        
+
     def end_user_keyword(self):
         self.variables.end_uk()
         self.uk_handlers.pop()
-        
+
     def get_library_instance(self, libname):
         return self._testlibs[libname].get_instance()
-        
+
     def get_handler(self, name):
         try:
             handler = self._get_handler(name)
@@ -193,11 +193,11 @@ class Namespace:
             if handler:
                 return handler
         return None
-        
+
     def _get_handler_from_test_case_file_user_keywords(self, name):
         if self.suite.user_keywords.has_handler(name):
             return self.suite.user_keywords.get_handler(name)
-        
+
     def _get_handler_from_resource_file_user_keywords(self, name):
         found = [ lib.get_handler(name)
                   for lib in self._userlibs if lib.has_handler(name) ]
@@ -206,7 +206,7 @@ class Namespace:
         if len(found) == 1:
             return found[0]
         self._raise_multiple_keywords_found(name, found)
-        
+
     def _get_handler_from_library_keywords(self, name):
         found = [ lib.get_handler(name)
                   for lib in self._testlibs.values() if lib.has_handler(name) ]
@@ -244,11 +244,11 @@ class Namespace:
                    ext_hand.library.orig_name, std_hand.library.orig_name,
                    ext_hand.longname, std_hand.longname))
         return [ext_hand]
-    
+
     def _get_explicit_handler(self, name):
         libname, kwname = self._split_keyword_name(name)
         # 1) Find matching lib(s)
-        libs = [ lib for lib in self._userlibs + self._testlibs.values() 
+        libs = [ lib for lib in self._userlibs + self._testlibs.values()
                  if utils.eq(lib.name, libname) ]
         if not libs:
             return None
@@ -276,7 +276,7 @@ class Namespace:
 
 
 class _VariableScopes:
-    
+
     def __init__(self, suite, parent):
         # suite and parent are None only when used by copy_all
         if suite is not None:
@@ -297,7 +297,7 @@ class _VariableScopes:
         vs._parents = self._parents[:]
         vs.current = self.current
         return vs
-        
+
     def replace_list(self, items):
         return self.current.replace_list(items)
 
@@ -306,7 +306,7 @@ class _VariableScopes:
 
     def replace_string(self, string):
         return self.current.replace_string(string)
-    
+
     def set_from_file(self, path, args, overwrite=False):
         variables = self._suite.set_from_file(path, args, overwrite)
         if self._test is not None:
@@ -315,10 +315,10 @@ class _VariableScopes:
             varz._set_from_file(variables, overwrite=True)
         if self._uk_handlers:
             self.current._set_from_file(variables, overwrite=True)
-            
+
     def set_from_variable_table(self, rawvariables):
         self._suite.set_from_variable_table(rawvariables)
-    
+
     def replace_meta(self, name, item, errors):
         error = None
         for varz in [self.current] + self._parents:
@@ -332,41 +332,41 @@ class _VariableScopes:
                 return varz.replace_string(item)
             except DataError, error:
                 pass
-        errors.append("Replacing variables from metadata '%s' failed: %s" 
+        errors.append("Replacing variables from metadata '%s' failed: %s"
                       % (name, error))
         return utils.unescape(item)
-        
+
     def __getitem__(self, name):
         return self.current[name]
-    
+
     def __setitem__(self, name, value):
         self.current[name] = value
-        
+
     def end_suite(self):
         self._suite = self._test = self.current = None
-        
+
     def start_test(self, test):
         self._test = self.current = self._suite.copy()
 
     def end_test(self):
         self.current = self._suite
-        
+
     def start_uk(self, handler):
         self._uk_handlers.append(self.current)
         self.current = self.current.copy()
-    
+
     def end_uk(self):
         self.current = self._uk_handlers.pop()
-        
+
     def set_global(self, name, value):
         GLOBAL_VARIABLES[name] = value
         for ns in robot.running.NAMESPACES:
             ns.variables.set_suite(name, value)
-        
+
     def set_suite(self, name, value):
         self._suite[name] = value
         self.set_test(name, value, False)
-        
+
     def set_test(self, name, value, fail_if_no_test=True):
         if self._test is not None:
             self._test[name] = value
@@ -378,6 +378,6 @@ class _VariableScopes:
 
     def keys(self):
         return self.current.keys()
-    
+
     def has_key(self, key):
         return self.current.has_key(key)

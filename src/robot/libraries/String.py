@@ -22,7 +22,7 @@ from robot import utils
 
 
 class String:
-    
+
     """A test library for string manipulation and verification.
 
     `String` is Robot Framework's standard library for manipulating
@@ -52,8 +52,8 @@ class String:
         return count
 
     def split_to_lines(self, string, start=0, end=None):
-        """Converts the `string` into a list of lines. 
-        
+        """Converts the `string` into a list of lines.
+
         It is possible to get only a selection of lines from `start`
         to `end` so that `start` index is inclusive and `end` is
         exclusive. Line numbering starts from 0, and it is possible to
@@ -99,7 +99,7 @@ class String:
         line matches if the `pattern` is found anywhere in it. By
         default the match is case-sensitive, but setting
         `case_insensitive` to any value makes it case-insensitive.
-        
+
         Lines are returned as one string catenated back together with
         newlines. Possible trailing newline is never returned. The
         number of matching lines is automatically logged.
@@ -130,7 +130,7 @@ class String:
         A line matches only if it matches the `pattern` fully.  By
         default the match is case-sensitive, but setting
         `case_insensitive` to any value makes it case-insensitive.
-        
+
         Lines are returned as one string catenated back together with
         newlines. Possible trailing newline is never returned. The
         number of matching lines is automatically logged.
@@ -159,7 +159,7 @@ class String:
         only if it matches the `pattern` fully. Notice that to make
         the match case-insensitive, you need to embed case-insensitive
         flag into the pattern.
-        
+
         Lines are returned as one string catenated back together with
         newlines. Possible trailing newline is never returned. The
         number of matching lines is automatically logged.
@@ -180,7 +180,7 @@ class String:
         matching = [ line for line in lines if matches(line) ]
         print '*INFO* %d out of %d lines matched' % (len(matching), len(lines))
         return '\n'.join(matching)
-    
+
     def replace_string(self, string, search_for, replace_with, count=-1):
         """Replaces `search_for` in the given `string` with `replace_with`.
 
@@ -198,7 +198,7 @@ class String:
         Examples:
         | ${str} = | Replace String | ${str} | Hello | Hi     |   |
         | ${str} = | Replace String | ${str} | world | tellus | 1 |
-        """        
+        """
         count = self._convert_to_integer(count, 'count')
         return string.replace(search_for, replace_with, count)
 
@@ -229,7 +229,7 @@ class String:
         If a `separator` is not given, any whitespace string is a
         separator. In that case also possible consecutive whitespace
         as well as leading and trailing whitespace is ignored.
-        
+
         Split words are returned as a list. If the optional
         `max_split` is given, at most `max_split` splits are done, and
         the returned list will have maximum `max_split + 1` elements.
@@ -261,20 +261,20 @@ class String:
         # Strings in Jython 2.2 don't have 'rsplit' methods
         reversed = self.split_string(string[::-1], separator, max_split)
         return [ r[::-1] for r in reversed ][::-1]
-    
+
     def fetch_from_left(self, string, marker):
         """Returns contents of the `string` before the first occurrence of `marker`.
-        
+
         If the `marker` is not found, whole string is returned.
 
         See also `Fetch From Right`, `Split String` and `Split String
         From Right`.
         """
         return string.split(marker)[0]
-        
+
     def fetch_from_right(self, string, marker):
         """Returns contents of the `string` after the last occurrence of `marker`.
-        
+
         If the `marker` is not found, whole string is returned.
 
         See also `Fetch From Left`, `Split String` and `Split String
@@ -313,7 +313,7 @@ class String:
         return ''.join([ chars[randint(0, maxi)] for i in xrange(length) ])
 
     def get_substring(self, string, start, end=None):
-        """Returns a substring from `start` index to `end` index. 
+        """Returns a substring from `start` index to `end` index.
 
         The `start` index is inclusive and `end` is exclusive.
         Indexing starts from 0, and it is possible to use
@@ -375,7 +375,7 @@ class String:
 
         For example 'STRING' and 'WITH SPECIALS!' would pass, and 'String', ''
         and ' ' would fail.
- 
+
         See also `Should Be Titlecase` and `Should Be Lowercase`.
         These keyword were added into Robot Framework 2.1.2.
         """

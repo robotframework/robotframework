@@ -21,8 +21,8 @@ def is_var(string):
         return False
     length = len(string)
     return length > 3 and string[0] in ['$','@'] and string.rfind('{') == 1 \
-            and string.find('}') == length - 1 
-            
+            and string.find('}') == length - 1
+
 def is_scalar_var(string):
     return is_var(string) and string[0] == '$'
 

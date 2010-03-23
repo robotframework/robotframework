@@ -13,7 +13,7 @@
 #  limitations under the License.
 
 
-# Return codes from Robot and Rebot. 
+# Return codes from Robot and Rebot.
 # RC below 250 is the number of failed critical tests and exactly 250
 # means that number or more such failures.
 INFO_PRINTED    = 251   # --help or --version
@@ -24,18 +24,18 @@ FRAMEWORK_ERROR = 255   # Unexpected error
 
 class RobotError(Exception):
     """Base class for Robot errors
-    
+
     Do not raise this method but use more specific errors instead.
     """
 
 class FrameworkError(RobotError):
     """Can be used when the core framework goes to unexpected state
 
-    It is good to explicitely raise a FrameworkError if some framework 
+    It is good to explicitely raise a FrameworkError if some framework
     component is used incorrectly. This is pretty much same as
     'Internal Error' and should of course never happen.
     """
-    
+
 class DataError(RobotError):
     """Should be used when provided test data is incorrect"""
 
@@ -44,7 +44,7 @@ class ExecutionFailed(RobotError):
     def __init__(self, message, timeouted=False):
         RobotError.__init__(self, message)
         self.timeouted = timeouted
-    
+
 class TimeoutError(RobotError):
     """Used when test execution is timed out"""
 

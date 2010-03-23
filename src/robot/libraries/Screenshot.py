@@ -26,18 +26,18 @@ from robot.errors import DataError
 
 
 class Screenshot:
- 
+
     """A test library for taking full-screen screenshots of the desktop.
 
     `Screenshot` is Robot Framework's standard library that provides
     keywords to capture and store screenshots of the whole desktop.
     This library is implemented with Java AWT APIs, so it can be used
-    only when running Robot Framework on Jython. 
+    only when running Robot Framework on Jython.
     """
 
     ROBOT_LIBRARY_SCOPE = 'TEST SUITE'
     ROBOT_LIBRARY_VERSION = utils.get_version()
-    
+
     def __init__(self, default_directory=None, log_file_directory=None):
         """Screenshot library can be imported with optional arguments.
 
@@ -59,11 +59,11 @@ class Screenshot:
         Directories` keyword.
         """
         self.set_screenshot_directories(default_directory, log_file_directory)
-    
-    def set_screenshot_directories(self, default_directory=None, 
+
+    def set_screenshot_directories(self, default_directory=None,
                                    log_file_directory=None):
         """Used to set `default_directory` and `log_file_directory`.
-        
+
         See the `library importing` for details.
         """
         if not default_directory:
@@ -74,10 +74,10 @@ class Screenshot:
             self._log_file_dir = None
         else:
             self._log_file_dir = os.path.normpath(log_file_directory.replace('/', os.sep))
-    
+
     def save_screenshot_to(self, path):
         """Saves a screenshot to the specified file.
-        
+
         The directory holding the file must exist or an exception is raised.
         """
         path = os.path.abspath(path.replace('/', os.sep))
@@ -90,10 +90,10 @@ class Screenshot:
         ImageIO.write(image, "jpg", File(path))
         print "Screenshot saved to '%s'" % path
         return path
-    
+
     def save_screenshot(self, basename="screenshot", directory=None):
         """Saves a screenshot with a generated unique name.
-        
+
         The unique name is derived based on the provided `basename` and
         `directory` passed in as optional arguments. If a `directory`
         is provided, the screenshot is saved under that directory.
@@ -125,19 +125,19 @@ class Screenshot:
             if not os.path.exists(path):
                 break
         return self.save_screenshot_to(path)
-    
-    def log_screenshot(self, basename="screenshot", directory=None, 
+
+    def log_screenshot(self, basename="screenshot", directory=None,
                        log_file_directory=None, width="100%"):
         """Takes a screenshot and logs it to Robot Framework's log file.
-        
+
         Saves the files as defined in the keyword `Save Screenshot` and creates
         a picture to Robot Framework's log. `directory` defines the directory
         where the screenshots are saved. By default, its value is
         `default_directory`, which is set at the library import or with the
         keyword `Set Screenshot Directories`. `log_file_directory` is used to
         create relative paths to the pictures. This allows moving the log and
-        pictures to different machines and having still working pictures. If 
-        `log_file_directory` is not given or set (in the same way as 
+        pictures to different machines and having still working pictures. If
+        `log_file_directory` is not given or set (in the same way as
         `default_directory` is set), the paths are absolute.
 
         The path where the screenshot is saved is returned.

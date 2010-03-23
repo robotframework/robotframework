@@ -29,7 +29,7 @@ def _get_time():
     millis = int((current - int(current)) * 1000)
     timetuple += (millis,)
     return timetuple
-    
+
 
 _CURRENT_TIME = None       # Seam for mocking time-dependent tests
 START_TIME = _get_time()
@@ -37,7 +37,7 @@ START_TIME = _get_time()
 
 def timestr_to_secs(timestr):
     """Parses time in format like '1h 10s' and returns time in seconds (float).
-    
+
     Given time must be in format '1d 2h 3m 4s 5ms' with following rules.
     - Time parts having zero value can be ignored (e.g. '3m 4s' is ok)
     - Format is case and space insensitive
@@ -79,7 +79,7 @@ def _timestr_to_secs(timestr):
         else: temp.append(c)
     if temp:
         raise ValueError
-    return sign * (float(millis)/1000 + float(secs) + float(mins)*60 
+    return sign * (float(millis)/1000 + float(secs) + float(mins)*60
                    + float(hours)*60*60 + float(days)*60*60*24)
 
 def _normalize_timestr(timestr):
@@ -103,21 +103,21 @@ def _normalize_timestr(timestr):
 
 def secs_to_timestr(secs, compact=False):
     """Converts time in seconds to a string representation.
-        
+
     Returned string is in format like
     '1 day 2 hours 3 minutes 4 seconds 5 milliseconds' with following rules.
-    - Time parts having zero value are not included (e.g. '3 minutes 4 seconds' 
+    - Time parts having zero value are not included (e.g. '3 minutes 4 seconds'
     instead of '0 days 0 hours 3 minutes 4 seconds')
-    - Hour part has a maximun of 23 and minutes and seconds both have 59 
+    - Hour part has a maximun of 23 and minutes and seconds both have 59
       (e.g. '1 minute 40 seconds' instead of '100 seconds')
-      
+
     If compact has value 'True', short suffixes are used.
     (e.g. 1d 2h 3min 4s 5ms)
     """
     return _SecsToTimestrHelper(secs, compact).get_value()
 
 class _SecsToTimestrHelper:
-    
+
     def __init__(self, float_secs, compact):
         self._compact = compact
         self._ret = []
@@ -128,12 +128,12 @@ class _SecsToTimestrHelper:
         self._add_item(mins, 'min', 'minute')
         self._add_item(secs, 's', 'second')
         self._add_item(millis, 'ms', 'millisecond')
-    
+
     def get_value(self):
         if len(self._ret) > 0:
             return self._sign + ' '.join(self._ret)
         return self._compact and '0s' or '0 seconds'
-        
+
     def _add_item(self, value, compact_suffix, long_suffix):
         if value == 0:
             return
@@ -142,7 +142,7 @@ class _SecsToTimestrHelper:
         else:
             suffix = ' %s%s' % (long_suffix, plural_or_not(value))
         self._ret.append('%d%s' % (value, suffix))
-    
+
     def _secs_to_components(self, float_secs):
         if float_secs < 0:
             sign = '- '
@@ -157,18 +157,18 @@ class _SecsToTimestrHelper:
         hours = int(int_secs / (60*60)) % 24
         days  = int(int_secs / (60*60*24))
         return sign, millis, secs, mins, hours, days
- 
+
 
 def format_time(timetuple, daysep='', daytimesep=' ', timesep=':',
                 millissep=None, gmtsep=None):
     """Returns a timestamp formatted from timetuple using separators.
-    
+
     timetuple is (year, month, day, hour, min, sec[, millis]), where parts must
     be integers and millis is required only when millissep is not None.
     """
     daytimeparts = [ '%02d' % t for t in timetuple[:6] ]
     day = daysep.join(daytimeparts[:3])
-    time_ = timesep.join(daytimeparts[3:6])    
+    time_ = timesep.join(daytimeparts[3:6])
     millis = millissep and '%s%03d' % (millissep, timetuple[6]) or ''
     return day + daytimesep + time_ + millis + _diff_to_gmt(gmtsep)
 
@@ -187,18 +187,18 @@ def _diff_to_gmt(sep):
 
 
 def get_time(format='timestamp', time_=None):
-    """Return the given or current time in requested format. 
-    
+    """Return the given or current time in requested format.
+
     If time is not given, current time is used. How time is returned is
     is deternined based on the given 'format' string as follows. Note that all
     checks are case insensitive.
-    
+
     - If 'format' contains word 'epoch' the time is returned in seconds after
       the unix epoch.
     - If 'format' contains any of the words 'year', 'month', 'day', 'hour',
       'min' or 'sec' only selected parts are returned. The order of the returned
-      parts is always the one in previous sentence and order of words in 
-      'format' is not significant. Parts are returned as zero padded strings 
+      parts is always the one in previous sentence and order of words in
+      'format' is not significant. Parts are returned as zero padded strings
       (e.g. May -> '05').
     - Otherwise (and by default) the time is returned as a timestamp string in
       format '2006-02-24 15:08:31'
@@ -214,7 +214,7 @@ def get_time(format='timestamp', time_=None):
     for i, match in enumerate(['year','month','day','hour','min','sec']):
         if match in format:
             parts.append('%.2d' % timetuple[i])
-    # 2) Return time as timestamp         
+    # 2) Return time as timestamp
     if not parts:
         return format_time(timetuple, daysep='-')
     # Return requested parts of the time
@@ -226,17 +226,17 @@ def get_time(format='timestamp', time_=None):
 
 def parse_time(timestr):
     """Parses the time string and returns its value as seconds since epoch.
-    
+
     Time can be given in four different formats:
-    
+
     1) Numbers are interpreted as time since epoch directly. It is possible to
        use also ints and floats, not only strings containing numbers.
     2) Valid timestamp ('YYYY-MM-DD hh:mm:ss' and 'YYYYMMDD hhmmss').
     3) 'NOW' (case-insensitive) is the current time rounded down to the
        closest second.
-    4) Format 'NOW - 1 day' or 'NOW + 1 hour 30 min' is the current time 
+    4) Format 'NOW - 1 day' or 'NOW + 1 hour 30 min' is the current time
        plus/minus the time specified with the time string.
-    """    
+    """
     try:
         ret = long(timestr)
         if ret < 0:
@@ -264,7 +264,7 @@ def get_timestamp(daysep='', daytimesep=' ', timesep=':', millissep='.'):
     timetuple = _get_time()
     return format_time(timetuple, daysep, daytimesep, timesep, millissep)
 
-    
+
 def timestamp_to_secs(timestamp, seps=('', ' ', ':', '.'), millis=False):
     try:
         secs = _timestamp_to_millis(timestamp, seps)/1000.0
@@ -288,15 +288,15 @@ def secs_to_timestamp(secs, seps=None, millis=False):
 def get_start_timestamp(daysep='', daytimesep=' ', timesep=':', millissep=None):
     return format_time(START_TIME, daysep, daytimesep, timesep, millissep)
 
-    
+
 def get_elapsed_time(start_time, end_time=None, seps=('', ' ', ':', '.')):
     """Returns the time between given timestamps in milliseconds.
-    
+
     If 'end_time' is not given current timestamp is got with
     get_timestamp using given 'seps'.
-    
+
     'seps' is a tuple containing 'daysep', 'daytimesep', 'timesep' and
-    'millissep' used in given timestamps. 
+    'millissep' used in given timestamps.
     """
     if start_time == 'N/A' or end_time == 'N/A':
         return 0
@@ -321,13 +321,13 @@ def elapsed_time_to_string(elapsed_millis):
     hours = int(elapsed_millis / 3600000)
     return '%s%02d:%02d:%02d.%03d' % (pre, hours, mins, secs, millis)
 
-    
+
 def _timestamp_to_millis(timestamp, seps):
     years, mons, days, hours, mins, secs, millis = _split_timestamp(timestamp, seps)
     timetuple = (years, mons, days, hours, mins, secs, 0, 0, time.daylight)
     secs = time.mktime(timetuple)
     return long(1000 * secs) + millis
-    
+
 def _split_timestamp(timestamp, seps):
     for sep in seps:
         if sep is not None and sep != '':

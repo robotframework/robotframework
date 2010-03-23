@@ -35,14 +35,14 @@ class _FakeSemaphore:
         pass
     def release(self):
         pass
-    
+
 def Semaphore():
     # Cygwin Python threads are buggy so use a fake semaphore when possible
     if sys.platform.count('cygwin') > 0 \
             and threading.currentThread().getName() == 'MainThread':
         return _FakeSemaphore()
     return threading.Semaphore()
-        
+
 
 Event = threading.Event
 
@@ -73,7 +73,7 @@ class Runner(Runnable):
         except:
             self._error = sys.exc_info()[1]
         self._notifier.set()
-        
+
     __call__ = run
 
     def is_done(self):
@@ -85,10 +85,10 @@ class Runner(Runnable):
         if self._error is not None:
             raise self._error
         return self._result
-    
-    
+
+
 def Thread(runner, stoppable=False, daemon=False, name=None):
-    if os.name == 'java':        
+    if os.name == 'java':
         thread = JavaThread(runner)   # This is always stoppable
     elif not stoppable:
         thread = threading.Thread(target=runner)

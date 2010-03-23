@@ -17,7 +17,7 @@ from robot import utils
 
 
 class BaseKeyword:
-    
+
     def __init__(self, name='', args=None, doc='', timeout='', type='kw'):
         self.name = name
         self.args = utils.to_list(args)

@@ -21,15 +21,15 @@ from abstractdomwrapper import AbstractDomWrapper
 
 
 class DomWrapper(AbstractDomWrapper):
-    
+
     """A wrapper for Java's XML DOM for simplifying reading data from it.
-    
+
     See documentation of AbstractDomWrapper for further usage information.
     """
-    
+
     def __init__(self, path=None, string=None, node=None):
         """Initialize by giving 'path' to an xml file or xml as a 'string'.
-        
+
         Alternative initialization by giving dom 'node' ment to be used only
         internallly.
         """
@@ -59,15 +59,15 @@ class DomWrapper(AbstractDomWrapper):
         builder = factory.newDocumentBuilder()
         builder.setEntityResolver(_IgnoreDtd())
         return builder.parse(source, 'dummy base uri')
-        
+
     def _create_list(self, items):
         return [ items.item(i) for i in range(items.length) ]
 
-    
+
 class _IgnoreDtd(EntityResolver):
     """EntityResolver that ignores all dtd references from doctypes.
-    
-    The idea to this hack is based on example at 
+
+    The idea to this hack is based on example at
     http://books.evc-cit.info/oobook/apc.html
     """
     def resolveEntity(self, publicId, systemId):
