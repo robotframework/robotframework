@@ -57,14 +57,13 @@ List Directory
 
 List Directory With Patterns
     ${tc} =  Check testcase  List Directory With Patterns
-    :FOR  ${index}  IN  9  12  14  17  20
-    \  Check Log Message  ${tc.kws[${index}].msgs[1]}  'pattern_type' argument of 'List Directory' keywords has been deprecated and will be removed in RF 2.2.  WARN
 
 List Directory With Absolute
     ${tc} =  Check testcase  List Directory With Absolute
     ${dir} =  Join Path  ${CURDIR}/../../..  testdata  standard_libraries  operating_system  robot_temp_dir
     Check Log Message  ${tc.kws[4].msgs[0]}  Listing contents of directory '<a href="file://${dir}">${dir}</a>'  HTML
     Check Log Message  ${tc.kws[4].msgs[1]}  ${dir}${/}bar.txt\n ${dir}${/}foo.txt\n ${dir}${/}foodir
+    Check Log Message  ${tc.kws[12].msgs[1]}  Signature of 'List Directory' keywords has changed. Please update how 'absolute' argumemt is given.  WARN
 
 List And Count Files And Directories In Directory
     [Documentation]  Tests 'List Files In Directory', 'List Directories In Directory', 'Count Files In Directory', 'Count Directories In Directory' and 'Count Items In Directory'

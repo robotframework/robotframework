@@ -92,7 +92,7 @@ Get File Size
     Create File  ${TESTFILE}  some content
     ${size} =  Get File Size  ${TESTFILE}
     Should Be Equal  ${size}  ${12}
-    ${size} =  Get File Size  ${CURDIR}/misc.html
+    ${size} =  Get File Size  ${CURDIR}/misc.txt
     Should Be True  ${size} > 1000
 
 List Directory
@@ -123,30 +123,16 @@ List Directory
     Should Be True  @{files8} == []
 
 List Directory With Patterns
-    Comment  0) Setup
+    Comment  Setup
     Create Directory  ${TESTDIR}
     Create File  ${TESTDIR}${/}foo.txt
     Create File  ${TESTDIR}${/}bar.txt
     Create Directory  ${TESTDIR}${/}foodir
-    Comment  1) Simple pattern
-    ${names} =  List Directory  ${TESTDIR}  *.txt
+    Comment  Actual test
+    ${names} =  List Directory  ${TESTDIR}  ???.txt
     Should Be True  ${names} == ['bar.txt', 'foo.txt']
-    Comment  2) Case-insensitive simple pattern
-    ${names} =  List Directory  ${TESTDIR}  ???.TXT  case-insensitive simple pattern
-    Should Be True  ${names} == ['bar.txt', 'foo.txt']
-    Comment  3) Regexp pattern
-    ${names} =  List Directory  ${TESTDIR}  o+  this is regexp
+    ${names} =  List Directory  ${TESTDIR}  *oo*
     Should Be True  ${names} == ['foo.txt', 'foodir']
-    ${names} =  List Directory  ${TESTDIR}  (?i)FO{2}  regular expression
-    Should Be True  ${names} == ['foo.txt', 'foodir']
-    Comment  4) Case-insensitive
-    ${names} =  List Directory  ${TESTDIR}  FOO  CaseInsensitive
-    Should Be True  ${names} == ['foo.txt', 'foodir']
-    Comment  5) Literal string
-    ${names} =  List Directory  ${TESTDIR}  foo  literal string
-    Should Be True  ${names} == ['foo.txt', 'foodir']
-    ${names} =  List Directory  ${TESTDIR}  ?oodi*  \
-    Should Be True  ${names} == ['foodir']
 
 List Directory With Absolute
     [Documentation]  This tests also List Files In Directory And List Directories In Directory
@@ -154,15 +140,15 @@ List Directory With Absolute
     Create File  ${TESTDIR}${/}foo.txt
     Create File  ${TESTDIR}${/}bar.txt
     Create Directory  ${TESTDIR}${/}foodir
-    ${names} =  List Directory  ${TESTDIR}  ${EMPTY}  ${EMPTY}  absolute
+    ${names} =  List Directory  ${TESTDIR}  ${EMPTY}  absolute
     Log  ${names}
     Should Be Equal  ${names[0]}  ${TESTDIR}${/}bar.txt
     Should Be Equal  ${names[1]}  ${TESTDIR}${/}foo.txt
     Should Be Equal  ${names[2]}  ${TESTDIR}${/}foodir
-    ${names} =  List Files In Directory  ${TESTDIR}  ${EMPTY}  ${EMPTY}  absolute
+    ${names} =  List Files In Directory  ${TESTDIR}  ${EMPTY}  whatever
     Should Be Equal  ${names[0]}  ${TESTDIR}${/}bar.txt
     Should Be Equal  ${names[1]}  ${TESTDIR}${/}foo.txt
-    ${names} =  List Directories In Directory  ${TESTDIR}  ${EMPTY}  ${EMPTY}  absolute
+    ${names} =  List Directories In Directory  ${TESTDIR}  ${EMPTY}  ${EMPTY}  deprecated absolute
     Should Be Equal  ${names[0]}  ${TESTDIR}${/}foodir
 
 List And Count Files And Directories In Directory
@@ -181,16 +167,16 @@ List And Count Files And Directories In Directory
     Should Be True  ${bar_files} == ['bar.txt']
     Comment  2) List Dirs In Dir
     ${dirs} =  List Directories In Directory  ${TESTDIR}
-    ${foo_dirs} =  List Directories In Directory  ${TESTDIR}  o+  R E G E X P
+    ${foo_dirs} =  List Directories In Directory  ${TESTDIR}  *o*
     Should Be True  ${dirs} == ['bardir', 'foodir']
     Should Be True  ${foo_dirs} == ['foodir']
     ${file_count} =  Count Files In Directory  ${TESTDIR}
-    ${txt_file_count} =  Count Files In Directory  ${TESTDIR}  *.TXT  case-insensitive glob
+    ${txt_file_count} =  Count Files In Directory  ${TESTDIR}  *.txt
     Should Be Equal  ${file_count}  ${3}
     Should Be Equal  ${file_count}  ${txt_file_count}
     Comment  4) Count Dirs In Dir
     ${dir_count} =  Count Directories In Directory  ${TESTDIR}
-    ${dir_dir_count} =  Count Directories In Directory  ${TESTDIR}  dir  literal
+    ${dir_dir_count} =  Count Directories In Directory  ${TESTDIR}  *dir
     Should Be Equal  ${dir_count}  ${2}
     Should Be Equal  ${dir_count}  ${dir_dir_count}
     Comment  5) Count Items In Dir
