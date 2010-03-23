@@ -1,0 +1,7 @@
+*** Settings ***
+Variables       ../variables.py
+
+*** Test Cases ***
+TC
+    Should Be Equal  suite  ${SUITE}
+
