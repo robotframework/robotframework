@@ -14,7 +14,6 @@
 
 
 import os
-import re
 import sys
 import time
 import glob
@@ -1334,29 +1333,3 @@ class _Process2(_Process):
         if not self.closed:
             self.stdout.close()
             self.closed = True
-
-
-# Helper function to select only matching lines. Used also by BuiltIn.
-#
-# TODO: Remove altogether in RF 2.2 when 'pattern_type' argument of
-# Grep File and List Directory keywords and the whole BuiltIn.Grep have
-# been removed (issues 258, 260 and 285)
-def _filter_lines(lines, pattern, ptype):
-    ptype = ptype.lower().replace(' ','').replace('-','')
-    if not pattern:
-        filtr = lambda line: True
-    elif 'simple' in ptype or 'glob' in ptype:
-        if 'caseinsensitive' in ptype:
-            pattern = pattern.lower()
-            filtr = lambda line: fnmatch.fnmatchcase(line.lower(), pattern)
-        else:
-            filtr = lambda line: fnmatch.fnmatchcase(line, pattern)
-    elif 'regularexpression' in ptype or 'regexp' in ptype:
-        pattern = re.compile(pattern)
-        filtr = lambda line: pattern.search(line)
-    elif 'caseinsensitive' in ptype:
-        pattern = pattern.lower()
-        filtr = lambda line: pattern in line.lower()
-    else:
-        filtr = lambda line: pattern in line
-    return [ line for line in lines if filtr(line) ]
