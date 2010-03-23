@@ -1,9 +1,0 @@
-*** Settings ***
-Force Tags  pybot  jybot  regression
-
-Resource  ../../resources/resource.html
-Suite Setup  Run tests  \  variables${/}same_name_variable_file_import
-
-*** Test Cases ***
-Variables are not left hanging after importing same named variable file
-    Check Test Suite  Same Name Variable File Import  2 critical tests, 2 passed, 0 failed\n2 tests total, 2 passed, 0 failed

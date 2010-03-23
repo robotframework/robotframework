@@ -1,7 +1,0 @@
-*** Settings ***
-Variables	vars.py
-
-*** Test Cases ***
-Test
-	Should Be Equal	foo	${variable}
-	Variable Should Exist	${SUITE 1}
