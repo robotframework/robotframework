@@ -5,9 +5,11 @@ Resource        ../../resources/resource.html
 
 *** Test Cases ***
 Different Variable Files
+    [Documentation]  Verifies that it is possible to import different variable files even when they have the same name. Verifies that new variables are importerd, existing overridden, and old ones not visible to others.
     Check Test Suite  Different Variable Files  6 critical tests, 6 passed, 0 failed\n 6 tests total, 6 passed, 0 failed  PASS
 
 Same Variable File
+    [Documentation]  Verifies that if the same variable file is re-imported, the module itself is not reloaded. This is done for performance reasons.
     ${suite} =  Check Test Suite  Same Variable File  6 critical tests, 6 passed, 0 failed\n 6 tests total, 6 passed, 0 failed
     Should Be True  ${suite.elapsedtime} < 6000  The same variable file is imported multiple times even it should be imported only once!!
 
