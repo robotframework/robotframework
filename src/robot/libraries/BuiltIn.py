@@ -23,7 +23,6 @@ from robot.errors import DataError, ExecutionFailed
 from robot import utils
 from robot.variables import is_var, is_list_var
 from robot.running import Keyword, NAMESPACES, RUN_KW_REGISTER
-from robot.libraries.OperatingSystem import _filter_lines
 
 if utils.is_jython:
     from java.lang import String, Number, Long, Double
@@ -1346,11 +1345,6 @@ class _Misc:
             raise DataError("Object '%s' does not have a method '%s'"
                             % (object, method_name))
         return method(*args)
-
-    def grep(self, text, pattern, pattern_type='literal string'):
-        """*DEPRECATED* Use `Get Lines Matching XXX` keywords from `String` library instead. This keyword will be removed in Robot Framework 2.2."""
-        lines = _filter_lines(text.splitlines(), pattern, pattern_type)
-        return '\n'.join(lines)
 
     def regexp_escape(self, *patterns):
         """Returns each argument string escaped for use as a regular expression.
