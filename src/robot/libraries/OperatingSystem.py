@@ -58,15 +58,31 @@ class OperatingSystem:
     (e.g. `File Should Exist`, `Directory Should Be Empty`) and
     manipulate environment variables (e.g. `Set Environment Variable`).
 
-    Starting from Robot Framework 2.0.2, all keywords expecting paths
-    as arguments accept a forward slash as a path separator regardless
-    the operating system. This only works if an argument is only a
-    path, *not if a path is part of an argument*, like it often is
-    with `Run` and `Start Process` keywords. In these cases, and with
-    earlier versions, built-in variable ${/} can be used to keep the
-    test data platform independent.
+    *Pattern matching*
 
-    Example usage:
+    Some keywords allow their arguments to be specified as _glob patterns_ 
+    where:
+    | *        | matches anything, even an empty string |
+    | ?        | matches any single character |
+    | [chars]  | matches any character inside square brackets (e.g. '[abc]' matches either 'a', 'b' or 'c') |
+    | [!chars] | matches any character not inside square brackets |
+    
+    Unless otherwise noted, matching is case-insensitive on
+    case-insensitive operating systems such as Windows. Pattern
+    matching is implemented using Python's `fnmatch` module:
+    http://docs.python.org/library/fnmatch.html
+
+    *Path separators*
+
+    All keywords expecting paths as arguments accept a forward slash
+    (`/`) as a path separator regardless the operating system. Notice
+    that this *does not work when the path is part of an argument*,
+    like it often is with `Run` and `Start Process` keywords. In such
+    cases the built-in variable `${/}` can be used to keep the test
+    data platform independent.
+
+    *Example*
+
     |  *Setting*  |     *Value*     |
     | Library     | OperatingSystem |
 
@@ -127,7 +143,7 @@ class OperatingSystem:
         return self._run(command, return_mode)
 
     def run_and_return_rc(self, command):
-        """Runs the given command in the system and returns the returnn code.
+        """Runs the given command in the system and returns the return code.
 
         The return code (RC) is returned as a positive integer in
         range from 0 to 255 as returned by the executed command. On
@@ -144,7 +160,7 @@ class OperatingSystem:
         | Should Be True | 0 < ${rc} < 42 |
 
         See `Run` and `Run And Return RC And Output` if you need to get the
-        output of the executed comand.
+        output of the executed command.
         """
         return self._run(command, 'RC')
 
@@ -308,18 +324,19 @@ class OperatingSystem:
         newlines and the number of matched lines is automatically logged.
         Possible trailing newline is never returned.
 
-        The `pattern` is used as _glob pattern_ same way as with `File Should
-        Exist` keyword. A line matches if it contains the `pattern` anywhere in
-        it i.e. it does not need to match the pattern fully. Other pattern
-        types were removed in Robot Framework 2.5.
-
-        If more complex pattern matching is needed, it is possible to use
-        `Get File` in combination with String library keywords like `Get
-        Lines Matching Regexp`.
+        A line matches if it contains the `pattern` anywhere in it and
+        it *does not need to match the pattern fully*. The pattern
+        matching syntax is explained in `introduction`, and in this
+        case matching is case-sensitive. Support for different pattern types
+        were removed in Robot Framework 2.5.
 
         Examples:
         | ${errors} = | Grep File | /var/log/myapp.log | ERROR |
         | ${ret} = | Grep File | ${CURDIR}/file.txt | [Ww]ildc??d ex*ple |
+
+        If more complex pattern matching is needed, it is possible to use
+        `Get File` in combination with String library keywords like `Get
+        Lines Matching Regexp`.
         """
         pattern = '*%s*' % pattern
         orig = self.get_file(path, encoding).splitlines()
@@ -343,9 +360,9 @@ class OperatingSystem:
     def should_exist(self, path, msg=None):
         """Fails unless the given path (file or directory) exists.
 
-        The path can be given as an exact path or as a pattern
-        similarly as with `File Should Exist` keyword. The default
-        error message can be overridden with the `msg` argument.
+        The path can be given as an exact path or as a glob pattern.
+        The pattern matching syntax is explained in `introduction`.
+        The default error message can be overridden with the `msg` argument.
         """
         path = self._absnorm(path)
         if not glob.glob(path):
@@ -355,9 +372,9 @@ class OperatingSystem:
     def should_not_exist(self, path, msg=None):
         """Fails if the given path (file or directory) exists.
 
-        The path can be given as an exact path or as a pattern
-        similarly as with `File Should Exist` keyword. The default
-        error message can be overridden with the `msg` argument.
+        The path can be given as an exact path or as a glob pattern.
+        The pattern matching syntax is explained in `introduction`.
+        The default error message can be overridden with the `msg` argument.
         """
         path = self._absnorm(path)
         matches = glob.glob(path)
@@ -373,18 +390,10 @@ class OperatingSystem:
         raise AssertionError(msg)
 
     def file_should_exist(self, path, msg=None):
-        """Fails unless the given path points to an existing file.
+        """Fails unless the given `path` points to an existing file.
 
-        The path can be given as an exact path or as a pattern where:
-        | *        | matches everything |
-        | ?        | matches any single character |
-        | [chars]  | matches any character inside square brackets (e.g. '[abc]' matches either 'a', 'b' or 'c') |
-        | [!chars] | matches any character not inside square brackets |
-
-        Pattern matching is implemented with the Python 'fnmatch'
-        module. For more information, see
-        http://docs.python.org/lib/module-fnmatch.html
-
+        The path can be given as an exact path or as a glob pattern.
+        The pattern matching syntax is explained in `introduction`.
         The default error message can be overridden with the `msg` argument.
         """
         path = self._absnorm(path)
@@ -396,9 +405,9 @@ class OperatingSystem:
     def file_should_not_exist(self, path, msg=None):
         """Fails if the given path points to an existing file.
 
-        The path can be given as an exact path or as a pattern
-        similarly as with `File Should Exist` keyword. The default
-        error message can be overridden with the `msg` argument.
+        The path can be given as an exact path or as a glob pattern.
+        The pattern matching syntax is explained in `introduction`.
+        The default error message can be overridden with the `msg` argument.
         """
         path = self._absnorm(path)
         matches = [ p for p in glob.glob(path) if os.path.isfile(p) ]
@@ -417,9 +426,9 @@ class OperatingSystem:
     def directory_should_exist(self, path, msg=None):
         """Fails unless the given path points to an existing directory.
 
-        The path can be given as an exact path or as a pattern
-        similarly as with `File Should Exist` keyword. The default
-        error message can be overridden with the `msg` argument.
+        The path can be given as an exact path or as a glob pattern.
+        The pattern matching syntax is explained in `introduction`.
+        The default error message can be overridden with the `msg` argument.
         """
         path = self._absnorm(path)
         matches = [ p for p in glob.glob(path) if os.path.isdir(p) ]
@@ -430,9 +439,9 @@ class OperatingSystem:
     def directory_should_not_exist(self, path, msg=None):
         """Fails if the given path points to an existing file.
 
-        The path can be given as an exact path or as a pattern
-        similarly as with `File Should Exist` keyword. The default
-        error message can be overridden with the `msg` argument.
+        The path can be given as an exact path or as a glob pattern.
+        The pattern matching syntax is explained in `introduction`.
+        The default error message can be overridden with the `msg` argument.
         """
         path = self._absnorm(path)
         matches = [ p for p in glob.glob(path) if os.path.isdir(p) ]
@@ -456,10 +465,10 @@ class OperatingSystem:
     def wait_until_removed(self, path, timeout='1 minute'):
         """Waits until the given file or directory is removed.
 
-        The path can be given as an exact path or as a pattern
-        similarly as with `File Should Exist` keyword. If the path is
-        a pattern, the keyword waits until all matching items are
-        removed.
+        The path can be given as an exact path or as a glob pattern.
+        The pattern matching syntax is explained in `introduction`.
+        If the path is a pattern, the keyword waits until all matching
+        items are removed.
 
         The optional `timeout` can be used to control the maximum time of
         waiting. The timeout is given as a timeout string, e.g. in a format
@@ -482,10 +491,10 @@ class OperatingSystem:
     def wait_until_created(self, path, timeout='1 minute'):
         """Waits until the given file or directory is created.
 
-        The path can be given as an exact path or as a pattern
-        similarly as with `File Should Exist` keyword. If the path is
-        a pattern, the keyword returns when an item matching to the
-        pattern is created.
+        The path can be given as an exact path or as a glob pattern.
+        The pattern matching syntax is explained in `introduction`.
+        If the path is a pattern, the keyword returns when an item matching
+        it is created.
 
         The optional `timeout` can be used to control the maximum time of
         waiting. The timeout is given as a timeout string, e.g. in a format
@@ -628,9 +637,9 @@ class OperatingSystem:
         Passes if the file does not exist, but fails if the path does
         not point to a regular file (e.g. it points to a directory).
 
-        The path can be given as an exact path or as a pattern
-        similarly as with `File Should Exist` keyword. If the path is
-        a pattern, all files matching it are removed.
+        The path can be given as an exact path or as a glob pattern.
+        The pattern matching syntax is explained in `introduction`.
+        If the path is a pattern, all files matching it are removed.
         """
         path = self._absnorm(path)
         matches = glob.glob(path)
@@ -1059,7 +1068,7 @@ class OperatingSystem:
         | Set Modified Time | /path/file | 1177654467         | #(2007-04-27 9:14:27) |
         | Set Modified Time | /path/file | 2007-04-27 9:14:27 |
         | Set Modified Time | /path/file | NOW                | # The time of execution |
-        | Set Modified Time | /path/file | NOW - 1d           | # 1 day subtraced from NOW |
+        | Set Modified Time | /path/file | NOW - 1d           | # 1 day subtracted from NOW |
         | Set Modified Time | /path/file | NOW + 1h 2min 3s   | # 1h 2min 3s added to NOW |
         """
         path = self._absnorm(path)
@@ -1101,15 +1110,20 @@ class OperatingSystem:
         absolute format (e.g. '/home/robot/file.txt'), set the `absolute`
         argument to any non-empty string.
 
-        If `pattern` is given, only items matching it are returned. By default
-        `pattern` is considered to be a simple glob pattern where '*' and '?'
-        can be used as wildcards (e.g. '*.txt' or 'file.???'). Using other
-        pattern types has been deprecated in Robot Framework 2.1.
+        If `pattern` is given, only items matching it are returned. The pattern
+        matching syntax is explained in `introduction`, and in this case
+        matching is case-sensitive. Support for different pattern types 
+        was removed in Robot Framework 2.5.
 
         Examples (using also other `List Directory` variants):
         | @{items} = | List Directory           | ${TEMPDIR} |
-        | @{files} = | List Files In Directory  | /tmmp | *.txt | | absolute |
+        | @{files} = | List Files In Directory  | /tmp | *.txt | absolute |
         | ${count} = | Count Files In Directory | ${CURDIR} | ??? |
+
+        The signature of this keyword was changed in RF 2.5 when the deprecated
+        `pattern_type` argument was removed. The `deprecated_absolute` argument
+        was added to keep the signature backwards compatible, but it will be
+        removed in RF 2.6.
         """
         items = self._list_dir(path, pattern, absolute, deprecated_absolute)
         self._info('\n'.join(items))
