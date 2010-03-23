@@ -1092,8 +1092,8 @@ class OperatingSystem:
         self._link("Size of file '%%s' is %d byte%s" % (size, plural), path)
         return size
 
-    def list_directory(self, path, pattern=None, pattern_type='DEPRECATED',
-                       absolute=False):
+    def list_directory(self, path, pattern=None, absolute=False,
+                       deprecated_absolute=None):
         """Returns items from a directory, optionally filtered with `pattern`.
 
         File and directory names are returned in case-sensitive alphabetical
@@ -1116,25 +1116,25 @@ class OperatingSystem:
         | @{files} = | List Files In Directory  | /tmmp | *.txt | | absolute |
         | ${count} = | Count Files In Directory | ${CURDIR} | ??? |
         """
-        items = self._list_dir(path, pattern, pattern_type, absolute)
+        items = self._list_dir(path, pattern, absolute, deprecated_absolute)
         self._info('\n'.join(items))
         return items
 
-    def list_files_in_directory(self, path, pattern=None,
-                                pattern_type='DEPRECATED', absolute=False):
+    def list_files_in_directory(self, path, pattern=None, absolute=False,
+                                deprecated_absolute=None):
         """A wrapper for `List Directory` that returns only files."""
-        files = self._list_files_in_dir(path, pattern, pattern_type, absolute)
+        files = self._list_files_in_dir(path, pattern, absolute, deprecated_absolute)
         self._info('\n'.join(files))
         return files
 
-    def list_directories_in_directory(self, path, pattern=None,
-                                      pattern_type='DEPRECATED', absolute=False):
+    def list_directories_in_directory(self, path, pattern=None, absolute=False,
+                                      deprecated_absolute=None):
         """A wrapper for `List Directory` that returns only directories."""
-        dirs = self._list_dirs_in_dir(path, pattern, pattern_type, absolute)
+        dirs = self._list_dirs_in_dir(path, pattern, absolute, deprecated_absolute)
         self._info('\n'.join(dirs))
         return dirs
 
-    def count_items_in_directory(self, path, pattern=None, pattern_type='DEPRECATED'):
+    def count_items_in_directory(self, path, pattern=None):
         """Returns the number of all items in the given directory.
 
         The arguments `pattern` and `pattern_type` have the same
@@ -1142,10 +1142,10 @@ class OperatingSystem:
         returned as an integer, so it must be checked e.g. with the
         built-in keyword `Should Be Equal As Integers`.
         """
-        items = self._list_dir(path, pattern, pattern_type)
+        items = self._list_dir(path, pattern)
         return len(items)
 
-    def count_files_in_directory(self, path, pattern=None, pattern_type='DEPRECATED'):
+    def count_files_in_directory(self, path, pattern=None):
         """Returns the number of files in the given directory.
 
         The arguments `pattern` and `pattern_type` have the same
@@ -1153,10 +1153,10 @@ class OperatingSystem:
         returned as an integer, so it must be checked e.g. with the
         built-in keyword `Should Be Equal As Integers`.
         """
-        files = self._list_files_in_dir(path, pattern, pattern_type)
+        files = self._list_files_in_dir(path, pattern)
         return len(files)
 
-    def count_directories_in_directory(self, path, pattern=None, pattern_type='DEPRECATED'):
+    def count_directories_in_directory(self, path, pattern=None):
         """Returns the number of subdirectories in the given directory.
 
         The arguments `pattern` and `pattern_type` have the same
@@ -1164,40 +1164,39 @@ class OperatingSystem:
         returned as an integer, so it must be checked e.g. with the
         built-in keyword `Should Be Equal As Integers`.
         """
-        dirs = self._list_dirs_in_dir(path, pattern, pattern_type)
+        dirs = self._list_dirs_in_dir(path, pattern)
         return len(dirs)
 
-    def _list_dir(self, path, pattern=None, pattern_type='DEPRECATED',
-                  absolute=False):
+    def _list_dir(self, path, pattern=None, absolute=False,
+                  deprecated_absolute=None):
         path = self._absnorm(path)
         self._link("Listing contents of directory '%s'", path)
         if not os.path.isdir(path):
             raise DataError("Directory '%s' does not exist" % path)
         items = os.listdir(path)
-        if pattern_type == 'DEPRECATED' or pattern_type == '':
-            pattern_type = 'simple'
-        else:
-            self._warn("'pattern_type' argument of 'List Directory' keywords "
-                       "has been deprecated and will be removed in RF 2.2.")
         if pattern:
-            items = _filter_lines(items, pattern, pattern_type)
+            items = [ i for i in items if fnmatch.fnmatchcase(i, pattern) ]
         items.sort()
+        if deprecated_absolute is not None:
+            self._warn("Signature of 'List Directory' keywords has changed. "
+                       "Please update how 'absolute' argumemt is given.")
+            absolute = deprecated_absolute
         if absolute:
             path = os.path.normpath(path)
             items = [ os.path.join(path,item) for item in items ]
         return items
 
-    def _list_files_in_dir(self, path, pattern=None, pattern_type='DEPRECATED',
-                           absolute=False):
+    def _list_files_in_dir(self, path, pattern=None, absolute=False,
+                           deprecated_absolute=None):
         return [ item for item in
-                 self._list_dir(path, pattern, pattern_type, absolute)
-                 if os.path.isfile(os.path.join(path,item)) ]
+                 self._list_dir(path, pattern, absolute, deprecated_absolute)
+                 if os.path.isfile(os.path.join(path, item)) ]
 
-    def _list_dirs_in_dir(self, path, pattern=None, pattern_type='DEPRECATED',
-                          absolute=False):
+    def _list_dirs_in_dir(self, path, pattern=None, absolute=False,
+                          deprecated_absolute=None):
         return [ item for item in
-                 self._list_dir(path, pattern, pattern_type, absolute)
-                 if os.path.isdir(os.path.join(path,item)) ]
+                 self._list_dir(path, pattern, absolute, deprecated_absolute)
+                 if os.path.isdir(os.path.join(path, item)) ]
 
     def touch(self, path):
         """Emulates the UNIX touch command.
