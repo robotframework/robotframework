@@ -1,1 +1,1 @@
-SUITE = "suite3.subsuite1"
+SUITE = SUITE_31 = "suite3.subsuite1"

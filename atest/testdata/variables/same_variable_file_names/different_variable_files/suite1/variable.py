@@ -1,1 +1,2 @@
-SUITE = "suite1"
+SUITE = SUITE_1 = "suite1"
+

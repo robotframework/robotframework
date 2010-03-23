@@ -3,5 +3,5 @@ Variables       ../variables.py
 
 *** Test Cases ***
 TC
-    Should Be Equal  suite  ${SUITE}
+    Should Be Equal  ${SUITE}  suite
 
