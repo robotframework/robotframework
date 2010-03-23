@@ -513,8 +513,6 @@ class OperatingSystem:
         The default error message can be overridden with the `msg` argument.
         """
         path = self._absnorm(path)
-        if not os.path.isdir(path):
-            raise AssertionError("Directory '%s' does not exist" % path)
         items = self._list_dir(path)
         if items:
             if not msg:
@@ -529,8 +527,6 @@ class OperatingSystem:
         The default error message can be overridden with the `msg` argument.
         """
         path = self._absnorm(path)
-        if not os.path.isdir(path):
-            raise AssertionError("Directory '%s' does not exist" % path)
         count = len(self._list_dir(path))
         if count == 0:
             self._fail(msg, "Directory '%s' is empty." % path)
