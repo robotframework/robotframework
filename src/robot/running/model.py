@@ -64,6 +64,7 @@ class RunnableTestSuite(BaseTestSuite):
         self.starttime = utils.get_timestamp()
         self.namespace = Namespace(self, parent)
         self.namespace.variables['${SUITE_NAME}'] = self.longname
+        self.namespace.variables['${SUITE_SOURCE}'] = self.source
         init_err = self._init_suite(self.namespace.variables)
         output.start_suite(self)
         setup_err = self._run_fixture(self.setup, output, error, init_err)
