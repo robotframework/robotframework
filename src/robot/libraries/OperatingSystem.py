@@ -571,46 +571,25 @@ class OperatingSystem:
 
     # Creating and removing files and directory
 
-    def create_file(self, path, content='', mode='DEPRECATED'):
-        """Creates a file to the given path with the given content.
-
-        Old `mode` argument is deprecated in Robot Framework 2.1 and will be
-        replaced with `encoding` in 2.2. Use new `Append To File` keyword if
-        there is a need to append to a file, and use `File Should Not Exist`
-        if you want to avoid overwriting existing files.
-
-        In Robot Framework 2.1 this keyword always uses UTF-8 encoding
-        and `Create File With Encoding` can be used if other encodings
-        are needed. Earlier versions used more limiting ASCII encoding.
-
-        If the directory where to create file does not exist it, and possible
-        intermediate missing directories, are created.
-        """
-        if mode == 'DEPRECATED':
-            open_mode = 'w'
-        else:
-            self._warn("'mode' argument for 'Create File' is deprecated and "
-                       "will be replaced with 'encoding' in RF 2.2.")
-            mode = mode.upper()
-            if 'FALSE' in mode or 'NO' in mode or "DON'T" in mode:
-                self.file_should_not_exist(path)
-            open_mode = 'APPEND' in mode and 'a' or 'w'
-        path = self._write_to_file(path, content, 'UTF-8', open_mode)
-        self._link("Created file '%s'", path)
-
-    def create_file_with_encoding(self, path, content='', encoding='UTF-8'):
-        """Writes the given contend to the specified file.
-
-        Use `Append To File` if you want to append to an existing file.
+    def create_file(self, path, content='', encoding='UTF-8'):
+        """Creates a file with the given content and encoding.
 
         If the directory where to create file does not exist it, and possible
         intermediate missing directories, are created.
 
-        This is a temporary keyword added in Robot Framework 2.1 and will be
-        deprecated in 2.2 when `Create File` gets `encoding` argument.
+        Use `Append To File` if you want to append to an existing file,
+        and use `File Should Not Exist` if you want to avoid overwriting
+        existing files.
+
+        Note that the deprecated `mode` argument was replaced with `encoding`
+        in Robot Framework 2.5.
         """
         path = self._write_to_file(path, content, encoding, 'w')
         self._link("Created file '%s'", path)
+
+    def create_file_with_encoding(self, path, content='', encoding='UTF-8'):
+        """*DEPRECATED* Use `Create File` instead. This keyword will be removed in RF 2.6."""
+        self.create_file(path, content, encoding)
 
     def append_to_file(self, path, content, encoding='UTF-8'):
         """Appends the given contend to the specified file.
