@@ -13,7 +13,7 @@ ${ANYDIR}  .*[/\\\\]
 *** Keywords ***
 Create And Verify File
     [Arguments]  ${content}  ${encoding}
-    Create File With Encoding  ${TESTFILE}  ${content}  ${encoding}
+    Create File  ${TESTFILE}  ${content}  ${encoding}
     Verify File  ${TESTFILE}  ${content}  ${encoding}
 
 Verify File

@@ -30,17 +30,15 @@ Create File With Encoding
 
 Create File Fails If Encoding Is Incorrect
     [Documentation]  FAIL REGEXP: Unicode(Encode|)Error: .*
-    Create File With Encoding  ${TESTFILE}  Hyvää yötä!  ASCII
+    Create File  ${TESTFILE}  Hyvää yötä!  ASCII
+
+"Create File With Encoding" Keyword Is Deprecated
+    Create File With Encoding  ${TESTFILE}  whatever  ASCII
 
 Append To File
     Append To File  ${TESTFILE}  First line\n
     Append To File  ${TESTFILE}  Second line\n  ASCII
     Verify File  ${TESTFILE}  First line\nSecond line\n
-
-Not Overwriting When File Exists Fails
-    [Documentation]  Testing deprecated feature FAIL File '${TESTFILE}' exists
-    Create File  ${TESTFILE}  whatever
-    Create File  ${TESTFILE}  this fails  Do not overwrite
 
 Create File To Non-Existing Dir
     Create File  ${TESTDIR}${/}file.txt  my content

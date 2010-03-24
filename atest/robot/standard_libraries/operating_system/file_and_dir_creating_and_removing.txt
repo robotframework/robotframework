@@ -13,11 +13,12 @@ Create File With Encoding
 Create File Fails If Encoding Is Incorrect
     Check testcase  Create File Fails If Encoding Is Incorrect
 
+"Create File With Encoding" Keyword Is Deprecated
+    ${tc} =  Check Test Case  ${TEST NAME}
+    Check Log Message  ${tc.kws[0].msgs[0]}  Keyword 'OperatingSystem.Create File With Encoding' is deprecated. Use `Create File` instead. This keyword will be removed in RF 2.6.  WARN
+
 Append To File
     Check testcase  Append To File
-
-Not Overwriting When File Exists Fails
-    Check testcase  Not Overwriting When File Exists Fails
 
 Create File To Non-Existing Dir
     Check testcase  Create File To Non-Existing Dir
