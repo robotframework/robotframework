@@ -632,51 +632,54 @@ of them are not even available all the time.
    +-----------------------+-------------------------------------------------------+----------------+
    |        Variable       |                    Explanation                        |    Available   |
    +=======================+=======================================================+================+
-   | ${TEST_NAME}          | The name of the current test case.                    | Test case      |
+   | ${TEST NAME}          | The name of the current test case.                    | Test case      |
    +-----------------------+-------------------------------------------------------+----------------+
-   | @{TEST_TAGS}          | Contains the tags of the current test case in         | Test case      |
+   | @{TEST TAGS}          | Contains the tags of the current test case in         | Test case      |
    |                       | alphabetical order.                                   |                |
    +-----------------------+-------------------------------------------------------+----------------+    
-   | ${TEST_STATUS}        | The status of the current test case, either PASS or   | Test teardown  |
+   | ${TEST STATUS}        | The status of the current test case, either PASS or   | Test teardown  |
    |                       | FAIL.                                                 |                |
    +-----------------------+-------------------------------------------------------+----------------+
-   | ${TEST_MESSAGE}       | The possible error message of the current test case.  | Test teardown  |
+   | ${TEST MESSAGE}       | The possible error message of the current test case.  | Test teardown  |
    +-----------------------+-------------------------------------------------------+----------------+
-   | ${PREV_TEST_NAME}     | The name of the previous test case, or an empty string| Everywhere     |
+   | ${PREV TEST NAME}     | The name of the previous test case, or an empty string| Everywhere     |
    |                       | if no tests have been executed yet.                   |                |
    +-----------------------+-------------------------------------------------------+----------------+
-   | ${PREV_TEST_STATUS}   | The status of the previous test case: either PASS,    | Everywhere     |
+   | ${PREV TEST STATUS}   | The status of the previous test case: either PASS,    | Everywhere     |
    |                       | FAIL or an empty string when no tests have been       |                |
    |                       | executed.                                             |                |
    +-----------------------+-------------------------------------------------------+----------------+
-   | ${PREV_TEST_MESSAGE}  | The possible error message of the previous test case. | Everywhere     |
+   | ${PREV TEST MESSAGE}  | The possible error message of the previous test case. | Everywhere     |
    +-----------------------+-------------------------------------------------------+----------------+
-   | ${SUITE_NAME}         | The full name of the current test suite.              | Everywhere     |
+   | ${SUITE NAME}         | The full name of the current test suite.              | Everywhere     |
    +-----------------------+-------------------------------------------------------+----------------+
-   | ${SUITE_STATUS}       | The status of the current test case, either PASS or   | Suite teardown |
+   | ${SUITE SOURCE}       | An absolute path to the suite file or directory. New  | Everywhere     |
+   |                       | in Robot Framework 2.5.                               |                |
+   +-----------------------+-------------------------------------------------------+----------------+
+   | ${SUITE STATUS}       | The status of the current test case, either PASS or   | Suite teardown |
    |                       | FAIL.                                                 |                |
    +-----------------------+-------------------------------------------------------+----------------+
-   | ${SUITE_MESSAGE}      | The full message of the current test suite, including | Suite teardown |
+   | ${SUITE MESSAGE}      | The full message of the current test suite, including | Suite teardown |
    |                       | statistics.                                           |                |
    +-----------------------+-------------------------------------------------------+----------------+
-   | ${OUTPUT_FILE}        | An absolute path to the current `output file`_. Has   | Everywhere     |
+   | ${OUTPUT FILE}        | An absolute path to the current `output file`_. Has   | Everywhere     |
    |                       | different values during execution when                |                |
    |                       | `outputs are split`_.                                 |                |
    +-----------------------+-------------------------------------------------------+----------------+
-   | ${LOG_FILE}           | An absolute path to the current `log file`_ or string | Everywhere     |
+   | ${LOG FILE}           | An absolute path to the current `log file`_ or string | Everywhere     |
    |                       | NONE when no log file is created. Has different values|                |
    |                       | during execution when `outputs are split`_.           |                |
    +-----------------------+-------------------------------------------------------+----------------+
-   | ${REPORT_FILE}        | An absolute path to the `report file`_ or string NONE | Everywhere     |
+   | ${REPORT FILE}        | An absolute path to the `report file`_ or string NONE | Everywhere     |
    |                       | when no report is created.                            |                |
    +-----------------------+-------------------------------------------------------+----------------+
-   | ${SUMMARY_FILE}       | An absolute path to the `summary file`_ or string NONE| Everywhere     |
+   | ${SUMMARY FILE}       | An absolute path to the `summary file`_ or string NONE| Everywhere     |
    |                       | when no summary is created.                           |                |
    +-----------------------+-------------------------------------------------------+----------------+
-   | ${DEBUG_FILE}         | An absolute path to the `debug file`_ or string NONE  | Everywhere     |
+   | ${DEBUG FILE}         | An absolute path to the `debug file`_ or string NONE  | Everywhere     |
    |                       | when no debug file is created.                        |                |
    +-----------------------+-------------------------------------------------------+----------------+
-   | ${OUTPUT_DIR}         | An absolute path to the `output directory`_.          | Everywhere     |
+   | ${OUTPUT DIR}         | An absolute path to the `output directory`_.          | Everywhere     |
    +-----------------------+-------------------------------------------------------+----------------+
 
 
