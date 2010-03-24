@@ -1,0 +1,47 @@
+*** Settings ***
+Suite Teardown  Remove Temps
+Test Setup      Remove Temps
+Library         OperatingSystem
+Resource        file_and_dir_resource.txt
+
+*** Variables ***
+${FILE PATTERN}  ${CURDIR}${/}R-F*.txt
+${TESTFILE}  ${CURDIR}${/}R-F.txt
+${TESTFILE2}  ${CURDIR}${/}R-F2.txt
+${TESTFILE3}  ${CURDIR}${/}R-F3.txt
+${TESTDIR}  ${CURDIR}${/}R-D
+${TESTDIR2}  ${CURDIR}${/}R-D2
+${ANYDIR}  .*[/\\\\]
+
+*** Test Cases ***
+Directory Should Be Empty
+    [Documentation]  FAIL Directory '${TESTDIR}' is not empty. Contents: 'f1.txt', 'f2.txt', 'f3.txt'
+    Create Dir  ${TESTDIR}
+    Directory Should Be Empty  ${TESTDIR}
+    Create File  ${TESTDIR}${/}f1.txt
+    Create File  ${TESTDIR}/f2.txt
+    Create File  ${TESTDIR}${/}f3.txt
+    Directory Should Be Empty  ${TESTDIR}
+
+Directory Should Not Be Empty
+    [Documentation]  FAIL Directory '${TESTDIR}' is empty.
+    Create Dir  ${TESTDIR}
+    Create File  ${TESTDIR}${/}file.txt
+    Directory Should Not Be Empty  ${TESTDIR}
+    Remove File  ${TESTDIR}${/}file.txt
+    Directory Should Not Be Empty  ${TESTDIR}
+
+File Should Be Empty
+    [Documentation]  FAIL File '${TESTFILE}' is not empty. Size: 12 bytes
+    Create File  ${TESTFILE}
+    File Should Be Empty  ${TESTFILE}
+    Create File  ${TESTFILE}  some content
+    File Should Be Empty  ${TESTFILE}
+
+File Should Not Be Empty
+    [Documentation]  FAIL File '${TESTFILE}' is empty.
+    Create File  ${TESTFILE}  some content
+    File Should Not Be Empty  ${TESTFILE}
+    Create File  ${TESTFILE}
+    File Should Not Be Empty  ${TESTFILE}
+

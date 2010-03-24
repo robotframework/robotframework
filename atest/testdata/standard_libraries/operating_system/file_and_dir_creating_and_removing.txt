@@ -1,0 +1,133 @@
+*** Settings ***
+Suite Teardown  Remove Temps
+Test Setup      Remove Temps
+Library         OperatingSystem
+
+*** Variables ***
+${FILE PATTERN}  ${CURDIR}${/}R-F*.txt
+${TESTFILE}  ${CURDIR}${/}R-F.txt
+${TESTFILE2}  ${CURDIR}${/}R-F2.txt
+${TESTFILE3}  ${CURDIR}${/}R-F3.txt
+${TESTDIR}  ${CURDIR}${/}R-D
+${TESTDIR2}  ${CURDIR}${/}R-D2
+${ANYDIR}  .*[/\\\\]
+
+*** Test Cases ***
+Create File
+    Create File  ${TESTFILE}
+    Verify File  ${TESTFILE}  ${EMPTY}
+    Create File  ${TESTFILE}  This is content in\n3\nlines
+    Verify File  ${TESTFILE}  This is content in\n3\nlines
+
+Create File With Encoding
+    Create And Verify FIle  Just normal ASCII  ASCII
+    Create And Verify FIle  Hyvää yötä!  UTF-8
+    Create And Verify FIle  Hyvää yötä!  ISO-8859-1
+    ${russian} =  Evaluate  u'\\u0421\\u043F\\u0430\\u0441\\u0438\\u0431\\u043E'
+    Create And Verify FIle  ${russian}  UTF-8
+    Create And Verify FIle  ${russian}  ISO-8859-5
+
+Create File Fails If Encoding Is Incorrect
+    [Documentation]  FAIL REGEXP: Unicode(Encode|)Error: .*
+    Create File With Encoding  ${TESTFILE}  Hyvää yötä!  ASCII
+
+Append To File
+    Append To File  ${TESTFILE}  First line\n
+    Append To File  ${TESTFILE}  Second line\n  ASCII
+    Verify File  ${TESTFILE}  First line\nSecond line\n
+
+Not Overwriting When File Exists Fails
+    [Documentation]  Testing deprecated feature FAIL File '${TESTFILE}' exists
+    Create File  ${TESTFILE}  whatever
+    Create File  ${TESTFILE}  this fails  Do not overwrite
+
+Create File To Non-Existing Dir
+    Create File  ${TESTDIR}${/}file.txt  my content
+    Verify File  ${TESTDIR}${/}file.txt  my content
+
+Remove File
+    Create File  ${TESTFILE}  whatever
+    File Should Exist  ${TESTFILE}
+    Remove File  ${TESTFILE}
+    Should Not Exist  ${TESTFILE}
+
+Remove File Using Glob Pattern
+    Create Dir  ${TESTDIR}
+    Create File  ${TESTDIR}${/}file1.txt  content
+    Create File  ${TESTDIR}${/}file2.txt  content
+    Create File  ${TESTDIR}${/}myfile.txt  content
+    Remove File  ${TESTDIR}${/}file?.txt
+    File Should Exist  ${TESTDIR}${/}myfile.txt
+    ${count} =  Count Items In Dir  ${TESTDIR}
+    Should Be Equal As Integers  ${count}  1
+    Remove File  ${TESTDIR}${/}*.txt
+    Directory Should Be Empty  ${TESTDIR}
+
+Remove Non-Existing File
+    Remove File  non-existing.txt
+
+Removing Directory As A File Fails
+    [Documentation]  FAIL Path '${CURDIR}' is not a file
+    Remove File  ${CURDIR}
+
+Remove Files
+    Create File  ${CURDIR}${/}foo.txt
+    Create File  ${CURDIR}${/}bar.txt
+    Create File  ${CURDIR}${/}zap.txt
+    Remove Files  ${CURDIR}/foo.txt  ${CURDIR}${/}bar.txt  ${CURDIR}${/}zap.txt
+    Should Not Exist  ${CURDIR}${/}foo.txt
+    Should Not Exist  ${CURDIR}${/}bar.txt
+    Should Not Exist  ${CURDIR}${/}zap.txt
+
+Create Directory
+    Create Directory  ${TESTDIR}
+    Fail Unless Dir Exists  ${TESTDIR}
+    Create Directory  ${TESTDIR}
+    Create Directory  ${TESTDIR}${/}sub${/}dirs${/}here
+    Fail Unless Dir Exists  ${TESTDIR}${/}sub${/}dirs${/}here
+
+Creating Directory Over Existing File Fails
+    [Documentation]  FAIL Path '${TESTFILE}' already exists but is not a directory
+    Create File  ${TESTFILE}
+    Create Directory  ${TESTFILE}
+
+Remove Directory
+    Create Directory  ${TESTDIR}
+    Remove Directory  ${TESTDIR}
+    Fail If Exists  ${TESTDIR}
+
+Remove Directory Recursively
+    Create Directory  ${TESTDIR}${/}sub
+    Create File  ${TESTDIR}${/}file.txt
+    Create File  ${TESTDIR}${/}sub${/}file2.txt
+    Remove Directory  ${TESTDIR}  Recursive
+    Fail If Exists  ${TESTDIR}
+
+Removing Non-Existing Directory Is Ok
+    Remove Directory  non-existing-dir
+
+Removing Non-Empty Directory When Not Recursive Fails
+    [Documentation]  FAIL Directory '${TESTDIR}' is not empty.
+    Create Directory  ${TESTDIR}
+    Create File  ${TESTDIR}${/}file.txt
+    Remove Directory  ${TESTDIR}
+
+Empty Directory
+    Create Directory  ${TESTDIR}
+    Create File  ${TESTDIR}${/}foo.txt
+    Create File  ${TESTDIR}${/}bar.txt
+    Create Directory  ${TESTDIR}${/}subdir
+    Create File  ${TESTDIR}${/}subdir${/}sub.txt
+    Fail If Dir Empty  ${TESTDIR}
+    Empty Directory  ${TESTDIR}
+    Fail Unless Dir Empty  ${TESTDIR}
+
+Emptying Non-Existing Directory Fails
+    [Documentation]  FAIL Directory '${CURDIR}${/}nonexisting' does not exist
+    Empty Directory  ${CURDIR}${/}nonexisting
+
+Emptying Dir When Directory Is File Fails
+    [Documentation]  FAIL Directory '${TESTFILE}' does not exist
+    Create File  ${TESTFILE}
+    Empty Directory  ${TESTFILE}
+

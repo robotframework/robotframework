@@ -1,0 +1,150 @@
+*** Settings ***
+Suite Teardown  Remove Temps
+Test Setup      Remove Temps
+Library         OperatingSystem
+Resource        file_and_dir_resource.txt
+
+*** Variables ***
+${FILE PATTERN}  ${CURDIR}${/}R-F*.txt
+${TESTFILE}  ${CURDIR}${/}R-F.txt
+${TESTFILE2}  ${CURDIR}${/}R-F2.txt
+${TESTFILE3}  ${CURDIR}${/}R-F3.txt
+${TESTDIR}  ${CURDIR}${/}R-D
+${TESTDIR2}  ${CURDIR}${/}R-D2
+${ANYDIR}  .*[/\\\\]
+
+*** Test Cases ***
+Should Exist
+    [Documentation]  FAIL REGEXP: Path '${ANYDIR}non-existing-file-or-dir' does not match any file or directory
+    Create File  ${TESTFILE}  whatever
+    Should Exist  ${TESTFILE}
+    Should Exist  ${CURDIR}
+    Should Exist  non-existing-file-or-dir
+
+Should Exist With Non Default Message
+    [Documentation]  FAIL Non-default error message
+    Should Exist  non-existing-file-or-dir  Non-default error message
+
+Should Exist With Pattern
+    [Documentation]  FAIL REGEXP: Path '${ANYDIR}\\*non\\*existing\\*' does not match any file or directory
+    Create File  ${TESTFILE}
+    Create File  ${TESTFILE2}
+    Create Dir  ${TESTDIR}
+    Should Exist  ${CURDIR}/*
+    Should Exist  ${CURDIR}/*.txt
+    Should Exist  ${CURDIR}${/}R*
+    Should Exist  ${CURDIR}${/}R-?
+    Should Exist  ${CURDIR}${/}[RX]-[ABCD]*
+    Should Exist  *non*existing*
+
+Should Not Exist
+    [Documentation]  FAIL Path '${CURDIR}' exists
+    Should Not Exist  non-existing-file.txt
+    Should Not Exist  ${CURDIR}
+
+Should Not Exist With Non Default Message
+    [Documentation]  FAIL This is a non-default error message
+    Should Not Exist  ${CURDIR}  This is a non-default error message
+
+Should Not Exist With Pattern
+    [Documentation]  FAIL Path '${CURDIR}${/}R-*' matches '${CURDIR}${/}R-D' and '${CURDIR}${/}R-F.txt'
+    Should Not Exist  *non?existing*
+    Create File  ${TESTFILE}
+    Create Dir  ${TESTDIR}
+    Should Not Exist  ${CURDIR}${/}R-*
+
+File Should Exist
+    [Documentation]  FAIL REGEXP: Path '${ANYDIR}non-existing-file' does not match any file
+    Create File  ${TESTFILE}  whatever
+    File Should Exist  ${TESTFILE}
+    File Should Exist  non-existing-file
+
+File Should Exist When Dir Exists
+    [Documentation]  FAIL Path '${CURDIR}' does not match any file
+    File Should Exist  ${CURDIR}
+
+File Should Exist With Non Default Message
+    [Documentation]  FAIL Hello, this is a non-default error
+    File Should Exist  ${CURDIR}  Hello, this is a non-default error
+
+File Should Exist With Pattern
+    [Documentation]  FAIL Path '${CURDIR}${/}robot_temp_d??' does not match any file
+    Create File  ${TESTFILE}  whatever
+    Create Dir  ${TESTDIR}
+    File Should Exist  ${CURDIR}${/}R-*
+    File Should Exist  ${CURDIR}/R[!abcd][FD].t?t
+    File Should Exist  ${CURDIR}${/}robot_temp_d??
+
+File Should Not Exist
+    [Documentation]  FAIL File '${TESTFILE}' exists
+    Create File  ${TESTFILE}  whatever
+    File Should Not Exist  non-existing-file.txt
+    File Should Not Exist  ${CURDIR}
+    File Should Not Exist  ${TESTFILE}
+
+File Should Not Exist With Non Default Message
+    [Documentation]  FAIL My non-default
+    Create File  ${TESTFILE}  whatever
+    File Should Not Exist  ${TESTFILE}  My non-default
+
+File Should Not Exist With Pattern Matching One File
+    [Documentation]  FAIL Path '${CURDIR}${/}R-*.txt' matches file '${CURDIR}${/}R-F.txt'
+    Create File  ${TESTFILE}  whatever
+    Create Dir  ${TESTDIR}
+    File Should Not Exist  *non?existing*
+    File Should Not Exist  ${CURDIR}${/}R-D
+    File Should Not Exist  ${CURDIR}/R-*.txt
+
+File Should Not Exist With Pattern Matching Multiple Files
+    [Documentation]  FAIL Path '${CURDIR}${/}R-*.txt' matches files '${CURDIR}${/}R-F.txt' and '${CURDIR}${/}R-F2.txt'
+    Create File  ${TESTFILE}  whatever
+    Create File  ${TESTFILE2}  whatever
+    File Should Not Exist  ${CURDIR}/R-*.txt
+
+Directory Should Exist
+    [Documentation]  Normal ok cases and failure with default message when dir doesn't exists FAIL REGEXP: Path '${ANYDIR}non-existing-directory' does not match any directory
+    Directory Should Exist  ${TEMPDIR}
+    Directory Should Exist  non-existing-directory
+
+Directory Should Exist When File Exists
+    [Documentation]  FAIL Path '${TESTFILE}' does not match any directory
+    Create File  ${TESTFILE}
+    Directory Should Exist  ${TESTFILE}
+
+Directory Should Exist Exists With Non Default Message
+    [Documentation]  FAIL One more non-default error
+    Directory Should Exist  non-existing-directory  One more non-default error
+
+Directory Should Exist With Pattern
+    [Documentation]  FAIL Path '${CURDIR}${/}R-F.txt' does not match any directory
+    Create File  ${TESTFILE}
+    Create Dir  ${TESTDIR}
+    Directory Should Exist  ${CURDIR}${/}R-*
+    Directory Should Exist  ${CURDIR}/R[!whatever][DB]*
+    Directory Should Exist  ${CURDIR}${/}R-F.txt
+
+Directory Should Not Exist
+    [Documentation]  FAIL Directory '${CURDIR}' exists
+    Create File  ${TESTFILE}
+    Directory Should Not Exist  non-existing
+    Directory Should Not Exist  ${TESTFILE}
+    Directory Should Not Exist  ${CURDIR}
+
+Directory Should Not Exist With Non Default Message
+    [Documentation]  FAIL Still one more non-default msg
+    Directory Should Not Exist  ${CURDIR}  Still one more non-default msg
+
+Directory Should Not Exist With Pattern Matching One Dir
+    [Documentation]  FAIL Path '${CURDIR}${/}R-*' matches directory '${TESTDIR}'
+    Create File  ${TESTFILE}
+    Create Dir  ${TESTDIR}
+    Directory Should Not Exist  *non?existing*
+    Directory Should Not Exist  ${CURDIR}${/}R-F.txt
+    Directory Should Not Exist  ${CURDIR}${/}R-*
+
+Directory Should Not Exist With Pattern Matching Multiple Dirs
+    [Documentation]  FAIL Path '${CURDIR}${/}R-[DF]*' matches directories '${TESTDIR}' and '${TESTDIR2}'
+    Create Dir  ${TESTDIR}
+    Create Dir  ${TESTDIR2}
+    Directory Should Not Exist  ${CURDIR}${/}R-[DF]*
+

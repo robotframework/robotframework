@@ -1,0 +1,66 @@
+*** Settings ***
+Suite Setup     Run Tests  ${EMPTY}  standard_libraries/operating_system/file_and_dir_creating_and_removing.txt
+Force Tags      regression  jybot  pybot
+Resource        ../../../resources/resource.html
+
+*** Test Cases ***
+Create File
+    Check testcase  Create File
+
+Create File With Encoding
+    Check testcase  Create File With Encoding
+
+Create File Fails If Encoding Is Incorrect
+    Check testcase  Create File Fails If Encoding Is Incorrect
+
+Append To File
+    Check testcase  Append To File
+
+Not Overwriting When File Exists Fails
+    Check testcase  Not Overwriting When File Exists Fails
+
+Create File To Non-Existing Dir
+    Check testcase  Create File To Non-Existing Dir
+
+Remove File
+    Check testcase  Remove File
+
+Remove Non-Existing File
+    Check testcase  Remove Non-Existing File
+
+Removing Directory As A File Fails
+    Check testcase  Removing Directory As A File Fails
+
+Remove File Using Glob Pattern
+    Check testcase  Remove File Using Glob Pattern
+
+Remove Files
+    Check testcase  Remove Files
+
+Create Directory
+    Check testcase  Create Directory
+
+Creating Directory Over Existing File Fails
+    Check testcase  Creating Directory Over Existing File Fails
+
+Remove Directory
+    Check testcase  Remove Directory
+
+Remove Directory Recursively
+    Check testcase  Remove Directory Recursively
+
+Removing Non-Existing Directory Is Ok
+    Check testcase  Removing Non-Existing Directory Is Ok
+
+Removing Non-Empty Directory When Not Recursive Fails
+    Check testcase  Removing Non-Empty Directory When Not Recursive Fails
+
+Empty Directory
+    Check testcase  Empty Directory
+
+Emptying Non-Existing Directory Fails
+    Check testcase  Emptying Non-Existing Directory Fails
+
+Emptying Directory When Dir Is File Fails
+    Check testcase  Emptying Dir When Directory is File Fails
+

@@ -1,0 +1,18 @@
+*** Settings ***
+Suite Setup     Run Tests  ${EMPTY}  standard_libraries/operating_system/file_and_dir_empty_or_not.txt
+Force Tags      regression  jybot  pybot
+Resource        ../../../resources/resource.html
+
+*** Test Cases ***
+Directory Should Be Empty
+    Check testcase  Directory Should Be Empty
+
+Directory Should Not Be Empty
+    Check testcase  Directory Should Not Be Empty
+
+File Should Be Empty
+    Check testcase  File Should Be Empty
+
+File Should Not Be Empty
+    Check testcase  File Should Not Be Empty
+
