@@ -18,7 +18,7 @@ from unic import unic
 
 
 _MAX_ASSIGN_LENGTH = 200
-_MAX_ERROR_LINES = 20
+_MAX_ERROR_LINES = 40
 _MAX_ERROR_LINE_LENGTH = 78
 _ERROR_CUT_EXPLN = ('    [ Message content over the limit has been removed. ]')
 
