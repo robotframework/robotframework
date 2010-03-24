@@ -99,30 +99,27 @@ class OperatingSystem:
     ROBOT_LIBRARY_SCOPE = 'GLOBAL'
     ROBOT_LIBRARY_VERSION = __version__
 
-    def run(self, command, return_mode='DEPRECATED'):
+    def run(self, command):
         """Runs the given command in the system and returns the output.
 
         The execution status of the command *is not checked* by this
         keyword, and it must be done separately based on the returned
-        output. If the return code of execution is needed, either `Run
+        output. If the execution return code is needed, either `Run
         And Return RC` or `Run And Return RC And Output` can be used.
-        `return_mode` argument for this keyword is deprecated and will
-        be removed in Robot Framework 2.2 version.
 
-        Starting from Robot Framework 2.0.2, the standard error stream
-        is automatically redirected to the standard output stream by
-        adding '2>&1' after the executed command. The automatic
-        redirection of the standard error is done only when the
-        executed command does not contain additional output
-        redirections. You can thus freely forward the standard error
-        somewhere else, for example, like 'my_command 2>stderr.txt'.
+        The standard error stream is automatically redirected to the standard
+        output stream by adding `2>&1` after the executed command. This
+        automatic redirection is done only when the executed command does not
+        contain additional output redirections. You can thus freely forward
+        the standard error somewhere else, for example, like
+        `my_command 2>stderr.txt`.
 
-        The returned output contains everything written into the
-        standard output or error by the command (unless either of them
+        The returned output contains everything written into the standard
+        output or error streams by the command (unless either of them
         is redirected explicitly). Many commands add an extra newline
-        (\\n) after the output to make it easier to read in the
+        (`\\n`) after the output to make it easier to read in the
         console. To ease processing the returned output, this possible
-        trailing newline is stripped.
+        trailing newline is stripped by this keyword.
 
         Examples:
         | ${output} =        | Run       | ls -lhF /tmp |
@@ -133,14 +130,7 @@ class OperatingSystem:
         | Should Be Equal    | ${stdout} | TEST PASSED |
         | File Should Be Empty | /tmp/stderr.txt |
         """
-        if return_mode != 'DEPRECATED':
-            LOGGER.warn("'return_mode' argument of 'Run' keyword is "
-                        "deprecated and will be removed in Robot "
-                        "Framework 2.1. Use 'Run And Return RC' or "
-                        "'Run And Return RC And Output' instead.")
-        else:
-            return_mode = 'output'
-        return self._run(command, return_mode)
+        return self._run(command)[1]
 
     def run_and_return_rc(self, command):
         """Runs the given command in the system and returns the return code.
@@ -162,7 +152,7 @@ class OperatingSystem:
         See `Run` and `Run And Return RC And Output` if you need to get the
         output of the executed command.
         """
-        return self._run(command, 'RC')
+        return self._run(command)[0]
 
     def run_and_return_rc_and_output(self, command):
         """Runs the given command in the system and returns the RC and output.
@@ -179,19 +169,14 @@ class OperatingSystem:
         | Should Be Equal      | ${stdout}       | TEST PASSED |
         | File Should Be Empty | /tmp/stderr.txt |
         """
-        return self._run(command, 'RC,Output')
+        return self._run(command)
 
-    def _run(self, command, mode):
+    def _run(self, command):
         process = _Process(command)
         self._info("Running command '%s'" % process)
         stdout = process.read()
         rc = process.close()
-        mode = mode.upper()
-        if 'RC' in mode:
-            if 'STDOUT' in mode or 'OUTPUT' in mode:
-                return rc, stdout
-            return rc
-        return stdout
+        return rc, stdout
 
     def start_process(self, command, stdin=None, alias=None):
         """Starts the given command as a background process.
