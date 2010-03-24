@@ -9,7 +9,6 @@ Run
 
 Run With RC And Stdout Checks
     Check testcase  Run With RC And Stdout Checks
-    Check Log Message  ${ERRORS.msgs[0]}  'return_mode' argument of 'Run' keyword is deprecated and will be removed in Robot Framework 2.1. Use 'Run And Return RC' or 'Run And Return RC And Output' instead.  WARN
 
 Run With RC Checks
     Check testcase  Run With RC Checks
@@ -35,10 +34,10 @@ Run And Return RC
 Run And Return RC And Output
     Check testcase  Run and return RC and output
 
-Run non-ascii command returning non-ascii output
+Run Non-ascii Command Returning Non-ascii Output
     Check testcase  Run non-ascii command returning non-ascii output
 
-Trailing newline is removed automatically
+Trailing Newline Is Removed Automatically
     Check test case  ${TESTNAME}
 
 It Is Possible To Start Background Processes

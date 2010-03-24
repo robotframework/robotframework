@@ -1,11 +1,10 @@
 *** Settings ***
 Library         OperatingSystem
-Variables  files/result.py
+Variables       files/result.py
 
 *** Variables ***
 ${#}  Usage of prog.py: prog.py rc=0 stdout='' stderr='' count=1
 ${PROG}  python ${CURDIR}${/}files${/}prog.py
-
 
 *** Test Cases ***
 Run
@@ -13,10 +12,10 @@ Run
     Run  ${PROG}
 
 Run With RC And Stdout Checks
-    ${rc}  ${stdout} =  Run  ${PROG} 42 hello  rc and stdout
+    ${rc}  ${stdout} =  Run And Return Rc And Output  ${PROG} 42 hello
     Fail Unless Equal  ${stdout}  hello
     Fail Unless Ints Equal  ${rc}  42
-    ${rc}  ${stdout} =  Run  ${PROG}  Return both RC and output
+    ${rc}  ${stdout} =  Run And Return Rc And Output  ${PROG}
     Fail Unless Ints Equal  ${rc}  0
     Fail Unless Equal  ${stdout}  \
 
@@ -30,9 +29,9 @@ Run With RC Checks
 
 Run With Stdout Checks
     ${stdout} =  Run  ${PROG} 42 hello
-    Fail Unless Equal  ${stdout}  hello
-    ${stdout} =  Run  ${PROG}  Only stdout is returned
-    Fail Unless Equal  ${stdout}  \
+    Should Be Equal  ${stdout}  hello
+    ${stdout} =  Run  ${PROG}
+    Should Be Equal  ${stdout}  ${EMPTY}
     Comment  Check that trailing newline is removed  In Windows echo adds extra space
     ${stdout} =  Run  echo hello world
     Should Match Regexp  ${stdout}  ^hello world ?$
@@ -69,11 +68,11 @@ Run And Return RC And Output
     Equals  ${rc}  ${42}
     Equals  ${output}  hello
 
-Run non-ascii command returning non-ascii output
+Run Non-ascii Command Returning Non-ascii Output
     ${output} =  Run  echo ${result}
     Should Be Equal  ${output.strip()}  ${result}
 
-Trailing newline is removed automatically
+Trailing Newline Is Removed Automatically
     ${output} =  Run  echo hello
     Log  ${output.__repr__()}
     Should Be True  '${output}'[-1] not in ['\\n', '\\r']
@@ -86,7 +85,7 @@ It Is Possible To Start Background Processes
 *** Keywords ***
 Run And Check RC
     [Arguments]  ${command}  ${expected}
-    ${rc} =  Run  ${command}  Return only RC
-    ${expected} =  Integer  ${expected}
-    Fail Unless Equal  ${rc}  ${expected}
+    ${rc} =  Run And Return Rc  ${command}
+    ${expected} =  Convert To Integer  ${expected}
+    Should Be Equal  ${rc}  ${expected}
 
