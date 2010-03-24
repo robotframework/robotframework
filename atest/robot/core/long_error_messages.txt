@@ -14,18 +14,18 @@ Under The Limit
     Has Not Been Cut  50 x 1 Message Under The Limit
     Has Not Been Cut  100 x 1 Message Under The Limit
     Has Not Been Cut  50 x 10 Message Under The Limit
-    Has Not Been Cut  150 X 9 Message Under The Limit
-    Has Not Been Cut  77 x 19 Message Under The Limit
+    Has Not Been Cut  150 X 19 Message Under The Limit
+    Has Not Been Cut  77 x 39 Message Under The Limit
 
 On The Limit
-    Has Not Been Cut  20 x 20 Message On The Limit
-    Has Not Been Cut  150 x 10 Message On The Limit
-    Has Not Been Cut  1560 x 1 Message On The Limit
+    Has Not Been Cut  20 x 40 Message On The Limit
+    Has Not Been Cut  150 x 20 Message On The Limit
+    Has Not Been Cut  3120 x 1 Message On The Limit
 
 Over The Limit
-    Has Been Cut  8 x 21 Message Over The Limit
-    Has Been Cut  200 x 7 Message Over The Limit  601.*${3DOTS}  ${3DOTS}.*END
-    Has Been Cut  1600 x 1 Message Over The Limit  .*${3DOTS}\\n  ${3DOTS}.*\\n
+    Has Been Cut  8 x 41 Message Over The Limit
+    Has Been Cut  400 x 7 Message Over The Limit  1201.*${3DOTS}  ${3DOTS}.*END
+    Has Been Cut  3121 x 1 Message Over The Limit  .*${3DOTS}\\n  ${3DOTS}.*\\n
 
 *** Keywords ***
 Has Been Cut

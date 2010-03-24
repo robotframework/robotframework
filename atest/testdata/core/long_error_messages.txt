@@ -10,29 +10,29 @@
 50 X 10 Message Under The Limit
     Fail With Long Message  50  10
 
-150 X 9 Message Under The Limit
+150 X 19 Message Under The Limit
     Fail With Long Message  150  9
 
-77 X 19 Message Under The Limit
-    Fail With Long Message  77  19
+77 X 39 Message Under The Limit
+    Fail With Long Message  77  39
 
-20 X 20 Message On The Limit
-    Fail With Long Message  20  20
+20 X 40 Message On The Limit
+    Fail With Long Message  20  40
 
-150 X 10 Message On The Limit
-    Fail With Long Message  150  10
+150 X 20 Message On The Limit
+    Fail With Long Message  150  20
 
-1560 X 1 Message On The Limit
-    Fail With Long Message  1560  1
+3120 X 1 Message On The Limit
+    Fail With Long Message  3120  1
 
-8 X 21 Message Over The Limit
-    Fail With Long Message  8  21
+8 X 41 Message Over The Limit
+    Fail With Long Message  8  41
 
-200 X 7 Message Over The Limit
-    Fail With Long Message  200  7
+400 X 7 Message Over The Limit
+    Fail With Long Message  400  7
 
-1600 X 1 Message Over The Limit
-    Fail With Long Message  1600  1
+3121 X 1 Message Over The Limit
+    Fail With Long Message  3121  1
 
 *** Keywords ***
 Fail With Long Message
