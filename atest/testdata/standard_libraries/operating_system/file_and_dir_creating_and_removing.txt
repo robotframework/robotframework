@@ -2,6 +2,7 @@
 Suite Teardown  Remove Temps
 Test Setup      Remove Temps
 Library         OperatingSystem
+Resource        file_and_dir_resource.txt
 
 *** Variables ***
 ${FILE PATTERN}  ${CURDIR}${/}R-F*.txt
