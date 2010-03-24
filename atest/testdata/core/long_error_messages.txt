@@ -1,0 +1,53 @@
+*** Settings ***
+
+*** Test Cases ***
+50 X 1 Message Under The Limit
+    Fail With Long Message  50  1
+
+100 X 1 Message Under The Limit
+    Fail With Long Message  100  1
+
+50 X 10 Message Under The Limit
+    Fail With Long Message  50  10
+
+150 X 9 Message Under The Limit
+    Fail With Long Message  150  9
+
+77 X 19 Message Under The Limit
+    Fail With Long Message  77  19
+
+20 X 20 Message On The Limit
+    Fail With Long Message  20  20
+
+150 X 10 Message On The Limit
+    Fail With Long Message  150  10
+
+1560 X 1 Message On The Limit
+    Fail With Long Message  1560  1
+
+8 X 21 Message Over The Limit
+    Fail With Long Message  8  21
+
+200 X 7 Message Over The Limit
+    Fail With Long Message  200  7
+
+1600 X 1 Message Over The Limit
+    Fail With Long Message  1600  1
+
+*** Keywords ***
+Fail With Long Message
+    [Arguments]  ${line_length}=80  ${line_count}=1
+    ${msg} =  Get Long Message  ${line_length}  ${line_count}
+    Comment  Sanity check.  Must have triple quotes because  ${msg} contains newlines.
+    Fail Unless  len("""${msg}""") == ${line_length} * ${line_count}  Wrong length
+    Fail  ${msg}
+
+Get Long Message
+    [Arguments]  ${line_length}=80  ${line_count}=1
+    ${lines} =  Evaluate  [ str(i * ${line_length} + 1) for i in range(${line_count}) ]
+    ${lines} =  Evaluate  [ line.ljust(${line_length} - 4) for line in ${lines} ]
+    ${msg} =  Evaluate  "END\\n".join(${lines})
+    ${total_chars} =  Evaluate  ${line_length} * ${line_count}
+    ${msg} =  Evaluate  """${msg}"""[:-len("${total_chars}")] + " " * 4 + "${total_chars}"
+    [Return]  ${msg}
+
