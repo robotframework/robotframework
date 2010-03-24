@@ -33,13 +33,14 @@ Log Variables In Suite Setup
     Check Log Message  ${kw.messages[22]}  \${suite_setup_global_var} = Global var set in suite setup
     Check Log Message  ${kw.messages[23]}  \${suite_setup_local_var} = [ Variable available only locally | in suite setup ]
     Check Log Message  ${kw.messages[24]}  \${suite_setup_suite_var} = Suite var set in suite setup
-    Check Log Message  ${kw.messages[25]}  \${SUMMARY_FILE} = NONE
-    Should Start With  ${kw.messages[26].message}  \${TEMPDIR} =
-    Should Start With  ${kw.messages[27].message}  \${True} =
-    Check Log Message  ${kw.messages[28]}  \@{list} = [ Hello | world ]
-    Check Log Message  ${kw.messages[29]}  \@{suite_setup_global_var} = [ Global var set in | suite setup ]
-    Check Log Message  ${kw.messages[30]}  \@{suite_setup_suite_var} = [ Suite var set in | suite setup ]
-    Should Be Equal As Integers  ${kw.message_count}  31  Wrong total message count
+    Should Start With  ${kw.messages[25].message}  \${SUITE_SOURCE} =
+    Check Log Message  ${kw.messages[26]}  \${SUMMARY_FILE} = NONE
+    Should Start With  ${kw.messages[27].message}  \${TEMPDIR} =
+    Should Start With  ${kw.messages[28].message}  \${True} =
+    Check Log Message  ${kw.messages[29]}  \@{list} = [ Hello | world ]
+    Check Log Message  ${kw.messages[30]}  \@{suite_setup_global_var} = [ Global var set in | suite setup ]
+    Check Log Message  ${kw.messages[31]}  \@{suite_setup_suite_var} = [ Suite var set in | suite setup ]
+    Should Be Equal As Integers  ${kw.message_count}  32  Wrong total message count
 
 Log Variables In Test
     ${test} =  Check Test Case  Log Variables
@@ -68,14 +69,15 @@ Log Variables In Test
     Should Start With  ${kw.messages[22].message}  \${SUITE_NAME} =
     Check Log Message  ${kw.messages[23]}  \${suite_setup_global_var} = Global var set in suite setup
     Check Log Message  ${kw.messages[24]}  \${suite_setup_suite_var} = Suite var set in suite setup
-    Check Log Message  ${kw.messages[25]}  \${SUMMARY_FILE} = NONE
-    Should Start With  ${kw.messages[26].message}  \${TEMPDIR} =
-    Check Log Message  ${kw.messages[27]}  \${TEST_NAME} = Log Variables
-    Should Start With  ${kw.messages[28].message}  \${True} =
-    Check Log Message  ${kw.messages[29]}  \@{list} = [ Hello | world ]
-    Check Log Message  ${kw.messages[30]}  \@{suite_setup_global_var} = [ Global var set in | suite setup ]
-    Check Log Message  ${kw.messages[31]}  \@{suite_setup_suite_var} = [ Suite var set in | suite setup ]
-    Should Be Equal As Integers  ${kw.message_count}  34  Wrong total message count
+    Should Start With  ${kw.messages[25].message}  \${SUITE_SOURCE} =
+    Check Log Message  ${kw.messages[26]}  \${SUMMARY_FILE} = NONE
+    Should Start With  ${kw.messages[27].message}  \${TEMPDIR} =
+    Check Log Message  ${kw.messages[28]}  \${TEST_NAME} = Log Variables
+    Should Start With  ${kw.messages[29].message}  \${True} =
+    Check Log Message  ${kw.messages[30]}  \@{list} = [ Hello | world ]
+    Check Log Message  ${kw.messages[31]}  \@{suite_setup_global_var} = [ Global var set in | suite setup ]
+    Check Log Message  ${kw.messages[32]}  \@{suite_setup_suite_var} = [ Suite var set in | suite setup ]
+    Should Be Equal As Integers  ${kw.message_count}  35  Wrong total message count
 
 Log Variables After Setting New Variables
     ${test} =  Check Test Case  Log Variables
@@ -105,16 +107,17 @@ Log Variables After Setting New Variables
     Should Start With  ${kw.messages[23].message}  \${SUITE_NAME} =
     Check Log Message  ${kw.messages[24]}  \${suite_setup_global_var} = Global var set in suite setup  DEBUG
     Check Log Message  ${kw.messages[25]}  \${suite_setup_suite_var} = Suite var set in suite setup  DEBUG
-    Check Log Message  ${kw.messages[26]}  \${SUMMARY_FILE} = NONE  DEBUG
-    Should Start With  ${kw.messages[27].message}  \${TEMPDIR} =
-    Check Log Message  ${kw.messages[28]}  \${TEST_NAME} = Log Variables  DEBUG
-    Should Start With  ${kw.messages[29].message}  \${True} =
-    Check Log Message  ${kw.messages[30]}  \${var} = Hello  DEBUG
-    Check Log Message  ${kw.messages[31]}  \@{int_list} = [ 0 | 1 | 2 | 3 ]  DEBUG
-    Check Log Message  ${kw.messages[32]}  \@{list} = [ Hello | world ]  DEBUG
-    Check Log Message  ${kw.messages[33]}  \@{suite_setup_global_var} = [ Global var set in | suite setup ]  DEBUG
-    Check Log Message  ${kw.messages[34]}  \@{suite_setup_suite_var} = [ Suite var set in | suite setup ]  DEBUG
-    Should Be Equal As Integers  ${kw.message_count}  37  Wrong total message count
+    Should Start With  ${kw.messages[26].message}  \${SUITE_SOURCE} =
+    Check Log Message  ${kw.messages[27]}  \${SUMMARY_FILE} = NONE  DEBUG
+    Should Start With  ${kw.messages[28].message}  \${TEMPDIR} =
+    Check Log Message  ${kw.messages[29]}  \${TEST_NAME} = Log Variables  DEBUG
+    Should Start With  ${kw.messages[30].message}  \${True} =
+    Check Log Message  ${kw.messages[31]}  \${var} = Hello  DEBUG
+    Check Log Message  ${kw.messages[32]}  \@{int_list} = [ 0 | 1 | 2 | 3 ]  DEBUG
+    Check Log Message  ${kw.messages[33]}  \@{list} = [ Hello | world ]  DEBUG
+    Check Log Message  ${kw.messages[34]}  \@{suite_setup_global_var} = [ Global var set in | suite setup ]  DEBUG
+    Check Log Message  ${kw.messages[35]}  \@{suite_setup_suite_var} = [ Suite var set in | suite setup ]  DEBUG
+    Should Be Equal As Integers  ${kw.message_count}  38  Wrong total message count
 
 Log Variables In User Keyword
     ${test} =  Check Test Case  Log Variables
@@ -144,15 +147,16 @@ Log Variables In User Keyword
     Should Start With  ${kw.messages[23].message}  \${SUITE_NAME} =
     Check Log Message  ${kw.messages[24]}  \${suite_setup_global_var} = Global var set in suite setup
     Check Log Message  ${kw.messages[25]}  \${suite_setup_suite_var} = Suite var set in suite setup
-    Check Log Message  ${kw.messages[26]}  \${SUMMARY_FILE} = NONE
-    Should Start With  ${kw.messages[27].message}  \${TEMPDIR} =
-    Check Log Message  ${kw.messages[28]}  \${TEST_NAME} = Log Variables
-    Should Start With  ${kw.messages[29].message}  \${True} =
-    Check Log Message  ${kw.messages[30]}  \${ukvar} = Value of an uk variable
-    Check Log Message  ${kw.messages[31]}  \${var} = Hello
-    Check Log Message  ${kw.messages[32]}  \@{int_list} = [ 0 | 1 | 2 | 3 ]
-    Check Log Message  ${kw.messages[33]}  \@{list} = [ Hello | world ]
-    Check Log Message  ${kw.messages[34]}  \@{suite_setup_global_var} = [ Global var set in | suite setup ]
-    Check Log Message  ${kw.messages[35]}  \@{suite_setup_suite_var} = [ Suite var set in | suite setup ]
-    Should Be Equal As Integers  ${kw.message_count}  38  Wrong total message count
+    Should Start With  ${kw.messages[26].message}  \${SUITE_SOURCE} =
+    Check Log Message  ${kw.messages[27]}  \${SUMMARY_FILE} = NONE
+    Should Start With  ${kw.messages[28].message}  \${TEMPDIR} =
+    Check Log Message  ${kw.messages[29]}  \${TEST_NAME} = Log Variables
+    Should Start With  ${kw.messages[30].message}  \${True} =
+    Check Log Message  ${kw.messages[31]}  \${ukvar} = Value of an uk variable
+    Check Log Message  ${kw.messages[32]}  \${var} = Hello
+    Check Log Message  ${kw.messages[33]}  \@{int_list} = [ 0 | 1 | 2 | 3 ]
+    Check Log Message  ${kw.messages[34]}  \@{list} = [ Hello | world ]
+    Check Log Message  ${kw.messages[35]}  \@{suite_setup_global_var} = [ Global var set in | suite setup ]
+    Check Log Message  ${kw.messages[36]}  \@{suite_setup_suite_var} = [ Suite var set in | suite setup ]
+    Should Be Equal As Integers  ${kw.message_count}  39  Wrong total message count
 
