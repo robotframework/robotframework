@@ -1,0 +1,31 @@
+*** Settings ***
+Documentation   Copy File and Copy Dir don't currently have tests but as Move File and Move Dir use them internally they are somehow tested. At least simple tests for them should be added anyway.
+Suite Setup     Run Tests  ${EMPTY}  standard_libraries/operating_system/file_and_dir_moving_and_copying.txt
+Force Tags      regression  jybot  pybot
+Resource        ../../../resources/resource.html
+
+*** Test Cases ***
+Move File
+    Check testcase  Move File
+
+Move File To Existing Dir
+    Check testcase  Move File To Existing Dir
+
+Move File To Non-Existing Dir
+    Check testcase  Move File To Non-Existing Dir
+
+Move File Using Just File Name
+    Check testcase  Move File Using Just File Name
+
+Moving Non-Existing File Fails
+    Check testcase  Moving Non-Existing File Fails
+
+Move Directory
+    Check testcase  Move Directory
+
+Move Directory Using Just Dir Name
+    Check testcase  Move Directory Using Just Dir Name
+
+Moving Non-Existing Directory Fails
+    Check testcase  Moving Non-Existing Directory Fails
+

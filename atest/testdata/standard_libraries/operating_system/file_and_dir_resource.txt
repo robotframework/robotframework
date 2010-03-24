@@ -1,0 +1,30 @@
+*** Settings ***
+Library         OperatingSystem
+
+*** Variables ***
+${FILE PATTERN}  ${CURDIR}${/}R-F*.txt
+${TESTFILE}  ${CURDIR}${/}R-F.txt
+${TESTFILE2}  ${CURDIR}${/}R-F2.txt
+${TESTFILE3}  ${CURDIR}${/}R-F3.txt
+${TESTDIR}  ${CURDIR}${/}R-D
+${TESTDIR2}  ${CURDIR}${/}R-D2
+${ANYDIR}  .*[/\\\\]
+
+*** Keywords ***
+Create And Verify File
+    [Arguments]  ${content}  ${encoding}
+    Create File With Encoding  ${TESTFILE}  ${content}  ${encoding}
+    Verify File  ${TESTFILE}  ${content}  ${encoding}
+
+Verify File
+    [Arguments]  ${path}  ${expected}  ${encoding}=UTF-8
+    ${content} =  Log File  ${path}  ${encoding}
+    Should Be Equal  ${content}  ${expected}
+
+Remove Temps
+    Remove Files  ${TESTFILE}  ${TESTFILE2}
+    Remove Directory  ${TESTDIR}  recursive
+    Remove Directory  ${TESTDIR2}  recursive
+    Remove Directory  just_name_1  recursive
+    Remove Directory  just_name_2  recursive
+
