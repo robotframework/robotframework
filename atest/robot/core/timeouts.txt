@@ -89,10 +89,6 @@ Shortest UK Timeout Should Be Applied
 Shortest Test Or UK Timeout Should Be Applied
     Check Test Case  Shortest Test or UK Timeout should be applied
 
-Timeouted Repeat Keyword
-    ${test} =  Check Test Case  Timeouted Repeat Keyword
-    Check Log Message  ${test.kws[1].msgs[0]}  This should be executed
-
 Timeouted Set Keyword
     Check Test Case  Timeouted Set Keyword
 

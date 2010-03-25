@@ -101,7 +101,7 @@ Teardown After Test Timeout
     [Teardown]  Log  Teardown executed
 
 Failing Teardown After Test Timeout
-    [Documentation]  FAIL Test timeout 1 second exceeded.\n \n  Also teardown failed:\n  Failure before keyword timeout
+    [Documentation]  FAIL Test timeout 1 second exceeded.\n  \n  Also teardown failed:\n  Failure before keyword timeout
     [Timeout]  1 second
     Sleep Without Logging  1.1
     [Teardown]  Timeouted Keyword Fails Before Timeout
@@ -156,13 +156,6 @@ Shortest Test Or UK Timeout Should Be Applied
     [Documentation]  FAIL Test timeout 1 second exceeded.
     [Timeout]  1 second
     Timeouted UK Using Timeouted UK
-
-Timeouted Repeat Keyword
-    [Documentation]  FAIL Keyword timeout 99 milliseconds exceeded.
-    [Timeout]  10 seconds
-    10 x  Timeouted Keyword Passes  0.01
-    Log  This should be executed
-    2 x  Timeouted Keyword Timeouts
 
 Timeouted Set Keyword
     [Documentation]  FAIL Keyword timeout 99 milliseconds exceeded.
