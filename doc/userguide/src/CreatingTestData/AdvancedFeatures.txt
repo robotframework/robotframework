@@ -455,56 +455,14 @@ __ `Suite setup and teardown`_
 Parallel execution of keywords
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-By default, all keywords are executed sequentially, so that a new
-keyword is started only after the previous one has ended. Of course,
-it is possible to create a library so that some keyword starts an
-action in the background and returns immediately, and there is
-another keyword that can later be used to check the status of the
-background process or other action.
+Prior to the 2.5 version Robot Framework a had special syntax for executing
+keywords in parallel. This functionality was removed because it was rarely 
+used and it never worked fully.
 
-Robot Framework also has native support for parallel execution of
-keywords. The syntax for it is using :name:`:PARALLEL` in the second
-column of the Test Case or Keyword table, similarly as :name:`:FOR` is
-used with `For loops`_. In both cases, a colon (:) must be used to
-separate them from normal keywords. Keywords inside a parallel block
-are also indented, similarly as keywords in a For loop.  The difference
-is that there is no need to have anything after :name:`:PARALLEL`, and
-normally the first keyword of the parallel block is already there.
-
-When a parallel block is executed, all the keywords in it are started
-in the background, one after another, and the whole block returns only
-after all the keywords have been completed. A parallel block fails if
-any of its keywords fails, but even in this case, Robot Framework
-waits that all keywords are finished. It is even possible that several
-keywords in a block fail.
-
-.. table:: Parallel execution examples
-   :class: example
-
-   ==============  ==========  ===============  ===============  ==========
-     Test Case       Action        Argument        Argument       Argument
-   ==============  ==========  ===============  ===============  ==========
-   Parallel once   Log         Before parallel  \                \
-   \               :PARALLEL   Log              Inside parallel  \
-   \               \           Sleep            2 seconds        \
-   \               \           Log              Inside parallel  \
-   \               Log         After parallel   \                \
-   \               \           \                \                \
-   Parallel twice  :PARALLEL   Sleep            2 seconds        \
-   \               \           Log              First parallel   \
-   \               :PARALLEL   Log              Second parallel  \
-   \               \           Fail             First failure    \
-   \               \           Fail             Second failure   \
-   ==============  ==========  ===============  ===============  ==========
-
-It is not possible to have nested parallel blocks, or to have a For loop
-inside a parallel block, or the other way around. However, you can have
-a user keyword inside a parallel block, and use another parallel
-block or a For loop there.
-
-.. warning:: Parallel execution cannot be used with timeouts_ and it
-             does not work correctly with any :name:`Run Keyword XXX`
-             keywords in the `BuiltIn library`_. In general, it is a quite
-             experimental and not much used feature, and it may also have
-             other peculiar problems.
-
+When parallel execution is needed, it must be implemented in test library
+level so that the library executes the code on background. Typically this
+means that the library needs a keyword like :name:`Start Something` that
+starts the execution and returns immediately, and another keyword like 
+:name:`Get Results From Something` that waits until the result is available
+and returns it. See `OperatingSystem library`_ keywords :name:`Start Process`
+and :name:`Read Process Output` for an example.
