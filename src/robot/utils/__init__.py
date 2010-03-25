@@ -43,6 +43,7 @@ from text import cut_long_message, cut_long_assign_msg, wrap
 from xmlwriter import XmlWriter
 from connectioncache import ConnectionCache
 from idgenerator import IdGenerator, FileNameGenerator
+import encoding
 
 
 # TODO: Capitalize these attributes. Do we need both VERSION and get_version()?

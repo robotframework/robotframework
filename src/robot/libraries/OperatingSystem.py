@@ -25,7 +25,7 @@ try:
     from robot.output import LOGGER
     from robot.utils import get_version, ConnectionCache, seq2str, \
         timestr_to_secs, secs_to_timestr, plural_or_not, get_time, \
-        secs_to_timestamp, parse_time, unic
+        secs_to_timestamp, parse_time, unic, encoding
     __version__ = get_version()
     PROCESSES = ConnectionCache('No active processes')
 
@@ -42,7 +42,7 @@ except ImportError:
             raise NotImplementedError('This usage requires Robot Framework '
                                       'to be installed.')
     LOGGER = get_time = secs_to_timestamp = parse_time = PROCESSES \
-             = _NotImplemented()
+             = encoding = _NotImplemented()
 
 
 class OperatingSystem:
@@ -1253,13 +1253,7 @@ class _Process:
                 command = command[:-1] + ' 2>&1 &'
             else:
                 command += ' 2>&1'
-        return self._encode_to_system(command)
-
-    def _encode_to_system(self, string):
-        if self._is_jython(2, 2):
-            return string
-        encoding = sys.getfilesystemencoding()
-        return encoding and string.encode(encoding) or string
+        return encoding.encode_to_file_system(command)
 
     def _process_output(self, stdout):
         stdout = stdout.replace('\r\n', '\n') # http://bugs.jython.org/issue1566
@@ -1267,10 +1261,7 @@ class _Process:
             stdout = stdout[:-1]
         if self._is_jython(2, 2):
             return stdout
-        encoding = self._get_console_encoding()
-        if encoding:
-            return unic(stdout, encoding)
-        return unic(stdout)
+        return encoding.decode_output(stdout)
 
     def _get_console_encoding(self):
         encoding = sys.__stdout__.encoding or sys.__stdin__.encoding
