@@ -12,7 +12,6 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-
 import os.path
 
 from robot import utils
@@ -109,8 +108,6 @@ class LogSerializer:
         elif kw.type == 'foritem':
             self._writer.element('span', 'VAR: ', status)
             self._writer.element('span', kw.name, {'class': 'arg'})
-        elif kw.type == 'parallel':
-            self._writer.element('span', 'PARALLEL:', status)
         else:
             kw_type = kw.type in ['setup','teardown'] and kw.type or 'keyword'
             self._writer.element('span', kw_type.upper()+': ', status)

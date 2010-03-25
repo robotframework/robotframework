@@ -47,25 +47,11 @@ class Namespace:
         self._userlibs = []
         self._imported_resource_files = []
         self._imported_variable_files = []
-        # suite is None only when used internally by copy
-        if suite is not None:
-            self.import_library('BuiltIn')
-            self.import_library('Reserved')
-            if suite.source is not None:
-                self._handle_imports(suite.imports)
-            robot.running.NAMESPACES.start_suite(self)
-
-    def copy(self):
-        # Namespace is copied by ParallelKeyword
-        ns = Namespace(None, None)
-        ns.variables = self.variables.copy_all()
-        ns.suite = self.suite
-        ns.test = self.test
-        ns.uk_handlers = self.uk_handlers[:]
-        ns.library_search_order = self.library_search_order[:]
-        ns._testlibs = self._testlibs
-        ns._userlibs = self._userlibs
-        return ns
+        self.import_library('BuiltIn')
+        self.import_library('Reserved')
+        if suite.source is not None:
+            self._handle_imports(suite.imports)
+        robot.running.NAMESPACES.start_suite(self)
 
     def _handle_imports(self, import_settings):
         for item in import_settings:

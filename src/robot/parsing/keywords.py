@@ -12,7 +12,6 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-
 import re
 
 from robot import utils
@@ -58,8 +57,6 @@ def BlockKeywordFactory(data):
     if data[0].startswith(':'):
         name = utils.normalize(data[0].replace(':',''))
         try:
-            if name == 'parallel':
-                return ParallelKeyword(data[1:])
             if name == 'for':
                 return ForKeyword(data[1:])
         except:
@@ -178,14 +175,6 @@ class ForKeyword(_BlockKeyword):
     def _raise_invalid_syntax(self):
         raise DataError('Invalid syntax in FOR loop. Expected format:\n'
                         '| : FOR | ${var} | IN | item1 | item2 |')
-
-
-class ParallelKeyword(_BlockKeyword):
-
-    def __init__(self, first_row):
-        _BlockKeyword.__init__(self, type='parallel')
-        self.keywords = []
-        self.add_row(first_row)
 
 
 class SyntaxErrorKeyword(BaseKeyword):

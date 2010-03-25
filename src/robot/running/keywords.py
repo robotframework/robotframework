@@ -12,24 +12,19 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-
-import time
-
 from robot import utils
 from robot.errors import FrameworkError, ExecutionFailed, DataError, \
     TimeoutError
 from robot.common import BaseKeyword
 from robot.variables import is_list_var
-from robot.output import LOGGER
 
 
 def KeywordFactory(kwdata):
     if kwdata.type == 'kw':
         return Keyword(kwdata.name, kwdata.args)
     try:
-        clazz = { 'set': SetKeyword, 'repeat': RepeatKeyword,
-                  'for': ForKeyword, 'parallel': ParallelKeyword,
-                  'error': SyntaxErrorKeyword }[kwdata.type]
+        clazz = {'set': SetKeyword, 'repeat': RepeatKeyword,
+                 'for': ForKeyword, 'error': SyntaxErrorKeyword}[kwdata.type]
         return clazz(kwdata)
     except KeyError:
         raise FrameworkError("Invalid kw type '%s'" % kwdata.type)
@@ -295,62 +290,6 @@ class ForItemKeyword(BaseKeyword):
         self.status = status
         self.endtime = utils.get_timestamp()
         self.elapsedtime = utils.get_elapsed_time(self.starttime, self.endtime)
-
-
-class ParallelKeyword(BaseKeyword):
-
-    def __init__(self, kwdata):
-        BaseKeyword.__init__(self, kwdata.name, type='parallel')
-        self.keywords = [ KeywordFactory(kw) for kw in kwdata.keywords ]
-        LOGGER.write('Parallel execution of keywords is deprecated and will be '
-                     'removed in the next major release.', 'WARN')
-
-    def run(self, output, namespace):
-        self.starttime = utils.get_timestamp()
-        self.status = 'PASS'
-        output.start_keyword(self)
-        running_keywords = []
-        errors = []
-        for kw in self.keywords:
-            kw.__call__ = kw.run
-            recorder = _OutputRecorder()
-            runner = utils.robotthread.Runner(kw, (recorder, namespace.copy()))
-            utils.robotthread.Thread(runner).start()
-            running_keywords.append((runner, recorder))
-            # Give started keyword some time to really start. This is ugly
-            # but required because there seems to be some threading problems
-            # at least on faster machines otherwise. Would be better to
-            # investigate more but parallel execution is so little used
-            # feature that it does not make much sense right now.
-            time.sleep(0.1)
-        for runner, recorder in running_keywords:
-            try:
-                runner.get_result()
-            except ExecutionFailed, err:
-                errors.append(utils.unic(err))
-                self.status = 'FAIL'
-            recorder.replay(output)
-        self.endtime = utils.get_timestamp()
-        self.elapsedtime = utils.get_elapsed_time(self.starttime, self.endtime)
-        output.end_keyword(self)
-        if len(errors) > 0:
-            if len(errors) > 1:
-                errors = [ 'Error %d: %s' % (i+1, err)
-                           for i, err in enumerate(errors) ]
-            raise ExecutionFailed('\n\n'.join(errors))
-
-
-class _OutputRecorder:
-
-    def __init__(self):
-        self._actions = []
-
-    def __getattr__(self, name):
-        return lambda *args : self._actions.append((name, args))
-
-    def replay(self, output):
-        for name, args in self._actions:
-            getattr(output, name)(*args)
 
 
 class SyntaxErrorKeyword(BaseKeyword):
