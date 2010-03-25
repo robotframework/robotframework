@@ -118,14 +118,6 @@ For With Set
     Equals  ${v3}  value 3
     Fail Unless  @{list} == [1, 2, 3, 'z']
 
-For With Repeat
-    :FOR  ${n}  IN  1  ${2}
-    \  0 x  Fail  Not executed
-    \  1 x  Log  Executed once
-    \  ${2} x  My UK
-    \  ${n} x  Log  Executed ${n} times
-    \  5 x  Log  Executed 5 times
-
 For Without In 1
     [Documentation]  FAIL ${SYNTAX_ERROR}
     Log  This is executed

@@ -127,12 +127,6 @@ For With Set
     Check Log Message  ${test.kws[0].kws[1].kws[1].msgs[1]}  \${v3} = value 3
     Check Log Message  ${test.kws[0].kws[1].kws[2].msgs[0]}  \@{list} = [ 1 | 2 | 3 | z ]
 
-For With Repeat
-    ${test} =  Check Test Case  For With Repeat
-    Should Be For Keyword  ${test.kws[0]}  2
-    Test "For With Repeat" Helper  ${test.kws[0].kws[0]}  1
-    Test "For With Repeat" Helper  ${test.kws[0].kws[1]}  2
-
 For Without In
     Check Syntax Error Test Case  For Without In 1
     Check Syntax Error Test Case  For Without In 2
