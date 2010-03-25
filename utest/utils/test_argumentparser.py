@@ -221,7 +221,9 @@ class TestArgumentParserParseArgs(unittest.TestCase):
     def test_arguments_are_globbed(self):
         _, args = self.ap.parse_args([__file__.replace('test_', '?????')])
         assert_equals(args, [__file__])
-        _, args = self.ap.parse_args([os.path.join(os.path.abspath('.'), '*')])
+        # Needed to ensure that the globbed directory contains files
+        globexpr = os.path.join(os.path.abspath('.'), '*')
+        _, args = self.ap.parse_args([globexpr])
         assert_true(len(args) > 1)
 
     def test_arguments_with_glob_patterns_arent_removed_if_they_dont_match(self):
