@@ -5,20 +5,29 @@ from unic import unic
 
 
 def encode_to_file_system(string):
-    return file_system_encoding and string.encode(file_system_encoding) or string
+    enc = sys.getfilesystemencoding()
+    return string.encode(enc) if enc else string
 
 def decode_output(string):
-    if output_encoding:
-        return unic(string, output_encoding)
+    if _output_encoding:
+        return unic(string, _output_encoding)
     return string
 
+
+def _get_output_encoding():
+    encoding = sys.__stdout__.encoding or sys.__stdin__.encoding
+    if os.sep == '/':
+        return encoding or _read_encoding_from_env()
+    # Use default DOS encoding if no encoding found (guess)
+    # or on buggy Jython 2.5: http://bugs.jython.org/issue1568
+    if not encoding or sys.platform.startswith('java'):
+        return 'cp437'
+    return encoding
+
 def _read_encoding_from_env():
-    if 'LANG' in os.environ:
-        return os.environ['LANG'].split('.')[-1]
-    if 'LC_CTYPE' in os.environ:
-        return os.environ['LC_CTYPE'].split('.')[-1]
+    for name in 'LANG', 'LC_CTYPE', 'LANGUAGE', 'LC_ALL':
+        if name in os.environ:
+            return os.environ[name].split('.')[-1]
+    return None
 
-file_system_encoding = sys.getfilesystemencoding()
-output_encoding = sys.__stdout__.encoding or sys.__stdin__.encoding or \
-    _read_encoding_from_env()
-
+_output_encoding = _get_output_encoding()
