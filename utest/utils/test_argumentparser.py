@@ -222,7 +222,7 @@ class TestArgumentParserParseArgs(unittest.TestCase):
         _, args = self.ap.parse_args([__file__.replace('test_', '?????')])
         assert_equals(args, [__file__])
         # Needed to ensure that the globbed directory contains files
-        globexpr = os.path.join(os.path.abspath('.'), '*')
+        globexpr = os.path.join(os.path.dirname(__file__), '*')
         _, args = self.ap.parse_args([globexpr])
         assert_true(len(args) > 1)
 
