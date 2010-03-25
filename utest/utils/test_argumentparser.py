@@ -17,14 +17,14 @@ Options:
   -r --reportfile file      This explanation continues ............... 78
        ........... to multiple lines.
        Next line is totally empty.
-             
+
   -E --escape what:with *      Line below has nothing after '*'. Next line has
           nothing after value and next nothing after option name
   -v --variable name:value *
   -N --name name
   -h -? --help
   --version  Explanation
-  
+
   -z   No long option so not an option line.
   --z  No long option here either
   this line doesn't start with a '-' so not an --optionline
@@ -40,7 +40,7 @@ USAGE2 = """Just Name Here
 usage:  robot.py [options] arg1 arg2
 
 options:
-  -v --variable name=value  
+  -v --variable name=value
   -x --var-able name=v1,v2   Explanation
   -3 --42
 """
@@ -55,10 +55,10 @@ class TestArgumentParserInit(unittest.TestCase):
         assert_equals(self.ap._short_opts, 'd:r:E:v:N:h?')
 
     def test_long_options(self):
-        expected = [ 'reportdir=', 'reportfile=', 'escape=', 'variable=', 
+        expected = [ 'reportdir=', 'reportfile=', 'escape=', 'variable=',
                      'name=', 'help', 'version' ]
         assert_equals(self.ap._long_opts, expected)
-        
+
     def test_multi_options(self):
         assert_equals(self.ap._multi_opts, ['escape','variable'])
 
@@ -83,14 +83,14 @@ class TestArgumentParserInit(unittest.TestCase):
 
     def test_same_option_multiple_times(self):
         for my_usage in [ ' --foo\n --foo\n',
-                         ' --foo\n -f --Foo\n', 
-                         ' -x --foo xxx\n -y --Foo yyy\n', 
+                         ' --foo\n -f --Foo\n',
+                         ' -x --foo xxx\n -y --Foo yyy\n',
                          ' -f --foo\n -f --bar\n' ]:
             assert_raises(FrameworkError, ArgumentParser, my_usage)
         ap = ArgumentParser(' -f --foo\n -F --bar\n')
         assert_equals(ap._short_opts, 'fF')
         assert_equals(ap._long_opts, ['foo','bar'])
-        
+
 
 class TestArgumentParserParseArgs(unittest.TestCase):
 
@@ -100,23 +100,23 @@ class TestArgumentParserParseArgs(unittest.TestCase):
     def test_single_options(self):
         inargs = '-d reports --reportfile report.html -? arg'.split()
         exp_opts = {'reportdir':'reports', 'reportfile':'report.html',
-                    'variable':[], 'name':None, 'escape' : [], 
+                    'variable':[], 'name':None, 'escape' : [],
                     'help':True, 'version':False }
         exp_args = [ 'arg' ]
         opts, args = self.ap.parse_args(inargs)
         assert_equals(opts, exp_opts)
         assert_equals(args, exp_args)
-        
+
     def test_multi_options(self):
         inargs = '-v a:1 -v b:2 --name my_name --variable c:3 arg'.split()
-        exp_opts = {'variable':['a:1','b:2','c:3'], 'name':'my_name', 
+        exp_opts = {'variable':['a:1','b:2','c:3'], 'name':'my_name',
                     'reportdir':None, 'reportfile':None, 'escape' : [],
                     'help':False, 'version':False }
         exp_args = [ 'arg' ]
         opts, args = self.ap.parse_args(inargs)
         assert_equals(opts, exp_opts)
         assert_equals(args, exp_args)
-        
+
     def test_toggle_options(self):
         for inargs, exp in [ ('arg', False),
                              ('--help arg', True),
@@ -125,15 +125,15 @@ class TestArgumentParserParseArgs(unittest.TestCase):
             opts, args = self.ap.parse_args(inargs.split())
             assert_equals(opts['help'], exp)
             assert_equals(args, ['arg'])
- 
+
     def test_single_option_multiple_times(self):
-        for inargs in [ '--name Foo -N Bar arg', 
+        for inargs in [ '--name Foo -N Bar arg',
                         '-N Zap --name Foo --name Bar arg',
                         '-N 1 -N 2 -N 3 -h --variable foo -N 4 --name Bar arg' ]:
             opts, args = self.ap.parse_args(inargs.split())
             assert_equals(opts['name'], 'Bar')
             assert_equals(args, ['arg'])
-            
+
     def test_case_insensitive_long_options(self):
         opts, args = self.ap.parse_args('--EsCape X:y --HELP arg'.split())
         assert_equals(opts['escape'], ['X:y'])
@@ -153,7 +153,7 @@ class TestArgumentParserParseArgs(unittest.TestCase):
         opts, args = ap.parse_args(inargs)
         assert_equals(opts, exp_opts)
         assert_equals(args, exp_args)
- 
+
     def test_check_args_with_correct_args(self):
         for args in [ ('hello',), ('hello world',) ]:
             self.ap.parse_args(args, check_args=True)
@@ -161,7 +161,7 @@ class TestArgumentParserParseArgs(unittest.TestCase):
     def test_check_args_with_wrong_number_of_args(self):
         for args in [ (), ('arg1','arg2','arg3') ]:
             assert_raises(DataError, self.ap._check_args, args)
-    
+
     def test_check_variable_number_of_args(self):
         ap = ArgumentParser('usage:  robot.py [options] args')
         ap.parse_args(['one_is_ok'], check_args=True)
@@ -205,7 +205,7 @@ class TestArgumentParserParseArgs(unittest.TestCase):
                       (['c:\\path','d:\\path'], ['c:\\path','d:\\path']),
                       (['c:\\path:d:\\path'], ['c:\\path','d:\\path']),
                       (['c:/path:x:yy:d:\\path','c','.','x:/xxx'],
-                       ['c:\\path', 'x', 'yy', 'd:\\path', 'c', '.', 'x:\\xxx']) ]  
+                       ['c:\\path', 'x', 'yy', 'd:\\path', 'c', '.', 'x:\\xxx']) ]
         for inp, exp in data:
             assert_equals(ap._split_pythonpath(inp), exp)
 
@@ -221,14 +221,14 @@ class TestArgumentParserParseArgs(unittest.TestCase):
     def test_arguments_are_globbed(self):
         _, args = self.ap.parse_args([__file__.replace('test_', '?????')])
         assert_equals(args, [__file__])
-        _, args = self.ap.parse_args(['*'])
+        _, args = self.ap.parse_args([os.path.abspath(os.curdir) + '/*'])
         assert_true(len(args) > 1)
 
     def test_arguments_with_glob_patterns_arent_removed_if_they_dont_match(self):
         _, args = self.ap.parse_args(['*.non.existing', 'non.ex.??'])
         assert_equals(args, ['*.non.existing', 'non.ex.??'])
 
-        
+
 class TestPrintHelpAndVersion(unittest.TestCase):
 
     def setUp(self):
