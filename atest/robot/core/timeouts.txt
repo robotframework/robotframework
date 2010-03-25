@@ -1,0 +1,115 @@
+*** Settings ***
+Documentation   Tests for test case and user keyword timeouts. Using timeouts with variables and invalid timeouts is tested in 'metadata.html'. It seems that on Cygwin Python tests now and then fail with an error message "error: can't allocate lock"
+Suite Setup     Run Tests  ${EMPTY}  core/timeouts.txt
+Suite Teardown  Remove Dir  ${timeout_temp}  recursive
+Force Tags      regression
+Default Tags    jybot  pybot
+Resource        ../../resources/resource.html
+
+*** Variables ***
+${timeout_temp}  ${TEMPDIR}${/}robot_timeout_tests
+${test_stopped}  ${timeout_temp}${/}test_stopped.txt
+${kw_stopped}  ${timeout_temp}${/}kw_stopped.txt
+
+*** Test Cases ***
+Timed Test Passes
+    Check Test Case  Passing
+    Check Test Case  Sleeping But Passing
+
+Timed Test Fails Before Timeout
+    Check Test Case  Failing Before Timeout
+
+Timed Test Timeouts
+    Check Test Case  Sleeping And Timeouting
+    Check Test Case  Total Time Too Long
+    Check Test Case  Looping Forever And Timeouting
+
+Timout Defined For One Test
+    Check Test Case  Timout Defined For One Test
+
+Stopped After Test Timeout
+    Check Test Case  Stopped After Test Timeout
+    Fail Unless File Empty  ${test_stopped}
+
+Timeouted Keyword Passes
+    Check Test Case  Timeouted Keyword Passes
+
+Timeouted Keyword Fails Before Timeout
+    Check Test Case  Timeouted Keyword Fails
+
+Timeouted Keyword Timeouts
+    Check Test Case  Timeouted Keyword Timeouts
+    Check Test Case  Timeouted Keyword Timeouts Due To Total Time
+
+Stopped After Keyword Timeout
+    Check Test Case  Stopped After Keyword timeout
+    Fail Unless File Empty  ${kw_stopped}
+
+Test Timeouts When Also Keywords Are Timeouted
+    Check Test Case  Test Timeouts When Also Keywords Are Timeouted
+
+Timeout Format
+    ${test} =  Check Test Case  Timeout Format
+    Equals  ${test.timeout}  2 days 4 hours 56 minutes 18 seconds
+
+Test Timeout During Setup
+    Check Test Case  Test Timeout During Setup
+
+Teardown After Timeout
+    [Documentation]  Test that teardown is executed after a test has timed out
+    ${test} =  Check Test Case  Teardown After Test Timeout
+    Equals  ${test.teardown.messages[0] .message}  Teardown executed
+    ${test} =  Check Test Case  Failing Teardown After Test Timeout
+    ${test} =  Check Test Case  Teardown With Sleep After Test Timeout
+    Equals  ${test.teardown.keywords[1] .messages[0].message}  Teardown executed
+
+Test Timeout During Teardown
+    [Documentation]  Test timeout should not interrupt teardown but test should be failed afterwards
+    ${test} =  Check Test Case  Test Timeout During Teardown
+    Equals  ${test.teardown.keywords[1] .messages[0].message}  Teardown executed
+
+Timeouted Setup Passes
+    Check Test Case  Timeouted Setup Passes
+
+Timeouted Setup Timeouts
+    Check Test Case  Timeouted Setup Timeouts
+
+Timeouted Teardown Passes
+    Check Test Case  Timeouted Teardown Passes
+
+Timeouted Teardown Timeouts
+    Check Test Case  Timeouted Teardown Timeouts
+
+Timeouted UK Using Non Timeouted UK
+    Check Test Case  Timeouted UK Using Non Timeouted UK
+
+Shortest UK Timeout Should Be Applied
+    Check Test Case  Shortest UK Timeout should be applied
+
+Shortest Test Or UK Timeout Should Be Applied
+    Check Test Case  Shortest Test or UK Timeout should be applied
+
+Timeouted Repeat Keyword
+    ${test} =  Check Test Case  Timeouted Repeat Keyword
+    Check Log Message  ${test.kws[1].msgs[0]}  This should be executed
+
+Timeouted Set Keyword
+    Check Test Case  Timeouted Set Keyword
+
+Test Timeout Should Not Be Active For Run Keyword Variants But To Keywords They Execute
+    Check Test Case  Test Timeout Should not be Active For Run keyword variants But To Keywords They Execute
+
+Keyword Timeout Should Not Be Active For Run Keyword Variants But To Keywords They Execute
+    Check Test Case  Keyword Timeout Should not be Active For Run keyword variants But To Keywords They Execute
+
+Output Capture With Timeouts
+    [Documentation]  Testing that capturing output works with timeouts
+    ${test} =  Check Test Case  Timeouted Keyword Passes
+    Check Log Message  ${test.kws[0].msgs[0]}  Testing outputcapture in timeouted test
+    Check Log Message  ${test.kws[1].kws[0].msgs[0]}  Testing outputcapture in timeouted keyword
+
+It Should Be Possible To Print From Java Libraries When Test Timeout Has Been Set
+    [Tags]  jybot
+    ${tc} =  Check Test Case  It Should Be Possible To Print From Java Libraries When Test Timeout Has Been Set
+    Check Log message  ${tc.kws[0].msgs[0]}  My message from java lib
+
