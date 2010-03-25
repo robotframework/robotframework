@@ -40,17 +40,11 @@ def KeywordList(rawkeywords):
 
 def KeywordFactory(kwdata):
     try:
-        try:
-            return SetKeyword(kwdata)
-        except TypeError:
-            pass
-        try:
-            return RepeatKeyword(kwdata)
-        except TypeError:
-            pass
+        return SetKeyword(kwdata)
+    except TypeError:
+        return BaseKeyword(kwdata[0], kwdata[1:])
     except:
         return SyntaxErrorKeyword(kwdata, utils.get_error_message())
-    return BaseKeyword(kwdata[0], kwdata[1:])
 
 
 def BlockKeywordFactory(data):
@@ -106,30 +100,6 @@ class SetKeyword(BaseKeyword):
             else:
                 list_var = item
         return scalar_vars, list_var
-
-
-class RepeatKeyword(BaseKeyword):
-
-    _repeat_re = re.compile('^(.+)\s*[xX]$')
-
-    def __init__(self, kwdata):
-        self.repeat, name, args = self._process_data(kwdata)
-        BaseKeyword.__init__(self, name, args, type='repeat')
-
-    def _process_data(self, kwdata):
-        res = self._repeat_re.search(kwdata[0])
-        if res is None:
-            raise TypeError('Not RepeatKeyword')
-        repeat = res.group(1).strip()
-        if not is_scalar_var(repeat):
-            try:
-                repeat = int(repeat)
-            except ValueError:
-                raise TypeError('Not RepeatKeyword')
-        try:
-            return repeat, kwdata[1], kwdata[2:]
-        except IndexError:
-            raise DataError('No keyword specified after the repeat count')
 
 
 class _BlockKeyword(BaseKeyword):

@@ -23,8 +23,8 @@ def KeywordFactory(kwdata):
     if kwdata.type == 'kw':
         return Keyword(kwdata.name, kwdata.args)
     try:
-        clazz = {'set': SetKeyword, 'repeat': RepeatKeyword,
-                 'for': ForKeyword, 'error': SyntaxErrorKeyword}[kwdata.type]
+        clazz = {'set': SetKeyword, 'for': ForKeyword,
+                 'error': SyntaxErrorKeyword}[kwdata.type]
         return clazz(kwdata)
     except KeyError:
         raise FrameworkError("Invalid kw type '%s'" % kwdata.type)
@@ -165,43 +165,6 @@ class SetKeyword(Keyword):
         raise DataError("Cannot assign return value of keyword '%s' to "
                         "variable%s %s: %s" % (name, utils.plural_or_not(varz),
                                                utils.seq2str(varz), err))
-
-
-class RepeatKeyword(Keyword):
-
-    def __init__(self, kwdata):
-        self._orig_repeat = self._repeat = kwdata.repeat
-        self._error = None
-        Keyword.__init__(self, kwdata.name, kwdata.args, 'repeat')
-        data = ['%s x' % kwdata.repeat, kwdata.name] + kwdata.args
-        self._example = '| %s |' % ' | '.join(data)
-
-    def _run(self, handler, output, namespace):
-        output.warn("Repeating keywords using the special syntax like '%s' is "
-                    "deprecated and will be removed in Robot Framework 2.2. "
-                    "Use 'BuiltIn.Repeat Keyword' instead." % self._example)
-        if self._error is not None:
-            output.fail(self._error)
-            raise ExecutionFailed(self._error)
-        for _ in range(self._repeat):
-            Keyword._run(self, handler, output, namespace)
-
-    def _get_name(self, handler_name, variables):
-        if not utils.is_integer(self._orig_repeat):
-            try:
-                self._repeat = self._get_repeat(variables)
-            except DataError, err:
-                self._error = utils.unic(err)
-        return '%sx %s' % (self._repeat, handler_name)
-
-    def _get_repeat(self, variables):
-        repeat = variables.replace_string(self._orig_repeat)
-        try:
-            return int(repeat)
-        except ValueError:
-            t = utils.type_as_str(repeat, printable=True)
-            raise DataError("Value of a repeat variable '%s' should be an "
-                            "integer, got %s instead" % (self._orig_repeat, t))
 
 
 class ForKeyword(BaseKeyword):
