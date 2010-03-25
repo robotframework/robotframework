@@ -1263,16 +1263,6 @@ class _Process:
             return stdout
         return encoding.decode_output(stdout)
 
-    def _get_console_encoding(self):
-        encoding = sys.__stdout__.encoding or sys.__stdin__.encoding
-        if os.sep == '/':
-            return encoding
-        # Use default DOS encoding if no encoding found (guess)
-        # or on buggy Jython 2.5: http://bugs.jython.org/issue1568
-        if not encoding or self._is_jython(2, 5):
-            return 'cp437'
-        return encoding
-
     def _is_jython(self, *version):
         return sys.platform.startswith('java') and sys.version_info[:2] == version
 
