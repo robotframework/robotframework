@@ -2,6 +2,7 @@
 Suite Teardown  Remove Items
 Test Setup      Remove Items
 Library         OperatingSystem
+Library         ./wait_until_library.py
 
 *** Variables ***
 ${FILE}  ${CURDIR}${/}ROBOTEST-F.txt
@@ -20,18 +21,20 @@ File And Dir Already Removed
 
 File And Dir Removed Before Timeout
     Create Items
-    :PARALLEL
-    \  Wait Until Removed  ${FILE}  5 second
-    \  Wait Until Removed  ${DIR}  32 seconds 44 millis
-    \  Remove Items After Sleeping
+    Remove After Sleeping  ${FILE}
+    Wait Until Removed  ${FILE}  5 second
+    Remove After Sleeping  ${DIR}
+    Wait Until Removed  ${DIR}  32 seconds 44 millis
 
 File And Dir Removed With Pattern
     Create Items
-    :PARALLEL
-    \  Wait Until Removed  ${FILE PATTERN}  23
-    \  Wait Until Removed  ${DIR PATTERN}  12 s
-    \  Wait Until Removed  ${BOTH PATTERN}
-    \  Remove Items After Sleeping
+    Remove After Sleeping  ${FILE}  ${FILE 2}
+    Wait Until Removed  ${FILE PATTERN}  23
+    Remove After Sleeping  ${DIR}
+    Wait Until Removed  ${DIR PATTERN}  12 s
+    Create Items
+    Remove After Sleeping  ${FILE}  ${FILE 2}  ${DIR}
+    Wait Until Removed  ${BOTH PATTERN}
 
 File Not Removed Before Timeout
     [Documentation]  FAIL '${FILE}' was not removed in 111 milliseconds
@@ -58,17 +61,16 @@ File And Dir Already Created
     Wait Until Created  ${DIR}
 
 File And Dir Created Before Timeout
-    :PARALLEL
-    \  Wait Until Created  ${FILE}  1111 ms
-    \  Wait Until Created  ${DIR}  1.111 seconds
-    \  Create Items After Sleeping
+    Create File After Sleeping  ${FILE}
+    Wait Until Created  ${FILE}  1111 ms
+    Create Dir After Sleeping  ${DIR}
+    Wait Until Created  ${DIR}  1.111 seconds
 
 File And Dir Created With Pattern
-    :PARALLEL
-    \  Wait Until Created  ${FILE PATTERN}
-    \  Wait Until Created  ${DIR PATTERN}
-    \  Wait Until Created  ${BOTH PATTERN}
-    \  Create Items After Sleeping
+    Create File After Sleeping  ${FILE}
+    Wait Until Created  ${FILE PATTERN}
+    Create Dir After Sleeping  ${DIR}
+    Wait Until Created  ${DIR PATTERN}
 
 File Not Created Before Timeout
     [Documentation]  FAIL '${FILE}' was not created in 1 second 1 millisecond
@@ -96,12 +98,4 @@ Create Items
     Create File  ${FILE}
     Create File  ${FILE 2}
     Create Directory  ${DIR}
-
-Remove Items After Sleeping
-    Sleep  0.25 s
-    Remove Items
-
-Create Items After Sleeping
-    Sleep  0.25 s
-    Create Items
 
