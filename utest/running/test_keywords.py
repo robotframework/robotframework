@@ -1,16 +1,15 @@
 import unittest
-    
+
 from robot.errors import DataError, ExecutionFailed
 from robot.parsing.keywords import SetKeyword as SetKeywordData
-from robot.parsing.keywords import RepeatKeyword as RepeatKeywordData
 from robot.running.timeouts import KeywordTimeout
-from robot.running.keywords import Keyword, SetKeyword, RepeatKeyword
+from robot.running.keywords import Keyword, SetKeyword
 from robot.utils.asserts import *
 from test_testlibrary import _FakeNamespace
 
 
 class OutputStub:
-    
+
     def __getattr__(self, name):
         if name == 'syslog':
             return self
@@ -20,16 +19,16 @@ class OutputStub:
 class MockHandler:
 
     type = 'mock'
-    
+
     def __init__(self, name='Mock Handler', doc='Mock Doc', error=False):
         self.name = self.longname = name
         self.doc = self.shortdoc = doc
         self.error = error
         self.timeout = KeywordTimeout()
-        
+
     def run(self, output, namespace, args):
         """Sets given args to self.ags and optionally returns something.
-        
+
         Returning works so that if two args are given and the first one is
         string 'return' (case insensitive) the second argument is returned.
         """
@@ -41,11 +40,11 @@ class MockHandler:
 
 
 class FakeNamespace(_FakeNamespace):
-    
+
     def __init__(self, error=False):
         _FakeNamespace.__init__(self)
         self.error = error
-    
+
     def get_handler(self, kwname):
         return MockHandler('Mocked.'+kwname, error=self.error)
 
@@ -55,20 +54,20 @@ class TestKeyword(unittest.TestCase):
     def test_run(self):
         for args in [ [], ['arg',], ['a1','a2'] ]:
             self._verify_run(args)
-            
+
     def test_run_with_variables(self):
         for args in [ ['${str}',], ['a1','--${str}--'], ['@{list}',],
                            ['@{list}','${str}-${str}','@{list}','v3'] ]:
             self._verify_run(args)
-                        
+
     def test_run_with_escape(self):
         for args in [ ['\\ arg \\',], ['\\${str}',], ['\\\\${str}',], ]:
             self._verify_run(args)
-        
+
     def test_run_error(self):
         kw = Keyword('handler_name', ())
         assert_raises(ExecutionFailed, kw.run, OutputStub(), FakeNamespace(error=True))
-        
+
     def _verify_run(self, args):
         kw = Keyword('handler_name', args)
         assert_equals(kw.name, 'handler_name')
@@ -80,41 +79,41 @@ class TestKeyword(unittest.TestCase):
 
 
 class TestSetKeyword(unittest.TestCase):
-    
+
     def test_init_one_scalar_var(self):
         skw = SetKeyword(SetKeywordData(['${var}','Set','x']))
         assert_equal(skw.name, 'Set')
         assert_equal(skw.scalar_vars, ['${var}'])
         assert_none(skw.list_var)
         assert_equal(skw.args, ['x'])
-                
+
     def test_init_three_scalar_vars(self):
         skw = SetKeyword(SetKeywordData('${v1} ${v2} ${v3} Set x y z'.split()))
         assert_equal(skw.scalar_vars, ['${v1}','${v2}','${v3}'])
         assert_none(skw.list_var)
         assert_equal(skw.args, ['x','y','z'])
-    
+
     def test_init_list_var(self):
         skw = SetKeyword(SetKeywordData(['@{list}','Set','x','y','z']))
         assert_equal(skw.scalar_vars, [])
         assert_equal(skw.list_var, '@{list}')
         assert_equal(skw.args, ['x','y','z'])
-                
+
     def test_init_two_scalar_and_one_list_vars(self):
         skw = SetKeyword(SetKeywordData('${v1} ${v2} @{list} Set x y z'.split()))
         assert_equal(skw.scalar_vars, ['${v1}','${v2}'])
         assert_equal(skw.list_var, '@{list}')
         assert_equal(skw.args, ['x','y','z'])
-                
+
     def test_init_no_vars_raises(self):
         assert_raises(TypeError, SetKeywordData, ['Set','a'])
-        
+
     def test_init_list_in_wrong_place_raises(self):
         assert_raises(DataError, SetKeywordData, ['@{list}','${str}','Set','a'])
-        
+
     def test_init_no_keyword_raises(self):
         assert_raises(DataError, SetKeywordData, ['${var}'])
-    
+
     def test_set_string_to_scalar(self):
         skw = SetKeyword(SetKeywordData(['${var}','KW','RETURN','value']))
         namespace = FakeNamespace()
@@ -149,7 +148,7 @@ class TestSetKeyword(unittest.TestCase):
 
     def test_set_objects_to_three_scalars(self):
         skw = SetKeyword(SetKeywordData(['${v1}','${v2}','${v3}','KW','RETURN',[['x','y'],{},None]]))
-        namespace = FakeNamespace()        
+        namespace = FakeNamespace()
         skw.run(OutputStub(), namespace)
         assert_equal(namespace.variables['${v1}'], ['x','y'])
         assert_equal(namespace.variables['${v2}'], {})
@@ -157,19 +156,19 @@ class TestSetKeyword(unittest.TestCase):
 
     def test_set_list_of_strings_to_list(self):
         skw = SetKeyword(SetKeywordData(['@{var}','KW','RETURN',['x','y','z']]))
-        namespace = FakeNamespace()        
+        namespace = FakeNamespace()
         skw.run(OutputStub(), namespace)
         assert_equal(namespace.variables['@{var}'], ['x','y','z'])
 
     def test_set_empty_list_to_list(self):
         skw = SetKeyword(SetKeywordData(['@{var}','KW','RETURN',[]]))
-        namespace = FakeNamespace()        
+        namespace = FakeNamespace()
         skw.run(OutputStub(), namespace)
         assert_equal(namespace.variables['@{var}'], [])
 
     def test_set_objects_to_two_scalars_and_list(self):
         skw = SetKeyword(SetKeywordData(['${v1}','${v2}','@{v3}','KW','RETURN',['a',None,'x','y',{}]]))
-        namespace = FakeNamespace()        
+        namespace = FakeNamespace()
         skw.run(OutputStub(), namespace)
         assert_equal(namespace.variables['${v1}'], 'a')
         assert_equal(namespace.variables['${v2}'], None)
@@ -177,14 +176,14 @@ class TestSetKeyword(unittest.TestCase):
 
     def test_set_scalars_and_list_so_that_list_is_empty(self):
         skw = SetKeyword(SetKeywordData(['${scal}','@{list}','KW','RETURN',['a']]))
-        namespace = FakeNamespace()        
+        namespace = FakeNamespace()
         skw.run(OutputStub(), namespace)
         assert_equal(namespace.variables['${scal}'], 'a')
         assert_equal(namespace.variables['@{list}'], [])
 
     def test_set_more_values_than_variables(self):
         skw = SetKeyword(SetKeywordData(['${v1}','${v2}','KW','RETURN',['x','y','z']]))
-        namespace = FakeNamespace()        
+        namespace = FakeNamespace()
         skw.run(OutputStub(), namespace)
         assert_equal(namespace.variables['${v1}'], 'x')
         assert_equal(namespace.variables['${v2}'], ['y','z'])
@@ -202,66 +201,5 @@ class TestSetKeyword(unittest.TestCase):
         assert_raises(ExecutionFailed, skw.run, OutputStub(), FakeNamespace())
 
 
-        
-class TestRepeatKeyword(unittest.TestCase):
-    
-    def test_init_valid(self):
-        for repeat in ['10 x', '10 X', '10x', '10X', '10  x', '10      X']:
-            data = [repeat,'Log','hello']
-            rkw = RepeatKeywordData(data)
-            assert_equal(rkw.repeat, 10)
-            
-    def test_init_with_zero_and_negative_repeat(self):
-        for repeat in ['0 x', '-1 X', '-1111X', '-42                      X']:
-            data = [repeat,'Log','hello']
-            rkw = RepeatKeywordData(data)
-            assert_equal(rkw.repeat, int(repeat[:-1].strip()))
-
-    def test_init_no_repeat(self):
-        assert_raises(TypeError, RepeatKeywordData, ['Log','hello'])
-        
-    def test_init_no_keyword(self):
-        assert_raises(DataError, RepeatKeywordData, ['10 x'])
-
-    def test_init_invalid_repeat(self):
-        for repeat in ['Foo x', '10.0 X', '10y', '10Z', '10 xx', 'xxx', 'X', 'x']:
-            assert_raises(TypeError, RepeatKeywordData, [repeat,'Log','hello'])
-
-    def test_repeat_with_variable(self):        
-        for repeat, var in [('${var} x',4), ('${var} X','4'), ('${4}x',None)]:
-            rkw = RepeatKeyword(RepeatKeywordData([repeat,'Log','hello']))
-            namespace = FakeNamespace()
-            if var is not None:
-                namespace.variables['${var}'] = var
-            rkw.run(OutputStub(), namespace)
-            assert_equal(rkw._repeat, 4)
-            assert_equal(rkw._orig_repeat, repeat[:-1].strip())
-            assert_equal(rkw.name, '4x Mocked.Log')
-            
-    def test_repeat_with_variable_using_different_values(self):
-        variable = '${var}'
-        rkw = RepeatKeyword(RepeatKeywordData([variable+' X','Log','hello']))
-        namespace = FakeNamespace()
-        for value in [ -123, '-1', 0, '0', 3, '42' ]:
-            namespace.variables[variable] = value
-            exp_repeat = int(value)
-            rkw.run(OutputStub(), namespace)
-            assert_equal(rkw._repeat, exp_repeat, 'Wrong repeat returned')
-            assert_equal(rkw._orig_repeat, variable, 'Wrong self.repeat')
-            assert_equal(rkw.name, str(exp_repeat) + 'x Mocked.Log', 'Wrong name')
-        
-    def test_repeat_with_non_existing_variable(self):        
-        rkw = RepeatKeyword(RepeatKeywordData(['${non_existing} x','Log','hello']))
-        assert_raises(ExecutionFailed, rkw.run, OutputStub(), FakeNamespace())
-        assert_equal(rkw.name, '${non_existing}x Mocked.Log')
-
-    def test_repeat_with_non_integer_variable(self):        
-        rkw = RepeatKeyword(RepeatKeywordData(['${non_int} x','Log','hello']))
-        namespace = FakeNamespace()
-        namespace.variables['${non_int}'] = 'xxx'
-        assert_raises(ExecutionFailed, rkw.run, OutputStub(), namespace)
-        assert_equal(rkw.name, '${non_int}x Mocked.Log')
-        
-        
 if __name__ == '__main__':
     unittest.main()
