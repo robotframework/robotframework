@@ -60,13 +60,13 @@ class OperatingSystem:
 
     *Pattern matching*
 
-    Some keywords allow their arguments to be specified as _glob patterns_ 
+    Some keywords allow their arguments to be specified as _glob patterns_
     where:
     | *        | matches anything, even an empty string |
     | ?        | matches any single character |
     | [chars]  | matches any character inside square brackets (e.g. '[abc]' matches either 'a', 'b' or 'c') |
     | [!chars] | matches any character not inside square brackets |
-    
+
     Unless otherwise noted, matching is case-insensitive on
     case-insensitive operating systems such as Windows. Pattern
     matching is implemented using Python's `fnmatch` module:
@@ -1076,7 +1076,7 @@ class OperatingSystem:
 
         If `pattern` is given, only items matching it are returned. The pattern
         matching syntax is explained in `introduction`, and in this case
-        matching is case-sensitive. Support for different pattern types 
+        matching is case-sensitive. Support for different pattern types
         was removed in Robot Framework 2.5.
 
         Examples (using also other `List Directory` variants):
