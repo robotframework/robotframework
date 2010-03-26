@@ -24,7 +24,7 @@ with open(inpath) as input:
         if line.startswith('*'):
             name = line.replace('*', '').replace(' ', '').upper()
             process = name in ('TESTCASE', 'TESTCASES')
-        elif process and line and line[0]:
+        elif process and line and line[0] != ' ':
             tests.append(line.split('  ')[0])
 
 with open(outpath, 'w') as output:
