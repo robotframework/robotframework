@@ -1177,10 +1177,8 @@ class _Misc:
         the same names and this functionality can thus be used to import new
         variables, e.g. for each test in a test suite.
 
-        The given path must be absolute. Starting from 2.0.2 version,
-        forward slashes can be used as path separator regardless the
-        operating system, but on earlier versions ${/} variable must be used
-        instead.
+        The given path must be absolute. Forward slashes can be used as path
+        separator regardless the operating system.
 
         Examples:
         | Import Variables | ${CURDIR}/variables.py   |      |      |
