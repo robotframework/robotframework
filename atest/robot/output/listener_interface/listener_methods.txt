@@ -64,7 +64,7 @@ Correct Attributes To Listener Methods
   ${status} =  Log File  ${TEMPDIR}/${ATTR_TYPE_FILE}
   Check Stderr Does Not Contain  attributeverifyinglistener
   Should Not Contain  ${status}  FAILED
-  Should Contain X Times  ${status}  PASSED  125
+  Should Contain X Times  ${status}  PASSED  126
 
 Correct Attributes To Java Listener Methods
   [Tags]  jybot
