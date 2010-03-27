@@ -2,6 +2,7 @@ import java.io.*;
 import java.util.*;
 import java.math.BigInteger;
 import org.python.core.PyList;
+import org.python.core.PyDictionary;
 
 public class JavaAttributeVerifyingListener {
     public static final String ROBOT_LISTENER_API_VERSION = "2";
@@ -24,10 +25,12 @@ public class JavaAttributeVerifyingListener {
 		expectedTypes.put("elapsedtime", BigInteger.class);
 		expectedTypes.put("tags", PyList.class);
 		expectedTypes.put("args", PyList.class);
+		expectedTypes.put("metadata", PyDictionary.class);
 	}
 	
 	public void startSuite(String name, Map attrs) {
-		verifyAttributes("START SUITE", attrs, new String[] {"doc", "starttime", "longname"});	
+		verifyAttributes("START SUITE", attrs,
+                         new String[] {"doc", "starttime", "longname", "metadata"});
 	}
 
 	public void endSuite(String name, Map attrs) {

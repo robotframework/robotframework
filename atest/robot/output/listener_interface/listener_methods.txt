@@ -71,7 +71,7 @@ Correct Attributes To Java Listener Methods
   ${status} =  Log File  ${JAVATEMPDIR}/${JAVA_ATTR_TYPE_FILE}
   Check Stderr Does Not Contain  JavaAttributeVerifyingListener
   Should Not Contain  ${status}  FAILED
-  Should Contain X Times  ${status}  PASSED  125
+  Should Contain X Times  ${status}  PASSED  126
 
 *** Keywords ***
 Run Tests With Listeners
