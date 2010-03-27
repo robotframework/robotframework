@@ -7,16 +7,30 @@ Resource        ../resources/resource.txt
 
 Variable Table
     Check Test Case  ${TESTNAME}
+    Verify deprecation warning  \@{table}  \${table}
 
 Assign Variables
     Check Test Case  ${TESTNAME}
+    Verify deprecation warning  \${assign}  \@{assign}
 
 Set Test/Suite/Global Variable
     Check Test Case  ${TESTNAME}
+    Verify deprecation warning  \@{SET}  \${SET}
 
 Variable File
     Check Test Case  ${TESTNAME}
+    Verify deprecation warning  \${VARFILE}  \@{VARFILE}
 
 Combinations
     Check Test Case  ${TESTNAME}
+    Verify deprecation warning  \@{table2}  \${table2}
+
+
+*** Keywords ***
+
+Verify deprecation warning
+    [Arguments]  ${1st}  ${2nd}
+    Check Stderr Contains  [ WARN ]
+    ...  Using same base name with scalar and list variables is deprecated. 
+    ...  Please change either '${1st}' or '${2nd}' before Robot Framework 2.6.
 
