@@ -25,7 +25,6 @@ from isvar import is_var, is_scalar_var
 
 
 class Variables(utils.NormalizedDict):
-
     """Represents a set of variables including both ${scalars} and @{lists}.
 
     Contains methods for replacing variables from list, scalars, and strings.
@@ -47,7 +46,15 @@ class Variables(utils.NormalizedDict):
     def __setitem__(self, name, value):
         if not is_var(name):
             raise DataError("Invalid variable name '%s'" % name)
+        self._deprecation_warning_if_basename_already_used(name)
         utils.NormalizedDict.__setitem__(self, name, value)
+
+    def _deprecation_warning_if_basename_already_used(self, name):
+        other = ('@' if name[0] == '$' else '$') + name[1:]
+        if utils.NormalizedDict.__contains__(self, other):
+            LOGGER.warn("Using same base name with scalar and list variables "
+                        "is deprecated. Please change either '%s' or '%s' "
+                        "before Robot Framework 2.6." % (name, other))
 
     def __getitem__(self, name):
         if not is_var(name):
