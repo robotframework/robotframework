@@ -54,7 +54,7 @@ class Listeners:
             if li.version == 1:
                 li.call_method(li.start_suite, suite.name, suite.doc)
             else:
-                attrs = self._get_start_attrs(suite, [])
+                attrs = self._get_start_attrs(suite, ['metadata'])
                 li.call_method(li.start_suite, suite.name, attrs)
 
     def end_suite(self, suite):
