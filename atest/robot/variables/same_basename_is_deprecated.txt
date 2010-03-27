@@ -1,0 +1,22 @@
+*** Settings ***
+Suite Setup     Run Tests  ${EMPTY}  variables/same_basename_is_deprecated.txt
+Force Tags      regression  pybot  jybot
+Resource        ../resources/resource.html
+
+*** Test Cases ***
+
+Variable Table
+    Check Test Case  ${TESTNAME}
+
+Assign Variables
+    Check Test Case  ${TESTNAME}
+
+Set Test/Suite/Global Variable
+    Check Test Case  ${TESTNAME}
+
+Variable File
+    Check Test Case  ${TESTNAME}
+
+Combinations
+    Check Test Case  ${TESTNAME}
+

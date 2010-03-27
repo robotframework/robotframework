@@ -1,0 +1,33 @@
+*** Settings ***
+Variables  same_basename.py
+
+*** Variables ***
+${TABLE}=  Value
+${TABLE2}=  Value2
+@{TABLE}=  A  B  C
+
+*** Test Cases ***
+Variable Table
+    Should Be Equal  ${TABLE}  Value
+    Should Be True  @{TABLE} == 'A B C'.split()
+
+Assign Variables
+    ${assign}=  Set Variable  value
+    @{assign}=  Create List  a  b  c
+    Should Be Equal  ${assign}  value
+    Should Be True  @{assign} == 'a b c'.split()
+
+Set Test/Suite/Global Variable
+    Set Test Variable  ${set}  -value-
+    Set Suite Variable  @{SET}  1  2  3
+    Should Be Equal  ${set}  -value-
+    Should Be True  @{set} == '1 2 3'.split()
+
+Variable File
+    Should Be Equal  ${VARFILE}  VaLuE
+    Should Be True  @{VARFILE} == 'A b C'.split()
+
+Combinations
+    @{table2}=  Create List  42
+    Should Be Equal  ${TABLE2}  Value2
+    Should Be True  @{table2} == ['42']
