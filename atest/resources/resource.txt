@@ -25,36 +25,36 @@ ${USAGE_TIP}  \n\nTry --help for usage information.
 
 *** Keywords ***
 Run Tests
-    [Arguments]  ${options}  @{datasources}
-    Run Tests Helper  ${options}  @{datasources}
+    [Arguments]  ${options}  @{data list}
+    Run Tests Helper  ${options}  @{data list}
     Process Output  ${OUTFILE}
 
 Run Tests Without Processing Output
-    [Arguments]  ${options}  @{datasources}
-    Run Tests Helper  ${options}  @{datasources}
+    [Arguments]  ${options}  @{data list}
+    Run Tests Helper  ${options}  @{data list}
 
 Run Tests Helper
-    [Arguments]  ${user_options}  @{datasources}
-    ${datasources} =  Set Variables And Get Datasources  @{datasources}
-    ${options} =  Catenate  ${user_options}  --variable interpreter:${INTERPRETER}  --pythonpath ${LIBPATH1}  --pythonpath ${LIBPATH2}
-    Run Helper  ${ROBOT}  ${options}  ${datasources}
+    [Arguments]  ${user options}  @{data list}
+    ${data string} =  Set Variables And Get Datasources  @{data list}
+    ${options} =  Catenate  ${user options}  --variable interpreter:${INTERPRETER}  --pythonpath ${LIBPATH1}  --pythonpath ${LIBPATH2}
+    Run Helper  ${ROBOT}  ${options}  ${data string}
 
 Run Rebot
-    [Arguments]  ${options}  @{datasources}
-    ${datasources} =  Set Variables And Get Datasources  @{datasources}
-    Run Helper  ${REBOT}  ${options}  ${datasources}
+    [Arguments]  ${options}  @{data list}
+    ${data string} =  Set Variables And Get Datasources  @{data list}
+    Run Helper  ${REBOT}  ${options}  ${data string}
     Process Output  ${OUTFILE}
 
 Run Rebot Without Processing Output
-    [Arguments]  ${options}  @{datasources}
-    ${datasources} =  Set Variables And Get Datasources  @{datasources}
-    Run Helper  ${REBOT}  ${options}  ${datasources}
+    [Arguments]  ${options}  @{data list}
+    ${data string} =  Set Variables And Get Datasources  @{data list}
+    Run Helper  ${REBOT}  ${options}  ${data string}
 
 Run Helper
-    [Arguments]  ${runner}  ${options}  ${datasources}
+    [Arguments]  ${runner}  ${options}  ${data string}
     Remove File  ${OUTFILE}
     ${cmd} =  Catenate  ${runner}  --monitorcolors OFF  --outputdir ${OUTDIR}  --output ${OUTFILE}  --report NONE  --log NONE
-    ...  ${options}  ${datasources}  1>${STDOUTFILE}  2>${STDERRFILE}
+    ...  ${options}  ${data string}  1>${STDOUTFILE}  2>${STDERRFILE}
     ${rc} =  Run And Return RC  ${cmd}
     Log  <a href="${OUTDIR}"> ${OUTDIR}</a>  HTML
     Log  <a href="${OUTFILE}"> ${OUTFILE}</a>  HTML
@@ -63,13 +63,13 @@ Run Helper
     Log  <a href="${SYSLOGFILE}"> ${SYSLOGFILE}</a>  HTML
 
 Set Variables And Get Datasources
-    [Arguments]  @{datasources}
+    [Arguments]  @{data list}
     Set Suite Variable  $SUITE  ${NONE}
-    ${name} =  Get Output Name  @{datasources}
+    ${name} =  Get Output Name  @{data list}
     Set Variables  ${name}
-    @{datasources} =  Join Paths  ${DATADIR}  @{datasources}
-    ${datasources} =  Catenate  @{datasources}
-    [Return]  ${datasources}
+    @{data list} =  Join Paths  ${DATADIR}  @{data list}
+    ${data string} =  Catenate  @{data list}
+    [Return]  ${data string}
 
 Set Variables
     [Arguments]  ${name}
