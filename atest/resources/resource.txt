@@ -1,0 +1,221 @@
+*** Settings ***
+Documentation   This resource file contains, or imports, all general variables and keywords used by the running side of Robot Framework acceptance tests.
+Library         OperatingSystem
+Library         Collections
+Library         String
+Library         TestCheckerLibrary
+Library         TestHelper
+Variables       variables.py
+
+*** Variables ***
+${INTERPRETER}  Set in test_runner.py
+${ROBOT}  Set in Set Variables
+${REBOT}  -- ;; --
+${OUTDIR}  -- ;; --
+${OUTFILE}  -- ;; --
+${SYSLOG FILE}  -- ;; --
+${STDERR FILE}  -- ;; --
+${STDOUT FILE}  -- ;; --
+${SUITE}  Set in Run Helper
+${ERRORS}  -- ;; --
+${DATADIR}  ${CURDIR}${/}..${/}testdata
+${LIBPATH1}  ${CURDIR}${/}..${/}testresources${/}testlibs
+${LIBPATH2}  ${CURDIR}${/}..${/}testresources${/}listeners
+${USAGE_TIP}  \n\nTry --help for usage information.
+
+*** Keywords ***
+Run Tests
+    [Arguments]  ${options}  @{datasources}
+    Run Tests Helper  ${options}  @{datasources}
+    Process Output  ${OUTFILE}
+
+Run Tests Without Processing Output
+    [Arguments]  ${options}  @{datasources}
+    Run Tests Helper  ${options}  @{datasources}
+
+Run Tests Helper
+    [Arguments]  ${user_options}  @{datasources}
+    ${datasources} =  Set Variables And Get Datasources  @{datasources}
+    ${options} =  Catenate  ${user_options}  --variable interpreter:${INTERPRETER}  --pythonpath ${LIBPATH1}  --pythonpath ${LIBPATH2}
+    Run Helper  ${ROBOT}  ${options}  ${datasources}
+
+Run Rebot
+    [Arguments]  ${options}  @{datasources}
+    ${datasources} =  Set Variables And Get Datasources  @{datasources}
+    Run Helper  ${REBOT}  ${options}  ${datasources}
+    Process Output  ${OUTFILE}
+
+Run Rebot Without Processing Output
+    [Arguments]  ${options}  @{datasources}
+    ${datasources} =  Set Variables And Get Datasources  @{datasources}
+    Run Helper  ${REBOT}  ${options}  ${datasources}
+
+Run Helper
+    [Arguments]  ${runner}  ${options}  ${datasources}
+    Remove File  ${OUTFILE}
+    ${cmd} =  Catenate  ${runner}  --monitorcolors OFF  --outputdir ${OUTDIR}  --output ${OUTFILE}  --report NONE  --log NONE
+    ...  ${options}  ${datasources}  1>${STDOUTFILE}  2>${STDERRFILE}
+    ${rc} =  Run And Return RC  ${cmd}
+    Log  <a href="${OUTDIR}"> ${OUTDIR}</a>  HTML
+    Log  <a href="${OUTFILE}"> ${OUTFILE}</a>  HTML
+    Log  <a href="${STDOUTFILE}"> ${STDOUTFILE}</a>  HTML
+    Log  <a href="${STDERRFILE}"> ${STDERRFILE}</a>  HTML
+    Log  <a href="${SYSLOGFILE}"> ${SYSLOGFILE}</a>  HTML
+
+Set Variables And Get Datasources
+    [Arguments]  @{datasources}
+    Set Suite Variable  $SUITE  ${NONE}
+    ${name} =  Get Output Name  @{datasources}
+    Set Variables  ${name}
+    @{datasources} =  Join Paths  ${DATADIR}  @{datasources}
+    ${datasources} =  Catenate  @{datasources}
+    [Return]  ${datasources}
+
+Set Variables
+    [Arguments]  ${name}
+    ${OUTDIR} =  Join Path  ${OUTPUTDIR}  output  ${name}
+    Set Global Variable  $OUTDIR  ${OUTDIR.replace('?', '_') .replace('*', '_')}
+    Create Directory  ${OUTDIR}
+    Set Suite Variable  $OUTFILE  ${OUTDIR}${/}output.xml
+    Set Suite Variable  $STDOUT_FILE  ${OUTDIR}${/}stdout.txt
+    Set Suite Variable  $STDERR_FILE  ${OUTDIR}${/}stderr.txt
+    Set Suite Variable  $SYSLOG_FILE  ${OUTDIR}${/}syslog.txt
+    Set Environment Variable  ROBOT_SYSLOG_FILE  ${SYSLOG_FILE}
+    ${robot} =  Join Path  ${ROBOTPATH}  runner.py
+    Set Suite Variable  $ROBOT  ${INTERPRETER} ${robot}
+    ${rebot} =  Join Path  ${ROBOTPATH}  rebot.py
+    Set Suite Variable  $REBOT  ${INTERPRETER} ${rebot}
+
+Check Test Case
+    [Arguments]  ${name}  ${status}=${None}  ${message}=${None}
+    ${test} =  Get Test From Suite  ${SUITE}  ${name}
+    Check Test Status  ${test}  ${status}  ${message}
+    [Return]  ${test}
+
+Check Test Suite
+    [Arguments]  ${name}  ${message}  ${status}=${None}
+    ${test suite} =  Get Test Suite  ${name}
+    Run Keyword If  """${status}""" != "None"  Should Be Equal  ${test suite.status}  ${status}
+    Should Be Equal  ${test suite.get_full_message()}  ${message}
+    [Return]  ${test suite}
+
+Get Test Case
+    [Arguments]  ${name}
+    ${test} =  Get Test From Suite  ${SUITE}  ${name}
+    [Return]  ${test}
+
+Get Test Suite
+    [Arguments]  ${name}
+    ${suite} =  Get Suite From Suite  ${SUITE}  ${name}
+    [Return]  ${suite}
+
+Check Test Doc
+    [Arguments]  ${test_name}  @{expected_doc}
+    ${test} =  Check Test Case  ${test_name}
+    ${expected_doc} =  Catenate  @{expected_doc}
+    Should Be Equal  ${test.doc}  ${expected_doc}
+    [Return]  ${test}
+
+Check Test Tags
+    [Arguments]  ${test_name}  @{expected_tags}
+    ${test} =  Check Test Case  ${test_name}
+    Should Be Equal  ${test.tags}  ${expected_tags}
+    [Return]  ${test}
+
+Check KW Arguments
+    [Arguments]  ${kw}  @{expected args}
+    Lists Should Be Equal  ${kw.args}  ${expected args}
+
+Check Log Message
+    [Arguments]  ${item}  ${msg}  ${level}=INFO
+    ${html} =  Set Variable If  '${level}' == 'HTML'  ${True}  ${False}
+    ${level} =  Set Variable If  ${html} is True  INFO  ${level}
+    Should Be Equal  ${item.message.rstrip()}  ${msg}  Wrong log message
+    Should Be Equal  ${item.level}  ${level}  Wrong log level
+    Should Be Equal  ${item.html}  ${html}  Wrong HTML status
+
+Check File Contains
+    [Arguments]  ${path}  @{expected}
+    ${expected} =  Catenate  @{expected}
+    ${file} =  Get File  ${path}
+    Should Contain  ${file}  ${expected}
+
+Check File Does Not Contain
+    [Arguments]  ${path}  @{expected}
+    ${expected} =  Catenate  @{expected}
+    ${file} =  Get File  ${path}
+    Should Not Contain  ${file}  ${expected}
+
+Check File Matches Regexp
+    [Arguments]  ${path}  @{expected}
+    ${expected} =  Catenate  @{expected}
+    ${file} =  Get File  ${path}
+    Should Match Regexp  ${file.strip()}  ^${expected}$
+
+Stderr Should Be Empty
+    ${stderr} =  Get Stderr
+    Should Be Empty  ${stderr}  Errors in test execution
+
+Check Stderr Contains
+    [Arguments]  @{expected}
+    Check File Contains  ${STDERR_FILE}  @{expected}
+
+Check Stderr Does Not Contain
+    [Arguments]  @{expected}
+    Check File Does Not Contain  ${STDERR_FILE}  @{expected}
+
+Check Stderr Matches Regexp
+    [Arguments]  @{expected}
+    Check File Matches Regexp  ${STDERR_FILE}  @{expected}
+
+Check Stdout Contains
+    [Arguments]  @{expected}
+    Check File Contains  ${STDOUT_FILE}  @{expected}
+
+Check Stdout Does Not Contain
+    [Arguments]  @{expected}
+    Check File Does Not Contain  ${STDERR_FILE}  @{expected}
+
+Check Stdout Matches Regexp
+    [Arguments]  @{expected}
+    Check File Matches Regexp  ${STDOUT_FILE}  @{expected}
+
+Get Syslog
+    ${file} =  Log File  ${SYSLOG_FILE}
+    [Return]  ${file}
+
+Get Stderr
+    ${file} =  Log File  ${STDERR_FILE}
+    [Return]  ${file}
+
+Get Stdout
+    ${file} =  Log File  ${STDOUT_FILE}
+    [Return]  ${file}
+
+Check Syslog Contains
+    [Arguments]  @{expected}
+    Check File Contains  ${SYSLOG_FILE}  @{expected}
+
+Check Syslog Does Not Contain
+    [Arguments]  @{expected}
+    Check File Does Not Contain  ${SYSLOG_FILE}  @{expected}
+
+Check Syslog Matches Regexp
+    [Arguments]  @{expected}
+    Check File Matches Regexp  ${SYSLOG_FILE}  @{expected}
+
+Check Names
+    [Arguments]  ${item}  ${name}  ${longprefix}=
+    Should Be Equal  ${item.name}  ${name}
+    Should Be Equal  ${item.longname}  ${longprefix}${name}
+
+Is Valid Timestamp
+    [Arguments]  ${time}
+    Log  ${time}
+    Should Match Regexp  ${time}  20\\d{6} \\d{2}:\\d{2}:\\d{2}.\\d{3}  Not valid timestamp
+
+Is Valid Elapsed Time
+    [Arguments]  ${time}
+    Log  ${time}
+    Should Be True  isinstance(${time}, int) and ${time} >= 0  Not valid elapsed time
+
