@@ -136,9 +136,9 @@ Check Log Message
 
 Check File Contains
     [Arguments]  ${path}  @{expected}
-    ${expected} =  Catenate  @{expected}
+    ${exp} =  Catenate  @{expected}
     ${file} =  Get File  ${path}
-    Should Contain  ${file}  ${expected}
+    Should Contain  ${file}  ${exp}
 
 Check File Does Not Contain
     [Arguments]  ${path}  @{expected}
