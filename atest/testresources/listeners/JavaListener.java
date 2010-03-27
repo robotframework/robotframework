@@ -17,8 +17,21 @@ public class JavaListener {
 	}
 	
 	public void startSuite(String name, Map attrs) throws IOException {
-		this.outfile.write("START SUITE: " + name + " '" + attrs.get("doc") + "'\n");
+        Map metadata = (Map)attrs.get("metadata");
+        String metastr = getMetaString(metadata);
+		this.outfile.write("START SUITE: " + name + " '" + attrs.get("doc") 
+                            + "' " + metastr + "\n");
 	}
+
+    private String getMetaString(Map metadata) {
+        String metastr = "[";
+        for (Object obj: metadata.entrySet()) {
+            Map.Entry entry = (Map.Entry) obj;
+            metastr += entry.getKey() + ": " + entry.getValue();
+        }
+        metastr += "]";
+        return metastr;
+    }
 
 	public void startTest(String name, Map attrs) throws IOException {
 		this.outfile.write("START TEST: " + name + " '" + attrs.get("doc") + "' [");

@@ -15,7 +15,10 @@ class ListenAll:
         self.outfile = open(path, 'w')
 
     def start_suite(self, name, attrs):
-        self.outfile.write("SUITE START: %s '%s'\n" % (name, attrs['doc']))
+        metastr = ' '.join(['%s: %s' % (k, v) for k, v
+                            in attrs['metadata'].items()])
+        self.outfile.write("SUITE START: %s '%s' [%s]\n"
+                           % (name, attrs['doc'], metastr))
 
     def start_test(self, name, attrs):
         tags = [ str(tag) for tag in attrs['tags'] ]

@@ -7,7 +7,10 @@ ROBOT_LISTENER_API_VERSION = 2
 
 
 def start_suite(name, attrs):
-    OUTFILE.write("SUITE START: %s '%s'\n" % (name, attrs['doc']))
+    metastr = ' '.join(['%s: %s' % (k, v) for k, v
+                        in attrs['metadata'].items()])
+    OUTFILE.write("SUITE START: %s '%s' [%s]\n"
+                  % (name, attrs['doc'], metastr))
 
 def start_test(name, attrs):
     tags = [ str(tag) for tag in attrs['tags'] ]
