@@ -25,7 +25,7 @@ Java Listener
   [Documentation]  Listener listening all methods implemented with Java
   [Tags]  jybot
   @{expected} =  Create List  Got settings on level: INFO
-  ...  START SUITE: Pass And Fail 'Some tests here'
+  ...  START SUITE: Pass And Fail 'Some tests here' [ListenerMeta: Hello]
   ...  START KW: My Keyword [Suite Setup]
   ...  START KW: BuiltIn.Log [Hello says "\${who}"!\${LEVEL1}]
   ...  LOG MESSAGE: [INFO] Hello says "Suite Setup"!
@@ -79,13 +79,13 @@ Run Tests With Listeners
   ...  --listener ListenAll --listener ListenAll:${TEMPDIR}${/}${ALL_FILE2}
   ...  --listener module_listener --listener listeners.ListenSome --listener JavaListener
   ...  --listener listeners.InvalidMethods --listener attributeverifyinglistener
-  ...  --listener JavaAttributeVerifyingListener
+  ...  --listener JavaAttributeVerifyingListener --metadata ListenerMeta:Hello
   Run Tests  ${args}  misc${/}pass_and_fail.html
 
 Check Listen All File
   [Arguments]  ${filename}
   @{expected}=  Create List  Got settings on level: INFO
-  ...  SUITE START: Pass And Fail 'Some tests here'
+  ...  SUITE START: Pass And Fail 'Some tests here' [ListenerMeta: Hello]
   ...  KW START: My Keyword ['Suite Setup']
   ...  KW START: BuiltIn.Log ['Hello says "\${who}"!', '\${LEVEL1}']
   ...  LOG MESSAGE: [INFO] Hello says "Suite Setup"!
