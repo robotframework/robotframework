@@ -12,8 +12,8 @@ Variable Table
     Should Be True  @{TABLE} == 'A B C'.split()
 
 Assign Variables
-    ${assign}=  Set Variable  value
     @{assign}=  Create List  a  b  c
+    ${assign}=  Set Variable  value
     Should Be Equal  ${assign}  value
     Should Be True  @{assign} == 'a b c'.split()
 
