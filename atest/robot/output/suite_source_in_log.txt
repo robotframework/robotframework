@@ -1,6 +1,6 @@
 *** Settings ***
 Force Tags      regression  pybot  jybot
-Resource        ../../resources/resource.html
+Resource        ../../resources/resource.txt
 
 *** Variables ***
 ${RELATIVE}  ../../testdata/misc

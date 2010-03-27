@@ -2,7 +2,7 @@
 Documentation   Testing that possible long error messages are truncated
 Suite Setup     Run Tests  ${EMPTY}  core${/}long_error_messages.txt
 Force Tags      regression  jybot  pybot
-Resource        ../../resources/resource.html
+Resource        ../../resources/resource.txt
 
 *** Variables ***
 ${4_SPACES}  \ \ \ \ \

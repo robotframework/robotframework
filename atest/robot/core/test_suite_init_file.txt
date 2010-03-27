@@ -1,7 +1,7 @@
 *** Settings ***
 Suite Setup      My Setup
 Force Tags       regression   jybot   pybot
-Resource         ../../resources/resource.html
+Resource         ../../resources/resource.txt
 
 *** Variables ***
 ${suite}   These three variables ...

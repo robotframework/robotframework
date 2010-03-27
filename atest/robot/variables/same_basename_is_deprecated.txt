@@ -1,7 +1,7 @@
 *** Settings ***
 Suite Setup     Run Tests  ${EMPTY}  variables/same_basename_is_deprecated.txt
 Force Tags      regression  pybot  jybot
-Resource        ../resources/resource.html
+Resource        ../resources/resource.txt
 
 *** Test Cases ***
 

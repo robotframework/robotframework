@@ -1,7 +1,7 @@
 * Settings *
 Force Tags  regression  pybot  jybot
 Suite Setup  Run Tests  \  parsing/unicode_paths
-Resource  ../../resources/resource.html
+Resource  ../../resources/resource.txt
 Variables  unicode_names.py
 
 * Test Cases *

@@ -1,7 +1,7 @@
 *** Settings ***
 Suite Setup     Run Tests  ${EMPTY}  standard_libraries/operating_system/file_and_dir_empty_or_not.txt
 Force Tags      regression  jybot  pybot
-Resource        ../../../resources/resource.html
+Resource        ../../../resources/resource.txt
 
 *** Test Cases ***
 Directory Should Be Empty

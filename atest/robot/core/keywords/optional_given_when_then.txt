@@ -1,7 +1,7 @@
 *** Settings ***
 Suite Setup     Run Tests  ${EMPTY}  core/keywords/optional_given_when_then.txt
 Force Tags      pybot  jybot  regression
-Resource        ../../../resources/resource.html
+Resource        ../../../resources/resource.txt
 
 *** Test Cases ***
 In user keyword name with normal arguments

@@ -3,7 +3,7 @@ Documentation   Tests for BuiltIn library's run keyword functionality
 Suite Setup     Run Tests  ${EMPTY}  standard_libraries/builtin/run_keyword.txt
 Force Tags      regression
 Default Tags    jybot  pybot
-Resource        ../../../resources/resource.html
+Resource        ../../../resources/resource.txt
 
 *** Test Cases ***
 Run Keyword
