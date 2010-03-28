@@ -112,8 +112,8 @@ Get Test Suite
 Check Test Doc
     [Arguments]  ${test_name}  @{expected_doc}
     ${test} =  Check Test Case  ${test_name}
-    ${expected_doc} =  Catenate  @{expected_doc}
-    Should Be Equal  ${test.doc}  ${expected_doc}
+    ${expected} =  Catenate  @{expected_doc}
+    Should Be Equal  ${test.doc}  ${expected}
     [Return]  ${test}
 
 Check Test Tags
@@ -142,15 +142,15 @@ Check File Contains
 
 Check File Does Not Contain
     [Arguments]  ${path}  @{expected}
-    ${expected} =  Catenate  @{expected}
+    ${exp} =  Catenate  @{expected}
     ${file} =  Get File  ${path}
-    Should Not Contain  ${file}  ${expected}
+    Should Not Contain  ${file}  ${exp}
 
 Check File Matches Regexp
     [Arguments]  ${path}  @{expected}
-    ${expected} =  Catenate  @{expected}
+    ${exp} =  Catenate  @{expected}
     ${file} =  Get File  ${path}
-    Should Match Regexp  ${file.strip()}  ^${expected}$
+    Should Match Regexp  ${file.strip()}  ^${exp}$
 
 Stderr Should Be Empty
     ${stderr} =  Get Stderr

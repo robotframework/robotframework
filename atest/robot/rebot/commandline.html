@@ -1940,19 +1940,8 @@ Contain</td>
 </tr>
 <tr>
 <td></td>
-<td>${exp_files} =</td>
-<td>List</td>
-<td>@{exp_files}</td>
-<td></td>
-<td></td>
-
-
-
-</tr>
-<tr>
-<td></td>
 <td>${act_files} =</td>
-<td>List Dir</td>
+<td>List Directory</td>
 <td>${dir_path}</td>
 <td></td>
 <td></td>
@@ -2132,9 +2121,9 @@ ${MYINPUT}</td>
 
 
 </tr>
-<tr><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Verify Correct Errors in Stderr</td><td>[Arguments]</td><td>@{errors}</td><td></td><td></td><td></td></tr><tr><td></td><td>${error} =</td><td>Set Variable If</td><td>os.sep=='/'</td><td></td><td></td></tr><tr><td></td><td>...</td><td>ERROR</td><td>[ ERROR ]</td><td></td><td></td></tr><tr><td></td><td>Check Stderr Contains</td><td>${error}</td><td></td><td></td><td></td></tr><tr>
+<tr><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Verify Correct Errors in Stderr</td><td>[Arguments]</td><td>@{messages}</td><td></td><td></td><td></td></tr><tr><td></td><td>${error} =</td><td>Set Variable If</td><td>os.sep=='/'</td><td></td><td></td></tr><tr><td></td><td>...</td><td>ERROR</td><td>[ ERROR ]</td><td></td><td></td></tr><tr><td></td><td>Check Stderr Contains</td><td>${error}</td><td></td><td></td><td></td></tr><tr>
 <td></td>
-<td>Check Stderr Contains</td><td>@{errors}</td>
+<td>Check Stderr Contains</td><td>@{messages}</td>
 
 <td></td>
 <td></td>
