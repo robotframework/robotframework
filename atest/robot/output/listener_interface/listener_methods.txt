@@ -3,7 +3,7 @@ Suite Setup  Run Tests With Listeners
 Suite Teardown  Remove Listener Files
 Force Tags  regression
 Default Tags  pybot  jybot
-Resource  listener_resource.html
+Resource  listener_resource.txt
 
 *** Test Cases ***
 Listen All
