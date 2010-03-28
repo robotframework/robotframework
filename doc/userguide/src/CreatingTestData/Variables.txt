@@ -17,9 +17,14 @@ name *cannot* be specified with a variable, but the `BuiltIn
 keyword`_ :name:`Run Keyword` can be used to get the same effect.
 
 Robot Framework itself has two kinds of variables, scalars__ and lists__,
-and they have the syntaxes :var:`${VARIABLE`} and :var:`@{VARIABLE}`,
+and they have the syntaxes :var:`${SCALAR}` and :var:`@{LIST}`,
 respectively. In addition to this, `environment variables`_ can be used
 directly with the syntax :var:`%{VARIABLE}`.
+
+.. warning:: Using scalar variables and list variables with the same
+             base name, for example :var:`${VAR}` and :var:`@{VAR}`,
+             has been deprecated in Robot Framework 2.5. For more
+             information, see `issue 484`__ in the issue tracker.
 
 The use of variables is recommended in the following cases:
 
@@ -55,6 +60,7 @@ literal string, it must be `escaped with a backslash`__ as in :code:`\\${NAME}`.
 
 __ `Scalar variables`_
 __ `List variables`_
+__ http://code.google.com/p/robotframework/issues/detail?id=484
 __ `Setting variables in command line`_
 __ Escaping_
 
