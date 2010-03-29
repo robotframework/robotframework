@@ -1,0 +1,50 @@
+*** Settings ***
+Documentation   Importing test libraries using relative and absolute path.
+Suite Setup     Run Tests  ${EMPTY}  test_libraries/library_import_by_path.txt
+Force Tags      regression
+Default Tags    pybot  jybot
+Resource        ../../resources/resource.txt
+
+*** Test Cases ***
+Importing Python Library In File By Path
+    ${test} =  Check Test Case  Importing Python Library In File By Path
+    Should Be Equal  ${test.kws[0].name}  MyLibFile.Keyword In My Lib File
+    Should Be Equal  ${test.kws[1].name}  \${ret} = MyLibFile2.Keyword In My Lib File 2
+
+Importing Python Library In Dir By Path
+    ${test} =  Check Test Case  Importing Python Library In Dir By Path
+    Should Be Equal  ${test.kws[0].name}  \${ret} = MyLibDir.Keyword In My Lib Dir
+    Should Be Equal  ${test.kws[2].name}  \${ret} = MyLibDir.Keyword In My Lib Dir
+
+Importing Python Library By Path With Variables
+    ${test} =  Check Test Case  Importing Python Library By Path With Variables
+    Should Be Equal  ${test.kws[0].name}  \${sum} = MyLibDir2.Keyword In My Lib Dir 2
+
+Importing Java Library File By Path With .java Extension
+    [Tags]  jybot
+    ${test} =  Check Test Case  Importing Java Library File By Path With .java Extension
+    Should Be Equal  ${test.kws[0].name}  \${ret} = MyJavaLib.Keyword In My Java Lib
+
+Importing Java Library File By Path With .class Extension
+    [Tags]  jybot
+    ${test} =  Check Test Case  Importing Java Library File By Path With .class Extension
+    Should Be Equal  ${test.kws[0].name}  \${ret} = MyJavaLib2.Keyword In My Java Lib 2
+
+Importing By Path Having Spaces
+    Check Test Case  Importing By Path Having Spaces
+
+Importing Invalid Python File Fails
+    Check Stderr Contains  Importing test library 'MyInvalidLibFile' failed:  ImportError: I'm not really a library!
+
+Inporting Dir Library Without Trailing "/" Fails
+    ${no} =  Evaluate  '${INTERPRETER}'.count('jython') and 'no' or 'No'
+    Check Stderr Contains  Importing test library 'MyLibDir' failed:  ImportError: ${no} module named MyLibDir
+
+Importing Non Python File Fails
+    ${no} =  Evaluate  '${INTERPRETER}'.count('jython') and 'no' or 'No'
+    Check Stderr Contains  Importing test library 'java_libraries.html' failed:  ImportError: ${no} module named java_libraries
+
+Importing Non Python Dir Fails
+    ${no} =  Evaluate  '${INTERPRETER}'.count('jython') and 'no' or 'No'
+    Check Stderr Matches Regexp  (?ms).*Importing test library 'library_scope/' failed:  ImportError: (${no} module named library_scope/|Import by filename is not supported.)
+
