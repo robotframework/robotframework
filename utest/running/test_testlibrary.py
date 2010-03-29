@@ -79,9 +79,8 @@ class TestImports(unittest.TestCase):
                          [("keyword from submodule", None)])
         
     def test_import_non_existing_module(self):
-        exp = ("Importing test library '%%s' failed: " 
-               "ImportError: %so module named %%s\nPYTHONPATH:" 
-               % (utils.is_jython and 'n' or 'N'))
+        exp = ("Importing test library '%s' failed: " 
+               "ImportError: No module named %s\nPYTHONPATH:")
         for name in 'nonexisting', 'nonexi.sting':
             try:
                 TestLibrary(name)

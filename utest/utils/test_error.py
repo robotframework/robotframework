@@ -47,8 +47,8 @@ class TestError(unittest.TestCase):
                     ('ArithmeticException', None, 'ArithmeticException'),
                     ('AssertionError', 'Msg\nin 3\nlines', 'Msg\nin 3\nlines'),
                     ('IOException', '1\n2', 'IOException: 1\n2'),
-                    ('RuntimeException', 'java.lang.RuntimeException: embedded', 'embedded'),
-                    ('IOException', 'java.io.IOException: emb', 'IOException: emb'), ]: 
+                    ('RuntimeException', 'embedded', 'embedded'),
+                    ('IOException', 'IOException: emb', 'IOException: emb'), ]: 
                 try:
                     throw_method = getattr(java_exceptions, 'throw'+exception)
                     throw_method(msg)
