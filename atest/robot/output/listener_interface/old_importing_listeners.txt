@@ -1,0 +1,55 @@
+*** Settings ***
+Suite Setup     Run Tests  --listener OldListenAll --listener old_listeners.ListenSome --listener old_module_listener --listener old_listeners.WithArgs:value --listener old_listeners.WithArgs:a1:a2 --listener ${LISTENERS}${/}OldListenAll.py:${TEMPDIR}${/}${ALL_FILE2} --listener old_listeners.WithArgs --listener old_listeners.WithArgs:1:2:3 --listener OldJavaListener --listener OldJavaListenerWithArgs:Hello:world! --listener OldJavaListenerWithArgs --listener OldJavaListenerWithArgs:b:a:r --listener NonExistingListener  misc${/}pass_and_fail.html
+Suite Teardown  Remove Listener Files
+Force Tags      regression
+Default Tags    pybot  jybot
+Resource        listener_resource.txt
+
+*** Test Cases ***
+Python Class Listener From Module With Same Name
+    Listener Import Message Should Be In Syslog  OldListenAll  [ ]  OldListenAll.py
+
+Python Class Listener From A Module With Different Name
+    Listener Import Message Should Be In Syslog  old_listeners.ListenSome  [ ]  old_listeners.py
+
+Python Module Listener
+    Listener Import Message Should Be In Syslog  old_module_listener  [ ]  old_module_listener.py
+
+Listener With Arguments
+    Listener Import Message Should Be In Syslog  old_listeners.WithArgs  [ value ]  old_listeners.py
+    Listener Import Message Should Be In Syslog  old_listeners.WithArgs  [ a1 | a2 ]  old_listeners.py
+    Check Listener File  ${ARGS_FILE}  I got arguments 'value' and 'default'  I got arguments 'a1' and 'a2'
+
+Listener With Path
+    ${expected args} =  Set Variable If  ${TEMPDIR.count(':')}  ${TEMPDIR[0]} | ${TEMPDIR[2:]}${/}${ALL_FILE2}  ${TEMPDIR}${/}${ALL_FILE2}
+    Listener Import Message Should Be In Syslog  ${LISTENERS}${/}OldListenAll.py  [ ${expected args} ]  OldListenAll.py
+    File Should Exist  ${TEMPDIR}${/}${ALL_FILE2}
+
+Listener With Wrong Number Of Arguments
+    Check Syslog contains  Taking listener 'old_listeners.WithArgs' into use failed: TypeError: __init__() takes at least 2 arguments (1 given)
+    Check Syslog contains  Taking listener 'old_listeners.WithArgs:1:2:3' into use failed: TypeError: __init__()
+
+Non Existing Listener
+    Check Syslog contains  Taking listener 'NonExistingListener' into use failed: Importing listener 'NonExistingListener' failed: ImportError:
+
+Java Listener
+    [Tags]  jybot
+    Listener Import Message Should Be In Syslog  OldJavaListener  [ ]
+
+Java Listener With Arguments
+    [Tags]  jybot
+    Listener Import Message Should Be In Syslog  OldJavaListenerWithArgs  [ Hello | world! ]
+    Check Listener File  ${JAVA_ARGS_FILE}  I got arguments 'Hello' and 'world!'
+
+Java Listener With Wrong Number Of Arguments
+    [Tags]  jybot
+    Check Syslog contains  Taking listener 'OldJavaListenerWithArgs' into use failed: TypeError: OldJavaListenerWithArgs(): expected 2 args; got 0
+    Check Syslog contains  Taking listener 'OldJavaListenerWithArgs:b:a:r' into use failed: TypeError: OldJavaListenerWithArgs(): expected 2 args; got 3
+
+*** Keywords ***
+Listener Import Message Should Be In Syslog
+    [Arguments]  ${name}  ${args}  ${source}=<unknown>
+    ${module_path} =  Join Path  ${LISTENERS}  ${source}
+    ${source} =  Set Variable If  '${source}' != '<unknown>'  ${module_path}  <unknown>
+    Check Syslog Contains  Imported listener '${name}' with arguments ${args} (source ${source}
+
