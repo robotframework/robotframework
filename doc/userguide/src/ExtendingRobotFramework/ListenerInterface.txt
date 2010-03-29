@@ -100,7 +100,8 @@ Thus, for example, :code:`startSuite` is a synonym to :code:`start_suite`.
    |               |                  | * testcount: number of tests in this suite       |
    |               |                  | * suitecount: number of subsuites this suite has |
    |               |                  | * totaltests: number of tests in all subsuites   |
-   |               |                  |   of this suite                                  |
+   |               |                  |                                                  |
+   |               |                  | The last four were added in Robot Framework 2.5  |
    +---------------+------------------+--------------------------------------------------+
    | end_suite     | name, attributes | Keys in the attributes dictionary:               |
    |               |                  |                                                  |
@@ -111,19 +112,19 @@ Thus, for example, :code:`startSuite` is a synonym to :code:`start_suite`.
    |               |                  | * elapsetime: execution time in milliseconds     |
    |               |                  |   as an integer                                  |
    |               |                  | * status: either :code:`PASS` or :code:`FAIL`    |
-   |               |                  | * statistics: suite statistics (number of passed | 
+   |               |                  | * statistics: suite statistics (number of passed |
    |               |                  |   and failed tests in the suite) as a string     |
-   |               |                  | * message: error message, if the suite setup     | 
+   |               |                  | * message: error message, if the suite setup     |
    |               |                  |   or teardown has failed, empty otherwise        |
    +---------------+------------------+--------------------------------------------------+
-   | start_test    | name, attributes | Keys in the attributes dictionary:               | 
+   | start_test    | name, attributes | Keys in the attributes dictionary:               |
    |               |                  |                                                  |
    |               |                  | * doc: test case documentation                   |
    |               |                  | * longname: test name including parent suites    |
    |               |                  | * starttime: execution start time                |
    |               |                  | * tags: test case tags as a list of strings      |
    +---------------+------------------+--------------------------------------------------+
-   | end_test      | name, attributes | Keys in the attributes dictionary:               | 
+   | end_test      | name, attributes | Keys in the attributes dictionary:               |
    |               |                  |                                                  |
    |               |                  | * doc: test case documentation                   |
    |               |                  | * longname: test name including parent suites    |
@@ -136,13 +137,13 @@ Thus, for example, :code:`startSuite` is a synonym to :code:`start_suite`.
    |               |                  | * message: contains an error message if the      |
    |               |                  |   test has failed and is empty otherwise         |
    +---------------+------------------+--------------------------------------------------+
-   | start_keyword | name, attributes | Keys in the attributes dictionary:               | 
+   | start_keyword | name, attributes | Keys in the attributes dictionary:               |
    |               |                  |                                                  |
    |               |                  | * doc: keyword documentation                     |
    |               |                  | * starttime: execution start time                |
    |               |                  | * args: keyword arguments as a list of strings   |
    +---------------+------------------+--------------------------------------------------+
-   | end_keyword   | name, attributes | Keys in the attributes dictionary:               | 
+   | end_keyword   | name, attributes | Keys in the attributes dictionary:               |
    |               |                  |                                                  |
    |               |                  | * doc: keyword documentation                     |
    |               |                  | * starttime: execution start time                |
