@@ -110,11 +110,6 @@ Reading Output With Lot Of Data In Stdout And Stderr
     ${out} =  Read Process Output
     Length Should Be  ${out}  ${12*15000-1}
 
-Mode Argument Is Deprecated
-    Start Process  ${PROG} 0 hello
-    ${out} =  Read Process Output  stderr
-    Should Be Equal  ${out}  hello
-
 *** Keywords ***
 My Setup
     ${index} =  Start Process  ${PROG} 0 from_suite_setup  ${EMPTY}  suite setup process
