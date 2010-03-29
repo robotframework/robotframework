@@ -12,7 +12,6 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-import os
 import sys
 
 
@@ -25,8 +24,7 @@ def unic(item, *args):
         return unicode(ascii_text)
 
 
-if os.name == 'java' and sys.version_info[:2] > (2,2):
-
+if sys.platform.startswith('java'):
     from java.lang import Object, Class
     _unic = unic
 
@@ -36,11 +34,3 @@ if os.name == 'java' and sys.version_info[:2] > (2,2):
         if isinstance(item, Object) and not isinstance(item, Class): # http://bugs.jython.org/issue1564
             item = item.toString()  # http://bugs.jython.org/issue1563
         return _unic(item, *args)
-
-
-elif os.name == 'java':
-
-    def unic(item, *args):
-        if isinstance(item, basestring):
-            return item
-        return unicode(item)
