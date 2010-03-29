@@ -1,5 +1,4 @@
 import unittest
-import sys
 
 from robot.output.listeners import Listeners
 from robot.output import LOGGER
@@ -16,6 +15,8 @@ class SuiteMock(_Mock):
         self.name = 'suitemock'
         self.doc = 'somedoc'
         self.status = 'PASS'
+        self.tests = self.suites = []
+        self.get_test_count = lambda: 0
 
     def get_stat_message(self):
         return 'full message'
@@ -39,7 +40,7 @@ class KwMock(_Mock):
 
 
 class ListenAllOldStyle:
-    
+
     def start_suite(self, name, doc):
         print "SUITE START: %s '%s'" % (name, doc)
     def start_test(self, name, doc, tags):
@@ -54,7 +55,7 @@ class ListenAllOldStyle:
         if status == 'PASS':
             print 'TEST END: PASS'
         else:
-            print "TEST END: %s %s" % (status, message)        
+            print "TEST END: %s %s" % (status, message)
     def end_suite(self, status, message):
         print 'SUITE END: %s %s' % (status, message)
     def output_file(self, path):
@@ -76,11 +77,11 @@ class ListenAllOldStyle:
 class ListenAllNewStyle:
 
     ROBOT_LISTENER_API_VERSION = '2'
-    
+
     def start_suite(self, name, attrs):
         print "SUITE START: %s '%s'" % (name, attrs['doc'])
     def start_test(self, name, attrs):
-        print "TEST START: %s '%s' %s" % (name, attrs['doc'], 
+        print "TEST START: %s '%s' %s" % (name, attrs['doc'],
                                           ', '.join(attrs['tags']))
     def start_keyword(self, name, attrs):
         args = [ str(arg) for arg in attrs['args'] ]
@@ -91,7 +92,7 @@ class ListenAllNewStyle:
         if attrs['status'] == 'PASS':
             print 'TEST END: PASS'
         else:
-            print "TEST END: %s %s" % (attrs['status'], attrs['message'])        
+            print "TEST END: %s %s" % (attrs['status'], attrs['message'])
     def end_suite(self, name, attrs):
         print 'SUITE END: %s %s' % (attrs['status'], attrs['statistics'])
     def output_file(self, path):
