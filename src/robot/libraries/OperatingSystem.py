@@ -234,17 +234,14 @@ class OperatingSystem:
         """
         PROCESSES.switch(index_or_alias)
 
-    def read_process_output(self, mode='DEPRECATED'):
+    def read_process_output(self):
         """Waits for the process to finish and returns its output.
 
-        In Robot Framework versions prior to 2.0.2 it was possible to
-        read either the standard output, standard error or both. As
-        mentioned in the documentation of `Start Process`, the
-        standard error is nowadays automatically redirected to the
-        standard output. This keyword thus always returns all the
-        output and `mode` argument is ignored.  As explained in `Run`
-        keyword, it is still possible to redirect the standard error,
-        or output, using e.g. '2>stderr.txt' after the command.
+        As mentioned in the documentation of `Start Process` keyword,
+        and documented thoroughly in `Run` keyword, the standard error
+        stream is automatically redirected to the standard
+        output. This keyword thus always returns all the output
+        procuded by the command.
 
         Note that although the process is finished, it is not removed
         from the process list. Trying to read from a stopped process
@@ -254,9 +251,6 @@ class OperatingSystem:
         See `Start Process` and `Switch Process` for more information
         and examples about running processes.
         """
-        if mode != 'DEPRECATED':
-            self._warn("'mode' argument for 'Read Process Output' keyword is "
-                       "deprecated and will be removed in RF 2.2.")
         output = PROCESSES.current.read()
         PROCESSES.current.close()
         return output
