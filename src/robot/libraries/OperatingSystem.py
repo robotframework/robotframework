@@ -200,10 +200,10 @@ class OperatingSystem:
         The optional `alias` is a name for this process that may be used with
         `Switch Process` instead of the returned index.
 
-        Starting from Robot Framework 2.0.2, the standard error stream
-        is redirected to the standard input stream automatically by
-        adding '2>&1' after the executed command. This is done the
-        same way, and for the same reasons, as with `Run` keyword.
+        The standard error stream is redirected to the standard input
+        stream automatically by adding '2>&1' after the executed
+        command. This is done the same way, and for the same reasons,
+        as with `Run` keyword.
 
         Example:
         | Start Process  | /path/longlasting.sh |
@@ -923,9 +923,8 @@ class OperatingSystem:
         removed). The base path and extension are returned as separate
         components so that the dot used as an extension separator is
         removed. If the path contains no extension, an empty string is
-        returned for it. Starting from Robot Framework 2.0.2, possible
-        leading and trailing dots in the file name are never
-        considered to be extension separators.
+        returned for it. Possible leading and trailing dots in the file
+        name are never considered to be extension separators.
 
         Examples:
         | ${path} | ${ext} = | Split Extension | file.extension    |

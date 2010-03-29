@@ -638,10 +638,8 @@ class Collections(_List, _Dictionary):
     | `Get Count`                  | lists |
 
     All list keywords expect a scalar variable (e.g. ${list}) as an
-    argument.  Starting with Robot Framework 2.0.3, it is possible to
-    use list variables (e.g. @{list}) as scalars simply by replacing
-    '@' with '$'. With earlier versions, list variables must be
-    converted to scalar variables first.
+    argument.  It is, however, possible to use list variables
+    (e.g. @{list}) as scalars simply by replacing '@' with '$'.
 
     List keywords that do not alter the given list can also be used
     with tuples, and to some extend also with other iterables.

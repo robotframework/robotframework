@@ -198,8 +198,7 @@ class _Verify:
     def should_not_be_equal_as_numbers(self, first, second, msg=None, values=True):
         """Fails if objects are equal after converting them to real numbers.
 
-        Starting from Robot Framework 2.0.2, the check for equality is
-        done using six decimal places.
+        The check for equality is done using six decimal places.
 
         See `Should Be Equal` for an explanation on how to override the default
         error message with `msg` and `values`.
@@ -211,8 +210,7 @@ class _Verify:
     def should_be_equal_as_numbers(self, first, second, msg=None, values=True):
         """Fails if objects are unequal after converting them to real numbers.
 
-        Starting from Robot Framework 2.0.2, the check for equality is
-        done using six decimal places.
+        The check for equality is done using six decimal places.
 
         See `Should Be Equal` for an explanation on how to override the default
         error message with `msg` and `values`.
@@ -583,8 +581,8 @@ class _Variables:
         | Should Be Equal | ${message}        | Hello Robot!           |
 
         If the given `text` contains only a single variable, its value is
-        returned as-is. Otherwise, and always with Robot Framework 2.0.3 and
-        earlier, this keyword returns a string.
+        returned as-is and it can be any object. Otherwise this keyword 
+        always returns a string.
         """
         return self.get_variables().replace_scalar(text)
 
@@ -907,12 +905,12 @@ class _RunKeyword:
         - ${var2} = 'value2'
         - ${var3} = None
 
-        Starting from Robot Framework 2.0.2 it is also possible to have
-        'Else If' support by replacing the second value with another
-        condition, and having two new values after it. If the first
-        condition is not true, the second is evaluated and one of the
-        values after it is returned based on its truth value. This can
-        be continued by adding more conditions without a limit.
+        It is also possible to have 'Else If' support by replacing the
+        second value with another condition, and having two new values
+        after it. If the first condition is not true, the second is
+        evaluated and one of the values after it is returned based on
+        its truth value. This can be continued by adding more
+        conditions without a limit.
 
         | ${var} = | Set Variable If | ${rc} == 0        | zero           |
         | ...      | ${rc} > 0       | greater than zero | less then zero |
@@ -1155,11 +1153,11 @@ class _Misc:
 
         This keyword supports importing libraries both using library
         names and physical paths. When path are used, they must be
-        given in absolute format. Starting from 2.0.2 version, forward
-        slashes can be used as path separators in all operating
-        systems. It is possible to use arguments as well as to give a
-        custom name with 'WITH NAME' syntax. For more information
-        about importing libraries, see Robot Framework User Guide.
+        given in absolute format. Forward slashes can be used as path
+        separators in all operating systems. It is possible to use
+        arguments as well as to give a custom name with 'WITH NAME'
+        syntax. For more information about importing libraries, see
+        Robot Framework User Guide.
 
         Examples:
         | Import Library | MyLibrary |
@@ -1374,8 +1372,6 @@ class _Misc:
 
         See `Remove Tags` for another keyword to modify tags at test
         execution time.
-
-        New in Robot Framework version 2.0.3.
         """
         tags = utils.normalize_tags(tags)
         handler = lambda test: utils.normalize_tags(test.tags + tags)
@@ -1394,8 +1390,6 @@ class _Misc:
 
         Example:
         | Remove Tags | mytag | something-* | ?ython |
-
-        New in Robot Framework version 2.0.3.
         """
         tags = utils.normalize_tags(tags)
         handler = lambda test: [ t for t in test.tags
