@@ -465,6 +465,7 @@ a:hover, a:active {
 }
 div.shortcuts {
   margin: 1em 0em;
+  font-size: 0.9em;
 }
 div.shortcuts a {
   text-decoration: none;
