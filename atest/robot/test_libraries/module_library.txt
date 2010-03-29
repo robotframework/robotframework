@@ -1,0 +1,57 @@
+*** Settings ***
+Suite Setup     Run Tests  ${EMPTY}  test_libraries/module_library.txt
+Force Tags      regression  jybot  pybot
+Resource        ../../resources/resource.txt
+
+*** Test Cases ***
+Passing
+    Check Test Case  Passing
+
+Failing
+    Check Test Case  Failing
+
+Logging
+    ${test} =  Check Test Case  Logging
+    Check Log Message  ${test.kws[0].msgs[0]}  Hello from module library
+    Check Log Message  ${test.kws[0].msgs[1]}  WARNING!  WARN
+
+Returning
+    Check Test Case  Returning
+
+One Argument
+    Check Test Case  One Argument
+
+Many Arguments
+    Check Test Case  Many arguments
+
+Default Arguments
+    Check Test Case  Default Arguments
+
+Variable Arguments
+    Check Test Case  Variable Arguments
+
+Only Methods And Functions Are Keywords
+    Check Test Case  Only methods and functions are Keywords
+
+Class Methods In Module Library Are Not Keywords
+    Check Test Case  Class Methods in Module Library are Not Keywords
+
+Class Method Assigned To Module Variable
+    Check Test Case  Class method assigned to Module variable
+
+Lambda Keyword
+    Check Test Case  Lambda Keyword
+
+Lambda Keyword With Arguments
+    Check Test Case  Lambda Keyword With Arguments
+
+Attribute With Same Name As Module
+    Check Test Case  Attribute With Same Name as Module
+
+Importing Submodule As Library
+    Check Test Case  Importing submodule As Library
+
+Module Library Scope Should Be Global
+    ${lib module path} =  Join Path  ${CURDIR}/../../  testresources/testlibs/module_library.py
+    Check Syslog Contains  Imported library 'module_library' with arguments [ ] (version test, module type, global scope, 12 keywords, source ${lib module path}
+
