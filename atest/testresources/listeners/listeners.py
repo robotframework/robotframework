@@ -41,17 +41,17 @@ class InvalidMethods:
 
 class SuiteAndTestCounts(object):
     ROBOT_LISTENER_API_VERSION = '2'
-    exp_counts = {
-                  'Subsuites & Subsuites 2': (0,2,4),
-                  'Subsuites': (0,2,2),
-                  'Sub 1': (1,0,1),
-                  'Sub 2': (1,0,1),
-                  'Subsuites 2': (0,1,2),
-                  'Subsuite 3': (2,0,2),
-                 }
+    exp_data = {
+        'Subsuites & Subsuites 2': ([], ['Subsuites', 'Subsuites 2'], 4),
+        'Subsuites':               ([], ['Sub 1', 'Sub 2'], 2),
+        'Sub 1':                   (['SubSuite1 First'], [], 1),
+        'Sub 2':                   (['SubSuite2 First'], [], 1),
+        'Subsuites 2':             ([], ['Subsuite 3'], 2),
+        'Subsuite 3':              (['SubSuite3 First', 'SubSuite3 Second'], [], 2),
+        }
 
     def start_suite(self, name, attrs):
-        counts = attrs['testcount'], attrs['suitecount'], attrs['totaltests']
-        if not counts == self.exp_counts[name]:
-            raise RuntimeError('Wrong number of tests or suites in %s, %s != %s' %
-                               (name, self.exp_counts[name]), counts)
+        data = attrs['tests'], attrs['suites'], attrs['totaltests']
+        if not data == self.exp_data[name]:
+            raise RuntimeError('Wrong tests or suites in %s, %s != %s' %
+                               (name, self.exp_data[name], data))

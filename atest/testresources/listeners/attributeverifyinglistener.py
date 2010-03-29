@@ -8,14 +8,14 @@ OUTFILE = open(os.path.join(tempfile.gettempdir(), 'listener_attrs.txt'), 'w')
 START_ATTRIBUTES = ['doc', 'starttime']
 END_ATTRIBUTES = START_ATTRIBUTES + ['endtime', 'elapsedtime', 'status']
 EXPECTED_TYPES = {'elapsedtime': long, 'tags': list, 'args': list,
-                  'metadata': dict, 'testcount': int, 'suitecount':int,
+                  'metadata': dict, 'tests': list, 'suites': list,
                   'totaltests': int}
 
 
 def start_suite(name, attrs):
     _verify_attributes('START SUITE', attrs,
-                       START_ATTRIBUTES+['longname', 'metadata', 'testcount',
-                                         'suitecount', 'totaltests'])
+                       START_ATTRIBUTES+['longname', 'metadata', 'tests',
+                                         'suites', 'totaltests'])
 
 def end_suite(name, attrs):
     _verify_attributes('END SUITE', attrs, END_ATTRIBUTES+['longname', 'statistics', 'message'])

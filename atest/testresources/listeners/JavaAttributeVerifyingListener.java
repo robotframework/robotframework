@@ -26,15 +26,15 @@ public class JavaAttributeVerifyingListener {
 		    put("tags", PyList.class);
 		    put("args", PyList.class);
 		    put("metadata", PyDictionary.class);
-		    put("testcount", Integer.class);
-		    put("suitecount", Integer.class);
+		    put("tests", PyList.class);
+		    put("suites", PyList.class);
 		    put("totaltests", Integer.class);
         }};
 	}
 	
 	public void startSuite(String name, Map attrs) {
 		verifyAttributes("START SUITE", attrs,
-                new String[] {"doc", "starttime", "longname", "metadata", "testcount", "suitecount", "totaltests"});
+                new String[] {"doc", "starttime", "longname", "metadata", "tests", "suites", "totaltests"});
 	}
 
 	public void endSuite(String name, Map attrs) {

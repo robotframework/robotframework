@@ -1,4 +1,5 @@
 import java.util.*;
+import org.python.core.PyList;
 
 public class JavaSuiteAndTestCountListener {
     public static final String ROBOT_LISTENER_API_VERSION = "2";
@@ -13,13 +14,18 @@ public class JavaSuiteAndTestCountListener {
     
     public void startSuite(String name, Map attrs) {
         int[] expCounts = data.get(name);
-        checkCount(expCounts[0], getActual(attrs, "testcount"));
-        checkCount(expCounts[1], getActual(attrs, "suitecount"));
+        checkCount(expCounts[0], getActual(attrs, "tests"));
+        checkCount(expCounts[1], getActual(attrs, "suites"));
         checkCount(expCounts[2], getActual(attrs, "totaltests"));
     }
 
     private int getActual(Map attrs, String key) {
-        return ((Integer) attrs.get(key)).intValue();
+        Object item = attrs.get(key);
+        try {
+            return ((PyList) item).size();
+        } catch (ClassCastException e) {
+            return ((Integer) attrs.get(key)).intValue();
+        }
     }
 
     private void checkCount(int expected, int actual) {
