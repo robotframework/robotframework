@@ -1,0 +1,30 @@
+*** Settings ***
+Suite Setup     Run Tests  ${EMPTY}  standard_libraries${/}builtin${/}converter.html
+Force Tags      regression
+Default Tags    jybot  pybot
+Resource        ../../../resources/resource.txt
+
+*** Test Cases ***
+Convert To Integer
+    Check testcase  Convert To Integer
+
+Convert To Integer With Java Objects
+    [Tags]  jybot
+    Check testcase  Convert To Integer With Java Objects
+
+Convert To Number
+    Check testcase  Convert To Number
+
+Convert To Number With Java Objects
+    [Tags]  jybot
+    Check testcase  Convert To Number With Java Objects
+
+Convert To String
+    Check testcase  Convert To String
+
+Convert To Boolean
+    Check testcase  Convert To Boolean
+
+Create List
+    Check testcase  Create List
+
