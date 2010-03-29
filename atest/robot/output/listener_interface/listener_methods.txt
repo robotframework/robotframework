@@ -77,6 +77,12 @@ Suite And Test Counts
     Run Tests  --listener listeners.SuiteAndTestCounts  misc/suites/sub*
     Stderr Should Be Empty
 
+Suite And Test Counts With Java
+    [Tags]  jybot
+    Run Tests  --listener JavaSuiteAndTestCountListener  misc/suites/sub*
+    Stderr Should Be Empty
+
+
 *** Keywords ***
 Run Tests With Listeners
     ${args}=  Catenate
