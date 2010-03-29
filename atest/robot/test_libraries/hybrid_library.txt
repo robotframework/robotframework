@@ -17,8 +17,7 @@ Keyword Implemented In Library Class Itself
 
 Non Existing Keyword
     Check Test Case  Non Existing Keyword
-    ${err} =  Evaluate  'jython' in '${INTERPRETER}' and "'instance' object has no attribute 'non_existing_kw'" or "Non-existing keyword 'non_existing_kw'"
-    Check Syslog Contains  | WARN \ |  Adding keyword 'non_existing_kw' to library 'GetKeywordNamesLibrary' failed:  Getting handler method failed: AttributeError: ${err}
+    Check Syslog Contains  | WARN \ |  Adding keyword 'non_existing_kw' to library 'GetKeywordNamesLibrary' failed:  Getting handler method failed: AttributeError: Non-existing keyword 'non_existing_kw'
 
 Named Keyword Is Not Method
     Check Test Case  Named Keyword Is Not Method
