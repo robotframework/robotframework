@@ -52,6 +52,6 @@ Importing Submodule As Library
     Check Test Case  Importing submodule As Library
 
 Module Library Scope Should Be Global
-    ${lib module path} =  Join Path  ${CURDIR}/../../  testresources/testlibs/module_library.py
+    ${lib module path} =  Join Path  ${CURDIR}/../../  testresources/testlibs/module_library
     Check Syslog Contains  Imported library 'module_library' with arguments [ ] (version test, module type, global scope, 12 keywords, source ${lib module path}
 
