@@ -18,7 +18,7 @@ Keyword In Python Class Using Method From Parent Class
     Check Test Case  Keyword In Python Class Using Method From Parent Class
 
 Message Of Importing Library Should Be In Syslog
-    ${lib path} =  Join Path  ${CURDIR}/../../  testresources/testlibs/ExtendPythonLib.py
+    ${lib path} =  Join Path  ${CURDIR}/../../  testresources/testlibs/ExtendPythonLib
     Check Syslog Contains  Imported library 'ExtendPythonLib' with arguments [ ] (version <unknown>, class type, testcase scope, 27 keywords, source ${lib path}
 
 Keyword From Java Class Extended By Python Class
