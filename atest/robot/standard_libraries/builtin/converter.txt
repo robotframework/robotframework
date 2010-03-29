@@ -1,5 +1,5 @@
 *** Settings ***
-Suite Setup     Run Tests  ${EMPTY}  standard_libraries${/}builtin${/}converter.html
+Suite Setup     Run Tests  ${EMPTY}  standard_libraries/builtin/converter.txt
 Force Tags      regression
 Default Tags    jybot  pybot
 Resource        ../../../resources/resource.txt
