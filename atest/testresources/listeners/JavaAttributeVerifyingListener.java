@@ -21,36 +21,45 @@ public class JavaAttributeVerifyingListener {
 		outfile = new BufferedWriter(new FileWriter(outpath));
 	}
 	public void createExcpectedTypes() {
-		expectedTypes = new HashMap();
-		expectedTypes.put("elapsedtime", BigInteger.class);
-		expectedTypes.put("tags", PyList.class);
-		expectedTypes.put("args", PyList.class);
-		expectedTypes.put("metadata", PyDictionary.class);
+		expectedTypes = new HashMap() {{
+		    put("elapsedtime", BigInteger.class);
+		    put("tags", PyList.class);
+		    put("args", PyList.class);
+		    put("metadata", PyDictionary.class);
+		    put("testcount", Integer.class);
+		    put("suitecount", Integer.class);
+		    put("totaltests", Integer.class);
+        }};
 	}
 	
 	public void startSuite(String name, Map attrs) {
 		verifyAttributes("START SUITE", attrs,
-                         new String[] {"doc", "starttime", "longname", "metadata"});
+                new String[] {"doc", "starttime", "longname", "metadata", "testcount", "suitecount", "totaltests"});
 	}
 
 	public void endSuite(String name, Map attrs) {
-		verifyAttributes("END SUITE", attrs, new String[] {"doc", "starttime", "longname", "endtime", "elapsedtime", "status", "message", "statistics"});
+		verifyAttributes("END SUITE", attrs,
+                new String[] {"doc", "starttime", "longname", "endtime", "elapsedtime", "status", "message", "statistics"});
 	}
 	
 	public void startTest(String name, Map attrs) {
-		verifyAttributes("START TEST", attrs, new String[] {"doc", "starttime", "longname", "tags"});	
+		verifyAttributes("START TEST", attrs,
+                new String[] {"doc", "starttime", "longname", "tags"});	
 	}
 
 	public void endTest(String name, Map attrs) {
-		verifyAttributes("END TEST", attrs, new String[] {"doc", "starttime", "longname", "tags", "endtime", "elapsedtime", "status", "message"});	
+		verifyAttributes("END TEST", attrs,
+                new String[] {"doc", "starttime", "longname", "tags", "endtime", "elapsedtime", "status", "message"});	
 	}
 	
 	public void startKeyword(String name, Map attrs) {
-		verifyAttributes("START KEYWORD", attrs, new String[] {"doc", "starttime", "args"});	
+		verifyAttributes("START KEYWORD", attrs,
+                new String[] {"doc", "starttime", "args"});
 	}
 	
 	public void endKeyword(String name, Map attrs) {
-		verifyAttributes("END KEYWORD", attrs, new String[] {"doc", "starttime", "args", "endtime", "elapsedtime", "status"});	
+		verifyAttributes("END KEYWORD", attrs,
+                new String[] {"doc", "starttime", "args", "endtime", "elapsedtime", "status"});
 	}
 
 	public void close() throws IOException {
@@ -65,8 +74,7 @@ public class JavaAttributeVerifyingListener {
         		outfile.write("Expected: " + names + "\n" + "Actual: " + attrs.keySet() + "\n");
 			}
 			else {
-				for (int i=0; i<names.length; i++){
-					String name = names[i];
+				for (String name: names) {
 					Object attr = attrs.get(name);
 					String status = "PASSED";
 					Class expectedClass = Class.forName("java.lang.String");	
