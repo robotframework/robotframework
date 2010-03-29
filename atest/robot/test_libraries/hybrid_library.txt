@@ -1,0 +1,26 @@
+*** Settings ***
+Suite Setup     Run Tests  ${EMPTY}  test_libraries/hybrid_library.txt
+Force Tags      regression  jybot  pybot
+Resource        ../../resources/resource.txt
+
+*** Test Cases ***
+Passing, Logging And Returning
+    ${tc} =  Check Test Case  Passing, Logging and Returning
+    Check Log Message  ${tc.kws[0].msgs[0]}  Hello world
+
+Failing
+    Check Test Case  Failing
+
+Keyword Implemented In Library Class Itself
+    ${tc} =  Check Test Case  Keyword Implemented In Library Class Itself
+    Check Log Message  ${tc.kws[0].msgs[0]}  No need for __getattr__ here!!
+
+Non Existing Keyword
+    Check Test Case  Non Existing Keyword
+    ${err} =  Evaluate  'jython' in '${INTERPRETER}' and "'instance' object has no attribute 'non_existing_kw'" or "Non-existing keyword 'non_existing_kw'"
+    Check Syslog Contains  | WARN \ |  Adding keyword 'non_existing_kw' to library 'GetKeywordNamesLibrary' failed:  Getting handler method failed: AttributeError: ${err}
+
+Named Keyword Is Not Method
+    Check Test Case  Named Keyword Is Not Method
+    Check Syslog Contains  | WARN \ |  Adding keyword 'this_is_not_keyword' to library 'GetKeywordNamesLibrary' failed:  Not a method or function
+
