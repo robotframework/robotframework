@@ -7,22 +7,22 @@ Resource        listener_resource.txt
 
 *** Test Cases ***
 Python Class Listener From Module With Same Name
-    Listener Import Message Should Be In Syslog  ListenAll  [ ]  ListenAll.py
+    Listener Import Message Should Be In Syslog  ListenAll  [ ]  ListenAll
 
 Python Class Listener From A Module With Different Name
-    Listener Import Message Should Be In Syslog  listeners.ListenSome  [ ]  listeners.py
+    Listener Import Message Should Be In Syslog  listeners.ListenSome  [ ]  listeners
 
 Python Module Listener
-    Listener Import Message Should Be In Syslog  module_listener  [ ]  module_listener.py
+    Listener Import Message Should Be In Syslog  module_listener  [ ]  module_listener
 
 Listener With Arguments
-    Listener Import Message Should Be In Syslog  listeners.WithArgs  [ value ]  listeners.py
-    Listener Import Message Should Be In Syslog  listeners.WithArgs  [ a1 | a2 ]  listeners.py
+    Listener Import Message Should Be In Syslog  listeners.WithArgs  [ value ]  listeners
+    Listener Import Message Should Be In Syslog  listeners.WithArgs  [ a1 | a2 ]  listeners
     Check Listener File  ${ARGS_FILE}  I got arguments 'value' and 'default'  I got arguments 'a1' and 'a2'
 
 Listener With Path
     ${expected args} =  Set Variable If  ${TEMPDIR.count(':')}  ${TEMPDIR[0]} | ${TEMPDIR[2:]}${/}${ALL_FILE2}  ${TEMPDIR}${/}${ALL_FILE2}
-    Listener Import Message Should Be In Syslog  ${LISTENERS}${/}ListenAll.py  [ ${expected args} ]  ListenAll.py
+    Listener Import Message Should Be In Syslog  ${LISTENERS}${/}ListenAll.py  [ ${expected args} ]  ListenAll
     File Should Exist  ${TEMPDIR}${/}${ALL_FILE2}
 
 Listener With Wrong Number Of Arguments
