@@ -13,6 +13,9 @@ def decode_output(string):
         return unic(string, _output_encoding)
     return string
 
+def encode_output(string):
+    return string.encode(_output_encoding)
+
 
 def _get_output_encoding():
     encoding = sys.__stdout__.encoding or sys.__stdin__.encoding
