@@ -108,11 +108,6 @@ recommended only when there is no safer option available. In general,
 libraries should be implemented so that keywords cannot hang or that
 they have their own timeout mechanism, if necessary.
 
-.. Note:: Before Robot Framework version 1.8.3, it was possible to
-          define if the keyword run was stopped or left running in
-          the background when a timeout occurred. This feature is now
-          removed and keywords are always stopped.
-
 
 Test case timeout
 '''''''''''''''''
