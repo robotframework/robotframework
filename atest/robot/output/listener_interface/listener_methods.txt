@@ -73,6 +73,10 @@ Correct Attributes To Java Listener Methods
     Should Not Contain  ${status}  FAILED
     Should Contain X Times  ${status}  PASSED  126
 
+Suite And Test Counts
+    Run Tests  --listener listeners.SuiteAndTestCounts  misc/suites/sub*
+    Stderr Should Be Empty
+
 *** Keywords ***
 Run Tests With Listeners
     ${args}=  Catenate
