@@ -7,22 +7,22 @@ Resource        listener_resource.txt
 
 *** Test Cases ***
 Python Class Listener From Module With Same Name
-    Listener Import Message Should Be In Syslog  OldListenAll  [ ]  OldListenAll.py
+    Listener Import Message Should Be In Syslog  OldListenAll  [ ]  OldListenAll
 
 Python Class Listener From A Module With Different Name
-    Listener Import Message Should Be In Syslog  old_listeners.ListenSome  [ ]  old_listeners.py
+    Listener Import Message Should Be In Syslog  old_listeners.ListenSome  [ ]  old_listeners
 
 Python Module Listener
-    Listener Import Message Should Be In Syslog  old_module_listener  [ ]  old_module_listener.py
+    Listener Import Message Should Be In Syslog  old_module_listener  [ ]  old_module_listener
 
 Listener With Arguments
-    Listener Import Message Should Be In Syslog  old_listeners.WithArgs  [ value ]  old_listeners.py
-    Listener Import Message Should Be In Syslog  old_listeners.WithArgs  [ a1 | a2 ]  old_listeners.py
+    Listener Import Message Should Be In Syslog  old_listeners.WithArgs  [ value ]  old_listeners
+    Listener Import Message Should Be In Syslog  old_listeners.WithArgs  [ a1 | a2 ]  old_listeners
     Check Listener File  ${ARGS_FILE}  I got arguments 'value' and 'default'  I got arguments 'a1' and 'a2'
 
 Listener With Path
     ${expected args} =  Set Variable If  ${TEMPDIR.count(':')}  ${TEMPDIR[0]} | ${TEMPDIR[2:]}${/}${ALL_FILE2}  ${TEMPDIR}${/}${ALL_FILE2}
-    Listener Import Message Should Be In Syslog  ${LISTENERS}${/}OldListenAll.py  [ ${expected args} ]  OldListenAll.py
+    Listener Import Message Should Be In Syslog  ${LISTENERS}${/}OldListenAll.py  [ ${expected args} ]  OldListenAll
     File Should Exist  ${TEMPDIR}${/}${ALL_FILE2}
 
 Listener With Wrong Number Of Arguments
