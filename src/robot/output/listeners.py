@@ -55,6 +55,9 @@ class Listeners:
                 li.call_method(li.start_suite, suite.name, suite.doc)
             else:
                 attrs = self._get_start_attrs(suite, ['metadata'])
+                attrs.update({'testcount' : len(suite.tests),
+                              'suitecount': len(suite.suites),
+                              'totaltests': suite.get_test_count()})
                 li.call_method(li.start_suite, suite.name, attrs)
 
     def end_suite(self, suite):
