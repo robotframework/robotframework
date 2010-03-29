@@ -97,6 +97,10 @@ Thus, for example, :code:`startSuite` is a synonym to :code:`start_suite`.
    |               |                  | * starttime: execution start time                |
    |               |                  | * metadata: a dictionary containing `free test   |
    |               |                  |   suite metadata`_                               |
+   |               |                  | * testcount: number of tests in this suite       |
+   |               |                  | * suitecount: number of subsuites this suite has |
+   |               |                  | * totaltests: number of tests in all subsuites   |
+   |               |                  |   of this suite                                  |
    +---------------+------------------+--------------------------------------------------+
    | end_suite     | name, attributes | Keys in the attributes dictionary:               |
    |               |                  |                                                  |
