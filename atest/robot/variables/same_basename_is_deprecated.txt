@@ -7,7 +7,7 @@ Resource        ../resources/resource.txt
 
 Variable Table
     Check Test Case  ${TESTNAME}
-    Verify deprecation warning  \@{table}  \${table}
+    Verify deprecation warning  \@{TABLE}  \${TABLE}
 
 Assign Variables
     Check Test Case  ${TESTNAME}
