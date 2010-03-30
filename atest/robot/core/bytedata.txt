@@ -1,0 +1,16 @@
+*** Settings ***
+Resource  ../resources/resource.txt
+Variables  ../../testdata/core/expbytevalues.py
+Suite SetUp  Run Tests  ${EMPTY}  core/bytedata.txt
+Force Tags  regression  pybot  jybot
+
+*** Test Cases ***
+In Exception
+    Check Test Case  In Exception
+
+In Return Value
+    Check Test Case  In Return Value
+
+In Message
+    ${tc}=  Check Test Case  In Message
+    Check Log Message  ${tc.kws[0].msgs[0]}  ${exp_log_msg}

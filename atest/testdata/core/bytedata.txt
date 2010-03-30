@@ -1,0 +1,15 @@
+*** Settings ***
+Library  bytelib
+Variables  expbytevalues.py
+
+*** Test Cases ***
+In Exception
+    [Documentation]  FAIL ${exp_error_msg}
+    In Exception
+
+In Return Value
+    ${retval} =  In Return Value
+    Should Be Equal  ${retval}  ${exp_return_value}
+
+In Message
+    In Message
