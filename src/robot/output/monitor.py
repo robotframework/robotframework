@@ -71,7 +71,8 @@ class CommandLineMonitor:
     def _write(self, message, newline=True, stream=sys.stdout):
         if newline:
             message += '\n'
-        stream.write(utils.encode_output(message).replace('\t', ' '*8))
+        message = message.encode('ascii', 'replace').replace('\t', ' '*8)
+        stream.write(message)
         stream.flush()
 
     def _write_info(self, name, doc, start_suite=False):
