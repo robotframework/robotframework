@@ -32,7 +32,7 @@ with open(outpath, 'w') as output:
     output.write("""*** Settings ***
 Suite Setup     Run Tests  ${EMPTY}  %s
 Force Tags      regression  pybot  jybot
-Resource        %s/resources/resource.html
+Resource        %s/resources/resource.txt
 
 *** Test Cases ***
 
