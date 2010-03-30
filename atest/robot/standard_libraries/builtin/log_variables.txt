@@ -27,7 +27,7 @@ Log Variables In Suite Setup
     Check Log Message  ${kw.messages[16]}  \${PREV_TEST_NAME} =
     Check Log Message  ${kw.messages[17]}  \${PREV_TEST_STATUS} =
     Check Log Message  ${kw.messages[18]}  \${REPORT_FILE} = NONE
-    Check Log Message  ${kw.messages[19]}  \${scalar} = Hi tellus
+    Check Log Message  ${kw.messages[19]}  \${SCALAR} = Hi tellus
     Check Log Message  ${kw.messages[20]}  \${SPACE} =
     Should Start With  ${kw.messages[21].message}  \${SUITE_NAME} =
     Check Log Message  ${kw.messages[22]}  \${suite_setup_global_var} = Global var set in suite setup
@@ -37,7 +37,7 @@ Log Variables In Suite Setup
     Check Log Message  ${kw.messages[26]}  \${SUMMARY_FILE} = NONE
     Should Start With  ${kw.messages[27].message}  \${TEMPDIR} =
     Should Start With  ${kw.messages[28].message}  \${True} =
-    Check Log Message  ${kw.messages[29]}  \@{list} = [ Hello | world ]
+    Check Log Message  ${kw.messages[29]}  \@{LIST} = [ Hello | world ]
     Check Log Message  ${kw.messages[30]}  \@{suite_setup_global_var} = [ Global var set in | suite setup ]
     Check Log Message  ${kw.messages[31]}  \@{suite_setup_suite_var} = [ Suite var set in | suite setup ]
     Should Be Equal As Integers  ${kw.message_count}  32  Wrong total message count
@@ -64,7 +64,7 @@ Log Variables In Test
     Check Log Message  ${kw.messages[17]}  \${PREV_TEST_NAME} = Previous Test
     Check Log Message  ${kw.messages[18]}  \${PREV_TEST_STATUS} = PASS
     Check Log Message  ${kw.messages[19]}  \${REPORT_FILE} = NONE
-    Check Log Message  ${kw.messages[20]}  \${scalar} = Hi tellus
+    Check Log Message  ${kw.messages[20]}  \${SCALAR} = Hi tellus
     Check Log Message  ${kw.messages[21]}  \${SPACE} =
     Should Start With  ${kw.messages[22].message}  \${SUITE_NAME} =
     Check Log Message  ${kw.messages[23]}  \${suite_setup_global_var} = Global var set in suite setup
@@ -74,7 +74,7 @@ Log Variables In Test
     Should Start With  ${kw.messages[27].message}  \${TEMPDIR} =
     Check Log Message  ${kw.messages[28]}  \${TEST_NAME} = Log Variables
     Should Start With  ${kw.messages[29].message}  \${True} =
-    Check Log Message  ${kw.messages[30]}  \@{list} = [ Hello | world ]
+    Check Log Message  ${kw.messages[30]}  \@{LIST} = [ Hello | world ]
     Check Log Message  ${kw.messages[31]}  \@{suite_setup_global_var} = [ Global var set in | suite setup ]
     Check Log Message  ${kw.messages[32]}  \@{suite_setup_suite_var} = [ Suite var set in | suite setup ]
     Should Be Equal As Integers  ${kw.message_count}  35  Wrong total message count
@@ -102,7 +102,7 @@ Log Variables After Setting New Variables
     Check Log Message  ${kw.messages[18]}  \${PREV_TEST_NAME} = Previous Test  DEBUG
     Check Log Message  ${kw.messages[19]}  \${PREV_TEST_STATUS} = PASS  DEBUG
     Check Log Message  ${kw.messages[20]}  \${REPORT_FILE} = NONE  DEBUG
-    Check Log Message  ${kw.messages[21]}  \${scalar} = Hi tellus  DEBUG
+    Check Log Message  ${kw.messages[21]}  \${SCALAR} = Hi tellus  DEBUG
     Check Log Message  ${kw.messages[22]}  \${SPACE} =  DEBUG
     Should Start With  ${kw.messages[23].message}  \${SUITE_NAME} =
     Check Log Message  ${kw.messages[24]}  \${suite_setup_global_var} = Global var set in suite setup  DEBUG
@@ -114,7 +114,7 @@ Log Variables After Setting New Variables
     Should Start With  ${kw.messages[30].message}  \${True} =
     Check Log Message  ${kw.messages[31]}  \${var} = Hello  DEBUG
     Check Log Message  ${kw.messages[32]}  \@{int_list} = [ 0 | 1 | 2 | 3 ]  DEBUG
-    Check Log Message  ${kw.messages[33]}  \@{list} = [ Hello | world ]  DEBUG
+    Check Log Message  ${kw.messages[33]}  \@{LIST} = [ Hello | world ]  DEBUG
     Check Log Message  ${kw.messages[34]}  \@{suite_setup_global_var} = [ Global var set in | suite setup ]  DEBUG
     Check Log Message  ${kw.messages[35]}  \@{suite_setup_suite_var} = [ Suite var set in | suite setup ]  DEBUG
     Should Be Equal As Integers  ${kw.message_count}  38  Wrong total message count
@@ -142,7 +142,7 @@ Log Variables In User Keyword
     Check Log Message  ${kw.messages[18]}  \${PREV_TEST_NAME} = Previous Test
     Check Log Message  ${kw.messages[19]}  \${PREV_TEST_STATUS} = PASS
     Check Log Message  ${kw.messages[20]}  \${REPORT_FILE} = NONE
-    Check Log Message  ${kw.messages[21]}  \${scalar} = Hi tellus
+    Check Log Message  ${kw.messages[21]}  \${SCALAR} = Hi tellus
     Check Log Message  ${kw.messages[22]}  \${SPACE} =
     Should Start With  ${kw.messages[23].message}  \${SUITE_NAME} =
     Check Log Message  ${kw.messages[24]}  \${suite_setup_global_var} = Global var set in suite setup
@@ -155,7 +155,7 @@ Log Variables In User Keyword
     Check Log Message  ${kw.messages[31]}  \${ukvar} = Value of an uk variable
     Check Log Message  ${kw.messages[32]}  \${var} = Hello
     Check Log Message  ${kw.messages[33]}  \@{int_list} = [ 0 | 1 | 2 | 3 ]
-    Check Log Message  ${kw.messages[34]}  \@{list} = [ Hello | world ]
+    Check Log Message  ${kw.messages[34]}  \@{LIST} = [ Hello | world ]
     Check Log Message  ${kw.messages[35]}  \@{suite_setup_global_var} = [ Global var set in | suite setup ]
     Check Log Message  ${kw.messages[36]}  \@{suite_setup_suite_var} = [ Suite var set in | suite setup ]
     Should Be Equal As Integers  ${kw.message_count}  39  Wrong total message count
