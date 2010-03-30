@@ -1,0 +1,47 @@
+*** Settings ***
+Documentation   Importing test libraries normally, using variable in library name, and importing libraries accepting arguments.
+Force Tags      regression
+Default Tags    pybot  jybot
+Resource        ../../resources/resource.txt
+
+*** Test Cases ***
+Normal Library Import
+    Run Tests  ${EMPTY}  test_libraries/library_import_normal.txt
+    Check Test Case  Normal Library Import
+
+Library Import With Spaces In Name
+    ${test} =  Check Test Case  Library Import With Spaces In Name
+    Check Log Message  ${test.kws[0].messages[0]}  It works!
+    Check Log Message  ${test.kws[1].messages[0]}  It really workz!!
+
+Number Of Keywords In Imported Library Is Reported In Syslog
+    ${testlibs path} =  Join Path  ${CURDIR}/../../  testresources/testlibs/
+    ${ex lib module} =  Join Path  ${testlibs path}  ExampleLibrary.py
+    Check Syslog Contains  | INFO \ |  Imported library 'ExampleLibrary' with arguments [ ] (version <unknown>, class type, testcase scope, 25 keywords, source ${ex lib module}
+    ${lib class module} =  Join Path  ${testlibs path}  libmodule.py
+    Check Syslog Contains  | INFO \ |  Imported library 'libmodule.LibClass1' with arguments [ ] (version <unknown>, class type, testcase scope, 1 keywords, source ${lib class module}
+
+Warning Should Be Written To Syslog If Library Contains No Keywords
+    ${lib module path} =  Join Path  ${CURDIR}/../../  testresources/testlibs/libmodule.py
+    Check Syslog Contains  | INFO \ |  Imported library 'libmodule' with arguments [ ] (version <unknown>, module type, global scope, 0 keywords, source ${lib module path}
+    Check Syslog Contains  | WARN \ |  Imported library 'libmodule' contains no keywords
+
+Importing Python Class From Module
+    Check Test Case  Importing Python Class From Module
+
+Library Import With Variables
+    Run Tests  ${EMPTY}  test_libraries/library_import_with_variable.txt
+    Check Test Case  Verify Library Import With Variable In Name
+    Check Test Case  Verify Library Import With List Variable
+
+Library Import With Variables From Resource File
+    Run Tests  ${EMPTY}  test_libraries/library_import_with_variable_from_resource.txt
+    Check Test Case  Verify Library Import With Variable In Name
+    Check Test Case  Verify Library Import With List Variable
+
+Arguments To Library
+    Run Tests  ${EMPTY}  test_libraries/library_with_0_parameters.txt  test_libraries/library_with_1_parameters.txt  test_libraries/library_with_2_parameters.txt
+    Check Test Case  Two Default Parameters
+    Check Test Case  One Default and One Set Parameter
+    Check Test Case  Two Set Parameters
+

@@ -1,0 +1,19 @@
+*** Settings ***
+Library         ${oslib}
+Library         ${param}Library  @{args}
+
+*** Variables ***
+${oslib}  OperatingSystem
+${param}  Parameter
+@{args}  myhost  1000
+
+*** Test Cases ***
+Verify Library Import With Variable In Name
+    Fail If Dir Empty  ${CURDIR}
+    Fail Unless Dir Exists  ${TEMPDIR}
+
+Verify Library Import With List Variable
+    ${host}  ${port} =  Parameters
+    Equals  ${host}  myhost
+    Equals  ${port}  1000
+
