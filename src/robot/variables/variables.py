@@ -242,6 +242,13 @@ class Variables(utils.NormalizedDict):
                                                 utils.get_error_message()))
 
     def _get_var_table_name_and_value(self, rawvar):
+        name = self._get_var_table_name(rawvar)
+        value = self._unescape_leading_trailing_spaces_from_var_table_value(rawvar.value)
+        if name[0] == '@':
+            return name, self.replace_list(value)
+        return name, self._get_var_table_scalar_value(value)
+
+    def _get_var_table_name(self, rawvar):
         name = self._normalize(rawvar.name)
         if not name:
             raise DataError('No variable name given')
@@ -249,17 +256,7 @@ class Variables(utils.NormalizedDict):
             name = name[:-1]
         elif not is_var(name):
             raise DataError("Invalid variable name '%s'" % rawvar.name)
-        value = self._unescape_leading_trailing_spaces_from_var_table_value(rawvar.value)
-        if name[0] == '$':
-            if len(value) == 1:
-                value = self.replace_scalar(value[0])
-            elif len(value) == 0:
-                value = ''
-            else:
-                value = self.replace_list(value)
-        else:
-            value = self.replace_list(value)
-        return name, value
+        return name
 
     def _unescape_leading_trailing_spaces_from_var_table_value(self, value):
         ret = []
@@ -271,6 +268,13 @@ class Variables(utils.NormalizedDict):
                     item = item[1:]
             ret.append(item)
         return ret
+
+    def _get_var_table_scalar_value(self, value):
+        if len(value) == 1:
+            return self.replace_scalar(value[0])
+        if len(value) == 0:
+            return ''
+        return self.replace_list(value)
 
     def _get_variables_from_module(self, module, args):
         variables = self._get_dynamical_variables(module, args)
