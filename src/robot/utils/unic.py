@@ -29,8 +29,6 @@ if sys.platform.startswith('java'):
     _unic = unic
 
     def unic(item, *args):
-        if isinstance(item, basestring) and not args:
-            return item
         if isinstance(item, Object) and not isinstance(item, Class): # http://bugs.jython.org/issue1564
             item = item.toString()  # http://bugs.jython.org/issue1563
         return _unic(item, *args)

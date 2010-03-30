@@ -1110,7 +1110,7 @@ class _Misc:
         level = level.upper()
         if not output.LEVELS.has_key(level) and level != 'HTML':
             raise DataError("Invalid log level '%s'" % level)
-        print '*%s* %s' % (level, message)
+        print '*%s* %s' % (level, utils.unic(message))
 
     def log_many(self, *messages):
         """Logs the given messages as separate entries with the INFO level."""
