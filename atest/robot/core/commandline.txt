@@ -1,0 +1,309 @@
+*** Settings ***
+Documentation   Testing Robot's command line functionality. Functionality tested elsewere:\n  + filtering by tags (--include/--exclude)\n  + filtering by names (--test/--suite)\n  + --MonitorColors/Width\n  + --critical/--noncritical\n  + --loglevel
+Suite Setup     Create Dir  ${MYOUTDIR}
+Suite Teardown  Remove Dir  ${MYOUTDIR}  recursive
+Test Setup      Empty Dir  ${MYOUTDIR}
+Default Tags    regression  pybot  jybot
+Resource        ../../resources/resource.txt
+
+*** Variables ***
+${TESTFILE}  misc${/}normal.html
+${PASS_FAIL_FILE}  misc${/}pass_and_fail.html
+${DUMMY_LIB_TEST}  misc${/}dummy_lib_test.html
+${UNICODE_TEST}  misc${/}unicode.html
+${MYOUTDIR}  ${TEMPDIR}${/}robot-test-145789
+${M_110_211}  1 critical test, 1 passed, 0 failed\n 2 tests total, 1 passed, 1 failed
+
+*** Test Cases ***
+Output Only
+    Run Tests Without Processing Output  --outputdir ${MYOUTDIR} --output myoutput.xml --report none --log none  ${TESTFILE}
+    Directory Should Contain  ${MYOUTDIR}  myoutput.xml
+
+Output And Report
+    Run Tests Without Processing Output  --outputdir ${MYOUTDIR} --output myoutput.xml --report myreport.html --log none  ${TESTFILE}
+    Directory Should Contain  ${MYOUTDIR}  myoutput.xml  myreport.html
+
+Output And Log
+    Run Tests Without Processing Output  --outputdir ${MYOUTDIR} --output myoutput.xml --report none --log mylog.html --summary none  ${TESTFILE}
+    Directory Should Contain  ${MYOUTDIR}  mylog.html  myoutput.xml
+
+Output And Summary
+    Run Tests Without Processing Output  --outputdir ${MYOUTDIR} -o myoutput.xml -r NONE -l none --summary mysummary.html  ${TESTFILE}
+    Directory Should Contain  ${MYOUTDIR}  myoutput.xml  mysummary.html
+
+Output None
+    Run Tests Without Processing Output  --outputdir ${MYOUTDIR} -o NONE -r None -l none  ${TESTFILE}
+    @{files} =  List Directory  ${MYOUTDIR}
+    Should Be True  @{files} == ['NONE.xml']
+    File Should Not Exist  NONE
+    File Should Not Exist  None
+    File Should Not Exist  none
+
+All Outputs
+    Run Tests Without Processing Output  --outputdir=${MYOUTDIR} --output=myoutput.xml --report=myreport.html --log=mylog.html -S mysummary.html  ${TESTFILE}
+    Directory Should Contain  ${MYOUTDIR}  mylog.html  myoutput.xml  myreport.html  mysummary.html
+
+All Outputs With Default Names
+    Verify ROBOT Set
+    ${path} =  Join Path  ${CURDIR}${/}..${/}..  testdata  ${TESTFILE}
+    Run  ${ROBOT} --outputdir ${MYOUTDIR} ${path}
+    Directory Should Contain  ${MYOUTDIR}  log.html  output.xml  report.html
+
+All Outputs Without Extensions
+    Run Tests Without Processing Output  --outputdir ${MYOUTDIR} -o myoutput -r myreport -l mylog -S mysummary  ${TESTFILE}
+    Directory Should Contain  ${MYOUTDIR}  mylog.html  myoutput.xml  myreport.html  mysummary.html
+
+Outputs Into Different Dirs
+    Run Tests Without Processing Output  --outputdir ::invalid:: -o ${MYOUTDIR}${/}o${/}o.xml -r ${MYOUTDIR}${/}r${/}r.html -l ${MYOUTDIR}${/}l${/}l.html --summary ${MYOUTDIR}${/}s.htm  ${TESTFILE}
+    Directory Should Contain  ${MYOUTDIR}${/}o  o.xml
+    Directory Should Contain  ${MYOUTDIR}${/}r  r.html
+    Directory Should Contain  ${MYOUTDIR}${/}l  l.html
+    Directory Should Contain  ${MYOUTDIR}  l  o  r  s.htm
+
+Debugfile
+    Run Tests Without Processing Output  --outputdir=${MYOUTDIR} --debugfile=DeBug.TXT -o o.xml  ${TESTFILE}
+    Directory Should Contain  ${MYOUTDIR}  DeBug.TXT  o.xml
+    ${content} =  Log File  ${MYOUTDIR}${/}DeBug.TXT
+    Should Contain  ${content}  + START SUITE: Normal
+    Should Contain  ${content}  +- START TEST: First One
+    Should Contain  ${content}  +-- START KW: BuiltIn.Log [ Test 1 ]\n Test 1\n +-- END KW: BuiltIn.Log
+    Should Contain  ${content}  +-- START KW: BuiltIn.Log [ Logging with debug level | DEBUG ]\n Logging with debug level\n +-- END KW: BuiltIn.Log
+    Should Contain  ${content}  + END SUITE: Normal
+    Check Syslog Contains  DebugFile: DeBug.TXT
+    ${path} =  Set Variable  [:.\\w /\\\\~+-]*DeBug\\.TXT
+    Check Stdout Matches Regexp  (?s).*Debug: {3}${path}.*
+    Check Syslog Matches Regexp  (?s).*Debug: ${path}.*
+
+Debugfile Log Level Should Always Be Debug
+    [Documentation]  --loglevel option should not affect what's written to debugfile
+    Run Tests Without Processing Output  --outputdir ${MYOUTDIR} -b debug.txt -o o.xml --loglevel WARN  ${TESTFILE}
+    ${content} =  Log File  ${MYOUTDIR}${/}debug.txt
+    Should Contain  ${content}  +-- START KW: BuiltIn.Log [ Test 1 ]\n Test 1\n +-- END KW: BuiltIn.Log
+    Should Contain  ${content}  +-- START KW: BuiltIn.Log [ Logging with debug level | DEBUG ]\n Logging with debug level\n +-- END KW: BuiltIn.Log
+
+No Debugfile
+    Run Tests Without Processing Output  --outputdir ${MYOUTDIR} --debugfile None -o o.xml  ${TESTFILE}
+    Directory Should Contain  ${MYOUTDIR}  o.xml
+    Check Syslog Contains  DebugFile: NONE
+
+Invalid Debugfile
+    Create Directory  ${MYOUTDIR}${/}debug.txt
+    Run Tests Without Processing Output  --outputdir ${MYOUTDIR} -b debug.txt  ${TESTFILE}
+    Check Stderr Matches Regexp  \\[ ERROR \\] Opening debug file '.*debug.txt' failed and writing to debug file is disabled. Error: (IOError|FileNotFoundException): .*
+    Check Stdout Contains  2 critical tests, 2 passed, 0 failed\n 2 tests total, 2 passed, 0 failed
+
+Writing Unicode To Debugfile
+    [Documentation]  Tests also that '.txt' is appended if no extension given
+    Run Tests Without Processing Output  --outputdir ${MYOUTDIR} --debugfile debug -o o.xml  ${UNICODE_TEST}
+    Directory Should Contain  ${MYOUTDIR}  debug.txt  o.xml
+    Stderr Should Be Empty
+
+Timestamped Outputs
+    Verify ROBOT Set
+    ${path} =  Join Path  ${CURDIR}${/}..${/}..  testdata  ${TESTFILE}
+    Run  ${ROBOT} --outputdir ${MYOUTDIR} --timestampoutputs ${path}
+    @{files} =  List Directory  ${MYOUTDIR}
+    Should Be True  len(@{files}) == 3
+    :FOR  ${file}  IN  @{files}
+    \  Fail Unless Regexp Matches  ${file}  (log|output|report)-20\\d{6}-\\d{6}\\.(html|xml)
+
+Timestamped Outputs With Names
+    Run Tests Without Processing Output  --outputdir ${MYOUTDIR} --TimestampOutputs -l l -r r.html -o o -S s  ${TESTFILE}
+    @{files} =  List Directory  ${MYOUTDIR}
+    Should Be True  len(@{files}) == 4
+    :FOR  ${file}  IN  @{files}
+    \  Fail Unless Regexp Matches  ${file}  (l|o|r|s)-20\\d{6}-\\d{6}\\.(html|xml)
+
+Default Name, Doc & Metadata
+    [Documentation]  Using default values (read from xml) for name, doc and metadata. Tests are run together to have less Robot runs with same input i.e. to have faster execution.
+    Run tests  ${EMPTY}  ${TESTFILE}
+    Check Names  ${SUITE}  Normal
+    Check Names  ${SUITE.tests[0]}  First One  Normal.
+    Check Names  ${SUITE.tests[1]}  Second One  Normal.
+    Should Be Equal  ${SUITE.doc}  Normal test cases
+    Should Be Equal  ${SUITE.metadata['Something']}  My Value
+
+Overriding Name, Doc & Metadata And Escaping
+    [Documentation]  Overriding name, doc and metadata. Also testing escaping values. Tests are run together to have less Robot runs with same input i.e. to have faster execution.
+    Run Tests  -N this_is_overridden_next --name my_COOL_NameEXEX --doc Even_cooooler_docEXQU --metadata something:New --metadata two_parts:one_part -M esc:STQUDOAMHAEXEX --escape star:ST -E quest:QU -E dollar:DO -E amp:AM -E hash:HA -E exclam:EX  ${TESTFILE}
+    Check Names  ${SUITE}  My COOL Name!!
+    Check Names  ${SUITE.tests[0]}  First One  My COOL Name!!.
+    Check Names  ${SUITE.tests[1]}  Second One  My COOL Name!!.
+    Should Be Equal  ${SUITE.doc}  Even cooooler doc!?
+    Should Be Equal  ${SUITE.metadata['Something']}  New
+    Should Be Equal  ${SUITE.metadata['Two Parts']}  one_part
+    Should Be Equal  ${SUITE.metadata['Esc']}  *?$&#!!
+
+It Should Be Possible To Use Wildcards In Datasources
+    Set Test Variable  $OUTPUTNAME  mysuite
+    Run Tests  ${EMPTY}  misc${/}suites${/}tsuite?.*ml
+    Should Be True  ${SUITE.suites} == ['Tsuite 1', 'Tsuite 2', 'Tsuite 3']
+
+No Input
+    Verify ROBOT Set
+    ${output} =  Run  ${ROBOT}
+    Should End With  ${output}  Expected at least 1 argument, got 0.${USAGE_TIP}
+
+Invalid Options
+    Run Tests Without Processing Output  --invalid option  ${TESTFILE}
+    Check Stderr Contains  option --invalid not recognized${USAGE_TIP}
+    Run Tests Without Processing Output  --name valid -X  ${TESTFILE}
+    Check Stderr Contains  option -X not recognized${USAGE_TIP}
+
+Non-Existing Input
+    Run Tests Without Processing Output  ${EMPTY}  nonexisting.html
+    Check Stderr Matches Regexp  .*Data source '.*[/\\\\]nonexisting\\.html' does not exist.${USAGE_TIP}
+
+Invalid Output Files
+    [Documentation]  Test error handling when output files (output, report, etc.) are invalid (i.e. can't be opened)
+    Create Dir  ${MYOUTDIR}${/}directory.html
+    Run Tests Without Processing Output  --outputdir ${MYOUTDIR} --output directory.html --report report.html  ${TESTFILE}
+    Check Stderr Matches Regexp  \\[ ERROR \\] Opening output file '.*directory.html' for writing failed: (IOError|FileNotFoundException): .*${USAGE_TIP}
+    Run Tests Without Processing Output  --outputdir ${MYOUTDIR} --summary directory.html --report myreport --log mylog.html  ${TESTFILE}
+    Check Stderr Matches Regexp  \\[ ERROR \\] Opening summary file '.*directory.html' for writing failed: IOError: .*
+
+Pythonpath
+    Create File  ${MYOUTDIR}${/}DummyLib.py  class DummyLib:\n \tdef dummykw(self):\n \t\tpass
+    Tests Should Fail With Errors  ${EMPTY}  ${DUMMY_LIB_TEST}  Test should pass only when PYTHONPATH is set
+    Tests Should Be Executed Without Errors  --pythonpath ${MYOUTDIR}  ${DUMMY_LIB_TEST}
+
+Pythonpath Multpiple Times Separated With Colon
+    [Setup]  Should Be Equal  ${PREV_TEST_STATUS}  PASS
+    Tests Should Be Executed Without Errors  -P .:${MYOUTDIR}${/}:${TEMPDIR} -P ${CURDIR}  ${DUMMY_LIB_TEST}
+
+Pythonpath As Glob Pattern
+    [Setup]  Should Be Equal  ${PREV_TEST_STATUS}  PASS
+    Tests Should Be Executed Without Errors  --pythonpath ${TEMPDIR}${/}STAR --escape star:STAR  ${DUMMY_LIB_TEST}
+
+PYTHONPATH Environment Variable
+    [Setup]  Should Be Equal  ${PREV_TEST_STATUS}  PASS
+    Set Environment Variable  PYTHONPATH  ${MYOUTDIR}${:}spam${:}eggs
+    Tests Should Be Executed Without Errors  ${EMPTY}  ${DUMMY_LIB_TEST}
+
+Help
+    Verify ROBOT Set
+    ${rc}  ${help} =  Run And Return Rc And Output  ${ROBOT} --help 2>&1
+    Should Be Equal  ${rc}  ${251}
+    Log  ${help.replace(' ','_').replace('\\t','_'*8)}
+    Should Start With  ${help}  Robot Framework -- A keyword-driven test automation framework\n\nVersion: \
+    Should End With  ${help}  \n\n# Setting syslog file before running tests.\n $ export ROBOT_SYSLOG_FILE=/tmp/syslog.txt\n $ pybot tests.html\n
+    Should Not Contain  ${help}  [ ERROR ]
+    Should Not Contain  ${help}  [ WARN \ ]
+    @{lines} =  Evaluate  [ '%d\\t%s' % (len(line), line) for line in ${help.splitlines()} ]
+    Log Many  @{lines}
+    @{long} =  Evaluate  [ line for line in ${help.splitlines()} if len(line) - line.count('\\\\') >= 80 ]
+    Log Many  @{long}
+    Should Be True  len(@{long}) == 0  Too long (>= 80) help line(s)
+    ${help2} =  Run  ${ROBOT} -h 2>&1
+    Should Be Equal  ${help}  ${help2}
+
+Version
+    Verify ROBOT Set
+    ${rc}  ${output} =  Run And Return Rc And Output  ${ROBOT} --version 2>&1
+    Should Be Equal  ${rc}  ${251}
+    Log  ${output}
+    Should Match Regexp  ${output}  ^Robot Framework (2\\.\\d+(\\.\\d+)?( (alpha|beta|rc)\\d*)?|trunk 2\\d{7}) \\([PJ]ython 2\\.[\\d.]+ on .+\\)$
+    Should Be True  len("${output}") < 80  Too long version line
+
+Argument File
+    Create File  ${MYOUTDIR}${/}a.txt  --name From_Arg_File\n -M Meta1:argfile\n # comment line\n --outputdir ${MYOUTDIR}\n --log none\n -r none\n \n --output output.xml\n \n
+    Run Tests Without Processing Output  --metadata Meta2:cli --argumentfile ${MYOUTDIR}${/}a.txt  ${TESTFILE}
+    Process Output  ${MYOUTDIR}${/}output.xml
+    Should Be Equal  ${SUITE.name}  From Arg File
+    Should Be True  ${SUITE.metadata} == {'Meta1': 'argfile', 'Meta2': 'cli', 'Something': 'My Value'}
+
+Two Argument Files
+    Create File  ${MYOUTDIR}${/}a1.txt  --metadata A1:Value1
+    Create File  ${MYOUTDIR}${/}a2.txt  --metadata A2:Value2
+    Run Tests  -A ${MYOUTDIR}${/}a1.txt --argumentfile ${MYOUTDIR}${/}a2.txt  ${TESTFILE}
+    Should Be Equal  ${SUITE.metadata['A1']}  Value1
+    Should Be Equal  ${SUITE.metadata['A2']}  Value2
+
+Recursive Argument File
+    Create File  ${MYOUTDIR}${/}first.txt  --metadata First:1\n --argumentfile ${MYOUTDIR}${/}second.txt
+    Create File  ${MYOUTDIR}${/}second.txt  --metadata Second:2
+    Run Tests  -A ${MYOUTDIR}${/}first.txt  ${TESTFILE}
+    Should Be Equal  ${SUITE.metadata['First']}  1
+    Should Be Equal  ${SUITE.metadata['Second']}  2
+
+Setting Syslog File
+    Set Environment Variable  ROBOT_SYSLOG_FILE  ${MYOUTDIR}${/}syslog.txt
+    Run Some Tests
+    File Should Not Be Empty  ${MYOUTDIR}${/}syslog.txt
+    Remove File  ${MYOUTDIR}${/}syslog.txt
+    Delete Environment Variable  ROBOT_SYSLOG_FILE
+    Run Some Tests
+    File Should Not Exist  ${MYOUTDIR}${/}syslog.txt
+    Set Environment Variable  ROBOT_SYSLOG_FILE  none
+    Run Some Tests
+    File Should Not Exist  ${MYOUTDIR}${/}syslog.txt
+    Set Environment Variable  ROBOT_SYSLOG_FILE  ${MYOUTDIR}
+    ${output} =  Run Some Tests
+    Should Contain  ${output}  ] Opening syslog file '${MYOUTDIR}' failed: IOError:
+
+Setting Syslog Level
+    Set Environment Variable  ROBOT_SYSLOG_FILE  ${MYOUTDIR}${/}syslog.txt
+    Set Environment Variable  ROBOT_SYSLOG_LEVEL  INFO
+    Run Some Tests
+    ${size1} =  Get File Size  ${MYOUTDIR}${/}syslog.txt
+    Set Environment Variable  ROBOT_SYSLOG_LEVEL  DEBUG
+    Run Some Tests
+    ${size2} =  Get File Size  ${MYOUTDIR}${/}syslog.txt
+    Should Be True  0 < ${size1} < ${size2}
+    Set Environment Variable  ROBOT_SYSLOG_LEVEL  warn
+    Run Some Tests
+    File Should Be Empty  ${MYOUTDIR}${/}syslog.txt
+    Set Environment Variable  ROBOT_SYSLOG_LEVEL  invalid
+    ${output} =  Run Some Tests
+    Should Contain  ${output}  ] Opening syslog file '${MYOUTDIR}${/}syslog.txt' failed: Invalid log level 'invalid'
+    [Teardown]  Set Environment Variable  ROBOT_SYSLOG_LEVEL  INFO
+
+Correct RC When Invalid Data
+    ${rc} =  Run And Return Rc  ${ROBOT} 2>&1
+    Should Be Equal  ${rc}  ${252}
+
+Invalid Argument Values
+    Run Tests  --splitoutputs not_int --suitestatlevel not_int --tagstatlink less_than_3x_:  ${TESTFILE}
+    Verify Correct Errors in Stderr  Option '--suitestatlevel' expected integer value but got 'not_int'.  Default value used instead.\n
+    Verify Correct Errors in Stderr  Option '--splitoutputs' expected integer value but got 'not_int'.  Default value used instead.\n
+    Verify Correct Errors in Stderr  Invalid format for option '--tagstatlink'.  Expected 'tag:link:title' but got 'less_than_3x_:'.\n
+    Should Be Equal  ${SUITE.status}  PASS
+
+Transform Is Ignored
+    Run Tests  --transform none  ${TESTFILE}
+    Verify Correct Errors in Stderr  Option '--transform' has been removed.
+
+*** Keywords ***
+Directory Should Contain
+    [Arguments]  ${dir_path}  @{exp_files}
+    ${act_files} =  List Directory  ${dir_path}
+    Should Be Equal  ${act_files}  ${exp_files}
+
+Verify ROBOT Set
+    Should Not Be Equal  ${ROBOT}  ${EMPTY}  This test can be run only after \${ROBOT} is set  No Values
+
+Run Some Tests
+    Verify ROBOT Set
+    ${path} =  Join Path  ${CURDIR}${/}..${/}..  testdata  ${TESTFILE}
+    ${output} =  Run  ${ROBOT} -l none -r none -d ${MYOUTDIR} ${path} 2>&1
+    Should Contain  ${output}  Output:  Running tests failed for some reason
+    [Return]  ${output}
+
+Tests Should Be Executed Without Errors
+    [Arguments]  ${options}  ${datasource}  ${explanation}=Test execution should have passed
+    Run Tests  ${options}  ${datasource}
+    Should Be Equal  ${SUITE.status}  PASS  ${explanation}  No values
+    File Should Be Empty  ${STDERR FILE}
+
+Tests Should Fail With Errors
+    [Arguments]  ${options}  ${datasource}  ${explanation}
+    Run Tests  ${options}  ${datasource}
+    Should Be Equal  ${SUITE.status}  FAIL  ${explanation}  No values
+    File Should Not Be Empty  ${STDERR FILE}
+
+Verify Correct Errors In Stderr
+    [Arguments]  @{messages}
+    ${error} =  Set Variable If  os.sep=='/'  ERROR  [ ERROR ]
+    Check Stderr Contains  ${error}
+    Check Stderr Contains  @{messages}
+
