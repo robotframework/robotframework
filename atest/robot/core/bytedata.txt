@@ -1,4 +1,5 @@
 *** Settings ***
+Documentation  In these tests keywords log, raise, and return messages containing ISO-8859-1 byte strings. Notice that they _do not_ use Unicode.
 Resource  ../resources/resource.txt
 Variables  ../../testdata/core/expbytevalues.py
 Suite SetUp  Run Tests  ${EMPTY}  core/bytedata.txt
@@ -6,11 +7,18 @@ Force Tags  regression  pybot  jybot
 
 *** Test Cases ***
 In Exception
-    Check Test Case  In Exception
+    [Documentation]  In the error message bytes are escaped.
+    ${tc} =  Check Test Case  In Exception
+    Check Log Message  ${tc.kws[0].msgs[0]}  ${exp_error_msg}  FAIL
 
 In Return Value
-    Check Test Case  In Return Value
+    [Documentation]  Return value is not altered by the framework and thus
+    ...  it contains the exact sama bytes that the keyword returned.
+    ...  When the return value is logged, the bytes are escaped.
+    ${tc} =  Check Test Case  In Return Value
+    Check Log Message  ${tc.kws[0].msgs[0]}  \${retval} = ${exp_return_msg}
 
 In Message
+    [Documentation]  In the log message bytes are escaped.
     ${tc}=  Check Test Case  In Message
     Check Log Message  ${tc.kws[0].msgs[0]}  ${exp_log_msg}
