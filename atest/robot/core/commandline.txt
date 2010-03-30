@@ -11,7 +11,7 @@ ${TESTFILE}  misc${/}normal.html
 ${PASS_FAIL_FILE}  misc${/}pass_and_fail.html
 ${DUMMY_LIB_TEST}  misc${/}dummy_lib_test.html
 ${UNICODE_TEST}  misc${/}unicode.html
-${MYOUTDIR}  ${TEMPDIR}${/}robot-test-145789
+${MYOUTDIR}  ${TEMPDIR}${/}robot-test-145789-${INTERPRETER}
 ${M_110_211}  1 critical test, 1 passed, 0 failed\n 2 tests total, 1 passed, 1 failed
 
 *** Test Cases ***
