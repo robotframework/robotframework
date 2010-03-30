@@ -97,10 +97,12 @@ Thus, for example, :code:`startSuite` is a synonym to :code:`start_suite`.
    |               |                  | * starttime: execution start time                |
    |               |                  | * metadata: a dictionary containing `free test   |
    |               |                  |   suite metadata`_                               |
-   |               |                  | * tests: names of test cases in this suite       |
-   |               |                  | * suites: names of subsuites this suite has      |
-   |               |                  | * totaltests: number of tests in all subsuites   |
-   |               |                  |   this suite                                     |
+   |               |                  | * tests: names of tests directly in this suite   |
+   |               |                  |   as a list of strings                           |
+   |               |                  | * suites: names of suites directly in this suite |
+   |               |                  |   as a list of strings                           |
+   |               |                  | * totaltests: total number of tests in this suite|
+   |               |                  |   and all its sub-suites as an integer           |
    |               |                  |                                                  |
    |               |                  | The last four were added in Robot Framework 2.5  |
    +---------------+------------------+--------------------------------------------------+
