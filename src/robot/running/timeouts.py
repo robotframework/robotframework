@@ -103,6 +103,14 @@ class _Timeout:
 
 class TestTimeout(_Timeout):
     type = 'test'
+    _kw_timeout_occurred = False
+
+    def set_keyword_timeout(self, timeout_occurred):
+        if not self._kw_timeout_occurred:
+            self._kw_timeout_occurred = timeout_occurred
+
+    def any_timeout_occurred(self):
+        return self.timed_out() or self._kw_timeout_occurred
 
 
 class KeywordTimeout(_Timeout):

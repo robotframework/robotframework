@@ -967,6 +967,21 @@ class _RunKeyword:
         if test.status == 'PASS':
             return self.run_keyword(name, *args)
 
+    def run_keyword_if_timeout_occurred(self, name, *args):
+        """Runs the given keyword if either a test or a keyword timeout has occurred.
+
+        This keyword can only be used in a test teardown. Trying to use it
+        anywhere else results in an error.
+
+        Otherwise, this keyword works exactly like `Run Keyword`, see its
+        documentation for more details.
+
+        Available in Robot Framework 2.5 and newer.
+        """
+        test = self._get_test_in_teardown('Run Keyword If Timeout Occurred')
+        if test.timeout.any_timeout_occurred():
+            return self.run_keyword(name, *args)
+
     def _get_test_in_teardown(self, kwname):
         test = NAMESPACES.current.test
         if test is not None and test.status != 'RUNNING':

@@ -12,7 +12,6 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-
 from robot import utils
 from robot.common import BaseTestSuite, BaseTestCase
 from robot.parsing import TestSuiteData
@@ -214,7 +213,8 @@ class RunnableTestCase(BaseTestCase):
         if fixture:
             try:
                 fixture.run(output, namespace)
-            except ExecutionFailed:
+            except ExecutionFailed, err:
+                self.timeout.set_keyword_timeout(err.timeouted)
                 return utils.get_error_message()
 
     def _run_keywords(self, output, namespace, setup_err):
@@ -222,7 +222,8 @@ class RunnableTestCase(BaseTestCase):
             for kw in self.keywords:
                 try:
                     kw.run(output, namespace)
-                except ExecutionFailed:
+                except ExecutionFailed, err:
+                    self.timeout.set_keyword_timeout(err.timeouted)
                     return utils.get_error_message()
 
     def _get_message(self, setup_err, kw_err):
