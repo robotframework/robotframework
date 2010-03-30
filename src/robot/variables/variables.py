@@ -242,32 +242,25 @@ class Variables(utils.NormalizedDict):
                                                 utils.get_error_message()))
 
     def _get_var_table_name_and_value(self, rawvar):
-        name = self._get_var_table_name(rawvar)
-        value = self._unescape_leading_trailing_spaces_from_var_table_value(rawvar.value)
+        name = self._get_var_table_name(rawvar.name)
+        value = [ self._unescape_leading_trailing_spaces(cell) for cell in rawvar.value ]
         if name[0] == '@':
             return name, self.replace_list(value)
         return name, self._get_var_table_scalar_value(value)
 
-    def _get_var_table_name(self, rawvar):
-        name = self._normalize(rawvar.name)
-        if not name:
-            raise DataError('No variable name given')
-        if name.endswith('=') and is_var(name[:-1]):
-            name = name[:-1]
-        elif not is_var(name):
-            raise DataError("Invalid variable name '%s'" % rawvar.name)
+    def _get_var_table_name(self, name):
+        if name.endswith('='):
+            name = name[:-1].strip()
+        if not is_var(name):
+            raise DataError("Invalid variable name '%s'" % name)
         return name
 
-    def _unescape_leading_trailing_spaces_from_var_table_value(self, value):
-        ret = []
-        for item in value:
-            if utils.is_str(item):
-                if item.endswith(' \\'):
-                    item = item[:-1]
-                if item.startswith('\\ '):
-                    item = item[1:]
-            ret.append(item)
-        return ret
+    def _unescape_leading_trailing_spaces(self, item):
+        if item.endswith(' \\'):
+            item = item[:-1]
+        if item.startswith('\\ '):
+            item = item[1:]
+        return item
 
     def _get_var_table_scalar_value(self, value):
         if len(value) == 1:
