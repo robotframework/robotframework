@@ -18,12 +18,15 @@ Empty Scalar String
 
 Scalar List
     Check Test Case  Scalar List
+    Check Syslog Contains  Creating scalar variable with more than one value is deprecated and this functionality will be removed in Robot Framework 2.6. Create a list variable '\@{LIST}' and use it as a scalar variable '\${LIST}' instead.
 
 Scalar List With Non-Strings
     Check Test Case  Scalar List With Non-Strings
+    Check Syslog Contains  Creating scalar variable with more than one value is deprecated and this functionality will be removed in Robot Framework 2.6. Create a list variable '\@{LIST WITH NON STRINGS}' and use it as a scalar variable '\${LIST WITH NON STRINGS}' instead.
 
 Scalar List With Escapes
     Check Test Case  Scalar List With Escapes
+    Check Syslog Contains  Creating scalar variable with more than one value is deprecated and this functionality will be removed in Robot Framework 2.6. Create a list variable '\@{LIST WITH ESCAPES}' and use it as a scalar variable '\${LIST WITH ESCAPES}' instead.
 
 List With One Item
     Check Test Case  List with One Item
