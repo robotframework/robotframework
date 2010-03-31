@@ -122,20 +122,18 @@ class SetKeyword(Keyword):
             return self._get_vars_to_set_when_ret_is_none()
         if self.list_var is None:
             return self._get_vars_to_set_with_only_scalars(ret)
-        try:
-            ret_as_list = self._try_to_convert_to_list(ret)
-        except ValueError:
-            self._raise_invalid_return_value(ret, wrong_type=True)
-        else:
-            return self._get_vars_to_set_with_scalars_and_list(ret_as_list)
+        if self._is_non_string_iterable(ret):
+            return self._get_vars_to_set_with_scalars_and_list(list(ret))
+        self._raise_invalid_return_value(ret, wrong_type=True)
 
-    def _try_to_convert_to_list(self, value):
+    def _is_non_string_iterable(self, value):
         if isinstance(value, basestring):
-            return value
+            return False
         try:
-            return list(value)
-        except:
-            raise ValueError()
+            iter(value)
+            return True
+        except TypeError:
+            return False
 
     def _get_vars_to_set_when_ret_is_none(self):
         ret = [ (var, None) for var in self.scalar_vars ]
