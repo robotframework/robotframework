@@ -39,7 +39,7 @@ Keyword In Python Class Using Method From Java Class
 
 Message Of Importing Library Extending Java Class Should Be In Syslog
     [Tags]  jybot
-    Check Syslog Contains  Imported library 'extendingjava.ExtendJavaLib' with arguments [ ] (version <unknown>, class type, global scope, 18 keywords
+    Check Syslog Contains  Imported library 'extendingjava.ExtendJavaLib' with arguments [ ] (version <unknown>, class type, global scope, 22 keywords
 
 Using Methods From Java Parents Should Not Create Handlers Starting With Super__
     [Documentation]  At least in Jython 2.2, when a class implemented in python inherits a java class, and the python class uses a method from the java class, the python instance ends up having an attribute super__methodname, where methodname is the method from parent class. We don't want to create keywords from these, even though they are real methods.
