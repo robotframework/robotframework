@@ -97,14 +97,19 @@ class SetKeyword(Keyword):
         return '%s = %s' % (', '.join(varz), handler_name)
 
     def _run(self, handler, output, namespace):
-        ret = Keyword._run(self, handler, output, namespace)
         try:
-            vars_to_set = self._get_vars_to_set(ret)
+            self._run_and_set_variables(handler, output, namespace)
         except DataError, err:
             msg = utils.unic(err)
             output.fail(msg)
             raise ExecutionFailed(msg)
-        for name, value in vars_to_set:
+
+    def _run_and_set_variables(self, handler, output, namespace):
+        return_value = Keyword._run(self, handler, output, namespace)
+        self._set_variables(namespace, output, return_value)
+
+    def _set_variables(self, namespace, output, return_value):
+        for name, value in self._get_vars_to_set(return_value):
             namespace.variables[name] = value
             if is_list_var(name) or utils.is_list(value):
                 value = utils.seq2str2(value)
@@ -117,9 +122,20 @@ class SetKeyword(Keyword):
             return self._get_vars_to_set_when_ret_is_none()
         if self.list_var is None:
             return self._get_vars_to_set_with_only_scalars(ret)
-        if utils.is_list(ret):
-            return self._get_vars_to_set_with_scalars_and_list(ret)
-        self._raise_invalid_return_value(ret, wrong_type=True)
+        try:
+            ret_as_list = self._try_to_convert_to_list(ret)
+        except ValueError:
+            self._raise_invalid_return_value(ret, wrong_type=True)
+        else:
+            return self._get_vars_to_set_with_scalars_and_list(ret_as_list)
+
+    def _try_to_convert_to_list(self, value):
+        if isinstance(value, basestring):
+            return value
+        try:
+            return list(value)
+        except:
+            raise ValueError()
 
     def _get_vars_to_set_when_ret_is_none(self):
         ret = [ (var, None) for var in self.scalar_vars ]
@@ -142,7 +158,7 @@ class SetKeyword(Keyword):
                     + [(self.scalar_vars[-1], ret[needed-1:])]
 
     def _get_vars_to_set_with_scalars_and_list(self, ret):
-        ret = list(ret)
+        #ret = list(ret)
         needed_scalars = len(self.scalar_vars)
         if not needed_scalars:
             return [(self.list_var, ret)]
