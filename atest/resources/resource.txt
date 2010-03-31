@@ -74,7 +74,7 @@ Set Variables And Get Datasources
 Set Variables
     [Arguments]  ${name}
     ${OUTDIR} =  Join Path  ${OUTPUTDIR}  output  ${name}
-    Set Global Variable  $OUTDIR  ${OUTDIR.replace('?', '_') .replace('*', '_')}
+    Set Global Variable  $OUTDIR  ${OUTDIR.encode('ascii', 'ignore').replace('?', '_') .replace('*', '_')}
     Create Directory  ${OUTDIR}
     Set Suite Variable  $OUTFILE  ${OUTDIR}${/}output.xml
     Set Suite Variable  $STDOUT_FILE  ${OUTDIR}${/}stdout.txt
@@ -151,6 +151,12 @@ Check File Matches Regexp
     ${exp} =  Catenate  @{expected}
     ${file} =  Get File  ${path}
     Should Match Regexp  ${file.strip()}  ^${exp}$
+
+File Should Be Equal To
+    [Arguments]  ${path}  @{expected}
+    ${content} =  Log File  ${path}
+    ${exp} =  Catenate  @{expected}
+    Should Be Equal  ${content}  ${exp}
 
 Stderr Should Be Empty
     ${stderr} =  Get Stderr
