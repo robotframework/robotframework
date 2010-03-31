@@ -46,6 +46,16 @@ Set List Variable
     Should Be Equal  ${test.kws[0].name}  \@{listvar} = BuiltIn.Create List
     Check Log Message  ${test.kws[0].msgs[0]}  \@{listvar} = [ h | e | ll | o ]
 
+Set List Variable From Custom Iterable
+    ${test} =  Check Test Case  Set List Variable From Custom Iterable
+    Should Be Equal  ${test.kws[0].name}  \@{listvar} = ExampleLibrary.Return Custom Iterable
+    Check Log Message  ${test.kws[0].msgs[0]}  \@{listvar} = [ Keijo | Mela ]
+
+Set List Variable From List Subclass
+    ${test} =  Check Test Case  Set List Variable From List Subclass
+    Should Be Equal  ${test.kws[0].name}  \@{listvar} = ExampleLibrary.Return List Subclass
+    Check Log Message  ${test.kws[0].msgs[0]}  \@{listvar} = [ Keijo | Mela ]
+
 Set Long String To Scalar Variable
     [Documentation]  Tests that message lenght is 200 characters.
     ${test} =  Check Test Case  Set Long String To Scalar variable

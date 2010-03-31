@@ -1,5 +1,12 @@
 import java.util.Hashtable;
 import java.util.LinkedList;
+import java.util.List;
+import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.Set;
+import java.util.HashSet;
+import java.util.Vector;
+import java.util.Iterator;
 
 
 public class ExampleJavaLibrary {
@@ -67,7 +74,7 @@ public class ExampleJavaLibrary {
     public String returnStringFromLibrary(String s) {
     	return s;
     }
-    
+
     public JavaObject getJavaObject(String name) {
         return new JavaObject(name);
     }
@@ -75,7 +82,27 @@ public class ExampleJavaLibrary {
     public String[] getStringArray(String[] args) {
     	return args;
     }
-    
+
+    public Vector getStringVector(String[] args) {
+        return new Vector(Arrays.asList(args));
+    }
+
+    public List<String> getStringList(String[] args) {
+        return Arrays.asList(args);
+    }
+
+    public Iterator<String> getStringIterator(String[] args) {
+        return Arrays.asList(args)
+                     .iterator();
+    }
+
+    public ArrayList<String> getStringArrayList(String[] args) {
+        ArrayList<String> list = new ArrayList<String>();
+        for (String s : args)
+            list.add(s);
+        return list;
+    }
+
     public int[] getArrayOfThreeInts() {
     	int[] ret = { 1, 2, 42 }; 
     	return ret;

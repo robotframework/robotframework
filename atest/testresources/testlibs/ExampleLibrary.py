@@ -124,3 +124,20 @@ class ExampleLibrary:
     def sleep_without_logging(self, timestr):
         seconds = utils.timestr_to_secs(timestr)
         time.sleep(seconds)
+
+    def return_custom_iterable(self, *values):
+        return _MyIterable(*values)
+
+    def return_list_subclass(self, *values):
+        return _MyList(values)
+
+
+class _MyIterable(object):
+    def __init__(self, *values):
+        self._list = list(values)
+    def __iter__(self):
+        return iter(self._list)
+
+
+class _MyList(list):
+    pass

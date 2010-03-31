@@ -1,6 +1,5 @@
 *** Settings ***
 Library         ExampleLibrary
-Library         ExampleJavaLibrary
 
 *** Test Cases ***
 Set Simple Scalar Variable
@@ -46,6 +45,16 @@ Set List Variable
     Should Be Equal  @{listvar}[1]  e
     Should Be Equal  @{listvar}[2]  ll
     Should Be Equal  @{listvar}[3]  o
+
+Set List Variable From Custom Iterable
+    @{listvar} =  Return Custom Iterable  Keijo  Mela
+    Should Be Equal  @{listvar}[0]  Keijo
+    Should Be Equal  @{listvar}[1]  Mela
+
+Set List Variable From List Subclass
+    @{listvar} =  Return List Subclass  Keijo  Mela
+    Should Be Equal  @{listvar}[0]  Keijo
+    Should Be Equal  @{listvar}[1]  Mela
 
 Set Long String To Scalar Variable
     ${var_300} =  Set Variable  123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 1234567890123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 1234567890123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 1234567890
