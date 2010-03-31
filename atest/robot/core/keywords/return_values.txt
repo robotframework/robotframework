@@ -1,0 +1,114 @@
+*** Settings ***
+Documentation   Tests for return values from keywords. Tests include e.g. setting different return values for variables and checking messages that are automatically logged when variables are set. Setting different return values got from Java libraries are tested thoroughly in java_libraries.html.
+Suite Setup     Run Tests  ${EMPTY}  core/keywords/return_values.txt  core/keywords/return_values_invalid.html
+Force Tags      regression  pybot  jybot
+Resource        ../../../resources/resource.txt
+
+*** Test Cases ***
+Set Simple Scalar Variable
+    ${test} =  Check Test Case  Set Simple Scalar Variable
+    Should Be Equal  ${test.kws[0].name}  \${setvar} = BuiltIn.Set Variable
+    Check Log Message  ${test.kws[0].msgs[0]}  \${setvar} = this value is set
+
+Set Empty Scalar Variable
+    ${test} =  Check Test Case  Set Empty Scalar Variable
+    Check Log Message  ${test.kws[0].msgs[0]}  \${setvar} =
+
+Set List To Scalar Variable
+    ${test} =  Check Test Case  Set List to Scalar Variable
+    Check Log Message  ${test.kws[0].msgs[0]}  \${setvar} = [ a | b | c ]
+
+Set Multible Scalar Variables
+    ${test} =  Check Test Case  Set Multible Scalar Variables
+    Should Be Equal  ${test.kws[0].name}  \${var1}, \${var2} = BuiltIn.Create List
+    Check Log Message  ${test.kws[0].msgs[0]}  \${var1} = one
+    Check Log Message  ${test.kws[0].msgs[1]}  \${var2} = two
+
+Set With = Mark
+    Check Test Case  Set With = Mark
+
+Invalid Syntax When Using = Mark
+    ${test} =  Check Test Case  Set With = Mark Invalid Syntax 1
+    Should Be Equal  ${test.kws[0].name}  \${v1} = \${v2} Create List a b
+    ${test} =  Check Test Case  Set With = Mark Invalid Syntax 2
+    Should Be Equal  ${test.kws[0].name}  \${v1} = \${v2} = Create List a b
+
+Set Python Object To Scalar Variable
+    ${test} =  Check Test Case  Set Python Object to Scalar Variable
+    Check Log Message  ${test.kws[0].msgs[0]}  \${var} = This is my name
+
+Set None To Scalar Variable
+    ${test} =  Check Test Case  Set None To Scalar Variable
+    Check Log Message  ${test.kws[0].msgs[0]}  \${var} = None
+
+Set List Variable
+    ${test} =  Check Test Case  Set List Variable
+    Should Be Equal  ${test.kws[0].name}  \@{listvar} = BuiltIn.Create List
+    Check Log Message  ${test.kws[0].msgs[0]}  \@{listvar} = [ h | e | ll | o ]
+
+Set Long String To Scalar Variable
+    [Documentation]  Tests that message lenght is 200 characters.
+    ${test} =  Check Test Case  Set Long String To Scalar variable
+    Check Log Message  ${test.kws[0].msgs[0]}  \${var_300} = 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 1234567890123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 1234567890...
+
+Set Long Values To List Variable
+    [Documentation]  Tests that message lenght is 200 characters.
+    ${test} =  Check Test Case  Set Long Values To List variable
+    Check Log Message  ${test.kws[1].msgs[0]}  \@{listvar} = [ 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 1234567890 | 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 12345...
+
+Set Scalar Variables With More Values Than Variables
+    ${test} =  Check Test Case  Set Scalar Variables With More Values Than Variables
+    Check Log Message  ${test.kws[0].msgs[0]}  \${a} = a
+    Check Log Message  ${test.kws[0].msgs[1]}  \${b} = b
+    Check Log Message  ${test.kws[0].msgs[2]}  \${c} = [ c | d | e | f ]
+
+Set Multiple Scalars With Too Few Values
+    ${test} =  Check Test Case  Set Multiple Scalars with too few values
+    Check Log Message  ${test.kws[0].msgs[0]}  Cannot assign return value of keyword 'BuiltIn.Create List' to variables '\${a}', '\${b}' and '\${c}': Need more values than 2  FAIL
+
+Set Multiple Scalars When No List Returned
+    ${test} =  Check Test Case  Set Multiple Scalars When No List Returned
+    Check Log Message  ${test.kws[0].msgs[0]}  Cannot assign return value of keyword 'BuiltIn.Set Variable' to variables '\${a}' and '\${b}': Expected list, got string instead  FAIL
+
+Set List When No List Returned
+    ${test} =  Check Test Case  Set List When No List Returned
+    Check Log Message  ${test.kws[0].msgs[0]}  Cannot assign return value of keyword 'BuiltIn.Set Variable' to variable '\@{list}': Expected list, got integer instead  FAIL
+
+Set List To Scalar And List Varibles
+    ${test} =  Check Test Case  Set List to Scalar and list varibles
+    Should Be Equal  ${test.kws[0].name}  \${a}, \${b}, \@{c} = BuiltIn.Create List
+    Check Log Message  ${test.kws[0].msgs[0]}  \${a} = 1
+    Check Log Message  ${test.kws[0].msgs[1]}  \${b} = 2
+    Check Log Message  ${test.kws[0].msgs[2]}  \@{c} = [ c | d | e | f ]
+
+Assigning One None To Multiple Variables
+    ${test} =  Check Test Case  Assigning One None To Multiple Variables
+    Check Log Message  ${test.kws[0].msgs[0]}  \${x} = None
+    Check Log Message  ${test.kws[0].msgs[1]}  \${y} = None
+
+Assigning None To List Variable
+    ${test} =  Check Test Case  Assigning None To List Variable
+    Check Log Message  ${test.kws[0].msgs[1]}  \@{list} = [ ]
+
+Assigning One None To Scalar Variables And List Variable
+    ${test} =  Check Test Case  Assigning One None To Scalar Variables And List Variable
+    Check Log Message  ${test.kws[0].msgs[0]}  \${a} = None
+    Check Log Message  ${test.kws[0].msgs[1]}  \${b} = None
+    Check Log Message  ${test.kws[0].msgs[2]}  \${c} = None
+    Check Log Message  ${test.kws[0].msgs[3]}  \@{d} = [ ]
+
+List Variable Can Be Only Last
+    ${test} =  Check Test Case  List Variable Can Be Only Last 1
+    Should Be Equal  ${test.kws[0].name}  \@{list} \@{list2} Set Variable 1 2 3 4
+    ${test} =  Check Test Case  List Variable Can Be Only Last 2
+    Should Be Equal  ${test.kws[0].name}  \@{list} \${scal} Set Variable 1 2 3 4
+
+No Keyword
+    ${test} =  Check Test Case  No Keyword
+    Should Be Equal  ${test.kws[0].name}  \${nokeyword}
+
+Failing Set Keyword
+    ${test} =  Check Test Case  Failing Set Keyword
+    Should Be Equal  ${test.kws[0].name}  \${ret} = BuiltIn.Fail
+    Check Test Case  Failing Set Keyword And Teardown
+
