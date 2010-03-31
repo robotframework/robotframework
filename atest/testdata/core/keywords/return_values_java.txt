@@ -1,0 +1,46 @@
+*** Settings ***
+Library         ExampleLibrary
+Library         ExampleJavaLibrary
+
+*** Test Cases ***
+Set Multiple Scalar Variables Using Java Array
+    ${var1}  ${var2} =  Get String Array  first value  second value
+    Should Be Equal  ${var1}  first value
+    Should Be Equal  ${var2}  second value
+    ${i1}  ${i2}  ${i42} =  Get Array Of Three Ints
+    Should Be Equal  ${i1}  ${1}
+    Should Be Equal  ${i2}  ${2}
+    Should Be Equal  ${i42}  ${42}
+
+Set Java Object To Scalar Variable
+    ${var} =  ExampleJavaLibrary.GetJavaObject  This is my name in Java
+    Should Be Equal  ${var.name}  This is my name in Java
+
+Set List Variable Using Java Array
+    @{listvar} =  Get String Array  v1  v2  v3
+    Should Be Equal  @{listvar}[0]  v1
+    Should Be True  @{listvar} == ['v1', 'v2', 'v3']
+    @{listvar} =  Get Array of Three Ints
+    Should Be Equal  @{listvar}[0]  ${1}
+    Should Be True  @{listvar} == [1 ,2, 42]
+
+Set Scalar Variables With More Values Than Variables Using Java Array
+    ${a}  ${b}  ${c} =  Get String Array  a  b  c  d
+    ...  e  f
+    Should Be Equal  ${a}  a
+    Should Be True  '${b}' == 'b'
+    Should Be True  ${c} == ['c', 'd', 'e', 'f']
+    ${i1}  ${i2&42} =  Get Array Of Three Ints
+    Should Be Equal  ${i1}  ${1}
+    Should Be True  ${i2&42} == [2, 42]
+
+Set Multiple Scalars With Too Few Values Using Java Array
+    [Documentation]  FAIL Cannot assign return value of keyword 'ExampleJavaLibrary.Get Array Of Three Ints' to variables '\${i1}', '\${i2}', '\${i3}' and '\${i4}': Need more values than 3
+    ${i1}  ${i2}  ${i3}  ${i4} =  Get Array Of Three Ints
+
+Set List To Scalar And List Varibles Using Java Array
+    ${a}  ${b}  @{c} =  Get Array Of Three Ints
+    Should Be Equal  ${a}  ${1}
+    Should Be Equal  ${b}  ${2}
+    Should Be Equal  @{c}  ${42}
+
