@@ -134,27 +134,36 @@ Check Log Message
     Should Be Equal  ${item.level}  ${level}  Wrong log level
     Should Be Equal  ${item.html}  ${html}  Wrong HTML status
 
+Get Output File
+    [Arguments]  ${path}
+    [Documentation]  Output encoding avare helper
+    ${encoding} =  Evaluate  __import__('robot').utils.encoding._output_encoding
+    ${encoding} =  Set Variable If  '${path}' in ['${STDERR FILE}','${STDOUT FILE}','${SYSLOG FILE}']
+    ...  ${encoding}  UTF-8
+    ${file} =  Log File  ${path}  ${encoding}
+    [Return]  ${file}
+
 Check File Contains
     [Arguments]  ${path}  @{expected}
     ${exp} =  Catenate  @{expected}
-    ${file} =  Get File  ${path}
+    ${file} =  Get Output File  ${path}
     Should Contain  ${file}  ${exp}
 
 Check File Does Not Contain
     [Arguments]  ${path}  @{expected}
     ${exp} =  Catenate  @{expected}
-    ${file} =  Get File  ${path}
+    ${file} =  Get Output File  ${path}
     Should Not Contain  ${file}  ${exp}
 
 Check File Matches Regexp
     [Arguments]  ${path}  @{expected}
     ${exp} =  Catenate  @{expected}
-    ${file} =  Get File  ${path}
+    ${file} =  Get Output File  ${path}
     Should Match Regexp  ${file.strip()}  ^${exp}$
 
 File Should Be Equal To
     [Arguments]  ${path}  @{expected}
-    ${content} =  Log File  ${path}
+    ${content} =  Get Output File  ${path}
     ${exp} =  Catenate  @{expected}
     Should Be Equal  ${content}  ${exp}
 
@@ -187,15 +196,15 @@ Check Stdout Matches Regexp
     Check File Matches Regexp  ${STDOUT_FILE}  @{expected}
 
 Get Syslog
-    ${file} =  Log File  ${SYSLOG_FILE}
+    ${file} =  Get Output File  ${SYSLOG_FILE}
     [Return]  ${file}
 
 Get Stderr
-    ${file} =  Log File  ${STDERR_FILE}
+    ${file} =  Get Output File  ${STDERR_FILE}
     [Return]  ${file}
 
 Get Stdout
-    ${file} =  Log File  ${STDOUT_FILE}
+    ${file} =  Get Output File  ${STDOUT_FILE}
     [Return]  ${file}
 
 Check Syslog Contains
