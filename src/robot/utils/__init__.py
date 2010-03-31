@@ -38,7 +38,8 @@ from robottypes import is_list, is_tuple, is_scalar, is_str, is_integer, \
         is_boolean, is_number, is_list_of_str, to_boolean, to_list, \
         dict2map, type_as_str
 from unic import unic
-from encoding import encode_to_file_system, decode_output, encode_output
+from encoding import encode_to_file_system, decode_from_file_system, \
+        decode_output, encode_output
 from robotversion import get_version, get_java_version
 from text import cut_long_message, cut_long_assign_msg, wrap
 from xmlwriter import XmlWriter

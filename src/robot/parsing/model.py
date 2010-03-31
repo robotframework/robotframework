@@ -12,9 +12,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-
 import os
-import sys
 
 from robot import utils
 from robot.errors import DataError
@@ -60,8 +58,6 @@ class _BaseSuite(BaseTestSuite):
 
     def _get_name_and_source(self, path):
         source = self._get_source(path)
-        if not utils.is_jython:
-            source = source.decode(sys.getfilesystemencoding(), 'ignore')
         return self._get_name(source), source
 
     def _get_name(self, source):

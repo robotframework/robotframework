@@ -8,6 +8,10 @@ def encode_to_file_system(string):
     enc = sys.getfilesystemencoding()
     return string.encode(enc) if enc else string
 
+def decode_from_file_system(string):
+    enc = sys.getfilesystemencoding()
+    return string.decode(enc) if enc else string
+
 def decode_output(string):
     if _output_encoding:
         return unic(string, _output_encoding)
