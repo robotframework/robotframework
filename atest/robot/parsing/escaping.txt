@@ -1,0 +1,72 @@
+*** Settings ***
+Suite Setup     Run Tests  ${EMPTY}  parsing${/}escaping.html
+Force Tags      regression  jybot  pybot
+Resource        ../../resources/resource.txt
+
+*** Test Cases ***
+Spaces In Variable Table
+    Check Test Case  Spaces In Variable Table
+
+Leading And Trailing Spaces In Variable Table
+    Check Test Case  Leading And Trailing Spaces In Variable Table
+
+Backslash In Variable Table
+    Check Test Case  Backslash In Variable Table
+
+Newline, Tab And Carriage Return In Variable Table
+    Check Test Case  Newline, Tab And Carriage Return In Variable Table
+
+Escaping Variables In Variable Table
+    Check Test Case  Escaping Variables In Variable Table
+
+Escaping From List Variable In Variable Table
+    Check Test Case  Escaping From List Variable In variable Table
+
+Non Strings Are Ok In Variable Table
+    Check Test Case  Non Strings Are Ok In variable Table
+
+Remove Spaces Before And After
+    Check Test Case  Remove Spaces Before And After
+
+Remove Extra Spaces Between
+    Check Test Case  Remove Extra Spaces between
+
+Escaping Space
+    Check Test Case  Escaping Space
+
+Literal Newline Is Converted To Space
+    Check Test Case  Literal Newline Is Converted to Space
+
+Literal Newline After Newline Escape Is Ignored
+    Check Test Case  Literal newline after Newline Escape Is Ignored
+
+New Line
+    Check Test Case  New Line
+
+New Line And Space
+    Check Test Case  New Line And Space
+
+Carrriage Return
+    Check Test Case  Carrriage Return
+
+Backslash
+    Check Test Case  Backslash
+
+Tabulator
+    Check Test Case  Tabulator
+
+Hash
+    Check Test Case  Hash
+
+Any Character Escaped
+    Check Test Case  Any Character Escaped
+
+Escaping Variables
+    Check Test Case  Escaping Variables
+
+Escaping Variables With User Keywords
+    Check Test Case  Escaping Variables With User Keywords
+
+No Errors Should Have Occurred
+    Fail Unless File Empty  ${STDERR_FILE}
+
