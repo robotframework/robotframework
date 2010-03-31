@@ -246,7 +246,7 @@ class Variables(utils.NormalizedDict):
         value = [ self._unescape_leading_trailing_spaces(cell) for cell in rawvar.value ]
         if name[0] == '@':
             return name, self.replace_list(value)
-        return name, self._get_var_table_scalar_value(value)
+        return name, self._get_var_table_scalar_value(name, value)
 
     def _get_var_table_name(self, name):
         if name.endswith('='):
@@ -262,11 +262,15 @@ class Variables(utils.NormalizedDict):
             item = item[1:]
         return item
 
-    def _get_var_table_scalar_value(self, value):
+    def _get_var_table_scalar_value(self, name, value):
         if len(value) == 1:
             return self.replace_scalar(value[0])
         if len(value) == 0:
             return ''
+        LOGGER.warn("Creating scalar variable with more than one value is "
+                    "deprecated and this functionality will be removed in "
+                    "Robot Framework 2.6. Create a list variable '@%s' and use "
+                    "it as a scalar variable '%s' instead." % (name[1:], name))
         return self.replace_list(value)
 
     def _get_variables_from_module(self, module, args):
