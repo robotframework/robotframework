@@ -546,7 +546,7 @@ REPORT = '''%(FUNCTIONS)s
   <td class="status_fail">${SUITE.critical_stats.failed} critical tests failed</td>
 <!-- END IF -->
 </tr>
-<!-- IF """${SUITE.htmldoc}""" != '' -->
+<!-- IF ${SUITE.htmldoc.__len__()} > 0 -->
   <tr><th>Documentation:</th><td>${SUITE.htmldoc}</td></tr>
 <!-- END IF -->
 <!-- FOR ${meta} IN ${SUITE.get_metadata(html=True)} -->
