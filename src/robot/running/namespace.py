@@ -49,6 +49,7 @@ class Namespace:
         self._imported_variable_files = []
         self.import_library('BuiltIn')
         self.import_library('Reserved')
+        self.import_library('Easter')
         if suite.source is not None:
             self._handle_imports(suite.imports)
         robot.running.NAMESPACES.start_suite(self)
