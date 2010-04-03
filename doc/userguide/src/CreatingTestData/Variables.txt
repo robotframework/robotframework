@@ -116,15 +116,14 @@ both the example test cases are equivalent.
    \             Log       ${GREET}, ${NAME}!!   \
    ============  ========  ====================  ==========
 
-
 When a scalar variable is used as the only value in a test data cell,
 the scalar variable is replaced with the value it has. The value may
 be any object. When a scalar variable is used in a test data cell with
 anything else (constant strings or other variables), its value is
-first converted into a string and then catenated to whatever is in
+first converted into a Unicode string and then catenated to whatever is in
 that cell. Converting the value into a string means that the object's
-method :code:`__str__` (in Python) or :code:`toString` (in Java) is
-called.
+method :code:`__unicode__` (in Python, with :code:`__str__` as a fallback) 
+or :code:`toString` (in Java) is called.
 
 The example below demonstrates the difference between having a
 variable in a cell alone or with other content. First, let us assume
@@ -163,6 +162,13 @@ the arguments as explained below:
 - :name:`KW 3` gets a string :code:`I said "Hello, world!"`
 - :name:`KW 4` gets a string :code:`You said "Hi, tellus!"`
 
+.. Note:: Converting variables to Unicode obviously fails if the variable 
+          cannot be represented as Unicode. This can happen, for example, 
+          if you try to use byte sequences as arguments to keywords so that
+          you catenate the values together like :code:`${byte1}${byte2}`. 
+          A workaround is creating a variable that contains the whole value
+          and using it alone in the cell (e.g. :code:`${bytes}`) as then 
+          the value is used as-is.
 
 List variables
 ''''''''''''''
