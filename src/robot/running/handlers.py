@@ -159,11 +159,11 @@ class _RunnableHandler(BaseHandler):
         return True
 
     def _parse_kwarg(self, arg):
-        return dict([self._split_from_kwarg_sep(arg)])
+	name, value = self._split_from_kwarg_sep(arg)
+        return {str(name): value}
 
     def _split_from_kwarg_sep(self, arg):
-        name, value = arg.split('=', 1)
-        return str(name), value
+        return arg.split('=', 1)
 
     def _parse_posarg(self, argstr):
         if self._is_str_with_kwarg_sep(argstr):
