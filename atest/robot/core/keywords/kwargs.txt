@@ -1,0 +1,22 @@
+*** Settings ***
+Suite Setup     Run Tests  ${EMPTY}  core/keywords/kwargs.txt
+Force Tags      regression  pybot  jybot
+Resource        ../../../resources/resource.txt
+
+*** Test Cases ***
+
+Simple Kwarg
+    Check Test Case  ${TESTNAME}
+
+Substitution Starts From The End
+    Check Test Case  ${TESTNAME}
+
+Equals Sign In Kwarg Value
+    Check Test Case  ${TESTNAME}
+
+Using non-existing kwarg
+    Check Test Case  ${TESTNAME}
+
+Escaping Kwarg
+    Check Test Case  ${TESTNAME}
+

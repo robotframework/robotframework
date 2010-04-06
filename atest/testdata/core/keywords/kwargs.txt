@@ -1,0 +1,39 @@
+*** Settings ***
+Library  KwargsLibrary
+
+*** Test Cases ***
+Simple Kwarg
+    ${ret}=  one kw arg  foo=bar
+    should be equal  ${ret}  foo=bar
+    ${ret}=  Two Kw Args  fst=bar  snd=quux
+    Should Be Equal  ${ret}  fst=bar, snd=quux
+    ${ret}=  Two Kw Args  snd=quux  fst=bar
+    Should Be Equal  ${ret}  fst=bar, snd=quux
+   
+Substitution Starts From The End
+    ${ret}=  Four Kw Args  a=foo  bar  d=quux
+    Should Be Equal  ${ret}  a=a=foo, b=bar, c=None, d=quux
+
+Equals Sign In Kwarg Value
+    ${ret}=  one kw arg  foo=bar=quux
+    should be equal  ${ret}  foo=bar=quux
+
+Using non-existing kwarg
+    ${ret}=  one kw arg  keijo=not kwarg
+    should be equal  ${ret}  foo=keijo=not kwarg
+
+Escaping Kwarg
+    ${ret}=  one kw arg  foo=bar\\=quux
+    should be equal  ${ret}  foo=bar\\=quux
+    ${ret}=  one kw arg  foo\\=bar
+    should be equal  ${ret}  foo=foo=bar
+
+Kwargs in User Keyword
+    ${ret}=  Uk With Kwargs  ukfoo=foo  ukbar=Bar
+    Should Be Equal  ${ret}  ukfoo=foo, ukbar=Bar
+
+*** Keywords ***
+Uk With Kwargs
+    [arguments]  ${ukfoo}=  ${ukbar}=
+    [return]  ukfoo=${ukfoo}, ukbar=${ukbar}
+
