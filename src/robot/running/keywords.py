@@ -156,7 +156,6 @@ class SetKeyword(Keyword):
                     + [(self.scalar_vars[-1], ret[needed-1:])]
 
     def _get_vars_to_set_with_scalars_and_list(self, ret):
-        #ret = list(ret)
         needed_scalars = len(self.scalar_vars)
         if not needed_scalars:
             return [(self.list_var, ret)]
