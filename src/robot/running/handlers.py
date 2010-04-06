@@ -125,9 +125,52 @@ class _RunnableHandler(BaseHandler):
         return self.check_arg_limits(args)
 
     def _run_handler(self, handler, args, output, timeout):
+        posargs, kwargs = self._resolve_kwargs(args)
         if timeout is not None and timeout.active():
-            return timeout.run(handler, args=args, logger=output)
-        return handler(*args)
+            return timeout.run(handler, args=posargs, logger=output)
+        return handler(*posargs, **kwargs)
+
+    def _resolve_kwargs(self, arguments):
+        posargs = []
+        kwargs = {}
+        kwargs_allowed = True
+        for arg in reversed(arguments):
+            if kwargs_allowed and self._is_kwarg(arg):
+                kwargs.update(self._parse_kwarg(arg))
+            else:
+                posargs.append(self._parse_posarg(arg))
+                kwargs_allowed = False
+        return reversed(posargs), kwargs
+
+    def _is_kwarg(self, arg):
+        if self._is_str_with_kwarg_sep(arg):
+            name, _ = self._split_from_kwarg_sep(arg)
+            return self._is_arg_name(name)
+        return False
+
+    def _is_arg_name(self, name):
+        return name in self.args
+
+    def _is_str_with_kwarg_sep(self, arg):
+        if not isinstance(arg, basestring):
+            return False
+        if not '=' in arg:
+            return False
+        return True
+
+    def _parse_kwarg(self, arg):
+        return dict([self._split_from_kwarg_sep(arg)])
+
+    def _split_from_kwarg_sep(self, arg):
+        name, value = arg.split('=', 1)
+        return str(name), value
+
+    def _parse_posarg(self, argstr):
+        if self._is_str_with_kwarg_sep(argstr):
+            name, _ = self._split_from_kwarg_sep(argstr)
+            if self._is_arg_name(name[:-1]):
+                return argstr.replace('\\=', '=')
+        return argstr
 
     def _get_timeout(self, namespace):
         # Timeouts must not be active for run keyword variants, only for
