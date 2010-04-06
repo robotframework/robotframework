@@ -128,29 +128,40 @@ class UserHandler(BaseHandler):
         timeout = varz.replace_meta('Timeout', self._timeout, self._errors)
         self.timeout = KeywordTimeout(*timeout)
 
-    def run(self, output, namespace, args):
+    def run(self, output, namespace, arguments):
         namespace.start_user_keyword(self)
-        args = namespace.variables.replace_list(args)
+        vars = namespace.variables
+        args = vars.replace_list(arguments)
         self._tracelog_args(output, args)
         self.check_arg_limits(args)
-        if len(args) < len(self.args):
-            args += self._get_defaults(args, namespace.variables)
-        for name, value in zip(self.args, args):
-            namespace.variables[name] = value
-        if self.varargs is not None:
-            namespace.variables[self.varargs] = self._get_varargs(args)
+        self._set_args_to_namespace(args, vars)
         self._verify_keyword_is_valid()
         self.timeout.start()
+        self._run_kws(output, namespace)
+        ret = self._get_return_value(vars)
+        namespace.end_user_keyword()
+        output.trace('Return: %s' % utils.unic(ret))
+        return ret
+
+    def _set_defaults_if_needed(self, args, vars):
+        if len(args) < len(self.args):
+            args += self._get_defaults(args, vars)
+        return args
+
+    def _set_args_to_namespace(self, arguments, vars):
+        args = self._set_defaults_if_needed(arguments, vars)
+        for name, value in zip(self.args, args):
+            vars[name] = value
+        if self.varargs:
+            vars[self.varargs] = self._get_varargs(args)
+
+    def _run_kws(self, output, namespace):
         for kw in self.keywords:
             try:
                 kw.run(output, namespace)
             except ExecutionFailed:
                 namespace.end_user_keyword()
                 raise
-        ret = self._get_return_value(namespace.variables)
-        namespace.end_user_keyword()
-        output.trace('Return: %s' % utils.unic(ret))
-        return ret
 
     def _verify_keyword_is_valid(self):
         if self._errors:
