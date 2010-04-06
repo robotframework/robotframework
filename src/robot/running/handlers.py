@@ -70,20 +70,28 @@ class _RunnableHandler(BaseHandler):
 
         Note: This method MUST NOT change this object's internal state.
         """
-        if self._method is not None:
-            handler = self._method
-        else:
-            lib_instance = self.library.get_instance()
-            handler = self._get_handler(lib_instance, self._handler_name)
         args = self._process_args(args, namespace.variables)
         self._tracelog_args(output, args)
-        utils.capture_output()
+        self._capture_output()
         try:
-            ret = self._run_handler(handler, args, output, namespace)
+            ret = self._run_handler(self._current_handler(), args, output, 
+                                    self._get_timeout(namespace))
         finally:
             self._release_and_log_output(output)
-        output.trace('Return: %s' % utils.unic(ret))
+        self._tracelog_return_value(output, ret)
         return ret
+
+    def _capture_output(self):
+        utils.capture_output()
+
+    def _current_handler(self):
+        if self._method is not None:
+            return self._method
+        return self._get_handler(self.library.get_instance(),
+                                 self._handler_name)
+
+    def _tracelog_return_value(self, output, ret):
+        output.trace('Return: %s' % utils.unic(ret))
 
     def _get_global_handler(self, method, name):
         return method
@@ -116,8 +124,7 @@ class _RunnableHandler(BaseHandler):
         args = variables.replace_list(args)
         return self.check_arg_limits(args)
 
-    def _run_handler(self, handler, args, output, namespace):
-        timeout = self._get_timeout(namespace)
+    def _run_handler(self, handler, args, output, timeout):
         if timeout is not None and timeout.active():
             return timeout.run(handler, args=args, logger=output)
         return handler(*args)
