@@ -172,7 +172,7 @@ class UserHandler(BaseHandler):
 class UserKeywordArguments(object):
 
     def __init__(self, argnames, defaults, vararg):
-        self._names = argnames
+        self._names = list(argnames) # Python 2.5 does not support indexing tuples
         self._defaults = defaults
         self._vararg = vararg
 
