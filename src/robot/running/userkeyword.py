@@ -198,7 +198,8 @@ class UserKeywordArguments(object):
             variables[name] = value
 
     def _fill(self, template, arguments):
-        arg_resolver = UserKeywordArgTypeResolver(self._names, arguments)
+        arg_resolver = UserKeywordArgTypeResolver(self._names, self._defaults,
+                                                  arguments)
         for name, value in arg_resolver.kwargs.items():
             template[self._names.index(name)] = value
         for index, value in enumerate(arg_resolver.posargs):

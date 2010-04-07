@@ -128,7 +128,8 @@ class _RunnableHandler(BaseHandler):
         return self.check_arg_limits(args)
 
     def _run_handler(self, handler, args, output, timeout):
-        arg_resolver = LibraryKeywordArgTypeResolver(self.args, args)
+        arg_resolver = LibraryKeywordArgTypeResolver(self.args, self.defaults,
+                                                     args)
         posargs, kwargs = arg_resolver.posargs, arg_resolver.kwargs
         if timeout is not None and timeout.active():
             return timeout.run(handler, args=posargs, kwargs=kwargs, logger=output)
