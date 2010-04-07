@@ -143,17 +143,44 @@ class UserHandler(BaseHandler):
         output.trace('Return: %s' % utils.unic(ret))
         return ret
 
-    def _set_defaults_if_needed(self, args, vars):
-        if len(args) < len(self.args):
-            args += self._get_defaults(args, vars)
-        return args
-
     def _set_args_to_namespace(self, arguments, vars):
-        args = self._set_defaults_if_needed(arguments, vars)
-        for name, value in zip(self.args, args):
-            vars[name] = value
+        signature = self._get_signature(vars)
+        args = arguments
         if self.varargs:
             vars[self.varargs] = self._get_varargs(args)
+            args = args[:len(signature)]
+        args = self._replace_kwargs(signature, args)
+        for name, value in zip(self.args, args):
+            vars[name] = value
+
+    def _get_signature(self, variables):
+        return [ MissingArg() for _ in range(len(self.args)-len(self.defaults)) ] +\
+                 list(variables.replace_list(self.defaults))
+
+    def _replace_kwargs(self, signature, arguments):
+        for arg in reversed(arguments):
+            if self._is_str_with_kwarg_sep(arg):
+                name, value = self._split_from_kwarg_sep(arg)
+                name = '${%s}' % name
+                if name in self.args:
+                    signature[self.args.index(name)] = value
+                    arguments.pop(-1)
+                else:
+                    break
+        for index, arg in enumerate(arguments):
+            signature[index] = arg
+        return signature
+
+    def _is_str_with_kwarg_sep(self, arg):
+        if not isinstance(arg, basestring):
+            return False
+        if not '=' in arg:
+            return False
+        return True
+
+    def _split_from_kwarg_sep(self, arg):
+        name, value = arg.split('=', 1)
+        return str(name), value
 
     def _run_kws(self, output, namespace):
         for kw in self.keywords:
@@ -179,17 +206,15 @@ class UserHandler(BaseHandler):
             return ret
         return ret[0]
 
-    def _get_defaults(self, args, variables):
-        """Returns as many default values as needed"""
-        defaults_needed = len(self.args) - len(args)
-        defaults = self.defaults[len(self.defaults)-defaults_needed:]
-        return tuple(variables.replace_list(defaults))
-
     def _get_varargs(self, args):
         """Returns args leftoever from argspec and thus belonging to varargs"""
         vararg_count = len(args) - len(self.args)
         varargs = args[len(args)-vararg_count:]
         return varargs  # Variables already replaced
+
+
+class MissingArg(object):
+    pass
 
 
 class EmbeddedArgsTemplate(UserHandler):
