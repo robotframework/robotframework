@@ -31,6 +31,14 @@ Escaping Kwarg
     ${ret}=  One Kwarg  foo\\=bar
     Should Be Equal  ${ret}  foo=foo=bar
 
+Using Argname Twice
+    [documentation]  FAIL  Keyword argument fst repeated.
+    ${ret}=  Two Kwargs  fst=foo  fst=foo
+
+Inside Run Kw
+    ${butler}=  Run Keyword  Uk Four Kwargs  a=foo  bar  d=quux  
+    Should Be Equal  ${butler}  a=a=foo, b=bar, c=, d=quux
+
 Uk Simple Kwarg
     Test With UK Kwargs
 

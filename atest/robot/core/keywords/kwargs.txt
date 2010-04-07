@@ -23,6 +23,12 @@ Using non-existing kwarg
 Escaping Kwarg
     Check Test Case  ${TESTNAME}
 
+Using Argname Twice
+    Check Test Case  ${TESTNAME}
+
+Inside Run Kw
+    Check Test Case  ${TESTNAME}
+
 Uk Simple Kwarg
     Check Test Case  ${TESTNAME}
 
