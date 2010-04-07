@@ -27,7 +27,10 @@ class _ArgTypeResolver(object):
         kwargs_allowed = True
         for arg in reversed(self._optional_values):
             if kwargs_allowed and self._is_kwarg(arg):
-                kwargs.update(self._parse_kwarg(arg))
+                name, value = self._parse_kwarg(arg)
+                if name in kwargs:
+                    raise RuntimeError('Keyword argument %s repeated.' % name)
+                kwargs.update({name: value})
             else:
                 posargs.append(self._parse_posarg(arg))
                 kwargs_allowed = False
@@ -63,7 +66,7 @@ class UserKeywordArgTypeResolver(_ArgTypeResolver):
 
     def _parse_kwarg(self, arg):
         name, value = self._split_from_kwarg_sep(arg)
-        return {('${%s}') % name: value}
+        return '${%s}' % name, value
 
 class LibraryKeywordArgTypeResolver(_ArgTypeResolver):
 
@@ -72,4 +75,4 @@ class LibraryKeywordArgTypeResolver(_ArgTypeResolver):
 
     def _parse_kwarg(self, arg):
         name, value = self._split_from_kwarg_sep(arg)
-        return {str(name): value}
+        return str(name), value
