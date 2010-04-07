@@ -14,6 +14,9 @@ Substitution Starts From The End
 Mandatory Args Should Be Positioned
     Check Test Case  ${TESTNAME}
 
+Kwargs and Varargs
+    Check Test Case  ${TESTNAME}
+
 Equals Sign In Kwarg Value
     Check Test Case  ${TESTNAME}
 

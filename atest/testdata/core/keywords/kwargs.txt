@@ -15,6 +15,12 @@ Mandatory Args Should Be Positioned
     ${ret}=  Mandatory And Kwargs  a  c=b
     Should Be Equal  ${ret}  a=a, b=c=b, c=None
 
+Kwargs and Varargs
+    ${ret}=  Kwargs and Mandatory Args  mandatory  d2=d2  d1=d1
+    Should Be Equal  ${ret}  mandatory=mandatory, d1=d1, d2=d2, varargs=[]
+    ${ret}=  Kwargs and Mandatory Args  1  2  3  4  5  6
+    Should Be Equal  ${ret}  mandatory=1, d1=2, d2=3, varargs=[4,5,6]
+
 Equals Sign In Kwarg Value
     ${ret}=  One Kwarg  foo=bar=quux
     Should Be Equal  ${ret}  foo=bar=quux
