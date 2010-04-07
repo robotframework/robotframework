@@ -145,13 +145,6 @@ class TestSettingUserKeywordArguments(unittest.TestCase):
         self._assert_variables({'${mand}': 'muuli', '@{varg}': []})
 
     def test_kwargs(self):
-        self._arguments_for(['${foo}']).set_to(self.variables, ['foo=bar'])
-        self._assert_variables({'${foo}': 'bar'})
-        self._arguments_for(['${foo}', '${bar}']).set_to(self.variables,
-                                                         ['bar=quux', 'foo=bar'])
-        self._assert_variables({'${foo}': 'bar', '${bar}': 'quux'})
-
-    def test_kwargs_and_defaults(self):
         self._arguments_for(['${a}', '${b}'], ('foo', 'b')).set_to(self.variables,
                                                                    ['b=bar'])
         self._assert_variables({'${a}': 'foo', '${b}': 'bar'})
@@ -159,17 +152,11 @@ class TestSettingUserKeywordArguments(unittest.TestCase):
         args.set_to(self.variables, ['a=foo', 'd', 'c=quux'])
         self._assert_variables({'${a}': 'a=foo', '${b}': 'd', '${c}': 'quux'})
 
-    def test_kwargs_and_vararg(self):
-        args = self._arguments_for(['${foo}', '${bar}'], vararg='@{list}')
-        args.set_to(self.variables, ['bar=quux', 'foo=bar', 'hevonen', 'aasi'])
-        self._assert_variables({'${foo}': 'bar', '${bar}': 'quux',
-                                '@{list}': ['hevonen', 'aasi']})
-
     def test_defaults_kwargs_and_vararg(self):
         args = self._arguments_for(['${foo}', '${bar}'], ('jotain',), '@{list}')
-        args.set_to(self.variables, ['bar=quux', 'foo=bar', 'hevonen', 'aasi'])
-        self._assert_variables({'${foo}': 'bar', '${bar}': 'quux',
-                                '@{list}': ['hevonen', 'aasi']})
+        args.set_to(self.variables, ['bar', 'bar=quux', 'hevonen', 'aasi'])
+        self._assert_variables({'${foo}': 'bar', '${bar}': 'quux', '@{list}': ['hevonen', 'aasi']})
+
         args = self._arguments_for(['${foo}', '${bar}'], ('jotain',), '@{list}')
         args.set_to(self.variables, ['quux', 'bar', 'hevonen', 'aasi'])
         self._assert_variables({'${foo}': 'quux', '${bar}': 'bar',
