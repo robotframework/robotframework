@@ -23,6 +23,7 @@ from robot import utils
 
 from keywords import KeywordFactory
 from timeouts import KeywordTimeout
+from argtypes import UserKeywordArgTypeResolver
 
 
 def PublicUserLibrary(path):
@@ -109,9 +110,9 @@ class UserHandler(BaseHandler):
         self._libname = libname
         self._set_variable_dependent_metadata(handlerdata.metadata)
         self.keywords = [ KeywordFactory(kw) for kw in handlerdata.keywords ]
-        self.args = handlerdata.args
-        self.defaults = handlerdata.defaults
-        self.varargs = handlerdata.varargs
+        self.arguments = UserKeywordArguments(handlerdata.args, 
+                                               handlerdata.defaults,
+                                               handlerdata.varargs)
         self.minargs = handlerdata.minargs
         self.maxargs = handlerdata.maxargs
         self.return_value = handlerdata.return_value
@@ -130,65 +131,18 @@ class UserHandler(BaseHandler):
 
     def run(self, output, namespace, arguments):
         namespace.start_user_keyword(self)
-        vars = namespace.variables
-        args = vars.replace_list(arguments)
-        self._tracelog_args(output, args)
-        self.check_arg_limits(args)
-        self._set_args_to_namespace(args, vars)
+        variables = namespace.variables
+        argument_values = variables.replace_list(arguments)
+        self._tracelog_args(output, argument_values)
+        self.check_arg_limits(argument_values)
+        self.arguments.set_to(variables, argument_values)
         self._verify_keyword_is_valid()
         self.timeout.start()
         self._run_kws(output, namespace)
-        ret = self._get_return_value(vars)
+        ret = self._get_return_value(variables)
         namespace.end_user_keyword()
         output.trace('Return: %s' % utils.unic(ret))
         return ret
-
-    def _set_args_to_namespace(self, arguments, vars):
-        signature = self._get_signature(vars)
-        args = arguments
-        if self.varargs:
-            vars[self.varargs] = self._get_varargs(args)
-            args = args[:len(signature)]
-        args = self._replace_kwargs(signature, args)
-        for name, value in zip(self.args, args):
-            vars[name] = value
-
-    def _get_signature(self, variables):
-        return [ MissingArg() for _ in range(len(self.args)-len(self.defaults)) ] +\
-                 list(variables.replace_list(self.defaults))
-
-    def _replace_kwargs(self, signature, arguments):
-        for arg in reversed(arguments):
-            if self._is_str_with_kwarg_sep(arg):
-                name, value = self._split_from_kwarg_sep(arg)
-                name = '${%s}' % name
-                if name in self.args:
-                    signature[self.args.index(name)] = value
-                    arguments.pop(-1)
-                else:
-                    break
-        for index, arg in enumerate(arguments):
-            signature[index] = arg
-        return signature
-
-    def _is_str_with_kwarg_sep(self, arg):
-        if not isinstance(arg, basestring):
-            return False
-        if not '=' in arg:
-            return False
-        return True
-
-    def _split_from_kwarg_sep(self, arg):
-        name, value = arg.split('=', 1)
-        return str(name), value
-
-    def _run_kws(self, output, namespace):
-        for kw in self.keywords:
-            try:
-                kw.run(output, namespace)
-            except ExecutionFailed:
-                namespace.end_user_keyword()
-                raise
 
     def _verify_keyword_is_valid(self):
         if self._errors:
@@ -198,6 +152,14 @@ class UserHandler(BaseHandler):
             raise DataError("User keyword '%s' contains no keywords"
                             % self.name)
 
+    def _run_kws(self, output, namespace):
+        for kw in self.keywords:
+            try:
+                kw.run(output, namespace)
+            except ExecutionFailed:
+                namespace.end_user_keyword()
+                raise
+
     def _get_return_value(self, variables):
         if not self.return_value:
             return None
@@ -206,15 +168,50 @@ class UserHandler(BaseHandler):
             return ret
         return ret[0]
 
+
+class UserKeywordArguments(object):
+
+    def __init__(self, argnames, defaults, vararg):
+        self._names = argnames
+        self._defaults = defaults
+        self._vararg = vararg
+
+    def set_to(self, variables, argument_values):
+        template_with_defaults = self._template_for(variables)
+        argument_values = self._set_possible_varargs(template_with_defaults,
+                                                     variables, argument_values)
+        self._set_variables(variables, self._fill(template_with_defaults,
+                                                  argument_values))
+
+    def _template_for(self, variables):
+        return [ MissingArg() for _ in range(len(self._names)-len(self._defaults)) ] +\
+                 list(variables.replace_list(self._defaults))
+
+    def _set_possible_varargs(self, template, variables, argument_values):
+        if self._vararg:
+            variables[self._vararg] = self._get_varargs(argument_values)
+            argument_values = argument_values[:len(template)]
+        return argument_values
+
+    def _set_variables(self, variables, args):
+        for name, value in zip(self._names, args):
+            variables[name] = value
+
+    def _fill(self, template, arguments):
+        arg_resolver = UserKeywordArgTypeResolver(self._names, arguments)
+        for name, value in arg_resolver.kwargs.items():
+            template[self._names.index(name)] = value
+        for index, value in enumerate(arg_resolver.posargs):
+            template[index] = value
+        return template
+
     def _get_varargs(self, args):
-        """Returns args leftoever from argspec and thus belonging to varargs"""
-        vararg_count = len(args) - len(self.args)
-        varargs = args[len(args)-vararg_count:]
-        return varargs  # Variables already replaced
+        return args[len(self._names):]
 
 
 class MissingArg(object):
-    pass
+    def __getattr__(self, name):
+        raise RuntimeError()
 
 
 class EmbeddedArgsTemplate(UserHandler):
@@ -267,9 +264,7 @@ class EmbeddedArgs(UserHandler):
     def _copy_attrs_from_template(self, template):
         self._libname = template._libname
         self.keywords = template.keywords
-        self.args = template.args
-        self.defaults = template.defaults
-        self.varargs = template.varargs
+        self.arguments = template.arguments
         self.minargs = template.minargs
         self.maxargs = template.maxargs
         self.return_value = template.return_value
