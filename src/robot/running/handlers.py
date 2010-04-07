@@ -129,10 +129,10 @@ class _RunnableHandler(BaseHandler):
 
     def _run_handler(self, handler, args, output, timeout):
         arg_resolver = LibraryKeywordArgTypeResolver(self.args, args)
-        posargs = arg_resolver.posargs
+        posargs, kwargs = arg_resolver.posargs, arg_resolver.kwargs
         if timeout is not None and timeout.active():
-            return timeout.run(handler, args=posargs, logger=output)
-        return handler(*posargs, **arg_resolver.kwargs)
+            return timeout.run(handler, args=posargs, kwargs=kwargs, logger=output)
+        return handler(*posargs, **kwargs)
 
     def _get_timeout(self, namespace):
         # Timeouts must not be active for run keyword variants, only for
