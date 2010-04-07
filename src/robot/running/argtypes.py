@@ -16,23 +16,22 @@ class _ArgTypeResolver(object):
 
     def __init__(self, names, defaults, values):
         self._names = names
-        self._values = values
-        self._mand_arg_count = len(names) - len(defaults)
-        self.posargs, self.kwargs = self._resolve()
+        mand_arg_count = len(names) - len(defaults)
+        self._optional_values = values[mand_arg_count:]
+        posargs, self.kwargs = self._resolve_optional_args()
+        self.posargs = values[:mand_arg_count] + list(posargs)
 
-    def _resolve(self):
-        origposargs = self._values[:self._mand_arg_count]
+    def _resolve_optional_args(self):
         posargs = []
-        remargs = self._values[self._mand_arg_count:]
         kwargs = {}
         kwargs_allowed = True
-        for arg in reversed(remargs):
+        for arg in reversed(self._optional_values):
             if kwargs_allowed and self._is_kwarg(arg):
                 kwargs.update(self._parse_kwarg(arg))
             else:
                 posargs.append(self._parse_posarg(arg))
                 kwargs_allowed = False
-        return origposargs + list(reversed(posargs)), kwargs
+        return reversed(posargs), kwargs
 
     def _is_kwarg(self, arg):
         if self._is_str_with_kwarg_sep(arg):
