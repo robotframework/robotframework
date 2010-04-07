@@ -36,7 +36,7 @@ Resource        %s/resources/resource.txt
 
 *** Test Cases ***
 
-""" % (path.replace(os.sep, '/'), '/'.join(['..']*path.count(os.sep))))
+""" % (path.replace(os.sep, '/'), '/'.join(['..']*(path.count(os.sep)+1))))
     for test in tests:
         output.write(test + '\n    Check Test Case  ${TESTNAME}\n\n')
 
