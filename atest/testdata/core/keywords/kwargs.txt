@@ -28,12 +28,21 @@ Escaping Kwarg
     ${ret}=  one kw arg  foo\\=bar
     should be equal  ${ret}  foo=foo=bar
 
-Kwargs in User Keyword
-    ${ret}=  Uk With Kwargs  ukfoo=foo  ukbar=Bar
-    Should Be Equal  ${ret}  ukfoo=foo, ukbar=Bar
-
+Uk Simple Kwarg
+    Uk Two KwArgs  ukfoo=arg
+    ${ret}=  Uk One Kwarg  ukfoo=ukbar
+    should be equal  ${ret}  ukfoo=ukbar
+    ${ret}=  Uk Two Kwargs  ukfoo=ukbar  ukbar=ukquux
+    Should Be Equal  ${ret}  ukfoo=ukbar, ukbar=ukquux
+    ${ret}=  Uk Two Kw Args  ukbar=ukquux  ukfoo=ukbar
+    Should Be Equal  ${ret}  ukfoo=ukbar, ukbar=ukquux
+ 
 *** Keywords ***
-Uk With Kwargs
+Uk One Kwarg
+    [arguments]  ${ukfoo}=
+    [return]  ukfoo=${ukfoo}
+
+Uk Two Kwargs
     [arguments]  ${ukfoo}=  ${ukbar}=
     [return]  ukfoo=${ukfoo}, ukbar=${ukbar}
 
