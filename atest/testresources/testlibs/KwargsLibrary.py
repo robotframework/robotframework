@@ -9,3 +9,6 @@ class KwargsLibrary(object):
     def fourkwargs(self, a=None, b=None, c=None, d=None):
         return 'a=%s, b=%s, c=%s, d=%s' % (a, b, c, d)
 
+    def mandatoryandkwargs(self, a, b, c=None):
+        return 'a=%s, b=%s, c=%s' % (a, b, c)
+

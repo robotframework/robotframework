@@ -11,6 +11,9 @@ Simple Kwarg
 Substitution Starts From The End
     Check Test Case  ${TESTNAME}
 
+Mandatory Args Should Be Positioned
+    Check Test Case  ${TESTNAME}
+
 Equals Sign In Kwarg Value
     Check Test Case  ${TESTNAME}
 
@@ -39,5 +42,8 @@ Simple Kwarg With Timeout
     Check Test Case  ${TESTNAME}
 
 Uk Simple Kwarg with Timeout
+    Check Test Case  ${TESTNAME}
+
+Mandatory Args Should Be Positioned With Uk
     Check Test Case  ${TESTNAME}
 

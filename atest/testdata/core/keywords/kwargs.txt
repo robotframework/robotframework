@@ -9,6 +9,12 @@ Substitution Starts From The End
     ${ret}=  Four Kwargs  a=foo  bar  d=quux
     Should Be Equal  ${ret}  a=a=foo, b=bar, c=None, d=quux
 
+Mandatory Args Should Be Positioned
+    ${ret}=  Mandatory And Kwargs  a  b  c
+    Should Be Equal  ${ret}  a=a, b=b, c=c
+    ${ret}=  Mandatory And Kwargs  a  c=b
+    Should Be Equal  ${ret}  a=a, b=c=b, c=None
+
 Equals Sign In Kwarg Value
     ${ret}=  One Kwarg  foo=bar=quux
     Should Be Equal  ${ret}  foo=bar=quux
@@ -16,6 +22,8 @@ Equals Sign In Kwarg Value
 Using non-existing kwarg
     ${ret}=  One Kwarg  keijo=not kwarg
     Should Be Equal  ${ret}  foo=keijo=not kwarg
+    ${ret}=  One Kwarg  ä=ö
+    Should Be Equal  ${ret}  foo=ä=ö
 
 Escaping Kwarg
     ${ret}=  One Kwarg  foo=bar\\=quux
@@ -50,7 +58,12 @@ Simple Kwarg With Timeout
    
 Uk Simple Kwarg with Timeout
     Test With UK Kwargs Using Timeout
-    
+ 
+Mandatory Args Should Be Positioned With Uk
+    ${ret}=  Mandatory And Kwargs Uk  a  b  c
+    Should Be Equal  ${ret}  a=a, b=b, c=c
+    ${ret}=  Mandatory And Kwargs Uk   a  c=b
+    Should Be Equal  ${ret}  a=a, b=c=b, c=
 
 *** Keywords ***
 Test With Kwargs
@@ -84,3 +97,8 @@ Uk Two Kwargs
 Uk Four Kw Args
     [arguments]  ${a}=  ${b}=  ${c}=  ${d}=
     [return]  a=${a}, b=${b}, c=${c}, d=${d}
+
+Mandatory And Kwargs Uk
+    [arguments]  ${a}  ${b}  ${c}=
+    [return]  a=${a}, b=${b}, c=${c}
+
