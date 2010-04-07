@@ -3,41 +3,76 @@ Library  KwargsLibrary
 
 *** Test Cases ***
 Simple Kwarg
+    Test With Kwargs
+
+Substitution Starts From The End
+    ${ret}=  Four Kwargs  a=foo  bar  d=quux
+    Should Be Equal  ${ret}  a=a=foo, b=bar, c=None, d=quux
+
+Equals Sign In Kwarg Value
+    ${ret}=  One Kwarg  foo=bar=quux
+    Should Be Equal  ${ret}  foo=bar=quux
+
+Using non-existing kwarg
+    ${ret}=  One Kwarg  keijo=not kwarg
+    Should Be Equal  ${ret}  foo=keijo=not kwarg
+
+Escaping Kwarg
+    ${ret}=  One Kwarg  foo=bar\\=quux
+    Should Be Equal  ${ret}  foo=bar\\=quux
+    ${ret}=  One Kwarg  foo\\=bar
+    Should Be Equal  ${ret}  foo=foo=bar
+
+Uk Simple Kwarg
+    Test With UK Kwargs
+
+Substitution Starts From The End With Uk
+    ${ret}=  Uk Four Kwargs  a=foo  bar  d=quux
+    Should Be Equal  ${ret}  a=a=foo, b=bar, c=, d=quux
+
+Equals Sign In Kwarg Value With Uk
+    ${ret}=  Uk one kwarg  ukfoo=bar=quux
+    Should Be Equal  ${ret}  ukfoo=bar=quux
+
+Using non-existing kwarg With Uk
+    ${ret}=  uk one kwarg  keijo=not kwarg
+    Should Be Equal  ${ret}  ukfoo=keijo=not kwarg
+
+Escaping Kwarg With Uk
+    ${ret}=  uk one kwarg  ukfoo=bar\\=quux
+    Should Be Equal  ${ret}  ukfoo=bar\\=quux
+    ${ret}=  uk one kwarg  ukfoo\\=bar
+    Should Be Equal  ${ret}  ukfoo=ukfoo=bar
+
+Simple Kwarg With Timeout
+    [timeout]  10
+    Test With Kwargs
+   
+Uk Simple Kwarg with Timeout
+    Test With UK Kwargs Using Timeout
+    
+
+*** Keywords ***
+Test With Kwargs
     ${ret}=  one kw arg  foo=bar
-    should be equal  ${ret}  foo=bar
+    Should Be Equal  ${ret}  foo=bar
     ${ret}=  Two Kw Args  fst=bar  snd=quux
     Should Be Equal  ${ret}  fst=bar, snd=quux
     ${ret}=  Two Kw Args  snd=quux  fst=bar
     Should Be Equal  ${ret}  fst=bar, snd=quux
-   
-Substitution Starts From The End
-    ${ret}=  Four Kw Args  a=foo  bar  d=quux
-    Should Be Equal  ${ret}  a=a=foo, b=bar, c=None, d=quux
 
-Equals Sign In Kwarg Value
-    ${ret}=  one kw arg  foo=bar=quux
-    should be equal  ${ret}  foo=bar=quux
-
-Using non-existing kwarg
-    ${ret}=  one kw arg  keijo=not kwarg
-    should be equal  ${ret}  foo=keijo=not kwarg
-
-Escaping Kwarg
-    ${ret}=  one kw arg  foo=bar\\=quux
-    should be equal  ${ret}  foo=bar\\=quux
-    ${ret}=  one kw arg  foo\\=bar
-    should be equal  ${ret}  foo=foo=bar
-
-Uk Simple Kwarg
-    Uk Two KwArgs  ukfoo=arg
+Test With UK Kwargs
     ${ret}=  Uk One Kwarg  ukfoo=ukbar
-    should be equal  ${ret}  ukfoo=ukbar
+    Should Be Equal  ${ret}  ukfoo=ukbar
     ${ret}=  Uk Two Kwargs  ukfoo=ukbar  ukbar=ukquux
     Should Be Equal  ${ret}  ukfoo=ukbar, ukbar=ukquux
     ${ret}=  Uk Two Kw Args  ukbar=ukquux  ukfoo=ukbar
     Should Be Equal  ${ret}  ukfoo=ukbar, ukbar=ukquux
- 
-*** Keywords ***
+
+Test With UK Kwargs Using Timeout
+    [Timeout]  10s
+    Test With UK Kwargs
+    
 Uk One Kwarg
     [arguments]  ${ukfoo}=
     [return]  ukfoo=${ukfoo}
@@ -46,3 +81,6 @@ Uk Two Kwargs
     [arguments]  ${ukfoo}=  ${ukbar}=
     [return]  ukfoo=${ukfoo}, ukbar=${ukbar}
 
+Uk Four Kw Args
+    [arguments]  ${a}=  ${b}=  ${c}=  ${d}=
+    [return]  a=${a}, b=${b}, c=${c}, d=${d}

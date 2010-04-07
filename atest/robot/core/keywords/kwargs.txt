@@ -20,3 +20,24 @@ Using non-existing kwarg
 Escaping Kwarg
     Check Test Case  ${TESTNAME}
 
+Uk Simple Kwarg
+    Check Test Case  ${TESTNAME}
+
+Substitution Starts From The End With Uk
+    Check Test Case  ${TESTNAME}
+
+Equals Sign In Kwarg Value With Uk
+    Check Test Case  ${TESTNAME}
+
+Using non-existing kwarg With Uk
+    Check Test Case  ${TESTNAME}
+
+Escaping Kwarg With Uk
+    Check Test Case  ${TESTNAME}
+
+Simple Kwarg With Timeout
+    Check Test Case  ${TESTNAME}
+
+Uk Simple Kwarg with Timeout
+    Check Test Case  ${TESTNAME}
+
