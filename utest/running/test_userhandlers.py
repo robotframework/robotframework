@@ -1,7 +1,7 @@
 import unittest
 
 from robot.running.userkeyword import UserHandler, EmbeddedArgsTemplate, \
-        EmbeddedArgs
+        EmbeddedArgs, UserKeywordArguments
 from robot.utils.asserts import *
 
 
@@ -97,6 +97,94 @@ class TestEmbeddedArgs(unittest.TestCase):
         embedded = EmbeddedArgs('My name', EAT('My ${name}'))
         for attr in dir(normal):
             assert_true(hasattr(embedded, attr), "'%s' missing" % attr)
+
+
+class _FakeVariables(dict):
+    replace_list = lambda self, args: args
+
+
+class TestSettingUserKeywordArguments(unittest.TestCase):
+
+    def setUp(self):
+        self.variables = _FakeVariables()
+
+    def test_noargs(self):
+        ukargs = UserKeywordArguments(argnames=[], defaults=[], vararg=None)
+        ukargs.set_to(self.variables, [])
+        self._assert_variables({})
+
+    def test_single_scalar(self):
+        self._arguments_for(['${foo}']).set_to(self.variables, ['bar'])
+        self._assert_variables({'${foo}': 'bar'})
+
+    def test_multiple_scalars(self):
+        self._arguments_for(['${foo}', '${bar}']).set_to(self.variables,
+                                                         ['bar', 'quux'])
+        self._assert_variables({'${foo}': 'bar', '${bar}': 'quux'})
+        self._arguments_for(['${foo}', '${bar}']).set_to(self.variables,
+                                                         ['hevonen', 'foox'])
+        self._assert_variables({'${foo}': 'hevonen', '${bar}': 'foox'})
+
+    def test_default_values(self):
+        self._arguments_for(['${foo}', '${bar}'],
+                            ('bar', 'quux')).set_to(self.variables, [])
+        self._assert_variables({'${foo}': 'bar', '${bar}': 'quux'})
+        self._arguments_for(['${foo}', '${bar}'], ('bar',)).set_to(self.variables,
+                                                                   ['kameli'])
+        self._assert_variables({'${foo}': 'kameli', '${bar}': 'bar'})
+
+    def test_varargs(self):
+        self._arguments_for([], vararg='@{helmet}').set_to(self.variables, [])
+        self._assert_variables({'@{helmet}': []})
+        self._arguments_for([], vararg='@{helmet}').set_to(self.variables,
+                                                           ['kameli', 'hevonen'])
+        self._assert_variables({'@{helmet}': ['kameli', 'hevonen']})
+
+    def test_scalar_and_vararg(self):
+        self._arguments_for(['${mand}'], vararg='@{varg}').set_to(self.variables, ['muuli'])
+        self._assert_variables({'${mand}': 'muuli', '@{varg}': []})
+
+    def test_kwargs(self):
+        self._arguments_for(['${foo}']).set_to(self.variables, ['foo=bar'])
+        self._assert_variables({'${foo}': 'bar'})
+        self._arguments_for(['${foo}', '${bar}']).set_to(self.variables,
+                                                         ['bar=quux', 'foo=bar'])
+        self._assert_variables({'${foo}': 'bar', '${bar}': 'quux'})
+
+    def test_kwargs_and_defaults(self):
+        self._arguments_for(['${a}', '${b}'], ('foo', 'b')).set_to(self.variables,
+                                                                   ['b=bar'])
+        self._assert_variables({'${a}': 'foo', '${b}': 'bar'})
+        args = self._arguments_for(['${a}', '${b}', '${c}'], ('a', 'b', 'c'))
+        args.set_to(self.variables, ['a=foo', 'd', 'c=quux'])
+        self._assert_variables({'${a}': 'a=foo', '${b}': 'd', '${c}': 'quux'})
+
+    def test_kwargs_and_vararg(self):
+        args = self._arguments_for(['${foo}', '${bar}'], vararg='@{list}')
+        args.set_to(self.variables, ['bar=quux', 'foo=bar', 'hevonen', 'aasi'])
+        self._assert_variables({'${foo}': 'bar', '${bar}': 'quux',
+                                '@{list}': ['hevonen', 'aasi']})
+
+    def test_defaults_kwargs_and_vararg(self):
+        args = self._arguments_for(['${foo}', '${bar}'], ('jotain',), '@{list}')
+        args.set_to(self.variables, ['bar=quux', 'foo=bar', 'hevonen', 'aasi'])
+        self._assert_variables({'${foo}': 'bar', '${bar}': 'quux',
+                                '@{list}': ['hevonen', 'aasi']})
+        args = self._arguments_for(['${foo}', '${bar}'], ('jotain',), '@{list}')
+        args.set_to(self.variables, ['quux', 'bar', 'hevonen', 'aasi'])
+        self._assert_variables({'${foo}': 'quux', '${bar}': 'bar',
+                                '@{list}': ['hevonen', 'aasi']})
+
+        args = self._arguments_for(['${foo}', '${bar}'], ('jotain',), '@{list}')
+        args.set_to(self.variables, ['aasi'])
+        self._assert_variables({'${foo}': 'aasi', '${bar}': 'jotain',
+                                '@{list}': []})
+
+    def _arguments_for(self, argnames, defaults=(), vararg=None):
+        return UserKeywordArguments(argnames, defaults, vararg)
+
+    def _assert_variables(self, expected):
+        assert_equals(self.variables, expected)
 
 
 if __name__ == '__main__':
