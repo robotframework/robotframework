@@ -240,6 +240,11 @@ class _JavaHandler(_RunnableHandler):
                 maxa = argc
         return mina, maxa
 
+    def _run_handler(self, handler, args, output, timeout):
+        if timeout is not None and timeout.active():
+            return timeout.run(handler, args=args, logger=output)
+        return handler(*args)
+
     def _replace_vars_from_args(self, args, variables):
         args = _RunnableHandler._replace_vars_from_args(self, args, variables)
         if self.maxargs == sys.maxint:
