@@ -24,6 +24,14 @@ ${LIBPATH2}  ${CURDIR}${/}..${/}testresources${/}listeners
 ${USAGE_TIP}  \n\nTry --help for usage information.
 
 *** Keywords ***
+
+Run Robot Directly
+    [Arguments]  ${opts and args}
+    Set Runners
+    ${output} =  Run  ${ROBOT} ${opts and args}
+    Log  ${output}
+    [Return]  ${output}
+
 Run Tests
     [Arguments]  ${options}  @{data list}
     Run Tests Helper  ${options}  @{data list}
@@ -56,11 +64,11 @@ Run Helper
     ${cmd} =  Catenate  ${runner}  --monitorcolors OFF  --outputdir ${OUTDIR}  --output ${OUTFILE}  --report NONE  --log NONE
     ...  ${options}  ${data string}  1>${STDOUTFILE}  2>${STDERRFILE}
     ${rc} =  Run And Return RC  ${cmd}
-    Log  <a href="${OUTDIR}"> ${OUTDIR}</a>  HTML
-    Log  <a href="${OUTFILE}"> ${OUTFILE}</a>  HTML
-    Log  <a href="${STDOUTFILE}"> ${STDOUTFILE}</a>  HTML
-    Log  <a href="${STDERRFILE}"> ${STDERRFILE}</a>  HTML
-    Log  <a href="${SYSLOGFILE}"> ${SYSLOGFILE}</a>  HTML
+    Log  <a href="file://${OUTDIR}">${OUTDIR}</a>  HTML
+    Log  <a href="file://${OUTFILE}">${OUTFILE}</a>  HTML
+    Log  <a href="file://${STDOUTFILE}">${STDOUTFILE}</a>  HTML
+    Log  <a href="file://${STDERRFILE}">${STDERRFILE}</a>  HTML
+    Log  <a href="file://${SYSLOGFILE}">${SYSLOGFILE}</a>  HTML
 
 Set Variables And Get Datasources
     [Arguments]  @{data list}
@@ -81,6 +89,9 @@ Set Variables
     Set Suite Variable  $STDERR_FILE  ${OUTDIR}${/}stderr.txt
     Set Suite Variable  $SYSLOG_FILE  ${OUTDIR}${/}syslog.txt
     Set Environment Variable  ROBOT_SYSLOG_FILE  ${SYSLOG_FILE}
+    Set Runners
+
+Set Runners
     ${robot} =  Join Path  ${ROBOTPATH}  runner.py
     Set Suite Variable  $ROBOT  ${INTERPRETER} ${robot}
     ${rebot} =  Join Path  ${ROBOTPATH}  rebot.py
