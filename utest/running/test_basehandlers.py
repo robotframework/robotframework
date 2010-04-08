@@ -29,18 +29,15 @@ class LibraryMock:
     def __init__(self, name='MyLibrary', scope='GLOBAL'):
         self.name = name
         self.scope = scope
-
   
-class TestRunnableHandler(unittest.TestCase):
     
+class TestPythonHandler(unittest.TestCase):
+
     def test_name(self):
         for method in _get_handler_methods(NameLibrary()):
-            handler = _RunnableHandler(LibraryMock('mylib'), method.__name__, method)
+            handler = _PythonHandler(LibraryMock('mylib'), method.__name__, method)
             assert_equals(handler.name, method.__doc__)
             assert_equals(handler.longname, 'mylib.'+method.__doc__)
-            
-
-class TestPythonHandler(unittest.TestCase):
 
     def test_docs(self):
         for method in _get_handler_methods(DocLibrary()):
@@ -52,14 +49,15 @@ class TestPythonHandler(unittest.TestCase):
         for method in _get_handler_methods(ArgInfoLibrary()):
             handler = _PythonHandler(LibraryMock(), method.__name__, method)
             expected = eval(method.__doc__)
-            assert_equals(handler._get_arg_spec(method), expected, method.__name__)
+            assert_equals(handler.arguments._get_arg_spec(method),
+                          expected, method.__name__)
             
     def test_arg_limits(self):
         for method in _get_handler_methods(ArgumentsPython()):
             handler = _PythonHandler(LibraryMock(), method.__name__, method)
             exp_mina, exp_maxa = eval(method.__doc__)
-            assert_equals(handler.minargs, exp_mina)
-            assert_equals(handler.maxargs, exp_maxa)
+            assert_equals(handler.arguments.minargs, exp_mina)
+            assert_equals(handler.arguments.maxargs, exp_maxa)
 
     def test_getarginfo_getattr(self):
         testlib = TestLibrary('classes.GetattrLibrary')
@@ -143,12 +141,12 @@ class TestDynamicHandlerCreation(unittest.TestCase):
         return DynamicHandler(LibraryMock('TEST CASE'), 'mock', lambda x: None,
                               doc, argspec)
         
-    def _assert_arg_specs(self, handler, minargs, maxargs, args=[], defaults=[], vararg=None):
-        assert_equals(handler.minargs, minargs)
-        assert_equals(handler.maxargs, maxargs)
-        assert_equals(handler.args, args)
-        assert_equals(handler.defaults, defaults)
-        assert_equals(handler.varargs, vararg)
+    def _assert_arg_specs(self, handler, minargs, maxargs, names=[], defaults=[], vararg=None):
+        assert_equals(handler.arguments.minargs, minargs)
+        assert_equals(handler.arguments.maxargs, maxargs)
+        assert_equals(handler.arguments.names, names)
+        assert_equals(handler.arguments.defaults, defaults)
+        assert_equals(handler.arguments.varargs, vararg)
         
 
 if utils.is_jython:
