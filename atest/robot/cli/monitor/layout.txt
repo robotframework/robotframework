@@ -1,0 +1,49 @@
+*** Settings ***
+Suite Setup     Run Tests  --variable FAIL:YES --log mylog.html --report myreport.html --summary mysummary.html --debugfile mydebug.txt  misc/suites/subsuites
+Force Tags      regression   pybot  jybot
+Resource        monitor_resource.txt
+
+
+
+*** Test Cases ***
+
+Top Level Suite Start
+    Check Stdout Contains  ${SEP_LINE1}\n Subsuites${SPACE * 69}\n ${SEP_LINE1}\n
+
+Top Level Suite End
+    ${status} =  Create Status Line  Subsuites  61  FAIL
+    Check Stdout Contains  ${SEP_LINE1}\n ${status}\n ${MSG_211}\n ${SEP_LINE1}\n
+
+Nestes Suite Start
+    Check Stdout Contains  ${SEP_LINE1}\n Subsuites.Sub 1 :: Normal test cases${SPACE * 42}\n ${SEP_LINE1}\n
+
+Nestes Suite End
+    ${status} =  Create Status Line  Subsuites.Sub 2 :: Normal test cases  34  PASS
+    Check Stdout Contains  ${SEP_LINE2}\n ${status}\n ${MSG_110}\n ${SEP_LINE1}\n
+
+Passing Test
+    ${status} =  Create Status Line  SubSuite2 First  55  PASS
+    Check Stdout Contains  ${SEP_LINE1}\n ${status}\n ${SEP_LINE2}\n
+
+Failing Test
+    ${status} =  Create Status Line  SubSuite1 First  55  FAIL
+    Check Stdout Contains  ${SEP_LINE1}\n ${status}\n This test was doomed to fail: YES != NO\n ${SEP_LINE2}\n
+
+Outputs
+    ${stdout} =  Get Stdout
+    ${outputs} =  Evaluate  '''${stdout.replace('\\','\\\\')}'''.split('${SEP_LINE1}')[-1]
+    Should Match Regexp  ${outputs}  Debug: \ \ .*mydebug.txt\n Output: \ .*output.xml\n Summary: .*mysummary.html\n Report: \ .*myreport.html\n Log: \ \ \ \ .*mylog.html
+
+Long Document Should Be Cut From End
+    ${doc} =  Evaluate  '0123456789' * 10
+    Run Tests  --name My_Name --doc start${doc}end  misc/normal.html
+    ${expbase} =  Evaluate  'My Name :: start' + '0123456789'*5
+    Check Stdout Contains  ${SEP_LINE1}\n ${expbase}012345678...\n ${SEP_LINE1}\n
+    Check Stdout Contains  ${SEP_LINE2}\n ${expbase}... | PASS |\n
+
+Long Name Should Be Cut From Beginning
+    ${name} =  Evaluate  '0123456789' * 10
+    Run Tests  --name start${name}end --doc whatever  misc/normal.html
+    ${expbase} =  Evaluate  '789' + '0123456789'*6+ 'end'
+    Check Stdout Contains  ${SEP_LINE1}\n ...890123456${expbase}\n ${SEP_LINE1}\n
+    Check Stdout Contains  ${SEP_LINE2}\n ...${expbase} | PASS |\n

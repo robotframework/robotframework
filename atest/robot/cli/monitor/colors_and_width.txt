@@ -1,0 +1,48 @@
+*** Settings ***
+Suite Setup  Run Tests  --variable FAIL:YES --log mylog.html --report myreport.html --summary mysummary.html --debugfile mydebug.txt  misc/suites/subsuites
+Force Tags   regression   pybot  jybot
+Resource     monitor_resource.txt
+
+
+*** Test Cases ***
+
+Monitor Colors Off
+    Run Tests  --monitorcolors off  misc/pass_and_fail.html
+    Monitor Colors Should Be Off
+
+Monitor Colors Force
+    Run Tests  -C force  misc/pass_and_fail.html
+    Monitor Colors Should Be On
+
+Monitor Colors On
+    Run Tests  --MonitorCol on  misc/pass_and_fail.html
+    Run Keyword If  os.sep == '/'  Monitor Colors Should Be On
+    Run Keyword If  os.sep != '/'  Monitor Colors Should Be Off
+
+Monitor Width
+    ${name} =  Evaluate  'Start-' + '0123456789' * 9 + '-end'
+    Run Tests  --monitorwidth 105 --name ${name} --doc x  misc/pass_and_fail.html
+    Check Stdout Contains  ${SEP_CHAR1 * 105}\n ${name} :: x\n ${SEP_CHAR1 * 105}\n
+    Check Stdout Contains  ${SEP_CHAR2 * 105}\n ...${name[7:]} | FAIL |\n ${MSG_211}\n ${SEP_CHAR1 * 105}\n
+    ${statuts} =  Create Status Line  Pass  93  PASS
+    Check Stdout Contains  ${SEP_CHAR1 * 105}\n ${statuts}\n ${SEP_CHAR2 * 105}\n
+    ${statuts} =  Create Status Line  Fail :: FAIL Expected failure  68  FAIL
+    Check Stdout Contains  ${SEP_CHAR2 * 105}\n ${statuts}\n Expected failure\n ${SEP_CHAR2 * 105}\n
+    Run Tests  -W 20 --name ${name}  misc/pass_and_fail.html
+    Check Stdout Contains  ${SEP_CHAR1 * 20}\n ...7890123456789-end\n ${SEP_CHAR1 * 20}\n
+    Check Stdout Contains  ${SEP_CHAR2 * 20}\n ...6789-end | FAIL |\n ${MSG_211}\n ${SEP_CHAR1 * 20}\n
+    Check Stdout Contains  ${SEP_CHAR1 * 20}\n Pass${SPACE * 8}| PASS |\n ${SEP_CHAR2 * 20}\n
+    Check Stdout Contains  ${SEP_CHAR2 * 20}\n Fail :: ... | FAIL |\n Expected failure\n ${SEP_CHAR2 * 20}\n
+
+
+*** Keywords ***
+
+Monitor Colors Should Be On
+    Check Stdout Does Not Contain  | PASS |
+    Check Stdout Contains  PASS
+    Check Stdout Does Not Contain  | FAIL |
+    Check Stdout Contains  FAIL
+
+Monitor Colors Should Be Off
+    Check Stdout Contains  | PASS |
+    Check Stdout Contains  | FAIL |
