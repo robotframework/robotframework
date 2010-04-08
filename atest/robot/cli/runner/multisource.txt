@@ -1,7 +1,7 @@
 *** Settings ***
 Documentation   Running multiple suites together.
 Force Tags      regression  pybot  jybot
-Resource        ../../resources/resource.txt
+Resource        ../../../resources/resource.txt
 
 *** Test Cases ***
 Default Name
