@@ -68,6 +68,7 @@ class _BaseTestLibrary(BaseLibrary):
         self.orig_name = name # Stores original name also after copying
         self.args = args
         self._instance_cache = []
+        self._libinst = None
         if libcode is not None:
             self.doc = utils.get_doc(libcode)
             self.scope = self._get_scope(libcode)
@@ -137,16 +138,13 @@ class _BaseTestLibrary(BaseLibrary):
         return scope in ['GLOBAL','TESTSUITE'] and scope or 'TESTCASE'
 
     def get_instance(self):
-        try:
-            if self._libinst is None:
-                self._libinst = self._get_instance()
-        except AttributeError:
-            self._libinst = self._get_instance()
+        if self._libinst is None:
+            self.init.check_arg_limits(self.args)
+            posargs, kwargs = self.init.resolve_args(self.args)
+            self._libinst = self._get_instance(posargs, kwargs)
         return self._libinst
 
-    def _get_instance(self):
-        self.init.check_arg_limits(self.args)
-        posargs, kwargs = self.init.resolve_args(self.args)
+    def _get_instance(self, posargs, kwargs):
         try:
             return self._libcode(*posargs, **kwargs)
         except:
