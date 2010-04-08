@@ -12,7 +12,6 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-
 import os
 import re
 
@@ -23,7 +22,7 @@ from robot import utils
 
 from keywords import KeywordFactory
 from timeouts import KeywordTimeout
-from argtypes import UserKeywordArgTypeResolver
+from arguments import UserKeywordArguments
 
 
 def PublicUserLibrary(path):
@@ -167,51 +166,6 @@ class UserHandler(BaseHandler):
         if len(ret) != 1 or is_list_var(self.return_value[0]):
             return ret
         return ret[0]
-
-
-class UserKeywordArguments(object):
-
-    def __init__(self, argnames, defaults, vararg):
-        self.names = list(argnames) # Python 2.5 does not support indexing tuples
-        self.defaults = defaults
-        self._vararg = vararg
-
-    def set_to(self, variables, argument_values):
-        template_with_defaults = self._template_for(variables)
-        argument_values = self._set_possible_varargs(template_with_defaults,
-                                                     variables, argument_values)
-        self._set_variables(variables, self._fill(template_with_defaults,
-                                                  argument_values))
-
-    def _template_for(self, variables):
-        return [ MissingArg() for _ in range(len(self.names)-len(self.defaults)) ] +\
-                 list(variables.replace_list(self.defaults))
-
-    def _set_possible_varargs(self, template, variables, argument_values):
-        if self._vararg:
-            variables[self._vararg] = self._get_varargs(argument_values)
-            argument_values = argument_values[:len(template)]
-        return argument_values
-
-    def _set_variables(self, variables, args):
-        for name, value in zip(self.names, args):
-            variables[name] = value
-
-    def _fill(self, template, arguments):
-        arg_resolver = UserKeywordArgTypeResolver(self, arguments)
-        for name, value in arg_resolver.kwargs.items():
-            template[self.names.index(name)] = value
-        for index, value in enumerate(arg_resolver.posargs):
-            template[index] = value
-        return template
-
-    def _get_varargs(self, args):
-        return args[len(self.names):]
-
-
-class MissingArg(object):
-    def __getattr__(self, name):
-        raise RuntimeError()
 
 
 class EmbeddedArgsTemplate(UserHandler):

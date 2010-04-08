@@ -12,22 +12,17 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-
 import sys
-from types import MethodType, FunctionType
 
 from robot import utils
-from robot.errors import FrameworkError
 from robot.common import BaseHandler
 
 from runkwregister import RUN_KW_REGISTER
-from argtypes import LibraryKeywordArgTypeResolver
+from arguments import PythonArguments, JavaArguments, DynamicArguments
 
 
 if utils.is_jython:
     from org.python.core import PyReflectedFunction, PyReflectedConstructor
-
-    from javaargcoercer import ArgumentCoercer
 
     def _is_java_init(init):
         return isinstance(init, PyReflectedConstructor)
@@ -52,153 +47,6 @@ def InitHandler(library, method):
         return _JavaInitHandler(library, method)
     else:
         return _PythonInitHandler(library, method)
-
-
-class _Arguments(object):
-
-    def __init__(self, argument_source):
-        self.names, self.defaults, self.varargs, self.minargs, self.maxargs = \
-            self._determine_args(argument_source)
-
-    def _determine_args(self, argument_source):
-        raise NotImplementedError(self.__class__.__name__)
-
-    def resolve_args(self, args):
-        return args, {}
-
-
-class PythonArguments(_Arguments):
-
-    def resolve_args(self, args):
-        arg_resolver = LibraryKeywordArgTypeResolver(self, args)
-        return arg_resolver.posargs, arg_resolver.kwargs
-
-    def _determine_args(self, handler_method):
-        args, defaults, varargs = self._get_arg_spec(handler_method)
-        minargs = len(args) - len(defaults)
-        maxargs = varargs is not None and sys.maxint or len(args)
-        return args, defaults, varargs, minargs, maxargs
-
-    def _get_arg_spec(self, handler):
-        """Returns info about args in a tuple (args, defaults, varargs)
-
-        args     - tuple of all accepted arguments
-        defaults - tuple of default values
-        varargs  - name of the argument accepting varargs or None
-        """
-        # Code below is based on inspect module's getargs and getargspec
-        # methods. See their documentation and/or source for more details.
-        if type(handler) is MethodType:
-            func = handler.im_func
-            first_arg = 1        # this drops 'self' from methods' args
-        elif type(handler) is FunctionType:
-            func = handler
-            first_arg = 0
-        else:
-            raise FrameworkError("Only MethodType and FunctionType accepted. "
-                                 "Got '%s' instead." % type(handler))
-        co = func.func_code
-        nargs = co.co_argcount
-        args = co.co_varnames[first_arg:nargs]
-        defaults = func.func_defaults
-        if defaults is None:
-            defaults = ()
-        if co.co_flags & 4:                      # 4 == CO_VARARGS
-            varargs =  co.co_varnames[nargs]
-        else:
-            varargs = None
-        return args, defaults, varargs
-
-
-class JavaArguments(_Arguments):
-
-    def __init__(self, handler_method):
-        _Arguments.__init__(self, handler_method)
-        self._arg_coercer = ArgumentCoercer(self._get_signatures(handler_method))
-
-    def _determine_args(self, handler_method):
-        signatures = self._get_signatures(handler_method)
-        minargs, maxargs = self._get_arg_limits(signatures)
-        return [], [], None, minargs, maxargs
-
-    def _get_signatures(self, handler):
-        co = self._get_code_object(handler)
-        return co.argslist[:co.nargs]
-
-    def _get_code_object(self, handler):
-        try:
-            return handler.im_func
-        except AttributeError:
-            return handler
-
-    def _get_arg_limits(self, signatures):
-        if len(signatures) == 1:
-            return self._get_single_sig_arg_limits(signatures[0])
-        else:
-            return self._get_multi_sig_arg_limits(signatures)
-
-    def _get_single_sig_arg_limits(self, signature):
-        args = signature.args
-        if len(args) > 0 and args[-1].isArray():
-            mina = len(args) - 1
-            maxa = sys.maxint
-        else:
-            mina = maxa = len(args)
-        return mina, maxa
-
-    def _get_multi_sig_arg_limits(self, signatures):
-        mina = maxa = None
-        for sig in signatures:
-            argc = len(sig.args)
-            if mina is None or argc < mina:
-                mina = argc
-            if maxa is None or argc > maxa:
-                maxa = argc
-        return mina, maxa
-
-    def coerce(self, args):
-        return self._arg_coercer(args)
-
-
-class DynamicArguments(_Arguments):
-
-    def _determine_args(self, argspec):
-        args, defaults, varargs = self._get_arg_spec(argspec)
-        minargs = len(args) - len(defaults)
-        maxargs = varargs is not None and sys.maxint or len(args)
-        return args, defaults, varargs, minargs, maxargs
-
-    def _get_arg_spec(self, argspec):
-        if argspec is None:
-            return [], [], '<unknown>'
-        try:
-            if utils.is_str(argspec):
-                raise TypeError
-            return self._parse_arg_spec(list(argspec))
-        except TypeError:
-            raise TypeError('Argument specification should be list/array of Strings.')
-
-    def _parse_arg_spec(self, argspec):
-        if argspec == []:
-            return [], [], None
-        args = []
-        defaults = []
-        vararg = None
-        for token in argspec:
-            if vararg is not None:
-                raise TypeError
-            if token.startswith('*'):
-                vararg = token[1:]
-                continue
-            if token.count('=') > 0:
-                arg, default = token.split('=', 1)
-                args.append(arg)
-                defaults.append(default)
-                continue
-            if defaults:
-                raise TypeError
-            args.append(token)
-        return args, defaults, vararg
 
 
 class _BaseHandler(BaseHandler):
@@ -333,11 +181,6 @@ class _JavaHandler(_RunnableHandler):
 
     def _parse_arguments(self, handler_method):
         return JavaArguments(handler_method)
-
-    def _run_handler(self, handler, args, output, timeout):
-        if timeout is not None and timeout.active():
-            return timeout.run(handler, args=args, logger=output)
-        return handler(*args)
 
     def _replace_vars_from_args(self, args, variables):
         args = _RunnableHandler._replace_vars_from_args(self, args, variables)
