@@ -14,9 +14,9 @@
 
 class _ArgTypeResolver(object):
 
-    def __init__(self, names, defaults, values):
-        self._names = names
-        mand_arg_count = len(names) - len(defaults)
+    def __init__(self, arguments, values):
+        self._names = arguments.names
+        mand_arg_count = len(arguments.names) - len(arguments.defaults)
         self._optional_values = values[mand_arg_count:]
         posargs, self.kwargs = self._resolve_optional_args()
         self.posargs = values[:mand_arg_count] + list(posargs)

@@ -172,8 +172,8 @@ class UserHandler(BaseHandler):
 class UserKeywordArguments(object):
 
     def __init__(self, argnames, defaults, vararg):
-        self._names = list(argnames) # Python 2.5 does not support indexing tuples
-        self._defaults = defaults
+        self.names = list(argnames) # Python 2.5 does not support indexing tuples
+        self.defaults = defaults
         self._vararg = vararg
 
     def set_to(self, variables, argument_values):
@@ -184,8 +184,8 @@ class UserKeywordArguments(object):
                                                   argument_values))
 
     def _template_for(self, variables):
-        return [ MissingArg() for _ in range(len(self._names)-len(self._defaults)) ] +\
-                 list(variables.replace_list(self._defaults))
+        return [ MissingArg() for _ in range(len(self.names)-len(self.defaults)) ] +\
+                 list(variables.replace_list(self.defaults))
 
     def _set_possible_varargs(self, template, variables, argument_values):
         if self._vararg:
@@ -194,20 +194,19 @@ class UserKeywordArguments(object):
         return argument_values
 
     def _set_variables(self, variables, args):
-        for name, value in zip(self._names, args):
+        for name, value in zip(self.names, args):
             variables[name] = value
 
     def _fill(self, template, arguments):
-        arg_resolver = UserKeywordArgTypeResolver(self._names, self._defaults,
-                                                  arguments)
+        arg_resolver = UserKeywordArgTypeResolver(self, arguments)
         for name, value in arg_resolver.kwargs.items():
-            template[self._names.index(name)] = value
+            template[self.names.index(name)] = value
         for index, value in enumerate(arg_resolver.posargs):
             template[index] = value
         return template
 
     def _get_varargs(self, args):
-        return args[len(self._names):]
+        return args[len(self.names):]
 
 
 class MissingArg(object):
