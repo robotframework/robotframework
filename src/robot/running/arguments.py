@@ -15,27 +15,42 @@
 import sys
 from types import MethodType, FunctionType
 
-from robot.errors import FrameworkError
+from robot.errors import DataError, FrameworkError
 from robot import utils
 
 if utils.is_jython:
     from javaargcoercer import ArgumentCoercer
 
 
-class _Arguments(object):
+class NoArguments(object):
 
-    def __init__(self, argument_source):
-        self.names, self.defaults, self.varargs, self.minargs, self.maxargs = \
-            self._determine_args(argument_source)
+    def __init__(self, argument_source=None):
+        self.names, self.defaults, self.varargs, self.minargs, self.maxargs \
+            = self._determine_args(argument_source)
 
     def _determine_args(self, argument_source):
-        raise NotImplementedError(self.__class__.__name__)
+        return [], [], None, 0, 0
 
     def resolve_args(self, args):
         return args, {}
 
+    def check_arg_limits(self, args):
+        if not self.minargs <= len(args) <= self.maxargs:
+            self._raise_inv_args(args)
+        return args
 
-class PythonArguments(_Arguments):
+    def _raise_inv_args(self, args):
+        minend = utils.plural_or_not(self.minargs)
+        if self.minargs == self.maxargs:
+            exptxt = "%d argument%s" % (self.minargs, minend)
+        elif self.maxargs != sys.maxint:
+            exptxt = "%d to %d arguments" % (self.minargs, self.maxargs)
+        else:
+            exptxt = "at least %d argument%s" % (self.minargs, minend)
+        raise DataError("Expected %s, got %d." % (exptxt, len(args)))
+
+
+class PythonArguments(NoArguments):
 
     def resolve_args(self, args):
         arg_resolver = LibraryKeywordArgTypeResolver(self, args)
@@ -78,10 +93,10 @@ class PythonArguments(_Arguments):
         return args, defaults, varargs
 
 
-class JavaArguments(_Arguments):
+class JavaArguments(NoArguments):
 
     def __init__(self, handler_method):
-        _Arguments.__init__(self, handler_method)
+        NoArguments.__init__(self, handler_method)
         self._arg_coercer = ArgumentCoercer(self._get_signatures(handler_method))
 
     def _determine_args(self, handler_method):
@@ -128,7 +143,7 @@ class JavaArguments(_Arguments):
         return self._arg_coercer(args)
 
 
-class DynamicArguments(_Arguments):
+class DynamicArguments(NoArguments):
 
     def _determine_args(self, argspec):
         args, defaults, varargs = self._get_arg_spec(argspec)
@@ -169,12 +184,14 @@ class DynamicArguments(_Arguments):
         return args, defaults, vararg
 
 
-class UserKeywordArguments(object):
+class UserKeywordArguments(NoArguments):
 
-    def __init__(self, argnames, defaults, vararg):
+    def __init__(self, argnames, defaults, vararg, minargs, maxargs):
         self.names = list(argnames) # Python 2.5 does not support indexing tuples
         self.defaults = defaults
         self._vararg = vararg
+        self.minargs = minargs
+        self.maxargs = maxargs
 
     def set_to(self, variables, argument_values):
         template_with_defaults = self._template_for(variables)

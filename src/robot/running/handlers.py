@@ -18,7 +18,7 @@ from robot import utils
 from robot.common import BaseHandler
 
 from runkwregister import RUN_KW_REGISTER
-from arguments import PythonArguments, JavaArguments, DynamicArguments
+from arguments import PythonArguments, JavaArguments, DynamicArguments, NoArguments
 
 
 if utils.is_jython:
@@ -117,7 +117,7 @@ class _RunnableHandler(_BaseHandler):
         if index < 0:
             return self._replace_vars_from_args(args, variables)
         if index == 0:
-            return self.check_arg_limits(args)
+            return self.arguments.check_arg_limits(args)
         # There might be @{list} variables and those might have more or less
         # arguments that is needed. Therefore we need to go through arguments
         # one by one.
@@ -127,12 +127,12 @@ class _RunnableHandler(_BaseHandler):
         # In case @{list} variable is unpacked, the arguments going further
         # needs to be escaped, otherwise those are unescaped twice.
         processed[index:] = [utils.escape(arg) for arg in processed[index:]]
-        return self.check_arg_limits(processed + args)
+        return self.arguments.check_arg_limits(processed + args)
 
     def _replace_vars_from_args(self, args, variables):
         """Overridden by JavaHandler"""
         args = variables.replace_list(args)
-        return self.check_arg_limits(args)
+        return self.arguments.check_arg_limits(args)
 
     def _run_handler(self, handler, args, output, timeout):
         posargs, kwargs = self.resolve_args(args)
@@ -229,11 +229,7 @@ class _NoInitHandler(_BaseHandler):
 
     def __init__(self, library):
         self.library = library
-        self.minargs = 0
-        self.maxargs = 0
-
-    def resolve_args(self, args):
-        return [], {}
+        self.arguments = NoArguments()
 
 
 class _PythonInitHandler(_BaseHandler):

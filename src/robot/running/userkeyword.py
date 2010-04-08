@@ -111,9 +111,9 @@ class UserHandler(BaseHandler):
         self.keywords = [ KeywordFactory(kw) for kw in handlerdata.keywords ]
         self.arguments = UserKeywordArguments(handlerdata.args, 
                                                handlerdata.defaults,
-                                               handlerdata.varargs)
-        self.minargs = handlerdata.minargs
-        self.maxargs = handlerdata.maxargs
+                                               handlerdata.varargs,
+                                               handlerdata.minargs,
+                                               handlerdata.maxargs)
         self.return_value = handlerdata.return_value
 
     def _set_variable_dependent_metadata(self, metadata):
@@ -133,7 +133,7 @@ class UserHandler(BaseHandler):
         variables = namespace.variables
         argument_values = variables.replace_list(arguments)
         self._tracelog_args(output, argument_values)
-        self.check_arg_limits(argument_values)
+        self.arguments.check_arg_limits(argument_values)
         self.arguments.set_to(variables, argument_values)
         self._verify_keyword_is_valid()
         self.timeout.start()
@@ -219,8 +219,6 @@ class EmbeddedArgs(UserHandler):
         self._libname = template._libname
         self.keywords = template.keywords
         self.arguments = template.arguments
-        self.minargs = template.minargs
-        self.maxargs = template.maxargs
         self.return_value = template.return_value
         self._doc = template._doc
         self.doc = template.doc

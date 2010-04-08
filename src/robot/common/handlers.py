@@ -29,22 +29,6 @@ class BaseHandler:
         raise AttributeError("%s does not have attribute '%s'"
                              % (self.__class__.__name__, name))
 
-    def check_arg_limits(self, args):
-        if not self.minargs <= len(args) <= self.maxargs:
-            self._raise_inv_args(args)
-        return args
-
-    def _raise_inv_args(self, args):
-        minend = utils.plural_or_not(self.minargs)
-        if self.minargs == self.maxargs:
-            exptxt = "%d argument%s" % (self.minargs, minend)
-        elif self.maxargs != sys.maxint:
-            exptxt = "%d to %d arguments" % (self.minargs, self.maxargs)
-        else:
-            exptxt = "at least %d argument%s" % (self.minargs, minend)
-        raise DataError("%s expected %s, got %d."
-                        % (self._get_type_and_name(), exptxt, len(args)))
-
     def _get_type_and_name(self):
         if 'Init' in self.__class__.__name__:
             return "Test Library '%s'" % self.library.name

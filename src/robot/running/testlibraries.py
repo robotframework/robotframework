@@ -139,8 +139,8 @@ class _BaseTestLibrary(BaseLibrary):
 
     def get_instance(self):
         if self._libinst is None:
-            self.init.check_arg_limits(self.args)
-            posargs, kwargs = self.init.resolve_args(self.args)
+            self.init.arguments.check_arg_limits(self.args)
+            posargs, kwargs = self.init.arguments.resolve_args(self.args)
             self._libinst = self._get_instance(posargs, kwargs)
         return self._libinst
 
@@ -246,7 +246,7 @@ class _ModuleLibrary(_BaseTestLibrary):
         return 'GLOBAL'
 
     def get_instance(self):
-        self.init.check_arg_limits(self.args)
+        self.init.arguments.check_arg_limits(self.args)
         return self._libcode
 
     def _create_init_handler(self, libcode):
