@@ -22,9 +22,11 @@ UTF-8   [Documentation]  äöå §½€
 UTF-8 Name Äöå §½€"
   [Documentation]  Quote is actually plain ASCII but there was
   ...              a bug in processing them also.
+  ...              FAIL  Äöå §½€"
   ${ret} =  äöå §½€
   Log       ${ret}
   Log       ${UTF NAME öäå §½€}
+  Fail      Äöå §½€"
 
 
 | * * * * * * * * * Keywords * * * * * * * * |
