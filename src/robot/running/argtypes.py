@@ -30,7 +30,7 @@ class _ArgTypeResolver(object):
                 name, value = self._parse_kwarg(arg)
                 if name in kwargs:
                     raise RuntimeError('Keyword argument %s repeated.' % name)
-                kwargs.update({name: value})
+                kwargs[name] = value
             else:
                 posargs.append(self._parse_posarg(arg))
                 kwargs_allowed = False
@@ -59,20 +59,25 @@ class _ArgTypeResolver(object):
                 return argstr.replace('\\=', '=')
         return argstr
 
-class UserKeywordArgTypeResolver(_ArgTypeResolver):
-
     def _is_arg_name(self, name):
-        return ('${%s}') % name in self._names
+        return self._arg_name(name) in self._names
 
     def _parse_kwarg(self, arg):
         name, value = self._split_from_kwarg_sep(arg)
-        return '${%s}' % name, value
+        return self._coerce(name), value
+
+class UserKeywordArgTypeResolver(_ArgTypeResolver):
+
+    def _arg_name(self, name):
+        return '${%s}' % name
+
+    def _coerce(self, name):
+        return '${%s}' % name
 
 class LibraryKeywordArgTypeResolver(_ArgTypeResolver):
 
-    def _is_arg_name(self, name):
-        return name in self._names
+    def _arg_name(self, name):
+        return name
 
-    def _parse_kwarg(self, arg):
-        name, value = self._split_from_kwarg_sep(arg)
-        return str(name), value
+    def _coerce(self, name):
+        return str(name)
