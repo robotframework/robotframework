@@ -68,6 +68,11 @@ class _RunnableHandler(BaseHandler):
         self.doc = ''
         self.timeout = ''  # Needed for set_attributes in runner.start_keyword
 
+    def resolve_args(self, args):
+        arg_resolver = LibraryKeywordArgTypeResolver(self.args, self.defaults,
+                                                     args)
+        return arg_resolver.posargs, arg_resolver.kwargs
+
     def run(self, output, namespace, args):
         """Executes the represented handler with given 'args'.
 
@@ -128,9 +133,7 @@ class _RunnableHandler(BaseHandler):
         return self.check_arg_limits(args)
 
     def _run_handler(self, handler, args, output, timeout):
-        arg_resolver = LibraryKeywordArgTypeResolver(self.args, self.defaults,
-                                                     args)
-        posargs, kwargs = arg_resolver.posargs, arg_resolver.kwargs
+        posargs, kwargs = self.resolve_args(args)
         if timeout is not None and timeout.active():
             return timeout.run(handler, args=posargs, kwargs=kwargs, logger=output)
         return handler(*posargs, **kwargs)
@@ -326,6 +329,9 @@ class _NoInitHandler(BaseHandler):
         self.minargs = 0
         self.maxargs = 0
 
+    def resolve_args(self, args):
+        return args, {}
+
 
 class _PythonInitHandler(_PythonHandler):
 
@@ -340,3 +346,6 @@ class _JavaInitHandler(_JavaHandler):
 
     def _get_code_object(self, handler):
         return handler
+
+    def resolve_args(self, args):
+        return args, {}

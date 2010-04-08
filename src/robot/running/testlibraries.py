@@ -146,8 +146,9 @@ class _BaseTestLibrary(BaseLibrary):
 
     def _get_instance(self):
         self.init.check_arg_limits(self.args)
+        posargs, kwargs = self.init.resolve_args(self.args)
         try:
-            return self._libcode(*self.args)
+            return self._libcode(*posargs, **kwargs)
         except:
             self._raise_creating_instance_failed()
 
