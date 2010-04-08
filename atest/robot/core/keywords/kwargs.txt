@@ -56,3 +56,6 @@ Uk Simple Kwarg with Timeout
 Mandatory Args Should Be Positioned With Uk
     Check Test Case  ${TESTNAME}
 
+Library Initialization Values
+    Check Test Case  ${TESTNAME}
+

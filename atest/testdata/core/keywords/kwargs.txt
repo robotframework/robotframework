@@ -1,5 +1,5 @@
 *** Settings ***
-Library  KwargsLibrary
+Library  KwargsLibrary  arg2=value2
 
 *** Test Cases ***
 Simple Kwarg
@@ -78,6 +78,10 @@ Mandatory Args Should Be Positioned With Uk
     Should Be Equal  ${ret}  a=a, b=b, c=c
     ${ret}=  Mandatory And Kwargs Uk   a  c=b
     Should Be Equal  ${ret}  a=a, b=c=b, c=
+
+Library Initialization Values
+    Check Init Arguments  ${None}  value2
+
 
 *** Keywords ***
 Test With Kwargs
