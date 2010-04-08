@@ -133,7 +133,7 @@ class UserHandler(BaseHandler):
         variables = namespace.variables
         argument_values = variables.replace_list(arguments)
         self._tracelog_args(output, argument_values)
-        self.arguments.check_arg_limits(argument_values)
+        self._check_arg_limits(argument_values)
         self.arguments.set_to(variables, argument_values)
         self._verify_keyword_is_valid()
         self.timeout.start()
@@ -142,6 +142,12 @@ class UserHandler(BaseHandler):
         namespace.end_user_keyword()
         output.trace('Return: %s' % utils.unic(ret))
         return ret
+
+    def _check_arg_limits(self, args):
+        try:
+            return self.arguments.check_arg_limits(args)
+        except DataError, err:
+            raise DataError("Keyword '%s' %s" % (self.name, str(err)))
 
     def _verify_keyword_is_valid(self):
         if self._errors:

@@ -47,7 +47,7 @@ class NoArguments(object):
             exptxt = "%d to %d arguments" % (self.minargs, self.maxargs)
         else:
             exptxt = "at least %d argument%s" % (self.minargs, minend)
-        raise DataError("Expected %s, got %d." % (exptxt, len(args)))
+        raise DataError("expected %s, got %d." % (exptxt, len(args)))
 
 
 class PythonArguments(NoArguments):
