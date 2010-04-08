@@ -1,7 +1,0 @@
-*** Settings ***
-Documentation  Functionality tested elsewere:\n
-...  + filtering by tags (--include/--exclude)\n  
-...  + filtering by names (--test/--suite)\n 
-...  + --MonitorColors/Width\n 
-...  + --critical/--noncritical\n
-...  + --loglevel
