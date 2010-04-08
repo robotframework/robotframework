@@ -224,7 +224,7 @@ class _RunnableHandler(_BaseHandler):
         self.name = utils.printable_name(handler_name, code_style=True)
         self._method = library.scope == 'GLOBAL' and \
                 self._get_global_handler(handler_method, handler_name) or None
-        self.doc = self._get_doc()
+        self.doc = ''
         self.timeout = ''  # Needed for set_attributes in runner.start_keyword
 
     def run(self, output, namespace, args):
