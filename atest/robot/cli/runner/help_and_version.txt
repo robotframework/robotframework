@@ -1,0 +1,33 @@
+*** Settings ***
+Default Tags    regression  pybot  jybot
+Resource        cli_resource.txt
+
+
+*** Test Cases ***
+
+
+Help
+    Set Runners
+    ${rc}  ${help} =  Run And Return Rc And Output  ${ROBOT} --help
+    Should Be Equal  ${rc}  ${251}
+    Log  ${help.replace(' ','_')}
+    Should Not Contain  ${help}  \t
+    Should Start With  ${help}  Robot Framework -- A keyword-driven test automation framework\n\nVersion: \
+    Should End With  ${help}  \n\n# Setting syslog file before running tests.\n $ export ROBOT_SYSLOG_FILE=/tmp/syslog.txt\n $ pybot tests.html\n
+    Should Not Contain  ${help}  [ ERROR ]
+    Should Not Contain  ${help}  [ WARN \ ]
+    @{lines} =  Evaluate  [ '%d\\t%s' % (len(line), line) for line in ${help.splitlines()} ]
+    Log Many  @{lines}
+    @{long} =  Evaluate  [ line for line in ${help.splitlines()} if len(line) - line.count('\\\\') >= 80 ]
+    Log Many  @{long}
+    Should Be True  len(@{long}) == 0  Too long (>= 80) help line(s)
+    ${help2} =  Run  ${ROBOT} -h
+    Should Be Equal  ${help}  ${help2}
+
+Version
+    Set Runners
+    ${rc}  ${output} =  Run And Return Rc And Output  ${ROBOT} --version
+    Should Be Equal  ${rc}  ${251}
+    Log  ${output}
+    Should Match Regexp  ${output}  ^Robot Framework (2\\.\\d+(\\.\\d+)?( (alpha|beta|rc)\\d*)?|trunk 2\\d{7}) \\([PJ]ython 2\\.[\\d.]+ on .+\\)$
+    Should Be True  len("${output}") < 80  Too long version line

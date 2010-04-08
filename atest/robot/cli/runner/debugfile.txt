@@ -1,0 +1,45 @@
+*** Settings ***
+Test Setup      Create Output Directory
+Default Tags    regression  pybot  jybot
+Resource        cli_resource.txt
+
+
+*** Test Cases ***
+
+Debugfile
+    Run Tests Without Processing Output  --outputdir=${CLI OUTDIR} --debugfile=DeBug.TXT -o o.xml  ${TESTFILE}
+    Output Directory Should Contain  DeBug.TXT  o.xml
+    ${content} =  Log File  ${CLI OUTDIR}${/}DeBug.TXT
+    Should Contain  ${content}  + START SUITE: Normal
+    Should Contain  ${content}  +- START TEST: First One
+    Should Contain  ${content}  +-- START KW: BuiltIn.Log [ Test 1 ]\n Test 1\n +-- END KW: BuiltIn.Log
+    Should Contain  ${content}  +-- START KW: BuiltIn.Log [ Logging with debug level | DEBUG ]\n Logging with debug level\n +-- END KW: BuiltIn.Log
+    Should Contain  ${content}  + END SUITE: Normal
+    Check Syslog Contains  DebugFile: DeBug.TXT
+    ${path} =  Set Variable  [:.\\w /\\\\~+-]*DeBug\\.TXT
+    Check Stdout Matches Regexp  (?s).*Debug: {3}${path}.*
+    Check Syslog Matches Regexp  (?s).*Debug: ${path}.*
+
+Debugfile Log Level Should Always Be Debug
+    [Documentation]  --loglevel option should not affect what's written to debugfile
+    Run Tests Without Processing Output  --outputdir ${CLI OUTDIR} -b debug.txt -o o.xml --loglevel WARN  ${TESTFILE}
+    ${content} =  Log File  ${CLI OUTDIR}${/}debug.txt
+    Should Contain  ${content}  +-- START KW: BuiltIn.Log [ Test 1 ]\n Test 1\n +-- END KW: BuiltIn.Log
+    Should Contain  ${content}  +-- START KW: BuiltIn.Log [ Logging with debug level | DEBUG ]\n Logging with debug level\n +-- END KW: BuiltIn.Log
+
+No Debugfile
+    Run Tests Without Processing Output  --outputdir ${CLI OUTDIR} --debugfile None -o o.xml  ${TESTFILE}
+    Directory Should Contain  ${CLI OUTDIR}  o.xml
+    Check Syslog Contains  DebugFile: NONE
+
+Invalid Debugfile
+    Create Directory  ${CLI OUTDIR}${/}debug.txt
+    Run Tests Without Processing Output  --outputdir ${CLI OUTDIR} -b debug.txt  ${TESTFILE}
+    Check Stderr Matches Regexp  \\[ ERROR \\] Opening debug file '.*debug.txt' failed and writing to debug file is disabled. Error: (IOError|FileNotFoundException): .*
+    Check Stdout Contains  2 critical tests, 2 passed, 0 failed\n 2 tests total, 2 passed, 0 failed
+
+Writing Unicode To Debugfile
+    [Documentation]  Tests also that '.txt' is appended if no extension given
+    Run Tests Without Processing Output  --outputdir ${CLI OUTDIR} --debugfile debug -o o.xml  ${UNICODE TEST}
+    Directory Should Contain  ${CLI OUTDIR}  debug.txt  o.xml
+    Stderr Should Be Empty

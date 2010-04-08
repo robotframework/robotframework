@@ -1,0 +1,33 @@
+*** Settings ***
+Resource        ../../../resources/resource.txt
+
+
+*** Variables ***
+${CLI OUTDIR}     ${TEMPDIR}${/}robot-cli-test-${INTERPRETER}
+${TEST FILE}      misc${/}normal.html
+${UNICODE TEST}   misc${/}unicode.html
+
+
+*** Keywords ***
+
+Create Output Directory
+    Remove Directory  ${CLI OUTDIR}  recursive
+    Create Directory  ${CLI OUTDIR}
+
+Directory Should Contain  [Arguments]  ${path}  @{expected}
+    ${actual} =  List Directory  ${path}
+    Should Be Equal  ${actual}  ${expected}
+
+Output Directory Should Contain  [Arguments]  @{expected}
+    Directory Should Contain  ${CLI OUTDIR}  @{expected}
+
+Run Some Tests  [Arguments]  ${options}=-l none -r none 
+    ${path} =  Join Path  ${CURDIR}/../../..  testdata  ${TESTFILE}
+    ${output} =  Run Robot Directly  -d ${CLI OUTDIR} ${options} ${path}
+    Should Contain  ${output}  Output:  message=Running tests failed for some reason
+    [Return]  ${output}
+
+Tests Should Pass Without Errors  [Arguments]  ${options}  ${datasource}
+    Run Tests  ${options}  ${datasource}
+    Should Be Equal  ${SUITE.status}  PASS
+    File Should Be Empty  ${STDERR FILE}

@@ -1,0 +1,42 @@
+*** Settings ***
+Test Setup      Create Output Directory and Set Variables
+Default Tags    regression  pybot  jybot
+Resource        cli_resource.txt
+
+
+*** Test Cases ***
+
+Argument File
+    Create Argument File  ${ARGFILE}  --name From Argfile  -M Meta1:From AF  -M Meta2:To be overwritten
+    ...  \# comment line  --outputdir ${CLI OUTDIR}  -l none  -r none  ${EMPTY}  -o output.xml  ${EMPTY}
+    Run Tests Without Processing Output  -M Meta1:Overwritten -A ${ARGFILE} -M Meta2:cli  ${TESTFILE}
+    Process Output  ${CLI OUTDIR}/output.xml
+    Should Be Equal  ${SUITE.name}  From Argfile
+    Should Be True  ${SUITE.metadata} == {'Meta1': 'From AF', 'Meta2': 'cli', 'Something': 'My Value'}
+
+Two Argument Files
+    Create Argument File  ${ARGFILE}  --metadata A1:Value1  --metadata A2:to be overridden
+    Create Argument File  ${ARGFILE2}  --metadata A2:Value2
+    Run Tests  -A ${ARGFILE} --argumentfile ${ARGFILE2}  ${TESTFILE}
+    Should Be Equal  ${SUITE.metadata['A1']}  Value1
+    Should Be Equal  ${SUITE.metadata['A2']}  Value2
+
+Recursive Argument File
+    Create Argument File  ${ARGFILE}  -M First:1  -M Second:overwritten  --argumentfile ${ARGFILE2}
+    Create Argument File  ${ARGFILE2}  --metadata Second:2
+    Run Tests  -A ${ARGFILE}  ${TESTFILE}
+    Should Be Equal  ${SUITE.metadata['First']}  1
+    Should Be Equal  ${SUITE.metadata['Second']}  2
+
+
+*** Keywords ***
+
+Create Output Directory and Set Variables
+    Create Output Directory
+    Set Suite Variable  ${ARGFILE}   ${CLI OUTDIR}/arg_file_1.txt
+    Set Suite Variable  ${ARGFILE2}  ${CLI OUTDIR}/arg_file_2.txt
+
+
+Create Argument FIle  [Arguments]  ${path}  @{lines}
+    ${content} =  Catenate  SEPARATOR=\n  @{lines}
+    Create File  ${path}  ${content}
