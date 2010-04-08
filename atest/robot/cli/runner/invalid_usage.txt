@@ -7,13 +7,16 @@ Resource        cli_resource.txt
 *** Test Cases ***
 
 No Input
-    Run Should Fail  ${EMPTY}                     Expected at least 1 argument, got 0\\.
+    Run Should Fail  ${EMPTY}  Expected at least 1 argument, got 0\\.
 
 Non-Existing Input
-    Run Should Fail  nonexisting.html             Data source '.*nonexisting\\.html' does not exist\\.
+    Run Should Fail  nonexisting.html  Data source '.*nonexisting\\.html' does not exist\\.
+
+Non-Existing Input With Non-Ascii Characters
+    Run Should Fail  eitäällä.txt  Data source '.*eitäällä\\.txt' does not exist\\.
 
 Invalid Options
-    Run Should Fail  --invalid option             option --invalid not recognized
+    Run Should Fail  --invalid option  option --invalid not recognized
     Run Should Fail  --name valid -X ${TESTFILE}  option -X not recognized
 
 Invalid Option Values
