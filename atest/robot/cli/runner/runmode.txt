@@ -1,0 +1,53 @@
+*** Settings ***
+Suite Setup     Check That Default Orders Are Correct
+Force Tags      pybot  jybot  regression
+Resource        ../../../resources/resource.txt
+
+*** Variables ***
+${DEFAULT SUITE ORDER}  ['Suite First', 'Subsuite 1', 'Suite 3', 'Suite 4', 'Suite 5', 'Suite 10', 'Suite 6', 'Suite 7', 'Suite 8', 'Suite 9']
+${DEFAULT TEST ORDER}  ['Test1', 'Test2', 'Test3', 'Test4', 'Test5', 'Test6', 'Test7', 'Test8', 'Test9', 'Test10', 'Test11', 'Test12']
+
+*** Test Cases ***
+Randomizing Tests
+    [Setup]  Run Tests  --runmode random:test  misc${/}multiple_suites${/}01__suite_first.html
+    Should Not Be Equal As Strings  ${SUITE.tests}  ${DEFAULT TEST ORDER}
+
+Randomizing Suites
+    [Setup]  Run Tests  --runmode RANDOM:SuitE  misc${/}multiple_suites
+    Should Not Be Equal As Strings  ${SUITE.suites}  ${DEFAULT SUITE ORDER}
+    ${tests} =  Get Tests
+    Should Be Equal As Strings  ${tests}  ${DEFAULT TEST ORDER}
+
+Randomizing Suites And Tests
+    [Setup]  Run Tests  --runmode random:all  misc${/}multiple_suites
+    Should Not Be Equal As Strings  ${SUITE.suites}  ${DEFAULT SUITE ORDER}
+    ${tests} =  Get Tests
+    Should Not Be Equal As Strings  ${tests}  ${DEFAULT TEST ORDER}
+
+Exit On Failure
+    [Setup]  Run Tests  --runmode exitonfailure  misc${/}pass_and_fail.html  misc${/}suites
+    Check Test Case  Pass
+    Check Test Case  Fail
+    Check Test Case  SubSuite1 First  FAIL  Critical failure occurred and ExitOnFailure option is in use
+    Check Test Case  Suite3 First  FAIL  Critical failure occurred and ExitOnFailure option is in use
+
+Correct Suite Teardown Is Executed When Exitonfailure Is Used
+    [Setup]  Run Tests  --runmode exitonfailure  misc${/}suites
+    ${tsuite} =  Get Test Suite  Suites
+    Should Be Equal  ${tsuite.teardown.name}  BuiltIn.Log
+    ${tsuite} =  Get Test Suite  Fourth
+    Should Be Equal  ${tsuite.teardown.name}  BuiltIn.Log
+    ${tsuite} =  Get Test Suite  Tsuite3
+    Should Be Equal  ${tsuite.teardown}  ${None}
+
+*** Keywords ***
+Check That Default Orders Are Correct
+    Run Tests  ${EMPTY}  misc${/}multiple_suites
+    Should Be Equal As Strings  ${SUITE.suites}  ${DEFAULT SUITE ORDER}
+    Should Be Equal As Strings  ${SUITE.suites[0].tests}  ${DEFAULT TEST ORDER}
+
+Get Tests
+    Comment  This keyword is needed as there is also one directory suite, which does not contain tests.
+    ${tests} =  Set Variable If  '${SUITE.suites[0].name}' == 'Subsuite 1'  ${SUITE.suites[0].suites[0].tests}  ${SUITE.suites[0].tests}
+    [Return]  ${tests}
+
