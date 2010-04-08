@@ -1,15 +1,15 @@
 #!/usr/bin/env python
 
-"""runnergen.py -- A script to generate atest runners based on data files.
+"""Script to generate atest runners based on data files.
 
-Usage:  runnergen.py path/to/data.file
+Usage:  %s path/to/data.file
 """
 
 from __future__ import with_statement
 import sys, os
 
 if len(sys.argv) != 2:
-    print __doc__
+    print __doc__ % os.path.basename(sys.argv[0])
     sys.exit(1)
 
 inpath = os.path.abspath(sys.argv[1])
