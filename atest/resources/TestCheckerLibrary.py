@@ -1,4 +1,4 @@
-import os.path
+import os
 import re
 
 from robot import utils
@@ -10,6 +10,7 @@ from robot.libraries.BuiltIn import BuiltIn
 class TestCheckerLibrary:
             
     def process_output(self, path):
+        path = path.replace('/', os.sep)
         try:
             print "Processing output '%s'" % path
             suite, errors = readers.process_output(path)
