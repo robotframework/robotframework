@@ -14,7 +14,6 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-
 """Robot Framework -- A keyword-driven test automation framework
 
 Version: <VERSION>
@@ -144,8 +143,6 @@ Options:
                           is specified. Example: '--summary summary.html'
  -b --debugfile file      Debug file written during execution. Not created
                           unless this option is specified.
-    --transform ignored   This option is ignored. Please use '--log' and
-                          '--report' to control what outputs to generate.
  -T --timestampoutputs    When this option is used, timestamp in a format
                           'YYYYMMDD-hhmmss' is added to all generated output
                           files between their basename and extension. For
@@ -218,7 +215,6 @@ Options:
                           'on'    - use colors in unixes but not in Windows
                           'off'   - never use colors
                           'force' - always use colors (also in Windows)
-    --colormonitor param  Deprecated. Use --monitorcolors instead.
  -P --pythonpath path *   Additional locations (directories, ZIPs, JARs) where
                           to search test libraries from when they are imported.
                           Multiple paths can be given by separating them with a

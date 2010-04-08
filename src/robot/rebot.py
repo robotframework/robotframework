@@ -14,7 +14,6 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-
 """Rebot -- Robot Framework Report and Log Generator
 
 Version: <VERSION>
@@ -175,7 +174,6 @@ Options:
                           'on'    - use colors in unixes but not in Windows
                           'off'   - never use colors
                           'force' - always use colors (also in Windows)
-    --colormonitor param  Deprecated. Use --monitorcolors instead.
  -E --escape what:with *  Escape characters which are problematic in console.
                           'what' is the name of the character to escape and
                           'with' is the string to escape it with. Note that

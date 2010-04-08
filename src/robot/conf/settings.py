@@ -12,7 +12,6 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-
 import os
 
 from robot import utils
@@ -58,8 +57,7 @@ class _BaseSettings:
                   'MonitorWidth'     : ('monitorwidth', 78),
                   'MonitorColors'    : ('monitorcolors', 'ON') }
 
-    _deprecated = { 'colormonitor'   : 'monitorcolors',
-                    'transform'      : None }
+    _deprecated = {}
 
     def __init__(self, options={}, log=True):
         self._opts = {}
