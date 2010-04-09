@@ -82,6 +82,7 @@ class _RunnableHandler(_BaseHandler):
         Note: This method MUST NOT change this object's internal state.
         """
         args = self._process_args(args, namespace.variables)
+        self._check_arg_limits(args)
         self._tracelog_args(output, args)
         self._capture_output()
         try:
@@ -118,7 +119,7 @@ class _RunnableHandler(_BaseHandler):
         if index < 0:
             return self._replace_vars_from_args(args, variables)
         if index == 0:
-            return self._check_arg_limits(args)
+            return args
         # There might be @{list} variables and those might have more or less
         # arguments that is needed. Therefore we need to go through arguments
         # one by one.
@@ -128,7 +129,7 @@ class _RunnableHandler(_BaseHandler):
         # In case @{list} variable is unpacked, the arguments going further
         # needs to be escaped, otherwise those are unescaped twice.
         processed[index:] = [utils.escape(arg) for arg in processed[index:]]
-        return self._check_arg_limits(processed + args)
+        return processed + args
 
     def _check_arg_limits(self, args):
         try:
@@ -137,9 +138,7 @@ class _RunnableHandler(_BaseHandler):
             raise DataError("Keyword '%s' %s" % (self.longname, str(err)))
 
     def _replace_vars_from_args(self, args, variables):
-        """Overridden by JavaHandler"""
-        args = variables.replace_list(args)
-        return self._check_arg_limits(args)
+        return variables.replace_list(args)
 
     def _run_handler(self, handler, args, output, timeout):
         posargs, kwargs = self.resolve_args(args)
@@ -191,6 +190,7 @@ class _JavaHandler(_RunnableHandler):
 
     def _replace_vars_from_args(self, args, variables):
         args = _RunnableHandler._replace_vars_from_args(self, args, variables)
+        self._check_arg_limits(args)
         if self.maxargs == sys.maxint:
             args = self._handle_varargs(args)
         return self.arguments.coerce(args)
