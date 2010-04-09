@@ -131,9 +131,10 @@ class SetKeyword(Keyword):
             return False
         try:
             iter(value)
-            return True
         except TypeError:
             return False
+        else:
+            return True
 
     def _get_vars_to_set_when_ret_is_none(self):
         ret = [ (var, None) for var in self.scalar_vars ]
