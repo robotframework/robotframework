@@ -6,7 +6,7 @@ from robot.utils.asserts import *
 
 
 class HandlerDataMock:
-    
+
     def __init__(self, name, args=[]):
         self.name = name
         self.args = args
@@ -17,12 +17,11 @@ class HandlerDataMock:
         self.minargs = 0
         self.maxargs = 0
         self.return_value = None
-        
-        
+
 def EAT(*args):
     return EmbeddedArgsTemplate(HandlerDataMock(*args), 'resource')
 
-    
+
 class TestEmbeddedArgs(unittest.TestCase):
 
     def setUp(self):
@@ -31,10 +30,10 @@ class TestEmbeddedArgs(unittest.TestCase):
 
     def test_keyword_has_normal_arguments(self):  
         assert_raises(TypeError, EAT, 'Name has ${args}', ['${norm arg}'])
-  
+
     def test_no_embedded_args(self):
         assert_raises(TypeError, EAT, 'No embedded args here')
-    
+
     def test_get_embedded_arg_and_regexp(self):
         assert_equals(self.tmp1.embedded_args, ['${item}'])
         assert_equals(self.tmp1.name_regexp.pattern, 
@@ -49,7 +48,7 @@ class TestEmbeddedArgs(unittest.TestCase):
 
     def test_create_handler_when_no_match(self):
         assert_raises(TypeError, EmbeddedArgs, 'Not matching', self.tmp1)
-    
+
     def test_create_handler_with_one_embedded_arg(self):
         handler = EmbeddedArgs('User selects book from list', self.tmp1)
         assert_equals(handler.embedded_args, [('${item}', 'book')])
@@ -59,7 +58,7 @@ class TestEmbeddedArgs(unittest.TestCase):
         assert_equals(handler.embedded_args, [('${item}', 'radio')])
         assert_equals(handler.name, 'User selects radio from list')
         assert_equals(handler.longname, 'resource.User selects radio from list')
-        
+
     def test_create_handler_with_many_embedded_args(self):
         handler = EmbeddedArgs('User * book from "list"', self.tmp2)
         assert_equals(handler.embedded_args, 

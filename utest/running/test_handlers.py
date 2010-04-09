@@ -29,8 +29,8 @@ class LibraryMock:
     def __init__(self, name='MyLibrary', scope='GLOBAL'):
         self.name = name
         self.scope = scope
-  
-    
+
+
 class TestPythonHandler(unittest.TestCase):
 
     def test_name(self):
@@ -51,7 +51,7 @@ class TestPythonHandler(unittest.TestCase):
             expected = eval(method.__doc__)
             assert_equals(handler.arguments._get_arg_spec(method),
                           expected, method.__name__)
-            
+
     def test_arg_limits(self):
         for method in _get_handler_methods(ArgumentsPython()):
             handler = _PythonHandler(LibraryMock(), method.__name__, method)
@@ -70,56 +70,56 @@ class TestPythonHandler(unittest.TestCase):
 
 
 class TestDynamicHandlerCreation(unittest.TestCase):
-    
+
     _type_err_msg = 'Argument specification should be list/array of Strings.'
-    
+
     def test_with_none_doc(self):
         assert_equals(self._create_handler().doc, '')
-        
+
     def test_with_empty_doc(self):
          assert_equals(self._create_handler('').doc, '')
-         
+
     def test_with_non_empty_doc(self):
         doc = 'This is some documentation'
         assert_equals(self._create_handler(doc).doc, doc)
-        
+
     def test_with_non_string_doc(self):
         doc = ['this', 'is', 'doc']
         assert_equals(self._create_handler(doc).doc, str(doc))
         doc = lambda x: None
         assert_equals(self._create_handler(doc).doc, str(doc))
-        
+
     def test_with_none_argspec(self):
         self._assert_arg_specs(self._create_handler(), 0, sys.maxint, 
                                vararg='<unknown>')
-        
+
     def test_with_empty_argspec(self):
         self._assert_arg_specs(self._create_handler(argspec=[]), 0, 0)
-        
+
     def test_with_mandatory_args(self):
         for args in [ ['arg'], ['arg1', 'arg2', 'arg3'] ]:
             handler = self._create_handler(argspec=args) 
             self._assert_arg_specs(handler, len(args), len(args), args)
-        
+
     def test_with_only_default_args(self):
         argspec = ['defarg1=value', 'defarg2=defvalue']
         self._assert_arg_specs(self._create_handler(argspec=argspec), 0, 2, 
                                ['defarg1', 'defarg2'], ['value', 'defvalue'])
-        
+
     def test_default_value_may_contain_equal_sign(self):
         self._assert_arg_specs(self._create_handler(argspec=['d=foo=bar']), 0, 1,
                                                     ['d'], ['foo=bar'])
-        
+
     def test_with_varargs(self):
         self._assert_arg_specs(self._create_handler(argspec=['*vararg']), 0, 
                                                     sys.maxint, vararg='vararg')
-    
+
     def test_integration(self):
         handler = self._create_handler(argspec=['arg', 'default=value'])
         self._assert_arg_specs(handler, 1, 2, ['arg', 'default'], ['value'])
         handler = self._create_handler(argspec=['arg', 'default=value', '*var'])
         self._assert_arg_specs(handler, 1, sys.maxint, ['arg', 'default'], ['value'], 'var')
-    
+
     def test_with_string_argspec(self):
         assert_raises_with_msg(TypeError, self._type_err_msg, self._create_handler, argspec='')
 
@@ -130,24 +130,24 @@ class TestDynamicHandlerCreation(unittest.TestCase):
         for argspec in [['d=v', 'arg'], ['a', 'b', 'c=v', 'd']]:
             assert_raises_with_msg(TypeError, self._type_err_msg, 
                                    self._create_handler, argspec=argspec)
-            
+
     def test_vararg_not_last(self):
         for argspec in [ ['*foo', 'arg'], ['arg', '*var', 'arg'], 
                          ['a', 'b=d', '*var', 'c'], ['*var', '*vararg'] ]:
             assert_raises_with_msg(TypeError, self._type_err_msg,
                                    self._create_handler, argspec=argspec)
-            
+
     def _create_handler(self, doc=None, argspec=None):
         return DynamicHandler(LibraryMock('TEST CASE'), 'mock', lambda x: None,
                               doc, argspec)
-        
+
     def _assert_arg_specs(self, handler, minargs, maxargs, names=[], defaults=[], vararg=None):
         assert_equals(handler.arguments.minargs, minargs)
         assert_equals(handler.arguments.maxargs, maxargs)
         assert_equals(handler.arguments.names, names)
         assert_equals(handler.arguments.defaults, defaults)
         assert_equals(handler.arguments.varargs, vararg)
-        
+
 
 if utils.is_jython:
     
@@ -155,14 +155,14 @@ if utils.is_jython:
                        _get_java_handler_methods(ArgumentsJava()) ])
 
     class TestJavaHandler(unittest.TestCase):
-        
+
         def test_arg_limits_no_defaults_or_varargs(self):
             for count in [ 0, 1, 3 ]:
                 method = handlers['a_%d' % count]
                 handler = _JavaHandler(LibraryMock(), method.__name__, method)
                 assert_equals(handler.minargs, count)
                 assert_equals(handler.maxargs, count)
-                
+
         def test_arg_limits_with_varargs(self):
             for count in [ 0, 1 ]:
                 method = handlers['a_%d_n' % count]
