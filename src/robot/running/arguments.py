@@ -31,12 +31,7 @@ class _KeywordArguments(object):
         self._name = kw_or_lib_name
 
     def resolve(self, args, variables=None):
-        args = self._replace_variables_from_args(args, variables)
-        self.check_arg_limits(args)
-        return self._get_argument_resolver().resolve(args)
-
-    def _replace_variables_from_args(self, args, variables):
-        return args
+        return self._get_argument_resolver().resolve(args, variables)
 
     def check_arg_limits(self, args):
         if not self.minargs <= len(args) <= self.maxargs:
@@ -56,9 +51,6 @@ class _KeywordArguments(object):
 
 
 class PythonKeywordArguments(_KeywordArguments):
-
-    def _replace_variables_from_args(self, args, variables):
-        return variables.replace_list(args)
 
     def _get_argument_resolver(self):
         return PythonKeywordArgumentResolver(self)
@@ -104,14 +96,10 @@ class JavaKeywordArguments(_KeywordArguments):
 
     def __init__(self, handler_method, name):
         _KeywordArguments.__init__(self, handler_method, name)
-        self._arg_coercer = ArgumentCoercer(self._get_signatures(handler_method))
+        self.arg_coercer = ArgumentCoercer(self._get_signatures(handler_method))
 
     def _get_argument_resolver(self):
-        return JavaKeywordArgumentResolver(self.minargs, self.maxargs,
-                                           self._arg_coercer)
-
-    def _replace_variables_from_args(self, args, variables):
-        return variables.replace_list(args)
+        return JavaKeywordArgumentResolver(self)
 
     def _determine_args(self, handler_method):
         signatures = self._get_signatures(handler_method)
@@ -155,9 +143,6 @@ class JavaKeywordArguments(_KeywordArguments):
 
 
 class DynamicKeywordArguments(_KeywordArguments):
-
-    def _replace_variables_from_args(self, args, variables):
-        return variables.replace_list(args)
 
     def _get_argument_resolver(self):
         return PythonKeywordArgumentResolver(self)
@@ -248,9 +233,6 @@ class UserKeywordArguments(_KeywordArguments):
 class PythonInitArguments(PythonKeywordArguments):
     _type = 'Test Library'
 
-    def _replace_variables_from_args(self, args, variables):
-        return args
-
 
 class JavaInitArguments(JavaKeywordArguments):
     _type = 'Test Library'
@@ -268,10 +250,14 @@ class _MissingArg(object):
 class _ArgumentResolver(object):
 
     def __init__(self, arguments):
+        self._arguments = arguments
         self._names = arguments.names
         self._mand_arg_count = len(arguments.names) - len(arguments.defaults)
 
-    def resolve(self, values):
+    def resolve(self, values, variables=None): #TODO: Remove default value
+        if variables:
+            values = variables.replace_list(values)
+        self._arguments.check_arg_limits(values)
         self._optional_values = values[self._mand_arg_count:]
         posargs, kwargs = self._resolve_optional_args()
         posargs = values[:self._mand_arg_count] + list(posargs)
@@ -343,17 +329,19 @@ class PythonKeywordArgumentResolver(_ArgumentResolver):
 
 class JavaKeywordArgumentResolver(object):
 
-    def __init__(self, minargs, maxargs, arg_coercer):
-        self._minargs, self._maxargs = minargs, maxargs
-        self._arg_coercer = arg_coercer
+    def __init__(self, arguments):
+        self._arguments = arguments
+        self._minargs, self._maxargs = arguments.minargs, arguments.maxargs
 
-    def resolve(self, values):
+    def resolve(self, values, variables):
+        values = variables.replace_list(values)
+        self._arguments.check_arg_limits(values)
         return self._handle_varargs_and_coerce(values)
 
     def _handle_varargs_and_coerce(self, args):
         if self._maxargs == sys.maxint:
             args = self._handle_varargs(args)
-        return self._coerce(args), {}
+        return self._arguments.arg_coercer(args), {}
 
     def _handle_varargs(self, args):
         if len(args) == self._minargs:
@@ -365,6 +353,3 @@ class JavaKeywordArgumentResolver(object):
             args = args[:self._minargs]
             args.append(varargs)
         return args
-
-    def _coerce(self, args):
-        return self._arg_coercer(args)
