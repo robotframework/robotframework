@@ -4,7 +4,7 @@ Default Tags    regression  pybot  jybot
 Resource        ../../resources/resource.txt
 
 *** Variables ***
-${TESTDATA}  misc${/}pass_and_fail.html
+${TESTDATA}  misc/pass_and_fail.html
 
 *** Test Cases ***
 No Log Level Given
@@ -18,7 +18,9 @@ Trace Level
     Run Tests  --loglevel TRACE  ${TESTDATA}
     Check Log Message  ${SUITE.tests[0].kws[0].kws[0].msgs[0]}  Arguments: [ Hello says "Pass"! | INFO ]  TRACE
     Check Log Message  ${SUITE.tests[0].kws[0].kws[0].msgs[1]}  Hello says "Pass"!  INFO
+    Check Log Message  ${SUITE.tests[0].kws[0].kws[0].msgs[2]}  Return: None  TRACE
     Check Log Message  ${SUITE.tests[0].kws[0].kws[1].msgs[1]}  Debug message  DEBUG
+    Check Log Message  ${SUITE.tests[1].kws[1].msgs[0]}  Arguments: [ msg=Expected failure ]  TRACE
     Check Log Message  ${SUITE.tests[1].kws[1].msgs[1]}  Expected failure  FAIL
 
 Debug Level
