@@ -23,21 +23,20 @@ class _RunKeywordRegister:
     def __init__(self):
         self._libs = {}
 
-    def register_run_keyword(self, library, keyword, args_to_process=None):
+    def register_run_keyword(self, libname, keyword, args_to_process=None):
         if args_to_process is None:
             args_to_process = self._get_args_from_method(keyword)
             keyword =  keyword.__name__
-        keyword = utils.printable_name(keyword, code_style=True)
-        self._libs.setdefault(library, {})[keyword] = int(args_to_process)
+        kwname = utils.printable_name(keyword, code_style=True)
+        self._libs.setdefault(libname, {})[kwname] = int(args_to_process)
 
-    def get_args_to_process(self, library, keyword):
-        if library in self._libs and keyword in self._libs[library]:
-            return self._libs[library][keyword]
+    def get_args_to_process(self, libname, kwname):
+        if libname in self._libs and kwname in self._libs[libname]:
+            return self._libs[libname][kwname]
         return -1
 
-    def is_run_keyword(self, handler):
-        return self.get_args_to_process(handler.library.orig_name,
-                                        handler.name) >= 0
+    def is_run_keyword(self, libname, kwname):
+        return self.get_args_to_process(libname, kwname) >= 0
 
     def _get_args_from_method(self, method):
         if type(method) is MethodType:
