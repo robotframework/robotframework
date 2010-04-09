@@ -139,16 +139,10 @@ class _BaseTestLibrary(BaseLibrary):
 
     def get_instance(self):
         if self._libinst is None:
-            self._check_arg_limits(self.args)
+            self.init.arguments.check_arg_limits(self.args)
             posargs, kwargs = self.init.arguments.resolve_args(self.args)
             self._libinst = self._get_instance(posargs, kwargs)
         return self._libinst
-
-    def _check_arg_limits(self, args):
-        try:
-            return self.init.arguments.check_arg_limits(args)
-        except DataError, err:
-            raise DataError("Test Library '%s' %s" % (self.name, str(err)))
 
     def _get_instance(self, posargs, kwargs):
         try:

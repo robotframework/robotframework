@@ -16,11 +16,10 @@ import sys
 
 from robot import utils
 from robot.common import BaseHandler
-from robot.errors import DataError
 
 from runkwregister import RUN_KW_REGISTER
 from arguments import PythonKeywordArguments, JavaKeywordArguments, \
-    DynamicKeywordArguments, NoArguments
+    DynamicKeywordArguments, PythonInitArguments, JavaInitArguments
 
 
 if utils.is_jython:
@@ -44,11 +43,9 @@ def Handler(library, name, method):
 
 def InitHandler(library, method):
     if method is None:
-        return _NoInitHandler(library)
-    elif _is_java_init(method):
-        return _JavaInitHandler(library, method)
-    else:
-        return _PythonInitHandler(library, method)
+        method = lambda: None
+    Init = _PythonInitHandler if not _is_java_init(method) else _JavaInitHandler
+    return Init(library, '__init__', method)
 
 
 class _BaseHandler(BaseHandler):
@@ -83,7 +80,7 @@ class _RunnableHandler(_BaseHandler):
         Note: This method MUST NOT change this object's internal state.
         """
         args = self._process_args(args, namespace.variables)
-        self._check_arg_limits(args)
+        self.arguments.check_arg_limits(args)
         self._tracelog_args(output, args)
         self._capture_output()
         try:
@@ -132,9 +129,6 @@ class _RunnableHandler(_BaseHandler):
         processed[index:] = [utils.escape(arg) for arg in processed[index:]]
         return processed + args
 
-    def _check_arg_limits(self, args):
-        self.arguments.check_arg_limits(args)
-
     def _replace_vars_from_args(self, args, variables):
         return variables.replace_list(args)
 
@@ -180,15 +174,12 @@ class _PythonHandler(_RunnableHandler):
 
 class _JavaHandler(_RunnableHandler):
 
-    def __init__(self, library, handler_name, handler_method):
-        _RunnableHandler.__init__(self, library, handler_name, handler_method)
-
     def _parse_arguments(self, handler_method):
         return JavaKeywordArguments(handler_method, self.longname)
 
     def _replace_vars_from_args(self, args, variables):
         args = _RunnableHandler._replace_vars_from_args(self, args, variables)
-        self._check_arg_limits(args)
+        self.arguments.check_arg_limits(args)
         if self.maxargs == sys.maxint:
             args = self._handle_varargs(args)
         return self.arguments.coerce(args)
@@ -230,26 +221,13 @@ class DynamicHandler(_RunnableHandler):
         return handler
 
 
-class _NoInitHandler(_BaseHandler):
-
-    def __init__(self, library):
-        self.library = library
-        self.arguments = NoArguments()
-
-
 class _PythonInitHandler(_BaseHandler):
 
-    def __init__(self, library, handler_method):
-        _BaseHandler.__init__(self, library, '__init__', handler_method)
-
     def _parse_arguments(self, handler_method):
-        return PythonKeywordArguments(handler_method)
+        return PythonInitArguments(handler_method, self.library.name)
 
 
 class _JavaInitHandler(_BaseHandler):
 
-    def __init__(self, library, handler_method):
-        _BaseHandler.__init__(self, library, '__init__', handler_method)
-
     def _parse_arguments(self, handler_method):
-        return JavaKeywordArguments(handler_method)
+        return JavaInitArguments(handler_method, self.library.name)

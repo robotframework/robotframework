@@ -22,13 +22,15 @@ if utils.is_jython:
     from javaargcoercer import ArgumentCoercer
 
 
-class NoArguments(object):
+class _KeywordArguments(object):
+    _type = 'Keyword'
 
-    def __init__(self):
+    def __init__(self, argument_source, kw_or_lib_name):
         self.names, self.defaults, self.varargs, self.minargs, self.maxargs \
-            = self._determine_args()
+            = self._determine_args(argument_source)
+        self._name = kw_or_lib_name
 
-    def _determine_args(self):
+    def _determine_args(self, argument_source):
         return [], [], None, 0, 0
 
     def resolve_args(self, args):
@@ -47,19 +49,8 @@ class NoArguments(object):
             exptxt = "%d to %d arguments" % (self.minargs, self.maxargs)
         else:
             exptxt = "at least %d argument%s" % (self.minargs, minend)
-        raise DataError("%s expected %s, got %d." %
-                        (self._get_type_and_name(), exptxt, len(args)))
-
-
-class _KeywordArguments(NoArguments):
-
-    def __init__(self, argument_source, keyword_name=''):
-        self.names, self.defaults, self.varargs, self.minargs, self.maxargs \
-            = self._determine_args(argument_source)
-        self._keyword_name = keyword_name
-
-    def _get_type_and_name(self):
-        return  "Keyword '%s'"  % self._keyword_name
+        raise DataError("%s '%s' expected %s, got %d."
+                        % (self._type, self._name, exptxt, len(args)))
 
 
 class PythonKeywordArguments(_KeywordArguments):
@@ -107,8 +98,8 @@ class PythonKeywordArguments(_KeywordArguments):
 
 class JavaKeywordArguments(_KeywordArguments):
 
-    def __init__(self, handler_method, keyword_name=''):
-        _KeywordArguments.__init__(self, handler_method, keyword_name)
+    def __init__(self, handler_method, name):
+        _KeywordArguments.__init__(self, handler_method, name)
         self._arg_coercer = ArgumentCoercer(self._get_signatures(handler_method))
 
     def _determine_args(self, handler_method):
@@ -198,13 +189,13 @@ class DynamicKeywordArguments(_KeywordArguments):
 
 class UserKeywordArguments(_KeywordArguments):
 
-    def __init__(self, argnames, defaults, vararg, minargs, maxargs, keyword_name):
+    def __init__(self, argnames, defaults, vararg, minargs, maxargs, name):
         self.names = list(argnames) # Python 2.5 does not support indexing tuples
         self.defaults = defaults
         self._vararg = vararg
         self.minargs = minargs
         self.maxargs = maxargs
-        self._keyword_name = keyword_name
+        self._name = name
 
     def set_to(self, variables, argument_values):
         template_with_defaults = self._template_for(variables)
@@ -214,7 +205,7 @@ class UserKeywordArguments(_KeywordArguments):
                                                   argument_values))
 
     def _template_for(self, variables):
-        return [ MissingArg() for _ in range(len(self.names)-len(self.defaults)) ] +\
+        return [ _MissingArg() for _ in range(len(self.names)-len(self.defaults)) ] +\
                  list(variables.replace_list(self.defaults))
 
     def _set_possible_varargs(self, template, variables, argument_values):
@@ -239,7 +230,15 @@ class UserKeywordArguments(_KeywordArguments):
         return args[len(self.names):]
 
 
-class MissingArg(object):
+class PythonInitArguments(PythonKeywordArguments):
+    _type = 'Test Library'
+
+
+class JavaInitArguments(JavaKeywordArguments):
+    _type = 'Test Library'
+
+
+class _MissingArg(object):
     def __getattr__(self, name):
         raise RuntimeError()
 
