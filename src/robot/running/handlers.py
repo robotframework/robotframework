@@ -19,7 +19,8 @@ from robot.common import BaseHandler
 from robot.errors import DataError
 
 from runkwregister import RUN_KW_REGISTER
-from arguments import PythonArguments, JavaArguments, DynamicArguments, NoArguments
+from arguments import PythonKeywordArguments, JavaKeywordArguments, \
+    DynamicKeywordArguments, NoArguments
 
 
 if utils.is_jython:
@@ -55,6 +56,7 @@ class _BaseHandler(BaseHandler):
 
     def __init__(self, library, handler_name, handler_method):
         self.library = library
+        self.name = utils.printable_name(handler_name, code_style=True)
         self.arguments = self._parse_arguments(handler_method)
         self.minargs, self.maxargs = self.arguments.minargs, self.arguments.maxargs
 
@@ -70,7 +72,6 @@ class _RunnableHandler(_BaseHandler):
     def __init__(self, library, handler_name, handler_method):
         _BaseHandler.__init__(self, library, handler_name, handler_method)
         self._handler_name = handler_name
-        self.name = utils.printable_name(handler_name, code_style=True)
         self._method = library.scope == 'GLOBAL' and \
                 self._get_global_handler(handler_method, handler_name) or None
         self.doc = ''
@@ -132,10 +133,7 @@ class _RunnableHandler(_BaseHandler):
         return processed + args
 
     def _check_arg_limits(self, args):
-        try:
-            return self.arguments.check_arg_limits(args)
-        except DataError, err:
-            raise DataError("Keyword '%s' %s" % (self.longname, str(err)))
+        self.arguments.check_arg_limits(args)
 
     def _replace_vars_from_args(self, args, variables):
         return variables.replace_list(args)
@@ -177,7 +175,7 @@ class _PythonHandler(_RunnableHandler):
         self.doc = utils.get_doc(handler_method)
 
     def _parse_arguments(self, handler_method):
-        return PythonArguments(handler_method)
+        return PythonKeywordArguments(handler_method, self.longname)
 
 
 class _JavaHandler(_RunnableHandler):
@@ -186,7 +184,7 @@ class _JavaHandler(_RunnableHandler):
         _RunnableHandler.__init__(self, library, handler_name, handler_method)
 
     def _parse_arguments(self, handler_method):
-        return JavaArguments(handler_method)
+        return JavaKeywordArguments(handler_method, self.longname)
 
     def _replace_vars_from_args(self, args, variables):
         args = _RunnableHandler._replace_vars_from_args(self, args, variables)
@@ -217,7 +215,7 @@ class DynamicHandler(_RunnableHandler):
         self.doc = doc is not None and utils.unic(doc) or ''
 
     def _parse_arguments(self, handler_method):
-        return DynamicArguments(self._argspec)
+        return DynamicKeywordArguments(self._argspec, self.longname)
 
     def _get_handler(self, lib_instance, handler_name):
         runner = getattr(lib_instance, self._run_keyword_method_name)
@@ -245,7 +243,7 @@ class _PythonInitHandler(_BaseHandler):
         _BaseHandler.__init__(self, library, '__init__', handler_method)
 
     def _parse_arguments(self, handler_method):
-        return PythonArguments(handler_method)
+        return PythonKeywordArguments(handler_method)
 
 
 class _JavaInitHandler(_BaseHandler):
@@ -254,4 +252,4 @@ class _JavaInitHandler(_BaseHandler):
         _BaseHandler.__init__(self, library, '__init__', handler_method)
 
     def _parse_arguments(self, handler_method):
-        return JavaArguments(handler_method)
+        return JavaKeywordArguments(handler_method)

@@ -113,7 +113,8 @@ class UserHandler(BaseHandler):
                                                handlerdata.defaults,
                                                handlerdata.varargs,
                                                handlerdata.minargs,
-                                               handlerdata.maxargs)
+                                               handlerdata.maxargs,
+                                               self.longname)
         self.return_value = handlerdata.return_value
 
     def _set_variable_dependent_metadata(self, metadata):
@@ -144,10 +145,7 @@ class UserHandler(BaseHandler):
         return ret
 
     def _check_arg_limits(self, args):
-        try:
-            return self.arguments.check_arg_limits(args)
-        except DataError, err:
-            raise DataError("Keyword '%s' %s" % (self.name, str(err)))
+        self.arguments.check_arg_limits(args)
 
     def _verify_keyword_is_valid(self):
         if self._errors:

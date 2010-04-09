@@ -24,11 +24,11 @@ if utils.is_jython:
 
 class NoArguments(object):
 
-    def __init__(self, argument_source=None):
+    def __init__(self):
         self.names, self.defaults, self.varargs, self.minargs, self.maxargs \
-            = self._determine_args(argument_source)
+            = self._determine_args()
 
-    def _determine_args(self, argument_source):
+    def _determine_args(self):
         return [], [], None, 0, 0
 
     def resolve_args(self, args):
@@ -47,10 +47,22 @@ class NoArguments(object):
             exptxt = "%d to %d arguments" % (self.minargs, self.maxargs)
         else:
             exptxt = "at least %d argument%s" % (self.minargs, minend)
-        raise DataError("expected %s, got %d." % (exptxt, len(args)))
+        raise DataError("%s expected %s, got %d." %
+                        (self._get_type_and_name(), exptxt, len(args)))
 
 
-class PythonArguments(NoArguments):
+class _KeywordArguments(NoArguments):
+
+    def __init__(self, argument_source, keyword_name=''):
+        self.names, self.defaults, self.varargs, self.minargs, self.maxargs \
+            = self._determine_args(argument_source)
+        self._keyword_name = keyword_name
+
+    def _get_type_and_name(self):
+        return  "Keyword '%s'"  % self._keyword_name
+
+
+class PythonKeywordArguments(_KeywordArguments):
 
     def resolve_args(self, args):
         arg_resolver = LibraryKeywordArgTypeResolver(self, args)
@@ -93,10 +105,10 @@ class PythonArguments(NoArguments):
         return args, defaults, varargs
 
 
-class JavaArguments(NoArguments):
+class JavaKeywordArguments(_KeywordArguments):
 
-    def __init__(self, handler_method):
-        NoArguments.__init__(self, handler_method)
+    def __init__(self, handler_method, keyword_name=''):
+        _KeywordArguments.__init__(self, handler_method, keyword_name)
         self._arg_coercer = ArgumentCoercer(self._get_signatures(handler_method))
 
     def _determine_args(self, handler_method):
@@ -143,7 +155,7 @@ class JavaArguments(NoArguments):
         return self._arg_coercer(args)
 
 
-class DynamicArguments(NoArguments):
+class DynamicKeywordArguments(_KeywordArguments):
 
     def _determine_args(self, argspec):
         args, defaults, varargs = self._get_arg_spec(argspec)
@@ -184,14 +196,15 @@ class DynamicArguments(NoArguments):
         return args, defaults, vararg
 
 
-class UserKeywordArguments(NoArguments):
+class UserKeywordArguments(_KeywordArguments):
 
-    def __init__(self, argnames, defaults, vararg, minargs, maxargs):
+    def __init__(self, argnames, defaults, vararg, minargs, maxargs, keyword_name):
         self.names = list(argnames) # Python 2.5 does not support indexing tuples
         self.defaults = defaults
         self._vararg = vararg
         self.minargs = minargs
         self.maxargs = maxargs
+        self._keyword_name = keyword_name
 
     def set_to(self, variables, argument_values):
         template_with_defaults = self._template_for(variables)
