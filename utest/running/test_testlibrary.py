@@ -3,7 +3,6 @@ import sys
     
 from robot.running.testlibraries import TestLibrary, _ClassLibrary, \
         _ModuleLibrary, _DynamicLibrary
-from robot.running.handlers import _NoInitHandler
 from robot.utils.asserts import *
 from robot import utils
 from robot.errors import DataError
@@ -184,13 +183,10 @@ class TestLibraryInit(unittest.TestCase):
     def test_library_with_metaclass(self):
         self._test_init_handler('newstyleclasses.MetaClassLibrary')
     
-    def _test_init_handler(self, libname, args=None, min=None, max=None):
+    def _test_init_handler(self, libname, args=None, min=0, max=0):
         lib = TestLibrary(libname, args)
-        if min is None and max is None:
-            assert_equals(lib.init.__class__, _NoInitHandler)
-        else:
-            assert_equals(lib.init.minargs, min)
-            assert_equals(lib.init.maxargs, max)
+        assert_equals(lib.init.minargs, min)
+        assert_equals(lib.init.maxargs, max)
         return lib
     
     if utils.is_jython:

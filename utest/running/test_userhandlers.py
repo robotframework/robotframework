@@ -109,7 +109,7 @@ class TestSettingUserKeywordArguments(unittest.TestCase):
 
     def test_noargs(self):
         ukargs = UserKeywordArguments(argnames=[], defaults=[], vararg=None,
-                                      minargs=0, maxargs=0)
+                                      minargs=0, maxargs=0, name='my name')
         ukargs.set_to(self.variables, [])
         self._assert_variables({})
 
@@ -168,7 +168,7 @@ class TestSettingUserKeywordArguments(unittest.TestCase):
                                 '@{list}': []})
 
     def _arguments_for(self, argnames, defaults=(), vararg=None):
-        return UserKeywordArguments(argnames, defaults, vararg, 0, 0)
+        return UserKeywordArguments(argnames, defaults, vararg, 0, 0, 'myname')
 
     def _assert_variables(self, expected):
         assert_equals(self.variables, expected)
