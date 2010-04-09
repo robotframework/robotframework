@@ -221,7 +221,7 @@ class Namespace:
             std_hand, ext_hand = hand2, hand1
         else:
             return [hand1, hand2]
-        if not RUN_KW_REGISTER.is_run_keyword(ext_hand):
+        if not RUN_KW_REGISTER.is_run_keyword(ext_hand.library.orig_name, ext_hand.name):
             LOGGER.warn(
                 "Keyword '%s' found both from a user created test library "
                 "'%s' and Robot Framework standard library '%s'. The user "
