@@ -12,9 +12,6 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-
-import sys
-
 from robot.errors import DataError
 from robot import utils
 
@@ -28,11 +25,6 @@ class BaseHandler:
             return self.doc and self.doc.splitlines()[0] or ''
         raise AttributeError("%s does not have attribute '%s'"
                              % (self.__class__.__name__, name))
-
-    def _get_type_and_name(self):
-        if 'Init' in self.__class__.__name__:
-            return "Test Library '%s'" % self.library.name
-        return "Keyword '%s'" % self.longname
 
     def _tracelog_args(self, logger, args):
         argstr = ' | '.join([utils.unic(a) for a in args ])
