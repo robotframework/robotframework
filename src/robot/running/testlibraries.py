@@ -139,8 +139,7 @@ class _BaseTestLibrary(BaseLibrary):
 
     def get_instance(self):
         if self._libinst is None:
-            self.init.arguments.check_arg_limits(self.args)
-            posargs, kwargs = self.init.arguments.resolve_args(self.args)
+            posargs, kwargs = self.init.arguments.resolve(self.args)
             self._libinst = self._get_instance(posargs, kwargs)
         return self._libinst
 

@@ -33,7 +33,8 @@ class _KeywordArguments(object):
     def _determine_args(self, argument_source):
         return [], [], None, 0, 0
 
-    def resolve_args(self, args):
+    def resolve(self, args, variables=None):
+        self.check_arg_limits(args)
         return args, {}
 
     def check_arg_limits(self, args):
@@ -55,7 +56,9 @@ class _KeywordArguments(object):
 
 class PythonKeywordArguments(_KeywordArguments):
 
-    def resolve_args(self, args):
+    def resolve(self, args, variables):
+        args = variables.replace_list(args)
+        self.check_arg_limits(args)
         arg_resolver = LibraryKeywordArgTypeResolver(self, args)
         return arg_resolver.posargs, arg_resolver.kwargs
 
@@ -101,6 +104,30 @@ class JavaKeywordArguments(_KeywordArguments):
     def __init__(self, handler_method, name):
         _KeywordArguments.__init__(self, handler_method, name)
         self._arg_coercer = ArgumentCoercer(self._get_signatures(handler_method))
+
+    def resolve(self, args, variables):
+        args = self._replace_vars_from_args(args, variables)
+        self.check_arg_limits(args)
+        arg_resolver = LibraryKeywordArgTypeResolver(self, args)
+        return arg_resolver.posargs, arg_resolver.kwargs
+
+    def _replace_vars_from_args(self, args, variables):
+        args = variables.replace_list(args)
+        self.check_arg_limits(args)
+        if self.maxargs == sys.maxint:
+            args = self._handle_varargs(args)
+        return self.coerce(args)
+
+    def _handle_varargs(self, args):
+        if len(args) == self.minargs:
+            args.append([])
+        elif len(args) == self.minargs + 1 and utils.is_list(args[-1]):
+            pass
+        else:
+            varargs = args[self.minargs:]
+            args = args[:self.minargs]
+            args.append(varargs)
+        return args
 
     def _determine_args(self, handler_method):
         signatures = self._get_signatures(handler_method)
@@ -233,9 +260,19 @@ class UserKeywordArguments(_KeywordArguments):
 class PythonInitArguments(PythonKeywordArguments):
     _type = 'Test Library'
 
+    def resolve(self, args):
+        self.check_arg_limits(args)
+        arg_resolver = LibraryKeywordArgTypeResolver(self, args)
+        return arg_resolver.posargs, arg_resolver.kwargs
+
 
 class JavaInitArguments(JavaKeywordArguments):
     _type = 'Test Library'
+
+    def resolve(self, args):
+        self.check_arg_limits(args)
+        arg_resolver = LibraryKeywordArgTypeResolver(self, args)
+        return arg_resolver.posargs, arg_resolver.kwargs
 
 
 class _MissingArg(object):

@@ -13,7 +13,6 @@
 #  limitations under the License.
 
 from robot.errors import DataError
-from robot import utils
 
 
 class BaseHandler:
@@ -26,9 +25,8 @@ class BaseHandler:
         raise AttributeError("%s does not have attribute '%s'"
                              % (self.__class__.__name__, name))
 
-    def _tracelog_args(self, logger, args):
-        argstr = ' | '.join([utils.unic(a) for a in args ])
-        logger.trace('Arguments: [ %s ]' % argstr)
+    def _tracelog_args(self, logger, posargs, kwargs={}):
+        logger.trace('Arguments: %s %s' % (posargs, kwargs))
 
 
 class UserErrorHandler:

@@ -68,9 +68,6 @@ class _BaseHandler(BaseHandler):
     def _parse_arguments(self, handler_method):
         raise NotImplementedError(self.__class__.__name__)
 
-    def resolve_args(self, args):
-        return self.arguments.resolve_args(args)
-
 
 class _RunnableHandler(_BaseHandler):
 
@@ -87,17 +84,19 @@ class _RunnableHandler(_BaseHandler):
 
         Note: This method MUST NOT change this object's internal state.
         """
-        args = self._process_args(args, namespace.variables)
-        self.arguments.check_arg_limits(args)
-        self._tracelog_args(output, args)
+        posargs, kwargs = self._process_args(args, namespace.variables)
+        self._tracelog_args(output, posargs, kwargs)
         self._capture_output()
         try:
-            ret = self._run_handler(self._current_handler(), args, output, 
-                                    self._get_timeout(namespace))
+            ret = self._run_handler(self._current_handler(), posargs, kwargs,
+                                    output, self._get_timeout(namespace))
         finally:
             self._release_and_log_output(output)
         self._tracelog_return_value(output, ret)
         return ret
+
+    def _process_args(self, args, variables):
+        return self.arguments.resolve(args, variables)
 
     def _capture_output(self):
         utils.capture_output()
@@ -118,14 +117,7 @@ class _RunnableHandler(_BaseHandler):
         """Overridden by DynamicHandler"""
         return getattr(lib_instance, handler_name)
 
-    def _process_args(self, args, variables):
-        return self._replace_vars_from_args(args, variables)
-
-    def _replace_vars_from_args(self, args, variables):
-        return variables.replace_list(args)
-
-    def _run_handler(self, handler, args, output, timeout):
-        posargs, kwargs = self.resolve_args(args)
+    def _run_handler(self, handler, posargs, kwargs, output, timeout):
         if timeout is not None and timeout.active():
             return timeout.run(handler, args=posargs, kwargs=kwargs, logger=output)
         return handler(*posargs, **kwargs)
@@ -165,24 +157,6 @@ class _JavaHandler(_RunnableHandler):
     def _parse_arguments(self, handler_method):
         return JavaKeywordArguments(handler_method, self.longname)
 
-    def _replace_vars_from_args(self, args, variables):
-        args = _RunnableHandler._replace_vars_from_args(self, args, variables)
-        self.arguments.check_arg_limits(args)
-        if self.maxargs == sys.maxint:
-            args = self._handle_varargs(args)
-        return self.arguments.coerce(args)
-
-    def _handle_varargs(self, args):
-        if len(args) == self.minargs:
-            args.append([])
-        elif len(args) == self.minargs + 1 and utils.is_list(args[-1]):
-            pass
-        else:
-            varargs = args[self.minargs:]
-            args = args[:self.minargs]
-            args.append(varargs)
-        return args
-
 
 class _DynamicHandler(_RunnableHandler):
 
@@ -214,7 +188,8 @@ class _RunKeywordHandler(_PythonHandler):
     def _process_args(self, args, variables):
         index = RUN_KW_REGISTER.get_args_to_process(self.library.orig_name, self.name)
         if index == 0:
-            return args
+            self.arguments.check_arg_limits(args)
+            return args, {}
         # There might be @{list} variables and those might have more or less
         # arguments that is needed. Therefore we need to go through arguments
         # one by one.
@@ -224,7 +199,9 @@ class _RunKeywordHandler(_PythonHandler):
         # In case @{list} variable is unpacked, the arguments going further
         # needs to be escaped, otherwise those are unescaped twice.
         processed[index:] = [utils.escape(arg) for arg in processed[index:]]
-        return processed + args
+        args = processed + args
+        self.arguments.check_arg_limits(args)
+        return args, {}
 
     def _get_timeout(self, namespace):
         return None
