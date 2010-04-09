@@ -25,7 +25,6 @@ from robot.errors import DataError, Information, FrameworkError
 from misc import plural_or_not
 from robottypes import is_list, is_boolean
 from text import wrap
-from encoding import decode_from_file_system
 
 
 ESCAPES = { 'space'   : ' ', 'apos'    : "'", 'quot'    : '"', 'lt'      : '<',
@@ -128,7 +127,7 @@ class ArgumentParser:
 
         Possible errors in processing arguments are reported using DataError.
         """
-        args_list = [ decode_from_file_system(a) for a in args_list ]
+        args_list = [ self._decode_from_file_system(a) for a in args_list ]
         if argfile:
             args_list = self._add_args_from_file(args_list, argfile)
         opts, args = self._parse_args(args_list)
@@ -143,6 +142,10 @@ class ArgumentParser:
         if check_args:
             self._check_args(args)
         return opts, args
+
+    def _decode_from_file_system(self, string):
+        enc = sys.getfilesystemencoding()
+        return string.decode(enc) if enc else string
 
     def _parse_args(self, args):
         args = [ self._lowercase_long_option(a) for a in args ]

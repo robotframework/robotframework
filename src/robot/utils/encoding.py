@@ -1,23 +1,31 @@
+#  Copyright 2008-2009 Nokia Siemens Networks Oyj
+#
+#  Licensed under the Apache License, Version 2.0 (the "License");
+#  you may not use this file except in compliance with the License.
+#  You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+#  Unless required by applicable law or agreed to in writing, software
+#  distributed under the License is distributed on an "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#  See the License for the specific language governing permissions and
+#  limitations under the License.
+
 import sys
 import os
 
 from unic import unic
 
 
-def encode_to_file_system(string):
-    enc = sys.getfilesystemencoding()
-    return string.encode(enc) if enc else string
-
-def decode_from_file_system(string):
-    enc = sys.getfilesystemencoding()
-    return string.decode(enc) if enc else string
-
 def decode_output(string):
+    """Decodes string from console encoding to Unicode."""
     if _output_encoding:
         return unic(string, _output_encoding)
     return string
 
 def encode_output(string, errors='replace'):
+    """Encodes string from Unicode to console encoding."""
     return string.encode(_output_encoding, errors)
 
 

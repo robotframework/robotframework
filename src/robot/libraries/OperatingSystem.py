@@ -25,7 +25,7 @@ try:
     from robot.output import LOGGER
     from robot.utils import get_version, ConnectionCache, seq2str, \
         timestr_to_secs, secs_to_timestr, plural_or_not, get_time, \
-        secs_to_timestamp, parse_time, unic, encoding
+        secs_to_timestamp, parse_time, unic, decode_output
     __version__ = get_version()
     PROCESSES = ConnectionCache('No active processes')
 
@@ -37,12 +37,13 @@ except ImportError:
     plural_or_not = lambda count: count != 1 and 's' or ''
     secs_to_timestr = lambda secs: '%d second%s' % (secs, plural_or_not(secs))
     unic = unicode
+    decode_output = lambda string: string
     class _NotImplemented:
         def __getattr__(self, name):
             raise NotImplementedError('This usage requires Robot Framework '
                                       'to be installed.')
     LOGGER = get_time = secs_to_timestamp = parse_time = PROCESSES \
-             = encoding = _NotImplemented()
+             = _NotImplemented()
 
 
 class OperatingSystem:
@@ -1246,7 +1247,11 @@ class _Process:
                 command = command[:-1] + ' 2>&1 &'
             else:
                 command += ' 2>&1'
-        return encoding.encode_to_file_system(command)
+        return self._encode_to_file_system(command)
+
+    def _encode_to_file_system(self, string):
+        enc = sys.getfilesystemencoding()
+        return string.encode(enc) if enc else string
 
     def _process_output(self, stdout):
         stdout = stdout.replace('\r\n', '\n') # http://bugs.jython.org/issue1566
@@ -1254,7 +1259,7 @@ class _Process:
             stdout = stdout[:-1]
         if self._is_jython(2, 2):
             return stdout
-        return encoding.decode_output(stdout)
+        return decode_output(stdout)
 
     def _is_jython(self, *version):
         return sys.platform.startswith('java') and sys.version_info[:2] == version
