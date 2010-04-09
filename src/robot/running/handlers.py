@@ -35,10 +35,18 @@ else:
 
 
 def Handler(library, name, method):
+    if RUN_KW_REGISTER.is_run_keyword(library.orig_name, name):
+        return _RunKeywordHandler(library, name, method)
     if _is_java_method(method):
         return _JavaHandler(library, name, method)
     else:
         return _PythonHandler(library, name, method)
+
+
+def DynamicHandler(library, name, method, doc, argspec):
+    if RUN_KW_REGISTER.is_run_keyword(library.orig_name, name):
+        return _DynamicRunKeywordHandler(library, name, method, doc, argspec)
+    return _DynamicHandler(library, name, method, doc, argspec)
 
 
 def InitHandler(library, method):
@@ -111,23 +119,7 @@ class _RunnableHandler(_BaseHandler):
         return getattr(lib_instance, handler_name)
 
     def _process_args(self, args, variables):
-        index = RUN_KW_REGISTER.get_args_to_process(self.library.orig_name, self.name)
-        # Negative index means that this is not Run Keyword variant and all
-        # arguments are processed normally
-        if index < 0:
-            return self._replace_vars_from_args(args, variables)
-        if index == 0:
-            return args
-        # There might be @{list} variables and those might have more or less
-        # arguments that is needed. Therefore we need to go through arguments
-        # one by one.
-        processed = []
-        while len(processed) < index and args:
-            processed += variables.replace_list([args.pop(0)])
-        # In case @{list} variable is unpacked, the arguments going further
-        # needs to be escaped, otherwise those are unescaped twice.
-        processed[index:] = [utils.escape(arg) for arg in processed[index:]]
-        return processed + args
+        return self._replace_vars_from_args(args, variables)
 
     def _replace_vars_from_args(self, args, variables):
         return variables.replace_list(args)
@@ -139,10 +131,6 @@ class _RunnableHandler(_BaseHandler):
         return handler(*posargs, **kwargs)
 
     def _get_timeout(self, namespace):
-        # Timeouts must not be active for run keyword variants, only for
-        # keywords they execute internally
-        if RUN_KW_REGISTER.is_run_keyword( self.library.orig_name, self.name):
-            return None
         timeoutable = self._get_timeoutable_items(namespace)
         if len(timeoutable) > 0 :
             return min([ item.timeout for item in timeoutable ])
@@ -196,7 +184,7 @@ class _JavaHandler(_RunnableHandler):
         return args
 
 
-class DynamicHandler(_RunnableHandler):
+class _DynamicHandler(_RunnableHandler):
 
     def __init__(self, library, handler_name, handler_method, doc='',
                  argspec=None):
@@ -219,6 +207,32 @@ class DynamicHandler(_RunnableHandler):
         def handler(*args):
             return runner(name, list(args))
         return handler
+
+
+class _RunKeywordHandler(_PythonHandler):
+
+    def _process_args(self, args, variables):
+        index = RUN_KW_REGISTER.get_args_to_process(self.library.orig_name, self.name)
+        if index == 0:
+            return args
+        # There might be @{list} variables and those might have more or less
+        # arguments that is needed. Therefore we need to go through arguments
+        # one by one.
+        processed = []
+        while len(processed) < index and args:
+            processed += variables.replace_list([args.pop(0)])
+        # In case @{list} variable is unpacked, the arguments going further
+        # needs to be escaped, otherwise those are unescaped twice.
+        processed[index:] = [utils.escape(arg) for arg in processed[index:]]
+        return processed + args
+
+    def _get_timeout(self, namespace):
+        return None
+
+
+class _DynamicRunKeywordHandler(_DynamicHandler, _RunKeywordHandler):
+    _process_args = _RunKeywordHandler._process_args
+    _get_timeout = _RunKeywordHandler._get_timeout
 
 
 class _PythonInitHandler(_BaseHandler):

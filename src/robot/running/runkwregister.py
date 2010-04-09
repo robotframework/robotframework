@@ -27,8 +27,9 @@ class _RunKeywordRegister:
         if args_to_process is None:
             args_to_process = self._get_args_from_method(keyword)
             keyword =  keyword.__name__
-        kwname = utils.printable_name(keyword, code_style=True)
-        self._libs.setdefault(libname, {})[kwname] = int(args_to_process)
+        if libname not in self._libs:
+            self._libs[libname] = utils.NormalizedDict(ignore=['_'])
+        self._libs[libname][keyword] = int(args_to_process)
 
     def get_args_to_process(self, libname, kwname):
         if libname in self._libs and kwname in self._libs[libname]:
