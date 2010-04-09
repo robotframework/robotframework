@@ -1,53 +1,53 @@
 *** Test Cases ***
 Simple Kwarg
-    ${ret}=  One Kwarg  ukfoo=ukbar
-    Should Be Equal  ${ret}  ukfoo=ukbar
-    ${ret}=  Two Kwargs  ukfoo=ukbar  ukbar=ukquux
-    Should Be Equal  ${ret}  ukfoo=ukbar, ukbar=ukquux
-    ${ret}=  Two Kw Args  ukbar=ukquux  ukfoo=ukbar
-    Should Be Equal  ${ret}  ukfoo=ukbar, ukbar=ukquux
+    ${ret}=  One Kwarg  kwarg=quux
+    Should Be Equal  ${ret}  quux
+    ${ret}=  Two Kwargs  first=foo  second=bar
+    Should Be Equal  ${ret}  foo, bar
+    ${ret}=  Two Kw Args  second=World!  first=Hello
+    Should Be Equal  ${ret}  Hello, World!
 
 Substitution Starts From The End
     ${ret}=  Four Kwargs  a=foo  bar  d=quux
-    Should Be Equal  ${ret}  a=a=foo, b=bar, c=, d=quux
+    Should Be Equal  ${ret}  a=foo, bar, default, quux
 
 Equals Sign In Kwarg Value
-    ${ret}=  One Kwarg  ukfoo=bar=quux
-    Should Be Equal  ${ret}  ukfoo=bar=quux
+    ${ret}=  One Kwarg  kwarg=bar=quux
+    Should Be Equal  ${ret}  bar=quux
 
 Using non-existing kwarg
-    ${ret}=  One Kwarg  keijo=not kwarg
-    Should Be Equal  ${ret}  ukfoo=keijo=not kwarg
+    ${ret}=  One Kwarg  notkwarg=some value
+    Should Be Equal  ${ret}  notkwarg=some value
 
 Escaping Kwarg
-    ${ret}=  One Kwarg  ukfoo=bar\\=quux
-    Should Be Equal  ${ret}  ukfoo=bar\\=quux
-    ${ret}=  One Kwarg  ukfoo\\=bar
-    Should Be Equal  ${ret}  ukfoo=ukfoo=bar
+    ${ret}=  One Kwarg  kwarg=bar\\=quux
+    Should Be Equal  ${ret}  bar\\=quux
+    ${ret}=  One Kwarg  kwarg\\=bar
+    Should Be Equal  ${ret}  kwarg=bar
 
 Mandatory Args Should Be Positioned
     ${ret}=  Mandatory And Kwargs  a  b  c
-    Should Be Equal  ${ret}  a=a, b=b, c=c
+    Should Be Equal  ${ret}  a, b, c
     ${ret}=  Mandatory And Kwargs   a  c=b
-    Should Be Equal  ${ret}  a=a, b=c=b, c=
+    Should Be Equal  ${ret}  a, c=b, KWARG VALUE
 
 Inside Run Kw
-    ${butler}=  Run Keyword  Four Kwargs  a=foo  bar  d=quux  
-    Should Be Equal  ${butler}  a=a=foo, b=bar, c=, d=quux
+    ${ret}=  Run Keyword  Four Kwargs  a=foo  bar  d=quux
+    Should Be Equal  ${ret}  a=foo, bar, default, quux
 
 *** Keywords ***
 One Kwarg
-    [arguments]  ${ukfoo}=
-    [return]  ukfoo=${ukfoo}
+    [arguments]  ${kwarg}=
+    [return]  ${kwarg}
 
 Two Kwargs
-    [arguments]  ${ukfoo}=  ${ukbar}=
-    [return]  ukfoo=${ukfoo}, ukbar=${ukbar}
+    [arguments]  ${first}=  ${second}=
+    [return]  ${first}, ${second}
 
 Four Kw Args
-    [arguments]  ${a}=  ${b}=  ${c}=  ${d}=
-    [return]  a=${a}, b=${b}, c=${c}, d=${d}
+    [arguments]  ${a}=default  ${b}=default  ${c}=default  ${d}=default
+    [return]  ${a}, ${b}, ${c}, ${d}
 
 Mandatory And Kwargs
-    [arguments]  ${a}  ${b}  ${c}=
-    [return]  a=${a}, b=${b}, c=${c}
+    [arguments]  ${man1}  ${man2}  ${kwarg}=KWARG VALUE
+    [return]  ${man1}, ${man2}, ${kwarg}
