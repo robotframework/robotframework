@@ -123,7 +123,7 @@ Check Listen All File
     ...  LOG MESSAGE: [DEBUG] Debug message
     ...  KW END: PASS
     ...  KW END: PASS
-    ...  KW START: BuiltIn.Fail ['Expected failure']
+    ...  KW START: BuiltIn.Fail ['msg=Expected failure']
     ...  LOG MESSAGE: [FAIL] Expected failure
     ...  KW END: FAIL
     ...  TEST END: FAIL Expected failure
