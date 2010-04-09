@@ -13,6 +13,7 @@
 #  limitations under the License.
 
 from robot.errors import DataError
+from robot import utils
 
 
 class BaseHandler:
@@ -26,7 +27,9 @@ class BaseHandler:
                              % (self.__class__.__name__, name))
 
     def _tracelog_args(self, logger, posargs, kwargs={}):
-        logger.trace('Arguments: %s %s' % (posargs, kwargs))
+        args = [ utils.unic(a) for a in posargs ] \
+             + [ '%s=%s' % (utils.unic(a), utils.unic(kwargs[a])) for a in kwargs ]
+        logger.trace('Arguments: [ %s ]' % ' | '.join(args))
 
 
 class UserErrorHandler:
