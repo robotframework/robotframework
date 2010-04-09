@@ -27,7 +27,7 @@ def _get_java_handler_methods(lib):
 
 class LibraryMock:
     def __init__(self, name='MyLibrary', scope='GLOBAL'):
-        self.name = name
+        self.name = self.orig_name = name
         self.scope = scope
 
 
