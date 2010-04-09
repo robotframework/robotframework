@@ -185,56 +185,64 @@ if utils.is_jython:
             self.lib = TestLibrary('ArgTypeCoercion')
 
         def test_coercing_to_integer(self):
-            handler = self.lib.handlers['intArgument']
-            assert_equals(handler._arg_coercer(['1']), [1])
+            self._test_coercion(self._handler_named('intArgument'),
+                                ['1'], [1])
 
         def test_coercing_to_boolean(self):
-            handler = self.lib.handlers['booleanArgument']
-            assert_equals(handler._arg_coercer(['True']), [True])
-            assert_equals(handler._arg_coercer(['FALSE']), [ False])
+            handler = self._handler_named('booleanArgument')
+            self._test_coercion(handler, ['True'], [True])
+            self._test_coercion(handler, ['FALSE'], [ False])
 
         def test_coercing_to_real_number(self):
-            handler = self.lib.handlers['doubleArgument']
-            assert_equals(handler._arg_coercer(['1.42']), [1.42])
-            handler = self.lib.handlers['floatArgument']
-            assert_equals(handler._arg_coercer(['-9991.098']), [-9991.098])
+            self._test_coercion(self._handler_named('doubleArgument'),
+                                ['1.42'], [1.42])
+            self._test_coercion(self._handler_named('floatArgument'),
+                                ['-9991.098'], [-9991.098])
 
         def test_coercion_with_compatible_types(self):
-            handler = self.lib.handlers['coercableKeywordWithCompatibleTypes']
-            assert_equals(handler._arg_coercer(['9999', '-42', 'FaLsE', '31.31']), 
-                                               [9999, -42, False, 31.31])
+            self._test_coercion(self._handler_named('coercableKeywordWithCompatibleTypes'), 
+                                ['9999', '-42', 'FaLsE', '31.31'], 
+                                [9999, -42, False, 31.31])
 
         def test_arguments_that_are_not_strings_are_not_coerced(self):
-            handler = self.lib.handlers['intArgument']
-            assert_equals(handler._arg_coercer([self.lib]), [self.lib])
-            handler = self.lib.handlers['booleanArgument']
-            assert_equals(handler._arg_coercer([42]), [42])
+            self._test_coercion(self._handler_named('intArgument'),
+                                [self.lib], [self.lib])
+            self._test_coercion(self._handler_named('booleanArgument'),
+                                [42], [42])
 
         def test_coercion_fails_with_reasonable_message(self):
-            msg = 'Argument at position 1 cannot be coerced to %s'
-            handler = self.lib.handlers['intArgument']
-            assert_raises_with_msg(DataError, msg % 'integer', handler._arg_coercer, ['invalid'])
-            handler = self.lib.handlers['booleanArgument']
-            assert_raises_with_msg(DataError, msg % 'boolean', handler._arg_coercer, ['invalid'])
-            handler = self.lib.handlers['floatArgument']
-            assert_raises_with_msg(DataError, msg % 'floating point number', handler._arg_coercer, ['invalid'])
+            exp_msg = 'Argument at position 1 cannot be coerced to %s'
+            self._test_coercion_fails(self._handler_named('intArgument'),
+                                      exp_msg % 'integer')
+            self._test_coercion_fails(self._handler_named('booleanArgument'),
+                                      exp_msg % 'boolean')
+            self._test_coercion_fails(self._handler_named('floatArgument'),
+                                      exp_msg % 'floating point number')
 
         def test_no_arg_no_coercion(self):
-            handler = self.lib.handlers['noArgument']
-            assert_equals(handler._arg_coercer([]), [])
+            self._test_coercion(self._handler_named('noArgument'), [], [])
 
         def test_coercing_multiple_arguments(self):
-            handler = self.lib.handlers['coercableKeyword']
-            assert_equals(handler._arg_coercer(['10.0', '42', 'tRUe']),
-                          [10.0, 42, True])
-        
+            self._test_coercion(self._handler_named('coercableKeyword'), 
+                                ['10.0', '42', 'tRUe'], [10.0, 42, True])
+
         def test_coercion_is_not_done_with_conflicting_signatures(self):
-            handler = self.lib.handlers['unCoercableKeyword']
-            assert_equals(handler._arg_coercer(['True', '42']), ['True', '42'])
+            self._test_coercion(self._handler_named('unCoercableKeyword'), 
+                                ['True', '42'], ['True', '42'])
 
         def test_coercable_and_uncoercable_args_in_same_kw(self):
-            handler = self.lib.handlers['coercableAndUnCoercableArgs']
-            assert_equals(handler._arg_coercer(['1', 'False', '-23', '0']), ['1', False, -23, '0'])
+            self._test_coercion(self._handler_named('coercableAndUnCoercableArgs'),
+                                ['1', 'False', '-23', '0'], ['1', False, -23, '0'])
+
+        def _handler_named(self, name):
+            return self.lib.handlers[name]
+
+        def _test_coercion(self, handler, args, expected):
+            assert_equals(handler.arguments.coerce(args), expected)
+
+        def _test_coercion_fails(self, handler, expected_message):
+            assert_raises_with_msg(DataError, expected_message,
+                                   handler.arguments.coerce, ['invalid'])
 
 
 if __name__ == '__main__':
