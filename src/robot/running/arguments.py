@@ -311,6 +311,12 @@ class _ArgumentResolver(object):
 
 class UserKeywordArgumentResolver(_ArgumentResolver):
 
+    def resolve(self, values):
+        self._optional_values = values[self._mand_arg_count:]
+        posargs, kwargs = self._resolve_optional_args()
+        posargs = values[:self._mand_arg_count] + list(posargs)
+        return posargs, kwargs
+
     def _arg_name(self, name):
         return '${%s}' % name
 
