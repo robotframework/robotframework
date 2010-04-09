@@ -1,0 +1,37 @@
+*** Settings ***
+Suite Setup     Run Tests  ${EMPTY}  core/kwargs/with_library_keywords.txt
+Force Tags      regression  pybot  jybot
+Resource        ../../../resources/resource.txt
+
+*** Test Cases ***
+
+Simple Kwarg
+    Check Test Case  ${TESTNAME}
+
+Substitution Starts From The End
+    Check Test Case  ${TESTNAME}
+
+Mandatory Args Should Be Positioned
+    Check Test Case  ${TESTNAME}
+
+Kwargs and Varargs
+    Check Test Case  ${TESTNAME}
+
+Equals Sign In Kwarg Value
+    Check Test Case  ${TESTNAME}
+
+Using non-existing kwarg
+    Check Test Case  ${TESTNAME}
+
+Escaping Kwarg
+    Check Test Case  ${TESTNAME}
+
+Using Argname Twice
+    Check Test Case  ${TESTNAME}
+
+Inside Run Kw
+    Check Test Case  ${TESTNAME}
+
+Simple Kwarg With Timeout
+    Check Test Case  ${TESTNAME}
+

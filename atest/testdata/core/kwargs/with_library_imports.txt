@@ -1,0 +1,7 @@
+*** Settings ***
+Library  KwargsLibrary  arg2=value2
+
+*** Test Cases ***
+
+Library Initialization Values
+    Check Init Arguments  ${None}  value2

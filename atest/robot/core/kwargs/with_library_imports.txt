@@ -1,0 +1,10 @@
+*** Settings ***
+Suite Setup     Run Tests  ${EMPTY}  core/kwargs/with_library_imports.txt
+Force Tags      regression  pybot  jybot
+Resource        ../../../resources/resource.txt
+
+*** Test Cases ***
+
+Library Initialization Values
+    Check Test Case  ${TESTNAME}
+

@@ -1,0 +1,59 @@
+*** Settings ***
+Library  KwargsLibrary
+
+*** Test Cases ***
+Simple Kwarg
+    Test With Kwargs
+
+Substitution Starts From The End
+    ${ret}=  Four Kwargs  a=foo  bar  d=quux
+    Should Be Equal  ${ret}  a=a=foo, b=bar, c=None, d=quux
+
+Mandatory Args Should Be Positioned
+    ${ret}=  Mandatory And Kwargs  a  b  c
+    Should Be Equal  ${ret}  a=a, b=b, c=c
+    ${ret}=  Mandatory And Kwargs  a  c=b
+    Should Be Equal  ${ret}  a=a, b=c=b, c=None
+
+Kwargs and Varargs
+    ${ret}=  Kwargs and Mandatory Args  mandatory  d2=d2  d1=d1
+    Should Be Equal  ${ret}  mandatory=mandatory, d1=d1, d2=d2, varargs=[]
+    ${ret}=  Kwargs and Mandatory Args  1  2  3  4  5  6
+    Should Be Equal  ${ret}  mandatory=1, d1=2, d2=3, varargs=[4,5,6]
+
+Equals Sign In Kwarg Value
+    ${ret}=  One Kwarg  foo=bar=quux
+    Should Be Equal  ${ret}  foo=bar=quux
+
+Using non-existing kwarg
+    ${ret}=  One Kwarg  keijo=not kwarg
+    Should Be Equal  ${ret}  foo=keijo=not kwarg
+    ${ret}=  One Kwarg  ä=ö
+    Should Be Equal  ${ret}  foo=ä=ö
+
+Escaping Kwarg
+    ${ret}=  One Kwarg  foo=bar\\=quux
+    Should Be Equal  ${ret}  foo=bar\\=quux
+    ${ret}=  One Kwarg  foo\\=bar
+    Should Be Equal  ${ret}  foo=foo=bar
+
+Using Argname Twice
+    [documentation]  FAIL  Keyword argument fst repeated.
+    ${ret}=  Two Kwargs  fst=foo  fst=foo
+
+Inside Run Kw
+    ${butler}=  Run Keyword  Four Kwargs  a=foo  bar  d=quux  
+    Should Be Equal  ${butler}  a=a=foo, b=bar, c=None, d=quux
+
+Simple Kwarg With Timeout
+    [timeout]  10
+    Test With Kwargs
+
+*** Keywords ***
+Test With Kwargs
+    ${ret}=  one kw arg  foo=bar
+    Should Be Equal  ${ret}  foo=bar
+    ${ret}=  Two Kw Args  fst=bar  snd=quux
+    Should Be Equal  ${ret}  fst=bar, snd=quux
+    ${ret}=  Two Kw Args  snd=quux  fst=bar
+    Should Be Equal  ${ret}  fst=bar, snd=quux

@@ -1,0 +1,53 @@
+*** Test Cases ***
+Simple Kwarg
+    ${ret}=  One Kwarg  ukfoo=ukbar
+    Should Be Equal  ${ret}  ukfoo=ukbar
+    ${ret}=  Two Kwargs  ukfoo=ukbar  ukbar=ukquux
+    Should Be Equal  ${ret}  ukfoo=ukbar, ukbar=ukquux
+    ${ret}=  Two Kw Args  ukbar=ukquux  ukfoo=ukbar
+    Should Be Equal  ${ret}  ukfoo=ukbar, ukbar=ukquux
+
+Substitution Starts From The End
+    ${ret}=  Four Kwargs  a=foo  bar  d=quux
+    Should Be Equal  ${ret}  a=a=foo, b=bar, c=, d=quux
+
+Equals Sign In Kwarg Value
+    ${ret}=  One Kwarg  ukfoo=bar=quux
+    Should Be Equal  ${ret}  ukfoo=bar=quux
+
+Using non-existing kwarg
+    ${ret}=  One Kwarg  keijo=not kwarg
+    Should Be Equal  ${ret}  ukfoo=keijo=not kwarg
+
+Escaping Kwarg
+    ${ret}=  One Kwarg  ukfoo=bar\\=quux
+    Should Be Equal  ${ret}  ukfoo=bar\\=quux
+    ${ret}=  One Kwarg  ukfoo\\=bar
+    Should Be Equal  ${ret}  ukfoo=ukfoo=bar
+
+Mandatory Args Should Be Positioned
+    ${ret}=  Mandatory And Kwargs  a  b  c
+    Should Be Equal  ${ret}  a=a, b=b, c=c
+    ${ret}=  Mandatory And Kwargs   a  c=b
+    Should Be Equal  ${ret}  a=a, b=c=b, c=
+
+Inside Run Kw
+    ${butler}=  Run Keyword  Four Kwargs  a=foo  bar  d=quux  
+    Should Be Equal  ${butler}  a=a=foo, b=bar, c=, d=quux
+
+*** Keywords ***
+One Kwarg
+    [arguments]  ${ukfoo}=
+    [return]  ukfoo=${ukfoo}
+
+Two Kwargs
+    [arguments]  ${ukfoo}=  ${ukbar}=
+    [return]  ukfoo=${ukfoo}, ukbar=${ukbar}
+
+Four Kw Args
+    [arguments]  ${a}=  ${b}=  ${c}=  ${d}=
+    [return]  a=${a}, b=${b}, c=${c}, d=${d}
+
+Mandatory And Kwargs
+    [arguments]  ${a}  ${b}  ${c}=
+    [return]  a=${a}, b=${b}, c=${c}
