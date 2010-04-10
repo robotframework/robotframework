@@ -1,5 +1,6 @@
 *** Settings ***
 Test Setup      Create Output Directory and Set Variables
+Suite Teardown  Delete Environment Variable  ROBOT_SYSLOG_FILE
 Default Tags    regression  pybot  jybot
 Resource        cli_resource.txt
 
@@ -28,15 +29,25 @@ Recursive Argument File
     Should Be Equal  ${SUITE.metadata['First']}  1
     Should Be Equal  ${SUITE.metadata['Second']}  2
 
+Argument File with Non-ASCII Characters
+    ${path} =  Join Path  ${CURDIR}/../../../testdata/parsing/unicode_paths/testäö.txt 
+    Create Argument File  ${ARGFILE 3}  -D äëïöüÿ  -C off  ${path}
+    ${output} =  Run Robot Directly  --argumentfile ${ARGFILE 3}
+    Should Not Contain  ${output.upper()}  ERROR
+    Should Contain  ${output}  Testäö :: äëïöüÿ
+
 
 *** Keywords ***
 
 Create Output Directory and Set Variables
     Create Output Directory
-    Set Suite Variable  ${ARGFILE}   ${CLI OUTDIR}/arg_file_1.txt
-    Set Suite Variable  ${ARGFILE2}  ${CLI OUTDIR}/arg_file_2.txt
+    Set Suite Variable  ${ARGFILE}    ${CLI OUTDIR}/arg_file_1.txt
+    Set Suite Variable  ${ARGFILE 2}  ${CLI OUTDIR}/arg_file_2.txt
+    Set Suite Variable  ${ARGFILE 3}  ${CLI OUTDIR}/ärg_fïlë_3.txt
+    Set Environment Variable  ROBOT_SYSLOG_FILE  ${CLI OUTDIR}/syslog.txt
 
-
-Create Argument FIle  [Arguments]  ${path}  @{lines}
+Create Argument File  [Arguments]  ${path}  @{lines}
+    [Documentation]  Writes also UTF8 BOM to the file to test it's ignored
     ${content} =  Catenate  SEPARATOR=\n  @{lines}
-    Create File  ${path}  ${content}
+    ${bom} =  Evaluate  __import__('codecs').BOM_UTF8.decode('UTF-8')
+    Create File  ${path}  ${bom}${content}

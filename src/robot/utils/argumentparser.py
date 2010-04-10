@@ -19,6 +19,7 @@ import re
 import sys
 import glob
 import string
+import codecs
 
 from robot.errors import DataError, Information, FrameworkError
 
@@ -211,19 +212,26 @@ class ArgumentParser:
         raise IndexError
 
     def _get_args_from_file(self, path):
-        try:
-            argfile = open(path)
-        except IOError, err:
-            raise DataError("Opening argument file '%s' failed: %s" % (path, err))
         args = []
-        for line in argfile.readlines():
+        for line in self._read_argfile(path).splitlines():
             line = line.strip()
             if line.startswith('-'):
                 args.extend(line.split(' ', 1))
             elif line and not line.startswith('#'):
                 args.append(line)
-        argfile.close()
         return args
+    
+    def _read_argfile(self, path):
+        try:
+            f = codecs.open(path, encoding='UTF-8')
+            content = f.read()
+        except (IOError, UnicodeError), err:
+            raise DataError("Opening argument file '%s' failed: %s" % (path, err))
+        finally:
+            f.close()
+        if content.startswith(codecs.BOM_UTF8.decode('UTF-8')):
+            content = content[1:]
+        return content
 
     def _get_escapes(self, escape_strings):
         escapes = {}
