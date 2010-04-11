@@ -33,12 +33,13 @@ class _KeywordArguments(object):
     def resolve(self, args, variables=None):
         return self._get_argument_resolver().resolve(args, variables)
 
-    def check_arg_limits(self, args):
-        if not self.minargs <= len(args) <= self.maxargs:
-            self._raise_inv_args(args)
+    def check_arg_limits(self, args, kwargs={}):
+        arg_count = len(args) + len(kwargs)
+        if not self.minargs <= arg_count <= self.maxargs:
+            self._raise_inv_args(arg_count)
         return args
 
-    def _raise_inv_args(self, args):
+    def _raise_inv_args(self, arg_count):
         minend = utils.plural_or_not(self.minargs)
         if self.minargs == self.maxargs:
             exptxt = "%d argument%s" % (self.minargs, minend)
@@ -47,7 +48,7 @@ class _KeywordArguments(object):
         else:
             exptxt = "at least %d argument%s" % (self.minargs, minend)
         raise DataError("%s '%s' expected %s, got %d."
-                        % (self._type, self._name, exptxt, len(args)))
+                        % (self._type, self._name, exptxt, arg_count))
 
 
 class PythonKeywordArguments(_KeywordArguments):
@@ -254,16 +255,21 @@ class _ArgumentResolver(object):
         self._names = arguments.names
         self._mand_arg_count = len(arguments.names) - len(arguments.defaults)
 
-    def resolve(self, values, variables=None): #TODO: Remove default value
-        if variables:
-            values = variables.replace_list(values)
-        self._arguments.check_arg_limits(values)
+    def resolve(self, values, variables=None):
         self._optional_values = values[self._mand_arg_count:]
-        posargs, kwargs = self._resolve_optional_args()
-        posargs = values[:self._mand_arg_count] + list(posargs)
+        posargs, kwargs = self._resolve_optional_args(variables)
+        posargs = values[:self._mand_arg_count] + list(posargs) 
+        posargs = self._replace_list(posargs, variables)
+        self._arguments.check_arg_limits(posargs, kwargs)
         return posargs, kwargs
 
-    def _resolve_optional_args(self):
+    def _replace_list(self, values, variables):
+        return variables.replace_list(values) if variables else values 
+
+    def _replace_scalar(self, value, variables):
+        return variables.replace_scalar(value) if variables else value 
+
+    def _resolve_optional_args(self, variables=None):
         posargs = []
         kwargs = {}
         kwargs_allowed = True
@@ -272,7 +278,7 @@ class _ArgumentResolver(object):
                 name, value = self._parse_kwarg(arg)
                 if name in kwargs:
                     raise RuntimeError('Keyword argument %s repeated.' % name)
-                kwargs[name] = value
+                kwargs[name] = self._replace_scalar(value, variables)
             else:
                 posargs.append(self._parse_posarg(arg))
                 kwargs_allowed = False
