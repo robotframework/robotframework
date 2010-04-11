@@ -11,6 +11,15 @@ Substitution Starts From The End
     ${ret}=  Four Kwargs  a=foo  bar  d=quux
     Should Be Equal  ${ret}  a=foo, bar, default, quux
 
+Kwarg Syntax In Variable Is Ignored
+    ${assignment}=  Set Variable  kwarg=value
+    ${ret}=  One Kwarg  ${assignment}
+    Should Be Equal  ${ret}  kwarg=value
+
+Non-string value in UK kwarg
+    ${ret}=  Uk One Kwarg  kwarg=${42}
+    Should Be Equal  ${ret}  ${42}
+
 Equals Sign In Kwarg Value
     ${ret}=  One Kwarg  kwarg=bar=quux
     Should Be Equal  ${ret}  bar=quux
@@ -20,10 +29,11 @@ Using non-existing kwarg
     Should Be Equal  ${ret}  notkwarg=some value
 
 Escaping Kwarg
-    ${ret}=  One Kwarg  kwarg=bar\\=quux
+    ${ret}=  Uk One Kwarg  kwarg=bar\\=quux
     Should Be Equal  ${ret}  bar\\=quux
-    ${ret}=  One Kwarg  kwarg\\=bar
-    Should Be Equal  ${ret}  kwarg=bar
+    ${ret}=  Uk One Kwarg  kwarg\\=bar=quux
+    Should Be Equal  ${ret}  kwarg\\=bar=quux
+    ${ret}=  Uk One Kwarg  kwarg\=bar
 
 Mandatory Args Should Be Positioned
     ${ret}=  Mandatory And Kwargs  a  b  c
