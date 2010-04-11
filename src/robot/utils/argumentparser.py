@@ -26,6 +26,7 @@ from robot.errors import DataError, Information, FrameworkError
 from misc import plural_or_not
 from robottypes import is_list, is_boolean
 from text import wrap
+from unic import unic
 
 
 ESCAPES = { 'space'   : ' ', 'apos'    : "'", 'quot'    : '"', 'lt'      : '<',
@@ -144,9 +145,13 @@ class ArgumentParser:
             self._check_args(args)
         return opts, args
 
-    def _decode_from_file_system(self, string):
-        enc = sys.getfilesystemencoding()
-        return string.decode(enc) if enc else string
+    def _decode_from_file_system(self, arg):
+        encoding = sys.getfilesystemencoding()
+        if sys.platform.startswith('java'):
+            # http://bugs.jython.org/issue1592
+            from java.lang import String
+            arg = String(arg)
+        return unic(arg, encoding) if encoding else unic(arg)
 
     def _parse_args(self, args):
         args = [ self._lowercase_long_option(a) for a in args ]
