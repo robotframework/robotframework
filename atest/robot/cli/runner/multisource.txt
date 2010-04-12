@@ -32,6 +32,7 @@ Overridden Name
     Check Names  ${suite.suites[1].tests[1]}  Example Test 2  My Name.Example Tests.
 
 Wildcards
+    Fail Non-Critically on Jython on Windows
     Run Tests  ${EMPTY}  misc/suites/tsuite?.*ml
     Check Names  ${suite}  Tsuite 1 & Tsuite 2 & Tsuite 3
     Check Content  ${suite}  ['Tsuite 1', 'Tsuite 2', 'Tsuite 3']  []
@@ -54,3 +55,7 @@ Check Content  [Arguments]  ${suite}  ${suites}  ${tests}
     Should Be True  ${suite.suites} == ${suites}
     Should Be True  ${suite.tests} == ${tests}
 
+Fail Non-Critically on Jython on Windows
+    ${jywin} =  Evaluate  'jython' in '${INTERPRETER.lower()}' and os.name == 'nt'  modules=os
+    Run Keyword If  ${jywin}  Remove Tags  regression
+    Run Keyword IF  ${jywin}  Fail  Non-critical failures because wildcards don't work on Jython on Windows: http://bugs.jython.org/issue1594
