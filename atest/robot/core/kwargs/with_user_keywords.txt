@@ -1,7 +1,6 @@
 *** Settings ***
 Suite Setup     Run Tests  ${EMPTY}  core/kwargs/with_user_keywords.txt
-Force Tags      pybot  jybot
-Default Tags    regression
+Force Tags      pybot  jybot  regression
 Resource        ../../../resources/resource.txt
 
 *** Test Cases ***
@@ -13,11 +12,9 @@ Substitution Starts From The End
     Check Test Case  ${TESTNAME}
 
 Kwarg Syntax In Variable Is Ignored
-    [Tags]
     Check Test Case  ${TESTNAME}
 
 Non-string value in UK kwarg
-    [Tags]
     Check Test Case  ${TESTNAME}
 
 Equals Sign In Kwarg Value
@@ -27,7 +24,6 @@ Using non-existing kwarg
     Check Test Case  ${TESTNAME}
 
 Escaping Kwarg
-    [Tags]
     Check Test Case  ${TESTNAME}
 
 Mandatory Args Should Be Positioned
