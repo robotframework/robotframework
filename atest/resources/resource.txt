@@ -172,6 +172,12 @@ Check File Matches Regexp
     ${file} =  Get Output File  ${path}
     Should Match Regexp  ${file.strip()}  ^${exp}$
 
+Check File Contains Regexp
+    [Arguments]  ${path}  @{expected}
+    ${exp} =  Catenate  @{expected}
+    ${file} =  Get Output File  ${path}
+    Should Match Regexp  ${file.strip()}  ${exp}
+
 File Should Be Equal To
     [Arguments]  ${path}  @{expected}
     ${content} =  Get Output File  ${path}
@@ -194,6 +200,10 @@ Check Stderr Matches Regexp
     [Arguments]  @{expected}
     Check File Matches Regexp  ${STDERR_FILE}  @{expected}
 
+Check Stderr Contains Regexp
+    [Arguments]  @{expected}
+    Check File Contains Regexp  ${STDERR_FILE}  @{expected}    
+
 Check Stdout Contains
     [Arguments]  @{expected}
     Check File Contains  ${STDOUT_FILE}  @{expected}
@@ -205,6 +215,10 @@ Check Stdout Does Not Contain
 Check Stdout Matches Regexp
     [Arguments]  @{expected}
     Check File Matches Regexp  ${STDOUT_FILE}  @{expected}
+
+Check Stdout Contains Regexp
+    [Arguments]  @{expected}
+    Check File Contains Regexp  ${STDOUT_FILE}  @{expected}    
 
 Get Syslog
     ${file} =  Get Output File  ${SYSLOG_FILE}
