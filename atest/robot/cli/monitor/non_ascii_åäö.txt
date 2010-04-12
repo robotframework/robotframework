@@ -1,4 +1,4 @@
-*** Settings ***
+﻿*** Settings ***
 Suite Setup  Run Tests  --name Hyvää_Üötä_€åppa  parsing/utf8_data.txt
 Force Tags   regression   pybot  jybot
 Resource     monitor_resource.txt
@@ -7,11 +7,15 @@ Resource     monitor_resource.txt
 *** Test Cases ***
 
 Non-ascii characters in suite name and documentation
-    Check stdout contains  Hyvää Üötä €åppa :: Testing that reading and writing of Unicode (äöå §½€ et...
+    Check stdout contains regexp  
+    ...  Hyvää Üötä [€?]åppa :: Testing that reading and writing of Unicode \\(äöå [§?]½[€?] et\\.\\.\\.
 
 Non-ascii characters in test name and documentation
-    Check stdout contains  UTF-8 Name Äöå §½€" :: Quote is actually plain ASCII but there was... | FAIL |
-    Check stdout contains  UTF-8 :: äöå §½€
+    Check stdout contains regexp
+    ...  UTF-8 Name Äöå [§?]½[€?]" :: Quote is actually plain ASCII but there was... | FAIL |
+    Check stdout contains regexp
+    ...  UTF-8 :: äöå [§?]½[€?]
 
 Non-ascii error message
-    Check stdout contains  Virheessäkin on ääkkösiä: Äöå §½€"
+    Check stdout contains regexp
+    ...  Virheessäkin on ääkkösiä: Äöå [§?]½[€?]"
