@@ -3,7 +3,7 @@ Documentation   Importing test libraries using relative and absolute path.
 Suite Setup     Run Tests  ${EMPTY}  test_libraries/library_import_by_path.txt
 Force Tags      regression
 Default Tags    pybot  jybot
-Resource        ../../resources/resource.txt
+Resource        atest_resource.txt
 
 *** Test Cases ***
 Importing Python Library In File By Path

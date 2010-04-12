@@ -1,7 +1,7 @@
 *** Settings ***
 Suite Setup     Run Tests And Read Outputs
 Force Tags      pybot  jybot  regression
-Resource        ../../resources/resource.txt
+Resource        atest_resource.txt
 
 *** Test Cases ***
 Tag Doc In Report Statistics

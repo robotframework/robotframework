@@ -1,7 +1,7 @@
 *** Settings ***
 Suite Setup     Run Tests  ${EMPTY}  core/kwargs/with_library_imports.txt
 Force Tags      regression  pybot  jybot
-Resource        ../../../resources/resource.txt
+Resource        atest_resource.txt
 
 *** Test Cases ***
 

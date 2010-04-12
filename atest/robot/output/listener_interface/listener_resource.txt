@@ -1,5 +1,5 @@
 *** Settings ***
-Resource        ../../../resources/resource.txt
+Resource        atest_resource.txt
 
 *** Variables ***
 ${ALL_FILE}  listen_all.txt

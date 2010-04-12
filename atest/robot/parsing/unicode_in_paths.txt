@@ -1,7 +1,7 @@
 *** Settings ***
 Force Tags  regression  pybot  jybot
 Suite Setup  Run Tests  --log ulog.html --report ureport.html  parsing/unicode_paths/testäö.txt  parsing/unicode_paths/Työ
-Resource  ../../resources/resource.txt
+Resource  atest_resource.txt
 
 
 *** Variables ***

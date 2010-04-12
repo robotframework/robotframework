@@ -2,7 +2,7 @@
 Documentation   Tests for return values from keywords. Tests include e.g. setting different return values for variables and checking messages that are automatically logged when variables are set. Setting different return values got from Java libraries are tested thoroughly in java_libraries.html.
 Suite Setup     Run Tests  ${EMPTY}  core/keywords/return_values.txt  core/keywords/return_values_invalid.html
 Force Tags      regression  pybot  jybot
-Resource        ../../../resources/resource.txt
+Resource        atest_resource.txt
 
 *** Test Cases ***
 Set Simple Scalar Variable

@@ -1,6 +1,6 @@
 *** Settings ***
 Documentation  In these tests keywords log, raise, and return messages containing ISO-8859-1 byte strings. Notice that they _do not_ use Unicode.
-Resource  ../resources/resource.txt
+Resource  atest_resource.txt
 Variables  ../../testdata/core/expbytevalues.py
 Suite SetUp  Run Tests  ${EMPTY}  core/bytedata.txt
 Force Tags  regression  pybot  jybot

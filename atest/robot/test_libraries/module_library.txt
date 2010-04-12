@@ -1,7 +1,7 @@
 *** Settings ***
 Suite Setup     Run Tests  ${EMPTY}  test_libraries/module_library.txt
 Force Tags      regression  jybot  pybot
-Resource        ../../resources/resource.txt
+Resource        atest_resource.txt
 
 *** Test Cases ***
 Passing

@@ -2,7 +2,7 @@
 Suite Setup     Run Tests  ${EMPTY}  standard_libraries/builtin/converter.txt
 Force Tags      regression
 Default Tags    jybot  pybot
-Resource        ../../../resources/resource.txt
+Resource        atest_resource.txt
 
 *** Test Cases ***
 Convert To Integer

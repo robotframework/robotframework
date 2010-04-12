@@ -2,7 +2,7 @@
 Documentation   Importing test libraries normally, using variable in library name, and importing libraries accepting arguments.
 Force Tags      regression
 Default Tags    pybot  jybot
-Resource        ../../resources/resource.txt
+Resource        atest_resource.txt
 
 *** Test Cases ***
 Normal Library Import

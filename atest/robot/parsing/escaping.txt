@@ -1,7 +1,7 @@
 *** Settings ***
 Suite Setup     Run Tests  ${EMPTY}  parsing${/}escaping.html
 Force Tags      regression  jybot  pybot
-Resource        ../../resources/resource.txt
+Resource        atest_resource.txt
 
 *** Test Cases ***
 Spaces In Variable Table

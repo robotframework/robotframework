@@ -1,7 +1,7 @@
 * Settings *
 Force Tags  regression  pybot  jybot
 Suite Setup  Run Tests  --variable cmd_line:cmd_value  standard_libraries/builtin/get_variables.txt
-Resource    ../../../resources/resource.txt
+Resource    atest_resource.txt
 
 * Test Cases *
 Automatic and Command Line Variables

@@ -2,7 +2,7 @@
 
 Force Tags	regression	pybot	jybot
 Suite Setup	Run Tests	${EMPTY}	core/keywords/embedded_argument_in_keyword_names.tsv
-Resource	../../../resources/resource.txt
+Resource	atest_resource.txt
 
 
 *** Test Cases ***

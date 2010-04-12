@@ -1,7 +1,7 @@
 *** Settings ***
 Documentation   Tests for including and excluding tests
 Force Tags      regression  jybot  pybot
-Resource        ../../resources/resource.txt
+Resource        atest_resource.txt
 
 *** Variables ***
 ${ESCAPES}  --escape star:STAR --escape quest:QUEST --escape amp:AMP

@@ -2,7 +2,7 @@
 Documentation  Verify that byte order mark (BOM) is igored in TXT and TSV files
 Suite Setup    Run Tests  --include bomelo  parsing/bom.t??
 Force Tags     regression   pybot  jybot
-Resource       ../../resources/resource.txt
+Resource       atest_resource.txt
 
 
 *** Test Cases ***

@@ -1,7 +1,7 @@
 *** Settings ***
 Suite Setup     Run Tests  ${EMPTY}  standard_libraries/easter.txt
 Force Tags      regression  pybot  jybot
-Resource        ../resources/resource.txt
+Resource        atest_resource.txt
 
 
 *** Test Cases ***
