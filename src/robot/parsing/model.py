@@ -133,8 +133,7 @@ class DirectorySuite(_BaseSuite):
         return utils.get_directory(path)
 
     def _get_suite_items(self, dirpath, suitenames):
-        names = os.listdir(dirpath)
-        names.sort(lambda x,y: cmp(x.lower(), y.lower()))
+        names = self._list_dir(dirpath)
         files = []
         initfile = None
         for name in names:
@@ -149,6 +148,15 @@ class DirectorySuite(_BaseSuite):
             else:
                 files.append(path)
         return files, initfile
+
+    def _list_dir(self, path):
+        names = os.listdir(path)
+        if utils.is_jython:
+            # http://bugs.jython.org/issue1593
+            from java.lang import String
+            names = [ utils.unic(String(n)) for n in names ]
+        names.sort(lambda x,y: cmp(x.lower(), y.lower()))
+        return names
 
     def _get_rawdata(self, path):
         if self.initfile is None:
