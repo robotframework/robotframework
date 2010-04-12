@@ -155,7 +155,7 @@ class DirectorySuite(_BaseSuite):
             # http://bugs.jython.org/issue1593
             from java.lang import String
             names = [ utils.unic(String(n)) for n in names ]
-        return sorted(names, key=str.lower)
+        return sorted(names, key=unicode.lower)
 
     def _get_rawdata(self, path):
         if self.initfile is None:
