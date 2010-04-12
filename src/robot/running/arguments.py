@@ -205,7 +205,13 @@ class UserKeywordArguments(_KeywordArguments):
         self._check_missing_args(template, len(arguments))
         self.check_arg_limits(template)
         self._set_variables(variables, template)
-        return positional, named
+        return self._resolve_variables(positional, named, variables)
+
+    def _resolve_variables(self, positional, named, variables):
+        posargs = variables.replace_list(positional)
+        for name, value in named.items():
+            named[name] = variables.replace_scalar(value)
+        return posargs, named
 
     def _check_missing_args(self, template, arg_count):
         for a in template:
