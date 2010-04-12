@@ -17,7 +17,7 @@ Kwarg Syntax In Variable Is Ignored
     Should Be Equal  ${ret}  kwarg=value
 
 Non-string value in UK kwarg
-    ${ret}=  Uk One Kwarg  kwarg=${42}
+    ${ret}=  One Kwarg  kwarg=${42}
     Should Be Equal  ${ret}  ${42}
 
 Equals Sign In Kwarg Value
@@ -29,11 +29,11 @@ Using non-existing kwarg
     Should Be Equal  ${ret}  notkwarg=some value
 
 Escaping Kwarg
-    ${ret}=  Uk One Kwarg  kwarg=bar\\=quux
+    ${ret}=  One Kwarg  kwarg=bar\\=quux
     Should Be Equal  ${ret}  bar\\=quux
-    ${ret}=  Uk One Kwarg  kwarg\\=bar=quux
+    ${ret}=  One Kwarg  kwarg\\=bar=quux
     Should Be Equal  ${ret}  kwarg\\=bar=quux
-    ${ret}=  Uk One Kwarg  kwarg\=bar
+    ${ret}=  One Kwarg  kwarg\=bar
 
 Mandatory Args Should Be Positioned
     ${ret}=  Mandatory And Kwargs  a  b  c
