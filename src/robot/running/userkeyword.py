@@ -109,7 +109,7 @@ class UserHandler(BaseHandler):
         self._libname = libname
         self._set_variable_dependent_metadata(handlerdata.metadata)
         self.keywords = [ KeywordFactory(kw) for kw in handlerdata.keywords ]
-        self.arguments = UserKeywordArguments(handlerdata.args, 
+        self._arguments = UserKeywordArguments(handlerdata.args,
                                                handlerdata.defaults,
                                                handlerdata.varargs,
                                                handlerdata.minargs,
@@ -132,10 +132,8 @@ class UserHandler(BaseHandler):
     def run(self, output, namespace, arguments):
         namespace.start_user_keyword(self)
         variables = namespace.variables
-        argument_values = variables.replace_list(arguments)
-        self._tracelog_args(output, argument_values)
-        self.arguments.check_arg_limits(argument_values)
-        self.arguments.set_to(variables, argument_values)
+        postional, named = self._arguments.set_to(variables, arguments)
+        self._tracelog_args(output, postional, named)
         self._verify_keyword_is_valid()
         self.timeout.start()
         self._run_kws(output, namespace)
@@ -219,7 +217,7 @@ class EmbeddedArgs(UserHandler):
     def _copy_attrs_from_template(self, template):
         self._libname = template._libname
         self.keywords = template.keywords
-        self.arguments = template.arguments
+        self._arguments = template._arguments
         self.return_value = template.return_value
         self._doc = template._doc
         self.doc = template.doc

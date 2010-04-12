@@ -33,8 +33,8 @@ class _KeywordArguments(object):
     def resolve(self, args, variables=None):
         return self._get_argument_resolver().resolve(args, variables)
 
-    def check_arg_limits(self, args, kwargs={}):
-        arg_count = len(args) + len(kwargs)
+    def check_arg_limits(self, args, namedargs={}):
+        arg_count = len(args) + len(namedargs)
         if not self.minargs <= arg_count <= self.maxargs:
             self._raise_inv_args(arg_count)
         return args
@@ -197,35 +197,39 @@ class UserKeywordArguments(_KeywordArguments):
         self.maxargs = maxargs
         self._name = name
 
-    def set_to(self, variables, argument_values):
+    def set_to(self, variables, arguments):
         template_with_defaults = self._template_for(variables)
-        argument_values = self._set_possible_varargs(template_with_defaults,
-                                                     variables, argument_values)
-        self._set_variables(variables, self._fill(template_with_defaults,
-                                                  argument_values))
+        template, positional, named = self._fill(template_with_defaults, arguments)
+        self._check_missing_args(template, len(arguments))
+        self.check_arg_limits(template)
+        self._set_variables(variables, template)
+        return positional, named
+
+    def _check_missing_args(self, template, arg_count):
+        for a in template:
+            if isinstance(a, _MissingArg):
+                self._raise_inv_args(arg_count)
 
     def _template_for(self, variables):
         return [ _MissingArg() for _ in range(len(self.names)-len(self.defaults)) ] +\
                  list(variables.replace_list(self.defaults))
 
-    def _set_possible_varargs(self, template, variables, argument_values):
+    def _set_variables(self, variables, arg_values):
         if self._vararg:
-            variables[self._vararg] = self._get_varargs(argument_values)
-            argument_values = argument_values[:len(template)]
-        return argument_values
-
-    def _set_variables(self, variables, args):
-        for name, value in zip(self.names, args):
-            variables[name] = value
+            variables[self._vararg] = variables.replace_list(self._get_varargs(arg_values))
+            arg_values = arg_values[:len(self.names)]
+        for name, value in zip(self.names, arg_values):
+            variables[name] = variables.replace_scalar(value)
 
     def _fill(self, template, arguments):
+        varargs = arguments[len(template):]
         arg_resolver = UserKeywordArgumentResolver(self)
-        posargs, kwargs = arg_resolver.resolve(arguments)
-        for name, value in kwargs.items():
+        positional, named = arg_resolver.resolve(arguments[:len(template)])
+        for name, value in named.items():
             template[self.names.index(name)] = value
-        for index, value in enumerate(posargs):
+        for index, value in enumerate(positional):
             template[index] = value
-        return template
+        return template + varargs, positional, named
 
     def _get_varargs(self, args):
         return args[len(self.names):]
