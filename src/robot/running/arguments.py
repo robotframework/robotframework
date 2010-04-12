@@ -252,43 +252,48 @@ class _ArgumentResolver(object):
 
     def __init__(self, arguments):
         self._arguments = arguments
-        self._names = arguments.names
         self._mand_arg_count = len(arguments.names) - len(arguments.defaults)
 
     def resolve(self, values, variables=None):
-        self._optional_values = values[self._mand_arg_count:]
-        posargs, kwargs = self._resolve_optional_args(variables)
-        posargs = values[:self._mand_arg_count] + list(posargs) 
-        posargs = self._replace_list(posargs, variables)
-        self._arguments.check_arg_limits(posargs, kwargs)
-        return posargs, kwargs
+        posargs, namedargs = self._resolve_pos_and_named_arguments(values, variables)
+        self._arguments.check_arg_limits(posargs, namedargs)
+        return posargs, namedargs
 
-    def _replace_list(self, values, variables):
-        return variables.replace_list(values) if variables else values 
+    def _resolve_pos_and_named_arguments(self, values, variables=None):
+        positional, named = self._resolve_argument_usage(values, variables)
+        return self._resolve_variables(positional, named, variables)
 
-    def _replace_scalar(self, value, variables):
-        return variables.replace_scalar(value) if variables else value 
-
-    def _resolve_optional_args(self, variables=None):
-        posargs = []
-        kwargs = {}
-        kwargs_allowed = True
-        for arg in reversed(self._optional_values):
-            if kwargs_allowed and self._is_kwarg(arg):
-                name, value = self._parse_kwarg(arg)
-                if name in kwargs:
+    def _resolve_argument_usage(self, values, variables):
+        positional = []
+        named = {}
+        named_args_allowed = True
+        for arg in reversed(self._optional(values)):
+            if named_args_allowed and self._is_named(arg):
+                name, value = self._parse_named(arg)
+                if name in named:
                     raise RuntimeError('Keyword argument %s repeated.' % name)
-                kwargs[name] = self._replace_scalar(value, variables)
+                named[name] = value
             else:
-                posargs.append(self._parse_posarg(arg))
-                kwargs_allowed = False
-        return reversed(posargs), kwargs
+                positional.append(self._parse_positional(arg))
+                named_args_allowed = False
+        positional = self._mandatory(values) + list(reversed(positional))
+        return positional, named
 
-    def _is_kwarg(self, arg):
+    def _optional(self, values):
+        return values[self._mand_arg_count:]
+
+    def _mandatory(self, values):
+        return values[:self._mand_arg_count]
+
+    def _is_named(self, arg):
         if self._is_str_with_kwarg_sep(arg):
             name, _ = self._split_from_kwarg_sep(arg)
             return self._is_arg_name(name)
         return False
+
+    def _parse_named(self, arg):
+        name, value = self._split_from_kwarg_sep(arg)
+        return self._coerce(name), value
 
     def _is_str_with_kwarg_sep(self, arg):
         if not isinstance(arg, basestring):
@@ -300,7 +305,7 @@ class _ArgumentResolver(object):
     def _split_from_kwarg_sep(self, arg):
         return arg.split('=', 1)
 
-    def _parse_posarg(self, argstr):
+    def _parse_positional(self, argstr):
         if self._is_str_with_kwarg_sep(argstr):
             name, _ = self._split_from_kwarg_sep(argstr)
             if self._is_arg_name(name[:-1]):
@@ -308,11 +313,19 @@ class _ArgumentResolver(object):
         return argstr
 
     def _is_arg_name(self, name):
-        return self._arg_name(name) in self._names
+        return self._arg_name(name) in self._arguments.names
 
-    def _parse_kwarg(self, arg):
-        name, value = self._split_from_kwarg_sep(arg)
-        return self._coerce(name), value
+    def _resolve_variables(self, posargs, kwargs, variables):
+        posargs = self._replace_list(posargs, variables)
+        for name, value in kwargs.items():
+            kwargs[name] = self._replace_scalar(value, variables)
+        return posargs, kwargs
+
+    def _replace_list(self, values, variables):
+        return variables.replace_list(values) if variables else values
+
+    def _replace_scalar(self, value, variables):
+        return variables.replace_scalar(value) if variables else value
 
 
 class UserKeywordArgumentResolver(_ArgumentResolver):
@@ -322,6 +335,21 @@ class UserKeywordArgumentResolver(_ArgumentResolver):
         posargs, kwargs = self._resolve_optional_args()
         posargs = values[:self._mand_arg_count] + list(posargs)
         return posargs, kwargs
+
+    def _resolve_optional_args(self, variables=None):
+        posargs = []
+        kwargs = {}
+        kwargs_allowed = True
+        for arg in reversed(self._optional_values):
+            if kwargs_allowed and self._is_named(arg):
+                name, value = self._parse_named(arg)
+                if name in kwargs:
+                    raise RuntimeError('Keyword argument %s repeated.' % name)
+                kwargs[name] = self._replace_scalar(value, variables)
+            else:
+                posargs.append(self._parse_positional(arg))
+                kwargs_allowed = False
+        return reversed(posargs), kwargs
 
     def _arg_name(self, name):
         return '${%s}' % name
