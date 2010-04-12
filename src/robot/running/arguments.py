@@ -213,8 +213,8 @@ class UserKeywordArguments(_KeywordArguments):
                 self._raise_inv_args(arg_count)
 
     def _template_for(self, variables):
-        return [ _MissingArg() for _ in range(len(self.names)-len(self.defaults)) ] +\
-                 list(variables.replace_list(self.defaults))
+        return [ _MissingArg() for _ in range(len(self.names)-len(self.defaults)) ] \
+                + list(self.defaults)
 
     def _set_variables(self, variables, arg_values):
         if self._vararg:
