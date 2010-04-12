@@ -12,12 +12,16 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from codecs import BOM_UTF8
+
 
 class TsvReader:
 
     def read(self, tsvfile, rawdata):
         process = False
-        for row in tsvfile.readlines():
+        for index, row in enumerate(tsvfile.readlines()):
+            if index == 0 and row.startswith(BOM_UTF8):
+                row = row[len(BOM_UTF8):]
             cells = [ self._process(cell) for cell in self._split_row(row) ]
             name = cells and cells[0].strip() or ''
             if name.startswith('*') and rawdata.start_table(name.replace('*','')):

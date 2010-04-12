@@ -1,0 +1,15 @@
+*** Settings ***
+Documentation  Verify that byte order mark (BOM) is igored in TXT and TSV files
+Suite Setup    Run Tests  --include bomelo  parsing/bom.t??
+Force Tags     regression   pybot  jybot
+Resource       ../../resources/resource.txt
+
+
+*** Test Cases ***
+
+Byte order mark in plain text file
+    Check test case  ${TESTNAME}
+
+
+Byte order mark in TSV file
+    Check test case  ${TESTNAME}
