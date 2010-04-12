@@ -1,5 +1,5 @@
 *** Settings ***
-Suite Setup     Run Tests  ${EMPTY}  core/kwargs/with_user_keywords.txt
+Suite Setup     Run Tests  --loglevel trace  core/kwargs/with_user_keywords.txt
 Force Tags      pybot  jybot  regression
 Resource        atest_resource.txt
 
@@ -34,3 +34,15 @@ Inside Run Kw
 
 Default value with escaped content
     Check Test Case  ${TESTNAME}
+
+Check Argument Trace Messages
+    ${tc}=  Check Test Case  Kwarg Syntax In Variable Is Ignored
+    Check Argument Value Trace  ${tc.kws[1].msgs[0]}  kwarg=value
+    ${tc}=  Check Test Case  Non-string value in UK kwarg
+    Check Argument Value Trace  ${tc.kws[0].msgs[0]}  \${kwarg}=42
+
+*** Keywords ***
+Check Argument Value Trace
+    [Arguments]  ${message}  ${exp_variables}
+    Check Log Message  ${message}  Arguments: [ ${exp_variables} ]  TRACE
+ 
