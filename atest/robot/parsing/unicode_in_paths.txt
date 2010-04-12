@@ -1,12 +1,27 @@
-* Settings *
+*** Settings ***
 Force Tags  regression  pybot  jybot
-Suite Setup  Run Tests  \  parsing/unicode_paths
+Suite Setup  Run Tests  --log ulog.html --report ureport.html  parsing/unicode_paths/testäö.txt  parsing/unicode_paths/Työ
 Resource  ../../resources/resource.txt
-Variables  unicode_names.py
 
-* Test Cases *
-Unicode characters in test data directory and file names
-  ${tc}=  Check Test Case  Test In Unicode Filename
-  Should Be Equal  ${tc.longname}  ${test_in_file}
-  ${tc}=  Check Test Case  Test In Unicode Directory
-  Should Be Equal  ${tc.longname}  ${test_in_dir}
+
+*** Variables ***
+${ROOT}  Testäö & Työ
+
+
+*** Test Cases ***
+
+Unicode characters in test case file name
+  ${tc}=  Check Test Case  Test In Unicode Filename (€åäö§)
+  Should Be Equal  ${tc.longname}  
+  ...  ${ROOT}.Testäö.Test In Unicode Filename (€åäö§)
+
+Unicode characters in test data directory name
+  ${tc}=  Check Test Case  Test In Unicode Directory (€ÅÄÖ§)
+  Should Be Equal  ${tc.longname}
+  ...  ${ROOT}.Työ.§test§.Test In Unicode Directory (€ÅÄÖ§)
+
+Creating logs and reports should succeed
+  [Documentation]  http://code.google.com/p/robotframework/issues/detail?id=530
+  File Should Not Be Empty  ${OUTDIR}/ulog.html
+  File Should Not Be Empty  ${OUTDIR}/ureport.html
+  Stderr should be empty
