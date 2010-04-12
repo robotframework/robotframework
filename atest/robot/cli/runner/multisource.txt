@@ -19,7 +19,7 @@ Default Name
     Check Names  ${suite.suites[1].tests[1]}  Example Test 2  Some Tests & Example Tests.Example Tests.
 
 Overridden Name
-    Run Tests  --name My%Name --escape space:%  core/misc/some_tests.html  core/misc/example_tests.html
+    Run Tests  --name My_Name  core/misc/some_tests.html  core/misc/example_tests.html
     Check Names  ${suite}  My Name
     Check Content  ${suite}  ['Some Tests','Example Tests']  []
     Check Names  ${suite.suites[0]}  Some Tests  My Name.
