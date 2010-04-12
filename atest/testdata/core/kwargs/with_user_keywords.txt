@@ -45,6 +45,10 @@ Inside Run Kw
     ${ret}=  Run Keyword  Four Kwargs  a=foo  bar  d=quux
     Should Be Equal  ${ret}  a=foo, bar, default, quux
 
+Default value with escaped content
+    ${ret}=  Escaped default value  d4=\${nv}
+    Should Be Equal  ${ret}  \${notvariable} \\\\ \n${SPACE}\${nv}
+
 *** Keywords ***
 One Kwarg
     [arguments]  ${kwarg}=
@@ -61,3 +65,7 @@ Four Kw Args
 Mandatory And Kwargs
     [arguments]  ${man1}  ${man2}  ${kwarg}=KWARG VALUE
     [return]  ${man1}, ${man2}, ${kwarg}
+
+Escaped default value
+    [arguments]  ${d1}=\${notvariable}  ${d2}=\\\\  ${d3}=\n  ${d4}=\t
+    [return]  ${d1} ${d2} ${d3} ${d4}

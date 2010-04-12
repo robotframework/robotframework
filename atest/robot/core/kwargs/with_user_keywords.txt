@@ -32,3 +32,5 @@ Mandatory Args Should Be Positioned
 Inside Run Kw
     Check Test Case  ${TESTNAME}
 
+Default value with escaped content
+    Check Test Case  ${TESTNAME}
