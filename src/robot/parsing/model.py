@@ -150,9 +150,11 @@ class DirectorySuite(_BaseSuite):
         return files, initfile
 
     def _list_dir(self, path):
-        names = os.listdir(path)
+        # Want to make sure path is Unicode because then os.listdir also
+        # returns entries as Unicode...
+        names = os.listdir(utils.unic(path))
+        # ... except on Jython: http://bugs.jython.org/issue1593
         if utils.is_jython:
-            # http://bugs.jython.org/issue1593
             from java.lang import String
             names = [ utils.unic(String(n)) for n in names ]
         return sorted(names, key=unicode.lower)
