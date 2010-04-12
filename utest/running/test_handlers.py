@@ -238,11 +238,11 @@ if utils.is_jython:
             return self.lib.handlers[name]
 
         def _test_coercion(self, handler, args, expected):
-            assert_equals(handler.arguments.coerce(args), expected)
+            assert_equals(handler.arguments.arg_coercer(args), expected)
 
         def _test_coercion_fails(self, handler, expected_message):
             assert_raises_with_msg(DataError, expected_message,
-                                   handler.arguments.coerce, ['invalid'])
+                                   handler.arguments.arg_coercer, ['invalid'])
 
 
 if __name__ == '__main__':
