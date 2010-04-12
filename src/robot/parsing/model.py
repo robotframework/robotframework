@@ -70,8 +70,9 @@ class _BaseSuite(BaseTestSuite):
                     DirectorySuite(path, suitenames, parent=self)
                 else:
                     FileSuite(path, parent=self)
-            except DataError, err:
-                LOGGER.info("Parsing data source '%s' failed: %s" % (path, err))
+            except DataError:
+                LOGGER.info("Parsing data source '%s' failed: %s"
+                            % (path, utils.get_error_message()))
         # The latter check is to get a more informative exception in
         # suite.filter_by_names later if --suite option was used.
         if self.get_test_count() == 0 and len(suitenames) == 0:
