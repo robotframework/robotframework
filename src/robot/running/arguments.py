@@ -31,7 +31,9 @@ class _KeywordArguments(object):
         self._name = kw_or_lib_name
 
     def resolve(self, args, variables=None):
-        return self._get_argument_resolver().resolve(args, variables)
+        posargs, namedargs = self._get_argument_resolver().resolve(args, variables)
+        self.check_arg_limits(posargs, namedargs)
+        return posargs, namedargs
 
     def check_arg_limits(self, args, namedargs={}):
         arg_count = len(args) + len(namedargs)
@@ -259,15 +261,10 @@ class _ArgumentResolver(object):
         self._mand_arg_count = len(arguments.names) - len(arguments.defaults)
 
     def resolve(self, values, variables=None):
-        posargs, namedargs = self._resolve_pos_and_named_arguments(values, variables)
-        self._arguments.check_arg_limits(posargs, namedargs)
-        return posargs, namedargs
-
-    def _resolve_pos_and_named_arguments(self, values, variables=None):
-        positional, named = self._resolve_argument_usage(values, variables)
+        positional, named = self._resolve_argument_usage(values)
         return self._resolve_variables(positional, named, variables)
 
-    def _resolve_argument_usage(self, values, variables):
+    def _resolve_argument_usage(self, values):
         positional = []
         named = {}
         named_args_allowed = True
@@ -333,27 +330,6 @@ class _ArgumentResolver(object):
 
 
 class UserKeywordArgumentResolver(_ArgumentResolver):
-
-    def resolve(self, values):
-        self._optional_values = values[self._mand_arg_count:]
-        posargs, kwargs = self._resolve_optional_args()
-        posargs = values[:self._mand_arg_count] + list(posargs)
-        return posargs, kwargs
-
-    def _resolve_optional_args(self, variables=None):
-        posargs = []
-        kwargs = {}
-        kwargs_allowed = True
-        for arg in reversed(self._optional_values):
-            if kwargs_allowed and self._is_named(arg):
-                name, value = self._parse_named(arg)
-                if name in kwargs:
-                    raise RuntimeError('Keyword argument %s repeated.' % name)
-                kwargs[name] = self._replace_scalar(value, variables)
-            else:
-                posargs.append(self._parse_positional(arg))
-                kwargs_allowed = False
-        return reversed(posargs), kwargs
 
     def _arg_name(self, name):
         return '${%s}' % name
