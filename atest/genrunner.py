@@ -32,11 +32,11 @@ with open(outpath, 'w') as output:
     output.write("""*** Settings ***
 Suite Setup     Run Tests  ${EMPTY}  %s
 Force Tags      regression  pybot  jybot
-Resource        %s/resources/resource.txt
+Resource        atest_resource.txt
 
 *** Test Cases ***
 
-""" % (path.replace(os.sep, '/'), '/'.join(['..']*(path.count(os.sep)+1))))
+""" % path.replace(os.sep, '/'))
     for test in tests:
         output.write(test + '\n    Check Test Case  ${TESTNAME}\n\n')
 
