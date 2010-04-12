@@ -1,3 +1,4 @@
+import sys
 import unittest
 
 from robot.running.userkeyword import UserHandler, EmbeddedArgsTemplate, \
@@ -99,7 +100,7 @@ class TestEmbeddedArgs(unittest.TestCase):
 
 
 class _FakeVariables(dict):
-    replace_list = lambda self, args: args
+    replace_scalar = replace_list = lambda self, args: args
 
 
 class TestSettingUserKeywordArguments(unittest.TestCase):
@@ -168,7 +169,10 @@ class TestSettingUserKeywordArguments(unittest.TestCase):
                                 '@{list}': []})
 
     def _arguments_for(self, argnames, defaults=(), vararg=None):
-        return UserKeywordArguments(argnames, defaults, vararg, 0, 0, 'myname')
+        minargs = len(argnames)-len(defaults)
+        maxargs = sys.maxint if vararg else len(argnames)
+        return UserKeywordArguments(argnames, defaults, vararg, minargs,
+                                    maxargs, 'myname')
 
     def _assert_variables(self, expected):
         assert_equals(self.variables, expected)
