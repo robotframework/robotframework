@@ -432,7 +432,7 @@ Problematic characters can often be handled easily using *argument files*.
 These files can contain both command line options and paths
 to the test data, one per line. They are taken into use with 
 :opt:`--argumentfile` option (short option :opt:`-A`) along with possible other
-command line options.  Argument files can contain any ASCII
+command line options.  Argument files can contain any 
 characters without escaping, but spaces in the beginning and end
 of lines are ignored. Additionally, empty lines and lines starting with
 a hash mark (#) are ignored::
@@ -442,6 +442,10 @@ a hash mark (#) are ignored::
    --variable VAR:Hello, world!
    # This is a comment
    path/to/my/tests
+
+.. note:: Starting from Robot Framework 2.5 it is possible to have also non-ASCII
+          characters in argument files. For this to work, the argument file must
+          be saved using UTF-8 encoding.
 
 Another important usage for argument files is specifying input files or
 directories in certain order. This can be very useful if the `alphabetical
@@ -458,9 +462,8 @@ When an argument file is used on the command line, its contents are
 placed to the original list of arguments to the same place where the
 argument file option was. Argument files can be used either alone so
 that they contain all the options and paths to the test data, or along
-with other options and paths. Starting from Robot Framework 2.1 it is
-possible to use :opt:`--argumentfile` option multiple times or even
-recursively::
+with other options and paths. It is possible to use :opt:`--argumentfile`
+option multiple times or even recursively::
 
    pybot --argumentfile all_arguments.txt
    pybot --name example --argumentfile other_options_and_paths.txt
