@@ -1,4 +1,4 @@
-*** Settings ***
+﻿*** Settings ***
 Force Tags  regression  pybot  jybot
 Suite Setup  Run Tests  --log ulog.html --report ureport.html  parsing/unicode_paths/testäö.txt  parsing/unicode_paths/Työ
 Resource  atest_resource.txt
@@ -25,3 +25,8 @@ Creating logs and reports should succeed
   File Should Not Be Empty  ${OUTDIR}/ulog.html
   File Should Not Be Empty  ${OUTDIR}/ureport.html
   Stderr should be empty
+
+Failures processing files are handled gracefully
+  ${path} =  Normalize Path  ${CURDIR}/../../testdata/parsing/unicode_paths/Työ/tyhjä.txt
+  ${path} =  Set Variable If  __import__('os').name == 'nt'  ${path.lower()}  ${path}
+  Check syslog contains  Parsing data source '${path}' failed: Test case file '${path}' contains no test cases.
