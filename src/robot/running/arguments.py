@@ -199,13 +199,13 @@ class UserKeywordArguments(_KeywordArguments):
         self.maxargs = maxargs
         self._name = name
 
-    def set_to(self, variables, arguments):
+    def set_to(self, output, variables, arguments):
         template_with_defaults = self._template_for(variables)
-        template, positional, named = self._fill(template_with_defaults, arguments, variables)
+        template = self._fill(template_with_defaults, arguments, variables)
         self._check_missing_args(template, len(arguments))
         self.check_arg_limits(template)
-        self._set_variables(variables, template)
-        return positional, named
+        argstr = self._set_variables(variables, template)
+        self._tracelog_args(output, argstr)
 
     def _check_missing_args(self, template, arg_count):
         for a in template:
@@ -217,11 +217,20 @@ class UserKeywordArguments(_KeywordArguments):
                 + variables.replace_list(list(self.defaults))
 
     def _set_variables(self, variables, arg_values):
+        args = []
+        varargstr = ''
         if self._vararg:
-            variables[self._vararg] = self._get_varargs(arg_values)
+            varargs = self._get_varargs(arg_values)
+            variables[self._vararg] = varargs
+            varargstr = ' | %s=%s' % (self._vararg, varargs)
             arg_values = arg_values[:len(self.names)]
         for name, value in zip(self.names, arg_values):
+            args.append('%s=%r' % (name, value))
             variables[name] = value
+        return ' | '.join(args) + varargstr
+
+    def _tracelog_args(self, logger, argstr):
+        logger.trace('Arguments: [ %s ]' % argstr)
 
     def _fill(self, template, arguments, variables):
         arg_resolver = UserKeywordArgumentResolver(self)
@@ -235,7 +244,7 @@ class UserKeywordArguments(_KeywordArguments):
             named[name] = replaced
         for index, value in enumerate(positional):
             template[index] = value
-        return template + varargs, positional, named
+        return template + varargs
 
     def _get_varargs(self, args):
         return args[len(self.names):]

@@ -137,8 +137,7 @@ class UserHandler(BaseHandler):
             namespace.end_user_keyword()
 
     def _run(self, output, namespace, arguments):
-        positional, named = self._arguments.set_to(namespace.variables, arguments)
-        self._tracelog_args(output, positional, named)
+        self._arguments.set_to(output, namespace.variables, arguments)
         self._verify_keyword_is_valid()
         self.timeout.start()
         for kw in self.keywords:
