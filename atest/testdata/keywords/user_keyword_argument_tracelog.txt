@@ -1,0 +1,41 @@
+*** Variables ***
+@{VALUES}  a  b  c  d
+
+*** Test cases ***
+Only Mandatory
+    Only Mandatory  arg1  arg2
+    Only Mandatory  ${-123}  ${0.0}
+
+Mandatory And Default
+    Mandatory And Default  mandatory
+
+Multiple Default Values
+    Multiple Default Values  10  a3=30
+
+Using Named Args
+    Mandatory and Default  foo  default=bar
+    Mandatory and Default  ${True}  default=${None}
+
+Using Varargs
+    Mandatory and Varargs  @{VALUES}
+    Mandatory and Varargs  mandatory  @{VALUES}
+    Mandatory and Varargs  mandatory
+
+
+*** Keywords ***
+Only Mandatory
+    [Arguments]  ${mand1}  ${mand2}
+    Log Many  ${mand1}  ${mand2}
+
+Mandatory And Default
+    [Arguments]  ${mand}  ${default}=default value
+    Log Many  ${mand}  ${default}
+
+Multiple Default Values
+    [Arguments]  ${a1}=1  ${a2}=2  ${a3}=3  ${a4}=${4}
+    Log Many  ${a1}  ${a2}  ${a3}  ${a4}
+
+Mandatory and Varargs
+    [Arguments]  ${mand}  @{vargs}
+    Log Many  ${mand}  @{vargs}
+    

@@ -1,0 +1,36 @@
+*** Settings ***
+Suite Setup     Run Tests  --loglevel TRACE  keywords/user_keyword_argument_tracelog.txt
+Force Tags      regression  pybot  jybot
+Resource        atest_resource.txt
+
+*** Test Cases ***
+
+Only Mandatory
+    ${tc} =  Check Test Case  Only Mandatory
+    Check Argument Value Trace  ${tc.kws[0]}  \${mand1}=u'arg1' | \${mand2}=u'arg2'
+    Check Argument Value Trace  ${tc.kws[1]}  \${mand1}=-123L | \${mand2}=0.0
+    
+Mandatory And Default
+    ${tc} =  Check Test Case  Mandatory And Default
+    Check Argument Value Trace  ${tc.kws[0]}  \${mand}=u'mandatory' | \${default}=u'default value'
+    
+Multiple Default Values
+    ${tc} =  Check Test Case  Multiple Default Values
+    Check Argument Value Trace  ${tc.kws[0]}  \${a1}=u'10' | \${a2}=u'2' | \${a3}=u'30' | \${a4}=4L
+    
+Using Named Args
+    ${tc} =  Check Test Case  Using Named Args
+    Check Argument Value Trace  ${tc.kws[0]}  \${mand}=u'foo' | \${default}=u'bar'
+    Check Argument Value Trace  ${tc.kws[1]}  \${mand}=True | \${default}=None
+
+Using Varargs
+    ${tc} =  Check Test Case  Using Varargs
+    Check Argument Value Trace  ${tc.kws[0]}  \${mand}=u'a' | \@{vargs}=[u'b', u'c', u'd']
+    Check Argument Value Trace  ${tc.kws[1]}  \${mand}=u'mandatory' | \@{vargs}=[u'a', u'b', u'c', u'd']
+    Check Argument Value Trace  ${tc.kws[2]}  \${mand}=u'mandatory' | \@{vargs}=[]
+
+*** Keywords ***
+Check Argument Value Trace
+    [Arguments]  ${kw}  ${exp_variables}
+    Check Log Message  ${kw.msgs[0]}  Arguments: [ ${exp_variables} ]  TRACE
+ 
