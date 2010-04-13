@@ -201,17 +201,11 @@ class UserKeywordArguments(_KeywordArguments):
 
     def set_to(self, variables, arguments):
         template_with_defaults = self._template_for(variables)
-        template, positional, named = self._fill(template_with_defaults, arguments)
+        template, positional, named = self._fill(template_with_defaults, arguments, variables)
         self._check_missing_args(template, len(arguments))
         self.check_arg_limits(template)
         self._set_variables(variables, template)
-        return self._resolve_variables(positional, named, variables)
-
-    def _resolve_variables(self, positional, named, variables):
-        posargs = variables.replace_list(positional)
-        for name, value in named.items():
-            named[name] = variables.replace_scalar(value)
-        return posargs, named
+        return template, named
 
     def _check_missing_args(self, template, arg_count):
         for a in template:
@@ -220,21 +214,23 @@ class UserKeywordArguments(_KeywordArguments):
 
     def _template_for(self, variables):
         return [ _MissingArg() for _ in range(len(self.names)-len(self.defaults)) ] \
-                + list(self.defaults)
+                + variables.replace_list(list(self.defaults))
 
     def _set_variables(self, variables, arg_values):
         if self._vararg:
-            variables[self._vararg] = variables.replace_list(self._get_varargs(arg_values))
+            variables[self._vararg] = self._get_varargs(arg_values)
             arg_values = arg_values[:len(self.names)]
         for name, value in zip(self.names, arg_values):
-            variables[name] = variables.replace_scalar(value)
+            variables[name] = value
 
-    def _fill(self, template, arguments):
-        varargs = arguments[len(template):]
+    def _fill(self, template, arguments, variables):
         arg_resolver = UserKeywordArgumentResolver(self)
-        positional, named = arg_resolver.resolve(arguments[:len(template)])
+        positional, named = arg_resolver.resolve(arguments)
+        positional = variables.replace_list(positional)
+        varargs = positional[len(self.names):]
+        positional = positional[:len(self.names)]
         for name, value in named.items():
-            template[self.names.index(name)] = value
+            template[self.names.index(name)] = variables.replace_scalar(value)
         for index, value in enumerate(positional):
             template[index] = value
         return template + varargs, positional, named
