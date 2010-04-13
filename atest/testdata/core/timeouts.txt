@@ -176,6 +176,17 @@ Keyword Timeout Should Not Be Active For Run Keyword Variants But To Keywords Th
 It Should Be Possible To Print From Java Libraries When Test Timeout Has Been Set
     ExampleJavaLibrary.Print  My message from java lib
 
+Timeouted Keyword Called With Wrong Number of Arguments
+    [Documentation]  FAIL Keyword 'Timeouted Keyword Passes' expected 0 to 1 arguments, got 4.
+    Timeouted Keyword Passes  wrong  number  of  arguments
+    [Teardown]  No Operation
+
+Timeouted Keyword Called With Wrong Number of Arguments with Run Keyword
+    [Documentation]  FAIL Keyword 'Timeouted Keyword Passes' expected 0 to 1 arguments, got 4.
+    Run Keyword  Timeouted Keyword Passes  wrong  number  of  arguments
+    [Teardown]  No Operation
+
+
 *** Keywords ***
 Clean Up Timeout Temp
     Remove Dir  ${timeout_temp}  recursive

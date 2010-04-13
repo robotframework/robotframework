@@ -109,3 +109,9 @@ It Should Be Possible To Print From Java Libraries When Test Timeout Has Been Se
     ${tc} =  Check Test Case  It Should Be Possible To Print From Java Libraries When Test Timeout Has Been Set
     Check Log message  ${tc.kws[0].msgs[0]}  My message from java lib
 
+Timeouted Keyword Called With Wrong Number of Arguments
+    Check Test Case  ${TEST NAME}
+
+Timeouted Keyword Called With Wrong Number of Arguments with Run Keyword
+    Check Test Case  ${TEST NAME}
+
