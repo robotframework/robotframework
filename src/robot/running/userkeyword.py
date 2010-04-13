@@ -131,14 +131,19 @@ class UserHandler(BaseHandler):
 
     def run(self, output, namespace, arguments):
         namespace.start_user_keyword(self)
-        variables = namespace.variables
-        postional, named = self._arguments.set_to(variables, arguments)
-        self._tracelog_args(output, postional, named)
+        try:
+            return self._run(output, namespace, arguments)
+        finally:
+            namespace.end_user_keyword()
+
+    def _run(self, output, namespace, arguments):
+        positional, named = self._arguments.set_to(namespace.variables, arguments)
+        self._tracelog_args(output, positional, named)
         self._verify_keyword_is_valid()
         self.timeout.start()
-        self._run_kws(output, namespace)
-        ret = self._get_return_value(variables)
-        namespace.end_user_keyword()
+        for kw in self.keywords:
+            kw.run(output, namespace)
+        ret = self._get_return_value(namespace.variables)
         output.trace('Return: %s' % utils.unic(ret))
         return ret
 
@@ -149,14 +154,6 @@ class UserHandler(BaseHandler):
         if not (self.keywords or self.return_value):
             raise DataError("User keyword '%s' contains no keywords"
                             % self.name)
-
-    def _run_kws(self, output, namespace):
-        for kw in self.keywords:
-            try:
-                kw.run(output, namespace)
-            except ExecutionFailed:
-                namespace.end_user_keyword()
-                raise
 
     def _get_return_value(self, variables):
         if not self.return_value:
