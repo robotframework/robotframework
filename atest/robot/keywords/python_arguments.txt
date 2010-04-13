@@ -1,0 +1,41 @@
+*** Settings ***
+Documentation   Test cases for handling valid and invalid arguments for keywords implemented with Python
+Suite Setup     Run Tests  ${EMPTY}  keywords/python_arguments.txt
+Force Tags      regression  pybot  jybot
+Resource        atest_resource.txt
+
+*** Test Cases ***
+Correct Number Of Arguments When No Defaults Or Varargs
+    Check Test Case  Correct Number Of Arguments When No Defaults Or Varargs
+
+Too Few Arguments When No Defaults Or Varargs
+    Check Test Case  Too Few Arguments When No Defaults Or Varargs 1
+    Check Test Case  Too Few Arguments When No Defaults Or Varargs 2
+
+Too Many Arguments When No Defaults Or Varargs
+    Check Test Case  Too Many Arguments When No Defaults Or Varargs 1
+    Check Test Case  Too Many Arguments When No Defaults Or Varargs 2
+    Check Test Case  Too Many Arguments When No Defaults Or Varargs 3
+
+Correct Number Of Arguments With Defaults
+    Check Test Case  Correct Number Of Arguments With Defaults
+
+Too Few Arguments With Defaults
+    Check Test Case  Too Few Arguments With Defaults
+
+Too Many Arguments With Defaults
+    Check Test Case  Too Many Arguments With Defaults 1
+    Check Test Case  Too Many Arguments With Defaults 2
+
+Correct Number Of Arguments With Varargs
+    Check Test Case  Correct Number Of Arguments With Varargs
+
+Too Few Arguments With Varargs
+    Check Test Case  Too Few Arguments With Varargs
+
+Correct Number Of Arguments With Defaults And Varargs
+    Check Test Case  Correct Number Of Arguments With Defaults And Varargs
+
+Too Few Arguments With Defaults And Varargs
+    Check Test Case  Too Few Arguments With Defaults And Varargs
+

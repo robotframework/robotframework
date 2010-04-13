@@ -1,5 +1,5 @@
 *** Settings ***
-Suite Setup     Run Tests  ${EMPTY}  core/keywords/optional_given_when_then.txt
+Suite Setup     Run Tests  ${EMPTY}  keywords/optional_given_when_then.txt
 Force Tags      pybot  jybot  regression
 Resource        atest_resource.txt
 

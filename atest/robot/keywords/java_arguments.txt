@@ -1,0 +1,54 @@
+*** Settings ***
+Documentation   Test cases for handling valid and invalid arguments for keywords implemented with Java. Some related tests are also in core/java_libraries.html and these test suites should actually be combined.
+Suite Setup     Run Tests  ${EMPTY}  keywords/java_arguments.txt
+Force Tags      regression  jybot
+Resource        atest_resource.txt
+
+*** Test Cases ***
+Correct Number Of Arguments When No Defaults Or Varargs
+    Check Test Case  Correct Number Of Arguments When No Defaults Or Varargs
+
+Too Few Arguments When No Defaults Or Varargs
+    Check Test Case  Too Few Arguments When No Defaults Or Varargs 1
+    Check Test Case  Too Few Arguments When No Defaults Or Varargs 2
+
+Too Many Arguments When No Defaults Or Varargs
+    Check Test Case  Too Many Arguments When No Defaults Or Varargs 1
+    Check Test Case  Too Many Arguments When No Defaults Or Varargs 2
+    Check Test Case  Too Many Arguments When No Defaults Or Varargs 3
+
+Correct Number Of Arguments With Defaults
+    Check Test Case  Correct Number Of Arguments With Defaults
+
+Too Few Arguments With Defaults
+    Check Test Case  Too Few Arguments With Defaults
+
+Too Many Arguments With Defaults
+    Check Test Case  Too Many Arguments With Defaults 1
+    Check Test Case  Too Many Arguments With Defaults 2
+
+Correct Number Of Arguments With Varargs
+    Check Test Case  Correct Number Of Arguments With Varargs
+
+Too Few Arguments With Varargs
+    Check Test Case  Too Few Arguments With Varargs
+
+Varargs Work Also With Arrays And Lists
+    [Documentation]  Make sure varargs support doesn't make it impossible to used Java arrays and Python lists with Java keyword expecting arrays.
+    Check Test Case  Varargs Work Also With Arrays And Lists
+
+Valid Arguments For Keyword Expecting Non String Scalar Arguments
+    Check Test Case  Valid Arguments For Keyword Expecting Non String Scalar Arguments
+
+Valid Arguments For Keyword Expecting Non String Array Arguments
+    Check Test Case  Valid Arguments For Keyword Expecting Non String Array Arguments
+
+Invalid Argument Types
+    Check Test Case  Invalid Argument Types 1
+    Check Test Case  Invalid Argument Types 2
+    Check Test Case  Invalid Argument Types 3
+    Check Test Case  Invalid Argument Types 4
+    Check Test Case  Invalid Argument Types 5
+    Check Test Case  Invalid Argument Types 6
+    Check Test Case  Invalid Argument Types 7
+

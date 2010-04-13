@@ -1,5 +1,5 @@
 *** Settings ***
-Suite Setup     Run Tests  ${EMPTY}  core/kwargs/with_library_keywords.txt
+Suite Setup     Run Tests  ${EMPTY}  keywords/namedargs/with_library_keywords.txt
 Force Tags      pybot  jybot  regression
 Resource        atest_resource.txt
 

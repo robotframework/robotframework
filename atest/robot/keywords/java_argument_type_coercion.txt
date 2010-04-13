@@ -1,0 +1,24 @@
+*** Settings ***
+Suite Setup     Run Tests  ${EMPTY}  keywords/java_argument_type_coercion.txt
+Force Tags      regression  jybot
+Resource        atest_resource.txt
+
+*** Test Cases ***
+Coercing Integer Arguments
+    Check Test Case  Coercing Integer Arguments
+
+Coercing Boolean Arguments
+    Check Test Case  Coercing Boolean Arguments
+
+Coercing Real Number Arguments
+    Check Test Case  Coercing Real Number Arguments
+
+Coercing Multiple Arguments
+    Check Test Case  Coercing Multiple Arguments
+
+Coercing Fails With Conflicting Signatures
+    Check Test Case  Coercing Fails With Conflicting Signatures
+
+It Is Possible To Coerce Only Some Arguments
+    Check Test Case  It is possible to Coerce Only Some Arguments
+

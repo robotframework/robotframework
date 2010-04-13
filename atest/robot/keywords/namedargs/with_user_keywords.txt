@@ -1,5 +1,5 @@
 *** Settings ***
-Suite Setup     Run Tests  --loglevel trace  core/kwargs/with_user_keywords.txt
+Suite Setup     Run Tests  --loglevel trace  keywords/namedargs/with_user_keywords.txt
 Force Tags      pybot  jybot  regression
 Resource        atest_resource.txt
 

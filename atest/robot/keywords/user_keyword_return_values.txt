@@ -1,0 +1,30 @@
+*** Settings ***
+Suite Setup     Run Tests  ${EMPTY}  keywords/user_keyword_return_values.txt
+Force Tags      regression  pybot  jybot
+Resource        atest_resource.txt
+
+*** Test Cases ***
+Return Nothing
+    Check Test Case  Return Nothing
+
+Return One String
+    Check Test Case  Return One String
+
+Return Multiple Strings
+    Check Test Case  Return Multiple Strings
+
+Return One Scalar Variable
+    Check Test Case  Return One Scalar Variable
+
+Return Multiple Scalar Variables
+    Check Test Case  Return Multiple Scalar Variables
+
+Return Empty List Variable
+    Check Test Case  Return Empty List Variable
+
+Return List Variable Containing One Item
+    Check Test Case  Return List Variable Containing One Item
+
+Return List Variable Containing Multiple Items
+    Check Test Case  Return List Variable Containing Multiple Items
+
