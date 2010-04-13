@@ -153,21 +153,6 @@ class TestSettingUserKeywordArguments(unittest.TestCase):
         args.set_to(self.variables, ['a=foo', 'd', 'c=quux'])
         self._assert_variables({'${a}': 'a=foo', '${b}': 'd', '${c}': 'quux'})
 
-    def test_defaults_kwargs_and_vararg(self):
-        args = self._arguments_for(['${foo}', '${bar}'], ('jotain',), '@{list}')
-        args.set_to(self.variables, ['bar', 'bar=quux', 'hevonen', 'aasi'])
-        self._assert_variables({'${foo}': 'bar', '${bar}': 'quux', '@{list}': ['hevonen', 'aasi']})
-
-        args = self._arguments_for(['${foo}', '${bar}'], ('jotain',), '@{list}')
-        args.set_to(self.variables, ['quux', 'bar', 'hevonen', 'aasi'])
-        self._assert_variables({'${foo}': 'quux', '${bar}': 'bar',
-                                '@{list}': ['hevonen', 'aasi']})
-
-        args = self._arguments_for(['${foo}', '${bar}'], ('jotain',), '@{list}')
-        args.set_to(self.variables, ['aasi'])
-        self._assert_variables({'${foo}': 'aasi', '${bar}': 'jotain',
-                                '@{list}': []})
-
     def _arguments_for(self, argnames, defaults=(), vararg=None):
         minargs = len(argnames)-len(defaults)
         maxargs = sys.maxint if vararg else len(argnames)
