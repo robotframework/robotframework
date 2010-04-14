@@ -1,0 +1,29 @@
+*** Settings ***
+Suite Setup     Run Tests  --loglevel TRACE  keywords/trace_log_return_value.txt
+Force Tags      regression  pybot  jybot
+Resource        atest_resource.txt
+
+*** Test Cases ***
+
+Return from Userkeyword
+    ${test} =  Check Test Case  ${TESTNAME}
+    Check Log Message  ${test.kws[0].msgs[1]}  Return: value  TRACE
+    Check Log Message  ${test.kws[0].kws[0].msgs[2]}  Return: value  TRACE
+
+
+Return from Library Keyword
+    ${test} =  Check Test Case  ${TESTNAME}
+    Check Log Message  ${test.kws[0].msgs[1]}  Return: value  TRACE
+
+Return Non String Object
+    ${test} =  Check Test Case  ${TESTNAME}
+    Check Log Message  ${test.kws[0].msgs[1]}  Return: 1  TRACE
+
+Return None
+    ${test} =  Check Test Case  ${TESTNAME}
+    Check Log Message  ${test.kws[0].msgs[1]}  Return: None  TRACE
+
+Return Non Ascii String
+    ${test} =  Check Test Case  ${TESTNAME}
+    Check Log Message  ${test.kws[0].msgs[1]}  Return: Hyvää Päivää  TRACE
+

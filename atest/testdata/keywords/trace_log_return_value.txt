@@ -1,0 +1,20 @@
+*** Test Cases ***
+Return from Userkeyword
+    Return Value From UK
+
+Return from Library Keyword
+    Set Variable  value
+
+Return Non String Object
+    Convert To Integer  1
+
+Return None
+    No Operation
+
+Return Non Ascii String
+    Set Variable  Hyvää Päivää
+
+
+*** User Keywords ***
+Return Value From UK  [Return]  ${return}
+    ${return} =  Set Variable  value
