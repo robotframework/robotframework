@@ -144,7 +144,13 @@ class ImportSetting:
         self.value = None
 
     def original_value(self):
-        return self._item.copy().value
+        orig = self._item.copy().value
+        self._at_least_one_value_required(orig)
+        return orig
+
+    def _at_least_one_value_required(self, values):
+        if len(values) == 0:
+            raise DataError("Setting '%s' requires a value" % self.name)
 
     def replace_variables(self, variables):
         item = self._item.copy()
@@ -153,8 +159,7 @@ class ImportSetting:
         except DataError:
             raise DataError("Replacing variables from setting '%s' failed: %s"
                             % (self.name, utils.get_error_message()))
-        if len(self.value) == 0:
-            raise DataError("Setting '%s' requires a value" % self.name)
+        self._at_least_one_value_required(self.value)
         if self.name == 'Resource' and len(self.value) > 1:
             raise DataError('Invalid resource import parameters: %s' % utils.seq2str2(self.value))
         basedir = utils.get_directory(item._parent._source)
