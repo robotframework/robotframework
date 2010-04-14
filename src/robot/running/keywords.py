@@ -51,6 +51,7 @@ class Keyword(BaseKeyword):
             output.warn("Keyword '%s' is deprecated. %s" % (name, msg))
         try:
             ret = self._run(handler, output, namespace)
+            output.trace('Return: %s' % utils.unic(ret))
         except ExecutionFailed, err:
             self.status = 'FAIL'
         else:
@@ -98,7 +99,7 @@ class SetKeyword(Keyword):
 
     def _run(self, handler, output, namespace):
         try:
-            self._run_and_set_variables(handler, output, namespace)
+            return self._run_and_set_variables(handler, output, namespace)
         except DataError, err:
             msg = utils.unic(err)
             output.fail(msg)
@@ -107,6 +108,7 @@ class SetKeyword(Keyword):
     def _run_and_set_variables(self, handler, output, namespace):
         return_value = Keyword._run(self, handler, output, namespace)
         self._set_variables(namespace, output, return_value)
+        return return_value
 
     def _set_variables(self, namespace, output, return_value):
         for name, value in self._get_vars_to_set(return_value):

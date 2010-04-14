@@ -88,12 +88,10 @@ class _RunnableHandler(_BaseHandler):
         self._tracelog_args(output, posargs, kwargs)
         self._capture_output()
         try:
-            ret = self._run_handler(self._current_handler(), posargs, kwargs,
-                                    output, self._get_timeout(namespace))
+            return self._run_handler(self._current_handler(), posargs, kwargs,
+                                     output, self._get_timeout(namespace))
         finally:
             self._release_and_log_output(output)
-        self._tracelog_return_value(output, ret)
-        return ret
 
     def _process_args(self, args, variables):
         return self.arguments.resolve(args, variables)
@@ -106,9 +104,6 @@ class _RunnableHandler(_BaseHandler):
             return self._method
         return self._get_handler(self.library.get_instance(),
                                  self._handler_name)
-
-    def _tracelog_return_value(self, output, ret):
-        output.trace('Return: %s' % utils.unic(ret))
 
     def _get_global_handler(self, method, name):
         return method

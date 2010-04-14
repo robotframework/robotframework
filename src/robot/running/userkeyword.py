@@ -142,9 +142,7 @@ class UserHandler(BaseHandler):
         self.timeout.start()
         for kw in self.keywords:
             kw.run(output, namespace)
-        ret = self._get_return_value(namespace.variables)
-        output.trace('Return: %s' % utils.unic(ret))
-        return ret
+        return self._get_return_value(namespace.variables)
 
     def _verify_keyword_is_valid(self):
         if self._errors:
