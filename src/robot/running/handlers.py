@@ -182,19 +182,8 @@ class _RunKeywordHandler(_PythonHandler):
 
     def _process_args(self, args, variables):
         index = RUN_KW_REGISTER.get_args_to_process(self.library.orig_name, self.name)
-        if index == 0:
-            self.arguments.check_arg_limits(args)
-            return args, {}
-        # There might be @{list} variables and those might have more or less
-        # arguments that is needed. Therefore we need to go through arguments
-        # one by one.
-        processed = []
-        while len(processed) < index and args:
-            processed += variables.replace_list([args.pop(0)])
-        # In case @{list} variable is unpacked, the arguments going further
-        # needs to be escaped, otherwise those are unescaped twice.
-        processed[index:] = [utils.escape(arg) for arg in processed[index:]]
-        args = processed + args
+        if index > 0:
+            args = variables.replace_from_beginning(index, args)
         self.arguments.check_arg_limits(args)
         return args, {}
 
