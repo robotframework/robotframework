@@ -28,7 +28,7 @@ ${USAGE_TIP}  \n\nTry --help for usage information.
 Run Robot Directly
     [Arguments]  ${opts and args}
     Set Runners
-    ${output} =  Run  ${ROBOT} ${opts and args}
+    ${output} =  Run  ${ROBOT} --outputdir ${TEMPDIR} ${opts and args}
     Log  ${output}
     [Return]  ${output}
 
