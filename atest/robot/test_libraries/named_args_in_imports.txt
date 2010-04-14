@@ -1,10 +1,19 @@
 *** Settings ***
 Suite Setup     Run Tests  ${EMPTY}  test_libraries/named_args_in_imports.txt
-Force Tags      regression  pybot  jybot
+Default Tags      regression
+Force Tags      pybot  jybot
 Resource        atest_resource.txt
 
 *** Test Cases ***
 
-Library Initialization Values
+Normal Named Arguments
+    Check Test Case  ${TESTNAME}
+
+Named Argument Syntax Inside Variable
+    [tags]
+    Check Test Case  ${TESTNAME}
+
+Non String Value
+    [tags]
     Check Test Case  ${TESTNAME}
 

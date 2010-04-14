@@ -6,8 +6,8 @@ class KwargsLibrary(object):
 
     def check_init_arguments(self, exp_arg1, exp_arg2):
         if self.arg1 != exp_arg1 or self.arg2 != exp_arg2:
-            raise AssertionError('Wrong initialization values: %s, %s'
-                                 % (self.arg1, self.arg2))
+            raise AssertionError('Wrong initialization values. Got (%s, %s), expected (%s, %s)'
+                                 % (self.arg1, self.arg2, exp_arg1, exp_arg2))
 
     def one_kwarg(self, kwarg=None):
         return kwarg

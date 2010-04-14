@@ -1,7 +1,21 @@
 *** Settings ***
-Library  KwargsLibrary  arg2=value2
+Library  KwargsLibrary  arg2=value2  WITH NAME  NormalNamed
+Library  KwargsLibrary  ${arg}  WITH NAME  NotNamedScalar
+Library  KwargsLibrary  @{args}  WITH NAME  NotNamedList
+Library  KwargsLibrary  arg2=${666}  WITH NAME  NonStringValue
+
+*** Variables ***
+${arg}   arg2=seppo
+@{args}  ${arg}  arg1
 
 *** Test Cases ***
 
-Library Initialization Values
-    Check Init Arguments  ${None}  value2
+Normal Named Arguments
+    NormalNamed.Check Init Arguments  ${NONE}  value2
+
+Named Argument Syntax Inside Variable
+    NotNamedScalar.Check Init Arguments  arg2=seppo  ${NONE}
+    NotNamedList.Check Init Arguments  arg2=seppo  arg1
+
+Non String Value
+    NonStringValue.Check Init Arguments  ${NONE}  ${666}
