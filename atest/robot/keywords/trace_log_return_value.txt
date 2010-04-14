@@ -7,13 +7,13 @@ Resource        atest_resource.txt
 
 Return from Userkeyword
     ${test} =  Check Test Case  ${TESTNAME}
-    Check Log Message  ${test.kws[0].msgs[1]}  Return: value  TRACE
-    Check Log Message  ${test.kws[0].kws[0].msgs[2]}  Return: value  TRACE
+    Check Log Message  ${test.kws[0].msgs[1]}  Return: u'value'  TRACE
+    Check Log Message  ${test.kws[0].kws[0].msgs[2]}  Return: u'value'  TRACE
 
 
 Return from Library Keyword
     ${test} =  Check Test Case  ${TESTNAME}
-    Check Log Message  ${test.kws[0].msgs[1]}  Return: value  TRACE
+    Check Log Message  ${test.kws[0].msgs[1]}  Return: u'value'  TRACE
 
 Return Non String Object
     ${test} =  Check Test Case  ${TESTNAME}
@@ -25,5 +25,8 @@ Return None
 
 Return Non Ascii String
     ${test} =  Check Test Case  ${TESTNAME}
-    Check Log Message  ${test.kws[0].msgs[1]}  Return: Hyvää Päivää  TRACE
+    Check Log Message  ${test.kws[0].msgs[1]}  Return: u'Hyv\\xe4\\xe4 P\\xe4iv\\xe4\\xe4'  TRACE
 
+Return Object With Unicode Repr
+    ${test} =  Check Test Case  ${TESTNAME}
+    Check Log Message  ${test.kws[0].msgs[2]}  Return: u'Circle is 360\\xb0, Hyv\\xe4\\xe4 \\xfc\\xf6t\\xe4, \\u0989\\u09c4 \\u09f0 \\u09fa \\u099f \\u09eb \\u09ea \\u09b9'  TRACE

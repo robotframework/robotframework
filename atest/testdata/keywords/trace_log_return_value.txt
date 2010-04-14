@@ -1,3 +1,7 @@
+*** Settings ***
+Library    UnicodeLibrary
+
+
 *** Test Cases ***
 Return from Userkeyword
     Return Value From UK
@@ -13,6 +17,9 @@ Return None
 
 Return Non Ascii String
     Set Variable  Hyvää Päivää
+
+Return Object With Unicode Repr
+    Print and Return Unicode Object
 
 
 *** User Keywords ***

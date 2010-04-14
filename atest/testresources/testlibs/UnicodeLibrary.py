@@ -21,9 +21,13 @@ class UnicodeLibrary:
 
 
 class UnicodeObject:
-    
+
     def __init__(self):
         self.message = u', '.join(messages)
-    
+
     def __str__(self):
+        return self.message
+
+    def __repr__(self):
+        #Should use repr here but this is valid for testing purposes
         return self.message
