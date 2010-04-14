@@ -12,8 +12,6 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-
-import os.path
 import copy
 
 from robot.parsing import ResourceFile
@@ -30,9 +28,9 @@ class Importer:
         self._libraries = _LibraryCache()
         self._resources = _LibraryCache()
 
-    def import_library(self, name, alias, args):
-        lib = TestLibrary(name, args)
-        positional, named = lib.init.arguments.resolve(args)
+    def import_library(self, name, alias, args, variables):
+        lib = TestLibrary(name, args, variables)
+        positional, named = lib.positional_args, lib.named_args
         lib = self._import_library(name, positional, named, lib)
         if name != alias:
             lib = self._copy_library(lib, alias)

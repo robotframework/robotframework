@@ -58,19 +58,32 @@ class Namespace:
     def _handle_imports(self, import_settings):
         for item in import_settings:
             try:
-                item.replace_variables(self.variables.current)
-                if item.name == 'Library':
-                    self.import_library(item.value[0], item.value[1:])
-                elif item.name == 'Resource':
-                    self._import_resource(item.value[0])
-                elif item.name == 'Variables':
-                    self.import_variables(item.value[0], item.value[1:])
-                else:
-                    raise FrameworkError("Invalid import setting: %s" % item)
+                self._import(item)
             except:
                 item.report_invalid_syntax()
 
-    def _import_resource(self, path):
+    def _import(self, import_setting):
+        try:
+            action = {'Library': self._import_library,
+                      'Resource': self._import_resource,
+                      'Variables': self._import_variables}[import_setting.name]
+            action(import_setting)
+        except KeyError:
+            raise FrameworkError("Invalid import setting: %s" % import_setting)
+
+    def _import_library(self, import_setting):
+        args = import_setting.original_value()
+        args = self.variables.replace_from_beginning(1, args)
+        name, remaining_args = args[0], args[1:]
+        self.import_library(import_setting.resolve_name(name), remaining_args)
+
+    def _import_variables(self, import_setting):
+        import_setting.replace_variables(self.variables.current)
+        self.import_variables(import_setting.value[0], import_setting.value[1:])
+
+    def _import_resource(self, import_setting):
+        import_setting.replace_variables(self.variables.current)
+        path = import_setting.value[0]
         if path not in self._imported_resource_files:
             self._imported_resource_files.append(path)
             resource = IMPORTER.import_resource(path)
@@ -95,7 +108,8 @@ class Namespace:
     def import_library(self, name, args=None):
         if not os.path.exists(name):
             name = name.replace(' ', '')
-        lib = IMPORTER.import_library(name, *self._alias_and_args(name, args))
+        alias, args = self._alias_and_args(name, args)
+        lib = IMPORTER.import_library(name, alias, args, self.variables.current)
         if self._testlibs.has_key(lib.name):
             LOGGER.info("Test library '%s' already imported by suite '%s'"
                         % (lib.name, self.suite.longname))
@@ -306,6 +320,18 @@ class _VariableScopes:
 
     def replace_string(self, string):
         return self.current.replace_string(string)
+
+    def replace_from_beginning(self, how_many, args):
+        # There might be @{list} variables and those might have more or less
+        # arguments that is needed. Therefore we need to go through arguments
+        # one by one.
+        processed = []
+        while len(processed) < how_many and args:
+            processed += self.current.replace_list([args.pop(0)])
+        # In case @{list} variable is unpacked, the arguments going further
+        # needs to be escaped, otherwise those are unescaped twice.
+        processed[how_many:] = [utils.escape(arg) for arg in processed[how_many:]]
+        return processed + args
 
     def set_from_file(self, path, args, overwrite=False):
         variables = self._suite.set_from_file(path, args, overwrite)

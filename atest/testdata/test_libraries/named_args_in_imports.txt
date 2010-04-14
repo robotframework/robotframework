@@ -1,12 +1,12 @@
 *** Settings ***
 Library  KwargsLibrary  arg2=value2  WITH NAME  NormalNamed
 Library  KwargsLibrary  ${arg}  WITH NAME  NotNamedScalar
-Library  KwargsLibrary  @{args}  WITH NAME  NotNamedList
+Library  @{name_and_args}  WITH NAME  NotNamedList
 Library  KwargsLibrary  arg2=${666}  WITH NAME  NonStringValue
 
 *** Variables ***
 ${arg}   arg2=seppo
-@{args}  ${arg}  arg1
+@{name_and_args}  KwargsLibrary  ${arg}  arg1
 
 *** Test Cases ***
 

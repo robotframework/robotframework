@@ -33,12 +33,12 @@ class TestLibraryTypes(unittest.TestCase):
     def test_python_library(self):
         lib = TestLibrary("BuiltIn")
         assert_equals(lib.__class__, _ClassLibrary)
-        assert_equals(lib.args, [])
+        assert_equals(lib.positional_args, [])
         
     def test_python_library_with_args(self):
         lib = TestLibrary("ParameterLibrary", ['my_host', '8080'])
         assert_equals(lib.__class__, _ClassLibrary)
-        assert_equals(lib.args, ['my_host', '8080'])
+        assert_equals(lib.positional_args, ['my_host', '8080'])
         
     def test_module_library(self):
         lib = TestLibrary("module_library")

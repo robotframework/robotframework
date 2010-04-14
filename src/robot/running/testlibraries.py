@@ -29,10 +29,10 @@ if utils.is_jython:
     from java.lang import Object
 
 
-def TestLibrary(name, args=None):
+def TestLibrary(name, args=None, variables=None):
     libcode, source = utils.import_(name)
     libclass = _get_lib_class(libcode)
-    return libclass(libcode, source, name, utils.to_list(args))
+    return libclass(libcode, source, name, utils.to_list(args), variables)
 
 
 def _get_lib_class(libcode):
@@ -59,14 +59,15 @@ def _get_dynamic_method(code, underscore_name):
 
 class _BaseTestLibrary(BaseLibrary):
 
-    def __init__(self, libcode, source, name, args):
+    def __init__(self, libcode, source, name, args, variables):
         if os.path.exists(name):
             name = os.path.splitext(os.path.basename(os.path.normpath(name)))[0]
         self.source = source
         self.version = self._get_version(libcode)
         self.name = name
         self.orig_name = name # Stores original name also after copying
-        self.args = args
+        self.positional_args = []
+        self.named_args = {}
         self._instance_cache = []
         self._libinst = None
         if libcode is not None:
@@ -74,6 +75,7 @@ class _BaseTestLibrary(BaseLibrary):
             self.scope = self._get_scope(libcode)
             self._libcode = libcode
             self.init =  self._create_init_handler(libcode)
+            self.positional_args, self.named_args = self.init.arguments.resolve(args, variables)
             self._libinst = self.get_instance()
             self.handlers = self._create_handlers(self._libinst)
             self.init_scope_handling()
@@ -139,13 +141,12 @@ class _BaseTestLibrary(BaseLibrary):
 
     def get_instance(self):
         if self._libinst is None:
-            posargs, kwargs = self.init.arguments.resolve(self.args)
-            self._libinst = self._get_instance(posargs, kwargs)
+            self._libinst = self._get_instance()
         return self._libinst
 
-    def _get_instance(self, posargs, kwargs):
+    def _get_instance(self):
         try:
-            return self._libcode(*posargs, **kwargs)
+            return self._libcode(*self.positional_args, **self.named_args)
         except:
             self._raise_creating_instance_failed()
 
@@ -194,8 +195,8 @@ class _BaseTestLibrary(BaseLibrary):
 
     def _raise_creating_instance_failed(self):
         msg, details = utils.get_error_details()
-        if self.args:
-            args = "argument%s %s" % (utils.plural_or_not(self.args),
+        if self.positional_args:
+            args = "argument%s %s" % (utils.plural_or_not(self.positional_args),
                                       utils.seq2str(self.args))
         else:
             args = "no arguments"
@@ -245,7 +246,7 @@ class _ModuleLibrary(_BaseTestLibrary):
         return 'GLOBAL'
 
     def get_instance(self):
-        self.init.arguments.check_arg_limits(self.args)
+        self.init.arguments.check_arg_limits(self.positional_args)
         return self._libcode
 
     def _create_init_handler(self, libcode):
@@ -269,10 +270,10 @@ class _HybridLibrary(_BaseTestLibrary):
 
 class _DynamicLibrary(_BaseTestLibrary):
 
-    def __init__(self, libcode, source, name, args):
+    def __init__(self, libcode, source, name, args, variables=None):
         self._get_kw_doc = _get_dynamic_method(libcode, 'get_keyword_documentation')
         self._get_kw_args = _get_dynamic_method(libcode, 'get_keyword_arguments')
-        _BaseTestLibrary.__init__(self, libcode, source, name, args)
+        _BaseTestLibrary.__init__(self, libcode, source, name, args, variables)
 
     def _get_handler_names(self, instance):
         try:

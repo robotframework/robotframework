@@ -143,6 +143,9 @@ class ImportSetting:
         self.name = item.name = utils.normalize(item.name).capitalize()
         self.value = None
 
+    def original_value(self):
+        return self._item.copy().value
+
     def replace_variables(self, variables):
         item = self._item.copy()
         try:
@@ -156,6 +159,11 @@ class ImportSetting:
             raise DataError('Invalid resource import parameters: %s' % utils.seq2str2(self.value))
         basedir = utils.get_directory(item._parent._source)
         self.value[0] = self._get_path(self.name, self.value[0], basedir)
+
+    def resolve_name(self, name):
+        """Returns absolute path to file if name points to one, otherwise return name unchanged."""
+        return self._get_path(self.name, name,
+                              utils.get_directory(self._item._parent._source))
 
     def _get_path(self, name, path, basedir):
         if name == 'Library' and not self._is_library_by_path(path, basedir):
