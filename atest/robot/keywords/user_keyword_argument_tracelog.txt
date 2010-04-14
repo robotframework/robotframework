@@ -5,29 +5,73 @@ Resource        atest_resource.txt
 
 *** Test Cases ***
 
-Only Mandatory
-    ${tc} =  Check Test Case  Only Mandatory
+UK with Only Mandatory Arguments
+    ${tc} =  Check Test Case  ${TEST NAME}
     Check Argument Value Trace  ${tc.kws[0]}  \${mand1}=u'arg1' | \${mand2}=u'arg2'
     Check Argument Value Trace  ${tc.kws[1]}  \${mand1}=-123L | \${mand2}=0.0
     
-Mandatory And Default
-    ${tc} =  Check Test Case  Mandatory And Default
+UK with Mandatory And Default Arguments
+    ${tc} =  Check Test Case  ${TEST NAME}
     Check Argument Value Trace  ${tc.kws[0]}  \${mand}=u'mandatory' | \${default}=u'default value'
     
-Multiple Default Values
-    ${tc} =  Check Test Case  Multiple Default Values
+UK with Multiple Default Values
+    ${tc} =  Check Test Case  ${TEST NAME}
     Check Argument Value Trace  ${tc.kws[0]}  \${a1}=u'10' | \${a2}=u'2' | \${a3}=u'30' | \${a4}=4L
     
-Using Named Args
-    ${tc} =  Check Test Case  Using Named Args
+UK with Using Named Arguments
+    ${tc} =  Check Test Case  ${TEST NAME}
     Check Argument Value Trace  ${tc.kws[0]}  \${mand}=u'foo' | \${default}=u'bar'
     Check Argument Value Trace  ${tc.kws[1]}  \${mand}=True | \${default}=None
 
-Using Varargs
-    ${tc} =  Check Test Case  Using Varargs
+UK with Using Variable Number of Arguments
+    ${tc} =  Check Test Case  ${TEST NAME}
     Check Argument Value Trace  ${tc.kws[0]}  \${mand}=u'a' | \@{vargs}=[u'b', u'c', u'd']
     Check Argument Value Trace  ${tc.kws[1]}  \${mand}=u'mandatory' | \@{vargs}=[u'a', u'b', u'c', u'd']
     Check Argument Value Trace  ${tc.kws[2]}  \${mand}=u'mandatory' | \@{vargs}=[]
+
+Library Keyword with Only Mandatory Arguments
+    ${tc} =  Check Test Case  ${TEST NAME}
+    Check Argument Value Trace  ${tc.kws[0]}  u'arg1' | u'arg2'
+    Check Argument Value Trace  ${tc.kws[1]}  -123L | 0.0
+    
+Library Keyword with Mandatory And Default Arguments
+    ${tc} =  Check Test Case  ${TEST NAME}
+    Check Argument Value Trace  ${tc.kws[0]}  u'mandatory'
+    
+Library Keyword with Multiple Default Values
+    ${tc} =  Check Test Case  ${TEST NAME}
+    Check Argument Value Trace  ${tc.kws[0]}  u'10' | a3=u'30'
+    
+Library Keyword with Using Named Arguments
+    ${tc} =  Check Test Case  ${TEST NAME}
+    Check Argument Value Trace  ${tc.kws[0]}  u'foo' | default=u'bar'
+    Check Argument Value Trace  ${tc.kws[1]}  True | default=None
+    Check Argument Value Trace  ${tc.kws[2]}  True | u'foo=bar'
+
+Library Keyword with Using Variable Number of Arguments
+    ${tc} =  Check Test Case  ${TEST NAME}
+    Check Argument Value Trace  ${tc.kws[0]}  u'a' | u'b' | u'c' | u'd'
+    Check Argument Value Trace  ${tc.kws[1]}  u'mandatory' | u'a' | u'b' | u'c' | u'd'
+    Check Argument Value Trace  ${tc.kws[2]}  u'mandatory'
+
+Non String Object as Argument
+    ${tc} =  Check Test Case  ${TEST NAME}
+    Check Argument Value Trace  ${tc.kws[0]}  1L
+
+None as Argument
+    ${tc} =  Check Test Case  ${TEST NAME}
+    Check Argument Value Trace  ${tc.kws[0]}  None
+
+Non Ascii String as Argument
+    ${tc} =  Check Test Case  ${TEST NAME}
+    Check Argument Value Trace  ${tc.kws[0]}  u'Hyv\\xe4\\xe4 P\\xe4iv\\xe4\\xe4'
+    Check Argument Value Trace  ${tc.kws[1]}  \${mand}=u'Hyv\\xe4\\xe4 P\\xe4iv\\xe4\\xe4' | \${default}=u'default value'
+
+Object With Unicode Repr as Argument
+    ${tc} =  Check Test Case  ${TEST NAME}
+    Check Argument Value Trace  ${tc.kws[1]}  u'Circle is 360\\xb0, Hyv\\xe4\\xe4 \\xfc\\xf6t\\xe4, \\u0989\\u09c4 \\u09f0 \\u09fa \\u099f \\u09eb \\u09ea \\u09b9'
+    Check Argument Value Trace  ${tc.kws[2]}  \${mand}=u'Circle is 360\\xb0, Hyv\\xe4\\xe4 \\xfc\\xf6t\\xe4, \\u0989\\u09c4 \\u09f0 \\u09fa \\u099f \\u09eb \\u09ea \\u09b9' | \${default}=u'default value'
+
 
 *** Keywords ***
 Check Argument Value Trace

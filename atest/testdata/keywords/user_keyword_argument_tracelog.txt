@@ -1,41 +1,80 @@
+*** Settings ***
+Library    UnicodeLibrary
+Library    TraceArgsLibrary.py
+
+
 *** Variables ***
 @{VALUES}  a  b  c  d
 
+
 *** Test cases ***
-Only Mandatory
+UK with Only Mandatory Arguments
+    Only Mandatory UK  arg1  arg2
+    Only Mandatory UK  ${-123}  ${0.0}
+
+UK with Mandatory And Default Arguments
+    Mandatory And Default UK  mandatory
+
+UK with Multiple Default Values
+    Multiple Default Values UK  10  a3=30
+
+UK with Using Named Arguments
+    Mandatory and Default UK  foo  default=bar
+    Mandatory and Default UK  ${True}  default=${None}
+
+UK with Using Variable Number of Arguments
+    Mandatory and Varargs UK  @{VALUES}
+    Mandatory and Varargs UK  mandatory  @{VALUES}
+    Mandatory and Varargs UK  mandatory
+
+Library Keyword with Only Mandatory Arguments
     Only Mandatory  arg1  arg2
     Only Mandatory  ${-123}  ${0.0}
 
-Mandatory And Default
+Library Keyword with Mandatory And Default Arguments
     Mandatory And Default  mandatory
 
-Multiple Default Values
+Library Keyword with Multiple Default Values
     Multiple Default Values  10  a3=30
 
-Using Named Args
+Library Keyword with Using Named Arguments
     Mandatory and Default  foo  default=bar
     Mandatory and Default  ${True}  default=${None}
+    Mandatory and Default  ${True}  foo=bar
 
-Using Varargs
+Library Keyword with Using Variable Number of Arguments
     Mandatory and Varargs  @{VALUES}
     Mandatory and Varargs  mandatory  @{VALUES}
     Mandatory and Varargs  mandatory
 
+Non String Object as Argument
+    Log  ${1}
+
+None as Argument
+    Log  ${NONE}
+
+Non Ascii String as Argument
+    Log  Hyvää Päivää
+    Mandatory And Default UK  Hyvää Päivää
+
+Object With Unicode Repr as Argument
+    ${object}  Print and Return Unicode Object
+    Log  ${object}
+    Mandatory And Default UK  ${object}
 
 *** Keywords ***
-Only Mandatory
+Only Mandatory UK
     [Arguments]  ${mand1}  ${mand2}
     Log Many  ${mand1}  ${mand2}
 
-Mandatory And Default
+Mandatory And Default UK
     [Arguments]  ${mand}  ${default}=default value
     Log Many  ${mand}  ${default}
 
-Multiple Default Values
+Multiple Default Values UK
     [Arguments]  ${a1}=1  ${a2}=2  ${a3}=3  ${a4}=${4}
     Log Many  ${a1}  ${a2}  ${a3}  ${a4}
 
-Mandatory and Varargs
+Mandatory and Varargs UK
     [Arguments]  ${mand}  @{vargs}
     Log Many  ${mand}  @{vargs}
-    
