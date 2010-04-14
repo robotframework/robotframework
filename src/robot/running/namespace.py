@@ -12,6 +12,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+import os
 import copy
 
 from robot import utils
@@ -92,7 +93,9 @@ class Namespace:
                         % (msg, self.suite.longname))
 
     def import_library(self, name, args=None):
-        lib = IMPORTER.import_library(name, args)
+        if not os.path.exists(name):
+            name = name.replace(' ', '')
+        lib = IMPORTER.import_library(name, *self._alias_and_args(name, args))
         if self._testlibs.has_key(lib.name):
             LOGGER.info("Test library '%s' already imported by suite '%s'"
                         % (lib.name, self.suite.longname))
@@ -102,6 +105,16 @@ class Namespace:
         if self.test:
             lib.start_test()
         self._import_deprecated_standard_libs(lib.name)
+
+    def _alias_and_args(self, name, args):
+        args = utils.to_list(args)
+        if len(args) >= 2 and utils.is_str(args[-2]) \
+               and args[-2].upper() == 'WITH NAME':
+            alias = args[-1].replace(' ', '')
+            args = args[:-2]
+        else:
+            alias = name
+        return alias, args
 
     def _import_deprecated_standard_libs(self, name):
         if name in ['BuiltIn', 'OperatingSystem']:

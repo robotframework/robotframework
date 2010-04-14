@@ -30,12 +30,13 @@ class Importer:
         self._libraries = _LibraryCache()
         self._resources = _LibraryCache()
 
-    def import_library(self, name, args):
-        code_name, name, args = self._get_lib_names_and_args(name, args)
-        lib = self._import_library(code_name, args)
-        if code_name != name:
-            lib = self._copy_library(lib, name)
-            LOGGER.info("Imported library '%s' with name '%s'" % (code_name, name))
+    def import_library(self, name, alias, args):
+        lib = TestLibrary(name, args)
+        positional, named = lib.init.arguments.resolve(args)
+        lib = self._import_library(name, positional, named, lib)
+        if name != alias:
+            lib = self._copy_library(lib, alias)
+            LOGGER.info("Imported library '%s' with name '%s'" % (name, alias))
         return lib
 
     def import_resource(self, path):
@@ -52,31 +53,17 @@ class Importer:
             # already earlier so no need to check that here either.
         return self._resources[path]
 
-    def _get_lib_names_and_args(self, name, args):
-        # Ignore spaces unless importing by path
-        if not os.path.exists(name):
-            name = name.replace(' ', '')
-        args = utils.to_list(args)
-        if len(args) >= 2 and utils.is_str(args[-2]) \
-               and args[-2].upper() == 'WITH NAME':
-            lib_name = args[-1].replace(' ', '')
-            args = args[:-2]
-        else:
-            lib_name = name
-        return name, lib_name, args
-
-    def _import_library(self, name, args):
-        key = (name, args)
+    def _import_library(self, name, positional, named, lib):
+        key = (name, positional, named)
         if self._libraries.has_key(key):
             LOGGER.info("Found test library '%s' with arguments %s from cache"
-                        % (name, utils.seq2str2(args)))
+                        % (name, utils.seq2str2(positional)))
             return self._libraries[key]
-        lib = TestLibrary(name, args)
         self._libraries[key] = lib
         libtype = lib.__class__.__name__.replace('Library', '').lower()[1:]
         LOGGER.info("Imported library '%s' with arguments %s (version %s, "
                     "%s type, %s scope, %d keywords, source %s)"
-                    % (name, utils.seq2str2(args), lib.version, libtype,
+                    % (name, utils.seq2str2(positional), lib.version, libtype,
                        lib.scope.lower(), len(lib), lib.source))
         if len(lib) == 0:
             LOGGER.warn("Imported library '%s' contains no keywords" % name)
