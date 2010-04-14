@@ -20,13 +20,14 @@ from robottypes import is_str
 
 
 _escape_re = re.compile(r'(\\+)([^\\]{0,2})')   # escapes and nextchars
+_SEQS_TO_BE_ESCAPED = ('\\', '${', '@{', '%{', '&{', '*{' , '=')
 
 
 def escape(item):
     if not is_str(item):
         return item
-    for orig in [ '\\', '${', '@{', '%{', '&{', '*{' ]:
-        item = item.replace(orig, '\\' + orig)
+    for seq in _SEQS_TO_BE_ESCAPED:
+        item = item.replace(seq, '\\' + seq)
     return item
 
 def unescape(item):
