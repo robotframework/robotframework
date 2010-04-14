@@ -44,10 +44,21 @@ class DomWrapper(AbstractDomWrapper):
         AbstractDomWrapper.__init__(self, path)
         # This should NOT be changed to 'if node:'. See chapter Truth Testing
         # from http://effbot.org/zone/element.htm#the-element-type 
-        if node is None: 
-            node = ET.parse(path or StringIO(string)).getroot()
+        if node is None:
+            node = self._get_root(path, string)
         self.name = node.tag
         self.attrs = dict(node.items())
         self.text = node.text or ''
         for child in list(node):
             self.children.append(DomWrapper(path, node=child))
+
+    def _get_root(self, path, string):
+        # Cannot give path to ET.parse because it doesn't close files it opens
+        # http://bugs.jython.org/issue1598
+        if path:
+            source = open(path, 'rb')
+        else:
+            source = StringIO(string)
+        node = ET.parse(source).getroot()
+        source.close()
+        return node
