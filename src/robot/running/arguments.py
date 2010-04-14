@@ -203,8 +203,8 @@ class UserKeywordArguments(_KeywordArguments):
         template_with_defaults = self._template_for(variables)
         argument_values = self._fill(template_with_defaults, arguments, variables)
         self._check_arg_limits(argument_values, len(arguments))
-        argstr = self._set_variables(variables, argument_values)
-        self._tracelog_args(output, argstr)
+        self._set_variables(variables, argument_values)
+        self._tracelog_args(output, variables)
 
     def _template_for(self, variables):
         return [ _MissingArg() for _ in range(self.minargs) ] \
@@ -234,26 +234,27 @@ class UserKeywordArguments(_KeywordArguments):
                 self._raise_inv_args(arg_count)
 
     def _set_variables(self, variables, arg_values):
-        args = []
-        varargstr = ''
-        if self._vararg:
-            varargs = self._get_varargs(arg_values)
-            variables[self._vararg] = varargs
-            varargstr = ' | %s=%s' % (self._vararg, varargs)
-            arg_values = arg_values[:len(self.names)]
-        for name, value in zip(self.names, arg_values):
-            try:
-                args.append('%s=%r' % (name, value))
-            except UnicodeError:
-                args.append('%s=%s' % (name, value))
+        before_varargs, varargs = self._split_args_and_varargs(arg_values)
+        for name, value in zip(self.names, before_varargs):
             variables[name] = value
-        return ' | '.join(args) + varargstr
+        if self._vararg:
+            variables[self._vararg] = varargs
 
-    def _tracelog_args(self, logger, argstr):
-        logger.trace('Arguments: [ %s ]' % argstr)
+    def _split_args_and_varargs(self, args):
+        if not self._vararg:
+            return args, []
+        return args[:len(self.names)], args[len(self.names):]
 
-    def _get_varargs(self, args):
-        return args[len(self.names):]
+    def _tracelog_args(self, logger, variables):
+        arguments_string = self._get_arguments_as_string(variables)
+        logger.trace('Arguments: [ %s ]' % arguments_string)
+
+    def _get_arguments_as_string(self, variables):
+        args = []
+        for name in self.names + (self._vararg and [self._vararg] or []):
+            args.append('%s=%s' % (name, utils.safe_repr(variables[name])))
+        return ' | '.join(args)
+
 
 
 class PythonInitArguments(PythonKeywordArguments):

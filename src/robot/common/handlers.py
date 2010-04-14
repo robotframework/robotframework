@@ -27,8 +27,8 @@ class BaseHandler:
                              % (self.__class__.__name__, name))
 
     def _tracelog_args(self, logger, posargs, kwargs={}):
-        args = [ utils.unic(a) for a in posargs ] \
-             + [ '%s=%s' % (utils.unic(a), utils.unic(kwargs[a])) for a in kwargs ]
+        args = [ utils.safe_repr(a) for a in posargs ] \
+             + [ '%s=%s' % (utils.unic(a), utils.safe_repr(kwargs[a])) for a in kwargs ]
         logger.trace('Arguments: [ %s ]' % ' | '.join(args))
 
 
