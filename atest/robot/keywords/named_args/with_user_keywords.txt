@@ -1,5 +1,5 @@
 *** Settings ***
-Suite Setup     Run Tests  ${EMPTY}  keywords/namedargs/with_library_keywords.txt
+Suite Setup     Run Tests  --loglevel trace  keywords/named_args/with_user_keywords.txt
 Force Tags      pybot  jybot  regression
 Resource        atest_resource.txt
 
@@ -11,16 +11,10 @@ Simple Kwarg
 Substitution Starts From The End
     Check Test Case  ${TESTNAME}
 
-Mandatory Args Should Be Positioned
-    Check Test Case  ${TESTNAME}
-
-Kwargs and Varargs
-    Check Test Case  ${TESTNAME}
-
 Kwarg Syntax In Variable Is Ignored
     Check Test Case  ${TESTNAME}
 
-Non-string value in kwarg
+Non-string value in UK kwarg
     Check Test Case  ${TESTNAME}
 
 Equals Sign In Kwarg Value
@@ -32,12 +26,12 @@ Using non-existing kwarg
 Escaping Kwarg
     Check Test Case  ${TESTNAME}
 
-Using Argname Twice
+Mandatory Args Should Be Positioned
     Check Test Case  ${TESTNAME}
 
 Inside Run Kw
     Check Test Case  ${TESTNAME}
 
-Simple Kwarg With Timeout
+Default value with escaped content
     Check Test Case  ${TESTNAME}
 
