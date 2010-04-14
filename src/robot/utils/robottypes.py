@@ -19,6 +19,7 @@ import sys
 
 from robot.errors import FrameworkError
 from match import eq_any
+from unic import unic
 
 
 _LIST_TYPES = [ types.ListType, types.TupleType ]
@@ -127,3 +128,9 @@ def type_as_str(item, printable=False):
     if printable and _printable_type_mapping.has_key(ret):
         ret = _printable_type_mapping[ret]
     return ret
+
+def safe_repr(item):
+    try:
+        return unic(repr(item))
+    except UnicodeError:
+        return repr(unic(item))
