@@ -242,7 +242,10 @@ class UserKeywordArguments(_KeywordArguments):
             varargstr = ' | %s=%s' % (self._vararg, varargs)
             arg_values = arg_values[:len(self.names)]
         for name, value in zip(self.names, arg_values):
-            args.append('%s=%s' % (name, utils.unic(repr(value))))
+            try:
+                args.append('%s=%r' % (name, value))
+            except UnicodeError:
+                args.append('%s=%s' % (name, value))
             variables[name] = value
         return ' | '.join(args) + varargstr
 
