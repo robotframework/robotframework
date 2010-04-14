@@ -1,5 +1,5 @@
 *** Settings ***
-Suite Setup     Run Tests  --listener OldListenAll --listener old_listeners.ListenSome --listener old_module_listener --listener old_listeners.WithArgs:value --listener old_listeners.WithArgs:a1:a2 --listener ${LISTENERS}${/}OldListenAll.py:${TEMPDIR}${/}${ALL_FILE2} --listener old_listeners.WithArgs --listener old_listeners.WithArgs:1:2:3 --listener OldJavaListener --listener OldJavaListenerWithArgs:Hello:world! --listener OldJavaListenerWithArgs --listener OldJavaListenerWithArgs:b:a:r --listener NonExistingListener  misc${/}pass_and_fail.html
+Suite Setup     Run Tests  --listener OldListenAll --listener old_listeners.ListenSome --listener old_module_listener --listener old_listeners.WithArgs:value --listener old_listeners.WithArgs:a1:a2 --listener ${LISTENERS}${/}OldListenAll.py:${TEMPDIR}${/}${ALL_FILE2} --listener old_listeners.WithArgs --listener old_listeners.WithArgs:1:2:3 --listener OldJavaListener --listener OldJavaListenerWithArgs:Hello:world --listener OldJavaListenerWithArgs --listener OldJavaListenerWithArgs:b:a:r --listener NonExistingListener  misc${/}pass_and_fail.html
 Suite Teardown  Remove Listener Files
 Force Tags      regression
 Default Tags    pybot  jybot
@@ -38,8 +38,8 @@ Java Listener
 
 Java Listener With Arguments
     [Tags]  jybot
-    Listener Import Message Should Be In Syslog  OldJavaListenerWithArgs  [ Hello | world! ]
-    Check Listener File  ${JAVA_ARGS_FILE}  I got arguments 'Hello' and 'world!'
+    Listener Import Message Should Be In Syslog  OldJavaListenerWithArgs  [ Hello | world ]
+    Check Listener File  ${JAVA_ARGS_FILE}  I got arguments 'Hello' and 'world'
 
 Java Listener With Wrong Number Of Arguments
     [Tags]  jybot
