@@ -57,6 +57,9 @@ Using Argname Twice
 Inside Run Kw
     ${ret}=  Run Keyword  Four Kwargs  a=foo  bar  d=quux  
     Should Be Equal  ${ret}  a=foo, bar, None, quux
+    @{list}  Create List  Four Kwargs  foo  c=bar  d\\=quux
+    ${ret}=  Run Keyword  @{list}
+    Should Be Equal  ${ret}  foo, c=bar, d\\=quux, None
 
 Simple Kwarg With Timeout
     [timeout]  10
