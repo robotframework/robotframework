@@ -201,20 +201,37 @@ class UserKeywordArguments(_KeywordArguments):
 
     def set_to(self, output, variables, arguments):
         template_with_defaults = self._template_for(variables)
-        template = self._fill(template_with_defaults, arguments, variables)
-        self._check_missing_args(template, len(arguments))
-        self.check_arg_limits(template)
-        argstr = self._set_variables(variables, template)
+        argument_values = self._fill(template_with_defaults, arguments, variables)
+        self._check_arg_limits(argument_values, len(arguments))
+        argstr = self._set_variables(variables, argument_values)
         self._tracelog_args(output, argstr)
+
+    def _template_for(self, variables):
+        return [ _MissingArg() for _ in range(self.minargs) ] \
+                + variables.replace_list(list(self.defaults))
+
+    def _fill(self, template, arguments, variables):
+        arg_resolver = UserKeywordArgumentResolver(self)
+        positional, named = arg_resolver.resolve(arguments)
+        positional = variables.replace_list(positional)
+        varargs = positional[len(self.names):]
+        positional = positional[:len(self.names)]
+        for name, value in named.items():
+            replaced = variables.replace_scalar(value)
+            template[self.names.index(name)] = replaced
+            named[name] = replaced
+        for index, value in enumerate(positional):
+            template[index] = value
+        return template + varargs
+
+    def _check_arg_limits(self, argument_values, orig_arg_count):
+        self._check_missing_args(argument_values, orig_arg_count)
+        self.check_arg_limits(argument_values)
 
     def _check_missing_args(self, template, arg_count):
         for a in template:
             if isinstance(a, _MissingArg):
                 self._raise_inv_args(arg_count)
-
-    def _template_for(self, variables):
-        return [ _MissingArg() for _ in range(len(self.names)-len(self.defaults)) ] \
-                + variables.replace_list(list(self.defaults))
 
     def _set_variables(self, variables, arg_values):
         args = []
@@ -234,20 +251,6 @@ class UserKeywordArguments(_KeywordArguments):
 
     def _tracelog_args(self, logger, argstr):
         logger.trace('Arguments: [ %s ]' % argstr)
-
-    def _fill(self, template, arguments, variables):
-        arg_resolver = UserKeywordArgumentResolver(self)
-        positional, named = arg_resolver.resolve(arguments)
-        positional = variables.replace_list(positional)
-        varargs = positional[len(self.names):]
-        positional = positional[:len(self.names)]
-        for name, value in named.items():
-            replaced = variables.replace_scalar(value)
-            template[self.names.index(name)] = replaced
-            named[name] = replaced
-        for index, value in enumerate(positional):
-            template[index] = value
-        return template + varargs
 
     def _get_varargs(self, args):
         return args[len(self.names):]
