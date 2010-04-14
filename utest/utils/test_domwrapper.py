@@ -39,10 +39,6 @@ DOM = DomWrapper(string=XML_STR)
 
 class TestDomWrapper(unittest.TestCase):
 
-    def test_etree_is_used_on_25_and_newer(self):
-        if sys.version_info[:2] >= (2,5):
-            assert_equals(DomWrapper.__module__, 'robot.utils.etreedomwrapper')
-
     def test_root(self):
         assert_equals(DOM.name, 'root')
         assert_equals(DOM.attrs, {})
