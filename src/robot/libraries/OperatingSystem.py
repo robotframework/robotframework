@@ -586,8 +586,10 @@ class OperatingSystem:
         if not os.path.exists(parent):
             os.makedirs(parent)
         f = open(path, mode+'b')
-        f.write(content.encode(encoding))
-        f.close()
+        try:
+            f.write(content.encode(encoding))
+        finally:
+            f.close()
         return path
 
     def remove_file(self, path):
