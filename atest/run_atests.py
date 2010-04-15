@@ -70,14 +70,14 @@ def atests(interpreter, *params):
         'OUTPUTDIR' : RESULTDIR,
         'INTERPRETER': interpreter,
         'PLATFORM': sys.platform,
-        'RUNNER': ('python' in os.path.basename(interpreter) and 'pybot' 
+        'RUNNER': ('python' in os.path.basename(interpreter) and 'pybot'
                    or 'jybot')
         }
     runner = os.path.join(os.path.dirname(robot.__file__), 'runner.py')
     command = '%s %s %s %s' % (sys.executable, runner, args, ' '.join(params))
     print 'Running command\n%s\n' % command
     sys.stdout.flush()
-    return subprocess.call(command.split())
+    return subprocess.call(command.split(), env={'ROBOT_SYSLOG_LEVEL': 'INFO'})
 
 
 def buildbot(interpreter, *params):
@@ -100,4 +100,4 @@ if __name__ == '__main__':
         rc = buildbot(*sys.argv[2:])
     else:
         rc = atests(*sys.argv[1:])
-    sys.exit(rc) 
+    sys.exit(rc)
