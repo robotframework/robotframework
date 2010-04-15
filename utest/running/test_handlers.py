@@ -56,8 +56,8 @@ class TestPythonHandler(unittest.TestCase):
         for method in _get_handler_methods(ArgumentsPython()):
             handler = _PythonHandler(LibraryMock(), method.__name__, method)
             exp_mina, exp_maxa = eval(method.__doc__)
-            assert_equals(handler.arguments.minargs, exp_mina)
-            assert_equals(handler.arguments.maxargs, exp_maxa)
+            assert_equals(handler.arguments._arg_limit_checker.minargs, exp_mina)
+            assert_equals(handler.arguments._arg_limit_checker.maxargs, exp_maxa)
 
     def test_getarginfo_getattr(self):
         testlib = TestLibrary('classes.GetattrLibrary')
@@ -65,8 +65,8 @@ class TestPythonHandler(unittest.TestCase):
         assert_equals(len(handlers), 3)
         for handler in handlers:
             assert_true(handler.name in ['Foo','Bar','Zap'])
-            assert_equals(handler.arguments.minargs, 0)
-            assert_equals(handler.arguments.maxargs, sys.maxint)
+            assert_equals(handler.arguments._arg_limit_checker.minargs, 0)
+            assert_equals(handler.arguments._arg_limit_checker.maxargs, sys.maxint)
 
 
 class TestDynamicHandlerCreation(unittest.TestCase):
@@ -142,8 +142,8 @@ class TestDynamicHandlerCreation(unittest.TestCase):
                               doc, argspec)
 
     def _assert_arg_specs(self, handler, minargs, maxargs, names=[], defaults=[], vararg=None):
-        assert_equals(handler.arguments.minargs, minargs)
-        assert_equals(handler.arguments.maxargs, maxargs)
+        assert_equals(handler.arguments._arg_limit_checker.minargs, minargs)
+        assert_equals(handler.arguments._arg_limit_checker.maxargs, maxargs)
         assert_equals(handler.arguments.names, names)
         assert_equals(handler.arguments.defaults, defaults)
         assert_equals(handler.arguments.varargs, vararg)
