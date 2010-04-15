@@ -83,8 +83,7 @@ class _RunnableHandler(_BaseHandler):
 
         Note: This method MUST NOT change this object's internal state.
         """
-        posargs, kwargs = self._process_args(args, namespace.variables)
-        self._tracelog_args(output, posargs, kwargs)
+        posargs, kwargs = self._process_args(output, args, namespace.variables)
         self._capture_output()
         try:
             return self._run_handler(self._current_handler(), posargs, kwargs,
@@ -92,13 +91,8 @@ class _RunnableHandler(_BaseHandler):
         finally:
             self._release_and_log_output(output)
 
-    def _process_args(self, args, variables):
-        return self.arguments.resolve(args, variables)
-
-    def _tracelog_args(self, logger, posargs, kwargs={}):
-        args = [ utils.safe_repr(a) for a in posargs ] \
-             + [ '%s=%s' % (utils.unic(a), utils.safe_repr(kwargs[a])) for a in kwargs ]
-        logger.trace('Arguments: [ %s ]' % ' | '.join(args))
+    def _process_args(self, output, args, variables):
+        return self.arguments.resolve(args, variables, output)
 
     def _capture_output(self):
         utils.capture_output()
@@ -184,7 +178,7 @@ class _DynamicHandler(_RunnableHandler):
 
 class _RunKeywordHandler(_PythonHandler):
 
-    def _process_args(self, args, variables):
+    def _process_args(self, output, args, variables):
         index = RUN_KW_REGISTER.get_args_to_process(self.library.orig_name, self.name)
         if index > 0:
             args = variables.replace_from_beginning(index, args)

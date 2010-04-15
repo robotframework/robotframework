@@ -30,9 +30,10 @@ class _KeywordArguments(object):
             = self._determine_args(argument_source)
         self._name = kw_or_lib_name
 
-    def resolve(self, args, variables=None):
+    def resolve(self, args, variables, output=None):
         posargs, namedargs = self._get_argument_resolver().resolve(args, variables)
         self.check_arg_limits(posargs, namedargs)
+        self._tracelog_args(output, posargs, namedargs)
         return posargs, namedargs
 
     def check_arg_limits(self, args, namedargs={}):
@@ -51,6 +52,13 @@ class _KeywordArguments(object):
             exptxt = "at least %d argument%s" % (self.minargs, minend)
         raise DataError("%s '%s' expected %s, got %d."
                         % (self._type, self._name, exptxt, arg_count))
+
+    def _tracelog_args(self, logger, posargs, namedargs={}):
+        if not logger:
+            return
+        args = [ utils.safe_repr(a) for a in posargs ] \
+             + [ '%s=%s' % (utils.unic(a), utils.safe_repr(namedargs[a])) for a in namedargs ]
+        logger.trace('Arguments: [ %s ]' % ' | '.join(args))
 
 
 class PythonKeywordArguments(_KeywordArguments):
