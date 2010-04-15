@@ -50,7 +50,7 @@ class Keyword(BaseKeyword):
             output.warn("Keyword '%s' is deprecated. %s" % (name, msg))
         try:
             ret = self._run(handler, output, namespace)
-            output.trace('Return: %r' % ret)
+            output.trace('Return: %s' % repr(ret))
         except ExecutionFailed, err:
             self.status = 'FAIL'
         else:
