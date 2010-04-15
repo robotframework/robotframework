@@ -160,23 +160,23 @@ if utils.is_jython:
             for count in [ 0, 1, 3 ]:
                 method = handlers['a_%d' % count]
                 handler = _JavaHandler(LibraryMock(), method.__name__, method)
-                assert_equals(handler.minargs, count)
-                assert_equals(handler.maxargs, count)
+                assert_equals(handler.arguments._arg_limit_checker.minargs, count)
+                assert_equals(handler.arguments._arg_limit_checker.maxargs, count)
 
         def test_arg_limits_with_varargs(self):
             for count in [ 0, 1 ]:
                 method = handlers['a_%d_n' % count]
                 handler = _JavaHandler(LibraryMock(), method.__name__, method)
-                assert_equals(handler.minargs, count)
-                assert_equals(handler.maxargs, sys.maxint)
+                assert_equals(handler.arguments._arg_limit_checker.minargs, count)
+                assert_equals(handler.arguments._arg_limit_checker.maxargs, sys.maxint)
 
         def test_arg_limits_with_defaults(self):
             # defaults i.e. multiple signatures
             for mina, maxa in [ (0,1), (1,3) ]:
                 method = handlers['a_%d_%d' % (mina, maxa)]
                 handler = _JavaHandler(LibraryMock(), method.__name__, method)
-                assert_equals(handler.minargs, mina)
-                assert_equals(handler.maxargs, maxa)
+                assert_equals(handler.arguments._arg_limit_checker.minargs, mina)
+                assert_equals(handler.arguments._arg_limit_checker.maxargs, maxa)
 
 
     class TestArgumentCoercer(unittest.TestCase):
