@@ -75,12 +75,16 @@ class _RunnableHandler(_BaseHandler):
     def __init__(self, library, handler_name, handler_method):
         _BaseHandler.__init__(self, library, handler_name, handler_method)
         self._handler_name = handler_name
-        self._method = self._get_global_handler(handler_method, handler_name) \
-            if library.scope == 'GLOBAL' else None
+        self._method = self._get_initial_handler(library, handler_name,
+                                                 handler_method)
         self.doc = ''
 
+    def _get_initial_handler(self, library, name, method):
+        if library.scope == 'GLOBAL':
+            return self._get_global_handler(method, name)
+        return None
+
     def run(self, output, namespace, args):
-        self._capture_output()
         posargs, kwargs = self.arguments.resolve(args, namespace.variables,
                                                  output)
         try:
@@ -90,12 +94,10 @@ class _RunnableHandler(_BaseHandler):
             self._release_and_log_output(output)
 
     def _run_handler(self, handler, output, posargs, kwargs, timeout):
-        if timeout is not None and timeout.active():
+        utils.capture_output() # Must be done right before run
+        if timeout and timeout.active():
             return timeout.run(handler, args=posargs, kwargs=kwargs, logger=output)
         return handler(*posargs, **kwargs)
-
-    def _capture_output(self):
-        utils.capture_output()
 
     def _release_and_log_output(self, logger):
         stdout, stderr = utils.release_output()
@@ -105,10 +107,9 @@ class _RunnableHandler(_BaseHandler):
             sys.stderr.write(stderr+'\n')
 
     def _current_handler(self):
-        if self._method is not None:
+        if self._method:
             return self._method
-        return self._get_handler(self.library.get_instance(),
-                                 self._handler_name)
+        return self._get_handler(self.library.get_instance(), self._handler_name)
 
     def _get_global_handler(self, method, name):
         return method
@@ -118,13 +119,13 @@ class _RunnableHandler(_BaseHandler):
 
     def _get_timeout(self, namespace):
         timeoutable = self._get_timeoutable_items(namespace)
-        if len(timeoutable) > 0 :
+        if timeoutable:
             return min([ item.timeout for item in timeoutable ])
         return None
 
     def _get_timeoutable_items(self, namespace):
         items = namespace.uk_handlers[:]
-        if namespace.test is not None and namespace.test.status == 'RUNNING':
+        if namespace.test and namespace.test.status == 'RUNNING':
             items.append(namespace.test)
         return items
 
