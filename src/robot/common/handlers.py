@@ -13,23 +13,6 @@
 #  limitations under the License.
 
 from robot.errors import DataError
-from robot import utils
-
-
-class BaseHandler:
-
-    def __getattr__(self, name):
-        if name == 'longname':
-            return '%s.%s' % (self.library.name, self.name)
-        if name == 'shortdoc':
-            return self.doc and self.doc.splitlines()[0] or ''
-        raise AttributeError("%s does not have attribute '%s'"
-                             % (self.__class__.__name__, name))
-
-    def _tracelog_args(self, logger, posargs, kwargs={}):
-        args = [ utils.safe_repr(a) for a in posargs ] \
-             + [ '%s=%s' % (utils.unic(a), utils.safe_repr(kwargs[a])) for a in kwargs ]
-        logger.trace('Arguments: [ %s ]' % ' | '.join(args))
 
 
 class UserErrorHandler:

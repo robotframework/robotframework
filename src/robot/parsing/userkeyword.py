@@ -18,7 +18,7 @@ import sys
 from robot import utils
 from robot.errors import DataError
 from robot.variables import is_list_var, is_scalar_var
-from robot.common import BaseHandler, UserErrorHandler
+from robot.common import UserErrorHandler
 
 from metadata import UserKeywordMetadata
 from keywords import KeywordList
@@ -54,8 +54,7 @@ def _report_creating_failed(data, err):
     data.report_invalid_syntax(msg)
 
 
-class UserHandler(BaseHandler):
-
+class UserHandler(object):
     type = 'user'
 
     def __init__(self, kwdata):

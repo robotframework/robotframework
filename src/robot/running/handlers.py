@@ -15,7 +15,6 @@
 import sys
 
 from robot import utils
-from robot.common import BaseHandler
 
 from runkwregister import RUN_KW_REGISTER
 from arguments import PythonKeywordArguments, JavaKeywordArguments, \
@@ -56,8 +55,10 @@ def InitHandler(library, method):
     return Init(library, '__init__', method)
 
 
-class _BaseHandler(BaseHandler):
+class _BaseHandler(object):
     type = 'library'
+    longname = property(lambda self: '%s.%s' % (self.library.name, self.name))
+    shortdoc = property(lambda self: self.doc.splitlines()[0] if self.doc else '')
 
     def __init__(self, library, handler_name, handler_method):
         self.library = library
@@ -95,6 +96,11 @@ class _RunnableHandler(_BaseHandler):
 
     def _process_args(self, args, variables):
         return self.arguments.resolve(args, variables)
+
+    def _tracelog_args(self, logger, posargs, kwargs={}):
+        args = [ utils.safe_repr(a) for a in posargs ] \
+             + [ '%s=%s' % (utils.unic(a), utils.safe_repr(kwargs[a])) for a in kwargs ]
+        logger.trace('Arguments: [ %s ]' % ' | '.join(args))
 
     def _capture_output(self):
         utils.capture_output()

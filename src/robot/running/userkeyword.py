@@ -15,8 +15,8 @@
 import os
 import re
 
-from robot.common import BaseHandler, BaseLibrary, UserErrorHandler
-from robot.errors import DataError, ExecutionFailed
+from robot.common import BaseLibrary, UserErrorHandler
+from robot.errors import DataError
 from robot.variables import is_list_var, VariableSplitter
 from robot import utils
 
@@ -99,10 +99,12 @@ class UserLibrary(BaseLibrary):
                         "Found: %s" % (where, name, names))
 
 
-class UserHandler(BaseHandler):
+class UserHandler(object):
     type = 'user'
     longname = property(lambda self: not self._libname and self.name
                         or '%s.%s' % (self._libname, self.name))
+    shortdoc = property(lambda self: self.doc.splitlines()[0] if self.doc else '')
+
 
     def __init__(self, handlerdata, libname):
         self.name = utils.printable_name(handlerdata.name)
