@@ -26,9 +26,9 @@ class _KeywordArguments(object):
     _type = 'Keyword'
 
     def __init__(self, argument_source, kw_or_lib_name):
-        self.names, self.defaults, self.varargs, minargs, maxargs \
+        self.names, self.defaults, self.varargs, self.minargs, self.maxargs \
             = self._determine_args(argument_source)
-        self._arg_limit_checker = _ArgLimitChecker(minargs, maxargs,
+        self._arg_limit_checker = _ArgLimitChecker(self.minargs, self.maxargs,
                                                    kw_or_lib_name, self._type)
 
     def resolve(self, args, variables, output=None):

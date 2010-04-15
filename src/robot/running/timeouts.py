@@ -20,7 +20,6 @@ from robot.errors import TimeoutError, DataError, FrameworkError
 
 
 class _Timeout:
-
     _defaults = ('', -1, None)
 
     def __init__(self, *params):
