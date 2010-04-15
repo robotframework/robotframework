@@ -77,7 +77,7 @@ def atests(interpreter, *params):
     command = '%s %s %s %s' % (sys.executable, runner, args, ' '.join(params))
     print 'Running command\n%s\n' % command
     sys.stdout.flush()
-    return subprocess.call(command.split(), env={'ROBOT_SYSLOG_LEVEL': 'INFO'})
+    return subprocess.call(command.split())
 
 
 def buildbot(interpreter, *params):
