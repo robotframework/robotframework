@@ -42,7 +42,6 @@ class Keyword(BaseKeyword):
             handler.init_user_keyword(namespace.variables)
         self.name = self._get_name(handler.longname, namespace.variables)
         self.doc = handler.shortdoc
-        self.timeout = str(handler.timeout)
         self.starttime = utils.get_timestamp()
         output.start_keyword(self)
         if self.doc.startswith('*DEPRECATED*'):

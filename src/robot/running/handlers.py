@@ -64,7 +64,6 @@ class _BaseHandler(object):
         self.library = library
         self.name = utils.printable_name(handler_name, code_style=True)
         self.arguments = self._parse_arguments(handler_method)
-        self.minargs, self.maxargs = self.arguments.minargs, self.arguments.maxargs
 
     def _parse_arguments(self, handler_method):
         raise NotImplementedError(self.__class__.__name__)
@@ -78,7 +77,6 @@ class _RunnableHandler(_BaseHandler):
         self._method = library.scope == 'GLOBAL' and \
                 self._get_global_handler(handler_method, handler_name) or None
         self.doc = ''
-        self.timeout = ''  # Needed for set_attributes in runner.start_keyword
 
     def run(self, output, namespace, args):
         """Executes the represented handler with given 'args'.
