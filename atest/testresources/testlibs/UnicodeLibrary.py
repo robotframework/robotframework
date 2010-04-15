@@ -29,5 +29,4 @@ class UnicodeObject:
         return self.message
 
     def __repr__(self):
-        #Should use repr here but this is valid for testing purposes
-        return self.message
+        return repr(self.message)
