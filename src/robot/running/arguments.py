@@ -197,6 +197,18 @@ class DynamicKeywordArguments(_KeywordArguments):
         return args, defaults, vararg
 
 
+class RunKeywordArguments(PythonKeywordArguments):
+
+    def __init__(self, argument_source, name, arg_resolution_index):
+        PythonKeywordArguments.__init__(self, argument_source, name)
+        self._arg_resolution_index = arg_resolution_index
+
+    def resolve(self, args, variables, output=None):
+        args = variables.replace_from_beginning(self._arg_resolution_index, args)
+        self.check_arg_limits(args)
+        return args, {}
+
+
 class UserKeywordArguments(_KeywordArguments):
 
     def __init__(self, argnames, defaults, vararg, minargs, maxargs, name):

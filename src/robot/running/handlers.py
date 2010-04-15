@@ -18,7 +18,8 @@ from robot import utils
 
 from runkwregister import RUN_KW_REGISTER
 from arguments import PythonKeywordArguments, JavaKeywordArguments, \
-    DynamicKeywordArguments, PythonInitArguments, JavaInitArguments
+    DynamicKeywordArguments, PythonInitArguments, JavaInitArguments, \
+    RunKeywordArguments
 
 
 if utils.is_jython:
@@ -74,28 +75,34 @@ class _RunnableHandler(_BaseHandler):
     def __init__(self, library, handler_name, handler_method):
         _BaseHandler.__init__(self, library, handler_name, handler_method)
         self._handler_name = handler_name
-        self._method = library.scope == 'GLOBAL' and \
-                self._get_global_handler(handler_method, handler_name) or None
+        self._method = self._get_global_handler(handler_method, handler_name) \
+            if library.scope == 'GLOBAL' else None
         self.doc = ''
 
     def run(self, output, namespace, args):
-        """Executes the represented handler with given 'args'.
-
-        Note: This method MUST NOT change this object's internal state.
-        """
-        posargs, kwargs = self._process_args(output, args, namespace.variables)
         self._capture_output()
+        posargs, kwargs = self.arguments.resolve(args, namespace.variables,
+                                                 output)
         try:
-            return self._run_handler(self._current_handler(), posargs, kwargs,
-                                     output, self._get_timeout(namespace))
+            return self._run_handler(self._current_handler(), output, posargs,
+                                     kwargs, self._get_timeout(namespace))
         finally:
             self._release_and_log_output(output)
 
-    def _process_args(self, output, args, variables):
-        return self.arguments.resolve(args, variables, output)
+    def _run_handler(self, handler, output, posargs, kwargs, timeout):
+        if timeout is not None and timeout.active():
+            return timeout.run(handler, args=posargs, kwargs=kwargs, logger=output)
+        return handler(*posargs, **kwargs)
 
     def _capture_output(self):
         utils.capture_output()
+
+    def _release_and_log_output(self, logger):
+        stdout, stderr = utils.release_output()
+        logger.log_output(stdout)
+        logger.log_output(stderr)
+        if stderr.strip() != '':
+            sys.stderr.write(stderr+'\n')
 
     def _current_handler(self):
         if self._method is not None:
@@ -107,13 +114,7 @@ class _RunnableHandler(_BaseHandler):
         return method
 
     def _get_handler(self, lib_instance, handler_name):
-        """Overridden by DynamicHandler"""
         return getattr(lib_instance, handler_name)
-
-    def _run_handler(self, handler, posargs, kwargs, output, timeout):
-        if timeout is not None and timeout.active():
-            return timeout.run(handler, args=posargs, kwargs=kwargs, logger=output)
-        return handler(*posargs, **kwargs)
 
     def _get_timeout(self, namespace):
         timeoutable = self._get_timeoutable_items(namespace)
@@ -126,13 +127,6 @@ class _RunnableHandler(_BaseHandler):
         if namespace.test is not None and namespace.test.status == 'RUNNING':
             items.append(namespace.test)
         return items
-
-    def _release_and_log_output(self, logger):
-        stdout, stderr = utils.release_output()
-        logger.log_output(stdout)
-        logger.log_output(stderr)
-        if stderr.strip() != '':
-            sys.stderr.write(stderr+'\n')
 
 
 class _PythonHandler(_RunnableHandler):
@@ -178,19 +172,17 @@ class _DynamicHandler(_RunnableHandler):
 
 class _RunKeywordHandler(_PythonHandler):
 
-    def _process_args(self, output, args, variables):
-        index = RUN_KW_REGISTER.get_args_to_process(self.library.orig_name, self.name)
-        if index > 0:
-            args = variables.replace_from_beginning(index, args)
-        self.arguments.check_arg_limits(args)
-        return args, {}
+    def _parse_arguments(self, handler_method):
+        arg_index = RUN_KW_REGISTER.get_args_to_process(self.library.orig_name,
+                                                        self.name)
+        return RunKeywordArguments(handler_method, self.longname, arg_index)
 
     def _get_timeout(self, namespace):
         return None
 
 
 class _DynamicRunKeywordHandler(_DynamicHandler, _RunKeywordHandler):
-    _process_args = _RunKeywordHandler._process_args
+    _parse_arguments = _RunKeywordHandler._parse_arguments
     _get_timeout = _RunKeywordHandler._get_timeout
 
 
