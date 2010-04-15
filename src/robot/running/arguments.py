@@ -26,9 +26,10 @@ class _KeywordArguments(object):
     _type = 'Keyword'
 
     def __init__(self, argument_source, kw_or_lib_name):
-        self.names, self.defaults, self.varargs, self.minargs, self.maxargs \
+        self.names, self.defaults, self.varargs, minargs, maxargs \
             = self._determine_args(argument_source)
-        self._name = kw_or_lib_name
+        self._arg_limit_checker = _ArgLimitChecker(minargs, maxargs,
+                                                   kw_or_lib_name, self._type)
 
     def resolve(self, args, variables, output=None):
         posargs, namedargs = self._get_argument_resolver().resolve(args, variables)
@@ -37,21 +38,7 @@ class _KeywordArguments(object):
         return posargs, namedargs
 
     def check_arg_limits(self, args, namedargs={}):
-        arg_count = len(args) + len(namedargs)
-        if not self.minargs <= arg_count <= self.maxargs:
-            self._raise_inv_args(arg_count)
-        return args
-
-    def _raise_inv_args(self, arg_count):
-        minend = utils.plural_or_not(self.minargs)
-        if self.minargs == self.maxargs:
-            exptxt = "%d argument%s" % (self.minargs, minend)
-        elif self.maxargs != sys.maxint:
-            exptxt = "%d to %d arguments" % (self.minargs, self.maxargs)
-        else:
-            exptxt = "at least %d argument%s" % (self.minargs, minend)
-        raise DataError("%s '%s' expected %s, got %d."
-                        % (self._type, self._name, exptxt, arg_count))
+        self._arg_limit_checker.check_arg_limits(args, namedargs)
 
     def _tracelog_args(self, logger, posargs, namedargs={}):
         if not logger:
@@ -209,56 +196,67 @@ class RunKeywordArguments(PythonKeywordArguments):
         return args, {}
 
 
-class UserKeywordArguments(_KeywordArguments):
+class PythonInitArguments(PythonKeywordArguments):
+    _type = 'Test Library'
+
+
+class JavaInitArguments(JavaKeywordArguments):
+    _type = 'Test Library'
+
+    def resolve(self, args, variables):
+        self.check_arg_limits(args)
+        return args, {}
+
+
+class UserKeywordArguments(object):
 
     def __init__(self, argnames, defaults, vararg, minargs, maxargs, name):
         self.names = list(argnames) # Python 2.5 does not support indexing tuples
         self.defaults = defaults
         self._vararg = vararg
         self.minargs = minargs
-        self.maxargs = maxargs
-        self._name = name
+        self._arg_limit_checker = _ArgLimitChecker(minargs, maxargs,
+                                                   name , 'Keyword')
 
-    def set_to(self, output, variables, arguments):
-        template_with_defaults = self._template_for(variables)
-        argument_values = self._fill(template_with_defaults, arguments, variables)
-        self._check_arg_limits(argument_values, len(arguments))
-        self._set_variables(variables, argument_values)
-        self._tracelog_args(output, variables)
+    def resolve(self, arguments, variables):
+        positional, varargs, named = self._resolve_arg_usage(arguments,
+                                                             variables)
+        self._arg_limit_checker.check_arg_limits(positional+varargs, named)
+        argument_values = self._resolve_arg_values(variables, named, positional)
+        argument_values += varargs
+        self._arg_limit_checker.check_missing_args(argument_values, len(arguments))
+        return argument_values
 
     def _template_for(self, variables):
         return [ _MissingArg() for _ in range(self.minargs) ] \
                 + variables.replace_list(list(self.defaults))
 
-    def _fill(self, template, arguments, variables):
-        arg_resolver = UserKeywordArgumentResolver(self)
-        positional, named = arg_resolver.resolve(arguments)
-        positional = variables.replace_list(positional)
-        varargs = positional[len(self.names):]
-        positional = positional[:len(self.names)]
+    def _resolve_arg_values(self, variables, named, positional):
+        template = self._template_for(variables)
         for name, value in named.items():
-            replaced = variables.replace_scalar(value)
-            template[self.names.index(name)] = replaced
-            named[name] = replaced
+            template[self.names.index(name)] = value
         for index, value in enumerate(positional):
             template[index] = value
-        return template + varargs
+        return template
 
-    def _check_arg_limits(self, argument_values, orig_arg_count):
-        self._check_missing_args(argument_values, orig_arg_count)
-        self.check_arg_limits(argument_values)
+    def _resolve_arg_usage(self, arguments, variables):
+        resolver = UserKeywordArgumentResolver(self)
+        positional, named = self._replace_variables(variables,
+                                                    *resolver.resolve(arguments))
+        return self._split_args_and_varargs(positional) + (named, )
 
-    def _check_missing_args(self, template, arg_count):
-        for a in template:
-            if isinstance(a, _MissingArg):
-                self._raise_inv_args(arg_count)
+    def _replace_variables(self, variables, positional, named):
+        for name in named:
+            named[name] = variables.replace_scalar(named[name])
+        return variables.replace_list(positional), named
 
-    def _set_variables(self, variables, arg_values):
+    def set_variables(self, arg_values, variables, output):
         before_varargs, varargs = self._split_args_and_varargs(arg_values)
         for name, value in zip(self.names, before_varargs):
             variables[name] = value
         if self._vararg:
             variables[self._vararg] = varargs
+        self._tracelog_args(output, variables)
 
     def _split_args_and_varargs(self, args):
         if not self._vararg:
@@ -275,18 +273,6 @@ class UserKeywordArguments(_KeywordArguments):
             args.append('%s=%s' % (name, utils.safe_repr(variables[name])))
         return ' | '.join(args)
 
-
-
-class PythonInitArguments(PythonKeywordArguments):
-    _type = 'Test Library'
-
-
-class JavaInitArguments(JavaKeywordArguments):
-    _type = 'Test Library'
-
-    def resolve(self, args, variables):
-        self.check_arg_limits(args)
-        return args, {}
 
 
 class _MissingArg(object):
@@ -413,3 +399,34 @@ class JavaKeywordArgumentResolver(object):
             args = args[:self._minargs]
             args.append(varargs)
         return args
+
+
+class _ArgLimitChecker(object):
+
+    def __init__(self, minargs, maxargs, name, type_):
+        self.minargs = minargs
+        self.maxargs = maxargs
+        self._name = name
+        self._type = type_
+
+    def check_arg_limits(self, args, namedargs={}):
+        arg_count = len(args) + len(namedargs)
+        if not self.minargs <= arg_count <= self.maxargs:
+            self._raise_inv_args(arg_count)
+        return args
+
+    def check_missing_args(self, args, arg_count):
+        for a in args:
+            if isinstance(a, _MissingArg):
+                self._raise_inv_args(arg_count)
+
+    def _raise_inv_args(self, arg_count):
+        minend = utils.plural_or_not(self.minargs)
+        if self.minargs == self.maxargs:
+            exptxt = "%d argument%s" % (self.minargs, minend)
+        elif self.maxargs != sys.maxint:
+            exptxt = "%d to %d arguments" % (self.minargs, self.maxargs)
+        else:
+            exptxt = "at least %d argument%s" % (self.minargs, minend)
+        raise DataError("%s '%s' expected %s, got %d."
+                        % (self._type, self._name, exptxt, arg_count))

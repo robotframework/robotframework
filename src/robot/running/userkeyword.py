@@ -139,7 +139,9 @@ class UserHandler(object):
             namespace.end_user_keyword()
 
     def _run(self, output, namespace, arguments):
-        self._arguments.set_to(output, namespace.variables, arguments)
+        argument_values = self._arguments.resolve(arguments, namespace.variables)
+        self._arguments.set_variables(argument_values, namespace.variables,
+                                      output)
         self._verify_keyword_is_valid()
         self.timeout.start()
         for kw in self.keywords:
