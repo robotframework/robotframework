@@ -65,8 +65,8 @@ class TestPythonHandler(unittest.TestCase):
         assert_equals(len(handlers), 3)
         for handler in handlers:
             assert_true(handler.name in ['Foo','Bar','Zap'])
-            assert_equals(handler.minargs, 0)
-            assert_equals(handler.maxargs, sys.maxint)
+            assert_equals(handler.arguments.minargs, 0)
+            assert_equals(handler.arguments.maxargs, sys.maxint)
 
 
 class TestDynamicHandlerCreation(unittest.TestCase):
