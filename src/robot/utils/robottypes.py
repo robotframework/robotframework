@@ -129,8 +129,3 @@ def type_as_str(item, printable=False):
         ret = _printable_type_mapping[ret]
     return ret
 
-def safe_repr(item):
-    try:
-        return unic(repr(item))
-    except UnicodeError:
-        return repr(unic(item))

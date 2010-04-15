@@ -36,7 +36,7 @@ from robottime import get_timestamp, get_start_timestamp, format_time, \
         timestamp_to_secs, parse_time
 from robottypes import is_list, is_tuple, is_scalar, is_str, is_integer, \
         is_boolean, is_number, is_list_of_str, to_boolean, to_list, \
-        dict2map, type_as_str, safe_repr
+        dict2map, type_as_str
 from unic import unic
 from encoding import decode_output, encode_output
 from robotversion import get_version, get_java_version
