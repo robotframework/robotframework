@@ -253,7 +253,7 @@ class _BaseKeywordDoc(_DocHelper):
         self.type = library.type
 
     def __cmp__(self, other):
-        return cmp(self.name, other.name)
+        return cmp(self.name.lower(), other.name.lower())
 
     def __getattr__(self, name):
         if name == 'argstr':
