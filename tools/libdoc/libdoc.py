@@ -454,14 +454,13 @@ body {
 }
 a.name, span.name {  
   font-style: italic;
-  color: black;
 }
-a:link, a:visited {
-  color: black;
+a, a:link, a:visited {
+  color: #c30;
 }
 a:hover, a:active {
   text-decoration: underline;
-  color: #666;
+  color: black;
 }
 div.shortcuts {
   margin: 1em 0em;
@@ -469,6 +468,7 @@ div.shortcuts {
 }
 div.shortcuts a {
   text-decoration: none;
+  color: black;
 }
 div.shortcuts a:hover {
   text-decoration: underline;
@@ -491,7 +491,7 @@ table.keywords th {
 }
 table.keywords td.kw {
   width: 150px;
-  color: black;
+  font-weight: bold;
 }
 table.keywords td.arg {
   width: 300px;
