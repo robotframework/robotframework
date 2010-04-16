@@ -19,9 +19,13 @@ def unic(item, *args):
     # Based on a recipe from http://code.activestate.com/recipes/466341
     try:
         return unicode(item, *args)
-    except UnicodeDecodeError:
-        ascii_text = str(item).encode('string_escape')
-        return unicode(ascii_text)
+    except UnicodeError:
+        try:
+            ascii_text = str(item).encode('string_escape')
+        except UnicodeError:
+            return "<unrepresentable object '%s'>" % item.__class__.__name__
+        else:
+            return unicode(ascii_text)
 
 
 if sys.platform.startswith('java'):
