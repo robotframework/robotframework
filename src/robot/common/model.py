@@ -63,7 +63,7 @@ class _TestAndSuiteHelper:
         return self.name
 
     def __repr__(self):
-        return "'%s'" % self.name
+        return repr(self.name)
 
 
 class BaseTestSuite(_TestAndSuiteHelper):
