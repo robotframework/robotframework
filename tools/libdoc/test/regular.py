@@ -1,4 +1,6 @@
 class regular:
+    ROBOT_LIBRARY_SCOPE = 'TEST SUITE'
+
     """This is a very regular test library"""
 
     def __init__(self, arg1='hello', arg2='world'):

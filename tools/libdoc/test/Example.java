@@ -4,6 +4,8 @@
  * This library is only used in an example and it does't do anything useful.
  */
 public class Example {
+    public static final String ROBOT_LIBRARY_VERSION = "1.0";
+    public static final String ROBOT_LIBRARY_SCOPE = "GLOBAL";
 
     /**
      * Creates new Example test library 1

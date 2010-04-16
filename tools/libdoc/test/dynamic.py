@@ -1,7 +1,7 @@
 class dynamic:
 
     def get_keyword_names(self):
-        return ['KW 1', 'KW 2']
+        return ['Keyword 1', 'KW 2']
 
     def run_keyword(self, name, args):
         print name, args
@@ -12,10 +12,11 @@ class dynamic:
     def get_keyword_documentation(self, name):
         return '''Dummy documentation for `%s`.
 
-Neither `KW 1` or `KW 2` do anything really interesting.
+Neither `Keyword 1` or `KW 2` do anything really interesting.
+They do, however, accept some `arguments`.
 
 Examples:
-| KW 1 | arg |
+| Keyword 1 | arg |
 | KW 1 | arg | arg 2 |
 | KW 2 | arg | arg 2 |
 
