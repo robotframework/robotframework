@@ -1,6 +1,6 @@
 *** Settings ***
 Library    UnicodeLibrary
-Library    TraceLogArgsLibrary.py
+Library    TraceLogArgsLibrary
 Suite Setup  Set Unicode Repr Object As Variable
 
 

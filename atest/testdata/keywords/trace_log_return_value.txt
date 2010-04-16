@@ -1,6 +1,6 @@
 *** Settings ***
 Library    UnicodeLibrary
-Library    TraceLogArgsLibrary.py
+Library    TraceLogArgsLibrary
 
 
 *** Test Cases ***
