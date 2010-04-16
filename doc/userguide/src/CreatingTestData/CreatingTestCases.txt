@@ -208,12 +208,11 @@ approaches can naturally be used together.
 
 `--settag`:opt: command line option
    All executed test cases get tags set with this option in addition
-   to tags they got elsewhere. This option is only available in Robot
-   Framework version 1.8.3 and newer.
+   to tags they got elsewhere.
 
 `Set Tags`:name: and `Remove Tags`:name: keywords 
    These `BuiltIn keywords`_ can be used to modify tags during the
-   test execution.  Available in Robot Framework 2.0.3 and newer.
+   test execution.
 
 Tags are free text, but they are normalized so that they are converted
 to lowercase and all spaces are removed. If a test case gets the same tag
