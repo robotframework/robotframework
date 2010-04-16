@@ -43,8 +43,8 @@ class _KeywordArguments(object):
     def _tracelog_args(self, logger, posargs, namedargs={}):
         if not logger:
             return
-        args = [ repr(a) for a in posargs ] \
-             + [ '%s=%r' % (utils.unic(a), namedargs[a]) for a in namedargs ]
+        args = [ utils.unic(a) for a in posargs ] \
+             + [ '%s=%s' % (utils.unic(a), utils.unic(namedargs[a])) for a in namedargs ]
         logger.trace('Arguments: [ %s ]' % ' | '.join(args))
 
 
@@ -270,7 +270,7 @@ class UserKeywordArguments(object):
     def _get_arguments_as_string(self, variables):
         args = []
         for name in self.names + (self._vararg and [self._vararg] or []):
-            args.append('%s=%r' % (name, variables[name]))
+            args.append('%s=%s' % (name, utils.unic(variables[name])))
         return ' | '.join(args)
 
 
