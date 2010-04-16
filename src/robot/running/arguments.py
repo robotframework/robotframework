@@ -41,12 +41,14 @@ class _KeywordArguments(object):
         self._arg_limit_checker.check_arg_limits(args, namedargs)
 
     def _tracelog_args(self, logger, posargs, namedargs={}):
-        if not logger:
+        if self._logger_not_available_during_library_init(logger):
             return
         args = [ utils.unic(a) for a in posargs ] \
              + [ '%s=%s' % (utils.unic(a), utils.unic(namedargs[a])) for a in namedargs ]
         logger.trace('Arguments: [ %s ]' % ' | '.join(args))
 
+    def _logger_not_available_during_library_init(self, logger):
+        return not logger
 
 class PythonKeywordArguments(_KeywordArguments):
 
