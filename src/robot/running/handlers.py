@@ -85,19 +85,24 @@ class _RunnableHandler(_BaseHandler):
         return None
 
     def run(self, output, namespace, args):
-        posargs, kwargs = self.arguments.resolve(args, namespace.variables,
-                                                 output)
+        positional, named = self.arguments.resolve(args, namespace.variables,
+                                                   output)
+        runner = self._runner_for(self._current_handler(), output, positional,
+                                  named, self._get_timeout(namespace))
+        return self._run_handler_with_output_captured(runner, output)
+
+    def _runner_for(self, handler, output, positional, named, timeout):
+        if timeout and timeout.active():
+            return lambda: timeout.run(handler, args=positional, kwargs=named,
+                                       logger=output)
+        return lambda: handler(*positional, **named)
+
+    def _run_handler_with_output_captured(self, runner, output):
+        utils.capture_output()
         try:
-            return self._run_handler(self._current_handler(), output, posargs,
-                                     kwargs, self._get_timeout(namespace))
+            return runner()
         finally:
             self._release_and_log_output(output)
-
-    def _run_handler(self, handler, output, posargs, kwargs, timeout):
-        utils.capture_output() # Must be done right before run
-        if timeout and timeout.active():
-            return timeout.run(handler, args=posargs, kwargs=kwargs, logger=output)
-        return handler(*posargs, **kwargs)
 
     def _release_and_log_output(self, logger):
         stdout, stderr = utils.release_output()
