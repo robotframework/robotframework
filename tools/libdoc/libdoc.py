@@ -42,6 +42,10 @@ Options:
  -T --title title         Sets the title of the generated HTML documentation.
                           Underscores in the given title are automatically
                           converted to spaces.
+ -S --styles styles       Overrides the default styles. If the given 'styles'
+                          is a path to an existing files, styles will be read
+                          from it. If it is string a 'NONE', no styles will be
+                          used. Otherwise the given text is used as-is.
  -P --pythonpath path *   Additional path(s) to insert into PYTHONPATH.
  -E --escape what:with *  Escapes characters which are problematic in console.
                           'what' is the name of the character to escape and
@@ -54,6 +58,7 @@ http://code.google.com/p/robotframework/wiki/LibraryDocumentationTool
 or tools/libdoc/doc/libdoc.html file inside source distributions.
 """
 
+from __future__ import with_statement
 import sys
 import os
 import re
@@ -75,17 +80,28 @@ def _uploading(output):
     return output.startswith('http://')
 
 
-def create_html_doc(lib, outpath, title=None):
+def create_html_doc(lib, outpath, title=None, styles=None):
     if title:
         title = title.replace('_', ' ')
     else:
         title = lib.name
     generated = utils.get_timestamp(daysep='-', millissep=None)
-    namespace = Namespace(LIB=lib, TITLE=title, GENERATED=generated)
-    doc = Template(template=DOCUMENT_TEMPLATE).generate(namespace) + '\n'
+    namespace = Namespace(LIB=lib, TITLE=title, STYLES=_get_styles(styles),
+                          GENERATED=generated)
+    doc = Template(template=HTML_TEMPLATE).generate(namespace) + '\n'
     outfile = open(outpath, 'w')
     outfile.write(doc.encode('UTF-8'))
     outfile.close()
+
+def _get_styles(styles):
+    if not styles:
+        return DEFAULT_STYLES
+    if styles.upper() == 'NONE':
+        return ''
+    if os.path.isfile(styles):
+        with open(styles) as f:
+            return f.read()
+    return styles
 
 
 def create_xml_doc(lib, outpath):
@@ -457,11 +473,7 @@ class _ErrorParser(HTMLParser):
             self.errors.append(data)
 
 
-DOCUMENT_TEMPLATE = '''<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<html>
-<head>
-<title>${TITLE}</title>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+DEFAULT_STYLES = '''
 <style media="all" type="text/css">
 body {
   background: white;
@@ -542,6 +554,15 @@ a {
   text-decoration: none;
 }
 </style>
+'''.strip()
+
+
+HTML_TEMPLATE = '''<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<title>${TITLE}</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+${STYLES}
 </head>
 <body>
 <h1>${TITLE}</h1>
@@ -557,7 +578,7 @@ a {
 
 <!-- IF ${LIB.inits} -->
 <h2 id="importing">Importing</h2>
-<table class="keywords">
+<table border="1" class="keywords">
 <tr>
   <th class="arg">Arguments</th>
   <th class="doc">Documentation</th>
@@ -582,7 +603,7 @@ a {
 </div>
 
 <h2>Keywords</h2>
-<table class="keywords">
+<table border="1" class="keywords">
 <tr>
   <th class="kw">Keyword</th>
   <th class="arg">Arguments</th>
@@ -643,7 +664,7 @@ if __name__ == '__main__':
                 output = get_unique_path(os.path.join(output, library.name), format.lower())
             output = os.path.abspath(output)
             if format == 'HTML':
-                create_html_doc(library, output, opts['title'])
+                create_html_doc(library, output, opts['title'], opts['styles'])
             else:
                 create_xml_doc(library, output)
     except Information, msg:

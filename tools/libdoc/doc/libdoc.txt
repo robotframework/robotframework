@@ -48,6 +48,10 @@ Options
   -T, --title <title>      Sets the title of the generated HTML documentation.
                            Underscores in the given title are automatically
                            converted to spaces.
+  -S, --styles <styles>    Overrides the default styles. If the given `styles`
+                           is a path to an existing files, styles will be read
+                           from it. If it is a string `NONE`, no styles will be
+                           used. Otherwise the given text is used as-is.
   -P, --pythonpath <path>  Additional path(s) to insert into PYTHONPATH.
   -E, --escape <what:with>  Escapes characters which are problematic in console.
                            :opt:`what` is the name of the character to escape 
