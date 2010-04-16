@@ -93,7 +93,8 @@ class RunnableTestSuite(BaseTestSuite):
                                       % '\n'.join(errors))
 
     def _run_setup(self, output):
-        self._run_errors.setup_err(self._run_fixture(self.setup, output))
+        if not self._run_errors:
+            self._run_errors.setup_err(self._run_fixture(self.setup, output))
 
     def _run_teardown(self, output):
         td_err = self._run_fixture(self.teardown, output)
@@ -101,7 +102,7 @@ class RunnableTestSuite(BaseTestSuite):
             self.suite_teardown_failed('Suite teardown failed:\n%s' % td_err)
 
     def _run_fixture(self, fixture, output):
-        if fixture and not self._run_errors:
+        if fixture:
             try:
                 fixture.run(output, self.namespace)
             except ExecutionFailed:
