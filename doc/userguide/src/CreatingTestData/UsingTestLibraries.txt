@@ -32,6 +32,8 @@ modules or Java libraries in packages, the full name including the
 module or package name must be used. In those cases where the library
 needs arguments, they are listed in the columns after the library
 name. Both the library name and arguments can be set using variables.
+Starting from Robot Framework 2.5, it is possible to set arguments
+using the `named arguments`_ syntax.
 
 .. table:: Importing test libraries
    :class: example

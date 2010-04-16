@@ -113,6 +113,49 @@ test case specific settings listed earlier.
    their own section.
 
 
+Using arguments
+~~~~~~~~~~~~~~~
+
+Positional arguments
+''''''''''''''''''''
+
+The most common way to specify arguments to keywords is to give the values by position.
+
+.. table:: Named argument examples
+   :class: example
+
+   +------------------+-----------------+----------------------+
+   |  Test Case       |     Action      |       Argument       |
+   +==================+=================+======================+
+   | Should Be Equal  |  1              | 2                    |
+   +------------------+-----------------+----------------------+
+
+Named arguments
+'''''''''''''''
+
+If a keyword accepts arguments that have default values, it is also possible to
+give the arguments using named argument syntax, 'argname=value'. This is especially
+useful if a keyword accepts multiple arguments that have default values.
+
+Consider using keyword `Start Process` from OperatingSystem library which takes
+following arguments: `command, stdin=None, alias=None`. Using named arguments
+it is possible to set `alias` wihtout specifying `stdin`:
+
+.. table:: Named argument examples
+   :class: example
+
+   +--------------+-----------------+----------------------+----------------------------+
+   |  Test Case   |     Action      |       Argument       |           Argument         |
+   +==============+=================+======================+============================+
+   | Example      | Start Process   | ${process name}      | alias=MyAlias              |
+   +--------------+-----------------+----------------------+----------------------------+
+
+This syntax can be used with user keywords and test libraries that are implemented
+with Python and that are not using the `dynamic library API`_.
+
+.. note:: Using named arguments only works with Robot Framework 2.5 or newer.
+
+
 Test case name and documentation
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
