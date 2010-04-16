@@ -59,20 +59,64 @@ class RunnableTestSuite(BaseTestSuite):
         self._exit_on_failure = False
 
     def run(self, output, parent=None, error=None):
+        self._start_run(output, parent, error)
+        self._run_setup(output)
+        self._run_sub_suites(output)
+        self._run_tests(output)
+        self._report_status(output)
+        self._run_teardown(output)
+        self._end_run(output)
+
+    def _start_run(self, output, parent, error):
+        self._run_errors = _RunErrors(error)
+        self._init_run(parent)
+        self._set_variable_dependent_metadata(self.namespace.variables)
+        output.start_suite(self)
+
+    def _init_run(self, parent):
         self.status = 'RUNNING'
         self.starttime = utils.get_timestamp()
         self.namespace = Namespace(self, parent)
         self.namespace.variables['${SUITE_NAME}'] = self.longname
         self.namespace.variables['${SUITE_SOURCE}'] = self.source
-        init_err = self._init_suite(self.namespace.variables)
-        output.start_suite(self)
-        setup_err = self._run_fixture(self.setup, output, error, init_err)
-        child_err = self._get_child_error(error, init_err, setup_err)
+
+    def _set_variable_dependent_metadata(self, varz):
+        errors = []
+        self.doc = varz.replace_meta('Documentation', self.doc, errors)
+        self.setup = Setup(varz.replace_meta('Setup', self.setup, errors))
+        self.teardown = Teardown(
+            varz.replace_meta('Teardown', self.teardown, errors))
+        for name, value in self.metadata.items():
+            self.metadata[name] = varz.replace_meta(name, value, errors)
+        if errors:
+            self._run_errors.init_err('Suite initialization failed:\n%s'
+                                      % '\n'.join(errors))
+
+    def _run_setup(self, output):
+        self._run_errors.setup_err(self._run_fixture(self.setup, output))
+
+    def _run_teardown(self, output):
+        td_err = self._run_fixture(self.teardown, output)
+        if td_err:
+            self.suite_teardown_failed('Suite teardown failed:\n%s' % td_err)
+
+    def _run_fixture(self, fixture, output):
+        if fixture and not self._run_errors:
+            try:
+                fixture.run(output, self.namespace)
+            except ExecutionFailed:
+                return utils.get_error_message()
+
+    def _run_sub_suites(self, output):
+        child_err = self._run_errors.child_error()
         for suite in self.suites:
             suite.run(output, self, child_err)
             if self._exit_on_failure and not child_err and \
                    suite.critical_stats.failed:
                 child_err = self._exit_on_failure_error
+
+    def _run_tests(self, output):
+        child_err = self._run_errors.child_error()
         executed_tests = []
         for test in self.tests:
             normname = utils.normalize(test.name)
@@ -85,55 +129,19 @@ class RunnableTestSuite(BaseTestSuite):
                     test.status == 'FAIL' and test.critical == 'yes':
                 child_err = self._exit_on_failure_error
             self._set_prev_test_variables(self.namespace.variables, test)
+
+    def _report_status(self, output):
         self.set_status()
-        self.message = self._get_my_error(error, init_err, setup_err)
+        self.message = self._run_errors.suite_error()
         self.namespace.variables['${SUITE_STATUS}'] = self.status
         self.namespace.variables['${SUITE_MESSAGE}'] = self.get_full_message()
-        td_err = self._run_fixture(self.teardown, output, error, init_err)
-        if td_err:
-            self.suite_teardown_failed('Suite teardown failed:\n%s' % td_err)
+
+    def _end_run(self, output):
         self.endtime = utils.get_timestamp()
         self.elapsedtime = utils.get_elapsed_time(self.starttime, self.endtime)
-        self._set_prev_test_variables(GLOBAL_VARIABLES,
-                                      varz=self.namespace.variables)
+        self._set_prev_test_variables(GLOBAL_VARIABLES, varz=self.namespace.variables)
         output.end_suite(self)
         self.namespace.end_suite()
-
-    def _init_suite(self, varz):
-        errors = []
-        self.doc = varz.replace_meta('Documentation', self.doc, errors)
-        self.setup = Setup(varz.replace_meta('Setup', self.setup, errors))
-        self.teardown = Teardown(
-            varz.replace_meta('Teardown', self.teardown, errors))
-        for name, value in self.metadata.items():
-            self.metadata[name] = varz.replace_meta(name, value, errors)
-        if errors:
-            return 'Suite initialization failed:\n%s' % '\n'.join(errors)
-
-    def _get_child_error(self, error, init_error, setup_error):
-        if error:
-            return error
-        if init_error:
-            return 'Initialization of the parent suite failed.'
-        if setup_error:
-            return 'Setup of the parent suite failed.'
-        return None
-
-    def _get_my_error(self, error, init_error, setup_error):
-        if error:
-            return error
-        if init_error:
-            return init_error
-        if setup_error:
-            return 'Suite setup failed:\n%s' % setup_error
-        return ''
-
-    def _run_fixture(self, fixture, output, error, init_error):
-        if fixture and not (error or init_error):
-            try:
-                fixture.run(output, self.namespace)
-            except ExecutionFailed:
-                return utils.get_error_message()
 
     def _set_prev_test_variables(self, destination, test=None, varz=None):
         if test is not None:
@@ -144,6 +152,41 @@ class RunnableTestSuite(BaseTestSuite):
         destination['${PREV_TEST_NAME}'] = name
         destination['${PREV_TEST_STATUS}'] = status
         destination['${PREV_TEST_MESSAGE}'] = message
+
+
+class _RunErrors(object):
+
+    def __init__(self, err):
+        self._parent_err = err
+        self._init_err = None
+        self._setup_err = None
+
+    def __nonzero__(self):
+        return bool(self._parent_err or self._init_err or self._setup_err)
+
+    def init_err(self, err):
+        self._init_err = err
+
+    def setup_err(self, err):
+        self._setup_err = err
+
+    def suite_error(self):
+        if self._parent_err:
+            return self._parent_err
+        if self._init_err:
+            return self._init_err
+        if self._setup_err:
+            return 'Suite setup failed:\n%s' % self._setup_err
+        return ''
+
+    def child_error(self):
+        if self._parent_err:
+            return self._parent_err
+        if self._init_err:
+            return 'Initialization of the parent suite failed.'
+        if self._setup_err:
+            return 'Setup of the parent suite failed.'
+        return None
 
 
 class RunnableTestCase(BaseTestCase):
