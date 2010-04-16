@@ -91,7 +91,9 @@ if os.name == 'java':
             return ByteArrayOutputStream()
 
         def _get_msg(self, key):
-            return self._outs[key].toString()
+            output = self._outs[key]
+            output.flush()
+            return output.toString('UTF-8')
 
 
 class _OutputCapture:
@@ -115,8 +117,8 @@ class _OutputCapture:
             self._orig_java_err = System.err
             self._capt_java_out = _JavaOutput()
             self._capt_java_err = _JavaOutput()
-            System.setOut(PrintStream(self._capt_java_out))
-            System.setErr(PrintStream(self._capt_java_err))
+            System.setOut(PrintStream(self._capt_java_out, False, 'UTF-8'))
+            System.setErr(PrintStream(self._capt_java_err, False, 'UTF-8'))
 
     def release_output(self):
         self._sema.acquire()
@@ -131,7 +133,7 @@ class _OutputCapture:
         if os.name == 'java':
             out = self._capt_java_out.get_value()
             err = self._capt_java_err.get_value()
-            if (out, err) !=  ('', ''):
+            if out or err:
                 return out, err
         return sys.stdout.get_value(), sys.stderr.get_value()
 
