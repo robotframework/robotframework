@@ -1,6 +1,7 @@
 *** Settings ***
 Suite Setup     Run Tests  --loglevel TRACE  keywords/trace_log_return_value.txt
-Force Tags      regression  pybot  jybot
+Force Tags      regression
+Default Tags    pybot  jybot
 Resource        atest_resource.txt
 
 *** Test Cases ***
@@ -30,3 +31,18 @@ Return Non Ascii String
 Return Object With Unicode Repr
     ${test} =  Check Test Case  ${TESTNAME}
     Check Log Message  ${test.kws[0].msgs[2]}  Return: u'Circle is 360\\xb0, Hyv\\xe4\\xe4 \\xfc\\xf6t\\xe4, \\u0989\\u09c4 \\u09f0 \\u09fa \\u099f \\u09eb \\u09ea \\u09b9'  TRACE
+
+Return Object with Invalid Unicode Repr with Python
+    [Tags]  pybot
+    ${test} =  Check Test Case  Return Object with Invalid Unicode Repr
+    Check Log Message  ${test.kws[0].msgs[1]}  Return: u'Hyv\\xe4'  TRACE
+
+Return Object with Invalid Unicode Repr with Jython
+    [Tags]  jybot
+    ${test} =  Check Test Case  Return Object with Invalid Unicode Repr
+    Comment  Next value is invalid , but that is the value Jython 2.5.1 returns
+    Check Log Message  ${test.kws[0].msgs[1]}  Return: Hyvä  TRACE
+
+Return Object with Non Ascii String from Repr
+    ${test} =  Check Test Case  ${TESTNAME}
+    Check Log Message  ${test.kws[0].msgs[1]}  Return: Hyv\\xe4  TRACE
