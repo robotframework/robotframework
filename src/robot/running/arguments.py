@@ -43,8 +43,8 @@ class _KeywordArguments(object):
     def _tracelog_args(self, logger, posargs, namedargs={}):
         if self._logger_not_available_during_library_init(logger):
             return
-        args = [ utils.unic(a) for a in posargs ] \
-             + [ '%s=%s' % (utils.unic(a), utils.unic(namedargs[a])) for a in namedargs ]
+        args = [ utils.safe_repr(a) for a in posargs ] \
+             + [ '%s=%s' % (utils.unic(a), utils.safe_repr(namedargs[a])) for a in namedargs ]
         logger.trace('Arguments: [ %s ]' % ' | '.join(args))
 
     def _logger_not_available_during_library_init(self, logger):
@@ -272,7 +272,7 @@ class UserKeywordArguments(object):
     def _get_arguments_as_string(self, variables):
         args = []
         for name in self.names + (self._vararg and [self._vararg] or []):
-            args.append('%s=%s' % (name, utils.unic(variables[name])))
+            args.append('%s=%s' % (name, utils.safe_repr(variables[name])))
         return ' | '.join(args)
 
 

@@ -129,3 +129,8 @@ def type_as_str(item, printable=False):
         ret = _printable_type_mapping[ret]
     return ret
 
+def safe_repr(item):
+    try:
+        return repr(item)
+    except Exception:
+        return "<invalid repr in class '%s'>" % (item.__class__)
