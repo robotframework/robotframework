@@ -3,7 +3,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<meta name="generator" content="Docutils 0.5: http://docutils.sourceforge.net/" />
+<meta name="generator" content="Docutils 0.6: http://docutils.sourceforge.net/" />
 <title>libdoc.py</title>
 <style type="text/css">
 
@@ -584,6 +584,13 @@ where the script is executed from.</td></tr>
 Underscores in the given title are automatically
 converted to spaces.</td></tr>
 <tr><td class="option-group" colspan="2">
+<kbd><span class="option">-S</span>, <span class="option">--styles <var>&lt;styles&gt;</var></span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>Overrides the default styles. If the given <cite>styles</cite>
+is a path to an existing files, styles will be read
+from it. If it is string <cite>NONE</cite>, no styles will be
+used. Otherwise the given text is used as-is.</td></tr>
+<tr><td class="option-group" colspan="2">
 <kbd><span class="option">-P</span>, <span class="option">--pythonpath <var>&lt;path&gt;</var></span></kbd></td>
 </tr>
 <tr><td>&nbsp;</td><td>Additional path(s) to insert into PYTHONPATH.</td></tr>
@@ -707,27 +714,27 @@ writing Javadoc should be used. The documentation is generated based
 on the Javadocs in the source files. For example following simple
 example has exactly same documentation (and functionality) than the
 earlier Python example.</p>
-<div class="highlight"><pre><span class="c">/**</span>
-<span class="c"> * Library for demo purposes.</span>
-<span class="c"> *</span>
-<span class="c"> * This library is only used in an example and it does&#39;t do anything useful.</span>
-<span class="c"> */</span>
-<span class="k">public</span> <span class="k">class</span> <span class="nc">ExampleLib</span> <span class="o">{</span>
+<div class="highlight"><pre><span class="cm">/**</span>
+<span class="cm"> * Library for demo purposes.</span>
+<span class="cm"> *</span>
+<span class="cm"> * This library is only used in an example and it does&#39;t do anything useful.</span>
+<span class="cm"> */</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">ExampleLib</span> <span class="o">{</span>
 
-    <span class="c">/**</span>
-<span class="c">     * Does nothing</span>
-<span class="c">     */</span>
-    <span class="k">public</span> <span class="kt">void</span> <span class="nf">myKeyword</span><span class="o">()</span> <span class="o">{</span>
+    <span class="cm">/**</span>
+<span class="cm">     * Does nothing</span>
+<span class="cm">     */</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">myKeyword</span><span class="o">()</span> <span class="o">{</span>
     <span class="o">}</span>
 
-    <span class="c">/**</span>
-<span class="c">     * Takes one argument and *does nothing* with it.</span>
-<span class="c">     *</span>
-<span class="c">     * Example:</span>
-<span class="c">     * | Your Keyword | xxx |</span>
-<span class="c">     * | Your Keyword | yyy |</span>
-<span class="c">     */</span>
-    <span class="k">public</span> <span class="kt">void</span> <span class="nf">yourKeyword</span><span class="o">(</span><span class="n">String</span> <span class="n">arg</span><span class="o">)</span> <span class="o">{</span>
+    <span class="cm">/**</span>
+<span class="cm">     * Takes one argument and *does nothing* with it.</span>
+<span class="cm">     *</span>
+<span class="cm">     * Example:</span>
+<span class="cm">     * | Your Keyword | xxx |</span>
+<span class="cm">     * | Your Keyword | yyy |</span>
+<span class="cm">     */</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">yourKeyword</span><span class="o">(</span><span class="n">String</span> <span class="n">arg</span><span class="o">)</span> <span class="o">{</span>
     <span class="o">}</span>
 <span class="o">}</span>
 </pre></div>
@@ -915,7 +922,7 @@ regardless where keywords originated from.</p>
 </div>
 <div class="footer">
 <hr class="footer" />
-Generated on: 2010-02-05 22:51 UTC.
+Generated on: 2010-04-16 22:28 UTC.
 
 </div>
 </body>
