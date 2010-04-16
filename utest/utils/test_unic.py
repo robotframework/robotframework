@@ -7,9 +7,9 @@ if is_jython:
     import UnicodeJavaLibrary
 
 
-class TestUnic(unittest.TestCase):
+if is_jython:
+    class TestUnic(unittest.TestCase):
 
-    if is_jython:
         def test_with_java_object(self):
             data = u'This is unicode \xe4\xf6'
             assert_equals(unic(JavaObject(data)), data)
@@ -25,6 +25,26 @@ class TestUnic(unittest.TestCase):
             iterator = UnicodeJavaLibrary().javaIterator()
             assert_true('java.util' in unic(iterator))
             assert_true('Circle is 360' in iterator.next())
+
+
+class TestUnic(unittest.TestCase):
+
+    def test_object_containing_unicode_repr(self):
+        assert_equals(unic(UnicodeRepr()), u'Hyv\xe4')
+
+    def test_list_with_objects_containing_unicode_repr(self):
+        objects = [UnicodeRepr(), UnicodeRepr()]
+        if is_jython:
+            expected = '[Hyv\\xe4, Hyv\\xe4]' # This is actually wrong behavior
+        else:
+            expected = "<unrepresentable object 'list'>"
+        assert_equals(unic(objects), expected)
+
+
+class UnicodeRepr:
+
+    def __repr__(self):
+        return u'Hyv\xe4'
 
 
 if __name__ == '__main__':
