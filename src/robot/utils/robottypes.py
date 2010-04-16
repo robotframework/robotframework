@@ -131,6 +131,6 @@ def type_as_str(item, printable=False):
 
 def safe_repr(item):
     try:
-        return repr(item)
-    except Exception:
-        return "<invalid repr in class '%s'>" % (item.__class__)
+        return unic(repr(item))
+    except UnicodeError:
+        return repr(unic(item))
