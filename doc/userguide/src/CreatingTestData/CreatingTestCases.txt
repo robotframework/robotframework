@@ -93,12 +93,12 @@ below and explained later in this section.
    ==================  ===========================  ==================  ===============
 
 
-Test-case-related settings in the Setting table
+Test case related settings in the Setting table
 '''''''''''''''''''''''''''''''''''''''''''''''
 
-The Setting table can have the following test-case-related
+The Setting table can have the following test case related
 settings. These settings are mainly default values for the
-test-case-specific settings listed earlier.
+test case specific settings listed earlier.
 
 `Force Tags`:opt:, `Default Tags`:opt:
    The forced and default values for tags_.

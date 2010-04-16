@@ -84,12 +84,12 @@ borrowed from Python, where files named in this manner denote that a
 directory is a module.
 
 The main usage of initialization files is setting test-suite-related
-settings, but setting `test-case-related settings`__ is also possible.
+settings, but setting `test case related settings`__ is also possible.
 However, only :opt:`Force Tags` is generally useful, because
 others are only default values for the same settings in lower-level files,
 and even they are default values for the `settings in the Test Case table`_.
 
-__ `Test-case-related settings in the Setting table`_
+__ `Test case related settings in the Setting table`_
 
 
 .. table:: An example test suite initialization file
