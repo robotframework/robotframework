@@ -92,6 +92,7 @@ def create_xml_doc(lib, outpath):
     writer = utils.XmlWriter(outpath)
     writer.start('keywordspec', {'name': lib.name, 'type': lib.type, 'generated': utils.get_timestamp(millissep=None)})
     writer.element('version', lib.version)
+    writer.element('scope', lib.scope)
     writer.element('doc', lib.doc)
     _write_keywords_to_xml(writer, 'init', lib.inits)
     _write_keywords_to_xml(writer, 'kw', lib.keywords)
@@ -190,6 +191,7 @@ class PythonLibraryDoc(_DocHelper):
         lib = self._import(name, arguments)
         self.name = newname or lib.name
         self.version = utils.html_escape(getattr(lib, 'version', '<unknown>'))
+        self.scope = self._get_scope(lib)
         self.doc = self._process_doc(self._get_doc(lib))
         self.inits = self._get_initializers(lib)
         self.keywords = [ KeywordDoc(handler, self) 
@@ -198,6 +200,12 @@ class PythonLibraryDoc(_DocHelper):
 
     def _import(self, name, args):
         return TestLibrary(name, args)
+    
+    def _get_scope(self, lib):
+        if hasattr(lib, 'scope'):
+            return {'TESTCASE': 'test case', 'TESTSUITE': 'test suite',
+                    'GLOBAL': 'global'}[lib.scope]
+        return ''
 
     def _get_doc(self, lib):
         return lib.doc or "Documentation for test library `%s`." % self.name
@@ -241,6 +249,7 @@ class XmlLibraryDoc(_DocHelper):
         self.name = dom.get_attr('name')
         self.type = dom.get_attr('type')
         self.version = dom.get_node('version').text
+        self.scope = dom.get_node('scope').text
         self.doc = dom.get_node('doc').text
         self.inits = [ XmlKeywordDoc(node, self) for node in dom.get_nodes('init') ]
         self.keywords = [ XmlKeywordDoc(node, self) for node in dom.get_nodes('kw') ]
@@ -317,7 +326,8 @@ if utils.is_jython:
         def __init__(self, path, newname=None):
             cls = self._get_class(path)
             self.name = newname or cls.qualifiedName()
-            self.version = utils.html_escape(self._get_version(cls))
+            self.version = self._get_version(cls)
+            self.scope = self._get_scope(cls)
             self.doc = self._process_doc(cls.getRawCommentText())
             self.keywords = [ JavaKeywordDoc(method, self) 
                               for method in cls.methods() ]
@@ -355,11 +365,19 @@ if utils.is_jython:
             return root.classes()[0]
 
         def _get_version(self, cls):
+            version = self._get_attr(cls, 'VERSION', '<unknown>')
+            return utils.html_escape(version)
+
+        def _get_scope(self, cls):
+            scope = self._get_attr(cls, 'SCOPE', 'TEST CASE')
+            return scope.replace('_', ' ').lower()
+
+        def _get_attr(self, cls, name, default):
             for field in cls.fields():
-                if field.name() == 'ROBOT_LIBRARY_VERSION' \
+                if field.name() == 'ROBOT_LIBRARY_' + name \
                         and field.isPublic() and field.constantValue():
                     return field.constantValue()
-            return '<unknown>'
+            return default
 
 
     class JavaKeywordDoc(_BaseKeywordDoc):
@@ -528,7 +546,10 @@ a {
 <body>
 <h1>${TITLE}</h1>
 <!-- IF "${LIB.version}" != "&lt;unknown&gt;" -->
-<p><b>Version:</b> ${LIB.version}</p>
+<b>Version:</b> ${LIB.version}<br>
+<!-- END IF -->
+<!-- IF "${LIB.type}" == "library" -->
+<b>Scope:</b> ${LIB.scope}</p>
 <!-- END IF -->
 
 <h2 id="introduction">Introduction</h2>
