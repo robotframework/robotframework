@@ -132,9 +132,9 @@ def _get_python_message(exc_type, exc_value):
         return unic(exc_type)
     name = _get_name(exc_type)
     try:
-        msg = unic(exc_value)
-    except UnicodeError:   # Happens at least if exception message is unicode
-        msg = unic(exc_value.args[0])
+        msg = unicode(exc_value)
+    except UnicodeError:  # Happens if message is Unicode and version < 2.6
+        msg = ' '.join(unic(a) for a in exc_value.args)
     return _format_message(name, msg)
 
 
