@@ -80,14 +80,14 @@ class RunnableTestSuite(BaseTestSuite):
         self.namespace.variables['${SUITE_NAME}'] = self.longname
         self.namespace.variables['${SUITE_SOURCE}'] = self.source
 
-    def _set_variable_dependent_metadata(self, varz):
+    def _set_variable_dependent_metadata(self, variables):
         errors = []
-        self.doc = varz.replace_meta('Documentation', self.doc, errors)
-        self.setup = Setup(varz.replace_meta('Setup', self.setup, errors))
+        self.doc = variables.replace_meta('Documentation', self.doc, errors)
+        self.setup = Setup(variables.replace_meta('Setup', self.setup, errors))
         self.teardown = Teardown(
-            varz.replace_meta('Teardown', self.teardown, errors))
+            variables.replace_meta('Teardown', self.teardown, errors))
         for name, value in self.metadata.items():
-            self.metadata[name] = varz.replace_meta(name, value, errors)
+            self.metadata[name] = variables.replace_meta(name, value, errors)
         if errors:
             self._run_errors.init_err('Suite initialization failed:\n%s'
                                       % '\n'.join(errors))
@@ -170,6 +170,9 @@ class _RunErrors(object):
     def setup_err(self, err):
         self._setup_err = err
 
+    def orig_or_init_error(self):
+        return self._parent_err or self._init_err
+
     def suite_error(self):
         if self._parent_err:
             return self._parent_err
@@ -203,21 +206,21 @@ class RunnableTestCase(BaseTestCase):
         self.keywords = [ KeywordFactory(kw) for kw in data.keywords ]
 
     def run(self, output, namespace, error=None):
-        self.status = 'RUNNING'
-        self.starttime = utils.get_timestamp()
-        init_err = self._init_test(namespace.variables)
-        error = error or init_err
-        namespace.start_test(self)
-        output.start_test(self)
-        if not error:
+        self._start_run(output, namespace, error)
+        if not self._run_errors.parent_errors():
             self._run(output, namespace)
         else:
             self.status = 'FAIL'
-            self.message = error
-        self.endtime = utils.get_timestamp()
-        self.elapsedtime = utils.get_elapsed_time(self.starttime, self.endtime)
-        output.end_test(self)
-        namespace.end_test()
+            self.message = self._run_errors.orig_or_init_error()
+        self._end_run(output, namespace)
+
+    def _start_run(self, output, namespace, error):
+        self._run_errors = _RunErrors(error)
+        self.status = 'RUNNING'
+        self.starttime = utils.get_timestamp()
+        self._run_errors.init_err(self._init_test(namespace.variables))
+        namespace.start_test(self)
+        output.start_test(self)
 
     def _init_test(self, varz):
         errors = []
@@ -251,6 +254,12 @@ class RunnableTestCase(BaseTestCase):
         if self.status == 'PASS' and self.timeout.timed_out():
             self.status = 'FAIL'
             self.message = self.timeout.get_message()
+
+    def _end_run(self, output, namespace):
+        self.endtime = utils.get_timestamp()
+        self.elapsedtime = utils.get_elapsed_time(self.starttime, self.endtime)
+        output.end_test(self)
+        namespace.end_test()
 
     def _run_fixture(self, fixture, output, namespace):
         if fixture:
