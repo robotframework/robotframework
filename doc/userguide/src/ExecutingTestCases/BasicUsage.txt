@@ -14,6 +14,16 @@ otherwise post-processed with the :prog:`rebot` tool.
 Starting test execution
 ~~~~~~~~~~~~~~~~~~~~~~~
 
+Synopsis
+''''''''
+
+::
+
+   pybot [options] datasources
+   jybot [options] datasources
+   interpreter /path/to/robot/runner.py [options] datasources
+
+
 Different runner scripts
 ''''''''''''''''''''''''
 
@@ -65,8 +75,7 @@ __ `Test suite name and documentation`_
 
    pybot test_cases.html
    pybot path/to/my_tests/
-   pybot /opt/robot/tests.html   
-   pybot c:\robot\tests.html
+   pybot c:\robot\tests.txt
    
 It is also possible to give paths to several test case files or
 directories at once, separated with spaces. In this case, Robot
@@ -118,9 +127,18 @@ Using command line options
 
 Robot Framework provides a number of command line options that can be
 used to control how test cases are executed and what outputs are
-generated. The syntax for using them is explained in this
-section. What options actually exist and how they can be used is
+generated. This section explains the option syntax, and what 
+options actually exist and how they can be used is
 discussed elsewhere in this chapter.
+
+Using options
+`````````````
+
+When options are used, they must always be given between the runner
+script and the data sources. For example::
+
+   pybot -L debug my_tests.txt
+   jybot --include smoke --variable HOST:10.0.0.42 path/to/tests/
 
 Short and long options
 ``````````````````````
