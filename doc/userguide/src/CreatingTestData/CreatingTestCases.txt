@@ -134,14 +134,26 @@ Named arguments
 '''''''''''''''
 
 If a keyword accepts arguments that have default values, it is also possible to
-give the arguments using named argument syntax, 'argname=value'. This is especially
-useful if a keyword accepts multiple arguments that have default values.
+give the arguments using named argument syntax, 'argname=value'. This is
+especially useful if a keyword accepts multiple arguments that have default
+values.
 
-Consider using keyword `Start Process` from OperatingSystem library which takes
-following arguments: `command, stdin=None, alias=None`. Using named arguments
-it is possible to set `alias` wihtout specifying `stdin`:
+This syntax can be used with user keywords and in importing test libraries and
+using keywords from test libraries that are implemented with Python and that
+are not using the `dynamic library API`_
+
+Following table demonstrates using named arguments in different scenarios:
 
 .. table:: Named argument examples
+   :class: example
+
+   +--------------+-----------------+----------------------+----------------------------+
+   |  Setting     |     Argument    |       Argument       |           Argument         |
+   +==============+=================+======================+============================+
+   | Library      | Telnet          | prompt=$             |                            |
+   +--------------+-----------------+----------------------+----------------------------+
+
+.. table::
    :class: example
 
    +--------------+-----------------+----------------------+----------------------------+
@@ -149,9 +161,20 @@ it is possible to set `alias` wihtout specifying `stdin`:
    +==============+=================+======================+============================+
    | Example      | Start Process   | ${process name}      | alias=MyAlias              |
    +--------------+-----------------+----------------------+----------------------------+
+   | Example      | My User Keyword | arg2=Hello           | arg3=World                 |
+   +--------------+-----------------+----------------------+----------------------------+
 
-This syntax can be used with user keywords and test libraries that are implemented
-with Python and that are not using the `dynamic library API`_.
+.. table::
+   :class: example
+
+   +--------------+-----------------+-----------+-----------------+-----------------+
+   |  Keywords    |     Action      | Argument  | Argument        | Argument        |
+   +==============+=================+===========+=================+=================+
+   | User Keyword |  [Arguments]    | ${arg1}   | ${arg2}=default | ${arg3}=default |
+   +--------------+-----------------+-----------+-----------------+-----------------+
+   | ...          |                 |           |                 |                 |
+   +--------------+-----------------+-----------+-----------------+-----------------+
+
 
 .. note:: Using named arguments only works with Robot Framework 2.5 or newer.
 
