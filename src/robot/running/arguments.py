@@ -44,11 +44,13 @@ class _KeywordArguments(object):
         if self._logger_not_available_during_library_init(logger):
             return
         args = [ utils.safe_repr(a) for a in posargs ] \
-             + [ '%s=%s' % (utils.unic(a), utils.safe_repr(namedargs[a])) for a in namedargs ]
+             + [ '%s=%s' % (utils.unic(a), utils.safe_repr(namedargs[a])) 
+                 for a in namedargs ]
         logger.trace('Arguments: [ %s ]' % ' | '.join(args))
 
     def _logger_not_available_during_library_init(self, logger):
         return not logger
+
 
 class PythonKeywordArguments(_KeywordArguments):
 
@@ -161,7 +163,7 @@ class DynamicKeywordArguments(_KeywordArguments):
                 raise TypeError
             return self._parse_arg_spec(list(argspec))
         except TypeError:
-            raise TypeError('Argument specification should be list/array of Strings.')
+            raise TypeError('Argument spec should be a list/array of strings')
 
     def _parse_arg_spec(self, argspec):
         if argspec == []:
@@ -175,7 +177,7 @@ class DynamicKeywordArguments(_KeywordArguments):
             if token.startswith('*'):
                 vararg = token[1:]
                 continue
-            if token.count('=') > 0:
+            if '=' in token:
                 arg, default = token.split('=', 1)
                 args.append(arg)
                 defaults.append(default)
@@ -218,11 +220,10 @@ class UserKeywordArguments(object):
         self._vararg = vararg
         self.minargs = minargs
         self._arg_limit_checker = _ArgLimitChecker(minargs, maxargs,
-                                                   name , 'Keyword')
+                                                   name, 'Keyword')
 
     def resolve(self, arguments, variables):
-        positional, varargs, named = self._resolve_arg_usage(arguments,
-                                                             variables)
+        positional, varargs, named = self._resolve_arg_usage(arguments, variables)
         self._arg_limit_checker.check_arg_limits(positional+varargs, named)
         argument_values = self._resolve_arg_values(variables, named, positional)
         argument_values += varargs
@@ -245,7 +246,7 @@ class UserKeywordArguments(object):
         resolver = UserKeywordArgumentResolver(self)
         positional, named = self._replace_variables(variables,
                                                     *resolver.resolve(arguments))
-        return self._split_args_and_varargs(positional) + (named, )
+        return self._split_args_and_varargs(positional) + (named,)
 
     def _replace_variables(self, variables, positional, named):
         for name in named:
@@ -271,14 +272,14 @@ class UserKeywordArguments(object):
 
     def _get_arguments_as_string(self, variables):
         args = []
-        for name in self.names + (self._vararg and [self._vararg] or []):
+        for name in self.names + ([self._vararg] if self._vararg else []):
             args.append('%s=%s' % (name, utils.safe_repr(variables[name])))
         return ' | '.join(args)
 
 
 class _MissingArg(object):
     def __getattr__(self, name):
-        raise RuntimeError()
+        raise RuntimeError
 
 
 class _ArgumentResolver(object):
@@ -326,7 +327,7 @@ class _ArgumentResolver(object):
     def _is_str_with_kwarg_sep(self, arg):
         if not isinstance(arg, basestring):
             return False
-        if not '=' in arg:
+        if '=' not in arg:
             return False
         return True
 
