@@ -207,11 +207,10 @@ class RunnableTestCase(BaseTestCase):
 
     def run(self, output, namespace, error=None):
         self._start_run(output, namespace, error)
-        if not self._run_errors.parent_errors():
+        if not self._run_preventing_errors():
             self._run(output, namespace)
         else:
-            self.status = 'FAIL'
-            self.message = self._run_errors.orig_or_init_error()
+            self._run_failed()
         self._end_run(output, namespace)
 
     def _start_run(self, output, namespace, error):
@@ -237,6 +236,9 @@ class RunnableTestCase(BaseTestCase):
         if not self.keywords:
             return 'Test case contains no keywords'
 
+    def _run_preventing_errors(self):
+        return self._run_errors.parent_errors()
+
     def _run(self, output, namespace):
         namespace.variables['${TEST_NAME}'] = self.name
         namespace.variables['@{TEST_TAGS}'] = self.tags
@@ -254,6 +256,10 @@ class RunnableTestCase(BaseTestCase):
         if self.status == 'PASS' and self.timeout.timed_out():
             self.status = 'FAIL'
             self.message = self.timeout.get_message()
+
+    def _run_failed(self):
+        self.status = 'FAIL'
+        self.message = self._run_errors.orig_or_init_error()
 
     def _end_run(self, output, namespace):
         self.endtime = utils.get_timestamp()
