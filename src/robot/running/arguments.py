@@ -214,10 +214,10 @@ class JavaInitArguments(JavaKeywordArguments):
 
 class UserKeywordArguments(object):
 
-    def __init__(self, argnames, defaults, vararg, minargs, maxargs, name):
+    def __init__(self, argnames, defaults, varargs, minargs, maxargs, name):
         self.names = list(argnames) # Python 2.5 does not support indexing tuples
         self.defaults = defaults
-        self._vararg = vararg
+        self.varargs = varargs
         self.minargs = minargs
         self._arg_limit_checker = _ArgLimitChecker(minargs, maxargs,
                                                    name, 'Keyword')
@@ -257,12 +257,12 @@ class UserKeywordArguments(object):
         before_varargs, varargs = self._split_args_and_varargs(arg_values)
         for name, value in zip(self.names, before_varargs):
             variables[name] = value
-        if self._vararg:
-            variables[self._vararg] = varargs
+        if self.varargs:
+            variables[self.varargs] = varargs
         self._tracelog_args(output, variables)
 
     def _split_args_and_varargs(self, args):
-        if not self._vararg:
+        if not self.varargs:
             return args, []
         return args[:len(self.names)], args[len(self.names):]
 
@@ -272,7 +272,7 @@ class UserKeywordArguments(object):
 
     def _get_arguments_as_string(self, variables):
         args = []
-        for name in self.names + ([self._vararg] if self._vararg else []):
+        for name in self.names + ([self.varargs] if self.varargs else []):
             args.append('%s=%s' % (name, utils.safe_repr(variables[name])))
         return ' | '.join(args)
 

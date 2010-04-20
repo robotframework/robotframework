@@ -59,6 +59,7 @@ def InitHandler(library, method):
 class _BaseHandler(object):
     type = 'library'
     longname = property(lambda self: '%s.%s' % (self.library.name, self.name))
+    doc = ''
     shortdoc = property(lambda self: self.doc.splitlines()[0] if self.doc else '')
 
     def __init__(self, library, handler_name, handler_method):
@@ -77,7 +78,6 @@ class _RunnableHandler(_BaseHandler):
         self._handler_name = handler_name
         self._method = self._get_initial_handler(library, handler_name,
                                                  handler_method)
-        self.doc = ''
 
     def _get_initial_handler(self, library, name, method):
         if library.scope == 'GLOBAL':
@@ -192,7 +192,7 @@ class _DynamicRunKeywordHandler(_DynamicHandler, _RunKeywordHandler):
     _get_timeout = _RunKeywordHandler._get_timeout
 
 
-class _PythonInitHandler(_BaseHandler):
+class _PythonInitHandler(_PythonHandler):
 
     def _parse_arguments(self, handler_method):
         return PythonInitArguments(handler_method, self.library.name)

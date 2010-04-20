@@ -111,12 +111,12 @@ class UserHandler(object):
         self._libname = libname
         self._set_variable_dependent_metadata(handlerdata.metadata)
         self.keywords = [ KeywordFactory(kw) for kw in handlerdata.keywords ]
-        self._arguments = UserKeywordArguments(handlerdata.args,
-                                               handlerdata.defaults,
-                                               handlerdata.varargs,
-                                               handlerdata.minargs,
-                                               handlerdata.maxargs,
-                                               self.longname)
+        self.arguments = UserKeywordArguments(handlerdata.args,
+                                              handlerdata.defaults,
+                                              handlerdata.varargs,
+                                              handlerdata.minargs,
+                                              handlerdata.maxargs,
+                                              self.longname)
         self.return_value = handlerdata.return_value
 
     def _set_variable_dependent_metadata(self, metadata):
@@ -139,8 +139,8 @@ class UserHandler(object):
             namespace.end_user_keyword()
 
     def _run(self, output, namespace, arguments):
-        argument_values = self._arguments.resolve(arguments, namespace.variables)
-        self._arguments.set_variables(argument_values, namespace.variables,
+        argument_values = self.arguments.resolve(arguments, namespace.variables)
+        self.arguments.set_variables(argument_values, namespace.variables,
                                       output)
         self._verify_keyword_is_valid()
         self.timeout.start()
@@ -215,7 +215,7 @@ class EmbeddedArgs(UserHandler):
     def _copy_attrs_from_template(self, template):
         self._libname = template._libname
         self.keywords = template.keywords
-        self._arguments = template._arguments
+        self.arguments = template.arguments
         self.return_value = template.return_value
         self._doc = template._doc
         self.doc = template.doc
