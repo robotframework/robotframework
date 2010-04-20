@@ -303,7 +303,7 @@ class _ArgumentResolver(object):
                     raise RuntimeError('Keyword argument %s repeated.' % name)
                 named[name] = value
             else:
-                positional.append(self._parse_positional(arg))
+                positional.append(arg)
                 named_args_allowed = False
         positional = self._mandatory(values) + list(reversed(positional))
         return positional, named
@@ -333,13 +333,6 @@ class _ArgumentResolver(object):
 
     def _split_from_kwarg_sep(self, arg):
         return arg.split('=', 1)
-
-    def _parse_positional(self, argstr):
-        if self._is_str_with_kwarg_sep(argstr):
-            name, _ = self._split_from_kwarg_sep(argstr)
-            if self._is_arg_name(name[:-1]):
-                return argstr.replace('\\=', '=')
-        return argstr
 
     def _is_arg_name(self, name):
         return self._arg_name(name) in self._arguments.names
