@@ -227,7 +227,7 @@ class PythonLibraryDoc(_DocHelper):
         return lib.doc or "Documentation for test library `%s`." % self.name
 
     def _get_initializers(self, lib):
-        if lib.init.maxargs == 0:
+        if lib.init.arguments.maxargs == 0:
             return []
         return [KeywordDoc(lib.init, self)]
 
@@ -306,19 +306,19 @@ class KeywordDoc(_BaseKeywordDoc):
         return args
 
     def _parse_args(self, handler):
-        args = [ arg.rstrip('_') for arg in handler.args ]
+        args = [ arg.rstrip('_') for arg in handler.arguments.names ]
         # strip ${} from user keywords (args look more consistent e.g. in IDE)
         if handler.type == 'user':
             args = [ arg[2:-1] for arg in args ]
-        default_count = len(handler.defaults)
+        default_count = len(handler.arguments.defaults)
         if default_count == 0:
             required = args[:]
             defaults = []
         else:
             required = args[:-default_count]
-            defaults = zip(args[-default_count:], list(handler.defaults))
-        varargs = handler.varargs
-        varargs = varargs is not None and varargs.rstrip('_') or varargs         
+            defaults = zip(args[-default_count:], list(handler.arguments.defaults))
+        varargs = handler.arguments.varargs
+        varargs = varargs is not None and varargs.rstrip('_') or varargs
         if handler.type == 'user' and varargs is not None:
             varargs = varargs[2:-1]
         return required, defaults, varargs
