@@ -70,8 +70,7 @@ class TestPythonHandler(unittest.TestCase):
 
 
 class TestDynamicHandlerCreation(unittest.TestCase):
-
-    _type_err_msg = 'Argument specification should be list/array of Strings.'
+    _type_err_msg = 'Argument spec should be a list/array of strings'
 
     def test_with_none_doc(self):
         assert_equals(self._create_handler().doc, '')
