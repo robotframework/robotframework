@@ -116,19 +116,70 @@ test case specific settings listed earlier.
 Using arguments
 ~~~~~~~~~~~~~~~
 
+A keyword may have several types of arguments. Following chapters describe how
+these arguments may be given in the test data.
+
+Library documentation is the best place to find out which kind of arguments a
+library keyword takes. Mandatory arguments are listed with names only, default
+values are designated by equals sign following the default value and arguments
+that accept variable number of values are designated with an asterisk (`*`)
+
+There is a separate `chapter`__ about how user keywords arguments are defined.
+
+__ `User keyword arguments`_
+
 Positional arguments
 ''''''''''''''''''''
 
 The most common way to specify arguments to keywords is to give the values by position.
 
-.. table:: Named argument examples
+.. table:: Positional argument example
    :class: example
 
-   +------------------+-----------------+----------------------+
-   |  Test Case       |     Action      |       Argument       |
-   +==================+=================+======================+
-   | Should Be Equal  |  1              | 2                    |
-   +------------------+-----------------+----------------------+
+   +------------------+------------------+----------------------+----------------------+
+   |  Test Case       |     Action       |       Argument       |       Argument       |
+   +==================+==================+======================+======================+
+   | Comparison Test  |  Should Be Equal |       1              | 2                    |
+   +------------------+------------------+----------------------+----------------------+
+
+Default values of arguments
+'''''''''''''''''''''''''''
+
+Both library keywords and user keywords may have default values for their
+arguments. This means that if the argument is not specified the default value
+for that argument is used. For instance, the keyword `Should Be Equal` takes a
+third argument which can be used to override the default error message and
+which has a default value of `None` (meaning that default error message is
+used)
+
+.. table:: Overriding default value example
+   :class: example
+
+   +------------------+------------------+-----------+----------+------------------+
+   |  Test Case       |     Action       |  Argument | Argument | Argument         |
+   +==================+==================+===========+==========+==================+
+   | Comparison Test  |  Should Be Equal |  1        |   2      | My error message |
+   +------------------+------------------+-----------+----------+------------------+
+
+
+Variable number of arguments
+''''''''''''''''''''''''''''
+
+It is also possible to define a keyword that accepts a variable number of
+arguments. For example, consider these usages of `BuiltIn` library keyword
+`Repeat Keyword`, which takes arguments `times`, `name` and `*args`
+
+.. table:: Variable number of arguments example
+   :class: example
+
+   +------------------+-----------------+----------+----------+----------+----------+
+   |  Test Case       |     Action      | Argument | Argument | Argument | Argument |
+   +==================+=================+==========+==========+==========+==========+
+   | Repeating Myself |  Repeat Keyword | 5        | Log Many | Hello    | World!   |
+   +------------------+-----------------+----------+----------+----------+----------+
+   | Repeating Myself |  Repeat Keyword | 2        | Sleep    | 1        |          |
+   +------------------+-----------------+----------+----------+----------+----------+
+
 
 Named arguments
 '''''''''''''''
@@ -144,36 +195,36 @@ are not using the `dynamic library API`_
 
 Following table demonstrates using named arguments in different scenarios:
 
-.. table:: Named argument examples
+.. table:: Named argument example
    :class: example
 
-   +--------------+-----------------+----------------------+----------------------------+
-   |  Setting     |     Argument    |       Argument       |           Argument         |
-   +==============+=================+======================+============================+
-   | Library      | Telnet          | prompt=$             |                            |
-   +--------------+-----------------+----------------------+----------------------------+
+   +--------------+-----------------+----------------------+
+   |  Setting     |     Argument    |       Argument       |
+   +==============+=================+======================+
+   | Library      | Telnet          | prompt=$             |
+   +--------------+-----------------+----------------------+
 
 .. table::
    :class: example
 
-   +--------------+-----------------+----------------------+----------------------------+
-   |  Test Case   |     Action      |       Argument       |           Argument         |
-   +==============+=================+======================+============================+
-   | Example      | Start Process   | ${process name}      | alias=MyAlias              |
-   +--------------+-----------------+----------------------+----------------------------+
-   | Example      | My User Keyword | arg2=Hello           | arg3=World                 |
-   +--------------+-----------------+----------------------+----------------------------+
+   +--------------+-----------------+-------------+------------+
+   |  Test Case   |     Action      |   Argument  | Argument   |
+   +==============+=================+=============+============+
+   | Example      | Open Connection | ${hostname} | port=${25} |
+   +--------------+-----------------+-------------+------------+
+   |              | Files in dir    | options=-l  |            |
+   +--------------+-----------------+-------------+------------+
 
 .. table::
    :class: example
 
-   +--------------+-----------------+-----------+-----------------+-----------------+
-   |  Keywords    |     Action      | Argument  | Argument        | Argument        |
-   +==============+=================+===========+=================+=================+
-   | User Keyword |  [Arguments]    | ${arg1}   | ${arg2}=default | ${arg3}=default |
-   +--------------+-----------------+-----------+-----------------+-----------------+
-   | ...          |                 |           |                 |                 |
-   +--------------+-----------------+-----------+-----------------+-----------------+
+   +--------------+-----------------+--------------------+-------------+
+   |  Keywords    |     Action      | Argument           | Argument    |
+   +==============+=================+====================+=============+
+   | Files in Dir |  [Arguments]    | ${path}=.          | ${options}= |
+   +--------------+-----------------+--------------------+-------------+
+   |              | Execute command | ${path} ${options} |             |
+   +--------------+-----------------+--------------------+-------------+
 
 
 .. note:: Using named arguments only works with Robot Framework 2.5 or newer.
