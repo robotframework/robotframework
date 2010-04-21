@@ -71,16 +71,16 @@ class Keyword(BaseKeyword):
         except ExecutionFailed:
             raise
         except TimeoutError:
-            self._report_failure(output, timeouted=True)
+            self._report_failure(output, timeout=True)
         except:
             self._report_failure(output)
 
-    def _report_failure(self, output, timeouted=False):
+    def _report_failure(self, output, timeout=False):
         msg, details = utils.get_error_details()
         output.fail(msg)
         if details:
             output.debug(details)
-        raise ExecutionFailed(utils.cut_long_message(msg), timeouted)
+        raise ExecutionFailed(utils.cut_long_message(msg), timeout)
 
 
 class SetKeyword(Keyword):
