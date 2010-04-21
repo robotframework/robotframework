@@ -272,7 +272,7 @@ class RunnableTestCase(BaseTestCase):
             try:
                 fixture.run(output, namespace)
             except ExecutionFailed, err:
-                self.timeout.set_keyword_timeout(err.timeouted)
+                self.timeout.set_keyword_timeout(err.timeout)
                 return utils.get_error_message()
 
     def _run_keywords(self, output, namespace, setup_err):
@@ -281,7 +281,7 @@ class RunnableTestCase(BaseTestCase):
                 try:
                     kw.run(output, namespace)
                 except ExecutionFailed, err:
-                    self.timeout.set_keyword_timeout(err.timeouted)
+                    self.timeout.set_keyword_timeout(err.timeout)
                     return utils.get_error_message()
 
     def _get_message(self, setup_err, kw_err):
