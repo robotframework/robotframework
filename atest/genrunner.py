@@ -16,6 +16,10 @@ inpath = os.path.abspath(sys.argv[1])
 outpath = inpath.replace(os.path.join('atest', 'testdata'), 
                          os.path.join('atest', 'robot'))
 
+dirname = os.path.dirname(outpath)
+if not os.path.exists(dirname):
+    os.mkdir(dirname)
+
 with open(inpath) as input:
     tests = []
     process = False
