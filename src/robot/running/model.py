@@ -128,6 +128,8 @@ class RunnableTestSuite(BaseTestSuite):
             if self._exit_on_failure and not child_err and \
                     test.status == 'FAIL' and test.critical == 'yes':
                 child_err = self._exit_on_failure_error
+            elif test.exit_on_failure:
+                child_err = 'placefolder'
             self._set_prev_test_variables(self.namespace.variables, test)
 
     def _report_status(self, output):
@@ -213,6 +215,7 @@ class RunnableTestCase(BaseTestCase):
                     + utils.get_not_none(data.tags, defaults.default_tags)
         self.timeout = utils.get_not_none(data.timeout, defaults.test_timeout)
         self.keywords = [ KeywordFactory(kw) for kw in data.keywords ]
+        self.exit_on_failure = False
 
     def run(self, output, namespace, error=None):
         self._start_run(output, namespace, error)
@@ -312,7 +315,8 @@ class RunnableTestCase(BaseTestCase):
             runnable.run(output, namespace)
         except ExecutionFailed, err:
             self.timeout.set_keyword_timeout(err.timeout)
-            return utils.get_error_message()
+            self.exit_on_failure = err.exit
+            return err.msg
 
 
 class _TestRunErrors(_RunErrors):

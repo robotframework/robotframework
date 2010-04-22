@@ -19,8 +19,9 @@ import re
 import traceback
 
 from robottypes import is_str
+from text import cut_long_message
 from unic import unic
-from robot.errors import DataError, TimeoutError, RemoteError
+from robot.errors import DataError, TimeoutError, RemoteError, ExecutionFailed
 
 RERAISED_EXCEPTIONS = (KeyboardInterrupt, SystemExit, MemoryError)
 if sys.platform.startswith('java'):
@@ -62,6 +63,10 @@ def get_error_details():
     MUST be used to get messages from all exceptions originating outside the
     framework.
     """
+    return get_execution_failed()[:2]
+
+
+def get_execution_failed():
     exc_type, exc_value, exc_traceback = sys.exc_info()
     if exc_type in (KeyboardInterrupt, SystemExit):
         raise exc_value
@@ -71,7 +76,10 @@ def get_error_details():
     else:
         message = _get_python_message(exc_type, exc_value)
         details = _get_python_details(exc_value, exc_traceback)
-    return message, details
+    timeout = isinstance(exc_value, TimeoutError)
+    exit = bool(getattr(exc_value, 'ROBOT_EXIT_ON_FAILURE', False))
+    return message, details, ExecutionFailed(cut_long_message(message),
+                                             timeout, exit)
 
 
 def _is_java_exception(exc):

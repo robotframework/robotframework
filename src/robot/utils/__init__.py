@@ -19,7 +19,8 @@ import os
 from argumentparser import ArgumentParser
 from domwrapper import DomWrapper
 from escaping import escape, unescape, escape_file_name
-from error import get_error_message, get_error_details, RERAISED_EXCEPTIONS
+from error import get_error_message, get_error_details, RERAISED_EXCEPTIONS, \
+    get_execution_failed
 from htmlutils import html_escape, html_attr_escape
 from htmlwriter import HtmlWriter
 from importing import simple_import, import_

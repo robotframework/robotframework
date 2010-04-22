@@ -70,17 +70,15 @@ class Keyword(BaseKeyword):
             return handler.run(output, namespace, self.args[:])
         except ExecutionFailed:
             raise
-        except TimeoutError:
-            self._report_failure(output, timeout=True)
         except:
             self._report_failure(output)
 
-    def _report_failure(self, output, timeout=False):
-        msg, details = utils.get_error_details()
+    def _report_failure(self, output):
+        msg, details, exception = utils.get_execution_failed()
         output.fail(msg)
         if details:
             output.debug(details)
-        raise ExecutionFailed(utils.cut_long_message(msg), timeout)
+        raise exception
 
 
 class SetKeyword(Keyword):
