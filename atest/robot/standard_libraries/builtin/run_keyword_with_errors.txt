@@ -83,6 +83,16 @@ Expect Error With Arguments That Needs To Be Escaped
     Check Log Message  ${tc.kws[1].kws[0].msgs[0]}  c:\\temp\\foo\\not_new_line
     Check Log Message  ${tc.kws[1].kws[0].msgs[1]}  \${notvar}
 
+Expect Error When Timeout Occurs
+    ${tc} =  Check Test Case  ${TEST NAME}
+    Should Be Equal  ${tc.kws[0].status}  FAIL  Run Keyword And Expect Error captured timeout even though it should not  no values
+
+Expect Error When Timeout Occurs In UK
+    Check Test Case  ${TEST NAME}
+
+Expect Error When Syntax Error
+    Check Test Case  ${TEST NAME}
+
 Variable Values Should Not Be Visible As Keyword's Arguments
     ${tc} =  Check Test Case  Ignore Error With Arguments That Needs To be Escaped
     Check KW Arguments  ${tc.kws[3].kws[0]}  \@{NEEDS ESCAPING}

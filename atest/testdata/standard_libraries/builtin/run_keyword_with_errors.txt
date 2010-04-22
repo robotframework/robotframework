@@ -98,6 +98,20 @@ Expect Error With Arguments That Needs To Be Escaped
     Run Keyword And Expect Error  Directory '${TEMPDIR}' exists  Directory Should Not Exist  ${TEMPDIR}
     Run Keyword And Expect Error  There are no errors  Log Many  @{NEEDS ESCAPING}
 
+Expect Error When Timeout Occurs
+    [Documentation]  FAIL  Test timeout 100 milliseconds exceeded.
+    [Timeout]  0.1 seconds
+    Run Keyword And Expect Error  *  Sleep  1 hour
+
+Expect Error When Timeout Occurs In UK
+    [Documentation]  FAIL  Keyword timeout 100 milliseconds exceeded.
+    Run Keyword And Expect Error  *  Timeouting UK
+
+Expect Error When Syntax Error
+    [Documentation]  FAIL  Keyword 'BuiltIn.No Operation' expected 0 arguments, got 4.
+    Run Keyword And Expect Error  *  No Operation  wrong  number  of  arguments
+
+
 *** Keywords ***
 Passing UK
     Log  Hello world
