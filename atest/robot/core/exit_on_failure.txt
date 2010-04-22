@@ -5,12 +5,19 @@ Resource        atest_resource.txt
 
 *** Test Cases ***
 Exit From Python Keyword
-    Run Tests  ${EMPTY}  core/exit_on_failure/python_library_kw.txt
+    Run Tests  ${EMPTY}  core/exit_on_failure/01__python_library_kw.txt
     Check Test Case  ${TESTNAME}
-    Check Test Case  Test That Should Not Be Run
+    Check Test Case  Test That Should Not Be Run 1
 
 Exit From Java Keyword
     [tags]  jybot
-    Run Tests  ${EMPTY}  core/exit_on_failure/java_library_kw.txt
+    Run Tests  ${EMPTY}  core/exit_on_failure/03__java_library_kw.txt
     Check Test Case  ${TESTNAME}
-    Check Test Case  Test That Should Not Be Run
+    Check Test Case  Test That Should Not Be Run 3
+
+Multiple Suite Aware Exiting
+    Run Tests  ${EMPTY}  core/exit_on_failure/
+    Check Test Case  Exit From Python Keyword
+    Check Test Case  Test That Should Not Be Run 1
+    Check Test Case  Test That Should Not Be Run 2.1
+    Check Test Case  Test That Should Not Be Run 2.2
