@@ -877,7 +877,7 @@ class _RunKeyword:
             try:
                 return self.run_keyword(name, *args)
             except ExecutionFailed, err:
-                if err.timeout:
+                if err.timeout or err.syntax:
                     raise
                 if time.time() > maxtime:
                     error = utils.get_error_message()
