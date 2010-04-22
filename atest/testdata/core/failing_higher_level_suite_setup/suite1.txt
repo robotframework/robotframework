@@ -1,0 +1,5 @@
+*** Settings ***
+Suite Setup  Fail  In File
+
+*** Test cases ***
+Test  No operation

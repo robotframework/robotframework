@@ -5,6 +5,7 @@ Resource        atest_resource.txt
 
 *** Variables ***
 ${1_pass_msg}  1 critical test, 1 passed, 0 failed\n 1 test total, 1 passed, 0 failed
+${1_fail_msg}  \n\n1 critical test, 0 passed, 1 failed\n 1 test total, 0 passed, 1 failed
 ${2_fail_msg}  \n\n2 critical tests, 0 passed, 2 failed\n 2 tests total, 0 passed, 2 failed
 ${4_fail_msg}  \n\n4 critical tests, 0 passed, 4 failed\n 4 tests total, 0 passed, 4 failed
 ${5_fail_msg}  \n\n5 critical tests, 0 passed, 5 failed\n 5 tests total, 0 passed, 5 failed
@@ -109,6 +110,15 @@ Failing Higher Level Suite Teardown
     ${ftd_ftd_suite} =  Get Test Suite  Ftd Failing Teardown
     Check Suite Status  ${ftd_ftd_suite}  FAIL  Suite teardown failed:\nFailure in suite teardown${also}${also}${2_fail_msg}
     Check Suite Contains Tests  ${ftd_ftd_suite}  FTD FTD Passing  FTD FTD Failing
+
+Failing Higher Level Suite Setup
+    ${suite} =  Run Tests And Get Suite  failing_higher_level_suite_setup  \
+    Check Suite Status  ${suite}  FAIL  Suite setup failed:\nExpected failure in higher level setup${2_fail_msg}
+    ${subsuite}=  Get Test Suite  Suite 1
+    Check Suite Status  ${subsuite}  FAIL  Setup of the parent suite failed.${1_fail_msg}
+    ${subsuite}=  Get Test Suite  Suite 2
+    Check Suite Status  ${subsuite}  FAIL  Setup of the parent suite failed.${1_fail_msg}
+
 
 *** Keywords ***
 Run Tests And Get Suite
