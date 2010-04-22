@@ -6,7 +6,8 @@ Resource        atest_resource.txt
 *** Test Cases ***
 Exit From Python Keyword
     Run Tests  ${EMPTY}  core/exit_on_failure/01__python_library_kw.txt
-    Check Test Case  ${TESTNAME}
+    ${tc}=  Check Test Case  ${TESTNAME}
+    Check Log Message  ${tc.teardown.msgs[0]}  This should be executed
     Check Test Case  Test That Should Not Be Run 1
 
 Exit From Java Keyword

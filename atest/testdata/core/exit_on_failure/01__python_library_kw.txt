@@ -4,6 +4,7 @@ Library  Exceptions
 *** Test Cases ***
 Exit From Python Keyword
     [Documentation]  FAIL  FatalCatastrophyException
+    [Teardown]  Log  This should be executed
     Exit On Failure
 
 Test That Should Not Be Run 1
