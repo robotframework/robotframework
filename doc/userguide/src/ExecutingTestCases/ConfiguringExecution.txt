@@ -302,28 +302,45 @@ __ `Setting variables in command line`_
 Setting the execution mode
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The command line option :opt:`--runmode` can be used to alter the test
-execution. Possible values for it are listed and explained below,
-other values are silently ignored. All these values are case-insensitive.
+Exit on failure
+'''''''''''''''
 
-:opt:`ExitOnFailure`
-    Test execution is stopped immediately if a `critical test`_
-    fails. All remaining tests are marked failed with the message
-    :msg:`Critical failure occurred and ExitOnFailure option is in
-    use`. This option is new in version 1.8.7.
+There are two ways to exit the execution prematuraly without running all
+the tests. First one is using the option :opt:`--runmode` with value
+:opt:`ExitOnFailure` (case-insensitive), in which case test execution is
+stopped immediately if a `critical test`_ fails. In this case the 
+remaining tests are marked failed with the message :msg:`Critical failure
+occurred and ExitOnFailure option is in use`. 
+
+Another possibility is having a keyword fail with a special error. How to 
+create such error is explained in `the test library API section`__. Also
+in this case the remaining tests are marked failed and their message will
+be :msg:`Test execution was stopped due to a fatal error`. 
+
+__ `Stopping test execution`_
+
+Randomizing execution order
+'''''''''''''''''''''''''''
+
+The :opt:`--runmode` option can also be used to randomize the test 
+execution order. This is done using the different values explained
+below.
 
 :opt:`random:test`
     Test cases inside each test suite are executed in random
-    order. This option is new in version 1.8.6. 
+    order. 
 
 :opt:`random:suite`
     All test suites are executed in a random order, but test cases inside
-    suites are run in the order they are defined.  This option is new in version 1.8.6.
+    suites are run in the order they are defined.
 
 :opt:`random:all`
     Both test cases and test suites are executed in a random
-    order. This option is new in version 1.8.6. 
+    order. 
 
+Example::
+
+    pybot --runmode random:test my_test.txt
 
 Controlling the monitor output
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

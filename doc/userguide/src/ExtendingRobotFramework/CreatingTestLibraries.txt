@@ -667,7 +667,7 @@ others, the message is created in the format :msg:`ExceptionType:
 Actual message`. In both cases, it is important for the users that the
 exception message is as informative as possible.
 
-If the error message is longer than 20 lines, it will be automatically
+If the error message is longer than 40 lines, it will be automatically
 cut from the middle to prevent reports from getting too long and
 difficult to read. The full error message is always shown in the log
 message of the failed keyword.
@@ -675,8 +675,32 @@ message of the failed keyword.
 The traceback of the exception is also logged using :msg:`DEBUG` `log level`_.
 These messages are not visible in log files by default because they are very
 rarely interesting for normal users. When developing libraries, it is often a
-good idea to run tests using :cli:`--loglevel DEBUG`. Notice that in Robot
-Framework 2.0.2 and earlier the log level for tracebacks was :msg:`INFO`.
+good idea to run tests using :cli:`--loglevel DEBUG`.
+
+Stopping test execution
+'''''''''''''''''''''''
+
+Starting from Robot Framework 2.5 it is possible to fail a test case so that
+`the whole test execution is stopped`__. This is done simply by having a special
+:code:`ROBOT_EXIT_ON_FAILURE` attribute with :code:`True` value set on the 
+exception raised from the keyword. This is illustrated in the examples below.
+
+Python:
+
+.. sourcecode:: python
+
+    class MyFatalError(RuntimeError):
+        ROBOT_EXIT_ON_FAILURE = True
+
+Java:
+
+.. sourcecode:: java
+
+    public class MyFatalError extends RuntimeException {
+        public static final boolean ROBOT_EXIT_ON_FAILURE = true;
+    } 
+
+__ `Exit on failure`_
 
 Logging information
 '''''''''''''''''''
