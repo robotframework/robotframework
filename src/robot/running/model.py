@@ -35,9 +35,6 @@ def TestSuite(datasources, settings):
 
 class RunnableTestSuite(BaseTestSuite):
 
-    _exit_on_failure_error = ('Critical failure occurred and ExitOnFailure '
-                              'option is in use')
-
     def __init__(self, data, testdefaults=None, parent=None):
         BaseTestSuite.__init__(self, data.name, data.source, parent)
         self.variables = GLOBAL_VARIABLES.copy()
@@ -69,7 +66,7 @@ class RunnableTestSuite(BaseTestSuite):
         self._end_run(output)
 
     def _start_run(self, output, parent, error):
-        self._run_errors = _SuiteRunErrors(error)
+        self._run_errors = _SuiteRunErrors(error, self._run_mode_exit_on_failure)
         self._init_run(parent)
         self._set_variable_dependent_metadata(self.namespace.variables)
         output.start_suite(self)
@@ -109,17 +106,14 @@ class RunnableTestSuite(BaseTestSuite):
                 return utils.get_error_message()
 
     def _run_sub_suites(self, output):
-        child_err = self._run_errors.child_error()
         for suite in self.suites:
-            suite.run(output, self, child_err)
-            if self._run_mode_exit_on_failure and not child_err and \
-                   suite.critical_stats.failed:
-                child_err = self._exit_on_failure_error
-            elif suite.exit_requiring_err_occured:
-                child_err = 'placefolder'
+            suite.run(output, self, self._run_errors)
+            if suite.critical_stats.failed:
+                self._run_errors.critical_failure()
+            if suite.exit_requiring_err_occured:
+                self._run_errors.fatal_error()
 
     def _run_tests(self, output):
-        child_err = self._run_errors.child_error()
         executed_tests = []
         for test in self.tests:
             normname = utils.normalize(test.name)
@@ -127,13 +121,12 @@ class RunnableTestSuite(BaseTestSuite):
                 LOGGER.warn("Multiple test cases with name '%s' executed in "
                             "test suite '%s'"% (test.name, self.longname))
             executed_tests.append(normname)
-            test.run(output, self.namespace, child_err)
-            if self._run_mode_exit_on_failure and not child_err and \
-                    test.status == 'FAIL' and test.critical == 'yes':
-                child_err = self._exit_on_failure_error
-            elif test.exit_on_failure:
+            test.run(output, self.namespace, self._run_errors)
+            if test.status == 'FAIL' and test.critical == 'yes':
+                self._run_errors.critical_failure()
+            if test.exit_on_failure:
                 self.exit_requiring_err_occured = True
-                child_err = 'placefolder'
+                self._run_errors.fatal_error()
             self._set_prev_test_variables(self.namespace.variables, test)
 
     def _report_status(self, output):
@@ -163,7 +156,7 @@ class RunnableTestSuite(BaseTestSuite):
 class _RunErrors(object):
 
     def __init__(self, err):
-        self._parent_err = err
+        self._parent_err = err.child_error() if err else None
         self._init_err = None
         self._setup_err = None
 
@@ -184,9 +177,15 @@ class _RunErrors(object):
 
 
 class _SuiteRunErrors(_RunErrors):
+    _exit_on_failure_error = ('Critical failure occurred and ExitOnFailure '
+                              'option is in use')
+    _exit_on_fatal_error = 'Test execution is stopped due to a fatal error'
 
-    def __init__(self, err):
+    def __init__(self, err, run_mode_is_exit_on_failure):
         _RunErrors.__init__(self, err)
+        self._run_mode_is_exit_on_failure = run_mode_is_exit_on_failure
+        self._exit = False
+        self._fatal = False
 
     def suite_error(self):
         if self._parent_err:
@@ -204,7 +203,18 @@ class _SuiteRunErrors(_RunErrors):
             return 'Initialization of the parent suite failed.'
         if self._setup_err:
             return 'Setup of the parent suite failed.'
+        if self._exit:
+            return self._exit_on_failure_error
+        if self._fatal:
+            return self._exit_on_fatal_error
         return None
+
+    def critical_failure(self):
+        if self._run_mode_is_exit_on_failure:
+            self._exit = True
+
+    def fatal_error(self):
+        self._fatal = True
 
 
 class RunnableTestCase(BaseTestCase):
@@ -221,16 +231,16 @@ class RunnableTestCase(BaseTestCase):
         self.keywords = [ KeywordFactory(kw) for kw in data.keywords ]
         self.exit_on_failure = False
 
-    def run(self, output, namespace, error=None):
-        self._start_run(output, namespace, error)
+    def run(self, output, namespace, suite_errors):
+        self._start_run(output, namespace, suite_errors)
         if not self._run_preventing_errors():
             self._run(output, namespace)
         else:
             self._run_failed()
         self._end_run(output, namespace)
 
-    def _start_run(self, output, namespace, error):
-        self._run_errors = _TestRunErrors(error)
+    def _start_run(self, output, namespace, suite_errors):
+        self._run_errors = _TestRunErrors(suite_errors)
         self.status = 'RUNNING'
         self.starttime = utils.get_timestamp()
         self._run_errors.init_err(self._init_test(namespace.variables))
@@ -325,7 +335,7 @@ class RunnableTestCase(BaseTestCase):
 
 class _TestRunErrors(_RunErrors):
 
-    def __init__(self, err=None):
+    def __init__(self, err):
         _RunErrors.__init__(self, err)
         self._kw_err = None
         self._teardown_err = None
