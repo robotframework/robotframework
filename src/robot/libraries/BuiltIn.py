@@ -811,15 +811,16 @@ class _RunKeyword:
         """
         try:
             self.run_keyword(name, *args)
-        except:
-            error = utils.get_error_message()
+        except ExecutionFailed, err:
+            if err.timeout or err.syntax:
+                raise
         else:
             raise AssertionError("Expected error '%s' did not occur"
                                  % expected_error)
-        if not self._matches(error, expected_error):
+        if not self._matches(err.msg, expected_error):
             raise AssertionError("Expected error '%s' but got '%s'"
-                                 % (expected_error, error))
-        return error
+                                 % (expected_error, err.msg))
+        return err.msg
 
     def repeat_keyword(self, times, name, *args):
         """Executes the specified keyword multiple times.
