@@ -1,0 +1,79 @@
+*** Settings ***
+Suite Setup     Run Tests  ${EMPTY}  standard_libraries/builtin/run_keyword_with_errors.txt
+Force Tags      regression
+Default Tags    jybot  pybot
+Resource        atest_resource.txt
+
+*** Test Cases ***
+Ignore Error When Keyword Passes
+    ${tc} =  Check Test Case  Ignore Error When Keyword Passes
+    Check Log Message  ${tc.kws[0].kws[0].msgs[0]}  My message
+
+Ignore Error When Keyword Fails
+    ${tc} =  Check Test Case  Ignore Error When Keyword Fails
+    Check Log Message  ${tc.kws[0].kws[0].msgs[0]}  My error message  FAIL
+    Equals  ${tc.kws[0].kws[0].status}  FAIL
+    Equals  ${tc.kws[0].status}  PASS
+
+Ignore Error Returns When Keyword Passes
+    Check Test Case  Ignore Error Returns When Keyword Passes
+
+Ignore Error Returns When Keyword Fails
+    Check Test Case  Ignore Error Returns When Keyword Fails
+
+Ignore Error With User Keyword When Keywords Pass
+    ${tc} =  Check Test Case  Ignore Error With User Keyword When Keywords Pass
+    Check Log Message  ${tc.kws[0].kws[0].kws[0].msgs[0]}  Hello world
+    Equals  ${tc.kws[0].kws[0].kws[2].name}  \${ret} = BuiltIn.Evaluate
+
+Ignore Error With User Keyword When Keyword Fails
+    ${tc} =  Check Test Case  Ignore Error With User Keyword When Keyword Fails
+    Check Log Message  ${tc.kws[0].kws[0].kws[0].kws[0].msgs[0]}  Hello world
+    Check Log Message  ${tc.kws[0].kws[0].kws[1].msgs[0]}  Expected failure in UK  FAIL
+    Ints Equal  ${tc.kws[0].kws[0].keyword_count}  2
+
+Ignore Error With Arguments That Needs To Be Escaped
+    Check Test Case  Ignore Error With Arguments That Needs To be Escaped
+
+Expect Error When Error Occurs
+    ${tc} =  Check Test Case  Expect Error When Error Occurs
+    Check Log Message  ${tc.kws[0].kws[0].msgs[0]}  My error message  FAIL
+    Equals  ${tc.kws[0].kws[0].status}  FAIL
+    Equals  ${tc.kws[0].status}  PASS
+
+Expect Error When Different Error Occurs
+    Check Test Case  Expect Error When Different Error Occurs
+    Check Test Case  Expect Error When Different Error Occurs 2
+
+Expect Error When No Errors Occur
+    Check Test Case  Expect Error When No Errors Occur
+
+Expected Error Is Pattern
+    Check Test Case  Expected error is Pattern
+
+Expected Error Is Multiline
+    Check Test Case  Expected Error Is Multiline
+
+Expected Error Should Be Returned
+    Check Test Case  Expected Error Should Be Returned
+
+Expect Error With User Keyword When Keywords Pass
+    ${tc} =  Check Test Case  Expect Error With User Keyword When Keywords Pass
+    Check Log Message  ${tc.kws[0].kws[0].kws[0].msgs[0]}  Hello world
+    Equals  ${tc.kws[0].kws[0].kws[2].name}  \${ret} = BuiltIn.Evaluate
+
+Expect Error With User Keyword When Keyword Fails
+    ${tc} =  Check Test Case  Expect Error With User Keyword When Keyword Fails
+    Check Log Message  ${tc.kws[0].kws[0].kws[0].kws[0].msgs[0]}  Hello world
+    Check Log Message  ${tc.kws[0].kws[0].kws[1].msgs[0]}  Expected failure in UK  FAIL
+    Ints Equal  ${tc.kws[0].kws[0].keyword_count}  2
+
+Expect Error With Arguments That Needs To Be Escaped
+    ${tc} =  Check Test Case  Expect Error With Arguments That Needs To be Escaped
+    Check Log Message  ${tc.kws[1].kws[0].msgs[0]}  c:\\temp\\foo\\not_new_line
+    Check Log Message  ${tc.kws[1].kws[0].msgs[1]}  \${notvar}
+
+Variable Values Should Not Be Visible As Keyword's Arguments
+    ${tc} =  Check Test Case  Ignore Error With Arguments That Needs To be Escaped
+    Check KW Arguments  ${tc.kws[3].kws[0]}  \@{NEEDS ESCAPING}
+

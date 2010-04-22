@@ -1,0 +1,98 @@
+*** Settings ***
+Library         Operating System
+
+*** Variables ***
+@{NEEDS ESCAPING}  c:\\temp\\foo\\not_new_line  \${notvar}
+${MESSAGE}  My message
+${ERROR MESSAGE}  My error message
+${FAIL KW}  Fail
+
+*** Test Cases ***
+Ignore Error When Keyword Passes
+    Run Keyword And Ignore Error  Log  ${MESSAGE}
+
+Ignore Error When Keyword Fails
+    Run Keyword And Ignore Error  Fail  ${ERROR MESSAGE}
+
+Ignore Error Returns When Keyword Passes
+    ${status}  ${ret val} =  Run Keyword And Ignore Error  Evaluate  1+2
+    Should Be Equal  ${status}  PASS
+    Should Be Equal  ${ret val}  ${3}
+
+Ignore Error Returns When Keyword Fails
+    ${status}  ${ret val} =  Run Keyword And Ignore Error  ${FAIL KW}  ${ERROR MESSAGE}
+    Should Be Equal  ${status}  FAIL
+    Should Be Equal  ${ret val}  My error message
+
+Ignore Error With User Keyword When Keywords Pass
+    ${status}  ${ret val} =  Run Keyword And Ignore Error  Passing UK
+    Should Be Equal  ${status}  PASS
+    Should Be Equal  ${ret val}  ${3}
+
+Ignore Error With User Keyword When Keyword Fails
+    ${status}  ${ret val} =  Run Keyword And Ignore Error  Failing Uk
+    Should Be Equal  ${status}  FAIL
+    Should Be Equal  ${ret val}  Expected failure in UK
+
+Ignore Error With Arguments That Needs To Be Escaped
+    ${status}  ${ret val} =  Run Keyword And Ignore Error  Directory Should Exist  ${CURDIR}
+    Should Be Equal  ${status}  PASS
+    Should Be Equal  ${ret val}  ${None}
+    ${status}  ${ret val} =  Run Keyword And Ignore Error  Create List  @{NEEDS ESCAPING}
+    Should Be Equal  ${status}  PASS
+    Should Be True  ${ret val} == @{NEEDS ESCAPING}
+
+Expect Error When Error Occurs
+    Run Keyword And Expect Error  ${ERROR MESSAGE}  ${FAIL KW}  ${ERROR MESSAGE}
+
+Expect Error When Different Error Occurs
+    [Documentation]  FAIL Expected error 'My error' but got 'My error message'
+    Run Keyword And Expect Error  My error  Fail  ${ERROR MESSAGE}
+    Fail  This should not be executed
+
+Expect Error When Different Error Occurs 2
+    [Documentation]  FAIL REGEXP:Expected error 'My error' but got 'Evaluating expression 'foo == bar' failed: NameError: (name 'foo' is not defined|foo)'
+    Run Keyword And Expect Error  My error  Evaluate  foo == bar
+    Fail  This should not be executed
+
+Expect Error When No Errors Occur
+    [Documentation]  FAIL Expected error 'My error message' did not occur
+    Run Keyword And Expect Error  My error message  Log  My message
+    Fail  This should not be executed
+
+Expected Error Is Pattern
+    Run Keyword And Expect Error  *  Fail  Critical error
+    Run Keyword And Expect Error  C*a? e*rro?  Fail  Critical error
+
+Expected Error Is Multiline
+    Run Keyword And Expect Error  My error message\nIn multiple\nLines  Fail  My error message\nIn multiple\nLines
+    Run Keyword And Expect Error  My error message*Lines  Fail  My error message\nIn multiple\nLines
+
+Expected Error Should Be Returned
+    ${error} =  Run Keyword And Expect Error  *  Fail  Critical error
+    Equals  ${error}  Critical error
+
+Expect Error With User Keyword When Keywords Pass
+    [Documentation]  FAIL Expected error 'My error' did not occur
+    Run Keyword And Expect Error  My error  Passing UK
+
+Expect Error With User Keyword When Keyword Fails
+    Run Keyword And Expect Error  Expected failure in UK  Failing Uk
+
+Expect Error With Arguments That Needs To Be Escaped
+    [Documentation]  FAIL Expected error 'There are no errors' did not occur
+    Run Keyword And Expect Error  Directory '${TEMPDIR}' exists  Directory Should Not Exist  ${TEMPDIR}
+    Run Keyword And Expect Error  There are no errors  Log Many  @{NEEDS ESCAPING}
+
+*** Keywords ***
+Passing UK
+    Log  Hello world
+    Noop
+    ${ret} =  Evaluate  1+2
+    [Return]  ${ret}
+
+Failing Uk
+    Passing Uk
+    Fail  Expected failure in UK
+    Fail  This should not be executed
+
