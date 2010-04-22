@@ -14,7 +14,6 @@
 
 
 from robot import utils
-from robot.errors import DataError
 
 
 class _List:
@@ -502,7 +501,7 @@ class _Dictionary:
         try:
             return dictionary[key]
         except KeyError:
-            raise DataError("Dictionary does not contain key '%s'" % key)
+            raise RuntimeError("Dictionary does not contain key '%s'" % key)
 
     def dictionary_should_contain_key(self, dictionary, key, msg=None):
         """Fails if `key` is not found from `dictionary`.

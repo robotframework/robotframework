@@ -37,7 +37,12 @@ class FrameworkError(RobotError):
     """
 
 class DataError(RobotError):
-    """Should be used when provided test data is incorrect"""
+    """Should be used when provided test data is incorrect
+
+    When keyword execution starts, RuntimeError should be used instead as 
+    DataErrors are not be caught by keywords that run other keywords for example
+    Run Keyword And Expect Error.
+    """
 
 class ExecutionFailed(RobotError):
     """Used for cummunicating failures in test execution"""

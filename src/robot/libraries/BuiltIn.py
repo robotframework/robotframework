@@ -12,7 +12,6 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-
 import os
 import re
 import time
@@ -37,7 +36,7 @@ class _Converter:
                 return self._jython_to_integer(item)
             return int(item)
         except:
-            raise DataError("'%s' cannot be converted to an integer: %s"
+            raise RuntimeError("'%s' cannot be converted to an integer: %s"
                             % (item, utils.get_error_message()))
 
     def _jython_to_integer(self, item):
@@ -64,9 +63,9 @@ class _Converter:
             error = utils.get_error_message()
             try:
                 return float(self.convert_to_integer(item))
-            except DataError:
-                raise DataError("'%s' cannot be converted to a floating point "
-                                "number: %s" % (item, error))
+            except RuntimeError:
+                raise RuntimeError("'%s' cannot be converted to a floating point "
+                                 "number: %s" % (item, error))
 
     def _jython_to_number(self, item):
         # This helper handles Java Strings and Numbers
@@ -331,7 +330,7 @@ class _Verify:
             try:
                 item1 = list(item1)
             except:
-                raise DataError("Converting '%s' to list failed: %s"
+                raise RuntimeError("Converting '%s' to list failed: %s"
                                 % (item1, utils.get_error_message()))
         count = item1.count(item2)
         self.log('Item found from the first item %d time%s'
@@ -461,7 +460,7 @@ class _Verify:
                     try: return item.length
                     except (KeyboardInterrupt, SystemExit): raise
                     except:
-                        raise DataError("Could not get length of '%s'" % item)
+                        raise RuntimeError("Could not get length of '%s'" % item)
 
     def length_should_be(self, item, length, msg=None):
         """Verifies that the length of the given item is correct.
@@ -469,11 +468,7 @@ class _Verify:
         The length of the item is got using the `Get Length` keyword. The
         default error message can be overridden with the `msg` argument.
         """
-        try:
-            length = int(length)
-        except ValueError:
-            raise DataError("Given length '%s' cannot be converted to "
-                            "an integer" % length)
+        length = self.convert_to_integer(length)
         if self.get_length(item) != length:
             if msg is None:
                 msg = "Length of '%s' should be %d but it is %d" \
@@ -691,7 +686,7 @@ class _Variables:
         try:
             return self._unescape_variable_if_needed(name)
         except ValueError:
-            raise DataError("Invalid variable syntax '%s'" % orig)
+            raise RuntimeError("Invalid variable syntax '%s'" % orig)
 
     def _resolve_possible_variable(self, name):
         try:
@@ -936,7 +931,7 @@ class _RunKeyword:
         if not values:
             if default:
                 return [None]
-            raise DataError('At least one value is required')
+            raise RuntimeError('At least one value is required')
         if is_list_var(values[0]):
             values[:1] = [ utils.escape(item) for item in
                            NAMESPACES.current.variables[values[0]] ]
@@ -988,7 +983,7 @@ class _RunKeyword:
         test = NAMESPACES.current.test
         if test is not None and test.status != 'RUNNING':
             return test
-        raise DataError("Keyword '%s' can only be used in test teardown"
+        raise RuntimeError("Keyword '%s' can only be used in test teardown"
                         % kwname)
 
     def run_keyword_if_all_critical_tests_passed(self, name, *args):
@@ -1047,7 +1042,7 @@ class _RunKeyword:
 
     def _get_suite_in_teardown(self, kwname):
         if NAMESPACES.current.suite.status == 'RUNNING':
-            raise DataError("Keyword '%s' can only be used in suite teardown"
+            raise RuntimeError("Keyword '%s' can only be used in suite teardown"
                             % kwname)
         return NAMESPACES.current.suite
 
@@ -1126,7 +1121,7 @@ class _Misc:
         """
         level = level.upper()
         if not output.LEVELS.has_key(level) and level != 'HTML':
-            raise DataError("Invalid log level '%s'" % level)
+            raise RuntimeError("Invalid log level '%s'" % level)
         print '*%s* %s' % (level, utils.unic(message))
 
     def log_many(self, *messages):
@@ -1334,7 +1329,7 @@ class _Misc:
         try:
             return eval(expression, namespace)
         except:
-            raise DataError("Evaluating expression '%s' failed: %s"
+            raise RuntimeError("Evaluating expression '%s' failed: %s"
                             % (expression, get_error_message()))
 
     def call_method(self, object, method_name, *args):
@@ -1355,7 +1350,7 @@ class _Misc:
         try:
             method = getattr(object, method_name)
         except AttributeError:
-            raise DataError("Object '%s' does not have a method '%s'"
+            raise RuntimeError("Object '%s' does not have a method '%s'"
                             % (object, method_name))
         return method(*args)
 
@@ -1460,7 +1455,7 @@ class BuiltIn(_Verify, _Converter, _Variables, _RunKeyword, _Misc):
             try:
                 condition = eval(condition)
             except:
-                raise DataError("Evaluating condition '%s' failed: %s"
+                raise RuntimeError("Evaluating condition '%s' failed: %s"
                                 % (condition, utils.get_error_message()))
         return condition and True or False
 

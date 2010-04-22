@@ -22,7 +22,6 @@ from javax.imageio import ImageIO
 from java.io import File
 
 from robot import utils
-from robot.errors import DataError
 
 
 class Screenshot:
@@ -82,7 +81,7 @@ class Screenshot:
         """
         path = os.path.abspath(path.replace('/', os.sep))
         if not os.path.exists(os.path.dirname(path)):
-            raise DataError("Directory '%s' where to save the screenshot does "
+            raise RuntimeError("Directory '%s' where to save the screenshot does "
                             "not exist" % os.path.dirname(path))
         screensize = Toolkit.getDefaultToolkit().getScreenSize()
         rectangle = Rectangle(0, 0, screensize.width, screensize.height)

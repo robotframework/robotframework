@@ -21,7 +21,6 @@ import fnmatch
 import shutil
 
 try:
-    from robot.errors import DataError
     from robot.output import LOGGER
     from robot.utils import get_version, ConnectionCache, seq2str, \
         timestr_to_secs, secs_to_timestr, plural_or_not, get_time, \
@@ -30,7 +29,6 @@ try:
     PROCESSES = ConnectionCache('No active processes')
 
 except ImportError:
-    DataError = RuntimeError
     __version__ = '<unknown>'
     seq2str = lambda items: ', '.join(["'%s'" % item for item in items])
     timestr_to_secs = int
@@ -608,7 +606,7 @@ class OperatingSystem:
             self._link("File '%s' does not exist", path)
         for match in matches:
             if not os.path.isfile(match):
-                raise DataError("Path '%s' is not a file" % match)
+                raise RuntimeError("Path '%s' is not a file" % match)
             os.remove(match)
             self._link("Removed file '%s'", match)
 
@@ -644,7 +642,7 @@ class OperatingSystem:
             self._link("Directory '%s' already exists", path )
             return
         if os.path.exists(path):
-            raise DataError("Path '%s' already exists but is not a directory" % path)
+            raise RuntimeError("Path '%s' already exists but is not a directory" % path)
         os.makedirs(path)
         self._link("Created directory '%s'", path)
 
@@ -663,7 +661,7 @@ class OperatingSystem:
             self._link("Directory '%s' does not exist", path)
             return
         if os.path.isfile(path):
-            raise DataError("Path '%s' is not a directory" % path)
+            raise RuntimeError("Path '%s' is not a directory" % path)
         if recursive:
             shutil.rmtree(path)
         else:
@@ -712,9 +710,9 @@ class OperatingSystem:
         dest_is_dir = dest.endswith(os.sep)
         dest = self._absnorm(dest)
         if not os.path.exists(source):
-            raise DataError("Source file '%s' does not exist" % source)
+            raise RuntimeError("Source file '%s' does not exist" % source)
         if not os.path.isfile(source):
-            raise DataError("Source file '%s' is not a regular file" % source)
+            raise RuntimeError("Source file '%s' is not a regular file" % source)
         if not os.path.exists(dest):
             if dest_is_dir:
                 parent = dest
@@ -750,11 +748,11 @@ class OperatingSystem:
         source = self._absnorm(source)
         dest = self._absnorm(dest)
         if not os.path.exists(source):
-            raise DataError("Source directory '%s' does not exist" % source)
+            raise RuntimeError("Source directory '%s' does not exist" % source)
         if not os.path.isdir(source):
-            raise DataError("Source directory '%s' is not a directory" % source)
+            raise RuntimeError("Source directory '%s' is not a directory" % source)
         if os.path.exists(dest) and not os.path.isdir(dest):
-            raise DataError("Destination '%s' exists but is not a directory" % dest)
+            raise RuntimeError("Destination '%s' exists but is not a directory" % dest)
         if os.path.exists(dest):
             base = os.path.basename(source)
             dest = os.path.join(dest, base)
@@ -779,7 +777,7 @@ class OperatingSystem:
         """
         ret = os.environ.get(name, default)
         if ret is None:
-            raise DataError("Environment variable '%s' does not exist" % name)
+            raise RuntimeError("Environment variable '%s' does not exist" % name)
         return ret
 
     def set_environment_variable(self, name, value):
@@ -996,7 +994,7 @@ class OperatingSystem:
         """
         path = self._absnorm(path)
         if not os.path.exists(path):
-            raise DataError("Getting modified time of '%s' failed: "
+            raise RuntimeError("Getting modified time of '%s' failed: "
                             "Path does not exist" % path)
         mtime = get_time(format, os.stat(path).st_mtime)
         self._link("Last modified time of '%%s' is %s" % mtime, path)
@@ -1034,12 +1032,12 @@ class OperatingSystem:
         path = self._absnorm(path)
         try:
             if not os.path.exists(path):
-                raise DataError('File does not exist')
+                raise RuntimeError('File does not exist')
             if not os.path.isfile(path):
-                raise DataError('Modified time can only be set to regular files')
+                raise RuntimeError('Modified time can only be set to regular files')
             mtime = parse_time(mtime)
-        except DataError, err:
-            raise DataError("Setting modified time of '%s' failed: %s"
+        except RuntimeError, err:
+            raise RuntimeError("Setting modified time of '%s' failed: %s"
                             % (path, err))
         os.utime(path, (mtime, mtime))
         time.sleep(0.1)  # Give os some time to really set these times
@@ -1141,7 +1139,7 @@ class OperatingSystem:
         path = self._absnorm(path)
         self._link("Listing contents of directory '%s'", path)
         if not os.path.isdir(path):
-            raise DataError("Directory '%s' does not exist" % path)
+            raise RuntimeError("Directory '%s' does not exist" % path)
         items = os.listdir(path)
         if pattern:
             items = [ i for i in items if fnmatch.fnmatchcase(i, pattern) ]
@@ -1178,9 +1176,9 @@ class OperatingSystem:
         """
         path = self._absnorm(path)
         if os.path.isdir(path):
-            raise DataError("Cannot touch '%s' because it is a directory" % path)
+            raise RuntimeError("Cannot touch '%s' because it is a directory" % path)
         if not os.path.exists(os.path.dirname(path)):
-            raise DataError("Cannot touch '%s' because its parent directory "
+            raise RuntimeError("Cannot touch '%s' because its parent directory "
                             "does not exist" % path)
         if os.path.exists(path):
             mtime = round(time.time())
@@ -1279,7 +1277,7 @@ class _Process2(_Process):
 
     def read(self):
         if self.closed:
-            raise DataError('Cannot read from a closed process')
+            raise RuntimeError('Cannot read from a closed process')
         return self._process_output(self.stdout.read())
 
     def close(self):
