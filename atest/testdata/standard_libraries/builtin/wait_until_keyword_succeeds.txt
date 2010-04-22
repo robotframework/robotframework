@@ -72,6 +72,22 @@ Wait Until With Shorter Keyword Timeout
     ${timeout} =  Set Variable  40 milliseconds
     Timeouted UK with Wait Until KW
 
+Invalid Number Of Arguments Inside Wait Until Keyword Succeeds
+    [Tags]  test
+    [Documentation]  FAIL  Keyword 'BuiltIn.No Operation' expected 0 arguments, got 4.
+    Wait Until Keyword Succeeds  1 second  0.1s  No Operation  wrong  number  of  arguments
+
+Invalid Keyword Inside Wait Until Keyword Succeeds
+    [Tags]  test
+    [Documentation]  FAIL  Keyword name must be a string
+    ${list} =  Create List  1  2
+    Wait Until Keyword Succeeds  1 second  0.1s  ${list}
+
+Keyword Not Found Inside Wait Until Keyword Succeeds
+    [Tags]  test
+    [Documentation]  FAIL  No keyword with name 'Non Existing KW' found.
+    Wait Until Keyword Succeeds  1 second  0.1s  Non Existing KW
+
 
 ***Keywords***
 User Keyword

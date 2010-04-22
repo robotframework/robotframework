@@ -20,6 +20,10 @@ Wait Until With Longer Test Timeout      Check Test Case  ${TEST NAME}
 Wait Until With Shorter Test Timeout     Check Test Case  ${TEST NAME}
 Wait Until With Longer Keyword Timeout   Check Test Case  ${TEST NAME}
 Wait Until With Shorter Keyword Timeout  Check Test Case  ${TEST NAME}
+Invalid Number Of Arguments Inside Wait Until Keyword Succeeds  Check Test Case  ${TEST NAME}
+Invalid Keyword Inside Wait Until Keyword Succeeds  Check Test Case  ${TEST NAME}
+Keyword Not Found Inside Wait Until Keyword Succeeds  Check Test Case  ${TEST NAME}
+
 Variable Values Should Not Be Visible As Keyword's Arguments
   ${tc} =  Check Test Case  Pass With First Try  
   Check KW Arguments  ${tc.kws[0].kws[0]}  \${HELLO}  
