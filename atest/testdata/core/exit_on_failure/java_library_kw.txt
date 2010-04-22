@@ -1,0 +1,11 @@
+*** Settings ***
+Library  JavaExceptions
+
+*** Test Cases ***
+Exit From Java Keyword
+    [Documentation]  FAIL  FatalCatastrophyException
+    Throw Exit On Failure
+
+Test That Should Not Be Run
+    [Documentation]  FAIL  placefolder
+    Fail  This should not be executed

@@ -1,6 +1,5 @@
 import java.io.IOException;
 
-
 public class JavaExceptions {
 
     /* base class is java.lang.Error */
@@ -40,6 +39,10 @@ public class JavaExceptions {
         else {
             throw new IOException(msg);
         }
+    }
+
+    public void throwExitOnFailure() {
+        throw new FatalCatastrophyException();
     }
 
 }
