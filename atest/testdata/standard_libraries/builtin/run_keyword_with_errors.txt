@@ -42,6 +42,20 @@ Ignore Error With Arguments That Needs To Be Escaped
     Should Be Equal  ${status}  PASS
     Should Be True  ${ret val} == @{NEEDS ESCAPING}
 
+Ignore Error When Timeout Occurs
+    [Documentation]  FAIL  Test timeout 100 milliseconds exceeded.
+    [Timeout]  0.1 seconds
+    Run Keyword And Ignore Error  Sleep  1 hour
+
+Ignore Error When Timeout Occurs In UK
+    [Documentation]  FAIL  Keyword timeout 100 milliseconds exceeded.
+    Run Keyword And Ignore Error  Timeouting UK
+
+Ignore Error When Syntax Error
+    [Documentation]  FAIL  Keyword 'BuiltIn.No Operation' expected 0 arguments, got 4.
+    Run Keyword And Ignore Error  No Operation  wrong  number  of  arguments
+
+
 Expect Error When Error Occurs
     Run Keyword And Expect Error  ${ERROR MESSAGE}  ${FAIL KW}  ${ERROR MESSAGE}
 
@@ -96,3 +110,6 @@ Failing Uk
     Fail  Expected failure in UK
     Fail  This should not be executed
 
+Timeouting UK
+    [Timeout]  0.1 seconds
+    Run Keyword And Ignore Error  Sleep  1 hour

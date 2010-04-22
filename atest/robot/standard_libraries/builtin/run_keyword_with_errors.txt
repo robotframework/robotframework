@@ -35,6 +35,16 @@ Ignore Error With User Keyword When Keyword Fails
 Ignore Error With Arguments That Needs To Be Escaped
     Check Test Case  Ignore Error With Arguments That Needs To be Escaped
 
+Ignore Error When Timeout Occurs
+    ${tc} =  Check Test Case  ${TEST NAME}
+    Should Be Equal  ${tc.kws[0].status}  FAIL  Run Keyword And Ignore Error captured timeout even though it should not  no values
+
+Ignore Error When Timeout Occurs In UK
+    Check Test Case  ${TEST NAME}
+
+Ignore Error When Syntax Error
+    Check Test Case  ${TEST NAME}
+
 Expect Error When Error Occurs
     ${tc} =  Check Test Case  Expect Error When Error Occurs
     Check Log Message  ${tc.kws[0].kws[0].msgs[0]}  My error message  FAIL
