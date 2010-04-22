@@ -21,6 +21,7 @@ import fnmatch
 import shutil
 
 try:
+    from robot.errors import DataError
     from robot.output import LOGGER
     from robot.utils import get_version, ConnectionCache, seq2str, \
         timestr_to_secs, secs_to_timestr, plural_or_not, get_time, \
@@ -29,6 +30,7 @@ try:
     PROCESSES = ConnectionCache('No active processes')
 
 except ImportError:
+    DataError = RuntimeError
     __version__ = '<unknown>'
     seq2str = lambda items: ', '.join(["'%s'" % item for item in items])
     timestr_to_secs = int
@@ -1032,11 +1034,11 @@ class OperatingSystem:
         path = self._absnorm(path)
         try:
             if not os.path.exists(path):
-                raise RuntimeError('File does not exist')
+                raise DataError('File does not exist')
             if not os.path.isfile(path):
-                raise RuntimeError('Modified time can only be set to regular files')
+                raise DataError('Modified time can only be set to regular files')
             mtime = parse_time(mtime)
-        except RuntimeError, err:
+        except DataError, err:
             raise RuntimeError("Setting modified time of '%s' failed: %s"
                             % (path, err))
         os.utime(path, (mtime, mtime))
