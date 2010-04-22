@@ -56,7 +56,8 @@ class RunnableTestSuite(BaseTestSuite):
             RunnableTestSuite(suite, testdefaults.copy(), parent=self)
         for test in data.tests:
             RunnableTestCase(test, testdefaults, parent=self)
-        self._exit_on_failure = False
+        self._run_mode_exit_on_failure = False
+        self.exit_requiring_err_occured = False
 
     def run(self, output, parent=None, error=None):
         self._start_run(output, parent, error)
@@ -111,9 +112,11 @@ class RunnableTestSuite(BaseTestSuite):
         child_err = self._run_errors.child_error()
         for suite in self.suites:
             suite.run(output, self, child_err)
-            if self._exit_on_failure and not child_err and \
+            if self._run_mode_exit_on_failure and not child_err and \
                    suite.critical_stats.failed:
                 child_err = self._exit_on_failure_error
+            elif suite.exit_requiring_err_occured:
+                child_err = 'placefolder'
 
     def _run_tests(self, output):
         child_err = self._run_errors.child_error()
@@ -125,10 +128,11 @@ class RunnableTestSuite(BaseTestSuite):
                             "test suite '%s'"% (test.name, self.longname))
             executed_tests.append(normname)
             test.run(output, self.namespace, child_err)
-            if self._exit_on_failure and not child_err and \
+            if self._run_mode_exit_on_failure and not child_err and \
                     test.status == 'FAIL' and test.critical == 'yes':
                 child_err = self._exit_on_failure_error
             elif test.exit_on_failure:
+                self.exit_requiring_err_occured = True
                 child_err = 'placefolder'
             self._set_prev_test_variables(self.namespace.variables, test)
 
