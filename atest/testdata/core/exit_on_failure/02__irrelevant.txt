@@ -1,8 +1,8 @@
 *** Test Cases ***
 Test That Should Not Be Run 2.1
-    [Documentation]  FAIL  placefolder
+    [Documentation]  FAIL  Test execution is stopped due to a fatal error
     No operation
 
 Test That Should Not Be Run 2.2
-    [Documentation]  FAIL  placefolder
+    [Documentation]  FAIL  Test execution is stopped due to a fatal error
     No operation
