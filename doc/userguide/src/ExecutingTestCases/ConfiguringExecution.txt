@@ -305,7 +305,7 @@ Setting the execution mode
 Exit on failure
 '''''''''''''''
 
-There are two ways to exit the execution prematuraly without running all
+There are two ways to exit the execution prematurely without running all
 the tests. First one is using the option :opt:`--runmode` with value
 :opt:`ExitOnFailure` (case-insensitive), in which case test execution is
 stopped immediately if a `critical test`_ fails. In this case the 
