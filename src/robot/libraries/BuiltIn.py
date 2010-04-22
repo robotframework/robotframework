@@ -791,7 +791,9 @@ class _RunKeyword:
         """
         try:
             return 'PASS', self.run_keyword(name, *args)
-        except:
+        except ExecutionFailed, err:
+            if err.timeout or err.syntax:
+                raise
             return 'FAIL', utils.get_error_message()
 
     def run_keyword_and_expect_error(self, expected_error, name, *args):
