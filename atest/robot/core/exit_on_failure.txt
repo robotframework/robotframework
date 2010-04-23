@@ -22,3 +22,8 @@ Multiple Suite Aware Exiting
     Check Test Case  Test That Should Not Be Run 1
     Check Test Case  Test That Should Not Be Run 2.1
     Check Test Case  Test That Should Not Be Run 2.2
+
+Fatal Exception and Runmode Exit on Failure
+    Run Tests  --runmode exitonfailure  core/exit_on_failure/01__python_library_kw.txt
+    Check Test Case  Test That Should Not Be Run 1  FAIL
+    ...  Critical failure occurred and ExitOnFailure option is in use
