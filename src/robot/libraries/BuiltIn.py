@@ -783,11 +783,14 @@ class _RunKeyword:
 
         The keyword name and arguments work as in `Run Keyword`. See
         `Run Keyword If` for a usage example.
+
+        Starting from Robot Framework 2.5 errors caused by invalid syntax or
+        timeouts, or fatal exceptions are not caught by this keyword.
         """
         try:
             return 'PASS', self.run_keyword(name, *args)
         except ExecutionFailed, err:
-            if err.timeout or err.syntax:
+            if err.timeout or err.syntax or err.exit:
                 raise
             return 'FAIL', utils.get_error_message()
 
@@ -808,11 +811,14 @@ class _RunKeyword:
         | Run Keyword And Expect Error | My error | Some Keyword | arg1 | arg2 |
         | ${msg} = | Run Keyword And Expect Error | * | My KW |
         | Should Start With | ${msg} | Once upon a time in |
+
+        Starting from Robot Framework 2.5 errors caused by invalid syntax or
+        timeouts, or fatal exceptions are not caught by this keyword.
         """
         try:
             self.run_keyword(name, *args)
         except ExecutionFailed, err:
-            if err.timeout or err.syntax:
+            if err.timeout or err.syntax or err.exit:
                 raise
         else:
             raise AssertionError("Expected error '%s' did not occur"
@@ -866,6 +872,9 @@ class _RunKeyword:
 
         Example:
         | Wait Until Keyword Succeeds | 2 min | 5 sec | My keyword | arg1 | arg2 |
+
+        Starting from Robot Framework 2.5 errors caused by invalid syntax or
+        timeouts, or fatal exceptions are not caught by this keyword.
         """
         timeout = utils.timestr_to_secs(timeout)
         retry_interval = utils.timestr_to_secs(retry_interval)
@@ -875,7 +884,7 @@ class _RunKeyword:
             try:
                 return self.run_keyword(name, *args)
             except ExecutionFailed, err:
-                if err.timeout or err.syntax:
+                if err.timeout or err.syntax or err.exit:
                     raise
                 if time.time() > maxtime:
                     error = utils.get_error_message()
