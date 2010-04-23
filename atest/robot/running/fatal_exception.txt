@@ -5,25 +5,25 @@ Resource        atest_resource.txt
 
 *** Test Cases ***
 Exit From Python Keyword
-    Run Tests  ${EMPTY}  core/exit_on_failure/01__python_library_kw.txt
+    Run Tests  ${EMPTY}  running/fatal_exception/01__python_library_kw.txt
     ${tc}=  Check Test Case  ${TESTNAME}
     Check Log Message  ${tc.teardown.msgs[0]}  This should be executed
     Check Test Case  Test That Should Not Be Run 1
 
 Exit From Java Keyword
     [tags]  jybot
-    Run Tests  ${EMPTY}  core/exit_on_failure/03__java_library_kw.txt
+    Run Tests  ${EMPTY}  running/fatal_exception/03__java_library_kw.txt
     Check Test Case  ${TESTNAME}
     Check Test Case  Test That Should Not Be Run 3
 
 Multiple Suite Aware Exiting
-    Run Tests  ${EMPTY}  core/exit_on_failure/
+    Run Tests  ${EMPTY}  running/fatal_exception/
     Check Test Case  Exit From Python Keyword
     Check Test Case  Test That Should Not Be Run 1
     Check Test Case  Test That Should Not Be Run 2.1
     Check Test Case  Test That Should Not Be Run 2.2
 
 Fatal Exception and Runmode Exit on Failure
-    Run Tests  --runmode exitonfailure  core/exit_on_failure/01__python_library_kw.txt
+    Run Tests  --runmode exitonfailure  running/fatal_exception/01__python_library_kw.txt
     Check Test Case  Test That Should Not Be Run 1  FAIL
     ...  Critical failure occurred and ExitOnFailure option is in use
