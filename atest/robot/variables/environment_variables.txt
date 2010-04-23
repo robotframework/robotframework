@@ -1,0 +1,48 @@
+*** Settings ***
+Suite Setup     Run Tests  ${EMPTY}  variables/environment_variables.txt
+Force Tags      pybot  jybot  regression
+Resource        atest_resource.txt
+
+*** Test Cases ***
+Environment Variables In Keyword Argument
+    Check Test Case  Environment Variables In Keyword Argument
+
+Environment Variable With Backslashes
+    Check Test Case  Environment Variable With Backslashes
+
+Environment Variable With Internal Variables
+    Check Test Case  Environment Variable With Internal Variables
+
+Leading And Trailing Spaces Are Ignored Environment Variable Name
+    Check Test Case  Leading and trailing spaces are ignored Environment Variable Name
+
+Non-Existing Environment Variable
+    Check Test Case  Non-Existing Environment Variable
+
+Environment Variabes Are Case, Space And Underscore Sensitive
+    Check Test Case  Environment Variabes Are Case, Space And Underscore Sensitive
+
+Environment Variables In Variable Table
+    Check Test Case  Environment Variables In Variable Table
+
+Environment Variables In Settings Table
+    Check Test Case  Environment Variables In Settings Table
+    Should Be Equal  ${SUITE.doc}  %{PATH} used in suite documentation
+    Should Be Equal  ${SUITE.metadata['PATH']}  %{PATH}
+    Should Contain  ${SUITE.doc}  ${:}  Make sure %{PATH} is ...
+    Should Contain  ${SUITE.metadata['PATH']}  ${:}  ... actually resolved
+
+Environment Variables In Test Metadata
+    ${tc} =  Check Test Case  Environment Variables In Test Metadata
+    Should Be Equal  ${tc.doc}  Env var value in a test doc
+
+Environment Variables In User Keyword Metadata
+    ${tc} =  Check Test Case  Environment Variables In User Keyword Metadata
+    Should Be Equal  ${tc.kws[0].doc}  Env var value in a uk doc
+
+Escaping Environment Variables
+    Check Test Case  Escaping Environment Variables
+
+Empty Environment Variable Is No Recognized
+    Check Test Case  Empty Environment Variable Is No Recognized
+
