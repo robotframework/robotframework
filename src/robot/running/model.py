@@ -56,8 +56,8 @@ class RunnableTestSuite(BaseTestSuite):
         self._run_mode_exit_on_failure = False
         self.exit_requiring_err_occured = False
 
-    def run(self, output, parent=None, error=None):
-        self._start_run(output, parent, error)
+    def run(self, output, parent=None, errors=None):
+        self._start_run(output, parent, errors)
         self._run_setup(output)
         self._run_sub_suites(output)
         self._run_tests(output)
@@ -65,8 +65,11 @@ class RunnableTestSuite(BaseTestSuite):
         self._run_teardown(output)
         self._end_run(output)
 
-    def _start_run(self, output, parent, error):
-        self._run_errors = _SuiteRunErrors(error, self._run_mode_exit_on_failure)
+    def _start_run(self, output, parent, errors):
+        if not errors:
+            errors = _SuiteRunErrors(self._run_mode_exit_on_failure)
+        self._run_errors = errors
+        self._run_errors.start_suite()
         self._init_run(parent)
         self._set_variable_dependent_metadata(self.namespace.variables)
         output.start_suite(self)
@@ -87,31 +90,32 @@ class RunnableTestSuite(BaseTestSuite):
         for name, value in self.metadata.items():
             self.metadata[name] = variables.replace_meta(name, value, errors)
         if errors:
-            self._run_errors.init_err('Suite initialization failed:\n%s'
-                                      % '\n'.join(errors))
+            self._run_errors.suite_init_err('Suite initialization failed:\n%s'
+                                            % '\n'.join(errors))
 
     def _run_setup(self, output):
-        self._run_errors.setup_err(self._run_fixture(self.setup, output))
+        if self._run_errors.is_suite_setup_allowed():
+            self._run_errors.suite_setup_err(self._run_fixture(self.setup, output))
 
     def _run_teardown(self, output):
-        td_err = self._run_fixture(self.teardown, output)
-        if td_err:
-            self.suite_teardown_failed('Suite teardown failed:\n%s' % td_err)
+        if self._run_errors.is_suite_teardown_allowed():
+            td_err = self._run_fixture(self.teardown, output)
+            if td_err:
+                self.suite_teardown_failed('Suite teardown failed:\n%s' % td_err)
 
     def _run_fixture(self, fixture, output):
-        if fixture and not self._run_errors.parent_errors():
+        if fixture:
             try:
                 fixture.run(output, self.namespace)
             except ExecutionFailed:
                 return utils.get_error_message()
+        return None
 
     def _run_sub_suites(self, output):
         for suite in self.suites:
             suite.run(output, self, self._run_errors)
             if suite.critical_stats.failed:
                 self._run_errors.critical_failure()
-            if suite.exit_requiring_err_occured:
-                self._run_errors.fatal_error()
 
     def _run_tests(self, output):
         executed_tests = []
@@ -124,9 +128,6 @@ class RunnableTestSuite(BaseTestSuite):
             test.run(output, self.namespace, self._run_errors)
             if test.status == 'FAIL' and test.critical == 'yes':
                 self._run_errors.critical_failure()
-            if test.exit_on_failure:
-                self.exit_requiring_err_occured = True
-                self._run_errors.fatal_error()
             self._set_prev_test_variables(self.namespace.variables, test)
 
     def _report_status(self, output):
@@ -141,6 +142,7 @@ class RunnableTestSuite(BaseTestSuite):
         self._set_prev_test_variables(GLOBAL_VARIABLES, varz=self.namespace.variables)
         output.end_suite(self)
         self.namespace.end_suite()
+        self._run_errors.end_suite()
 
     def _set_prev_test_variables(self, destination, test=None, varz=None):
         if test:
@@ -153,55 +155,82 @@ class RunnableTestSuite(BaseTestSuite):
         destination['${PREV_TEST_MESSAGE}'] = message
 
 
-class _RunErrors(object):
-
-    def __init__(self, err):
-        self._parent_err = err.child_error() if err else None
-        self._init_err = None
-        self._setup_err = None
-
-    def parent_errors(self):
-        return bool(self._parent_err or self._init_err)
-
-    def init_err(self, err):
-        self._init_err = err
-
-    def setup_err(self, err):
-        self._setup_err = err
-
-    def is_setup_err(self):
-        return bool(self._setup_err)
-
-    def orig_or_init_error(self):
-        return self._parent_err or self._init_err
-
-
-class _SuiteRunErrors(_RunErrors):
+class _SuiteRunErrors(object):
+    NO_ERROR = None
     _exit_on_failure_error = ('Critical failure occurred and ExitOnFailure '
                               'option is in use')
     _exit_on_fatal_error = 'Test execution is stopped due to a fatal error'
 
-    def __init__(self, err, run_mode_is_exit_on_failure):
-        _RunErrors.__init__(self, err)
+    def __init__(self, run_mode_is_exit_on_failure=False):
         self._run_mode_is_exit_on_failure = run_mode_is_exit_on_failure
-        self._exit = False
-        self._fatal = False
+        self._earlier_init_errors = []
+        self._earlier_setup_errors = []
+        self._earlier_suite_setup_executions = []
+        self._init_current_errors()
+        self._exit = self._fatal = False
+        self._current_suite_setup_executed = False
+
+    def _init_current_errors(self):
+        self._current_init_err = self._current_setup_err = self.NO_ERROR
+
+    def start_suite(self):
+        self._earlier_init_errors.append(self._current_init_err)
+        self._earlier_setup_errors.append(self._current_setup_err)
+        self._earlier_suite_setup_executions.append(self._current_suite_setup_executed)
+        self._init_current_errors()
+        self._current_suite_setup_executed = False
+
+    def end_suite(self):
+        self._current_setup_err = self._earlier_setup_errors.pop()
+        self._current_init_err = self._earlier_init_errors.pop()
+        self._current_suite_setup_executed = self._earlier_suite_setup_executions.pop()
+
+    def is_suite_setup_allowed(self):
+        return self._current_init_err is self.NO_ERROR and \
+                not self._earlier_errors()
+
+    def is_suite_teardown_allowed(self):
+        if self._current_suite_setup_executed:
+            return True
+        return self._current_init_err is self.NO_ERROR and \
+                not self._earlier_errors()
+
+    def _earlier_errors(self):
+        if self._fatal or self._exit:
+            return True
+        for err in self._earlier_setup_errors + self._earlier_init_errors:
+            if err is not self.NO_ERROR:
+                return True
+        return False
+
+    def suite_init_err(self, err):
+        self._current_init_err = err
+
+    def suite_setup_err(self, err):
+        self._current_suite_setup_executed = True
+        self._current_setup_err = err or self.NO_ERROR
 
     def suite_error(self):
-        if self._parent_err:
-            return self._parent_err
-        if self._init_err:
-            return self._init_err
-        if self._setup_err:
-            return 'Suite setup failed:\n%s' % self._setup_err
+        if self._earlier_init_erros_occurred():
+            return 'Initialization of the parent suite failed.'
+        if self._earlier_setup_errors_occurred():
+            return 'Setup of the parent suite failed.'
+        if self._current_init_err:
+            return self._current_init_err
+        if self._current_setup_err:
+            return 'Suite setup failed:\n%s' % self._current_setup_err
         return ''
 
+    def _earlier_init_erros_occurred(self):
+        return bool([err for err in self._earlier_init_errors if err])
+
+    def _earlier_setup_errors_occurred(self):
+        return bool([err for err in self._earlier_setup_errors if err])
+
     def child_error(self):
-        if self._parent_err:
-            return self._parent_err
-        if self._init_err:
+        if self._current_init_err or self._earlier_init_erros_occurred():
             return 'Initialization of the parent suite failed.'
-        if self._setup_err:
+        if self._current_setup_err or self._earlier_setup_errors_occurred():
             return 'Setup of the parent suite failed.'
         if self._exit:
             return self._exit_on_failure_error
@@ -232,6 +261,7 @@ class RunnableTestCase(BaseTestCase):
         self.exit_on_failure = False
 
     def run(self, output, namespace, suite_errors):
+        self._suite_errors = suite_errors
         self._start_run(output, namespace, suite_errors)
         if not self._run_preventing_errors():
             self._run(output, namespace)
@@ -329,16 +359,31 @@ class RunnableTestCase(BaseTestCase):
             runnable.run(output, namespace)
         except ExecutionFailed, err:
             self.timeout.set_keyword_timeout(err.timeout)
-            self.exit_on_failure = err.exit
+            if err.exit:
+                self._suite_errors.fatal_error()
             return err.msg
 
 
-class _TestRunErrors(_RunErrors):
+class _TestRunErrors(object):
 
     def __init__(self, err):
-        _RunErrors.__init__(self, err)
+        self._parent_err = err.child_error() if err else None
+        self._init_err = None
+        self._setup_err = None
         self._kw_err = None
         self._teardown_err = None
+
+    def parent_errors(self):
+        return bool(self._parent_err or self._init_err)
+
+    def init_err(self, err):
+        self._init_err = err
+
+    def setup_err(self, err):
+        self._setup_err = err
+
+    def is_setup_err(self):
+        return bool(self._setup_err)
 
     def kw_err(self, err):
         self._kw_err = err
@@ -358,6 +403,9 @@ class _TestRunErrors(_RunErrors):
         if message == '':
             return 'Teardown failed:\n%s' % self._teardown_err
         return '%s\n\nAlso teardown failed:\n%s' % (message, self._teardown_err)
+
+    def orig_or_init_error(self):
+        return self._parent_err or self._init_err
 
 
 class _TestCaseDefaults:
@@ -389,3 +437,4 @@ class _TestCaseDefaults:
         copy.test_teardown = self.test_teardown[:]
         copy.test_timeout = self.test_timeout[:]
         return copy
+
