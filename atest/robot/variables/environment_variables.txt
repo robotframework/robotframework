@@ -19,8 +19,15 @@ Leading And Trailing Spaces Are Ignored Environment Variable Name
 Non-Existing Environment Variable
     Check Test Case  Non-Existing Environment Variable
 
-Environment Variabes Are Case, Space And Underscore Sensitive
-    Check Test Case  Environment Variabes Are Case, Space And Underscore Sensitive
+Environment Variabes Are Case Sensitive
+    Run Keyword If  '${:}' == ':'  Check Test Case  Environment Variabes Are Case Sensitive
+    Run Keyword Unless  '${:}' == ':'  Check Test Case  Environment Variables Are Not Case Sensitive On Windows
+
+Environment Variabes Are Space Sensitive
+    Check Test Case  ${TEST_NAME}
+
+Environment Variabes Are Underscore Sensitive
+    Check Test Case  ${TEST_NAME}
 
 Environment Variables In Variable Table
     Check Test Case  Environment Variables In Variable Table
