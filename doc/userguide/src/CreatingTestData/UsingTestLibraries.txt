@@ -29,11 +29,16 @@ subsequent column. The library name is case-sensitive (it is the name
 of the module or class implementing the library and must be exactly
 correct), but any spaces in it are ignored. With Python libraries in
 modules or Java libraries in packages, the full name including the
-module or package name must be used. In those cases where the library
-needs arguments, they are listed in the columns after the library
-name. Both the library name and arguments can be set using variables.
-Starting from Robot Framework 2.5, it is possible to set arguments
-using the `named arguments`_ syntax.
+module or package name must be used.
+
+In those cases where the library needs arguments, they are listed in
+the columns after the library name. It is possible to use default
+values, variable number of arguments, and named arguments in test
+library imports similarly as with `arguments to keywords`__.  Both the
+library name and arguments can be set using variables.
+
+__ `Using arguments`_
+
 
 .. table:: Importing test libraries
    :class: example

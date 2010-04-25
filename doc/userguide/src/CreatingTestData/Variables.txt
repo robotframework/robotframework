@@ -78,7 +78,7 @@ ignored. However, it is recommended to use all capital letters with
 global variables (for example, :var:`${PATH}` or :var:`${TWO_WORDS}`)
 and small letters with variables that are only available in certain
 test cases or user keywords (for example, :var:`${my_var}` or
-:var:`${myVar}`). Much more importantly, though, cases shoud be used
+:var:`${myVar}`). Much more importantly, though, cases should be used
 consistently.
 
 Unlike in some programming languages where similar variable syntax is
@@ -124,6 +124,10 @@ first converted into a Unicode string and then catenated to whatever is in
 that cell. Converting the value into a string means that the object's
 method :code:`__unicode__` (in Python, with :code:`__str__` as a fallback) 
 or :code:`toString` (in Java) is called.
+
+.. note:: Variable values are used as-is without conversions also when
+          passing arguments to keywords using the `named arguments`_
+          syntax like :code:`argname=${var}`.
 
 The example below demonstrates the difference between having a
 variable in a cell alone or with other content. First, let us assume

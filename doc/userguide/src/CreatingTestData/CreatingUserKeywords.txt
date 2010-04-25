@@ -176,8 +176,25 @@ positional arguments.
    \                                  Log              Optional: ${optional}
    =================================  ===============  =====================  ===================
 
-As all Pythonistas must have already noticed, the syntax for specifying default arguments
-is heavily inspired by Python syntax for function default values.
+When a keyword accepts several arguments with default values and only
+some of them needs to be overridden, it is often handy to use the
+`named arguments`_ syntax. When this syntax is used with user
+keywords, the arguments are specified without the :var:`${}`
+decoration. For example, the second keyword above could be used like
+below and :var:`${arg1}` would still get its default value.
+
+.. table:: User keyword and named arguments syntax
+   :class: example
+
+   =============  ===========================  ==============  ============
+     Test Case               Action               Argument       Argument
+   =============  ===========================  ==============  ============
+   Example        Two Arguments With Defaults  arg2=new value
+   =============  ===========================  ==============  ============
+
+As all Pythonistas must have already noticed, the syntax for
+specifying default arguments is heavily inspired by Python syntax for
+function default values.
 
 Variable number of arguments
 ''''''''''''''''''''''''''''
