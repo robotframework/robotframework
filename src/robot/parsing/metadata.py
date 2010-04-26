@@ -84,7 +84,7 @@ class UserKeywordMetadata(_Metadata):
                'timeout': 'Timeout' }
 
 
-class TestCaseFileMetadata(_Metadata):
+class TestSuiteInitFileMetadata(_Metadata):
     _names = { 'documentation': 'Documentation',
                'document': 'Documentation',
                'suitesetup': 'Suite Setup',
@@ -95,9 +95,7 @@ class TestCaseFileMetadata(_Metadata):
                'testprecondition': 'Test Setup',
                'testteardown': 'Test Teardown',
                'testpostcondition': 'Test Teardown',
-               'defaulttags': 'Default Tags',
-               'forcetags': 'Force Tags',
-               'testtimeout': 'Test Timeout' }
+               'forcetags': 'Force Tags' }
 
     def __init__(self, rawdata=None):
         _Metadata.__init__(self)
@@ -124,16 +122,20 @@ class TestCaseFileMetadata(_Metadata):
         self.user_metadata[name] = value
 
 
-class TestSuiteInitFileMetadata(TestCaseFileMetadata):
-    _deprecated_metadata = ['testsetup', 'testteardown', 'defaulttags',
-                            'testtimeout']
-
-    def set(self, item):
-        TestCaseFileMetadata.set(self, item)
-        if utils.normalize(item.name) in self._deprecated_metadata:
-            msg = "Using setting '%s' in init file is deprecated and will be " \
-                    "removed in the next major release." % (item.name)
-            item.report_invalid_syntax(msg, 'WARN')
+class TestCaseFileMetadata(TestSuiteInitFileMetadata):
+    _names = { 'documentation': 'Documentation',
+               'document': 'Documentation',
+               'suitesetup': 'Suite Setup',
+               'suiteprecondition': 'Suite Setup',
+               'suiteteardown': 'Suite Teardown',
+               'suitepostcondition': 'Suite Teardown',
+               'testsetup': 'Test Setup',
+               'testprecondition': 'Test Setup',
+               'testteardown': 'Test Teardown',
+               'testpostcondition': 'Test Teardown',
+               'forcetags': 'Force Tags',
+               'defaulttags': 'Default Tags',
+               'testtimeout': 'Test Timeout' }
 
 
 class ImportSetting:

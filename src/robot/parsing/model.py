@@ -42,17 +42,15 @@ class _BaseSuite(BaseTestSuite):
     def __init__(self, rawdata, parent=None):
         name, source = self._get_name_and_source(rawdata.source)
         BaseTestSuite.__init__(self, name, source, parent)
-        metadata = self._get_metadata(rawdata)
-        self.doc = metadata['Documentation']
-        self.suite_setup = metadata['SuiteSetup']
-        self.suite_teardown = metadata['SuiteTeardown']
-        self.test_setup = metadata['TestSetup']
-        self.test_teardown = metadata['TestTeardown']
-        self.default_tags = metadata['DefaultTags']
-        self.force_tags = metadata['ForceTags']
-        self.test_timeout = metadata['TestTimeout']
-        self.metadata = metadata.user_metadata
-        self.imports = metadata.imports
+        self._metadata = self._get_metadata(rawdata)
+        self.doc = self._metadata['Documentation']
+        self.suite_setup = self._metadata['SuiteSetup']
+        self.suite_teardown = self._metadata['SuiteTeardown']
+        self.test_setup = self._metadata['TestSetup']
+        self.test_teardown = self._metadata['TestTeardown']
+        self.force_tags = self._metadata['ForceTags']
+        self.metadata = self._metadata.user_metadata
+        self.imports = self._metadata.imports
         self.variables = rawdata.variables
         self.user_keywords = UserHandlerList(rawdata.keywords)
 
@@ -88,6 +86,8 @@ class FileSuite(_BaseSuite):
         rawdata = self._get_rawdata(path)
         _BaseSuite.__init__(self, rawdata, parent)
         self._create_testcases(rawdata)
+        self.default_tags = self._metadata['DefaultTags']
+        self.test_timeout = self._metadata['TestTimeout']
 
     def _get_metadata(self, rawdata):
         return TestCaseFileMetadata(rawdata)
@@ -125,6 +125,8 @@ class DirectorySuite(_BaseSuite):
         _BaseSuite.__init__(self, rawdata, parent)
         error = "Test suite directory '%s' contains no test cases." % path
         self._create_subsuites(subitems, suitenames, error)
+        self.default_tags = None
+        self.test_timeout = None
 
     def _get_metadata(self, rawdata):
         return TestSuiteInitFileMetadata(rawdata)
