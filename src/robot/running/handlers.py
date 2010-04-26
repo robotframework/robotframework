@@ -20,6 +20,7 @@ from runkwregister import RUN_KW_REGISTER
 from arguments import PythonKeywordArguments, JavaKeywordArguments, \
     DynamicKeywordArguments, PythonInitArguments, JavaInitArguments, \
     RunKeywordArguments
+from robot.utils.signalhandler import ROBOT_SIGNAL_HANDLER
 
 
 if utils.is_jython:
@@ -92,10 +93,22 @@ class _RunnableHandler(_BaseHandler):
         return self._run_handler_with_output_captured(runner, output)
 
     def _runner_for(self, handler, output, positional, named, timeout):
+        wrapped_handler = self._wrap_with_signal_handling(handler)
         if timeout and timeout.active():
-            return lambda: timeout.run(handler, args=positional, kwargs=named,
+            return lambda: timeout.run(wrapped_handler, args=positional, kwargs=named,
                                        logger=output)
-        return lambda: handler(*positional, **named)
+        return lambda: wrapped_handler(*positional, **named)
+
+    def _wrap_with_signal_handling(self, runnable):
+        def _signal_wrapper(runnable):
+            def _wrapped_function(*wrapped_positional, **wrapped_named):
+                try:
+                    ROBOT_SIGNAL_HANDLER.start_running_keyword()
+                    return runnable(*wrapped_positional, **wrapped_named)
+                finally:
+                    ROBOT_SIGNAL_HANDLER.stop_running_keyword()
+            return _wrapped_function
+        return _signal_wrapper(runnable)
 
     def _run_handler_with_output_captured(self, runner, output):
         utils.capture_output()
@@ -177,6 +190,9 @@ class _DynamicHandler(_RunnableHandler):
 
 
 class _RunKeywordHandler(_PythonHandler):
+
+    def _wrap_with_signal_handling(self, runnable):
+        return runnable
 
     def _parse_arguments(self, handler_method):
         arg_index = RUN_KW_REGISTER.get_args_to_process(self.library.orig_name,

@@ -12,7 +12,6 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-
 import sys
 
 if __name__ == '__main__':
@@ -29,6 +28,7 @@ from errors import DataError, Information, XmlParsingError, INFO_PRINTED, \
         DATA_ERROR, STOPPED_BY_USER, FRAMEWORK_ERROR
 from variables import init_global_variables
 import utils
+from utils.signalhandler import ROBOT_SIGNAL_HANDLER
 
 __version__ = utils.version
 
@@ -91,6 +91,7 @@ def run(*datasources, **options):
     pybot /path/to/tests.html
     pybot --log mylog.html /path/to/tests.html /path/to/tests2.html
     """
+    ROBOT_SIGNAL_HANDLER.start()
     settings = RobotSettings(options)
     LOGGER.register_console_logger(settings['MonitorWidth'],
                                    settings['MonitorColors'])
