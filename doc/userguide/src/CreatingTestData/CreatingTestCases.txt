@@ -144,7 +144,7 @@ argument names separated with a comma like :code:`first, second,
 third`. The argument names actually do not matter in this case, except
 that they should explain what the argument does, but it is important
 to have exactly the same number of arguments as specified in the
-documentation. Using too few or too many arguments will result an
+documentation. Using too few or too many arguments will result in an
 error.
 
 The test below uses keywords :name:`Create Directory` and :name:`Copy
@@ -281,7 +281,7 @@ the incompatible keywords.
 .. note:: When the named argument syntax is used with user keywords,
           the argument names are given without the :var:`${}`
           decoration. For example, user keyword with arguments
-          :code:`${arg1}=default, ${arg2}=second` can be used like
+          :code:`${arg1}=default, ${arg2}=second` must be used like
           :code:`arg2=override`.
 
 The named argument syntax is used only when the part of the argument
