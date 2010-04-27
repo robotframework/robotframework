@@ -90,30 +90,27 @@ class _RunnableHandler(_BaseHandler):
                                                    output)
         runner = self._runner_for(self._current_handler(), output, positional,
                                   named, self._get_timeout(namespace))
-        return self._run_handler_with_output_captured(runner, output)
+        return self._run_with_output_captured_and_signal_monitor(runner, output)
 
     def _runner_for(self, handler, output, positional, named, timeout):
-        wrapped_handler = self._wrap_with_signal_handling(handler)
         if timeout and timeout.active():
-            return lambda: timeout.run(wrapped_handler, args=positional, kwargs=named,
+            return lambda: timeout.run(handler, args=positional, kwargs=named,
                                        logger=output)
-        return lambda: wrapped_handler(*positional, **named)
+        return lambda: handler(*positional, **named)
 
-    def _wrap_with_signal_handling(self, runnable):
-        def _wrapped_function(*wrapped_positional, **wrapped_named):
-            try:
-                STOP_SIGNAL_MONITOR.start_running_keyword()
-                return runnable(*wrapped_positional, **wrapped_named)
-            finally:
-                STOP_SIGNAL_MONITOR.stop_running_keyword()
-        return _wrapped_function
-        
-    def _run_handler_with_output_captured(self, runner, output):
+    def _run_with_output_captured_and_signal_monitor(self, runner, output):
         utils.capture_output()
         try:
-            return runner()
+            return self._run_with_signal_monitoring(runner)
         finally:
             self._release_and_log_output(output)
+
+    def _run_with_signal_monitoring(self, runner):
+        try:
+            STOP_SIGNAL_MONITOR.start_running_keyword()
+            return runner()
+        finally:
+            STOP_SIGNAL_MONITOR.stop_running_keyword()
 
     def _release_and_log_output(self, logger):
         stdout, stderr = utils.release_output()
@@ -189,8 +186,10 @@ class _DynamicHandler(_RunnableHandler):
 
 class _RunKeywordHandler(_PythonHandler):
 
-    def _wrap_with_signal_handling(self, runnable):
-        return runnable
+    def _run_with_signal_monitoring(self, runner):
+        # With run keyword variants, only the keyword to be run can fail
+        # and therefore monitoring should not raise exception yet.
+        return runner()
 
     def _parse_arguments(self, handler_method):
         arg_index = RUN_KW_REGISTER.get_args_to_process(self.library.orig_name,

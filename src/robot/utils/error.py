@@ -32,7 +32,7 @@ if sys.platform.startswith('java'):
 _java_trace_re = re.compile('^\s+at (\w.+)')
 _ignored_java_trace = ('org.python.', 'robot.running.', 'robot$py.',
                        'sun.reflect.', 'java.lang.reflect.')
-_ignore_trace_until = (os.path.join('robot','running','handlers.py'), '_wrapped_function')
+_ignore_trace_until = (os.path.join('robot','running','handlers.py'), '<lambda>')
 _generic_exceptions = ('AssertionError', 'AssertionFailedError', 'Exception',
                        'Error', 'RuntimeError', 'RuntimeException',
                        'DataError', 'TimeoutError', 'ExecutionFailed', 'RemoteError')

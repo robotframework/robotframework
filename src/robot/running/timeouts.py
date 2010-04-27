@@ -73,9 +73,11 @@ class _Timeout:
         if not self.active():
             raise FrameworkError('Timeout is not active')
         timeout = self.time_left()
+        STOP_SIGNAL_MONITOR.stop_running_keyword()
         if logger:
             logger.debug('%s timeout %s active. %s seconds left.'
                          % (self.type.capitalize(), self.string, round(timeout, 3)))
+        STOP_SIGNAL_MONITOR.start_running_keyword()
         if timeout <= 0:
             raise TimeoutError(self.get_message())
         notifier = Event()
@@ -88,7 +90,6 @@ class _Timeout:
         if runner.is_done():
             return runner.get_result()
         try:
-            STOP_SIGNAL_MONITOR.stop_running_keyword()
             thread.stop()
         except utils.RERAISED_EXCEPTIONS:
             raise
