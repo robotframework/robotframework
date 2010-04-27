@@ -15,6 +15,7 @@
 import time
 
 from robot import utils
+from robot.utils.signalhandler import STOP_SIGNAL_MONITOR
 from robot.utils.robotthread import Thread, Runner, Event
 from robot.errors import TimeoutError, DataError, FrameworkError
 
@@ -87,6 +88,7 @@ class _Timeout:
         if runner.is_done():
             return runner.get_result()
         try:
+            STOP_SIGNAL_MONITOR.stop_running_keyword()
             thread.stop()
         except utils.RERAISED_EXCEPTIONS:
             raise

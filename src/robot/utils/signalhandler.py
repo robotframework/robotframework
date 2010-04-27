@@ -18,7 +18,7 @@ import sys
 from robot.errors import ExecutionFailed
 
 
-class _RobotSignalHandler(object):
+class _StopSignalMonitor(object):
 
     def __init__(self):
         self._signal_count = 0
@@ -29,7 +29,7 @@ class _RobotSignalHandler(object):
         if self._signal_count > 1:
             sys.__stderr__.write("Execution forcefully stopped.")
             raise SystemExit()
-        sys.__stderr__.write("Stopping execution. Second signal will force exit.")
+        sys.__stderr__.write("Stopping execution gracefully. Second signal will force exit.")
         if self._running_keyword:
             self._stop_execution_gracefully()
 
@@ -48,8 +48,5 @@ class _RobotSignalHandler(object):
     def stop_running_keyword(self):
         self._running_keyword = False
 
-    def is_break_signaled(self):
-        return self.count > 0
 
-
-ROBOT_SIGNAL_HANDLER = _RobotSignalHandler()
+STOP_SIGNAL_MONITOR = _StopSignalMonitor()

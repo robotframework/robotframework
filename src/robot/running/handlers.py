@@ -20,7 +20,7 @@ from runkwregister import RUN_KW_REGISTER
 from arguments import PythonKeywordArguments, JavaKeywordArguments, \
     DynamicKeywordArguments, PythonInitArguments, JavaInitArguments, \
     RunKeywordArguments
-from robot.utils.signalhandler import ROBOT_SIGNAL_HANDLER
+from robot.utils.signalhandler import STOP_SIGNAL_MONITOR
 
 
 if utils.is_jython:
@@ -100,16 +100,14 @@ class _RunnableHandler(_BaseHandler):
         return lambda: wrapped_handler(*positional, **named)
 
     def _wrap_with_signal_handling(self, runnable):
-        def _signal_wrapper(runnable):
-            def _wrapped_function(*wrapped_positional, **wrapped_named):
-                try:
-                    ROBOT_SIGNAL_HANDLER.start_running_keyword()
-                    return runnable(*wrapped_positional, **wrapped_named)
-                finally:
-                    ROBOT_SIGNAL_HANDLER.stop_running_keyword()
-            return _wrapped_function
-        return _signal_wrapper(runnable)
-
+        def _wrapped_function(*wrapped_positional, **wrapped_named):
+            try:
+                STOP_SIGNAL_MONITOR.start_running_keyword()
+                return runnable(*wrapped_positional, **wrapped_named)
+            finally:
+                STOP_SIGNAL_MONITOR.stop_running_keyword()
+        return _wrapped_function
+        
     def _run_handler_with_output_captured(self, runner, output):
         utils.capture_output()
         try:

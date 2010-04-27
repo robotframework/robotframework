@@ -28,7 +28,7 @@ from errors import DataError, Information, XmlParsingError, INFO_PRINTED, \
         DATA_ERROR, STOPPED_BY_USER, FRAMEWORK_ERROR
 from variables import init_global_variables
 import utils
-from utils.signalhandler import ROBOT_SIGNAL_HANDLER
+from utils.signalhandler import STOP_SIGNAL_MONITOR
 
 __version__ = utils.version
 
@@ -91,7 +91,7 @@ def run(*datasources, **options):
     pybot /path/to/tests.html
     pybot --log mylog.html /path/to/tests.html /path/to/tests2.html
     """
-    ROBOT_SIGNAL_HANDLER.start()
+    STOP_SIGNAL_MONITOR.start()
     settings = RobotSettings(options)
     LOGGER.register_console_logger(settings['MonitorWidth'],
                                    settings['MonitorColors'])
