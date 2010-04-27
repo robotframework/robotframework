@@ -30,19 +30,19 @@ Non-Existing Environment Variable
     [Documentation]  FAIL Environment variable 'NON_EXISTING' does not exist
     Log  %{NON_EXISTING}
 
-Environment Variabes Are Case Sensitive
+Environment Variables Are Case Sensitive
     [Documentation]  FAIL Environment variable 'this_env_var_is_set' does not exist
     Log  %{this_env_var_is_set}
 
-Environment Variabes Are Not Case Sensitive On Windows
+Environment Variables Are Not Case Sensitive On Windows
     [Documentation]  On Windows case is not sensitive.
     Log  %{this_env_var_is_set}
 
-Environment Variabes Are Space Sensitive
+Environment Variables Are Space Sensitive
     [Documentation]  FAIL Environment variable 'THIS ENV VAR IS SET' does not exist
     Log  %{THIS ENV VAR IS SET}
 
-Environment Variabes Are Underscore Sensitive
+Environment Variables Are Underscore Sensitive
     [Documentation]  FAIL Environment variable 'TH_IS_ENVVAR_IS_SET' does not exist
     Log  %{TH_IS_ENVVAR_IS_SET}
 
