@@ -101,7 +101,7 @@ executed with Python with it:
 The results of the test execution are written to 'results' folder. The 
 directory contains output, log and report files that are named based on
 the startup script used to run the test cases (e.g. 'jybot-log.html'). 
-The directory also contains time-stampped folders for other test outputs.
+The directory also contains time-stamped folders for other test outputs.
 
 Test Data
 ---------
@@ -124,7 +124,7 @@ These acceptance tests are in general *not* good examples of
 well-written test cases. This is mainly due to us learning how to
 write good test cases with Robot Framework while developing it, and so
 far there has not been time for refactoring them. With better tools
-refactorig is getting easier and hopefully we can do something for
+refactoring is getting easier and hopefully we can do something for
 these tests in the future. The first step would be reorganizing the
 structure of 'robot' and 'testdata' folders. Their current structure
 follows Robot Framework's old internal module structure and it is far
