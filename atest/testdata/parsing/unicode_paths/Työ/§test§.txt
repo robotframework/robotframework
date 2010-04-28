@@ -1,3 +1,0 @@
-*Test Cases*
-Test In Unicode Directory (€ÅÄÖ§)
-  Log  Hello from unicode directory
