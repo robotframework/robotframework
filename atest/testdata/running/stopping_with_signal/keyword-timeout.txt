@@ -1,0 +1,15 @@
+*** Settings ***
+Library  Library.py
+
+*** Test Case ***
+Test
+  Timeout In UK
+
+Test 2
+  No operation
+
+*** Keywords ***
+Timeout In UK
+  [Timeout]  3 seconds
+  My Sleep  2
+

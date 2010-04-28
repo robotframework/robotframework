@@ -1,0 +1,27 @@
+*** Settings ***
+Force Tags      not-ready
+Default Tags    pybot  jybot
+Resource        atest_resource.txt
+
+*** Test Cases ***
+SIGINT Signal Should Stop Test Execution Gracefully
+    Start Test Execution  
+
+SIGTERM Signal Should Stop Test Execution Gracefully
+
+One Signal Should Stop Test Execution Gracefully  When Run Keyword Is Used
+
+One Signal Should Stop Test Execution Gracefully When Test Timeout Is Used
+
+One Signal Should Stop Test Execution Gracefully When Keyword Timeout Is Used
+
+Two SIGINT Signals Should Stop Test Execution Forcefully
+
+Two SIGTERM Signals Should Stop Test Execution Forcefully
+
+Two Signals Should Stop Test Execution Forcefully When Run Keyword Is Used
+
+Two Signals Should Stop Test Execution Forcefully When Test Timeout Is Used
+
+Two Signals Should Stop Test Execution Forcefully When Keyword Timeout Is Used
+

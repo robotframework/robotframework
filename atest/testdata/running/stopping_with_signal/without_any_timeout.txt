@@ -1,0 +1,10 @@
+*** Settings ***
+Library  Library.py
+
+*** Test Case ***
+Test
+  My Sleep  2
+  No Operation
+
+Test 2
+  No Operation

@@ -1,0 +1,11 @@
+*** Settings ***
+Library  Library.py
+
+*** Test Case ***
+Test
+  Run Keyword  My Sleep  5
+  No Operation
+
+Test 2
+  No Operation
+
