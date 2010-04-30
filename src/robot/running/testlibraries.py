@@ -58,6 +58,7 @@ def _get_dynamic_method(code, underscore_name):
 
 
 class _BaseTestLibrary(BaseLibrary):
+    supports_named_arguments = False # this attribute is for libdoc
 
     def __init__(self, libcode, source, name, args, variables):
         if os.path.exists(name):
@@ -205,6 +206,7 @@ class _BaseTestLibrary(BaseLibrary):
 
 
 class _ClassLibrary(_BaseTestLibrary):
+    supports_named_arguments = True # this attribute is for libdoc
 
     def _get_handler_method(self, libcode, name):
         # Type is checked before using getattr to avoid calling properties,
@@ -241,6 +243,7 @@ class _ClassLibrary(_BaseTestLibrary):
 
 
 class _ModuleLibrary(_BaseTestLibrary):
+    supports_named_arguments = True # this attribute is for libdoc
 
     def _get_scope(self, libcode):
         return 'GLOBAL'
