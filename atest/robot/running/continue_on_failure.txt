@@ -1,0 +1,37 @@
+*** Settings ***
+Suite Setup     Run Tests  ${EMPTY}  running/continue_on_failure.txt  running/continue_on_failure_in_suite_setup.txt
+Force Tags      regression  pybot  jybot
+Resource        atest_resource.txt
+
+*** Test Cases ***
+
+Continue in test
+    ${tc}=  Check Test Case  ${TESTNAME}
+    Check Log Message  ${tc.kws[1].msgs[0]}  This should be executed
+
+Continue in user keyword
+    ${tc}=  Check Test Case  ${TESTNAME}
+    Check Log Message  ${tc.kws[0].kws[1].msgs[0]}  This should be executed in Test Case
+
+Continue in user keyword with several continuable failures
+    ${tc}=  Check Test Case  ${TESTNAME}
+    Check Log Message  ${tc.kws[0].kws[1].msgs[0]}  This should be executed in Test Case
+    Check Log Message  ${tc.kws[0].kws[3].msgs[0]}  This should also be executed in Test Case
+    Check Log Message  ${tc.kws[0].kws[5].msgs[0]}  This too should also be executed in Test Case
+
+Continue in test setup
+    ${tc}=  Check Test Case  ${TESTNAME}
+    Check Log Message  ${tc.setup.kws[1].msgs[0]}  This should be executed in Test Setup
+
+Continue in test teardown
+    ${tc}=  Check Test Case  ${TESTNAME}
+    Check Log Message  ${tc.teardown.kws[1].msgs[0]}  This should be executed in Test Teardown
+
+Continue in suite teardown
+    ${suite}=  Get Test Suite  Continue On Failure
+    Check Log Message  ${suite.teardown.kws[1].msgs[0]}  This should be executed in Suite Teardown
+
+Continue in suite setup
+    ${suite}=  Get Test Suite  Continue On Failure In Suite Setup
+    Check Log Message  ${suite.setup.kws[1].msgs[0]}  This should be executed in Suite Setup
+

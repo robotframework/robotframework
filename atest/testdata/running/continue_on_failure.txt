@@ -1,0 +1,48 @@
+*** Settings ***
+Suite Teardown  Continuable Failure In User Keyword In Suite Teardown   
+Library  Exceptions
+
+
+*** Variables ***
+${APOCALYPSE ERROR MESSAGE}  ContinuableApocalypseException: Can be continued\n\n
+${EXPECTED ERROR MESSAGE}  ${APOCALYPSE ERROR MESSAGE}Also teardown of the parent suite failed.
+
+
+*** Test Cases ***
+Continue in test
+    [Documentation]  FAIL  ${EXPECTED ERROR MESSAGE}
+    Raise Continuable Failure
+    Log  This should be executed
+
+Continue in user keyword
+    [Documentation]  FAIL  ${EXPECTED ERROR MESSAGE}
+    Continuable Failure In User Keyword In Test Case 
+
+Continue in user keyword with several continuable failures
+    [Documentation]   FAIL  Error 1: ${APOCALYPSE ERROR MESSAGE}Error 2: ${APOCALYPSE ERROR MESSAGE}Error 3: ${EXPECTED ERROR MESSAGE}
+    Several Continuable Failures In User Keyword In Test Case
+
+Continue in test setup
+    [Documentation]  FAIL  Setup failed:\n${EXPECTED ERROR MESSAGE}
+    [setup]  Continuable Failure In User Keyword In Test Setup
+    Log  This should not be executed
+
+Continue in test teardown
+    [Documentation]  FAIL  Teardown failed:\n${EXPECTED ERROR MESSAGE}
+    [teardown]  Continuable Failure In User Keyword In Test Teardown
+    No operation
+
+
+*** User Keywords ***
+Continuable Failure In User Keyword In ${where}
+    Raise Continuable Failure
+    Log  This should be executed in ${where}
+
+Several Continuable Failures In User Keyword In ${where}
+    Raise Continuable Failure
+    Log  This should be executed in ${where}
+    Raise Continuable Failure
+    Log  This should also be executed in ${where}
+    Raise Continuable Failure
+    Log  This too should also be executed in ${where}
+
