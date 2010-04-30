@@ -205,6 +205,7 @@ class PythonLibraryDoc(_DocHelper):
 
     def __init__(self, name, arguments=None, newname=None):
         lib = self._import(name, arguments)
+        self.supports_named_arguments = lib.supports_named_arguments
         self.name = newname or lib.name
         self.version = utils.html_escape(getattr(lib, 'version', '<unknown>'))
         self.scope = self._get_scope(lib)
@@ -234,6 +235,7 @@ class PythonLibraryDoc(_DocHelper):
 
 class ResourceDoc(PythonLibraryDoc):
     type = 'resource'
+    supports_named_arguments = True
 
     def _import(self, path, arguments):
         if arguments:
@@ -338,6 +340,7 @@ if utils.is_jython:
 
     class JavaLibraryDoc(_DocHelper):
         type = 'library'
+        supports_named_arguments = False
 
         def __init__(self, path, newname=None):
             cls = self._get_class(path)
@@ -570,7 +573,13 @@ ${STYLES}
 <b>Version:</b> ${LIB.version}<br>
 <!-- END IF -->
 <!-- IF "${LIB.type}" == "library" -->
-<b>Scope:</b> ${LIB.scope}</p>
+<b>Scope:</b> ${LIB.scope}<br>
+<!-- END IF -->
+<b>Named arguments: </b>
+<!-- IF ${LIB.supports_named_arguments} -->
+supported
+<!-- ELSE -->
+not supported
 <!-- END IF -->
 
 <h2 id="introduction">Introduction</h2>
