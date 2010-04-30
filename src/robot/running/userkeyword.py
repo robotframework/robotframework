@@ -16,7 +16,7 @@ import os
 import re
 
 from robot.common import BaseLibrary, UserErrorHandler
-from robot.errors import DataError
+from robot.errors import DataError, ExecutionFailed
 from robot.variables import is_list_var, VariableSplitter
 from robot import utils
 
@@ -144,8 +144,20 @@ class UserHandler(object):
                                       output)
         self._verify_keyword_is_valid()
         self.timeout.start()
+        errors = []
         for kw in self.keywords:
-            kw.run(output, namespace)
+            try:
+                kw.run(output, namespace)
+            except ExecutionFailed, err:
+                if not err.cont:
+                    raise
+                else:
+                    errors.append(err.msg)
+        if errors:
+            if len(errors) > 1:
+                errors = [ 'Error %d: %s' % (i+1, err)
+                           for i, err in enumerate(errors) ]
+            raise ExecutionFailed('\n\n'.join(errors))
         return self._get_return_value(namespace.variables)
 
     def _verify_keyword_is_valid(self):

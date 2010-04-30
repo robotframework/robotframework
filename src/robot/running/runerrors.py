@@ -111,7 +111,7 @@ class TestRunErrors(object):
         self._parent_err = err.child_error() if err else None
         self._init_err = None
         self._setup_err = None
-        self._kw_err = None
+        self._kw_errs = []
         self._teardown_err = None
 
     def is_allowed_to_run(self):
@@ -127,7 +127,7 @@ class TestRunErrors(object):
         return bool(self._setup_err)
 
     def kw_err(self, err):
-        self._kw_err = err
+        self._kw_errs.append(err)
 
     def teardown_err(self, err):
         self._teardown_err = err
@@ -138,7 +138,14 @@ class TestRunErrors(object):
     def get_message(self):
         if self._setup_err:
             return 'Setup failed:\n%s' % self._setup_err
-        return self._kw_err or ''
+        if len(self._kw_errs) > 0:
+            if len(self._kw_errs) > 1:
+                errors = [ 'Error %d: %s' % (i+1, err)
+                           for i, err in enumerate(self._kw_errs) ]
+            else:
+                errors = self._kw_errs
+            return '\n\n'.join(errors)
+        return ''
 
     def get_teardown_message(self, message):
         if message == '':

@@ -78,9 +78,10 @@ def get_execution_failed():
         details = _get_python_details(exc_value, exc_traceback)
     timeout = isinstance(exc_value, TimeoutError)
     exit = bool(getattr(exc_value, 'ROBOT_EXIT_ON_FAILURE', False))
+    cont = bool(getattr(exc_value, 'ROBOT_CONTINUE_ON_FAILURE', False))
     syntax = isinstance(exc_value, DataError)
     return message, details, ExecutionFailed(cut_long_message(message),
-                                             timeout, exit, syntax)
+                                             timeout, exit, cont, syntax)
 
 
 def _is_java_exception(exc):

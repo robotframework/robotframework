@@ -13,8 +13,7 @@
 #  limitations under the License.
 
 from robot import utils
-from robot.errors import FrameworkError, ExecutionFailed, DataError, \
-    TimeoutError
+from robot.errors import FrameworkError, ExecutionFailed, DataError
 from robot.common import BaseKeyword
 from robot.variables import is_list_var
 

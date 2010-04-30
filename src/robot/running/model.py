@@ -202,7 +202,8 @@ class RunnableTestCase(BaseTestCase):
         self.init_ctx(namespace)
         self.timeout.start()
         self._run_setup(output, namespace)
-        self._run_keywords(output, namespace)
+        if not self._run_errors.setup_failed():
+            self._run_keywords(output, namespace)
         self._report_status(namespace)
         self._run_teardown(output, namespace)
         self._report_status_after_teardown()
@@ -216,13 +217,12 @@ class RunnableTestCase(BaseTestCase):
         self._run_errors.setup_err(setup_err)
 
     def _run_keywords(self, output, namespace):
-        if self._run_errors.setup_failed():
-            return
         for kw in self.keywords:
-            kw_err = self._run_with_error_handling(kw, output, namespace)
+            kw_err, can_continue = self._run_with_error_handling(kw, output, namespace)
             if kw_err:
                 self._run_errors.kw_err(kw_err)
-                return
+                if not can_continue:
+                    return
 
     def _report_status(self, namespace):
         self.message = self._run_errors.get_message()
@@ -256,15 +256,16 @@ class RunnableTestCase(BaseTestCase):
 
     def _run_fixture(self, fixture, output, namespace):
         if fixture:
-            return self._run_with_error_handling(fixture, output, namespace)
+            return self._run_with_error_handling(fixture, output, namespace)[0]
 
     def _run_with_error_handling(self, runnable, output, namespace):
         try:
             runnable.run(output, namespace)
+            return '', True
         except ExecutionFailed, err:
             self.timeout.set_keyword_timeout(err.timeout)
             self._suite_errors.test_failed(exit=err.exit)
-            return err.msg
+            return err.msg, err.cont
 
 
 class _TestCaseDefaults:
