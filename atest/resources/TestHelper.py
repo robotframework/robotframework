@@ -32,3 +32,6 @@ class TestHelper:
         if splitlevel > 0 and splitlevel <= len(parts):
             parts = parts[splitlevel:]
         return '.'.join(parts)
+
+    def running_on_jython(self, interpreter):
+        return 'jython' in interpreter
