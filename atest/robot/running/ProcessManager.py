@@ -25,14 +25,15 @@ class ProcessManager(object):
 
     def send_terminate(self, signal_name):
         if os.name != 'nt':
-            signal_to_send = getattr(signal, signal_name)
-            pid = self._process.pid
-            os.kill(pid, signal_to_send)
+            os.kill(self._process.pid, getattr(signal, signal_name))
         else:
-            signal_handler = signal.signal(signal.SIGINT, signal.SIG_IGN)
-            kernel32 = ctypes.windll.kernel32
-            kernel32.GenerateConsoleCtrlEvent(0, 0)
-            signal.signal(signal.SIGINT, signal_handler)
+            self._set_handler_to_ignore_one_sigint()
+            ctypes.windll.kernel32.GenerateConsoleCtrlEvent(0, 0)
+
+    def _set_handler_to_ignore_one_sigint(self):
+        orig_handler = signal.getsignal(signal.SIGINT)
+        signal.signal(signal.SIGINT, lambda signum, frame:
+                      signal.signal(signal.SIGINT, orig_handler))
 
     def get_stdout(self):
         self._stdout += self._process.stdout.read()
