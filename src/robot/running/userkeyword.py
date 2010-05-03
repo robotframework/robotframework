@@ -144,11 +144,11 @@ class UserKeywordHandler(object):
                                      output)
         self._verify_keyword_is_valid()
         self.timeout.start()
-        self._errors = UserKeywordRunErrors()
+        errs = UserKeywordRunErrors()
         for kw in self.keywords:
-            self._run_with_error_handling(kw, output, namespace)
-        if self._errors.has_errors():
-            raise ExecutionFailed(self._errors.get_message(), cont=True)
+            self._run_with_error_handling(kw, output, namespace, errs)
+        if errs.has_errors():
+            raise ExecutionFailed(errs.get_message(), cont=True)
         return self._get_return_value(namespace.variables)
 
     def _verify_keyword_is_valid(self):
@@ -159,13 +159,13 @@ class UserKeywordHandler(object):
             raise DataError("User keyword '%s' contains no keywords"
                             % self.name)
 
-    def _run_with_error_handling(self, kw, output, namespace):
+    def _run_with_error_handling(self, kw, output, namespace, errs):
         try:
             kw.run(output, namespace)
         except ExecutionFailed, err:
-            self._errors.add(err.msg)
+            errs.add(err.msg)
             if not err.cont:
-                raise ExecutionFailed(self._errors.get_message())
+                raise ExecutionFailed(errs.get_message(),exit=err.exit,syntax=err.syntax,timeout=err.timeout)
 
     def _get_return_value(self, variables):
         if not self.return_value:
