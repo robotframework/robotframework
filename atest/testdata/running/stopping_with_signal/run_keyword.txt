@@ -9,7 +9,7 @@ ${TEARDOWN SLEEP} =  0 seconds
 *** Test Case ***
 Test
   Create File  ${TEMPDIR}/robot_signal_test_started.txt
-  Run Keyword  My Sleep  2
+  Run Keyword  Busy Sleep  2
   No Operation
 
 Test 2

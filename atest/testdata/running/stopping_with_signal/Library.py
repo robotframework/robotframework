@@ -1,7 +1,7 @@
 import time
 
 class Library:
-    def my_sleep(self, seconds):
-        start_time = time.time()
-        while (time.time() - int(seconds) < start_time):
-            time.sleep(1)
+    def busy_sleep(self, seconds):
+        max_time = time.time() + int(seconds)
+        while time.time() < max_time:
+            pass

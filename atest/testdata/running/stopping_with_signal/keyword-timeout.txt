@@ -18,6 +18,6 @@ Test 2
 *** Keywords ***
 Timeout In UK
   [Timeout]  3 seconds
-  My Sleep  2
+  Busy Sleep  2
   No operation
 

@@ -3,7 +3,6 @@ Force Tags      regression
 Default Tags    pybot  jybot
 Resource        atest_resource.txt
 Library  ProcessManager.py
-Library  JavaStarter.py
 
 *** Test Cases ***
 SIGINT Signal Should Stop Test Execution Gracefully
@@ -96,5 +95,5 @@ One Signal
 Two Signals
 	[arguments]  ${signal}
 	send terminate  ${signal}
-	Sleep  0.1s
+	Busy Sleep  1
 	send terminate  ${signal}
