@@ -20,6 +20,7 @@ $ atest/run_atests.py python --splitoutputs 2 atest/robot
 $ atest/run_atests.py /usr/bin/jython22 atest/robot/core/variables.html
 """
 
+import signal
 import subprocess
 import os.path
 import shutil
@@ -77,6 +78,7 @@ def atests(interpreter, *params):
     command = '%s %s %s %s' % (sys.executable, runner, args, ' '.join(params))
     print 'Running command\n%s\n' % command
     sys.stdout.flush()
+    signal.signal(signal.SIGINT, signal.SIG_IGN)
     return subprocess.call(command.split())
 
 
