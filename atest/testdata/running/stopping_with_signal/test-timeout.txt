@@ -1,8 +1,10 @@
 *** Settings ***
 Library  Library.py
+Library  OperatingSystem
 
 *** Test Case ***
 Test  [timeout]  3 Seconds
+  Create File  ${TEMPDIR}/robot_signal_test_started.txt
   My Sleep  2
   No Operation
 

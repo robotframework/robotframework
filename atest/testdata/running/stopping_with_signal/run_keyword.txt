@@ -1,9 +1,11 @@
 *** Settings ***
 Library  Library.py
+Library  OperatingSystem
 
 *** Test Case ***
 Test
-  Run Keyword  My Sleep  5
+  Create File  ${TEMPDIR}/robot_signal_test_started.txt
+  Run Keyword  My Sleep  2
   No Operation
 
 Test 2

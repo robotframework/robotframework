@@ -1,9 +1,12 @@
 *** Settings ***
 Library  Library.py
+Library  OperatingSystem
 
 *** Test Case ***
 Test
+  Create File  ${TEMPDIR}/robot_signal_test_started.txt
   Timeout In UK
+  No operation
 
 Test 2
   No operation
@@ -12,4 +15,5 @@ Test 2
 Timeout In UK
   [Timeout]  3 seconds
   My Sleep  2
+  No operation
 
