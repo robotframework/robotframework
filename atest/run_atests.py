@@ -74,6 +74,8 @@ def atests(interpreter, *params):
         'RUNNER': ('python' in os.path.basename(interpreter) and 'pybot'
                    or 'jybot')
         }
+    if os.name == 'nt':
+        args += ' --exclude nonwindows'
     runner = os.path.join(os.path.dirname(robot.__file__), 'runner.py')
     command = '%s %s %s %s' % (sys.executable, runner, args, ' '.join(params))
     print 'Running command\n%s\n' % command
