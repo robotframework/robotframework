@@ -1,8 +1,7 @@
-import sys
 import unittest
 
-from robot.running.userkeyword import UserHandler, EmbeddedArgsTemplate, \
-        EmbeddedArgs, UserKeywordArguments
+from robot.running.userkeyword import UserKeywordHandler, \
+    EmbeddedArgsTemplate, EmbeddedArgs
 from robot.utils.asserts import *
 
 
@@ -93,7 +92,7 @@ class TestEmbeddedArgs(unittest.TestCase):
         assert_equals(handler.longname, 'resource.User SELECts book frOm liST')
 
     def test_embedded_args_handler_has_all_needed_attributes(self):
-        normal = UserHandler(HandlerDataMock('My name'), None)
+        normal = UserKeywordHandler(HandlerDataMock('My name'), None)
         embedded = EmbeddedArgs('My name', EAT('My ${name}'))
         for attr in dir(normal):
             assert_true(hasattr(embedded, attr), "'%s' missing" % attr)

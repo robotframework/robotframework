@@ -1,5 +1,4 @@
 import unittest
-import sys
 import os
 
 from robot.parsing.userkeyword import UserHandlerList
@@ -51,13 +50,13 @@ class EmbeddedArgsTemplateStub:
 class TestUserLibrary(unittest.TestCase):
 
     def setUp(self):
-        self._orig_userhandler = userkeyword.UserHandler
+        self._orig_userhandler = userkeyword.UserKeywordHandler
         self._orig_embeddedargstemplate = userkeyword.EmbeddedArgsTemplate
-        userkeyword.UserHandler = UserHandlerStub
+        userkeyword.UserKeywordHandler = UserHandlerStub
         userkeyword.EmbeddedArgsTemplate = EmbeddedArgsTemplateStub
-        
+
     def tearDown(self):
-        userkeyword.UserHandler = self._orig_userhandler
+        userkeyword.UserKeywordHandler = self._orig_userhandler
         userkeyword.EmbeddedArgsTemplate = self._orig_embeddedargstemplate
         
     def test_name_from_resource(self):
