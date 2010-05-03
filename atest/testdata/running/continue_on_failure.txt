@@ -4,23 +4,24 @@ Library  Exceptions
 
 
 *** Variables ***
-${APOCALYPSE ERROR MESSAGE}  ContinuableApocalypseException: Can be continued\n\n
+${ERROR}  ContinuableApocalypseException: Can be continued
+${ERROR LINE}  ${ERROR}\n\n
 ${TEARDOWN ERROR}  Also teardown of the parent suite failed.
-${EXPECTED ERROR MESSAGE}  ${APOCALYPSE ERROR MESSAGE}${TEARDOWN ERROR}
+${ERROR LINE WITH TEARDOWN}  ${ERROR LINE}${TEARDOWN ERROR}
 
 
 *** Test Cases ***
 Continue in test
-    [Documentation]  FAIL  ${EXPECTED ERROR MESSAGE}
+    [Documentation]  FAIL  ${ERROR LINE WITH TEARDOWN}
     Raise Continuable Failure
     Log  This should be executed
 
 Continue in user keyword
-    [Documentation]  FAIL  ${EXPECTED ERROR MESSAGE}
+    [Documentation]  FAIL  ${ERROR LINE WITH TEARDOWN}
     Continuable Failure In User Keyword In Test Case
 
 Continue in test with several continuable failures
-    [Documentation]   FAIL  Error 1: ${APOCALYPSE ERROR MESSAGE}Error 2: ${APOCALYPSE ERROR MESSAGE}Error 3: ${EXPECTED ERROR MESSAGE}
+    [Documentation]   FAIL  Error 1: ${ERROR LINE}Error 2: ${ERROR LINE}Error 3: ${ERROR LINE WITH TEARDOWN}
     Raise Continuable Failure
     Log  This should be executed
     Raise Continuable Failure
@@ -29,33 +30,37 @@ Continue in test with several continuable failures
     Log  This too should also be executed
 
 Continue in user keyword with several continuable failures
-    [Documentation]   FAIL  Error 1: ${APOCALYPSE ERROR MESSAGE}Error 2: ${APOCALYPSE ERROR MESSAGE}Error 3: ${EXPECTED ERROR MESSAGE}
+    [Documentation]   FAIL  Error 1: ${ERROR LINE}Error 2: ${ERROR LINE}Error 3: ${ERROR LINE WITH TEARDOWN}
     Several Continuable Failures In User Keyword In Test Case
 
 Continuable and regular failure
-    [Documentation]   FAIL  Error 1: ${APOCALYPSE ERROR MESSAGE}Error 2: Stopping here!!\n\n${TEARDOWN ERROR}
+    [Documentation]   FAIL  Error 1: ${ERROR LINE}Error 2: Stopping here!!\n\n${TEARDOWN ERROR}
     Raise Continuable Failure
     Log  This should be executed
     Fail  Stopping here!!
     Log  This should not be executed
 
 Continue in nested user keyword
-    [Documentation]   FAIL  Error 1: ${APOCALYPSE ERROR MESSAGE}Error 2: ${EXPECTED ERROR MESSAGE}
+    [Documentation]  FAIL Error 1: ${ERROR} in top level\n\n
+    ...  Error 2: ${ERROR}\n\n
+    ...  Error 3: ${ERROR}\n\n
+    ...  Error 4: ${ERROR}\n\n
+    ...  Error 5: ${ERROR} in top level after nesting\n\n${TEARDOWN ERROR}
     Continuable Failure In Nested UK
 
 Continuable and regular failure in nested UK
-    [Documentation]   FAIL  Error 1: ${APOCALYPSE ERROR MESSAGE}Error 2: Stop!!\n\n${TEARDOWN ERROR}
+    [Documentation]   FAIL  Error 1: ${ERROR LINE}Error 2: Stop!!\n\n${TEARDOWN ERROR}
     Continuable and regular failure in nested UK
     Log  This should not be executed
 
 Continue in test setup
-    [Documentation]  FAIL  Setup failed:\n${EXPECTED ERROR MESSAGE}
+    [Documentation]  FAIL  Setup failed:\n${ERROR LINE WITH TEARDOWN}
     [setup]  Continuable Failure In User Keyword In Test Setup
     Log  This should not be executed
 
 Continue in test teardown
-    [Documentation]  FAIL  Teardown failed:\n${EXPECTED ERROR MESSAGE}
-    [teardown]  Continuable Failure In User Keyword In Test Teardown
+    [Documentation]  FAIL  Teardown failed:\n${ERROR LINE WITH TEARDOWN}
+    [Teardown]  Continuable Failure In User Keyword In Test Teardown
     No operation
 
 
@@ -73,9 +78,10 @@ Several Continuable Failures In User Keyword In ${where}
     Log  This too should also be executed in ${where}
 
 Continuable Failure In Nested UK
-    Continuable Failure In User Keyword In Nested UK
+    Raise Continuable Failure  Can be continued in top level
     Log  This should be executed in Top Level UK
-    Raise Continuable Failure
+    Several Continuable Failures In User Keyword In Nested UK
+    Raise Continuable Failure  Can be continued in top level after nesting
 
 Continuable and regular failure in nested UK
     Continuable and regular failure

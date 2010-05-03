@@ -52,4 +52,3 @@ Continue in suite teardown
 Continue in suite setup
     ${suite}=  Get Test Suite  Continue On Failure In Suite Setup
     Check Log Message  ${suite.setup.kws[1].msgs[0]}  This should be executed in Suite Setup
-
