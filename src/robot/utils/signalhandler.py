@@ -35,8 +35,6 @@ class _StopSignalMonitor(object):
             self._stop_execution_gracefully()
 
     def _stop_execution_gracefully(self):
-        # if in teardown, do nothing
-        # TODO: change method for teardown?
         if not self._error_reported:
             self._error_reported = True
             raise ExecutionFailed('Execution terminated by signal', exit=True)
