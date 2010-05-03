@@ -213,15 +213,16 @@ class RunnableTestCase(BaseTestCase):
         namespace.variables['@{TEST_TAGS}'] = self.tags
 
     def _run_setup(self, output, namespace):
-        setup_err = self._run_fixture(self.setup, output, namespace)
-        self._run_errors.setup_err(setup_err)
+        error = self._run_fixture(self.setup, output, namespace)
+        if error:
+            self._run_errors.setup_err(error.msg)
 
     def _run_keywords(self, output, namespace):
         for kw in self.keywords:
-            kw_err, can_continue = self._run_with_error_handling(kw, output, namespace)
-            if kw_err:
-                self._run_errors.kw_err(kw_err)
-                if not can_continue:
+            error = self._run_with_error_handling(kw, output, namespace)
+            if error:
+                self._run_errors.kw_err(error.msg)
+                if not error.cont:
                     return
 
     def _report_status(self, namespace):
@@ -231,8 +232,9 @@ class RunnableTestCase(BaseTestCase):
         namespace.variables['${TEST_STATUS}'] = self.status
 
     def _run_teardown(self, output, namespace):
-        td_err = self._run_fixture(self.teardown, output, namespace)
-        self._run_errors.teardown_err(td_err)
+        error = self._run_fixture(self.teardown, output, namespace)
+        if error:
+            self._run_errors.teardown_err(error.msg)
 
     def _report_status_after_teardown(self):
         if self._run_errors.teardown_failed():
@@ -256,16 +258,16 @@ class RunnableTestCase(BaseTestCase):
 
     def _run_fixture(self, fixture, output, namespace):
         if fixture:
-            return self._run_with_error_handling(fixture, output, namespace)[0]
+            return self._run_with_error_handling(fixture, output, namespace)
 
     def _run_with_error_handling(self, runnable, output, namespace):
         try:
             runnable.run(output, namespace)
-            return '', True
+            return None
         except ExecutionFailed, err:
             self.timeout.set_keyword_timeout(err.timeout)
             self._suite_errors.test_failed(exit=err.exit)
-            return err.msg, err.cont
+            return err
 
 
 class _TestCaseDefaults:

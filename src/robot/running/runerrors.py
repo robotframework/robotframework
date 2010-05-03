@@ -138,14 +138,7 @@ class TestRunErrors(object):
     def get_message(self):
         if self._setup_err:
             return 'Setup failed:\n%s' % self._setup_err
-        if len(self._kw_errs) > 0:
-            if len(self._kw_errs) > 1:
-                errors = [ 'Error %d: %s' % (i+1, err)
-                           for i, err in enumerate(self._kw_errs) ]
-            else:
-                errors = self._kw_errs
-            return '\n\n'.join(errors)
-        return ''
+        return _form_error_message(self._kw_errs)
 
     def get_teardown_message(self, message):
         if message == '':
@@ -154,3 +147,24 @@ class TestRunErrors(object):
 
     def parent_or_init_error(self):
         return self._parent_err or self._init_err
+
+
+class UserKeywordRunErrors(object):
+
+    def __init__(self):
+        self._errors = []
+
+    def add(self, msg):
+        self._errors.append(msg)
+
+    def has_errors(self):
+        return bool(self._errors)
+
+    def get_message(self):
+        return _form_error_message(self._errors)
+
+
+def _form_error_message(errors):
+    """Returns list of errors formatted as a string (empty string is returned if list is empty)"""
+    return '\n\n'.join(errors if len(errors) == 1 else [ 'Error %d: %s' % (i+1, err)
+                                                         for i, err in enumerate(errors) ])

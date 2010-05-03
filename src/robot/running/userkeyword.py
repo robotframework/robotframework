@@ -23,6 +23,7 @@ from robot import utils
 from keywords import KeywordFactory
 from timeouts import KeywordTimeout
 from arguments import UserKeywordArguments
+from runerrors import UserKeywordRunErrors
 
 
 def PublicUserLibrary(path):
@@ -49,7 +50,7 @@ class UserLibrary(BaseLibrary):
                 try:
                     handler = EmbeddedArgsTemplate(handler, self.name)
                 except TypeError:
-                    handler = UserHandler(handler, self.name)
+                    handler = UserKeywordHandler(handler, self.name)
                 else:
                     self.embedded_arg_handlers.append(handler)
             if self.handlers.has_key(handler.name):
@@ -99,12 +100,11 @@ class UserLibrary(BaseLibrary):
                         "Found: %s" % (where, name, names))
 
 
-class UserHandler(object):
+class UserKeywordHandler(object):
     type = 'user'
     longname = property(lambda self: not self._libname and self.name
                         or '%s.%s' % (self._libname, self.name))
     shortdoc = property(lambda self: self.doc.splitlines()[0] if self.doc else '')
-
 
     def __init__(self, handlerdata, libname):
         self.name = utils.printable_name(handlerdata.name)
@@ -141,23 +141,14 @@ class UserHandler(object):
     def _run(self, output, namespace, arguments):
         argument_values = self.arguments.resolve(arguments, namespace.variables)
         self.arguments.set_variables(argument_values, namespace.variables,
-                                      output)
+                                     output)
         self._verify_keyword_is_valid()
         self.timeout.start()
-        errors = []
+        self._errors = UserKeywordRunErrors()
         for kw in self.keywords:
-            try:
-                kw.run(output, namespace)
-            except ExecutionFailed, err:
-                if not err.cont:
-                    raise
-                else:
-                    errors.append(err.msg)
-        if errors:
-            if len(errors) > 1:
-                errors = [ 'Error %d: %s' % (i+1, err)
-                           for i, err in enumerate(errors) ]
-            raise ExecutionFailed('\n\n'.join(errors))
+            self._run_with_error_handling(kw, output, namespace)
+        if self._errors.has_errors():
+            raise ExecutionFailed(self._errors.get_message(), cont=True)
         return self._get_return_value(namespace.variables)
 
     def _verify_keyword_is_valid(self):
@@ -168,6 +159,14 @@ class UserHandler(object):
             raise DataError("User keyword '%s' contains no keywords"
                             % self.name)
 
+    def _run_with_error_handling(self, kw, output, namespace):
+        try:
+            kw.run(output, namespace)
+        except ExecutionFailed, err:
+            self._errors.add(err.msg)
+            if not err.cont:
+                raise ExecutionFailed(self._errors.get_message())
+
     def _get_return_value(self, variables):
         if not self.return_value:
             return None
@@ -177,7 +176,7 @@ class UserHandler(object):
         return ret[0]
 
 
-class EmbeddedArgsTemplate(UserHandler):
+class EmbeddedArgsTemplate(UserKeywordHandler):
 
     def __init__(self, handlerdata, libname):
         if handlerdata.args:
@@ -186,7 +185,7 @@ class EmbeddedArgsTemplate(UserHandler):
                 = self._read_embedded_args_and_regexp(handlerdata.name)
         if not self.embedded_args:
             raise TypeError('Must have embedded arguments')
-        UserHandler.__init__(self, handlerdata, libname)
+        UserKeywordHandler.__init__(self, handlerdata, libname)
 
     def _read_embedded_args_and_regexp(self, string):
         args = []
@@ -208,7 +207,7 @@ class EmbeddedArgsTemplate(UserHandler):
         return string[:var.start], string[var.start:var.end], string[var.end:]
 
 
-class EmbeddedArgs(UserHandler):
+class EmbeddedArgs(UserKeywordHandler):
 
     def __init__(self, name, template):
         match = template.name_regexp.match(name)
@@ -222,7 +221,7 @@ class EmbeddedArgs(UserHandler):
     def run(self, output, namespace, args):
         for name, value in self.embedded_args:
             namespace.variables[name] = namespace.variables.replace_scalar(value)
-        return UserHandler.run(self, output, namespace, args)
+        return UserKeywordHandler.run(self, output, namespace, args)
 
     def _copy_attrs_from_template(self, template):
         self._libname = template._libname
