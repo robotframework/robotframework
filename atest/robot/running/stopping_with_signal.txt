@@ -66,16 +66,16 @@ Start Running Robot
     [arguments]  ${datasource}  ${teardown sleep}
     Set Runners
     ${path to datasource} =  Set Variables And Get Datasources  ${datasource}
-    ProcessManager.start process  ${ROBOT} --output ${OUTFILE} --report None --log None --variable TEARDOWNSLEEP:${teardown sleep} ${path to datasource}
+    ${path to runner} =  Join Path  ${ROBOTPATH}  runner.py
+    ProcessManager.start process  ${INTERPRETER}  ${path to runner}  --output  ${OUTFILE}  --report  None  --log  None  --variable  TEARDOWNSLEEP:${teardown sleep}  ${path to datasource}
 
 Start Running Jybot
     [arguments]  ${datasource}  ${teardown sleep}
     ${jybot} =  Get Jython Path
     Set Runners
     ${path to datasource} =  Set Variables And Get Datasources  ${datasource}
-    ${robot_jybot} =  Join Path  ${ROBOTPATH}  runner.py
-    log  ${jybot} ${robot_jybot} --output ${OUTFILE} --report None --log None ${path to datasource}
-    ProcessManager.start process  ${jybot} ${robot_jybot} --output ${OUTFILE} --report None --log None --variable TEARDOWNSLEEP:${teardown sleep} ${path to datasource}
+    ${path to runner} =  Join Path  ${ROBOTPATH}  runner.py
+    ProcessManager.start process  ${jybot}  ${path to runner}  --output  ${OUTFILE}  --report  None  --log  None  --variable  TEARDOWNSLEEP:${teardown sleep}  ${path to datasource}
 
 Check Test Cases Have Failed Correctly
     Check Test Case  Test  FAIL  Execution terminated by signal

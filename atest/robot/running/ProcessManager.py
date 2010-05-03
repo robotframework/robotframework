@@ -7,8 +7,12 @@ class ProcessManager(object):
     def __init__(self):
         self._current_running_process = None
 
-    def start_process(self,*args):
-        self._current_running_process = subprocess.Popen(args, shell=True, stderr=subprocess.PIPE, 
+    def start_process(self, *args):
+        if ' ' in args[0]:
+            args = args[0].split() + list(args[1:])
+        print args
+        print ' '.join(args)
+        self._current_running_process = subprocess.Popen(args, shell=False, stderr=subprocess.PIPE, 
                                                          stdout=subprocess.PIPE)
         self._output = ''
         self._err = ''
@@ -17,9 +21,17 @@ class ProcessManager(object):
         self._current_running_process.poll()
         return self._current_running_process.returncode
 
-    def send_terminate(self, signal_):
+    def send_terminate(self, signal_name):
+        signal_to_send = getattr(signal, signal_name)
         pid = self._current_running_process.pid
-        os.kill(pid, getattr(signal, signal_))
+        if not os.name == 'nt':
+            os.kill(pid, signal_to_send)
+        else:
+            print "Process pid is:", pid
+            signal.signal(signal.SIGINT, signal.SIG_IGN)
+            import ctypes
+            kernel32 = ctypes.windll.kernel32
+            kernel32.GenerateConsoleCtrlEvent(0, 0)
 
     def get_stdout(self):
         self._output += self._current_running_process.stdout.read()

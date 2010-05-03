@@ -11,12 +11,14 @@ class JavaStarter(object):
         jython_jar = os.path.join(self._jython_home, 'jython.jar')
         self._classpath = jython_jar + os.pathsep + os.getenv('CLASSPATH','')
         java_home = os.getenv('JAVA_HOME')
-        self._java = os.path.join(java_home, 'java') if java_home else 'java'
+        if java_home and java_home.startswith('"') and java_home.endswith('"'):
+            java_home = java_home[1:-1]
+        self._java = os.path.join(java_home, 'bin', 'java') if java_home else 'java'
 
     def get_jython_path(self):
         if not self._jython_home:
             raise RuntimeError('This test requires JYTHON_HOME environment variable to be set.')
-        return '%s -Dpython.home=%s -classpath %s org.python.util.jython' % (self._java,self._jython_home,self._classpath)
+        return '%s -Dpython.home=%s -classpath %s org.python.util.jython' % (self._java, self._jython_home, self._classpath)
 
 
 # CP="/home/peke/Prog/jython2.2/jython.jar"
