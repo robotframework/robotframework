@@ -23,7 +23,6 @@ from robot import utils
 from keywords import KeywordFactory
 from timeouts import KeywordTimeout
 from arguments import UserKeywordArguments
-from runerrors import UserKeywordRunErrors
 
 
 def PublicUserLibrary(path):
@@ -144,11 +143,11 @@ class UserKeywordHandler(object):
                                      output)
         self._verify_keyword_is_valid()
         self.timeout.start()
-        errs = UserKeywordRunErrors()
+        errs = []
         for kw in self.keywords:
             self._run_with_error_handling(kw, output, namespace, errs)
-        if errs.has_errors():
-            raise ExecutionFailed(errs.get_message(), cont=True)
+        if errs:
+            raise ExecutionFailed(errs, cont=True)
         return self._get_return_value(namespace.variables)
 
     def _verify_keyword_is_valid(self):
@@ -163,9 +162,13 @@ class UserKeywordHandler(object):
         try:
             kw.run(output, namespace)
         except ExecutionFailed, err:
-            errs.add(err.msg)
+            if isinstance(err.msg, basestring):
+                errs.append(err.msg)
+            else:
+                errs.extend(err.msg)
             if not err.cont:
-                raise ExecutionFailed(errs.get_message(),exit=err.exit,syntax=err.syntax,timeout=err.timeout)
+                raise ExecutionFailed(errs, exit=err.exit,
+                                      syntax=err.syntax,timeout=err.timeout)
 
     def _get_return_value(self, variables):
         if not self.return_value:

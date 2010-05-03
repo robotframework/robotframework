@@ -121,16 +121,25 @@ class TestRunErrors(object):
         self._init_err = err
 
     def setup_err(self, err):
-        self._setup_err = err
+        if isinstance(err, basestring):
+            self._setup_err = err
+        else:
+            self._setup_err = self._form_error_message(err)
 
     def setup_failed(self):
         return bool(self._setup_err)
 
     def kw_err(self, err):
-        self._kw_errs.append(err)
+        if isinstance(err, basestring):
+            self._kw_errs.append(err)
+        else:
+            self._kw_errs.extend(err)
 
     def teardown_err(self, err):
-        self._teardown_err = err
+        if isinstance(err, basestring):
+            self._teardown_err = err
+        else:
+            self._teardown_err = self._form_error_message(err)
 
     def teardown_failed(self):
         return bool(self._teardown_err)
@@ -138,7 +147,7 @@ class TestRunErrors(object):
     def get_message(self):
         if self._setup_err:
             return 'Setup failed:\n%s' % self._setup_err
-        return _form_error_message(self._kw_errs)
+        return self._form_error_message(self._kw_errs)
 
     def get_teardown_message(self, message):
         if message == '':
@@ -147,24 +156,8 @@ class TestRunErrors(object):
 
     def parent_or_init_error(self):
         return self._parent_err or self._init_err
-
-
-class UserKeywordRunErrors(object):
-
-    def __init__(self):
-        self._errors = []
-
-    def add(self, msg):
-        self._errors.append(msg)
-
-    def has_errors(self):
-        return bool(self._errors)
-
-    def get_message(self):
-        return _form_error_message(self._errors)
-
-
-def _form_error_message(errors):
-    """Returns list of errors formatted as a string (empty string is returned if list is empty)"""
-    return '\n\n'.join(errors if len(errors) == 1 else [ 'Error %d: %s' % (i+1, err)
-                                                         for i, err in enumerate(errors) ])
+    
+    def _form_error_message(self, errors):
+        """Returns list of errors formatted as a string (empty string is returned if list is empty)"""
+        return '\n\n'.join(errors if len(errors) == 1 else [ 'Error %d: %s' % (i+1, err)
+                                                             for i, err in enumerate(errors) ])
