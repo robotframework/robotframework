@@ -1,6 +1,10 @@
 *** Settings ***
 Library  Library.py
 Library  OperatingSystem
+Suite Teardown  Sleep  ${TEARDOWN SLEEP}
+
+*** Variables ***
+${TEARDOWN SLEEP} =  0 seconds
 
 *** Test Case ***
 Test  [timeout]  3 Seconds
