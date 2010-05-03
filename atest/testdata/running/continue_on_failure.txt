@@ -5,7 +5,8 @@ Library  Exceptions
 
 *** Variables ***
 ${APOCALYPSE ERROR MESSAGE}  ContinuableApocalypseException: Can be continued\n\n
-${EXPECTED ERROR MESSAGE}  ${APOCALYPSE ERROR MESSAGE}Also teardown of the parent suite failed.
+${TEARDOWN ERROR}  Also teardown of the parent suite failed.
+${EXPECTED ERROR MESSAGE}  ${APOCALYPSE ERROR MESSAGE}${TEARDOWN ERROR}
 
 
 *** Test Cases ***
@@ -16,11 +17,36 @@ Continue in test
 
 Continue in user keyword
     [Documentation]  FAIL  ${EXPECTED ERROR MESSAGE}
-    Continuable Failure In User Keyword In Test Case 
+    Continuable Failure In User Keyword In Test Case
+
+Continue in test with several continuable failures
+    [Documentation]   FAIL  Error 1: ${APOCALYPSE ERROR MESSAGE}Error 2: ${APOCALYPSE ERROR MESSAGE}Error 3: ${EXPECTED ERROR MESSAGE}
+    Raise Continuable Failure
+    Log  This should be executed
+    Raise Continuable Failure
+    Log  This should also be executed
+    Raise Continuable Failure
+    Log  This too should also be executed
 
 Continue in user keyword with several continuable failures
     [Documentation]   FAIL  Error 1: ${APOCALYPSE ERROR MESSAGE}Error 2: ${APOCALYPSE ERROR MESSAGE}Error 3: ${EXPECTED ERROR MESSAGE}
     Several Continuable Failures In User Keyword In Test Case
+
+Continuable and regular failure
+    [Documentation]   FAIL  Error 1: ${APOCALYPSE ERROR MESSAGE}Error 2: Stopping here!!\n\n${TEARDOWN ERROR}
+    Raise Continuable Failure
+    Log  This should be executed
+    Fail  Stopping here!!
+    Log  This should not be executed
+
+Continue in nested user keyword
+    [Documentation]   FAIL  Error 1: ${APOCALYPSE ERROR MESSAGE}Error 2: ${EXPECTED ERROR MESSAGE}
+    Continuable Failure In Nested UK
+
+Continuable and regular failure in nested UK
+    [Documentation]   FAIL  Error 1: ${APOCALYPSE ERROR MESSAGE}Error 2: Stop!!\n\n${TEARDOWN ERROR}
+    Continuable and regular failure in nested UK
+    Log  This should not be executed
 
 Continue in test setup
     [Documentation]  FAIL  Setup failed:\n${EXPECTED ERROR MESSAGE}
@@ -46,3 +72,16 @@ Several Continuable Failures In User Keyword In ${where}
     Raise Continuable Failure
     Log  This too should also be executed in ${where}
 
+Continuable Failure In Nested UK
+    Continuable Failure In User Keyword In Nested UK
+    Log  This should be executed in Top Level UK
+    Raise Continuable Failure
+
+Continuable and regular failure in nested UK
+    Continuable and regular failure
+    Log  This should not be executed
+
+Continuable and regular failure
+    Raise Continuable Failure
+    Log  This should be executed in Nested UK
+    Fail  Stop!!
