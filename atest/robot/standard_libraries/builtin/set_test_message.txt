@@ -1,0 +1,33 @@
+*** Settings ***
+Force Tags  regression  pybot  jybot
+Suite Setup  Run Tests  ${EMPTY}  standard_libraries/builtin/set_test_message.txt  standard_libraries/builtin/set_test_message_in_suite_level.txt
+Resource    atest_resource.txt
+
+*** Test Cases ***
+Set Message To Successful Test
+    Check Test Case  ${TEST NAME}  PASS  My Test Message
+
+Set Message To Test That Failed
+    Check Test Case  ${TEST NAME}
+
+Set Message To Failed Test On Teardown
+    Check Test Case  ${TEST NAME}
+
+Set Message and Fail On Teardown
+    Check Test Case  ${TEST NAME}
+
+Set Message On Setup
+    Check Test Case  ${TEST NAME}  PASS  Setup Message
+
+Set Message On Setup And Check Its Value
+    Check Test Case  ${TEST NAME}  PASS  Message To Be Checked
+
+Check Message From Previous Test
+    Check Test Case  ${TEST NAME}
+
+Not Allowed In Suite Setup or Teardown
+    ${error}=  Catenate  SEPARATOR=\n  Suite setup failed:
+    ...  'Set Test Message' keyword cannot be used in suite setup or teardown\n
+    ...  Also suite teardown failed:
+    ...  'Set Test Message' keyword cannot be used in suite setup or teardown
+    Should Be Equal  ${SUITE.suites[1].message}  ${error}

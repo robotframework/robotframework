@@ -226,9 +226,13 @@ class RunnableTestCase(BaseTestCase):
                     return
 
     def _report_status(self, namespace):
-        self.message = self._run_errors.get_message()
+        message = self._run_errors.get_message()
+        if message:
+            self.status = 'FAIL'
+            self.message = message
+        else:
+            self.status = 'PASS'
         namespace.variables['${TEST_MESSAGE}'] = self.message
-        self.status = self.message == '' and 'PASS' or 'FAIL'
         namespace.variables['${TEST_STATUS}'] = self.status
 
     def _run_teardown(self, output, namespace):

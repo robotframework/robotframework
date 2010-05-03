@@ -1382,6 +1382,22 @@ class _Misc:
             return re.escape(patterns[0])
         return [ re.escape(pattern) for pattern in patterns ]
 
+    def set_test_message(self, message):
+        """Sets message for for the current test.
+        
+        This is overridden by possible failure message, except when this keyword 
+        is used in test case teardown. In test case teardown this overrides 
+        messages even for failed tests.
+        
+        This keyword can not be used in suite setup or suite teardown.
+        """
+        test = NAMESPACES.current.test
+        if test is None:
+            raise RuntimeError("'Set Test Message' keyword cannot be used in "
+                               "suite setup or teardown")
+        test.message = message
+        print 'Set test message to:\n%s' % message
+
     def set_tags(self, *tags):
         """Adds given `tags` for the current test or all tests in a suite.
 

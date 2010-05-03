@@ -93,7 +93,7 @@ class TestCheckerLibrary:
             if test.message.startswith(start):
                 return
 
-        raise AssertionError("Wrong error message\n\n"
+        raise AssertionError("Wrong message\n\n"
                              "Expected:\n%s\n\nActual:\n%s\n"
                              % (test.exp_message, test.message))
 

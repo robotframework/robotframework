@@ -1,0 +1,32 @@
+*** Test cases ***
+Set Message To Successful Test
+    Set Test Message  My Test Message
+    No Operation
+
+Set Message To Test That Failed
+    [documentation]  FAIL  Fail Message
+    Set Test Message  Message That Will Be Ignored
+    Fail  Fail Message
+
+Set Message To Failed Test On Teardown
+    [documentation]  FAIL  Teardown Message
+    Fail  Message That Will Be Ignored
+    [teardown]  Set Test Message  Teardown Message
+
+Set Message and Fail On Teardown
+    [documentation]  FAIL  Message Before Teardown\n\nAlso teardown failed:\nFailing Teardown Message
+    Set Test Message  Message Before Teardown
+    [teardown]  Fail  Failing Teardown Message
+
+Set Message On Setup
+    [setup]  Set Test Message  Setup Message
+    No Operation
+
+Set Message On Setup And Check Its Value
+    [setup]  Set Test Message  Message To Be Checked
+    Variable Should Not Exist  ${TEST MESSAGE}
+    [teardown]  Should Be Equal  ${TEST MESSAGE}  Message To Be Checked
+
+Check Message From Previous Test
+    Should Be Equal  ${PREV TEST MESSAGE}  Message To Be Checked
+
