@@ -1,6 +1,5 @@
 *** Settings ***
-Force Tags      regression
-Default Tags    pybot  jybot
+Force Tags      regression  pybot  jybot
 Resource        atest_resource.txt
 Library  ProcessManager.py
 
@@ -11,6 +10,7 @@ SIGINT Signal Should Stop Test Execution Gracefully
     Check Test Cases Have Failed Correctly
 
 SIGTERM Signal Should Stop Test Execution Gracefully
+    [tags]  non windows
     Start And Send Signal  without_any_timeout.txt  One Signal  SIGTERM  0s
     Process Output For Graceful Shutdown
     Check Test Cases Have Failed Correctly
@@ -35,6 +35,7 @@ Two SIGINT Signals Should Stop Test Execution Forcefully
     Check Tests Have Been Forced To Shutdown
 
 Two SIGTERM Signals Should Stop Test Execution Forcefully
+    [tags]  non windows
     Start And Send Signal  without_any_timeout.txt  Two Signals  SIGTERM  1s
     Check Tests Have Been Forced To Shutdown
 
