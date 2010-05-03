@@ -31,7 +31,7 @@ class RobotError(Exception):
 class FrameworkError(RobotError):
     """Can be used when the core framework goes to unexpected state
 
-    It is good to explicitely raise a FrameworkError if some framework
+    It is good to explicitly raise a FrameworkError if some framework
     component is used incorrectly. This is pretty much same as
     'Internal Error' and should of course never happen.
     """
@@ -45,7 +45,7 @@ class DataError(RobotError):
     """
 
 class ExecutionFailed(RobotError):
-    """Used for cummunicating failures in test execution"""
+    """Used for communicating failures in test execution"""
     def __init__(self, message, timeout=False, exit=False, cont=False,
                  syntax=False):
         RobotError.__init__(self, message)
@@ -54,6 +54,7 @@ class ExecutionFailed(RobotError):
         self.exit = exit
         self.cont = cont
         self.syntax = syntax
+
 
 class TimeoutError(RobotError):
     """Used when test execution is timed out"""
