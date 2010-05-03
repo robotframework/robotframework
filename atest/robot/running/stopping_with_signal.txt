@@ -21,12 +21,12 @@ One Signal Should Stop Test Execution Gracefully When Run Keyword Is Used
     Check Test Cases Have Failed Correctly
 
 One Signal Should Stop Test Execution Gracefully When Test Timeout Is Used
-    Start And Send Signal  test-timeout.txt  One Signal  SIGTERM  0s
+    Start And Send Signal  test_timeout.txt  One Signal  SIGTERM  0s
     Process Output For Graceful Shutdown
     Check Test Cases Have Failed Correctly
 
 One Signal Should Stop Test Execution Gracefully When Keyword Timeout Is Used
-    Start And Send Signal  keyword-timeout.txt  One Signal  SIGTERM  0s
+    Start And Send Signal  keyword_timeout.txt  One Signal  SIGTERM  0s
     Process Output For Graceful Shutdown
     Check Test Cases Have Failed Correctly
 
@@ -43,11 +43,11 @@ Two Signals Should Stop Test Execution Forcefully When Run Keyword Is Used
     Check Tests Have Been Forced To Shutdown
 
 Two Signals Should Stop Test Execution Forcefully When Test Timeout Is Used
-    Start And Send Signal  test-timeout.txt  Two Signals  SIGINT  1s
+    Start And Send Signal  test_timeout.txt  Two Signals  SIGINT  1s
     Check Tests Have Been Forced To Shutdown
 
 Two Signals Should Stop Test Execution Forcefully When Keyword Timeout Is Used
-    Start And Send Signal  keyword-timeout.txt  Two Signals  SIGINT  1s
+    Start And Send Signal  keyword_timeout.txt  Two Signals  SIGINT  1s
     Check Tests Have Been Forced To Shutdown
 
 *** Key Words ***
