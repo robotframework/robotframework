@@ -74,8 +74,9 @@ class MultipleErrors(ExecutionFailed):
     def __unicode__(self):
         if len(self._errors) == 1:
             return unicode(self._errors[0])
-        return '\n\n'.join('Error %d: %s' % (i+1, err) 
-                           for i, err in enumerate(self._errors))
+        lines = ['Several failures occurred:'] \
+                + ['%d) %s' % (i+1, err) for i, err in enumerate(self._errors)]
+        return '\n\n'.join(lines)
 
 
 class TimeoutError(RobotError):
