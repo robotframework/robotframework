@@ -215,9 +215,9 @@ class RunnableTestCase(BaseTestCase):
         namespace.variables['@{TEST_TAGS}'] = self.tags
 
     def _run_setup(self, output, namespace):
-        error = self._run_fixture(self.setup, output, namespace)
-        if error:
-            self._run_errors.setup_err(error.msg)
+        if self.setup:
+            self._run_fixture(self.setup, output, namespace,
+                              self._run_errors.setup_err)
 
     def _report_status(self, namespace):
         message = self._run_errors.get_message()
@@ -230,9 +230,9 @@ class RunnableTestCase(BaseTestCase):
         namespace.variables['${TEST_STATUS}'] = self.status
 
     def _run_teardown(self, output, namespace):
-        error = self._run_fixture(self.teardown, output, namespace)
-        if error:
-            self._run_errors.teardown_err(error.msg)
+        if self.teardown:
+            self._run_fixture(self.teardown, output, namespace,
+                              self._run_errors.teardown_err)
 
     def _report_status_after_teardown(self):
         if self._run_errors.teardown_failed():
@@ -254,18 +254,13 @@ class RunnableTestCase(BaseTestCase):
         output.end_test(self)
         namespace.end_test()
 
-    def _run_fixture(self, fixture, output, namespace):
-        if fixture:
-            return self._run_with_error_handling(fixture, output, namespace)
-
-    def _run_with_error_handling(self, runnable, output, namespace):
+    def _run_fixture(self, fixture, output, namespace, error_reporter):
         try:
-            runnable.run(output, namespace)
-            return None
+            fixture.run(output, namespace)
         except ExecutionFailed, err:
             self.timeout.set_keyword_timeout(err.timeout)
             self._suite_errors.test_failed(exit=err.exit)
-            return err
+            error_reporter(err.msg)
 
 
 class _TestCaseDefaults:
