@@ -1,0 +1,22 @@
+*** Settings ***
+Library  Library.py
+Library  OperatingSystem
+Suite Teardown  My Suite Teardown
+
+*** Variables ***
+${TEARDOWN SLEEP} =  0 seconds
+
+*** Test Case ***
+Test
+  Create File  ${TEMPDIR}/robot_signal_test_started.txt
+  Busy Sleep  2
+  No Operation
+  [teardown]  Log  Logging Test Case Teardown
+
+Test 2
+  No Operation
+
+*** Keywords ***
+My Suite Teardown
+    Log  Logging Suite Teardown
+    Sleep  ${TEARDOWN SLEEP}

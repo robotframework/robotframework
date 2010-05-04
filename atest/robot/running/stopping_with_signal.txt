@@ -51,6 +51,15 @@ Two Signals Should Stop Test Execution Forcefully When Keyword Timeout Is Used
     Start And Send Signal  keyword_timeout.txt  Two Signals  SIGINT  1s
     Check Tests Have Been Forced To Shutdown
 
+One Signal Should Stop Test Execution Gracefully And Test Case And Suite Teardowns Should Be Run
+    Start And Send Signal  with_teardown.txt  One Signal  SIGINT  0s
+    Process Output For Graceful Shutdown
+    Check Test Cases Have Failed Correctly
+    ${tc} =  Get Test Case  Test
+    Check Log Message  ${tc.teardown.msgs[0]}  Logging Test Case Teardown
+    ${ts} =  Get Test Suite  With Teardown
+    Check Log Message  ${ts.teardown.kws[0].msgs[0]}  Logging Suite Teardown
+
 *** Key Words ***
 Start And Send Signal
     [arguments]  ${testcase file}  ${signal method}  ${signal}  ${teardown sleep}
