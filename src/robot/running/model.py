@@ -21,7 +21,7 @@ from robot.output import LOGGER
 
 from fixture import Setup, Teardown
 from timeouts import TestTimeout
-from keywords import KeywordFactory
+from keywords import TestCaseKeywords
 from namespace import Namespace
 from runerrors import SuiteRunErrors, TestRunErrors
 from userkeyword import UserLibrary
@@ -163,7 +163,7 @@ class RunnableTestCase(BaseTestCase):
         self.tags = defaults.force_tags \
                     + utils.get_not_none(data.tags, defaults.default_tags)
         self.timeout = utils.get_not_none(data.timeout, defaults.test_timeout)
-        self.keywords = [ KeywordFactory(kw) for kw in data.keywords ]
+        self.keywords = TestCaseKeywords(data.keywords)
         self.exit_on_failure = False
 
     def run(self, output, namespace, suite_errors):
@@ -203,7 +203,9 @@ class RunnableTestCase(BaseTestCase):
         self.timeout.start()
         self._run_setup(output, namespace)
         if not self._run_errors.setup_failed():
-            self._run_keywords(output, namespace)
+            errors = self.keywords.run(output, namespace, self.timeout,
+                                       self._suite_errors)
+            self._run_errors.kw_err(errors)
         self._report_status(namespace)
         self._run_teardown(output, namespace)
         self._report_status_after_teardown()
@@ -216,14 +218,6 @@ class RunnableTestCase(BaseTestCase):
         error = self._run_fixture(self.setup, output, namespace)
         if error:
             self._run_errors.setup_err(error.msg)
-
-    def _run_keywords(self, output, namespace):
-        for kw in self.keywords:
-            error = self._run_with_error_handling(kw, output, namespace)
-            if error:
-                self._run_errors.kw_err(error.msg)
-                if not error.cont:
-                    return
 
     def _report_status(self, namespace):
         message = self._run_errors.get_message()

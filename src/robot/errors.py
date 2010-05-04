@@ -46,14 +46,36 @@ class DataError(RobotError):
 
 class ExecutionFailed(RobotError):
     """Used for communicating failures in test execution"""
+    msg = property(lambda self: self._msg)
+
     def __init__(self, message, timeout=False, exit=False, cont=False,
                  syntax=False):
         RobotError.__init__(self, message)
-        self.msg = message
+        self._msg = message
         self.timeout = timeout
         self.exit = exit
         self.cont = cont
         self.syntax = syntax
+
+    def get_errors(self):
+        return [self.msg]
+
+
+class MultipleErrors(ExecutionFailed):
+    msg = property(lambda self: ''.join(self._errors))
+
+    def __init__(self, errors):
+        exit = any(err for err in errors if err.exit)
+        cont = any(err for err in errors if err.cont)
+        timeout = any(err for err in errors if err.timeout)
+        syntax = any(err for err in errors if err.syntax)
+        self._errors= []
+        for e in errors:
+            self._errors.extend(e.get_errors())
+        ExecutionFailed.__init__(self, '', timeout, exit, cont, syntax)
+
+    def get_errors(self):
+        return self._errors
 
 
 class TimeoutError(RobotError):

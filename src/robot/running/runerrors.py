@@ -129,11 +129,8 @@ class TestRunErrors(object):
     def setup_failed(self):
         return bool(self._setup_err)
 
-    def kw_err(self, err):
-        if isinstance(err, basestring):
-            self._kw_errs.append(err)
-        else:
-            self._kw_errs.extend(err)
+    def kw_err(self, errors):
+        self._kw_errs = errors
 
     def teardown_err(self, err):
         if isinstance(err, basestring):
@@ -156,7 +153,7 @@ class TestRunErrors(object):
 
     def parent_or_init_error(self):
         return self._parent_err or self._init_err
-    
+
     def _form_error_message(self, errors):
         """Returns list of errors formatted as a string (empty string is returned if list is empty)"""
         return '\n\n'.join(errors if len(errors) == 1 else [ 'Error %d: %s' % (i+1, err)

@@ -16,11 +16,11 @@ import os
 import re
 
 from robot.common import BaseLibrary, UserErrorHandler
-from robot.errors import DataError, ExecutionFailed
+from robot.errors import DataError
 from robot.variables import is_list_var, VariableSplitter
 from robot import utils
 
-from keywords import KeywordFactory
+from keywords import UserKeywordKeywords
 from timeouts import KeywordTimeout
 from arguments import UserKeywordArguments
 
@@ -109,7 +109,7 @@ class UserKeywordHandler(object):
         self.name = utils.printable_name(handlerdata.name)
         self._libname = libname
         self._set_variable_dependent_metadata(handlerdata.metadata)
-        self.keywords = [ KeywordFactory(kw) for kw in handlerdata.keywords ]
+        self.keywords = UserKeywordKeywords(handlerdata.keywords)
         self.arguments = UserKeywordArguments(handlerdata.args,
                                               handlerdata.defaults,
                                               handlerdata.varargs,
@@ -143,11 +143,7 @@ class UserKeywordHandler(object):
                                      output)
         self._verify_keyword_is_valid()
         self.timeout.start()
-        errs = []
-        for kw in self.keywords:
-            self._run_with_error_handling(kw, output, namespace, errs)
-        if errs:
-            raise ExecutionFailed(errs, cont=True)
+        self.keywords.run(output, namespace)
         return self._get_return_value(namespace.variables)
 
     def _verify_keyword_is_valid(self):
@@ -157,18 +153,6 @@ class UserKeywordHandler(object):
         if not (self.keywords or self.return_value):
             raise DataError("User keyword '%s' contains no keywords"
                             % self.name)
-
-    def _run_with_error_handling(self, kw, output, namespace, errs):
-        try:
-            kw.run(output, namespace)
-        except ExecutionFailed, err:
-            if isinstance(err.msg, basestring):
-                errs.append(err.msg)
-            else:
-                errs.extend(err.msg)
-            if not err.cont:
-                raise ExecutionFailed(errs, exit=err.exit,
-                                      syntax=err.syntax,timeout=err.timeout)
 
     def _get_return_value(self, variables):
         if not self.return_value:

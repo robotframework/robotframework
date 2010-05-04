@@ -13,12 +13,77 @@
 #  limitations under the License.
 
 from robot import utils
-from robot.errors import FrameworkError, ExecutionFailed, DataError
+from robot.errors import FrameworkError, ExecutionFailed, DataError, MultipleErrors
 from robot.common import BaseKeyword
 from robot.variables import is_list_var
 
 
-def KeywordFactory(kwdata):
+class _Keywords(object):
+
+    def __init__(self, kwdata):
+        self._keywords = [ _KeywordFactory(kw) for kw in kwdata ]
+
+    def __iter__(self):
+        return iter(self._keywords)
+
+    def _run(self, output, namespace):
+        errors = []
+        for kw in self._keywords:
+            error = self._run_with_error_handling(kw, output, namespace)
+            if error:
+                errors.append(error)
+                if not error.cont:
+                    return self._report_errors(errors)
+        return self._report_errors(errors)
+
+    def _run_with_error_handling(self, kw, output, namespace):
+        try:
+            kw.run(output, namespace)
+            return None
+        except ExecutionFailed, err:
+            self._keyword_failed(err)
+            return err
+
+    def _keyword_failed(self, err):
+        pass
+
+
+class TestCaseKeywords(_Keywords):
+
+    def run(self, output, namespace, test_timeout, suite_run_errors):
+        self.test_timeout = test_timeout
+        self.suite_run_errors = suite_run_errors
+        return self._run(output, namespace)
+
+    def _keyword_failed(self, err):
+        self.test_timeout.set_keyword_timeout(err.timeout)
+        self.suite_run_errors.test_failed(exit=err.exit)
+
+    def _report_errors(self, errors):
+        all_errors = []
+        for err in errors:
+            all_errors.extend(err.get_errors())
+        return all_errors
+
+
+class UserKeywordKeywords(_Keywords):
+
+    def run(self, output, namespace):
+        self._run(output, namespace)
+
+    def _run_with_error_handling(self, kw, output, namespace):
+        try:
+            kw.run(output, namespace)
+            return None
+        except ExecutionFailed, err:
+            return err
+
+    def _report_errors(self, errors):
+        if errors:
+            raise MultipleErrors(errors)
+
+
+def _KeywordFactory(kwdata):
     if kwdata.type == 'kw':
         return Keyword(kwdata.name, kwdata.args)
     try:
@@ -102,7 +167,11 @@ class SetKeyword(Keyword):
             raise ExecutionFailed(msg)
 
     def _run_and_set_variables(self, handler, output, namespace):
-        return_value = Keyword._run(self, handler, output, namespace)
+        try:
+            return_value = Keyword._run(self, handler, output, namespace)
+        except ExecutionFailed:
+            self._set_variables(namespace, output, None)
+            raise
         self._set_variables(namespace, output, return_value)
         return return_value
 
@@ -186,7 +255,7 @@ class ForKeyword(BaseKeyword):
         self.items = kwdata.items
         self.range = kwdata.range
         BaseKeyword.__init__(self, kwdata.name, type='for')
-        self.keywords = [ KeywordFactory(kw) for kw in kwdata.keywords ]
+        self.keywords = [ _KeywordFactory(kw) for kw in kwdata.keywords ]
 
     def run(self, output, namespace):
         self.starttime = utils.get_timestamp()
