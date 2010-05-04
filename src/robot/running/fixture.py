@@ -22,6 +22,7 @@ class _Fixture(object):
 
     def __init__(self, kwdata=None):
         self._keyword = self._fixture_keyword(kwdata)
+        self.name = self._keyword.name if self._keyword else ''
 
     def _fixture_keyword(self, kwdata):
         kwdata = utils.to_list(kwdata)
