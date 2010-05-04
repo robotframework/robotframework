@@ -47,6 +47,9 @@ class _Keywords(object):
     def _keyword_failed(self, err):
         pass
 
+    def __nonzero__(self):
+        return bool(self._keywords)
+
 
 class TestCaseKeywords(_Keywords):
 
