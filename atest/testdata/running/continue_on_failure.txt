@@ -48,6 +48,12 @@ Continue in nested user keyword
     ...  Error 5: ${ERROR} in top level after nesting\n\n${TEARDOWN ERROR}
     Continuable Failure In Nested UK
 
+Continuable and regular failure in UK
+    [Documentation]   FAIL  Error 1: ${ERROR LINE}Error 2: Stop!!\n\n${TEARDOWN ERROR}
+    Continuable and regular failure
+    Continuable and regular failure
+    Log  This should not be executed
+
 Continuable and regular failure in nested UK
     [Documentation]   FAIL  Error 1: ${ERROR LINE}Error 2: Stop!!\n\n${TEARDOWN ERROR}
     Continuable and regular failure in nested UK
