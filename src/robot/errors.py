@@ -58,8 +58,11 @@ class ExecutionFailed(RobotError):
     def get_errors(self):
         return [self]
 
+    def __unicode__(self):
+        return unicode(self.args[0])
 
-class MultipleErrors(ExecutionFailed):
+
+class ExecutionFailures(ExecutionFailed):
 
     def __init__(self, errors):
         self.exit = any(err.exit for err in errors)
@@ -67,6 +70,7 @@ class MultipleErrors(ExecutionFailed):
         self.timeout = any(err.timeout for err in errors)
         self.syntax = any(err.syntax for err in errors)
         self._errors = errors
+        RobotError.__init__(self, unicode(self))
 
     def get_errors(self):
         return self._errors

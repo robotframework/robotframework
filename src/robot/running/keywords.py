@@ -13,7 +13,7 @@
 #  limitations under the License.
 
 from robot import utils
-from robot.errors import FrameworkError, ExecutionFailed, DataError, MultipleErrors
+from robot.errors import FrameworkError, ExecutionFailed, ExecutionFailures, DataError
 from robot.common import BaseKeyword
 from robot.variables import is_list_var
 
@@ -33,7 +33,7 @@ class Keywords(object):
                 if not err.cont:
                     break
         if errors:
-            raise MultipleErrors(errors)
+            raise ExecutionFailures(errors)
 
     def __nonzero__(self):
         return bool(self._keywords)
