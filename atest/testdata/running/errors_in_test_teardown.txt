@@ -1,0 +1,38 @@
+*** Settings ***
+Library  Exceptions
+Suite Teardown  Suite Teardown With Errors
+
+*** Test Cases ***
+Test With One Error In Teardown
+    [documentation]  FAIL Teardown failed:\nMessage\n\nAlso teardown of the parent suite failed.
+    No Operation
+    [teardown]  One Error
+
+Test With Many Errors In Teardown
+    [documentation]  FAIL Teardown failed:\nMessage 1\n\nAlso teardown of the parent suite failed.
+    No Operation
+    [teardown]  Many Errors
+
+Test With A Fatal Error In Teardown
+    [documentation]  FAIL Teardown failed:\nFatalCatastrophyException\n\nAlso teardown of the parent suite failed.
+    No Operation
+    [teardown]  Fatal Error
+
+*** Keywords ***
+One Error
+    Fail  Message
+    Log  This Should Be executed
+
+Many Errors
+    Fail  Message 1
+    Fail  Message 2
+    Log  This Should Also Be Executed
+
+Fatal Error
+    Exit On Failure
+    Log  This Should Not Be Executed
+
+Suite Teardown With Errors
+    Fail  Suite Message 1
+    Fail  Suite Message 2
+    Log  This As Well Should Be Executed
