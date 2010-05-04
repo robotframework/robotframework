@@ -792,7 +792,7 @@ class _RunKeyword:
         except ExecutionFailed, err:
             if err.timeout or err.syntax or err.exit:
                 raise
-            return 'FAIL', err.msg
+            return 'FAIL', unicode(err)
 
     def run_keyword_and_expect_error(self, expected_error, name, *args):
         """Runs the keyword and checks that the expected error occurred.
@@ -823,10 +823,10 @@ class _RunKeyword:
         else:
             raise AssertionError("Expected error '%s' did not occur"
                                  % expected_error)
-        if not self._matches(err.msg, expected_error):
+        if not self._matches(unicode(err), expected_error):
             raise AssertionError("Expected error '%s' but got '%s'"
-                                 % (expected_error, err.msg))
-        return err.msg
+                                 % (expected_error, err))
+        return unicode(err)
 
     def repeat_keyword(self, times, name, *args):
         """Executes the specified keyword multiple times.
@@ -887,7 +887,7 @@ class _RunKeyword:
                 if err.timeout or err.syntax or err.exit:
                     raise
                 if time.time() > maxtime:
-                    error = err.msg
+                    error = unicode(err)
                 else:
                     time.sleep(retry_interval)
         raise AssertionError("Timeout %s exceeded. The last error was: %s"
