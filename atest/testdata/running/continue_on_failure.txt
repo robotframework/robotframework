@@ -5,7 +5,8 @@ Library  Exceptions
 
 *** Variables ***
 ${HEADER}  Several failures occurred:
-${ERROR}  ContinuableApocalypseException: Can be continued
+${EXC}  ContinuableApocalypseException
+${ERROR}  ${EXC}: Can be continued
 ${TEARDOWN ERROR}  Also teardown of the parent suite failed.
 ${ERROR WITH TEARDOWN}  ${ERROR}\n\n${TEARDOWN ERROR}
 
@@ -22,22 +23,26 @@ Continue in user keyword
 
 Continue in test with several continuable failures
     [Documentation]   FAIL  ${HEADER}\n\n
-    ...  1) ${ERROR}\n\n
-    ...  2) ${ERROR}\n\n
-    ...  3) ${ERROR WITH TEARDOWN}
-    Raise Continuable Failure
+    ...  1) ${EXC}: A\n\n
+    ...  2) ${EXC}: B\n\n
+    ...  3) ${EXC}: C\n\n${TEARDOWN ERROR}
+    Raise Continuable Failure  A
     Log  This should be executed
-    Raise Continuable Failure
+    Raise Continuable Failure  B
     Log  This should also be executed
-    Raise Continuable Failure
+    Raise Continuable Failure  C
     Log  This too should also be executed
 
 Continue in user keyword with several continuable failures
     [Documentation]   FAIL  ${HEADER}\n\n
-    ...  1) ${ERROR}\n\n
-    ...  2) ${ERROR}\n\n
-    ...  3) ${ERROR WITH TEARDOWN}
+    ...  1) ${EXC}: 1\n\n
+    ...  2) ${EXC}: 2\n\n
+    ...  3) ${EXC}: 3\n\n
+    ...  4) ${EXC}: 1\n\n
+    ...  5) ${EXC}: 2\n\n
+    ...  6) ${EXC}: 3\n\n${TEARDOWN ERROR}
     Several Continuable Failures In User Keyword In Test Case
+    Several Continuable Failures In User Keyword In Test Case, Again
 
 Continuable and regular failure
     [Documentation]   FAIL  ${HEADER}\n\n
@@ -51,23 +56,32 @@ Continuable and regular failure
 Continue in nested user keyword
     [Documentation]  FAIL ${HEADER}\n\n
     ...  1) ${ERROR} in top level (with ∏ön ÄßÇïï €§)\n\n
-    ...  2) ${ERROR}\n\n
-    ...  3) ${ERROR}\n\n
-    ...  4) ${ERROR}\n\n
+    ...  2) ${EXC}: 1\n\n
+    ...  3) ${EXC}: 2\n\n
+    ...  4) ${EXC}: 3\n\n
     ...  5) ${ERROR} in top level after nesting (with ∏ön ÄßÇïï €§)\n\n${TEARDOWN ERROR}
     Continuable Failure In Nested UK
 
 Continuable and regular failure in UK
     [Documentation]  FAIL ${HEADER}\n\n
-    ...  1) ${ERROR}\n\n
-    ...  2) Stop!!\n\n${TEARDOWN ERROR}
+    ...  1) ${EXC}: one\n\n
+    ...  2) ${EXC}: two\n\n
+    ...  3) Stop!!\n\n${TEARDOWN ERROR}
     Continuable and regular failure
     Fail  This should not be executed
 
-Continuable and regular failure in nested UK
+Several continuable failures and regular failure in nested UK
     [Documentation]  FAIL ${HEADER}\n\n
-    ...  1) ${ERROR}\n\n
-    ...  2)  Stop!!\n\n${TEARDOWN ERROR}
+    ...  1) ${EXC}: first level 1\n\n
+    ...  2) ${EXC}: Can be continued in top level (with ∏ön ÄßÇïï €§)\n\n
+    ...  3) ${EXC}: 1\n\n
+    ...  4) ${EXC}: 2\n\n
+    ...  5) ${EXC}: 3\n\n
+    ...  6) ${EXC}: Can be continued in top level after nesting (with ∏ön ÄßÇïï €§)\n\n
+    ...  7) ${EXC}: first level 2\n\n
+    ...  8) ${EXC}: one\n\n
+    ...  9) ${EXC}: two\n\n
+    ...  10) Stop!!\n\n${TEARDOWN ERROR}
     Continuable and regular failure in nested UK
     Fail  This should not be executed
 
@@ -87,7 +101,7 @@ Continue when setting variables
 
 Continue in test setup
     [Documentation]  FAIL  Setup failed:\n${ERROR WITH TEARDOWN}
-    [setup]  Continuable Failure In User Keyword In Test Setup
+    [Setup]  Continuable Failure In User Keyword In Test Setup
     Fail  This should not be executed (with ∏ön ÄßÇïï €§)
 
 Continue in test teardown
@@ -95,18 +109,34 @@ Continue in test teardown
     No operation
     [Teardown]  Continuable Failure In User Keyword In Test Teardown
 
+Continue many times in test setup and teardown
+    [Documentation]  FAIL  Setup failed:\n
+    ...  ${HEADER}\n\n
+    ...  1) ${EXC}: 1\n\n
+    ...  2) ${EXC}: 2\n\n
+    ...  3) ${EXC}: 3\n\n
+    ...  Also teardown failed:\n
+    ...  ${HEADER}\n\n
+    ...  1) ${EXC}: 1\n\n
+    ...  2) ${EXC}: 2\n\n
+    ...  3) ${EXC}: 3\n\n${TEARDOWN ERROR}
+    [Setup]  Several Continuable Failures In User Keyword In Test Setup
+    Fail  This should not be executed
+    [Teardown]  Several Continuable Failures In User Keyword In Test Teardown
+
 
 *** User Keywords ***
+
 Continuable Failure In User Keyword In ${where}
     Raise Continuable Failure
     Log  This should be executed in ${where}
 
 Several Continuable Failures In User Keyword In ${where}
-    Raise Continuable Failure
+    Raise Continuable Failure  1
     Log  This should be executed in ${where} (with ∏ön ÄßÇïï €§)
-    Raise Continuable Failure
+    Raise Continuable Failure  2
     Log  This should also be executed in ${where}
-    Raise Continuable Failure
+    Raise Continuable Failure  3
     Log  This too should also be executed in ${where}
 
 Continuable Failure In Nested UK
@@ -116,10 +146,14 @@ Continuable Failure In Nested UK
     Raise Continuable Failure  Can be continued in top level after nesting (with ∏ön ÄßÇïï €§)
 
 Continuable and regular failure in nested UK
+    Raise Continuable Failure  first level 1
+    Continuable Failure In Nested UK
+    Raise Continuable Failure  first level 2
     Continuable and regular failure
-    Log  This should not be executed
+    Fail  This should not be executed
 
 Continuable and regular failure
-    Raise Continuable Failure
+    Raise Continuable Failure  one
+    Raise Continuable Failure  two
     Log  This should be executed in Nested UK (with ∏ön ÄßÇïï €§)
     Fail  Stop!!

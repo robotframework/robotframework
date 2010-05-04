@@ -21,9 +21,8 @@ Continue in test with several continuable failures
 
 Continue in user keyword with several continuable failures
     ${tc}=  Check Test Case  ${TESTNAME}
-    Check Log Message  ${tc.kws[0].kws[1].msgs[0]}  This should be executed in Test Case (with ∏ön ÄßÇïï €§)
-    Check Log Message  ${tc.kws[0].kws[3].msgs[0]}  This should also be executed in Test Case
-    Check Log Message  ${tc.kws[0].kws[5].msgs[0]}  This too should also be executed in Test Case
+    Verify all failures in user keyword  ${tc.kws[0]}  Test Case
+    Verify all failures in user keyword  ${tc.kws[1]}  Test Case, Again
 
 Continuable and regular failure
     ${tc}=  Check Test Case  ${TESTNAME}
@@ -32,12 +31,14 @@ Continuable and regular failure
 Continue in nested user keyword
     ${tc}=  Check Test Case  ${TESTNAME}
     Check Log Message  ${tc.kws[0].kws[1].msgs[0]}  This should be executed in Top Level UK (with ∏ön ÄßÇïï €§)
+    Verify all failures in user keyword  ${tc.kws[0].kws[2]}  Nested UK
 
 Continuable and regular failure in UK
     ${tc}=  Check Test Case  ${TESTNAME}
 
-Continuable and regular failure in nested UK
+Several continuable failures and regular failure in nested UK
     ${tc}=  Check Test Case  ${TESTNAME}
+    Verify all failures in user keyword  ${tc.kws[0].kws[1].kws[2]}  Nested UK
 
 Continue when setting variables
     ${tc}=  Check Test Case  ${TESTNAME}
@@ -57,6 +58,12 @@ Continue in test teardown
     ${tc}=  Check Test Case  ${TESTNAME}
     Check Log Message  ${tc.teardown.kws[1].msgs[0]}  This should be executed in Test Teardown
 
+Continue many times in test setup and teardown
+    ${tc}=  Check Test Case  ${TESTNAME}
+    Verify all failures in user keyword  ${tc.setup}  Test Setup
+    Should Be Equal As Numbers  ${tc.kws.__len__()}  0
+    Verify all failures in user keyword  ${tc.teardown}  Test Teardown
+
 Continue in suite teardown
     ${suite}=  Get Test Suite  Continue On Failure
     Check Log Message  ${suite.teardown.kws[1].msgs[0]}  This should be executed in Suite Teardown
@@ -64,3 +71,13 @@ Continue in suite teardown
 Continue in suite setup
     ${suite}=  Get Test Suite  Continue On Failure In Suite Setup
     Check Log Message  ${suite.setup.kws[1].msgs[0]}  This should be executed in Suite Setup (with ∏ön ÄßÇïï €§)
+
+
+*** Keywords ***
+Verify all failures in user keyword  [Arguments]  ${kw}  ${where}
+    Check Log Message  ${kw.kws[0].msgs[0]}  ContinuableApocalypseException: 1  FAIL
+    Check Log Message  ${kw.kws[1].msgs[0]}  This should be executed in ${where} (with ∏ön ÄßÇïï €§)
+    Check Log Message  ${kw.kws[2].msgs[0]}  ContinuableApocalypseException: 2  FAIL
+    Check Log Message  ${kw.kws[3].msgs[0]}  This should also be executed in ${where}
+    Check Log Message  ${kw.kws[4].msgs[0]}  ContinuableApocalypseException: 3  FAIL
+    Check Log Message  ${kw.kws[5].msgs[0]}  This too should also be executed in ${where}
