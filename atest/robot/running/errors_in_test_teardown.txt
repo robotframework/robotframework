@@ -1,6 +1,6 @@
 *** Settings ***
 Suite Setup     Run Tests  ${EMPTY}  running/errors_in_test_teardown.txt
-Force Tags      not ready  pybot  jybot
+Force Tags      regression  pybot  jybot
 Resource        atest_resource.txt
 
 *** Test Cases ***
@@ -15,3 +15,20 @@ Test With Many Errors In Teardown
 Test With A Fatal Error In Teardown
     ${tc} =  Check Test Case  ${TESTNAME}
     Should Be True  len(${tc.teardown.kws}) == 1
+
+Suite Teardown Is Executed Fully
+    ${ts} =  Get Test Suite  errors in test teardown
+    Check Log Message  ${ts.teardown.kws[0].msgs[0]}  Suite Message 1  FAIL
+    Check Log Message  ${ts.teardown.kws[1].msgs[0]}  Suite Message 2 (with ∏ön ÄßÇïï €§)  FAIL
+    Check Log Message  ${ts.teardown.kws[2].msgs[0]}  This As Well Should Be Executed
+    ${msg} =  Catenate  SEPARATOR=\n
+    ...  Suite teardown failed:
+    ...  Several failures occurred:\n
+    ...  1) Suite Message 1\n
+    ...  2) Suite Message 2 (with ∏ön ÄßÇïï €§)
+    Should Be Equal  ${ts.message}  ${msg}
+
+Suite Teardown Should Stop At Fatal Error
+    Run Tests  ${EMPTY}  running/fatal_error_in_suite_teardown.txt
+    ${ts} =  Get Test Suite  fatal error in suite teardown
+    Should Be True  len(${ts.teardown.kws}) == 1

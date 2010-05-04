@@ -4,17 +4,25 @@ Suite Teardown  Suite Teardown With Errors
 
 *** Test Cases ***
 Test With One Error In Teardown
-    [documentation]  FAIL Teardown failed:\nMessage\n\nAlso teardown of the parent suite failed.
+    [documentation]  FAIL Teardown failed:\n
+    ...  Message\n\n
+    ...  Also teardown of the parent suite failed.
     No Operation
     [teardown]  One Error
 
 Test With Many Errors In Teardown
-    [documentation]  FAIL Teardown failed:\nMessage 1\n\nAlso teardown of the parent suite failed.
+    [documentation]  FAIL Teardown failed:\n
+    ...  Several failures occurred:\n\n
+    ...  1) Message 1\n\n
+    ...  2) Message 2\n\n
+    ...  Also teardown of the parent suite failed.
     No Operation
     [teardown]  Many Errors
 
 Test With A Fatal Error In Teardown
-    [documentation]  FAIL Teardown failed:\nFatalCatastrophyException\n\nAlso teardown of the parent suite failed.
+    [documentation]  FAIL Teardown failed:\n
+    ...  FatalCatastrophyException\n\n
+    ...  Also teardown of the parent suite failed.
     No Operation
     [teardown]  Fatal Error
 
@@ -34,5 +42,5 @@ Fatal Error
 
 Suite Teardown With Errors
     Fail  Suite Message 1
-    Fail  Suite Message 2
+    Fail  Suite Message 2 (with ∏ön ÄßÇïï €§)
     Log  This As Well Should Be Executed
