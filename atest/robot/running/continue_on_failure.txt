@@ -38,6 +38,12 @@ Continuable and regular failure in nested UK
 
 Continue when setting variables
     ${tc}=  Check Test Case  ${TESTNAME}
+    Check Log Message  ${tc.kws[0].msgs[1]}  \${ret} = None
+    Check Log Message  ${tc.kws[2].msgs[1]}  \${r1} = None
+    Check Log Message  ${tc.kws[2].msgs[2]}  \${r2} = None
+    Check Log Message  ${tc.kws[2].msgs[3]}  \${r3} = None
+    Check Log Message  ${tc.kws[4].msgs[1]}  \@{list} = [ ]
+    Should Be True  len(${tc.kws[6].msgs}) == 1
 
 Continue in test setup
     ${tc}=  Check Test Case  ${TESTNAME}

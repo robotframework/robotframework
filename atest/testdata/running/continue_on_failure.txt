@@ -54,13 +54,14 @@ Continuable and regular failure in nested UK
     Log  This should not be executed
 
 Continue when setting variables
-    [Documentation]   FAIL  Error 1: ${ERROR LINE}Error 2: ${ERROR LINE}Error 3: ${ERROR LINE WITH TEARDOWN}
+    [Documentation]   FAIL  Error 1: ${ERROR LINE}Error 2: ${ERROR LINE}Error 3: ${ERROR LINE}Error 4: No jokes\n\n${TEARDOWN ERROR}
     ${ret}=  Raise Continuable Failure
     Should Be Equal  ${ret}  ${None}
     ${r1}  ${r2}  ${r3}=  Raise Continuable Failure
     Should Be True  ${r1} == ${r2} == ${r3} == None
     @{list}=  Raise Continuable Failure
     Should Be True  @{list} == []
+    ${notset} =  Fail  No jokes
 
 Continue in test setup
     [Documentation]  FAIL  Setup failed:\n${ERROR LINE WITH TEARDOWN}
