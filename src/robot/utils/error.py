@@ -35,8 +35,7 @@ _ignored_java_trace = ('org.python.', 'robot.running.', 'robot$py.',
 _ignore_trace_until = (os.path.join('robot','running','handlers.py'), '<lambda>')
 _generic_exceptions = ('AssertionError', 'AssertionFailedError', 'Exception',
                        'Error', 'RuntimeError', 'RuntimeException',
-                       'DataError', 'TimeoutError', 'ExecutionFailed',
-                       'ExecutionFailures', 'RemoteError')
+                       'DataError', 'TimeoutError', 'RemoteError')
 
 
 def get_error_message():
@@ -46,8 +45,8 @@ def get_error_message():
     MUST be used to get messages from all exceptions originating outside the
     framework.
     """
-    exc_type, exc_value, exc_traceback = sys.exc_info()
-    if exc_type in (KeyboardInterrupt, SystemExit):
+    exc_type, exc_value = sys.exc_info()[:2]
+    if exc_type in RERAISED_EXCEPTIONS:
         raise exc_value
     if _is_java_exception(exc_value):
         return _get_java_message(exc_type, exc_value)

@@ -108,8 +108,8 @@ class RunnableTestSuite(BaseTestSuite):
         if fixture:
             try:
                 fixture.run(output, self.namespace)
-            except ExecutionFailed:
-                return utils.get_error_message()
+            except ExecutionFailed, err:
+                return unicode(err)
         return None
 
     def _run_sub_suites(self, output):
