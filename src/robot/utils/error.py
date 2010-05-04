@@ -35,7 +35,8 @@ _ignored_java_trace = ('org.python.', 'robot.running.', 'robot$py.',
 _ignore_trace_until = (os.path.join('robot','running','handlers.py'), '<lambda>')
 _generic_exceptions = ('AssertionError', 'AssertionFailedError', 'Exception',
                        'Error', 'RuntimeError', 'RuntimeException',
-                       'DataError', 'TimeoutError', 'ExecutionFailed', 'RemoteError')
+                       'DataError', 'TimeoutError', 'ExecutionFailed',
+                       'ExecutionFailures', 'RemoteError')
 
 
 def get_error_message():
