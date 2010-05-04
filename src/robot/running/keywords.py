@@ -33,7 +33,7 @@ class _Keywords(object):
             if error:
                 errors.append(error)
                 if not error.cont:
-                    return self._report_errors(errors)
+                    break
         return self._report_errors(errors)
 
     def _run_with_error_handling(self, kw, output, namespace):
@@ -73,13 +73,6 @@ class UserKeywordKeywords(_Keywords):
 
     def run(self, output, namespace):
         self._run(output, namespace)
-
-    def _run_with_error_handling(self, kw, output, namespace):
-        try:
-            kw.run(output, namespace)
-            return None
-        except ExecutionFailed, err:
-            return err
 
     def _report_errors(self, errors):
         if errors:
