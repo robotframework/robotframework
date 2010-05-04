@@ -38,7 +38,8 @@ Continuable and regular failure in UK
 
 Several continuable failures and regular failure in nested UK
     ${tc}=  Check Test Case  ${TESTNAME}
-    Verify all failures in user keyword  ${tc.kws[0].kws[1].kws[2]}  Nested UK
+    Verify all failures in user keyword  ${tc.kws[0].kws[2]}  Nested UK
+    Verify all failures in user keyword  ${tc.kws[1].kws[1].kws[2]}  Nested UK
 
 Continue when setting variables
     ${tc}=  Check Test Case  ${TESTNAME}

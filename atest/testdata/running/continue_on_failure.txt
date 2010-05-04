@@ -72,16 +72,22 @@ Continuable and regular failure in UK
 
 Several continuable failures and regular failure in nested UK
     [Documentation]  FAIL ${HEADER}\n\n
-    ...  1) ${EXC}: first level 1\n\n
-    ...  2) ${EXC}: Can be continued in top level (with ∏ön ÄßÇïï €§)\n\n
-    ...  3) ${EXC}: 1\n\n
-    ...  4) ${EXC}: 2\n\n
-    ...  5) ${EXC}: 3\n\n
-    ...  6) ${EXC}: Can be continued in top level after nesting (with ∏ön ÄßÇïï €§)\n\n
-    ...  7) ${EXC}: first level 2\n\n
-    ...  8) ${EXC}: one\n\n
-    ...  9) ${EXC}: two\n\n
-    ...  10) Stop!!\n\n${TEARDOWN ERROR}
+    ...  1) ${ERROR} in top level (with ∏ön ÄßÇïï €§)\n\n
+    ...  2) ${EXC}: 1\n\n
+    ...  3) ${EXC}: 2\n\n
+    ...  4) ${EXC}: 3\n\n
+    ...  5) ${ERROR} in top level after nesting (with ∏ön ÄßÇïï €§)\n\n
+    ...  6) ${EXC}: first level 1\n\n
+    ...  7) ${EXC}: Can be continued in top level (with ∏ön ÄßÇïï €§)\n\n
+    ...  8) ${EXC}: 1\n\n
+    ...  9) ${EXC}: 2\n\n
+    ...  10) ${EXC}: 3\n\n
+    ...  11) ${EXC}: Can be continued in top level after nesting (with ∏ön ÄßÇïï €§)\n\n
+    ...  12) ${EXC}: first level 2\n\n
+    ...  13) ${EXC}: one\n\n
+    ...  14) ${EXC}: two\n\n
+    ...  15) Stop!!\n\n${TEARDOWN ERROR}
+    Continuable Failure In Nested UK
     Continuable and regular failure in nested UK
     Fail  This should not be executed
 
