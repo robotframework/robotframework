@@ -53,6 +53,15 @@ Continuable and regular failure in nested UK
     Continuable and regular failure in nested UK
     Log  This should not be executed
 
+Continue when setting variables
+    [Documentation]   FAIL  Error 1: ${ERROR LINE}Error 2: ${ERROR LINE}Error 3: ${ERROR LINE WITH TEARDOWN}
+    ${ret}=  Raise Continuable Failure
+    Should Be Equal  ${ret}  ${None}
+    ${r1}  ${r2}  ${r3}=  Raise Continuable Failure
+    Should Be True  ${r1} == ${r2} == ${r3} == None
+    @{list}=  Raise Continuable Failure
+    Should Be True  @{list} == []
+
 Continue in test setup
     [Documentation]  FAIL  Setup failed:\n${ERROR LINE WITH TEARDOWN}
     [setup]  Continuable Failure In User Keyword In Test Setup
