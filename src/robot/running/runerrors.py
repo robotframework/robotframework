@@ -68,7 +68,7 @@ class SuiteRunErrors(object):
 
     def suite_setup_err(self, err):
         self._current_suite_setup_executed = True
-        self._current_setup_err = err or self._NO_ERROR
+        self._current_setup_err = unicode(err) if err else self._NO_ERROR
 
     def suite_error(self):
         if self._earlier_init_erros_occurred():

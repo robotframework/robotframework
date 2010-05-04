@@ -96,21 +96,14 @@ class RunnableTestSuite(BaseTestSuite):
 
     def _run_setup(self, output):
         if self._run_errors.is_suite_setup_allowed():
-            self._run_errors.suite_setup_err(self._run_fixture(self.setup, output))
+            self._run_errors.suite_setup_err(self.setup.run(output,
+                                                            self.namespace))
 
     def _run_teardown(self, output):
         if self._run_errors.is_suite_teardown_allowed():
-            td_err = self._run_fixture(self.teardown, output)
+            td_err = self.teardown.run(output, self.namespace)
             if td_err:
-                self.suite_teardown_failed('Suite teardown failed:\n%s' % td_err)
-
-    def _run_fixture(self, fixture, output):
-        if fixture:
-            try:
-                fixture.run(output, self.namespace)
-            except ExecutionFailed, err:
-                return unicode(err)
-        return None
+                self.suite_teardown_failed('Suite teardown failed:\n%s' % unicode(td_err))
 
     def _run_sub_suites(self, output):
         for suite in self.suites:
@@ -218,9 +211,8 @@ class RunnableTestCase(BaseTestCase):
         namespace.variables['@{TEST_TAGS}'] = self.tags
 
     def _run_setup(self, output, namespace):
-        if self.setup:
-            self._run_fixture(self.setup, output, namespace,
-                              self._run_errors.setup_err)
+        self._run_fixture(self.setup, output, namespace,
+                          self._run_errors.setup_err)
 
     def _report_status(self, namespace):
         message = self._run_errors.get_message()
@@ -233,9 +225,8 @@ class RunnableTestCase(BaseTestCase):
         namespace.variables['${TEST_STATUS}'] = self.status
 
     def _run_teardown(self, output, namespace):
-        if self.teardown:
-            self._run_fixture(self.teardown, output, namespace,
-                              self._run_errors.teardown_err)
+        self._run_fixture(self.teardown, output, namespace,
+                          self._run_errors.teardown_err)
 
     def _report_status_after_teardown(self):
         if self._run_errors.teardown_failed():
@@ -258,12 +249,11 @@ class RunnableTestCase(BaseTestCase):
         namespace.end_test()
 
     def _run_fixture(self, fixture, output, namespace, error_reporter):
-        try:
-            fixture.run(output, namespace)
-        except ExecutionFailed, err:
-            self.timeout.set_keyword_timeout(err.timeout)
-            self._suite_errors.test_failed(exit=err.exit)
-            error_reporter(unicode(err))
+        error = fixture.run(output, namespace)
+        if error:
+            self.timeout.set_keyword_timeout(error.timeout)
+            self._suite_errors.test_failed(exit=error.exit)
+            error_reporter(unicode(error))
 
 
 class _TestCaseDefaults:

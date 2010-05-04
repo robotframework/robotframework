@@ -13,20 +13,34 @@
 #  limitations under the License.
 
 from robot import utils
+from robot.errors import ExecutionFailed
 
 from keywords import Keyword
 
 
-def Setup(kwdata=None):
-    return Fixture(kwdata, 'setup')
+class _Fixture(object):
 
+    def __init__(self, kwdata=None):
+        self._keyword = self._fixture_keyword(kwdata)
 
-def Teardown(kwdata=None):
-    return Fixture(kwdata, 'teardown')
+    def _fixture_keyword(self, kwdata):
+        kwdata = utils.to_list(kwdata)
+        if kwdata == []:
+            return None
+        return Keyword(kwdata[0], kwdata[1:], type=self.__class__.__name__.lower())
 
-
-def Fixture(kwdata, type):
-    kwdata = utils.to_list(kwdata)
-    if kwdata == []:
+    def run(self, output, namespace):
+        if self._keyword:
+            try:
+                self._keyword.run(output, namespace)
+            except ExecutionFailed, err:
+                return err
         return None
-    return Keyword(kwdata[0], kwdata[1:], type=type)
+
+    def serialize(self, serializer):
+        serializer.start_keyword(self._keyword)
+        serializer.end_keyword(self._keyword)
+
+
+class Setup(_Fixture): pass
+class Teardown(_Fixture): pass
