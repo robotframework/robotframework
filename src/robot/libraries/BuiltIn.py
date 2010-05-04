@@ -792,7 +792,7 @@ class _RunKeyword:
         except ExecutionFailed, err:
             if err.timeout or err.syntax or err.exit:
                 raise
-            return 'FAIL', utils.get_error_message()
+            return 'FAIL', err.msg
 
     def run_keyword_and_expect_error(self, expected_error, name, *args):
         """Runs the keyword and checks that the expected error occurred.
@@ -887,7 +887,7 @@ class _RunKeyword:
                 if err.timeout or err.syntax or err.exit:
                     raise
                 if time.time() > maxtime:
-                    error = utils.get_error_message()
+                    error = err.msg
                 else:
                     time.sleep(retry_interval)
         raise AssertionError("Timeout %s exceeded. The last error was: %s"
