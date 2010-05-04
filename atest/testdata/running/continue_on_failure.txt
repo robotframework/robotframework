@@ -42,19 +42,19 @@ Continue in user keyword with several continuable failures
 Continuable and regular failure
     [Documentation]   FAIL  ${HEADER}\n\n
     ...  1) ${ERROR}\n\n
-    ...  2) Stopping here!!\n\n${TEARDOWN ERROR}
+    ...  2) Stopping here!! (with ∏ön ÄßÇïï €§)\n\n${TEARDOWN ERROR}
     Raise Continuable Failure
     Log  This should be executed
-    Fail  Stopping here!!
+    Fail  Stopping here!! (with ∏ön ÄßÇïï €§)
     Log  This should not be executed
 
 Continue in nested user keyword
     [Documentation]  FAIL ${HEADER}\n\n
-    ...  1) ${ERROR} in top level\n\n
+    ...  1) ${ERROR} in top level (with ∏ön ÄßÇïï €§)\n\n
     ...  2) ${ERROR}\n\n
     ...  3) ${ERROR}\n\n
     ...  4) ${ERROR}\n\n
-    ...  5) ${ERROR} in top level after nesting\n\n${TEARDOWN ERROR}
+    ...  5) ${ERROR} in top level after nesting (with ∏ön ÄßÇïï €§)\n\n${TEARDOWN ERROR}
     Continuable Failure In Nested UK
 
 Continuable and regular failure in UK
@@ -89,7 +89,7 @@ Continue when setting variables
 Continue in test setup
     [Documentation]  FAIL  Setup failed:\n${ERROR WITH TEARDOWN}
     [setup]  Continuable Failure In User Keyword In Test Setup
-    Log  This should not be executed
+    Log  This should not be executed (with ∏ön ÄßÇïï €§)
 
 Continue in test teardown
     [Documentation]  FAIL  Teardown failed:\n${ERROR WITH TEARDOWN}
@@ -104,17 +104,17 @@ Continuable Failure In User Keyword In ${where}
 
 Several Continuable Failures In User Keyword In ${where}
     Raise Continuable Failure
-    Log  This should be executed in ${where}
+    Log  This should be executed in ${where} (with ∏ön ÄßÇïï €§)
     Raise Continuable Failure
     Log  This should also be executed in ${where}
     Raise Continuable Failure
     Log  This too should also be executed in ${where}
 
 Continuable Failure In Nested UK
-    Raise Continuable Failure  Can be continued in top level
-    Log  This should be executed in Top Level UK
+    Raise Continuable Failure  Can be continued in top level (with ∏ön ÄßÇïï €§)
+    Log  This should be executed in Top Level UK (with ∏ön ÄßÇïï €§)
     Several Continuable Failures In User Keyword In Nested UK
-    Raise Continuable Failure  Can be continued in top level after nesting
+    Raise Continuable Failure  Can be continued in top level after nesting (with ∏ön ÄßÇïï €§)
 
 Continuable and regular failure in nested UK
     Continuable and regular failure
@@ -122,5 +122,5 @@ Continuable and regular failure in nested UK
 
 Continuable and regular failure
     Raise Continuable Failure
-    Log  This should be executed in Nested UK
+    Log  This should be executed in Nested UK (with ∏ön ÄßÇïï €§)
     Fail  Stop!!

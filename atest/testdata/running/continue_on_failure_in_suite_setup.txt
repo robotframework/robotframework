@@ -11,4 +11,4 @@ Not Executed
 *** User Keywords ***
 Continuable Failure In User Keyword In ${where}
     Raise Continuable Failure
-    Log  This should be executed in ${where}
+    Log  This should be executed in ${where} (with ∏ön ÄßÇïï €§)
