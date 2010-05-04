@@ -199,7 +199,7 @@ class RunnableTestCase(BaseTestCase):
             return 'Test case contains no keywords'
 
     def _run(self, output, namespace):
-        self.init_ctx(namespace)
+        self._init_context(namespace)
         self.timeout.start()
         self._run_setup(output, namespace)
         if not self._run_errors.setup_failed():
@@ -213,7 +213,7 @@ class RunnableTestCase(BaseTestCase):
         self._run_teardown(output, namespace)
         self._report_status_after_teardown()
 
-    def init_ctx(self, namespace):
+    def _init_context(self, namespace):
         namespace.variables['${TEST_NAME}'] = self.name
         namespace.variables['@{TEST_TAGS}'] = self.tags
 
