@@ -165,8 +165,9 @@ class SetKeyword(Keyword):
     def _run_and_set_variables(self, handler, output, namespace):
         try:
             return_value = Keyword._run(self, handler, output, namespace)
-        except ExecutionFailed:
-            self._set_variables(namespace, output, None)
+        except ExecutionFailed, err:
+            if err.cont:
+                self._set_variables(namespace, output, None)
             raise
         self._set_variables(namespace, output, return_value)
         return return_value
