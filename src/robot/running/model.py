@@ -21,7 +21,7 @@ from robot.output import LOGGER
 
 from fixture import Setup, Teardown
 from timeouts import TestTimeout
-from keywords import TestCaseKeywords
+from keywords import Keywords
 from namespace import Namespace
 from runerrors import SuiteRunErrors, TestRunErrors
 from userkeyword import UserLibrary
@@ -163,7 +163,7 @@ class RunnableTestCase(BaseTestCase):
         self.tags = defaults.force_tags \
                     + utils.get_not_none(data.tags, defaults.default_tags)
         self.timeout = utils.get_not_none(data.timeout, defaults.test_timeout)
-        self.keywords = TestCaseKeywords(data.keywords)
+        self.keywords = Keywords(data.keywords)
         self.exit_on_failure = False
 
     def run(self, output, namespace, suite_errors):
@@ -203,9 +203,12 @@ class RunnableTestCase(BaseTestCase):
         self.timeout.start()
         self._run_setup(output, namespace)
         if not self._run_errors.setup_failed():
-            errors = self.keywords.run(output, namespace, self.timeout,
-                                       self._suite_errors)
-            self._run_errors.kw_err(errors)
+            try:
+                self.keywords.run(output, namespace)
+            except ExecutionFailed, err:
+                self._run_errors.kw_err(unicode(err))
+                self.timeout.set_keyword_timeout(err.timeout)
+                self._suite_errors.test_failed(exit=err.exit)
         self._report_status(namespace)
         self._run_teardown(output, namespace)
         self._report_status_after_teardown()
@@ -260,7 +263,7 @@ class RunnableTestCase(BaseTestCase):
         except ExecutionFailed, err:
             self.timeout.set_keyword_timeout(err.timeout)
             self._suite_errors.test_failed(exit=err.exit)
-            error_reporter(err.msg)
+            error_reporter(unicode(err))
 
 
 class _TestCaseDefaults:
