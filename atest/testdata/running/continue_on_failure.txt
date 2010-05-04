@@ -46,7 +46,7 @@ Continuable and regular failure
     Raise Continuable Failure
     Log  This should be executed
     Fail  Stopping here!! (with ∏ön ÄßÇïï €§)
-    Log  This should not be executed
+    Fail  This should not be executed
 
 Continue in nested user keyword
     [Documentation]  FAIL ${HEADER}\n\n
@@ -60,17 +60,16 @@ Continue in nested user keyword
 Continuable and regular failure in UK
     [Documentation]  FAIL ${HEADER}\n\n
     ...  1) ${ERROR}\n\n
-    ...  2)  Stop!!\n\n${TEARDOWN ERROR}
+    ...  2) Stop!!\n\n${TEARDOWN ERROR}
     Continuable and regular failure
-    Continuable and regular failure
-    Log  This should not be executed
+    Fail  This should not be executed
 
 Continuable and regular failure in nested UK
     [Documentation]  FAIL ${HEADER}\n\n
     ...  1) ${ERROR}\n\n
     ...  2)  Stop!!\n\n${TEARDOWN ERROR}
     Continuable and regular failure in nested UK
-    Log  This should not be executed
+    Fail  This should not be executed
 
 Continue when setting variables
     [Documentation]  FAIL ${HEADER}\n\n
@@ -89,12 +88,12 @@ Continue when setting variables
 Continue in test setup
     [Documentation]  FAIL  Setup failed:\n${ERROR WITH TEARDOWN}
     [setup]  Continuable Failure In User Keyword In Test Setup
-    Log  This should not be executed (with ∏ön ÄßÇïï €§)
+    Fail  This should not be executed (with ∏ön ÄßÇïï €§)
 
 Continue in test teardown
     [Documentation]  FAIL  Teardown failed:\n${ERROR WITH TEARDOWN}
-    [Teardown]  Continuable Failure In User Keyword In Test Teardown
     No operation
+    [Teardown]  Continuable Failure In User Keyword In Test Teardown
 
 
 *** User Keywords ***
