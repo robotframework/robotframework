@@ -73,7 +73,7 @@ class MultipleErrors(ExecutionFailed):
 
     def __unicode__(self):
         if len(self._errors) == 1:
-            return str(self._errors[0])
+            return unicode(self._errors[0])
         return '\n\n'.join('Error %d: %s' % (i+1, err) 
                            for i, err in enumerate(self._errors))
 
