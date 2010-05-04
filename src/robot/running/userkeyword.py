@@ -20,7 +20,7 @@ from robot.errors import DataError
 from robot.variables import is_list_var, VariableSplitter
 from robot import utils
 
-from keywords import UserKeywordKeywords
+from keywords import Keywords
 from timeouts import KeywordTimeout
 from arguments import UserKeywordArguments
 
@@ -109,7 +109,7 @@ class UserKeywordHandler(object):
         self.name = utils.printable_name(handlerdata.name)
         self._libname = libname
         self._set_variable_dependent_metadata(handlerdata.metadata)
-        self.keywords = UserKeywordKeywords(handlerdata.keywords)
+        self.keywords = Keywords(handlerdata.keywords)
         self.arguments = UserKeywordArguments(handlerdata.args,
                                               handlerdata.defaults,
                                               handlerdata.varargs,

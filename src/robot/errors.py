@@ -46,36 +46,36 @@ class DataError(RobotError):
 
 class ExecutionFailed(RobotError):
     """Used for communicating failures in test execution"""
-    msg = property(lambda self: self._msg)
 
     def __init__(self, message, timeout=False, exit=False, cont=False,
                  syntax=False):
         RobotError.__init__(self, message)
-        self._msg = message
         self.timeout = timeout
         self.exit = exit
         self.cont = cont
         self.syntax = syntax
 
     def get_errors(self):
-        return [self.msg]
+        return [self]
 
 
 class MultipleErrors(ExecutionFailed):
-    msg = property(lambda self: ''.join(self._errors))
 
     def __init__(self, errors):
-        exit = any(err for err in errors if err.exit)
-        cont = any(err for err in errors if err.cont)
-        timeout = any(err for err in errors if err.timeout)
-        syntax = any(err for err in errors if err.syntax)
-        self._errors= []
-        for e in errors:
-            self._errors.extend(e.get_errors())
-        ExecutionFailed.__init__(self, '', timeout, exit, cont, syntax)
+        self.exit = any(err.exit for err in errors)
+        self.cont = all(err.cont for err in errors)
+        self.timeout = any(err.timeout for err in errors)
+        self.syntax = any(err.syntax for err in errors)
+        self._errors = errors
 
     def get_errors(self):
         return self._errors
+
+    def __unicode__(self):
+        if len(self._errors) == 1:
+            return str(self._errors[0])
+        return '\n\n'.join('Error %d: %s' % (i+1, err) 
+                           for i, err in enumerate(self._errors))
 
 
 class TimeoutError(RobotError):

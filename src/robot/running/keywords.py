@@ -18,65 +18,28 @@ from robot.common import BaseKeyword
 from robot.variables import is_list_var
 
 
-class _Keywords(object):
+class Keywords(object):
 
     def __init__(self, kwdata):
         self._keywords = [ _KeywordFactory(kw) for kw in kwdata ]
 
-    def __iter__(self):
-        return iter(self._keywords)
-
-    def _run(self, output, namespace):
+    def run(self, output, namespace):
         errors = []
         for kw in self._keywords:
-            error = self._run_with_error_handling(kw, output, namespace)
-            if error:
-                errors.append(error)
-                if not error.cont:
+            try:
+                kw.run(output, namespace)
+            except ExecutionFailed, err:
+                errors.extend(err.get_errors())
+                if not err.cont:
                     break
-        return self._report_errors(errors)
-
-    def _run_with_error_handling(self, kw, output, namespace):
-        try:
-            kw.run(output, namespace)
-            return None
-        except ExecutionFailed, err:
-            self._keyword_failed(err)
-            return err
-
-    def _keyword_failed(self, err):
-        pass
+        if errors:
+            raise MultipleErrors(errors)
 
     def __nonzero__(self):
         return bool(self._keywords)
 
-
-class TestCaseKeywords(_Keywords):
-
-    def run(self, output, namespace, test_timeout, suite_run_errors):
-        self.test_timeout = test_timeout
-        self.suite_run_errors = suite_run_errors
-        return self._run(output, namespace)
-
-    def _keyword_failed(self, err):
-        self.test_timeout.set_keyword_timeout(err.timeout)
-        self.suite_run_errors.test_failed(exit=err.exit)
-
-    def _report_errors(self, errors):
-        all_errors = []
-        for err in errors:
-            all_errors.extend(err.get_errors())
-        return all_errors
-
-
-class UserKeywordKeywords(_Keywords):
-
-    def run(self, output, namespace):
-        self._run(output, namespace)
-
-    def _report_errors(self, errors):
-        if errors:
-            raise MultipleErrors(errors)
+    def __iter__(self):
+        return iter(self._keywords)
 
 
 def _KeywordFactory(kwdata):
