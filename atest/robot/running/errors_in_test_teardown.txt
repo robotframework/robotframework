@@ -1,23 +1,32 @@
-*** Settings ***
+﻿*** Settings ***
 Suite Setup     Run Tests  ${EMPTY}  running/errors_in_test_teardown.txt
 Force Tags      regression  pybot  jybot
 Resource        atest_resource.txt
 
 *** Test Cases ***
-Test With One Error In Teardown
+One Error In Teardown
     ${tc} =  Check Test Case  ${TESTNAME}
     Check Log Message  ${tc.teardown.kws[1].msgs[0]}  This Should Be executed
 
-Test With Many Errors In Teardown
+Many Errors In Teardown
     ${tc} =  Check Test Case  ${TESTNAME}
     Check Log Message  ${tc.teardown.kws[2].msgs[0]}  This Should Also Be Executed
 
-Test With A Fatal Error In Teardown
+Errors In Teardown When Setting Variables
+    ${tc} =  Check Test Case  ${TESTNAME}
+    Check Log Message  ${tc.teardown.kws[0].msgs[0]}  no return value is set  FAIL
+    Check Log Message  ${tc.teardown.kws[0].msgs[1]}  \${ret} = None
+
+Errors In For Loop In Teardown
+    Check Test Case  ${TESTNAME}
+
+Keyword Timeout In Teardown
     ${tc} =  Check Test Case  ${TESTNAME}
     Should Be True  len(${tc.teardown.kws}) == 1
 
-Test With Errors In For Loop In Teardown
+Fatal Error In Teardown
     ${tc} =  Check Test Case  ${TESTNAME}
+    Should Be True  len(${tc.teardown.kws}) == 1
 
 Suite Teardown Is Executed Fully
     ${ts} =  Get Test Suite  errors in test teardown

@@ -60,8 +60,20 @@ class ExecutionFailed(RobotError):
         RobotError.__init__(self, utils.cut_long_message(message))
         self.timeout = timeout
         self.exit = exit
-        self.cont = cont
         self.syntax = syntax
+        self.cont = self._continue_on_failure(cont)
+
+    def _continue_on_failure(self, cont):
+        if self.timeout or self.syntax or self.exit:
+            return False
+        if cont:
+            return True
+        return self._in_test_or_suite_teardown()
+
+    def _in_test_or_suite_teardown(self):
+        from robot.running import NAMESPACES
+        test_or_suite = NAMESPACES.current.test or NAMESPACES.current.suite
+        return test_or_suite.status != 'RUNNING'
 
     def get_errors(self):
         return [self]

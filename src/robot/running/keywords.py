@@ -30,24 +30,10 @@ class Keywords(object):
                 kw.run(output, namespace)
             except ExecutionFailed, err:
                 errors.extend(err.get_errors())
-                if not self._continue_on_failure(err):
+                if not err.cont:
                     break
         if errors:
             raise ExecutionFailures(errors)
-
-    def _continue_on_failure(self, err):
-        if err.exit:
-            return False
-        if err.cont:
-            return True
-        if self._in_test_or_suite_teardown():
-            err.cont = True
-        return err.cont
-
-    def _in_test_or_suite_teardown(self):
-        from robot.running import NAMESPACES
-        test_or_suite = NAMESPACES.current.test or NAMESPACES.current.suite
-        return test_or_suite.status != 'RUNNING'
 
     def __nonzero__(self):
         return bool(self._keywords)

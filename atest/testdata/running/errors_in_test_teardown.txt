@@ -1,16 +1,16 @@
-*** Settings ***
+﻿*** Settings ***
 Library  Exceptions
 Suite Teardown  Suite Teardown With Errors
 
 *** Test Cases ***
-Test With One Error In Teardown
+One Error In Teardown
     [documentation]  FAIL Teardown failed:\n
     ...  Message\n\n
     ...  Also teardown of the parent suite failed.
     No Operation
     [teardown]  One Error
 
-Test With Many Errors In Teardown
+Many Errors In Teardown
     [documentation]  FAIL Teardown failed:\n
     ...  Several failures occurred:\n\n
     ...  1) Message 1\n\n
@@ -19,7 +19,14 @@ Test With Many Errors In Teardown
     No Operation
     [teardown]  Many Errors
 
-Test With Errors In For Loop In Teardown
+Errors In Teardown When Setting Variables
+    [documentation]  FAIL  Teardown failed:\n
+    ...  no return value is set\n\n
+    ...  Also teardown of the parent suite failed.
+    No Operation
+    [teardown]  Errors when setting variables
+
+Errors In For Loop In Teardown
     [documentation]  FAIL Teardown failed:\n
     ...  Several failures occurred:\n\n
     ...  1) cat\n\n
@@ -30,12 +37,20 @@ Test With Errors In For Loop In Teardown
     No Operation
     [teardown]  Errors In For Loop
 
-Test With A Fatal Error In Teardown
+Keyword Timeout In Teardown
+    [documentation]  FAIL Teardown failed:\n
+    ...  Keyword timeout 42 milliseconds exceeded.\n\n
+    ...  Also teardown of the parent suite failed.
+    No Operation
+    [teardown]  Timeout
+
+Fatal Error In Teardown
     [documentation]  FAIL Teardown failed:\n
     ...  FatalCatastrophyException\n\n
     ...  Also teardown of the parent suite failed.
     No Operation
     [teardown]  Fatal Error
+
 
 *** Keywords ***
 One Error
@@ -47,6 +62,10 @@ Many Errors
     Fail  Message 2
     Log  This Should Also Be Executed
 
+Errors when setting variables
+    ${ret} =  Fail  no return value is set
+    Should Be Equal  ${ret}  ${None}
+
 Errors In For Loop
     :FOR  ${animal}  in  cat  dog
     \    Fail  ${animal}
@@ -54,7 +73,12 @@ Errors In For Loop
 
 Fatal Error
     Exit On Failure
-    Log  This Should Not Be Executed
+    Fail  This Should Not Be Executed
+
+Timeout
+    [timeout]  42 ms
+    Sleep  1 s
+    Fail  This Should Not Be Executed
 
 Suite Teardown With Errors
     Fail  Suite Message 1
