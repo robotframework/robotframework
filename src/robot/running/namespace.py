@@ -139,6 +139,8 @@ class Namespace:
         self.test = test
         for lib in self._testlibs.values():
             lib.start_test()
+        self.variables['${TEST_NAME}'] = test.name
+        self.variables['@{TEST_TAGS}'] = test.tags
 
     def end_test(self):
         self.test = None
@@ -146,6 +148,10 @@ class Namespace:
         self.uk_handlers = []
         for lib in self._testlibs.values():
             lib.end_test()
+
+    def test_ended(self, message, status):
+        self.variables['${TEST_MESSAGE}'] = message
+        self.variables['${TEST_STATUS}'] = status
 
     def end_suite(self):
         self.suite = None

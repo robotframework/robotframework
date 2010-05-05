@@ -191,7 +191,6 @@ class RunnableTestCase(BaseTestCase):
             return 'Test case contains no keywords'
 
     def _run(self, output, namespace):
-        self._init_context(namespace)
         self.timeout.start()
         self._run_setup(output, namespace)
         if not self.run_errors.setup_failed():
@@ -208,10 +207,6 @@ class RunnableTestCase(BaseTestCase):
         self.timeout.set_keyword_timeout(err.timeout)
         self._suite_errors.test_failed(exit=err.exit)
 
-    def _init_context(self, namespace):
-        namespace.variables['${TEST_NAME}'] = self.name
-        namespace.variables['@{TEST_TAGS}'] = self.tags
-
     def _run_setup(self, output, namespace):
         self.setup.run(output, namespace, TestSetupListener(self))
 
@@ -222,8 +217,7 @@ class RunnableTestCase(BaseTestCase):
             self.message = message
         else:
             self.status = 'PASS'
-        namespace.variables['${TEST_MESSAGE}'] = self.message
-        namespace.variables['${TEST_STATUS}'] = self.status
+        namespace.test_ended(self.message, self.status)
 
     def _run_teardown(self, output, namespace):
         self.teardown.run(output, namespace, TestTeardownListener(self))
