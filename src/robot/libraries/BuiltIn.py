@@ -449,16 +449,16 @@ class _Verify:
 
     def _get_length(self, item):
         try: return len(item)
-        except (KeyboardInterrupt, SystemExit): raise
+        except utils.RERAISED_EXCEPTIONS: raise
         except:
             try: return item.length()
-            except (KeyboardInterrupt, SystemExit): raise
+            except utils.RERAISED_EXCEPTIONS: raise
             except:
                 try: return item.size()
-                except (KeyboardInterrupt, SystemExit): raise
+                except utils.RERAISED_EXCEPTIONS: raise
                 except:
                     try: return item.length
-                    except (KeyboardInterrupt, SystemExit): raise
+                    except utils.RERAISED_EXCEPTIONS: raise
                     except:
                         raise RuntimeError("Could not get length of '%s'" % item)
 
