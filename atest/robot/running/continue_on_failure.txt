@@ -73,6 +73,22 @@ Continue in suite setup
     ${suite}=  Get Test Suite  Continue On Failure In Suite Setup
     Check Log Message  ${suite.setup.kws[1].msgs[0]}  This should be executed in Suite Setup (with ∏ön ÄßÇïï €§)
 
+Continue in for loop
+    ${tc}=  Check Test Case  ${TESTNAME}
+    Check Log Message  ${tc.kws[0].kws[0].kws[0].msgs[0]}  ContinuableApocalypseException: 0  FAIL
+    Check Log Message  ${tc.kws[0].kws[0].kws[1].msgs[0]}  This should be executed inside for loop
+    Check Log Message  ${tc.kws[0].kws[1].kws[0].msgs[0]}  ContinuableApocalypseException: 1  FAIL
+    Check Log Message  ${tc.kws[0].kws[1].kws[1].msgs[0]}  This should be executed inside for loop
+    Check Log Message  ${tc.kws[0].kws[2].kws[0].msgs[0]}  ContinuableApocalypseException: 2  FAIL
+    Check Log Message  ${tc.kws[0].kws[2].kws[1].msgs[0]}  This should be executed inside for loop
+    Check Log Message  ${tc.kws[0].kws[3].kws[0].msgs[0]}  ContinuableApocalypseException: 3  FAIL
+    Check Log Message  ${tc.kws[0].kws[3].kws[1].msgs[0]}  This should be executed inside for loop
+    Check Log Message  ${tc.kws[0].kws[4].kws[0].msgs[0]}  ContinuableApocalypseException: 4  FAIL
+    Check Log Message  ${tc.kws[0].kws[4].kws[1].msgs[0]}  This should be executed inside for loop
+    Check Log Message  ${tc.kws[1].msgs[0]}  This should be executed after for loop
+
+Continuable and regular failure in for loop
+    Check Test Case  ${TESTNAME}
 
 *** Keywords ***
 Verify all failures in user keyword  [Arguments]  ${kw}  ${where}

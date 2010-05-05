@@ -227,7 +227,7 @@ class ForKeyword(BaseKeyword):
         self.items = kwdata.items
         self.range = kwdata.range
         BaseKeyword.__init__(self, kwdata.name, type='for')
-        self.keywords = [ _KeywordFactory(kw) for kw in kwdata.keywords ]
+        self.keywords = Keywords(kwdata.keywords)
 
     def run(self, output, namespace):
         self.starttime = utils.get_timestamp()
@@ -242,34 +242,40 @@ class ForKeyword(BaseKeyword):
             error = ExecutionFailed(msg)
         else:
             error = None
-        self.status = error is None and 'PASS' or 'FAIL'
+        self.status = 'PASS' if not error else 'FAIL'
         self.endtime = utils.get_timestamp()
         self.elapsedtime = utils.get_elapsed_time(self.starttime, self.endtime)
         output.end_keyword(self)
-        if error is not None:
+        if error:
             raise error
 
     def _run(self, output, namespace):
         items = self._replace_vars_from_items(namespace.variables)
+        errors = []
         for i in range(0, len(items), len(self.vars)):
             values = items[i:i+len(self.vars)]
-            self._run_one_round(output, namespace, self.vars, values)
+            error = self._run_one_round(output, namespace, self.vars, values)
+            if error:
+                errors.extend(error.get_errors())
+                if not error.cont:
+                    break
+        if errors:
+            raise ExecutionFailures(errors)
 
     def _run_one_round(self, output, namespace, variables, values):
         foritem = ForItemKeyword(variables, values)
         output.start_keyword(foritem)
         for var, value in zip(variables, values):
             namespace.variables[var] = value
-        error = None
-        for kw in self.keywords:
-            try:
-                kw.run(output, namespace)
-            except ExecutionFailed, error:
-                break
-        foritem.end(error is None and 'PASS' or 'FAIL')
+        try:
+            self.keywords.run(output, namespace)
+        except ExecutionFailed, error:
+            pass
+        else:
+            error = None
+        foritem.end('PASS' if not error else 'FAIL')
         output.end_keyword(foritem)
-        if error is not None:
-            raise error
+        return error
 
     def _replace_vars_from_items(self, variables):
         items = variables.replace_list(self.items)
