@@ -784,7 +784,7 @@ class _RunKeyword:
         The keyword name and arguments work as in `Run Keyword`. See
         `Run Keyword If` for a usage example.
 
-        Starting from Robot Framework 2.5 errors caused by invalid syntax or
+        Starting from Robot Framework 2.5 errors caused by invalid syntax,
         timeouts, or fatal exceptions are not caught by this keyword.
         """
         try:
@@ -795,13 +795,17 @@ class _RunKeyword:
             return 'FAIL', unicode(err)
 
     def run_keyword_and_continue_on_failure(self, name, *args):
-        """Runs the keyword and continues even if failure occurs.
+        """Runs the keyword and continues execution even if a failure occurs.
 
-        The keyword name and arguments work as in `Run Keyword`. See
-        `Run Keyword If` for a usage example.
+        The keyword name and arguments work as with `Run Keyword`.
 
-        Errors caused by invalid syntax or timeouts, or fatal exceptions are not
-        caught by this keyword."""
+        Example:
+        | Run Keyword And Continue On Failure | Fail | This is a stupid example |
+        | Log | This keyword is executed |
+
+        This keyword was added in Robot Framework 2.5. Errors caused by invalid
+        syntax, timeouts, or fatal exceptions are not caught.
+        """
         try:
             return self.run_keyword(name, *args)
         except ExecutionFailed, err:
@@ -827,7 +831,7 @@ class _RunKeyword:
         | ${msg} = | Run Keyword And Expect Error | * | My KW |
         | Should Start With | ${msg} | Once upon a time in |
 
-        Starting from Robot Framework 2.5 errors caused by invalid syntax or
+        Starting from Robot Framework 2.5 errors caused by invalid syntax,
         timeouts, or fatal exceptions are not caught by this keyword.
         """
         try:
@@ -888,7 +892,7 @@ class _RunKeyword:
         Example:
         | Wait Until Keyword Succeeds | 2 min | 5 sec | My keyword | arg1 | arg2 |
 
-        Starting from Robot Framework 2.5 errors caused by invalid syntax or
+        Starting from Robot Framework 2.5 errors caused by invalid syntax,
         timeouts, or fatal exceptions are not caught by this keyword.
         """
         timeout = utils.timestr_to_secs(timeout)
