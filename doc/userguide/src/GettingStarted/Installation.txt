@@ -49,18 +49,16 @@ only work with Python, so installing it is always recommended.
 Python installation
 '''''''''''''''''''
 
-Python 2.6 or 2.5 are recommended, although Python 2.4 and 2.3 are also
-supported. On most UNIX-like systems, you have Python installed by
-default. If you are on Windows or otherwise need to install Python
-yourself, your best place to start is probably the `Python
-homepage`_. There you can download a suitable installer and get more
-information about the installation and Python in general.
+Starting from Robot Framework 2.5, Python 2.5 is the minimum supported Python
+version.  Earlier versions support Python 2.3 or newer. On most UNIX-like
+systems, you have Python installed by default. If you are on Windows or
+otherwise need to install Python yourself, your best place to start is probably
+the `Python homepage`_. There you can download a suitable installer and get
+more information about the installation and Python in general.
 
-.. Note:: Robot Framework is not compatible with Python 3.x
-          versions. Python 3.0 was intentionally backwards
-          incompatible with earlier Python releases, and supporting it
-          as long as we need to support very old Python versions (most
-          notably Jython 2.2) is not feasible.
+.. Note:: Robot Framework is currently not compatible with Python 3.x
+          versions because Python 3.0 was intentionally backwards incompatible with
+          earlier Python releases.
 
 .. Note:: On Windows, and especially on Windows Vista, it is
           recommended to install Python to all users, and to run the
@@ -69,42 +67,35 @@ information about the installation and Python in general.
 Jython installation
 '''''''''''''''''''
 
-Using test libraries implemented with Java or using Java tools
-directly requires running Robot Framework on Jython, which then requires
-Java Runtime Environment (JRE). The minimum required Java version is
-1.4, but newer versions are recommended, as they tend to be faster
-with dynamic languages, such as Jython. Both Sun and IBM Java versions
-are supported.
+Using test libraries implemented with Java or using Java tools directly
+requires running Robot Framework on Jython, which in turn requires Java Runtime
+Environment (JRE). Minimum required JRE version depends on the Jython version
+used.  Jython 2.5 requires Java 1.5 or newer, whereas Jython 2.2 works also with
+Java 1.4. Both Sun and IBM Java implementations are supported.
 
-Robot Framework requires Jython version 2.2. The earlier Jython
-version 2.1 is not compatible with Robot Framework, and Jython 2.2
-betas and alphas are not supported either. Unfortunately, also Jython
-2.2.1 has certain Unicode problems (for more information, see
-http://bugs.jython.org/issue1802339 and
-http://bugs.jython.org/issue1032). 
-
-.. Note:: Although Robot Framework does not yet officially support the
-          newly released Jython 2.5, this version ought to work pretty
-          well and problems are most likely limited to Unicode
-          support.  For more information and current status see
-          http://code.google.com/p/robotframework/issues/detail?id=198
+Starting from Robot Framework 2.5, using Robot Framework requires Jython
+version 2.5.  Earlier version support Jython 2.2, but due to some unicode
+problems Jython 2.2.1 is not recommended (for more information, see
+http://bugs.jython.org/issue1802339 and http://bugs.jython.org/issue1032).
 
 Installing Jython is a fairly easy procedure. First you need to get an
 installer from the `Jython homepage`_ or directly from
-http://downloads.sourceforge.net/jython/jython_installer-2.2.jar.
-Note that the installer is an executable JAR package, which you need
-to run as :cli:`java -jar jython_installer-2.2.jar`. Depending on your
-system, the installer runs either in the graphical or the textual
-mode, but in both cases, the actual installation procedure is very
-easy.
+http://sourceforge.net/projects/jython/files/. The latest stable release is
+recommended.  Note that the installer is an executable JAR package, which you
+need to run as :cli:`java -jar jython_installer-<version>.jar`. Depending on
+your system, the installer runs either in the graphical or the textual mode,
+but in both cases, the actual installation procedure is very easy.
 
-Jython 2.2 does not have Python's :code:`distutils` module, which
-is required for automatically installing Robot Framework.
-The normal procedure is installing Robot Framework using
-Python but `manual installation`_ is also possible.
-When installing Robot Framework with Python, its installer tries to find the
-Jython executable on the system to create the :prog:`jybot` runner script
-correctly. Jython is found if:
+With Jython 2.5, it is possible to install Robot Framework without having
+Python available by  `installing from source`_.  Jython 2.2 does not have
+Python's :code:`distutils` module, which is required for automatically
+installing Robot Framework and thus the only way to install without Python is
+`manual installation`_.
+
+With all supported Jython versions, it is possible to install Robot Framework
+using Python and still start execution using Jython.  When installing Robot
+Framework with Python, its installer tries to find the Jython executable on the
+system to create the :prog:`jybot` runner script correctly. Jython is found if:
 
 1. Jython can be executed in the system directly (i.e. it is in the :var:`PATH`).
 
@@ -123,10 +114,6 @@ correctly. Jython is found if:
       D:\Jython22
       /usr/local/jython2.2
       /opt/whatever/Jython22
-
-If you plan to use Robot Framework only with Jython, you do not
-necessarily need Python at all. In that case, you need to perform a `manual
-installation`_ or have some custom installer.
 
 
 Installation
@@ -172,6 +159,9 @@ something like the following text should appear at the end::
           uses the standard Python installation system and should
           operate in accordance with the host operating system
           conventions.
+
+.. Note:: It is possible to run the above scripts also with Jython 2.5.
+          In this case, Python installation is not required to use Robot Framework
 
 Using Windows installer
 '''''''''''''''''''''''
