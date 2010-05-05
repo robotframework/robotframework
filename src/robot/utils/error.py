@@ -19,7 +19,6 @@ import re
 import traceback
 
 from robottypes import is_str
-from text import cut_long_message
 from unic import unic
 from robot.errors import DataError, TimeoutError, RemoteError, ExecutionFailed
 
@@ -80,8 +79,8 @@ def get_execution_failed():
     exit = bool(getattr(exc_value, 'ROBOT_EXIT_ON_FAILURE', False))
     cont = bool(getattr(exc_value, 'ROBOT_CONTINUE_ON_FAILURE', False))
     syntax = isinstance(exc_value, DataError)
-    return message, details, ExecutionFailed(cut_long_message(message),
-                                             timeout, exit, cont, syntax)
+    return message, details, ExecutionFailed(message, timeout, exit, cont,
+                                             syntax)
 
 
 def _is_java_exception(exc):

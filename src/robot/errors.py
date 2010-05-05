@@ -12,6 +12,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+import utils
 
 # Return codes from Robot and Rebot.
 # RC below 250 is the number of failed critical tests and exactly 250
@@ -27,6 +28,13 @@ class RobotError(Exception):
 
     Do not raise this method but use more specific errors instead.
     """
+    def __init__(self, message=''):
+        Exception.__init__(self, message)
+
+    def __unicode__(self):
+        """This is required because of Python 2.5"""
+        return unicode(self.args[0])
+
 
 class FrameworkError(RobotError):
     """Can be used when the core framework goes to unexpected state
@@ -49,7 +57,7 @@ class ExecutionFailed(RobotError):
 
     def __init__(self, message, timeout=False, exit=False, cont=False,
                  syntax=False):
-        RobotError.__init__(self, message)
+        RobotError.__init__(self, utils.cut_long_message(message))
         self.timeout = timeout
         self.exit = exit
         self.cont = cont
@@ -57,9 +65,6 @@ class ExecutionFailed(RobotError):
 
     def get_errors(self):
         return [self]
-
-    def __unicode__(self):
-        return unicode(self.args[0])
 
 
 class ExecutionFailures(ExecutionFailed):
@@ -70,17 +75,17 @@ class ExecutionFailures(ExecutionFailed):
         self.timeout = any(err.timeout for err in errors)
         self.syntax = any(err.syntax for err in errors)
         self._errors = errors
-        RobotError.__init__(self, unicode(self))
+        RobotError.__init__(self, self._get_message())
 
-    def get_errors(self):
-        return self._errors
-
-    def __unicode__(self):
+    def _get_message(self):
         if len(self._errors) == 1:
             return unicode(self._errors[0])
         lines = ['Several failures occurred:'] \
                 + ['%d) %s' % (i+1, unicode(err)) for i, err in enumerate(self._errors)]
-        return '\n\n'.join(lines)
+        return utils.cut_long_message('\n\n'.join(lines))
+
+    def get_errors(self):
+        return self._errors
 
 
 class TimeoutError(RobotError):
