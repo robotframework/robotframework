@@ -214,7 +214,7 @@ class SetKeyword(Keyword):
         else:
             err = 'Need more values than %d' % len(ret)
         varz = self.scalar_vars[:]
-        if self.list_var is not None:
+        if self.list_var:
             varz.append(self.list_var)
         name = self.name.split(' = ', 1)[1]
         raise DataError("Cannot assign return value of keyword '%s' to "
@@ -239,7 +239,7 @@ class ForKeyword(BaseKeyword):
         except ExecutionFailed, err:
             error = err
         except DataError, err:
-            msg = utils.unic(err)
+            msg = unicode(err)
             output.fail(msg)
             error = ExecutionFailed(msg)
         else:
@@ -256,10 +256,10 @@ class ForKeyword(BaseKeyword):
         errors = []
         for i in range(0, len(items), len(self.vars)):
             values = items[i:i+len(self.vars)]
-            error = self._run_one_round(output, namespace, self.vars, values)
-            if error:
-                errors.extend(error.get_errors())
-                if not error.cont:
+            err = self._run_one_round(output, namespace, self.vars, values)
+            if err:
+                errors.extend(err.get_errors())
+                if not err.cont:
                     break
         if errors:
             raise ExecutionFailures(errors)
@@ -271,8 +271,8 @@ class ForKeyword(BaseKeyword):
             namespace.variables[var] = value
         try:
             self.keywords.run(output, namespace)
-        except ExecutionFailed, error:
-            pass
+        except ExecutionFailed, err:
+            error = err
         else:
             error = None
         foritem.end('PASS' if not error else 'FAIL')
@@ -305,8 +305,8 @@ class ForKeyword(BaseKeyword):
 class ForItemKeyword(BaseKeyword):
 
     def __init__(self, vars, items):
-        name = ', '.join([ '%s = %s' % (var, utils.cut_long_assign_msg(item))
-                           for var, item in zip(vars, items) ])
+        name = ', '.join('%s = %s' % (var, utils.cut_long_assign_msg(item))
+                         for var, item in zip(vars, items))
         BaseKeyword.__init__(self, name, type='foritem')
         self.starttime = utils.get_timestamp()
 
