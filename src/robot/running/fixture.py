@@ -30,13 +30,12 @@ class _Fixture(object):
             return None
         return Keyword(kwdata[0], kwdata[1:], type=self.__class__.__name__.lower())
 
-    def run(self, output, namespace):
+    def run(self, output, namespace, error_listener):
         if self._keyword:
             try:
                 self._keyword.run(output, namespace)
             except ExecutionFailed, err:
-                return err
-        return None
+                error_listener.notify(err)
 
     def serialize(self, serializer):
         serializer.start_keyword(self._keyword)
@@ -45,3 +44,37 @@ class _Fixture(object):
 
 class Setup(_Fixture): pass
 class Teardown(_Fixture): pass
+
+
+
+class SuiteTearDownListener(object):
+    def __init__(self, suite):
+        self._suite = suite
+    def notify(self, error):
+        self._suite.suite_teardown_failed('Suite teardown failed:\n%s'
+                                          % unicode(error))
+
+
+class SuiteSetupListener(object):
+    def __init__(self, suite):
+        self._suite = suite
+    def notify(self, error):
+        self._suite.run_errors.suite_setup_err(error)
+
+
+class _TestListener(object):
+    def __init__(self, test):
+        self._test = test
+    def notify(self, error):
+        self._test.keyword_failed(error)
+        self._notify_run_errors(error)
+
+
+class TestSetupListener(_TestListener):
+    def _notify_run_errors(self, error):
+        self._test.run_errors.setup_err(error)
+
+
+class TestTeardownListener(_TestListener):
+    def _notify_run_errors(self, error):
+        self._test.run_errors.teardown_err(error)

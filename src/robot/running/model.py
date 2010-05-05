@@ -19,7 +19,8 @@ from robot.errors import ExecutionFailed
 from robot.variables import GLOBAL_VARIABLES
 from robot.output import LOGGER
 
-from fixture import Setup, Teardown
+from fixture import Setup, Teardown, SuiteSetupListener, SuiteTearDownListener,\
+    TestSetupListener, TestTeardownListener
 from timeouts import TestTimeout
 from keywords import Keywords
 from namespace import Namespace
@@ -69,8 +70,8 @@ class RunnableTestSuite(BaseTestSuite):
     def _start_run(self, output, parent, errors):
         if not errors:
             errors = SuiteRunErrors(self._run_mode_exit_on_failure)
-        self._run_errors = errors
-        self._run_errors.start_suite()
+        self.run_errors = errors
+        self.run_errors.start_suite()
         self._init_run(parent)
         self._set_variable_dependent_metadata(self.namespace.variables)
         output.start_suite(self)
@@ -91,23 +92,21 @@ class RunnableTestSuite(BaseTestSuite):
         for name, value in self.metadata.items():
             self.metadata[name] = variables.replace_meta(name, value, errors)
         if errors:
-            self._run_errors.suite_init_err('Suite initialization failed:\n%s'
+            self.run_errors.suite_init_err('Suite initialization failed:\n%s'
                                             % '\n'.join(errors))
 
     def _run_setup(self, output):
-        if self._run_errors.is_suite_setup_allowed():
-            self._run_errors.suite_setup_err(self.setup.run(output,
-                                                            self.namespace))
+        if self.run_errors.is_suite_setup_allowed():
+            self.setup.run(output, self.namespace, SuiteSetupListener(self))
+            self.run_errors.setup_executed()
 
     def _run_teardown(self, output):
-        if self._run_errors.is_suite_teardown_allowed():
-            td_err = self.teardown.run(output, self.namespace)
-            if td_err:
-                self.suite_teardown_failed('Suite teardown failed:\n%s' % unicode(td_err))
+        if self.run_errors.is_suite_teardown_allowed():
+            self.teardown.run(output, self.namespace, SuiteTearDownListener(self))
 
     def _run_sub_suites(self, output):
         for suite in self.suites:
-            suite.run(output, self, self._run_errors)
+            suite.run(output, self, self.run_errors)
 
     def _run_tests(self, output):
         executed_tests = []
@@ -117,12 +116,12 @@ class RunnableTestSuite(BaseTestSuite):
                 LOGGER.warn("Multiple test cases with name '%s' executed in "
                             "test suite '%s'"% (test.name, self.longname))
             executed_tests.append(normname)
-            test.run(output, self.namespace, self._run_errors)
+            test.run(output, self.namespace, self.run_errors)
             self._set_prev_test_variables(self.namespace.variables, test)
 
     def _report_status(self, output):
         self.set_status()
-        self.message = self._run_errors.suite_error()
+        self.message = self.run_errors.suite_error()
         self.namespace.variables['${SUITE_STATUS}'] = self.status
         self.namespace.variables['${SUITE_MESSAGE}'] = self.get_full_message()
 
@@ -132,7 +131,7 @@ class RunnableTestSuite(BaseTestSuite):
         self._set_prev_test_variables(GLOBAL_VARIABLES, varz=self.namespace.variables)
         output.end_suite(self)
         self.namespace.end_suite()
-        self._run_errors.end_suite()
+        self.run_errors.end_suite()
 
     def _set_prev_test_variables(self, destination, test=None, varz=None):
         if test:
@@ -162,17 +161,17 @@ class RunnableTestCase(BaseTestCase):
     def run(self, output, namespace, suite_errors):
         self._suite_errors = suite_errors
         self._start_run(output, namespace)
-        if self._run_errors.is_allowed_to_run():
+        if self.run_errors.is_allowed_to_run():
             self._run(output, namespace)
         else:
             self._not_allowed_to_run()
         self._end_run(output, namespace)
 
     def _start_run(self, output, namespace):
-        self._run_errors = TestRunErrors(self._suite_errors)
+        self.run_errors = TestRunErrors(self._suite_errors)
         self.status = 'RUNNING'
         self.starttime = utils.get_timestamp()
-        self._run_errors.init_err(self._init_test(namespace.variables))
+        self.run_errors.init_err(self._init_test(namespace.variables))
         namespace.start_test(self)
         output.start_test(self)
 
@@ -195,27 +194,29 @@ class RunnableTestCase(BaseTestCase):
         self._init_context(namespace)
         self.timeout.start()
         self._run_setup(output, namespace)
-        if not self._run_errors.setup_failed():
+        if not self.run_errors.setup_failed():
             try:
                 self.keywords.run(output, namespace)
             except ExecutionFailed, err:
-                self._run_errors.kw_err(unicode(err))
-                self.timeout.set_keyword_timeout(err.timeout)
-                self._suite_errors.test_failed(exit=err.exit)
+                self.run_errors.kw_err(unicode(err))
+                self.keyword_failed(err)
         self._report_status(namespace)
         self._run_teardown(output, namespace)
         self._report_status_after_teardown()
+
+    def keyword_failed(self, err):
+        self.timeout.set_keyword_timeout(err.timeout)
+        self._suite_errors.test_failed(exit=err.exit)
 
     def _init_context(self, namespace):
         namespace.variables['${TEST_NAME}'] = self.name
         namespace.variables['@{TEST_TAGS}'] = self.tags
 
     def _run_setup(self, output, namespace):
-        self._run_fixture(self.setup, output, namespace,
-                          self._run_errors.setup_err)
+        self.setup.run(output, namespace, TestSetupListener(self))
 
     def _report_status(self, namespace):
-        message = self._run_errors.get_message()
+        message = self.run_errors.get_message()
         if message:
             self.status = 'FAIL'
             self.message = message
@@ -225,13 +226,12 @@ class RunnableTestCase(BaseTestCase):
         namespace.variables['${TEST_STATUS}'] = self.status
 
     def _run_teardown(self, output, namespace):
-        self._run_fixture(self.teardown, output, namespace,
-                          self._run_errors.teardown_err)
+        self.teardown.run(output, namespace, TestTeardownListener(self))
 
     def _report_status_after_teardown(self):
-        if self._run_errors.teardown_failed():
+        if self.run_errors.teardown_failed():
             self.status = 'FAIL'
-            self.message = self._run_errors.get_teardown_message(self.message)
+            self.message = self.run_errors.get_teardown_message(self.message)
         if self.status == 'PASS' and self.timeout.timed_out():
             self.status = 'FAIL'
             self.message = self.timeout.get_message()
@@ -240,20 +240,13 @@ class RunnableTestCase(BaseTestCase):
 
     def _not_allowed_to_run(self):
         self.status = 'FAIL'
-        self.message = self._run_errors.parent_or_init_error()
+        self.message = self.run_errors.parent_or_init_error()
 
     def _end_run(self, output, namespace):
         self.endtime = utils.get_timestamp()
         self.elapsedtime = utils.get_elapsed_time(self.starttime, self.endtime)
         output.end_test(self)
         namespace.end_test()
-
-    def _run_fixture(self, fixture, output, namespace, error_reporter):
-        error = fixture.run(output, namespace)
-        if error:
-            self.timeout.set_keyword_timeout(error.timeout)
-            self._suite_errors.test_failed(exit=error.exit)
-            error_reporter(unicode(error))
 
 
 class _TestCaseDefaults:
