@@ -18,6 +18,7 @@ class TestSuiteRunErrors(unittest.TestCase):
 
     def test_teardown_executed_after_setup_errs(self):
         self.errs.suite_setup_err('Terriblesness occured!')
+        self.errs.setup_executed()
         assert_true(self.errs.is_suite_teardown_allowed())
 
     def test_higher_level_setup_err_prevents_all_lower_level_setups(self):
@@ -55,6 +56,7 @@ class TestSuiteRunErrors(unittest.TestCase):
     def test_teardown_is_run_after_setup_called(self):
         self.errs.start_suite()
         self.errs.suite_setup_err(None)
+        self.errs.setup_executed()
         self.errs.test_failed(exit=True)
         assert_true(self.errs.is_suite_teardown_allowed())
 
