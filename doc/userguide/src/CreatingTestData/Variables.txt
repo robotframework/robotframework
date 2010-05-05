@@ -439,10 +439,10 @@ keyword. Having the equals sign :code:`=` after the variable name is
 not obligatory, but recommended, because it makes the assignment
 more explicit.
 
-If a keyword returns an iterable, it is also possible to set it into
-several scalar variables or into a list variable. This is possible
-with keywords that return any Python or Java iterable (most common
-examples are lists/tuples in Python and arrays/ArrayLists in Java).
+If a keyword returns a list, it is also possible to assign the return
+value into several scalar variables and/or one list variable. Starting
+from Robot Framework 2.5 this works with all list-like objects, but
+prior to it only Python lists and tuples and Java arrays were supported.
 
 .. table:: Assigning multiple values at once
    :class: example
@@ -451,7 +451,7 @@ examples are lists/tuples in Python and arrays/ArrayLists in Java).
       Test Case        Action      Argument    Argument    Argument
    ===============  ============  ==========  ==========  ==========
    Return Multiple  ${scalar} =   Get 3       \           \
-   \                ${a}          ${b}        ${c}=       Get 3
+   \                ${a}          ${b}        ${c} =      Get 3
    \                ${first}      @{rest} =   Get 3       \
    \                @{list} =     Get 3       \           \
    ===============  ============  ==========  ==========  ==========
