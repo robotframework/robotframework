@@ -1,4 +1,5 @@
 *** Settings ***
+Library  Exceptions
 
 *** Test Cases ***
 50 X 1 Message Under The Limit
@@ -33,6 +34,16 @@
 
 3121 X 1 Message Over The Limit
     Fail With Long Message  3121  1
+
+Multiple errors
+    :FOR  ${index}  IN RANGE  1  100
+    \   Raise Continuable Failure   Failure number ${index}
+
+Two long errors
+    ${err}=  Get Long Message   40  50
+    Raise Continuable Failure  ${err} 
+    Raise Continuable Failure  ${err.replace(' ', '~')} 
+
 
 *** Keywords ***
 Fail With Long Message
