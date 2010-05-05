@@ -1,5 +1,6 @@
 import os
 import unittest
+import sys
 
 from robot.utils.asserts import assert_equals
 from robot import utils
@@ -37,7 +38,7 @@ class TestMiscUtils(unittest.TestCase):
                 ( '/path/to', '/path/to/dir/result_in_sub_dir.html', 'dir/result_in_sub_dir.html' ),
                 ( '/commonprefix/sucks/baR', '/commonprefix/sucks/baZ.txt', '../baZ.txt' ),
                 ( '/a/very/long/path', '/no/depth/limitation', '../../../../no/depth/limitation' ),
-                ( '/etc/fstab', '/path/to/existing/file', '../path/to/existing/file' ),
+                ( '/etc/hosts', '/path/to/existing/file', '../path/to/existing/file' ),
                 ( '/path/to/identity', '/path/to/identity', 'identity' ),
             ]
         else:
@@ -63,6 +64,8 @@ class TestMiscUtils(unittest.TestCase):
             ]
 
         for basedir, target, expected in inputs:
+            if sys.platform == 'darwin':
+                expected = expected.lower()
             assert_equals(get_link_path(target, basedir).replace('R:', 'r:'), expected,
                          '%s -> %s' % (target, basedir))
 
