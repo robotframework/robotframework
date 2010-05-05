@@ -13,12 +13,13 @@
 #  limitations under the License.
 
 import sys
+import unicodedata
 
 
 def unic(item, *args):
     # Based on a recipe from http://code.activestate.com/recipes/466341
     try:
-        return unicode(item, *args)
+        return unicodedata.normalize("NFC",unicode(item, *args))
     except UnicodeError:
         try:
             ascii_text = str(item).encode('string_escape')
