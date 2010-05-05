@@ -62,9 +62,9 @@ class TestMiscUtils(unittest.TestCase):
                 ( 'c:\\boot.ini', 'c:\\path\\to\\existing\\file', 'path/to/existing/file' ),
                 ( 'c:\\path\\to\\identity', 'c:\\path\\to\\identity', 'identity' ),
             ]
-
+        import robot.utils.normalizing
         for basedir, target, expected in inputs:
-            if sys.platform == 'darwin':
+            if robot.utils.normalizing._CASE_INSENSITIVE_FILESYSTEM :
                 expected = expected.lower()
             assert_equals(get_link_path(target, basedir).replace('R:', 'r:'), expected,
                          '%s -> %s' % (target, basedir))
