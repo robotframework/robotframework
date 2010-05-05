@@ -367,7 +367,7 @@ error is explained in `the test library API section`__. When test execution
 ends, test case is failed with all the continue on failures that have occurred
 during test execution.
 
-__ `continuing test execution despite of failure`_
+__ `continuing test execution despite of failures`_
 
 Stopping test execution gracefully
 ''''''''''''''''''''''''''''''''''
