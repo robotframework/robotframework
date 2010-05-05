@@ -794,6 +794,17 @@ class _RunKeyword:
                 raise
             return 'FAIL', unicode(err)
 
+    def run_keyword_and_continue_on_failure(self, name, *args):
+        """Runs the keyword and continues even if non-exitable errors occurred.
+
+        The keyword name and arguments work as in `Run Keyword`. See
+        `Run Keyword If` for a usage example."""
+        try:
+            return self.run_keyword(name, *args)
+        except ExecutionFailed, err:
+            err.cont = True
+            raise err
+
     def run_keyword_and_expect_error(self, expected_error, name, *args):
         """Runs the keyword and checks that the expected error occurred.
 
