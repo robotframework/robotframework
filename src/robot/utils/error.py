@@ -76,11 +76,10 @@ def get_execution_failed():
         message = _get_python_message(exc_type, exc_value)
         details = _get_python_details(exc_value, exc_traceback)
     timeout = isinstance(exc_value, TimeoutError)
+    syntax = isinstance(exc_value, DataError)
     exit = bool(getattr(exc_value, 'ROBOT_EXIT_ON_FAILURE', False))
     cont = bool(getattr(exc_value, 'ROBOT_CONTINUE_ON_FAILURE', False))
-    syntax = isinstance(exc_value, DataError)
-    return message, details, ExecutionFailed(message, timeout, exit, cont,
-                                             syntax)
+    return message, details, ExecutionFailed(message, timeout, syntax, exit, cont)
 
 
 def _is_java_exception(exc):

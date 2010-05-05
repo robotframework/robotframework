@@ -14,6 +14,7 @@
 
 import utils
 
+
 # Return codes from Robot and Rebot.
 # RC below 250 is the number of failed critical tests and exactly 250
 # means that number or more such failures.
@@ -24,7 +25,7 @@ FRAMEWORK_ERROR = 255   # Unexpected error
 
 
 class RobotError(Exception):
-    """Base class for Robot errors
+    """Base class for Robot Framework errors.
 
     Do not raise this method but use more specific errors instead.
     """
@@ -32,7 +33,7 @@ class RobotError(Exception):
         Exception.__init__(self, message)
 
     def __unicode__(self):
-        """This is required because of Python 2.5"""
+        # Needed to handle exceptions w/ Unicode correctly on Python 2.5
         return unicode(self.args[0])
 
 
@@ -44,6 +45,7 @@ class FrameworkError(RobotError):
     'Internal Error' and should of course never happen.
     """
 
+
 class DataError(RobotError):
     """Should be used when provided test data is incorrect
 
@@ -52,15 +54,24 @@ class DataError(RobotError):
     Run Keyword And Expect Error.
     """
 
+
+class TimeoutError(RobotError):
+    """Used when test execution is timed out"""
+
+
+class Information(RobotError):
+    """Used by argument parser with --help or --version"""
+
+
 class ExecutionFailed(RobotError):
     """Used for communicating failures in test execution"""
 
-    def __init__(self, message, timeout=False, exit=False, cont=False,
-                 syntax=False):
+    def __init__(self, message, timeout=False, syntax=False, exit=False, 
+                 cont=False):
         RobotError.__init__(self, utils.cut_long_message(message))
         self.timeout = timeout
-        self.exit = exit
         self.syntax = syntax
+        self.exit = exit
         self.cont = self._continue_on_failure(cont)
 
     def _continue_on_failure(self, cont):
@@ -72,8 +83,8 @@ class ExecutionFailed(RobotError):
 
     def _in_test_or_suite_teardown(self):
         from robot.running import NAMESPACES
-        test_or_suite = NAMESPACES.current.test or NAMESPACES.current.suite
-        return test_or_suite.status != 'RUNNING'
+        ns = NAMESPACES.current
+        return ns is not None and (ns.test or ns.suite).status != 'RUNNING'
 
     def get_errors(self):
         return [self]
@@ -82,26 +93,24 @@ class ExecutionFailed(RobotError):
 class ExecutionFailures(ExecutionFailed):
 
     def __init__(self, errors):
-        self.exit = any(err.exit for err in errors)
-        self.cont = all(err.cont for err in errors)
-        self.timeout = any(err.timeout for err in errors)
-        self.syntax = any(err.syntax for err in errors)
+        ExecutionFailed.__init__(self, self._format_message(errors),
+                                 any(err.timeout for err in errors),
+                                 any(err.syntax for err in errors),
+                                 any(err.exit for err in errors),
+                                 all(err.cont for err in errors))
         self._errors = errors
-        RobotError.__init__(self, self._get_message())
 
-    def _get_message(self):
-        if len(self._errors) == 1:
-            return unicode(self._errors[0])
+    def _format_message(self, errors):
+        if len(errors) == 1:
+            return unicode(errors[0])
         lines = ['Several failures occurred:'] \
-                + ['%d) %s' % (i+1, unicode(err)) for i, err in enumerate(self._errors)]
-        return utils.cut_long_message('\n\n'.join(lines))
+                + ['%d) %s' % (i+1, unicode(e)) for i, e in enumerate(errors)]
+        print lines
+        return '\n\n'.join(lines)
 
     def get_errors(self):
         return self._errors
 
-
-class TimeoutError(RobotError):
-    """Used when test execution is timed out"""
 
 class _RobotErrorWithTrace(RobotError):
 
@@ -109,11 +118,10 @@ class _RobotErrorWithTrace(RobotError):
         RobotError.__init__(self, message)
         self.traceback = traceback
 
+
 class RemoteError(_RobotErrorWithTrace):
     """Used by Remote library to report remote errors"""
 
+
 class XmlParsingError(_RobotErrorWithTrace):
     """Used when parsing XML fails"""
-
-class Information(RobotError):
-    """Used by argument parser with --help or --version"""
