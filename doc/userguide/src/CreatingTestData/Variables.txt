@@ -439,10 +439,10 @@ keyword. Having the equals sign :code:`=` after the variable name is
 not obligatory, but recommended, because it makes the assignment
 more explicit.
 
-If a keyword returns a list, it is also possible to set it into
+If a keyword returns an iterable, it is also possible to set it into
 several scalar variables or into a list variable. This is possible
 with keywords that return any Python or Java iterable (most common
-examples are lists and Java arrays).
+examples are lists/tuples in Python and arrays/ArrayLists in Java).
 
 .. table:: Assigning multiple values at once
    :class: example
