@@ -702,6 +702,31 @@ Java:
 
 __ `Exit on failure`_
 
+Continuing test execution dispite of failure
+''''''''''''''''''''''''''''''''''''''''''''
+
+Starting from Robot Framework 2.5 it is possible to keep executing test
+case even in case of a failure. This is done via keyword 
+`Run Keyword And Continue On Failure` or by raising an exception with
+a special :code:`ROBOT_CONTINUE_ON_FAILURE` attribute with :code:`True`
+value set from the keyword. The latter is illustrated in the examples below.
+
+Python:
+
+.. sourcecode:: python
+
+    class MyContinuableError(RuntimeError):
+        ROBOT_CONTINUE_ON_FAILURE = True
+
+Java:
+
+.. sourcecode:: java
+
+    public class MyContinuableError extends RuntimeException {
+        public static final boolean ROBOT_CONTINUE_ON_FAILURE = true;
+    }
+
+
 Logging information
 '''''''''''''''''''
 
