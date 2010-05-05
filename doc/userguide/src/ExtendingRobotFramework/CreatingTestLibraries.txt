@@ -363,7 +363,7 @@ Example Java library implemented as a class in the :path:`MyLibrary.java` file:
 The example below illustrates how the example libraries above can be
 used. If you want to try this yourself, make sure that the library is
 in the `library search path`_. Note that in the subsequent examples all
-boilerplates, such as taking a library into use and creating a test
+boilerplate, such as taking a library into use and creating a test
 case, is excluded.
 
 .. table:: Using simple example library
@@ -702,14 +702,14 @@ Java:
 
 __ `Exit on failure`_
 
-Continuing test execution despite of failure
-''''''''''''''''''''''''''''''''''''''''''''
+Continuing test execution despite of failures
+'''''''''''''''''''''''''''''''''''''''''''''
 
-Starting from Robot Framework 2.5 it is possible to keep executing test
-case even in case of a failure. This is done via keyword 
-`Run Keyword And Continue On Failure` or by raising an exception with
-a special :code:`ROBOT_CONTINUE_ON_FAILURE` attribute with :code:`True`
-value set from the keyword. The latter is illustrated in the examples below.
+Starting from Robot Framework 2.5 it is possible to `continue test
+execution even when there are failures`__. The way to signal this from
+test libraries is adding a special :code:`ROBOT_CONTINUE_ON_FAILURE`
+attribute with :code:`True` value to the exception used to communicate
+the failure. This is demonstrated by the examples below.
 
 Python:
 
@@ -726,6 +726,7 @@ Java:
         public static final boolean ROBOT_CONTINUE_ON_FAILURE = true;
     }
 
+__ `Continue on failure`_
 
 Logging information
 '''''''''''''''''''
