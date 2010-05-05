@@ -51,9 +51,17 @@ Ignore Error When Timeout Occurs In UK
     [Documentation]  FAIL  Keyword timeout 100 milliseconds exceeded.
     Run Keyword And Ignore Error  Timeouting UK
 
-Ignore Error When Syntax Error
+Ignore Error When Syntax Error At Parsing Time
+    [Documentation]  FAIL  Syntax error: No keyword specified
+    Run Keyword And Ignore Error  Broken User Keyword
+
+Ignore Error When Syntax Error At Run Time
     [Documentation]  FAIL  Keyword 'BuiltIn.No Operation' expected 0 arguments, got 4.
     Run Keyword And Ignore Error  No Operation  wrong  number  of  arguments
+
+Ignore Error When Syntax Error In For Loop
+    [Documentation]  FAIL  Non-existing variable '\${nonex}'
+    Run Keyword And Ignore Error  For Loop With Syntax Error
 
 
 Expect Error When Error Occurs
@@ -107,9 +115,17 @@ Expect Error When Timeout Occurs In UK
     [Documentation]  FAIL  Keyword timeout 100 milliseconds exceeded.
     Run Keyword And Expect Error  *  Timeouting UK
 
-Expect Error When Syntax Error
-    [Documentation]  FAIL  Keyword 'BuiltIn.No Operation' expected 0 arguments, got 4.
-    Run Keyword And Expect Error  *  No Operation  wrong  number  of  arguments
+Expect Error When Syntax Error At Parsing Time
+    [Documentation]  FAIL  Syntax error: No keyword specified
+    Run Keyword And Expect Error  *  Broken User Keyword
+
+Expect Error When Syntax Error At Run Time
+    [Documentation]  FAIL  No keyword with name 'Non existing keyword' found.
+    Run Keyword And Expect Error  *  Non existing keyword
+
+Expect Error When Syntax Error In For Loop
+    [Documentation]  FAIL  Non-existing variable '\${nonex}'
+    Run Keyword And Expect Error  *  For Loop With Syntax Error
 
 
 *** Keywords ***
@@ -127,3 +143,10 @@ Failing Uk
 Timeouting UK
     [Timeout]  0.1 seconds
     Run Keyword And Ignore Error  Sleep  1 hour
+
+For Loop With Syntax Error
+    :FOR  ${a}  IN  ${nonex}
+    \   Whatever
+
+Broken User Keyword
+    ${x}

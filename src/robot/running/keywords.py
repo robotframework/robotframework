@@ -241,7 +241,7 @@ class ForKeyword(BaseKeyword):
         except DataError, err:
             msg = unicode(err)
             output.fail(msg)
-            error = ExecutionFailed(msg)
+            error = ExecutionFailed(msg, syntax=True)
         else:
             error = None
         self.status = 'PASS' if not error else 'FAIL'
@@ -330,4 +330,4 @@ class SyntaxErrorKeyword(BaseKeyword):
         self.endtime = utils.get_timestamp()
         self.elapsedtime = utils.get_elapsed_time(self.starttime, self.endtime)
         output.end_keyword(self)
-        raise ExecutionFailed(self._error)
+        raise ExecutionFailed(self._error, syntax=True)

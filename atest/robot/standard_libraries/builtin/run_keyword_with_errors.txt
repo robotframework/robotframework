@@ -42,8 +42,15 @@ Ignore Error When Timeout Occurs
 Ignore Error When Timeout Occurs In UK
     Check Test Case  ${TEST NAME}
 
-Ignore Error When Syntax Error
+Ignore Error When Syntax Error At Parsing Time
     Check Test Case  ${TEST NAME}
+
+Ignore Error When Syntax Error At Run Time
+    Check Test Case  ${TEST NAME}
+
+Ignore Error When Syntax Error In For Loop
+    Check Test Case  ${TEST NAME}
+
 
 Expect Error When Error Occurs
     ${tc} =  Check Test Case  Expect Error When Error Occurs
@@ -90,7 +97,13 @@ Expect Error When Timeout Occurs
 Expect Error When Timeout Occurs In UK
     Check Test Case  ${TEST NAME}
 
-Expect Error When Syntax Error
+Expect Error When Syntax Error At Parsing Time
+    Check Test Case  ${TEST NAME}
+
+Expect Error When Syntax Error At Run Time
+    Check Test Case  ${TEST NAME}
+
+Expect Error When Syntax Error In For Loop
     Check Test Case  ${TEST NAME}
 
 Variable Values Should Not Be Visible As Keyword's Arguments
