@@ -121,9 +121,9 @@ class SetKeyword(Keyword):
         try:
             return self._run_and_set_variables(handler, output, namespace)
         except DataError, err:
-            msg = utils.unic(err)
+            msg = unicode(err)
             output.fail(msg)
-            raise ExecutionFailed(msg)
+            raise ExecutionFailed(msg, syntax=True)
 
     def _run_and_set_variables(self, handler, output, namespace):
         try:

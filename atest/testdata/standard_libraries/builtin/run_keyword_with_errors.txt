@@ -59,6 +59,11 @@ Ignore Error When Syntax Error At Run Time
     [Documentation]  FAIL  Keyword 'BuiltIn.No Operation' expected 0 arguments, got 4.
     Run Keyword And Ignore Error  No Operation  wrong  number  of  arguments
 
+Ignore Error When Syntax Error In Setting Variables
+    [Documentation]  FAIL  Cannot assign return value of keyword 'BuiltIn.Set Variable' to variable '\@{incompatible}': Expected list, got string instead
+    Run Keyword And Ignore Error  Invalid Syntax When Setting Variable
+
+
 Ignore Error When Syntax Error In For Loop
     [Documentation]  FAIL  Non-existing variable '\${nonex}'
     Run Keyword And Ignore Error  For Loop With Syntax Error
@@ -123,6 +128,10 @@ Expect Error When Syntax Error At Run Time
     [Documentation]  FAIL  No keyword with name 'Non existing keyword' found.
     Run Keyword And Expect Error  *  Non existing keyword
 
+Expect Error When Syntax Error In Setting Variables
+    [Documentation]  FAIL  Cannot assign return value of keyword 'BuiltIn.Set Variable' to variable '\@{incompatible}': Expected list, got string instead
+    Run Keyword And Expect Error  *  Invalid Syntax When Setting Variable
+
 Expect Error When Syntax Error In For Loop
     [Documentation]  FAIL  Non-existing variable '\${nonex}'
     Run Keyword And Expect Error  *  For Loop With Syntax Error
@@ -143,6 +152,9 @@ Failing Uk
 Timeouting UK
     [Timeout]  0.1 seconds
     Run Keyword And Ignore Error  Sleep  1 hour
+
+Invalid Syntax When Setting Variable
+    @{incompatible} =  Set Variable  string
 
 For Loop With Syntax Error
     :FOR  ${a}  IN  ${nonex}
