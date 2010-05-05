@@ -19,6 +19,17 @@ Test With Many Errors In Teardown
     No Operation
     [teardown]  Many Errors
 
+Test With Errors In For Loop In Teardown
+    [documentation]  FAIL Teardown failed:\n
+    ...  Several failures occurred:\n\n
+    ...  1) cat\n\n
+    ...  2) again\n\n
+    ...  3) dog\n\n
+    ...  4) again\n\n
+    ...  Also teardown of the parent suite failed.
+    No Operation
+    [teardown]  Errors In For Loop
+
 Test With A Fatal Error In Teardown
     [documentation]  FAIL Teardown failed:\n
     ...  FatalCatastrophyException\n\n
@@ -35,6 +46,11 @@ Many Errors
     Fail  Message 1
     Fail  Message 2
     Log  This Should Also Be Executed
+
+Errors In For Loop
+    :FOR  ${animal}  in  cat  dog
+    \    Fail  ${animal}
+    \    Fail  again
 
 Fatal Error
     Exit On Failure

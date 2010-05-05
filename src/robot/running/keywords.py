@@ -36,11 +36,13 @@ class Keywords(object):
             raise ExecutionFailures(errors)
 
     def _continue_on_failure(self, err):
-        if err.cont:
-            return True
         if err.exit:
             return False
-        return self._in_test_or_suite_teardown()
+        if err.cont:
+            return True
+        if self._in_test_or_suite_teardown():
+            err.cont = True
+        return err.cont
 
     def _in_test_or_suite_teardown(self):
         from robot.running import NAMESPACES
