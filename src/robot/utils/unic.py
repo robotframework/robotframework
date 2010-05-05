@@ -19,12 +19,12 @@ import unicodedata
 def unic(item, *args):
     # Based on a recipe from http://code.activestate.com/recipes/466341
     try:
-        return unicodedata.normalize("NFC",unicode(item, *args))
+        return unicodedata.normalize('NFC', unicode(item, *args))
     except UnicodeError:
         try:
             ascii_text = str(item).encode('string_escape')
         except UnicodeError:
-            return "<unrepresentable object '%s'>" % item.__class__.__name__
+            return u"<unrepresentable object '%s'>" % item.__class__.__name__
         else:
             return unicode(ascii_text)
 
