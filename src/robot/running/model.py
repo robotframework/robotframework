@@ -56,7 +56,6 @@ class RunnableTestSuite(BaseTestSuite):
         for test in data.tests:
             RunnableTestCase(test, testdefaults, parent=self)
         self._run_mode_exit_on_failure = False
-        self.exit_requiring_err_occured = False
 
     def run(self, output, parent=None, errors=None):
         self._start_run(output, parent, errors)
@@ -156,7 +155,6 @@ class RunnableTestCase(BaseTestCase):
                     + utils.get_not_none(data.tags, defaults.default_tags)
         self.timeout = utils.get_not_none(data.timeout, defaults.test_timeout)
         self.keywords = Keywords(data.keywords)
-        self.exit_on_failure = False
 
     def run(self, output, namespace, suite_errors):
         self._suite_errors = suite_errors
