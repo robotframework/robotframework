@@ -92,36 +92,6 @@ in the second example below::
    pybot my_tests.html your_tests.html
    pybot --name Example path/to/tests/pattern_*.html
 
-
-Test execution order
-''''''''''''''''''''
-
-Test cases in a test suite are executed in the order they are specified
-in the test case file where they are created. Test suites inside a higher level
-test suite are executed in case-insensitive alphabetical order based on the file
-or directory name. Finally, if multiple files and/or directories are given from
-the command line, they are executed in the order they are specified.
-
-If there is a need to use certain test suite execution order inside a
-directory, it is possible to add prefixes like :path:`01` and
-:path:`02` into file and directory names. Starting from Robot
-Framework 2.1, such prefixes are automatically removed if they are
-separated from the base name with two underscores like in the examples
-below. These prefixes will not be visible anywhere in reports or
-logs::
-
-   01__my_suite.html -> My Suite
-   02__another_suite.html -> Another Suite
-
-If the alphabetical ordering of test suites inside suites is problematic, 
-a good workaround is giving them separately in the required order. This easily
-leads to overly long start-up commands, but `argument files`_  allow listing 
-files nicely one file per line. It is also possible to `randomize the execution 
-order of test cases or test suites`__  using :opt:`--runmode` option.
-
-__ `Setting the execution mode`_
-
-
 Using command line options
 ''''''''''''''''''''''''''
 
@@ -283,6 +253,148 @@ file.
 
 __ `Deprecating keywords`_
 __ `Logging information`_
+
+
+Test execution
+~~~~~~~~~~~~~~
+
+Test execution flow
+''''''''''''''''''''
+
+Test execution starts with highest level test suite's setup if one exists. 
+After setup is executed, sub suites (in case of directory suite) or test cases 
+(in case of file suite) are executed in order specified in `test execution order`_ 
+chapter. In case of directory suite, it's sub suites are executed similar manner. 
+
+In case suite setup fails, sub suites and/or tests are executed, but failed 
+immediately with information about failure in suite setup.
+
+Test case execution is started by executing setup and continued by executing
+keywords one at a time. In case failure occurs during setup or keyword execution, 
+test execution is stopped unless failure type is `continue on failure`__. Teardown
+is executed always as last step even test execution fails.
+
+__ `continue on failure`_
+
+Starting from Robot Framework 2.5 all keywords in suite and test teardowns are
+executed, on `continue on failure mode`__, even if failures occur. If teardown
+execution is `stopped by user or with special exception`__, teardown execution is
+stopped.
+
+__ `continue on failure`_
+__ `stopping test execution gracefully`_
+
+Following structure demonstrates the test execution order:
+
+- suite setup
+
+  - suite setup
+
+    - suite setup
+
+      - test setup
+
+        - test keywords
+
+      - test teardown
+
+      - test setup
+
+        - test keywords
+
+      - test teardown
+
+    - suite teardown
+
+    - suite setup
+
+      - test setup
+
+        - test keywords
+
+      - test teardown
+
+      - test setup
+
+        - test keywords
+
+      - test teardown
+
+    - suite teardown
+
+  - suite teardown
+
+- suite teardown
+
+
+Test execution order
+''''''''''''''''''''
+
+Test cases in a test suite are executed in the order they are specified
+in the test case file where they are created. Test suites inside a higher level
+test suite are executed in case-insensitive alphabetical order based on the file
+or directory name. Finally, if multiple files and/or directories are given from
+the command line, they are executed in the order they are specified.
+
+If there is a need to use certain test suite execution order inside a
+directory, it is possible to add prefixes like :path:`01` and
+:path:`02` into file and directory names. Starting from Robot
+Framework 2.1, such prefixes are automatically removed if they are
+separated from the base name with two underscores like in the examples
+below. These prefixes will not be visible anywhere in reports or
+logs::
+
+   01__my_suite.html -> My Suite
+   02__another_suite.html -> Another Suite
+
+If the alphabetical ordering of test suites inside suites is problematic, 
+a good workaround is giving them separately in the required order. This easily
+leads to overly long start-up commands, but `argument files`_  allow listing 
+files nicely one file per line. It is also possible to `randomize the execution 
+order of test cases or test suites`__  using :opt:`--runmode` option.
+
+__ `Setting the execution mode`_
+
+
+Continue on failure
+'''''''''''''''''''
+
+Starting from Robot Framework 2.5 test execution could have been continued even
+case of failure. This can be achieved by using 
+`Run Keyword And Continue On Failure` keyword from BuiltIn library or
+implementing own keyword failing with special exception. How to create such
+error is explained in `the test library API section`__. When test execution
+ends, test case is failed with all the continue on failures that have occurred
+during test execution.
+
+__ `continuing test execution despite of failure`_
+
+Stopping test execution gracefully
+''''''''''''''''''''''''''''''''''
+
+Starting from Robot Framework 2.5 it have been possible to stop test execution
+gracefully. When test execution is stopped, the remaining tests are marked
+failed and their message will be :msg:`Test execution was stopped due to a fatal error`.
+
+Test execution can be stopped by pressing :code:`Ctrl-C` in the console in which
+the test execution was started. In case :prog:`pybot` is used, execution is
+stopped immediately and all the remaining tests will fail. In case :prog:`jybot`
+is used, the test execution ends immediately when currently running keyword returns.
+This limitation is caused by a bug in Jython's signal handling. Second :code:`Ctrl-C`
+will forcefully stop the test execution.
+
+When test are executed in background process, :code:`INT` or :code:`TERM`
+signals can be used for stopping the test execution using tools like
+:prog:`kill`. Second signal can be used to forcefully stop the test execution.
+Same limitation with :prog:`jybot` applies as with stopping with :code:`Ctrl-C`.
+As signaling is not supported on Windows, there is no easy way to use this
+feature on it.
+
+Another possibility to stop test execution is having a keyword fail with a
+special error. How to create such error is explained in
+`the test library API section`__. 
+
+__ `Stopping test execution`_
 
 
 Post-processing outputs

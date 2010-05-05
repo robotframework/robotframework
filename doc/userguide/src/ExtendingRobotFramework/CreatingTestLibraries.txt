@@ -702,7 +702,7 @@ Java:
 
 __ `Exit on failure`_
 
-Continuing test execution dispite of failure
+Continuing test execution despite of failure
 ''''''''''''''''''''''''''''''''''''''''''''
 
 Starting from Robot Framework 2.5 it is possible to keep executing test

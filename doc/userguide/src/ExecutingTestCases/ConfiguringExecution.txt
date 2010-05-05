@@ -305,19 +305,17 @@ Setting the execution mode
 Exit on failure
 '''''''''''''''
 
-There are two ways to exit the execution prematurely without running all
-the tests. First one is using the option :opt:`--runmode` with value
+It is possible to exit the execution prematurely without running all
+the tests. This can be achieved by using the option :opt:`--runmode` with value
 :opt:`ExitOnFailure` (case-insensitive), in which case test execution is
 stopped immediately if a `critical test`_ fails. In this case the 
 remaining tests are marked failed with the message :msg:`Critical failure
-occurred and ExitOnFailure option is in use`. 
+occurred and ExitOnFailure option is in use`.
 
-Another possibility is having a keyword fail with a special error. How to 
-create such error is explained in `the test library API section`__. Also
-in this case the remaining tests are marked failed and their message will
-be :msg:`Test execution was stopped due to a fatal error`. 
+There are also other ways to `stop test execution gracefully`__.
 
-__ `Stopping test execution`_
+__ `Stopping test execution gracefully`_
+
 
 Randomizing execution order
 '''''''''''''''''''''''''''
