@@ -27,6 +27,26 @@ Run User keyword And Continue On Failure
     Run keyword And Continue On Failure  Exception In User Keyword
     Log  This should be executed
 
+Run Keyword And Continue On Failure With Syntax Error
+    [Documentation]  FAIL  Keyword 'BuiltIn.No Operation' expected 0 arguments, got 1.
+    Run keyword And Continue On Failure  No Operation  illegal argument
+    Fail  This Should Not Be Executed!
+
+Run Keyword And Continue On Failure With Timeout
+    [Documentation]  FAIL  Test timeout 100 milliseconds exceeded.
+    [Timeout]  0.1 seconds
+    Run keyword And Continue On Failure  Sleep  1 second
+    Fail  This Should Not Be Executed!
+
+Run Keyword And Continue On Failure With Fatal Error
+    [Documentation]  FAIL  FatalCatastrophyException
+    Run keyword And Continue On Failure  Exit On Failure
+    Fail  This Should Not Be Executed!
+
+This Should Fail With Fatal
+    [Documentation]  FAIL  Test execution is stopped due to a fatal error
+    No Operation
+
 *** Keywords ***
 Exception In User Keyword
     Fail  Expected Failure
