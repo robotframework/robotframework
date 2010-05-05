@@ -441,10 +441,8 @@ more explicit.
 
 If a keyword returns a list, it is also possible to set it into
 several scalar variables or into a list variable. This is possible
-with keywords returning Python lists or tuples or, from Robot
-Framework version 1.8.6 onwards, with Java keywords returning an
-array. In the future, it is possible to add support also for other
-iterables, if needed.
+with keywords that return any Python or Java iterable (most common
+examples are lists and Java arrays).
 
 .. table:: Assigning multiple values at once
    :class: example
