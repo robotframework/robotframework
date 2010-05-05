@@ -31,24 +31,24 @@ One Signal Should Stop Test Execution Gracefully When Keyword Timeout Is Used
     Check Test Cases Have Failed Correctly
 
 Two SIGINT Signals Should Stop Test Execution Forcefully
-    Start And Send Signal  without_any_timeout.txt  Two Signals  SIGINT  1s
+    Start And Send Signal  without_any_timeout.txt  Two Signals  SIGINT  2s
     Check Tests Have Been Forced To Shutdown
 
 Two SIGTERM Signals Should Stop Test Execution Forcefully
     [tags]  non windows
-    Start And Send Signal  without_any_timeout.txt  Two Signals  SIGTERM  1s
+    Start And Send Signal  without_any_timeout.txt  Two Signals  SIGTERM  2s
     Check Tests Have Been Forced To Shutdown
 
 Two Signals Should Stop Test Execution Forcefully When Run Keyword Is Used
-    Start And Send Signal  run_keyword.txt  Two Signals  SIGINT  1s
+    Start And Send Signal  run_keyword.txt  Two Signals  SIGINT  2s
     Check Tests Have Been Forced To Shutdown
 
 Two Signals Should Stop Test Execution Forcefully When Test Timeout Is Used
-    Start And Send Signal  test_timeout.txt  Two Signals  SIGINT  1s
+    Start And Send Signal  test_timeout.txt  Two Signals  SIGINT  2s
     Check Tests Have Been Forced To Shutdown
 
 Two Signals Should Stop Test Execution Forcefully When Keyword Timeout Is Used
-    Start And Send Signal  keyword_timeout.txt  Two Signals  SIGINT  1s
+    Start And Send Signal  keyword_timeout.txt  Two Signals  SIGINT  2s
     Check Tests Have Been Forced To Shutdown
 
 One Signal Should Stop Test Execution Gracefully And Test Case And Suite Teardowns Should Be Run
