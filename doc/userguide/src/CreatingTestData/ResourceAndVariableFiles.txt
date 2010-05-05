@@ -13,15 +13,12 @@ enable creating variables dynamically. Their flexibility comes from
 the fact that they are created using Python code, which also makes
 them somewhat more complicated than `Variable tables`_.
 
-
 .. contents:: 
    :depth: 2
    :local: 
 
-
 Resource files
 ~~~~~~~~~~~~~~
-
 
 Taking resource files into use
 ''''''''''''''''''''''''''''''
@@ -45,9 +42,9 @@ are automatically changed to backslashes ("\\") on Windows.
    =========  =======================  =======
     Setting            Value            Value
    =========  =======================  =======
-   Resource   myresources.html         \
-   Resource   ../data/resources.html   \
-   Resource   ${RESOURCES}/common.tsv  \
+   Resource   myresources.html
+   Resource   ../data/resources.html
+   Resource   ${RESOURCES}/common.tsv
    =========  =======================  =======
 
 The user keywords and variables defined in a resource file are
@@ -55,7 +52,6 @@ available in the file that takes that resource file into
 use. Similarly available are also all keywords and variables from the
 libraries, resource files and variable files imported by the said
 resource file.
-
 
 Resource file structure
 '''''''''''''''''''''''
@@ -76,7 +72,6 @@ taken into use.
 
 __ `Handling keywords with same names`_
 
-
 Documenting resource files
 ''''''''''''''''''''''''''
 
@@ -94,7 +89,6 @@ execution.
 __ `User keyword name and documentation`_
 __ `Test suite name and documentation`_
 
-
 Example resource file
 '''''''''''''''''''''
 
@@ -104,9 +98,9 @@ Example resource file
    =============  ========================  =======  =======
       Setting               Value            Value    Value
    =============  ========================  =======  =======
-   Documentation  An example resource file  \        \
-   Library        SeleniumLibrary           \        \
-   Resource       ${RESOURCES}/common.html  \        \
+   Documentation  An example resource file
+   Library        SeleniumLibrary
+   Resource       ${RESOURCES}/common.html
    =============  ========================  =======  =======
 
 .. table::
@@ -115,10 +109,10 @@ Example resource file
    ==============  ============================  =======  =======
       Variable                Value               Value    Value
    ==============  ============================  =======  =======
-   ${HOST}         localhost:7272                \        \
-   ${LOGIN_URL}    \http://${HOST}/              \        \
-   ${WELCOME_URL}  \http://${HOST}/welcome.html  \        \
-   ${BROWSER}      Firefox                       \        \
+   ${HOST}         localhost:7272
+   ${LOGIN_URL}    \http://${HOST}/
+   ${WELCOME_URL}  \http://${HOST}/welcome.html
+   ${BROWSER}      Firefox
    ==============  ============================  =======  =======
 
 .. table:: 
@@ -128,16 +122,15 @@ Example resource file
        Keyword         Action           Argument        Argument     Argument
    ===============  ===============  ==============  ==============  ========
    Open Login Page  [Documentation]  Opens browser   to login page
-   \                Open Browser     ${LOGIN_URL}    ${BROWSER}      \
-   \                Title Should Be  Login Page      \               \ 
-   \                \                \               \               \ 
-   Input Name       [Arguments]      ${name}         \               \ 
-   \                Input Text       username_field  ${name}         \
-   \                \                \               \               \ 
-   Input Password   [Arguments]      ${password}     \               \ 
-   \                Input Text       password_field  ${password}     \
+   \                Open Browser     ${LOGIN_URL}    ${BROWSER}
+   \                Title Should Be  Login Page
+   \
+   Input Name       [Arguments]      ${name}
+   \                Input Text       username_field  ${name}
+   \
+   Input Password   [Arguments]      ${password}
+   \                Input Text       password_field  ${password}
    ===============  ===============  ==============  ==============  ========
-
 
 Variable files
 ~~~~~~~~~~~~~~
@@ -162,7 +155,6 @@ variables:
    (or :code:`getVariables`) method that returns variables as a Python 
    dictionary. This method can even take arguments, which makes this
    approach quite flexible.
-
 
 Taking variable files into use
 ''''''''''''''''''''''''''''''
@@ -190,9 +182,9 @@ __ `Getting variables from a special function`_
    =========  =======================  =======  =======
     Setting             Value           Value    Value
    =========  =======================  =======  =======
-   Variables  myvariables.py           \        \
-   Variables  ../data/variables.py     \        \
-   Variables   ${RESOURCES}/common.py  \        \
+   Variables  myvariables.py
+   Variables  ../data/variables.py
+   Variables   ${RESOURCES}/common.py
    Variables  taking_arguments.py      arg1     ${ARG2}
    =========  =======================  =======  =======
 
@@ -223,10 +215,6 @@ names, those that are set individually with
 
 __ `Setting variables in command line`_
 
-.. note:: Giving arguments to variable files from the command line works only 
-          in Robot Framework 2.0.3 and newer.
-
-
 Creating variables directly
 '''''''''''''''''''''''''''
 
@@ -248,7 +236,6 @@ variables and attributes.
    STRINGS = ["one", "two", "kolme", "four"]
    NUMBERS = [1, INTEGER, 3.14]
 
-
 In the example above, variables :var:`${VARIABLE}`,
 :var:`${ANOTHER_VARIABLE}`, and so on, are created. The first two
 variables are strings, the third one is an integer and the last two are lists.
@@ -261,7 +248,6 @@ be prefixed with :code:`LIST__` (note the two underscores).
    LIST__STRINGS = ["list", "of", "strings"]
    LIST__MIXED = ["first value", -1.1, None, True]
 
-
 The variables in both the examples above could be created also using the
 Variable table below.
 
@@ -271,15 +257,14 @@ Variable table below.
    ===================  ====================  ==========  =========  =========
          Variable              Value            Value       Value      Value
    ===================  ====================  ==========  =========  =========
-   ${VARIABLE}          An example string     \           \          \
-   ${ANOTHER_VARIABLE}  This is pretty easy!  \           \          \
-   ${INTEGER}           ${42}                 \           \          \
+   ${VARIABLE}          An example string
+   ${ANOTHER_VARIABLE}  This is pretty easy!
+   ${INTEGER}           ${42}
    ${STRINGS}           one                   two         kolme      four
-   ${NUMBERS}           ${1}                  ${INTEGER}  ${3.14}    \
-   @{STRINGS}           list                  of          strings    \
+   ${NUMBERS}           ${1}                  ${INTEGER}  ${3.14}
+   @{STRINGS}           list                  of          strings
    @{MIXED}             first value           ${-1.1}     ${None}    ${True}
    ===================  ====================  ==========  =========  =========
-
 
 Using objects as values
 ```````````````````````
@@ -304,7 +289,7 @@ the same file.
 
 .. sourcecode:: python
 
-    MAPPING = { 'one': 1, 'two': 2}
+    MAPPING = {'one': 1, 'two': 2}
     
     class MyObject:
         def __init__(self, name):
@@ -312,7 +297,6 @@ the same file.
 
     OBJ1 = MyObject('John')
     OBJ2 = MyObject('Jane')
-
 
 Creating variables dynamically
 ``````````````````````````````
@@ -352,7 +336,6 @@ the user.
     AREA1 = get_area(1)
     AREA2 = get_area(2)
 
-
 Selecting which variables to include
 ````````````````````````````````````
 
@@ -381,7 +364,6 @@ with an underscore:
     AREA1 = _get_area(1)
     AREA2 = _get_area(2)
 
-
 If there is a large number of other attributes, instead of prefixing
 them all, it is often easier to use a special attribute
 :code:`__all__` and give it a list of attribute names to be processed
@@ -401,11 +383,9 @@ as variables.
     AREA1 = get_area(1)
     AREA2 = get_area(2)
 
-
 .. Note:: The :code:`__all__` attribute is also, and originally, used
           by Python to decide which attributes to import
           when using the syntax :code:`from modulename import *`.
-
 
 Getting variables from a special function
 '''''''''''''''''''''''''''''''''''''''''
@@ -419,7 +399,6 @@ and variable values as values. Variables are considered to be scalars,
 unless prefixed with :code:`LIST__`, and values can contain
 anything. The example below is identical to the first examples of
 `creating variables directly`_.
-
 
 .. sourcecode:: python 
 
@@ -458,7 +437,6 @@ or database where to read variables from.
             return variables1
         else:
             return variables2
-
 
 The most notable benefit of using :code:`get_variables` instead of
 defining variables directly as global attributes of the variable file
