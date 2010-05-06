@@ -5,7 +5,6 @@ Installation and uninstallation
    :depth: 2 
    :local: 
 
-
 Introduction
 ~~~~~~~~~~~~
 
@@ -26,13 +25,11 @@ There are four ways to install Robot Framework:
 `Using Easy Install`_
     If Python package managing tool `Easy Install`_ is available, installing Robot 
     Framework is as easy as running command :cli:`easy_install robotframework`. 
-    Easy Install support is available from Robot Framework 2.0.1 onwards.
 
 `Using One Click Installer`_ 
     If you are using Windows XP and you do not have preconditions (Python_ and 
     optional Jython_) installed, you can use `One Click Installer`_ to do all 
     the needed installations.
-    
 
 Installation packages are available from
 http://downloads.robotframework.org, and source code from
@@ -73,18 +70,14 @@ Environment (JRE). Minimum required JRE version depends on the Jython version
 used.  Jython 2.5 requires Java 1.5 or newer, whereas Jython 2.2 works also with
 Java 1.4. Both Sun and IBM Java implementations are supported.
 
-Starting from Robot Framework 2.5, using Robot Framework requires Jython
-version 2.5.  Earlier version support Jython 2.2, but due to some unicode
-problems Jython 2.2.1 is not recommended (for more information, see
-http://bugs.jython.org/issue1802339 and http://bugs.jython.org/issue1032).
+Starting from Robot Framework 2.5, the minimum supported Jython version is 2.5.
+Earlier Robot Framework versions support also Jython 2.2.
 
-Installing Jython is a fairly easy procedure. First you need to get an
-installer from the `Jython homepage`_ or directly from
-http://sourceforge.net/projects/jython/files/. The latest stable release is
-recommended.  Note that the installer is an executable JAR package, which you
-need to run as :cli:`java -jar jython_installer-<version>.jar`. Depending on
-your system, the installer runs either in the graphical or the textual mode,
-but in both cases, the actual installation procedure is very easy.
+Installing Jython is a fairly easy procedure, and the first step is getting an
+installer from the `Jython homepage`_. Note that the installer is an executable
+JAR package, which you need to run as :cli:`java -jar jython_installer-<version>.jar`.
+Depending on your system, the installer runs either in graphical or textual
+mode, but in both cases, the actual installation procedure is very easy.
 
 There are three ways to install Robot Framework so that it can be run with Jython.
 
@@ -111,13 +104,10 @@ There are three ways to install Robot Framework so that it can be run with Jytho
             /usr/local/jython2.2
             /opt/whatever/Jython22
 
-
 2.  With Jython 2.5, it is possible to install Robot Framework without having
     Python available by  `installing from source`_.
 
-3.  Jython 2.2 does not have Python's :code:`distutils` module, which is
-    required for automatically installing Robot Framework and thus the only way
-    to install without Python is `manual installation`_.
+3.  It is possible to do `manual installation`_.
 
 
 Installation
@@ -148,24 +138,23 @@ be used also for creating distribution packages.
 for Robot Framework. When it is used for installation, it simply uses
 :prog:`setup.py`, and thus above commands are totally equivalent. 
 
-With both of these commands you get a rather long output, and
-something like the following text should appear at the end::
+It is possible to install Robot Framework 2.5 also using Jython. In this case
+the :prog:`pybot` runner script is not created.
 
-   Creating Robot Framework start-up scripts...
+With both of these commands you get a rather long output, and
+something like the following text should appear at the end.
+The actual output obviously depends on your environment.
+
+::
+
+   Creating Robot Framework runner scripts...
    Installation directory: /usr/lib/python2.5/site-packages/robot
    Python executable: /usr/bin/python
-   Jython executable: /cygdrive/c/jython2.2b2/jython.bat (found from system)
+   Jython executable: /cygdrive/c/jython2.5/jython.bat (found from system)
    Pybot script: /usr/bin/pybot
    Jybot script: /usr/bin/jybot
    Rebot script: /usr/bin/rebot
-
-.. Note:: The paths vary based on your environment. Robot Framework
-          uses the standard Python installation system and should
-          operate in accordance with the host operating system
-          conventions.
-
-.. Note:: It is possible to run the above scripts also with Jython 2.5.
-          In this case, Python installation is not required to use Robot Framework
+   Installation was successful.
 
 Using Windows installer
 '''''''''''''''''''''''
@@ -173,7 +162,7 @@ Using Windows installer
 The installation itself requires only double clicking the provided
 Windows installer and following instructions. After the installation
 you probably want to `set the environment`__ so that Robot Framework
-start-up scripts can be executed easily. Notice that the framework
+runner scripts can be executed easily. Notice that the framework
 is automatically installed `under the Python installation`__ and that
 location cannot be altered at this point.
 
@@ -200,41 +189,29 @@ Easy Install depends on do you want to install the latest version or
 some specific version::
 
    easy_install robotframework         # latest version
-   easy_install robotframework==2.0.4  # specified version (2.0.4)
+   easy_install robotframework==2.1.3  # specified version
 
 If you need to use a proxy to access the Internet, you can tell Easy
 Install to use it by setting the :var:`http_proxy` environment
 variable.
 
-A part of the Robot Framework installation is updating :prog:`pybot`,
-:prog:`jybot` and :prog:`rebot` `runner scripts`_ to work on the
-system where the framework is installed. How this is done is slightly
-fragile and it does not succeed with Easy Install on all environments.
-If automatically updating the runner script fails, executing them will
-not succeed unless they are fixed manually. Two known situations where
-the runner scripts are not updated correctly are explained below:
+On Windows the :prog:`pybot`, :prog:`jybot` and :prog:`rebot` `runner scripts`_
+are not updated when using Easy Install. A workaround is running 
+:prog:`robot_postinstall.py` script manually afterwards. The installation
+output tells where the post-install script is located, and you can either double
+click it or run it from the command line like 
+:cli:`python C:\\Python25\\Scripts\\robot_postinstall.py`.
 
-- On Windows you always need to run :prog:`robot_postinstall.py`
-  script after the installation to configure the runner scripts. The
-  installation output should tell where the post-install script is
-  located, and you can execute it by double clicking it or running it
-  from command line like :cli:`python
-  C:\\Python25\\Scripts\\robot_postinstall.py`.
-
-- On OS X using Easy Install with virtualenv__ fails because the
-  installation picks up the system wide Python installation (`issue
-  236`__). A workaround is updating the runner scripts manually after
-  the installation or `installing from source`_.
-
-__ http://pypi.python.org/pypi/virtualenv
-__ http://code.google.com/p/robotframework/issues/detail?id=236
+Updating the runner scripts is slightly fragile process in genereal and it
+may not work with Easy Install on all environments. If the runner scripts
+do not work after installation, they need to fixed manually.
 
 Using One Click Installer
 '''''''''''''''''''''''''
 
 The One Click Installer installs Robot Framework and its preconditions Python_ 
 and Jython_ (optional). It also automatically `sets up environment`__ so that 
-Robot Framework start-up scripts, as well as Python and Jython executables are 
+Robot Framework `runner scripts`_, as well as Python and Jython executables are 
 in PATH. 
 
 .. Note:: The One Click Installer works only on Windows XP.
@@ -292,10 +269,10 @@ Python copies these scripts into :path:`[PythonInstallationDir]\\Scripts`.
 Setting up environment
 ''''''''''''''''''''''
 
-After the installation, you might want to make Robot Framework's
-runner scripts easily available from the command line. On UNIX-like
+After the installation, you probably want to make Robot Framework's
+`runner scripts`_ easily available from the command line. On UNIX-like
 systems, that should be the case automatically, but for example on
-Windows, it is not. In environments where startup scripts are not
+Windows, it is not. In environments where runners are not
 available, the directory containing them must be set to the :var:`PATH`
 environment variable. 
 
