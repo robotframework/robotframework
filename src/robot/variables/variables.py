@@ -12,10 +12,13 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-
 import re
 import os
-from types import DictionaryType
+from UserDict import UserDict
+if os.name == 'java':
+    from java.util import Map
+else:
+    class Map: pass
 
 from robot import utils
 from robot.errors import DataError
@@ -293,11 +296,13 @@ class Variables(utils.NormalizedDict):
         except AttributeError:
             return None
         variables = get_variables(*args)
-        if type(variables) != DictionaryType:
-            raise DataError("%s returned '%s', expected a dictionary"
-                            % (get_variables.__name__,
-                               utils.type_as_str(variables)))
-        return variables.items()
+        if isinstance(variables, (dict, UserDict)):
+            return variables.items()
+        if isinstance(variables, Map):
+            return [(entry.key, entry.value) for entry in variables.entrySet()]
+        raise DataError("%s returned '%s', expected a mapping"
+                         % (get_variables.__name__,
+                           utils.type_as_str(variables)))
 
     def has_key(self, key):
         try:
