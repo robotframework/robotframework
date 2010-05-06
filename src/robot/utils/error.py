@@ -51,7 +51,7 @@ def get_error_details():
     """Returns error message and details of the last occurred exception.
     """
     dets = ErrorDetails()
-    return dets.message, dets.details
+    return dets.message, dets.traceback
 
 
 class ErrorDetails(object):
