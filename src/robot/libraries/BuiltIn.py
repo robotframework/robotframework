@@ -118,11 +118,25 @@ class _Converter:
 
 class _Verify:
 
-    # Wrappers for robot.asserts
-
     def fail(self, msg=None):
-        """Fails the test immediately with the given (optional) message."""
-        asserts.fail(msg)
+        """Fails the test immediately with the given (optional) message.
+
+        See `Fatal Error` if you need to stop the whole test execution.
+        """
+        raise AssertionError(msg) if msg else AssertionError()
+
+    def fatal_error(self, msg=None):
+        """Stops the whole test execution.
+
+        The test or suite where this keyword is used fails with the provided
+        message, and subsequent tests fail with a canned message.
+        Possible teardowns will nevertheless be executed.
+
+        See `Fail` if you only want to stop one test case unconditionally.
+        """
+        error = AssertionError(msg) if msg else AssertionError()
+        error.ROBOT_EXIT_ON_FAILURE = True
+        raise error
 
     def should_not_be_true(self, condition, msg=None):
         """Fails if the given condition is true.
