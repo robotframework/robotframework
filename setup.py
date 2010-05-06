@@ -56,7 +56,7 @@ def main():
     if 'bdist_wininst' in sys.argv:
         inst_scripts = [ script+'.bat' for script in inst_scripts ]
         inst_scripts.append('robot_postinstall.py')
-    elif os.name == 'nt':
+    elif os.sep == '\\':
         inst_scripts = [ script+'.bat' for script in inst_scripts ]
 
     if 'bdist_egg' in sys.argv:

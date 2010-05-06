@@ -107,7 +107,7 @@ def _get_installation_dir():
     return os.path.dirname(os.path.abspath(robot.__file__))
 
 def _update_scripts(scripts, script_dir, robot_dir, python_exe=sys.executable):
-    print 'Creating Robot Framework start-up scripts...'
+    print 'Creating Robot Framework runner scripts...'
     print 'Installation directory:', robot_dir
     if os.name != 'java':
         jython_exe, how_found = _find_jython()

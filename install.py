@@ -74,9 +74,11 @@ def _remove_runners():
     runners = ['pybot', 'jybot', 'rebot']
     if os.name == 'java':
         runners.remove('pybot')
+    if os.sep == '\\':
+        runners = [ r + '.bat' for r in runners]
     for name in runners:
-        if os.sep == '\\':
-            _remove(os.path.join(sys.prefix, 'Scripts', name+'.bat'))
+        if os.sep == '\\' and os.name != 'java':
+            _remove(os.path.join(sys.prefix, 'Scripts', name))
         elif os.name == 'java':
             _remove(os.path.join(sys.prefix, 'bin', name))
         else:
