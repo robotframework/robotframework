@@ -18,6 +18,7 @@ from keywords import Keyword
 from testlibraries import TestLibrary
 from userkeyword import PublicUserLibrary as UserLibrary
 from runkwregister import RUN_KW_REGISTER
+from signalhandler import STOP_SIGNAL_MONITOR
 
 
 class _Namespaces:

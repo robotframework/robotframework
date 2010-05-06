@@ -15,9 +15,10 @@
 import time
 
 from robot import utils
-from robot.utils.signalhandler import STOP_SIGNAL_MONITOR
 from robot.utils.robotthread import Thread, Runner, Event
 from robot.errors import TimeoutError, DataError, FrameworkError
+
+from signalhandler import STOP_SIGNAL_MONITOR
 
 
 class _Timeout:

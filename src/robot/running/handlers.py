@@ -20,7 +20,7 @@ from runkwregister import RUN_KW_REGISTER
 from arguments import PythonKeywordArguments, JavaKeywordArguments, \
     DynamicKeywordArguments, PythonInitArguments, JavaInitArguments, \
     RunKeywordArguments
-from robot.utils.signalhandler import STOP_SIGNAL_MONITOR
+from signalhandler import STOP_SIGNAL_MONITOR
 
 
 if utils.is_jython:

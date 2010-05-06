@@ -22,13 +22,13 @@ if 'pythonpathsetter' not in sys.modules:
     import pythonpathsetter
 from output import Output, CommandLineMonitor, LOGGER
 from conf import RobotSettings, RebotSettings
-from running import TestSuite
+from running import TestSuite, STOP_SIGNAL_MONITOR
 from serializing import RobotTestOutput, RebotTestOutput, SplitIndexTestOutput
 from errors import DataError, Information, XmlParsingError, INFO_PRINTED, \
         DATA_ERROR, STOPPED_BY_USER, FRAMEWORK_ERROR
 from variables import init_global_variables
 import utils
-from utils.signalhandler import STOP_SIGNAL_MONITOR
+
 
 __version__ = utils.version
 
