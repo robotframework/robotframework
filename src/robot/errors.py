@@ -85,13 +85,15 @@ class ExecutionFailed(RobotError):
 
 class HandlerExecutionFailed(ExecutionFailed):
 
-    def __init__(self, message, orig_error, is_test_or_suite_teardown):
+    def __init__(self, error_details, is_test_or_suite_teardown):
+        orig_error = error_details.error
         timeout = isinstance(orig_error, TimeoutError)
         syntax = isinstance(orig_error, DataError)
         exit = bool(getattr(orig_error, 'ROBOT_EXIT_ON_FAILURE', False))
         cont = bool(getattr(orig_error, 'ROBOT_CONTINUE_ON_FAILURE', False))
         cont = cont or is_test_or_suite_teardown
-        ExecutionFailed.__init__(self, message, timeout, syntax, exit, cont)
+        ExecutionFailed.__init__(self, error_details.message, timeout, syntax,
+                                 exit, cont)
 
 
 class ExecutionFailures(ExecutionFailed):

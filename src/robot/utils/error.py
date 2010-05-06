@@ -44,38 +44,40 @@ def get_error_message():
     MUST be used to get messages from all exceptions originating outside the
     framework.
     """
-    exc_type, exc_value = sys.exc_info()[:2]
-    if exc_type in RERAISED_EXCEPTIONS:
-        raise exc_value
-    if _is_java_exception(exc_value):
-        return _get_java_message(exc_type, exc_value)
-    return _get_python_message(exc_type, exc_value)
+    return ErrorDetails().message
 
 
 def get_error_details():
     """Returns error message and details of the last occurred exception.
+    """
+    dets = ErrorDetails()
+    return dets.message, dets.details
 
-    Error message contains exception's type and message and details contains
-    stacktrace.
 
-    This method handles also exceptions containing unicode messages. Thus it
+class ErrorDetails(object):
+    """This class wraps the last occurred exception
+
+    It has attributes message, traceback and error, where message contains
+    type and message of the original error, traceback it's contains traceback
+    (or stack trace in case of Java exception) and error contains the original
+    error instance
+
+    This class handles also exceptions containing unicode messages. Thus it
     MUST be used to get messages from all exceptions originating outside the
     framework.
     """
-    return get_error_details_and_instance()[:2]
 
-
-def get_error_details_and_instance():
-    exc_type, exc_value, exc_traceback = sys.exc_info()
-    if exc_type in (KeyboardInterrupt, SystemExit):
-        raise exc_value
-    if _is_java_exception(exc_value):
-        message = _get_java_message(exc_type, exc_value)
-        details = _get_java_details(exc_value)
-    else:
-        message = _get_python_message(exc_type, exc_value)
-        details = _get_python_details(exc_value, exc_traceback)
-    return message, details, exc_value
+    def __init__(self):
+        exc_type, exc_value, exc_traceback = sys.exc_info()
+        if exc_type in RERAISED_EXCEPTIONS:
+            raise exc_value
+        if _is_java_exception(exc_value):
+            self.message = _get_java_message(exc_type, exc_value)
+            self.traceback = _get_java_details(exc_value)
+        else:
+            self.message = _get_python_message(exc_type, exc_value)
+            self.traceback = _get_python_details(exc_value, exc_traceback)
+        self.error = exc_value
 
 
 def _is_java_exception(exc):

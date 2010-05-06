@@ -98,11 +98,11 @@ class Keyword(BaseKeyword):
             self._report_failure(output, namespace)
 
     def _report_failure(self, output, namespace):
-        message, details, orig_error = utils.get_error_details_and_instance()
-        output.fail(message)
-        if details:
-            output.debug(details)
-        raise HandlerExecutionFailed(message, orig_error,
+        error_details = utils.ErrorDetails()
+        output.fail(error_details.message)
+        if error_details.traceback:
+            output.debug(error_details.traceback)
+        raise HandlerExecutionFailed(error_details,
                                      self._in_test_or_suite_teardown(namespace))
 
     def _in_test_or_suite_teardown(self, namespace):
