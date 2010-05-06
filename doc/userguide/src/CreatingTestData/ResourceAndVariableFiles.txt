@@ -152,8 +152,8 @@ variables:
 
 `Getting variables from a special function`_
    Alternatively, variable files can have a special :code:`get_variables`
-   (or :code:`getVariables`) method that returns variables as a Python 
-   dictionary. This method can even take arguments, which makes this
+   (or :code:`getVariables`) method that returns variables as either a Python dictionary or a Java Map. 
+   This method can even take arguments, which makes this
    approach quite flexible.
 
 Taking variable files into use
@@ -394,8 +394,9 @@ An alternative syntax for getting variables is having a special
 :code:`get_variables` function (also camelCase syntax
 :code:`getVariables` is possible) in the variable file. In this case,
 Robot Framework calls that function and it returns variables as a
-Python dictionary (similar to Java maps), with variable names as keys
-and variable values as values. Variables are considered to be scalars,
+Python dictionary or its subclass or a Java :code:`Map`, with variable names as keys
+and variable values as values. (Note: Prior to Robot Framework 2.5 only 
+Python dictionaries were supported.) Variables are considered to be scalars,
 unless prefixed with :code:`LIST__`, and values can contain
 anything. The example below is identical to the first examples of
 `creating variables directly`_.
