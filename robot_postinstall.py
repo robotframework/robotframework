@@ -5,11 +5,11 @@ from distutils.sysconfig import get_python_lib
 
 def egg_preinstall(temp_robot_path, scripts):
     """Updates platform specific startup scripts.
-    
-    Run as part of the easy_install egg creation procedure. This is the only 
-    way to get the scripts updated when the easy_install is used. Updates the 
+
+    Run as part of the easy_install egg creation procedure. This is the only
+    way to get the scripts updated when the easy_install is used. Updates the
     scripts before the egg is created and therefore the created egg cannot be
-    used at any other machine unless the Python and Jython installations are 
+    used at any other machine unless the Python and Jython installations are
     exactly equal.
     """
     major, minor = sys.version_info[0:2]
@@ -22,8 +22,8 @@ def egg_preinstall(temp_robot_path, scripts):
 
 def generic_install(script_names, script_dir, robot_dir):
     """Updates given startup scripts.
-    
-    Run as part of the generic installation procedure from 'setup.py' after 
+
+    Run as part of the generic installation procedure from 'setup.py' after
     running 'python setyp.py install'.
     """
     _update_scripts(script_names, script_dir, robot_dir)
@@ -31,8 +31,8 @@ def generic_install(script_names, script_dir, robot_dir):
 
 def windows_binary_install():
     """Updates start-up scripts.
-    
-    Executed as the last part of Windows binary installation started by 
+
+    Executed as the last part of Windows binary installation started by
     running 'robotframework-<version>.win32.exe'.
     """
     scripts = ['pybot.bat','jybot.bat', 'rebot.bat']
@@ -49,10 +49,10 @@ def windows_binary_install():
 
 def windows_binary_uninstall():
     """Deletes Jython compiled files ('*$py.class')
-    
+
     This function is executed as part of the Windows binary uninstallation
     started from 'Add/Remove Programs'.
-    
+
     Uninstaller deletes files only if installer has created them and also
     deletes directories only if they are empty. Thus compiled files created
     by Jython must be deleted separately.
@@ -107,11 +107,15 @@ def _get_installation_dir():
     return os.path.dirname(os.path.abspath(robot.__file__))
 
 def _update_scripts(scripts, script_dir, robot_dir, python_exe=sys.executable):
-    jython_exe, how_found = _find_jython()
     print 'Creating Robot Framework start-up scripts...'
     print 'Installation directory:', robot_dir
-    print 'Python executable:', python_exe
-    print 'Jython executable: %s (%s)' % (jython_exe, how_found)
+    if os.name != 'java':
+        jython_exe, how_found = _find_jython()
+        print 'Python executable:', python_exe
+        print 'Jython executable: %s (%s)' % (jython_exe, how_found)
+    else:
+        jython_exe = python_exe
+        print 'Jython executable:', jython_exe
     for script in scripts:
         path = os.path.join(script_dir, script)
         content = _read(path)
@@ -123,7 +127,7 @@ def _update_scripts(scripts, script_dir, robot_dir, python_exe=sys.executable):
         name = os.path.splitext(os.path.basename(script))[0].capitalize()
         print '%s script: %s' % (name, path)
 
-    
+
 def _read(path):
     reader = open(path)
     content = reader.read()
@@ -137,10 +141,10 @@ def _write(path, content):
     writer.write(content)
     writer.close()
 
-    
+
 def _find_jython():
     """Tries to find path to Jython and returns it and how it was found.
-    
+
     First Jython is searched from PATH, then checked is JYTHON_HOME set and
     finally Jython installation directory is searched from the system.
     """
@@ -190,7 +194,7 @@ def _search_jython_from_dirs(search_dirs, jyexe, recursions=1,
     if raise_unless_found:
         raise ValueError, 'not found'
     return jyexe, 'default value'
-    
+
 def _is_jython_dir(dir, jyexe):
     if not os.path.basename(os.path.normpath(dir)).lower().startswith('jython'):
         return False
@@ -199,17 +203,17 @@ def _is_jython_dir(dir, jyexe):
     except:   # may not have rights to read the dir etc.
         return False
     return jyexe in items and 'jython.jar' in items
-    
+
 
 if __name__ == '__main__':
     # This is executed when run as a post-install script for Windows binary
     # distribution. Executed both when installed and when uninstalled from
-    # Add/Remove Programs. For more details see 
+    # Add/Remove Programs. For more details see
     # 5.3 Creating Windows Installers
     # http://docs.python.org/dist/postinstallation-script.html
     #
     # If installation is done using 'easy_install', this script is not run
-    # automatically. It is possible to run this script manually without 
+    # automatically. It is possible to run this script manually without
     # arguments to update start-up scripts in that case.
     if len(sys.argv) < 2 or sys.argv[1] == '-install':
         windows_binary_install()

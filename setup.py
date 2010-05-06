@@ -47,13 +47,15 @@ PACKAGES = [ 'robot', 'robot.common', 'robot.conf', 'robot.libraries',
              'robot.running', 'robot.utils', 'robot.variables' ]
 
 SCRIPT_NAMES = ['pybot', 'jybot', 'rebot']
+if os.name == 'java':
+    SCRIPT_NAMES.remove('pybot')
 
 
 def main():
     inst_scripts = [ os.path.join('src','bin',name) for name in SCRIPT_NAMES ]
     if 'bdist_wininst' in sys.argv:
         inst_scripts = [ script+'.bat' for script in inst_scripts ]
-        inst_scripts.append('robot_postinstall.py') 
+        inst_scripts.append('robot_postinstall.py')
     elif os.name == 'nt':
         inst_scripts = [ script+'.bat' for script in inst_scripts ]
 
@@ -78,7 +80,7 @@ def main():
           packages     = PACKAGES,
           scripts      = inst_scripts,
     )
-    
+
     if 'install' in sys.argv:
         absnorm = lambda path: os.path.abspath(os.path.normpath(path))
         script_dir = absnorm(dist.command_obj['install_scripts'].install_dir)
@@ -86,7 +88,7 @@ def main():
         robot_dir = os.path.join(module_dir, 'robot')
         script_names = [ os.path.basename(name) for name in inst_scripts ]
         robot_postinstall.generic_install(script_names, script_dir, robot_dir)
-    
+
 
 if __name__ == "__main__":
     main()
