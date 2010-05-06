@@ -71,9 +71,14 @@ def _get_installation_directory():
     return robot_dir
 
 def _remove_runners():
-    for name in ['pybot', 'jybot', 'rebot']:
+    runners = ['pybot', 'jybot', 'rebot']
+    if os.name == 'java':
+        runners.remove('pybot')
+    for name in runners:
         if os.sep == '\\':
             _remove(os.path.join(sys.prefix, 'Scripts', name+'.bat'))
+        elif os.name == 'java':
+            _remove(os.path.join(sys.prefix, 'bin', name))
         else:
             for dirpath in ['/bin', '/usr/bin/', '/usr/local/bin' ]:
                  _remove(os.path.join(dirpath, name))
@@ -93,7 +98,6 @@ def _remove(path):
             os.remove(path)
     except Exception, err:
         print "Removing '%s' failed: %s" % (path, err)
-        sys.exit(1)
     else:
         print "Removed '%s'" % path
 
