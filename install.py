@@ -75,14 +75,14 @@ def _remove_runners():
     if os.name == 'java':
         runners.remove('pybot')
     if os.sep == '\\':
-        runners = [ r + '.bat' for r in runners]
+        runners = [r + '.bat' for r in runners]
     for name in runners:
-        if os.sep == '\\' and os.name != 'java':
-            _remove(os.path.join(sys.prefix, 'Scripts', name))
-        elif os.name == 'java':
+        if os.name == 'java':
             _remove(os.path.join(sys.prefix, 'bin', name))
+        elif os.sep == '\\':
+            _remove(os.path.join(sys.prefix, 'Scripts', name))
         else:
-            for dirpath in ['/bin', '/usr/bin/', '/usr/local/bin' ]:
+            for dirpath in ['/bin', '/usr/bin/', '/usr/local/bin']:
                  _remove(os.path.join(dirpath, name))
 
 def _remove_egg_info(instdir):

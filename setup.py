@@ -33,7 +33,6 @@ libraries implemented either with Python or Java. Users can also
 create new keywords from existing ones using the same simple syntax
 that is used for creating test cases.
 """[1:-1]
-
 CLASSIFIERS = """
 Development Status :: 5 - Production/Stable
 License :: OSI Approved :: Apache Software License
@@ -41,11 +40,9 @@ Operating System :: OS Independent
 Programming Language :: Python
 Topic :: Software Development :: Testing
 """[1:-1]
-
-PACKAGES = [ 'robot', 'robot.common', 'robot.conf', 'robot.libraries',
-             'robot.output', 'robot.parsing', 'robot.serializing',
-             'robot.running', 'robot.utils', 'robot.variables' ]
-
+PACKAGES = ['robot', 'robot.common', 'robot.conf', 'robot.libraries',
+            'robot.output', 'robot.parsing', 'robot.serializing',
+            'robot.running', 'robot.utils', 'robot.variables']
 SCRIPT_NAMES = ['pybot', 'jybot', 'rebot']
 if os.name == 'java':
     SCRIPT_NAMES.remove('pybot')

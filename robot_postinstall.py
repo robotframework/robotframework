@@ -67,6 +67,7 @@ def windows_binary_uninstall():
                     print "Failed to remove Jython compiled file '%s': %s" \
                             % (path, str(err))
 
+
 def _find_easy_install_dir():
     """Returns the installation directory that easy_install will actually use.
 
@@ -127,20 +128,17 @@ def _update_scripts(scripts, script_dir, robot_dir, python_exe=sys.executable):
         name = os.path.splitext(os.path.basename(script))[0].capitalize()
         print '%s script: %s' % (name, path)
 
-
 def _read(path):
     reader = open(path)
     content = reader.read()
     reader.close()
     return content
 
-
 def _write(path, content):
     os.chmod(path, 0755)
     writer = open(path, 'w')
     writer.write(content)
     writer.close()
-
 
 def _find_jython():
     """Tries to find path to Jython and returns it and how it was found.
