@@ -13,7 +13,8 @@
 #  limitations under the License.
 
 from robot import utils
-from robot.errors import FrameworkError, ExecutionFailed, ExecutionFailures, DataError
+from robot.errors import FrameworkError, ExecutionFailed, ExecutionFailures, \
+    DataError, HandlerExecutionFailed
 from robot.common import BaseKeyword
 from robot.variables import is_list_var
 
@@ -94,14 +95,19 @@ class Keyword(BaseKeyword):
         except ExecutionFailed:
             raise
         except:
-            self._report_failure(output)
+            self._report_failure(output, namespace)
 
-    def _report_failure(self, output):
-        msg, details, exception = utils.get_execution_failed()
-        output.fail(msg)
+    def _report_failure(self, output, namespace):
+        message, details, orig_error = utils.get_error_details_and_instance()
+        output.fail(message)
         if details:
             output.debug(details)
-        raise exception
+        raise HandlerExecutionFailed(message, orig_error,
+                                     self._in_test_or_suite_teardown(namespace))
+
+    def _in_test_or_suite_teardown(self, namespace):
+        test_or_suite = namespace.test or namespace.suite
+        return test_or_suite.status != 'RUNNING'
 
 
 class SetKeyword(Keyword):

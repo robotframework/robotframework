@@ -77,17 +77,21 @@ class ExecutionFailed(RobotError):
     def _continue_on_failure(self, cont):
         if self.timeout or self.syntax or self.exit:
             return False
-        if cont:
-            return True
-        return self._in_test_or_suite_teardown()
-
-    def _in_test_or_suite_teardown(self):
-        from robot.running import NAMESPACES
-        ns = NAMESPACES.current
-        return ns is not None and (ns.test or ns.suite).status != 'RUNNING'
+        return cont
 
     def get_errors(self):
         return [self]
+
+
+class HandlerExecutionFailed(ExecutionFailed):
+
+    def __init__(self, message, orig_error, is_test_or_suite_teardown):
+        timeout = isinstance(orig_error, TimeoutError)
+        syntax = isinstance(orig_error, DataError)
+        exit = bool(getattr(orig_error, 'ROBOT_EXIT_ON_FAILURE', False))
+        cont = bool(getattr(orig_error, 'ROBOT_CONTINUE_ON_FAILURE', False))
+        cont = cont or is_test_or_suite_teardown
+        ExecutionFailed.__init__(self, message, timeout, syntax, exit, cont)
 
 
 class ExecutionFailures(ExecutionFailed):
