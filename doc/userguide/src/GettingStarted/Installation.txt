@@ -42,9 +42,9 @@ http://source.robotframework.org.
 Preconditions
 ~~~~~~~~~~~~~
 
-Robot Framework runs both on Python_ and Jython_, and you need to have
-at least one of them to be able to use it. However, the provided installers
-only work with Python, so installing it is always recommended.
+Robot Framework runs both on Python_ and Jython_, and you need to have at least
+one of them to be able to use it. However, some of the provided installers only
+work with Python, so installing it is always recommended.
 
 Python installation
 '''''''''''''''''''
@@ -86,34 +86,38 @@ need to run as :cli:`java -jar jython_installer-<version>.jar`. Depending on
 your system, the installer runs either in the graphical or the textual mode,
 but in both cases, the actual installation procedure is very easy.
 
-With Jython 2.5, it is possible to install Robot Framework without having
-Python available by  `installing from source`_.  Jython 2.2 does not have
-Python's :code:`distutils` module, which is required for automatically
-installing Robot Framework and thus the only way to install without Python is
-`manual installation`_.
+There are three ways to install Robot Framework so that it can be run with Jython.
 
-With all supported Jython versions, it is possible to install Robot Framework
-using Python and still start execution using Jython.  When installing Robot
-Framework with Python, its installer tries to find the Jython executable on the
-system to create the :prog:`jybot` runner script correctly. Jython is found if:
+1.  With all supported Jython versions, it is possible to install Robot Framework
+    using Python and still start execution using Jython.  When installing Robot
+    Framework with Python, its installer tries to find the Jython executable on the
+    system to create the :prog:`jybot` runner script correctly. Jython is found if:
 
-1. Jython can be executed in the system directly (i.e. it is in the :var:`PATH`).
+    -  Jython can be executed in the system directly (i.e. it is in the :var:`PATH`).
 
-2. An environment variable :var:`JYTHON_HOME` is set and it points to
-   the Jython installation directory.
+    -  An environment variable :var:`JYTHON_HOME` is set and it points to
+       the Jython installation directory.
 
-3. The installer finds the Jython installation directory from the system. On 
-   Windows, it is searched 
-   from the :path:`C:\\` and :path:`D:\\` drives, and on other systems from
-   the :path:`/usr/local` and :path:`/opt` directories. The directory is found 
-   if it is under the searched directories mentioned above, or one level
-   deeper. For example, the following Jython installation directories
-   would be found by the installer::
+    -  The installer finds the Jython installation directory from the system. On
+       Windows, it is searched from the :path:`C:\\` and :path:`D:\\` drives,
+       and on other systems from the :path:`/usr/local` and :path:`/opt`
+       directories. The directory is found if it is under the searched
+       directories mentioned above, or one level deeper. For example, the
+       following Jython installation directories would be found by the
+       installer::
 
-      C:\APPS\Jython2.2
-      D:\Jython22
-      /usr/local/jython2.2
-      /opt/whatever/Jython22
+            C:\APPS\Jython2.2
+            D:\Jython22
+            /usr/local/jython2.2
+            /opt/whatever/Jython22
+
+
+2.  With Jython 2.5, it is possible to install Robot Framework without having
+    Python available by  `installing from source`_.
+
+3.  Jython 2.2 does not have Python's :code:`distutils` module, which is
+    required for automatically installing Robot Framework and thus the only way
+    to install without Python is `manual installation`_.
 
 
 Installation
