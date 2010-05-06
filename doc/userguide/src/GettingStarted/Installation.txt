@@ -196,22 +196,22 @@ Install to use it by setting the :var:`http_proxy` environment
 variable.
 
 On Windows the :prog:`pybot`, :prog:`jybot` and :prog:`rebot` `runner scripts`_
-are not updated when using Easy Install. A workaround is running 
+are not updated when using Easy Install. A workaround is running
 :prog:`robot_postinstall.py` script manually afterwards. The installation
-output tells where the post-install script is located, and you can either double
-click it or run it from the command line like 
-:cli:`python C:\\Python25\\Scripts\\robot_postinstall.py`.
+output tells where the post-install script is located, and you can either
+double click it or run it from the command line like :cli:`python
+C:\\Python25\\Scripts\\robot_postinstall.py`.
 
-Updating the runner scripts is slightly fragile process in genereal and it
+Updating the runner scripts is slightly fragile process in general and it
 may not work with Easy Install on all environments. If the runner scripts
 do not work after installation, they need to fixed manually.
 
 Using One Click Installer
 '''''''''''''''''''''''''
 
-The One Click Installer installs Robot Framework and its preconditions Python_ 
-and Jython_ (optional). It also automatically `sets up environment`__ so that 
-Robot Framework `runner scripts`_, as well as Python and Jython executables are 
+The One Click Installer installs Robot Framework and its preconditions Python_
+and Jython_ (optional). It also automatically `sets up environment`__ so that
+Robot Framework `runner scripts`_, as well as Python and Jython executables are
 in PATH. 
 
 .. Note:: The One Click Installer works only on Windows XP.
@@ -219,15 +219,15 @@ in PATH.
 __ `Setting up environment`_
 
 The One Click Installer requires that you have downloaded all the required 
-component installers and have them in the same directory with it. More detailed 
-instructions and details about the supported installers are available at `One 
+component installers and have them in the same directory with it. More detailed
+instructions and details about the supported installers are available at `One
 Click Installer's documentation`__.
 
 __ `One Click Installer`_
 
 .. Note:: You should use this installer *ONLY* if you do not previously have 
           Python or Jython installed. In that case, and also if you want to 
-          have a custom installation, you need to install the needed components 
+          have a custom installation, you need to install the needed components
           separately.
 
 Manual installation
