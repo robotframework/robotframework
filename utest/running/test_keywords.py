@@ -39,11 +39,16 @@ class MockHandler:
             return args[1]
 
 
-class FakeNamespace(_FakeNamespace):
+class _FakeSuite(object):
+    def __init__(self):
+        self.status = 'RUNNING'
 
+
+class FakeNamespace(_FakeNamespace):
     def __init__(self, error=False):
         _FakeNamespace.__init__(self)
         self.error = error
+        self.suite = _FakeSuite()
 
     def get_handler(self, kwname):
         return MockHandler('Mocked.'+kwname, error=self.error)
