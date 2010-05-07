@@ -89,6 +89,8 @@ class _RunnableHandler(_BaseHandler):
         pass
 
     def run(self, context, args):
+        if context.dry_run:
+            return None
         output = context.output
         positional, named = self.arguments.resolve(args, context.get_current_vars(),
                                                    output)

@@ -91,7 +91,7 @@ class _BaseReader:
         except AttributeError:
             status = _MissingStatus()
         self.status = status.get_attr('status','').upper()
-        if self.status not in ['PASS','FAIL']:
+        if self.status not in ['PASS','FAIL', 'NOT_RUN']:
             raise DataError("Item '%s' has invalid status '%s'"
                             % (self.name, status))
         self.message = status.text

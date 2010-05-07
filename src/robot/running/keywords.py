@@ -77,7 +77,8 @@ class Keyword(BaseKeyword):
         except ExecutionFailed, err:
             self.status = 'FAIL'
         else:
-            self.status = 'PASS'
+            if not (context.dry_run and handler.type == 'library'):
+                self.status = 'PASS'
         self.endtime = utils.get_timestamp()
         self.elapsedtime = utils.get_elapsed_time(self.starttime, self.endtime)
         context.end_keyword(self)
@@ -245,7 +246,7 @@ class ForKeyword(BaseKeyword):
     def _run(self, context):
         items = self._replace_vars_from_items(context.get_current_vars())
         errors = []
-        for i in range(0, len(items), len(self.vars)):
+        for i in self._iteration_steps(items, context):
             values = items[i:i+len(self.vars)]
             err = self._run_one_round(context, self.vars, values)
             if err:
@@ -254,6 +255,11 @@ class ForKeyword(BaseKeyword):
                     break
         if errors:
             raise ExecutionFailures(errors)
+
+    def _iteration_steps(self, items, context):
+        if context.dry_run:
+            return [0]
+        return range(0, len(items), len(self.vars))
 
     def _run_one_round(self, context, variables, values):
         foritem = ForItemKeyword(variables, values)

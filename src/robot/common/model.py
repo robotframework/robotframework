@@ -275,6 +275,8 @@ class BaseTestSuite(_TestAndSuiteHelper):
         runmode = runmode.upper()
         if runmode == 'EXITONFAILURE':
             self._run_mode_exit_on_failure = True
+        elif runmode == 'DRYRUN':
+            self._run_mode_dry_run = True
         elif runmode == 'RANDOM:TEST':
             random.shuffle(self.tests)
         elif runmode == 'RANDOM:SUITE':

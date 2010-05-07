@@ -37,9 +37,10 @@ def TestSuite(datasources, settings):
 
 class ExecutionContext(object):
 
-    def __init__(self, namespace, output):
+    def __init__(self, namespace, output, dry_run=False):
         self.namespace = namespace
         self.output = output
+        self.dry_run = dry_run
 
     def get_current_vars(self):
         return self.namespace.variables
@@ -127,6 +128,7 @@ class RunnableTestSuite(BaseTestSuite):
         for test in data.tests:
             RunnableTestCase(test, testdefaults, parent=self)
         self._run_mode_exit_on_failure = False
+        self._run_mode_dry_run = False
 
     def run(self, output, parent=None, errors=None):
         context = self._start_run(output, parent, errors)
@@ -145,7 +147,8 @@ class RunnableTestSuite(BaseTestSuite):
         self.status = 'RUNNING'
         self.starttime = utils.get_timestamp()
         parent_vars = parent.context.get_current_vars() if parent else None
-        self.context = ExecutionContext(Namespace(self, parent_vars), output)
+        self.context = ExecutionContext(Namespace(self, parent_vars), output,
+                                        self._run_mode_dry_run)
         self._set_variable_dependent_metadata(self.context)
         output.start_suite(self)
         return self.context
