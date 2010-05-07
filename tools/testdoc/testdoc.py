@@ -26,17 +26,17 @@ arguments. Most of the options accepted by this tool have exactly same
 semantics as same options have when executing test cases.
 
 Options:
-  -o --output path       Where to write the generated documentation. If the 
+  -o --output path       Where to write the generated documentation. If the
                          path is a directory, the documentation is
                          generated there using name '<suitename>-doc.html'.
-  -T --title title       Set the title of the generated documentation. 
+  -T --title title       Set the title of the generated documentation.
                          Underscores in the title are converted to spaces.
   -N --name name         Set the name of the top level test suite.
   -D --doc document      Set the document of the top level test suite.
-  -M --metadata name:value *  Set metadata of the top level test suite. 
-  -G --settag tag *      Set given tag(s) to all test cases. 
-  -t --test name *       Include test cases by name. 
-  -s --suite name *      Include test suites by name. 
+  -M --metadata name:value *  Set metadata of the top level test suite.
+  -G --settag tag *      Set given tag(s) to all test cases.
+  -t --test name *       Include test cases by name.
+  -s --suite name *      Include test suites by name.
   -i --include tag *     Include test cases by tags.
   -e --exclude tag *     Exclude test cases by tags.
   -h --help              Print this help.
@@ -71,7 +71,7 @@ def generate_test_doc(args):
     outpath = get_outpath(opts['output'], suite.name)
     serialize_test_doc(suite, outpath, opts['title'])
     exit(msg=outpath)
-    
+
 def serialize_test_doc(suite, outpath, title):
     outfile = open(outpath, 'w')
     serializer = TestdocSerializer(outfile, suite)
@@ -82,8 +82,8 @@ def serialize_test_doc(suite, outpath, title):
         title = title.replace('_', ' ')
     else:
         title = 'Documentation for %s' % suite.name
-    namespace = Namespace(gentime_str=str_time, gentime_int=int_time, 
-                          version=utils.get_full_version('testdoc.py'), 
+    namespace = Namespace(gentime_str=str_time, gentime_int=int_time,
+                          version=utils.get_full_version('testdoc.py'),
                           suite=suite, title=title)
     Template(template=templates.LOG).generate(namespace, outfile)
     suite.serialize(serializer)
@@ -99,7 +99,7 @@ def process_arguments(args_list):
     except DataError, err:
         exit(error=str(err))
     return opts, args
-    
+
 def exit(msg=None, error=None):
     if msg:
         sys.stdout.write(msg + '\n')
@@ -124,16 +124,16 @@ class TestdocSerializer(LogSerializer):
         self._suite_level = 0
 
     def start_suite(self, suite):
-        suite._init_suite(NonResolvingVariableScopes())
+        suite._set_variable_dependent_metadata(NonResolvingContext())
         LogSerializer.start_suite(self, suite)
 
     def start_test(self, test):
-        test._init_test(NonResolvingVariableScopes())
+        test._init_test(NonResolvingContext())
         LogSerializer.start_test(self, test)
 
     def start_keyword(self, kw):
         if isinstance(kw, Keyword):  # Doesn't match For or Parallel
-            kw.name = kw._get_name(kw.name, NonResolvingVariableScopes())
+            kw.name = kw._get_name(kw.name, NonResolvingContext())
         LogSerializer.start_keyword(self, kw)
 
     def _is_element_open(self, item):
@@ -171,12 +171,9 @@ class TestdocSerializer(LogSerializer):
             LogSerializer._write_expand_all(self, item)
 
 
-class NonResolvingVariableScopes:
+class NonResolvingContext:
 
-    def replace_meta(self, name, item, errors):
-        return item
-
-    def replace_string(self, item):
+    def replace_vars_from_setting(self, name, item, errors):
         return item
 
 
