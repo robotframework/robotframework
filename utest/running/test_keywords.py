@@ -58,6 +58,7 @@ class _FakeContext(object):
         self.output = OutputStub()
         self.error = error
         self.variables = self.namespace.variables
+        self.dry_run = False
 
     def get_handler(self, kwname):
         return MockHandler('Mocked.'+kwname, error=self.error)
