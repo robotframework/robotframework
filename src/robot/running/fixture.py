@@ -38,8 +38,9 @@ class _Fixture(object):
                 error_listener.notify(err)
 
     def serialize(self, serializer):
-        serializer.start_keyword(self._keyword)
-        serializer.end_keyword(self._keyword)
+        if self._keyword:
+            serializer.start_keyword(self._keyword)
+            serializer.end_keyword(self._keyword)
 
 
 class Setup(_Fixture): pass
