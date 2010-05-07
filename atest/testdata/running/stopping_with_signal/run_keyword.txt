@@ -5,10 +5,11 @@ Suite Teardown  Sleep  ${TEARDOWN SLEEP}
 
 *** Variables ***
 ${TEARDOWN SLEEP} =  0 seconds
+${TESTSIGNALFILE} =  test_signal_file.txt
 
 *** Test Case ***
 Test
-  Create File  ${TEMPDIR}/robot_signal_test_started.txt
+  Create File  ${TEMPDIR}/${TESTSIGNALFILE}
   Run Keyword  Busy Sleep  2
   No Operation
 

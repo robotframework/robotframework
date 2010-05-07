@@ -63,28 +63,29 @@ One Signal Should Stop Test Execution Gracefully And Test Case And Suite Teardow
 *** Key Words ***
 Start And Send Signal
     [arguments]  ${testcase file}  ${signal method}  ${signal}  ${teardown sleep}
-    Remove File  ${TEMPDIR}/robot_signal_test_started.txt
     ${is_jython_in_use} =  Running On Jython  ${INTERPRETER}
-    Run Keyword unless  ${is_jython_in_use}  Start Running Robot  running/stopping_with_signal/${testcase file}  ${teardown sleep}
-    Run Keyword if  ${is_jython_in_use}  Start Running jybot  running/stopping_with_signal/${testcase file}  ${teardown sleep}
-    Wait Until Created  ${TEMPDIR}/robot_signal_test_started.txt
+    ${test signal file} =  catenate  SEPARATOR=_  robot_signal_test_started  %{USER}  ${INTERPRETER}  .txt
+    Remove File  ${TEMPDIR}/${test signal file}
+    Run Keyword unless  ${is_jython_in_use}  Start Running Robot  ${test signal file}  running/stopping_with_signal/${testcase file}  ${teardown sleep}
+    Run Keyword if  ${is_jython_in_use}  Start Running jybot  ${test signal file}  running/stopping_with_signal/${testcase file}  ${teardown sleep}
+    Wait Until Created  ${TEMPDIR}/${test signal file}  5 minutes
     Run Keyword  ${signal method}  ${signal}
     wait until finished
 
 Start Running Robot
-    [arguments]  ${datasource}  ${teardown sleep}
+    [arguments]  ${test signal file}  ${datasource}  ${teardown sleep}
     Set Runners
     ${path to datasource} =  Set Variables And Get Datasources  ${datasource}
     ${path to runner} =  Join Path  ${ROBOTPATH}  runner.py
-    ProcessManager.start process  ${INTERPRETER}  ${path to runner}  --output  ${OUTFILE}  --report  None  --log  None  --variable  TEARDOWNSLEEP:${teardown sleep}  ${path to datasource}
+    ProcessManager.start process  ${INTERPRETER}  ${path to runner}  --variable  TESTSIGNALFILE:${test signal file}  --output  ${OUTFILE}  --report  None  --log  None  --variable  TEARDOWNSLEEP:${teardown sleep}  ${path to datasource}
 
 Start Running Jybot
-    [arguments]  ${datasource}  ${teardown sleep}
+    [arguments]  ${test signal file}  ${datasource}  ${teardown sleep}
     ${jybot} =  Get Jython Path
     Set Runners
     ${path to datasource} =  Set Variables And Get Datasources  ${datasource}
     ${path to runner} =  Join Path  ${ROBOTPATH}  runner.py
-    ProcessManager.start process  ${jybot}  ${path to runner}  --output  ${OUTFILE}  --report  None  --log  None  --variable  TEARDOWNSLEEP:${teardown sleep}  ${path to datasource}
+    ProcessManager.start process  ${jybot}  ${path to runner}  --variable  TESTSIGNALFILE:${test signal file}  --output  ${OUTFILE}  --report  None  --log  None  --variable  TEARDOWNSLEEP:${teardown sleep}  ${path to datasource}
 
 Check Test Cases Have Failed Correctly
     Check Test Case  Test  FAIL  Execution terminated by signal
