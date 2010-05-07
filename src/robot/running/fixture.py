@@ -30,10 +30,10 @@ class _Fixture(object):
             return None
         return Keyword(kwdata[0], kwdata[1:], type=self.__class__.__name__.lower())
 
-    def run(self, output, namespace, error_listener):
+    def run(self, context, error_listener):
         if self._keyword:
             try:
-                self._keyword.run(output, namespace)
+                self._keyword.run(context)
             except ExecutionFailed, err:
                 error_listener.notify(err)
 

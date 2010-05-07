@@ -124,27 +124,28 @@ class UserKeywordHandler(object):
         self._timeout = metadata.get('Timeout', [])
         self.timeout = [ utils.unescape(item) for item in self._timeout ]
 
-    def init_user_keyword(self, varz):
+    def init_keyword(self, varz):
         self._errors = []
         self.doc = varz.replace_meta('Documentation', self._doc, self._errors)
         timeout = varz.replace_meta('Timeout', self._timeout, self._errors)
         self.timeout = KeywordTimeout(*timeout)
 
-    def run(self, output, namespace, arguments):
-        namespace.start_user_keyword(self)
+    def run(self, context, arguments):
+        context.namespace.start_user_keyword(self)
         try:
-            return self._run(output, namespace, arguments)
+            return self._run(context, arguments)
         finally:
-            namespace.end_user_keyword()
+            context.namespace.end_user_keyword()
 
-    def _run(self, output, namespace, arguments):
-        argument_values = self.arguments.resolve(arguments, namespace.variables)
-        self.arguments.set_variables(argument_values, namespace.variables,
-                                     output)
+    def _run(self, context, arguments):
+        variables = context.get_current_vars()
+        argument_values = self.arguments.resolve(arguments, variables)
+        output = context.output
+        self.arguments.set_variables(argument_values, variables, output)
         self._verify_keyword_is_valid()
         self.timeout.start()
-        self.keywords.run(output, namespace)
-        return self._get_return_value(namespace.variables)
+        self.keywords.run(context)
+        return self._get_return_value(variables)
 
     def _verify_keyword_is_valid(self):
         if self._errors:
@@ -205,10 +206,10 @@ class EmbeddedArgs(UserKeywordHandler):
         self.origname = template.name
         self._copy_attrs_from_template(template)
 
-    def run(self, output, namespace, args):
+    def run(self, context, args):
         for name, value in self.embedded_args:
-            namespace.variables[name] = namespace.variables.replace_scalar(value)
-        return UserKeywordHandler.run(self, output, namespace, args)
+            context.get_current_vars()[name] = context.get_current_vars().replace_scalar(value)
+        return UserKeywordHandler.run(self, context, args)
 
     def _copy_attrs_from_template(self, template):
         self._libname = template._libname

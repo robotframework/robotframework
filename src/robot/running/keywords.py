@@ -24,11 +24,11 @@ class Keywords(object):
     def __init__(self, kwdata):
         self._keywords = [ _KeywordFactory(kw) for kw in kwdata ]
 
-    def run(self, output, namespace):
+    def run(self, context):
         errors = []
         for kw in self._keywords:
             try:
-                kw.run(output, namespace)
+                kw.run(context)
             except ExecutionFailed, err:
                 errors.extend(err.get_errors())
                 if not err.cont:
@@ -60,28 +60,27 @@ class Keyword(BaseKeyword):
         BaseKeyword.__init__(self, name, args, type=type)
         self.handler_name = name
 
-    def run(self, output, namespace):
-        handler = namespace.get_handler(self.handler_name)
-        if handler.type == 'user':
-            handler.init_user_keyword(namespace.variables)
-        self.name = self._get_name(handler.longname, namespace.variables)
+    def run(self, context):
+        handler = context.get_handler(self.handler_name)
+        handler.init_keyword(context.get_current_vars())
+        self.name = self._get_name(handler.longname, context.get_current_vars())
         self.doc = handler.shortdoc
         self.starttime = utils.get_timestamp()
-        output.start_keyword(self)
+        context.start_keyword(self)
         if self.doc.startswith('*DEPRECATED*'):
             msg = self.doc.replace('*DEPRECATED*', '', 1).strip()
             name = self.name.split('} = ', 1)[-1]  # Remove possible variable
-            output.warn("Keyword '%s' is deprecated. %s" % (name, msg))
+            context.warn("Keyword '%s' is deprecated. %s" % (name, msg))
         try:
-            ret = self._run(handler, output, namespace)
-            output.trace('Return: %s' % utils.safe_repr(ret))
+            ret = self._run(handler, context)
+            context.trace('Return: %s' % utils.safe_repr(ret))
         except ExecutionFailed, err:
             self.status = 'FAIL'
         else:
             self.status = 'PASS'
         self.endtime = utils.get_timestamp()
         self.elapsedtime = utils.get_elapsed_time(self.starttime, self.endtime)
-        output.end_keyword(self)
+        context.end_keyword(self)
         if self.status == 'FAIL':
             raise err
         return ret
@@ -89,21 +88,21 @@ class Keyword(BaseKeyword):
     def _get_name(self, handler_name, variables):
         return handler_name
 
-    def _run(self, handler, output, namespace):
+    def _run(self, handler, context):
         try:
-            return handler.run(output, namespace, self.args[:])
+            return handler.run(context, self.args[:])
         except ExecutionFailed:
             raise
         except:
-            self._report_failure(output, namespace)
+            self._report_failure(context)
 
-    def _report_failure(self, output, namespace):
+    def _report_failure(self, context):
         error_details = utils.ErrorDetails()
-        output.fail(error_details.message)
+        context.output.fail(error_details.message)
         if error_details.traceback:
-            output.debug(error_details.traceback)
+            context.output.debug(error_details.traceback)
         raise HandlerExecutionFailed(error_details,
-                                     self._in_test_or_suite_teardown(namespace))
+                                     self._in_test_or_suite_teardown(context.namespace))
 
     def _in_test_or_suite_teardown(self, namespace):
         test_or_suite = namespace.test or namespace.suite
@@ -123,32 +122,32 @@ class SetKeyword(Keyword):
             varz.append(self.list_var)
         return '%s = %s' % (', '.join(varz), handler_name)
 
-    def _run(self, handler, output, namespace):
+    def _run(self, handler, context):
         try:
-            return self._run_and_set_variables(handler, output, namespace)
+            return self._run_and_set_variables(handler, context)
         except DataError, err:
             msg = unicode(err)
-            output.fail(msg)
+            context.output.fail(msg)
             raise ExecutionFailed(msg, syntax=True)
 
-    def _run_and_set_variables(self, handler, output, namespace):
+    def _run_and_set_variables(self, handler, context):
         try:
-            return_value = Keyword._run(self, handler, output, namespace)
+            return_value = Keyword._run(self, handler, context)
         except ExecutionFailed, err:
             if err.cont:
-                self._set_variables(namespace, output, None)
+                self._set_variables(context, None)
             raise
-        self._set_variables(namespace, output, return_value)
+        self._set_variables(context, return_value)
         return return_value
 
-    def _set_variables(self, namespace, output, return_value):
+    def _set_variables(self, context, return_value):
         for name, value in self._get_vars_to_set(return_value):
-            namespace.variables[name] = value
+            context.get_current_vars()[name] = value
             if is_list_var(name) or utils.is_list(value):
                 value = utils.seq2str2(value)
             else:
                 value = utils.unic(value)
-            output.info('%s = %s' % (name, utils.cut_long_assign_msg(value)))
+            context.output.info('%s = %s' % (name, utils.cut_long_assign_msg(value)))
 
     def _get_vars_to_set(self, ret):
         if ret is None:
@@ -223,32 +222,32 @@ class ForKeyword(BaseKeyword):
         BaseKeyword.__init__(self, kwdata.name, type='for')
         self.keywords = Keywords(kwdata.keywords)
 
-    def run(self, output, namespace):
+    def run(self, context):
         self.starttime = utils.get_timestamp()
-        output.start_keyword(self)
+        context.output.start_keyword(self)
         try:
-            self._run(output, namespace)
+            self._run(context)
         except ExecutionFailed, err:
             error = err
         except DataError, err:
             msg = unicode(err)
-            output.fail(msg)
+            context.output.fail(msg)
             error = ExecutionFailed(msg, syntax=True)
         else:
             error = None
         self.status = 'PASS' if not error else 'FAIL'
         self.endtime = utils.get_timestamp()
         self.elapsedtime = utils.get_elapsed_time(self.starttime, self.endtime)
-        output.end_keyword(self)
+        context.output.end_keyword(self)
         if error:
             raise error
 
-    def _run(self, output, namespace):
-        items = self._replace_vars_from_items(namespace.variables)
+    def _run(self, context):
+        items = self._replace_vars_from_items(context.get_current_vars())
         errors = []
         for i in range(0, len(items), len(self.vars)):
             values = items[i:i+len(self.vars)]
-            err = self._run_one_round(output, namespace, self.vars, values)
+            err = self._run_one_round(context, self.vars, values)
             if err:
                 errors.extend(err.get_errors())
                 if not err.cont:
@@ -256,19 +255,19 @@ class ForKeyword(BaseKeyword):
         if errors:
             raise ExecutionFailures(errors)
 
-    def _run_one_round(self, output, namespace, variables, values):
+    def _run_one_round(self, context, variables, values):
         foritem = ForItemKeyword(variables, values)
-        output.start_keyword(foritem)
+        context.output.start_keyword(foritem)
         for var, value in zip(variables, values):
-            namespace.variables[var] = value
+            context.get_current_vars()[var] = value
         try:
-            self.keywords.run(output, namespace)
+            self.keywords.run(context)
         except ExecutionFailed, err:
             error = err
         else:
             error = None
         foritem.end('PASS' if not error else 'FAIL')
-        output.end_keyword(foritem)
+        context.output.end_keyword(foritem)
         return error
 
     def _replace_vars_from_items(self, variables):
@@ -314,12 +313,12 @@ class SyntaxErrorKeyword(BaseKeyword):
         BaseKeyword.__init__(self, kwdata.name, type='error')
         self._error = kwdata.error
 
-    def run(self, output, namespace):
+    def run(self, context):
         self.starttime = utils.get_timestamp()
         self.status = 'FAIL'
-        output.start_keyword(self)
-        output.fail(self._error)
+        context.output.start_keyword(self)
+        context.output.fail(self._error)
         self.endtime = utils.get_timestamp()
         self.elapsedtime = utils.get_elapsed_time(self.starttime, self.endtime)
-        output.end_keyword(self)
+        context.output.end_keyword(self)
         raise ExecutionFailed(self._error, syntax=True)

@@ -30,5 +30,8 @@ class UserErrorHandler:
         self._error = error
         self.timeout = ''
 
+    def init_keyword(self, varz):
+        pass
+
     def run(self, *args):
         raise DataError(self._error)

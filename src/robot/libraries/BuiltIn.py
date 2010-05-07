@@ -759,7 +759,8 @@ class _RunKeyword:
         if not utils.is_str(name):
             raise DataError('Keyword name must be a string')
         kw = Keyword(name, args)
-        return kw.run(output.OUTPUT, NAMESPACES.current)
+        from robot.running.model import ExecutionContext
+        return kw.run(ExecutionContext(NAMESPACES.current, output.OUTPUT))
 
     def run_keyword_if(self, condition, name, *args):
         """Runs the given keyword with the given arguments, if `condition` is true.

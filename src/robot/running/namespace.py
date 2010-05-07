@@ -36,10 +36,10 @@ class Namespace:
     A new instance of this class is created for each test suite.
     """
 
-    def __init__(self, suite, parent):
+    def __init__(self, suite, parent_vars):
         if suite is not None:
             LOGGER.info("Initializing namespace for test suite '%s'" % suite.longname)
-        self.variables = _VariableScopes(suite, parent)
+        self.variables = _VariableScopes(suite, parent_vars)
         self.suite = suite
         self.test = None
         self.uk_handlers = []
@@ -54,6 +54,8 @@ class Namespace:
         if suite.source is not None:
             self._handle_imports(suite.imports)
         robot.running.NAMESPACES.start_suite(self)
+        self.variables['${SUITE_NAME}'] = suite.longname
+        self.variables['${SUITE_SOURCE}'] = suite.source
 
     def _handle_imports(self, import_settings):
         for item in import_settings:
@@ -149,7 +151,7 @@ class Namespace:
         for lib in self._testlibs.values():
             lib.end_test()
 
-    def test_ended(self, message, status):
+    def set_test_status_before_teardown(self, message, status):
         self.variables['${TEST_MESSAGE}'] = message
         self.variables['${TEST_STATUS}'] = status
 
@@ -297,15 +299,15 @@ class Namespace:
 
 class _VariableScopes:
 
-    def __init__(self, suite, parent):
+    def __init__(self, suite, parent_vars):
         # suite and parent are None only when used by copy_all
         if suite is not None:
             suite.variables.update(GLOBAL_VARIABLES)
             self._suite = self.current = suite.variables
         self._parents = []
-        if parent is not None:
-            self._parents.append(parent.namespace.variables.current)
-            self._parents.extend(parent.namespace.variables._parents)
+        if parent_vars is not None:
+            self._parents.append(parent_vars.current)
+            self._parents.extend(parent_vars._parents)
         self._test = None
         self._uk_handlers = []
 
@@ -351,6 +353,7 @@ class _VariableScopes:
     def set_from_variable_table(self, rawvariables):
         self._suite.set_from_variable_table(rawvariables)
 
+    # TODO Cleanup, accumulator and return val etc.
     def replace_meta(self, name, item, errors):
         error = None
         for varz in [self.current] + self._parents:

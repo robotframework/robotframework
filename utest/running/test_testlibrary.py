@@ -397,7 +397,7 @@ class TestHandlers(unittest.TestCase):
         lib = TestLibrary('classes.RecordingLibrary')
         calls_after_init = lib._libinst.calls_to_getattr
         for _ in range(5): 
-            lib.handlers['kw'].run(_FakeOutput(), _FakeNamespace(), [])
+            lib.handlers['kw'].run(_FakeContext(), [])
         assert_equals(lib._libinst.calls_to_getattr, calls_after_init)
                     
     if utils.is_jython:
@@ -504,6 +504,15 @@ class _FakeOutput:
         pass
     def log_output(self, output):
         pass
+
+
+class _FakeContext:
+    def __init__(self):
+        self.output = _FakeOutput()
+        self.namespace =  _FakeNamespace()
+
+    def get_current_vars(self):
+        return self.namespace.variables
 
 
 if __name__ == '__main__':

@@ -85,11 +85,15 @@ class _RunnableHandler(_BaseHandler):
             return self._get_global_handler(method, name)
         return None
 
-    def run(self, output, namespace, args):
-        positional, named = self.arguments.resolve(args, namespace.variables,
+    def init_keyword(self, varz):
+        pass
+
+    def run(self, context, args):
+        output = context.output
+        positional, named = self.arguments.resolve(args, context.get_current_vars(),
                                                    output)
         runner = self._runner_for(self._current_handler(), output, positional,
-                                  named, self._get_timeout(namespace))
+                                  named, self._get_timeout(context.namespace))
         return self._run_with_output_captured_and_signal_monitor(runner, output)
 
     def _runner_for(self, handler, output, positional, named, timeout):

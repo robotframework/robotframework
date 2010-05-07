@@ -35,6 +35,77 @@ def TestSuite(datasources, settings):
     return suite
 
 
+class ExecutionContext(object):
+
+    def __init__(self, namespace, output):
+        self.namespace = namespace
+        self.output = output
+
+    def get_current_vars(self):
+        return self.namespace.variables
+
+    def end_test(self, test):
+        self.output.end_test(test)
+        self.namespace.end_test()
+
+    def end_suite(self, suite):
+        self.output.end_suite(suite)
+        self.namespace.end_suite()
+
+    def output_file_changed(self, filename):
+        self._set_global_variable('${OUTPUT_FILE}', filename)
+
+    def replace_vars_from_setting(self, name, value, errors):
+        return self.namespace.variables.replace_meta(name, value, errors)
+
+    def log_file_changed(self, filename):
+        self._set_global_variable('${LOG_FILE}', filename)
+
+    def set_prev_test_variables(self, test):
+        self._set_prev_test_variables(self.get_current_vars(), test.name,
+                                      test.status, test.message)
+
+    def copy_prev_test_vars_to_global(self):
+        varz = self.get_current_vars()
+        name, status, message = varz['${PREV_TEST_NAME}'], \
+                    varz['${PREV_TEST_STATUS}'], varz['${PREV_TEST_MESSAGE}']
+        self._set_prev_test_variables(GLOBAL_VARIABLES, name, status, message)
+
+    def _set_prev_test_variables(self, destination, name, status, message):
+        destination['${PREV_TEST_NAME}'] = name
+        destination['${PREV_TEST_STATUS}'] = status
+        destination['${PREV_TEST_MESSAGE}'] = message
+
+    def _set_global_variable(self, name, value):
+        self.namespace.variables.set_global(name, value)
+
+    def report_suite_status(self, status, message):
+        self.get_current_vars()['${SUITE_STATUS}'] = status
+        self.get_current_vars()['${SUITE_MESSAGE}'] = message
+
+    def start_test(self, test):
+        self.namespace.start_test(test)
+        self.output.start_test(test)
+
+    def set_test_status_before_teardown(self, message, status):
+        self.namespace.set_test_status_before_teardown(message, status)
+
+    def get_handler(self, name):
+        return self.namespace.get_handler(name)
+
+    def start_keyword(self, keyword):
+        self.output.start_keyword(keyword)
+
+    def end_keyword(self, keyword):
+        self.output.end_keyword(keyword)
+
+    def warn(self, message):
+        self.output.warn(message)
+
+    def trace(self, message):
+        self.output.trace(message)
+
+
 class RunnableTestSuite(BaseTestSuite):
 
     def __init__(self, data, testdefaults=None, parent=None):
@@ -58,56 +129,57 @@ class RunnableTestSuite(BaseTestSuite):
         self._run_mode_exit_on_failure = False
 
     def run(self, output, parent=None, errors=None):
-        self._start_run(output, parent, errors)
-        self._run_setup(output)
-        self._run_sub_suites(output)
-        self._run_tests(output)
-        self._report_status(output)
-        self._run_teardown(output)
-        self._end_run(output)
+        context = self._start_run(output, parent, errors)
+        self._run_setup(context)
+        self._run_sub_suites(context)
+        self._run_tests(context)
+        self._report_status(context)
+        self._run_teardown(context)
+        self._end_run(context)
 
     def _start_run(self, output, parent, errors):
         if not errors:
             errors = SuiteRunErrors(self._run_mode_exit_on_failure)
         self.run_errors = errors
         self.run_errors.start_suite()
-        self._init_run(parent)
-        self._set_variable_dependent_metadata(self.namespace.variables)
-        output.start_suite(self)
-
-    def _init_run(self, parent):
         self.status = 'RUNNING'
         self.starttime = utils.get_timestamp()
-        self.namespace = Namespace(self, parent)
-        self.namespace.variables['${SUITE_NAME}'] = self.longname
-        self.namespace.variables['${SUITE_SOURCE}'] = self.source
+        parent_vars = parent.context.get_current_vars() if parent else None
+        self.context = ExecutionContext(Namespace(self, parent_vars), output)
+        self._set_variable_dependent_metadata(self.context)
+        output.start_suite(self)
+        return self.context
 
-    def _set_variable_dependent_metadata(self, variables):
+    def _set_variable_dependent_metadata(self, context):
         errors = []
-        self.doc = variables.replace_meta('Documentation', self.doc, errors)
-        self.setup = Setup(variables.replace_meta('Setup', self.setup, errors))
-        self.teardown = Teardown(
-            variables.replace_meta('Teardown', self.teardown, errors))
+        self.doc = context.replace_vars_from_setting('Documentation', self.doc,
+                                                     errors)
+        self.setup = Setup(context.replace_vars_from_setting('Setup', self.setup,
+                                                             errors))
+        self.teardown = Teardown(context.replace_vars_from_setting('Teardown',
+                                                                   self.teardown,
+                                                                   errors))
         for name, value in self.metadata.items():
-            self.metadata[name] = variables.replace_meta(name, value, errors)
+            self.metadata[name] = context.replace_vars_from_setting(name, value,
+                                                                    errors)
         if errors:
             self.run_errors.suite_init_err('Suite initialization failed:\n%s'
                                             % '\n'.join(errors))
 
-    def _run_setup(self, output):
+    def _run_setup(self, context):
         if self.run_errors.is_suite_setup_allowed():
-            self.setup.run(output, self.namespace, SuiteSetupListener(self))
+            self.setup.run(context, SuiteSetupListener(self))
             self.run_errors.setup_executed()
 
-    def _run_teardown(self, output):
+    def _run_teardown(self, context):
         if self.run_errors.is_suite_teardown_allowed():
-            self.teardown.run(output, self.namespace, SuiteTearDownListener(self))
+            self.teardown.run(context, SuiteTearDownListener(self))
 
-    def _run_sub_suites(self, output):
+    def _run_sub_suites(self, context):
         for suite in self.suites:
-            suite.run(output, self, self.run_errors)
+            suite.run(context.output, self, self.run_errors)
 
-    def _run_tests(self, output):
+    def _run_tests(self, context):
         executed_tests = []
         for test in self.tests:
             normname = utils.normalize(test.name)
@@ -115,32 +187,20 @@ class RunnableTestSuite(BaseTestSuite):
                 LOGGER.warn("Multiple test cases with name '%s' executed in "
                             "test suite '%s'"% (test.name, self.longname))
             executed_tests.append(normname)
-            test.run(output, self.namespace, self.run_errors)
-            self._set_prev_test_variables(self.namespace.variables, test)
+            test.run(context, self.run_errors)
+            context.set_prev_test_variables(test)
 
-    def _report_status(self, output):
+    def _report_status(self, context):
         self.set_status()
         self.message = self.run_errors.suite_error()
-        self.namespace.variables['${SUITE_STATUS}'] = self.status
-        self.namespace.variables['${SUITE_MESSAGE}'] = self.get_full_message()
+        context.report_suite_status(self.status, self.get_full_message())
 
-    def _end_run(self, output):
+    def _end_run(self, context):
         self.endtime = utils.get_timestamp()
         self.elapsedtime = utils.get_elapsed_time(self.starttime, self.endtime)
-        self._set_prev_test_variables(GLOBAL_VARIABLES, varz=self.namespace.variables)
-        output.end_suite(self)
-        self.namespace.end_suite()
+        context.copy_prev_test_vars_to_global()
+        context.end_suite(self)
         self.run_errors.end_suite()
-
-    def _set_prev_test_variables(self, destination, test=None, varz=None):
-        if test:
-            name, status, message = test.name, test.status, test.message
-        else:
-            name, status, message = varz['${PREV_TEST_NAME}'], \
-                    varz['${PREV_TEST_STATUS}'], varz['${PREV_TEST_MESSAGE}']
-        destination['${PREV_TEST_NAME}'] = name
-        destination['${PREV_TEST_STATUS}'] = status
-        destination['${PREV_TEST_MESSAGE}'] = message
 
 
 class RunnableTestCase(BaseTestCase):
@@ -156,69 +216,74 @@ class RunnableTestCase(BaseTestCase):
         self.timeout = utils.get_not_none(data.timeout, defaults.test_timeout)
         self.keywords = Keywords(data.keywords)
 
-    def run(self, output, namespace, suite_errors):
+    def run(self, context, suite_errors):
         self._suite_errors = suite_errors
-        self._start_run(output, namespace)
+        self._start_run(context)
         if self.run_errors.is_allowed_to_run():
-            self._run(output, namespace)
+            self._run(context)
         else:
             self._not_allowed_to_run()
-        self._end_run(output, namespace)
+        self._end_run(context)
 
-    def _start_run(self, output, namespace):
+    def _start_run(self, context):
         self.run_errors = TestRunErrors(self._suite_errors)
         self.status = 'RUNNING'
         self.starttime = utils.get_timestamp()
-        self.run_errors.init_err(self._init_test(namespace.variables))
-        namespace.start_test(self)
-        output.start_test(self)
+        self.run_errors.init_err(self._init_test(context))
+        context.start_test(self)
 
-    def _init_test(self, varz):
+    def _init_test(self, context):
         errors = []
-        self.doc = varz.replace_meta('Documentation', self.doc, errors)
-        self.setup = Setup(varz.replace_meta('Setup', self.setup, errors))
-        self.teardown = Teardown(
-            varz.replace_meta('Teardown', self.teardown, errors))
-        self.tags = utils.normalize_tags(
-            varz.replace_meta('Tags', self.tags, errors))
-        self.timeout = TestTimeout(
-            *varz.replace_meta('Timeout', self.timeout, errors))
+        self.doc = context.replace_vars_from_setting('Documentation', self.doc,
+                                                     errors)
+        self.setup = Setup(context.replace_vars_from_setting('Setup', self.setup,
+                                                             errors))
+        self.teardown = Teardown(context.replace_vars_from_setting('Teardown',
+                                                                   self.teardown,
+                                                                   errors))
+        self.tags = utils.normalize_tags(context.replace_vars_from_setting('Tags',
+                                                                           self.tags,
+                                                                           errors))
+        self.timeout = TestTimeout(*context.replace_vars_from_setting('Timeout',
+                                                                      self.timeout,
+                                                                      errors))
         if errors:
             return 'Test case initialization failed:\n%s' % '\n'.join(errors)
         if not self.keywords:
             return 'Test case contains no keywords'
+        return None
 
-    def _run(self, output, namespace):
+    def _run(self, context):
         self.timeout.start()
-        self._run_setup(output, namespace)
+        self._run_setup(context)
         if not self.run_errors.setup_failed():
             try:
-                self.keywords.run(output, namespace)
+                self.keywords.run(context)
             except ExecutionFailed, err:
                 self.run_errors.kw_err(unicode(err))
                 self.keyword_failed(err)
-        self._report_status(namespace)
-        self._run_teardown(output, namespace)
+        context.set_test_status_before_teardown(*self._report_status())
+        self._run_teardown(context)
         self._report_status_after_teardown()
 
     def keyword_failed(self, err):
         self.timeout.set_keyword_timeout(err.timeout)
         self._suite_errors.test_failed(exit=err.exit)
 
-    def _run_setup(self, output, namespace):
-        self.setup.run(output, namespace, TestSetupListener(self))
+    def _run_setup(self, context):
+        self.setup.run(context, TestSetupListener(self))
 
-    def _report_status(self, namespace):
+    def _report_status(self):
         message = self.run_errors.get_message()
         if message:
             self.status = 'FAIL'
             self.message = message
         else:
             self.status = 'PASS'
-        namespace.test_ended(self.message, self.status)
+        return self.message, self.status
 
-    def _run_teardown(self, output, namespace):
-        self.teardown.run(output, namespace, TestTeardownListener(self))
+    def _run_teardown(self, context):
+        self.teardown.run(context, TestTeardownListener(self))
 
     def _report_status_after_teardown(self):
         if self.run_errors.teardown_failed():
@@ -234,11 +299,10 @@ class RunnableTestCase(BaseTestCase):
         self.status = 'FAIL'
         self.message = self.run_errors.parent_or_init_error()
 
-    def _end_run(self, output, namespace):
+    def _end_run(self, context):
         self.endtime = utils.get_timestamp()
         self.elapsedtime = utils.get_elapsed_time(self.starttime, self.endtime)
-        output.end_test(self)
-        namespace.end_test()
+        context.end_test(self)
 
 
 class _TestCaseDefaults:

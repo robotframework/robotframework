@@ -61,18 +61,16 @@ class Output(AbstractLogger):
     def start_suite(self, suite):
         LOGGER.start_suite(suite)
         if self._xmllogger.started_output:
-            suite.namespace.variables.set_global('${OUTPUT_FILE}',
-                                                 self._xmllogger.started_output)
+            suite.context.output_file_changed(self._xmllogger.started_output)
             if self._namegen:
-                suite.namespace.variables.set_global('${LOG_FILE}',
-                                                     self._namegen.get_name())
+                suite.context.log_file_changed(self._namegen.get_name())
 
     def end_suite(self, suite):
         LOGGER.end_suite(suite)
         if self._xmllogger.ended_output:
             LOGGER.output_file('Output', self._xmllogger.ended_output)
             orig_outpath = self._settings['Output']
-            suite.namespace.variables.set_global('${OUTPUT_FILE}', orig_outpath)
+            suite.context.output_file_changed(orig_outpath)
             self._create_split_log(self._xmllogger.ended_output, suite)
 
     def _create_split_log(self, outpath, suite):
@@ -81,7 +79,7 @@ class Output(AbstractLogger):
         logpath = self._namegen.get_prev()
         output = robot.serializing.SplitSubTestOutput(outpath)
         output.serialize_log(logpath)
-        suite.namespace.variables.set_global('${LOG_FILE}', self._namegen.get_base())
+        suite.context.log_file_changed(self._namegen.get_base())
 
     def start_test(self, test):
         LOGGER.start_test(test)
