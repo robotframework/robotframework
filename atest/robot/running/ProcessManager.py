@@ -9,7 +9,6 @@ class ProcessManager(object):
 
     def __init__(self):
         self._process = None
-        self._output_read = False
         self._stdout = ''
         self._stderr = ''
 
@@ -17,13 +16,8 @@ class ProcessManager(object):
         args = args[0].split() + list(args[1:])
         self._process = subprocess.Popen(args, stderr=subprocess.PIPE, 
                                          stdout=subprocess.PIPE)
-        self._output_read = False
         self._stdout = ''
         self._stderr = ''
-
-    def returncode(self):
-        self._process.poll()
-        return self._process.returncode
 
     def send_terminate(self, signal_name):
         if os.name != 'nt':
@@ -46,9 +40,8 @@ class ProcessManager(object):
         return self._stderr
 
     def wait_until_finished(self):
-        if not self._output_read:
-            self._stdout,self._stderr = self._process.communicate()
-            self._output_read = True
+        if self._process.returncode is None:
+            self._stdout, self._stderr = self._process.communicate()
 
     def busy_sleep(self, seconds):
         max_time = time.time() + int(seconds)
