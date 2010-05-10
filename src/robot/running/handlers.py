@@ -90,7 +90,14 @@ class _RunnableHandler(_BaseHandler):
 
     def run(self, context, args):
         if context.dry_run:
-            return None
+            return self._dry_run(args)
+        return self._run(context, args)
+
+    def _dry_run(self, args):
+        self.arguments.check_arg_limits_for_dry_run(args)
+        return None
+
+    def _run(self, context, args):
         output = context.output
         positional, named = self.arguments.resolve(args, context.get_current_vars(),
                                                    output)

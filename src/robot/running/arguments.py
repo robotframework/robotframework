@@ -16,6 +16,7 @@ import sys
 from types import MethodType, FunctionType
 
 from robot.errors import DataError, FrameworkError
+from robot.variables import is_list_var
 from robot import utils
 
 if utils.is_jython:
@@ -39,6 +40,9 @@ class _KeywordArguments(object):
 
     def check_arg_limits(self, args, namedargs={}):
         self._arg_limit_checker.check_arg_limits(args, namedargs)
+
+    def check_arg_limits_for_dry_run(self, args):
+        self._arg_limit_checker.check_arg_limits_for_dry_run(args)
 
     def _tracelog_args(self, logger, posargs, namedargs={}):
         if self._logger_not_available_during_library_init(logger):
@@ -212,7 +216,7 @@ class JavaInitArguments(JavaKeywordArguments):
         return args, {}
 
 
-class UserKeywordArguments(object):
+class UserKeywordArguments(_KeywordArguments):
 
     def __init__(self, argnames, defaults, varargs, minargs, maxargs, name):
         self.names = list(argnames) # Python 2.5 does not support indexing tuples
@@ -405,10 +409,17 @@ class _ArgLimitChecker(object):
         self._type = type_
 
     def check_arg_limits(self, args, namedargs={}):
-        arg_count = len(args) + len(namedargs)
+        self._check_arg_limits(len(args) + len(namedargs))
+
+    def check_arg_limits_for_dry_run(self, args):
+        arg_count = len(args)
+        if args and is_list_var(args[-1]):
+            arg_count = self.minargs
+        self._check_arg_limits(arg_count)
+
+    def _check_arg_limits(self, arg_count):
         if not self.minargs <= arg_count <= self.maxargs:
             self._raise_inv_args(arg_count)
-        return args
 
     def check_missing_args(self, args, arg_count):
         for a in args:

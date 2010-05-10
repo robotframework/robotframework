@@ -139,9 +139,21 @@ class UserKeywordHandler(object):
 
     def _run(self, context, arguments):
         variables = context.get_current_vars()
+        if context.dry_run:
+            return self._dry_run(context, variables, arguments)
+        return self._variable_resolving_run(context, variables, arguments)
+
+    def _dry_run(self, context, variables, arguments):
+        self.arguments.check_arg_limits_for_dry_run(arguments)
+        return self._execute(context, variables)
+
+    def _variable_resolving_run(self, context, variables, arguments):
         argument_values = self.arguments.resolve(arguments, variables)
-        output = context.output
-        self.arguments.set_variables(argument_values, variables, output)
+        self.arguments.set_variables(argument_values, variables,
+                                     context.output)
+        return self._execute(context, variables)
+
+    def _execute(self, context, variables):
         self._verify_keyword_is_valid()
         self.timeout.start()
         self.keywords.run(context)
