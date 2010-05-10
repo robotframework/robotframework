@@ -1,0 +1,41 @@
+*** Settings ***
+Suite Setup     Run Tests  --runmode dryrun  cli/dryrun.txt
+Force Tags      regression  pybot  jybot
+Resource        atest_resource.txt
+
+*** Test Cases ***
+
+No Failures
+    ${tc}=  Check Test Case  ${TESTNAME}
+    Should have correct number of keywords  ${tc}  2
+    Should have correct number of keywords  ${tc.kws[1]}  1
+
+Failures
+    ${tc}=  Check Test Case  ${TESTNAME}
+    Should have correct number of keywords  ${tc}  3
+    Should have correct number of keywords  ${tc.kws[1]}  2
+
+For Loops
+    ${tc}=  Check Test Case  ${TESTNAME}
+    Should have correct number of keywords  ${tc}  2
+    Should have correct number of keywords  ${tc.kws[0]}  1
+    Should have correct number of keywords  ${tc.kws[0].kws[0]}  2
+    Should have correct number of keywords  ${tc.kws[1]}  2
+
+Non-existing keyword name
+    ${tc}=  Check Test Case  ${TESTNAME}
+
+Wrong Number of Arguments
+    ${tc}=  Check Test Case  ${TESTNAME}
+
+Wrong Number of Arguments for UK
+    ${tc}=  Check Test Case  ${TESTNAME}
+    
+Arguments given as list variable
+    ${tc}=  Check Test Case  ${TESTNAME}
+
+*** Keywords ***
+Should have correct number of keywords
+    [Arguments]  ${test or uk}  ${exp number of kws}
+    Log  ${test or uk.kws}
+    Should Be Equal As Integers  ${test or uk.kws.__len__()}  ${exp number of kws}

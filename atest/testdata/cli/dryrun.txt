@@ -1,0 +1,55 @@
+*** Test Cases ***
+
+No Failures
+    Log  Hello from test
+    Simple UK
+
+Failures
+    Fail
+    Fail In Uk
+    No Operation
+
+For Loops
+    ::FOR  ${i}  IN RANGE  10
+    \   Log  ${i}
+    \   Fail
+    For Loop in UK
+
+Non-existing keyword name
+    [ Documentation ]  FAIL No keyword with name 'Does not exist' found.
+    Does not exist
+
+Wrong Number of Arguments
+    [Documentation]  FAIL Keyword 'BuiltIn.Should Be Equal' expected 2 to 4 arguments, got 1.
+    Should Be Equal  1
+
+Wrong Number of Arguments for UK
+    [Documentation]  FAIL Keyword 'Anarchy In The UK' expected 2 arguments, got 1.
+    Anarchy in the UK  foo
+
+Arguments given as list variable
+    [Documentation]  FAIL Keyword 'BuiltIn.Should Be Equal' expected 2 to 4 arguments, got 1.
+    @{list} =  Create List  1  1
+    Should Be Equal  @{list}
+    Anarchy in the UK  @{list}
+    @{empty list}  Create List
+    Convert to Number   1  @{empty list}
+    Should Be Equal  @{foo
+
+
+*** Keywords ***
+Simple UK
+    Log  Hello from UK
+
+Fail In UK
+    Fail
+    Fail  And again
+
+For Loop in UK
+    ::FOR  ${i}  IN RANGE  10
+    \   Should be Equal  ${i}  0
+    Fail
+
+Anarchy in the UK
+    [Arguments]  ${a1}  ${a2}
+    Fail  ${a1}${2}
