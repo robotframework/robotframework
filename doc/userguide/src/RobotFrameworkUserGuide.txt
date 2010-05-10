@@ -57,6 +57,7 @@ Executing test cases
    :local: 
 
 .. include:: ExecutingTestCases/BasicUsage.txt
+.. include:: ExecutingTestCases/TestExecution.txt
 .. include:: ExecutingTestCases/ConfiguringExecution.txt
 .. include:: ExecutingTestCases/OutputFiles.txt
 
