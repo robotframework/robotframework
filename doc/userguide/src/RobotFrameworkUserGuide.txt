@@ -58,6 +58,7 @@ Executing test cases
 
 .. include:: ExecutingTestCases/BasicUsage.txt
 .. include:: ExecutingTestCases/TestExecution.txt
+.. include:: ExecutingTestCases/PostProcessing.txt
 .. include:: ExecutingTestCases/ConfiguringExecution.txt
 .. include:: ExecutingTestCases/OutputFiles.txt
 
