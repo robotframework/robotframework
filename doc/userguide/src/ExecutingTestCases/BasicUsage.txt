@@ -3,8 +3,11 @@ Basic usage
 
 Robot Framework test cases are executed from the command line, and the
 end result is, by default, an output file in the XML format and an HTML
-report and log. After the execution, output files can be combined and
-otherwise post-processed with the :prog:`rebot` tool.
+report and log. After the execution, `output files`__ can be combined and
+otherwise `post-processed`__ with the :prog:`rebot` tool.
+
+__ `Created outputs`_
+__ `Post-processing outputs`_
 
 .. contents::
    :depth: 2
@@ -90,7 +93,7 @@ in the second example below::
    pybot --name Example path/to/tests/pattern_*.html
 
 Using command line options
-''''''''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Robot Framework provides a number of command line options that can be
 used to control how test cases are executed and what outputs are
@@ -99,7 +102,7 @@ options actually exist and how they can be used is
 discussed elsewhere in this chapter.
 
 Using options
-`````````````
+'''''''''''''
 
 When options are used, they must always be given between the runner
 script and the data sources. For example::
@@ -108,7 +111,7 @@ script and the data sources. For example::
    jybot --include smoke --variable HOST:10.0.0.42 path/to/tests/
 
 Short and long options
-``````````````````````
+''''''''''''''''''''''
 
 Options always have a long name, such as :opt:`--name`, and the
 most frequently needed options also have a short name, such as
@@ -127,7 +130,7 @@ names in an easy-to-read format. For example, :opt:`--SuiteStatLevel`
 is equivalent to, but easier to read than :opt:`--suitestatlevel`.
 
 Setting option values
-`````````````````````
+'''''''''''''''''''''
 
 Most of the options require a value, which is given after the option
 name. Both short and long options accept the value separated
@@ -142,7 +145,7 @@ variables. If the options that take only one value are used several
 times, the value given last is effective.
 
 Option value as simple pattern
-``````````````````````````````
+''''''''''''''''''''''''''''''
 
 Many of the options take arguments as *simple patterns*. This means
 that :code:`*` and :code:`?` can be used as special characters, so
@@ -152,8 +155,11 @@ prefix-\*` matches all tags starting with :code:`prefix-`, and
 :cli:`--include a???` matches any tag that is four characters long and
 starts with a character :code:`a`.
 
-Generated outputs
-'''''''''''''''''
+Test results
+~~~~~~~~~~~~
+
+Command line output
+'''''''''''''''''''
 
 The most visible output from test execution is the output displayed in
 the command line. All executed test suites and test cases, as well as
@@ -163,7 +169,7 @@ output from executing a simple test suite with only two test cases::
    ==============================================================================
    Example test suite
    ==============================================================================
-   First test :: Possible documentation is here                          | PASS |
+   First test :: Possible test documentation                             | PASS |
    ------------------------------------------------------------------------------
    Second test                                                           | FAIL |
    Error message is displayed here
@@ -175,6 +181,9 @@ output from executing a simple test suite with only two test cases::
    Output:  /path/to/output.xml
    Report:  /path/to/report.html
    Log:     /path/to/log.html
+
+Generated output files
+''''''''''''''''''''''
 
 The command line output is very limited, and separate output files are
 normally needed for investigating the test execution. As the example
@@ -246,28 +255,6 @@ file.
 
 __ `Deprecating keywords`_
 __ `Logging information`_
-
-Getting help on the command line
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Both when executing test cases with :prog:`pybot` or :prog:`jybot` and
-when post-processing reports with :prog:`rebot`, it is possible to get
-command line help with the option :opt:`--help` and its short version
-:opt:`-h`. These help texts have a short general overview and
-briefly explain the available command line options.
-
-All runner scripts also support getting the version information with
-the option :opt:`--version`. This information also contains Python
-or Jython version and the platform type::
-
-   $ pybot --version
-   Robot Framework 2.0.3 (Python 2.5.1 on cygwin)
-
-   C:\>jybot --version
-   Robot Framework 2.0.3 (Jython 2.2 on java1.5.0_16)
-
-   C:\>rebot --version
-   Rebot 2.0.3 (Python 2.5.2 on win32)
 
 Escaping complicated characters
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -372,6 +359,29 @@ option multiple times or even recursively::
    pybot -A first.txt -A second.txt -A third.txt some_tests.tsv
 
 __ `Specifying test data to be executed`_
+
+Getting help and version information
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Both when executing test cases with :prog:`pybot` or :prog:`jybot` and
+when post-processing reports with :prog:`rebot`, it is possible to get
+command line help with the option :opt:`--help` and its short version
+:opt:`-h`. These help texts have a short general overview and
+briefly explain the available command line options.
+
+All runner scripts also support getting the version information with
+the option :opt:`--version`. This information also contains Python
+or Jython version and the platform type::
+
+   $ pybot --version
+   Robot Framework 2.0.3 (Python 2.5.1 on cygwin)
+
+   C:\>jybot --version
+   Robot Framework 2.0.3 (Jython 2.2 on java1.5.0_16)
+
+   C:\>rebot --version
+   Rebot 2.0.3 (Python 2.5.2 on win32)
+
 
 Creating start-up scripts
 ~~~~~~~~~~~~~~~~~~~~~~~~~

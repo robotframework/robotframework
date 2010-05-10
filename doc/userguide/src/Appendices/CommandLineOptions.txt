@@ -134,7 +134,7 @@ Command line options for post-processing outputs
 .. _search test libraries: `library search path`_
 .. _Escapes characters: `Escaping complicated characters`_
 .. _read more arguments: `Argument files`_
-.. _usage instructions: `Getting help on the command line`_
+.. _usage instructions: `Getting help and version information`_
 .. _version information: `usage instructions`_
 
 .. _Removes keyword data: `Removing keywords from outputs`_
