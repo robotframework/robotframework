@@ -9,6 +9,7 @@ class ProcessManager(object):
 
     def __init__(self):
         self._process = None
+        self._output_read = False
         self._stdout = ''
         self._stderr = ''
 
@@ -16,6 +17,7 @@ class ProcessManager(object):
         args = args[0].split() + list(args[1:])
         self._process = subprocess.Popen(args, stderr=subprocess.PIPE, 
                                          stdout=subprocess.PIPE)
+        self._output_read = False
         self._stdout = ''
         self._stderr = ''
 
@@ -36,15 +38,17 @@ class ProcessManager(object):
                       signal.signal(signal.SIGINT, orig_handler))
 
     def get_stdout(self):
-        self._stdout += self._process.stdout.read()
+        self.wait_until_finished()
         return self._stdout
 
     def get_stderr(self):
-        self._stderr += self._process.stderr.read()
+        self.wait_until_finished()
         return self._stderr
 
     def wait_until_finished(self):
-        self._process.wait()
+        if not self._output_read:
+            self._stdout,self._stderr = self._process.communicate()
+            self._output_read = True
 
     def busy_sleep(self, seconds):
         max_time = time.time() + int(seconds)

@@ -85,6 +85,8 @@ Start Running Jybot
     Set Runners
     ${path to datasource} =  Set Variables And Get Datasources  ${datasource}
     ${path to runner} =  Join Path  ${ROBOTPATH}  runner.py
+    ${command to run jython} =  catenate  ${jybot}  ${path to runner}  --variable  TESTSIGNALFILE:${test signal file}  --output  ${OUTFILE}  --report  None  --log  None  --variable  TEARDOWNSLEEP:${teardown sleep}  ${path to datasource}
+    log  ${command to run jython}
     ProcessManager.start process  ${jybot}  ${path to runner}  --variable  TESTSIGNALFILE:${test signal file}  --output  ${OUTFILE}  --report  None  --log  None  --variable  TEARDOWNSLEEP:${teardown sleep}  ${path to datasource}
 
 Check Test Cases Have Failed Correctly
