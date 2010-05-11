@@ -413,7 +413,8 @@ class _ArgLimitChecker(object):
 
     def check_arg_limits_for_dry_run(self, args):
         arg_count = len(args)
-        if args and is_list_var(args[-1]):
+        scalar_arg_count = len([a for a in args if not is_list_var(a)])
+        if scalar_arg_count <= self.minargs and arg_count - scalar_arg_count:
             arg_count = self.minargs
         self._check_arg_limits(arg_count)
 
