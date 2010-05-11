@@ -74,17 +74,20 @@ class Keyword(BaseKeyword):
         try:
             ret = self._run(handler, context)
             context.trace('Return: %s' % utils.safe_repr(ret))
-        except ExecutionFailed, err:
+        except ExecutionFailed:
             self.status = 'FAIL'
+            self._end(context)
+            raise
         else:
             if not (context.dry_run and handler.type == 'library'):
                 self.status = 'PASS'
+            self._end(context)
+            return ret
+
+    def _end(self, context):
         self.endtime = utils.get_timestamp()
         self.elapsedtime = utils.get_elapsed_time(self.starttime, self.endtime)
         context.end_keyword(self)
-        if self.status == 'FAIL':
-            raise err
-        return ret
 
     def _get_name(self, handler_name, variables):
         return handler_name
