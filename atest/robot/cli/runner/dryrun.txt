@@ -37,6 +37,9 @@ Too few arguments for UK
 Too many arguments
     Check Test Case  ${TESTNAME}
     
+Invalid syntax in UK
+    Check Test Case  ${TESTNAME}
+
 Arguments given as list variable
     Check Test Case  ${TESTNAME}
 
