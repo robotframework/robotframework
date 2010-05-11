@@ -85,15 +85,21 @@ class ExecutionFailed(RobotError):
 
 class HandlerExecutionFailed(ExecutionFailed):
 
-    def __init__(self, error_details, is_test_or_suite_teardown):
+    def __init__(self, error_details, is_test_or_suite_teardown, is_dry_run):
         orig_error = error_details.error
         timeout = isinstance(orig_error, TimeoutError)
         syntax = isinstance(orig_error, DataError)
         exit = bool(getattr(orig_error, 'ROBOT_EXIT_ON_FAILURE', False))
         cont = bool(getattr(orig_error, 'ROBOT_CONTINUE_ON_FAILURE', False))
         cont = cont or is_test_or_suite_teardown
+        self._is_dry_run = is_dry_run
         ExecutionFailed.__init__(self, error_details.message, timeout, syntax,
                                  exit, cont)
+
+    def _continue_on_failure(self, cont):
+        if self._is_dry_run:
+            return True
+        return ExecutionFailed._continue_on_failure(self, cont)
 
 
 class ExecutionFailures(ExecutionFailed):

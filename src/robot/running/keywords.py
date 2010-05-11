@@ -102,8 +102,8 @@ class Keyword(BaseKeyword):
         context.output.fail(error_details.message)
         if error_details.traceback:
             context.output.debug(error_details.traceback)
-        raise HandlerExecutionFailed(error_details,
-                                     self._in_test_or_suite_teardown(context.namespace))
+        is_teardown = self._in_test_or_suite_teardown(context.namespace)
+        raise HandlerExecutionFailed(error_details, is_teardown, context.dry_run)
 
     def _in_test_or_suite_teardown(self, namespace):
         test_or_suite = namespace.test or namespace.suite
