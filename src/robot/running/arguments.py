@@ -216,7 +216,7 @@ class JavaInitArguments(JavaKeywordArguments):
         return args, {}
 
 
-class UserKeywordArguments(_KeywordArguments):
+class UserKeywordArguments(object):
 
     def __init__(self, argnames, defaults, varargs, minargs, maxargs, name):
         self.names = list(argnames) # Python 2.5 does not support indexing tuples
@@ -225,6 +225,17 @@ class UserKeywordArguments(_KeywordArguments):
         self.minargs = minargs
         self._arg_limit_checker = _ArgLimitChecker(minargs, maxargs,
                                                    name, 'Keyword')
+
+    def resolve_arguments_for_dry_run(self, arguments):
+        self._arg_limit_checker.check_arg_limits_for_dry_run(arguments)
+        required_number_of_args = self.minargs + len(self.defaults)
+        needed_args = required_number_of_args - len(arguments)
+        if needed_args > 0:
+            return self._fill_missing_args(arguments, needed_args)
+        return arguments
+
+    def _fill_missing_args(self, arguments, needed):
+        return arguments + needed * [None]
 
     def resolve(self, arguments, variables):
         positional, varargs, named = self._resolve_arg_usage(arguments, variables)

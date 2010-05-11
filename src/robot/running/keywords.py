@@ -247,9 +247,9 @@ class ForKeyword(BaseKeyword):
             raise error
 
     def _run(self, context):
-        items = self._replace_vars_from_items(context.get_current_vars())
         errors = []
-        for i in self._iteration_steps(items, context):
+        items, iteration_steps = self._get_items_and_iteration_steps(context)
+        for i in iteration_steps:
             values = items[i:i+len(self.vars)]
             err = self._run_one_round(context, self.vars, values)
             if err:
@@ -259,10 +259,11 @@ class ForKeyword(BaseKeyword):
         if errors:
             raise ExecutionFailures(errors)
 
-    def _iteration_steps(self, items, context):
+    def _get_items_and_iteration_steps(self, context):
         if context.dry_run:
-            return [0]
-        return range(0, len(items), len(self.vars))
+            return self.vars, [0]
+        items = self._replace_vars_from_items(context.get_current_vars())
+        return items, range(0, len(items), len(self.vars))
 
     def _run_one_round(self, context, variables, values):
         foritem = ForItemKeyword(variables, values)
