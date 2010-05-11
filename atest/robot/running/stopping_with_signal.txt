@@ -44,12 +44,16 @@ Two Signals Should Stop Test Execution Forcefully When Run Keyword Is Used
     Check Tests Have Been Forced To Shutdown
 
 Two Signals Should Stop Test Execution Forcefully When Test Timeout Is Used
+    [timeout]  1 minute
     Start And Send Signal  test_timeout.txt  Two Signals  SIGINT  2s
     Check Tests Have Been Forced To Shutdown
+    [teardown]  Log Info From Process
 
 Two Signals Should Stop Test Execution Forcefully When Keyword Timeout Is Used
+    [timeout]  1 minute
     Start And Send Signal  keyword_timeout.txt  Two Signals  SIGINT  2s
     Check Tests Have Been Forced To Shutdown
+    [teardown]  Log Info From Process
 
 One Signal Should Stop Test Execution Gracefully And Test Case And Suite Teardowns Should Be Run
     Start And Send Signal  with_teardown.txt  One Signal  SIGINT  0s
@@ -110,3 +114,6 @@ Two Signals
 	send terminate  ${signal}
 	Busy Sleep  1
 	send terminate  ${signal}
+
+Log Info From Process
+    Run Keyword If Test Failed  Log Stdout And Stderr

@@ -39,6 +39,10 @@ class ProcessManager(object):
         self.wait_until_finished()
         return self._stderr
 
+    def log_stdout_and_stderr(self):
+        print "stdout: ", self._process.stdout.read()
+        print "stderr: ", self._process.stderr.read()
+
     def wait_until_finished(self):
         if self._process.returncode is None:
             self._stdout, self._stderr = self._process.communicate()
