@@ -293,9 +293,9 @@ class ForKeyword(BaseKeyword):
     def _get_range_items(self, items):
         try:
             items = [ int(item) for item in items ]
-        except ValueError:
-            raise DataError('FOR IN RANGE expected integer arguments, '
-                            'got %s instead.' % utils.type_as_str(item, True))
+        except:
+            raise DataError('Converting argument of FOR IN RANGE failed: %s'
+                            % utils.get_error_message())
         if not 1 <= len(items) <= 3:
             raise DataError('FOR IN RANGE expected 1-3 arguments, '
                             'got %d instead.' % len(items))
