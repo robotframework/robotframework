@@ -1,7 +1,18 @@
+*** Settings ***
+Library  OperatingSystem
+Variables  vars.py
+Resource  ${RESOURCE PATH}
+
+Library  DoesNotExist
+Variables  wrong_path.py
+Resource  NonExisting.tsv
+
+
 *** Test Cases ***
 
 No Failures
     Log  Hello from test
+    ${contents}=  List Directory  .
     Simple UK
 
 Failures
@@ -10,46 +21,36 @@ Failures
     No Operation
 
 For Loops
+    [Documentation]  FAIL Keyword 'resource.Anarchy In The UK' expected 3 arguments, got 2.
     ::FOR  ${i}  IN RANGE  10
     \   Log  ${i}
-    \   Fail
+    \   Simple UK
     For Loop in UK
+    ::FOR  ${a}  ${b}  IN RANGE  2
+    \   Anarchy in the UK  1  2
 
 Non-existing keyword name
     [ Documentation ]  FAIL No keyword with name 'Does not exist' found.
     Does not exist
 
-Wrong Number of Arguments
+Too few arguments
     [Documentation]  FAIL Keyword 'BuiltIn.Should Be Equal' expected 2 to 4 arguments, got 1.
     Should Be Equal  1
 
-Wrong Number of Arguments for UK
-    [Documentation]  FAIL Keyword 'Anarchy In The UK' expected 2 arguments, got 1.
+Too few arguments for UK
+    [Documentation]  FAIL Keyword 'resource.Anarchy In The UK' expected 3 arguments, got 1.
     Anarchy in the UK  foo
+
+Too many arguments
+    [Documentation]  FAIL  Keyword 'BuiltIn.No Operation' expected 0 arguments, got 2.
+    No Operation  ${foo}  @{list}
 
 Arguments given as list variable
     [Documentation]  FAIL Keyword 'BuiltIn.Should Be Equal' expected 2 to 4 arguments, got 1.
     @{list} =  Create List  1  1
     Should Be Equal  @{list}
     Anarchy in the UK  @{list}
+    Anarchy in the UK  @{list}  1
     @{empty list}  Create List
-    Convert to Number   1  @{empty list}
+    Convert to Number   1  @{empty list}  @{empty list}
     Should Be Equal  @{foo
-
-
-*** Keywords ***
-Simple UK
-    Log  Hello from UK
-
-Fail In UK
-    Fail
-    Fail  And again
-
-For Loop in UK
-    ::FOR  ${i}  IN RANGE  10
-    \   Should be Equal  ${i}  0
-    Fail
-
-Anarchy in the UK
-    [Arguments]  ${a1}  ${a2}
-    Fail  ${a1}${2}
