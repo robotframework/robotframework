@@ -240,6 +240,9 @@ For In Range With Wrong Number Of Variables
 For In Range With Non-Existing Variables In Arguments
     Check Test Case  For In Range With Non-Existing Variables In Arguments
 
+For In Range With None As Range
+    Check Test Case  ${TESTNAME}
+
 *** Keywords ***
 Should Be For Keyword
     [Arguments]  ${kw}  ${subcount}

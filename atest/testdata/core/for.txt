@@ -262,7 +262,7 @@ For In Range With No Arguments
     \  Fail  Not executed
 
 For In Range With Non Number Arguments
-    [Documentation]  FAIL FOR IN RANGE expected integer arguments, got string instead.
+    [Documentation]  FAIL Converting argument of FOR IN RANGE failed: ValueError: invalid literal for int() with base 10: 'not a number'
     :FOR  ${i}  IN RANGE  not a number
     \  Fail  Not executed
 
@@ -274,6 +274,11 @@ For In Range With Wrong Number Of Variables
 For In Range With Non-Existing Variables In Arguments
     [Documentation]  FAIL Non-existing variable '\@{non-existing}'
     :FOR  ${i}  IN RANGE  @{non-existing}
+    \  Fail  Not executed
+
+For In Range With None As Range
+    [Documentation]  FAIL Converting argument of FOR IN RANGE failed: TypeError: int() argument must be a string or a number, not 'NoneType'
+    :FOR  ${i}  IN RANGE  ${NONE}
     \  Fail  Not executed
 
 *** Keywords ***
