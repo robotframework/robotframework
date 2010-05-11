@@ -20,17 +20,20 @@ Keywords that would fail
     Fail In Uk
     No Operation
 
+Userkeyword return value
+    ${quux}=  Some Return Value  ${foo}  ${bar}
+
 For Loops
     [Documentation]  FAIL Keyword 'resource.Anarchy In The UK' expected 3 arguments, got 2.
     ::FOR  ${i}  IN RANGE  10
     \   Log  ${i}
     \   Simple UK
     For Loop in UK
-    ::FOR  ${a}  ${b}  IN RANGE  2
+    ::FOR  ${a}  ${b}  IN RANGE  ${NONE}
     \   Anarchy in the UK  1  2
 
 Non-existing keyword name
-    [ Documentation ]  FAIL No keyword with name 'Does not exist' found.
+    [Documentation]  FAIL No keyword with name 'Does not exist' found.
     Does not exist
 
 Too few arguments
@@ -69,3 +72,8 @@ Arguments given as list variable
 Invalid Syntax UK
     [Arguments]  ${arg
     No Operation
+
+Some Return Value
+    [Arguments]  ${a1}  @{a2}
+    [Return]  ${a1}@{a2[1]}
+

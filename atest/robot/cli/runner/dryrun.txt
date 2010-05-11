@@ -12,6 +12,9 @@ Passing keywords
     Status should be  ${tc.kws[0]}  NOT_RUN
     Should have correct number of keywords  ${tc.kws[2]}  1
 
+Userkeyword return value
+    Check Test Case  ${TESTNAME}
+
 Keywords that would fail
     ${tc}=  Check Test Case  ${TESTNAME}
     Should have correct number of keywords  ${tc}  3
