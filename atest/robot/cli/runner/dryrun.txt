@@ -1,18 +1,18 @@
 *** Settings ***
-Suite Setup     Run Tests  --runmode dryrun  cli/dryrun/dryrun.txt
+Suite Setup     Run Tests  --runmode dryrun  cli/dryrun/
 Force Tags      regression  pybot  jybot
 Resource        atest_resource.txt
 
 *** Test Cases ***
 
-No Failures
+Passing keywords
     ${tc}=  Check Test Case  ${TESTNAME}
     Should have correct number of keywords  ${tc}  3
     Status should be  ${tc}  PASS
     Status should be  ${tc.kws[0]}  NOT_RUN
     Should have correct number of keywords  ${tc.kws[2]}  1
 
-Failures
+Keywords that would fail
     ${tc}=  Check Test Case  ${TESTNAME}
     Should have correct number of keywords  ${tc}  3
     Should have correct number of keywords  ${tc.kws[1]}  2
@@ -45,6 +45,8 @@ Invalid imports
     Check Stderr Contains  Variable file 'wrong_path.py' does not exist
     Check Stderr Contains  Resource file 'NonExisting.tsv' does not exist
 
+Test from other suite
+    Check Test Case  Some Other Test
 
 *** Keywords ***
 Should have correct number of keywords

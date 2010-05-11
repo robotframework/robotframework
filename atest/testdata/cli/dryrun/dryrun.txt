@@ -10,12 +10,12 @@ Resource  NonExisting.tsv
 
 *** Test Cases ***
 
-No Failures
+Passing keywords
     Log  Hello from test
     ${contents}=  List Directory  .
     Simple UK
 
-Failures
+Keywords that would fail
     Fail
     Fail In Uk
     No Operation
@@ -54,3 +54,4 @@ Arguments given as list variable
     @{empty list}  Create List
     Convert to Number   1  @{empty list}  @{empty list}
     Should Be Equal  @{foo
+
