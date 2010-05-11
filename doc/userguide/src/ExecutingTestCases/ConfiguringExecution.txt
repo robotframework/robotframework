@@ -340,6 +340,24 @@ Example::
 
     pybot --runmode random:test my_test.txt
 
+
+Dry run
+'''''''
+
+Starting from Robot Framework 2.5 it is possible to specify a dry-run mode
+using the option :opt:`runmode` with value :opt:`DryRun` (case-insensitive). In
+the dry run mode, all but the lowest level (library) keywords are executed.
+This mode can be used to validate the test data; if the dry-run passes, the
+data should be syntactically correct. The dry-run execution may fail for
+following reasons:
+
+  * Using keywords that are not found
+  * Using keywords with wrong number of arguments
+  * Using user keywords that have invalid syntax
+
+In addition, warnings are given for imports that cannot be resolved.
+
+
 Controlling the monitor output
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
