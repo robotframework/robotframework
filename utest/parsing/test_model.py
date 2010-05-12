@@ -50,6 +50,14 @@ class TestSettingTable(unittest.TestCase):
         self.table.doc.set(['hello', 'world'])
         assert_equal(self.table.doc.value, 'hello world')
 
+    def test_imports(self):
+        self.table.add_library(['Name', 'arg'])
+        self.table.add_resource(['reso.txt'])
+        self.table.add_variables(['varz.py', 'a1', 'a2'])
+        self.table.add_resource(['reso2.txt'])
+        assert_true(len(self.table.imports), 4)
+        assert_true(all(isinstance(im, Import) for im in self.table.imports))
+
 
 class TestVariableTable(unittest.TestCase):
 

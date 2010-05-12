@@ -49,6 +49,15 @@ class SettingTable(DataTable):
         self.default_tags = Tags()
         self.imports = []
 
+    def add_library(self, value):
+        self.imports.append(Library(value))
+
+    def add_resource(self, value):
+        self.imports.append(Resource(value))
+
+    def add_variables(self, value):
+        self.imports.append(Variables(value))
+
     def __iter__(self):
         for setting in [self.doc, self.suite_setup, self.suite_teardown,
                         self.metadata, self.test_setup, self.test_teardown,
@@ -123,6 +132,20 @@ class Arguments(Setting):
     pass
 
 class Return(Setting):
+    pass
+
+class Import(Setting):
+
+    def __init__(self, value):
+        self.value = value
+
+class Library(Import):
+    pass
+
+class Resource(Import):
+    pass
+
+class Variables(Import):
     pass
 
 
