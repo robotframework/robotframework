@@ -40,9 +40,10 @@ ARGUMENTS = ' '.join('''
 --doc RobotSPFrameworkSPacceptanceSPtests
 --reporttitle RobotSPFrameworkSPTestSPReport
 --logtitle RobotSPFrameworkSPTestSPLog
---metadata interpreter:%(INTERPRETER)s
---metadata platform:%(PLATFORM)s
---variable interpreter:%(INTERPRETER)s
+--metadata Interpreter:%(INTERPRETER)s
+--metadata Platform:%(PLATFORM)s
+--variable INTERPRETER:%(INTERPRETER)s
+--variable STANDALONE_JYTHON:NO
 --pythonpath %(PYTHONPATH)s
 --include %(RUNNER)s
 --outputdir %(OUTPUTDIR)s
