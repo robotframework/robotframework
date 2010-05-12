@@ -73,6 +73,7 @@ class TestTestCaseTable(unittest.TestCase):
 
     def setUp(self):
         self.table = TestCaseFile().testcase_table
+        self.test = TestCase('name')
 
     def test_create(self):
         assert_equal(self.table.tests, [])
@@ -84,22 +85,57 @@ class TestTestCaseTable(unittest.TestCase):
         assert_equal(test.name, 'My name')
 
     def test_settings(self):
-        test = self.table.add('Name')
-        assert_true(isinstance(test.doc, Documentation))
-        assert_true(isinstance(test.tags, Tags))
-        assert_true(isinstance(test.setup, Fixture))
-        assert_true(isinstance(test.teardown, Fixture))
-        assert_true(isinstance(test.timeout, Timeout))
+        assert_true(isinstance(self.test.doc, Documentation))
+        assert_true(isinstance(self.test.tags, Tags))
+        assert_true(isinstance(self.test.setup, Fixture))
+        assert_true(isinstance(self.test.teardown, Fixture))
+        assert_true(isinstance(self.test.timeout, Timeout))
 
     def test_set_settings(self):
-        test = self.table.add('Name')
-        test.doc.set('My coooool doc')
-        test.tags.set(['My', 'coooool', 'tags'])
-        assert_equal(test.doc.value, 'My coooool doc')
-        assert_equal(test.tags.value, ['My', 'coooool', 'tags'])
+        self.test.doc.set('My coooool doc')
+        self.test.tags.set(['My', 'coooool', 'tags'])
+        assert_equal(self.test.doc.value, 'My coooool doc')
+        assert_equal(self.test.tags.value, ['My', 'coooool', 'tags'])
 
-    def test_add_test_row(self):
-        test = NotImplemented
+
+class TestKeywordTable(unittest.TestCase):
+
+    def setUp(self):
+        self.table = TestCaseFile().keyword_table
+        self.kw = UserKeyword('name')
+
+    def test_create(self):
+        assert_equal(self.table.keywords, [])
+
+    def test_add_keyword(self):
+        kw = self.table.add('My name')
+        assert_true(len(self.table.keywords), 1)
+        assert_true(self.table.keywords[0] is kw)
+        assert_equal(kw.name, 'My name')
+
+    def test_settings(self):
+        assert_true(isinstance(self.kw.doc, Documentation))
+        assert_true(isinstance(self.kw.args, Arguments))
+        assert_true(isinstance(self.kw.return_, Return))
+        assert_true(isinstance(self.kw.timeout, Timeout))
+
+    def test_set_settings(self):
+        self.kw.doc.set('My coooool doc')
+        self.kw.args.set(['${args}', 'are not', 'validated'])
+        assert_equal(self.kw.doc.value, 'My coooool doc')
+        assert_equal(self.kw.args.value, ['${args}', 'are not', 'validated'])
+
+
+class TestStep(unittest.TestCase):
+
+    def setUp(self):
+        self.test = TestCase('name')
+
+    def test_add_test_step(self):
+        self.test.add_step(['Keyword', 'arg1', 'arg2'])
+        assert_equal(len(self.test.steps), 1)
+        assert_equal(self.test.steps[0].keyword, 'Keyword')
+        assert_equal(self.test.steps[0].args, ['arg1', 'arg2'])
 
 
 if __name__ == "__main__":

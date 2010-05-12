@@ -77,7 +77,13 @@ class TestCaseTable(DataTable):
         return self.tests[-1]
 
 class KeywordTable(DataTable):
-    pass
+
+    def __init__(self):
+        self.keywords = []
+
+    def add(self, name):
+        self.keywords.append(UserKeyword(name))
+        return self.keywords[-1]
 
 
 class Setting(object):
@@ -113,6 +119,12 @@ class Timeout(Setting):
 class Tags(Setting):
     pass
 
+class Arguments(Setting):
+    pass
+
+class Return(Setting):
+    pass
+
 
 class Variable(object):
 
@@ -130,3 +142,28 @@ class TestCase(object):
         self.setup = Fixture()
         self.teardown = Fixture()
         self.timeout = Timeout()
+        self.steps = []
+
+    def add_step(self, content):
+        self.steps.append(Step(content))
+
+
+class UserKeyword(object):
+
+    def __init__(self, name):
+        self.name = name
+        self.doc = Documentation()
+        self.args = Arguments()
+        self.return_ = Return()
+        self.timeout = Timeout()
+        self.steps = []
+
+    def add_step(self, content):
+        self.steps.append(Step(content))
+
+
+class Step(object):
+
+    def __init__(self, content):
+        self.keyword = content[0]
+        self.args = content[1:]
