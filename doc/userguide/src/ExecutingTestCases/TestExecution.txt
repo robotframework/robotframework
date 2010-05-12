@@ -104,7 +104,7 @@ leads to overly long start-up commands, but `argument files`_  allow listing
 files nicely one file per line. It is also possible to `randomize the execution 
 order of test cases or test suites`__  using :opt:`--runmode` option.
 
-__ `Setting the execution mode`_
+__ `Setting execution mode`_
 
 
 Continue on failure

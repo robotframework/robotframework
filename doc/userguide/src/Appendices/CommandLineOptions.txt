@@ -11,7 +11,6 @@ __ `Starting test execution`_
    :depth: 2
    :local:
 
-
 Command line options for test execution
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -26,6 +25,8 @@ Command line options for test execution
   -c, --critical <tag>    Tests that have the given tag are `considered critical`_. 
   -n, --noncritical <tag>  Tests that have the given tag are `not critical`_. 
   --runmode <mode>        Sets the `execution mode`_ for this test run.
+                          Valid modes are :opt:`ContinueOnFailure`, 
+			  :opt:`DryRun`, and :opt:`Random:<what>`.
   -v, --variable <name:value>   Sets `individual variables`_.
   -V, --variablefile <path:args>  Sets variables using `variable files`_. 
   -d, --outputdir <dir>   Defines where to `create output files`_.
@@ -58,7 +59,6 @@ Command line options for test execution
   -A, --argumentfile <path>   A text file to `read more arguments`_ from. 
   -h, --help              Prints `usage instructions`_.
   --version               Prints the `version information`_.
-
 
 Command line options for post-processing outputs
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -112,7 +112,7 @@ Command line options for post-processing outputs
 .. _Selects the test cases: `By tag names`_
 .. _considered critical: `Setting criticality`_
 .. _not critical: `considered critical`_
-.. _execution mode: `Setting the execution mode`_
+.. _execution mode: `Setting execution mode`_
 .. _individual variables: `Setting variables in command line`_
 
 .. _create output files: `Output directory`_

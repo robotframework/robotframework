@@ -12,14 +12,12 @@ __ `Created outputs`_
    :depth: 2
    :local:
 
-
 Selecting test cases
 ~~~~~~~~~~~~~~~~~~~~
 
 Robot Framework offers several command line options for selecting
 which test cases to execute. The same options also work when
 post-processing outputs with the :prog:`rebot` tool.
-
 
 By test suite and test case names
 '''''''''''''''''''''''''''''''''
@@ -113,7 +111,6 @@ many interesting possibilities:
   the tests for a certain iteration can be generated (for example, :cli:`rebot
   --include iter-42 ouput.xml`).
 
-
 Setting criticality
 ~~~~~~~~~~~~~~~~~~~
 
@@ -160,7 +157,6 @@ use :opt:`--critical` and/or :opt:`--noncritical` also with it::
 
 __ `By tag names`_
 __ http://code.google.com/p/robotframework/issues/detail?id=146
-          
 
 Setting metadata
 ~~~~~~~~~~~~~~~~
@@ -187,7 +183,6 @@ are converted to spaces, and it may contain simple `HTML formatting`_.
 
 __ `Test suite name and documentation`_
 
-
 Setting free metadata
 '''''''''''''''''''''
 
@@ -205,7 +200,6 @@ Setting tags
 The command line option :opt:`--settag (-G)` can be used to set
 the given tag to all executed test cases. This option may be used
 several times to set multiple tags.
-
 
 Adjusting library search path
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -227,7 +221,6 @@ __ `Taking test libraries into use`_
 __ `Setting listeners`_
 __ `Creating start-up scripts`_
 
-
 Locations automatically in PYTHONPATH
 '''''''''''''''''''''''''''''''''''''
 
@@ -240,9 +233,8 @@ directory where tests are executed from into PYTHONPATH.
 
 __ `Packaging libraries`_
 
-
-Setting PYTHONPATH in system
-''''''''''''''''''''''''''''
+Setting PYTHONPATH
+''''''''''''''''''
 
 There are several ways to alter PYTHONPATH in the system, but the most
 common one is setting an environment variable with the same name
@@ -251,9 +243,8 @@ environment variable normally, but Robot Framework ensures that
 locations listed in it are added into the library search path
 regardless the interpreter.
 
-
-Setting CLASSPATH in the system
-'''''''''''''''''''''''''''''''
+Setting CLASSPATH
+'''''''''''''''''
 
 CLASSPATH is used only with Jython, and the most common way to alter
 it is setting an environment variable similarly as with PYTHONPATH.
@@ -261,9 +252,8 @@ Note that instead of CLASSPATH, it is always possible to use
 PYTHONPATH with Jython, even with libraries and listeners implemented
 with Java.
 
-
-Using the --pythonpath option
-'''''''''''''''''''''''''''''
+Using --pythonpath option
+'''''''''''''''''''''''''
 
 Robot Framework also has a separate command line option
 :opt:`--pythonpath (-P)` for adding directories or archives into
@@ -279,7 +269,6 @@ Examples::
    --pythonpath libs/ 
    --pythonpath /opt/testlibs:mylibs.zip:yourlibs 
    --pythonpath mylib.jar --pythonpath lib/STAR.jar --escape star:STAR 
-
 
 Setting variables
 ~~~~~~~~~~~~~~~~~
@@ -298,9 +287,8 @@ illustrate how to use these options::
 
 __ `Setting variables in command line`_
 
-
-Setting the execution mode
-~~~~~~~~~~~~~~~~~~~~~~~~~~
+Setting execution mode
+~~~~~~~~~~~~~~~~~~~~~~
 
 Exit on failure
 '''''''''''''''
@@ -316,6 +304,27 @@ There are also other ways to `stop test execution gracefully`__.
 
 __ `Stopping test execution gracefully`_
 
+Dry run
+'''''''
+
+Robot Framework supports so called *dry run* mode where the tests are
+run normally otherwise, but the keywords coming from test libraries
+are not executed at all. The dry rum mode can be used to validate the
+test data; if the dry run passes, the data should be syntactically
+correct.  This mode is triggered using option :opt:`--runmode DryRun`
+(case-insensitive) and it is supported starting from Robot Framework
+2.5.
+
+The dry run execution may fail for following reasons:
+
+  * Using keywords that are not found.
+  * Using keywords with wrong number of arguments.
+  * Using user keywords that have invalid syntax.
+
+In addition, normal `execution errors`__ are shown, for example, when 
+test library or resource file imports cannot be resolved.
+
+__ `Errors and warnings during execution`_
 
 Randomizing execution order
 '''''''''''''''''''''''''''
@@ -339,29 +348,6 @@ below.
 Example::
 
     pybot --runmode random:test my_test.txt
-
-
-Dry run
-'''''''
-
-Robot Framework supports so called *dry run* mode where the tests are
-run normally otherwise, but the keywords coming from test libraries are
-not executed at all. This mode can be used to validate the test data;
-if the dry run passes, the data should be syntactically correct. The
-dry run execution may fail for following reasons:
-
-  * Using keywords that are not found.
-  * Using keywords with wrong number of arguments.
-  * Using user keywords that have invalid syntax.
-
-In addition, normal `execution errors`__ are shown, for example, when 
-test library or resource file imports cannot be resolved.
-
-This mode is triggered using option :opt:`--runmode DryRun` (case-insensitive)
-and it is supported starting from Robot Framework 2.5.
-
-__ `Errors and warnings during execution`_
-
 
 Controlling the monitor output
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -390,7 +376,6 @@ values:
 Example::
 
    pybot --monitorwidth 140 --monitorcolors OFF tests.html > output.txt
-
 
 Setting listeners
 ~~~~~~~~~~~~~~~~~
