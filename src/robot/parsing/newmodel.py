@@ -60,10 +60,21 @@ class SettingTable(DataTable):
         return any(setting.edited() for setting in self)
 
 class VariableTable(DataTable):
-    pass
+
+    def __init__(self):
+        self.variables = []
+
+    def add(self, name, value):
+        self.variables.append(Variable(name, value))
 
 class TestCaseTable(DataTable):
-    pass
+
+    def __init__(self):
+        self.tests = []
+
+    def add(self, name):
+        self.tests.append(TestCase(name))
+        return self.tests[-1]
 
 class KeywordTable(DataTable):
     pass
@@ -98,3 +109,16 @@ class Timeout(Setting):
 
 class Tags(Setting):
     pass
+
+
+class Variable(object):
+
+    def __init__(self, name, value):
+        self.name = name
+        self.value = value
+
+
+class TestCase(object):
+
+    def __init__(self, name):
+        self.name = name
