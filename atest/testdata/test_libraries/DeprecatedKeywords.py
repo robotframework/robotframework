@@ -3,7 +3,7 @@ class DeprecatedKeywords:
     def deprecated_library_keyword(self):
         """*DEPRECATED* Use keyword `Not Deprecated With Doc` instead!
         
-        Some more doc here which is ignored in the warning.
+        Some more doc here. ignore this in the warning.
         """
         pass
 
