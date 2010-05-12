@@ -18,12 +18,8 @@ class TestTestCaseFile(unittest.TestCase):
 
     def test_edited(self):
         assert_false(self.tcf.edited())
-        assert_false(self.tcf.setting_table.edited())
-        assert_false(self.tcf.variable_table.edited())
         self.tcf.setting_table.doc.set('content')
         assert_true(self.tcf.edited())
-        assert_true(self.tcf.setting_table.edited())
-        assert_false(self.tcf.variable_table.edited())
 
 
 class TestSettingTable(unittest.TestCase):
@@ -42,6 +38,9 @@ class TestSettingTable(unittest.TestCase):
         assert_true(isinstance(self.table.force_tags, Tags))
         assert_true(isinstance(self.table.default_tags, Tags))
         assert_equal(self.table.imports, [])
+
+    def test_empty_doc(self):
+        assert_equal(self.table.doc.value, '')
 
     def test_set_doc_with_string(self):
         self.table.doc.set('hello')
@@ -81,9 +80,27 @@ class TestTestCaseTable(unittest.TestCase):
     def test_add_test(self):
         test = self.table.add('My name')
         assert_true(len(self.table.tests), 1)
-        assert_equal(self.table.tests[0].name, 'My name')
         assert_true(self.table.tests[0] is test)
+        assert_equal(test.name, 'My name')
 
-    
+    def test_settings(self):
+        test = self.table.add('Name')
+        assert_true(isinstance(test.doc, Documentation))
+        assert_true(isinstance(test.tags, Tags))
+        assert_true(isinstance(test.setup, Fixture))
+        assert_true(isinstance(test.teardown, Fixture))
+        assert_true(isinstance(test.timeout, Timeout))
+
+    def test_set_settings(self):
+        test = self.table.add('Name')
+        test.doc.set('My coooool doc')
+        test.tags.set(['My', 'coooool', 'tags'])
+        assert_equal(test.doc.value, 'My coooool doc')
+        assert_equal(test.tags.value, ['My', 'coooool', 'tags'])
+
+    def test_add_test_row(self):
+        test = NotImplemented
+
+
 if __name__ == "__main__":
     unittest.main()

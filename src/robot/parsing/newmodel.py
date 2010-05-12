@@ -93,6 +93,9 @@ class Setting(object):
 
 class Documentation(Setting):
 
+    def __init__(self):
+        self.value = ''
+
     def set(self, value):
         if not isinstance(value, basestring):
             value = ' '.join(value)
@@ -122,3 +125,8 @@ class TestCase(object):
 
     def __init__(self, name):
         self.name = name
+        self.doc = Documentation()
+        self.tags = Tags()
+        self.setup = Fixture()
+        self.teardown = Fixture()
+        self.timeout = Timeout()
