@@ -31,12 +31,12 @@ class TestSettingTable(unittest.TestCase):
         assert_true(isinstance(self.table.doc, Documentation))
         assert_true(isinstance(self.table.suite_setup, Fixture))
         assert_true(isinstance(self.table.suite_teardown, Fixture))
-        assert_true(isinstance(self.table.metadata, Metadata))
         assert_true(isinstance(self.table.test_setup, Fixture))
         assert_true(isinstance(self.table.test_teardown, Fixture))
         assert_true(isinstance(self.table.test_timeout, Timeout))
         assert_true(isinstance(self.table.force_tags, Tags))
         assert_true(isinstance(self.table.default_tags, Tags))
+        assert_equal(self.table.metadata, [])
         assert_equal(self.table.imports, [])
 
     def test_empty_doc(self):
@@ -50,12 +50,21 @@ class TestSettingTable(unittest.TestCase):
         self.table.doc.set(['hello', 'world'])
         assert_equal(self.table.doc.value, 'hello world')
 
+    def test_metadata(self):
+        self.table.add_metadata('Foo', 'bar')
+        self.table.add_metadata('boo', ['f', 'a', 'r'])
+        assert_equal(len(self.table.metadata), 2)
+        assert_equal(self.table.metadata[0].name, 'Foo')
+        assert_equal(self.table.metadata[0].value, 'bar')
+        assert_equal(self.table.metadata[1].name, 'boo')
+        assert_equal(self.table.metadata[1].value, 'f a r')
+
     def test_imports(self):
         self.table.add_library(['Name', 'arg'])
         self.table.add_resource(['reso.txt'])
         self.table.add_variables(['varz.py', 'a1', 'a2'])
         self.table.add_resource(['reso2.txt'])
-        assert_true(len(self.table.imports), 4)
+        assert_equal(len(self.table.imports), 4)
         assert_true(all(isinstance(im, Import) for im in self.table.imports))
 
 

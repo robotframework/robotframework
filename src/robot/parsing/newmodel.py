@@ -41,13 +41,16 @@ class SettingTable(DataTable):
         self.doc = Documentation()
         self.suite_setup = Fixture()
         self.suite_teardown = Fixture()
-        self.metadata = Metadata()
         self.test_setup = Fixture()
         self.test_teardown = Fixture()
         self.test_timeout = Timeout()
         self.force_tags = Tags()
         self.default_tags = Tags()
+        self.metadata = []
         self.imports = []
+
+    def add_metadata(self, name, value):
+        self.metadata.append(Metadata(name, value))
 
     def add_library(self, value):
         self.imports.append(Library(value))
@@ -60,9 +63,9 @@ class SettingTable(DataTable):
 
     def __iter__(self):
         for setting in [self.doc, self.suite_setup, self.suite_teardown,
-                        self.metadata, self.test_setup, self.test_teardown,
-                        self.test_timeout, self.force_tags, self.default_tags] \
-                        + self.imports:
+                        self.test_setup, self.test_teardown, self.test_timeout,
+                        self.force_tags, self.default_tags] \
+                        + self.metadata + self.imports:
             yield setting
 
     def edited(self):
@@ -106,21 +109,25 @@ class Setting(object):
     def edited(self):
         return bool(self.value)
 
+    def _string_value(self, value):
+        return value if isinstance(value, basestring) else ' '.join(value)
+
 class Documentation(Setting):
 
     def __init__(self):
         self.value = ''
 
     def set(self, value):
-        if not isinstance(value, basestring):
-            value = ' '.join(value)
-        self.value = value
+        self.value = self._string_value(value)
 
 class Fixture(Setting):
     pass
 
 class Metadata(Setting):
-    pass
+
+    def __init__(self, name, value):
+        self.name = name
+        self.value = self._string_value(value)
 
 class Timeout(Setting):
     pass
