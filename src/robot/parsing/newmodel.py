@@ -12,6 +12,9 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from robot.variables import is_var
+
+
 class TestCaseFile(object):
 
     def __init__(self, source=None):
@@ -159,7 +162,9 @@ class Variables(Import):
 class Variable(object):
 
     def __init__(self, name, value):
-        self.name = name
+        self.name = name.rstrip('= ')
+        if name.startswith('$') and isinstance(value, basestring):
+            value = [value]  # Need to support scalar lists until RF 2.6
         self.value = value
 
 
@@ -195,5 +200,18 @@ class UserKeyword(object):
 class Step(object):
 
     def __init__(self, content):
-        self.keyword = content[0]
-        self.args = content[1:]
+        self.assign = self._get_assigned_vars(content)
+        try:
+            self.keyword = content[len(self.assign)]
+        except IndexError:
+            self.keyword = ''
+        self.args = content[len(self.assign)+1:]
+
+    def _get_assigned_vars(self, content):
+        vars = []
+        for item in content:
+            item = item.rstrip('= ')
+            if not is_var(item):
+                break
+            vars.append(item)
+        return vars

@@ -78,12 +78,15 @@ class TestVariableTable(unittest.TestCase):
 
     def test_add_variables(self):
         self.table.add('${SCALAR}', ['hello'])
+        self.table.add('${S2} =', 'hello as string')
         self.table.add('@{LIST}', ['hello', 'world'])
-        assert_true(len(self.table.variables), 2)
+        assert_equal(len(self.table.variables), 3)
         assert_equal(self.table.variables[0].name, '${SCALAR}')
         assert_equal(self.table.variables[0].value, ['hello'])
-        assert_equal(self.table.variables[1].name, '@{LIST}')
-        assert_equal(self.table.variables[1].value, ['hello', 'world'])
+        assert_equal(self.table.variables[1].name, '${S2}')
+        assert_equal(self.table.variables[1].value, ['hello as string'])
+        assert_equal(self.table.variables[2].name, '@{LIST}')
+        assert_equal(self.table.variables[2].value, ['hello', 'world'])
 
 
 class TestTestCaseTable(unittest.TestCase):
@@ -114,6 +117,12 @@ class TestTestCaseTable(unittest.TestCase):
         assert_equal(self.test.doc.value, 'My coooool doc')
         assert_equal(self.test.tags.value, ['My', 'coooool', 'tags'])
 
+    def test_add_step(self):
+        self.test.add_step(['Keyword', 'arg1', 'arg2'])
+        assert_equal(len(self.test.steps), 1)
+        assert_equal(self.test.steps[0].keyword, 'Keyword')
+        assert_equal(self.test.steps[0].args, ['arg1', 'arg2'])
+
 
 class TestKeywordTable(unittest.TestCase):
 
@@ -142,17 +151,39 @@ class TestKeywordTable(unittest.TestCase):
         assert_equal(self.kw.doc.value, 'My coooool doc')
         assert_equal(self.kw.args.value, ['${args}', 'are not', 'validated'])
 
+    def test_add_step(self):
+        self.kw.add_step(['Keyword', 'arg1', 'arg2'])
+        assert_equal(len(self.kw.steps), 1)
+        assert_equal(self.kw.steps[0].keyword, 'Keyword')
+        assert_equal(self.kw.steps[0].args, ['arg1', 'arg2'])
+
 
 class TestStep(unittest.TestCase):
 
-    def setUp(self):
-        self.test = TestCase('name')
+    def test_kw_only(self):
+        self._test(['My kewl keyword'], 'My kewl keyword')
 
-    def test_add_test_step(self):
-        self.test.add_step(['Keyword', 'arg1', 'arg2'])
-        assert_equal(len(self.test.steps), 1)
-        assert_equal(self.test.steps[0].keyword, 'Keyword')
-        assert_equal(self.test.steps[0].args, ['arg1', 'arg2'])
+    def test_kw_and_args(self):
+        self._test(['KW', 'first arg', '${a2}'], args=['first arg', '${a2}'])
+
+    def test_assign_to_one_var(self):
+        self._test(['${var}', 'KW'], assign=['${var}'])
+        self._test(['${var}=', 'KW', 'a'], args=['a'], assign=['${var}'])
+        self._test(['@{var}     =', 'KW'], assign=['@{var}'])
+
+    def test_assign_to_multiple_var(self):
+        self._test(['${v1}', '${v2}', '@{v3} =', 'KW', '${a1}', '${a2}'],
+                   args=['${a1}', '${a2}'], assign=['${v1}', '${v2}', '@{v3}'])
+        self._test(['${v1}=', '${v2}=', 'KW'], assign=['${v1}', '${v2}'])
+
+    def test_assign_without_keyword(self):
+        self._test(['${v1}', '${v2}'], kw='', assign=['${v1}', '${v2}'])
+
+    def _test(self, content, kw='KW', args=[], assign=[]):
+        step = Step(content)
+        assert_equal(step.keyword, kw)
+        assert_equal(step.args, args)
+        assert_equal(step.assign, assign)
 
 
 if __name__ == "__main__":
