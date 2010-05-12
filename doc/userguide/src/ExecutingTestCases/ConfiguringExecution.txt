@@ -344,18 +344,23 @@ Example::
 Dry run
 '''''''
 
-Starting from Robot Framework 2.5 it is possible to specify a dry-run mode
-using the option :opt:`runmode` with value :opt:`DryRun` (case-insensitive). In
-the dry run mode, all but the lowest level (library) keywords are executed.
-This mode can be used to validate the test data; if the dry-run passes, the
-data should be syntactically correct. The dry-run execution may fail for
-following reasons:
+Robot Framework supports so called *dry run* mode where the tests are
+run normally otherwise, but the keywords coming from test libraries are
+not executed at all. This mode can be used to validate the test data;
+if the dry run passes, the data should be syntactically correct. The
+dry run execution may fail for following reasons:
 
-  * Using keywords that are not found
-  * Using keywords with wrong number of arguments
-  * Using user keywords that have invalid syntax
+  * Using keywords that are not found.
+  * Using keywords with wrong number of arguments.
+  * Using user keywords that have invalid syntax.
 
-In addition, warnings are given for imports that cannot be resolved.
+In addition, normal `execution errors`__ are shown, for example, when 
+test library or resource file imports cannot be resolved.
+
+This mode is triggered using option :opt:`--runmode DryRun` (case-insensitive)
+and it is supported starting from Robot Framework 2.5.
+
+__ `Errors and warnings during execution`_
 
 
 Controlling the monitor output
