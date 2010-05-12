@@ -85,9 +85,17 @@ def _split_path_to_module(path):
 def _import(name, type_):
     modname, classname, fromlist = _get_import_params(name)
     try:
-        # It seems that we get class when importing java class from file system
-        # or from a default package of a jar file. Otherwise we get a module.
-        imported = __import__(modname, {}, {}, fromlist)
+        try:
+            # It seems that we get class when importing java class from file system
+            # or from a default package of a jar file. Otherwise we get a module.
+            imported = __import__(modname, {}, {}, fromlist)
+        except ImportError:
+            # Hack to support standalone Jython: 
+            # http://code.google.com/p/robotframework/issues/detail?id=515
+            if not sys.platform.startswith('java'):
+                raise 
+            __import__(name)
+            imported = __import__(modname, {}, {}, fromlist)
     except:
         _raise_import_failed(type_, name)
     try:
