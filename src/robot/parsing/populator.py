@@ -267,10 +267,19 @@ class Populator(object):
             self._current_populator.add(cells)
 
     def _data_cells(self, row):
-        cells = [ self._collapse_whitespace(c) for c in row ]
+        cells = [ self._collapse_whitespace(cell)
+                  for cell in self._cells_without_comments(row) ]
         while cells and not cells[-1]:
             cells.pop()
         return cells
 
     def _collapse_whitespace(self, value):
         return self._whitespace_regexp.sub(' ', value).strip()
+
+    def _cells_without_comments(self, row):
+        filtered = []
+        for c in row:
+            if c.startswith('#'):
+                return filtered
+            filtered.append(c)
+        return filtered

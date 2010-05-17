@@ -107,6 +107,21 @@ class TestCaseFilePopulatingTest(unittest.TestCase):
         assert_equals(uk.args.value, ['${foo}', '${bar}'])
         assert_equals(uk.return_.value, ['ankka', 'kameli'])
 
+    def test_comment_handling(self):
+        self._create_table('Keywords', [['#Commented row'],
+                                        ['', '# Another Commented row'],
+                                        ['My User Keyword', '#End', 'of', 'row comment'],
+                                        ['', '[Arguments]', '${foo}', '${bar}'],
+                                        ['', 'Log Many', '${foo}'],
+                                        ['', '# Commented row inside kw'],
+                                        ['', '...', 'bar'],
+                                        ['', 'No Operation'],
+                                        ['', '[Return]', 'ankka', 'kameli']])
+        uk = self._nth_uk(0)
+        assert_equals(len(uk.steps), 2)
+        assert_equals(uk.args.value, ['${foo}', '${bar}'])
+        assert_equals(uk.return_.value, ['ankka', 'kameli'])
+
     def test_whitespace_is_ignored(self):
         self._create_table('Test Cases', [['My   test'],
                                           [' ', '[Tags]', 'foo', '  \t  '],
