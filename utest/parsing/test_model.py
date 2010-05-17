@@ -39,7 +39,7 @@ class TestSettingTable(unittest.TestCase):
         assert_equal(self.table.metadata, [])
         assert_equal(self.table.imports, [])
 
-    def test_empty_doc(self):
+    def test_doc_default(self):
         assert_equal(self.table.doc.value, '')
 
     def test_set_doc_with_string(self):
@@ -49,6 +49,38 @@ class TestSettingTable(unittest.TestCase):
     def test_set_doc_with_list(self):
         self.table.doc.set(['hello', 'world'])
         assert_equal(self.table.doc.value, 'hello world')
+
+    def test_fixture_default(self):
+        assert_equal(self.table.suite_setup.name, None)
+        assert_equal(self.table.suite_setup.args, [])
+        assert_false(hasattr(self.table.suite_setup, 'value'))
+
+    def test_set_fixture(self):
+        self.table.suite_teardown.set(['Name', 'a1', 'a2'])
+        assert_equal(self.table.suite_teardown.name, 'Name')
+        assert_equal(self.table.suite_teardown.args, ['a1', 'a2'])
+        assert_false(hasattr(self.table.suite_teardown, 'value'))
+
+    def test_set_fixture_with_empty_value(self):
+        self.table.test_teardown.set([])
+        assert_equal(self.table.test_teardown.name, '')
+        assert_equal(self.table.test_teardown.args, [])
+
+    def test_timeout_default(self):
+        assert_equal(self.table.test_timeout.value, None)
+        assert_equal(self.table.test_timeout.message, '')
+        assert_false(hasattr(self.table.suite_setup, 'value'))
+
+    def test_set_timeout(self):
+        self.table.test_timeout.set(['1s', 'msg', 'in multiple', 'cell'])
+        assert_equal(self.table.test_timeout.value, '1s')
+        assert_equal(self.table.test_timeout.message, 'msg in multiple cell')
+        assert_false(hasattr(self.table.suite_teardown, 'value'))
+
+    def test_set_timeout_with_empty_value(self):
+        self.table.test_timeout.set([])
+        assert_equal(self.table.test_timeout.value, '')
+        assert_equal(self.table.test_timeout.message, '')
 
     def test_metadata(self):
         self.table.add_metadata('Foo', 'bar')

@@ -38,6 +38,7 @@ class DataTable(object):
     def edited(self):
         return False
 
+
 class SettingTable(DataTable):
 
     def __init__(self):
@@ -74,6 +75,7 @@ class SettingTable(DataTable):
     def edited(self):
         return any(setting.edited() for setting in self)
 
+
 class VariableTable(DataTable):
 
     def __init__(self):
@@ -81,6 +83,7 @@ class VariableTable(DataTable):
 
     def add(self, name, value):
         self.variables.append(Variable(name, value))
+
 
 class TestCaseTable(DataTable):
 
@@ -90,6 +93,7 @@ class TestCaseTable(DataTable):
     def add(self, name):
         self.tests.append(TestCase(name))
         return self.tests[-1]
+
 
 class KeywordTable(DataTable):
 
@@ -115,6 +119,7 @@ class Setting(object):
     def _string_value(self, value):
         return value if isinstance(value, basestring) else ' '.join(value)
 
+
 class Documentation(Setting):
 
     def __init__(self):
@@ -123,8 +128,46 @@ class Documentation(Setting):
     def set(self, value):
         self.value = self._string_value(value)
 
+
 class Fixture(Setting):
+
+    def __init__(self):
+        self.name = None
+        self.args = []
+
+    def set(self, value):
+        self.name = value[0] if value else ''
+        self.args = value[1:]
+
+    def edited(self):
+        return self.name is not None
+
+
+class Timeout(Setting):
+
+    def __init__(self):
+        self.value = None
+        self.message = ''
+
+    def set(self, value):
+        self.value = value[0] if value else ''
+        self.message = ' '.join(value[1:])
+
+    def edited(self):
+        return self.value is not None
+
+
+class Tags(Setting):
     pass
+
+
+class Arguments(Setting):
+    pass
+
+
+class Return(Setting):
+    pass
+
 
 class Metadata(Setting):
 
@@ -132,28 +175,20 @@ class Metadata(Setting):
         self.name = name
         self.value = self._string_value(value)
 
-class Timeout(Setting):
-    pass
-
-class Tags(Setting):
-    pass
-
-class Arguments(Setting):
-    pass
-
-class Return(Setting):
-    pass
 
 class Import(Setting):
 
     def __init__(self, value):
         self.value = value
 
+
 class Library(Import):
     pass
 
+
 class Resource(Import):
     pass
+
 
 class Variables(Import):
     pass
