@@ -58,14 +58,14 @@ class TestCaseFilePopulatingTest(unittest.TestCase):
                                           ['Another test'],
                                           ['', 'Log', 'quux']])
         assert_equals(len(self._datafile.testcase_table.tests), 2)
-        test = self._nth_test(0)
+        test = self._first_test()
         assert_equals(len(test.steps), 1)
         assert_equals(test.steps[0].keyword, 'No operation')
-        assert_equals(len(self._nth_test(1).steps), 1)
+        assert_equals(len(self._first_test().steps), 1)
 
     def test_case_name_and_first_step_on_same_row(self):
         self._create_table('Test cases', [['My test name', 'No Operation']])
-        assert_equals(len(self._nth_test(0).steps), 1)
+        assert_equals(len(self._first_test().steps), 1)
 
     def test_continuing_row_in_test(self):
         self._create_table('Test cases', [['My test name', 'Log Many', 'foo'],
@@ -74,8 +74,8 @@ class TestCaseFilePopulatingTest(unittest.TestCase):
                                           ['', 'Log Many', 'quux'],
                                           ['', '...', 'fooness'],
                                           ['', 'Log', 'barness']])
-        assert_equals(len(self._nth_test(0).steps), 1)
-        assert_equals(len(self._nth_test(1).steps), 2)
+        assert_equals(len(self._first_test().steps), 1)
+        assert_equals(len(self._nth_test(2).steps), 2)
 
     def test_test_settings(self):
         doc = 'This is domumentation for the test case'
@@ -84,7 +84,7 @@ class TestCaseFilePopulatingTest(unittest.TestCase):
                                           ['', '[  Tags  ]', 'ankka', 'kameli'],
                                           ['', '... ', 'aasi'],
                                           ['', 'Log', 'barness']])
-        test = self._nth_test(0)
+        test = self._first_test()
         assert_equals(len(test.steps), 1)
         assert_equals(test.doc.value, doc)
         assert_equals(test.tags.value, ['ankka', 'kameli', 'aasi'])
@@ -101,6 +101,16 @@ class TestCaseFilePopulatingTest(unittest.TestCase):
         assert_equals(uk.args.value, ['${foo}', '${bar}'])
         assert_equals(uk.return_.value, ['ankka', 'kameli'])
 
+    def test_whitespace_is_ignored(self):
+        self._create_table('Test Cases', [['My test'],
+                                          [' ', '[Tags]', 'foo', '  \t  '],
+                                          ['  '],
+                                          [ '\t'],
+                                          ['', 'Log Many', '', 'argh']])
+        test = self._first_test()
+        assert_equals(test.tags.value, ['foo'])
+        self._number_of_steps_should_be(test, 1)
+
     def _assert_setting(self, setting_name, exp_value):
         assert_equals(getattr(self._datafile.setting_table, setting_name).value,
                       exp_value)
@@ -115,10 +125,16 @@ class TestCaseFilePopulatingTest(unittest.TestCase):
         self._populator.eof()
 
     def _nth_test(self, index):
-        return self._datafile.testcase_table.tests[index]
+        return self._datafile.testcase_table.tests[index-1]
+
+    def _first_test(self):
+        return self._nth_test(1)
 
     def _nth_uk(self, index):
         return self._datafile.keyword_table.keywords[index]
+
+    def _number_of_steps_should_be(self, test, expected_steps):
+        assert_equals(len(test.steps), expected_steps)
 
 
 if __name__ == '__main__':

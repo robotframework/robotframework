@@ -231,8 +231,15 @@ class Populator(object):
         return self._current_populator is not self._null_populator
 
     def add(self, row):
-        if row:
-            self._current_populator.add(row)
+        cells = self._data_cells(row)
+        if cells:
+            self._current_populator.add(cells)
+
+    def _data_cells(self, row):
+        cells = [ c.strip() for c in row ]
+        while cells and not cells[-1]:
+            cells.pop()
+        return cells
 
     def eof(self):
         self._current_populator.populate()
