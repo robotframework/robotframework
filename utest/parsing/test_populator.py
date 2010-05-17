@@ -61,6 +61,68 @@ class TestCaseFilePopulatingTest(unittest.TestCase):
         self._populator.eof()
         assert_equals(len(self._datafile.setting_table.imports), 4)
 
+    def test_test_case_populating(self):
+        self._start_table('Test cases')
+        self._populator.add(['My test name'])
+        self._populator.add(['', 'No operation'])
+        self._populator.add(['Another test'])
+        self._populator.add(['', 'Log', 'quux'])
+        self._populator.eof()
+        assert_equals(len(self._datafile.testcase_table.tests), 2)
+        test = self._datafile.testcase_table.tests[0]
+        assert_equals(len(test.steps), 1)
+        assert_equals(test.steps[0].keyword, 'No operation')
+        test = self._datafile.testcase_table.tests[1]
+        assert_equals(len(test.steps), 1)
+
+    def test_case_name_and_first_step_on_same_row(self):
+        self._start_table('Test cases')
+        self._populator.add(['My test name', 'No Operation'])
+        self._populator.eof()
+        test = self._datafile.testcase_table.tests[0]
+        assert_equals(len(test.steps), 1)
+
+    def test_continuing_row_in_test(self):
+        self._start_table('Test cases')
+        self._populator.add(['My test name', 'Log Many', 'foo'])
+        self._populator.add(['', '...', 'bar', 'quux'])
+        self._populator.add(['Another test'])
+        self._populator.add(['', 'Log Many', 'quux'])
+        self._populator.add(['', '...', 'fooness'])
+        self._populator.add(['', 'Log', 'barness'])
+        self._populator.eof()
+        test = self._datafile.testcase_table.tests[0]
+        assert_equals(len(test.steps), 1)
+        test = self._datafile.testcase_table.tests[1]
+        assert_equals(len(test.steps), 2)
+
+    def test_test_settings(self):
+        self._start_table('Test cases')
+        self._populator.add(['My test name'])
+        self._populator.add(['', '[Documentation]', 'This is domumentation for the test case'])
+        self._populator.add(['', '[  Tags  ]', 'ankka', 'kameli'])
+        self._populator.add(['', '... ', 'aasi'])
+        self._populator.add(['', 'Log', 'barness'])
+        self._populator.eof()
+        test = self._datafile.testcase_table.tests[0]
+        assert_equals(len(test.steps), 1)
+        assert_equals(test.doc.value, 'This is domumentation for the test case')
+        assert_equals(test.tags.value, ['ankka', 'kameli', 'aasi'])
+
+    def test_creating_user_keywords(self):
+        self._start_table('Keywords')
+        self._populator.add(['My User Keyword'])
+        self._populator.add(['', '[Arguments]', '${foo}', '${bar}'])
+        self._populator.add(['', 'Log Many', '${foo}'])
+        self._populator.add(['', '...', 'bar'])
+        self._populator.add(['', 'No Operation'])
+        self._populator.add(['', '[Return]', 'ankka', 'kameli'])
+        self._populator.eof()
+        uk = self._datafile.keyword_table.keywords[0]
+        assert_equals(len(uk.steps), 2)
+        assert_equals(uk.args.value, ['${foo}', '${bar}'])
+        assert_equals(uk.return_.value, ['ankka', 'kameli'])
+
     def _assert_setting(self, setting_name, exp_value):
         assert_equals(getattr(self._datafile.setting_table, setting_name).value,
                       exp_value)

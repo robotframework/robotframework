@@ -7,25 +7,28 @@ class _TablePopulator(object):
 
     def __init__(self, datafile):
         self._table = self._get_table(datafile)
-        self._current_populator = None
+        self._populator = None
 
     def add(self, row):
-        if self._is_continuing_row(row):
-            self._current_populator.add(self._values_from(row))
+        if self._is_continuing(row):
+            self._populator.add(self._values_from(row))
         else:
-            if self._current_populator:
-                self._current_populator.populate()
-            self._current_populator = self._get_populator(row)
+            self.populate()
+            self._populator = self._get_populator(row)
 
-    def _is_continuing_row(self, row):
-        return row[0] == '...'
+    def _values_from(self, row):
+        return row
+
+    def _is_continuing(self, row):
+        return row[0].strip() == self.row_continuation_marker
 
     def populate(self):
-        if self._current_populator:
-            self._current_populator.populate()
+        if self._populator:
+            self._populator.populate()
 
 
 class SettingTablePopulator(_TablePopulator):
+    row_continuation_marker = '...'
     attrs_by_name = utils.NormalizedDict({'Documentation': 'doc',
                                           'Document': 'doc',
                                           'Suite Setup': 'suite_setup',
@@ -62,6 +65,7 @@ class SettingTablePopulator(_TablePopulator):
 
 
 class VariableTablePopulator(_TablePopulator):
+    row_continuation_marker = '...'
 
     def _get_table(self, datafile):
         return datafile.variable_table
@@ -69,12 +73,86 @@ class VariableTablePopulator(_TablePopulator):
     def _get_populator(self, row):
         return VariablePopulator(self._table.add, row)
 
-    def _values_from(self, row):
-        return row
+
+class TestTablePopulator(_TablePopulator):
+    row_continuation_marker = ''
+
+    def _get_table(self, datafile):
+        return datafile.testcase_table
+
+    def _get_populator(self, row):
+        return TestCasePopulator(self._table.add, row)
 
 
-class TestTablePopulator(SettingTablePopulator): pass
-class KeywordTablePopulator(SettingTablePopulator): pass
+class KeywordTablePopulator(_TablePopulator):
+    row_continuation_marker = ''
+
+    def _get_table(self, datafile):
+        return datafile.keyword_table
+
+    def _get_populator(self, row):
+        return UserKeywordPopulator(self._table.add, row)
+
+
+class _TestCaseUserKeywordPopulator(object):
+    row_continuation_marker = ('', '...')
+
+    def __init__(self, setter, row):
+        self._test_or_uk = setter(row[0])
+        self._populator = self._get_populator(row)
+
+    def add(self, row):
+        if self._is_continuing_step(row):
+            self._populator.add(row[2:])
+        else:
+            self._populator.populate()
+            self._populator = self._get_populator(row)
+
+    def _get_populator(self, row):
+        first_cell = self._first_cell_value(row)
+        if self._is_setting(first_cell):
+            return PropertyPopulator(self._setting_setter(first_cell), row[2:])
+        return StepPopulator(self._test_or_uk.add_step, row[1:])
+
+    def _first_cell_value(self, row):
+        return row[1].strip() if len(row) > 1 else ''
+
+    def _is_setting(self, cell):
+        return cell and cell[0] == '[' and cell[-1] == ']'
+
+    def _setting_setter(self, cell):
+        attr_name = self.attrs_by_name[self._setting_name(cell)]
+        return getattr(self._test_or_uk, attr_name).set
+
+    def _setting_name(self, cell):
+        return cell[1:-1].strip()
+
+    def _is_continuing_step(self, row):
+        return (row[0].strip(), row[1].strip()) == self.row_continuation_marker
+
+    def populate(self):
+        if self._populator:
+            self._populator.populate()
+
+
+class TestCasePopulator(_TestCaseUserKeywordPopulator):
+    attrs_by_name = utils.NormalizedDict({'Documentation': 'doc',
+                                          'Document': 'doc',
+                                          'Setup': 'setup',
+                                          'Precondition': 'setup',
+                                          'Teardown': 'teardown',
+                                          'Postcondition': 'teardown',
+                                          'Tags': 'tags',
+                                          'Timeout': 'timeout'})
+
+
+
+class UserKeywordPopulator(_TestCaseUserKeywordPopulator):
+    attrs_by_name = utils.NormalizedDict({'Documentation': 'doc',
+                                          'Document': 'doc',
+                                          'Arguments': 'args',
+                                          'Return': 'return_',
+                                          'Timeout': 'timeout'})
 
 
 class PropertyPopulator(object):
@@ -94,6 +172,19 @@ class VariablePopulator(PropertyPopulator):
     def populate(self):
         self._setter(self._value[0], self._value[1:])
 
+
+class StepPopulator(object):
+
+    def __init__(self, setter, row):
+        self._setter = setter
+        self._current_row = row
+
+    def add(self, row):
+        self._current_row.extend(row)
+
+    def populate(self):
+        if self._current_row:
+            self._setter(self._current_row)
 
 
 class Populator(object):
