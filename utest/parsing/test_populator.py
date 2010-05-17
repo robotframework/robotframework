@@ -40,6 +40,12 @@ class TestCaseFilePopulatingTest(unittest.TestCase):
                                         ['Variables', 'varzors.py']])
         assert_equals(len(self._datafile.setting_table.imports), 4)
 
+    def test_suite_metadata(self):
+        self._create_table('settings', [['Meta: Foon:ess', 'Barness'],
+                                        ['Metadata', 'Quux', 'Value']])
+        self._assert_meta(0, 'Foon:ess', 'Barness')
+        self._assert_meta(1, 'Quux', 'Value')
+
     def test_adding_variables(self):
         self._create_table('Variables', [['${scalar}', 'value'],
                                          ['@{list}', 'v1', 'v2'],
@@ -114,6 +120,11 @@ class TestCaseFilePopulatingTest(unittest.TestCase):
 
     def _assert_setting(self, setting_name, exp_value):
         assert_equals(self._setting_with(setting_name).value, exp_value)
+
+    def _assert_meta(self, index, exp_name, exp_value):
+        meta = self._setting_with('metadata')[index]
+        assert_equals(meta.name, exp_name)
+        assert_equals(meta.value, exp_value)
 
     def _setting_with(self, name):
         return getattr(self._datafile.setting_table, name)

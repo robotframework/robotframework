@@ -43,6 +43,7 @@ class _TablePopulator(object):
 
 class SettingTablePopulator(_TablePopulator):
     row_continuation_marker = '...'
+    olde_metadata_prefix = 'meta:'
     attrs_by_name = utils.NormalizedDict({'Documentation': 'doc',
                                           'Document': 'doc',
                                           'Suite Setup': 'suite_setup',
@@ -56,10 +57,10 @@ class SettingTablePopulator(_TablePopulator):
                                           'Force Tags': 'force_tags',
                                           'Default Tags': 'default_tags',
                                           'Test Timeout': 'test_timeout'})
-
     import_setters_by_name = utils.NormalizedDict({'Library': 'add_library',
                                                    'Resource': 'add_resource',
                                                    'Variables': 'add_variables'})
+
 
     def _get_table(self, datafile):
         return datafile.setting_table
@@ -68,14 +69,37 @@ class SettingTablePopulator(_TablePopulator):
         return row[1:]
 
     def _get_populator(self, row):
-        return PropertyPopulator(self._get_setter(row[0]), row[1:])
+        first_cell, rest = row[0], row[1:]
+        if self._is_metadata(first_cell):
+            initial_value = self._initial_metadata_value(first_cell, rest)
+            return NameAndValuePropertyPopulator(self._table.add_metadata, initial_value)
+        return ValuePropertyPopulator(self._get_setter(first_cell), rest)
+
+    def _is_metadata(self, setting_name):
+        setting_name = setting_name.lower()
+        return self._is_metadata_with_olde_prefix(setting_name) \
+            or setting_name == 'metadata'
+
+    def _is_metadata_with_olde_prefix(self, setting_name):
+        return setting_name.lower().startswith(self.olde_metadata_prefix)
+
+    def _initial_metadata_value(self, first_cell, value):
+        if self._is_metadata_with_olde_prefix(first_cell):
+            return self._extract_value_from_olde_style_meta_cell(first_cell) + value
+        return value
+
+    def _extract_value_from_olde_style_meta_cell(self, first_cell):
+        return [first_cell.split(':', 1)[1].strip()]
 
     def _get_setter(self, setting_name):
-        if setting_name in self.import_setters_by_name:
+        if self._is_import(setting_name):
             attr_name = self.import_setters_by_name[setting_name]
             return getattr(self._table, attr_name)
         attr_name = self.attrs_by_name[setting_name]
         return getattr(self._table, attr_name).set
+
+    def _is_import(self, setting_name):
+        return setting_name in self.import_setters_by_name
 
 
 class VariableTablePopulator(_TablePopulator):
@@ -85,7 +109,7 @@ class VariableTablePopulator(_TablePopulator):
         return datafile.variable_table
 
     def _get_populator(self, row):
-        return VariablePopulator(self._table.add, row)
+        return NameAndValuePropertyPopulator(self._table.add, row)
 
 
 class TestTablePopulator(_TablePopulator):
@@ -125,7 +149,7 @@ class _TestCaseUserKeywordPopulator(object):
     def _get_populator(self, row):
         first_cell = self._first_cell_value(row)
         if self._is_setting(first_cell):
-            return PropertyPopulator(self._setting_setter(first_cell), row[2:])
+            return ValuePropertyPopulator(self._setting_setter(first_cell), row[2:])
         return StepPopulator(self._test_or_uk.add_step, row[1:])
 
     def _first_cell_value(self, row):
@@ -169,7 +193,7 @@ class UserKeywordPopulator(_TestCaseUserKeywordPopulator):
                                           'Timeout': 'timeout'})
 
 
-class PropertyPopulator(object):
+class _PropertyPopulator(object):
 
     def __init__(self, setter, initial_value):
         self._setter = setter
@@ -178,11 +202,15 @@ class PropertyPopulator(object):
     def add(self, row):
         self._value.extend(row)
 
+
+class ValuePropertyPopulator(_PropertyPopulator):
+
     def populate(self):
         self._setter(self._value)
 
 
-class VariablePopulator(PropertyPopulator):
+class NameAndValuePropertyPopulator(_PropertyPopulator):
+
     def populate(self):
         self._setter(self._value[0], self._value[1:])
 
@@ -230,6 +258,9 @@ class Populator(object):
             self._current_populator = self._null_populator
         return self._current_populator is not self._null_populator
 
+    def eof(self):
+        self._current_populator.populate()
+
     def add(self, row):
         cells = self._data_cells(row)
         if cells:
@@ -240,9 +271,6 @@ class Populator(object):
         while cells and not cells[-1]:
             cells.pop()
         return cells
-
-    def eof(self):
-        self._current_populator.populate()
 
     def _collapse_whitespace(self, value):
         return self._whitespace_regexp.sub(' ', value).strip()
