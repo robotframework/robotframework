@@ -35,10 +35,14 @@ class TestCaseFilePopulatingTest(unittest.TestCase):
 
     def test_adding_import(self):
         self._create_table('settings', [['Library', 'FooBarness'],
-                                        ['Library', 'BarFooness'],
+                                        ['Library', 'BarFooness', 'arg1', 'arg2'],
                                         ['Resource', 'QuuxNess.txt'],
                                         ['Variables', 'varzors.py']])
         assert_equals(len(self._datafile.setting_table.imports), 4)
+        self._assert_import(0, 'FooBarness', [])
+        self._assert_import(1, 'BarFooness', ['arg1', 'arg2'])
+        self._assert_import(2, 'QuuxNess.txt', [])
+        self._assert_import(3, 'varzors.py', [])
 
     def test_suite_metadata(self):
         self._create_table('settings', [['Meta: Foon:ess', 'Barness'],
@@ -146,8 +150,15 @@ class TestCaseFilePopulatingTest(unittest.TestCase):
 
     def _assert_fixture(self, fixture_name, exp_name, exp_args):
         fixture = self._setting_with(fixture_name)
-        assert_equals(fixture.name, exp_name)
-        assert_equals(fixture.args, exp_args)
+        self._assert_name_and_args(fixture, exp_name, exp_args)
+
+    def _assert_import(self, index, exp_name, exp_args):
+        imp = self._datafile.setting_table.imports[index]
+        self._assert_name_and_args(imp, exp_name, exp_args)
+
+    def _assert_name_and_args(self, item, exp_name, exp_args):
+        assert_equals(item.name, exp_name)
+        assert_equals(item.args, exp_args)
 
     def _start_table(self, name):
         return self._populator.start_table(name)

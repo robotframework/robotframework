@@ -61,7 +61,6 @@ class SettingTablePopulator(_TablePopulator):
                                                    'Resource': 'add_resource',
                                                    'Variables': 'add_variables'})
 
-
     def _get_table(self, datafile):
         return datafile.setting_table
 
@@ -71,9 +70,22 @@ class SettingTablePopulator(_TablePopulator):
     def _get_populator(self, row):
         first_cell, rest = row[0], row[1:]
         if self._is_metadata(first_cell):
-            initial_value = self._initial_metadata_value(first_cell, rest)
-            return NameAndValuePropertyPopulator(self._table.add_metadata, initial_value)
-        return ValuePropertyPopulator(self._get_setter(first_cell), rest)
+            return self._metadata_populator(first_cell, rest)
+        if self._is_import(first_cell):
+            return self._import_populator(first_cell, rest)
+        return self._setting_populator(first_cell, rest)
+
+    def _metadata_populator(self, first_cell, rest):
+        initial_value = self._initial_metadata_value(first_cell, rest)
+        return NameAndValuePropertyPopulator(self._table.add_metadata, initial_value)
+
+    def _import_populator(self, first_cell, rest):
+        attr_name = self.import_setters_by_name[first_cell]
+        return NameAndValuePropertyPopulator(getattr(self._table, attr_name), rest)
+
+    def _setting_populator(self, first_cell, rest):
+        attr_name = self.attrs_by_name[first_cell]
+        return ValuePropertyPopulator(getattr(self._table, attr_name).set, rest)
 
     def _is_metadata(self, setting_name):
         setting_name = setting_name.lower()
@@ -85,18 +97,11 @@ class SettingTablePopulator(_TablePopulator):
 
     def _initial_metadata_value(self, first_cell, value):
         if self._is_metadata_with_olde_prefix(first_cell):
-            return self._extract_value_from_olde_style_meta_cell(first_cell) + value
+            return self._extract_name_from_olde_style_meta_cell(first_cell) + value
         return value
 
-    def _extract_value_from_olde_style_meta_cell(self, first_cell):
+    def _extract_name_from_olde_style_meta_cell(self, first_cell):
         return [first_cell.split(':', 1)[1].strip()]
-
-    def _get_setter(self, setting_name):
-        if self._is_import(setting_name):
-            attr_name = self.import_setters_by_name[setting_name]
-            return getattr(self._table, attr_name)
-        attr_name = self.attrs_by_name[setting_name]
-        return getattr(self._table, attr_name).set
 
     def _is_import(self, setting_name):
         return setting_name in self.import_setters_by_name
