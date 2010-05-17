@@ -80,6 +80,9 @@ class VariableTable(DataTable):
     def add(self, name, value):
         self.variables.append(Variable(name, value))
 
+    def __iter__(self):
+        return iter(self.variables)
+
 
 class TestCaseTable(DataTable):
 
@@ -90,6 +93,9 @@ class TestCaseTable(DataTable):
         self.tests.append(TestCase(name))
         return self.tests[-1]
 
+    def __iter__(self):
+        return iter(self.tests)
+
 
 class KeywordTable(DataTable):
 
@@ -99,6 +105,9 @@ class KeywordTable(DataTable):
     def add(self, name):
         self.keywords.append(UserKeyword(name))
         return self.keywords[-1]
+
+    def __iter__(self):
+        return iter(self.keywords)
 
 
 class Setting(object):
