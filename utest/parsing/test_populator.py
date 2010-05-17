@@ -27,11 +27,18 @@ class TestCaseFilePopulatingTest(unittest.TestCase):
 
     def test_adding_settings(self):
         doc = 'This is doc'
-        setup = ['Keyword Name', 'Argument name']
+        setup_name, setup_args = 'Keyword Name', ['a1', 'a2']
         self._create_table('Settings', [['Documentation', doc],
-                                        ['S  uite SeTUp'] + setup])
+                                        ['S  uite SeTUp'] + [setup_name] + setup_args])
         self._assert_setting('doc', doc)
-        self._assert_setting('suite_setup', setup)
+        self._assert_fixture('suite_setup', setup_name, setup_args)
+
+    def test_adding_import(self):
+        self._create_table('settings', [['Library', 'FooBarness'],
+                                        ['Library', 'BarFooness'],
+                                        ['Resource', 'QuuxNess.txt'],
+                                        ['Variables', 'varzors.py']])
+        assert_equals(len(self._datafile.setting_table.imports), 4)
 
     def test_adding_variables(self):
         self._create_table('Variables', [['${scalar}', 'value'],
@@ -44,13 +51,6 @@ class TestCaseFilePopulatingTest(unittest.TestCase):
         self._create_table('Settings', [['Documentation', 'Part 1'],
                                         ['...', 'Part 2']])
         self._assert_setting('doc', 'Part 1 Part 2')
-
-    def test_adding_import(self):
-        self._create_table('settings', [['Library', 'FooBarness'],
-                                        ['Library', 'BarFooness'],
-                                        ['Resource', 'QuuxNess.txt'],
-                                        ['Variables', 'varzors.py']])
-        assert_equals(len(self._datafile.setting_table.imports), 4)
 
     def test_test_case_populating(self):
         self._create_table('Test cases', [['My test name'],
@@ -113,8 +113,15 @@ class TestCaseFilePopulatingTest(unittest.TestCase):
         self._number_of_steps_should_be(test, 1)
 
     def _assert_setting(self, setting_name, exp_value):
-        assert_equals(getattr(self._datafile.setting_table, setting_name).value,
-                      exp_value)
+        assert_equals(self._setting_with(setting_name).value, exp_value)
+
+    def _setting_with(self, name):
+        return getattr(self._datafile.setting_table, name)
+
+    def _assert_fixture(self, fixture_name, exp_name, exp_args):
+        fixture = self._setting_with(fixture_name)
+        assert_equals(fixture.name, exp_name)
+        assert_equals(fixture.args, exp_args)
 
     def _start_table(self, name):
         return self._populator.start_table(name)
