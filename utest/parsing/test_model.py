@@ -92,12 +92,30 @@ class TestSettingTable(unittest.TestCase):
         assert_equal(self.table.metadata[1].value, 'f a r')
 
     def test_imports(self):
-        self.table.add_library(['Name', 'arg'])
-        self.table.add_resource(['reso.txt'])
-        self.table.add_variables(['varz.py', 'a1', 'a2'])
-        self.table.add_resource(['reso2.txt'])
-        assert_equal(len(self.table.imports), 4)
+        self._verify_import(self.table.add_library('Name'), 'Name')
+        self._verify_import(self.table.add_resource('reso.txt'), 'reso.txt')
+        self._verify_import(self.table.add_variables('varz.py'), 'varz.py')
+        self._verify_import(self.table.add_variables('./v2.py', ['a1', 'a2']),
+                            './v2.py', ['a1', 'a2'])
+        self._verify_import(self.table.add_library('N2', ['1', '2', '3', '4']),
+                            'N2', ['1', '2', '3', '4']) 
+        assert_equal(len(self.table.imports), 5)
         assert_true(all(isinstance(im, Import) for im in self.table.imports))
+
+    def test_resource_with_invalid_args(self):
+        reso = self.table.add_resource('reso.txt', ['invalid', 'args'])
+        self._verify_import(reso, 'reso.txt invalid args')
+
+    def test_library_with_name(self):
+        lib = self.table.add_library('Name', ['WITH NAME', 'New name'])
+        self._verify_import(lib, 'Name', [], 'New name')
+        lib = self.table.add_library('Orig', ['a1', 'a2', 'with name', 'New'])
+        self._verify_import(lib, 'Orig', ['a1', 'a2'], 'New')
+
+    def _verify_import(self, imp, name, args=[], alias=None):
+        assert_equal(imp.name, name)
+        assert_equal(imp.args, args)
+        assert_equal(imp.alias, alias)
 
 
 class TestVariableTable(unittest.TestCase):
@@ -150,10 +168,14 @@ class TestTestCaseTable(unittest.TestCase):
         assert_equal(self.test.tags.value, ['My', 'coooool', 'tags'])
 
     def test_add_step(self):
-        self.test.add_step(['Keyword', 'arg1', 'arg2'])
-        assert_equal(len(self.test.steps), 1)
-        assert_equal(self.test.steps[0].keyword, 'Keyword')
-        assert_equal(self.test.steps[0].args, ['arg1', 'arg2'])
+        step = self.test.add_step(['Keyword', 'arg1', 'arg2'])
+        assert_equal(self.test.steps, [step])
+        assert_equal(step.keyword, 'Keyword')
+        assert_equal(step.args, ['arg1', 'arg2'])
+
+    def test_add_for_loop(self):
+        loop = self.test.add_for_loop(['${var}', 'IN', 'value'])
+        assert_equal(self.test.steps, [loop])
 
 
 class TestKeywordTable(unittest.TestCase):
@@ -184,10 +206,14 @@ class TestKeywordTable(unittest.TestCase):
         assert_equal(self.kw.args.value, ['${args}', 'are not', 'validated'])
 
     def test_add_step(self):
-        self.kw.add_step(['Keyword', 'arg1', 'arg2'])
-        assert_equal(len(self.kw.steps), 1)
-        assert_equal(self.kw.steps[0].keyword, 'Keyword')
-        assert_equal(self.kw.steps[0].args, ['arg1', 'arg2'])
+        step = self.kw.add_step(['Keyword', 'arg1', 'arg2'])
+        assert_equal(self.kw.steps, [step])
+        assert_equal(step.keyword, 'Keyword')
+        assert_equal(step.args, ['arg1', 'arg2'])
+
+    def test_add_for_loop(self):
+        loop = self.kw.add_for_loop(['${var}', 'IN', 'value'])
+        assert_equal(self.kw.steps, [loop])
 
 
 class TestStep(unittest.TestCase):
@@ -216,6 +242,40 @@ class TestStep(unittest.TestCase):
         assert_equal(step.keyword, kw)
         assert_equal(step.args, args)
         assert_equal(step.assign, assign)
+
+
+class TestForLoop(unittest.TestCase):
+
+    def test_normal_for(self):
+        self._test(['${var}', 'IN', 'value1', 'value2'],
+                   ['${var}'], ['value1', 'value2'])
+        self._test(['${v1}', '${v2}', 'in', '@{values}'],
+                   ['${v1}', '${v2}'], ['@{values}'])
+        self._test(['${v1}', '${v2}', '${v3}', 'IN'],
+                   ['${v1}', '${v2}', '${v3}'], [])
+        self._test(['${x}', 'IN', 'IN RANGE', 'IN', 'IN RANGE', 'X'],
+                   ['${x}'], ['IN RANGE', 'IN', 'IN RANGE', 'X'])
+
+    def test_variable_format_is_not_verified(self):
+        self._test(['whatever', 'here', 'in', 'value1', 'value2'],
+                   ['whatever', 'here'], ['value1', 'value2'])
+
+    def test_without_vars(self):
+        self._test(['IN', 'value1', 'value2'], [], ['value1', 'value2'])
+
+    def test_without_in(self):
+        self._test(['whatever', 'here'], ['whatever', 'here'], [])
+
+    def test_in_range(self):
+        self._test(['${i}', 'IN RANGE', '100'], ['${i}'], ['100'], range=True)
+        self._test(['what', 'ever', 'in range', 'IN', 'whatever'], 
+                   ['what', 'ever'], ['IN', 'whatever'], range=True)
+
+    def _test(self, content, vars, values, range=False):
+        loop = ForLoop(content)
+        assert_equal(loop.vars, vars)
+        assert_equal(loop.values, values)
+        assert_equal(loop.range, range)
 
 
 if __name__ == "__main__":

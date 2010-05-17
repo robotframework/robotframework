@@ -55,15 +55,19 @@ class SettingTable(DataTable):
 
     def add_metadata(self, name, value):
         self.metadata.append(Metadata(name, value))
+        return self.metadata[-1]
 
-    def add_library(self, value):
-        self.imports.append(Library(value))
+    def add_library(self, name, args=None):
+        self.imports.append(Library(name, args))
+        return self.imports[-1]
 
-    def add_resource(self, value):
-        self.imports.append(Resource(value))
+    def add_resource(self, name, invalid_args=None):
+        self.imports.append(Resource(name, invalid_args))
+        return self.imports[-1]
 
-    def add_variables(self, value):
-        self.imports.append(Variables(value))
+    def add_variables(self, name, args=None):
+        self.imports.append(Variables(name, args))
+        return self.imports[-1]
 
     def __iter__(self):
         for setting in [self.doc, self.suite_setup, self.suite_teardown,
@@ -178,20 +182,37 @@ class Metadata(Setting):
 
 class Import(Setting):
 
-    def __init__(self, value):
-        self.value = value
+    def __init__(self, name, args=None, alias=None):
+        self.name = name
+        self.args = args or []
+        self.alias = alias
 
 
 class Library(Import):
-    pass
+
+    def __init__(self, name, args=None, alias=None):
+        if args and not alias:
+            args, alias = self._split_alias(args)
+        Import.__init__(self, name, args, alias)
+
+    def _split_alias(self, args):
+        if len(args) >= 2 and args[-2].upper() == 'WITH NAME':
+            return args[:-2], args[-1]
+        return args, None
 
 
 class Resource(Import):
-    pass
+
+    def __init__(self, name, invalid_args=None):
+        if invalid_args:
+            name += ' ' + ' '.join(invalid_args)
+        Import.__init__(self, name)
 
 
 class Variables(Import):
-    pass
+
+    def __init__(self, name, args=None):
+        Import.__init__(self, name, args)
 
 
 class Variable(object):
@@ -203,7 +224,14 @@ class Variable(object):
         self.value = value
 
 
-class TestCase(object):
+class WithSteps(object):
+
+    def add_step(self, content):
+        self.steps.append(Step(content))
+        return self.steps[-1]
+
+
+class TestCase(WithSteps):
 
     def __init__(self, name):
         self.name = name
@@ -214,11 +242,12 @@ class TestCase(object):
         self.timeout = Timeout()
         self.steps = []
 
-    def add_step(self, content):
-        self.steps.append(Step(content))
+    def add_for_loop(self, data):
+        self.steps.append(ForLoop(data))
+        return self.steps[-1]
 
 
-class UserKeyword(object):
+class UserKeyword(TestCase):
 
     def __init__(self, name):
         self.name = name
@@ -228,8 +257,20 @@ class UserKeyword(object):
         self.timeout = Timeout()
         self.steps = []
 
-    def add_step(self, content):
-        self.steps.append(Step(content))
+
+class ForLoop(WithSteps):
+
+    def __init__(self, data):
+        self.range, index = self._get_range_and_index(data)
+        self.vars = data[:index]
+        self.values = data[index+1:]
+        self.steps = []
+
+    def _get_range_and_index(self, data):
+        for index, item in enumerate(data):
+            if item.upper() in ['IN', 'IN RANGE']:
+                return item.upper() == 'IN RANGE', index
+        return False, len(data)
 
 
 class Step(object):
