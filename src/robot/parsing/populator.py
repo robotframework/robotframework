@@ -236,7 +236,7 @@ class Populator(object):
             self._current_populator.add(cells)
 
     def _data_cells(self, row):
-        cells = [ c.strip() for c in row ]
+        cells = [ self._collapse_whitespace(c) for c in row ]
         while cells and not cells[-1]:
             cells.pop()
         return cells

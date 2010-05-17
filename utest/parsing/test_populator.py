@@ -102,12 +102,13 @@ class TestCaseFilePopulatingTest(unittest.TestCase):
         assert_equals(uk.return_.value, ['ankka', 'kameli'])
 
     def test_whitespace_is_ignored(self):
-        self._create_table('Test Cases', [['My test'],
+        self._create_table('Test Cases', [['My   test'],
                                           [' ', '[Tags]', 'foo', '  \t  '],
                                           ['  '],
                                           [ '\t'],
                                           ['', 'Log Many', '', 'argh']])
         test = self._first_test()
+        assert_equals(test.name, 'My test')
         assert_equals(test.tags.value, ['foo'])
         self._number_of_steps_should_be(test, 1)
 
