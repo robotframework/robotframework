@@ -16,11 +16,6 @@ class TestTestCaseFile(unittest.TestCase):
         assert_true(isinstance(self.tcf.testcase_table, TestCaseTable))
         assert_true(isinstance(self.tcf.keyword_table, KeywordTable))
 
-    def test_edited(self):
-        assert_false(self.tcf.edited())
-        self.tcf.setting_table.doc.set('content')
-        assert_true(self.tcf.edited())
-
 
 class TestSettingTable(unittest.TestCase):
 

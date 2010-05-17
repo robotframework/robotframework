@@ -29,14 +29,9 @@ class TestCaseFile(object):
                       self.testcase_table, self.keyword_table]:
             yield table
 
-    def edited(self):
-        return any(table.edited() for table in self)
-
 
 class DataTable(object):
-
-    def edited(self):
-        return False
+    pass
 
 
 class SettingTable(DataTable):
@@ -76,9 +71,6 @@ class SettingTable(DataTable):
                         + self.metadata + self.imports:
             yield setting
 
-    def edited(self):
-        return any(setting.edited() for setting in self)
-
 
 class VariableTable(DataTable):
 
@@ -117,9 +109,6 @@ class Setting(object):
     def set(self, value):
         self.value = value
 
-    def edited(self):
-        return bool(self.value)
-
     def _string_value(self, value):
         return value if isinstance(value, basestring) else ' '.join(value)
 
@@ -143,9 +132,6 @@ class Fixture(Setting):
         self.name = value[0] if value else ''
         self.args = value[1:]
 
-    def edited(self):
-        return self.name is not None
-
 
 class Timeout(Setting):
 
@@ -156,9 +142,6 @@ class Timeout(Setting):
     def set(self, value):
         self.value = value[0] if value else ''
         self.message = ' '.join(value[1:])
-
-    def edited(self):
-        return self.value is not None
 
 
 class Tags(Setting):
