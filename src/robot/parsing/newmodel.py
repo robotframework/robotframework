@@ -260,17 +260,17 @@ class UserKeyword(TestCase):
 
 class ForLoop(WithSteps):
 
-    def __init__(self, data):
-        self.range, index = self._get_range_and_index(data)
-        self.vars = data[:index]
-        self.values = data[index+1:]
+    def __init__(self, content):
+        self.range, index = self._get_range_and_index(content)
+        self.vars = content[:index]
+        self.values = content[index+1:]
         self.steps = []
 
-    def _get_range_and_index(self, data):
-        for index, item in enumerate(data):
+    def _get_range_and_index(self, content):
+        for index, item in enumerate(content):
             if item.upper() in ['IN', 'IN RANGE']:
                 return item.upper() == 'IN RANGE', index
-        return False, len(data)
+        return False, len(content)
 
 
 class Step(object):
