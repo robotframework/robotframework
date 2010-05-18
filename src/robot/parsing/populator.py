@@ -35,7 +35,7 @@ class _TablePopulator(Populator):
         self._populator = None
 
     def add(self, row):
-        if not row.startswith(self.row_continuation_marker):
+        if not self._is_continuing(row):
             self.populate()
             self._populator = self._get_populator(row)
         self._populator.add(row)
@@ -44,9 +44,11 @@ class _TablePopulator(Populator):
         if self._populator:
             self._populator.populate()
 
+    def _is_continuing(self, row):
+        return row.is_continuing()
+
 
 class SettingTablePopulator(_TablePopulator):
-    row_continuation_marker = '...'
     olde_metadata_prefix = 'meta:'
     attrs_by_name = utils.NormalizedDict({'Documentation': 'doc',
                                           'Document': 'doc',
@@ -93,7 +95,6 @@ class SettingTablePopulator(_TablePopulator):
 
 
 class VariableTablePopulator(_TablePopulator):
-    row_continuation_marker = '...'
 
     def _get_table(self, datafile):
         return datafile.variable_table
@@ -103,7 +104,6 @@ class VariableTablePopulator(_TablePopulator):
 
 
 class TestTablePopulator(_TablePopulator):
-    row_continuation_marker = ''
 
     def _get_table(self, datafile):
         return datafile.testcase_table
@@ -111,9 +111,10 @@ class TestTablePopulator(_TablePopulator):
     def _get_populator(self, row):
         return TestCasePopulator(self._table.add)
 
+    def _is_continuing(self, row):
+        return row.is_indented()
 
 class KeywordTablePopulator(_TablePopulator):
-    row_continuation_marker = ''
 
     def _get_table(self, datafile):
         return datafile.keyword_table
@@ -121,9 +122,11 @@ class KeywordTablePopulator(_TablePopulator):
     def _get_populator(self, row):
         return UserKeywordPopulator(self._table.add)
 
+    def _is_continuing(self, row):
+        return row.is_indented()
+
 
 class ForLoopPopulator(Populator):
-    row_continuation_marker = '...'
 
     def __init__(self, for_loop_creator):
         self._for_loop_creator = for_loop_creator
@@ -138,13 +141,13 @@ class ForLoopPopulator(Populator):
             if not declaration_ready:
                 return
             self._loop = self._for_loop_creator(self._declaration)
-        if not (self._continues(row) or self._continues(dedented_row)):
+        if not (row.is_continuing() or dedented_row.is_continuing()):
             self._populator.populate()
             self._populator = StepPopulator(self._loop.add_step)
         self._populator.add(dedented_row)
 
     def _populate_declaration(self, row):
-        if row.starts_for_loop() or self._continues(row):
+        if row.starts_for_loop() or row.is_continuing():
             self._declaration.extend(row.tail())
             return False
         return True
@@ -152,12 +155,8 @@ class ForLoopPopulator(Populator):
     def populate(self):
         self._populator.populate()
 
-    def _continues(self, row):
-        return row.startswith(self.row_continuation_marker)
-
 
 class _TestCaseUserKeywordPopulator(Populator):
-    row_continuation_marker = '...'
 
     def __init__(self, test_or_uk_creator):
         self._test_or_uk_creator = test_or_uk_creator
@@ -184,8 +183,8 @@ class _TestCaseUserKeywordPopulator(Populator):
         return StepPopulator(self._test_or_uk.add_step)
 
     def _continues(self, row):
-        return row.startswith(self.row_continuation_marker) or \
-            (isinstance(self._populator, ForLoopPopulator) and row.startswith(''))
+        return row.is_continuing() or \
+            (isinstance(self._populator, ForLoopPopulator) and row.is_indented())
 
     def _setting_setter(self, cell):
         attr_name = self.attrs_by_name[self._setting_name(cell)]
@@ -323,6 +322,7 @@ class TestCaseFilePopulator(Populator):
 
 
 class DataRow(object):
+    _row_continuation_marker = '...'
     _whitespace_regexp = re.compile('\s+')
 
     def __init__(self, cells):
@@ -351,6 +351,12 @@ class DataRow(object):
     def starts_test_or_user_keyword_setting(self):
         head = self.head()
         return head and head[0] == '[' and head[-1] == ']'
+
+    def is_indented(self):
+        return self.head() == ''
+
+    def is_continuing(self):
+        return self.head() == self._row_continuation_marker
 
     def _data_cells(self, row):
         cells = [ self._collapse_whitespace(cell)
