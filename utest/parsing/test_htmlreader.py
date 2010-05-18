@@ -4,13 +4,14 @@ from types import UnicodeType
 
 from robot.parsing.htmlreader import HtmlReader
 from robot.utils.asserts import *
+from robot.parsing.populator import TestDataPopulator
 
 
 VALID_TABLES = [ "Variable", "Setting", "Test Case", "Test Suite", "Keyword" ]
 ROW_TEMPLATE = '<tr><td>%s</td><td>%s</td><td>%s</td></tr>'
 
 
-class TestDataMock:
+class PopulatorMock:
 
     def __init__(self):
         self.tables = {}
@@ -25,7 +26,7 @@ class TestDataMock:
             self.current = None
             return False
 
-    def add_row(self, cells):
+    def add(self, cells):
         self.tables[self.current].append(cells)
 
 
@@ -33,7 +34,7 @@ class TestHtmlReader(unittest.TestCase):
 
     def setUp(self):
         self.reader = HtmlReader()
-        self.reader.data = TestDataMock()
+        self.reader.populator = PopulatorMock()
 
     def test_initial_state(self):
         self.reader.state = self.reader.IGNORE
@@ -47,7 +48,7 @@ class TestHtmlReader(unittest.TestCase):
             self.reader.feed('<table>')
             self.reader.feed(ROW_TEMPLATE % (name, 'Value 1', 'Value2'))
             assert_equals(self.reader.state, self.reader.PROCESS)
-            assert_equals(self.reader.data.current, name)
+            assert_equals(self.reader.populator.current, name)
             self.reader.feed('</table>')
             assert_equals(self.reader.state, self.reader.IGNORE)
 
@@ -56,10 +57,10 @@ class TestHtmlReader(unittest.TestCase):
             self.reader.feed('<table>')
             self.reader.feed(ROW_TEMPLATE % (name, 'Value 1', 'Value2'))
             assert_equals(self.reader.state, self.reader.IGNORE)
-            assert_none(self.reader.data.current)
+            assert_none(self.reader.populator.current)
             self.reader.feed(ROW_TEMPLATE % ('This', 'row', 'is ignored'))
             assert_equals(self.reader.state, self.reader.IGNORE)
-            assert_equals(len(self.reader.data.tables.values()), 0)
+            assert_equals(len(self.reader.populator.tables.values()), 0)
             self.reader.feed('</table>')
             assert_equals(self.reader.state, self.reader.IGNORE)
 
@@ -71,7 +72,7 @@ class TestHtmlReader(unittest.TestCase):
             self.reader.feed(ROW_TEMPLATE % (name, 'Value 1', 'Value2'))
             self.reader.feed(ROW_TEMPLATE % inp)
             self.reader.feed('</table>')
-            assert_equals(self.reader.data.tables[name], [ exp ])
+            assert_equals(self.reader.populator.tables[name], [ exp ])
 
     def test_processing(self):
         self._row_processing(ROW_TEMPLATE)
@@ -101,7 +102,7 @@ class TestHtmlReader(unittest.TestCase):
             assert_equals(self.reader.state, self.reader.PROCESS)
             self.reader.feed('</table>')
             assert_equals(self.reader.state, self.reader.IGNORE)
-            assert_equals(self.reader.data.tables[name], row_data)
+            assert_equals(self.reader.populator.tables[name], row_data)
 
 
 class TestEntityAndCharRefs(unittest.TestCase):
@@ -175,13 +176,13 @@ class TestEncoding(unittest.TestCase):
 
     def test_encoding_and_entityrefs(self):
         reader = HtmlReader()
-        reader.data = TestDataMock()
+        reader.populator = PopulatorMock()
         reader.feed('<meta content="text/html; charset=utf-8" />')
         reader.feed('<table><tr><td>Setting</td></tr>')
         reader.feed('<tr><td>&auml;iti')
         assert_equals(reader.current_cell, [u'\xe4', u'iti'])
         reader.feed('</tr>')
-        assert_equals(reader.data.tables['Setting'][0], [u'\xe4iti'])
+        assert_equals(reader.populator.tables['Setting'][0], [u'\xe4iti'])
 
 
 if __name__ == '__main__':

@@ -17,6 +17,7 @@ import HTMLParser
 from htmlentitydefs import entitydefs
 
 from robot import utils
+from populator import TestDataPopulator
 
 extra_entitydefs = {'nbsp': ' ',  'apos': "'", 'tilde': '~'}
 
@@ -42,8 +43,8 @@ class HtmlReader(HTMLParser.HTMLParser):
                            'br_start'    : self.br_start,
                            'meta_start'  : self.meta_start }
 
-    def read(self, htmlfile, rawdata):
-        self.data = rawdata
+    def read(self, htmlfile, datafile):
+        self.populator = TestDataPopulator(datafile)
         self.state = self.IGNORE
         self.current_row = None
         self.current_cell = None
@@ -53,7 +54,7 @@ class HtmlReader(HTMLParser.HTMLParser):
         # if the same instance of our HtmlParser is reused. Currently it's
         # used only once so there's no problem.
         self.close()
-        return self.data
+        self.populator.eof()
 
     def handle_starttag(self, tag, attrs):
         handler = self._handlers.get(tag+'_start')
@@ -130,14 +131,14 @@ class HtmlReader(HTMLParser.HTMLParser):
         if self.state == self.INITIAL:
             if len(self.current_row) > 0:
                 table_name = self.current_row[0]
-                if self.data.start_table(table_name):
+                if self.populator.start_table(table_name):
                     self.state = self.PROCESS
                 else:
                     self.state = self.IGNORE
             else:
                 self.state = self.IGNORE
         elif self.state == self.PROCESS:
-            self.data.add_row(self.current_row)
+            self.populator.add(self.current_row)
         self.current_row = None
 
     def td_start(self, attrs=None):
