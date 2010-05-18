@@ -12,15 +12,12 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-import os
-
 from robot.errors import DataError
 from robot.variables import is_var
-from robot import utils
 
-from readers import Reader
 from settings import (Documentation, Fixture, Timeout, Tags, Metadata, 
                       Library, Resource, Variables, Arguments, Return)
+from datareader import read_data
 
 
 class TestCaseFile(object):
@@ -32,19 +29,7 @@ class TestCaseFile(object):
         self.testcase_table = TestCaseTable()
         self.keyword_table = KeywordTable()
         if source:
-            self._populate(source)
-
-    def _populate(self, path):
-        if not os.path.isfile(path):
-            raise DataError("Data source '%s' does not exist." % path)
-        try:
-            datafile = open(path, 'rb')
-        except:
-            raise DataError(utils.get_error_message())
-        try:
-            return Reader(path).read(datafile, self)
-        finally:
-            datafile.close()
+            read_data(source, self)
 
     def __iter__(self):
         for table in [self.setting_table, self.variable_table,

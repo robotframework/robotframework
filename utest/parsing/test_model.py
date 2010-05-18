@@ -5,20 +5,15 @@ from robot.utils.asserts import *
 from robot.parsing.newmodel import *
 from robot.parsing.settings import *
 from robot.parsing.txtreader import TxtReader
-import robot.parsing.populator
+from robot.parsing.populator import TestDataPopulator
 
 
 class TestTestCaseFile(unittest.TestCase):
 
     def setUp(self):
         self.tcf = TestCaseFile()
-        self._orig_curdir = robot.parsing.populator.PROCESS_CURDIR
-        robot.parsing.populator.PROCESS_CURDIR = False
 
-    def tearDown(self):
-        robot.parsing.populator.PROCESS_CURDIR = self._orig_curdir
-
-    def test_create(self):
+    def test_init(self):
         assert_none(self.tcf.source)
         assert_true(isinstance(self.tcf.setting_table, SettingTable))
         assert_true(isinstance(self.tcf.variable_table, VariableTable))
@@ -26,10 +21,10 @@ class TestTestCaseFile(unittest.TestCase):
         assert_true(isinstance(self.tcf.keyword_table, KeywordTable))
 
     def test_integration(self):
-        test_file = StringIO('*** Test Cases *** \ntest  No operation\n')
-        TxtReader().read(test_file, self.tcf)
+        test_file = StringIO('*** Test Cases *** \nMy test  No operation\n')
+        TxtReader().read(test_file, TestDataPopulator(self.tcf))
         assert_equal(len(self.tcf.testcase_table.tests), 1)
-        assert_equal(self.tcf.testcase_table.tests[0].name, 'test')
+        assert_equal(self.tcf.testcase_table.tests[0].name, 'My test')
 
 
 class TestSettingTable(unittest.TestCase):
@@ -37,7 +32,7 @@ class TestSettingTable(unittest.TestCase):
     def setUp(self):
         self.table = TestCaseFile().setting_table
 
-    def test_create(self):
+    def test_init(self):
         assert_true(isinstance(self.table.doc, Documentation))
         assert_true(isinstance(self.table.suite_setup, Fixture))
         assert_true(isinstance(self.table.suite_teardown, Fixture))
@@ -133,7 +128,7 @@ class TestVariableTable(unittest.TestCase):
     def setUp(self):
         self.table = TestCaseFile().variable_table
 
-    def test_create(self):
+    def test_init(self):
         assert_equal(self.table.variables, [])
 
     def test_add_variables(self):
@@ -166,7 +161,7 @@ class TestTestCaseTable(unittest.TestCase):
         self.table = TestCaseFile().testcase_table
         self.test = TestCase('name')
 
-    def test_create(self):
+    def test_init(self):
         assert_equal(self.table.tests, [])
 
     def test_add_test(self):
@@ -205,7 +200,7 @@ class TestKeywordTable(unittest.TestCase):
         self.table = TestCaseFile().keyword_table
         self.kw = UserKeyword('name')
 
-    def test_create(self):
+    def test_init(self):
         assert_equal(self.table.keywords, [])
 
     def test_add_keyword(self):

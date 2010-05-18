@@ -334,7 +334,7 @@ class TestDataPopulator(Populator):
         self._current_populator.populate()
 
     def add(self, row):
-        if PROCESS_CURDIR:
+        if PROCESS_CURDIR and self._curdir:
             row = self._replace_curdirs_in(row)
         data = DataRow(row)
         if data:

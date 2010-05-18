@@ -17,14 +17,11 @@ import HTMLParser
 from htmlentitydefs import entitydefs
 
 from robot import utils
-from populator import TestDataPopulator
 
 extra_entitydefs = {'nbsp': ' ',  'apos': "'", 'tilde': '~'}
 
 
 class HtmlReader(HTMLParser.HTMLParser):
-
-    # States
     IGNORE = 0
     INITIAL = 1
     PROCESS = 2
@@ -43,8 +40,8 @@ class HtmlReader(HTMLParser.HTMLParser):
                            'br_start'    : self.br_start,
                            'meta_start'  : self.meta_start }
 
-    def read(self, htmlfile, datafile):
-        self.populator = TestDataPopulator(datafile)
+    def read(self, htmlfile, populator):
+        self.populator = populator
         self.state = self.IGNORE
         self.current_row = None
         self.current_cell = None

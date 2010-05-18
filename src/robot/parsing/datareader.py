@@ -12,8 +12,12 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot.errors import DataError
+import os
 
+from robot.errors import DataError
+from robot import utils
+
+from populator import TestDataPopulator
 from htmlreader import HtmlReader
 from tsvreader import TsvReader
 from txtreader import TxtReader
@@ -27,7 +31,7 @@ except ImportError:
 
 READERS = {'html': HtmlReader, 'htm': HtmlReader, 'xhtml': HtmlReader,
            'tsv': TsvReader , 'rst': RestReader, 'rest': RestReader,
-           'txt': TxtReader }
+           'txt': TxtReader}
 
 
 def Reader(path):
@@ -36,3 +40,16 @@ def Reader(path):
         return READERS[extension]()
     except KeyError:
         raise DataError("No reader found for extension '%s'" % extension)
+
+
+def read_data(path, datafile):
+    if not os.path.isfile(path):
+        raise DataError("Data source '%s' does not exist." % path)
+    try:
+        source = open(path, 'rb')
+    except:
+        raise DataError(utils.get_error_message())
+    try:
+        Reader(path).read(source, TestDataPopulator(datafile))
+    finally:
+        source.close()
