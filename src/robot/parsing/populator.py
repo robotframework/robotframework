@@ -117,6 +117,40 @@ class KeywordTablePopulator(_TablePopulator):
         return UserKeywordPopulator(self._table.add)
 
 
+class ForLoopPopulator(Populator):
+    row_continuation_marker = '...'
+
+    def __init__(self, for_loop_creator):
+        self._for_loop_creator = for_loop_creator
+        self._loop = None
+        self._populator = NullPopulator()
+        self._declaration = []
+
+    def add(self, row):
+        dedented_row = row.dedent()
+        if not self._loop:
+            declaration_ready = self._populate_declaration(row)
+            if not declaration_ready:
+                return
+            self._loop = self._for_loop_creator(self._declaration)
+        if not (self._continues(row) or self._continues(dedented_row)):
+            self._populator.populate()
+            self._populator = StepPopulator(self._loop.add_step)
+        self._populator.add(dedented_row)
+
+    def _populate_declaration(self, row):
+        if row.starts_for_loop() or self._continues(row):
+            self._declaration.extend(row.tail())
+            return False
+        return True
+
+    def populate(self):
+        self._populator.populate()
+
+    def _continues(self, row):
+        return row.startswith(self.row_continuation_marker)
+
+
 class _TestCaseUserKeywordPopulator(Populator):
     row_continuation_marker = '...'
 
@@ -129,23 +163,24 @@ class _TestCaseUserKeywordPopulator(Populator):
         dedented_row = row.dedent()
         if not self._test_or_uk:
             self._test_or_uk = self._test_or_uk_creator(row.head())
-        if not dedented_row.startswith(self.row_continuation_marker):
+        if not self._continues(dedented_row):
             self._populator.populate()
             self._populator = self._get_populator(dedented_row)
         self._populator.add(dedented_row)
 
     def populate(self):
-        if self._populator:
-            self._populator.populate()
+        self._populator.populate()
 
     def _get_populator(self, row):
-        first_cell = row.head()
-        if self._is_setting(first_cell):
-            return SettingPopulator(self._setting_setter(first_cell))
+        if row.starts_test_or_user_keyword_setting():
+            return SettingPopulator(self._setting_setter(row.head()))
+        if row.starts_for_loop():
+            return ForLoopPopulator(self._test_or_uk.add_for_loop)
         return StepPopulator(self._test_or_uk.add_step)
 
-    def _is_setting(self, cell):
-        return cell and cell[0] == '[' and cell[-1] == ']'
+    def _continues(self, row):
+        return row.startswith(self.row_continuation_marker) or \
+            (isinstance(self._populator, ForLoopPopulator) and row.startswith(''))
 
     def _setting_setter(self, cell):
         attr_name = self.attrs_by_name[self._setting_name(cell)]
@@ -268,6 +303,9 @@ class TestCaseFilePopulator(Populator):
     def populate(self):
         self._current_populator.populate()
 
+    def eof(self):
+        self.populate()
+
     def add(self, row):
         data = DataRow(row)
         if data:
@@ -294,6 +332,15 @@ class DataRow(object):
 
     def startswith(self, value):
         return self.head() == value
+
+    def starts_for_loop(self):
+        if not self.head().startswith(':'):
+            return False
+        return self.head().replace(':', '').upper().strip() == 'FOR'
+
+    def starts_test_or_user_keyword_setting(self):
+        head = self.head()
+        return head and head[0] == '[' and head[-1] == ']'
 
     def _data_cells(self, row):
         cells = [ self._collapse_whitespace(cell)

@@ -87,6 +87,50 @@ class TestCaseFilePopulatingTest(unittest.TestCase):
         assert_equals(len(self._first_test().steps), 1)
         assert_equals(len(self._nth_test(2).steps), 2)
 
+    def test_for_loop(self):
+        self._create_table('Test cases', [['For loop test'],
+                                          ['', ':FOR', '${i}', 'IN', '@{list}'],
+                                          ['', '', 'Log', '${i}']])
+        assert_equals(len(self._first_test().steps), 1)
+        for_loop = self._first_test().steps[0]
+        assert_equals(len(for_loop.steps), 1)
+        assert_true(not for_loop.range)
+        assert_equals(for_loop.vars, ['${i}'])
+        assert_equals(for_loop.values, ['@{list}'])
+
+    def test_in_range_for_loop(self):
+        self._create_table('Test cases', [['For loop test'],
+                                          ['', 'Log', 'Before FOR'],
+                                          ['', ': for', '${i}', '${j}', 'IN RANGE', '10'],
+                                          ['', '', 'Log', '${i}'],
+                                          ['', '', 'Fail', '${j}'],
+                                          ['', 'Log', 'Outside FOR']])
+        assert_equals(len(self._first_test().steps), 3)
+        for_loop = self._first_test().steps[1]
+        assert_equals(len(for_loop.steps), 2)
+        assert_true(for_loop.range)
+        assert_equals(for_loop.vars, ['${i}', '${j}'])
+
+    def test_malicious_for_loop(self):
+        self._create_table('Test cases', [['Malicious for loop test'],
+                                          ['', 'Log', 'Before FOR'],
+                                          ['#', 'Log', 'Before FOR'],
+                                          ['', '::::   fOr', '${i}', 'IN', '10', '20'],
+                                          ['#', '...', 'No operation'],
+                                          ['', '...', '30', '40'],
+                                          ['', '...', '50', '60'],
+                                          ['', '', 'Log Many', '${i}'],
+                                          ['', '', '...', '${i}'],
+                                          ['', '...', '${i}'],
+                                          ['', 'Log', 'Outside FOR']])
+        assert_equals(len(self._first_test().steps), 3)
+        for_loop = self._first_test().steps[1]
+        assert_equals(len(for_loop.steps), 1)
+        assert_true(not for_loop.range)
+        assert_equals(for_loop.vars, ['${i}'])
+        assert_equals(for_loop.values, ['10', '20', '30', '40', '50', '60'])
+
+
     def test_test_settings(self):
         doc = 'This is domumentation for the test case'
         self._create_table('Test cases', [['My test name'],
@@ -167,7 +211,7 @@ class TestCaseFilePopulatingTest(unittest.TestCase):
         self._start_table(name)
         for r  in rows:
             self._populator.add(r)
-        self._populator.populate()
+        self._populator.eof()
 
     def _nth_test(self, index):
         return self._datafile.testcase_table.tests[index-1]
