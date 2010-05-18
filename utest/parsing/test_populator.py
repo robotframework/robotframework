@@ -1,4 +1,5 @@
 import unittest
+import os
 
 from robot.parsing.populator import TestCaseFilePopulator
 from robot.parsing.newmodel import TestCaseFile
@@ -11,9 +12,6 @@ class TestCaseFilePopulatingTest(unittest.TestCase):
         self._datafile = TestCaseFile()
         self._path = '/path/to/source.txt'
         self._populator = TestCaseFilePopulator(self._datafile, self._path)
-
-    def test_creation(self):
-        assert_equals(self._datafile.source, self._path)
 
     def test_starting_valid_table(self):
         for name in ['Test Cases', '  variables   ', 'K E Y WO R D S']:
@@ -173,7 +171,7 @@ class TestCaseFilePopulatingTest(unittest.TestCase):
     def test_curdir_handling(self):
         self._create_table('Test cases', [['My test name'],
                                           ['', 'Log', '${CURDIR}']])
-        assert_equals(self._first_test().steps[0].args, ['/path/to'])
+        assert_equals(self._first_test().steps[0].args, [os.path.dirname(self._path)])
 
     def test_turn_off_curdir_handling(self):
         from robot.parsing import populator

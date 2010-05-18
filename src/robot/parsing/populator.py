@@ -295,9 +295,8 @@ class TestCaseFilePopulator(Populator):
 
     def __init__(self, datafile, path):
         self._datafile = datafile
-        self._datafile.source = path
         self._current_populator = self._null_populator
-        self._curdir = os.path.dirname(self._datafile.source)
+        self._curdir = os.path.dirname(path)
 
     def start_table(self, name):
         try:
