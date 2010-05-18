@@ -275,6 +275,7 @@ class NullPopulator(Populator):
 
 
 class TestCaseFilePopulator(Populator):
+    _null_populator = NullPopulator()
     populators = utils.NormalizedDict({'Setting':       SettingTablePopulator,
                                        'Settings':      SettingTablePopulator,
                                        'Metadata':      SettingTablePopulator,
@@ -290,7 +291,7 @@ class TestCaseFilePopulator(Populator):
     def __init__(self, datafile, path):
         self._datafile = datafile
         self._datafile.source = path
-        self._current_populator = NullPopulator()
+        self._current_populator = self._null_populator
 
     def start_table(self, name):
         try:
