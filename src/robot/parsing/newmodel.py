@@ -14,10 +14,13 @@
 
 import os
 
-from robot.variables import is_var
-from readers import Reader
-from robot import utils
 from robot.errors import DataError
+from robot.variables import is_var
+from robot import utils
+
+from readers import Reader
+from settings import (Documentation, Fixture, Timeout, Tags, Metadata, 
+                      Library, Resource, Variables, Arguments, Return)
 
 
 class TestCaseFile(object):
@@ -31,11 +34,6 @@ class TestCaseFile(object):
         if source:
             self._populate(source)
 
-    def __iter__(self):
-        for table in [self.setting_table, self.variable_table,
-                      self.testcase_table, self.keyword_table]:
-            yield table
-
     def _populate(self, path):
         if not os.path.isfile(path):
             raise DataError("Data source '%s' does not exist." % path)
@@ -47,6 +45,11 @@ class TestCaseFile(object):
             return Reader(path).read(datafile, self)
         finally:
             datafile.close()
+
+    def __iter__(self):
+        for table in [self.setting_table, self.variable_table,
+                      self.testcase_table, self.keyword_table]:
+            yield table
 
 
 class DataTable(object):
@@ -129,108 +132,13 @@ class KeywordTable(DataTable):
         return iter(self.keywords)
 
 
-class Setting(object):
-
-    def __init__(self):
-        self.value = []
-
-    def set(self, value):
-        self.value = value
-
-    def _string_value(self, value):
-        return value if isinstance(value, basestring) else ' '.join(value)
-
-
-class Documentation(Setting):
-
-    def __init__(self):
-        self.value = ''
-
-    def set(self, value):
-        self.value = self._string_value(value)
-
-
-class Fixture(Setting):
-
-    def __init__(self):
-        self.name = None
-        self.args = []
-
-    def set(self, value):
-        self.name = value[0] if value else ''
-        self.args = value[1:]
-
-
-class Timeout(Setting):
-
-    def __init__(self):
-        self.value = None
-        self.message = ''
-
-    def set(self, value):
-        self.value = value[0] if value else ''
-        self.message = ' '.join(value[1:])
-
-
-class Tags(Setting):
-    pass
-
-
-class Arguments(Setting):
-    pass
-
-
-class Return(Setting):
-    pass
-
-
-class Metadata(Setting):
-
-    def __init__(self, name, value):
-        self.name = name
-        self.value = self._string_value(value)
-
-
-class Import(Setting):
-
-    def __init__(self, name, args=None, alias=None):
-        self.name = name
-        self.args = args or []
-        self.alias = alias
-
-
-class Library(Import):
-
-    def __init__(self, name, args=None, alias=None):
-        if args and not alias:
-            args, alias = self._split_alias(args)
-        Import.__init__(self, name, args, alias)
-
-    def _split_alias(self, args):
-        if len(args) >= 2 and args[-2].upper() == 'WITH NAME':
-            return args[:-2], args[-1]
-        return args, None
-
-
-class Resource(Import):
-
-    def __init__(self, name, invalid_args=None):
-        if invalid_args:
-            name += ' ' + ' '.join(invalid_args)
-        Import.__init__(self, name)
-
-
-class Variables(Import):
-
-    def __init__(self, name, args=None):
-        Import.__init__(self, name, args)
-
-
 class Variable(object):
 
     def __init__(self, name, value):
         self.name = name.rstrip('= ')
-        if name.startswith('$') and isinstance(value, basestring):
+        if name.startswith('$') and value == []:
+            value = ''
+        if isinstance(value, basestring):
             value = [value]  # Need to support scalar lists until RF 2.6
         self.value = value
 

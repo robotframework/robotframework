@@ -3,6 +3,7 @@ from StringIO import StringIO
 
 from robot.utils.asserts import *
 from robot.parsing.newmodel import *
+from robot.parsing.settings import *
 from robot.parsing.txtreader import TxtReader
 import robot.parsing.populator
 
@@ -147,6 +148,17 @@ class TestVariableTable(unittest.TestCase):
         assert_equal(self.table.variables[2].name, '@{LIST}')
         assert_equal(self.table.variables[2].value, ['hello', 'world'])
 
+    def test_empty_value(self):
+        self.table.add('${V1}', [])
+        self.table.add('${V2}', '')
+        assert_equal(self.table.variables[0].value, [''])
+        assert_equal(self.table.variables[1].value, [''])
+
+    def test_variable_syntax_is_not_verified(self):
+        self.table.add('not var', 'the value')
+        assert_equal(self.table.variables[0].name, 'not var')
+        assert_equal(self.table.variables[0].value, ['the value'])
+        
 
 class TestTestCaseTable(unittest.TestCase):
 
