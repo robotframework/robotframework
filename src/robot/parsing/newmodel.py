@@ -12,12 +12,20 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+import os
+
 from robot.errors import DataError
 from robot.variables import is_var
 
 from settings import (Documentation, Fixture, Timeout, Tags, Metadata, 
                       Library, Resource, Variables, Arguments, Return)
-from datareader import read_data
+from datareader import FileReader, DirectoryReader
+
+
+def TestData(path):
+    if os.path.isdir(path):
+        return TestDataDirectory(path)
+    return TestCaseFile(path)
 
 
 class TestCaseFile(object):
@@ -29,7 +37,7 @@ class TestCaseFile(object):
         self.testcase_table = TestCaseTable()
         self.keyword_table = KeywordTable()
         if source:
-            read_data(source, self)
+            FileReader().read(source, self)
 
     def __iter__(self):
         for table in [self.setting_table, self.variable_table,
@@ -45,8 +53,17 @@ class TestDataDirectory(object):
         self.variable_table = VariableTable()
         self.testcase_table = TestCaseTableNotAllowed('test suite init file')
         self.keyword_table = KeywordTable()
+        self.children = []
         if source:
-            self._populate(source)
+            DirectoryReader().read(source, self)
+
+    def add_child(self, path):
+        self.children.append(TestData(path))
+
+    def __iter__(self):
+        for table in [self.setting_table, self.variable_table,
+                      self.keyword_table]:
+            yield table
 
 
 class DataTable(object):
