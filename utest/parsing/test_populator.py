@@ -228,6 +228,21 @@ class TestCaseFilePopulatingTest(unittest.TestCase):
         self._number_of_steps_should_be(test, 1)
         assert_equals(test.tags.value, ['foo'])
 
+    def test_populator_happy_path_workflow(self):
+        self._create_table('settings', [['Library', 'FooBarness']], eof=False)
+        self._create_table('Variables', [['${scalar}', 'value']], eof=False)
+        self._create_table('Test cases', [['My test name'],
+                                          ['', 'Log', 'quux']], eof=False)
+        self._create_table('More cases', [['My other test name'],
+                                          ['', 'Log', 'foox']], eof=False)
+        self._create_table('Keywords', [['My User Keyword'],
+                                        ['', 'Foo', 'Bar']], eof=False)
+        self._populator.eof()
+        self._assert_import(0, 'FooBarness', [])
+        assert_equals(len(self._datafile.variable_table.variables), 1)
+        assert_equals(len(self._datafile.testcase_table.tests), 1)
+        assert_equals(len(self._nth_uk(0).steps), 1)
+
     def _assert_setting(self, setting_name, exp_value):
         assert_equals(self._setting_with(setting_name).value, exp_value)
 
@@ -254,11 +269,12 @@ class TestCaseFilePopulatingTest(unittest.TestCase):
     def _start_table(self, name):
         return self._populator.start_table(name)
 
-    def _create_table(self, name, rows):
+    def _create_table(self, name, rows, eof=True):
         self._start_table(name)
         for r  in rows:
             self._populator.add(r)
-        self._populator.eof()
+        if eof:
+            self._populator.eof()
 
     def _nth_test(self, index):
         return self._datafile.testcase_table.tests[index-1]
