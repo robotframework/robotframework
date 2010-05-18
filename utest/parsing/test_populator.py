@@ -9,7 +9,7 @@ class TestCaseFilePopulatingTest(unittest.TestCase):
 
     def setUp(self):
         self._datafile = TestCaseFile()
-        self._path = '/path/to/source'
+        self._path = '/path/to/source.txt'
         self._populator = TestCaseFilePopulator(self._datafile, self._path)
 
     def test_creation(self):
@@ -169,6 +169,20 @@ class TestCaseFilePopulatingTest(unittest.TestCase):
         assert_equals(len(uk.steps), 2)
         assert_equals(uk.args.value, ['${foo}', '${bar}'])
         assert_equals(uk.return_.value, ['ankka', 'kameli'])
+
+    def test_curdir_handling(self):
+        self._create_table('Test cases', [['My test name'],
+                                          ['', 'Log', '${CURDIR}']])
+        assert_equals(self._first_test().steps[0].args, ['/path/to'])
+
+    def test_turn_off_curdir_handling(self):
+        from robot.parsing import populator
+        populator.PROCESS_CURDIR = False
+        self.setUp()
+        self._create_table('Test cases', [['My test name'],
+                                          ['', 'Log', '${CURDIR}']])
+        assert_equals(self._first_test().steps[0].args, ['${CURDIR}'])
+        populator.PROCESS_CURDIR = True
 
     def test_whitespace_is_ignored(self):
         self._create_table('Test Cases', [['My   test'],

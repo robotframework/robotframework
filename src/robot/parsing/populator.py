@@ -13,8 +13,13 @@
 #  limitations under the License.
 
 import re
+import os
 
 from robot import utils
+
+
+# Hook for external tools for altering ${CURDIR} processing
+PROCESS_CURDIR = True
 
 
 class Populator(object):
@@ -292,6 +297,7 @@ class TestCaseFilePopulator(Populator):
         self._datafile = datafile
         self._datafile.source = path
         self._current_populator = self._null_populator
+        self._curdir = os.path.dirname(self._datafile.source)
 
     def start_table(self, name):
         try:
@@ -307,9 +313,14 @@ class TestCaseFilePopulator(Populator):
         self.populate()
 
     def add(self, row):
+        if PROCESS_CURDIR:
+            row = self._replace_curdirs_in(row)
         data = DataRow(row)
         if data:
             self._current_populator.add(data)
+
+    def _replace_curdirs_in(self, row):
+        return [cell.replace('${CURDIR}', self._curdir) for cell in row]
 
 
 class DataRow(object):
