@@ -270,12 +270,11 @@ class StepPopulator(_PropertyPopulator):
 
 
 class NullPopulator(Populator):
-    add = lambda self, row: None
-    populate = lambda self: None
+    def add(self, row): pass
+    def populate(self): pass
 
 
 class TestCaseFilePopulator(Populator):
-    _null_populator = NullPopulator()
     populators = utils.NormalizedDict({'Setting':       SettingTablePopulator,
                                        'Settings':      SettingTablePopulator,
                                        'Metadata':      SettingTablePopulator,
@@ -291,7 +290,7 @@ class TestCaseFilePopulator(Populator):
     def __init__(self, datafile, path):
         self._datafile = datafile
         self._datafile.source = path
-        self._current_populator = self._null_populator
+        self._current_populator = NullPopulator()
 
     def start_table(self, name):
         try:
