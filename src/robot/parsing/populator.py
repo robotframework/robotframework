@@ -279,7 +279,7 @@ class NullPopulator(Populator):
     def populate(self): pass
 
 
-class TestCaseFilePopulator(Populator):
+class TestDataPopulator(Populator):
     _null_populator = NullPopulator()
     populators = utils.NormalizedDict({'Setting':       SettingTablePopulator,
                                        'Settings':      SettingTablePopulator,
@@ -293,10 +293,15 @@ class TestCaseFilePopulator(Populator):
                                        'User Keyword':  KeywordTablePopulator,
                                        'User Keywords': KeywordTablePopulator})
 
-    def __init__(self, datafile, path):
+    def __init__(self, datafile):
         self._datafile = datafile
         self._current_populator = self._null_populator
-        self._curdir = os.path.dirname(path)
+        self._curdir = self._determine_curdir(datafile)
+
+    def _determine_curdir(self, datafile):
+        if datafile.source:
+            return os.path.dirname(datafile.source)
+        return None
 
     def start_table(self, name):
         try:
@@ -305,11 +310,8 @@ class TestCaseFilePopulator(Populator):
             self._current_populator = self._null_populator
         return self._current_populator is not self._null_populator
 
-    def populate(self):
-        self._current_populator.populate()
-
     def eof(self):
-        self.populate()
+        self._current_populator.populate()
 
     def add(self, row):
         if PROCESS_CURDIR:
