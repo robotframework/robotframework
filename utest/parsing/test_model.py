@@ -1,7 +1,9 @@
 import unittest
+from StringIO import StringIO
 
 from robot.utils.asserts import *
 from robot.parsing.newmodel import *
+from robot.parsing.txtreader import TxtReader
 
 
 class TestTestCaseFile(unittest.TestCase):
@@ -15,6 +17,13 @@ class TestTestCaseFile(unittest.TestCase):
         assert_true(isinstance(self.tcf.variable_table, VariableTable))
         assert_true(isinstance(self.tcf.testcase_table, TestCaseTable))
         assert_true(isinstance(self.tcf.keyword_table, KeywordTable))
+
+    def test_integration(self):
+        test_file = StringIO('*** Test Cases *** \ntest  No operation\n')
+        test_file.name = '/tmp/foo.txt'
+        TxtReader().read(test_file, self.tcf)
+        assert_equal(len(self.tcf.testcase_table.tests), 1)
+        assert_equal(self.tcf.testcase_table.tests[0].name, 'test')
 
 
 class TestSettingTable(unittest.TestCase):

@@ -13,21 +13,24 @@
 #  limitations under the License.
 
 from codecs import BOM_UTF8
+from populator import TestCaseFilePopulator
 
 
 class TsvReader:
 
-    def read(self, tsvfile, rawdata):
+    def read(self, tsvfile, datafile):
         process = False
+        populator = TestCaseFilePopulator(datafile, tsvfile.name)
         for index, row in enumerate(tsvfile.readlines()):
             if index == 0 and row.startswith(BOM_UTF8):
                 row = row[len(BOM_UTF8):]
             cells = [ self._process(cell) for cell in self._split_row(row) ]
             name = cells and cells[0].strip() or ''
-            if name.startswith('*') and rawdata.start_table(name.replace('*','')):
+            if name.startswith('*') and populator.start_table(name.replace('*','')):
                 process = True
             elif process:
-                rawdata.add_row(cells)
+                populator.add(cells)
+        populator.eof()
 
     def _split_row(self, row):
         return row.rstrip().split('\t')
