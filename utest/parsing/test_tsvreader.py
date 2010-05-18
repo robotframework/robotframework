@@ -4,33 +4,25 @@ from StringIO import StringIO
 
 if __name__ == "__main__":
     sys.path.insert(0, "../../../src")
-    
+
 from robot.parsing.tsvreader import TsvReader
+from robot.parsing.newmodel import TestCaseFile
 from robot.utils.asserts import *
+import robot.parsing.populator
 
-
-class MockRawData:
-    def __init__(self, processed_tables=None):
-        self.tables = {}
-        self._current = None
-        self._processed = processed_tables
-    
-    def start_table(self, name):
-        if self._processed is not None and name not in self._processed:
-            return False
-        self.tables[name] = []
-        self._current = name
-        return True
-    
-    def add_row(self, cells):
-        self.tables[self._current].append(cells)
-    
 
 class TestTsvParser(unittest.TestCase):
-    
+
+    def setUp(self):
+        self.tcf = TestCaseFile()
+        self._orig_curdir = robot.parsing.populator.PROCESS_CURDIR
+        robot.parsing.populator.PROCESS_CURDIR = False
+
+    def tearDown(self):
+        robot.parsing.populator.PROCESS_CURDIR = self._orig_curdir
+
     def test_start_table(self):
         tsv = StringIO('''*Setting*\t*Value*\t*V*
-Some data here
 ***Variable
 
 *Not*Table*
@@ -39,12 +31,9 @@ Keyword*\tNot a table because doesn't start with '*'
 
 *******************T*e*s*t*********C*a*s*e************\t***********\t******\t*
 ''')
-        data = MockRawData(['Setting','Variable','TestCase','Keyword'])
-        TsvReader().read(tsv, data)
-        act = data.tables.keys()
-        act.sort()
-        assert_equals(act, ['Setting','TestCase','Variable'])
-        
+        TsvReader().read(tsv, self.tcf)
+        assert_false(True, "Need to add checks after new model supports table names")
+
     def test_rows(self):
         tsv = StringIO('''Ignored text before tables...
 Mote\tignored\text
@@ -53,28 +42,15 @@ Document\tWhatever\t\t\\\t
 Default Tags\tt1\tt2\tt3\t\t
 
 *Variable*\tWhatever
-  2 spaces before and after  
-\\ \\ 2 escaped spaces before and after \\ \\
-4 spaces in the row below
+\\ \\ 2 escaped spaces before and after \\ \\\t\\ \\ value \\ \\
     
 ''')
-        data = MockRawData()
-        TsvReader().read(tsv, data)
-        expected1 = [ ['Document','Whatever','','\\'],
-                      ['Default Tags','t1','t2','t3'],
-                      [''] ]
-        expected2 = [ ['  2 spaces before and after'], 
-                      ['\\ \\ 2 escaped spaces before and after \\ \\'], 
-                      ['4 spaces in the row below'], 
-                      [''] ]
-        assert_equals(len(data.tables.keys()), 2)
-        self._verify_rows(data.tables['Setting'], expected1)
-        self._verify_rows(data.tables['Variable'], expected2)
+        TsvReader().read(tsv, self.tcf)
+        assert_equal(self.tcf.setting_table.doc.value, 'Whatever  \\')
+        assert_equal(self.tcf.setting_table.default_tags.value, ['t1','t2','t3'])
+        assert_equal(self.tcf.variable_table.variables[0].name, '\\ \\ 2 escaped spaces before and after \\ \\')
+        assert_equal(self.tcf.variable_table.variables[0].value, ['\\ \\ value \\ \\'])
 
-    def _verify_rows(self, actual, expected):
-        assert_equals(len(actual), len(expected))
-        for act, exp in zip(actual, expected):
-            assert_equals(act, exp)
     
     def test_quotes(self):
         tsv = StringIO('''*Variable*\t*Value*
@@ -87,16 +63,15 @@ ${v}\t"""Hel "" """" lo"""""""
 ${v}\t"Hello
 ${v}\tHello"
 ''')
-        data = MockRawData()
-        TsvReader().read(tsv, data)
-        actual = [ row for row in data.tables['Variable'] ]
+        TsvReader().read(tsv, self.tcf)
+        actual = [ variable for variable in self.tcf.variable_table.variables ]
         expected = ['Hello','Hello','"Hello"','""Hello""','Hel"lo',
                     '"Hel " "" lo"""','"Hello','Hello"']
         assert_equals(len(actual), len(expected))
         for act, exp in zip(actual, expected):
-            assert_equals(act[0], '${v}')
-            assert_equals(act[1], exp)
+            assert_equals(act.name, '${v}')
+            assert_equals(act.value, [exp])
 
-        
+
 if __name__ == '__main__':
     unittest.main()
