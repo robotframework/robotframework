@@ -52,6 +52,18 @@ class TestCaseFile(object):
             yield table
 
 
+class TestDataDirectory(object):
+
+    def __init__(self, source=None):
+        self.source = source
+        self.setting_table = SettingTable()
+        self.variable_table = VariableTable()
+        self.testcase_table = TestCaseTableNotAllowed('test suite init file')
+        self.keyword_table = KeywordTable()
+        if source:
+            self._populate(source)
+
+
 class DataTable(object):
     pass
 
@@ -131,6 +143,15 @@ class KeywordTable(DataTable):
     def __iter__(self):
         return iter(self.keywords)
 
+
+class TestCaseTableNotAllowed(object):
+
+    def __init__(self, where):
+        self.message = 'Test case table not allowed in ' + where
+
+    def __getattr__(self, name):
+        raise DataError(self.message)
+        
 
 class Variable(object):
 
