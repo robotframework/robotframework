@@ -304,6 +304,7 @@ class TestDataPopulator(Populator):
         return None
 
     def start_table(self, name):
+        self._current_populator.populate()
         try:
             self._current_populator = self.populators[name](self._datafile)
         except KeyError:
