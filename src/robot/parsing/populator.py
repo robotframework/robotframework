@@ -164,13 +164,14 @@ class _TestCaseUserKeywordPopulator(Populator):
         self._populator = NullPopulator()
 
     def add(self, row):
-        dedented_row = row.dedent()
         if not self._test_or_uk:
             self._test_or_uk = self._test_or_uk_creator(row.head())
-        if not self._continues(dedented_row):
-            self._populator.populate()
-            self._populator = self._get_populator(dedented_row)
-        self._populator.add(dedented_row)
+        dedented_row = row.dedent()
+        if dedented_row:
+            if not self._continues(dedented_row):
+                self._populator.populate()
+                self._populator = self._get_populator(dedented_row)
+            self._populator.add(dedented_row)
 
     def populate(self):
         self._populator.populate()
@@ -329,7 +330,7 @@ class DataRow(object):
         self.cells = self._data_cells(cells)
 
     def head(self):
-        return self.cells[0] if len(self.cells) else ''
+        return self.cells[0]
 
     def tail(self):
         return self.cells[1:]
