@@ -17,21 +17,23 @@ import re
 from robot import utils
 
 
-class _TablePopulator(object):
+class Populator(object):
+    """Explicit interface for all populators."""
+    def add(self, row): raise NotImplementedError()
+    def populate(self): raise NotImplementedError()
+
+
+class _TablePopulator(Populator):
 
     def __init__(self, datafile):
         self._table = self._get_table(datafile)
         self._populator = None
 
     def add(self, row):
-        if self._is_continuing(row):
-            self._populator.add(self._values_from(row))
-        else:
+        if not self._is_continuing(row):
             self.populate()
             self._populator = self._get_populator(row)
-
-    def _values_from(self, row):
-        return row
+        self._populator.add(row)
 
     def _is_continuing(self, row):
         return row[0].strip() == self.row_continuation_marker
@@ -57,54 +59,35 @@ class SettingTablePopulator(_TablePopulator):
                                           'Force Tags': 'force_tags',
                                           'Default Tags': 'default_tags',
                                           'Test Timeout': 'test_timeout'})
-    import_setters_by_name = utils.NormalizedDict({'Library': 'add_library',
-                                                   'Resource': 'add_resource',
-                                                   'Variables': 'add_variables'})
+    name_value_setters = utils.NormalizedDict({'Library': 'add_library',
+                                               'Resource': 'add_resource',
+                                               'Variables': 'add_variables',
+                                               'Metadata': 'add_metadata'})
 
     def _get_table(self, datafile):
         return datafile.setting_table
 
-    def _values_from(self, row):
-        return row[1:]
-
     def _get_populator(self, row):
-        first_cell, rest = row[0], row[1:]
-        if self._is_metadata(first_cell):
-            return self._metadata_populator(first_cell, rest)
-        if self._is_import(first_cell):
-            return self._import_populator(first_cell, rest)
-        return self._setting_populator(first_cell, rest)
-
-    def _metadata_populator(self, first_cell, rest):
-        initial_value = self._initial_metadata_value(first_cell, rest)
-        return NameAndValuePropertyPopulator(self._table.add_metadata, initial_value)
-
-    def _import_populator(self, first_cell, rest):
-        attr_name = self.import_setters_by_name[first_cell]
-        return NameAndValuePropertyPopulator(getattr(self._table, attr_name), rest)
-
-    def _setting_populator(self, first_cell, rest):
-        attr_name = self.attrs_by_name[first_cell]
-        return ValuePropertyPopulator(getattr(self._table, attr_name).set, rest)
-
-    def _is_metadata(self, setting_name):
-        setting_name = setting_name.lower()
-        return self._is_metadata_with_olde_prefix(setting_name) \
-            or setting_name == 'metadata'
+        first_cell = row[0]
+        if self._is_metadata_with_olde_prefix(first_cell):
+            return OldStyleMetadataPopulator(self._table.add_metadata)
+        if self._is_import_or_metadata(first_cell):
+            return SettingTableNameValuePopulator(self._table_attr_setter(first_cell))
+        return SettingPopulator(self._setting_setter(first_cell))
 
     def _is_metadata_with_olde_prefix(self, setting_name):
         return setting_name.lower().startswith(self.olde_metadata_prefix)
 
-    def _initial_metadata_value(self, first_cell, value):
-        if self._is_metadata_with_olde_prefix(first_cell):
-            return self._extract_name_from_olde_style_meta_cell(first_cell) + value
-        return value
+    def _is_import_or_metadata(self, setting_name):
+        return setting_name in self.name_value_setters
 
-    def _extract_name_from_olde_style_meta_cell(self, first_cell):
-        return [first_cell.split(':', 1)[1].strip()]
+    def _table_attr_setter(self, first_cell):
+        attr_name = self.name_value_setters[first_cell]
+        return getattr(self._table, attr_name)
 
-    def _is_import(self, setting_name):
-        return setting_name in self.import_setters_by_name
+    def _setting_setter(self, first_cell):
+        attr_name = self.attrs_by_name[first_cell]
+        return getattr(self._table, attr_name).set
 
 
 class VariableTablePopulator(_TablePopulator):
@@ -114,7 +97,7 @@ class VariableTablePopulator(_TablePopulator):
         return datafile.variable_table
 
     def _get_populator(self, row):
-        return NameAndValuePropertyPopulator(self._table.add, row)
+        return NameAndValuePropertyPopulator(self._table.add)
 
 
 class TestTablePopulator(_TablePopulator):
@@ -124,7 +107,7 @@ class TestTablePopulator(_TablePopulator):
         return datafile.testcase_table
 
     def _get_populator(self, row):
-        return TestCasePopulator(self._table.add, row)
+        return TestCasePopulator(self._table.add)
 
 
 class KeywordTablePopulator(_TablePopulator):
@@ -134,28 +117,37 @@ class KeywordTablePopulator(_TablePopulator):
         return datafile.keyword_table
 
     def _get_populator(self, row):
-        return UserKeywordPopulator(self._table.add, row)
+        return UserKeywordPopulator(self._table.add)
 
 
-class _TestCaseUserKeywordPopulator(object):
+class _TestCaseUserKeywordPopulator(Populator):
     row_continuation_marker = ('', '...')
 
-    def __init__(self, setter, row):
-        self._test_or_uk = setter(row[0])
-        self._populator = self._get_populator(row)
+    def __init__(self, test_or_uk_creator):
+        self._test_or_uk_creator = test_or_uk_creator
+        self._test_or_uk = None
 
     def add(self, row):
-        if self._is_continuing_step(row):
-            self._populator.add(row[2:])
-        else:
+        if not self._test_or_uk:
+            self._test_or_uk = self._test_or_uk_creator(row[0])
+            self._populator = self._get_populator(row)
+        elif not self._is_continuing_step(row):
             self._populator.populate()
             self._populator = self._get_populator(row)
+        self._populator.add(row[1:])
+
+    def populate(self):
+        if self._populator:
+            self._populator.populate()
+
+    def _is_continuing_step(self, row):
+        return (row[0].strip(), row[1].strip()) == self.row_continuation_marker
 
     def _get_populator(self, row):
         first_cell = self._first_cell_value(row)
         if self._is_setting(first_cell):
-            return ValuePropertyPopulator(self._setting_setter(first_cell), row[2:])
-        return StepPopulator(self._test_or_uk.add_step, row[1:])
+            return SettingPopulator(self._setting_setter(first_cell))
+        return StepPopulator(self._test_or_uk.add_step)
 
     def _first_cell_value(self, row):
         return row[1].strip() if len(row) > 1 else ''
@@ -169,13 +161,6 @@ class _TestCaseUserKeywordPopulator(object):
 
     def _setting_name(self, cell):
         return cell[1:-1].strip()
-
-    def _is_continuing_step(self, row):
-        return (row[0].strip(), row[1].strip()) == self.row_continuation_marker
-
-    def populate(self):
-        if self._populator:
-            self._populator.populate()
 
 
 class TestCasePopulator(_TestCaseUserKeywordPopulator):
@@ -198,47 +183,70 @@ class UserKeywordPopulator(_TestCaseUserKeywordPopulator):
                                           'Timeout': 'timeout'})
 
 
-class _PropertyPopulator(object):
+class _PropertyPopulator(Populator):
 
-    def __init__(self, setter, initial_value):
+    def __init__(self, setter):
         self._setter = setter
-        self._value = initial_value
+        self._value = []
+
+
+class NameAndValuePropertyPopulator(_PropertyPopulator):
 
     def add(self, row):
         self._value.extend(row)
 
+    def populate(self):
+        name, value = self._value[0], self._value[1:]
+        self._setter(name, value)
 
-class ValuePropertyPopulator(_PropertyPopulator):
+
+class SettingPopulator(_PropertyPopulator):
+
+    def add(self, row):
+        self._value.extend(row[1:])
 
     def populate(self):
         self._setter(self._value)
 
 
-class NameAndValuePropertyPopulator(_PropertyPopulator):
-
-    def populate(self):
-        self._setter(self._value[0], self._value[1:])
-
-
-class StepPopulator(object):
-
-    def __init__(self, setter, row):
-        self._setter = setter
-        self._current_row = row
+class SettingTableNameValuePopulator(NameAndValuePropertyPopulator):
 
     def add(self, row):
-        self._current_row.extend(row)
+        self._value.extend(row[1:])
+
+
+class OldStyleMetadataPopulator(NameAndValuePropertyPopulator):
+    olde_metadata_prefix = 'meta:'
+
+    def add(self, row):
+        if self._is_metadata_with_olde_prefix(row[0]):
+            values = self._extract_name_from_olde_style_meta_cell(row[0]) + row[1:]
+        else:
+            values = row[1:]
+        self._value.extend(values)
+
+    def _extract_name_from_olde_style_meta_cell(self, first_cell):
+        return [first_cell.split(':', 1)[1].strip()]
+
+    def _is_metadata_with_olde_prefix(self, first_cell):
+        return first_cell.lower().startswith(self.olde_metadata_prefix)
+
+
+class StepPopulator(_PropertyPopulator):
+
+    def add(self, row):
+        self._value.extend(row)
 
     def populate(self):
-        if self._current_row:
-            self._setter(self._current_row)
+        if self._value:
+            self._setter(self._value)
 
 
-class Populator(object):
+class TestCaseFilePopulator(Populator):
     _whitespace_regexp = re.compile('\s+')
-    _null_populator = type('NullTablePopulator', (), 
+    _null_populator = type('NullTablePopulator', (Populator, ),
                            {'add': lambda self, row: None,
-                            'eof': lambda self: None})()
+                            'populate': lambda self: None})()
     populators = utils.NormalizedDict({'Setting':       SettingTablePopulator,
                                        'Settings':      SettingTablePopulator,
                                        'Metadata':      SettingTablePopulator,
@@ -263,7 +271,7 @@ class Populator(object):
             self._current_populator = self._null_populator
         return self._current_populator is not self._null_populator
 
-    def eof(self):
+    def populate(self):
         self._current_populator.populate()
 
     def add(self, row):

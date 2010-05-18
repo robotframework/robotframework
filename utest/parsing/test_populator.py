@@ -1,6 +1,6 @@
 import unittest
 
-from robot.parsing.populator import Populator
+from robot.parsing.populator import TestCaseFilePopulator
 from robot.parsing.newmodel import TestCaseFile
 from robot.utils.asserts import assert_equals, assert_true, assert_false
 
@@ -10,7 +10,7 @@ class TestCaseFilePopulatingTest(unittest.TestCase):
     def setUp(self):
         self._datafile = TestCaseFile()
         self._path = '/path/to/source'
-        self._populator = Populator(self._datafile, self._path)
+        self._populator = TestCaseFilePopulator(self._datafile, self._path)
 
     def test_creation(self):
         assert_equals(self._datafile.source, self._path)
@@ -167,7 +167,7 @@ class TestCaseFilePopulatingTest(unittest.TestCase):
         self._start_table(name)
         for r  in rows:
             self._populator.add(r)
-        self._populator.eof()
+        self._populator.populate()
 
     def _nth_test(self, index):
         return self._datafile.testcase_table.tests[index-1]
