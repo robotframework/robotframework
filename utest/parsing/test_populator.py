@@ -134,8 +134,8 @@ class TestCaseFilePopulatingTest(unittest.TestCase):
                                           ['', 'Log Many', '', 'argh']])
         test = self._first_test()
         assert_equals(test.name, 'My test')
-        assert_equals(test.tags.value, ['foo'])
         self._number_of_steps_should_be(test, 1)
+        assert_equals(test.tags.value, ['foo'])
 
     def _assert_setting(self, setting_name, exp_value):
         assert_equals(self._setting_with(setting_name).value, exp_value)

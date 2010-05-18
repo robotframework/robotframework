@@ -30,13 +30,10 @@ class _TablePopulator(Populator):
         self._populator = None
 
     def add(self, row):
-        if not self._is_continuing(row):
+        if not row.startswith(self.row_continuation_marker):
             self.populate()
             self._populator = self._get_populator(row)
         self._populator.add(row)
-
-    def _is_continuing(self, row):
-        return row[0].strip() == self.row_continuation_marker
 
     def populate(self):
         if self._populator:
@@ -68,7 +65,7 @@ class SettingTablePopulator(_TablePopulator):
         return datafile.setting_table
 
     def _get_populator(self, row):
-        first_cell = row[0]
+        first_cell = row.head()
         if self._is_metadata_with_olde_prefix(first_cell):
             return OldStyleMetadataPopulator(self._table.add_metadata)
         if self._is_import_or_metadata(first_cell):
@@ -121,36 +118,31 @@ class KeywordTablePopulator(_TablePopulator):
 
 
 class _TestCaseUserKeywordPopulator(Populator):
-    row_continuation_marker = ('', '...')
+    row_continuation_marker = '...'
 
     def __init__(self, test_or_uk_creator):
         self._test_or_uk_creator = test_or_uk_creator
         self._test_or_uk = None
+        self._populator = NullPopulator()
 
     def add(self, row):
+        dedented_row = row.dedent()
         if not self._test_or_uk:
-            self._test_or_uk = self._test_or_uk_creator(row[0])
-            self._populator = self._get_populator(row)
-        elif not self._is_continuing_step(row):
+            self._test_or_uk = self._test_or_uk_creator(row.head())
+        if not dedented_row.startswith(self.row_continuation_marker):
             self._populator.populate()
-            self._populator = self._get_populator(row)
-        self._populator.add(row[1:])
+            self._populator = self._get_populator(dedented_row)
+        self._populator.add(dedented_row)
 
     def populate(self):
         if self._populator:
             self._populator.populate()
 
-    def _is_continuing_step(self, row):
-        return (row[0].strip(), row[1].strip()) == self.row_continuation_marker
-
     def _get_populator(self, row):
-        first_cell = self._first_cell_value(row)
+        first_cell = row.head()
         if self._is_setting(first_cell):
             return SettingPopulator(self._setting_setter(first_cell))
         return StepPopulator(self._test_or_uk.add_step)
-
-    def _first_cell_value(self, row):
-        return row[1].strip() if len(row) > 1 else ''
 
     def _is_setting(self, cell):
         return cell and cell[0] == '[' and cell[-1] == ']'
@@ -193,7 +185,7 @@ class _PropertyPopulator(Populator):
 class NameAndValuePropertyPopulator(_PropertyPopulator):
 
     def add(self, row):
-        self._value.extend(row)
+        self._value.extend(row.all())
 
     def populate(self):
         name, value = self._value[0], self._value[1:]
@@ -203,7 +195,7 @@ class NameAndValuePropertyPopulator(_PropertyPopulator):
 class SettingPopulator(_PropertyPopulator):
 
     def add(self, row):
-        self._value.extend(row[1:])
+        self._value.extend(row.tail())
 
     def populate(self):
         self._setter(self._value)
@@ -212,17 +204,17 @@ class SettingPopulator(_PropertyPopulator):
 class SettingTableNameValuePopulator(NameAndValuePropertyPopulator):
 
     def add(self, row):
-        self._value.extend(row[1:])
+        self._value.extend(row.tail())
 
 
 class OldStyleMetadataPopulator(NameAndValuePropertyPopulator):
     olde_metadata_prefix = 'meta:'
 
     def add(self, row):
-        if self._is_metadata_with_olde_prefix(row[0]):
-            values = self._extract_name_from_olde_style_meta_cell(row[0]) + row[1:]
+        if self._is_metadata_with_olde_prefix(row.head()):
+            values = self._extract_name_from_olde_style_meta_cell(row.head()) + row.tail()
         else:
-            values = row[1:]
+            values = row.tail()
         self._value.extend(values)
 
     def _extract_name_from_olde_style_meta_cell(self, first_cell):
@@ -235,18 +227,20 @@ class OldStyleMetadataPopulator(NameAndValuePropertyPopulator):
 class StepPopulator(_PropertyPopulator):
 
     def add(self, row):
-        self._value.extend(row)
+        self._value.extend(row.all())
 
     def populate(self):
         if self._value:
             self._setter(self._value)
 
 
+class NullPopulator(Populator):
+    add = lambda self, row: None
+    populate = lambda self: None
+
+
 class TestCaseFilePopulator(Populator):
-    _whitespace_regexp = re.compile('\s+')
-    _null_populator = type('NullTablePopulator', (Populator, ),
-                           {'add': lambda self, row: None,
-                            'populate': lambda self: None})()
+    _null_populator = NullPopulator()
     populators = utils.NormalizedDict({'Setting':       SettingTablePopulator,
                                        'Settings':      SettingTablePopulator,
                                        'Metadata':      SettingTablePopulator,
@@ -275,9 +269,31 @@ class TestCaseFilePopulator(Populator):
         self._current_populator.populate()
 
     def add(self, row):
-        cells = self._data_cells(row)
-        if cells:
-            self._current_populator.add(cells)
+        data = DataRow(row)
+        if data:
+            self._current_populator.add(data)
+
+
+class DataRow(object):
+    _whitespace_regexp = re.compile('\s+')
+
+    def __init__(self, cells):
+        self.cells = self._data_cells(cells)
+
+    def head(self):
+        return self.cells[0] if len(self.cells) else ''
+
+    def tail(self):
+        return self.cells[1:]
+
+    def all(self):
+        return self.cells
+
+    def dedent(self):
+        return DataRow(self.tail())
+
+    def startswith(self, value):
+        return self.head() == value
 
     def _data_cells(self, row):
         cells = [ self._collapse_whitespace(cell)
@@ -296,3 +312,6 @@ class TestCaseFilePopulator(Populator):
                 return filtered
             filtered.append(c)
         return filtered
+
+    def __nonzero__(self):
+        return self.cells != []
