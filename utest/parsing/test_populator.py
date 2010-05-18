@@ -1,9 +1,25 @@
 import unittest
 import os
+from StringIO import StringIO
 
 from robot.parsing.populator import TestDataPopulator
 from robot.parsing.newmodel import TestCaseFile
 from robot.utils.asserts import assert_equals, assert_true, assert_false
+
+from robot.output import LOGGER
+LOGGER.disable_automatic_console_logger()
+LOGGER.disable_message_cache()
+
+
+class _MockLogger(object):
+    def __init__(self):
+        self._output = StringIO()
+
+    def message(self, msg):
+        self._output.write(msg.message)
+
+    def value(self):
+        return self._output.getvalue()
 
 
 class TestCaseFilePopulatingTest(unittest.TestCase):
@@ -12,6 +28,11 @@ class TestCaseFilePopulatingTest(unittest.TestCase):
         self._datafile = TestCaseFile()
         self._datafile.source = '/path/to/source.txt'
         self._populator = TestDataPopulator(self._datafile)
+        self._logger = _MockLogger()
+        LOGGER.register_logger(self._logger)
+
+    def tearDown(self):
+        LOGGER.unregister_logger(self._logger)
 
     def test_starting_valid_table(self):
         for name in ['Test Cases', '  variables   ', 'K E Y WO R D S']:
@@ -30,6 +51,10 @@ class TestCaseFilePopulatingTest(unittest.TestCase):
                                         ['S  uite SeTUp'] + [setup_name] + setup_args])
         self._assert_setting('doc', doc)
         self._assert_fixture('suite_setup', setup_name, setup_args)
+
+    def test_invalid_settings(self):
+        self._create_table('Settings', [['In valid', 'val ue']])
+        assert_equals(self._logger.value(), "Invalid setting 'In valid' in setting table.")
 
     def test_adding_import(self):
         self._create_table('settings', [['Library', 'FooBarness'],
@@ -139,6 +164,16 @@ class TestCaseFilePopulatingTest(unittest.TestCase):
         assert_equals(len(test.steps), 1)
         assert_equals(test.doc.value, doc)
         assert_equals(test.tags.value, ['ankka', 'kameli', 'aasi'])
+
+    def test_invalid_test_settings(self):
+        self._create_table('Test cases', [['My test name'],
+                                          ['', '[Aasi]']])
+        assert_equals(self._logger.value(), "Invalid setting '[Aasi]' in test case 'My test name'.")
+
+    def test_invalid_keyword_settings(self):
+        self._create_table('Keywords', [['My User Keyword'],
+                                        ['', '[ank ka]']])
+        assert_equals(self._logger.value(), "Invalid setting '[ank ka]' in keyword 'My User Keyword'.")
 
     def test_creating_user_keywords(self):
         self._create_table('Keywords', [['My User Keyword'],

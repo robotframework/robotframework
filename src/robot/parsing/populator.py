@@ -16,10 +16,14 @@ import re
 import os
 
 from robot import utils
-
+from robot.output import LOGGER
 
 # Hook for external tools for altering ${CURDIR} processing
 PROCESS_CURDIR = True
+
+
+def report_invalid_setting(msg):
+    LOGGER.error("Invalid setting %s." % msg)
 
 
 class Populator(object):
@@ -77,13 +81,19 @@ class SettingTablePopulator(_TablePopulator):
             return OldStyleMetadataPopulator(self._table.add_metadata)
         if self._is_import_or_metadata(first_cell):
             return SettingTableNameValuePopulator(self._table_attr_setter(first_cell))
-        return SettingPopulator(self._setting_setter(first_cell))
+        if self._is_setting(first_cell):
+            return SettingPopulator(self._setting_setter(first_cell))
+        report_invalid_setting("'%s' in setting table" % (first_cell))
+        return NullPopulator()
 
-    def _is_metadata_with_olde_prefix(self, setting_name):
-        return setting_name.lower().startswith(self.olde_metadata_prefix)
+    def _is_metadata_with_olde_prefix(self, value):
+        return value.lower().startswith(self.olde_metadata_prefix)
 
-    def _is_import_or_metadata(self, setting_name):
-        return setting_name in self.name_value_setters
+    def _is_import_or_metadata(self, value):
+        return value in self.name_value_setters
+
+    def _is_setting(self, value):
+        return value in self.attrs_by_name
 
     def _table_attr_setter(self, first_cell):
         attr_name = self.name_value_setters[first_cell]
@@ -178,7 +188,8 @@ class _TestCaseUserKeywordPopulator(Populator):
 
     def _get_populator(self, row):
         if row.starts_test_or_user_keyword_setting():
-            return SettingPopulator(self._setting_setter(row.head()))
+            setter = self._setting_setter(row.head())
+            return SettingPopulator(setter) if setter else NullPopulator()
         if row.starts_for_loop():
             return ForLoopPopulator(self._test_or_uk.add_for_loop)
         return StepPopulator(self._test_or_uk.add_step)
@@ -188,14 +199,22 @@ class _TestCaseUserKeywordPopulator(Populator):
             (isinstance(self._populator, ForLoopPopulator) and row.is_indented())
 
     def _setting_setter(self, cell):
-        attr_name = self.attrs_by_name[self._setting_name(cell)]
-        return getattr(self._test_or_uk, attr_name).set
+        if self._setting_name(cell) in self.attrs_by_name:
+            attr_name = self.attrs_by_name[self._setting_name(cell)]
+            return getattr(self._test_or_uk, attr_name).set
+        self._log_invalid_setting(cell)
+        return None
 
     def _setting_name(self, cell):
         return cell[1:-1].strip()
 
+    def _log_invalid_setting(self, value):
+        report_invalid_setting("'%s' in %s '%s'" % (value, self._item_type,
+                                                    self._test_or_uk.name))
+
 
 class TestCasePopulator(_TestCaseUserKeywordPopulator):
+    _item_type = 'test case'
     attrs_by_name = utils.NormalizedDict({'Documentation': 'doc',
                                           'Document': 'doc',
                                           'Setup': 'setup',
@@ -206,8 +225,8 @@ class TestCasePopulator(_TestCaseUserKeywordPopulator):
                                           'Timeout': 'timeout'})
 
 
-
 class UserKeywordPopulator(_TestCaseUserKeywordPopulator):
+    _item_type = 'keyword'
     attrs_by_name = utils.NormalizedDict({'Documentation': 'doc',
                                           'Document': 'doc',
                                           'Arguments': 'args',
