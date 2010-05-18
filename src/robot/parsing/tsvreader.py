@@ -13,14 +13,14 @@
 #  limitations under the License.
 
 from codecs import BOM_UTF8
-from populator import TestCaseFilePopulator
+from populator import TestDataPopulator
 
 
 class TsvReader:
 
     def read(self, tsvfile, datafile):
         process = False
-        populator = TestCaseFilePopulator(datafile, tsvfile.name)
+        populator = TestDataPopulator(datafile)
         for index, row in enumerate(tsvfile.readlines()):
             if index == 0 and row.startswith(BOM_UTF8):
                 row = row[len(BOM_UTF8):]

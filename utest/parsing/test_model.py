@@ -4,12 +4,18 @@ from StringIO import StringIO
 from robot.utils.asserts import *
 from robot.parsing.newmodel import *
 from robot.parsing.txtreader import TxtReader
+import robot.parsing.populator
 
 
 class TestTestCaseFile(unittest.TestCase):
 
     def setUp(self):
         self.tcf = TestCaseFile()
+        self._orig_curdir = robot.parsing.populator.PROCESS_CURDIR
+        robot.parsing.populator.PROCESS_CURDIR = False
+
+    def tearDown(self):
+        robot.parsing.populator.PROCESS_CURDIR = self._orig_curdir
 
     def test_create(self):
         assert_none(self.tcf.source)
@@ -20,7 +26,6 @@ class TestTestCaseFile(unittest.TestCase):
 
     def test_integration(self):
         test_file = StringIO('*** Test Cases *** \ntest  No operation\n')
-        test_file.name = '/tmp/foo.txt'
         TxtReader().read(test_file, self.tcf)
         assert_equal(len(self.tcf.testcase_table.tests), 1)
         assert_equal(self.tcf.testcase_table.tests[0].name, 'test')
