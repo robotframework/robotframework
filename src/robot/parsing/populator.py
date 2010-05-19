@@ -120,7 +120,7 @@ class VariableTablePopulator(_TablePopulator):
         return datafile.variable_table
 
     def _get_populator(self, row):
-        return NameAndValuePropertyPopulator(self._table.add)
+        return VariablePopulator(self._table.add)
 
 
 class TestTablePopulator(_TablePopulator):
@@ -278,6 +278,14 @@ class NameAndValuePropertyPopulator(_PropertyPopulator):
     def populate(self):
         name, value = self._value[0], self._value[1:]
         self._setter(name, value, self._comments.formatted_value())
+
+
+class VariablePopulator(NameAndValuePropertyPopulator):
+
+    def _add(self, row):
+        if row.is_continuing():
+            row = row.dedent()
+        self._value.extend(row.all)
 
 
 class SettingPopulator(_PropertyPopulator):

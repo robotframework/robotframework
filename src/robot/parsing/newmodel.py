@@ -114,8 +114,8 @@ class VariableTable(DataTable):
     def __init__(self):
         self.variables = []
 
-    def add(self, name, value, comment=None):
-        self.variables.append(Variable(name, value))
+    def add(self, name, value, comment):
+        self.variables.append(Variable(name, value, comment))
 
     def __iter__(self):
         return iter(self.variables)
@@ -158,13 +158,14 @@ class TestCaseTableNotAllowed(object):
 
 class Variable(object):
 
-    def __init__(self, name, value):
+    def __init__(self, name, value, comment):
         self.name = name.rstrip('= ')
         if name.startswith('$') and value == []:
             value = ''
         if isinstance(value, basestring):
             value = [value]  # Need to support scalar lists until RF 2.6
         self.value = value
+        self.comment = comment
 
 
 class WithSteps(object):

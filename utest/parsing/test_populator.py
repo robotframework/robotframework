@@ -58,6 +58,12 @@ class _PopulatorTest(unittest.TestCase):
         assert_equals(meta.value, exp_value)
         self._assert_comment(meta, exp_comment)
 
+    def _assert_variable(self, index, exp_name, exp_value, exp_comment=None):
+        var = self._datafile.variable_table.variables[index]
+        assert_equals(var.name, exp_name)
+        assert_equals(var.value, exp_value)
+        self._assert_comment(var, exp_comment)
+
     def _assert_comment(self, item, exp_comment):
         if exp_comment:
             assert_equals(item.comment, exp_comment)
@@ -92,7 +98,8 @@ class TestCaseFilePopulatingTest(_PopulatorTest):
         doc = 'This is doc'
         setup_name, setup_args = 'Keyword Name', ['a1', 'a2']
         self._create_table('Settings', [['Documentation', doc],
-                                        ['S  uite SeTUp'] + [setup_name] + setup_args])
+                                        ['S  uite SeTUp'] + [setup_name],
+                                        ['...'] + setup_args])
         self._assert_setting('doc', doc)
         self._assert_fixture('suite_setup', setup_name, setup_args)
 
@@ -122,7 +129,8 @@ class TestCaseFilePopulatingTest(_PopulatorTest):
                                          ['@{list}', 'v1', 'v2'],
                                          ['...', 'v3', 'v4']])
         assert_equals(len(self._datafile.variable_table.variables), 2)
-        assert_equals(self._datafile.variable_table.variables[0].name, '${scalar}')
+        self._assert_variable(0, '${scalar}', ['value'])
+        self._assert_variable(1, '@{list}', ['v1', 'v2', 'v3', 'v4'])
 
     def test_setting_in_multiple_rows(self):
         self._create_table('Settings', [['Documentation', 'Part 1'],
@@ -299,7 +307,7 @@ class TestPopulatingComments(_PopulatorTest):
         self._datafile = TestCaseFile()
         self._populator = TestDataPopulator(self._datafile)
 
-    def test_end_of_line_setting_comment(self):
+    def test_setting_table(self):
         self._create_table('settings', [['Force Tags', 'Foo', 'Bar', '#comment'],
                                         ['Library', 'Foo', '#Lib comment'],
                                         ['#comment', 'between rows', 'in many cells'],
@@ -316,6 +324,10 @@ class TestPopulatingComments(_PopulatorTest):
         self._assert_import(1, 'varz.py', ['arg'], ' between values')
         self._assert_meta(0, 'metaname', 'metavalue', 'last line is commented')
 
+    def test_variable_table(self):
+        self._create_table('variables', [['${varname}', 'varvalue', '#has comment'],
+                                         ])
+        self._assert_variable(0, '${varname}', ['varvalue'], 'has comment')
 
 if __name__ == '__main__':
     unittest.main()
