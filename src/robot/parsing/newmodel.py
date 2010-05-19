@@ -128,7 +128,7 @@ class VariableTable(DataTable):
     def __init__(self):
         self.variables = []
 
-    def add(self, name, value, comment):
+    def add(self, name, value, comment=None):
         self.variables.append(Variable(name, value, comment))
 
     def __iter__(self):
@@ -172,7 +172,7 @@ class TestCaseTableNotAllowed(object):
 
 class Variable(object):
 
-    def __init__(self, name, value, comment):
+    def __init__(self, name, value, comment=None):
         self.name = name.rstrip('= ')
         if name.startswith('$') and value == []:
             value = ''
