@@ -131,6 +131,7 @@ class TestSettingTable(unittest.TestCase):
         assert_equal(imp.name, name)
         assert_equal(imp.args, args)
         assert_equal(imp.alias, alias)
+        assert_equal(imp.type, type(imp).__name__)
 
 
 class TestVariableTable(unittest.TestCase):
