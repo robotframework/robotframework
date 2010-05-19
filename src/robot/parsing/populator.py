@@ -76,7 +76,7 @@ class SettingTablePopulator(_TablePopulator):
         return datafile.setting_table
 
     def _get_populator(self, row):
-        first_cell = row.head()
+        first_cell = row.head
         if self._is_metadata_with_olde_prefix(first_cell):
             return OldStyleMetadataPopulator(self._table.add_metadata)
         if self._is_import_or_metadata(first_cell):
@@ -158,7 +158,7 @@ class ForLoopPopulator(Populator):
 
     def _populate_declaration(self, row):
         if row.starts_for_loop() or row.is_continuing():
-            self._declaration.extend(row.tail())
+            self._declaration.extend(row.tail)
             return False
         return True
 
@@ -175,7 +175,7 @@ class _TestCaseUserKeywordPopulator(Populator):
 
     def add(self, row):
         if not self._test_or_uk:
-            self._test_or_uk = self._test_or_uk_creator(row.head())
+            self._test_or_uk = self._test_or_uk_creator(row.head)
         dedented_row = row.dedent()
         if dedented_row:
             if not self._continues(dedented_row):
@@ -188,7 +188,7 @@ class _TestCaseUserKeywordPopulator(Populator):
 
     def _get_populator(self, row):
         if row.starts_test_or_user_keyword_setting():
-            setter = self._setting_setter(row.head())
+            setter = self._setting_setter(row.head)
             return SettingPopulator(setter) if setter else NullPopulator()
         if row.starts_for_loop():
             return ForLoopPopulator(self._test_or_uk.add_for_loop)
@@ -239,12 +239,13 @@ class _PropertyPopulator(Populator):
     def __init__(self, setter):
         self._setter = setter
         self._value = []
+        self._comments = []
 
 
 class NameAndValuePropertyPopulator(_PropertyPopulator):
 
     def add(self, row):
-        self._value.extend(row.all())
+        self._value.extend(row.all)
 
     def populate(self):
         name, value = self._value[0], self._value[1:]
@@ -254,26 +255,27 @@ class NameAndValuePropertyPopulator(_PropertyPopulator):
 class SettingPopulator(_PropertyPopulator):
 
     def add(self, row):
-        self._value.extend(row.tail())
+        self._value.extend(row.tail)
+        self._comments.extend(row.comments)
 
     def populate(self):
-        self._setter(self._value)
+        self._setter(self._value, self._comments)
 
 
 class SettingTableNameValuePopulator(NameAndValuePropertyPopulator):
 
     def add(self, row):
-        self._value.extend(row.tail())
+        self._value.extend(row.tail)
 
 
 class OldStyleMetadataPopulator(NameAndValuePropertyPopulator):
     olde_metadata_prefix = 'meta:'
 
     def add(self, row):
-        if self._is_metadata_with_olde_prefix(row.head()):
-            values = self._extract_name_from_olde_style_meta_cell(row.head()) + row.tail()
+        if self._is_metadata_with_olde_prefix(row.head):
+            values = self._extract_name_from_olde_style_meta_cell(row.head) + row.tail
         else:
-            values = row.tail()
+            values = row.tail
         self._value.extend(values)
 
     def _extract_name_from_olde_style_meta_cell(self, first_cell):
@@ -286,7 +288,7 @@ class OldStyleMetadataPopulator(NameAndValuePropertyPopulator):
 class StepPopulator(_PropertyPopulator):
 
     def add(self, row):
-        self._value.extend(row.all())
+        self._value.extend(row.all)
 
     def populate(self):
         if self._value:
@@ -349,55 +351,61 @@ class DataRow(object):
     _whitespace_regexp = re.compile('\s+')
 
     def __init__(self, cells):
-        self.cells = self._data_cells(cells)
-
-    def head(self):
-        return self.cells[0]
-
-    def tail(self):
-        return self.cells[1:]
-
-    def all(self):
-        return self.cells
+        self.cells, self.comments = self._parse(cells)
+        self.head = self.cells[0] if self.cells else None
+        self.tail = self.cells[1:] if self.cells else None
+        self.all = self.cells
 
     def dedent(self):
-        return DataRow(self.tail())
+        return DataRow(self.tail)
 
     def startswith(self, value):
         return self.head() == value
 
     def starts_for_loop(self):
-        if not self.head().startswith(':'):
+        if not self.head.startswith(':'):
             return False
-        return self.head().replace(':', '').upper().strip() == 'FOR'
+        return self.head.replace(':', '').upper().strip() == 'FOR'
 
     def starts_test_or_user_keyword_setting(self):
-        head = self.head()
+        head = self.head
         return head and head[0] == '[' and head[-1] == ']'
 
     def is_indented(self):
-        return self.head() == ''
+        return self.head == ''
 
     def is_continuing(self):
-        return self.head() == self._row_continuation_marker
+        return self.head == self._row_continuation_marker
 
-    def _data_cells(self, row):
-        cells = [ self._collapse_whitespace(cell)
-                  for cell in self._cells_without_comments(row) ]
-        while cells and not cells[-1]:
-            cells.pop()
-        return cells
+    def _parse(self, row):
+        return self._purge_empty_cells(self._extract_data(row)), \
+            self._extract_comments(row)
 
     def _collapse_whitespace(self, value):
         return self._whitespace_regexp.sub(' ', value).strip()
 
-    def _cells_without_comments(self, row):
-        filtered = []
+    def _extract_comments(self, row):
+        comments = []
+        for c in row:
+            if c.startswith('#') and not comments:
+                comments.append(c[1:])
+            elif comments:
+                comments.append(c)
+        return comments
+
+    def _extract_data(self, row):
+        data = []
         for c in row:
             if c.startswith('#'):
-                return filtered
-            filtered.append(c)
-        return filtered
+                return data
+            data.append(c)
+        return data
+
+    def _purge_empty_cells(self, data):
+        data = [ self._collapse_whitespace(cell) for cell in data]
+        while data and not data[-1]:
+            data.pop()
+        return data
 
     def __nonzero__(self):
         return self.cells != []

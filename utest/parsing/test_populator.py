@@ -21,8 +21,27 @@ class _MockLogger(object):
     def value(self):
         return self._output.getvalue()
 
+class _PopulatorTest(unittest.TestCase):
 
-class TestCaseFilePopulatingTest(unittest.TestCase):
+    def _start_table(self, name):
+        return self._populator.start_table(name)
+
+    def _create_table(self, name, rows, eof=True):
+        self._start_table(name)
+        for r  in rows:
+            self._populator.add(r)
+        if eof:
+            self._populator.eof()
+
+    def _assert_setting(self, setting_name, exp_value, exp_comment=None):
+        assert_equals(self._setting_with(setting_name).value, exp_value)
+        if exp_comment:
+            assert_equals(self._setting_with(setting_name).comment, exp_comment)
+
+    def _setting_with(self, name):
+        return getattr(self._datafile.setting_table, name)
+
+class TestCaseFilePopulatingTest(_PopulatorTest):
 
     def setUp(self):
         self._datafile = TestCaseFile()
@@ -243,16 +262,10 @@ class TestCaseFilePopulatingTest(unittest.TestCase):
         assert_equals(len(self._datafile.testcase_table.tests), 1)
         assert_equals(len(self._nth_uk(0).steps), 1)
 
-    def _assert_setting(self, setting_name, exp_value):
-        assert_equals(self._setting_with(setting_name).value, exp_value)
-
     def _assert_meta(self, index, exp_name, exp_value):
         meta = self._setting_with('metadata')[index]
         assert_equals(meta.name, exp_name)
         assert_equals(meta.value, exp_value)
-
-    def _setting_with(self, name):
-        return getattr(self._datafile.setting_table, name)
 
     def _assert_fixture(self, fixture_name, exp_name, exp_args):
         fixture = self._setting_with(fixture_name)
@@ -288,6 +301,19 @@ class TestCaseFilePopulatingTest(unittest.TestCase):
     def _number_of_steps_should_be(self, test, expected_steps):
         assert_equals(len(test.steps), expected_steps)
 
+
+class TestPopulatingComments(_PopulatorTest):
+
+    def setUp(self):
+        self._datafile = TestCaseFile()
+        self._populator = TestDataPopulator(self._datafile)
+
+    def test_end_of_line_setting_comment(self):
+        self._create_table('settings', [['Force Tags', 'Foo', 'Bar', '#comment'],
+                                        ['#comment between rows'],
+                                        ['Default Tags', 'Quux']])
+        self._assert_setting('force_tags', ['Foo', 'Bar'], 'comment')
+        #self._assert_setting('default_tags', ['Quux'], 'comment between rows')
 
 if __name__ == '__main__':
     unittest.main()

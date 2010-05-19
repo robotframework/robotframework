@@ -17,8 +17,13 @@ class Setting(object):
 
     def __init__(self):
         self.value = []
+        self.comment = ''
 
-    def set(self, value):
+    def set(self, value, comment=''):
+        self._set(value)
+        self.comment = self._string_value(comment)
+
+    def _set(self, value):
         self.value = value
 
     def _string_value(self, value):
@@ -30,7 +35,7 @@ class Documentation(Setting):
     def __init__(self):
         self.value = ''
 
-    def set(self, value):
+    def _set(self, value):
         self.value = self._string_value(value)
 
 
@@ -40,7 +45,7 @@ class Fixture(Setting):
         self.name = None
         self.args = []
 
-    def set(self, value):
+    def _set(self, value):
         self.name = value[0] if value else ''
         self.args = value[1:]
 
@@ -51,7 +56,7 @@ class Timeout(Setting):
         self.value = None
         self.message = ''
 
-    def set(self, value):
+    def _set(self, value):
         self.value = value[0] if value else ''
         self.message = ' '.join(value[1:])
 
