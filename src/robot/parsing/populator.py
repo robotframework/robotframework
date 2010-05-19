@@ -37,12 +37,22 @@ class _TablePopulator(Populator):
     def __init__(self, datafile):
         self._table = self._get_table(datafile)
         self._populator = None
+        self._comments = []
 
     def add(self, row):
+        if row.is_comment():
+            self._comments.append(row)
+            return
         if not self._is_continuing(row):
             self.populate()
             self._populator = self._get_populator(row)
+            self._add_cached_comments_to(self._populator)
         self._populator.add(row)
+
+    def _add_cached_comments_to(self, populator):
+        for crow in self._comments:
+            populator.add(crow)
+        self._comments = []
 
     def populate(self):
         if self._populator:
@@ -255,7 +265,8 @@ class NameAndValuePropertyPopulator(_PropertyPopulator):
 class SettingPopulator(_PropertyPopulator):
 
     def add(self, row):
-        self._value.extend(row.tail)
+        if not row.is_comment():
+            self._value.extend(row.tail)
         self._comments.extend(row.comments)
 
     def populate(self):
@@ -379,6 +390,9 @@ class DataRow(object):
     def is_continuing(self):
         return self.head == self._row_continuation_marker
 
+    def is_comment(self):
+        return not self.cells and self.comments
+
     def _parse(self, row):
         return self._purge_empty_cells(self._extract_data(row)), \
             self._extract_comments(row)
@@ -387,6 +401,8 @@ class DataRow(object):
         return self._whitespace_regexp.sub(' ', value).strip()
 
     def _extract_comments(self, row):
+        if not row:
+            return []
         comments = []
         for c in row:
             if c.startswith('#') and not comments:
@@ -396,6 +412,8 @@ class DataRow(object):
         return comments
 
     def _extract_data(self, row):
+        if not row:
+            return []
         data = []
         for c in row:
             if c.startswith('#'):
@@ -410,4 +428,4 @@ class DataRow(object):
         return data
 
     def __nonzero__(self):
-        return self.cells != []
+        return bool(self.cells or self.comments)
