@@ -302,8 +302,8 @@ class TestPopulatingComments(_PopulatorTest):
     def test_end_of_line_setting_comment(self):
         self._create_table('settings', [['Force Tags', 'Foo', 'Bar', '#comment'],
                                         ['Library', 'Foo', '#Lib comment'],
-                                        ['#comment between rows'],
-                                        ['Default Tags', 'Quux'],
+                                        ['#comment', 'between rows', 'in many cells'],
+                                        ['Default Tags', 'Quux', '#also end of line'],
                                         ['Variables', 'varz.py'],
                                         ['# between values'],
                                         ['...', 'arg'],
@@ -312,7 +312,7 @@ class TestPopulatingComments(_PopulatorTest):
                                         ])
         self._assert_setting('force_tags', ['Foo', 'Bar'], 'comment')
         self._assert_import(0, 'Foo', [], 'Lib comment')
-        self._assert_setting('default_tags', ['Quux'], 'comment between rows')
+        self._assert_setting('default_tags', ['Quux'], 'comment | between rows | in many cells\nalso end of line')
         self._assert_import(1, 'varz.py', ['arg'], ' between values')
         self._assert_meta(0, 'metaname', 'metavalue', 'last line is commented')
 

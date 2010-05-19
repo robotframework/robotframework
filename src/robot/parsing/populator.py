@@ -244,18 +244,30 @@ class UserKeywordPopulator(_TestCaseUserKeywordPopulator):
                                           'Timeout': 'timeout'})
 
 
+class Comments(object):
+
+    def __init__(self):
+        self._crows = []
+
+    def add(self, row):
+        if row.comments:
+            self._crows.append(row.comments)
+
+    def formatted_value(self):
+        return '\n'.join(' | '.join(row) for row in self._crows)
+
+
 class _PropertyPopulator(Populator):
-    comments = property(lambda self: ''.join(self._comments))
 
     def __init__(self, setter):
         self._setter = setter
         self._value = []
-        self._comments = []
+        self._comments = Comments()
 
     def add(self, row):
         if not row.is_commented():
             self._add(row)
-        self._comments.extend(row.comments)
+        self._comments.add(row)
 
 
 class NameAndValuePropertyPopulator(_PropertyPopulator):
@@ -265,7 +277,7 @@ class NameAndValuePropertyPopulator(_PropertyPopulator):
 
     def populate(self):
         name, value = self._value[0], self._value[1:]
-        self._setter(name, value, self.comments)
+        self._setter(name, value, self._comments.formatted_value())
 
 
 class SettingPopulator(_PropertyPopulator):
@@ -274,7 +286,7 @@ class SettingPopulator(_PropertyPopulator):
         self._value.extend(row.tail)
 
     def populate(self):
-        self._setter(self._value, self.comments)
+        self._setter(self._value, self._comments.formatted_value())
 
 
 class SettingTableNameValuePopulator(NameAndValuePropertyPopulator):
