@@ -81,11 +81,11 @@ class TestDataDirectory(_TestData):
             yield table
 
 
-class DataTable(object):
+class _Table(object):
     pass
 
 
-class SettingTable(DataTable):
+class SettingTable(_Table):
 
     def __init__(self):
         self.doc = Documentation()
@@ -123,7 +123,7 @@ class SettingTable(DataTable):
             yield setting
 
 
-class VariableTable(DataTable):
+class VariableTable(_Table):
 
     def __init__(self):
         self.variables = []
@@ -135,7 +135,7 @@ class VariableTable(DataTable):
         return iter(self.variables)
 
 
-class TestCaseTable(DataTable):
+class TestCaseTable(_Table):
 
     def __init__(self):
         self.tests = []
@@ -148,7 +148,7 @@ class TestCaseTable(DataTable):
         return iter(self.tests)
 
 
-class KeywordTable(DataTable):
+class KeywordTable(_Table):
 
     def __init__(self):
         self.keywords = []
@@ -182,14 +182,14 @@ class Variable(object):
         self.comment = comment
 
 
-class WithSteps(object):
+class _WithSteps(object):
 
     def add_step(self, content):
         self.steps.append(Step(content))
         return self.steps[-1]
 
 
-class TestCase(WithSteps):
+class TestCase(_WithSteps):
 
     def __init__(self, name):
         self.name = name
@@ -216,7 +216,7 @@ class UserKeyword(TestCase):
         self.steps = []
 
 
-class ForLoop(WithSteps):
+class ForLoop(_WithSteps):
 
     def __init__(self, content):
         self.range, index = self._get_range_and_index(content)
