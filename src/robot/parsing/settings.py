@@ -19,9 +19,9 @@ class Setting(object):
         self.value = []
         self.comment = ''
 
-    def set(self, value, comment=''):
+    def set(self, value, comment=None):
         self._set(value)
-        self.comment = self._string_value(comment)
+        self.comment = comment
 
     def _set(self, value):
         self.value = value
@@ -75,25 +75,27 @@ class Return(Setting):
 
 class Metadata(Setting):
 
-    def __init__(self, name, value):
+    def __init__(self, name, value, comment):
         self.name = name
         self.value = self._string_value(value)
+        self.comment = comment
 
 
 class Import(Setting):
 
-    def __init__(self, name, args=None, alias=None):
+    def __init__(self, name, args=None, alias=None, comment=None):
         self.name = name
         self.args = args or []
         self.alias = alias
+        self.comment = comment
 
 
 class Library(Import):
 
-    def __init__(self, name, args=None, alias=None):
+    def __init__(self, name, args=None, alias=None, comment=None):
         if args and not alias:
             args, alias = self._split_alias(args)
-        Import.__init__(self, name, args, alias)
+        Import.__init__(self, name, args, alias, comment)
 
     def _split_alias(self, args):
         if len(args) >= 2 and args[-2].upper() == 'WITH NAME':
@@ -103,13 +105,13 @@ class Library(Import):
 
 class Resource(Import):
 
-    def __init__(self, name, invalid_args=None):
+    def __init__(self, name, invalid_args=None, comment=None):
         if invalid_args:
             name += ' ' + ' '.join(invalid_args)
-        Import.__init__(self, name)
+        Import.__init__(self, name, comment=comment)
 
 
 class Variables(Import):
 
-    def __init__(self, name, args=None):
-        Import.__init__(self, name, args)
+    def __init__(self, name, args=None, comment=None):
+        Import.__init__(self, name, args, comment=comment)

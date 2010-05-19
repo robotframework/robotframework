@@ -85,20 +85,20 @@ class SettingTable(DataTable):
         self.metadata = []
         self.imports = []
 
-    def add_metadata(self, name, value):
-        self.metadata.append(Metadata(name, value))
+    def add_metadata(self, name, value, comment=None):
+        self.metadata.append(Metadata(name, value, comment))
         return self.metadata[-1]
 
-    def add_library(self, name, args=None):
-        self.imports.append(Library(name, args))
+    def add_library(self, name, args=None, comment=None):
+        self.imports.append(Library(name, args, comment=comment))
         return self.imports[-1]
 
-    def add_resource(self, name, invalid_args=None):
-        self.imports.append(Resource(name, invalid_args))
+    def add_resource(self, name, invalid_args=None, comment=None):
+        self.imports.append(Resource(name, invalid_args, comment=comment))
         return self.imports[-1]
 
-    def add_variables(self, name, args=None):
-        self.imports.append(Variables(name, args))
+    def add_variables(self, name, args=None, comment=None):
+        self.imports.append(Variables(name, args, comment=comment))
         return self.imports[-1]
 
     def __iter__(self):
@@ -114,7 +114,7 @@ class VariableTable(DataTable):
     def __init__(self):
         self.variables = []
 
-    def add(self, name, value):
+    def add(self, name, value, comment=None):
         self.variables.append(Variable(name, value))
 
     def __iter__(self):

@@ -36,17 +36,17 @@ class _TablePopulator(Populator):
 
     def __init__(self, datafile):
         self._table = self._get_table(datafile)
-        self._populator = None
+        self._populator = NullPopulator()
         self._comments = []
 
     def add(self, row):
-        if row.is_comment():
+        if row.is_commented():
             self._comments.append(row)
             return
         if not self._is_continuing(row):
-            self.populate()
+            self._populator.populate()
             self._populator = self._get_populator(row)
-            self._add_cached_comments_to(self._populator)
+        self._add_cached_comments_to(self._populator)
         self._populator.add(row)
 
     def _add_cached_comments_to(self, populator):
@@ -55,8 +55,8 @@ class _TablePopulator(Populator):
         self._comments = []
 
     def populate(self):
-        if self._populator:
-            self._populator.populate()
+        self._add_cached_comments_to(self._populator)
+        self._populator.populate()
 
     def _is_continuing(self, row):
         return row.is_continuing()
@@ -245,44 +245,48 @@ class UserKeywordPopulator(_TestCaseUserKeywordPopulator):
 
 
 class _PropertyPopulator(Populator):
+    comments = property(lambda self: ''.join(self._comments))
 
     def __init__(self, setter):
         self._setter = setter
         self._value = []
         self._comments = []
 
+    def add(self, row):
+        if not row.is_commented():
+            self._add(row)
+        self._comments.extend(row.comments)
+
 
 class NameAndValuePropertyPopulator(_PropertyPopulator):
 
-    def add(self, row):
+    def _add(self, row):
         self._value.extend(row.all)
 
     def populate(self):
         name, value = self._value[0], self._value[1:]
-        self._setter(name, value)
+        self._setter(name, value, self.comments)
 
 
 class SettingPopulator(_PropertyPopulator):
 
-    def add(self, row):
-        if not row.is_comment():
-            self._value.extend(row.tail)
-        self._comments.extend(row.comments)
+    def _add(self, row):
+        self._value.extend(row.tail)
 
     def populate(self):
-        self._setter(self._value, self._comments)
+        self._setter(self._value, self.comments)
 
 
 class SettingTableNameValuePopulator(NameAndValuePropertyPopulator):
 
-    def add(self, row):
+    def _add(self, row):
         self._value.extend(row.tail)
 
 
 class OldStyleMetadataPopulator(NameAndValuePropertyPopulator):
     olde_metadata_prefix = 'meta:'
 
-    def add(self, row):
+    def _add(self, row):
         if self._is_metadata_with_olde_prefix(row.head):
             values = self._extract_name_from_olde_style_meta_cell(row.head) + row.tail
         else:
@@ -390,7 +394,7 @@ class DataRow(object):
     def is_continuing(self):
         return self.head == self._row_continuation_marker
 
-    def is_comment(self):
+    def is_commented(self):
         return not self.cells and self.comments
 
     def _parse(self, row):

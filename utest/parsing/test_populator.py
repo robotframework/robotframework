@@ -33,10 +33,34 @@ class _PopulatorTest(unittest.TestCase):
         if eof:
             self._populator.eof()
 
-    def _assert_setting(self, setting_name, exp_value, exp_comment=None):
-        assert_equals(self._setting_with(setting_name).value, exp_value)
+    def _assert_setting(self, name, exp_value, exp_comment=None):
+        setting = self._setting_with(name)
+        assert_equals(setting.value, exp_value)
+        self._assert_comment(setting, exp_comment)
+
+    def _assert_fixture(self, fixture_name, exp_name, exp_args, exp_comment=None):
+        fixture = self._setting_with(fixture_name)
+        self._assert_name_and_args(fixture, exp_name, exp_args)
+        self._assert_comment(fixture, exp_comment)
+
+    def _assert_import(self, index, exp_name, exp_args, exp_comment=None):
+        imp = self._datafile.setting_table.imports[index]
+        self._assert_name_and_args(imp, exp_name, exp_args)
+        self._assert_comment(imp, exp_comment)
+
+    def _assert_name_and_args(self, item, exp_name, exp_args):
+        assert_equals(item.name, exp_name)
+        assert_equals(item.args, exp_args)
+
+    def _assert_meta(self, index, exp_name, exp_value, exp_comment=None):
+        meta = self._setting_with('metadata')[index]
+        assert_equals(meta.name, exp_name)
+        assert_equals(meta.value, exp_value)
+        self._assert_comment(meta, exp_comment)
+
+    def _assert_comment(self, item, exp_comment):
         if exp_comment:
-            assert_equals(self._setting_with(setting_name).comment, exp_comment)
+            assert_equals(item.comment, exp_comment)
 
     def _setting_with(self, name):
         return getattr(self._datafile.setting_table, name)
@@ -246,23 +270,6 @@ class TestCaseFilePopulatingTest(_PopulatorTest):
         assert_equals(len(self._datafile.testcase_table.tests), 1)
         assert_equals(len(self._nth_uk(0).steps), 1)
 
-    def _assert_meta(self, index, exp_name, exp_value):
-        meta = self._setting_with('metadata')[index]
-        assert_equals(meta.name, exp_name)
-        assert_equals(meta.value, exp_value)
-
-    def _assert_fixture(self, fixture_name, exp_name, exp_args):
-        fixture = self._setting_with(fixture_name)
-        self._assert_name_and_args(fixture, exp_name, exp_args)
-
-    def _assert_import(self, index, exp_name, exp_args):
-        imp = self._datafile.setting_table.imports[index]
-        self._assert_name_and_args(imp, exp_name, exp_args)
-
-    def _assert_name_and_args(self, item, exp_name, exp_args):
-        assert_equals(item.name, exp_name)
-        assert_equals(item.args, exp_args)
-
     def _start_table(self, name):
         return self._populator.start_table(name)
 
@@ -294,10 +301,20 @@ class TestPopulatingComments(_PopulatorTest):
 
     def test_end_of_line_setting_comment(self):
         self._create_table('settings', [['Force Tags', 'Foo', 'Bar', '#comment'],
+                                        ['Library', 'Foo', '#Lib comment'],
                                         ['#comment between rows'],
-                                        ['Default Tags', 'Quux']])
+                                        ['Default Tags', 'Quux'],
+                                        ['Variables', 'varz.py'],
+                                        ['# between values'],
+                                        ['...', 'arg'],
+                                        ['Meta: metaname', 'metavalue'],
+                                        ['#last line is commented'],
+                                        ])
         self._assert_setting('force_tags', ['Foo', 'Bar'], 'comment')
+        self._assert_import(0, 'Foo', [], 'Lib comment')
         self._assert_setting('default_tags', ['Quux'], 'comment between rows')
+        self._assert_import(1, 'varz.py', ['arg'], ' between values')
+        self._assert_meta(0, 'metaname', 'metavalue', 'last line is commented')
 
 
 if __name__ == '__main__':
