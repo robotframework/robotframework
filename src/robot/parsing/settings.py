@@ -89,6 +89,10 @@ class Import(Setting):
         self.alias = alias
         self.comment = comment
 
+    @property
+    def type(self):
+        return type(self).__name__
+
 
 class Library(Import):
 
