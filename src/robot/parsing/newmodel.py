@@ -39,7 +39,7 @@ class _TestData(object):
         if not self.source:
             return None
         name = os.path.splitext(os.path.basename(self.source))[0]
-        name = name.replace('_', ' ')
+        name = name.replace('_', ' ').strip()
         return name.title() if name.islower() else name
 
     def report_invalid_syntax(self, table, message, level='ERROR'):
