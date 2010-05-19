@@ -328,9 +328,13 @@ class TestPopulatingComments(_PopulatorTest):
         self._create_table('variables', [['${varname}', 'varvalue', '#has comment'],
                                          ['#label', 'A', 'B', 'C'],
                                          ['@{items}', '1', '2', '3'],
+                                         ['${ohtervarname}', '##end comment'],
+                                         ['', '', '#comment'],
+                                         ['...', 'otherval'],
                                          ['#EOT']])
         self._assert_variable(0, '${varname}', ['varvalue'], 'has comment')
-        self._assert_variable(1, '@{items}', ['1', '2', '3'], 'label | A | B | C\nEOT')
+        self._assert_variable(1, '@{items}', ['1', '2', '3'], 'label | A | B | C')
+        self._assert_variable(2, '${ohtervarname}', ['otherval'], '#end comment\ncomment\nEOT')
 
 if __name__ == '__main__':
     unittest.main()
