@@ -16,6 +16,7 @@ import os
 
 from robot.errors import DataError
 from robot.variables import is_var
+from robot.output import LOGGER
 
 from settings import (Documentation, Fixture, Timeout, Tags, Metadata,
                       Library, Resource, Variables, Arguments, Return)
@@ -41,15 +42,21 @@ class _TestData(object):
         name = name.replace('_', ' ')
         return name.title() if name.islower() else name
 
+    def report_invalid_syntax(self, table, message, level='ERROR'):
+        initfile = getattr(self, 'initfile', None)
+        path = os.path.join(self.source, initfile) if initfile else self.source
+        LOGGER.write("Invalid syntax in file '%s' in table '%s': %s"
+                     % (path, table, message), level)
+
 
 class TestCaseFile(_TestData):
 
     def __init__(self, source=None):
         _TestData.__init__(self, source)
-        self.setting_table = SettingTable()
-        self.variable_table = VariableTable()
-        self.testcase_table = TestCaseTable()
-        self.keyword_table = KeywordTable()
+        self.setting_table = SettingTable(self)
+        self.variable_table = VariableTable(self)
+        self.testcase_table = TestCaseTable(self)
+        self.keyword_table = KeywordTable(self)
         if source:
             FileReader().read(source, self)
 
@@ -64,10 +71,10 @@ class TestDataDirectory(_TestData):
     def __init__(self, source=None):
         _TestData.__init__(self, source)
         self.initfile = None
-        self.setting_table = SettingTable()
-        self.variable_table = VariableTable()
+        self.setting_table = SettingTable(self)
+        self.variable_table = VariableTable(self)
         self.testcase_table = TestCaseTableNotAllowed('test suite init file')
-        self.keyword_table = KeywordTable()
+        self.keyword_table = KeywordTable(self)
         self.children = []
         if source:
             DirectoryReader().read(source, self)
@@ -82,12 +89,20 @@ class TestDataDirectory(_TestData):
 
 
 class _Table(object):
-    pass
+
+    def __init__(self, parent):
+        self.parent = parent
+
+    def report_invalid_syntax(self, message, level='ERROR'):
+        # TODO: Use the real table name here when headers are available
+        table = type(self).__name__.replace('Table', '')
+        self.parent.report_invalid_syntax(table, message, level)
 
 
 class SettingTable(_Table):
 
-    def __init__(self):
+    def __init__(self, parent):
+        _Table.__init__(self, parent)
         self.doc = Documentation()
         self.suite_setup = Fixture()
         self.suite_teardown = Fixture()
@@ -125,7 +140,8 @@ class SettingTable(_Table):
 
 class VariableTable(_Table):
 
-    def __init__(self):
+    def __init__(self, parent):
+        _Table.__init__(self, parent)
         self.variables = []
 
     def add(self, name, value, comment=None):
@@ -137,7 +153,8 @@ class VariableTable(_Table):
 
 class TestCaseTable(_Table):
 
-    def __init__(self):
+    def __init__(self, parent):
+        _Table.__init__(self, parent)
         self.tests = []
 
     def add(self, name):
@@ -150,7 +167,8 @@ class TestCaseTable(_Table):
 
 class KeywordTable(_Table):
 
-    def __init__(self):
+    def __init__(self, parent):
+        _Table.__init__(self, parent)
         self.keywords = []
 
     def add(self, name):
