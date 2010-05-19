@@ -41,6 +41,7 @@ class _PopulatorTest(unittest.TestCase):
     def _setting_with(self, name):
         return getattr(self._datafile.setting_table, name)
 
+
 class TestCaseFilePopulatingTest(_PopulatorTest):
 
     def setUp(self):
@@ -156,9 +157,7 @@ class TestCaseFilePopulatingTest(_PopulatorTest):
     def test_malicious_for_loop(self):
         self._create_table('Test cases', [['Malicious for loop test'],
                                           ['', 'Log', 'Before FOR'],
-                                          ['#', 'Log', 'Before FOR'],
                                           ['', '::::   fOr', '${i}', 'IN', '10', '20'],
-                                          ['#', '...', 'No operation'],
                                           ['', '...', '30', '40'],
                                           ['', '...', '50', '60'],
                                           ['', '', 'Log Many', '${i}'],
@@ -198,21 +197,6 @@ class TestCaseFilePopulatingTest(_PopulatorTest):
         self._create_table('Keywords', [['My User Keyword'],
                                         ['', '[Arguments]', '${foo}', '${bar}'],
                                         ['', 'Log Many', '${foo}'],
-                                        ['', '...', 'bar'],
-                                        ['', 'No Operation'],
-                                        ['', '[Return]', 'ankka', 'kameli']])
-        uk = self._nth_uk(0)
-        assert_equals(len(uk.steps), 2)
-        assert_equals(uk.args.value, ['${foo}', '${bar}'])
-        assert_equals(uk.return_.value, ['ankka', 'kameli'])
-
-    def test_comment_handling(self):
-        self._create_table('Keywords', [['#Commented row'],
-                                        ['', '# Another Commented row'],
-                                        ['My User Keyword', '#End', 'of', 'row comment'],
-                                        ['', '[Arguments]', '${foo}', '${bar}'],
-                                        ['', 'Log Many', '${foo}'],
-                                        ['', '# Commented row inside kw'],
                                         ['', '...', 'bar'],
                                         ['', 'No Operation'],
                                         ['', '[Return]', 'ankka', 'kameli']])
@@ -313,7 +297,8 @@ class TestPopulatingComments(_PopulatorTest):
                                         ['#comment between rows'],
                                         ['Default Tags', 'Quux']])
         self._assert_setting('force_tags', ['Foo', 'Bar'], 'comment')
-        #self._assert_setting('default_tags', ['Quux'], 'comment between rows')
+        self._assert_setting('default_tags', ['Quux'], 'comment between rows')
+
 
 if __name__ == '__main__':
     unittest.main()
