@@ -16,7 +16,7 @@ import sys
 from types import MethodType, FunctionType
 
 from robot.errors import DataError, FrameworkError
-from robot.variables import is_list_var
+from robot.variables import is_list_var, is_scalar_var
 from robot import utils
 
 if utils.is_jython:
@@ -218,13 +218,50 @@ class JavaInitArguments(JavaKeywordArguments):
 
 class UserKeywordArguments(object):
 
-    def __init__(self, argnames, defaults, varargs, minargs, maxargs, name):
+    def __init__(self, args, name):
+        argnames, self.defaults, self.varargs = self._get_arg_spec(args)
         self.names = list(argnames) # Python 2.5 does not support indexing tuples
-        self.defaults = defaults
-        self.varargs = varargs
-        self.minargs = minargs
-        self._arg_limit_checker = _ArgLimitChecker(minargs, maxargs,
+        self.minargs = len(argnames) - len(self.defaults)
+        maxargs = self.varargs is not None and sys.maxint or len(argnames)
+        self._arg_limit_checker = _ArgLimitChecker(self.minargs, maxargs,
                                                    name, 'Keyword')
+
+    def _get_arg_spec(self, origargs):
+        """Returns argument spec in a tuple (args, defaults, varargs).
+
+        args     - tuple of all accepted arguments
+        defaults - tuple of default values
+        varargs  - name of the argument accepting varargs or None
+
+        Examples:
+          ['${arg1}', '${arg2}']
+            => ('${arg1}', '${arg2}'), (), None
+          ['${arg1}', '${arg2}=default', '@{varargs}']
+            => ('${arg1}', '${arg2}'), ('default',), '@{varargs}'
+        """
+        args = []
+        defaults = []
+        varargs = None
+        for arg in origargs:
+            if varargs:
+                raise DataError('Only last argument can be a list')
+            if is_list_var(arg):
+                varargs = arg
+                continue   # should be last round (otherwise DataError in next)
+            arg, default = self._split_default(arg)
+            if defaults and not default:
+                raise DataError('Non default argument after default arguments')
+            if not is_scalar_var(arg):
+                raise DataError("Invalid argument '%s'" % arg)
+            args.append(arg)
+            if default:
+                defaults.append(default)
+        return tuple(args), tuple(defaults), varargs
+
+    def _split_default(self, arg):
+        if '=' not in arg:
+            return arg, None
+        return arg.split('=', 1)
 
     def resolve_arguments_for_dry_run(self, arguments):
         self._arg_limit_checker.check_arg_limits_for_dry_run(arguments)

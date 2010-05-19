@@ -21,8 +21,9 @@ from robot.variables import is_list_var
 
 class Keywords(object):
 
-    def __init__(self, kwdata):
-        self._keywords = [ _KeywordFactory(kw) for kw in kwdata ]
+    def __init__(self, steps):
+        #FIXME: Initial hack to support new parsing model
+        self._keywords = [ Keyword(step.keyword, step.args) for step in steps ]
 
     def run(self, context):
         errors = []
