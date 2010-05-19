@@ -28,10 +28,24 @@ def TestData(path):
     return TestCaseFile(path)
 
 
-class TestCaseFile(object):
+class _TestData(object):
+
+    def __init__(self, source):
+        self.source = os.path.abspath(source) if source else None
+
+    @property
+    def name(self):
+        if not self.source:
+            return None
+        name = os.path.splitext(os.path.basename(self.source))[0]
+        name = name.replace('_', ' ')
+        return name.title() if name.islower() else name
+
+
+class TestCaseFile(_TestData):
 
     def __init__(self, source=None):
-        self.source = source
+        _TestData.__init__(self, source)
         self.setting_table = SettingTable()
         self.variable_table = VariableTable()
         self.testcase_table = TestCaseTable()
@@ -45,10 +59,10 @@ class TestCaseFile(object):
             yield table
 
 
-class TestDataDirectory(object):
+class TestDataDirectory(_TestData):
 
     def __init__(self, source=None):
-        self.source = source
+        _TestData.__init__(self, source)
         self.initfile = None
         self.setting_table = SettingTable()
         self.variable_table = VariableTable()

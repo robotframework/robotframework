@@ -20,6 +20,16 @@ class TestTestCaseFile(unittest.TestCase):
         assert_true(isinstance(self.tcf.testcase_table, TestCaseTable))
         assert_true(isinstance(self.tcf.keyword_table, KeywordTable))
 
+    def test_name(self):
+        assert_none(self.tcf.name)
+        for source, name in [('hello.txt', 'Hello'),
+                             ('hello', 'Hello'),
+                             ('hello_world.tsv', 'Hello World'),
+                             ('HELLO world.htm', 'HELLO world'),
+                             ('HelloWorld.txt', 'HelloWorld')]:
+            self.tcf.source = os.path.abspath(source)
+            assert_equal(self.tcf.name, name)
+
     def test_integration(self):
         test_file = StringIO('*** Test Cases *** \nMy test  No operation\n')
         TxtReader().read(test_file, TestDataPopulator(self.tcf))
