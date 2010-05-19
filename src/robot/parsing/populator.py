@@ -321,6 +321,8 @@ class TestDataPopulator(Populator):
 
     def _determine_curdir(self, datafile):
         if datafile.source:
+            if os.path.isdir(datafile.source):
+                return datafile.source
             return os.path.dirname(datafile.source)
         return None
 

@@ -72,6 +72,7 @@ class DirectoryReader(object):
             try:
                 FileReader().read(init, datadir)
             except DataError, err:
+                # TODO: Reverse control?
                 LOGGER.error(unicode(err))
         for child in children:
             try:
