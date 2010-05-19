@@ -17,7 +17,7 @@ import os
 from robot.errors import DataError
 from robot.variables import is_var
 
-from settings import (Documentation, Fixture, Timeout, Tags, Metadata, 
+from settings import (Documentation, Fixture, Timeout, Tags, Metadata,
                       Library, Resource, Variables, Arguments, Return)
 from datareader import FileReader, DirectoryReader
 
@@ -49,6 +49,7 @@ class TestDataDirectory(object):
 
     def __init__(self, source=None):
         self.source = source
+        self.initfile = None
         self.setting_table = SettingTable()
         self.variable_table = VariableTable()
         self.testcase_table = TestCaseTableNotAllowed('test suite init file')
@@ -149,11 +150,11 @@ class KeywordTable(DataTable):
 class TestCaseTableNotAllowed(object):
 
     def __init__(self, where):
-        self.message = 'Test case table not allowed in ' + where
+        self.message = 'Test case table not allowed in %s.' % where
 
     def __getattr__(self, name):
         raise DataError(self.message)
-        
+
 
 class Variable(object):
 

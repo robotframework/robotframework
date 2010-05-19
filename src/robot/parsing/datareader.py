@@ -38,7 +38,7 @@ READERS = {'html': HtmlReader, 'htm': HtmlReader, 'xhtml': HtmlReader,
 class FileReader(object):
 
     def read(self, path, datafile):
-        LOGGER.info("Parsing test case file '%s'" % path)
+        LOGGER.info("Parsing test case file '%s'." % path)
         source = self._open(path)
         try:
             self._get_reader(path).read(source, TestDataPopulator(datafile))
@@ -58,7 +58,7 @@ class FileReader(object):
         try:
             return READERS[extension]()
         except KeyError:
-            raise DataError("No reader found for extension '%s'" % extension)
+            raise DataError("No reader found for extension '%s'." % extension)
 
 
 class DirectoryReader(object):
@@ -67,10 +67,11 @@ class DirectoryReader(object):
 
     def read(self, path, datadir):
         LOGGER.info("Parsing test data directory '%s'" % path)
-        init, children = self._get_children(path)
-        if init:
+        initfile, children = self._get_children(path)
+        datadir.initfile = initfile
+        if initfile:
             try:
-                FileReader().read(init, datadir)
+                FileReader().read(initfile, datadir)
             except DataError, err:
                 # TODO: Reverse control?
                 LOGGER.error(unicode(err))
@@ -82,19 +83,19 @@ class DirectoryReader(object):
                             % (path, unicode(err)))
 
     def _get_children(self, dirpath):
-        init = None
+        initfile = None
         children = []
         for name, path in self._list_dir(dirpath):
             if self._is_init_file(name, path):
-                if not init:
-                    init = path
+                if not initfile:
+                    initfile = path
                 else:
-                    LOGGER.error("Ignoring second test suite init file '%s'" % path)
+                    LOGGER.error("Ignoring second test suite init file '%s'." % path)
             elif self._is_ignored(name, path):
-                LOGGER.info("Ignoring file or directory '%s'" % name)
+                LOGGER.info("Ignoring file or directory '%s'." % name)
             else:
                 children.append(path)
-        return init, children
+        return initfile, children
 
     def _list_dir(self, path):
         # os.listdir returns Unicode entries when path is Unicode
