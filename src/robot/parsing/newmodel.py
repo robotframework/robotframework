@@ -20,7 +20,7 @@ from robot.output import LOGGER
 
 from settings import (Documentation, Fixture, Timeout, Tags, Metadata,
                       Library, Resource, Variables, Arguments, Return)
-from datareader import FileReader, DirectoryReader
+from datareader import FromFilePopulator, FromDirectoryPopulator
 
 
 def TestData(path):
@@ -59,8 +59,8 @@ class TestCaseFile(_TestData):
         self.variable_table = VariableTable(self)
         self.testcase_table = TestCaseTable(self)
         self.keyword_table = KeywordTable(self)
-        if self.source:
-            FileReader().read(self.source, self)
+        if source:
+            FromFilePopulator(self).populate(source)
 
     def __iter__(self):
         for table in [self.setting_table, self.variable_table,
@@ -79,7 +79,7 @@ class TestDataDirectory(_TestData):
         self.testcase_table = TestCaseTableNotAllowed('test suite init file')
         self.keyword_table = KeywordTable(self)
         if self.source:
-            DirectoryReader().read(self.source, self)
+            FromDirectoryPopulator().populate(self.source, self)
 
     def add_child(self, path):
         self.children.append(TestData(path))

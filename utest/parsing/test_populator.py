@@ -2,7 +2,7 @@ import unittest
 import os
 from StringIO import StringIO
 
-from robot.parsing.populator import TestDataPopulator, DataRow
+from robot.parsing.datareader import FromFilePopulator, DataRow
 from robot.parsing.newmodel import TestCaseFile
 from robot.utils.asserts import assert_equals, assert_true, assert_false
 
@@ -85,8 +85,8 @@ class TestCaseFilePopulatingTest(_PopulatorTest):
 
     def setUp(self):
         self._datafile = TestCaseFile()
-        self._datafile.source = '/path/to/source.txt'
-        self._populator = TestDataPopulator(self._datafile)
+        self._datafile.directory = '/path/to'
+        self._populator = FromFilePopulator(self._datafile)
         self._logger = _MockLogger()
         LOGGER.register_logger(self._logger)
 
@@ -250,16 +250,16 @@ class TestCaseFilePopulatingTest(_PopulatorTest):
         self._create_table('Test cases', [['My test name'],
                                           ['', 'Log', '${CURDIR}']])
         assert_equals(self._first_test().steps[0].args,
-                      [os.path.dirname(self._datafile.source)])
+                      [self._datafile.directory])
 
     def test_turn_off_curdir_handling(self):
-        from robot.parsing import populator
-        populator.PROCESS_CURDIR = False
+        from robot.parsing import datareader
+        datareader.PROCESS_CURDIR = False
         self.setUp()
         self._create_table('Test cases', [['My test name'],
                                           ['', 'Log', '${CURDIR}']])
         assert_equals(self._first_test().steps[0].args, ['${CURDIR}'])
-        populator.PROCESS_CURDIR = True
+        datareader.PROCESS_CURDIR = True
 
     def test_whitespace_is_ignored(self):
         self._create_table('Test Cases', [['My   test'],
@@ -305,7 +305,7 @@ class TestPopulatingComments(_PopulatorTest):
 
     def setUp(self):
         self._datafile = TestCaseFile()
-        self._populator = TestDataPopulator(self._datafile)
+        self._populator = FromFilePopulator(self._datafile)
 
     def test_setting_table(self):
         self._create_table('settings', [['Force Tags', 'Foo', 'Bar', '#comment'],

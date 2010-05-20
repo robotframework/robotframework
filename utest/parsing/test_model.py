@@ -6,7 +6,7 @@ from robot.parsing.newmodel import *
 from robot.parsing.settings import *
 from robot.parsing.settings import _Import
 from robot.parsing.txtreader import TxtReader
-from robot.parsing.populator import TestDataPopulator
+from robot.parsing.datareader import FromFilePopulator
 
 
 class TestTestCaseFile(unittest.TestCase):
@@ -32,12 +32,6 @@ class TestTestCaseFile(unittest.TestCase):
                              ('HelloWorld.txt', 'HelloWorld')]:
             self.tcf.source = os.path.abspath(source)
             assert_equal(self.tcf.name, name)
-
-    def test_integration(self):
-        test_file = StringIO('*** Test Cases *** \nMy test  No operation\n')
-        TxtReader().read(test_file, TestDataPopulator(self.tcf))
-        assert_equal(len(self.tcf.testcase_table.tests), 1)
-        assert_equal(self.tcf.testcase_table.tests[0].name, 'My test')
 
 
 class TestSettingTable(unittest.TestCase):
