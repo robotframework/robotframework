@@ -148,8 +148,8 @@ class _Assignment(object):
                 scalar_vars.append(var)
         return scalar_vars, list_var
 
-    def __nonzero__(self):
-        return bool(self.scalar_vars or self.list_var)
+    def __len__(self):
+        return len(self.scalar_vars) + (1 if self.list_var else 0)
 
     def __iter__(self):
         for var in self.scalar_vars:
@@ -169,7 +169,7 @@ class _Assignment(object):
     def _get_vars_to_set(self, ret):
         if ret is None:
             return self._get_vars_to_set_when_ret_is_none()
-        if self.list_var:
+        if not self.list_var:
             return self._get_vars_to_set_with_only_scalars(ret)
         if self._is_non_string_iterable(ret):
             return self._get_vars_to_set_with_scalars_and_list(list(ret))
@@ -219,8 +219,9 @@ class _Assignment(object):
             err = 'Expected list, got %s instead' % utils.type_as_str(ret, True)
         else:
             err = 'Need more values than %d' % len(ret)
-        raise DataError("Cannot assign return value of keyword '%s' to "
-                        "variables %s: %s" % (self.keyword, list(self), err))
+        raise DataError("Cannot assign return value of keyword '%s' to variable%s %s: %s" 
+                        % (self.keyword, utils.plural_or_not(len(self)),
+                           utils.seq2str(list(self)), err))
 
 
 class ForKeyword(BaseKeyword):
