@@ -16,7 +16,7 @@ import os
 
 from robot import utils
 from robot.common import BaseTestSuite, BaseTestCase
-from robot.parsing import TestCaseFile
+from robot.parsing import TestCaseFile, TestDataDirectory
 from robot.errors import ExecutionFailed, DataError
 from robot.variables import GLOBAL_VARIABLES
 from robot.output import LOGGER
@@ -52,7 +52,7 @@ def TestSuite(datasources, settings):
 
 def _get_directory_or_file_suite(path, suite_names):
     if os.path.isdir(path):
-        return DirectoryData(path, suite_names)
+        return TestDataDirectory(path) #FIXME: filter suites: , suite_names)
     return TestCaseFile(path)
 
 
@@ -148,8 +148,8 @@ class RunnableTestSuite(BaseTestSuite):
 #            testdefaults = _TestCaseDefaults()
 #        testdefaults.add_defaults(data)
 # FIXME: directory suites
-#        for suite in data.suites:
-#            RunnableTestSuite(suite, testdefaults.copy(), parent=self)
+        for suite in data.children:
+            RunnableTestSuite(suite, testdefaults, parent=self)
         for test in data.testcase_table:
             RunnableTestCase(test, testdefaults, parent=self)
         self._run_mode_exit_on_failure = False

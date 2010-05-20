@@ -33,6 +33,7 @@ class _TestData(object):
 
     def __init__(self, source):
         self.source = os.path.abspath(source) if source else None
+        self.children = []
 
     @property
     def name(self):
@@ -77,7 +78,6 @@ class TestDataDirectory(_TestData):
         self.variable_table = VariableTable(self)
         self.testcase_table = TestCaseTableNotAllowed('test suite init file')
         self.keyword_table = KeywordTable(self)
-        self.children = []
         if self.source:
             DirectoryReader().read(self.source, self)
 
@@ -197,6 +197,11 @@ class TestCaseTableNotAllowed(object):
     def __getattr__(self, name):
         raise DataError(self.message)
 
+    def __nonzero__(self):
+        return False
+
+    def __iter__(self):
+        return iter([])
 
 class Variable(object):
 
