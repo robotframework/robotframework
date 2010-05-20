@@ -5,18 +5,34 @@ from robot.running.userkeyword import UserKeywordHandler, \
 from robot.utils.asserts import *
 
 
+class Fake(object):
+    value = ''
+    message = ''
+
+class FakeArgs(object):
+
+    def __init__(self, args):
+        self.value = args
+
+    def __nonzero__(self):
+        return bool(self.value)
+
+
 class HandlerDataMock:
 
     def __init__(self, name, args=[]):
         self.name = name
-        self.args = args
+        self.args = FakeArgs(args)
         self.metadata = {}
-        self.keywords = []
+        self.steps = []
         self.defaults = []
         self.varargs = None
         self.minargs = 0
         self.maxargs = 0
         self.return_value = None
+        self.doc = Fake()
+        self.timeout = Fake()
+        self.return_ = Fake()
 
 def EAT(*args):
     return EmbeddedArgsTemplate(HandlerDataMock(*args), 'resource')
