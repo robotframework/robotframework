@@ -20,15 +20,16 @@ from keywords import Keyword
 
 class _Fixture(object):
 
-    def __init__(self, kwdata=None):
-        self._keyword = self._fixture_keyword(kwdata)
-        self.name = self._keyword.name if self._keyword else ''
+    def __init__(self, name, args):
+        self.name = name or ''
+        self.args = args
+        self._keyword = None
 
-    def _fixture_keyword(self, kwdata):
-        kwdata = utils.to_list(kwdata)
-        if kwdata == []:
-            return None
-        return Keyword(kwdata[0], kwdata[1:], type=self.__class__.__name__.lower())
+    def replace_variables(self, variables):
+        if self.name:
+            self.name = variables.replace_string(self.name)
+            self._keyword = Keyword(self.name, self.args, 
+                                    type=type(self).__name__.lower())
 
     def run(self, context, error_listener):
         if self._keyword:

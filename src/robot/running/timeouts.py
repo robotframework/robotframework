@@ -22,24 +22,24 @@ from signalhandler import STOP_SIGNAL_MONITOR
 
 
 class _Timeout:
-    _defaults = ('', -1, None)
 
-    def __init__(self, *params):
-        try:
-            self.string, self.secs, self.message = self._process_params(params)
-            self.error = None
-        except DataError, err:
-            self.string, self.secs, self.message = self._defaults
-            self.secs = 0.000001
-            self.error = 'Setting %s timeout failed: %s' % (self.type, err)
+    def __init__(self, timeout, message):
+        self.string = timeout or ''
+        self.message = message
+        self.secs = -1
         self.starttime = 0
+        self.error = None
 
-    def _process_params(self, params):
-        if len(params) == 0:
-            return self._defaults
-        secs = utils.timestr_to_secs(params[0])
-        msg = len(params) > 1 and ' '.join(params[1:]) or None
-        return utils.secs_to_timestr(secs), secs, msg
+    def replace_variables(self, variables):
+        try:
+            self.string = variables.replace_string(self.string)
+            if not self.string:
+                return
+            self.secs = utils.timestr_to_secs(self.string)
+            self.message = variables.replace_string(self.message)
+        except DataError, err:
+            self.secs = 0.000001 # to make timeout active
+            self.error = 'Setting %s timeout failed: %s' % (self.type, unicode(err))
 
     def start(self):
         self.starttime = time.time()

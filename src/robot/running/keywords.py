@@ -53,8 +53,8 @@ def _KeywordFactory(step):
 
 class Keyword(BaseKeyword):
 
-    def __init__(self, name, args, assign=None):
-        BaseKeyword.__init__(self, name, args)
+    def __init__(self, name, args, assign=None, type='kw'):
+        BaseKeyword.__init__(self, name, args, type=type)
         self.assign = _Assignment(name, assign or [])
         self.handler_name = name
 

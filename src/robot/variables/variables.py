@@ -232,31 +232,25 @@ class Variables(utils.NormalizedDict):
             if overwrite or not utils.NormalizedDict.has_key(self, name):
                 self[name] = value
 
-    def set_from_variable_table(self, raw_variables):
-        for rawvar in raw_variables:
+    def set_from_variable_table(self, variable_table):
+        for variable in variable_table:
             try:
-                name, value = self._get_var_table_name_and_value(rawvar)
+                name, value = self._get_var_table_name_and_value(variable.name,
+                                                                 variable.value)
                 # self.has_key would also match if name matches extended syntax
                 if not utils.NormalizedDict.has_key(self, name):
                     self[name] = value
-            except:
-                rawvar.report_invalid_syntax("Setting variable '%s' failed: %s"
-                                             % (rawvar.name,
-                                                utils.get_error_message()))
+            except DataError, err:
+                variable_table.report_invalid_syntax("Setting variable '%s' failed: %s"
+                                                     % (variable.name, unicode(err)))
 
-    def _get_var_table_name_and_value(self, rawvar):
-        name = self._get_var_table_name(rawvar.name)
-        value = [ self._unescape_leading_trailing_spaces(cell) for cell in rawvar.value ]
+    def _get_var_table_name_and_value(self, name, value):
+        if not is_var(name):
+            raise DataError("Invalid variable name.")
+        value = [ self._unescape_leading_trailing_spaces(cell) for cell in value ]
         if name[0] == '@':
             return name, self.replace_list(value)
         return name, self._get_var_table_scalar_value(name, value)
-
-    def _get_var_table_name(self, name):
-        if name.endswith('='):
-            name = name[:-1].strip()
-        if not is_var(name):
-            raise DataError("Invalid variable name '%s'" % name)
-        return name
 
     def _unescape_leading_trailing_spaces(self, item):
         if item.endswith(' \\'):
@@ -268,8 +262,6 @@ class Variables(utils.NormalizedDict):
     def _get_var_table_scalar_value(self, name, value):
         if len(value) == 1:
             return self.replace_scalar(value[0])
-        if len(value) == 0:
-            return ''
         LOGGER.warn("Creating scalar variable with more than one value is "
                     "deprecated and this functionality will be removed in "
                     "Robot Framework 2.6. Create a list variable '@%s' and use "

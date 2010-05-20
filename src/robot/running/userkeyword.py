@@ -37,25 +37,26 @@ def PublicUserLibrary(path):
 
 class UserLibrary(BaseLibrary):
 
-    def __init__(self, handlerdata, path=None):
-        if path is not None:
-            self.name = os.path.splitext(os.path.basename(path))[0]
-        else:
-            self.name = None
+    def __init__(self, user_keywords, path=None):
+        self.name = self._get_name_for_resource_file(path)
         self.handlers = utils.NormalizedDict(ignore=['_'])
         self.embedded_arg_handlers = []
-        for handler in handlerdata:
-            if handler.type != 'error':
-                try:
-                    handler = EmbeddedArgsTemplate(handler, self.name)
-                except TypeError:
-                    handler = UserKeywordHandler(handler, self.name)
-                else:
-                    self.embedded_arg_handlers.append(handler)
+        for user_keyword in user_keywords:
+            try:
+                handler = EmbeddedArgsTemplate(user_keyword, self.name)
+            except TypeError:
+                handler = UserKeywordHandler(user_keyword, self.name)
+            else:
+                self.embedded_arg_handlers.append(handler)
             if self.handlers.has_key(handler.name):
                 err = "Keyword '%s' defined multiple times" % handler.name
                 handler = UserErrorHandler(handler.name, err)
             self.handlers[handler.name] = handler
+
+    def _get_name_for_resource_file(self, path):
+        if path is None:
+            return None
+        return os.path.splitext(os.path.basename(path))[0]
 
     def has_handler(self, name):
         if BaseLibrary.has_handler(self, name):
@@ -105,30 +106,26 @@ class UserKeywordHandler(object):
                         or '%s.%s' % (self._libname, self.name))
     shortdoc = property(lambda self: self.doc.splitlines()[0] if self.doc else '')
 
-    def __init__(self, handlerdata, libname):
-        self.name = utils.printable_name(handlerdata.name)
+    def __init__(self, keyword, libname):
+        self.name = utils.printable_name(keyword.name)
         self._libname = libname
-        self._set_variable_dependent_metadata(handlerdata.metadata)
-        self.keywords = Keywords(handlerdata.keywords)
-        self.arguments = UserKeywordArguments(handlerdata.args,
-                                              handlerdata.defaults,
-                                              handlerdata.varargs,
-                                              handlerdata.minargs,
-                                              handlerdata.maxargs,
-                                              self.longname)
-        self.return_value = handlerdata.return_value
+        self._set_variable_dependent_settings(keyword)
+        self.keywords = Keywords(keyword.steps)
+        self.arguments = UserKeywordArguments(keyword.args.value, self.longname)
+        self.return_value = keyword.return_.value
 
-    def _set_variable_dependent_metadata(self, metadata):
-        self._doc = metadata.get('Documentation', '')
-        self.doc = utils.unescape(self._doc)
-        self._timeout = metadata.get('Timeout', [])
-        self.timeout = [ utils.unescape(item) for item in self._timeout ]
+    def _set_variable_dependent_settings(self, keyword):
+        self._doc = keyword.doc.value
+        self._timeout = (keyword.timeout.value, keyword.timeout.message)
+        # FIXME: do we need this? Does libdoc need this?
+        # self.doc = utils.unescape(self._doc)
+        #self.timeout = [ utils.unescape(item) for item in self._timeout ]
 
     def init_keyword(self, varz):
         self._errors = []
         self.doc = varz.replace_meta('Documentation', self._doc, self._errors)
-        timeout = varz.replace_meta('Timeout', self._timeout, self._errors)
-        self.timeout = KeywordTimeout(*timeout)
+        self.timeout = KeywordTimeout(*self._timeout)
+        self.timeout.replace_variables(varz)
 
     def run(self, context, arguments):
         context.namespace.start_user_keyword(self)

@@ -14,7 +14,6 @@
 
 import copy
 
-from robot.parsing import ResourceFile
 from robot.output import LOGGER
 from robot import utils
 
@@ -28,7 +27,7 @@ class Importer:
         self._libraries = _LibraryCache()
         self._resources = _LibraryCache()
 
-    def import_library(self, name, alias, args, variables):
+    def import_library(self, name, args, alias, variables):
         lib = TestLibrary(name, args, variables)
         positional, named = lib.positional_args, lib.named_args
         lib = self._import_library(name, positional, named, lib)

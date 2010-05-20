@@ -12,10 +12,12 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+import os
+
 from robot import utils
 from robot.common import BaseTestSuite, BaseTestCase
-from robot.parsing import TestSuiteData
-from robot.errors import ExecutionFailed
+from robot.parsing import TestCaseFile
+from robot.errors import ExecutionFailed, DataError
 from robot.variables import GLOBAL_VARIABLES
 from robot.output import LOGGER
 
@@ -29,10 +31,29 @@ from userkeyword import UserLibrary
 
 
 def TestSuite(datasources, settings):
-    suitedata = TestSuiteData(datasources, settings['SuiteNames'])
-    suite = RunnableTestSuite(suitedata)
+    datasources = [ utils.normpath(path) for path in datasources ]
+    suite_names = settings['SuiteNames']
+    if not datasources:
+        raise DataError("No data sources given.")
+    elif len(datasources) > 1:
+        suitedatas = []
+        for datasource in datasources:
+            try:
+                suitedatas.append(_get_directory_or_file_suite(datasource, suite_names))
+            except DataError:
+                pass
+        # FIXME: needs to be implemented
+        suite = RunnableMultiTestSuite(suitedatas)
+    else:
+        suitedata = _get_directory_or_file_suite(datasources[0], suite_names)
+        suite = RunnableTestSuite(suitedata)
     suite.set_options(settings)
     return suite
+
+def _get_directory_or_file_suite(path, suite_names):
+    if os.path.isdir(path):
+        return DirectoryData(path, suite_names)
+    return TestCaseFile(path)
 
 
 class ExecutionContext(object):
@@ -112,23 +133,34 @@ class RunnableTestSuite(BaseTestSuite):
     def __init__(self, data, testdefaults=None, parent=None):
         BaseTestSuite.__init__(self, data.name, data.source, parent)
         self.variables = GLOBAL_VARIABLES.copy()
-        self.variables.set_from_variable_table(data.variables)
+        self.variables.set_from_variable_table(data.variable_table)
         self.source = data.source
-        self.doc = data.doc or ''
-        self.metadata = data.metadata
-        self.imports = data.imports
-        self.user_keywords = UserLibrary(data.user_keywords)
-        self.setup = data.suite_setup or []
-        self.teardown = data.suite_teardown or []
-        if not testdefaults:
-            testdefaults = _TestCaseDefaults()
-        testdefaults.add_defaults(data)
-        for suite in data.suites:
-            RunnableTestSuite(suite, testdefaults.copy(), parent=self)
-        for test in data.tests:
+        self.doc = data.setting_table.doc.value
+        self.metadata = self._get_metadata(data.setting_table.metadata)
+        self.imports = data.setting_table.imports
+        self.user_keywords = UserLibrary(data.keyword_table.keywords)
+        self.setup = Setup(data.setting_table.suite_setup.name, 
+                           data.setting_table.suite_setup.args)
+        self.teardown = Teardown(data.setting_table.suite_teardown.name, 
+                                 data.setting_table.suite_teardown.args)
+# FIXME: higher level settings
+#        if not testdefaults:
+#            testdefaults = _TestCaseDefaults()
+#        testdefaults.add_defaults(data)
+# FIXME: directory suites
+#        for suite in data.suites:
+#            RunnableTestSuite(suite, testdefaults.copy(), parent=self)
+        for test in data.testcase_table:
             RunnableTestCase(test, testdefaults, parent=self)
         self._run_mode_exit_on_failure = False
         self._run_mode_dry_run = False
+
+
+    def _get_metadata(self, metadata):
+        meta = {}
+        for item in metadata:
+            meta[item.name] = item.value
+        return meta
 
     def run(self, output, parent=None, errors=None):
         context = self._start_run(output, parent, errors)
@@ -157,11 +189,8 @@ class RunnableTestSuite(BaseTestSuite):
         errors = []
         self.doc = context.replace_vars_from_setting('Documentation', self.doc,
                                                      errors)
-        self.setup = Setup(context.replace_vars_from_setting('Setup', self.setup,
-                                                             errors))
-        self.teardown = Teardown(context.replace_vars_from_setting('Teardown',
-                                                                   self.teardown,
-                                                                   errors))
+        self.setup.replace_variables(context.get_current_vars())
+        self.teardown.replace_variables(context.get_current_vars())
         for name, value in self.metadata.items():
             self.metadata[name] = context.replace_vars_from_setting(name, value,
                                                                     errors)
@@ -210,14 +239,17 @@ class RunnableTestCase(BaseTestCase):
 
     def __init__(self, data, defaults, parent):
         BaseTestCase.__init__(self, data.name, parent)
-        self.doc = data.doc or ''
-        self.setup = utils.get_not_none(data.setup, defaults.test_setup)
-        self.teardown = utils.get_not_none(data.teardown,
-                                           defaults.test_teardown)
-        self.tags = defaults.force_tags \
-                    + utils.get_not_none(data.tags, defaults.default_tags)
-        self.timeout = utils.get_not_none(data.timeout, defaults.test_timeout)
-        self.keywords = Keywords(data.keywords)
+        self.doc = data.doc.value
+        self.setup = Setup(data.setup.name, data.setup.args)
+        # FIXME: higher level settings
+        # utils.get_not_none(data.setup, defaults.test_setup)
+        self.teardown = Teardown(data.teardown.name, data.teardown.args)
+        #utils.get_not_none(data.teardown,
+        #             defaults.test_teardown)
+        self.tags = data.tags.value #defaults.force_tags \
+                    #+ utils.get_not_none(data.tags, defaults.default_tags)
+        self.timeout = TestTimeout(data.timeout.value, data.timeout.message)
+        self.keywords = Keywords(data.steps)
 
     def run(self, context, suite_errors):
         self._suite_errors = suite_errors
@@ -239,17 +271,12 @@ class RunnableTestCase(BaseTestCase):
         errors = []
         self.doc = context.replace_vars_from_setting('Documentation', self.doc,
                                                      errors)
-        self.setup = Setup(context.replace_vars_from_setting('Setup', self.setup,
-                                                             errors))
-        self.teardown = Teardown(context.replace_vars_from_setting('Teardown',
-                                                                   self.teardown,
-                                                                   errors))
+        self.setup.replace_variables(context.get_current_vars())
+        self.teardown.replace_variables(context.get_current_vars())
         self.tags = utils.normalize_tags(context.replace_vars_from_setting('Tags',
                                                                            self.tags,
                                                                            errors))
-        self.timeout = TestTimeout(*context.replace_vars_from_setting('Timeout',
-                                                                      self.timeout,
-                                                                      errors))
+        self.timeout.replace_variables(context.get_current_vars())
         if errors:
             return 'Test case initialization failed:\n%s' % '\n'.join(errors)
         if not self.keywords:
