@@ -2,7 +2,7 @@ import unittest
 import os
 from StringIO import StringIO
 
-from robot.parsing.populator import TestDataPopulator
+from robot.parsing.populator import TestDataPopulator, DataRow
 from robot.parsing.newmodel import TestCaseFile
 from robot.utils.asserts import assert_equals, assert_true, assert_false
 
@@ -70,6 +70,12 @@ class _PopulatorTest(unittest.TestCase):
 
     def _setting_with(self, name):
         return getattr(self._datafile.setting_table, name)
+
+    def _nth_test(self, index):
+        return self._datafile.testcase_table.tests[index-1]
+
+    def _first_test(self):
+        return self._nth_test(1)
 
 
 class TestCaseFilePopulatingTest(_PopulatorTest):
@@ -288,12 +294,6 @@ class TestCaseFilePopulatingTest(_PopulatorTest):
         if eof:
             self._populator.eof()
 
-    def _nth_test(self, index):
-        return self._datafile.testcase_table.tests[index-1]
-
-    def _first_test(self):
-        return self._nth_test(1)
-
     def _nth_uk(self, index):
         return self._datafile.keyword_table.keywords[index]
 
@@ -335,6 +335,28 @@ class TestPopulatingComments(_PopulatorTest):
         self._assert_variable(0, '${varname}', ['varvalue'], 'has comment')
         self._assert_variable(1, '@{items}', ['1', '2', '3'], 'label | A | B | C')
         self._assert_variable(2, '${ohtervarname}', ['otherval'], '#end comment\ncomment\nEOT')
+
+    def test_test_case_table(self):
+        self._create_table('test cases', [['#start of table comment'],
+                                          ['Test case'],
+                                          ['', 'No operation', '#step comment'],
+                                          ['', '', '#This step has only comment'],
+                                          ['Another test', '#comment in name row'],
+                                          ['', 'Log many', 'argh'],
+                                          ['#', 'Comment between step def'],
+                                          ['', '...', 'urgh']
+                                          ])
+        assert_equals(self._first_test().steps[0].comment, 'start of table comment')
+        assert_equals(self._first_test().steps[1].comment, 'step comment')
+        assert_equals(self._first_test().steps[2].comment, 'This step has only comment')
+        assert_equals(self._nth_test(2).steps[0].comment, 'comment in name row')
+        assert_equals(self._nth_test(2).steps[1].comment, ' | Comment between step def')
+        assert_equals(self._nth_test(2).steps[1].args, ['argh', 'urgh'])
+
+class DataRowTest(unittest.TestCase):
+
+    def test_commented_row(self):
+        assert_true(DataRow(['#start of table comment']).is_commented())
 
 if __name__ == '__main__':
     unittest.main()

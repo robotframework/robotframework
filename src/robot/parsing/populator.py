@@ -40,7 +40,7 @@ class _TablePopulator(Populator):
         self._comments = []
 
     def add(self, row):
-        if row.is_commented():
+        if self._is_cacheable_comment_row(row):
             self._comments.append(row)
             return
         if not self._is_continuing(row):
@@ -60,6 +60,9 @@ class _TablePopulator(Populator):
 
     def _is_continuing(self, row):
         return row.is_continuing()
+
+    def _is_cacheable_comment_row(self, row):
+        return row.is_commented()
 
 
 class SettingTablePopulator(_TablePopulator):
@@ -132,7 +135,10 @@ class TestTablePopulator(_TablePopulator):
         return TestCasePopulator(self._table.add)
 
     def _is_continuing(self, row):
-        return row.is_indented()
+        return row.is_indented() or row.is_commented()
+
+    def _is_cacheable_comment_row(self, row):
+        return row.is_commented() and isinstance(self._populator, NullPopulator)
 
 class KeywordTablePopulator(_TablePopulator):
 
@@ -182,8 +188,12 @@ class _TestCaseUserKeywordPopulator(Populator):
         self._test_or_uk_creator = test_or_uk_creator
         self._test_or_uk = None
         self._populator = NullPopulator()
+        self._comments = []
 
     def add(self, row):
+        if row.is_commented():
+            self._comments.append(row)
+            return
         if not self._test_or_uk:
             self._test_or_uk = self._test_or_uk_creator(row.head)
         dedented_row = row.dedent()
@@ -191,10 +201,23 @@ class _TestCaseUserKeywordPopulator(Populator):
             if not self._continues(dedented_row):
                 self._populator.populate()
                 self._populator = self._get_populator(dedented_row)
+                self._populate_cached_comments()
+            else:
+                for crow in self._comments:
+                    self._populator.add(crow)
+                self._comments = []
             self._populator.add(dedented_row)
+
+    def _populate_cached_comments(self):
+        for crow in self._comments:
+            populator = StepPopulator(self._test_or_uk.add_step)
+            populator.add(crow)
+            populator.populate()
+        self._comments = []
 
     def populate(self):
         self._populator.populate()
+        self._populate_cached_comments()
 
     def _get_populator(self, row):
         if row.starts_test_or_user_keyword_setting():
@@ -322,12 +345,14 @@ class OldStyleMetadataPopulator(NameAndValuePropertyPopulator):
 
 class StepPopulator(_PropertyPopulator):
 
-    def add(self, row):
+    def _add(self, row):
+        if row.is_continuing():
+            row = row.dedent()
         self._value.extend(row.all)
 
     def populate(self):
-        if self._value:
-            self._setter(self._value)
+        if self._value or self._comments:
+            self._setter(self._value, self._comments.formatted_value())
 
 
 class NullPopulator(Populator):
@@ -394,15 +419,17 @@ class DataRow(object):
         self.all = self.cells
 
     def dedent(self):
-        return DataRow(self.tail)
+        dedented = DataRow(self.tail)
+        dedented.comments = self.comments
+        return dedented
 
     def startswith(self, value):
         return self.head() == value
 
     def starts_for_loop(self):
-        if not self.head.startswith(':'):
-            return False
-        return self.head.replace(':', '').upper().strip() == 'FOR'
+        if self.head and self.head.startswith(':'):
+            return self.head.replace(':', '').upper().strip() == 'FOR'
+        return False
 
     def starts_test_or_user_keyword_setting(self):
         head = self.head
@@ -415,7 +442,7 @@ class DataRow(object):
         return self.head == self._row_continuation_marker
 
     def is_commented(self):
-        return not self.cells and self.comments
+        return bool(not self.cells and self.comments)
 
     def _parse(self, row):
         return self._purge_empty_cells(self._extract_data(row)), \

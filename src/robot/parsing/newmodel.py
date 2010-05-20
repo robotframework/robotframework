@@ -212,8 +212,8 @@ class Variable(object):
 
 class _WithSteps(object):
 
-    def add_step(self, content):
-        self.steps.append(Step(content))
+    def add_step(self, content, comment=None):
+        self.steps.append(Step(content, comment))
         return self.steps[-1]
 
 
@@ -261,13 +261,14 @@ class ForLoop(_WithSteps):
 
 class Step(object):
 
-    def __init__(self, content):
+    def __init__(self, content, comment=None):
         self.assign = self._get_assigned_vars(content)
         try:
             self.keyword = content[len(self.assign)]
         except IndexError:
             self.keyword = ''
         self.args = content[len(self.assign)+1:]
+        self.comment = comment
 
     def _get_assigned_vars(self, content):
         vars = []
