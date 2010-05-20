@@ -1,7 +1,6 @@
 import unittest
 
 from robot.errors import DataError, ExecutionFailed
-from robot.parsing.keywords import SetKeyword as SetKeywordData
 from robot.running.timeouts import KeywordTimeout
 from robot.running.keywords import Keyword
 from robot.utils.asserts import *
@@ -18,15 +17,14 @@ class OutputStub:
 
 class MockHandler:
 
-    type = 'mock'
-
     def __init__(self, name='Mock Handler', doc='Mock Doc', error=False):
         self.name = self.longname = name
         self.doc = self.shortdoc = doc
         self.error = error
         self.timeout = KeywordTimeout()
 
-    def init_keyword(self, varz): pass
+    def init_keyword(self, varz):
+        pass
 
     def run(self, context, args):
         """Sets given args to self.ags and optionally returns something.
@@ -100,41 +98,37 @@ class TestKeyword(unittest.TestCase):
         assert_equals(kw.handler_name, 'handler_name')
 
 
-class TestSetKeyword(unittest.TestCase):
+class TestResolveAssignment(unittest.TestCase):
 
-    def test_init_one_scalar_var(self):
-        skw = SetKeyword(SetKeywordData(['${var}','Set','x']))
-        assert_equal(skw.name, 'Set')
-        assert_equal(skw.scalar_vars, ['${var}'])
-        assert_none(skw.list_var)
-        assert_equal(skw.args, ['x'])
+    def test_one_scalar(self):
+        self._verify(['${var}'])
 
-    def test_init_three_scalar_vars(self):
-        skw = SetKeyword(SetKeywordData('${v1} ${v2} ${v3} Set x y z'.split()))
-        assert_equal(skw.scalar_vars, ['${v1}','${v2}','${v3}'])
-        assert_none(skw.list_var)
-        assert_equal(skw.args, ['x','y','z'])
+    def test_multiple_scalars(self):
+        self._verify('${v1} ${v2} ${v3}'.split())
 
-    def test_init_list_var(self):
-        skw = SetKeyword(SetKeywordData(['@{list}','Set','x','y','z']))
-        assert_equal(skw.scalar_vars, [])
-        assert_equal(skw.list_var, '@{list}')
-        assert_equal(skw.args, ['x','y','z'])
+    def test_list(self):
+        self._verify(['@{list}'])
 
-    def test_init_two_scalar_and_one_list_vars(self):
-        skw = SetKeyword(SetKeywordData('${v1} ${v2} @{list} Set x y z'.split()))
-        assert_equal(skw.scalar_vars, ['${v1}','${v2}'])
-        assert_equal(skw.list_var, '@{list}')
-        assert_equal(skw.args, ['x','y','z'])
-
-    def test_init_no_vars_raises(self):
-        assert_raises(TypeError, SetKeywordData, ['Set','a'])
+    def test_scalars_and_list(self):
+        self._verify('${v1} ${v2} @{list}'.split())
 
     def test_init_list_in_wrong_place_raises(self):
-        assert_raises(DataError, SetKeywordData, ['@{list}','${str}','Set','a'])
+        assert_raises(DataError, Keyword, 'Name', ['arg'], ['@{list}','${str}'])
 
-    def test_init_no_keyword_raises(self):
-        assert_raises(DataError, SetKeywordData, ['${var}'])
+    def _verify(self, assign):
+        kw = Keyword('Name', ['arg'], assign)
+        if assign[-1][0] == '$':
+            exp_list = None
+        else:
+            exp_list = assign.pop()
+        assert_equal(kw.name, 'Name')
+        assert_equal(kw.args, ['arg'])
+        assert_equal(kw.assign.keyword, 'Name')
+        assert_equal(kw.assign.scalar_vars, assign)
+        assert_equal(kw.assign.list_var, exp_list)
+
+
+class TestX(unittest.TestCase):
 
     def test_set_string_to_scalar(self):
         skw = SetKeyword(SetKeywordData(['${var}','KW','RETURN','value']))
