@@ -118,8 +118,8 @@ class UserKeywordHandler(object):
         self._doc = keyword.doc.value
         self._timeout = (keyword.timeout.value, keyword.timeout.message)
         # FIXME: do we need this? Does libdoc need this?
-        # self.doc = utils.unescape(self._doc)
-        #self.timeout = [ utils.unescape(item) for item in self._timeout ]
+        self.doc = utils.unescape(self._doc)
+        self.timeout = [ utils.unescape(item) for item in self._timeout ]
 
     def init_keyword(self, varz):
         self._errors = []
