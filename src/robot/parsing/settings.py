@@ -38,6 +38,9 @@ class _Setting(object):
     def _set(self, value):
         self.value = value
 
+    def report_invalid_syntax(self, message, level='ERROR'):
+        self.table.report_invalid_syntax(message, level)
+
     def _string_value(self, value):
         return value if isinstance(value, basestring) else ' '.join(value)
 

@@ -64,7 +64,7 @@ class Namespace:
             try:
                 self._import(item)
             except:
-                item.report_invalid_syntax()
+                item.report_invalid_syntax(utils.get_error_message())
 
     def _import(self, import_setting):
         try:
