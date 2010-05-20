@@ -3,7 +3,7 @@ import unittest
 from robot.errors import DataError, ExecutionFailed
 from robot.parsing.keywords import SetKeyword as SetKeywordData
 from robot.running.timeouts import KeywordTimeout
-from robot.running.keywords import Keyword, SetKeyword
+from robot.running.keywords import Keyword
 from robot.utils.asserts import *
 from test_testlibrary import _FakeNamespace
 
