@@ -13,17 +13,16 @@
 #  limitations under the License.
 
 from robot import utils
-from robot.errors import FrameworkError, ExecutionFailed, ExecutionFailures, \
-    DataError, HandlerExecutionFailed
+from robot.errors import (DataError, ExecutionFailed, ExecutionFailures,
+                          HandlerExecutionFailed)
 from robot.common import BaseKeyword
-from robot.variables import is_list_var
+from robot.variables import is_var, is_list_var
 
 
 class Keywords(object):
 
     def __init__(self, steps):
-        #FIXME: Initial hack to support new parsing model
-        self._keywords = [ Keyword(step.keyword, step.args) for step in steps ]
+        self._keywords = [_KeywordFactory(step) for step in steps]
 
     def run(self, context):
         errors = []
@@ -44,27 +43,39 @@ class Keywords(object):
         return iter(self._keywords)
 
 
-def _KeywordFactory(kwdata):
-    if kwdata.type == 'kw':
-        return Keyword(kwdata.name, kwdata.args)
+def _KeywordFactory(step):
+    # TODO: Support for FOR 
     try:
-        clazz = {'set': SetKeyword, 'for': ForKeyword,
-                 'error': SyntaxErrorKeyword}[kwdata.type]
-        return clazz(kwdata)
-    except KeyError:
-        raise FrameworkError("Invalid kw type '%s'" % kwdata.type)
+        return Keyword(step.assign, step.keyword, step.args)
+    except DataError, err:
+        return SyntaxErrorKeyword(step.keyword, unicode(err))
 
 
 class Keyword(BaseKeyword):
 
-    def __init__(self, name, args, type='kw'):
-        BaseKeyword.__init__(self, name, args, type=type)
+    def __init__(self, name, args, assign):
+        BaseKeyword.__init__(self, name, args)
+        self.assign = _Assignment(name, assign)
         self.handler_name = name
 
     def run(self, context):
+        handler = self._start(context)
+        try:
+            return_value = self._run(handler, context)
+        except ExecutionFailed, err:
+            self.status = 'FAIL'
+            self._end(context, error=err)
+            raise
+        else:
+            if not (context.dry_run and handler.type == 'library'):
+                self.status = 'PASS'
+            self._end(context, return_value)
+            return return_value
+
+    def _start(self, context):
         handler = context.get_handler(self.handler_name)
         handler.init_keyword(context.get_current_vars())
-        self.name = self._get_name(handler.longname, context.get_current_vars())
+        self.name = self._get_name(handler.longname)
         self.doc = handler.shortdoc
         self.starttime = utils.get_timestamp()
         context.start_keyword(self)
@@ -72,26 +83,20 @@ class Keyword(BaseKeyword):
             msg = self.doc.replace('*DEPRECATED*', '', 1).strip()
             name = self.name.split('} = ', 1)[-1]  # Remove possible variable
             context.warn("Keyword '%s' is deprecated. %s" % (name, msg))
-        try:
-            ret = self._run(handler, context)
-            context.trace('Return: %s' % utils.safe_repr(ret))
-        except ExecutionFailed:
-            self.status = 'FAIL'
-            self._end(context)
-            raise
-        else:
-            if not (context.dry_run and handler.type == 'library'):
-                self.status = 'PASS'
-            self._end(context)
-            return ret
+        return handler
 
-    def _end(self, context):
+    def _get_name(self, handler_name):
+        if not self.assign:
+            return handler_name
+        return '%s = %s' % (', '.join(self.assign), handler_name)
+
+    def _end(self, context, return_value=None, error=None):
         self.endtime = utils.get_timestamp()
         self.elapsedtime = utils.get_elapsed_time(self.starttime, self.endtime)
+        if not error or error.cont:
+            self._set_variables(context, return_value)
+            context.trace('Return: %s' % utils.safe_repr(return_value))
         context.end_keyword(self)
-
-    def _get_name(self, handler_name, variables):
-        return handler_name
 
     def _run(self, handler, context):
         try:
@@ -100,6 +105,14 @@ class Keyword(BaseKeyword):
             raise
         except:
             self._report_failure(context)
+
+    def _set_variables(self, context, return_value):
+        try:
+            self.assign.set_variables(context, return_value)
+        except DataError, err:
+            msg = unicode(err)
+            context.output.fail(msg)
+            raise ExecutionFailed(msg, syntax=True)
 
     def _report_failure(self, context):
         error_details = utils.ErrorDetails()
@@ -114,38 +127,37 @@ class Keyword(BaseKeyword):
         return test_or_suite.status != 'RUNNING'
 
 
-class SetKeyword(Keyword):
+class _Assignment(object):
 
-    def __init__(self, kwdata):
-        self.scalar_vars = kwdata.scalar_vars
-        self.list_var = kwdata.list_var
-        Keyword.__init__(self, kwdata.name, kwdata.args, 'set')
+    def __init__(self, keyword, assign):
+        self.keyword = keyword
+        self.scalar_vars, self.list_var = self._split_assing(assign)
 
-    def _get_name(self, handler_name, variables):
-        varz = self.scalar_vars[:]
-        if self.list_var is not None:
-            varz.append(self.list_var)
-        return '%s = %s' % (', '.join(varz), handler_name)
+    def _split_assing(self, assign):
+        scalar_vars = []
+        list_var = None
+        for var in assign:
+            if not is_var(var):
+                raise DataError('Invalid variable to assign: %s' % var)
+            if list_var:
+                raise DataError('Only the last variable to assign can be '
+                                'a list variable.')
+            if is_list_var(var):
+                list_var = var
+            else:
+                scalar_vars.append(var)
+        return scalar_vars, list_var
 
-    def _run(self, handler, context):
-        try:
-            return self._run_and_set_variables(handler, context)
-        except DataError, err:
-            msg = unicode(err)
-            context.output.fail(msg)
-            raise ExecutionFailed(msg, syntax=True)
+    def __nonzero__(self):
+        return bool(self.scalar_vars or self.list_var)
 
-    def _run_and_set_variables(self, handler, context):
-        try:
-            return_value = Keyword._run(self, handler, context)
-        except ExecutionFailed, err:
-            if err.cont:
-                self._set_variables(context, None)
-            raise
-        self._set_variables(context, return_value)
-        return return_value
+    def __iter__(self):
+        for var in self.scalar_vars:
+            yield var
+        if self.list_var:
+            yield self.list_var
 
-    def _set_variables(self, context, return_value):
+    def set_variables(self, context, return_value):
         for name, value in self._get_vars_to_set(return_value):
             context.get_current_vars()[name] = value
             if is_list_var(name) or utils.is_list(value):
@@ -157,7 +169,7 @@ class SetKeyword(Keyword):
     def _get_vars_to_set(self, ret):
         if ret is None:
             return self._get_vars_to_set_when_ret_is_none()
-        if self.list_var is None:
+        if self.list_var:
             return self._get_vars_to_set_with_only_scalars(ret)
         if self._is_non_string_iterable(ret):
             return self._get_vars_to_set_with_scalars_and_list(list(ret))
@@ -175,7 +187,7 @@ class SetKeyword(Keyword):
 
     def _get_vars_to_set_when_ret_is_none(self):
         ret = [ (var, None) for var in self.scalar_vars ]
-        if self.list_var is not None:
+        if self.list_var:
             ret.append((self.list_var, []))
         return ret
 
@@ -195,7 +207,7 @@ class SetKeyword(Keyword):
 
     def _get_vars_to_set_with_scalars_and_list(self, ret):
         needed_scalars = len(self.scalar_vars)
-        if not needed_scalars:
+        if needed_scalars == 0:
             return [(self.list_var, ret)]
         if len(ret) < needed_scalars:
             self._raise_invalid_return_value(ret)
@@ -205,17 +217,10 @@ class SetKeyword(Keyword):
     def _raise_invalid_return_value(self, ret, wrong_type=False):
         if wrong_type:
             err = 'Expected list, got %s instead' % utils.type_as_str(ret, True)
-        elif ret is None:
-            err = 'Keyword returned nothing'
         else:
             err = 'Need more values than %d' % len(ret)
-        varz = self.scalar_vars[:]
-        if self.list_var:
-            varz.append(self.list_var)
-        name = self.name.split(' = ', 1)[1]
         raise DataError("Cannot assign return value of keyword '%s' to "
-                        "variable%s %s: %s" % (name, utils.plural_or_not(varz),
-                                               utils.seq2str(varz), err))
+                        "variables %s: %s" % (self.keyword, list(self), err))
 
 
 class ForKeyword(BaseKeyword):
@@ -320,9 +325,9 @@ class ForItemKeyword(BaseKeyword):
 
 class SyntaxErrorKeyword(BaseKeyword):
 
-    def __init__(self, kwdata):
-        BaseKeyword.__init__(self, kwdata.name, type='error')
-        self._error = kwdata.error
+    def __init__(self, name, error):
+        BaseKeyword.__init__(self, name, type='error')
+        self._error = error
 
     def run(self, context):
         self.starttime = utils.get_timestamp()
