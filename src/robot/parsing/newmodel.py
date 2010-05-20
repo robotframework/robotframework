@@ -53,12 +53,13 @@ class TestCaseFile(_TestData):
 
     def __init__(self, source=None):
         _TestData.__init__(self, source)
+        self.directory = os.path.dirname(self.source) if self.source else None
         self.setting_table = SettingTable(self)
         self.variable_table = VariableTable(self)
         self.testcase_table = TestCaseTable(self)
         self.keyword_table = KeywordTable(self)
-        if source:
-            FileReader().read(source, self)
+        if self.source:
+            FileReader().read(self.source, self)
 
     def __iter__(self):
         for table in [self.setting_table, self.variable_table,
@@ -70,14 +71,15 @@ class TestDataDirectory(_TestData):
 
     def __init__(self, source=None):
         _TestData.__init__(self, source)
+        self.directory = self.source
         self.initfile = None
         self.setting_table = SettingTable(self)
         self.variable_table = VariableTable(self)
         self.testcase_table = TestCaseTableNotAllowed('test suite init file')
         self.keyword_table = KeywordTable(self)
         self.children = []
-        if source:
-            DirectoryReader().read(source, self)
+        if self.source:
+            DirectoryReader().read(self.source, self)
 
     def add_child(self, path):
         self.children.append(TestData(path))
@@ -92,6 +94,14 @@ class _Table(object):
 
     def __init__(self, parent):
         self.parent = parent
+
+    @property
+    def source(self):
+        return self.parent.source
+
+    @property
+    def directory(self):
+        return self.parent.directory
 
     def report_invalid_syntax(self, message, level='ERROR'):
         # TODO: Use the real table name here when headers are available
@@ -115,19 +125,19 @@ class SettingTable(_Table):
         self.imports = []
 
     def add_metadata(self, name, value, comment=None):
-        self.metadata.append(Metadata(name, value, comment))
+        self.metadata.append(Metadata(self, name, value, comment))
         return self.metadata[-1]
 
     def add_library(self, name, args=None, comment=None):
-        self.imports.append(Library(name, args, comment=comment))
+        self.imports.append(Library(self, name, args, comment=comment))
         return self.imports[-1]
 
     def add_resource(self, name, invalid_args=None, comment=None):
-        self.imports.append(Resource(name, invalid_args, comment=comment))
+        self.imports.append(Resource(self, name, invalid_args, comment=comment))
         return self.imports[-1]
 
     def add_variables(self, name, args=None, comment=None):
-        self.imports.append(Variables(name, args, comment=comment))
+        self.imports.append(Variables(self, name, args, comment=comment))
         return self.imports[-1]
 
     def __iter__(self):

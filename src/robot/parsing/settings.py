@@ -23,6 +23,14 @@ class _Setting(object):
     def _init(self):
         self.value = []
 
+    @property
+    def source(self):
+        return self.table.source
+
+    @property
+    def directory(self):
+        return self.table.directory
+
     def set(self, value, comment=None):
         self._set(value)
         self.comment = comment
