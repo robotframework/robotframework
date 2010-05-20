@@ -23,7 +23,7 @@ from signalhandler import STOP_SIGNAL_MONITOR
 
 class _Timeout:
 
-    def __init__(self, timeout, message):
+    def __init__(self, timeout=None, message=''):
         self.string = timeout or ''
         self.message = message
         self.secs = -1
