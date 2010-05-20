@@ -60,9 +60,6 @@ class FromFilePopulator(object):
         self._curdir = datafile.directory
 
     def populate(self, path):
-        self._read(path)
-
-    def _read(self, path):
         LOGGER.info("Parsing test case file '%s'." % path)
         source = self._open(path)
         try:
