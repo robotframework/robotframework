@@ -128,93 +128,79 @@ class TestResolveAssignment(unittest.TestCase):
         assert_equal(kw.assign.list_var, exp_list)
 
 
-class TestX(unittest.TestCase):
+class TestSettingVariables(unittest.TestCase):
 
     def test_set_string_to_scalar(self):
-        skw = SetKeyword(SetKeywordData(['${var}','KW','RETURN','value']))
-        context = _FakeContext()
-        skw.run(context)
-        assert_equal(context.variables['${var}'], 'value')
+        self._verify_scalar('value')
 
     def test_set_object_to_scalar(self):
-        skw = SetKeyword(SetKeywordData(['${var}','KW','RETURN',self]))
-        context = _FakeContext()
-        skw.run(context)
-        assert_equal(context.variables['${var}'], self)
+        self._verify_scalar(self)
 
     def test_set_empty_list_to_scalar(self):
-        skw = SetKeyword(SetKeywordData(['${var}','KW','RETURN',[]]))
-        context = _FakeContext()
-        skw.run(context)
-        assert_equal(context.variables['${var}'], [])
+        self._verify_scalar([])
 
     def test_set_list_with_one_element_to_scalar(self):
-        skw = SetKeyword(SetKeywordData(['${var}','KW','RETURN',['hi']]))
-        context = _FakeContext()
-        skw.run(context)
-        assert_equal(context.variables['${var}'], ['hi'])
+        self._verify_scalar(['hi'])
 
-    def test_set_strings_to_three_scalars(self):
-        skw = SetKeyword(SetKeywordData(['${v1}','${v2}','${v3}','KW','RETURN',['x','y','z']]))
-        context = _FakeContext()
-        skw.run(context)
-        assert_equal(context.variables['${v1}'], 'x')
-        assert_equal(context.variables['${v2}'], 'y')
-        assert_equal(context.variables['${v3}'], 'z')
+    def test_set_strings_to_multiple_scalars(self):
+        self._verify_three_scalars('x', 'y', 'z')
 
-    def test_set_objects_to_three_scalars(self):
-        skw = SetKeyword(SetKeywordData(['${v1}','${v2}','${v3}','KW','RETURN',[['x','y'],{},None]]))
-        context = _FakeContext()
-        skw.run(context)
-        assert_equal(context.variables['${v1}'], ['x','y'])
-        assert_equal(context.variables['${v2}'], {})
-        assert_equal(context.variables['${v3}'], None)
+    def test_set_objects_to_multiple_scalars(self):
+        self._verify_three_scalars(['x', 'y'], {}, None)
 
     def test_set_list_of_strings_to_list(self):
-        skw = SetKeyword(SetKeywordData(['@{var}','KW','RETURN',['x','y','z']]))
-        context = _FakeContext()
-        skw.run(context)
-        assert_equal(context.variables['@{var}'], ['x','y','z'])
+        self._verify_list(['x','y','z'])
 
     def test_set_empty_list_to_list(self):
-        skw = SetKeyword(SetKeywordData(['@{var}','KW','RETURN',[]]))
-        context = _FakeContext()
-        skw.run(context)
-        assert_equal(context.variables['@{var}'], [])
+        self._verify_list([])
+
+    def test_set_objects_to_list(self):
+        self._verify_list([{True: False}, None, self])
 
     def test_set_objects_to_two_scalars_and_list(self):
-        skw = SetKeyword(SetKeywordData(['${v1}','${v2}','@{v3}','KW','RETURN',['a',None,'x','y',{}]]))
-        context = _FakeContext()
-        skw.run(context)
-        assert_equal(context.variables['${v1}'], 'a')
-        assert_equal(context.variables['${v2}'], None)
-        assert_equal(context.variables['@{v3}'], ['x','y',{}])
+        variables = self._run_kw(['${v1}','${v2}','@{v3}'], ['a',None,'x','y',{}])
+        assert_equal(variables['${v1}'], 'a')
+        assert_equal(variables['${v2}'], None)
+        assert_equal(variables['@{v3}'], ['x','y',{}])
 
     def test_set_scalars_and_list_so_that_list_is_empty(self):
-        skw = SetKeyword(SetKeywordData(['${scal}','@{list}','KW','RETURN',['a']]))
-        context = _FakeContext()
-        skw.run(context)
-        assert_equal(context.variables['${scal}'], 'a')
-        assert_equal(context.variables['@{list}'], [])
+        variables = self._run_kw(['${scal}','@{list}'], ['a'])
+        assert_equal(variables['${scal}'], 'a')
+        assert_equal(variables['@{list}'], [])
 
     def test_set_more_values_than_variables(self):
-        skw = SetKeyword(SetKeywordData(['${v1}','${v2}','KW','RETURN',['x','y','z']]))
-        context = _FakeContext()
-        skw.run(context)
-        assert_equal(context.variables['${v1}'], 'x')
-        assert_equal(context.variables['${v2}'], ['y','z'])
+        variables = self._run_kw(['${v1}','${v2}'], ['x','y','z'])
+        assert_equal(variables['${v1}'], 'x')
+        assert_equal(variables['${v2}'], ['y','z'])
 
     def test_set_too_few_scalars_raises(self):
-        skw = SetKeyword(SetKeywordData(['${v1}','${v2}','KW','RETURN',['x']]))
-        assert_raises(ExecutionFailed, skw.run, _FakeContext())
+        assert_raises(ExecutionFailed, self._run_kw, ['${v1}','${v2}'], ['x'])
 
     def test_set_list_but_no_list_raises(self):
-        skw = SetKeyword(SetKeywordData(['@{list}','KW','RETURN','not a list']))
-        assert_raises(ExecutionFailed, skw.run, _FakeContext())
+        assert_raises(ExecutionFailed, self._run_kw, ['@{list}'], 'not a list')
 
     def test_set_too_few_scalars_with_list_raises(self):
-        skw = SetKeyword(SetKeywordData(['${v1}','${v2}','@{list}','KW','RETURN',['x']]))
-        assert_raises(ExecutionFailed, skw.run, _FakeContext())
+        assert_raises(ExecutionFailed, self._run_kw, ['${v1}','${v2}','@{list}'], ['x'])
+
+    def _verify_scalar(self, return_value):
+        variables = self._run_kw(['${var}'], return_value)
+        assert_equal(variables['${var}'], return_value)
+
+    def _verify_list(self, return_value):
+        variables = self._run_kw(['@{var}'], return_value)
+        assert_equal(variables['@{var}'], return_value)
+
+    def _verify_three_scalars(self, ret1, ret2, ret3):
+        variables = self._run_kw(['${v1}','${v2}','${v3}'], [ret1, ret2, ret3])
+        assert_equal(variables['${v1}'], ret1)
+        assert_equal(variables['${v2}'], ret2)
+        assert_equal(variables['${v3}'], ret3)
+
+    def _run_kw(self, assign, return_value):
+        kw = Keyword('Name', ['Return', return_value], assign)
+        context = _FakeContext()
+        kw.run(context)
+        return context.variables
 
 
 if __name__ == '__main__':
