@@ -32,30 +32,42 @@ class Populator(object):
     def populate(self): raise NotImplementedError()
 
 
+class CommentCacher(object):
+
+    def __init__(self):
+        self._init_comments()
+
+    def _init_comments(self):
+        self._comments = []
+
+    def add(self, comment):
+        self._comments.append(comment)
+
+    def consume_comments_with(self, function):
+        for c in self._comments:
+            function(c)
+        self._init_comments()
+
+
 class _TablePopulator(Populator):
 
     def __init__(self, datafile):
         self._table = self._get_table(datafile)
         self._populator = NullPopulator()
-        self._comments = []
+        self._comments = CommentCacher()
 
     def add(self, row):
         if self._is_cacheable_comment_row(row):
-            self._comments.append(row)
+            self._comments.add(row)
             return
         if not self._is_continuing(row):
             self._populator.populate()
             self._populator = self._get_populator(row)
-        self._add_cached_comments_to(self._populator)
+        self._comments.consume_comments_with(self._populator.add)
         self._populator.add(row)
 
-    def _add_cached_comments_to(self, populator):
-        for crow in self._comments:
-            populator.add(crow)
-        self._comments = []
-
     def populate(self):
-        self._add_cached_comments_to(self._populator)
+        self._comments.consume_comments_with(self._populator.add)
         self._populator.populate()
 
     def _is_continuing(self, row):
@@ -126,13 +138,7 @@ class VariableTablePopulator(_TablePopulator):
         return VariablePopulator(self._table.add)
 
 
-class TestTablePopulator(_TablePopulator):
-
-    def _get_table(self, datafile):
-        return datafile.testcase_table
-
-    def _get_populator(self, row):
-        return TestCasePopulator(self._table.add)
+class _StepContainingTablePopulator(_TablePopulator):
 
     def _is_continuing(self, row):
         return row.is_indented() or row.is_commented()
@@ -140,16 +146,23 @@ class TestTablePopulator(_TablePopulator):
     def _is_cacheable_comment_row(self, row):
         return row.is_commented() and isinstance(self._populator, NullPopulator)
 
-class KeywordTablePopulator(_TablePopulator):
+
+class TestTablePopulator(_StepContainingTablePopulator):
+
+    def _get_table(self, datafile):
+        return datafile.testcase_table
+
+    def _get_populator(self, row):
+        return TestCasePopulator(self._table.add)
+
+
+class KeywordTablePopulator(_StepContainingTablePopulator):
 
     def _get_table(self, datafile):
         return datafile.keyword_table
 
     def _get_populator(self, row):
         return UserKeywordPopulator(self._table.add)
-
-    def _is_continuing(self, row):
-        return row.is_indented()
 
 
 class ForLoopPopulator(Populator):
@@ -188,36 +201,38 @@ class _TestCaseUserKeywordPopulator(Populator):
         self._test_or_uk_creator = test_or_uk_creator
         self._test_or_uk = None
         self._populator = NullPopulator()
-        self._comments = []
+        self._comments = CommentCacher()
 
     def add(self, row):
         if row.is_commented():
-            self._comments.append(row)
+            self._comments.add(row)
             return
         if not self._test_or_uk:
             self._test_or_uk = self._test_or_uk_creator(row.head)
         dedented_row = row.dedent()
         if dedented_row:
-            if not self._continues(dedented_row):
-                self._populator.populate()
-                self._populator = self._get_populator(dedented_row)
-                self._populate_cached_comments()
-            else:
-                for crow in self._comments:
-                    self._populator.add(crow)
-                self._comments = []
-            self._populator.add(dedented_row)
+            self._handle_data_row(dedented_row)
 
-    def _populate_cached_comments(self):
-        for crow in self._comments:
-            populator = StepPopulator(self._test_or_uk.add_step)
-            populator.add(crow)
-            populator.populate()
-        self._comments = []
+    def _handle_data_row(self, row):
+        if not self._continues(row):
+            self._populator.populate()
+            self._populator = self._get_populator(row)
+            self._flush_comments_with(self._populate_comment_row)
+        else:
+            self._flush_comments_with(self._populator.add)
+        self._populator.add(row)
+
+    def _populate_comment_row(self, crow):
+        populator = StepPopulator(self._test_or_uk.add_step)
+        populator.add(crow)
+        populator.populate()
+
+    def _flush_comments_with(self, function):
+        self._comments.consume_comments_with(function)
 
     def populate(self):
         self._populator.populate()
-        self._populate_cached_comments()
+        self._flush_comments_with(self._populate_comment_row)
 
     def _get_populator(self, row):
         if row.starts_test_or_user_keyword_setting():
