@@ -77,6 +77,9 @@ class _PopulatorTest(unittest.TestCase):
     def _first_test(self):
         return self._nth_test(1)
 
+    def _number_of_steps_should_be(self, test, expected_steps):
+        assert_equals(len(test.steps), expected_steps)
+
 
 class TestCaseFilePopulatingTest(_PopulatorTest):
 
@@ -297,9 +300,6 @@ class TestCaseFilePopulatingTest(_PopulatorTest):
     def _nth_uk(self, index):
         return self._datafile.keyword_table.keywords[index]
 
-    def _number_of_steps_should_be(self, test, expected_steps):
-        assert_equals(len(test.steps), expected_steps)
-
 
 class TestPopulatingComments(_PopulatorTest):
 
@@ -344,7 +344,13 @@ class TestPopulatingComments(_PopulatorTest):
                                           ['Another test', '#comment in name row'],
                                           ['', 'Log many', 'argh'],
                                           ['#', 'Comment between step def'],
-                                          ['', '...', 'urgh']
+                                          ['', '...', 'urgh'],
+                                          ['Test with for loop'],
+                                          ['',':FOR', 'v*ttuperkele'],
+                                          ['#commented out in for loop'],
+                                          ['','', 'Fooness in the bar', '#end commtne'],
+                                          ['','#', 'Barness'],
+                                          ['', 'Lodi']
                                           ])
         assert_equals(self._first_test().steps[0].comment, 'start of table comment')
         assert_equals(self._first_test().steps[1].comment, 'step comment')
@@ -352,6 +358,11 @@ class TestPopulatingComments(_PopulatorTest):
         assert_equals(self._nth_test(2).steps[0].comment, 'comment in name row')
         assert_equals(self._nth_test(2).steps[1].comment, ' | Comment between step def')
         assert_equals(self._nth_test(2).steps[1].args, ['argh', 'urgh'])
+        assert_equals(self._nth_test(3).steps[0].steps[0].comment, 'commented out in for loop')
+        assert_equals(self._nth_test(3).steps[0].steps[1].comment, 'end commtne')
+        assert_equals(self._nth_test(3).steps[1].comment, ' | Barness')
+        self._number_of_steps_should_be(self._nth_test(3), 3)
+
 
 class DataRowTest(unittest.TestCase):
 
