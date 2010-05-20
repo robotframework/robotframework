@@ -12,16 +12,6 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from model import TestSuiteData
-from rawdata import RawData
-from resourcefile import ResourceFile
+from newmodel import TestCaseFile
 from robot.conf.settings import RobotSettings
 
-
-def TestSuite(*datasources):
-    """Creates and returns a parsed test suite object.
-
-    Data sources are paths to files and directories, similarly as when running
-    pybot/jybot from command line.
-    """
-    return TestSuiteData(datasources)

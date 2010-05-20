@@ -17,10 +17,9 @@ from robot import utils
 from robot.errors import DataError
 
 from rawdata import RawData
-from metadata import ImportSetting
 from userkeyword import UserHandlerList
 
-
+# FIXME: update to new model
 class ResourceFile:
 
     def __init__(self, path):
