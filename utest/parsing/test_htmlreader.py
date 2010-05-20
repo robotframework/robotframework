@@ -4,7 +4,6 @@ from types import UnicodeType
 
 from robot.parsing.htmlreader import HtmlReader
 from robot.utils.asserts import *
-from robot.parsing.populator import TestDataPopulator
 
 
 VALID_TABLES = [ "Variable", "Setting", "Test Case", "Test Suite", "Keyword" ]

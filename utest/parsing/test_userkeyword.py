@@ -1,7 +1,6 @@
 import unittest
 from types import *
 
-from robot.parsing.userkeyword import UserHandler, UserHandlerList, UserErrorHandler
 from robot.errors import *
 from robot.utils.asserts import *
 

@@ -1,7 +1,6 @@
 import unittest
 import os
 
-from robot.parsing.userkeyword import UserHandlerList
 from robot.running import userkeyword
 from robot.errors import DataError
 from robot.utils.asserts import *
