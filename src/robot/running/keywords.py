@@ -46,7 +46,7 @@ class Keywords(object):
 def _KeywordFactory(step):
     # TODO: Support for FOR 
     try:
-        return Keyword(step.assign, step.keyword, step.args)
+        return Keyword(step.keyword, step.args, step.assign)
     except DataError, err:
         return SyntaxErrorKeyword(step.keyword, unicode(err))
 
