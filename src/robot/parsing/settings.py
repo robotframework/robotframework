@@ -13,11 +13,15 @@
 #  limitations under the License.
 
 
-class Setting(object):
+class _Setting(object):
 
-    def __init__(self):
+    def __init__(self, table=None, comment=None):
+        self.table = table
+        self.comment = comment
+        self._init()
+
+    def _init(self):
         self.value = []
-        self.comment = ''
 
     def set(self, value, comment=None):
         self._set(value)
@@ -30,18 +34,18 @@ class Setting(object):
         return value if isinstance(value, basestring) else ' '.join(value)
 
 
-class Documentation(Setting):
+class Documentation(_Setting):
 
-    def __init__(self):
+    def _init(self):
         self.value = ''
 
     def _set(self, value):
         self.value = self._string_value(value)
 
 
-class Fixture(Setting):
+class Fixture(_Setting):
 
-    def __init__(self):
+    def _init(self):
         self.name = None
         self.args = []
 
@@ -50,9 +54,9 @@ class Fixture(Setting):
         self.args = value[1:]
 
 
-class Timeout(Setting):
+class Timeout(_Setting):
 
-    def __init__(self):
+    def _init(self):
         self.value = None
         self.message = ''
 
@@ -61,29 +65,31 @@ class Timeout(Setting):
         self.message = ' '.join(value[1:])
 
 
-class Tags(Setting):
+class Tags(_Setting):
     pass
 
 
-class Arguments(Setting):
+class Arguments(_Setting):
     pass
 
 
-class Return(Setting):
+class Return(_Setting):
     pass
 
 
-class Metadata(Setting):
+class Metadata(_Setting):
 
-    def __init__(self, name, value, comment):
+    def __init__(self, table, name, value, comment):
+        self.table = table
         self.name = name
         self.value = self._string_value(value)
         self.comment = comment
 
 
-class Import(Setting):
+class _Import(_Setting):
 
-    def __init__(self, name, args=None, alias=None, comment=None):
+    def __init__(self, table, name, args=None, alias=None, comment=None):
+        self.table = table
         self.name = name
         self.args = args or []
         self.alias = alias
@@ -94,12 +100,12 @@ class Import(Setting):
         return type(self).__name__
 
 
-class Library(Import):
+class Library(_Import):
 
-    def __init__(self, name, args=None, alias=None, comment=None):
+    def __init__(self, table, name, args=None, alias=None, comment=None):
         if args and not alias:
             args, alias = self._split_alias(args)
-        Import.__init__(self, name, args, alias, comment)
+        _Import.__init__(self, table, name, args, alias, comment)
 
     def _split_alias(self, args):
         if len(args) >= 2 and args[-2].upper() == 'WITH NAME':
@@ -107,15 +113,15 @@ class Library(Import):
         return args, None
 
 
-class Resource(Import):
+class Resource(_Import):
 
-    def __init__(self, name, invalid_args=None, comment=None):
+    def __init__(self, table, name, invalid_args=None, comment=None):
         if invalid_args:
             name += ' ' + ' '.join(invalid_args)
-        Import.__init__(self, name, comment=comment)
+        _Import.__init__(self, table, name, comment=comment)
 
 
-class Variables(Import):
+class Variables(_Import):
 
-    def __init__(self, name, args=None, comment=None):
-        Import.__init__(self, name, args, comment=comment)
+    def __init__(self, table, name, args=None, comment=None):
+        _Import.__init__(self, table, name, args, comment=comment)

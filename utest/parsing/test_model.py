@@ -4,6 +4,7 @@ from StringIO import StringIO
 from robot.utils.asserts import *
 from robot.parsing.newmodel import *
 from robot.parsing.settings import *
+from robot.parsing.settings import _Import
 from robot.parsing.txtreader import TxtReader
 from robot.parsing.populator import TestDataPopulator
 
@@ -117,7 +118,7 @@ class TestSettingTable(unittest.TestCase):
         self._verify_import(self.table.add_library('N2', ['1', '2', '3', '4']),
                             'N2', ['1', '2', '3', '4']) 
         assert_equal(len(self.table.imports), 5)
-        assert_true(all(isinstance(im, Import) for im in self.table.imports))
+        assert_true(all(isinstance(im, _Import) for im in self.table.imports))
 
     def test_resource_with_invalid_args(self):
         reso = self.table.add_resource('reso.txt', ['invalid', 'args'])
