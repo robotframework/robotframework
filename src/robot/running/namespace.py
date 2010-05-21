@@ -13,6 +13,7 @@
 #  limitations under the License.
 
 import os
+import sys
 import copy
 
 from robot import utils
@@ -81,8 +82,8 @@ class Namespace:
             self._imported_resource_files.append(path)
             resource = IMPORTER.import_resource(path)
             self.variables.set_from_variable_table(resource.variable_table)
-            self._userlibs.append(UserLibrary(resource.keywords_table.keywords))
-            self._handle_imports(resource.imports)
+            self._userlibs.append(UserLibrary(resource.keyword_table.keywords))
+            self._handle_imports(resource.setting_table.imports)
         else:
             LOGGER.info("Resource file '%s' already imported by suite '%s'"
                         % (path, self.suite.longname))

@@ -15,6 +15,7 @@
 import copy
 
 from robot.output import LOGGER
+from robot.parsing.newmodel import TestCaseFile
 from robot import utils
 
 from testlibraries import TestLibrary
@@ -40,11 +41,10 @@ class Importer:
         if self._resources.has_key(path):
             LOGGER.info("Found resource file '%s' from cache" % path)
         else:
-            resource = ResourceFile(path)
-            resource.user_keywords = UserLibrary(resource.user_keywords, path)
+            resource = TestCaseFile(path)
             self._resources[path] = resource
             LOGGER.info("Imported resource file '%s' (%d keywords)"
-                        % (path, len(resource.user_keywords)))
+                        % (path, len(resource.keyword_table.keywords)))
             # Resource file may contain only variables so we should not warn
             # if there are no keywords. Importing an empty resource file fails
             # already earlier so no need to check that here either.
