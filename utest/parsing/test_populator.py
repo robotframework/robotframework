@@ -7,7 +7,6 @@ from robot.parsing.model import TestCaseFile
 from robot.utils.asserts import assert_equals, assert_true, assert_false
 
 from robot.output import LOGGER
-LOGGER.disable_automatic_console_logger()
 LOGGER.disable_message_cache()
 
 
@@ -88,10 +87,12 @@ class TestCaseFilePopulatingTest(_PopulatorTest):
         self._datafile.directory = '/path/to'
         self._populator = FromFilePopulator(self._datafile)
         self._logger = _MockLogger()
+        self._console_logger = LOGGER._loggers.pop(0)
         LOGGER.register_logger(self._logger)
 
     def tearDown(self):
         LOGGER.unregister_logger(self._logger)
+        LOGGER._loggers.insert(0, self._console_logger)
 
     def test_starting_valid_table(self):
         for name in ['Test Cases', '  variables   ', 'K E Y WO R D S']:
@@ -180,7 +181,7 @@ class TestCaseFilePopulatingTest(_PopulatorTest):
         assert_equals(len(for_loop.steps), 1)
         assert_true(not for_loop.range)
         assert_equals(for_loop.vars, ['${i}'])
-        assert_equals(for_loop.values, ['@{list}'])
+        assert_equals(for_loop.items, ['@{list}'])
 
     def test_in_range_for_loop(self):
         self._create_table('Test cases', [['For loop test'],
@@ -210,7 +211,7 @@ class TestCaseFilePopulatingTest(_PopulatorTest):
         assert_equals(len(for_loop.steps), 1)
         assert_true(not for_loop.range)
         assert_equals(for_loop.vars, ['${i}'])
-        assert_equals(for_loop.values, ['10', '20', '30', '40', '50', '60'])
+        assert_equals(for_loop.items, ['10', '20', '30', '40', '50', '60'])
 
     def test_test_settings(self):
         doc = 'This is domumentation for the test case'

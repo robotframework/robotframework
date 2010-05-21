@@ -16,7 +16,7 @@ class TestTestCaseFile(unittest.TestCase):
 
     def test_init(self):
         assert_none(self.tcf.source)
-        assert_true(isinstance(self.tcf.setting_table, SettingTable))
+        assert_true(isinstance(self.tcf.setting_table, TestCaseFileSettingTable))
         assert_true(isinstance(self.tcf.variable_table, VariableTable))
         assert_true(isinstance(self.tcf.testcase_table, TestCaseTable))
         assert_true(isinstance(self.tcf.keyword_table, KeywordTable))
@@ -295,10 +295,10 @@ class TestForLoop(unittest.TestCase):
         self._test(['what', 'ever', 'in range', 'IN', 'whatever'], 
                    ['what', 'ever'], ['IN', 'whatever'], range=True)
 
-    def _test(self, content, vars, values, range=False):
+    def _test(self, content, vars, items, range=False):
         loop = ForLoop(content)
         assert_equal(loop.vars, vars)
-        assert_equal(loop.values, values)
+        assert_equal(loop.items, items)
         assert_equal(loop.range, range)
 
 
