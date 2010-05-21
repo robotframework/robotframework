@@ -219,10 +219,9 @@ class JavaInitArguments(JavaKeywordArguments):
 class UserKeywordArguments(object):
 
     def __init__(self, args, name):
-        argnames, self.defaults, self.varargs = self._get_arg_spec(args)
-        self.names = list(argnames) # Python 2.5 does not support indexing tuples
-        self.minargs = len(argnames) - len(self.defaults)
-        maxargs = self.varargs is not None and sys.maxint or len(argnames)
+        self.names, self.defaults, self.varargs = self._get_arg_spec(args)
+        self.minargs = len(self.names) - len(self.defaults)
+        maxargs = self.varargs is not None and sys.maxint or len(self.names)
         self._arg_limit_checker = _ArgLimitChecker(self.minargs, maxargs,
                                                    name, 'Keyword')
 
@@ -254,9 +253,9 @@ class UserKeywordArguments(object):
             if not is_scalar_var(arg):
                 raise DataError("Invalid argument '%s'" % arg)
             args.append(arg)
-            if default:
+            if default is not None:
                 defaults.append(default)
-        return tuple(args), tuple(defaults), varargs
+        return args, defaults, varargs
 
     def _split_default(self, arg):
         if '=' not in arg:
