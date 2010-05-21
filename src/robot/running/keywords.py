@@ -16,7 +16,7 @@ from robot import utils
 from robot.errors import (DataError, ExecutionFailed, ExecutionFailures,
                           HandlerExecutionFailed)
 from robot.common import BaseKeyword
-from robot.variables import is_var, is_list_var
+from robot.variables import is_var, is_list_var, is_scalar_var
 
 
 class Keywords(object):
@@ -44,13 +44,9 @@ class Keywords(object):
 
 
 def _KeywordFactory(step):
-    # TODO: Support for FOR 
-    try:
+    if not hasattr(step, 'steps'):
         return Keyword(step.keyword, step.args, step.assign)
-    except AttributeError:
-        return ForKeyword(step)
-    except DataError, err:
-        return SyntaxErrorKeyword(step.keyword, unicode(err))
+    return ForKeyword(step)
 
 
 class Keyword(BaseKeyword):
@@ -95,10 +91,12 @@ class Keyword(BaseKeyword):
     def _end(self, context, return_value=None, error=None):
         self.endtime = utils.get_timestamp()
         self.elapsedtime = utils.get_elapsed_time(self.starttime, self.endtime)
-        if not error or error.cont:
-            self._set_variables(context, return_value)
-            context.trace('Return: %s' % utils.safe_repr(return_value))
-        context.end_keyword(self)
+        try:
+            if not error or error.cont:
+                self._set_variables(context, return_value)
+                context.trace('Return: %s' % utils.safe_repr(return_value))
+        finally:
+            context.end_keyword(self)
 
     def _run(self, handler, context):
         try:
@@ -133,7 +131,13 @@ class _Assignment(object):
 
     def __init__(self, keyword, assign):
         self.keyword = keyword
-        self.scalar_vars, self.list_var = self._split_assing(assign)
+        # TODO: Cleanup handling errors
+        try:
+            self.scalar_vars, self.list_var = self._split_assing(assign)
+            self._error = None
+        except DataError, err:
+            self.scalar_vars, self.list_var = [], None
+            self._error = err
 
     def _split_assing(self, assign):
         scalar_vars = []
@@ -160,6 +164,8 @@ class _Assignment(object):
             yield self.list_var
 
     def set_variables(self, context, return_value):
+        if self._error:
+            raise self._error
         for name, value in self._get_vars_to_set(return_value):
             context.get_current_vars()[name] = value
             if is_list_var(name) or utils.is_list(value):
@@ -229,16 +235,22 @@ class _Assignment(object):
 class ForKeyword(BaseKeyword):
 
     def __init__(self, forstep):
+        BaseKeyword.__init__(self, self._get_name(forstep), type='for')
         self.vars = forstep.vars
-        self.items = forstep.values
+        self.items = forstep.items
         self.range = forstep.range
-        BaseKeyword.__init__(self, forstep.name, type='for')
         self.keywords = Keywords(forstep.steps)
+
+    def _get_name(self, data):
+        return '%s %s [ %s ]' % (' | '.join(data.vars),
+                                 'IN' if not data.range else 'IN RANGE',
+                                 ' | '.join(data.items))
 
     def run(self, context):
         self.starttime = utils.get_timestamp()
         context.output.start_keyword(self)
         try:
+            self._validate_vars()
             self._run(context)
         except ExecutionFailed, err:
             error = err
@@ -254,6 +266,13 @@ class ForKeyword(BaseKeyword):
         context.output.end_keyword(self)
         if error:
             raise error
+
+    def _validate_vars(self):
+        if not self.vars:
+            raise DataError('FOR loop variables missing.')
+        for var in self.vars:
+            if not is_scalar_var(var):
+                raise DataError("Invalid FOR loop variable '%s'." % var)
 
     def _run(self, context):
         errors = []
@@ -290,8 +309,6 @@ class ForKeyword(BaseKeyword):
         return error
 
     def _replace_vars_from_items(self, variables):
-        if not self.vars:
-            self._raise_invalid_syntax()
         items = variables.replace_list(self.items)
         if self.range:
             items = self._get_range_items(items)
@@ -301,10 +318,6 @@ class ForKeyword(BaseKeyword):
                         'variables. Got %d variables (%s) but %d value%s.'
                         % (len(self.vars), utils.seq2str(self.vars),
                            len(items), utils.plural_or_not(items)))
-
-    def _raise_invalid_syntax(self):
-        raise DataError('Invalid syntax in FOR loop. Expected format:\n'
-                        '| : FOR | ${var} | IN | item1 | item2 |')
 
     def _get_range_items(self, items):
         try:
@@ -330,20 +343,3 @@ class ForItemKeyword(BaseKeyword):
         self.status = status
         self.endtime = utils.get_timestamp()
         self.elapsedtime = utils.get_elapsed_time(self.starttime, self.endtime)
-
-
-class SyntaxErrorKeyword(BaseKeyword):
-
-    def __init__(self, name, error):
-        BaseKeyword.__init__(self, name, type='error')
-        self._error = error
-
-    def run(self, context):
-        self.starttime = utils.get_timestamp()
-        self.status = 'FAIL'
-        context.output.start_keyword(self)
-        context.output.fail(self._error)
-        self.endtime = utils.get_timestamp()
-        self.elapsedtime = utils.get_elapsed_time(self.starttime, self.endtime)
-        context.output.end_keyword(self)
-        raise ExecutionFailed(self._error, syntax=True)
