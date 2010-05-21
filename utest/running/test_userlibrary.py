@@ -4,34 +4,11 @@ import os
 from robot.running import userkeyword
 from robot.errors import DataError
 from robot.utils.asserts import *
-
-    
-class RawDataStub:
-    
-    RESOURCE = 2
-    
-    def __init__(self, source, *keyword_names):
-        self.source = source
-        self.keywords = [ KeywordDataStub(name) for name in keyword_names ]
-        
-    def get_type(self):
-        return self.source == 'NOT_RESOURCE' and 1 or 2
-    
-        
-class KeywordDataStub:
-    
-    def __init__(self, name):
-        self.name = name
-        self.keywords = []
-        self.metadata = []
-        self.reported_errors = []
-        
-    def report_invalid_syntax(self, error):
-        self.reported_errors.append(error)
+from robot.parsing.model import UserKeyword
 
 
 class UserHandlerStub:
-    
+
     def __init__(self, kwdata, library):
         self.name = kwdata.name
         if kwdata.name == 'FAIL':
@@ -39,7 +16,7 @@ class UserHandlerStub:
 
 
 class EmbeddedArgsTemplateStub:
-    
+
     def __init__(self, kwdata, library):
         self.name = kwdata.name
         if kwdata.name != 'Embedded ${arg}':
@@ -57,18 +34,17 @@ class TestUserLibrary(unittest.TestCase):
     def tearDown(self):
         userkeyword.UserKeywordHandler = self._orig_userhandler
         userkeyword.EmbeddedArgsTemplate = self._orig_embeddedargstemplate
-        
+
     def test_name_from_resource(self):
         for source, exp in [ ('resources.html', 'resources'), 
                              (os.path.join('..','res','My Res.HTM'), 'My Res'),
                              (os.path.abspath('my_res.xhtml'), 'my_res') ]:
-            kwdata  = UserHandlerList(RawDataStub(source).keywords)
-            lib = userkeyword.UserLibrary(kwdata, source)
+            lib = userkeyword.UserLibrary([], source)
             assert_equals(lib.name, exp)
-            
+
     def test_name_from_test_case_file(self):
         assert_none(self._get_userlibrary('NOT_RESOURCE').name)
-        
+
     def test_creating_keyword(self):
         lib = self._get_userlibrary('source', 'kw 1', 'kw 2')
         assert_equals(len(lib.handlers.keys()), 2)
@@ -91,9 +67,6 @@ class TestUserLibrary(unittest.TestCase):
                                     'kw', 'Embedded ${arg}')
         assert_equals(len(lib.handlers.keys()), 2)
         assert_true(lib.handlers.has_key('kw'))
-        assert_equals(lib.handlers['Embedded ${arg}']._error, 
-                      "Keyword 'Embedded ${arg}' defined multiple times")
-        assert_equals(lib.embedded_arg_handlers, [])
 
     def test_creating_duplicate_keyword_in_resource_file(self):
         lib = self._get_userlibrary('source', 'kw', 'kw', 'kw 2')
@@ -101,14 +74,14 @@ class TestUserLibrary(unittest.TestCase):
         assert_true(lib.handlers.has_key('kw'))
         assert_true(lib.handlers.has_key('kw 2'))
         assert_equals(lib.handlers['kw']._error, 
-                      "Keyword 'Kw' defined multiple times")
+                      "Keyword 'kw' defined multiple times")
         
     def test_creating_duplicate_keyword_in_test_case_file(self):
         lib = self._get_userlibrary('NOT_RESOURCE', 'MYKW', 'my kw')
         assert_equals(len(lib.handlers.keys()), 1)
         assert_true(lib.handlers.has_key('mykw'))
         assert_equals(lib.handlers['mykw']._error,
-                      "Keyword 'My Kw' defined multiple times")
+                      "Keyword 'my kw' defined multiple times")
 
     def test_has_handler_with_non_existing_keyword(self):
         lib = self._get_userlibrary('source', 'kw')
@@ -130,8 +103,7 @@ class TestUserLibrary(unittest.TestCase):
         assert_true(isinstance(handler, UserHandlerStub))
 
     def _get_userlibrary(self, source, *keyword_names):
-        kwdata = UserHandlerList(RawDataStub(source, *keyword_names).keywords)
-        return userkeyword.UserLibrary(kwdata)
+        return userkeyword.UserLibrary([UserKeyword(name) for name in keyword_names])
         
     def _lib_has_embedded_arg_keyword(self, lib):
         assert_true(lib.handlers.has_key('Embedded ${arg}'))
