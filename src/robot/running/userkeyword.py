@@ -48,7 +48,7 @@ class UserLibrary(BaseLibrary):
                 handler = UserKeywordHandler(user_keyword, self.name)
             else:
                 self.embedded_arg_handlers.append(handler)
-            if self.handlers.has_key(handler.name):
+            if handler.name in self.handlers:
                 err = "Keyword '%s' defined multiple times" % handler.name
                 handler = UserErrorHandler(handler.name, err)
             self.handlers[handler.name] = handler
