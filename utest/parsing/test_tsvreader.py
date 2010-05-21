@@ -47,7 +47,7 @@ Default Tags\tt1\tt2\tt3\t\t
     
 ''')
         TsvReader().read(tsv, FromFilePopulator(self.tcf))
-        assert_equal(self.tcf.setting_table.doc.value, 'Whatever  \\')
+        assert_equal(self.tcf.setting_table.doc.value, 'Whatever  ')
         assert_equal(self.tcf.setting_table.default_tags.value, ['t1','t2','t3'])
         assert_equal(self.tcf.variable_table.variables[0].name, '\\ \\ 2 escaped spaces before and after \\ \\')
         assert_equal(self.tcf.variable_table.variables[0].value, ['\\ \\ value \\ \\'])
