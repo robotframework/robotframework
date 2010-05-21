@@ -164,6 +164,8 @@ class _Assignment(object):
             yield self.list_var
 
     def set_variables(self, context, return_value):
+        if not self:
+            return
         if self._error:
             raise self._error
         for name, value in self._get_vars_to_set(return_value):
@@ -203,7 +205,7 @@ class _Assignment(object):
         needed = len(self.scalar_vars)
         if needed == 1:
             return [(self.scalar_vars[0], ret)]
-        if not utils.is_list(ret):
+        if not self._is_non_string_iterable(ret):
             self._raise_invalid_return_value(ret, wrong_type=True)
         ret = list(ret)
         if len(ret) < needed:
@@ -224,7 +226,7 @@ class _Assignment(object):
 
     def _raise_invalid_return_value(self, ret, wrong_type=False):
         if wrong_type:
-            err = 'Expected list, got %s instead' % utils.type_as_str(ret, True)
+            err = 'Expected list like object, got %s instead' % utils.type_as_str(ret, True)
         else:
             err = 'Need more values than %d' % len(ret)
         raise DataError("Cannot assign return value of keyword '%s' to variable%s %s: %s" 

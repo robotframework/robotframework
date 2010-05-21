@@ -15,7 +15,7 @@
 import copy
 
 from robot.output import LOGGER
-from robot.parsing.newmodel import ResourceFile
+from robot.parsing import ResourceFile
 from robot import utils
 
 from testlibraries import TestLibrary

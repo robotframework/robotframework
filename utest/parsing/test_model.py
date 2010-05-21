@@ -2,7 +2,7 @@ import unittest
 from StringIO import StringIO
 
 from robot.utils.asserts import *
-from robot.parsing.newmodel import *
+from robot.parsing.model import *
 from robot.parsing.settings import *
 from robot.parsing.settings import _Import
 from robot.parsing.txtreader import TxtReader

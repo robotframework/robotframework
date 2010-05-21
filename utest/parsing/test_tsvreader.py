@@ -6,7 +6,7 @@ if __name__ == "__main__":
     sys.path.insert(0, "../../../src")
 
 from robot.parsing.tsvreader import TsvReader
-from robot.parsing.newmodel import TestCaseFile
+from robot.parsing.model import TestCaseFile
 from robot.parsing.datareader import FromFilePopulator
 from robot.utils.asserts import *
 import robot.parsing.populator

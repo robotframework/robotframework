@@ -3,7 +3,7 @@ import os
 from StringIO import StringIO
 
 from robot.parsing.datareader import FromFilePopulator, DataRow
-from robot.parsing.newmodel import TestCaseFile
+from robot.parsing.model import TestCaseFile
 from robot.utils.asserts import assert_equals, assert_true, assert_false
 
 from robot.output import LOGGER

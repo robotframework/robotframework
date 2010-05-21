@@ -12,6 +12,4 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from newmodel import TestCaseFile, TestDataDirectory
-from robot.conf.settings import RobotSettings
-
+from model import TestCaseFile, TestDataDirectory, ResourceFile
