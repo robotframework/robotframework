@@ -88,18 +88,6 @@ class Keyword(BaseKeyword):
             return handler_longname
         return '%s = %s' % (', '.join(self.assign), handler_longname)
 
-    def _end(self, context, return_value=None, error=None):
-        self.endtime = utils.get_timestamp()
-        self.elapsedtime = utils.get_elapsed_time(self.starttime, self.endtime)
-        try:
-            if not error or error.cont:
-                self._set_variables(context, return_value)
-        except ExecutionFailed:
-            self.status = 'FAIL'
-            raise
-        finally:
-            context.end_keyword(self)
-
     def _run(self, handler, context):
         try:
             return handler.run(context, self.args[:])
@@ -108,10 +96,20 @@ class Keyword(BaseKeyword):
         except:
             self._report_failure(context)
 
+    def _end(self, context, return_value=None, error=None):
+        self.endtime = utils.get_timestamp()
+        self.elapsedtime = utils.get_elapsed_time(self.starttime, self.endtime)
+        try:
+            if not error or error.cont:
+                self._set_variables(context, return_value)
+        finally:
+            context.end_keyword(self)
+
     def _set_variables(self, context, return_value):
         try:
             _VariableAssigner(self.assign).assign(context, return_value)
         except DataError, err:
+            self.status = 'FAIL'
             msg = unicode(err)
             context.output.fail(msg)
             raise ExecutionFailed(msg, syntax=True)
