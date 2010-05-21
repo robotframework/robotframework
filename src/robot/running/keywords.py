@@ -53,7 +53,7 @@ class Keyword(BaseKeyword):
 
     def __init__(self, name, args, assign=None, type='kw'):
         BaseKeyword.__init__(self, name, args, type=type)
-        self.assign = _Assignment(name, assign or [])
+        self.assign = assign or []
         self.handler_name = name
 
     def run(self, context):
@@ -83,10 +83,10 @@ class Keyword(BaseKeyword):
             context.warn("Keyword '%s' is deprecated. %s" % (name, msg))
         return handler
 
-    def _get_name(self, handler_name):
+    def _get_name(self, handler_longname):
         if not self.assign:
-            return handler_name
-        return '%s = %s' % (', '.join(self.assign), handler_name)
+            return handler_longname
+        return '%s = %s' % (', '.join(self.assign), handler_longname)
 
     def _end(self, context, return_value=None, error=None):
         self.endtime = utils.get_timestamp()
@@ -94,7 +94,9 @@ class Keyword(BaseKeyword):
         try:
             if not error or error.cont:
                 self._set_variables(context, return_value)
-                context.trace('Return: %s' % utils.safe_repr(return_value))
+        except ExecutionFailed:
+            self.status = 'FAIL'
+            raise
         finally:
             context.end_keyword(self)
 
@@ -108,7 +110,7 @@ class Keyword(BaseKeyword):
 
     def _set_variables(self, context, return_value):
         try:
-            self.assign.set_variables(context, return_value)
+            _VariableAssigner(self.assign).assign(context, return_value)
         except DataError, err:
             msg = unicode(err)
             context.output.fail(msg)
@@ -127,47 +129,29 @@ class Keyword(BaseKeyword):
         return test_or_suite.status != 'RUNNING'
 
 
-class _Assignment(object):
+class _VariableAssigner(object):
 
-    def __init__(self, keyword, assign):
-        self.keyword = keyword
-        # TODO: Cleanup handling errors
-        try:
-            self.scalar_vars, self.list_var = self._split_assing(assign)
-            self._error = None
-        except DataError, err:
-            self.scalar_vars, self.list_var = [], None
-            self._error = err
+    def __init__(self, assign):
+        self.scalar_vars = []
+        self.list_var = None
+        self._process_assign(assign)
 
-    def _split_assing(self, assign):
-        scalar_vars = []
-        list_var = None
+    def _process_assign(self, assign):
         for var in assign:
             if not is_var(var):
                 raise DataError('Invalid variable to assign: %s' % var)
-            if list_var:
+            if self.list_var:
                 raise DataError('Only the last variable to assign can be '
                                 'a list variable.')
             if is_list_var(var):
-                list_var = var
+                self.list_var = var
             else:
-                scalar_vars.append(var)
-        return scalar_vars, list_var
+                self.scalar_vars.append(var)
 
-    def __len__(self):
-        return len(self.scalar_vars) + (1 if self.list_var else 0)
-
-    def __iter__(self):
-        for var in self.scalar_vars:
-            yield var
-        if self.list_var:
-            yield self.list_var
-
-    def set_variables(self, context, return_value):
-        if not self:
+    def assign(self, context, return_value):
+        context.trace('Return: %s' % utils.safe_repr(return_value))
+        if not (self.scalar_vars or self.list_var):
             return
-        if self._error:
-            raise self._error
         for name, value in self._get_vars_to_set(return_value):
             context.get_current_vars()[name] = value
             if is_list_var(name) or utils.is_list(value):
@@ -229,9 +213,7 @@ class _Assignment(object):
             err = 'Expected list like object, got %s instead' % utils.type_as_str(ret, True)
         else:
             err = 'Need more values than %d' % len(ret)
-        raise DataError("Cannot assign return value of keyword '%s' to variable%s %s: %s" 
-                        % (self.keyword, utils.plural_or_not(len(self)),
-                           utils.seq2str(list(self)), err))
+        raise DataError("Cannot assign return value to variables: %s." % err)
 
 
 class ForLoop(BaseKeyword):

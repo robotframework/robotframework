@@ -2,7 +2,7 @@ import unittest
 
 from robot.errors import DataError, ExecutionFailed
 from robot.running.timeouts import KeywordTimeout
-from robot.running.keywords import Keyword
+from robot.running.keywords import Keyword, _VariableAssigner
 from robot.utils.asserts import *
 from test_testlibrary import _FakeNamespace
 
@@ -113,19 +113,16 @@ class TestResolveAssignment(unittest.TestCase):
         self._verify('${v1} ${v2} @{list}'.split())
 
     def test_init_list_in_wrong_place_raises(self):
-        assert_raises(DataError, Keyword, 'Name', ['arg'], ['@{list}','${str}'])
+        assert_raises(DataError, _VariableAssigner, ['@{list}','${str}'])
 
     def _verify(self, assign):
-        kw = Keyword('Name', ['arg'], assign)
+        assigner = _VariableAssigner(assign)
         if assign[-1][0] == '$':
             exp_list = None
         else:
             exp_list = assign.pop()
-        assert_equal(kw.name, 'Name')
-        assert_equal(kw.args, ['arg'])
-        assert_equal(kw.assign.keyword, 'Name')
-        assert_equal(kw.assign.scalar_vars, assign)
-        assert_equal(kw.assign.list_var, exp_list)
+        assert_equal(assigner.scalar_vars, assign)
+        assert_equal(assigner.list_var, exp_list)
 
 
 class TestSettingVariables(unittest.TestCase):
