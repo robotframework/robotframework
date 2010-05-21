@@ -64,6 +64,8 @@ class Fixture(_Setting):
         self.name = value[0] if value else ''
         self.args = value[1:]
 
+    def is_set(self):
+        return self.name is not None
 
 class Timeout(_Setting):
 
@@ -77,7 +79,17 @@ class Timeout(_Setting):
 
 
 class Tags(_Setting):
-    pass
+
+    def __init__(self, table=None, comment=None):
+        _Setting.__init__(self, table, comment)
+        self._value_set = False
+
+    def set(self, value, comment=None):
+        _Setting.set(self, value, comment)
+        self._value_set = True
+
+    def is_set(self):
+        return self._value_set
 
 
 class Arguments(_Setting):
