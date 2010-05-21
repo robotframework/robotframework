@@ -248,7 +248,7 @@ class UserKeywordArguments(object):
                 varargs = arg
                 continue   # should be last round (otherwise DataError in next)
             arg, default = self._split_default(arg)
-            if defaults and not default:
+            if defaults and default is None:
                 raise DataError('Non default argument after default arguments')
             if not is_scalar_var(arg):
                 raise DataError("Invalid argument '%s'" % arg)
