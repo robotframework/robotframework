@@ -169,11 +169,11 @@ class DataRow(object):
         return data
 
     def _purge_empty_cells(self, data):
-        data = [ cell if cell != '\\' else '' for cell in data]
         data = [ self._collapse_whitespace(cell) for cell in data]
         while data and not data[-1]:
             data.pop()
-        return data
+        # Cells with only a single backslash are considered empty
+        return [ cell if cell != '\\' else '' for cell in data]
 
     def __nonzero__(self):
         return bool(self.cells or self.comments)
