@@ -90,8 +90,8 @@ class TestComparisons(unittest.TestCase):
 
     def test_compare_with_timeouted_and_non_timeouted(self):
         touts = self._create_timeouts(['','1min','42sec','','43','1h1m','99',''])
-        assert_equals(min(touts).string, '')
-        assert_equals(max(touts).string, '1 hour 1 minute')
+        assert_equals(min(touts).string, '42 seconds')
+        assert_equals(max(touts).string, '')
 
     def test_that_compare_uses_starttime(self):
         touts = self._create_timeouts(['1min','42seconds','43','1h1min','99'])
