@@ -68,6 +68,24 @@ class TestCaseFile(_TestData):
             yield table
 
 
+class ResourceFile(_TestData):
+
+    def __init__(self, source=None):
+        _TestData.__init__(self, source)
+        self.directory = os.path.dirname(self.source) if self.source else None
+        self.setting_table = SettingTable(self)
+        self.variable_table = VariableTable(self)
+        self.testcase_table = TestCaseTableNotAllowed('resource file')
+        self.keyword_table = KeywordTable(self)
+        if self.source:
+            FromFilePopulator(self).populate(source)
+
+    def __iter__(self):
+        for table in [self.setting_table, self.variable_table,
+                      self.keyword_table]:
+            yield table
+
+
 class TestDataDirectory(_TestData):
 
     def __init__(self, source=None):

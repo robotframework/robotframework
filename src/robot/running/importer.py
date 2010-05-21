@@ -15,11 +15,10 @@
 import copy
 
 from robot.output import LOGGER
-from robot.parsing.newmodel import TestCaseFile
+from robot.parsing.newmodel import ResourceFile
 from robot import utils
 
 from testlibraries import TestLibrary
-from userkeyword import UserLibrary
 
 
 class Importer:
@@ -41,7 +40,7 @@ class Importer:
         if self._resources.has_key(path):
             LOGGER.info("Found resource file '%s' from cache" % path)
         else:
-            resource = TestCaseFile(path)
+            resource = ResourceFile(path)
             self._resources[path] = resource
             LOGGER.info("Imported resource file '%s' (%d keywords)"
                         % (path, len(resource.keyword_table.keywords)))
