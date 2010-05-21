@@ -2,7 +2,9 @@ import unittest
 
 from robot.running.userkeyword import UserKeywordHandler, \
     EmbeddedArgsTemplate, EmbeddedArgs
+from robot.running.arguments import UserKeywordArguments
 from robot.utils.asserts import *
+from robot.errors import DataError
 
 
 class Fake(object):
@@ -113,6 +115,48 @@ class TestEmbeddedArgs(unittest.TestCase):
         for attr in dir(normal):
             assert_true(hasattr(embedded, attr), "'%s' missing" % attr)
 
+
+class TestGetArgSpec(unittest.TestCase):
+
+    def test_no_args(self):
+        self._verify('', [], [], None)
+
+    def test_one_arg(self):
+        self._verify('${arg1}', ['${arg1}',], [], None)
+
+    def test_one_vararg(self):
+        self._verify('@{varargs}', [], [], '@{varargs}')
+
+    def test_one_default(self):
+        self._verify('${arg1} ${arg2}=default @{varargs}',
+                     ['${arg1}', '${arg2}'], ['default'], '@{varargs}')
+
+    def test_one_empty_default(self):
+        self._verify('${arg1} ${arg2}= @{varargs}',
+                     ['${arg1}', '${arg2}'], [''], '@{varargs}')
+
+    def test_many_defaults(self):
+        self._verify('${arg1}=default1 ${arg2}=default2 ${arg3}=default3',
+                     ['${arg1}', '${arg2}', '${arg3}'],
+                     ['default1', 'default2', 'default3'], None)
+
+    def _verify(self, in_args, exp_args, exp_defaults, exp_varargs):
+        args = UserKeywordArguments(in_args.split(), 'foobar')
+        assert_equals(args.names, exp_args)
+        assert_equals(args.defaults, exp_defaults)
+        assert_equals(args.varargs, exp_varargs)
+
+    def test_many_varargs_raises(self):
+        in_args = ['@{varargs}', '@{varargs2}']
+        assert_raises(DataError, UserKeywordArguments, in_args, 'foobar')
+
+    def test_args_after_varargs_raises(self):
+        in_args = ['@{varargs}', '${arg1}']
+        assert_raises(DataError, UserKeywordArguments, in_args, 'foobar')
+
+    def test_get_defaults_before_args_raises(self):
+        in_args = ['${args1}=default', '${arg2}']
+        assert_raises(DataError, UserKeywordArguments, in_args, 'foobar')
 
 if __name__ == '__main__':
     unittest.main()
