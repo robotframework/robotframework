@@ -187,7 +187,7 @@ class TestCaseTable(_Table):
         self.tests = []
 
     def add(self, name):
-        self.tests.append(TestCase(name))
+        self.tests.append(TestCase(self, name))
         return self.tests[-1]
 
     def __iter__(self):
@@ -243,7 +243,8 @@ class _WithSteps(object):
 
 class TestCase(_WithSteps):
 
-    def __init__(self, name):
+    def __init__(self, parent, name):
+        self.parent = parent
         self.name = name
         self.doc = Documentation()
         self.tags = Tags()

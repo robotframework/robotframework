@@ -167,7 +167,7 @@ class TestTestCaseTable(unittest.TestCase):
 
     def setUp(self):
         self.table = TestCaseFile().testcase_table
-        self.test = TestCase('name')
+        self.test = TestCase(None, 'name')
 
     def test_init(self):
         assert_equal(self.table.tests, [])
