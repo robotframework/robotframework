@@ -256,6 +256,9 @@ class ForLoop(_WithSteps):
         self.vars = content[:index]
         self.values = content[index+1:]
         self.steps = []
+        self.name = '%s %s [ %s ]' % (' | '.join(self.vars),
+                                      self.range and 'IN RANGE' or 'IN',
+                                      ' | '.join(self.values))
 
     def _get_range_and_index(self, content):
         for index, item in enumerate(content):
