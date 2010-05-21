@@ -46,7 +46,7 @@ class Keywords(object):
 def _KeywordFactory(step):
     if not hasattr(step, 'steps'):
         return Keyword(step.keyword, step.args, step.assign)
-    return ForKeyword(step)
+    return ForLoop(step)
 
 
 class Keyword(BaseKeyword):
@@ -232,7 +232,7 @@ class _Assignment(object):
                            utils.seq2str(list(self)), err))
 
 
-class ForKeyword(BaseKeyword):
+class ForLoop(BaseKeyword):
 
     def __init__(self, forstep):
         BaseKeyword.__init__(self, self._get_name(forstep), type='for')
@@ -294,7 +294,7 @@ class ForKeyword(BaseKeyword):
         return items, range(0, len(items), len(self.vars))
 
     def _run_one_round(self, context, variables, values):
-        foritem = ForItemKeyword(variables, values)
+        foritem = _ForItem(variables, values)
         context.output.start_keyword(foritem)
         for var, value in zip(variables, values):
             context.get_current_vars()[var] = value
@@ -331,7 +331,7 @@ class ForKeyword(BaseKeyword):
         return range(*items)
 
 
-class ForItemKeyword(BaseKeyword):
+class _ForItem(BaseKeyword):
 
     def __init__(self, vars, items):
         name = ', '.join('%s = %s' % (var, utils.cut_long_assign_msg(item))
