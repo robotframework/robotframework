@@ -47,6 +47,8 @@ def _KeywordFactory(step):
     # TODO: Support for FOR 
     try:
         return Keyword(step.keyword, step.args, step.assign)
+    except AttributeError:
+        return ForKeyword(step)
     except DataError, err:
         return SyntaxErrorKeyword(step.keyword, unicode(err))
 
@@ -226,12 +228,12 @@ class _Assignment(object):
 
 class ForKeyword(BaseKeyword):
 
-    def __init__(self, kwdata):
-        self.vars = kwdata.vars
-        self.items = kwdata.items
-        self.range = kwdata.range
-        BaseKeyword.__init__(self, kwdata.name, type='for')
-        self.keywords = Keywords(kwdata.keywords)
+    def __init__(self, forstep):
+        self.vars = forstep.vars
+        self.items = forstep.values
+        self.range = forstep.range
+        BaseKeyword.__init__(self, forstep.name, type='for')
+        self.keywords = Keywords(forstep.steps)
 
     def run(self, context):
         self.starttime = utils.get_timestamp()
@@ -288,6 +290,8 @@ class ForKeyword(BaseKeyword):
         return error
 
     def _replace_vars_from_items(self, variables):
+        if not self.vars:
+            self._raise_invalid_syntax()
         items = variables.replace_list(self.items)
         if self.range:
             items = self._get_range_items(items)
@@ -297,6 +301,10 @@ class ForKeyword(BaseKeyword):
                         'variables. Got %d variables (%s) but %d value%s.'
                         % (len(self.vars), utils.seq2str(self.vars),
                            len(items), utils.plural_or_not(items)))
+
+    def _raise_invalid_syntax(self):
+        raise DataError('Invalid syntax in FOR loop. Expected format:\n'
+                        '| : FOR | ${var} | IN | item1 | item2 |')
 
     def _get_range_items(self, items):
         try:
