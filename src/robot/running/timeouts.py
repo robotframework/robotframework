@@ -23,12 +23,14 @@ from signalhandler import STOP_SIGNAL_MONITOR
 
 class _Timeout:
 
-    def __init__(self, timeout=None, message=''):
+    def __init__(self, timeout=None, message='', variables=None):
         self.string = timeout or ''
         self.message = message
         self.secs = -1
         self.starttime = 0
         self.error = None
+        if variables:
+            self.replace_variables(variables)
 
     def replace_variables(self, variables):
         try:
@@ -36,6 +38,7 @@ class _Timeout:
             if not self.string:
                 return
             self.secs = utils.timestr_to_secs(self.string)
+            self.string = utils.secs_to_timestr(self.secs)
             self.message = variables.replace_string(self.message)
         except DataError, err:
             self.secs = 0.000001 # to make timeout active
@@ -60,8 +63,8 @@ class _Timeout:
         return self.string
 
     def __cmp__(self, other):
-        if utils.is_str(other):
-            return cmp(str(self), other)
+        if not self.active() and not other.active():
+            return 0
         if not self.active():
             return 1
         if not other.active():
@@ -99,7 +102,7 @@ class _Timeout:
         raise TimeoutError(self.get_message())
 
     def get_message(self):
-        if self.message is not None:
+        if self.message:
             return self.message
         return '%s timeout %s exceeded.' % (self.type.capitalize(), self.string)
 

@@ -16,6 +16,11 @@ if os.name == 'java':
     from java.lang import Error as JavaError
     from thread_resources import java_failing
 
+class VariableMock(object):
+    
+    def replace_string(self, string):
+        return string
+
 
 class TestInit(unittest.TestCase):
 
@@ -30,50 +35,42 @@ class TestInit(unittest.TestCase):
             self._verify_tout(TestTimeout(tout_str), exp_str, exp_secs)
 
     def test_invalid_timeout_string(self):
-        for inv in [ 'invalid', '1s 1', '' ]:
+        for inv in ['invalid', '1s 1']:
             for params in [ [inv], [inv,'whatever'] ]:
                 tout = TestTimeout(*params)
                 err = "Setting test timeout failed: Invalid time string '%s'"
-                self._verify_tout(tout, secs=0.000001, err=err % inv)
+                self._verify_tout(tout, str=inv, secs=0.000001, err=err % inv)
 
-    def test_message(self):
-        for msgcols in [ ['mymessage'],
-                         ['This is my message!'],
-                         ['Message in','two colums'],
-                         ['My','message','in','quite','many','columns','.'] ]:
-            tout = TestTimeout('10sec', *msgcols)
-            self._verify_tout(tout, str='10 seconds', secs=10, msg=' '.join(msgcols))
-
-    def _verify_tout(self, tout, str='', secs=-1, msg=None, err=None):
+    def _verify_tout(self, tout, str='', secs=-1, err=None):
+        tout.replace_variables(VariableMock())
         assert_equals(tout.string, str)
         assert_equals(tout.secs, secs)
-        assert_equals(tout.message, msg)
         assert_equals(tout.error, err)
 
 
 class TestTimer(unittest.TestCase):
 
     def test_time_left(self):
-        tout = TestTimeout('1s')
+        tout = TestTimeout('1s', variables=VariableMock())
         tout.start()
         assert_true(tout.time_left() > 0.9)
         time.sleep(0.2)
         assert_true(tout.time_left() < 0.9)
 
     def test_timed_out_with_no_timeout(self):
-        tout = TestTimeout()
+        tout = TestTimeout(variables=VariableMock())
         tout.start()
         time.sleep(0.01)
         assert_false(tout.timed_out())
 
     def test_timed_out_with_non_exceeded_timeout(self):
-        tout = TestTimeout('10s')
+        tout = TestTimeout('10s', variables=VariableMock())
         tout.start()
         time.sleep(0.01)
         assert_false(tout.timed_out())
 
     def test_timed_out_with_exceeded_timeout(self):
-        tout = TestTimeout('1ms')
+        tout = TestTimeout('1ms', variables=VariableMock())
         tout.start()
         time.sleep(0.02)
         assert_true(tout.timed_out())
@@ -105,7 +102,7 @@ class TestComparisons(unittest.TestCase):
     def _create_timeouts(self, tout_strs):
         touts = []
         for tout_str in tout_strs:
-            touts.append(TestTimeout(tout_str))
+            touts.append(TestTimeout(tout_str, variables=VariableMock()))
             touts[-1].start()
         return touts
 
@@ -122,7 +119,7 @@ class MockLogger:
 class TestRun(unittest.TestCase):
 
     def setUp(self):
-        self.tout = TestTimeout('1s')
+        self.tout = TestTimeout('1s', variables=VariableMock())
         self.tout.start()
         self.logger = MockLogger()
 
@@ -177,9 +174,10 @@ class TestRun(unittest.TestCase):
             assert_raises(TimeoutError, self.tout.run, sleeping, (10,))
 
     def test_customized_message(self):
-        for msgcols in [ ['mymessage'], ['My','message','in','5','cols'] ]:
+        for msgcols in [ ['mymessage'] ]:
             self.logger.msgs = []
             tout = KeywordTimeout('1s', *msgcols)
+            tout.replace_variables(VariableMock())
             tout.start()
             tout.run(passing, logger=self.logger)
             self._verify_debug_msg(self.logger.msgs[0], 'Keyword')
