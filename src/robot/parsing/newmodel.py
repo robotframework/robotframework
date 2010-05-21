@@ -129,7 +129,15 @@ class _Table(object):
         self.parent.report_invalid_syntax(table, message, level)
 
 
-class _SettingTable(_Table):
+class _WithSettings(object):
+    def setter_for(self, setting_name):
+        return self._setters[setting_name]
+
+    def is_setting(self, setting_name):
+        return setting_name in self._setters
+
+
+class _SettingTable(_Table, _WithSettings):
 
     def __init__(self, parent):
         _Table.__init__(self, parent)
@@ -143,7 +151,7 @@ class _SettingTable(_Table):
         self.default_tags = Tags()
         self.metadata = []
         self.imports = []
-        self._setting_setters = self._get_setting_setters()
+        self._setters = self._get_setters()
 
     def add_metadata(self, name, value, comment=None):
         self.metadata.append(Metadata(self, name, value, comment))
@@ -168,16 +176,10 @@ class _SettingTable(_Table):
                         + self.metadata + self.imports:
             yield setting
 
-    def setter_for(self, setting_name):
-        return self._setting_setters[setting_name]
-
-    def is_setting(self, setting_name):
-        return setting_name in self._setting_setters
-
 
 class TestCaseFileSettingTable(_SettingTable):
 
-    def _get_setting_setters(self):
+    def _get_setters(self):
         return utils.NormalizedDict({'Documentation': self.doc.set,
                                      'Document': self.doc.set,
                                      'Suite Setup': self.suite_setup.set,
@@ -205,7 +207,7 @@ class ImportSetter(object):
 
 
 class ResourceFileSettingTable(_SettingTable):
-    def _get_setting_setters(self):
+    def _get_setters(self):
         return utils.NormalizedDict({'Documentation': self.doc.set,
                                      'Document': self.doc.set,
                                      'Library': ImportSetter(self.add_library),
@@ -214,7 +216,7 @@ class ResourceFileSettingTable(_SettingTable):
 
 
 class InitFileSettingTable(_SettingTable):
-    def _get_setting_setters(self):
+    def _get_setters(self):
         return utils.NormalizedDict({'Documentation': self.doc.set,
                                      'Document': self.doc.set,
                                      'Suite Setup': self.suite_setup.set,
@@ -306,7 +308,7 @@ class _WithSteps(object):
         return self.steps[-1]
 
 
-class TestCase(_WithSteps):
+class TestCase(_WithSteps, _WithSettings):
 
     def __init__(self, parent, name):
         self.parent = parent
@@ -317,6 +319,17 @@ class TestCase(_WithSteps):
         self.teardown = Fixture()
         self.timeout = Timeout()
         self.steps = []
+        self._setters = self._get_setters()
+
+    def _get_setters(self):
+        return utils.NormalizedDict({'Documentation': self.doc.set,
+                                     'Document': self.doc.set,
+                                     'Setup': self.setup.set,
+                                     'Precondition': self.setup.set,
+                                     'Teardown': self.teardown.set,
+                                     'Postcondition': self.teardown.set,
+                                     'Tags': self.tags.set,
+                                     'Timeout': self.timeout.set})
 
     def add_for_loop(self, data):
         self.steps.append(ForLoop(data))
@@ -332,6 +345,14 @@ class UserKeyword(TestCase):
         self.return_ = Return()
         self.timeout = Timeout()
         self.steps = []
+        self._setters = self._get_setters()
+
+    def _get_setters(self):
+        return utils.NormalizedDict({'Documentation': self.doc.set,
+                                     'Document': self.doc.set,
+                                     'Arguments': self.args.set,
+                                     'Return': self.return_.set,
+                                     'Timeout': self.timeout.set})
 
 
 class ForLoop(_WithSteps):

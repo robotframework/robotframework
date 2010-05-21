@@ -12,7 +12,6 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot import utils
 from robot.output import LOGGER
 
 
@@ -193,7 +192,7 @@ class _TestCaseUserKeywordPopulator(Populator):
 
     def _get_populator(self, row):
         if row.starts_test_or_user_keyword_setting():
-            setter = self._setting_setter(row.head)
+            setter = self._setting_setter(row)
             return SettingPopulator(setter) if setter else NullPopulator()
         if row.starts_for_loop():
             return ForLoopPopulator(self._test_or_uk.add_for_loop)
@@ -203,15 +202,12 @@ class _TestCaseUserKeywordPopulator(Populator):
         return row.is_continuing() or \
             (isinstance(self._populator, ForLoopPopulator) and row.is_indented())
 
-    def _setting_setter(self, cell):
-        if self._setting_name(cell) in self.attrs_by_name:
-            attr_name = self.attrs_by_name[self._setting_name(cell)]
-            return getattr(self._test_or_uk, attr_name).set
-        self._log_invalid_setting(cell)
+    def _setting_setter(self, row):
+        setting_name = row.test_or_user_keyword_setting_name()
+        if self._test_or_uk.is_setting(setting_name):
+            return self._test_or_uk.setter_for(setting_name)
+        self._log_invalid_setting(row.head)
         return None
-
-    def _setting_name(self, cell):
-        return cell[1:-1].strip()
 
     def _log_invalid_setting(self, value):
         report_invalid_setting("'%s' in %s '%s'" % (value, self._item_type,
@@ -220,23 +216,10 @@ class _TestCaseUserKeywordPopulator(Populator):
 
 class TestCasePopulator(_TestCaseUserKeywordPopulator):
     _item_type = 'test case'
-    attrs_by_name = utils.NormalizedDict({'Documentation': 'doc',
-                                          'Document': 'doc',
-                                          'Setup': 'setup',
-                                          'Precondition': 'setup',
-                                          'Teardown': 'teardown',
-                                          'Postcondition': 'teardown',
-                                          'Tags': 'tags',
-                                          'Timeout': 'timeout'})
 
 
 class UserKeywordPopulator(_TestCaseUserKeywordPopulator):
     _item_type = 'keyword'
-    attrs_by_name = utils.NormalizedDict({'Documentation': 'doc',
-                                          'Document': 'doc',
-                                          'Arguments': 'args',
-                                          'Return': 'return_',
-                                          'Timeout': 'timeout'})
 
 
 class Comments(object):

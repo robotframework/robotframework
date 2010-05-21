@@ -160,6 +160,9 @@ class DataRow(object):
     def is_commented(self):
         return bool(not self.cells and self.comments)
 
+    def test_or_user_keyword_setting_name(self):
+        return self.head[1:-1]
+
     def _parse(self, row):
         return self._purge_empty_cells(self._extract_data(row)), \
             self._extract_comments(row)
