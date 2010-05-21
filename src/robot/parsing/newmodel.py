@@ -24,10 +24,10 @@ from settings import (Documentation, Fixture, Timeout, Tags, Metadata,
 from datareader import FromFilePopulator, FromDirectoryPopulator
 
 
-def TestData(path):
-    if os.path.isdir(path):
-        return TestDataDirectory(path)
-    return TestCaseFile(path)
+def TestData(parent=None, source=None):
+    if os.path.isdir(source):
+        return TestDataDirectory(parent, source)
+    return TestCaseFile(parent, source)
 
 
 class _TestData(object):
@@ -55,7 +55,7 @@ class _TestData(object):
 class TestCaseFile(_TestData):
 
     def __init__(self, parent=None, source=None):
-        _TestData.__init__(self, source)
+        _TestData.__init__(self, parent, source)
         self.directory = os.path.dirname(self.source) if self.source else None
         self.setting_table = TestCaseFileSettingTable(self)
         self.variable_table = VariableTable(self)
