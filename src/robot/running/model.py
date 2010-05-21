@@ -328,7 +328,6 @@ class RunnableTestCase(BaseTestCase):
         context.end_test(self)
 
     def _get_tags(self, tc_data):
-        print tc_data.parent.parent
         force_tags = self._get_parent_force_tags(tc_data.parent.parent)
         tc_tags = tc_data.tags.is_set() and tc_data.tags.value or \
                     tc_data.parent.parent.setting_table.default_tags.value
