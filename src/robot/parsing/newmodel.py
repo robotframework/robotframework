@@ -31,7 +31,8 @@ def TestData(path):
 
 class _TestData(object):
 
-    def __init__(self, source):
+    def __init__(self, parent=None, source=None):
+        self.parent = parent
         self.source = os.path.abspath(source) if source else None
         self.children = []
 
@@ -52,7 +53,7 @@ class _TestData(object):
 
 class TestCaseFile(_TestData):
 
-    def __init__(self, source=None):
+    def __init__(self, parent=None, source=None):
         _TestData.__init__(self, source)
         self.directory = os.path.dirname(self.source) if self.source else None
         self.setting_table = SettingTable(self)
@@ -71,7 +72,7 @@ class TestCaseFile(_TestData):
 class ResourceFile(_TestData):
 
     def __init__(self, source=None):
-        _TestData.__init__(self, source)
+        _TestData.__init__(self, source=source)
         self.directory = os.path.dirname(self.source) if self.source else None
         self.setting_table = SettingTable(self)
         self.variable_table = VariableTable(self)
@@ -88,8 +89,8 @@ class ResourceFile(_TestData):
 
 class TestDataDirectory(_TestData):
 
-    def __init__(self, source=None):
-        _TestData.__init__(self, source)
+    def __init__(self, parent=None, source=None):
+        _TestData.__init__(self, parent, source)
         self.directory = self.source
         self.initfile = None
         self.setting_table = SettingTable(self)
@@ -100,7 +101,7 @@ class TestDataDirectory(_TestData):
             FromDirectoryPopulator().populate(self.source, self)
 
     def add_child(self, path):
-        self.children.append(TestData(path))
+        self.children.append(TestData(parent=self,source=path))
 
     def __iter__(self):
         for table in [self.setting_table, self.variable_table,
