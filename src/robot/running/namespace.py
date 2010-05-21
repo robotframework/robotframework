@@ -111,7 +111,7 @@ class Namespace:
         name = self._get_library_name(import_setting, variables)
         lib = IMPORTER.import_library(name, import_setting.args, 
                                       import_setting.alias, variables)
-        if self._testlibs.has_key(lib.name):
+        if lib.name in self._testlibs:
             LOGGER.info("Test library '%s' already imported by suite '%s'"
                         % (lib.name, self.suite.longname))
             return

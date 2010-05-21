@@ -31,7 +31,7 @@ class Importer:
         lib = TestLibrary(name, args, variables)
         positional, named = lib.positional_args, lib.named_args
         lib = self._import_library(name, positional, named, lib)
-        if name != alias:
+        if alias and name != alias:
             lib = self._copy_library(lib, alias)
             LOGGER.info("Imported library '%s' with name '%s'" % (name, alias))
         return lib
