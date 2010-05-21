@@ -107,20 +107,40 @@ class FromFilePopulator(object):
 class DataRow(object):
     _row_continuation_marker = '...'
     _whitespace_regexp = re.compile('\s+')
+    _ye_olde_metadata_prefix = 'meta:'
 
     def __init__(self, cells):
         self.cells, self.comments = self._parse(cells)
-        self.head = self.cells[0] if self.cells else None
-        self.tail = self.cells[1:] if self.cells else None
-        self.all = self.cells
+
+    @property
+    def head(self): 
+        return self.cells[0] if self.cells else None
+
+    @property
+    def tail(self):
+        return self.cells[1:] if self.cells else None
+
+    @property
+    def all(self):
+        return self.cells
 
     def dedent(self):
-        dedented = DataRow(self.tail)
-        dedented.comments = self.comments
-        return dedented
+        row = DataRow(self.tail)
+        row.comments = self.comments
+        return row
 
     def startswith(self, value):
         return self.head() == value
+
+    def handle_old_style_metadata(self):
+        if self._is_metadata_with_olde_prefix(self.head):
+            self.cells = self._convert_to_new_style_metadata()
+
+    def _is_metadata_with_olde_prefix(self, value):
+        return value.lower().startswith(self._ye_olde_metadata_prefix)
+
+    def _convert_to_new_style_metadata(self):
+        return ['Metadata'] + [self.head.split(':', 1)[1].strip()] + self.tail
 
     def starts_for_loop(self):
         if self.head and self.head.startswith(':'):

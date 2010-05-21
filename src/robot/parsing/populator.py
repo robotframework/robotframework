@@ -72,55 +72,18 @@ class _TablePopulator(Populator):
 
 
 class SettingTablePopulator(_TablePopulator):
-    olde_metadata_prefix = 'meta:'
-    attrs_by_name = utils.NormalizedDict({'Documentation': 'doc',
-                                          'Document': 'doc',
-                                          'Suite Setup': 'suite_setup',
-                                          'Suite Precondition': 'suite_setup',
-                                          'Suite Teardown': 'suite_teardown',
-                                          'Suite Postcondition': 'suite_teardown',
-                                          'Test Setup': 'test_setup',
-                                          'Test Precondition': 'test_setup',
-                                          'Test Teardown': 'test_teardown',
-                                          'Test Postcondition': 'test_teardown',
-                                          'Force Tags': 'force_tags',
-                                          'Default Tags': 'default_tags',
-                                          'Test Timeout': 'test_timeout'})
-    name_value_setters = utils.NormalizedDict({'Library': 'add_library',
-                                               'Resource': 'add_resource',
-                                               'Variables': 'add_variables',
-                                               'Metadata': 'add_metadata'})
 
     def _get_table(self, datafile):
         return datafile.setting_table
 
     def _get_populator(self, row):
+        row.handle_old_style_metadata()
         first_cell = row.head
-        if self._is_metadata_with_olde_prefix(first_cell):
-            return OldStyleMetadataPopulator(self._table.add_metadata)
-        if self._is_import_or_metadata(first_cell):
-            return SettingTableNameValuePopulator(self._table_attr_setter(first_cell))
-        if self._is_setting(first_cell):
-            return SettingPopulator(self._setting_setter(first_cell))
+        if self._table.is_setting(first_cell):
+            return SettingPopulator(self._table.setter_for(first_cell))
         report_invalid_setting("'%s' in setting table" % (first_cell))
         return NullPopulator()
 
-    def _is_metadata_with_olde_prefix(self, value):
-        return value.lower().startswith(self.olde_metadata_prefix)
-
-    def _is_import_or_metadata(self, value):
-        return value in self.name_value_setters
-
-    def _is_setting(self, value):
-        return value in self.attrs_by_name
-
-    def _table_attr_setter(self, first_cell):
-        attr_name = self.name_value_setters[first_cell]
-        return getattr(self._table, attr_name)
-
-    def _setting_setter(self, first_cell):
-        attr_name = self.attrs_by_name[first_cell]
-        return getattr(self._table, attr_name).set
 
 
 class VariableTablePopulator(_TablePopulator):
@@ -302,22 +265,16 @@ class _PropertyPopulator(Populator):
         self._comments.add(row)
 
 
-class NameAndValuePropertyPopulator(_PropertyPopulator):
-
-    def _add(self, row):
-        self._value.extend(row.all)
-
-    def populate(self):
-        name, value = self._value[0], self._value[1:]
-        self._setter(name, value, self._comments.formatted_value())
-
-
-class VariablePopulator(NameAndValuePropertyPopulator):
+class VariablePopulator(_PropertyPopulator):
 
     def _add(self, row):
         if row.is_continuing():
             row = row.dedent()
         self._value.extend(row.all)
+
+    def populate(self):
+        name, value = self._value[0], self._value[1:]
+        self._setter(name, value, self._comments.formatted_value())
 
 
 class SettingPopulator(_PropertyPopulator):
@@ -327,29 +284,6 @@ class SettingPopulator(_PropertyPopulator):
 
     def populate(self):
         self._setter(self._value, self._comments.formatted_value())
-
-
-class SettingTableNameValuePopulator(NameAndValuePropertyPopulator):
-
-    def _add(self, row):
-        self._value.extend(row.tail)
-
-
-class OldStyleMetadataPopulator(NameAndValuePropertyPopulator):
-    olde_metadata_prefix = 'meta:'
-
-    def _add(self, row):
-        if self._is_metadata_with_olde_prefix(row.head):
-            values = self._extract_name_from_olde_style_meta_cell(row.head) + row.tail
-        else:
-            values = row.tail
-        self._value.extend(values)
-
-    def _extract_name_from_olde_style_meta_cell(self, first_cell):
-        return [first_cell.split(':', 1)[1].strip()]
-
-    def _is_metadata_with_olde_prefix(self, first_cell):
-        return first_cell.lower().startswith(self.olde_metadata_prefix)
 
 
 class StepPopulator(_PropertyPopulator):

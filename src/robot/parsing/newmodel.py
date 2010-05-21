@@ -17,6 +17,7 @@ import os
 from robot.errors import DataError
 from robot.variables import is_var
 from robot.output import LOGGER
+from robot import utils
 
 from settings import (Documentation, Fixture, Timeout, Tags, Metadata,
                       Library, Resource, Variables, Arguments, Return)
@@ -56,7 +57,7 @@ class TestCaseFile(_TestData):
     def __init__(self, parent=None, source=None):
         _TestData.__init__(self, source)
         self.directory = os.path.dirname(self.source) if self.source else None
-        self.setting_table = SettingTable(self)
+        self.setting_table = TestCaseFileSettingTable(self)
         self.variable_table = VariableTable(self)
         self.testcase_table = TestCaseTable(self)
         self.keyword_table = KeywordTable(self)
@@ -74,7 +75,7 @@ class ResourceFile(_TestData):
     def __init__(self, source=None):
         _TestData.__init__(self, source=source)
         self.directory = os.path.dirname(self.source) if self.source else None
-        self.setting_table = SettingTable(self)
+        self.setting_table = ResourceFileSettingTable(self)
         self.variable_table = VariableTable(self)
         self.testcase_table = TestCaseTableNotAllowed('resource file')
         self.keyword_table = KeywordTable(self)
@@ -93,7 +94,7 @@ class TestDataDirectory(_TestData):
         _TestData.__init__(self, parent, source)
         self.directory = self.source
         self.initfile = None
-        self.setting_table = SettingTable(self)
+        self.setting_table = InitFileSettingTable(self)
         self.variable_table = VariableTable(self)
         self.testcase_table = TestCaseTableNotAllowed('test suite init file')
         self.keyword_table = KeywordTable(self)
@@ -128,7 +129,7 @@ class _Table(object):
         self.parent.report_invalid_syntax(table, message, level)
 
 
-class SettingTable(_Table):
+class _SettingTable(_Table):
 
     def __init__(self, parent):
         _Table.__init__(self, parent)
@@ -142,6 +143,7 @@ class SettingTable(_Table):
         self.default_tags = Tags()
         self.metadata = []
         self.imports = []
+        self._setting_setters = self._get_setting_setters()
 
     def add_metadata(self, name, value, comment=None):
         self.metadata.append(Metadata(self, name, value, comment))
@@ -165,6 +167,69 @@ class SettingTable(_Table):
                         self.force_tags, self.default_tags] \
                         + self.metadata + self.imports:
             yield setting
+
+    def setter_for(self, setting_name):
+        return self._setting_setters[setting_name]
+
+    def is_setting(self, setting_name):
+        return setting_name in self._setting_setters
+
+
+class TestCaseFileSettingTable(_SettingTable):
+
+    def _get_setting_setters(self):
+        return utils.NormalizedDict({'Documentation': self.doc.set,
+                                     'Document': self.doc.set,
+                                     'Suite Setup': self.suite_setup.set,
+                                     'Suite Precondition': self.suite_setup.set,
+                                     'Suite Teardown': self.suite_teardown.set,
+                                     'Suite Postcondition': self.suite_teardown.set,
+                                     'Test Setup': self.test_setup.set,
+                                     'Test Precondition': self.test_setup.set,
+                                     'Test Teardown': self.test_teardown.set,
+                                     'Test Postcondition': self.test_teardown.set,
+                                     'Force Tags': self.force_tags.set,
+                                     'Default Tags': self.default_tags.set,
+                                     'Test Timeout': self.test_timeout.set,
+                                     'Library': ImportSetter(self.add_library),
+                                     'Resource': ImportSetter(self.add_resource),
+                                     'Variables': ImportSetter(self.add_variables),
+                                     'Metadata': ImportSetter(self.add_metadata)})
+
+
+class ImportSetter(object):
+    def __init__(self, setter):
+        self._setter = setter
+    def __call__(self, datacells, comment):
+        self._setter(datacells[0], datacells[1:], comment)
+
+
+class ResourceFileSettingTable(_SettingTable):
+    def _get_setting_setters(self):
+        return utils.NormalizedDict({'Documentation': self.doc.set,
+                                     'Document': self.doc.set,
+                                     'Library': ImportSetter(self.add_library),
+                                     'Resource': ImportSetter(self.add_resource),
+                                     'Variables': ImportSetter(self.add_variables)})
+
+
+class InitFileSettingTable(_SettingTable):
+    def _get_setting_setters(self):
+        return utils.NormalizedDict({'Documentation': self.doc.set,
+                                     'Document': self.doc.set,
+                                     'Suite Setup': self.suite_setup.set,
+                                     'Suite Precondition': self.suite_setup.set,
+                                     'Suite Teardown': self.suite_teardown.set,
+                                     'Suite Postcondition': self.suite_teardown.set,
+                                     'Test Setup': self.test_setup.set,
+                                     'Test Precondition': self.test_setup.set,
+                                     'Test Teardown': self.test_teardown.set,
+                                     'Test Postcondition': self.test_teardown.set,
+                                     'Force Tags': self.force_tags.set,
+                                     'Library': ImportSetter(self.add_library),
+                                     'Resource': ImportSetter(self.add_resource),
+                                     'Variables': ImportSetter(self.add_variables),
+                                     'Metadata': ImportSetter(self.add_metadata)})
 
 
 class VariableTable(_Table):
