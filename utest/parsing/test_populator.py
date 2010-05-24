@@ -22,6 +22,8 @@ class _MockLogger(object):
 class _PopulatorTest(unittest.TestCase):
 
     def _start_table(self, name):
+        if isinstance(name, basestring):
+            name = [name]
         return self._populator.start_table(name)
 
     def _create_table(self, name, rows, eof=True):
@@ -96,6 +98,13 @@ class TestCaseFilePopulatingTest(_PopulatorTest):
     def test_starting_valid_table(self):
         for name in ['Test Cases', '  variables   ', 'K E Y WO R D S']:
             assert_true(self._start_table(name))
+
+    def test_table_headers(self):
+        header_list = ['seTTINGS', 'header', 'again']
+        self._create_table(header_list,[])
+        setting_table = self._datafile.setting_table
+        assert_equals(setting_table.header, header_list)
+        assert_equals(setting_table.name, header_list[0])
 
     def test_starting_invalid_table(self):
         assert_false(self._start_table('Per Se'))
@@ -326,16 +335,6 @@ class TestCaseFilePopulatingTest(_PopulatorTest):
         assert_equals(len(self._datafile.variable_table.variables), 1)
         assert_equals(len(self._datafile.testcase_table.tests), 1)
         assert_equals(len(self._nth_uk(0).steps), 1)
-
-    def _start_table(self, name):
-        return self._populator.start_table(name)
-
-    def _create_table(self, name, rows, eof=True):
-        self._start_table(name)
-        for r  in rows:
-            self._populator.add(r)
-        if eof:
-            self._populator.eof()
 
     def _nth_uk(self, index):
         return self._datafile.keyword_table.keywords[index]

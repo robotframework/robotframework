@@ -23,7 +23,7 @@ class TestTsvParser(unittest.TestCase):
         robot.parsing.datareader.PROCESS_CURDIR = self._orig_curdir
 
     def test_start_table(self):
-        tsv = StringIO('''*Setting*\t*Value*\t*V*
+        tsv = StringIO('''*SettING*\t*  Value  *\t*V*
 ***Variable
 
 *Not*Table*
@@ -33,7 +33,8 @@ Keyword*\tNot a table because doesn't start with '*'
 *******************T*e*s*t*********C*a*s*e************\t***********\t******\t*
 ''')
         TsvReader().read(tsv, FromFilePopulator(self.tcf))
-        assert_false(True, "Need to add checks after new model supports table names")
+        assert_equals(self.tcf.setting_table.name, 'SettING')
+        assert_equals(self.tcf.setting_table.header, ['SettING','Value','V'])
 
     def test_rows(self):
         tsv = StringIO('''Ignored text before tables...

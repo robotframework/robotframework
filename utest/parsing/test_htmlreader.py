@@ -16,7 +16,8 @@ class PopulatorMock:
         self.tables = {}
         self.current = None
 
-    def start_table(self, name):
+    def start_table(self, header):
+        name = header[0]
         if name in VALID_TABLES:
             self.tables[name] = []
             self.current = name

@@ -82,10 +82,11 @@ class FromFilePopulator(object):
         except KeyError:
             raise DataError("No reader found for extension '%s'." % extension)
 
-    def start_table(self, name):
+    def start_table(self, header):
         self._current_populator.populate()
+        header = DataRow(header)
         try:
-            self._current_populator = self.populators[name](self._datafile)
+            self._current_populator = self.populators[header.head](self._datafile, header.all)
         except KeyError:
             self._current_populator = self._null_populator
         return self._current_populator is not self._null_populator
@@ -111,7 +112,6 @@ class DataRow(object):
 
     def __init__(self, cells):
         self.cells, self.comments = self._parse(cells)
-
 
     @property
     def head(self): 

@@ -113,8 +113,16 @@ class TestDataDirectory(_TestData):
 
 class _Table(object):
 
+    @property
+    def name(self):
+        return self.header[0]
+
     def __init__(self, parent):
         self.parent = parent
+        self.header = None
+
+    def set_header(self, header):
+        self.header = header
 
     @property
     def source(self):
@@ -125,9 +133,7 @@ class _Table(object):
         return self.parent.directory
 
     def report_invalid_syntax(self, message, level='ERROR'):
-        # TODO: Use the real table name here when headers are available
-        table = type(self).__name__.replace('Table', '')
-        self.parent.report_invalid_syntax(table, message, level)
+        self.parent.report_invalid_syntax(self.name, message, level)
 
 
 class _WithSettings(object):

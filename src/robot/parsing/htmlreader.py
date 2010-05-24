@@ -127,8 +127,7 @@ class HtmlReader(HTMLParser.HTMLParser):
             self.td_end()
         if self.state == self.INITIAL:
             if len(self.current_row) > 0:
-                table_name = self.current_row[0]
-                if self.populator.start_table(table_name):
+                if self.populator.start_table(self.current_row):
                     self.state = self.PROCESS
                 else:
                     self.state = self.IGNORE

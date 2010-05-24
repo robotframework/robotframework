@@ -24,7 +24,7 @@ class TsvReader:
                 row = row[len(BOM_UTF8):]
             cells = [ self._process(cell) for cell in self._split_row(row) ]
             name = cells and cells[0].strip() or ''
-            if name.startswith('*') and populator.start_table(name.replace('*','')):
+            if name.startswith('*') and populator.start_table([ c.replace('*','') for c in cells ]):
                 process = True
             elif process:
                 populator.add(cells)
