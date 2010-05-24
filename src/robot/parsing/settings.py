@@ -44,6 +44,10 @@ class _Setting(object):
     def _string_value(self, value):
         return value if isinstance(value, basestring) else ' '.join(value)
 
+    def _concat_string_with_value(self, str, value):
+        str_val = self._string_value(value)
+        str += str_val if not str else ' ' + str_val
+        return str
 
 class Documentation(_Setting):
 
@@ -51,8 +55,7 @@ class Documentation(_Setting):
         self.value = ''
 
     def _set(self, value):
-        str_val = self._string_value(value)
-        self.value += str_val if not self.value else ' ' + str_val
+        self.value = self._concat_string_with_value(self.value, value)
 
 
 class Fixture(_Setting):
@@ -81,8 +84,7 @@ class Timeout(_Setting):
         if not self.value:
             self.value = value[0] if value else ''
             value = value[1:]
-        str_val = self._string_value(value)
-        self.message += str_val if not self.message else ' ' + str_val
+        self.message = self._concat_string_with_value(self.message, value)
 
 
 class Tags(_Setting):
