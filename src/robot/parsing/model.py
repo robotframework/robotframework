@@ -370,6 +370,12 @@ class ForLoop(_WithSteps):
                 return item.upper() == 'IN RANGE', index
         return False, len(content)
 
+    def is_comment(self):
+        return False
+
+    def is_for_loop(self):
+        return True
+
 
 class Step(object):
 
@@ -392,4 +398,7 @@ class Step(object):
         return vars
 
     def is_comment(self):
-        return not self.assign and not self.keyword and not self.args
+        return not (self.assign or self.keyword or self.args)
+
+    def is_for_loop(self):
+        return False
