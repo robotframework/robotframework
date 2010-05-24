@@ -1,4 +1,4 @@
-*** Settings ***
+﻿*** Settings ***
 Suite Setup     Run Tests  --loglevel TRACE  keywords/trace_log_return_value.txt
 Force Tags      regression
 Default Tags    pybot  jybot
@@ -9,8 +9,7 @@ Resource        atest_resource.txt
 Return from Userkeyword
     ${test} =  Check Test Case  ${TESTNAME}
     Check Log Message  ${test.kws[0].msgs[1]}  Return: u'value'  TRACE
-    Check Log Message  ${test.kws[0].kws[0].msgs[2]}  Return: u'value'  TRACE
-
+    Check Log Message  ${test.kws[0].kws[0].msgs[1]}  Return: u'value'  TRACE
 
 Return from Library Keyword
     ${test} =  Check Test Case  ${TESTNAME}
