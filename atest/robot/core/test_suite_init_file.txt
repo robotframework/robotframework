@@ -4,9 +4,9 @@ Force Tags       regression   jybot   pybot
 Resource         atest_resource.txt
 
 *** Variables ***
-${suite}   These three variables ...
-${subsuite_with_init}   ... get are set in ...
-${subsuite_without_init}   ... 'My Setup'.
+${suite}                   These three variables...
+${subsuite_with_init}      ...are set in...
+${subsuite_without_init}   ...'My Setup'.
 
 *** Test Cases ***
 Suite Name
@@ -29,12 +29,13 @@ Suite Setup
 Suite Teardown
     [Documentation]   Setting and not setting teardown using suite file
     Check Log Message   ${suite.teardown.kws[1].msgs[0]}   Teardown of test suite directory
-    Check Log Message   ${subsuite_with_init.teardown .kws[1].msgs[0]}   Teardown of sub test suite directory
+    Check Log Message   ${subsuite_with_init.teardown.kws[1].msgs[0]}   Teardown of sub test suite directory
     Should Be Equal   ${subsuite_without_init.teardown}   ${None}
 
-Invalid Suite Metadata
-    Check Stderr Contains  Test Suite Init File does not have metadata 'Invalid'.   Available: 'Documentation', 'Force Tags', 'Suite Setup', 'Suite Teardown', 'Test Setup' and 'Test Teardown'
-    Check Stderr Contains   Test Suite Init File does not have metadata 'Invalid In Sub'.  Available: 'Documentation', 'Force Tags', 'Suite Setup', 'Suite Teardown', 'Test Setup' and 'Test Teardown' 
+Invalid Suite Setting
+    ${base} =  Normalize Path  ${CURDIR}/../../testdata/core/test_suite_dir_with_init_file
+    Check Log Message  ${ERRORS.msgs[0]}  Invalid syntax in file '${base}${/}__init__.html' in table 'Setting': Non-existing setting 'Invalid'.  ERROR
+    Check Log Message  ${ERRORS.msgs[1]}  Invalid syntax in file '${base}${/}sub_suite_with_init_file${/}__init__.html' in table 'Setting': Non-existing setting 'Invalid In Sub'.  ERROR
 
 Test Tags
     [Documentation]   Settings tags for tests using Force and Default Tags in different suite levels and also [Tags] in tests
@@ -74,7 +75,7 @@ Test Fixture
 
 *** Keywords ***
 My Setup
-    Run Tests   ${EMPTY}   core${/}test_suite_dir_with_init_file
+    Run Tests   ${EMPTY}   core/test_suite_dir_with_init_file
     ${suite} =   Get Test Suite   Test Suite Dir With Init File
     ${subsuite_with_init} =   Get Test Suite   Sub Suite With Init File
     ${subsuite_without_init} =   Get Test Suite   Sub Suite Without Init File
