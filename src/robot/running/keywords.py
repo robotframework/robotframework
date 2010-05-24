@@ -208,7 +208,7 @@ class _VariableAssigner(object):
 
     def _raise_invalid_return_value(self, ret, wrong_type=False):
         if wrong_type:
-            err = 'Expected list like object, got %s instead' % utils.type_as_str(ret, True)
+            err = 'Expected list-like object, got %s instead' % utils.type_as_str(ret, True)
         else:
             err = 'Need more values than %d' % len(ret)
         raise DataError("Cannot assign return value to variables: %s." % err)
@@ -232,7 +232,7 @@ class ForLoop(BaseKeyword):
         self.starttime = utils.get_timestamp()
         context.output.start_keyword(self)
         try:
-            self._validate_vars()
+            self._validate()
             self._run(context)
         except ExecutionFailed, err:
             error = err
@@ -249,12 +249,16 @@ class ForLoop(BaseKeyword):
         if error:
             raise error
 
-    def _validate_vars(self):
+    def _validate(self):
         if not self.vars:
-            raise DataError('FOR loop variables missing.')
+            raise DataError('FOR loop has no loop variables.')
         for var in self.vars:
             if not is_scalar_var(var):
                 raise DataError("Invalid FOR loop variable '%s'." % var)
+        if not self.items:
+            raise DataError('FOR loop has no loop values.')
+        if not self.keywords:
+            raise DataError('FOR loop contains no keywords.')
 
     def _run(self, context):
         errors = []
@@ -297,9 +301,8 @@ class ForLoop(BaseKeyword):
         if len(items) % len(self.vars) == 0:
             return items
         raise DataError('Number of FOR loop values should be multiple of '
-                        'variables. Got %d variables (%s) but %d value%s.'
-                        % (len(self.vars), utils.seq2str(self.vars),
-                           len(items), utils.plural_or_not(items)))
+                        'variables. Got %d variables but %d value%s.'
+                        % (len(self.vars), len(items), utils.plural_or_not(items)))
 
     def _get_range_items(self, items):
         try:
