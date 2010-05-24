@@ -14,11 +14,11 @@ Top Level Suite End
     ${status} =  Create Status Line  Subsuites  61  FAIL
     Check Stdout Contains  ${SEP_LINE1}\n ${status}\n ${MSG_211}\n ${SEP_LINE1}\n
 
-Nestes Suite Start
-    Check Stdout Contains  ${SEP_LINE1}\n Subsuites.Sub 1 :: Normal test cases${SPACE * 42}\n ${SEP_LINE1}\n
+Nested Suite Start
+    Check Stdout Contains  ${SEP_LINE1}\n Subsuites.Sub1 :: Normal test cases${SPACE * 43}\n ${SEP_LINE1}\n
 
-Nestes Suite End
-    ${status} =  Create Status Line  Subsuites.Sub 2 :: Normal test cases  34  PASS
+Nested Suite End
+    ${status} =  Create Status Line  Subsuites.Sub2 :: Normal test cases  35  PASS
     Check Stdout Contains  ${SEP_LINE2}\n ${status}\n ${MSG_110}\n ${SEP_LINE1}\n
 
 Passing Test
