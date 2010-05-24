@@ -148,6 +148,8 @@ class ForLoopPopulator(Populator):
         return True
 
     def populate(self):
+        if not self._loop:
+            self._for_loop_creator(self._declaration)
         self._populator.populate()
 
 
