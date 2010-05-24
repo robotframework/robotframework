@@ -111,7 +111,7 @@ class UserKeywordHandler(object):
         self._libname = libname
         self._set_variable_dependent_settings(keyword)
         self.keywords = Keywords(keyword.steps)
-        self.arguments = UserKeywordArguments(keyword.args.value, self.longname)
+        self._keyword_args = keyword.args.value
         self.return_value = keyword.return_.value
 
     def _set_variable_dependent_settings(self, keyword):
@@ -134,24 +134,25 @@ class UserKeywordHandler(object):
         finally:
             context.namespace.end_user_keyword()
 
-    def _run(self, context, arguments):
+    def _run(self, context, argument_values):
+        args_spec = UserKeywordArguments(self._keyword_args, self.longname)
         variables = context.get_current_vars()
         if context.dry_run:
-            return self._dry_run(context, variables, arguments)
-        return self._variable_resolving_run(context, variables, arguments)
+            return self._dry_run(context, variables, args_spec, argument_values)
+        return self._variable_resolving_run(context, variables, args_spec, argument_values)
 
-    def _dry_run(self, context, variables, arguments):
-        args = self.arguments.resolve_arguments_for_dry_run(arguments)
-        self._execute(context, variables, args)
+    def _dry_run(self, context, variables, args_spec, argument_values):
+        resolved_arguments = args_spec.resolve_arguments_for_dry_run(argument_values)
+        self._execute(context, variables, args_spec, resolved_arguments)
         return None
 
-    def _variable_resolving_run(self, context, variables, arguments):
-        argument_values = self.arguments.resolve(arguments, variables)
-        self._execute(context, variables, argument_values)
+    def _variable_resolving_run(self, context, variables, args_spec, argument_values):
+        resolved_arguments = args_spec.resolve(argument_values, variables)
+        self._execute(context, variables, args_spec, resolved_arguments)
         return self._get_return_value(variables)
 
-    def _execute(self, context, variables, argument_values):
-        self.arguments.set_variables(argument_values, variables,
+    def _execute(self, context, variables, args_spec, resolved_arguments):
+        args_spec.set_variables(resolved_arguments, variables,
                                      context.output)
         self._verify_keyword_is_valid()
         self.timeout.start()
@@ -224,7 +225,7 @@ class EmbeddedArgs(UserKeywordHandler):
     def _copy_attrs_from_template(self, template):
         self._libname = template._libname
         self.keywords = template.keywords
-        self.arguments = template.arguments
+        self._keyword_args = template._keyword_args
         self.return_value = template.return_value
         self._doc = template._doc
         self.doc = template.doc
