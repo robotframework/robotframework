@@ -42,6 +42,7 @@ class _TestData(object):
         if not self.source:
             return None
         name = os.path.splitext(os.path.basename(self.source))[0]
+        name = name.split('__')[-1] # Strip ignored prefix
         name = name.replace('_', ' ').strip()
         return name.title() if name.islower() else name
 
