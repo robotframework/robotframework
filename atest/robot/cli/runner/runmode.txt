@@ -9,30 +9,30 @@ ${DEFAULT TEST ORDER}  ['test1', 'test2', 'test3', 'test4', 'test5', 'test6', 't
 
 *** Test Cases ***
 Randomizing Tests
-    [Setup]  Run Tests  --runmode random:test  misc${/}multiple_suites${/}01__suite_first.html
+    [Setup]  Run Tests  --runmode random:test  misc/multiple_suites/01__suite_first.html
     Should Not Be Equal As Strings  ${SUITE.tests}  ${DEFAULT TEST ORDER}
 
 Randomizing Suites
-    [Setup]  Run Tests  --runmode RANDOM:SuitE  misc${/}multiple_suites
+    [Setup]  Run Tests  --runmode RANDOM:SuitE  misc/multiple_suites
     Should Not Be Equal As Strings  ${SUITE.suites}  ${DEFAULT SUITE ORDER}
     ${tests} =  Get Tests
     Should Be Equal As Strings  ${tests}  ${DEFAULT TEST ORDER}
 
 Randomizing Suites And Tests
-    [Setup]  Run Tests  --runmode random:all  misc${/}multiple_suites
+    [Setup]  Run Tests  --runmode random:all  misc/multiple_suites
     Should Not Be Equal As Strings  ${SUITE.suites}  ${DEFAULT SUITE ORDER}
     ${tests} =  Get Tests
     Should Not Be Equal As Strings  ${tests}  ${DEFAULT TEST ORDER}
 
 Exit On Failure
-    [Setup]  Run Tests  --runmode exitonfailure  misc${/}pass_and_fail.html  misc${/}suites
+    [Setup]  Run Tests  --runmode exitonfailure  misc/pass_and_fail.html  misc/suites
     Check Test Case  Pass
     Check Test Case  Fail
     Check Test Case  SubSuite1 First  FAIL  Critical failure occurred and ExitOnFailure option is in use
     Check Test Case  Suite3 First  FAIL  Critical failure occurred and ExitOnFailure option is in use
 
 Correct Suite Teardown Is Executed When Exitonfailure Is Used
-    [Setup]  Run Tests  --runmode exitonfailure  misc${/}suites
+    [Setup]  Run Tests  --runmode exitonfailure  misc/suites
     ${tsuite} =  Get Test Suite  Suites
     Should Be Equal  ${tsuite.teardown.name}  BuiltIn.Log
     ${tsuite} =  Get Test Suite  Fourth
@@ -42,7 +42,7 @@ Correct Suite Teardown Is Executed When Exitonfailure Is Used
 
 *** Keywords ***
 Check That Default Orders Are Correct
-    Run Tests  ${EMPTY}  misc${/}multiple_suites
+    Run Tests  ${EMPTY}  misc/multiple_suites
     Should Be Equal As Strings  ${SUITE.suites}  ${DEFAULT SUITE ORDER}
     Should Be Equal As Strings  ${SUITE.suites[0].tests}  ${DEFAULT TEST ORDER}
 
