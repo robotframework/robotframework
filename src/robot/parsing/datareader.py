@@ -14,6 +14,7 @@
 
 import os
 import re
+import sys
 
 from robot import utils
 from robot.output import LOGGER
@@ -57,7 +58,15 @@ class FromFilePopulator(object):
     def __init__(self, datafile):
         self._datafile = datafile
         self._current_populator = self._null_populator
-        self._curdir = datafile.directory
+        self._curdir = self._get_curdir(datafile.directory)
+
+    def _get_curdir(self, path):
+        if not path:
+            return None
+        path = path.replace('\\','\\\\')
+        if not utils.is_jython:
+            path = path.decode(sys.getfilesystemencoding(), 'ignore')
+        return path
 
     def populate(self, path):
         LOGGER.info("Parsing test case file '%s'." % path)
