@@ -160,6 +160,23 @@ class RunnableTestSuite(BaseTestSuite):
         self.run_errors.end_suite()
 
 
+class RunnableMultiTestSuite(RunnableTestSuite):
+
+    def __init__(self, suitedatas):
+        BaseTestSuite.__init__(self, name='')
+        self.variables = GLOBAL_VARIABLES.copy()
+        self.doc = ''
+        self.imports = []
+        # FIXME: remove if possible
+        #self.user_keywords = UserLibrary(data.keyword_table.keywords)
+        self.setup = Setup(None, None)
+        self.teardown = Teardown(None, None)
+        for suite in suitedatas:
+            RunnableTestSuite(suite, parent=self)
+        self._run_mode_exit_on_failure = False
+        self._run_mode_dry_run = False
+
+
 class RunnableTestCase(BaseTestCase):
 
     def __init__(self, tc_data, parent):
