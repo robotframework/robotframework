@@ -28,11 +28,14 @@ Simple For
 
 Empty For
     ${test} =  Check Test Case  Empty for
-    Should Be For Keyword  ${test.kws[0]}  2
+    Should Be For Keyword  ${test.kws[0]}  0
 
 For Without Value
     ${test} =  Check Test Case  For Without value
     Should Be For Keyword  ${test.kws[0]}  0
+
+For Loop Over Empty List Var
+    Check Test Case  ${TESTNAME}
 
 For Failing
     ${test} =  Check Test Case  For Failing
@@ -128,21 +131,21 @@ For With Set
     Check Log Message  ${test.kws[0].kws[1].kws[2].msgs[0]}  \@{list} = [ 1 | 2 | 3 | z ]
 
 For Without In
-    Check Syntax Error Test Case  For Without In 1
-    Check Syntax Error Test Case  For Without In 2
-    Check Syntax Error Test Case  For Without In 3
+    Check Test Case  For Without In 1
+    Check Test Case  For Without In 2
+    Check Test Case  For Without In 3
 
 For Without Parameters
-    Check Syntax Error Test Case  For Without Parameters
+    Check Test Case  For Without Parameters
 
 For Without Variable
-    Check Syntax Error Test Case  For without variable
+    Check Test Case  For without variable
 
 Variable Format
-    Check Syntax Error Test Case  Variable Format 1
-    Check Syntax Error Test Case  Variable Format 2
-    Check Syntax Error Test Case  Variable Format 3
-    Check Syntax Error Test Case  Variable Format 4
+    Check Test Case  Variable Format 1
+    Check Test Case  Variable Format 2
+    Check Test Case  Variable Format 3
+    Check Test Case  Variable Format 4
 
 For With Non Existing Keyword
     Check Test Case  For With Non Existing Keyword
@@ -171,7 +174,6 @@ For With Multiple Variables
 For With Wrong Number Of Parameters For Multiple Variables
     ${test} =  Check Test Case  For With Wrong number of parameters for multiple variables
     Should Be For Keyword  ${test.kws[1]}  0
-    Check Log Message  ${test.kws[1].msgs[0]}  Number of FOR loop values should be multiple of variables. Got 3 variables ('\${a}', '\${b}' and '\${c}') but 5 values.  FAIL
 
 Cut Long Variable Value In For Item Name
     ${test} =  Check Test Case  Cut Long Variable Value In For Item Name
@@ -226,7 +228,6 @@ For In Range With Multiple Variables
 For In Range With Too Many Arguments
     ${test} =  Check Test Case  For In Range With Too Many Arguments
     Should Be For In Range Keyword  ${test.kws[0]}  0
-    Check Log Message  ${test.kws[0].msgs[0]}  FOR IN RANGE expected 1-3 arguments, got 4 instead.  FAIL
 
 For In Range With No Arguments
     Check Test Case  For In Range With No Arguments
@@ -259,12 +260,6 @@ Should Be For Item
     [Arguments]  ${kw}  ${name}
     Equals  ${kw.type}  foritem  Not FOR item
     Equals  ${kw.name}  ${name}
-
-Check Syntax Error Test Case
-    [Arguments]  ${name}
-    ${test} =  Check Test Case  ${name}
-    Check Log Message  ${test.kws[0].msgs[0]}  This is executed
-    Check Log Message  ${test.kws[1].msgs[0]}  Syntax error: Invalid syntax in FOR loop. Expected format:\n | : FOR | \${var} | IN | item1 | item2 |  FAIL
 
 Test "Simple For 2" Helper
     [Arguments]  ${kw}  ${num}
