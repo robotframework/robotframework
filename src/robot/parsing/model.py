@@ -172,7 +172,13 @@ class _SettingTable(_Table, _WithSettings):
         self.imports = []
         self._setters = self._get_setters()
 
-    def add_metadata(self, name, value, comment=None):
+    def _get_adder(self, adder_method):
+        def adder(value, comment):
+            name = value[0] if value else ''
+            adder_method(name, value[1:], comment)
+        return adder
+
+    def add_metadata(self, name, value='', comment=None):
         self.metadata.append(Metadata(self, name, value, comment))
         return self.metadata[-1]
 
@@ -215,26 +221,19 @@ class TestCaseFileSettingTable(_SettingTable):
                                      'Force Tags': self.force_tags.set,
                                      'Default Tags': self.default_tags.set,
                                      'Test Timeout': self.test_timeout.set,
-                                     'Library': ImportSetter(self.add_library),
-                                     'Resource': ImportSetter(self.add_resource),
-                                     'Variables': ImportSetter(self.add_variables),
-                                     'Metadata': ImportSetter(self.add_metadata)})
-
-
-class ImportSetter(object):
-    def __init__(self, setter):
-        self._setter = setter
-    def __call__(self, datacells, comment):
-        self._setter(datacells[0], datacells[1:], comment)
+                                     'Library': self._get_adder(self.add_library),
+                                     'Resource': self._get_adder(self.add_resource),
+                                     'Variables': self._get_adder(self.add_variables),
+                                     'Metadata': self._get_adder(self.add_metadata)})
 
 
 class ResourceFileSettingTable(_SettingTable):
     def _get_setters(self):
         return utils.NormalizedDict({'Documentation': self.doc.set,
                                      'Document': self.doc.set,
-                                     'Library': ImportSetter(self.add_library),
-                                     'Resource': ImportSetter(self.add_resource),
-                                     'Variables': ImportSetter(self.add_variables)})
+                                     'Library': self._get_adder(self.add_library),
+                                     'Resource': self._get_adder(self.add_resource),
+                                     'Variables': self._get_adder(self.add_variables)})
 
 
 class InitFileSettingTable(_SettingTable):
@@ -250,10 +249,10 @@ class InitFileSettingTable(_SettingTable):
                                      'Test Teardown': self.test_teardown.set,
                                      'Test Postcondition': self.test_teardown.set,
                                      'Force Tags': self.force_tags.set,
-                                     'Library': ImportSetter(self.add_library),
-                                     'Resource': ImportSetter(self.add_resource),
-                                     'Variables': ImportSetter(self.add_variables),
-                                     'Metadata': ImportSetter(self.add_metadata)})
+                                     'Library': self._get_adder(self.add_library),
+                                     'Resource': self._get_adder(self.add_resource),
+                                     'Variables': self._get_adder(self.add_variables),
+                                     'Metadata': self._get_adder(self.add_metadata)})
 
 
 class VariableTable(_Table):
