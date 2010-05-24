@@ -1,0 +1,13 @@
+*** Settings ***
+Library         BinaryDataLibrary
+
+*** Test Cases ***
+Bytes
+    Print Bytes
+
+Byte Error
+    Raise Byte Error
+
+Binary Data
+    Print Binary Data
+

@@ -1,0 +1,39 @@
+*** Settings ***
+Documentation   Test handling situation where library writes binary data into stdout or raises exception containing it. These tests currently fail when run on Jython. The problem is most likely some weird bug in Jython that needs more investication.
+Suite Setup     My Run Tests
+Force Tags      regression  pybot  jybot  jython-bug
+Resource        atest_resource.txt
+Variables       ../../resources/unicode_vars.py
+
+*** Test Cases ***
+Bytes
+    [Documentation]  Check that bytes 0-255, incl. control chars, can be printed ok. The output from bytes 128-255 is an empty string on Python and unichr(byte) on Jython. This is due to string/unicode implementation differences on Python and Jython
+    ${test} =  Check Test Case  Bytes
+    Message  First check some printable bytes and control chars.  Control chars should result to an empty string.
+    :FOR  ${index}  ${exp}  IN  0  \  1  \
+    ...  7  \  8  \  9  \t  10
+    ...  \n  32  \ \  82  R  111  o
+    ...  98  b  111  o  116  t  123
+    ...  {
+    \  Check Log Message  ${test.kws[0].msgs[${index}]}  Byte ${index}: '${exp}'
+    Message  Check that all bytes were really written without errors.
+    @{range} =  Evaluate  range(256)
+    :FOR  ${index}  IN  @{range}
+    \  Starts  ${test.kws[0].msgs[${index}].message}  Byte ${index}:
+    Check Log Message  ${test.kws[0].msgs[-1]}  All bytes printed succesfully
+
+Byte Error
+    [Documentation]  Check an exception containing control chars is handled ok
+    Check Test Case  Byte Error  FAIL  REGEXP: Bytes 0, 10, 127, 255: .*
+
+Binary Data
+    [Documentation]  Make sure even totally binary data doesn't break anything
+    ${test} =  Check Test Case  Binary Data
+    Check Log Message  ${test.kws[0].msgs[1]}  Binary data printed successfully
+
+*** Keywords ***
+My Run Tests
+    Run Tests  ${EMPTY}  core/binary_data.txt
+    ${stderr} =  Get Stderr
+    Equals  ${stderr}  \
+
