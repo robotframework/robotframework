@@ -1,0 +1,31 @@
+*** Settings ***
+Documentation   Empty test cases and user keywords
+Suite Setup     Run Tests  ${EMPTY}  core/empty_testcase_and_uk.txt
+Force Tags      regression  pybot  jybot
+Resource        atest_resource.txt
+
+*** Test Cases ***
+Empty Test Case
+    Check Test Case  ${TESTNAME}
+
+Empty Test Case With Setup And Teardown
+    Check Test Case  ${TESTNAME}
+
+Empty User Keyword
+    Check Test Case  ${TESTNAME}
+
+User Keyword With [Return]
+    Check Test Case  ${TESTNAME}
+
+User Keyword With Empty [Return]
+    Check Test Case  ${TESTNAME}
+
+Empty User Keyword With Other Settings Than [Return]
+    Check Test Case  ${TESTNAME}
+
+Non-Empty And Empty User Keyword
+    Check Test Case  ${TESTNAME}
+
+Non-Empty UK Using Empty UK
+    Check Test Case  ${TESTNAME}
+
