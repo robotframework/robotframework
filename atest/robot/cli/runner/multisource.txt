@@ -33,19 +33,19 @@ Overridden Name
 
 Wildcards
     Run Tests  ${EMPTY}  misc/suites/tsuite?.*ml
-    Check Names  ${suite}  Tsuite 1 & Tsuite 2 & Tsuite 3
-    Check Content  ${suite}  ['Tsuite 1', 'Tsuite 2', 'Tsuite 3']  []
-    Check Names  ${suite.suites[0]}  Tsuite 1  Tsuite 1 & Tsuite 2 & Tsuite 3.
+    Check Names  ${suite}  Tsuite1 & Tsuite2 & Tsuite3
+    Check Content  ${suite}  ['Tsuite1', 'Tsuite2', 'Tsuite3']  []
+    Check Names  ${suite.suites[0]}  Tsuite1  Tsuite1 & Tsuite2 & Tsuite3.
     Check Content  ${suite.suites[0]}  []  ['Suite1 First', 'Suite1 Second', 'Third In Suite1']
-    Check Names  ${suite.suites[0].tests[0]}  Suite1 First  Tsuite 1 & Tsuite 2 & Tsuite 3.Tsuite 1.  
-    Check Names  ${suite.suites[0].tests[1]}  Suite1 Second  Tsuite 1 & Tsuite 2 & Tsuite 3.Tsuite 1.  
-    Check Names  ${suite.suites[0].tests[2]}  Third In Suite1  Tsuite 1 & Tsuite 2 & Tsuite 3.Tsuite 1.  
-    Check Names  ${suite.suites[1]}  Tsuite 2  Tsuite 1 & Tsuite 2 & Tsuite 3.
+    Check Names  ${suite.suites[0].tests[0]}  Suite1 First  Tsuite1 & Tsuite2 & Tsuite3.Tsuite1.  
+    Check Names  ${suite.suites[0].tests[1]}  Suite1 Second  Tsuite1 & Tsuite2 & Tsuite3.Tsuite1.  
+    Check Names  ${suite.suites[0].tests[2]}  Third In Suite1  Tsuite1 & Tsuite2 & Tsuite3.Tsuite1.  
+    Check Names  ${suite.suites[1]}  Tsuite2  Tsuite1 & Tsuite2 & Tsuite3.
     Check Content  ${suite.suites[1]}  []  ['Suite2 First']
-    Check Names  ${suite.suites[1].tests[0]}  Suite2 First  Tsuite 1 & Tsuite 2 & Tsuite 3.Tsuite 2.
-    Check Names  ${suite.suites[2]}  Tsuite 3  Tsuite 1 & Tsuite 2 & Tsuite 3.
+    Check Names  ${suite.suites[1].tests[0]}  Suite2 First  Tsuite1 & Tsuite2 & Tsuite3.Tsuite2.
+    Check Names  ${suite.suites[2]}  Tsuite3  Tsuite1 & Tsuite2 & Tsuite3.
     Check Content  ${suite.suites[2]}  []  ['Suite3 First']
-    Check Names  ${suite.suites[2].tests[0]}  Suite3 First  Tsuite 1 & Tsuite 2 & Tsuite 3.Tsuite 3.
+    Check Names  ${suite.suites[2].tests[0]}  Suite3 First  Tsuite1 & Tsuite2 & Tsuite3.Tsuite3.
 
 
 *** Keywords ***
