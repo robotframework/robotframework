@@ -22,7 +22,18 @@ from robot.variables import is_var, is_list_var, is_scalar_var
 class Keywords(object):
 
     def __init__(self, steps):
-        self._keywords = [_KeywordFactory(step) for step in steps]
+        self._keywords = []
+        for step in steps:
+            self._add_keyword(step)
+
+    def _add_keyword(self, step):
+        if step.is_comment():
+            return
+        if step.is_for_loop():
+            keyword = ForLoop(step)
+        else:
+            keyword = Keyword(step.keyword, step.args, step.assign)
+        self._keywords.append(keyword)
 
     def run(self, context):
         errors = []
@@ -41,12 +52,6 @@ class Keywords(object):
 
     def __iter__(self):
         return iter(self._keywords)
-
-
-def _KeywordFactory(step):
-    if not hasattr(step, 'steps'):
-        return Keyword(step.keyword, step.args, step.assign)
-    return ForLoop(step)
 
 
 class Keyword(BaseKeyword):
