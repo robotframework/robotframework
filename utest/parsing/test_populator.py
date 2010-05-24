@@ -1,5 +1,4 @@
 import unittest
-import os
 from StringIO import StringIO
 
 from robot.parsing.datareader import FromFilePopulator, DataRow
@@ -212,6 +211,14 @@ class TestCaseFilePopulatingTest(_PopulatorTest):
         assert_true(not for_loop.range)
         assert_equals(for_loop.vars, ['${i}'])
         assert_equals(for_loop.items, ['10', '20', '30', '40', '50', '60'])
+
+    def test_for_loop_with_empty_body(self):
+        self._create_table('Test cases', [['For loop test'],
+                                          ['', ':FOR ', '${var}', 'IN', 'foo'],
+                                          ['', 'Log', 'outside FOR']])
+        test = self._first_test()
+        assert_equals(len(test.steps), 2)
+        assert_equals(test.steps[0].steps, [])
 
     def test_test_settings(self):
         doc = 'This is domumentation for the test case'
