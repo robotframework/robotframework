@@ -260,7 +260,11 @@ class TestStep(unittest.TestCase):
         self._test(['${v1}=', '${v2}=', 'KW'], assign=['${v1}', '${v2}'])
 
     def test_assign_without_keyword(self):
-        self._test(['${v1}', '${v2}'], kw='', assign=['${v1}', '${v2}'])
+        self._test(['${v1}', '${v2}'], kw=None, assign=['${v1}', '${v2}'])
+
+    def test_is_comment(self):
+        assert_true(Step([], comment="comment").is_comment())
+        assert_false(Step(['KW'], comment="comment").is_comment())
 
     def _test(self, content, kw='KW', args=[], assign=[]):
         step = Step(content)

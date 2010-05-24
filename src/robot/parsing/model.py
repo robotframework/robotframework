@@ -378,7 +378,7 @@ class Step(object):
         try:
             self.keyword = content[len(self.assign)]
         except IndexError:
-            self.keyword = ''
+            self.keyword = None
         self.args = content[len(self.assign)+1:]
         self.comment = comment
 
@@ -390,3 +390,6 @@ class Step(object):
                 break
             vars.append(item)
         return vars
+
+    def is_comment(self):
+        return not self.assign and not self.keyword and not self.args
