@@ -107,7 +107,7 @@ class UserKeywordHandler(object):
     shortdoc = property(lambda self: self.doc.splitlines()[0] if self.doc else '')
 
     def __init__(self, keyword, libname):
-        self.name = utils.printable_name(keyword.name)
+        self.name = keyword.name
         self._libname = libname
         self._set_variable_dependent_settings(keyword)
         self.keywords = Keywords(keyword.steps)

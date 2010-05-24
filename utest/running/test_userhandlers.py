@@ -56,8 +56,8 @@ class TestEmbeddedArgs(unittest.TestCase):
         assert_equals(self.tmp1.embedded_args, ['${item}'])
         assert_equals(self.tmp1.name_regexp.pattern,
                       '^User\\ selects\\ (.*?)\\ from\\ list$')
-        assert_equals(self.tmp1.name, 'User Selects ${item} From List')
-        assert_equals(self.tmp1.longname, 'resource.User Selects ${item} From List')
+        assert_equals(self.tmp1.name, 'User selects ${item} from list')
+        assert_equals(self.tmp1.longname, 'resource.User selects ${item} from list')
 
     def test_get_multiple_embedded_args_and_regexp(self):
         assert_equals(self.tmp2.embedded_args, ['${x}', '${y}', '${z}'])
