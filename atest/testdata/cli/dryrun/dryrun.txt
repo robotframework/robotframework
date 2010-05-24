@@ -24,7 +24,7 @@ Userkeyword return value
     ${quux}=  Some Return Value  ${foo}  ${bar}
 
 For Loops
-    [Documentation]  FAIL Keyword 'resource.Anarchy In The UK' expected 3 arguments, got 2.
+    [Documentation]  FAIL Keyword 'resource.Anarchy in the UK' expected 3 arguments, got 2.
     ::FOR  ${i}  IN RANGE  10
     \   Log  ${i}
     \   Simple UK
@@ -41,7 +41,7 @@ Too few arguments
     Should Be Equal  1
 
 Too few arguments for UK
-    [Documentation]  FAIL Keyword 'resource.Anarchy In The UK' expected 3 arguments, got 1.
+    [Documentation]  FAIL Keyword 'resource.Anarchy in the UK' expected 3 arguments, got 1.
     Anarchy in the UK  foo
 
 Too many arguments
