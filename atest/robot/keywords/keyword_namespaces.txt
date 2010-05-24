@@ -24,12 +24,12 @@ Keyword From Resource Overrides Keywords From Libraries
 
 Keyword From User Library Overrides Keywords From Standard Library
     Check Test Case  Keyword From User Library Overrides Keywords From Standard Library
-    Check Stderr Contains  [ WARN ]  Keyword 'Comment' found both from a user created test library 'MyLibrary1' and Robot Framework standard library 'BuiltIn'. The user created keyword is used.  To select explicitly, and to get rid of this warning, use full format i.e. either 'MyLibrary1.Comment' or 'BuiltIn.Comment'.
-    Check Stderr Contains  [ WARN ]  Keyword 'Copy Directory' found both from a user created test library 'MyLibrary1' and Robot Framework standard library 'OperatingSystem'. The user created keyword is used.  To select explicitly, and to get rid of this warning, use full format i.e. either 'MyLibrary1.Copy Directory' or 'OperatingSystem.Copy Directory'.
+    Check Log Message  ${ERRORS.msgs[0]}  Keyword 'Comment' found both from a user created test library 'MyLibrary1' and Robot Framework standard library 'BuiltIn'. The user created keyword is used. To select explicitly, and to get rid of this warning, use full format i.e. either 'MyLibrary1.Comment' or 'BuiltIn.Comment'.  WARN
+    Check Log Message  ${ERRORS.msgs[1]}  Keyword 'Copy Directory' found both from a user created test library 'MyLibrary1' and Robot Framework standard library 'OperatingSystem'. The user created keyword is used. To select explicitly, and to get rid of this warning, use full format i.e. either 'MyLibrary1.Copy Directory' or 'OperatingSystem.Copy Directory'.  WARN
 
 Keyword From User Library Overrides Keywords From Standard Library Even When Std Lib Imported With Different Name
     Check Test Case  Keyword From User Library Overrides Keywords From Standard Library Even When Std lib imported with Different Name
-    Check Stderr Contains  [ WARN ]  Keyword 'Open Connection' found both from a user created test library 'MyLibrary1' and Robot Framework standard library 'Telnet'. The user created keyword is used.  To select explicitly, and to get rid of this warning, use full format i.e. either 'MyLibrary1.Open Connection' or 'StdLibWithCustomName.Open Connection'.
+    Check Log Message  ${ERRORS.msgs[2]}  Keyword 'Replace String' found both from a user created test library 'MyLibrary1' and Robot Framework standard library 'String'. The user created keyword is used. To select explicitly, and to get rid of this warning, use full format i.e. either 'MyLibrary1.Replace String' or 'Std Lib With Custom Name.Replace String'.  WARN
 
 No Warning When User Library Keyword Is Registered As RunKeyword Variant And It Has Same Name As Std Keyword
     Check Test Case  No Warning when User Library Keyword Is Registered As RunKeyword Variant And It Has Same Name As Std Keyword

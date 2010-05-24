@@ -4,7 +4,7 @@ Resource        resources/my_resource_2.html
 Library         resources/MyLibrary1.py
 Library         resources/MyLibrary2.py
 Library         OperatingSystem
-Library         Telnet  WITH NAME  Std Lib With Custom Name
+Library         String  WITH NAME  Std Lib With Custom Name
 
 *** Test Cases ***
 Keywords With Unique Name Are Ok
@@ -52,7 +52,12 @@ Keyword From User Library Overrides Keywords From Standard Library
     Copy Directory
 
 Keyword From User Library Overrides Keywords From Standard Library Even When Std Lib Imported With Different Name
-    Open Connection
+    ${ret} =  Replace String
+    Should Be Equal  ${ret}  I replace nothing!
+    ${ret} =  MyLibrary1.Replace String
+    Should Be Equal  ${ret}  I replace nothing!
+    ${ret} =  Std Lib With Custom Name.Replace String  I replace this!  this  that
+    Should Be Equal  ${ret}  I replace that!
 
 No Warning When User Library Keyword Is Registered As RunKeyword Variant And It Has Same Name As Std Keyword
     Run Keyword If  ${TRUE}  Log  Hello
