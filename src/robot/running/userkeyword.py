@@ -177,14 +177,14 @@ class UserKeywordHandler(object):
 
 class EmbeddedArgsTemplate(UserKeywordHandler):
 
-    def __init__(self, handlerdata, libname):
-        if handlerdata.args:
+    def __init__(self, keyword, libname):
+        if keyword.args.value:
             raise TypeError('Cannot have normal arguments')
         self.embedded_args, self.name_regexp \
-                = self._read_embedded_args_and_regexp(handlerdata.name)
+                = self._read_embedded_args_and_regexp(keyword.name)
         if not self.embedded_args:
             raise TypeError('Must have embedded arguments')
-        UserKeywordHandler.__init__(self, handlerdata, libname)
+        UserKeywordHandler.__init__(self, keyword, libname)
 
     def _read_embedded_args_and_regexp(self, string):
         args = []
