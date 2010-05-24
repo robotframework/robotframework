@@ -1,0 +1,147 @@
+*** Settings ***
+Documentation   Tests for --test and --suite options
+Force Tags      regression  jybot  pybot
+Resource        atest_resource.txt
+
+*** Variables ***
+${TESTDATA_TEST}  misc/many_tests.html
+${TESTDATA_SUITES}  misc/suites
+${ESCAPES}  --escape star:STAR --escape quest:QUEST --escape space:SPACE
+${TEST_ERROR_MESSAGE}  Suite 'Many Tests' contains no test cases named 'notexists'.\n\n Try --help for usage information.
+${SUITE_ERROR_MESSAGE}  Suite 'Suites' contains no test suites named 'notexists'.\n\n Try --help for usage information.
+
+*** Test Cases ***
+One Call To Test
+    Run And Check Tests  --test First  First
+
+Test Name With Spaces, Underscores And Mixed Case
+    [Documentation]  Testing that spaces, underscores and case are ignored in suite names.
+    Run And Check Tests  --test sec_SPACE_ondONE  Second One
+
+One Call To Test With Normalized Test Name
+    Run And Check Tests  --test secondone  Second One
+
+Two Calls To Test
+    Run And Check Tests  --test First --test thirdone  First  Third One
+
+One Call To Test With Nonexisting Test Name
+    Run Failing Test  --test notexists  ${TESTDATA_TEST}  ${TEST_ERROR_MESSAGE}
+
+Two Calls To Test With One Nonexisting Test Name
+    Run And Check Tests  --test notexists --test First  First
+
+One Call To Test With Pattern
+    Run And Check Tests  --test STARoneSTAR  Second One  Third One  Fourth One With More Complex Name
+
+Two Calls To Test With Patterns
+    Run And Check Tests  --test STARone --test FiQUESTst  First  Second One  Third One
+
+Suite With One Arg
+    Run And Check Suites And Tests  --suite tsuite1  ['Tsuite1']  Suite1 First  Suite1 Second  Third in Suite1
+
+Suite Name With Spaces, Underscores And Mixed Case
+    [Documentation]  Testing that spaces, underscores and case are ignored in suite names.
+    Run And Check Suites And Tests  --suite t_SPACE_SuiTe_1  ['Tsuite1']  Suite1 First  Suite1 Second  Third in Suite1
+
+Suite With Two Args
+    Run And Check Suites And Tests  --suite tsuite1 --suite TSuite2  ['Tsuite1', 'Tsuite2']  Suite1 First  Suite1 Second  Third in Suite1  Suite2 First
+
+Correct Files Processed With --suite Matches Files
+    [Documentation]  Testing that only files matching to --suite are processed Using data from previous test case.
+    ${syslog} =  Get Syslog
+    ${suitedir} =  Join Path  ${DATADIR}  ${TESTDATA_SUITES}
+    ${subsuitedir} =  Join Path  ${suitedir}  subsuites
+    Contains  ${syslog}  Parsing test data directory '${suitedir}'
+    Contains  ${syslog}  Ignoring file or directory 'fourth.html'
+    Contains  ${syslog}  Ignoring file or directory 'tsuite3.html'
+    Contains  ${syslog}  Parsing test suite directory '${subsuitedir}'
+    Contains  ${syslog}  Ignoring file or directory 'sub1.html'
+    Contains  ${syslog}  Ignoring file or directory 'sub2.html'
+    Contains  ${syslog}  Parsing test case file '${suitedir}${/}tsuite1.html
+    Contains  ${syslog}  Parsing test case file '${suitedir}${/}tsuite2.html
+
+Suite With No Matching Args
+    Run Failing Test  --suite notexists  ${TESTDATA_SUITES}  ${SUITE_ERROR_MESSAGE}
+
+Suite With Matching And NonMatching Args
+    Run And Check Suites And Tests  --suite tsuite1 --suite notexists  ['Tsuite1']  Suite1 First  Suite1 Second  Third in Suite1
+
+Suite With Pattern In Arg
+    Run And Check Suites And Tests  --suite tSTAR  ['Tsuite1', 'Tsuite2', 'Tsuite3']  Suite1 First  Suite1 Second  Third in Suite1  Suite2 First  Suite3 First
+
+Selecting Directory Suite
+    Run And Check Suites Within Subdirs  --suite subsuites  ['Sub1', 'Sub2']  SubSuite1 First  SubSuite2 First
+
+Correct Files Processed When --suite Matches Directory
+    [Documentation]  Testing that only files matching to --suite are processed. This time --suite matches directory so all suites under it should be processed. Using data from previous test case.
+    ${syslog} =  Get Syslog
+    ${suitedir} =  Join Path  ${DATADIR}  ${TESTDATA_SUITES}
+    ${subsuitedir} =  Join Path  ${suitedir}  subsuites
+    Contains  ${syslog}  Parsing test data directory '${suitedir}'
+    Contains  ${syslog}  Ignoring file or directory 'fourth.html'
+    Contains  ${syslog}  Ignoring file or directory 'tsuite1.html'
+    Contains  ${syslog}  Ignoring file or directory 'tsuite2.html'
+    Contains  ${syslog}  Ignoring file or directory 'tsuite3.html'
+    Contains  ${syslog}  Parsing test suite directory '${subsuitedir}'
+    Contains  ${syslog}  Parsing test case file '${subsuitedir}${/}sub1.html'
+    Contains  ${syslog}  Parsing test case file '${subsuitedir}${/}sub2.html'
+
+Suite Under Subdirectory Using Pattern
+    Run And Check Suites Within Subdirs  --suite subQUEST  ['Sub1', 'Sub2']  SubSuite1 First  SubSuite2 First
+
+Suite And Test Togehter
+    [Documentation]  Testing that only tests matching --test which are under suite matching --suite are run.
+    Run And Check Suites And Tests  --suite subsuites --suite tsuite3 --test SubSuite1First --test Suite4First  ['Subsuites']  SubSuite1First
+
+Suite With Include And Exclude
+    Run And Check Suites And Tests  --suite tsuiteQUEST --include tSTAR --exclude t2  ['Tsuite1', 'Tsuite2', 'Tsuite3']  Suite1 First  Suite2 First  Suite3 First
+
+Suite, Test Include And Exclude Together
+    Run And Check Suites And Tests  --suite subSTAR --test STARfirst -s nosuite -t notest --include t1 --exclude sub3  ['Subsuites']  SubSuite1First
+
+Filter Using Suite Long Name
+    Run And Check Suites And Tests  --suite suites.fourth  ['Fourth']  Suite4 First
+    Run And Check Suites And Tests  --suite Subsuites.Sub1  ['Subsuites']  SubSuite1 First
+
+Filter Using Long Suite Name WIth Pattern
+    Run And Check Suites And Tests  --suite suites.*.SUB?  ['Subsuites']  SubSuite1 First  SubSuite2 First
+
+Filter Using Long Suite Name And Other Filters
+    Run And Check Suites And Tests  --suite suites.fourth --suite tsuite1 -s Subsuites.Sub1 --test *first* --exclude none  ['Fourth','Subsuites','Tsuite1']  Suite4 First  Suite1 First  SubSuite1 First
+
+Filter Suite When Suites Are Ordered With Prefix
+    Run Suites  --suite Suite2  ${DATADIR}/misc/multiple_suites
+    Should Be True  ${SUITE.suites} == ['Subsuite1']
+    Should Be True  ${SUITE.suites[0].suites} == ['Suite2']
+
+*** Keywords ***
+Run And Check Tests
+    [Arguments]  ${params}  @{tests}
+    Run Tests  ${params} ${ESCAPES}  ${TESTDATA_TEST}
+    Stderr Should Be Empty
+    Check Suite Contains Tests  ${suite}  @{tests}
+
+Run And Check Suites And Tests
+    [Arguments]  ${params}  ${suites}  @{tests}
+    Run Suites  ${params}
+    Should Be True  ${SUITE.suites} == ${suites}
+    Check Suite Contains Tests  ${SUITE}  @{tests}
+
+Run And Check Suites Within Subdirs
+    [Arguments]  ${params}  ${suites}  @{tests}
+    Run Suites  ${params}
+    Should Be True  ${SUITE.suites[0].suites} == ${suites}
+    Check Suite Contains Tests  ${SUITE}  @{tests}
+
+Run Suites
+    [Arguments]  ${params}  ${testdata}=${TESTDATA_SUITES}
+    Set Suite Variable  $SUITE  ${None}
+    Run Tests  ${params} ${ESCAPES}  ${testdata}
+    Stderr Should Be Empty
+
+Run Failing Test
+    [Arguments]  ${params}  ${testdata}  ${error_msg}
+    Run Tests Without Processing Output  ${params} ${ESCAPES}  ${testdata}
+    ${stderr} =  Get Stderr
+    Fail Unless Ends  ${stderr.strip()}  ${error_msg}
+
