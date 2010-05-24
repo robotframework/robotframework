@@ -51,7 +51,8 @@ class Documentation(_Setting):
         self.value = ''
 
     def _set(self, value):
-        self.value = self._string_value(value)
+        str_val = self._string_value(value)
+        self.value += str_val if not self.value else ' ' + str_val
 
 
 class Fixture(_Setting):
@@ -61,11 +62,14 @@ class Fixture(_Setting):
         self.args = []
 
     def _set(self, value):
-        self.name = value[0] if value else ''
-        self.args = value[1:]
+        if not self.name:
+            self.name = value[0] if value else ''
+            value = value[1:]
+        self.args.extend(value)
 
     def is_set(self):
         return self.name is not None
+
 
 class Timeout(_Setting):
 
@@ -74,8 +78,11 @@ class Timeout(_Setting):
         self.message = ''
 
     def _set(self, value):
-        self.value = value[0] if value else ''
-        self.message = ' '.join(value[1:])
+        if not self.value:
+            self.value = value[0] if value else ''
+            value = value[1:]
+        str_val = self._string_value(value)
+        self.message += str_val if not self.message else ' ' + str_val
 
 
 class Tags(_Setting):
@@ -84,8 +91,8 @@ class Tags(_Setting):
         _Setting.__init__(self, table, comment)
         self._value_set = False
 
-    def set(self, value, comment=None):
-        _Setting.set(self, value, comment)
+    def _set(self, value):
+        self.value.extend(value)
         self._value_set = True
 
     def is_set(self):

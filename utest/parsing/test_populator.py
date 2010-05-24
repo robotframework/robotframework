@@ -105,12 +105,37 @@ class TestCaseFilePopulatingTest(_PopulatorTest):
 
     def test_adding_settings(self):
         doc = 'This is doc'
+        more_doc = 'smore'
+        force_tags = 'force'
+        more_tags = 'more tagness'
+        default_tags = 'default'
         setup_name, setup_args = 'Keyword Name', ['a1', 'a2']
         self._create_table('Settings', [['Documentation', doc],
+                                        ['S  uite Tear Down'] + [setup_name],
                                         ['S  uite SeTUp'] + [setup_name],
-                                        ['...'] + setup_args])
-        self._assert_setting('doc', doc)
+                                        ['...'] + setup_args,
+                                        ['S  uite teardown'] + setup_args,
+                                        ['Doc um entati on', more_doc],
+                                        ['force tags', force_tags],
+                                        ['Default tags', default_tags],
+                                        ['FORCETAGS', more_tags],
+                                        ['test timeout', '1s'],
+                                        ['De Fault TAGS', more_tags],
+                                        ['test timeout', 'timeout message'],
+                                        ['test timeout', more_doc]
+                                        ])
+        self._assert_setting('doc', doc + ' ' + more_doc)
         self._assert_fixture('suite_setup', setup_name, setup_args)
+        self._assert_fixture('suite_teardown', setup_name, setup_args)
+        self._assert_tags('default_tags', [default_tags, more_tags])
+        self._assert_tags('force_tags', [force_tags, more_tags])
+        timeout = self._setting_with('test_timeout')
+        assert_equals(timeout.value, '1s')
+        assert_equals(timeout.message, 'timeout message '+more_doc)
+
+    def _assert_tags(self, tag_name, exp_value):
+        tag = self._setting_with(tag_name)
+        assert_equals(tag.value, exp_value)
 
     def test_invalid_settings(self):
         self._create_table('Settings', [['In valid', 'val ue']])
