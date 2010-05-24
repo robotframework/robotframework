@@ -429,7 +429,7 @@ class Step(object):
         try:
             self.keyword = content[len(self.assign)]
         except IndexError:
-            self.keyword = None
+            self.keyword = ''
         self.args = content[len(self.assign)+1:]
         self.comment = comment
 
