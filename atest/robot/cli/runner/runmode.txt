@@ -4,8 +4,8 @@ Force Tags      pybot  jybot  regression
 Resource        atest_resource.txt
 
 *** Variables ***
-${DEFAULT SUITE ORDER}  ['Suite First', 'Subsuite 1', 'Suite 3', 'Suite 4', 'Suite 5', 'Suite 10', 'Suite 6', 'Suite 7', 'Suite 8', 'Suite 9']
-${DEFAULT TEST ORDER}  ['Test1', 'Test2', 'Test3', 'Test4', 'Test5', 'Test6', 'Test7', 'Test8', 'Test9', 'Test10', 'Test11', 'Test12']
+${DEFAULT SUITE ORDER}  ['Suite First', 'Subsuite1', 'Suite3', 'Suite4', 'Suite5', 'Suite10', 'Suite6', 'Suite7', 'Suite8', 'Suite9']
+${DEFAULT TEST ORDER}  ['test1', 'test2', 'test3', 'test4', 'test5', 'test6', 'test7', 'test8', 'test9', 'test10', 'test11', 'test12']
 
 *** Test Cases ***
 Randomizing Tests
