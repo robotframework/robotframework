@@ -273,6 +273,13 @@ class TestCaseFilePopulatingTest(_PopulatorTest):
         self._number_of_steps_should_be(test, 1)
         assert_equals(test.tags.value, ['foo'])
 
+    def test_escaping_empty_cells(self):
+        self._create_table('Settings', [['Documentation', '\\']],)
+        self._assert_setting('doc', '')
+        self._create_table('Test cases', [['test',
+                                           '', 'Log Many', 'foo', '\\']],)
+        assert_equals(self._first_test().steps[0].args, ['Log Many', 'foo', ''])
+
     def test_populator_happy_path_workflow(self):
         self._create_table('settings', [['Library', 'FooBarness']], eof=False)
         self._create_table('Variables', [['${scalar}', 'value']], eof=False)
@@ -369,6 +376,10 @@ class DataRowTest(unittest.TestCase):
 
     def test_commented_row(self):
         assert_true(DataRow(['#start of table comment']).is_commented())
+
+    def test_escaping_empty_cells(self):
+        assert_equals(DataRow(['foo', '\\', '']).all, ['foo', ''])
+
 
 if __name__ == '__main__':
     unittest.main()

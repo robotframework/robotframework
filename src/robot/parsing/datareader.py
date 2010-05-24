@@ -112,6 +112,7 @@ class DataRow(object):
     def __init__(self, cells):
         self.cells, self.comments = self._parse(cells)
 
+
     @property
     def head(self): 
         return self.cells[0] if self.cells else None
@@ -125,9 +126,10 @@ class DataRow(object):
         return self.cells
 
     def dedent(self):
-        row = DataRow(self.tail)
-        row.comments = self.comments
-        return row
+        datarow = DataRow([])
+        datarow.cells = self.tail
+        datarow.comments = self.comments
+        return datarow
 
     def startswith(self, value):
         return self.head() == value
