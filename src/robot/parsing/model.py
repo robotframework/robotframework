@@ -113,16 +113,16 @@ class TestDataDirectory(_TestData):
 
 class _Table(object):
 
-    @property
-    def name(self):
-        return self.header[0]
-
     def __init__(self, parent):
         self.parent = parent
         self.header = None
 
     def set_header(self, header):
         self.header = header
+
+    @property
+    def name(self):
+        return self.header[0]
 
     @property
     def source(self):
