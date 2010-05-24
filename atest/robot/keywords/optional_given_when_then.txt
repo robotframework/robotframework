@@ -39,7 +39,7 @@ Keyword can be used with and without prefix
     ${tc} =  Check Test Case  ${TEST NAME}
     Should Be Equal  ${tc.kws[0].name}  GiveN we don't drink too many beers
     Should Be Equal  ${tc.kws[1].name}  and we don't drink too many beers
-    Should Be Equal  ${tc.kws[2].name}  We Don't Drink Too Many Beers
+    Should Be Equal  ${tc.kws[2].name}  We don't drink too many beers
     Should Be Equal  ${tc.kws[3].name}  When time
     Should Be Equal  ${tc.kws[4].name}  Time
     Should Be Equal  ${tc.kws[5].name}  Then we are in Berlin city
