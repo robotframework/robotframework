@@ -54,7 +54,7 @@ Correct Files Processed With --suite Matches Files
     Contains  ${syslog}  Parsing test data directory '${suitedir}'
     Contains  ${syslog}  Ignoring file or directory 'fourth.html'
     Contains  ${syslog}  Ignoring file or directory 'tsuite3.html'
-    Contains  ${syslog}  Parsing test suite directory '${subsuitedir}'
+    Contains  ${syslog}  Parsing test data directory '${subsuitedir}'
     Contains  ${syslog}  Ignoring file or directory 'sub1.html'
     Contains  ${syslog}  Ignoring file or directory 'sub2.html'
     Contains  ${syslog}  Parsing test case file '${suitedir}${/}tsuite1.html
@@ -82,7 +82,7 @@ Correct Files Processed When --suite Matches Directory
     Contains  ${syslog}  Ignoring file or directory 'tsuite1.html'
     Contains  ${syslog}  Ignoring file or directory 'tsuite2.html'
     Contains  ${syslog}  Ignoring file or directory 'tsuite3.html'
-    Contains  ${syslog}  Parsing test suite directory '${subsuitedir}'
+    Contains  ${syslog}  Parsing test data directory '${subsuitedir}'
     Contains  ${syslog}  Parsing test case file '${subsuitedir}${/}sub1.html'
     Contains  ${syslog}  Parsing test case file '${subsuitedir}${/}sub2.html'
 
