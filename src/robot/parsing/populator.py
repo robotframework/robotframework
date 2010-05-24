@@ -84,7 +84,6 @@ class SettingTablePopulator(_TablePopulator):
         return NullPopulator()
 
 
-
 class VariableTablePopulator(_TablePopulator):
 
     def _get_table(self, datafile):
