@@ -1,0 +1,218 @@
+*** Settings ***
+Documentation   Tests for making sure splitting logs into multiple html files works while running tests These tests assume that splitting outputs to multiple xmls works in the first place.
+Suite Setup     My Run Tests  --splitoutputs 1 --log subsuites-log --report subsuites-report --variable SLEEP:1.1s  misc/suites/subsuites
+Force Tags      pybot  jybot  regression
+Resource        atest_resource.txt
+Resource        splitting_resource.txt
+
+*** Test Cases ***
+Correct Sub Logs Should Be Created
+    @{files} =  List Directory  ${OUTDIR}  ${LOGBASE}*.html
+    Should Be True  len(@{files}) == 3
+    Should Be Equal  @{files}[0]  ${LOGBASE}-001.html
+    Should Be Equal  @{files}[1]  ${LOGBASE}-002.html
+    Should Be Equal  @{files}[2]  ${LOGBASE}.html
+
+Sub Logs Should Have Been Created Before Finishing Index
+    ${sub1} =  Get Modified Time  ${OUTDIR}/${LOGBASE}-001.html  epoch
+    ${sub2} =  Get Modified Time  ${OUTDIR}/${LOGBASE}-002.html  epoch
+    ${index} =  Get Modified Time  ${OUTDIR}/${LOGBASE}.html  epoch
+    Should Be True  ${sub1} < ${sub2} <= ${index}
+
+Index Log Should Have Links To Sub Logs But No Sub Log Content
+    ${index} =  Get File  ${OUTDIR}/${LOGBASE}.html
+    Log Should Contain Sub Log Link But No Sub Log Content  ${index}  Sub 1  ${LOGBASE}-001.html  Subsuites  SubSuite1 First
+    Log Should Contain Sub Log Link But No Sub Log Content  ${index}  Sub 2  ${LOGBASE}-002.html  Subsuites  SubSuite2 First
+
+Sub Logs Should Have Correct Content
+    ${sublog} =  Get File  ${OUTDIR}/${LOGBASE}-002.html
+    Stat Link To Itself Should Be Ok  ${sublog}  Sub 2
+    Suite Anchor In Sub Log Should Be Ok  ${sublog}  Sub 2
+    Test Anchor In Sub Log Should Be Ok  ${sublog}  Sub 2.SubSuite2 First
+
+Report Should Have Correct Links
+    ${report} =  Set Variable  ${LOGBASE.replace('log','report')}
+    ${index} =  Get File  ${OUTDIR}/${report}.html
+    ${details}  ${tags} =  Evaluate  '''${index}'''.split('<h2>Test Details by Tag</h2>')
+    Link In Suite Details Table To Index Log Should Be Ok  ${details}  Subsuites  ${LOGBASE}.html  suite
+    Link In Suite Details Table To Sub Log Should Be Ok  ${details}  Subsuites.Sub 1  ${LOGBASE}-001.html  suite
+    Link In Suite Details Table To Sub Log Should Be Ok  ${details}  Subsuites.Sub 1.SubSuite1 First  ${LOGBASE}-001.html  test
+    Link In Tag Details Table To Sub Log Should Be Ok  ${tags}  Subsuites.Sub 1.SubSuite1 First  ${LOGBASE}-001.html
+    Link In Tag Details Table To Sub Log Should Be Ok  ${tags}  Subsuites.Sub 2.SubSuite2 First  ${LOGBASE}-002.html
+
+Correct Syslog Message Should Be Written
+    Check Syslog Contains  Log: ${OUTDIR}${/}${LOGBASE}-001.html
+    Check Syslog Contains  Log: ${OUTDIR}${/}${LOGBASE}-002.html
+    Check Syslog Contains  Log: ${OUTDIR}${/}${LOGBASE}.html
+
+Only Index Should Be Created If Non-Nested Suite
+    @{files} =  My Run Tests  --SplitOutputs 1 --log mylog.html  misc/normal.html
+    Should Be True  len(@{files}) == 1
+    Should Be Equal  @{files}  mylog.html
+    ${index} =  Get File  ${OUTDIR}/mylog.html
+    Log Should Contain Sub Log Content  ${index}  Normal
+
+Split Level 1
+    Run Nested Suite With Given Split Level  1
+    Verify Log Got From misc/suites with level 1  ${LOGBASE}  ${OUTDIR}
+
+Suite Statistics Should Be Correct When Splitting
+    Should Be Equal  ${PREV_TEST_STATUS}  PASS
+    ${index} =  Log File  ${OUTDIR}/${LOGBASE}.html
+    Log Should Contain correct Statistics  ${index}  Suites  FAIL  6  5  1  10
+    ...  9  1
+    Log Should Contain correct Statistics  ${index}  Suites.Fourth  FAIL  1  0  1  1
+    ...  0  1
+    Log Should Contain correct Statistics  ${index}  Suites.Subsuites  PASS  1  1  0  2
+    ...  2  0
+    Log Should Contain correct Statistics  ${index}  Suites.Subsuites 2  PASS  1  1  0  2
+    ...  2  0
+    Log Should Contain correct Statistics  ${index}  Suites.Tsuite 1  PASS  1  1  0  3
+    ...  3  0
+    Log Should Contain correct Statistics  ${index}  Suites.Tsuite 2  PASS  1  1  0  1
+    ...  1  0
+    Log Should Contain correct Statistics  ${index}  Suites.Tsuite 3  PASS  1  1  0  1
+    ...  1  0
+
+Split Level 2
+    Run Nested Suite With Given Split Level  2
+    Verify Log Got From misc/suites with level 2  ${LOGBASE}  ${OUTDIR}
+
+Index Log Should Have Test Case Details For Suites Below Split Level
+    [Documentation]  Requires Split level 2 test to be executed just before.
+    ${index} =  Get File  ${OUTDIR}/nestedsuite2.html
+    Should Contain  ${index}  <span class="fail">TEST&nbsp;CASE: </span>\n<a class="name" name="test_Suites.Fourth.Suite4 First" title="Suites.Fourth.Suite4 First">Suite4 First</a>
+
+Split Level 3
+    @{files} =  Run Deeply Nested Suite With Given Split Level  3
+    Should Be True  len(@{files}) == 6
+    Should Be Equal  @{files}[0]  ${LOGBASE}-001.html
+    Should Be Equal  @{files}[1]  ${LOGBASE}-002.html
+    Should Be Equal  @{files}[2]  ${LOGBASE}-003.html
+    Should Be Equal  @{files}[3]  ${LOGBASE}-004.html
+    Should Be Equal  @{files}[4]  ${LOGBASE}-005.html
+    Should Be Equal  @{files}[5]  ${LOGBASE}.html
+    ${index} =  Get File  ${OUTDIR}/${LOGBASE}.html
+    :FOR  ${name}  ${link}  ${test}  ${suite}  IN  Suite 4  ${LOGBASE}-001.html
+    ...  Test 10  Multiple Suites.Subsuite 1  Suite 2  ${LOGBASE}-002.html  Test 12  Multiple Suites.Subsuite 1  Sub 1
+    ...  ${LOGBASE}-003.html  SubSuite1 First  Suites.Subsuites  Sub 2  ${LOGBASE}-004.html  SubSuite2 First  Suites.Subsuites
+    ...  Subsuite 3  ${LOGBASE}-005.html  SubSuite3 First  Suites.Subsuites 2
+    \  Log Should Contain Sub Log Link But No Sub Log Content  ${index}  ${name}  ${link}  Misc.${suite}  ${test}
+
+Sub Outputs Should Not Be Processed When Creating Index Log
+    [Documentation]  Verifies that sub outputs aren't needed when creating index log by removing sub outputs while running tests.
+    ${sub_outs} =  Join Path  ${OUTPUTDIR}/output/suites  output-*.xml
+    Run Tests Without Processing Output  --SplitOutputs 1 --log rm_sub_outs_1.html --variable SUITE_TEARDOWN_KW:Remove_File --variable SUITE_TEARDOWN_ARG:${sub_outs}  misc/suites
+    ${index} =  Verify Log Got From misc/suites with level 1  rm_sub_outs_1  ${OUTDIR}
+    :FOR  ${id}  IN  001  002  003  004  005
+    ...  006
+    \  ${path} =  Join Path  ${OUTDIR}  output-${id}.xml
+    \  Should Contain  ${index}  Removed file '<a href="file://${path}">${path}</a>'
+    Run Tests Without Processing Output  --SplitOutputs 2 --log rm_sub_outs_2.html --variable SUITE_TEARDOWN_KW:Remove_File --variable SUITE_TEARDOWN_ARG:${sub_outs}  misc/suites
+    ${index} =  Verify Log Got From misc/suites with level 2  rm_sub_outs_2  ${OUTDIR}
+    :FOR  ${id}  IN  001  002  003
+    \  ${path} =  Join Path  ${OUTDIR}  output-${id}.xml
+    \  Should Contain  ${index}  Removed file '<a href="file://${path}">
+
+Statistcs By Suite Table Should Contain Correct Links In Index Log
+    ${name} =  Set Variable  statistics_by_suite_links_log
+    Run Tests  --log ${name} --splitoutput 2  misc
+    Statistics Table Should Contain Link  ${name}.html  ${EMPTY}  Misc  Misc
+    Statistics Table Should Contain Link  ${name}.html  ${name}-002.html  Subsuite 1.Suite 2  Misc.Multiple Suites.Subsuite 1.Suite 2
+    Statistics Table Should Contain Link  ${name}.html  ${name}-010.html  Suite 9  Misc.Multiple Suites.Suite 9
+    Statistics Table Should Contain Link  ${name}.html  ${EMPTY}  Misc.Normal  Misc.Normal
+    Statistics Table Should Contain Link  ${name}.html  ${name}-012.html  Subsuites.Sub 1  Misc.Suites.Subsuites.Sub 1
+    Statistics Table Should Contain Link  ${name}.html  ${EMPTY}  Misc.Unicode  Misc.Unicode
+
+*** Keywords ***
+Run Nested Suite With Given Split Level
+    [Arguments]  ${level}
+    @{files} =  My Run Tests  --SplitOutputs ${level} --log nestedsuite${level} --critical t1  misc/suites  FAIL
+    [Return]  @{files}
+
+Run Deeply Nested Suite With Given Split Level
+    [Arguments]  ${level}
+    @{files} =  My Run Tests  --SplitOutputs ${level} --log deeplynestedsuite${level}  misc  FAIL
+    [Return]  @{files}
+
+My Run Tests
+    [Arguments]  ${args}  ${path}  ${status}=PASS
+    ${name} =  Get Logname  ${args}
+    Set Suite Variable  $LOGBASE  ${name}
+    Remove File  ${OUTDIR}/${LOGBASE}*.html
+    Run Tests  ${args}  ${path}
+    Should Be Equal  ${SUITE.status}  ${status}
+    @{files} =  List Dir  ${OUTDIR}  ${LOGBASE}*.html
+    [Return]  @{files}
+
+Get Logname
+    [Arguments]  ${args}
+    ${name} =  Set  ${args.split('--log ')[1].split()[0]}
+    ${name}  ${ext} =  Split Extension  ${name}
+    [Return]  ${name}
+
+Log Should Contain Sub Log Link But No Sub Log Content
+    [Arguments]  ${log}  ${name}  ${link}  ${suite}  ${test}  ${status}=pass
+    ${expected} =  Catenate  SEPARATOR=\n  <span class="${status}">TEST&nbsp;SUITE: </span>  <a class="splitname" href="${link}#suite_${name}" name="suite_${suite}.${name}" title="${suite}.${name}">${name}</a>  </td>\n </tr>
+    Should Contain  ${log}  ${expected}
+    Should Contain  ${log}  <tr><th>Details:</th><td><a href="${link}">${link}</a></td></tr>
+    Should Not Contain  ${log}  ${test}
+
+Log Should Contain Sub Log Content
+    [Arguments]  ${log}  ${name}
+    ${expected} =  Catenate  SEPARATOR=\n  <span class="pass">TEST&nbsp;SUITE: </span>  <a class="name" name="suite_${name}" title="${name}">${name}</a>  </td>\n</tr>\n<tr>\n<td>  <div class="indent" id="suite000001_children" style="display: block;">  <table class="metadata">
+    ...  <tr><th>Full Name:</th><td>${name}</td></tr>
+    Should Contain  ${log}  ${expected}
+
+Log Should Contain Correct Statistics
+    [Arguments]  ${log}  ${name}  ${status}  @{stats}
+    ${cls1} =  Set Variable If  @{stats}[2] > 0  \ class="fail"  \
+    ${cls2} =  Set Variable If  @{stats}[5] > 0  \ class="fail"  \
+    ${msg} =  Catenate  SEPARATOR=  @{stats}[0]&nbsp;critical&nbsp;tests?,&nbsp;  @{stats}[1]&nbsp;passed,&nbsp;  <span${cls1}>@{stats}[2]&nbsp;failed</span>  <br />  @{stats}[3]&nbsp;tests?&nbsp;total,&nbsp;
+    ...  @{stats}[4]&nbsp;passed,&nbsp;  <span${cls2}>@{stats}[5]&nbsp;failed</span>
+    ${exp} =  Catenate  SEPARATOR=\n  <table class="metadata">  <tr><th>Full Name:</th><td>${name}</td></tr>(  <tr><th>.+:</th><td>.+</td></tr>)*  <tr><th>Start&nbsp;/&nbsp;End&nbsp;/&nbsp;Elapsed:</th><td>.+</td></tr>  <tr><th>Overall Status:</th><td class="${status.lower()}">${status}</td>\</tr>
+    ...  <tr><th>Message:</th><td>${msg}</td></tr>(  <tr><th>Details:</th><td><a .*</a></td></tr>)?  </table>
+    Should Match Regexp  ${log}  ${exp}
+
+Verify Log Got From Misc/suites With Level 1
+    [Arguments]  ${logname}  ${logdir}
+    @{files} =  List Dir  ${logdir}  ${logname}*.html
+    Should Be True  len(@{files}) == 7
+    Should Be Equal  @{files}[0]  ${logname}-001.html
+    Should Be Equal  @{files}[1]  ${logname}-002.html
+    Should Be Equal  @{files}[2]  ${logname}-003.html
+    Should Be Equal  @{files}[3]  ${logname}-004.html
+    Should Be Equal  @{files}[4]  ${logname}-005.html
+    Should Be Equal  @{files}[5]  ${logname}-006.html
+    Should Be Equal  @{files}[6]  ${logname}.html
+    ${index} =  Get File  ${logdir}/${logname}.html
+    :FOR  ${name}  ${link}  ${test}  ${status}  IN  Fourth  ${logname}-001.html
+    ...  Suite4 First  fail  Subsuites  ${logname}-002.html  SubSuite1 First  pass  Subsuites 2
+    ...  ${logname}-003.html  SubSuite3 First  pass  Tsuite 1  ${logname}-004.html  Suite1 First  pass
+    ...  Tsuite 2  ${logname}-005.html  Suite2 First  pass  Tsuite 3  ${logname}-006.html  Suite3 First
+    ...  pass
+    \  Log Should Contain Sub Log Link But No Sub Log Content  ${index}  ${name}  ${link}  Suites  ${test}  ${status}
+    [Return]  ${index}
+
+Verify Log Got From Misc/suites With Level 2
+    [Arguments]  ${logname}  ${logdir}
+    @{files} =  List Dir  ${logdir}  ${logname}*.html
+    Should Be True  len(@{files}) == 4
+    Should Be Equal  @{files}[0]  ${logname}-001.html
+    Should Be Equal  @{files}[1]  ${logname}-002.html
+    Should Be Equal  @{files}[2]  ${logname}-003.html
+    Should Be Equal  @{files}[3]  ${logname}.html
+    ${index} =  Get File  ${logdir}/${logname}.html
+    :FOR  ${name}  ${link}  ${test}  ${suite}  IN  Sub 1  ${logname}-001.html
+    ...  SubSuite1 First  Subsuites  Sub 2  ${logname}-002.html  SubSuite2 First  Subsuites  Subsuite 3
+    ...  ${logname}-003.html  SubSuite3 First  Subsuites 2
+    \  Log Should Contain Sub Log Link But No Sub Log Content  ${index}  ${name}  ${link}  Suites.${suite}  ${test}
+    [Return]  ${index}
+
+Statistics Table Should Contain Link
+    [Arguments]  ${file}  ${path}  ${link}  ${name}
+    ${content} =  Get File  ${OUTDIR}${/}${file}
+    ${on click} =  Set Variable If  "${link}" == "${name}"  onclick="set_element_visible('suite_${name}')"${SPACE}  ${EMPTY}
+    ${name span} =  Get Name Span In Statistics Table  ${name}
+    Should Contain  ${content}  <div class="stat_name"><a href="${path}#suite_${link}" ${on click}title="${name}">${name span}</a></div>
+

@@ -1,0 +1,80 @@
+*** Settings ***
+Documentation   Tests for splitting output and log with Rebot. Reading splitted outputs is tested in split_output.html
+Suite Setup     Run Some Tests
+Suite Teardown  Remove File  ${INPUT}
+Test Setup      Remove File  ${OUTDIR}${/}${BASEOUT}*.xml
+Force Tags      pybot  jybot  regression
+Resource        atest_resource.txt
+Resource        splitting_resource.txt
+
+*** Variables ***
+${INPUT}  ${TEMPDIR}${/}robot-test-split-input.xml
+${BASEOUT}  output
+
+*** Test Cases ***
+Split Level 1
+    Run Rebot With Given Split Level  1
+    Correct Files Should Be Created  ${BASEOUT}  xml  8
+    Correct Files Should Be Created  split1  html  8
+
+Split Level 2
+    Run Rebot With Given Split Level  2
+    Correct Files Should Be Created  ${BASEOUT}  xml  17
+    Correct Files Should Be Created  split2  html  17
+
+Index Log Should Have Correct Content
+    ${index} =  Get File  ${OUTDIR}${/}split2.html
+    Stat Link To Itself Should Be Ok  ${index}  Misc
+    Stat Link In Index To Sub Log Should Be Ok  ${index}  Misc.Suites.Subsuites  split2-012.html
+    Test Link In Index To Sub Log Should Be Ok  ${index}  Misc.Suites.Fourth  split2-011.html
+
+Sub Logs Should Have Correct Content
+    ${sublog} =  Get File  ${OUTDIR}${/}split2-012.html
+    Stat Link To Itself Should Be Ok  ${sublog}  Subsuites
+    Suite Anchor In Sub Log Should Be Ok  ${sublog}  Subsuites
+    Test Anchor In Sub Log Should Be Ok  ${sublog}  Subsuites.Sub 1.SubSuite1 First
+
+Report Should Have Correct Links
+    ${index} =  Get File  ${OUTDIR}${/}report2.html
+    ${details}  ${tags} =  Evaluate  '''${index}'''.split('<h2>Test Details by Tag</h2>')
+    Link In Suite Details Table To Index Log Should Be Ok  ${details}  Misc  split2.html  suite
+    Link In Suite Details Table To Index Log Should Be Ok  ${details}  Misc.Dummy Lib Test.Dummy Test  split2.html  test
+    Link In Suite Details Table To Sub Log Should Be Ok  ${details}  Misc.Suites.Fourth  split2-011.html  suite  2
+    Link In Suite Details Table To Sub Log Should Be Ok  ${details}  Misc.Suites.Fourth.Suite4 First  split2-011.html  test  2
+    Link In Tag Details Table To Index Log Should Be Ok  ${tags}  Misc.Many Tests.First  split2.html
+    Link In Tag Details Table To Sub Log Should Be Ok  ${tags}  Misc.Suites.Subsuites 2.Subsuite 3.SubSuite3 Second  split2-013.html  2
+
+Split Level 3
+    Run Rebot With Given Split Level  3
+    Correct Files Should Be Created  ${BASEOUT}  xml  6
+    Correct Files Should Be Created  split3  html  6
+
+Only Index Should Be Created If Non-Nested Suite
+    Run Tests  ${EMPTY}  misc${/}normal.html
+    Move File  ${OUTFILE}  ${INPUT}
+    Run Rebot Without Processing Output  --split 1 --log nosplit --output nosplit  ${INPUT}
+    Process Output  ${OUTDIR}${/}nosplit.xml
+    Should Be Equal  ${SUITE.name}  Normal
+    ${files} =  List Dir  ${OUTDIR}  nosplit*
+    Should Be True  ${files} == [ 'nosplit.html', 'nosplit.xml' ]
+
+*** Keywords ***
+Run Some Tests
+    Run Tests  ${EMPTY}  misc
+    Move File  ${OUTFILE}  ${INPUT}
+
+Run Rebot With Given Split Level
+    [Arguments]  ${level}
+    Run Rebot  --SplitOutputs ${level} --log split${level}.html --report report${level}.html  ${INPUT}
+    Should Be Equal  ${SUITE.status}  FAIL
+
+Correct Files Should Be Created
+    [Arguments]  ${base}  ${ext}  ${exp_count}
+    @{files} =  List Dir  ${OUTDIR}  ${base}*.${ext}
+    Should Be True  len(@{files}) == ${exp_count}
+    @{range} =  Evaluate  range(${exp_count}-1)
+    :FOR  ${i}  IN  @{range}
+    \  ${id} =  Evaluate  "%03d" % (${i} + 1)
+    \  Should Be Equal  @{files}[${i}]  ${base}-${id}.${ext}
+    Should Be Equal  @{files}[${id}]  ${base}.${ext}
+
