@@ -32,7 +32,7 @@ Sub Logs Should Have Correct Content
     ${sublog} =  Get File  ${OUTDIR}${/}split2-012.html
     Stat Link To Itself Should Be Ok  ${sublog}  Subsuites
     Suite Anchor In Sub Log Should Be Ok  ${sublog}  Subsuites
-    Test Anchor In Sub Log Should Be Ok  ${sublog}  Subsuites.Sub 1.SubSuite1 First
+    Test Anchor In Sub Log Should Be Ok  ${sublog}  Subsuites.Sub1.SubSuite1 First
 
 Report Should Have Correct Links
     ${index} =  Get File  ${OUTDIR}${/}report2.html
@@ -42,7 +42,7 @@ Report Should Have Correct Links
     Link In Suite Details Table To Sub Log Should Be Ok  ${details}  Misc.Suites.Fourth  split2-011.html  suite  2
     Link In Suite Details Table To Sub Log Should Be Ok  ${details}  Misc.Suites.Fourth.Suite4 First  split2-011.html  test  2
     Link In Tag Details Table To Index Log Should Be Ok  ${tags}  Misc.Many Tests.First  split2.html
-    Link In Tag Details Table To Sub Log Should Be Ok  ${tags}  Misc.Suites.Subsuites 2.Subsuite 3.SubSuite3 Second  split2-013.html  2
+    Link In Tag Details Table To Sub Log Should Be Ok  ${tags}  Misc.Suites.Subsuites2.Subsuite3.SubSuite3 Second  split2-013.html  2
 
 Split Level 3
     Run Rebot With Given Split Level  3

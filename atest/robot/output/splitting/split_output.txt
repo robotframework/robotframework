@@ -1,5 +1,5 @@
 *** Settings ***
-Documentation   Tests for making sure splitting outputs into multiple xml files works while running tests. Making sure that logs and reports are created correctly in this case is tested elsewhere.
+Documentation   Tests for making sure splitting outputs into multiple xml files works while running tests. Making sure that logs and reports are created correctly in this case is tested elsewhere. NO RIDE because it would mess up formatting.
 Suite Setup     Run suite with two sub suites so that output is split
 Force Tags      pybot  jybot  regression
 Resource        atest_resource.txt
@@ -10,20 +10,20 @@ ${OUTBASE}  output
 *** Test Cases ***
 Correct Sub Outputs Should Be Created
     @{files} =  List Directory  ${OUTDIR}  ${OUTBASE}*.xml
-    Fail Unless  len(@{files}) == 3
-    Equals  @{files}[0]  ${OUTBASE}-001.xml
-    Equals  @{files}[1]  ${OUTBASE}-002.xml
-    Equals  @{files}[2]  ${OUTBASE}.xml
+    Should Be True  len(@{files}) == 3
+    Should Be Equal  @{files}[0]  ${OUTBASE}-001.xml
+    Should Be Equal  @{files}[1]  ${OUTBASE}-002.xml
+    Should Be Equal  @{files}[2]  ${OUTBASE}.xml
 
 Sub Outputs Should Have Been Created Before Finishing Index
     ${sub1} =  Get Modified Time  ${OUTDIR}${/}${OUTBASE}-001.xml  epoch
     ${sub2} =  Get Modified Time  ${OUTDIR}${/}${OUTBASE}-002.xml  epoch
     ${index} =  Get Modified Time  ${OUTDIR}${/}${OUTBASE}.xml  epoch
-    Fail Unless  ${sub1} < ${sub2} <= ${index}
+    Should Be True  ${sub1} < ${sub2} <= ${index}
 
 When Index File Is Processed All Sub Outputs Should Be Processed Automatically
-    Equals  ${SUITE.suites[0].tests[0].name}  SubSuite1 First
-    Equals  ${SUITE.suites[1].tests[0].name}  SubSuite2 First
+    Should Be Equal  ${SUITE.suites[0].tests[0].name}  SubSuite1 First
+    Should Be Equal  ${SUITE.suites[1].tests[0].name}  SubSuite2 First
 
 Correct Syslog Messages Should Be Written
     Check Syslog Contains  Output: ${OUTDIR}${/}${OUTBASE}-001.xml
@@ -34,53 +34,65 @@ It Should Be Possible To Process Individual Sub Outputs
     Set Suite Variable  $SUITE  ${None}
     ${path1}  ${path 2} =  Create List  ${OUTDIR}${/}${OUTBASE}-001.xml  ${OUTDIR}${/}${OUTBASE}-002.xml
     Run Rebot  ${EMPTY}  ${path1}
-    Equals  ${SUITE.tests[0].name}  SubSuite1 First
+    Should Be Equal  ${SUITE.tests[0].name}  SubSuite1 First
     Run Rebot  ${EMPTY}  ${path2}
-    Equals  ${SUITE.tests[0].name}  SubSuite2 First
+    Should Be Equal  ${SUITE.tests[0].name}  SubSuite2 First
 
 Only Index Should Be Created If Non-Nested Suite
     @{files} =  My Run Tests  --SplitOutputs 1  misc${/}normal.html
-    Fail Unless  len(@{files}) == 1
-    Equals  @{files}[0]  ${OUTBASE}.xml
-    Equals  ${SUITE.tests[0].name}  First One
-    Equals  ${SUITE.tests[1].name}  Second One
+    Should Be True  len(@{files}) == 1
+    Should Be Equal  @{files}[0]  ${OUTBASE}.xml
+    Should Be Equal  ${SUITE.tests[0].name}  First One
+    Should Be Equal  ${SUITE.tests[1].name}  Second One
 
 Split Level 1
     @{files} =  Run Nested Suite With Given Split Level  1
-    Fail Unless  len(@{files}) == 7
-    Equals  @{files}[0]  ${OUTBASE}-001.xml  fourth.html
-    Equals  @{files}[1]  ${OUTBASE}-002.xml  subsuites/
-    Equals  @{files}[2]  ${OUTBASE}-003.xml  subsuites2/
-    Equals  @{files}[3]  ${OUTBASE}-004.xml  tsuite1.html
-    Equals  @{files}[4]  ${OUTBASE}-005.xml  tsuite2.html
-    Equals  @{files}[5]  ${OUTBASE}-006.xml  tsuite3.html
-    Equals  @{files}[6]  ${OUTBASE}.xml  index
-    Equals  ${SUITE.suites[0].tests[0].name}  Suite4 First
-    Equals  ${SUITE.suites[1].suites[0].tests[0].name}  SubSuite1 First
-    Equals  ${SUITE.suites[-1].tests[-1].name}  Suite3 First
-    Index Should Contain Src Links  Fourth  ${OUTBASE}-001.xml  Subsuites  ${OUTBASE}-002.xml  Subsuites 2  ${OUTBASE}-003.xml  Tsuite 1
-    ...  ${OUTBASE}-004.xml  Tsuite 2  ${OUTBASE}-005.xml  Tsuite 3  ${OUTBASE}-006.xml
+    Should Be True  len(@{files}) == 7
+    Should Be Equal  @{files}[0]  ${OUTBASE}-001.xml  fourth.html
+    Should Be Equal  @{files}[1]  ${OUTBASE}-002.xml  subsuites/
+    Should Be Equal  @{files}[2]  ${OUTBASE}-003.xml  subsuites2/
+    Should Be Equal  @{files}[3]  ${OUTBASE}-004.xml  tsuite1.html
+    Should Be Equal  @{files}[4]  ${OUTBASE}-005.xml  tsuite2.html
+    Should Be Equal  @{files}[5]  ${OUTBASE}-006.xml  tsuite3.html
+    Should Be Equal  @{files}[6]  ${OUTBASE}.xml  index
+    Should Be Equal  ${SUITE.suites[0].tests[0].name}  Suite4 First
+    Should Be Equal  ${SUITE.suites[1].suites[0].tests[0].name}  SubSuite1 First
+    Should Be Equal  ${SUITE.suites[-1].tests[-1].name}  Suite3 First
+    Index Should Contain Src Links  
+    ...  Fourth      ${OUTBASE}-001.xml
+    ...  Subsuites   ${OUTBASE}-002.xml
+    ...  Subsuites2  ${OUTBASE}-003.xml
+    ...  Tsuite1     ${OUTBASE}-004.xml
+    ...  Tsuite2     ${OUTBASE}-005.xml
+    ...  Tsuite3  ${OUTBASE}-006.xml
 
 Split Level 2
     @{files} =  Run Nested Suite With Given Split Level  2
-    Fail Unless  len(@{files}) == 4
-    Equals  @{files}[0]  ${OUTBASE}-001.xml  subsuites/sub1.html
-    Equals  @{files}[1]  ${OUTBASE}-002.xml  subsuites/sub2.html
-    Equals  @{files}[2]  ${OUTBASE}-003.xml  subsuites2/subsuite3.html
-    Equals  @{files}[3]  ${OUTBASE}.xml  index
-    Index Should Contain Src Links  Sub 1  ${OUTBASE}-001.xml  Sub 2  ${OUTBASE}-002.xml  Subsuite 3  ${OUTBASE}-003.xml
+    Should Be True  len(@{files}) == 4
+    Should Be Equal  @{files}[0]  ${OUTBASE}-001.xml  subsuites/sub1.html
+    Should Be Equal  @{files}[1]  ${OUTBASE}-002.xml  subsuites/sub2.html
+    Should Be Equal  @{files}[2]  ${OUTBASE}-003.xml  subsuites2/subsuite3.html
+    Should Be Equal  @{files}[3]  ${OUTBASE}.xml  index
+    Index Should Contain Src Links  
+    ...  Sub1       ${OUTBASE}-001.xml
+    ...  Sub2       ${OUTBASE}-002.xml
+    ...  Subsuite3  ${OUTBASE}-003.xml
 
 Split Level 3
     @{files} =  Run Deeply Nested Suite With Given Split Level  3
-    Fail Unless  len(@{files}) == 6
-    Equals  @{files}[0]  ${OUTBASE}-001.xml  misc/suites/multiple_suites/02__subsuite1/first__suite4.html
-    Equals  @{files}[1]  ${OUTBASE}-002.xml  misc/suites/multiple_suites/02__subsuite1/second__suite2.html
-    Equals  @{files}[2]  ${OUTBASE}-003.xml  misc/suites/subsuites/sub1.html
-    Equals  @{files}[3]  ${OUTBASE}-004.xml  misc/suites/subsuites/sub2.html
-    Equals  @{files}[4]  ${OUTBASE}-005.xml  misc/suites/subsuites2/subsuite3.html
-    Equals  @{files}[5]  ${OUTBASE}.xml  index
-    Index Should Contain Src Links  Suite 4  ${OUTBASE}-001.xml  Suite 2  ${OUTBASE}-002.xml  Sub 1  ${OUTBASE}-003.xml  Sub 2
-    ...  ${OUTBASE}-004.xml  Subsuite 3  ${OUTBASE}-005.xml
+    Should Be True  len(@{files}) == 6
+    Should Be Equal  @{files}[0]  ${OUTBASE}-001.xml  misc/suites/multiple_suites/02__subsuite1/first__suite4.html
+    Should Be Equal  @{files}[1]  ${OUTBASE}-002.xml  misc/suites/multiple_suites/02__subsuite1/second__suite2.html
+    Should Be Equal  @{files}[2]  ${OUTBASE}-003.xml  misc/suites/subsuites/sub1.html
+    Should Be Equal  @{files}[3]  ${OUTBASE}-004.xml  misc/suites/subsuites/sub2.html
+    Should Be Equal  @{files}[4]  ${OUTBASE}-005.xml  misc/suites/subsuites2/subsuite3.html
+    Should Be Equal  @{files}[5]  ${OUTBASE}.xml  index
+    Index Should Contain Src Links
+    ...  Suite4     ${OUTBASE}-001.xml
+    ...  Suite2     ${OUTBASE}-002.xml
+    ...  Sub1       ${OUTBASE}-003.xml
+    ...  Sub2       ${OUTBASE}-004.xml
+    ...  Subsuite3  ${OUTBASE}-005.xml
 
 *** Keywords ***
 Run Suite With Two Sub Suites So That Output Is Split
@@ -100,7 +112,7 @@ My Run Tests
     [Arguments]  ${args}  ${path}  ${status}=PASS
     Remove File  ${OUTDIR}${/}${OUTBASE}*.xml
     Run Tests  ${args}  ${path}
-    Equals  ${SUITE.status}  ${status}
+    Should Be Equal  ${SUITE.status}  ${status}
     @{files} =  List Directory  ${OUTDIR}  ${OUTBASE}*.xml
     [Return]  @{files}
 
@@ -110,11 +122,11 @@ Index Should Contain Src Links
     :FOR  ${name}  ${link}  IN  @{names_and_links}
     \  Index Should contain Src Link  ${output}  ${name}  ${link}
     ${suites} =  Get Lines Containing String  ${output}  <suite${SPACE}
-    Fail Unless  ${suites.count('src="')} == len(@{names_and_links})/2
+    Should Be True  ${suites.count('src="')} == len(@{names_and_links})/2
 
 Index Should Contain Src Link
     [Arguments]  ${output}  ${name}  ${link}
     ${pattern} =  Catenate  SEPARATOR=\n  <suite( src="${link}"| name="${name}"| source=".*"){3}>  (<doc>.*</doc>|<doc/>)  <metadata>\n (<item name=".*">.*</item>\n)*</metadata>  <status .*>  </suite>
     Log  ${pattern}
-    Matches Regexp  ${output}  ${pattern}
+    Should Match Regexp  ${output}  ${pattern}
 
