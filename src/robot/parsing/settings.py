@@ -47,10 +47,11 @@ class _Setting(object):
     def _string_value(self, value):
         return value if isinstance(value, basestring) else ' '.join(value)
 
-    def _concat_string_with_value(self, str, value):
-        str_val = self._string_value(value)
-        str += str_val if not str else ' ' + str_val
-        return str
+    def _concat_string_with_value(self, string, value):
+        if string:
+            return string + ' ' + self._string_value(value)
+        return self._string_value(value)
+
 
 class Documentation(_Setting):
 
