@@ -148,7 +148,9 @@ class TestCaseFilePopulatingTest(_PopulatorTest):
 
     def test_invalid_settings(self):
         self._create_table('Settings', [['In valid', 'val ue']])
-        assert_equals(self._logger.value(), "Invalid setting 'In valid' in setting table.")
+        assert_equals(self._logger.value(), "Invalid syntax in file 'None' in "
+                                            "table 'Settings': Non-existing "
+                                            "setting 'In valid'.")
 
     def test_adding_import(self):
         self._create_table('settings', [['Library', 'FooBarness'],
@@ -269,12 +271,18 @@ class TestCaseFilePopulatingTest(_PopulatorTest):
     def test_invalid_test_settings(self):
         self._create_table('Test cases', [['My test name'],
                                           ['', '[Aasi]']])
-        assert_equals(self._logger.value(), "Invalid setting '[Aasi]' in test case 'My test name'.")
+        assert_equals(self._logger.value(), "Invalid syntax in file 'None' in "
+                                            "table 'Test cases': Invalid syntax "
+                                            "in test case 'My test name': "
+                                            "Non-existing setting 'Aasi'.")
 
     def test_invalid_keyword_settings(self):
         self._create_table('Keywords', [['My User Keyword'],
                                         ['', '[ank ka]']])
-        assert_equals(self._logger.value(), "Invalid setting '[ank ka]' in keyword 'My User Keyword'.")
+        assert_equals(self._logger.value(), "Invalid syntax in file 'None' in "
+                                            "table 'Keywords': Invalid syntax "
+                                            "in test case 'My User Keyword': "
+                                            "Non-existing setting 'ank ka'.")
 
     def test_creating_user_keywords(self):
         self._create_table('Keywords', [['My User Keyword'],

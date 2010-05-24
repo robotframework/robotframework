@@ -49,7 +49,7 @@ class _TestData(object):
     def report_invalid_syntax(self, table, message, level='ERROR'):
         initfile = getattr(self, 'initfile', None)
         path = os.path.join(self.source, initfile) if initfile else self.source
-        LOGGER.write("Invalid syntax in file '%s' in table '%s': %s"
+        LOGGER.write("Invalid syntax in file '%s' in table '%s': %s."
                      % (path, table, message), level)
 
 
@@ -82,11 +82,19 @@ class ResourceFile(_TestData):
         self.keyword_table = KeywordTable(self)
         if self.source:
             FromFilePopulator(self).populate(source)
+            self._report_status()
 
     def __iter__(self):
         for table in [self.setting_table, self.variable_table,
                       self.keyword_table]:
             yield table
+
+    def _report_status(self):
+        if self.setting_table or self.variable_table or self.keyword_table:
+            LOGGER.info("Imported resource file '%s' (%d keywords)"
+                        % (self.source, len(self.keyword_table.keywords)))
+        else:
+            LOGGER.warn("Imported resource file '%s' is empty." % self.source)
 
 
 class TestDataDirectory(_TestData):
@@ -138,8 +146,11 @@ class _Table(object):
 
 
 class _WithSettings(object):
-    def setter_for(self, setting_name):
-        return self._setters[setting_name]
+
+    def get_setter(self, setting_name):
+        if setting_name in self._setters:
+            return self._setters[setting_name]
+        self.report_invalid_syntax("Non-existing setting '%s'" % setting_name)
 
     def is_setting(self, setting_name):
         return setting_name in self._setters
@@ -149,14 +160,14 @@ class _SettingTable(_Table, _WithSettings):
 
     def __init__(self, parent):
         _Table.__init__(self, parent)
-        self.doc = Documentation()
-        self.suite_setup = Fixture()
-        self.suite_teardown = Fixture()
-        self.test_setup = Fixture()
-        self.test_teardown = Fixture()
-        self.test_timeout = Timeout()
-        self.force_tags = Tags()
-        self.default_tags = Tags()
+        self.doc = Documentation(self)
+        self.suite_setup = Fixture(self)
+        self.suite_teardown = Fixture(self)
+        self.test_setup = Fixture(self)
+        self.test_teardown = Fixture(self)
+        self.test_timeout = Timeout(self)
+        self.force_tags = Tags(self)
+        self.default_tags = Tags(self)
         self.metadata = []
         self.imports = []
         self._setters = self._get_setters()
@@ -183,6 +194,9 @@ class _SettingTable(_Table, _WithSettings):
                         self.force_tags, self.default_tags] \
                         + self.metadata + self.imports:
             yield setting
+
+    def __nonzero__(self):
+        return any(setting.is_set() for setting in self)
 
 
 class TestCaseFileSettingTable(_SettingTable):
@@ -254,6 +268,9 @@ class VariableTable(_Table):
     def __iter__(self):
         return iter(self.variables)
 
+    def __nonzero__(self):
+        return bool(self.variables)
+
 
 class TestCaseTable(_Table):
 
@@ -268,6 +285,9 @@ class TestCaseTable(_Table):
     def __iter__(self):
         return iter(self.tests)
 
+    def __nonzero__(self):
+        return bool(self.tests)
+
 
 class KeywordTable(_Table):
 
@@ -276,11 +296,14 @@ class KeywordTable(_Table):
         self.keywords = []
 
     def add(self, name):
-        self.keywords.append(UserKeyword(name))
+        self.keywords.append(UserKeyword(self, name))
         return self.keywords[-1]
 
     def __iter__(self):
         return iter(self.keywords)
+
+    def __nonzero__(self):
+        return bool(self.keywords)
 
 
 class TestCaseTableNotAllowed(object):
@@ -296,6 +319,7 @@ class TestCaseTableNotAllowed(object):
 
     def __iter__(self):
         return iter([])
+
 
 class Variable(object):
 
@@ -321,11 +345,11 @@ class TestCase(_WithSteps, _WithSettings):
     def __init__(self, parent, name):
         self.parent = parent
         self.name = name
-        self.doc = Documentation()
-        self.tags = Tags()
-        self.setup = Fixture()
-        self.teardown = Fixture()
-        self.timeout = Timeout()
+        self.doc = Documentation(self)
+        self.tags = Tags(self)
+        self.setup = Fixture(self)
+        self.teardown = Fixture(self)
+        self.timeout = Timeout(self)
         self.steps = []
         self._setters = self._get_setters()
 
@@ -339,19 +363,33 @@ class TestCase(_WithSteps, _WithSettings):
                                      'Tags': self.tags.set,
                                      'Timeout': self.timeout.set})
 
+    @property
+    def source(self):
+        return self.parent.source
+
+    @property
+    def directory(self):
+        return self.parent.directory
+
     def add_for_loop(self, data):
         self.steps.append(ForLoop(data))
         return self.steps[-1]
 
+    def report_invalid_syntax(self, message, level='ERROR'):
+        type = 'test case' if isinstance(self, TestCase) else 'keyword'
+        message = "Invalid syntax in %s '%s': %s" % (type, self.name, message)
+        self.parent.report_invalid_syntax(message, level)
+
 
 class UserKeyword(TestCase):
 
-    def __init__(self, name):
+    def __init__(self, parent, name):
+        self.parent = parent
         self.name = name
-        self.doc = Documentation()
-        self.args = Arguments()
-        self.return_ = Return()
-        self.timeout = Timeout()
+        self.doc = Documentation(self)
+        self.args = Arguments(self)
+        self.return_ = Return(self)
+        self.timeout = Timeout(self)
         self.steps = []
         self._setters = self._get_setters()
 

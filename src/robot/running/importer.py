@@ -42,11 +42,6 @@ class Importer:
         else:
             resource = ResourceFile(path)
             self._resources[path] = resource
-            LOGGER.info("Imported resource file '%s' (%d keywords)"
-                        % (path, len(resource.keyword_table.keywords)))
-            # Resource file may contain only variables so we should not warn
-            # if there are no keywords. Importing an empty resource file fails
-            # already earlier so no need to check that here either.
         return self._resources[path]
 
     def _import_library(self, name, positional, named, lib):

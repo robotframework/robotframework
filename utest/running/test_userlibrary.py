@@ -103,7 +103,7 @@ class TestUserLibrary(unittest.TestCase):
         assert_true(isinstance(handler, UserHandlerStub))
 
     def _get_userlibrary(self, source, *keyword_names):
-        return userkeyword.UserLibrary([UserKeyword(name) for name in keyword_names])
+        return userkeyword.UserLibrary([UserKeyword(None, name) for name in keyword_names])
         
     def _lib_has_embedded_arg_keyword(self, lib):
         assert_true(lib.handlers.has_key('Embedded ${arg}'))

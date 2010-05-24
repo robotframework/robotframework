@@ -207,7 +207,7 @@ class TestKeywordTable(unittest.TestCase):
 
     def setUp(self):
         self.table = TestCaseFile().keyword_table
-        self.kw = UserKeyword('name')
+        self.kw = UserKeyword(None, 'name')
 
     def test_init(self):
         assert_equal(self.table.keywords, [])

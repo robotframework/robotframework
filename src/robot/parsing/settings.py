@@ -15,8 +15,8 @@
 
 class _Setting(object):
 
-    def __init__(self, table=None, comment=None):
-        self.table = table
+    def __init__(self, parent=None, comment=None):
+        self.parent = parent
         self.comment = comment
         self._init()
 
@@ -25,11 +25,11 @@ class _Setting(object):
 
     @property
     def source(self):
-        return self.table.source
+        return self.parent.source if self.parent else None
 
     @property
     def directory(self):
-        return self.table.directory
+        return self.parent.directory if self.parent else None
 
     def set(self, value, comment=None):
         self._set(value)
@@ -38,8 +38,11 @@ class _Setting(object):
     def _set(self, value):
         self.value = value
 
+    def is_set(self):
+        return bool(self.value)
+
     def report_invalid_syntax(self, message, level='ERROR'):
-        self.table.report_invalid_syntax(message, level)
+        self.parent.report_invalid_syntax(message, level)
 
     def _string_value(self, value):
         return value if isinstance(value, basestring) else ' '.join(value)
@@ -86,19 +89,22 @@ class Timeout(_Setting):
             value = value[1:]
         self.message = self._concat_string_with_value(self.message, value)
 
+    def is_set(self):
+        return self.value is not None
+
 
 class Tags(_Setting):
 
-    def __init__(self, table=None, comment=None):
-        _Setting.__init__(self, table, comment)
-        self._value_set = False
+    def _init(self):
+        self.value = []
+        self._is_set = False
 
     def _set(self, value):
         self.value.extend(value)
-        self._value_set = True
+        self._is_set = True
 
     def is_set(self):
-        return self._value_set
+        return self._is_set
 
 
 class Arguments(_Setting):
@@ -111,17 +117,20 @@ class Return(_Setting):
 
 class Metadata(_Setting):
 
-    def __init__(self, table, name, value, comment):
-        self.table = table
+    def __init__(self, parent, name, value, comment=None):
+        self.parent = parent
         self.name = name
         self.value = self._string_value(value)
         self.comment = comment
 
+    def is_set(self):
+        return True
+
 
 class _Import(_Setting):
 
-    def __init__(self, table, name, args=None, alias=None, comment=None):
-        self.table = table
+    def __init__(self, parent, name, args=None, alias=None, comment=None):
+        self.parent = parent
         self.name = name
         self.args = args or []
         self.alias = alias
@@ -131,13 +140,16 @@ class _Import(_Setting):
     def type(self):
         return type(self).__name__
 
+    def is_set(self):
+        return True
+
 
 class Library(_Import):
 
-    def __init__(self, table, name, args=None, alias=None, comment=None):
+    def __init__(self, parent, name, args=None, alias=None, comment=None):
         if args and not alias:
             args, alias = self._split_alias(args)
-        _Import.__init__(self, table, name, args, alias, comment)
+        _Import.__init__(self, parent, name, args, alias, comment)
 
     def _split_alias(self, args):
         if len(args) >= 2 and args[-2].upper() == 'WITH NAME':
@@ -147,13 +159,13 @@ class Library(_Import):
 
 class Resource(_Import):
 
-    def __init__(self, table, name, invalid_args=None, comment=None):
+    def __init__(self, parent, name, invalid_args=None, comment=None):
         if invalid_args:
             name += ' ' + ' '.join(invalid_args)
-        _Import.__init__(self, table, name, comment=comment)
+        _Import.__init__(self, parent, name, comment=comment)
 
 
 class Variables(_Import):
 
-    def __init__(self, table, name, args=None, comment=None):
-        _Import.__init__(self, table, name, args, comment=comment)
+    def __init__(self, parent, name, args=None, comment=None):
+        _Import.__init__(self, parent, name, args, comment=comment)

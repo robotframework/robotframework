@@ -140,9 +140,8 @@ class Namespace:
                 self._report_replacing_vars_failed(import_setting, err)
         else:
             name = import_setting.name
-        # FIXME: clean up. impoert_setting does not have direcory when created in import library or import variables
-        dir = import_setting.table and import_setting.directory or ''
-        return self._get_path(import_setting.type, name, dir)
+        basedir = import_setting.directory or ''
+        return self._get_path(import_setting.type, name, basedir)
 
     def _report_replacing_vars_failed(self, import_setting, err):
         raise DataError("Replacing variables from setting '%s' failed: %s"

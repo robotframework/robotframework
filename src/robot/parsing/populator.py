@@ -12,12 +12,6 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot.output import LOGGER
-
-
-def report_invalid_setting(msg):
-    LOGGER.error("Invalid setting %s." % msg)
-
 
 class Populator(object):
     """Explicit interface for all populators."""
@@ -78,11 +72,8 @@ class SettingTablePopulator(_TablePopulator):
 
     def _get_populator(self, row):
         row.handle_old_style_metadata()
-        first_cell = row.head
-        if self._table.is_setting(first_cell):
-            return SettingPopulator(self._table.setter_for(first_cell))
-        report_invalid_setting("'%s' in setting table" % (first_cell))
-        return NullPopulator()
+        setter = self._table.get_setter(row.head)
+        return SettingPopulator(setter) if setter else NullPopulator()
 
 
 class VariableTablePopulator(_TablePopulator):
@@ -206,14 +197,7 @@ class _TestCaseUserKeywordPopulator(Populator):
 
     def _setting_setter(self, row):
         setting_name = row.test_or_user_keyword_setting_name()
-        if self._test_or_uk.is_setting(setting_name):
-            return self._test_or_uk.setter_for(setting_name)
-        self._log_invalid_setting(row.head)
-        return None
-
-    def _log_invalid_setting(self, value):
-        report_invalid_setting("'%s' in %s '%s'" % (value, self._item_type,
-                                                    self._test_or_uk.name))
+        return self._test_or_uk.get_setter(setting_name)
 
 
 class TestCasePopulator(_TestCaseUserKeywordPopulator):
