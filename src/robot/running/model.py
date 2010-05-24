@@ -34,27 +34,28 @@ from context import ExecutionContext
 
 def TestSuite(datasources, settings):
     datasources = [ utils.normpath(path) for path in datasources ]
-    suite_names = settings['SuiteNames']
+    include_suites = settings['SuiteNames']
     if not datasources:
         raise DataError("No data sources given.")
     elif len(datasources) > 1:
         suitedatas = []
         for datasource in datasources:
             try:
-                suitedatas.append(_get_directory_or_file_suite(datasource, suite_names))
+                suitedatas.append(_get_directory_or_file_suite(datasource, 
+                                                               include_suites))
             except DataError:
                 pass
         # FIXME: needs to be implemented
         suite = RunnableMultiTestSuite(suitedatas)
     else:
-        suitedata = _get_directory_or_file_suite(datasources[0], suite_names)
+        suitedata = _get_directory_or_file_suite(datasources[0], include_suites)
         suite = RunnableTestSuite(suitedata)
     suite.set_options(settings)
     return suite
 
-def _get_directory_or_file_suite(path, suite_names):
+def _get_directory_or_file_suite(path, include_suites):
     if os.path.isdir(path):
-        return TestDataDirectory(source=path) #FIXME: filter suites: , suite_names)
+        return TestDataDirectory(source=path, include_suites=include_suites)
     return TestCaseFile(source=path)
 
 
@@ -187,6 +188,7 @@ class RunnableTestCase(BaseTestCase):
         teardown = tc_data.teardown.is_set() and tc_data.teardown or self._get_parent_test_teardown(tc_data.parent.parent)
         self.teardown = Teardown(teardown.name, teardown.args)
         self.tags = self._get_tags(tc_data)
+        #FIXME: Handle parent timeout!!
         self.timeout = TestTimeout(tc_data.timeout.value, tc_data.timeout.message)
         self.keywords = Keywords(tc_data.steps)
 

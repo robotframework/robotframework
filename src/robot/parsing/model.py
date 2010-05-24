@@ -24,9 +24,9 @@ from settings import (Documentation, Fixture, Timeout, Tags, Metadata,
 from datareader import FromFilePopulator, FromDirectoryPopulator
 
 
-def TestData(parent=None, source=None):
+def TestData(parent=None, source=None, include_suites=[]):
     if os.path.isdir(source):
-        return TestDataDirectory(parent, source)
+        return TestDataDirectory(parent, source, include_suites)
     return TestCaseFile(parent, source)
 
 
@@ -91,7 +91,7 @@ class ResourceFile(_TestData):
 
 class TestDataDirectory(_TestData):
 
-    def __init__(self, parent=None, source=None):
+    def __init__(self, parent=None, source=None, include_suites=[]):
         _TestData.__init__(self, parent, source)
         self.directory = self.source
         self.initfile = None
@@ -100,10 +100,11 @@ class TestDataDirectory(_TestData):
         self.testcase_table = TestCaseTableNotAllowed('test suite init file')
         self.keyword_table = KeywordTable(self)
         if self.source:
-            FromDirectoryPopulator().populate(self.source, self)
+            FromDirectoryPopulator().populate(self.source, self, include_suites)
 
-    def add_child(self, path):
-        self.children.append(TestData(parent=self,source=path))
+    def add_child(self, path, include_suites):
+        self.children.append(TestData(parent=self,source=path, 
+                                      include_suites=include_suites))
 
     def __iter__(self):
         for table in [self.setting_table, self.variable_table,

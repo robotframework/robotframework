@@ -217,9 +217,10 @@ class FromDirectoryPopulator(object):
     ignored_prefixes = ('_', '.')
     ignored_dirs = ('CVS',)
 
-    def populate(self, path, datadir):
+    def populate(self, path, datadir, include_suites):
         LOGGER.info("Parsing test data directory '%s'" % path)
-        initfile, children = self._get_children(path)
+        include_sub_suites = self._get_include_suites(path, include_suites)
+        initfile, children = self._get_children(path, include_sub_suites)
         datadir.initfile = initfile
         if initfile:
             try:
@@ -229,12 +230,19 @@ class FromDirectoryPopulator(object):
                 LOGGER.error(unicode(err))
         for child in children:
             try:
-                datadir.add_child(child)
+                datadir.add_child(child, include_sub_suites)
             except DataError, err:
                 LOGGER.info("Parsing data source '%s' failed: %s"
                             % (path, unicode(err)))
 
-    def _get_children(self, dirpath):
+    def _get_include_suites(self, path, include_suites):
+        # If directory is included also all it children should be included
+        if self._is_in_incl_suites(os.path.basename(os.path.normpath(path)),
+                                   include_suites):
+            return []
+        return include_suites
+
+    def _get_children(self, dirpath, include_suites):
         initfile = None
         children = []
         for name, path in self._list_dir(dirpath):
@@ -243,7 +251,7 @@ class FromDirectoryPopulator(object):
                     initfile = path
                 else:
                     LOGGER.error("Ignoring second test suite init file '%s'." % path)
-            elif self._is_ignored(name, path):
+            elif self._is_ignored(name, path, include_suites):
                 LOGGER.info("Ignoring file or directory '%s'." % name)
             else:
                 children.append(path)
@@ -265,11 +273,21 @@ class FromDirectoryPopulator(object):
         base, extension = name.lower().rsplit('.', 1)
         return base == '__init__' and extension in READERS
 
-    def _is_ignored(self, name, path):
+    def _is_ignored(self, name, path, include_suites):
         if name.startswith(self.ignored_prefixes):
             return True
         if os.path.isdir(path):
             return name in self.ignored_dirs
-        extension = path.lower().split('.')[-1]
-        return extension not in READERS
+        base, extension = name.lower().rsplit('.', 1)
+        if extension not in READERS:
+            return True
+        return not self._is_in_incl_suites(base, include_suites)
+
+    def _is_in_incl_suites(self, name, include_suites):
+        if include_suites == []:
+            return True
+        # Match only to the last part of name given like '--suite parent.child'
+        include_suites = [ incl.split('.')[-1] for incl in include_suites ]
+        name = name.split('__', 1)[-1]  # Strip possible prefix
+        return utils.matches_any(name, include_suites, ignore=['_'])
 
