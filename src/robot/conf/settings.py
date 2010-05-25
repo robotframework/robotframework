@@ -91,7 +91,7 @@ class _BaseSettings:
         if not self._cli_opts.has_key(name):
             raise KeyError("Non-existing settings '%s'" % name)
         elif name == 'Name' and value is not None:
-            value = utils.printable_name(value.replace('_', ' '))
+            value = value.replace('_', ' ')
         elif name == 'Doc' and value is not None:
             value = value.replace('_', ' ')
         elif name == 'TagDoc':
