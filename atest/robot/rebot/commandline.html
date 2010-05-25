@@ -748,8 +748,8 @@ execution.</td>
 <td>-N this_is_overridden_next<br>
 --name my_COOL_NameEXEX<br>
 --doc Even_cooooler_docEXQU<br>
---metadata something:New<br>
---metadata two_parts:one_part<br>
+--metadata Something:New<br>
+--metadata two_parts:three_parts_here<br>
 -M esc:STQUDOAMHAEXEX<br>
 --escape star:ST -E quest:QU<br>
 -E dollar:DO -E amp:AM<br>
@@ -763,7 +763,7 @@ execution.</td>
 <td></td>
 <td>Check Names</td>
 <td>${SUITE}</td>
-<td>My COOL Name!!</td>
+<td>my COOL Name!!</td>
 <td></td>
 
 
@@ -773,7 +773,7 @@ execution.</td>
 <td>Check Names</td>
 <td>${SUITE.tests[0]}</td>
 <td>First One<br></td>
-<td>My COOL Name!!.</td>
+<td>my COOL Name!!.</td>
 
 
 </tr>
@@ -782,7 +782,7 @@ execution.</td>
 <td>Check Names</td>
 <td>${SUITE.tests[1]}</td>
 <td>Second One<br></td>
-<td>My COOL Name!!.</td>
+<td>my COOL Name!!.</td>
 
 
 </tr>
@@ -807,9 +807,8 @@ ${SUITE.metadata['Something']}</td>
 <tr>
 <td></td>
 <td>Should Be Equal</td>
-<td>${SUITE.metadata['Two
-Parts']}</td>
-<td>one_part</td>
+<td>${SUITE.metadata['two parts']}</td>
+<td>three parts here</td>
 <td></td>
 
 
@@ -818,7 +817,7 @@ Parts']}</td>
 <td></td>
 <td>Should Be Equal</td>
 <td>
-${SUITE.metadata['Esc']}</td>
+${SUITE.metadata['esc']}</td>
 <td>*?$&amp;#!!</td>
 <td></td>
 
