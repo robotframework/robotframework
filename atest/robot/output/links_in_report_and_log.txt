@@ -1,0 +1,39 @@
+*** Settings ***
+Suite Setup     Create Report And Log And Read Those Content
+Force Tags      pybot  jybot  regression
+Resource        atest_resource.txt
+
+*** Variables ***
+${PREFIX}  links_in_report_and_log
+${REPORT FILE NAME}  ${PREFIX}_report.html
+${LOG FILE NAME}  ${PREFIX}_log.html
+
+*** Test Cases ***
+Link From Report's "Statistics By Tag" Table To "Test Details By Tag" Table
+    Should Contain  ${REPORT}  <div class="stat_name"><a href="#tag_some">some</a></div>
+    Should Contain  ${REPORT}  <td class="col_name"><a name="tag_some"></a>some</td>
+
+Link From Report's "Statistics By Suite" Table To "Test Details By Suite" Table
+    Should Contain  ${REPORT}  <div class="stat_name"><a href="#suite_Multiple Suites.Suite3" title="Multiple Suites.Suite3"><span class="parent_name">Multiple Suites . </span>Suite3</a></div>
+    Should Contain  ${REPORT}  <td class="col_name"><a href="links_in_report_and_log_log.html#suite_Multiple Suites.Suite3" id="suite_Multiple Suites.Suite3" title="Multiple Suites.Suite3">Multiple Suites.Suite3</a></td>
+
+Link From Report's "Test Details By Suite" Table To Log's Details
+    Should Contain  ${REPORT}  <td class="col_name"><a href="links_in_report_and_log_log.html#test_Multiple Suites.Suite3.test1" id="test_Multiple Suites.Suite3.test1" title="Multiple Suites.Suite3.test1">test1</a></td>
+    Should Contain  ${LOG}  <a class="name" name="test_Multiple Suites.Suite3.test1" title="Multiple Suites.Suite3.test1">test1</a>
+
+Link From Report's "Test Details By Tags" Table To Log's Details
+    Should Contain  ${REPORT}  <td class="col_name"><a href="links_in_report_and_log_log.html#test_Multiple Suites.Suite 6.test12" id="test_Multiple Suites.Suite 6.test12" title="Multiple Suites.Suite 6.test12"><span class="parent_name">Multiple Suites . Suite 6 . </span>test12</a></td>
+    Should Contain  ${LOG}  <a class="name" name="test_Multiple Suites.Suite 6.test12" title="Multiple Suites.Suite 6.test12">test12</a>
+
+Link From Log's "Statistics By Suite" Table To Log's Details
+    Should Contain  ${LOG}  <div class="stat_name"><a href="#suite_Multiple Suites.Subsuite1.Suite4" onclick="set_element_visible('suite_Multiple Suites.Subsuite1.Suite4')" title="Multiple Suites.Subsuite1.Suite4"><span class="parent_name">Multiple Suites . Subsuite1 . </span>Suite4</a></div>
+    Should Contain  ${LOG}  <a class="name" name="suite_Multiple Suites.Subsuite1.Suite4" title="Multiple Suites.Subsuite1.Suite4">Suite4</a>
+
+*** Keywords ***
+Create Report And Log And Read Those Content
+    Run Tests  --report ${REPORT FILE NAME} --log ${LOG FILE NAME}  misc${/}multiple_suites
+    ${log} =  Get File  ${OUTDIR}${/}${LOG FILE NAME}
+    Set Suite Variable  $LOG
+    ${report} =  Get File  ${OUTDIR}${/}${REPORT FILE NAME}
+    Set Suite Variable  $REPORT
+
