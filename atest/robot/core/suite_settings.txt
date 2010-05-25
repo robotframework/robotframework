@@ -32,16 +32,16 @@ User Metadata In Multiple Columns
     Should be Equal  ${suite.metadata['Multiple columns']}  Value in multiple columns
 
 User Metadata In Multiple Lines
-    Should be Equal  ${suite.metadata['Multiple lines']}  Value in multiple lines '\n\n' and with real newlines
+    Should be Equal  ${suite.metadata['multiple lines']}  Value in multiple lines '\n\n' and with real newlines
 
 User Metadata With Variables
-    Should be Equal  ${suite.metadata['Variables']}  Version: 1.2
+    Should be Equal  ${suite.metadata['variables']}  Version: 1.2
 
 User Metadata With Variable From Resource
-    Should be Equal  ${suite.metadata['Variable From Resource']}  Variable from a resource file
+    Should be Equal  ${suite.metadata['Variable from resource']}  Variable from a resource file
 
 User Metadata With Variable From Commandline
-    Should be Equal  ${suite.metadata['Var From CLI']}  my_metadata
+    Should be Equal  ${suite.metadata['Var from CLI']}  my_metadata
 
 Unescaping Metadata In Setting Table
     [Documentation]  Test that metadata in setting table is unescaped correctly. This is already partly tested in Suite Documentation

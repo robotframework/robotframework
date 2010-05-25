@@ -16,8 +16,7 @@ Suite Teardown  ${SUITE_FIXTURE_FROM_CLI}
 Suite Tear down  Default suite teardown  
 meta: Name  Value
 meta: Multiple columns  Value in  multiple  columns
-Meta: Multiple lines  Value in
-meTa:multiple lines  multiple lines  '\n\n'   and with
+meTa: multiple lines  Value in  multiple lines  '\n\n'   and with
 ...  real newlines
 mETA:variables  Version: ${version}   
 Meta: Variable from resource  ${resource_file_var}    
