@@ -61,10 +61,7 @@ class FromFilePopulator(object):
         self._curdir = self._get_curdir(datafile.directory)
 
     def _get_curdir(self, path):
-        if not path:
-            return None
-        path = path.replace('\\','\\\\')
-        return path
+        return path.replace('\\','\\\\') if path else None
 
     def populate(self, path):
         LOGGER.info("Parsing test case file '%s'." % path)
@@ -231,7 +228,7 @@ class FromDirectoryPopulator(object):
                 datadir.add_child(child, include_sub_suites)
             except DataError, err:
                 LOGGER.info("Parsing data source '%s' failed: %s"
-                            % (path, unicode(err)))
+                            % (child, unicode(err)))
 
     def _get_include_suites(self, path, include_suites):
         # If directory is included also all it children should be included
