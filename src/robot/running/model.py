@@ -34,28 +34,40 @@ from context import ExecutionContext
 
 def TestSuite(datasources, settings):
     datasources = [ utils.normpath(path) for path in datasources ]
-    include_suites = settings['SuiteNames']
-    if not datasources:
-        raise DataError("No data sources given.")
-    elif len(datasources) > 1:
-        suitedatas = []
-        for datasource in datasources:
-            try:
-                suitedatas.append(_get_directory_or_file_suite(datasource, 
-                                                               include_suites))
-            except DataError:
-                pass
-        suite = RunnableMultiTestSuite(suitedatas)
-    else:
-        suitedata = _get_directory_or_file_suite(datasources[0], include_suites)
-        suite = RunnableTestSuite(suitedata)
+    suite = _get_suite(datasources, settings['SuiteNames'])
     suite.set_options(settings)
+    _check_suite_contains_tests(suite)
     return suite
 
-def _get_directory_or_file_suite(path, include_suites):
+def _get_suite(datasources, include_suites):
+    if not datasources:
+        raise DataError("No data sources given.")
+    if len(datasources) > 1:
+        return _get_multisource_suite(datasources, include_suites)
+    return RunnableTestSuite(_parse_suite(datasources[0], include_suites))
+
+def _parse_suite(path, include_suites):
     if os.path.isdir(path):
         return TestDataDirectory(source=path, include_suites=include_suites)
     return TestCaseFile(source=path)
+
+def _get_multisource_suite(datasources, include_suites):
+    suitedatas = []
+    for datasource in datasources:
+        try:
+            suitedatas.append(_parse_suite(datasource, include_suites))
+        except DataError:
+            pass
+    suite = RunnableMultiTestSuite(suitedatas)
+    if suite.get_test_count() == 0:
+        raise DataError("Data sources %s contain no test cases."
+                        % utils.seq2str(datasources))
+    return suite
+
+def _check_suite_contains_tests(suite):
+    suite.filter_empty_suites()
+    if suite.get_test_count() == 0:
+        raise DataError("Test suite '%s' contains no test cases." % (suite.source))
 
 
 class RunnableTestSuite(BaseTestSuite):
@@ -80,7 +92,14 @@ class RunnableTestSuite(BaseTestSuite):
         self._run_mode_exit_on_failure = False
         self._run_mode_dry_run = False
 
-
+    def filter_empty_suites(self):
+        for suite in self.suites[:]:
+            suite.filter_empty_suites()
+            if suite.get_test_count() == 0:
+                self.suites.remove(suite)
+                LOGGER.info("Running test suite '%s' failed: Test suite"
+                            " contains no test cases." % (suite.source))
+ 
     def _get_metadata(self, metadata):
         meta = {}
         for item in metadata:
