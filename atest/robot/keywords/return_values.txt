@@ -24,7 +24,10 @@ Multible Scalar Variables
     Check Log Message  ${test.kws[0].msgs[0]}  \${var1} = one
     Check Log Message  ${test.kws[0].msgs[1]}  \${var2} = two
 
-Optional = Mark
+= Mark Without Space
+    Check Test Case  ${TEST NAME}
+
+No = Mark
     Check Test Case  ${TEST NAME}
 
 Optional = Mark With Multiple Variables

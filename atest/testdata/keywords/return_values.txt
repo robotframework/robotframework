@@ -1,4 +1,5 @@
 *** Settings ***
+Documentation   NO RIDE because it would sanitize formatting too much.
 Library         ExampleLibrary
 
 *** Test Cases ***
@@ -21,13 +22,22 @@ Multible Scalar Variables
     Should Be Equal  ${var1}  one
     Should Be Equal  ${var2}  two
 
-Optional = Mark
-    ${var} =  Set Variable  hello
+= Mark Without Space
+    ${var}=  Set Variable  hello
     Should Be Equal  ${var}  hello
-    ${v1}  ${v2} =  Set Variable  hi  you
+    ${v1}  ${v2}=  Set Variable  hi  you
     Should Be Equal  ${v1}  hi
     Should Be Equal  ${v2}  you
     @{list}=  Set Variable  a  b  c
+    Should Be Equal  @{list}[0] @{list}[1] @{list}[2]  a b c
+
+No = Mark
+    ${var}  Set Variable  hello
+    Should Be Equal  ${var}  hello
+    ${v1}  ${v2}  Set Variable  hi  you
+    Should Be Equal  ${v1}  hi
+    Should Be Equal  ${v2}  you
+    @{list}  Set Variable  a  b  c
     Should Be Equal  @{list}[0] @{list}[1] @{list}[2]  a b c
 
 Optional = Mark With Multiple Variables
@@ -75,8 +85,7 @@ Long Values To List Variable
 
 Scalar Variables With More Values Than Variables
     [Documentation]  Extra string variables are added to last scalar variable as list
-    ${a}  ${b}  ${c} =  List  a  b  c  d
-    ...  e  f
+    ${a}  ${b}  ${c} =  List  a  b  c  d  e  f
     Should Be Equal  ${a}  a
     Should Be True  '${b}' == 'b'
     Should Be True  ${c} == ['c', 'd', 'e', 'f']
@@ -94,8 +103,7 @@ List When No List Returned
     @{list} =  Set Variable  ${42}
 
 List To Scalar And List Varibles
-    ${a}  ${b}  @{c} =  Create List  1  2  c  d
-    ...  e  f
+    ${a}  ${b}  @{c} =  Create List  1  2  c  d  e  f
     Should Be True  ${a} + ${b} == 3
     Should Be True  @{c} == ['c', 'd', 'e', 'f']
     Should Be Equal  @{c}[1]@{c}[2]@{c}[3] @{c}[3]oo(@{c}[0]): print @{c}[0]  def foo(c): print c
