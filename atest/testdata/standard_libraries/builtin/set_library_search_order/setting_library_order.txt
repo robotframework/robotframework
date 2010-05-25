@@ -40,11 +40,18 @@ Setting Library Order Allows Setting Own Library Before BuiltIn Library
     Set Library Search Order  Library1
     Own Library Should Be Used
 
-Setting Library Order With Spaces In Name
+Library Search Order Is Space Insensitive
     Set Library Search Order  Library With Space  Library1  Library3
     Active Library Should Be  Library With Space
-    Set Library Search Order  Library With Space
+    Set Library Search Order  LibraryWithSpace  Library1  Library3
     Active Library Should Be  Library With Space
+    Set Library Search Order  Library 3  Library1
+    Active Library Should Be  Library3
+
+Library Search Order Is Case Sensitive
+    Set Library Search Order  library3  Library1
+    Active Library Should Be  Library1
+
 
 *** Keywords ***
 Active Library Should Be

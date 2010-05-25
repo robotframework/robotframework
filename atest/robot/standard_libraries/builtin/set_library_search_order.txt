@@ -31,6 +31,9 @@ Setting Library Order Allows Setting Own Library Before BuiltIn Library
 Default Library Order Should Be Suite Specific
     Check Test Case  ${TEST NAME}
 
-Setting Library Order With Spaces In Name
+Library Search Order Is Space Insensitive
+    Check Test Case  ${TEST NAME}
+
+Library Search Order Is Case Sensitive
     Check Test Case  ${TEST NAME}
 

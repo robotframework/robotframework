@@ -1270,10 +1270,9 @@ class _Misc:
         keyword is used in. The old order is returned and can be used
         to reset the search order later.
         """
-        library_search_order = NAMESPACES.current.library_search_order
-        libraries = [ lib.replace(' ', '') for lib in libraries ]
+        old_order = NAMESPACES.current.library_search_order
         NAMESPACES.current.library_search_order = libraries
-        return library_search_order
+        return old_order
 
     def get_time(self, format='timestamp', time_='NOW'):
         """Returns the given time in the requested format.
