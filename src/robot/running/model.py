@@ -277,8 +277,8 @@ class RunnableTestCase(BaseTestCase):
 
     def _get_tags(self, tc_data):
         force_tags = self._get_parent_force_tags(tc_data.parent.parent)
-        tc_tags = tc_data.tags.is_set() and tc_data.tags.value or \
-                    tc_data.parent.parent.setting_table.default_tags.value
+        tc_tags = tc_data.tags.value if tc_data.tags.is_set() \
+            else tc_data.parent.parent.setting_table.default_tags.value
         return list(set(tc_tags + force_tags))
 
     def _get_parent_force_tags(self, data):
