@@ -68,7 +68,7 @@ class TestCaseFile(_TestData):
 
     def _validate(self):
         if not self.testcase_table.is_started():
-            raise DataError()
+            raise DataError('Test case file has no test case table.')
 
     def __iter__(self):
         for table in [self.setting_table, self.variable_table,
