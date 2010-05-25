@@ -55,9 +55,9 @@ Run Suite Dir And Check Results
     Should Be True  ${SUITE.suites[1].suites} == ['Sub Suite1', 'Sub Suite2']
     Check Suite Contains Tests  ${SUITE}  @{SAMPLE_TESTS}  @{SUBSUITE_TESTS}
     ${invalid} =  Join Path  ${DATADIR}  ${path}  invalid.${type}
-    Check Syslog Contains  Parsing data source '${invalid}' failed:  Test case file '${invalid}' contains no test cases
+    Check Syslog Contains  Parsing data source '${invalid}' failed:  Test case file has no test case table.
     ${empty} =  Join Path  ${DATADIR}  ${path}  empty.${type}
-    Check Syslog Contains  Parsing data source '${empty}' failed:  Test case file '${empty}' contains no test cases
+    Check Syslog Contains  Parsing data source '${empty}' failed:  Test case file has no test case table.
 
 Check Suite With Init
     [Arguments]  ${suite}

@@ -68,6 +68,8 @@ class FromFilePopulator(object):
         source = self._open(path)
         try:
             self._get_reader(path).read(source, self)
+        except:
+            raise DataError(utils.get_error_message())
         finally:
             source.close()
 
