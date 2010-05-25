@@ -4,25 +4,6 @@ Force Tags      regression  jybot  pybot
 Resource        atest_resource.txt
 
 *** Test Cases ***
-Test Case Name
-    [Documentation]  Check that test case name is capitalized
-    ${test} =  Check testcase  lower case test case name
-    Equals  ${test.name}  Lower Case Test Case Name
-
-Test Case Documentation
-    Check Test Doc  Test Case Documentation  Documentation for this test case
-
-Test Case Documentation In Multiple Columns
-    Check Test Doc  Test Case Documentation in Multiple Columns  Documentation for this  test case in multiple columns
-
-Test Case Documentation In Multiple Lines
-    Check Test Doc  Test Case Documentation in Multiple Lines  Documentation for this  test case in multiple lines
-
-Test Case Documentation With Variables
-    Check Test Doc  Test Case Documentation With Variables  Variables work in documentation  since Robot 1.2
-
-Test Case Documentation With Non-Existing Variables
-    Check Test Doc  Test Case Documentation With Non-Existing Variables  Starting from RF 2.1 \${NONEX} variables are just left unchanged in all documentations. Existing ones are replaced: "1 sec"
 
 Test Case Tags
     [Documentation]  Check that test case tags can be set in one and multiple lines and that they override Default Tags but not Force Tags
@@ -73,16 +54,15 @@ Multiple Test Case Metas
 
 Test Case With Invalid Metadata
     Check testcase  Test Case With Invalid Metadata
-    Check Stderr Contains  [ ERROR ] Error in file '${PATH}' in table 'Test Case' in element on row 86:  Test Case does not have metadata 'Invalid Test Meta'.  Available: 'Documentation', 'Setup', 'Tags', 'Teardown' and 'Timeout'
+    Check Stderr Contains  [ ERROR ] Invalid syntax in file '${PATH}' in table 'Test Case': Invalid syntax in test case 'Test Case With Invalid Metadata': Non-existing setting 'Invalid Test Meta'.
 
 Escaping Metadata In Test Case Table
     ${test} =  Check Test Case  Escaping Metadata in Test Case Table
     Equal  ${test.doc}  Two backslashes \\\\
 
 User Keyword Name
-    [Documentation]  Test that the name of the created user keyword is capitalized even when created in lower case
     ${test} =  Check testcase  Lower Case User Keyword Name
-    Equals  ${test.keywords[0].name}  UK With Lower Case Name
+    Equals  ${test.keywords[0].name}  UK with lower case name
 
 User Keyword Documentation
     [Documentation]  Check that test case documentation can be set in one cell and in multiple columns and lines
@@ -134,13 +114,13 @@ User Keyword With Multiple Metas
 
 User Keyword With Invalid Metadata
     Check Test Case  User Keyword With Invalid Metadata
-    Check Stderr Contains  [ ERROR ] Error in file '${PATH}' in table 'Keyword' in element on row 39:  User Keyword does not have metadata 'Invalid UK Meta'.  Available: 'Arguments', 'Documentation', 'Return' and 'Timeout'
-    Check Stderr Contains  [ ERROR ] Error in file '${PATH}' in table 'Keyword' in element on row 44:  User Keyword does not have metadata 'Invalid'.  Available: 'Arguments', 'Documentation', 'Return' and 'Timeout'
+    Check Stderr Contains  [ ERROR ] Invalid syntax in file '${PATH}' in table 'Keyword': Invalid syntax in keyword 'UK With Invalid Meta Passing': Non-existing setting 'Invalid UK Meta'.
+    Check Stderr Contains  [ ERROR ] Invalid syntax in file '${PATH}' in table 'Keyword': Invalid syntax in keyword 'UK With Invalid Meta Failing': Non-existing setting 'Invalid'.
 
 Non Existing Variable In Suite Setup And Teardown
     Run Tests  ${EMPTY}  core${/}metadata.html
     Equals  ${SUITE.status}  FAIL
-    ${exp} =  Catenate  SEPARATOR=\n  Suite initialization failed:  Replacing variables from metadata 'Setup' failed: Non-existing variable '\${SUITE_FIXTURE_FROM_CLI}'  Replacing variables from metadata 'Teardown' failed: Non-existing variable '\${SUITE_FIXTURE_FROM_CLI}'  Replacing variables from metadata 'Var From CLI' failed: Non-existing variable '\${META_FROM_CLI}'
+    ${exp} =  Catenate  SEPARATOR=\n  Suite initialization failed:  Replacing variables from Setup failed: Non-existing variable '\${SUITE_FIXTURE_FROM_CLI}'.  Replacing variables from Teardown failed: Non-existing variable '\${SUITE_FIXTURE_FROM_CLI}'.  Replacing variables from setting 'Var from CLI' failed: Non-existing variable '\${META_FROM_CLI}'.
     Equals  ${SUITE.message}  ${exp}
     ${tc} =  Get Test Case  Test Case Documentation
     Equals  ${tc.status}  FAIL
