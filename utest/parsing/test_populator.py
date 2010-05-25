@@ -117,6 +117,7 @@ class TestCaseFilePopulatingTest(_PopulatorTest):
         more_doc = 'smore'
         force_tags = 'force'
         more_tags = 'more tagness'
+        even_more_tags = 'even more'
         default_tags = 'default'
         setup_name, setup_args = 'Keyword Name', ['a1', 'a2']
         self._create_table('Settings', [['Documentation', doc],
@@ -130,13 +131,14 @@ class TestCaseFilePopulatingTest(_PopulatorTest):
                                         ['FORCETAGS', more_tags],
                                         ['test timeout', '1s'],
                                         ['De Fault TAGS', more_tags],
+                                        ['...', even_more_tags],
                                         ['test timeout', 'timeout message'],
                                         ['test timeout', more_doc]
                                         ])
         self._assert_setting('doc', doc + ' ' + more_doc)
         self._assert_fixture('suite_setup', setup_name, setup_args)
         self._assert_fixture('suite_teardown', setup_name, setup_args)
-        self._assert_tags('default_tags', [default_tags, more_tags])
+        self._assert_tags('default_tags', [default_tags, more_tags, even_more_tags])
         self._assert_tags('force_tags', [force_tags, more_tags])
         timeout = self._setting_with('test_timeout')
         assert_equals(timeout.value, '1s')
@@ -261,12 +263,12 @@ class TestCaseFilePopulatingTest(_PopulatorTest):
         self._create_table('Test cases', [['My test name'],
                                           ['', '[Documentation]', doc],
                                           ['', '[  Tags  ]', 'ankka', 'kameli'],
-                                          ['', '... ', 'aasi'],
+                                          ['', '... ', '', 'aasi'],
                                           ['', 'Log', 'barness']])
         test = self._first_test()
         assert_equals(len(test.steps), 1)
         assert_equals(test.doc.value, doc)
-        assert_equals(test.tags.value, ['ankka', 'kameli', 'aasi'])
+        assert_equals(test.tags.value, ['ankka', 'kameli', '', 'aasi'])
 
     def test_invalid_test_settings(self):
         self._create_table('Test cases', [['My test name'],
