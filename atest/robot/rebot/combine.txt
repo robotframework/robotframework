@@ -141,7 +141,7 @@ My Setup
     Run Rebot  ${EMPTY}  ${TEMP FILE 1}  ${TEMP FILE 2}
     Set Suite Variable  $SUITE1  ${SUITE}
     Comment  4) Combine w/ options
-    Run Rebot  --name new_name --doc MySPfineSPdoc --metadata name:value -M other_meta:AnotherSPvalue --critical force --escape space:SP --report ${REPORT 1}  ${TEMP FILE 1}  ${TEMP FILE 2}
+    Run Rebot  --name New_Name --doc MySPfineSPdoc --metadata Name:value -M Other_Meta:AnotherSPvalue --critical force --escape space:SP --report ${REPORT 1}  ${TEMP FILE 1}  ${TEMP FILE 2}
     Set Suite Variable  $SUITE2  ${SUITE}
     Copy File  ${OUT FILE}  ${TEMP FILE 3}
     Comment  5) Combine with times.xml  which has known times
