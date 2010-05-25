@@ -246,7 +246,7 @@ class Variables(utils.NormalizedDict):
 
     def _get_var_table_name_and_value(self, name, value):
         if not is_var(name):
-            raise DataError("Invalid variable name.")
+            raise DataError("Invalid variable name")
         value = [ self._unescape_leading_trailing_spaces(cell) for cell in value ]
         if name[0] == '@':
             return name, self.replace_list(value)
