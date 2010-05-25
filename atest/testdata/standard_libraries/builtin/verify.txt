@@ -6,7 +6,7 @@ ${str0}  0
 ${str1}  1
 ${int0}  ${0}
 ${int1}  ${1}
-${LIST}  a  b  cee  b  ${42}
+@{LIST}  a  b  cee  b  ${42}
 
 *** Test Cases ***
 Fail
@@ -184,12 +184,17 @@ Get Length
 
 Length Should Be
     [Documentation]  FAIL Length of '['a', 'b']' should be 3 but it is 2
-    :FOR  ${input}  ${expected}  IN
-    \  ${TUPLE 0} =  0  ${LIST 0}  0
-    \  ${DICT 0}  ${0} =  \  ${0.0}
-    \  ${TUPLE 1} =  1  ${LIST 3}  2
-    \  ${DICT 3}  ${3} =  123456789012345678901  ${2.1e1}
-    \  ${CUSTOM 0} =  0  ${CUSTOM 1}  1
+    :FOR  ${input}     ${expected}  IN
+    ...   ${TUPLE 0}   0
+    ...   ${LIST 0}    0
+    ...   ${DICT 0}    ${0}
+    ...   ${EMPTY}     ${0.0}
+    ...   ${TUPLE 1}   1
+    ...   ${LIST 3}    3
+    ...   ${DICT 3}    ${3}
+    ...   ${CUSTOM 0}  0
+    ...   ${CUSTOM 1}  1
+    ...   123456789012345678901  ${2.1e1}
     \  Length Should Be  ${input}  ${expected}
     Length Should Be  ${LIST 2}  3
 
