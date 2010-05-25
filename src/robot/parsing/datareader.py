@@ -64,8 +64,6 @@ class FromFilePopulator(object):
         if not path:
             return None
         path = path.replace('\\','\\\\')
-        if not utils.is_jython:
-            path = path.decode(sys.getfilesystemencoding(), 'ignore')
         return path
 
     def populate(self, path):
