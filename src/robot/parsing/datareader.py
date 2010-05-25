@@ -64,7 +64,7 @@ class FromFilePopulator(object):
         return path.replace('\\','\\\\') if path else None
 
     def populate(self, path):
-        LOGGER.info("Parsing test case file '%s'." % path)
+        LOGGER.info("Parsing file '%s'." % path)
         source = self._open(path)
         try:
             self._get_reader(path).read(source, self)

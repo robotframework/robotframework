@@ -28,15 +28,17 @@ Process Resource Files Only Once
     Check Log Message  ${tc.kws[0].kws[1].msgs[0]}  variable value from 02 resource
     Check Log Message  ${tc.kws[0].kws[2].kws[0].msgs[0]}  variable value from 02 resource
     Check Log Message  ${tc.kws[1].msgs[0]}  variable value from 03 resource
-    Comment  Check that resources were parsed only once
     ${dir} =  Join Path  ${CURDIR}/../../testdata  parsing/resource_parsing
+    Comment  These messages come twice. Once when they are parsed as test case 
+       ...   files and a second time when parsed as resource files.
+    Should Contain X Times  ${SYSLOG}  Parsing file '${dir}${/}02_resource.html'  2
+    Should Contain X Times  ${SYSLOG}  Parsing file '${dir}${/}03_resource.html'  2
+    Comment  Check that resources were parsed only once
     Syslog File Should Contain In Order  Parsing test data directory  '${dir}'
-    Syslog File Should Contain In Order  Parsing test case file  '${dir}${/}01_tests.html'
-    Syslog File Should Contain In Order  Parsing test case file  '${dir}${/}02_resource.html'
-    Syslog File Should Contain In Order  Parsing data source  '${dir}${/}02_resource.html'  failed:  Test case file  '${dir}${/}02_resource.html'  contains no test cases
-    Syslog File Should Contain In Order  Parsing test case file  '${dir}${/}03_resource.html'
-    Syslog File Should Contain In Order  Parsing data source  '${dir}${/}03_resource.html'  failed:  Test case file  '${dir}${/}03_resource.html'  contains no test cases
-    Syslog File Should Contain In Order  Parsing test case file  '${dir}${/}04_tests.html'
+    Syslog File Should Contain In Order  Parsing file  '${dir}${/}01_tests.html'
+    Syslog File Should Contain In Order  Parsing data source '${dir}${/}02_resource.html' failed: Test case file has no test case table.
+    Syslog File Should Contain In Order  Parsing data source '${dir}${/}03_resource.html' failed: Test case file has no test case table.
+    Syslog File Should Contain In Order  Parsing file  '${dir}${/}04_tests.html'
     Syslog File Should Contain In Order  Started test suite  'Resource Parsing'
     Syslog File Should Contain In Order  Imported resource file  '${dir}${/}02_resource.html'
     Syslog File Should Contain In Order  Imported resource file  '${dir}${/}03_resource.html'
