@@ -117,12 +117,12 @@ Sub Outputs Should Not Be Processed When Creating Index Log
     \  ${path} =  Join Path  ${OUTDIR}  output-${id}.xml
     \  Should Contain  ${index}  Removed file '<a href="file://${path}">
 
-Statistcs By Suite Table Should Contain Correct Links In Index Log
+Statistics By Suite Table Should Contain Correct Links In Index Log
     ${name} =  Set Variable  statistics_by_suite_links_log
     Run Tests  --log ${name} --splitoutput 2  misc
     Statistics Table Should Contain Link  ${name}.html  ${EMPTY}  Misc  Misc
     Statistics Table Should Contain Link  ${name}.html  ${name}-002.html  Subsuite1.Suite2  Misc.Multiple Suites.Subsuite1.Suite2
-    Statistics Table Should Contain Link  ${name}.html  ${name}-010.html  Suite9  Misc.Multiple Suites.Suite9
+    Statistics Table Should Contain Link  ${name}.html  ${name}-010.html  Suite 9 Name  Misc.Multiple Suites.Suite 9 Name
     Statistics Table Should Contain Link  ${name}.html  ${EMPTY}  Misc.Normal  Misc.Normal
     Statistics Table Should Contain Link  ${name}.html  ${name}-012.html  Subsuites.Sub1  Misc.Suites.Subsuites.Sub1
     Statistics Table Should Contain Link  ${name}.html  ${EMPTY}  Misc.Unicode  Misc.Unicode
