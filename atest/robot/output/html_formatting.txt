@@ -1,0 +1,105 @@
+*** Settings ***
+Suite Setup     My Setup
+Force Tags      regression  pybot  jybot
+Resource        atest_resource.txt
+
+*** Variables ***
+${LOG}      Set in My Setup
+${REPORT}   ------ii-------
+${SUMMARY}  ------ii-------
+
+*** Test Cases ***
+Suite Documentation
+    Should Be Equal  ${SUITE.status}  PASS
+    ${doc} =  Catenate  SEPARATOR=\n
+    ...  Test cases demonstrating html formatting of suite and test docs and suite metadata.<br />
+    ...  <br />
+    ...  It is possible to format text with <b>bold</b>, <i>italic</i> and <i><b>bold italic</b></i>. Also links like <a href="http://basso.fi/radio">http://basso.fi/radio</a>, <a href="ftp://funet.fi">ftp://funet.fi</a> and <a href="file:///c:/temp">file:///c:/temp</a> are automatically formatted.<br />
+    ...  Image links like <img src="http://server/image.jpg" title="http://server/image.jpg" style="border: 1px solid gray" /> even create images.<br />
+    ...  Furthermore tables and horizontal rulers are available as seen by examples below.<br />
+    ...  <br />\n<hr />\n<br />
+    ...  <table border="1" class="doc">
+    ...  <tr>\n<td><b>a</b></td>\n<td><b>b</b></td>\n<td><b>c</b></td>\n</tr>
+    ...  <tr>\n<td><i>1</i></td>\n<td>xx</td>\n<td>yy</td>\n</tr>
+    ...  <tr>\n<td><i>2</i></td>\n<td>zz</td>\n<td></td>\n</tr>
+    ...  </table>
+    ...  <br />\n<hr />
+    ...  There was a bug handling " in the end of suite doc: "
+    Should Contain  ${log}  ${doc}
+    Comment  1)  Suite doc in log
+    Should Contain  ${LOG}  <tr><th>Full Name:</th><td>Html Formatting</td></tr>\n <tr><th>Documentation:</th><td>${doc}</td></tr>
+    Comment  2)  Suite doc in report
+    Should Contain  ${REPORT}  Html Formatting</a></td>\n <td class="col_doc">${doc}</td>
+    Comment  3)  Summary info in report
+    Should Contain  ${REPORT}  <tr><th>Documentation:</th><td>${doc}</td></tr>
+    Comment  4)  Summary info in summary
+    Should Contain  ${SUMMARY}  <tr><th>Documentation:</th><td>${doc}</td></tr>
+
+Suite Metadata In Log
+    Should Contain  ${LOG}  <tr><th>Bold:</th><td>Text in <b>bold</b>.</td></tr>
+    Should Match Regexp  ${LOG}  <tr><th>Image Link:</th><td><img src="file://.*[/\\\\]robot\\.bmp" title="file://.*[/\\\\]robot\\.bmp" style="border: 1px solid gray" /></td></tr>
+    Should Contain  ${LOG}  <tr><th>Italic:</th><td><i>Italic text</i></td></tr>
+    Should Contain  ${LOG}  <tr><th>Link:</th><td><a href="http://x">http://x</a>, <a href="https://y.z">https://y.z</a></td></tr>
+    Should Contain  ${LOG}  <tr><th>Link2:</th><td><a href="http://xxx">http://xxx</a></td></tr>
+
+Suite Metadata In Report
+    Should Contain  ${REPORT}  <span class="meta_name">Bold: </span>\nText in <b>bold</b>.<br />
+    Should Match Regexp  ${REPORT}  <span class="meta_name">Image Link: </span>\n<img src="file://.*[/\\\\]robot\\.bmp" title="file://.*[/\\\\]robot\\.bmp" style="border: 1px solid gray" /><br />
+    Should Contain  ${REPORT}  <span class="meta_name">Italic: </span>\n<i>Italic text</i><br />
+    Should Contain  ${REPORT}  <span class="meta_name">Link: </span>\n<a href="http://x">http://x</a>, <a href="https://y.z">https://y.z</a><br />
+    Should Contain  ${REPORT}  <span class="meta_name">Link2: </span>\n<a href="http://xxx">http://xxx</a><br />
+
+Summary Info In Report
+    Should Contain  ${REPORT}  <tr><th>Bold:</th><td>Text in <b>bold</b>.</td></tr>
+    Should Match Regexp  ${REPORT}  <tr><th>Image Link:</th><td><img src="file://.*[/\\\\]robot\\.bmp" title="file://.*[/\\\\]robot\\.bmp" style="border: 1px solid gray" /></td></tr>
+    Should Contain  ${REPORT}  <tr><th>Italic:</th><td><i>Italic text</i></td></tr>
+    Should Contain  ${REPORT}  <tr><th>Link:</th><td><a href="http://x">http://x</a>, <a href="https://y.z">https://y.z</a></td></tr>
+    Should Contain  ${REPORT}  <tr><th>Link2:</th><td><a href="http://xxx">http://xxx</a></td></tr>
+
+Summary Info In Summary
+    Should Contain  ${SUMMARY}  <tr><th>Bold:</th><td>Text in <b>bold</b>.</td></tr>
+    Should Match Regexp  ${SUMMARY}  <tr><th>Image Link:</th><td><img src="file://.*[/\\\\]robot\\.bmp" title="file://.*[/\\\\]robot\\.bmp" style="border: 1px solid gray" /></td></tr>
+    Should Contain  ${SUMMARY}  <tr><th>Italic:</th><td><i>Italic text</i></td></tr>
+    Should Contain  ${SUMMARY}  <tr><th>Link:</th><td><a href="http://x">http://x</a>, <a href="https://y.z">https://y.z</a></td></tr>
+    Should Contain  ${SUMMARY}  <tr><th>Link2:</th><td><a href="http://xxx">http://xxx</a></td></tr>
+
+Bold
+    Check Test Documentation  Bold  <b>Bold</b>
+
+Italic
+    Check Test Documentation  Italic  <i>This is italic</i> and this is not
+
+Bold Italic
+    Check Test Documentation  Bold Italic  <i><b>Bold italic</b>, only italic</i> and no formatting
+
+Link
+    Check Test Documentation  Link  For more info see: <a href="http://some.url/">http://some.url/</a>
+
+Image Link
+    Check Test Documentation  Image Link  "<img src="file://path/image.GIF" title="file://path/image.GIF" style="border: 1px solid gray" />" (<img src="http://s/x.PnG" title="http://s/x.PnG" style="border: 1px solid gray" />) <img src="https://i.jpeg" title="https://i.jpeg" style="border: 1px solid gray" />!!
+
+Table
+    Check Test Documentation  Table  <table border="1" class="doc">\n <tr>\n <td><b>a</b></td>\n <td><b>b</b></td>\n <td><b>c</b></td>\n </tr>\n <tr>\n <td><i>1</i></td>\n <td>xx</td>\n <td>yy</td>\n </tr>\n <tr>\n <td><i>2</i></td>\n <td>zz</td>\n <td></td>\n </tr>\n </table>\n
+
+Horizontal Ruler
+    Check Test Documentation  Horizontal Ruler  <hr />\n Horizontal rulers rule<br />\n <hr />\n
+
+Normal Usage
+    [Documentation]  Using documentation in more realistic manner like normal user could use it
+    Check Test Documentation  Normal Usage  <b>Header</b><br />\n <br />\n This test case is <i>an example</i>. It tries to be use formatting in a manner normal users would use it.<br />\n <br />\n <b>Another Header</b><br />\n <br />\n Here's some more text about something. See <a href="http://something/else">http://something/else</a> for more details.<br />\n <br />\n <b>Final Header</b><br />\n <br />\n 1. Point one<br />\n 2. Point two<br />\n 3. Piste kolme
+
+*** Keywords ***
+My Setup
+    Run Tests  --log html_formatting-log.html --report html_formatting-report.html --summary html_formatting-summary.html --metadata Link2:http://xxx  output/html_formatting.html
+    ${LOG} =  Get File  ${OUTDIR}${/}html_formatting-log.html
+    ${REPORT} =  Get File  ${OUTDIR}${/}html_formatting-report.html
+    ${SUMMARY} =  Get File  ${OUTDIR}${/}html_formatting-summary.html
+    Set Suite Variable  \${LOG}
+    Set Suite Variable  \${REPORT}
+    Set Suite Variable  \${SUMMARY}
+
+Check Test Documentation
+    [Arguments]  ${test}  ${doc}
+    Check Test Case  ${test}
+    Should Contain  ${LOG}  <tr><th>Full Name:</th><td>Html Formatting.${test}</td></tr>\n <tr><th>Documentation:</th><td>${doc}</td></tr>
+    Should Contain  ${REPORT}  >${test}</a></td>\n <td class="col_doc">${doc}</td>
