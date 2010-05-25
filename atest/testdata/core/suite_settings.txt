@@ -1,0 +1,35 @@
+*** Settings ***
+Resource  resources.html
+
+Documentation  Test cases for metadata in  Setting table (incl. imports)    and within Test Case and    Keyword tables.
+doc u ment  Text from multiple columns and  lines is catenated with spaces.   Real newlines need to be  added with 'backslash+n' (e.g. '\n').
+...  Also variables work since Robot     ${version}, and they work   from commandline too:   ${SUITE_DOC_FROM_CLI}. 
+...  Starting from RF 2.1  ${nonexisting} variables are  just left unchanged.    
+...  Of course escaping  (e.g.    '\${non-existing-in-suite-doc}'    and '\\')  works too.   
+ Def ault TAGS  @{default_tags}  
+Default Tags  \  default-39  # Empty tags should be ignored
+Forcetags  \  force-1
+Test Setup  Log  Default test setup
+Test Teardown  Log  Default test teardown  INFO
+Suitesetup  ${SUITE_FIXTURE_FROM_CLI}  ${default} suite setup  # Global variables work here
+Suite Teardown  ${SUITE_FIXTURE_FROM_CLI}
+Suite Tear down  Default suite teardown  
+meta: Name  Value
+meta: Multiple columns  Value in  multiple  columns
+Meta: Multiple lines  Value in
+meTa:multiple lines  multiple lines  '\n\n'   and with
+...  real newlines
+mETA:variables  Version: ${version}   
+Meta: Variable from resource  ${resource_file_var}    
+Meta:Var from CLI  ${META_FROM_CLI}
+Meta: Escaping   Three backslashes \\\\\\  
+
+*** Variables ***
+${version}  1.2
+${default}  Default
+@{Default_tags}  default-1O  default-2  # default-3 added separately
+
+
+
+*** Test cases ***
+Test Case  No Operation
