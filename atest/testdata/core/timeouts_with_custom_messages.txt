@@ -4,8 +4,7 @@ Test Timeout    500 milliseconds  My customized ${default_msg_end}
 
 *** Variables ***
 ${default_msg_end}  default test timeout
-${test_msg}  My test timeout message with variables
-@{kw_timeout}  0.1 sec  My keyword timeout message  with variables
+${message}  message from variable
 
 *** Test Cases ***
 Default Test Timeout Message
@@ -23,8 +22,8 @@ Test Timeout Message In Multiple Columns
     Sleep  10
 
 Test Timeout Message With Variables
-    [Documentation]  FAIL My test timeout message with variables
-    [Timeout]  200 milliseconds  ${test_msg}
+    [Documentation]  FAIL Test ${message}
+    [Timeout]  200 milliseconds  Test ${message}
     Sleep  10
 
 Keyword Timeout Message
@@ -39,9 +38,9 @@ Keyword Timeout Message In Multiple Columns
     Keyword Timeout Message In Multiple Columns  10
 
 Keyword Timeout Message With Variables
-    [Documentation]  FAIL My keyword timeout message with variables
+    [Documentation]  FAIL Keyword ${message}
     [Timeout]
-    Keyword Timeout Message WIth Variables  10
+    Keyword Timeout Message With Variables
 
 *** Keywords ***
 Keyword Timeout Message
@@ -54,8 +53,7 @@ Keyword Timeout Message In Multiple Columns
     [Timeout]  111 milliseconds  My keyword timeout message in multiple columns
     Sleep  ${secs}
 
-Keyword Timeout Message WIth Variables
-    [Arguments]  ${secs}
-    [Timeout]  @{kw_timeout}
-    Sleep  ${secs}
+Keyword Timeout Message With Variables
+    [Timeout]  ${0.1} sec  Keyword ${message}
+    Sleep  5 sec
 

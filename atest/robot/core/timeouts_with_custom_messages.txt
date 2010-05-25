@@ -19,7 +19,7 @@ Test Timeout Message In Multiple Columns
 
 Test Timeout Message With Variables
     ${test} =  Check Test Case  Test Timeout Message With Variables
-    Check Log Message  ${test.kws[0].msgs[0]}  My test timeout message with variables  FAIL
+    Check Log Message  ${test.kws[0].msgs[0]}  Test message from variable  FAIL
 
 Keyword Timeout Message
     ${test} =  Check Test Case  Keyword Timeout Message
@@ -31,5 +31,5 @@ Keyword Timeout Message In Multiple Columns
 
 Keyword Timeout Message With Variables
     ${test} =  Check Test Case  Keyword Timeout Message With Variables
-    Check Log Message  ${test.kws[0].kws[0].msgs[0]}  My keyword timeout message with variables  FAIL
+    Check Log Message  ${test.kws[0].kws[0].msgs[0]}  Keyword message from variable  FAIL
 
