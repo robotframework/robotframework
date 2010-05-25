@@ -7,7 +7,7 @@ Resource        atest_resource.txt
 Suite Name
     Should Be Equal  ${suite.name}  Suite Settings
 
-Suite Document
+Suite Documentation
     [Documentation]  Checks that suite document can be set in metadata. Also checks that backslashes are escaped correctly.
     Should Be Equal  ${suite.doc}  Test cases for metadata in Setting table (incl. imports) and within Test Case and Keyword tables. Text from multiple columns and lines is catenated with spaces. Real newlines need to be added with 'backslash+n' (e.g. '\n'). Also variables work since Robot 1.2, and they work from commandline too: Hello. Starting from RF 2.1 \${nonexisting} variables are just left unchanged. Of course escaping (e.g. '\${non-existing-in-suite-doc}' and '\\') works too.
 
@@ -25,33 +25,10 @@ Suite Suite Setup
 Suite Suite Teardown
     Verify Teardown  ${suite}  BuiltIn.Log  Default suite teardown
 
-User Metadata
-    Should be Equal  ${suite.metadata['Name']}  Value
-
-User Metadata In Multiple Columns
-    Should be Equal  ${suite.metadata['Multiple columns']}  Value in multiple columns
-
-User Metadata In Multiple Lines
-    Should be Equal  ${suite.metadata['multiple lines']}  Value in multiple lines '\n\n' and with real newlines
-
-User Metadata With Variables
-    Should be Equal  ${suite.metadata['variables']}  Version: 1.2
-
-User Metadata With Variable From Resource
-    Should be Equal  ${suite.metadata['Variable from resource']}  Variable from a resource file
-
-User Metadata With Variable From Commandline
-    Should be Equal  ${suite.metadata['Var from CLI']}  my_metadata
-
-Unescaping Metadata In Setting Table
-    [Documentation]  Test that metadata in setting table is unescaped correctly. This is already partly tested in Suite Documentation
-    ${stderr} =  Get File  ${STDERR FILE}
-    Fail If Contains  ${stderr}  \${non-existing-in-suite-doc}
-    Should be Equal  ${suite.metadata['Escaping']}  Three backslashes \\\\\\
 
 *** Keywords ***
 My Setup
-    Run Tests  --variable suite_doc_from_cli:Hello --variable suite_fixture_from_cli:Log --variable meta_from_cli:my_metadata  core/suite_settings.txt
+    Run Tests  --variable suite_doc_from_cli:Hello --variable suite_fixture_from_cli:Log  core/suite_settings.txt
 
 Verify Setup
     [Arguments]  ${item}  ${expected_name}  ${expected_message}
