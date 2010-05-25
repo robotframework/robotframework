@@ -383,8 +383,8 @@ class TestCase(_WithSteps, _WithSettings):
         return self.steps[-1]
 
     def report_invalid_syntax(self, message, level='ERROR'):
-        type = 'test case' if isinstance(self, TestCase) else 'keyword'
-        message = "Invalid syntax in %s '%s': %s" % (type, self.name, message)
+        type_ = 'test case' if type(self) is TestCase else 'keyword'
+        message = "Invalid syntax in %s '%s': %s" % (type_, self.name, message)
         self.parent.report_invalid_syntax(message, level)
 
 
