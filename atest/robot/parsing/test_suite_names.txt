@@ -1,37 +1,45 @@
 *** Settings ***
-Test Setup      Run Multiple Suites If It Is Not Already Executed
+Suite Setup     Run Tests  ${EMPTY}  misc/multiple_suites
 Force Tags      regression  jybot  pybot
 Resource        atest_resource.txt
 
-*** Variables ***
-${SUITE}  NOT INITIALIZED
 
 *** Test Cases ***
-Prefix Is Removed From Directory Suite Name
-    Should Be Equal  ${SUITE.suites[1].name}  Subsuite1
-
 Root Directory Suite Name
     Should Be Equal  ${SUITE.name}  Multiple Suites
 
 Prefix Is Removed From File Suite Name
     Should Be Equal  ${SUITE.suites[0].name}  Suite First
 
+Prefix Is Removed From Directory Suite Name
+    Should Be Equal  ${SUITE.suites[1].name}  Subsuite1
+
 Child File Suite Name
-    Should Be Equal  ${SUITE.suites[6].name}  Suite6
+    Should Be Equal  ${SUITE.suites[6].name}  Suite 6
 
 Child Directory Suite Name
-    [Setup]  Run Tests  ${EMPTY}  misc${/}suites
-    Should Be Equal  ${SUITE.suites[2].name}  Subsuites2
+    Should Be Equal  ${SUITE.suites[1].name}  Subsuite1
+
+Non-uppercase names are titlecased
+    Should Be Equal  ${SUITE.suites[6].name}  Suite 6
+    Should Be Equal  ${SUITE.suites[9].name}  Suite 9 Name
+
+Names with uppercase chars are not titlecased
+    Should Be Equal  ${SUITE.suites[7].name}  SUite7
+    Should Be Equal  ${SUITE.suites[8].name}  suiTe 8
+
+Underscores are converted to spaces
+    Should Be Equal  ${SUITE.suites[8].name}  suiTe 8
+    Should Be Equal  ${SUITE.suites[9].name}  Suite 9 Name
+
+Spaces are preserved
+    Should Be Equal  ${SUITE.suites[6].name}  Suite 6
 
 Root File Suite Name
-    [Setup]  Run Tests  ${EMPTY}  misc${/}pass_and_fail.html
+    [Setup]  Run Tests  ${EMPTY}  misc/pass_and_fail.html
     Should Be Equal  ${SUITE.name}  Pass And Fail
 
-Suite Name Ending With Dot
-    [Setup]  Run Tests  --name something_ending_with_dot.  misc${/}pass_and_fail.html
-    Should Be Equal  ${SUITE.name}  Something Ending With Dot.
-
-*** Keywords ***
-Run Multiple Suites If It Is Not Already Executed
-    Run Keyword If  """${SUITE}""" != """Multiple Suites"""  Run Tests  \  misc${/}multiple_suites
-
+Suite Name Given From Command Line
+    [Documentation]  '_' -> ' ' but otherwise as-is. Ending dot has caused bug.
+    [Setup]  Run Tests  --name Ending_with_dot.  misc/pass_and_fail.html
+    Should Be Equal  ${SUITE.name}  Ending with dot.
