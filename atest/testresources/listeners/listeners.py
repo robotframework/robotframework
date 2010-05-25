@@ -42,12 +42,12 @@ class InvalidMethods:
 class SuiteAndTestCounts(object):
     ROBOT_LISTENER_API_VERSION = '2'
     exp_data = {
-        'Subsuites & Subsuites 2': ([], ['Subsuites', 'Subsuites 2'], 4),
-        'Subsuites':               ([], ['Sub 1', 'Sub 2'], 2),
-        'Sub 1':                   (['SubSuite1 First'], [], 1),
-        'Sub 2':                   (['SubSuite2 First'], [], 1),
-        'Subsuites 2':             ([], ['Subsuite 3'], 2),
-        'Subsuite 3':              (['SubSuite3 First', 'SubSuite3 Second'], [], 2),
+        'Subsuites & Subsuites2': ([], ['Subsuites', 'Subsuites2'], 4),
+        'Subsuites':               ([], ['Sub1', 'Sub2'], 2),
+        'Sub1':                   (['SubSuite1 First'], [], 1),
+        'Sub2':                   (['SubSuite2 First'], [], 1),
+        'Subsuites2':             ([], ['Subsuite3'], 2),
+        'Subsuite3':              (['SubSuite3 First', 'SubSuite3 Second'], [], 2),
         }
 
     def start_suite(self, name, attrs):
