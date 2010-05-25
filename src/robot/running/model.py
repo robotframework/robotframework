@@ -45,7 +45,6 @@ def TestSuite(datasources, settings):
                                                                include_suites))
             except DataError:
                 pass
-        # FIXME: needs to be implemented
         suite = RunnableMultiTestSuite(suitedatas)
     else:
         suitedata = _get_directory_or_file_suite(datasources[0], include_suites)
