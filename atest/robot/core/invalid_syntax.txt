@@ -1,0 +1,88 @@
+*** Settings ***
+Documentation   Tests for invalid syntax in the test data. Non-existing variables in metadata are already tested in metadata.html and some other errors in resource_and_variable_imports.html
+Suite Setup     My Setup
+Force Tags      regression
+Default Tags    jybot  pybot
+Resource        atest_resource.txt
+
+*** Test Cases ***
+Valid Test
+    ${test} =  Check Test Case  Valid Test
+    Equals  ${test.doc}  This test should be executed and PASS
+
+Library Imports
+    Verify Error  Setting 'Library' requires a value  Setting  7
+    Verify Error  Importing test library 'NonExistingLibrary' failed: ImportError:  Setting  8
+    Check Test Case  Check Valid Library Import
+    Verify Error  Non-existing variable '${unicod  Setting  15
+
+Resource Imports
+    Verify Error  Resource file 'non-existing-resource.html' does not exist  Setting  2
+    Verify Error  Setting 'Resource' requires a value  Setting  3
+    Check Test Case  Check Valid Resource Import
+
+Variable File Imports
+    Verify Error  Variable file 'non-existing-variables.py' does not exist  Setting  4
+    Verify Error  Setting 'Variables' requires a value  Setting  6
+    Check Test Case  Check Valid Variable File Import
+
+Invalid Setting
+    Verify Error  Test Case File does not have metadata 'Invalid Setting'. Available: 'Default Tags', 'Documentation', 'Force Tags', 'Suite Setup', 'Suite Teardown', 'Test Setup', 'Test Teardown' and 'Test Timeout'  Setting  13
+
+Variables In Variable Table
+    Verify Error  Setting variable 'Invalid Variable Name' failed: Invalid variable name 'Invalid Variable Name'  Variable  1
+    Check Test Case  Check Valid Variable In Variable Table
+
+Non-Existing Variable In Test
+    Check Test Case  Non-Existing Variable
+
+Non-Existing Keyword
+    ${test} =  Check Test Case  Non-Existing Keyword
+    Starts  ${test.doc}  Note that doc and tags
+    Fail Unless  ${test.tags} == ['example','tags']
+
+Non-Existing Keyword In UK
+    ${test} =  Check Test Case  Non-Existing Keyword In UK
+    Starts  ${test.doc}  Note that doc and tags
+    Fail Unless  ${test.tags} == ['more','tags']
+
+Invalid Keyword Arguments
+    ${test} =  Check Test Case  Invalid Keyword Arguments
+    Starts  ${test.doc}  Note that doc and tags
+    Fail Unless  ${test.tags} == [ ]
+
+Invalid Keyword Arguments In UK
+    ${test} =  Check Test Case  Invalid Keyword Arguments In UK
+    Starts  ${test.doc}  Note that doc and tags
+    Fail Unless  ${test.tags} == ['1', '2', '3']
+
+Invalid Metadata In Test Case
+    ${test} =  Check Test Case  Test Case With Invalid Metadata
+    Equals  ${test.doc}  Invalid metadata is ignored with an error and this test will PASS
+    Check Test Case  Check Test case With Invalid Metadata
+    Verify Error  Test Case does not have metadata 'Invalid In Test'. Available: 'Documentation', 'Setup', 'Tags', 'Teardown' and 'Timeout'  Test Case  35
+
+Invalid Metadata In User Keyword
+    Check Test Case  User Keyword With Invalid Metadata
+    Check Test Case  Check User Keyword With Invalid Meta
+    Verify Error  User Keyword does not have metadata 'Invalid In UK'. Available: 'Arguments', 'Documentation', 'Return' and 'Timeout'  Keyword  9
+
+User Keyword Defined Multiple Times
+    ${test} =  Check Test Case  User Keyword Defined Multiple Times
+    Starts  ${test.doc}  Note that doc and tags
+    Fail Unless  ${test.tags} == ['mytag']
+    Verify Error  Creating keyword 'Same KW Name Twice' failed: Keyword 'Same KW Name Twice' defined multiple times  Keyword  3
+    Verify Error  Creating keyword 'UK 4 Times' failed: Keyword 'UK 4 Times' defined multiple times  Keyword  13
+    Verify Error  Creating keyword 'UK 4 Times' failed: Keyword 'UK 4 Times' defined multiple times  Keyword  14
+    Verify Error  Creating keyword 'UK 4 Times' failed: Keyword 'UK 4 Times' defined multiple times  Keyword  15
+
+*** Keywords ***
+My Setup
+    Run Tests  ${EMPTY}  core${/}invalid_syntax.html
+    ${PATH} =  Join Path  ${CURDIR}..${/}..${/}..${/}testdata  core${/}invalid_syntax.html
+    Set Suite Variable  $PATH
+
+Verify Error
+    [Arguments]  ${error}  ${table}  ${row}
+    Check Stderr Contains  [ ERROR ] Error in file '${PATH}'  in table '${table}' in element  on row ${row}: ${error}
+
