@@ -1,0 +1,216 @@
+*** Settings ***
+Suite Setup     My Setup
+Force Tags      regression  jybot  pybot
+Resource        atest_resource.txt
+
+*** Test Cases ***
+Suite Name
+    [Documentation]  Checks that suite name can be set in metadata and the name is capitalized
+    Should Be Equal  ${suite.name}  Metadata
+
+Suite Document
+    [Documentation]  Checks that suite document can be set in metadata. Also checks that backslashes are escaped correctly.
+    Should Be Equal  ${suite.doc}  Test cases for metadata in Setting table (incl. imports) and within Test Case and Keyword tables. Text from multiple columns and lines is catenated with spaces. Real newlines need to be added with 'backslash+n' (e.g. '\n'). Also variables work since Robot 1.2, and they work from commandline too: Hello. Starting from RF 2.1 \${nonexisting} variables are just left unchanged. Of course escaping (e.g. '\${non-existing-in-suite-doc}' and '\\') works too.
+
+Suite Test Setup
+    ${test} =  Check Test Case  Test Case Documentation
+    Verify Setup  ${test}  BuiltIn.Log  Default test setup
+
+Suite Test Teardown
+    ${test} =  Check Test Case  Test Case Documentation
+    Verify Teardown  ${test}  BuiltIn.Log  Default test teardown
+
+Suite Suite Setup
+    Verify Setup  ${suite}  BuiltIn.Log  Default suite setup
+
+Suite Suite Teardown
+    Verify Teardown  ${suite}  BuiltIn.Log  Default suite teardown
+
+Suite Test Timeout
+    Check Test Case  Suite Level Test Timeout
+
+User Metadata
+    Equal  ${suite.metadata['Name']}  Value
+
+User Metadata In Multiple Columns
+    Equal  ${suite.metadata['Multiple Columns']}  Value in multiple columns
+
+User Metadata In Multiple Lines
+    Equal  ${suite.metadata['Multiple Lines']}  Value in multiple lines '\n\n' and with real newlines
+
+User Metadata With Variables
+    Equal  ${suite.metadata['Variables']}  Version: 1.2
+
+User Metadata With Variable From Resource
+    Equal  ${suite.metadata['Variable From Resource']}  Variable from a resource file
+
+User Metadata With Variable From Commandline
+    Equal  ${suite.metadata['Var From CLI']}  my_metadata
+
+Unescaping Metadata In Setting Table
+    [Documentation]  Test that metadata in setting table is unescaped correctly. This is already partly tested in Suite Documentation
+    ${stderr} =  Get File  ${STDERR FILE}
+    Fail If Contains  ${stderr}  \${non-existing-in-suite-doc}
+    Equal  ${suite.metadata['Escaping']}  Three backslashes \\\\\\
+
+Test Case Name
+    [Documentation]  Check that test case name is capitalized
+    ${test} =  Check testcase  lower case test case name
+    Equals  ${test.name}  Lower Case Test Case Name
+
+Test Case Documentation
+    Check Test Doc  Test Case Documentation  Documentation for this test case
+
+Test Case Documentation In Multiple Columns
+    Check Test Doc  Test Case Documentation in Multiple Columns  Documentation for this  test case in multiple columns
+
+Test Case Documentation In Multiple Lines
+    Check Test Doc  Test Case Documentation in Multiple Lines  Documentation for this  test case in multiple lines
+
+Test Case Documentation With Variables
+    Check Test Doc  Test Case Documentation With Variables  Variables work in documentation  since Robot 1.2
+
+Test Case Documentation With Non-Existing Variables
+    Check Test Doc  Test Case Documentation With Non-Existing Variables  Starting from RF 2.1 \${NONEX} variables are just left unchanged in all documentations. Existing ones are replaced: "1 sec"
+
+Test Case Tags
+    [Documentation]  Check that test case tags can be set in one and multiple lines and that they override Default Tags but not Force Tags
+    Check Test Tags  Test Case Tags  force-1  test-1  test-2
+    Check Test Tags  Test Case Tags In Multiple Rows  force-1  test-1  test-2  test-3  test-4  test-5
+    Check Test Tags  Test Case Default Tags  default-1  default-2  default-3  force-1
+
+Test Case Tags With Variables
+    [Documentation]  Check that variables work in test case tags and invalid variables are handled correctly
+    Check Test Tags  Test Case Tags With Variables  force-1  test-1  test-2  test-3  test-4  test-5
+
+Test Case Tags With Non-Existing Variables
+    Check Test Tags  Test Case Tags With Non-Existing Variables  \${non-existing}  \@{non-existing}  force-1
+
+Test Case Setup
+    ${test} =  Check Test Case  Test Case Setup
+    Verify Setup  ${test}  BuiltIn.Log  Test case setup
+
+Test Case Setup With Escapes
+    ${test} =  Check Test Case  Test Case Setup With Escapes
+    Verify Setup  ${test}  BuiltIn.Log  One backslash \\
+
+Test Case Teardown
+    ${test} =  Check Test Case  Test Case Teardown
+    Verify Teardown  ${test}  BuiltIn.Log  Test case teardown
+
+Test Case Teardown With Escapes
+    ${test} =  Check Test Case  Test Case Teardown With Escapes
+    Verify Teardown  ${test}  BuiltIn.Log  \${notvar} is not a variable
+
+Test Case Timeout
+    Check Test Case  Test Case Timeout
+    Check Test Case  Test Case Timeout 2
+
+Test Case Timeout With Variables
+    Check Test Case  Test Case Timeout With Variables
+
+Test Case With Invalid Timeout
+    Check Test Case  Test Case With Invalid Timeout
+
+Multiple Test Case Metas
+    ${test} =  Check Test Case  Multiple Test Case Metas
+    Equal  ${test.doc}  Documentation for this test case
+    ${expected_tags} =  Create List  force-1  test-1  test-2
+    Equal  ${test.tags}  ${expected_tags}
+    Verify Setup  ${test}  BuiltIn.Log  Test case setup
+    Verify Teardown  ${test}  BuiltIn.Log  Test case teardown
+
+Test Case With Invalid Metadata
+    Check testcase  Test Case With Invalid Metadata
+    Check Stderr Contains  [ ERROR ] Error in file '${PATH}' in table 'Test Case' in element on row 86:  Test Case does not have metadata 'Invalid Test Meta'.  Available: 'Documentation', 'Setup', 'Tags', 'Teardown' and 'Timeout'
+
+Escaping Metadata In Test Case Table
+    ${test} =  Check Test Case  Escaping Metadata in Test Case Table
+    Equal  ${test.doc}  Two backslashes \\\\
+
+User Keyword Name
+    [Documentation]  Test that the name of the created user keyword is capitalized even when created in lower case
+    ${test} =  Check testcase  Lower Case User Keyword Name
+    Equals  ${test.keywords[0].name}  UK With Lower Case Name
+
+User Keyword Documentation
+    [Documentation]  Check that test case documentation can be set in one cell and in multiple columns and lines
+    ${test} =  Check testcase  User Keyword Documentation
+    Equal  ${test.keywords[0].doc}  Documentation for a user keyword
+    Equal  ${test.keywords[1].doc}  Documentation for a user keyword in multiple columns
+    Equal  ${test.keywords[2].doc}  Documentation for a user keyword in multiple lines
+
+User Keyword Short Documentation
+    [Documentation]  Checks that it is possible to use "short doc" with user keywords i.e. that only the first line (until real newline) is taken into documentation.
+    ${test} =  Check testcase  User Keyword With Short Documentation
+    Equal  ${test.keywords[0].doc}  This is the short doc and also the only thing logged
+
+User Keyword Documentation With Variables
+    [Documentation]  Check that variables work in user keyword documentation and invalid variables are handled correctly
+    ${test} =  Check testcase  User Keyword Documentation With Variables
+    Equal  ${test.keywords[0].doc}  Variables work in documentation since Robot 1.2
+
+User Keyword Documentation With Non Existing Variables
+    ${tc} =  Check testcase  User Keyword Documentation with non Existing Variables
+    Equals  ${tc.kws[0].doc}  Starting from RF 2.1 \@{non-existing} variables are just left unchanged in keyword documentation.
+
+User Keyword Arguments
+    [Documentation]  Check that user keyword Arguments work. Arguments and Return are handled differently than other metadatas.
+    ${test} =  Check testcase  User Keyword Arguments
+    Equal  ${test.keywords[0].args[0]}  one
+    Check Log Message  ${test.keywords[0].keywords[0].messages[0]}  one
+    Equal  ${test.keywords[1].args[0]}  one
+    Equal  ${test.keywords[1].args[1]}  two
+    Equal  ${test.keywords[1].args[2]}  three
+    Check Log Message  ${test.keywords[1].keywords[0].messages[0]}  one two three
+
+User Keyword Return
+    [Documentation]  Check that user keyword Return works. Arguments and Return are handled differently than other metadatas.
+    Check Test Case  User Keyword Return
+
+User Keyword Timeout
+    Check Test Case  User Keyword Timeout
+
+User Keyword Timeout With Variables
+    Check Test Case  User Keyword Timeout With Variables
+
+User Keyword With Invalid Timeout
+    Check Test Case  User Keyword With Invalid Timeout
+
+User Keyword With Multiple Metas
+    ${test} =  Check testcase  User Keyword With Multiple Metas
+    Equal  ${test.keywords[0].doc}  Documentation for a user keyword
+
+User Keyword With Invalid Metadata
+    Check Test Case  User Keyword With Invalid Metadata
+    Check Stderr Contains  [ ERROR ] Error in file '${PATH}' in table 'Keyword' in element on row 39:  User Keyword does not have metadata 'Invalid UK Meta'.  Available: 'Arguments', 'Documentation', 'Return' and 'Timeout'
+    Check Stderr Contains  [ ERROR ] Error in file '${PATH}' in table 'Keyword' in element on row 44:  User Keyword does not have metadata 'Invalid'.  Available: 'Arguments', 'Documentation', 'Return' and 'Timeout'
+
+Non Existing Variable In Suite Setup And Teardown
+    Run Tests  ${EMPTY}  core${/}metadata.html
+    Equals  ${SUITE.status}  FAIL
+    ${exp} =  Catenate  SEPARATOR=\n  Suite initialization failed:  Replacing variables from metadata 'Setup' failed: Non-existing variable '\${SUITE_FIXTURE_FROM_CLI}'  Replacing variables from metadata 'Teardown' failed: Non-existing variable '\${SUITE_FIXTURE_FROM_CLI}'  Replacing variables from metadata 'Var From CLI' failed: Non-existing variable '\${META_FROM_CLI}'
+    Equals  ${SUITE.message}  ${exp}
+    ${tc} =  Get Test Case  Test Case Documentation
+    Equals  ${tc.status}  FAIL
+    Equals  ${tc.message}  Initialization of the parent suite failed.
+
+*** Keywords ***
+My Setup
+    Run Tests  --variable suite_doc_from_cli:Hello --variable suite_fixture_from_cli:Log --variable meta_from_cli:my_metadata  core${/}metadata.html
+    ${PATH} =  Join Path  ${CURDIR}${/}..${/}..  testdata${/}core${/}metadata.html
+    Set Suite Variable  $PATH
+
+Verify Setup
+    [Arguments]  ${item}  ${expected_name}  ${expected_message}
+    Verify Fixture  ${item.setup}  ${expected_name}  ${expected_message}
+
+Verify Teardown
+    [Arguments]  ${item}  ${expected_name}  ${expected_message}
+    Verify Fixture  ${item.teardown}  ${expected_name}  ${expected_message}
+
+Verify Fixture
+    [Arguments]  ${fixture}  ${expected_name}  ${expected_message}
+    Equal  ${fixture.name}  ${expected_name}
+    Check Log Message  ${fixture.messages[0]}  ${expected_message}
+
