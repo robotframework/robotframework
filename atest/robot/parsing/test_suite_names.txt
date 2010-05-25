@@ -2,6 +2,7 @@
 Suite Setup     Run Tests  ${EMPTY}  misc/multiple_suites
 Force Tags      regression  jybot  pybot
 Resource        atest_resource.txt
+Documentation   Giving suite names from commandline is tested in robot/cli/runner/suite_name_doc_and_metadata.txt
 
 
 *** Test Cases ***
@@ -39,7 +40,3 @@ Root File Suite Name
     [Setup]  Run Tests  ${EMPTY}  misc/pass_and_fail.html
     Should Be Equal  ${SUITE.name}  Pass And Fail
 
-Suite Name Given From Command Line
-    [Documentation]  '_' -> ' ' but otherwise as-is. Ending dot has caused bug.
-    [Setup]  Run Tests  --name Ending_with_dot.  misc/pass_and_fail.html
-    Should Be Equal  ${SUITE.name}  Ending with dot.
