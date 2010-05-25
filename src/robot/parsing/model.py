@@ -44,7 +44,9 @@ class _TestData(object):
         name = os.path.splitext(os.path.basename(self.source))[0]
         name = name.split('__', 1)[-1]  # Strip possible prefix
         name = name.replace('_', ' ').strip()
-        return name.title() if name.islower() else name
+        if name.islower():
+            name = ' '.join(w[0].upper() + w[1:] for w in name.split())
+        return name
 
     def report_invalid_syntax(self, table, message, level='ERROR'):
         initfile = getattr(self, 'initfile', None)

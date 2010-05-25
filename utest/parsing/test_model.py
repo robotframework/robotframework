@@ -27,10 +27,11 @@ class TestTestCaseFile(unittest.TestCase):
                              ('hello', 'Hello'),
                              ('hello_world.tsv', 'Hello World'),
                              ('HELLO_world.htm', 'HELLO world'),
-                             ('  h i   w o r l d  .htm', 'H I   W O R L D'),
+                             ('1name', '1name'),
+                             ('  h i   w o r l d  .htm', 'H I W O R L D'),
                              ('HelloWorld.txt', 'HelloWorld'),
                              ('09__h_E_l_l_o_', 'h E l l o'),
-                             ('prefix__the__name', 'The  Name')]:
+                             ('prefix__the__name', 'The Name')]:
             self.tcf.source = os.path.abspath(source)
             assert_equal(self.tcf.name, name)
 
