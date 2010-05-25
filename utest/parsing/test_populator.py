@@ -283,7 +283,7 @@ class TestCaseFilePopulatingTest(_PopulatorTest):
                                         ['', '[ank ka]']])
         assert_equals(self._logger.value(), "Invalid syntax in file 'None' in "
                                             "table 'Keywords': Invalid syntax "
-                                            "in test case 'My User Keyword': "
+                                            "in keyword 'My User Keyword': "
                                             "Non-existing setting 'ank ka'.")
 
     def test_creating_user_keywords(self):
