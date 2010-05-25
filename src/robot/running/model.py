@@ -114,8 +114,8 @@ class RunnableTestSuite(BaseTestSuite):
         errors = []
         self.doc = context.replace_vars_from_setting('Documentation', self.doc,
                                                      errors)
-        self.setup.replace_variables(context.get_current_vars())
-        self.teardown.replace_variables(context.get_current_vars())
+        self.setup.replace_variables(context.get_current_vars(), errors)
+        self.teardown.replace_variables(context.get_current_vars(), errors)
         for name, value in self.metadata.items():
             self.metadata[name] = context.replace_vars_from_setting(name, value,
                                                                     errors)
@@ -210,8 +210,8 @@ class RunnableTestCase(BaseTestCase):
         errors = []
         self.doc = context.replace_vars_from_setting('Documentation', self.doc,
                                                      errors)
-        self.setup.replace_variables(context.get_current_vars())
-        self.teardown.replace_variables(context.get_current_vars())
+        self.setup.replace_variables(context.get_current_vars(), errors)
+        self.teardown.replace_variables(context.get_current_vars(), errors)
         self.tags = utils.normalize_tags(context.replace_vars_from_setting('Tags',
                                                                            self.tags,
                                                                            errors))

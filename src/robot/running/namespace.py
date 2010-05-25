@@ -423,7 +423,7 @@ class _VariableScopes:
                 return varz.replace_string(item)
             except DataError, error:
                 pass
-        errors.append("Replacing variables from metadata '%s' failed: %s"
+        errors.append("Replacing variables from setting '%s' failed: %s."
                       % (name, error))
         return utils.unescape(item)
 

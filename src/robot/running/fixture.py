@@ -12,8 +12,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot import utils
-from robot.errors import ExecutionFailed
+from robot.errors import ExecutionFailed, DataError
 
 from keywords import Keyword
 
@@ -25,9 +24,13 @@ class _Fixture(object):
         self.args = args
         self._keyword = None
 
-    def replace_variables(self, variables):
+    def replace_variables(self, variables, errors):
         if self.name:
-            self.name = variables.replace_string(self.name)
+            try:
+                self.name = variables.replace_string(self.name)
+            except DataError, err:
+                errors.append('Replacing variables from %s failed: %s.'
+                              % (self.__class__.__name__, unicode(err)))
             self._keyword = Keyword(self.name, self.args, 
                                     type=type(self).__name__.lower())
 
