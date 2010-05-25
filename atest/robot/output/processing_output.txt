@@ -24,8 +24,8 @@ Directory Suite
     My Run Robot And Rebot  --metadata x:http://x.fi --name My_Name --doc Something  misc${/}suites
     Should Be Equal  ${SUITE.name}  My Name
     Should Be Equal  ${SUITE.doc}  Something
-    Should Be Equal  ${SUITE.metadata['X']}  http://x.fi
-    Should Be True  ${SUITE.get_metadata(html=True)} == [ ('X', '<a href="http://x.fi">http://x.fi</a>') ]
+    Should Be Equal  ${SUITE.metadata['x']}  http://x.fi
+    Should Be True  ${SUITE.get_metadata(html=True)} == [('x', '<a href="http://x.fi">http://x.fi</a>')]
     Check Suite Got From misc/suites/ Directory
 
 Created Minimal
