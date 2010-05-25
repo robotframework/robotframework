@@ -109,7 +109,7 @@ class BaseTestSuite(_TestAndSuiteHelper):
                 name, value = metastr.split(':', 1)
             except ValueError:
                 name, value = metastr, ''
-            self.metadata[utils.printable_name(name.replace('_',' '))] = value
+            self.metadata[name] = value
 
     def get_metadata(self, html=False):
         names = self.metadata.keys()

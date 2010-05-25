@@ -90,10 +90,10 @@ class _BaseSettings:
     def __setitem__(self, name, value):
         if not self._cli_opts.has_key(name):
             raise KeyError("Non-existing settings '%s'" % name)
-        elif name == 'Name' and value is not None:
+        elif name in ['Name', 'Doc'] and value:
             value = value.replace('_', ' ')
-        elif name == 'Doc' and value is not None:
-            value = value.replace('_', ' ')
+        elif name == 'Metadata' and value:
+            value = [v.replace('_', ' ') for v in value]
         elif name == 'TagDoc':
             value = [ item.replace('_', ' ') for item in value ]
         elif name in ['Include', 'Exclude', 'TagStatCombine']:
