@@ -57,8 +57,8 @@ Correct Files Processed With --suite Matches Files
     Contains  ${syslog}  Parsing test data directory '${subsuitedir}'
     Contains  ${syslog}  Ignoring file or directory 'sub1.html'
     Contains  ${syslog}  Ignoring file or directory 'sub2.html'
-    Contains  ${syslog}  Parsing test case file '${suitedir}${/}tsuite1.html
-    Contains  ${syslog}  Parsing test case file '${suitedir}${/}tsuite2.html
+    Contains  ${syslog}  Parsing file '${suitedir}${/}tsuite1.html
+    Contains  ${syslog}  Parsing file '${suitedir}${/}tsuite2.html
 
 Suite With No Matching Args
     Run Failing Test  --suite notexists  ${TESTDATA_SUITES}  ${SUITE_ERROR_MESSAGE}
@@ -83,8 +83,8 @@ Correct Files Processed When --suite Matches Directory
     Contains  ${syslog}  Ignoring file or directory 'tsuite2.html'
     Contains  ${syslog}  Ignoring file or directory 'tsuite3.html'
     Contains  ${syslog}  Parsing test data directory '${subsuitedir}'
-    Contains  ${syslog}  Parsing test case file '${subsuitedir}${/}sub1.html'
-    Contains  ${syslog}  Parsing test case file '${subsuitedir}${/}sub2.html'
+    Contains  ${syslog}  Parsing file '${subsuitedir}${/}sub1.html'
+    Contains  ${syslog}  Parsing file '${subsuitedir}${/}sub2.html'
 
 Suite Under Subdirectory Using Pattern
     Run And Check Suites Within Subdirs  --suite subQUEST  ['Sub1', 'Sub2']  SubSuite1 First  SubSuite2 First
