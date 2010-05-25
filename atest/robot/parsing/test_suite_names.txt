@@ -1,0 +1,37 @@
+*** Settings ***
+Test Setup      Run Multiple Suites If It Is Not Already Executed
+Force Tags      regression  jybot  pybot
+Resource        atest_resource.txt
+
+*** Variables ***
+${SUITE}  NOT INITIALIZED
+
+*** Test Cases ***
+Prefix Is Removed From Directory Suite Name
+    Should Be Equal  ${SUITE.suites[1].name}  Subsuite1
+
+Root Directory Suite Name
+    Should Be Equal  ${SUITE.name}  Multiple Suites
+
+Prefix Is Removed From File Suite Name
+    Should Be Equal  ${SUITE.suites[0].name}  Suite First
+
+Child File Suite Name
+    Should Be Equal  ${SUITE.suites[6].name}  Suite6
+
+Child Directory Suite Name
+    [Setup]  Run Tests  ${EMPTY}  misc${/}suites
+    Should Be Equal  ${SUITE.suites[2].name}  Subsuites2
+
+Root File Suite Name
+    [Setup]  Run Tests  ${EMPTY}  misc${/}pass_and_fail.html
+    Should Be Equal  ${SUITE.name}  Pass And Fail
+
+Suite Name Ending With Dot
+    [Setup]  Run Tests  --name something_ending_with_dot.  misc${/}pass_and_fail.html
+    Should Be Equal  ${SUITE.name}  Something Ending With Dot.
+
+*** Keywords ***
+Run Multiple Suites If It Is Not Already Executed
+    Run Keyword If  """${SUITE}""" != """Multiple Suites"""  Run Tests  \  misc${/}multiple_suites
+
