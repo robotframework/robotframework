@@ -187,8 +187,7 @@ class RunnableTestCase(BaseTestCase):
         teardown = tc_data.teardown.is_set() and tc_data.teardown or self._get_parent_test_teardown(tc_data.parent.parent)
         self.teardown = Teardown(teardown.name, teardown.args)
         self.tags = self._get_tags(tc_data)
-        #FIXME: Handle parent timeout!!
-        self.timeout = TestTimeout(tc_data.timeout.value, tc_data.timeout.message)
+        self.timeout = self._get_timeout(tc_data)
         self.keywords = Keywords(tc_data.steps)
 
     def run(self, context, suite_errors):
@@ -293,4 +292,12 @@ class RunnableTestCase(BaseTestCase):
         if data.setting_table.test_teardown.is_set():
             return data.setting_table.test_teardown
         return data.parent and self._get_parent_test_teardown(data.parent) or Fixture()
+
+    def _get_timeout(self, tc_data):
+        if tc_data.timeout.is_set():
+            return self._build_timeout(tc_data.timeout)
+        return self._build_timeout(tc_data.parent.parent.setting_table.test_timeout)
+
+    def _build_timeout(self, timeout):
+        return TestTimeout(timeout.value, timeout.message)
 
