@@ -1,7 +1,6 @@
 *** Settings ***
 Suite Setup     Run Tests  ${EMPTY}  test_libraries/named_args_in_imports.txt
-Default Tags      regression
-Force Tags      pybot  jybot
+Force Tags      regression  pybot  jybot
 Resource        atest_resource.txt
 
 *** Test Cases ***
@@ -9,11 +8,12 @@ Resource        atest_resource.txt
 Normal Named Arguments
     Check Test Case  ${TESTNAME}
 
-Named Argument Syntax Inside Variable
-    [tags]
+Non String Value
     Check Test Case  ${TESTNAME}
 
-Non String Value
-    [tags]
+Named Argument Syntax Doesn't Work Inside Variable
+    Check Test Case  ${TESTNAME}
+
+WITH NAME Doesn't Work Inside Variable
     Check Test Case  ${TESTNAME}
 
