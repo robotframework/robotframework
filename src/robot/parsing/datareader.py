@@ -172,7 +172,7 @@ class DataRow(object):
         return bool(not self.cells and self.comments)
 
     def test_or_user_keyword_setting_name(self):
-        return self.head[1:-1]
+        return self.head[1:-1].strip()
 
     def _parse(self, row):
         return self._purge_empty_cells(self._extract_data(row)), \
