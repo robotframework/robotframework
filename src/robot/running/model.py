@@ -273,11 +273,12 @@ class RunnableTestCase(BaseTestCase):
         self.elapsedtime = utils.get_elapsed_time(self.starttime, self.endtime)
         context.end_test(self)
 
+    # FIXME: Clean up getting test settings (e.g. Serious Law of Demeter breaking)
     def _get_tags(self, tc_data):
         force_tags = self._get_parent_force_tags(tc_data.parent.parent)
         tc_tags = tc_data.tags.value if tc_data.tags.is_set() \
             else tc_data.parent.parent.setting_table.default_tags.value
-        return list(set(tc_tags + force_tags))
+        return tc_tags + force_tags
 
     def _get_parent_force_tags(self, data):
         parent_tags = data.parent and self._get_parent_force_tags(data.parent) or []
