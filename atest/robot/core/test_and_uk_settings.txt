@@ -118,7 +118,7 @@ User Keyword With Invalid Metadata
     Check Stderr Contains  [ ERROR ] Invalid syntax in file '${PATH}' in table 'Keyword': Invalid syntax in keyword 'UK With Invalid Meta Failing': Non-existing setting 'Invalid'.
 
 Non Existing Variable In Suite Setup And Teardown
-    Run Tests  ${EMPTY}  core${/}metadata.html
+    Run Tests  ${EMPTY}  core${/}test_and_uk_settings.html
     Equals  ${SUITE.status}  FAIL
     ${exp} =  Catenate  SEPARATOR=\n  Suite initialization failed:  Replacing variables from Setup failed: Non-existing variable '\${SUITE_FIXTURE_FROM_CLI}'.  Replacing variables from Teardown failed: Non-existing variable '\${SUITE_FIXTURE_FROM_CLI}'.  Replacing variables from setting 'Var from CLI' failed: Non-existing variable '\${META_FROM_CLI}'.
     Equals  ${SUITE.message}  ${exp}
@@ -128,8 +128,8 @@ Non Existing Variable In Suite Setup And Teardown
 
 *** Keywords ***
 My Setup
-    Run Tests  --variable suite_doc_from_cli:Hello --variable suite_fixture_from_cli:Log --variable meta_from_cli:my_metadata  core${/}metadata.html
-    ${PATH} =  Join Path  ${CURDIR}${/}..${/}..  testdata${/}core${/}metadata.html
+    Run Tests  --variable suite_doc_from_cli:Hello --variable suite_fixture_from_cli:Log --variable meta_from_cli:my_metadata  core${/}test_and_uk_settings.html
+    ${PATH} =  Join Path  ${CURDIR}${/}..${/}..  testdata${/}core${/}test_and_uk_settings.html
     Set Suite Variable  $PATH
 
 Verify Setup
