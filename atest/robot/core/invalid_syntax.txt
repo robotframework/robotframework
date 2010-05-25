@@ -11,26 +11,26 @@ Valid Test
     Equals  ${test.doc}  This test should be executed and PASS
 
 Library Imports
-    Verify Error  Setting 'Library' requires a value  Setting  7
-    Verify Error  Importing test library 'NonExistingLibrary' failed: ImportError:  Setting  8
+    Verify Error  Library setting requires a name  Setting
+    Verify Error  Importing test library 'NonExistingLibrary' failed: ImportError:  Setting
     Check Test Case  Check Valid Library Import
-    Verify Error  Non-existing variable '${unicod  Setting  15
+    Verify Error  Replacing variables from setting 'Library' failed: Non-existing variable '${unicodeï¿½ï¿½ï¿½  Setting
 
 Resource Imports
-    Verify Error  Resource file 'non-existing-resource.html' does not exist  Setting  2
-    Verify Error  Setting 'Resource' requires a value  Setting  3
+    Verify Error  Resource file 'non-existing-resource.html' does not exist  Setting
+    Verify Error  Resource setting requires a name.  Setting
     Check Test Case  Check Valid Resource Import
 
 Variable File Imports
-    Verify Error  Variable file 'non-existing-variables.py' does not exist  Setting  4
-    Verify Error  Setting 'Variables' requires a value  Setting  6
+    Verify Error  Variable file 'non-existing-variables.py' does not exist  Setting
+    Verify Error  Variables setting requires a name.  Setting
     Check Test Case  Check Valid Variable File Import
 
 Invalid Setting
-    Verify Error  Test Case File does not have metadata 'Invalid Setting'. Available: 'Default Tags', 'Documentation', 'Force Tags', 'Suite Setup', 'Suite Teardown', 'Test Setup', 'Test Teardown' and 'Test Timeout'  Setting  13
+    Verify Error  Non-existing setting 'Invalid Setting'  Setting
 
 Variables In Variable Table
-    Verify Error  Setting variable 'Invalid Variable Name' failed: Invalid variable name 'Invalid Variable Name'  Variable  1
+    Verify Error  Setting variable 'Invalid Variable Name' failed: Invalid variable name.  Variable
     Check Test Case  Check Valid Variable In Variable Table
 
 Non-Existing Variable In Test
@@ -60,21 +60,17 @@ Invalid Metadata In Test Case
     ${test} =  Check Test Case  Test Case With Invalid Metadata
     Equals  ${test.doc}  Invalid metadata is ignored with an error and this test will PASS
     Check Test Case  Check Test case With Invalid Metadata
-    Verify Error  Test Case does not have metadata 'Invalid In Test'. Available: 'Documentation', 'Setup', 'Tags', 'Teardown' and 'Timeout'  Test Case  35
+    Verify Error  Invalid syntax in test case 'Test Case With Invalid Metadata': Non-existing setting 'Invalid In Test'.  Test Case
 
 Invalid Metadata In User Keyword
     Check Test Case  User Keyword With Invalid Metadata
     Check Test Case  Check User Keyword With Invalid Meta
-    Verify Error  User Keyword does not have metadata 'Invalid In UK'. Available: 'Arguments', 'Documentation', 'Return' and 'Timeout'  Keyword  9
+    Verify Error  Invalid syntax in keyword 'UK With Invalid Metadata': Non-existing setting 'Invalid In UK'.  Keyword
 
 User Keyword Defined Multiple Times
     ${test} =  Check Test Case  User Keyword Defined Multiple Times
     Starts  ${test.doc}  Note that doc and tags
     Fail Unless  ${test.tags} == ['mytag']
-    Verify Error  Creating keyword 'Same KW Name Twice' failed: Keyword 'Same KW Name Twice' defined multiple times  Keyword  3
-    Verify Error  Creating keyword 'UK 4 Times' failed: Keyword 'UK 4 Times' defined multiple times  Keyword  13
-    Verify Error  Creating keyword 'UK 4 Times' failed: Keyword 'UK 4 Times' defined multiple times  Keyword  14
-    Verify Error  Creating keyword 'UK 4 Times' failed: Keyword 'UK 4 Times' defined multiple times  Keyword  15
 
 *** Keywords ***
 My Setup
@@ -83,6 +79,6 @@ My Setup
     Set Suite Variable  $PATH
 
 Verify Error
-    [Arguments]  ${error}  ${table}  ${row}
-    Check Stderr Contains  [ ERROR ] Error in file '${PATH}'  in table '${table}' in element  on row ${row}: ${error}
+    [Arguments]  ${error}  ${table}
+    Check Stderr Contains  [ ERROR ] Invalid syntax in file '${PATH}'  in table '${table}': ${error}
 
