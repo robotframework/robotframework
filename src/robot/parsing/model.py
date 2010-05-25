@@ -64,6 +64,11 @@ class TestCaseFile(_TestData):
         self.keyword_table = KeywordTable(self)
         if source:
             FromFilePopulator(self).populate(source)
+            self._validate()
+
+    def _validate(self):
+        if not self.testcase_table.is_started():
+            raise DataError()
 
     def __iter__(self):
         for table in [self.setting_table, self.variable_table,
@@ -286,6 +291,9 @@ class TestCaseTable(_Table):
 
     def __nonzero__(self):
         return bool(self.tests)
+
+    def is_started(self):
+        return bool(self.header)
 
 
 class KeywordTable(_Table):
