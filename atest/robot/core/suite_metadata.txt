@@ -10,9 +10,6 @@ Documentation  Tests for commandline option --metadata are located in robot/cli/
 Metadata
     Should be Equal  ${suite.metadata['Name']}  Value
 
-Metadata Names Are Case Sensitive
-    Should be Equal  ${suite.metadata['name']}  names are case sensitive
-
 Metadata In Multiple Columns
     Should be Equal  ${suite.metadata['Multiple columns']}  Value in multiple columns
 
