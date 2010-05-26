@@ -52,7 +52,7 @@ Ignore Error When Timeout Occurs In UK
     Run Keyword And Ignore Error  Timeouting UK
 
 Ignore Error When Syntax Error At Parsing Time
-    [Documentation]  FAIL No keyword with name '' found. 
+    [Documentation]  FAIL Keyword name cannot be empty.
     Run Keyword And Ignore Error  Broken User Keyword
 
 Ignore Error When Syntax Error At Run Time
@@ -121,7 +121,7 @@ Expect Error When Timeout Occurs In UK
     Run Keyword And Expect Error  *  Timeouting UK
 
 Expect Error When Syntax Error At Parsing Time
-    [Documentation]  FAIL No keyword with name '' found. 
+    [Documentation]  FAIL Keyword name cannot be empty.
     Run Keyword And Expect Error  *  Broken User Keyword
 
 Expect Error When Syntax Error At Run Time
