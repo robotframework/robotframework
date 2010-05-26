@@ -186,13 +186,12 @@ __ `Test suite name and documentation`_
 Setting free metadata
 '''''''''''''''''''''
 
-`Free test suite metadata`_ may also be given from the command line
-with the option :opt:`--metadata (-M)`. The argument must be in
-the format :opt:`name:value`, where :opt:`name` the name of
-the metadata to set and :opt:`value` is its value. Underscores in
-the former are converted to spaces and words capitalized, and the
-latter may contain simple `HTML formatting`_. This option may be used
-several times to set multiple metadata.
+`Free test suite metadata`_ may also be given from the command line with the
+option :opt:`--metadata (-M)`. The argument must be in the format
+:opt:`name:value`, where :opt:`name` the name of the metadata to set and
+:opt:`value` is its value. Underscores in the name and value are converted to
+spaces, and the latter may contain simple `HTML formatting`_. This option may
+be used several times to set multiple metadata.
 
 Setting tags
 ''''''''''''
