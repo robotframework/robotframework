@@ -247,6 +247,8 @@ class Namespace:
 
     def _get_handler(self, name):
         handler = None
+        if not name:
+            raise DataError('Keyword name cannot be empty.')
         if '.' in name:
             handler = self._get_explicit_handler(name)
         if not handler:
