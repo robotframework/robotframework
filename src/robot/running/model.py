@@ -47,17 +47,20 @@ def _get_suite(datasources, include_suites):
     return RunnableTestSuite(_parse_suite(datasources[0], include_suites))
 
 def _parse_suite(path, include_suites):
-    if os.path.isdir(path):
-        return TestDataDirectory(source=path, include_suites=include_suites)
-    return TestCaseFile(source=path)
+    try:
+        if os.path.isdir(path):
+            return TestDataDirectory(source=path, include_suites=include_suites)
+        return TestCaseFile(source=path)
+    except DataError, err:
+        raise DataError("Parsing '%s' failed: %s" % (path, unicode(err)))
 
 def _get_multisource_suite(datasources, include_suites):
     suitedatas = []
     for datasource in datasources:
         try:
             suitedatas.append(_parse_suite(datasource, include_suites))
-        except DataError:
-            pass
+        except DataError, err:
+            LOGGER.info(err)
     suite = RunnableMultiTestSuite(suitedatas)
     if suite.get_test_count() == 0:
         raise DataError("Data sources %s contain no test cases."
