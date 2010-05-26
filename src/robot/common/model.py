@@ -72,7 +72,7 @@ class BaseTestSuite(_TestAndSuiteHelper):
     def __init__(self, name, source=None, parent=None):
         _TestAndSuiteHelper.__init__(self, name, parent)
         self.source = source is not None and utils.normpath(source) or None
-        self.metadata = {}
+        self.metadata = utils.NormalizedDict()
         self.suites = []
         self.tests = []
         self.critical = _Critical()
