@@ -112,8 +112,7 @@ class BaseTestSuite(_TestAndSuiteHelper):
             self.metadata[name] = value
 
     def get_metadata(self, html=False):
-        names = self.metadata.keys()
-        names.sort()
+        names = sorted(self.metadata.keys())
         values = [ self.metadata[n] for n in names ]
         if html:
             values = [ utils.html_escape(v, formatting=True) for v in values ]

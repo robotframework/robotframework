@@ -12,9 +12,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-
 import os
-import sys
 import re
 from UserDict import UserDict
 
@@ -51,6 +49,7 @@ def normalize_tags(tags):
     ret.sort(lambda x, y: cmp(normalize(x), normalize(y)))
     return ret
 
+
 def normpath(path, normcase=True):
     """Returns path in normalized and absolute format.
 
@@ -73,6 +72,7 @@ def _abspath(path):
         if pathlen == 3:
             return path
     return os.path.abspath(path)
+
 
 class NormalizedDict(UserDict):
 
