@@ -10,9 +10,6 @@ ${SCRIPT_DIR}  ${CURDIR}${/}..${/}..${/}testdata${/}public_api
 Running
     Test public API  run
 
-Parsed Data
-    Test public API  parsing
-
 Output
     Test public API  output
 
