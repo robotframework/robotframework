@@ -133,7 +133,7 @@ List Variable Can Be Only Last 2
     @{list}  ${scalar} =  Set Variable  1  2
 
 No Keyword
-    [Documentation]  FAIL No keyword with name '' found.
+    [Documentation]  FAIL Keyword name cannot be empty.
     ${nokeyword}
 
 Failing Keyword
