@@ -143,11 +143,18 @@ class Listeners:
         mapping.update(dict([(n, n) for n in names]))
         attrs = {}
         for name, attr in mapping.items():
-            attr = getattr(item, attr)
-            if callable(attr):
-                attr = attr()
-            attrs[name] = attr
+            attrs[name] = self._get_attr_value(item, attr)
         return attrs
+
+    def _get_attr_value(self, item, attr_name):
+        attr = getattr(item, attr_name)
+        if callable(attr):
+            attr = attr()
+        if isinstance(attr, (utils.NormalizedDict, dict)):
+            attr = dict(attr)
+        if isinstance(attr, list):
+            attr = list(attr)
+        return attr
 
 
 class _ListenerProxy(AbstractLoggerProxy):
