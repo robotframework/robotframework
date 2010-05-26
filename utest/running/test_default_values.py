@@ -1,7 +1,7 @@
 import unittest
 
 from robot.utils.asserts import *
-from robot.running.model import DefaultValues
+from robot.running.defaultvalues import DefaultValues
 from robot.parsing.model import TestCaseFileSettingTable, InitFileSettingTable
 from robot.parsing.settings import Tags, Fixture
 
