@@ -119,3 +119,6 @@ class NormalizedDict(UserDict):
         copy = UserDict.copy(self)
         copy._keys = self._keys.copy()
         return copy
+
+    def __str__(self):
+        return str(dict(self.items()))

@@ -164,6 +164,10 @@ class TestNormalizedDict(unittest.TestCase):
         assert_equals(nd._keys, {'a': 'a', 'b': 'B', 'c': 'C'})
         assert_equals(cd._keys, {'a': 'a', 'b': 'B'})
 
+    def test_str(self):
+        nd = NormalizedDict({'a': 1, 'B': 1})
+        assert_equals(str(nd), "{'a': 1, 'B': 1}")
+
 
 if __name__ == '__main__':
     unittest.main()
