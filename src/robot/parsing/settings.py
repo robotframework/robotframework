@@ -107,6 +107,13 @@ class Tags(_Setting):
     def is_set(self):
         return self._is_set
 
+    def __add__(self, other):
+        if not isinstance(other, Tags):
+            raise TypeError('Tags can only be added with tags')
+        tags = Tags()
+        tags.set(self.value + other.value)
+        return tags
+
 
 class Arguments(_Setting):
     pass

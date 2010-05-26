@@ -17,14 +17,12 @@ import os
 from robot import utils
 from robot.common import BaseTestSuite, BaseTestCase
 from robot.parsing import TestCaseFile, TestDataDirectory
-from robot.parsing.settings import Fixture
 from robot.errors import ExecutionFailed, DataError
 from robot.variables import GLOBAL_VARIABLES
 from robot.output import LOGGER
 
 from fixture import Setup, Teardown, SuiteSetupListener, SuiteTearDownListener,\
     TestSetupListener, TestTeardownListener
-from timeouts import TestTimeout
 from keywords import Keywords
 from namespace import Namespace
 from runerrors import SuiteRunErrors, TestRunErrors

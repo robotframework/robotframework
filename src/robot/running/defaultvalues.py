@@ -21,45 +21,37 @@ class DefaultValues(object):
 
     def __init__(self, settings, parent_default_values=None):
         self._parent = parent_default_values
-        self._setup = settings.test_setup \
-                      if settings.test_setup.is_set() else None
-        self._teardown = settings.test_teardown \
-                         if settings.test_teardown.is_set() else None
-        self._timeout = settings.test_timeout \
-                         if settings.test_timeout.is_set() else None
-        self._force_tags = settings.force_tags.value
-        self._default_tags = settings.default_tags.value
+        self._setup = settings.test_setup
+        self._teardown = settings.test_teardown
+        self._timeout = settings.test_timeout
+        self._force_tags = settings.force_tags
+        self._default_tags = settings.default_tags
 
     def get_setup(self, tc_setup):
-        setup = self._get_applicapble(tc_setup, self._get_setup())
+        setup = tc_setup if tc_setup.is_set() else self._get_default_setup()
         return Setup(setup.name, setup.args)
 
-    def _get_applicapble(self, tc_value, own_value):
-        if tc_value.is_set():
-            return tc_value
-        return own_value if own_value else tc_value
-
-    def _get_setup(self):
-        if self._setup:
+    def _get_default_setup(self):
+        if self._setup.is_set() or not self._parent:
             return self._setup
-        return self._parent._get_setup() if self._parent else None
+        return self._parent._get_default_setup()
 
     def get_teardown(self, tc_teardown):
-        teardown = self._get_applicapble(tc_teardown, self._get_teardown())
-        return Teardown(teardown.name, teardown.args)
+        td = tc_teardown if tc_teardown.is_set() else self._get_default_teardown()
+        return Teardown(td.name, td.args)
 
-    def _get_teardown(self):
-        if self._teardown:
+    def _get_default_teardown(self):
+        if self._teardown.is_set() or not self._parent:
             return self._teardown
-        return self._parent._get_teardown() if self._parent else None
+        return self._parent._get_default_teardown()
 
     def get_timeout(self, tc_timeout):
-        timeout = self._get_applicapble(tc_timeout, self._timeout)
+        timeout = tc_timeout if tc_timeout.is_set() else self._timeout
         return TestTimeout(timeout.value, timeout.message)
 
     def get_tags(self, tc_tags):
-        tags = tc_tags.value if tc_tags.is_set() else self._default_tags
-        return tags + self._get_force_tags()
+        tags = tc_tags if tc_tags.is_set() else self._default_tags
+        return (tags + self._get_force_tags()).value
 
     def _get_force_tags(self):
         if not self._parent:
