@@ -249,6 +249,12 @@ and its value is used instead.
    \              Log Many          @{items}        \           \
    =============  ================  ==============  ==========  ==========
 
+Where list variables can be used
+````````````````````````````````
+
+TODO
+
+
 Environment variables
 '''''''''''''''''''''
 
