@@ -5,7 +5,6 @@ Variables
    :depth: 2
    :local:
 
-
 Introduction
 ~~~~~~~~~~~~
 
@@ -206,7 +205,6 @@ are equivalent.
    List Variable  Login     @{USER}      \
    =============  ========  ===========  ==========
 
-
 It is also possible to access a certain value from the list variable
 with the syntax :var:`@{NAME}[i]`, where :var:`i` is the index of the
 selected value. Indexes start from zero, and trying to access a value
@@ -225,14 +223,16 @@ manner can be used similarly as scalar variables:
    \              Title Should Be  Welcome @{USER}[0]!  \
    =============  ===============  ===================  ==========
 
+Using list variables as scalar variables
+````````````````````````````````````````
 
-Starting from Robot Framework 2.0.3, it is possible to use list
-variables as scalar variables containing lists simply by replacing
-:var:`@` with :var:`$`. This makes it possible to use list variables
-with list related keywords, for example, from from BuiltIn_ and
-Collections_ libraries. This feature works only if there is no scalar
-variable with same basename as the list variable has. In these cases
-the scalar variable has precedence and its value is used instead.
+It is possible to use list variables as scalar variables containing
+lists simply by replacing :var:`@` with :var:`$`. This makes it
+possible to use list variables with list related keywords, for
+example, from from BuiltIn_ and Collections_ libraries. This feature
+works only if there is no scalar variable with same basename as the
+list variable has. In these cases the scalar variable has precedence
+and its value is used instead.
 
 .. table:: Using list variables as scalars
    :class: example
@@ -248,7 +248,6 @@ the scalar variable has precedence and its value is used instead.
    \              Length Should Be  ${items}        2           \
    \              Log Many          @{items}        \           \
    =============  ================  ==============  ==========  ==========
-
 
 Environment variables
 '''''''''''''''''''''
@@ -276,13 +275,11 @@ not effective after the test execution.
    \              Run       %{JAVA_HOME}${/}javac  \
    =============  ========  =====================  ==========
 
-
 Creating variables
 ~~~~~~~~~~~~~~~~~~
 
 Variables can spring into existence from different sources as
 described in the subsections below.
-
 
 Variable table
 ''''''''''''''
@@ -294,7 +291,6 @@ data, and the needed syntax is very simple. Their main disadvantage is
 that they only enable assigning variables into strings or a list of
 strings. If other value types are needed, `variable files`_ are
 probably a better option.
-
 
 Creating scalar variables
 `````````````````````````
@@ -331,7 +327,6 @@ variables slightly more explicit.
    ${VERSION} =  2.0              \
    ============  ===============  =========
 
-
 Creating list variables
 ```````````````````````
 
@@ -357,7 +352,6 @@ __ `Dividing test data to several rows`_
    ...           seven      \          \
    ============  =========  =========  =========
 
-
 Variable file
 '''''''''''''
 
@@ -366,7 +360,6 @@ kind of variables. It is possible to assign variables to any object
 using them, and they also enable creating variables dynamically. The
 variable file syntax and taking variable files into use is explained
 in section `Resource and variable files`_.
-
 
 Setting variables in command line
 '''''''''''''''''''''''''''''''''
@@ -412,7 +405,6 @@ the latter have `higher priority`__. Additionally, if multiple variable files
 have same variables, the ones in the file specified first are taken into use.
 
 __ `Variable priorities and scopes`_
-
 
 Return values from keywords
 '''''''''''''''''''''''''''
@@ -476,7 +468,6 @@ could cause hard-to-debug errors. If there is a genuine need for
 setting a variable in one test case and using it in another, it is
 possible to use built-in keywords as explained in the next section.
 
-
 Using built-in :name:`Set Test/Suite/Global Variable` keywords
 ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 
@@ -509,7 +500,6 @@ them. Setting variables with this keyword thus has the same effect as
 everywhere, it should be used with care.
 
 __ `Setting variables in command line`_
-
 
 Built-in variables
 ~~~~~~~~~~~~~~~~~~
@@ -556,7 +546,6 @@ operating-system-agnostic.
    \              Set Environment Variable  CLASSPATH                ${TEMPDIR}${:}${TEMPDIR}${/}foo.jar
    =============  ========================  =======================  ===================================
 
-
 Number variables
 ''''''''''''''''
 
@@ -575,7 +564,6 @@ string that just looks like a number, as an argument.
    Example 1B   Connect   example.com  ${80}       # Connect gets a string and an integer
    Example 2    Do X      ${3.14}      ${-1e-4}    # Do X gets floating point numbers 3.14 and -0.0001
    ===========  ========  ===========  ==========  ===================================================
-
 
 Boolean and None/null variables
 '''''''''''''''''''''''''''''''
@@ -602,19 +590,17 @@ These variables are case-insensitive, so for example :var:`${True}` and
 interpreter, Jython automatically converts :code:`None` and
 :code:`null` to the correct format when necessary.
 
-
 Space and empty variables
 '''''''''''''''''''''''''
 
-Starting from Robot Framework version 2.0.2, it is possible to create
-spaces and empty strings using variables :var:`${SPACE}` and
-:var:`${EMPTY}`, respectively. These variables are useful, for example,
-when there would otherwise be a need to `escape spaces or empty
-cells`__ with a backslash. If more than one space is needed, it is
-possible to use the `extended variable syntax`_ like :var:`${SPACE * 5}`.
-In the following exmaple, :name:`Should Be Equal` keyword gets
-identical arguments but those using variables are easier to understand
-than those using backslashes.
+It is possible to create spaces and empty strings using variables
+:var:`${SPACE}` and :var:`${EMPTY}`, respectively. These variables are
+useful, for example, when there would otherwise be a need to `escape
+spaces or empty cells`__ with a backslash. If more than one space is
+needed, it is possible to use the `extended variable syntax`_ like
+:var:`${SPACE * 5}`.  In the following exmaple, :name:`Should Be
+Equal` keyword gets identical arguments but those using variables are
+easier to understand than those using backslashes.
 
 __ Escaping_
 
@@ -631,7 +617,6 @@ __ Escaping_
    Quoted Spaces  Should Be Equal    "${SPACE * 2}"    " \\ "
    Empty          Should Be Equal    ${EMPTY}          \\
    =============  =================  ================  ================================
-
 
 Automatic variables
 '''''''''''''''''''
@@ -695,7 +680,6 @@ of them are not even available all the time.
    +-----------------------+-------------------------------------------------------+----------------+
    | ${OUTPUT DIR}         | An absolute path to the `output directory`_.          | Everywhere     |
    +-----------------------+-------------------------------------------------------+----------------+
-
 
 Variable priorities and scopes
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -771,7 +755,6 @@ Variable priorities
 __ `Setting variables in command line`_
 __ `Using built-in Set Test/Suite/Global Variable keywords`_
 
-
 Variable scopes
 '''''''''''''''
 
@@ -821,7 +804,6 @@ global, test suite, test case or user keyword scope.
 
 __ `Setting variables in command line`_
 __ `User keyword arguments`_
-
 
 Advanced variable features
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -936,7 +918,6 @@ example could be replaced with the following Java implementation:
      }
  }
 
-
 Many standard Python objects, including strings and numbers, have
 methods that can be used with the extended variable syntax either
 explicitly or implicitly. Sometimes this can be really useful and
@@ -964,7 +945,6 @@ Note that even though :code:`abs(number)` is recommended over
 must be in the beginning of the extended syntax. Using :code:`__xxx__`
 methods in the test data like this is already a bit questionable, and
 it is normally better to move this kind of logic into test libraries.
-
 
 Variables inside variables
 ''''''''''''''''''''''''''
