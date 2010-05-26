@@ -171,8 +171,9 @@ class TestCaseFilePopulatingTest(_PopulatorTest):
         assert_equals(test.steps[0].comment, 'comment')
 
     def test_unnamed_test_and_line_continuation(self):
-        self._create_table('test cases', [['', '...', 'foo']])
+        self._create_table('test cases', [['', '...', 'foo', '#comment']])
         assert_equals(self._first_test().name, '')
+        assert_equals(self._first_test().steps[0].comment, 'comment')
 
     def test_continuing_in_the_begining_of_the_keyword_table(self):
         self._create_table('keywords', [['...', 'foo']])
