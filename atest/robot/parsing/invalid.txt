@@ -1,0 +1,43 @@
+*** Settings ***
+Force Tags      regression  jybot  pybot
+Resource        data_formats/formats_resource.html
+
+*** Variables ***
+${PARSING}  parsing
+${NO TESTS}  ${PARSING}${/}notests
+
+*** Test Cases ***
+Invalid Input
+    Run Tests Without Processing Output  ${EMPTY}  ${PARSING}${/}unsupported.log
+    Check Stderr Contains  [ ERROR ] Unsupported file format '.log'
+
+Malformed HTML
+    Run Tests Without Processing Output  ${EMPTY}  ${HTMLDIR}${/}malformed.html
+    Check Stderr Matches Regexp  \\[ ERROR \\] Parsing '.*[/\\\\]malformed.html' failed: HTMLParseError:?.*${USAGE_TIP}
+
+HTML File Not Containing Tests
+    Run Tests Without Processing Output  ${EMPTY}  ${HTMLDIR}${/}invalid.html
+    Check Stderr Matches Regexp  \\[ ERROR \\] Test case file '.*[/\\\\]invalid.html' contains no test cases.${USAGE_TIP}
+
+Empty Directory
+    Run Tests Without Processing Output  ${EMPTY}  ${NO TESTS}${/}empty
+    Check Stderr Matches Regexp  \\[ ERROR \\] Test suite directory '.*[/\\\\]empty' contains no test cases.${USAGE_TIP}
+
+Directory Containing No Test Cases
+    Run Tests Without Processing Output  ${EMPTY}  ${NO TESTS}
+    Check Stderr Matches Regexp  \\[ ERROR \\] Test suite directory '.*[/\\\\]notests' contains no test cases.${USAGE_TIP}
+    ${path} =  Join Path  ${DATADIR}/${NO TESTS}  empty
+    Check Syslog Contains  Parsing data source '${path}' failed: Test suite directory '${path}' contains no test cases.
+
+Empty HTML File
+    Run Tests Without Processing Output  ${EMPTY}  ${HTMLDIR}${/}empty.html
+    Check Stderr Matches Regexp  \\[ ERROR \\] Test case file '.*[/\\\\]empty.html' contains no test cases.${USAGE_TIP}
+
+Empty TSV File
+    Run Tests Without Processing Output  ${EMPTY}  ${TSVDIR}${/}empty.tsv
+    Check Stderr Matches Regexp  \\[ ERROR \\] Test case file '.*[/\\\\]empty.tsv' contains no test cases.${USAGE_TIP}
+
+Empty TXT File
+    Run Tests Without Processing Output  ${EMPTY}  ${TXTDIR}${/}empty.txt
+    Check Stderr Matches Regexp  \\[ ERROR \\] Test case file '.*[/\\\\]empty.txt' contains no test cases.${USAGE_TIP}
+
