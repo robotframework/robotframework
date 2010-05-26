@@ -51,7 +51,7 @@ class _TestData(object):
     def report_invalid_syntax(self, table, message, level='ERROR'):
         initfile = getattr(self, 'initfile', None)
         path = os.path.join(self.source, initfile) if initfile else self.source
-        LOGGER.write("Invalid syntax in file '%s' in table '%s': %s."
+        LOGGER.write("Invalid syntax in file '%s' in table '%s': %s"
                      % (path, table, message), level)
 
 
@@ -98,7 +98,7 @@ class ResourceFile(_TestData):
 
     def _report_status(self):
         if self.setting_table or self.variable_table or self.keyword_table:
-            LOGGER.info("Imported resource file '%s' (%d keywords)"
+            LOGGER.info("Imported resource file '%s' (%d keywords)."
                         % (self.source, len(self.keyword_table.keywords)))
         else:
             LOGGER.warn("Imported resource file '%s' is empty." % self.source)
@@ -157,7 +157,7 @@ class _WithSettings(object):
     def get_setter(self, setting_name):
         if setting_name in self._setters:
             return self._setters[setting_name]
-        self.report_invalid_syntax("Non-existing setting '%s'" % setting_name)
+        self.report_invalid_syntax("Non-existing setting '%s'." % setting_name)
 
     def is_setting(self, setting_name):
         return setting_name in self._setters
