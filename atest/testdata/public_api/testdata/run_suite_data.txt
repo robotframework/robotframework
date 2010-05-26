@@ -9,9 +9,5 @@ critical stats passed|  suite.critical_stats.passed | int(3) | int(1) | int(1)
 critical stats failed| suite.critical_stats.failed | int(1) | int(0) | int(1)
 #source| suite.source | os.path.abspath('testdata').lower() | ENDS = 'testdata'+os.path.sep+'empty_settings.html' | 'testdata'+os.path.sep+'everything.html'
 subsuites| [ s.name for s in suite.suites ] | ['Empty Settings', 'Everything', 'Minimum'] | [] | []
-tests |[ t.name for t in suite.tests ] | [] | [ 'Empty Metadata' ] | [ 'Passing Test', 'Failing Test' ]
+tests |[ t.name for t in suite.tests ] | [] | [ 'Empty Metadata' ] | [ 'Passing test', 'Failing Test' ]
 doc|suite.doc | '' | '' | Test cases for public API
-
-  
-
-               
