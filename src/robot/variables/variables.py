@@ -48,7 +48,7 @@ class Variables(utils.NormalizedDict):
 
     def __setitem__(self, name, value):
         if not is_var(name):
-            raise DataError("Invalid variable name '%s'" % name)
+            raise DataError("Invalid variable name '%s'." % name)
         self._deprecation_warning_if_basename_already_used(name)
         utils.NormalizedDict.__setitem__(self, name, value)
 
@@ -61,7 +61,7 @@ class Variables(utils.NormalizedDict):
 
     def __getitem__(self, name):
         if not is_var(name):
-            raise DataError("Invalid variable name '%s'" % name)
+            raise DataError("Invalid variable name '%s'." % name)
         try: return utils.NormalizedDict.__getitem__(self, name)
         except KeyError:
             try: return self._get_number_var(name)
@@ -70,7 +70,7 @@ class Variables(utils.NormalizedDict):
                 except ValueError:
                     try: return self._get_list_var_as_scalar(name)
                     except ValueError:
-                        raise DataError("Non-existing variable '%s'" % name)
+                        raise DataError("Non-existing variable '%s'." % name)
 
     def _get_list_var_as_scalar(self, name):
         if is_scalar_var(name):
@@ -246,7 +246,7 @@ class Variables(utils.NormalizedDict):
 
     def _get_var_table_name_and_value(self, name, value):
         if not is_var(name):
-            raise DataError("Invalid variable name")
+            raise DataError("Invalid variable name.")
         value = [ self._unescape_leading_trailing_spaces(cell) for cell in value ]
         if name[0] == '@':
             return name, self.replace_list(value)
