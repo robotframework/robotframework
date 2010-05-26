@@ -18,12 +18,12 @@ Library Imports
 
 Resource Imports
     Verify Error  Resource file 'non-existing-resource.html' does not exist  Setting
-    Verify Error  Resource setting requires a name.  Setting
+    Verify Error  Resource setting requires a name  Setting
     Check Test Case  Check Valid Resource Import
 
 Variable File Imports
     Verify Error  Variable file 'non-existing-variables.py' does not exist  Setting
-    Verify Error  Variables setting requires a name.  Setting
+    Verify Error  Variables setting requires a name  Setting
     Check Test Case  Check Valid Variable File Import
 
 Invalid Setting
