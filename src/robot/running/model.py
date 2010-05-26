@@ -237,6 +237,8 @@ class RunnableTestCase(BaseTestCase):
         self.timeout.replace_variables(context.get_current_vars())
         if errors:
             return 'Test case initialization failed:\n%s' % '\n'.join(errors)
+        if not self.name:
+            return 'Test case name is required.'
         if not self.keywords:
             return 'Test case contains no keywords'
         return None

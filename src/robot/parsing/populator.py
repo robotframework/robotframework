@@ -59,7 +59,7 @@ class _TablePopulator(Populator):
         self._populator.populate()
 
     def _is_continuing(self, row):
-        return row.is_continuing()
+        return row.is_continuing() and self._populator
 
     def _is_cacheable_comment_row(self, row):
         return row.is_commented()
@@ -88,7 +88,7 @@ class VariableTablePopulator(_TablePopulator):
 class _StepContainingTablePopulator(_TablePopulator):
 
     def _is_continuing(self, row):
-        return row.is_indented() or row.is_commented()
+        return row.is_indented() and self._populator or row.is_commented()
 
     def _is_cacheable_comment_row(self, row):
         return row.is_commented() and isinstance(self._populator, NullPopulator)
@@ -192,7 +192,7 @@ class _TestCaseUserKeywordPopulator(Populator):
         return StepPopulator(self._test_or_uk.add_step)
 
     def _continues(self, row):
-        return row.is_continuing() or \
+        return row.is_continuing() and self._populator or \
             (isinstance(self._populator, ForLoopPopulator) and row.is_indented())
 
     def _setting_setter(self, row):
@@ -237,7 +237,7 @@ class _PropertyPopulator(Populator):
 class VariablePopulator(_PropertyPopulator):
 
     def _add(self, row):
-        if row.is_continuing():
+        if row.is_continuing() and self._value:
             row = row.dedent()
         self._value.extend(row.all)
 
@@ -270,3 +270,4 @@ class StepPopulator(_PropertyPopulator):
 class NullPopulator(Populator):
     def add(self, row): pass
     def populate(self): pass
+    def __nonzero__(self): return False

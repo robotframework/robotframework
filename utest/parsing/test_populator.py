@@ -148,6 +148,28 @@ class TestCaseFilePopulatingTest(_PopulatorTest):
         tag = self._setting_with(tag_name)
         assert_equals(tag.value, exp_value)
 
+    def test_continuing_in_the_begining_of_the_setting_table(self):
+        self._create_table('Settings', [['...']])
+        assert_equals(self._logger.value(), "Invalid syntax in file 'None' in "
+                                            "table 'Settings': Non-existing "
+                                            "setting '...'.")
+
+    def test_continuing_in_the_begining_of_the_variable_table(self):
+        self._create_table('Variables', [['...', 'val']])
+        self._assert_variable(0, '...',  ['val'])
+
+    def test_continuing_in_the_begining_of_the_testcase_table(self):
+        self._create_table('test cases', [['...', 'foo']])
+        assert_equals(self._first_test().name, '...')
+
+    def test_continuing_in_the_begining_of_the_testcase_table2(self):
+        self._create_table('test cases', [['', '...', 'foo']])
+        assert_equals(self._first_test().name, '')
+
+    def test_continuing_in_the_begining_of_the_keyword_table(self):
+        self._create_table('keywords', [['...', 'foo']])
+        assert_equals(self._nth_uk(1).name, '...')
+
     def test_invalid_settings(self):
         self._create_table('Settings', [['In valid', 'val ue']])
         assert_equals(self._logger.value(), "Invalid syntax in file 'None' in "
@@ -203,11 +225,12 @@ class TestCaseFilePopulatingTest(_PopulatorTest):
         self._create_table('Test cases', [['My test name', 'Log Many', 'foo'],
                                           ['', '...', 'bar', 'quux'],
                                           ['Another test'],
+                                          ['', '...'],
                                           ['', 'Log Many', 'quux'],
                                           ['', '...', 'fooness'],
                                           ['', 'Log', 'barness']])
         assert_equals(len(self._first_test().steps), 1)
-        assert_equals(len(self._nth_test(2).steps), 2)
+        assert_equals(len(self._nth_test(2).steps), 3)
 
     def test_for_loop(self):
         self._create_table('Test cases', [['For loop test'],
@@ -344,10 +367,10 @@ class TestCaseFilePopulatingTest(_PopulatorTest):
         self._assert_import(0, 'FooBarness', [])
         assert_equals(len(self._datafile.variable_table.variables), 1)
         assert_equals(len(self._datafile.testcase_table.tests), 1)
-        assert_equals(len(self._nth_uk(0).steps), 1)
+        assert_equals(len(self._nth_uk(1).steps), 1)
 
     def _nth_uk(self, index):
-        return self._datafile.keyword_table.keywords[index]
+        return self._datafile.keyword_table.keywords[index-1]
 
 
 class TestPopulatingComments(_PopulatorTest):
