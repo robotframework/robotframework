@@ -74,7 +74,7 @@ class FromFilePopulator(object):
 
     def _open(self, path):
         if not os.path.isfile(path):
-            raise DataError("Data source '%s' does not exist." % path)
+            raise DataError("Data source does not exist.")
         try:
             return open(path, 'rb')
         except:
