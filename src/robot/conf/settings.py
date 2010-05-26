@@ -224,10 +224,12 @@ class RobotSettings(_BaseSettings):
         settings._opts = self._opts.copy()
         for name in ['Variables', 'VariableFiles', 'Listeners']:
             del(settings._opts[name])
-        for name in ['Include', 'Exclude', 'TestNames', 'SuiteNames']:
+        for name in ['Include', 'Exclude', 'TestNames', 'SuiteNames', 'Metadata']:
             settings._opts[name] = []
         for name in ['Output', 'RemoveKeywords']:
             settings._opts[name] = 'NONE'
+        for name in ['Name', 'Doc']:
+            settings._opts[name] = None
         return datasources, settings
 
 

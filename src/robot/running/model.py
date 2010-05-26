@@ -104,7 +104,7 @@ class RunnableTestSuite(BaseTestSuite):
                             " contains no test cases." % (suite.source))
  
     def _get_metadata(self, metadata):
-        meta = {}
+        meta = utils.NormalizedDict()
         for item in metadata:
             meta[item.name] = item.value
         return meta
