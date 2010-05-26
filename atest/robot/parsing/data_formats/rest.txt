@@ -25,5 +25,5 @@ Directory With ReST Init
 *** Keywords ***
 Clear Error Should Be Given When Docutils Is Not Installed
     ${stderr} =  Get Stderr
-    Should Match RegExp  ${stderr}  [ ERROR ] Parsing '.*[/\\\\]sample.rst' failed: Using reStructuredText test data requires having 'docutils' module installed.\n \n Try --help for usage information.\n
+    Should Match RegExp  ${stderr}  \\[ ERROR \\] Parsing '.*[/\\\\]sample.rst' failed: Using reStructuredText test data requires having 'docutils' module installed.\n \n Try --help for usage information.\n
 
