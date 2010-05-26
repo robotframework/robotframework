@@ -36,8 +36,8 @@ Process Resource Files Only Once
     Comment  Check that resources were parsed only once
     Syslog File Should Contain In Order  Parsing test data directory  '${dir}'
     Syslog File Should Contain In Order  Parsing file  '${dir}${/}01_tests.html'
-    Syslog File Should Contain In Order  Parsing data source '${dir}${/}02_resource.html' failed: Test case file has no test case table.
-    Syslog File Should Contain In Order  Parsing data source '${dir}${/}03_resource.html' failed: Test case file has no test case table.
+    Syslog File Should Contain In Order  Parsing data source '${dir}${/}02_resource.html' failed: File has no test case table.
+    Syslog File Should Contain In Order  Parsing data source '${dir}${/}03_resource.html' failed: File has no test case table.
     Syslog File Should Contain In Order  Parsing file  '${dir}${/}04_tests.html'
     Syslog File Should Contain In Order  Started test suite  'Resource Parsing'
     Syslog File Should Contain In Order  Imported resource file  '${dir}${/}02_resource.html'

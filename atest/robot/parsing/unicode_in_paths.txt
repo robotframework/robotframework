@@ -30,4 +30,4 @@ Failures processing files are handled gracefully
   ${path} =  Normalize Path  ${CURDIR}/../../testdata/parsing/unicode_paths/Työ/tyhjä.txt
   ${path} =  Set Variable If  __import__('robot').utils.normalizing._CASE_INSENSITIVE_FILESYSTEM
   ...  ${path.lower()}  ${path}
-  Check syslog contains  Parsing data source '${path}' failed: Test case file has no test case table.
+  Check syslog contains  Parsing data source '${path}' failed: File has no test case table.

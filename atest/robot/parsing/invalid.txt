@@ -6,7 +6,7 @@ Resource        data_formats/formats_resource.txt
 ${PARSING}  parsing
 ${NO TESTS}  ${PARSING}${/}notests
 ${EMPTY TC TABLE} =  ${PARSING}${/}empty_testcase_table.txt
-${EMPTY TC TABLE MSG} =  Test case file has no test case table.
+${EMPTY TC TABLE MSG} =  File has no test case table.
 
 
 *** Test Cases ***
@@ -17,7 +17,7 @@ Malformed HTML
     Check Parsing Error  malformed.html  HTMLParseError:?.*  ${HTMLDIR}${/}malformed.html
 
 HTML File Not Containing Tests
-    Check Parsing Error  invalid.html  Test case file has no test case table.  ${HTMLDIR}${/}invalid.html
+    Check Parsing Error  invalid.html  ${EMPTY TC TABLE MSG}  ${HTMLDIR}${/}invalid.html
 
 Empty Directory
     Run Tests Without Processing Output  ${EMPTY}  ${NO TESTS}${/}empty
