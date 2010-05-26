@@ -3,6 +3,9 @@ Documentation  NO RIDE because it removes empty [Return]
 
 
 *** Test Cases ***
+    Log  This test case has no name
+    [Documentation]  FAIL  Test case name is required.
+
 Empty Test Case
     [Documentation]  FAIL Test case contains no keywords
 
@@ -36,7 +39,16 @@ Non-Empty UK Using Empty UK
     [Documentation]  FAIL User keyword 'Empty UK' contains no keywords
     Non Empty UK Using Empty UK
 
+Using User Keyword That Has No Name
+    [Documentation]  FAIL  Keyword name cannot be empty.
+    \  argh
+    ${x}
+
 *** Keywords ***
+    [Documentation]  This keyword has no name
+    [Arguments]  ${arg}=urg
+    Log   ${arg}
+
 Empty UK
 
 Empty UK With Settings

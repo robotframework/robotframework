@@ -29,3 +29,9 @@ Non-Empty And Empty User Keyword
 Non-Empty UK Using Empty UK
     Check Test Case  ${TESTNAME}
 
+Test Case Without Name Specified
+    Check Test Case  \
+
+User Keyword Without Name Specified
+    Check Test Case  Using User Keyword That Has No Name
+
