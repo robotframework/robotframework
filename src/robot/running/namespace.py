@@ -414,7 +414,7 @@ class _VariableScopes:
     def set_from_variable_table(self, rawvariables):
         self._suite.set_from_variable_table(rawvariables)
 
-    # TODO Cleanup, accumulator and return val etc.
+    # FIXME: Do we still need this?
     def replace_meta(self, name, item, errors):
         error = None
         for varz in [self.current] + self._parents:
@@ -428,7 +428,7 @@ class _VariableScopes:
                 return varz.replace_string(item)
             except DataError, error:
                 pass
-        errors.append("Replacing variables from setting '%s' failed: %s."
+        errors.append("Replacing variables from setting '%s' failed: %s"
                       % (name, error))
         return utils.unescape(item)
 

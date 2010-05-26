@@ -29,7 +29,7 @@ class _Fixture(object):
             try:
                 self.name = variables.replace_string(self.name)
             except DataError, err:
-                errors.append('Replacing variables from %s failed: %s.'
+                errors.append('Replacing variables from %s failed: %s'
                               % (self.__class__.__name__, unicode(err)))
             self._keyword = Keyword(self.name, self.args, 
                                     type=type(self).__name__.lower())
