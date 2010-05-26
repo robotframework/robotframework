@@ -1,0 +1,60 @@
+*** Settings ***
+Suite Setup     Run Tests  ${EMPTY}  parsing${/}multirow.html
+Force Tags      regression  jybot  pybot
+Resource        atest_resource.txt
+
+*** Test Cases ***
+Multirow Settings
+    Equals  ${SUITE.doc}  This doc is one long \ string ! ! ! !
+    Fail Unless  ${SUITE.tests[0].tags} == [ 't'+str(i) for i in range(1,10) ]
+
+Multirow Variables
+    Check Test Case  Multirow Variables
+
+Multirow Args For Base Keyword
+    ${test} =  Check Test Case  Multirow Args For Base Keyword
+    ${kw} =  Set  ${test.kws[0]}
+    Check Log Message  ${kw.messages[0]}  one
+    Check Log Message  ${kw.messages[1]}  two
+    Check Log Message  ${kw.messages[2]}  three
+    Check Log Message  ${kw.messages[3]}  four
+    Check Log Message  ${kw.messages[4]}  five
+
+Multirow Args For User Keyword
+    ${test} =  Check Test Case  Multirow Args For User Keyword
+    ${kw} =  Set  ${test.kws[0].kws[0]}
+    Check Log Message  ${kw.messages[0]}  1
+    Check Log Message  ${kw.messages[1]}  2
+    Check Log Message  ${kw.messages[2]}  3
+    Check Log Message  ${kw.messages[3]}  4
+    Check Log Message  ${kw.messages[4]}  5
+
+Multirow In User Keyword
+    ${test} =  Check Test Case  Multirow In User Keyword
+
+Multirow Return Values
+    Check Test Case  Multirow Return Values
+
+Multirow Test Metadata
+    ${test} =  Check Test Case  Multirow Test Metadata
+    Fail Unless  ${test.tags} == [ 'my'+str(i) for i in range(1,6) ]
+    Equals  ${test.doc}  This test doc is one long string
+
+Multirow User Keyword Metadata
+    ${test} =  Check Test Case  Multirow User Keyword Metadata
+
+Invalid Multirow Usage
+    Check Multirow Error From Stderr  Setting  1  Invalid multirow usage: No item started
+    Check Multirow Error From Stderr  Variable  2  Invalid multirow usage: No item started
+    Check Multirow Error From Stderr  Test Case  1  No name specified
+    Check Multirow Error From Stderr  Test Case  3  Invalid multirow usage: No item started
+    Check Multirow Error From Stderr  Keyword  1  No name specified
+    Check Multirow Error From Stderr  Keyword  3  Invalid multirow usage: No item started
+    Check Test Case  Invalid Usage In Test And User Keyword
+
+*** Keywords ***
+Check Multirow Error From Stderr
+    [Arguments]  ${table}  ${row}  ${err}
+    ${path} =  Join Path  ${CURDIR}..${/}..${/}..  testdata  parsing  multirow.html
+    Check Stderr Contains  [ ERROR ] Error in file '${path}' in table '${table}' in element on row ${row}: ${err}
+
