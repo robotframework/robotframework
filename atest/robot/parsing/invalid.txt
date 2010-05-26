@@ -5,19 +5,19 @@ Resource        data_formats/formats_resource.txt
 *** Variables ***
 ${PARSING}  parsing
 ${NO TESTS}  ${PARSING}${/}notests
+${EMPTY TC TABLE} =  ${PARSING}${/}empty_testcase_table.txt
+${EMPTY TC TABLE MSG} =  Test case file has no test case table.
+
 
 *** Test Cases ***
 Invalid Input
-    Run Tests Without Processing Output  ${EMPTY}  ${PARSING}${/}unsupported.log
-    Check Stderr Contains  [ ERROR ] Unsupported file format 'log'
+    Check Parsing Error  unsupported.log  Unsupported file format 'log'.  ${PARSING}${/}unsupported.log
 
 Malformed HTML
-    Run Tests Without Processing Output  ${EMPTY}  ${HTMLDIR}${/}malformed.html
-    Check Stderr Matches Regexp  \\[ ERROR \\] Parsing '.*[/\\\\]malformed.html' failed: HTMLParseError:?.*${USAGE_TIP}
+    Check Parsing Error  malformed.html  HTMLParseError:?.*  ${HTMLDIR}${/}malformed.html
 
 HTML File Not Containing Tests
-    Run Tests Without Processing Output  ${EMPTY}  ${HTMLDIR}${/}invalid.html
-    Check Stderr Matches Regexp  \\[ ERROR \\] Test case file has no test case table.${USAGE_TIP}
+    Check Parsing Error  invalid.html  Test case file has no test case table.  ${HTMLDIR}${/}invalid.html
 
 Empty Directory
     Run Tests Without Processing Output  ${EMPTY}  ${NO TESTS}${/}empty
@@ -29,15 +29,29 @@ Directory Containing No Test Cases
     ${path} =  Join Path  ${DATADIR}/${NO TESTS}  empty
     Check Syslog Contains  Running test suite '${path}' failed: Test suite contains no test cases.
 
+File Containing No Test Cases
+    Run Tests Without Processing Output  ${EMPTY}  ${EMPTY TC TABLE}
+    Check Stderr Matches Regexp  \\[ ERROR \\] Test suite '.*[/\\\\]empty_testcase_table.txt' contains no test cases.${USAGE_TIP}
+
+Multisource Containing No Test Cases
+    Run Tests Without Processing Output  ${EMPTY}  ${HTMLDIR}${/}empty.html  ${TSVDIR}${/}empty.tsv
+    Check Stderr Matches Regexp  \\[ ERROR \\] Data sources '.*[/\\\\]empty.html' and '.*[/\\\\]empty.tsv' contain no test cases.${USAGE_TIP}
+    ${syslog} =  Get Syslog
+    Should Match RegExp  ${syslog}  '.*[/\\\\]empty.html' failed: ${EMPTY TC TABLE MSG}
+    Should Match RegExp  ${syslog}  Parsing '.*[/\\\\]empty.tsv' failed: ${EMPTY TC TABLE MSG}
+
 Empty HTML File
-    Run Tests Without Processing Output  ${EMPTY}  ${HTMLDIR}${/}empty.html
-    Check Stderr Matches Regexp  \\[ ERROR \\] Test case file has no test case table.${USAGE_TIP}
+    Check Parsing Error  empty.html  ${EMPTY TC TABLE MSG}  ${HTMLDIR}${/}empty.html
 
 Empty TSV File
-    Run Tests Without Processing Output  ${EMPTY}  ${TSVDIR}${/}empty.tsv
-    Check Stderr Matches Regexp  \\[ ERROR \\] Test case file has no test case table.${USAGE_TIP}
+    Check Parsing Error  empty.tsv  ${EMPTY TC TABLE MSG}  ${TSVDIR}${/}empty.tsv
 
 Empty TXT File
-    Run Tests Without Processing Output  ${EMPTY}  ${TXTDIR}${/}empty.txt
-    Check Stderr Matches Regexp  \\[ ERROR \\] Test case file has no test case table.${USAGE_TIP}
+    Check Parsing Error  empty.txt  ${EMPTY TC TABLE MSG}  ${TXTDIR}${/}empty.txt
 
+
+*** User Keywords ***
+Check Parsing Error
+    [Arguments]  ${file}  ${error}  @{paths}
+    Run Tests Without Processing Output  ${EMPTY}  @{paths}
+    Check Stderr Matches Regexp  \\[ ERROR \\] Parsing '.*[/\\\\]${file}' failed: ${error}${USAGE_TIP}
