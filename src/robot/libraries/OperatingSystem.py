@@ -1049,7 +1049,6 @@ class OperatingSystem:
 
     def get_file_size(self, path):
         """Returns and logs file size as an integer in bytes"""
-        # TODO: Add an option to return size in kilos, megas or gigas
         path = self._absnorm(path)
         size = os.stat(path).st_size
         plural = plural_or_not(size)
