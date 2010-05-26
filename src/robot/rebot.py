@@ -36,16 +36,16 @@ http://robotframework.org.
 
 Options:
 
- -N --name name           Set the name of the top level test suite. Name is
-                          automatically capitalized and underscores converted
-                          to spaces.
- -D --doc document        Set the document of the top level test suite.
-                          Underscores in the document are turned into spaces
-                          and it may also contain simple HTML formatting (e.g.
-                          *bold*, _italic_ and http://url/).
- -M --metadata name:value *  Set metadata of the top level test suite. Name is
-                          automatically capitalized and underscores converted
-                          to spaces. Value can contain same HTML formatting as
+ -N --name name           Set the name of the top level test suite. Underscores
+                          in the name are converted to spaces. Default name is
+                          created from the name of the executed data source.
+ -D --doc documentation   Set the documentation of the top level test suite.
+                          Underscores in the documentation are converted to
+                          spaces and it may also contain simple HTML formatting
+                          (e.g. *bold* and http://url/).
+ -M --metadata name:value *  Set metadata of the top level test suite.
+                          Underscores in the name and value are converted to
+                          spaces. Value can contain same HTML formatting as
                           --doc. Example: '--metadata version:1.2'
  -G --settag tag *        Sets given tag(s) to all executed test cases.
  -t --test name *         Select test cases by name. Name is case and space
