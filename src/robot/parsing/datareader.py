@@ -14,7 +14,6 @@
 
 import os
 import re
-import sys
 
 from robot import utils
 from robot.output import LOGGER
@@ -86,7 +85,7 @@ class FromFilePopulator(object):
         try:
             return READERS[extension]()
         except KeyError:
-            raise DataError("No reader found for extension '%s'." % extension)
+            raise DataError("Unsupported file format '%s'." % extension)
 
     def start_table(self, header):
         self._current_populator.populate()
