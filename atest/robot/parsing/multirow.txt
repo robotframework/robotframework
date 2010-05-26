@@ -44,17 +44,14 @@ Multirow User Keyword Metadata
     ${test} =  Check Test Case  Multirow User Keyword Metadata
 
 Invalid Multirow Usage
-    Check Multirow Error From Stderr  Setting  1  Invalid multirow usage: No item started
-    Check Multirow Error From Stderr  Variable  2  Invalid multirow usage: No item started
-    Check Multirow Error From Stderr  Test Case  1  No name specified
-    Check Multirow Error From Stderr  Test Case  3  Invalid multirow usage: No item started
-    Check Multirow Error From Stderr  Keyword  1  No name specified
-    Check Multirow Error From Stderr  Keyword  3  Invalid multirow usage: No item started
+    Check Multirow Error From Stderr  Setting  Non-existing setting '...'.
+    Check Multirow Error From Stderr  Variable  Setting variable '...' failed: Invalid variable name.
+    Check Test Case  \
     Check Test Case  Invalid Usage In Test And User Keyword
 
 *** Keywords ***
 Check Multirow Error From Stderr
-    [Arguments]  ${table}  ${row}  ${err}
+    [Arguments]  ${table}  ${err}
     ${path} =  Join Path  ${CURDIR}..${/}..${/}..  testdata  parsing  multirow.html
-    Check Stderr Contains  [ ERROR ] Error in file '${path}' in table '${table}' in element on row ${row}: ${err}
+    Check Stderr Contains  [ ERROR ] Invalid syntax in file '${path}' in table '${table}': ${err}
 
