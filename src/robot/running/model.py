@@ -30,6 +30,7 @@ from namespace import Namespace
 from runerrors import SuiteRunErrors, TestRunErrors
 from userkeyword import UserLibrary
 from context import ExecutionContext
+from defaultvalues import DefaultValues
 
 
 def TestSuite(datasources, settings):
@@ -75,7 +76,7 @@ def _check_suite_contains_tests(suite):
 
 class RunnableTestSuite(BaseTestSuite):
 
-    def __init__(self, data, parent=None):
+    def __init__(self, data, parent=None, defaults=None):
         BaseTestSuite.__init__(self, data.name, data.source, parent)
         self.variables = GLOBAL_VARIABLES.copy()
         self.variables.set_from_variable_table(data.variable_table)
@@ -88,10 +89,11 @@ class RunnableTestSuite(BaseTestSuite):
                            data.setting_table.suite_setup.args)
         self.teardown = Teardown(data.setting_table.suite_teardown.name, 
                                  data.setting_table.suite_teardown.args)
+        defaults = DefaultValues(data.setting_table, defaults)
         for suite in data.children:
-            RunnableTestSuite(suite, parent=self)
+            RunnableTestSuite(suite, parent=self, defaults=defaults)
         for test in data.testcase_table:
-            RunnableTestCase(test, parent=self)
+            RunnableTestCase(test, parent=self, defaults=defaults)
         self._run_mode_exit_on_failure = False
         self._run_mode_dry_run = False
 
@@ -199,15 +201,13 @@ class RunnableMultiTestSuite(RunnableTestSuite):
 
 class RunnableTestCase(BaseTestCase):
 
-    def __init__(self, tc_data, parent):
+    def __init__(self, tc_data, parent, defaults):
         BaseTestCase.__init__(self, tc_data.name, parent)
         self.doc = tc_data.doc.value
-        setup = tc_data.setup.is_set() and tc_data.setup or self._get_parent_test_setup(tc_data.parent.parent)
-        self.setup = Setup(setup.name, setup.args)
-        teardown = tc_data.teardown.is_set() and tc_data.teardown or self._get_parent_test_teardown(tc_data.parent.parent)
-        self.teardown = Teardown(teardown.name, teardown.args)
-        self.tags = self._get_tags(tc_data)
-        self.timeout = self._get_timeout(tc_data)
+        self.setup = defaults.get_setup(tc_data.setup)
+        self.teardown = defaults.get_teardown(tc_data.teardown)
+        self.tags = defaults.get_tags(tc_data.tags)
+        self.timeout = defaults.get_timeout(tc_data.timeout)
         self.keywords = Keywords(tc_data.steps)
 
     def run(self, context, suite_errors):
@@ -294,33 +294,3 @@ class RunnableTestCase(BaseTestCase):
         self.endtime = utils.get_timestamp()
         self.elapsedtime = utils.get_elapsed_time(self.starttime, self.endtime)
         context.end_test(self)
-
-    # FIXME: Clean up getting test settings (e.g. Serious Law of Demeter breaking)
-    def _get_tags(self, tc_data):
-        force_tags = self._get_parent_force_tags(tc_data.parent.parent)
-        tc_tags = tc_data.tags.value if tc_data.tags.is_set() \
-            else tc_data.parent.parent.setting_table.default_tags.value
-        return tc_tags + force_tags
-
-    def _get_parent_force_tags(self, data):
-        parent_tags = data.parent and self._get_parent_force_tags(data.parent) or []
-        return data.setting_table.force_tags.value + parent_tags
-
-    def _get_parent_test_setup(self, data):
-        if data.setting_table.test_setup.is_set():
-            return data.setting_table.test_setup
-        return data.parent and self._get_parent_test_setup(data.parent) or Fixture()
-   
-    def _get_parent_test_teardown(self, data):
-        if data.setting_table.test_teardown.is_set():
-            return data.setting_table.test_teardown
-        return data.parent and self._get_parent_test_teardown(data.parent) or Fixture()
-
-    def _get_timeout(self, tc_data):
-        if tc_data.timeout.is_set():
-            return self._build_timeout(tc_data.timeout)
-        return self._build_timeout(tc_data.parent.parent.setting_table.test_timeout)
-
-    def _build_timeout(self, timeout):
-        return TestTimeout(timeout.value, timeout.message)
-
