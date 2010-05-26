@@ -42,17 +42,10 @@ PROCESS_CURDIR = True
 
 class FromFilePopulator(object):
     _null_populator = NullPopulator()
-    populators = utils.NormalizedDict({'Setting':       SettingTablePopulator,
-                                       'Settings':      SettingTablePopulator,
-                                       'Metadata':      SettingTablePopulator,
-                                       'Variable':      VariableTablePopulator,
-                                       'Variables':     VariableTablePopulator,
-                                       'Test Case':     TestTablePopulator,
-                                       'Test Cases':    TestTablePopulator,
-                                       'Keyword':       KeywordTablePopulator,
-                                       'Keywords':      KeywordTablePopulator,
-                                       'User Keyword':  KeywordTablePopulator,
-                                       'User Keywords': KeywordTablePopulator})
+    populators = utils.NormalizedDict({'setting':       SettingTablePopulator,
+                                       'variable':      VariableTablePopulator,
+                                       'testcase':     TestTablePopulator,
+                                       'keyword':       KeywordTablePopulator})
 
     def __init__(self, datafile):
         self._datafile = datafile
@@ -90,9 +83,10 @@ class FromFilePopulator(object):
     def start_table(self, header):
         self._current_populator.populate()
         header = DataRow(header)
-        try:
-            self._current_populator = self.populators[header.head](self._datafile, header.all)
-        except KeyError:
+        table = self._datafile.start_table(header.all)
+        if table is not None:
+            self._current_populator = self.populators[table.type](self._datafile)
+        else:
             self._current_populator = self._null_populator
         return self._current_populator is not self._null_populator
 
@@ -222,7 +216,6 @@ class FromDirectoryPopulator(object):
             try:
                 FromFilePopulator(datadir).populate(initfile)
             except DataError, err:
-                # TODO: Reverse control?
                 LOGGER.error(unicode(err))
         for child in children:
             try:

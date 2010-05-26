@@ -38,9 +38,8 @@ class CommentCacher(object):
 
 class _TablePopulator(Populator):
 
-    def __init__(self, datafile, header):
+    def __init__(self, datafile):
         self._table = self._get_table(datafile)
-        self._table.set_header(header)
         self._populator = NullPopulator()
         self._comments = CommentCacher()
 

@@ -37,6 +37,29 @@ class _TestData(object):
         self.source = os.path.abspath(source) if source else None
         self.children = []
 
+    def start_table(self, header_row):
+        tables = self._get_tables()
+        try:
+            table = tables[header_row[0]]
+            table.set_header(header_row)
+            return table
+        except KeyError:
+            # FIXME: This is not handled 
+            if utils.normalize(header_row[0]) == 'testcases':
+                LOGGER.error('Test case table not allowed in test suite init file.')
+            return None
+
+    def _get_tables(self):
+        return utils.NormalizedDict({'Setting':       self.setting_table,
+                                     'Settings':      self.setting_table,
+                                     'Metadata':      self.setting_table,
+                                     'Variable':      self.variable_table,
+                                     'Variables':     self.variable_table,
+                                     'Keyword':       self.keyword_table,
+                                     'Keywords':      self.keyword_table,
+                                     'User Keyword':  self.keyword_table,
+                                     'User Keywords': self.keyword_table})
+
     @property
     def name(self):
         if not self.source:
@@ -71,6 +94,19 @@ class TestCaseFile(_TestData):
     def _validate(self):
         if not self.testcase_table.is_started():
             raise DataError('File has no test case table.')
+
+    def _get_tables(self):
+        return utils.NormalizedDict({'Setting':       self.setting_table,
+                                     'Settings':      self.setting_table,
+                                     'Metadata':      self.setting_table,
+                                     'Variable':      self.variable_table,
+                                     'Variables':     self.variable_table,
+                                     'Test Case':     self.testcase_table,
+                                     'Test Cases':    self.testcase_table,
+                                     'Keyword':       self.keyword_table,
+                                     'Keywords':      self.keyword_table,
+                                     'User Keyword':  self.keyword_table,
+                                     'User Keywords': self.keyword_table})
 
     def __iter__(self):
         for table in [self.setting_table, self.variable_table,
@@ -164,6 +200,7 @@ class _WithSettings(object):
 
 
 class _SettingTable(_Table, _WithSettings):
+    type = 'setting'
 
     def __init__(self, parent):
         _Table.__init__(self, parent)
@@ -263,6 +300,7 @@ class InitFileSettingTable(_SettingTable):
 
 
 class VariableTable(_Table):
+    type = 'variable'
 
     def __init__(self, parent):
         _Table.__init__(self, parent)
@@ -279,6 +317,7 @@ class VariableTable(_Table):
 
 
 class TestCaseTable(_Table):
+    type = 'testcase'
 
     def __init__(self, parent):
         _Table.__init__(self, parent)
@@ -299,6 +338,7 @@ class TestCaseTable(_Table):
 
 
 class KeywordTable(_Table):
+    type = 'keyword'
 
     def __init__(self, parent):
         _Table.__init__(self, parent)
