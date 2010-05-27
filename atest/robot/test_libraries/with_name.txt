@@ -71,16 +71,16 @@ Module Library
 Java Library
     [Tags]  jybot
     ${test} =  Check Test Case  Java Library
-    Should Be Equal  ${test.kws[0].name}  \${s} = JavaLib.Return String From Library
-    Should Be Equal  ${test.kws[2].name}  \${obj} = JavaLib.Get Java Object
-    Check Syslog Contains  Imported library 'ExampleJavaLibrary' with name 'JavaLib'
+    Should Be Equal  ${test.kws[0].name}  \${s} = Java Lib.Return String From Library
+    Should Be Equal  ${test.kws[2].name}  \${obj} = Java Lib.Get Java Object
+    Check Syslog Contains  Imported library 'ExampleJavaLibrary' with name 'Java Lib'
 
 Java Library In Package
     [Tags]  jybot
     ${test} =  Check Test Case  Java Library In Package
-    Should Be Equal  ${test.kws[0].name}  \${s1} = JavaPkg.Return Value
-    Should Be Equal  ${test.kws[1].name}  \${s2} = JavaPkg.Return Value
-    Check Syslog Contains  Imported library 'javapkg.JavaPackageExample' with name 'JavaPkg'
+    Should Be Equal  ${test.kws[0].name}  \${s1} = Java Pkg.Return Value
+    Should Be Equal  ${test.kws[1].name}  \${s2} = Java Pkg.Return Value
+    Check Syslog Contains  Imported library 'javapkg.JavaPackageExample' with name 'Java Pkg'
 
 Import Library Keyword
     ${test} =  Check Test Case  Import Library Keyword
