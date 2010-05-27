@@ -35,13 +35,6 @@ Historical reporting tool
 `risto.py`_ is a tool for generating graphs about historical statistics
 of test executions.
 
-Test data tidying tool
-''''''''''''''''''''''
-
-`robotidy.py`_ is a tool for cleaning Robot Framework test data, changing test 
-data format between HTML and TSV and fixing inline comments to format supported
-by Robot IDE.
-
 Test result diffing tool
 ''''''''''''''''''''''''
 
