@@ -41,15 +41,14 @@ PROCESS_CURDIR = True
 
 
 class FromFilePopulator(object):
-    _null_populator = NullPopulator()
-    populators = utils.NormalizedDict({'setting':       SettingTablePopulator,
-                                       'variable':      VariableTablePopulator,
-                                       'testcase':     TestTablePopulator,
-                                       'keyword':       KeywordTablePopulator})
+    _populators = {'setting': SettingTablePopulator,
+                  'variable': VariableTablePopulator,
+                  'testcase': TestTablePopulator,
+                  'keyword': KeywordTablePopulator}
 
     def __init__(self, datafile):
         self._datafile = datafile
-        self._current_populator = self._null_populator
+        self._current_populator = NullPopulator()
         self._curdir = self._get_curdir(datafile.directory)
 
     def _get_curdir(self, path):
@@ -82,13 +81,13 @@ class FromFilePopulator(object):
 
     def start_table(self, header):
         self._current_populator.populate()
-        header = DataRow(header)
-        table = self._datafile.start_table(header.all)
-        if table is not None:
-            self._current_populator = self.populators[table.type](self._datafile)
-        else:
-            self._current_populator = self._null_populator
-        return self._current_populator is not self._null_populator
+        try:
+            table = self._datafile.start_table(DataRow(header).all)
+            self._current_populator = self._populators[table.type](table)
+        except DataError, err:
+            LOGGER.error(unicode(err))
+            self._current_populator = NullPopulator()
+        return bool(self._current_populator)
 
     def eof(self):
         self._current_populator.populate()

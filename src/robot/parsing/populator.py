@@ -38,8 +38,8 @@ class CommentCacher(object):
 
 class _TablePopulator(Populator):
 
-    def __init__(self, datafile):
-        self._table = self._get_table(datafile)
+    def __init__(self, table):
+        self._table = table
         self._populator = NullPopulator()
         self._comments = CommentCacher()
 
@@ -66,9 +66,6 @@ class _TablePopulator(Populator):
 
 class SettingTablePopulator(_TablePopulator):
 
-    def _get_table(self, datafile):
-        return datafile.setting_table
-
     def _get_populator(self, row):
         row.handle_old_style_metadata()
         setter = self._table.get_setter(row.head)
@@ -76,9 +73,6 @@ class SettingTablePopulator(_TablePopulator):
 
 
 class VariableTablePopulator(_TablePopulator):
-
-    def _get_table(self, datafile):
-        return datafile.variable_table
 
     def _get_populator(self, row):
         return VariablePopulator(self._table.add)
@@ -95,17 +89,11 @@ class _StepContainingTablePopulator(_TablePopulator):
 
 class TestTablePopulator(_StepContainingTablePopulator):
 
-    def _get_table(self, datafile):
-        return datafile.testcase_table
-
     def _get_populator(self, row):
         return TestCasePopulator(self._table.add)
 
 
 class KeywordTablePopulator(_StepContainingTablePopulator):
-
-    def _get_table(self, datafile):
-        return datafile.keyword_table
 
     def _get_populator(self, row):
         return UserKeywordPopulator(self._table.add)
