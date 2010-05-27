@@ -74,8 +74,8 @@ def _isWordBoundary(prev, char, next):
     return prev.isdigit()
 
 
-def plural_or_not(list_or_int):
-    count = list_or_int if isinstance(list_or_int, int) else len(list_or_int)
+def plural_or_not(item):
+    count = item if isinstance(item, (int, long)) else len(item)
     return '' if count == 1 else 's'
 
 
