@@ -51,7 +51,6 @@ The use of variables is recommended in the following cases:
 - When values in the test data are long or otherwise complicated. For
   example, :var:`${URL}` is shorter than
   :code:`\http://long.domain.name:8080/path/to/service?foo=1&bar=2&zap=42`.
-  
 
 If a nonexistent variable is used in the test data, the keyword using
 it fails. If the same syntax that is used for variables is needed as a
@@ -62,7 +61,6 @@ __ `List variables`_
 __ http://code.google.com/p/robotframework/issues/detail?id=484
 __ `Setting variables in command line`_
 __ Escaping_
-
 
 Variable types
 ~~~~~~~~~~~~~~
@@ -86,7 +84,6 @@ data. Basically, variable names can have any characters between the
 curly braces. However, using only alphabetic characters from a to z,
 numbers, underscore and space is recommended, and it is
 even a requirement for using the `extended variable syntax`_.
-
 
 Scalar variables
 ''''''''''''''''
@@ -170,7 +167,7 @@ the arguments as explained below:
           if you try to use byte sequences as arguments to keywords so that
           you catenate the values together like :code:`${byte1}${byte2}`. 
           A workaround is creating a variable that contains the whole value
-          and using it alone in the cell (e.g. :code:`${bytes}`) as then 
+          and using it alone in the cell (e.g. :code:`${bytes}`) because then 
           the value is used as-is.
 
 List variables
@@ -204,6 +201,9 @@ are equivalent.
    Strings        Login     robot        secret
    List Variable  Login     @{USER}      \
    =============  ========  ===========  ==========
+
+Accessing individual list variable items
+````````````````````````````````````````
 
 It is also possible to access a certain value from the list variable
 with the syntax :var:`@{NAME}[i]`, where :var:`i` is the index of the
@@ -249,11 +249,33 @@ and its value is used instead.
    \              Log Many          @{items}        \           \
    =============  ================  ==============  ==========  ==========
 
-Where list variables can be used
-````````````````````````````````
+Using list variables with settings
+``````````````````````````````````
 
-TODO
+List variables can be used only with some of the settings__. They can
+be used in arguments to imported libraries and variable files, but
+library and variable file names themselves cannot be list
+variables. They work exactly the same way also with setups and
+teardowns, and with tag related settings they can be used
+freely. Using scalar variables is possible also in those places where
+list variables are not supported.
 
+.. table:: Using list variables with settings
+   :class: example
+
+   ==============  ===============  ===============  ====================
+      Settings          Value            Value             Comment
+   ==============  ===============  ===============  ====================
+   Library         ExampleLibrary   @{LIB ARGS}      # This works
+   Library         ${LIBRARY}       @{LIB ARGS}      # This works
+   Library         @{KEYWORD}                        # This does not work
+   Suite Setup     Some Keyword     @{KW ARGS}       # This works
+   Suite Setup     ${KEYWORD}       @{KW ARGS}       # This works
+   Suite Setup     @{KEYWORD}                        # This does not work
+   Default Tags    @{TAGS}                           # This works
+   ==============  ===============  ===============  ====================
+
+__ `All available settings in test data`_
 
 Environment variables
 '''''''''''''''''''''
@@ -351,8 +373,8 @@ __ `Dividing test data to several rows`_
      Variable      Value      Value      Value
    ============  =========  =========  =========
    @{NAMES}      Matti      Teppo      \
-   @{EMPTY}      \          \          \
-   @{NAMES2}     @{NAMES}   @{EMPTY}   Seppo
+   @{NAMES2}     @{NAMES}   Seppo      \
+   @{NOTHING}    \          \          \
    @{MANY}       one        two        three
    ...           four       five       six
    ...           seven      \          \
