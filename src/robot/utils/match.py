@@ -35,13 +35,6 @@ def eq_any(str_, str_list, ignore=[], caseless=True, spaceless=True):
     return False
 
 
-def any_eq_any(strs1, strs2, ignore=[], caseless=True, spaceless=True):
-    for s in strs1:
-        if eq_any(s, strs2, ignore, caseless, spaceless):
-            return True
-    return False
-
-
 def matches(string, pattern, ignore=[], caseless=True, spaceless=True):
     string = normalize(string, ignore, caseless, spaceless)
     pattern = normalize(pattern, ignore, caseless, spaceless)
@@ -63,25 +56,5 @@ def _get_match_regexp(pattern):
 def matches_any(string, patterns, ignore=[], caseless=True, spaceless=True):
     for pattern in patterns:
         if matches(string, pattern, ignore, caseless, spaceless):
-            return True
-    return False
-
-
-def any_matches(strings, pattern, ignore=[], caseless=True, spaceless=True):
-    for string in strings:
-        if matches(string, pattern, ignore, caseless, spaceless):
-            return True
-    return False
-
-
-def contains(str1, str2, ignore=[], caseless=True, spaceless=True):
-    str1 = normalize(str1, ignore, caseless, spaceless)
-    str2 = normalize(str2, ignore, caseless, spaceless)
-    return str2 in str1
-
-
-def contains_any(string, strings, ignore=[], caseless=True, spaceless=True):
-    for s in strings:
-        if contains(string, s, ignore, caseless, spaceless):
             return True
     return False

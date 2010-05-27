@@ -660,11 +660,15 @@ class Collections(_List, _Dictionary):
     ROBOT_LIBRARY_VERSION = utils.get_version()
 
 
-def _verify_condition(condition, default_msg, given_msg, values=False):
+def _verify_condition(condition, default_msg, given_msg, include_default=False):
     if not condition:
-        values = utils.to_boolean(values, false_strs=['No Values'])
-        if given_msg is None:
+        if not given_msg:
             raise AssertionError(default_msg)
-        if values:
+        if _include_default_message(include_default):
             raise AssertionError(given_msg + '\n' + default_msg)
         raise AssertionError(given_msg)
+
+def _include_default_message(include):
+    if isinstance(include, basestring):
+        return include.lower() not in ['no values', 'false']
+    return bool(include)

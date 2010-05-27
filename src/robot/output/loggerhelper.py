@@ -71,8 +71,7 @@ class Message:
         self.html = html
 
     def _process_message(self, msg):
-        """Makes sure we have a string and no extra CR is written to log"""
-        if not utils.is_str(msg):
+        if not isinstance(msg, basestring):
             msg = utils.unic(msg)
         return msg.replace('\r\n', '\n')
 

@@ -13,18 +13,17 @@
 #  limitations under the License.
 
 
-from robot import utils
-
-
 def is_var(string):
-    if not utils.is_str(string):
+    if not isinstance(string, basestring):
         return False
     length = len(string)
     return length > 3 and string[0] in ['$','@'] and string.rfind('{') == 1 \
             and string.find('}') == length - 1
 
+
 def is_scalar_var(string):
     return is_var(string) and string[0] == '$'
+
 
 def is_list_var(string):
     return is_var(string) and string[0] == '@'

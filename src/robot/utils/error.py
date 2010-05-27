@@ -18,7 +18,6 @@ import sys
 import re
 import traceback
 
-from robottypes import is_str
 from unic import unic
 from robot.errors import DataError, TimeoutError, RemoteError
 
@@ -89,13 +88,6 @@ def _get_name(exc_type):
     except AttributeError:
         return unic(exc_type)
 
-def _msg_to_str(msg):
-    if msg is None:
-        return ''
-    if not is_str(msg):
-        return unic(msg)
-    return msg
-
 
 def _get_java_message(exc_type, exc_value):
     exc_name = _get_name(exc_type)
@@ -116,7 +108,7 @@ def _get_java_details(exc_value):
     lines = [ line for line in output.toString().splitlines()
               if line and not _is_ignored_stacktrace_line(line) ]
     details = '\n'.join(lines)
-    msg = _msg_to_str(exc_value.getMessage())
+    msg = unic(exc_value.getMessage() or '')
     if msg:
         details = details.replace(msg, '', 1)
     return details
@@ -160,7 +152,7 @@ def _get_python_details(exc_value, exc_tb):
 
 
 def _format_message(name, message, java=False):
-    message = _msg_to_str(message)
+    message = unic(message or '')
     if java:
         message = _clean_up_java_message(message, name)
     name = name.split('.')[-1]  # Use only last part of the name

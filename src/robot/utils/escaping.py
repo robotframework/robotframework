@@ -12,31 +12,28 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-
 import re
-import string
-
-from robottypes import is_str
 
 
-_escape_re = re.compile(r'(\\+)([^\\]{0,2})')   # escapes and nextchars
+_ESCAPE_RE = re.compile(r'(\\+)([^\\]{0,2})')   # escapes and nextchars
 _SEQS_TO_BE_ESCAPED = ('\\', '${', '@{', '%{', '&{', '*{' , '=')
 
 
 def escape(item):
-    if not is_str(item):
+    if not isinstance(item, basestring):
         return item
     for seq in _SEQS_TO_BE_ESCAPED:
         item = item.replace(seq, '\\' + seq)
     return item
 
+
 def unescape(item):
-    if not is_str(item):
+    if not isinstance(item, basestring):
         return item
     result = []
     unprocessed = item
     while True:
-        res = _escape_re.search(unprocessed)
+        res = _ESCAPE_RE.search(unprocessed)
         # If no escapes found append string to result and exit loop
         if res is None:
             result.append(unprocessed)
@@ -66,28 +63,3 @@ def unescape(item):
         else:
             result.append('\t' + nextchars[1:])
     return ''.join(result)
-
-
-def escape_file_name(filename):
-    """Escapes filename.
-
-    Use only with actual file name and not with full path because possible
-    '/' and '\\' in the given name are also escaped!
-    """
-    return ''.join([ _escape_char(c) for c in filename ])
-
-
-_ok_chars = string.ascii_letters + string.digits + '-+.'
-_replaced_chars = { u'\xe4' : 'a',  u'\xe5' : 'a',
-                    u'\xc4' : 'A',  u'\xc5' : 'A',
-                    u'\xf6' : 'o',  u'\xd6' : 'O',
-                    u'\xfc' : 'u',  u'\xdc' : 'U', }
-
-def _escape_char(char):
-    if char in _ok_chars:
-        return char
-    elif _replaced_chars.has_key(char):
-        return _replaced_chars[char]
-    else:
-        return '_'
-

@@ -157,12 +157,8 @@ class _VariableAssigner(object):
             return
         for name, value in self._get_vars_to_set(return_value):
             context.get_current_vars()[name] = value
-            if is_list_var(name) or utils.is_list(value):
-                value = utils.seq2str2(value)
-            else:
-                value = utils.unic(value)
-            context.output.info('%s = %s' % (name, utils.cut_long_assign_msg(value)))
-
+            context.output.info(utils.format_assign_message(name, value))
+            
     def _get_vars_to_set(self, ret):
         if ret is None:
             return self._get_vars_to_set_when_ret_is_none()
@@ -325,7 +321,7 @@ class ForLoop(BaseKeyword):
 class _ForItem(BaseKeyword):
 
     def __init__(self, vars, items):
-        name = ', '.join('%s = %s' % (var, utils.cut_long_assign_msg(item))
+        name = ', '.join(utils.format_assign_message(var, item)
                          for var, item in zip(vars, items))
         BaseKeyword.__init__(self, name, type='foritem')
         self.starttime = utils.get_timestamp()

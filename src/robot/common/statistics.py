@@ -194,7 +194,7 @@ class TagStatistics:
 
     def _parse_name_and_pattern_from(self, option):
         pattern, name = self._split_pattern_and_name(option)
-        name = self._get_printable_name(pattern, name)
+        name = self._get_name(pattern, name)
         return pattern, name
 
     def _split_pattern_and_name(self, pattern):
@@ -204,9 +204,9 @@ class TagStatistics:
         index = pattern.rfind(option_separator)
         return pattern[:index], pattern[index+1:]
 
-    def _get_printable_name(self, pattern, name):
+    def _get_name(self, pattern, name):
         if pattern != name:
-            name = utils.printable_name(name, True)
+            return name.replace('_', ' ')
         return name.replace('&', ' & ').replace('NOT', ' NOT ')
 
     def add_test(self, test, critical):

@@ -122,7 +122,8 @@ class Variables(utils.NormalizedDict):
         return results
 
     def _replace_variables_inside_possible_list_var(self, item):
-        if not (utils.is_str(item) and item.startswith('@{') and item[-1] == '}'):
+        if not (isinstance(item, basestring) 
+                and item.startswith('@{') and item.endswith('}')):
             return None
         var = VariableSplitter(item, self._identifiers)
         if var.start != 0 or var.end != len(item):
@@ -136,7 +137,7 @@ class Variables(utils.NormalizedDict):
         variable its value is returned. Otherwise variables are replaced with
         'replace_string'. Result may be any object.
         """
-        if not utils.is_str(item):
+        if not isinstance(item, basestring):
             return item
         var = VariableSplitter(item, self._identifiers)
         if var.identifier and var.base and \
@@ -160,7 +161,7 @@ class Variables(utils.NormalizedDict):
                 if not ignore_errors:
                     raise
                 value = string[splitted.start:splitted.end]
-            if not utils.is_str(value):
+            if not isinstance(value, basestring):
                 value = utils.unic(value)
             result.append(value)
             string = string[splitted.end:]
@@ -224,7 +225,11 @@ class Variables(utils.NormalizedDict):
         for name, value in variables:
             if name.startswith(list_prefix):
                 name = '@{%s}' % name[len(list_prefix):]
-                if not utils.is_list(value):
+                try:
+                    if isinstance(value, basestring):
+                        raise TypeError
+                    value = list(value)
+                except TypeError:
                     raise DataError("List variable '%s' cannot get a non-list "
                                     "value '%s'" % (name, utils.unic(value)))
             else:

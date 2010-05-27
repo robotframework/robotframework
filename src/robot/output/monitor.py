@@ -60,7 +60,7 @@ class CommandLineMonitor:
     def output_file(self, name, path):
         # called by LOGGER
         if not self._running_suites:  # ignores splitted output files
-            self._write('%s %s' % ((name+':').ljust(8), utils.cygpath(path)))
+            self._write('%s %s' % ((name+':').ljust(8), path))
 
     def message(self, msg):
         # called by LOGGER

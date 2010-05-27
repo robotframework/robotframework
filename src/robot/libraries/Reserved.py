@@ -13,9 +13,6 @@
 #  limitations under the License.
 
 
-from robot import utils
-
-
 RESERVED_KEYWORDS = [ 'for', 'while', 'break', 'continue', 'end',
                       'if', 'else', 'elif', 'else if', 'return' ]
 
@@ -28,5 +25,5 @@ class Reserved:
         return RESERVED_KEYWORDS
 
     def run_keyword(self, name, args):
-        raise Exception("'%s' is a reserved keyword" % utils.printable_name(name))
+        raise Exception("'%s' is a reserved keyword" % name.title())
 

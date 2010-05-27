@@ -17,7 +17,6 @@ import time
 
 from robot.errors import DataError
 from normalizing import normalize
-from robottypes import is_number
 from misc import plural_or_not
 
 
@@ -83,7 +82,7 @@ def _timestr_to_secs(timestr):
                    + float(hours)*60*60 + float(days)*60*60*24)
 
 def _normalize_timestr(timestr):
-    if is_number(timestr):
+    if isinstance(timestr, (int, long, float)):
         return timestr
     timestr = normalize(timestr)
     for item in 'milliseconds', 'millisecond', 'millis':

@@ -24,7 +24,6 @@ import codecs
 from robot.errors import DataError, Information, FrameworkError
 
 from misc import plural_or_not
-from robottypes import is_list, is_boolean
 from text import wrap
 from unic import unic
 
@@ -254,9 +253,9 @@ class ArgumentParser:
         return escapes
 
     def _unescape(self, value, escapes):
-        if value is None or is_boolean(value):
+        if value in [None, True, False]:
             return value
-        if is_list(value):
+        if isinstance(value, list):
             return [ self._unescape(item, escapes) for item in value ]
         for esc_name, esc_value in escapes.items():
             value = value.replace(esc_name, esc_value)
@@ -344,7 +343,7 @@ class ArgumentParser:
         return True
 
     def _get_pythonpath(self, paths):
-        if not is_list(paths):
+        if isinstance(paths, basestring):
             paths = [paths]
         temp = []
         for path in self._split_pythonpath(paths):
@@ -353,7 +352,7 @@ class ArgumentParser:
         return paths
 
     def _split_pythonpath(self, paths):
-        # paths may already contein ':' as separator
+        # paths may already contain ':' as separator
         tokens = ':'.join(paths).split(':')
         if os.sep == '/':
             return tokens

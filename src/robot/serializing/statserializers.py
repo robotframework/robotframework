@@ -108,12 +108,13 @@ class _StatSerializer:
     def _write_graph(self, stat):
         # See utils.percents_to_widths to understand why different percent and
         # width values are needed
-        percents = utils.calc_percents(stat.passed, stat.failed)
-        widths = utils.percents_to_widths(*percents)
-        pass_attrs = {'class': 'pass_bar', 'title': '%.1f%%' % percents[0],
-                      'style': 'width: %.2f%%;' % widths[0]}
-        fail_attrs = {'class': 'fail_bar', 'title': '%.1f%%' % percents[1],
-                      'style': 'width: %.2f%%;' % widths[1]}
+        percents = _Percents(stat.passed, stat.failed)
+        pass_attrs = {'class': 'pass_bar',
+                      'title': '%.1f%%' % percents.pass_percent,
+                      'style': 'width: %.2f%%;' % percents.pass_width}
+        fail_attrs = {'class': 'fail_bar',
+                      'title': '%.1f%%' % percents.fail_percent,
+                      'style': 'width: %.2f%%;' % percents.fail_width}
         self._writer.element('b', None, pass_attrs)
         self._writer.element('b', None, fail_attrs)
 
@@ -206,3 +207,44 @@ class SummaryStatSerializer(_StatSerializer):
 
     def _get_element_name_and_attrs(self, stat):
         return 'span', {}
+
+
+class _Percents(object):
+
+    def __init__(self, passed, failed):
+        self.pass_percent, self.fail_percent \
+            = self._calculate_percents(passed, failed)
+        self.pass_width, self.fail_width \
+            = self._calculate_widths(self.pass_percent, self.fail_percent)
+
+    def _calculate_percents(self, passed, failed):
+        total = passed + failed
+        if total == 0:
+            return 0.0, 0.0
+        pass_percent = 100.0 * passed / total
+        fail_percent = 100.0 * failed / total
+        if 0 < pass_percent < 0.1:
+            return 0.1, 99.9
+        if 0 < fail_percent < 0.1:
+            return 99.9, 0.1
+        return round(pass_percent, 1), round(fail_percent, 1)
+
+    def _calculate_widths(self, num1, num2):
+        if num1 + num2 == 0:
+            return 0.0, 0.0
+        # Make small percentages better visible
+        if 0 < num1 < 1:
+            num1, num2= 1.0, 99.0
+        if 0 < num2 < 1:
+            num1, num2= 99.0, 1.0
+        # Handle situation where both are rounded up
+        while num1 + num2 > 100:
+            num1, num2 = self._subtract_from_larger(num1, num2, 0.1)
+        # Make sure both pass and fail bar fit into 100% also in IE
+        num1, num2 = self._subtract_from_larger(num1, num2, 0.01)
+        return num1, num2
+
+    def _subtract_from_larger(self, num1, num2, subtr):
+        if num1 > num2:
+            return num1-subtr, num2
+        return num1, num2-subtr

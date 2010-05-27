@@ -396,10 +396,10 @@ class BaseTestCase(_TestAndSuiteHelper):
         """Returns True if given tag matches any tag from self.tags.
 
         Note that given tag may be ANDed combination of multiple tags (e.g.
-        tag1&tag2) and then all of them must match some tag from selg.tags.
+        tag1&tag2) and then all of them must match some tag from self.tags.
         """
         for item in tag.split('&'):
-            if not utils.any_matches(self.tags, item):
+            if not any(utils.matches(tag, item) for tag in self.tags):
                 return False
         return True
 

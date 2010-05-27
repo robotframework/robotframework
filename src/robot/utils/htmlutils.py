@@ -16,7 +16,6 @@
 import re
 import os.path
 
-from robottypes import is_str
 from unic import unic
 
 
@@ -49,9 +48,8 @@ _url_re = re.compile('''
 
 
 def html_escape(text, formatting=False):
-    if not is_str(text):
+    if not isinstance(text, basestring):
         text = unic(text)
-
     for name, value in [('&', '&amp;'), ('<', '&lt;'), ('>', '&gt;')]:
         text = text.replace(name, value)
 

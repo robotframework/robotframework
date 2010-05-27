@@ -14,6 +14,7 @@
 
 
 import os
+import tempfile
 
 from robot import utils
 from robot.output import LOGGER
@@ -27,7 +28,7 @@ GLOBAL_VARIABLES = Variables()
 
 def init_global_variables(settings):
     _set_cli_vars(settings)
-    for name, value in [ ('${TEMPDIR}', utils.get_temp_dir()),
+    for name, value in [ ('${TEMPDIR}', os.path.normpath(tempfile.gettempdir())),
                          ('${EXECDIR}', os.path.abspath('.')),
                          ('${/}', os.sep),
                          ('${:}', os.pathsep),
@@ -47,6 +48,7 @@ def init_global_variables(settings):
                          ('${PREV_TEST_STATUS}', ''),
                          ('${PREV_TEST_MESSAGE}', '') ]:
         GLOBAL_VARIABLES[name] = value
+
 
 def _set_cli_vars(settings):
     for path, args in settings['VariableFiles']:

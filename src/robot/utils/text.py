@@ -12,9 +12,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-
-from robottypes import is_str
 from unic import unic
+from misc import seq2str2
 
 
 _MAX_ASSIGN_LENGTH = 200
@@ -24,8 +23,6 @@ _ERROR_CUT_EXPLN = ('    [ Message content over the limit has been removed. ]')
 
 
 def cut_long_message(msg):
-    if not is_str(msg):
-        msg = unic(msg)
     lines = msg.splitlines()
     lengths = _count_line_lenghts(lines)
     if sum(lengths) <= _MAX_ERROR_LINES:
@@ -71,13 +68,11 @@ def _count_virtual_line_length(line):
     return length
 
 
-# TODO: rename _msg -> _message
-def cut_long_assign_msg(msg):
-    if not is_str(msg):
-        msg = unic(msg)
-    if len(msg) <= _MAX_ASSIGN_LENGTH:
-        return msg
-    return msg[:_MAX_ASSIGN_LENGTH] + '...'
+def format_assign_message(variable, value, cut_long=True):
+    value = unic(value) if variable.startswith('$') else seq2str2(value)
+    if cut_long and len(value) > _MAX_ASSIGN_LENGTH:
+        value = value[:_MAX_ASSIGN_LENGTH] + '...'
+    return '%s = %s' % (variable, value)
 
 
 def wrap(text, width, indent=0):

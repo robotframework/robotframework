@@ -17,77 +17,11 @@ import types
 import os
 import sys
 
-from robot.errors import FrameworkError
-from match import eq_any
 from unic import unic
 
 
-_LIST_TYPES = [ types.ListType, types.TupleType ]
 if sys.platform.startswith('java'):
     from java.util import HashMap
-    import array
-    _LIST_TYPES.append(array.ArrayType)
-
-
-def is_list(item):
-    # TODO: Should support also other iterables incl. java.lang.Vector
-    return type(item) in _LIST_TYPES
-
-def is_tuple(item):
-    return type(item) is types.TupleType
-
-def is_scalar(item):
-    return not is_list(item)
-
-def is_str(item):
-    return type(item) in types.StringTypes
-
-def is_integer(item):
-    return type(item) in [ types.IntType, types.LongType ]
-
-def is_number(item):
-    return type(item) in [ types.IntType, types.LongType, types.FloatType ]
-
-def is_boolean(item):
-    return type(item) is type(True) # No BooleanType in Jython 2.2a1
-
-def is_list_of_str(item):
-    if not is_list(item): return False
-    for i in item:
-        if not is_str(i): return False
-    return True
-
-
-_default_true_strs = ['True', 'Yes']
-_default_false_strs = ['False', 'No']
-
-def _get_boolean_strs(given, defaults):
-        if given is None:
-            return defaults
-        return given + defaults
-
-def to_boolean(value, true_strs=None, false_strs=None, default=False):
-    if is_boolean(value):
-        return value
-    if is_number(value):
-        return value != 0
-    if is_str(value):
-        true_strs =_get_boolean_strs(true_strs, _default_true_strs)
-        false_strs =_get_boolean_strs(false_strs, _default_false_strs)
-        if eq_any(value, true_strs):
-            return True
-        if eq_any(value, false_strs):
-            return False
-    return default
-
-
-def to_list(item):
-    if item is None:
-        return []
-    if not is_list(item):
-        raise FrameworkError('Expected list, tuple or None, got %s'
-                             % type_as_str(item, True))
-    return list(item)
 
 
 def dict2map(dictionary):
@@ -97,6 +31,13 @@ def dict2map(dictionary):
     for key, value in dictionary.items():
         map.put(key, value)
     return map
+
+
+# FIXME: Remove
+def to_list(item):
+    if item is None:
+        return []
+    return list(item)
 
 
 _type_dict = dict([ (getattr(types,attr), attr) for attr in dir(types)
@@ -128,6 +69,7 @@ def type_as_str(item, printable=False):
     if printable and _printable_type_mapping.has_key(ret):
         ret = _printable_type_mapping[ret]
     return ret
+
 
 def safe_repr(item):
     try:

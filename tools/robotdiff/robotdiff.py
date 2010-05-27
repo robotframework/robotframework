@@ -72,7 +72,7 @@ def main(args):
         except DataError, err:
             exit(error=str(err))
     diff.serialize()
-    print "Report: %s" % utils.cygpath(diff.close())
+    print "Report: %s" % diff.close()
 
 def _process_args(cliargs):
     ap = utils.ArgumentParser(__doc__, arg_limits=(2, sys.maxint))

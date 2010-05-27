@@ -195,11 +195,11 @@ class TestTagStatistics(unittest.TestCase):
     def test_combine_with_name(self):
         for comb_tags, expected_name in [ 
                 ( [], '' ),
-                ( ['t1&t2:my_name'], 'My Name' ),
-                ( ['t1NOTt3:others'], 'Others' ),
-                ( ['1:2&2:3:name'], 'Name' ),
+                ( ['t1&t2:my_name'], 'my name' ),
+                ( ['t1NOTt3:Others'], 'Others' ),
+                ( ['1:2&2:3:nAme'], 'nAme' ),
                 ( ['3*'], '3*' ),
-                ( ['4NOT5:some new name'], 'Some New Name' )]:
+                ( ['4NOT5:Some new name'], 'Some new name' )]:
             stats = TagStatistics(tag_stat_combine=comb_tags)
             test = TestMock()
             stats._add_tagstatcombine_statistics(test)

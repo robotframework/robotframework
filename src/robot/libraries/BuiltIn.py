@@ -17,9 +17,9 @@ import re
 import time
 
 from robot import output
-from robot.utils import asserts, get_error_message
 from robot.errors import DataError, ExecutionFailed
 from robot import utils
+from robot.utils import asserts
 from robot.variables import is_var, is_list_var
 from robot.running import Keyword, NAMESPACES, RUN_KW_REGISTER
 
@@ -94,7 +94,7 @@ class _Converter:
         For more information about truth values, see
         http://docs.python.org/lib/truth.html.
         """
-        if utils.is_str(item):
+        if isinstance(item, basestring):
             if utils.eq(item, 'True'):
                 return True
             if utils.eq(item, 'False'):
@@ -178,8 +178,12 @@ class _Verify:
           string 'False' or 'No Values', the error message is simply `msg`.
         - Otherwise the error message is '`msg`: `first` != `second`'.
         """
-        values = utils.to_boolean(values, false_strs=['No Values'], default=True)
-        asserts.fail_unless_equal(first, second, msg, values)
+        asserts.fail_unless_equal(first, second, msg, self._include_values(values))
+
+    def _include_values(self, values):
+        if isinstance(values, basestring):
+            return values.lower() not in ['no values', 'false']
+        return bool(values)
 
     def should_not_be_equal(self, first, second, msg=None, values=True):
         """Fails if the given objects are equal.
@@ -187,8 +191,7 @@ class _Verify:
         See `Should Be Equal` for an explanation on how to override the default
         error message with `msg` and `values`.
         """
-        values = utils.to_boolean(values, false_strs=['No Values'], default=True)
-        asserts.fail_if_equal(first, second, msg, values)
+        asserts.fail_if_equal(first, second, msg, self._include_values(values))
 
     def should_not_be_equal_as_integers(self, first, second, msg=None, values=True):
         """Fails if objects are equal after converting them to integers.
@@ -529,15 +532,9 @@ class _Variables:
     def log_variables(self, level='INFO'):
         """Logs all variables in the current scope with given log level."""
         variables = self.get_variables()
-        names = variables.keys()
-        names.sort(lambda x, y: cmp(x.lower(), y.lower()))
-        for name in names:
-            value = variables[name]
-            if utils.is_list(value):
-                value = '[ %s ]' % ' | '.join([utils.unic(v) for v in value ])
-            else:
-                value = utils.unic(value)
-            self.log('%s = %s' % (name, value), level)
+        for name in sorted(variables.keys(), key=lambda string: string.lower()):
+            msg = utils.format_assign_message(name, variables[name], cut_long=False)
+            self.log(msg, level)
 
     def variable_should_exist(self, name, msg=None):
         """Fails unless the given variable exists within the current scope.
@@ -710,7 +707,7 @@ class _Variables:
             return name
 
     def _unescape_variable_if_needed(self, name):
-        if not (utils.is_str(name) and len(name) > 1):
+        if not (isinstance(name, basestring) and len(name) > 1):
             raise ValueError
         if name.startswith('\\'):
             name = name[1:]
@@ -734,11 +731,7 @@ class _Variables:
         return list(values)
 
     def _log_set_variable(self, name, value):
-        if is_list_var(name):
-            value = '[ %s ]' % ' | '.join([utils.unic(v) for v in value ])
-        else:
-            value = utils.unic(value)
-        self.log('%s = %s' % (name, utils.cut_long_assign_msg(value)))
+        self.log(utils.format_assign_message(name, value))
 
 
 class _RunKeyword:
@@ -756,7 +749,7 @@ class _RunKeyword:
         can be a variable and thus set dynamically, e.g. from a return value of
         another keyword or from the command line.
         """
-        if not utils.is_str(name):
+        if not isinstance(name, basestring):
             raise DataError('Keyword name must be a string')
         kw = Keyword(name, args)
         from robot.running.model import ExecutionContext
@@ -1373,7 +1366,7 @@ class _Misc:
             return eval(expression, namespace)
         except:
             raise RuntimeError("Evaluating expression '%s' failed: %s"
-                            % (expression, get_error_message()))
+                            % (expression, utils.get_error_message()))
 
     def call_method(self, object, method_name, *args):
         """Calls the named method of the given object with the provided arguments.
@@ -1510,13 +1503,13 @@ class BuiltIn(_Verify, _Converter, _Variables, _RunKeyword, _Misc):
         return utils.matches(string, pattern, caseless=False, spaceless=False)
 
     def _is_true(self, condition):
-        if utils.is_str(condition):
+        if isinstance(condition, basestring):
             try:
                 condition = eval(condition)
             except:
                 raise RuntimeError("Evaluating condition '%s' failed: %s"
                                 % (condition, utils.get_error_message()))
-        return condition and True or False
+        return bool(condition)
 
 
 def register_run_keyword(library, keyword, args_to_process=None):

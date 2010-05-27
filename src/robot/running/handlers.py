@@ -12,6 +12,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+import inspect
 import sys
 
 from robot import utils
@@ -160,7 +161,7 @@ class _PythonHandler(_RunnableHandler):
 
     def __init__(self, library, handler_name, handler_method):
         _RunnableHandler.__init__(self, library, handler_name, handler_method)
-        self.doc = utils.get_doc(handler_method)
+        self.doc = inspect.getdoc(handler_method) or ''
 
     def _parse_arguments(self, handler_method):
         return PythonKeywordArguments(handler_method, self.longname)

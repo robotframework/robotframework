@@ -21,6 +21,7 @@ from robot import utils
 
 if utils.is_jython:
     from javaargcoercer import ArgumentCoercer
+    from array import ArrayType
 
 
 class _KeywordArguments(object):
@@ -163,7 +164,7 @@ class DynamicKeywordArguments(_KeywordArguments):
         if argspec is None:
             return [], [], '<unknown>'
         try:
-            if utils.is_str(argspec):
+            if isinstance(argspec, basestring):
                 raise TypeError
             return self._parse_arg_spec(list(argspec))
         except TypeError:
@@ -438,7 +439,7 @@ class JavaKeywordArgumentResolver(object):
     def _handle_varargs(self, args):
         if len(args) == self._minargs:
             args.append([])
-        elif len(args) == self._minargs + 1 and utils.is_list(args[-1]):
+        elif len(args) == self._minargs + 1 and isinstance(args[-1], ArrayType):
             pass
         else:
             varargs = args[self._minargs:]
