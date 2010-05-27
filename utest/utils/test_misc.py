@@ -13,12 +13,11 @@ from robot.utils.misc import *
 class TestMiscUtils(unittest.TestCase):
 
     def test_seq2str(self):
-        for exp, seq in [ ( "", () ),
-                          ( "'One'", ("One",) ),
-                          ( "'1' and '2'", ("1","2") ),
-                          ( "'1', '2', '3', 'f o u r', 'fi ve' and '6'",
-                            ("1","2","3","f o u r","fi ve","6") ) ]:
-            assert_equals(exp, seq2str(seq))
+        for seq, expected in [((), ''), ([], ''), (set(), ''),
+                              (['One'], "'One'"),
+                              (['1', '2'], "'1' and '2'"),
+                              (['a', 'b', 'c', 'd'], "'a', 'b', 'c' and 'd'")]:
+            assert_equals(seq2str(seq), expected)
 
     def test_get_link_path(self):
         if os.sep == '/':
