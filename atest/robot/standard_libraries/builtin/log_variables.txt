@@ -31,7 +31,7 @@ Log Variables In Suite Setup
     Check Log Message  ${kw.messages[20]}  \${SPACE} =
     Should Start With  ${kw.messages[21].message}  \${SUITE_NAME} =
     Check Log Message  ${kw.messages[22]}  \${suite_setup_global_var} = Global var set in suite setup
-    Check Log Message  ${kw.messages[23]}  \${suite_setup_local_var} = [ Variable available only locally | in suite setup ]
+    Check Log Message  ${kw.messages[23]}  \${suite_setup_local_var} = [u'Variable available only locally', u'in suite setup']
     Check Log Message  ${kw.messages[24]}  \${suite_setup_suite_var} = Suite var set in suite setup
     Should Start With  ${kw.messages[25].message}  \${SUITE_SOURCE} =
     Check Log Message  ${kw.messages[26]}  \${SUMMARY_FILE} = NONE
@@ -91,7 +91,7 @@ Log Variables After Setting New Variables
     Check Log Message  ${kw.messages[7]}  \${EMPTY} =  DEBUG
     Should Start With  ${kw.messages[8].message}  \${EXECDIR} =
     Should Start With  ${kw.messages[9].message}  \${False} =
-    Check Log Message  ${kw.messages[10]}  \${int_list} = [ 0 | 1 | 2 | 3 ]  DEBUG
+    Check Log Message  ${kw.messages[10]}  \${int_list} = [0, 1, 2, 3]  DEBUG
     Should Start With  ${kw.messages[11].message}  \${interpreter} =
     Check Log Message  ${kw.messages[12]}  \${LOG_FILE} = NONE  DEBUG
     Check Log Message  ${kw.messages[13]}  \${None} = None  DEBUG
@@ -131,7 +131,7 @@ Log Variables In User Keyword
     Check Log Message  ${kw.messages[7]}  \${EMPTY} =
     Should Start With  ${kw.messages[8].message}  \${EXECDIR} =
     Should Start With  ${kw.messages[9].message}  \${False} =
-    Check Log Message  ${kw.messages[10]}  \${int_list} = [ 0 | 1 | 2 | 3 ]
+    Check Log Message  ${kw.messages[10]}  \${int_list} = [0, 1, 2, 3]
     Should Start With  ${kw.messages[11].message}  \${interpreter} =
     Check Log Message  ${kw.messages[12]}  \${LOG_FILE} = NONE
     Check Log Message  ${kw.messages[13]}  \${None} = None
