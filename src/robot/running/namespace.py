@@ -414,18 +414,17 @@ class _VariableScopes:
     def set_from_variable_table(self, rawvariables):
         self._suite.set_from_variable_table(rawvariables)
 
-    # FIXME: Do we still need this?
+    # TODO: This should be removed so that these objects themselves had
+    # the capability of resolving variables.
     def replace_meta(self, name, item, errors):
         error = None
         for varz in [self.current] + self._parents:
             try:
-                if name in ['Setup', 'Teardown']:
-                    return varz.replace_list(item[:1]) + item[1:]
                 if name == 'Documentation':
                     return varz.replace_string(item, ignore_errors=True)
-                if utils.is_list(item):
-                    return varz.replace_list(item)
-                return varz.replace_string(item)
+                elif isinstance(item, basestring):
+                    return varz.replace_string(item)
+                return varz.replace_list(item)
             except DataError, error:
                 pass
         errors.append("Replacing variables from setting '%s' failed: %s"
