@@ -45,9 +45,9 @@ Set Scalar Variables With More Values Than Variables Using Array
     ${test} =  Check Test Case  Set Scalar Variables With More Values Than Variables Using Array
     Check Log Message  ${test.kws[0].msgs[0]}  \${a} = a
     Check Log Message  ${test.kws[0].msgs[1]}  \${b} = b
-    Check Log Message  ${test.kws[0].msgs[2]}  \${c} = [ c | d | e | f ]
+    Check Log Message  ${test.kws[0].msgs[2]}  \${c} = [u'c', u'd', u'e', u'f']
     Check Log Message  ${test.kws[4].msgs[0]}  \${i1} = 1
-    Check Log Message  ${test.kws[4].msgs[1]}  \${i2&42} = [ 2 | 42 ]
+    Check Log Message  ${test.kws[4].msgs[1]}  \${i2&42} = [2, 42]
 
 Set Multiple Scalars With Too Few Values Using Array
     ${test} =  Check Test Case  Set Multiple Scalars with too few values Using Array
