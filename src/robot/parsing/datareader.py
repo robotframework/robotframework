@@ -81,12 +81,9 @@ class FromFilePopulator(object):
 
     def start_table(self, header):
         self._current_populator.populate()
-        try:
-            table = self._datafile.start_table(DataRow(header).all)
-            self._current_populator = self._populators[table.type](table)
-        except DataError, err:
-            LOGGER.error(unicode(err))
-            self._current_populator = NullPopulator()
+        table = self._datafile.start_table(DataRow(header).all)
+        self._current_populator = self._populators[table.type](table) \
+                                    if table is not None else NullPopulator()
         return bool(self._current_populator)
 
     def eof(self):

@@ -56,13 +56,12 @@ class _TestData(object):
     def start_table(self, header_row):
         table_name = header_row[0]
         try:
-            table = self._get_tables()[table_name]
+            table = self._valid_table(self._get_tables()[table_name])
         except KeyError:
-            raise DataError("Invalid table name '%s'." % table_name)
+            return None
         else:
-            if isinstance(table, TestCaseTableNotAllowed):
-                raise DataError(table.message)
-            table.set_header(header_row)
+            if table is not None:
+                table.set_header(header_row)
             return table
 
     @property
@@ -100,10 +99,8 @@ class TestCaseFile(_TestData):
         if not self.testcase_table.is_started():
             raise DataError('File has no test case table.')
 
-    def _get_tables(self):
-        tables = _TestData._get_tables(self)
-        tables.update({})
-        return tables
+    def _valid_table(self, table):
+        return table
 
     def __iter__(self):
         for table in [self.setting_table, self.variable_table,
@@ -118,16 +115,11 @@ class ResourceFile(_TestData):
         self.directory = os.path.dirname(self.source) if self.source else None
         self.setting_table = ResourceFileSettingTable(self)
         self.variable_table = VariableTable(self)
-        self.testcase_table = TestCaseTableNotAllowed('resource file')
+        self.testcase_table = TestCaseTable(self)
         self.keyword_table = KeywordTable(self)
         if self.source:
             FromFilePopulator(self).populate(source)
             self._report_status()
-
-    def __iter__(self):
-        for table in [self.setting_table, self.variable_table,
-                      self.keyword_table]:
-            yield table
 
     def _report_status(self):
         if self.setting_table or self.variable_table or self.keyword_table:
@@ -135,6 +127,17 @@ class ResourceFile(_TestData):
                         % (self.source, len(self.keyword_table.keywords)))
         else:
             LOGGER.warn("Imported resource file '%s' is empty." % self.source)
+
+    def _valid_table(self, table):
+        if table is self.testcase_table:
+            raise DataError('Test case table not allowed in resource file.')
+        return table
+
+    def __iter__(self):
+        for table in [self.setting_table, self.variable_table,
+                      self.keyword_table]:
+            yield table
+
 
 
 class TestDataDirectory(_TestData):
@@ -145,10 +148,16 @@ class TestDataDirectory(_TestData):
         self.initfile = None
         self.setting_table = InitFileSettingTable(self)
         self.variable_table = VariableTable(self)
-        self.testcase_table = TestCaseTableNotAllowed('test suite init file')
+        self.testcase_table = TestCaseTable(self)
         self.keyword_table = KeywordTable(self)
         if self.source:
             FromDirectoryPopulator().populate(self.source, self, include_suites)
+
+    def _valid_table(self, table):
+        if table is self.testcase_table:
+            LOGGER.error('Test case table not allowed in test suite init file.')
+            return None
+        return table
 
     def add_child(self, path, include_suites):
         self.children.append(TestData(parent=self,source=path, 
@@ -350,21 +359,6 @@ class KeywordTable(_Table):
 
     def __nonzero__(self):
         return bool(self.keywords)
-
-
-class TestCaseTableNotAllowed(object):
-
-    def __init__(self, where):
-        self.message = 'Test case table not allowed in %s.' % where
-
-    def __getattr__(self, name):
-        raise DataError(self.message)
-
-    def __nonzero__(self):
-        return False
-
-    def __iter__(self):
-        return iter([])
 
 
 class Variable(object):
