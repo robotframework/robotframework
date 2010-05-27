@@ -14,6 +14,7 @@
 
 import sys
 import inspect
+from array import ArrayType
 
 from robot.errors import DataError, FrameworkError
 from robot.variables import is_list_var, is_scalar_var
@@ -21,7 +22,6 @@ from robot import utils
 
 if utils.is_jython:
     from javaargcoercer import ArgumentCoercer
-    from array import ArrayType
 
 
 class _KeywordArguments(object):
@@ -429,23 +429,16 @@ class JavaKeywordArgumentResolver(object):
     def resolve(self, values, variables):
         values = variables.replace_list(values)
         self._arguments.check_arg_limits(values)
-        return self._handle_varargs_and_coerce(values)
+        if self._expects_varargs() and self._last_is_not_list(values):
+            values[self._minargs:] = [values[self._minargs:]]
+        return self._arguments.arg_coercer(values), {}
 
-    def _handle_varargs_and_coerce(self, args):
-        if self._maxargs == sys.maxint:
-            args = self._handle_varargs(args)
-        return self._arguments.arg_coercer(args), {}
+    def _expects_varargs(self):
+        return self._maxargs == sys.maxint
 
-    def _handle_varargs(self, args):
-        if len(args) == self._minargs:
-            args.append([])
-        elif len(args) == self._minargs + 1 and isinstance(args[-1], ArrayType):
-            pass
-        else:
-            varargs = args[self._minargs:]
-            args = args[:self._minargs]
-            args.append(varargs)
-        return args
+    def _last_is_not_list(self, args):
+        return not (len(args) == self._minargs + 1
+                    and isinstance(args[-1], (list, tuple, ArrayType)))
 
 
 class _ArgLimitChecker(object):
