@@ -42,8 +42,6 @@ def to_list(item):
 
 _type_dict = dict([ (getattr(types,attr), attr) for attr in dir(types)
                     if not attr.startswith('_') and attr != 'StringTypes' ])
-if os.name == 'java':
-    _type_dict[array.ArrayType] = 'ArrayType'
 
 _printable_type_mapping = {
   'StringType'     : 'string',
@@ -57,7 +55,6 @@ _printable_type_mapping = {
   'LongType'       : 'integer',
   'BooleanType'    : 'boolean',
   'FloatType'      : 'floating point number',
-  'ArrayType'      : 'array'
 }
 
 
