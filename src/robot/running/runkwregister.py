@@ -13,7 +13,7 @@
 #  limitations under the License.
 
 
-from types import MethodType, FunctionType
+import inspect
 
 from robot import utils
 
@@ -40,9 +40,9 @@ class _RunKeywordRegister:
         return self.get_args_to_process(libname, kwname) >= 0
 
     def _get_args_from_method(self, method):
-        if type(method) is MethodType:
+        if inspect.ismethod(method):
             return method.im_func.func_code.co_argcount -1
-        elif type(method) is FunctionType:
+        elif inspect.isfunction(method):
             return method.func_code.co_argcount
         raise ValueError("Needs function or method!")
 

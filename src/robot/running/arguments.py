@@ -13,7 +13,7 @@
 #  limitations under the License.
 
 import sys
-from types import MethodType, FunctionType
+import inspect
 
 from robot.errors import DataError, FrameworkError
 from robot.variables import is_list_var, is_scalar_var
@@ -76,10 +76,10 @@ class PythonKeywordArguments(_KeywordArguments):
         """
         # Code below is based on inspect module's getargs and getargspec
         # methods. See their documentation and/or source for more details.
-        if type(handler) is MethodType:
+        if inspect.ismethod(handler):
             func = handler.im_func
             first_arg = 1        # this drops 'self' from methods' args
-        elif type(handler) is FunctionType:
+        elif inspect.isfunction(handler):
             func = handler
             first_arg = 0
         else:

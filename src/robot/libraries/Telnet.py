@@ -16,7 +16,7 @@
 import telnetlib
 import time
 import re
-from types import MethodType, StringTypes
+import inspect
 
 from robot import utils
 
@@ -70,7 +70,7 @@ class Telnet:
         if self._lib_kws is None:
             self._lib_kws = [ name for name in dir(self)
                               if not name.startswith('_') and name != 'get_keyword_names'
-                              and type(getattr(self,name)) is MethodType ]
+                              and inspect.ismethod(getattr(self, name)) ]
         return self._lib_kws
 
     def _get_connection_keywords(self):
@@ -80,7 +80,7 @@ class Telnet:
                          if name not in ['write', 'read', 'read_until'] ]
             self._conn_kws = [ name for name in dir(conn)
                                if not name.startswith('_') and name not in excluded
-                               and type(getattr(conn,name)) is MethodType ]
+                               and inspect.ismethod(getattr(conn, name)) ]
         return self._conn_kws
 
     def __getattr__(self, name):
@@ -414,7 +414,7 @@ class TelnetConnection(telnetlib.Telnet):
         ret = ret.decode('ASCII', 'ignore')
         self._log(ret, loglevel)
         if index == -1:
-            expected = [ type(exp) in StringTypes and exp or exp.pattern
+            expected = [ exp if isinstance(exp, basestring) else exp.pattern
                          for exp in expected ]
             raise AssertionError("No match found for %s in %s"
                                  % (utils.seq2str(expected, lastsep=' or '),
@@ -503,7 +503,7 @@ class TelnetConnection(telnetlib.Telnet):
     def _is_valid_log_level(self, level, raise_if_invalid=False):
         if level is None:
             return True
-        if type(level) in StringTypes and \
+        if isinstance(level, basestring) and \
                 level.upper() in ['TRACE', 'DEBUG', 'INFO', 'WARN']:
             return True
         if not raise_if_invalid:
