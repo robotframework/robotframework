@@ -173,17 +173,14 @@ explained in section `Setting metadata`_.
 Free test suite metadata
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
-Test suites can also have other metadata than the documentation. This
-metadata is defined in the Setting table using the :opt:`Meta: <name>`
-setting, where <name> is a freely selected metadata name. For example,
-:opt:`Meta: Version` adds the version metadata for a test
-suite. Metadata set in this manner is shown in test reports and logs.
+Test suites can also have other metadata than the documentation. This metadata
+is defined in the Setting table using the :opt:`Metadata` setting. Metadata
+set in this manner is shown in test reports and logs.
 
-The value for the metadata is located in the column after the name. It
-is handled similarly as documentations, which means that it can be
-`split into several cells`__ (joined together with
-spaces), simple `HTML formatting`_ works and even variables_ can be
-used.
+The name and value for the metadata are located in the columns following
+:opt:`Metadata`. The value is handled similarly as documentations, which means
+that it can be `split into several cells`__ (joined together with spaces),
+simple `HTML formatting`_ works and even variables_ can be used.
 
 __ `Dividing test data to several rows`_
 
@@ -191,18 +188,22 @@ __ `Dividing test data to several rows`_
 .. table:: Metadata examples 
    :class: example
 
-   =================  ====================  =========================  ==============================
-        Setting              Value                     Value                       Value 
-   =================  ====================  =========================  ==============================
-   Meta: Version      2.0                   \                          \
-   Meta: More Info    For more information  about \*Robot Framework\*  see \http://robotframework.org
-   Meta: Executed At  ${HOST}               \                          \
-   =================  ====================  =========================  ==============================
+   =========  ===========  ====================  =========================  ==============================
+    Setting    Value            Value                  Value                       Value
+   =========  ===========  ====================  =========================  ==============================
+    Metadata  Version      2.0                   \                          \
+    Metadata  More Info    For more information  about \*Robot Framework\*  see \http://robotframework.org
+    Metadata  Executed At  ${HOST}               \                          \
+   =========  ===========  ====================  =========================  ==============================
 
 
 For top-level test suites, it is possible to set metadata also with the 
 :opt:`--metadata` command line option. This is discussed in more
 detail in section `Setting metadata`_.
+
+Prior to Robot Framework 2.5 free metadata was specified with syntax like
+:opt:`Meta: <name>`, where <name> was the metadata name and value was in
+subsequent column(s). RF 2.5 supports also this older syntax.
 
 
 Suite setup and teardown
