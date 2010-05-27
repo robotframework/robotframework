@@ -14,7 +14,6 @@
 
 
 import os
-import types
 import inspect
 
 from robot import utils
@@ -36,7 +35,7 @@ def TestLibrary(name, args=None, variables=None):
 
 
 def _get_lib_class(libcode):
-    if isinstance(libcode, types.ModuleType):
+    if inspect.ismodule(libcode):
         return _ModuleLibrary
     if _get_dynamic_method(libcode, 'get_keyword_names'):
         if _get_dynamic_method(libcode, 'run_keyword'):
@@ -111,7 +110,7 @@ class _BaseTestLibrary(BaseLibrary):
     def _valid_init(self, init_method):
         if utils.is_jython and isinstance(init_method, PyReflectedConstructor):
             return True
-        if isinstance(init_method, (types.MethodType, types.FunctionType)):
+        if inspect.isroutine(init_method):
             return True
         return False
 

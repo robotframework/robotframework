@@ -12,8 +12,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-
-import types
+import inspect
 
 from robot import utils
 from robot.errors import DataError
@@ -172,7 +171,7 @@ class _ListenerProxy(AbstractLoggerProxy):
 
     def _import_listener(self, name, args):
         listener, source = utils.import_(name, 'listener')
-        if not isinstance(listener, types.ModuleType):
+        if not inspect.ismodule(listener):
             listener = listener(*args)
         elif args:
             raise DataError("Listeners implemented as modules do not take arguments")
