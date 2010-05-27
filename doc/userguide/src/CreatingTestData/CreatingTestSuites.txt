@@ -133,12 +133,14 @@ example, with lower-level test suites, `resource files`_ must be used.
 Test suite name and documentation
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The test suite name is got directly from the file or directory name, but
-a possible file extension is ignored. The name is created so that
-underscores are replaced with spaces, words in camelCaseFormat
-separated, and first letters of all words capitalized. For example,
-:path:`some_tests.html` becomes :name:`Some Tests` and
-:path:`MyTestDir` becomes :name:`My Test Dir`.
+The test suite name is got from the file or directory name. The name
+is created so that the extension is ignored, possible underscores are
+replaced with spaces, and names fully in lower case are title cased. For
+example, :path:`some_tests.html` becomes :name:`Some Tests` and
+:path:`My_test_directory` becomes :name:`My test directory`.
+
+.. note:: The rules for creating test suite names changed slightly in
+   	  Robot Framework 2.5. 
 
 The file or directory name can contain a prefix to control the `test
 execution order`_. The prefix is separated from the base name by two
