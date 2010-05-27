@@ -210,7 +210,7 @@ class _VariableAssigner(object):
     def _raise_invalid_return_value(self, ret, wrong_type=False):
         if wrong_type:
             err = 'Expected list-like object, got %s instead' \
-                    % utils.type_as_str(ret, True)
+                    % type(ret).__name__
         else:
             err = 'Need more values than %d' % len(ret)
         raise DataError("Cannot assign return values: %s." % err)

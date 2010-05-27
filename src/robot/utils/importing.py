@@ -15,13 +15,10 @@
 
 import os
 import sys
-from types import ModuleType, ClassType, TypeType
-if sys.platform.startswith('java'):
-    from java.lang import System
+import inspect
 
 from robot.errors import DataError
 from error import get_error_message, get_error_details
-from robottypes import type_as_str
 from normalizing import normpath
 
 
@@ -104,7 +101,7 @@ def _import(name, type_):
         if fromlist:
             _raise_no_lib_in_module(type_, modname, fromlist[0])
         code = imported
-    if not isinstance(code, (ModuleType, ClassType, TypeType)):
+    if inspect.ismodule(code):
         if fromlist:
             _raise_invalid_type(type_, code)
         else:
@@ -136,13 +133,14 @@ def _raise_import_failed(type_, name):
     msg = ["Importing %s '%s' failed: %s" % (type_, name, error_msg),
            "PYTHONPATH: %s" % sys.path, error_details]
     if sys.platform.startswith('java'):
+        from java.lang import System
         msg.insert(-1, 'CLASSPATH: %s' % System.getProperty('java.class.path'))
     raise DataError('\n'.join(msg))
 
 def _raise_no_lib_in_module(type_, modname, libname):
-    raise DataError("%s module '%s' does not contain '%s'"
+    raise DataError("%s module '%s' does not contain '%s'."
                     % (type_.capitalize(), modname, libname))
 
 def _raise_invalid_type(type_, code):
-    raise DataError("Imported %s is not a class or module, got '%s' instead"
-                    % (type_, type_as_str(code)))
+    raise DataError("Imported %s should be a class or module, got %s."
+                    % (type_, type(code).__name__))

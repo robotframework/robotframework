@@ -43,7 +43,7 @@ Dynamic Variable File With Variables And Backslashes In Args
 
 Invalid Dynamic Variable File Usage
     ${path} =  Join Path  ${RESDIR}  dynamic_variables.py
-    My Check Stderr Contains  [ ERROR ] Invalid syntax in file '${DATAPATH}' in table 'Setting':  Processing variable file '${path}' with arguments [ Two args returns None | which is invalid ] failed:  get_variables returned 'NoneType', expected a mapping
+    My Check Stderr Contains  [ ERROR ] Invalid syntax in file '${DATAPATH}' in table 'Setting':  Processing variable file '${path}' with arguments [ Two args returns None | which is invalid ] failed: Expected mapping but get_variables returned NoneType.
     My Check Stderr Contains  [ ERROR ] Invalid syntax in file '${DATAPATH}' in table 'Setting':  Processing variable file '${path}' with arguments [ More args raises an exception | which is invalid | of course ] failed:  Invalid arguments for get_variables
     ${path} =  Join Path  ${RESDIR}  dynamicVariables.py
     My Check Stderr Contains  [ ERROR ] Invalid syntax in file '${DATAPATH}' in table 'Setting':  Replacing variables from setting 'Variables' failed:  Non-existing variable '\${non_existing_var_as_arg}'

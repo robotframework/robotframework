@@ -297,9 +297,8 @@ class Variables(utils.NormalizedDict):
             return variables.items()
         if isinstance(variables, Map):
             return [(entry.key, entry.value) for entry in variables.entrySet()]
-        raise DataError("%s returned '%s', expected a mapping"
-                         % (get_variables.__name__,
-                           utils.type_as_str(variables)))
+        raise DataError("Expected mapping but %s returned %s."
+                         % (get_variables.__name__, type(variables).__name__))
 
     def has_key(self, key):
         try:
