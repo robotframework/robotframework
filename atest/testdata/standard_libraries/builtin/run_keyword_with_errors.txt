@@ -65,7 +65,7 @@ Ignore Error When Syntax Error In Setting Variables
 
 
 Ignore Error When Syntax Error In For Loop
-    [Documentation]  FAIL  Non-existing variable '\${nonex}'
+    [Documentation]  FAIL  Non-existing variable '\${nonex}'.
     Run Keyword And Ignore Error  For Loop With Syntax Error
 
 
@@ -133,7 +133,7 @@ Expect Error When Syntax Error In Setting Variables
     Run Keyword And Expect Error  *  Invalid Syntax When Setting Variable
 
 Expect Error When Syntax Error In For Loop
-    [Documentation]  FAIL  Non-existing variable '\${nonex}'
+    [Documentation]  FAIL  Non-existing variable '\${nonex}'.
     Run Keyword And Expect Error  *  For Loop With Syntax Error
 
 

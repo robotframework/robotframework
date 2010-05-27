@@ -27,7 +27,7 @@ Embedded Arguments as Variables
 	Should Be True	${item} == []
 
 Non-Existing Variable in Embedded Arguments
-	[Documentation]	FAIL Non-existing variable '${non existing}'
+	[Documentation]	FAIL Non-existing variable '${non existing}'.
 	User ${non existing} Selects ${variables} From Webshop
 	
 Escaping Values Given As Embedded Arguments
@@ -67,7 +67,7 @@ Keyword with normal arguments cannot have embedded arguments
 	Keyword with value and normal args	foo	bar
 
 Keyword with embedded args can be used as "normal" keyword
-	[Documentation]	FAIL Non-existing variable '${user}'
+	[Documentation]	FAIL Non-existing variable '${user}'.
 	Normal keyword with ${variable} in name
 	User ${user} Selects ${item} From Webshop
 
