@@ -4,12 +4,12 @@ import org.python.core.PyList;
 public class JavaSuiteAndTestCountListener {
     public static final String ROBOT_LISTENER_API_VERSION = "2";
     private final Map<String, int[]>  data = new HashMap<String, int[]>() {{
-        put("Subsuites & Subsuites 2", new int[] {0,2,4});
+        put("Subsuites & Subsuites2", new int[] {0,2,4});
         put("Subsuites", new int[] {0,2,2});
-        put("Sub 1", new int[] {1,0,1});
-        put("Sub 2", new int[] {1,0,1});
-        put("Subsuites 2", new int[] {0,1,2});
-        put("Subsuite 3", new int[] {2,0,2});
+        put("Sub1", new int[] {1,0,1});
+        put("Sub2", new int[] {1,0,1});
+        put("Subsuites2", new int[] {0,1,2});
+        put("Subsuite3", new int[] {2,0,2});
     }};
     
     public void startSuite(String name, Map attrs) {
