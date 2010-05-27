@@ -54,7 +54,7 @@ Set Scalar Variables With More Values Than Variables Using Array
     Should Be True  ${i2&42} == [2, 42]
 
 Set Multiple Scalars With Too Few Values Using Array
-    [Documentation]  FAIL Cannot assign return value of keyword 'ExampleJavaLibrary.Get Array Of Three Ints' to variables '\${i1}', '\${i2}', '\${i3}' and '\${i4}': Need more values than 3
+    [Documentation]  FAIL Cannot assign return values: Need more values than 3.
     ${i1}  ${i2}  ${i3}  ${i4} =  Get Array Of Three Ints
 
 Set List To Scalar And List Varibles Using Array
