@@ -28,8 +28,9 @@ test suite:
 `Documentation`:opt:
    Used for specifying a `test suite documentation`_
 
-`Meta: <name>`:opt:
-   Used for setting `free test suite metadata`_.
+`Metadata`:opt:
+   Used for setting `free test suite metadata`_ as name-value
+   pairs.
 
 `Suite Setup`:opt:, `Suite Teardown`:opt:
    Specify `suite setup and teardown`_. Have also synonyms
@@ -68,8 +69,8 @@ __ `Supported file formats`_
 Initialization files
 ''''''''''''''''''''
 
-A test suite created from a directory can have the same settings
-(:opt:`Documentation`, :opt:`Meta: <name>`, :opt:`Suite Setup`, :opt:`Suite
+A test suite created from a directory can have same settings
+(:opt:`Documentation`, :opt:`Metadata`, :opt:`Suite Setup`, :opt:`Suite
 Teardown`, :opt:`Test Setup`, :opt:`Test Teardown`) as a test case created
 from a file. Because a directory alone cannot have that kind of information,
 they must be placed into a special initialization file.
@@ -201,9 +202,10 @@ For top-level test suites, it is possible to set metadata also with the
 :opt:`--metadata` command line option. This is discussed in more
 detail in section `Setting metadata`_.
 
-Prior to Robot Framework 2.5 free metadata was specified with syntax like
-:opt:`Meta: <name>`, where <name> was the metadata name and value was in
-subsequent column(s). RF 2.5 supports also this older syntax.
+Prior to Robot Framework 2.5 the free metadata was specified with syntax like
+:opt:`Meta: <name>`, where :opt:`<name>` was the metadata name and the value
+was defined in subsequent column. Robot Framework 2.5 still supports this old
+format but it will be deprecated in the future.
 
 
 Suite setup and teardown

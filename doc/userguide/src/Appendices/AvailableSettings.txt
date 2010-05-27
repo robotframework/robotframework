@@ -29,7 +29,7 @@ importing libraries, resources, and variables.
    | Documentation   | Used for specifying a `test suite`__ or                |
    |                 | `resource file`__ documentation.                       |
    +-----------------+--------------------------------------------------------+
-   | Meta: <name>    | Used for setting `free test suite metadata`_.          |
+   | Metadata        | Used for setting `free test suite metadata`_.          |
    +-----------------+--------------------------------------------------------+
    | Suite Setup     | Used for specifying the `suite setup`_.                |
    +-----------------+--------------------------------------------------------+
