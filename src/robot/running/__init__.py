@@ -16,9 +16,27 @@
 from model import TestSuite
 from keywords import Keyword
 from testlibraries import TestLibrary
-from userkeyword import PublicUserLibrary as UserLibrary
 from runkwregister import RUN_KW_REGISTER
 from signalhandler import STOP_SIGNAL_MONITOR
+
+
+def UserLibrary(path):
+    """Create a user library instance from given resource file.
+
+    This is used at least by libdoc.py."""
+    from robot.parsing import ResourceFile
+    from robot import utils
+    from arguments import UserKeywordArguments
+    from userkeyword import UserLibrary as RuntimeUserLibrary
+
+    resource = ResourceFile(path)
+    ret = RuntimeUserLibrary(resource.keyword_table.keywords, path)
+    for handler in ret.handlers.values(): # This is done normally only at runtime.
+        handler.arguments = UserKeywordArguments(handler._keyword_args,
+                                                 handler.longname)
+        handler.doc = utils.unescape(handler._doc)
+    ret.doc = resource.setting_table.doc.value
+    return ret
 
 
 class _Namespaces:

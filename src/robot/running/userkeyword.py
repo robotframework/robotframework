@@ -25,17 +25,8 @@ from timeouts import KeywordTimeout
 from arguments import UserKeywordArguments
 
 
-def PublicUserLibrary(path):
-    """Create a user library instance from given resource file."""
-    from robot.parsing import ResourceFile
-
-    resource = ResourceFile(path)
-    ret = UserLibrary(resource.user_keywords, path)
-    ret.doc = resource.doc
-    return ret
-
-
 class UserLibrary(BaseLibrary):
+    supports_named_arguments = True # this attribute is for libdoc
 
     def __init__(self, user_keywords, path=None):
         self.name = self._get_name_for_resource_file(path)
@@ -115,10 +106,9 @@ class UserKeywordHandler(object):
         self.return_value = keyword.return_.value
 
     def _set_variable_dependent_settings(self, keyword):
+        # TODO: Is this method really needed?
         self._doc = keyword.doc.value
         self._timeout = (keyword.timeout.value, keyword.timeout.message)
-        # FIXME: do we need this? Does libdoc need this?
-        self.doc = utils.unescape(self._doc)
         self.timeout = [ utils.unescape(item) for item in self._timeout ]
 
     def init_keyword(self, varz):
