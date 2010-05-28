@@ -32,7 +32,7 @@ class Library:
     def __init__(self, language=None):
         if language:
             self._start_library(language)
-            if not self.test(attempts=7):
+            if not self.test(attempts=15):
                 raise RuntimeError("Starting %s library failed" % language)
 
     def _start_library(self, lang):
@@ -43,7 +43,7 @@ class Library:
         stderr = os.path.join(OUTPUTDIR, 'stderr.txt')
         cmd = '%s%s%s 1> %s 2> %s' % (lang, opts, lib, stdout, stderr)
         print 'Starting %s remote library with command:\n%s' % (lang, cmd)
-        stdin, stdouterr = os.popen4(cmd) 
+        stdin, stdouterr = os.popen4(cmd)
         stdin.close()
         stdouterr.close()
 
@@ -100,7 +100,7 @@ if __name__ == '__main__':
         args.append(os.path.join(REMOTEDIR, 'test', 'atest'))
     else:
         args.extend(sys.argv[2:])
-    print 'Running tests with command:\n%s' % ' '.join(args) 
+    print 'Running tests with command:\n%s' % ' '.join(args)
     subprocess.call(args)
     lib.stop()
     print
