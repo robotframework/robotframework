@@ -49,31 +49,31 @@ class DocLibrary:
 class ArgInfoLibrary:
     handler_count = 11
     def no_args(self):
-        """(), (), None"""
+        """[], [], None"""
         # Argument inspection had a bug when there was args on function body
         # so better keep some of them around here.
         a=b=c=1  
     def required1(self, one):
-        """('one',), (), None"""
+        """['one',], [], None"""
     def required2(self, one, two):
-        """('one','two'), (), None"""
+        """['one','two'], [], None"""
     def required9(self, one, two, three, four, five, six, seven, eight, nine):
-        """('one','two','three','four','five','six','seven','eight','nine'),\
-           (), None"""
+        """['one','two','three','four','five','six','seven','eight','nine'],\
+           [], None"""
     def default1(self, one=1):
-        """('one',), (1,), None"""
+        """['one'], [1], None"""
     def default5(self, one='', two=None, three=3, four='huh', five=True):
-        """('one','two','three','four','five'), ('',None,3,'huh',True), None"""
+        """['one','two','three','four','five'], ['',None,3,'huh',True], None"""
     def required1_default1(self, one, two=''):
-        """('one','two'), ('',), None"""
+        """['one','two'], [''], None"""
     def required2_default3(self, one, two, three=3, four=4, five=5):
-        """('one','two','three','four','five'), (3,4,5), None"""
+        """['one','two','three','four','five'], [3,4,5], None"""
     def varargs(self,*one):
-        """(), (), 'one'"""
+        """[], [], 'one'"""
     def required2_varargs(self, one, two, *three):
-        """('one','two'), (), 'three'"""
+        """['one','two'], [], 'three'"""
     def req4_def2_varargs(self, one, two, three, four, five=5, six=6, *seven):
-        """('one','two','three','four','five','six'), (5,6), 'seven'"""
+        """['one','two','three','four','five','six'], [5,6], 'seven'"""
 
 
 class GetattrLibrary:

@@ -16,7 +16,7 @@ import sys
 import inspect
 from array import ArrayType
 
-from robot.errors import DataError, FrameworkError
+from robot.errors import DataError
 from robot.variables import is_list_var, is_scalar_var
 from robot import utils
 
@@ -78,7 +78,8 @@ class PythonKeywordArguments(_KeywordArguments):
         args, varargs, _, defaults = inspect.getargspec(handler)
         if inspect.ismethod(handler):
             args = args[1:]  # drop 'self'
-        return args, defaults or [], varargs
+        defaults = list(defaults) if defaults else []
+        return args, defaults, varargs
 
 
 class JavaKeywordArguments(_KeywordArguments):
