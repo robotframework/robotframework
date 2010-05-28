@@ -1,5 +1,6 @@
 import os
 import sys
+import subprocess
 
 
 class LoginLibrary:
@@ -24,7 +25,9 @@ class LoginLibrary:
                                   % (expected_status, self._status))
 
     def _run_command(self, command, *args):
-        command = '"%s" %s %s' % (self._sut_path, command, ' '.join(args))
-        process = os.popen(command)
-        self._status = process.read().strip()
-        process.close()
+        if not sys.executable:
+            raise RuntimeError("Could not find Jython installation")
+        command = [sys.executable, self._sut_path, command] + list(args)
+        process = subprocess.Popen(command, stdout=subprocess.PIPE,
+                                   stderr=subprocess.STDOUT)
+        self._status = process.communicate()[0].strip()
