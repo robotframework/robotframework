@@ -101,7 +101,7 @@ def _import(name, type_):
         if fromlist:
             _raise_no_lib_in_module(type_, modname, fromlist[0])
         code = imported
-    if inspect.ismodule(code):
+    if not (inspect.ismodule(code) or inspect.isclass(code)):
         if fromlist:
             _raise_invalid_type(type_, code)
         else:
