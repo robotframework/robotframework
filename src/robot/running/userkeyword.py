@@ -218,6 +218,4 @@ class EmbeddedArgs(UserKeywordHandler):
         self._keyword_args = template._keyword_args
         self.return_value = template.return_value
         self._doc = template._doc
-        self.doc = template.doc
         self._timeout = template._timeout
-        self.timeout = template.timeout
