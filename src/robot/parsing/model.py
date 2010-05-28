@@ -465,6 +465,9 @@ class ForLoop(_WithSteps):
     def is_for_loop(self):
         return True
 
+    def apply_template(self, template):
+        return Step(['Fail', 'Templates not supported with FOR loops.'])
+
 
 class Step(object):
 
@@ -491,3 +494,7 @@ class Step(object):
 
     def is_for_loop(self):
         return False
+
+    def apply_template(self, template):
+        kw = [self.keyword] if self.keyword else []
+        return Step([template] + self.assign + kw + self.args)

@@ -21,18 +21,21 @@ from robot.variables import is_var, is_list_var, is_scalar_var
 
 class Keywords(object):
 
-    def __init__(self, steps, template=False):
+    def __init__(self, steps, template=None):
         self._keywords = []
-        for step in steps:
-            self._add_keyword(step, template)
+        self._continue_on_failure = bool(template)
+        if template:
+            steps = [s.apply_template(template) for s in steps]
+        for s in steps:
+            self._add_keyword(s)
 
-    def _add_keyword(self, step, template):
+    def _add_keyword(self, step):
         if step.is_comment():
             return
         if step.is_for_loop():
             keyword = ForLoop(step)
         else:
-            keyword = Keyword(step.keyword, step.args, step.assign, continue_on_failure=template)
+            keyword = Keyword(step.keyword, step.args, step.assign)
         self._keywords.append(keyword)
 
     def run(self, context):
@@ -42,7 +45,7 @@ class Keywords(object):
                 kw.run(context)
             except ExecutionFailed, err:
                 errors.extend(err.get_errors())
-                if not err.cont:
+                if not (err.cont or self._continue_on_failure):
                     break
         if errors:
             raise ExecutionFailures(errors)
@@ -56,19 +59,16 @@ class Keywords(object):
 
 class Keyword(BaseKeyword):
 
-    def __init__(self, name, args, assign=None, type='kw', continue_on_failure=False):
+    def __init__(self, name, args, assign=None, type='kw'):
         BaseKeyword.__init__(self, name, args, type=type)
         self.assign = assign or []
         self.handler_name = name
-        self.continue_on_failure = continue_on_failure
 
     def run(self, context):
         handler = self._start(context)
         try:
             return_value = self._run(handler, context)
         except ExecutionFailed, err:
-            if self.continue_on_failure:
-                err.cont = True
             self.status = 'FAIL'
             self._end(context, error=err)
             raise
