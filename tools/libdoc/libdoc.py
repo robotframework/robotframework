@@ -31,7 +31,7 @@ Options:
  -a --argument value *    Possible arguments that a library needs.
  -f --format HTML|XML     Specifies whether to generate HTML or XML output.
                           The default value is got from the output file
-                          extension and if the output is not specified the 
+                          extension and if the output is not specified the
                           default is HTML.
  -o --output path         Where to write the generated documentation. Can be
                           either a directory or a file, or a URL pointing to
@@ -69,11 +69,11 @@ from HTMLParser import HTMLParser
 from robot.running import TestLibrary, UserLibrary
 from robot.serializing import Template, Namespace
 from robot.errors import DataError, Information
-from robot.parsing import rawdata
+from robot.parsing import datareader
 from robot import utils
 
 
-rawdata.PROCESS_CURDIR = False
+datareader.PROCESS_CURDIR = False
 
 
 def _uploading(output):
@@ -140,7 +140,7 @@ def LibraryDoc(libname, arguments=None, newname=None):
         return XmlLibraryDoc(libname, newname)
     elif ext == '.java':
         if not utils.is_jython:
-            raise DataError('Documenting Java test libraries requires Jython.')
+            raise DataError('Documenting Java test libraries requires using Jython.')
         return JavaLibraryDoc(libname, newname)
     else:
         return PythonLibraryDoc(libname, arguments, newname)
@@ -166,7 +166,7 @@ class _DocHelper:
             ret.append(self._get_doc_line_separator(line, ret[-1]))
             ret.append(line)
         return ''.join(ret)
-            
+
     def _get_doc_line_separator(self, line, prev):
         if prev == '':
             return ''
@@ -211,13 +211,13 @@ class PythonLibraryDoc(_DocHelper):
         self.scope = self._get_scope(lib)
         self.doc = self._process_doc(self._get_doc(lib))
         self.inits = self._get_initializers(lib)
-        self.keywords = [ KeywordDoc(handler, self) 
+        self.keywords = [ KeywordDoc(handler, self)
                           for handler in lib.handlers.values() ]
         self.keywords.sort()
 
     def _import(self, name, args):
         return TestLibrary(name, args)
-    
+
     def _get_scope(self, lib):
         if hasattr(lib, 'scope'):
             return {'TESTCASE': 'test case', 'TESTSUITE': 'test suite',
@@ -296,7 +296,7 @@ class KeywordDoc(_BaseKeywordDoc):
     def __init__(self, handler, library):
         _BaseKeywordDoc.__init__(self, library)
         self.name = handler.name
-        self.args = self._get_args(handler) 
+        self.args = self._get_args(handler)
         self.doc = self._process_doc(handler.doc)
         self.shortdoc = handler.shortdoc
 
@@ -348,7 +348,7 @@ if utils.is_jython:
             self.version = self._get_version(cls)
             self.scope = self._get_scope(cls)
             self.doc = self._process_doc(cls.getRawCommentText())
-            self.keywords = [ JavaKeywordDoc(method, self) 
+            self.keywords = [ JavaKeywordDoc(method, self)
                               for method in cls.methods() ]
             self.inits = [ JavaKeywordDoc(init, self)
                            for init in cls.constructors() ]
@@ -358,11 +358,11 @@ if utils.is_jython:
 
         def _get_class(self, path):
             """Processes the given Java source file and returns ClassDoc.
-            
-            Processing is done using com.sun.tools.javadoc APIs. The usage has 
-            been figured out from sources at 
+
+            Processing is done using com.sun.tools.javadoc APIs. The usage has
+            been figured out from sources at
             http://www.java2s.com/Open-Source/Java-Document/JDK-Modules-com.sun/tools/com.sun.tools.javadoc.htm
-            
+
             Returned object implements com.sun.javadoc.ClassDoc interface, see
             http://java.sun.com/j2se/1.4.2/docs/tooldocs/javadoc/doclet/
             """
@@ -371,7 +371,7 @@ if utils.is_jython:
                 from com.sun.tools.javac.util import List, Context
                 from com.sun.tools.javac.code.Flags import PUBLIC
             except ImportError:
-                raise DataError("Creating documentation from Java source files " 
+                raise DataError("Creating documentation from Java source files "
                                 "requires 'tools.jar' to be in CLASSPATH.")
             context = Context()
             Messager.preRegister(context, 'libdoc.py')
@@ -485,7 +485,7 @@ body {
   font-family: sans-serif;
   padding: 0.1em 0.5em;
 }
-a.name, span.name {  
+a.name, span.name {
   font-style: italic;
 }
 a, a:link, a:visited {
