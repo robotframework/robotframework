@@ -32,26 +32,12 @@ from robottime import get_timestamp, get_start_timestamp, format_time, \
         get_time, get_elapsed_time, elapsed_time_to_string, \
         timestr_to_secs, secs_to_timestr, secs_to_timestamp, \
         timestamp_to_secs, parse_time
-from robottypes import to_list, dict2map, type_as_str, safe_repr
-from unic import unic
+from unic import unic, safe_repr
 from encoding import decode_output, encode_output
-from robotversion import get_version, get_java_version
 from text import cut_long_message, format_assign_message, wrap
 from xmlwriter import XmlWriter
 from connectioncache import ConnectionCache
 from idgenerator import IdGenerator, FileNameGenerator
 
 
-# TODO: Capitalize these attributes. Do we need both VERSION and get_version()?
-version    = get_version()          # Robot version as string
-py_version = sys.version_info[:2]   # Python version in tuple (major,minor)
-java_version = get_java_version()   # Java version in tuple (major,minor)
 is_jython  = sys.platform.startswith('java')
-is_windows = os.sep == '\\'         # This works also in Jython on Windows
-is_cygwin  = 'cygwin' in sys.platform
-platform   = '%sython %s on %s' % (is_jython and 'J' or 'P',
-                                   sys.version.split()[0], sys.platform)
-
-def get_full_version(who=''):
-    vers = '%s %s (%s)' % (who, version, platform)
-    return vers.strip()
