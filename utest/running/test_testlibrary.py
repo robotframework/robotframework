@@ -90,15 +90,15 @@ class TestImports(unittest.TestCase):
                 raise AssertionError("DataError not raised")
 
     def test_import_non_existing_class_from_existing_module(self):
-        msg = "Test library module 'pythonmodule' does not contain 'NonExisting'"
+        msg = "Test library module 'pythonmodule' does not contain 'NonExisting'."
         assert_raises_with_msg(DataError, msg,
                                TestLibrary, 'pythonmodule.NonExisting')
 
     def test_import_invalid_type(self):
-        msg = "Imported test library is not a class or module, got '%s' instead"
-        assert_raises_with_msg(DataError, msg % 'StringType',
+        msg = 'Imported test library should be a class or module, got %s.'
+        assert_raises_with_msg(DataError, msg % 'str',
                                TestLibrary, 'pythonmodule.some_string')
-        assert_raises_with_msg(DataError, msg % 'InstanceType',
+        assert_raises_with_msg(DataError, msg % 'instance',
                                TestLibrary, 'pythonmodule.some_object')
 
     def test_import_with_unicode_name(self):
