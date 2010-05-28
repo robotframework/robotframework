@@ -16,7 +16,7 @@ import signal
 import sys
 
 from robot.errors import ExecutionFailed
-
+from robot.output import LOGGER
 
 class _StopSignalMonitor(object):
 
@@ -25,8 +25,9 @@ class _StopSignalMonitor(object):
         self._running_keyword = False
         self._error_reported = False
 
-    def __call__(self,signum, frame):
+    def __call__(self, signum, frame):
         self._signal_count += 1
+        LOGGER.info('Received signal: %s.' % signum)
         if self._signal_count > 1:
             sys.__stderr__.write('Execution forcefully stopped.')
             raise SystemExit()
