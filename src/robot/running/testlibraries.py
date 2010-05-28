@@ -108,9 +108,9 @@ class _BaseTestLibrary(BaseLibrary):
         return InitHandler(self, init_method)
 
     def _valid_init(self, init_method):
-        if utils.is_jython and isinstance(init_method, PyReflectedConstructor):
+        if inspect.ismethod(init_method):
             return True
-        if inspect.isroutine(init_method):
+        if utils.is_jython and isinstance(init_method, PyReflectedConstructor):
             return True
         return False
 
