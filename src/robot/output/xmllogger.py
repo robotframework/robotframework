@@ -17,6 +17,7 @@ import os.path
 
 from robot import utils
 from robot.errors import DataError
+from robot.version import get_full_version
 
 from loggerhelper import IsLogged
 
@@ -27,7 +28,7 @@ class XmlLogger:
         self._namegen = utils.FileNameGenerator(path)
         self._log_message_is_logged = IsLogged(log_level)
         self._error_is_logged = IsLogged('WARN')
-        attrs = { 'generator': utils.get_full_version(generator),
+        attrs = { 'generator': get_full_version(generator),
                   'generated': utils.get_timestamp() }
         self._writer = None
         self._writer_args = (path, attrs)

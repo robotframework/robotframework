@@ -27,7 +27,7 @@ from serializing import RobotTestOutput, RebotTestOutput, SplitIndexTestOutput
 from errors import DataError, Information, XmlParsingError, INFO_PRINTED, \
         DATA_ERROR, STOPPED_BY_USER, FRAMEWORK_ERROR
 from variables import init_global_variables
-from version import get_version
+from version import get_version, get_full_version
 import utils
 
 
@@ -35,16 +35,16 @@ __version__ = get_version()
 
 
 def run_from_cli(args, usage):
-    LOGGER.info(utils.get_full_version('Robot Framework'))
+    LOGGER.info(get_full_version('Robot Framework'))
     _run_or_rebot_from_cli(run, args, usage, pythonpath='pythonpath')
 
 def rebot_from_cli(args, usage):
-    LOGGER.info(utils.get_full_version('Rebot'))
+    LOGGER.info(get_full_version('Rebot'))
     _run_or_rebot_from_cli(rebot, args, usage)
 
 def _run_or_rebot_from_cli(method, cliargs, usage, **argparser_config):
     LOGGER.register_file_logger()
-    ap = utils.ArgumentParser(usage, utils.get_full_version())
+    ap = utils.ArgumentParser(usage, get_full_version())
     try:
         options, datasources = \
             ap.parse_args(cliargs, argfile='argumentfile', unescape='escape',

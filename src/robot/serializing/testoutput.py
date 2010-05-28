@@ -20,6 +20,7 @@ from robot.errors import DataError
 from robot.common import Statistics
 from robot.conf import get_title
 from robot.output import LOGGER, process_outputs, process_output
+from robot.version import get_full_version
 
 import templates
 from templating import Namespace, Template
@@ -133,7 +134,7 @@ class RobotTestOutput:
         elapsed_time = utils.elapsed_time_to_string(self.suite.elapsedtime)
         namespace = Namespace(gentime_str=str_time, gentime_int=int_time,
                               elapsed_time=elapsed_time,
-                              version=utils.get_full_version(self._generator),
+                              version=get_full_version(self._generator),
                               suite=self.suite, title=title)
         tmpl = Template(template=template)
         tmpl.generate(namespace, outfile)
