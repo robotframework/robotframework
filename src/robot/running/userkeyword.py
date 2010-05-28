@@ -99,22 +99,17 @@ class UserKeywordHandler(object):
 
     def __init__(self, keyword, libname):
         self.name = keyword.name
-        self._libname = libname
-        self._set_variable_dependent_settings(keyword)
         self.keywords = Keywords(keyword.steps)
-        self._keyword_args = keyword.args.value
         self.return_value = keyword.return_.value
-
-    def _set_variable_dependent_settings(self, keyword):
-        # TODO: Is this method really needed?
+        self._libname = libname
         self._doc = keyword.doc.value
-        self._timeout = (keyword.timeout.value, keyword.timeout.message)
-        self.timeout = [ utils.unescape(item) for item in self._timeout ]
+        self._timeout = keyword.timeout
+        self._keyword_args = keyword.args.value
 
     def init_keyword(self, varz):
         self._errors = []
         self.doc = varz.replace_meta('Documentation', self._doc, self._errors)
-        self.timeout = KeywordTimeout(*self._timeout)
+        self.timeout = KeywordTimeout(self._timeout.value, self._timeout.message)
         self.timeout.replace_variables(varz)
 
     def run(self, context, arguments):
