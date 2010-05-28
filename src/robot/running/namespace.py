@@ -160,12 +160,7 @@ class Namespace:
     def _get_path(self, setting_name, path, basedir):
         if setting_name == 'Library' and not self._is_library_by_path(path, basedir):
             return path
-        try:
-            path = self._resolve_path(path.replace('/', os.sep), basedir)
-        except DataError:
-            if setting_name == 'Variables': name = 'Variable file'
-            if setting_name == 'Resource': name = 'Resource file'
-            raise DataError("%s '%s' does not exist" % (name, path))
+        path = self._resolve_path(setting_name, path.replace('/', os.sep), basedir)
         if setting_name in ['Variables','Library']:
             dirname, filename = os.path.split(os.path.normpath(path))
             path = os.path.join(utils.normpath(dirname), filename)
@@ -174,21 +169,21 @@ class Namespace:
         return path
 
     def _is_library_by_path(self, path, basedir):
-        if os.path.splitext(path)[1].lower() in ['.py','.java','.class']:
-            return os.path.isfile(os.path.join(basedir, path))
-        if not path.endswith('/'):
-            return False
-        init = os.path.join(basedir, path.replace('/',os.sep), '__init__.py')
-        return os.path.isfile(init)
+        return path.lower().endswith(('.py', '.java', '.class', '/'))
 
-    def _resolve_path(self, respath, basedir):
+    def _resolve_path(self, setting_name, path, basedir):
         for base in [basedir] + sys.path:
             if not os.path.isdir(base):
                 continue
-            path = os.path.join(base, respath)
-            if os.path.exists(path):
-                return path
-        raise DataError()
+            ret = os.path.join(base, path)
+            if os.path.isfile(ret):
+                return ret
+            if os.path.isdir(ret) and os.path.isfile(os.path.join(ret, '__init__.py')):
+                return ret
+        name = {'Library': 'Test library',
+                'Variables': 'Variable file',
+                'Resource': 'Resource file'}[setting_name]
+        raise DataError("%s '%s' does not exist." % (name, path))
 
     def _import_deprecated_standard_libs(self, name):
         if name in ['BuiltIn', 'OperatingSystem']:

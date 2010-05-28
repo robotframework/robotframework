@@ -43,5 +43,7 @@ Importing Non Python File Fails
     Check Stderr Contains  Importing test library 'java_libraries.html' failed:  ImportError: No module named java_libraries
 
 Importing Non Python Dir Fails
-    Check Stderr Matches Regexp  (?ms).*Importing test library 'library_scope/' failed:  ImportError: (No module named library_scope/|Import by filename is not supported.)
+    Check Stderr Contains  Test library 'library_scope/' does not exist.
 
+Importing Non Existing Py File
+    Check Stderr Contains  Test library 'this_does_not_exist.py' does not exist.

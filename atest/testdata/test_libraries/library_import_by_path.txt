@@ -10,6 +10,7 @@ Library         MyInvalidLibFile.py
 Library         java_libraries.html
 Library         library_scope/
 Library         spaces in path/SpacePathLib.py
+Library         this_does_not_exist.py
 
 *** Variables ***
 ${MYVAR}  ${CURDIR}${/}dir_for_libs
