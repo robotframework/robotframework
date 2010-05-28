@@ -1,7 +1,10 @@
 *** Settings ***
 Force Tags      regression  pybot  jybot
 Resource        atest_resource.txt
-Library  ProcessManager.py
+Library         ProcessManager.py
+Test Teardown   Log Info From Process And Cleanup
+Suite Setup     Set timestamp
+
 
 *** Test Cases ***
 SIGINT Signal Should Stop Test Execution Gracefully
@@ -44,16 +47,12 @@ Two Signals Should Stop Test Execution Forcefully When Run Keyword Is Used
     Check Tests Have Been Forced To Shutdown
 
 Two Signals Should Stop Test Execution Forcefully When Test Timeout Is Used
-    [timeout]  1 minute
     Start And Send Signal  test_timeout.txt  Two Signals  SIGINT  2s
     Check Tests Have Been Forced To Shutdown
-    [teardown]  Log Info From Process
 
 Two Signals Should Stop Test Execution Forcefully When Keyword Timeout Is Used
-    [timeout]  1 minute
     Start And Send Signal  keyword_timeout.txt  Two Signals  SIGINT  2s
     Check Tests Have Been Forced To Shutdown
-    [teardown]  Log Info From Process
 
 One Signal Should Stop Test Execution Gracefully And Test Case And Suite Teardowns Should Be Run
     Start And Send Signal  with_teardown.txt  One Signal  SIGINT  0s
@@ -66,13 +65,14 @@ One Signal Should Stop Test Execution Gracefully And Test Case And Suite Teardow
 
 *** Key Words ***
 Start And Send Signal
+    [timeout]  2 minutes
     [arguments]  ${testcase file}  ${signal method}  ${signal}  ${teardown sleep}
     ${is_jython_in_use} =  Running On Jython  ${INTERPRETER}
     ${test signal file} =  catenate  SEPARATOR=_  robot_signal_test_started  %{USER}  ${INTERPRETER}  .txt
     Remove File  ${TEMPDIR}/${test signal file}
     Run Keyword unless  ${is_jython_in_use}  Start Running Robot  ${test signal file}  running/stopping_with_signal/${testcase file}  ${teardown sleep}
     Run Keyword if  ${is_jython_in_use}  Start Running jybot  ${test signal file}  running/stopping_with_signal/${testcase file}  ${teardown sleep}
-    Wait Until Created  ${TEMPDIR}/${test signal file}  5 minutes
+    Wait Until Created  ${TEMPDIR}/${test signal file}  1 minutes
     Run Keyword  ${signal method}  ${signal}
     wait until finished
 
@@ -81,7 +81,7 @@ Start Running Robot
     Set Runners
     ${path to datasource} =  Set Variables And Get Datasources  ${datasource}
     ${path to runner} =  Join Path  ${ROBOTPATH}  runner.py
-    ProcessManager.start process  ${INTERPRETER}  ${path to runner}  --variable  TESTSIGNALFILE:${test signal file}  --output  ${OUTFILE}  --report  None  --log  None  --variable  TEARDOWNSLEEP:${teardown sleep}  ${path to datasource}
+    ProcessManager.start process  ${INTERPRETER}  ${path to runner}  --variable  TESTSIGNALFILE:${test signal file}  --output  ${OUTFILE}  --report  None  --log  None  --debugfile  %{HOME}/${TESTNAME}_${TEST TIMESTAMP}.txt  --variable  TEARDOWNSLEEP:${teardown sleep}  ${path to datasource}
 
 Start Running Jybot
     [arguments]  ${test signal file}  ${datasource}  ${teardown sleep}
@@ -89,9 +89,9 @@ Start Running Jybot
     Set Runners
     ${path to datasource} =  Set Variables And Get Datasources  ${datasource}
     ${path to runner} =  Join Path  ${ROBOTPATH}  runner.py
-    ${command to run jython} =  catenate  ${jybot}  ${path to runner}  --variable  TESTSIGNALFILE:${test signal file}  --output  ${OUTFILE}  --report  None  --log  None  --variable  TEARDOWNSLEEP:${teardown sleep}  ${path to datasource}
+    ${command to run jython} =  catenate  ${jybot}  ${path to runner}  --variable  TESTSIGNALFILE:${test signal file}  --output  ${OUTFILE}  --report  None  --log  None  --debugfile  %{HOME}/${TESTNAME}_${TEST TIMESTAMP}.txt  --variable  TEARDOWNSLEEP:${teardown sleep}  ${path to datasource}
     log  ${command to run jython}
-    ProcessManager.start process  ${jybot}  ${path to runner}  --variable  TESTSIGNALFILE:${test signal file}  --output  ${OUTFILE}  --report  None  --log  None  --variable  TEARDOWNSLEEP:${teardown sleep}  ${path to datasource}
+    ProcessManager.start process  ${jybot}  ${path to runner}  --variable  TESTSIGNALFILE:${test signal file}  --output  ${OUTFILE}  --report  None  --log  None  --debugfile  %{HOME}/${TESTNAME}_${TEST TIMESTAMP}.txt  --variable  TEARDOWNSLEEP:${teardown sleep}  ${path to datasource}
 
 Check Test Cases Have Failed Correctly
     Check Test Case  Test  FAIL  Execution terminated by signal
@@ -115,5 +115,10 @@ Two Signals
 	Busy Sleep  1
 	send terminate  ${signal}
 
-Log Info From Process
+Log Info From Process And Cleanup
     Run Keyword If Test Failed  Log Stdout And Stderr
+    Run Keyword If Test Passed  Remove File  %{HOME}/${TESTNAME}_${TEST TIMESTAMP}.txt
+
+ Set timestamp
+    ${tmp} =  Get Time
+    Set Suite Variable  ${TEST TIMESTAMP}  ${tmp}
