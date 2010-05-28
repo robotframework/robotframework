@@ -21,7 +21,6 @@ class ExecutionContext(object):
         self.namespace = namespace
         self.output = output
         self.dry_run = dry_run
-        self.continue_on_failure = False
 
     def get_current_vars(self):
         return self.namespace.variables
@@ -29,7 +28,6 @@ class ExecutionContext(object):
     def end_test(self, test):
         self.output.end_test(test)
         self.namespace.end_test()
-        self.continue_on_failure = False
 
     def end_suite(self, suite):
         self.output.end_suite(suite)
@@ -66,8 +64,7 @@ class ExecutionContext(object):
         self.get_current_vars()['${SUITE_STATUS}'] = status
         self.get_current_vars()['${SUITE_MESSAGE}'] = message
 
-    def start_test(self, test, continue_on_failure=False):
-        self.continue_on_failure = continue_on_failure
+    def start_test(self, test):
         self.namespace.start_test(test)
         self.output.start_test(test)
 
