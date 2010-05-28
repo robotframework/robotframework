@@ -74,26 +74,3 @@ def format_assign_message(variable, value, cut_long=True):
         value = value[:_MAX_ASSIGN_LENGTH] + '...'
     return '%s = %s' % (variable, value)
 
-
-def wrap(text, width, indent=0):
-    """Wraps given text so that it fits into given width with optional indent.
-
-    Preserves existing line breaks and most spaces in the text. Expects that
-    existing line breaks are posix newlines (\n).
-
-    Based on a recipe from ActiveState Python Cookbook at
-    http://aspn.activestate.com/ASPN/Cookbook/Python/Recipe/148061
-    """
-    text = reduce(lambda line, word, width=width: '%s%s%s' %
-                  (line,
-                   ' \n'[(len(line)-line.rfind('\n')-1
-                         + len(word.split('\n',1)[0]
-                              ) >= width)],
-                   word),
-                  text.split(' ')
-                 )
-    if not indent > 0:
-        return text
-    pre = ' ' * indent
-    joiner = '\n' + pre
-    return pre + joiner.join(text.splitlines())

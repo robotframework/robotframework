@@ -264,12 +264,11 @@ class TestPrintHelpAndVersion(unittest.TestCase):
  --he"""
         expected = """Name
  --escape x:y      blaa blaa .............................................. end
-                   Available escapes:
-                   amp (&), apos ('), at (@), bslash (\), colon (:), comma (,),
-                   curly1 ({), curly2 (}), dollar ($), exclam (!), gt (>), hash
-                   (#), lt (<), paren1 ((), paren2 ()), percent (%), pipe (|),
-                   quest (?), quot ("), semic (;), slash (/), space ( ),
-                   square1 ([), square2 (]), star (*)
+                   Available escapes: amp (&), apos ('), at (@), bslash (\),
+                   colon (:), comma (,), curly1 ({), curly2 (}), dollar ($),
+                   exclam (!), gt (>), hash (#), lt (<), paren1 ((), paren2
+                   ()), percent (%), pipe (|), quest (?), quot ("), semic (;),
+                   slash (/), space ( ), square1 ([), square2 (]), star (*)
                    -- next line --
  --he"""
         assert_raises_with_msg(Information, expected,

@@ -20,11 +20,11 @@ import sys
 import glob
 import string
 import codecs
+import textwrap
 
 from robot.errors import DataError, Information, FrameworkError
 
 from misc import plural_or_not
-from text import wrap
 from unic import unic
 
 
@@ -377,17 +377,18 @@ class ArgumentParser:
         return ret
 
     def _get_available_escapes(self):
-        names = ESCAPES.keys()
-        names.sort()
-        return ', '.join([ '%s (%s)' % (n, ESCAPES[n]) for n in names ])
+        names = sorted(ESCAPES.keys(), key=str.lower)
+        return ', '.join('%s (%s)' % (n, ESCAPES[n]) for n in names)
 
     def _raise_help(self):
         msg = self._usage
         if self._version:
             msg = msg.replace('<VERSION>', self._version)
         def replace_escapes(res):
-            escapes = 'Available escapes:\n' + self._get_available_escapes()
-            return wrap(escapes, len(res.group(2)), len(res.group(1)))
+            escapes = 'Available escapes: ' + self._get_available_escapes()
+            lines = textwrap.wrap(escapes, width=len(res.group(2)))
+            indent = ' ' * len(res.group(1))
+            return '\n'.join(indent + line for line in lines)
         msg = re.sub('( *)(<-+ESCAPES-+>)', replace_escapes, msg)
         raise Information(msg)
 
