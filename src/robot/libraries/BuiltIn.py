@@ -1214,7 +1214,7 @@ class _Misc:
         | Import Library | ${CURDIR}/Library.py | some | args |
         | Import Library | ${CURDIR}/../libs/Lib.java | arg | WITH NAME | JavaLib |
         """
-        NAMESPACES.current.import_library(name.replace('/', os.sep), args)
+        NAMESPACES.current.import_library(name.replace('/', os.sep), list(args))
 
     def import_variables(self, path, *args):
         """Imports a variable file with the given path and optional arguments.
