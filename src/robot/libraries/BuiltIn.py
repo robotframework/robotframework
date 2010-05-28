@@ -752,7 +752,7 @@ class _RunKeyword:
         """
         if not isinstance(name, basestring):
             raise DataError('Keyword name must be a string')
-        kw = Keyword(name, args)
+        kw = Keyword(name, list(args))
         from robot.running.model import ExecutionContext
         return kw.run(ExecutionContext(NAMESPACES.current, output.OUTPUT))
 
