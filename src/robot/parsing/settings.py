@@ -62,6 +62,18 @@ class Documentation(_Setting):
         self.value = self._concat_string_with_value(self.value, value)
 
 
+class Template(_Setting):
+
+    def _init(self):
+        self.value = None
+
+    def _set(self, value):
+        self.value = value[0] if value else ''
+
+    def is_set(self):
+        return self.value is not None
+
+
 class Fixture(_Setting):
 
     def _init(self):

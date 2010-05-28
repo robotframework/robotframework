@@ -114,6 +114,7 @@ class TestCaseFilePopulatingTest(_PopulatorTest):
 
     def test_adding_settings(self):
         doc = 'This is doc'
+        template = 'Foo'
         more_doc = 'smore'
         force_tags = 'force'
         more_tags = 'more tagness'
@@ -133,7 +134,8 @@ class TestCaseFilePopulatingTest(_PopulatorTest):
                                         ['De Fault TAGS', more_tags],
                                         ['...', even_more_tags],
                                         ['test timeout', 'timeout message'],
-                                        ['test timeout', more_doc]
+                                        ['test timeout', more_doc],
+                                        ['test template', template]
                                         ])
         self._assert_setting('doc', doc + ' ' + more_doc)
         self._assert_fixture('suite_setup', setup_name, setup_args)
@@ -143,6 +145,7 @@ class TestCaseFilePopulatingTest(_PopulatorTest):
         timeout = self._setting_with('test_timeout')
         assert_equals(timeout.value, '1s')
         assert_equals(timeout.message, 'timeout message '+more_doc)
+        self._assert_setting('test_template', template)
 
     def _assert_tags(self, tag_name, exp_value):
         tag = self._setting_with(tag_name)
@@ -309,6 +312,15 @@ class TestCaseFilePopulatingTest(_PopulatorTest):
                                             "table 'Test cases': Invalid syntax "
                                             "in test case 'My test name': "
                                             "Non-existing setting 'Aasi'.")
+
+    def test_test_template_overrides_setting(self):
+        setting_test_template = 'Foo'
+        test_test_template = 'Bar'
+        self._create_table('Settings', [['Test Template', setting_test_template]],
+                           eof=False)
+        self._create_table('Test Cases', [['','[Template]', test_test_template]])
+        test = self._first_test()
+        assert_equals(test.template.value, test_test_template)
 
     def test_invalid_keyword_settings(self):
         self._create_table('Keywords', [['My User Keyword'],

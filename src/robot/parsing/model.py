@@ -20,7 +20,7 @@ from robot.output import LOGGER
 from robot import utils
 
 from settings import (Documentation, Fixture, Timeout, Tags, Metadata,
-                      Library, Resource, Variables, Arguments, Return)
+                      Library, Resource, Variables, Arguments, Return, Template)
 from datareader import FromFilePopulator, FromDirectoryPopulator
 
 
@@ -216,6 +216,7 @@ class _SettingTable(_Table, _WithSettings):
         self.test_setup = Fixture(self)
         self.test_teardown = Fixture(self)
         self.test_timeout = Timeout(self)
+        self.test_template = Template(self)
         self.force_tags = Tags(self)
         self.default_tags = Tags(self)
         self.metadata = []
@@ -268,6 +269,7 @@ class TestCaseFileSettingTable(_SettingTable):
                                      'Test Precondition': self.test_setup.set,
                                      'Test Teardown': self.test_teardown.set,
                                      'Test Postcondition': self.test_teardown.set,
+                                     'Test Template': self.test_template.set,
                                      'Force Tags': self.force_tags.set,
                                      'Default Tags': self.default_tags.set,
                                      'Test Timeout': self.test_timeout.set,
@@ -386,6 +388,7 @@ class TestCase(_WithSteps, _WithSettings):
         self.parent = parent
         self.name = name
         self.doc = Documentation(self)
+        self.template = Template(self)
         self.tags = Tags(self)
         self.setup = Fixture(self)
         self.teardown = Fixture(self)
@@ -396,6 +399,7 @@ class TestCase(_WithSteps, _WithSettings):
     def _get_setters(self):
         return utils.NormalizedDict({'Documentation': self.doc.set,
                                      'Document': self.doc.set,
+                                     'Template': self.template.set,
                                      'Setup': self.setup.set,
                                      'Precondition': self.setup.set,
                                      'Teardown': self.teardown.set,
