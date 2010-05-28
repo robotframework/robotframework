@@ -263,17 +263,17 @@ list variables are not supported.
 .. table:: Using list variables with settings
    :class: example
 
-   ==============  ===============  ===============  ====================
+   ==============  ================  ===============  ====================
       Settings          Value            Value             Comment
-   ==============  ===============  ===============  ====================
-   Library         ExampleLibrary   @{LIB ARGS}      # This works
-   Library         ${LIBRARY}       @{LIB ARGS}      # This works
-   Library         @{KEYWORD}                        # This does not work
-   Suite Setup     Some Keyword     @{KW ARGS}       # This works
-   Suite Setup     ${KEYWORD}       @{KW ARGS}       # This works
-   Suite Setup     @{KEYWORD}                        # This does not work
-   Default Tags    @{TAGS}                           # This works
-   ==============  ===============  ===============  ====================
+   ==============  ================  ===============  ====================
+   Library         ExampleLibrary    @{LIB ARGS}      # This works
+   Library         ${LIBRARY}        @{LIB ARGS}      # This works
+   Library         @{NAME AND ARGS}                   # This does not work
+   Suite Setup     Some Keyword      @{KW ARGS}       # This works
+   Suite Setup     ${KEYWORD}        @{KW ARGS}       # This works
+   Suite Setup     @{KEYWORD}                         # This does not work
+   Default Tags    @{TAGS}                            # This works
+   ==============  ================  ===============  ====================
 
 __ `All available settings in test data`_
 
