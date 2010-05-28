@@ -34,7 +34,7 @@ from robottime import get_timestamp, get_start_timestamp, format_time, \
         timestamp_to_secs, parse_time
 from unic import unic, safe_repr
 from encoding import decode_output, encode_output
-from text import cut_long_message, format_assign_message, wrap
+from text import cut_long_message, format_assign_message
 from xmlwriter import XmlWriter
 from connectioncache import ConnectionCache
 from idgenerator import IdGenerator, FileNameGenerator
