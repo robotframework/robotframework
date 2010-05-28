@@ -85,7 +85,7 @@ class PythonKeywordArguments(_KeywordArguments):
             first_arg = 0
         else:
             raise FrameworkError("Only MethodType and FunctionType accepted. "
-                                 "Got '%s' instead." % type(handler))
+                                 "Got '%s' instead." % type(handler).__name__)
         co = func.func_code
         nargs = co.co_argcount
         args = co.co_varnames[first_arg:nargs]
