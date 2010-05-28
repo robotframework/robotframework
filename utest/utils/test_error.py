@@ -21,11 +21,7 @@ class TestError(unittest.TestCase):
                     (ValueError, 'Something', 'ValueError: Something'), 
                     (ValueError, None, 'ValueError'),
                     (AssertionError, 'Msg\nin 3\nlines', 'Msg\nin 3\nlines'),
-                    (ValueError, '2\nlines', 'ValueError: 2\nlines'),
-                    ("MyStringException", None, "MyStringException"),
-                    ("MyStrEx2", "My msg", "MyStrEx2: My msg")  ]:
-            if isinstance(exception, basestring) and utils.py_version > (2, 5):
-                continue
+                    (ValueError, '2\nlines', 'ValueError: 2\nlines')]:
             try:
                 raise exception, msg
             except:
