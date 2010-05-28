@@ -113,7 +113,7 @@ class Variables(utils.NormalizedDict):
         Result is always a list.
         """
         results = []
-        for item in utils.to_list(items):
+        for item in items or []:
             listvar = self._replace_variables_inside_possible_list_var(item)
             if listvar:
                 results.extend(self[listvar])
@@ -207,7 +207,7 @@ class Variables(utils.NormalizedDict):
 
     def set_from_file(self, path, args, overwrite=False):
         LOGGER.info("Importing varible file '%s' with args %s" % (path, args))
-        args = utils.to_list(args)
+        args = args or []
         try:
             module = utils.simple_import(path)
             variables = self._get_variables_from_module(module, args)

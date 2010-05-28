@@ -35,7 +35,7 @@ class SuiteMock:
         
     def add_test(self, status, tags=None):
         test = TestMock(status, tags, 
-                        self.critical.are_critical(utils.to_list(tags)))
+                        self.critical.are_critical(tags or []))
         self.tests.append(test)
         return test
         

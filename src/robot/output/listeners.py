@@ -13,6 +13,7 @@
 #  limitations under the License.
 
 import inspect
+import sys
 
 from robot import utils
 from robot.errors import DataError
@@ -21,6 +22,7 @@ from logger import LOGGER
 
 if utils.is_jython:
     from java.lang import Object
+    from java.util import HashMap
 
 
 class Listeners:
@@ -198,5 +200,13 @@ class _ListenerProxy(AbstractLoggerProxy):
 
     def _convert_possible_dict_to_map(self, arg):
         if isinstance(arg, dict):
-            return utils.dict2map(arg)
+            return self._dict2map(arg)
         return arg
+
+    def _dict2map(self, dictionary):
+        if not utils.is_jython:
+            return dictionary
+        map = HashMap()
+        for key, value in dictionary.items():
+            map.put(key, value)
+        return map

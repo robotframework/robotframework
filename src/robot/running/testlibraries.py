@@ -31,7 +31,7 @@ if utils.is_jython:
 def TestLibrary(name, args=None, variables=None):
     libcode, source = utils.import_(name)
     libclass = _get_lib_class(libcode)
-    return libclass(libcode, source, name, utils.to_list(args), variables)
+    return libclass(libcode, source, name, args or [], variables)
 
 
 def _get_lib_class(libcode):

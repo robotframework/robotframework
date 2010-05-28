@@ -181,10 +181,10 @@ class TagStatistics:
     def __init__(self, include=None, exclude=None, tag_stat_combine=None,
                  docs=None, links=None):
         self.stats = utils.NormalizedDict()
-        self._include = utils.to_list(include)
-        self._exclude = utils.to_list(exclude)
+        self._include = include or []
+        self._exclude = exclude or []
         self._patterns_and_names = self._get_patterns_and_names(tag_stat_combine)
-        self._taginfo = TagStatInfo(utils.to_list(docs), utils.to_list(links))
+        self._taginfo = TagStatInfo(docs or [], links or [])
 
     def _get_patterns_and_names(self, tag_stat_combine_options):
         if not tag_stat_combine_options:

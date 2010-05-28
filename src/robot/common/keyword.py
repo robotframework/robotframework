@@ -13,14 +13,11 @@
 #  limitations under the License.
 
 
-from robot import utils
-
-
 class BaseKeyword:
 
     def __init__(self, name='', args=None, doc='', timeout='', type='kw'):
         self.name = name
-        self.args = utils.to_list(args)
+        self.args = args or []
         self.doc = doc
         self.timeout = timeout
         self.type = type

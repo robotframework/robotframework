@@ -202,8 +202,8 @@ class BaseTestSuite(_TestAndSuiteHelper):
         self.filter_by_tags(includes, excludes)
 
     def filter_by_names(self, suites=None, tests=None):
-        suites = [ ([], name.split('.')) for name in utils.to_list(suites) ]
-        tests = utils.to_list(tests)
+        suites = [ ([], name.split('.')) for name in suites or [] ]
+        tests = tests or []
         if (suites or tests) and not self._filter_by_names(suites, tests):
             self._raise_no_tests_filtered_by_names(suites, tests)
 
@@ -435,8 +435,8 @@ class _Critical:
         self.set(tags, nons)
 
     def set(self, tags, nons):
-        self.tags = utils.normalize_tags(utils.to_list(tags))
-        self.nons = utils.normalize_tags(utils.to_list(nons))
+        self.tags = utils.normalize_tags(tags or [])
+        self.nons = utils.normalize_tags(nons or [])
 
     def is_critical(self, tag):
         return utils.matches_any(tag, self.tags)
