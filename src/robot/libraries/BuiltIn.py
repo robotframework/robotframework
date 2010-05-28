@@ -22,6 +22,7 @@ from robot import utils
 from robot.utils import asserts
 from robot.variables import is_var, is_list_var
 from robot.running import Keyword, NAMESPACES, RUN_KW_REGISTER
+from robot.version import get_version
 
 if utils.is_jython:
     from java.lang import String, Number, Long, Double
@@ -587,7 +588,7 @@ class _Variables:
         | Should Be Equal | ${message}        | Hello Robot!           |
 
         If the given `text` contains only a single variable, its value is
-        returned as-is and it can be any object. Otherwise this keyword 
+        returned as-is and it can be any object. Otherwise this keyword
         always returns a string.
         """
         return self.get_variables().replace_scalar(text)
@@ -1410,11 +1411,11 @@ class _Misc:
 
     def set_test_message(self, message):
         """Sets message for for the current test.
-        
-        This is overridden by possible failure message, except when this keyword 
-        is used in test case teardown. In test case teardown this overrides 
+
+        This is overridden by possible failure message, except when this keyword
+        is used in test case teardown. In test case teardown this overrides
         messages even for failed tests.
-        
+
         This keyword can not be used in suite setup or suite teardown.
         """
         test = NAMESPACES.current.test
@@ -1496,7 +1497,7 @@ class BuiltIn(_Verify, _Converter, _Variables, _RunKeyword, _Misc):
     """
 
     ROBOT_LIBRARY_SCOPE = 'GLOBAL'
-    ROBOT_LIBRARY_VERSION = utils.get_version()
+    ROBOT_LIBRARY_VERSION = get_version()
 
     def _matches(self, string, pattern):
         # Must use this instead of fnmatch when string may contain newlines.

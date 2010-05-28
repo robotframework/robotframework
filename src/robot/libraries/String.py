@@ -18,7 +18,7 @@ from fnmatch import fnmatchcase
 from random import randint
 from string import ascii_lowercase, ascii_uppercase, digits
 
-from robot import utils
+from robot.version import get_version
 
 
 class String:
@@ -43,7 +43,7 @@ class String:
     """
 
     ROBOT_LIBRARY_SCOPE = 'GLOBAL'
-    ROBOT_LIBRARY_VERSION = utils.get_version()
+    ROBOT_LIBRARY_VERSION = get_version()
 
     def get_line_count(self, string):
         """Returns and logs the number of lines in the given `string`."""

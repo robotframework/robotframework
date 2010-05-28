@@ -23,9 +23,10 @@ import shutil
 try:
     from robot.errors import DataError
     from robot.output import LOGGER
-    from robot.utils import get_version, ConnectionCache, seq2str, \
-        timestr_to_secs, secs_to_timestr, plural_or_not, get_time, \
-        secs_to_timestamp, parse_time, unic, decode_output
+    from robot.version import get_version
+    from robot.utils import (ConnectionCache, seq2str, timestr_to_secs,
+                             secs_to_timestr, plural_or_not, get_time,
+                             secs_to_timestamp, parse_time, unic, decode_output)
     __version__ = get_version()
     PROCESSES = ConnectionCache('No active processes')
 

@@ -12,7 +12,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-
+from robot.version import get_version
 from robot import utils
 
 
@@ -657,7 +657,7 @@ class Collections(_List, _Dictionary):
     --------
     """
     ROBOT_LIBRARY_SCOPE = 'GLOBAL'
-    ROBOT_LIBRARY_VERSION = utils.get_version()
+    ROBOT_LIBRARY_VERSION = get_version()
 
 
 def _verify_condition(condition, default_msg, given_msg, include_default=False):

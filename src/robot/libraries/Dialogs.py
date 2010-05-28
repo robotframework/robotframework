@@ -24,11 +24,11 @@ Jython but they provide the same functionality.
 import sys
 
 try:
-    from robot import utils
+    from robot.version import get_version
 except ImportError:
     __version__ = 'unknown'
 else:
-    __version__ = utils.get_version()
+    __version__ = get_version()
 
 
 DIALOG_TITLE = 'Robot Framework'

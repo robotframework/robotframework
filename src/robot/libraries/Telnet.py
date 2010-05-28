@@ -18,6 +18,7 @@ import time
 import re
 import inspect
 
+from robot.version import get_version
 from robot import utils
 
 
@@ -36,7 +37,7 @@ class Telnet:
     """
 
     ROBOT_LIBRARY_SCOPE = 'TEST_SUITE'
-    ROBOT_LIBRARY_VERSION = utils.get_version()
+    ROBOT_LIBRARY_VERSION = get_version()
 
     def __init__(self, timeout=3.0, newline='CRLF', prompt=None, prompt_is_regexp=False):
         """Telnet library can be imported with optional arguments.

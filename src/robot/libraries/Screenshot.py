@@ -21,6 +21,7 @@ from java.awt import Toolkit, Robot, Rectangle
 from javax.imageio import ImageIO
 from java.io import File
 
+from robot.version import get_version
 from robot import utils
 
 
@@ -35,7 +36,7 @@ class Screenshot:
     """
 
     ROBOT_LIBRARY_SCOPE = 'TEST SUITE'
-    ROBOT_LIBRARY_VERSION = utils.get_version()
+    ROBOT_LIBRARY_VERSION = get_version()
 
     def __init__(self, default_directory=None, log_file_directory=None):
         """Screenshot library can be imported with optional arguments.
