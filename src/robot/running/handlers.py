@@ -17,10 +17,11 @@ import sys
 
 from robot import utils
 
+from outputcapture import OutputCapturer
 from runkwregister import RUN_KW_REGISTER
-from arguments import PythonKeywordArguments, JavaKeywordArguments, \
-    DynamicKeywordArguments, PythonInitArguments, JavaInitArguments, \
-    RunKeywordArguments
+from arguments import (PythonKeywordArguments, JavaKeywordArguments,
+                       DynamicKeywordArguments, RunKeywordArguments,
+                       PythonInitArguments, JavaInitArguments)
 from signalhandler import STOP_SIGNAL_MONITOR
 
 
@@ -113,11 +114,15 @@ class _RunnableHandler(_BaseHandler):
         return lambda: handler(*positional, **named)
 
     def _run_with_output_captured_and_signal_monitor(self, runner, output):
-        utils.capture_output()
+        capturer = OutputCapturer()
         try:
             return self._run_with_signal_monitoring(runner)
         finally:
-            self._release_and_log_output(output)
+            stdout, stderr = capturer.release()
+            output.log_output(stdout)
+            output.log_output(stderr)
+            if stderr.strip() != '':
+                sys.__stderr__.write(stderr+'\n')
 
     def _run_with_signal_monitoring(self, runner):
         try:
@@ -125,13 +130,6 @@ class _RunnableHandler(_BaseHandler):
             return runner()
         finally:
             STOP_SIGNAL_MONITOR.stop_running_keyword()
-
-    def _release_and_log_output(self, logger):
-        stdout, stderr = utils.release_output()
-        logger.log_output(stdout)
-        logger.log_output(stderr)
-        if stderr.strip() != '':
-            sys.stderr.write(stderr+'\n')
 
     def _current_handler(self):
         if self._method:

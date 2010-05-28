@@ -26,7 +26,6 @@ from importing import simple_import, import_
 from match import eq, eq_any, matches, matches_any
 from misc import plural_or_not, get_link_path, printable_name, seq2str, seq2str2
 from normalizing import normalize, normalize_tags, normpath, NormalizedDict
-from outputcapture import capture_output, release_output
 from robottime import (get_timestamp, get_start_timestamp, format_time,
                        get_time, get_elapsed_time, elapsed_time_to_string,
                        timestr_to_secs, secs_to_timestr, secs_to_timestamp,

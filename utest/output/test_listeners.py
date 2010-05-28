@@ -4,6 +4,7 @@ from robot.output.listeners import Listeners
 from robot.output import LOGGER
 from robot.utils.asserts import *
 from robot import utils
+from robot.running.outputcapture import OutputCapturer
 
 
 class _Mock:
@@ -125,7 +126,7 @@ class _BaseListenerTest:
     def setUp(self):
         self.listeners = Listeners([(self.listener_name, [])])
         self.listener = self.listeners._listeners[0]
-        utils.capture_output()
+        self.capturer = OutputCapturer()
 
     def test_start_suite(self):
         self.listeners.start_suite(SuiteMock())
@@ -176,7 +177,7 @@ class _BaseListenerTest:
         self._assert_output('Closing...')
 
     def _assert_output(self, expected):
-        stdout, stderr = utils.release_output()
+        stdout, stderr = self.capturer.release()
         assert_equals(stderr, '')
         assert_equals(stdout.rstrip(), expected)
 
