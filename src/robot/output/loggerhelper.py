@@ -67,6 +67,8 @@ class Message:
         self.timestamp = utils.get_timestamp(daysep='', daytimesep=' ',
                                              timesep=':', millissep='.')
         self.level = level.upper()
+        if self.level not in LEVELS:
+            raise DataError("Invalid log level '%s'" % level)
         self.message = self._process_message(message)
         self.html = html
 
@@ -98,7 +100,6 @@ class IsLogged:
 
 
 class AbstractLoggerProxy:
-
     _methods = NotImplemented
 
     def __init__(self, logger):
@@ -114,4 +115,3 @@ class AbstractLoggerProxy:
     def _toCamelCase(self, name):
         parts = name.split('_')
         return ''.join([parts[0]] + [part.capitalize() for part in parts[1:]])
-

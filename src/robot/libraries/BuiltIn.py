@@ -16,7 +16,8 @@ import os
 import re
 import time
 
-from robot import output
+from robot.output import LOGGER, OUTPUT
+from robot.output.loggerhelper import Message
 from robot.errors import DataError, ExecutionFailed
 from robot import utils
 from robot.utils import asserts
@@ -754,7 +755,7 @@ class _RunKeyword:
             raise DataError('Keyword name must be a string')
         kw = Keyword(name, list(args))
         from robot.running.model import ExecutionContext
-        return kw.run(ExecutionContext(NAMESPACES.current, output.OUTPUT))
+        return kw.run(ExecutionContext(NAMESPACES.current, OUTPUT))
 
     def run_keyword_if(self, condition, name, *args):
         """Runs the given keyword with the given arguments, if `condition` is true.
@@ -1157,10 +1158,8 @@ class _Misc:
         the console and in the Test Execution Errors section in the
         log file.
         """
-        level = level.upper()
-        if not output.LEVELS.has_key(level) and level != 'HTML':
-            raise RuntimeError("Invalid log level '%s'" % level)
-        print '*%s* %s' % (level, utils.unic(message))
+        level, html = (level, False) if level.upper() != 'HTML' else ('INFO', True)
+        LOGGER.log_message(Message(utils.unic(message), level, html))
 
     def log_many(self, *messages):
         """Logs the given messages as separate entries with the INFO level."""
@@ -1188,7 +1187,7 @@ class _Misc:
         The available levels: TRACE, DEBUG, INFO (default), WARN and NONE (no
         logging).
         """
-        old = output.OUTPUT.set_log_level(level)
+        old = OUTPUT.set_log_level(level)
         self.log('Log level changed from %s to %s' % (old, level.upper()))
         return old
 
@@ -1361,7 +1360,7 @@ class _Misc:
         Notice that instead of creating complicated expressions, it is
         recommended to move the logic into a test library.
         """
-        modules = modules and modules.replace(' ','').split(',') or []
+        modules = modules.replace(' ','').split(',') if modules else []
         namespace = dict([ (m, __import__(m)) for m in modules if m != '' ])
         try:
             return eval(expression, namespace)
@@ -1388,7 +1387,7 @@ class _Misc:
             method = getattr(object, method_name)
         except AttributeError:
             raise RuntimeError("Object '%s' does not have a method '%s'"
-                            % (object, method_name))
+                               % (object, method_name))
         return method(*args)
 
     def regexp_escape(self, *patterns):
@@ -1423,7 +1422,7 @@ class _Misc:
             raise RuntimeError("'Set Test Message' keyword cannot be used in "
                                "suite setup or teardown")
         test.message = message
-        print 'Set test message to:\n%s' % message
+        self.log('Set test message to:\n%s' % message)
 
     def set_tags(self, *tags):
         """Adds given `tags` for the current test or all tests in a suite.
@@ -1441,8 +1440,8 @@ class _Misc:
         tags = utils.normalize_tags(tags)
         handler = lambda test: utils.normalize_tags(test.tags + tags)
         self._set_or_remove_tags(handler)
-        print 'Set tag%s %s.' % (utils.plural_or_not(tags),
-                                 utils.seq2str(tags))
+        self.log('Set tag%s %s.' % (utils.plural_or_not(tags),
+                                    utils.seq2str(tags)))
 
     def remove_tags(self, *tags):
         """Removes given `tags` from the current test or all tests in a suite.
@@ -1460,8 +1459,8 @@ class _Misc:
         handler = lambda test: [ t for t in test.tags
                                  if not utils.matches_any(t, tags) ]
         self._set_or_remove_tags(handler)
-        print 'Removed tag%s %s.' % (utils.plural_or_not(tags),
-                                     utils.seq2str(tags))
+        self.log('Removed tag%s %s.' % (utils.plural_or_not(tags),
+                                        utils.seq2str(tags)))
 
     def _set_or_remove_tags(self, handler, suite=None, test=None):
         if not (suite or test):
@@ -1485,7 +1484,6 @@ class _Misc:
 
 
 class BuiltIn(_Verify, _Converter, _Variables, _RunKeyword, _Misc):
-
     """An always available standard library with often needed keywords.
 
     `BuiltIn` is Robot Framework's standard library that provides a set
@@ -1509,7 +1507,7 @@ class BuiltIn(_Verify, _Converter, _Variables, _RunKeyword, _Misc):
                 condition = eval(condition)
             except:
                 raise RuntimeError("Evaluating condition '%s' failed: %s"
-                                % (condition, utils.get_error_message()))
+                                   % (condition, utils.get_error_message()))
         return bool(condition)
 
 
