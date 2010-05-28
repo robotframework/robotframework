@@ -93,18 +93,23 @@ class UserLibrary(BaseLibrary):
 
 class UserKeywordHandler(object):
     type = 'user'
-    longname = property(lambda self: not self._libname and self.name
-                        or '%s.%s' % (self._libname, self.name))
-    shortdoc = property(lambda self: self.doc.splitlines()[0] if self.doc else '')
 
     def __init__(self, keyword, libname):
         self.name = keyword.name
         self.keywords = Keywords(keyword.steps)
         self.return_value = keyword.return_.value
         self._libname = libname
-        self._doc = keyword.doc.value
+        self.doc = self._doc = keyword.doc.value
         self._timeout = keyword.timeout
         self._keyword_args = keyword.args.value
+
+    @property
+    def longname(self):
+        return '%s.%s' % (self._libname, self.name) if self._libname else self.name
+
+    @property
+    def shortdoc(self):
+        return self.doc.splitlines()[0] if self.doc else ''
 
     def init_keyword(self, varz):
         self._errors = []
@@ -212,5 +217,6 @@ class EmbeddedArgs(UserKeywordHandler):
         self.keywords = template.keywords
         self._keyword_args = template._keyword_args
         self.return_value = template.return_value
+        self.doc = template.doc
         self._doc = template._doc
         self._timeout = template._timeout
