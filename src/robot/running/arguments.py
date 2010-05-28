@@ -71,32 +71,14 @@ class PythonKeywordArguments(_KeywordArguments):
     def _get_arg_spec(self, handler):
         """Returns info about args in a tuple (args, defaults, varargs)
 
-        args     - tuple of all accepted arguments
-        defaults - tuple of default values
+        args     - list of all accepted arguments except varargs
+        defaults - list of default values
         varargs  - name of the argument accepting varargs or None
         """
-        # Code below is based on inspect module's getargs and getargspec
-        # methods. See their documentation and/or source for more details.
+        args, varargs, _, defaults = inspect.getargspec(handler)
         if inspect.ismethod(handler):
-            func = handler.im_func
-            first_arg = 1        # this drops 'self' from methods' args
-        elif inspect.isfunction(handler):
-            func = handler
-            first_arg = 0
-        else:
-            raise FrameworkError("Only MethodType and FunctionType accepted. "
-                                 "Got '%s' instead." % type(handler).__name__)
-        co = func.func_code
-        nargs = co.co_argcount
-        args = co.co_varnames[first_arg:nargs]
-        defaults = func.func_defaults
-        if defaults is None:
-            defaults = ()
-        if co.co_flags & 4:                      # 4 == CO_VARARGS
-            varargs =  co.co_varnames[nargs]
-        else:
-            varargs = None
-        return args, defaults, varargs
+            args = args[1:]  # drop 'self'
+        return args, defaults or [], varargs
 
 
 class JavaKeywordArguments(_KeywordArguments):
