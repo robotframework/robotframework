@@ -58,10 +58,10 @@ from robot.serializing.logserializers import LogSerializer
 from robot.serializing import templates
 from robot.serializing.templating import Namespace, Template
 from robot.errors import DataError, Information
-from robot.parsing import rawdata
+from robot.parsing import datareader
 from robot.variables import Variables
 
-rawdata.PROCESS_CURDIR = False
+datareader.PROCESS_CURDIR = False
 Variables.set_from_variable_table = lambda self, varz: None
 
 
@@ -132,8 +132,8 @@ class TestdocSerializer(LogSerializer):
         LogSerializer.start_test(self, test)
 
     def start_keyword(self, kw):
-        if isinstance(kw, Keyword):  # Doesn't match For or Parallel
-            kw.name = kw._get_name(kw.name, NonResolvingContext())
+        if isinstance(kw, Keyword):  # Doesn't match For
+            kw.name = kw._get_name(kw.name)
         LogSerializer.start_keyword(self, kw)
 
     def _is_element_open(self, item):
@@ -175,6 +175,12 @@ class NonResolvingContext:
 
     def replace_vars_from_setting(self, name, item, errors):
         return item
+
+    def replace_string(self, item):
+        return item
+
+    def get_current_vars(self):
+        return NonResolvingContext()
 
 
 if __name__ == '__main__':
