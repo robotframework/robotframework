@@ -111,7 +111,7 @@ class _BaseSettings:
         elif name == 'RemoveKeywords':
             value = value.upper()
         elif name == 'MonitorColors':
-            value = (utils.eq(value, 'ON') and not utils.is_windows) \
+            value = (utils.eq(value, 'ON') and (not os.sep == '\\')) \
                          or utils.eq(value, 'FORCE')
         self._opts[name] = value
 
