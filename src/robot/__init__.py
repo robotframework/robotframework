@@ -27,10 +27,11 @@ from serializing import RobotTestOutput, RebotTestOutput, SplitIndexTestOutput
 from errors import DataError, Information, XmlParsingError, INFO_PRINTED, \
         DATA_ERROR, STOPPED_BY_USER, FRAMEWORK_ERROR
 from variables import init_global_variables
+from version import get_version
 import utils
 
 
-__version__ = utils.version
+__version__ = get_version()
 
 
 def run_from_cli(args, usage):
