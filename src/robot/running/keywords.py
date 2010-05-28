@@ -21,18 +21,18 @@ from robot.variables import is_var, is_list_var, is_scalar_var
 
 class Keywords(object):
 
-    def __init__(self, steps):
+    def __init__(self, steps, template=False):
         self._keywords = []
         for step in steps:
-            self._add_keyword(step)
+            self._add_keyword(step, template)
 
-    def _add_keyword(self, step):
+    def _add_keyword(self, step, template):
         if step.is_comment():
             return
         if step.is_for_loop():
             keyword = ForLoop(step)
         else:
-            keyword = Keyword(step.keyword, step.args, step.assign)
+            keyword = Keyword(step.keyword, step.args, step.assign, continue_on_failure=template)
         self._keywords.append(keyword)
 
     def run(self, context):
@@ -56,16 +56,19 @@ class Keywords(object):
 
 class Keyword(BaseKeyword):
 
-    def __init__(self, name, args, assign=None, type='kw'):
+    def __init__(self, name, args, assign=None, type='kw', continue_on_failure=False):
         BaseKeyword.__init__(self, name, args, type=type)
         self.assign = assign or []
         self.handler_name = name
+        self.continue_on_failure = continue_on_failure
 
     def run(self, context):
         handler = self._start(context)
         try:
             return_value = self._run(handler, context)
         except ExecutionFailed, err:
+            if self.continue_on_failure:
+                err.cont = True
             self.status = 'FAIL'
             self._end(context, error=err)
             raise

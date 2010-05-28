@@ -26,6 +26,7 @@ class DefaultValues(object):
         self._timeout = settings.test_timeout
         self._force_tags = settings.force_tags
         self._default_tags = settings.default_tags
+        self._test_template = settings.test_template
 
     def get_setup(self, tc_setup):
         setup = tc_setup if tc_setup.is_set() else self._get_default_setup()
@@ -57,3 +58,7 @@ class DefaultValues(object):
         if not self._parent:
             return self._force_tags
         return self._force_tags + self._parent._get_force_tags()
+
+    def get_template(self, template):
+        tmplt = template if template.is_set() else self._test_template
+        return tmplt.value

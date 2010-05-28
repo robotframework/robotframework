@@ -17,6 +17,7 @@ import os
 from robot import utils
 from robot.common import BaseTestSuite, BaseTestCase
 from robot.parsing import TestCaseFile, TestDataDirectory
+from robot.parsing.model import Step
 from robot.errors import ExecutionFailed, DataError
 from robot.variables import GLOBAL_VARIABLES
 from robot.output import LOGGER
@@ -197,6 +198,24 @@ class RunnableMultiTestSuite(RunnableTestSuite):
         self._run_mode_dry_run = False
 
 
+class Template(object):
+
+    def __init__(self, template):
+        self.template = template
+
+    def apply_to_steps(self, orig_steps):
+        if not self.template:
+            return orig_steps
+        steps = []
+        for s in orig_steps:
+            templated_step = Step([self.template] + s.assign + [s.keyword] + s.args)
+            steps.append(templated_step)
+        return steps
+
+    def __nonzero__(self):
+        return bool(self.template)
+
+
 class RunnableTestCase(BaseTestCase):
 
     def __init__(self, tc_data, parent, defaults):
@@ -206,7 +225,9 @@ class RunnableTestCase(BaseTestCase):
         self.teardown = defaults.get_teardown(tc_data.teardown)
         self.tags = defaults.get_tags(tc_data.tags)
         self.timeout = defaults.get_timeout(tc_data.timeout)
-        self.keywords = Keywords(tc_data.steps)
+        self.template = Template(defaults.get_template(tc_data.template))
+        steps = self.template.apply_to_steps(tc_data.steps)
+        self.keywords = Keywords(steps, self.template)
 
     def run(self, context, suite_errors):
         self._suite_errors = suite_errors

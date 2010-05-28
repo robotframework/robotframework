@@ -3,7 +3,7 @@ import unittest
 from robot.utils.asserts import *
 from robot.running.defaultvalues import DefaultValues
 from robot.parsing.model import TestCaseFileSettingTable, InitFileSettingTable
-from robot.parsing.settings import Tags, Fixture
+from robot.parsing.settings import Tags, Fixture, Template
 
 
 class TestDefaultValues(unittest.TestCase):
@@ -16,6 +16,7 @@ class TestDefaultValues(unittest.TestCase):
         tcf_table = TestCaseFileSettingTable(None)
         tcf_table.force_tags.set(['tcf_force_tag1','tcf_force_tag2'])
         tcf_table.default_tags.set(['tcf_default_tag1','tcf_default_tag2'])
+        tcf_table.test_template.set(['Foo'])
         self.tcf_defaults = DefaultValues(tcf_table, directory)
 
     def test_default_tags(self):
@@ -43,6 +44,13 @@ class TestDefaultValues(unittest.TestCase):
         teardown = Fixture()
         teardown.set(['name','arg','arg2'])
         assert_equal(self.tcf_defaults.get_teardown(teardown).name,'name')
+
+    def test_template(self):
+        template = Template()
+        assert_equal(self.tcf_defaults.get_template(template),'Foo')
+        template.set(['Bar'])
+        assert_equal(self.tcf_defaults.get_template(template),'Bar')
+
 
 if __name__ == "__main__":
     unittest.main()
