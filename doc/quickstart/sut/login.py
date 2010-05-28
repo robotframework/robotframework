@@ -8,7 +8,7 @@ DATABASE_FILE = os.path.join(tempfile.gettempdir(), 'robotframework-quickstart-d
 
 
 class DataBase(object):
-   
+
     def __init__(self, dbfile):
         """This class reads ands writes user data in a 'database'.
 	dbfile can be either or string or already opened file object. In the
@@ -53,7 +53,7 @@ class DataBase(object):
                 raise ValueError('Access Denied')
             self._users[username].password = new_pwd
         except ValueError, err:
-            return 'Changing password failed: %s' % err 
+            return 'Changing password failed: %s' % err
         else:
             return 'SUCCESS'
 
@@ -92,15 +92,15 @@ class User(object):
                 has_upper = True
             elif char.isdigit():
                 has_number = True
-            else: 
+            else:
                 has_invalid = True
                 break
         if has_invalid or not (has_lower and has_upper and has_number):
-            raise ValueError('Password must be a combination of lowercase ' 
+            raise ValueError('Password must be a combination of lowercase '
                              'and uppercase letters and numbers')
 
     def serialize(self, dbfile):
-        dbfile.write('%s\t%s\t%s\n' % 
+        dbfile.write('%s\t%s\t%s\n' %
                         (self.username, self.password, self.status))
 
 
@@ -118,14 +118,14 @@ def change_password(username, old_pwd, new_pwd):
     db = DataBase(DATABASE_FILE)
     print db.change_password(username, old_pwd, new_pwd)
     db.close()
-    
+
 def help():
     print 'Usage: %s { create | login | change-password | help }' \
              % os.path.basename(sys.argv[0])
 
 
 if __name__ == '__main__':
-    actions = {'create': create_user, 'login': login, 
+    actions = {'create': create_user, 'login': login,
                'change-password': change_password, 'help': help}
     try:
         action = sys.argv[1]
