@@ -41,3 +41,10 @@ if sys.platform.startswith('java'):
         if isinstance(item, Object) and not isinstance(item, Class): # http://bugs.jython.org/issue1564
             item = item.toString()  # http://bugs.jython.org/issue1563
         return _unic(item, *args)
+
+
+def safe_repr(item):
+    try:
+        return unic(repr(item))
+    except UnicodeError:
+        return repr(unic(item))
