@@ -1,0 +1,29 @@
+*** Settings ***
+Suite Setup     Run Tests  ${EMPTY}  running/test_template.txt
+Force Tags      regression  pybot  jybot
+Resource        atest_resource.txt
+
+*** Test Cases ***
+Test Using Normal Keyword Is Not Possible With Template
+    Check Test Case  ${TESTNAME}
+
+Test Default Template
+    Check Test Case  ${TESTNAME}
+
+Test Overriding Default Template In Test
+    Check Test Case  ${TESTNAME}
+
+Test Overriding Default Template In Test With Empty
+    Check Test Case  ${TESTNAME}
+
+Test Template With Variables
+    Check Test Case  ${TESTNAME}
+
+Test Template With Variables And Keyword Name
+    Check Test Case  ${TESTNAME}
+
+Test Template With For
+    Check Test Case  ${TESTNAME}
+
+Test User Keywords Should Not Be Continued On Failure
+    Check Test Case  ${TESTNAME}

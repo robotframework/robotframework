@@ -1,0 +1,61 @@
+*** Settings ***
+Test Template  Should Be Equal
+
+*** Variables ***
+${VARIABLE}  Same
+${SAME VARIABLE}  Same
+
+*** Test Cases ***
+Test Using Normal Keyword Is Not Possible With Template
+  Fail  Fail
+
+Test Default Template
+  [Documentation]  FAIL Several failures occurred:\n\n1) Same != Not Same\n\n2) Same != Not Same Again
+  Same  Same
+  Same  Not Same
+  Same  Not Same Again
+
+Test Overriding Default Template In Test
+  [Documentation]  FAIL Same == Same
+  [Template]  Should Not Be Equal
+  Same  Same
+  Same  Not Same
+  Same  Not Same Again
+
+Test Overriding Default Template In Test With Empty
+  [documentation]  FAIL This should be executed as normal keyword
+  [Template]
+  Fail  This should be executed as normal keyword
+
+Test Template With Variables
+  [Template]  Expect Exactly Two Args
+  ${VARIABLE}  ${VARIABLE}
+
+Test Template With Variables And Keyword Name
+  [template]  Expect Exactly Three Args
+  ${SAME VARIABLE}  Same  ${VARIABLE}
+
+Test Template With For
+  [Documentation]  FAIL Several failures occurred:\n\n1) Templates not supported with FOR loops.\n\n2) Same != Not Same
+  Same  Same
+  :FOR  ${i}  IN RANGE  10
+  \  Log  ${i}
+  Same  Not Same
+
+Test User Keywords Should Not Be Continued On Failure
+    [Documentation]  FAIL Several failures occurred:\n\n1) expected failure\n\n2) second expected failure
+    [Template]  Failing Uk With Multiple Fails
+    expected failure
+    second expected failure
+
+*** Keywords ***
+Expect Exactly Two Args  [arguments]  ${a1}  ${a2}
+  Should Be Equal  ${a1}  ${a2}
+
+Expect Exactly Three Args  [arguments]  ${a1}  ${a2}  ${a3}
+  Should Be Equal  ${a1}  ${a2}
+  Should Be Equal  ${a1}  ${a3}
+
+Failing Uk With Multiple Fails  [arguments]  ${msg}
+  Fail  ${msg}
+  Fail  this should not occur
