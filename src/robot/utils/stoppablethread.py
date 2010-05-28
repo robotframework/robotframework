@@ -12,7 +12,6 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-
 import sys
 import threading
 
@@ -60,4 +59,3 @@ class StoppablePythonThread(threading.Thread):
             if why == 'line':
                 raise SystemExit()
         return self._localtrace
-
