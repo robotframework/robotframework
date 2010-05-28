@@ -32,6 +32,7 @@ class _Setting(object):
         return self.parent.directory if self.parent else None
 
     def set(self, value, comment=None):
+        """Mainly used at parsing time, later attributes can be set directly."""
         self._set(value)
         self.comment = comment
 
@@ -68,7 +69,7 @@ class Template(_Setting):
         self.value = None
 
     def _set(self, value):
-        self.value = value[0] if value else ''
+        self.value = self._concat_string_with_value(self.value, value)
 
     def is_set(self):
         return self.value is not None
@@ -109,21 +110,19 @@ class Timeout(_Setting):
 class Tags(_Setting):
 
     def _init(self):
-        self.value = []
-        self._is_set = False
+        self.value = None
 
     def _set(self, value):
-        self.value.extend(value)
-        self._is_set = True
+        self.value = (self.value or []) + value
 
     def is_set(self):
-        return self._is_set
+        return self.value is not None
 
     def __add__(self, other):
         if not isinstance(other, Tags):
             raise TypeError('Tags can only be added with tags')
         tags = Tags()
-        tags.set(self.value + other.value)
+        tags.value = (self.value or []) + (other.value or [])
         return tags
 
 
