@@ -14,9 +14,8 @@
 
 
 import HTMLParser
+import sys
 from htmlentitydefs import entitydefs
-
-from robot import utils
 
 extra_entitydefs = {'nbsp': ' ',  'apos': "'", 'tilde': '~'}
 
@@ -189,7 +188,7 @@ class HtmlReader(HTMLParser.HTMLParser):
 
 
 # Workaround for following bug in Python 2.6: http://bugs.python.org/issue3932
-if utils.py_version > (2, 5):
+if sys.version_info[:2] > (2, 5):
     def unescape_from_py25(self, s):
         if '&' not in s:
             return s
