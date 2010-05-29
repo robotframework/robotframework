@@ -37,14 +37,17 @@ class _PythonOutput(object):
         sys.stdout = StringIO()
 
     def release(self):
-        sys.stdout.flush()
-        sys.stderr.flush()
-        out = sys.stdout.getvalue()
-        err = sys.stderr.getvalue()
+        out = self._get_value(sys.stdout)
+        err = self._get_value(sys.stderr)
         sys.stdout = self._orig_out
         sys.stderr = self._orig_err
         return out, err
 
+    def _get_value(self, stream):
+        stream.flush()
+        value = stream.getvalue()
+        stream.close()
+        return value
 
 if not sys.platform.startswith('java'):
     class _JavaOutput(object):
@@ -70,4 +73,9 @@ else:
             System.err.close()
             System.setOut(self._orig_out)
             System.setErr(self._orig_err)
-            return self._out.toString('UTF-8'), self._err.toString('UTF-8')
+            return self._get_value(self._out), self._get_value(self._err)
+
+        def _get_value(self, stream):
+            value = stream.toString('UTF-8')
+            stream.reset()
+            return value
