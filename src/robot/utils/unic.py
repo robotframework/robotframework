@@ -13,17 +13,17 @@
 #  limitations under the License.
 
 import sys
-import unicodedata
+
+try:
+    from unicodedata import normalize
+except ImportError:  # Jython on Java 1.5 lacks this method
+    normalize = lambda form, unistr: unistr
 
 
 def unic(item, *args):
     # Based on a recipe from http://code.activestate.com/recipes/466341
     try:
-        # in jython with java 1.5 unicodedata does not have the normalize-method
-        if hasattr(unicodedata, 'normalize'):
-            return unicodedata.normalize('NFC', unicode(item, *args))
-        else:
-            return unicode(item, *args)
+        return normalize('NFC', unicode(item, *args))
     except UnicodeError:
         try:
             ascii_text = str(item).encode('string_escape')
