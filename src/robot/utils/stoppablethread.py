@@ -16,8 +16,7 @@ import sys
 import threading
 
 
-class StoppablePythonThread(threading.Thread):
-
+class Thread(threading.Thread):
     """A subclass of threading.Thread, with a stop() method.
 
     Original version posted by Connelly Barnes to python-list and available at
@@ -29,14 +28,13 @@ class StoppablePythonThread(threading.Thread):
     in Python because in Jython we can use java.lang.Thread.
     """
 
-    def __init__(self, *args, **kwargs):
-        threading.Thread.__init__(self, *args, **kwargs)
+    def __init__(self, runner):
+        threading.Thread.__init__(self, target=runner)
         self._stopped = False
 
     def start(self):
-        """Start the thread."""
         self.__run_backup = self.run
-        self.run = self.__run      # Force the Thread to install our trace.
+        self.run = self.__run
         threading.Thread.start(self)
 
     def stop(self):

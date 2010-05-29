@@ -15,7 +15,7 @@
 import time
 
 from robot import utils
-from robot.utils.robotthread import Thread, Runner, Event
+from robot.utils.robotthread import ThreadedRunner
 from robot.errors import TimeoutError, DataError, FrameworkError
 
 from signalhandler import STOP_SIGNAL_MONITOR
@@ -72,7 +72,7 @@ class _Timeout:
         return cmp(self.time_left(), other.time_left())
 
     def run(self, runnable, args=None, kwargs=None, logger=None):
-        if self.error is not None:
+        if self.error:
             raise DataError(self.error)
         if not self.active():
             raise FrameworkError('Timeout is not active')
@@ -84,21 +84,10 @@ class _Timeout:
         STOP_SIGNAL_MONITOR.start_running_keyword()
         if timeout <= 0:
             raise TimeoutError(self.get_message())
-        notifier = Event()
-        runner = Runner(runnable, args, kwargs, notifier)
-        # Thread's name is important - it's used in utils.outputcapture
-        thread = Thread(runner, stoppable=True, daemon=True, name='TIMED_RUN')
-        thread.start()
-        time.sleep(0.001)
-        notifier.wait(timeout)
-        if runner.is_done():
+        runner = ThreadedRunner(runnable, args, kwargs)
+        if runner.run_in_thread(timeout):
             return runner.get_result()
-        try:
-            thread.stop()
-        except utils.RERAISED_EXCEPTIONS:
-            raise
-        except:
-            pass
+        runner.stop_thread()
         raise TimeoutError(self.get_message())
 
     def get_message(self):
