@@ -19,63 +19,76 @@ from StringIO import StringIO
 class OutputCapturer:
 
     def __init__(self):
-        self._python_output = _PythonOutput()
-        self._java_output = _JavaOutput()
+        self._python_out = _PythonCapturer(stdout=True)
+        self._python_err = _PythonCapturer(stdout=False)
+        self._java_out = _JavaCapturer(stdout=True)
+        self._java_err = _JavaCapturer(stdout=False)
 
     def release(self):
-        pyout, pyerr = self._python_output.release()
-        jaout, jaerr = self._java_output.release()
-        return (pyout, pyerr) if pyout or pyerr else (jaout, jaerr)
+        # Only either Python or Java output generally contains something
+        stdout = self._python_out.release() + self._java_out.release()
+        stderr = self._python_err.release() + self._java_err.release()
+        return stdout, stderr
 
 
-class _PythonOutput(object):
+class _PythonCapturer(object):
 
-    def __init__(self):
-        self._orig_out = sys.stdout
-        self._orig_err = sys.stderr
-        sys.stderr = StringIO()
-        sys.stdout = StringIO()
+    def __init__(self, stdout=True):
+        if stdout:
+            self._original = sys.stdout
+            self._set_stream = self._set_stdout
+        else:
+            self._original = sys.stderr
+            self._set_stream = self._set_stderr
+        self._stream = StringIO()
+        self._set_stream(self._stream)
+
+    def _set_stdout(self, stream):
+        sys.stdout = stream 
+
+    def _set_stderr(self, stream):
+        sys.stderr = stream 
 
     def release(self):
-        out = self._get_value(sys.stdout)
-        err = self._get_value(sys.stderr)
-        sys.stdout = self._orig_out
-        sys.stderr = self._orig_err
-        return out, err
+        # Original stream must be restored before closing the current
+        self._set_stream(self._original)
+        self._stream.flush()
+        output = self._stream.getvalue()
+        self._stream.close()
+        return output
 
-    def _get_value(self, stream):
-        stream.flush()
-        value = stream.getvalue()
-        stream.close()
-        return value
 
 if not sys.platform.startswith('java'):
-    class _JavaOutput(object):
+
+    class _JavaCapturer(object):
+        def __init__(self, stdout):
+            pass
         def release(self):
-            return '', ''
+            return ''
 
 else:
+
     from java.io import PrintStream, ByteArrayOutputStream
     from java.lang import System
-    
-    class _JavaOutput(object):
-        
-        def __init__(self):
-            self._orig_out = System.out
-            self._orig_err = System.err
-            self._out = ByteArrayOutputStream()
-            self._err = ByteArrayOutputStream()
-            System.setOut(PrintStream(self._out, False, 'UTF-8'))
-            System.setErr(PrintStream(self._err, False, 'UTF-8'))
-    
-        def release(self):
-            System.out.close()
-            System.err.close()
-            System.setOut(self._orig_out)
-            System.setErr(self._orig_err)
-            return self._get_value(self._out), self._get_value(self._err)
 
-        def _get_value(self, stream):
-            value = stream.toString('UTF-8')
-            stream.reset()
-            return value
+
+    class _JavaCapturer(object):
+
+        def __init__(self, stdout=True):
+            if stdout:
+                self._original = System.out
+                self._set_stream = System.setOut
+            else:
+                self._original = System.err
+                self._set_stream = System.setErr
+            self._bytes = ByteArrayOutputStream()
+            self._stream = PrintStream(self._bytes, False, 'UTF-8')
+            self._set_stream(self._stream)
+
+        def release(self):
+            # Original stream must be restored before closing the current
+            self._set_stream(self._original)
+            self._stream.close()
+            output = self._bytes.toString('UTF-8')
+            self._bytes.reset()
+            return output
