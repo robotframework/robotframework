@@ -109,8 +109,8 @@ class _RunnableHandler(_BaseHandler):
 
     def _runner_for(self, handler, output, positional, named, timeout):
         if timeout and timeout.active:
-            return lambda: timeout.run(handler, args=positional, kwargs=named,
-                                       logger=output)
+            output.debug(timeout.get_message())
+            return lambda: timeout.run(handler, args=positional, kwargs=named)
         return lambda: handler(*positional, **named)
 
     def _run_with_output_captured_and_signal_monitor(self, runner, output):

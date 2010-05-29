@@ -18,8 +18,6 @@ from robot import utils
 from robot.utils.robotthread import ThreadedRunner
 from robot.errors import TimeoutError, DataError, FrameworkError
 
-from signalhandler import STOP_SIGNAL_MONITOR
-
 
 class _Timeout(object):
 
@@ -27,7 +25,7 @@ class _Timeout(object):
         self.string = timeout or ''
         self.message = message
         self.secs = -1
-        self.starttime = 0
+        self.starttime = -1
         self.error = None
         if variables:
             self.replace_variables(variables)
@@ -38,7 +36,7 @@ class _Timeout(object):
 
     @property
     def active(self):
-        return self.secs > 0
+        return self.starttime > 0
 
     def replace_variables(self, variables):
         try:
@@ -53,11 +51,12 @@ class _Timeout(object):
             self.error = 'Setting %s failed: %s' % (self.type.lower(), unicode(err))
 
     def start(self):
-        self.starttime = time.time()
+        if self.secs > 0:
+            self.starttime = time.time()
 
     def time_left(self):
-        if self.starttime == 0:
-            raise FrameworkError('Timeout not started')
+        if not self.active:
+            return -1
         elapsed = time.time() - self.starttime
         return self.secs - elapsed
 
@@ -71,16 +70,12 @@ class _Timeout(object):
         return cmp(not self.active, not other.active) \
             or cmp(self.time_left(), other.time_left())
 
-    def run(self, runnable, args=None, kwargs=None, logger=None):
+    def run(self, runnable, args=None, kwargs=None):
         if self.error:
             raise DataError(self.error)
         if not self.active:
             raise FrameworkError('Timeout is not active')
         timeout = self.time_left()
-        STOP_SIGNAL_MONITOR.stop_running_keyword()
-        if logger:
-            logger.debug(self.get_message())
-        STOP_SIGNAL_MONITOR.start_running_keyword()
         if timeout <= 0:
             raise TimeoutError(self.get_message())
         runner = ThreadedRunner(runnable, args, kwargs)
@@ -89,8 +84,8 @@ class _Timeout(object):
         try:
             runner.stop_thread()
         except:
-            raise TimeoutError('Stopping keyword after %s failed: %s' %
-                               (self.type.lower(), utils.get_error_message()))
+            raise TimeoutError('Stopping keyword after %s failed: %s'
+                               % (self.type.lower(), utils.get_error_message()))
         raise TimeoutError(self.get_message())
 
     def get_message(self):

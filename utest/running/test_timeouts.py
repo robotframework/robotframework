@@ -103,31 +103,19 @@ class TestComparisons(unittest.TestCase):
         return touts
 
 
-class MockLogger:
-    def __init__(self):
-        self.msgs = []
-    def debug(self, msg):
-        self.msgs.append(('DEBUG',msg))
-    def info(self, msg):
-        self.msgs.append(('INFO',msg))
-
-
 class TestRun(unittest.TestCase):
 
     def setUp(self):
         self.tout = TestTimeout('1s', variables=VariableMock())
         self.tout.start()
-        self.logger = MockLogger()
 
     def test_passing(self):
-        assert_none(self.tout.run(passing, logger=self.logger))
-        self._verify_debug_msg(self.logger.msgs[0])
+        assert_none(self.tout.run(passing))
 
     def test_returning(self):
         for arg in [ 10, 'hello', ['l','i','s','t'], unittest]:
-            ret = self.tout.run(returning, args=(arg,), logger=self.logger)
+            ret = self.tout.run(returning, args=(arg,))
             assert_equals(ret, arg)
-            self._verify_debug_msg(self.logger.msgs[-1])
 
     def test_failing(self):
         assert_raises_with_msg(MyException, 'hello world',
@@ -145,16 +133,14 @@ class TestRun(unittest.TestCase):
 
     def test_method_executed_normally_if_no_timeout(self):
         os.environ['ROBOT_THREAD_TESTING'] = 'initial value'
-        self.tout.run(sleeping, (0.05,), {}, self.logger)
-        self._verify_debug_msg(self.logger.msgs[0])
+        self.tout.run(sleeping, (0.05,))
         assert_equals(os.environ['ROBOT_THREAD_TESTING'], '0.05')
 
     def test_method_stopped_if_timeout(self):
         os.environ['ROBOT_THREAD_TESTING'] = 'initial value'
         self.tout.secs = 0.001
         assert_raises_with_msg(TimeoutError, 'Test timeout 1 second exceeded.',
-                               self.tout.run, sleeping, (0.05,), {}, self.logger)
-        self._verify_debug_msg(self.logger.msgs[0])
+                               self.tout.run, sleeping, (0.05,))
         time.sleep(0.1)
         assert_equals(os.environ['ROBOT_THREAD_TESTING'], 'initial value')
 
@@ -164,20 +150,36 @@ class TestRun(unittest.TestCase):
             assert_raises(TimeoutError, self.tout.run, sleeping, (10,))
 
     def test_customized_message(self):
-        self.logger.msgs = []
         tout = KeywordTimeout('1s', 'My message', VariableMock())
         tout.start()
-        tout.run(passing, logger=self.logger)
-        self._verify_debug_msg(self.logger.msgs[0], 'Keyword')
-        tout.secs = 0.01
-        time.sleep(0.02)
+        tout.run(passing)
+        tout.secs = 0.001
+        time.sleep(0.01)
         assert_raises_with_msg(TimeoutError, 'My message',
-                               tout.run, sleeping, (1,), {}, self.logger)
+                               tout.run, sleeping, (1,))
 
-    def _verify_debug_msg(self, msg, type='Test'):
-        assert_equals(msg[0], 'DEBUG')
-        assert_true(msg[1].startswith('%s timeout 1 second active.' % type), msg[1])
-        assert_true(msg[1].endswith('seconds left.'), msg[1])
+
+class TestMessage(unittest.TestCase):
+
+    def test_non_active(self):
+        assert_equal(TestTimeout().get_message(), 'Test timeout not active.')
+
+    def test_active(self):
+        tout = KeywordTimeout('42s', variables=VariableMock())
+        tout.start()
+        msg = tout.get_message()
+        assert_true(msg.startswith('Keyword timeout 42 seconds active.'), msg)
+        assert_true(msg.endswith('seconds left.'), msg)
+
+    def test_failed_default(self):
+        tout = TestTimeout('1s', variables=VariableMock())
+        tout.starttime = time.time() - 2
+        assert_equal(tout.get_message(), 'Test timeout 1 second exceeded.')
+
+    def test_failed_custom(self):
+        tout = KeywordTimeout('1s', 'Custom message', VariableMock())
+        tout.starttime = time.time() - 2
+        assert_equal(tout.get_message(), 'Custom message')
 
 
 if __name__ == '__main__':
