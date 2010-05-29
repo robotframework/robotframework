@@ -59,7 +59,7 @@ class _Timeout(object):
         if self.starttime == 0:
             raise FrameworkError('Timeout not started')
         elapsed = time.time() - self.starttime
-        return round(self.secs - elapsed, 3)
+        return self.secs - elapsed
 
     def timed_out(self):
         return self.active and self.time_left() < 0
@@ -79,8 +79,7 @@ class _Timeout(object):
         timeout = self.time_left()
         STOP_SIGNAL_MONITOR.stop_running_keyword()
         if logger:
-            logger.debug('%s %s active. %s seconds left.'
-                         % (self.type, self.string, timeout))
+            logger.debug(self.get_message())
         STOP_SIGNAL_MONITOR.start_running_keyword()
         if timeout <= 0:
             raise TimeoutError(self.get_message())
@@ -95,6 +94,11 @@ class _Timeout(object):
         raise TimeoutError(self.get_message())
 
     def get_message(self):
+        if not self.active:
+            return '%s not active.' % self.type
+        if not self.timed_out():
+            return '%s %s active. %s seconds left.' % (self.type, self.string,
+                                                       round(self.time_left(), 3))
         if self.message:
             return self.message
         return '%s %s exceeded.' % (self.type, self.string)
