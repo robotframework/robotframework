@@ -16,8 +16,7 @@ import os
 import re
 import time
 
-from robot.output import LOGGER, OUTPUT
-from robot.output.loggerhelper import Message
+from robot.output import LOGGER, OUTPUT, Message
 from robot.errors import DataError, ExecutionFailed
 from robot import utils
 from robot.utils import asserts
