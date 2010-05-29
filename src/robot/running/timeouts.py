@@ -21,7 +21,7 @@ from robot.errors import TimeoutError, DataError, FrameworkError
 from signalhandler import STOP_SIGNAL_MONITOR
 
 
-class _Timeout:
+class _Timeout(object):
 
     def __init__(self, timeout=None, message='', variables=None):
         self.string = timeout or ''
@@ -31,6 +31,14 @@ class _Timeout:
         self.error = None
         if variables:
             self.replace_variables(variables)
+
+    @property
+    def type(self):
+        return type(self).__name__.replace('Timeout', ' timeout')
+
+    @property
+    def active(self):
+        return self.secs > 0
 
     def replace_variables(self, variables):
         try:
@@ -42,7 +50,7 @@ class _Timeout:
             self.message = variables.replace_string(self.message)
         except DataError, err:
             self.secs = 0.000001 # to make timeout active
-            self.error = 'Setting %s timeout failed: %s' % (self.type, unicode(err))
+            self.error = 'Setting %s failed: %s' % (self.type.lower(), unicode(err))
 
     def start(self):
         self.starttime = time.time()
@@ -51,36 +59,28 @@ class _Timeout:
         if self.starttime == 0:
             raise FrameworkError('Timeout not started')
         elapsed = time.time() - self.starttime
-        return self.secs - elapsed
-
-    def active(self):
-        return self.secs > 0
+        return round(self.secs - elapsed, 3)
 
     def timed_out(self):
-        return self.active() and self.time_left() < 0
+        return self.active and self.time_left() < 0
 
     def __str__(self):
         return self.string
 
     def __cmp__(self, other):
-        if not self.active() and not other.active():
-            return 0
-        if not self.active():
-            return 1
-        if not other.active():
-            return -1
-        return cmp(self.time_left(), other.time_left())
+        return cmp(not self.active, not other.active) \
+            or cmp(self.time_left(), other.time_left())
 
     def run(self, runnable, args=None, kwargs=None, logger=None):
         if self.error:
             raise DataError(self.error)
-        if not self.active():
+        if not self.active:
             raise FrameworkError('Timeout is not active')
         timeout = self.time_left()
         STOP_SIGNAL_MONITOR.stop_running_keyword()
         if logger:
-            logger.debug('%s timeout %s active. %s seconds left.'
-                         % (self.type.capitalize(), self.string, round(timeout, 3)))
+            logger.debug('%s %s active. %s seconds left.'
+                         % (self.type, self.string, timeout))
         STOP_SIGNAL_MONITOR.start_running_keyword()
         if timeout <= 0:
             raise TimeoutError(self.get_message())
@@ -93,20 +93,18 @@ class _Timeout:
     def get_message(self):
         if self.message:
             return self.message
-        return '%s timeout %s exceeded.' % (self.type.capitalize(), self.string)
+        return '%s %s exceeded.' % (self.type, self.string)
 
 
 class TestTimeout(_Timeout):
-    type = 'test'
-    _kw_timeout_occurred = False
+    _keyword_timeouted = False
 
     def set_keyword_timeout(self, timeout_occurred):
-        if not self._kw_timeout_occurred:
-            self._kw_timeout_occurred = timeout_occurred
+        self._keyword_timeouted = self._keyword_timeouted or timeout_occurred
 
     def any_timeout_occurred(self):
-        return self.timed_out() or self._kw_timeout_occurred
+        return self.timed_out() or self._keyword_timeouted
 
 
 class KeywordTimeout(_Timeout):
-    type = 'keyword'
+    pass
