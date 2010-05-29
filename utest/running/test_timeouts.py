@@ -9,12 +9,8 @@ from robot.running.timeouts import TestTimeout, KeywordTimeout
 
 # thread_resources is here
 sys.path.append(os.path.join(os.path.dirname(__file__),'..','utils'))
-
 from thread_resources import passing, failing, sleeping, returning, MyException
 
-if os.name == 'java':
-    from java.lang import Error as JavaError
-    from thread_resources import java_failing
 
 class VariableMock(object):
     
@@ -134,21 +130,15 @@ class TestRun(unittest.TestCase):
             self._verify_debug_msg(self.logger.msgs[-1])
 
     def test_failing(self):
-        try:
-            self.tout.run(failing, args=('hello world',))
-        except MyException, err:
-            assert_equals(str(err), 'hello world')
-        else:
-            fail('run did not raise an exception as expected')
+        assert_raises_with_msg(MyException, 'hello world',
+                               self.tout.run, failing, ('hello world',))
 
-    if os.name == 'java':
+    if sys.platform.startswith('java'):
         def test_java_failing(self):
-            try:
-                self.tout.run(java_failing, args=('hi tellus',))
-            except JavaError, err:
-                assert_equals(err.getMessage(), 'hi tellus')
-            else:
-                fail('run did not raise an exception as expected')
+            from java.lang import Error
+            from thread_resources import java_failing
+            assert_raises_with_msg(Error, 'java.lang.Error: hi tellus',
+                                   self.tout.run, java_failing, ('hi tellus',))
 
     def test_sleeping(self):
         assert_equals(self.tout.run(sleeping, args=(0.01,)), 0.01)
@@ -161,7 +151,7 @@ class TestRun(unittest.TestCase):
 
     def test_method_stopped_if_timeout(self):
         os.environ['ROBOT_THREAD_TESTING'] = 'initial value'
-        self.tout.secs = 0.01
+        self.tout.secs = 0.001
         assert_raises_with_msg(TimeoutError, 'Test timeout 1 second exceeded.',
                                self.tout.run, sleeping, (0.05,), {}, self.logger)
         self._verify_debug_msg(self.logger.msgs[0])
@@ -169,22 +159,20 @@ class TestRun(unittest.TestCase):
         assert_equals(os.environ['ROBOT_THREAD_TESTING'], 'initial value')
 
     def test_zero_and_negative_timeout(self):
-        for tout in [ 0, 0.0, -0.01, -1, -1000 ]:
-            self.tout.time_left = lambda : tout
+        for tout in [0, 0.0, -0.01, -1, -1000]:
+            self.tout.time_left = lambda: tout
             assert_raises(TimeoutError, self.tout.run, sleeping, (10,))
 
     def test_customized_message(self):
-        for msgcols in [ ['mymessage'] ]:
-            self.logger.msgs = []
-            tout = KeywordTimeout('1s', *msgcols)
-            tout.replace_variables(VariableMock())
-            tout.start()
-            tout.run(passing, logger=self.logger)
-            self._verify_debug_msg(self.logger.msgs[0], 'Keyword')
-            tout.secs = 0.01
-            assert_raises_with_msg(TimeoutError, ' '.join(msgcols),
-                                   tout.run, sleeping, (1,), {}, self.logger)
-            self._verify_debug_msg(self.logger.msgs[1], 'Keyword')
+        self.logger.msgs = []
+        tout = KeywordTimeout('1s', 'My message', VariableMock())
+        tout.start()
+        tout.run(passing, logger=self.logger)
+        self._verify_debug_msg(self.logger.msgs[0], 'Keyword')
+        tout.secs = 0.01
+        time.sleep(0.02)
+        assert_raises_with_msg(TimeoutError, 'My message',
+                               tout.run, sleeping, (1,), {}, self.logger)
 
     def _verify_debug_msg(self, msg, type='Test'):
         assert_equals(msg[0], 'DEBUG')
