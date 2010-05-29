@@ -87,7 +87,11 @@ class _Timeout(object):
         runner = ThreadedRunner(runnable, args, kwargs)
         if runner.run_in_thread(timeout):
             return runner.get_result()
-        runner.stop_thread()
+        try:
+            runner.stop_thread()
+        except:
+            raise TimeoutError('Stopping keyword after %s failed: %s' %
+                               (self.type.lower(), utils.get_error_message()))
         raise TimeoutError(self.get_message())
 
     def get_message(self):

@@ -16,8 +16,6 @@
 import sys
 from threading import Event
 
-from robot.utils import RERAISED_EXCEPTIONS
-
 
 if sys.platform.startswith('java'):
     from java.lang import Thread, Runnable, Throwable
@@ -63,9 +61,4 @@ class ThreadedRunner(Runnable):
         return self._result
 
     def stop_thread(self):
-        try:
-            self._thread.stop()
-        except RERAISED_EXCEPTIONS:
-            raise
-        except:
-            pass
+        self._thread.stop()
