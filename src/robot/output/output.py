@@ -95,7 +95,7 @@ class Output(AbstractLogger):
 
     def log_output(self, output):
         """Splits given output to levels and messages and logs them"""
-        for msg in _OutputSplitter(output).messages:
+        for msg in _OutputSplitter(output):
             self.message(msg)
 
     def message(self, msg):
@@ -110,7 +110,7 @@ class _OutputSplitter:
                                     re.MULTILINE)
 
     def __init__(self, output):
-        self.messages = self._get_messages(output.strip())
+        self._messages = self._get_messages(output.strip())
 
     def _get_messages(self, output):
         if not output:
@@ -126,3 +126,6 @@ class _OutputSplitter:
         else:
             tokens.insert(0, '*INFO*')
         return ((tokens[i], tokens[i+1]) for i in xrange(0, len(tokens), 2))
+
+    def __iter__(self):
+        return iter(self._messages)

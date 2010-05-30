@@ -1157,7 +1157,7 @@ class _Misc:
         the console and in the Test Execution Errors section in the
         log file.
         """
-        LOGGER.log_message(Message(utils.unic(message), level))
+        LOGGER.log_message(Message(message, level))
 
     def log_many(self, *messages):
         """Logs the given messages as separate entries with the INFO level."""
