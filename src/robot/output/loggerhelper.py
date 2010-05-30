@@ -66,11 +66,16 @@ class Message:
     def __init__(self, message, level, html=False):
         self.timestamp = utils.get_timestamp(daysep='', daytimesep=' ',
                                              timesep=':', millissep='.')
-        self.level = level.upper()
-        if self.level not in LEVELS:
-            raise DataError("Invalid log level '%s'" % level)
+        self.level, self.html = self._get_level_and_html(level, html)
         self.message = self._process_message(message)
-        self.html = html
+
+    def _get_level_and_html(self, level, html):
+        level = level.upper()
+        if level == 'HTML':
+            return 'INFO', True
+        if level not in LEVELS:
+            raise DataError("Invalid log level '%s'" % level)
+        return level, html
 
     def _process_message(self, msg):
         if not isinstance(msg, basestring):

@@ -1157,8 +1157,7 @@ class _Misc:
         the console and in the Test Execution Errors section in the
         log file.
         """
-        level, html = (level, False) if level.upper() != 'HTML' else ('INFO', True)
-        LOGGER.log_message(Message(utils.unic(message), level, html))
+        LOGGER.log_message(Message(utils.unic(message), level))
 
     def log_many(self, *messages):
         """Logs the given messages as separate entries with the INFO level."""
