@@ -9,11 +9,11 @@ class TestOutputSplitter(unittest.TestCase):
     
     def test_empty_output_should_result_in_empty_messages_list(self):
         splitter = _OutputSplitter('')
-        assert_equals([], splitter.messages)
+        assert_equals([], list(splitter))
         
     def test_plain_output_should_have_info_level(self):
         splitter = _OutputSplitter('this is an output message\nin many\nlines.')
-        assert_equals(1, len(splitter.messages))
+        assert_equals(1, len(list(splitter)))
         self._verify_message(splitter, 'this is an output message\nin many\nlines.')
         
     def test_leading_and_trailing_space_should_be_stripped(self):
@@ -26,7 +26,7 @@ class TestOutputSplitter(unittest.TestCase):
         
     def test_it_is_possible_to_define_multiple_levels(self):
         splitter = _OutputSplitter('*WARN*WARNING!\n*DEBUG*msg')
-        assert_equals(2, len(splitter.messages))
+        assert_equals(2, len(list(splitter)))
         self._verify_message(splitter, 'WARNING!', 'WARN')
         self._verify_message(splitter, 'msg', 'DEBUG', index=1)
 
@@ -41,9 +41,10 @@ class TestOutputSplitter(unittest.TestCase):
         
         
     def _verify_message(self, splitter, msg, level='INFO', html=False, index=0):
-        assert_equals(splitter.messages[index].message, msg)
-        assert_equals(splitter.messages[index].level, level)
-        assert_equals(splitter.messages[index].html, html)
+        message = list(splitter)[index]
+        assert_equals(message.message, msg)
+        assert_equals(message.level, level)
+        assert_equals(message.html, html)
 
         
 if __name__ == '__main__':
