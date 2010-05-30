@@ -12,11 +12,9 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-
 import time
 
 from robot import utils
-from robot.errors import DataError
 from robot.common import Statistics
 from robot.conf import get_title
 from robot.output import LOGGER, process_outputs, process_output
@@ -25,11 +23,11 @@ from robot.version import get_full_version
 import templates
 from templating import Namespace, Template
 from outputserializers import OutputSerializer
-from statserializers import LogStatSerializer, SplitLogStatSerializer, \
-     ReportStatSerializer, SummaryStatSerializer
+from statserializers import (LogStatSerializer, SplitLogStatSerializer,
+                             ReportStatSerializer, SummaryStatSerializer)
 from logserializers import LogSerializer, SplitLogSerializer, ErrorSerializer
-from reportserializers import ReportSerializer, SplitReportSerializer, \
-     TagDetailsSerializer
+from reportserializers import (ReportSerializer, SplitReportSerializer,
+                               TagDetailsSerializer)
 
 
 class RobotTestOutput:
@@ -37,7 +35,7 @@ class RobotTestOutput:
     def __init__(self, suite, exec_errors, settings=None):
         self.suite = suite
         self.exec_errors = exec_errors
-        if settings is not None:
+        if settings:
             params = (settings['SuiteStatLevel'], settings['TagStatInclude'],
                       settings['TagStatExclude'], settings['TagStatCombine'],
                       settings['TagDoc'], settings['TagStatLink'])
@@ -128,26 +126,25 @@ class RobotTestOutput:
 
     def _use_template(self, outfile, template, title):
         ttuple = time.localtime()
-        str_time = utils.format_time(ttuple, daytimesep='&nbsp;',
-                                     gmtsep='&nbsp;')
+        str_time = utils.format_time(ttuple, daytimesep='&nbsp;', gmtsep='&nbsp;')
         int_time = long(time.mktime(ttuple))
         elapsed_time = utils.elapsed_time_to_string(self.suite.elapsedtime)
-        namespace = Namespace(gentime_str=str_time, gentime_int=int_time,
+        namespace = Namespace(gentime_str=str_time,
+                              gentime_int=int_time,
                               elapsed_time=elapsed_time,
                               version=get_full_version(self._generator),
-                              suite=self.suite, title=title)
-        tmpl = Template(template=template)
-        tmpl.generate(namespace, outfile)
+                              suite=self.suite,
+                              title=title)
+        Template(template=template).generate(namespace, outfile)
 
     def _get_outfile(self, outpath, outtype):
-        if outpath == 'NONE':
-            return None
-        try:
-            return open(outpath, 'wb')
-        except:
-            LOGGER.error("Opening %s file '%s' for writing failed: %s"
-                         % (outtype, outpath, utils.get_error_message()))
-            return None
+        if outpath != 'NONE':
+            try:
+                return open(outpath, 'wb')
+            except:
+                LOGGER.error("Opening %s file '%s' for writing failed: %s"
+                             % (outtype, outpath, utils.get_error_message()))
+        return None
 
 
 class RebotTestOutput(RobotTestOutput):
