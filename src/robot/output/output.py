@@ -106,9 +106,8 @@ class Output(AbstractLogger):
 
 
 class _OutputSplitter:
-
-    _split_output_regexp = re.compile('^(\*(?:%s|HTML)\*)' % '|'.join(LEVELS),
-                                      re.MULTILINE)
+    _split_from_levels = re.compile('^(\*(?:%s|HTML)\*)' % '|'.join(LEVELS),
+                                    re.MULTILINE)
 
     def __init__(self, output):
         self.messages = self._get_messages(output.strip())
@@ -116,26 +115,14 @@ class _OutputSplitter:
     def _get_messages(self, output):
         if not output:
             return []
-        tokens = self._split_output_regexp.split(output)
-        if len(tokens) == 1:
-            return [Message(output, 'INFO', False)]
-        return self._split_messages(tokens)
+        return [Message(msg.strip(), level[1:-1])
+                for level, msg in self._split_to_levels_and_messages(output)]
 
-    def _split_messages(self, tokens):
+    def _split_to_levels_and_messages(self, output):
+        tokens = self._split_from_levels.split(output)
         # Output started with a level
         if tokens[0] == '':
             tokens = tokens[1:]
-        # No level in the beginning, default first msg to INFO
         else:
             tokens.insert(0, '*INFO*')
-        messages = []
-        for i in range(0, len(tokens), 2):
-            level, html = self._get_level_and_html(tokens[i][1:-1])
-            msg = tokens[i+1].strip()
-            messages.append(Message(msg, level, html))
-        return messages
-
-    def _get_level_and_html(self, token):
-        if token == 'HTML':
-            return 'INFO', True
-        return token, False
+        return ((tokens[i], tokens[i+1]) for i in xrange(0, len(tokens), 2))
