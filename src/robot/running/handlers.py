@@ -121,7 +121,7 @@ class _RunnableHandler(_BaseHandler):
             stdout, stderr = capturer.release()
             output.log_output(stdout)
             output.log_output(stderr)
-            if stderr.strip() != '':
+            if stderr:
                 sys.__stderr__.write(stderr+'\n')
 
     def _run_with_signal_monitoring(self, runner):
