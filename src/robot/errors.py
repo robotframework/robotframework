@@ -117,7 +117,6 @@ class ExecutionFailures(ExecutionFailed):
             return unicode(errors[0])
         lines = ['Several failures occurred:'] \
                 + ['%d) %s' % (i+1, unicode(e)) for i, e in enumerate(errors)]
-        print lines
         return '\n\n'.join(lines)
 
     def get_errors(self):
