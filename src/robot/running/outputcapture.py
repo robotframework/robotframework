@@ -25,10 +25,22 @@ class OutputCapturer:
         self._java_err = _JavaCapturer(stdout=False)
 
     def release(self):
-        # Only either Python or Java output generally contains something
-        stdout = self._python_out.release() + self._java_out.release()
-        stderr = self._python_err.release() + self._java_err.release()
-        return stdout, stderr
+        py_out = self._python_out.release()
+        py_err = self._python_err.release()
+        java_out = self._java_out.release()
+        java_err = self._java_err.release()
+        # FIXME: Should return both Python and Java stdout/stderr.
+        # It is unfortunately not possible to do py_out+java_out here, because
+        # java_out is always Unicode and py_out is bytes (=str). When py_out
+        # contains non-ASCII bytes catenation fails with UnicodeError.
+        # Unfortunately utils.unic(py_out) doesn't work either, because later
+        # splitting the output to levels and messages fails. Should investigate
+        # why that happens. It also seems that the byte message are never
+        # converted to Unicode - at least Message class doesn't do that.
+        # It's probably safe to leave this code like it is in RF 2.5, because
+        # a) the earlier versions worked the same way, and b) this code is
+        # used so that there should never be output both from Python and Java.  
+        return (py_out, py_err) if (py_out or py_err) else (java_out, java_err)
 
 
 class _PythonCapturer(object):
