@@ -11,7 +11,7 @@ No Operation
 
 Sleep
     ${time1} =  Get Time
-    Sleep  1.001
+    Sleep  1.111
     ${time2} =  Get Time
     Sleep  0 hours 0 mins 1 S E C O N D 234 milliseconds
     ${time3} =  Get Time
