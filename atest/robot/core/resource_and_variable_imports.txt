@@ -89,7 +89,7 @@ Invalid Resource File
     My Check Stderr Contains  [ WARN ] Imported resource file '${path}' is empty
 
 Invalid Resource Import Parameters
-    My Check Stderr Contains  [ ERROR ] Invalid syntax in file '${DATAPATH}' in table 'Setting': Resource file 'resources_and_variables/resources.html only one parameter allowed' does not exist
+    My Check Stderr Contains  [ ERROR ] Invalid syntax in file '${DATAPATH}' in table 'Setting': Resource file 'resources_and_variables${/}resources.html only one parameter allowed' does not exist
 
 Invalid Setting In Resource File
     ${path} =  Join Path  ${RESDIR}  resources.html
