@@ -88,7 +88,7 @@ class _Timeout(object):
         except:
             raise TimeoutError('Stopping keyword after %s failed: %s'
                                % (self.type.lower(), utils.get_error_message()))
-        raise TimeoutError(self.get_message())
+        raise TimeoutError(self._get_timeout_error())
 
     def get_message(self):
         if not self.active:
@@ -98,6 +98,9 @@ class _Timeout(object):
                                                        self.time_left())
         if self.message:
             return self.message
+        return self._get_timeout_error()
+
+    def _get_timeout_error(self):
         return '%s %s exceeded.' % (self.type, self.string)
 
 
