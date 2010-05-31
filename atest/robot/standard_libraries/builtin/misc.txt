@@ -11,7 +11,7 @@ No Operation
 
 Sleep
     ${tc} =  Check Test Case  Sleep
-    Check Log Message  ${tc.kws[1].msgs[0]}  Slept 1 second 1 millisecond
+    Check Log Message  ${tc.kws[1].msgs[0]}  Slept 1 second 111 milliseconds
     Check Log Message  ${tc.kws[3].msgs[0]}  Slept 1 second 234 milliseconds
     Check Log Message  ${tc.kws[5].msgs[0]}  Slept 1 second 112 milliseconds
 
