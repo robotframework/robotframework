@@ -27,3 +27,6 @@ Test Template With For
 
 Test User Keywords Should Not Be Continued On Failure
     Check Test Case  ${TESTNAME}
+
+Commented Rows With Test Template
+    Check Test Case  ${TESTNAME}

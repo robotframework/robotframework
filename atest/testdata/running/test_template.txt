@@ -48,6 +48,10 @@ Test User Keywords Should Not Be Continued On Failure
     expected failure
     second expected failure
 
+Commented Rows With Test Template
+    # My comment
+    42  42
+
 *** Keywords ***
 Expect Exactly Two Args  [arguments]  ${a1}  ${a2}
   Should Be Equal  ${a1}  ${a2}
