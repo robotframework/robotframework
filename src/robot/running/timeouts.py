@@ -58,10 +58,12 @@ class _Timeout(object):
         if not self.active:
             return -1
         elapsed = time.time() - self.starttime
-        return self.secs - elapsed
+        # Timeout granularity is 1ms. Without rounding some timeout tests fail
+        # intermittently on Windows, probably due to threading.Event.wait().
+        return round(self.secs - elapsed, 3)
 
     def timed_out(self):
-        return self.active and self.time_left() < 0
+        return self.active and self.time_left() <= 0
 
     def __str__(self):
         return self.string
@@ -93,7 +95,7 @@ class _Timeout(object):
             return '%s not active.' % self.type
         if not self.timed_out():
             return '%s %s active. %s seconds left.' % (self.type, self.string,
-                                                       round(self.time_left(), 3))
+                                                       self.time_left())
         if self.message:
             return self.message
         return '%s %s exceeded.' % (self.type, self.string)
