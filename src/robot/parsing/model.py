@@ -160,7 +160,7 @@ class TestDataDirectory(_TestData):
         return table
 
     def add_child(self, path, include_suites):
-        self.children.append(TestData(parent=self,source=path, 
+        self.children.append(TestData(parent=self,source=path,
                                       include_suites=include_suites))
 
     def __iter__(self):
@@ -496,5 +496,7 @@ class Step(object):
         return False
 
     def apply_template(self, template):
+        if self.is_comment():
+            return self
         kw = [self.keyword] if self.keyword else []
         return Step([template] + self.assign + kw + self.args)
