@@ -26,7 +26,6 @@ if utils.is_jython:
 
 
 class Listeners:
-
     _start_attrs = ['doc', 'starttime', 'longname']
     _end_attrs = _start_attrs + ['endtime', 'elapsedtime', 'status', 'message']
 
@@ -34,7 +33,7 @@ class Listeners:
         self._listeners = self._import_listeners(listeners)
 
     def __nonzero__(self):
-        return len(self._listeners) > 0
+        return bool(self._listeners)
 
     def _import_listeners(self, listener_data):
         listeners = []
@@ -55,9 +54,9 @@ class Listeners:
             if li.version == 1:
                 li.call_method(li.start_suite, suite.name, suite.doc)
             else:
-                attrs = self._get_start_attrs(suite, ['metadata'])
-                attrs.update({'tests' : [ t.name for t in suite.tests ],
-                              'suites': [ s.name for s in suite.suites],
+                attrs = self._get_start_attrs(suite, 'metadata')
+                attrs.update({'tests' : [t.name for t in suite.tests ],
+                              'suites': [s.name for s in suite.suites],
                               'totaltests': suite.get_test_count()})
                 li.call_method(li.start_suite, suite.name, attrs)
 
@@ -67,8 +66,8 @@ class Listeners:
                 li.call_method(li.end_suite, suite.status,
                                suite.get_full_message())
             else:
-                attrs = self._get_end_attrs(suite, [],
-                                            {'statistics': 'get_stat_message'})
+                attrs = self._get_end_attrs(suite)
+                attrs.update({'statistics': suite.get_stat_message()})
                 li.call_method(li.end_suite, suite.name, attrs)
 
     def start_test(self, test):
@@ -76,7 +75,7 @@ class Listeners:
             if li.version == 1:
                 li.call_method(li.start_test, test.name, test.doc, test.tags)
             else:
-                attrs = self._get_start_attrs(test, ['tags'])
+                attrs = self._get_start_attrs(test, 'tags')
                 li.call_method(li.start_test, test.name, attrs)
 
     def end_test(self, test):
@@ -84,7 +83,7 @@ class Listeners:
             if li.version == 1:
                 li.call_method(li.end_test, test.status, test.message)
             else:
-                attrs = self._get_end_attrs(test, ['tags'])
+                attrs = self._get_end_attrs(test, 'tags')
                 li.call_method(li.end_test, test.name, attrs)
 
     def start_keyword(self, kw):
@@ -92,7 +91,7 @@ class Listeners:
             if li.version == 1:
                 li.call_method(li.start_keyword, kw.name, kw.args)
             else:
-                attrs = self._get_start_attrs(kw, ['args', '-longname'])
+                attrs = self._get_start_attrs(kw, 'args', '-longname')
                 li.call_method(li.start_keyword, kw.name, attrs)
 
     def end_keyword(self, kw):
@@ -100,7 +99,7 @@ class Listeners:
             if li.version == 1:
                 li.call_method(li.end_keyword, kw.status)
             else:
-                attrs = self._get_end_attrs(kw, ['args', '-longname', '-message'])
+                attrs = self._get_end_attrs(kw, 'args', '-longname', '-message')
                 li.call_method(li.end_keyword, kw.name, attrs)
 
     def log_message(self, msg):
@@ -114,9 +113,8 @@ class Listeners:
                 li.call_method(li.message, self._create_msg_dict(msg))
 
     def _create_msg_dict(self, msg):
-        return {'message': msg.message, 'level': msg.level,
-                'timestamp': msg.timestamp,
-                'html': msg.html and 'yes' or 'no'}
+        return {'timestamp': msg.timestamp, 'message': msg.message,
+                'level': msg.level, 'html': 'yes' if msg.html else 'no'}
 
     def output_file(self, name, path):
         for li in self._listeners:
@@ -126,36 +124,35 @@ class Listeners:
         for li in self._listeners:
             li.call_method(li.close)
 
-    def _get_start_attrs(self, item, names, mapping=None):
-        return self._get_attrs(item, self._start_attrs, names, mapping)
+    def _get_start_attrs(self, item, *names):
+        return self._get_attrs(item, self._start_attrs, names)
 
-    def _get_end_attrs(self, item, names, mapping=None):
-        return self._get_attrs(item, self._end_attrs, names, mapping)
+    def _get_end_attrs(self, item, *names):
+        return self._get_attrs(item, self._end_attrs, names)
 
-    def _get_attrs(self, item, defaults, extras, mapping=None):
-        names = defaults[:]
+    def _get_attrs(self, item, defaults, extras):
+        names = self._get_attr_names(defaults, extras)
+        return dict((n, self._get_attr_value(item, n)) for n in names)
+
+    def _get_attr_names(self, defaults, extras):
+        names = list(defaults)
         for name in extras:
             if name.startswith('-'):
                 names.remove(name[1:])
             else:
                 names.append(name)
-        if not mapping:
-            mapping = {}
-        mapping.update(dict([(n, n) for n in names]))
-        attrs = {}
-        for name, attr in mapping.items():
-            attrs[name] = self._get_attr_value(item, attr)
-        return attrs
+        return names
 
-    def _get_attr_value(self, item, attr_name):
-        attr = getattr(item, attr_name)
-        if callable(attr):
-            attr = attr()
-        if isinstance(attr, (utils.NormalizedDict, dict)):
-            attr = dict(attr)
-        if isinstance(attr, list):
-            attr = list(attr)
-        return attr
+    def _get_attr_value(self, item, name):
+        value = getattr(item, name)
+        return self._take_copy_of_mutable_value(value)
+
+    def _take_copy_of_mutable_value(self, value):
+        if isinstance(value, (dict, utils.NormalizedDict)):
+            return dict(value)
+        if isinstance(value, list):
+            return list(value)
+        return value
 
 
 class _ListenerProxy(AbstractLoggerProxy):
@@ -189,7 +186,7 @@ class _ListenerProxy(AbstractLoggerProxy):
 
     def call_method(self, method, *args):
         if self.is_java:
-            args = [ self._convert_possible_dict_to_map(a) for a in args ]
+            args = [self._to_map(a) if isinstance(a, dict) else a for a in args]
         try:
             method(*args)
         except:
@@ -198,15 +195,8 @@ class _ListenerProxy(AbstractLoggerProxy):
                          % (method.__name__, self.name, message))
             LOGGER.info("Details:\n%s" % details)
 
-    def _convert_possible_dict_to_map(self, arg):
-        if isinstance(arg, dict):
-            return self._dict2map(arg)
-        return arg
-
-    def _dict2map(self, dictionary):
-        if not utils.is_jython:
-            return dictionary
+    def _to_map(self, dictionary):
         map = HashMap()
-        for key, value in dictionary.items():
+        for key, value in dictionary.iteritems():
             map.put(key, value)
         return map

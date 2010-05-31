@@ -63,7 +63,7 @@ class AbstractLogger:
 
 class Message:
 
-    def __init__(self, message, level, html=False):
+    def __init__(self, message, level='INFO', html=False):
         self.timestamp = utils.get_timestamp(daysep='', daytimesep=' ',
                                              timesep=':', millissep='.')
         self.level, self.html = self._get_level_and_html(level, html)
