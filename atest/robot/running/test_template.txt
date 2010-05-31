@@ -30,3 +30,6 @@ Test User Keywords Should Not Be Continued On Failure
 
 Commented Rows With Test Template
     Check Test Case  ${TESTNAME}
+
+Templates with Run Keyword
+    Check Test Case  ${TESTNAME}

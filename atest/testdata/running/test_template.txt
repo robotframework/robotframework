@@ -2,25 +2,25 @@
 Test Template  Should Be Equal
 
 *** Variables ***
-${VARIABLE}  Same
-${SAME VARIABLE}  Same
+${VARIABLE}       Variable content
+${SAME VARIABLE}  Variable content
 
 *** Test Cases ***
 Test Using Normal Keyword Is Not Possible With Template
   Fail  Fail
 
 Test Default Template
-  [Documentation]  FAIL Several failures occurred:\n\n1) Same != Not Same\n\n2) Same != Not Same Again
+  [Documentation]  FAIL Several failures occurred:\n\n1) Something != Different\n\n2) 42 != 43
   Same  Same
-  Same  Not Same
-  Same  Not Same Again
+  Something  Different
+  42  43
 
 Test Overriding Default Template In Test
   [Documentation]  FAIL Same == Same
   [Template]  Should Not Be Equal
   Same  Same
-  Same  Not Same
-  Same  Not Same Again
+  Something  Different
+  42  43
 
 Test Overriding Default Template In Test With Empty
   [documentation]  FAIL This should be executed as normal keyword
@@ -33,14 +33,14 @@ Test Template With Variables
 
 Test Template With Variables And Keyword Name
   [template]  Expect Exactly Three Args
-  ${SAME VARIABLE}  Same  ${VARIABLE}
+  ${SAME VARIABLE}  Variable content  ${VARIABLE}
 
 Test Template With For
-  [Documentation]  FAIL Several failures occurred:\n\n1) Templates not supported with FOR loops.\n\n2) Same != Not Same
+  [Documentation]  FAIL Several failures occurred:\n\n1) Templates not supported with FOR loops.\n\n2) Samething != Different
   Same  Same
   :FOR  ${i}  IN RANGE  10
   \  Log  ${i}
-  Same  Not Same
+  Samething  Different
 
 Test User Keywords Should Not Be Continued On Failure
     [Documentation]  FAIL Several failures occurred:\n\n1) expected failure\n\n2) second expected failure
@@ -50,7 +50,18 @@ Test User Keywords Should Not Be Continued On Failure
 
 Commented Rows With Test Template
     # My comment
+    Same  Same  # Another comment
+    # Yet another comment
     42  42
+
+Templates with Run Keyword
+    [Documentation]  FAIL  Several failures occurred:\n\n1) First failure\n\n2) No keyword with name 'Variable content' found.
+    [Template]  Run Keyword
+    Should be equal  42  42
+    Fail  First failure
+    Expect exactly three args  xxx  xxx  xxx
+    ${VARIABLE} =  Set variable  this doesn't work
+
 
 *** Keywords ***
 Expect Exactly Two Args  [arguments]  ${a1}  ${a2}
