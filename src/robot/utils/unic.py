@@ -14,16 +14,30 @@
 
 import sys
 
-try:
+
+if sys.platform.startswith('java'):
+    from java.lang import Object, Class
+
+    def unic(item, *args):
+        # http://bugs.jython.org/issue1564
+        if isinstance(item, Object) and not isinstance(item, Class):
+            item = item.toString()  # http://bugs.jython.org/issue1563
+        return _unic(item, *args)
+
+else:
+    # importing unicodedata on jython takes a very long time, and does not seem 
+    # necessary as java probably already handles normalization. Furthermore 
+    # java 1.5 does not even have unicodedata.normalize
     from unicodedata import normalize
-except ImportError:  # Jython on Java 1.5 lacks this method
-    normalize = lambda form, unistr: unistr
+    
+    def unic(item, *args):
+        return normalize('NFC', _unic(item, *args))
 
 
-def unic(item, *args):
+def _unic(item, *args):
     # Based on a recipe from http://code.activestate.com/recipes/466341
     try:
-        return normalize('NFC', unicode(item, *args))
+        return unicode(item, *args)
     except UnicodeError:
         try:
             ascii_text = str(item).encode('string_escape')
@@ -31,16 +45,6 @@ def unic(item, *args):
             return u"<unrepresentable object '%s'>" % item.__class__.__name__
         else:
             return unicode(ascii_text)
-
-
-if sys.platform.startswith('java'):
-    from java.lang import Object, Class
-    _unic = unic
-
-    def unic(item, *args):
-        if isinstance(item, Object) and not isinstance(item, Class): # http://bugs.jython.org/issue1564
-            item = item.toString()  # http://bugs.jython.org/issue1563
-        return _unic(item, *args)
 
 
 def safe_repr(item):
