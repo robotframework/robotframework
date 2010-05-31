@@ -96,11 +96,11 @@ class _Timeout(object):
         if not self.timed_out():
             return '%s %s active. %s seconds left.' % (self.type, self.string,
                                                        self.time_left())
-        if self.message:
-            return self.message
         return self._get_timeout_error()
 
     def _get_timeout_error(self):
+        if self.message:
+            return self.message
         return '%s %s exceeded.' % (self.type, self.string)
 
 
