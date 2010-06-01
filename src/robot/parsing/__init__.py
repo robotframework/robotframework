@@ -12,4 +12,5 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from model import TestCaseFile, TestDataDirectory, ResourceFile
+from model import (TestCaseFile, TestDataDirectory, ResourceFile,
+                   TestCase, UserKeyword)
