@@ -82,7 +82,7 @@ class RunnableTestSuite(BaseTestSuite):
         self.doc = data.setting_table.doc.value
         self.metadata = self._get_metadata(data.setting_table.metadata)
         self.imports = data.setting_table.imports
-        self.user_keywords = UserLibrary(data.keyword_table.keywords)
+        self.user_keywords = UserLibrary(data.keywords)
         self.setup = Setup(data.setting_table.suite_setup.name, 
                            data.setting_table.suite_setup.args)
         self.teardown = Teardown(data.setting_table.suite_teardown.name, 

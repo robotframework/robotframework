@@ -75,6 +75,10 @@ class _TestData(object):
             name = ' '.join(w[0].upper() + w[1:] for w in name.split())
         return name
 
+    @property
+    def keywords(self):
+        return self.keyword_table.keywords
+
     def report_invalid_syntax(self, table, message, level='ERROR'):
         initfile = getattr(self, 'initfile', None)
         path = os.path.join(self.source, initfile) if initfile else self.source
