@@ -147,7 +147,6 @@ class ResourceFile(_TestData):
             yield table
 
 
-
 class TestDataDirectory(_TestData):
 
     def __init__(self, parent=None, source=None, include_suites=[]):
