@@ -81,7 +81,7 @@ class RunnableTestSuite(BaseTestSuite):
         self.source = data.source
         self.doc = data.setting_table.doc.value
         self.metadata = self._get_metadata(data.setting_table.metadata)
-        self.imports = data.setting_table.imports
+        self.imports = data.imports
         self.user_keywords = UserLibrary(data.keywords)
         self.setup = Setup(data.setting_table.suite_setup.name, 
                            data.setting_table.suite_setup.args)

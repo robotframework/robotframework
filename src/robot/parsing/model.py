@@ -79,6 +79,10 @@ class _TestData(object):
     def keywords(self):
         return self.keyword_table.keywords
 
+    @property
+    def imports(self):
+        return self.setting_table.imports
+
     def report_invalid_syntax(self, table, message, level='ERROR'):
         initfile = getattr(self, 'initfile', None)
         path = os.path.join(self.source, initfile) if initfile else self.source
