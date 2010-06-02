@@ -110,6 +110,9 @@ class TestCaseFile(_TestData):
     def _valid_table(self, table):
         return table
 
+    def has_tests(self):
+        return True
+
     def __iter__(self):
         for table in [self.setting_table, self.variable_table,
                       self.testcase_table, self.keyword_table]:
@@ -159,6 +162,7 @@ class TestDataDirectory(_TestData):
         self.keyword_table = KeywordTable(self)
         if self.source:
             FromDirectoryPopulator().populate(self.source, self, include_suites)
+            self.children = [ ch for ch in self.children if ch.has_tests() ]
 
     def _valid_table(self, table):
         if table is self.testcase_table:
@@ -169,6 +173,9 @@ class TestDataDirectory(_TestData):
     def add_child(self, path, include_suites):
         self.children.append(TestData(parent=self,source=path,
                                       include_suites=include_suites))
+
+    def has_tests(self):
+        return any(ch.has_tests() for ch in self.children)
 
     def __iter__(self):
         for table in [self.setting_table, self.variable_table,
