@@ -26,8 +26,6 @@ Empty Directory
 Directory Containing No Test Cases
     Run Tests Without Processing Output  ${EMPTY}  ${NO TESTS}
     Check Stderr Matches Regexp  \\[ ERROR \\] Test suite '.*[/\\\\]notests' contains no test cases.${USAGE_TIP}
-    ${path} =  Join Path  ${DATADIR}/${NO TESTS}  empty
-    Check Syslog Contains  Running test suite '${path}' failed: Test suite contains no test cases.
 
 File Containing No Test Cases
     Run Tests Without Processing Output  ${EMPTY}  ${EMPTY TC TABLE}
