@@ -67,7 +67,7 @@ Keyword with normal arguments cannot have embedded arguments
 	Keyword with value and normal args	foo	bar
 
 Keyword with embedded args can be used as "normal" keyword
-	[Documentation]	FAIL Non-existing variable '${user}'.
+	[Documentation]	FAIL Replacing variables from keyword return value failed: Non-existing variable '${user}'.
 	Normal keyword with ${variable} in name
 	User ${user} Selects ${item} From Webshop
 
