@@ -249,16 +249,16 @@ class TestStep(unittest.TestCase):
 
     def test_assign_to_one_var(self):
         self._test(['${var}', 'KW'], assign=['${var}'])
-        self._test(['${var}=', 'KW', 'a'], args=['a'], assign=['${var}'])
-        self._test(['@{var}     =', 'KW'], assign=['@{var}'])
+        self._test(['${var}=', 'KW', 'a'], args=['a'], assign=['${var}='])
+        self._test(['@{var}     =', 'KW'], assign=['@{var}     ='])
 
     def test_assign_to_multiple_var(self):
-        self._test(['${v1}', '${v2}', '@{v3} =', 'KW', '${a1}', '${a2}'],
-                   args=['${a1}', '${a2}'], assign=['${v1}', '${v2}', '@{v3}'])
-        self._test(['${v1}=', '${v2}=', 'KW'], assign=['${v1}', '${v2}'])
+        self._test(['${v1}', '${v2}', '@{v3}=', 'KW', '${a1}', '${a2}'],
+                   args=['${a1}', '${a2}'], assign=['${v1}', '${v2}', '@{v3}='])
+        self._test(['${v1}=', '${v2} =', 'KW'], assign=['${v1}=', '${v2} ='])
 
     def test_assign_without_keyword(self):
-        self._test(['${v1}', '${v2}'], kw='', assign=['${v1}', '${v2}'])
+        self._test(['${v1}', '${v2}'], kw=None, assign=['${v1}', '${v2}'])
 
     def test_is_comment(self):
         assert_true(Step([], comment="comment").is_comment())

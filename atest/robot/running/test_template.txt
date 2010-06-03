@@ -22,6 +22,12 @@ Test Template With Variables
 Test Template With Variables And Keyword Name
     Check Test Case  ${TESTNAME}
 
+Test Template With Variable And Assign Mark (=)
+    Check Test Case  ${TESTNAME}
+
+Test Empty Values
+    Check Test Case  ${TESTNAME}
+
 Test Template With For
     Check Test Case  ${TESTNAME}
 

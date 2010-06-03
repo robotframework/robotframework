@@ -490,15 +490,14 @@ class Step(object):
         try:
             self.keyword = content[len(self.assign)]
         except IndexError:
-            self.keyword = ''
+            self.keyword = None
         self.args = content[len(self.assign)+1:]
         self.comment = comment
 
     def _get_assigned_vars(self, content):
         vars = []
         for item in content:
-            item = item.rstrip('= ')
-            if not is_var(item):
+            if not is_var(item.rstrip('= ')):
                 break
             vars.append(item)
         return vars
@@ -512,5 +511,5 @@ class Step(object):
     def apply_template(self, template):
         if self.is_comment():
             return self
-        kw = [self.keyword] if self.keyword else []
+        kw = [self.keyword] if self.keyword is not None else []
         return Step([template] + self.assign + kw + self.args)

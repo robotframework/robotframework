@@ -112,7 +112,7 @@ List Variable Can Be Only Last
 
 No Keyword
     ${test} =  Check Test Case  ${TEST NAME}
-    Should Be Equal  ${test.kws[0].name}  \${nokeyword} =${SPACE}
+    Should Be Equal  ${test.kws[0].name}  \${nokeyword} = None
 
 Failing keyword
     ${test} =  Check Test Case  ${TEST NAME}

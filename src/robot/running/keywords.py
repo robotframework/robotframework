@@ -94,7 +94,8 @@ class Keyword(BaseKeyword):
     def _get_name(self, handler_longname):
         if not self.assign:
             return handler_longname
-        return '%s = %s' % (', '.join(self.assign), handler_longname)
+        return '%s = %s' % (', '.join(a.rstrip('= ') for a in self.assign),
+                            handler_longname)
 
     def _run(self, handler, context):
         try:
@@ -144,6 +145,10 @@ class _VariableAssigner(object):
 
     def _process_assign(self, assign):
         for var in assign:
+            # FIXME: Now that we need to remove '=' on the running side,
+            # we should also verify that it is only used with the last
+            # variable like in earlier versions.
+            var = var.rstrip('= ')
             if not is_var(var):
                 raise DataError('Invalid variable to assign: %s' % var)
             if self.list_var:

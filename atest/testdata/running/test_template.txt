@@ -1,4 +1,5 @@
 *** Settings ***
+Documenation   NO RIDE because it would clean-up too much data.
 Test Template  Should Be Equal
 
 *** Variables ***
@@ -35,6 +36,18 @@ Test Template With Variables And Keyword Name
   [template]  Expect Exactly Three Args
   ${SAME VARIABLE}  Variable content  ${VARIABLE}
 
+Test Template With Variable And Assign Mark (=)
+  [Documentation]  FAIL  1= != 2=
+  [Template]  Expect Exactly Two Args
+  ${42} =     42 =
+  ${42}=      42=
+  ${1}=       ${2}=
+
+Test Empty Values
+  [Template]  Expect Exactly Two Args
+  \           \
+  ${EMPTY}    \
+    
 Test Template With For
   [Documentation]  FAIL Several failures occurred:\n\n1) Templates not supported with FOR loops.\n\n2) Samething != Different
   Same  Same
@@ -55,7 +68,7 @@ Commented Rows With Test Template
     42  42
 
 Templates with Run Keyword
-    [Documentation]  FAIL  Several failures occurred:\n\n1) First failure\n\n2) No keyword with name 'Variable content' found.
+    [Documentation]  FAIL  Several failures occurred:\n\n1) First failure\n\n2) No keyword with name 'Variable content =' found.
     [Template]  Run Keyword
     Should be equal  42  42
     Fail  First failure
