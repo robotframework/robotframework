@@ -45,6 +45,11 @@ Return List Variable Containing Multiple Items
     Equals  ${ret1}  string
     Equals  ${ret2}  ${42}
 
+Return Non-Existing Variable
+    [Documentation]  FAIL  Replacing variables from keyword return value failed: Non-existing variable '\${nonex}'.
+    Return Non-Existing Variable
+
+
 *** Keywords ***
 No Return At All
     NOOP
@@ -70,3 +75,5 @@ Return List Variable
     [Arguments]  @{args}
     [Return]  @{args}
 
+Return Non-Existing Variable
+    [Return]  ${nonex}

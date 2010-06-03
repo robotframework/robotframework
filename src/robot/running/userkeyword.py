@@ -159,7 +159,11 @@ class UserKeywordHandler(object):
     def _get_return_value(self, variables):
         if not self.return_value:
             return None
-        ret = variables.replace_list(self.return_value)
+        try:
+            ret = variables.replace_list(self.return_value)
+        except DataError, err:
+            raise DataError('Replacing variables from keyword return value '
+                            'failed: %s' % unicode(err))
         if len(ret) != 1 or is_list_var(self.return_value[0]):
             return ret
         return ret[0]
