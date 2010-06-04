@@ -264,6 +264,10 @@ class TestStep(unittest.TestCase):
         assert_true(Step([], comment="comment").is_comment())
         assert_false(Step(['KW'], comment="comment").is_comment())
 
+    def test_representation(self):
+        assert_equals(Step(['${v}, @{list}=', 'KW', 'arg']).as_list(),
+                      ['${v}, @{list}=', 'KW', 'arg'])
+
     def test_apply_template_to_step(self):
         kw = 'Should Be Equal'
         args = ['Foo', 'Bar']
@@ -305,6 +309,12 @@ class TestForLoop(unittest.TestCase):
         self._test(['${i}', 'IN RANGE', '100'], ['${i}'], ['100'], range=True)
         self._test(['what', 'ever', 'in range', 'IN', 'whatever'], 
                    ['what', 'ever'], ['IN', 'whatever'], range=True)
+
+    def test_representation(self):
+        assert_equals(ForLoop(['${var}', 'IN', 'value1', 'value2']).as_list(),
+                      [': FOR', '${var}', 'IN', 'value1', 'value2'])
+        assert_equals(ForLoop(['${v2}', '${v2}', 'IN RANGE', '100']).as_list(),
+                      [': FOR', '${v2}', '${v2}', 'IN RANGE', '100'])
 
     def _test(self, content, vars, items, range=False):
         loop = ForLoop(content)

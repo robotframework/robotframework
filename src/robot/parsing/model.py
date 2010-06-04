@@ -482,6 +482,9 @@ class ForLoop(_WithSteps):
     def apply_template(self, template):
         return Step(['Fail', 'Templates not supported with FOR loops.'])
 
+    def as_list(self):
+        return [': FOR'] + self.vars + ['IN RANGE' if self.range else 'IN'] + self.items
+
 
 class Step(object):
 
@@ -511,5 +514,8 @@ class Step(object):
     def apply_template(self, template):
         if self.is_comment():
             return self
+        return Step([template] + self.as_list())
+
+    def as_list(self):
         kw = [self.keyword] if self.keyword is not None else []
-        return Step([template] + self.assign + kw + self.args)
+        return self.assign + kw + self.args
