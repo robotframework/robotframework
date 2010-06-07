@@ -57,13 +57,15 @@ importing libraries, resources, and variables.
    | Test            | A synonym for Test Teardown.                           |
    | Postcondition   |                                                        |
    +-----------------+--------------------------------------------------------+
+   | Test Template   | Used for specifying a default `template keyword`_      |
+   |                 | for test cases.                                        |
+   +-----------------+--------------------------------------------------------+
    | Test Timeout    | Used for specifying a default `test case timeout`_.    |
    +-----------------+--------------------------------------------------------+
- 
+
 __ `Test suite documentation`_
 __ `Documenting resource files`_
 
-  
 Test Case table
 ~~~~~~~~~~~~~~~
 
@@ -89,9 +91,10 @@ default values defined in the Settings table.
    +-----------------+--------------------------------------------------------+
    | [Postcondition] | A synonym for [Teardown].                              |
    +-----------------+--------------------------------------------------------+
+   | [Template]      | Used for specifying a `template keyword`_.             |
+   +-----------------+--------------------------------------------------------+
    | [Timeout]       | Used for specifying a `test case timeout`_.            |
    +-----------------+--------------------------------------------------------+
- 
 
 Keyword table
 ~~~~~~~~~~~~~
@@ -113,4 +116,3 @@ which they are defined.
    +-----------------+--------------------------------------------------------+
    | [Timeout]       | Used for specifying a `user keyword timeout`_.         |
    +-----------------+--------------------------------------------------------+
-
