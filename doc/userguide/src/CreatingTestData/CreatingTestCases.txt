@@ -512,18 +512,17 @@ can be created using variables, assuming that those variables exist.
 Test setup and teardown
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-Robot Framework has similar test setup and teardown functions as many
+Robot Framework has similar test setup and teardown functionality as many
 other test automation frameworks. In short, a test setup is something
 that is executed before a test case and a test teardown is executed
-after a test case. What makes a test teardown special is that it is
-executed also when a test case fails, so it can be used for clean-up
-activities that must be done regardless of the test case status. Both
-a setup and a teardown can also easily be specified for all test cases
-in a test suite, so using them avoids repetition.
+after a test case. In Robot Framework, setups and teardowns are just
+normal keywords with possible arguments. They can either be keywords
+from libraries or higher-level `user keyword`_.
 
-In Robot Framework, a test setup or teardown is just a normal keyword
-with possible arguments. It can either be a keyword from a library or
-a higher-level user keyword.
+The test teardown is special in two ways. First of all, it is
+executed also when a test case fails, so it can be used for clean-up
+activities that must be done regardless of the test case status. 
+
 
 The easiest way to specify a setup or a teardown for test cases in a
 test suite is using the :opt:`Test Setup` and :opt:`Test
