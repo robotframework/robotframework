@@ -43,12 +43,12 @@ contain possible arguments to the specified keyword.
    ==================  ===========================  ==================  ===============
        Test Case                  Action                 Argument          Argument
    ==================  ===========================  ==================  ===============
-   Valid Login         Open Login Page              \                   \
-   \                   Input Name                   demo                \
-   \                   Input Password               mode                \
-   \                   Submit Credentials           \                   \
-   \                   Welcome Page Should Be Open  \                   \
-   \                   \                            \                   \
+   Valid Login         Open Login Page
+   \                   Input Name                   demo
+   \                   Input Password               mode
+   \                   Submit Credentials
+   \                   Welcome Page Should Be Open
+   \
    Setting Variables   Do Something                 first argument      second argument
    \                   ${value} =                   Get Some Value      \
    \                   Should Be Equal              ${value}            Expected value
@@ -89,11 +89,10 @@ below and explained later in this section.
    ==================  ===========================  ==================  ===============
        Test Case                  Action                 Argument          Argument
    ==================  ===========================  ==================  ===============
-   Test With Settings  [Documentation]              Another dummy test  \
+   Test With Settings  [Documentation]              Another dummy test
    \                   [Tags]                       dummy               owner-johndoe
-   \                   Log                          Hello, world!       \
+   \                   Log                          Hello, world!
    ==================  ===========================  ==================  ===============
-
 
 Test case related settings in the Setting table
 '''''''''''''''''''''''''''''''''''''''''''''''
@@ -116,7 +115,6 @@ test case specific settings listed earlier.
 `Test Timeout`:opt:
    The default value for `test case timeout`_. Timeouts_ are discussed in
    their own section.
-
 
 Using arguments
 ~~~~~~~~~~~~~~~
@@ -447,21 +445,21 @@ can be created using variables, assuming that those variables exist.
 .. table:: Tagging example
    :class: example
 
-   ============  ==========  =======  =======  
-     Setting       Value      Value    Value   
-   ============  ==========  =======  =======  
-   Force Tags    req-42      \        \
-   Default Tags  owner-john  smoke    \
-   ============  ==========  =======  =======  
+   ============  ==========  =======  =======
+     Setting       Value      Value    Value
+   ============  ==========  =======  =======
+   Force Tags    req-42
+   Default Tags  owner-john  smoke
+   ============  ==========  =======  =======
 
 .. table:: 
    :class: example
 
-   ==========  =========  =======  =======  
-    Variable     Value     Value    Value   
-   ==========  =========  =======  =======  
-   ${HOST}     10.0.1.42  \        \
-   ==========  =========  =======  =======  
+   ==========  =========  =======  =======
+    Variable     Value     Value    Value
+   ==========  =========  =======  =======
+   ${HOST}     10.0.1.42
+   ==========  =========  =======  =======
 
 .. table:: 
    :class: example
@@ -543,8 +541,8 @@ setup or teardown.
    =============  =================  =======  =======  
       Setting            Value        Value    Value  
    =============  =================  =======  =======  
-   Test Setup     Open Application   App A    \
-   Test Teardown  Close Application  \        \
+   Test Setup     Open Application   App A
+   Test Teardown  Close Application  
    =============  =================  =======  =======  
 
 .. table:: 
@@ -554,20 +552,20 @@ setup or teardown.
        Test Case           Action            Argument            Argument
    ==================  ===============  ===================  ==================
    Default values      [Documentation]  Setup and teardown   from setting table
-   \                   Do Something     \                    \
-   \                   \                \                    \
+   \                   Do Something
+   \
    Overridden setup    [Documentation]  Own setup, teardown  from setting table
    \                   [Setup]          Open Application     App B
-   \                   Do Something     \                    \
-   \                   \                \                    \
+   \                   Do Something
+   \
    No teardown         [Documentation]  Default setup, no    teardown at all
-   \                   Do Something     \                    \
-   \                   [Teardown]       \                    \
-   \                   \                \                    \
+   \                   Do Something
+   \                   [Teardown]
+   \
    Using variables     [Documentation]  Setup and teardown   given as variables
-   \                   [Setup]          ${SETUP}             \
-   \                   Do Something     \                    \
-   \                   [Teardown]       ${TEARDOWN}          \
+   \                   [Setup]          ${SETUP}
+   \                   Do Something
+   \                   [Teardown]       ${TEARDOWN}
    ==================  ===============  ===================  ==================
   
 Often when creating use-case-like test cases, the terms *precondition*
