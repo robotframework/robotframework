@@ -589,7 +589,7 @@ variable. This facilitates having different setups or teardowns in
 different environments by giving the keyword name as a variable from
 the command line.
 
-.. Note:: `Test suites can have a setup and teardown of their
+.. note:: `Test suites can have a setup and teardown of their
            own`__. A suite setup is executed before any test cases or sub test
            suites in that test suite, and similarly a suite teardown is
            executed after them.
@@ -600,11 +600,10 @@ Test templates
 ~~~~~~~~~~~~~~
 
 Test templates convert the normal `keyword-driven`_ test cases into
-`data-driven`_ tests. When the body of the normal test case is
-constructed from keywords and their possible arguments, test cases
-with template only have data that is used as arguments for the
-template keyword. This is illustrated by the following example test
-cases that are functionally fully identical.
+`data-driven`_ tests. Whereas the body of the normal test case is constructed
+from keywords and their possible arguments, test cases with template define
+only the arguments for the template keyword. This is illustrated by the
+following example test cases that are functionally fully identical.
 
 .. table:: Using test template
    :class: example
