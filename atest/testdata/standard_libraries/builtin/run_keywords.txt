@@ -1,0 +1,56 @@
+***Test Cases***
+Passing keywords
+    Run keywords  No Operation  Passing  Log Variables
+
+Failing keyword
+    [Documentation]  FAIL  Expected error message
+    Run keywords  Passing  Failing  Not Executed
+
+Keywords as variables
+    [Documentation]  FAIL  Expected error message
+    Run keywords  ${NOOP}  ${PASSING}  @{KEYWORDS}  ${FAILING}
+
+Non-existing variable as keyword name
+    [Documentation]  FAIL  Non-existing variable '${NON-EXISTING}'.
+    Run keywords  Not Executed  ${NON-EXISTING}  Not Executed
+
+Non-existing keyword
+    [Documentation]  FAIL  No keyword with name 'Non-Existing' found.
+    Run keywords  Passing  Non-Existing  Non-Existing But Not Executed
+
+Wrong number of arguments to keyword
+    [Documentation]  FAIL  Keyword 'BuiltIn.Log' expected 1 to 2 arguments, got 0.
+    Run keywords  Passing  Log  This isn't argument to Log keyword
+
+In setup
+    [Documentation]  FAIL  Setup failed:\nExpected error message
+    [Setup]  Run keywords  ${NOOP}  Passing  ${FAILING}  Not executed
+    No Operation
+
+In teardown
+    [Documentation]  FAIL  Teardown failed:\n
+    ...  Several failures occurred:\n\n
+    ...  1) Expected error message\n\n
+    ...  2) AssertionError\n\n
+    ...  3) No keyword with name 'Executed but doesn't exist' found.
+    No Operation
+    [Teardown]  Run keywords  Passing  ${NOOP}  Failing  ${NOOP}  Fail
+    ...  Executed but doesn't exist
+    ...  Not executed after syntax error
+
+
+***Variables***
+${NOOP}      No Operation
+${PASSING}   Passing
+${FAILING}   Failing
+@{KEYWORDS}  ${NOOP}  ${PASSING}  Log Variables
+
+
+***Keywords***
+Passing
+    Log  Hello, world!
+
+Failing
+    Fail  Expected error message
+
+

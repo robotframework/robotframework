@@ -1,0 +1,42 @@
+*** Settings ***
+Suite Setup     Run Tests  ${EMPTY}  standard_libraries/builtin/run_keywords.txt
+Force Tags      regression  pybot  jybot
+Resource        atest_resource.txt
+
+*** Test Cases ***
+
+Passing keywords
+    ${tc} =  Should Have Correct Keywords  BuiltIn.No Operation  Passing  BuiltIn.Log Variables
+    Check Log Message  ${tc.kws[0].kws[1].kws[0].msgs[0]}  Hello, world!
+
+Failing keyword
+    Should Have Correct Keywords  Passing  Failing
+
+Keywords as variables
+    Should Have Correct Keywords  BuiltIn.No Operation  Passing
+    ...  BuiltIn.No Operation  Passing  BuiltIn.Log Variables  Failing
+
+Non-existing variable as keyword name
+    ${tc} =  Check Test Case  ${TESTNAME}
+    Should Be Empty  ${tc.kws[0].kws}
+
+Non-existing keyword
+    Should Have Correct Keywords  Passing  Non-Existing
+
+Wrong number of arguments to keyword
+    Should Have Correct Keywords  Passing  BuiltIn.Log
+
+In setup
+    Check Test Case  ${TESTNAME}
+
+In teardown
+    Check Test Case  ${TESTNAME}
+
+
+***Keywords***
+Should Have Correct Keywords  [Arguments]  @{expected}
+    ${tc} =  Check Test Case  ${TESTNAME}
+    ${exp} =  Catenate  SEPARATOR=', '  @{expected}
+    Should Be Equal As Strings  ${tc.kws[0].kws}  ['${exp}']
+    [Return]  ${tc}
+    

@@ -17,7 +17,7 @@ import re
 import time
 
 from robot.output import LOGGER, OUTPUT, Message
-from robot.errors import DataError, ExecutionFailed
+from robot.errors import DataError, ExecutionFailed, ExecutionFailures
 from robot import utils
 from robot.utils import asserts
 from robot.variables import is_var, is_list_var
@@ -755,6 +755,30 @@ class _RunKeyword:
         kw = Keyword(name, list(args))
         from robot.running.model import ExecutionContext
         return kw.run(ExecutionContext(NAMESPACES.current, OUTPUT))
+
+    def run_keywords(self, *names):
+        """Executes all the given keywords in a sequence without arguments.
+
+        This keyword is mainly useful in setups and teardowns when they need to
+        take care of multiple actions and creating a new higher level user
+        keyword is overkill. User keywords must nevertheless be used if the
+        executed keywords need to take arguments.
+
+        Example:
+        |  *Setting*  |   *Value*    |      *Value*        |    *Value*    |
+        | Suite Setup | Run Keywords | Initialize database | Start servers |
+        """
+        errors = []
+        for kw in self.get_variables().replace_list(names):
+            try:
+                self.run_keyword(kw)
+            except ExecutionFailed, err:
+                errors.append(err)
+                if not err.cont:
+                    break
+        if errors:
+            raise ExecutionFailures(errors)
+
 
     def run_keyword_if(self, condition, name, *args):
         """Runs the given keyword with the given arguments, if `condition` is true.
