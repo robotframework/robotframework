@@ -229,10 +229,10 @@ class _SettingTable(_Table, _WithSettings):
         self.suite_teardown = Fixture(self)
         self.test_setup = Fixture(self)
         self.test_teardown = Fixture(self)
-        self.test_timeout = Timeout(self)
-        self.test_template = Template(self)
         self.force_tags = Tags(self)
         self.default_tags = Tags(self)
+        self.test_template = Template(self)
+        self.test_timeout = Timeout(self)
         self.metadata = []
         self.imports = []
         self._setters = self._get_setters()
@@ -276,9 +276,9 @@ class TestCaseFileSettingTable(_SettingTable):
                                      'Test Precondition': self.test_setup.set,
                                      'Test Teardown': self.test_teardown.set,
                                      'Test Postcondition': self.test_teardown.set,
-                                     'Test Template': self.test_template.set,
                                      'Force Tags': self.force_tags.set,
                                      'Default Tags': self.default_tags.set,
+                                     'Test Template': self.test_template.set,
                                      'Test Timeout': self.test_timeout.set,
                                      'Library': self._get_adder(self.add_library),
                                      'Resource': self._get_adder(self.add_resource),
@@ -287,8 +287,8 @@ class TestCaseFileSettingTable(_SettingTable):
 
     def __iter__(self):
         for setting in [self.doc, self.suite_setup, self.suite_teardown,
-                        self.test_setup, self.test_teardown, self.test_timeout,
-                        self.force_tags, self.default_tags] \
+                        self.test_setup, self.test_teardown, self.force_tags,
+                        self.default_tags, self.test_template, self.test_timeout] \
                         + self.metadata + self.imports:
             yield setting
 
