@@ -109,6 +109,8 @@ Appendices
 .. _user keyword: `Creating user keywords`_
 .. _user keywords: `user keyword`_
 .. _higher-level keywords: `user keyword`_
+.. _keyword-driven: `Keyword-driven style`_
+.. _data-driven: `Data-driven style`_
 .. _data-driven approach: `Data-driven style`_
 .. _test case file: `Test case files`_
 .. _test suite directory: `Test suite directories`_
@@ -125,6 +127,8 @@ Appendices
 .. _suite teardown: `Suite setup and teardown`_
 .. _tag: `Tagging test cases`_
 .. _tags: tag_
+.. _test template:  `Test templates`_
+.. _template keyword: `Test templates`_
 .. _test case timeouts: `Test case timeout`_
 .. _test timeout: `Test case timeout`_
 .. _user keyword timeouts: `User keyword timeout`_
