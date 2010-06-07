@@ -259,13 +259,6 @@ class _SettingTable(_Table, _WithSettings):
         self.imports.append(Variables(self, name, args, comment=comment))
         return self.imports[-1]
 
-    def __iter__(self):
-        for setting in [self.doc, self.suite_setup, self.suite_teardown,
-                        self.test_setup, self.test_teardown, self.test_timeout,
-                        self.force_tags, self.default_tags] \
-                        + self.metadata + self.imports:
-            yield setting
-
     def __nonzero__(self):
         return any(setting.is_set() for setting in self)
 
@@ -292,8 +285,16 @@ class TestCaseFileSettingTable(_SettingTable):
                                      'Variables': self._get_adder(self.add_variables),
                                      'Metadata': self._get_adder(self.add_metadata)})
 
+    def __iter__(self):
+        for setting in [self.doc, self.suite_setup, self.suite_teardown,
+                        self.test_setup, self.test_teardown, self.test_timeout,
+                        self.force_tags, self.default_tags] \
+                        + self.metadata + self.imports:
+            yield setting
+
 
 class ResourceFileSettingTable(_SettingTable):
+
     def _get_setters(self):
         return utils.NormalizedDict({'Documentation': self.doc.set,
                                      'Document': self.doc.set,
@@ -301,8 +302,13 @@ class ResourceFileSettingTable(_SettingTable):
                                      'Resource': self._get_adder(self.add_resource),
                                      'Variables': self._get_adder(self.add_variables)})
 
+    def __iter__(self):
+        for setting in [self.doc] + self.imports:
+            yield setting
+
 
 class InitFileSettingTable(_SettingTable):
+
     def _get_setters(self):
         return utils.NormalizedDict({'Documentation': self.doc.set,
                                      'Document': self.doc.set,
@@ -319,6 +325,12 @@ class InitFileSettingTable(_SettingTable):
                                      'Resource': self._get_adder(self.add_resource),
                                      'Variables': self._get_adder(self.add_variables),
                                      'Metadata': self._get_adder(self.add_metadata)})
+
+    def __iter__(self):
+        for setting in [self.doc, self.suite_setup, self.suite_teardown,
+                        self.test_setup, self.test_teardown, self.force_tags] \
+                        + self.metadata + self.imports:
+            yield setting
 
 
 class VariableTable(_Table):
