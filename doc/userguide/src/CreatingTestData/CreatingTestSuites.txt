@@ -9,7 +9,6 @@ hierarchical test suite structure.
    :depth: 2
    :local: 
 
-
 Test case files
 ~~~~~~~~~~~~~~~
 
@@ -35,7 +34,6 @@ test suite:
 `Suite Setup`:opt:, `Suite Teardown`:opt:
    Specify `suite setup and teardown`_. Have also synonyms
    :opt:`Suite Precondition` and :opt:`Suite Postcondition`, respectively.
-
 
 Test suite directories
 ~~~~~~~~~~~~~~~~~~~~~~
@@ -65,7 +63,6 @@ and the processing continues.
 
 __ `Supported file formats`_
 
-
 Initialization files
 ''''''''''''''''''''
 
@@ -92,17 +89,16 @@ and even they are default values for the `settings in the Test Case table`_.
 
 __ `Test case related settings in the Setting table`_
 
-
 .. table:: An example test suite initialization file
    :class: example
 
    =============  =============  =============
       Setting         Value          Value
    =============  =============  =============
-   Documentation  Example suite  \
+   Documentation  Example suite
    Suite Setup    Do Something   ${MESSAGE}
-   Force Tags     example        \
-   Library        SomeLibrary    \
+   Force Tags     example
+   Library        SomeLibrary
    =============  =============  =============
 
 .. table::
@@ -111,7 +107,7 @@ __ `Test case related settings in the Setting table`_
    =============  =============  =============
       Variable        Value          Value
    =============  =============  =============
-   ${MESSAGE}     Hello, world!  \
+   ${MESSAGE}     Hello, world!
    =============  =============  =============
 
 .. table::
@@ -120,15 +116,13 @@ __ `Test case related settings in the Setting table`_
    =============  =============  ================  ================
       Keyword         Action         Argument          Argument
    =============  =============  ================  ================
-   Do Something   [Arguments]    ${arg}            \
-   \              Log            ${arg}            \
+   Do Something   [Arguments]    ${arg}
+   \              Log            ${arg}
    =============  =============  ================  ================
   
-
 Note that variables and keywords created in initialization files *are
 not* available elsewhere. If there is a need to share them, for
 example, with lower-level test suites, `resource files`_ must be used.
-
 
 Test suite name and documentation
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -172,7 +166,6 @@ overridden in test execution. This can be done with the command line
 options :opt:`--name` and :opt:`--doc`, respectively, as
 explained in section `Setting metadata`_.
 
-
 Free test suite metadata
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -187,18 +180,16 @@ simple `HTML formatting`_ works and even variables_ can be used.
 
 __ `Dividing test data to several rows`_
 
-
 .. table:: Metadata examples 
    :class: example
 
    =========  ===========  ====================  =========================  ==============================
-    Setting    Value            Value                  Value                       Value
+    Setting      Value            Value                   Value                          Value
    =========  ===========  ====================  =========================  ==============================
-    Metadata  Version      2.0                   \                          \
-    Metadata  More Info    For more information  about \*Robot Framework\*  see \http://robotframework.org
-    Metadata  Executed At  ${HOST}               \                          \
+   Metadata   Version      2.0
+   Metadata   More Info    For more information  about \*Robot Framework\*  see \http://robotframework.org
+   Metadata   Executed At  ${HOST}
    =========  ===========  ====================  =========================  ==============================
-
 
 For top-level test suites, it is possible to set metadata also with the 
 :opt:`--metadata` command line option. This is discussed in more
@@ -208,7 +199,6 @@ Prior to Robot Framework 2.5 the free metadata was specified with syntax like
 :opt:`Meta: <name>`, where :opt:`<name>` was the metadata name and the value
 was defined in subsequent column. Robot Framework 2.5 still supports this old
 format but it will be deprecated in the future.
-
 
 Suite setup and teardown
 ~~~~~~~~~~~~~~~~~~~~~~~~
