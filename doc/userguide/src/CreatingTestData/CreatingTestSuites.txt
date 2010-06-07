@@ -230,7 +230,7 @@ cases have been executed. It is executed even if the setup of the same
 suite fails. If the suite teardown fails, all test cases in the
 suite are marked failed, regardless of their original execution status.
 Starting from Robot Framework 2.5, all the keywords in suite teardowns
-are executed even if one of them failes.
+are executed even if one of them fails.
 
 The name of the keyword to be executed as a setup or a teardown can be
 a variable. This facilitates having different setups or teardowns
