@@ -68,8 +68,8 @@ A test suite created from a directory can have similar settings as a suite
 created from a test case file. Because a directory alone cannot have that
 kind of information, it must be placed into a special test suite initialization
 file. Initialization files have the same structure and syntax as
-test case files, except that they cannot have test case tables and all
-settings are not supported.
+test case files, except that they cannot have test case tables and not all
+settings are supported.
 
 An initialization file name must always be of the format :path:`__init__.ext`,
 where the extension must match one of the `supported file formats`_ (for example,
@@ -83,7 +83,7 @@ imported in initialization files *are not* available in the lower level
 test suites, but `resource files`_ can be used if there is a need to
 share them.
 
-How to use different settings in the initialization:
+How to use different settings in the initialization files:
 
 `Documentation`:opt:, `Metadata`:opt:, `Suite Setup`:opt:, `Suite Teardown`:opt:
    These test suite specific settings work the same way as in test case files.
