@@ -9,140 +9,236 @@ and how to stop the whole test execution gracefully.
    :depth: 2
    :local:
 
-Test execution flow
-~~~~~~~~~~~~~~~~~~~
+Execution flow
+~~~~~~~~~~~~~~
 
-Test execution starts with highest level test suite's setup if one exists. 
-After setup is executed, sub suites (in case of directory suite) or test cases 
-(in case of file suite) are executed in order specified in `test execution order`_ 
-chapter. In case of directory suite, it's sub suites are executed similar manner. 
+Executed suites and tests
+'''''''''''''''''''''''''
 
-In case suite setup fails, sub suites and/or tests are executed, but failed 
-immediately with information about failure in suite setup.
+Test cases are always executed within a test suite. A test suite
+created from a `test case file`_ has tests directly, whereas suites
+created from directories__ have child test suites which either have
+tests or their own child suites. By default all the tests in an
+executed suite are run, but it is possible to `select tests`__ using
+options :opt:`--test`, :opt:`--suite`, :opt:`--include` and
+:opt:`--exclude`. Suites containing no tests are ignored.
 
-Test case execution is started by executing setup and continued by executing
-keywords one at a time. In case failure occurs during setup or keyword execution, 
-test execution is stopped unless failure type is `continue on failure`__. Teardown
-is executed always as last step even test execution fails.
+The execution stars from the top-level test suite. If the suite has
+tests they are executed one-by-one, and if it has suites they are
+executed recursively in depth-first order. When an individual test
+case is executed, the keywords it contains are run in a
+sequence. Normally the execution ends if any of the keywords fails,
+but it is also possible to `continue after failures`__. The exact `execution
+order`_ and how possible `setups and teardowns`_ affect the execution
+are discussed in the following sections.
 
-__ `continue on failure`_
-
-Starting from Robot Framework 2.5 all keywords in suite and test teardowns are
-executed, on `continue on failure mode`__, even if failures occur. If teardown
-execution is `stopped by user or with special exception`__, teardown execution is
-stopped.
-
-__ `continue on failure`_
-__ `stopping test execution gracefully`_
-
-Following structure demonstrates the test execution order:
-
-- suite setup
-
-  - suite setup
-
-    - suite setup
-
-      - test setup
-
-        - test keywords
-
-      - test teardown
-
-      - test setup
-
-        - test keywords
-
-      - test teardown
-
-    - suite teardown
-
-    - suite setup
-
-      - test setup
-
-        - test keywords
-
-      - test teardown
-
-      - test setup
-
-        - test keywords
-
-      - test teardown
-
-    - suite teardown
-
-  - suite teardown
-
-- suite teardown
+__ `Test suite directories`_
+__ `Selecting test cases`_
+__ `Continue on failure`_
 
 
-Test execution order
-~~~~~~~~~~~~~~~~~~~~
+Setups and teardowns
+''''''''''''''''''''
 
-Test cases in a test suite are executed in the order they are specified
-in the test case file where they are created. Test suites inside a higher level
-test suite are executed in case-insensitive alphabetical order based on the file
-or directory name. Finally, if multiple files and/or directories are given from
-the command line, they are executed in the order they are specified.
+Setups and teardowns on `test case`__ and `test suite`__ level have
+some effect on the test execution flow.
+
+__ `Test setup and teardown`_
+__ `Suite setup and teardown`_
+
+Suite setup
+```````````
+
+If a test suite has a setup, it is executed before its tests and child
+suites. If the suite setup succeeds, test execution continues
+normally. If it fails, all the test cases the suite and its child
+suites have marked failed with a message :msg:`Setup of the parent
+suite failed.`. The tests and possible suite setups and teardowns in
+the child test suites are not executed.
+
+Suite setups are often used for setting up the test environment.
+Because tests are not run if the suite setup fails, it is easy to use
+suite setups for verifying that the environment is in state that the
+tests can be executed.
+
+Suite teardown
+``````````````
+
+If a test suite has a teardown, it is executed after all its test
+cases and child suites. Suite teardowns are executed regardless the
+test status and even if the matching suite setup fails. If the suite
+teardown fails, all tests in the suite are marked failed afterwards in
+reports and logs.
+
+Suite teardowns are mostly used for cleaning up the test environment
+after the execution. To ensure that all these tasks are done, `all the
+keywords used in the teardown are executed`__ even if some of them
+fail.
+
+__ `Continue on failure`_
+
+Test setup
+``````````
+
+Possible test setup is executed before the keywords a test case
+has. If the setup fails, the keywords are not executed. The main use
+for test setups is setting up the environment for that particular test
+case.
+
+Test teardown
+`````````````
+
+Possible test teardown is executed after the test case has been
+executed otherwise. It is executed regardless the test status and also
+if the setup of the test has failed.
+
+Similarly as suite teardown, test teardowns are used mainly for
+cleanup activities. Also they are executed fully even if some of their
+keywords fail.
+
+Execution order
+'''''''''''''''
+
+Test cases in a test suite are executed in the same order as they are
+in a test case file. Test suites inside a higher level test suite are
+executed in case-insensitive alphabetical order based on the file or
+directory name. If multiple files and/or directories are given from
+the command line, they are executed in the order they are
+given.
 
 If there is a need to use certain test suite execution order inside a
 directory, it is possible to add prefixes like :path:`01` and
-:path:`02` into file and directory names. Starting from Robot
-Framework 2.1, such prefixes are automatically removed if they are
-separated from the base name with two underscores like in the examples
-below. These prefixes will not be visible anywhere in reports or
-logs::
+:path:`02` into file and directory names. Such prefixes are not
+included in the generated test suite name if they are separated from
+the base name of the suite with two underscores::
 
    01__my_suite.html -> My Suite
    02__another_suite.html -> Another Suite
 
-If the alphabetical ordering of test suites inside suites is problematic, 
-a good workaround is giving them separately in the required order. This easily
-leads to overly long start-up commands, but `argument files`_  allow listing 
-files nicely one file per line. It is also possible to `randomize the execution 
-order of test cases or test suites`__  using :opt:`--runmode` option.
+If the alphabetical ordering of test suites inside suites is
+problematic, a good workaround is giving them separately in the
+required order. This easily leads to overly long start-up commands,
+but `argument files`_ allow listing files nicely one file per line.
+
+It is also possible to `randomize the execution order`__ using
+the :opt:`--runmode` option.
 
 __ `Setting execution mode`_
-
 
 Continue on failure
 ~~~~~~~~~~~~~~~~~~~
 
-Starting from Robot Framework 2.5 test execution could have been continued even
-case of failure. This can be achieved by using 
-`Run Keyword And Continue On Failure` keyword from BuiltIn library or
-implementing own keyword failing with special exception. How to create such
-error is explained in `the test library API section`__. When test execution
-ends, test case is failed with all the continue on failures that have occurred
-during test execution.
+Normally test cases are stopped immediately when any of their keywords
+fail. This behavior shortens test execution time and prevents
+subsequent keywords hanging or otherwise causing problems if the
+system under test is in unstable state. The biggest drawbacks are that often
+subsequent keywords would give more information about the state of the
+system, and in teardowns all the cleanup keywords may not be
+executed. 
 
-__ `continuing test execution despite of failures`_
+Before Robot Framework 2.5 the only way to handle failures so that
+test execution is not terminated immediately was using `BuiltIn
+keywords`_ :name:`Run Keyword And Ignore Error` and :name:`Run Keyword
+And Expect Error`. Using these keywords for this purpose often added
+extra complexity to test cases, and in Robot Framework 2.5 the
+following features were added to make continuing after failures
+easier.
+
+Special failures from keywords
+''''''''''''''''''''''''''''''
+
+`Library keywords`_ report failures using exceptions, and it is
+possible to use special exceptions to tell the core framework that
+execution can continue regardless the failure. How these exceptions
+can be created is explained in the `test library API chapter`__.
+
+When a test ends and there has been one or more continuable failure,
+the test will be marked failed. If there are more than one failure,
+all of them will be enumerated in the final error message::
+
+  Several failures occurred:
+
+  1) First error message.
+
+  2) Second error message ...
+
+Test execution ends also if a normal failure occurs after continuable
+failures. Also in that case all the failures will be listed in the
+final error message.
+
+The return value from failed keywords, and possibly assigned to a
+variable, is always the Python :code:`None`.
+
+__ `Continuing test execution despite of failures`_
+
+:name:`Run Keyword And Continue On Failure` keyword
+'''''''''''''''''''''''''''''''''''''''''''''''''''
+
+`BuiltIn keyword`_ :name:`Run Keyword And Continue On Failure` allows
+converting any failure into a continuable failure. These failures are
+handled by the framework exactly the same way as continuable failures
+originating from library keywords.
+
+Execution continues on teardowns automatically
+''''''''''''''''''''''''''''''''''''''''''''''
+
+To make it sure that all the cleanup activities are taken care of, the
+continue on failure mode is automatically on in `test and suite
+teardowns`__. In practice this means that in teardowns all the
+keywords in all levels are always executed.
+
+__ `Setups and teardowns`_
+
+All top-level keywords are executed when tests have templates
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+
+When using `test templates`_, all the data rows are always executed to
+make it sure that all the different combinations are tested. In this
+usage continuing is limited to the top-level keywords, and inside them
+the execution ends normally if there are non-continuable failures.
 
 Stopping test execution gracefully
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Starting from Robot Framework 2.5 it have been possible to stop test execution
-gracefully. When test execution is stopped, the remaining tests are marked
-failed and their message will be :msg:`Test execution was stopped due to a fatal error`.
+Before Robot Framework 2.5 the only way to stop the test execution
+gracefully so that reports and logs are generated was using the
+:opt:`--runmode ExitOnFailure` `command line option`__. This is a
+pretty limited mechanism, and Robot Framework 2.5 added the following
+new capabilities.
 
-Test execution can be stopped by pressing :code:`Ctrl-C` in the console in which
-the test execution was started. In case :prog:`pybot` is used, execution is
-stopped immediately and all the remaining tests will fail. In case :prog:`jybot`
-is used, the test execution ends immediately when currently running keyword returns.
-This limitation is caused by a bug in Jython's signal handling. Second :code:`Ctrl-C`
-will forcefully stop the test execution.
+Regardless the way how tests are stopped, the tests that have not yet
+been executed will be marked failed with a message :msg:`Test
+execution was stopped due to a fatal error`.
 
-When test are executed in background process, :code:`INT` or :code:`TERM`
-signals can be used for stopping the test execution using tools like
-:prog:`kill`. Second signal can be used to forcefully stop the test execution.
-Same limitation with :prog:`jybot` applies as with stopping with :code:`Ctrl-C`.
-As signaling is not supported on Windows, there is no easy way to use this
-feature on it.
+__ `Exit on failure`_
 
-Another possibility to stop test execution is having a keyword fail with a
-special error. How to create such error is explained in
-`the test library API section`__. 
+Pressing :code:`Ctrl-C`
+'''''''''''''''''''''''
+
+The execution is stopped when :code:`Ctrl-C` is pressed in the console
+where the tests are running. When running the tests on Python, the
+execution is stopped immediately, but with Jython it ends only after
+the currently executing keyword returns.
+
+If :code:`Ctrl-C` is pressed again, the execution ends immediately and
+reports and logs are not created.
+
+Using signals
+'''''''''''''
+
+On Unix-like machine it is possible to terminate test execution also
+using signals :code:`INT` and :code:`TERM`. These signals can be send
+from the command line using :prog:`kill` tool, and sending signals can
+also be easily automated.
+
+Signals have the same limitation on Jython as pressing :code:`Ctrl-C`.
+Similarly also the second signal stops the execution forcefully.
+
+Using keywords
+''''''''''''''
+
+The execution can be stopped also by the executed keywords. There is a
+separate :name:`Fatal Error` `BuiltIn keyword`_ for this purpose, and
+custom keywords can use `fatal exceptions`__ when they fail.
 
 __ `Stopping test execution`_
