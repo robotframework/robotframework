@@ -19,7 +19,19 @@ class _MockLogger(object):
     def value(self):
         return self._output.getvalue()
 
+
 class _PopulatorTest(unittest.TestCase):
+
+    def setUp(self):
+        self._datafile = TestCaseFile()
+        self._datafile.directory = '/path/to'
+        self._populator = FromFilePopulator(self._datafile)
+        self._logger = _MockLogger()
+        self._console_logger = LOGGER._loggers.pop(0)
+        LOGGER.register_logger(self._logger)
+
+    def _assert_no_parsing_errors(self):
+        assert_true(self._logger.value() == '', self._logger.value())
 
     def _start_table(self, name):
         if isinstance(name, basestring):
@@ -82,14 +94,6 @@ class _PopulatorTest(unittest.TestCase):
 
 
 class TestCaseFilePopulatingTest(_PopulatorTest):
-
-    def setUp(self):
-        self._datafile = TestCaseFile()
-        self._datafile.directory = '/path/to'
-        self._populator = FromFilePopulator(self._datafile)
-        self._logger = _MockLogger()
-        self._console_logger = LOGGER._loggers.pop(0)
-        LOGGER.register_logger(self._logger)
 
     def tearDown(self):
         LOGGER.unregister_logger(self._logger)
@@ -396,13 +400,11 @@ class TestCaseFilePopulatingTest(_PopulatorTest):
 
 class TestPopulatingComments(_PopulatorTest):
 
-    def setUp(self):
-        self._datafile = TestCaseFile()
-        self._populator = FromFilePopulator(self._datafile)
-
     def test_setting_table(self):
         self._create_table('settings', [['Force Tags', 'Foo', 'Bar', '#comment'],
                                         ['Library', 'Foo', '#Lib comment'],
+                                        [' #Resource', 'resource.txt'],
+                                        ['Resource', 'resource2.txt'],
                                         ['#comment', 'between rows', 'in many cells'],
                                         ['Default Tags', 'Quux', '#also end of line'],
                                         ['Variables', 'varz.py'],
@@ -411,10 +413,12 @@ class TestPopulatingComments(_PopulatorTest):
                                         ['Meta: metaname', 'metavalue'],
                                         ['#last line is commented'],
                                         ])
+        self._assert_no_parsing_errors()
         self._assert_setting('force_tags', ['Foo', 'Bar'], 'comment')
         self._assert_import(0, 'Foo', [], 'Lib comment')
+        self._assert_import(1, 'resource2.txt', [], 'Resource | resource.txt')
         self._assert_setting('default_tags', ['Quux'], 'comment | between rows | in many cells\nalso end of line')
-        self._assert_import(1, 'varz.py', ['arg'], ' between values')
+        self._assert_import(2, 'varz.py', ['arg'], ' between values')
         self._assert_meta(0, 'metaname', 'metavalue', 'last line is commented')
 
     def test_variable_table(self):

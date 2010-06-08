@@ -109,7 +109,7 @@ class DataRow(object):
         self.cells, self.comments = self._parse(cells)
 
     @property
-    def head(self): 
+    def head(self):
         return self.cells[0] if self.cells else None
 
     @property
@@ -161,6 +161,7 @@ class DataRow(object):
         return self.head[1:-1].strip()
 
     def _parse(self, row):
+        row = [self._collapse_whitespace(cell) for cell in row]
         return self._purge_empty_cells(self._extract_data(row)), \
             self._extract_comments(row)
 
@@ -189,7 +190,6 @@ class DataRow(object):
         return data
 
     def _purge_empty_cells(self, data):
-        data = [ self._collapse_whitespace(cell) for cell in data]
         while data and not data[-1]:
             data.pop()
         # Cells with only a single backslash are considered empty
