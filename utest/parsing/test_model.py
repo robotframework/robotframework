@@ -54,11 +54,11 @@ class TestSettingTable(unittest.TestCase):
         assert_equal(self.table.doc.value, '')
 
     def test_set_doc_with_string(self):
-        self.table.doc.set('hello')
+        self.table.doc.populate('hello')
         assert_equal(self.table.doc.value, 'hello')
 
     def test_set_doc_with_list(self):
-        self.table.doc.set(['hello', 'world'])
+        self.table.doc.populate(['hello', 'world'])
         assert_equal(self.table.doc.value, 'hello world')
 
     def test_fixture_default(self):
@@ -67,13 +67,13 @@ class TestSettingTable(unittest.TestCase):
         assert_false(hasattr(self.table.suite_setup, 'value'))
 
     def test_set_fixture(self):
-        self.table.suite_teardown.set(['Name', 'a1', 'a2'])
+        self.table.suite_teardown.populate(['Name', 'a1', 'a2'])
         assert_equal(self.table.suite_teardown.name, 'Name')
         assert_equal(self.table.suite_teardown.args, ['a1', 'a2'])
         assert_false(hasattr(self.table.suite_teardown, 'value'))
 
     def test_set_fixture_with_empty_value(self):
-        self.table.test_teardown.set([])
+        self.table.test_teardown.populate([])
         assert_equal(self.table.test_teardown.name, '')
         assert_equal(self.table.test_teardown.args, [])
 
@@ -83,13 +83,13 @@ class TestSettingTable(unittest.TestCase):
         assert_false(hasattr(self.table.suite_setup, 'value'))
 
     def test_set_timeout(self):
-        self.table.test_timeout.set(['1s', 'msg', 'in multiple', 'cell'])
+        self.table.test_timeout.populate(['1s', 'msg', 'in multiple', 'cell'])
         assert_equal(self.table.test_timeout.value, '1s')
         assert_equal(self.table.test_timeout.message, 'msg in multiple cell')
         assert_false(hasattr(self.table.suite_teardown, 'value'))
 
     def test_set_timeout_with_empty_value(self):
-        self.table.test_timeout.set([])
+        self.table.test_timeout.populate([])
         assert_equal(self.table.test_timeout.value, '')
         assert_equal(self.table.test_timeout.message, '')
 
@@ -185,8 +185,8 @@ class TestTestCaseTable(unittest.TestCase):
         assert_true(isinstance(self.test.timeout, Timeout))
 
     def test_set_settings(self):
-        self.test.doc.set('My coooool doc')
-        self.test.tags.set(['My', 'coooool', 'tags'])
+        self.test.doc.populate('My coooool doc')
+        self.test.tags.populate(['My', 'coooool', 'tags'])
         assert_equal(self.test.doc.value, 'My coooool doc')
         assert_equal(self.test.tags.value, ['My', 'coooool', 'tags'])
 
@@ -223,8 +223,8 @@ class TestKeywordTable(unittest.TestCase):
         assert_true(isinstance(self.kw.timeout, Timeout))
 
     def test_set_settings(self):
-        self.kw.doc.set('My coooool doc')
-        self.kw.args.set(['${args}', 'are not', 'validated'])
+        self.kw.doc.populate('My coooool doc')
+        self.kw.args.populate(['${args}', 'are not', 'validated'])
         assert_equal(self.kw.doc.value, 'My coooool doc')
         assert_equal(self.kw.args.value, ['${args}', 'are not', 'validated'])
 

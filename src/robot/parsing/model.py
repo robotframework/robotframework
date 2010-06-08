@@ -266,20 +266,20 @@ class _SettingTable(_Table, _WithSettings):
 class TestCaseFileSettingTable(_SettingTable):
 
     def _get_setters(self):
-        return utils.NormalizedDict({'Documentation': self.doc.set,
-                                     'Document': self.doc.set,
-                                     'Suite Setup': self.suite_setup.set,
-                                     'Suite Precondition': self.suite_setup.set,
-                                     'Suite Teardown': self.suite_teardown.set,
-                                     'Suite Postcondition': self.suite_teardown.set,
-                                     'Test Setup': self.test_setup.set,
-                                     'Test Precondition': self.test_setup.set,
-                                     'Test Teardown': self.test_teardown.set,
-                                     'Test Postcondition': self.test_teardown.set,
-                                     'Force Tags': self.force_tags.set,
-                                     'Default Tags': self.default_tags.set,
-                                     'Test Template': self.test_template.set,
-                                     'Test Timeout': self.test_timeout.set,
+        return utils.NormalizedDict({'Documentation': self.doc.populate,
+                                     'Document': self.doc.populate,
+                                     'Suite Setup': self.suite_setup.populate,
+                                     'Suite Precondition': self.suite_setup.populate,
+                                     'Suite Teardown': self.suite_teardown.populate,
+                                     'Suite Postcondition': self.suite_teardown.populate,
+                                     'Test Setup': self.test_setup.populate,
+                                     'Test Precondition': self.test_setup.populate,
+                                     'Test Teardown': self.test_teardown.populate,
+                                     'Test Postcondition': self.test_teardown.populate,
+                                     'Force Tags': self.force_tags.populate,
+                                     'Default Tags': self.default_tags.populate,
+                                     'Test Template': self.test_template.populate,
+                                     'Test Timeout': self.test_timeout.populate,
                                      'Library': self._get_adder(self.add_library),
                                      'Resource': self._get_adder(self.add_resource),
                                      'Variables': self._get_adder(self.add_variables),
@@ -296,8 +296,8 @@ class TestCaseFileSettingTable(_SettingTable):
 class ResourceFileSettingTable(_SettingTable):
 
     def _get_setters(self):
-        return utils.NormalizedDict({'Documentation': self.doc.set,
-                                     'Document': self.doc.set,
+        return utils.NormalizedDict({'Documentation': self.doc.populate,
+                                     'Document': self.doc.populate,
                                      'Library': self._get_adder(self.add_library),
                                      'Resource': self._get_adder(self.add_resource),
                                      'Variables': self._get_adder(self.add_variables)})
@@ -310,17 +310,17 @@ class ResourceFileSettingTable(_SettingTable):
 class InitFileSettingTable(_SettingTable):
 
     def _get_setters(self):
-        return utils.NormalizedDict({'Documentation': self.doc.set,
-                                     'Document': self.doc.set,
-                                     'Suite Setup': self.suite_setup.set,
-                                     'Suite Precondition': self.suite_setup.set,
-                                     'Suite Teardown': self.suite_teardown.set,
-                                     'Suite Postcondition': self.suite_teardown.set,
-                                     'Test Setup': self.test_setup.set,
-                                     'Test Precondition': self.test_setup.set,
-                                     'Test Teardown': self.test_teardown.set,
-                                     'Test Postcondition': self.test_teardown.set,
-                                     'Force Tags': self.force_tags.set,
+        return utils.NormalizedDict({'Documentation': self.doc.populate,
+                                     'Document': self.doc.populate,
+                                     'Suite Setup': self.suite_setup.populate,
+                                     'Suite Precondition': self.suite_setup.populate,
+                                     'Suite Teardown': self.suite_teardown.populate,
+                                     'Suite Postcondition': self.suite_teardown.populate,
+                                     'Test Setup': self.test_setup.populate,
+                                     'Test Precondition': self.test_setup.populate,
+                                     'Test Teardown': self.test_teardown.populate,
+                                     'Test Postcondition': self.test_teardown.populate,
+                                     'Force Tags': self.force_tags.populate,
                                      'Library': self._get_adder(self.add_library),
                                      'Resource': self._get_adder(self.add_resource),
                                      'Variables': self._get_adder(self.add_variables),
@@ -423,15 +423,15 @@ class TestCase(_WithSteps, _WithSettings):
         self._setters = self._get_setters()
 
     def _get_setters(self):
-        return utils.NormalizedDict({'Documentation': self.doc.set,
-                                     'Document': self.doc.set,
-                                     'Template': self.template.set,
-                                     'Setup': self.setup.set,
-                                     'Precondition': self.setup.set,
-                                     'Teardown': self.teardown.set,
-                                     'Postcondition': self.teardown.set,
-                                     'Tags': self.tags.set,
-                                     'Timeout': self.timeout.set})
+        return utils.NormalizedDict({'Documentation': self.doc.populate,
+                                     'Document': self.doc.populate,
+                                     'Template': self.template.populate,
+                                     'Setup': self.setup.populate,
+                                     'Precondition': self.setup.populate,
+                                     'Teardown': self.teardown.populate,
+                                     'Postcondition': self.teardown.populate,
+                                     'Tags': self.tags.populate,
+                                     'Timeout': self.timeout.populate})
 
     @property
     def source(self):
@@ -464,11 +464,11 @@ class UserKeyword(TestCase):
         self._setters = self._get_setters()
 
     def _get_setters(self):
-        return utils.NormalizedDict({'Documentation': self.doc.set,
-                                     'Document': self.doc.set,
-                                     'Arguments': self.args.set,
-                                     'Return': self.return_.set,
-                                     'Timeout': self.timeout.set})
+        return utils.NormalizedDict({'Documentation': self.doc.populate,
+                                     'Document': self.doc.populate,
+                                     'Arguments': self.args.populate,
+                                     'Return': self.return_.populate,
+                                     'Timeout': self.timeout.populate})
 
 
 class ForLoop(_WithSteps):

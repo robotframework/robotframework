@@ -19,9 +19,9 @@ class _Setting(object):
         self.setting_name = setting_name
         self.parent = parent
         self.comment = comment
-        self._init()
+        self.reset()
 
-    def _init(self):
+    def reset(self):
         self.value = []
 
     @property
@@ -32,12 +32,12 @@ class _Setting(object):
     def directory(self):
         return self.parent.directory if self.parent else None
 
-    def set(self, value, comment=None):
+    def populate(self, value, comment=None):
         """Mainly used at parsing time, later attributes can be set directly."""
-        self._set(value)
+        self._populate(value)
         self.comment = comment
 
-    def _set(self, value):
+    def _populate(self, value):
         self.value = value
 
     def is_set(self):
@@ -60,10 +60,10 @@ class _Setting(object):
 
 class Documentation(_Setting):
 
-    def _init(self):
+    def reset(self):
         self.value = ''
 
-    def _set(self, value):
+    def _populate(self, value):
         self.value = self._concat_string_with_value(self.value, value)
 
     def as_list(self):
@@ -72,10 +72,10 @@ class Documentation(_Setting):
 
 class Template(_Setting):
 
-    def _init(self):
+    def reset(self):
         self.value = None
 
-    def _set(self, value):
+    def _populate(self, value):
         self.value = self._concat_string_with_value(self.value, value)
 
     def is_set(self):
@@ -87,11 +87,11 @@ class Template(_Setting):
 
 class Fixture(_Setting):
 
-    def _init(self):
+    def reset(self):
         self.name = None
         self.args = []
 
-    def _set(self, value):
+    def _populate(self, value):
         if not self.name:
             self.name = value[0] if value else ''
             value = value[1:]
@@ -106,11 +106,11 @@ class Fixture(_Setting):
 
 class Timeout(_Setting):
 
-    def _init(self):
+    def reset(self):
         self.value = None
         self.message = ''
 
-    def _set(self, value):
+    def _populate(self, value):
         if not self.value:
             self.value = value[0] if value else ''
             value = value[1:]
@@ -125,10 +125,10 @@ class Timeout(_Setting):
 
 class Tags(_Setting):
 
-    def _init(self):
+    def reset(self):
         self.value = None
 
-    def _set(self, value):
+    def _populate(self, value):
         self.value = (self.value or []) + value
 
     def is_set(self):
