@@ -39,3 +39,6 @@ Commented Rows With Test Template
 
 Templates with Run Keyword
     Check Test Case  ${TESTNAME}
+
+Templates with continuable failures
+    Check Test Case  ${TESTNAME}

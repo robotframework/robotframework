@@ -1,5 +1,5 @@
 *** Settings ***
-Documenation   NO RIDE because it would clean-up too much data.
+Documentation   NO RIDE because it would clean-up too much data.
 Test Template  Should Be Equal
 
 *** Variables ***
@@ -75,6 +75,25 @@ Templates with Run Keyword
     Expect exactly three args  xxx  xxx  xxx
     ${VARIABLE} =  Set variable  this doesn't work
 
+Templates with continuable failures
+    [Documentation]  FAIL  Several failures occurred:\n\n
+    ...  1) Continuable 1\n\n
+    ...  2) Continuable 1\n\n
+    ...  3) Continuable 2\n\n
+    ...  4) Continuable 1\n\n
+    ...  5) Continuable 2\n\n
+    ...  6) Continuable 3\n\n
+    ...  7) Continuable 1\n\n
+    ...  8) Continuable 2\n\n
+    ...  9) Continuable 3\n\n
+    ...  10) Continuable 4\n\n
+    ...  11) Continuable 5
+    [Template]  Continuable failures
+    1
+    2
+    3
+    5
+
 
 *** Keywords ***
 Expect Exactly Two Args  [arguments]  ${a1}  ${a2}
@@ -87,3 +106,7 @@ Expect Exactly Three Args  [arguments]  ${a1}  ${a2}  ${a3}
 Failing Uk With Multiple Fails  [arguments]  ${msg}
   Fail  ${msg}
   Fail  this should not occur
+
+Continuable failures  [arguments]  ${count}
+  :FOR  ${i}  IN RANGE  ${count}
+  \  Run keyword and continue on failure  Fail  Continuable ${i+1}
