@@ -22,6 +22,7 @@ from robot import utils
 from robot.utils import asserts
 from robot.variables import is_var, is_list_var
 from robot.running import Keyword, NAMESPACES, RUN_KW_REGISTER
+from robot.running.model import ExecutionContext
 from robot.version import get_version
 
 if utils.is_jython:
@@ -753,7 +754,6 @@ class _RunKeyword:
         if not isinstance(name, basestring):
             raise DataError('Keyword name must be a string')
         kw = Keyword(name, list(args))
-        from robot.running.model import ExecutionContext
         return kw.run(ExecutionContext(NAMESPACES.current, OUTPUT))
 
     def run_keywords(self, *names):
