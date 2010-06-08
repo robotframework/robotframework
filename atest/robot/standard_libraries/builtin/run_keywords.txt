@@ -6,14 +6,14 @@ Resource        atest_resource.txt
 *** Test Cases ***
 
 Passing keywords
-    ${tc} =  Should Have Correct Keywords  BuiltIn.No Operation  Passing  BuiltIn.Log Variables
+    ${tc} =  Test Should Have Correct Keywords  BuiltIn.No Operation  Passing  BuiltIn.Log Variables
     Check Log Message  ${tc.kws[0].kws[1].kws[0].msgs[0]}  Hello, world!
 
 Failing keyword
-    Should Have Correct Keywords  Passing  Failing
+    Test Should Have Correct Keywords  Passing  Failing
 
 Keywords as variables
-    Should Have Correct Keywords  BuiltIn.No Operation  Passing
+    Test Should Have Correct Keywords  BuiltIn.No Operation  Passing
     ...  BuiltIn.No Operation  Passing  BuiltIn.Log Variables  Failing
 
 Non-existing variable as keyword name
@@ -21,22 +21,34 @@ Non-existing variable as keyword name
     Should Be Empty  ${tc.kws[0].kws}
 
 Non-existing keyword
-    Should Have Correct Keywords  Passing  Non-Existing
+    Test Should Have Correct Keywords  Passing  Non-Existing
 
 Wrong number of arguments to keyword
-    Should Have Correct Keywords  Passing  BuiltIn.Log
+    Test Should Have Correct Keywords  Passing  BuiltIn.Log
 
-In setup
+In test setup
     Check Test Case  ${TESTNAME}
 
-In teardown
+In test teardown
     Check Test Case  ${TESTNAME}
 
+In suite setup
+    Check Log Message  ${SUITE.setup.kws[0].kws[0].msgs[0]}  Hello, world!
+    Should Have Correct Keywords  ${SUITE.setup}  Passing  BuiltIn.No Operation
 
-***Keywords***
-Should Have Correct Keywords  [Arguments]  @{expected}
+In suite teardown
+    Should Have Correct Keywords  ${SUITE.teardown}
+    ...  Failing  Passing  BuiltIn.Fail
+    Should Be Equal  ${SUITE.message}
+    ...  Suite teardown failed:\nSeveral failures occurred:\n\n1) Expected error message\n\n2) AssertionError
+
+
+***Keywords*** 
+Test Should Have Correct Keywords  [Arguments]  @{expected}
     ${tc} =  Check Test Case  ${TESTNAME}
-    ${exp} =  Catenate  SEPARATOR=', '  @{expected}
-    Should Be Equal As Strings  ${tc.kws[0].kws}  ['${exp}']
+    Should Have Correct Keywords  ${tc.kws[0]}  @{expected}
     [Return]  ${tc}
-    
+
+Should Have Correct Keywords  [Arguments]  ${kw}  @{expected}
+    ${exp} =  Catenate  SEPARATOR=', '  @{expected}
+    Should Be Equal As Strings  ${kw.kws}  ['${exp}']
