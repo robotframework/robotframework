@@ -12,7 +12,6 @@ and straightforward.
    :depth: 2 
    :local: 
 
-
 Introduction
 ~~~~~~~~~~~~
 
@@ -91,14 +90,11 @@ __ `Reporting keyword status`_
 __ `Logging information`_
 __ `Returning values`_
 
-
 Creating test library class or module
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Test libraries can be implemented as Python modules or Python or Java classes. 
-In Robot Framework 2.0.1 and earlier, it is possible to use only classic
-classes as test libraries. Both classic and new style classes are 
-supported from 2.0.2 onwards.
+Test libraries can be implemented as Python modules and Python or Java
+classes.
 
 Test library names
 ''''''''''''''''''
@@ -124,7 +120,7 @@ full name. For example, the class :code:`MyLib` in the
 :code:`com.mycompany.myproject` package must be imported with the name
 :name:`com.mycompany.myproject.MyLib`.
 
-.. Tip:: If the library name is really long, for example when the Java
+.. tip:: If the library name is really long, for example when the Java
          package name is long, it is recommended to give the library a
          simpler alias by using the `WITH NAME syntax`_.
 
@@ -153,7 +149,7 @@ line.
     Setting      Value       Value     Value
    =========  ===========  =========  =======
    Library    MyLibrary    10.0.0.1   8080
-   Library    AnotherLib   ${VAR}     \
+   Library    AnotherLib   ${VAR}
    =========  ===========  =========  =======
 
 Example implementations, first one in Python and second in Java, for
@@ -312,7 +308,6 @@ A Java class using :code:`ROBOT_LIBRARY_VERSION`:
         }
     }
 
-
 Creating static keywords
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -372,7 +367,7 @@ case, is excluded.
    =========  ===========  =======  =======
     Setting      Value      Value    Value
    =========  ===========  =======  =======
-   Library     MyLibrary   \        \
+   Library     MyLibrary
    =========  ===========  =======  =======
 
 .. table::
@@ -381,8 +376,8 @@ case, is excluded.
    ===========  ===========  ============  ============
     Test Case     Action       Argument      Argument
    ===========  ===========  ============  ============
-   My Test      Do Nothing   \             \
-   \            Hello        world         \
+   My Test      Do Nothing
+   \            Hello        world
    ===========  ===========  ============  ============
 
 Keyword arguments
@@ -449,10 +444,10 @@ with one to three arguments.
    ===========  ==================  =============  ============  =============
     Test Case         Action          Argument       Argument       Argument 
    ===========  ==================  =============  ============  =============
-   Defaults     One Default         \              \             \
-   \            One Default         argument       \             \
-   \            Multiple Defaults   required arg   \             \
-   \            Multiple Defaults   required arg   optional      \
+   Defaults     One Default
+   \            One Default         argument
+   \            Multiple Defaults   required arg
+   \            Multiple Defaults   required arg   optional
    \            Multiple Defaults   required arg   optional 1    optional 2
    ===========  ==================  =============  ============  =============
 
@@ -522,13 +517,13 @@ specifying arguments:
    ===========  ==============  =============  ============  ==============
     Test Case       Action         Argument      Argument       Argument 
    ===========  ==============  =============  ============  ==============
-   Varargs      Any Arguments   \              \             \
-   \            Any Arguments   argument       \             \
+   Varargs      Any Arguments
+   \            Any Arguments   argument
    \            Any Arguments   arg 1          arg 2         arg 2
-   \            ...             arg 4          arg 5         \
-   \            One Required    required arg   \             \
+   \            ...             arg 4          arg 5
+   \            One Required    required arg
    \            One Required    required arg   another arg   yet another
-   \            Also Defaults   required       \             \
+   \            Also Defaults   required
    \            Also Defaults   required       these two     have defaults 
    \            Also Defaults   1              2             3
    \            ...             4              5             6
@@ -642,7 +637,6 @@ variables is the only option.
    \            Conflicting Types  ${1}           2              
    ===========  =================  =============  ==========  =====================
 
-
 Communicating with Robot Framework
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -700,7 +694,7 @@ Java:
         public static final boolean ROBOT_EXIT_ON_FAILURE = true;
     } 
 
-__ `Exit on failure`_
+__ `Stopping test execution gracefully`_
 
 Continuing test execution despite of failures
 '''''''''''''''''''''''''''''''''''''''''''''
@@ -869,7 +863,7 @@ __ `Scalar variables`_
    :class: example
 
    ================  ===============  ==============
-   ${string} =       Return String    \            
+   ${string} =       Return String
    Should Be Equal   ${string}        Hello, world!
    ${object} =       Return Object    Robot        
    Should Be Equal   ${object.name}   Robot        
@@ -897,17 +891,16 @@ __ `List variables`_
    :class: example
 
    ================  ==================  ==================  =======================
-   ${var1}           ${var2} =           Return Two Values   \
-   Should Be Equal   ${var1}             first value         \
-   Should Be Equal   ${var2}             second value        \
-   @{list} =         Return Two Values   \                   \
-   Should Be Equal   @{list}[0]          first value         \
-   Should Be Equal   @{list}[1]          second value        \
+   ${var1}           ${var2} =           Return Two Values
+   Should Be Equal   ${var1}             first value
+   Should Be Equal   ${var2}             second value
+   @{list} =         Return Two Values
+   Should Be Equal   @{list}[0]          first value
+   Should Be Equal   @{list}[1]          second value
    ${s1}             ${s2}               @{li} =             Return Multiple Values
-   Should Be Equal   ${v1} ${v2}         a list              \
-   Should Be Equal   @{li}[0] @{li}[1]   of strings          \
+   Should Be Equal   ${v1} ${v2}         a list
+   Should Be Equal   @{li}[0] @{li}[1]   of strings
    ================  ==================  ==================  =======================
-
 
 Distributing test libraries
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1088,7 +1081,6 @@ __ `Errors and warnings during execution`_
 __ `User keyword name and documentation`_
 __ `Creating static keywords`_
  
-
 Dynamic library API
 ~~~~~~~~~~~~~~~~~~~
 
@@ -1277,7 +1269,7 @@ camelCase aliases work exactly the same way.
    ==========================  ================  ======================================================
               Name                 Arguments                       Purpose
    ==========================  ================  ======================================================
-   get_keyword_names           \                 To return names of implemented keywords.
+   get_keyword_names                             To return names of implemented keywords.
    run_keyword                 name, arguments   To execute the specified keyword with given arguments.
    get_keyword_arguments       name              To return keyword's argument specification. Optional.
    get_keyword_documentation   name              To return keyword's documentation. Optional.
@@ -1307,7 +1299,6 @@ are completely optional.
 
 A good example of using the dynamic API is Robot Framework's own
 `Remote library`_.
-
 
 Hybrid library API
 ~~~~~~~~~~~~~~~~~~
@@ -1404,7 +1395,6 @@ the keyword name and arguments.
 
 A good example of using the hybrid API is Robot Framework's own
 `Telnet library`_.
-
 
 Using Robot Framework's internal modules
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
