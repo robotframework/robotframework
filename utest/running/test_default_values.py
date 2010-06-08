@@ -20,33 +20,33 @@ class TestDefaultValues(unittest.TestCase):
         self.tcf_defaults = DefaultValues(tcf_table, directory)
 
     def test_default_tags(self):
-        tc_tags = Tags()
+        tc_tags = Tags('Tags')
         assert_equal(self.tcf_defaults.get_tags(tc_tags), 
                      ['tcf_default_tag1','tcf_default_tag2','tcf_force_tag1',
                       'tcf_force_tag2','dir_force_tag1','dir_force_tag2'])
 
     def test_overriding_default_tags(self):
-        tc_tags = Tags()
+        tc_tags = Tags('Tags')
         tc_tags.set(['test_tag1','test_tag2'])
         assert_equal(self.tcf_defaults.get_tags(tc_tags), 
                      ['test_tag1','test_tag2','tcf_force_tag1',
                       'tcf_force_tag2','dir_force_tag1','dir_force_tag2'])
 
     def test_setup_from_directory(self):
-        setup = self.tcf_defaults.get_setup(Fixture())
+        setup = self.tcf_defaults.get_setup(Fixture('Suite Setup'))
         assert_equal(setup.name,'dir_setup')
         assert_equal(setup.args,['arg'])
 
     def test_teardown_empty(self):
-        assert_equal(self.tcf_defaults.get_teardown(Fixture()).name,'')
+        assert_equal(self.tcf_defaults.get_teardown(Fixture('Suite Setup')).name,'')
 
     def test_teardown_from_test(self):
-        teardown = Fixture()
+        teardown = Fixture('Teardown')
         teardown.set(['name','arg','arg2'])
         assert_equal(self.tcf_defaults.get_teardown(teardown).name,'name')
 
     def test_template(self):
-        template = Template()
+        template = Template('Template')
         assert_equal(self.tcf_defaults.get_template(template),'Foo')
         template.set(['Bar'])
         assert_equal(self.tcf_defaults.get_template(template),'Bar')

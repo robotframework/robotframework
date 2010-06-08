@@ -15,7 +15,8 @@
 
 class _Setting(object):
 
-    def __init__(self, parent=None, comment=None):
+    def __init__(self, setting_name, parent=None, comment=None):
+        self.setting_name = setting_name
         self.parent = parent
         self.comment = comment
         self._init()
@@ -53,6 +54,9 @@ class _Setting(object):
             return string + ' ' + self._string_value(value)
         return self._string_value(value)
 
+    def as_list(self):
+        return [self.setting_name] + self.value
+
 
 class Documentation(_Setting):
 
@@ -61,6 +65,9 @@ class Documentation(_Setting):
 
     def _set(self, value):
         self.value = self._concat_string_with_value(self.value, value)
+
+    def as_list(self):
+        return [self.setting_name, self.value]
 
 
 class Template(_Setting):
@@ -73,6 +80,9 @@ class Template(_Setting):
 
     def is_set(self):
         return self.value is not None
+
+    def as_list(self):
+        return [self.setting_name, self.value]
 
 
 class Fixture(_Setting):
@@ -90,6 +100,9 @@ class Fixture(_Setting):
     def is_set(self):
         return self.name is not None
 
+    def as_list(self):
+        return [self.setting_name, self.name] + self.args
+
 
 class Timeout(_Setting):
 
@@ -106,6 +119,9 @@ class Timeout(_Setting):
     def is_set(self):
         return self.value is not None
 
+    def as_list(self):
+        return [self.setting_name, self.value, self.message]
+
 
 class Tags(_Setting):
 
@@ -121,7 +137,7 @@ class Tags(_Setting):
     def __add__(self, other):
         if not isinstance(other, Tags):
             raise TypeError('Tags can only be added with tags')
-        tags = Tags()
+        tags = Tags('Tags')
         tags.value = (self.value or []) + (other.value or [])
         return tags
 
@@ -136,7 +152,8 @@ class Return(_Setting):
 
 class Metadata(_Setting):
 
-    def __init__(self, parent, name, value, comment=None):
+    def __init__(self, setting_name, parent, name, value, comment=None):
+        self.setting_name = setting_name
         self.parent = parent
         self.name = name
         self.value = self._string_value(value)
@@ -144,6 +161,9 @@ class Metadata(_Setting):
 
     def is_set(self):
         return True
+
+    def as_list(self):
+        return [self.setting_name, self.name, self.value]
 
 
 class _Import(_Setting):
@@ -162,6 +182,9 @@ class _Import(_Setting):
     def is_set(self):
         return True
 
+    def as_list(self):
+        return [self.type, self.name] + self.args
+
 
 class Library(_Import):
 
@@ -174,6 +197,10 @@ class Library(_Import):
         if len(args) >= 2 and args[-2].upper() == 'WITH NAME':
             return args[:-2], args[-1]
         return args, None
+
+    def as_list(self):
+        alias = ['WITH NAME', self.alias] if self.alias else []
+        return ['Library', self.name] + self.args + alias
 
 
 class Resource(_Import):

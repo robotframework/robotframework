@@ -224,15 +224,15 @@ class _SettingTable(_Table, _WithSettings):
 
     def __init__(self, parent):
         _Table.__init__(self, parent)
-        self.doc = Documentation(self)
-        self.suite_setup = Fixture(self)
-        self.suite_teardown = Fixture(self)
-        self.test_setup = Fixture(self)
-        self.test_teardown = Fixture(self)
-        self.force_tags = Tags(self)
-        self.default_tags = Tags(self)
-        self.test_template = Template(self)
-        self.test_timeout = Timeout(self)
+        self.doc = Documentation('Documentation', self)
+        self.suite_setup = Fixture('Suite Setup', self)
+        self.suite_teardown = Fixture('Suite Teardown', self)
+        self.test_setup = Fixture('Test Setup', self)
+        self.test_teardown = Fixture('Test Teardown', self)
+        self.force_tags = Tags('Force Tags', self)
+        self.default_tags = Tags('Default Tags', self)
+        self.test_template = Template('Test Template', self)
+        self.test_timeout = Timeout('Test Timeout', self)
         self.metadata = []
         self.imports = []
         self._setters = self._get_setters()
@@ -244,7 +244,7 @@ class _SettingTable(_Table, _WithSettings):
         return adder
 
     def add_metadata(self, name, value='', comment=None):
-        self.metadata.append(Metadata(self, name, value, comment))
+        self.metadata.append(Metadata('Metadata', self, name, value, comment))
         return self.metadata[-1]
 
     def add_library(self, name, args=None, comment=None):
@@ -413,12 +413,12 @@ class TestCase(_WithSteps, _WithSettings):
     def __init__(self, parent, name):
         self.parent = parent
         self.name = name
-        self.doc = Documentation(self)
-        self.template = Template(self)
-        self.tags = Tags(self)
-        self.setup = Fixture(self)
-        self.teardown = Fixture(self)
-        self.timeout = Timeout(self)
+        self.doc = Documentation('[Documentation]', self)
+        self.template = Template('[Template]', self)
+        self.tags = Tags('[Tags]', self)
+        self.setup = Fixture('[Setup]', self)
+        self.teardown = Fixture('[Teardown]', self)
+        self.timeout = Timeout('[Timeout]', self)
         self.steps = []
         self._setters = self._get_setters()
 
@@ -456,10 +456,10 @@ class UserKeyword(TestCase):
     def __init__(self, parent, name):
         self.parent = parent
         self.name = name
-        self.doc = Documentation(self)
-        self.args = Arguments(self)
-        self.return_ = Return(self)
-        self.timeout = Timeout(self)
+        self.doc = Documentation('[Documentation]', self)
+        self.args = Arguments('[Arguments]', self)
+        self.return_ = Return('[Return]', self)
+        self.timeout = Timeout('[Timeout]', self)
         self.steps = []
         self._setters = self._get_setters()
 
