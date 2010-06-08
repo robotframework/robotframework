@@ -142,8 +142,8 @@ example, :path:`some_tests.html` becomes :name:`Some Tests` and
 .. note:: The rules for creating test suite names changed slightly in
    	  Robot Framework 2.5. 
 
-The file or directory name can contain a prefix to control the `test
-execution order`_. The prefix is separated from the base name by two
+The file or directory name can contain a prefix to control the `execution 
+order`_ of the suites. The prefix is separated from the base name by two
 underscores and, when constructing the actual test suite name, both
 the prefix and underscores are removed. For example files
 :path:`01__some_tests.txt` and :path:`02__more_tests.txt` create test
