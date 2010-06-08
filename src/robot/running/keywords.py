@@ -139,25 +139,9 @@ class Keyword(BaseKeyword):
 class _VariableAssigner(object):
 
     def __init__(self, assign):
-        self.scalar_vars = []
-        self.list_var = None
-        self._process_assign(assign)
-
-    def _process_assign(self, assign):
-        for var in assign:
-            # FIXME: Now that we need to remove '=' on the running side,
-            # we should also verify that it is only used with the last
-            # variable like in earlier versions.
-            var = var.rstrip('= ')
-            if not is_var(var):
-                raise DataError('Invalid variable to assign: %s' % var)
-            if self.list_var:
-                raise DataError('Only the last variable to assign can be '
-                                'a list variable.')
-            if is_list_var(var):
-                self.list_var = var
-            else:
-                self.scalar_vars.append(var)
+        ap = _AssignParser(assign)
+        self.scalar_vars = ap.scalar_vars
+        self.list_var = ap.list_var
 
     def assign(self, context, return_value):
         context.trace('Return: %s' % utils.safe_repr(return_value))
@@ -222,6 +206,38 @@ class _VariableAssigner(object):
         else:
             err = 'Need more values than %d' % len(ret)
         raise DataError("Cannot assign return values: %s." % err)
+
+
+class _AssignParser(object):
+
+    def __init__(self, assign):
+        self.scalar_vars = []
+        self.list_var = None
+        self._assign_mark_used = False
+        for var in assign:
+            self._verify_items_allowed_only_on_last_round()
+            var = self._strip_possible_assign_mark(var)
+            self._set(var)
+
+    def _verify_items_allowed_only_on_last_round(self):
+        if self._assign_mark_used:
+            raise DataError("Assign mark '=' can be used only with the last variable.")
+        if self.list_var:
+            raise DataError('Only the last variable to assign can be a list variable.')
+
+    def _strip_possible_assign_mark(self, variable):
+        if not variable.endswith('='):
+            return variable
+        self._assign_mark_used = True
+        return variable.rstrip('= ')
+
+    def _set(self, variable):
+        if is_scalar_var(variable):
+            self.scalar_vars.append(variable)
+        elif is_list_var(variable):
+            self.list_var = variable
+        else:
+            raise DataError('Invalid variable to assign: %s' % variable)
 
 
 class ForLoop(BaseKeyword):

@@ -41,10 +41,14 @@ No = Mark
     Should Be Equal  @{list}[0] @{list}[1] @{list}[2]  a b c
 
 Optional = Mark With Multiple Variables
-    ${v1}=  ${v2}=  @{list}=  Set Variable  a  b  c
+    ${v1}  ${v2}  @{list}=  Set Variable  a  b  c
     Should Be Equal  ${v1}  a
     Should Be Equal  ${v2}  b
     Should Be Equal  @{list}  c    
+
+= Can Be Used Only With The Last Variable
+    [Documentation]  FAIL Assign mark '=' can be used only with the last variable.
+    ${v1} =  ${v2} =  Set Variable  a  b
 
 Python Object To Scalar Variable
     ${var} =  Return Object  This is my name

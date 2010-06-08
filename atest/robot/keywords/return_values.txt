@@ -33,6 +33,9 @@ No = Mark
 Optional = Mark With Multiple Variables
     Check Test Case  ${TEST NAME}
 
+= Can Be Used Only With The Last Variable
+    Check Test Case  ${TEST NAME}
+
 Python Object To Scalar Variable
     ${test} =  Check Test Case  ${TEST NAME}
     Check Log Message  ${test.kws[0].msgs[0]}  \${var} = This is my name
