@@ -400,6 +400,12 @@ class Variable(object):
         self.value = value
         self.comment = comment
 
+    def as_list(self):
+        return [self.name] + self.value
+
+    def is_set(self):
+        return True
+
 
 class _WithSteps(object):
 
@@ -450,6 +456,12 @@ class TestCase(_WithSteps, _WithSettings):
         message = "Invalid syntax in %s '%s': %s" % (type_, self.name, message)
         self.parent.report_invalid_syntax(message, level)
 
+    def __iter__(self):
+        for element in [self.doc, self.template, self.tags,
+                        self.setup, self.timeout] \
+                        + self.steps + [self.teardown]:
+            yield element
+
 
 class UserKeyword(TestCase):
 
@@ -469,6 +481,12 @@ class UserKeyword(TestCase):
                                      'Arguments': self.args.populate,
                                      'Return': self.return_.populate,
                                      'Timeout': self.timeout.populate})
+
+    def __iter__(self):
+        for element in [self.doc, self.args,
+                        self.return_, self.timeout] \
+                        + self.steps:
+            yield element
 
 
 class ForLoop(_WithSteps):
@@ -527,6 +545,9 @@ class Step(object):
         if self.is_comment():
             return self
         return Step([template] + self.as_list())
+
+    def is_set(self):
+        return True
 
     def as_list(self):
         kw = [self.keyword] if self.keyword is not None else []
