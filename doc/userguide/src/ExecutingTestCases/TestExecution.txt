@@ -50,9 +50,9 @@ Suite setup
 ```````````
 
 If a test suite has a setup, it is executed before its tests and child
-suites. If the suite setup succeeds, test execution continues
+suites. If the suite setup passes, test execution continues
 normally. If it fails, all the test cases the suite and its child
-suites have marked failed with a message :msg:`Setup of the parent
+suites are marked failed with a message :msg:`Setup of the parent
 suite failed.`. The tests and possible suite setups and teardowns in
 the child test suites are not executed.
 
@@ -65,7 +65,7 @@ Suite teardown
 ``````````````
 
 If a test suite has a teardown, it is executed after all its test
-cases and child suites. Suite teardowns are executed regardless the
+cases and child suites. Suite teardowns are executed regardless of the
 test status and even if the matching suite setup fails. If the suite
 teardown fails, all tests in the suite are marked failed afterwards in
 reports and logs.
@@ -89,7 +89,7 @@ Test teardown
 `````````````
 
 Possible test teardown is executed after the test case has been
-executed otherwise. It is executed regardless the test status and also
+executed otherwise. It is executed regardless of the test status and also
 if the setup of the test has failed.
 
 Similarly as suite teardown, test teardowns are used mainly for
@@ -99,12 +99,11 @@ keywords fail.
 Execution order
 '''''''''''''''
 
-Test cases in a test suite are executed in the same order as they are
-in a test case file. Test suites inside a higher level test suite are
-executed in case-insensitive alphabetical order based on the file or
-directory name. If multiple files and/or directories are given from
-the command line, they are executed in the order they are
-given.
+Test cases in a test suite are executed in the same order as they are defined
+in the test case file. Test suites inside a higher level test suite are
+executed in case-insensitive alphabetical order based on the file or directory
+name. If multiple files and/or directories are given from the command line,
+they are executed in the order they are given.
 
 If there is a need to use certain test suite execution order inside a
 directory, it is possible to add prefixes like :path:`01` and
@@ -166,7 +165,7 @@ Test execution ends also if a normal failure occurs after continuable
 failures. Also in that case all the failures will be listed in the
 final error message.
 
-The return value from failed keywords, and possibly assigned to a
+The return value from failed keywords, possibly assigned to a
 variable, is always the Python :code:`None`.
 
 __ `Continuing test execution despite of failures`_
@@ -228,7 +227,7 @@ Using signals
 
 On Unix-like machine it is possible to terminate test execution also
 using signals :code:`INT` and :code:`TERM`. These signals can be send
-from the command line using :prog:`kill` tool, and sending signals can
+from the command line using :prog:`kill` command, and sending signals can
 also be easily automated.
 
 Signals have the same limitation on Jython as pressing :code:`Ctrl-C`.
