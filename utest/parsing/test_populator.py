@@ -1,7 +1,7 @@
 import unittest
 from StringIO import StringIO
 
-from robot.parsing.datareader import FromFilePopulator, DataRow
+from robot.parsing.populators import FromFilePopulator, DataRow
 from robot.parsing.model import TestCaseFile
 from robot.utils.asserts import assert_equals, assert_true, assert_false
 
@@ -353,13 +353,13 @@ class TestCaseFilePopulatingTest(_PopulatorTest):
                       [self._datafile.directory])
 
     def test_turn_off_curdir_handling(self):
-        from robot.parsing import datareader
-        datareader.PROCESS_CURDIR = False
+        from robot.parsing import populators
+        populators.PROCESS_CURDIR = False
         self.setUp()
         self._create_table('Test cases', [['My test name'],
                                           ['', 'Log', '${CURDIR}']])
         assert_equals(self._first_test().steps[0].args, ['${CURDIR}'])
-        datareader.PROCESS_CURDIR = True
+        populators.PROCESS_CURDIR = True
 
     def test_whitespace_is_ignored(self):
         self._create_table('Test Cases', [['My   test'],

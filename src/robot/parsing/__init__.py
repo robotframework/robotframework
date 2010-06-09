@@ -12,5 +12,6 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from datarow import DataRow
 from model import (TestCaseFile, TestDataDirectory, ResourceFile,
                    TestCase, UserKeyword)

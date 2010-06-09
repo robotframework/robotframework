@@ -21,7 +21,7 @@ from robot import utils
 
 from settings import (Documentation, Fixture, Timeout, Tags, Metadata,
                       Library, Resource, Variables, Arguments, Return, Template)
-from datareader import FromFilePopulator, FromDirectoryPopulator
+from populators import FromFilePopulator, FromDirectoryPopulator
 
 
 def TestData(parent=None, source=None, include_suites=[]):

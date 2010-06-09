@@ -7,20 +7,20 @@ if __name__ == "__main__":
 
 from robot.parsing.tsvreader import TsvReader
 from robot.parsing.model import TestCaseFile
-from robot.parsing.datareader import FromFilePopulator
+from robot.parsing.populators import FromFilePopulator
 from robot.utils.asserts import *
-import robot.parsing.populator
+import robot.parsing.populators
 
 
 class TestTsvParser(unittest.TestCase):
 
     def setUp(self):
         self.tcf = TestCaseFile()
-        self._orig_curdir = robot.parsing.datareader.PROCESS_CURDIR
-        robot.parsing.datareader.PROCESS_CURDIR = False
+        self._orig_curdir = robot.parsing.populators.PROCESS_CURDIR
+        robot.parsing.populators.PROCESS_CURDIR = False
 
     def tearDown(self):
-        robot.parsing.datareader.PROCESS_CURDIR = self._orig_curdir
+        robot.parsing.populators.PROCESS_CURDIR = self._orig_curdir
 
     def test_start_table(self):
         tsv = StringIO('''*SettING*\t*  Value  *\t*V*
