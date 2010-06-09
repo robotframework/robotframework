@@ -27,7 +27,6 @@ def get_title(type_, name):
 
 
 class _BaseSettings:
-
     _cli_opts = { 'Name'             : ('name', None),
                   'Doc'              : ('doc', None),
                   'Metadata'         : ('metadata', []),
@@ -47,6 +46,7 @@ class _BaseSettings:
                   'LogTitle'         : ('logtitle', None),
                   'ReportTitle'      : ('reporttitle', None),
                   'SummaryTitle'     : ('summarytitle', None),
+                  'ReportBackground' : ('reportbackground', None),
                   'SuiteStatLevel'   : ('suitestatlevel', -1),
                   'TagStatInclude'   : ('tagstatinclude', []),
                   'TagStatExclude'   : ('tagstatexclude', []),
@@ -56,7 +56,6 @@ class _BaseSettings:
                   'LogLevel'         : ('loglevel', 'INFO'),
                   'MonitorWidth'     : ('monitorwidth', 78),
                   'MonitorColors'    : ('monitorcolors', 'ON') }
-
     _deprecated = {}
 
     def __init__(self, options={}, log=True):
@@ -199,14 +198,11 @@ class _BaseSettings:
         return name, args
 
     def __str__(self):
-        names = self._opts.keys()
-        names.sort()
-        ret = [ '%s: %s' % (name, self._opts[name]) for name in names ]
-        return '\n'.join(ret)
+        return '\n'.join('%s: %s' % (name, self._opts[name])
+                         for name in sorted(self._opts))
 
 
 class RobotSettings(_BaseSettings):
-
     _extra_cli_opts = { 'Output'        : ('output', 'output.xml'),
                         'RunMode'       : ('runmode', 'normal'),
                         'Variables'     : ('variable', []),
@@ -234,7 +230,6 @@ class RobotSettings(_BaseSettings):
 
 
 class RebotSettings(_BaseSettings):
-
     _extra_cli_opts = { 'Output'         : ('output', 'NONE'),
                         'RemoveKeywords' : ('removekeywords', 'NONE'),
                         'StartTime'      : ('starttime', 'N/A'),

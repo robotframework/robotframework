@@ -160,6 +160,11 @@ Options:
                           title is '<Name Of The Suite> Test Report'.
     --summarytitle title  Title for the generated summary report. The default
                           title is '<Name Of The Suite> Summary Report'.
+    --reportbackground colors  Background colors to use in report and summary.
+                          Either 'all_passed:critical_passed:failed' or
+                          'passed:failed'. Both color names and codes work.
+                          Examples:  --reportbackground green:yellow:red
+                                     --reportbackground #00E:#E00
  -L --loglevel level      Threshold level for logging. Available levels:
                           TRACE, DEBUG, INFO (default), WARN, NONE (no logging)
     --suitestatlevel level  How many levels to show in 'Statistics by Suite'
@@ -189,10 +194,9 @@ Options:
                           multiple matches, documentations are catenated with
                           spaces. Documentation can contain formatting as with
                           --doc option.
-                          Examples:
-                          --tagdoc mytag:My_documentation
-                          --tagdoc regression:*See*_http://info.html
-                          --tagdoc owner-*:Original_author
+                          Examples:  --tagdoc mytag:My_documentation
+                                     --tagdoc regression:*See*_http://info.html
+                                     --tagdoc owner-*:Original_author
     --tagstatlink pattern:link:title *  Add external links into 'Statistics by
                           Tag' table in outputs. Pattern can contain characters
                           '*' (matches anything) and '?' (matches any char).

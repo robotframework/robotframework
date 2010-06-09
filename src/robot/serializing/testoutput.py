@@ -47,9 +47,11 @@ class RobotTestOutput:
     def serialize(self, settings, generator='Robot'):
         self._generator = generator
         self.serialize_output(settings['Output'], settings['SplitOutputs'])
-        self.serialize_summary(settings['Summary'], settings['SummaryTitle'])
+        self.serialize_summary(settings['Summary'], settings['SummaryTitle'],
+                               settings['ReportBackground'])
         self.serialize_report(settings['Report'], settings['ReportTitle'],
-                              settings['Log'], settings['SplitOutputs'])
+                              settings['ReportBackground'], settings['Log'],
+                              settings['SplitOutputs'])
         self.serialize_log(settings['Log'], settings['LogTitle'],
                            settings['SplitOutputs'])
 
@@ -63,19 +65,39 @@ class RobotTestOutput:
         serializer.close()
         LOGGER.output_file('Output', path)
 
-    def serialize_summary(self, path, title=None):
+    def serialize_summary(self, path, title=None, background=None):
         outfile = self._get_outfile(path, 'summary')
         if not outfile:
             return
         if not title:
             title = get_title('Summary', self.suite.name)
-        self._use_template(outfile, templates.REPORT, title)
+        self._use_template(outfile, templates.REPORT, title,
+                           self._get_background_color(background))
         self.statistics.serialize(SummaryStatSerializer(outfile))
         outfile.write('</body>\n</html>\n')
         outfile.close()
         LOGGER.output_file('Summary', path)
 
-    def serialize_report(self, path, title=None, logpath=None, split=-1):
+    def _get_background_color(self, colors):
+        all_passed, critical_passed, failures \
+                = self._resolve_background_colors(colors)
+        if self.suite.all_stats:
+            return all_passed
+        if self.suite.critical_stats:
+            return critical_passed
+        return failures
+
+    def _resolve_background_colors(self, color_str):
+        if color_str and color_str.count(':') not in [1, 2]:
+            LOGGER.error("Invalid background color '%s'." % color_str)
+            color_str = None
+        if not color_str:
+            color_str = '#99FF66:#FF3333'
+        colors = color_str.split(':', 2)
+        return colors if len(colors) == 3 else [colors[0], colors[0], colors[1]]
+
+    def serialize_report(self, path, title=None, background=None,
+                         logpath=None, split=-1):
         outfile = self._get_outfile(path, 'report')
         if not outfile:
             return
@@ -83,7 +105,8 @@ class RobotTestOutput:
             title = get_title('Report', self.suite.name)
         if logpath == 'NONE':
             logpath = None
-        self._use_template(outfile, templates.REPORT, title)
+        self._use_template(outfile, templates.REPORT, title,
+                           self._get_background_color(background))
         self.statistics.serialize(ReportStatSerializer(outfile))
         if split > 0 and logpath:
             self.suite.serialize(SplitReportSerializer(outfile, logpath, split))
@@ -124,7 +147,7 @@ class RobotTestOutput:
         # Overridden by RebotTestOutput
         pass
 
-    def _use_template(self, outfile, template, title):
+    def _use_template(self, outfile, template, title, background=None):
         ttuple = time.localtime()
         str_time = utils.format_time(ttuple, daytimesep='&nbsp;', gmtsep='&nbsp;')
         int_time = long(time.mktime(ttuple))
@@ -134,7 +157,8 @@ class RobotTestOutput:
                               elapsed_time=elapsed_time,
                               version=get_full_version(self._generator),
                               suite=self.suite,
-                              title=title)
+                              title=title,
+                              background=background)
         Template(template=template).generate(namespace, outfile)
 
     def _get_outfile(self, outpath, outtype):

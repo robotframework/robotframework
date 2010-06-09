@@ -1,0 +1,44 @@
+*** Settings ***
+Documentation   NO RIDE because it would break formatting.
+Force Tags      regression  pybot  jybot
+Resource        atest_resource.txt
+Test Template   Reports should have correct background
+
+
+*** Variables ***
+${DATA}         misc/pass_and_fail.html
+
+
+*** Test Cases ***      *** Options ***                          *** Color ***
+
+Default colors          --test pass                              \#99FF66
+                        --critical none                          \#99FF66
+                        ${EMPTY}                                 \#FF3333
+
+Two custom colors       --reportbackground blue:red -t pass      blue
+                        --ReportBackGround blue:red -c none      blue
+                        --REPORTBACKGROUND blue:red              red
+
+Three custom colors     --reportback green:yellow:red -t pass    green
+                        --reportback green:yellow:red -c none    yellow
+                        --reportback green:yellow:red            red
+
+Wrong number of colors  --reportbackground invalid               \#FF3333
+                        --reportb too:many:colors:here -c none   \#99FF66
+
+  [Teardown]  Check stderr contains
+  ...  Invalid background color 'too:many:colors:here'.
+
+
+
+*** Keywords ***
+
+Reports should have correct background
+    [Arguments]  ${options}  ${expected backgrund}
+    Run Tests  ${options} --report rep.html --summary sum.html  ${DATA}
+    File should have background  rep.html  ${expected backgrund}
+    File should have background  sum.html  ${expected backgrund}
+
+File should have background  [Arguments]  ${file}  ${color}
+    ${content} =  Get File  ${OUTDIR}/${file}
+    Should Contain  ${content}  background: ${color};

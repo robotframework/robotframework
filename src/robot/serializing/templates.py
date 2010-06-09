@@ -435,13 +435,8 @@ REPORT = '''%(FUNCTIONS)s
 <head>
 <!-- CALL meta ${version} -->
 <style media="all" type="text/css">
-  /* Background color (green or red) */
   body {
-<!-- IF ${suite.critical_stats.failed} == 0 -->
-    background: #99FF66;
-<!-- ELSE -->
-    background: #FF3333;
-<!-- END IF -->
+    background: ${BACKGROUND};
   }
   /* Generic Table Styles */
   table {
@@ -493,7 +488,6 @@ REPORT = '''%(FUNCTIONS)s
   .suite_row, .tag_row{
     background: #E9E9E9;
   }
-  /* Metadata */
   .meta_name {
     font-weight: bold;
   }

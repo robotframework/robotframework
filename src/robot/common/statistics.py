@@ -68,6 +68,9 @@ class Stat:
     def __cmp__(self, other):
         return cmp(self.name, other.name)
 
+    def __nonzero__(self):
+        return self.failed == 0
+
 
 class SuiteStat(Stat):
     type = 'suite'
