@@ -43,6 +43,9 @@ class _Setting(object):
     def is_set(self):
         return bool(self.value)
 
+    def is_for_loop(self):
+        return False
+
     def report_invalid_syntax(self, message, level='ERROR'):
         self.parent.report_invalid_syntax(message, level)
 
@@ -55,6 +58,12 @@ class _Setting(object):
         return self._string_value(value)
 
     def as_list(self):
+        ret = self._data_as_list()
+        if self.comment:
+            ret.append('# %s' % self.comment)
+        return ret
+
+    def _data_as_list(self):
         return [self.setting_name] + self.value
 
 
@@ -66,7 +75,7 @@ class Documentation(_Setting):
     def _populate(self, value):
         self.value = self._concat_string_with_value(self.value, value)
 
-    def as_list(self):
+    def _data_as_list(self):
         return [self.setting_name, self.value]
 
 
@@ -81,7 +90,7 @@ class Template(_Setting):
     def is_set(self):
         return self.value is not None
 
-    def as_list(self):
+    def _data_as_list(self):
         return [self.setting_name, self.value]
 
 
@@ -100,7 +109,7 @@ class Fixture(_Setting):
     def is_set(self):
         return self.name is not None
 
-    def as_list(self):
+    def _data_as_list(self):
         return [self.setting_name, self.name] + self.args
 
 
@@ -119,7 +128,7 @@ class Timeout(_Setting):
     def is_set(self):
         return self.value is not None
 
-    def as_list(self):
+    def _data_as_list(self):
         return [self.setting_name, self.value, self.message]
 
 
@@ -162,7 +171,7 @@ class Metadata(_Setting):
     def is_set(self):
         return True
 
-    def as_list(self):
+    def _data_as_list(self):
         return [self.setting_name, self.name, self.value]
 
 
@@ -182,7 +191,7 @@ class _Import(_Setting):
     def is_set(self):
         return True
 
-    def as_list(self):
+    def _data_as_list(self):
         return [self.type, self.name] + self.args
 
 
@@ -198,7 +207,7 @@ class Library(_Import):
             return args[:-2], args[-1]
         return args, None
 
-    def as_list(self):
+    def _data_as_list(self):
         alias = ['WITH NAME', self.alias] if self.alias else []
         return ['Library', self.name] + self.args + alias
 

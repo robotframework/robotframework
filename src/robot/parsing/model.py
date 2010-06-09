@@ -401,10 +401,16 @@ class Variable(object):
         self.comment = comment
 
     def as_list(self):
-        return [self.name] + self.value
+        ret = [self.name] + self.value
+        if self.comment:
+            ret.append('# %s' % self.comment)
+        return ret
 
     def is_set(self):
         return True
+
+    def is_for_loop(self):
+        return False
 
 
 class _WithSteps(object):
@@ -457,8 +463,8 @@ class TestCase(_WithSteps, _WithSettings):
         self.parent.report_invalid_syntax(message, level)
 
     def __iter__(self):
-        for element in [self.doc, self.template, self.tags,
-                        self.setup, self.timeout] \
+        for element in [self.doc, self.tags, self.setup, 
+                        self.template, self.timeout] \
                         + self.steps + [self.teardown]:
             yield element
 
@@ -483,9 +489,8 @@ class UserKeyword(TestCase):
                                      'Timeout': self.timeout.populate})
 
     def __iter__(self):
-        for element in [self.doc, self.args,
-                        self.return_, self.timeout] \
-                        + self.steps:
+        for element in [self.args, self.doc, self.timeout] \
+                        + self.steps + [self.return_]:
             yield element
 
 
@@ -514,6 +519,9 @@ class ForLoop(_WithSteps):
 
     def as_list(self):
         return [': FOR'] + self.vars + ['IN RANGE' if self.range else 'IN'] + self.items
+
+    def __iter__(self):
+        return iter(self.steps)
 
 
 class Step(object):
@@ -544,11 +552,16 @@ class Step(object):
     def apply_template(self, template):
         if self.is_comment():
             return self
-        return Step([template] + self.as_list())
+        return Step([template] + self.as_list(include_comment=False))
 
     def is_set(self):
         return True
 
-    def as_list(self):
+    def as_list(self, indent=False, include_comment=True):
         kw = [self.keyword] if self.keyword is not None else []
-        return self.assign + kw + self.args
+        ret = self.assign + kw + self.args
+        if indent:
+            ret.insert(0, '')
+        if include_comment and self.comment:
+            ret.append('# %s' % self.comment)
+        return ret
