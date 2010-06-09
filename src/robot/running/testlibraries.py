@@ -197,7 +197,7 @@ class _BaseTestLibrary(BaseLibrary):
         msg, details = utils.get_error_details()
         if self.positional_args:
             args = "argument%s %s" % (utils.plural_or_not(self.positional_args),
-                                      utils.seq2str(self.args))
+                                      utils.seq2str(self.positional_args))
         else:
             args = "no arguments"
         raise DataError("Creating an instance of the test library '%s' with %s "
