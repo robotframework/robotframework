@@ -10,7 +10,6 @@ to fine-tune their contents.
    :depth: 2
    :local:
 
-
 Different output files
 ~~~~~~~~~~~~~~~~~~~~~~
 
@@ -20,7 +19,6 @@ using command line options, which get the path to the output file in
 question as an argument. A special value :opt:`NONE`
 (case-insensitive) can be used to disable creating a certain output
 file.
-
 
 Output directory
 ''''''''''''''''
@@ -34,7 +32,6 @@ set with this option is, again, relative to the execution directory,
 but can naturally be given also as an absolute path. Regardless of how
 a path to an individual output file is obtained, its parent directory
 is created automatically, if it does not exist already.
-
 
 Output file
 '''''''''''
@@ -51,7 +48,6 @@ are executed, and the default name for them is
 not created unless this option is explicitly used.
 
 __ `Post-processing outputs`_
-
 
 Log file
 ''''''''
@@ -79,7 +75,6 @@ log files are always created and their default name is
    :width: 500
 
    An example of log file with keyword details visible
-
 
 Report file
 '''''''''''
@@ -129,7 +124,6 @@ can be created using the command line option :opt:`--summary
 
    An example summary file
 
-
 Debug file
 ''''''''''
 
@@ -143,7 +137,6 @@ viewing tool`_, or in UNIX-like systems, simply with the :prog:`tail
 
 Debug files are not created unless the command line option
 :opt:`--debugfile (-b)` is used explicitly.
-
 
 Timestamping output files
 '''''''''''''''''''''''''
@@ -161,7 +154,6 @@ for example, create such output files as
 
    pybot --timestampoutputs --log mylog.html --report NONE tests.html
 
-
 Setting titles
 ''''''''''''''
 
@@ -178,6 +170,36 @@ Examples::
    pybot --logtitle Smoke_Test_Log --reporttitle Smoke_Test_Report --include smoke mytests
    rebot --summarytitle Overview --summary overview.html --log none --report none *.xml
 
+Setting background colors
+'''''''''''''''''''''''''
+
+By default the `report file`_ and the `summary file`_ have a green
+background when all the `critical tests`_ pass and a red background
+otherwise.  These colors can be customized by using the
+:opt:`--reportbackground` command line option, which takes two or
+three colors separated with a colon as an argument::
+
+   --reportbackground blue:red
+   --reportbackground green:yellow:red
+   --reportbackground #00E:#E00
+
+If you specify two colors, the first one will be used instead of the
+default green color and the second instead of the default red. This
+allows, for example, using blue instead of green to make backgrounds
+easier to separate for color blind people.
+
+If you specify three colors, the first one will be used when all the
+test succeed, the second when only non-critical tests have failed, and
+the last when there are critical failures. This feature thus allows
+using a separate background color, for example yellow, when
+non-critical tests have failed.
+	
+The specified colors are used as a value for the :code:`body`
+element's :code:`background` CSS property. The value is used as-is and
+can be a HTML color name (e.g. :code:`red`), a hexadecimal value
+(e.g. :code:`#F00`), or an RGB value (e.g. :code:`rgb(255,0,0)`. The
+default green and red colors are actually specified using hexadecimal
+values and they are :code:`#9F6` and :code:`#F33`, respectively.
 
 Log levels
 ~~~~~~~~~~
@@ -229,7 +251,6 @@ arguments as the :opt:`--loglevel` option, and it also returns the
 old level so that it can be restored later, for example, in a `test
 teardown`_.
 
-
 Splitting outputs
 ~~~~~~~~~~~~~~~~~
 
@@ -253,7 +274,6 @@ about created files can be received through the `listener
 interface`_, and `automatic variables`_ :var:`${LOG_FILE}` and
 :var:`${OUTPUT_FILE}` always contain the path to the current file.
 
-
 Specifying a split level
 ''''''''''''''''''''''''
 
@@ -269,7 +289,6 @@ Splitting can be activated with the command line option
 argument. Index files have the same name as the output and log would have
 without splitting, and lower-level files get a running counter between
 the basename and extension.
-
 
 Examples
 ''''''''
@@ -295,13 +314,11 @@ suites hierarchically in the following way::
        |-- c2.html
        `-- c3.html
 
-
 In the first example these test cases are executed so that they are
 split right below the top-level test suite. The command line to use is
 as follows, and the following table lists all the created output files::
 
    pybot --splitoutputs 1 project
-
 
 .. table:: All output files created in the first example
    :class: tabular
@@ -331,7 +348,6 @@ as follows, and the following table lists all the created output files::
    | report.html   | A normal report file.                                 |
    +---------------+-------------------------------------------------------+ 
 
-
 The fact that output files are split is transparent when
 post-processing outputs afterwards, and it is enough to point
 :prog:`rebot` to the index file. Splitting works with :prog:`rebot`
@@ -343,7 +359,6 @@ first example could thus by re-split, for example, as::
 In this example, splitting is done from the second level. The table below
 again lists created the files, and because :prog:`rebot` does not create new
 output files by default, they are not listed in the table either.
-
 
 .. table:: All output files created in the second example
    :class: tabular
@@ -370,12 +385,10 @@ output files by default, they are not listed in the table either.
    | report.html   | A normal report file.                                 |
    +---------------+-------------------------------------------------------+ 
 
-
 The last example splits outputs from the third level. It also shows
 how to configure output file names when splitting::
 
    rebot --splitoutputs 3 --log mylog.html --report none output.xml
-
 
 .. table:: All output files created in the third example
    :class: tabular
@@ -399,12 +412,9 @@ how to configure output file names when splitting::
    | mylog-005.html| The whole :name:`B12` test suite.                     |
    +---------------+-------------------------------------------------------+ 
 
-
 If a split level higher than three is used with this test data, all the
 information ends up to index files. The end result is thus exactly the
 same as if outputs were not split at all.
-
-
 
 Configuring statistics
 ~~~~~~~~~~~~~~~~~~~~~~
@@ -415,7 +425,6 @@ by Suite` and :name:`Test Details by Tag` tables in different output
 files. All these options work both when executing test cases and when
 post-processing outputs.
 
-
 Configuring displayed suite statistics
 ''''''''''''''''''''''''''''''''''''''
 
@@ -425,7 +434,6 @@ somewhat difficult to read. You can control the number of levels
 displayed with the command line option :opt:`--suitestatlevel`. It
 takes the required level as an integer, and if :opt:`0` is used,
 the whole table is removed.
-
 
 Including and excluding tag statistics
 ''''''''''''''''''''''''''''''''''''''
@@ -447,7 +455,6 @@ report considerably smaller, which is why excluding tags that are not
 interesting can be recommended.
 
 __ `By tag names`_
-
 
 Generating combined tag statistics
 ''''''''''''''''''''''''''''''''''
@@ -491,7 +498,6 @@ with a colon (:code:`:`). Example below generates combined tag so that the name 
 in reports and logs is :name:`Critical Tests`::
 
     --tagstatcombine *NOTnon-critical:Critical_Tests
-
 
 Creating links from tag names
 '''''''''''''''''''''''''''''
@@ -540,13 +546,11 @@ Examples::
     --tagdoc regression:*See*_http://info.html
     --tagdoc owner-*:Original_author
 
-
 Additional options for post-processing outputs
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 These options are available only when `post-processing outputs`_ with
 :prog:`rebot`.
-
 
 Setting times for combined outputs
 ''''''''''''''''''''''''''''''''''
@@ -569,7 +573,6 @@ Examples::
 
    rebot --starttime 20080611-17:59:20.495 output1.xml output2.xml
    rebot --starttime 20080611-175920 --endtime 20080611-180242 *.xml
-
 
 Removing keywords from outputs
 ''''''''''''''''''''''''''''''
@@ -594,7 +597,6 @@ faster to process further. Even when keywords are removed, names,
 arguments and statuses of top-level keywords are preserved, so it is
 still possible to create log files and see the high-level structure of
 each test case. 
-
 
 System log
 ~~~~~~~~~~

@@ -38,7 +38,8 @@ Command line options for test execution
   -T, --timestampoutputs  `Adds a timestamp`_ to all output files.
   --splitoutputs <level>  `Splits output and log`_ files. 
   --logtitle <title>      `Sets a title`_ for the generated test log. 
-  --reporttitle <title>   `Sets a title`_ for the generated test report. 
+  --reporttitle <title>   `Sets a title`_ for the generated test report.
+  --reportbackground <colors>    `Sets background colors`_ for the generated report and summary.
   --summarytitle <title>  `Sets a title`_ for the generated summary report.
   -L, --loglevel <level>  `Sets the threshold level`_ for logging. 
   --suitestatlevel <level>  Defines how many `levels to show`_ in the :name:`Statistics 
@@ -82,6 +83,7 @@ Command line options for post-processing outputs
   --splitoutputs <level>  `Splits output and log`_ files.
   --logtitle <title>    `Sets a title`_ for the generated test log.
   --reporttitle <title>  `Sets a title`_ for the generated test report.
+  --reportbackground <colors>    `Sets background colors`_ for the generated report and summary.
   --summarytitle <title>  `Sets a title`_ for the generated summary report.
   --suitestatlevel <level>  Defines how many `levels to show`_ in the :name:`Statistics by Suite`
                           table in outputs.
@@ -119,6 +121,7 @@ Command line options for post-processing outputs
 .. _Adds a timestamp: `Timestamping output files`_
 .. _Splits output and log: `Splitting outputs`_
 .. _Sets a title: `Setting titles`_
+.. _Sets background colors: `Setting background colors`_
 
 .. _Sets the threshold level: `Setting log level`_
 .. _levels to show: `Configuring displayed suite statistics`_
