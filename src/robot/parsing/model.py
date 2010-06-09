@@ -492,7 +492,7 @@ class ForLoop(_WithSteps):
         return True
 
     def apply_template(self, template):
-        return Step(['Fail', 'Templates not supported with FOR loops.'])
+        return self
 
     def as_list(self):
         return [': FOR'] + self.vars + ['IN RANGE' if self.range else 'IN'] + self.items

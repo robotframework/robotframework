@@ -28,7 +28,13 @@ Test Template With Variable And Assign Mark (=)
 Test Empty Values
     Check Test Case  ${TESTNAME}
 
-Test Template With For
+Test Template With FOR Loop
+    Check Test Case  ${TESTNAME}
+
+Test Template With FOR Loop Containing Variables
+    Check Test Case  ${TESTNAME}
+
+Test Template With FOR IN RANGE Loop
     Check Test Case  ${TESTNAME}
 
 Test User Keywords Should Not Be Continued On Failure

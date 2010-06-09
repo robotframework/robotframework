@@ -16,7 +16,7 @@ from robot import utils
 from robot.errors import (DataError, ExecutionFailed, ExecutionFailures,
                           HandlerExecutionFailed)
 from robot.common import BaseKeyword
-from robot.variables import is_var, is_list_var, is_scalar_var
+from robot.variables import is_list_var, is_scalar_var
 
 
 class Keywords(object):
@@ -27,13 +27,13 @@ class Keywords(object):
         if template:
             steps = [s.apply_template(template) for s in steps]
         for s in steps:
-            self._add_keyword(s)
+            self._add_keyword(s, template)
 
-    def _add_keyword(self, step):
+    def _add_keyword(self, step, template):
         if step.is_comment():
             return
         if step.is_for_loop():
-            keyword = ForLoop(step)
+            keyword = ForLoop(step, template)
         else:
             keyword = Keyword(step.keyword, step.args, step.assign)
         self._keywords.append(keyword)
@@ -242,12 +242,13 @@ class _AssignParser(object):
 
 class ForLoop(BaseKeyword):
 
-    def __init__(self, forstep):
+    def __init__(self, forstep, template=None):
         BaseKeyword.__init__(self, self._get_name(forstep), type='for')
         self.vars = forstep.vars
         self.items = forstep.items
         self.range = forstep.range
-        self.keywords = Keywords(forstep.steps)
+        self.keywords = Keywords(forstep.steps, template)
+        self._continue_on_failure = bool(template)
 
     def _get_name(self, data):
         return '%s %s [ %s ]' % (' | '.join(data.vars),
@@ -294,7 +295,7 @@ class ForLoop(BaseKeyword):
             err = self._run_one_round(context, self.vars, values)
             if err:
                 errors.extend(err.get_errors())
-                if not err.cont:
+                if not (err.cont or self._continue_on_failure):
                     break
         if errors:
             raise ExecutionFailures(errors)
