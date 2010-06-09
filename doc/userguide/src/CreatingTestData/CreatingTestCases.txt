@@ -652,6 +652,24 @@ the templated tests the mode is on automatically.
    \                    third round 1    third round 2
    ===================  ===============  ================  ===============
 
+If templates are used with `for loops`_, the template is applied for
+all the steps inside the loop. The continue on failure mode is in use
+also in this case, which means that all the steps are executed with
+all the looped elements even if there are failures.
+
+.. table:: Using test template with for loops
+   :class: example
+
+   ==================  ===============  ===============  ==========  ==========
+       Test Case            Action          Argument      Argument    Argument
+   ==================  ===============  ===============  ==========  ==========
+   Template and for    [Template]       Example keyword
+   \                   :FOR             ${item}          IN          @{ITEMS}
+   \                                    ${item}          2nd arg
+   \                   :FOR             ${index}         IN RANGE    42
+   \                                    1st arg          ${index}
+   ==================  ===============  ===============  ==========  ==========
+
 The main use case for test templates is reducing duplication with
 data-driven tests. Instead of repeating the same keyword with all the
 tests in a file, it is possible to use it only once in the Setting
