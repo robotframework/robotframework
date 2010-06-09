@@ -12,7 +12,6 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-
 import re
 
 from robot import utils
@@ -71,7 +70,6 @@ class Stat:
 
 
 class SuiteStat(Stat):
-
     type = 'suite'
 
     def __init__(self, suite):
@@ -89,7 +87,6 @@ class SuiteStat(Stat):
 
 
 class TagStat(Stat):
-
     type = 'tag'
 
     def __init__(self, name, critical=False, non_critical=False, info=None):
@@ -126,7 +123,6 @@ class CombinedTagStat(TagStat):
 
 
 class TotalStat(Stat):
-
     type = 'total'
 
     def __init__(self, name, suite_stat):

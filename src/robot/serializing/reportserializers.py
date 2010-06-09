@@ -92,7 +92,6 @@ class _TableHelper:
 
 
 class ReportSerializer(_TableHelper):
-
     end_test = start_keyword = end_keyword = message = lambda self, arg: None
 
     def __init__(self, output, logpath=None):
