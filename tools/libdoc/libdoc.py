@@ -69,11 +69,11 @@ from HTMLParser import HTMLParser
 from robot.running import TestLibrary, UserLibrary
 from robot.serializing import Template, Namespace
 from robot.errors import DataError, Information
-from robot.parsing import datareader
+from robot.parsing import populators
 from robot import utils
 
 
-datareader.PROCESS_CURDIR = False
+populators.PROCESS_CURDIR = False
 
 
 def _uploading(output):
