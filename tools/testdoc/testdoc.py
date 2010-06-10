@@ -50,7 +50,7 @@ import sys
 import os
 import time
 
-from robot import utils
+from robot import utils, version
 from robot.common import BaseKeyword, BaseTestSuite
 from robot.running import TestSuite, Keyword
 from robot.conf import RobotSettings
@@ -58,10 +58,10 @@ from robot.serializing.logserializers import LogSerializer
 from robot.serializing import templates
 from robot.serializing.templating import Namespace, Template
 from robot.errors import DataError, Information
-from robot.parsing import datareader
+from robot.parsing import populators
 from robot.variables import Variables
 
-datareader.PROCESS_CURDIR = False
+populators.PROCESS_CURDIR = False
 Variables.set_from_variable_table = lambda self, varz: None
 
 
@@ -83,7 +83,7 @@ def serialize_test_doc(suite, outpath, title):
     else:
         title = 'Documentation for %s' % suite.name
     namespace = Namespace(gentime_str=str_time, gentime_int=int_time,
-                          version=utils.get_full_version('testdoc.py'),
+                          version=version.get_full_version('testdoc.py'),
                           suite=suite, title=title)
     Template(template=templates.LOG).generate(namespace, outfile)
     suite.serialize(serializer)
