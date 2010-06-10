@@ -496,3 +496,46 @@ Jython scripts. The last line of the :prog:`jybot` script can, again in
 Windows, be edited like below::
 
   %jython% -J-Xmx1024m %runner% %*
+
+Debugging problems
+~~~~~~~~~~~~~~~~~~
+
+A test case can fail because the system under test does not work
+correctly, in which case the test has found a bug, or because the test
+itself is buggy. The error message explaining the failure is shown on
+the `command line output`_ and in the `report file`_, and sometimes
+the error message alone is enough to pinpoint the problem. More often
+that not, however, `log files`_ are needed because they have also
+other log messages and they show which keyword actually failed.
+
+When a failure is caused by the tested application, the error message
+and log messages ought to be enough to understand what caused it. If
+that is not the case, the test library does not provide `enough
+information`__ and needs to be enhanced. In this situation running the
+same test manually, if possible, may also reveal more information
+about the issue.
+
+Failures caused test cases themselves or by keywords they use can
+sometimes be hard to debug. If the error message, for example, tells
+that a keyword is used with wrong number of arguments fixing the
+problem is obviously easy, but if a keyword is missing or fails in
+unexpected way finding the root cause can be harder. The first place
+to look for more information is the `execution errors`__ section in
+the log file. For example, an error about a failed test library import
+may well explain why a test has failed due to a missing keyword.
+
+If the log file does not provide enough information by default, it is
+possible to execute tests with a lower `log level`_. For example
+tracebacks showing where in the code the failure occurred are logged
+using the :msg:`DEBUG` level, and this information is invaluable when
+the problem is in an individual keyword.
+
+If the log file still does not have enough information, it is a good
+idea to enable the syslog_ and see what information it provides. It is
+also possible to add some keywords to the test cases to see what is
+going on. Especially `BuiltIn keywords`_ :name:`Log` and :name:`Log
+Variables` are useful. If nothing else works, it is always possible to
+search help from `mailing lists`_ or elsewhere.
+
+__ `Communicating with Robot Framework`_
+__ `Errors and warnings during execution`_

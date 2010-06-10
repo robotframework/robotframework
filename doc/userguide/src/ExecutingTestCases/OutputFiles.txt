@@ -213,7 +213,7 @@ keywords can `log information`__ using different levels. The available
 log levels are:
 
 :msg:`FAIL`
-   Used when a keyword fails. Can be used only by Robot Framework.
+   Used when a keyword fails. Can be used only by Robot Framework itself.
 
 :msg:`WARN`
    Used to display warnings. They shown also in `the console and in
@@ -225,12 +225,14 @@ log levels are:
    messages below this level are not shown in the log file.
 
 :msg:`DEBUG`
-   Used for debugging purposes. Useful for example for logging what
-   libraries are doing internally.
+   Used for debugging purposes. Useful, for example, for
+   logging what libraries are doing internally. When a keyword fails,
+   a traceback showing where in the code the failure occurred is
+   logged using this level automatically.
 
 :msg:`TRACE`
-   Another debugging level. Robot Framework itself logs the actual values
-   of keyword arguments and the return values using this level.
+   Another debugging level. The keyword arguments and return values
+   are automatically logged using this level.
 
 __ `Logging information`_
 __ `Errors and warnings during execution`_
