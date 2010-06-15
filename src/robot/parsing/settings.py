@@ -64,7 +64,18 @@ class _Setting(object):
         return ret
 
     def _data_as_list(self):
-        return [self.setting_name] + self.value
+        ret = [self.setting_name]
+        if self.value:
+            ret.extend(self.value)
+        return ret
+
+    def _extend_from_third_position(self, ret, tail):
+        if len(ret) == 2:
+            ret.extend(tail)
+        elif len(ret) == 1:
+            ret.extend([''] + tail)
+        else:
+            raise ValueError('Illegal length %d' % len(ret))
 
 
 class Documentation(_Setting):
@@ -91,7 +102,10 @@ class Template(_Setting):
         return self.value is not None
 
     def _data_as_list(self):
-        return [self.setting_name, self.value]
+        ret = [self.setting_name]
+        if self.value:
+            ret.append(self.value)
+        return ret
 
 
 class Fixture(_Setting):
@@ -110,7 +124,12 @@ class Fixture(_Setting):
         return self.name is not None
 
     def _data_as_list(self):
-        return [self.setting_name, self.name] + self.args
+        ret = [self.setting_name]
+        if self.name:
+            ret.append(self.name)
+        if self.args:
+            self._extend_from_third_position(ret, self.args)
+        return ret
 
 
 class Timeout(_Setting):
@@ -129,7 +148,12 @@ class Timeout(_Setting):
         return self.value is not None
 
     def _data_as_list(self):
-        return [self.setting_name, self.value, self.message]
+        ret = [self.setting_name]
+        if self.value:
+            ret.append(self.value)
+        if self.message:
+            self._extend_from_third_position(ret, [self.message])
+        return ret
 
 
 class Tags(_Setting):
