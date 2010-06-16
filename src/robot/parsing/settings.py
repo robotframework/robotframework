@@ -69,14 +69,6 @@ class _Setting(object):
             ret.extend(self.value)
         return ret
 
-    def _extend_from_third_position(self, ret, tail):
-        if len(ret) == 2:
-            ret.extend(tail)
-        elif len(ret) == 1:
-            ret.extend([''] + tail)
-        else:
-            raise ValueError('Illegal length %d' % len(ret))
-
 
 class Documentation(_Setting):
 
@@ -125,10 +117,10 @@ class Fixture(_Setting):
 
     def _data_as_list(self):
         ret = [self.setting_name]
-        if self.name:
-            ret.append(self.name)
+        if self.name or self.args:
+            ret.append(self.name if self.name else '')
         if self.args:
-            self._extend_from_third_position(ret, self.args)
+            ret.extend(self.args)
         return ret
 
 
@@ -149,10 +141,10 @@ class Timeout(_Setting):
 
     def _data_as_list(self):
         ret = [self.setting_name]
-        if self.value:
-            ret.append(self.value)
+        if self.value or self.message:
+            ret.append(self.value if self.value else '')
         if self.message:
-            self._extend_from_third_position(ret, [self.message])
+            ret.append(self.message)
         return ret
 
 
