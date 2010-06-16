@@ -118,7 +118,7 @@ class Fixture(_Setting):
     def _data_as_list(self):
         ret = [self.setting_name]
         if self.name or self.args:
-            ret.append(self.name if self.name else '')
+            ret.append(self.name or '')
         if self.args:
             ret.extend(self.args)
         return ret
@@ -142,7 +142,7 @@ class Timeout(_Setting):
     def _data_as_list(self):
         ret = [self.setting_name]
         if self.value or self.message:
-            ret.append(self.value if self.value else '')
+            ret.append(self.value or '')
         if self.message:
             ret.append(self.message)
         return ret
