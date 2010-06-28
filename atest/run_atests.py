@@ -72,8 +72,8 @@ def atests(interpreter, *params):
         'OUTPUTDIR' : RESULTDIR,
         'INTERPRETER': interpreter,
         'PLATFORM': sys.platform,
-        'RUNNER': ('python' in os.path.basename(interpreter) and 'pybot'
-                   or 'jybot')
+        'RUNNER': ('jython' in os.path.basename(interpreter) and 'jybot'
+                   or 'pybot')
         }
     if os.name == 'nt':
         args += ' --exclude nonwindows'

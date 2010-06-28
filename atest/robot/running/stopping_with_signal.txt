@@ -96,6 +96,7 @@ Start Run
     Set Runners
     ${path to datasource} =  Set Variables And Get Datasources  ${datasource}
     ${path to runner} =  Join Path  ${ROBOTPATH}  runner.py
+    ${runner} =  Get Coverage Runner
     @{command} =  Create List  ${runner}  ${path to runner}  --variable  TESTSIGNALFILE:${test signal file}  --output  ${OUTFILE}  --report  None  --log  None  --debugfile  ${TEST DEBUG FILE}  --variable  TEARDOWNSLEEP:${teardown sleep}  ${path to datasource}
     Log Many  @{command}
     ProcessManager.start process  @{command}
