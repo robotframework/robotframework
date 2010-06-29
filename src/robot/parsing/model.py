@@ -99,7 +99,7 @@ class TestCaseFile(_TestData):
         self.variable_table = VariableTable(self)
         self.testcase_table = TestCaseTable(self)
         self.keyword_table = KeywordTable(self)
-        if source:
+        if source: # FIXME: model should be decoupled from populating
             FromFilePopulator(self).populate(source)
             self._validate()
 
