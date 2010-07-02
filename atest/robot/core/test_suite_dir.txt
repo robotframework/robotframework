@@ -1,0 +1,55 @@
+*** Settings ***
+Suite Setup     Run Tests  ${EMPTY}  core${/}test_suite_dir
+Force Tags      regression  jybot  pybot
+Resource        atest_resource.txt
+
+*** Variables ***
+${1_test_msg}  1 critical test, 1 passed, 0 failed\n 1 test total, 1 passed, 0 failed
+${2_test_msg}  2 critical tests, 2 passed, 0 failed\n 2 tests total, 2 passed, 0 failed
+${3_test_msg}  3 critical tests, 3 passed, 0 failed\n 3 tests total, 3 passed, 0 failed
+
+*** Test Cases ***
+Main Suite Executed
+    Suite Passed  Test Suite Dir  ${3_test_msg}
+
+Child File Suite Executed
+    Suite Passed  Test File 1  ${1_test_msg}
+
+Child Dir Suite Executed
+    Suite Passed  Test Dir 1  ${2_test_msg}
+
+Grandchild File Suite Executed
+    Suite Passed  Test File 2  ${1_test_msg}
+
+Grandchild Dir Suite Executed
+    Suite Passed  Test Dir 2  ${1_test_msg}
+
+Grandgrandchild Dir Suite Executed
+    Suite Passed  Test Dir 3  ${1_test_msg}
+
+Grandgrandchild File Suite Executed
+    Suite Passed  Test File 3  ${1_test_msg}
+
+Child Suites Not Containing Tests Not Executed
+    Check Parsing Failed Due To No Test Cases  no_tests_file_1.html
+    Check Parsing Failed Due To No Test Cases  no_tests_file_2.html
+    Check Parsing Failed Due To No Test Cases  no_tests_file_3.html
+    Check Sub Suite Count  Test Suite Dir  2
+    Check Sub Suite Count  Test Dir 1  2
+
+*** Keywords ***
+Suite Passed
+    [Arguments]  ${name}  ${expected_msg}
+    Check Test Suite  ${name}  ${expected_msg}  PASS
+
+Check Sub Suite Count
+    [Arguments]  ${name}  ${expected_count}
+    ${suite} =  Get Test Suite  ${name}
+    Ints Equal  ${suite.suites.__len__()}  ${expected_count}
+
+Check Parsing Failed Due To No Test Cases
+    [Arguments]  ${file_name}
+    ${syslog} =  Get Syslog
+    Log  ${syslog}  DEBUG
+    Matches Regexp  ${syslog}  Running test suite '.*${file_name}' failed: Test suite contains no test cases.
+
