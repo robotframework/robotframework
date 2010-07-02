@@ -138,10 +138,10 @@ class FromDirectoryPopulator(object):
                     initfile = path
                 else:
                     LOGGER.error("Ignoring second test suite init file '%s'." % path)
-            elif self._is_ignored(name, path, include_suites):
-                LOGGER.info("Ignoring file or directory '%s'." % name)
-            else:
+            elif self._is_included(name, path, include_suites):
                 children.append(path)
+            else:
+                LOGGER.info("Ignoring file or directory '%s'." % name)
         return initfile, children
 
     def _list_dir(self, path):
@@ -160,15 +160,14 @@ class FromDirectoryPopulator(object):
         base, extension = os.path.splitext(name.lower())
         return base == '__init__' and extension[1:] in READERS
 
-    def _is_ignored(self, name, path, include_suites):
+    def _is_included(self, name, path, include_suites):
         if name.startswith(self.ignored_prefixes):
-            return True
+            return False
         if os.path.isdir(path):
-            return name in self.ignored_dirs
+            return name not in self.ignored_dirs
         base, extension = os.path.splitext(name.lower())
-        if extension[1:] not in READERS:
-            return True
-        return not self._is_in_incl_suites(base, include_suites)
+        return (extension[1:] in READERS and
+                self._is_in_incl_suites(base, include_suites))
 
     def _is_in_incl_suites(self, name, include_suites):
         if include_suites == []:
