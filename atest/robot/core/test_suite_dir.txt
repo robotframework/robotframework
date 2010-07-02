@@ -37,6 +37,9 @@ Child Suites Not Containing Tests Not Executed
     Check Sub Suite Count  Test Suite Dir  2
     Check Sub Suite Count  Test Dir 1  2
 
+File Without Extension
+    Check Syslog Contains  Ignoring file or directory 'no_extension'.
+
 *** Keywords ***
 Suite Passed
     [Arguments]  ${name}  ${expected_msg}

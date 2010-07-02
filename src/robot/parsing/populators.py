@@ -74,7 +74,7 @@ class FromFilePopulator(object):
             raise DataError(utils.get_error_message())
 
     def _get_reader(self, path):
-        extension = path.lower().split('.')[-1]
+        extension = os.path.splitext(path.lower())[-1][1:]
         try:
             return READERS[extension]()
         except KeyError:
@@ -157,16 +157,16 @@ class FromDirectoryPopulator(object):
     def _is_init_file(self, name, path):
         if not os.path.isfile(path):
             return False
-        base, extension = name.lower().rsplit('.', 1)
-        return base == '__init__' and extension in READERS
+        base, extension = os.path.splitext(name.lower())
+        return base == '__init__' and extension[1:] in READERS
 
     def _is_ignored(self, name, path, include_suites):
         if name.startswith(self.ignored_prefixes):
             return True
         if os.path.isdir(path):
             return name in self.ignored_dirs
-        base, extension = name.lower().rsplit('.', 1)
-        if extension not in READERS:
+        base, extension = os.path.splitext(name.lower())
+        if extension[1:] not in READERS:
             return True
         return not self._is_in_incl_suites(base, include_suites)
 
