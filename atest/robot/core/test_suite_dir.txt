@@ -1,5 +1,5 @@
 *** Settings ***
-Suite Setup     Run Tests  ${EMPTY}  core${/}test_suite_dir
+Suite Setup     Run Tests  ${EMPTY}  core/test_suite_dir
 Force Tags      regression  jybot  pybot
 Resource        atest_resource.txt
 
@@ -32,8 +32,8 @@ Grandgrandchild File Suite Executed
 
 Child Suites Not Containing Tests Not Executed
     Check Parsing Failed Due To No Test Cases  no_tests_file_1.html
-    Check Parsing Failed Due To No Test Cases  no_tests_file_2.html
-    Check Parsing Failed Due To No Test Cases  no_tests_file_3.html
+    Check Parsing Failed Due To No Test Cases  test_dir_1/no_tests_file_2.html
+    Check Parsing Failed Due To No Test Cases  test_dir_1/no_tests_dir_2/no_tests_file_3.html
     Check Sub Suite Count  Test Suite Dir  2
     Check Sub Suite Count  Test Dir 1  2
 
@@ -45,11 +45,10 @@ Suite Passed
 Check Sub Suite Count
     [Arguments]  ${name}  ${expected_count}
     ${suite} =  Get Test Suite  ${name}
-    Ints Equal  ${suite.suites.__len__()}  ${expected_count}
+    Length Should Be  ${suite.suites}  ${expected_count}
 
 Check Parsing Failed Due To No Test Cases
-    [Arguments]  ${file_name}
-    ${syslog} =  Get Syslog
-    Log  ${syslog}  DEBUG
-    Matches Regexp  ${syslog}  Running test suite '.*${file_name}' failed: Test suite contains no test cases.
+    [Arguments]  ${file}
+    ${path} =  Normalize Path  ${CURDIR}/../../testdata/core/test_suite_dir/${file}
+    Check Syslog Contains  Running test suite '${path}' failed: Test suite contains no test cases.
 
