@@ -40,6 +40,22 @@ Report Should Have Correct Links
     Link In Tag Details Table To Sub Log Should Be Ok  ${tags}  Subsuites.Sub1.SubSuite1 First  ${LOGBASE}-001.html
     Link In Tag Details Table To Sub Log Should Be Ok  ${tags}  Subsuites.Sub2.SubSuite2 First  ${LOGBASE}-002.html
 
+Index Log Should Have Correct Title
+    ${log} =  Get File  ${OUTDIR}/${LOGBASE}.html
+    Should Contain  ${log}  <title>Subsuites Test Log</title>
+    Should Contain  ${log}  <h1>Subsuites Test Log</h1>
+
+Sub Logs Should Have Correct Title
+    :FOR  ${log}  ${name}  IN  001  Sub1  002  Sub2
+    \  ${log} =  Get File  ${OUTDIR}/${LOGBASE}-${log}.html
+    \  Should Contain  ${log}  <title>${name} Test Log</title>
+    \  Should Contain  ${log}  <h1>${name} Test Log</h1>
+
+Report Should Have Correct Title
+    ${log} =  Get File  ${OUTDIR}/subsuites-report.html
+    Should Contain  ${log}  <title>Subsuites Test Report</title>
+    Should Contain  ${log}  <h1>Subsuites Test Report</h1>
+
 Correct Syslog Message Should Be Written
     Check Syslog Contains  Log: ${OUTDIR}${/}${LOGBASE}-001.html
     Check Syslog Contains  Log: ${OUTDIR}${/}${LOGBASE}-002.html

@@ -16,7 +16,6 @@ import time
 
 from robot import utils
 from robot.common import Statistics
-from robot.conf import get_title
 from robot.output import LOGGER, process_outputs, process_output
 from robot.version import get_full_version
 
@@ -69,9 +68,8 @@ class RobotTestOutput:
         outfile = self._get_outfile(path, 'summary')
         if not outfile:
             return
-        if not title:
-            title = get_title('Summary', self.suite.name)
-        self._use_template(outfile, templates.REPORT, title,
+        self._use_template(outfile, templates.REPORT, 
+                           title or '%s Summary Report' % self.suite.name,
                            self._get_background_color(background))
         self.statistics.serialize(SummaryStatSerializer(outfile))
         outfile.write('</body>\n</html>\n')
@@ -101,13 +99,11 @@ class RobotTestOutput:
         outfile = self._get_outfile(path, 'report')
         if not outfile:
             return
-        if not title:
-            title = get_title('Report', self.suite.name)
-        if logpath == 'NONE':
-            logpath = None
-        self._use_template(outfile, templates.REPORT, title,
+        self._use_template(outfile, templates.REPORT, 
+                           title or '%s Test Report' % self.suite.name,
                            self._get_background_color(background))
         self.statistics.serialize(ReportStatSerializer(outfile))
+        logpath = logpath if logpath != 'NONE' else None
         if split > 0 and logpath:
             self.suite.serialize(SplitReportSerializer(outfile, logpath, split))
         else:
@@ -121,9 +117,8 @@ class RobotTestOutput:
         outfile = self._get_outfile(path, 'log')
         if not outfile:
             return
-        if not title:
-            title = get_title('Log', self.suite.name)
-        self._use_template(outfile, templates.LOG, title)
+        self._use_template(outfile, templates.LOG,
+                           title or '%s Test Log' % self.suite.name)
         if split > 0:
             self._serialize_split_log(outfile, split)
         else:
@@ -190,7 +185,7 @@ class RebotTestOutput(RobotTestOutput):
         outfile = self._get_outfile(self._namegen.get_name(), 'log')
         if not outfile:
             return
-        self._use_template(outfile, templates.LOG, get_title('Log', suite.name))
+        self._use_template(outfile, templates.LOG, '%s Test Log' % suite.name)
         Statistics(suite).serialize(LogStatSerializer(outfile, split_level))
         suite.serialize(LogSerializer(outfile, split_level))
         outfile.write('</body>\n</html>\n')
