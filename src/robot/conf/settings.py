@@ -19,13 +19,6 @@ from robot.errors import DataError, FrameworkError
 from robot.output import LOGGER
 
 
-def get_title(type_, name):
-    endings = { 'Log' : 'Test Log',
-                'Report' : 'Test Report',
-                'Summary' : 'Summary Report' }
-    return '%s %s' % (name, endings[type_])
-
-
 class _BaseSettings:
     _cli_opts = { 'Name'             : ('name', None),
                   'Doc'              : ('doc', None),
@@ -89,45 +82,40 @@ class _BaseSettings:
     def __setitem__(self, name, value):
         if not self._cli_opts.has_key(name):
             raise KeyError("Non-existing settings '%s'" % name)
-        elif name in ['Name', 'Doc'] and value:
-            value = value.replace('_', ' ')
-        elif name == 'Metadata' and value:
-            value = [v.replace('_', ' ') for v in value]
-        elif name == 'TagDoc':
-            value = [ item.replace('_', ' ') for item in value ]
-        elif name in ['Include', 'Exclude', 'TagStatCombine']:
-            value = [ item.replace('AND','&')  for item in value ]
-        elif name in self._optional_outputs and utils.eq(value, 'NONE'):
-            value = 'NONE'
-        elif name == 'OutputDir':
-            value = utils.normpath(value)
-        elif name in ['SplitOutputs', 'SuiteStatLevel', 'MonitorWidth']:
-            value = self._convert_to_integer(name, value)
-        elif name in ['Listeners', 'VariableFiles']:
-            value = [ self._split_args_from_name(item) for item in value ]
-        elif name == 'TagStatLink':
-            value = self._process_tag_stat_link(value)
-        elif name == 'RemoveKeywords':
-            value = value.upper()
-        elif name == 'MonitorColors':
-            value = (utils.eq(value, 'ON') and (not os.sep == '\\')) \
-                         or utils.eq(value, 'FORCE')
+        if value:
+            value = self._process_value(name, value)
         self._opts[name] = value
+
+    def _process_value(self, name, value):
+        if name in ['Name', 'Doc', 'LogTitle', 'ReportTitle', 'SummaryTitle']:
+            return value.replace('_', ' ')
+        if name in ['Metadata', 'TagDoc']:
+            return [v.replace('_', ' ') for v in value]
+        if name in ['Include', 'Exclude', 'TagStatCombine']:
+            return [item.replace('AND', '&') for item in value]
+        if name in self._optional_outputs and utils.eq(value, 'NONE'):
+            return 'NONE'
+        if name == 'OutputDir':
+           return utils.normpath(value)
+        if name in ['SplitOutputs', 'SuiteStatLevel', 'MonitorWidth']:
+            return self._convert_to_integer(name, value)
+        if name in ['Listeners', 'VariableFiles']:
+            return [self._split_args_from_name(item) for item in value]
+        if name == 'TagStatLink':
+            return self._process_tag_stat_link(value)
+        if name == 'RemoveKeywords':
+            return value.upper()
+        if name == 'MonitorColors':
+            return (utils.eq(value, 'ON') and os.sep == '/') \
+                or utils.eq(value, 'FORCE')
+        return value
 
     def __getitem__(self, name):
         if not self._cli_opts.has_key(name):
             raise KeyError("Non-existing setting '%s'" % name)
         elif name in ['Output', 'Log', 'Report', 'Summary', 'DebugFile']:
             return self._get_output_file(name)
-        elif name in ['LogTitle', 'ReportTitle', 'SummaryTitle']:
-            return self._get_output_title(name)
         return self._opts[name]
-
-    def _get_output_title(self, type_):
-        value = self._opts[type_]
-        if value is not None:
-            return value.replace('_', ' ')
-        return get_title(type_.replace('Title',''), self['Name'])
 
     def _get_output_file(self, type_):
         """Returns path of the requested ouput file and creates needed dirs.

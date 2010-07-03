@@ -12,5 +12,4 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-
-from settings import RobotSettings, RebotSettings, get_title
+from settings import RobotSettings, RebotSettings
