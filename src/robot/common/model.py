@@ -12,7 +12,6 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-
 import random
 
 from statistics import Stat
@@ -293,7 +292,6 @@ class BaseTestSuite(_TestAndSuiteHelper):
         self.filter(settings['SuiteNames'], settings['TestNames'],
                     settings['Include'], settings['Exclude'])
         self.set_name(settings['Name'])
-        settings['Name'] = self.name
         self.set_doc(settings['Doc'])
         self.set_metadata(settings['Metadata'])
         self.set_critical_tags(settings['Critical'], settings['NonCritical'])
