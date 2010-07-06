@@ -137,16 +137,21 @@ class Variables(utils.NormalizedDict):
         variable its value is returned. Otherwise variables are replaced with
         'replace_string'. Result may be any object.
         """
-        if not isinstance(item, basestring):
-            return item
+        if self._cannot_have_variables(item):
+            return utils.unescape(item)
         var = VariableSplitter(item, self._identifiers)
         if var.identifier and var.base and \
                var.start == 0 and var.end == len(item):
             return self._get_variable(var)
         return self.replace_string(item, var)
 
+    def _cannot_have_variables(self, item):
+        return (not isinstance(item, basestring)) or '{' not in item
+
     def replace_string(self, string, splitted=None, ignore_errors=False):
         """Replaces variables from a string. Result is always a string."""
+        if self._cannot_have_variables(string):
+            return utils.unescape(string)
         result = []
         if splitted is None:
             splitted = VariableSplitter(string, self._identifiers)
