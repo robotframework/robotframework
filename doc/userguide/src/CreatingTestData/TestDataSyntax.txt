@@ -9,7 +9,6 @@ cases, test suites and so on.
    :depth: 2
    :local: 
 
-
 Files and directories
 ~~~~~~~~~~~~~~~~~~~~~
 
@@ -32,7 +31,6 @@ In addition to this, there are:
 - `Variable files`_ to provide more flexible ways to create variables
   than resource files 
 
-
 Supported file formats
 ~~~~~~~~~~~~~~~~~~~~~~
 
@@ -48,7 +46,6 @@ for TSV, :path:`.txt` for plain text, and :path:`.rst` or
 Different `test data templates`_ are available for HTML and TSV
 formats to make it easier to get started writing tests.
 
-
 HTML format
 '''''''''''
 
@@ -63,8 +60,8 @@ tables is ignored.
    ============  ================  =======  =======
       Setting          Value        Value    Value 
    ============  ================  =======  =======
-   Library       OperatingSystem   \        \
-   \             \                 \        \
+   Library       OperatingSystem
+   \
    ============  ================  =======  =======
 
 .. table::
@@ -73,8 +70,8 @@ tables is ignored.
    ============  ================  =======  =======
      Variable        Value          Value    Value
    ============  ================  =======  =======
-   ${MESSAGE}    Hello, world!     \        \
-   \             \                 \        \
+   ${MESSAGE}    Hello, world!
+   \
    ============  ================  =======  =======
 
 .. table::
@@ -83,10 +80,10 @@ tables is ignored.
    ============  ===================  ============  =============
     Test Case           Action          Argument      Argument 
    ============  ===================  ============  =============
-   My Test       [Documentation]      Example test  \
-   \             Log                  ${MESSAGE}    \
-   \             My Keyword           /tmp          \
-   \             \                    \             \
+   My Test       [Documentation]      Example test
+   \             Log                  ${MESSAGE}
+   \             My Keyword           /tmp
+   \
    Another Test  Should Be Equal      ${MESSAGE}    Hello, world!
    ============  ===================  ============  =============
    
@@ -96,8 +93,8 @@ tables is ignored.
    ============  ======================  ============  ==========
      Keyword            Action             Argument     Argument
    ============  ======================  ============  ==========
-   My Keyword    [Arguments]             ${path}       \
-   \             Directory Should Exist  ${path}       \
+   My Keyword    [Arguments]             ${path}
+   \             Directory Should Exist  ${path}
    ============  ======================  ============  ==========
 
 Editing test data
@@ -124,7 +121,6 @@ XHTML files should use the XML preamble as in this example::
 
 If no encoding is specified, Robot Framework uses ISO-8859-1 by default. 
 
-
 TSV format
 ''''''''''
 
@@ -140,24 +136,24 @@ similarly as data outside tables in HTML data.
 
    ============  =======================  =============  =============
    \*Setting*    \*Value*                 \*Value*       \*Value*
-   Library       OperatingSystem          \              \
-   \             \                        \              \ 
-   \             \                        \              \
+   Library       OperatingSystem
+   \
+   \
    \*Variable*   \*Value*                 \*Value*       \*Value*
-   ${MESSAGE}    Hello, world!            \              \
-   \             \                        \              \
-   \             \                        \              \
+   ${MESSAGE}    Hello, world!
+   \
+   \
    \*Test Case*  \*Action*                \*Argument*    \*Argument*
-   My Test       [Documentation]          Example test   \
-   \             Log                      ${MESSAGE}     \
-   \             My Keyword               /tmp           \
-   \             \                        \              \
+   My Test       [Documentation]          Example test
+   \             Log                      ${MESSAGE}
+   \             My Keyword               /tmp
+   \
    Another Test  Should Be Equal          ${MESSAGE}     Hello, world!
-   \             \                        \              \ 
-   \             \                        \              \
+   \
+   \
    \*Keyword*    \*Action*                \*Argument*    \*Argument*
-   My Keyword    [Arguments]              ${path}        \
-   \             Directory Should Exist   ${path}        \
+   My Keyword    [Arguments]              ${path}
+   \             Directory Should Exist   ${path}
    ============  =======================  =============  =============
 
 Editing test data
@@ -190,7 +186,6 @@ Encoding
 TSV files are always expected to use UTF-8 encoding. Because ASCII is
 a subset of UTF-8, plain ASCII is naturally supported too.
 
-
 Plain text format
 '''''''''''''''''
 
@@ -210,7 +205,6 @@ converted to two spaces. This allows using a single tab as a separator similarly
 as in the TSV format. Notice, however, that in the plain text format multiple
 tabs are considered to be a single separator whereas in the TSV format every
 tab would be a separator.
-
 
 Space separated format
 ``````````````````````
@@ -330,7 +324,6 @@ processing it will not succeed.
 __ reStructuredText_
 __ http://docutils.sourceforge.net/docs/user/rst/quickref.html
 
-
 .. note:: Using reST files with Robot Framework requires the Python docutils 
           module to be installed. 
 
@@ -394,21 +387,23 @@ files.
 Temporary files when using reST
 ```````````````````````````````
 
-Unlike HTML or TSV formats, Robot Framework does not parse reST files directly.
-Instead, docutils is used to automatically transform reST source files into temporary HTML
-files that are subsequently read by Robot. These temporary files are removed 
-immediately after being read. This HTML file generation and cleanup is handled
-internally by Robot Framework, it does not require the user to directly invoke docutils tools.
+Unlike HTML or TSV formats, Robot Framework does not parse reST files
+directly.  Instead, docutils is used to automatically transform reST
+source files into temporary HTML files that are subsequently read by
+Robot. These temporary files are removed immediately after being
+read. This HTML file generation and cleanup is handled internally by
+Robot Framework, it does not require the user to directly invoke
+docutils tools.
 
 Syntax errors in reST source files
 ``````````````````````````````````
 
-If you create test data or other portions of a reST file that is not syntactically
-correct (a malformed table for example), the reST-to-HTML conversion will not 
-take place and no test cases will be read from that file. When this occurs, 
-Robot Framework will show the docutils error message in it's console output showing the 
-filename, line number, source context, and type of error.
-
+If you create test data or other portions of a reST file that is not
+syntactically correct (a malformed table for example), the
+reST-to-HTML conversion will not take place and no test cases will be
+read from that file. When this occurs, Robot Framework will show the
+docutils error message in it's console output showing the filename,
+line number, source context, and type of error.
 
 Test data tables
 ~~~~~~~~~~~~~~~~
@@ -440,7 +435,6 @@ used as a table name.
    |              |                                           | User Keywords     |
    +--------------+-------------------------------------------+-------------------+
 
-
 Rules for parsing the data
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -470,7 +464,6 @@ place it to the documentation or other metadata of test cases or suites,
 or log with the :name:`Log` or :name:`Comment` keywords available
 from the `BuiltIn library`_.
 
-
 Escaping
 ''''''''
 
@@ -493,7 +486,6 @@ The escape character can be used as follows:
 
 __ `Handling whitespace`_
 __ `Space and empty variables`_
-
 
 Handling whitespace
 '''''''''''''''''''
@@ -520,7 +512,6 @@ trailing, or consecutive spaces is using `built-in variable`__
 like :var:`${SPACE * 8}` which makes handling consecutive spaces very simple.
 
 __ `Space and empty variables`_
-
 
 Dividing test data to several rows
 ''''''''''''''''''''''''''''''''''
@@ -582,7 +573,6 @@ splitting the data to several rows.
    |           | ${var} =        | Get X         | 1    | 2     | 3    | 4    | 5   | 6   |
    +-----------+-----------------+---------------+------+-------+------+------+-----+-----+
 
-
 .. table:: Test data split to several rows
    :class: example
 
@@ -619,7 +609,6 @@ splitting the data to several rows.
    \            ...               3               4           5
    \            ...               6               
    ===========  ================  ==============  ==========  ==========
-
 
 Splitting test data in reST tables
 ```````````````````````````````````
