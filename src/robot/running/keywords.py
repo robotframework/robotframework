@@ -23,7 +23,7 @@ class Keywords(object):
 
     def __init__(self, steps, template=None):
         self._keywords = []
-        self._continue_on_failure = bool(template)
+        self._templated = bool(template)
         if template:
             steps = [s.apply_template(template) for s in steps]
         for s in steps:
@@ -45,9 +45,7 @@ class Keywords(object):
                 kw.run(context)
             except ExecutionFailed, err:
                 errors.extend(err.get_errors())
-                if err.timeout or err.exit:
-                    break
-                if not (err.cont or self._continue_on_failure):
+                if not err.can_continue(context.dry_run, self._templated):
                     break
         if errors:
             raise ExecutionFailures(errors)
@@ -131,7 +129,7 @@ class Keyword(BaseKeyword):
         if error_details.traceback:
             context.output.debug(error_details.traceback)
         is_teardown = self._in_test_or_suite_teardown(context.namespace)
-        raise HandlerExecutionFailed(error_details, is_teardown, context.dry_run)
+        raise HandlerExecutionFailed(error_details, is_teardown)
 
     def _in_test_or_suite_teardown(self, namespace):
         test_or_suite = namespace.test or namespace.suite
@@ -250,7 +248,7 @@ class ForLoop(BaseKeyword):
         self.items = forstep.items
         self.range = forstep.range
         self.keywords = Keywords(forstep.steps, template)
-        self._continue_on_failure = bool(template)
+        self._templated = bool(template)
 
     def _get_name(self, data):
         return '%s %s [ %s ]' % (' | '.join(data.vars),
@@ -297,9 +295,7 @@ class ForLoop(BaseKeyword):
             err = self._run_one_round(context, self.vars, values)
             if err:
                 errors.extend(err.get_errors())
-                if err.timeout or err.exit:
-                    break
-                if not (err.cont or self._continue_on_failure):
+                if not err.can_continue(context.dry_run, self._templated):
                     break
         if errors:
             raise ExecutionFailures(errors)

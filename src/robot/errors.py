@@ -78,12 +78,25 @@ class ExecutionFailed(RobotError):
         self.timeout = timeout
         self.syntax = syntax
         self.exit = exit
-        self.cont = self._continue_on_failure(cont)
+        self.cont = cont
 
-    def _continue_on_failure(self, cont):
-        if self.timeout or self.syntax or self.exit:
+    @property
+    def dont_cont(self):
+        return self.timeout or self.syntax or self.exit
+
+    # Python 2.6 property decorators would have nice `setter` attribute:
+    # http://docs.python.org/library/functions.html#property
+    cont = property(lambda self: self._cont and not self.dont_cont,
+                    lambda self, cont: setattr(self, '_cont', cont))
+
+    def can_continue(self, dry_run=False, templated=False):
+        if dry_run:
+            return True
+        if self.dont_cont:
             return False
-        return cont
+        if templated:
+            return True
+        return self.cont
 
     def get_errors(self):
         return [self]
@@ -91,21 +104,15 @@ class ExecutionFailed(RobotError):
 
 class HandlerExecutionFailed(ExecutionFailed):
 
-    def __init__(self, error_details, is_test_or_suite_teardown, is_dry_run):
+    def __init__(self, error_details, is_test_or_suite_teardown):
         orig_error = error_details.error
         timeout = isinstance(orig_error, TimeoutError)
         syntax = isinstance(orig_error, DataError)
         exit = bool(getattr(orig_error, 'ROBOT_EXIT_ON_FAILURE', False))
-        cont = bool(getattr(orig_error, 'ROBOT_CONTINUE_ON_FAILURE', False))
-        cont = cont or is_test_or_suite_teardown
-        self._is_dry_run = is_dry_run
+        cont = bool(getattr(orig_error, 'ROBOT_CONTINUE_ON_FAILURE', False)) \
+            or is_test_or_suite_teardown
         ExecutionFailed.__init__(self, error_details.message, timeout, syntax,
                                  exit, cont)
-
-    def _continue_on_failure(self, cont):
-        if self._is_dry_run:
-            return True
-        return ExecutionFailed._continue_on_failure(self, cont)
 
 
 class ExecutionFailures(ExecutionFailed):

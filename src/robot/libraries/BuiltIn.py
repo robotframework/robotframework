@@ -823,7 +823,7 @@ class _RunKeyword:
         try:
             return 'PASS', self.run_keyword(name, *args)
         except ExecutionFailed, err:
-            if err.timeout or err.syntax or err.exit:
+            if err.dont_cont:
                 raise
             return 'FAIL', unicode(err)
 
@@ -836,13 +836,14 @@ class _RunKeyword:
         | Run Keyword And Continue On Failure | Fail | This is a stupid example |
         | Log | This keyword is executed |
 
-        This keyword was added in Robot Framework 2.5. Errors caused by invalid
-        syntax, timeouts, or fatal exceptions are not caught.
+        This keyword was added in Robot Framework 2.5. The execution is not
+        continued if the failure is caused by invalid syntax, timeout, or 
+        fatal exception.
         """
         try:
             return self.run_keyword(name, *args)
         except ExecutionFailed, err:
-            if not (err.timeout or err.syntax or err.exit):
+            if not err.dont_cont:
                 err.cont = True
             raise err
 
@@ -870,7 +871,7 @@ class _RunKeyword:
         try:
             self.run_keyword(name, *args)
         except ExecutionFailed, err:
-            if err.timeout or err.syntax or err.exit:
+            if err.dont_cont:
                 raise
         else:
             raise AssertionError("Expected error '%s' did not occur"
@@ -936,7 +937,7 @@ class _RunKeyword:
             try:
                 return self.run_keyword(name, *args)
             except ExecutionFailed, err:
-                if err.timeout or err.syntax or err.exit:
+                if err.dont_cont:
                     raise
                 if time.time() > maxtime:
                     error = unicode(err)

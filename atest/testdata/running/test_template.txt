@@ -133,6 +133,12 @@ Templates, timeouts, and for loops
     :FOR  ${i}  IN RANGE  10
     \    0.05 seconds
 
+Templates and syntax errors
+    [Documentation]  FAIL  Non-existing variable '\${nonex}'.
+    [Template]  Should be equal
+    ${nonex}      something
+    not compared  anymore
+
 Templates and fatal errors 1
     [Documentation]  FAIL  Several failures occurred:\n\n
     ...  1) First error\n\n
