@@ -167,9 +167,11 @@ You can create and edit TSV files in any spreadsheet program, such as
 Microsoft Excel. Select the tab-separated format when you save the
 file and remember to set the file extension to :path:`.tsv`. It is
 also a good idea to turn all automatic corrections off and configure
-the tool to treat all values in the file as plain text. The TSV format
-is also relatively easy to edit with any text editor, especially if
-the editor supports visually separating tabs from spaces.
+the tool to treat all values in the file as plain text.
+
+TSV files are relatively easy to edit with any text editor,
+especially if the editor supports visually separating tabs from
+spaces. The TSV format is also supported by RIDE_.
 
 Robot Framework parses TSV data by first splitting all the content
 into rows and then rows into cells on the basis of the tabular
@@ -294,12 +296,18 @@ __ Escaping_
 Editing and encoding
 ````````````````````
 
-The biggest benefit of the plain text format over HTML and TSV
-is that it is very easy to edit using normal text editors. 
+One of the biggest benefit of the plain text format over HTML and TSV
+is that editing it using normal text editors is very easy. For Emacs__
+there is even a special `robot-mode.el`__ that provides syntax
+highlighting and keyword completion. The plain text format is also
+supported by RIDE_, although it only supports the space separated
+variant.
+
+__ http://www.gnu.org/software/emacs/
+__ http://code.google.com/p/robot-mode/
 
 Similarly as with the TSV test data, plain text files are always expected
 to use UTF-8 encoding. As a consequence also ASCII files are supported.
-
 
 reStructuredText format
 '''''''''''''''''''''''
