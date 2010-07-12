@@ -52,6 +52,9 @@ Templates with continuable failures
 Templates and timeouts
     Check Test Case  ${TESTNAME}
 
+Templates, timeouts, and for loops
+    Check Test Case  ${TESTNAME}
+
 Templates and fatal errors
     Check Test Case  ${TESTNAME} 1
     Check Test Case  ${TESTNAME} 2

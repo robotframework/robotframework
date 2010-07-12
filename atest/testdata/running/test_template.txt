@@ -126,6 +126,13 @@ Templates and timeouts
     0.2 seconds
     0.1 seconds
 
+Templates, timeouts, and for loops
+    [Documentation]  FAIL  Timeout error should happen only once
+    [Timeout]  0.1 seconds  Timeout error should happen only once
+    [Template]  Sleep
+    :FOR  ${i}  IN RANGE  10
+    \    0.05 seconds
+
 Templates and fatal errors 1
     [Documentation]  FAIL  Several failures occurred:\n\n
     ...  1) First error\n\n

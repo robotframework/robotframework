@@ -297,6 +297,8 @@ class ForLoop(BaseKeyword):
             err = self._run_one_round(context, self.vars, values)
             if err:
                 errors.extend(err.get_errors())
+                if err.timeout or err.exit:
+                    break
                 if not (err.cont or self._continue_on_failure):
                     break
         if errors:
