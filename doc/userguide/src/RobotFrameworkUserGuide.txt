@@ -214,7 +214,7 @@ Appendices
 .. _fileviewer.py: ../../tools/fileviewer/doc/fileviewer.html
 .. _One click installer: ../../tools/oneclickinstaller/doc/oneclickinstaller.html
 .. _statuschecker.py: ../../tools/statuschecker/doc/statuschecker.html
-.. _Robot IDE: `Test data editing tool (Robot IDE)`_
+.. _RIDE: `Test data editing tool (RIDE)`_
 .. _mabot: `Manual test execution tool (mabot)`_
 .. _javatools: `Tools for creating Java test libraries`_
 

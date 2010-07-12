@@ -73,10 +73,10 @@ External tools
 
 These tools are developed as separate projects.
 
-Test data editing tool (Robot IDE)
-''''''''''''''''''''''''''''''''''
+Test data editing tool (RIDE)
+'''''''''''''''''''''''''''''
 
-Robot IDE is a standalone tool for editing test data. It helps in
+RIDE is a standalone tool for editing test data. It helps in
 creating, editing and maintaining of Robot Framework test data.
 The project pages are at http://code.google.com/p/robotframework-ride/.
 

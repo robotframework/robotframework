@@ -105,7 +105,7 @@ Editing test data
 
 Test data in HTML files can be edited with whichever editor you
 prefer, but a graphic editor, where you can actually see the tables,
-is recommended.  There is also a tool called `Robot IDE`_
+is recommended.  There is also a tool called RIDE_
 available that is actually designed for editing the test data.
 
 Encoding and entity references
@@ -380,7 +380,7 @@ Test data in reST files can be edited with any text editor. It is recommended
 that the editor be configured to use a monospace font to aid with alignment
 of table elements.
 
-The `Robot IDE`_ does not support direct editing of test data in reST source
+Note that RIDE_ does not support direct editing of test data in reST source
 files.
 
 Temporary files when using reST
@@ -457,7 +457,7 @@ When Robot Framework parses the test data, it ignores:
 When Robot Framework ignores some data, this data is not available in 
 any resulting reports and, additionally, most tools used with Robot
 Framework also ignore them. To add information that is visible in
-Robot Framework outputs, or available to, for example, `Robot IDE`_,
+Robot Framework outputs, or available to, for example, RIDE_,
 place it to the documentation or other metadata of test cases or suites,
 or log with the :name:`Log` or :name:`Comment` keywords available
 from the `BuiltIn library`_.
