@@ -12,6 +12,10 @@ Passing keywords
 Failing keyword
     Test Should Have Correct Keywords  Passing  Failing
 
+Continuable failures
+    Test Should Have Correct Keywords  Continuable failure  
+    ...  Multiple continuables  Failing
+
 Keywords as variables
     Test Should Have Correct Keywords  BuiltIn.No Operation  Passing
     ...  BuiltIn.No Operation  Passing  BuiltIn.Log Variables  Failing

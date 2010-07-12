@@ -21,6 +21,16 @@ Failing keyword
     [Documentation]  FAIL  Expected error message${ATD ERR}
     Run keywords  Passing  Failing  Not Executed
 
+Continuable failures
+    [Documentation]  FAIL  Several failures occurred:\n\n
+    ...  1) Expected continuable failure\n\n
+    ...  2) Continuable 1/4\n\n
+    ...  3) Continuable 2/4\n\n
+    ...  4) Continuable 3/4\n\n
+    ...  5) Continuable 4/4\n\n
+    ...  6) Expected error message${ATD ERR}
+    Run keywords  Continuable failure  Multiple continuables  Failing  Not Exec
+
 Keywords as variables
     [Documentation]  FAIL  Expected error message${ATD ERR}
     Run keywords  ${NOOP}  ${PASSING}  @{KEYWORDS}  ${FAILING}
@@ -60,3 +70,12 @@ Passing
 
 Failing
     Fail  Expected error message
+
+Continuable failure  [Arguments]  ${msg}=Expected continuable failure
+    Run keyword and continue on failure  Fail  ${msg}
+
+Multiple continuables
+    Continuable failure  Continuable 1/4
+    Continuable failure  Continuable 2/4
+    Continuable failure  Continuable 3/4
+    Continuable failure  Continuable 4/4

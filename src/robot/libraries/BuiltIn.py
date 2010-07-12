@@ -773,7 +773,7 @@ class _RunKeyword:
             try:
                 self.run_keyword(kw)
             except ExecutionFailed, err:
-                errors.append(err)
+                errors.extend(err.get_errors())
                 if not err.cont:
                     break
         if errors:
