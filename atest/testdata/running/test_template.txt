@@ -118,6 +118,27 @@ Templates with continuable failures
     3
     5
 
+Templates and timeouts
+    [Documentation]  FAIL  Timeout error should happen only once
+    [Timeout]  0.1 seconds  Timeout error should happen only once
+    [Template]  Sleep
+    0.3 seconds
+    0.2 seconds
+    0.1 seconds
+
+Templates and fatal errors 1
+    [Documentation]  FAIL  Several failures occurred:\n\n
+    ...  1) First error\n\n
+    ...  2) Second error is fatal and should stop execution
+    [Template]  Run Keyword
+    Fail  First error
+    Fatal Error  Second error is fatal and should stop execution
+    Fail  This should not be executed
+
+Templates and fatal errors 2
+    [Documentation]  FAIL  Test execution is stopped due to a fatal error
+    Fail  This should not be executed
+
 
 *** Keywords ***
 Expect Exactly Two Args  [arguments]  ${a1}  ${a2}

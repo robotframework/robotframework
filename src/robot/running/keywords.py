@@ -45,6 +45,8 @@ class Keywords(object):
                 kw.run(context)
             except ExecutionFailed, err:
                 errors.extend(err.get_errors())
+                if err.timeout or err.exit:
+                    break
                 if not (err.cont or self._continue_on_failure):
                     break
         if errors:

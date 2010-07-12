@@ -48,3 +48,10 @@ Templates with Run Keyword
 
 Templates with continuable failures
     Check Test Case  ${TESTNAME}
+
+Templates and timeouts
+    Check Test Case  ${TESTNAME}
+
+Templates and fatal errors
+    Check Test Case  ${TESTNAME} 1
+    Check Test Case  ${TESTNAME} 2
