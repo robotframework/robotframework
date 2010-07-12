@@ -38,7 +38,7 @@ class RobotError(Exception):
 
 
 class FrameworkError(RobotError):
-    """Can be used when the core framework goes to unexpected state
+    """Can be used when the core framework goes to unexpected state.
 
     It is good to explicitly raise a FrameworkError if some framework
     component is used incorrectly. This is pretty much same as
@@ -47,24 +47,30 @@ class FrameworkError(RobotError):
 
 
 class DataError(RobotError):
-    """Should be used when provided test data is incorrect
+    """Used when the provided test data is invalid.
 
-    When keyword execution starts, RuntimeError should be used instead as 
-    DataErrors are not be caught by keywords that run other keywords for example
-    Run Keyword And Expect Error.
+    DataErrors are not be caught by keywords that run other keywords
+    (e.g. `Run Keyword And Expect Error`). Libraries should thus use
+    this exception with care.
     """
 
 
 class TimeoutError(RobotError):
-    """Used when test execution is timed out"""
+    """Used when a test or keyword timeout occurs.
+
+    This exception is handled specially so that execution of the
+    current test is always stopped immediately and it is not caught by
+    keywords executing other keywords (e.g. `Run Keyword And Expect
+    Error`). Libraries should thus NOT use this exception themselves.
+    """
 
 
 class Information(RobotError):
-    """Used by argument parser with --help or --version"""
+    """Used by argument parser with --help or --version."""
 
 
 class ExecutionFailed(RobotError):
-    """Used for communicating failures in test execution"""
+    """Used for communicating failures in test execution."""
 
     def __init__(self, message, timeout=False, syntax=False, exit=False, 
                  cont=False):
@@ -131,8 +137,8 @@ class _RobotErrorWithTrace(RobotError):
 
 
 class RemoteError(_RobotErrorWithTrace):
-    """Used by Remote library to report remote errors"""
+    """Used by Remote library to report remote errors."""
 
 
 class XmlParsingError(_RobotErrorWithTrace):
-    """Used when parsing XML fails"""
+    """Used when parsing XML fails."""
