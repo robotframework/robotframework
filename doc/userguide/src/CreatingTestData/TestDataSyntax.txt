@@ -327,11 +327,6 @@ __ http://docutils.sourceforge.net/docs/user/rst/quickref.html
 .. note:: Using reST files with Robot Framework requires the Python docutils 
           module to be installed. 
 
-          reStructureText documents are not currently supported when running
-          tests on Jython. This is anticipated to change when Jython 2.5 
-          fully supports docutils. To use reST files with Jython earlier, it
-          is possible to just convert them to HTML before running tests.
-
 In reST files, test data is defined in tables within the document, similar to
 the HTML format. Robot Framework identifies `test data tables`_ based on the 
 text in the first cell and all content outsided of the recognized table types is
