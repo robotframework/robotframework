@@ -3,20 +3,52 @@ Documentation   Tests for checking that library initialization arguments are han
 Suite Setup     Run Tests  ${EMPTY}  test_libraries/library_imports_with_args.txt
 Force Tags      regression  pybot  jybot
 Resource        atest_resource.txt
+Test Template   Library import should have been successful
+
 
 *** Test Cases ***
-Importing Python Library With Arguments
-    Check Syslog Contains  Imported library 'PythonVarArgsConstructor' with arguments [ valid argument | another arg ]
+Mandatory arguments
+    libswithargs.Normal  valid argument  another arg
 
-Importing Python Library With Default Arguments
-    Check Syslog Contains  Imported library 'PythonVarArgsConstructor' with arguments [ mandatory ]
+Default values
+    libswithargs.Defaults  m1
+    libswithargs.Defaults  m2  d1
+    libswithargs.Defaults  m3  1  2
 
-Importing Python Library With Too Many Arguments
-    Check Syslog Contains  Test Library 'ExampleLibrary' expected 0 arguments, got 1.
+Varargs
+    libswithargs.Varargs  m1
+    libswithargs.Varargs  m2  v1
+    libswithargs.Varargs  m3  1  2
 
-Importing Python Library With Too Few Arguments
-    Check Syslog Contains  Test Library 'PythonVarArgsConstructor' expected at least 1 argument, got 0.
+Mixed
+    libswithargs.Mixed  m1
+    libswithargs.Mixed  m2  d1
+    libswithargs.Mixed  m3  d2  v
+    libswithargs.Mixed  m4  d3  v1  v2
 
-Importing Python Library With List And Dictinary Arguments
-    Check Syslog Contains  Imported library 'ParameterLibrary' with arguments [ [1, 2, 3, 4, 'foo', 'bar'] | {'a': 1} ]
+Variables containing objects
+    libswithargs.Mixed  [1, 2, 3, 4, 'foo', 'bar']  {'a': 1}  None  42
 
+Too Few Arguments
+    [Template]  Library import should have failed
+    libswithargs.Normal    2 arguments, got 1.
+    libswithargs.Defaults  1 to 3 arguments, got 0.
+    libswithargs.Varargs   at least 1 argument, got 0.
+
+Too Many Arguments
+    [Template]  Library import should have failed
+    libswithargs.Normal    2 arguments, got 4.
+    libswithargs.Defaults  1 to 3 arguments, got 5.
+
+
+***Keywords***
+
+Library import should have been successful
+    [Arguments]  ${lib}  @{params}
+    Check Test Case  ${TEST NAME}
+    ${par} =  Catenate  SEPARATOR=${SPACE}|${SPACE}  @{params}
+    Check Syslog Contains  Imported library '${lib}' with arguments [ ${par} ]
+
+Library import should have failed
+    [Arguments]  ${lib}  ${err}
+    Check Syslog Contains  Test Library '${lib}' expected ${err}

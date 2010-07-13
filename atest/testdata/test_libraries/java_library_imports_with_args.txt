@@ -1,0 +1,10 @@
+*** Settings ***
+Library         JavaVarArgsConstructor  WITH NAME  JavaVarArgs1
+Library         JavaVarArgsConstructor  mandatory  WITH NAME  JavaVarArgs2
+Library         JavaVarArgsConstructor  valid argument  another arg
+
+
+*** Test Cases ***
+Test
+    Comment  Tests only failing library imports.
+
