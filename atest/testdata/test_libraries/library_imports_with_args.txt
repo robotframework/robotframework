@@ -1,0 +1,16 @@
+*** Settings ***
+Library         ExampleLibrary  invalid
+Library         ExampleJavaLibrary  invalid
+Library         PythonVarArgsConstructor  WITH NAME  VarArgs1
+Library         PythonVarArgsConstructor  mandatory  WITH NAME  VarArgs2
+Library         PythonVarArgsConstructor  valid argument  another arg
+Library         JavaVarArgsConstructor  WITH NAME  JavaVarArgs1
+Library         JavaVarArgsConstructor  mandatory  WITH NAME  JavaVarArgs2
+Library         JavaVarArgsConstructor  valid argument  another arg
+Variables       ../../testresources/res_and_var_files/different_variables.py
+Library         ParameterLibrary  ${list1}  ${dictionary1}
+
+*** Test Cases ***
+Test
+    Comment  Tests only failing library imports.
+

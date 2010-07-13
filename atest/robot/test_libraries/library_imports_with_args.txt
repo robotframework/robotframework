@@ -1,0 +1,22 @@
+*** Settings ***
+Documentation   Tests for checking that library initialization arguments are handled correctly. Taking libraries without arguments is not tested here, because almost every other suite does that.
+Suite Setup     Run Tests  ${EMPTY}  test_libraries/library_imports_with_args.txt
+Force Tags      regression  pybot  jybot
+Resource        atest_resource.txt
+
+*** Test Cases ***
+Importing Python Library With Arguments
+    Check Syslog Contains  Imported library 'PythonVarArgsConstructor' with arguments [ valid argument | another arg ]
+
+Importing Python Library With Default Arguments
+    Check Syslog Contains  Imported library 'PythonVarArgsConstructor' with arguments [ mandatory ]
+
+Importing Python Library With Too Many Arguments
+    Check Syslog Contains  Test Library 'ExampleLibrary' expected 0 arguments, got 1.
+
+Importing Python Library With Too Few Arguments
+    Check Syslog Contains  Test Library 'PythonVarArgsConstructor' expected at least 1 argument, got 0.
+
+Importing Python Library With List And Dictinary Arguments
+    Check Syslog Contains  Imported library 'ParameterLibrary' with arguments [ [1, 2, 3, 4, 'foo', 'bar'] | {'a': 1} ]
+

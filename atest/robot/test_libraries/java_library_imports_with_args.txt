@@ -1,0 +1,19 @@
+*** Settings ***
+Documentation   Tests for checking that library initialization arguments are handled correctly. Taking libraries without arguments is not tested here, because almost every other suite does that.
+Suite Setup     Run Tests  ${EMPTY}  test_libraries/library_imports_with_args.txt
+Force Tags      regression  jybot
+Resource        atest_resource.txt
+
+*** Test Cases ***
+Importing Java Library With Arguments
+    Check Syslog Contains  Imported library 'JavaVarArgsConstructor' with arguments [ valid argument | another arg ]
+
+Importing Java Library With Default Arguments
+    Check Syslog Contains  Imported library 'JavaVarArgsConstructor' with arguments [ mandatory ]
+
+Importing Java Library With Too Many Arguments
+    Check Syslog Contains  Test Library 'ExampleJavaLibrary' expected 0 arguments, got 1.
+
+Importing Java Library With Too Few Arguments
+    Check Syslog Contains  Test Library 'JavaVarArgsConstructor' expected 1 to 3 arguments, got 0.
+
