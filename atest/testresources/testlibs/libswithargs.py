@@ -1,4 +1,4 @@
-class Normal:
+class Mandatory:
 
     def __init__(self, mandatory1, mandatory2):
         self.mandatory1 = mandatory1
@@ -19,10 +19,10 @@ class Defaults(object):
         return self.mandatory, self.default1, self.default2
 
 
-class Varargs(Normal):
+class Varargs(Mandatory):
 
     def __init__(self, mandatory, *varargs):
-        Normal.__init__(self, mandatory, ' '.join(str(a) for a in varargs))
+        Mandatory.__init__(self, mandatory, ' '.join(str(a) for a in varargs))
 
 
 class Mixed(Defaults):

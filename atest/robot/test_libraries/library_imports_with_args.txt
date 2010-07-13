@@ -2,13 +2,14 @@
 Documentation   Tests for checking that library initialization arguments are handled correctly. Taking libraries without arguments is not tested here, because almost every other suite does that.
 Suite Setup     Run Tests  ${EMPTY}  test_libraries/library_imports_with_args.txt
 Force Tags      regression  pybot  jybot
-Resource        atest_resource.txt
+Resource        resource_for_importing_libs_with_args.txt
 Test Template   Library import should have been successful
 
 
 *** Test Cases ***
+
 Mandatory arguments
-    libswithargs.Normal  valid argument  another arg
+    libswithargs.Mandatory  first arg  another arg
 
 Default values
     libswithargs.Defaults  m1
@@ -28,27 +29,19 @@ Mixed
 
 Variables containing objects
     libswithargs.Mixed  [1, 2, 3, 4, 'foo', 'bar']  {'a': 1}  None  42
+    libswithargs.Defaults  None  1.0  True
 
 Too Few Arguments
     [Template]  Library import should have failed
-    libswithargs.Normal    2 arguments, got 1.
-    libswithargs.Defaults  1 to 3 arguments, got 0.
-    libswithargs.Varargs   at least 1 argument, got 0.
+    libswithargs.Mandatory  2 arguments, got 1.
+    libswithargs.Defaults   1 to 3 arguments, got 0.
+    libswithargs.Varargs    at least 1 argument, got 0.
 
 Too Many Arguments
     [Template]  Library import should have failed
-    libswithargs.Normal    2 arguments, got 4.
-    libswithargs.Defaults  1 to 3 arguments, got 5.
+    libswithargs.Mandatory  2 arguments, got 4.
+    libswithargs.Defaults   1 to 3 arguments, got 5.
 
-
-***Keywords***
-
-Library import should have been successful
-    [Arguments]  ${lib}  @{params}
-    Check Test Case  ${TEST NAME}
-    ${par} =  Catenate  SEPARATOR=${SPACE}|${SPACE}  @{params}
-    Check Syslog Contains  Imported library '${lib}' with arguments [ ${par} ]
-
-Library import should have failed
-    [Arguments]  ${lib}  ${err}
-    Check Syslog Contains  Test Library '${lib}' expected ${err}
+Non-existing variables
+    [Template]
+    Check syslog contains  Non-existing variable '\${NONEX}'.

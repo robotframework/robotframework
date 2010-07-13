@@ -1,19 +1,48 @@
 *** Settings ***
 Documentation   Tests for checking that library initialization arguments are handled correctly. Taking libraries without arguments is not tested here, because almost every other suite does that.
-Suite Setup     Run Tests  ${EMPTY}  test_libraries/library_imports_with_args.txt
+Suite Setup     Run Tests  ${EMPTY}  test_libraries/java_library_imports_with_args.txt
 Force Tags      regression  jybot
-Resource        atest_resource.txt
+Resource        resource_for_importing_libs_with_args.txt
+Test Template   Library import should have been successful
+
 
 *** Test Cases ***
-Importing Java Library With Arguments
-    Check Syslog Contains  Imported library 'JavaVarArgsConstructor' with arguments [ valid argument | another arg ]
+Mandatory arguments
+    MandatoryArgs  first arg  another arg
 
-Importing Java Library With Default Arguments
-    Check Syslog Contains  Imported library 'JavaVarArgsConstructor' with arguments [ mandatory ]
+Default values
+    DefaultArgs  m1
+    DefaultArgs  m2  d1
+    DefaultArgs  m3  1  2
 
-Importing Java Library With Too Many Arguments
-    Check Syslog Contains  Test Library 'ExampleJavaLibrary' expected 0 arguments, got 1.
+Variables containing objects
+    MandatoryArgs  42  The name of the JavaObject
+    MandatoryArgs  {key=value}  True
 
-Importing Java Library With Too Few Arguments
-    Check Syslog Contains  Test Library 'JavaVarArgsConstructor' expected 1 to 3 arguments, got 0.
+Too Few Arguments
+    [Template]  Library import should have failed
+    MandatoryArgs    2 arguments, got 1.
+    DefaultArgs      1 to 3 arguments, got 0.
+    Varargs          at least 1 argument, got 0.
 
+Too Many Arguments
+    [Template]  Library import should have failed
+    MandatoryArgs    2 arguments, got 4.
+    DefaultArgs      1 to 3 arguments, got 5.
+
+Non-existing variables
+    [Template]
+    Check syslog contains  Non-existing variable '\${NONEX}'.
+
+
+***Keywords***
+
+Library import should have been successful
+    [Arguments]  ${lib}  @{params}
+    Check Test Case  ${TEST NAME}
+    ${par} =  Catenate  SEPARATOR=${SPACE}|${SPACE}  @{params}
+    Check Syslog Contains  Imported library '${lib}' with arguments [ ${par} ]
+
+Library import should have failed
+    [Arguments]  ${lib}  ${err}
+    Check Syslog Contains  Test Library '${lib}' expected ${err}
