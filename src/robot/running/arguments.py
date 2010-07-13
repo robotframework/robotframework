@@ -196,6 +196,7 @@ class JavaInitArguments(JavaKeywordArguments):
     _type = 'Test Library'
 
     def resolve(self, args, variables):
+        args = variables.replace_list(args)
         self.check_arg_limits(args)
         return args, {}
 
