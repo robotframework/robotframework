@@ -23,7 +23,6 @@ Too Few Arguments
     [Template]  Library import should have failed
     MandatoryArgs    2 arguments, got 1.
     DefaultArgs      1 to 3 arguments, got 0.
-    Varargs          at least 1 argument, got 0.
 
 Too Many Arguments
     [Template]  Library import should have failed
