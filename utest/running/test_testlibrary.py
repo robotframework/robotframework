@@ -195,7 +195,7 @@ class TestLibraryInit(unittest.TestCase):
             self._test_init_handler('ExampleJavaLibrary', None, 0, 0)
 
         def test_java_library_with_constructor(self):
-            self._test_init_handler('JavaVarArgsConstructor', ['arg1', 'arg2'], 1, 3)
+            self._test_init_handler('DefaultArgs', ['arg1', 'arg2'], 1, 3)
 
         def test_extended_java_lib_with_no_init_and_no_constructor(self):
             self._test_init_handler('extendingjava.ExtendJavaLib', None, 0, 0)
