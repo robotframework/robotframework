@@ -61,6 +61,7 @@ class TestPythonHandler(unittest.TestCase):
 
     def test_getarginfo_getattr(self):
         testlib = TestLibrary('classes.GetattrLibrary')
+        testlib.create_handlers()
         handlers = testlib.handlers.values()
         assert_equals(len(handlers), 3)
         for handler in handlers:

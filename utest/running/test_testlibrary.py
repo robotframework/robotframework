@@ -27,53 +27,58 @@ example_keywords = [ ( "Log", ("msg",) ),
                      ( "equals", ("1","2","failed") ), ]
 java_keywords = [ ( "print", ("msg",) ) ]
 
+def load_lib(name, args=None):
+    lib = TestLibrary(name, args)
+    lib.create_handlers()
+    return lib
+
 
 class TestLibraryTypes(unittest.TestCase):
 
     def test_python_library(self):
-        lib = TestLibrary("BuiltIn")
+        lib = load_lib("BuiltIn")
         assert_equals(lib.__class__, _ClassLibrary)
         assert_equals(lib.positional_args, [])
 
     def test_python_library_with_args(self):
-        lib = TestLibrary("ParameterLibrary", ['my_host', '8080'])
+        lib = load_lib("ParameterLibrary", ['my_host', '8080'])
         assert_equals(lib.__class__, _ClassLibrary)
         assert_equals(lib.positional_args, ['my_host', '8080'])
 
     def test_module_library(self):
-        lib = TestLibrary("module_library")
+        lib = load_lib("module_library")
         assert_equals(lib.__class__, _ModuleLibrary)
 
     def test_module_library_with_args(self):
         assert_raises(DataError, TestLibrary, "module_library", ['arg'] )
 
     def test_dynamic_python_library(self):
-        lib = TestLibrary("RunKeywordLibrary")
+        lib = load_lib("RunKeywordLibrary")
         assert_equals(lib.__class__, _DynamicLibrary)
 
     if utils.is_jython:
         def test_java_library(self):
-            lib = TestLibrary("ExampleJavaLibrary")
+            lib = load_lib("ExampleJavaLibrary")
             assert_equals(lib.__class__, _ClassLibrary)
 
 
 class TestImports(unittest.TestCase):
 
     def test_import_python_class(self):
-        lib = TestLibrary("BuiltIn")
+        lib = load_lib("BuiltIn")
         self._verify_lib(lib, "BuiltIn", default_keywords)
 
     def test_import_python_class_from_module(self):
-        lib = TestLibrary("BuiltIn.BuiltIn")
+        lib = load_lib("BuiltIn.BuiltIn")
         self._verify_lib(lib, "BuiltIn.BuiltIn", default_keywords)
 
     def test_import_python_module(self):
-        lib = TestLibrary("module_library")
+        lib = load_lib("module_library")
         kws = ["passing", "two arguments from class", "lambdakeyword", "argument"]
         self._verify_lib(lib, "module_library", [ (kw, None) for kw in kws ])
 
     def test_import_python_module_from_module(self):
-        lib = TestLibrary("pythonmodule.library")
+        lib = load_lib("pythonmodule.library")
         self._verify_lib(lib, "pythonmodule.library",
                          [("keyword from submodule", None)])
 
@@ -82,7 +87,7 @@ class TestImports(unittest.TestCase):
                "ImportError: No module named %s\nPYTHONPATH:")
         for name in 'nonexisting', 'nonexi.sting':
             try:
-                TestLibrary(name)
+                load_lib(name)
             except DataError, err:
                 module = name.split('.')[0]
                 assert_true(str(err).startswith(exp % (name, module)), err)
@@ -102,48 +107,48 @@ class TestImports(unittest.TestCase):
                                TestLibrary, 'pythonmodule.some_object')
 
     def test_import_with_unicode_name(self):
-        self._verify_lib(TestLibrary(u"BuiltIn"), "BuiltIn", default_keywords)
-        self._verify_lib(TestLibrary(u"BuiltIn.BuiltIn"), "BuiltIn.BuiltIn", default_keywords)
-        self._verify_lib(TestLibrary(u"pythonmodule.library"), "pythonmodule.library",
+        self._verify_lib(load_lib(u"BuiltIn"), "BuiltIn", default_keywords)
+        self._verify_lib(load_lib(u"BuiltIn.BuiltIn"), "BuiltIn.BuiltIn", default_keywords)
+        self._verify_lib(load_lib(u"pythonmodule.library"), "pythonmodule.library",
                          [("keyword from submodule", None)])
 
     def test_set_global_scope(self):
-        assert_equals(TestLibrary('libraryscope.Global').scope, 'GLOBAL')
+        assert_equals(load_lib('libraryscope.Global').scope, 'GLOBAL')
 
     def test_set_suite_scope(self):
-        assert_equals(TestLibrary('libraryscope.Suite').scope, 'TESTSUITE')
+        assert_equals(load_lib('libraryscope.Suite').scope, 'TESTSUITE')
 
     def test_set_test_scope(self):
-        assert_equals(TestLibrary('libraryscope.Test').scope, 'TESTCASE')
+        assert_equals(load_lib('libraryscope.Test').scope, 'TESTCASE')
 
     def test_set_invalid_scope(self):
         for libname in ['libraryscope.InvalidValue',
                         'libraryscope.InvalidEmpty',
                         'libraryscope.InvalidMethod',
                         'libraryscope.InvalidNone']:
-            lib = TestLibrary(libname)
+            lib = load_lib(libname)
             assert_equals(lib.scope, 'TESTCASE')
 
     if utils.is_jython:
 
         def test_import_java(self):
-            lib = TestLibrary("ExampleJavaLibrary")
+            lib = load_lib("ExampleJavaLibrary")
             self._verify_lib(lib, "ExampleJavaLibrary", java_keywords)
 
         def test_import_java_with_dots(self):
-            lib = TestLibrary("javapkg.JavaPackageExample")
+            lib = load_lib("javapkg.JavaPackageExample")
             self._verify_lib(lib, "javapkg.JavaPackageExample", java_keywords)
 
         def test_set_global_scope_java(self):
-            lib = TestLibrary('javalibraryscope.Global')
+            lib = load_lib('javalibraryscope.Global')
             assert_equals(lib.scope, 'GLOBAL')
 
         def test_set_suite_scope_java(self):
-            lib = TestLibrary('javalibraryscope.Suite')
+            lib = load_lib('javalibraryscope.Suite')
             assert_equals(lib.scope, 'TESTSUITE')
 
         def test_set_test_scope_java(self):
-            lib = TestLibrary('javalibraryscope.Test')
+            lib = load_lib('javalibraryscope.Test')
             assert_equals(lib.scope, 'TESTCASE')
 
         def test_set_invalid_scope_java(self):
@@ -153,7 +158,7 @@ class TestImports(unittest.TestCase):
                              'javalibraryscope.InvalidPrivate',
                              'javalibraryscope.InvalidProtected',
                              'javalibraryscope.InvalidValue' ]:
-                lib = TestLibrary(libname)
+                lib = load_lib(libname)
                 assert_equals(lib.scope, 'TESTCASE')
 
     def _verify_lib(self, lib, libname, keywords):
@@ -184,7 +189,7 @@ class TestLibraryInit(unittest.TestCase):
         self._test_init_handler('newstyleclasses.MetaClassLibrary')
 
     def _test_init_handler(self, libname, args=None, min=0, max=0):
-        lib = TestLibrary(libname, args)
+        lib = load_lib(libname, args)
         assert_equals(lib.init.arguments._arg_limit_checker.minargs, min)
         assert_equals(lib.init.arguments._arg_limit_checker.maxargs, max)
         return lib
@@ -223,7 +228,7 @@ class TestVersion(unittest.TestCase):
         self._test_version('module_library', 'test')
 
     def _test_version(self, name, version):
-        lib = TestLibrary(name)
+        lib = load_lib(name)
         assert_equals(lib.version, version)
 
     if utils.is_jython:
@@ -238,7 +243,7 @@ class TestVersion(unittest.TestCase):
 class _TestScopes(unittest.TestCase):
 
     def _get_lib_and_instance(self, name):
-        lib = TestLibrary(name)
+        lib = load_lib(name)
         if lib.scope == 'GLOBAL':
             assert_not_none(lib._libinst)
         else:
@@ -361,7 +366,7 @@ class TestHandlers(unittest.TestCase):
     def test_get_handlers(self):
         for lib in [ NameLibrary, DocLibrary, ArgInfoLibrary, GetattrLibrary,
                      SynonymLibrary ]:
-            testlib = TestLibrary('classes.%s' % lib.__name__)
+            testlib = load_lib('classes.%s' % lib.__name__)
             handlers = testlib.handlers.values()
             assert_equals(lib.handler_count, len(handlers), lib.__name__)
             for handler in handlers:
@@ -369,7 +374,7 @@ class TestHandlers(unittest.TestCase):
                 assert_equals(handler._handler_name.count('skip'), 0)
 
     def test_non_global_dynamic_handlers(self):
-        lib = TestLibrary("RunKeywordLibrary")
+        lib = load_lib("RunKeywordLibrary")
         assert_equals(len(lib.handlers), 2)
         assert_true(lib.handlers.has_key('Run Keyword That Passes'))
         assert_true(lib.handlers.has_key('Run Keyword That Fails'))
@@ -377,7 +382,7 @@ class TestHandlers(unittest.TestCase):
         assert_none(lib.handlers['Run Keyword That Fails']._method)
 
     def test_global_dynamic_handlers(self):
-        lib = TestLibrary("RunKeywordLibrary.GlobalRunKeywordLibrary")
+        lib = load_lib("RunKeywordLibrary.GlobalRunKeywordLibrary")
         assert_equals(len(lib.handlers), 2)
         for name in 'Run Keyword That Passes', 'Run Keyword That Fails':
             handler = lib.handlers[name]
@@ -386,7 +391,7 @@ class TestHandlers(unittest.TestCase):
             assert_equals(handler._method.__name__, 'handler')
 
     def test_synonym_handlers(self):
-        testlib = TestLibrary('classes.SynonymLibrary')
+        testlib = load_lib('classes.SynonymLibrary')
         names = [ 'handler', 'synonym_handler', 'another_synonym' ]
         for handler in testlib.handlers.values():
             # test 'handler_name' -- raises ValueError if it isn't in 'names'
@@ -394,7 +399,7 @@ class TestHandlers(unittest.TestCase):
         assert_equals(len(names), 0, 'handlers %s not created' % names, False)
 
     def test_global_handlers_are_created_only_once(self):
-        lib = TestLibrary('classes.RecordingLibrary')
+        lib = load_lib('classes.RecordingLibrary')
         calls_after_init = lib._libinst.calls_to_getattr
         for _ in range(5):
             lib.handlers['kw'].run(_FakeContext(), [])
@@ -408,7 +413,7 @@ class TestHandlers(unittest.TestCase):
                          MultipleSignatures,
                          NoHandlers,
                          Extended ]:
-                testlib = TestLibrary(lib.__name__)
+                testlib = load_lib(lib.__name__)
                 handlers = testlib.handlers.values()
                 assert_equals(len(handlers), lib().handler_count, lib.__name__)
                 for handler in handlers:
@@ -419,25 +424,25 @@ class TestHandlers(unittest.TestCase):
 class TestDynamicLibrary(unittest.TestCase):
 
     def test_get_keyword_doc_is_used_if_present(self):
-        lib = TestLibrary('classes.ArgDocDynamicLibrary')
+        lib = load_lib('classes.ArgDocDynamicLibrary')
         assert_equals(lib.handlers['No Arg'].doc, 'Keyword documentation for No Arg')
 
     def test_get_keyword_doc_and_args_are_ignored_if_not_callable(self):
-        lib = TestLibrary('classes.InvalidAttributeDynamicLibrary')
+        lib = load_lib('classes.InvalidAttributeDynamicLibrary')
         assert_equals(len(lib.handlers), 4)
         assert_equals(lib.handlers['No Arg'].doc, '')
         self._assert_handler_args(lib.handlers['No Arg'], 0, sys.maxint)
 
     def test_handler_is_not_created_if_get_keyword_doc_fails(self):
-        lib = TestLibrary('classes.InvalidGetDocDynamicLibrary')
+        lib = load_lib('classes.InvalidGetDocDynamicLibrary')
         assert_equals(len(lib.handlers), 0)
 
     def test_handler_is_not_created_if_get_keyword_args_fails(self):
-        lib = TestLibrary('classes.InvalidGetArgsDynamicLibrary')
+        lib = load_lib('classes.InvalidGetArgsDynamicLibrary')
         assert_equals(len(lib.handlers), 0)
 
     def test_get_keyword_arguments_is_used_if_present(self):
-        lib = TestLibrary('classes.ArgDocDynamicLibrary')
+        lib = load_lib('classes.ArgDocDynamicLibrary')
         for name, exp in [ ('No Arg', ()) , ('One Arg', (1,1)),
                            ('One or Two Args', (1, 2)),
                            ('Many Args', (0, sys.maxint))]:
@@ -449,7 +454,7 @@ class TestDynamicLibrary(unittest.TestCase):
 
     if utils.is_jython:
         def test_dynamic_java_handlers(self):
-            lib = TestLibrary('ArgDocDynamicJavaLibrary')
+            lib = load_lib('ArgDocDynamicJavaLibrary')
             for name, min, max in [ ('Java No Arg', 0, 0), ('Java One Arg', 1, 1),
                                     ('Java One or Two Args', 1, 2),
                                     ('Java Many Args', 0, sys.maxint) ]:
@@ -458,12 +463,12 @@ class TestDynamicLibrary(unittest.TestCase):
                                           min, max)
 
         def test_get_keyword_doc_and_args_are_ignored_if_not_callable_in_java(self):
-            lib = TestLibrary('InvalidAttributeArgDocDynamicJavaLibrary')
+            lib = load_lib('InvalidAttributeArgDocDynamicJavaLibrary')
             assert_equals(len(lib.handlers), 1)
             self._assert_handler_args(lib.handlers['keyword'], 0, sys.maxint)
 
         def test_handler_is_not_created_if_get_keyword_doc_fails_in_java(self):
-            lib = TestLibrary('InvalidSignatureArgDocDynamicJavaLibrary')
+            lib = load_lib('InvalidSignatureArgDocDynamicJavaLibrary')
             assert_equals(len(lib.handlers), 0)
 
         def _assert_java_handler(self, handler, doc, minargs, maxargs):
