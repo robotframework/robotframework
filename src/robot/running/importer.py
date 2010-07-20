@@ -50,7 +50,6 @@ class Importer:
             LOGGER.info("Found test library '%s' with arguments %s from cache"
                         % (name, utils.seq2str2(positional)))
             return self._libraries[key]
-        lib.create_handlers()
         self._libraries[key] = lib
         libtype = lib.__class__.__name__.replace('Library', '').lower()[1:]
         LOGGER.info("Imported library '%s' with arguments %s (version %s, "

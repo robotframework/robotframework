@@ -76,13 +76,9 @@ class _BaseTestLibrary(BaseLibrary):
             self._libcode = libcode
             self.init =  self._create_init_handler(libcode)
             self.positional_args, self.named_args = self.init.arguments.resolve(args, variables)
-
-    def create_handlers(self):
-        if self._libcode is None:
-            return
-        self._libinst = self.get_instance()
-        self.handlers = self._create_handlers(self._libinst)
-        self.init_scope_handling()
+            self._libinst = self.get_instance()
+            self.handlers = self._create_handlers(self._libinst)
+            self.init_scope_handling()
 
     def start_suite(self):
         pass
