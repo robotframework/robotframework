@@ -16,7 +16,7 @@ Passing keywords
     Simple UK
 
 Keywords that would fail
-    Fail
+    Fail  Not actually executed so won't fail.
     Fail In Uk
     No Operation
 
@@ -53,8 +53,14 @@ Invalid syntax in UK
     Invalid Syntax UK
 
 Multiple Failures
-    [Documentation]  FAIL Several failures occurred:\n\n1) Keyword 'BuiltIn.Should Be Equal' expected 2 to 4 arguments, got 1.\n\n2) No keyword with name 'Does not exist' found.
+    [Documentation]  FAIL Several failures occurred:\n\n
+    ...  1) Keyword 'BuiltIn.Should Be Equal' expected 2 to 4 arguments, got 1.\n\n
+    ...  2) Invalid argument '${arg'\n\n
+    ...  3) Keyword 'BuiltIn.Log' expected 1 to 2 arguments, got 4.\n\n
+    ...  4) No keyword with name 'Yet another non-existing keyword' found.\n\n
+    ...  5) No keyword with name 'Does not exist' found.
     Should Be Equal  1
+    UK with multiple failures
     Does not exist
     
 Arguments given as list variable
@@ -74,6 +80,10 @@ Invalid Syntax UK
     No Operation
 
 Some Return Value
-    [Arguments]  ${a1}  @{a2}
-    [Return]  ${a1}@{a2[1]}
+    [Arguments]  ${a1}  ${a2}
+    [Return]  ${a1}-${a2}
 
+UK with multiple failures
+    Invalid Syntax UK
+    Log  too  many  arguments  here
+    Yet another non-existing keyword
