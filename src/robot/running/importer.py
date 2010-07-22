@@ -28,7 +28,7 @@ class Importer:
         self._resources = _LibraryCache()
 
     def import_library(self, name, args, alias, variables):
-        lib = TestLibrary(name, args, variables)
+        lib = TestLibrary(name, args, variables, create_handlers=False)
         positional, named = lib.positional_args, lib.named_args
         lib = self._import_library(name, positional, named, lib)
         if alias and name != alias:
@@ -50,6 +50,7 @@ class Importer:
             LOGGER.info("Found test library '%s' with arguments %s from cache"
                         % (name, utils.seq2str2(positional)))
             return self._libraries[key]
+        lib.create_handlers()
         self._libraries[key] = lib
         libtype = lib.__class__.__name__.replace('Library', '').lower()[1:]
         LOGGER.info("Imported library '%s' with arguments %s (version %s, "

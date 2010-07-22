@@ -28,10 +28,13 @@ if utils.is_jython:
     from java.lang import Object
 
 
-def TestLibrary(name, args=None, variables=None):
+def TestLibrary(name, args=None, variables=None, create_handlers=True):
     libcode, source = utils.import_(name)
     libclass = _get_lib_class(libcode)
-    return libclass(libcode, source, name, args or [], variables)
+    lib = libclass(libcode, source, name, args or [], variables)
+    if create_handlers:
+        lib.create_handlers()
+    return lib
 
 
 def _get_lib_class(libcode):
@@ -76,6 +79,9 @@ class _BaseTestLibrary(BaseLibrary):
             self._libcode = libcode
             self.init =  self._create_init_handler(libcode)
             self.positional_args, self.named_args = self.init.arguments.resolve(args, variables)
+
+    def create_handlers(self):
+        if self._libcode:
             self._libinst = self.get_instance()
             self.handlers = self._create_handlers(self._libinst)
             self.init_scope_handling()
