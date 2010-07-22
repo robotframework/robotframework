@@ -205,7 +205,8 @@ class Comments(object):
             self._crows.append(row.comments)
 
     def formatted_value(self):
-        return '\n'.join(' | '.join(row) for row in self._crows)
+        rows = (' '.join(row).strip() for row in self._crows)
+        return '\n'.join(rows)
 
 
 class _PropertyPopulator(Populator):

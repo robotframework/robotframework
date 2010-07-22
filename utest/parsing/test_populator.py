@@ -416,9 +416,9 @@ class TestPopulatingComments(_PopulatorTest):
         self._assert_no_parsing_errors()
         self._assert_setting('force_tags', ['Foo', 'Bar'], 'comment')
         self._assert_import(0, 'Foo', [], 'Lib comment')
-        self._assert_import(1, 'resource2.txt', [], 'Resource | resource.txt')
-        self._assert_setting('default_tags', ['Quux'], 'comment | between rows | in many cells\nalso end of line')
-        self._assert_import(2, 'varz.py', ['arg'], ' between values')
+        self._assert_import(1, 'resource2.txt', [], 'Resource resource.txt')
+        self._assert_setting('default_tags', ['Quux'], 'comment between rows in many cells\nalso end of line')
+        self._assert_import(2, 'varz.py', ['arg'], 'between values')
         self._assert_meta(0, 'metaname', 'metavalue', 'last line is commented')
 
     def test_variable_table(self):
@@ -430,7 +430,7 @@ class TestPopulatingComments(_PopulatorTest):
                                          ['...', 'otherval'],
                                          ['#EOT']])
         self._assert_variable(0, '${varname}', ['varvalue'], 'has comment')
-        self._assert_variable(1, '@{items}', ['1', '2', '3'], 'label | A | B | C')
+        self._assert_variable(1, '@{items}', ['1', '2', '3'], 'label A B C')
         self._assert_variable(2, '${ohtervarname}', ['otherval'], '#end comment\ncomment\nEOT')
 
     def test_test_case_table(self):
@@ -446,18 +446,18 @@ class TestPopulatingComments(_PopulatorTest):
                                           ['',':FOR', 'v*ttuperkele'],
                                           ['#commented out in for loop'],
                                           ['','', 'Fooness in the bar', '#end commtne'],
-                                          ['','#', 'Barness'],
+                                          ['','# ', '   Barness  '],
                                           ['', 'Lodi']
                                           ])
         assert_equals(self._first_test().steps[0].comment, 'start of table comment')
         assert_equals(self._first_test().steps[1].comment, 'step comment')
         assert_equals(self._first_test().steps[2].comment, 'This step has only comment')
         assert_equals(self._nth_test(2).steps[0].comment, 'comment in name row')
-        assert_equals(self._nth_test(2).steps[1].comment, ' | Comment between step def')
+        assert_equals(self._nth_test(2).steps[1].comment, 'Comment between step def')
         assert_equals(self._nth_test(2).steps[1].args, ['argh', 'urgh'])
         assert_equals(self._nth_test(3).steps[0].steps[0].comment, 'commented out in for loop')
         assert_equals(self._nth_test(3).steps[0].steps[1].comment, 'end commtne')
-        assert_equals(self._nth_test(3).steps[1].comment, ' | Barness')
+        assert_equals(self._nth_test(3).steps[1].comment, 'Barness')
         self._number_of_steps_should_be(self._nth_test(3), 3)
 
 
