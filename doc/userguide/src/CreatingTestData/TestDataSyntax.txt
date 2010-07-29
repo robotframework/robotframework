@@ -103,7 +103,7 @@ Editing test data
 Test data in HTML files can be edited with whichever editor you
 prefer, but a graphic editor, where you can actually see the tables,
 is recommended.  There is also a tool called RIDE_
-available that is actually designed for editing the test data.
+available that is designed for editing the test data.
 
 Encoding and entity references
 ``````````````````````````````
@@ -393,9 +393,8 @@ docutils tools.
 Syntax errors in reST source files
 ``````````````````````````````````
 
-If you create test data or other portions of a reST file that is not
-syntactically correct (a malformed table for example), the
-reST-to-HTML conversion will not take place and no test cases will be
+If reST file is not syntactically correct (a malformed table for example), 
+the reST-to-HTML conversion will not take place and no test cases will be
 read from that file. When this occurs, Robot Framework will show the
 docutils error message in it's console output showing the filename,
 line number, source context, and type of error.
@@ -439,7 +438,7 @@ Ignored data
 When Robot Framework parses the test data, it ignores:
 
 - All tables that do not start with a recognized table name in the first cell
-- Everything else on the first row apart from the first cell
+- Everything else on the first row of a table apart from the first cell
 - Data outside tables in HTML/reST and data before the first table in TSV
 - All empty rows, which means these kinds of rows can be used to make
   the tables more readable
@@ -526,8 +525,8 @@ documentations) can be split to several columns. These values
 will be then catenated together with spaces when the test data is
 parsed.
 
-All these syntaxes are illustrated in the following examples. The
-first three tables show tables where test data has not been split, and
+All these syntaxes are illustrated in the following examples. In the
+first three tables test data has not been split, and
 the following three illustrate how fewer columns are needed after
 splitting the data to several rows.
 
@@ -610,9 +609,8 @@ Splitting test data in reST tables
 
 In the plain text markup for reST tables, there are two types of table
 syntax that can be used to create test data. When using the `Simple
-Tables` syntax for test data tables that have data into several rows,
-a :code:`\\` or :code:`..` is required in the first cell of a
-continued row in addition to the :code:`...` required by Robot Framework.
+Tables` syntax, a :code:`\\` or :code:`..` is required in the first cell 
+of a continued row in addition to the :code:`...` required by Robot Framework.
 
 Here is an example using reST `Simple Table` format::
 
