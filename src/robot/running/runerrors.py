@@ -84,10 +84,10 @@ class SuiteRunErrors(object):
         return ''
 
     def _earlier_init_erros_occurred(self):
-        return bool([err for err in self._earlier_init_errors if err])
+        return any(self._earlier_init_errors)
 
     def _earlier_setup_errors_occurred(self):
-        return bool([err for err in self._earlier_setup_errors if err])
+        return any(self._earlier_setup_errors)
 
     def child_error(self):
         if self._current_init_err or self._earlier_init_erros_occurred():
