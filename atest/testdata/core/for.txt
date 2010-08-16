@@ -1,4 +1,5 @@
 *** Settings ***
+Documentation  NO RIDE because we want to test different formatting
 
 *** Variables ***
 @{NUMS}  1  2  3  4  5
@@ -281,6 +282,25 @@ For In Range With None As Range
     [Documentation]  FAIL STARTS: Converting argument of FOR IN RANGE failed: TypeError:
     :FOR  ${i}  IN RANGE  ${NONE}
     \  Fail  Not executed
+
+For loops are case and space insensitive
+    ${result} =  Set Variable  ${EMPTY}
+    : f o r  ${c}  i n  a  b  c
+    \  ${result} =  Set Variable  ${result}${c}
+    : F o R  ${i}  i n r a n g e  1  2
+    \  ${result} =  Set Variable  ${result}${i}
+    :for  ${i}  inrange  2  4
+    \  ${result} =  Set Variable  ${result}${i}
+    Should Be Equal  ${result}  abc123
+
+For word can have many colons
+    ${result} =  Set Variable  ${EMPTY}
+    ::::::::FOR  ${i}  IN  0  1  2  3
+    \  ${result} =  Set Variable  ${result}${i}
+    :::f:o:r:::  ${i}  inrange  4  10
+    \  ${result} =  Set Variable  ${result}${i}
+    Should Be Equal  ${result}  0123456789
+
 
 *** Keywords ***
 My UK

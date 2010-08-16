@@ -504,8 +504,9 @@ class ForLoop(_WithSteps):
 
     def _get_range_and_index(self, content):
         for index, item in enumerate(content):
-            if item.upper() in ['IN', 'IN RANGE']:
-                return item.upper() == 'IN RANGE', index
+            item = item.upper().replace(' ', '')
+            if item in ['IN', 'INRANGE']:
+                return item == 'INRANGE', index
         return False, len(content)
 
     def is_comment(self):

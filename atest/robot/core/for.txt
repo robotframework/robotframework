@@ -244,6 +244,13 @@ For In Range With Non-Existing Variables In Arguments
 For In Range With None As Range
     Check Test Case  ${TESTNAME}
 
+For loops are case and space insensitive
+    Check Test Case  ${TESTNAME}
+
+For word can have many colons
+    Check Test Case  ${TESTNAME}
+
+
 *** Keywords ***
 Should Be For Keyword
     [Arguments]  ${kw}  ${subcount}

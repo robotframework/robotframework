@@ -56,7 +56,7 @@ class DataRow(object):
 
     def starts_for_loop(self):
         if self.head and self.head.startswith(':'):
-            return self.head.replace(':', '').upper().strip() == 'FOR'
+            return self.head.replace(':', '').replace(' ', '').upper() == 'FOR'
         return False
 
     def starts_test_or_user_keyword_setting(self):
