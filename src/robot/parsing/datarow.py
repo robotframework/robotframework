@@ -79,7 +79,7 @@ class DataRow(object):
         data = []
         comments = []
         for cell in row:
-            cell = self._collape_whitespace(cell)
+            cell = self._collapse_whitespace(cell)
             if cell.startswith('#') and not comments:
                 comments.append(cell[1:])
             elif comments:
@@ -88,7 +88,7 @@ class DataRow(object):
                 data.append(cell)
         return self._purge_empty_cells(data), self._purge_empty_cells(comments)
 
-    def _collapse_whitespace(self, row):
+    def _collapse_whitespace(self, cell):
         return self._whitespace_regexp.sub(' ', cell).strip()
 
     def _purge_empty_cells(self, row):
