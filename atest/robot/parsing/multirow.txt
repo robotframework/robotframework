@@ -1,57 +1,55 @@
 *** Settings ***
-Suite Setup     Run Tests  ${EMPTY}  parsing${/}multirow.html
+Suite Setup     Run Tests  ${EMPTY}  parsing/multirow.txt
 Force Tags      regression  jybot  pybot
 Resource        atest_resource.txt
 
 *** Test Cases ***
 Multirow Settings
-    Equals  ${SUITE.doc}  This doc is one long \ string ! ! ! !
-    Fail Unless  ${SUITE.tests[0].tags} == [ 't'+str(i) for i in range(1,10) ]
+    Should Be Equal  ${SUITE.doc}  NO RIDE!! This doc is one long string ! ! ! !
+    Should Be True   ${SUITE.tests[0].tags} == ['t'+str(i) for i in range(1,10)]
 
 Multirow Variables
-    Check Test Case  Multirow Variables
+    Check Test Case  ${TEST NAME}
 
-Multirow Args For Base Keyword
-    ${test} =  Check Test Case  Multirow Args For Base Keyword
-    ${kw} =  Set  ${test.kws[0]}
-    Check Log Message  ${kw.messages[0]}  one
-    Check Log Message  ${kw.messages[1]}  two
-    Check Log Message  ${kw.messages[2]}  three
-    Check Log Message  ${kw.messages[3]}  four
-    Check Log Message  ${kw.messages[4]}  five
+Multirow Args For Library Keyword
+    ${tc} =  Check Test Case  ${TEST NAME}
+    Check Log Message  ${tc.kws[0].msgs[0]}  one
+    Check Log Message  ${tc.kws[0].msgs[1]}  two
+    Check Log Message  ${tc.kws[0].msgs[2]}  three
+    Check Log Message  ${tc.kws[0].msgs[3]}  four
+    Check Log Message  ${tc.kws[0].msgs[4]}  five
 
 Multirow Args For User Keyword
-    ${test} =  Check Test Case  Multirow Args For User Keyword
-    ${kw} =  Set  ${test.kws[0].kws[0]}
-    Check Log Message  ${kw.messages[0]}  1
-    Check Log Message  ${kw.messages[1]}  2
-    Check Log Message  ${kw.messages[2]}  3
-    Check Log Message  ${kw.messages[3]}  4
-    Check Log Message  ${kw.messages[4]}  5
+    ${tc} =  Check Test Case  ${TEST NAME}
+    Check Log Message  ${tc.kws[0].kws[0].msgs[0]}  1
+    Check Log Message  ${tc.kws[0].kws[0].msgs[1]}  2
+    Check Log Message  ${tc.kws[0].kws[0].msgs[2]}  3
+    Check Log Message  ${tc.kws[0].kws[0].msgs[3]}  4
+    Check Log Message  ${tc.kws[0].kws[0].msgs[4]}  5
 
 Multirow In User Keyword
-    ${test} =  Check Test Case  Multirow In User Keyword
+    Check Test Case  ${TEST NAME}
 
 Multirow Return Values
-    Check Test Case  Multirow Return Values
+    Check Test Case  ${TEST NAME}
 
-Multirow Test Metadata
-    ${test} =  Check Test Case  Multirow Test Metadata
-    Fail Unless  ${test.tags} == [ 'my'+str(i) for i in range(1,6) ]
-    Equals  ${test.doc}  This test doc is one long string
+Multirow Test Settings
+    ${tc} =  Check Test Case  ${TEST NAME}
+    Should Be True   ${tc.tags} == ['my'+str(i) for i in range(1,6)]
+    Should Be Equal  ${tc.doc}  This test doc is one long string
 
-Multirow User Keyword Metadata
-    ${test} =  Check Test Case  Multirow User Keyword Metadata
+Multirow User Keyword Settings
+    Check Test Case  ${TEST NAME}
 
 Invalid Multirow Usage
-    Check Multirow Error From Stderr  Setting  Non-existing setting '...'.
-    Check Multirow Error From Stderr  Variable  Setting variable '...' failed: Invalid variable name.
+    Check Multirow Error From Stderr  Settings   Non-existing setting '...'.
+    Check Multirow Error From Stderr  Variables  Setting variable '...' failed: Invalid variable name.
     Check Test Case  \
     Check Test Case  Invalid Usage In Test And User Keyword
 
 *** Keywords ***
 Check Multirow Error From Stderr
     [Arguments]  ${table}  ${err}
-    ${path} =  Join Path  ${CURDIR}..${/}..${/}..  testdata  parsing  multirow.html
+    ${path} =  Join Path  ${CURDIR}  ..  ..  testdata  parsing  multirow.txt
     Check Stderr Contains  [ ERROR ] Invalid syntax in file '${path}' in table '${table}': ${err}
 
