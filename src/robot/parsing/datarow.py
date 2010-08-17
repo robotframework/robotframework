@@ -76,39 +76,26 @@ class DataRow(object):
         return self.head[1:-1].strip()
 
     def _parse(self, row):
-        row = [self._collapse_whitespace(cell) for cell in row]
-        return self._purge_empty_cells(self._extract_data(row)), \
-            self._extract_comments(row)
-
-    def _collapse_whitespace(self, value):
-        return self._whitespace_regexp.sub(' ', value).strip()
-
-    def _extract_comments(self, row):
-        if not row:
-            return []
-        comments = []
-        for c in row:
-            if c.startswith('#') and not comments:
-                comments.append(c[1:])
-            elif comments:
-                comments.append(c)
-        return comments
-
-    def _extract_data(self, row):
-        if not row:
-            return []
         data = []
-        for c in row:
-            if c.startswith('#'):
-                return data
-            data.append(c)
-        return data
+        comments = []
+        for cell in row:
+            cell = self._collape_whitespace(cell)
+            if cell.startswith('#') and not comments:
+                comments.append(cell[1:])
+            elif comments:
+                comments.append(cell)
+            else:
+                data.append(cell)
+        return self._purge_empty_cells(data), self._purge_empty_cells(comments)
 
-    def _purge_empty_cells(self, data):
-        while data and not data[-1]:
-            data.pop()
+    def _collapse_whitespace(self, row):
+        return self._whitespace_regexp.sub(' ', cell).strip()
+
+    def _purge_empty_cells(self, row):
+        while row and not row[-1]:
+            row.pop()
         # Cells with only a single backslash are considered empty
-        return [ cell if cell != '\\' else '' for cell in data]
+        return [cell if cell != '\\' else '' for cell in row]
 
     def __nonzero__(self):
         return bool(self.cells or self.comments)
