@@ -12,6 +12,7 @@ Default Tags  t1  t2  t3  t4
 ...           \   t7  t8
 ...           t9
 
+
 *** Variables ***
 ...  # Invalid usage
 ${scalarlist}  1  2  3  4
@@ -26,6 +27,7 @@ ${string}
 ...  world
 ...
 ...  !
+
 
 *** Test Cases ***
 \   ...  # Invalid usage
@@ -97,7 +99,23 @@ Multirow User Keyword Settings
     Should Be True  ${x[5:8]} == ['r1','r2','r3']
     Should Be True  ${x[9:]} == [str(i) for i in range(7,10)]
 
-
+Multirow With For Loop Declaration
+    ${result} =  Set Variable  ${EMPTY}
+    :FOR  ${item}  IN  a  b  c
+    ...                d  e
+    \  ${result} =  Set Variable  ${result}${item}
+    Should Be Equal  ${result}  abcde
+    :FOR
+    ...  ${item}
+    ...  IN
+    ...  e
+    ...  d
+    ...  c
+    ...  b
+    \  ${result} =  Set Variable  ${result.replace('${item}', '')}
+    Should Be Equal  ${result}  a
+    
+   
 *** Keywords ***
 \    # Invalid usage
 

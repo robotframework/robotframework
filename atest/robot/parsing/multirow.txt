@@ -41,6 +41,9 @@ Multirow Test Settings
 Multirow User Keyword Settings
     Check Test Case  ${TEST NAME}
 
+Multirow With For Loop Declaration
+    Check Test Case  ${TEST NAME}
+
 Invalid Multirow Usage
     Check Multirow Error From Stderr  Settings   Non-existing setting '...'.
     Check Multirow Error From Stderr  Variables  Setting variable '...' failed: Invalid variable name.
