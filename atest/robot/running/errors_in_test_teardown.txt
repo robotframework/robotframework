@@ -24,6 +24,10 @@ Keyword Timeout In Teardown
     ${tc} =  Check Test Case  ${TESTNAME}
     Should Be True  len(${tc.teardown.kws}) == 1
 
+Syntax Error in Teardown
+    ${tc} =  Check Test Case  ${TESTNAME}
+    Should Be True  len(${tc.teardown.kws}) == 3
+
 Fatal Error In Teardown
     ${tc} =  Check Test Case  ${TESTNAME}
     Should Be True  len(${tc.teardown.kws}) == 1

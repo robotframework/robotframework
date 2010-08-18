@@ -44,6 +44,14 @@ Keyword Timeout In Teardown
     No Operation
     [teardown]  Timeout
 
+Syntax Error in Teardown
+    [documentation]  FAIL Teardown failed:\nSeveral failures occurred:\n\n
+    ...  1) Non-existing variable '${non existing variable}'.\n\n
+    ...  2) No keyword with name 'Keyword Missing' found.\n\n
+    ...  Also teardown of the parent suite failed.
+    No Operation
+    [teardown]  Syntax Error
+
 Fatal Error In Teardown
     [documentation]  FAIL Teardown failed:\n
     ...  FatalCatastrophyException\n\n
@@ -71,13 +79,18 @@ Errors In For Loop
     \    Fail  ${animal}
     \    Fail  again
 
-Fatal Error
-    Exit On Failure
-    Fail  This Should Not Be Executed
-
 Timeout
     [timeout]  42 ms
     Sleep  1 s
+    Fail  This Should Not Be Executed
+
+Syntax Error
+    Log  ${non existing variable}
+    Keyword Missing
+    Log  This Should Be Executed
+
+Fatal Error
+    Exit On Failure
     Fail  This Should Not Be Executed
 
 Suite Teardown With Errors
