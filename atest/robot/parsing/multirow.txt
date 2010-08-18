@@ -11,6 +11,9 @@ Multirow Settings
 Multirow Variables
     Check Test Case  ${TEST NAME}
 
+Multirow Import
+    Check Test Case  ${TEST NAME}
+
 Multirow Args For Library Keyword
     ${tc} =  Check Test Case  ${TEST NAME}
     Check Log Message  ${tc.kws[0].msgs[0]}  one
@@ -42,6 +45,9 @@ Multirow User Keyword Settings
     Check Test Case  ${TEST NAME}
 
 Multirow With For Loop Declaration
+    Check Test Case  ${TEST NAME}
+
+Multirow With For Loop Keywords
     Check Test Case  ${TEST NAME}
 
 Invalid Multirow Usage

@@ -11,6 +11,8 @@ Default Tags  t1  t2  t3  t4
 ...  
 ...           \   t7  t8
 ...           t9
+Library
+...  OperatingSystem
 
 
 *** Variables ***
@@ -45,6 +47,9 @@ Multirow Variables
     Should Be Equal  @{list}[1]  my
     Should Be Equal  @{list}[2]  world
     Should Be Equal  @{list}[3]  !
+
+Multirow Import
+    Directory Should Exist  .
 
 Multirow Args For Library Keyword
     Log Many  one  two
@@ -101,20 +106,56 @@ Multirow User Keyword Settings
 
 Multirow With For Loop Declaration
     ${result} =  Set Variable  ${EMPTY}
-    :FOR  ${item}  IN  a  b  c
-    ...                d  e
+    :FOR  ${item}  IN  a  b
+    ...                c
     \  ${result} =  Set Variable  ${result}${item}
-    Should Be Equal  ${result}  abcde
+    Should Be Equal  ${result}  abc
     :FOR
     ...  ${item}
     ...  IN
-    ...  e
-    ...  d
     ...  c
     ...  b
     \  ${result} =  Set Variable  ${result.replace('${item}', '')}
     Should Be Equal  ${result}  a
+    :FOR
+    ...  ${item}
+    ...  IN RANGE
+    ...  1
+    ...  2
+    \  ${result} =  Set Variable  ${result}${item}
+    Should Be Equal  ${result}  a1
+    :FOR  ${i1}  ${i2}  IN  
+    ...   b      2
+    ...   c      3
+    \  ${result} =  Set Variable  ${result}${i1}${i2}
+    Should Be Equal  ${result}  a1b2c3
+    :FOR  ${item}  IN
+    \  ...  a  b  c
+    \  ${result} =  Set Variable  ${result.replace('${item}', '')}
+    Should Be Equal  ${result}  123
+    :FOR  ${item}  IN RANGE  1
+    \  ...  4
+    \  ${result} =  Set Variable  ${result.replace('${item}', '')}
+    Should Be Equal  ${result}  ${EMPTY}
+
+Multirow With For Loop Keywords
+    ${result} =  Set Variable  ${EMPTY}
+    :FOR  ${item}  IN  a  b  c
+    \  ${item} =  Set Variable
+    \  ...  ${item.upper()}
+    \  ${result} =  Set Variable
+    ...  ${result}${item}
+    \    ${x} =
+    ...  Catenate
+    ...     1  2  3
+    \  ...  a
+    \  ...     b
+    \  ...        ${item.lower()}
+    Should Be Equal  ${result}  ABC
+    Should Be Equal  ${x}  1 2 3 a b c
     
+
+  
    
 *** Keywords ***
 \    # Invalid usage
