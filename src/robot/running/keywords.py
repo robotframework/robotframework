@@ -45,7 +45,8 @@ class Keywords(object):
                 kw.run(context)
             except ExecutionFailed, err:
                 errors.extend(err.get_errors())
-                if not err.can_continue(context.dry_run, self._templated):
+                if not err.can_continue(context.teardown, self._templated,
+                                        context.dry_run):
                     break
         if errors:
             raise ExecutionFailures(errors)
@@ -109,7 +110,7 @@ class Keyword(BaseKeyword):
         self.endtime = utils.get_timestamp()
         self.elapsedtime = utils.get_elapsed_time(self.starttime, self.endtime)
         try:
-            if not error or error.cont:
+            if not error or error.can_continue(context.teardown):
                 self._set_variables(context, return_value)
         finally:
             context.end_keyword(self)
@@ -128,12 +129,7 @@ class Keyword(BaseKeyword):
         context.output.fail(error_details.message)
         if error_details.traceback:
             context.output.debug(error_details.traceback)
-        is_teardown = self._in_test_or_suite_teardown(context.namespace)
-        raise HandlerExecutionFailed(error_details, is_teardown)
-
-    def _in_test_or_suite_teardown(self, namespace):
-        test_or_suite = namespace.test or namespace.suite
-        return test_or_suite.status != 'RUNNING'
+        raise HandlerExecutionFailed(error_details)
 
 
 class _VariableAssigner(object):
@@ -295,7 +291,8 @@ class ForLoop(BaseKeyword):
             err = self._run_one_round(context, self.vars, values)
             if err:
                 errors.extend(err.get_errors())
-                if not err.can_continue(context.dry_run, self._templated):
+                if not err.can_continue(context.teardown, self._templated,
+                                        context.dry_run):
                     break
         if errors:
             raise ExecutionFailures(errors)

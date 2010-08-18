@@ -22,6 +22,11 @@ class ExecutionContext(object):
         self.output = output
         self.dry_run = dry_run
 
+    @property
+    def teardown(self):
+        test_or_suite = self.namespace.test or self.namespace.suite
+        return test_or_suite.status != 'RUNNING'
+
     def get_current_vars(self):
         return self.namespace.variables
 

@@ -89,12 +89,12 @@ class ExecutionFailed(RobotError):
     cont = property(lambda self: self._cont and not self.dont_cont,
                     lambda self, cont: setattr(self, '_cont', cont))
 
-    def can_continue(self, dry_run=False, templated=False):
+    def can_continue(self, teardown=False, templated=False, dry_run=False):
         if dry_run:
             return True
-        if self.dont_cont:
+        if self.dont_cont and not (teardown and self.syntax):
             return False
-        if templated:
+        if teardown or templated:
             return True
         return self.cont
 
@@ -104,13 +104,12 @@ class ExecutionFailed(RobotError):
 
 class HandlerExecutionFailed(ExecutionFailed):
 
-    def __init__(self, error_details, is_test_or_suite_teardown):
+    def __init__(self, error_details):
         orig_error = error_details.error
         timeout = isinstance(orig_error, TimeoutError)
         syntax = isinstance(orig_error, DataError)
         exit = bool(getattr(orig_error, 'ROBOT_EXIT_ON_FAILURE', False))
-        cont = bool(getattr(orig_error, 'ROBOT_CONTINUE_ON_FAILURE', False)) \
-            or is_test_or_suite_teardown
+        cont = bool(getattr(orig_error, 'ROBOT_CONTINUE_ON_FAILURE', False))
         ExecutionFailed.__init__(self, error_details.message, timeout, syntax,
                                  exit, cont)
 
