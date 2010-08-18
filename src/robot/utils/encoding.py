@@ -43,6 +43,6 @@ def _read_encoding_from_env():
     for name in 'LANG', 'LC_CTYPE', 'LANGUAGE', 'LC_ALL':
         if name in os.environ:
             return os.environ[name].split('.')[-1]
-    return None
+    return 'ascii'
 
 _output_encoding = _get_output_encoding()
