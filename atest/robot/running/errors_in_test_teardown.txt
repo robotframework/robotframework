@@ -40,12 +40,14 @@ Suite Teardown Is Executed Fully
     ${ts} =  Get Test Suite  errors in test teardown
     Check Log Message  ${ts.teardown.kws[0].msgs[0]}  Suite Message 1  FAIL
     Check Log Message  ${ts.teardown.kws[1].msgs[0]}  Suite Message 2 (with ∏ön ÄßÇïï €§)  FAIL
-    Check Log Message  ${ts.teardown.kws[2].msgs[0]}  This As Well Should Be Executed
+    Check Log Message  ${ts.teardown.kws[2].msgs[0]}  No keyword with name 'Missing Keyword' found.  FAIL
+    Check Log Message  ${ts.teardown.kws[3].msgs[0]}  This As Well Should Be Executed
     ${msg} =  Catenate  SEPARATOR=\n
     ...  Suite teardown failed:
     ...  Several failures occurred:\n
     ...  1) Suite Message 1\n
-    ...  2) Suite Message 2 (with ∏ön ÄßÇïï €§)
+    ...  2) Suite Message 2 (with ∏ön ÄßÇïï €§)\n
+    ...  3) No keyword with name 'Missing Keyword' found.
     Should Be Equal  ${ts.message}  ${msg}
 
 Suite Teardown Should Stop At Fatal Error

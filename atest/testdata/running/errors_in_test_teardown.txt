@@ -112,4 +112,5 @@ Fatal Error
 Suite Teardown With Errors
     Fail  Suite Message 1
     Fail  Suite Message 2 (with ∏ön ÄßÇïï €§)
+    Missing Keyword
     Log  This As Well Should Be Executed
