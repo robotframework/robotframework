@@ -774,7 +774,8 @@ class _RunKeyword:
                 self.run_keyword(kw)
             except ExecutionFailed, err:
                 errors.extend(err.get_errors())
-                if not err.cont:
+                context = ExecutionContext(NAMESPACES.current, OUTPUT)
+                if not err.can_continue(context.teardown):
                     break
         if errors:
             raise ExecutionFailures(errors)
