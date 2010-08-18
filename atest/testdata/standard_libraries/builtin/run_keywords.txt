@@ -57,11 +57,12 @@ In test teardown
     ...  Several failures occurred:\n\n
     ...  1) Expected error message\n\n
     ...  2) AssertionError\n\n
-    ...  3) No keyword with name 'Executed but doesn't exist' found.${ATD ERR}
+    ...  3) No keyword with name 'Executed but doesn't exist' found.\n\n
+    ...  4) No keyword with name 'Executed after syntax error in teardown' found.${ATD ERR}
     No Operation
     [Teardown]  Run keywords  Passing  ${NOOP}  Failing  ${NOOP}  Fail
     ...  Executed but doesn't exist
-    ...  Not executed after syntax error
+    ...  Executed after syntax error in teardown
 
 
 ***Keywords***
