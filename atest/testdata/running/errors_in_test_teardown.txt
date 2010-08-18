@@ -52,6 +52,16 @@ Syntax Error in Teardown
     No Operation
     [teardown]  Syntax Error
 
+Syntax Error in For Loop in Teardown
+    [documentation]  FAIL Teardown failed:\nSeveral failures occurred:\n\n
+    ...  1) Non-existing variable '${non existing variable}'.\n\n
+    ...  2) This should be executed\n\n
+    ...  3) Non-existing variable '${non existing variable}'.\n\n
+    ...  4) This should be executed\n\n
+    ...  Also teardown of the parent suite failed.
+    No Operation
+    [teardown]  Syntax Errors In For Loop
+
 Fatal Error In Teardown
     [documentation]  FAIL Teardown failed:\n
     ...  FatalCatastrophyException\n\n
@@ -88,6 +98,12 @@ Syntax Error
     Log  ${non existing variable}
     Keyword Missing
     Log  This Should Be Executed
+
+Syntax Errors In For Loop
+    :FOR  ${i}  IN RANGE  2
+    \  Log  ${non existing variable}
+    \  Fail  This should be executed
+	Log  This should be executed
 
 Fatal Error
     Exit On Failure
