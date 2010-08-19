@@ -10,7 +10,6 @@ ${STDERR FILE}  ${TEMPDIR}/redirect_stderr.txt
 *** Test Cases ***
 
 Invalid Encoding In Environment Variables
-  Set Invalid Environment Variables
   ${stdout}  ${stderr} =  Run Some Tests With Std Streams Redirected
   Should Contain   ${stdout}  Pass And Fail :: Some tests here
   Should Be Empty  ${stderr}
@@ -18,14 +17,11 @@ Invalid Encoding In Environment Variables
 
 *** Keywords ***
 
-Set Invalid Environment Variables
-  :FOR  ${var}  IN  LANG  LC_TYPE  LANGUAGE  LC_ALL
-  \  Set Environment Variable  ${var}  invalid
-
 Run Some Tests With Std Streams Redirected
   Set Runners
   ${cmd} =  Catenate  
   ...  echo "redirect stdin" |
+  ...  LANG=invalid LC_TYPE=invalid LANGUAGE=invalid LC_ALL=invalid
   ...  ${ROBOT} --monitorcolors off ${TESTFILE} 
   ...  > ${STDOUT FILE} 2> ${STDERR FILE}
   Run  ${cmd}
