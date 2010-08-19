@@ -23,6 +23,28 @@ class DataRow(object):
     def __init__(self, cells):
         self.cells, self.comments = self._parse(cells)
 
+    def _parse(self, row):
+        data = []
+        comments = []
+        for cell in row:
+            cell = self._collapse_whitespace(cell)
+            if cell.startswith('#') and not comments:
+                comments.append(cell[1:])
+            elif comments:
+                comments.append(cell)
+            else:
+                data.append(cell)
+        return self._purge_empty_cells(data), self._purge_empty_cells(comments)
+
+    def _collapse_whitespace(self, cell):
+        return self._whitespace_regexp.sub(' ', cell).strip()
+
+    def _purge_empty_cells(self, row):
+        while row and not row[-1]:
+            row.pop()
+        # Cells with only a single backslash are considered empty
+        return [cell if cell != '\\' else '' for cell in row]
+
     @property
     def head(self):
         return self.cells[0] if self.cells else None
@@ -33,6 +55,15 @@ class DataRow(object):
 
     @property
     def all(self):
+        return self.cells
+
+    @property
+    def data(self):
+        if self.is_continuing():
+            index = self.cells.index(self._row_continuation_marker) + 1
+            return self.cells[index:]
+        if self.starts_test_or_user_keyword_setting():
+            return self.cells[1:]
         return self.cells
 
     def dedent(self):
@@ -67,35 +98,17 @@ class DataRow(object):
         return self.head == ''
 
     def is_continuing(self):
-        return self.head == self._row_continuation_marker
+        for cell in self.cells:
+            if cell == self._row_continuation_marker:
+                return True
+            if cell:
+                return False
 
     def is_commented(self):
         return bool(not self.cells and self.comments)
 
     def test_or_user_keyword_setting_name(self):
         return self.head[1:-1].strip()
-
-    def _parse(self, row):
-        data = []
-        comments = []
-        for cell in row:
-            cell = self._collapse_whitespace(cell)
-            if cell.startswith('#') and not comments:
-                comments.append(cell[1:])
-            elif comments:
-                comments.append(cell)
-            else:
-                data.append(cell)
-        return self._purge_empty_cells(data), self._purge_empty_cells(comments)
-
-    def _collapse_whitespace(self, cell):
-        return self._whitespace_regexp.sub(' ', cell).strip()
-
-    def _purge_empty_cells(self, row):
-        while row and not row[-1]:
-            row.pop()
-        # Cells with only a single backslash are considered empty
-        return [cell if cell != '\\' else '' for cell in row]
 
     def __nonzero__(self):
         return bool(self.cells or self.comments)

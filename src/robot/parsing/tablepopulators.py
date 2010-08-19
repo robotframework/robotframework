@@ -51,7 +51,10 @@ class _TablePopulator(Populator):
             self._populator.populate()
             self._populator = self._get_populator(row)
         self._comments.consume_comments_with(self._populator.add)
-        self._populator.add(row)
+        if isinstance(self._populator, (SettingPopulator, VariablePopulator)):
+            self._populator.add(row.dedent())
+        else:
+            self._populator.add(row)
 
     def populate(self):
         self._comments.consume_comments_with(self._populator.add)
@@ -75,7 +78,7 @@ class SettingTablePopulator(_TablePopulator):
 class VariableTablePopulator(_TablePopulator):
 
     def _get_populator(self, row):
-        return VariablePopulator(self._table.add)
+        return VariablePopulator(self._table.add, row.head)
 
 
 class _StepContainingTablePopulator(_TablePopulator):
@@ -114,14 +117,14 @@ class ForLoopPopulator(Populator):
             if not declaration_ready:
                 return
             self._loop = self._for_loop_creator(self._declaration)
-        if not (row.is_continuing() or dedented_row.is_continuing()):
+        if not row.is_continuing():
             self._populator.populate()
             self._populator = StepPopulator(self._loop.add_step)
         self._populator.add(dedented_row)
 
     def _populate_declaration(self, row):
         if row.starts_for_loop() or row.is_continuing():
-            self._declaration.extend(row.tail)
+            self._declaration.extend(row.dedent().data)
             return False
         return True
 
@@ -224,20 +227,22 @@ class _PropertyPopulator(Populator):
 
 class VariablePopulator(_PropertyPopulator):
 
+    def __init__(self, setter, name):
+        _PropertyPopulator.__init__(self, setter)
+        self._name = name
+
     def _add(self, row):
-        if row.is_continuing() and self._value:
-            row = row.dedent()
-        self._value.extend(row.all)
+        self._value.extend(row.data)
 
     def populate(self):
-        name, value = self._value[0], self._value[1:]
-        self._setter(name, value, self._comments.formatted_value())
+        self._setter(self._name, self._value,
+                     self._comments.formatted_value())
 
 
 class SettingPopulator(_PropertyPopulator):
 
     def _add(self, row):
-        self._value.extend(row.tail)
+        self._value.extend(row.data)
 
     def populate(self):
         self._setter(self._value, self._comments.formatted_value())
@@ -246,9 +251,7 @@ class SettingPopulator(_PropertyPopulator):
 class StepPopulator(_PropertyPopulator):
 
     def _add(self, row):
-        if row.is_continuing():
-            row = row.dedent()
-        self._value.extend(row.all)
+        self._value.extend(row.data)
 
     def populate(self):
         if self._value or self._comments:
