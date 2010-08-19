@@ -127,16 +127,14 @@ class TestCaseFilePopulatingTest(_PopulatorTest):
         setup_name, setup_args = 'Keyword Name', ['a1', 'a2']
         self._create_table('Settings', [['Documentation', doc],
                                         ['S  uite Tear Down'] + [setup_name],
-                                        ['S  uite SeTUp'] + [setup_name],
-                                        ['...'] + setup_args,
+                                        ['S  uite SeTUp'] + [setup_name] + setup_args,
                                         ['S  uite teardown'] + setup_args,
                                         ['Doc um entati on', more_doc],
                                         ['force tags', force_tags],
                                         ['Default tags', default_tags],
                                         ['FORCETAGS', more_tags],
                                         ['test timeout', '1s'],
-                                        ['De Fault TAGS', more_tags],
-                                        ['...', even_more_tags],
+                                        ['De Fault TAGS', more_tags, even_more_tags],
                                         ['test timeout', 'timeout message'],
                                         ['test timeout', more_doc],
                                         ['test template', template]
@@ -151,9 +149,24 @@ class TestCaseFilePopulatingTest(_PopulatorTest):
         assert_equals(timeout.message, 'timeout message '+more_doc)
         self._assert_setting('test_template', template)
 
+    def test_line_continuation_in_setting_table(self):
+         self._create_table('Settings', [['Documentation', 'doc'],
+                                         ['...', 'in two lines'],
+                                         ['Force Tags', 'one', 'two'],
+                                         ['', '...', 'three']
+                                        ])
+         self._assert_setting('doc', 'doc in two lines')
+         self._assert_setting('force_tags', ['one', 'two', 'three'])
+
     def _assert_tags(self, tag_name, exp_value):
         tag = self._setting_with(tag_name)
         assert_equals(tag.value, exp_value)
+
+    def test_invalid_settings(self):
+        self._create_table('Settings', [['In valid', 'val ue']])
+        assert_equals(self._logger.value(), "Invalid syntax in file 'None' in "
+                                            "table 'Settings': Non-existing "
+                                            "setting 'In valid'.")
 
     def test_continuing_in_the_begining_of_the_setting_table(self):
         self._create_table('Settings', [['...']])
@@ -180,17 +193,12 @@ class TestCaseFilePopulatingTest(_PopulatorTest):
     def test_unnamed_test_and_line_continuation(self):
         self._create_table('test cases', [['', '...', 'foo', '#comment']])
         assert_equals(self._first_test().name, '')
+        assert_equals(self._first_test().steps[0].keyword, 'foo')
         assert_equals(self._first_test().steps[0].comment, 'comment')
 
     def test_continuing_in_the_begining_of_the_keyword_table(self):
         self._create_table('keywords', [['...', 'foo']])
         assert_equals(self._nth_uk(1).name, '...')
-
-    def test_invalid_settings(self):
-        self._create_table('Settings', [['In valid', 'val ue']])
-        assert_equals(self._logger.value(), "Invalid syntax in file 'None' in "
-                                            "table 'Settings': Non-existing "
-                                            "setting 'In valid'.")
 
     def test_adding_import(self):
         self._create_table('settings', [['Library', 'FooBarness'],
@@ -211,16 +219,18 @@ class TestCaseFilePopulatingTest(_PopulatorTest):
 
     def test_adding_variables(self):
         self._create_table('Variables', [['${scalar}', 'value'],
-                                         ['@{list}', 'v1', 'v2'],
-                                         ['...', 'v3', 'v4']])
+                                         ['@{list}', 'v1', 'v2', 'v3', 'v4']])
         assert_equals(len(self._datafile.variable_table.variables), 2)
         self._assert_variable(0, '${scalar}', ['value'])
         self._assert_variable(1, '@{list}', ['v1', 'v2', 'v3', 'v4'])
 
-    def test_setting_in_multiple_rows(self):
-        self._create_table('Settings', [['Documentation', 'Part 1'],
-                                        ['...', 'Part 2']])
-        self._assert_setting('doc', 'Part 1 Part 2')
+    def test_line_continuation_in_variable_table(self):
+        self._create_table('Variables', [['@{list}'],
+                                         ['...', 'v1'],
+                                         ['', '...', 'v2'],
+                                         ['', '', '...', 'v3', 'v4']])
+        self._assert_variable(0, '@{list}', ['v1', 'v2', 'v3', 'v4'])
+
 
     def test_test_case_populating(self):
         self._create_table('Test cases', [['My test name'],
@@ -237,16 +247,18 @@ class TestCaseFilePopulatingTest(_PopulatorTest):
         self._create_table('Test cases', [['My test name', 'No Operation']])
         assert_equals(len(self._first_test().steps), 1)
 
-    def test_continuing_row_in_test(self):
+    def test_line_continuation_in_test(self):
         self._create_table('Test cases', [['My test name', 'Log Many', 'foo'],
                                           ['', '...', 'bar', 'quux'],
                                           ['Another test'],
-                                          ['', '...'],
                                           ['', 'Log Many', 'quux'],
-                                          ['', '...', 'fooness'],
+                                          ['', '', '...', 'fooness'],
+                                          ['', '', '', '...', 'and more'],
                                           ['', 'Log', 'barness']])
-        assert_equals(len(self._first_test().steps), 1)
-        assert_equals(len(self._nth_test(2).steps), 3)
+        self._number_of_steps_should_be((self._first_test()), 1)
+        self._number_of_steps_should_be(self._nth_test(2), 2)
+        assert_equals(self._nth_test(2).steps[0].keyword, 'Log Many')
+        assert_equals(self._nth_test(2).steps[0].args, ['quux', 'fooness', 'and more'])
 
     def test_for_loop(self):
         self._create_table('Test cases', [['For loop test'],
@@ -272,12 +284,13 @@ class TestCaseFilePopulatingTest(_PopulatorTest):
         assert_true(for_loop.range)
         assert_equals(for_loop.vars, ['${i}', '${j}'])
 
-    def test_malicious_for_loop(self):
+    def test_line_continuation_in_for_loop(self):
         self._create_table('Test cases', [['Malicious for loop test'],
                                           ['', 'Log', 'Before FOR'],
-                                          ['', '::::   fOr', '${i}', 'IN', '10', '20'],
-                                          ['', '...', '30', '40'],
-                                          ['', '...', '50', '60'],
+                                          ['', '::::   fOr', '${i}', 'IN', '10'],
+                                          ['', '...', '20'],
+                                          ['', '', '...', '30', '40'],
+                                          ['', '', '', '...', '50', '60'],
                                           ['', '', 'Log Many', '${i}'],
                                           ['', '', '...', '${i}'],
                                           ['', '...', '${i}'],
