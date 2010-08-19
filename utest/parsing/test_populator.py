@@ -219,10 +219,12 @@ class TestCaseFilePopulatingTest(_PopulatorTest):
 
     def test_adding_variables(self):
         self._create_table('Variables', [['${scalar}', 'value'],
+                                         ['${slist}', '[s, o, m, e]'],
                                          ['@{list}', 'v1', 'v2', 'v3', 'v4']])
-        assert_equals(len(self._datafile.variable_table.variables), 2)
+        assert_equals(len(self._datafile.variable_table.variables), 3)
         self._assert_variable(0, '${scalar}', ['value'])
-        self._assert_variable(1, '@{list}', ['v1', 'v2', 'v3', 'v4'])
+        self._assert_variable(1, '${slist}', ['[s, o, m, e]'])
+        self._assert_variable(2, '@{list}', ['v1', 'v2', 'v3', 'v4'])
 
     def test_line_continuation_in_variable_table(self):
         self._create_table('Variables', [['@{list}'],

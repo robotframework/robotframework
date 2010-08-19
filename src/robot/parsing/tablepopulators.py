@@ -51,10 +51,7 @@ class _TablePopulator(Populator):
             self._populator.populate()
             self._populator = self._get_populator(row)
         self._comments.consume_comments_with(self._populator.add)
-        if isinstance(self._populator, (SettingPopulator, VariablePopulator)):
-            self._populator.add(row.dedent())
-        else:
-            self._populator.add(row)
+        self._populator.add(row)
 
     def populate(self):
         self._comments.consume_comments_with(self._populator.add)
@@ -224,6 +221,9 @@ class _PropertyPopulator(Populator):
             self._add(row)
         self._comments.add(row)
 
+    def _add(self, row):
+        self._value.extend(row.dedent().data)
+
 
 class VariablePopulator(_PropertyPopulator):
 
@@ -231,18 +231,12 @@ class VariablePopulator(_PropertyPopulator):
         _PropertyPopulator.__init__(self, setter)
         self._name = name
 
-    def _add(self, row):
-        self._value.extend(row.data)
-
     def populate(self):
         self._setter(self._name, self._value,
                      self._comments.formatted_value())
 
 
 class SettingPopulator(_PropertyPopulator):
-
-    def _add(self, row):
-        self._value.extend(row.data)
 
     def populate(self):
         self._setter(self._value, self._comments.formatted_value())

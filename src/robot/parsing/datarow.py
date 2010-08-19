@@ -62,8 +62,6 @@ class DataRow(object):
         if self.is_continuing():
             index = self.cells.index(self._row_continuation_marker) + 1
             return self.cells[index:]
-        if self.starts_test_or_user_keyword_setting():
-            return self.cells[1:]
         return self.cells
 
     def dedent(self):
@@ -94,6 +92,9 @@ class DataRow(object):
         head = self.head
         return head and head[0] == '[' and head[-1] == ']'
 
+    def test_or_user_keyword_setting_name(self):
+        return self.head[1:-1].strip()
+
     def is_indented(self):
         return self.head == ''
 
@@ -106,9 +107,6 @@ class DataRow(object):
 
     def is_commented(self):
         return bool(not self.cells and self.comments)
-
-    def test_or_user_keyword_setting_name(self):
-        return self.head[1:-1].strip()
 
     def __nonzero__(self):
         return bool(self.cells or self.comments)
