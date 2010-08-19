@@ -1,0 +1,35 @@
+*** Settings ***
+Force Tags   regression   pybot  jybot  non windows
+Resource     monitor_resource.txt
+
+*** Variables ***
+${TES TFILE}    ${CURDIR}/../../../testdata/misc/pass_and_fail.html
+${STDOUT FILE}  ${TEMPDIR}/redirect_stdout.txt
+${STDERR FILE}  ${TEMPDIR}/redirect_stderr.txt
+
+*** Test Cases ***
+
+Invalid Encoding In Environment Variables
+  Set Invalid Environment Variables
+  ${stdout}  ${stderr} =  Run Some Tests With Std Streams Redirected
+  Should Contain   ${stdout}  Pass And Fail :: Some tests here
+  Should Be Empty  ${stderr}
+
+
+*** Keywords ***
+
+Set Invalid Environment Variables
+  :FOR  ${var}  IN  LANG  LC_TYPE  LANGUAGE  LC_ALL
+  \  Set Environment Variable  ${var}  invalid
+
+Run Some Tests With Std Streams Redirected
+  Set Runners
+  ${cmd} =  Catenate  
+  ...  echo "redirect stdin" |
+  ...  ${ROBOT} --monitorcolors off ${TESTFILE} 
+  ...  > ${STDOUT FILE} 2> ${STDERR FILE}
+  Run  ${cmd}
+  ${stdout} =  Log File  ${STDOUT FILE}
+  ${stderr} =  Log File  ${STDERR FILE}
+  [Return]  ${stdout}  ${stderr}
+  

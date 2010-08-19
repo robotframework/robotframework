@@ -30,19 +30,26 @@ def encode_output(string, errors='replace'):
 
 
 def _get_output_encoding():
+    # Jython is buggy on Windows: http://bugs.jython.org/issue1568
+    if os.sep == '\\' and sys.platform.startswith('java'):
+        return 'cp437'  # Default DOS encoding
     encoding = sys.__stdout__.encoding or sys.__stdin__.encoding
+    if encoding:
+        return encoding
     if os.sep == '/':
-        return encoding or _read_encoding_from_env()
-    # Use default DOS encoding if no encoding found (guess)
-    # or on buggy Jython 2.5: http://bugs.jython.org/issue1568
-    if not encoding or sys.platform.startswith('java'):
-        return 'cp437'
-    return encoding
+        return _read_encoding_from_unix_env()
+    return 'cp437'  # Default DOS encoding
 
-def _read_encoding_from_env():
+def _read_encoding_from_unix_env():
     for name in 'LANG', 'LC_CTYPE', 'LANGUAGE', 'LC_ALL':
-        if name in os.environ:
-            return os.environ[name].split('.')[-1]
+        try:
+            # Encoding can be in format like `UTF-8` or `en_US.UTF-8`
+            encoding = os.environ[name].split('.')[-1]
+            'testing that encoding is valid'.encode(encoding)
+        except (KeyError, LookupError):
+            pass
+        else:
+            return encoding
     return 'ascii'
 
 _output_encoding = _get_output_encoding()
