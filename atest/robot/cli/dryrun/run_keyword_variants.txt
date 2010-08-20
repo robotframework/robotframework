@@ -1,0 +1,58 @@
+*** Settings ***
+Suite Setup     Run Tests  --runmode dryrun  cli/dryrun/run_keyword_variants.txt
+Force Tags      regression  pybot  jybot
+Resource        atest_resource.txt
+
+*** Test Cases ***
+
+Run Keyword With Keyword with Invalid Number of Arguments
+    Check Test Case  ${TESTNAME}
+
+Run Keyword With Missing Keyword
+    Check Test Case  ${TESTNAME}
+
+Run Keyword With Variable In Keyword Name
+    Check Test Case  ${TESTNAME}
+
+Run Keyword With UK
+    Check Test Case  ${TESTNAME}
+
+Run Keyword With Failing UK
+    Check Test Case  ${TESTNAME}
+
+Comment
+    Check Test Case  ${TESTNAME}
+
+Set Variables
+    Check Test Case  ${TESTNAME}
+
+Run Keywords When All Keywords Pass
+    Check Test Case  ${TESTNAME}
+
+Run Keywords When One Keyword Fails
+    Check Test Case  ${TESTNAME}
+
+Run Keywords When Multiple Keyword Fails
+    Check Test Case  ${TESTNAME}
+
+Run Keyword in For Loop Pass
+    Check Test Case  ${TESTNAME}
+
+Run Keyword in For Loop Fail
+    Check Test Case  ${TESTNAME}
+
+Wait Until Keyword Succeeds Pass
+    Check Test Case  ${TESTNAME}
+
+Wait Until Keyword Succeeds Fail
+    Check Test Case  ${TESTNAME}
+
+Run Keyword If Pass
+    Check Test Case  ${TESTNAME}
+
+Run Keyword If Fail
+    Check Test Case  ${TESTNAME}
+
+Test Teardown Related Run Keyword Variants
+    Check Test Case  ${TESTNAME}
+
