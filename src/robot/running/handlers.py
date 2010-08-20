@@ -16,9 +16,11 @@ import inspect
 import sys
 
 from robot import utils
+from robot.errors import DataError
 
 from outputcapture import OutputCapturer
 from runkwregister import RUN_KW_REGISTER
+from keywords import Keywords, Keyword
 from arguments import (PythonKeywordArguments, JavaKeywordArguments,
                        DynamicKeywordArguments, RunKeywordArguments,
                        PythonInitArguments, JavaInitArguments)
@@ -92,10 +94,10 @@ class _RunnableHandler(_BaseHandler):
 
     def run(self, context, args):
         if context.dry_run:
-            return self._dry_run(args)
+            return self._dry_run(context, args)
         return self._run(context, args)
 
-    def _dry_run(self, args):
+    def _dry_run(self, context, args):
         self.arguments.check_arg_limits_for_dry_run(args)
         return None
 
@@ -198,6 +200,10 @@ class _DynamicHandler(_RunnableHandler):
 
 class _RunKeywordHandler(_PythonHandler):
 
+    def __init__(self, library, handler_name, handler_method):
+        _PythonHandler.__init__(self, library, handler_name, handler_method)
+        self._handler_method = handler_method
+
     def _run_with_signal_monitoring(self, runner):
         # With run keyword variants, only the keyword to be run can fail
         # and therefore monitoring should not raise exception yet.
@@ -210,6 +216,43 @@ class _RunKeywordHandler(_PythonHandler):
 
     def _get_timeout(self, namespace):
         return None
+
+    def _dry_run(self, context, args):
+        _RunnableHandler._dry_run(self, context, args)
+        keywords = self._get_runnable_keywords(context, args)
+        keywords.run(context)
+
+    def _get_runnable_keywords(self, context, args):
+        keywords = Keywords([])
+        for keyword in self._get_keywords(args):
+            if self._variable_syntax_in(keyword.name, context):
+                continue
+            keywords.add_keyword(keyword)
+        return keywords
+
+    def _get_keywords(self, args):
+        arg_names, varargs = self._get_handler_arg_names_and_varargs()
+        if 'name' in arg_names:
+            name_index = arg_names.index('name')
+            return [ Keyword(args[name_index], args[name_index+1:]) ]
+        elif varargs == 'names':
+            return [ Keyword(name, []) for name in args[len(arg_names):] ]
+        return []
+
+    def _get_handler_arg_names_and_varargs(self):
+        args, varargs, _, _ = inspect.getargspec(self._handler_method)
+        if inspect.ismethod(self._handler_method):
+            args = args[1:]
+        return args, varargs
+
+    def _variable_syntax_in(self, kw_name, context):
+        try:
+            resolved = context.namespace.variables.replace_string(kw_name)
+            #Variable can contain value, but it might be wrong, 
+            #therefore it cannot be returned
+            return resolved != kw_name
+        except DataError:
+            return True
 
 
 class _DynamicRunKeywordHandler(_DynamicHandler, _RunKeywordHandler):

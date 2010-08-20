@@ -27,15 +27,18 @@ class Keywords(object):
         if template:
             steps = [s.apply_template(template) for s in steps]
         for s in steps:
-            self._add_keyword(s, template)
+            self._add_step(s, template)
 
-    def _add_keyword(self, step, template):
+    def _add_step(self, step, template):
         if step.is_comment():
             return
         if step.is_for_loop():
             keyword = ForLoop(step, template)
         else:
             keyword = Keyword(step.keyword, step.args, step.assign)
+        self.add_keyword(keyword)
+
+    def add_keyword(self, keyword):
         self._keywords.append(keyword)
 
     def run(self, context):
