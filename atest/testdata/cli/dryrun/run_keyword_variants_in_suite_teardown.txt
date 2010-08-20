@@ -1,0 +1,19 @@
+*** Settings ***
+Suite Teardown  Run All Suite Teardown Related Run Keyword Variants
+
+
+*** Variables ***
+${FAILURE MESSAGE WITH LOG KW} =  Keyword 'BuiltIn.Log' expected 1 to 2 arguments, got 0.
+
+
+*** Test Cases ***
+Suite Teardown Related Run Keyword Variants
+    [Documentation]  FAIL  Teardown of the parent suite failed.
+    No Operation
+
+*** Keywords ***
+Run All Suite Teardown Related Run Keyword Variants
+    Run Keyword If All Critical Tests Passed  Log
+    Run Keyword If Any Critical Tests Failed  Log
+    Run Keyword If All Tests Passed  Log
+    Run Keyword If Any Tests Failed  Log
