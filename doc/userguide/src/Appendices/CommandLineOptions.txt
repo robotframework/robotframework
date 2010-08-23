@@ -85,6 +85,7 @@ Command line options for post-processing outputs
   --reporttitle <title>  `Sets a title`_ for the generated test report.
   --reportbackground <colors>    `Sets background colors`_ for the generated report and summary.
   --summarytitle <title>  `Sets a title`_ for the generated summary report.
+  -L, --loglevel <level>  `Sets the threshold level`_ to select log messages. New in Robot Framework 2.5.2.
   --suitestatlevel <level>  Defines how many `levels to show`_ in the :name:`Statistics by Suite`
                           table in outputs.
   --tagstatinclude <tag>  `Includes only these tags`_ in the :name:`Statistics by Tag` and

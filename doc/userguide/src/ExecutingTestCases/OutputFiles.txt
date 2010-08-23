@@ -240,12 +240,20 @@ __ `Errors and warnings during execution`_
 Setting log level
 '''''''''''''''''
 
-By default, log messages below :msg:`INFO` are not logged, but this
-threshold level can be changed from the command line using the
+By default, log messages below the :msg:`INFO` level are not logged, but this
+threshold can be changed from the command line using the
 :opt:`--loglevel (-L)` option. This option takes any of the
 available log levels as an argument, and that level becomes the new
 threshold level. A special value :msg:`NONE` can also be used to
 disable logging altogether.
+
+Starting from Robot Framework 2.5.2, it is possible to use the
+:opt:`--loglevel` option also when `post-processing outputs`_ with
+:prog:`rebot`. This allows, for example, running tests initially with
+the :msg:`TRACE` level, and generating smaller log files for normal
+viewing later with the :msg:`INFO` level. By default all the messages
+included during execution will be included also with :prog:`rebot`.
+Messages ignored during the execution cannot be recovered.
 
 Another possibility to change the log level is using the `BuiltIn
 keyword`_ :name:`Set Log Level` in the test data. It takes the same
