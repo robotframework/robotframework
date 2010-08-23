@@ -510,15 +510,12 @@ __ `Space and empty variables`_
 Dividing test data to several rows
 ''''''''''''''''''''''''''''''''''
 
-If a keyword requires more arguments than there are columns available,
-it is not necessary to add more columns. Instead, it is possible to
-simply have three dots (:code:`...`) below the original keyword name
-and continue arguments there. Arguments presented like this are parsed
-as if they were all in one row.
+If there is more data than readily fits a row, it possible to use ellipsis
+(:code:`...`) to continue the previous line. In test case and user keyword tables,
+the ellipsis must be preceded by at least one empty cell.  In settings and
+variable tables, it can be placed directly under the setting or variable name.
 
-The same approach works also with settings and variables taking
-several values. In these cases, the three dots are, of course, placed
-under the setting or variable name.
+In all tables, all empty cells before the ellipsis are ignored.
 
 Additionally, values of settings that take only one value (mainly
 documentations) can be split to several columns. These values
@@ -601,7 +598,7 @@ splitting the data to several rows.
    \            ...               four            five        six
    \            ${var} =          Get X           1           2
    \            ...               3               4           5
-   \            ...               6               
+   \            ...               ...             6
    ===========  ================  ==============  ==========  ==========
 
 Splitting test data in reST tables
