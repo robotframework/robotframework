@@ -98,7 +98,7 @@ Options:
  -n --noncritical tag *   Tests with given tag are not critical even if they
                           have a tag set with --critical. Tag can be a pattern.
     --runmode mode        Possible values are 'random:test', 'random:suite',
-                          'random:all', 'exitonfailure' and dryrun. Any other
+                          'random:all', 'exitonfailure' and 'dryrun'. Any other
                           value is ignored. First three change the execution
                           order of suites or tests (or both). 'exitonfailure'
                           causes the execution of tests to be stopped if a
