@@ -19,23 +19,24 @@ from robot import utils
 from robot.errors import DataError, XmlParsingError
 from robot.common import BaseTestSuite, BaseTestCase, BaseKeyword
 from robot.output import LOGGER
+from robot.output.loggerhelper import IsLogged
 
 
 def process_outputs(paths, settings):
     if not paths:
         raise DataError('No output files given.')
     if len(paths) == 1:
-        return process_output(paths[0])
+        return process_output(paths[0], log_level=settings['LogLevel'])
     suite = CombinedTestSuite(settings['StartTime'], settings['EndTime'])
     exec_errors = CombinedExecutionErrors()
     for path in paths:
-        subsuite, suberrors = process_output(path)
+        subsuite, suberrors = process_output(path, log_level=settings['LogLevel'])
         suite.add_suite(subsuite)
         exec_errors.add(suberrors)
     return suite, exec_errors
 
 
-def process_output(path, read_level=-1):
+def process_output(path, read_level=-1, log_level=None):
     """Process one output file and return TestSuite and ExecutionErrors
 
     'read_level' can be used to limit how many suite levels are read. This is
@@ -54,7 +55,7 @@ def process_output(path, read_level=-1):
                         (path, message), traceback)
     suite = _get_suite_node(root, path)
     errors = _get_errors_node(root)
-    return TestSuite(suite, read_level), ExecutionErrors(errors)
+    return TestSuite(suite, read_level, log_level=log_level), ExecutionErrors(errors)
 
 def _get_suite_node(root, path):
     if root.name != 'robot':
@@ -102,9 +103,9 @@ class _BaseReader:
 
 class _TestAndSuiteReader(_BaseReader):
 
-    def __init__(self, node):
+    def __init__(self, node, log_level=None):
         _BaseReader.__init__(self, node)
-        self.keywords = [ Keyword(kw) for kw in node.get_nodes('kw') ]
+        self.keywords = [ Keyword(kw, log_level) for kw in node.get_nodes('kw') ]
         if len(self.keywords) > 0 and self.keywords[0].type == 'setup':
             self.setup = self.keywords.pop(0)
         if len(self.keywords) > 0 and self.keywords[-1].type == 'teardown':
@@ -113,8 +114,8 @@ class _TestAndSuiteReader(_BaseReader):
 
 class _SuiteReader(_TestAndSuiteReader):
 
-    def __init__(self, node):
-        _TestAndSuiteReader.__init__(self, node)
+    def __init__(self, node, log_level=None):
+        _TestAndSuiteReader.__init__(self, node, log_level)
         del(self.keywords)
         for metanode in node.get_nodes('metadata/item'):
             self.metadata[metanode.get_attr('name')] = metanode.text
@@ -125,15 +126,15 @@ class _SuiteReader(_TestAndSuiteReader):
 
 class _TestReader(_TestAndSuiteReader):
 
-    def __init__(self, node):
-        _TestAndSuiteReader.__init__(self, node)
+    def __init__(self, node, log_level=None):
+        _TestAndSuiteReader.__init__(self, node, log_level)
         self.tags = [ tag.text for tag in node.get_nodes('tags/tag') ]
         self.timeout = node.get_attr('timeout', '')
 
 
 class _KeywordReader(_BaseReader):
 
-    def __init__(self, node):
+    def __init__(self, node, log_level=None):
         _BaseReader.__init__(self, node)
         del(self.message)
         self.args = [ arg.text for arg in node.get_nodes('arguments/arg') ]
@@ -142,12 +143,13 @@ class _KeywordReader(_BaseReader):
         self.keywords = []
         self.messages = []
         self.children = []
+        log_filter = IsLogged(log_level or 'TRACE')
         for child in node.children:
             if child.name == 'kw':
                 kw = Keyword(child)
                 self.keywords.append(kw)
                 self.children.append(kw)
-            elif child.name == 'msg':
+            elif child.name == 'msg' and log_filter(child.get_attr('level', 'INFO')):
                 msg = Message(child)
                 self.messages.append(msg)
                 self.children.append(msg)
@@ -155,16 +157,16 @@ class _KeywordReader(_BaseReader):
 
 class TestSuite(BaseTestSuite, _SuiteReader):
 
-    def __init__(self, node, read_level=-1, level=1, parent=None):
+    def __init__(self, node, read_level=-1, level=1, parent=None, log_level=None):
         node = self._get_node(node, read_level, level)
         BaseTestSuite.__init__(self, node.attrs.get('name'),
                                node.attrs.get('source', None), parent)
-        _SuiteReader.__init__(self, node)
+        _SuiteReader.__init__(self, node, log_level=log_level)
         for snode in node.get_nodes('suite'):
             snode.generator = node.generator
-            TestSuite(snode, read_level, level+1, parent=self)
+            TestSuite(snode, read_level, level+1, parent=self, log_level=log_level)
         for tnode in node.get_nodes('test'):
-            TestCase(tnode, parent=self)
+            TestCase(tnode, parent=self, log_level=log_level)
         self.set_status()
         if node.generator == 'robot' and \
                 self.teardown is not None and self.teardown.status == 'FAIL':
@@ -248,9 +250,9 @@ class CombinedTestSuite(TestSuite):
 
 class TestCase(BaseTestCase, _TestReader):
 
-    def __init__(self, node, parent):
+    def __init__(self, node, parent, log_level=None):
         BaseTestCase.__init__(self, node.get_attr('name'), parent)
-        _TestReader.__init__(self, node)
+        _TestReader.__init__(self, node, log_level=log_level)
         self.set_criticality(parent.critical)
 
     def remove_keywords(self, how):
@@ -262,10 +264,10 @@ class TestCase(BaseTestCase, _TestReader):
 
 class Keyword(BaseKeyword, _KeywordReader):
 
-    def __init__(self, node):
+    def __init__(self, node, log_level=None):
         self._init_data()
         BaseKeyword.__init__(self, node.get_attr('name'))
-        _KeywordReader.__init__(self, node)
+        _KeywordReader.__init__(self, node, log_level)
 
     def _init_data(self):
         self.messages = []

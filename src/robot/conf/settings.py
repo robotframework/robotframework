@@ -46,7 +46,6 @@ class _BaseSettings:
                   'TagStatCombine'   : ('tagstatcombine', []),
                   'TagDoc'           : ('tagdoc', []),
                   'TagStatLink'      : ('tagstatlink', []),
-                  'LogLevel'         : ('loglevel', 'INFO'),
                   'MonitorWidth'     : ('monitorwidth', 78),
                   'MonitorColors'    : ('monitorcolors', 'ON') }
     _deprecated = {}
@@ -192,6 +191,7 @@ class _BaseSettings:
 
 class RobotSettings(_BaseSettings):
     _extra_cli_opts = { 'Output'        : ('output', 'output.xml'),
+                        'LogLevel'      : ('loglevel', 'INFO'),
                         'RunMode'       : ('runmode', 'normal'),
                         'Variables'     : ('variable', []),
                         'VariableFiles' : ('variablefile', []),
@@ -219,6 +219,7 @@ class RobotSettings(_BaseSettings):
 
 class RebotSettings(_BaseSettings):
     _extra_cli_opts = { 'Output'         : ('output', 'NONE'),
+                        'LogLevel'       : ('loglevel', 'TRACE'),
                         'RemoveKeywords' : ('removekeywords', 'NONE'),
                         'StartTime'      : ('starttime', 'N/A'),
                         'EndTime'        : ('endtime', 'N/A')}
