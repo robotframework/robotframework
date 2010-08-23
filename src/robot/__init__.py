@@ -61,7 +61,7 @@ def _run_or_rebot_from_cli(method, cliargs, usage, **argparser_config):
     except DataError:
         _exit(DATA_ERROR, *utils.get_error_details())
     except XmlParsingError, error:
-        _exit(FRAMEWORK_ERROR, utils.unic(error), error.traceback)
+        _exit(DATA_ERROR, utils.unic(error), error.traceback)
     except (KeyboardInterrupt, SystemExit):
         _exit(STOPPED_BY_USER, 'Execution stopped by user.')
     except:
