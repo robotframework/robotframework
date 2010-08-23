@@ -1,0 +1,46 @@
+*** Settings ***
+Test Setup     Empty output directory
+Test Template  Correct outputs should be created
+Force Tags     pybot  jybot  regression
+Resource       rebot_cli_resource.txt
+
+*** Test Cases ***
+
+Default outputs 
+    ${EMPTY}                                       log.html  report.html
+
+Output Only
+    --output myoutput.xml --log none --report none          myoutput.xml
+
+Report Only
+    --output none --report myreport.html --log NONE        myreport.html
+
+Log Only
+    --output None --report NONE --log mylog.html -S none      mylog.html
+
+Summary Only
+    -o none --summary mysummary.html -l none -r NONE      mysummary.html
+
+All Outputs
+    -o myoutput.xml -r myreport.html -l mylog.html -S mysummary.html
+    ...  mylog.html  myoutput.xml  myreport.html  mysummary.html
+
+Outputs Without Extensions
+    --output xoutput --report xreport --log xlog --summary xsummary
+    ...  xlog.html  xoutput.xml  xreport.html  xsummary.html
+
+Outputs Into Different Directories
+    [Template]
+    Set Runners
+    Run  ${REBOT} --outputdir ::invalid:: -o ${MYOUTDIR}${/}o${/}o.xml -r ${MYOUTDIR}${/}r${/}r.html -l ${MYOUTDIR}${/}l${/}l.html --summary ${MYOUTDIR}${/}s.htm ${MYINPUT}
+    Directory Should Contain  ${MYOUTDIR}${/}o  o.xml
+    Directory Should Contain  ${MYOUTDIR}${/}r  r.html
+    Directory Should Contain  ${MYOUTDIR}${/}l  l.html
+    Directory Should Contain  ${MYOUTDIR}  l  o  r  s.htm
+
+
+*** Keywords ***
+Correct outputs should be created
+    [Arguments]  ${arguments}  @{expected}
+    ${outputs} =  Run rebot and return outputs  ${arguments}
+    Lists Should Be Equal  ${outputs}  ${expected}

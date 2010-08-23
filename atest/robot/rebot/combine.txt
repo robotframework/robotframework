@@ -129,6 +129,11 @@ Combined Suite Names Are Correct In Statistics Table
     Should Contain  ${report content}  <div class="stat_name"><a href="#suite_New Name" title="New Name">New Name</a></div>
     Should Contain  ${report content}  <div class="stat_name"><a href="#suite_New Name.Pass And Fail" title="New Name.Pass And Fail"><span class="parent_name">New Name . </span>Pass And Fail</a></div>
 
+Wildcards
+    Run Rebot  ${EMPTY}  ${TEMPDIR}${/}rebot-test-?.x*
+    Should Be True  ${SUITE.suites} == ['Pass And Fail', 'Normal', 'New Name']
+
+
 *** Keywords ***
 My Setup
     Comment  1) Create first input for Rebot

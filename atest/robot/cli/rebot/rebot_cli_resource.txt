@@ -24,6 +24,13 @@ Remove temporary files
     Remove Directory  ${MYOUTDIR}  recursively
     Remove File  ${MYINPUT}
 
-Rebot And Process Output  
-    [Arguments]  ${arguments}=${EMPTY}  ${input}=${MYINPUT}
-    Run Rebot  --outputdir ${MYOUTDIR} ${arguments}  ${input}
+Empty output directory
+    Empty Directory  ${MYOUTDIR}
+
+Run rebot and return outputs
+    [Arguments]  ${arguments}
+    Empty output directory
+    Set Runners
+    Run  ${REBOT} --outputdir ${MYOUTDIR} ${arguments} ${MYINPUT}
+    @{outputs} =  List Directory  ${MYOUTDIR}
+    [Return]  @{outputs}

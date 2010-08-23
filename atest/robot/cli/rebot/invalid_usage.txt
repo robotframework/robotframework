@@ -1,0 +1,61 @@
+*** Settings ***
+Default Tags    regression  pybot  jybot
+Resource        rebot_cli_resource.txt
+
+
+*** Test Cases ***
+
+Invalid Options
+    Rebot should fail  --invalid option  option --invalid not recognized
+    Rebot should fail  --name valid -I   option -I not recognized
+
+No Input
+    Rebot should fail  ${EMPTY}  Expected at least 1 argument, got 0.
+
+Non-Existing Input
+    Rebot should fail  nonex.xml  Output file 'nonex\\.xml' does not exist.
+
+Non-XML Input
+    Create File  ${MYOUTDIR}/invalid.txt  Hello, world
+    Rebot should fail  ${MYOUTDIR}${/}invalid.txt  (\\[Fatal Error\\] .*: Content is not allowed in prolog.\\n)?Opening XML file '.*invalid.txt' failed: .*
+
+Non-Compatible XML
+    Create File  ${MYOUTDIR}/invalid.xml  <not><our>type</our></not>
+    Rebot should fail  ${MYOUTDIR}${/}invalid.xml  File '.*invalid.xml' is not Robot Framework output file.
+
+Invalid Output Directory
+    [Documentation]  Test error handling when some of the output dirs (where to write output, report, etc.) is invalid (i.e. can't be created). To make sure creating dirs fails their names are non-standard (that's not enough in Linux) parent is made read only.
+    Create Directory  ${MYOUTDIR}${/}x
+    Set Read Only  ${MYOUTDIR}${/}x
+    Rebot should fail  -d ${MYOUTDIR}${/}x${/}:i ${MYINPUT}
+    ...  Can't create log file's parent directory '.*': (OS|IO|Windows)Error: .*
+    Rebot should fail  -d ${MYOUTDIR}${/}x${/}:i -o out.xml -l none -r none ${MYINPUT}
+    ...  Can't create output file's parent directory '.*': (OS|IO|Windows)Error: .*
+    [Teardown]  Set Read Write  ${MYOUTDIR}${/}x
+
+Invalid Output File
+    Create Directory  ${MYOUTDIR}${/}directory.ext
+    Rebot should fail  -d ${MYOUTDIR} -o directory.ext ${MYINPUT}
+    ...  Opening output file '.*directory.ext' for writing failed: (IOError|FileNotFoundException): .*
+
+Invalid Argument Values
+    Run Rebot  --splitoutputs not_int --suitestatlevel not_int --tagstatlink less_than_3x_:  ${MYINPUT}
+    Verify Correct Errors in Stderr  Option '--suitestatlevel' expected integer value but got 'not_int'.  Default value used instead.\n
+    Verify Correct Errors in Stderr  Option '--splitoutputs' expected integer value but got 'not_int'.  Default value used instead.\n
+    Verify Correct Errors in Stderr  Invalid format for option '--tagstatlink'.  Expected 'tag:link:title' but got 'less_than_3x_:'.\n
+    Should Be Equal  ${SUITE.status}  PASS
+
+
+*** Keywords ***
+
+Rebot Should Fail  [Arguments]  ${options}  ${exp msg}
+    Set Runners
+    ${rc}  ${output} =  Run And Return RC and Output  ${REBOT} ${options}
+    Should Be Equal As Integers  ${rc}  252
+    Should Match Regexp  ${output}  ^\\[ .*ERROR.* \\] ${exp msg}${USAGETIP}$
+
+Verify Correct Errors In Stderr
+    [Arguments]  @{messages}
+    ${error} =  Set Variable If  os.sep=='/'  ERROR  [ ERROR ]
+    Check Stderr Contains  ${error}
+    Check Stderr Contains  @{messages}
