@@ -1,0 +1,29 @@
+*** Settings ***
+Resource  ../runner/cli_resource.txt
+
+*** Variables ***
+${TEST FILE}      misc${/}normal.html
+${PASSFAIL FILE}  misc${/}pass_and_fail.html
+${MYOUTDIR}       ${TEMPDIR}${/}robot-test-145435
+${MYINPUT}        ${TEMPDIR}${/}robot-test-145435.xml
+${M_211_211}      2 critical tests, 1 passed, 1 failed\n 2 tests total, 1 passed, 1 failed
+${M_110_211}      1 critical test, 1 passed, 0 failed\n 2 tests total, 1 passed, 1 failed
+${M_101_211}      1 critical test, 0 passed, 1 failed\n 2 tests total, 1 passed, 1 failed
+${M_000_211}      0 critical tests, 0 passed, 0 failed\n 2 tests total, 1 passed, 1 failed
+${USAGE_TIP}      \n\nTry --help for usage information.
+
+
+*** Keywords ***
+
+Run tests to create input file for Rebot
+    Run Tests Without Processing Output  --loglevel TRACE  ${TESTFILE}
+    Move File  ${OUTFILE}  ${MYINPUT}
+    Create Directory  ${MYOUTDIR}
+
+Remove temporary files
+    Remove Directory  ${MYOUTDIR}  recursively
+    Remove File  ${MYINPUT}
+
+Rebot And Process Output  
+    [Arguments]  ${arguments}=${EMPTY}  ${input}=${MYINPUT}
+    Run Rebot  --outputdir ${MYOUTDIR} ${arguments}  ${input}

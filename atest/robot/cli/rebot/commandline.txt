@@ -1,7 +1,5 @@
 *** Settings ***
 Documentation   Testing Rebot's command line functionality. Functionality tested elsewere:\n  - filtering by tags/names\n  - combining outputs\n  - creating correct html (incl. --xxxtitle options)
-Suite Setup     My Setup
-Suite Teardown  Remove Temps
 Test Setup      Empty Directory  ${MYOUTDIR}
 Force Tags      regression  pybot  jybot
 Resource        atest_resource.txt
