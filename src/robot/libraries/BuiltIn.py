@@ -1550,6 +1550,12 @@ def register_run_keyword(library, keyword, args_to_process=None):
     there is a warning in such cases unless the keyword is used in long
     format (e.g. MyLib.Keyword).
 
+    Starting from Robot Framework 2.5.2, keywords executed by registered run
+    keywords can be tested with dryrun runmode with following limitations:
+    - Registered keyword must have 'name' argument which takes keyword's name or
+    Registered keyword must have '*names' argument which takes keywords' names
+    - Keyword name does not contain variables
+
     2) How to use this method
 
     `library` is the name of the library where the registered keyword is
