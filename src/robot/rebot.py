@@ -115,6 +115,8 @@ Options:
                           'passed:failed'. Both color names and codes work.
                           Examples:  --reportbackground green:yellow:red
                                      --reportbackground #00E:#E00
+ -L --loglevel level      Threshold for selecting messages. Available levels:
+                          TRACE (default), DEBUG, INFO, WARN, NONE (no msgs)
     --suitestatlevel level  How many levels to show in 'Statistics by Suite'
                           table in outputs. By default all suite levels are
                           shown. If zero (0) is given the whole table is
