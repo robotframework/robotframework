@@ -46,7 +46,10 @@ class _TablePopulator(Populator):
     def add(self, row):
         if self._is_cacheable_comment_row(row):
             self._comments.add(row)
-            return
+        else:
+            self._add(row)
+
+    def _add(self, row):
         if not self._is_continuing(row):
             self._populator.populate()
             self._populator = self._get_populator(row)
