@@ -231,19 +231,13 @@ class _RunKeywordHandler(_PythonHandler):
         return keywords
 
     def _get_keywords(self, args):
-        arg_names, varargs = self._get_handler_arg_names_and_varargs()
+        arg_names = self.arguments.names
         if 'name' in arg_names:
             name_index = arg_names.index('name')
             return [ Keyword(args[name_index], args[name_index+1:]) ]
-        elif varargs == 'names':
+        elif self.arguments.varargs == 'names':
             return [ Keyword(name, []) for name in args[len(arg_names):] ]
         return []
-
-    def _get_handler_arg_names_and_varargs(self):
-        args, varargs, _, _ = inspect.getargspec(self._handler_method)
-        if inspect.ismethod(self._handler_method):
-            args = args[1:]
-        return args, varargs
 
     def _variable_syntax_in(self, kw_name, context):
         try:
