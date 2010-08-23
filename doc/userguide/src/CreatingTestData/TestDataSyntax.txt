@@ -324,7 +324,7 @@ processing it will not succeed.
 __ reStructuredText_
 __ http://docutils.sourceforge.net/docs/user/rst/quickref.html
 
-.. note:: Using reST files with Robot Framework requires the Python docutils 
+.. Note:: Using reST files with Robot Framework requires the Python docutils 
           module to be installed. 
 
 In reST files, test data is defined in tables within the document, similar to
@@ -593,13 +593,17 @@ splitting the data to several rows.
    Example      [Documentation]   Documentation   for this    test case.
    \            ...               This can get    quite       long...
    \            [Tags]            t-1             t-2         t-3
-   \            ...               t-4             t-5         \
+   \            ...               t-4             t-5
    \            Do X              one             two         three
    \            ...               four            five        six
    \            ${var} =          Get X           1           2
    \            ...               3               4           5
    \            ...               ...             6
    ===========  ================  ==============  ==========  ==========
+
+.. Note:: Empty cells before ellipsis are allowed generally only in Robot
+          Framework 2.5.2 and newer. In earlier versions a single leading
+          empty cell is allowed inside `for loops`_ but not otherwise.
 
 Splitting test data in reST tables
 ```````````````````````````````````
