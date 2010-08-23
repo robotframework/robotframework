@@ -57,9 +57,10 @@ class DomWrapper(object):
             source = open(path, 'rb')
         else:
             source = StringIO(string)
-        node = ET.parse(source).getroot()
-        source.close()
-        return node
+        try:
+            return ET.parse(source).getroot()
+        finally:
+            source.close()
 
     def get_nodes(self, path):
         """Returns a list of descendants matching given 'path'.
