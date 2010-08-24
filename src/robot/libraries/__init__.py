@@ -12,10 +12,3 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-
-import os
-
-
-STDLIB_NAMES = [ name for name, ext
-    in [ os.path.splitext(i) for i in os.listdir(os.path.dirname(__file__)) ]
-    if not (name == 'Remote' or name.startswith('_') or ext != '.py') ]

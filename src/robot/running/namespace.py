@@ -18,7 +18,6 @@ import copy
 
 from robot import utils
 from robot.errors import FrameworkError, DataError
-from robot.libraries import STDLIB_NAMES
 from robot.variables import GLOBAL_VARIABLES
 from robot.common import UserErrorHandler
 from robot.output import LOGGER
@@ -30,6 +29,8 @@ from importer import Importer
 from runkwregister import RUN_KW_REGISTER
 
 
+STDLIB_NAMES = ['BuiltIn', 'Collections', 'Dialogs', 'Easter', 'OperatingSystem',
+                'Remote', 'Reserved', 'Screenshot', 'String', 'Telnet']
 IMPORTER = Importer()
 
 
@@ -112,7 +113,7 @@ class Namespace:
 
     def _import_library(self, import_setting, variables):
         name = self._get_library_name(import_setting, variables)
-        lib = IMPORTER.import_library(name, import_setting.args, 
+        lib = IMPORTER.import_library(name, import_setting.args,
                                       import_setting.alias, variables)
         if lib.name in self._testlibs:
             LOGGER.info("Test library '%s' already imported by suite '%s'"
