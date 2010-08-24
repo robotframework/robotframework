@@ -1,5 +1,6 @@
 *** Settings ***
 Library  Exceptions
+Suite Teardown  Log  Suite Teardown
 
 *** Test Cases ***
 Exit From Python Keyword
