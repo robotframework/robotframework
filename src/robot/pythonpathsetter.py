@@ -27,11 +27,11 @@ def norm_path(path):
         path = path.lower()
     return path
 
-def add_path(path, to_beginning=False):
+def add_path(path, to_beginning=False, force=False):
     if not path:
         return
     path = norm_path(path)
-    if path not in sys.path and os.path.exists(path):
+    if path not in sys.path and (os.path.exists(path) or force):
         if to_beginning:
             sys.path.insert(0, path)
         else:
@@ -48,7 +48,8 @@ sys.path = [ norm_path(p) for p in sys.path ]
 ROBOTDIR = norm_path(os.path.dirname(os.path.abspath(__file__)))
 PARENTDIR = os.path.dirname(ROBOTDIR)
 
-add_path(os.path.join(ROBOTDIR, 'libraries'), to_beginning=True)
+add_path(os.path.join(ROBOTDIR, 'libraries'), to_beginning=True,
+        force=True)
 add_path(PARENTDIR, to_beginning=True)
 # Handles egg installations
 if fnmatch.fnmatchcase(os.path.basename(PARENTDIR), 'robotframework-*.egg'):
