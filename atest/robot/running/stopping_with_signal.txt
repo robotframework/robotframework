@@ -64,16 +64,28 @@ One Signal Should Stop Test Execution Gracefully And Test Case And Suite Teardow
     ${ts} =  Get Test Suite  With Teardown
     Check Log Message  ${ts.teardown.kws[0].msgs[0]}  Logging Suite Teardown
 
+One Signal Should Stop Test Execution Gracefully And Skip Teardowns With Runmode
+    Start And Send Signal  with_teardown.txt  One Signal  SIGINT  0s  runmode=SkipTeardownOnExit
+    Process Output For Graceful Shutdown
+    Check Test Cases Have Failed Correctly
+    ${tc} =  Get Test Case  Test
+    #Should Have Correct Number Of Keywords  ${tc.teardown}  0
+    Should Be Equal  ${tc.teardown}  ${None}
+    ${ts} =  Get Test Suite  With Teardown
+    #Should Have Correct Number Of Keywords  ${ts.teardown}  0
+    Should Be Equal  ${ts.teardown}  ${None}
+
+
 *** Key Words ***
 Start And Send Signal
     # Timeouts and signals apparently don't work on Windows
     # [timeout]  2 minutes
-    [arguments]  ${testcase file}  ${signal method}  ${signal}  ${teardown sleep}
+    [arguments]  ${testcase file}  ${signal method}  ${signal}  ${teardown sleep}  ${runmode}=normal
     ${is_jython_in_use} =  Running On Jython  ${INTERPRETER}
     ${test signal file} =  catenate  SEPARATOR=_  robot_signal_test_started  ${INTERPRETER}  .txt
     Remove File  ${TEMPDIR}/${test signal file}
-    Run Keyword unless  ${is_jython_in_use}  Start Running Robot  ${test signal file}  running/stopping_with_signal/${testcase file}  ${teardown sleep}
-    Run Keyword if  ${is_jython_in_use}  Start Running jybot  ${test signal file}  running/stopping_with_signal/${testcase file}  ${teardown sleep}
+    Run Keyword unless  ${is_jython_in_use}  Start Running Robot  ${test signal file}  running/stopping_with_signal/${testcase file}  ${teardown sleep}  ${runmode}
+    Run Keyword if  ${is_jython_in_use}  Start Running jybot  ${test signal file}  running/stopping_with_signal/${testcase file}  ${teardown sleep}  ${runmode}
     Wait Until Created  ${TEMPDIR}/${test signal file}  1 minutes
     Run Keyword  ${signal method}  ${signal}
     Wait Until Finished With Timeout
@@ -83,21 +95,21 @@ Wait Until Finished With Timeout
     wait until finished
 
 Start Running Robot
-    [arguments]  ${test signal file}  ${datasource}  ${teardown sleep}
+    [arguments]  ${test signal file}  ${datasource}  ${teardown sleep}  ${runmode}
     ${runner} =  Get Coverage Runner
-    Start Run  ${runner}  ${test signal file}  ${datasource}  ${teardown sleep}
+    Start Run  ${runner}  ${test signal file}  ${datasource}  ${teardown sleep}  ${runmode}
 
 Start Running Jybot
-    [arguments]  ${test signal file}  ${datasource}  ${teardown sleep}
+    [arguments]  ${test signal file}  ${datasource}  ${teardown sleep}  ${runmode}
     ${jybot} =  Get Jython Path
-    Start Run  ${jybot}  ${test signal file}  ${datasource}  ${teardown sleep}
+    Start Run  ${jybot}  ${test signal file}  ${datasource}  ${teardown sleep}  ${runmode}
 
 Start Run
-    [arguments]  ${runner}  ${test signal file}  ${datasource}  ${teardown sleep}
+    [arguments]  ${runner}  ${test signal file}  ${datasource}  ${teardown sleep}  ${runmode}
     Set Runners
     ${path to datasource} =  Set Variables And Get Datasources  ${datasource}
     ${path to runner} =  Join Path  ${ROBOTPATH}  runner.py
-    @{command} =  Create List  ${runner}  ${path to runner}  --variable  TESTSIGNALFILE:${test signal file}  --output  ${OUTFILE}  --report  None  --log  None  --debugfile  ${TEST DEBUG FILE}  --variable  TEARDOWNSLEEP:${teardown sleep}  ${path to datasource}
+    @{command} =  Create List  ${runner}  ${path to runner}  --variable  TESTSIGNALFILE:${test signal file}  --output  ${OUTFILE}  --report  None  --log  None  --debugfile  ${TEST DEBUG FILE}  --variable  TEARDOWNSLEEP:${teardown sleep}  --runmode  ${runmode}  ${path to datasource}
     Log Many  @{command}
     ProcessManager.start process  @{command}
 

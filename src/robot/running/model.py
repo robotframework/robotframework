@@ -94,6 +94,7 @@ class RunnableTestSuite(BaseTestSuite):
             RunnableTestCase(test, parent=self, defaults=defaults)
         self._run_mode_exit_on_failure = False
         self._run_mode_dry_run = False
+        self._run_mode_skip_teardowns_on_exit = False
 
     def filter_empty_suites(self):
         for suite in self.suites[:]:
@@ -120,7 +121,7 @@ class RunnableTestSuite(BaseTestSuite):
 
     def _start_run(self, output, parent, errors):
         if not errors:
-            errors = SuiteRunErrors(self._run_mode_exit_on_failure)
+            errors = SuiteRunErrors(self._run_mode_exit_on_failure, self._run_mode_skip_teardowns_on_exit)
         self.run_errors = errors
         self.run_errors.start_suite()
         self.status = 'RUNNING'
@@ -195,6 +196,7 @@ class RunnableMultiTestSuite(RunnableTestSuite):
             RunnableTestSuite(suite, parent=self)
         self._run_mode_exit_on_failure = False
         self._run_mode_dry_run = False
+        self._run_mode_skip_teardowns_on_exit = False
 
 
 class RunnableTestCase(BaseTestCase):
@@ -258,7 +260,7 @@ class RunnableTestCase(BaseTestCase):
 
     def keyword_failed(self, err):
         self.timeout.set_keyword_timeout(err.timeout)
-        self._suite_errors.test_failed(exit=err.exit)
+        self._suite_errors.test_failed(exit=err.exit, critical=self.critical=='yes')
 
     def _run_setup(self, context):
         self.setup.run(context, TestSetupListener(self))
@@ -273,7 +275,8 @@ class RunnableTestCase(BaseTestCase):
         return self.message, self.status
 
     def _run_teardown(self, context):
-        self.teardown.run(context, TestTeardownListener(self))
+        if self._suite_errors.is_test_teardown_allowed():
+            self.teardown.run(context, TestTeardownListener(self))
 
     def _report_status_after_teardown(self):
         if self.run_errors.teardown_failed():

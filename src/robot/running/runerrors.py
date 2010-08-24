@@ -21,8 +21,9 @@ class SuiteRunErrors(object):
     _parent_suite_setup_error = 'Setup of the parent suite failed.'
 
 
-    def __init__(self, run_mode_is_exit_on_failure=False):
+    def __init__(self, run_mode_is_exit_on_failure=False, run_mode_skip_teardowns_on_exit=False):
         self._run_mode_is_exit_on_failure = run_mode_is_exit_on_failure
+        self._run_mode_skip_teardowns_on_exit = run_mode_skip_teardowns_on_exit
         self._earlier_init_errors = []
         self._earlier_setup_errors = []
         self._earlier_suite_setup_executions = []
@@ -50,10 +51,17 @@ class SuiteRunErrors(object):
                 not self._earlier_errors()
 
     def is_suite_teardown_allowed(self):
+        if not self.is_test_teardown_allowed():
+            return False
         if self._current_suite_setup_executed:
             return True
         return self._current_init_err is self._NO_ERROR and \
                 not self._earlier_errors()
+
+    def is_test_teardown_allowed(self):
+        if not self._run_mode_skip_teardowns_on_exit:
+            return True
+        return not (self._exit_fatal or self._exit_runmode)
 
     def _earlier_errors(self):
         if self._exit_runmode or self._exit_fatal:

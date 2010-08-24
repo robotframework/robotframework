@@ -273,6 +273,8 @@ class BaseTestSuite(_TestAndSuiteHelper):
         runmode = runmode.upper()
         if runmode == 'EXITONFAILURE':
             self._run_mode_exit_on_failure = True
+        elif runmode == 'SKIPTEARDOWNONEXIT':
+            self._run_mode_skip_teardowns_on_exit = True
         elif runmode == 'DRYRUN':
             self._run_mode_dry_run = True
         elif runmode == 'RANDOM:TEST':
@@ -296,7 +298,8 @@ class BaseTestSuite(_TestAndSuiteHelper):
         self.set_metadata(settings['Metadata'])
         self.set_critical_tags(settings['Critical'], settings['NonCritical'])
         try:
-            self.set_runmode(settings['RunMode'])
+            for runmode in settings['RunMode']:
+                self.set_runmode(runmode)
         except (KeyError, AttributeError) : # Only applicable when running tcs
             pass
         if not self.suites:

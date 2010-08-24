@@ -192,7 +192,7 @@ class _BaseSettings:
 class RobotSettings(_BaseSettings):
     _extra_cli_opts = { 'Output'        : ('output', 'output.xml'),
                         'LogLevel'      : ('loglevel', 'INFO'),
-                        'RunMode'       : ('runmode', 'normal'),
+                        'RunMode'       : ('runmode', []),
                         'Variables'     : ('variable', []),
                         'VariableFiles' : ('variablefile', []),
                         'Listeners'     : ('listener', []),
