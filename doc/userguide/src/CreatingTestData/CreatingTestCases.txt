@@ -322,7 +322,7 @@ __ `Taking test libraries into use`_
    :class: example
 
    =============  =================  =====================  ============  ============
-     Test Case          Action              Argument          Argument      Argument
+     Keyword            Action              Argument          Argument      Argument
    =============  =================  =====================  ============  ============
    List files     [Arguments]        ${path}=.              ${options}=
    \              Execute command    ls ${options} ${path}
