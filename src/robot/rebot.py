@@ -248,4 +248,5 @@ except ImportError:
 import robot
 
 
-robot.rebot_from_cli(sys.argv[1:], __doc__)
+if __name__ == '__main__':
+    robot.rebot_from_cli(sys.argv[1:], __doc__)
