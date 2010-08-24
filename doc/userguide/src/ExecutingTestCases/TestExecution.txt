@@ -122,7 +122,7 @@ but `argument files`_ allow listing files nicely one file per line.
 It is also possible to `randomize the execution order`__ using
 the :opt:`--runmode` option.
 
-__ `Setting execution mode`_
+__ `Randomizing execution order`_
 
 Continue on failure
 ~~~~~~~~~~~~~~~~~~~
@@ -201,15 +201,26 @@ Stopping test execution gracefully
 
 Before Robot Framework 2.5 the only way to stop the test execution
 gracefully so that reports and logs are generated was using the
-:opt:`--runmode ExitOnFailure` `command line option`__. This is a
-pretty limited mechanism, and Robot Framework 2.5 added the following
-new capabilities.
+:opt:`--runmode ExitOnFailure` command line option. This is a
+pretty limited mechanism, and Robot Framework 2.5 added a number of
+new capabilities explained below.
 
 Regardless the way how tests are stopped, the tests that have not yet
 been executed will be marked failed with a message :msg:`Test
 execution was stopped due to a fatal error`.
 
-__ `Exit on failure`_
+Exit on failure
+'''''''''''''''
+
+It is possible to exit the execution prematurely without running all
+the tests. This can be achieved by using the option :opt:`--runmode` with value
+:opt:`ExitOnFailure` (case-insensitive), in which case test execution is
+stopped immediately if a `critical test`_ fails. In this case the 
+remaining tests are marked failed with the message :msg:`Critical failure
+occurred and ExitOnFailure option is in use`.
+
+This option has been available on Robot Framework since version 1.8.7. The
+following next three methods are new in Robot Framework version 2.5.
 
 Pressing :code:`Ctrl-C`
 '''''''''''''''''''''''
@@ -241,3 +252,10 @@ separate :name:`Fatal Error` `BuiltIn keyword`_ for this purpose, and
 custom keywords can use `fatal exceptions`__ when they fail.
 
 __ `Stopping test execution`_
+
+Handling Teardowns
+''''''''''''''''''
+
+Teardowns for tests and suites that have been started are run always, even if tests are stopped using one of the methods above. This allows test and suite cleanup to be run even if tests failed.
+
+Starting from Robot Framework version 2.5.2 teardowns can be skipped on graceful exit with :opt:`--runmode SkipTeardownOnExit` command line option.

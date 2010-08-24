@@ -286,25 +286,8 @@ illustrate how to use these options::
 
 __ `Setting variables in command line`_
 
-Setting execution mode
-~~~~~~~~~~~~~~~~~~~~~~
-
-Exit on failure
-'''''''''''''''
-
-It is possible to exit the execution prematurely without running all
-the tests. This can be achieved by using the option :opt:`--runmode` with value
-:opt:`ExitOnFailure` (case-insensitive), in which case test execution is
-stopped immediately if a `critical test`_ fails. In this case the 
-remaining tests are marked failed with the message :msg:`Critical failure
-occurred and ExitOnFailure option is in use`.
-
-There are also other ways to `stop test execution gracefully`__.
-
-__ `Stopping test execution gracefully`_
-
 Dry run
-'''''''
+~~~~~~~
 
 Robot Framework supports so called *dry run* mode where the tests are
 run normally otherwise, but the keywords coming from test libraries
@@ -326,7 +309,7 @@ test library or resource file imports cannot be resolved.
 __ `Errors and warnings during execution`_
 
 Randomizing execution order
-'''''''''''''''''''''''''''
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The :opt:`--runmode` option can also be used to randomize the test 
 execution order. This is done using the different values explained
