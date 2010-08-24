@@ -2,7 +2,7 @@ Basic usage
 -----------
 
 Robot Framework test cases are executed from the command line, and the
-end result is, by default, an output file in the XML format and an HTML
+end result is, by default, an output file in XML format and an HTML
 report and log. After the execution, `output files`__ can be combined and
 otherwise `post-processed`__ with the :prog:`rebot` tool.
 
@@ -268,7 +268,7 @@ Because escaping complicated characters with a backslash or quoting
 the values does not always work too well, Robot Framework has its own
 generic escaping mechanism. Another possibility is using `argument
 files`_ where options can be specified in the plain text format. Both of
-these mechanisms work both when executing tests and when
+these mechanisms work when executing tests and when
 post-processing outputs, and also some of the external supporting
 tools have the same or similar capabilities.
 
@@ -515,7 +515,7 @@ information`__ and needs to be enhanced. In this situation running the
 same test manually, if possible, may also reveal more information
 about the issue.
 
-Failures caused test cases themselves or by keywords they use can
+Failures caused by test cases themselves or by keywords they use can
 sometimes be hard to debug. If the error message, for example, tells
 that a keyword is used with wrong number of arguments fixing the
 problem is obviously easy, but if a keyword is missing or fails in

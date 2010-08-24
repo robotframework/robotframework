@@ -403,7 +403,7 @@ least for the following purposes:
 - Tags are shown in test reports_, logs_ and, of course, in the test
   data, so they provide metadata to test cases.
 - Statistics__ about test cases (total, passed, failed  are 
-  automatically collected based on tags.
+  automatically collected based on tags).
 - With tags, you can `include or exclude`__ test cases to be executed.
 - With tags, you can specify which test cases are considered `critical`_.
 
@@ -421,9 +421,8 @@ approaches can naturally be used together.
 
 `Default Tags`:opt: in the Setting table
    Test cases that do not have a :opt:`[Tags]` setting of their own
-   get these tags. If it used in the test suite initialization file,
-   it is interpreted as a default value for :opt:`Default Tags` in
-   lower-level test suites.
+   get these tags. Starting from Robot Framework version 2.5 default
+   tags are no longer supported in test suite initialization files.
 
 `[Tags]`:opt: in the Test Case table
    A test case always gets these tags. Additionally, it does not get the

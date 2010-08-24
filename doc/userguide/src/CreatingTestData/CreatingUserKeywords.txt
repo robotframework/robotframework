@@ -147,7 +147,7 @@ Default values
 Positional arguments are probably sufficient in most
 situations. However, sometimes it is useful to be able to have a
 keyword that takes a different number of arguments and has default
-values for those that are not given. Also user keywords allow this,
+values for those that are not given. User keywords also allow this,
 and the needed new syntax does not add very much to the already
 discussed basic syntax. In short, default values are added to
 arguments, so that first there is the equals sign (:code:`=`) and then
@@ -199,15 +199,16 @@ function default values.
 Variable number of arguments
 ''''''''''''''''''''''''''''
 
-Sometimes, but more and more seldom, even default values are not
-enough and there is a need for a keyword accepting any number of
-arguments. User keywords support also this. All that is needed is
-having `list variables`_ such as :var:`@{varargs}` as the last
-argument in the keyword signature. This syntax can be combined with
-the previously described positional arguments and default values, and
-at the end the list variable gets all the leftover arguments that do
-not match other arguments. The list variable can thus have any number
-of items, even zero.
+Sometimes even default values are not enough and there is a need 
+for a keyword accepting any number of arguments. User keywords 
+support also this. All that is needed is having `list variable`__ 
+such as :var:`@{varargs}` as the last argument in the keyword signature. 
+This syntax can be combined with the previously described positional 
+arguments and default values, and at the end the list variable gets all 
+the leftover arguments that do not match other arguments. The list 
+variable can thus have any number of items, even zero.
+
+__ `list variables`_
 
 .. table:: User keywords accepting variable number of arguments
    :class: example
@@ -234,11 +235,13 @@ argument, the second argument :var:`${opt}` always gets the given
 value instead of the default value. This happens even if the given
 value is empty. The last example also illustrates how a variable
 number of arguments accepted by a user keyword can be used in a `for
-loops`_. This combination of two rather advanced functions can
+loop`__. This combination of two rather advanced functions can
 sometimes be very useful.
 
 Again, Pythonistas probably notice that the variable number of
 arguments syntax is very close to the one in Python.
+
+__ `for loops`_
 
 Embedding arguments into keyword name
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -252,7 +255,7 @@ and clear sentences as keywords. It has always been possible to use
 keywords like :name:`Select dog from list` and :name:`Selects cat from
 list`, but all such keywords must have been implemented
 separately. The idea of embedding arguments into the keyword name is
-that all you need is a keyword with name like :name:`Selects ${animal}
+that all you need is a keyword with name like :name:`Select ${animal}
 from list`.
 
 .. table:: An example keyword with arguments embedded into its name
@@ -275,15 +278,15 @@ is used like :name:`Select dog from list`. Obviously it is not
 mandatory to use all these arguments inside the keyword, and they can
 thus be used as wildcards.
 
-This kind of keywords are also used the same way as other keywords
+These kind of keywords are also used the same way as other keywords
 except that spaces and underscores are not ignored in their
 names. They are, however, case-insensitive like other keywords. For
-example the keyword in the above example could be used like
+example the keyword in the example above could be used like
 :name:`select x from list` but not like :name:`Select x fromlist`.
 
 Embedded arguments do not support default values or variable number of
-arguments similarly as traditional arguments. Using variables when
-calling these keyword is possible but that can reduce readability. 
+arguments like traditional arguments do. Using variables when
+calling these keywords is possible but that can reduce readability. 
 Notice also that embedded arguments only work with user keywords.
 
 Embedded arguments matching too much

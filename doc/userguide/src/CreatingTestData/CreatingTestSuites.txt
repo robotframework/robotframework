@@ -133,7 +133,7 @@ __ `Test case related settings in the Setting table`_
 Test suite name and documentation
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The test suite name is got from the file or directory name. The name
+The test suite name is constructed from the file or directory name. The name
 is created so that the extension is ignored, possible underscores are
 replaced with spaces, and names fully in lower case are title cased. For
 example, :path:`some_tests.html` becomes :name:`Some Tests` and

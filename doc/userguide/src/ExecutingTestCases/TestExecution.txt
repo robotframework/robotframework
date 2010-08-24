@@ -23,7 +23,7 @@ executed suite are run, but it is possible to `select tests`__ using
 options :opt:`--test`, :opt:`--suite`, :opt:`--include` and
 :opt:`--exclude`. Suites containing no tests are ignored.
 
-The execution stars from the top-level test suite. If the suite has
+The execution starts from the top-level test suite. If the suite has
 tests they are executed one-by-one, and if it has suites they are
 executed recursively in depth-first order. When an individual test
 case is executed, the keywords it contains are run in a
@@ -40,8 +40,7 @@ __ `Continue on failure`_
 Setups and teardowns
 ''''''''''''''''''''
 
-Setups and teardowns on `test case`__ and `test suite`__ level have
-some effect on the test execution flow.
+Setups and teardowns can be defined on `test case`__ and `test suite`__ level.
 
 __ `Test setup and teardown`_
 __ `Suite setup and teardown`_
@@ -58,7 +57,7 @@ the child test suites are not executed.
 
 Suite setups are often used for setting up the test environment.
 Because tests are not run if the suite setup fails, it is easy to use
-suite setups for verifying that the environment is in state that the
+suite setups for verifying that the environment is in state in which the
 tests can be executed.
 
 Suite teardown

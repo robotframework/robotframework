@@ -48,7 +48,7 @@ Specifying a keyword explicitly
 
 Scopes alone are not a sufficient solution, because there can be
 keywords with the same name in several libraries or resources, and
-additionally, they provide a mechanism to use only the keyword of the
+thus, they provide a mechanism to use only the keyword of the
 highest priority. In such cases, it is possible to use *the full name
 of the keyword*, where the keyword name is prefixed with the name of
 the resource or library and a dot is a delimiter.
@@ -243,7 +243,7 @@ syntax is possible also in shell scripts or Perl.
 Normal for loop
 '''''''''''''''
 
-In a normal For loop, one variable is assigned into a list of values,
+In a normal For loop, one variable is assigned from a list of values,
 one value per iteration. The syntax starts with :name:`:FOR`, where
 colon is required to separate the syntax from normal keywords. The
 next cell contains the loop variable, the subsequent cell must have
@@ -283,8 +283,8 @@ __ `Dividing test data to several rows`_
 
 For loops are most useful and also clearest when they are used with
 `list variables`_. This is illustrated by the example below, where
-:var:`@{ELEMENTS}` contains an arbitrary long list of element names
-and :name:`Start Element` is used with all of them.
+:var:`@{ELEMENTS}` contains an arbitrarily long list of element names
+and keyword :name:`Start Element` is used with all of them.
 
 .. table:: For loop with a list variable
    :class: example
@@ -303,8 +303,7 @@ Using several loop variables
 It is also possible to use several loop variables. The syntax is the
 same as with the normal For loop, but all loop variables are listed in
 the cells between :name:`:FOR` and :name:`IN`. There can be any number of loop
-variables, but their number must match the number of loop
-values. The number of values must be evenly dividable by the number of
+variables, but the number of values must be evenly dividable by the number of
 variables.
 
 This syntax naturally works both with and without list variables. In
@@ -379,7 +378,7 @@ illustrated by the examples below.
 Repeating single keyword
 ''''''''''''''''''''''''
 
-For loops can be an overkill in situations where there is only a need to repeat a single keyword. In these cases
+For loops can be excessive in situations where there is only a need to repeat a single keyword. In these cases
 it is often easier to use `BuiltIn keyword`_ :name:`Repeat Keyword` which was added in Robot Framework 2.0.4.
 This keyword takes a keyword and how many times to repeat it as arguments. The times to repeat
 the keyword can have an optional postfix `times` or `x` to make the syntax easier to read.

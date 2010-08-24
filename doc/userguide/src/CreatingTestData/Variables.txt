@@ -180,13 +180,12 @@ possible). The main benefit of list variables is that they allow you
 to assign a name for a larger data set. While list variables normally
 contain only strings, other content is also possible.
 
-When you use a list variable in test data, then the cell that contains
-the variable is replaced with the content of the variable. Thus, if
-the list variable contains two elements, the cell containing the list
-variable is turned into two cells with the content of the list
-variable. Note that cells with list variables should not contain other
-content. The list variable syntax, :var:`@{NAME}`, is borrowed from
-Perl.
+When you use a list variable in test data, then the elements of the list
+are inserted as new cells in the test data. Thus, if the list variable 
+contains two elements, the cell containing the list variable is turned 
+into two cells with the content of the list variable. Note that cells 
+with list variables should not contain other content. The list variable 
+syntax, :var:`@{NAME}`, is borrowed from Perl.
 
 Assuming that the list variable :var:`@{USER}` is set to the value
 :code:`['robot','secret']`, the following two test cases
@@ -255,10 +254,10 @@ Using list variables with settings
 List variables can be used only with some of the settings__. They can
 be used in arguments to imported libraries and variable files, but
 library and variable file names themselves cannot be list
-variables. They work exactly the same way also with setups and
-teardowns, and with tag related settings they can be used
-freely. Using scalar variables is possible also in those places where
-list variables are not supported.
+variables. Also with setups and teardowns list variable can not be used
+as the name of the keyword, but can be used in arguments. With tag related 
+settings they can be used freely. Using scalar variables is possible in 
+those places where list variables are not supported.
 
 .. table:: Using list variables with settings
    :class: example
@@ -756,7 +755,7 @@ Variable priorities
    variables it imports. All these variables are available for files that
    import this resource file.
 
-   Notice that variables imported from resource and variable files are not
+   Note that variables imported from resource and variable files are not
    available in the Variable table of the file that imports them. This
    is due to the Variable table being processed before the Setting table
    where the resource files and variable files are imported.
