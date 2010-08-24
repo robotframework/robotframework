@@ -117,7 +117,7 @@ Command line options for post-processing outputs
 .. _considered critical: `Setting criticality`_
 .. _not critical: `considered critical`_
 .. _ContinueOnFailure: `Continue on failure`_
-.. _ExitOnFailure: `Exit on failure`_
+.. _ExitOnFailure: `ExitOnFailure mode`_
 .. _SkipTeardownOnExit: `Handling Teardowns`_
 .. _DryRun: `Dry run`_
 .. _Random: `Randomizing execution order`_

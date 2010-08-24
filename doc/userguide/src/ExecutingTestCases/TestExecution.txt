@@ -199,28 +199,13 @@ the execution ends normally if there are non-continuable failures.
 Stopping test execution gracefully
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Before Robot Framework 2.5 the only way to stop the test execution
-gracefully so that reports and logs are generated was using the
-:opt:`--runmode ExitOnFailure` command line option. This is a
-pretty limited mechanism, and Robot Framework 2.5 added a number of
-new capabilities explained below.
+Sometimes there is a need to stop the test execution before all the tests
+have finished, but so that logs and reports are created. Different ways how
+to accomplish this are explained below. In all these cases the remaining
+test cases are marked failed. 
 
-Regardless the way how tests are stopped, the tests that have not yet
-been executed will be marked failed with a message :msg:`Test
-execution was stopped due to a fatal error`.
-
-Exit on failure
-'''''''''''''''
-
-It is possible to exit the execution prematurely without running all
-the tests. This can be achieved by using the option :opt:`--runmode` with value
-:opt:`ExitOnFailure` (case-insensitive), in which case test execution is
-stopped immediately if a `critical test`_ fails. In this case the 
-remaining tests are marked failed with the message :msg:`Critical failure
-occurred and ExitOnFailure option is in use`.
-
-This option has been available on Robot Framework since version 1.8.7. The
-following next three methods are new in Robot Framework version 2.5.
+.. Note:: Most of these features are new in Robot Framework 2.5. Only
+          the `ExitOnFailure mode`_ is supported in earlier versions.
 
 Pressing :code:`Ctrl-C`
 '''''''''''''''''''''''
@@ -228,7 +213,7 @@ Pressing :code:`Ctrl-C`
 The execution is stopped when :code:`Ctrl-C` is pressed in the console
 where the tests are running. When running the tests on Python, the
 execution is stopped immediately, but with Jython it ends only after
-the currently executing keyword returns.
+the currently executing keyword ends.
 
 If :code:`Ctrl-C` is pressed again, the execution ends immediately and
 reports and logs are not created.
@@ -236,7 +221,7 @@ reports and logs are not created.
 Using signals
 '''''''''''''
 
-On Unix-like machine it is possible to terminate test execution also
+On Unix-like machines it is possible to terminate test execution
 using signals :code:`INT` and :code:`TERM`. These signals can be send
 from the command line using :prog:`kill` command, and sending signals can
 also be easily automated.
@@ -253,9 +238,20 @@ custom keywords can use `fatal exceptions`__ when they fail.
 
 __ `Stopping test execution`_
 
-Handling Teardowns
+:opt:`ExitOnFailure` mode
+'''''''''''''''''''''''''
+
+If option :opt:`--runmode` is used with value :opt:`ExitOnFailure`
+(case-insensitive), the test execution stops immediately if a `critical
+test`_ fails. 
+
+Handling teardowns
 ''''''''''''''''''
 
-Teardowns for tests and suites that have been started are run always, even if tests are stopped using one of the methods above. This allows test and suite cleanup to be run even if tests failed.
+By default teardowns for tests and suites that have been started are executed
+even if test execution is stopped using one of the methods above. This allows
+clean-up activities to be run regardless how execution ends.
 
-Starting from Robot Framework version 2.5.2 teardowns can be skipped on graceful exit with :opt:`--runmode SkipTeardownOnExit` command line option.
+Starting from Robot Framework 2.5.2, teardowns are skipped when the execution is
+stopped if the :opt:`--runmode SkipTeardownOnExit` command line option is used.
+This can be useful if clean-up takes a lot of time.
