@@ -1525,6 +1525,30 @@ class _Misc:
         else:
             test.tags = handler(test)
 
+    def get_library_instance(self, name):
+        """Returns the currently active instance of the specified test library.
+
+        This keyword makes it easy for test libraries to interact with
+        other test libraries that have state. This is illustrated by
+        the Python example below:
+
+        | from robot.libraries.BuiltIn import BuiltIn
+        |
+        | def title_should_start_with(expected):
+        |     seleniumlib = BuiltIn().get_library_instance('SeleniumLibrary')
+        |     title = seleniumlib.get_title()
+        |     if not title.startswith(expected):
+        |         raise AssertionError("Title '%s' did not start with '%s'"
+        |                              % (title, expected))
+
+        It is also possible to use this keyword in the test data and
+        pass the returned library instance to another keyword. If a
+        library is imported with a custom name, the `name` used to get
+        the instance must be that name and not the original library
+        name.
+        """
+        return NAMESPACES.current.get_library_instance(name)
+
 
 class BuiltIn(_Verify, _Converter, _Variables, _RunKeyword, _Misc):
     """An always available standard library with often needed keywords.

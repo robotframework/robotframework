@@ -225,7 +225,10 @@ class Namespace:
         self.uk_handlers.pop()
 
     def get_library_instance(self, libname):
-        return self._testlibs[libname].get_instance()
+        try:
+            return self._testlibs[libname.replace(' ', '')].get_instance()
+        except KeyError:
+            raise DataError("No library with name '%s' found." % libname)
 
     def get_handler(self, name):
         try:
