@@ -141,7 +141,11 @@ class _Verify:
         raise error
 
     def exit_for_loop(self):
-        """TODO
+        """Immediately stops executing enclosing for loop and continues 
+        execution after the for loop normally.
+        
+        This keyword can be used inside a keyword to exit a for loop in test 
+        case or calling keyword. If executed outside of a for loop, the test fails.
         """
         # Error message is shown only if there is no eclosing for loop
         error = AssertionError('Exit for loop without enclosing for loop.')
