@@ -23,6 +23,7 @@ Argument 'command' can have one of the following values:
   - wininst  : create Windows installer
   - all      : create both packages
   - version  : update only version information in 'src/robot/version.py'
+  - jar      : create stand-alone jar file containing RF and Jython
 
 'version_number' must be a version number in format '2.x(.y)', 'trunk' or
 'keep'. With 'keep', version information is not updated.
@@ -31,6 +32,9 @@ Argument 'command' can have one of the following values:
 the last one can have a number after the name like 'alpha1' or 'rc2'. When
 'version_number' is 'trunk', 'release_tag' is automatically assigned to the
 current date.
+
+When creating the jar distribution, jython.jar must be placed in 'ext-lib'
+directory, under the project root.
 
 This script uses 'setup.py' internally. Distribution packages are created
 under 'dist' directory, which is deleted initially. Depending on your system,
@@ -49,12 +53,17 @@ import os
 import shutil
 import re
 import time
+import subprocess
+import zipfile
 
 
 ROOT_PATH = os.path.dirname(__file__)
 DIST_PATH = os.path.join(ROOT_PATH, 'dist')
 BUILD_PATH = os.path.join(ROOT_PATH, 'build')
 ROBOT_PATH = os.path.join(ROOT_PATH, 'src', 'robot')
+JAVA_SRC_ROOT = os.path.join(ROOT_PATH, 'src', 'java')
+JAVA_PKG = ('org', 'robotframework')
+JYTHON_JAR = os.path.join(ROOT_PATH, 'ext-lib', 'jython.jar')
 SETUP_PATH = os.path.join(ROOT_PATH, 'setup.py')
 VERSION_PATH = os.path.join(ROBOT_PATH, 'version.py')
 VERSIONS = [re.compile('^2\.\d+(\.\d+)?$'), 'trunk', 'keep']
@@ -76,7 +85,7 @@ def get_version(sep=' '):
 def get_full_version(who=''):
     interpreter   =  sys.platform.startswith('java') and 'Jython' or 'Python'
     syversion = sys.version.split()[0]
-    vers = '%%s %%s (%%s %%s on %%s)' %% (who, get_version(), interpreter, 
+    vers = '%%s %%s (%%s %%s on %%s)' %% (who, get_version(), interpreter,
                                          syversion, sys.platform)
     return vers.strip()
 
@@ -89,7 +98,7 @@ def sdist(*version_info):
     _clean()
     _create_sdist()
     _announce()
-    
+
 def wininst(*version_info):
     version(*version_info)
     _clean()
@@ -113,7 +122,7 @@ def version(version_number, release_tag=None):
         _update_version(version_number, '%d%02d%02d' % time.localtime()[:3])
     else:
         _update_version(version_number, _verify_version(release_tag, RELEASES))
-    
+
 def _verify_version(given, valid):
     for item in valid:
         if given == item or (hasattr(item, 'search') and item.search(given)):
@@ -131,7 +140,7 @@ def _keep_version():
     sys.path.insert(0, ROBOT_PATH)
     from version import get_version
     print 'Keeping version %s' % get_version()
- 
+
 def _clean():
     print 'Cleaning up...'
     for path in [DIST_PATH, BUILD_PATH]:
@@ -144,14 +153,14 @@ def _verify_platform(version_number, release_tag=None):
         print 'Windows installer was not created.'
         return False
     return True
-   
+
 def _create_sdist():
     _create('sdist', 'source distribution')
 
 def _create_wininst():
     _create('bdist_wininst', 'Windows installer')
     if os.sep != '\\':
-        print 'Warning: Windows installers created on other platforms may not' 
+        print 'Warning: Windows installers created on other platforms may not'
         print 'be exactly identical to ones created in Windows.'
 
 def _create(command, name):
@@ -166,6 +175,56 @@ def _announce():
     print 'Created:'
     for path in os.listdir(DIST_PATH):
         print os.path.abspath(os.path.join(DIST_PATH, path))
+
+def jar():
+    _check_jython()
+    _compile_java_classes()
+    _create_jar()
+
+def _check_jython():
+    if not os.path.isfile(JYTHON_JAR):
+        raise ValueError()
+
+def _compile_java_classes():
+    source_path = os.path.join(JAVA_SRC_ROOT, *JAVA_PKG)
+    source_files = [ os.path.join(source_path, f) for f
+                     in os.listdir(source_path) if f.endswith('java')]
+    print 'Compiling %d source files' % len(source_files)
+    subprocess.call(['javac', '-cp', JYTHON_JAR]  + source_files)
+
+def _create_jar():
+    tmpdir = _create_tmpdir()
+    _copy_files_to(tmpdir)
+    _fill_jar_from(tmpdir)
+
+def _create_tmpdir():
+    tmpdir = os.path.join(ROOT_PATH, 'tmp-jar-dir')
+    if os.path.exists(tmpdir):
+        shutil.rmtree(tmpdir)
+    os.mkdir(tmpdir)
+    return tmpdir
+
+def _copy_files_to(tmpdir):
+    for srcdir, todir in [(ROBOT_PATH, os.path.join(tmpdir, 'Lib', 'robot')),
+                          (os.path.join(JAVA_SRC_ROOT, *JAVA_PKG), os.path.join(tmpdir, 'org', 'robotframework')),
+                          (os.path.join(JAVA_SRC_ROOT, 'META-INF'), os.path.join(tmpdir, 'META-INF'))]:
+        shutil.copytree(srcdir, todir)
+
+def _fill_jar_from(tmpdir):
+    jar_path = os.path.join(DIST_PATH, 'robot.jar')
+    shutil.copyfile(JYTHON_JAR, jar_path)
+    jar = zipfile.ZipFile(jar_path, 'a')
+    os.chdir(tmpdir) # this is the easiest way to avoid 'tmp-jar-dir' in paths copied to jar
+    for dirname in ('Lib', 'org', 'META-INF'):
+        _copy_files_to_jar(dirname, jar)
+    jar.close()
+
+def _copy_files_to_jar(dirname, jar):
+    for root, _, files in os.walk(dirname):
+        for name in files:
+            path = os.path.join(root, name)
+            print 'Adding %s to jar' % path
+            jar.write(path)
 
 
 if __name__ == '__main__':
