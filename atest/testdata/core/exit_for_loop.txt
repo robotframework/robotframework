@@ -1,3 +1,6 @@
+*** Settings ***
+Library  JavaExceptions
+
 *** Test Cases ***
 Simple Exit For Loop
     :FOR  ${var}  IN  one  two
@@ -43,6 +46,12 @@ Exit For Loop Without For Loop Should Fail
 Exit For Loop In Userkeyword Without For Loop Should Fail
    [Documentation]  FAIL Exit for loop without enclosing for loop.
    With Only Exit For Loop
+
+Exit For Loop With Userlibrary
+    :FOR  ${var}  IN  one  two
+    \  Throw Exit For Loop
+    \  Fail  Should not be executed
+    Should BE Equal  ${var}  one
 
 
 *** Keyword ***

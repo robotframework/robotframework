@@ -45,4 +45,8 @@ public class JavaExceptions {
         throw new FatalCatastrophyException();
     }
 
+    public void throwExitForLoop() {
+        throw new ExitForLoopException();
+    }
+
 }

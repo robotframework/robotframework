@@ -375,6 +375,24 @@ illustrated by the examples below.
    ================  ===============  ==========  ==========  =======  =======  =======
 
 
+Exiting for loop
+''''''''''''''''
+
+Normally for loop is executed until all the elements of the loop have been
+looped through or an error occurs and the test case or keyword fails. However
+sometimes execution of a for loop needs to be stopped before all elements of
+the loop have been gone through. `BuiltIn keyword`_ :name:`Exit For Loop` can be
+used to exit the enclosing for loop.
+
+:name:`Exit For Loop` keyword can be used directly in a for loop or in a keyword
+that the for loop uses. In both cases the test execution continues after the
+for loop. If executed outside of a for loop, the test fails.
+
+Exiting a for loop can also be initiated from a user library by raising an
+exception with :code:`ROBOT_EXIT_FOR_LOOP` attribute. Please see
+'Stopping test execution'_ for examples how to do this in Python and Java
+libraries.
+
 Repeating single keyword
 ''''''''''''''''''''''''
 
