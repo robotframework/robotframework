@@ -176,10 +176,13 @@ def _announce():
     for path in os.listdir(DIST_PATH):
         print os.path.abspath(os.path.join(DIST_PATH, path))
 
-def jar():
+def jar(*version_info):
+    version(*version_info)
     _check_jython()
+    _clean()
     _compile_java_classes()
-    _create_jar()
+    _create_jar_distribution()
+    _announce()
 
 def _check_jython():
     if not os.path.isfile(JYTHON_JAR):
@@ -192,10 +195,11 @@ def _compile_java_classes():
     print 'Compiling %d source files' % len(source_files)
     subprocess.call(['javac', '-cp', JYTHON_JAR]  + source_files)
 
-def _create_jar():
+def _create_jar_distribution():
     tmpdir = _create_tmpdir()
     _copy_files_to(tmpdir)
-    _fill_jar_from(tmpdir)
+    jar_path = _create_jar_file()
+    _fill_jar(tmpdir, jar_path)
 
 def _create_tmpdir():
     tmpdir = os.path.join(ROOT_PATH, 'tmp-jar-dir')
@@ -213,21 +217,27 @@ def _copy_files_to(tmpdir):
                             os.path.join(tmpdir, 'META-INF')) ]:
         shutil.copytree(srcdir, todir)
 
-def _fill_jar_from(tmpdir):
-    jar_path = os.path.join(DIST_PATH, 'robot.jar')
+def _create_jar_file():
+    from version import get_version
+    jar_path = os.path.join(DIST_PATH, 'robot-%s.jar' % get_version(sep='-'))
+    if not os.path.exists(DIST_PATH):
+        os.mkdir(DIST_PATH)
     shutil.copyfile(JYTHON_JAR, jar_path)
+    return jar_path
+
+def _fill_jar(tmpdir, jar_path):
     jar = zipfile.ZipFile(jar_path, 'a')
-    os.chdir(tmpdir) # this is the easiest way to avoid 'tmp-jar-dir' in paths copied to jar
     for dirname in ('Lib', 'org', 'META-INF'):
-        _copy_files_to_jar(dirname, jar)
+        _copy_files_to_jar(tmpdir, dirname, jar)
     jar.close()
 
-def _copy_files_to_jar(dirname, jar):
-    for root, _, files in os.walk(dirname):
+def _copy_files_to_jar(tmpdir, dirname, jar):
+    for root, _, files in os.walk(os.path.join(tmpdir, dirname)):
         for name in files:
-            path = os.path.join(root, name)
-            print 'Adding %s to jar' % path
-            jar.write(path)
+            source = os.path.join(root, name)
+            target = source.replace(tmpdir+os.sep, '')
+            print 'Adding %s' % target
+            jar.write(source, target)
 
 
 if __name__ == '__main__':
