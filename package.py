@@ -188,7 +188,7 @@ def _check_jython():
 def _compile_java_classes():
     source_path = os.path.join(JAVA_SRC_ROOT, *JAVA_PKG)
     source_files = [ os.path.join(source_path, f) for f
-                     in os.listdir(source_path) if f.endswith('java')]
+                     in os.listdir(source_path) if f.endswith('java') ]
     print 'Compiling %d source files' % len(source_files)
     subprocess.call(['javac', '-cp', JYTHON_JAR]  + source_files)
 
@@ -205,9 +205,12 @@ def _create_tmpdir():
     return tmpdir
 
 def _copy_files_to(tmpdir):
-    for srcdir, todir in [(ROBOT_PATH, os.path.join(tmpdir, 'Lib', 'robot')),
-                          (os.path.join(JAVA_SRC_ROOT, *JAVA_PKG), os.path.join(tmpdir, 'org', 'robotframework')),
-                          (os.path.join(JAVA_SRC_ROOT, 'META-INF'), os.path.join(tmpdir, 'META-INF'))]:
+    for srcdir, todir in [ (ROBOT_PATH,
+                            os.path.join(tmpdir, 'Lib', 'robot')),
+                           (os.path.join(JAVA_SRC_ROOT, *JAVA_PKG),
+                            os.path.join(tmpdir, 'org', 'robotframework')),
+                           (os.path.join(JAVA_SRC_ROOT, 'META-INF'),
+                            os.path.join(tmpdir, 'META-INF')) ]:
         shutil.copytree(srcdir, todir)
 
 def _fill_jar_from(tmpdir):
