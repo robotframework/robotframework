@@ -1,0 +1,49 @@
+*** Settings ***
+Suite Setup     Run Tests  ${EMPTY}  core/exit_for_loop.txt
+Force Tags      regression  pybot  jybot
+Resource        atest_resource.txt
+
+*** Test Cases ***
+
+Simple Exit For Loop
+    Test And All Keywords Should Have Passed
+
+Exit For Loop In Runkeyword
+    Test And All Keywords Should Have Passed
+
+Exit For Loop In UserKeyword
+    Test And All Keywords Should Have Passed
+
+Exit For Loop In UserKeyword With Loop
+    Test And All Keywords Should Have Passed
+
+Exit For Loop In UserKeyword With Loop Within Loop
+    Test And All Keywords Should Have Passed
+
+Exit For Loop In Userkeyword Calling Userkeyword With Exit For Loop
+    Test And All Keywords Should Have Passed
+
+Exit For Loop Without For Loop Should Fail
+    Check Test Case  ${TESTNAME}
+
+Exit For Loop In Userkeyword Without For Loop Should Fail
+    Check Test Case  ${TESTNAME}
+
+Exit For Loop Keyword Should Have No Messages
+    ${tc} =  Check Test Case  Simple Exit For Loop
+    Should Be Equal  ${tc.kws[0].kws[0].kws[0].name}  BuiltIn.Exit For Loop
+    Should Be Empty  ${tc.kws[0].kws[0].kws[0].msgs}
+
+*** Keyword ***
+Test And All Keywords Should Have Passed
+    ${tc} =  Check Test Case  ${TESTNAME}
+    Check All Keywords Passed  ${tc}
+    Should Be Equal  ${tc.kws[-1].name}  BuiltIn.Should Be Equal
+
+
+Check All Keywords Passed
+    [arguments]  ${tc or kw}
+    @{kws} =  Set Variable  ${tc or kw.kws}
+    :FOR  ${kw}  IN  @{kws}
+    \    Should Be Equal  ${kw.status}  PASS
+    \    Check All Keywords Passed  ${kw} 

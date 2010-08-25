@@ -73,12 +73,13 @@ class ExecutionFailed(RobotError):
     """Used for communicating failures in test execution."""
 
     def __init__(self, message, timeout=False, syntax=False, exit=False, 
-                 cont=False):
+                 cont=False, exit_for_loop=False):
         RobotError.__init__(self, utils.cut_long_message(message))
         self.timeout = timeout
         self.syntax = syntax
         self.exit = exit
         self.cont = cont
+        self.exit_for_loop = exit_for_loop
 
     @property
     def dont_cont(self):
@@ -110,8 +111,9 @@ class HandlerExecutionFailed(ExecutionFailed):
         syntax = isinstance(orig_error, DataError)
         exit = bool(getattr(orig_error, 'ROBOT_EXIT_ON_FAILURE', False))
         cont = bool(getattr(orig_error, 'ROBOT_CONTINUE_ON_FAILURE', False))
+        exit_for_loop = bool(getattr(orig_error, 'ROBOT_EXIT_FOR_LOOP', False))
         ExecutionFailed.__init__(self, error_details.message, timeout, syntax,
-                                 exit, cont)
+                                 exit, cont, exit_for_loop)
 
 
 class ExecutionFailures(ExecutionFailed):
@@ -121,7 +123,8 @@ class ExecutionFailures(ExecutionFailed):
                                  any(err.timeout for err in errors),
                                  any(err.syntax for err in errors),
                                  any(err.exit for err in errors),
-                                 all(err.cont for err in errors))
+                                 all(err.cont for err in errors),
+                                 all(err.exit_for_loop for err in errors))
         self._errors = errors
 
     def _format_message(self, errors):

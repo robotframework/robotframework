@@ -140,6 +140,14 @@ class _Verify:
         error.ROBOT_EXIT_ON_FAILURE = True
         raise error
 
+    def exit_for_loop(self):
+        """TODO
+        """
+        # Error message is shown only if there is no eclosing for loop
+        error = AssertionError('Exit for loop without enclosing for loop.')
+        error.ROBOT_EXIT_FOR_LOOP = True
+        raise error
+
     def should_not_be_true(self, condition, msg=None):
         """Fails if the given condition is true.
 

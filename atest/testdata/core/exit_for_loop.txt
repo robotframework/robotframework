@@ -1,0 +1,71 @@
+*** Test Cases ***
+Simple Exit For Loop
+    :FOR  ${var}  IN  one  two
+    \  Exit For Loop
+    \  Fail  Should not be executed
+    Should BE Equal  ${var}  one
+
+Exit For Loop In Runkeyword
+    :FOR  ${var}  IN  one  two  three
+    \  Run Keyword If  '${var}' == 'two'  Exit For Loop
+    \  ${x} =  Set Variable  ${var}-extra
+    Should Be Equal  ${x}  one-extra
+    Should Be Equal  ${var}  two
+
+Exit For Loop In UserKeyword
+    :FOR  ${var}  IN  one  two
+    \  With Only Exit For Loop
+    \  Fail  Should not be executed
+    Should BE Equal  ${var}  one
+
+Exit For Loop In UserKeyword With Loop
+    :FOR  ${var}  IN  one  two
+    \  With Loop
+    \  ${x} =  Set Variable  ${var}-extra
+    Should Be Equal  ${x}  two-extra
+
+Exit For Loop In UserKeyword With Loop Within Loop
+    :FOR  ${var}  IN  one  two
+    \  With Loop Within Loop
+    \  ${x} =  Set Variable  ${var}-extra
+    Should Be Equal  ${x}  two-extra
+
+Exit For Loop In Userkeyword Calling Userkeyword With Exit For Loop
+    :FOR  ${var}  IN  one  two
+    \  With Keyword For Loop Calling Keyword With Exit For Loop
+    \  ${x} =  Set Variable  ${var}-extra
+    Should Be Equal  ${x}  two-extra
+
+Exit For Loop Without For Loop Should Fail
+   [Documentation]  FAIL Exit for loop without enclosing for loop.
+   Exit For Loop
+
+Exit For Loop In Userkeyword Without For Loop Should Fail
+   [Documentation]  FAIL Exit for loop without enclosing for loop.
+   With Only Exit For Loop
+
+
+*** Keyword ***
+With Loop
+    :FOR  ${var}  IN  one  two
+    \  Exit For Loop
+    \  Fail
+    Log  KW Finished
+
+With Only Exit For Loop
+    Exit For Loop
+    Fail
+
+With Loop Within Loop
+    :FOR  ${var}  IN  one  two
+    \  With Loop
+    \  Log  This is Logged
+    \  Exit For Loop
+    \  Fail
+    Log  Loop Within Loop Finished
+
+With Keyword For Loop Calling Keyword With Exit For Loop
+    :FOR  ${var}  IN  one  two
+    \  With Only Exit For Loop
+    \  Fail
+    Log  This Is Logged

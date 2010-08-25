@@ -73,7 +73,7 @@ class Keyword(BaseKeyword):
         try:
             return_value = self._run(handler, context)
         except ExecutionFailed, err:
-            self.status = 'FAIL'
+            self.status = 'FAIL' if not err.exit_for_loop else 'PASS'
             self._end(context, error=err)
             raise
         else:
@@ -128,11 +128,14 @@ class Keyword(BaseKeyword):
             raise ExecutionFailed(msg, syntax=True)
 
     def _report_failure(self, context):
+        # TODO: Refactor
         error_details = utils.ErrorDetails()
-        context.output.fail(error_details.message)
-        if error_details.traceback:
-            context.output.debug(error_details.traceback)
-        raise HandlerExecutionFailed(error_details)
+        error = HandlerExecutionFailed(error_details)
+        if not error.exit_for_loop:
+            context.output.fail(error_details.message)
+            if error_details.traceback:
+                context.output.debug(error_details.traceback)
+        raise error
 
 
 class _VariableAssigner(object):
@@ -293,6 +296,8 @@ class ForLoop(BaseKeyword):
             values = items[i:i+len(self.vars)]
             err = self._run_one_round(context, self.vars, values)
             if err:
+                if err.exit_for_loop:
+                    break
                 errors.extend(err.get_errors())
                 if not err.can_continue(context.teardown, self._templated,
                                         context.dry_run):
@@ -317,7 +322,7 @@ class ForLoop(BaseKeyword):
             error = err
         else:
             error = None
-        foritem.end('PASS' if not error else 'FAIL')
+        foritem.end('PASS' if not error or error.exit_for_loop else 'FAIL')
         context.output.end_keyword(foritem)
         return error
 
