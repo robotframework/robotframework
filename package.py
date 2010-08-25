@@ -200,6 +200,7 @@ def _create_jar_distribution():
     _copy_files_to(tmpdir)
     jar_path = _create_jar_file()
     _fill_jar(tmpdir, jar_path)
+    shutil.rmtree(tmpdir)
 
 def _create_tmpdir():
     tmpdir = os.path.join(ROOT_PATH, 'tmp-jar-dir')
