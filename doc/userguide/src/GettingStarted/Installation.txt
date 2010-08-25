@@ -31,6 +31,10 @@ There are four ways to install Robot Framework:
     optional Jython_) installed, you can use `One Click Installer`_ to do all 
     the needed installations.
 
+In addition, starting from Robot Framework 2.5.2, Robot Framework is
+distributed as a standalone jar file. In this case, only Java Runtime
+Environment is needed to use Robot Framework.
+
 Installation packages are available from
 http://downloads.robotframework.org, and source code from
 http://source.robotframework.org.

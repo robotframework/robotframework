@@ -24,6 +24,7 @@ Synopsis
    pybot [options] datasources
    jybot [options] datasources
    interpreter /path/to/robot/runner.py [options] datasources
+   java -jar robot-<version>.jar [options] datasources
 
 Different runner scripts
 ''''''''''''''''''''''''
@@ -36,6 +37,10 @@ libraries use modules or syntax available only on Python, others use
 Java-based tools that require Jython, and some work on both. If you
 can use either :prog:`pybot` or :prog:`jybot`, the former is
 recommended, as Python is somewhat faster than Jython.
+
+Starting from Robot Framework 2.5.2, it is also possible to get Robot Framework
+as a single jar file.  In this case, Jython is bundled inside the jar, and the
+above discussion about Jython applies.
 
 Another possibility for starting the test execution is running the
 :prog:`runner.py` script under the installed__ :code:`robot` module
