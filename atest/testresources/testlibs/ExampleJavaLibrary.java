@@ -14,21 +14,21 @@ public class ExampleJavaLibrary {
     private int counter = 0;
 
     public void print(Object msg) {
-	print(msg, "INFO");
+        print(msg, "INFO");
     }
 
     public void print(Object msg, String level) {
-	System.out.println("*" + level.toUpperCase() + "*" + msg);
-    }    
-    
+        System.out.println("*" + level.toUpperCase() + "*" + msg);
+    }
+
     public void divByZero() {
         int i = 1/0;
     }
-    
+
     public void javaException() {
         exception(null);
     }
-    
+
     public void javaException(String msg) {
         exception(msg);
     }
@@ -36,42 +36,42 @@ public class ExampleJavaLibrary {
     // Jython creates properties from getters, which should not be accessed
     // at library creation time. See issue 188.
     public int getCount() {
-	counter++;
-	return counter;
+        counter++;
+        return counter;
     }
-    
+
     private void exception(String msg) {
-        throw new ArrayStoreException(msg); 
+        throw new ArrayStoreException(msg);
     }
-    
+
     public void externalJavaException() {
         new JavaObject().exception();
     }
-    
+
     public void javaSleep(String secs) throws InterruptedException {
-	javaSleep(Double.parseDouble(secs));
+        javaSleep(Double.parseDouble(secs));
     }
-    
+
     public void javaSleep(double secs) throws InterruptedException {
-	int millis = (new Double(secs * 1000)).intValue(); 
-	Thread.sleep(millis);
-	System.out.println("Slept " + secs + " seconds in Java");
+        int millis = (new Double(secs * 1000)).intValue();
+        Thread.sleep(millis);
+        System.out.println("Slept " + secs + " seconds in Java");
     }
-    
+
     public void printMultipleMessagesAndSleepBetween() throws InterruptedException {
-	System.out.println("First message.");
-	Thread.sleep(42);
-	System.out.println("Secong line of the first message.");
-	System.out.println("*WARN* Looping and sleeping next..");
-	System.out.print("*INFO*");
-	for (int i=0; i < 100; i++) {
-	    System.out.print(i);
-	    Thread.sleep(2);
-	}
+        System.out.println("First message.");
+        Thread.sleep(42);
+        System.out.println("Secong line of the first message.");
+        System.out.println("*WARN* Looping and sleeping next..");
+        System.out.print("*INFO*");
+        for (int i=0; i < 100; i++) {
+            System.out.print(i);
+            Thread.sleep(2);
+        }
     }
 
     public String returnStringFromLibrary(String s) {
-	return s;
+        return s;
     }
 
     public JavaObject getJavaObject(String name) {
@@ -79,11 +79,11 @@ public class ExampleJavaLibrary {
     }
 
     public String[] getStringArray(String[] args) {
-	return args;
+        return args;
     }
 
     public Vector getStringVector(String[] args) {
-        return new Vector(Arrays.asList(args));
+        return new Vector<String>(Arrays.asList(args));
     }
 
     public List<String> getStringList(String[] args) {
@@ -91,8 +91,7 @@ public class ExampleJavaLibrary {
     }
 
     public Iterator<String> getStringIterator(String[] args) {
-        return Arrays.asList(args)
-                     .iterator();
+        return Arrays.asList(args).iterator();
     }
 
     public ArrayList<String> getStringArrayList(String[] args) {
@@ -103,35 +102,35 @@ public class ExampleJavaLibrary {
     }
 
     public int[] getArrayOfThreeInts() {
-	int[] ret = { 1, 2, 42 }; 
-	return ret;
+        int[] ret = { 1, 2, 42 }; 
+        return ret;
     }
-    
+
     public Hashtable getHashtable() {
-	return new Hashtable();
+        return new Hashtable();
     }
-    
-    public void setToHashtable(Hashtable ht, String key, String value) {
-	ht.put(key, value);
+
+    public void setToHashtable(Hashtable<String, String> ht, String key, String value) {
+        ht.put(key, value);
     }
-    
+
     public String getFromHashtable(Hashtable ht, String key) {
-	return (String)ht.get(key);
+        return (String)ht.get(key);
     }
 
     public void checkInHashtable(Hashtable ht, String key, String expected) {
-	String actual = (String)ht.get(key);
-	if (!actual.equals(expected)) {
-	    throw new AssertionError(actual + " != " + expected);
-	}
+        String actual = (String)ht.get(key);
+        if (!actual.equals(expected)) {
+            throw new AssertionError(actual + " != " + expected);
+        }
     }
 
     public LinkedList getLinkedList(Object[] values) {
-        LinkedList list = new LinkedList();
-	for (int i=0; i < values.length; i++) {
+        LinkedList<Object> list = new LinkedList<Object>();
+        for (int i=0; i < values.length; i++) {
             list.add(values[i]);
         }
         return list;
     }
-     
+
 }
