@@ -1,4 +1,2 @@
 Manifest-Version: 1.0
-Built-By: janne
-Main-Class: org.robotframework.RobotJarRunner
-
+Main-Class: org.robotframework.JarRobot
