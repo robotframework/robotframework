@@ -10,15 +10,15 @@ public class RunnerFactory {
     public RunnerFactory() {
         runnerClass = importRunnerClass();
     }
-    
-	private PyObject importRunnerClass() {
-		PythonInterpreter interpreter = new PythonInterpreter();
+
+    private PyObject importRunnerClass() {
+        PythonInterpreter interpreter = new PythonInterpreter();
         interpreter.exec("import robot; from robot.jarrunner import JarRunner");
         return interpreter.get("JarRunner");
-	}
+    }
 
     public RobotRunner createRunner() {
         PyObject runnerObject = runnerClass.__call__();
-        return (RobotRunner)runnerObject.__tojava__(RobotRunner.class);
+        return (RobotRunner) runnerObject.__tojava__(RobotRunner.class);
     }
 }
