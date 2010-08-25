@@ -146,8 +146,15 @@ class _Verify:
         This keyword can be used directly in a for loop or in a keyword that
         the for loop uses. In both cases the test execution continues after
         the for loop. If executed outside of a for loop, the test fails.
+
+        Example:
+        | :FOR | ${var} | IN | @{SOME LIST} |
+        |      | Run Keyword If | '${var}' == 'EXIT' | Exit For Loop |
+        |      | Do Something   | ${var} |
+
+        New in Robot Framework 2.5.2
         """
-        # Error message is shown only if there is no eclosing for loop
+        # Error message is shown only if there is no enclosing for loop
         error = AssertionError('Exit for loop without enclosing for loop.')
         error.ROBOT_EXIT_FOR_LOOP = True
         raise error

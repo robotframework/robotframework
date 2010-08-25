@@ -374,7 +374,6 @@ illustrated by the examples below.
    \                 \                Log         ${index}    \        \        \
    ================  ===============  ==========  ==========  =======  =======  =======
 
-
 Exiting for loop
 ''''''''''''''''
 
@@ -388,10 +387,23 @@ used to exit the enclosing for loop.
 that the for loop uses. In both cases the test execution continues after the
 for loop. If executed outside of a for loop, the test fails.
 
-Exiting a for loop can also be initiated from a user library by raising an
-exception with :code:`ROBOT_EXIT_FOR_LOOP` attribute. Please see
-'Stopping test execution'_ for examples how to do this in Python and Java
+.. table:: Exit for loop example
+   :class: example
+
+   ==============  ========  ==============  ==================  ===============
+      Test Case     Action    Argument        Argument            Argument
+   ==============  ========  ==============  ==================  ===============
+   Exit For Loop   :FOR      ${var}          IN                  @{SOME LIST}
+   \                         Run Keyword If  '${var}' == 'EXIT'  Exit For Loop
+   \                         Do Something    ${var}
+   ==============  ========  ==============  ==================  ===============
+
+Exiting a for loop can also be initiated from a keyword in a test library by 
+raising an exception with :code:`ROBOT_EXIT_FOR_LOOP` attribute. Please see
+`Stopping test execution`_ for examples how to do this in Python and Java
 libraries.
+
+.. note:: Exit for loop functionality is new in Robot Framework 2.5.2.
 
 Repeating single keyword
 ''''''''''''''''''''''''
