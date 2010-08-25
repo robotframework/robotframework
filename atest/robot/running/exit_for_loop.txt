@@ -1,5 +1,5 @@
 *** Settings ***
-Suite Setup     Run Tests  ${EMPTY}  core/exit_for_loop.txt
+Suite Setup     Run Tests  ${EMPTY}  running/exit_for_loop.txt
 Default Tags      regression  pybot  jybot
 Resource        atest_resource.txt
 

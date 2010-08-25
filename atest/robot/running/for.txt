@@ -1,6 +1,6 @@
 *** Settings ***
 Documentation   For loop
-Suite Setup     Run Tests  ${EMPTY}  core/for.txt
+Suite Setup     Run Tests  ${EMPTY}  running/for.txt
 Force Tags      regression  pybot  jybot
 Resource        atest_resource.txt
 
