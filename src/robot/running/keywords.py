@@ -128,14 +128,12 @@ class Keyword(BaseKeyword):
             raise ExecutionFailed(msg, syntax=True)
 
     def _report_failure(self, context):
-        # TODO: Refactor
-        error_details = utils.ErrorDetails()
-        error = HandlerExecutionFailed(error_details)
-        if not error.exit_for_loop:
-            context.output.fail(error_details.message)
-            if error_details.traceback:
-                context.output.debug(error_details.traceback)
-        raise error
+        failure = HandlerExecutionFailed()
+        if not failure.exit_for_loop:
+            context.output.fail(failure.message)
+            if failure.traceback:
+                context.output.debug(failure.traceback)
+        raise failure
 
 
 class _VariableAssigner(object):

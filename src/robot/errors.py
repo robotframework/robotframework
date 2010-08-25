@@ -105,15 +105,16 @@ class ExecutionFailed(RobotError):
 
 class HandlerExecutionFailed(ExecutionFailed):
 
-    def __init__(self, error_details):
-        orig_error = error_details.error
-        timeout = isinstance(orig_error, TimeoutError)
-        syntax = isinstance(orig_error, DataError)
-        exit = bool(getattr(orig_error, 'ROBOT_EXIT_ON_FAILURE', False))
-        cont = bool(getattr(orig_error, 'ROBOT_CONTINUE_ON_FAILURE', False))
-        exit_for_loop = bool(getattr(orig_error, 'ROBOT_EXIT_FOR_LOOP', False))
-        ExecutionFailed.__init__(self, error_details.message, timeout, syntax,
+    def __init__(self):
+        details = utils.ErrorDetails()
+        timeout = isinstance(details.error, TimeoutError)
+        syntax = isinstance(details.error, DataError)
+        exit = bool(getattr(details.error, 'ROBOT_EXIT_ON_FAILURE', False))
+        cont = bool(getattr(details.error, 'ROBOT_CONTINUE_ON_FAILURE', False))
+        exit_for_loop = bool(getattr(details.error, 'ROBOT_EXIT_FOR_LOOP', False))
+        ExecutionFailed.__init__(self, details.message, timeout, syntax,
                                  exit, cont, exit_for_loop)
+        self.traceback = details.traceback
 
 
 class ExecutionFailures(ExecutionFailed):
