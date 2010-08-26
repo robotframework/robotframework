@@ -55,15 +55,16 @@ import re
 import time
 import subprocess
 import zipfile
+from glob import glob
 
 
-ROOT_PATH = os.path.dirname(__file__)
+ROOT_PATH = os.path.abspath(os.path.dirname(__file__))
 DIST_PATH = os.path.join(ROOT_PATH, 'dist')
 BUILD_PATH = os.path.join(ROOT_PATH, 'build')
 ROBOT_PATH = os.path.join(ROOT_PATH, 'src', 'robot')
 JAVA_SRC_ROOT = os.path.join(ROOT_PATH, 'src', 'java')
 JAVA_PKG = ('org', 'robotframework')
-JYTHON_JAR = os.path.join(ROOT_PATH, 'ext-lib', 'jython.jar')
+JYTHON_JAR = glob(os.path.join(ROOT_PATH, 'ext-lib', 'jython-standalone-*.jar'))[0]
 SETUP_PATH = os.path.join(ROOT_PATH, 'setup.py')
 VERSION_PATH = os.path.join(ROBOT_PATH, 'version.py')
 VERSIONS = [re.compile('^2\.\d+(\.\d+)?$'), 'trunk', 'keep']
@@ -122,6 +123,8 @@ def version(version_number, release_tag=None):
         _update_version(version_number, '%d%02d%02d' % time.localtime()[:3])
     else:
         _update_version(version_number, _verify_version(release_tag, RELEASES))
+    from version import get_version
+    return get_version(sep='-')
 
 def _verify_version(given, valid):
     for item in valid:
@@ -177,16 +180,9 @@ def _announce():
         print os.path.abspath(os.path.join(DIST_PATH, path))
 
 def jar(*version_info):
-    version(*version_info)
-    _check_jython()
-    _clean()
+    ver = version(*version_info)
     _compile_java_classes()
-    _create_jar_distribution()
-    _announce()
-
-def _check_jython():
-    if not os.path.isfile(JYTHON_JAR):
-        raise ValueError()
+    _create_jar_distribution(ver)
 
 def _compile_java_classes():
     source_path = os.path.join(JAVA_SRC_ROOT, *JAVA_PKG)
@@ -195,12 +191,14 @@ def _compile_java_classes():
     print 'Compiling %d source files' % len(source_files)
     subprocess.call(['javac', '-cp', JYTHON_JAR]  + source_files)
 
-def _create_jar_distribution():
+def _create_jar_distribution(version):
     tmpdir = _create_tmpdir()
     _copy_files_to(tmpdir)
-    jar_path = _create_jar_file()
+    _create_manifest(tmpdir, version)
+    jar_path = _create_jar_file(version)
     _fill_jar(tmpdir, jar_path)
     shutil.rmtree(tmpdir)
+    print 'Created %s based on %s' % (jar_path, JYTHON_JAR)
 
 def _create_tmpdir():
     tmpdir = os.path.join(ROOT_PATH, 'tmp-jar-dir')
@@ -210,19 +208,30 @@ def _create_tmpdir():
     return tmpdir
 
 def _copy_files_to(tmpdir):
-    for srcdir, todir in [ (ROBOT_PATH,
-                            os.path.join(tmpdir, 'Lib', 'robot')),
-                           (os.path.join(JAVA_SRC_ROOT, *JAVA_PKG),
-                            os.path.join(tmpdir, 'org', 'robotframework')),
-                           (os.path.join(JAVA_SRC_ROOT, 'META-INF'),
-                            os.path.join(tmpdir, 'META-INF')) ]:
-        shutil.copytree(srcdir, todir)
+    for srcdir, todir in [(ROBOT_PATH,
+                           os.path.join(tmpdir, 'Lib', 'robot')),
+                          (os.path.join(JAVA_SRC_ROOT, *JAVA_PKG),
+                           os.path.join(tmpdir, 'org', 'robotframework'))]:
+        # pyc files must be excluded so that compileall works properly.
+        shutil.copytree(srcdir, todir, ignore=shutil.ignore_patterns('*.pyc*'))
+    subprocess.call(['java', '-jar', JYTHON_JAR, '-m', 'compileall', tmpdir])
 
-def _create_jar_file():
-    from version import get_version
-    jar_path = os.path.join(DIST_PATH, 'robot-%s.jar' % get_version(sep='-'))
+def _create_manifest(tmpdir, version):
+    mffile = os.path.join(tmpdir, 'META-INF', 'MANIFEST.MF')
+    os.mkdir(os.path.dirname(mffile))
+    open(mffile, 'w').write('''Manifest-Version: 1.0
+Main-Class: org.robotframework.RobotFramework
+Specification-Version: 2
+Implementation-Version: %s''' % version)
+
+def _create_jar_file(version):
+    jar_path = os.path.join(DIST_PATH, 'robotframework-%s.jar' % version)
     if not os.path.exists(DIST_PATH):
         os.mkdir(DIST_PATH)
+    for path in [os.path.join(DIST_PATH, name) for name in os.listdir(DIST_PATH)]:
+        if path.endswith('.jar'):
+            print 'removing old jarfile', path
+            os.remove(path)
     shutil.copyfile(JYTHON_JAR, jar_path)
     return jar_path
 
@@ -235,6 +244,8 @@ def _fill_jar(tmpdir, jar_path):
 def _copy_files_to_jar(tmpdir, dirname, jar):
     for root, _, files in os.walk(os.path.join(tmpdir, dirname)):
         for name in files:
+            if not name.endswith(('.class', '.MF')):
+                continue
             source = os.path.join(root, name)
             target = source.replace(tmpdir+os.sep, '')
             print 'Adding %s' % target
