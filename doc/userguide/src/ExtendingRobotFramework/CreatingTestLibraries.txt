@@ -1442,3 +1442,152 @@ The plan is to document all the internal modules better so that it is
 easier to decide which can be used and how they should be used. If you
 are unsure is using some API safe, please send a question to either
 user or developer `mailing list`_.
+
+Extending existing test libraries
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This section explains different approaches how to add new
+functionality to existing test libraries and how to use them in your
+own libraries otherwise.
+
+Modifying original source code
+''''''''''''''''''''''''''''''
+
+If you have access to the source code of the library you want to
+extend, you can naturally modify the source code directly. The biggest
+problem of this approach is that it can be hard for you to update the
+original library without affecting your changes. For users it may also
+be confusing to use a library that has different functionality than
+the original one. Repackaging the library may also be a big extra
+task.
+
+This approach works extremely well if the enhancements are generic and
+you plan to submit them back to the original developers. If your
+changes are applied to the original library, they are included in the
+future releases and all the problems discussed above are mitigated. If
+changes are non-generic, or you for some other reason cannot submit
+them back, the approaches explained in the subsequent sections
+probably work better.
+
+Using inheritance
+'''''''''''''''''
+
+Another straightforward way to extend an existing library is using
+inheritance. This is illustrated by the example below that adds new
+:name:`Title Should Start With` keyword to the SeleniumLibrary_. This
+example uses Python, but you can obviously extend an existing Java
+library in Java code the same way.
+
+.. sourcecode:: python
+
+   from SeleniumLibrary import SeleniumLibrary
+
+   class ExtendedSeleniumLibrary(SeleniumLibrary):
+
+       def title_should_start_with(self, expected):
+       	   title = self.get_title()
+           if not title.startswith(expected):
+               raise AssertionError("Title '%s' did not start with '%s'"
+                                    % (title, expected))
+
+.. Note:: The new keyword added in this particular example is generic
+          and should be added to the original library instead. In
+          practice it is so simple that it can created as a `user
+          keyword`_ and is unlikely to be added.
+
+A big difference with this approach compared to modifying the original
+library is that the new library has a different name than the
+original. A benefit is that you can easily tell that you are using a
+custom library, but a big problem is that you cannot easily use the
+new library with the original. First of all your new library will have
+same keywords as the original meaning that there is always
+conflict__. Another problem is that the libraries do not share their
+state. 
+
+This approach works well when you start to use a new library and want
+to add custom enhancements to it from the beginning. Otherwise other
+mechanisms explained in this section are probably better.
+
+__ `Handling keywords with same names`_
+
+Using delegation
+''''''''''''''''
+
+Because test libraries are technically just classes or modules, a
+simple way to use another library is importing it and using its
+methods. This approach works great when the methods are static and do
+not depend on the library state. This is illustrated by the earlier
+example that uses `Robot Framework's BuiltIn library`__.
+
+If the library has state, however, things may not work as you would
+hope.  The library instance you use in your library will not be the
+same as the framework uses, and thus changes done by executed keywords
+are not visible to your library. The next section explains how to get
+an access to the same library instance that the framework uses.
+
+__ `Using Robot Framework's internal modules`_
+
+Getting active library instance from Robot Framework
+''''''''''''''''''''''''''''''''''''''''''''''''''''
+
+Robot Framework 2.5.2 added by BuiltIn_ keyword :name:`Get Library
+Instance` that can be used to get the currently active library
+instance from the framework itself. The library instance returned by
+this keyword is the same as the framework itself uses, and thus
+there is no problem seeing the correct library state. Although this
+functionality is available as a keyword, it is typically used in test
+libraries directly by importing the :name:`BuiltIn` library class `as
+discussed earlier`__. The following example illustrates how to
+implement the same :name:`Title Should Start With` keyword as in the
+earlier example about `using inheritance`_.
+
+__ `Using Robot Framework's internal modules`_
+
+.. sourcecode:: python
+
+   from robot.libraries.BuiltIn import BuiltIn
+      
+   def title_should_start_with(expected):
+       seleniumlib = BuiltIn().get_library_instance('SeleniumLibrary')
+       title = seleniumlib.get_title()
+       if not title.startswith(expected):
+           raise AssertionError("Title '%s' did not start with '%s'"
+                                % (title, expected))
+
+This approach is clearly better than importing the library directly
+and using it when the library has a state. The biggest benefit over
+inheritance is that you can use the original library normally and use
+the new library in addition to it when needed. That is demonstrated in
+the example below where the code from the previous examples is
+expected to be available in a new library :name:`SeLibExtensions`.
+
+.. table:: Using library and another library that extends it
+   :class: example
+
+   ===========  ===============  =======  =======
+    Settings         Value        Value    Value
+   ===========  ===============  =======  =======
+   Library      SeleniumLibrary
+   Library      SeLibExtensions
+   ===========  ===============  =======  =======
+
+.. table::
+   :class: example
+
+   ===============  =======================  ==============  =================
+      Test Case             Action              Argument          Argument
+   ===============  =======================  ==============  =================
+   Example          Open Browser             http://example  # SeleniumLibrary
+   \                Title Should Start With  Example         # SeLibExtensions
+   ===============  =======================  ==============  =================
+
+
+Libraries using dynamic or hybrid API
+'''''''''''''''''''''''''''''''''''''
+
+Test libraries that use the dynamic__ or `hybrid library API`_ often
+have their own systems how to extend them. With these libraries you
+need to ask guidance from the library developers or consult the
+library documentation or source code.
+
+__ `dynamic library API`_
