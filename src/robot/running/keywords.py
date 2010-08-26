@@ -130,7 +130,7 @@ class Keyword(BaseKeyword):
     def _report_failure(self, context):
         failure = HandlerExecutionFailed()
         if not failure.exit_for_loop:
-            context.output.fail(failure.message)
+            context.output.fail(unicode(failure))
             if failure.traceback:
                 context.output.debug(failure.traceback)
         raise failure
@@ -150,7 +150,7 @@ class _VariableAssigner(object):
         for name, value in self._get_vars_to_set(return_value):
             context.get_current_vars()[name] = value
             context.output.info(utils.format_assign_message(name, value))
-            
+
     def _get_vars_to_set(self, ret):
         if ret is None:
             return self._get_vars_to_set_when_ret_is_none()
