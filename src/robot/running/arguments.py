@@ -34,10 +34,13 @@ class _KeywordArguments(object):
                                                    kw_or_lib_name, self._type)
 
     def resolve(self, args, variables, output=None):
-        posargs, namedargs = self._get_argument_resolver().resolve(args, variables)
+        posargs, namedargs = self._resolve(args, variables)
         self.check_arg_limits(posargs, namedargs)
         self._tracelog_args(output, posargs, namedargs)
         return posargs, namedargs
+
+    def _resolve(self, args, variables):
+        return self._get_argument_resolver().resolve(args, variables)
 
     def check_arg_limits(self, args, namedargs={}):
         self._arg_limit_checker.check_arg_limits(args, namedargs)
@@ -49,7 +52,7 @@ class _KeywordArguments(object):
         if self._logger_not_available_during_library_init(logger):
             return
         args = [ utils.safe_repr(a) for a in posargs ] \
-             + [ '%s=%s' % (utils.unic(a), utils.safe_repr(namedargs[a])) 
+             + [ '%s=%s' % (utils.unic(a), utils.safe_repr(namedargs[a]))
                  for a in namedargs ]
         logger.trace('Arguments: [ %s ]' % ' | '.join(args))
 
@@ -182,9 +185,8 @@ class RunKeywordArguments(PythonKeywordArguments):
         PythonKeywordArguments.__init__(self, argument_source, name)
         self._arg_resolution_index = arg_resolution_index
 
-    def resolve(self, args, variables, output=None):
+    def _resolve(self, args, variables):
         args = variables.replace_from_beginning(self._arg_resolution_index, args)
-        self.check_arg_limits(args)
         return args, {}
 
 
