@@ -4,7 +4,8 @@ Using Robot Framework from Java
 Starting from Robot Framework 2.5.2 Robot Framework is also distributed as a
 standalone jar file that contains both Jython and Robot Framework.  This allows
 `command line execution`__ with only Java installed, but the jar file also
-provides an API for Java usage. The current API documentation is available online__ 
+provides an API for Java usage. The current API documentation is available
+online__.
 
 __ `Starting test execution`_
 __ http://code.google.com/p/robotframework/wiki/JavaIntegration
@@ -33,6 +34,7 @@ started from a Java program:
 
     }
 
-:code:`JarRobot.run` is the same as when Robot Framework `is executed from the command line`__.
+Return value of :code:`RobotFramework.run` has same meaning as `return code`_ of
+Robot Framework execution.
 
 

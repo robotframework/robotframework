@@ -191,6 +191,7 @@ Appendices
 .. _module search path: `library search path`_
 .. _runner script: `Different runner scripts`_
 .. _runner scripts: `runner script`_
+.. _return code: `return codes`_
 
 .. 4. Extending
 
