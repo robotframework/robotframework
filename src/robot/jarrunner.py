@@ -13,15 +13,20 @@
 #  limitations under the License.
 
 from org.robotframework import RobotRunner
-from robot import runner, run_from_cli
+from robot import runner, run_from_cli, rebot, rebot_from_cli
 
 
 class JarRunner(RobotRunner):
     """Used for Java-Jython interop when RF is executed from .jar file"""
 
     def run(self, args):
+        print rebot, rebot.__file__
         try:
-            run_from_cli(args, runner.__doc__)
+            if args and args[0] == 'rebot':
+                print rebot.__doc__
+                rebot_from_cli(args[1:], rebot.__doc__)
+            else:
+                run_from_cli(args, runner.__doc__)
         except SystemExit, err:
             return err.code
 
