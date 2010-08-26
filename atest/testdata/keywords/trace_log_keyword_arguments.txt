@@ -40,6 +40,10 @@ Variable Number of Arguments with Library Keyword
     Mandatory and Varargs  mandatory  @{VALUES}
     Mandatory and Varargs  mandatory
 
+Arguments With Run Keyword
+    ${keyword name}=  Set Variable  Log Many
+    Run Keyword  ${keyword name}  @{VALUES}
+
 Non String Object as Argument
     Mandatory and Default UK  ${TRUE}  default=${1.0}
     Mandatory and Default  ${TRUE}  default=${1.0}

@@ -40,6 +40,11 @@ Variable Number of Arguments with Library Keyword
     ...  u'mandatory' | u'a' | u'b' | u'c' | u'd'
     ...  u'mandatory'
 
+Arguments With Run Keyword
+    ${tc}=  Check Test Case  ${TEST NAME}
+    Check Log Message  ${tc.kws[1].msgs[0]}  Arguments: [ u'Log Many' | u'\@{VALUES}' ]  TRACE
+    Check Log Message  ${tc.kws[1].kws[0].msgs[0]}  Arguments: [ u'a' | u'b' | u'c' | u'd' ]  TRACE
+
 Non String Object as Argument
     Check Argument Value Trace  \${mand}=True | \${default}=1.0
     ...  True | default=1.0
