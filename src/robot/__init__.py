@@ -39,8 +39,9 @@ def run_from_cli(args, usage):
     _run_or_rebot_from_cli(run, args, usage, pythonpath='pythonpath')
 
 def rebot_from_cli(args, usage):
+    print args
     LOGGER.info(get_full_version('Rebot'))
-    _run_or_rebot_from_cli(rebot, args, usage)
+    _run_or_rebot_from_cli(run_rebot, args, usage)
 
 def _run_or_rebot_from_cli(method, cliargs, usage, **argparser_config):
     LOGGER.register_file_logger()
@@ -115,7 +116,7 @@ def run(*datasources, **options):
     return suite
 
 
-def rebot(*datasources, **options):
+def run_rebot(*datasources, **options):
     """Creates reports/logs from given Robot output files with given options.
 
     Given input files are paths to Robot output files similarly as when running
@@ -123,8 +124,8 @@ def rebot(*datasources, **options):
     their names are same as long command line options without hyphens.
 
     Examples:
-    rebot('/path/to/output.xml')
-    rebot('/path/out1.xml', '/path/out2.xml', report='myrep.html', log='NONE')
+    run_rebot('/path/to/output.xml')
+    run_rebot('/path/out1.xml', '/path/out2.xml', report='myrep.html', log='NONE')
 
     Equivalent command line usage:
     rebot /path/to/output.xml
