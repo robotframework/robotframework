@@ -24,7 +24,7 @@ Synopsis
    pybot [options] datasources
    jybot [options] datasources
    interpreter /path/to/robot/runner.py [options] datasources
-   java -jar robot-<version>.jar [options] datasources
+   java -jar robotframework-<version>.jar [options] datasources
 
 Different runner scripts
 ''''''''''''''''''''''''
