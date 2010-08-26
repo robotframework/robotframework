@@ -20,10 +20,8 @@ class JarRunner(RobotRunner):
     """Used for Java-Jython interop when RF is executed from .jar file"""
 
     def run(self, args):
-        print rebot, rebot.__file__
         try:
             if args and args[0] == 'rebot':
-                print rebot.__doc__
                 rebot_from_cli(args[1:], rebot.__doc__)
             else:
                 run_from_cli(args, runner.__doc__)

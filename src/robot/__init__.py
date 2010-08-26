@@ -39,7 +39,6 @@ def run_from_cli(args, usage):
     _run_or_rebot_from_cli(run, args, usage, pythonpath='pythonpath')
 
 def rebot_from_cli(args, usage):
-    print args
     LOGGER.info(get_full_version('Rebot'))
     _run_or_rebot_from_cli(run_rebot, args, usage)
 
