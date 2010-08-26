@@ -73,6 +73,7 @@ Extending Robot Framework
 .. include:: ExtendingRobotFramework/RemoteLibrary.txt
 .. include:: ExtendingRobotFramework/ListenerInterface.txt
 .. include:: ExtendingRobotFramework/InternalAPI.txt
+.. include:: ExtendingRobotFramework/JavaIntegration.txt
 
 Appendices
 ==========
