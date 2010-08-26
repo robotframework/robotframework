@@ -246,7 +246,8 @@ class Variables(utils.NormalizedDict):
         for variable in variable_table:
             try:
                 name, value = self._get_var_table_name_and_value(variable.name,
-                                                                 variable.value)
+                                                                 variable.value, 
+                                                                 variable_table.source)
                 # self.has_key would also match if name matches extended syntax
                 if not utils.NormalizedDict.has_key(self, name):
                     self[name] = value
@@ -254,13 +255,13 @@ class Variables(utils.NormalizedDict):
                 variable_table.report_invalid_syntax("Setting variable '%s' failed: %s"
                                                      % (variable.name, unicode(err)))
 
-    def _get_var_table_name_and_value(self, name, value):
+    def _get_var_table_name_and_value(self, name, value, path):
         if not is_var(name):
             raise DataError("Invalid variable name.")
         value = [ self._unescape_leading_trailing_spaces(cell) for cell in value ]
         if name[0] == '@':
             return name, self.replace_list(value)
-        return name, self._get_var_table_scalar_value(name, value)
+        return name, self._get_var_table_scalar_value(name, value, path)
 
     def _unescape_leading_trailing_spaces(self, item):
         if item.endswith(' \\'):
@@ -269,13 +270,14 @@ class Variables(utils.NormalizedDict):
             item = item[1:]
         return item
 
-    def _get_var_table_scalar_value(self, name, value):
+    def _get_var_table_scalar_value(self, name, value, path):
         if len(value) == 1:
             return self.replace_scalar(value[0])
         LOGGER.warn("Creating scalar variable with more than one value is "
                     "deprecated and this functionality will be removed in "
                     "Robot Framework 2.6. Create a list variable '@%s' and use "
-                    "it as a scalar variable '%s' instead." % (name[1:], name))
+                    "it as a scalar variable '%s' instead in file '%s'."
+                    % (name[1:], name, path))
         return self.replace_list(value)
 
     def _get_variables_from_module(self, module, args):
