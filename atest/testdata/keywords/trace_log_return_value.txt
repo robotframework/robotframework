@@ -10,6 +10,9 @@ Return from Userkeyword
 Return from Library Keyword
     Set Variable  value
 
+Return From Run Keyword
+    Run Keyword  Set Variable  value
+
 Return Non String Object
     Convert To Integer  1
 

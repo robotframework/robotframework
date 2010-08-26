@@ -15,6 +15,11 @@ Return from Library Keyword
     ${test} =  Check Test Case  ${TESTNAME}
     Check Log Message  ${test.kws[0].msgs[1]}  Return: u'value'  TRACE
 
+Return from Run Keyword
+    ${test} =  Check Test Case  ${TESTNAME}
+    Check Log Message  ${test.kws[0].msgs[1]}  Return: u'value'  TRACE
+    Check Log Message  ${test.kws[0].kws[0].msgs[1]}  Return: u'value'  TRACE
+
 Return Non String Object
     ${test} =  Check Test Case  ${TESTNAME}
     Check Log Message  ${test.kws[0].msgs[1]}  Return: 1  TRACE
