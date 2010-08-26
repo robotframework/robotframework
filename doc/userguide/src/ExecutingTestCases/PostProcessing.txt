@@ -21,6 +21,7 @@ that arguments to :prog:`rebot` are XML output files instead of test
 data files or directories.
 
 
+
 Creating different reports and logs
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -43,6 +44,12 @@ faster.
    rebot output.xml
    rebot path/to/output_file.xml
    rebot --include smoke --name Smoke_Tests c:\results\output.xml
+
+When using Robot Framework jar distribution, :prog:`rebot` is started with command:
+
+::
+
+    java -jar robotframework-<version>.jar rebot
 
 .. Note:: When running tests with Jython, the default JVM maximum
           memory size may not be enough for creating reports and logs
