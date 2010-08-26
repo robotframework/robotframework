@@ -249,6 +249,10 @@ Check Syslog Matches Regexp
     [Arguments]  @{expected}
     Check File Matches Regexp  ${SYSLOG_FILE}  @{expected}
 
+Check Syslog Contains Regexp
+    [Arguments]  @{expected}
+    Check File Contains Regexp  ${SYSLOG_FILE}  @{expected}
+
 Check Names
     [Arguments]  ${item}  ${name}  ${longprefix}=
     Should Be Equal  ${item.name}  ${name}
