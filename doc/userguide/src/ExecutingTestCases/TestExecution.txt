@@ -27,10 +27,11 @@ The execution starts from the top-level test suite. If the suite has
 tests they are executed one-by-one, and if it has suites they are
 executed recursively in depth-first order. When an individual test
 case is executed, the keywords it contains are run in a
-sequence. Normally the execution ends if any of the keywords fails,
-but it is also possible to `continue after failures`__. The exact `execution
-order`_ and how possible `setups and teardowns`_ affect the execution
-are discussed in the following sections.
+sequence. Normally the execution of the current test ends if any
+of the keywords fails, but it is also possible to 
+`continue after failures`__. The exact `execution order`_ and how 
+possible `setups and teardowns`_ affect the execution are discussed
+in the following sections.
 
 __ `Test suite directories`_
 __ `Selecting test cases`_
@@ -79,8 +80,8 @@ __ `Continue on failure`_
 Test setup
 ``````````
 
-Possible test setup is executed before the keywords a test case
-has. If the setup fails, the keywords are not executed. The main use
+Possible test setup is executed before the keywords of the test case.
+If the setup fails, the keywords are not executed. The main use
 for test setups is setting up the environment for that particular test
 case.
 
@@ -88,7 +89,7 @@ Test teardown
 `````````````
 
 Possible test teardown is executed after the test case has been
-executed otherwise. It is executed regardless of the test status and also
+executed. It is executed regardless of the test status and also
 if the setup of the test has failed.
 
 Similarly as suite teardown, test teardowns are used mainly for
@@ -129,10 +130,9 @@ Continue on failure
 Normally test cases are stopped immediately when any of their keywords
 fail. This behavior shortens test execution time and prevents
 subsequent keywords hanging or otherwise causing problems if the
-system under test is in unstable state. The biggest drawbacks are that often
+system under test is in unstable state. This has the drawback that often
 subsequent keywords would give more information about the state of the
-system, and in teardowns all the cleanup keywords may not be
-executed. 
+system.
 
 Before Robot Framework 2.5 the only way to handle failures so that
 test execution is not terminated immediately was using `BuiltIn
@@ -221,7 +221,7 @@ Using signals
 '''''''''''''
 
 On Unix-like machines it is possible to terminate test execution
-using signals :code:`INT` and :code:`TERM`. These signals can be send
+using signals :code:`INT` and :code:`TERM`. These signals can be sent
 from the command line using :prog:`kill` command, and sending signals can
 also be easily automated.
 
@@ -241,8 +241,8 @@ __ `Stopping test execution`_
 '''''''''''''''''''''''''
 
 If option :opt:`--runmode` is used with value :opt:`ExitOnFailure`
-(case-insensitive), the test execution stops immediately if a `critical
-test`_ fails. 
+(case-insensitive), the execution of tests stops immediately if 
+a `critical test`_ fails and the remaining tests are marked as failed.
 
 Handling teardowns
 ''''''''''''''''''

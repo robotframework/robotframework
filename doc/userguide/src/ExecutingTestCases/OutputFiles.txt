@@ -1,7 +1,7 @@
 Created outputs
 ---------------
 
-Several output files are created when tests are executed, and most of
+Several output files are created when tests are executed, and all of
 them are somehow related to test results. This section discusses what
 outputs are created, how to configure where they are created, and how
 to fine-tune their contents.
@@ -36,18 +36,23 @@ is created automatically, if it does not exist already.
 Output file
 '''''''''''
 
-Output files contain all the test execution results in the XML
+Output files contain all the test execution results in XML
 format. Log_, report_, and summary_ files are generated based on
 output files, and output files can also be `combined and otherwise
 post-processed`__ after the test execution.
 
 The command line option :opt:`--output (-o)` determines where
 output files are created. Output files are always created when tests
-are executed, and the default name for them is
-:path:`output.xml`. When post-processing outputs, new output files are
-not created unless this option is explicitly used.
+are executed, and unless outputs are `splitted`__, only one output file 
+is created. The default name for the output file is :path:`output.xml`.
+If outputs are splitted to several output files, they are named by 
+postfixing the name of the first output file with sequence numbers. When 
+post-processing outputs, new output files are not created unless 
+:opt:`--output (-o)` option is explicitly used.
 
 __ `Post-processing outputs`_
+
+__ `Splitting outputs`_
 
 Log file
 ''''''''
@@ -68,13 +73,13 @@ log files are always created and their default name is
    :target: src/ExecutingTestCases/log_passed.html
    :width: 500
 
-   An example of beginning of log file
+   An example of beginning of a log file
 
 .. figure:: src/ExecutingTestCases/log_failed.png
    :target: src/ExecutingTestCases/log_failed.html
    :width: 500
 
-   An example of log file with keyword details visible
+   An example of a log file with keyword details visible
 
 Report file
 '''''''''''
@@ -84,7 +89,7 @@ format. They have statistics based on tags and executed test suites,
 as well as a list of all executed test cases. When both reports and
 logs are generated, the report has links to the log file for easy
 navigation to more detailed information.  It is easy to see the
-overall test execution status from reports, because their background
+overall test execution status from report, because its background
 color is green, if all `critical tests`_ pass, and bright red
 otherwise.
 
@@ -198,8 +203,8 @@ The specified colors are used as a value for the :code:`body`
 element's :code:`background` CSS property. The value is used as-is and
 can be a HTML color name (e.g. :code:`red`), a hexadecimal value
 (e.g. :code:`#F00`), or an RGB value (e.g. :code:`rgb(255,0,0)`. The
-default green and red colors are actually specified using hexadecimal
-values and they are :code:`#9F6` and :code:`#F33`, respectively.
+default green and red colors are specified using hexadecimal
+values :code:`#9F6` and :code:`#F33`, respectively.
 
 Log levels
 ~~~~~~~~~~
@@ -231,7 +236,7 @@ log levels are:
    logged using this level automatically.
 
 :msg:`TRACE`
-   Another debugging level. The keyword arguments and return values
+   More detailed debugging level. The keyword arguments and return values
    are automatically logged using this level.
 
 __ `Logging information`_
@@ -268,7 +273,7 @@ Benefits
 ''''''''
 
 When executing a large number of test cases, the size of log files can
-increase to the extent that opening them into browsers is
+increase to the extent that opening them into a browser is
 slow. Additionally, since log files can be created only after output
 files are ready, they are available only after the test
 execution. This is not a problem if the test execution time is short,
@@ -279,7 +284,7 @@ Splitting outputs provides a solution for both of these
 problems. First of all, splitting logs means that individual log files
 are smaller and thus faster to open. If outputs are split while
 executing test cases, the lower-level log files are also created
-immediateay when the equivelent output files are ready. Notifications
+immediately when the equivalent output files are ready. Notifications
 about created files can be received through the `listener
 interface`_, and `automatic variables`_ :var:`${LOG_FILE}` and
 :var:`${OUTPUT_FILE}` always contain the path to the current file.
@@ -368,7 +373,7 @@ first example could thus by re-split, for example, as::
 
 In this example, splitting is done from the second level. The table below
 again lists created the files, and because :prog:`rebot` does not create new
-output files by default, they are not listed in the table either.
+output files by default, they are not listed in the table.
 
 .. table:: All output files created in the second example
    :class: tabular

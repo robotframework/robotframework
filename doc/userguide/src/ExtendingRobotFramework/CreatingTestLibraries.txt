@@ -52,9 +52,9 @@ Robot Framework has three different test library APIs.
 Static API 
 
   The simplest approach is having a module (in Python) or a class
-  (in Python or Java) with methods the names of which map more or less
-  directly to `keyword names`_. Keywords also take the same `arguments`__ as
-  the code implementing them.  Keywords `report failures`__ with
+  (in Python or Java) with methods which map directly to 
+  `keyword names`_. Keywords also take the same `arguments`__ as
+  the methods implementing them.  Keywords `report failures`__ with
   exceptions, `log`__ by writing to standard output and can `return
   values`__ using the :code:`return` statement.
 
@@ -139,8 +139,8 @@ constructor. The default values and variable number of arguments work
 similarly as with `keyword arguments`_, with the exception that there
 is no variable argument support for Java libraries. Arguments passed
 to the library, as well as the library name itself, can be specified
-using variables, so it is possible to alter them, for example, from the command
-line.
+using variables, so it is possible to alter them, for example, from the
+command line.
 
 .. table:: Importing a test library with arguments
    :class: example
@@ -191,7 +191,7 @@ Libraries implemented as classes can have an internal state, which can
 be altered by keywords and with arguments to the constructor of the
 library. Because the state can affect how keywords actually behave, it
 is important to make sure that changes in one test case do not
-accidentally affect other test cases. This kind of dependencies may
+accidentally affect other test cases. These kind of dependencies may
 create hard-to-debug problems, for example, when new test cases are
 added and they use the library inconsistently.
 
@@ -282,9 +282,9 @@ Version information is read from attribute
 :code:`ROBOT_LIBRARY_VERSION`, similarly as `test library scope`_ is
 read from :code:`ROBOT_LIBRARY_SCOPE`. If
 :code:`ROBOT_LIBRARY_VERSION` does not exist, information is tried to
-be read from :code:`__version__` attribute. These attributes must be a
+be read from :code:`__version__` attribute. These attributes must be 
 class or module attributes, depending whether the library is
-implemented as a class or a module.  For Java libraries, the version
+implemented as a class or a module.  For Java libraries the version
 attribute must be declared as :code:`static final`.
 
 An example Python module using :code:`__version__`:
@@ -357,9 +357,7 @@ Example Java library implemented as a class in the :path:`MyLibrary.java` file:
 
 The example below illustrates how the example libraries above can be
 used. If you want to try this yourself, make sure that the library is
-in the `library search path`_. Note that in the subsequent examples all
-boilerplate, such as taking a library into use and creating a test
-case, is excluded.
+in the `library search path`_.
 
 .. table:: Using simple example library
    :class: example  
@@ -385,7 +383,7 @@ Keyword arguments
 
 With a static and hybrid API, the information on how many arguments a
 keyword needs is got directly from the method that implements it.
-Libraries using the `dynamic library API`_ have other means for getting
+Libraries using the `dynamic library API`_ have other means for sharing
 this information, so this section is not relevant to them.
 
 The most common and also simplest situation is when a keyword needs an
@@ -433,7 +431,7 @@ which is familiar to all Python programmers, is illustrated below:
 The first example keyword above can be used either with zero or one
 arguments. If no arguments are given, :code:`arg` gets the value
 :code:`default`. If there is one argument, :code:`arg` gets that value,
-and calling the keyword with any other number of arguments fails. In the
+and calling the keyword with more than one argument fails. In the
 second example, one argument is always required, but the second and
 the third one have default values, so it is possible to use the keyword
 with one to three arguments.
@@ -491,10 +489,9 @@ in test libraries is different in Python and Java.
 
 Variable number of arguments with Python
 ````````````````````````````````````````
-Python itself has a good support for methods accepting any
-number of arguments. The same syntax works in libraries and, as
-the examples below show, it can also be combined with other ways of
-specifying arguments:
+Python supports methods accepting any number of arguments. The same 
+syntax works in libraries and, as the examples below show, it can also 
+be combined with other ways of specifying arguments:
 
 .. sourcecode:: python
 
@@ -531,34 +528,42 @@ specifying arguments:
 
 Variable number of arguments with Java
 ``````````````````````````````````````
-In Java, there is no syntax for a variable number of arguments, but Robot
-Framework has its own support for them. If the last argument in a keyword
-signature is an array, all leftover arguments are packed into
-it. This also works, if the keyword is used with one argument less than
-the actual number of arguments in the signature - in this case the
-array at the end will be empty. 
+Robot supports Java varargs syntax for defining variable number of arguments.
+Robot also will translate an array as the last argument in a keyword signature as
+a list of variable number of arguments. In this case, all leftover arguments to the
+keyword are packed into the list. This also works if the keyword is used with one
+argument less than the actual number of arguments in the signature - in this case 
+the array at the end will be empty.
 
-This system has one limitation: it only works if the method has one
-signature. Thus it is not possible to have a Java keyword that has
-both the default values and a variable number of arguments. Of course,
-having the required values with a variable number of arguments is
-possible, as the examples below illustrate:
+Robot's support for variable number of arguments in Java has one limitation:
+it only works if the method has only one signature. Thus it is not possible to have a
+Java keyword that has both the default values and a variable number of arguments.
+Of course, having a number of required arguments is still possible, as the 
+examples below illustrate:
 
 .. sourcecode:: java
 
-  public void anyArguments(String[] args) {
+  public void anyNumberOfArguments(String... varargs) {
       System.out.println("Got arguments:");
-      for (int i; i < args.length; i++) {
-          System.out.println(args[i]);
+      for (String arg: varargs) {
+          System.out.println(arg);
       }
   }
 
-  public void oneRequired(String required, String[] others) {
+  public void oneArgumentRequired(String required, String... others) {
       System.out.println("Required: " + required + "\nOthers:");
-      for (int i; i < others.length; i++) {
-          System.out.println(others[i]);
+      for (String arg: others) {
+          System.out.println(arg);
       }
   }
+
+  public void usingAnArray(String[] args) {
+      System.out.println("Got arguments:");
+      for (String arg: args) {
+          System.out.println(arg);
+      }
+  }
+
 
 Argument types
 ''''''''''''''
