@@ -10,12 +10,14 @@ Variable Table
     Verify deprecation warning  \@{TABLE}  \${TABLE}
 
 Assign Variables
-    Check Test Case  ${TESTNAME}
+    ${tc} =  Check Test Case  ${TESTNAME}
     Verify deprecation warning  \${assign}  \@{assign}
+    Check Log Message  ${tc.kws[1].messages[0]}   Using same base name with scalar and list variables is deprecated. Please change either '\${assign}' or '\@{assign}' before Robot Framework 2.6.  WARN
 
 Set Test/Suite/Global Variable
-    Check Test Case  ${TESTNAME}
+    ${tc} =  Check Test Case  ${TESTNAME}
     Verify deprecation warning  \@{SET}  \${SET}
+    Check Log Message  ${tc.kws[1].messages[0]}   Using same base name with scalar and list variables is deprecated. Please change either '\@{SET}' or '\${SET}' before Robot Framework 2.6.  WARN
 
 Variable File
     Check Test Case  ${TESTNAME}
