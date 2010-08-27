@@ -22,7 +22,7 @@ else:
 
 from robot import utils
 from robot.errors import DataError
-from robot.output import LOGGER
+from robot.output import LOGGER, Message
 
 from isvar import is_var, is_scalar_var
 
@@ -54,10 +54,17 @@ class Variables(utils.NormalizedDict):
 
     def _deprecation_warning_if_basename_already_used(self, name):
         other = ('@' if name[0] == '$' else '$') + name[1:]
-        if utils.NormalizedDict.__contains__(self, other):
-            LOGGER.warn("Using same base name with scalar and list variables "
-                        "is deprecated. Please change either '%s' or '%s' "
-                        "before Robot Framework 2.6." % (name, other))
+        if not utils.NormalizedDict.__contains__(self, other):
+            return
+        msg = ("Using same base name with scalar and list variables "
+               "is deprecated. Please change either '%s' or '%s' "
+               "before Robot Framework 2.6." % (name, other))
+        # An ugly  hack to get messages to log file when possible. log_message
+        # fails if writing XML hasn't started e.g. when processing Variable table
+        try:
+            LOGGER.log_message(Message(msg, 'WARN'))
+        except AttributeError:
+            LOGGER.warn(msg)
 
     def __getitem__(self, name):
         if not is_var(name):
