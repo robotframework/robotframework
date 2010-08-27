@@ -45,9 +45,7 @@ faster.
    rebot path/to/output_file.xml
    rebot --include smoke --name Smoke_Tests c:\results\output.xml
 
-When using Robot Framework jar distribution, :prog:`rebot` is started with command:
-
-::
+When using Robot Framework jar distribution, :prog:`rebot` is started with command::
 
     java -jar robotframework-<version>.jar rebot
 

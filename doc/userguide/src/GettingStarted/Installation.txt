@@ -259,14 +259,12 @@ with Python. After you have downloaded the jar file, you can execute it like::
   java -jar robotframework-2.5.2.jar mytests.txt
   java -jar robotframework-2.5.2.jar --variable name:value mytests.txt
 
-If you need to `post-process outputs`_, you need to use :cli:`rebot` as the
+If you need to `post-process outputs`_, :cli:`rebot` must be given as the
 first argument to the jar file::
 
   java -jar robotframework-2.5.2.jar rebot --help
   java -jar robotframework-2.5.2.jar rebot output.xml
   java -jar robotframework-2.5.2.jar rebot --name Combined outputs/*.xml
-
-
 
 Where files are installed
 '''''''''''''''''''''''''
