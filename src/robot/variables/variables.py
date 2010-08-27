@@ -264,7 +264,7 @@ class Variables(utils.NormalizedDict):
                 variable_table.report_invalid_syntax("Setting variable '%s' failed: %s"
                                                      % (variable.name, unicode(err)))
 
-    def _get_var_table_name_and_value(self, name, value, path):
+    def _get_var_table_name_and_value(self, name, value, path=None):
         if not is_var(name):
             raise DataError("Invalid variable name.")
         value = [ self._unescape_leading_trailing_spaces(cell) for cell in value ]
@@ -279,14 +279,17 @@ class Variables(utils.NormalizedDict):
             item = item[1:]
         return item
 
-    def _get_var_table_scalar_value(self, name, value, path):
+    def _get_var_table_scalar_value(self, name, value, path=None):
         if len(value) == 1:
             return self.replace_scalar(value[0])
-        LOGGER.warn("Creating scalar variable with more than one value is "
-                    "deprecated and this functionality will be removed in "
-                    "Robot Framework 2.6. Create a list variable '@%s' and use "
-                    "it as a scalar variable '%s' instead in file '%s'."
-                    % (name[1:], name, path))
+        msg = ("Creating scalar variable with more than one value is "
+               "deprecated and this functionality will be removed in "
+               "Robot Framework 2.6. Create a list variable '@%s' and use "
+               "it as a scalar variable '%s' instead" % (name[1:], name))
+        if path:
+            msg += " in file '%s'" % path
+        msg += '.'
+        LOGGER.warn(msg)
         return self.replace_list(value)
 
     def _get_variables_from_module(self, module, args):
