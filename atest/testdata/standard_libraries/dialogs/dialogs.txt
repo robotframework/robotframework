@@ -1,0 +1,28 @@
+*** Settings ***
+Library         Dialogs
+
+*** Test Cases ***
+Pause Execution
+    Pause Execution  Press OK.
+
+Execute Manual Step
+    [Documentation]  FAIL Predefined Error Message
+    Execute Manual Step  Press PASS.
+    Execute Manual Step  Press FAIL and OK.  Predefined Error Message
+
+Get Value From User Passes
+    ${value} =  Get Value From User  Input 'value' and press OK.
+    Should Be Equal  ${value}  value
+
+Get Value From User Fails
+    [Documentation]  FAIL ValueError: No value provided by user
+    Get Value From User  Press Cancel.
+
+Get Selection From User Passes
+    ${value} =  Get Selection From User  Select 'value' and press OK.  zip  zap  foo  value  bar
+    Should Be Equal  ${value}  value
+
+Get Selection From User Fails
+    [Documentation]  FAIL ValueError: No value provided by user
+    Get Selection From User  Press Cancel.  zip  zap  foo
+
