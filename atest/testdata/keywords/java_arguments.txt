@@ -45,6 +45,12 @@ Correct Number Of Arguments With Defaults
     ${ret} =  A 1 3  My argument  My argument 2  My argument 3
     Equals  ${ret}  a_1_3: My argument My argument 2 My argument 3
 
+Java Varargs Should Work
+    ${ret} =  Java Varargs  My Argument 1  My Argument 2
+    Equals  ${ret}  javaVarArgs: My Argument 1 My Argument 2
+    ${ret} =  Java Varargs
+    Equals  ${ret}  javaVarArgs:
+
 Too Few Arguments With Defaults
     [Documentation]  FAIL Keyword 'ArgumentsJava.A 1 3' expected 1 to 3 arguments, got 0.
     A 1 3

@@ -47,5 +47,11 @@ public class ArgumentsJava {
     	}
     	return ret;
     }
-    
+
+    public String javaVarargs(String...args) {
+        String ret = "javaVarArgs:";
+        for (String arg: args)
+            ret += " " + arg;
+        return ret;
+    }
 }

@@ -30,6 +30,9 @@ Too Many Arguments With Defaults
 Correct Number Of Arguments With Varargs
     Check Test Case  Correct Number Of Arguments With Varargs
 
+Java Varargs Should Work
+    Check Test Case  Java Varargs Should Work
+
 Too Few Arguments With Varargs
     Check Test Case  Too Few Arguments With Varargs
 
