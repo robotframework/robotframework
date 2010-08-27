@@ -284,7 +284,7 @@ class ErrorSerializer:
         self._writer.start('td', {'class': 'time'}, newline=False)
         self._writer.element('a', msg.timestamp.replace(' ', '&nbsp;'),
                              {'href': "#msg_%s" % msg.timestamp,
-                              'onclick': "set_message_visible('msg_%s')" % msg.timestamp,
+                              'onclick': "set_element_visible('msg_%s')" % msg.timestamp,
                               'title': 'Link to log when error occurred during execution.'},
                               escape=False, newline=False)
         self._writer.end('td')

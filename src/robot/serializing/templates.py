@@ -398,33 +398,35 @@ LOG = '''%(FUNCTIONS)s
         }
         return hash.slice(1).replace(/%%20/g, ' ')
     }
-    function set_element_visible(name) {
-        var elements = document.body.getElementsByTagName('a')
+    function set_element_visible(id_or_name) {
+        var element = document.getElementById(id_or_name)
+        if (element) {
+            open_parents(element)
+            return
+        }
+        var elements = document.getElementsByName(id_or_name)
         for (var i=0; i<elements.length; i++) {
-            if (elements[i].getAttribute('name') == name) {
-                open_parents(elements[i])
-                return
-            }
+            open_parents(elements[i])
         }
     }
     // Find right type of parent element, open it and its parents
     function open_parents(element) {
         var parent = element.parentNode
+        if (!parent) {
+            return
+        }
         // Find a parent table with id
         while (parent.nodeName != 'TABLE' || parent.getAttribute('id') == null) {
             parent = parent.parentNode
+            if (!parent) {
+               return
+            }
         }
         var element_id = parent.getAttribute('id')
         if (document.getElementById(element_id+'_children').style.display == 'none') {
             toggle_child_visibility(element_id)
-            open_parents(parent)
         }
-    }
-    function set_message_visible(name) {
-        var element = document.getElementById(name)
-        if (element) {
-            open_parents(element)
-        }
+        open_parents(parent)
     }
 </script>
 
