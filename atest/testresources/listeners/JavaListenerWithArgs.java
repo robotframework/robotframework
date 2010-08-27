@@ -4,7 +4,7 @@ import java.io.*;
 public class JavaListenerWithArgs {
 	
 	public JavaListenerWithArgs(String arg1, String arg2) throws IOException {
-		String tmpdir = System.getProperty("java.io.tmpdir");
+		String tmpdir = JavaTempDir.getTempDir();
 		String sep = System.getProperty("file.separator");
 		String outpath = tmpdir + sep + "java_listener_with_args.txt";
 		BufferedWriter outfile = new BufferedWriter(new FileWriter(outpath));

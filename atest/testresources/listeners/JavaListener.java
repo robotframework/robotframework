@@ -10,7 +10,7 @@ public class JavaListener {
 	BufferedWriter outfile = null;
 	
 	public JavaListener() throws IOException {
-		String tmpdir = System.getProperty("java.io.tmpdir");
+		String tmpdir = JavaTempDir.getTempDir();
 		String sep = System.getProperty("file.separator");
 		String outpath = tmpdir + sep + "listen_java.txt";
 		this.outfile = new BufferedWriter(new FileWriter(outpath ));

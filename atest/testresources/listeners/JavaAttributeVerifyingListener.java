@@ -15,13 +15,13 @@ public class JavaAttributeVerifyingListener {
 	}
 
 	public void createOutputFile() throws IOException {
-		String tmpdir = System.getProperty("java.io.tmpdir");
+		String tmpdir = JavaTempDir.getTempDir();
 		String sep = System.getProperty("file.separator");
 		String outpath = tmpdir + sep + "listener_attrs_java.txt";
 		outfile = new BufferedWriter(new FileWriter(outpath));
 	}
 	public void createExcpectedTypes() {
-		expectedTypes = new HashMap() {{
+		expectedTypes = new HashMap<String, Class>() {{
 		    put("elapsedtime", BigInteger.class);
 		    put("tags", PyList.class);
 		    put("args", PyList.class);
