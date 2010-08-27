@@ -189,7 +189,7 @@ def _compile_java_classes():
     source_files = [ os.path.join(source_path, f) for f
                      in os.listdir(source_path) if f.endswith('java') ]
     print 'Compiling %d source files' % len(source_files)
-    subprocess.call(['javac', '-cp', JYTHON_JAR]  + source_files)
+    subprocess.call(['javac', '-target', '1.5', '-cp', JYTHON_JAR]  + source_files)
 
 def _create_jar_distribution(version):
     tmpdir = _create_tmpdir()
