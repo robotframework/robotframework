@@ -123,6 +123,7 @@ def version(version_number, release_tag=None):
         _update_version(version_number, '%d%02d%02d' % time.localtime()[:3])
     else:
         _update_version(version_number, _verify_version(release_tag, RELEASES))
+    sys.path.insert(0, ROBOT_PATH)
     from version import get_version
     return get_version(sep='-')
 
