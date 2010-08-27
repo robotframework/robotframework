@@ -8,7 +8,7 @@ Installation and uninstallation
 Introduction
 ~~~~~~~~~~~~
 
-There are four ways to install Robot Framework:
+There are several ways to install Robot Framework:
 
 `Installing from source`_
     You can get the source code either as a source distribution
@@ -31,9 +31,10 @@ There are four ways to install Robot Framework:
     optional Jython_) installed, you can use `One Click Installer`_ to do all 
     the needed installations.
 
-In addition, starting from Robot Framework 2.5.2, Robot Framework is
-distributed as a standalone jar file. In this case, only Java Runtime
-Environment is needed to use Robot Framework.
+`Standalone jar distribution`_
+    If you need to run tests with only Jython, the easiest way to install everything
+    is to downloading the standalone ``robotframework-<version>.jar``, which contains
+    both Jython and Robot Framework.
 
 Installation packages are available from
 http://downloads.robotframework.org, and source code from
@@ -245,6 +246,27 @@ always do it manually following these steps:
 
 3. Create the needed runner scripts. If you have a source package or
    a checkout, you can get templates from :path:`src/bin` directory.
+
+Standalone jar distribution
+'''''''''''''''''''''''''''
+
+Starting from Robot Framework 2.5.2, it is also distributed as a standalone
+``robotframework-<version>.jar``, which contains both Jython and Robot
+Framework. It is an easy way to get everything if you do not need to run tests
+with Python. After you have downloaded the jar file, you can execute it like::
+
+  java -jar robotframework-2.5.2.jar --help
+  java -jar robotframework-2.5.2.jar mytests.txt
+  java -jar robotframework-2.5.2.jar --variable name:value mytests.txt
+
+If you need to `post-process outputs`_, you need to use :cli:`rebot` as the
+first argument to the jar file::
+
+  java -jar robotframework-2.5.2.jar rebot --help
+  java -jar robotframework-2.5.2.jar rebot output.xml
+  java -jar robotframework-2.5.2.jar rebot --name Combined outputs/*.xml
+
+
 
 Where files are installed
 '''''''''''''''''''''''''

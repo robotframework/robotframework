@@ -40,7 +40,8 @@ recommended, as Python is somewhat faster than Jython.
 
 Starting from Robot Framework 2.5.2, it is also possible to get Robot Framework
 as a single jar file.  In this case, Jython is bundled inside the jar, and the
-above discussion about Jython applies.
+above discussion about Jython applies. In this case, the normal arguments to
+Robot Framework are given after the jar file name.
 
 Another possibility for starting the test execution is running the
 :prog:`runner.py` script under the installed__ :code:`robot` module
