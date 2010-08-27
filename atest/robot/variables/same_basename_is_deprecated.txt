@@ -7,7 +7,7 @@ Resource        atest_resource.txt
 
 Variable Table
     Check Test Case  ${TESTNAME}
-    Verify deprecation warning  \@{TABLE}  \${TABLE}
+    Verify deprecation warning with path  \\@\\{TABLE}  \\$\\{TABLE}
 
 Assign Variables
     ${tc} =  Check Test Case  ${TESTNAME}
@@ -21,7 +21,7 @@ Set Test/Suite/Global Variable
 
 Variable File
     Check Test Case  ${TESTNAME}
-    Verify deprecation warning  \${VARFILE}  \@{VARFILE}
+    Verify deprecation warning with path   \\$\\{VARFILE}  \\@\\{VARFILE}
 
 Combinations
     Check Test Case  ${TESTNAME}
@@ -36,3 +36,9 @@ Verify deprecation warning
     ...  Using same base name with scalar and list variables is deprecated. 
     ...  Please change either '${1st}' or '${2nd}' before Robot Framework 2.6.
 
+Verify deprecation warning with path
+    [Arguments]  ${1st}  ${2nd}
+    Check Syslog Contains Regexp  \\|\\s*WARN\\s*\\|\\s*
+    ...  Using same base name with scalar and list variables is deprecated\\.
+    ...  Please change either '${1st}' or '${2nd}' in file '.*'
+    ...  before Robot Framework 2\\.6\\.
