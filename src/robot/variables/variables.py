@@ -46,19 +46,21 @@ class Variables(utils.NormalizedDict):
         utils.NormalizedDict.__init__(self, ignore=['_'])
         self._identifiers = identifiers
 
-    def __setitem__(self, name, value):
+    def __setitem__(self, name, value, path=None):
         if not is_var(name):
             raise DataError("Invalid variable name '%s'." % name)
-        self._deprecation_warning_if_basename_already_used(name)
+        self._deprecation_warning_if_basename_already_used(name, path)
         utils.NormalizedDict.__setitem__(self, name, value)
 
-    def _deprecation_warning_if_basename_already_used(self, name):
+    def _deprecation_warning_if_basename_already_used(self, name, path):
         other = ('@' if name[0] == '$' else '$') + name[1:]
         if not utils.NormalizedDict.__contains__(self, other):
             return
-        msg = ("Using same base name with scalar and list variables "
-               "is deprecated. Please change either '%s' or '%s' "
-               "before Robot Framework 2.6." % (name, other))
+        msg = ("Using same base name with scalar and list variables is "
+               "deprecated. Please change either '%s' or '%s'") % (name, other)
+        if path:
+            msg += " in file '%s'" % path
+        msg += " before Robot Framework 2.6."
         # An ugly  hack to get messages to log file when possible. log_message
         # fails if writing XML hasn't started e.g. when processing Variable table
         try:
@@ -223,7 +225,7 @@ class Variables(utils.NormalizedDict):
         try:
             module = utils.simple_import(path)
             variables = self._get_variables_from_module(module, args)
-            self._set_from_file(variables, overwrite)
+            self._set_from_file(variables, overwrite, path)
         except:
             amsg = args and 'with arguments %s ' % utils.seq2str2(args) or ''
             raise DataError("Processing variable file '%s' %sfailed: %s"
@@ -232,7 +234,7 @@ class Variables(utils.NormalizedDict):
 
     # This can be used with variables got from set_from_file directly to
     # prevent importing same file multiple times
-    def _set_from_file(self, variables, overwrite):
+    def _set_from_file(self, variables, overwrite, path):
         list_prefix = 'LIST__'
         for name, value in variables:
             if name.startswith(list_prefix):
@@ -247,7 +249,7 @@ class Variables(utils.NormalizedDict):
             else:
                 name = '${%s}' % name
             if overwrite or not utils.NormalizedDict.has_key(self, name):
-                self[name] = value
+                self.__setitem__(name, value, path)
 
     def set_from_variable_table(self, variable_table):
         for variable in variable_table:
@@ -257,7 +259,7 @@ class Variables(utils.NormalizedDict):
                                                                  variable_table.source)
                 # self.has_key would also match if name matches extended syntax
                 if not utils.NormalizedDict.has_key(self, name):
-                    self[name] = value
+                    self.__setitem__(name, value, variable_table.source)
             except DataError, err:
                 variable_table.report_invalid_syntax("Setting variable '%s' failed: %s"
                                                      % (variable.name, unicode(err)))

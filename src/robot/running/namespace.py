@@ -404,11 +404,11 @@ class _VariableScopes:
     def set_from_file(self, path, args, overwrite=False):
         variables = self._suite.set_from_file(path, args, overwrite)
         if self._test is not None:
-            self._test._set_from_file(variables, overwrite=True)
+            self._test._set_from_file(variables, overwrite=True, path=path)
         for varz in self._uk_handlers:
-            varz._set_from_file(variables, overwrite=True)
+            varz._set_from_file(variables, overwrite=True, path=path)
         if self._uk_handlers:
-            self.current._set_from_file(variables, overwrite=True)
+            self.current._set_from_file(variables, overwrite=True, path=path)
 
     def set_from_variable_table(self, rawvariables):
         self._suite.set_from_variable_table(rawvariables)
