@@ -1490,11 +1490,6 @@ library in Java code the same way.
                raise AssertionError("Title '%s' did not start with '%s'"
                                     % (title, expected))
 
-.. Note:: The new keyword added in this particular example is generic
-          and should be added to the original library instead. In
-          practice it is so simple that it can created as a `user
-          keyword`_ and is unlikely to be added.
-
 A big difference with this approach compared to modifying the original
 library is that the new library has a different name than the
 original. A benefit is that you can easily tell that you are using a
@@ -1510,8 +1505,8 @@ mechanisms explained in this section are probably better.
 
 __ `Handling keywords with same names`_
 
-Using delegation
-''''''''''''''''
+Using other libraries directly
+''''''''''''''''''''''''''''''
 
 Because test libraries are technically just classes or modules, a
 simple way to use another library is importing it and using its
