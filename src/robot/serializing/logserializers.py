@@ -56,9 +56,9 @@ class LogSerializer:
 
     def start_keyword(self, kw):
         kw.id = self._idgen.get_id('kw')
-        self._writer.start('table', {'class': 'keyword'})
+        self._writer.start('table', {'class': 'keyword', 'id': kw.id})
         self._write_keyword_name(kw)
-        self._writer.start('tr', {'id': kw.id})
+        self._writer.start('tr')
         self._writer.start('td', newline=True)
         self._writer.start('div', {'class': 'indent',
                                    'style': self._get_display_style(kw),
@@ -71,8 +71,11 @@ class LogSerializer:
     def message(self, msg):
         self._writer.start('table', {'class': 'messages'})
         self._writer.start('tr')
-        self._writer.element('td', msg.timestamp.split()[1],  # log only time
-                             {'class': 'time'})
+        attrs = {'class': 'time'}
+        if msg.level in ['WARN', 'ERROR']:
+            # Allow linking from Test Execution Errors table
+            attrs['id'] = 'msg_%s' % msg.timestamp
+        self._writer.element('td', msg.timestamp.split()[1], attrs)
         self._writer.element('td', msg.level,
                              {'class': '%s level' % msg.level.lower()})
         self._writer.element('td', msg.message, {'class': 'msg'},
@@ -98,7 +101,7 @@ class LogSerializer:
         self._writer.element('a', 'Expand All', attrs)
 
     def _write_keyword_name(self, kw):
-        self._writer.start('tr', {'id': kw.id})
+        self._writer.start('tr')
         self._writer.start('td')
         self._write_folding_button(kw)
         status = {'class': kw.status.lower()}
@@ -278,8 +281,13 @@ class ErrorSerializer:
 
     def message(self, msg):
         self._writer.start('tr')
-        self._writer.element('td', msg.timestamp.replace(' ', '&nbsp;'),
-                             {'class': 'time'}, escape=False)
+        self._writer.start('td', {'class': 'time'}, newline=False)
+        self._writer.element('a', msg.timestamp.replace(' ', '&nbsp;'),
+                             {'href': "#msg_%s" % msg.timestamp,
+                              'onclick': "set_message_visible('msg_%s')" % msg.timestamp,
+                              'title': 'Link to log when error occurred during execution.'},
+                              escape=False, newline=False)
+        self._writer.end('td')
         self._writer.element('td', msg.level,
                              {'class': '%s level' % msg.level.lower()})
         self._writer.element('td', msg.message, {'class': 'msg'})

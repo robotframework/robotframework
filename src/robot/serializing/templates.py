@@ -420,6 +420,12 @@ LOG = '''%(FUNCTIONS)s
             open_parents(parent)
         }
     }
+    function set_message_visible(name) {
+        var element = document.getElementById(name)
+        if (element) {
+            open_parents(element)
+        }
+    }
 </script>
 
 <title>${title}</title>
