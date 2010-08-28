@@ -26,7 +26,7 @@ format`__ and they can be customized freely.
    simplified accordingly.
 
 Templates are available through this user guide, they are included in
-the source distribution and they can also be downloaded from
+the source distribution, and they can also be downloaded from
 http://code.google.com/p/robotframework/wiki/Templates.
 
 
