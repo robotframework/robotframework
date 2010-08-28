@@ -66,18 +66,18 @@ Parsed test data
 
 Package :code:`robot.parsing` contains tools for parsing and handling test data.
 :code:`TestCaseFile` and :code:`TestDataDirectory` classes can be instantiated
-with parameter :code:`source` to start parsing existing test data. Example below
-shows how to parse names of tests from a test file. For more details please 
+with named parameter :code:`source` to start parsing existing test data. Example
+below shows how to parse names of tests from a test file. For more details please 
 see the source code of Robot Framework directly.
 
 .. sourcecode:: python
 
-	from robot.parsing import TestCaseFile
+    from robot.parsing import TestCaseFile
 
-	suite = TestCaseFile(source='path/to/tests.html')
-	print 'Suite: ', suite.name
-	for test in suite.testcase_table:
-		print test.name
+    suite = TestCaseFile(source='path/to/tests.html')
+    print 'Suite: ', suite.name
+    for test in suite.testcase_table:
+        print test.name
 
 Runnable test data
 ~~~~~~~~~~~~~~~~~~
