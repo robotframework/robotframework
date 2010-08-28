@@ -623,8 +623,8 @@ string containing a number, and with the boolean type the data must
 contain either string :code:`true` or :code:`false`. Coercion is only
 done if the original value was a string from the test data, but it is
 of course still possible to use variables containing correct types with
-these keywords. With keywords having conflicting signatures using
-variables is the only option.
+these keywords. Using variables is the only option if keywords have 
+conflicting signatures.
 
 .. table:: Using automatic type coercion
    :class: example
@@ -878,8 +878,7 @@ Keywords can also return values so that they can be assigned into
 several `scalar variables`_ at once, into `a list variable`__, or
 into scalar variables and a list variable. All these usages require
 that returned values are Python lists or tuples or
-Java arrays. If there is a need, support for other iterables can be
-added in the future.
+in Java arrays, Lists, or Iterators.
 
 __ `List variables`_
 
@@ -1014,8 +1013,9 @@ Packaging libraries
 After a library is implemented, documented, and tested, it still needs
 to be distributed to the users. With simple libraries consisting of a
 single file, it is often enough to ask the users to copy that file
-somewhere and set the `library search path`_ accordingly. With more
-complicated libraries, package them to make the installation easier.
+somewhere and set the `library search path`_ accordingly. More
+complicated libraries should be packaged to make the installation
+easier.
 
 Since libraries are normal programming code, they can be packaged
 using normal packaging tools. With Python, good options include
@@ -1090,7 +1090,7 @@ Dynamic library API
 ~~~~~~~~~~~~~~~~~~~
 
 The dynamic API is in most ways similar to the static API. For
-example, reporting the keyword status, logging and returning values
+example, reporting the keyword status, logging, and returning values
 works exactly the same way. Most importantly, there are no differences
 in importing dynamic libraries and using their keywords compared to
 other libraries, so you do not even need to know what APIs the
@@ -1282,8 +1282,8 @@ camelCase aliases work exactly the same way.
 
 It is possible to write a formal interface specification in Java, as
 below. However, remember that libraries *do not need* to implement
-any explicit interface, because Robot Framework directly checks if the
-library has the required :code:`get_keyword_names` and
+any explicit interface, because Robot Framework directly checks with
+reflection if the library has the required :code:`get_keyword_names` and
 :code:`run_keyword` methods. Additionally,
 :code:`get_keyword_arguments` and :code:`get_keyword_documentation`
 are completely optional.
@@ -1437,11 +1437,11 @@ using :code:`set_test_variable`, :code:`set_suite_variable` and
        print '*HTML* Output written to <a href="results.txt">results.txt</a>'
 
 The only catch with using methods from :code:`BuiltIn` is that all
-:code:`run_keyword` method variants must be handled specially. What
-needs to be done is registering methods that use these methods to be *run
-keywords* themselves using :code:`register_run_keyword` method
-in :code:`BuiltIn` module. This method's documentation explains why
-this needs to be done and obviously also how to do it.
+:code:`run_keyword` method variants must be handled specially. 
+Methods that use :code:`run_keyword` methods have to be registered
+as *run keywords* themselves using :code:`register_run_keyword` 
+method in :code:`BuiltIn` module. This method's documentation explains
+why this needs to be done and obviously also how to do it.
 
 The plan is to document all the internal modules better so that it is
 easier to decide which can be used and how they should be used. If you
@@ -1530,7 +1530,7 @@ __ `Using Robot Framework's internal modules`_
 Getting active library instance from Robot Framework
 ''''''''''''''''''''''''''''''''''''''''''''''''''''
 
-Robot Framework 2.5.2 added by BuiltIn_ keyword :name:`Get Library
+Robot Framework 2.5.2 added new BuiltIn_ keyword :name:`Get Library
 Instance` that can be used to get the currently active library
 instance from the framework itself. The library instance returned by
 this keyword is the same as the framework itself uses, and thus
