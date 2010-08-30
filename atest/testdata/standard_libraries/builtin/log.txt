@@ -1,0 +1,35 @@
+*** Settings ***
+Variables       objects_for_call_method.py
+
+
+*** Test Cases ***
+
+Log
+    Log  Hello, world!
+    Log  ${42}
+    Log  ${None}
+    Log  ${OBJ}
+
+Log With Different Levels
+    [Documentation]  FAIL Invalid log level 'INVALID'
+    [Setup]  Set Log Level  TRACE
+    Log  Log says: Hello from tests!
+    Log  Trace level  TRACE
+    Log  Debug level  debug
+    Log  Info level  Info
+    Log  Warn level  wArN
+    Log  Fail level  FAIL
+    Log  Error level  ERROR
+    Log  Invalid level  INVALID
+    [Teardown]  Set Log Level  INFO
+
+Log HTML
+    Log  <b>not bold</b>
+    Log  <b>bold</b>  HTML
+    ${html} =  Set Variable  <img src="nonex.png">
+    Log  ${html}
+    Log  ${html}  HTML
+
+Log Many
+    Log Many  Log Many says:  Hello  from  tests!
+    Log Many  Log Many says: Hi!!

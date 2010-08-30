@@ -1,0 +1,39 @@
+*** Settings ***
+Suite Setup     Run Tests  ${EMPTY}  standard_libraries/builtin/log.txt
+Force Tags      regression  jybot  pybot
+Resource        atest_resource.txt
+
+*** Test Cases ***
+Log
+    ${tc} =  Check Test Case  Log
+    Check Log Message  ${tc.kws[0].msgs[0]}  Hello, world!
+    Check Log Message  ${tc.kws[1].msgs[0]}  42
+    Check Log Message  ${tc.kws[2].msgs[0]}  None
+    Check Log Message  ${tc.kws[3].msgs[0]}  String presentation of MyObject
+
+Log With Different Levels
+    ${tc} =  Check Test Case  Log With Different Levels
+    Comment  Test set log level to trace so  the logged message is second  and first contains resolved args
+    Check Log Message  ${tc.kws[0].msgs[1]}  Log says: Hello from tests!  INFO
+    Check Log Message  ${tc.kws[1].msgs[1]}  Trace level  TRACE
+    Check Log Message  ${tc.kws[2].msgs[1]}  Debug level  DEBUG
+    Check Log Message  ${tc.kws[3].msgs[1]}  Info level  INFO
+    Check Log Message  ${tc.kws[4].msgs[1]}  Warn level  WARN
+    Check Log Message  ${ERRORS.msgs[0]}  Warn level  WARN
+    Check Log Message  ${tc.kws[5].msgs[1]}  Fail level  FAIL
+    Check Log Message  ${tc.kws[6].msgs[1]}  Error level  ERROR
+
+Log HTML
+    ${tc} =  Check Test Case  Log HTML
+    Check Log Message  ${tc.kws[0].msgs[0]}  <b>not bold</b>  INFO
+    Check Log Message  ${tc.kws[1].msgs[0]}  <b>bold</b>  HTML
+    Check Log Message  ${tc.kws[3].msgs[0]}  <img src="nonex.png">  INFO
+    Check Log Message  ${tc.kws[4].msgs[0]}  <img src="nonex.png">  HTML
+
+Log Many
+    ${tc} =  Check Test Case  Log Many
+    Check Log Message  ${tc.kws[0].msgs[0]}  Log Many says:  INFO
+    Check Log Message  ${tc.kws[0].msgs[1]}  Hello  INFO
+    Check Log Message  ${tc.kws[0].msgs[2]}  from  INFO
+    Check Log Message  ${tc.kws[0].msgs[3]}  tests!  INFO
+    Check Log Message  ${tc.kws[1].msgs[0]}  Log Many says: Hi!!  INFO
