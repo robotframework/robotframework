@@ -19,7 +19,8 @@ Log With Different Levels
     Check Log Message  ${tc.kws[2].msgs[1]}  Debug level  DEBUG
     Check Log Message  ${tc.kws[3].msgs[1]}  Info level  INFO
     Check Log Message  ${tc.kws[4].msgs[1]}  Warn level  WARN
-    Check Log Message  ${ERRORS.msgs[0]}  Warn level  WARN
+    Length Should Be   ${tc.kws[4].msgs}     3
+    Check Log Message  ${ERRORS.msgs[0]}     Warn level  WARN
     Check Log Message  ${tc.kws[5].msgs[1]}  Fail level  FAIL
     Check Log Message  ${tc.kws[6].msgs[1]}  Error level  ERROR
 

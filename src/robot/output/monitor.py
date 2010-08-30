@@ -59,14 +59,14 @@ class CommandLineMonitor:
 
     def output_file(self, name, path):
         # called by LOGGER
-        if not self._running_suites:  # ignores splitted output files
+        if not self._running_suites:  # ignore split output files
             self._write('%s %s' % ((name+':').ljust(8), path))
 
     def message(self, msg):
         # called by LOGGER
         if self._is_logged(msg.level):
             message = '[ %s ] %s' % (self._highlight(msg.level), msg.message)
-            self._write(message, stream=sys.stderr)
+            self._write(message, stream=sys.__stderr__)
 
     def _write(self, message, newline=True, stream=sys.stdout):
         if newline:
