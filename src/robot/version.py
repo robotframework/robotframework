@@ -3,8 +3,8 @@ import sys
 
 
 VERSION = 'trunk'
-RELEASE = '20100712'
-TIMESTAMP = '20100712-143442'
+RELEASE = '20100830'
+TIMESTAMP = '20100830-133642'
 
 def get_version(sep=' '):
     if RELEASE == 'final':
@@ -14,7 +14,7 @@ def get_version(sep=' '):
 def get_full_version(who=''):
     interpreter   =  sys.platform.startswith('java') and 'Jython' or 'Python'
     syversion = sys.version.split()[0]
-    vers = '%s %s (%s %s on %s)' % (who, get_version(), interpreter, 
+    vers = '%s %s (%s %s on %s)' % (who, get_version(), interpreter,
                                          syversion, sys.platform)
     return vers.strip()
 
