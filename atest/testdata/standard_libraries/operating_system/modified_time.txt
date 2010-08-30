@@ -1,0 +1,90 @@
+*** Settings ***
+Suite Teardown  Remove Temps
+Test Setup      Remove Temps
+Library         OperatingSystem
+
+*** Variables ***
+${TESTFILE}  ${CURDIR}${/}robot_temp_file.txt
+${TESTDIR}  ${CURDIR}${/}robot_temp_dir
+
+*** Test Cases ***
+Get Modified Time As Timestamp
+    ${time1} =  Get Modified Time  ${CURDIR}
+    Log  ${time1}
+    Create File  ${TESTFILE}  hello
+    ${time2} =  Get Modified Time  ${TESTFILE}
+    Log  ${time2}
+    Should Be True  '${time2}' >= '${time1}'
+    Should Match Regexp  ${time1}  \\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}
+
+Get Modified Time As Seconds After Epoch
+    ${dirtime} =  Get Modified Time  ${CURDIR}  epoch
+    Should Be True  1000000000 < ${dirtime} < 2000000000
+    ${current} =  Get Time  epoch
+    Should Be True  ${current} >= ${dirtime}
+
+Get Modified Time As Parts
+    ${year} =  Get Modified Time  ${CURDIR}  year
+    Should Be True  2000 < ${year} < 2100
+    ${yyyy}  ${mm}  ${dd} =  Get Modified Time  ${CURDIR}  year, month, day
+    Should Be Equal  ${yyyy}  ${year}
+    Comment  Must use 'int', because otherwise 08 and 09 cause problems.  They are thougt to be octal but there is no such octal numbers as 08 or 09.
+    Should Be True  1 <= int('${mm}') <= 12
+    Should Be True  1 <= int('${dd}') <= 31
+    @{time} =  Get Modified Time  ${CURDIR}  year, sec, min, hour
+    Should Be Equal  @{time}[0]  ${year}
+    Should Be True  0 <= int('@{time}[1]') <= 23
+    Should Be True  0 <= int('@{time}[2]') <= 59
+    Should Be True  0 <= int('@{time}[3]') <= 59
+
+Get Modified Time Fails When Path Does Not Exist
+    [Documentation]  FAIL Getting modified time of '${CURDIR}${/}does_not_exist' failed: Path does not exist
+    Get Modified Time  ${CURDIR}${/}does_not_exist
+
+Set Modified Time Using Epoch
+    [Documentation]  FAIL Setting modified time of '${TESTFILE}' failed: Epoch time must be positive (got -1)
+    Create File  ${TESTFILE}
+    Set Modified Time  ${TESTFILE}  1177575740
+    ${mtime} =  Get Modified Time  ${TESTFILE}
+    Should Be Equal  ${mtime}  2007-04-26 11:22:20
+    Set Modified time  ${TESTFILE}  -1
+
+Set Modified Time Using Timestamp
+    [Documentation]  FAIL Setting modified time of '${TESTFILE}' failed: Invalid time format 'invalid'
+    Create File  ${TESTFILE}
+    :FOR  ${timestamp}  IN  2007-04-26 11:22:30  20070426 11:22:30  20070426 112230  20070426-112230  20070426 11:22:30.456
+    ...  20070426 11:22:29.9  invalid
+    \  Set Modified Time  ${TESTFILE}  ${timestamp}
+    \  ${mtime} =  Get Modified Time  ${TESTFILE}  epoch
+    \  Should Be Equal  ${mtime}  ${1177575750}
+
+Set Modified Time Using NOW
+    [Documentation]  FAIL Setting modified time of '${TESTFILE}' failed: Invalid time string 'invalid'
+    Create File  ${TESTFILE}
+    ${t0} =  Get Modified Time  ${TESTFILE}  epoch
+    Sleep  2.5 s
+    Set Modified Time  ${TESTFILE}  NOW
+    ${t1} =  Get Modified Time  ${TESTFILE}  epoch
+    Should Be True  ${t0} < ${t1} < ${t0}+5
+    Set Modified Time  ${TESTFILE}  NOW-1day
+    ${t2} =  Get Modified Time  ${TESTFILE}  epoch
+    Should Be True  ${t2}-4 <= ${t1} - 24*60*60 <= ${t2}
+    Set Modified Time  ${TESTFILE}  now + 1 day 2 hour 3 min 4 seconds 10 ms
+    ${t3} =  Get Modified Time  ${TESTFILE}  epoch
+    Should Be True  ${t3}-9 <= ${t1} + (24*60*60 + 2*60*60 + 3*60 + 4) <= ${t3}
+    Set Modified Time  ${TESTFILE}  NOW + invalid
+
+Set Modified Time Fails When Path Does Not Exist
+    [Documentation]  FAIL Setting modified time of '${CURDIR}${/}does_not_exist' failed: File does not exist
+    Set Modified Time  ${CURDIR}${/}does_not_exist  0
+
+Set Modified Time Fails When Path Is Directory
+    [Documentation]  FAIL Setting modified time of '${CURDIR}' failed: Modified time can only be set to regular files
+    Set Modified Time  ${CURDIR}  0
+
+
+*** Keywords ***
+Remove Temps
+    Remove File  ${TESTFILE}
+    Remove Dir  ${TESTDIR}  recursive
+

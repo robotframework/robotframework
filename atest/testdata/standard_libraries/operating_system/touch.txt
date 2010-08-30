@@ -1,0 +1,38 @@
+*** Settings ***
+Suite Teardown  Remove Temps
+Test Setup      Remove Temps
+Library         OperatingSystem
+
+*** Variables ***
+${TESTFILE}  ${CURDIR}${/}robot_temp_file.txt
+${TESTDIR}  ${CURDIR}${/}robot_temp_dir
+
+*** Test Cases ***
+Touch
+    Should Not Exist  ${TESTFILE}
+    Touch  ${TESTFILE}
+    File Should Be Empty  ${TESTFILE}
+    ${time1} =  Get Modified Time  ${TESTFILE}  epoch
+    Sleep  2.5 s
+    Touch  ${TESTFILE}
+    ${time2} =  Get Modified Time  ${TESTFILE}  epoch
+    Should Be True  ${time2} > ${time1}
+    Create File  ${TESTFILE}  Some text\nin 2 lines\n
+    Touch  ${TESTFILE}
+    ${content} =  Get File  ${TESTFILE}
+    Should Be Equal  ${content}  Some text\nin 2 lines\n
+
+Touch Dir Fails
+    [Documentation]  FAIL Cannot touch '${CURDIR}' because it is a directory
+    Touch  ${CURDIR}
+
+Touch When Parent Does Not Exist Fails
+    [Documentation]  FAIL Cannot touch '${TESTDIR}${/}file.txt' because its parent directory does not exist
+    Fail If Dir Exists  ${TESTDIR}
+    Touch  ${TESTDIR}/file.txt
+
+*** Keywords ***
+Remove Temps
+    Remove File  ${TESTFILE}
+    Remove Dir  ${TESTDIR}  recursive
+

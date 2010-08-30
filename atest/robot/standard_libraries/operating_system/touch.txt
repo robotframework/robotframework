@@ -1,0 +1,19 @@
+*** Settings ***
+Suite Setup     Run Tests  ${EMPTY}  standard_libraries/operating_system/touch.txt
+Force Tags      regression  jybot  pybot
+Resource        atest_resource.txt
+
+*** Test Cases ***
+Touch
+    ${tc} =  Check testcase  Touch
+    ${path} =  Join Path  ${CURDIR}/../../..  testdata  standard_libraries  operating_system  robot_temp_file.txt
+    Check Log Message  ${tc.kws[1].msgs[0]}  Touched new file '<a href="file://${path}">${path}</a>'  HTML
+    Check Log Message  ${tc.kws[5].msgs[0]}  Touched existing file '<a href="file://${path}">${path}</a>'  HTML
+    Check Log Message  ${tc.kws[9].msgs[0]}  Touched existing file '<a href="file://${path}">${path}</a>'  HTML
+
+Touch Dir Fails
+    Check testcase  Touch Dir Fails
+
+Touch When Parent Does Not Exist Fails
+    Check testcase  Touch When Parent Does Not Exist Fails
+
