@@ -28,10 +28,9 @@ class XmlLogger:
         self._namegen = utils.FileNameGenerator(path)
         self._log_message_is_logged = IsLogged(log_level)
         self._error_is_logged = IsLogged('WARN')
-        attrs = { 'generator': get_full_version(generator),
-                  'generated': utils.get_timestamp() }
         self._writer = None
-        self._writer_args = (path, attrs)
+        self._writer_args = (path, {'generator': get_full_version(generator),
+                                    'generated': utils.get_timestamp()})
         self._index_writer = None
         self._split_level = split_level
         self._suite_level = 0
@@ -71,14 +70,15 @@ class XmlLogger:
         return self._log_message_is_logged.set_level(level)
 
     def _message(self, msg):
-        html = msg.html and 'yes' or 'no'
-        attrs = { 'timestamp': msg.timestamp, 'level': msg.level, 'html': html }
+        attrs = {'timestamp': msg.timestamp, 'level': msg.level}
+        if msg.html:
+            attrs['html'] = 'yes'
         if msg.linkable:
             attrs['linkable'] = 'yes'
         self._writer.element('msg', msg.message, attrs)
 
     def start_keyword(self, kw):
-        attrs = { 'name': kw.name, 'type': kw.type, 'timeout': kw.timeout }
+        attrs = {'name': kw.name, 'type': kw.type, 'timeout': kw.timeout}
         self._writer.start('kw', attrs)
         self._writer.element('doc', kw.doc)
         self._write_list('arg', [utils.unic(a) for a in kw.args], 'arguments')
@@ -88,8 +88,8 @@ class XmlLogger:
         self._writer.end('kw')
 
     def start_test(self, test):
-        attrs = { 'name': test.name, 'critical': test.critical,
-                  'timeout': str(test.timeout) }
+        attrs = {'name': test.name, 'critical': test.critical,
+                 'timeout': str(test.timeout)}
         self._writer.start('test', attrs)
         self._writer.element('doc', test.doc)
 
@@ -215,6 +215,6 @@ class XmlLogger:
             self._writer.end(container)
 
     def _write_status(self, item, message=None):
-        attrs = { 'status': item.status, 'starttime': item.starttime,
-                  'endtime': item.endtime }
-        self._writer.element('status', message, attrs)
+        self._writer.element('status', message, {'status': item.status,
+                                                 'starttime': item.starttime,
+                                                 'endtime': item.endtime})
