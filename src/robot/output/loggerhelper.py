@@ -68,6 +68,7 @@ class Message:
                                              timesep=':', millissep='.')
         self.level, self.html = self._get_level_and_html(level, html)
         self.message = self._process_message(message)
+        self.linkable = False
 
     def _get_level_and_html(self, level, html):
         level = level.upper()

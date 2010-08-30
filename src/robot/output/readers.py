@@ -297,6 +297,7 @@ class Message:
         self.level = node.get_attr('level', 'INFO')
         self.message = node.text
         self.html = node.get_attr('html', 'no') == 'yes'
+        self.linkable = node.get_attr('linkable', 'no') == 'yes'
 
     def serialize(self, serializer):
         serializer.message(self)

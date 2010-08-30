@@ -73,6 +73,8 @@ class XmlLogger:
     def _message(self, msg):
         html = msg.html and 'yes' or 'no'
         attrs = { 'timestamp': msg.timestamp, 'level': msg.level, 'html': html }
+        if msg.linkable:
+            attrs['linkable'] = 'yes'
         self._writer.element('msg', msg.message, attrs)
 
     def start_keyword(self, kw):

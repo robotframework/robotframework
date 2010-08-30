@@ -100,6 +100,7 @@ class _Logger(AbstractLogger):
         for logger in self._loggers:
             logger.log_message(msg)
         if msg.level == 'WARN':
+            msg.linkable = True
             self.message(msg)
 
     def output_file(self, name, path):

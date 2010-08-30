@@ -30,8 +30,11 @@ Link From Log's "Statistics By Suite" Table To Log's Details
     Should Contain  ${LOG}  <a class="name" name="suite_Multiple Suites.Subsuite1.Suite4" title="Multiple Suites.Subsuite1.Suite4">Suite4</a>
 
 Link From Log's "Test Execution Errors" Table To Log's Details
-    ${match}  ${group1}  ${group2} =  Should Match Regexp  ${LOG}  <td class="time"><a href="#msg_(\\d{8}) (\\d{2}:\\d{2}:\\d{2}.\\d{3})" onclick="set_element_visible\\('msg_\\d{8} \\d{2}:\\d{2}:\\d{2}.\\d{3}'\\)" title="Link to log when error occurred during execution.">\\d{8}&nbsp;\\d{2}:\\d{2}:\\d{2}.\\d{3}</a></td>
+    ${match}  ${group1}  ${group2} =  Should Match Regexp  ${LOG}  <td class="time"><a href="#msg_(\\d{8}) (\\d{2}:\\d{2}:\\d{2}.\\d{3})" onclick="set_element_visible\\('msg_\\d{8} \\d{2}:\\d{2}:\\d{2}.\\d{3}'\\)" title="Link to details.">\\d{8}&nbsp;\\d{2}:\\d{2}:\\d{2}.\\d{3}</a></td>\n<td class="warn level">WARN</td>\n<td class="msg">warning</td>
     Should Contain  ${LOG}  <td class="time" id="msg_${group1} ${group2}">${group2}</td>
+
+No Link From Log's "Test Execution Errors" Table To Log's Details When There Is No Link Target
+    Should Match Regexp  ${LOG}  <td class="time">\\d{8}&nbsp;\\d{2}:\\d{2}:\\d{2}.\\d{3}</td>\n<td class="error level">ERROR</td>\n<td class="msg">Invalid syntax in file '.*SUite7.html' in table 'Setting': Importing test library 'NonExisting' failed:
 
 *** Keywords ***
 Create Report And Log And Read Those Content
