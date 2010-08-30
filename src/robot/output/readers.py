@@ -19,7 +19,7 @@ from robot import utils
 from robot.errors import DataError, XmlParsingError
 from robot.common import BaseTestSuite, BaseTestCase, BaseKeyword
 from robot.output import LOGGER
-from robot.output.loggerhelper import IsLogged
+from robot.output.loggerhelper import IsLogged, Message
 
 
 def process_outputs(paths, settings):
@@ -150,7 +150,7 @@ class _KeywordReader(_BaseReader):
                 self.keywords.append(kw)
                 self.children.append(kw)
             elif child.name == 'msg' and log_filter(child.get_attr('level', 'INFO')):
-                msg = Message(child)
+                msg = MessageFromXml(child)
                 self.messages.append(msg)
                 self.children.append(msg)
 
@@ -290,14 +290,14 @@ class Keyword(BaseKeyword, _KeywordReader):
         serializer.end_keyword(self)
 
 
-class Message:
+class MessageFromXml(Message):
 
     def __init__(self, node):
-        self.timestamp = node.get_attr('timestamp', 'N/A')
-        self.level = node.get_attr('level', 'INFO')
-        self.message = node.text
-        self.html = node.get_attr('html', 'no') == 'yes'
-        self.linkable = node.get_attr('linkable', 'no') == 'yes'
+        Message.__init__(self, node.text,
+                         level=node.get_attr('level', 'INFO'),
+                         html=node.get_attr('html', 'no') == 'yes',
+                         timestamp=node.get_attr('timestamp', 'N/A'),
+                         linkable=node.get_attr('linkable', 'no') == 'yes')
 
     def serialize(self, serializer):
         serializer.message(self)
@@ -317,7 +317,7 @@ class ExecutionErrors:
         if node is None:
             self.messages = []
         else:
-            self.messages = [ Message(msg) for msg in node.get_nodes('msg') ]
+            self.messages = [MessageFromXml(msg) for msg in node.get_nodes('msg')]
 
     def serialize(self, serializer):
         serializer.start_errors(self)

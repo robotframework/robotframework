@@ -61,14 +61,18 @@ class AbstractLogger:
         raise NotImplementedError(self.__class__)
 
 
-class Message:
+class Message(object):
 
-    def __init__(self, message, level='INFO', html=False):
-        self.timestamp = utils.get_timestamp(daysep='', daytimesep=' ',
-                                             timesep=':', millissep='.')
+    def __init__(self, message, level='INFO', html=False, timestamp=None, linkable=False):
+        self.message = self._get_message(message)
         self.level, self.html = self._get_level_and_html(level, html)
-        self.message = self._process_message(message)
-        self.linkable = False
+        self.timestamp = self._get_timestamp(timestamp)
+        self.linkable = linkable
+
+    def _get_message(self, msg):
+        if not isinstance(msg, basestring):
+            msg = utils.unic(msg)
+        return msg.replace('\r\n', '\n')
 
     def _get_level_and_html(self, level, html):
         level = level.upper()
@@ -78,10 +82,11 @@ class Message:
             raise DataError("Invalid log level '%s'" % level)
         return level, html
 
-    def _process_message(self, msg):
-        if not isinstance(msg, basestring):
-            msg = utils.unic(msg)
-        return msg.replace('\r\n', '\n')
+    def _get_timestamp(self, timestamp):
+        if timestamp:
+            return timestamp
+        return utils.get_timestamp(daysep='', daytimesep=' ',
+                                   timesep=':', millissep='.')
 
 
 class IsLogged:
