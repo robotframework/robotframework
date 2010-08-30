@@ -68,7 +68,7 @@ class CommandLineMonitor:
             message = '[ %s ] %s' % (self._highlight(msg.level), msg.message)
             self._write(message, stream=sys.__stderr__)
 
-    def _write(self, message, newline=True, stream=sys.stdout):
+    def _write(self, message, newline=True, stream=sys.__stdout__):
         if newline:
             message += '\n'
         stream.write(utils.encode_output(message).replace('\t', ' '*8))
