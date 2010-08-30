@@ -20,32 +20,34 @@ import os
 import fnmatch
 
 
-def norm_path(path):
-    path = os.path.normpath(path)
-    # If windows or cyqwin (os.path.normcase not supported in jython)
-    if os.sep == '\\' or sys.platform.count('cygwin') > 0:
-        path = path.lower()
-    return path
-
 def add_path(path, to_beginning=False, force=False):
-    if not path:
-        return
-    path = norm_path(path)
-    if path not in sys.path and (os.path.exists(path) or force):
+    if _should_be_added(path, force):
         if to_beginning:
             sys.path.insert(0, path)
         else:
             sys.path.append(path)
 
 def remove_path(path):
-    path = norm_path(path)
-    while path in sys.path:
-        sys.path.remove(path)
+    path = _normpath(path)
+    sys.path = [p for p in sys.path if _normpath(p) != path]
+
+def _should_be_added(path, force):
+    if (not path) or _find_in_syspath_normalized(path):
+        return False
+    return force or os.path.exists(path)
+
+def _find_in_syspath_normalized(path):
+    path = _normpath(path)
+    for element in sys.path:
+        if _normpath(element) == path:
+            return element
+    return None
+
+def _normpath(path):
+    return os.path.normcase(os.path.normpath(path))
 
 
-sys.path = [ norm_path(p) for p in sys.path ]
-
-ROBOTDIR = norm_path(os.path.dirname(os.path.abspath(__file__)))
+ROBOTDIR = os.path.dirname(os.path.abspath(__file__))
 PARENTDIR = os.path.dirname(ROBOTDIR)
 
 add_path(os.path.join(ROBOTDIR, 'libraries'), to_beginning=True,
@@ -69,4 +71,4 @@ if PYPATH:
 # Current dir (it seems to be in Jython by default so let's be consistent)
 add_path('.')
 
-del norm_path, add_path, remove_path, ROBOTDIR, PARENTDIR, PYPATH
+del _find_in_syspath_normalized, _normpath, add_path, remove_path, ROBOTDIR, PARENTDIR, PYPATH
