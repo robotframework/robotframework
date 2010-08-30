@@ -74,7 +74,7 @@ class LogSerializer:
         attrs = {'class': 'time'}
         if msg.level in ['WARN', 'ERROR']:
             # Allow linking from Test Execution Errors table
-            attrs['id'] = 'msg_%s' % msg.timestamp
+            attrs['id'] = 'msg_%s' % msg.timestamp.replace(' ','_')
         self._writer.element('td', msg.timestamp.split()[1], attrs)
         self._writer.element('td', msg.level,
                              {'class': '%s level' % msg.level.lower()})
@@ -291,8 +291,8 @@ class ErrorSerializer:
 
     def _write_timestamp(self, msg):
         if msg.linkable:
-            attrs = {'href': "#msg_%s" % msg.timestamp,
-                     'onclick': "set_element_visible('msg_%s')" % msg.timestamp,
+            attrs = {'href': "#msg_%s" % msg.timestamp.replace(' ','_'),
+                     'onclick': "set_element_visible('msg_%s')" % msg.timestamp.replace(' ','_'),
                      'title': 'Link to details.'}
             self._writer.start('a', attrs, newline=False)
         self._writer.content(msg.timestamp.replace(' ', '&nbsp;'), escape=False)
