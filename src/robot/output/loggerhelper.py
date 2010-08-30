@@ -88,6 +88,15 @@ class Message(object):
         return utils.get_timestamp(daysep='', daytimesep=' ',
                                    timesep=':', millissep='.')
 
+    def get_timestamp(self, sep=' '):
+        return self.timestamp.replace(' ', sep)
+
+    @property
+    def time(self):
+        if ' ' not in self.timestamp:
+            return self.timestamp
+        return self.timestamp.split()[1]
+
 
 class IsLogged:
 
