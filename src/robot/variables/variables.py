@@ -61,11 +61,11 @@ class Variables(utils.NormalizedDict):
         if path:
             msg += " in file '%s'" % path
         msg += " before Robot Framework 2.6."
-        # An ugly  hack to get messages to log file when possible. log_message
-        # fails if writing XML hasn't started e.g. when processing Variable table
-        try:
+        # If path is not known we are executing keywords and can use
+        # log_message which will create also links.
+        if not path:
             LOGGER.log_message(Message(msg, 'WARN'))
-        except AttributeError:
+        else:
             LOGGER.warn(msg)
 
     def __getitem__(self, name):
