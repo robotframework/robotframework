@@ -46,16 +46,19 @@ class Variables(utils.NormalizedDict):
         utils.NormalizedDict.__init__(self, ignore=['_'])
         self._identifiers = identifiers
 
-    def __setitem__(self, name, value, path=None):
+    def __setitem__(self, name, value, path=None, depr_warning=True):
         if not is_var(name):
             raise DataError("Invalid variable name '%s'." % name)
-        self._deprecation_warning_if_basename_already_used(name, path)
+        if depr_warning:
+            self._deprecation_warning_if_basename_already_used(name, path)
         utils.NormalizedDict.__setitem__(self, name, value)
 
     def _deprecation_warning_if_basename_already_used(self, name, path):
         other = ('@' if name[0] == '$' else '$') + name[1:]
-        if not utils.NormalizedDict.__contains__(self, other):
-            return
+        if utils.NormalizedDict.__contains__(self, other):
+            self._log_warning_when_basename_already_used(name, other, path)
+
+    def _log_warning_when_basename_already_used(self, name, other, path):
         msg = ("Using same base name with scalar and list variables is "
                "deprecated. Please change either '%s' or '%s'") % (name, other)
         if path:
