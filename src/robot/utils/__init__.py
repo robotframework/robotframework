@@ -30,7 +30,8 @@ from robottime import (get_timestamp, get_start_timestamp, format_time,
                        get_time, get_elapsed_time, elapsed_time_to_string,
                        timestr_to_secs, secs_to_timestr, secs_to_timestamp,
                        timestamp_to_secs, parse_time)
-from text import cut_long_message, format_assign_message
+from text import (cut_long_message, format_assign_message,
+                  pad_console_length, get_console_length)
 from unic import unic, safe_repr
 from xmlwriter import XmlWriter
 
