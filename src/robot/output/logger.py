@@ -17,7 +17,7 @@ import os
 
 from robot import utils
 
-from loggerhelper import AbstractLogger, AbstractLoggerProxy
+from loggerhelper import AbstractLogger, AbstractLoggerProxy, Message
 from filelogger import FileLogger
 from monitor import CommandLineMonitor
 
@@ -102,6 +102,10 @@ class _Logger(AbstractLogger):
         if msg.level == 'WARN':
             msg.linkable = True
             self.message(msg)
+
+    def warn(self, msg, log=False):
+        method = self.log_message if log else self.message
+        method(Message(msg, 'WARN'))
 
     def output_file(self, name, path):
         """Finished output, report, log, summary or debug file (incl. split)"""

@@ -22,7 +22,7 @@ else:
 
 from robot import utils
 from robot.errors import DataError
-from robot.output import LOGGER, Message
+from robot.output import LOGGER
 
 from isvar import is_var, is_scalar_var
 
@@ -61,12 +61,8 @@ class Variables(utils.NormalizedDict):
         if path:
             msg += " in file '%s'" % path
         msg += " before Robot Framework 2.6."
-        # If path is not known we are executing keywords and can use
-        # log_message which will create also links.
-        if not path:
-            LOGGER.log_message(Message(msg, 'WARN'))
-        else:
-            LOGGER.warn(msg)
+        # If path is not known we are executing keywords and can log message
+        LOGGER.warn(msg, log=not path)
 
     def __getitem__(self, name):
         if not is_var(name):
@@ -282,14 +278,13 @@ class Variables(utils.NormalizedDict):
     def _get_var_table_scalar_value(self, name, value, path=None):
         if len(value) == 1:
             return self.replace_scalar(value[0])
-        msg = ("Creating scalar variable with more than one value is "
-               "deprecated and this functionality will be removed in "
+        msg = ("Creating a scalar variable with a list value in the Variable "
+               "table is deprecated and this functionality will be removed in "
                "Robot Framework 2.6. Create a list variable '@%s' and use "
                "it as a scalar variable '%s' instead" % (name[1:], name))
         if path:
             msg += " in file '%s'" % path
-        msg += '.'
-        LOGGER.warn(msg)
+        LOGGER.warn(msg + '.')
         return self.replace_list(value)
 
     def _get_variables_from_module(self, module, args):
