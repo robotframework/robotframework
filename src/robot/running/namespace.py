@@ -267,9 +267,9 @@ class Namespace:
         return None
 
     def _get_implicit_handler(self, name):
-        for method in [ self._get_handler_from_test_case_file_user_keywords,
-                        self._get_handler_from_resource_file_user_keywords,
-                        self._get_handler_from_library_keywords ]:
+        for method in [self._get_handler_from_test_case_file_user_keywords,
+                       self._get_handler_from_resource_file_user_keywords,
+                       self._get_handler_from_library_keywords]:
             handler = method(name)
             if handler:
                 return handler
@@ -280,8 +280,8 @@ class Namespace:
             return self.suite.user_keywords.get_handler(name)
 
     def _get_handler_from_resource_file_user_keywords(self, name):
-        found = [ lib.get_handler(name)
-                  for lib in self._userlibs if lib.has_handler(name) ]
+        found = [lib.get_handler(name) for lib in self._userlibs
+                 if lib.has_handler(name)]
         if not found:
             return None
         if len(found) == 1:
@@ -289,8 +289,8 @@ class Namespace:
         self._raise_multiple_keywords_found(name, found)
 
     def _get_handler_from_library_keywords(self, name):
-        found = [ lib.get_handler(name)
-                  for lib in self._testlibs.values() if lib.has_handler(name) ]
+        found = [lib.get_handler(name) for lib in self._testlibs.values()
+                 if lib.has_handler(name)]
         if not found:
             return None
         if len(found) > 1:
@@ -309,34 +309,34 @@ class Namespace:
                     return [handler]
         return handlers
 
-    def _filter_stdlib_handler(self, hand1, hand2):
-        if hand1.library.orig_name in STDLIB_NAMES:
-            std_hand, ext_hand = hand1, hand2
-        elif hand2.library.orig_name in STDLIB_NAMES:
-            std_hand, ext_hand = hand2, hand1
+    def _filter_stdlib_handler(self, handler1, handler2):
+        if handler1.library.orig_name in STDLIB_NAMES:
+            standard, external = handler1, handler2
+        elif handler2.library.orig_name in STDLIB_NAMES:
+            standard, external = handler2, handler1
         else:
-            return [hand1, hand2]
-        if not RUN_KW_REGISTER.is_run_keyword(ext_hand.library.orig_name, ext_hand.name):
+            return [handler1, handler2]
+        if not RUN_KW_REGISTER.is_run_keyword(external.library.orig_name, external.name):
             LOGGER.warn(
                 "Keyword '%s' found both from a user created test library "
                 "'%s' and Robot Framework standard library '%s'. The user "
                 "created keyword is used. To select explicitly, and to get "
-                "rid of this warning, use full format i.e. either '%s' or '%s'."
-                % (std_hand.name,
-                   ext_hand.library.orig_name, std_hand.library.orig_name,
-                   ext_hand.longname, std_hand.longname))
-        return [ext_hand]
+                "rid of this warning, use either '%s' or '%s'."
+                % (standard.name,
+                   external.library.orig_name, standard.library.orig_name,
+                   external.longname, standard.longname))
+        return [external]
 
     def _get_explicit_handler(self, name):
         libname, kwname = self._split_keyword_name(name)
         # 1) Find matching lib(s)
-        libs = [ lib for lib in self._userlibs + self._testlibs.values()
-                 if utils.eq(lib.name, libname) ]
+        libs = [lib for lib in self._userlibs + self._testlibs.values()
+                if utils.eq(lib.name, libname)]
         if not libs:
             return None
         # 2) Find matching kw from found libs
-        found = [ lib.get_handler(kwname)
-                  for lib in libs if lib.has_handler(kwname) ]
+        found = [lib.get_handler(kwname) for lib in libs
+                 if lib.has_handler(kwname)]
         if len(found) > 1:
             self._raise_multiple_keywords_found(name, found, implicit=False)
         return found and found[0] or None
@@ -351,8 +351,7 @@ class Namespace:
         error = "Multiple keywords with name '%s' found.\n" % name
         if implicit:
             error += "Give the full name of the keyword you want to use.\n"
-        names = [ handler.longname for handler in found ]
-        names.sort()
+        names = sorted(handler.longname for handler in found)
         error += "Found: %s" % utils.seq2str(names)
         raise DataError(error)
 
