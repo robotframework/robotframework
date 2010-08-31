@@ -1,5 +1,6 @@
 *** Settings ***
 Variables  same_basename.py
+Suite Setup  Setup
 
 *** Variables ***
 ${TABLE}=  Value
@@ -18,10 +19,14 @@ Assign Variables
     Should Be True  @{assign} == 'a b c'.split()
 
 Set Test/Suite/Global Variable
-    Set Test Variable  ${set}  -value-
-    Set Suite Variable  @{SET}  1  2  3
-    Should Be Equal  ${set}  -value-
-    Should Be True  @{set} == '1 2 3'.split()
+    ${SET} =  Set Variable  initial
+    Should Be Equal  ${SET}  initial
+    Set Test Variable  @{SET}  test  var
+    Should Be True  @{set} == 'test var'.split()
+    Set Suite Variable  @{SET}  suite  var
+    Should Be True  @{set} == 'suite var'.split()
+    Set Global Variable  @{SET}  global  var
+    Should Be True  @{set} == 'global var'.split()
 
 Variable File
     Should Be Equal  ${VARFILE}  VaLuE
@@ -31,3 +36,22 @@ Combinations
     @{table2}=  Create List  42
     Should Be Equal  ${TABLE2}  Value2
     Should Be True  @{table2} == ['42']
+
+Set Variables In User Keyword
+    ${set} =  Set Variable  initial
+    UK
+
+*** Keywords ***
+UK
+    Another UK
+
+Another UK
+    Warning In UK
+
+Warning In UK
+    @{set} =  Create List  deprecated usage
+    Set Test Variable  @{set}  another deprecated usage
+
+Setup
+    Set Suite Variable  ${setup}  suite
+    Set Suite Variable  @{setup}  suite var
