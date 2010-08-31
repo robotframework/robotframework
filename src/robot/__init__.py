@@ -24,8 +24,8 @@ from output import Output, CommandLineMonitor, LOGGER
 from conf import RobotSettings, RebotSettings
 from running import TestSuite, STOP_SIGNAL_MONITOR
 from serializing import RobotTestOutput, RebotTestOutput, SplitIndexTestOutput
-from errors import DataError, Information, XmlParsingError, INFO_PRINTED, \
-        DATA_ERROR, STOPPED_BY_USER, FRAMEWORK_ERROR
+from errors import (DataError, Information, INFO_PRINTED, DATA_ERROR,
+                    STOPPED_BY_USER, FRAMEWORK_ERROR)
 from variables import init_global_variables
 from version import get_version, get_full_version
 import utils
@@ -58,10 +58,8 @@ def _run_or_rebot_from_cli(method, cliargs, usage, **argparser_config):
     LOGGER.info('Data sources: %s' % utils.seq2str(datasources))
     try:
         suite = method(*datasources, **options)
-    except DataError:
-        _exit(DATA_ERROR, *utils.get_error_details())
-    except XmlParsingError, error:
-        _exit(DATA_ERROR, utils.unic(error), error.traceback)
+    except DataError, err:
+        _exit(DATA_ERROR, unicode(err))
     except (KeyboardInterrupt, SystemExit):
         _exit(STOPPED_BY_USER, 'Execution stopped by user.')
     except:

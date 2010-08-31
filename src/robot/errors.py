@@ -139,16 +139,9 @@ class ExecutionFailures(ExecutionFailed):
         return self._errors
 
 
-class _RobotErrorWithTrace(RobotError):
+class RemoteError(RobotError):
+    """Used by Remote library to report remote errors."""
 
     def __init__(self, message, traceback):
         RobotError.__init__(self, message)
         self.traceback = traceback
-
-
-class RemoteError(_RobotErrorWithTrace):
-    """Used by Remote library to report remote errors."""
-
-
-class XmlParsingError(_RobotErrorWithTrace):
-    """Used when parsing XML fails."""

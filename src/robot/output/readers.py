@@ -16,7 +16,7 @@
 import os.path
 
 from robot import utils
-from robot.errors import DataError, XmlParsingError
+from robot.errors import DataError
 from robot.common import BaseTestSuite, BaseTestCase, BaseKeyword
 from robot.output import LOGGER
 from robot.output.loggerhelper import IsLogged, Message
@@ -47,12 +47,9 @@ def process_output(path, read_level=-1, log_level=None):
     LOGGER.info("Processing output file '%s'." % path)
     try:
         root = utils.DomWrapper(path)
-    except utils.RERAISED_EXCEPTIONS:
-        raise
     except:
-        message, traceback = utils.get_error_details()
-        raise XmlParsingError("Opening XML file '%s' failed: %s" %
-                              (path, message), traceback)
+        err = utils.get_error_message()
+        raise DataError("Opening XML file '%s' failed: %s" % (path, err))
     suite = _get_suite_node(root, path)
     errors = _get_errors_node(root)
     return TestSuite(suite, read_level, log_level=log_level), ExecutionErrors(errors)
