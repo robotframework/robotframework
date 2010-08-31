@@ -66,7 +66,7 @@ Assign Mark With List Variable
 Syslog Contains Deprecation Warning About Variable
     [Arguments]  ${name}
     Check Syslog Contains Regexp
-    ...  Creating scalar variable with more than one value is deprecated and
-    ...  this functionality will be removed in Robot Framework 2\\.6\\. Create
-    ...  a list variable '@\\{${name}}' and use it as a scalar variable
-    ...  '\\$\\{${name}}' instead in file '.*'\\.
+    ...  Creating a scalar variable with a list value in the Variable table is
+    ...  deprecated and this functionality will be removed in Robot Framework
+    ...  2\\.6\\. Create a list variable '@\\{${name}}' and use it as a scalar 
+    ...  variable '\\$\\{${name}}' instead in file '.*'\\.
