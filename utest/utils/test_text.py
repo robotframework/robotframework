@@ -3,7 +3,8 @@ import unittest
 from robot.utils.asserts import *
 
 from robot.utils.text import cut_long_message, _count_line_lenghts, \
-    _MAX_ERROR_LINES, _MAX_ERROR_LINE_LENGTH, _ERROR_CUT_EXPLN
+    _MAX_ERROR_LINES, _MAX_ERROR_LINE_LENGTH, _ERROR_CUT_EXPLN,\
+    get_console_length, pad_console_length
 
 
 class NoCutting(unittest.TestCase):
@@ -133,7 +134,37 @@ class TestCountLines(unittest.TestCase):
         lengths = [b-1, b, b+1, 2*b-1, 2*b, 2*b+1, 7*b-1, 7*b, 7*b+1]
         lines = [ 'e'*length for length in lengths ]
         assert_equal(_count_line_lenghts(lines), [1, 1, 2, 2, 2, 3, 7, 7, 8])
-    
-        
+
+
+class TestConsoleWidth(unittest.TestCase):
+
+    len16_asian = u'\u6c49\u5b57\u5e94\u8be5\u6b63\u786e\u5bf9\u9f50'
+    ten_normal = u'1234567890'
+    mixed_26 = u'012345\u6c49\u5b57\u5e94\u8be5\u6b63\u786e\u5bf9\u9f567890'
+    nfd = u'A\u030Abo'
+
+    def test_console_width(self):
+        assert_equal(get_console_length(self.ten_normal), 10)
+
+    def test_east_asian_width(self):
+        assert_equal(get_console_length(self.len16_asian), 16)
+
+    def test_combining_width(self):
+        assert_equal(get_console_length(self.nfd), 3)
+
+    def test_cut_right(self):
+        assert_equal(pad_console_length(self.ten_normal, 5), '12...')
+        assert_equal(pad_console_length(self.ten_normal, 15), self.ten_normal+' '*5)
+        assert_equal(pad_console_length(self.ten_normal, 10), self.ten_normal)
+
+    def test_cut_left(self):
+        assert_equal(pad_console_length(self.ten_normal, 5, cut_left=True), '...90')
+
+    def test_cut_east_asian(self):
+        assert_equal(pad_console_length(self.len16_asian, 10), u'\u6c49\u5b57\u5e94... ')
+        assert_equal(pad_console_length(self.len16_asian, 10, cut_left=True), u'...\u786e\u5bf9\u9f50 ')
+        assert_equal(pad_console_length(self.mixed_26, 11), u'012345\u6c49...')
+
+
 if __name__ == '__main__':
     unittest.main()

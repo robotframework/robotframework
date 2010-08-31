@@ -16,6 +16,7 @@
 import sys
 
 from robot import utils
+from robot.utils.text import pad_console_length, get_console_length # TODO: to __init__
 
 from loggerhelper import IsLogged
 
@@ -79,17 +80,15 @@ class CommandLineMonitor:
         if not start_suite:
             maxwidth -= len(' | PASS |')
         info = self._get_info(name, doc, maxwidth)
-        self._write(info.ljust(maxwidth), newline=start_suite)
+        self._write(info, newline=start_suite)
 
     def _get_info(self, name, doc, maxwidth):
-        if len(name) > maxwidth:
-            return '...' + name[-maxwidth+3:]
+        if get_console_length(name) > maxwidth:
+            return pad_console_length(name, maxwidth, cut_left=True)
         if doc == '':
-            return name
+            return pad_console_length(name, maxwidth)
         info = '%s :: %s' % (name, doc.splitlines()[0])
-        if len(info) > maxwidth:
-            info = info[:maxwidth-3] + '...'
-        return info
+        return pad_console_length(info, maxwidth)
 
     def _write_status(self, status):
         self._write(' | %s |' % self._highlight(status))

@@ -14,6 +14,7 @@
 
 from unic import unic
 from misc import seq2str2
+from charwidth import get_char_width
 
 
 _MAX_ASSIGN_LENGTH = 200
@@ -74,3 +75,34 @@ def format_assign_message(variable, value, cut_long=True):
         value = value[:_MAX_ASSIGN_LENGTH] + '...'
     return '%s = %s' % (variable, value)
 
+
+def get_console_length(text):
+    return sum(get_char_width(char) for char in text)
+
+
+def pad_console_length(text, width, cut_left=False):
+    if width < 5:
+        width = 5
+    diff = get_console_length(text) - width
+    if diff <= 0:
+        return _pad_width(text, width)
+    if cut_left:
+        return _pad_width('...'+_lose_width_left(text, diff+3), width)
+    return _pad_width(_lose_width_right(text, diff+3)+'...', width)
+
+def _pad_width(text, width):
+    more = width - get_console_length(text)
+    return text + ' ' * more
+
+def _lose_width_right(text, diff):
+    return _lose_width(text, diff, -1, slice(None, -1))
+
+def _lose_width_left(text, diff):
+    return _lose_width(text, diff, 0, slice(1, None))
+
+def _lose_width(text, diff, index, slice):
+    lost = 0
+    while lost < diff:
+        lost += get_console_length(text[index])
+        text = text[slice]
+    return text
