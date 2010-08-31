@@ -1,5 +1,53 @@
-#TODO: Copyright
-east_asian_chars = [
+#  Copyright 2008-2010 Nokia Siemens Networks Oyj
+#
+#  Licensed under the Apache License, Version 2.0 (the "License");
+#  you may not use this file except in compliance with the License.
+#  You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+#  Unless required by applicable law or agreed to in writing, software
+#  distributed under the License is distributed on an "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#  See the License for the specific language governing permissions and
+#  limitations under the License.
+
+
+"""A module to handle different character widths on the console.
+
+Some East Asian characters have width of two on console, and combining
+characters themselves take no extra space.
+
+See issue 604 [1] for more details. It also contains `generate_wild_chars.py`
+script that was originally used to create the East Asian wild character map.
+Big thanks for xieyanbo for the script and the original patch.
+
+Note that Python's `unicodedata` module is not used here because importing
+it takes several seconds on Jython.
+
+[1] http://code.google.com/p/robotframework/issues/detail?id=604
+"""
+
+def get_char_width(char):
+    char = ord(char)
+    if _char_in_map(char, _COMBINING_CHARS):
+        return 0
+    if _char_in_map(char, _EAST_ASIAN_WILD_CHARS):
+        return 2
+    return 1
+
+def _char_in_map(char, map):
+    for begin, end in map:
+        if char < begin:
+            break
+        if begin <= char <= end:
+            return True
+    return False
+
+
+_COMBINING_CHARS = [(768,879)]
+
+_EAST_ASIAN_WILD_CHARS = [
         (888, 889), (896, 899), (909, 909), (1316, 1328), (1368, 1368),
         (1416, 1416), (1420, 1424), (1481, 1487), (1516, 1519),
         (1526, 1535), (1541, 1541), (1565, 1565), (1631, 1631),
@@ -66,21 +114,3 @@ east_asian_chars = [
         (65281, 65376), (65472, 65473), (65481, 65481), (65489, 65489),
         (65497, 65497), (65502, 65511), (65520, 65528), (65535, 65535),
         ]
-
-combining_chars = [(768,879)]
-
-def _char_in_ranges(char, ranges):
-    for begin, end in ranges:
-        if char < begin:
-            break
-        if begin <= char <= end:
-            return True
-    return False
-
-def get_char_width(char):
-    char = ord(char)
-    if  _char_in_ranges(char, combining_chars):
-        return 0
-    if _char_in_ranges(char, east_asian_chars):
-        return 2
-    return 1
