@@ -95,7 +95,7 @@ class _BaseSettings:
         if name in self._optional_outputs and utils.eq(value, 'NONE'):
             return 'NONE'
         if name == 'OutputDir':
-           return utils.normpath(value)
+            return utils.normpath(value)
         if name in ['SplitOutputs', 'SuiteStatLevel', 'MonitorWidth']:
             return self._convert_to_integer(name, value)
         if name in ['Listeners', 'VariableFiles']:
