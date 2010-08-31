@@ -52,7 +52,7 @@ def process_output(path, read_level=-1, log_level=None):
     except:
         message, traceback = utils.get_error_details()
         raise XmlParsingError("Opening XML file '%s' failed: %s" %
-                        (path, message), traceback)
+                              (path, message), traceback)
     suite = _get_suite_node(root, path)
     errors = _get_errors_node(root)
     return TestSuite(suite, read_level, log_level=log_level), ExecutionErrors(errors)
@@ -105,10 +105,10 @@ class _TestAndSuiteReader(_BaseReader):
 
     def __init__(self, node, log_level=None):
         _BaseReader.__init__(self, node)
-        self.keywords = [ Keyword(kw, log_level) for kw in node.get_nodes('kw') ]
-        if len(self.keywords) > 0 and self.keywords[0].type == 'setup':
+        self.keywords = [Keyword(kw, log_level) for kw in node.get_nodes('kw')]
+        if self.keywords and self.keywords[0].type == 'setup':
             self.setup = self.keywords.pop(0)
-        if len(self.keywords) > 0 and self.keywords[-1].type == 'teardown':
+        if self.keywords and self.keywords[-1].type == 'teardown':
             self.teardown = self.keywords.pop(-1)
 
 
@@ -121,14 +121,14 @@ class _SuiteReader(_TestAndSuiteReader):
             self.metadata[metanode.get_attr('name')] = metanode.text
 
     def _get_texts(self, node, path):
-        return [ item.text for item in node.get_nodes(path) ]
+        return [item.text for item in node.get_nodes(path)]
 
 
 class _TestReader(_TestAndSuiteReader):
 
     def __init__(self, node, log_level=None):
         _TestAndSuiteReader.__init__(self, node, log_level)
-        self.tags = [ tag.text for tag in node.get_nodes('tags/tag') ]
+        self.tags = [tag.text for tag in node.get_nodes('tags/tag')]
         self.timeout = node.get_attr('timeout', '')
 
 
@@ -137,7 +137,7 @@ class _KeywordReader(_BaseReader):
     def __init__(self, node, log_level=None):
         _BaseReader.__init__(self, node)
         del(self.message)
-        self.args = [ arg.text for arg in node.get_nodes('arguments/arg') ]
+        self.args = [arg.text for arg in node.get_nodes('arguments/arg')]
         self.type = node.get_attr('type', 'kw')
         self.timeout = node.get_attr('timeout', '')
         self.keywords = []
@@ -188,8 +188,8 @@ class TestSuite(BaseTestSuite, _SuiteReader):
         BaseTestSuite.set_status(self)
         if self.starttime == 'N/A' or self.endtime == 'N/A':
             subitems = self.suites + self.tests + [self.setup, self.teardown]
-            self.elapsedtime = sum([ item.elapsedtime for item in subitems
-                                     if item is not None ])
+            self.elapsedtime = sum(item.elapsedtime for item in subitems
+                                   if item is not None )
 
     def _set_critical_tags(self, critical):
         BaseTestSuite._set_critical_tags(self, critical)
