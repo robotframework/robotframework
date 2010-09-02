@@ -23,9 +23,11 @@ Get Time As Parts
     Should Be True  0 <= int('${sec}') <= 59
 
 When Time Is Seconds After Epoch
-    ${time} =  Get Time  ${EMPTY}  1177654467
+    ${secs} =  Evaluate  1177665267 + time.altzone  modules=time
+    ${time} =  Get Time  ${EMPTY}  ${secs}
     Should Be Equal  ${time}  2007-04-27 09:14:27
-    ${time} =  Get Time  ${EMPTY}  ${1177654467}
+    ${secs} =  Convert To String  ${secs}
+    ${time} =  Get Time  time_=${secs}
     Should Be Equal  ${time}  2007-04-27 09:14:27
 
 When Time Is Timestamp

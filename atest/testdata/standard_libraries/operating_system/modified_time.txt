@@ -5,7 +5,6 @@ Library         OperatingSystem
 
 *** Variables ***
 ${TESTFILE}  ${CURDIR}${/}robot_temp_file.txt
-${TESTDIR}  ${CURDIR}${/}robot_temp_dir
 
 *** Test Cases ***
 Get Modified Time As Timestamp
@@ -44,7 +43,8 @@ Get Modified Time Fails When Path Does Not Exist
 Set Modified Time Using Epoch
     [Documentation]  FAIL Setting modified time of '${TESTFILE}' failed: Epoch time must be positive (got -1)
     Create File  ${TESTFILE}
-    Set Modified Time  ${TESTFILE}  1177575740
+    ${epoch} =  Evaluate  1177586540 + time.altzone  modules=time
+    Set Modified Time  ${TESTFILE}  ${epoch}
     ${mtime} =  Get Modified Time  ${TESTFILE}
     Should Be Equal  ${mtime}  2007-04-26 11:22:20
     Set Modified time  ${TESTFILE}  -1
@@ -52,11 +52,12 @@ Set Modified Time Using Epoch
 Set Modified Time Using Timestamp
     [Documentation]  FAIL Setting modified time of '${TESTFILE}' failed: Invalid time format 'invalid'
     Create File  ${TESTFILE}
+    ${expected} =  Evaluate  1177586550 + time.altzone  modules=time
     :FOR  ${timestamp}  IN  2007-04-26 11:22:30  20070426 11:22:30  20070426 112230  20070426-112230  20070426 11:22:30.456
     ...  20070426 11:22:29.9  invalid
     \  Set Modified Time  ${TESTFILE}  ${timestamp}
     \  ${mtime} =  Get Modified Time  ${TESTFILE}  epoch
-    \  Should Be Equal  ${mtime}  ${1177575750}
+    \  Should Be Equal  ${mtime}  ${expected}
 
 Set Modified Time Using NOW
     [Documentation]  FAIL Setting modified time of '${TESTFILE}' failed: Invalid time string 'invalid'
@@ -86,5 +87,4 @@ Set Modified Time Fails When Path Is Directory
 *** Keywords ***
 Remove Temps
     Remove File  ${TESTFILE}
-    Remove Dir  ${TESTDIR}  recursive
 

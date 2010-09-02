@@ -21,15 +21,15 @@ Get Modified Time Fails When Path Does Not Exist
 Set Modified Time Using Epoch
     ${tc} =  Check testcase  Set Modified Time Using Epoch
     ${path} =  Join Path  ${CURDIR}/../../..  testdata  standard_libraries  operating_system  robot_temp_file.txt
-    Check Log Message  ${tc.kws[1].msgs[0]}  Set modified time of '<a href="file://${path}">${path}</a>' to 2007-04-26 11:22:20  HTML
+    Check Log Message  ${tc.kws[2].msgs[0]}  Set modified time of '<a href="file://${path}">${path}</a>' to 2007-04-26 11:22:20  HTML
 
 Set Modified Time Using Timestamp
     ${tc} =  Check testcase  Set modified Time Using Timestamp
     ${path} =  Join Path  ${CURDIR}/../../..  testdata  standard_libraries  operating_system  robot_temp_file.txt
-    Check Log Message  ${tc.kws[1].kws[0].kws[0].msgs[0]}  Set modified time of '<a href="file://${path}">${path}</a>' to 2007-04-26 11:22:30  HTML
-    Check Log Message  ${tc.kws[1].kws[1].kws[0].msgs[0]}  Set modified time of '<a href="file://${path}">${path}</a>' to 2007-04-26 11:22:30  HTML
-    Check Log Message  ${tc.kws[1].kws[2].kws[0].msgs[0]}  Set modified time of '<a href="file://${path}">${path}</a>' to 2007-04-26 11:22:30  HTML
-    Check Log Message  ${tc.kws[1].kws[3].kws[0].msgs[0]}  Set modified time of '<a href="file://${path}">${path}</a>' to 2007-04-26 11:22:30  HTML
+    Check Log Message  ${tc.kws[2].kws[0].kws[0].msgs[0]}  Set modified time of '<a href="file://${path}">${path}</a>' to 2007-04-26 11:22:30  HTML
+    Check Log Message  ${tc.kws[2].kws[1].kws[0].msgs[0]}  Set modified time of '<a href="file://${path}">${path}</a>' to 2007-04-26 11:22:30  HTML
+    Check Log Message  ${tc.kws[2].kws[2].kws[0].msgs[0]}  Set modified time of '<a href="file://${path}">${path}</a>' to 2007-04-26 11:22:30  HTML
+    Check Log Message  ${tc.kws[2].kws[3].kws[0].msgs[0]}  Set modified time of '<a href="file://${path}">${path}</a>' to 2007-04-26 11:22:30  HTML
 
 Set Modified Time Using NOW
     Check testcase  Set Modified Time Using NOW
