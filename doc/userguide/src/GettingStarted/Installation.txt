@@ -33,7 +33,7 @@ There are several ways to install Robot Framework:
 
 `Standalone jar distribution`_
     If you need to run tests with only Jython, the easiest way to install everything
-    is to downloading the standalone ``robotframework-<version>.jar``, which contains
+    is to downloading the standalone :path:`robotframework-<version>.jar`, which contains
     both Jython and Robot Framework.
 
 Installation packages are available from
@@ -102,7 +102,7 @@ There are three ways to install Robot Framework so that it can be run with Jytho
        following Jython installation directories would be found by the
        installer::
 
-			C:\APPS\Jython2.5.1
+            C:\APPS\Jython2.5.1
             D:\Jython251
             /usr/local/jython2.5.1
             /opt/whatever/Jython251
@@ -159,19 +159,24 @@ The actual output obviously depends on your environment.
 Using Windows installer
 '''''''''''''''''''''''
 
-The installation itself requires only double clicking the provided
-Windows installer and following instructions. After the installation
-you probably want to `set the environment`__ so that Robot Framework
-runner scripts can be executed easily. Notice that the framework
-is automatically installed `under the Python installation`__ and that
-location cannot be altered at this point.
+There are separate graphical installers for 32 bit (more common) and
+64 bit Windows systems. The former installer has name in format
+:path:`robotframework-<version>.win32.exe` and the latter
+:path:`robotframework-<version>.win-amd64.exe`. The installation
+itself requires only double clicking the appropriate installer and
+following instructions.
 
-.. Note:: With Python 2.6 you need to add the Python installation 
+After the installation you probably want to `set the environment`__ so
+that Robot Framework runner scripts can be executed easily. Notice
+that the framework is automatically installed `under the Python
+installation`__ and that location cannot be altered at this point.
+
+.. Note:: With Python 2.6 and 2.7 you need to add the Python installation 
           directory into :var:`PATH` environment variable *before*
           running the Robot Framework installer. `Setting up environment`_
           section has more information about setting environment variables.
 
-.. Note:: On Windows Vista installing Robot Framework requires
+.. Note:: On Windows Vista and Windows 7 installing Robot Framework requires
           administrator privileges. Select ``Run as administrator`` from
           the context menu when starting the installer.
 
@@ -214,7 +219,7 @@ and Jython_ (optional). It also automatically `sets up environment`__ so that
 Robot Framework `runner scripts`_, as well as Python and Jython executables are
 in PATH. 
 
-.. Note:: The One Click Installer works only on Windows XP.
+.. Note:: The One Click Installer works only on Windows XP (32 bit).
 
 __ `Setting up environment`_
 
