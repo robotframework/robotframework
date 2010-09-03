@@ -1,0 +1,34 @@
+<!-- This pom is used only for releasing the jar distribution to Sonatype repositories.
+     More information at http://code.google.com/p/robotframework/wiki/Releasing
+     -->
+<project>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.robotframework</groupId>
+  <artifactId>robotframework</artifactId>
+  <packaging>jar</packaging>
+  <name>Robot Framew${version}name>
+  <version>${robotVersion}</version>
+  <description>High level test automation framework</description>
+  <url>http://robotframework.org</url>
+  <licenses>
+    <license>
+      <name>The Apache Software License, Version 2.0</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+  <scm>
+      <url>http://robotframework.googlecode.com/svn</url>
+      <connection>http://robotframework.googlecode.com/svn</connection>
+  </scm>
+  <developers>
+    <developer>
+      <id>Robot Framework developers</id>
+      <email>robotframework@gmail.com</email>
+      <roles>
+        <role>architect</role>
+        <role>developer</role>
+      </roles>
+    </developer>
+  </developers>
+</project>
