@@ -195,9 +195,9 @@ def _compile_java_classes():
 def _create_jar_distribution(version):
     tmpdir = _create_tmpdir()
     _copy_files_to(tmpdir)
-    _create_manifest(tmpdir, version)
     jar_path = _create_jar_file(version)
     _fill_jar(tmpdir, jar_path)
+    _create_manifest(tmpdir, version)
     shutil.rmtree(tmpdir)
     print 'Created %s based on %s' % (jar_path, JYTHON_JAR)
 
@@ -219,6 +219,8 @@ def _copy_files_to(tmpdir):
 
 def _create_manifest(tmpdir, version):
     mffile = os.path.join(tmpdir, 'META-INF', 'MANIFEST.MF')
+    if os.path.exists(mffile):
+        os.remove(mffile)
     os.mkdir(os.path.dirname(mffile))
     open(mffile, 'w').write('''Manifest-Version: 1.0
 Main-Class: org.robotframework.RobotFramework
