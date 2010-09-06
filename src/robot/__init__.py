@@ -150,7 +150,7 @@ def _exit(rc, message=None, details=None):
       255     - Internal and unexpected error occurred in the framework itself
     """
     if rc == INFO_PRINTED:
-        print message
+        print utils.encode_output(message)
     else:
         if rc == DATA_ERROR:
             message += '\n\nTry --help for usage information.'
