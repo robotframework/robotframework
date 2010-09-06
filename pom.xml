@@ -6,7 +6,7 @@
   <groupId>org.robotframework</groupId>
   <artifactId>robotframework</artifactId>
   <packaging>jar</packaging>
-  <name>Robot Framew${version}name>
+  <name>Robot Framework</name>
   <version>${robotVersion}</version>
   <description>High level test automation framework</description>
   <url>http://robotframework.org</url>
