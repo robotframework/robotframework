@@ -206,7 +206,7 @@ def get_time(format='timestamp', time_=None):
     format = format.lower()
     # 1) Return time in seconds since epoc
     if 'epoch' in format:
-        return long(time_)
+        return int(time_)
     timetuple = time.localtime(time_)
     parts = []
     for i, match in enumerate(['year','month','day','hour','min','sec']):
@@ -236,7 +236,7 @@ def parse_time(timestr):
        plus/minus the time specified with the time string.
     """
     try:
-        ret = long(timestr)
+        ret = int(timestr)
         if ret < 0:
             raise DataError("Epoch time must be positive (got %s)" % timestr)
         return ret
@@ -270,7 +270,7 @@ def timestamp_to_secs(timestamp, seps=('', ' ', ':', '.'), millis=False):
         raise DataError("Invalid timestamp '%s'" % timestamp)
     if millis:
         return round(secs, 3)
-    return long(round(secs))
+    return int(round(secs))
 
 
 def secs_to_timestamp(secs, seps=None, millis=False):
@@ -307,7 +307,7 @@ def get_elapsed_time(start_time, end_time=None, seps=('', ' ', ':', '.')):
 
 def elapsed_time_to_string(elapsed_millis):
     """Converts elapsed time in millisecods to format 'hh:mm:ss.mil'"""
-    elapsed_millis = round(elapsed_millis, 0)
+    elapsed_millis = round(elapsed_millis)
     if elapsed_millis < 0:
         pre = '-'
         elapsed_millis = abs(elapsed_millis)
