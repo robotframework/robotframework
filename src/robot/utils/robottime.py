@@ -321,10 +321,8 @@ def elapsed_time_to_string(elapsed_millis):
 
 
 def _timestamp_to_millis(timestamp, seps):
-    years, mons, days, hours, mins, secs, millis \
-        = _split_timestamp(timestamp, seps)
-    # -1 means that mktime will guess should it use DST based on date and time
-    secs = time.mktime((years, mons, days, hours, mins, secs, 0, 0, -1))
+    Y, M, D, h, m, s, millis = _split_timestamp(timestamp, seps)
+    secs = time.mktime((Y, M, D, h, m, s, 0, 0, time.daylight))
     return int(round(1000*secs + millis))
 
 def _split_timestamp(timestamp, seps):
