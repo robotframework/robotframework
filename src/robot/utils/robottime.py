@@ -70,16 +70,15 @@ def _timestr_to_secs(timestr):
         sign = 1
     temp = []
     for c in timestr:
-        if   c == 'x': millis = ''.join(temp); temp = []
-        elif c == 's': secs   = ''.join(temp); temp = []
-        elif c == 'm': mins   = ''.join(temp); temp = []
-        elif c == 'h': hours  = ''.join(temp); temp = []
-        elif c == 'p': days   = ''.join(temp); temp = []
+        if   c == 'x': millis = float(''.join(temp)); temp = []
+        elif c == 's': secs   = float(''.join(temp)); temp = []
+        elif c == 'm': mins   = float(''.join(temp)); temp = []
+        elif c == 'h': hours  = float(''.join(temp)); temp = []
+        elif c == 'p': days   = float(''.join(temp)); temp = []
         else: temp.append(c)
     if temp:
         raise ValueError
-    return sign * (float(millis)/1000 + float(secs) + float(mins)*60
-                   + float(hours)*60*60 + float(days)*60*60*24)
+    return sign * (millis/1000 + secs + mins*60 + hours*60*60 + days*60*60*24)
 
 def _normalize_timestr(timestr):
     if isinstance(timestr, (int, long, float)):
@@ -131,7 +130,7 @@ class _SecsToTimestrHelper:
     def get_value(self):
         if len(self._ret) > 0:
             return self._sign + ' '.join(self._ret)
-        return self._compact and '0s' or '0 seconds'
+        return '0s' if self._compact else '0 seconds'
 
     def _add_item(self, value, compact_suffix, long_suffix):
         if value == 0:
@@ -165,7 +164,7 @@ def format_time(timetuple, daysep='', daytimesep=' ', timesep=':',
     timetuple is (year, month, day, hour, min, sec[, millis]), where parts must
     be integers and millis is required only when millissep is not None.
     """
-    daytimeparts = [ '%02d' % t for t in timetuple[:6] ]
+    daytimeparts = ['%02d' % t for t in timetuple[:6]]
     day = daysep.join(daytimeparts[:3])
     time_ = timesep.join(daytimeparts[3:6])
     millis = millissep and '%s%03d' % (millissep, timetuple[6]) or ''
@@ -266,8 +265,8 @@ def get_timestamp(daysep='', daytimesep=' ', timesep=':', millissep='.'):
 
 def timestamp_to_secs(timestamp, seps=('', ' ', ':', '.'), millis=False):
     try:
-        secs = _timestamp_to_millis(timestamp, seps)/1000.0
-    except:
+        secs = _timestamp_to_millis(timestamp, seps) / 1000.0
+    except (ValueError, OverflowError):
         raise DataError("Invalid timestamp '%s'" % timestamp)
     if millis:
         return round(secs, 3)
@@ -275,8 +274,8 @@ def timestamp_to_secs(timestamp, seps=('', ' ', ':', '.'), millis=False):
 
 
 def secs_to_timestamp(secs, seps=None, millis=False):
-    if seps is None:
-        seps = ('', ' ', ':', millis and '.' or None)
+    if not seps:
+        seps = ('', ' ', ':', '.' if millis else None)
     ttuple = time.localtime(secs)[:6]
     if millis:
         millis = (secs - int(secs)) * 1000
@@ -329,9 +328,9 @@ def _timestamp_to_millis(timestamp, seps):
 
 def _split_timestamp(timestamp, seps):
     for sep in seps:
-        if sep is not None and sep != '':
+        if sep:
             timestamp = timestamp.replace(sep, '')
-    timestamp = timestamp.ljust(17).replace(' ', '0')
+    timestamp = timestamp.ljust(17, '0')
     years = int(timestamp[:4])
     mons = int(timestamp[4:6])
     days = int(timestamp[6:8])
