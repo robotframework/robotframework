@@ -302,7 +302,8 @@ def get_elapsed_time(start_time, end_time=None, seps=('', ' ', ':', '.')):
         end_time = get_timestamp(*seps)
     start_millis = _timestamp_to_millis(start_time, seps)
     end_millis = _timestamp_to_millis(end_time, seps)
-    return end_millis - start_millis
+    # start/end_millis can be long but we want to return int when possible
+    return int(end_millis - start_millis)
 
 
 def elapsed_time_to_string(elapsed_millis):

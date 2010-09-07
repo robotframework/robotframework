@@ -7,7 +7,7 @@ OUTFILE = open(os.path.join(tempfile.gettempdir(), 'listener_attrs.txt'), 'w')
 
 START_ATTRIBUTES = ['doc', 'starttime']
 END_ATTRIBUTES = START_ATTRIBUTES + ['endtime', 'elapsedtime', 'status']
-EXPECTED_TYPES = {'elapsedtime': long, 'tags': list, 'args': list,
+EXPECTED_TYPES = {'elapsedtime': (int, long), 'tags': list, 'args': list,
                   'metadata': dict, 'tests': list, 'suites': list,
                   'totaltests': int}
 
@@ -39,9 +39,13 @@ def _verify_attributes(method_name, attrs, names):
         OUTFILE.write('Expected: %s\nActual: %s\n' % (names, attrs.keys()))
         return
     for name in names:
-        status = isinstance(attrs[name], EXPECTED_TYPES.get(name, basestring))\
-                and 'PASSED' or 'FAILED'
-        OUTFILE.write('%s | %s: %s\n' %(status, name, attrs[name]))
+        value = attrs[name]
+        exp_type = EXPECTED_TYPES.get(name, basestring)
+        if isinstance(value, exp_type):
+            OUTFILE.write('PASSED | %s: %s\n' % (name, value))
+        else:
+            OUTFILE.write('FAILED | %s: %r, Expected: %s, Actual: %s\n' 
+                          % (name, value, type(value), exp_type))
 
 def close():
     OUTFILE.close()
