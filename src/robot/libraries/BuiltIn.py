@@ -1317,8 +1317,8 @@ class _Misc:
         as follows. Note that all checks are case-insensitive.
 
         1) If `format` contains the word 'epoch', the time is returned
-           in seconds after the UNIX epoch. The return value is always
-           an integer.
+           in seconds after the UNIX epoch (Jan 1, 1970 0:00:00).
+           The return value is always an integer.
 
         2) If `format` contains any of the words 'year', 'month',
            'day', 'hour', 'min', or 'sec', only the selected parts are
@@ -1335,9 +1335,8 @@ class _Misc:
         argument is only available in Robot Framework 2.1.1 and newer.
 
         1) If `time` is a floating point number, it is interpreted as
-           seconds since epoch (Jan 1, 1970 0:00:00). This
-           documentation is written about 1177654467 seconds since
-           epoch.
+           seconds since the epoch. This documentation is written about 
+           1177654467 seconds after the epoch.
 
         2) If `time` is a valid timestamp, that time will be used. Valid
            timestamp formats are 'YYYY-MM-DD hh:mm:ss' and 'YYYYMMDD hhmmss'.
@@ -1349,7 +1348,6 @@ class _Misc:
            30 min', the current time plus/minus the time specified
            with the time string is used. The time string format is
            described in an appendix of Robot Framework User Guide.
-
 
         Examples (expecting the current time is 2006-03-29 15:06:21):
         | ${time} = | Get Time |             |  |  |
@@ -1369,16 +1367,15 @@ class _Misc:
 
         | ${time} = | Get Time |      | 1177654467 |
         | ${secs} = | Get Time | sec  | 2007-04-27 09:14:27 |
-        | ${year} = | Get Time | year | NOW                | # The time of execution |
-        | ${day} = | Get Time | day  | NOW - 1d           | # 1 day subtraced from NOW |
-        | @{time} = | Get Time | hour min sec | NOW + 1h 2min 3s   | # 1h 2min 3s added to NOW |
+        | ${year} = | Get Time | year | NOW      | # The time of execution |
+        | ${day} =  | Get Time | day  | NOW - 1d | # 1 day subtraced from NOW |
+        | @{time} = | Get Time | hour min sec | NOW + 1h 2min 3s | # 1h 2min 3s added to NOW |
         =>
         - ${time} = '2007-04-27 09:14:27'
         - ${secs} = 27
         - ${year} = '2006'
         - ${day} = '28'
         - @{time} = ['16', '08', '24']
-
         """
         return utils.get_time(format, utils.parse_time(time_))
 
