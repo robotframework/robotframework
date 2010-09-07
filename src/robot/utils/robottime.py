@@ -325,7 +325,7 @@ def _timestamp_to_millis(timestamp, seps):
         = _split_timestamp(timestamp, seps)
     # -1 means that mktime will guess should it use DST based on date and time
     secs = time.mktime((years, mons, days, hours, mins, secs, 0, 0, -1))
-    return 1000*secs + millis
+    return int(round(1000*secs + millis))
 
 def _split_timestamp(timestamp, seps):
     for sep in seps:
