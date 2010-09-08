@@ -10,8 +10,7 @@ class TestPercents(unittest.TestCase):
 
     def _verify_percents(self, input, expected):
         p = _Percents(*input)
-        assert_equals(p.pass_percent, expected[0])
-        assert_equals(p.fail_percent, expected[1])
+        assert_equals((p.pass_percent, p.fail_percent), expected)
 
     def test_calc_percents_zeros(self):
         self._verify_percents((0, 0), (0, 0))
@@ -54,8 +53,7 @@ class TestPercents(unittest.TestCase):
 
     def test_calc_percents_rounding_both_up(self):
         for in1, in2, ex1, ex2 in [ (3, 13, 18.8, 81.3),
-                                    (105, 9895, 1.1, 99.0),
-                                    (4445, 5555, 44.5, 55.6) ]:
+                                    (105, 9895, 1.1, 99.0) ]:
             self._verify_percents((in1, in2), (ex1, ex2))
             self._verify_percents((in2, in1), (ex2, ex1))
 

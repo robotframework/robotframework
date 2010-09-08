@@ -234,9 +234,9 @@ class _Percents(object):
             return 0.0, 0.0
         # Make small percentages better visible
         if 0 < num1 < 1:
-            num1, num2= 1.0, 99.0
+            num1, num2 = 1.0, 99.0
         if 0 < num2 < 1:
-            num1, num2= 99.0, 1.0
+            num1, num2 = 99.0, 1.0
         # Handle situation where both are rounded up
         while num1 + num2 > 100:
             num1, num2 = self._subtract_from_larger(num1, num2, 0.1)
