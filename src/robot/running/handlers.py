@@ -63,9 +63,7 @@ def InitHandler(library, method):
 
 class _BaseHandler(object):
     type = 'library'
-    longname = property(lambda self: '%s.%s' % (self.library.name, self.name))
     doc = ''
-    shortdoc = property(lambda self: self.doc.splitlines()[0] if self.doc else '')
 
     def __init__(self, library, handler_name, handler_method):
         self.library = library
@@ -74,6 +72,14 @@ class _BaseHandler(object):
 
     def _parse_arguments(self, handler_method):
         raise NotImplementedError(self.__class__.__name__)
+
+    @property
+    def longname(self):
+        return '%s.%s' % (self.library.name, self.name)
+
+    @property
+    def shortdoc(self):
+        return self.doc.splitlines()[0] if self.doc else ''
 
 
 class _RunnableHandler(_BaseHandler):
@@ -136,7 +142,8 @@ class _RunnableHandler(_BaseHandler):
     def _current_handler(self):
         if self._method:
             return self._method
-        return self._get_handler(self.library.get_instance(), self._handler_name)
+        return self._get_handler(self.library.get_instance(),
+                                 self._handler_name)
 
     def _get_global_handler(self, method, name):
         return method
@@ -147,14 +154,17 @@ class _RunnableHandler(_BaseHandler):
     def _get_timeout(self, namespace):
         timeoutable = self._get_timeoutable_items(namespace)
         if timeoutable:
-            return min([ item.timeout for item in timeoutable ])
+            return min(item.timeout for item in timeoutable)
         return None
 
     def _get_timeoutable_items(self, namespace):
         items = namespace.uk_handlers[:]
-        if namespace.test and namespace.test.status == 'RUNNING':
+        if self._test_running_and_not_in_teardown(namespace.test):
             items.append(namespace.test)
         return items
+
+    def _test_running_and_not_in_teardown(self, test):
+        return test and test.status == 'RUNNING'
 
 
 class _PythonHandler(_RunnableHandler):
