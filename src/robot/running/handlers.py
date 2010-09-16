@@ -109,11 +109,11 @@ class _RunnableHandler(_BaseHandler):
 
     def _run(self, context, args):
         output = context.output
-        positional, named = self.arguments.resolve(args, context.get_current_vars(),
-                                                   output)
+        positional, named = \
+            self.arguments.resolve(args, context.get_current_vars(), output)
         runner = self._runner_for(self._current_handler(), output, positional,
                                   named, self._get_timeout(context.namespace))
-        return self._run_with_output_captured_and_signal_monitor(runner, output)
+        return self._run_with_output_captured_and_signal_monitor(runner, context)
 
     def _runner_for(self, handler, output, positional, named, timeout):
         if timeout and timeout.active:
@@ -121,20 +121,20 @@ class _RunnableHandler(_BaseHandler):
             return lambda: timeout.run(handler, args=positional, kwargs=named)
         return lambda: handler(*positional, **named)
 
-    def _run_with_output_captured_and_signal_monitor(self, runner, output):
+    def _run_with_output_captured_and_signal_monitor(self, runner, context):
         capturer = OutputCapturer()
         try:
-            return self._run_with_signal_monitoring(runner)
+            return self._run_with_signal_monitoring(runner, context)
         finally:
             stdout, stderr = capturer.release()
-            output.log_output(stdout)
-            output.log_output(stderr)
+            context.output.log_output(stdout)
+            context.output.log_output(stderr)
             if stderr:
                 sys.__stderr__.write(stderr+'\n')
 
-    def _run_with_signal_monitoring(self, runner):
+    def _run_with_signal_monitoring(self, runner, context):
         try:
-            STOP_SIGNAL_MONITOR.start_running_keyword()
+            STOP_SIGNAL_MONITOR.start_running_keyword(context.teardown)
             return runner()
         finally:
             STOP_SIGNAL_MONITOR.stop_running_keyword()
@@ -214,7 +214,7 @@ class _RunKeywordHandler(_PythonHandler):
         _PythonHandler.__init__(self, library, handler_name, handler_method)
         self._handler_method = handler_method
 
-    def _run_with_signal_monitoring(self, runner):
+    def _run_with_signal_monitoring(self, runner, context):
         # With run keyword variants, only the keyword to be run can fail
         # and therefore monitoring should not raise exception yet.
         return runner()

@@ -1,14 +1,14 @@
 import unittest
 import sys
 
-from robot.running.testlibraries import TestLibrary, _ClassLibrary, \
-        _ModuleLibrary, _DynamicLibrary
+from robot.running.testlibraries import (TestLibrary, _ClassLibrary,
+                                         _ModuleLibrary, _DynamicLibrary)
 from robot.utils.asserts import *
 from robot import utils
 from robot.errors import DataError
 
-from classes import NameLibrary, DocLibrary, ArgInfoLibrary, GetattrLibrary, \
-        SynonymLibrary
+from classes import (NameLibrary, DocLibrary, ArgInfoLibrary, GetattrLibrary,
+                     SynonymLibrary)
 if utils.is_jython:
     import ArgumentTypes, Extended, MultipleArguments, MultipleSignatures, NoHandlers
 
@@ -511,6 +511,7 @@ class _FakeContext:
         self.output = _FakeOutput()
         self.namespace =  _FakeNamespace()
         self.dry_run = False
+        self.teardown = False
 
     def get_current_vars(self):
         return self.namespace.variables
