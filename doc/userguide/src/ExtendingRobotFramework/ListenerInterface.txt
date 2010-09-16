@@ -112,7 +112,7 @@ Thus, for example, :code:`startSuite` is a synonym to :code:`start_suite`.
    |               |                  | * longname: test suite name including parents    |
    |               |                  | * starttime: execution start time                |
    |               |                  | * endtime: execution end time                    |
-   |               |                  | * elapsetime: execution time in milliseconds     |
+   |               |                  | * elapsedtime: execution time in milliseconds    |
    |               |                  |   as an integer                                  |
    |               |                  | * status: either :code:`PASS` or :code:`FAIL`    |
    |               |                  | * statistics: suite statistics (number of passed |
@@ -133,7 +133,7 @@ Thus, for example, :code:`startSuite` is a synonym to :code:`start_suite`.
    |               |                  | * longname: test name including parent suites    |
    |               |                  | * starttime: execution start time                |
    |               |                  | * endtime: execution end time                    |
-   |               |                  | * elapsetime: execution time in milliseconds     |
+   |               |                  | * elapsedtime: execution time in milliseconds    |
    |               |                  |   as an integer                                  |
    |               |                  | * tags: test case tags as a list of strings      |
    |               |                  | * status: either :code:`PASS` or :code:`FAIL`    |
@@ -151,7 +151,7 @@ Thus, for example, :code:`startSuite` is a synonym to :code:`start_suite`.
    |               |                  | * doc: keyword documentation                     |
    |               |                  | * starttime: execution start time                |
    |               |                  | * endtime: execution end time                    |
-   |               |                  | * elapsetime: execution time in milliseconds     |
+   |               |                  | * elapsedtime: execution time in milliseconds    |
    |               |                  |   as an integer                                  |
    |               |                  | * args: keyword's arguments as a list of strings |
    |               |                  | * status: either :code:`PASS` or :code:`FAIL`    |
