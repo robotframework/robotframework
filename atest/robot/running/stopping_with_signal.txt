@@ -1,5 +1,6 @@
 *** Settings ***
-Force Tags      regression  pybot  jybot
+Force Tags      regression
+Default Tags    pybot  jybot
 Resource        atest_resource.txt
 Library         ProcessManager.py
 Test Teardown   Log Info From Process And Cleanup
@@ -9,28 +10,34 @@ Test Setup      Set Test Debug File
 
 *** Test Cases ***
 SIGINT Signal Should Stop Test Execution Gracefully
-    Start And Send Signal  without_any_timeout.txt  One Signal  SIGINT  0s
+    Start And Send Signal  without_any_timeout.txt  One Signal  SIGINT
     Process Output For Graceful Shutdown
     Check Test Cases Have Failed Correctly
 
 SIGTERM Signal Should Stop Test Execution Gracefully
-    [tags]  non windows
-    Start And Send Signal  without_any_timeout.txt  One Signal  SIGTERM  0s
+    [tags]  non windows  pybot  jybot
+    Start And Send Signal  without_any_timeout.txt  One Signal  SIGTERM
+    Process Output For Graceful Shutdown
+    Check Test Cases Have Failed Correctly
+
+Execution Is Stopped Even If Keyword Swallows Exception
+    [Tags]  pybot
+    Start And Send Signal  swallow_exception.txt  One Signal  SIGTERM
     Process Output For Graceful Shutdown
     Check Test Cases Have Failed Correctly
 
 One Signal Should Stop Test Execution Gracefully When Run Keyword Is Used
-    Start And Send Signal  run_keyword.txt  One Signal  SIGTERM  0s
+    Start And Send Signal  run_keyword.txt  One Signal  SIGTERM
     Process Output For Graceful Shutdown
     Check Test Cases Have Failed Correctly
 
 One Signal Should Stop Test Execution Gracefully When Test Timeout Is Used
-    Start And Send Signal  test_timeout.txt  One Signal  SIGTERM  0s
+    Start And Send Signal  test_timeout.txt  One Signal  SIGTERM
     Process Output For Graceful Shutdown
     Check Test Cases Have Failed Correctly
 
 One Signal Should Stop Test Execution Gracefully When Keyword Timeout Is Used
-    Start And Send Signal  keyword_timeout.txt  One Signal  SIGTERM  0s
+    Start And Send Signal  keyword_timeout.txt  One Signal  SIGTERM
     Process Output For Graceful Shutdown
     Check Test Cases Have Failed Correctly
 
@@ -39,7 +46,7 @@ Two SIGINT Signals Should Stop Test Execution Forcefully
     Check Tests Have Been Forced To Shutdown
 
 Two SIGTERM Signals Should Stop Test Execution Forcefully
-    [tags]  non windows
+    [tags]  non windows  pybot  jybot
     Start And Send Signal  without_any_timeout.txt  Two Signals  SIGTERM  2s
     Check Tests Have Been Forced To Shutdown
 
@@ -56,7 +63,7 @@ Two Signals Should Stop Test Execution Forcefully When Keyword Timeout Is Used
     Check Tests Have Been Forced To Shutdown
 
 One Signal Should Stop Test Execution Gracefully And Test Case And Suite Teardowns Should Be Run
-    Start And Send Signal  with_teardown.txt  One Signal  SIGINT  0s
+    Start And Send Signal  with_teardown.txt  One Signal  SIGINT
     Process Output For Graceful Shutdown
     Check Test Cases Have Failed Correctly
     ${tc} =  Get Test Case  Test
@@ -65,22 +72,18 @@ One Signal Should Stop Test Execution Gracefully And Test Case And Suite Teardow
     Check Log Message  ${ts.teardown.kws[0].msgs[0]}  Logging Suite Teardown
 
 One Signal Should Stop Test Execution Gracefully And Skip Teardowns With Runmode
-    Start And Send Signal  with_teardown.txt  One Signal  SIGINT  0s  runmode=SkipTeardownOnExit
+    Start And Send Signal  with_teardown.txt  One Signal  SIGINT  runmode=SkipTeardownOnExit
     Process Output For Graceful Shutdown
     Check Test Cases Have Failed Correctly
     ${tc} =  Get Test Case  Test
-    #Should Have Correct Number Of Keywords  ${tc.teardown}  0
     Should Be Equal  ${tc.teardown}  ${None}
     ${ts} =  Get Test Suite  With Teardown
-    #Should Have Correct Number Of Keywords  ${ts.teardown}  0
     Should Be Equal  ${ts.teardown}  ${None}
 
 
-*** Key Words ***
+*** Keywords ***
 Start And Send Signal
-    # Timeouts and signals apparently don't work on Windows
-    # [timeout]  2 minutes
-    [arguments]  ${testcase file}  ${signal method}  ${signal}  ${teardown sleep}  ${runmode}=normal
+    [arguments]  ${testcase file}  ${signal method}  ${signal}  ${teardown sleep}=0s  ${runmode}=normal
     ${is_jython_in_use} =  Running On Jython  ${INTERPRETER}
     ${test signal file} =  catenate  SEPARATOR=_  robot_signal_test_started  ${INTERPRETER}  .txt
     Remove File  ${TEMPDIR}/${test signal file}
