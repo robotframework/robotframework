@@ -83,9 +83,21 @@ class NormalizedDict(UserDict):
         for key, value in initial.items():
             self[key] = value
 
-    def __setitem__(self, key, value):
+    def update(self, dict=None, **kwargs):
+        if dict:
+            UserDict.update(self, dict)
+            for key in dict:
+                self._add_key(key)
+        if kwargs:
+            self.update(kwargs)
+
+    def _add_key(self, key):
         nkey = self._normalize(key)
         self._keys.setdefault(nkey, key)
+        return nkey
+
+    def __setitem__(self, key, value):
+        nkey = self._add_key(key)
         self.data[nkey] = value
 
     set = __setitem__
@@ -111,6 +123,9 @@ class NormalizedDict(UserDict):
 
     def keys(self):
         return self._keys.values()
+
+    def __iter__(self):
+        return self._keys.itervalues()
 
     def items(self):
         return [ (key, self[key]) for key in self.keys() ]

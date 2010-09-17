@@ -47,8 +47,7 @@ class Variables(utils.NormalizedDict):
         self._identifiers = identifiers
 
     def __setitem__(self, name, value, path=None, depr_warning=True):
-        if not is_var(name):
-            raise DataError("Invalid variable name '%s'." % name)
+        self._validate_var_name(name)
         if depr_warning:
             self._deprecation_warning_if_basename_already_used(name, path)
         utils.NormalizedDict.__setitem__(self, name, value)
@@ -67,9 +66,17 @@ class Variables(utils.NormalizedDict):
         # If path is not known we are executing keywords and can log message
         LOGGER.warn(msg, log=not path)
 
+    def update(self, dict=None, **kwargs):
+        if dict:
+            self._validate_var_dict(dict)
+            UserDict.update(self, dict)
+            for key in dict:
+                self._add_key(key)
+        if kwargs:
+            self.update(kwargs)
+
     def __getitem__(self, name):
-        if not is_var(name):
-            raise DataError("Invalid variable name '%s'." % name)
+        self._validate_var_name(name)
         try: return utils.NormalizedDict.__getitem__(self, name)
         except KeyError:
             try: return self._get_number_var(name)
@@ -79,6 +86,14 @@ class Variables(utils.NormalizedDict):
                     try: return self._get_list_var_as_scalar(name)
                     except ValueError:
                         raise DataError("Non-existing variable '%s'." % name)
+
+    def _validate_var_name(self, name):
+        if not is_var(name):
+            raise DataError("Invalid variable name '%s'." % name)
+
+    def _validate_var_dict(self, dict):
+        for name in dict:
+            self._validate_var_name(name)
 
     def _get_list_var_as_scalar(self, name):
         if is_scalar_var(name):
@@ -130,7 +145,7 @@ class Variables(utils.NormalizedDict):
         return results
 
     def _replace_variables_inside_possible_list_var(self, item):
-        if not (isinstance(item, basestring) 
+        if not (isinstance(item, basestring)
                 and item.startswith('@{') and item.endswith('}')):
             return None
         var = VariableSplitter(item, self._identifiers)
@@ -254,7 +269,7 @@ class Variables(utils.NormalizedDict):
         for variable in variable_table:
             try:
                 name, value = self._get_var_table_name_and_value(variable.name,
-                                                                 variable.value, 
+                                                                 variable.value,
                                                                  variable_table.source)
                 # self.has_key would also match if name matches extended syntax
                 if not utils.NormalizedDict.has_key(self, name):
@@ -264,8 +279,7 @@ class Variables(utils.NormalizedDict):
                                                      % (variable.name, unicode(err)))
 
     def _get_var_table_name_and_value(self, name, value, path=None):
-        if not is_var(name):
-            raise DataError("Invalid variable name.")
+        self._validate_var_name(name)
         value = [ self._unescape_leading_trailing_spaces(cell) for cell in value ]
         if name[0] == '@':
             return name, self.replace_list(value)

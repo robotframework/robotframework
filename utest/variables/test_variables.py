@@ -83,7 +83,19 @@ class TestVariables(unittest.TestCase):
                 self.varz.clear()
         self.varz['${myvar}'] = ''
         assert_equals(self.varz['${myvar}'], '')
-                
+
+    def test_update(self):
+        self.varz['${a}'] = 1
+        self.varz.update({'${b}':2})
+        for k, v in [('${a}', 1), ('${b}', 2)]:
+            assert_true(k in self.varz)
+            assert_true(k in self.varz.keys())
+            assert_equals(self.varz[k], v)
+
+    def test_update_invalid(self):
+        self.varz['${a}'] = 1
+        assert_raises(DataError, self.varz.update, {'invalid variable name':2})
+
     def test_set_list(self):
         for var in LISTS:
             for value in [ [], [''], ['str'], [10], ['hi','u'], ['hi',2], 

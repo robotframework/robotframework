@@ -168,6 +168,28 @@ class TestNormalizedDict(unittest.TestCase):
         nd = NormalizedDict({'a': 1, 'B': 1})
         assert_equals(str(nd), "{'a': 1, 'B': 1}")
 
+    def test_update(self):
+        nd = NormalizedDict({'a': 1})
+        nd.update({'b': 2})
+        assert_equals(nd['b'], 2)
+        assert_true('b' in nd.keys())
+
+    def test_update_with_kwargs(self):
+        nd = NormalizedDict({'a': 0, 'c': 1})
+        nd.update({'b': 2, 'c': 3}, b=4, d=5)
+        for k, v in [('a', 0), ('b', 4), ('c', 3), ('d', 5)]:
+            assert_equals(nd[k], v)
+            assert_true(k in nd)
+            assert_true(k in nd.keys())
+
+    def test_iter(self):
+        nd = NormalizedDict({'a': 0, 'B': 1, 'c': 2})
+        assert_equals(sorted(list(nd)), ['B', 'a', 'c'])
+        keys = []
+        for key in nd:
+            keys.append(key)
+        assert_equals(sorted(keys), ['B', 'a', 'c'])
+
 
 if __name__ == '__main__':
     unittest.main()

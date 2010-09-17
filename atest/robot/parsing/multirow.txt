@@ -52,7 +52,7 @@ Multirow With For Loop Keywords
 
 Invalid Multirow Usage
     Check Multirow Error From Stderr  Settings   Non-existing setting '...'.
-    Check Multirow Error From Stderr  Variables  Setting variable '...' failed: Invalid variable name.
+    Check Multirow Error From Stderr  Variables  Setting variable '...' failed: Invalid variable name '...'.
     Check Test Case  \
     Check Test Case  Invalid Usage In Test And User Keyword
 
