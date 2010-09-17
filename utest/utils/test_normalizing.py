@@ -6,7 +6,7 @@ from robot.utils.asserts import *
 
 
 class TestNormalizing(unittest.TestCase):
-    
+
     def test_normpath(self):
         if os.sep == '/':
             inputs = [ ('/tmp/', '/tmp'),
@@ -34,18 +34,18 @@ class TestNormalizing(unittest.TestCase):
 
         for inp, exp in inputs:
             assert_equal(normpath(inp), exp, inp)
-    
+
     def test_normalize_with_defaults(self):
         for inp, exp in [ ('', ''),
                           ('            ', ''),
                           (' \n\t\r', ''),
                           ('foo', 'foo'),
-                          (' f o o ', 'foo'), 
-                          ('_BAR', '_bar'), 
-                          ('Fo OBar\r\n', 'foobar'), 
+                          (' f o o ', 'foo'),
+                          ('_BAR', '_bar'),
+                          ('Fo OBar\r\n', 'foobar'),
                           ('foo\tbar', 'foobar'),
                           ('\n \n \n \n F o O \t\tBaR \r \r \r   ', 'foobar') ]:
-            assert_equals(exp, normalize(inp))           
+            assert_equals(exp, normalize(inp))
 
     def test_normalize_with_caseless(self):
         assert_equals(normalize('Fo o BaR', caseless=False), 'FooBaR')
@@ -53,15 +53,15 @@ class TestNormalizing(unittest.TestCase):
 
     def test_normalize_with_spaceless(self):
         assert_equals(normalize('Fo o BaR', spaceless=False), 'fo o bar')
-        assert_equals(normalize('Fo O B AR', spaceless=True), 'foobar')  
+        assert_equals(normalize('Fo O B AR', spaceless=True), 'foobar')
 
     def test_normalize_with_ignore(self):
         assert_equals(normalize('Foo_ bar', ignore=['_']), 'foobar')
         assert_equals(normalize('Foo_ bar', ignore=['_', 'f', 'o']), 'bar')
         assert_equals(normalize('Foo_ bar', ignore=['_', 'F', 'o']), 'bar')
-        assert_equals(normalize('Foo_ bar', ignore=['_', 'f', 'o'], 
+        assert_equals(normalize('Foo_ bar', ignore=['_', 'f', 'o'],
                                 caseless=False), 'Fbar')
-        assert_equals(normalize('Foo_\n bar\n', ignore=['\n'], 
+        assert_equals(normalize('Foo_\n bar\n', ignore=['\n'],
                                 spaceless=False), 'foo_ bar')
 
     def test_normalize_tags(self):
@@ -96,14 +96,14 @@ class TestNormalizedDict(unittest.TestCase):
         nd['foo_bar'] = 'value'
         assert_equals(nd['foobar'], 'value')
         assert_equals(nd['F  oo\nB   ___a r'], 'value')
-        
+
     def test_caseless_and_spaceless(self):
         nd = NormalizedDict(caseless=False, spaceless=False)
         nd['F o o B AR'] = 'value'
         for key in ['foobar', 'f o o b ar', 'FooBAR']:
             assert_false(nd.has_key(key))
         assert_equals(nd['F o o B AR'], 'value')
-        
+
     def test_has_key_and_contains(self):
         nd = NormalizedDict({'Foo': 'bar'})
         fail_unless(nd.has_key('Foo') and nd.has_key(' f O o '))
@@ -171,4 +171,4 @@ class TestNormalizedDict(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
-        
+
