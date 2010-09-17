@@ -1,24 +1,26 @@
 *** Settings ***
-Suite Setup     Run Tests  ${EMPTY}  standard_libraries${/}dialogs${/}dialogs.txt
+Suite Setup     Run Tests  ${EMPTY}  standard_libraries/dialogs/dialogs.txt
 Force Tags      regression  jybot  pybot  manual
 Resource        atest_resource.txt
 
 *** Test Cases ***
 Pause Execution
-    Check Test Case  Pause Execution
+    Check Test Case  ${TESTNAME}
 
 Execute Manual Step
-    Check Test Case  Execute Manual Step
+    Check Test Case  ${TESTNAME}
 
 Get Value From User Passes
-    Check Test Case  Get Value From User Passes
+    Check Test Case  ${TESTNAME}
 
 Get Value From User Fails
-    Check Test Case  Get Value From User Fails
+    Check Test Case  ${TESTNAME}
 
 Get Selection From User Passes
-    Check Test Case  Get Selection From User Passes
+    Check Test Case  ${TESTNAME}
 
 Get Selection From User Fails
-    Check Test Case  Get Selection From User Fails
+    Check Test Case  ${TESTNAME}
 
+Dialog and timeout
+    Check Test Case  ${TESTNAME}
