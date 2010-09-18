@@ -415,6 +415,10 @@ class TestHandlers(unittest.TestCase):
                     assert_false(handler._handler_name.startswith('_'))
                     assert_equals(handler._handler_name.count('skip'), 0)
 
+        def test_overridden_getName(self):
+            handlers = TestLibrary('OverrideGetName').handlers
+            assert_equals(sorted(handlers.keys()), ['doNothing', 'getName'])
+
 
 class TestDynamicLibrary(unittest.TestCase):
 
