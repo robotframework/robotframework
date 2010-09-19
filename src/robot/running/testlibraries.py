@@ -241,15 +241,15 @@ class _ClassLibrary(_BaseTestLibrary):
             return False
         for signature in handler.argslist[:handler.nargs]:
             cls = signature.declaringClass
-            if not (cls is Object or self._is_created_by_jython(cls)):
+            if not (cls is Object or self._is_created_by_jython(handler, cls)):
                 return False
         return True
 
     def _is_created_in_java(self, handler):
         return hasattr(handler, 'argslist')
 
-    def _is_created_by_jython(self, cls):
-        return cls.__name__.startswith('org.python.proxies.')
+    def _is_created_by_jython(self, handler, cls):
+        return handler.__name__ in getattr(cls, '__supernames__', [])
 
 
 class _ModuleLibrary(_BaseTestLibrary):

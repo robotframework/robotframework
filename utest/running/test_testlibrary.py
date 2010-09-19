@@ -419,6 +419,12 @@ class TestHandlers(unittest.TestCase):
             handlers = TestLibrary('OverrideGetName').handlers
             assert_equals(sorted(handlers.keys()), ['doNothing', 'getName'])
 
+        def test_extending_java_lib_in_python(self):
+            handlers = TestLibrary('extendingjava.ExtendJavaLib').handlers
+            assert_equals(len(handlers), 22)
+            for handler in 'kw_in_java_extender', 'javaSleep', 'divByZero':
+                assert_true(handler in handlers)
+
 
 class TestDynamicLibrary(unittest.TestCase):
 
