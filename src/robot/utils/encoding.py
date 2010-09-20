@@ -33,12 +33,18 @@ def _get_output_encoding():
     # Jython is buggy on Windows: http://bugs.jython.org/issue1568
     if os.sep == '\\' and sys.platform.startswith('java'):
         return 'cp437'  # Default DOS encoding
-    encoding = sys.__stdout__.encoding or sys.__stdin__.encoding
+    encoding = _get_encoding_from_std_streams()
     if encoding:
         return encoding
     if os.sep == '/':
         return _read_encoding_from_unix_env()
     return 'cp437'  # Default DOS encoding
+
+def _get_encoding_from_std_streams():
+    # Stream may not have encoding attribute if it is intercepted outside RF
+    # in Python. Encoding is None if process's outputs are redirected.
+    return getattr(sys.__stdout__, 'encoding', None) \
+        or getattr(sys.__stderr__, 'encoding', None)
 
 def _read_encoding_from_unix_env():
     for name in 'LANG', 'LC_CTYPE', 'LANGUAGE', 'LC_ALL':
