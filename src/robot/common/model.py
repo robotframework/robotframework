@@ -104,6 +104,7 @@ class BaseTestSuite(_TestAndSuiteHelper):
 
     def set_metadata(self, metalist):
         for metastr in metalist:
+            metastr = metastr.replace('\\', '\\\\')
             try:
                 name, value = metastr.split(':', 1)
             except ValueError:
