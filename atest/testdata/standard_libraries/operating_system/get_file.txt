@@ -35,7 +35,7 @@ Get Ascii File With Default Encoding
     Should Be Equal  ${file}  Hyvaa yota
 
 Get Latin-1 With Default Encoding
-    [Documentation]  FAIL REGEXP: (UnicodeDecodeError: .*invalid data.*|UnicodeError: utf-8 decoding error: invalid data|)
+    [Documentation]  FAIL REGEXP: (UnicodeDecodeError|UnicodeError): .*
     ${file} =  Get File  ${latin-1file}
 
 Get Latin-1 With Latin-1 Encoding

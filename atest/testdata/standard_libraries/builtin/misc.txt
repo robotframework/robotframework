@@ -15,7 +15,7 @@ Sleep
     ${time2} =  Get Time
     Sleep  0 hours 0 mins 1 S E C O N D 234 milliseconds
     ${time3} =  Get Time
-    Sleep  ${1.1115}
+    Sleep  ${1.1119}
     ${time4} =  Get Time
     Should Be True  '${time4}' > '${time3}' > '${time2}' > '${time1}'
 
