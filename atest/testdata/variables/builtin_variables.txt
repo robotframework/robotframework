@@ -56,16 +56,16 @@ ${EMPTY}
     Should Be Equal  -${EMPTY}-${EMPTY*2}-${EMPTY}-  ----
 
 ${/}
-    ${exp} =  Evaluate  __import__('os').sep
+    ${exp} =  Evaluate  os.sep  modules=os
     Should Be Equal  ${/}  ${exp}
     Should Be Equal  ${/}foo${/}  ${exp}foo${exp}
 
 ${:}
-    ${exp} =  Evaluate  __import__('os').pathsep
+    ${exp} =  Evaluate  os.pathsep  modules=os
     Should Be Equal  ${:}  ${exp}
 
 ${TEMPDIR}
-    ${exp} =  Evaluate  __import__('tempfile').gettempdir().rstrip('/')
+    ${exp} =  Evaluate  tempfile.gettempdir().rstrip('/')  modules=tempfile
     Should Be Equal  ${TEMPDIR}  ${exp}
     Directory Should Exist  ${TEMPDIR}
     Should Not End With  ${TEMPDIR}  /
@@ -73,7 +73,7 @@ ${TEMPDIR}
     Should Start With  \${TEMPDIR}  $
 
 ${EXECDIR}
-    ${exp} =  Evaluate  __import__('os').path.abspath('.')
+    ${exp} =  Evaluate  os.path.abspath('.')  modules=os
     Should Be Equal  ${EXECDIR}  ${exp}
     Directory Should Exist  ${EXECDIR}
     Should Not End With  ${EXECDIR}  /
@@ -118,4 +118,3 @@ Built-In Variables Can Be Overridden In Local Scope 2
     Should Not Be Equal  ${SPACE}  Local value 3
     Should Not Be Equal  ${TEST_NAME}  Local value 4
     Should Not Be Equal  ${1}  Local value 5
-
