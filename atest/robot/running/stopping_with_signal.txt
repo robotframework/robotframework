@@ -84,12 +84,12 @@ One Signal Should Stop Test Execution Gracefully And Skip Teardowns With Runmode
 *** Keywords ***
 Start And Send Signal
     [arguments]  ${testcase file}  ${signal method}  ${signal}  ${teardown sleep}=0s  ${runmode}=normal
-    ${is_jython_in_use} =  Running On Jython  ${INTERPRETER}
-    ${test signal file} =  catenate  SEPARATOR=_  robot_signal_test_started  ${INTERPRETER}  .txt
-    Remove File  ${TEMPDIR}/${test signal file}
-    Run Keyword unless  ${is_jython_in_use}  Start Running Robot  ${test signal file}  running/stopping_with_signal/${testcase file}  ${teardown sleep}  ${runmode}
-    Run Keyword if  ${is_jython_in_use}  Start Running jybot  ${test signal file}  running/stopping_with_signal/${testcase file}  ${teardown sleep}  ${runmode}
-    Wait Until Created  ${TEMPDIR}/${test signal file}  1 minutes
+    ${jython} =  Running On Jython  ${INTERPRETER}
+    ${testfile} =  Set Variable If  ${jython}  robot_signal_test_jython.txt  robot_signal_test_python.txt
+    Remove File  ${TEMPDIR}/${testfile}
+    Run Keyword unless  ${jython}  Start Running Robot  ${testfile}  running/stopping_with_signal/${testcase file}  ${teardown sleep}  ${runmode}
+    Run Keyword if  ${jython}  Start Running jybot  ${testfile}  running/stopping_with_signal/${testcase file}  ${teardown sleep}  ${runmode}
+    Wait Until Created  ${TEMPDIR}/${testfile}  1 minutes
     Run Keyword  ${signal method}  ${signal}
     Wait Until Finished With Timeout
 
