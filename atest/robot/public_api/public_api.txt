@@ -13,10 +13,6 @@ Running
 Output
     Test public API  output
 
-Runnable Data
-    [Tags]
-    FAIL  Test to be done
-
 *** Keywords ***
 Test Public API
     [Arguments]  ${name}
