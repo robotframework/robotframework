@@ -14,7 +14,8 @@ Default Name, Doc & Metadata
     Should Be Equal  ${SUITE.metadata['Something']}  My Value
 
 Overriding Name, Doc & Metadata And Escaping
-    Run Tests  -l log.html -N this_is_overridden_next --name my_COOL_Name.EXEX. --doc Even_cooooler_docEXQU --metadata something:new --metadata Two_Parts:three_part_VALUE -M path:c:\\\\temp\\\\new.txt -M esc:STQUDOAMHAEXEX --escape star:ST -E quest:QU -E dollar:DO -E amp:AM -E hash:HA -E exclam:EX  ${TESTFILE}
+    ${bs} =  Set Variable If  __import__('os').name == 'nt'  \\  \\\\
+    Run Tests  -l log.html -N this_is_overridden_next --name my_COOL_Name.EXEX. --doc Even_cooooler_docEXQU --metadata something:new --metadata Two_Parts:three_part_VALUE -M path:c:${bs}temp${bs}new.txt -M esc:STQUDOAMHAEXEX --escape star:ST -E quest:QU -E dollar:DO -E amp:AM -E hash:HA -E exclam:EX  ${TESTFILE}
     Check Names  ${SUITE}  my COOL Name.!!.
     Check Names  ${SUITE.tests[0]}  First One  my COOL Name.!!..
     Check Names  ${SUITE.tests[1]}  Second One  my COOL Name.!!..

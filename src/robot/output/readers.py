@@ -204,6 +204,9 @@ class TestSuite(BaseTestSuite, _SuiteReader):
         self.set_status()
         return ret
 
+    def _escape_metadata(self, metastr):
+        return metastr
+
     def remove_keywords(self, how):
         how = how.upper()
         if how not in ['ALL','PASSED']:

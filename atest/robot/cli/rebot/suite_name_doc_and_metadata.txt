@@ -16,11 +16,13 @@ Default Name, Doc & Metadata
 
 Overriding Name, Doc & Metadata And Escaping
     [Documentation]  Overriding name, doc and metadata. Also testing escaping values. Tests are run together to have less Rebot runs with same input i.e. to have faster execution.
-    Run Rebot  -N this_is_overridden_next --name my_COOL_NameEXEX --doc Even_cooooler_docEXQU --metadata something:New --metadata two_parts:three_parts_here -M esc:STQUDOAMHAEXEX --escape star:ST -E quest:QU -E dollar:DO -E amp:AM -E hash:HA -E exclam:EX  ${MYINPUT}
+    ${bs} =  Set Variable If  __import__('os').name == 'nt'  \\  \\\\
+    Run Rebot  -N this_is_overridden_next --name my_COOL_NameEXEX --doc Even_cooooler_docEXQU --metadata something:New --metadata two_parts:three_parts_here -M path:c:${bs}temp${bs}new.txt -M esc:STQUDOAMHAEXEX --escape star:ST -E quest:QU -E dollar:DO -E amp:AM -E hash:HA -E exclam:EX  ${MYINPUT}
     Check Names  ${SUITE}  my COOL Name!!
     Check Names  ${SUITE.tests[0]}  First One  my COOL Name!!.
     Check Names  ${SUITE.tests[1]}  Second One  my COOL Name!!.
     Should Be Equal  ${SUITE.doc}  Even cooooler doc!?
     Should Be Equal  ${SUITE.metadata['Something']}  New
     Should Be Equal  ${SUITE.metadata['two parts']}  three parts here
+    Should Be Equal  ${SUITE.metadata['path']}  c:\\temp\\new.txt
     Should Be Equal  ${SUITE.metadata['esc']}  *?$&#!!
