@@ -130,7 +130,7 @@ class Keyword(BaseKeyword):
     def _report_failure(self, context):
         failure = HandlerExecutionFailed()
         if not failure.exit_for_loop:
-            context.output.fail(unicode(failure))
+            context.output.fail(failure.full_message)
             if failure.traceback:
                 context.output.debug(failure.traceback)
         raise failure

@@ -114,6 +114,7 @@ class HandlerExecutionFailed(ExecutionFailed):
         exit_for_loop = bool(getattr(details.error, 'ROBOT_EXIT_FOR_LOOP', False))
         ExecutionFailed.__init__(self, details.message, timeout, syntax,
                                  exit, cont, exit_for_loop)
+        self.full_message = details.message
         self.traceback = details.traceback
 
 
