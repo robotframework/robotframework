@@ -64,7 +64,7 @@ class SuiteSetupListener(object):
     def __init__(self, suite):
         self._suite = suite
     def notify(self, error):
-        self._suite.run_errors.suite_setup_err(error)
+        self._suite.run_errors.suite_setup_err(unicode(error))
 
 
 class _TestListener(object):
@@ -77,9 +77,9 @@ class _TestListener(object):
 
 class TestSetupListener(_TestListener):
     def _notify_run_errors(self, error):
-        self._test.run_errors.setup_err(error)
+        self._test.run_errors.setup_err(unicode(error))
 
 
 class TestTeardownListener(_TestListener):
     def _notify_run_errors(self, error):
-        self._test.run_errors.teardown_err(error)
+        self._test.run_errors.teardown_err(unicode(error))

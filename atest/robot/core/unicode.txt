@@ -1,5 +1,5 @@
 *** Settings ***
-Suite Setup     Run Tests  ${EMPTY}  core/unicode.txt
+Suite Setup     Run Tests  ${EMPTY}  core/unicode.txt  core/unicode_failure_in_suite_setup_and_teardown.txt
 Force Tags      regression  pybot  jybot
 Resource        atest_resource.txt
 Variables       ../../resources/unicode_vars.py
@@ -18,5 +18,22 @@ Unicode In Return Value Attributes
     Check Log Message  ${test.kws[1].msgs[0]}  ${MESSAGES}
 
 Unicode Failure
-    Check Test Case  ${TESTNAME}  FAIL  ${MESSAGES}
+    ${tc} =  Check Test Case  ${TESTNAME}  FAIL  ${MESSAGES}
+    Check Log Message  ${tc.kws[0].msgs[0]}  ${MESSAGES}  FAIL
+
+Unicode Failure In Setup
+    ${tc} =  Check Test Case  ${TESTNAME}  FAIL  Setup failed:\n ${MESSAGES}
+    Check Log Message  ${tc.setup.msgs[0]}  ${MESSAGES}  FAIL
+
+Unicode Failure In Teardown
+    ${tc} =  Check Test Case  ${TESTNAME}  FAIL  Teardown failed:\n ${MESSAGES}
+    Check Log Message  ${tc.teardown.msgs[0]}  ${MESSAGES}  FAIL
+
+Unicode Failure In Teardown After Normal Failure
+    Check Test Case  ${TESTNAME}  FAIL  Just ASCII here\n\n Also teardown failed:\n ${MESSAGES}
+
+Unicode Failure In Suite Setup and Teardown
+    Check Test Case  ${TESTNAME}
+    Check Log Message  ${SUITE.suites[1].setup.msgs[0]}  ${MESSAGES}  FAIL
+    Check Log Message  ${SUITE.suites[1].teardown.msgs[0]}  ${MESSAGES}  FAIL
 

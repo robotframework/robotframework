@@ -1,0 +1,9 @@
+*** Settings ***
+Suite Setup     Raise Unicode Error
+Suite Teardown  Raise Unicode Error
+Library         UnicodeLibrary
+
+*** Test Cases ***
+Unicode Failure In Suite Setup and Teardown
+    [Documentation]  FAIL  Setup of the parent suite failed.\n\nAlso teardown of the parent suite failed.
+
