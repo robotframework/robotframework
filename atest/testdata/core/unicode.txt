@@ -2,13 +2,13 @@
 Library         UnicodeLibrary
 
 *** Test Cases ***
-Unicode
+Unicode In Log Messages
     Print Unicode Strings
 
-Unicode Object
+Unicode In Return Value Attributes
     ${obj} =  Print And Return Unicode Object
     Log  ${obj.message}
 
-Unicode Error
+Unicode Failure
     Raise Unicode Error
 
