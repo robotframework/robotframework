@@ -1,0 +1,14 @@
+*** Settings ***
+Library         UnicodeLibrary
+
+*** Test Cases ***
+Unicode
+    Print Unicode Strings
+
+Unicode Object
+    ${obj} =  Print And Return Unicode Object
+    Log  ${obj.message}
+
+Unicode Error
+    Raise Unicode Error
+
