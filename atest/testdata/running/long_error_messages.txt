@@ -35,7 +35,7 @@ Library  Exceptions
 3121 X 1 Message Over The Limit
     Fail With Long Message  3121  1
 
-Multiple errors
+Multiple short errors
     :FOR  ${index}  IN RANGE  1  100
     \   Raise Continuable Failure   Failure number ${index}
 

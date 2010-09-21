@@ -5,8 +5,7 @@ Force Tags      regression  jybot  pybot
 Resource        atest_resource.txt
 
 *** Variables ***
-${4_SPACES}  \ \ \ \ \
-${EXPLANATION}  \n ${4_SPACES}[ Message content over the limit has been removed. ]\n
+${EXPLANATION}  \n${SPACE*4}[ Message content over the limit has been removed. ]\n
 ${3DOTS}  \\.\\.\\.
 
 *** Test Cases ***
@@ -27,12 +26,12 @@ Over The Limit
     Has Been Cut  400 x 7 Message Over The Limit  1201.*${3DOTS}  ${3DOTS}.*END
     Has Been Cut  3121 x 1 Message Over The Limit  .*${3DOTS}\\n  ${3DOTS}.*\\n
 
-Multiple Errors
-    ${test} =  Get Test Case  ${TESTNAME}
+Multiple Short Errors
+    ${test} =  Has Been Cut  ${TESTNAME}
     Should Be Equal  ${test.message.count('\n')}  ${40}
     
 Two long errors
-    ${test} =  Get Test Case  ${TESTNAME}
+    ${test} =  Has Been Cut  ${TESTNAME}
     Should Be Equal  ${test.message.count('\n')}  ${40}
     Should Be True  ${test.message.startswith('Several failures occurred:\n\n1) ContinuableApocalypseException: 1')}
     Should Be True  ${test.message.endswith('1961~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~2000')}
@@ -40,15 +39,16 @@ Two long errors
 
 *** Keywords ***
 Has Been Cut
-    [Arguments]  ${testname}  ${eol_dots}=  ${bol_dots}=
-    ${test} =  Get Test Case  ${testname}
+    [Arguments]  ${test}  ${eol_dots}=  ${bol_dots}=
+    ${test} =  Get Test Case  ${test}
     Should Contain  ${test.message}  ${EXPLANATION}
     Should Match Non Empty Regexp  ${test.message}  ${eol_dots}
     Should Match Non Empty Regexp  ${test.message}  ${bol_dots}
+    [Return]  ${test}
 
 Should Match Non Empty Regexp
     [Arguments]  ${message}  ${pattern}
-    Run Keyword If  '${pattern}' != ''  Should Match Regexp  ${message}  ${pattern}
+    Run Keyword If  '${pattern}'  Should Match Regexp  ${message}  ${pattern}
 
 Has Not Been Cut
     [Arguments]  ${testname}
