@@ -155,6 +155,10 @@ the value, for example :var:`${arg}=default`. There can be many
 arguments with defaults, but they all must be given after the normal
 positional arguments.
 
+.. note:: The syntax for default values is space sensitive. Spaces
+          before the :code:`=` sign are not allowed, and possible spaces
+          after it are considered part of the default value itself.
+
 .. table:: User keyword with default values for arguments
    :class: example
 
