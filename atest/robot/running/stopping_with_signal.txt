@@ -85,6 +85,8 @@ One Signal Should Stop Test Execution Gracefully And Skip Teardowns With Runmode
 Start And Send Signal
     [arguments]  ${testcase file}  ${signal method}  ${signal}  ${teardown sleep}=0s  ${runmode}=normal
     ${jython} =  Running On Jython  ${INTERPRETER}
+    ${stripped_ip} =  Set Variable  ${INTERPRETER.replace('\\', '_').replace('/', '_').replace(':', '_').replace('.', '_')}
+    ${testfile} =  catenate  SEPARATOR=_  robot_signal_test_started  ${stripped_ip}  .txt
     ${testfile} =  Set Variable If  ${jython}  robot_signal_test_jython.txt  robot_signal_test_python.txt
     Remove File  ${TEMPDIR}/${testfile}
     Run Keyword unless  ${jython}  Start Running Robot  ${testfile}  running/stopping_with_signal/${testcase file}  ${teardown sleep}  ${runmode}
