@@ -198,6 +198,31 @@ if not sys.platform.startswith('java'):
         def apply(self):
             self.result = True
 
+    #FIXME: Remove when not needed anymore
+    def _run_in_thread(callable):
+        print "Running in python thread"
+        from threading import Thread
+        import time
+        t = Thread(target=callable)
+        t.run()
+        while t.isAlive():
+            time.sleep(1)
+
+    def _run_in_rf_thread(callable):
+        print "Running in rf thread"
+        from robot.utils.robotthread import ThreadedRunner
+        t = ThreadedRunner(callable)
+        t.run_in_thread(10)
+        print t.get_result()
+
+    if __name__ == '__main__':
+        _run_in_thread(pause_execution)
+        _run_in_thread(pause_execution)
+        _run_in_thread(pause_execution)
+        _run_in_thread(pause_execution)
+        _run_in_rf_thread(pause_execution)
+        _run_in_rf_thread(pause_execution)
+
 
 else:
 
