@@ -302,8 +302,12 @@ The dry run execution may fail for following reasons:
   * Using keywords with wrong number of arguments.
   * Using user keywords that have invalid syntax.
 
-In addition, normal `execution errors`__ are shown, for example, when 
-test library or resource file imports cannot be resolved.
+In addition to these failures, normal `execution errors`__ are shown,
+for example, when test library or resource file imports cannot be
+resolved.
+
+.. note:: The dry run mode does not validate variables. This
+          limitation may be lifted in the future releases.
 
 __ `Errors and warnings during execution`_
 
