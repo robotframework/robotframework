@@ -1,0 +1,14 @@
+*** Settings ***
+Suite Setup     Run Tests  --listener ${CURDIR}${/}listener_using_builtin.py  standard_libraries/builtin/used_in_custom_libs_and_listeners.txt
+Force Tags      regression  pybot  jybot
+Resource        atest_resource.txt
+
+*** Test Cases ***
+
+Keywords Using BuiltIn
+    ${tc} =  Check Test Case  ${TESTNAME}
+    Check Log Message  ${tc.kws[0].msgs[0]}  Log level changed from INFO to DEBUG
+    Check Log Message  ${tc.kws[0].msgs[1]}  Hello, debug world!  DEBUG
+
+Listener Using BuiltIn
+    Check Test Case  ${TESTNAME}

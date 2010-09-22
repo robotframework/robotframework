@@ -16,7 +16,7 @@ import os
 import re
 import time
 
-from robot.output import LOGGER, OUTPUT, Message
+from robot.output import LOGGER, Message
 from robot.errors import DataError, ExecutionFailed, ExecutionFailures
 from robot import utils
 from robot.utils import asserts
@@ -773,7 +773,7 @@ class _RunKeyword:
         if not isinstance(name, basestring):
             raise DataError('Keyword name must be a string')
         kw = Keyword(name, list(args))
-        return kw.run(ExecutionContext(NAMESPACES.current, OUTPUT))
+        return kw.run(ExecutionContext(NAMESPACES.current, self._output))
 
     def run_keywords(self, *names):
         """Executes all the given keywords in a sequence without arguments.
@@ -793,7 +793,7 @@ class _RunKeyword:
                 self.run_keyword(kw)
             except ExecutionFailed, err:
                 errors.extend(err.get_errors())
-                context = ExecutionContext(NAMESPACES.current, OUTPUT)
+                context = ExecutionContext(NAMESPACES.current, self._output)
                 if not err.can_continue(context.teardown):
                     break
         if errors:
@@ -1230,7 +1230,7 @@ class _Misc:
         The available levels: TRACE, DEBUG, INFO (default), WARN and NONE (no
         logging).
         """
-        old = OUTPUT.set_log_level(level)
+        old = self._output.set_log_level(level)
         self.log('Log level changed from %s to %s' % (old, level.upper()))
         return old
 
@@ -1560,6 +1560,16 @@ class BuiltIn(_Verify, _Converter, _Variables, _RunKeyword, _Misc):
 
     ROBOT_LIBRARY_SCOPE = 'GLOBAL'
     ROBOT_LIBRARY_VERSION = get_version()
+
+    @property
+    def _output(self):
+        # OUTPUT is initially set to None and gets real value only when actual
+        # execution starts. If BuiltIn is used externally before that, OUTPUT
+        # gets None value. For more information see this bug report:
+        # http://code.google.com/p/robotframework/issues/detail?id=654
+        # TODO: Refactor running so that OUTPUT is available via context
+        from robot.output import OUTPUT
+        return OUTPUT
 
     def _matches(self, string, pattern):
         # Must use this instead of fnmatch when string may contain newlines.
