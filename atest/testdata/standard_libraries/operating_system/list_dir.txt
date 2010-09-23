@@ -1,111 +1,110 @@
 *** Settings ***
-Suite Teardown  Remove Temps
-Test Setup      Remove Temps
+Test Setup      Create Test Directories
+Suite Teardown  Remove Test Directories
 Library         OperatingSystem
+Library         Collections
 
 *** Variables ***
-${TESTDIR}  ${CURDIR}${/}robot_temp_dir
+${BASE}   ${TEMPDIR}${/}robot_list_dir_temp
+${DIR}    foodir
+${F1}     foo.txt
+${F2}     ŋöŋ-äßćïï.txt
 
 *** Test Cases ***
 
-List Directory
-    [Documentation]  This test also tests setting variables
-    Create Dir  ${TESTDIR}
-    Create File  ${TESTDIR}${/}foo.txt
-    Create File  ${TESTDIR}${/}bar.txt
-    ${files} =  List Directory  ${TESTDIR}
-    Should Be True  ${files} == ['bar.txt','foo.txt']
-    @{files2} =  List Directory  ${TESTDIR}
-    Should Be Equal  @{files2}[0]  bar.txt
-    Should Be Equal  @{files2}[1]  foo.txt
-    ${file}  @{files3} =  List Dir  ${TESTDIR}
-    Should Be Equal  ${file}  bar.txt
-    Should Be Equal  @{files3}[0]  foo.txt
-    Remove File  ${TESTDIR}${/}bar.txt
-    ${files4} =  List Directory  ${TESTDIR}
-    Should Be True  ${files4} == ['foo.txt']
-    @{files5} =  List Directory  ${TESTDIR}
-    Should Be Equal  @{files5}[0]  foo.txt
-    ${file2}  @{files6} =  List Dir  ${TESTDIR}
-    Should Be Equal  ${file2}  foo.txt
-    Should Be True  @{files6} == []
-    Remove File  ${TESTDIR}${/}foo.txt
-    ${files7} =  List Directory  ${TESTDIR}
-    Should Be True  ${files7} == []
-    @{files8} =  List Directory  ${TESTDIR}
-    Should Be True  @{files8} == []
+List And Count Directory
+    List And Count Directory  ${F1}  ${DIR}  ${F2}
+    Remove File  ${BASE}/${F1}
+    List And Count Directory  ${DIR}  ${F2}
+    Remove File  ${BASE}/${F2}
+    List And Count Directory  ${DIR}
+    Remove Directory  ${BASE}/${DIR}
+    List And Count Directory
 
-List Directory With Patterns
-    Comment  Setup
-    Create Directory  ${TESTDIR}
-    Create File  ${TESTDIR}${/}foo.txt
-    Create File  ${TESTDIR}${/}bar.txt
-    Create Directory  ${TESTDIR}${/}foodir
-    Comment  Actual test
-    ${names} =  List Directory  ${TESTDIR}  ???.txt
-    Should Be True  ${names} == ['bar.txt', 'foo.txt']
-    ${names} =  List Directory  ${TESTDIR}  *oo*
-    Should Be True  ${names} == ['foo.txt', 'foodir']
+List And Count Files In Directory
+    List And Count Files In Directory  ${F1}  ${F2}
+    Remove Files  ${BASE}/${F1}  ${BASE}/${F2}
+    List And Count Files In Directory
+
+List And Count Directories In Directory
+    List And Count Directories In Directory  ${DIR}
+    Remove Directory  ${BASE}/${DIR}
+    List And Count Directories In Directory
+
+List And Count Directory With Patterns
+    List And Count Directory With Pattern  *.txt  ${F1}  ${F2}
+    List And Count Directory With Pattern  f??*   ${F1}  ${DIR}
+    List And Count Directory With Pattern  nomatch
+
+List And Count Files In Directory With Patterns
+    List And Count Files In Directory With Pattern  *     ${F1}  ${F2}
+    List And Count Files In Directory With Pattern  foo*  ${F1}
+    List And Count Files In Directory With Pattern  none
+
+List And Count Directories In Directory With Patterns
+    List And Count Directories In Directory With Pattern  f*  ${DIR}
+    List And Count Directories In Directory With Pattern  *.txt
 
 List Directory With Absolute
-    [Documentation]  This tests also List Files In Directory And List Directories In Directory
-    Create Directory  ${TESTDIR}
-    Create File  ${TESTDIR}${/}foo.txt
-    Create File  ${TESTDIR}${/}bar.txt
-    Create Directory  ${TESTDIR}${/}foodir
-    ${names} =  List Directory  ${TESTDIR}  ${EMPTY}  absolute
-    Log  ${names}
-    Should Be Equal  ${names[0]}  ${TESTDIR}${/}bar.txt
-    Should Be Equal  ${names[1]}  ${TESTDIR}${/}foo.txt
-    Should Be Equal  ${names[2]}  ${TESTDIR}${/}foodir
-    ${names} =  List Files In Directory  ${TESTDIR}  ${EMPTY}  whatever
-    Should Be Equal  ${names[0]}  ${TESTDIR}${/}bar.txt
-    Should Be Equal  ${names[1]}  ${TESTDIR}${/}foo.txt
-    ${names} =  List Directories In Directory  ${TESTDIR}  ${EMPTY}  ${EMPTY}  deprecated absolute
-    Should Be Equal  ${names[0]}  ${TESTDIR}${/}foodir
-
-List And Count Files And Directories In Directory
-    [Documentation]  Tests 'List Files In Directory', 'List Directories In Directory', 'Count Files In Directory', 'Count Directories In Directory' and 'Count Items In Directory'
-    Comment  0) Setup
-    Create Dir  ${TESTDIR}
-    Create File  ${TESTDIR}${/}foo.txt
-    Create File  ${TESTDIR}${/}bar.txt
-    Create File  ${TESTDIR}${/}zap.txt
-    Create Dir  ${TESTDIR}${/}foodir
-    Create Dir  ${TESTDIR}${/}bardir
-    Comment  1) List Files In Dir
-    ${files} =  List Files In Directory  ${TESTDIR}
-    ${bar_files} =  List Files In Directory  ${TESTDIR}  bar*
-    Should Be True  ${files} == ['bar.txt','foo.txt','zap.txt']
-    Should Be True  ${bar_files} == ['bar.txt']
-    Comment  2) List Dirs In Dir
-    ${dirs} =  List Directories In Directory  ${TESTDIR}
-    ${foo_dirs} =  List Directories In Directory  ${TESTDIR}  *o*
-    Should Be True  ${dirs} == ['bardir', 'foodir']
-    Should Be True  ${foo_dirs} == ['foodir']
-    ${file_count} =  Count Files In Directory  ${TESTDIR}
-    ${txt_file_count} =  Count Files In Directory  ${TESTDIR}  *.txt
-    Should Be Equal  ${file_count}  ${3}
-    Should Be Equal  ${file_count}  ${txt_file_count}
-    Comment  4) Count Dirs In Dir
-    ${dir_count} =  Count Directories In Directory  ${TESTDIR}
-    ${dir_dir_count} =  Count Directories In Directory  ${TESTDIR}  *dir
-    Should Be Equal  ${dir_count}  ${2}
-    Should Be Equal  ${dir_count}  ${dir_dir_count}
-    Comment  5) Count Items In Dir
-    ${count} =  Count Items In Directory  ${TESTDIR}
-    ${foo_count} =  Count Items In Directory  ${TESTDIR}  foo*
-    Should Be Equal  ${count}  ${5}
-    Should Be Equal  ${foo_count}  ${2}
-    Comment  6) Misc tests
-    ${html_file_count} =  Count Files In Directory  ${CURDIR}  *.html
-    ${html_dir_count} =  Count Directories In Directory  ${CURDIR}  *.html
-    ${html_item_count} =  Count Items In Directory  ${CURDIR}  *.html
-    Should Be True  ${html_file_count} > 0
-    Should Be Equal  ${html_dir_count}  ${0}
-    Should Be Equal  ${html_file_count}  ${html_item_count}
+    @{expected} =  Create List  ${BASE}${/}${F1}  ${BASE}${/}${F2}
+    @{items} =  List Directory  ${BASE}  *.txt  absolute
+    Lists Should Be Equal  ${items}  ${expected}
+    @{items} =  List Files In Directory  ${BASE}  absolute=yes
+    Lists Should Be Equal  ${items}  ${expected}
+    @{items} =  List Directories In Directory  ${BASE}  ${EMPTY}  ${EMPTY}  deprecated absolute
+    Should Be True  @{items} == ['${BASE}${/}${DIR}']
 
 
 *** Keywords ***
-Remove Temps
-    Remove Dir  ${TESTDIR}  recursive
+
+Create Test Directories
+    Remove Test Directories
+    Create Directory  ${BASE}
+    Create Directory  ${BASE}/${DIR}
+    Create File       ${BASE}/${F1}
+    Create File       ${BASE}/${F2}
+
+Remove Test Directories
+    Remove Directory  ${BASE}  recursive
+
+List And Count Directory
+    [Arguments]  @{expected}
+    @{items} =  List Directory  ${BASE}
+    ${count} =  Count Items In Directory  ${BASE}
+    Lists Should Be Equal  ${items}  ${expected}
+    Length Should Be  ${items}  ${count}
+
+List And Count Directory With Pattern
+    [Arguments]  ${pattern}  @{expected}
+    @{items} =  List Directory  ${BASE}  ${pattern}
+    ${count} =  Count Items In Directory  ${BASE}  ${pattern}
+    Lists Should Be Equal  ${items}  ${expected}
+    Length Should Be  ${items}  ${count}
+
+List And Count Files In Directory
+    [Arguments]  @{expected}
+    ${items} =  List Files In Directory  ${BASE}
+    ${count} =  Count Files In Directory  ${BASE}
+    Lists Should Be Equal  ${items}  ${expected}
+    Length Should Be  ${items}  ${count}
+
+List And Count Files In Directory With Pattern
+    [Arguments]  ${pattern}  @{expected}
+    ${items} =  List Files In Directory  ${BASE}  ${pattern}
+    ${count} =  Count Files In Directory  ${BASE}  ${pattern}
+    Lists Should Be Equal  ${items}  ${expected}
+    Length Should Be  ${items}  ${count}
+
+List And Count Directories In Directory
+    [Arguments]  @{expected}
+    ${items} =  List Directories In Directory  ${BASE}
+    ${count} =  Count Directories In Directory  ${BASE}
+    Lists Should Be Equal  ${items}  ${expected}
+    Length Should Be  ${items}  ${count}
+
+List And Count Directories In Directory With Pattern
+    [Arguments]  ${pattern}  @{expected}
+    ${items} =  List Directories In Directory  ${BASE}  ${pattern}
+    ${count} =  Count Directories In Directory  ${BASE}  ${pattern}
+    Lists Should Be Equal  ${items}  ${expected}
+    Length Should Be  ${items}  ${count}
