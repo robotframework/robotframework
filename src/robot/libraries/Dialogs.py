@@ -19,6 +19,8 @@
 for pausing the test execution and getting input from users. The
 dialogs are slightly different depending on are tests run on Python or
 Jython but they provide the same functionality.
+
+Note: Dialogs library cannot be used with timeouts on Windows with Python.
 """
 
 import sys
@@ -81,10 +83,22 @@ if not sys.platform.startswith('java'):
                         BOTH, END, LEFT
     import tkMessageBox
     import tkSimpleDialog
+    import os
+    from threading import currentThread
+
+
+    def _prevent_execution_with_timeouts(method):
+        def _check_timeout(*args):
+            if os.name == 'nt' and  currentThread().name != 'MainThread':
+                raise AssertionError("Dialogs library cannot be used with "
+                                     "timeout on Windows with Python.")
+            return method(*args)
+        return _check_timeout
 
 
     class _AbstractTkDialog(Toplevel):
 
+        @_prevent_execution_with_timeouts
         def __init__(self, title):
             parent = Tk()
             parent.withdraw()
@@ -100,8 +114,8 @@ if not sys.platform.startswith('java'):
             self.title(title)
             self.grab_set()
             self.protocol("WM_DELETE_WINDOW", self._right_clicked)
-            self.geometry("+%d+%d" % (parent.winfo_rootx()+50,
-                                      parent.winfo_rooty()+50))
+            self.geometry("+%d+%d" % (parent.winfo_rootx()+150,
+                                      parent.winfo_rooty()+150))
 
         def _create_body(self):
             frame = Frame(self)
@@ -140,15 +154,17 @@ if not sys.platform.startswith('java'):
             raise NotImplementedError()
 
 
-    class MessageDialog:
+    class MessageDialog(object):
 
+        @_prevent_execution_with_timeouts
         def __init__(self, message):
             Tk().withdraw()
             tkMessageBox.showinfo(DIALOG_TITLE, message)
 
 
-    class InputDialog:
+    class InputDialog(object):
 
+        @_prevent_execution_with_timeouts
         def __init__(self, message, default):
             Tk().withdraw()
             self.result = tkSimpleDialog.askstring(DIALOG_TITLE, message,
@@ -197,31 +213,6 @@ if not sys.platform.startswith('java'):
 
         def apply(self):
             self.result = True
-
-    #FIXME: Remove when not needed anymore
-    def _run_in_thread(callable):
-        print "Running in python thread"
-        from threading import Thread
-        import time
-        t = Thread(target=callable)
-        t.run()
-        while t.isAlive():
-            time.sleep(1)
-
-    def _run_in_rf_thread(callable):
-        print "Running in rf thread"
-        from robot.utils.robotthread import ThreadedRunner
-        t = ThreadedRunner(callable)
-        t.run_in_thread(10)
-        print t.get_result()
-
-    if __name__ == '__main__':
-        _run_in_thread(pause_execution)
-        _run_in_thread(pause_execution)
-        _run_in_thread(pause_execution)
-        _run_in_thread(pause_execution)
-        _run_in_rf_thread(pause_execution)
-        _run_in_rf_thread(pause_execution)
 
 
 else:
