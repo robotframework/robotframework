@@ -493,17 +493,23 @@ the same way as they are handled in HTML. This means that Robot Framework:
 
 To prevent Robot Framework from parsing data according to these rules, a backslash can be used:
 
-- Before leading spaces, for example :code:`\\ some text`
-- Between consecutive spaces, for example :code:`text \\ \\ more text`
-- After trailing spaces, for example :code:`some text \\ \\`
-- With :code:`n` to create a newline, for example :code:`first line\\n2nd line`
-- With :code:`t` to create a tab character, for example :code:`text\\tmore text`
-- With :code:`r` to create a carriage return, for example :code:`text\\rmore text`
+- Before leading spaces, for example :code:`\\ some text`.
+- Between consecutive spaces, for example :code:`text \\ \\ more text`.
+- After trailing spaces, for example :code:`some text \\ \\`.
+- As :code:`\\n` to create a newline, for example :code:`first line\\n2nd line`.
+- As :code:`\\t` to create a tab character, for example :code:`text\\tmore text`.
+- As :code:`\\r` to create a carriage return, for example :code:`text\\rmore text`.
 
 Another, and often clearer, possibility for representing leading,
 trailing, or consecutive spaces is using `built-in variable`__
 :var:`${SPACE}`. The `extended variable syntax`_ even allows syntax
 like :var:`${SPACE * 8}` which makes handling consecutive spaces very simple.
+
+.. note:: Possible unescaped whitespace character after the :code:`\\n` is
+          ignored to allow wrapping long lines containing newlines. This
+          means that :code:`two lines\\nhere` and :code:`two lines\\n here`
+          are equivalent. An exception to this rule is that the whitespace
+          character is not ignored inside the `extended variable syntax`_. 
 
 __ `Space and empty variables`_
 
