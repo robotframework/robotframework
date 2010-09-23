@@ -150,6 +150,10 @@ class TestdocSerializer(LogSerializer):
         self._write_metadata_row('Number of Tests', suite.get_test_count())
         self._writer.end('table')
 
+    def _start_suite_or_test_metadata(self, suite_or_test):
+        suite_or_test.doc = utils.unescape(suite_or_test.doc)
+        LogSerializer._start_suite_or_test_metadata(self, suite_or_test)
+
     def _write_test_metadata(self, test):
         self._start_suite_or_test_metadata(test)
         if test.timeout.secs < 0:
