@@ -23,4 +23,9 @@ Get Selection From User Fails
     Check Test Case  ${TESTNAME}
 
 Dialog and timeout
-    Check Test Case  ${TESTNAME}
+    ${on python} =  Running On Python  ${INTERPRETER}
+    ${on windows} =  Running On Windows
+    ${message} =  Set Variable If  ${on python} and ${on windows}
+    ...  Dialogs library cannot be used with timeout on Windows with Python.
+    ...  Test timeout 1 seconds exceeded.
+    Check Test Case  ${TESTNAME}  FAIL  ${message}

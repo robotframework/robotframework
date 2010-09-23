@@ -35,3 +35,9 @@ class TestHelper:
 
     def running_on_jython(self, interpreter):
         return 'jython' in interpreter
+
+    def running_on_python(self, interpreter):
+        return not self.running_on_jython(interpreter)
+
+    def running_on_windows(self):
+        return os.path.sep == '\\'

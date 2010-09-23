@@ -1,6 +1,5 @@
 *** Settings ***
 Library         Dialogs
-Test Timeout    1 minute
 
 *** Test Cases ***
 Pause Execution
@@ -28,7 +27,5 @@ Get Selection From User Fails
     Get Selection From User  Press Cancel.  zip  zap  foo
 
 Dialog and timeout
-    [Documentation]  FAIL Test timeout 2 seconds exceeded.
-    [Timeout]  2s
-    Execute Manual Step  Press PASS (if you are fast enough)
+    [Timeout]  1s
     Execute Manual Step  Wait for timeout
