@@ -27,5 +27,5 @@ Dialog and timeout
     ${on windows} =  Running On Windows
     ${message} =  Set Variable If  ${on python} and ${on windows}
     ...  Dialogs library cannot be used with timeout on Windows with Python.
-    ...  Test timeout 1 seconds exceeded.
+    ...  Test timeout 1 second exceeded.
     Check Test Case  ${TESTNAME}  FAIL  ${message}
