@@ -1,0 +1,23 @@
+*** Settings ***
+Suite Setup  Import Resource  ${CURDIR}/import_resource_resource.txt
+
+*** Test Cases ***
+Import Resource
+    Variable Should Exist  ${VAR FROM IMPORT RESOURCE RESOURCE}
+    Variable Should Exist  ${VAR FROM VARFILE 1}
+    KW From Import Resource Resource
+
+Import Resource With Sub Resources
+    Variable Should Exist  ${VAR FROM IMPORT RESOURCE RESOURCE RESOURCE}
+    KW From Import Resource Resource Resource
+    Verify Operating System Library Is Imported
+    Variable Should Exist  ${VAR FROM VARFILE 2}
+
+Import Non-Existing Resource
+    [Documentation]  FAIL Resource file 'non-existing.txt' does not exist.
+    Import Resource  non-existing.txt
+    
+
+*** User Keywords ***
+Verify Operating System Library Is Imported
+    Directory Should Exist  ${CURDIR}

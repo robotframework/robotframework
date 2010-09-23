@@ -1,0 +1,13 @@
+*** Settings ***
+Resource  import_resource_resource_resource.txt
+Variables  import_resource_vars.py  VAR FROM VARFILE 2  3*RESOURCE
+Library  OperatingSystem
+
+
+*** Variables ***
+${VAR FROM IMPORT RESOURCE RESOURCE RESOURCE}  value
+
+
+*** User Keywords ***
+KW From Import Resource Resource Resource
+    No Operation
