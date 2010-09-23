@@ -1277,6 +1277,22 @@ class _Misc:
         NAMESPACES.current.import_variables(path.replace('/', os.sep),
                                             args, overwrite=True)
 
+    def import_resource(self, path):
+        """Imports a resource file with the given path.
+
+        Resources imported with this keyword are set into the test suite scope
+        similarly when importing them in the Setting table using the Resource
+        setting. 
+
+        The given path must be absolute. Forward slashes can be used as path
+        separator regardless the operating system.
+
+        Examples:
+        | Import Resource | ${CURDIR}/resource.txt |
+        | Import Resource | ${CURDIR}/../resources/resource.html |
+        """
+        NAMESPACES.current.import_resource(path.replace('/', os.sep))
+
     def set_library_search_order(self, *libraries):
         """Sets the resolution order to use when a name matches multiple keywords.
 

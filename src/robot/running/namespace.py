@@ -21,7 +21,7 @@ from robot.errors import FrameworkError, DataError
 from robot.variables import GLOBAL_VARIABLES
 from robot.common import UserErrorHandler
 from robot.output import LOGGER
-from robot.parsing.settings import Library, Variables
+from robot.parsing.settings import Library, Variables, Resource
 import robot
 
 from userkeyword import UserLibrary
@@ -79,7 +79,10 @@ class Namespace:
         except KeyError:
             raise FrameworkError("Invalid import setting: %s" % import_setting)
 
-    def _import_resource(self, import_setting, variables):
+    def import_resource(self, name):
+            self._import_resource(Resource(None, name))
+
+    def _import_resource(self, import_setting, variables=None):
         path = self._resolve_name(import_setting, variables)
         if path not in self._imported_resource_files:
             self._imported_resource_files.append(path)
