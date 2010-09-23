@@ -1058,7 +1058,7 @@ class OperatingSystem:
 
     def list_directory(self, path, pattern=None, absolute=False,
                        deprecated_absolute=None):
-        """Returns items from a directory, optionally filtered with `pattern`.
+        """Returns and logs items in a directory, optionally filtered with `pattern`.
 
         File and directory names are returned in case-sensitive alphabetical
         order, e.g. ['A Name', 'Second', 'a lower case name', 'one more'].
@@ -1086,60 +1086,51 @@ class OperatingSystem:
         removed in RF 2.6.
         """
         items = self._list_dir(path, pattern, absolute, deprecated_absolute)
-        self._info('\n'.join(items))
+        self._info('%d item%s:\n%s' % (len(items), plural_or_not(items), '\n'.join(items)))
         return items
 
     def list_files_in_directory(self, path, pattern=None, absolute=False,
                                 deprecated_absolute=None):
         """A wrapper for `List Directory` that returns only files."""
         files = self._list_files_in_dir(path, pattern, absolute, deprecated_absolute)
-        self._info('\n'.join(files))
+        self._info('%d file%s:\n%s' % (len(files), plural_or_not(files), '\n'.join(files)))
         return files
 
     def list_directories_in_directory(self, path, pattern=None, absolute=False,
                                       deprecated_absolute=None):
         """A wrapper for `List Directory` that returns only directories."""
         dirs = self._list_dirs_in_dir(path, pattern, absolute, deprecated_absolute)
-        self._info('\n'.join(dirs))
+        self._info('%d director%s:\n%s' % (len(dirs), 'y' if len(dirs) == 1 else 'ies', '\n'.join(dirs)))
         return dirs
 
     def count_items_in_directory(self, path, pattern=None):
-        """Returns the number of all items in the given directory.
+        """Returns and logs the number of all items in the given directory.
 
         The arguments `pattern` and `pattern_type` have the same
         semantics as in the `List Directory` keyword. The count is
         returned as an integer, so it must be checked e.g. with the
         built-in keyword `Should Be Equal As Integers`.
         """
-        items = self._list_dir(path, pattern)
-        return len(items)
+        count = len(self._list_dir(path, pattern))
+        self._info("%s item%s." % (count, plural_or_not(count)))
+        return count
 
     def count_files_in_directory(self, path, pattern=None):
-        """Returns the number of files in the given directory.
-
-        The arguments `pattern` and `pattern_type` have the same
-        semantics as in the `List Directory` keyword. The count is
-        returned as an integer, so it must be checked e.g. with the
-        built-in keyword `Should Be Equal As Integers`.
-        """
-        files = self._list_files_in_dir(path, pattern)
-        return len(files)
+        """A wrapper for `Count Items In Directory` returning onlyt directory count."""
+        count = len(self._list_files_in_dir(path, pattern))
+        self._info("%s file%s." % (count, plural_or_not(count)))
+        return count
 
     def count_directories_in_directory(self, path, pattern=None):
-        """Returns the number of subdirectories in the given directory.
-
-        The arguments `pattern` and `pattern_type` have the same
-        semantics as in the `List Directory` keyword. The count is
-        returned as an integer, so it must be checked e.g. with the
-        built-in keyword `Should Be Equal As Integers`.
-        """
-        dirs = self._list_dirs_in_dir(path, pattern)
-        return len(dirs)
+        """A wrapper for `Count Items In Directory` returning only file count."""
+        count = len(self._list_dirs_in_dir(path, pattern))
+        self._info("%s director%s." % (count, 'y' if count == 1 else 'ies'))
+        return count
 
     def _list_dir(self, path, pattern=None, absolute=False,
                   deprecated_absolute=None):
         path = self._absnorm(path)
-        self._link("Listing contents of directory '%s'", path)
+        self._link("Listing contents of directory '%s'.", path)
         if not os.path.isdir(path):
             raise RuntimeError("Directory '%s' does not exist" % path)
         items = os.listdir(path)
