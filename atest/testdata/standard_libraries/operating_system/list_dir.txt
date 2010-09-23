@@ -4,22 +4,9 @@ Test Setup      Remove Temps
 Library         OperatingSystem
 
 *** Variables ***
-${TESTFILE}  ${CURDIR}${/}robot_temp_file.txt
 ${TESTDIR}  ${CURDIR}${/}robot_temp_dir
 
 *** Test Cases ***
-Get File Size
-    Create File  ${TESTFILE}
-    ${size} =  Get File Size  ${TESTFILE}
-    Should Be Equal  ${size}  ${0}
-    Create File  ${TESTFILE}  x
-    ${size} =  Get File Size  ${TESTFILE}
-    Should Be Equal  ${size}  ${1}
-    Create File  ${TESTFILE}  some content
-    ${size} =  Get File Size  ${TESTFILE}
-    Should Be Equal  ${size}  ${12}
-    ${size} =  Get File Size  ${CURDIR}/misc.txt
-    Should Be True  ${size} > 1000
 
 List Directory
     [Documentation]  This test also tests setting variables
@@ -121,6 +108,4 @@ List And Count Files And Directories In Directory
 
 *** Keywords ***
 Remove Temps
-    Remove File  ${TESTFILE}
     Remove Dir  ${TESTDIR}  recursive
-

@@ -1,15 +1,9 @@
 *** Settings ***
-Suite Setup     Run Tests  ${EMPTY}  standard_libraries/operating_system/misc.txt
+Suite Setup     Run Tests  ${EMPTY}  standard_libraries/operating_system/list_dir.txt
 Force Tags      regression  jybot  pybot
 Resource        atest_resource.txt
 
 *** Test Cases ***
-Get File Size
-    ${tc} =  Check testcase  Get File Size
-    ${path} =  Join Path  ${CURDIR}/../../..  testdata  standard_libraries  operating_system  robot_temp_file.txt
-    Check Log Message  ${tc.kws[1].msgs[0]}  Size of file '<a href="file://${path}">${path}</a>' is 0 bytes  HTML
-    Check Log Message  ${tc.kws[4].msgs[0]}  Size of file '<a href="file://${path}">${path}</a>' is 1 byte  HTML
-    Check Log Message  ${tc.kws[7].msgs[0]}  Size of file '<a href="file://${path}">${path}</a>' is 12 bytes  HTML
 
 List Directory
     ${tc} =  Check testcase  List Directory
