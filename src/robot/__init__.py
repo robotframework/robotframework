@@ -13,10 +13,24 @@
 #  limitations under the License.
 
 import sys
+import os
 
 if __name__ == '__main__':
     sys.stderr.write("Use 'runner' or 'rebot' for executing.\n")
     sys.exit(252)  # 252 == DATA_ERROR
+
+
+if sys.platform.startswith('java') and sys.version_info[:3] < (2,5,2):
+    # Global workaround for http://bugs.jython.org/issue1593
+    from java.lang import String
+    def listdir(path):
+        items = os._listdir(path)
+        if isinstance(path, unicode):
+            items = [unicode(String(i).toString()) for i in items]
+        return items
+    os._listdir = os.listdir
+    os.listdir = listdir
+
 
 if 'pythonpathsetter' not in sys.modules:
     import pythonpathsetter

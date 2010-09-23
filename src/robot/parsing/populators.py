@@ -147,10 +147,6 @@ class FromDirectoryPopulator(object):
     def _list_dir(self, path):
         # os.listdir returns Unicode entries when path is Unicode
         names = os.listdir(utils.unic(path))
-        # http://bugs.jython.org/issue1593
-        if utils.is_jython:
-            from java.lang import String
-            names = [utils.unic(String(n)) for n in names]
         for name in sorted(names, key=unicode.lower):
             yield name, os.path.join(path, name)
 
