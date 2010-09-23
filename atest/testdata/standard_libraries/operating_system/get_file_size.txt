@@ -1,0 +1,28 @@
+*** Settings ***
+Library         OperatingSystem
+
+*** Variables ***
+${TESTFILE}  ${TEMPDIR}/robot_temp_file.txt
+
+*** Test Cases ***
+Get File Size
+    Create File  ${TESTFILE}
+    ${size} =  Get File Size  ${TESTFILE}
+    Should Be Equal  ${size}  ${0}
+    Create File  ${TESTFILE}  x
+    ${size} =  Get File Size  ${TESTFILE}
+    Should Be Equal  ${size}  ${1}
+    Create File  ${TESTFILE}  some content
+    ${size} =  Get File Size  ${TESTFILE}
+    Should Be Equal  ${size}  ${12}
+    ${size} =  Get File Size  ${CURDIR}/get_file_size.txt
+    Should Be True  0 < ${size} < 1000
+    [Teardown]  Remove FIle  ${TESTFILE}
+
+Get size of non-existing file
+   [Documentation]  FAIL  File '${EXECDIR}${/}non.ex' does not exist.
+   Get File Size  non.ex
+
+Get size of directory
+   [Documentation]  FAIL  File '${CURDIR}' does not exist.
+   Get File Size  ${CURDIR}

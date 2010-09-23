@@ -12,7 +12,6 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-
 import os
 import sys
 import time
@@ -1041,16 +1040,17 @@ class OperatingSystem:
             mtime = parse_time(mtime)
         except DataError, err:
             raise RuntimeError("Setting modified time of '%s' failed: %s"
-                            % (path, err))
+                               % (path, err))
         os.utime(path, (mtime, mtime))
         time.sleep(0.1)  # Give os some time to really set these times
         tstamp = secs_to_timestamp(mtime, ('-',' ',':'))
         self._link("Set modified time of '%%s' to %s" % tstamp, path)
 
-
     def get_file_size(self, path):
         """Returns and logs file size as an integer in bytes"""
         path = self._absnorm(path)
+        if not os.path.isfile(path):
+            raise RuntimeError("File '%s' does not exist." % path)
         size = os.stat(path).st_size
         plural = plural_or_not(size)
         self._link("Size of file '%%s' is %d byte%s" % (size, plural), path)
