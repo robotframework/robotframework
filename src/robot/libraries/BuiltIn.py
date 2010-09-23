@@ -1273,6 +1273,9 @@ class _Misc:
         Examples:
         | Import Variables | ${CURDIR}/variables.py   |      |      |
         | Import Variables | ${CURDIR}/../vars/env.py | arg1 | arg2 |
+
+
+        New in Robot Framework 2.5.4
         """
         NAMESPACES.current.import_variables(path.replace('/', os.sep),
                                             args, overwrite=True)
