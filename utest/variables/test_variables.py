@@ -223,7 +223,23 @@ class TestVariables(unittest.TestCase):
         assert_equals(self.varz.replace_scalar('${dic["a"]}'), 1)
         assert_equals(self.varz.replace_scalar('${dic["o"]}'), obj)
         assert_equals(self.varz.replace_scalar('-${dic["o"].b[2]}-'), '-3-')
-        
+
+    def test_space_is_not_ignored_after_newline_in_extend_variable_syntax(self):
+        self.varz['${x}'] = 'test string'
+        self.varz['${lf}'] = '\\n'
+        self.varz['${lfs}'] = '\\n '
+        for inp, exp in [('${x.replace(" ", """\\n""")}', 'test\nstring'),
+                         ('${x.replace(" ", """\\n """)}', 'test\n string'),
+                         ('${x.replace(" ", """${lf}""")}', 'test\nstring'),
+                         ('${x.replace(" ", """${lfs}""")}', 'test\n string')]:
+            assert_equals(self.varz.replace_scalar(inp), exp)
+
+    def test_escaping_with_extended_variable_syntax(self):
+        self.varz['${p}'] = 'c:\\temp'
+        assert self.varz['${p}'] == 'c:\\temp'
+        assert_equals(self.varz.replace_scalar('${p + "\\\\foo.txt"}'),
+                      'c:\\temp\\foo.txt')
+
     def test_internal_variables(self):
         # Internal variables are variables like ${my${name}}
         self.varz['${name}'] = 'name'
