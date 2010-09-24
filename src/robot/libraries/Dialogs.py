@@ -83,15 +83,14 @@ if not sys.platform.startswith('java'):
                         BOTH, END, LEFT
     import tkMessageBox
     import tkSimpleDialog
-    import os
     from threading import currentThread
 
 
     def _prevent_execution_with_timeouts(method):
         def _check_timeout(*args):
             if 'linux' not in sys.platform and currentThread().getName() != 'MainThread':
-                raise AssertionError("Dialogs library can be used with timeout " +
-                                    "only on Jython and Python on Linux.")
+                raise AssertionError("Dialogs library is not supported with timeouts " +
+                                     "on Python on this platform.")
             return method(*args)
         return _check_timeout
 

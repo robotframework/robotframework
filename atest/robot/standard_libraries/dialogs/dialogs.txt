@@ -26,6 +26,6 @@ Dialog and timeout
     ${on python} =  Running On Python  ${INTERPRETER}
     ${on linux} =  Running On Linux
     ${message} =  Set Variable If  ${on python} and not ${on linux}
-    ...  Dialogs library can be used with timeout only on Jython and Python on Linux.
+    ...  Dialogs library is not supported with timeouts on Python on this platform.
     ...  Test timeout 1 second exceeded.
     Check Test Case  ${TESTNAME}  FAIL  ${message}
