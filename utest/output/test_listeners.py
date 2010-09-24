@@ -201,10 +201,10 @@ class TestNewStyleListeners(_BaseListenerTest, unittest.TestCase):
 class TestInvalidOldStyleListener(unittest.TestCase):
 
     def setUp(self):
-        self._console_logger = LOGGER._loggers.pop(0)
+        self._console_logger = LOGGER._loggers.remove_first_regular_logger()
 
     def tearDown(self):
-        LOGGER._loggers.insert(0, self._console_logger)
+        LOGGER._loggers._regular_loggers.insert(0, self._console_logger)
 
     def test_calling_listener_methods_fails(self):
         listenres = Listeners([('test_listeners.InvalidListenerOldStyle', [])])

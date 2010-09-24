@@ -27,12 +27,12 @@ class _PopulatorTest(unittest.TestCase):
         self._datafile.directory = '/path/to'
         self._populator = FromFilePopulator(self._datafile)
         self._logger = _MockLogger()
-        self._console_logger = LOGGER._loggers.pop(0)
+        self._console_logger = LOGGER._loggers.remove_first_regular_logger()
         LOGGER.register_logger(self._logger)
 
     def tearDown(self):
         LOGGER.unregister_logger(self._logger)
-        LOGGER._loggers.insert(0, self._console_logger)
+        LOGGER._loggers._regular_loggers.insert(0, self._console_logger)
 
     def _assert_no_parsing_errors(self):
         assert_true(self._logger.value() == '', self._logger.value())
