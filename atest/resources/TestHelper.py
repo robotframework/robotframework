@@ -39,5 +39,5 @@ class TestHelper:
     def running_on_python(self, interpreter):
         return not self.running_on_jython(interpreter)
 
-    def running_on_windows(self):
-        return os.path.sep == '\\'
+    def running_on_linux(self):
+        return 'linux' in sys.platform
