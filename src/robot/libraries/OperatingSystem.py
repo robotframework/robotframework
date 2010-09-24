@@ -1133,6 +1133,7 @@ class OperatingSystem:
         self._link("Listing contents of directory '%s'.", path)
         if not os.path.isdir(path):
             raise RuntimeError("Directory '%s' does not exist" % path)
+        # result is already unicode but unic also handles NFC normalization
         items = sorted(unic(item) for item in os.listdir(path))
         if pattern:
             items = [ i for i in items if fnmatch.fnmatchcase(i, pattern) ]
