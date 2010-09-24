@@ -89,7 +89,7 @@ if not sys.platform.startswith('java'):
 
     def _prevent_execution_with_timeouts(method):
         def _check_timeout(*args):
-            if os.name == 'nt' and  currentThread().name != 'MainThread':
+            if os.name == 'nt' and  currentThread().getName() != 'MainThread':
                 raise AssertionError("Dialogs library cannot be used with "
                                      "timeout on Windows with Python.")
             return method(*args)
