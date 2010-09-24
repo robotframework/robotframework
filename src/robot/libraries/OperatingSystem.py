@@ -1133,10 +1133,9 @@ class OperatingSystem:
         self._link("Listing contents of directory '%s'.", path)
         if not os.path.isdir(path):
             raise RuntimeError("Directory '%s' does not exist" % path)
-        items = os.listdir(path)
+        items = sorted(unic(item) for item in os.listdir(path))
         if pattern:
             items = [ i for i in items if fnmatch.fnmatchcase(i, pattern) ]
-        items.sort()
         if deprecated_absolute is not None:
             self._warn("Signature of 'List Directory' keywords has changed. "
                        "Please update how 'absolute' argumemt is given.")
