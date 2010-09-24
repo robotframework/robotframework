@@ -36,6 +36,7 @@ class Logger(AbstractLogger):
 
     def __init__(self):
         self._loggers = []
+        self._context_changing_loggers = []
         self._message_cache = []
         self._register_console_logger()
         self._console_logger_disabled = False
@@ -51,18 +52,28 @@ class Logger(AbstractLogger):
     def register_logger(self, *loggers):
         for log in loggers:
             logger = self._register_logger(log)
-            if self._message_cache:
-                for msg in self._message_cache:
-                    logger.message(msg)
+            self._relay_cached_messages_to(logger)
 
     def _register_logger(self, log):
         self._loggers.append(_LoggerProxy(log))
         return self._loggers[-1]
 
+    def _relay_cached_messages_to(self, logger):
+        if self._message_cache:
+            for msg in self._message_cache:
+                logger.message(msg)
+
+    def register_context_changing_logger(self, log):
+        self._context_changing_loggers.append(_LoggerProxy(log))
+        self._relay_cached_messages_to(self._context_changing_loggers[-1])
+
     def unregister_logger(self, *loggers):
         for log in loggers:
             self._loggers = [proxy for proxy in self._loggers
                              if proxy.logger is not log]
+            self._context_changing_loggers = [proxy for proxy in self._context_changing_loggers
+                                              if proxy.logger is not log]
+
 
     def register_console_logger(self, width=78, colors=True):
         self.disable_automatic_console_logger()
@@ -90,14 +101,14 @@ class Logger(AbstractLogger):
 
     def message(self, msg):
         """Messages about what the framework is doing, warnings, errors, ..."""
-        for logger in self._loggers:
+        for logger in self._context_changing_loggers + self._loggers:
             logger.message(msg)
         if self._message_cache is not None:
             self._message_cache.append(msg)
 
     def log_message(self, msg):
         """Log messages written (mainly) by libraries"""
-        for logger in self._loggers:
+        for logger in self._context_changing_loggers + self._loggers:
             logger.log_message(msg)
         if msg.level == 'WARN':
             msg.linkable = True
@@ -109,37 +120,38 @@ class Logger(AbstractLogger):
 
     def output_file(self, name, path):
         """Finished output, report, log, summary or debug file (incl. split)"""
-        for logger in self._loggers:
+        for logger in self._loggers + self._context_changing_loggers:
             logger.output_file(name, path)
 
     def close(self):
-        for logger in self._loggers:
+        for logger in self._loggers + self._context_changing_loggers:
             logger.close()
         self._loggers = []
+        self._context_changing_loggers = []
         self._message_cache = []
 
     def start_suite(self, suite):
-        for logger in self._loggers:
+        for logger in self._context_changing_loggers + self._loggers:
             logger.start_suite(suite)
 
     def end_suite(self, suite):
-        for logger in self._loggers:
+        for logger in self._loggers + self._context_changing_loggers:
             logger.end_suite(suite)
 
     def start_test(self, test):
-        for logger in self._loggers:
+        for logger in self._context_changing_loggers + self._loggers:
             logger.start_test(test)
 
     def end_test(self, test):
-        for logger in self._loggers:
+        for logger in self._loggers + self._context_changing_loggers:
             logger.end_test(test)
 
     def start_keyword(self, keyword):
-        for logger in self._loggers:
+        for logger in self._context_changing_loggers + self._loggers:
             logger.start_keyword(keyword)
 
     def end_keyword(self, keyword):
-        for logger in self._loggers:
+        for logger in self._loggers + self._context_changing_loggers:
             logger.end_keyword(keyword)
 
 

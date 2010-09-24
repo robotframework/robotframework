@@ -38,7 +38,7 @@ class Output(AbstractLogger):
         robot.output.OUTPUT = self
 
     def _register_loggers(self, listeners, debugfile):
-        LOGGER.register_logger(self._xmllogger)
+        LOGGER.register_context_changing_logger(self._xmllogger)
         for logger in Listeners(listeners), DebugFile(debugfile):
             if logger: LOGGER.register_logger(logger)
         LOGGER.disable_message_cache()

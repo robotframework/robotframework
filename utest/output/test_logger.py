@@ -174,6 +174,53 @@ class TestLogger(unittest.TestCase):
         self.logger.unregister_logger(logger2)
         self.logger.unregister_logger(None)
 
+    def test_registering_context_changing_logger(self):
+        self.logger.register_context_changing_logger(LoggerMock())
+        assert_equals(len(self.logger._context_changing_loggers), 1)
+
+    def test_messages_to_context_chagning_loggers(self):
+        log = LoggerMock(('msg', 'INFO'))
+        self.logger.register_context_changing_logger(log)
+        self.logger.write('msg', 'INFO')
+        assert_true(log.msg is not None)
+
+    def test_start_methods_are_called_first_for_context_changing_loggers(self):
+        class FirstLogger:
+            def start_suite(self, suite): self.suite = suite
+            def start_test(self, test): self.test = test
+            def start_keyword(self, kw): self.kw = kw
+        class SecondLogger:
+            def __init__(self, logger): self._reference = logger
+            def start_suite(self, suite): assert_equals(suite, self._reference.suite)
+            def start_test(self, test): assert_equals(test, self._reference.test)
+            def start_keyword(self, kw): assert_equals(kw, self._reference.kw)
+        log1 = FirstLogger()
+        log2 = SecondLogger(log1)
+        self.logger.register_logger(log2)
+        self.logger.register_context_changing_logger(log1)
+        self.logger.start_suite('Suite')
+        self.logger.start_test('Test')
+        self.logger.start_keyword('Keyword')
+
+    def test_end_methods_are_called_last_for_context_changing_loggers(self):
+        class FirstLogger:
+            def end_suite(self, suite): self.suite = suite
+            def end_test(self, test): self.test = test
+            def end_keyword(self, kw): self.kw = kw
+        class SecondLogger:
+            def __init__(self, logger): self._reference = logger
+            def end_suite(self, suite): self.suite = suite; assert_equals(suite, self._reference.suite)
+            def end_test(self, test): assert_equals(test, self._reference.test)
+            def end_keyword(self, kw): assert_equals(kw, self._reference.kw)
+        log1 = FirstLogger()
+        log2 = SecondLogger(log1)
+        self.logger.register_logger(log1)
+        self.logger.register_context_changing_logger(log2)
+        self.logger.end_suite('Suite')
+        self.logger.end_test('Test')
+        self.logger.end_keyword('Keyword')
+        assert_true(log2.suite is not None)
+
 
 if __name__ == "__main__":
     unittest.main()
