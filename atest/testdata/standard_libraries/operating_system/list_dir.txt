@@ -1,4 +1,4 @@
-*** Settings ***
+﻿*** Settings ***
 Test Setup      Create Test Directories
 Suite Teardown  Remove Test Directories
 Library         OperatingSystem
@@ -46,13 +46,12 @@ List And Count Directories In Directory With Patterns
     List And Count Directories In Directory With Pattern  *.txt
 
 List Directory With Absolute
-    @{expected} =  Create List  ${BASE}${/}${F1}  ${BASE}${/}${F2}
     @{items} =  List Directory  ${BASE}  *.txt  absolute
-    Lists Should Be Equal  ${items}  ${expected}
+    Listing Should Have Correct Items  ${items}  ${BASE}${/}${F1}  ${BASE}${/}${F2}
     @{items} =  List Files In Directory  ${BASE}  absolute=yes
-    Lists Should Be Equal  ${items}  ${expected}
+    Listing Should Have Correct Items  ${items}  ${BASE}${/}${F1}  ${BASE}${/}${F2}
     @{items} =  List Directories In Directory  ${BASE}  ${EMPTY}  ${EMPTY}  deprecated absolute
-    Should Be True  @{items} == ['${BASE}${/}${DIR}']
+    Listing Should Have Correct Items  ${items}  ${BASE}${/}${DIR}
 
 
 *** Keywords ***
@@ -108,3 +107,7 @@ List And Count Directories In Directory With Pattern
     ${count} =  Count Directories In Directory  ${BASE}  ${pattern}
     Lists Should Be Equal  ${items}  ${expected}
     Length Should Be  ${items}  ${count}
+
+Listing Should Have Correct Items
+    [Arguments]  ${items}  @{expected}
+    Lists Should Be Equal  ${items}  ${expected}

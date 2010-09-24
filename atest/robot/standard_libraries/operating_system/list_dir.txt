@@ -1,4 +1,4 @@
-*** Settings ***
+﻿*** Settings ***
 Suite Setup     Run Tests  ${EMPTY}  standard_libraries/operating_system/list_dir.txt
 Force Tags      regression  pybot  jybot
 Resource        atest_resource.txt
@@ -46,10 +46,10 @@ List And Count Directories In Directory With Patterns
 
 List Directory With Absolute
     ${tc} =  Check Test Case  ${TESTNAME}
-    Verify List Message  ${tc.kws[1]}  2 items  \n${BASE}${/}${F1}\n${BASE}${/}${F2}
-    Verify List Message  ${tc.kws[3]}  2 files  \n${BASE}${/}${F1}\n${BASE}${/}${F2}
-    Verify List Message  ${tc.kws[5]}  1 directory  \n${BASE}${/}${DIR}
-    Check Log Message  ${tc.kws[5].msgs[1]}  Signature of 'List Directory' keywords has changed. Please update how 'absolute' argumemt is given.  WARN
+    Verify List Message  ${tc.kws[0]}  2 items  \n${BASE}${/}${F1}\n${BASE}${/}${F2}
+    Verify List Message  ${tc.kws[2]}  2 files  \n${BASE}${/}${F1}\n${BASE}${/}${F2}
+    Verify List Message  ${tc.kws[4]}  1 directory  \n${BASE}${/}${DIR}
+    Check Log Message  ${tc.kws[4].msgs[1]}  Signature of 'List Directory' keywords has changed. Please update how 'absolute' argumemt is given.  WARN
 
 
 *** Keywords ***
@@ -68,4 +68,3 @@ Verify Count Message
     [Arguments]  ${kw}  ${count}
     Check Log Message  ${kw.msgs[0]}  Listing contents of directory '<a href="file://${BASE}">${BASE}</a>'.  HTML
     Check Log Message  ${kw.msgs[1]}  ${count}.
-    
