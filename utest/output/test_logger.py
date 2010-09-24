@@ -135,7 +135,7 @@ class TestLogger(unittest.TestCase):
         logger.disable_automatic_console_logger()
         assert_equals(logger._loggers, [])
 
-    def test_automatic_console_logger_can_be_disabled(self):
+    def test_automatic_console_logger_can_be_disabled_after_registering_logger(self):
         logger = _Logger()
         mock = LoggerMock()
         logger.register_logger(mock)
